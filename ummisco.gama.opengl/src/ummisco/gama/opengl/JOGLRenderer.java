@@ -128,6 +128,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		}
 
 	}
+	
+	public static int Y_FLAG = -1;
 
 	private static boolean BLENDING_ENABLED; // blending on/off
 	GLCanvas canvas;
@@ -153,7 +155,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 	// Use to inverse y composant
-	public int yFlag;
+	//public int yFlag;
 	private final GeometryCache geometryCache = new GeometryCache();
 	private final TextRenderersCache textRendererCache = new TextRenderersCache();
 	private final TextureCache textureCache = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()
@@ -164,7 +166,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		super(d);
 		camera = new CameraArcBall(this);
 		sceneBuffer = new SceneBuffer(this);
-		yFlag = -1;
 		jtsDrawer = new JTSDrawer(this);
 	}
 
@@ -349,7 +350,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		}
 
 		GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(), data.getAmbientLightColor());
-		GLUtilLight.UpdateDiffuseLightValue(gl, getGlu(), data.getDiffuseLightColor());
+		GLUtilLight.UpdateDiffuseLightValue(gl, getGlu(), data.getDiffuseLights());
 
 		final float[] light0Position = new float[4];
 		ILocation p1 = data.getDiffuseLightPosition();
@@ -367,7 +368,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 					data.getDiffuseLightColor());
 		}
 
-		GLUtilLight.UpdateDiffuseLightPosition(gl, getGlu(), light0Position);
+//		GLUtilLight.UpdateDiffuseLightPosition(gl, getGlu(), light0Position);
 
 		// Blending control
 		if (BLENDING_ENABLED) {

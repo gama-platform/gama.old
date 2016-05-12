@@ -487,6 +487,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 		} else {
 			geometry = geom;
 		}
+		if (geometry != null && !GeometryUtils.isClockWise(geometry)) {
+			GeometryUtils.changeClockWise(geometry);
+		}
 		// setEnvelope(null);
 	}
 

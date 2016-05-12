@@ -21,6 +21,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.glu.GLUtessellator;
@@ -45,6 +46,8 @@ import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.GeometryObject;
+import ummisco.gama.opengl.utils.GLUtilGLContext;
+import ummisco.gama.opengl.utils.GLUtilLight;
 import ummisco.gama.opengl.utils.GLUtilNormal;
 import ummisco.gama.opengl.utils.Vertex;
 
@@ -72,7 +75,8 @@ public class JTSDrawer {
 		if (c == null) {
 			return;
 		}
-		gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(c.getRed() / 255.0), (float)(c.getGreen() / 255.0),
+				(float)(c.getBlue() / 255.0), (float)(alpha * c.getAlpha() / 255.0)});
 	}
 
 	public void drawGeometryCached(final GL2 gl, final GamaGeometryFile file) {
@@ -131,18 +135,27 @@ public class JTSDrawer {
 	public void drawPolygon(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 			final Color border, final GeometryObject object, final boolean drawPolygonContour,
 			final double z_fighting_value, final int norm_dir) {
+		
+		int p_norm_dir = 1;
 
 		if (renderer.getComputeNormal()) {
 			final Vertex[] vertices = getExteriorRingVertices(p);
-			GLUtilNormal.HandleNormal(vertices, c, alpha, norm_dir, renderer);
+			
+			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+				p_norm_dir = -1;
+			} else {
+				p_norm_dir = 1;
+			}
+			
+			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		}
 		if (!object.isTextured()) {
 			if (fill) {
 				if (!colorpicking) {
 					setColor(gl, c, alpha);
 				}
-				drawTesselatedPolygon(gl, p, norm_dir, c, alpha);
-				gl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
+				drawTesselatedPolygon(gl, p, p_norm_dir, c, alpha);
+				GLUtilGLContext.SetCurrentColor(gl, new float[] {0.0f,0.0f,0.0f,(float)alpha});
 				if (drawPolygonContour == true) {
 					drawPolygonContour(gl, p, border, alpha, z_fighting_value);
 				}
@@ -158,7 +171,7 @@ public class JTSDrawer {
 		} else {
 			final Texture texture = object.getTexture(gl, renderer, 0);
 			if (texture != null) {
-				drawTexturedPolygon(gl, p, texture, norm_dir);
+				drawTexturedPolygon(gl, p, texture, p_norm_dir);
 			}
 			if (drawPolygonContour == true) {
 				drawPolygonContour(gl, p, border, alpha, z_fighting_value);
@@ -178,17 +191,17 @@ public class JTSDrawer {
 			final Vertex[] vertices = getExteriorRingVertices(p);
 
 			final double[] normalmean = new double[3];
-			for (int i = 0; i < vertices.length - 2; i++) {
-				final double[] normal = GLUtilNormal.CalculateNormal(vertices[i + 2], vertices[i + 1], vertices[i]);
-				normalmean[0] = (normalmean[0] + normal[0]) / (i + 1);
-				normalmean[1] = (normalmean[1] + normal[1]) / (i + 1);
-				normalmean[2] = (normalmean[2] + normal[2]) / (i + 1);
-			}
+//			for (int i = 0; i < vertices.length - 2; i++) {
+				double[] normal = GLUtilNormal.CalculateNormal(vertices[0], vertices[0 + 1], vertices[0 + 2]);
+				normalmean[0] = (normalmean[0] + normal[0]);
+				normalmean[1] = (normalmean[1] + normal[1]);
+				normalmean[2] = (normalmean[2] + normal[2]);
+//			}
 
-			if (renderer.data.isDraw_norm()) {
+			if (renderer.data.isDraw_norm()) {				
 				final Vertex center = GLUtilNormal.GetCenter(vertices);
 				gl.glBegin(GL.GL_LINES);
-				gl.glColor3d(1.0, 0.0, 0.0);
+				GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 0.0f, 0.0f});
 				gl.glVertex3d(center.x, center.y, center.z);
 				gl.glVertex3d(center.x + normalmean[0] * norm_dir, center.y + normalmean[1] * norm_dir,
 						center.z + normalmean[2] * norm_dir);
@@ -215,7 +228,7 @@ public class JTSDrawer {
 		for (int j = 0; j < p.getExteriorRing().getNumPoints(); j++) {
 			final Point pp = p.getExteriorRing().getPointN(j);
 			tempPolygon[j][0] = pp.getX();
-			tempPolygon[j][1] = renderer.yFlag * pp.getY();
+			tempPolygon[j][1] = JOGLRenderer.Y_FLAG * pp.getY();
 			if (Double.isNaN(pp.getCoordinate().z) == true) {
 				tempPolygon[j][2] = 0.0d;
 			} else {
@@ -238,7 +251,7 @@ public class JTSDrawer {
 			for (int j = 0; j < numIntPoints; j++) {
 				final Point pp = p.getInteriorRingN(i).getPointN(j);
 				tempPolygon[j][0] = pp.getX();
-				tempPolygon[j][1] = renderer.yFlag * pp.getY();
+				tempPolygon[j][1] = JOGLRenderer.Y_FLAG * pp.getY();
 
 				if (Double.isNaN(pp.getCoordinate().z) == true) {
 					tempPolygon[j][2] = 0.0d;
@@ -257,41 +270,48 @@ public class JTSDrawer {
 	}
 
 	public void drawTexturedPolygon(final GL2 gl, final Polygon p, final Texture texture, final int norm_dir) {
-
-		gl.glColor3d(1.0, 1.0, 1.0);
+		int p_norm_dir = 1;
+		
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
 		if (texture != null) {
 			texture.enable(gl);
 			texture.bind(gl);
 		}
 
-		if (p.getNumPoints() > 5) {
+		// Why when nb points > 2 ?????????
+//		if (p.getNumPoints() > 2) {
 			drawTriangulatedPolygon(gl, p, false, texture);
 
-		} else {
-			
-			if (renderer.getComputeNormal()) {
-				final Vertex[] vertices = this.getExteriorRingVertices(p);
-				GLUtilNormal.HandleNormal(vertices, null, 0, norm_dir, renderer);
-			}
-			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
-										// and texture mixture
-			gl.glBegin(GL2ES3.GL_QUADS);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(),
-					renderer.yFlag * p.getExteriorRing().getPointN(0).getY(), p.getExteriorRing().getCoordinateN(0).z);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			;
-			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(),
-					renderer.yFlag * p.getExteriorRing().getPointN(1).getY(), p.getExteriorRing().getCoordinateN(1).z);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			;
-			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(),
-					renderer.yFlag * p.getExteriorRing().getPointN(2).getY(), p.getExteriorRing().getCoordinateN(2).z);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(),
-					renderer.yFlag * p.getExteriorRing().getPointN(3).getY(), p.getExteriorRing().getCoordinateN(3).z);
-			gl.glEnd();
-		}
+//		} else {
+//			
+//			if (renderer.getComputeNormal()) {
+//				final Vertex[] vertices = this.getExteriorRingVertices(p);
+//				if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+//					p_norm_dir = 1;
+//				} else {
+//					p_norm_dir = -1;
+//				}
+//				GLUtilNormal.HandleNormal(vertices, null, 0, p_norm_dir, renderer);
+//			}
+//			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
+//										// and texture mixture
+//			gl.glBegin(GL2ES3.GL_QUADS);
+//			gl.glTexCoord2f(0.0f, 1.0f);
+//			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(),
+//					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(3).getY(), p.getExteriorRing().getCoordinateN(3).z);
+//			gl.glTexCoord2f(1.0f, 1.0f);
+//			;
+//			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(),
+//					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(2).getY(), p.getExteriorRing().getCoordinateN(2).z);
+//			gl.glTexCoord2f(1.0f, 0.0f);
+//			;
+//			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(),
+//					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(1).getY(), p.getExteriorRing().getCoordinateN(1).z);
+//			gl.glTexCoord2f(0.0f, 0.0f);
+//			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(),
+//					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(0).getY(), p.getExteriorRing().getCoordinateN(0).z);
+//			gl.glEnd();
+//		}
 		if (texture != null) {
 			texture.disable(gl);
 		}
@@ -363,117 +383,96 @@ public class JTSDrawer {
 		// final double xMax = env.getMaxX();
 		// final double yMin = env.getMinY();
 		// final double yMax = env.getMaxY();
+		
+		// reverse the list of points in the exterior ring if the "real" ring (with the Y_FLAG) is not Clockwise.
+		Point[] pointList = new Point[polygon.getExteriorRing().getNumPoints()];
+		final Vertex[] vertices = getExteriorRingVertices(polygon);
+		if (false/*isClockwise(vertices)*/) {
+			for (int i=0 ; i < polygon.getExteriorRing().getNumPoints() ; i++) {
+				pointList[polygon.getExteriorRing().getNumPoints()-i-1] = polygon.getExteriorRing().getPointN(i);
+			}
+		}
+		else {
+			for (int i=0 ; i < polygon.getExteriorRing().getNumPoints() ; i++) {
+				pointList[i] = polygon.getExteriorRing().getPointN(i);
+			}
+		}
 
 		if (showTriangulation) {
 			if (Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true) {
 				gl.glBegin(GL.GL_LINES); // draw using triangles
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
+				gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(), 0.0d);
+				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(), 0.0d);
+				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(), 0.0d);
+				gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(), 0.0d);
+				gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(), 0.0d);
+				gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(), 0.0d);
 				gl.glEnd();
 			} else {
 				gl.glBegin(GL.GL_LINES); // draw using triangles
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),
-						polygon.getExteriorRing().getPointN(0).getCoordinate().z);
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),
-						polygon.getExteriorRing().getPointN(0).getCoordinate().z);
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),
-						polygon.getExteriorRing().getPointN(1).getCoordinate().z);
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),
-						polygon.getExteriorRing().getPointN(2).getCoordinate().z);
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),
-						polygon.getExteriorRing().getPointN(2).getCoordinate().z);
-				gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-						renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),
-						polygon.getExteriorRing().getPointN(0).getCoordinate().z);
+				gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
+						pointList[0].getCoordinate().z);
+				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
+						pointList[1].getCoordinate().z);
+				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(),
+						pointList[1].getCoordinate().z);
+				gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(),
+						pointList[2].getCoordinate().z);
+				gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(),
+						pointList[2].getCoordinate().z);
+				gl.glVertex3d(pointList[0].getX(),	JOGLRenderer.Y_FLAG * pointList[0].getY(),
+						pointList[0].getCoordinate().z);
 				gl.glEnd();
 
 			}
 		} else {
 			if (Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true) {
 				if (texture != null) {
-					gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to
-												// avoid color and texture
-												// mixture
+					GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f}); // Set the color to white to
+																						// avoid color and texture
+																						// mixture
 					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
 					gl.glTexCoord2f(0.0f, 1.0f);
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
+					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(), 0.0d);
 					gl.glTexCoord2f(1.0f, 1.0f);
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
+					gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(), 0.0d);
 					gl.glTexCoord2f(1.0f, 0.0f);
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
+					gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(), 0.0d);
 					gl.glEnd();
 
 				} else {
 					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(), 0.0d);
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(), 0.0d);
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(), 0.0d);
+					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(), 0.0d);
+					gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(), 0.0d);
+					gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(), 0.0d);
 					gl.glEnd();
 				}
 
 			} else {
 				if (texture != null) {
-					gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to
-												// avoid color and texture
-												// mixture
+					GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f}); // Set the color to white to
+																						// avoid color and texture
+																						// mixture
 					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
-					// gl.glTexCoord2d(polygon.getExteriorRing().getPointN(0).getX()
-					// / (xMax - xMin),renderer.yFlag *
-					// polygon.getExteriorRing().getPointN(0).getY() / (yMax -
-					// yMin));
 					gl.glTexCoord2f(0.0f, 1.0f);
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),
-							polygon.getExteriorRing().getPointN(0).getCoordinate().z);
-					// gl.glTexCoord2d(polygon.getExteriorRing().getPointN(1).getX()
-					// / (xMax - xMin),renderer.yFlag *
-					// polygon.getExteriorRing().getPointN(1).getY() / (yMax -
-					// yMin));
+					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
+							pointList[0].getCoordinate().z);
 					gl.glTexCoord2f(1.0f, 1.0f);
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),
-							polygon.getExteriorRing().getPointN(1).getCoordinate().z);
-					// gl.glTexCoord2d(polygon.getExteriorRing().getPointN(2).getX()
-					// / (xMax - xMin),renderer.yFlag *
-					// polygon.getExteriorRing().getPointN(2).getY() / (yMax -
-					// yMin));
+					gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(),
+							pointList[1].getCoordinate().z);
 					gl.glTexCoord2f(1.0f, 0.0f);
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),
-							polygon.getExteriorRing().getPointN(2).getCoordinate().z);
+					gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(),
+							pointList[2].getCoordinate().z);
 					gl.glEnd();
 				} else {
 					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY(),
-							polygon.getExteriorRing().getPointN(0).getCoordinate().z);
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(1).getY(),
-							polygon.getExteriorRing().getPointN(1).getCoordinate().z);
-					gl.glVertex3d(polygon.getExteriorRing().getPointN(2).getX(),
-							renderer.yFlag * polygon.getExteriorRing().getPointN(2).getY(),
-							polygon.getExteriorRing().getPointN(2).getCoordinate().z);
+					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
+							pointList[0].getCoordinate().z);
+					gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(),
+							pointList[1].getCoordinate().z);
+					gl.glVertex3d(pointList[2].getX(),
+							JOGLRenderer.Y_FLAG * pointList[2].getY(),
+							pointList[2].getCoordinate().z);
 					gl.glEnd();
 				}
 			}
@@ -539,26 +538,39 @@ public class JTSDrawer {
 			final double height, /* final Integer angle, */final boolean drawPolygonContour, final Color border,
 			final GeometryObject object, final Double z_fighting_value) {
 
-		int p_norm_dir = -1;
+		int p_norm_dir = 1;
 		int face_norm_dir = -1;
 		boolean polyCW = true;
 		if (renderer.getComputeNormal()) {
 			final Vertex[] vertices = getExteriorRingVertices(p);
 			polyCW = isClockwise(vertices);
-			if (polyCW) {
-				face_norm_dir = 1;
-				p_norm_dir = -1;
-			} else {
-				face_norm_dir = 1;
+//			if (polyCW) {
+//				face_norm_dir = 1;
+//				p_norm_dir = -1;
+//			} else {
+//				face_norm_dir = 1;
+//				p_norm_dir = 1;
+//			}
+			
+			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
 				p_norm_dir = 1;
+			} else {
+				p_norm_dir = -1;
 			}
 
+		}
+
+		// translate the lights
+		double z = 0.0;
+		if (Double.isNaN(p.getCoordinate().z) == false) {
+			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
 		drawPolygon(gl, p, c, alpha, fill, border, object, drawPolygonContour, z_fighting_value, p_norm_dir);
 		// gl.glTranslated(0, 0, height);
 		final double[] vectorNormal = calculatePolygonNormal(p, polyCW);
 
+		float[][] buffer = translatePositionalLights(gl,new float[] {(float)(-vectorNormal[0] * height), (float)(-vectorNormal[1] * height), (float)(-vectorNormal[2] * height)});
 		gl.glTranslated(-vectorNormal[0] * height, -vectorNormal[1] * height, -vectorNormal[2] * height);
 		drawPolygon(gl, p, c, alpha, fill, border, object/* ,angle */, drawPolygonContour, z_fighting_value,
 				-p_norm_dir);
@@ -570,16 +582,17 @@ public class JTSDrawer {
 		if (object.isTextured()) {
 			if (object.hasSeveralTextures()) {
 				drawTexturedFaces(gl, p, c, alpha, fill, border, object.getTexture(gl, renderer, 1), height,
-						drawPolygonContour, polyCW);
+						drawPolygonContour, -face_norm_dir, polyCW);
 			} else {
 				drawTexturedFaces(gl, p, c, alpha, fill, border, object.getTexture(gl, renderer, 0), height,
-						drawPolygonContour, polyCW);
+						drawPolygonContour, -face_norm_dir, polyCW);
 			}
 
 		} else {
-			drawFaces(gl, p, c, alpha, fill, border, height, drawPolygonContour, face_norm_dir, polyCW);
+			drawFaces(gl, p, c, alpha, fill, border, height, drawPolygonContour, -face_norm_dir, polyCW);
 		}
-
+		
+		revertTranslatePositionalLights(gl,buffer);
 	}
 
 	// //////////////////////////////FACE DRAWER
@@ -607,7 +620,7 @@ public class JTSDrawer {
 
 			if (fill) {
 				if (renderer.getComputeNormal()) {
-					GLUtilNormal.HandleNormal(vertices, c, alpha, norm_dir, renderer);
+					GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
 				}
 				gl.glBegin(GL2ES3.GL_QUADS);
 				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
@@ -641,7 +654,7 @@ public class JTSDrawer {
 
 	public void drawTexturedFaces(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 			final Color b, final Texture texture, final double height, final boolean drawPolygonContour,
-			final boolean clockwise) {
+			final int norm_dir, final boolean clockwise) {
 
 		texture.enable(gl);
 		texture.bind(gl);
@@ -659,12 +672,11 @@ public class JTSDrawer {
 			final int k = (j + 1) % curPolyGonNumPoints;
 
 			final Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
-			GLUtilNormal.HandleNormal(vertices, null, alpha, 1, renderer);
-			gl.glColor3d(0.25, 0.25, 0.25);// Set the color to white to avoid
-											// color and texture mixture
+			GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
 			gl.glBegin(GL2ES3.GL_QUADS);
-			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
-										// and texture mixture
+			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f}); // Set the color to white to
+																				// avoid color and texture
+																				// mixture
 			gl.glTexCoord2f(0.0f, 0.0f);
 			gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
 			gl.glTexCoord2f(1.0f, 0.0f);
@@ -698,33 +710,6 @@ public class JTSDrawer {
 		texture.disable(gl);
 	}
 
-	public Vertex[] getFaceVerticesOld(final Polygon p, final int j, final int k, final double elevation,
-			final double height) {
-		// Build the 4 vertices of the face.
-		final Vertex[] vertices = new Vertex[4];
-		for (int i = 0; i < 4; i++) {
-			vertices[i] = new Vertex();
-		}
-		// FIXME; change double to double in Vertex
-		vertices[0].x = p.getExteriorRing().getPointN(j).getX();
-		vertices[0].y = renderer.yFlag * p.getExteriorRing().getPointN(j).getY();
-		vertices[0].z = elevation + height;
-
-		vertices[1].x = p.getExteriorRing().getPointN(k).getX();
-		vertices[1].y = renderer.yFlag * p.getExteriorRing().getPointN(k).getY();
-		vertices[1].z = elevation + height;
-
-		vertices[2].x = p.getExteriorRing().getPointN(k).getX();
-		vertices[2].y = renderer.yFlag * p.getExteriorRing().getPointN(k).getY();
-		vertices[2].z = elevation;
-
-		vertices[3].x = p.getExteriorRing().getPointN(j).getX();
-		vertices[3].y = renderer.yFlag * p.getExteriorRing().getPointN(j).getY();
-		vertices[3].z = elevation;
-
-		return vertices;
-	}
-
 	public double[] calculatePolygonNormal(final Polygon p, final Boolean clockwise) {
 		// Get 3 vertices of the initial polygon.
 		final Vertex[] verticesP = new Vertex[3];
@@ -733,15 +718,15 @@ public class JTSDrawer {
 		}
 
 		verticesP[0].x = p.getExteriorRing().getPointN(0).getX();
-		verticesP[0].y = renderer.yFlag * p.getExteriorRing().getPointN(0).getY();
+		verticesP[0].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(0).getY();
 		verticesP[0].z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 
 		verticesP[1].x = p.getExteriorRing().getPointN(1).getX();
-		verticesP[1].y = renderer.yFlag * p.getExteriorRing().getPointN(1).getY();
+		verticesP[1].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(1).getY();
 		verticesP[1].z = p.getExteriorRing().getPointN(1).getCoordinate().z;
 
 		verticesP[2].x = p.getExteriorRing().getPointN(2).getX();
-		verticesP[2].y = renderer.yFlag * p.getExteriorRing().getPointN(2).getY();
+		verticesP[2].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(2).getY();
 		verticesP[2].z = p.getExteriorRing().getPointN(2).getCoordinate().z;
 		final double[] normal = GLUtilNormal.CalculateNormal(verticesP[0], verticesP[1], verticesP[2]);
 		if (clockwise == null || clockwise != isClockwise(verticesP)) {
@@ -761,22 +746,35 @@ public class JTSDrawer {
 		for (int i = 0; i < 4; i++) {
 			vertices[i] = new Vertex();
 		}
+		
+		// reverse the list of points in the exterior ring if the "real" ring (with the Y_FLAG) is not Clockwise.
+		Point[] pointList = new Point[p.getExteriorRing().getNumPoints()];
+		if (isClockwise(getExteriorRingVertices(p))) {
+			for (int i=0 ; i < p.getExteriorRing().getNumPoints() ; i++) {
+				pointList[p.getExteriorRing().getNumPoints()-i-1] = p.getExteriorRing().getPointN(i);
+			}
+		}
+		else {
+			for (int i=0 ; i < p.getExteriorRing().getNumPoints() ; i++) {
+				pointList[i] = p.getExteriorRing().getPointN(i);
+			}
+		}
 
-		vertices[0].x = p.getExteriorRing().getPointN(j).getX() + vectorNormal[0] * height;
-		vertices[0].y = renderer.yFlag * p.getExteriorRing().getPointN(j).getY() + vectorNormal[1] * height;
-		vertices[0].z = p.getExteriorRing().getPointN(j).getCoordinate().z + vectorNormal[2] * height;
+		vertices[0].x = pointList[j].getX() + vectorNormal[0] * height;
+		vertices[0].y = JOGLRenderer.Y_FLAG * pointList[j].getY() + vectorNormal[1] * height;
+		vertices[0].z = pointList[j].getCoordinate().z + vectorNormal[2] * height;
 
-		vertices[1].x = p.getExteriorRing().getPointN(k).getX() + vectorNormal[0] * height;
-		vertices[1].y = renderer.yFlag * p.getExteriorRing().getPointN(k).getY() + vectorNormal[1] * height;
-		vertices[1].z = p.getExteriorRing().getPointN(k).getCoordinate().z + vectorNormal[2] * height;
+		vertices[1].x = pointList[k].getX() + vectorNormal[0] * height;
+		vertices[1].y = JOGLRenderer.Y_FLAG * pointList[k].getY() + vectorNormal[1] * height;
+		vertices[1].z = pointList[k].getCoordinate().z + vectorNormal[2] * height;
 
-		vertices[2].x = p.getExteriorRing().getPointN(k).getX();
-		vertices[2].y = renderer.yFlag * p.getExteriorRing().getPointN(k).getY();
-		vertices[2].z = p.getExteriorRing().getPointN(k).getCoordinate().z;
+		vertices[2].x = pointList[k].getX();
+		vertices[2].y = JOGLRenderer.Y_FLAG * pointList[k].getY();
+		vertices[2].z = pointList[k].getCoordinate().z;
 
-		vertices[3].x = p.getExteriorRing().getPointN(j).getX();
-		vertices[3].y = renderer.yFlag * p.getExteriorRing().getPointN(j).getY();
-		vertices[3].z = p.getExteriorRing().getPointN(j).getCoordinate().z;
+		vertices[3].x = pointList[j].getX();
+		vertices[3].y = JOGLRenderer.Y_FLAG * pointList[j].getY();
+		vertices[3].z = pointList[j].getCoordinate().z;
 
 		return vertices;
 
@@ -791,15 +789,15 @@ public class JTSDrawer {
 		}
 		// FIXME; change double to double in Vertex
 		vertices[0].x = p.getExteriorRing().getPointN(0).getX();
-		vertices[0].y = renderer.yFlag * p.getExteriorRing().getPointN(0).getY();
+		vertices[0].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(0).getY();
 		vertices[0].z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 
 		vertices[1].x = p.getExteriorRing().getPointN(1).getX();
-		vertices[1].y = renderer.yFlag * p.getExteriorRing().getPointN(1).getY();
+		vertices[1].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(1).getY();
 		vertices[1].z = p.getExteriorRing().getPointN(1).getCoordinate().z;
 
 		vertices[2].x = p.getExteriorRing().getPointN(2).getX();
-		vertices[2].y = renderer.yFlag * p.getExteriorRing().getPointN(2).getY();
+		vertices[2].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(2).getY();
 		vertices[2].z = p.getExteriorRing().getPointN(2).getCoordinate().z;
 
 		return vertices;
@@ -811,7 +809,7 @@ public class JTSDrawer {
 		for (int i = 0; i < p.getExteriorRing().getNumPoints() - 1; i++) {
 			vertices[i] = new Vertex();
 			vertices[i].x = p.getExteriorRing().getPointN(i).getX();
-			vertices[i].y = renderer.yFlag * p.getExteriorRing().getPointN(i).getY();
+			vertices[i].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(i).getY();
 			vertices[i].z = p.getExteriorRing().getPointN(i).getCoordinate().z;
 			if (Double.isNaN(vertices[i].z)) {
 				vertices[i].z = 0.0d;
@@ -864,16 +862,16 @@ public class JTSDrawer {
 		for (int j = 0; j < numPoints - 1; j++) {
 
 			if (Double.isNaN(line.getPointN(j).getCoordinate().z) == true) {
-				gl.glVertex3d(line.getPointN(j).getX(), renderer.yFlag * line.getPointN(j).getY(), z);
+				gl.glVertex3d(line.getPointN(j).getX(), JOGLRenderer.Y_FLAG * line.getPointN(j).getY(), z);
 
 			} else {
-				gl.glVertex3d(line.getPointN(j).getX(), renderer.yFlag * line.getPointN(j).getY(),
+				gl.glVertex3d(line.getPointN(j).getX(), JOGLRenderer.Y_FLAG * line.getPointN(j).getY(),
 						z + line.getPointN(j).getCoordinate().z);
 			}
 			if (Double.isNaN(line.getPointN(j + 1).getCoordinate().z) == true) {
-				gl.glVertex3d(line.getPointN(j + 1).getX(), renderer.yFlag * line.getPointN(j + 1).getY(), z);
+				gl.glVertex3d(line.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * line.getPointN(j + 1).getY(), z);
 			} else {
-				gl.glVertex3d(line.getPointN(j + 1).getX(), renderer.yFlag * line.getPointN(j + 1).getY(),
+				gl.glVertex3d(line.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * line.getPointN(j + 1).getY(),
 						z + line.getPointN(j + 1).getCoordinate().z);
 			}
 
@@ -892,7 +890,8 @@ public class JTSDrawer {
 		}
 
 		// Draw a quad
-		gl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha * c.getAlpha() / 255.0);
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(c.getRed() / 255.0), (float)(c.getGreen() / 255.0), 
+				(float)(c.getBlue() / 255.0), (float)(alpha * c.getAlpha() / 255.0)});
 		final int numPoints = l.getNumPoints();
 
 		// Add z value
@@ -908,40 +907,38 @@ public class JTSDrawer {
 					vertices[i] = new Vertex();
 				}
 				vertices[0].x = l.getPointN(j).getX();
-				vertices[0].y = renderer.yFlag * l.getPointN(j).getY();
+				vertices[0].y = JOGLRenderer.Y_FLAG * l.getPointN(j).getY();
 				vertices[0].z = z;
 
 				vertices[1].x = l.getPointN(j + 1).getX();
-				vertices[1].y = renderer.yFlag * l.getPointN(j + 1).getY();
+				vertices[1].y = JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY();
 				vertices[1].z = z;
 
 				vertices[2].x = l.getPointN(j + 1).getX();
-				vertices[2].y = renderer.yFlag * l.getPointN(j + 1).getY();
+				vertices[2].y = JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY();
 				vertices[2].z = z + height;
-				GLUtilNormal.HandleNormal(vertices, c, alpha, 1, renderer);
+				GLUtilNormal.HandleNormal(vertices, 1, renderer);
 			}
 
 			if (object.isTextured()) {
 				final Texture texture = object.getTexture(gl, renderer, 0);
-				gl.glColor3d(1.0, 1.0, 1.0);
+				GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});// Set the color to white to avoid
+																					// color and texture mixture
 				if (texture != null) {
 					texture.enable(gl);
 					texture.bind(gl);
 				}
-
-				gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid
-											// color and texture mixture
 				gl.glBegin(GL2ES3.GL_QUADS);
 				gl.glTexCoord2f(0.0f, 1.0f);
-				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z);
+				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z);
 				gl.glTexCoord2f(1.0f, 1.0f);
 				;
-				gl.glVertex3d(l.getPointN(j + 1).getX(), renderer.yFlag * l.getPointN(j + 1).getY(), z);
+				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z);
 				gl.glTexCoord2f(1.0f, 0.0f);
 				;
-				gl.glVertex3d(l.getPointN(j + 1).getX(), renderer.yFlag * l.getPointN(j + 1).getY(), z + height);
+				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z + height);
 				gl.glTexCoord2f(0.0f, 0.0f);
-				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z + height);
+				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z + height);
 				gl.glEnd();
 
 				if (texture != null) {
@@ -949,10 +946,10 @@ public class JTSDrawer {
 				}
 			} else {
 				gl.glBegin(GL2ES3.GL_QUADS);
-				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z);
-				gl.glVertex3d(l.getPointN(j + 1).getX(), renderer.yFlag * l.getPointN(j + 1).getY(), z);
-				gl.glVertex3d(l.getPointN(j + 1).getX(), renderer.yFlag * l.getPointN(j + 1).getY(), z + height);
-				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z + height);
+				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z);
+				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z);
+				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z + height);
+				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z + height);
 				gl.glEnd();
 			}
 
@@ -965,17 +962,17 @@ public class JTSDrawer {
 
 			for (int j = 0; j < numPoints - 1; j++) {
 				gl.glBegin(GL.GL_LINES);
-				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z);
-				gl.glVertex3d(l.getPointN(j + 1).getX(), renderer.yFlag * l.getPointN(j + 1).getY(), z);
+				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z);
+				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z);
 
-				gl.glVertex3d(l.getPointN(j + 1).getX(), renderer.yFlag * l.getPointN(j + 1).getY(), z);
-				gl.glVertex3d(l.getPointN(j + 1).getX(), renderer.yFlag * l.getPointN(j + 1).getY(), z + height);
+				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z);
+				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z + height);
 
-				gl.glVertex3d(l.getPointN(j + 1).getX(), renderer.yFlag * l.getPointN(j + 1).getY(), z + height);
-				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z + height);
+				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z + height);
+				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z + height);
 
-				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z + height);
-				gl.glVertex3d(l.getPointN(j).getX(), renderer.yFlag * l.getPointN(j).getY(), z);
+				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z + height);
+				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z);
 
 				gl.glEnd();
 			}
@@ -1006,7 +1003,7 @@ public class JTSDrawer {
 			angle = k * 2 * CmnFastMath.PI / numPoints;
 
 			tempPolygon[k][0] = point.getCoordinate().x + FastMath.cos(angle) * radius;
-			tempPolygon[k][1] = renderer.yFlag * (point.getCoordinate().y + FastMath.sin(angle) * radius);
+			tempPolygon[k][1] = JOGLRenderer.Y_FLAG * (point.getCoordinate().y + FastMath.sin(angle) * radius);
 			tempPolygon[k][2] = z;
 		}
 
@@ -1020,7 +1017,7 @@ public class JTSDrawer {
 		// Add a line around the circle
 		// FIXME/ Check the cost of this line
 		if (!colorpicking) {
-			gl.glColor4d(0.0d, 0.0d, 0.0d, alpha * c.getAlpha() / 255.0);
+			GLUtilGLContext.SetCurrentColor(gl, new float[] {0.0f, 0.0f, 0.0f, (float)(alpha * c.getAlpha() / 255.0)});
 		}
 		// gl.glLineWidth(renderer.getLineWidth());
 		gl.glBegin(GL.GL_LINES);
@@ -1028,15 +1025,60 @@ public class JTSDrawer {
 		for (int k = 0; k < numPoints; k++) {
 			angle = k * 2 * CmnFastMath.PI / numPoints;
 			xBegin = point.getCoordinate().x + FastMath.cos(angle) * radius;
-			yBegin = renderer.yFlag * (point.getCoordinate().y + FastMath.sin(angle) * radius);
+			yBegin = JOGLRenderer.Y_FLAG * (point.getCoordinate().y + FastMath.sin(angle) * radius);
 			angle = (k + 1) * 2 * CmnFastMath.PI / numPoints;
 			xEnd = point.getCoordinate().x + FastMath.cos(angle) * radius;
-			yEnd = renderer.yFlag * (point.getCoordinate().y + FastMath.sin(angle) * radius);
+			yEnd = JOGLRenderer.Y_FLAG * (point.getCoordinate().y + FastMath.sin(angle) * radius);
 			gl.glVertex3d(xBegin, yBegin, z);
 			gl.glVertex3d(xEnd, yEnd, z);
 		}
 		gl.glEnd();
 
+	}
+	
+	public float[][] translatePositionalLights(final GL2 gl, final float[] translation) {
+		// this function translate all the positional lights, and returns an array of {lightId,x,y,z,w}.
+		
+		// compute the number of position to memorize
+		int positionalLightNumber = 0;
+		for (int id = 0; id<8; id++) {
+			int lightId = GLLightingFunc.GL_LIGHT0+id;
+			if (gl.glIsEnabled(lightId)) {
+				float[] position = new float[4];
+				gl.glGetLightfv(lightId, GLLightingFunc.GL_POSITION, position, 0);
+				if (position[3] == 1) {
+					positionalLightNumber++;
+				}
+			}
+		}
+		
+		// translate the light and store the old position in the buffer to return
+		float[][] result = new float[positionalLightNumber][5];
+		positionalLightNumber = 0;
+		for (int id = 0; id<8; id++) {
+			int lightId = GLLightingFunc.GL_LIGHT0+id;
+			if (gl.glIsEnabled(lightId)) {
+				float[] position = new float[4];
+				gl.glGetLightfv(lightId, GLLightingFunc.GL_POSITION, position, 0);
+				if (position[3] == 1) {
+					result[positionalLightNumber][0] = lightId;
+					for (int idx = 0 ; idx < position.length ; idx++) {
+						result[positionalLightNumber][idx+1] = position[idx];
+					}
+					gl.glLightfv(lightId, GLLightingFunc.GL_POSITION, new float[] {position[0]-translation[0],position[1]-translation[1],position[2]-translation[2]}, 0);
+					positionalLightNumber++;
+				}
+			}
+		}
+		
+		// return the buffer. This buffer has to be given to the function revertTranslatePositionalLights
+		return result;
+	}
+	
+	public void revertTranslatePositionalLights(final GL2 gl, final float[][] initPosBuffer) {
+		for (float[] pos : initPosBuffer) {
+			gl.glLightfv((int)pos[0], GLLightingFunc.GL_POSITION, new float[] {pos[1],pos[2],pos[3],pos[4]}, 0);
+		}
 	}
 
 	// //////////////////////////////SPECIAL 3D SHAPE DRAWER
@@ -1053,11 +1095,11 @@ public class JTSDrawer {
 		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glPushMatrix();
 		gl.glTranslated(pos.x, pos.y, pos.z);
-		gl.glColor4d(0.5, 0.5, 0.5, 1.0);
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {0.5f, 0.5f, 0.5f, 1.0f});		
 		glut.glutSolidSphere(5.0 * (distance / 500), slices, stacks);
-		gl.glColor4d(0.5, 0.5, 0.5, 0.1);
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {0.5f, 0.5f, 0.5f, 0.1f});
 		glut.glutSolidSphere(49.0 * (distance / 500), slices, stacks);
-		gl.glColor4d(0.5, 0.5, 0.5, 1);
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {0.5f, 0.5f, 0.5f, 1.0f});
 		glut.glutWireSphere(50.0 * (distance / 500), slices / 2, stacks / 2);
 		gl.glPopMatrix();
 		gl.glEnable(GL2.GL_LIGHTING);
@@ -1078,9 +1120,9 @@ public class JTSDrawer {
 		gl.glPushMatrix();
 		gl.glTranslated(pos.x, pos.y, pos.z);
 		gl.glScaled(width, height, z);
-		gl.glColor4d(0, 0.5, 0, 0.15);
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {0.0f, 0.5f, 0.0f, 0.15f});
 		glut.glutSolidCube(0.99f);
-		gl.glColor4d(0.5, 0.5, 0.5, 1);
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {0.5f, 0.5f, 0.5f, 1.0f});
 		glut.glutWireCube(1f);
 		gl.glPopMatrix();
 	}
@@ -1092,7 +1134,9 @@ public class JTSDrawer {
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
-		gl.glTranslated(p.getCentroid().getX(), renderer.yFlag * p.getCentroid().getY(), z);
+		gl.glTranslated(p.getCentroid().getX(), JOGLRenderer.Y_FLAG * p.getCentroid().getY(), z);
+			
+		float[][] buffer = translatePositionalLights(gl,new float[] {(float)p.getCentroid().getX(), (float)(JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float)z});
 		final Color c = g.getColor();
 		if (!colorpicking) {
 			setColor(gl, c, g.getAlpha());
@@ -1107,7 +1151,7 @@ public class JTSDrawer {
 			}
 			t.enable(gl);
 			t.bind(gl);
-			gl.glColor3d(1.0, 1.0, 1.0);
+			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, 1.0f});
 		}
 
 		final GLU glu = renderer.getGlu();
@@ -1136,7 +1180,8 @@ public class JTSDrawer {
 			t.disable(gl);
 		}
 
-		gl.glTranslated(-p.getCentroid().getX(), -renderer.yFlag * p.getCentroid().getY(), -z);
+		gl.glTranslated(-p.getCentroid().getX(), -JOGLRenderer.Y_FLAG * p.getCentroid().getY(), -z);
+		revertTranslatePositionalLights(gl,buffer);
 
 	}
 
@@ -1150,7 +1195,8 @@ public class JTSDrawer {
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
-		gl.glTranslated(p.getCentroid().getX(), renderer.yFlag * p.getCentroid().getY(), z);
+		gl.glTranslated(p.getCentroid().getX(), JOGLRenderer.Y_FLAG * p.getCentroid().getY(), z);
+		float[][] buffer = translatePositionalLights(gl,new float[] {(float)p.getCentroid().getX(), (float)(JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float)z});
 		if (!colorpicking) {
 			final Color c = g.getColor();
 			setColor(gl, c, g.getAlpha());
@@ -1161,7 +1207,8 @@ public class JTSDrawer {
 			glut.glutWireCone(g.getHeight(), g.getHeight(), 10, 10);
 		}
 
-		gl.glTranslated(-p.getCentroid().getX(), -renderer.yFlag * p.getCentroid().getY(), -z);
+		gl.glTranslated(-p.getCentroid().getX(), -JOGLRenderer.Y_FLAG * p.getCentroid().getY(), -z);
+		revertTranslatePositionalLights(gl,buffer);
 	}
 
 	public void drawTeapot(final GL2 gl, final GeometryObject g) {
@@ -1169,18 +1216,20 @@ public class JTSDrawer {
 		double z = 0.0;
 		final Polygon p = (Polygon) g.geometry;
 		if (!Double.isNaN(p.getCoordinate().z)) {
-			// TODO Normally, the NaN case is not true anymore
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
-		gl.glTranslated(p.getCentroid().getX(), renderer.yFlag * p.getCentroid().getY(), z);
+		gl.glTranslated(p.getCentroid().getX(), JOGLRenderer.Y_FLAG * p.getCentroid().getY(), z);
+		float[][] buffer = translatePositionalLights(gl,new float[] {(float)p.getCentroid().getX(), (float)(JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float)z});
 		if (!colorpicking) {
 			setColor(gl, g.getColor(), g.getAlpha());
 		}
+		// FIXME : apply the rotation also to the light
 		gl.glRotated(90, 1.0, 0.0, 0.0);
 		glut.glutSolidTeapot(g.getHeight());
 		gl.glRotated(-90, 1.0, 0.0, 0.0);
-		gl.glTranslated(-p.getCentroid().getX(), -renderer.yFlag * p.getCentroid().getY(), -z);
+		gl.glTranslated(-p.getCentroid().getX(), -JOGLRenderer.Y_FLAG * p.getCentroid().getY(), -z);
+		revertTranslatePositionalLights(gl,buffer);
 	}
 
 	public void drawPyramid(final GL2 gl, final GeometryObject g) {
@@ -1255,7 +1304,8 @@ public class JTSDrawer {
 
 			final double distance = FastMath.sqrt(x_length * x_length + y_length * y_length + z_length * z_length);
 
-			gl.glTranslated(l.getPointN(i).getX(), renderer.yFlag * l.getPointN(i).getY(), z);
+			gl.glTranslated(l.getPointN(i).getX(), JOGLRenderer.Y_FLAG * l.getPointN(i).getY(), z);
+			float[][] buffer = translatePositionalLights(gl,new float[] {(float)l.getPointN(i).getX(), (float)(JOGLRenderer.Y_FLAG * l.getPointN(i).getY()), (float)z});
 			Vector3d d;
 			if (Double.isNaN(l.getCoordinate().z) == false) {
 				d = new Vector3d((l.getPointN(i + 1).getX() - l.getPointN(i).getX()) / distance,
@@ -1273,6 +1323,7 @@ public class JTSDrawer {
 
 			double omega = FastMath.acos(z_up.dot(d));
 			omega = omega * 180 / CmnFastMath.PI;
+			// FIXME : apply the rotation also to the light
 			gl.glRotated(omega, a.x, a.y, a.z);
 
 			if (!colorpicking) {
@@ -1293,7 +1344,8 @@ public class JTSDrawer {
 			myGlu.gluDeleteQuadric(quad);
 
 			gl.glRotated(-omega, a.x, a.y, a.z);
-			gl.glTranslated(-l.getPointN(i).getX(), -renderer.yFlag * l.getPointN(i).getY(), -z);
+			gl.glTranslated(-l.getPointN(i).getX(), -JOGLRenderer.Y_FLAG * l.getPointN(i).getY(), -z);
+			revertTranslatePositionalLights(gl,buffer);
 		}
 
 	}
@@ -1306,15 +1358,15 @@ public class JTSDrawer {
 		}
 
 		vertices[0].x = p.getExteriorRing().getPointN(i).getX();
-		vertices[0].y = renderer.yFlag * p.getExteriorRing().getPointN(i).getY();
+		vertices[0].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(i).getY();
 		vertices[0].z = 0.0d;
 
 		vertices[1].x = p.getExteriorRing().getPointN(j).getX();
-		vertices[1].y = renderer.yFlag * p.getExteriorRing().getPointN(j).getY();
+		vertices[1].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(j).getY();
 		vertices[1].z = 0.0d;
 
 		vertices[2].x = p.getExteriorRing().getPointN(i).getX() + size / 2 * x;
-		vertices[2].y = renderer.yFlag * (p.getExteriorRing().getPointN(i).getY() + size / 2 * y);
+		vertices[2].y = JOGLRenderer.Y_FLAG * (p.getExteriorRing().getPointN(i).getY() + size / 2 * y);
 		vertices[2].z = size;
 		return vertices;
 	}
@@ -1323,30 +1375,28 @@ public class JTSDrawer {
 			final GeometryObject g) {
 		Vertex[] vertices;
 		
-		int p_norm_dir = 1;
+		int p_norm_dir = -1;
 		
 		if (renderer.getComputeNormal()) {
 			vertices = getExteriorRingVertices(p);
 			
-			if (isClockwise(vertices)) {
-				p_norm_dir = -1;
-			} else {
+			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
 				p_norm_dir = 1;
+			} else {
+				p_norm_dir = -1;
 			}
 			
-			GLUtilNormal.HandleNormal(vertices, c, alpha, p_norm_dir, renderer);
+			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		}
 		final Coordinate coords[] = p.getExteriorRing().getCoordinates();
 
 		if (g.isTextured()) {
 			final Texture texture = g.getTexture(gl, renderer, 0);
-			gl.glColor3d(1.0, 1.0, 1.0);
+			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, 1.0f});
 			if (texture != null) {
 				texture.enable(gl);
 				texture.bind(gl);
 			}
-			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
-										// and texture mixture
 		}
 		
 		gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
@@ -1354,74 +1404,94 @@ public class JTSDrawer {
 
 		gl.glBegin(GL2ES3.GL_QUADS);
 		gl.glTexCoord2f(0.0f, 1.0f);
-		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
+		gl.glVertex3d(coords[0].x, JOGLRenderer.Y_FLAG * coords[0].y, coords[0].z);
 		gl.glTexCoord2f(1.0f, 1.0f);
-		gl.glVertex3d(coords[1].x, renderer.yFlag * coords[1].y, coords[1].z);
+		gl.glVertex3d(coords[1].x, JOGLRenderer.Y_FLAG * coords[1].y, coords[1].z);
 		gl.glTexCoord2f(1.0f, 0.0f);
-		gl.glVertex3d(coords[2].x, renderer.yFlag * coords[2].y, coords[2].z);
+		gl.glVertex3d(coords[2].x, JOGLRenderer.Y_FLAG * coords[2].y, coords[2].z);
 		gl.glTexCoord2f(0.0f, 0.0f);
-		gl.glVertex3d(coords[3].x, renderer.yFlag * coords[3].y, coords[3].z);
+		gl.glVertex3d(coords[3].x, JOGLRenderer.Y_FLAG * coords[3].y, coords[3].z);
 		gl.glEnd();
 
 		if (renderer.getComputeNormal()) {
 			vertices = getPyramidfaceVertices(p, 0, 1, size, 1, -1);
-			GLUtilNormal.HandleNormal(vertices, c, alpha, -p_norm_dir, renderer);
+			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+				p_norm_dir = 1;
+			} else {
+				p_norm_dir = -1;
+			}
+			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		}
 
 		final double[] norm = calculatePolygonNormal(p, null);
 		norm[0] = norm[0] * size + p.getCentroid().getX();
-		norm[1] = norm[1] * size + renderer.yFlag * p.getCentroid().getY();
+		norm[1] = norm[1] * size + JOGLRenderer.Y_FLAG * p.getCentroid().getY();
 		norm[2] = norm[2] * size + p.getCentroid().getCoordinate().z;
 		
 		gl.glPolygonOffset(0.0f, -(float) 1.1);
 
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glTexCoord2f(0.0f, 1.0f);
-		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
+		gl.glVertex3d(coords[0].x, JOGLRenderer.Y_FLAG * coords[0].y, coords[0].z);
 		gl.glTexCoord2f(1.0f, 1.0f);
-		gl.glVertex3d(coords[1].x, renderer.yFlag * coords[1].y, coords[1].z);
+		gl.glVertex3d(coords[1].x, JOGLRenderer.Y_FLAG * coords[1].y, coords[1].z);
 		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
 
 		if (renderer.getComputeNormal()) {
-			vertices = getPyramidfaceVertices(p, 1, 2, size, -1, -1);
-			GLUtilNormal.HandleNormal(vertices, c, alpha, -p_norm_dir, renderer);
+			vertices = getPyramidfaceVertices(p, 1, 2, size, 1, 1);
+			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+				p_norm_dir = 1;
+			} else {
+				p_norm_dir = -1;
+			}
+			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glTexCoord2f(0.0f, 1.0f);
-		gl.glVertex3d(coords[1].x, renderer.yFlag * coords[1].y, coords[1].z);
+		gl.glVertex3d(coords[1].x, JOGLRenderer.Y_FLAG * coords[1].y, coords[1].z);
 		gl.glTexCoord2f(1.0f, 1.0f);
-		gl.glVertex3d(coords[2].x, renderer.yFlag * coords[2].y, coords[2].z);
+		gl.glVertex3d(coords[2].x, JOGLRenderer.Y_FLAG * coords[2].y, coords[2].z);
 		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
 
 		if (renderer.getComputeNormal()) {
 			vertices = getPyramidfaceVertices(p, 2, 3, size, -1, 1);
-			GLUtilNormal.HandleNormal(vertices, c, alpha, -p_norm_dir, renderer);
+			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+				p_norm_dir = 1;
+			} else {
+				p_norm_dir = -1;
+			}
+			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glTexCoord2f(0.0f, 1.0f);
-		gl.glVertex3d(coords[2].x, renderer.yFlag * coords[2].y, coords[2].z);
+		gl.glVertex3d(coords[2].x, JOGLRenderer.Y_FLAG * coords[2].y, coords[2].z);
 		gl.glTexCoord2f(1.0f, 1.0f);
-		gl.glVertex3d(coords[3].x, renderer.yFlag * coords[3].y, coords[3].z);
+		gl.glVertex3d(coords[3].x, JOGLRenderer.Y_FLAG * coords[3].y, coords[3].z);
 		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
 
 		if (renderer.getComputeNormal()) {
-			vertices = getPyramidfaceVertices(p, 3, 0, size, 1, 1);
-			GLUtilNormal.HandleNormal(vertices, c, alpha, -p_norm_dir, renderer);
+			vertices = getPyramidfaceVertices(p, 3, 0, size, -1, -1);
+			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+				p_norm_dir = 1;
+			} else {
+				p_norm_dir = -1;
+			}
+			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		}
 
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glTexCoord2f(0.0f, 1.0f);
-		gl.glVertex3d(coords[3].x, renderer.yFlag * coords[3].y, coords[3].z);
+		gl.glVertex3d(coords[0].x, JOGLRenderer.Y_FLAG * coords[3].y, coords[3].z);
 		gl.glTexCoord2f(1.0f, 1.0f);
-		gl.glVertex3d(coords[0].x, renderer.yFlag * coords[0].y, coords[0].z);
+		gl.glVertex3d(coords[3].x, JOGLRenderer.Y_FLAG * coords[0].y, coords[0].z);
 		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
@@ -1452,7 +1522,7 @@ public class JTSDrawer {
 		final double width = p.getEnvelopeInternal().getWidth();
 		final double height = p.getEnvelopeInternal().getHeight();
 
-		gl.glTranslated(p.getCentroid().getX(), -p.getCentroid().getY(), 0.0d);
+		gl.glTranslated(p.getCentroid().getX(), p.getCentroid().getY(), 0.0d);
 		drawRectangle(gl, width, height * 0.8, p.getCentroid());
 		drawRectangle(gl, width * 0.8, height, p.getCentroid());
 		drawRoundCorner(gl, width, height, width * 0.1, height * 0.1, 5);
@@ -1543,7 +1613,7 @@ public class JTSDrawer {
 		final double[] vertices = new double[9];
 		for (int i = 0; i < 3; i++) {
 			vertices[i * 3] = polygon.getExteriorRing().getPointN(0).getX();
-			vertices[i * 3 + 1] = renderer.yFlag * polygon.getExteriorRing().getPointN(0).getY();
+			vertices[i * 3 + 1] = JOGLRenderer.Y_FLAG * polygon.getExteriorRing().getPointN(0).getY();
 			vertices[i * 3 + 2] = 0.0d;
 		}
 		return vertices;

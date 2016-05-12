@@ -20,6 +20,7 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 /**
  *
@@ -81,11 +82,11 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 			gl.glPushMatrix();
 			gl.glDisable(GLLightingFunc.GL_LIGHTING);
 			gl.glDisable(GL.GL_BLEND);
-			gl.glColor4d(s.getColor().getRed() / 255.0, s.getColor().getGreen() / 255.0, s.getColor().getBlue() / 255.0,
-					s.getColor().getAlpha() / 255.0 * s.getAlpha());
+			GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(s.getColor().getRed() / 255.0), (float)(s.getColor().getGreen() / 255.0), 
+					(float)(s.getColor().getBlue() / 255.0), (float)(s.getColor().getAlpha() / 255.0 * s.getAlpha())});					
 			gl.glRasterPos3d(x, y, z);
 			renderer.getGlut().glutBitmapString(fontToUse, s.string);
-			gl.glColor4d(1, 1, 1, 1);
+			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, 1.0f});
 			gl.glEnable(GL.GL_BLEND);
 			gl.glEnable(GLLightingFunc.GL_LIGHTING);
 			gl.glPopMatrix();

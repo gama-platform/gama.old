@@ -20,6 +20,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> {
 
@@ -123,7 +124,7 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		if (objects.size() == 0) {
 			return;
 		}
-		gl.glColor3d(1.0, 1.0, 1.0);
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
 		if (picking) {
 			drawPicking(gl, renderer);
 			return;

@@ -27,6 +27,7 @@ import msi.gama.util.*;
 import msi.gama.util.file.Gama3DGeometryFile;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.*;
+import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 /**
  * Class GamaObjFile.
@@ -332,8 +333,8 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					texture = null;
 				}
 				gl.glEnable(GLLightingFunc.GL_COLOR_MATERIAL);
-				gl.glColor4f(materials.getKd(nextmatname)[0], materials.getKd(nextmatname)[1],
-					materials.getKd(nextmatname)[2], materials.getd(nextmatname));
+				GLUtilGLContext.SetCurrentColor(gl, new float[] {materials.getKd(nextmatname)[0], materials.getKd(nextmatname)[1],
+						materials.getKd(nextmatname)[2], materials.getd(nextmatname)});
 				String mapKa = materials.getMapKa(nextmatname);
 				String mapKd = materials.getMapKd(nextmatname);
 				String mapd = materials.getMapd(nextmatname);

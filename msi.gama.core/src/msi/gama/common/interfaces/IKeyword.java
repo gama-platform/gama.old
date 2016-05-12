@@ -201,6 +201,7 @@ public interface IKeyword {
 	public static final String HIS = "his";
 	public static final String HISTOGRAM = "histogram";
 	public static final String HOST = "host";
+	public static final String ID = "id";
 	public static final String IF = "if";
 	public static final String IGNORE = "ignore";
 	public static final String IMAGE = "image";

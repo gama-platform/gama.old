@@ -23,6 +23,7 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 public class ResourceObject extends AbstractObject {
 
@@ -45,10 +46,10 @@ public class ResourceObject extends AbstractObject {
 		// If a location is provided we use it otherwise we use that of the
 		// agent if it exists
 		if (attributes.location != null) {
-			gl.glTranslated(attributes.location.x, renderer.yFlag * attributes.location.y, attributes.location.z);
+			gl.glTranslated(attributes.location.x, JOGLRenderer.Y_FLAG * attributes.location.y, attributes.location.z);
 		} else if (attributes.getAgent() != null) {
 			final ILocation loc = attributes.getAgent().getLocation();
-			gl.glTranslated(loc.getX(), renderer.yFlag * loc.getY(), loc.getZ());
+			gl.glTranslated(loc.getX(), JOGLRenderer.Y_FLAG * loc.getY(), loc.getZ());
 		}
 
 		final GamaPoint size = getDimensions();
@@ -74,9 +75,9 @@ public class ResourceObject extends AbstractObject {
 		// FIXME Necessary for all file types ?
 		//
 		// if ( size != null ) {
-		// gl.glTranslated(-size.x / 2, renderer.yFlag * size.y / 2, 0);
+		// gl.glTranslated(-size.x / 2, JOGLRenderer.Y_FLAG * size.y / 2, 0);
 		if (size == null && env != null) {
-			gl.glTranslated(-env.getWidth() / 2, -renderer.yFlag * env.getHeight() / 2, 0);
+			gl.glTranslated(-env.getWidth() / 2, -JOGLRenderer.Y_FLAG * env.getHeight() / 2, 0);
 		}
 
 		// We then compute the scaling factor to apply
@@ -92,8 +93,9 @@ public class ResourceObject extends AbstractObject {
 		}
 		// And apply its color if any
 		if (getColor() != null) { // does not work for obj files
-			gl.glColor4d(getColor().getRed() / 255.0, getColor().getGreen() / 255.0, getColor().getBlue() / 255.0,
-					getAlpha() * getColor().getAlpha() / 255.0);
+			GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(getColor().getRed() / 255.0), (float)(getColor().getGreen() / 255.0),
+					(float)(getColor().getBlue() / 255.0),
+					(float)(getAlpha() * getColor().getAlpha() / 255.0)});
 		}
 		// Then we draw the geometry itself
 		super.draw(gl, drawer, isPicking);

@@ -69,6 +69,7 @@ import msi.gaml.types.Types;
  */
 @symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT, with_sequence = true, concept = { IConcept.DISPLAY })
 @facets(value = {
+		@facet(name = "light_property", type = IType.STRING, optional = true, doc = @doc("...")),
 		@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("Allows to fill the background of the display with a specific color")),
 		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the display")),
 		@facet(name = IKeyword.FOCUS, type = IType.GEOMETRY, optional = true, doc = @doc("the geometry (or agent) on which the display will (dynamically) focus")),
@@ -356,6 +357,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			this.data.setDiffuseLightPosition(Cast.asPoint(getScope(), light3.value(getScope())));
 			constantDiffusePos = light3.isConst();
 		}
+		
+		final IExpression light_property = getFacet("light_property");
+		if (light_property != null) {
+			this.data.setLightProperty(getFacet("light_property").toString());
+		}
 
 		final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 		if (camera != null) {
@@ -596,6 +602,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		}
 		setLayers(list);
+//		
+//		final List<LightStatement> lightList = new ArrayList();
+//		for (final ISymbol s : commands) {
+//			if (s instanceof OverlayStatement && ((OverlayStatement) s).hasInfo()) {
+//				overlayInfo = (OverlayStatement) s;
+//			}
+//			lightList.add((LightStatement) s);
+//
+//		}
 	}
 
 	public void setSurface(final IDisplaySurface surface) {

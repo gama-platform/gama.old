@@ -43,7 +43,7 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 		// System.out.println("Drawing at " + x + " " + y + " " + z);
 		// Binds the texture
 		curTexture.bind(gl);
-		gl.glColor4d(1.0d, 1.0d, 1.0d, img.getAlpha());
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, (float)(double)img.getAlpha()});
 		TextureCoords textureCoords = curTexture.getImageTexCoords();
 		float textureTop = textureCoords.top();
 		float textureBottom = textureCoords.bottom();
@@ -78,9 +78,9 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 			vertices[3].x = x;
 			vertices[3].y = -y;
 			vertices[3].z = z;
-			GLUtilNormal.HandleNormal(vertices, null, img.getAlpha(), -1, renderer);
+			GLUtilNormal.HandleNormal(vertices, -1, renderer);
 		}
-		gl.glColor4d(1.0d, 1.0d, 1.0d, img.getAlpha());
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, (float)(double)img.getAlpha()});
 		gl.glBegin(GL2ES3.GL_QUADS);
 		// bottom-left of the texture and quad
 		gl.glTexCoord2f(textureLeft, textureBottom);

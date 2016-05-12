@@ -59,6 +59,17 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		final Color color = geometry.getColor();
 		final Color border = geometry.getBorder();
 		final IShape.Type type = geometry.getType();
+		
+//		// find the translation vector
+//		double z = 0.0;
+//		final Polygon p = (Polygon) geometry.geometry;
+//		if (Double.isNaN(p.getCoordinate().z) == false) {
+//			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
+//		}
+//		float[] translationVector = new float[] {(float)p.getCentroid().getX(), (float)(renderer.yFlag * p.getCentroid().getY()), (float)z};
+//		// translate the light
+//		getJtsDrawer().translateAllLights(gl, translationVector);
+		
 		switch (type) {
 		case MULTIPOLYGON:
 			getJtsDrawer().drawMultiPolygon(gl, (MultiPolygon) geometry.geometry, color, geometry.getAlpha(),
@@ -97,10 +108,10 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			} else {
 				if (getJtsDrawer().renderer.getComputeNormal()) {
 					int norm_dir = 1;
-					final Vertex[] vertices = getJtsDrawer().getExteriorRingVertices((Polygon) geometry.geometry);
-					if (!JTSDrawer.isClockwise(vertices)) {
-						norm_dir = -1;
-					}
+//					final Vertex[] vertices = getJtsDrawer().getExteriorRingVertices((Polygon) geometry.geometry);
+//					if (!JTSDrawer.isClockwise(vertices)) {
+//						norm_dir = -1;
+//					}
 					getJtsDrawer().drawPolygon(gl, (Polygon) geometry.geometry, color, geometry.getAlpha(),
 							geometry.isFilled(), geometry.getBorder(), geometry, true, geometry.getZ_fighting_id(),
 							norm_dir);

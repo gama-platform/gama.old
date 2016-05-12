@@ -22,6 +22,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.utils.GLUtilGLContext;
 import ummisco.gama.opengl.utils.GLUtilNormal;
 import ummisco.gama.opengl.utils.Vertex;
 
@@ -73,7 +74,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 			curTexture.bind(gl);
 		}
 
-		gl.glColor4d(1.0d, 1.0d, 1.0d, demObj.getAlpha());
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, (float)(double)demObj.getAlpha()});
 
 		// Draw Grid with square
 		// if texture draw with color coming from the texture and z according to
@@ -95,35 +96,35 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 					}
 					final Color lineColor = demObj.getBorder();
 					if (lineColor != null) {
-						gl.glColor3d(lineColor.getRed() / 255.0f, lineColor.getGreen() / 255.0f,
-								lineColor.getBlue() / 255.0f);
+						GLUtilGLContext.SetCurrentColor(gl, new float[] {lineColor.getRed() / 255.0f, lineColor.getGreen() / 255.0f,
+								lineColor.getBlue() / 255.0f});
 						gl.glBegin(GL.GL_LINE_STRIP);
-						gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, zValScaled);
-						gl.glVertex3d(x2 * cellWidth, -y1 * cellHeight, zValScaled);
-						gl.glVertex3d(x2 * cellWidth, -y2 * cellHeight, zValScaled);
-						gl.glVertex3d(x1 * cellWidth, -y2 * cellHeight, zValScaled);
-						gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, zValScaled);
+						gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
+						gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
+						gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, zValScaled);
+						gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, zValScaled);
+						gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
 						gl.glEnd();
 					} else {
 						if (demObj.isGrayScaled()) {
-							gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
+							GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(zValue / maxZ), (float)(zValue / maxZ), (float)(zValue / maxZ)});
 							gl.glBegin(GL2ES3.GL_QUADS);
-							gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, zValScaled);
-							gl.glVertex3d(x2 * cellWidth, -y1 * cellHeight, zValScaled);
-							gl.glVertex3d(x2 * cellWidth, -y2 * cellHeight, zValScaled);
-							gl.glVertex3d(x1 * cellWidth, -y2 * cellHeight, zValScaled);
+							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
+							gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
+							gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, zValScaled);
+							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, zValScaled);
 							gl.glEnd();
 
 						} else {
 							gl.glBegin(GL2ES3.GL_QUADS);
 							gl.glTexCoord2d(envWidthStep * i, envHeightStep * j);
-							gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, zValScaled);
+							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
 							gl.glTexCoord2d(envWidthStep * (i + 1), envHeightStep * j);
-							gl.glVertex3d(x2 * cellWidth, -y1 * cellHeight, zValScaled);
+							gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
 							gl.glTexCoord2d(envWidthStep * (i + 1), envHeightStep * (j + 1));
-							gl.glVertex3d(x2 * cellWidth, -y2 * cellHeight, zValScaled);
+							gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, zValScaled);
 							gl.glTexCoord2d(envWidthStep * i, envHeightStep * (j + 1));
-							gl.glVertex3d(x1 * cellWidth, -y2 * cellHeight, zValScaled);
+							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, zValScaled);
 							gl.glEnd();
 						}
 					}
@@ -181,56 +182,55 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 							vertices[i1] = new Vertex();
 						}
 						vertices[0].x = x1 * cellWidth;
-						vertices[0].y = -y1 * cellHeight;
+						vertices[0].y = JOGLRenderer.Y_FLAG * y1 * cellHeight;
 						vertices[0].z = z1 * altFactor;
 
 						vertices[1].x = x1 * cellWidth;
-						vertices[1].y = -y2 * cellHeight;
+						vertices[1].y = JOGLRenderer.Y_FLAG * y2 * cellHeight;
 						vertices[1].z = z1 * altFactor;
 
 						vertices[2].x = x2 * cellWidth;
-						vertices[2].y = -y1 * cellHeight;
+						vertices[2].y = JOGLRenderer.Y_FLAG * y1 * cellHeight;
 						vertices[2].z = z4 * altFactor;
 
 						vertices[3].x = x2 * cellWidth;
-						vertices[3].y = -y2 * cellHeight;
+						vertices[3].y = JOGLRenderer.Y_FLAG * y2 * cellHeight;
 						vertices[3].z = z3 * altFactor;
-						final double[] normal = GLUtilNormal.CalculateNormal(vertices[2], vertices[1], vertices[0]);
-						gl.glNormal3dv(normal, 0);
+						GLUtilNormal.HandleNormal(vertices, 1, renderer);
 						// GLUtilNormal.HandleNormal(vertices, null, 0,-1,
 						// renderer);
 					}
 					final Color lineColor = demObj.getBorder();
 					if (lineColor != null) {
-						gl.glColor3d(lineColor.getRed() / 255.0f, lineColor.getGreen() / 255.0f,
-								lineColor.getBlue() / 255.0f);
+						GLUtilGLContext.SetCurrentColor(gl, new float[] {lineColor.getRed() / 255.0f, lineColor.getGreen() / 255.0f,
+								lineColor.getBlue() / 255.0f});
 						gl.glBegin(GL.GL_LINE_STRIP);
-						gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, z1 * altFactor);
-						gl.glVertex3d(x1 * cellWidth, -y2 * cellHeight, z2 * altFactor);
-						gl.glVertex3d(x2 * cellWidth, -y1 * cellHeight, z4 * altFactor);
-						gl.glVertex3d(x2 * cellWidth, -y2 * cellHeight, z3 * altFactor);
-						gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, z1 * altFactor);
+						gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, z1 * altFactor);
+						gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, z2 * altFactor);
+						gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, z4 * altFactor);
+						gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, z3 * altFactor);
+						gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, z1 * altFactor);
 						gl.glEnd();
 					} else {
 						if (demObj.isGrayScaled()) {
-							gl.glColor3d(zValue / maxZ, zValue / maxZ, zValue / maxZ);
+							GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(zValue / maxZ), (float)(zValue / maxZ), (float)(zValue / maxZ)});
 							gl.glBegin(GL.GL_TRIANGLE_STRIP);
-							gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, z1 * altFactor);
-							gl.glVertex3d(x1 * cellWidth, -y2 * cellHeight, z2 * altFactor);
-							gl.glVertex3d(x2 * cellWidth, -y1 * cellHeight, z4 * altFactor);
-							gl.glVertex3d(x2 * cellWidth, -y2 * cellHeight, z3 * altFactor);
+							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, z1 * altFactor);
+							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, z2 * altFactor);
+							gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, z4 * altFactor);
+							gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, z3 * altFactor);
 							gl.glEnd();
 
 						} else {
 							gl.glBegin(GL.GL_TRIANGLE_STRIP);
 							gl.glTexCoord2d(envWidthStep * i, envHeightStep * j);
-							gl.glVertex3d(x1 * cellWidth, -y1 * cellHeight, z1 * altFactor);
+							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, z1 * altFactor);
 							gl.glTexCoord2d(envWidthStep * i, envHeightStep * (j + 1));
-							gl.glVertex3d(x1 * cellWidth, -y2 * cellHeight, z2 * altFactor);
+							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, z2 * altFactor);
 							gl.glTexCoord2d(envWidthStep * (i + 1), envHeightStep * j);
-							gl.glVertex3d(x2 * cellWidth, -y1 * cellHeight, z4 * altFactor);
+							gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, z4 * altFactor);
 							gl.glTexCoord2d(envWidthStep * (i + 1), envHeightStep * (j + 1));
-							gl.glVertex3d(x2 * cellWidth, -y2 * cellHeight, z3 * altFactor);
+							gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, z3 * altFactor);
 							gl.glEnd();
 						}
 					}
@@ -241,7 +241,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		if (demObj.isShowText() && demObj.values != null) {
 			// Draw gridvalue as text inside each cell
 			gl.glDisable(GL.GL_BLEND);
-			gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
+			GLUtilGLContext.SetCurrentColor(gl, new float[] {0.0f, 0.0f, 0.0f, 1.0f});
 			for (int i = 0; i < columns; i++) {
 				stepX = i * cellWidth;/// textureWidth * columns;
 				for (int j = 0; j < rows; j++) {
@@ -328,7 +328,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 				} else {
 					float color = dem.getRGB(cols - x, y) & 255;
 					color = color / 255.0f;
-					gl.glColor3f(color, color, color);
+					GLUtilGLContext.SetCurrentColor(gl, new float[] {color, color, color});
 					gl.glVertex3f(vx, vy, alt1);
 					gl.glVertex3f(vx, vy + th, alt2);
 				}
