@@ -18,6 +18,7 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 public class Chromosome implements Comparable<Chromosome> {
@@ -65,9 +66,9 @@ public class Chromosome implements Comparable<Chromosome> {
 			}
 			phenotype[cpt] = var.getName();
 			if (var.getType().id() == IType.FLOAT) {
-				genes[cpt] = ((Double) var.value(scope)).doubleValue();
+				genes[cpt] = Cast.asFloat(scope, (var.value(scope)));
 			} else if (var.getType().id() == IType.INT) {
-				genes[cpt] = ((Integer) var.value(scope)).doubleValue();
+				genes[cpt] = Cast.asInt(scope, (var.value(scope)));
 			} else {
 				genes[cpt] = 0;
 			}
@@ -77,9 +78,9 @@ public class Chromosome implements Comparable<Chromosome> {
 
 	public void setGene(final IScope scope, final IParameter.Batch var, final int index) {
 		if (var.getType().id() == IType.FLOAT) {
-			genes[index] = ((Double) var.value(scope)).doubleValue();
+			genes[index] = Cast.asFloat(scope, (var.value(scope)));
 		} else if (var.getType().id() == IType.INT) {
-			genes[index] = ((Integer) var.value(scope)).doubleValue();
+			genes[index] = Cast.asInt(scope, (var.value(scope)));
 		} else {
 			genes[index] = 0;
 		}
