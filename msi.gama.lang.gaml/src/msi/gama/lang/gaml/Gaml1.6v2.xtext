@@ -150,7 +150,7 @@ experimentStatement returns Statement:
 
 
 S_Output returns Statement:
-	key=("output"|"permanent") block=outputBlock
+	key=("output"|"permanent") (facets+=Facet)* block=outputBlock
 ;
 
 outputBlock returns Block:

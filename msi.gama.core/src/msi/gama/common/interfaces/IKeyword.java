@@ -225,6 +225,7 @@ public interface IKeyword {
 	public static final String KEYWORD = "keyword";
 	public static final String KILL = "kill";
 	public static final String OVERLAY = "overlay";
+	public static final String LAYOUT = "layout";
 	public static final String LEFT = "left";
 	public static final String LEGEND = "legend";
 	public static final String LET = "let";

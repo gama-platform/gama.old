@@ -517,4 +517,10 @@ public class HeadlessListener extends AbstractGui {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public void applyLayout(final int layout) {
+		// TODO Auto-generated method stub
+
+	}
 }

@@ -261,4 +261,7 @@ public interface IGui {
 
 	Set<String> getViews(String modelName, String expeName);
 
+	// See ArrangeDisplayViews
+	void applyLayout(int layout);
+
 }

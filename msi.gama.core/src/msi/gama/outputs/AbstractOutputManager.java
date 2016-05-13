@@ -168,7 +168,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 			}
 
 		}
-		// scope.getGui().waitForViewsToBeInitialized();
 		if (GamaPreferences.CORE_AUTO_RUN.getValue()) {
 			GAMA.startFrontmostExperiment();
 		}

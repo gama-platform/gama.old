@@ -350,7 +350,8 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getDisplayBlockAccess().getStatementsAssignment_2(), "rule__DisplayBlock__StatementsAssignment_2");
 					put(grammarAccess.getExperimentBlockAccess().getStatementsAssignment_2(), "rule__ExperimentBlock__StatementsAssignment_2");
 					put(grammarAccess.getS_OutputAccess().getKeyAssignment_0(), "rule__S_Output__KeyAssignment_0");
-					put(grammarAccess.getS_OutputAccess().getBlockAssignment_1(), "rule__S_Output__BlockAssignment_1");
+					put(grammarAccess.getS_OutputAccess().getFacetsAssignment_1(), "rule__S_Output__FacetsAssignment_1");
+					put(grammarAccess.getS_OutputAccess().getBlockAssignment_2(), "rule__S_Output__BlockAssignment_2");
 					put(grammarAccess.getOutputBlockAccess().getStatementsAssignment_2(), "rule__OutputBlock__StatementsAssignment_2");
 					put(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getKeyAssignment_0(), "rule__SpeciesOrGridDisplayStatement__KeyAssignment_0");
 					put(grammarAccess.getSpeciesOrGridDisplayStatementAccess().getExprAssignment_1(), "rule__SpeciesOrGridDisplayStatement__ExprAssignment_1");

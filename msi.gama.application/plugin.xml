@@ -648,7 +648,7 @@
             <command
                   commandId="msi.gama.application.commands.ShowHideParametersView"
                   icon="icons/menu.open.parameters2.png"
-                  label="Toggle Parameters"
+                  label="Parameters"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -660,7 +660,7 @@
             <command
                   commandId="msi.gama.application.commands.ShowHideConsoleView"
                   icon="icons/menu.open.console2.png"
-                  label="Toggle Console"
+                  label="Console"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -681,53 +681,108 @@
                   </reference>
                </visibleWhen>
             </command>
-            <menu
-                  icon="icons/menu.open.view2.png"
-                  label="Show View">
-               <dynamic
-                     class="msi.gama.gui.swt.commands.ShowViewContributionItem"
-                     id="msi.gama.application.showView">
-               </dynamic>
-            </menu>
             <separator
                   name="msi.gama.application.window.views"
                   visible="true">
             </separator>
-            <command
-                  commandId="msi.gama.application.perspective.load"
-                  label="Load Perspective"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.window.savePerspective"
-                  label="Save Perspective"
-                  style="push">
-            </command>
             <menu
-                  icon="icons/menu.open.perspective2.png"
-                  label="Open Perspective">
-               <dynamic
-                     class="msi.gama.gui.swt.commands.OpenPerspectiveContributionItem"
-                     id="msi.gama.application.showView">
-               </dynamic>
+                  icon="icons/menu.layout.png"
+                  label="Arrange Display Views...">
+               <command
+                     commandId="msi.gama.application.layoutDisplays"
+                     icon="icons/layout.stack.png"
+                     label="Stacked"
+                     style="push">
+                  <parameter
+                        name="msi.gama.displays.layout"
+                        value="Stacked">
+                  </parameter>
+               </command>
+               <command
+                     commandId="msi.gama.application.layoutDisplays"
+                     icon="icons/layout.grid.png"
+                     label="Split"
+                     style="push">
+                  <parameter
+                        name="msi.gama.displays.layout"
+                        value="Split">
+                  </parameter>
+               </command>
+               <command
+                     commandId="msi.gama.application.layoutDisplays"
+                     icon="icons/layout.horizontal.png"
+                     label="Horizontally"
+                     style="push">
+                  <parameter
+                        name="msi.gama.displays.layout"
+                        value="Horizontal">
+                  </parameter>
+               </command>
+               <command
+                     commandId="msi.gama.application.layoutDisplays"
+                     icon="icons/layout.vertical.png"
+                     label="Vertically"
+                     style="push">
+                  <parameter
+                        name="msi.gama.displays.layout"
+                        value="Vertical">
+                  </parameter>
+               </command>
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isSimulationReady">
+                     </reference>
+                     <reference
+                           definitionId="isInSimulationPerspective">
+                     </reference>
+                  </and>
+               </visibleWhen>
             </menu>
-            <command
-                  commandId="org.eclipse.ui.window.resetPerspective"
-                  icon="icons/menu.reset.perspective2.png"
-                  label="Reset Perspective..."
-                  style="push">
-            </command>
-            <separator
-                  name="msi.gama.application.window.perspectives"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="org.eclipse.ui.ToggleCoolbarAction"
-                  icon="icons/menu.toolbar2.png"
-                  label="Toggle Toolbar"
-                  style="push"
-                  tooltip="Toggle the main toolbar on and off">
-            </command>
+            <menu
+                  icon="icons/menu.other.png"
+                  label="Other...">
+               <menu
+                     icon="icons/menu.open.perspective2.png"
+                     label="Open Perspective">
+                  <dynamic
+                        class="msi.gama.gui.swt.commands.OpenPerspectiveContributionItem"
+                        id="msi.gama.application.showView">
+                  </dynamic>
+               </menu>
+               <command
+                     commandId="org.eclipse.ui.window.savePerspective"
+                     icon="icons/menu.save.perspective.png"
+                     label="Save Perspective"
+                     style="push">
+               </command>
+               <command
+                     commandId="org.eclipse.ui.window.resetPerspective"
+                     icon="icons/menu.reset.perspective2.png"
+                     label="Reset Perspective..."
+                     style="push">
+               </command>
+               <separator
+                     name="msi.gama.application.window.perspectives"
+                     visible="true">
+               </separator>
+               <menu
+                     icon="icons/menu.open.view2.png"
+                     label="Show View">
+                  <dynamic
+                        class="msi.gama.gui.swt.commands.ShowViewContributionItem"
+                        id="msi.gama.application.showView">
+                  </dynamic>
+               </menu>
+               <command
+                     commandId="org.eclipse.ui.ToggleCoolbarAction"
+                     icon="icons/menu.toolbar2.png"
+                     label="Toggle Toolbar"
+                     style="push"
+                     tooltip="Toggle the main toolbar on and off">
+               </command>
+            </menu>
          </menu>
       </menuContribution>
       <menuContribution
@@ -1391,6 +1446,20 @@
             </or>
          </activeWhen>
       </handler>
+      <handler
+            class="msi.gama.gui.swt.commands.ArrangeDisplayViews"
+            commandId="msi.gama.application.layoutDisplays">
+         <activeWhen>
+            <and>
+               <reference
+                     definitionId="isInSimulationPerspective">
+               </reference>
+               <reference
+                     definitionId="isSimulationReady">
+               </reference>
+            </and>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.services">
@@ -1719,6 +1788,49 @@
             id="msi.gama.category"
             name="Specific to GAMA">
       </category>
+      <commandParameterType
+            id="msi.gama.application.String"
+            type="java.lang.String">
+         <commandParameter
+               id="msi.gama.displays.layout"
+               name="layout"
+               optional="false"
+               typeId="msi.gama.application.String">
+         </commandParameter>
+         <commandParameter
+               id="LAYOUT"
+               name="layout"
+               optional="false"
+               typeId="msi.gama.application.String">
+         </commandParameter>
+         <commandParameter
+               id="LAYOUT"
+               name="layout"
+               optional="true"
+               typeId="msi.gama.application.String">
+         </commandParameter>
+         <commandParameter
+               id="LAYOUT"
+               name="layout"
+               optional="true">
+         </commandParameter>
+         <commandParameter
+               id="LAYOUT"
+               name="name"
+               optional="true">
+         </commandParameter>
+      </commandParameterType>
+      <command
+            categoryId="msi.gama.category"
+            id="msi.gama.application.layoutDisplays"
+            name="Layout display views">
+         <commandParameter
+               id="msi.gama.displays.layout"
+               name="layout"
+               optional="false"
+               typeId="msi.gama.application.String">
+         </commandParameter>
+      </command>
    </extension> <extension
          point="org.eclipse.ui.newWizards">
       <category

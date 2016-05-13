@@ -1672,14 +1672,16 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cKeyAlternatives_0_0 = (Alternatives)cKeyAssignment_0.eContents().get(0);
 		private final Keyword cKeyOutputKeyword_0_0_0 = (Keyword)cKeyAlternatives_0_0.eContents().get(0);
 		private final Keyword cKeyPermanentKeyword_0_0_1 = (Keyword)cKeyAlternatives_0_0.eContents().get(1);
-		private final Assignment cBlockAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cBlockOutputBlockParserRuleCall_1_0 = (RuleCall)cBlockAssignment_1.eContents().get(0);
+		private final Assignment cFacetsAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cFacetsFacetParserRuleCall_1_0 = (RuleCall)cFacetsAssignment_1.eContents().get(0);
+		private final Assignment cBlockAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cBlockOutputBlockParserRuleCall_2_0 = (RuleCall)cBlockAssignment_2.eContents().get(0);
 		
 		//S_Output Statement:
-		//	key=("output" | "permanent") block=outputBlock
+		//	key=("output" | "permanent") facets+=Facet* block=outputBlock
 		@Override public ParserRule getRule() { return rule; }
 
-		//key=("output" | "permanent") block=outputBlock
+		//key=("output" | "permanent") facets+=Facet* block=outputBlock
 		public Group getGroup() { return cGroup; }
 
 		//key=("output" | "permanent")
@@ -1694,11 +1696,17 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//"permanent"
 		public Keyword getKeyPermanentKeyword_0_0_1() { return cKeyPermanentKeyword_0_0_1; }
 
+		//facets+=Facet*
+		public Assignment getFacetsAssignment_1() { return cFacetsAssignment_1; }
+
+		//Facet
+		public RuleCall getFacetsFacetParserRuleCall_1_0() { return cFacetsFacetParserRuleCall_1_0; }
+
 		//block=outputBlock
-		public Assignment getBlockAssignment_1() { return cBlockAssignment_1; }
+		public Assignment getBlockAssignment_2() { return cBlockAssignment_2; }
 
 		//outputBlock
-		public RuleCall getBlockOutputBlockParserRuleCall_1_0() { return cBlockOutputBlockParserRuleCall_1_0; }
+		public RuleCall getBlockOutputBlockParserRuleCall_2_0() { return cBlockOutputBlockParserRuleCall_2_0; }
 	}
 
 	public class OutputBlockElements extends AbstractParserRuleElementFinder {
@@ -5417,7 +5425,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//S_Output Statement:
-	//	key=("output" | "permanent") block=outputBlock
+	//	key=("output" | "permanent") facets+=Facet* block=outputBlock
 	public S_OutputElements getS_OutputAccess() {
 		return pS_Output;
 	}

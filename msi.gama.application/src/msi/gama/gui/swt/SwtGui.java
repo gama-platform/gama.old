@@ -88,6 +88,7 @@ import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.parameters.EditorsDialog;
 import msi.gama.gui.parameters.UserControlDialog;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.commands.ArrangeDisplayViews;
 import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 import msi.gama.gui.swt.controls.StatusControlContribution;
@@ -1622,6 +1623,19 @@ public class SwtGui extends AbstractGui {
 	 */
 	public static void setOpenGLStartupSequence(final Runnable runnable) {
 		openGLStartupSequence = runnable;
+	}
+
+	@Override
+	public void applyLayout(final int layout) {
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				ArrangeDisplayViews.execute(layout);
+
+			}
+		});
+
 	}
 
 }

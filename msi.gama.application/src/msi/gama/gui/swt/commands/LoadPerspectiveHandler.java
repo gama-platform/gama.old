@@ -11,7 +11,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
-import msi.gama.runtime.GAMA;
 
 /**
  * Class SavePerspectiveHandler.
@@ -32,7 +31,7 @@ public class LoadPerspectiveHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) {
 
-		msi.gama.gui.swt.perspectives.LoadPerspectiveHandler.execute(GAMA.getModel(), GAMA.getExperiment().getName());
+		msi.gama.gui.swt.commands.ArrangeDisplayViews.execute(0);
 		// final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 		// if ( activeWorkbenchWindow != null ) {
 		// final WorkbenchPage page = (WorkbenchPage) activeWorkbenchWindow.getActivePage();

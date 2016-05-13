@@ -1393,7 +1393,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 * Constraint:
 	 *     (
 	 *         (key=_1Expr_Facets_BlockOrEnd_Key firstFacet=FirstFacetKey? expr=Expression facets+=Facet* block=Block?) | 
-	 *         ((key='output' | key='permanent') block=outputBlock)
+	 *         ((key='output' | key='permanent') facets+=Facet* block=outputBlock)
 	 *     )
 	 */
 	protected void sequence_S_1Expr_Facets_BlockOrEnd_S_Output(ISerializationContext context, Statement semanticObject) {
@@ -1657,7 +1657,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     S_Output returns Statement
 	 *
 	 * Constraint:
-	 *     ((key='output' | key='permanent') block=outputBlock)
+	 *     ((key='output' | key='permanent') facets+=Facet* block=outputBlock)
 	 */
 	protected void sequence_S_Output(ISerializationContext context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

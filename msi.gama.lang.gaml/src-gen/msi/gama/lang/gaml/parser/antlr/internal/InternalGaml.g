@@ -3143,16 +3143,34 @@ ruleS_Output returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getS_OutputAccess().getBlockOutputBlockParserRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getS_OutputAccess().getFacetsFacetParserRuleCall_1_0()); 
 	    }
-		lv_block_1_0=ruleoutputBlock		{
+		lv_facets_1_0=ruleFacet		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getS_OutputRule());
+	        }
+       		add(
+       			$current, 
+       			"facets",
+        		lv_facets_1_0, 
+        		"msi.gama.lang.gaml.Gaml.Facet");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)*(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getS_OutputAccess().getBlockOutputBlockParserRuleCall_2_0()); 
+	    }
+		lv_block_2_0=ruleoutputBlock		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getS_OutputRule());
 	        }
        		set(
        			$current, 
        			"block",
-        		lv_block_1_0, 
+        		lv_block_2_0, 
         		"msi.gama.lang.gaml.Gaml.outputBlock");
 	        afterParserOrEnumRuleCall();
 	    }

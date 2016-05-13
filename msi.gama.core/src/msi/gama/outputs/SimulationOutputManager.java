@@ -12,7 +12,11 @@
 package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.example;
+import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.symbol;
+import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
@@ -24,15 +28,15 @@ import msi.gaml.descriptions.IDescription;
  */
 @symbol(name = IKeyword.OUTPUT, kind = ISymbolKind.OUTPUT, with_sequence = true, concept = {})
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })
-@doc(
-	value = "`output` blocks define how to visualize a simulation (with one or more display blocks that define separate windows). It will include a set of displays, monitors and files statements. It will be taken into account only if the experiment type is `gui`.",
-	usages = { @usage(value = "Its basic syntax is: ",
-	examples = { @example(value = "experiment exp_name type: gui {", isExecutable = false),
-		@example(value = "   // [inputs]", isExecutable = false),
-		@example(value = "   output {", isExecutable = false),
-		@example(value = "      // [display, file or monitor statements]", isExecutable = false),
-		@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false) }) },
-	see = { IKeyword.DISPLAY, IKeyword.MONITOR, IKeyword.INSPECT, IKeyword.OUTPUT_FILE })
+@doc(value = "`output` blocks define how to visualize a simulation (with one or more display blocks that define separate windows). It will include a set of displays, monitors and files statements. It will be taken into account only if the experiment type is `gui`.", usages = {
+		@usage(value = "Its basic syntax is: ", examples = {
+				@example(value = "experiment exp_name type: gui {", isExecutable = false),
+				@example(value = "   // [inputs]", isExecutable = false),
+				@example(value = "   output {", isExecutable = false),
+				@example(value = "      // [display, file, inspect, layout or monitor statements]", isExecutable = false),
+				@example(value = "   }", isExecutable = false),
+				@example(value = "}", isExecutable = false) }) }, see = { IKeyword.DISPLAY, IKeyword.MONITOR,
+						IKeyword.INSPECT, IKeyword.OUTPUT_FILE, IKeyword.LAYOUT })
 public class SimulationOutputManager extends AbstractOutputManager {
 
 	public SimulationOutputManager(final IDescription desc) {
@@ -42,17 +46,9 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	@Override
 	public boolean init(final IScope scope) {
 		scope.getGui().waitStatus(" Building outputs ");
-		boolean result = super.init(scope);
-		// if ( result ) {
-		// scope.getGui().updateSimulationState();
-		// }
+		final boolean result = super.init(scope);
+
 		return result;
 	}
-
-	// @Override
-	// public boolean step(final IScope scope) {
-	// boolean result = super.step(scope);
-	// return result;
-	// }
 
 }
