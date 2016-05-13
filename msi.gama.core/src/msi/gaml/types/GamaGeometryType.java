@@ -538,8 +538,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 			for ( Geometry g : geoms ) {
 				gs.add(g.buffer(0.0));
 			}
-			Geometry geom = CascadedPolygonUnion.union(gs);
-			if ( geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
+			try {
+				Geometry geom = CascadedPolygonUnion.union(gs);
+				if ( geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
+			} catch (AssertionFailedException e2) {
+				return null;
+			}
+			
 		}
 		return null;
 	}
