@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
+import java.net.ServerSocket;
 import java.util.List;
 import java.util.Map;
 
@@ -34,6 +35,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -197,6 +199,22 @@ public abstract class AbstractAgent implements IAgent {
 			// scope.getGui().debug(this.getClass().getSimpleName() + " " +
 			// getName() + " .dispose (in MinimalAgent)");
 			dead = true;
+			
+			if(getSpecies().getDescription() instanceof SpeciesDescription){
+				SpeciesDescription spec =(SpeciesDescription) getSpecies().getDescription();
+				if(spec.getSkillsNames().contains("socket")){
+					final Integer port = Cast.asInt(this.getScope(), this.getAttribute("port"));
+					final ServerSocket sersock = (ServerSocket) this.getAttribute("__server" + port);
+					if (sersock != null && !sersock.isClosed()) {
+						try {
+							sersock.close();
+							this.setAttribute("__server"+ port, null);
+						} catch (Exception e) {
+							throw GamaRuntimeException.create(e, this.getScope());
+						}
+					}				}
+			}
+			
 			final IPopulation p = getPopulation();
 			if (p != null) {
 				p.removeValue(null, this);
