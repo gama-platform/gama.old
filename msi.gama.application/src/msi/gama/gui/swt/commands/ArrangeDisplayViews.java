@@ -9,7 +9,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl;
@@ -33,9 +32,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent e) {
 		final String layout = e.getParameter(LAYOUT);
-		int orientation = GamaPreferences.LAYOUTS.indexOf(layout);
-		if ( orientation == -1 )
-			orientation = 0;
+		final int orientation = GamaPreferences.LAYOUTS.indexOf(layout);
 		execute(orientation);
 		return true;
 	}
@@ -47,6 +44,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 			partService = context.get(EPartService.class);
 			application = SwtGui.getPage().getWorkbenchWindow().getService(MApplication.class);
 		}
+		if ( layout < 0 || layout >= GamaPreferences.LAYOUTS.size() )
+			return;
 		System.out.println("Executing layout " + GamaPreferences.LAYOUTS.get(layout));
 		final List<MPlaceholder> holders = modelService.findElements(application, MPlaceholder.class,
 			EModelService.IN_ACTIVE_PERSPECTIVE, new Selector() {
@@ -179,10 +178,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	static void associate(final MElementContainer container, final MPlaceholder holder) {
-		partService.bringToTop((MPart) holder.getRef());
 		container.getChildren().add(holder);
-		// ((MPart) holder.getRef()).getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
-		partService.activate((MPart) holder.getRef());
+		// partService.activate((MPart) holder.getRef());
 	}
 
 }

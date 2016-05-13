@@ -32,7 +32,9 @@ public class IUnits {
 	 * Layout constants
 	 *
 	 */
-
+	@constant(value = "none", category = { IConstantCategory.GRAPHIC }, concept = { IConcept.DISPLAY,
+			IConcept.OUTPUT }, doc = @doc("This constant represents the absence of a predefined layout"))
+	public final static int none = -1;
 	@constant(value = "stack", category = { IConstantCategory.GRAPHIC }, concept = { IConcept.DISPLAY,
 			IConcept.OUTPUT }, doc = @doc("This constant represents a layout where all display views are stacked"))
 	public final static int stack = 0;

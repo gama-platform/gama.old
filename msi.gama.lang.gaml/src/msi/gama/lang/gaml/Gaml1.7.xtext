@@ -173,9 +173,9 @@ outputStatement returns Statement
 //;
 
 	/**
- * Statement keys
+ * Statement keys 
  */
-_EquationsKey:
+_EquationsKey: 
 	"equation";
 
 _SolveKey:

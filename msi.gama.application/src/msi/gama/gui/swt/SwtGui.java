@@ -117,6 +117,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.operators.IUnits;
 import msi.gaml.types.IType;
 
 /**
@@ -1627,6 +1628,8 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public void applyLayout(final int layout) {
+		if ( layout == IUnits.none )
+			return;
 		asyncRun(new Runnable() {
 
 			@Override
