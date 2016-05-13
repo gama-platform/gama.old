@@ -4033,99 +4033,115 @@ rule___LayerKey__Alternatives
     }
 :
 (
-{ before(grammarAccess.get_LayerKeyAccess().getTextKeyword_0()); }
+{ before(grammarAccess.get_LayerKeyAccess().getLightKeyword_0()); }
+
+	'light' 
+
+{ after(grammarAccess.get_LayerKeyAccess().getLightKeyword_0()); }
+)
+
+    |(
+{ before(grammarAccess.get_LayerKeyAccess().getCameraKeyword_1()); }
+
+	'camera' 
+
+{ after(grammarAccess.get_LayerKeyAccess().getCameraKeyword_1()); }
+)
+
+    |(
+{ before(grammarAccess.get_LayerKeyAccess().getTextKeyword_2()); }
 
 	'text' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getTextKeyword_0()); }
+{ after(grammarAccess.get_LayerKeyAccess().getTextKeyword_2()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getImageKeyword_1()); }
+{ before(grammarAccess.get_LayerKeyAccess().getImageKeyword_3()); }
 
 	'image' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getImageKeyword_1()); }
+{ after(grammarAccess.get_LayerKeyAccess().getImageKeyword_3()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getDataKeyword_2()); }
+{ before(grammarAccess.get_LayerKeyAccess().getDataKeyword_4()); }
 
 	'data' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getDataKeyword_2()); }
+{ after(grammarAccess.get_LayerKeyAccess().getDataKeyword_4()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getChartKeyword_3()); }
+{ before(grammarAccess.get_LayerKeyAccess().getChartKeyword_5()); }
 
 	'chart' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getChartKeyword_3()); }
+{ after(grammarAccess.get_LayerKeyAccess().getChartKeyword_5()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getAgentsKeyword_4()); }
+{ before(grammarAccess.get_LayerKeyAccess().getAgentsKeyword_6()); }
 
 	'agents' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getAgentsKeyword_4()); }
+{ after(grammarAccess.get_LayerKeyAccess().getAgentsKeyword_6()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getGraphicsKeyword_5()); }
+{ before(grammarAccess.get_LayerKeyAccess().getGraphicsKeyword_7()); }
 
 	'graphics' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getGraphicsKeyword_5()); }
+{ after(grammarAccess.get_LayerKeyAccess().getGraphicsKeyword_7()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getDisplay_populationKeyword_6()); }
+{ before(grammarAccess.get_LayerKeyAccess().getDisplay_populationKeyword_8()); }
 
 	'display_population' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getDisplay_populationKeyword_6()); }
+{ after(grammarAccess.get_LayerKeyAccess().getDisplay_populationKeyword_8()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getDisplay_gridKeyword_7()); }
+{ before(grammarAccess.get_LayerKeyAccess().getDisplay_gridKeyword_9()); }
 
 	'display_grid' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getDisplay_gridKeyword_7()); }
+{ after(grammarAccess.get_LayerKeyAccess().getDisplay_gridKeyword_9()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getQuadtreeKeyword_8()); }
+{ before(grammarAccess.get_LayerKeyAccess().getQuadtreeKeyword_10()); }
 
 	'quadtree' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getQuadtreeKeyword_8()); }
+{ after(grammarAccess.get_LayerKeyAccess().getQuadtreeKeyword_10()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getEventKeyword_9()); }
+{ before(grammarAccess.get_LayerKeyAccess().getEventKeyword_11()); }
 
 	'event' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getEventKeyword_9()); }
+{ after(grammarAccess.get_LayerKeyAccess().getEventKeyword_11()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getOverlayKeyword_10()); }
+{ before(grammarAccess.get_LayerKeyAccess().getOverlayKeyword_12()); }
 
 	'overlay' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getOverlayKeyword_10()); }
+{ after(grammarAccess.get_LayerKeyAccess().getOverlayKeyword_12()); }
 )
 
     |(
-{ before(grammarAccess.get_LayerKeyAccess().getDatalistKeyword_11()); }
+{ before(grammarAccess.get_LayerKeyAccess().getDatalistKeyword_13()); }
 
 	'datalist' 
 
-{ after(grammarAccess.get_LayerKeyAccess().getDatalistKeyword_11()); }
+{ after(grammarAccess.get_LayerKeyAccess().getDatalistKeyword_13()); }
 )
 
 ;

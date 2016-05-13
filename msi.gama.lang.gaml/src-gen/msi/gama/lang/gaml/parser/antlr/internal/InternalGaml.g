@@ -3710,87 +3710,101 @@ rule_LayerKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken
     }
     @after { leaveRule(); }:
 (
+	kw='light' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getLightKeyword_0()); 
+    }
+
+    |
+	kw='camera' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getCameraKeyword_1()); 
+    }
+
+    |
 	kw='text' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getTextKeyword_0()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getTextKeyword_2()); 
     }
 
     |
 	kw='image' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getImageKeyword_1()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getImageKeyword_3()); 
     }
 
     |
 	kw='data' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getDataKeyword_2()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getDataKeyword_4()); 
     }
 
     |
 	kw='chart' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getChartKeyword_3()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getChartKeyword_5()); 
     }
 
     |
 	kw='agents' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getAgentsKeyword_4()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getAgentsKeyword_6()); 
     }
 
     |
 	kw='graphics' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getGraphicsKeyword_5()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getGraphicsKeyword_7()); 
     }
 
     |
 	kw='display_population' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getDisplay_populationKeyword_6()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getDisplay_populationKeyword_8()); 
     }
 
     |
 	kw='display_grid' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getDisplay_gridKeyword_7()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getDisplay_gridKeyword_9()); 
     }
 
     |
 	kw='quadtree' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getQuadtreeKeyword_8()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getQuadtreeKeyword_10()); 
     }
 
     |
 	kw='event' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getEventKeyword_9()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getEventKeyword_11()); 
     }
 
     |
 	kw='overlay' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getOverlayKeyword_10()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getOverlayKeyword_12()); 
     }
 
     |
 	kw='datalist' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getDatalistKeyword_11()); 
+        newLeafNode(kw, grammarAccess.get_LayerKeyAccess().getDatalistKeyword_13()); 
     }
 )
     ;

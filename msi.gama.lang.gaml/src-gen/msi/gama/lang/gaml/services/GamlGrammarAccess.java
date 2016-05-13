@@ -1995,63 +1995,71 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	public class _LayerKeyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml._LayerKey");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Keyword cTextKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
-		private final Keyword cImageKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
-		private final Keyword cDataKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
-		private final Keyword cChartKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
-		private final Keyword cAgentsKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
-		private final Keyword cGraphicsKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
-		private final Keyword cDisplay_populationKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
-		private final Keyword cDisplay_gridKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
-		private final Keyword cQuadtreeKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
-		private final Keyword cEventKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
-		private final Keyword cOverlayKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
-		private final Keyword cDatalistKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cLightKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
+		private final Keyword cCameraKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
+		private final Keyword cTextKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
+		private final Keyword cImageKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
+		private final Keyword cDataKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
+		private final Keyword cChartKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
+		private final Keyword cAgentsKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
+		private final Keyword cGraphicsKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
+		private final Keyword cDisplay_populationKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
+		private final Keyword cDisplay_gridKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
+		private final Keyword cQuadtreeKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
+		private final Keyword cEventKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cOverlayKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cDatalistKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
 		
 		//_LayerKey:
-		//	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" |
-		//	"event" | "overlay" | "datalist";
+		//	"light" | "camera" | "text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" |
+		//	"display_grid" | "quadtree" | "event" | "overlay" | "datalist";
 		@Override public ParserRule getRule() { return rule; }
 
-		//"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" |
-		//"event" | "overlay" | "datalist"
+		//"light" | "camera" | "text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid"
+		//| "quadtree" | "event" | "overlay" | "datalist"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
+		//"light"
+		public Keyword getLightKeyword_0() { return cLightKeyword_0; }
+
+		//"camera"
+		public Keyword getCameraKeyword_1() { return cCameraKeyword_1; }
+
 		//"text"
-		public Keyword getTextKeyword_0() { return cTextKeyword_0; }
+		public Keyword getTextKeyword_2() { return cTextKeyword_2; }
 
 		//"image"
-		public Keyword getImageKeyword_1() { return cImageKeyword_1; }
+		public Keyword getImageKeyword_3() { return cImageKeyword_3; }
 
 		//"data"
-		public Keyword getDataKeyword_2() { return cDataKeyword_2; }
+		public Keyword getDataKeyword_4() { return cDataKeyword_4; }
 
 		//"chart"
-		public Keyword getChartKeyword_3() { return cChartKeyword_3; }
+		public Keyword getChartKeyword_5() { return cChartKeyword_5; }
 
 		//"agents"
-		public Keyword getAgentsKeyword_4() { return cAgentsKeyword_4; }
+		public Keyword getAgentsKeyword_6() { return cAgentsKeyword_6; }
 
 		//"graphics"
-		public Keyword getGraphicsKeyword_5() { return cGraphicsKeyword_5; }
+		public Keyword getGraphicsKeyword_7() { return cGraphicsKeyword_7; }
 
 		//"display_population"
-		public Keyword getDisplay_populationKeyword_6() { return cDisplay_populationKeyword_6; }
+		public Keyword getDisplay_populationKeyword_8() { return cDisplay_populationKeyword_8; }
 
 		//"display_grid"
-		public Keyword getDisplay_gridKeyword_7() { return cDisplay_gridKeyword_7; }
+		public Keyword getDisplay_gridKeyword_9() { return cDisplay_gridKeyword_9; }
 
 		//"quadtree"
-		public Keyword getQuadtreeKeyword_8() { return cQuadtreeKeyword_8; }
+		public Keyword getQuadtreeKeyword_10() { return cQuadtreeKeyword_10; }
 
 		//"event"
-		public Keyword getEventKeyword_9() { return cEventKeyword_9; }
+		public Keyword getEventKeyword_11() { return cEventKeyword_11; }
 
 		//"overlay"
-		public Keyword getOverlayKeyword_10() { return cOverlayKeyword_10; }
+		public Keyword getOverlayKeyword_12() { return cOverlayKeyword_12; }
 
 		//"datalist"
-		public Keyword getDatalistKeyword_11() { return cDatalistKeyword_11; }
+		public Keyword getDatalistKeyword_13() { return cDatalistKeyword_13; }
 	}
 
 	public class _DoKeyElements extends AbstractParserRuleElementFinder {
@@ -5520,8 +5528,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//_LayerKey:
-	//	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" |
-	//	"event" | "overlay" | "datalist";
+	//	"light" | "camera" | "text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" |
+	//	"display_grid" | "quadtree" | "event" | "overlay" | "datalist";
 	public _LayerKeyElements get_LayerKeyAccess() {
 		return p_LayerKey;
 	}
