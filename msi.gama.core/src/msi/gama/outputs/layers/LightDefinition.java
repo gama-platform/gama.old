@@ -49,7 +49,7 @@ public class LightDefinition extends AbstractLayerStatement {
 	@Override
 	protected boolean _init(final IScope scope) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -61,7 +61,7 @@ public class LightDefinition extends AbstractLayerStatement {
 	@Override
 	protected boolean _step(final IScope scope) {
 		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 }
