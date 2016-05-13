@@ -47,7 +47,6 @@ import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.GeometryObject;
 import ummisco.gama.opengl.utils.GLUtilGLContext;
-import ummisco.gama.opengl.utils.GLUtilLight;
 import ummisco.gama.opengl.utils.GLUtilNormal;
 import ummisco.gama.opengl.utils.Vertex;
 
@@ -277,6 +276,7 @@ public class JTSDrawer {
 			texture.enable(gl);
 			texture.bind(gl);
 		}
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
 
 		// Why when nb points > 2 ?????????
 //		if (p.getNumPoints() > 2) {
@@ -537,20 +537,13 @@ public class JTSDrawer {
 	public void drawPolyhedre(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 			final double height, /* final Integer angle, */final boolean drawPolygonContour, final Color border,
 			final GeometryObject object, final Double z_fighting_value) {
-
+		
 		int p_norm_dir = 1;
 		int face_norm_dir = -1;
 		boolean polyCW = true;
 		if (renderer.getComputeNormal()) {
 			final Vertex[] vertices = getExteriorRingVertices(p);
 			polyCW = isClockwise(vertices);
-//			if (polyCW) {
-//				face_norm_dir = 1;
-//				p_norm_dir = -1;
-//			} else {
-//				face_norm_dir = 1;
-//				p_norm_dir = 1;
-//			}
 			
 			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
 				p_norm_dir = 1;
@@ -560,18 +553,13 @@ public class JTSDrawer {
 
 		}
 
-		// translate the lights
-		double z = 0.0;
-		if (Double.isNaN(p.getCoordinate().z) == false) {
-			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
-		}
-
 		drawPolygon(gl, p, c, alpha, fill, border, object, drawPolygonContour, z_fighting_value, p_norm_dir);
 		// gl.glTranslated(0, 0, height);
 		final double[] vectorNormal = calculatePolygonNormal(p, polyCW);
 
-		float[][] buffer = translatePositionalLights(gl,new float[] {(float)(-vectorNormal[0] * height), (float)(-vectorNormal[1] * height), (float)(-vectorNormal[2] * height)});
+		gl.glPushMatrix();
 		gl.glTranslated(-vectorNormal[0] * height, -vectorNormal[1] * height, -vectorNormal[2] * height);
+		float[][] buffer = translatePositionalLights(gl,new float[] {(float)(-vectorNormal[0] * height), (float)(-vectorNormal[1] * height), (float)(-vectorNormal[2] * height)});
 		drawPolygon(gl, p, c, alpha, fill, border, object/* ,angle */, drawPolygonContour, z_fighting_value,
 				-p_norm_dir);
 		// gl.glTranslated(0, 0, -height);
@@ -593,6 +581,7 @@ public class JTSDrawer {
 		}
 		
 		revertTranslatePositionalLights(gl,buffer);
+		gl.glPopMatrix();
 	}
 
 	// //////////////////////////////FACE DRAWER
@@ -656,8 +645,10 @@ public class JTSDrawer {
 			final Color b, final Texture texture, final double height, final boolean drawPolygonContour,
 			final int norm_dir, final boolean clockwise) {
 
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
 		texture.enable(gl);
 		texture.bind(gl);
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
 
 		double elevation = 0.0d;
 
@@ -928,6 +919,7 @@ public class JTSDrawer {
 					texture.enable(gl);
 					texture.bind(gl);
 				}
+				GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
 				gl.glBegin(GL2ES3.GL_QUADS);
 				gl.glTexCoord2f(0.0f, 1.0f);
 				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z);
@@ -1065,7 +1057,7 @@ public class JTSDrawer {
 					for (int idx = 0 ; idx < position.length ; idx++) {
 						result[positionalLightNumber][idx+1] = position[idx];
 					}
-					gl.glLightfv(lightId, GLLightingFunc.GL_POSITION, new float[] {position[0]-translation[0],position[1]-translation[1],position[2]-translation[2]}, 0);
+					gl.glLightfv(lightId, GLLightingFunc.GL_POSITION, new float[] {position[0]-translation[0],position[1]-translation[1],position[2]-translation[2], 1}, 0);
 					positionalLightNumber++;
 				}
 			}
@@ -1111,7 +1103,8 @@ public class JTSDrawer {
 			return;
 		final GamaPoint pos = envelope.centre();
 		final double width = envelope.getWidth();
-		final double height = envelope.getHeight();
+		final double height = envelope.getHeight(
+				);
 		final double z = Math.max(2, renderer.getMaxEnvDim() / 100);
 		// TODO
 		if (gl == null) {
@@ -1134,6 +1127,7 @@ public class JTSDrawer {
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
+		gl.glPushMatrix();
 		gl.glTranslated(p.getCentroid().getX(), JOGLRenderer.Y_FLAG * p.getCentroid().getY(), z);
 			
 		float[][] buffer = translatePositionalLights(gl,new float[] {(float)p.getCentroid().getX(), (float)(JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float)z});
@@ -1180,9 +1174,9 @@ public class JTSDrawer {
 			t.disable(gl);
 		}
 
-		gl.glTranslated(-p.getCentroid().getX(), -JOGLRenderer.Y_FLAG * p.getCentroid().getY(), -z);
+		gl.glPopMatrix();
+		//gl.glTranslated(-p.getCentroid().getX(), -JOGLRenderer.Y_FLAG * p.getCentroid().getY(), -z);
 		revertTranslatePositionalLights(gl,buffer);
-
 	}
 
 	public void drawCone3D(final GL2 gl, final GeometryObject g) {
@@ -1195,6 +1189,7 @@ public class JTSDrawer {
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
+		gl.glPushMatrix();
 		gl.glTranslated(p.getCentroid().getX(), JOGLRenderer.Y_FLAG * p.getCentroid().getY(), z);
 		float[][] buffer = translatePositionalLights(gl,new float[] {(float)p.getCentroid().getX(), (float)(JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float)z});
 		if (!colorpicking) {
@@ -1207,7 +1202,7 @@ public class JTSDrawer {
 			glut.glutWireCone(g.getHeight(), g.getHeight(), 10, 10);
 		}
 
-		gl.glTranslated(-p.getCentroid().getX(), -JOGLRenderer.Y_FLAG * p.getCentroid().getY(), -z);
+		gl.glPopMatrix();
 		revertTranslatePositionalLights(gl,buffer);
 	}
 
@@ -1219,6 +1214,7 @@ public class JTSDrawer {
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
+		gl.glPushMatrix();
 		gl.glTranslated(p.getCentroid().getX(), JOGLRenderer.Y_FLAG * p.getCentroid().getY(), z);
 		float[][] buffer = translatePositionalLights(gl,new float[] {(float)p.getCentroid().getX(), (float)(JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float)z});
 		if (!colorpicking) {
@@ -1228,7 +1224,7 @@ public class JTSDrawer {
 		gl.glRotated(90, 1.0, 0.0, 0.0);
 		glut.glutSolidTeapot(g.getHeight());
 		gl.glRotated(-90, 1.0, 0.0, 0.0);
-		gl.glTranslated(-p.getCentroid().getX(), -JOGLRenderer.Y_FLAG * p.getCentroid().getY(), -z);
+		gl.glPopMatrix();
 		revertTranslatePositionalLights(gl,buffer);
 	}
 
@@ -1240,6 +1236,7 @@ public class JTSDrawer {
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
+		gl.glPushMatrix();
 		gl.glTranslated(0, 0, z);
 		if (!colorpicking) {
 			setColor(gl, g.getColor(), g.getAlpha());
@@ -1260,7 +1257,7 @@ public class JTSDrawer {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 			}
 		}
-		gl.glTranslated(0, 0, -z);
+		gl.glPopMatrix();
 	}
 
 	public void drawMultiLineCylinder(final GL2 gl, final Geometry g, final Color c, final double alpha,
@@ -1304,6 +1301,7 @@ public class JTSDrawer {
 
 			final double distance = FastMath.sqrt(x_length * x_length + y_length * y_length + z_length * z_length);
 
+			gl.glPushMatrix();
 			gl.glTranslated(l.getPointN(i).getX(), JOGLRenderer.Y_FLAG * l.getPointN(i).getY(), z);
 			float[][] buffer = translatePositionalLights(gl,new float[] {(float)l.getPointN(i).getX(), (float)(JOGLRenderer.Y_FLAG * l.getPointN(i).getY()), (float)z});
 			Vector3d d;
@@ -1343,8 +1341,9 @@ public class JTSDrawer {
 			myGlu.gluCylinder(quad, height, height, distance, slices, stacks);
 			myGlu.gluDeleteQuadric(quad);
 
-			gl.glRotated(-omega, a.x, a.y, a.z);
-			gl.glTranslated(-l.getPointN(i).getX(), -JOGLRenderer.Y_FLAG * l.getPointN(i).getY(), -z);
+//			gl.glRotated(-omega, a.x, a.y, a.z);
+//			gl.glTranslated(-l.getPointN(i).getX(), -JOGLRenderer.Y_FLAG * l.getPointN(i).getY(), -z);
+			gl.glPopMatrix();
 			revertTranslatePositionalLights(gl,buffer);
 		}
 
@@ -1373,8 +1372,11 @@ public class JTSDrawer {
 
 	public void pyramidSkeleton(final GL2 gl, final Polygon p, final double size, final Color c, final double alpha,
 			final GeometryObject g) {
-		Vertex[] vertices;
+		// set the chosen color to the opengl context
+		GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(c.getRed()/255.0f),(float)(c.getGreen()/255.0f),
+				(float)(c.getBlue()/255.0f),(float)alpha});
 		
+		Vertex[] vertices;		
 		int p_norm_dir = -1;
 		
 		if (renderer.getComputeNormal()) {
@@ -1397,6 +1399,7 @@ public class JTSDrawer {
 				texture.enable(gl);
 				texture.bind(gl);
 			}
+			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, 1.0f});
 		}
 		
 		gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
@@ -1522,11 +1525,12 @@ public class JTSDrawer {
 		final double width = p.getEnvelopeInternal().getWidth();
 		final double height = p.getEnvelopeInternal().getHeight();
 
+		gl.glPushMatrix();
 		gl.glTranslated(p.getCentroid().getX(), p.getCentroid().getY(), 0.0d);
 		drawRectangle(gl, width, height * 0.8, p.getCentroid());
 		drawRectangle(gl, width * 0.8, height, p.getCentroid());
 		drawRoundCorner(gl, width, height, width * 0.1, height * 0.1, 5);
-		gl.glTranslated(-p.getCentroid().getX(), p.getCentroid().getY(), 0.0d);
+		gl.glPopMatrix();
 
 	}
 

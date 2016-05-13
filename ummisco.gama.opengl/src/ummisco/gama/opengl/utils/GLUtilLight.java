@@ -21,9 +21,11 @@ import com.jogamp.opengl.GL2ES1;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
+import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LightPropertiesStructure;
+import msi.gaml.operators.fastmaths.FastMath;
 
 public class GLUtilLight {
 
@@ -150,6 +152,10 @@ public class GLUtilLight {
 		DrawLight0(gl, glu, radius);
 		DrawLight1(gl, glu, radius);
 	}
+	
+	public static void DrawLight(final GL2 gl, final GLU glu, final double radius, final int lightID) {
+		
+	}
 
 	public static void DrawLight0(final GL2 gl, final GLU glu, final double radius) {
 //		gl.glTranslatef(light0Position[0], light0Position[1], light0Position[2]);
@@ -272,17 +278,66 @@ public class GLUtilLight {
 		}
 	}
 	
-	public static void UpdateDiffuseLightValue(final GL2 gl, final GLU glu, final List<LightPropertiesStructure> lightPropertiesList) {
+	public static void UpdateDiffuseLightValue(final GL2 gl, final List<LightPropertiesStructure> lightPropertiesList, final double size) {
 		for (LightPropertiesStructure lightProperties : lightPropertiesList) {
 			gl.glEnable(GLLightingFunc.GL_LIGHT0+lightProperties.id);
-			final float[] lightColor = { lightProperties.color.getRed() / 255.0f, lightProperties.color.getGreen() / 255.0f,
+			// GET AND SET ALL THE PROPERTIES OF THE LIGHT
+			// Get the type of light (direction / point / spot)
+			final LightPropertiesStructure.TYPE type = lightProperties.type;
+			// Get and set the color (the diffuse color)
+			final float[] diffuseColor = { lightProperties.color.getRed() / 255.0f, lightProperties.color.getGreen() / 255.0f,
 					lightProperties.color.getBlue() / 255.0f, lightProperties.color.getAlpha() / 255.0f };
+			gl.glLightfv(GLLightingFunc.GL_LIGHT0+lightProperties.id, GLLightingFunc.GL_DIFFUSE, diffuseColor, 0);
+			// Get and set the specular light (if it exists)
+			if (lightProperties.specularColor != null) {
+				final float[] specularColor = { lightProperties.specularColor.getRed() / 255.0f, lightProperties.specularColor.getGreen() / 255.0f,
+						lightProperties.specularColor.getBlue() / 255.0f, lightProperties.specularColor.getAlpha() / 255.0f };
+				gl.glLightfv(GLLightingFunc.GL_LIGHT0+lightProperties.id, GLLightingFunc.GL_SPECULAR, specularColor, 0);
+			}
+			// Get and set the position
+			// the 4th value of the position determines weather of not the distance object-light has to be computed
+			int positionW = (type == LightPropertiesStructure.TYPE.DIRECTION) ? 0 : 1;
 			final float[] lightPosition = { (float)lightProperties.position.x, (float)lightProperties.position.y,
-					(float)lightProperties.position.z, 1 };
-			final float linearAttenuation = lightProperties.linearAttenuation;
-			gl.glLightfv(GLLightingFunc.GL_LIGHT0+lightProperties.id, GLLightingFunc.GL_DIFFUSE, lightColor, 0);
+					(float)lightProperties.position.z, positionW };
 			gl.glLightfv(GLLightingFunc.GL_LIGHT0+lightProperties.id, GLLightingFunc.GL_POSITION, lightPosition, 0);
-			gl.glLightf(GLLightingFunc.GL_LIGHT0+lightProperties.id, GLLightingFunc.GL_LINEAR_ATTENUATION, linearAttenuation);
+			// Get and set the attenuation (if it is not a direction light)
+			if (type != LightPropertiesStructure.TYPE.DIRECTION) {
+				final float linearAttenuation = lightProperties.linearAttenuation;
+				final float quadraticAttenuation = lightProperties.quadraticAttenuation;
+				gl.glLightf(GLLightingFunc.GL_LIGHT0+lightProperties.id, GLLightingFunc.GL_LINEAR_ATTENUATION, linearAttenuation);
+				gl.glLightf(GLLightingFunc.GL_LIGHT0+lightProperties.id, GLLightingFunc.GL_QUADRATIC_ATTENUATION, quadraticAttenuation);
+			}
+			// Get and set spot properties (if the light is a spot light)
+			if (type == LightPropertiesStructure.TYPE.SPOT) {
+				final float[] spotLight = { (float)lightProperties.spotDirection.x, (float)lightProperties.spotDirection.y,
+						(float)lightProperties.spotDirection.z };
+				gl.glLightfv(GLLightingFunc.GL_LIGHT0+lightProperties.id, GLLightingFunc.GL_SPOT_DIRECTION, spotLight, 0);
+				final float spotAngle = lightProperties.spotAngle;
+				gl.glLightf(GLLightingFunc.GL_LIGHT0+lightProperties.id, GLLightingFunc.GL_SPOT_CUTOFF, spotAngle);
+			}
+			
+			// DRAW THE LIGHT IF NEEDED
+			if (lightProperties.drawLight) {
+				// disable the lighting during the time the light is drawn
+				gl.glDisable(GL2.GL_LIGHTING);
+				gl.glPushMatrix();
+				gl.glTranslated(lightPosition[0], lightPosition[1], lightPosition[2]);
+				// save the current color to re-set it at the end of this part
+				float[] currentColor = GLUtilGLContext.GetCurrentColor();
+				// change the current color to the light color (the representation of the color will have the same color as the light in itself)
+				GLUtilGLContext.SetCurrentColor(gl, diffuseColor);
+				GLUT glut = new GLUT();
+				if (type == LightPropertiesStructure.TYPE.POINT) {
+					glut.glutSolidSphere(size, 16, 16);
+				}
+				else if (type == LightPropertiesStructure.TYPE.SPOT) {
+					double baseSize = FastMath.sin(lightProperties.spotAngle)*size;
+					glut.glutSolidCone(baseSize, size, 16, 16);
+				}
+				GLUtilGLContext.SetCurrentColor(gl, currentColor);
+				gl.glPopMatrix();
+				gl.glEnable(GL2.GL_LIGHTING);
+			}
 		}
 	}
 
@@ -391,3 +446,4 @@ public class GLUtilLight {
 	// }
 
 }
+

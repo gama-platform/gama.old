@@ -98,7 +98,7 @@ public class LayeredDisplayData {
 	private boolean isTriangulating = false;
 	// private int traceSize = 0;
 	private boolean isZFighting = true; // GamaPreferences.CORE_Z_FIGHTING.getValue();
-	private boolean isDrawingNormals = true; // GamaPreferences.CORE_DRAW_NORM.getValue();
+	private boolean isDrawingNormals = false; // GamaPreferences.CORE_DRAW_NORM.getValue();
 	public boolean isComputingNormals = true;
 	private boolean isDisplayingAsACube = false; // GamaPreferences.CORE_CUBEDISPLAY.getValue();
 	private boolean ortho = false;

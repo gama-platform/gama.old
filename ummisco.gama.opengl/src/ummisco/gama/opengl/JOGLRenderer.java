@@ -350,7 +350,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		}
 
 		GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(), data.getAmbientLightColor());
-		GLUtilLight.UpdateDiffuseLightValue(gl, getGlu(), data.getDiffuseLights());
+		GLUtilLight.UpdateDiffuseLightValue(gl, data.getDiffuseLights(), getMaxEnvDim() / 20);
 
 		final float[] light0Position = new float[4];
 		ILocation p1 = data.getDiffuseLightPosition();
@@ -364,8 +364,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		light0Position[3] = 0.0f;
 
 		if (data.isDrawDiffLight()) {
-			GLUtilLight.DrawDiffuseLight0(light0Position, gl, getGlu(), getMaxEnvDim() / 10,
-					data.getDiffuseLightColor());
+//			GLUtilLight.DrawDiffuseLights(gl, getGlu(), getMaxEnvDim() / 10);
+//			GLUtilLight.DrawDiffuseLight0(light0Position, gl, getGlu(), getMaxEnvDim() / 10,
+//					data.getDiffuseLightColor());
 		}
 
 //		GLUtilLight.UpdateDiffuseLightPosition(gl, getGlu(), light0Position);
