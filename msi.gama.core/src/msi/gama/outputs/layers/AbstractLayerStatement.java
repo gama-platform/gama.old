@@ -11,13 +11,18 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.LayeredDisplayData;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 
@@ -33,16 +38,16 @@ import msi.gaml.expressions.IExpression;
 public abstract class AbstractLayerStatement extends Symbol implements ILayerStatement {
 
 	private IDisplayLayerBox box;
-	IDisplayOutput output;
+	LayeredDisplayOutput output;
 	private Integer order = 0;
 
 	public AbstractLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setBox(new LayerBox(getFacet(IKeyword.TRANSPARENCY), getFacet(IKeyword.POSITION), getFacet(IKeyword.SIZE),
-			getFacet(IKeyword.REFRESH), getFacet(IKeyword.TRACE), getFacet(IKeyword.FADING),
-			getFacet(IKeyword.SELECTABLE)));
+				getFacet(IKeyword.REFRESH), getFacet(IKeyword.TRACE), getFacet(IKeyword.FADING),
+				getFacet(IKeyword.SELECTABLE)));
 		final IExpression title = getFacet(IKeyword.NAME);
-		if ( title != null && title.isConst() ) {
+		if (title != null && title.isConst()) {
 			setName(title.literalValue());
 		}
 	}
@@ -72,7 +77,17 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 
 	@Override
 	public void setDisplayOutput(final IDisplayOutput out) {
-		output = out;
+		output = (LayeredDisplayOutput) out;
+	}
+
+	public LayeredDisplayOutput getDisplayOutput() {
+		return output;
+	}
+
+	public LayeredDisplayData getLayeredDisplayData() {
+		if (output == null)
+			return null;
+		return output.getData();
 	}
 
 	@Override
@@ -80,7 +95,9 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 
 	@Override
 	public final boolean step(final IScope scope) throws GamaRuntimeException {
-		if ( !scope.interrupted() ) { return _step(scope); }
+		if (!scope.interrupted()) {
+			return _step(scope);
+		}
 		return false;
 	}
 
@@ -107,7 +124,8 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) {}
+	public void setChildren(final List<? extends ISymbol> children) {
+	}
 
 	public List<? extends ISymbol> getChildren() {
 		return Collections.EMPTY_LIST;
