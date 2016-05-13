@@ -14,6 +14,9 @@ package msi.gama.gui.views;
 import javax.swing.JComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IWorkbenchPartReference;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.displays.awt.Java2DDisplaySurface;
@@ -25,6 +28,7 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 
 	public static final String ID = IGui.LAYER_VIEW_ID;
 	public static long REALIZATION_TIME_OUT = 2000;
+	public boolean isVisible;
 
 	@Override
 	public Java2DDisplaySurface getDisplaySurface() {
@@ -33,7 +37,47 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 
 	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
-		parent.setData("NAME", "Parent");
+		getSite().getService(IPartService.class).addPartListener(new IPartListener2() {
+
+			@Override
+			public void partActivated(final IWorkbenchPartReference partRef) {
+				if ( partRef.getPart(false).equals(AWTDisplayView.this) )
+					isVisible = true;
+			}
+
+			@Override
+			public void partBroughtToTop(final IWorkbenchPartReference partRef) {
+				if ( partRef.getPart(false).equals(AWTDisplayView.this) )
+
+					isVisible = true;
+			}
+
+			@Override
+			public void partClosed(final IWorkbenchPartReference partRef) {}
+
+			@Override
+			public void partDeactivated(final IWorkbenchPartReference partRef) {}
+
+			@Override
+			public void partOpened(final IWorkbenchPartReference partRef) {}
+
+			@Override
+			public void partHidden(final IWorkbenchPartReference partRef) {
+				if ( partRef.getPart(false).equals(AWTDisplayView.this) )
+
+					isVisible = false;
+			}
+
+			@Override
+			public void partVisible(final IWorkbenchPartReference partRef) {
+				if ( partRef.getPart(false).equals(AWTDisplayView.this) )
+
+					isVisible = true;
+			}
+
+			@Override
+			public void partInputChanged(final IWorkbenchPartReference partRef) {}
+		});
 		if ( getOutput() == null ) { return null; }
 
 		surfaceComposite = new SwingControl(parent, SWT.NO_FOCUS) {
@@ -89,16 +133,19 @@ public class AWTDisplayView extends LayeredDisplayView/* implements ISizeProvide
 	public void waitToBeRealized() {
 		if ( Platform.isWin32() ) { return; }
 		final long start = System.currentTimeMillis();
+		long now = start;
 		boolean openable = false;
-		while (!openable) {
+
+		while (isVisible && !openable) {
 			try {
 				Thread.sleep(50);
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
-			final long now = System.currentTimeMillis();
+			now = System.currentTimeMillis();
 			openable = now - start > REALIZATION_TIME_OUT || this.getDisplaySurface().isRealized();
 		}
+		System.out.println("Realized in " + (now - start) + "ms");
 
 	}
 

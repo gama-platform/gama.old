@@ -53,7 +53,10 @@ public class RemoveUnwantedActionSets extends PerspectiveAdapter /* implements I
 					for ( final String s : TOOLBAR_ACTION_SETS_TO_REMOVE ) {
 						if ( item.getId().contains(s) ) {
 							// System.out.println("Removed perspective contribution to toolbar:" + item.getId());
-							w.getCoolBarManager2().remove(item);
+							try {
+								if ( w.getCoolBarManager2().find(item.getId()) != null )
+									w.getCoolBarManager2().remove(item);
+							} catch (final Exception e) {}
 						}
 					}
 				}

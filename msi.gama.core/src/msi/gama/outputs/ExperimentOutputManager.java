@@ -36,7 +36,7 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.PERMANENT, kind = ISymbolKind.OUTPUT, with_sequence = true, concept = { IConcept.BATCH,
 		IConcept.PARAMETER })
 @facets(omissible = IKeyword.LAYOUT, value = {
-		@facet(name = IKeyword.LAYOUT, type = IType.INT, optional = false, doc = @doc("One of the four possible predefined layouts: #stack, #split, #horizontal or #vertical. This layout will be applied to both experiment and simulation display views")) })
+		@facet(name = IKeyword.LAYOUT, type = IType.INT, optional = true, doc = @doc("One of the four possible predefined layouts: #stack, #split, #horizontal or #vertical. This layout will be applied to both experiment and simulation display views")) })
 
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @doc(value = "Represents the outputs of the experiment itself. In a batch experiment, the permanent section allows to define an output block that will NOT be re-initialized at the beginning of each simulation but will be filled at the end of each simulation.", usages = {

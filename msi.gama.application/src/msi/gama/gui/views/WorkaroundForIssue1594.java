@@ -1,7 +1,9 @@
 package msi.gama.gui.views;
 
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IWorkbenchPartReference;
 import msi.gama.gui.displays.awt.Java2DDisplaySurface;
 import msi.gama.runtime.GAMA;
 
@@ -10,9 +12,7 @@ public class WorkaroundForIssue1594 {
 	public static void installOn(final AWTDisplayView view, final Composite parent, final Composite surfaceComposite,
 		final Java2DDisplaySurface displaySurface) {
 		// Install only on Windows
-		if ( !msi.gama.gui.swt.swing.Platform.isWin32() ) {
-			return;
-		}
+
 		final IPartService ps = view.getSite().getService(IPartService.class);
 		ps.addPartListener(new IPartListener2() {
 
@@ -27,6 +27,7 @@ public class WorkaroundForIssue1594 {
 
 			@Override
 			public void partOpened(final IWorkbenchPartReference partRef) {
+				if ( !msi.gama.gui.swt.swing.Platform.isWin32() ) { return; }
 				// Fix for Issue #1594
 				if ( partRef.getPart(false).equals(view) ) {
 					final IPartListener2 listener = this;

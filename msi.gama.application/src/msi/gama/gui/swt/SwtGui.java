@@ -1627,7 +1627,7 @@ public class SwtGui extends AbstractGui {
 
 	@Override
 	public void applyLayout(final int layout) {
-		run(new Runnable() {
+		asyncRun(new Runnable() {
 
 			@Override
 			public void run() {

@@ -8,7 +8,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
@@ -89,30 +88,31 @@ public class ArrangeDisplayViews extends AbstractHandler {
 				horizontalOrVertical(displayStack, holders, layout == IUnits.horizontal);
 
 		}
-		clean(displayStack.getParent());
+		// clean(displayStack.getParent());
 
 	}
 
-	private static void clean(final MElementContainer parent) {
-		final List<MUIElement> toRemove = new ArrayList();
-		// System.out.println("Cleaning " + toRemove.size() + " useless containers");
-		for ( final MUIElement element : toRemove ) {
-			element.getParent().getChildren().remove(element);
-		}
+	// private static void clean(final MElementContainer parent) {
+	// final List<MUIElement> toRemove = new ArrayList();
+	// collectChildrenToClean(parent, toRemove);
+	// // System.out.println("Cleaning " + toRemove.size() + " useless containers");
+	// for ( final MUIElement element : toRemove ) {
+	// element.getParent().getChildren().remove(element);
+	// }
+	//
+	// }
 
-	}
-
-	private static void collectChildrenToClean(final MElementContainer parent, final List<MUIElement> toRemove) {
-		for ( final Object object : parent.getChildren() ) {
-			final MUIElement element = (MUIElement) object;
-			if ( element.getTransientData().containsKey("Dynamic") ) {
-				final MElementContainer container = (MElementContainer) element;
-				if ( container.getChildren().isEmpty() ) {
-					toRemove.add(container);
-				} else collectChildrenToClean(container, toRemove);
-			}
-		}
-	}
+	// private static void collectChildrenToClean(final MElementContainer parent, final List<MUIElement> toRemove) {
+	// for ( final Object object : parent.getChildren() ) {
+	// final MUIElement element = (MUIElement) object;
+	// if ( element.getTransientData().containsKey("Dynamic") ) {
+	// final MElementContainer container = (MElementContainer) element;
+	// if ( container.getChildren().isEmpty() ) {
+	// toRemove.add(container);
+	// } else collectChildrenToClean(container, toRemove);
+	// }
+	// }
+	// }
 
 	static void stack(final MPartStack displayStack, final List<MPlaceholder> holders) {
 		for ( int i = 0; i < holders.size(); i++ ) {
@@ -179,7 +179,9 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	static void associate(final MElementContainer container, final MPlaceholder holder) {
+		partService.bringToTop((MPart) holder.getRef());
 		container.getChildren().add(holder);
+		// ((MPart) holder.getRef()).getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
 		partService.activate((MPart) holder.getRef());
 	}
 
