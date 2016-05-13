@@ -25,23 +25,24 @@ public class GamaKeyBindings implements Listener {
 			return;
 		switch (event.keyCode) {
 			// Handles START & RELOAD
-			case 'r':
-				if ( shift(event) ) {
-					consume(event);
-					GAMA.reloadFrontmostExperiment();
-				} else {
-					consume(event);
-					GAMA.startFrontmostExperiment();
-				}
-				break;		
-			// Handles PAUSE & STEP
 			case 'p':
 				if ( shift(event) ) {
 					consume(event);
-					GAMA.stepFrontmostExperiment();
+					GAMA.startFrontmostExperiment();
 				} else {
 					consume(event);
-					GAMA.pauseFrontmostExperiment();
+					GAMA.startPauseFrontmostExperiment();
+
+				}
+				break;
+			// Handles PAUSE & STEP
+			case 'r':
+				if ( shift(event) ) {
+					consume(event);
+					GAMA.relaunchFrontmostExperiment();
+				} else {
+					consume(event);
+					GAMA.reloadFrontmostExperiment();
 				}
 				break;
 			// Handles CLOSE
