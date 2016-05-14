@@ -14,75 +14,59 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaList;
 import msi.gaml.operators.Cast;
 
+public class MultiThreadedSocketServer extends Thread {
 
-public class MultiThreadedSocketServer extends Thread{
+	private ServerSocket myServerSocket;
+	private IAgent myAgent;
+	boolean ServerOn = true;
 
-    private ServerSocket myServerSocket;
-    private IAgent myAgent;
-    boolean ServerOn = true;
+	public MultiThreadedSocketServer(final IAgent a, final ServerSocket ss) {
+		myAgent = a;
+		myServerSocket = ss;
+	}
 
+	public void run() {
+		// Successfully created Server Socket. Now wait for connections.
+		while (!myServerSocket.isClosed()) {
+			try {
+				// Accept incoming connections.
+				Socket clientSocket = myServerSocket.accept();
 
-    public MultiThreadedSocketServer(final IAgent a, final ServerSocket ss) 
-    { 
-    	myAgent = a;
-    	myServerSocket = ss;
-    }
+				// accept() will block until a client connects to the server.
+				// If execution reaches this point, then it means that a client
+				// socket has been accepted.
 
+				// For each client, we will start a service thread to
+				// service the client requests. This is to demonstrate a
+				// Multi-Threaded server. Starting a thread also lets our
+				// MultiThreadedSocketServer accept multiple connections
+				// simultaneously.
 
+				// Start a Service thread
 
-    public void run(){
-        // Successfully created Server Socket. Now wait for connections. 
-        while(!myServerSocket.isClosed()) 
-        {                        
-            try 
-            { 
-                // Accept incoming connections. 
-                Socket clientSocket = myServerSocket.accept(); 
+				if (!clientSocket.isClosed() && !clientSocket.isInputShutdown()) {
+					GamaList<String> l = (GamaList<String>) Cast.asList(myAgent.getScope(),
+							myAgent.getAttribute("clientID"));
+					if (l!=null && !l.contains(clientSocket.toString())) {
+						l.addValue(myAgent.getScope(), clientSocket.toString());
+						myAgent.setAttribute("clientID", l);
 
-                // accept() will block until a client connects to the server. 
-                // If execution reaches this point, then it means that a client 
-                // socket has been accepted. 
+						myAgent.setAttribute("__client" + clientSocket.toString(), clientSocket);
+						ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
+						cliThread.start();
+					}
+				}
 
-                // For each client, we will start a service thread to 
-                // service the client requests. This is to demonstrate a 
-                // Multi-Threaded server. Starting a thread also lets our 
-                // MultiThreadedSocketServer accept multiple connections simultaneously. 
+			} catch (Exception ioe) {
 
-                // Start a Service thread 	
+				if (myServerSocket.isClosed()) {
+					this.interrupt();
+				} else {
+					ioe.printStackTrace();
+				}
+			}
 
-        		if(!clientSocket.isClosed() && !clientSocket.isInputShutdown()){			
-        			GamaList<String> l=(GamaList<String>) Cast.asList(myAgent.getScope(), myAgent.getAttribute("clientID"));
-        			if(!l.contains(clientSocket.toString())){
-        				l.addValue(myAgent.getScope(), clientSocket.toString());
-        				myAgent.setAttribute("clientID", l);
-        			}
-        		}
-                myAgent.setAttribute("__client"+clientSocket.toString(), clientSocket);
-                ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
-                cliThread.start(); 
+		}
+	}
 
-            } 
-            catch(IOException ioe) 
-            { 
-                System.out.println("Exception encountered on accept. Ignoring. Stack Trace :"); 
-                ioe.printStackTrace(); 
-            } 
-
-        }
-
-        try 
-        { 
-            myServerSocket.close(); 
-            System.out.println("Server Stopped"); 
-        } 
-        catch(Exception ioe) 
-        { 
-            System.out.println("Problem stopping server socket"); 
-            System.exit(-1); 
-        } 
-
-
-
-    } 
-
-  }
+}

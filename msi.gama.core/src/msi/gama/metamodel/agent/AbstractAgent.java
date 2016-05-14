@@ -11,7 +11,9 @@
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
+import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +34,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
@@ -202,17 +205,30 @@ public abstract class AbstractAgent implements IAgent {
 			
 			if(getSpecies().getDescription() instanceof SpeciesDescription){
 				SpeciesDescription spec =(SpeciesDescription) getSpecies().getDescription();
-				if(spec.getSkillsNames().contains("socket")){
+				if (spec.getSkillsNames().contains("socket")) {
 					final Integer port = Cast.asInt(this.getScope(), this.getAttribute("port"));
 					final ServerSocket sersock = (ServerSocket) this.getAttribute("__server" + port);
 					if (sersock != null && !sersock.isClosed()) {
 						try {
 							sersock.close();
-							this.setAttribute("__server"+ port, null);
+							this.setAttribute("__server" + port, null);
 						} catch (Exception e) {
 							throw GamaRuntimeException.create(e, this.getScope());
 						}
-					}				}
+					}
+					
+					Socket cSock = (Socket) this.getAttribute("__socket");	
+					if(cSock!=null){						
+						try {
+							cSock.shutdownInput();
+							cSock.shutdownOutput();
+							cSock.close();
+						} catch (Exception e) {
+							throw GamaRuntimeException.create(e, this.getScope());
+						}
+					}
+					
+				}
 			}
 			
 			final IPopulation p = getPopulation();

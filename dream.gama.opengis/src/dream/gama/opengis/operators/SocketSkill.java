@@ -124,39 +124,6 @@ public class SocketSkill extends Skill {
 		openSocket(scope);
 	}
 
-//	@action(name = "listen", doc = @doc(examples = { @example("d;") }, value = "."))
-//	public String primListen(final IScope scope) throws GamaRuntimeException {
-//		final Integer myPort = Cast.asInt(scope, scope.getAgentScope().getAttribute("port"));
-//		final ServerSocket sersock = (ServerSocket) scope.getAgentScope().getAttribute("__server" + myPort);
-//		Socket sock = null;
-//
-//		if(sersock == null){
-//			openSocket(scope);
-//			
-//		}
-//		while (true) {
-//			try {
-//				sock = sersock.accept();
-//			} catch (Exception e) {
-//				e.printStackTrace();
-//			}
-////			System.out.println(sock.getInetAddress());
-////            ClientServiceThread cliThread = new ClientServiceThread(sock);
-////            cliThread.start(); 
-//
-//			if (sock != null && !sock.isClosed()) {
-//				scope.getAgentScope().setAttribute("__client"+sock.toString(), sock);
-//				break;
-//			}
-////			if(sock.isClosed()){
-////				scope.getAgentScope().setAttribute("__client"+sock.toString(),null);
-////				return "";
-////			}
-//			
-//		}
-//		return sock.toString(); 
-//	}
-
 	@action(name = "get_from_client",args = {
 			@arg(name = "clientID", type = IType.STRING, optional = false, doc = @doc("td)")) 
 	}, doc = @doc(examples = { @example("d;") }, value = "."))
@@ -165,9 +132,9 @@ public class SocketSkill extends Skill {
 
 		final Socket sock = (Socket) scope.getAgentScope().getAttribute("__client"+cli);
 		String receiveMessage = "";
-		if(sock.isClosed() || sock.isInputShutdown()){			
+		if(sock.isClosed() || sock.isInputShutdown() || sock.isOutputShutdown()){			
 			GamaList<String> l=(GamaList<String>) Cast.asList(scope, scope.getAgentScope().getAttribute("clientID"));
-			if(l.contains(sock.toString())){
+			if(l!=null && l.contains(sock.toString())){
 				l.remove(sock.toString());
 				scope.getAgentScope().setAttribute("clientID", l);
 			}
@@ -175,20 +142,10 @@ public class SocketSkill extends Skill {
 		}
 		try {
 
-			receiveMessage = (String) scope.getAgentScope().getAttribute("__clientCommand" + sock.toString());
-			scope.getAgentScope().setAttribute("message", receiveMessage);
-//			if (scope.getAgentScope().getAttribute("__client") == null) {
-	
+			receiveMessage = ""+ scope.getAgentScope().getAttribute("__clientCommand" + sock.toString());
+			scope.getAgentScope().setAttribute("__clientCommand" + sock.toString(),"");
+			scope.getAgentScope().setAttribute("message", receiveMessage);	
 		
-//			} else {
-//				final Socket sock = (Socket) scope.getAgentScope().getAttribute("__client");
-				
-//				InputStream istream = sock.getInputStream();
-//				BufferedReader receiveRead = new BufferedReader(new InputStreamReader(istream));
-//				if ((receiveMessage = receiveRead.readLine()) != null) {
-//					scope.getAgentScope().setAttribute("message", receiveMessage);
-//				}
-//			}
 		} catch (Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
@@ -209,13 +166,19 @@ public class SocketSkill extends Skill {
 		try {
 			final Socket sock = (Socket) scope.getAgentScope().getAttribute("__client"+cli);
 			if (sock == null || sock.isClosed() || sock.isOutputShutdown()) {
+				GamaList<String> l=(GamaList<String>) Cast.asList(scope, scope.getAgentScope().getAttribute("clientID"));
+				if(l.contains(sock.toString())){
+					l.remove(sock.toString());
+					scope.getAgentScope().setAttribute("clientID", l);
+				}
 				return;
+			}else{				
+				OutputStream ostream = sock.getOutputStream();
+				PrintWriter pwrite = new PrintWriter(ostream, true);
+				pwrite.println(msg);
+				pwrite.flush();
 			}
 
-			OutputStream ostream = sock.getOutputStream();
-			PrintWriter pwrite = new PrintWriter(ostream, true);
-			pwrite.println(msg);
-			pwrite.flush();
 
 		} catch (Exception e) {
 			throw GamaRuntimeException.create(e, scope);
