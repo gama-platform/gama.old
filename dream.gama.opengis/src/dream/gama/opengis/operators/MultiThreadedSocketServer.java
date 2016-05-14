@@ -16,9 +16,39 @@ import msi.gaml.operators.Cast;
 
 public class MultiThreadedSocketServer extends Thread {
 
-	private ServerSocket myServerSocket;
 	private IAgent myAgent;
 	boolean ServerOn = true;
+	private ServerSocket myServerSocket;
+	/**
+	 * @return the myServerSocket
+	 */
+	public ServerSocket getMyServerSocket() {
+		return myServerSocket;
+	}
+
+	/**
+	 * @param myServerSocket the myServerSocket to set
+	 */
+	public void setMyServerSocket(ServerSocket myServerSocket) {
+		this.myServerSocket = myServerSocket;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Thread#interrupt()
+	 */
+	@Override
+	public void interrupt() {
+		super.interrupt();
+		try {
+			myAgent.setAttribute("__server"+ myServerSocket.getLocalPort(), null);
+			myServerSocket.close();				
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
 
 	public MultiThreadedSocketServer(final IAgent a, final ServerSocket ss) {
 		myAgent = a;
@@ -46,14 +76,14 @@ public class MultiThreadedSocketServer extends Thread {
 
 				if (!clientSocket.isClosed() && !clientSocket.isInputShutdown()) {
 					GamaList<String> l = (GamaList<String>) Cast.asList(myAgent.getScope(),
-							myAgent.getAttribute("clientID"));
+							myAgent.getAttribute("clients"));
 					if (l!=null && !l.contains(clientSocket.toString())) {
 						l.addValue(myAgent.getScope(), clientSocket.toString());
-						myAgent.setAttribute("clientID", l);
+						myAgent.setAttribute("clients", l);
 
-						myAgent.setAttribute("__client" + clientSocket.toString(), clientSocket);
 						ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
 						cliThread.start();
+						myAgent.setAttribute("__client" + clientSocket.toString(), cliThread);
 					}
 				}
 

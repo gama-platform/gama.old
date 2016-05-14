@@ -203,31 +203,25 @@ public abstract class AbstractAgent implements IAgent {
 			// getName() + " .dispose (in MinimalAgent)");
 			dead = true;
 			
-			if(getSpecies().getDescription() instanceof SpeciesDescription){
-				SpeciesDescription spec =(SpeciesDescription) getSpecies().getDescription();
-				if (spec.getSkillsNames().contains("socket")) {
+			if (getSpecies().getDescription() instanceof SpeciesDescription) {
+				if (((SpeciesDescription) getSpecies().getDescription()).getSkillsNames().contains("socket")) {
+					((SpeciesDescription) getSpecies().getDescription()).implementsSkill("socket");
 					final Integer port = Cast.asInt(this.getScope(), this.getAttribute("port"));
-					final ServerSocket sersock = (ServerSocket) this.getAttribute("__server" + port);
-					if (sersock != null && !sersock.isClosed()) {
-						try {
-							sersock.close();
+					final Thread sersock = (Thread) this.getAttribute("__server" + port);
+					final Thread cSock = (Thread) this.getAttribute("__socket");
+
+					try {
+						if (sersock != null) {
+							sersock.interrupt();
 							this.setAttribute("__server" + port, null);
-						} catch (Exception e) {
-							throw GamaRuntimeException.create(e, this.getScope());
 						}
-					}
-					
-					Socket cSock = (Socket) this.getAttribute("__socket");	
-					if(cSock!=null){						
-						try {
-							cSock.shutdownInput();
-							cSock.shutdownOutput();
-							cSock.close();
-						} catch (Exception e) {
-							throw GamaRuntimeException.create(e, this.getScope());
+						if (cSock != null) {
+							cSock.interrupt();
+							this.setAttribute("__socket", null);
 						}
+					} catch (Exception e) {
+						throw GamaRuntimeException.create(e, this.getScope());
 					}
-					
 				}
 			}
 			
