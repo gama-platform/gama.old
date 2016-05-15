@@ -81,7 +81,7 @@ public class MultiThreadedSocketServer extends Thread {
 						l.addValue(myAgent.getScope(), clientSocket.toString());
 						myAgent.setAttribute("clients", l);
 
-						ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
+						final ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
 						cliThread.start();
 						myAgent.setAttribute("__client" + clientSocket.toString(), cliThread);
 					}

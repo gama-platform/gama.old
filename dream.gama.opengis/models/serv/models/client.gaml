@@ -83,18 +83,19 @@ species ship skills:[moving]
 }
 species user skills:[socket]
 {
+	string myClientID<-"";
 	string messageS <-"";
 	string msg<-"";
 	init
 	{
 		port<-3001;
 //		ip<-ip_serveur;
-		do connect_server;
+		myClientID<- connect_server();
 		do send_to_server msg:"connexion:"+pseudo+":"+wanted_color;
 	}
 	reflex update
 	{
-		write messages;
+//		write messages[myClientID];
 		if(messageS != ""){			
 			//write "Sending: "+messageS;
 			do send_to_server msg:messageS;
@@ -103,7 +104,7 @@ species user skills:[socket]
 		msg<- listen_server();
 		if (msg!=nil and msg!="")
 		{
-			//write "Server says: "+msg;
+//			//write "Server says: "+msg;
 			list<string>infoMessage <- msg split_with ":"; 
 			int index<-0;
 			loop while: index<length(infoMessage)
@@ -205,7 +206,7 @@ species user skills:[socket]
 		do sendFireMessage(direction);
 	}
 }
-experiment launchClient type:gui
+experiment lClient type:gui
 {
 	float minimum_cycle_duration<-0.1#s;
 	output

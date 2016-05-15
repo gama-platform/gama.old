@@ -12,8 +12,13 @@ import java.util.Deque;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.Types;
 
 class ClientServiceThread extends Thread {
 	private Socket myClientSocket;
@@ -27,10 +32,16 @@ class ClientServiceThread extends Thread {
 	}
 
 	public ClientServiceThread(final IAgent a, final Socket s) {
+		
 		myAgent = a;
 		myClientSocket = s;
-//		Deque<String> msgs = new ArrayDeque<String>();
-		GamaList msgs =  (GamaList) GamaListFactory.create(String.class);
+		GamaList<String> msgs =  (GamaList<String>) GamaListFactory.create(String.class);
+		GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) myAgent.getAttribute("messages");
+		if(m == null) {
+			m = GamaMapFactory.create(Types.STRING, Types.LIST);
+		}
+		m.put(myClientSocket.toString(),msgs);
+		myAgent.setAttribute("messages", m);
 		myAgent.setAttribute("__clientCommand" + myClientSocket.toString(), msgs);
 
 	}
@@ -76,12 +87,15 @@ class ClientServiceThread extends Thread {
 				GamaList<String> msgs = (GamaList<String>) myAgent.getAttribute("__clientCommand" + myClientSocket.toString());
 				if (msgs != null) {
 					msgs.addValue(myAgent.getScope(),clientCommand != null ? clientCommand : "");
+					final GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) myAgent.getAttribute("messages");
+					m.put(myClientSocket.toString(),msgs);
+					myAgent.setAttribute("messages", m);
 					myAgent.setAttribute("__clientCommand" + myClientSocket.toString(), msgs);
 				}
 
 			}
 		} catch (Exception e) {
-//			if (myClientSocket.isClosed() || myClientSocket.isInputShutdown() || myClientSocket.isOutputShutdown()) {
+			if (myClientSocket.isClosed() || myClientSocket.isInputShutdown() || myClientSocket.isOutputShutdown()) {
 				myAgent.setAttribute("__client"+myClientSocket.toString(),null);
 				GamaList<String> l = (GamaList<String>) Cast.asList(myAgent.getScope(),
 						myAgent.getAttribute("clients"));
@@ -90,9 +104,9 @@ class ClientServiceThread extends Thread {
 					myAgent.setAttribute("clients", l);
 				}
 				this.interrupt();
-//			} else {
-//				e.printStackTrace();
-//			}
+			} else {
+				e.printStackTrace();
+			}
 		} 
 	}
 

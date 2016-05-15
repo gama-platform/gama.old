@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
 	<name>serv</name>
-	<comment></comment>
+	<comment>dream.gama.opengis</comment>
 	<projects>
 	</projects>
 	<buildSpec>
@@ -14,5 +14,6 @@
 	<natures>
 		<nature>org.eclipse.xtext.ui.shared.xtextNature</nature>
 		<nature>msi.gama.application.gamaNature</nature>
+		<nature>msi.gama.application.pluginNature</nature>
 	</natures>
 </projectDescription>

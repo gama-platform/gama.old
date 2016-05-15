@@ -60,7 +60,7 @@ species server skills: [socket]
 					}
 //					do send_to_client cliendID: id msg: "Ser send to " ;
 					do send_to_client cID: id msg: "ship:"+first(theUsers).pseudo+":"+first(theUsers).my_ship.color+":50:../images/user.png:"+first(theUsers).my_ship.size+":"+first(theUsers).my_ship.heading+":"+first(theUsers).my_ship.location.x+":"+first(theUsers).my_ship.location.y+":"+first(theUsers).my_ship.number_bullet;
-
+//					loop times:1000000{int i;}
 				}
 				else
 				{
