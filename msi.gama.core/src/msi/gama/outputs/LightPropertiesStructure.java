@@ -13,7 +13,7 @@ public class LightPropertiesStructure {
 	public float linearAttenuation = 0;
 	public float quadraticAttenuation = 0;
 	public boolean drawLight = true;
-	public GamaPoint spotDirection = new GamaPoint(0,0,-1);
+	public GamaPoint direction = new GamaPoint(0,0,-1);
 	public float spotAngle = 45.0f;
 	
 	public static enum TYPE { DIRECTION, POINT, SPOT };

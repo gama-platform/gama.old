@@ -40,6 +40,11 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	private IDisplayLayerBox box;
 	LayeredDisplayOutput output;
 	private Integer order = 0;
+	protected boolean layerToCreate = true;
+	
+	public boolean isToCreate() {
+		return layerToCreate;
+	}
 
 	public AbstractLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);

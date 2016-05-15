@@ -337,6 +337,45 @@ public class LayeredDisplayData {
 		return result;
 	}
 	
+	public void setLightActive(int lightId, boolean value) {
+		if (lights[lightId] == null) {
+			lights[lightId] = new LightPropertiesStructure();
+		}
+		lights[lightId].active = value;
+	}
+	
+	public void setLightPosition(int lightId, GamaPoint position) {
+		lights[lightId].position = position;
+	}
+	
+	public void setLightDirection(int lightId, GamaPoint direction) {
+		lights[lightId].direction = direction;
+	}
+	
+	public void setDiffuseLightColor(int lightId, GamaColor color) {
+		lights[lightId].color = color;
+	}
+	
+	public void setSpecularLightColor(int lightId, GamaColor color) {
+		lights[lightId].specularColor = color;
+	}
+	
+	public void setSpotAngle(int lightId, float angle) {
+		lights[lightId].spotAngle = angle;
+	}
+	
+	public void setLinearAttenuation(int lightId, float linearAttenuation) {
+		lights[lightId].linearAttenuation = linearAttenuation;
+	}
+	
+	public void setQuadraticAttenuation(int lightId, float quadraticAttenuation) {
+		lights[lightId].quadraticAttenuation = quadraticAttenuation;
+	}
+	
+	public void setDrawLight(int lightId, boolean value) {
+		lights[lightId].drawLight = value;
+	}
+	
 	public void setLightProperty(String value) {
 		// value : id:1; active:true; color:rgb(255,200,200,200); ... | id:2; active:true; ...
 		// TODO

@@ -104,6 +104,7 @@ public interface IKeyword {
 	public static final String DIFFUSE = "diffuse";
 	public static final String DIFFUSE_LIGHT = "diffuse_light";
 	public static final String DIFFUSE_LIGHT_POS = "diffuse_light_pos";
+	public static final String DIRECTION = "direction";
 	public static final String DISABLE = "disable";
 	public static final String DISPLAY = "display";
 	public static final String DISPLAY_GL = "graphdisplaygl";
@@ -116,6 +117,7 @@ public interface IKeyword {
 	public static final String DRAWENV = "draw_env";
 	public static final String DRAW_NORM = "draw_norm";
 	public static final String DRAW_DIFFUSE_LIGHT = "draw_diffuse_light";
+	public static final String DRAW_LIGHT = "draw_light";
 	// public static final String DRAWASDEM = "draw_as_dem";
 	public static final String ELEVATION = "elevation";
 	public static final String DYNAMIC = "dynamic";
@@ -232,6 +234,7 @@ public interface IKeyword {
 	public static final String LET = "let";
 	public static final String LINE = "line";
 	public static final String LINES = "lines";
+	public static final String LINEAR_ATTENUATION = "linear_attenuation";
 	public static final String LOCATION = "location";
 	public static final String LOOP = "loop";
 	public static final String LOOK_AT = "look_at";
@@ -316,6 +319,7 @@ public interface IKeyword {
 	public static final String PROPAGATION = "propagation";
 	public static final String PROPORTION = "proportion";
 	public static final String PUT = "put";
+	public static final String QUADRATIC_ATTENUATION = "quadratic_attenuation";
 	public static final String QUADTREE = "quadtree";
 	public static final String RADIUS = "radius";
 	public static final String RAISES = "raises";
@@ -363,8 +367,10 @@ public interface IKeyword {
 	public static final String SKILLS = "skills";
 	public static final String SOURCE = "source";
 	public static final String SPECIES = "species";
+	public static final String SPECULAR = "specular";
 	public static final String SPEED = "speed";
 	public static final String SPLINE = "spline";
+	public static final String SPOT_ANGLE = "spot_angle";
 	public static final String STACK = "stack";
 	public static final String START_SOUND = "start_sound";
 	public static final String STATE = "state";

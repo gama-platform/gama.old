@@ -46,14 +46,15 @@ public class LayerManager implements ILayerManager {
 	public LayerManager(final IDisplaySurface surface, final LayeredDisplayOutput output) {
 		this.surface = surface;
 		final List<AbstractLayerStatement> layers = output.getLayers();
-		for (final AbstractLayerStatement layer : layers) {
-			final ILayer result = AbstractLayer.createLayer(output.getScope(), layer);
-			if (result != null)
-				if (result instanceof OverlayLayer) {
+		for ( final AbstractLayerStatement layer : layers ) {
+			if (layer.isToCreate()) {
+				ILayer result = AbstractLayer.createLayer(output.getScope(), layer);
+				if ( result instanceof OverlayLayer ) {
 					overlay = (OverlayLayer) result;
 				} else {
 					addLayer(result);
 				}
+			}
 		}
 	}
 
