@@ -156,6 +156,9 @@ public class LightStatement extends AbstractLayerStatement {
 		if (getFacetValue(scope, "active") != null) {
 			getLayeredDisplayData().setLightActive(lightId,Cast.asBool(scope, getFacetValue(scope, "active")));
 		}
+		else {
+			getLayeredDisplayData().setLightActive(lightId,true);
+		}
 		if (getFacetValue(scope, IKeyword.TYPE) != null) {
 			getLayeredDisplayData().setLightType(lightId,Cast.asString(scope, getFacetValue(scope, IKeyword.TYPE)));
 		}
