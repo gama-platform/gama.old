@@ -34,19 +34,19 @@ public class IUnits {
 	 */
 	@constant(value = "none", category = { IConstantCategory.GRAPHIC }, concept = { IConcept.DISPLAY,
 			IConcept.OUTPUT }, doc = @doc("This constant represents the absence of a predefined layout"))
-	public final static int none = -1;
+	public final static int none = 0;
 	@constant(value = "stack", category = { IConstantCategory.GRAPHIC }, concept = { IConcept.DISPLAY,
 			IConcept.OUTPUT }, doc = @doc("This constant represents a layout where all display views are stacked"))
-	public final static int stack = 0;
+	public final static int stack = 1;
 	@constant(value = "split", category = { IConstantCategory.GRAPHIC }, concept = { IConcept.DISPLAY,
 			IConcept.OUTPUT }, doc = @doc("This constant represents a layout where all display views are split in a grid-like structure"))
-	public final static int split = 1;
+	public final static int split = 2;
 	@constant(value = "horizontal", category = { IConstantCategory.GRAPHIC }, concept = { IConcept.DISPLAY,
 			IConcept.OUTPUT }, doc = @doc("This constant represents a layout where all display views are aligned horizontally"))
-	public final static int horizontal = 2;
+	public final static int horizontal = 3;
 	@constant(value = "vertical", category = { IConstantCategory.GRAPHIC }, concept = { IConcept.DISPLAY,
 			IConcept.OUTPUT }, doc = @doc("This constant represents a layout where all display views are aligned vertically"))
-	public final static int vertical = 3;
+	public final static int vertical = 4;
 
 	/**
 	 * Font style constants
