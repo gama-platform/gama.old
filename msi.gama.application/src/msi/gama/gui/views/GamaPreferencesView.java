@@ -133,10 +133,10 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		final int width = Math.min(shell.getSize().x, bounds.x);
 		final int height = Math.min(shell.getSize().y, bounds.y);
 		shell.setSize(width, height);
-		final int x = bounds.x + (bounds.width - width) / 2;
-		final int y = bounds.y + (bounds.height - height) / 2;
+		// final int x = bounds.x + (bounds.width - width) / 2;
+		// final int y = bounds.y + (bounds.height - height) / 2;
 
-		shell.setLocation(x, y);
+		// shell.setLocation(x, y);
 
 		buildContents();
 	}
