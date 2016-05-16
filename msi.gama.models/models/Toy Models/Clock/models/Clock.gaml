@@ -19,7 +19,7 @@ global {
 	//Zoom to take in consideration the zoom in the display, to better write the cycle values
 	int zoom <- 4 min:1 max:100;
 	//Time value for a cycle
-	float step<-3600000.0#ms min: 1.0 max: 3600000.0;
+	float step<-360000.0#ms min: 1.0 max: 360000.0;
 	
 	//Alarm parameters
 	int alarm_days <- 0 min:0 max:365;
