@@ -170,7 +170,7 @@ public class ChartDataSet {
 		for (Entry<String, ChartDataSeries> entry : newseries.entrySet())
 		{
 				//should do something... raise an exception?
-			addNewSerie(entry.getKey(), entry.getValue(),0);
+			addNewSerie(entry.getKey(), entry.getValue(),-1);
 		}
 //		series.putAll(source.getSeries());
 	}

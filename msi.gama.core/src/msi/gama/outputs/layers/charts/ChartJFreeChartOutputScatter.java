@@ -332,12 +332,16 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 
 	protected void createNewSerie(IScope scope, String serieid) {
+		
 		ChartDataSeries dataserie=chartdataset.getDataSeries(scope,serieid);
 		final XYIntervalSeries serie = new XYIntervalSeries(dataserie.getSerieLegend(scope), false, true);		
 		XYPlot plot = (XYPlot)this.chart.getPlot();
 
 		XYIntervalSeriesCollection firstdataset=(XYIntervalSeriesCollection)plot.getDataset();
 
+		if (!IdPosition.containsKey(serieid))
+		{
+		
 		if (firstdataset.getSeriesCount()==0)
 		{
 			firstdataset.addSeries(serie);
@@ -357,8 +361,9 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		IdPosition.put(serieid, jfreedataset.size()-1);
 //		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" fdsize "+plot.getSeriesCount()+" jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount());
 		// TODO Auto-generated method stub		
-	}
 
+		}
+	}
 
 
 	protected void resetSerie(IScope scope, String serieid) {
