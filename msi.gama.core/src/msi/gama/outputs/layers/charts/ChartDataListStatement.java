@@ -171,10 +171,9 @@ public class ChartDataListStatement extends AbstractStatement {
 		data.setDataset(scope, graphdataset);
 		
 		String stval = getLiteral(IKeyword.STYLE);
-		if ( stval == null ) {
-			stval = IKeyword.LINE;
+		if ( stval != null ) {
+			data.setStyle(scope,stval);
 		}
-		data.setStyle(scope,stval);
 
 		
 		
@@ -258,38 +257,6 @@ public class ChartDataListStatement extends AbstractStatement {
 		}
 
 		
-		
-		//TODO		
-		/*		
-		
-		
-		boolean boolval = getFacetValue(scope, MARKER, true);
-		data.setMarkerBool(scope,boolval);
-		
-		stval = getFacetValue(scope, MARKERSHAPE, null);
-		data.setMarkerShape(scope,stval);
-
-		data.setStyle(scope,stval);
-
-		
-		stval = getFacetValue(scope, IKeyword.COLOR, "black");
-		data.sourceParameters.put(IKeyword.COLOR,stval);
-		
-		 boolval = getFacetValue(scope, MARKER, true);
-		data.sourceParameters.put(MARKER,boolval);
-		
-		 boolval = getFacetValue(scope, LINE_VISIBLE, true);
-		data.sourceParameters.put(LINE_VISIBLE,boolval);
-		
-		 boolval = getFacetValue(scope, FILL, true);
-		data.sourceParameters.put(FILL,boolval);
-
-		stval = getFacetValue(scope, MARKERSHAPE, null);
-		data.sourceParameters.put(MARKERSHAPE,stval);
-
-		stval = getFacetValue(scope, MARKERSHAPE, null);
-		data.sourceParameters.put(MARKERSHAPE,stval);
-	*/	
 		
 		return data;
 	}

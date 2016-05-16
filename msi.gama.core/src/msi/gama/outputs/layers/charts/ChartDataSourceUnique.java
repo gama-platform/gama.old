@@ -42,12 +42,6 @@ public class ChartDataSourceUnique extends ChartDataSource {
 		myname=stval;
 	}
 
-	public void setMarkerShape(IScope scope, String stval) {
-		// TODO Auto-generated method stub
-		//markerName is useless, for now creates/modifies the output
-		uniqueMarkerName=stval;
-//		this.getDataset().getOutput().setSerieMarkerShape(scope,this.getName(),stval);
-	}
 		
 	
 	public void updatevalues(IScope scope, int chartCycle) {

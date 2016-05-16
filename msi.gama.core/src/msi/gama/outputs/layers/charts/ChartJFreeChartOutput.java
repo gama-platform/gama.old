@@ -109,11 +109,17 @@ public class ChartJFreeChartOutput extends ChartOutput {
 	{
 		super.initChart(scope,chartname);
 		
-		//not yet updated, move to subclasses
-
 		initRenderer(scope);
 		Plot plot = chart.getPlot();
+
+		chart.setTitle(this.getName());
+		chart.getTitle().setVisible(true);
 		chart.getTitle().setFont(getTitleFont());
+		if (textColor!=null)
+		{
+			chart.getTitle().setPaint(textColor);				
+		}
+
 		if ( backgroundColor == null ) {
 			plot.setBackgroundPaint(null);
 			chart.setBackgroundPaint(null);
@@ -130,21 +136,14 @@ public class ChartJFreeChartOutput extends ChartOutput {
 				chart.getLegend().setBackgroundPaint(bg);
 			}
 		}
-		// chart.getLegend().setItemPaint(axesColor);
-		// chart.getLegend().setBackgroundPaint(null);
-
-		if ( plot instanceof CategoryPlot ) {
-
-		} else if ( plot instanceof XYPlot ) {
-			final XYPlot pp = (XYPlot) chart.getPlot();
-			pp.setDomainGridlinePaint(axesColor);
-			pp.setRangeGridlinePaint(axesColor);
-			pp.setDomainCrosshairPaint(axesColor);
-			pp.setRangeCrosshairPaint(axesColor);
-			pp.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-			pp.setDomainCrosshairVisible(true);
-			pp.setRangeCrosshairVisible(true);
+		if ( chart.getLegend() != null ) {
+			chart.getLegend().setItemFont(getLegendFont());
+			if (textColor!=null)
+			{
+				chart.getLegend().setItemPaint(textColor);				
+			}
 		}
+		
 		
     	
 

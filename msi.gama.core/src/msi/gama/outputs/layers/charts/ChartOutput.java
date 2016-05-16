@@ -31,15 +31,14 @@ public abstract class ChartOutput {
 	public int lastUpdateCycle=-1;
 	
 	String chname="";	
+	String xlabel=null;
+	String ylabel=null;
 	ChartDataSet chartdataset;
 	int type = SERIES_CHART;
 
-	//copy from previous dataLayerStatement
-	
-	String style = IKeyword.DEFAULT;
-	 ChartOutput chartOutput = null;
-	 StringBuilder history;
-	 static String chartFolder = "charts";
+	ChartOutput chartOutput = null;
+	 GamaColor backgroundColor = null, axesColor = null, textColor=null;
+
 	 String tickFontFace = Font.SANS_SERIF;
 	 int tickFontSize = 10;
 	 int tickFontStyle = Font.PLAIN;
@@ -52,10 +51,26 @@ public abstract class ChartOutput {
 	 String titleFontFace = Font.SERIF;
 	 int titleFontSize = 14;
 	 int titleFontStyle = Font.BOLD;
-	 GamaColor backgroundColor = null, axesColor = null;
+	 
+	 String series_label_position="default";
+	String style = IKeyword.DEFAULT;
+	 
+	 double gap=-1; //only used in bar charts? copied the code, don't understand how to use it...
+	 
+	 double xrangeinterval,xrangemin,xrangemax;
+	 boolean usexrangeinterval=false, usexrangeminmax=false;
+	 double yrangeinterval,yrangemin,yrangemax;
+	 boolean useyrangeinterval=false, useyrangeminmax=false;
+
+	double xtickunit=-1;
+	double ytickunit=-1;
+
+	//copy from previous dataLayerStatement
+	
+	 StringBuilder history;
+	 static String chartFolder = "charts";
 
 	 final Map<String, Integer> expressions_index = new HashMap();
-	 boolean exploded=false;
 	static String xAxisName = "'time'";
 	
 	
@@ -188,6 +203,8 @@ public abstract class ChartOutput {
 			{
 				this.resetSerie(scope,serieid);
 			}
+			resetAxes(scope);
+
 		}
 		else
 		{
@@ -209,6 +226,8 @@ public abstract class ChartOutput {
 			{
 				this.resetSerie(scope,serieid);
 			}
+			resetAxes(scope);
+
 			
 		}
 		updateImage(scope);		
@@ -217,6 +236,11 @@ public abstract class ChartOutput {
 		System.out.println("output last update:"+lastUpdateCycle);
 	}
 	
+	public void resetAxes(IScope scope) {
+		// Update axes
+		
+	}
+
 	private void removeSerie(IScope scope, String serieid) {
 		// TODO Auto-generated method stub
 		
@@ -242,6 +266,12 @@ public abstract class ChartOutput {
 		// TODO Auto-generated method stub
 		
 	}
+	
+	public void setUseXSource(IScope scope, IExpression expval) {
+		// if there is something to do to use custom X axis
+		
+		
+	}
 
 	int toFontStyle(final String style) {
 		if ( style.equals("bold") ) { return Font.BOLD; }
@@ -255,6 +285,12 @@ public abstract class ChartOutput {
 		chname=chartname;
 		
 	}
+
+	public  void createChart(IScope scope)
+	{
+		
+	}
+	
 	
 	 public ChartDataSet getChartdataset() {
 		return chartdataset;
@@ -269,12 +305,135 @@ public abstract class ChartOutput {
 		return chname;
 	}
 
+	public String getStyle()
+	{
+		return style;
+	}
+
 	public void setAxesColorValue(IScope scope, GamaColor color) {
 			axesColor = color;
 		
 	}
 	
+	public void setBackgroundColorValue(IScope scope, GamaColor color) {
+		backgroundColor = color;
 	
+}
+
+	public void setColorValue(IScope scope, GamaColor color) {
+		textColor = color;
+	
+}
+
+	public void setTickFontFace(IScope scope, String value) {
+	if ( value != null ) {
+		tickFontFace = value;
+	}
+	}
+	public void setLabelFontFace(IScope scope, String value) {
+	if ( value != null ) {
+		labelFontFace =  value;
+	}
+	}
+	public void setLegendFontFace(IScope scope, String value) {
+	if ( value != null ) {
+		legendFontFace = value;
+	}
+	}
+	public void setTitleFontFace(IScope scope, String value) {
+	if ( value != null ) {
+		titleFontFace =  value;
+	}
+	}
+	public void setTickFontSize(IScope scope, int value) {
+		tickFontSize = value;
+	}
+	public void setLabelFontSize(IScope scope, int value) {
+		labelFontSize =  value;
+	}
+	public void setLegendFontSize(IScope scope, int value) {
+		legendFontSize =  value;
+	}
+	public void setTitleFontSize(IScope scope, int value) {
+		titleFontSize =  value;
+	}
+	public void setTickFontStyle(IScope scope, String value) {
+	if ( value != null ) {
+		tickFontStyle = toFontStyle( value);
+	}
+	}
+	public void setLabelFontStyle(IScope scope, String value) {
+	if ( value != null ) {
+		labelFontStyle = toFontStyle( value);
+	}
+	}
+	public void setLegendFontStyle(IScope scope, String value) {
+	if ( value != null ) {
+		legendFontStyle = toFontStyle( value);
+	}
+	}
+	public void setTitleFontStyle(IScope scope, String value) {
+	if ( value != null ) {
+		titleFontStyle = toFontStyle( value);
+	}
+	}
+
+	public void setXLabel(IScope scope, String asString) {
+		// TODO Auto-generated method stub
+		xlabel=asString;
+		
+	}
+	public void setYLabel(IScope scope, String asString) {
+		// TODO Auto-generated method stub
+		ylabel=asString;
+		
+	}
+	
+	public void setXRangeInterval(IScope scope, double doubleValue) {
+		// TODO Auto-generated method stub
+		this.usexrangeinterval=true;
+		this.xrangeinterval=doubleValue;
+		
+	}
+	
+	public void setXRangeMinMax(IScope scope, double minValue, double maxValue) {
+		// TODO Auto-generated method stub
+		this.usexrangeminmax=true;
+		this.xrangemin=minValue;
+		this.xrangemax=maxValue;
+		
+	}
+
+	public void setYRangeInterval(IScope scope, double doubleValue) {
+		// TODO Auto-generated method stub
+		this.useyrangeinterval=true;
+		this.yrangeinterval=doubleValue;
+		
+	}
+	
+	public void setYRangeMinMax(IScope scope, double minValue, double maxValue) {
+		// TODO Auto-generated method stub
+		this.useyrangeminmax=true;
+		this.yrangemin=minValue;
+		this.yrangemax=maxValue;
+		
+	}
+	public void setXTickUnit(IScope scope, double r) {
+		this.xtickunit=r;
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void setYTickUnit(IScope scope, double r) {
+		this.ytickunit=r;
+		// TODO Auto-generated method stub
+		
+	}
+	public void setGap(IScope scope, double range) {
+		// TODO Auto-generated method stub
+		this.gap=range;
+	}
+
 	public JFreeChart getJFChart()
 	{
 		return null;
@@ -296,5 +455,26 @@ public abstract class ChartOutput {
 		// TODO Auto-generated method stub
 		
 	}
+
+	public void setSeriesLabelPosition(IScope scope, String asString) {
+		// TODO Auto-generated method stub
+		series_label_position=asString;
+		
+	}
+
+	public void setStyle(IScope scope, String asString) {
+		// TODO Auto-generated method stub
+		style=asString;
+		
+	}
+
+	public void initChart_post_data_init(IScope scope) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+
+
 
 }

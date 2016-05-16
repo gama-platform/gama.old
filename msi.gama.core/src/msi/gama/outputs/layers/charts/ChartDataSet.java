@@ -5,11 +5,13 @@ import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
@@ -23,14 +25,16 @@ public class ChartDataSet {
 	ArrayList<Double> XSeriesValues=new ArrayList<Double>(); //for series
 	LinkedHashMap<String,Integer> serieCreationDate=new LinkedHashMap<String,Integer>();
 
+	IExpression xsource; //to replace default common X Source
+	
 	LinkedHashMap<String,Integer> serieRemovalDate=new LinkedHashMap<String,Integer>();
 	LinkedHashMap<String,Integer> serieToUpdateBefore=new LinkedHashMap<String,Integer>();
 	ChartOutput mainoutput;
 	int resetAllBefore=0;
 	
-	String defaultstyle;
+	String defaultstyle=IKeyword.DEFAULT;
 
-
+	boolean useXSource=false;
 	boolean commonXSeries=false; // series
 	boolean byCategory=false; //histogram/pie
 	boolean keepOldSeries=true; // keep old series or move to deleted (to keep history)
@@ -131,6 +135,7 @@ public class ChartDataSet {
 	public void setOutput(ChartOutput output)
 	{
 		mainoutput=output;
+		this.defaultstyle=output.getStyle();
 	}
 
 	public void addNewSerie(String id,ChartDataSeries serie,int date)
@@ -154,6 +159,10 @@ public class ChartDataSet {
 		
 	}
 	
+	public ArrayList<ChartDataSource> getSources() {
+		return sources;
+	}
+
 	public void addDataSource(ChartDataSource source)
 	{
 		sources.add(source);
@@ -183,9 +192,10 @@ public class ChartDataSet {
 		return series.get(serieid);
 	}
 
+
 	public void updatedataset(IScope scope, int chartCycle) {
 		// TODO Auto-generated method stub
-		addCommonXValue(scope,chartCycle);
+		updateXValues(scope, chartCycle);
 		for (ChartDataSource source : sources)
 		{
 			source.updatevalues(scope,chartCycle);
@@ -193,6 +203,78 @@ public class ChartDataSet {
 		
 	}
 
+	public void updateXValues(IScope scope, int chartCycle)
+	{
+		if (this.useXSource)
+		{
+			Object xval=xsource.value(scope);
+			if (xval instanceof GamaList)
+			{
+				IList xv2=Cast.asList(scope, xval);
+	/*			if (xv2.get(0) instanceof Number)
+				{
+					XSeriesValues=new ArrayList<Double>();
+					categories=new ArrayList<String>();
+					for (int i=0; i<xv2.size(); i++)
+					{
+						XSeriesValues.add(new Double(Cast.asFloat(scope, xv2.get(i))));
+						categories.add(Cast.asString(scope, xv2.get(i)));
+						
+					}
+					
+				}
+				else*/ //restore to allow common X number series (I found it confusing..)
+				{
+					if (xv2.size()>categories.size())
+					{
+						categories=new ArrayList<String>();
+						for (int i=0; i<xv2.size(); i++)
+						{
+							if (i>XSeriesValues.size())
+							{
+								XSeriesValues.add(new Double(getCycleOrPlusOneForBatch(scope,chartCycle)));								
+							}
+							categories.add(Cast.asString(scope, xv2.get(i)));
+						}
+						XSeriesValues=new ArrayList<Double>();
+						categories=new ArrayList<String>();
+						
+					}
+					
+				}				
+			}
+			else 
+				{
+/*				if (xval instanceof Number )
+				{
+					double dvalue=Cast.asFloat(scope, xval);
+					XSeriesValues.add(new Double(dvalue));
+					categories.add(""+xval);				
+				}
+				else  */ //restore to allow common X number series (I found it confusing..)
+			{
+					XSeriesValues.add(new Double(getCycleOrPlusOneForBatch(scope,chartCycle)));
+					categories.add(Cast.asString(scope, xval));
+			}
+				}
+			
+		}
+		else
+		{
+			addCommonXValue(scope,getCycleOrPlusOneForBatch(scope,chartCycle));
+			
+		}
+		
+	}
+	
+	public int getCycleOrPlusOneForBatch(IScope scope,int chartcycle)
+	{
+		if (this.XSeriesValues.contains((double)chartcycle))
+			return (int)(XSeriesValues.get(XSeriesValues.size()-1)).doubleValue()+1;
+		return chartcycle;
+	}
+	
+	
 	private void addCommonXValue(IScope scope, int chartCycle) {
 		// TODO Auto-generated method stub
 		XSeriesValues.add(new Double(chartCycle));
@@ -205,6 +287,11 @@ public class ChartDataSet {
 		return scope.getClock().getCycle();
 	}
 
+	public void setXSource(IScope scope, IExpression data) {
+		// TODO Auto-generated method stub
+		this.useXSource=true;
+		this.xsource=data;
+	}
 	
 	
 	public ChartDataSeries createOrGetSerie(IScope scope, String id, ChartDataSourceList source) {
@@ -265,6 +352,8 @@ public class ChartDataSet {
 		// TODO Auto-generated method stub
 		return defaultstyle;
 	}
+
+
 
 	
 }

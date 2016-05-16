@@ -72,7 +72,7 @@ public class ChartDataStatement extends AbstractStatement {
 	public static final String XMINMAX_VALUES = "x_minmax_values";
 	public static final String YMINMAX_VALUES = "y_minmax_values";
 	public static final String MARKER_EMPTY = "marker_empty";
-	public static final String MARKER_SQUARE = "marker_sqaure";
+	public static final String MARKER_SQUARE = "marker_square";
 	public static final String MARKER_CIRCLE = "marker_circle";
 	public static final String MARKER_UP_TRIANGLE = "marker_up_triangle";
 	public static final String MARKER_DIAMOND = "marker_diamond";

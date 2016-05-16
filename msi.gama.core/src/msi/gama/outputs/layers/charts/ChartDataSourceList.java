@@ -172,10 +172,6 @@ public class ChartDataSourceList extends ChartDataSource {
 		
 	}
 
-	public void setMarkerShape(IScope scope, String stval) {
-		// TODO Auto-generated method stub
-		uniqueMarkerName=stval;
-	}
 
 
 	private void newserie(IScope scope, String myname) {

@@ -6,8 +6,10 @@ import java.util.HashMap;
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
+import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.DefaultPolarItemRenderer;
 import org.jfree.chart.renderer.category.AbstractCategoryItemRenderer;
@@ -31,17 +33,21 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 		// TODO Auto-generated constructor stubs
 		
 
-				if ( style.equals(IKeyword.THREE_D) ) {
-					chart = ChartFactory.createPieChart3D(getName(), null, false, true, false);
-				} else if ( style.equals(IKeyword.RING) ) {
-					chart = ChartFactory.createRingChart(getName(), null, false, true, false);
-				} else if ( style.equals(IKeyword.EXPLODED) ) {
-					chart = ChartFactory.createPieChart(getName(), null, false, true, false);
-					exploded = true;
-				} else {
-					chart = ChartFactory.createPieChart(getName(), null, false, true, false);
-				}
 
+	}
+	
+	public void createChart(IScope scope)
+	{
+		super.createChart(scope);
+		if ( style.equals(IKeyword.THREE_D) ) {
+			chart = ChartFactory.createPieChart3D(getName(), null, false, true, false);
+		} else if ( style.equals(IKeyword.RING) ) {
+			chart = ChartFactory.createRingChart(getName(), null, false, true, false);
+		} else if ( style.equals(IKeyword.EXPLODED) ) {
+			chart = ChartFactory.createPieChart(getName(), null, false, true, false);
+		} else {
+			chart = ChartFactory.createPieChart(getName(), null, false, true, false);
+		}
 	}
 	public void initdataset()
 	{
@@ -85,8 +91,29 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 		return new DefaultPieDataset();
 	}
 
+	public void initChart(IScope scope, String chartname)
+	{
+		super.initChart(scope,chartname);
+
+		final PiePlot pp = (PiePlot) chart.getPlot();
+		pp.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1} ({2})"));
+		if (axesColor!=null)
+		{
+			pp.setLabelLinkPaint(axesColor);
+		}
+		pp.setLabelFont(getTickFont());
+		if (textColor!=null)
+		{
+//			pp.setLabelPaint(textColor);				
+			//not for Pie since the label background is always yellow for now...
+		}
+
+	}
+
+	
 	protected AbstractRenderer createRenderer(IScope scope,String serieid)
 	{
+
 		String style=this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
 		AbstractRenderer newr=new DefaultPolarItemRenderer();
 		switch (style)
@@ -141,7 +168,11 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 		
 		nbseries++;
 		IdPosition.put(serieid, nbseries-1);
-		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" jfds "+jfreedataset.size()+" datasc "+" nbse "+nbseries);
+		if ( getStyle().equals(IKeyword.EXPLODED) ) {
+				plot.setExplodePercent(serieid, 0.20);
+		}
+		
+//		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" jfds "+jfreedataset.size()+" datasc "+" nbse "+nbseries);
 	}
 
 

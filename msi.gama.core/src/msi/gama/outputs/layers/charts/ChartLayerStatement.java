@@ -68,11 +68,11 @@ import org.jfree.ui.RectangleInsets;
 @facets(value = {
 	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional = true), */
 	@facet(name = ChartLayerStatement.XRANGE,
-		type = { IType.FLOAT, IType.INT, IType.POINT },
+		type = { IType.FLOAT, IType.INT, IType.POINT, IType.LIST },
 		optional = true,
 		doc = @doc("range of the x-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
 	@facet(name = ChartLayerStatement.YRANGE,
-		type = { IType.FLOAT, IType.INT, IType.POINT },
+		type = { IType.FLOAT, IType.INT, IType.POINT, IType.LIST },
 		optional = true,
 		doc = @doc("range of the y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
 	@facet(name = IKeyword.POSITION,
@@ -97,7 +97,9 @@ import org.jfree.ui.RectangleInsets;
 		doc = @doc("the type of chart. It could be histogram, series, xy, pie or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 			IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
-			IKeyword.EXPLODED }, optional = true),
+			IKeyword.EXPLODED, IKeyword.DEFAULT }, 
+			doc = @doc("The sub-style, also default style for the series."),
+			optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true, doc = @doc("the style of the chart")),
 	@facet(name = IKeyword.GAP, type = IType.FLOAT, optional = true),
 	@facet(name = ChartLayerStatement.YTICKUNIT,
@@ -109,7 +111,15 @@ import org.jfree.ui.RectangleInsets;
 		optional = true,
 		doc = @doc("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the chart layer")),
+	@facet(name = ChartLayerStatement.XLABEL, type = IType.LABEL, optional = true, doc = @doc("the title for the X axis")),
+	@facet(name = ChartLayerStatement.YLABEL, type = IType.LABEL, optional = true, doc = @doc("the title for the Y axis")),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
+	@facet(name = ChartLayerStatement.SERIES_LABEL_POSITION,
+	type = IType.ID,
+	values = { "default", "none", "legend","onchart","yaxis","xaxis" },
+	optional = true,
+	doc = @doc("Position of the Series names: default (best guess), none, legend, onchart, xaxis (for category plots) or yaxis (uses the first serie name).")),
+
 	@facet(name = ChartLayerStatement.TICKFONTFACE, type = IType.STRING, optional = true),
 	@facet(name = ChartLayerStatement.TICKFONTSIZE, type = IType.INT, optional = true),
 	@facet(name = ChartLayerStatement.TICKFONTSTYLE,
@@ -155,6 +165,11 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	public static final String XRANGE = "x_range";
 	public static final String YRANGE = "y_range";
 
+	public static final String XLABEL = "x_label";
+	public static final String YLABEL = "y_label";	
+
+	public static final String SERIES_LABEL_POSITION = "series_label_position";
+	
 	public static final String YTICKUNIT = "y_tick_unit";
 	public static final String XTICKUNIT = "x_tick_unit";
 
@@ -257,7 +272,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
-		lastValues.clear();;
+		lastValues.clear();
 
 //		chartParameters.clear();
 		
@@ -266,55 +281,177 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 		chartoutput = ChartJFreeChartOutput.createChartOutput(scope,getName(),string1);
 		
+		string1 = getFacet(IKeyword.STYLE);
+		if ( string1 != null ) {
+			chartoutput.setStyle(scope,Cast.asString(scope, string1.value(scope)));
+		}
+
+		chartoutput.createChart(scope);
+		
+		string1 = getFacet(ChartLayerStatement.XLABEL);
+		if ( string1 != null ) {
+			chartoutput.setXLabel(scope,Cast.asString(scope, string1.value(scope)));
+		}
+
+		string1 = getFacet(ChartLayerStatement.YLABEL);
+		if ( string1 != null ) {
+			chartoutput.setYLabel(scope,Cast.asString(scope, string1.value(scope)));
+		}
+		
+		string1 = getFacet(ChartLayerStatement.SERIES_LABEL_POSITION);
+		if ( string1 != null ) {
+			chartoutput.setSeriesLabelPosition(scope,Cast.asString(scope, string1.value(scope)));
+		}
+
+		
+		IExpression expr = getFacet(XRANGE);
+		if (expr!=null)
+		{
+		Object range = expr.value(scope);
+
+		if ( range instanceof Number ) {
+			chartoutput.setXRangeInterval(scope,((Number)range).doubleValue());
+		} 
+		else if ( range instanceof GamaPoint ) {
+			chartoutput.setXRangeMinMax(scope,((GamaPoint) range).getX(),((GamaPoint) range).getY());
+		}
+	 else if ( range instanceof GamaList ) {
+			chartoutput.setXRangeMinMax(scope,Cast.asFloat(scope, ((GamaList) range).get(0)),Cast.asFloat(scope, ((GamaList) range).get(1)));
+	 }
+		}
+		
+		expr = getFacet(YRANGE);
+		if (expr!=null)
+		{
+		Object range = expr.value(scope);
+
+		if ( range instanceof Number ) {
+			chartoutput.setYRangeInterval(scope,((Number)range).doubleValue());
+		} 
+		else if ( range instanceof GamaPoint ) {
+			chartoutput.setYRangeMinMax(scope,((GamaPoint) range).getX(),((GamaPoint) range).getY());
+		}
+	 else if ( range instanceof GamaList ) {
+			chartoutput.setYRangeMinMax(scope,Cast.asFloat(scope, ((GamaList) range).get(0)),Cast.asFloat(scope, ((GamaList) range).get(1)));
+	 }
+		}
+	
+		IExpression expr2 = getFacet(XTICKUNIT);
+		if ( expr2 != null ) {
+			Object range = expr2.value(scope);
+
+			if ( range instanceof Number ) {
+				double r = ((Number) range).doubleValue();
+				chartoutput.setXTickUnit(scope,r);
+			}
+		}
+		
+		 expr2 = getFacet(YTICKUNIT);
+		if ( expr2 != null ) {
+			Object range = expr2.value(scope);
+
+			if ( range instanceof Number ) {
+				double r = ((Number) range).doubleValue();
+				chartoutput.setYTickUnit(scope,r);
+			}
+		}
+		 expr2 = getFacet(IKeyword.GAP);
+		if ( expr2 != null ) {
+			Double range = Cast.asFloat(scope, expr2.value(scope));
+			chartoutput.setGap(scope,range);
+		}
+		// ((BarRenderer) plot.getRenderer()).setItemMargin(gap);
+		
 		GamaColor colorvalue=new GamaColor(Color.black);
 		IExpression color = getFacet(IKeyword.AXES);
-//		chartParameters.put(IKeyword.AXES, color);
 		if ( color != null ) {
 			colorvalue = Cast.asColor(scope, color.value(scope));
 		}
 		chartoutput.setAxesColorValue(scope,colorvalue);
 
-//TOCHANGE		
-		/*
-		IExpression color1 = getFacet(IKeyword.BACKGROUND);
-		chartParameters.put(IKeyword.BACKGROUND, color1);
-		IExpression string = getFacet(IKeyword.STYLE);
-		chartParameters.put(IKeyword.STYLE, string);
+		colorvalue=new GamaColor(Color.black);
+		color = getFacet(IKeyword.COLOR);
+		if ( color != null ) {
+			colorvalue = Cast.asColor(scope, color.value(scope));
+			chartoutput.setColorValue(scope,colorvalue);
+		}
+
+		colorvalue=new GamaColor(Color.white);
+		color = getFacet(IKeyword.BACKGROUND);
+		if ( color != null ) {
+			colorvalue = Cast.asColor(scope, color.value(scope));
+			chartoutput.setBackgroundColorValue(scope,colorvalue);
+		}
+
 		IExpression face = getFacet(ChartLayerStatement.TICKFONTFACE);
-		chartParameters.put(ChartLayerStatement.TICKFONTFACE, face);
+		if ( face != null ) {
+			chartoutput.setTickFontFace(scope,Cast.asString(scope, face));
+		}
 		face = getFacet(ChartLayerStatement.LABELFONTFACE);
-		chartParameters.put(ChartLayerStatement.LABELFONTFACE, face);
+		if ( face != null ) {
+			chartoutput.setLabelFontFace(scope,Cast.asString(scope, face));
+		}
 		face = getFacet(ChartLayerStatement.LEGENDFONTFACE);
-		chartParameters.put(ChartLayerStatement.LEGENDFONTFACE, face);
+		if ( face != null ) {
+			chartoutput.setLegendFontFace(scope,Cast.asString(scope, face));
+		}
 		face = getFacet(ChartLayerStatement.TITLEFONTFACE);
-		chartParameters.put(ChartLayerStatement.TITLEFONTFACE, face);
+		if ( face != null ) {
+			chartoutput.setTitleFontFace(scope,Cast.asString(scope, face));
+		}
 		face = getFacet(ChartLayerStatement.TICKFONTSIZE);
-		chartParameters.put(ChartLayerStatement.TICKFONTSIZE, face);
+		if ( face != null ) {
+			chartoutput.setTickFontSize(scope,Cast.asInt(scope, face.value(scope)).intValue());
+		}
 		face = getFacet(ChartLayerStatement.LABELFONTSIZE);
-		chartParameters.put(ChartLayerStatement.LABELFONTSIZE, face);
+		if ( face != null ) {
+			chartoutput.setLabelFontSize(scope,Cast.asInt(scope, face.value(scope)).intValue());
+		}
 		face = getFacet(ChartLayerStatement.LEGENDFONTSIZE);
-		chartParameters.put(ChartLayerStatement.LEGENDFONTSIZE, face);
+		if ( face != null ) {
+			chartoutput.setLegendFontSize(scope,Cast.asInt(scope, face.value(scope)).intValue());
+		}
 		face = getFacet(ChartLayerStatement.TITLEFONTSIZE);
-		chartParameters.put(ChartLayerStatement.TITLEFONTSIZE, face);
+		if ( face != null ) {
+			chartoutput.setTitleFontSize(scope,Cast.asInt(scope, face.value(scope)).intValue());
+		}
 		face = getFacet(ChartLayerStatement.TICKFONTSTYLE);
-		chartParameters.put(ChartLayerStatement.TICKFONTSTYLE, face);
+		if ( face != null ) {
+			chartoutput.setTickFontStyle(scope,getLiteral(ChartLayerStatement.TICKFONTSTYLE));
+		}
 		face = getFacet(ChartLayerStatement.LABELFONTSTYLE);
-		chartParameters.put(ChartLayerStatement.LABELFONTSTYLE, face);
+		if ( face != null ) {
+			chartoutput.setLabelFontStyle(scope,getLiteral(ChartLayerStatement.LABELFONTSTYLE));
+		}
 		face = getFacet(ChartLayerStatement.LEGENDFONTSTYLE);
-		chartParameters.put(ChartLayerStatement.LEGENDFONTSTYLE, face);
+		if ( face != null ) {
+			chartoutput.setLegendFontStyle(scope,getLiteral(ChartLayerStatement.LEGENDFONTSTYLE));
+		}
 		face = getFacet(ChartLayerStatement.TITLEFONTSTYLE);
-		chartParameters.put(ChartLayerStatement.TITLEFONTSTYLE, face);
-*/
+		if ( face != null ) {
+			chartoutput.setTitleFontStyle(scope,getLiteral(ChartLayerStatement.TITLEFONTSTYLE));
+		}
 		
 		
+
 		chartoutput.initChart(scope,getName());
 		
 		chartdataset=new ChartDataSet();
 	    chartoutput.setChartdataset(chartdataset);
 	    chartoutput.initdataset();
-		
+
+		expr = getFacet(IKeyword.TIMEXSERIES);
+		if (expr!=null)
+		{
+			IExpression expval = getFacet(IKeyword.TIMEXSERIES).resolveAgainst(scope);
+			chartdataset.setXSource(scope,expval);
+			chartoutput.setUseXSource(scope,expval);
+		}
+	    
+	    
 		dataDeclaration.executeOn(scope);
 				
+		chartoutput.initChart_post_data_init(scope);
 		chartoutput.updateOutput(scope);
 
 		return true;

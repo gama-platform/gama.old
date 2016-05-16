@@ -1,13 +1,17 @@
 package msi.gama.outputs.layers.charts;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Shape;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.axis.CategoryAxis;
+import org.jfree.chart.axis.ExtendedCategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.NumberTickUnit;
+import org.jfree.chart.axis.SubCategoryAxis;
 import org.jfree.chart.labels.AbstractCategoryItemLabelGenerator;
 import org.jfree.chart.labels.CategoryItemLabelGenerator;
 import org.jfree.chart.labels.ItemLabelAnchor;
@@ -22,7 +26,11 @@ import org.jfree.chart.renderer.category.AbstractCategoryItemRenderer;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.BarRenderer3D;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.LevelRenderer;
+import org.jfree.chart.renderer.category.ScatterRenderer;
+import org.jfree.chart.renderer.category.StackedAreaRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.renderer.category.StatisticalLineAndShapeRenderer;
 import org.jfree.chart.renderer.xy.AbstractXYItemRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
@@ -44,11 +52,19 @@ import msi.gaml.expressions.IExpression;
 
 public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
+	boolean useSubAxis=false;
+	boolean useMainAxisLabel=true;
+	
 	public ChartJFreeChartOutputHistogram(IScope scope, String name,
 			IExpression typeexp) {
 		super(scope, name, typeexp);
 		// TODO Auto-generated constructor stub
 
+	}
+	
+	public void createChart(IScope scope)
+	{
+		super.createChart(scope);
 		jfreedataset.add(0,new DefaultCategoryDataset());
 		
 		if ( style.equals(IKeyword.THREE_D) ) {
@@ -65,7 +81,9 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 					false);
 
 		}		
+		
 	}
+	
 	public void initdataset()
 	{
 		super.initdataset();
@@ -151,10 +169,26 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			break;
 		
 		}
-		case IKeyword.WHISKER:
+		case IKeyword.DOT:
+		{
+			newr=new ScatterRenderer();
+			break;		
+		}			
 		case IKeyword.AREA:
-		case IKeyword.BAR:
+		{
+			newr=new StackedAreaRenderer();
+			break;		
+		}			
+		case IKeyword.LINE:
+		{
+			newr=new StatisticalLineAndShapeRenderer();
+			break;		
+		}
 		case IKeyword.STEP:
+		{
+			newr=new LevelRenderer();
+			break;		
+		}			
 		case IKeyword.RING:
 		case IKeyword.EXPLODED:
 		default: 
@@ -172,6 +206,8 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 //		AbstractCategoryItemRenderer newr=(AbstractCategoryItemRenderer)this.getOrCreateRenderer(scope, serieid);
         CategoryPlot plot = (CategoryPlot)this.chart.getPlot();
 		AbstractCategoryItemRenderer newr=(AbstractCategoryItemRenderer)plot.getRenderer();
+		if (serieid!=this.getChartdataset().series.keySet().iterator().next())
+			newr=(AbstractCategoryItemRenderer)this.getOrCreateRenderer(scope, serieid);
 		
 		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
 		int myrow=IdPosition.get(serieid);
@@ -180,12 +216,25 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			newr.setSeriesPaint(myrow,myserie.getMycolor());
 		}
 
-		((BarRenderer)newr).setBaseItemLabelGenerator(new LabelGenerator());
-        ItemLabelPosition itemlabelposition = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER);
-        newr.setBasePositiveItemLabelPosition(itemlabelposition);
-        newr.setBaseNegativeItemLabelPosition(itemlabelposition);
-        newr.setBaseItemLabelsVisible(true);
+		if (this.series_label_position.equals("onchart"))
+		{
+//			((BarRenderer)newr).setBaseItemLabelGenerator(new LabelGenerator());
+			newr.setBaseItemLabelGenerator(new LabelGenerator());
+	        ItemLabelPosition itemlabelposition = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER);
+	        newr.setBasePositiveItemLabelPosition(itemlabelposition);
+	        newr.setBaseNegativeItemLabelPosition(itemlabelposition);
+	        newr.setBaseItemLabelsVisible(true);
+		}
 
+		if (newr instanceof BarRenderer)
+		{
+			if (gap>=0)
+	        {
+	            ((BarRenderer)newr).setMaximumBarWidth(1 - gap);
+	        	
+	        }
+			
+		}
 		
 	}
 	
@@ -234,7 +283,9 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		nbseries++;
 //    	plot.setRenderer(nbseries-1, (CategoryItemRenderer)getOrCreateRenderer(scope,serieid));
 		IdPosition.put(serieid, nbseries-1);
-		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" fdsize "+plot.getCategories().size()+" jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount()+" nbse "+nbseries);
+
+		
+//		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" fdsize "+plot.getCategories().size()+" jfds "+jfreedataset.size()+" datasc "+plot.getDatasetCount()+" nbse "+nbseries);
 		// TODO Auto-generated method stub		
 	}
 
@@ -251,7 +302,6 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		ArrayList<String> CValues=dataserie.getCValues(scope);
 		ArrayList<Double> YValues=dataserie.getYValues(scope);
 		ArrayList<Double> SValues=dataserie.getSValues(scope);
-		
 		if (CValues.size()>0)
 		{
 			// TODO Hack to speed up, change!!!
@@ -261,8 +311,8 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		for(int i=0; i<CValues.size(); i++)
 		{
 				serie.addValue(YValues.get(i), serieid, CValues.get(i)); 
+//				((ExtendedCategoryAxis)domainAxis).addSubLabel(CValues.get(i), serieid);;
 		}
-		rangeAxis.setAutoRange(true);
 		}
 		if (SValues.size()>0)
 		{
@@ -273,14 +323,182 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		this.resetRenderer(scope, serieid); 
 				
 	}
+
+	public void resetAxes(IScope scope)
+	{
+		final NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot)this.chart.getPlot()).getRangeAxis();
+
+		if (!useyrangeinterval && !useyrangeminmax)
+		{
+			rangeAxis.setAutoRange(true);
+		}
+			
+		if (this.useyrangeinterval)
+		{
+			rangeAxis.setFixedAutoRange(yrangeinterval);
+			rangeAxis.setAutoRangeMinimumSize(yrangeinterval);
+			rangeAxis.setAutoRange(true);
+			
+		}
+		if (this.useyrangeminmax)
+		{
+			rangeAxis.setRange(yrangemin, yrangemax);
+			
+		}
+
+		resetDomainAxis(scope);
+		CategoryAxis domainAxis = (CategoryAxis) ((CategoryPlot)this.chart.getPlot()).getDomainAxis();
+
+		if (this.useSubAxis)
+		{
+			for (String serieid:chartdataset.getDataSeriesIds(scope))
+			{
+				((SubCategoryAxis) domainAxis).addSubCategory(serieid);			
+			}
+			
+		}
+		
+	}
+
 	
+	private void resetDomainAxis(IScope scope) {
+		// TODO Auto-generated method stub
+		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
+		if (this.useSubAxis)
+		{
+		SubCategoryAxis newAxis=new SubCategoryAxis(pp.getDomainAxis().getLabel());
+		pp.setDomainAxis(newAxis);
+		}
+		
+		pp.getDomainAxis().setAxisLinePaint(axesColor);
+		pp.getDomainAxis().setTickLabelFont(getTickFont());
+		pp.getDomainAxis().setLabelFont(getLabelFont());
+		if (textColor!=null)
+		{
+			pp.getDomainAxis().setLabelPaint(textColor);				
+			pp.getDomainAxis().setTickLabelPaint(textColor);				
+		}
+
+        if (gap>0)
+        {
+
+		pp.getDomainAxis().setCategoryMargin(gap);
+		pp.getDomainAxis().setUpperMargin(gap);
+		pp.getDomainAxis().setLowerMargin(gap);
+        }
+
+		if (this.useSubAxis && !this.useMainAxisLabel)
+		{
+			pp.getDomainAxis().setTickLabelsVisible(false);
+//			pp.getDomainAxis().setTickLabelPaint(this.backgroundColor);
+	//		pp.getDomainAxis().setLabelFont(new Font(labelFontFace, labelFontStyle, 1));
+		}
+
+		
+		
+	}
 	public void initChart(IScope scope, String chartname)
 	{
 		super.initChart(scope, chartname);
 		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
+
+		
+		
+
+
+	}
+	public void initChart_post_data_init(IScope scope) {
+		// TODO Auto-generated method stub
+		super.initChart_post_data_init(scope);
+		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
+
+		String sty=getStyle();
+		this.useSubAxis=false;
+		switch (sty)
+		{
+			case (IKeyword.STACK):
+			{				
+				if (this.series_label_position.equals("xaxis"))
+				{
+					this.series_label_position="default";
+				}
+				if (this.series_label_position.equals("default"))
+				{
+					this.series_label_position="legend";					
+				}
+				break;
+			}
+			default:
+			{
+				if (this.series_label_position.equals("default"))
+				{
+					if (this.getChartdataset().getSources().size()>0)
+					{
+						ChartDataSource onesource=this.getChartdataset().getSources().get(0);
+						if (onesource.isCumulative)
+						{
+							this.series_label_position="legend";
+						}
+						else
+						{
+							this.series_label_position="xaxis";	
+							useMainAxisLabel=false;
+						}
+						
+					}
+					else
+					{
+						this.series_label_position="legend";
+						
+					}
+				}
+				break;
+			}
+		}
+		if (this.series_label_position.equals("xaxis"))
+		{
+			this.useSubAxis=true;
+		}
+
+		if (!this.series_label_position.equals("legend"))
+		{
+			chart.getLegend().setVisible(false);
+			// legend is useless, but I find it nice anyway... Could put back...
+		}
+		this.resetDomainAxis(scope);
+		
 		pp.setDomainGridlinePaint(axesColor);
 		pp.setRangeGridlinePaint(axesColor);
 		pp.setRangeCrosshairVisible(true);
+		
+		
+		pp.getRangeAxis().setAxisLinePaint(axesColor);
+		pp.getRangeAxis().setLabelFont(getLabelFont());
+		pp.getRangeAxis().setTickLabelFont(getTickFont());
+		if (textColor!=null)
+		{
+			pp.getRangeAxis().setLabelPaint(textColor);				
+			pp.getRangeAxis().setTickLabelPaint(textColor);				
+		}
+		if ( ytickunit > 0 ) {
+			((NumberAxis)pp.getRangeAxis()).setTickUnit(new NumberTickUnit(ytickunit));
+		}
+
+
+		if (ylabel!=null && ylabel!="")
+		{
+			pp.getRangeAxis().setLabel(ylabel);				
+		}
+		if (this.series_label_position.equals("yaxis"))
+		{
+			pp.getRangeAxis().setLabel(this.getChartdataset().getDataSeriesIds(scope).iterator().next());
+			chart.getLegend().setVisible(false);
+		}
+		
+		if (xlabel!=null && xlabel!="")
+		{
+			pp.getDomainAxis().setLabel(xlabel);				
+		}
 		
 	}
 	

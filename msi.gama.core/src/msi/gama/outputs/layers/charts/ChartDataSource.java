@@ -48,7 +48,7 @@ public class ChartDataSource {
 	IExpression markershapeexp;
 	
 	String uniqueMarkerName;
-	String style=IKeyword.LINE;
+	String style=IKeyword.DEFAULT;
 
 	Object lastvalue;	
 //	HashMap<String,Object> sourceParameters=new HashMap<String,Object>();	
@@ -162,6 +162,7 @@ public class ChartDataSource {
 	}
 	public String getStyle(IScope scope) {
 		// TODO Auto-generated method stub
+		if (style==IKeyword.DEFAULT) return this.getDataset().getStyle(scope);
 		return style;
 	}
 	
@@ -772,6 +773,16 @@ public class ChartDataSource {
 		
 
 	}
+	public void setMarkerShape(IScope scope, String stval) {
+		// TODO Auto-generated method stub
+		//markerName is useless, for now creates/modifies the output
+		uniqueMarkerName=stval;
+		if (uniqueMarkerName==ChartDataStatement.MARKER_EMPTY)
+		{
+			this.setMarkerBool(scope, false);
+		}
+//		this.getDataset().getOutput().setSerieMarkerShape(scope,this.getName(),stval);
+	}
 
 	public void setMarkerSize(IScope scope, IExpression expval) {
 		// TODO Auto-generated method stub
@@ -790,7 +801,7 @@ public class ChartDataSource {
 		this.colorexp=expval;
 		
 	}
-
+/*
 	public void setMarkerShapeExp(IScope scope, IExpression expval) {
 		// TODO Auto-generated method stub
 		this.setUseMarkerShapeExp(scope, true);
@@ -807,7 +818,7 @@ public class ChartDataSource {
 	public boolean isUseMarkerShapeExp() {
 		return useMarkerShapeExp;
 	}
-	
+	*/
 	public boolean isUseSizeExp() {
 		// TODO Auto-generated method stub
 		if (this.sizeexp==null) return false;
