@@ -122,6 +122,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 	public final Map<String, SingleEquationStatement> equations = new TOrderedHashMap<>();
 	public final Map<String, IExpression> variables_diff = new TOrderedHashMap<>();
+	public IExpression variable_time = null;
 	private IScope currentScope;
 	IExpression simultan = null;
 
@@ -183,8 +184,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 					final IExpression v = ((SingleEquationStatement) s).getVar(i);
 					if (((SingleEquationStatement) s).getOrder() > 0) {
 						variables_diff.put(((SingleEquationStatement) s).toString(), v);
-					}
+					}					
 				}
+				variable_time = ((SingleEquationStatement) s).getVar_t();
 			} else {
 				others.add(s);
 			}
