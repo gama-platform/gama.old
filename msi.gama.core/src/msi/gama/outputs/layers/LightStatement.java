@@ -16,6 +16,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AspectStatement;
@@ -24,6 +25,7 @@ import msi.gaml.types.IType;
 @symbol(name = "light", kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.LIGHT, IConcept.THREED })
 @inside(symbols = IKeyword.DISPLAY)
 @facets(
+		omissible = IKeyword.ID,
 	value = { 
 		@facet(name = IKeyword.ID, type = IType.INT, optional = false,
 		doc = @doc("a number from 1 to 7 to specify which light we are using") ),
@@ -71,18 +73,40 @@ public class LightStatement extends AbstractLayerStatement {
 		@Override
 		public void validate(final StatementDescription desc) {
 			
-//			IExpressionDescription position = desc.getFacets().get(IKeyword.POSITION);
-//			IExpressionDescription direction = desc.getFacets().get(IKeyword.DIRECTION);
-//			IExpressionDescription type = desc.getFacets().get(IKeyword.TYPE);
-//			IExpressionDescription variation = desc.getFacets().get(IKeyword.VARIATION);
-//			
-//			type.l
-//
-//			// conflict diffusion matrix /vs/ parameters
-//			if ( propor != null && mat_diffu != null ) {
-//				desc.error("\"matrix:\" and \"proportion:\" can not be used at the same time", IGamlIssue.GENERAL);
-//			}
+			IExpressionDescription position = desc.getFacets().get(IKeyword.POSITION);
+			IExpressionDescription direction = desc.getFacets().get(IKeyword.DIRECTION);
+			IExpressionDescription spotAngle = desc.getFacets().get(IKeyword.SPOT_ANGLE);
+			IExpressionDescription linearAttenuation = desc.getFacets().get(IKeyword.LINEAR_ATTENUATION);
+			IExpressionDescription quadraticAttenuation = desc.getFacets().get(IKeyword.QUADRATIC_ATTENUATION);
 			
+			IExpression spec = desc.getFacets().getExpr(IKeyword.TYPE);
+			if ( spec != null && spec.isConst() ) {
+				String typeString = spec.literalValue().toString();
+				// light type direction
+				if ( typeString.compareTo("direction") == 0 ) {
+					if (position != null) {
+						desc.error("a direction light has no position (only a direction)", IGamlIssue.GENERAL);
+					}
+					if (linearAttenuation != null) {
+						desc.error("a direction light has no attenuation", IGamlIssue.GENERAL);
+					}
+					if (quadraticAttenuation != null) {
+						desc.error("a direction light has no attenuation", IGamlIssue.GENERAL);
+					}
+				}
+				// light type spot
+				else if ( typeString.compareTo("type") == 0 ) {
+				}
+				// light type point
+				else {
+					if (direction != null) {
+						desc.error("a point light has no direction (only a position)", IGamlIssue.GENERAL);
+					}
+					if (spotAngle != null) {
+						desc.error("a point light has no spot angle (only a spot light does !)", IGamlIssue.GENERAL);
+					}
+				}
+			}			
 		}
 
 	}
