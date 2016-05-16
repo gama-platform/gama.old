@@ -208,20 +208,11 @@ public class ChartDataSourceList extends ChartDataSource {
 						String myname=Cast.asString(scope, no);
 						newserie(scope,myname);
 						currentseries.add(i, myname);
-						
-														
-						
 					}
-
-					
 				}
-				
-			
 			}
 		}
 		inferDatasetProperties(scope);		
-		
-		
 	}
 	
 	public void inferDatasetProperties(final IScope scope)

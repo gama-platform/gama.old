@@ -216,8 +216,8 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 //		AbstractCategoryItemRenderer newr=(AbstractCategoryItemRenderer)this.getOrCreateRenderer(scope, serieid);
         CategoryPlot plot = (CategoryPlot)this.chart.getPlot();
 		AbstractCategoryItemRenderer newr=(AbstractCategoryItemRenderer)plot.getRenderer();
-		if (serieid!=this.getChartdataset().series.keySet().iterator().next())
-			newr=(AbstractCategoryItemRenderer)this.getOrCreateRenderer(scope, serieid);
+//		if (serieid!=this.getChartdataset().series.keySet().iterator().next())
+//			newr=(AbstractCategoryItemRenderer)this.getOrCreateRenderer(scope, serieid);
 		
 		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
 		int myrow=IdPosition.get(serieid);
