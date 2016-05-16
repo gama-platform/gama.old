@@ -202,6 +202,11 @@
 	  <!--  eclipse dependencies end -->
 	  
 	  <!--  dependencies needed by others -->
+	<dependency>
+	    <groupId>org.jogamp.jogl</groupId>
+	    <artifactId>jogl-all</artifactId>
+	    <version>2.3.2</version>
+	</dependency>
 	  <dependency>
 		<groupId>commons-lang</groupId>
 		<artifactId>commons-lang</artifactId>
