@@ -1,6 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Network
-Bundle-SymbolicName: ummisco.gama.network
+Bundle-SymbolicName: ummisco.gama.network;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Export-Package: ummisco.gama.network.common,
+ ummisco.gama.network.skills
+Require-Bundle: msi.gama.processor;bundle-version="1.4.0",
+ msi.gama.core;bundle-version="1.7.0",
+ ummisco.gama.serialize;bundle-version="1.7.0"
+Bundle-ClassPath: ext/hawtbuf-1.9.jar,
+ ext/hawtdispatch-1.21.jar,
+ ext/hawtdispatch-transport-1.21.jar,
+ ext/mqtt-client-1.10.jar,
+ .
