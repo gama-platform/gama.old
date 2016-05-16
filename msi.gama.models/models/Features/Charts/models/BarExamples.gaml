@@ -91,7 +91,7 @@ experiment my_experiment type: gui {
 				datalist legend:["A","B","C"] 
 					style: bar
 					value:[cycle,cos(100*cycle),cos(100*(cycle+30))] 
-					color:[#green,#blue,#red];
+					color:[#green,#black,#purple];
 			}
 		}
 

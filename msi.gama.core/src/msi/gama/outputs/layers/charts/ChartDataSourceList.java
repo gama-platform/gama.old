@@ -97,6 +97,7 @@ public class ChartDataSourceList extends ChartDataSource {
 
 	private void updateserielist(IScope scope, int chartCycle) {
 		Object oname = getNameExp().value(scope);
+		Object o = getValue().value(scope);
 
 		ArrayList<String> oldseries=currentseries;
 		boolean somethingchanged=false;
@@ -111,14 +112,18 @@ public class ChartDataSourceList extends ChartDataSource {
 
 			if  ( oname instanceof GamaList )
 			{
-				IList lval=Cast.asList(scope, oname); 
+				IList lvaln=Cast.asList(scope, oname); 
 				currentseries=new ArrayList<String>();
 
-				if (lval.size()>0)
+				if (lvaln.size()>0)
 				{
-					for (int i=0; i<lval.size(); i++)
+
+// value list case					
+					IList lval=Cast.asList(scope, o); 
+					
+					for (int i=0; i<Math.min(lvaln.size(),lval.size()); i++)
 					{
-						Object no=lval.get(i);
+						Object no=lvaln.get(i);
 						if (no!=null)
 						{
 							String myname=Cast.asString(scope, no);

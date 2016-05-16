@@ -31,12 +31,15 @@ global {
 	init{  
 		//Ant are placed randomly in the nest
 		create ant number: ants_number with: [location::any_location_in (ant_grid(center))] ;
+		
 	}
 	
 	//Reflex to diffuse the road of pheromon on the grid
 	reflex diffuse {
       diffuse var:road on:ant_grid proportion: diffusion_rate radius:2 propagation: gradient;
    }
+
+
 
 }
 
@@ -58,6 +61,9 @@ species ant skills: [moving] control: fsm {
 	ant_grid place update: ant_grid (location ); 
 	string im <- 'ant_shape_empty' ;
 	bool hasFood <- false ;
+
+
+
 	reflex diffuse_road when:hasFood=true{
       ant_grid(location).road <- ant_grid(location).road + 100.0;
    }
@@ -131,12 +137,12 @@ experiment Ant type: gui {
 	parameter 'Display state of agents:' var: display_state category: 'Display' ;
 
 	list<list<int>> nbants<-[[0]];
-	list<string> statesnames<-[""];
+	list<string> statesnames<-["wandering"];
 	list<string> categnames<-["empty","carry"];
 	list<list<int>> nbantsbydist<-[[0]];
 	list xytestvallist<-[[[1,1],[2,2],[3,3]],[[1,2],[2,1],[3,4]],[[1,3],[2,3],[0,1]],[[1,4],[2,5],[0,0]]];
 	list<list<int>> xyval<-[[1,1],[2,1],[3,2]];
-	
+
 	//Reflex to update the charts, belonging to the experiment bloc as it will not be used by other experiment which don't have the charts
 	reflex update_charts
 	{
@@ -165,89 +171,49 @@ experiment Ant type: gui {
 		//write("nbantsbydist"+nbantsbydist);
 		//write("states"+statesnames);		
 	}
+	
 	//The different displays
 	output {
 		display Ants type: opengl {
 			grid ant_grid ;
 			species ant aspect: text ;
 		}
-		display ChartPie {
-			chart "DataPie" type:pie
+		display ProportionCarryFood {
+			chart "Proportions carrying: Pie"  size: {0.5,0.5} position: {0, 0} type:pie
 			{
 				data "empty_ants" value:(list(ant) count (!each.hasFood)) color:°red;
 				data "carry_food_ants" value:(list(ant) count (each.hasFood)) color:°green;
 				
 			}
 			
-			}
-		display ChartPieList {
-			chart "DataListPie" type:pie style:exploded
-			{
-				datalist ["empty","carry"] value:[(list(ant) count (!each.hasFood)),(list(ant) count (each.hasFood))] color:[°red,°green];				
-			}
-		}
-		display ChartHisto {
-			chart "DataBar" type:histogram
+			chart "Proportion carrying: Bar history"  size: {0.5,0.5} position: {0.5, 0} type:histogram
+			
 			{
 				data "empty_ants" value:(list(ant) count (!each.hasFood)) color:°red;
 				data "carry_food_ants" value:(list(ant) count (each.hasFood)) color:°green;				
 			}
 			
-			}
-		display ChartHistoList {
-			chart "DataListBar" type:histogram style:"3d"
+			chart "Proportion: serie"   size: {1.0,0.5} position: {0, 0.5} type:series 
+			series_label_position: legend
+			style:stack
 			{
-				datalist ["empty","carry"] value:[(list(ant) count (!each.hasFood)),(list(ant) count (each.hasFood))] color:[°red,°green];				
-			}
-		}
-		display ChartHistoListList {
-			chart "DataListListBar" type:histogram
-			{
-				datalist "data" categoriesnames:categnames  value:nbants legend:statesnames inverse_series_categories:false style:stack;
+				datalist ["empty","carry"] accumulate_values:true 
+				value:[(list(ant) count (!each.hasFood)),(list(ant) count (each.hasFood))] 
+				color:[°red,°green];				
 			}
 		}
-		display ChartSerie {
-			chart "DataSeries" type:series
+		display ProportionByState {
+			chart "DataListListBar" type:histogram 
+			time_series: categnames 
+			series_label_position: legend
 			{
-				data "empty_ants" value:float((list(ant) count (!each.hasFood))) color:°red;
-				data "carry_food_ants" value:float((list(ant) count (each.hasFood))) color:°green;
-				
+				datalist value:nbants legend:statesnames style:stack;
 			}
 			
-			}
+		}
 
-		display Dispscaleoption
-		{
-			chart "simpleserieslist" type:series  y_range:{-6.11, -4.11} x_tick_unit:0.5 y_tick_unit:0.05
-			{
-				data "prems" value:[-5,-6,-8] legend:"prems" color:°blue marker_shape:marker_square fill:false;
-				data "sec" value:[-5.5,-4.11,-5.645] legend:"sec" color:°red marker_shape:marker_empty;
-				data "third" value:[-7,-6,-4.654] legend:"third" color:°green marker_shape:marker_hor_ellipse fill:false;
-			}
-		}
-		display Cyclevalues
-		{
-			chart "simplecyclelist" type:xy x_tick_unit:0.5 y_tick_unit:0.5
-			{
-				data "prems" value:{-5+cycle,-4} legend:"prems" color:°blue marker_shape:marker_square fill:false;
-				data "sec" value:{-5.5+cycle,-3.5} legend:"sec" color:°red marker_shape:marker_diamond;
-				data "third" value:{-7+cycle,-4.654} legend:"third" color:°green marker_shape:marker_hor_ellipse fill:false;
-			}
-		}
-			display ChartSerieList {
-			chart "DataListSeries" type:series
-			{
-				datalist ["food","empty"] value:[(list(ant) count (each.hasFood)),(list(ant) count (!each.hasFood))] color:[°purple,°black] style:area;				
-			}
-		}
-		display ChartSeriesListList {
-			chart "DataListListSeries" type:series
-			{
-				datalist "data" categoriesnames: categnames  value:nbants legend:statesnames inverse_series_categories:false style:line;
-			}
-		}
-		display ChartScatter {
-			chart "DataScatter" type:scatter
+		display PositionByCarry {
+			chart "Position by carry state (data)" type:scatter
 			{
 				data "empty_ants" value:((list(ant) where (!each.hasFood)) collect each.location) color:°red line_visible:false;
 				data "carry_food_ants" value:((list(ant) where (each.hasFood)) collect each.location) color:°green line_visible:false;
@@ -255,17 +221,23 @@ experiment Ant type: gui {
 			}
 			
 			}
-		display ChartScatterList {
-			chart "DataListScatter" type:scatter
+			// Idem with datalist:
+//		display PositionByState {
+//			chart "Position by state (datalist)" type:scatter
+//			{
+//				datalist ["empty","carry"] value:[((list(ant) where (!each.hasFood))  collect each.location),((list(ant) where (each.hasFood))  collect each.location)] color:[°red,°green] line_visible:false;				
+//			}
+//		}
+		display CentroidPosition {
+			chart "Centroide and size by Carry state" type:scatter
 			{
-				datalist ["empty","carry"] value:[((list(ant) where (!each.hasFood))  collect each.location),((list(ant) where (each.hasFood))  collect each.location)] color:[°red,°green] line_visible:false;				
-			}
-		}
-		display ChartScatterHistory {
-			chart "DataListScatterHistory" type:scatter
-			{
-				datalist ["empty","carry"] value:[mean((list(ant) where (!each.hasFood)) collect each.location),mean((list(ant) where (each.hasFood)) collect each.location)]
-					 color:[°red,°green] line_visible:true;				
+				datalist ["carry","empty"] value:[mean((list(ant) where (each.hasFood)) collect each.location),
+					mean((list(ant) where (!each.hasFood)) collect each.location)
+				]
+				marker_size: [length(list(ant) where (each.hasFood))/20,length(list(ant) where (!each.hasFood))/20]
+					 color:[°red,°green] 
+					 fill:false
+					 line_visible:true;				
 			}
 		}	
 		}
@@ -290,6 +262,8 @@ experiment AntOneDisp type: gui {
 	reflex update_charts
 	{
 		ant x<-one_of(world.ant);
+		nbants<-[];
+		statesnames<-[];
 		loop x over:list(world.ant)
 		{
 			if !(statesnames contains (x.state))
@@ -315,14 +289,19 @@ experiment AntOneDisp type: gui {
 			species ant aspect: text ;
 		}
 
-		display ChartSerieList {
-			chart "DataListScatterHistory" type:scatter
+		display ChartScatter {
+			chart "DataScatter" type:scatter
 			{
-				datalist ["empty","carry"] value:[mean((list(ant) where (!each.hasFood)) collect each.location),mean((list(ant) where (each.hasFood)) collect each.location)]
-					 color:[°red,°green] line_visible:true;				
+				data "empty_ants" value:((list(ant) where (!each.hasFood)) collect each.location) color:°red line_visible:false;
+				data "carry_food_ants" value:((list(ant) where (each.hasFood)) collect each.location) color:°green line_visible:false;
+				
 			}
-		}
+			
+			}
 	}
 }
+
+
+
 
 

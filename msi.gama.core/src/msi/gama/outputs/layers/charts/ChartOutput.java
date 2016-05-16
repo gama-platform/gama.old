@@ -214,15 +214,19 @@ public abstract class ChartOutput {
 			LinkedHashMap<String,Integer> toremove=chartdataset.getSerieRemovalDate();
 			for (String serieid:toremove.keySet())
 			{
-				if (toremove.get(serieid)>lastUpdateCycle)
+				if (toremove.get(serieid)>=lastUpdateCycle)
+				{
 					removeSerie(scope,serieid);
+					toremove.put(serieid,toremove.get(serieid)-1);
+				}
 			}
 			LinkedHashMap<String,Integer> toadd=chartdataset.getSerieCreationDate();
 			for (String serieid:toadd.keySet())
 			{
-				if (toadd.get(serieid)>lastUpdateCycle)
+				if (toadd.get(serieid)>=lastUpdateCycle)
 				{
-					createNewSerie(scope,serieid);					
+					createNewSerie(scope,serieid);
+					toadd.put(serieid,toadd.get(serieid)-1);
 				}
 			}
 			for (String serieid:chartdataset.getDataSeriesIds(scope))
