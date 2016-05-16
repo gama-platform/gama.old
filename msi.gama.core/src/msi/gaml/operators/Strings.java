@@ -142,14 +142,27 @@ public class Strings {
 
 	@operator(value = { "replace" }, can_be_const = true, category = { IOperatorCategory.STRING },
 			concept = { IConcept.STRING })
-	@doc(value = "Returns the String resulting by replacing for the first operand all the sub-strings corresponding the the second operand by the thrid operand",
+	@doc(value = "Returns the String resulting by replacing for the first operand all the sub-strings corresponding the second operand by the third operand",
 		examples = @example(value = "replace('to be or not to be,that is the question','to', 'do')",
-			equals = "'do be or not do be,that is the question'"))
+			equals = "'do be or not do be,that is the question'"),
+		see = { "replace_regex"})
 	public static
 		String opReplace(final String target, final String pattern, final String replacement) {
+		return target.replace(pattern, replacement);
+	}
+	
+	@operator(value = { "replace_regex" }, can_be_const = true, category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc(value = "Returns the String resulting by replacing for the first operand all the sub-strings corresponding to the regular expression given in the second operand by the third operand",
+		examples = @example(value = "replace_regex(\"colour, color\", \"colou?r\", \"col\")",
+			equals = "'col, col'"),
+	see = { "replace"})
+	public static
+		String opReplaceRegex(final String target, final String pattern, final String replacement) {
 		return target.replaceAll(pattern, replacement);
 	}
-
+	
+	
 	@operator(value = "is_number", can_be_const = true, category = { IOperatorCategory.STRING },
 			concept = { IConcept.STRING })
 	@doc(value = "tests whether the operand represents a numerical value",
