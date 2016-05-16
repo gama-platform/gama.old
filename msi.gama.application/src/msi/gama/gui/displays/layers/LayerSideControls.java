@@ -21,7 +21,7 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.SWTChartEditor;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.AgentLayerStatement;
-import msi.gama.outputs.layers.ChartLayerStatement;
+import msi.gama.outputs.layers.charts.ChartLayerStatement;
 import msi.gama.outputs.layers.GridLayer;
 import msi.gama.outputs.layers.GridLayerStatement;
 import msi.gama.outputs.layers.ILayerStatement;
