@@ -855,7 +855,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				for (final IDescription L : lst) {
 					if (L.getKeyword().equals("equation")) {
 						final SystemOfEquationsStatement soe = (SystemOfEquationsStatement) L.compile();
-						if (soe.variables_diff.values().toString().contains(varDiff.getName()))
+						if (soe.variables_diff.values().toString().contains(varDiff.getName()) || soe.variable_time.toString().equals(varDiff.getName()))
 							return factory.createOperator("internal_integrated_value", getContext(), object,
 									((IVarExpression.Agent) container).getOwner(), varDiff);
 					}

@@ -562,6 +562,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public void dispose() {
 		getData().removeListener(this);
 		if ( disposed ) { return; }
+		setRealized(false);
 		disposed = true;
 		if ( layerManager != null ) {
 			layerManager.dispose();
@@ -703,6 +704,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public boolean isRealized() {
 		return realized;
+	}
+
+	public void setRealized(final boolean b) {
+		realized = b;
 	}
 
 	@Override
