@@ -282,21 +282,14 @@ public class GLUtilLight {
 	public static void UpdateDiffuseLightValue(final GL2 gl, final List<LightPropertiesStructure> lightPropertiesList, final double size) {
 		for (LightPropertiesStructure lightProperties : lightPropertiesList) {
 			if (lightProperties.active) {
-				gl.glEnable(GL2.GL_LIGHTING);
 				gl.glEnable(GL2.GL_LIGHT0+lightProperties.id);
 				// GET AND SET ALL THE PROPERTIES OF THE LIGHT
 				// Get the type of light (direction / point / spot)
-				final LightPropertiesStructure.TYPE type = lightProperties.type;
+				LightPropertiesStructure.TYPE type = lightProperties.type;
 				// Get and set the color (the diffuse color)
-				final float[] diffuseColor = { lightProperties.color.getRed() / 255.0f, lightProperties.color.getGreen() / 255.0f,
+				float[] diffuseColor = { lightProperties.color.getRed() / 255.0f, lightProperties.color.getGreen() / 255.0f,
 						lightProperties.color.getBlue() / 255.0f, lightProperties.color.getAlpha() / 255.0f };
 				gl.glLightfv(GL2.GL_LIGHT0+lightProperties.id, GL2.GL_DIFFUSE, diffuseColor, 0);
-				// Get and set the specular light (if it exists)
-				if (lightProperties.specularColor != null) {
-					final float[] specularColor = { lightProperties.specularColor.getRed() / 255.0f, lightProperties.specularColor.getGreen() / 255.0f,
-							lightProperties.specularColor.getBlue() / 255.0f, lightProperties.specularColor.getAlpha() / 255.0f };
-					gl.glLightfv(GL2.GL_LIGHT0+lightProperties.id, GL2.GL_SPECULAR, specularColor, 0);
-				}
 				// Get and set the position
 				// the 4th value of the position determines weather of not the distance object-light has to be computed
 				float[] lightPosition;
@@ -311,14 +304,14 @@ public class GLUtilLight {
 				gl.glLightfv(GL2.GL_LIGHT0+lightProperties.id, GL2.GL_POSITION, lightPosition, 0);
 				// Get and set the attenuation (if it is not a direction light)
 				if (type != LightPropertiesStructure.TYPE.DIRECTION) {
-					final float linearAttenuation = lightProperties.linearAttenuation;
-					final float quadraticAttenuation = lightProperties.quadraticAttenuation;
+					float linearAttenuation = lightProperties.linearAttenuation;
+					float quadraticAttenuation = lightProperties.quadraticAttenuation;
 					gl.glLightf(GL2.GL_LIGHT0+lightProperties.id, GL2.GL_LINEAR_ATTENUATION, linearAttenuation);
 					gl.glLightf(GL2.GL_LIGHT0+lightProperties.id, GL2.GL_QUADRATIC_ATTENUATION, quadraticAttenuation);
 				}
 				// Get and set spot properties (if the light is a spot light)
 				if (type == LightPropertiesStructure.TYPE.SPOT) {
-					final float[] spotLight = { (float)lightProperties.direction.x, (float)lightProperties.direction.y,
+					float[] spotLight = { (float)lightProperties.direction.x, (float)lightProperties.direction.y,
 							(float)lightProperties.direction.z };
 					gl.glLightfv(GL2.GL_LIGHT0+lightProperties.id, GL2.GL_SPOT_DIRECTION, spotLight, 0);
 					final float spotAngle = lightProperties.spotAngle;
@@ -340,8 +333,17 @@ public class GLUtilLight {
 						glut.glutSolidSphere(size, 16, 16);
 					}
 					else if (type == LightPropertiesStructure.TYPE.SPOT) {
-						double baseSize = FastMath.sin(lightProperties.spotAngle)*size;
+						double baseSize = FastMath.sin(lightProperties.spotAngle/2)*size;
+						gl.glPushMatrix();
+						gl.glTranslated(-lightProperties.position.x, -JOGLRenderer.Y_FLAG * lightProperties.position.y, -lightProperties.position.z);
+						double xAngle = FastMath.asin(lightProperties.direction.x)*180;
+						double yAngle = FastMath.asin(lightProperties.direction.y)*180;
+						gl.glRotated(FastMath.asin(lightProperties.direction.x)*180, 1, 0, 0);
+						gl.glRotated(FastMath.asin(lightProperties.direction.y)*180, 0, 1, 0);
+						gl.glRotated(FastMath.asin(lightProperties.direction.z)*180, 0, 0, 1);
+						//gl.glTranslated(lightProperties.position.x, JOGLRenderer.Y_FLAG * lightProperties.position.y, lightProperties.position.z);
 						glut.glutSolidCone(baseSize, size, 16, 16);
+						gl.glPopMatrix();
 					}
 					GLUtilGLContext.SetCurrentColor(gl, currentColor);
 					gl.glPopMatrix();

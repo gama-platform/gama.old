@@ -341,7 +341,20 @@ public class LayeredDisplayData {
 		if (lights[lightId] == null) {
 			lights[lightId] = new LightPropertiesStructure();
 		}
+		lights[lightId].id = lightId;
 		lights[lightId].active = value;
+	}
+	
+	public void setLightType(int lightId, String type) {
+		if (type.compareTo("direction") == 0) {
+			lights[lightId].type = LightPropertiesStructure.TYPE.DIRECTION;
+		}
+		else if (type.compareTo("point") == 0){
+			lights[lightId].type = LightPropertiesStructure.TYPE.POINT;
+		}
+		else {
+			lights[lightId].type = LightPropertiesStructure.TYPE.SPOT;
+		}
 	}
 	
 	public void setLightPosition(int lightId, GamaPoint position) {
@@ -354,10 +367,6 @@ public class LayeredDisplayData {
 	
 	public void setDiffuseLightColor(int lightId, GamaColor color) {
 		lights[lightId].color = color;
-	}
-	
-	public void setSpecularLightColor(int lightId, GamaColor color) {
-		lights[lightId].specularColor = color;
 	}
 	
 	public void setSpotAngle(int lightId, float angle) {

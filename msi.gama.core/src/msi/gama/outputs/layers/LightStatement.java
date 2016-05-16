@@ -1,6 +1,8 @@
 package msi.gama.outputs.layers;
 
 import java.util.List;
+
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.AbstractDisplayOutput;
@@ -8,8 +10,12 @@ import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AspectStatement;
@@ -30,7 +36,7 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.SPOT_ANGLE, type = IType.FLOAT, optional = true,
 		doc = @doc("the angle of the spot light in degree (only for spot light). (default value : 45)") ),
 		@facet(name = IKeyword.LINEAR_ATTENUATION, type = IType.FLOAT, optional = true,
-		doc = @doc("the linear attenuation of the positionnal light. (default vlaue : 0)") ),
+		doc = @doc("the linear attenuation of the positionnal light. (default value : 0)") ),
 		@facet(name = IKeyword.QUADRATIC_ATTENUATION, type = IType.FLOAT, optional = true,
 		doc = @doc("the linear attenuation of the positionnal light. (default value : 0)") ),
 		@facet(name = "active",	type = IType.BOOL, optional = true,
@@ -38,9 +44,12 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.COLOR,
 		type = { IType.INT, IType.COLOR }, optional = true,
 		doc = @doc("an int / rgb / rgba value to specify the color and the intensity of the light. (default value : (255,255,255,255) ).") ),
-		@facet(name = IKeyword.SPECULAR,
-		type = { IType.INT, IType.COLOR }, optional = true,
-		doc = @doc("an int / rgb / rgba value to specify the color and the intensity of the specular light. (default value : (255,255,255,255) ).") ) })
+		@facet(name = IKeyword.DRAW_LIGHT,
+		type = { IType.BOOL }, optional = true,
+		doc = @doc("draw or not the light. (default value : false).") ),
+		@facet(name = IKeyword.UPDATE,
+		type = { IType.BOOL }, optional = true,
+		doc = @doc("specify if the light has to be updated. (default value : false).") )})
 //@doc(
 //	value = "`graphics` allows the modeler to freely draw shapes/geometries/texts without having to define a species. It works exactly like a species [Aspect161 aspect]: the draw statement can be used in the same way.",
 //	usages = { @usage(value = "The general syntax is:",
@@ -52,9 +61,35 @@ import msi.gaml.types.IType;
 //	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
 //		IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.POPULATION })
 public class LightStatement extends AbstractLayerStatement {
+	
+	public static class LightStatementValidator implements IDescriptionValidator<StatementDescription> {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final StatementDescription desc) {
+			
+//			IExpressionDescription position = desc.getFacets().get(IKeyword.POSITION);
+//			IExpressionDescription direction = desc.getFacets().get(IKeyword.DIRECTION);
+//			IExpressionDescription type = desc.getFacets().get(IKeyword.TYPE);
+//			IExpressionDescription variation = desc.getFacets().get(IKeyword.VARIATION);
+//			
+//			type.l
+//
+//			// conflict diffusion matrix /vs/ parameters
+//			if ( propor != null && mat_diffu != null ) {
+//				desc.error("\"matrix:\" and \"proportion:\" can not be used at the same time", IGamlIssue.GENERAL);
+//			}
+			
+		}
+
+	}
 
 	AspectStatement aspect;
 	static int i;
+	boolean update = false;
 
 	public LightStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
@@ -69,11 +104,36 @@ public class LightStatement extends AbstractLayerStatement {
 
 	@Override
 	protected boolean _init(IScope scope) {
+		if (getFacetValue(scope, IKeyword.UPDATE) != null) {
+			update = Cast.asBool(scope, getFacetValue(scope, IKeyword.DRAW_LIGHT));
+		}
+		setLightProperties(scope);
+		return true;
+	}
+
+	@Override
+	public short getType() {
 		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected boolean _step(IScope scope) {
+		if (update) {
+			setLightProperties(scope);
+		}		
+		// TODO Auto-generated method stub
+		return true;
+	}
+	
+	private void setLightProperties (IScope scope) {
 		int lightId = Cast.asInt(scope, getFacetValue(scope, IKeyword.ID));
 		
 		if (getFacetValue(scope, "active") != null) {
 			getLayeredDisplayData().setLightActive(lightId,Cast.asBool(scope, getFacetValue(scope, "active")));
+		}
+		if (getFacetValue(scope, IKeyword.TYPE) != null) {
+			getLayeredDisplayData().setLightType(lightId,Cast.asString(scope, getFacetValue(scope, IKeyword.TYPE)));
 		}
 		if (getFacetValue(scope, IKeyword.POSITION) != null) {
 			getLayeredDisplayData().setLightPosition(lightId,(GamaPoint)Cast.asPoint(scope, getFacetValue(scope, IKeyword.POSITION)));
@@ -83,9 +143,6 @@ public class LightStatement extends AbstractLayerStatement {
 		}
 		if (getFacetValue(scope, IKeyword.COLOR) != null) {
 			getLayeredDisplayData().setDiffuseLightColor(lightId,Cast.asColor(scope, getFacetValue(scope, IKeyword.COLOR)));
-		}
-		if (getFacetValue(scope, IKeyword.SPECULAR) != null) {
-			getLayeredDisplayData().setSpecularLightColor(lightId,Cast.asColor(scope, getFacetValue(scope, IKeyword.SPECULAR)));
 		}
 		if (getFacetValue(scope, IKeyword.LINEAR_ATTENUATION) != null) {
 			getLayeredDisplayData().setLinearAttenuation(lightId,(float)(double)Cast.asFloat(scope, getFacetValue(scope, IKeyword.LINEAR_ATTENUATION)));
@@ -99,19 +156,6 @@ public class LightStatement extends AbstractLayerStatement {
 		if (getFacetValue(scope, IKeyword.DRAW_LIGHT) != null) {
 			getLayeredDisplayData().setDrawLight(lightId,Cast.asBool(scope, getFacetValue(scope, IKeyword.DRAW_LIGHT)));
 		}
-		return true;
-	}
-
-	@Override
-	public short getType() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	protected boolean _step(IScope scope) {
-		// TODO Auto-generated method stub
-		return false;
 	}
 
 }
