@@ -291,7 +291,7 @@ public class GLUtilLight {
 							-(float)lightProperties.direction.z, 0 };
 				}
 				else {
-					lightPosition = new float[] { (float)lightProperties.position.x, (float)lightProperties.position.y,
+					lightPosition = new float[] { (float)lightProperties.position.x, JOGLRenderer.Y_FLAG * (float)lightProperties.position.y,
 							(float)lightProperties.position.z, 1 };
 				}
 				gl.glLightfv(GL2.GL_LIGHT0+lightProperties.id, GL2.GL_POSITION, lightPosition, 0);
@@ -304,7 +304,7 @@ public class GLUtilLight {
 				}
 				// Get and set spot properties (if the light is a spot light)
 				if (type == LightPropertiesStructure.TYPE.SPOT) {
-					float[] spotLight = { (float)lightProperties.direction.x, (float)lightProperties.direction.y,
+					float[] spotLight = { (float)lightProperties.direction.x, JOGLRenderer.Y_FLAG * (float)lightProperties.direction.y,
 							(float)lightProperties.direction.z };
 					gl.glLightfv(GL2.GL_LIGHT0+lightProperties.id, GL2.GL_SPOT_DIRECTION, spotLight, 0);
 					final float spotAngle = lightProperties.spotAngle;
@@ -315,25 +315,27 @@ public class GLUtilLight {
 				if (lightProperties.drawLight) {
 					// disable the lighting during the time the light is drawn
 					gl.glDisable(GL2.GL_LIGHTING);
-					gl.glPushMatrix();
-					gl.glTranslated(lightPosition[0], JOGLRenderer.Y_FLAG * lightPosition[1], lightPosition[2]);
+					
 					// save the current color to re-set it at the end of this part
 					float[] currentColor = GLUtilGLContext.GetCurrentColor();
 					// change the current color to the light color (the representation of the color will have the same color as the light in itself)
 					GLUtilGLContext.SetCurrentColor(gl, diffuseColor);
 					GLUT glut = new GLUT();
 					if (type == LightPropertiesStructure.TYPE.POINT) {
+						gl.glPushMatrix();
+						gl.glTranslated(lightPosition[0], lightPosition[1], lightPosition[2]);
 						glut.glutSolidSphere(size, 16, 16);
+						gl.glPopMatrix();
 					}
 					else if (type == LightPropertiesStructure.TYPE.SPOT) {
+						gl.glPushMatrix();
+						gl.glTranslated(lightPosition[0], lightPosition[1], lightPosition[2]);
+						
 						double baseSize = FastMath.sin(FastMath.toRadians(lightProperties.spotAngle)/2)*size;
 						
 						double x = lightProperties.direction.x;
-						double y = lightProperties.direction.y;
+						double y = lightProperties.direction.y * JOGLRenderer.Y_FLAG;
 						double z = lightProperties.direction.z;
-						
-						// draw cone
-						gl.glPushMatrix();
 						
 						// see : http://opengl.developpez.com/tutoriels/opengl-tutorial/17-les-rotations-quaternions/
 						// init vector : {0,0,-1}
@@ -353,8 +355,7 @@ public class GLUtilLight {
 						
 						double angle = Math.acos(flag * cosAngle);
 						axis = CrossProduct(new double[] {0,0,-1},new double[] {x,y,z});
-						// translate the light to put is to the real position.
-						gl.glTranslated(lightProperties.position.x, JOGLRenderer.Y_FLAG * lightProperties.position.y, lightProperties.position.z);
+						
 						// apply the rotation
 						gl.glRotated(Math.toDegrees(-angle)+180, axis[0], axis[1], axis[2]);
 
