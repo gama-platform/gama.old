@@ -1,0 +1,32 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>other.gama.feature.plugins</groupId>
+  <artifactId>other.gama.feature.plugins</artifactId>
+  <packaging>eclipse-feature</packaging>
+  <parent>
+  	<groupId>msi.gama</groupId>
+  	<artifactId>msi.gama.parent</artifactId>
+  	<version>1.7.0-SNAPSHOT</version>
+  	<relativePath>../msi.gama.parent/</relativePath>
+  </parent>
+  
+  <build>
+  <plugins>
+	  <plugin>
+		<!-- Use compiler plugin with tycho as the adapter to the JDT compiler. -->
+		<groupId>org.eclipse.tycho</groupId>
+		<artifactId>tycho-compiler-plugin</artifactId>
+		<version>${tycho.version}</version>
+		<configuration>
+			<source>1.8</source>
+			<target>1.8</target>
+			<compilerArgument>-proc:none</compilerArgument>
+			<annotationProcessors>
+            <annotationProcessor>msi.gama.precompiler.GamaProcessor</annotationProcessor>
+          </annotationProcessors>
+		</configuration>
+	  </plugin>
+  </plugins>
+  </build>
+  <version>1.7.0-SNAPSHOT</version>
+</project>

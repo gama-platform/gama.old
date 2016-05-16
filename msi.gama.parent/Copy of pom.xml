@@ -1,0 +1,151 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>msi.gama.parent</groupId>
+  <artifactId>msi.gama.parent</artifactId>
+  <version>1.0.0</version>
+  <packaging>pom</packaging>
+  <name>msi.gama.parent</name>
+<!-- Declare Maven version -->
+	<prerequisites>
+		<maven>3.0</maven>
+	</prerequisites>
+	
+	<!-- Declare Tycho version -->
+	<properties>
+		<tycho-version>0.22.0</tycho-version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
+	<!-- Declare repositories (p2 layout) that will automatically retrieve the library during the build process -->
+	<repositories>	
+		<repository>
+			<id>teamSVN</id>
+			<url>http://download.eclipse.org/technology/subversive/0.7/update-site/</url>
+			<layout>p2</layout>
+		</repository>
+
+		<repository>
+			<id>Xtext</id>
+			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/composite/releases/</url>
+			<layout>p2</layout>
+		</repository>
+		
+		<repository>
+			<id>EMF</id>
+			<url>http://download.eclipse.org/modeling/emf/updates/releases/</url>
+			<layout>p2</layout>
+		</repository>
+		
+		<repository>
+			<id>SWT-4.4</id>
+			<url>http://www.eclipse.org/swt/updates/4.4</url>
+			<layout>p2</layout>
+		</repository>
+		
+		<repository>
+			<id>icu</id>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20110523182458/repository/</url>
+			<layout>p2</layout>
+		</repository>
+		
+		<repository>
+			<id>eclipse-luna</id>
+			<url>http://download.eclipse.org/releases/luna/</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
+	<build>
+		<plugins>
+			<plugin>
+				<!-- Activate Tycho -->
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<environments>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+						</environments>
+				</configuration>
+			</plugin>
+			<!-- enable source bundle generation -->
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+								<pluginExecution>
+									<pluginExecutionFilter>
+										<groupId>
+											org.eclipse.tycho
+										</groupId>
+										<artifactId>
+											tycho-packaging-plugin
+										</artifactId>
+										<versionRange>
+											[0.22.0,)
+										</versionRange>
+										<goals>
+											<goal>
+												build-qualifier-aggregator
+											</goal>
+										</goals>
+									</pluginExecutionFilter>
+									<action>
+										<ignore></ignore>
+									</action>
+								</pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+
+	<modules>
+		<module>../msi.gama.application</module>
+		<module>../msi.gama.core</module>
+		
+		<module>../msi.gama.lang.gaml</module>
+		<module>../msi.gama.lang.gaml.ui</module>
+		<module>../msi.gama.models</module>
+		<module>../msi.gama.processor</module>
+		
+		
+		
+		
+		
+		
+		
+		<module>../ummisco.gaml.editbox</module>
+	</modules>
+</project>
