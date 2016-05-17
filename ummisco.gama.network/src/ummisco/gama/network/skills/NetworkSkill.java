@@ -14,9 +14,6 @@ package ummisco.gama.network.skills;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-
-import com.thoughtworks.xstream.XStream;
-
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -37,7 +34,7 @@ import msi.gaml.types.IType;
 @var(name = INetworkSkill.NET_AGENT_SERVER, type = IType.LIST, doc = @doc("Net ID of the agent"))})
 @skill(name = INetworkSkill.NETWORK_SKILL, concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
 public class NetworkSkill  extends Skill implements INetworkSkill{
-
+	
 	private final HashMap<String, LinkedList<Map<String, Object>>> agentMessage;
 	private final HashMap<String,IConnector> serverList;
 	
@@ -102,13 +99,13 @@ public class NetworkSkill  extends Skill implements INetworkSkill{
 		connector.sendMessage(dest, mp);
 	}
 
-	@action(name = INetworkSkill.FETCH_MESSAGE, args = {}, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
+	@action(name = INetworkSkill.FETCH_MESSAGE, args = {}, doc = @doc(value = "", returns = "", examples = { @example("") }))
 	public GamaMap<String, String> fetchMessage(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		IConnector connector=this.serverList.get(serverName);
 		GamaMap<String, String>  res = connector.fetchMessageBox(agent);
-		return res; //connector.fetchMessageBox(agent); //fetchMyMailBox(scope, tmpName);
+		return res; 
 
 	}
 	
@@ -119,13 +116,13 @@ public class NetworkSkill  extends Skill implements INetworkSkill{
 		return message;
 	}
 
-	@action(name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX, args = {}, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
+	@action(name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX, args = {}, doc = @doc(value = "", returns = "", examples = { @example("") }))
 	public boolean notEmptyMessageBox(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		IConnector connector=this.serverList.get(serverName);
 		
-		return !connector.emptyMessageBox(agent); //isEmptyMailBox(scope, tmpName);
+		return !connector.emptyMessageBox(agent);
 	}
 
 }
