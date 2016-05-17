@@ -220,6 +220,12 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 //			newr=(AbstractCategoryItemRenderer)this.getOrCreateRenderer(scope, serieid);
 		
 		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
+		if (!IdPosition.containsKey(serieid))
+		{
+		System.out.println("pb!!!");	
+		}
+		else
+		{
 		int myrow=IdPosition.get(serieid);
 		if (myserie.getMycolor()!=null)
 		{
@@ -244,6 +250,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	        	
 	        }
 			
+		}
 		}
 		
 	}
@@ -300,6 +307,12 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	}
 
 
+	public void removeSerie(IScope scope, String serieid) {
+		// TODO Auto-generated method stub
+		super.removeSerie(scope, serieid);
+		this.clearDataSet(scope);
+	}
+	
 	
 	protected void resetSerie(IScope scope, String serieid) {
 		// TODO Auto-generated method stub

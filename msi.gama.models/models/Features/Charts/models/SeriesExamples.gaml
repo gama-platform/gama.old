@@ -11,6 +11,7 @@ global
 }
 
 experiment my_experiment type: gui {
+	float minimum_cycle_duration<-0.1;
 	output {
 		display "data_cumulative_serie_spline_chart" type:java2D {
 			chart "Nice cumulative series chart" type:series 
