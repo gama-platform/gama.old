@@ -111,6 +111,13 @@ public class NetworkSkill  extends Skill implements INetworkSkill{
 		return res; //connector.fetchMessageBox(agent); //fetchMyMailBox(scope, tmpName);
 
 	}
+	
+	@action(name = INetworkSkill.LISTEN, args = {@arg(name = INetworkSkill.PORT, type = IType.STRING, doc = @doc("port number"))}, doc = @doc(value = "", returns = "", examples = { @example("") }))
+	public String listen(final IScope scope) {
+		//TO DO
+		String message = "";
+		return message;
+	}
 
 	@action(name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX, args = {}, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
 	public boolean notEmptyMessageBox(final IScope scope) {
