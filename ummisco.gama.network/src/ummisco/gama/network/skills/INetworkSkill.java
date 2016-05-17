@@ -22,6 +22,8 @@ public interface INetworkSkill  {
 	public static String SERVER_URL = "to";
 	public static String GROUP = "with_group";
 	public static String WITHNAME = "with_name";
+	public static String PROTOCOL = "protocol";
+	public static String PORT = "port";
 	
 	//Agent Data
 	public static String NET_AGENT_NAME = "network_name";

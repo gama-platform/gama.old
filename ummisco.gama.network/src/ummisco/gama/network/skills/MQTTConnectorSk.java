@@ -34,7 +34,6 @@ import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.mqtt.common.MQTTConnector;
-import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.common.SimpleMapSerializer;
 
 

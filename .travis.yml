@@ -3,7 +3,7 @@ language: java
 # whitelist
 branches:
   only:
-   - mavencasse
+   - master
 
 jdk:
    - oraclejdk8
@@ -13,3 +13,5 @@ notifications:
   email:
     recipients:
      - my.gama.bot@gmail.com
+
+script: sh ./build.sh
