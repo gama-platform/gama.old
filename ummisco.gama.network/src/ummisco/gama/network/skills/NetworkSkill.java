@@ -32,8 +32,6 @@ import msi.gama.util.GamaMap;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 import ummisco.gama.network.common.IConnector;
-import ummisco.gama.network.common.INetworkSkill;
-import ummisco.gama.network.skills.mqtt.MQTTConnectorSk;
 
 @vars({ @var(name = INetworkSkill.NET_AGENT_NAME, type = IType.STRING, doc = @doc("Net ID of the agent")),
 @var(name = INetworkSkill.NET_AGENT_GROUPS, type = IType.LIST, doc = @doc("Net ID of the agent")),
@@ -86,6 +84,7 @@ public class NetworkSkill  extends Skill implements INetworkSkill{
 		HashMap<String, String> mp = new HashMap<>();
 		mp.put(INetworkSkill.FROM,sender);
 		mp.put(INetworkSkill.CONTENT,messageContent.toString());
+		System.out.println("sender "+sender + " message"+mp);
 		connector.sendMessage(dest, mp);
 	}
 
@@ -100,12 +99,12 @@ public class NetworkSkill  extends Skill implements INetworkSkill{
 	}
 
 	@action(name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX, args = {}, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { @example("do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}") }))
-	public boolean emptyMessageBox(final IScope scope) {
+	public boolean notEmptyMessageBox(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		IConnector connector=this.serverList.get(serverName);
 		
-		return connector.emptyMessageBox(agent); //isEmptyMailBox(scope, tmpName);
+		return !connector.emptyMessageBox(agent); //isEmptyMailBox(scope, tmpName);
 	}
 
 }

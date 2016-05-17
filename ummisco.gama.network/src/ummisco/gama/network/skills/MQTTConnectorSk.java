@@ -1,4 +1,4 @@
-package ummisco.gama.network.skills.mqtt;
+package ummisco.gama.network.skills;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.IConcept;
@@ -35,7 +35,6 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.mqtt.common.MQTTConnector;
 import ummisco.gama.network.common.IConnector;
-import ummisco.gama.network.common.INetworkSkill;
 import ummisco.gama.network.common.SimpleMapSerializer;
 
 

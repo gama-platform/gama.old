@@ -9,10 +9,13 @@
  *
  *
  **********************************************************************************************/
-package dream.gama.opengis.operators;
+package ummisco.gama.network.skills;
 
 import java.io.*;
 import java.net.*;
+
+import ummisco.gama.network.skills.ClientServiceThread;
+import ummisco.gama.network.skills.MultiThreadedSocketServer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.precompiler.IConcept;
@@ -156,7 +159,7 @@ public class SocketSkill extends Skill {
 		String receiveMessage = "";
 			
 		GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) scope.getAgentScope().getAttribute("messages");
-		GamaList<String> msgs = (GamaList<String>) m.get(cli);
+		GamaList<String> msgs = (GamaList<String>) m.get(scope, cli);
 
 		receiveMessage = msgs.firstValue(scope);
 		
@@ -209,7 +212,7 @@ public class SocketSkill extends Skill {
 		}
 		try {
 			GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) scope.getAgentScope().getAttribute("messages");
-			GamaList<String> msgs = (GamaList<String>) m.get(sock.toString());
+			GamaList<String> msgs = (GamaList<String>) m.get(scope, sock.toString());
 			receiveMessage = msgs.firstValue(scope);
 			
 			msgs.remove(receiveMessage);

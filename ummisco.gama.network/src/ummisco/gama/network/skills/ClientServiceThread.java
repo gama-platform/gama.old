@@ -1,4 +1,4 @@
-package dream.gama.opengis.operators;
+package ummisco.gama.network.skills;
 
 import java.io.BufferedReader;
 import java.io.IOException;
