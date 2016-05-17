@@ -367,10 +367,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			gl.glDisable(GLLightingFunc.GL_LIGHTING);
 		}
 
-		// GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(),
-		// data.getAmbientLightColor());
-		// GLUtilLight.UpdateDiffuseLightValue(gl, data.getDiffuseLights(),
-		// getMaxEnvDim() / 20);
+		 GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(),
+		 data.getAmbientLightColor());
+		 GLUtilLight.UpdateDiffuseLightValue(gl, data.getDiffuseLights(),
+		 getMaxEnvDim() / 20);
 
 		// Blending control
 		if (BLENDING_ENABLED) {

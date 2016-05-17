@@ -19,6 +19,9 @@ public class GLUtilGLContext {
 
 	public static void SetCurrentColor(final GL2 gl, final float... newColor) {
 		System.out.println("Setting " + Arrays.toString(newColor) + " for GL " + gl.getContext().getHandle());
+		if (newColor == null) {
+			return;
+		}
 		final float[] color = new float[4];
 		if (newColor.length == 1) {
 			color[0] = newColor[0];

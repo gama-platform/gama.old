@@ -24,7 +24,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LightPropertiesStructure;
-import msi.gaml.operators.fastmaths.FastMath;
+import msi.gama.util.GamaColor;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class GLUtilLight {
@@ -175,12 +175,21 @@ public class GLUtilLight {
 		data.setDiffuseLightColor(0, new GamaColor(0,0,0,0));
 		
 		// default value for diffuse light
-		data.setLightActive(1, true);
-		// directional light
-		data.setLightType(1, "direction");
-		data.setLightDirection(1, new GamaPoint(0.5,0.5,-1,0) );
-		// white color
-		data.setDiffuseLightColor(1, new GamaColor(255,255,255,255));
+		boolean useDefaultValueForLight1 = true;
+		for (LightPropertiesStructure lightProp : data.getDiffuseLights()) {
+			if (lightProp.id == 1) {
+				useDefaultValueForLight1 = false;
+			}
+		}
+		if (useDefaultValueForLight1)
+		{
+			data.setLightActive(1, true);
+			// directional light
+			data.setLightType(1, "direction");
+			data.setLightDirection(1, new GamaPoint(0.5,0.5,-1,0) );
+			// white color
+			data.setDiffuseLightColor(1, new GamaColor(255,255,255,255));
+		}
 
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GLLightingFunc.GL_AMBIENT_AND_DIFFUSE);
@@ -284,7 +293,7 @@ public class GLUtilLight {
 						gl.glPushMatrix();
 						gl.glTranslated(lightPosition[0], lightPosition[1], lightPosition[2]);
 
-						final double baseSize = FastMath.sin(FastMath.toRadians(lightProperties.spotAngle) / 2) * size;
+						final double baseSize = Math.sin(Math.toRadians(lightProperties.spotAngle) / 2) * size;
 
 						final double x = lightProperties.direction.x;
 						final double y = lightProperties.direction.y * JOGLRenderer.Y_FLAG;

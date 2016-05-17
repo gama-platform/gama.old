@@ -53,26 +53,10 @@ public class LayeredDisplayData {
 	 * Colors
 	 */
 	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
-	private Color ambientColor = new GamaColor(50, 50, 50, 255); // (0.2,0.2,0.2,1)
+	private Color ambientColor = new GamaColor(0, 0, 0, 255); // (0.2,0.2,0.2,1)
 																	// is the
 																	// default
 																	// value.
-	private Color defaultDiffuseColor = new GamaColor(110, 110, 110, 255); // 110
-																	// because
-																	// it is the
-																	// value
-																	// with
-																	// which the
-																	// colors
-																	// are
-																	// displayed
-																	// as for
-																	// java2D
-																	// display
-																	// with an
-																	// ambient
-																	// light set
-																	// to 50.
 	private Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 	/**
 	 * Properties
@@ -397,22 +381,6 @@ public class LayeredDisplayData {
 	 */
 	public void setAmbientLightColor(final Color ambientLightColor) {
 		this.ambientColor = ambientLightColor;
-	}
-
-	/**
-	 * @param diffuseLightColor
-	 *            the diffuseLightColor to set
-	 */
-	public void setDiffuseLightColor(final Color diffuseLightColor) {
-		this.defaultDiffuseColor = diffuseLightColor;
-	}
-
-	/**
-	 * @param diffuseLightPosition
-	 *            the diffuseLightPosition to set
-	 */
-	public void setDiffuseLightPosition(final ILocation diffuseLightPosition) {
-//		this.diffuseLightPosition = diffuseLightPosition;
 	}
 
 	/**
