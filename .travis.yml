@@ -1,9 +1,5 @@
 language: java
 
-install:
-  - git config --global user.email "my.gama.bot@gmail.com"
-  - git config --global user.name "gama-bot"
-
 # whitelist
 branches:
   only:
@@ -15,7 +11,5 @@ jdk:
 
 notifications:
   email: 
-    on_success: always
-    on_failure: always
-  recipients:
-    - gama-dev@googlegroups.com
+    recipients:
+      - gama-dev@googlegroups.com
