@@ -25,6 +25,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LightPropertiesStructure;
+import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 
@@ -208,7 +209,7 @@ public class GLUtilLight {
 //			light0Position[1] = 0;
 //			light0Position[2] = 1;
 //			light0Position[3] = 0.0f;
-//			gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_DIFFUSE, lightDiffuseValue, 0);
+			gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_DIFFUSE, new float[] {0,0,0,0}, 0);
 //			gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_POSITION, light0Position, 0);
 
 			light1Position[0] = -widthEnv;
@@ -259,14 +260,6 @@ public class GLUtilLight {
 		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 //		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 	}
-
-//	public static void UpdateDiffuseLightValue(final GL2 gl, final GLU glu, final Color diffuseLightValue) {
-//		final float[] lightDiffuseValue = { diffuseLightValue.getRed() / 255.0f, diffuseLightValue.getGreen() / 255.0f,
-//				diffuseLightValue.getBlue() / 255.0f, 1.0f };
-//		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_DIFFUSE, lightDiffuseValue, 0);
-//		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_DIFFUSE, lightDiffuseValue, 0);
-//
-//	}
 	
 	public static void TranslateAllLights(final GL2 gl, final float[] translation) {
 		for (int id = 0; id<8; id++) {
@@ -298,7 +291,7 @@ public class GLUtilLight {
 							-(float)lightProperties.direction.z, 0 };
 				}
 				else {
-					lightPosition = new float[] { (float)lightProperties.position.x, (float)lightProperties.position.y,
+					lightPosition = new float[] { (float)lightProperties.position.x, JOGLRenderer.Y_FLAG * (float)lightProperties.position.y,
 							(float)lightProperties.position.z, 1 };
 				}
 				gl.glLightfv(GL2.GL_LIGHT0+lightProperties.id, GL2.GL_POSITION, lightPosition, 0);
@@ -311,7 +304,7 @@ public class GLUtilLight {
 				}
 				// Get and set spot properties (if the light is a spot light)
 				if (type == LightPropertiesStructure.TYPE.SPOT) {
-					float[] spotLight = { (float)lightProperties.direction.x, (float)lightProperties.direction.y,
+					float[] spotLight = { (float)lightProperties.direction.x, JOGLRenderer.Y_FLAG * (float)lightProperties.direction.y,
 							(float)lightProperties.direction.z };
 					gl.glLightfv(GL2.GL_LIGHT0+lightProperties.id, GL2.GL_SPOT_DIRECTION, spotLight, 0);
 					final float spotAngle = lightProperties.spotAngle;
@@ -322,31 +315,58 @@ public class GLUtilLight {
 				if (lightProperties.drawLight) {
 					// disable the lighting during the time the light is drawn
 					gl.glDisable(GL2.GL_LIGHTING);
-					gl.glPushMatrix();
-					gl.glTranslated(lightPosition[0], lightPosition[1], lightPosition[2]);
+					
 					// save the current color to re-set it at the end of this part
 					float[] currentColor = GLUtilGLContext.GetCurrentColor();
 					// change the current color to the light color (the representation of the color will have the same color as the light in itself)
 					GLUtilGLContext.SetCurrentColor(gl, diffuseColor);
 					GLUT glut = new GLUT();
 					if (type == LightPropertiesStructure.TYPE.POINT) {
+						gl.glPushMatrix();
+						gl.glTranslated(lightPosition[0], lightPosition[1], lightPosition[2]);
 						glut.glutSolidSphere(size, 16, 16);
+						gl.glPopMatrix();
 					}
 					else if (type == LightPropertiesStructure.TYPE.SPOT) {
-						double baseSize = FastMath.sin(lightProperties.spotAngle/2)*size;
 						gl.glPushMatrix();
-						gl.glTranslated(-lightProperties.position.x, -JOGLRenderer.Y_FLAG * lightProperties.position.y, -lightProperties.position.z);
-						double xAngle = FastMath.asin(lightProperties.direction.x)*180;
-						double yAngle = FastMath.asin(lightProperties.direction.y)*180;
-						gl.glRotated(FastMath.asin(lightProperties.direction.x)*180, 1, 0, 0);
-						gl.glRotated(FastMath.asin(lightProperties.direction.y)*180, 0, 1, 0);
-						gl.glRotated(FastMath.asin(lightProperties.direction.z)*180, 0, 0, 1);
-						//gl.glTranslated(lightProperties.position.x, JOGLRenderer.Y_FLAG * lightProperties.position.y, lightProperties.position.z);
+						gl.glTranslated(lightPosition[0], lightPosition[1], lightPosition[2]);
+						
+						double baseSize = FastMath.sin(FastMath.toRadians(lightProperties.spotAngle)/2)*size;
+						
+						double x = lightProperties.direction.x;
+						double y = lightProperties.direction.y * JOGLRenderer.Y_FLAG;
+						double z = lightProperties.direction.z;
+						
+						// see : http://opengl.developpez.com/tutoriels/opengl-tutorial/17-les-rotations-quaternions/
+						// init vector : {0,0,-1}
+						// dest vector : {x,y,z}
+						// compute angle
+						double xNorm = x / Math.sqrt(x*x+y*y+z*z);
+						double yNorm = y / Math.sqrt(x*x+y*y+z*z);
+						double zNorm = z / Math.sqrt(x*x+y*y+z*z);
+						int flag = 1;
+						if (zNorm < 0) {
+							flag = -1;
+						}
+						double cosAngle = flag*zNorm;
+						
+						// compute axis : dest vect init
+						double[] axis = new double[3];
+						
+						double angle = Math.acos(flag * cosAngle);
+						axis = CrossProduct(new double[] {0,0,-1},new double[] {x,y,z});
+						
+						// apply the rotation
+						gl.glRotated(Math.toDegrees(-angle)+180, axis[0], axis[1], axis[2]);
+
+						// translate to put the summit of the cone as rotation point. 
+						gl.glTranslated(0, 0, -size);
+						
 						glut.glutSolidCone(baseSize, size, 16, 16);
 						gl.glPopMatrix();
 					}
 					GLUtilGLContext.SetCurrentColor(gl, currentColor);
-					gl.glPopMatrix();
+					
 					gl.glEnable(GL2.GL_LIGHTING);
 				}
 			}
@@ -355,40 +375,14 @@ public class GLUtilLight {
 			}
 		}
 	}
-
-
-	public static void UpdateDiffuseLightPosition(final GL2 gl, final GLU glu, final float[] lightDiffusePos) {
-
-//		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_POSITION, lightDiffusePos, 0);
-		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_POSITION, lightDiffusePos, 0);
-
+	
+	public static double[] CrossProduct(double[] vect1, double[] vect2) {
+		double[] result = new double[3];
+		result[0] = vect1[1] * vect2[2] - vect1[2] * vect2[1];
+		result[1] = vect1[2] * vect2[0] - vect1[0] * vect2[2];
+		result[2] = vect1[0] * vect2[1] - vect1[1] * vect2[0];
+		return result;
 	}
-
-	// public static void DrawLight(final GL2 gl, final GLU glu) {
-	// gl.glTranslated(light1Position[0], -light1Position[1],
-	// light1Position[2]);
-	// gl.glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
-	// final GLUquadric quad = glu.gluNewQuadric();
-	// glu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
-	// glu.gluQuadricNormals(quad, GLU.GLU_FLAT);
-	// glu.gluQuadricOrientation(quad, GLU.GLU_OUTSIDE);
-	// final int slices = 16;
-	// final int stacks = 16;
-	// glu.gluSphere(quad, 1.0f, slices, stacks);
-	// glu.gluDeleteQuadric(quad);
-	// gl.glTranslated(-light1Position[0], light1Position[1],
-	// -light1Position[2]);
-	// }
-
-	// public static void setPointSize(final GL2 gl, final float size, final
-	// boolean smooth) {
-	// gl.glPointSize(size);
-	// if (smooth) {
-	// gl.glEnable(GL2ES1.GL_POINT_SMOOTH);
-	// } else {
-	// gl.glDisable(GL2ES1.GL_POINT_SMOOTH);
-	// }
-	// }
 
 	public static void setLineWidth(final GL gl, final float size, final boolean smooth) {
 		// smooth should be set to false always, as it creates jagged lines
