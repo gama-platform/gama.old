@@ -9,6 +9,7 @@ model graphoperators
 
 global {
 	graph<geometry,geometry> the_graph;
+	list<list> cliques;
 	init {
 		create people number: 50;
 		
@@ -29,8 +30,12 @@ global {
 		write "beta_index: " + beta_index(the_graph);
 		write "gamma_index: " + gamma_index(the_graph);
 		write "connectivity_index: " + connectivity_index(the_graph);
-		write "connected_components_of: " + connected_components_of(the_graph);
+		write "connected_components_of: " + length(connected_components_of(the_graph));
 		
+		write "connected_components_of: " + length(connected_components_of(the_graph));
+		
+		write "maximal_cliques_of:" + (maximal_cliques_of(the_graph) collect (length(each)));
+		write "biggest_cliques_of:" + (biggest_cliques_of(the_graph) collect (length(each)));
 	}
 }
 
@@ -46,6 +51,7 @@ species people {
 experiment graphoperators type: gui {
 	
 	output {
+		
 		display map background:#lightgray{
 			graphics "edges" {
 				loop edge over: the_graph.edges {
@@ -53,7 +59,6 @@ experiment graphoperators type: gui {
 				}
  			}
  			species people aspect: centrality;
-			
 		}
 	}
 }
