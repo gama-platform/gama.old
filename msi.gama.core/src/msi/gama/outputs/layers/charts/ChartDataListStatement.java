@@ -41,29 +41,27 @@ import org.jfree.chart.renderer.xy.*;
 @symbol(name = "datalist", kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = { IConcept.CHART }, doc = @doc("add a list of series to a chart. The number of series can be dynamic (the size of the list changes each step). See Ant Foraging (Charts) model in ChartTest for examples."))
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @facets(value = {
-	@facet(name = IKeyword.VALUE, type = IType.LIST, optional = false, doc = @doc("the values to display. Has to be a List of List. Each element can be a number (series/histogram) or a list with two values (XY chart)")),
+	@facet(name = IKeyword.VALUE, type = IType.LIST, optional = false, doc = @doc("the values to display. Has to be a matrix, a list or a List of List. Each element can be a number (series/histogram) or a list with two values (XY chart)")),
 	@facet(name = ChartDataStatement.YERR_VALUES, type = IType.LIST, optional = true, doc = @doc("the Y Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
 	@facet(name = ChartDataStatement.XERR_VALUES, type = IType.LIST, optional = true, doc = @doc("the X Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
 	@facet(name = ChartDataStatement.YMINMAX_VALUES, type = IType.LIST, optional = true, doc = @doc("the Y MinMax bar values to display (BW charts). Has to be a List. Each element can be a number or a list with two values (low and high value)")),
-	@facet(name = ChartDataStatement.MARKERSIZE, type = IType.LIST, optional = true, doc = @doc("the Y Error bar values to display. Has to be a List. Each element can be a number or a list with one value for each serie element")),
+	@facet(name = ChartDataStatement.MARKERSIZE, type = IType.LIST, optional = true, doc = @doc("the marker sizes to display. Can be a list of numbers (same size for each marker of the series) or a list of list (different sizes by point)")),
 //	@facet(name = IKeyword.NAME, type =  IType.LIST, optional = true, doc = @doc("the name of the series: a list of strings (can be a variable with dynamic names)")),
 	@facet(name = IKeyword.LEGEND, type =  IType.LIST, optional = true, doc = @doc("the name of the series: a list of strings (can be a variable with dynamic names)")),
-	@facet(name = ChartDataListStatement.CATEGNAMES, type =  IType.LIST, optional = true, doc = @doc("the name of categories (can be a variable with dynamic names)")),
-	@facet(name = ChartDataListStatement.REVERSECATEG, type =  IType.BOOL, optional = true, doc = @doc("reverse the order of series/categories ([[1,2],[3,4],[5,6]] --> [[1,3,5],[2,4,6]]. May be useful when it is easier to construct one list over the other.")),
-	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true),
+	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true, doc = @doc("marker visible or not")),
 	@facet(name = ChartDataStatement.MARKERSHAPE, type = IType.ID, values = { ChartDataStatement.MARKER_EMPTY,
 			ChartDataStatement.MARKER_SQUARE, ChartDataStatement.MARKER_CIRCLE, ChartDataStatement.MARKER_UP_TRIANGLE,
 			ChartDataStatement.MARKER_DIAMOND, ChartDataStatement.MARKER_HOR_RECTANGLE,
 			ChartDataStatement.MARKER_DOWN_TRIANGLE, ChartDataStatement.MARKER_HOR_ELLIPSE,
 			ChartDataStatement.MARKER_RIGHT_TRIANGLE, ChartDataStatement.MARKER_VERT_RECTANGLE,
-			ChartDataStatement.MARKER_LEFT_TRIANGLE }, optional = true),
-	@facet(name = ChartDataStatement.CUMUL_VALUES, type = IType.BOOL, optional = true),
-	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
-	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
+			ChartDataStatement.MARKER_LEFT_TRIANGLE }, optional = true, doc = @doc("Shape of the marker. Same one for all series.")),
+	@facet(name = ChartDataStatement.CUMUL_VALUES, type = IType.BOOL, optional = true, doc = @doc("Force to replace values at each step (false) or accumulate with previous steps (true)")),
+	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true, doc = @doc("Line visible or not (same for all series)")),
+	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true, doc = @doc("Marker filled (true) or not (false), same for all series.")),
 	@facet(name = IKeyword.COLOR, type =  IType.LIST, optional = true, doc = @doc("list of colors")),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
-		IKeyword.EXPLODED }, optional = true, doc = @doc("series style")) }, omissible = IKeyword.LEGEND)
+		IKeyword.EXPLODED }, optional = true, doc = @doc("Style for the serie (if not the default one sepecified on chart statement)")) }, omissible = IKeyword.LEGEND)
 public class ChartDataListStatement extends AbstractStatement {	
 
 	public static final String DATALISTS = "datalist";

@@ -39,26 +39,26 @@ import org.jfree.chart.renderer.xy.*;
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @facets(value = {
 	@facet(name = IKeyword.VALUE, type = { IType.FLOAT, IType.POINT, IType.LIST }, optional = false),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
+//	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.LEGEND, type = IType.STRING, optional = true),
-	@facet(name = ChartDataStatement.YERR_VALUES, type = IType.LIST, optional = true, doc = @doc("the Y Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
-	@facet(name = ChartDataStatement.XERR_VALUES, type = IType.LIST, optional = true, doc = @doc("the X Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
+	@facet(name = ChartDataStatement.YERR_VALUES, type = { IType.FLOAT, IType.LIST}, optional = true, doc = @doc("the Y Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
+	@facet(name = ChartDataStatement.XERR_VALUES, type = { IType.FLOAT, IType.LIST}, optional = true, doc = @doc("the X Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
 	@facet(name = ChartDataStatement.YMINMAX_VALUES, type = IType.LIST, optional = true, doc = @doc("the Y MinMax bar values to display (BW charts). Has to be a List. Each element can be a number or a list with two values (low and high value)")),
-	@facet(name = ChartDataStatement.MARKERSIZE, type = IType.LIST, optional = true, doc = @doc("the Y Error bar values to display. Has to be a List. Each element can be a number or a list with one value for each serie element")),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
-	@facet(name = ChartDataStatement.CUMUL_VALUES, type = IType.BOOL, optional = true),
-	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true),
-	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true),
+	@facet(name = ChartDataStatement.MARKERSIZE, type = IType.LIST, optional = true, doc = @doc("Size of the marker. Can be a double (same size for every marker) or a list (different sizes for each marker.")),
+	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true, doc = @doc("color of the serie")),
+	@facet(name = ChartDataStatement.CUMUL_VALUES, type = IType.BOOL, optional = true, doc = @doc("Force to replace values at each step (false) or accumulate with previous steps (true)")),
+	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true, doc = @doc("Line visible or not")),
+	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true, doc = @doc("marker visible or not")),
 	@facet(name = ChartDataStatement.MARKERSHAPE, type = IType.ID, values = { ChartDataStatement.MARKER_EMPTY,
 		ChartDataStatement.MARKER_SQUARE, ChartDataStatement.MARKER_CIRCLE, ChartDataStatement.MARKER_UP_TRIANGLE,
 		ChartDataStatement.MARKER_DIAMOND, ChartDataStatement.MARKER_HOR_RECTANGLE,
 		ChartDataStatement.MARKER_DOWN_TRIANGLE, ChartDataStatement.MARKER_HOR_ELLIPSE,
 		ChartDataStatement.MARKER_RIGHT_TRIANGLE, ChartDataStatement.MARKER_VERT_RECTANGLE,
-		ChartDataStatement.MARKER_LEFT_TRIANGLE }, optional = true),
-	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true),
+		ChartDataStatement.MARKER_LEFT_TRIANGLE }, optional = true, doc = @doc("Shape of the marker")),
+	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true, doc = @doc("Marker filled (true) or not (false)")),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
-		IKeyword.EXPLODED }, optional = true) }, omissible = IKeyword.LEGEND)
+		IKeyword.EXPLODED }, optional = true, doc = @doc("Style for the serie (if not the default one sepecified on chart statement)")) }, omissible = IKeyword.LEGEND)
 public class ChartDataStatement extends AbstractStatement {
 
 	public static final String MARKER = "marker";

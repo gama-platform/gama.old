@@ -518,7 +518,7 @@ public class ChartDataSource {
 					break;
 					
 				}
-				case ChartDataSource.DATA_TYPE_LIST_LIST_POINT:
+				case ChartDataSource.DATA_TYPE_LIST_POINT:
 				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
 				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
 				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
