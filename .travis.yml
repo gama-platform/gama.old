@@ -1,0 +1,8 @@
+# whitelist
+branches:
+  only:
+   - mavencasse
+
+jdk:
+   - oraclejdk8
+   - openjdk8
