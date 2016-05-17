@@ -561,17 +561,20 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	@Override
 	public void zoomIn() {
-		getDisplaySurface().zoomIn();
+		if ( getDisplaySurface() != null )
+			getDisplaySurface().zoomIn();
 	}
 
 	@Override
 	public void zoomOut() {
-		getDisplaySurface().zoomOut();
+		if ( getDisplaySurface() != null )
+			getDisplaySurface().zoomOut();
 	}
 
 	@Override
 	public void zoomFit() {
-		getDisplaySurface().zoomFit();
+		if ( getDisplaySurface() != null )
+			getDisplaySurface().zoomFit();
 	}
 
 	@Override
