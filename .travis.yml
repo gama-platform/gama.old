@@ -14,6 +14,7 @@ cache:
 script: sh ./build.sh
 deploy:
   provider: releases
+  overwrite: true
   api_key:
     secure: Eq94fdL/ECS3jnSqTfor5tVQGDPE66RmdER/7heP6SB4iKnxY7bl3yn0Syjcr5QbYrZtRWGt+is9tHSUfy68faHW4MRmflZTjDLU8GnYjVqAGTbNwaB02yXPdhf+oVs6rJrAu3WEIrkA7KDyLsXrWmnvYhhn5+1DTlNMJHNbttXsaGU+NP7/wPday7aTW1BiDj5QmYxKoeIfmLB0yo9aX3UeGLwl/yuWhdmoTAzJo35VyxoC/H5Vzpb1MH3lqFIKJ25ycsdnHSHyQO/cKciBbnnzS1cxqfq6/nuN5NbduOzN5NpjzZLs4KORhzCQxnW4ZXB+1m9nXFf32kfTLl0b5HF3cFYLtIZThTSupnwqBJoCriMQ0MVLx45HG4iIkXs34KI4hMPL4Oq7huosschh4VebOfNbwc2XQfa86sRsvYBWkBOd+0yG2aqXdYOB05x8XjZYhC2XGDO+0qr3iWC5lgqNLI5/rMzQJC4wnyv1qcRuX+Gir89ITqKE1FbZ/CCL8zQM3FQYt/19DK208gkUG1x4vt992cQpLltMg63AQS9GUkdsO3X8eYILXB6jTdaOkOeSAzJ+C9eRNfstU/MxNSRUey8f6F3X/xXnO+/2A+5Qqrtqu7dm94bxGfr3LxftP9oZkhigOWHDria4d+l8f9P5OqoLCox2HvBd6kwo43E=
   file:  
