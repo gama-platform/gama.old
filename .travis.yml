@@ -7,7 +7,6 @@ branches:
 
 jdk:
    - oraclejdk8
-   - openjdk7
 
 notifications:
   email:
