@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -50,7 +49,10 @@ import msi.gaml.types.IType;
 public class ExperimentOutputManager extends AbstractOutputManager {
 
 	private IScope scope;
-	private int layout = GamaPreferences.LAYOUTS.indexOf(GamaPreferences.CORE_DISPLAY_LAYOUT.getValue());
+	private int layout = 0;/*
+							 * GamaPreferences.LAYOUTS.indexOf(GamaPreferences.
+							 * CORE_DISPLAY_LAYOUT.getValue())
+							 */;
 
 	public ExperimentOutputManager(final IDescription desc) {
 		super(desc);
@@ -64,8 +66,9 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 			layout = Cast.asInt(scope, exp.value(scope));
 		}
 		// scope.getGui().prepareForExperiment(scope.getExperiment().getSpecies());
-		if (super.init(scope))
-			scope.getGui().applyLayout(getLayout());
+		// TODO REMOVED BECAUSE TOO INSTABLE
+		// if (super.init(scope))
+		// scope.getGui().applyLayout(getLayout());
 		return true;
 	}
 

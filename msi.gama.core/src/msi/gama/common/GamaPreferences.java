@@ -537,10 +537,14 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_DISPLAY_ORDER = create("core.display_order",
 			"Stack displays on screen in the order defined by the model", true, IType.BOOL).in(DISPLAY)
 					.group("Layout (settings effective after experiment relaunch)");
+
+	// TODO REMOVED Because too much instability
 	public static final List<String> LAYOUTS = Arrays.asList("Npne", "Stacked", "Split", "Horizontal", "Vertical");
-	public static final Entry<String> CORE_DISPLAY_LAYOUT = create("core.display.layout",
-			"Default layout of display views", "None", IType.STRING).among(LAYOUTS.toArray(new String[0])).in(DISPLAY)
-					.group("Layout (settings effective after experiment relaunch)");
+	// public static final Entry<String> CORE_DISPLAY_LAYOUT =
+	// create("core.display.layout",
+	// "Default layout of display views", "None",
+	// IType.STRING).among(LAYOUTS.toArray(new String[0])).in(DISPLAY)
+	// .group("Layout (settings effective after experiment relaunch)");
 
 	/**
 	 * Default Aspect
