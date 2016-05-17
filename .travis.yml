@@ -8,3 +8,8 @@ branches:
 jdk:
    - oraclejdk8
    - openjdk7
+
+notifications:
+  email:
+    recipients:
+     - my.gama.bot@gmail.com
