@@ -53,12 +53,9 @@ public class GamlGenerator implements IGenerator {
 	private String getContentsFor(final GamlResource input) {
 		final GamlProperties requires = input.getRequires();
 		final StringWriter sw = new StringWriter();
-		try {
-			requires.store(sw);
-		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		
+		requires.store(sw);
+
 		return sw.toString();
 	}
 
