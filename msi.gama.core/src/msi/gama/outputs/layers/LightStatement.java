@@ -7,6 +7,7 @@ import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -15,6 +16,7 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import msi.gama.outputs.layers.LightStatement.LightStatementValidator;
 
 @symbol(name = "light", kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.LIGHT, IConcept.THREED })
@@ -30,7 +32,7 @@ import msi.gama.outputs.layers.LightStatement.LightStatementValidator;
 		@facet(name = IKeyword.TYPE, type = IType.LABEL, optional = true,
 		doc = @doc("the type of light to create. A value among {point, direction, spot}. (default value : direction)") ),
 		@facet(name = IKeyword.DIRECTION, type = IType.POINT, optional = true,
-		doc = @doc("the direction of the light (only for direction and spot light). (default value : {0,0,-1})") ),
+		doc = @doc("the direction of the light (only for direction and spot light). (default value : {0.5,0.5,-1})") ),
 		@facet(name = IKeyword.SPOT_ANGLE, type = IType.FLOAT, optional = true,
 		doc = @doc("the angle of the spot light in degree (only for spot light). (default value : 45)") ),
 		@facet(name = IKeyword.LINEAR_ATTENUATION, type = IType.FLOAT, optional = true,
@@ -47,7 +49,7 @@ import msi.gama.outputs.layers.LightStatement.LightStatementValidator;
 		doc = @doc("draw or not the light. (default value : false).") ),
 		@facet(name = IKeyword.UPDATE,
 		type = { IType.BOOL }, optional = true,
-		doc = @doc("specify if the light has to be updated. (default value : false).") )})
+		doc = @doc("specify if the light has to be updated. (default value : true).") )})
 //@doc(
 //	value = "`graphics` allows the modeler to freely draw shapes/geometries/texts without having to define a species. It works exactly like a species [Aspect161 aspect]: the draw statement can be used in the same way.",
 //	usages = { @usage(value = "The general syntax is:",
@@ -118,7 +120,7 @@ public class LightStatement extends AbstractLayerStatement {
 
 	AspectStatement aspect;
 	static int i;
-	boolean update = false;
+	boolean update = true;
 
 	public LightStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
@@ -134,7 +136,7 @@ public class LightStatement extends AbstractLayerStatement {
 	@Override
 	protected boolean _init(IScope scope) {
 		if (getFacetValue(scope, IKeyword.UPDATE) != null) {
-			update = Cast.asBool(scope, getFacetValue(scope, IKeyword.DRAW_LIGHT));
+			update = Cast.asBool(scope, getFacetValue(scope, IKeyword.UPDATE));
 		}
 		setLightProperties(scope);
 		return true;
@@ -173,8 +175,14 @@ public class LightStatement extends AbstractLayerStatement {
 		if (getFacetValue(scope, IKeyword.DIRECTION) != null) {
 			getLayeredDisplayData().setLightDirection(lightId,(GamaPoint)Cast.asPoint(scope, getFacetValue(scope, IKeyword.DIRECTION)));
 		}
-		if (getFacetValue(scope, IKeyword.COLOR) != null) {
-			getLayeredDisplayData().setDiffuseLightColor(lightId,Cast.asColor(scope, getFacetValue(scope, IKeyword.COLOR)));
+		IExpression expr = getFacet(IKeyword.COLOR);
+		if (expr != null) {
+			if (expr.getType().equals(Types.COLOR)) {
+				getLayeredDisplayData().setDiffuseLightColor(lightId,Cast.asColor(scope, expr.value(scope)));
+			} else {
+				final int meanValue = Cast.asInt(scope, expr.value(scope));
+				getLayeredDisplayData().setDiffuseLightColor(lightId,new GamaColor(meanValue, meanValue, meanValue, 255));
+			}
 		}
 		if (getFacetValue(scope, IKeyword.LINEAR_ATTENUATION) != null) {
 			getLayeredDisplayData().setLinearAttenuation(lightId,(float)(double)Cast.asFloat(scope, getFacetValue(scope, IKeyword.LINEAR_ATTENUATION)));

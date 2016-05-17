@@ -43,7 +43,7 @@ species Building{
 	}
 	
 	aspect base {
-		draw shape;
+		draw shape color:#white;
 	}
 	
 	aspect textured {
@@ -61,7 +61,8 @@ experiment DisplayTextured  type: gui {
 }
 experiment DisplayWithDynamicDiffuseLight  type: gui {
 	output {
-	  display City type:opengl draw_diffuse_light:true diffuse_light:hsb((time mod 255) /255,1.0 ,0.5)  diffuse_light_pos:{world.shape.width*0.5+ world.shape.width*1.5*sin(time*2),world.shape.width*0.5,world.shape.width*cos(time*2)} background:rgb(10,40,55){
+	  display City type:opengl background:rgb(10,40,55){
+	  		light 1 type:point color:hsb((time mod 255) /255,1.0 ,0.5) position:{world.shape.width*0.5+ world.shape.width*1.5*sin(time*2),world.shape.width*0.5,world.shape.width*cos(time*2)} draw_light:true update:true;
 			species Building aspect:base;									
 		}
 	}
