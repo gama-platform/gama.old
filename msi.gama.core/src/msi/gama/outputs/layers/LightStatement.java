@@ -1,29 +1,25 @@
 package msi.gama.outputs.layers;
 
-import java.util.List;
-
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.AbstractDisplayOutput;
 import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
-import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.types.IType;
+import msi.gama.outputs.layers.LightStatement.LightStatementValidator;
 
 @symbol(name = "light", kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.LIGHT, IConcept.THREED })
 @inside(symbols = IKeyword.DISPLAY)
+@validator(LightStatementValidator.class)
 @facets(
 		omissible = IKeyword.ID,
 	value = { 
@@ -64,20 +60,29 @@ import msi.gaml.types.IType;
 //		IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.POPULATION })
 public class LightStatement extends AbstractLayerStatement {
 	
-	public static class LightStatementValidator implements IDescriptionValidator<StatementDescription> {
+	public static class LightStatementValidator implements IDescriptionValidator {
 
 		/**
 		 * Method validate()
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
-		public void validate(final StatementDescription desc) {
+		public void validate(final IDescription desc) {
 			
 			IExpressionDescription position = desc.getFacets().get(IKeyword.POSITION);
 			IExpressionDescription direction = desc.getFacets().get(IKeyword.DIRECTION);
 			IExpressionDescription spotAngle = desc.getFacets().get(IKeyword.SPOT_ANGLE);
 			IExpressionDescription linearAttenuation = desc.getFacets().get(IKeyword.LINEAR_ATTENUATION);
 			IExpressionDescription quadraticAttenuation = desc.getFacets().get(IKeyword.QUADRATIC_ATTENUATION);
+			
+			IExpression idExp = desc.getFacets().getExpr(IKeyword.ID);
+			if ( idExp != null && idExp.isConst() ) {
+				int id = Cast.asInt(null, idExp.literalValue());
+				if ( (id <= 0) || (id > 7) ) {
+					desc.error("'id' facet accept values between 1 and 7. (the light \"0\" is only used for the ambient light, which can be changed through the \"ambient_light\" display facet)",
+						IGamlIssue.GENERAL);
+				}
+			}
 			
 			IExpression spec = desc.getFacets().getExpr(IKeyword.TYPE);
 			if ( spec != null && spec.isConst() ) {

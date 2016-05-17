@@ -268,8 +268,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		// lighting.
 		GLUtilLight.enableSmooth(gl);
 		GLUtilLight.enableDepthTest(gl);
-		GLUtilLight.InitializeLighting(gl, (float) data.getEnvWidth(), (float) data.getEnvHeight(),
-				data.getAmbientLightColor(), data.getDiffuseLightColor());
+		GLUtilLight.InitializeLighting(gl, data);
 
 		// Perspective correction
 		gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
@@ -372,26 +371,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		// data.getAmbientLightColor());
 		// GLUtilLight.UpdateDiffuseLightValue(gl, data.getDiffuseLights(),
 		// getMaxEnvDim() / 20);
-
-		final float[] light0Position = new float[4];
-		ILocation p1 = data.getDiffuseLightPosition();
-		if (p1.equals(LayeredDisplayData.noChange)) {
-			p1 = new GamaPoint(data.getEnvWidth() / 2, data.getEnvHeight() / 2, data.getEnvWidth() * 2);
-		}
-		final ILocation p = p1;
-		light0Position[0] = (float) p.getX();
-		light0Position[1] = -(float) p.getY();
-		light0Position[2] = (float) p.getZ();
-		light0Position[3] = 0.0f;
-
-		if (data.isDrawDiffLight()) {
-			// GLUtilLight.DrawDiffuseLights(gl, getGlu(), getMaxEnvDim() / 10);
-			// GLUtilLight.DrawDiffuseLight0(light0Position, gl, getGlu(),
-			// getMaxEnvDim() / 10,
-			// data.getDiffuseLightColor());
-		}
-
-		// GLUtilLight.UpdateDiffuseLightPosition(gl, getGlu(), light0Position);
 
 		// Blending control
 		if (BLENDING_ENABLED) {

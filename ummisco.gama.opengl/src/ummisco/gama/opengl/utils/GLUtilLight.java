@@ -22,14 +22,12 @@ import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LightPropertiesStructure;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class GLUtilLight {
-
-	private static float light0Position[] = new float[4];
-	private static float light1Position[] = new float[4];
 
 	public static final int fogMode[] = { GL2.GL_EXP, GL2.GL_EXP2, GL2.GL_LINEAR };
 
@@ -124,22 +122,19 @@ public class GLUtilLight {
 	public static void setAmbiantLight(final GL2 gl, final Color ambientLightValue) {
 		final float[] lightAmbientValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
 				ambientLightValue.getBlue() / 255.0f, 1.0f };
-		// gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_AMBIENT,
-		// lightAmbientValue, 0);
+		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
-	public static void setDiffuseLight(final GL2 gl, final Color ambientLightValue, final GamaPoint pos) {
-		// Diffuse light 0
-		// final float[] light1DiffuseValue = { ambientLightValue.getRed() /
-		// 255.0f, ambientLightValue.getGreen() / 255.0f,
-		// ambientLightValue.getBlue() / 255.0f, 1.0f };
-		// // Diffuse light location xyz (directed light)
-		// final float light1Position[] = { (float) pos.getX(), (float)
-		// pos.getY(), (float) pos.getZ() };
-		// gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_DIFFUSE,
-		// light1DiffuseValue, 0);
-		// gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_POSITION,
-		// light1Position, 0);
+	public static void setDiffuseLight(final GL2 gl, final Color diffuseLight, final GamaPoint pos) {
+		// This method is deprecated !! Use "light" statement instead.
+		// change the diffusion light value for GL_LIGHT1
+//		final float[] light1DiffuseValue = { diffuseLight.getRed() / 255.0f, diffuseLight.getGreen() / 255.0f,
+//				diffuseLight.getBlue() / 255.0f, 1.0f };
+		
+//		// Diffuse light location xyz (directed light)
+//		final float light1Position[] = { (float) pos.getX(), (float) pos.getY(), (float) pos.getZ() };
+//		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_DIFFUSE, light1DiffuseValue, 0);
+//		gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_POSITION, light1Position, 0);
 	}
 
 	// public static void DrawDiffuseLight0(final float[] light0Position, final
@@ -155,34 +150,6 @@ public class GLUtilLight {
 	// -light0Position[2]);
 	// }
 
-	public static void DrawDiffuseLights(final GL2 gl, final GLU glu, final double radius) {
-		DrawLight0(gl, glu, radius);
-		DrawLight1(gl, glu, radius);
-	}
-
-	public static void DrawLight(final GL2 gl, final GLU glu, final double radius, final int lightID) {
-
-	}
-
-	public static void DrawLight0(final GL2 gl, final GLU glu, final double radius) {
-		// gl.glTranslatef(light0Position[0], light0Position[1],
-		// light0Position[2]);
-		// gl.glColor3f(1.0f, 1.0f, 0.0f);
-		// GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 0.0f});
-		// DrawSphere(gl, glu, radius);
-		// gl.glTranslatef(-light0Position[0], -light0Position[1],
-		// -light0Position[2]);
-	}
-
-	public static void DrawLight1(final GL2 gl, final GLU glu, final double radius) {
-		// gl.glTranslatef(light1Position[0], light1Position[1],
-		// light1Position[2]);
-		// gl.glColor3f(1.0f, 1.0f, 0.0f);
-		// DrawSphere(gl, glu, radius);
-		// gl.glTranslatef(-light1Position[0], -light1Position[1],
-		// -light1Position[2]);
-	}
-
 	public static void DrawSphere(final GL gl, final GLU glu, final double radius) {
 		// Draw sphere (possible styles: FILL, LINE, POINT).
 		final GLUquadric earth = glu.gluNewQuadric();
@@ -195,61 +162,25 @@ public class GLUtilLight {
 		glu.gluDeleteQuadric(earth);
 	}
 
-	public static void InitializeLighting(final GL2 gl, final float widthEnv, final float heightEnv,
-			final Color ambientLightValue, final Color diffuseLightValue) {
+	public static void InitializeLighting(final GL2 gl, LayeredDisplayData data) {
 
 		// ambient
+		Color ambientLightValue = data.getAmbientLightColor();
 		final float[] lightAmbientValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
 				ambientLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
-		// gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_AMBIENT,
-		// lightAmbientValue, 0);
-
-		// Diffuse
-		final float[] lightDiffuseValue = { diffuseLightValue.getRed() / 255.0f, diffuseLightValue.getGreen() / 255.0f,
-				diffuseLightValue.getBlue() / 255.0f, 1.0f };
-
-		final boolean use2light = false;
-		// use Two lights
-		if (use2light) {
-			// light0Position[0] = widthEnv * 2;
-			// light0Position[1] = -heightEnv / 2;
-			// light0Position[2] = 2 * widthEnv;
-			// light0Position[0] = 0;
-			// light0Position[1] = 0;
-			// light0Position[2] = 1;
-			// light0Position[3] = 0.0f;
-			gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_DIFFUSE, new float[] { 0, 0, 0, 0 }, 0);
-			// gl.glLightfv(GLLightingFunc.GL_LIGHT0,
-			// GLLightingFunc.GL_POSITION, light0Position, 0);
-
-			light1Position[0] = -widthEnv;
-			light1Position[1] = -heightEnv / 2;
-			light1Position[2] = 2 * widthEnv;
-			light1Position[3] = 0.0f;
-			gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_DIFFUSE, lightDiffuseValue, 0);
-			gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_POSITION, light1Position, 0);
-
-			// gl.glEnable(GLLightingFunc.GL_LIGHT0); // Enable Light-0
-			gl.glEnable(GLLightingFunc.GL_LIGHT1); // Enable Light-1
-		} else {
-			light0Position[0] = widthEnv / 2;
-			light0Position[1] = -heightEnv / 2;
-			light0Position[2] = 2 * widthEnv;
-			light0Position[3] = 0.0f;
-			// gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_DIFFUSE,
-			// lightDiffuseValue, 0);
-			// gl.glLightfv(GLLightingFunc.GL_LIGHT0,
-			// GLLightingFunc.GL_POSITION, light0Position, 0);
-
-			// gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_DIFFUSE,
-			// lightDiffuseValue, 0);
-			// gl.glLightfv(GLLightingFunc.GL_LIGHT1,
-			// GLLightingFunc.GL_POSITION, light0Position, 0);
-			//
-			gl.glEnable(GLLightingFunc.GL_LIGHT0);
-			// gl.glEnable(GLLightingFunc.GL_LIGHT1);
-		}
+		// deactivate diffuse light for the light0
+		data.setLightActive(0, true);
+		data.setLightType(0, "direction");
+		data.setDiffuseLightColor(0, new GamaColor(0,0,0,0));
+		
+		// default value for diffuse light
+		data.setLightActive(1, true);
+		// directional light
+		data.setLightType(1, "direction");
+		data.setLightDirection(1, new GamaPoint(0.5,0.5,-1,0) );
+		// white color
+		data.setDiffuseLightColor(1, new GamaColor(255,255,255,255));
 
 		// set material properties which will be assigned by glColor
 		gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GLLightingFunc.GL_AMBIENT_AND_DIFFUSE);
@@ -273,8 +204,6 @@ public class GLUtilLight {
 		final float[] lightAmbientValue = { ambiantLightValue.getRed() / 255.0f, ambiantLightValue.getGreen() / 255.0f,
 				ambiantLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
-		// gl.glLightfv(GLLightingFunc.GL_LIGHT1, GLLightingFunc.GL_AMBIENT,
-		// lightAmbientValue, 0);
 	}
 
 	public static void TranslateAllLights(final GL2 gl, final float[] translation) {

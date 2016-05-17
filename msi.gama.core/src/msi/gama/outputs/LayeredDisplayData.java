@@ -57,7 +57,7 @@ public class LayeredDisplayData {
 																	// is the
 																	// default
 																	// value.
-	private Color diffuseColor = new GamaColor(110, 110, 110, 255); // 110
+	private Color defaultDiffuseColor = new GamaColor(110, 110, 110, 255); // 110
 																	// because
 																	// it is the
 																	// value
@@ -106,9 +106,7 @@ public class LayeredDisplayData {
 														// the display
 	private boolean isShowingFPS = false; // GamaPreferences.CORE_SHOW_FPS.getValue();
 	private boolean isDrawingEnvironment = GamaPreferences.CORE_DRAW_ENV.getValue();
-	private boolean isDrawingDiffuseLight = false;
 	private boolean isLightOn = true; // GamaPreferences.CORE_IS_LIGHT_ON.getValue();
-	private ILocation diffuseLightPosition = getNoChange();
 	private ILocation cameraPos = getNoChange();
 	private ILocation cameraLookPos = getNoChange();
 	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
@@ -318,13 +316,6 @@ public class LayeredDisplayData {
 	public void setLightOn(final boolean isLightOn) {
 		this.isLightOn = isLightOn;
 	}
-
-	/**
-	 * @return the drawDiffLight
-	 */
-	public boolean isDrawDiffLight() {
-		return isDrawingDiffuseLight;
-	}
 	
 	public List<LightPropertiesStructure> getDiffuseLights() {
 		ArrayList<LightPropertiesStructure> result = new ArrayList<LightPropertiesStructure>();
@@ -384,88 +375,6 @@ public class LayeredDisplayData {
 	public void setDrawLight(int lightId, boolean value) {
 		lights[lightId].drawLight = value;
 	}
-	
-	public void setLightProperty(String value) {
-		// value : id:1; active:true; color:rgb(255,200,200,200); ... | id:2; active:true; ...
-		// TODO
-		String[] lightPropertyList;
-		if (value.contains("|"))
-		{
-			lightPropertyList = value.split("\\|");
-		}
-		else {
-			lightPropertyList = new String[1];
-			lightPropertyList[0] = value;
-		}
-		for (String lightProperty : lightPropertyList) {
-			LightPropertiesStructure lightProp = new LightPropertiesStructure();
-			lightProp.id = getIDProperty(lightProperty);
-			lightProp.color = getColorProperty(lightProperty);
-			lightProp.position = getPositionProperty(lightProperty);
-			lightProp.linearAttenuation = getLinearAttenuationProperty(lightProperty);
-			lights[lightProp.id] = lightProp;
-		}
-	}
-	
-	public int getIDProperty(String str) {
-		return Integer.parseInt(getPropertyValue(str, "id"));
-	}
-	
-	public GamaColor getColorProperty(String str) {
-		int r=255,g=255,b=255,a=255;
-		String colorStr = getPropertyValue(str, "color");
-		colorStr = colorStr.replace("rgb", "");
-		colorStr = colorStr.replace("(", "");
-		colorStr = colorStr.replace(")", "");
-		colorStr = colorStr.replace(" ", "");
-		String channelList[] = colorStr.split(",");
-		if (channelList.length == 1) {
-			r = g = b = Integer.parseInt(channelList[0]);
-		}
-		else if (channelList.length >= 3) {
-			r = Integer.parseInt(channelList[0]);
-			g = Integer.parseInt(channelList[1]);
-			b = Integer.parseInt(channelList[2]);
-			if (channelList.length == 4) {
-				a = Integer.parseInt(channelList[3]);
-			}
-		}
-		return new GamaColor(r,g,b,a);
-	}
-	
-	public GamaPoint getPositionProperty(String str) {
-		int x=0,y=0,z=0;
-		String positionStr = getPropertyValue(str, "position");
-		positionStr = positionStr.replace("{", "");
-		positionStr = positionStr.replace("}", "");
-		positionStr = positionStr.replace(" ", "");
-		String coordinateList[] = positionStr.split(",");
-		x = Integer.parseInt(coordinateList[0]);
-		y = Integer.parseInt(coordinateList[1]);
-		if (coordinateList.length == 3) {
-			z = Integer.parseInt(coordinateList[2]);
-		}
-		return new GamaPoint(x,y,z);
-	}
-	
-	public float getLinearAttenuationProperty(String str) {
-		String linearAttenuationStr = getPropertyValue(str, "linearAttenuation");
-		return Float.parseFloat(linearAttenuationStr);
-	}
-	
-	public String getPropertyValue(String str, String propName) {
-		String result = str.split(propName+":")[1];
-		result = result.split(";")[0];
-		return result;
-	}
-
-	/**
-	 * @param drawDiffLight
-	 *            the drawDiffLight to set
-	 */
-	public void setDrawDiffLight(final boolean drawDiffLight) {
-		this.isDrawingDiffuseLight = drawDiffLight;
-	}
 
 	public void disableCameraInteractions(final boolean disableCamInteract) {
 		this.disableCameraInteraction = disableCamInteract;
@@ -491,25 +400,11 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @return the diffuseLightColor
-	 */
-	public Color getDiffuseLightColor() {
-		return diffuseColor;
-	}
-
-	/**
 	 * @param diffuseLightColor
 	 *            the diffuseLightColor to set
 	 */
 	public void setDiffuseLightColor(final Color diffuseLightColor) {
-		this.diffuseColor = diffuseLightColor;
-	}
-
-	/**
-	 * @return the diffuseLightPosition
-	 */
-	public ILocation getDiffuseLightPosition() {
-		return diffuseLightPosition;
+		this.defaultDiffuseColor = diffuseLightColor;
 	}
 
 	/**
@@ -517,7 +412,7 @@ public class LayeredDisplayData {
 	 *            the diffuseLightPosition to set
 	 */
 	public void setDiffuseLightPosition(final ILocation diffuseLightPosition) {
-		this.diffuseLightPosition = diffuseLightPosition;
+//		this.diffuseLightPosition = diffuseLightPosition;
 	}
 
 	/**
