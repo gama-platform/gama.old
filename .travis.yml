@@ -8,8 +8,3 @@ branches:
 jdk:
    - oraclejdk8
    - openjdk7
-
-notifications:
-  email: 
-    recipients:
-      - gama-dev@googlegroups.com
