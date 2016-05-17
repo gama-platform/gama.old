@@ -30,20 +30,11 @@ import msi.gaml.types.IType;
 @doc("k")
 @vars({ 
 		@var(name = "messages", type = IType.MAP, doc = @doc("the list of messages")),
-
 		@var(name = "clients", type = IType.LIST, doc = @doc("the list of clients")),
 		@var(name = "port", type = IType.INT, doc = @doc("the port")),
 		@var(name = "ip", type = IType.STRING, doc = @doc("the IP")) })
 @skill(name = "socket", concept = { IConcept.SKILL, IConcept.NETWORK })
 public class SocketSkill extends Skill {
-
-	// private Integer myPort;
-	// private String myIP = "127.0.0.1";
-	// private String sendMessage;
-	// private String recMessage;
-	// private ServerSocket sersock = null;
-	// private Socket sock = null;
-	// private Socket cSock = null;
 	
 	@getter("clients")
 	public IList getListClient(final IAgent agent) {
@@ -163,39 +154,16 @@ public class SocketSkill extends Skill {
 	public String primGetFromClient(final IScope scope) throws GamaRuntimeException {
 		String cli = scope.getStringArg("cID");
 		String receiveMessage = "";
-
-//		final Socket sock = (Socket) ((ClientServiceThread)scope.getAgentScope().getAttribute("__client"+cli)).getMyClientSocket();
-//		if( sock == null){
-//			return receiveMessage; 
-//		}
-//		if(sock.isClosed() || sock.isInputShutdown() || sock.isOutputShutdown()){			
-//			GamaList<String> l=(GamaList<String>) Cast.asList(scope, scope.getAgentScope().getAttribute("clients"));
-//			if(l!=null && l.contains(sock.toString())){
-//				l.remove(sock.toString());
-//				scope.getAgentScope().setAttribute("clients", l);
-//			}
-//			return receiveMessage;
-//		}
-//		try {
-
-//			receiveMessage = ""+ scope.getAgentScope().getAttribute("__clientCommand" + sock.toString());
-//			GamaList<String> msgs = (GamaList<String>)  scope.getAgentScope().getAttribute("__clientCommand" + sock.toString());
 			
-			GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) scope.getAgentScope().getAttribute("messages");
-			GamaList<String> msgs = (GamaList<String>) m.get(cli);
+		GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) scope.getAgentScope().getAttribute("messages");
+		GamaList<String> msgs = (GamaList<String>) m.get(cli);
 
-			receiveMessage = msgs.firstValue(scope);
-			
-			msgs.remove(receiveMessage);
-			m.put(cli,msgs);
-			scope.getAgentScope().setAttribute("messages",m);
-			
-//			scope.getAgentScope().setAttribute("__clientCommand" + sock.toString(),"");
-//			scope.getAgentScope().setAttribute("message", receiveMessage);	
+		receiveMessage = msgs.firstValue(scope);
 		
-//		} catch (Exception e) {
-//			throw GamaRuntimeException.create(e, scope);
-//		}
+		msgs.remove(receiveMessage);
+		m.put(cli,msgs);
+		scope.getAgentScope().setAttribute("messages",m);
+			
 		return receiveMessage; 
 	}
 
@@ -215,23 +183,12 @@ public class SocketSkill extends Skill {
 			Socket sock = null;
 			if (c != null) {
 				sock = (Socket) c.getMyClientSocket();
-			}
-//			if (sock.isClosed() || sock.isOutputShutdown()) {
-//				GamaList<String> l=(GamaList<String>) Cast.asList(scope, scope.getAgentScope().getAttribute("clients"));
-//				if(l.contains(sock.toString())){
-//					l.remove(sock.toString());
-//					scope.getAgentScope().setAttribute("clients", l);
-//				}
-//				return;
-//			}else{		
+			}	
 			if(sock == null) {return;}
 				OutputStream ostream = sock.getOutputStream();
 				PrintWriter pwrite = new PrintWriter(ostream, true);
 				pwrite.println(msg);
 				pwrite.flush();
-//			}
-
-
 		} catch (Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
@@ -251,10 +208,6 @@ public class SocketSkill extends Skill {
 			return receiveMessage; 
 		}
 		try {
-
-//			receiveMessage = ""+ scope.getAgentScope().getAttribute("__clientCommand" + sock.toString());
-//			GamaList<String> msgs = (GamaList<String>)  scope.getAgentScope().getAttribute("__clientCommand" + sock.toString());
-
 			GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) scope.getAgentScope().getAttribute("messages");
 			GamaList<String> msgs = (GamaList<String>) m.get(sock.toString());
 			receiveMessage = msgs.firstValue(scope);
@@ -262,20 +215,11 @@ public class SocketSkill extends Skill {
 			msgs.remove(receiveMessage);
 			m.put(sock.toString(),msgs);
 			scope.getAgentScope().setAttribute("messages",m);
-			
-			
-//			scope.getAgentScope().setAttribute("__clientCommand" + sock.toString(),"");
-//			scope.getAgentScope().setAttribute("message", receiveMessage);	
 		
 		} catch (Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
-		return receiveMessage; 
-		
-		
-		
-		
-		
+		return receiveMessage; 	
 	}
 
 	@action(name = "send_to_server", args = {
@@ -297,8 +241,6 @@ public class SocketSkill extends Skill {
 			PrintWriter pwrite = new PrintWriter(ostream, true);
 			pwrite.println(msg); // sending to server
 			pwrite.flush(); // flush the data
-//			pwrite.close();
-//			ostream.close();
 
 		} catch (Exception e) {
 			throw GamaRuntimeException.create(e, scope);
