@@ -1,3 +1,5 @@
+language: java
+
 # whitelist
 branches:
   only:
