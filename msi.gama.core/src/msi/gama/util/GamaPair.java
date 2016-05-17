@@ -12,6 +12,8 @@
 package msi.gama.util;
 
 import java.util.Map;
+
+import gnu.trove.impl.HashFunctions;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.*;
@@ -63,6 +65,10 @@ public class GamaPair<K, V> implements IContainer<Integer, Object>, IContainer.A
 
 	public boolean equals(final GamaPair p) {
 		return key.equals(p.key) && value.equals(p.value);
+	}
+	
+	public int hashCode() {
+		return HashFunctions.hash(key) + 1024 * HashFunctions.hash(value);
 	}
 
 	@Override
