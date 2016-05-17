@@ -23,7 +23,7 @@
       <import plugin="org.eclipse.emf.ecore"/>
       <import plugin="org.junit" version="4.8.2" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.runtime"/>
-      <import plugin="com.google.guava" version="10.0.1" match="compatible"/>
+      <import plugin="com.google.guava" version="15.0" match="compatible"/>
       <import plugin="org.apache.commons.lang"/>
    </requires>
 

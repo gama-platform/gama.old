@@ -1,0 +1,14 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>ummisco.gaml.extensions.rjava</groupId>
+  <artifactId>ummisco.gaml.extensions.rjava</artifactId>
+  <packaging>eclipse-plugin</packaging>
+  <parent>
+  	<groupId>msi.gama</groupId>
+  	<artifactId>msi.gama.parent</artifactId>
+  	<version>1.7.0-SNAPSHOT</version>
+        <relativePath>../msi.gama.parent/</relativePath>
+  </parent>
+  
+  <version>1.0.0-SNAPSHOT</version>
+</project>

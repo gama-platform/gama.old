@@ -321,6 +321,7 @@ public interface IKeyword {
 	public static final String PUT = "put";
 	public static final String QUADRATIC_ATTENUATION = "quadratic_attenuation";
 	public static final String QUADTREE = "quadtree";
+	public static final String RADAR = "radar";
 	public static final String RADIUS = "radius";
 	public static final String RAISES = "raises";
 	public static final String RANDOM_SPECIES_NAME = "random_builder";

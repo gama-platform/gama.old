@@ -26,3 +26,4 @@ release/*
 .metadata/*
 /*/gaml/
 /*/bin/
+msi.gama.ext/lib/

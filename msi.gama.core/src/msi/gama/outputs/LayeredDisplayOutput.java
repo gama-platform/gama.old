@@ -95,6 +95,7 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.DIFFUSE_LIGHT_POS, type = IType.POINT, optional = true, doc = @doc(value = "Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width`*`2}",
 				deprecated = "Use statement \"light\" instead")),
 		@facet(name = IKeyword.IS_LIGHT_ON, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the light. Default is true")),
+		@facet(name = IKeyword.DRAW_DIFFUSE_LIGHT, type = IType.BOOL, optional = true, doc = @doc(value = "Allows to show/hide a representation of the lights. Default is false.")),
 		@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT,
 				IType.AGENT }, optional = true, doc = @doc("Allows to define the position of the camera")),
 		@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the direction of the camera")),
@@ -330,6 +331,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
 		// this facet is deprecated...
 		if (light2 != null) {
+			this.data.setLightActive(1, true);
 			if (light2.getType().equals(Types.COLOR)) {
 				this.data.setDiffuseLightColor(1,Cast.asColor(getScope(), light2.value(getScope())));
 			} else {
@@ -341,7 +343,35 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
 		// this facet is deprecated...
 		if (light3 != null) {
+			this.data.setLightActive(1, true);
 			this.data.setLightDirection(1,(GamaPoint)Cast.asPoint(getScope(), light3.value(getScope())));
+		}
+		
+		final IExpression drawLights = getFacet(IKeyword.DRAW_DIFFUSE_LIGHT);
+		if (drawLights != null) {
+			if ( Cast.asBool(getScope(), drawLights.value(getScope())) == true ) {
+				// set the drawLight attribute to true for all the already existing light 
+				for (int i = 0 ; i < 8 ; i++) {
+					boolean lightAlreadyCreated = false;
+					for (LightPropertiesStructure lightProp : this.data.getDiffuseLights()) {
+						if (lightProp.id == i) {
+							lightProp.drawLight = true;
+							lightAlreadyCreated = true;
+						}
+					}
+					// if the light does not exist yet, create it by using the method "setLightActive", and set the drawLight attr to true.
+					if (!lightAlreadyCreated) {
+						if (i < 2) {
+							this.data.setLightActive(i, true);
+						}
+						else {
+							this.data.setLightActive(i, false);
+						}
+						this.data.setDrawLight(i, true);
+					}
+					lightAlreadyCreated = false;
+				}
+			}
 		}
 
 		final IExpression camera = getFacet(IKeyword.CAMERA_POS);

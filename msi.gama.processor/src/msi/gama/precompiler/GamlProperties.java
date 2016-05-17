@@ -108,7 +108,9 @@ public class GamlProperties {
 			prop.store(writer, NULL);
 			writer.flush();
 			writer.close();
-		} catch (IOException e) {}
+		} catch (IOException e) {
+			throw new java.io.IOError(e);
+		}
 
 	}
 

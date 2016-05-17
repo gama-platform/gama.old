@@ -103,7 +103,6 @@ public class ModelScene {
 			gl.glDeleteTextures(textureIdsToDestroy.length, textureIdsToDestroy, 0);
 			localVolatileTextures.clear();
 		}
-
 	}
 
 	public Texture getTexture(final GL gl, final BufferedImage image) {

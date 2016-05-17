@@ -26,7 +26,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaPair;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.jts.JTSDrawer;
-import ummisco.gama.opengl.utils.Vertex;
+import ummisco.gama.opengl.utils.GLUtilLight;
 
 /**
  *
@@ -44,6 +44,8 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	@Override
 	protected void _draw(final GL2 gl, final GeometryObject geometry) {
+		
+		// apply the rotation
 		final GamaPair<Double, GamaPoint> rot = geometry.attributes.rotation;
 
 		if (rot != null) {
@@ -52,9 +54,11 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			final Double rotation = -rot.key;
 			final GamaPoint axis = rot.value;
 			gl.glTranslated(loc.x, -loc.y, loc.z);
+			//GLUtilLight.rotateLights(renderer.data.getDiffuseLights(),rotation,axis);
 			gl.glRotated(rotation, axis.x, axis.y, axis.z);
 			gl.glTranslated(-loc.x, loc.y, -loc.z);
 		}
+		
 		final double height = geometry.getHeight();
 		final Color color = geometry.getColor();
 		final Color border = geometry.getBorder();
@@ -150,6 +154,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			}
 
 		}
+		
 	}
 
 	JTSDrawer getJtsDrawer() {

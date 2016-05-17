@@ -43,11 +43,11 @@ public class LayerObject implements Iterable<GeometryObject> {
 	volatile boolean isInvalid;
 	volatile boolean overlay;
 
-	protected ISceneObjects<GeometryObject> geometries;
-	protected ISceneObjects<ResourceObject> resources;
-	protected ISceneObjects<ImageObject> images;
-	protected ISceneObjects<FieldObject> dems;
-	protected ISceneObjects<StringObject> strings;
+	protected final ISceneObjects<GeometryObject> geometries;
+	protected final ISceneObjects<ResourceObject> resources;
+	protected final ISceneObjects<ImageObject> images;
+	protected final ISceneObjects<FieldObject> dems;
+	protected final ISceneObjects<StringObject> strings;
 
 	public LayerObject(final JOGLRenderer renderer, final ILayer layer) {
 		this.layer = layer;

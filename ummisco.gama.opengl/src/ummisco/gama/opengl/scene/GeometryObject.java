@@ -12,9 +12,11 @@
 package ummisco.gama.opengl.scene;
 
 import com.vividsolutions.jts.geom.Geometry;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
-import msi.gaml.statements.draw.*;
+import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
 
 public class GeometryObject extends AbstractObject {
 
@@ -32,14 +34,19 @@ public class GeometryObject extends AbstractObject {
 
 	@Override
 	public double getZ_fighting_id() {
-		if ( getType() == IShape.Type.GRIDLINE ) { return super.getZ_fighting_id(); }
-		if ( getAgent() != null && getAgent().getLocation().getZ() == 0d &&
-			getHeight() == 0d ) { return super.getZ_fighting_id() + 1 / (double) (getAgent().getIndex() + 10); }
+		if (getType() == IShape.Type.GRIDLINE) {
+			return super.getZ_fighting_id();
+		}
+		if (getAgent() != null && getAgent().getLocation().getZ() == 0d && getHeight() == 0d) {
+			return super.getZ_fighting_id() + 1 / (double) (getAgent().getIndex() + 10);
+		}
 		return super.getZ_fighting_id();
 	}
 
 	public IShape.Type getType() {
-		if ( !(attributes instanceof ShapeDrawingAttributes) ) { return null; }
+		if (!(attributes instanceof ShapeDrawingAttributes)) {
+			return null;
+		}
 		return ((ShapeDrawingAttributes) attributes).type;
 	}
 

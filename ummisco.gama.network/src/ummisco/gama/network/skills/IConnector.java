@@ -1,4 +1,4 @@
-package ummisco.gama.network.common;
+package ummisco.gama.network.skills;
 
 import java.util.Map;
 
