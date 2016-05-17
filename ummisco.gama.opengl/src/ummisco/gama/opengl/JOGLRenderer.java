@@ -128,7 +128,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		}
 
 	}
-	
+
 	public static int Y_FLAG = -1;
 
 	private static boolean BLENDING_ENABLED; // blending on/off
@@ -155,7 +155,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 	// Use to inverse y composant
-	//public int yFlag;
+	// public int yFlag;
 	private final GeometryCache geometryCache = new GeometryCache();
 	private final TextRenderersCache textRendererCache = new TextRenderersCache();
 	private final TextureCache textureCache = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()
@@ -293,6 +293,25 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 	}
 
+	public void setCurrentColor(final GL2 gl, final Color c, final double alpha) {
+		if (c == null)
+			return;
+		setCurrentColor(gl, c.getRed() / 255d, c.getGreen() / 255d, c.getBlue() / 255d, c.getAlpha() / 255d * alpha);
+	}
+
+	public void setCurrentColor(final GL2 gl, final Color c) {
+		setCurrentColor(gl, c, 1);
+	}
+
+	public void setCurrentColor(final GL2 gl, final double red, final double green, final double blue,
+			final double alpha) {
+		gl.glColor4d(red, green, blue, alpha);
+	}
+
+	public void setCurrentColor(final GL2 gl, final double value) {
+		setCurrentColor(gl, value, value, value, 1);
+	}
+
 	public Integer getGeometryListFor(final GL2 gl, final GamaGeometryFile file) {
 		return geometryCache.get(gl, this, file);
 	}
@@ -349,8 +368,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			gl.glDisable(GLLightingFunc.GL_LIGHTING);
 		}
 
-		GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(), data.getAmbientLightColor());
-		GLUtilLight.UpdateDiffuseLightValue(gl, data.getDiffuseLights(), getMaxEnvDim() / 20);
+		// GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(),
+		// data.getAmbientLightColor());
+		// GLUtilLight.UpdateDiffuseLightValue(gl, data.getDiffuseLights(),
+		// getMaxEnvDim() / 20);
 
 		final float[] light0Position = new float[4];
 		ILocation p1 = data.getDiffuseLightPosition();
@@ -364,12 +385,13 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		light0Position[3] = 0.0f;
 
 		if (data.isDrawDiffLight()) {
-//			GLUtilLight.DrawDiffuseLights(gl, getGlu(), getMaxEnvDim() / 10);
-//			GLUtilLight.DrawDiffuseLight0(light0Position, gl, getGlu(), getMaxEnvDim() / 10,
-//					data.getDiffuseLightColor());
+			// GLUtilLight.DrawDiffuseLights(gl, getGlu(), getMaxEnvDim() / 10);
+			// GLUtilLight.DrawDiffuseLight0(light0Position, gl, getGlu(),
+			// getMaxEnvDim() / 10,
+			// data.getDiffuseLightColor());
 		}
 
-//		GLUtilLight.UpdateDiffuseLightPosition(gl, getGlu(), light0Position);
+		// GLUtilLight.UpdateDiffuseLightPosition(gl, getGlu(), light0Position);
 
 		// Blending control
 		if (BLENDING_ENABLED) {

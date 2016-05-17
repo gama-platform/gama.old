@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
+import java.awt.Color;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -20,7 +21,6 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> {
 
@@ -124,7 +124,8 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		if (objects.size() == 0) {
 			return;
 		}
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
+		renderer.setCurrentColor(gl, Color.white);
+		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
 		if (picking) {
 			drawPicking(gl, renderer);
 			return;

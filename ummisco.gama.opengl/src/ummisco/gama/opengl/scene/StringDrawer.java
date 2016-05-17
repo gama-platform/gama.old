@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
+import java.awt.Color;
 import java.awt.Font;
 
 import com.jogamp.opengl.GL;
@@ -20,7 +21,6 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 /**
  *
@@ -82,11 +82,17 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 			gl.glPushMatrix();
 			gl.glDisable(GLLightingFunc.GL_LIGHTING);
 			gl.glDisable(GL.GL_BLEND);
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(s.getColor().getRed() / 255.0), (float)(s.getColor().getGreen() / 255.0), 
-					(float)(s.getColor().getBlue() / 255.0), (float)(s.getColor().getAlpha() / 255.0 * s.getAlpha())});					
+			renderer.setCurrentColor(gl, s.getColor(), s.getAlpha());
+			// GLUtilGLContext.SetCurrentColor(gl, (float)
+			// (s.getColor().getRed() / 255.0),
+			// (float) (s.getColor().getGreen() / 255.0), (float)
+			// (s.getColor().getBlue() / 255.0),
+			// (float) (s.getColor().getAlpha() / 255.0 * s.getAlpha()));
 			gl.glRasterPos3d(x, y, z);
 			renderer.getGlut().glutBitmapString(fontToUse, s.string);
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, 1.0f});
+			renderer.setCurrentColor(gl, Color.white);
+			// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f, 1.0f,
+			// 1.0f, 1.0f });
 			gl.glEnable(GL.GL_BLEND);
 			gl.glEnable(GLLightingFunc.GL_LIGHTING);
 			gl.glPopMatrix();

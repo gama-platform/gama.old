@@ -11,10 +11,16 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import com.jogamp.opengl.*;
-import com.jogamp.opengl.util.texture.*;
+import java.awt.Color;
+
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES3;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureCoords;
+
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.utils.*;
+import ummisco.gama.opengl.utils.GLUtilNormal;
+import ummisco.gama.opengl.utils.Vertex;
 
 /**
  *
@@ -32,25 +38,29 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 
 	@Override
 	protected void _draw(final GL2 gl, final ImageObject img) {
-		Texture curTexture = img.getTexture(gl, renderer, 0);
-		if ( curTexture == null ) { return; }
-		double width = img.getDimensions().x;
-		double height = img.getDimensions().y;
+		final Texture curTexture = img.getTexture(gl, renderer, 0);
+		if (curTexture == null) {
+			return;
+		}
+		final double width = img.getDimensions().x;
+		final double height = img.getDimensions().y;
 
-		double x = img.getLocation().x;
-		double y = img.getLocation().y;
-		double z = img.getLocation().z;
+		final double x = img.getLocation().x;
+		final double y = img.getLocation().y;
+		final double z = img.getLocation().z;
 		// System.out.println("Drawing at " + x + " " + y + " " + z);
 		// Binds the texture
 		curTexture.bind(gl);
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, (float)(double)img.getAlpha()});
-		TextureCoords textureCoords = curTexture.getImageTexCoords();
-		float textureTop = textureCoords.top();
-		float textureBottom = textureCoords.bottom();
-		float textureLeft = textureCoords.left();
-		float textureRight = textureCoords.right();
+		renderer.setCurrentColor(gl, Color.white, img.getAlpha());
+		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f,
+		// img.getAlpha().floatValue());
+		final TextureCoords textureCoords = curTexture.getImageTexCoords();
+		final float textureTop = textureCoords.top();
+		final float textureBottom = textureCoords.bottom();
+		final float textureLeft = textureCoords.left();
+		final float textureRight = textureCoords.right();
 		double angle = img.getRotationAngle();
-		if ( angle != 0 ) {
+		if (angle != 0) {
 			gl.glTranslated(x + width / 2, -(y + height / 2), 0.0d);
 			// FIXME:Check counterwise or not, and do we rotate
 			// around the center or around a point.
@@ -58,9 +68,9 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 			gl.glTranslated(-(x + width / 2), +(y + height / 2), 0.0d);
 		}
 
-		if ( renderer.getComputeNormal() ) {
-			Vertex[] vertices = new Vertex[4];
-			for ( int i = 0; i < 4; i++ ) {
+		if (renderer.getComputeNormal()) {
+			final Vertex[] vertices = new Vertex[4];
+			for (int i = 0; i < 4; i++) {
 				vertices[i] = new Vertex();
 			}
 			vertices[0].x = x;
@@ -80,7 +90,9 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 			vertices[3].z = z;
 			GLUtilNormal.HandleNormal(vertices, -1, renderer);
 		}
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, (float)(double)img.getAlpha()});
+		renderer.setCurrentColor(gl, Color.white, img.getAlpha());
+		// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f, 1.0f, 1.0f,
+		// (float) (double) img.getAlpha() });
 		gl.glBegin(GL2ES3.GL_QUADS);
 		// bottom-left of the texture and quad
 		gl.glTexCoord2f(textureLeft, textureBottom);
@@ -96,7 +108,7 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 		gl.glVertex3d(x, -y, z);
 		gl.glEnd();
 		angle = img.getRotationAngle();
-		if ( angle != 0 ) {
+		if (angle != 0) {
 			gl.glTranslated(x + width / 2, -(y + height / 2), 0.0d);
 			gl.glRotated(angle, 0.0d, 0.0d, 1.0d);
 			gl.glTranslated(-(x + width / 2), +(y + height / 2), 0.0d);

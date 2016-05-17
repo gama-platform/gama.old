@@ -125,7 +125,8 @@ public class GAMA {
 		}
 		currentExperiment.setHeadless(true);
 		for (final Map.Entry<String, Object> entry : params.entrySet()) {
-			currentExperiment.setParameterValue(currentExperiment.getExperimentScope(), entry.getKey(),
+			
+			currentExperiment.setParameterValueByTitle(currentExperiment.getExperimentScope(), entry.getKey(),
 					entry.getValue());
 		}
 		currentExperiment.open();

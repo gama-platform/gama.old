@@ -43,7 +43,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.AgentLayer;
-import msi.gama.outputs.layers.ChartLayer;
+import msi.gama.outputs.layers.charts.ChartLayer;
 import msi.gama.outputs.layers.GraphicLayer;
 import msi.gama.outputs.layers.GridLayer;
 import msi.gama.outputs.layers.ImageLayer;
