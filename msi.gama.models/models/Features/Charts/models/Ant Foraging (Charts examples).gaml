@@ -146,10 +146,10 @@ experiment Ant type: gui {
 	//Reflex to update the charts, belonging to the experiment bloc as it will not be used by other experiment which don't have the charts
 	reflex update_charts
 	{
-		nbants<-[];
-		statesnames<-[];
+		nbants<-list<list<int>>([]);
+		statesnames<-list<string>([]);
 		categnames<-["empty","carry"];
-		nbantsbydist<-[];
+		nbantsbydist<-list<list<int>>([]);
 		ant x<-one_of(world.ant);
 		loop x over:list(world.ant)
 		{
@@ -158,7 +158,7 @@ experiment Ant type: gui {
 			add [(list(ant) count (each.state=x.state and !each.hasFood)),(list(ant) count (each.state=x.state and each.hasFood))] to: nbants;
 			add (x.state) to:statesnames;				
 			int d<-0;
-			list<int> nl<-[];
+			list<int> nl<-list<int>([]);
 			loop d from:0 to:9
 				{
 			add (list(ant) count (each.state=x.state and (((each distance_to center)>gridsize/20*d) and ((each distance_to center)<gridsize/20*(d+1))))) to: nl;
@@ -269,8 +269,8 @@ experiment AntOneDisp type: gui {
 	reflex update_charts
 	{
 		ant x<-one_of(world.ant);
-		nbants<-[];
-		statesnames<-[];
+		nbants<-list<list<int>>([]);
+		statesnames<-list<string>([]);
 		loop x over:list(world.ant)
 		{
 			if !(statesnames contains (x.state))
@@ -278,7 +278,7 @@ experiment AntOneDisp type: gui {
 			add [(list(ant) count (each.state=x.state and !each.hasFood)),(list(ant) count (each.state=x.state and each.hasFood))] to: nbants;
 			add (x.state) to:statesnames;				
 			int d<-0;
-			list<int> nl<-[];
+			list<int> nl<-list<int>([]);
 			loop d from:0 to:9
 				{
 			add (list(ant) count (each.state=x.state and (((each distance_to center)>gridsize/20*d) and ((each distance_to center)<gridsize/20*(d+1))))) to: nl;
