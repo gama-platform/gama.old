@@ -211,11 +211,14 @@ public class Variable extends Symbol implements IVariable {
 				return;
 			}
 			// AD 15/04/14: special case for files
-			if (!init.isConst() && init.getType().getType().id() != IType.FILE) {
-				final String p = "Parameter '" + cd.getParameterName() + "' ";
-				cd.error(p + "initial value must be constant", IGamlIssue.NOT_CONST, INIT);
-				return;
-			}
+			// AD 17/06/16 The restriction is temporarily removed
+			// if (!init.isConst() && init.getType().getType().id() !=
+			// IType.FILE) {
+			// final String p = "Parameter '" + cd.getParameterName() + "' ";
+			// cd.error(p + "initial value must be constant",
+			// IGamlIssue.NOT_CONST, INIT);
+			// return;
+			// }
 			if (facets.containsKey(UPDATE) || facets.containsKey(VALUE) || facets.containsKey(FUNCTION)) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
 				cd.error(p + "cannot have an 'update', 'value' or 'function' facet", IGamlIssue.REMOVE_VALUE);
