@@ -22,8 +22,6 @@ import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-import com.sun.org.apache.bcel.internal.generic.NEWARRAY;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.headless.common.Display2D;
 import msi.gama.headless.common.Globals;

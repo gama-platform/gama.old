@@ -27,5 +27,5 @@
 	  </plugin>
   </plugins>
   </build>
-   <version>1.4.0-SNAPSHOT</version>
+  <version>1.7.0-SNAPSHOT</version>
 </project>

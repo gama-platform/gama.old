@@ -262,6 +262,17 @@
 			  <artifactId>tycho-p2-director-plugin</artifactId>
 			  <version>${tycho.version}</version>
 			</plugin>
+  <plugin>
+    <artifactId>maven-clean-plugin</artifactId>
+    <version>3.0.0</version>
+    <configuration>
+      <filesets>
+        <fileset>
+          <directory>gaml</directory>
+        </fileset>
+      </filesets>
+    </configuration>
+  </plugin>
   </plugins>
 </build>
 </project>
