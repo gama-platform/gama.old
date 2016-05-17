@@ -226,9 +226,17 @@ public class GLUtilLight {
 			}
 		}
 	}
+	
+	public static void rotateLights(final GL2 gl, final List<LightPropertiesStructure> lightPropertiesList,final double rotation,final GamaPoint axis) {
+		for (final LightPropertiesStructure lightProperties : lightPropertiesList) {
+			if (lightProperties.active) {
+				
+			}
+		}
+	}
 
 	public static void UpdateDiffuseLightValue(final GL2 gl, final List<LightPropertiesStructure> lightPropertiesList,
-			final double size) {
+			final double size, final double worldWidth, final double worldHeight) {
 		for (final LightPropertiesStructure lightProperties : lightPropertiesList) {
 			if (lightProperties.active) {
 				gl.glEnable(GL2.GL_LIGHT0 + lightProperties.id);
@@ -284,6 +292,12 @@ public class GLUtilLight {
 					// the light in itself)
 					GLUtilGLContext.SetCurrentColor(gl, diffuseColor);
 					final GLUT glut = new GLUT();
+					final double x = lightProperties.direction.x;
+					final double y = lightProperties.direction.y * JOGLRenderer.Y_FLAG;
+					final double z = lightProperties.direction.z;
+					final double zNorm = z / Math.sqrt(x * x + y * y + z * z);
+					final double xNorm = x / Math.sqrt(x * x + y * y + z * z);
+					final double yNorm = y / Math.sqrt(x * x + y * y + z * z);
 					if (type == LightPropertiesStructure.TYPE.POINT) {
 						gl.glPushMatrix();
 						gl.glTranslated(lightPosition[0], lightPosition[1], lightPosition[2]);
@@ -295,18 +309,11 @@ public class GLUtilLight {
 
 						final double baseSize = Math.sin(Math.toRadians(lightProperties.spotAngle) / 2) * size;
 
-						final double x = lightProperties.direction.x;
-						final double y = lightProperties.direction.y * JOGLRenderer.Y_FLAG;
-						final double z = lightProperties.direction.z;
-
 						// see :
 						// http://opengl.developpez.com/tutoriels/opengl-tutorial/17-les-rotations-quaternions/
 						// init vector : {0,0,-1}
 						// dest vector : {x,y,z}
 						// compute angle
-						final double xNorm = x / Math.sqrt(x * x + y * y + z * z);
-						final double yNorm = y / Math.sqrt(x * x + y * y + z * z);
-						final double zNorm = z / Math.sqrt(x * x + y * y + z * z);
 						int flag = 1;
 						if (zNorm < 0) {
 							flag = -1;
@@ -328,6 +335,33 @@ public class GLUtilLight {
 
 						glut.glutSolidCone(baseSize, size, 16, 16);
 						gl.glPopMatrix();
+					}
+					else {
+						// draw direction light : a sphere in the middle of the environment, and an arrow.
+						int maxI = 3;
+						int maxJ = 3;
+						for (int i = 0; i < maxI; i++) {
+							for (int j = 0; j < maxJ; j++) {
+								double[] beginPoint = new double[] {i*worldWidth/maxI, JOGLRenderer.Y_FLAG * j*worldHeight/maxJ, size*10};
+								double[] endPoint = new double[] {i*worldWidth/maxI+xNorm*size*3, JOGLRenderer.Y_FLAG * (j*worldHeight/maxJ) + yNorm*size*3, size*10+zNorm*size*3};
+								// draw the big sphere
+//								gl.glPushMatrix();
+//								gl.glTranslated(beginPoint[0],beginPoint[1],beginPoint[2]);
+//								glut.glutSolidSphere(size, 16, 16);
+//								gl.glPopMatrix();
+								// draw the lines
+								gl.glBegin(GL2.GL_LINES);
+								gl.glLineWidth((float) (size/10));
+								gl.glVertex3d(beginPoint[0],beginPoint[1],beginPoint[2]);
+								gl.glVertex3d(endPoint[0],endPoint[1],endPoint[2]);
+								gl.glEnd();
+								// draw the small sphere
+								gl.glPushMatrix();
+								gl.glTranslated(endPoint[0],endPoint[1],endPoint[2]);
+								glut.glutSolidSphere(size/5, 16, 16);
+								gl.glPopMatrix();
+							}
+						}
 					}
 					GLUtilGLContext.SetCurrentColor(gl, currentColor);
 
