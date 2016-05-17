@@ -232,7 +232,7 @@ TypeFacetKey:
 
 SpecialFacetKey:
 	'data:' | 'when'':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
-	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:";
+	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:";
 
 ActionFacetKey:
 	"action:";

@@ -4,11 +4,16 @@
  */
 package msi.gama.lang.gaml.generator;
 
+import java.io.IOException;
 import java.io.StringWriter;
-import org.eclipse.core.resources.*;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.generator.*;
+import org.eclipse.xtext.generator.IFileSystemAccess;
+import org.eclipse.xtext.generator.IGenerator;
+
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.precompiler.GamlProperties;
 
@@ -24,17 +29,20 @@ public class GamlGenerator implements IGenerator {
 	/**
 	 *
 	 */
-	public GamlGenerator() {}
+	public GamlGenerator() {
+	}
 
 	/**
 	 * Method doGenerate()
-	 * @see org.eclipse.xtext.generator.IGenerator#doGenerate(org.eclipse.emf.ecore.resource.Resource, org.eclipse.xtext.generator.IFileSystemAccess)
+	 * 
+	 * @see org.eclipse.xtext.generator.IGenerator#doGenerate(org.eclipse.emf.ecore.resource.Resource,
+	 *      org.eclipse.xtext.generator.IFileSystemAccess)
 	 */
 	@Override
 	public void doGenerate(final Resource input, final IFileSystemAccess fsa) {
-		GamlResource resource = (GamlResource) input;
-		String fileName = getFilenameFor(resource);
-		String contents = getContentsFor(resource);
+		final GamlResource resource = (GamlResource) input;
+		final String fileName = getFilenameFor(resource);
+		final String contents = getContentsFor(resource);
 		fsa.generateFile(fileName, GamlOutputConfigurationProvider.META, contents);
 	}
 
@@ -43,9 +51,14 @@ public class GamlGenerator implements IGenerator {
 	 * @return
 	 */
 	private String getContentsFor(final GamlResource input) {
-		GamlProperties requires = input.getRequires();
-		StringWriter sw = new StringWriter();
-		requires.store(sw);
+		final GamlProperties requires = input.getRequires();
+		final StringWriter sw = new StringWriter();
+		try {
+			requires.store(sw);
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return sw.toString();
 	}
 
@@ -57,7 +70,7 @@ public class GamlGenerator implements IGenerator {
 		IPath path = input.getPath();
 		final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		path = file.getProjectRelativePath();
-		String s = path.toString();
+		final String s = path.toString();
 		return s + ".meta";
 	}
 

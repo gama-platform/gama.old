@@ -28,6 +28,7 @@ import msi.gama.common.interfaces.IOverlayProvider;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.shape.Envelope3D;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayOutput.DisplaySerializer;
 import msi.gama.outputs.LayeredDisplayOutput.InfoValidator;
@@ -87,12 +88,13 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
 		@facet(name = IKeyword.ORTHOGRAPHIC_PROJECTION, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the orthographic projection. Default can be configured in Preferences")),
 		@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT,
-				IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(50,50,50,255)")),
+				IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(0,0,0,255)")),
 		@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT,
-				IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is (110,110,110,255)")),
-		@facet(name = IKeyword.DIFFUSE_LIGHT_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width`*`2}")),
+				IType.COLOR }, optional = true, doc = @doc(value = "Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is (110,110,110,255)",
+						deprecated = "Use statement \"light\" instead")),
+		@facet(name = IKeyword.DIFFUSE_LIGHT_POS, type = IType.POINT, optional = true, doc = @doc(value = "Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width`*`2}",
+				deprecated = "Use statement \"light\" instead")),
 		@facet(name = IKeyword.IS_LIGHT_ON, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the light. Default is true")),
-		@facet(name = IKeyword.DRAW_DIFFUSE_LIGHT, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the diffuse light. Default is false")),
 		@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT,
 				IType.AGENT }, optional = true, doc = @doc("Allows to define the position of the camera")),
 		@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the direction of the camera")),
@@ -184,14 +186,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 						break;
 					}
 				}
-				// if ( gridDisplayed ) {
-				// IExpressionDescription zfight = d.getFacets().get(ZFIGHTING);
-				// Boolean zFightDefault = true; //
-				// GamaPreferences.CORE_Z_FIGHTING.getValue();
-				// Boolean zFightWanted =
-				// zfight == null ? zFightDefault :
-				// zfight.getExpression().literalValue().equals(IKeyword.TRUE);
-				// }
 			}
 
 			final IExpressionDescription camera = d.getFacets().getDescr(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR);
@@ -218,8 +212,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	protected IDisplaySurface surface;
 	private boolean constantBackground = true;
 	private boolean constantAmbientLight = true;
-	private boolean constantDiffuseLight = true;
-	private boolean constantDiffusePos = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
 	public volatile boolean cameraFix = false; // Means that the camera has been
@@ -314,11 +306,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			this.data.setOrtho(Cast.asBool(getScope(), ortho.value(getScope())));
 		}
 
-		final IExpression ddiff = getFacet(IKeyword.DRAW_DIFFUSE_LIGHT);
-		if (ddiff != null) {
-			this.data.setDrawDiffLight(Cast.asBool(getScope(), ddiff.value(getScope())));
-		}
-
 		final IExpression fixed_cam = getFacet(IKeyword.CAMERA_INTERACTION);
 		if (fixed_cam != null) {
 			this.data.disableCameraInteractions(!Cast.asBool(getScope(), fixed_cam.value(getScope())));
@@ -341,20 +328,20 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 
 		final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
+		// this facet is deprecated...
 		if (light2 != null) {
 			if (light2.getType().equals(Types.COLOR)) {
-				this.data.setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
+				this.data.setDiffuseLightColor(1,Cast.asColor(getScope(), light2.value(getScope())));
 			} else {
 				final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
-				this.data.setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
+				this.data.setDiffuseLightColor(1,new GamaColor(meanValue, meanValue, meanValue, 255));
 			}
-			constantDiffuseLight = light2.isConst();
 		}
 
 		final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
+		// this facet is deprecated...
 		if (light3 != null) {
-			this.data.setDiffuseLightPosition(Cast.asPoint(getScope(), light3.value(getScope())));
-			constantDiffusePos = light3.isConst();
+			this.data.setLightDirection(1,(GamaPoint)Cast.asPoint(getScope(), light3.value(getScope())));
 		}
 
 		final IExpression camera = getFacet(IKeyword.CAMERA_POS);
@@ -472,26 +459,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 					final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
 					this.data.setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
 				}
-			}
-		}
-
-		if (!constantDiffuseLight) {
-			final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
-			if (light2 != null) {
-				if (light2.getType().equals(Types.COLOR)) {
-					this.data.setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
-				} else {
-					final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
-					this.data.setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue, 255));
-				}
-			}
-		}
-
-		if (!constantDiffusePos) {
-			final IExpression light3 = getFacet(IKeyword.DIFFUSE_LIGHT_POS);
-			if (light3 != null) {
-				this.data.setDiffuseLightPosition(Cast.asPoint(getScope(), light3.value(getScope())));
-
 			}
 		}
 

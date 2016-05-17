@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package ummisco.gama.network.common;
+package ummisco.gama.network.skills;
 
 import java.util.Observer;
 
@@ -32,7 +32,6 @@ public interface INetworkSkill  {
 	public static String TO = "to";
 	public static String FROM = "from";
 	public static String CONTENT = "content";
-
 	public static String BROADCAST = "all";
 	
 	

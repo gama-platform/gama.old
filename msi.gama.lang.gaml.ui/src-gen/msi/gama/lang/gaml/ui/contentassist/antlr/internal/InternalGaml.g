@@ -4594,6 +4594,14 @@ rule__SpecialFacetKey__Alternatives
 { after(grammarAccess.getSpecialFacetKeyAccess().getAspectKeyword_14()); }
 )
 
+    |(
+{ before(grammarAccess.getSpecialFacetKeyAccess().getLightKeyword_15()); }
+
+	'light:' 
+
+{ after(grammarAccess.getSpecialFacetKeyAccess().getLightKeyword_15()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);

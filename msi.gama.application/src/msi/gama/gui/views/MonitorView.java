@@ -56,10 +56,13 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
-		// super.ownCreatePartControl(parent);
 		displayItems();
 	}
 
+	@Override
+	protected boolean needsOutput() {
+		return false;
+	}
 	// @Override
 	// public void setRefreshRate(final int rate) {
 	// if ( rate > 0 ) {
