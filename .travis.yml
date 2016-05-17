@@ -3,7 +3,7 @@ branches:
   only:
   - master
 jdk:
-- oraclejdk8
+  - oraclejdk8
 notifications:
   email:
     recipients:
@@ -24,6 +24,6 @@ deploy:
     - "$HOME/.m2/repository/msi/gama/msi.gama.application/1.7.0-SNAPSHOT/msi.gama.application-1.7.0-SNAPSHOT-macosx.cocoa.x86_64.zip"
   skip_cleanup: true
   on:
-    repo: gama-platform/gama
-    all_branches: true
     tags: true
+    all_branches: true
+    repo: gama-platform/gama
