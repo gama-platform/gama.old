@@ -387,6 +387,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		checkGetParameter(name).setValue(scope, val);
 	}
 
+	public void setParameterValueByTitle(final IScope scope, final String name, final Object val) throws GamaRuntimeException {
+		checkGetParameterByTitle(name).setValue(scope, val);
+	}
+
+	
 	// @Override
 	public Object getParameterValue(final String name) throws GamaRuntimeException {
 		return checkGetParameter(name).value(scope);
@@ -398,6 +403,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		return getParameter(name) != null;
 	}
 
+	public IParameter.Batch getParameterByTitle(final String title)
+	{
+		for(IParameter p:parameters.values())
+		{
+			if(p.getTitle().equals(title) && p instanceof IParameter.Batch)
+				return (IParameter.Batch)p;
+		}
+		return null;
+	}
+	
 	public IParameter.Batch getParameter(final String name) {
 		final IParameter p = parameters.get(name);
 		if (p != null && p instanceof IParameter.Batch) {
@@ -417,6 +432,14 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		parameters.put(name, p);
 	}
 
+	protected IParameter.Batch checkGetParameterByTitle(final String name) throws GamaRuntimeException {
+		final IParameter.Batch v = getParameterByTitle(name);
+		if (v == null) {
+			throw GamaRuntimeException.error("No parameter named " + name + " in experiment " + getName(),
+					getExperimentScope());
+		}
+		return v;
+	}
 	protected IParameter.Batch checkGetParameter(final String name) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameter(name);
 		if (v == null) {
