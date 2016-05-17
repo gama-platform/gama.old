@@ -617,13 +617,65 @@ public class Stats {
 	// TODO Penser a faire ces calculs sur les points, egalement (et les entiers
 	// ?)
 
-	@operator(value = "median", can_be_const = true, expected_content_type = { IType.INT, IType.FLOAT }, category = {
-			IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC })
-	@doc(value = "the median of all the elements of the operand.", comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.", special_cases = {
-			"" }, examples = { @example(value = "median ([4.5, 3.5, 5.5, 7.0])", equals = "5.0") }, see = { "mean" })
-	public static Double opMedian(final IScope scope, final IContainer values) {
-		final DataSet d = from(scope, values);
-		return d.getMedian();
+	
+	@operator(value = "median", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
+			IType.INT, IType.FLOAT, IType.POINT, IType.COLOR }, category = { IOperatorCategory.STATISTICAL,
+					IOperatorCategory.CONTAINER,
+					IOperatorCategory.COLOR }, concept = { IConcept.STATISTIC, IConcept.COLOR })
+	@doc(value = "the median of all the elements of the operand.", special_cases = {
+			"if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" }, examples = { @example(value = "median ([4.5, 3.5, 5.5, 3.4, 7.0])", equals = "5.0") }, see = { "mean" })
+	public static Object opMedian(final IScope scope, final IContainer values) {
+		
+		IType contentType = values.getType().getContentType();
+		if (values.length(scope) == 0) {
+			return contentType.cast(scope, 0d, null, false);
+		}
+		switch (contentType.id()) {
+		case IType.INT:
+		case IType.FLOAT:
+			final DataSet d2 = new DataSet();
+			for (final Object o : values.iterable(scope)) {
+				d2.addValue(Cast.asFloat(scope, o));
+			}
+			final Number result = d2.getSize() == 0 ? 0.0 : d2.getMedian();
+			return contentType.cast(scope, result, null, false);
+		case IType.POINT:
+			final DataSet x = new DataSet();
+			final DataSet y = new DataSet();
+			final DataSet z = new DataSet();
+			for (final Object o : values.iterable(scope)) {
+				final ILocation p = (ILocation) o;
+				x.addValue(p.getX());
+				y.addValue(p.getY());
+				z.addValue(p.getZ());
+			}
+			if (x.getSize() == 0) {
+				return new GamaPoint(0, 0, 0);
+			}
+			return new GamaPoint(x.getMedian(), y.getMedian(), z.getMedian());
+		case IType.COLOR:
+			final DataSet r = new DataSet();
+			final DataSet g = new DataSet();
+			final DataSet b = new DataSet();
+			for (final Object o :values.iterable(scope)) {
+				final GamaColor p = (GamaColor) o;
+				r.addValue(p.getRed());
+				g.addValue(p.getGreen());
+				b.addValue(p.getBlue());
+			}
+			if (r.getSize() == 0) {
+				return new GamaColor(0, 0, 0, 0);
+			}
+			return new GamaColor(r.getMedian(), g.getMedian(), b.getMedian(), 0);
+		default:
+			final DataSet d = new DataSet();
+			for (final Object o : values.iterable(scope)) {
+				d.addValue(Cast.asFloat(scope, o));
+			}
+			final Number n = d.getSize() == 0 ? 0.0 : d.getMedian();
+			return Cast.asFloat(scope, n);
+
+		}
 	}
 
 	@operator(value = "standard_deviation", can_be_const = true, expected_content_type = { IType.INT,
