@@ -245,8 +245,6 @@ public class Types {
 	 */
 	public static boolean intFloatCase(final IType t1, final IType t2) {
 		return t1 == FLOAT && t2 == INT || t2 == FLOAT && t1 == INT;
-		// return t1.id() == IType.FLOAT && t2.id() == IType.INT || t2.id() ==
-		// IType.FLOAT && t1.id() == IType.INT;
 	}
 
 	/**
