@@ -449,7 +449,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 							+ this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
 					newOutputName = keyName;
 				} else {
-					final String postfix = getUserFriendlyPostfixName();
+					final String postfix = " (Simulation " + getIndex() + " of " + getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, "")
+							+ ")";
 					keyName = entry.getKey() + postfix;
 					newOutputName = output.getName() + postfix;
 				}
