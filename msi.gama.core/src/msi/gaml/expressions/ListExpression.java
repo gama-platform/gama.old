@@ -11,13 +11,16 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.*;
-import msi.gama.common.GamaPreferences;
+import java.util.Arrays;
+import java.util.List;
+
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gaml.types.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
+import msi.gaml.types.GamaType;
+import msi.gaml.types.Types;
 
 /**
  * ListValueExpr.
@@ -27,22 +30,28 @@ import msi.gaml.types.*;
 public class ListExpression extends AbstractExpression {
 
 	public static IExpression create(final List<? extends IExpression> elements) {
-		ListExpression u = new ListExpression(elements);
-		if ( u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue() ) {
-			IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(), u.serialize(false));
-			// System.out.println(" ==== Simplification of " + u.toGaml() + " into " + e.toGaml());
-			return e;
-		}
+		final ListExpression u = new ListExpression(elements);
+
+		// if (u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue())
+		// {
+		// final IExpression e =
+		// GAML.getExpressionFactory().createConst(u.value(null), u.getType(),
+		// u.serialize(false));
+		// // System.out.println(" ==== Simplification of " + u.toGaml() + "
+		// // into " + e.toGaml());
+		// return e;
+		// }
 		return u;
 	}
 
 	final IExpression[] elements;
 	private final Object[] values;
-	private boolean isConst, computed;
+	// private boolean isConst;
+	private boolean computed;
 
 	ListExpression(final List<? extends IExpression> elements) {
 		this.elements = elements.toArray(new IExpression[0]);
-		int n = this.elements.length;
+		final int n = this.elements.length;
 		values = new Object[n];
 		setName(elements.toString());
 		type = Types.LIST.of(GamaType.findCommonType(this.elements, GamaType.TYPE));
@@ -55,10 +64,10 @@ public class ListExpression extends AbstractExpression {
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
-		ListExpression copy = new ListExpression(Arrays.asList(elements));
-		for ( int i = 0; i < elements.length; i++ ) {
-			IExpression exp = elements[i];
-			if ( exp != null ) {
+		final ListExpression copy = new ListExpression(Arrays.asList(elements));
+		for (int i = 0; i < elements.length; i++) {
+			final IExpression exp = elements[i];
+			if (exp != null) {
 				copy.elements[i] = exp.resolveAgainst(scope);
 			}
 		}
@@ -67,9 +76,11 @@ public class ListExpression extends AbstractExpression {
 
 	@Override
 	public IList value(final IScope scope) throws GamaRuntimeException {
-		if ( isConst && computed ) { return GamaListFactory.createWithoutCasting(getType().getContentType(), values); }
-		for ( int i = 0; i < elements.length; i++ ) {
-			if ( elements[i] == null ) {
+		// if ( isConst && computed ) { return
+		// GamaListFactory.createWithoutCasting(getType().getContentType(),
+		// values); }
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i] == null) {
 				computed = false;
 				return GamaListFactory.EMPTY_LIST;
 			}
@@ -87,18 +98,20 @@ public class ListExpression extends AbstractExpression {
 
 	@Override
 	public boolean isConst() {
-		for ( final IExpression e : elements ) {
-			// indicates a former problem in the compilation of the expression
-			if ( e == null ) { return false; }
-			if ( !e.isConst() ) { return false; }
-		}
-		isConst = true;
-		return true;
+		return false;
+
+		// for ( final IExpression e : elements ) {
+		// // indicates a former problem in the compilation of the expression
+		// if ( e == null ) { return false; }
+		// if ( !e.isConst() ) { return false; }
+		// }
+		// isConst = true;
+		// return true;
 	}
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		surround(sb, '[', ']', elements);
 		return sb.toString();
 	}
@@ -122,12 +135,13 @@ public class ListExpression extends AbstractExpression {
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		for ( IExpression e : elements ) {
-			if ( e != null ) {
+		for (final IExpression e : elements) {
+			if (e != null) {
 				e.collectMetaInformation(meta);
 			}
 		}
