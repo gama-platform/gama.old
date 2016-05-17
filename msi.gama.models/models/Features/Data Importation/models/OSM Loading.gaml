@@ -11,9 +11,9 @@ model simpleOSMLoading
 global{
 	
 	//map used to filter the object to build from the OSM file according to attributes. for an exhaustive list, see: http://wiki.openstreetmap.org/wiki/Map_Features
-	map filtering <- map(["highway"::["primary", "secondary", "tertiary", "motorway", "living_street","residential", "unclassified"], "building"::["yes"]]);
+	map filtering <- map(["highway"::[], "building"::[]]);
 	//OSM file to load
-	file<geometry> osmfile <-  file<geometry>(osm_file("../includes/rouen.gz", filtering))  ;
+	file<geometry> osmfile <-  file<geometry>(osm_file("../includes/boston.pbf", filtering))  ;
 	
 	//compute the size of the environment from the envelope of the OSM file
 	geometry shape <- envelope(osmfile);
@@ -36,6 +36,7 @@ global{
 			//do the generic agent die
 			do die;
 		}
+		save building to: "buildings.shp" type: "shp";
 	}	
 }
 

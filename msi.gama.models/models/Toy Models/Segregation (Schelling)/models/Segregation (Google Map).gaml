@@ -12,9 +12,9 @@ import "../include/Common Schelling Segregation.gaml"
 
 global {
 	//List of all the free places
-	list<space> free_places <- []; 
+	list<space> free_places ; 
 	//List of all the places
-	list<space> all_places <- [];
+	list<space> all_places;
 	//Shape of the environment
 	geometry shape <- square(dimensions);
 	//Percentage of similarity wanted by an agent

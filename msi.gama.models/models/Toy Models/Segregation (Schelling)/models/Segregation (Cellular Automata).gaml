@@ -13,11 +13,11 @@ import "../include/Common Schelling Segregation.gaml"
 //Define the environment as torus
 global torus: true{
 	//List of all the free places
-	list<space> free_places <- [] ;
+	list<space> free_places ;
 	//List of all the places
-	list<space> all_places <- [] ;
+	list<space> all_places  ;
 	//List of all the people
-	list<space> all_people <- [];
+	list<space> all_people;
 	//Shape of the environment
 	geometry shape <- square(dimensions);
 	

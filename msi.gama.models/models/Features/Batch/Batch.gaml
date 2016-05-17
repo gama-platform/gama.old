@@ -66,7 +66,7 @@ species people skills:[moving] {
 		}
 	}
 
-	aspect default {
+	aspect default { 
 		draw circle(1) color: color;
     }
 }

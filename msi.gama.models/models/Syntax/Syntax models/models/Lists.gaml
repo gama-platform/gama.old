@@ -27,7 +27,7 @@ species declaring_list_attributes {
 	
 	// lists can be declared so that they only accept a given type of contents.
 	// For instance, empty_list_of_int will only accept integer elements
-	list<int> empty_list_of_int <- [];
+	list<int> empty_list_of_int ;
 	
 	// the value passed to 'list_with' is verified and casted to the contents type of the list if necessary
 	list<int> list_of_int_size_10_filled_with_string<- list<int>(list_with(10,'1')); // list_of_int_size_10_filled_with_string is filled with the casting of '1' to int, i.e. 1
@@ -163,7 +163,7 @@ species modifying_lists {
 		// Besides assigning a new value to a list, lists can be manipulated using
 		// the "add", "remove" and "put" statements. 
 		// Let's define an empty list supposed to contain integer elements
-		list<int> l1 <- [];
+		list<int> l1;
 		// and add some stuff to it using "add"
 		add 1 to: l1;
 		add 2 to: l1;

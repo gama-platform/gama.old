@@ -49,7 +49,7 @@ global {
 		loop i from: 0 to: (length(categories) * length(categories)) - 1 {
 			fuzzy_transitions[i,i] <- 1.0;	
 		}
-		list<float> similarity_per_agents <- [];
+		list<float> similarity_per_agents ;
 		write "kappa(map observed, map simulation, categories): " + kappa( areaclc collect (each.obs_cover),areaclc collect (each.sim_cover),categories);
 		write "kappa(map observed, map simulation,categories, weights): " + kappa( areaclc collect (each.obs_cover),areaclc collect (each.sim_cover),categories,areaclc collect (each.shape.area));
 		
@@ -111,7 +111,7 @@ experiment mapcomparison type: gui {
 		display map_init type: opengl{
 			species areaclc aspect: init refresh: false;
 		}
-		display map_fuzzy type: opengl{
+		display map_fuzzy type: opengl background: #pink{
 			species areaclc aspect: fuzzy_sim ;
 		}
 	}

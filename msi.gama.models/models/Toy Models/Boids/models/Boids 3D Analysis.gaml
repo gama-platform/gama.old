@@ -82,7 +82,7 @@ global torus: torus_environment{
 	 reflex create_flocks {
 	 	if create_flock {
 	 		//Create a map using a boid agent as a key and the list of all its neighbours as the value for the key
-	 		map<boids, list<boids>> potentialBoidsNeighboursMap <- [];
+	 		map<boids, list<boids>> potentialBoidsNeighboursMap;
 	 		
 	 		//Search all the boids within the two boids distance from a boid agent and put them in the map
 	 		loop one_boids over: boids {
@@ -215,7 +215,7 @@ species flock
 		 	 
 		 	remove largest_flock from: nearby_flocks;
 		 	 
-		 	list<boids> added_components <- [];
+		 	list<boids> added_components ;
 		 	loop one_flock over: nearby_flocks {
 		 		release one_flock.members returns: released_boids; 
 		 		

@@ -10,7 +10,7 @@ model MovingAgents
 
 global
 {
-	list<being> moved_agents <- [];
+	list<being> moved_agents ;
 	geometry shape <- square(1000);
 	point target;
 	geometry zone <- circle(100);
@@ -27,7 +27,7 @@ global
 			do die;
 		}
 
-		moved_agents <- [];
+		moved_agents <- list<being>([]);
 	}
 
 	action duplicate (list<agent> selectedAgent, point mousePosition)
@@ -55,7 +55,7 @@ global
 				color <- # burlywood;
 			}
 
-			moved_agents <- [];
+			moved_agents <- list<being>([]);
 		}
 
 	}

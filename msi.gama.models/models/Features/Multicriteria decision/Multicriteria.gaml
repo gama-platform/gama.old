@@ -124,9 +124,9 @@ species people  {
 	}
 	
 	list<list> houses_eval {
-		list<list> candidates <- [];
+		list<list> candidates;
 		loop bat over: house {
-			list<float> cand <- [];
+			list<float> cand;
 			add bat.standing / 5 to: cand;
 			add ((500000 - bat.price) / 500000) to: cand;
 			add ((100 - (self distance_to bat)) / 100) to: cand;

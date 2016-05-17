@@ -13,9 +13,9 @@ import "../include/Common Schelling Segregation.gaml"
 
 global {
 	//List of all the free places
-	list<space> free_places <- [] ;
+	list<space> free_places ;
 	//List of all the places
-	list<space> all_places <- [] ;
+	list<space> all_places ;
 	//Shape of the world
 	geometry shape <- square(dimensions);
 	
