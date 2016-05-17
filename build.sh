@@ -1,4 +1,3 @@
-
 cd msi.gama.processor &&
 mvn clean install &&
 cd - &&
