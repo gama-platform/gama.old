@@ -13,6 +13,7 @@ package msi.gaml.operators;
 
 import java.util.*;
 import org.jgrapht.DirectedGraph;
+import org.jgrapht.alg.BronKerboschCliqueFinder;
 import org.jgrapht.alg.ConnectivityInspector;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -405,7 +406,57 @@ public class Graphs {
 		}
 		return results;
 	}
+	
+	
+	@operator(value = "maximal_cliques_of",
+			type = IType.LIST,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
+		@doc(
+			value = "returns the maximal cliques of a graph using the Bron-Kerbosch clique detection algorithm: A clique is maximal if it is impossible to enlarge it by adding another vertex from the graph. Note that a maximal clique is not necessarily the biggest clique in the graph. ",
+			examples = { @example(value = "graph my_graph <- graph([]);"),
+				@example(value = "maximal_cliques_of (my_graph)",
+				equals = "the list of all the maximal cliques as list",
+				test = false) },
+			see = { "biggest_cliques_of"})
+		public static IList<IList> getMaximalCliques(final IScope scope, final IGraph graph) {
+			if ( graph == null ) { throw GamaRuntimeException
+				.error("In the maximal_cliques_of operator, the graph should not be null!", scope); }
+			BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
+			IList<IList> results = GamaListFactory.create(Types.LIST);
+			Collection cliques =  cls.getAllMaximalCliques();
+			for ( Object obj :cliques) {
+				results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));
+			}
+			return results;
+		}
 
+	@operator(value = "biggest_cliques_of",
+			type = IType.LIST,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH, IConcept.NODE, IConcept.EDGE })
+		@doc(
+			value = "returns the biggest cliques of a graph using the Bron-Kerbosch clique detection algorithm",
+			examples = { @example(value = "graph my_graph <- graph([]);"),
+				@example(value = "biggest_cliques_of (my_graph)",
+				equals = "the list of the biggest cliques as list",
+				test = false) },
+			see = { "maximal_cliques_of"})
+		public static IList<IList> getBiggestCliques(final IScope scope, final IGraph graph) {
+			if ( graph == null ) { throw GamaRuntimeException
+				.error("In the biggest_cliques_of operator, the graph should not be null!", scope); }
+			BronKerboschCliqueFinder cls = new BronKerboschCliqueFinder(graph);
+			
+			IList<IList> results = GamaListFactory.create(Types.LIST);
+			Collection cliques =  cls.getBiggestMaximalCliques() ;
+			for ( Object obj :cliques) {
+				results.add(GamaListFactory.create(scope, graph.getType().getKeyType(), (Set) obj));
+			}
+			return results;
+		}
+	
 	@operator(value = "nb_cycles", type = IType.INT, category = { IOperatorCategory.GRAPH },
 		concept = { IConcept.GRAPH })
 	@doc(
