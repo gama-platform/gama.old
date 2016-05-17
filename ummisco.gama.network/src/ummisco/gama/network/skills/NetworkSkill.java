@@ -95,7 +95,7 @@ public class NetworkSkill  extends Skill implements INetworkSkill{
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		IConnector connector=this.serverList.get(serverName);
 		GamaMap<String, String>  res = connector.fetchMessageBox(agent);
-		return connector.fetchMessageBox(agent); //fetchMyMailBox(scope, tmpName);
+		return res; //connector.fetchMessageBox(agent); //fetchMyMailBox(scope, tmpName);
 
 	}
 

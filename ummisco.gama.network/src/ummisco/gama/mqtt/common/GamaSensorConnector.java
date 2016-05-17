@@ -49,7 +49,7 @@ public class GamaSensorConnector  implements IGamaConnector {
 	{
 		if(topic == null)
 			topic = new UTF8Buffer(boxName);
-		System.out.println("topic :"+topic+": ");
+		//System.out.println("topic :"+topic+": ");
 		 connection.publish(topic, new AsciiBuffer(SimpleMapSerializer.map2String(data)), QoS.AT_LEAST_ONCE, false);
 	}
 	
