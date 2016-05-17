@@ -11,6 +11,7 @@ global
 }
 
 experiment my_experiment type: gui {
+	float minimum_cycle_duration<-0.2;
 	output {
 		display "nice_bar_chart" {
 			chart "Nice Cumulative Bar Chart" type:histogram 

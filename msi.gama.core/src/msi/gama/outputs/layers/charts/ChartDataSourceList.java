@@ -162,6 +162,14 @@ public class ChartDataSourceList extends ChartDataSource {
 						}
 						
 					}
+					ChartDataSeries s;
+					
+					for (int i=0; i<currentseries.size(); i++)
+					{
+						s=this.getDataset().getDataSeries(scope, currentseries.get(i));
+						this.getDataset().series.remove(currentseries.get(i));
+						this.getDataset().series.put(currentseries.get(i),s);
+					}
 
 				}
 					
@@ -226,7 +234,7 @@ public class ChartDataSourceList extends ChartDataSource {
 		int type_val=ChartDataSource.DATA_TYPE_NULL;
 		if ( this.getValue() != null ) {
 			o=this.getValue().value(scope);
-			if  ( o instanceof GamaList )
+			if  ( o instanceof GamaList && Cast.asList(scope, o).size()>0)
 			{
 				Object o2=Cast.asList(scope, o).get(0);
 				type_val=get_data_type(scope,o2);

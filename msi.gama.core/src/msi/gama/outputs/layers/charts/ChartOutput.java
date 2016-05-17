@@ -248,7 +248,7 @@ public abstract class ChartOutput {
 		
 	}
 
-	private void removeSerie(IScope scope, String serieid) {
+	public void removeSerie(IScope scope, String serieid) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -11,6 +11,8 @@ global
 }
 
 experiment my_experiment type: gui {
+	float minimum_cycle_duration<-0.2;
+	
 	output {
 		display "data_pie_chart" type:java2D {
 			chart "Nice Ring Pie Chart" type:pie style:ring

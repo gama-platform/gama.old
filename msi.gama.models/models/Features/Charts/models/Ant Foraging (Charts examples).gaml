@@ -240,6 +240,13 @@ experiment Ant type: gui {
 					 line_visible:true;				
 			}
 		}	
+		display DistributionPosition {
+			chart "Distribution of the X positions" type:histogram
+			{
+				datalist (distribution_of(list(ant) collect each.location.x,10) at "legend") 
+					value:(distribution_of(list(ant) collect each.location.x,10) at "values");
+			}
+		}	
 		}
 	
 	}
