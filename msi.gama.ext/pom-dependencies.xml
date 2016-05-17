@@ -1226,8 +1226,8 @@
 	  
 	  <!-- Rcaller : current version in properties -->
 	  <dependency>
-	    <groupId>org.expr.rcaller</groupId>
-	    <artifactId>RCaller</artifactId>
+            <groupId>com.github.jbytecode</groupId>
+            <artifactId>RCaller</artifactId>
 	    <version>${RCaller.version}</version>
 	    <!-- take this one from local folder for now in case local repo does not work -->
 	    <!-- <scope>system</scope>

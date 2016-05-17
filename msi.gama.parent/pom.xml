@@ -85,7 +85,7 @@
         <spring.version>3.1.2.RELEASE</spring.version>
         <prefuse.version>beta-20071021</prefuse.version>
        <!--  <RCaller.version>2.5</RCaller.version> this version is not on maven -->
-        <RCaller.version>2.5</RCaller.version>
+        <RCaller.version>2.7</RCaller.version>
         <svgsalamander.version>1.0</svgsalamander.version>
         <trove4j.version>3.0.3</trove4j.version>
         <vecmath.version>1.5.2</vecmath.version>
