@@ -8,9 +8,9 @@
   <packaging>pom</packaging>
   
   <modules>
-	<module>../ummisco.gaml.editbox</module>
+    <module>../ummisco.gaml.editbox</module>
     <module>../msi.gama.ext</module>
-    <module>../msi.gama.processor</module>
+    <!--<module>../msi.gama.processor</module>-->
     <module>../msi.gama.core</module>
     <module>../msi.gama.lang.gaml</module>
     <module>../msi.gama.lang.gaml.ui</module>
@@ -62,11 +62,11 @@
   </modules>
   
   <properties>
-  		<batik.version>1.7</batik.version>
-  		<p2-maven.version>1.2.0-SNAPSHOT</p2-maven.version>
-  		<jetty-maven.version>8.1.5.v20120716</jetty-maven.version>
-    	<tycho.version>0.24.0</tycho.version>
-   		<project.version>1.7.0-SNAPSHOT</project.version>
+  	<batik.version>1.7</batik.version>
+  	<p2-maven.version>1.2.0-SNAPSHOT</p2-maven.version>
+  	<jetty-maven.version>8.1.5.v20120716</jetty-maven.version>
+    	<tycho.version>0.25.0</tycho.version>
+   	<project.version>1.7.0-SNAPSHOT</project.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <geotools.version>13.4</geotools.version>
         <math3.version>3.1.1</math3.version>
@@ -125,6 +125,8 @@
     	<org.eclipse.core.filebuffers.version>3.3.0-v20070606-0010</org.eclipse.core.filebuffers.version>
     	<addjars.version>1.0.5</addjars.version>
     </properties>
+
+
     <repositories>
     <repository>
       <id>eclipse-mars</id>
@@ -203,6 +205,22 @@
       <artifactId>tycho-maven-plugin</artifactId>
       <version>${tycho.version}</version>
       <extensions>true</extensions>
+      <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+          <!--<compilerArgument>-proc:none</compilerArgument>-->
+          <annotationProcessors>
+                <annotationProcessor>msi.gama.precompiler.GamaProcessor</annotationProcessor>
+          </annotationProcessors>
+      </configuration>
+      <dependencies>
+          <!-- dependency  containing the annotation processor specified in the annotationProcessor element -->
+          <dependency>
+              <groupId>msi.gama</groupId>
+              <artifactId>msi.gama.processor</artifactId>
+              <version>1.7.0-SNAPSHOT</version>
+          </dependency>
+      </dependencies>
     </plugin>
     <plugin>
                 <groupId>org.eclipse.tycho</groupId>

@@ -19,8 +19,7 @@
 	</properties>
 	<build>
 		<plugins>
-			<plugin>
-				<!-- Use compiler plugin with tycho as the adapter to the JDT compiler. -->
+			<!--<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-compiler-plugin</artifactId>
 				<version>${tycho.version}</version>
@@ -32,7 +31,7 @@
 						<annotationProcessor>msi.gama.precompiler.GamaProcessor</annotationProcessor>
 					</annotationProcessors>
 				</configuration>
-			</plugin>
+			</plugin>-->
 			<!-- Workaround: Use an existing config.ini file (caused by the problem 
 				that tycho will always generate a default one) -->
 			<!-- <plugin> <artifactId>maven-resources-plugin</artifactId> <executions> 
