@@ -48,6 +48,7 @@
     <module>../ummisco.gama.feature.stats</module>
     <module>../ummisco.gama.gpu</module>
     <module>../ummisco.gama.opengl</module>
+    <module>../ummisco.gama.serialize</module>
     <module>../ummisco.gaml.extensions.maths</module>
     <module>../ummisco.gaml.extensions.rjava</module>
     <module>../ummisco.gaml.extensions.sound</module>
