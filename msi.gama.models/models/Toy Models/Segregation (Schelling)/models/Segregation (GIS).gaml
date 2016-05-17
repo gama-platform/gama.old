@@ -11,9 +11,9 @@ model segregation
 import "../include/Common Schelling Segregation.gaml" 
 global {
 	//List of all the free places
-	list<space> free_places <- [] ;  
+	list<space> free_places  ;  
 	//List of all the places
-	list<space> all_places <- [] ;
+	list<space> all_places ;
 	//Neighbours distance for the perception of an agent
 	int neighbours_distance <- 50 min: 1 parameter: "Distance of perception:" category: "Population" max: 1000;
 	//Shapefile to load
@@ -81,7 +81,7 @@ species people parent: base {
 //Species space representing a space for a people agent to live in
 species space {	
 	//List of all the people agents living within
-	list<people> insiders <- [];
+	list<people> insiders;
 	rgb color <- rgb(255, 255, 255); 
 	//Surface of the place
 	float surface;

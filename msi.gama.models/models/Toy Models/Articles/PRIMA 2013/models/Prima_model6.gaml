@@ -85,9 +85,9 @@ species buildings {
 	//Variable to know the number of people inside the building
 	int nbInhabitants update: length(members);
 	//List of all the people_in_building agents not infected				
-	list<people_in_building> membersS <- [] update: list<people_in_building>(members) where (!each.is_infected);
+	list<people_in_building> membersS update: list<people_in_building>(members) where (!each.is_infected);
 	//List of all the people_in_building agents infected				
-	list<people_in_building> membersI <- [] update: list<people_in_building>(members) where (each.is_infected);
+	list<people_in_building> membersI update: list<people_in_building>(members) where (each.is_infected);
 	float t;
 	//Float used in the ODE system representing the number of non infected agents    
 	float S update: length(membersS) as float; 

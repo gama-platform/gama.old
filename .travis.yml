@@ -14,4 +14,8 @@ notifications:
     recipients:
      - my.gama.bot@gmail.com
 
+cache:
+  directories:
+    - $HOME/.m2
+
 script: sh ./build.sh

@@ -46,7 +46,7 @@ global {
 		loop i from: 0 to: (length(categories) * length(categories)) - 1 {
 			fuzzy_transitions[i,i] <- 1.0;	
 		}
-		list<float> similarity_per_agents <- [];
+		list<float> similarity_per_agents ;
 		write "kappa(map observed, map simulation, categories): " + kappa( cell collect (each.cat_observed),cell collect (each.cat),categories);
 		write "kappa simulation(map init, map observed, map simulation,categories): " + kappa_sim( cell collect (each.cat_init), cell collect (each.cat_observed),cell collect (each.cat),categories);
 		using topology(cell) {

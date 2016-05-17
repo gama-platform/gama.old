@@ -60,14 +60,15 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 	@Override
 	public void clear(final GL gl, final int sizeLimit, final boolean fading) {
 		isFading = fading;
-		if (sizeLimit == 0) {
-			objects.clear();
-		} else {
-			final int size = objects.size();
-			for (int i = 0, n = size - sizeLimit; i < n; i++) {
-				objects.poll();
+
+		final int size = objects.size();
+		for (int i = 0, n = size - sizeLimit; i < n; i++) {
+			final List<T> list = objects.poll();
+			for (final T t : list) {
+				t.dispose(gl);
 			}
 		}
+
 		currentList = newCurrentList();
 		objects.offer(currentList);
 		final Integer index = openGLListIndex;

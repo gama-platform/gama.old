@@ -46,7 +46,7 @@ global {
 	int new_pedestian_generate_frequency <- 1;
 	int new_pedestrian_y_distance <- int(environment_size / new_pedestrian_rate);
 	
-	list<pedestrian> pedestrians <- [] update: list(pedestrian); 
+	list<pedestrian> pedestrians  update: list(pedestrian); 
 	float start_time <- machine_time;
 	
 	init {

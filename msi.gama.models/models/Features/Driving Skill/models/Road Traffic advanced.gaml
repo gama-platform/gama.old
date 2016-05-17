@@ -52,6 +52,10 @@ global {
 		//creation of the road network using the road and intersection agents
 		road_network <-  (as_driving_graph(road, intersection))  with_weights general_speed_map;
 		
+		//initialize the traffic light
+		ask intersection {
+			do initialize;
+		}
 		
 		create people number: nb_people { 
 			max_speed <- 160 °km/°h;
@@ -78,7 +82,7 @@ global {
 //species that will represent the intersection node, it can be traffic lights or not, using the skill_road_node skill
 species intersection skills: [skill_road_node] {
 	bool is_traffic_signal;
-	list<list> stop <- [];
+	list<list> stop;
 	int time_to_change <- 100;
 	int counter <- rnd (time_to_change) ;
 	list<road> ways1;
@@ -86,7 +90,7 @@ species intersection skills: [skill_road_node] {
 	bool is_green;
 	rgb color_fire;
 	
-	init {
+	action initialize {
 		if (is_traffic_signal) {
 			do compute_crossing;
 			stop<< [];

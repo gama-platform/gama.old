@@ -31,9 +31,9 @@ global {
 	//Number of neighbours
 	int sum_total_neighbours <- 1 update: sum (all_people collect each.total_nearby) min: 1;
 	//List of all the places
-	list<agent> all_places <- [];
+	list<agent> all_places;
 	//List of all the people
-	list<base> all_people <- [];  
+	list<base> all_people;  
 	
 	//Action to write the description of the model in the console
 	action description {

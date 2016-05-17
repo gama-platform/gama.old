@@ -14,7 +14,7 @@ global{
 	map filtering <- map(["highway"::["primary", "secondary", "tertiary", "motorway", "living_street","residential", "unclassified"]]);
 	
 	//OSM file to load
-	file<geometry> osmfile <-  file<geometry>(osm_file("../includes/rouen.gz", filtering))  ;
+	file<geometry> osmfile <-  file<geometry>(osm_file("../includes/boston2.pbf", filtering))  ;
 	
 	geometry shape <- envelope(osmfile);
 	graph the_graph; 
@@ -75,8 +75,8 @@ global{
 		write "node agents filtered";
 		
 		//Save all the road agents inside the file with the path written, using the with: facet to make a link between attributes and columns of the resulting shapefiles. 
-		save road type:"shp" to:"../includes/roads.shp" with:[lanes::"lanes",maxspeed::"maxspeed", oneway::"oneway"] ;
-		save intersection type:"shp" to:"../includes/nodes.shp" with:[type::"type", crossing::"crossing"] ;
+		save road type:"shp" to:"../includes/roads_boston.shp" with:[lanes::"lanes",maxspeed::"maxspeed", oneway::"oneway"] ;
+		save intersection type:"shp" to:"../includes/nodes_boston.shp" with:[type::"type", crossing::"crossing"] ;
 		write "road and node shapefile saved";
 	}
 }

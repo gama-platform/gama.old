@@ -44,6 +44,15 @@ public abstract class AbstractObject {
 		this.textures = textures;
 	}
 
+	public void dispose(final GL gl) {
+		if (textures == null) {
+			return;
+		}
+		for (int i = 0; i < textures.length; i++) {
+			textures[i] = null;
+		}
+	}
+
 	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer) {
 		this(attributes, layer, attributes.getTextures() != null ? new Texture[attributes.getTextures().size()] : null);
 	}
