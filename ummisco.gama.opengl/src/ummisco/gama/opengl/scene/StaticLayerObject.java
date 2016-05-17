@@ -25,7 +25,6 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 public class StaticLayerObject extends LayerObject {
 
@@ -66,14 +65,16 @@ public class StaticLayerObject extends LayerObject {
 			super.draw(gl, renderer);
 
 			gl.glDisable(GL.GL_BLEND);
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {0.0f, 0.0f, 0.0f, 1.0f});
+			renderer.setCurrentColor(gl, Color.black);
+			// GLUtilGLContext.SetCurrentColor(gl, 0.0f, 0.0f, 0.0f, 1.0f);
 			gl.glRasterPos3d(-renderer.getDisplayWidth() / 10d, renderer.getHeight() / 10d, 0);
 			gl.glScaled(8.0d, 8.0d, 8.0d);
 			final GLUT glut = new GLUT();
 			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "Loading...");
 			gl.glScaled(0.5d, 0.5d, 0.5d);
 			gl.glEnable(GL.GL_BLEND);
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, 1.0f});
+			renderer.setCurrentColor(gl, Color.white);
+			// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f, 1.0f);
 		}
 
 	}
@@ -131,7 +132,9 @@ public class StaticLayerObject extends LayerObject {
 				computeFrameRate();
 				gl.glDisable(GL.GL_BLEND);
 				// renderer.getContext().makeCurrent();
-				GLUtilGLContext.SetCurrentColor(gl, new float[] {0.0f, 0.0f, 0.0f, 1.0f});
+				renderer.setCurrentColor(gl, Color.black);
+				// GLUtilGLContext.SetCurrentColor(gl, new float[] { 0.0f, 0.0f,
+				// 0.0f, 1.0f });
 				gl.glRasterPos3d(-renderer.getWidth() / 10d, renderer.getHeight() / 10d, 0);
 				gl.glScaled(8.0d, 8.0d, 8.0d);
 				final GLUT glut = new GLUT();
@@ -139,7 +142,9 @@ public class StaticLayerObject extends LayerObject {
 				gl.glScaled(0.125d, 0.125d, 0.125d);
 				gl.glEnable(GL.GL_BLEND);
 			}
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, 1.0f});
+			renderer.setCurrentColor(gl, Color.white);
+			// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f, 1.0f,
+			// 1.0f, 1.0f });
 			gl.glEnable(GL2.GL_LIGHTING);
 		}
 

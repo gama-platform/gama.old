@@ -46,7 +46,6 @@ import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.GeometryObject;
-import ummisco.gama.opengl.utils.GLUtilGLContext;
 import ummisco.gama.opengl.utils.GLUtilNormal;
 import ummisco.gama.opengl.utils.Vertex;
 
@@ -74,8 +73,11 @@ public class JTSDrawer {
 		if (c == null) {
 			return;
 		}
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(c.getRed() / 255.0), (float)(c.getGreen() / 255.0),
-				(float)(c.getBlue() / 255.0), (float)(alpha * c.getAlpha() / 255.0)});
+		renderer.setCurrentColor(gl, c, alpha);
+		// GLUtilGLContext.SetCurrentColor(gl, (float) (c.getRed() / 255.0),
+		// (float) (c.getGreen() / 255.0),
+		// (float) (c.getBlue() / 255.0), (float) (alpha * c.getAlpha() /
+		// 255.0));
 	}
 
 	public void drawGeometryCached(final GL2 gl, final GamaGeometryFile file) {
@@ -134,18 +136,18 @@ public class JTSDrawer {
 	public void drawPolygon(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 			final Color border, final GeometryObject object, final boolean drawPolygonContour,
 			final double z_fighting_value, final int norm_dir) {
-		
+
 		int p_norm_dir = 1;
 
 		if (renderer.getComputeNormal()) {
 			final Vertex[] vertices = getExteriorRingVertices(p);
-			
+
 			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
 				p_norm_dir = -1;
 			} else {
 				p_norm_dir = 1;
 			}
-			
+
 			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		}
 		if (!object.isTextured()) {
@@ -154,7 +156,9 @@ public class JTSDrawer {
 					setColor(gl, c, alpha);
 				}
 				drawTesselatedPolygon(gl, p, p_norm_dir, c, alpha);
-				GLUtilGLContext.SetCurrentColor(gl, new float[] {0.0f,0.0f,0.0f,(float)alpha});
+				setColor(gl, Color.black, alpha);
+				// GLUtilGLContext.SetCurrentColor(gl, 0.0f, 0.0f, 0.0f, (float)
+				// alpha);
 				if (drawPolygonContour == true) {
 					drawPolygonContour(gl, p, border, alpha, z_fighting_value);
 				}
@@ -190,17 +194,18 @@ public class JTSDrawer {
 			final Vertex[] vertices = getExteriorRingVertices(p);
 
 			final double[] normalmean = new double[3];
-//			for (int i = 0; i < vertices.length - 2; i++) {
-				double[] normal = GLUtilNormal.CalculateNormal(vertices[0], vertices[0 + 1], vertices[0 + 2]);
-				normalmean[0] = (normalmean[0] + normal[0]);
-				normalmean[1] = (normalmean[1] + normal[1]);
-				normalmean[2] = (normalmean[2] + normal[2]);
-//			}
+			// for (int i = 0; i < vertices.length - 2; i++) {
+			final double[] normal = GLUtilNormal.CalculateNormal(vertices[0], vertices[0 + 1], vertices[0 + 2]);
+			normalmean[0] = normalmean[0] + normal[0];
+			normalmean[1] = normalmean[1] + normal[1];
+			normalmean[2] = normalmean[2] + normal[2];
+			// }
 
-			if (renderer.data.isDraw_norm()) {				
+			if (renderer.data.isDraw_norm()) {
 				final Vertex center = GLUtilNormal.GetCenter(vertices);
 				gl.glBegin(GL.GL_LINES);
-				GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 0.0f, 0.0f});
+				setColor(gl, Color.red, 1);
+				// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 0.0f, 0.0f);
 				gl.glVertex3d(center.x, center.y, center.z);
 				gl.glVertex3d(center.x + normalmean[0] * norm_dir, center.y + normalmean[1] * norm_dir,
 						center.z + normalmean[2] * norm_dir);
@@ -269,49 +274,54 @@ public class JTSDrawer {
 	}
 
 	public void drawTexturedPolygon(final GL2 gl, final Polygon p, final Texture texture, final int norm_dir) {
-		int p_norm_dir = 1;
-		
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
+		final int p_norm_dir = 1;
+		setColor(gl, Color.white, 1);
+		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
 		if (texture != null) {
 			texture.enable(gl);
 			texture.bind(gl);
 		}
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
+		setColor(gl, Color.white, 1);
+		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
 
 		// Why when nb points > 2 ?????????
-//		if (p.getNumPoints() > 2) {
-			drawTriangulatedPolygon(gl, p, false, texture);
+		// if (p.getNumPoints() > 2) {
+		drawTriangulatedPolygon(gl, p, false, texture);
 
-//		} else {
-//			
-//			if (renderer.getComputeNormal()) {
-//				final Vertex[] vertices = this.getExteriorRingVertices(p);
-//				if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
-//					p_norm_dir = 1;
-//				} else {
-//					p_norm_dir = -1;
-//				}
-//				GLUtilNormal.HandleNormal(vertices, null, 0, p_norm_dir, renderer);
-//			}
-//			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
-//										// and texture mixture
-//			gl.glBegin(GL2ES3.GL_QUADS);
-//			gl.glTexCoord2f(0.0f, 1.0f);
-//			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(),
-//					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(3).getY(), p.getExteriorRing().getCoordinateN(3).z);
-//			gl.glTexCoord2f(1.0f, 1.0f);
-//			;
-//			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(),
-//					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(2).getY(), p.getExteriorRing().getCoordinateN(2).z);
-//			gl.glTexCoord2f(1.0f, 0.0f);
-//			;
-//			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(),
-//					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(1).getY(), p.getExteriorRing().getCoordinateN(1).z);
-//			gl.glTexCoord2f(0.0f, 0.0f);
-//			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(),
-//					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(0).getY(), p.getExteriorRing().getCoordinateN(0).z);
-//			gl.glEnd();
-//		}
+		// } else {
+		//
+		// if (renderer.getComputeNormal()) {
+		// final Vertex[] vertices = this.getExteriorRingVertices(p);
+		// if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+		// p_norm_dir = 1;
+		// } else {
+		// p_norm_dir = -1;
+		// }
+		// GLUtilNormal.HandleNormal(vertices, null, 0, p_norm_dir, renderer);
+		// }
+		// gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
+		// // and texture mixture
+		// gl.glBegin(GL2ES3.GL_QUADS);
+		// gl.glTexCoord2f(0.0f, 1.0f);
+		// gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(),
+		// JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(3).getY(),
+		// p.getExteriorRing().getCoordinateN(3).z);
+		// gl.glTexCoord2f(1.0f, 1.0f);
+		// ;
+		// gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(),
+		// JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(2).getY(),
+		// p.getExteriorRing().getCoordinateN(2).z);
+		// gl.glTexCoord2f(1.0f, 0.0f);
+		// ;
+		// gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(),
+		// JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(1).getY(),
+		// p.getExteriorRing().getCoordinateN(1).z);
+		// gl.glTexCoord2f(0.0f, 0.0f);
+		// gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(),
+		// JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(0).getY(),
+		// p.getExteriorRing().getCoordinateN(0).z);
+		// gl.glEnd();
+		// }
 		if (texture != null) {
 			texture.disable(gl);
 		}
@@ -383,17 +393,17 @@ public class JTSDrawer {
 		// final double xMax = env.getMaxX();
 		// final double yMin = env.getMinY();
 		// final double yMax = env.getMaxY();
-		
-		// reverse the list of points in the exterior ring if the "real" ring (with the Y_FLAG) is not Clockwise.
-		Point[] pointList = new Point[polygon.getExteriorRing().getNumPoints()];
+
+		// reverse the list of points in the exterior ring if the "real" ring
+		// (with the Y_FLAG) is not Clockwise.
+		final Point[] pointList = new Point[polygon.getExteriorRing().getNumPoints()];
 		final Vertex[] vertices = getExteriorRingVertices(polygon);
-		if (false/*isClockwise(vertices)*/) {
-			for (int i=0 ; i < polygon.getExteriorRing().getNumPoints() ; i++) {
-				pointList[polygon.getExteriorRing().getNumPoints()-i-1] = polygon.getExteriorRing().getPointN(i);
+		if (false/* isClockwise(vertices) */) {
+			for (int i = 0; i < polygon.getExteriorRing().getNumPoints(); i++) {
+				pointList[polygon.getExteriorRing().getNumPoints() - i - 1] = polygon.getExteriorRing().getPointN(i);
 			}
-		}
-		else {
-			for (int i=0 ; i < polygon.getExteriorRing().getNumPoints() ; i++) {
+		} else {
+			for (int i = 0; i < polygon.getExteriorRing().getNumPoints(); i++) {
 				pointList[i] = polygon.getExteriorRing().getPointN(i);
 			}
 		}
@@ -420,7 +430,7 @@ public class JTSDrawer {
 						pointList[2].getCoordinate().z);
 				gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(),
 						pointList[2].getCoordinate().z);
-				gl.glVertex3d(pointList[0].getX(),	JOGLRenderer.Y_FLAG * pointList[0].getY(),
+				gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
 						pointList[0].getCoordinate().z);
 				gl.glEnd();
 
@@ -428,9 +438,19 @@ public class JTSDrawer {
 		} else {
 			if (Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true) {
 				if (texture != null) {
-					GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f}); // Set the color to white to
-																						// avoid color and texture
-																						// mixture
+					setColor(gl, Color.white, 1);
+					// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f); //
+					// Set
+					// the
+					// color
+					// to
+					// white
+					// to
+					// avoid
+					// color
+					// and
+					// texture
+					// mixture
 					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
 					gl.glTexCoord2f(0.0f, 1.0f);
 					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(), 0.0d);
@@ -450,9 +470,19 @@ public class JTSDrawer {
 
 			} else {
 				if (texture != null) {
-					GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f}); // Set the color to white to
-																						// avoid color and texture
-																						// mixture
+					setColor(gl, Color.white, 1);
+					// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f,
+					// 1.0f, 1.0f }); // Set
+					// the
+					// color
+					// to
+					// white
+					// to
+					// avoid
+					// color
+					// and
+					// texture
+					// mixture
 					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
 					gl.glTexCoord2f(0.0f, 1.0f);
 					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
@@ -470,8 +500,7 @@ public class JTSDrawer {
 							pointList[0].getCoordinate().z);
 					gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(),
 							pointList[1].getCoordinate().z);
-					gl.glVertex3d(pointList[2].getX(),
-							JOGLRenderer.Y_FLAG * pointList[2].getY(),
+					gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(),
 							pointList[2].getCoordinate().z);
 					gl.glEnd();
 				}
@@ -537,14 +566,14 @@ public class JTSDrawer {
 	public void drawPolyhedre(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 			final double height, /* final Integer angle, */final boolean drawPolygonContour, final Color border,
 			final GeometryObject object, final Double z_fighting_value) {
-		
+
 		int p_norm_dir = 1;
-		int face_norm_dir = -1;
+		final int face_norm_dir = -1;
 		boolean polyCW = true;
 		if (renderer.getComputeNormal()) {
 			final Vertex[] vertices = getExteriorRingVertices(p);
 			polyCW = isClockwise(vertices);
-			
+
 			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
 				p_norm_dir = 1;
 			} else {
@@ -559,7 +588,8 @@ public class JTSDrawer {
 
 		gl.glPushMatrix();
 		gl.glTranslated(-vectorNormal[0] * height, -vectorNormal[1] * height, -vectorNormal[2] * height);
-		float[][] buffer = translatePositionalLights(gl,new float[] {(float)(-vectorNormal[0] * height), (float)(-vectorNormal[1] * height), (float)(-vectorNormal[2] * height)});
+		final float[][] buffer = translatePositionalLights(gl, new float[] { (float) (-vectorNormal[0] * height),
+				(float) (-vectorNormal[1] * height), (float) (-vectorNormal[2] * height) });
 		drawPolygon(gl, p, c, alpha, fill, border, object/* ,angle */, drawPolygonContour, z_fighting_value,
 				-p_norm_dir);
 		// gl.glTranslated(0, 0, -height);
@@ -579,8 +609,8 @@ public class JTSDrawer {
 		} else {
 			drawFaces(gl, p, c, alpha, fill, border, height, drawPolygonContour, -face_norm_dir, polyCW);
 		}
-		
-		revertTranslatePositionalLights(gl,buffer);
+
+		revertTranslatePositionalLights(gl, buffer);
 		gl.glPopMatrix();
 	}
 
@@ -644,11 +674,12 @@ public class JTSDrawer {
 	public void drawTexturedFaces(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 			final Color b, final Texture texture, final double height, final boolean drawPolygonContour,
 			final int norm_dir, final boolean clockwise) {
-
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
+		setColor(gl, Color.white, 1);
+		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
 		texture.enable(gl);
 		texture.bind(gl);
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
+		setColor(gl, Color.white, 1);
+		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
 
 		double elevation = 0.0d;
 
@@ -665,9 +696,18 @@ public class JTSDrawer {
 			final Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
 			GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
 			gl.glBegin(GL2ES3.GL_QUADS);
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f}); // Set the color to white to
-																				// avoid color and texture
-																				// mixture
+			setColor(gl, Color.white, 1);
+			// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f); // Set
+			// the
+			// color
+			// to
+			// white
+			// to
+			// avoid
+			// color
+			// and
+			// texture
+			// mixture
 			gl.glTexCoord2f(0.0f, 0.0f);
 			gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
 			gl.glTexCoord2f(1.0f, 0.0f);
@@ -737,16 +777,16 @@ public class JTSDrawer {
 		for (int i = 0; i < 4; i++) {
 			vertices[i] = new Vertex();
 		}
-		
-		// reverse the list of points in the exterior ring if the "real" ring (with the Y_FLAG) is not Clockwise.
-		Point[] pointList = new Point[p.getExteriorRing().getNumPoints()];
+
+		// reverse the list of points in the exterior ring if the "real" ring
+		// (with the Y_FLAG) is not Clockwise.
+		final Point[] pointList = new Point[p.getExteriorRing().getNumPoints()];
 		if (isClockwise(getExteriorRingVertices(p))) {
-			for (int i=0 ; i < p.getExteriorRing().getNumPoints() ; i++) {
-				pointList[p.getExteriorRing().getNumPoints()-i-1] = p.getExteriorRing().getPointN(i);
+			for (int i = 0; i < p.getExteriorRing().getNumPoints(); i++) {
+				pointList[p.getExteriorRing().getNumPoints() - i - 1] = p.getExteriorRing().getPointN(i);
 			}
-		}
-		else {
-			for (int i=0 ; i < p.getExteriorRing().getNumPoints() ; i++) {
+		} else {
+			for (int i = 0; i < p.getExteriorRing().getNumPoints(); i++) {
 				pointList[i] = p.getExteriorRing().getPointN(i);
 			}
 		}
@@ -881,8 +921,11 @@ public class JTSDrawer {
 		}
 
 		// Draw a quad
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(c.getRed() / 255.0), (float)(c.getGreen() / 255.0), 
-				(float)(c.getBlue() / 255.0), (float)(alpha * c.getAlpha() / 255.0)});
+		setColor(gl, c, alpha);
+		// GLUtilGLContext.SetCurrentColor(gl, (float) (c.getRed() / 255.0),
+		// (float) (c.getGreen() / 255.0),
+		// (float) (c.getBlue() / 255.0), (float) (alpha * c.getAlpha() /
+		// 255.0));
 		final int numPoints = l.getNumPoints();
 
 		// Add z value
@@ -913,13 +956,26 @@ public class JTSDrawer {
 
 			if (object.isTextured()) {
 				final Texture texture = object.getTexture(gl, renderer, 0);
-				GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});// Set the color to white to avoid
-																					// color and texture mixture
+				setColor(gl, Color.white, 1);
+				// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f, 1.0f,
+				// 1.0f });// Set
+				// the
+				// color
+				// to
+				// white
+				// to
+				// avoid
+				// color
+				// and
+				// texture
+				// mixture
 				if (texture != null) {
 					texture.enable(gl);
 					texture.bind(gl);
 				}
-				GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f});
+				setColor(gl, Color.white, 1);
+				// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f, 1.0f,
+				// 1.0f });
 				gl.glBegin(GL2ES3.GL_QUADS);
 				gl.glTexCoord2f(0.0f, 1.0f);
 				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z);
@@ -1009,7 +1065,9 @@ public class JTSDrawer {
 		// Add a line around the circle
 		// FIXME/ Check the cost of this line
 		if (!colorpicking) {
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {0.0f, 0.0f, 0.0f, (float)(alpha * c.getAlpha() / 255.0)});
+			setColor(gl, Color.black, alpha);
+			// GLUtilGLContext.SetCurrentColor(gl, 0.0f, 0.0f, 0.0f, (float)
+			// (alpha * c.getAlpha() / 255.0));
 		}
 		// gl.glLineWidth(renderer.getLineWidth());
 		gl.glBegin(GL.GL_LINES);
@@ -1027,49 +1085,53 @@ public class JTSDrawer {
 		gl.glEnd();
 
 	}
-	
+
 	public float[][] translatePositionalLights(final GL2 gl, final float[] translation) {
-		// this function translate all the positional lights, and returns an array of {lightId,x,y,z,w}.
-		
+		// this function translate all the positional lights, and returns an
+		// array of {lightId,x,y,z,w}.
+
 		// compute the number of position to memorize
 		int positionalLightNumber = 0;
-		for (int id = 0; id<8; id++) {
-			int lightId = GLLightingFunc.GL_LIGHT0+id;
+		for (int id = 0; id < 8; id++) {
+			final int lightId = GLLightingFunc.GL_LIGHT0 + id;
 			if (gl.glIsEnabled(lightId)) {
-				float[] position = new float[4];
+				final float[] position = new float[4];
 				gl.glGetLightfv(lightId, GLLightingFunc.GL_POSITION, position, 0);
 				if (position[3] == 1) {
 					positionalLightNumber++;
 				}
 			}
 		}
-		
-		// translate the light and store the old position in the buffer to return
-		float[][] result = new float[positionalLightNumber][5];
+
+		// translate the light and store the old position in the buffer to
+		// return
+		final float[][] result = new float[positionalLightNumber][5];
 		positionalLightNumber = 0;
-		for (int id = 0; id<8; id++) {
-			int lightId = GLLightingFunc.GL_LIGHT0+id;
+		for (int id = 0; id < 8; id++) {
+			final int lightId = GLLightingFunc.GL_LIGHT0 + id;
 			if (gl.glIsEnabled(lightId)) {
-				float[] position = new float[4];
+				final float[] position = new float[4];
 				gl.glGetLightfv(lightId, GLLightingFunc.GL_POSITION, position, 0);
 				if (position[3] == 1) {
 					result[positionalLightNumber][0] = lightId;
-					for (int idx = 0 ; idx < position.length ; idx++) {
-						result[positionalLightNumber][idx+1] = position[idx];
+					for (int idx = 0; idx < position.length; idx++) {
+						result[positionalLightNumber][idx + 1] = position[idx];
 					}
-					gl.glLightfv(lightId, GLLightingFunc.GL_POSITION, new float[] {position[0]-translation[0],position[1]-translation[1],position[2]-translation[2], 1}, 0);
+					gl.glLightfv(lightId, GLLightingFunc.GL_POSITION, new float[] { position[0] - translation[0],
+							position[1] - translation[1], position[2] - translation[2], 1 }, 0);
 					positionalLightNumber++;
 				}
 			}
 		}
-		
-		// return the buffer. This buffer has to be given to the function revertTranslatePositionalLights
+
+		// return the buffer. This buffer has to be given to the function
+		// revertTranslatePositionalLights
 		return result;
 	}
-	
+
 	public void revertTranslatePositionalLights(final GL2 gl, final float[][] initPosBuffer) {
-		for (float[] pos : initPosBuffer) {
-			gl.glLightfv((int)pos[0], GLLightingFunc.GL_POSITION, new float[] {pos[1],pos[2],pos[3],pos[4]}, 0);
+		for (final float[] pos : initPosBuffer) {
+			gl.glLightfv((int) pos[0], GLLightingFunc.GL_POSITION, new float[] { pos[1], pos[2], pos[3], pos[4] }, 0);
 		}
 	}
 
@@ -1087,11 +1149,14 @@ public class JTSDrawer {
 		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glPushMatrix();
 		gl.glTranslated(pos.x, pos.y, pos.z);
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {0.5f, 0.5f, 0.5f, 1.0f});		
+		setColor(gl, Color.gray, 1);
+		// GLUtilGLContext.SetCurrentColor(gl, 0.5f, 0.5f, 0.5f, 1.0f);
 		glut.glutSolidSphere(5.0 * (distance / 500), slices, stacks);
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {0.5f, 0.5f, 0.5f, 0.1f});
+		setColor(gl, Color.gray, 0.1);
+		// GLUtilGLContext.SetCurrentColor(gl, 0.5f, 0.5f, 0.5f, 0.1f);
 		glut.glutSolidSphere(49.0 * (distance / 500), slices, stacks);
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {0.5f, 0.5f, 0.5f, 1.0f});
+		setColor(gl, Color.gray, 1);
+		// GLUtilGLContext.SetCurrentColor(gl, 0.5f, 0.5f, 0.5f, 1.0f);
 		glut.glutWireSphere(50.0 * (distance / 500), slices / 2, stacks / 2);
 		gl.glPopMatrix();
 		gl.glEnable(GL2.GL_LIGHTING);
@@ -1103,8 +1168,7 @@ public class JTSDrawer {
 			return;
 		final GamaPoint pos = envelope.centre();
 		final double width = envelope.getWidth();
-		final double height = envelope.getHeight(
-				);
+		final double height = envelope.getHeight();
 		final double z = Math.max(2, renderer.getMaxEnvDim() / 100);
 		// TODO
 		if (gl == null) {
@@ -1113,9 +1177,11 @@ public class JTSDrawer {
 		gl.glPushMatrix();
 		gl.glTranslated(pos.x, pos.y, pos.z);
 		gl.glScaled(width, height, z);
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {0.0f, 0.5f, 0.0f, 0.15f});
+		renderer.setCurrentColor(gl, 0, 0.5, 0, 0.15);
+		// GLUtilGLContext.SetCurrentColor(gl, 0.0f, 0.5f, 0.0f, 0.15f);
 		glut.glutSolidCube(0.99f);
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {0.5f, 0.5f, 0.5f, 1.0f});
+		setColor(gl, Color.gray, 1);
+		// GLUtilGLContext.SetCurrentColor(gl, 0.5f, 0.5f, 0.5f, 1.0f);
 		glut.glutWireCube(1f);
 		gl.glPopMatrix();
 	}
@@ -1129,8 +1195,9 @@ public class JTSDrawer {
 
 		gl.glPushMatrix();
 		gl.glTranslated(p.getCentroid().getX(), JOGLRenderer.Y_FLAG * p.getCentroid().getY(), z);
-			
-		float[][] buffer = translatePositionalLights(gl,new float[] {(float)p.getCentroid().getX(), (float)(JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float)z});
+
+		final float[][] buffer = translatePositionalLights(gl, new float[] { (float) p.getCentroid().getX(),
+				(float) (JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float) z });
 		final Color c = g.getColor();
 		if (!colorpicking) {
 			setColor(gl, c, g.getAlpha());
@@ -1145,7 +1212,8 @@ public class JTSDrawer {
 			}
 			t.enable(gl);
 			t.bind(gl);
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, 1.0f});
+			setColor(gl, Color.white, 1);
+			// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f, 1.0f);
 		}
 
 		final GLU glu = renderer.getGlu();
@@ -1175,8 +1243,9 @@ public class JTSDrawer {
 		}
 
 		gl.glPopMatrix();
-		//gl.glTranslated(-p.getCentroid().getX(), -JOGLRenderer.Y_FLAG * p.getCentroid().getY(), -z);
-		revertTranslatePositionalLights(gl,buffer);
+		// gl.glTranslated(-p.getCentroid().getX(), -JOGLRenderer.Y_FLAG *
+		// p.getCentroid().getY(), -z);
+		revertTranslatePositionalLights(gl, buffer);
 	}
 
 	public void drawCone3D(final GL2 gl, final GeometryObject g) {
@@ -1191,7 +1260,8 @@ public class JTSDrawer {
 
 		gl.glPushMatrix();
 		gl.glTranslated(p.getCentroid().getX(), JOGLRenderer.Y_FLAG * p.getCentroid().getY(), z);
-		float[][] buffer = translatePositionalLights(gl,new float[] {(float)p.getCentroid().getX(), (float)(JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float)z});
+		final float[][] buffer = translatePositionalLights(gl, new float[] { (float) p.getCentroid().getX(),
+				(float) (JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float) z });
 		if (!colorpicking) {
 			final Color c = g.getColor();
 			setColor(gl, c, g.getAlpha());
@@ -1203,7 +1273,7 @@ public class JTSDrawer {
 		}
 
 		gl.glPopMatrix();
-		revertTranslatePositionalLights(gl,buffer);
+		revertTranslatePositionalLights(gl, buffer);
 	}
 
 	public void drawTeapot(final GL2 gl, final GeometryObject g) {
@@ -1216,7 +1286,8 @@ public class JTSDrawer {
 
 		gl.glPushMatrix();
 		gl.glTranslated(p.getCentroid().getX(), JOGLRenderer.Y_FLAG * p.getCentroid().getY(), z);
-		float[][] buffer = translatePositionalLights(gl,new float[] {(float)p.getCentroid().getX(), (float)(JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float)z});
+		final float[][] buffer = translatePositionalLights(gl, new float[] { (float) p.getCentroid().getX(),
+				(float) (JOGLRenderer.Y_FLAG * p.getCentroid().getY()), (float) z });
 		if (!colorpicking) {
 			setColor(gl, g.getColor(), g.getAlpha());
 		}
@@ -1225,7 +1296,7 @@ public class JTSDrawer {
 		glut.glutSolidTeapot(g.getHeight());
 		gl.glRotated(-90, 1.0, 0.0, 0.0);
 		gl.glPopMatrix();
-		revertTranslatePositionalLights(gl,buffer);
+		revertTranslatePositionalLights(gl, buffer);
 	}
 
 	public void drawPyramid(final GL2 gl, final GeometryObject g) {
@@ -1249,10 +1320,10 @@ public class JTSDrawer {
 				setColor(gl, g.getBorder(), g.getAlpha());
 			}
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-//			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
-//			gl.glPolygonOffset(0.0f, -(float) 1.1);
+			// gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
+			// gl.glPolygonOffset(0.0f, -(float) 1.1);
 			pyramidSkeleton(gl, p, g.getHeight(), g.getBorder(), g.getAlpha(), g);
-//			gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
+			// gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 			if (!renderer.data.isTriangulation()) {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 			}
@@ -1303,7 +1374,8 @@ public class JTSDrawer {
 
 			gl.glPushMatrix();
 			gl.glTranslated(l.getPointN(i).getX(), JOGLRenderer.Y_FLAG * l.getPointN(i).getY(), z);
-			float[][] buffer = translatePositionalLights(gl,new float[] {(float)l.getPointN(i).getX(), (float)(JOGLRenderer.Y_FLAG * l.getPointN(i).getY()), (float)z});
+			final float[][] buffer = translatePositionalLights(gl, new float[] { (float) l.getPointN(i).getX(),
+					(float) (JOGLRenderer.Y_FLAG * l.getPointN(i).getY()), (float) z });
 			Vector3d d;
 			if (Double.isNaN(l.getCoordinate().z) == false) {
 				d = new Vector3d((l.getPointN(i + 1).getX() - l.getPointN(i).getX()) / distance,
@@ -1341,15 +1413,16 @@ public class JTSDrawer {
 			myGlu.gluCylinder(quad, height, height, distance, slices, stacks);
 			myGlu.gluDeleteQuadric(quad);
 
-//			gl.glRotated(-omega, a.x, a.y, a.z);
-//			gl.glTranslated(-l.getPointN(i).getX(), -JOGLRenderer.Y_FLAG * l.getPointN(i).getY(), -z);
+			// gl.glRotated(-omega, a.x, a.y, a.z);
+			// gl.glTranslated(-l.getPointN(i).getX(), -JOGLRenderer.Y_FLAG *
+			// l.getPointN(i).getY(), -z);
 			gl.glPopMatrix();
-			revertTranslatePositionalLights(gl,buffer);
+			revertTranslatePositionalLights(gl, buffer);
 		}
 
 	}
 
-	public Vertex[] getPyramidfaceVertices(final Polygon p, int i, int j, final double size, final int x,
+	public Vertex[] getPyramidfaceVertices(final Polygon p, final int i, final int j, final double size, final int x,
 			final int y) {
 		final Vertex[] vertices = new Vertex[3];
 		for (int i1 = 0; i1 < 3; i1++) {
@@ -1373,35 +1446,39 @@ public class JTSDrawer {
 	public void pyramidSkeleton(final GL2 gl, final Polygon p, final double size, final Color c, final double alpha,
 			final GeometryObject g) {
 		// set the chosen color to the opengl context
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(c.getRed()/255.0f),(float)(c.getGreen()/255.0f),
-				(float)(c.getBlue()/255.0f),(float)alpha});
-		
-		Vertex[] vertices;		
+		setColor(gl, c, alpha);
+		// GLUtilGLContext.SetCurrentColor(gl, c.getRed() / 255.0f, c.getGreen()
+		// / 255.0f, c.getBlue() / 255.0f,
+		// (float) alpha);
+
+		Vertex[] vertices;
 		int p_norm_dir = -1;
-		
+
 		if (renderer.getComputeNormal()) {
 			vertices = getExteriorRingVertices(p);
-			
+
 			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
 				p_norm_dir = 1;
 			} else {
 				p_norm_dir = -1;
 			}
-			
+
 			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		}
 		final Coordinate coords[] = p.getExteriorRing().getCoordinates();
 
 		if (g.isTextured()) {
 			final Texture texture = g.getTexture(gl, renderer, 0);
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, 1.0f});
+			setColor(gl, Color.white, 1);
+			// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f, 1.0f);
 			if (texture != null) {
 				texture.enable(gl);
 				texture.bind(gl);
 			}
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, 1.0f});
+			setColor(gl, Color.white, 1);
+			// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f, 1.0f);
 		}
-		
+
 		gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 		gl.glPolygonOffset(0.0f, (float) 1.1);
 
@@ -1430,7 +1507,7 @@ public class JTSDrawer {
 		norm[0] = norm[0] * size + p.getCentroid().getX();
 		norm[1] = norm[1] * size + JOGLRenderer.Y_FLAG * p.getCentroid().getY();
 		norm[2] = norm[2] * size + p.getCentroid().getCoordinate().z;
-		
+
 		gl.glPolygonOffset(0.0f, -(float) 1.1);
 
 		gl.glBegin(GL.GL_TRIANGLES);
@@ -1498,7 +1575,7 @@ public class JTSDrawer {
 		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
-		
+
 		gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 
 		if (g.isTextured()) {
