@@ -27,7 +27,6 @@ import static msi.gama.precompiler.JavaWriter.SPECIES_PREFIX;
 import static msi.gama.precompiler.JavaWriter.SYMBOL_PREFIX;
 import static msi.gama.precompiler.JavaWriter.TYPE_PREFIX;
 import static msi.gama.precompiler.JavaWriter.VAR_PREFIX;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -43,6 +42,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.FilerException;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -148,7 +148,9 @@ public class GamaProcessor extends AbstractProcessor {
 				throw e;
 			}
 
-			gp.store(createWriter(GAML));
+			final Writer gamlWriter = createWriter(GAML);
+			if(gamlWriter != null) gp.store(gamlWriter);
+
 			final Writer source = createSourceWriter();
 			if (source != null) {
 				try {
@@ -1058,12 +1060,11 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createWriter(final String s) {
 		try {
-			final OutputStream output = processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null)
-					.openOutputStream();
+			final OutputStream output = processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null).openOutputStream();
 			final Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
 			return writer;
 		} catch (final Exception e) {
-			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
+			processingEnv.getMessager().printMessage(Kind.WARNING, e.getMessage());
 		}
 		return null;
 	}
@@ -1075,7 +1076,7 @@ public class GamaProcessor extends AbstractProcessor {
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {
-			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
+			processingEnv.getMessager().printMessage(Kind.WARNING, e.getMessage());
 		}
 		return null;
 	}
