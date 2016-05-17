@@ -18,23 +18,31 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 
 public interface INetworkSkill  {
-	public static String CONNECT_TOPIC = "connect";
-	public static String SERVER_URL = "to";
-	public static String GROUP = "with_group";
-	public static String WITHNAME = "with_name";
-	public static String PROTOCOL = "protocol";
-	public static String PORT = "port";
+	public final static String CONNECT_TOPIC = "connect";
+	public final static String SERVER_URL = "to";
+	public final static String GROUP = "with_group";
+	public final static String WITHNAME = "with_name";
+	public final static String PROTOCOL = "protocol";
+	public final static String PORT = "port";
 	
 	//Agent Data
-	public static String NET_AGENT_NAME = "network_name";
-	public static String NET_AGENT_GROUPS = "network_groups";
-	public static String NET_AGENT_SERVER = "network_server";
+	public final static String NET_AGENT_NAME = "network_name";
+	public final static String NET_AGENT_GROUPS = "network_groups";
+	public final static String NET_AGENT_SERVER = "network_server";
 	
 	//MESSAGE CONTENTS
-	public static String TO = "to";
-	public static String FROM = "from";
-	public static String CONTENT = "content";
-	public static String BROADCAST = "all";
+	public final static String TO = "to";
+	public final static String FROM = "from";
+	public final static String CONTENT = "content";
+	public final static String BROADCAST = "all";
+	
+	
+	// CONNECTION PROTOCOL
+	public final static String UDP_SERVER = "udp_server";
+	public final static String UDP_CLIENT = "udp_client";
+	public final static String TCP_SERVER = "tcp_server";
+	public final static String TCP_CLIENT = "tcp_client";
+	public final static String MQTT = "mqtt";
 	
 	
 	///// SKILL NETWORK
@@ -50,5 +58,9 @@ public interface INetworkSkill  {
 	public static String SENSOR_NAME = "sensor_name";
 	public static String FETCH_DATA = "fetch_data";
 	public static String EMPTY_BUFFER="has_received_data";
+	
+	
+	
+	
 	
 }
