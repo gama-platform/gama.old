@@ -53,20 +53,23 @@ public class NetworkSkill  extends Skill implements INetworkSkill{
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
 		String serverURL = (String) scope.getArg(INetworkSkill.SERVER_URL, IType.STRING);
 		String dest = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
+		String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
+		String port = (String) scope.getArg(INetworkSkill.PORT, IType.STRING);
+		
 		IConnector connector =  serverList.get(serverURL);
 		if(connector == null)
 		{
-			if(INetworkSkill.PROTOCOL == "udp"){
+			if(protocol != null && protocol.equals( INetworkSkill.UDP_SERVER)){
 				System.out.println("create udp serveur");
 				connector = new UDPConnector();
-			}
-
-			if(INetworkSkill.PROTOCOL == "tcp"){
+			} 
+			else if(protocol != null && protocol.equals( INetworkSkill.TCP_SERVER)){
 				System.out.println("create tcp serveur");
 				connector = new TCPConnector();
 			}
 			
-			if(INetworkSkill.PROTOCOL == "mqtt"){
+			else //if(protocol.equals( INetworkSkill.MQTT))
+			{
 				System.out.println("create mqtt serveur");
 				connector = new MQTTConnectorSk();
 			}			
@@ -77,7 +80,6 @@ public class NetworkSkill  extends Skill implements INetworkSkill{
 		try {
 			connector.connectToServer(scope.getAgentScope(), dest, serverURL, scope);
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

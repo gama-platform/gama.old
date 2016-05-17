@@ -108,7 +108,8 @@ public class MQTTConnectorSk implements IConnector{
 		}
 		
 		@Override
-		public void onConnected() {}
+		public void onConnected() {
+		}
 
 		@Override
 		public void onDisconnected() {}
@@ -149,31 +150,28 @@ public class MQTTConnectorSk implements IConnector{
 	}
 	
 	
-	public void connectToServer(IAgent agent, String dest, String server, IScope scope) throws Exception  {
+	public void connectToServer(IAgent agent, String agentName, String server, IScope scope) throws Exception  {
 		if(	sendConnection == null) 
 			sendConnection= MQTTConnector.connectSender(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
-	
-		
 		CallbackConnection connection =  receiveConnections.get(server);
-			System.out.println("connection "+ server+" :"+dest+":");
 			if(connection == null)
 			{
 				try {
 					connection = MQTTConnector.connectReceiver(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
 					connection.listener(new MQTTListener(server,connection,this));
-					connection.connect(new MQTTConnecterListener(connection, server,dest));
+					connection.connect(new MQTTConnecterListener(connection, server,agentName));
 					receiveConnections.put(server, connection);
 					
 				} catch (URISyntaxException e) {
 					e.printStackTrace();
 				} 
 			}
-			ArrayList<IAgent> agentBroadcast = this.boxFollower.get(dest);
+			ArrayList<IAgent> agentBroadcast = this.boxFollower.get(agentName);
 			if(agentBroadcast == null)
 			{
-				if(!(this.boxFollower.keySet().contains(dest)))
+				if(!(this.boxFollower.keySet().contains(agentName)))
 				{
-					Topic [] tps = {new Topic(dest, QoS.AT_LEAST_ONCE)};
+					Topic [] tps = {new Topic(agentName, QoS.AT_LEAST_ONCE)};
 					connection.subscribe( tps,new Callback<byte[]>() {
 	                    public void onSuccess(byte[] qoses) {
 	                    }
@@ -184,7 +182,7 @@ public class MQTTConnectorSk implements IConnector{
 	                });
 				}
 				agentBroadcast = new ArrayList<IAgent>();
-				this.boxFollower.put(dest, agentBroadcast);
+				this.boxFollower.put(agentName, agentBroadcast);
 			}
 			if(!agentBroadcast.contains(agent))
 			{
@@ -215,6 +213,7 @@ public class MQTTConnectorSk implements IConnector{
 	@Override
 	public void sendMessage(String dest, Map<String, String >  data) 
 	{
+		System.out.println("sent message "+ SimpleMapSerializer.map2String(data));
 		sendConnection.publish(new UTF8Buffer(dest), new AsciiBuffer(SimpleMapSerializer.map2String(data)), QoS.AT_LEAST_ONCE, false);
 	}
 
