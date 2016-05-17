@@ -24,6 +24,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -125,6 +126,18 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 				// preferenceManager.remove((IPreferenceNode) elem);
 			}
 		}
+		shell.layout();
+		shell.pack();
+		// final Monitor primary = SwtGui.getDisplay().getPrimaryMonitor();
+		final Rectangle bounds = parentShell.getBounds();
+		final int width = Math.min(shell.getSize().x, bounds.x);
+		final int height = Math.min(shell.getSize().y, bounds.y);
+		shell.setSize(width, height);
+		// final int x = bounds.x + (bounds.width - width) / 2;
+		// final int y = bounds.y + (bounds.height - height) / 2;
+
+		// shell.setLocation(x, y);
+
 		buildContents();
 	}
 

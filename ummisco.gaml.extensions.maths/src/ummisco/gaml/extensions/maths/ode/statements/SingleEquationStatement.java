@@ -165,6 +165,10 @@ public class SingleEquationStatement extends AbstractStatement {
 		return var;
 	}
 
+	public IExpression getVarTime() {
+		return var_t;
+	}
+
 	public IExpression getVar(final int index) {
 		return var.get(index);
 	}
@@ -191,14 +195,12 @@ public class SingleEquationStatement extends AbstractStatement {
 		if (getOrder() == 0) {
 			return;
 		}
-		for (int i = 0; i < ((AbstractNAryOperator) function).numArg(); i++) {
+		int i = 0;
+		for (i = 0; i < ((AbstractNAryOperator) function).numArg() - 1; i++) {
 			final IExpression tmp = ((AbstractNAryOperator) function).arg(i);
-			if (tmp.getName().equals("t")) {
-				var_t = tmp;
-			} else {
 				var.add(i, tmp);
-			}
 		}
+		var_t =((AbstractNAryOperator) function).arg(i);
 	}
 
 	/**

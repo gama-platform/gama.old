@@ -13,6 +13,8 @@ package msi.gama.metamodel.shape;
 
 import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
 import java.lang.reflect.Field;
+import java.util.Map;
+
 import org.apache.commons.math3.geometry.euclidean.threed.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.*;
@@ -94,7 +96,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	 */
 	private void mixAttributes(final IShape source) {
 		if ( source == null ) { return; }
-		GamaMap attr = source.getAttributes();
+		GamaMap<Object, Object> attr = source.getAttributes();
 		if ( attr == null ) { return; }
 		Object depth = attr.get(IShape.DEPTH_ATTRIBUTE);
 		if ( depth != null ) {
@@ -106,6 +108,11 @@ public class GamaShape implements IShape /* , IContainer */ {
 			// we have a specific type of geometry. Choose to copy it.
 			setAttribute(IShape.TYPE_ATTRIBUTE, type);
 		}
+				for (Map.Entry entry: attr.entrySet()){
+					if (entry.getValue() != source) {
+						setAttribute(entry.getKey(), entry.getValue());
+					}
+				}
 	}
 
 	/**

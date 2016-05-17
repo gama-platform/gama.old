@@ -92,7 +92,7 @@ public abstract class Solver {
 					}
 
 				}
-				integrationValues.put("t", GamaListFactory.create(Double.class));
+				integrationValues.put(eq.variable_time.getName(), GamaListFactory.create(Double.class));
 
 				if (scope.getClock().getCycle() == 0) {
 					storeValues(initialTime, y, integrationValues);
