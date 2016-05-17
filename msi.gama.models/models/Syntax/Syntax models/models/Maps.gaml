@@ -28,7 +28,7 @@ species declaring_map_attributes {
 	map map_initialized_with_list <- map<int, int>([1,2,3,4]);
 	// maps can be declared so that they only accept a given type of keys and values
 	// For instance, empty_map_of_int will accept string keys and integer values
-	map<string, int> empty_map_of_int <- [];
+	map<string, int> empty_map_of_int;
 	// The appropriate casting is realized if the map is initialized with a list of values
 	map<string, int> map_of_int_with_init_of_string <- map<string, int>(['10', '20']); // => ['10'::10,'20'::20]
 	// or with another map

@@ -95,7 +95,7 @@ species flock skills: [moving] {
 			if (f != self and (shape intersects f.shape)) {
 				geometry new_shape <- convex_hull(polygon(shape.points + f.shape.points));
 				if empty(obstacle overlapping new_shape) {
-					list<boids> released_boids <- [];
+					list<boids> released_boids;
 					ask f {
 						release members as: boids in: world returns: released_coms;
 						released_boids <- list(released_coms);

@@ -47,7 +47,7 @@ species test_species {
 	
 	//Third test for lists
 	test t3 {
- 		list<int> aa <- [];
+ 		list<int> aa;
 	 	assert aa[0] raises: "error";
 	 	assert aa[0] raises: "";
 	 	assert a raises: "error";

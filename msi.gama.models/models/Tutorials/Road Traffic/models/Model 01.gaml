@@ -8,19 +8,14 @@
 model tutorial_gis_city_traffic
 
 global {
-	file shape_file_buildings <- file("../includes/building.shp");
-	file shape_file_roads <- file("../includes/road.shp");
-	file shape_file_bounds <- file("../includes/bounds.shp");
-	geometry shape <- envelope(shape_file_bounds);
+	file buildings_shapefile <- file("../includes/buildings.shp");
+	file roads_shapefile <- file("../includes/street.shp");
+	geometry shape <- envelope(envelope(buildings_shapefile) + envelope(roads_shapefile));
 	float step <- 10 #mn;
 	
 	init {
-		create building from: shape_file_buildings with: [type::string(read ("NATURE"))] {
-			if type="Industrial" {
-				color <- #blue ;
-			}
-		}
-		create road from: shape_file_roads ;
+		create building from: buildings_shapefile ;
+		create road from: roads_shapefile ;
 	}
 }
 
@@ -34,17 +29,14 @@ species building {
 }
 
 species road  {
-	rgb color <- #black ;
+	rgb color <- #red ;
 	aspect base {
 		draw shape color: color ;
 	}
 }
 
 experiment road_traffic type: gui {
-	parameter "Shapefile for the buildings:" var: shape_file_buildings category: "GIS" ;
-	parameter "Shapefile for the roads:" var: shape_file_roads category: "GIS" ;
-	parameter "Shapefile for the bounds:" var: shape_file_bounds category: "GIS" ;
-	
+		
 	output {
 		display city_display type:opengl {
 			species building aspect: base ;

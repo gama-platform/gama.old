@@ -11,7 +11,7 @@
   <groupId>msi.gama</groupId>
   <artifactId>msi.gama.processor</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <version>1.7.0-SNAPSHOT</version>
+  <version>1.4.0</version>
   <build>
   <plugins combine.self="override">
     <plugin>

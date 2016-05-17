@@ -285,7 +285,7 @@ global {
 				if target in nearby_groups {
 					if (rnd(10)) < (merge_possibility * 10) {
 						list<ball_in_group> target_coms <- list<ball_in_group>(target.members) ;
-						list<ball> released_balls <- [];
+						list<ball> released_balls ;
 						ask target {
 							release target_coms as: ball in: world returns: released_coms;
 							released_balls <- list(released_coms);
