@@ -22,7 +22,6 @@ import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.utils.GLUtilGLContext;
 import ummisco.gama.opengl.utils.GLUtilNormal;
 import ummisco.gama.opengl.utils.Vertex;
 
@@ -73,8 +72,9 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 			curTexture.enable(gl);
 			curTexture.bind(gl);
 		}
-
-		GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 1.0f, 1.0f, (float)(double)demObj.getAlpha()});
+		renderer.setCurrentColor(gl, Color.white, demObj.getAlpha());
+		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f,
+		// demObj.getAlpha().floatValue());
 
 		// Draw Grid with square
 		// if texture draw with color coming from the texture and z according to
@@ -96,8 +96,11 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 					}
 					final Color lineColor = demObj.getBorder();
 					if (lineColor != null) {
-						GLUtilGLContext.SetCurrentColor(gl, new float[] {lineColor.getRed() / 255.0f, lineColor.getGreen() / 255.0f,
-								lineColor.getBlue() / 255.0f});
+						renderer.setCurrentColor(gl, lineColor);
+						// GLUtilGLContext.SetCurrentColor(gl, new float[] {
+						// lineColor.getRed() / 255.0f,
+						// lineColor.getGreen() / 255.0f, lineColor.getBlue() /
+						// 255.0f });
 						gl.glBegin(GL.GL_LINE_STRIP);
 						gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
 						gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
@@ -107,7 +110,11 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 						gl.glEnd();
 					} else {
 						if (demObj.isGrayScaled()) {
-							GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(zValue / maxZ), (float)(zValue / maxZ), (float)(zValue / maxZ)});
+							renderer.setCurrentColor(gl, zValue / maxZ);
+							// GLUtilGLContext.SetCurrentColor(gl, new float[] {
+							// (float) (zValue / maxZ),
+							// (float) (zValue / maxZ), (float) (zValue / maxZ)
+							// });
 							gl.glBegin(GL2ES3.GL_QUADS);
 							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
 							gl.glVertex3d(x2 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, zValScaled);
@@ -202,8 +209,11 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 					}
 					final Color lineColor = demObj.getBorder();
 					if (lineColor != null) {
-						GLUtilGLContext.SetCurrentColor(gl, new float[] {lineColor.getRed() / 255.0f, lineColor.getGreen() / 255.0f,
-								lineColor.getBlue() / 255.0f});
+						renderer.setCurrentColor(gl, lineColor);
+						// GLUtilGLContext.SetCurrentColor(gl, new float[] {
+						// lineColor.getRed() / 255.0f,
+						// lineColor.getGreen() / 255.0f, lineColor.getBlue() /
+						// 255.0f });
 						gl.glBegin(GL.GL_LINE_STRIP);
 						gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, z1 * altFactor);
 						gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, z2 * altFactor);
@@ -213,7 +223,11 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 						gl.glEnd();
 					} else {
 						if (demObj.isGrayScaled()) {
-							GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(zValue / maxZ), (float)(zValue / maxZ), (float)(zValue / maxZ)});
+							renderer.setCurrentColor(gl, zValue / maxZ);
+							// GLUtilGLContext.SetCurrentColor(gl, new float[] {
+							// (float) (zValue / maxZ),
+							// (float) (zValue / maxZ), (float) (zValue / maxZ)
+							// });
 							gl.glBegin(GL.GL_TRIANGLE_STRIP);
 							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y1 * cellHeight, z1 * altFactor);
 							gl.glVertex3d(x1 * cellWidth, JOGLRenderer.Y_FLAG * y2 * cellHeight, z2 * altFactor);
@@ -241,7 +255,9 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		if (demObj.isShowText() && demObj.values != null) {
 			// Draw gridvalue as text inside each cell
 			gl.glDisable(GL.GL_BLEND);
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {0.0f, 0.0f, 0.0f, 1.0f});
+			renderer.setCurrentColor(gl, Color.black);
+			// GLUtilGLContext.SetCurrentColor(gl, new float[] { 0.0f, 0.0f,
+			// 0.0f, 1.0f });
 			for (int i = 0; i < columns; i++) {
 				stepX = i * cellWidth;/// textureWidth * columns;
 				for (int j = 0; j < rows; j++) {
@@ -328,7 +344,8 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 				} else {
 					float color = dem.getRGB(cols - x, y) & 255;
 					color = color / 255.0f;
-					GLUtilGLContext.SetCurrentColor(gl, new float[] {color, color, color});
+					renderer.setCurrentColor(gl, color);
+					// GLUtilGLContext.SetCurrentColor(gl, color, color, color);
 					gl.glVertex3f(vx, vy, alt1);
 					gl.glVertex3f(vx, vy + th, alt2);
 				}

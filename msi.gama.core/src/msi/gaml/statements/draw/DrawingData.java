@@ -5,16 +5,26 @@
 package msi.gaml.statements.draw;
 
 import java.awt.Color;
+
 import msi.gama.common.GamaPreferences;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaFont;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaFontType;
+import msi.gaml.types.GamaListType;
+import msi.gaml.types.Types;
 
 /**
- * Class DrawingData. This class contains a number of attributes to help draw geometries, pictures, files and text. These attributes are supplied either by the draw statement or by the layer
+ * Class DrawingData. This class contains a number of attributes to help draw
+ * geometries, pictures, files and text. These attributes are supplied either by
+ * the draw statement or by the layer
  *
  * @author drogoul
  * @since 28 janv. 2016
@@ -42,7 +52,7 @@ public class DrawingData {
 	ILocation constantLocation;
 	Boolean constantEmpty;
 	GamaColor constantBorder;
-	GamaColor constantColor;
+	// GamaColor constantColor;
 	GamaFont constantFont;
 	IList constantTextures;
 	Boolean constantperspective;
@@ -61,9 +71,9 @@ public class DrawingData {
 	Boolean currentperspective;
 
 	public DrawingData(final IExpression sizeExp, final IExpression depthExp, final IExpression rotationExp,
-		final IExpression locationExp, final IExpression emptyExp, final IExpression borderExp,
-		final IExpression colorExp, final IExpression fontExp, final IExpression textureExp,
-		final IExpression perspectiveExp) {
+			final IExpression locationExp, final IExpression emptyExp, final IExpression borderExp,
+			final IExpression colorExp, final IExpression fontExp, final IExpression textureExp,
+			final IExpression perspectiveExp) {
 		this.sizeExp = sizeExp;
 		this.depthExp = depthExp;
 		this.rotationExp = rotationExp;
@@ -79,22 +89,22 @@ public class DrawingData {
 
 	private void initializeConstants() {
 		/* perspective */
-		if ( perspectiveExp != null && perspectiveExp.isConst() ) {
+		if (perspectiveExp != null && perspectiveExp.isConst()) {
 			constantperspective = Cast.asBool(null, perspectiveExp.value(null));
-		} else if ( perspectiveExp == null ) {
+		} else if (perspectiveExp == null) {
 			constantperspective = true;
 		}
 		/* SIZE */
-		if ( sizeExp != null && sizeExp.isConst() ) {
+		if (sizeExp != null && sizeExp.isConst()) {
 			constantSIze = Cast.asPoint(null, sizeExp.value(null));
 		}
 		/* DEPTH */
-		if ( depthExp != null && depthExp.isConst() ) {
+		if (depthExp != null && depthExp.isConst()) {
 			constantDepth = Cast.asFloat(null, depthExp.value(null));
 		}
 		/* ROTATION */
-		if ( rotationExp != null && rotationExp.isConst() ) {
-			if ( rotationExp.getType().getType() == Types.PAIR ) {
+		if (rotationExp != null && rotationExp.isConst()) {
+			if (rotationExp.getType().getType() == Types.PAIR) {
 				constantRotation = Cast.asPair(null, rotationExp.value(null), true);
 				constantRotation.key = Cast.asFloat(null, constantRotation.key);
 			} else {
@@ -103,53 +113,55 @@ public class DrawingData {
 			}
 		}
 		/* LOCATION */
-		if ( locationExp != null && locationExp.isConst() ) {
+		if (locationExp != null && locationExp.isConst()) {
 			constantLocation = Cast.asPoint(null, locationExp.value(null));
 		}
 		/* EMPTY */
-		if ( emptyExp != null && emptyExp.isConst() ) {
+		if (emptyExp != null && emptyExp.isConst()) {
 			constantEmpty = Cast.asBool(null, emptyExp.value(null));
-		} else if ( emptyExp == null ) {
+		} else if (emptyExp == null) {
 			constantEmpty = false;
 		}
 
 		/* BORDER */
-		if ( borderExp != null && borderExp.isConst() ) {
-			if ( borderExp.getType() == Types.BOOL ) {
+		if (borderExp != null && borderExp.isConst()) {
+			if (borderExp.getType() == Types.BOOL) {
 				hasBorder = Cast.asBool(null, borderExp.value(null));
-				if ( hasBorder ) {
+				if (hasBorder) {
 					constantBorder = DEFAULT_BORDER_COLOR;
 				}
 			} else {
 				hasBorder = true;
 				constantBorder = Cast.asColor(null, borderExp.value(null));
 			}
-		} else if ( borderExp == null ) {
+		} else if (borderExp == null) {
 			hasBorder = true;
-			// AD commented in order to allow for the color to be chosen when computing the border color
+			// AD commented in order to allow for the color to be chosen when
+			// computing the border color
 			// constantBorder = DEFAULT_BORDER_COLOR;
 		} else {
 			hasBorder = true;
 		}
 
 		/* COLOR */
-		if ( colorExp != null && colorExp.isConst() ) {
-			hasColor = true;
-			constantColor = Cast.asColor(null, colorExp.value(null));
-		} else if ( colorExp == null ) {
-			hasColor = false;
-		} else {
-			hasColor = true;
-		}
+		hasColor = colorExp != null;
+		// if (colorExp != null && colorExp.isConst()) {
+		// hasColor = true;
+		// // constantColor = Cast.asColor(null, colorExp.value(null));
+		// } else if (colorExp == null) {
+		// hasColor = false;
+		// } else {
+		// hasColor = true;
+		// }
 
 		/* FONT */
-		if ( fontExp != null && fontExp.isConst() ) {
+		if (fontExp != null && fontExp.isConst()) {
 			constantFont = GamaFontType.staticCast(null, fontExp.value(null), true);
 		}
 
 		/* TEXTURES */
-		if ( textureExp != null && textureExp.isConst() ) {
-			if ( textureExp.getType().getType() == Types.LIST ) {
+		if (textureExp != null && textureExp.isConst()) {
+			if (textureExp.getType().getType() == Types.LIST) {
 				constantTextures = Cast.asList(null, textureExp.value(null));
 			} else {
 				constantTextures = GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(null));
@@ -160,18 +172,18 @@ public class DrawingData {
 	public void computeAttributes(final IScope scope) {
 
 		/* perspective */
-		if ( constantperspective != null ) {
+		if (constantperspective != null) {
 			currentperspective = constantperspective;
 		} else {
 			currentperspective = Cast.asBool(scope, perspectiveExp.value(scope));
 		}
 		/* SIZE */
-		if ( constantSIze != null ) {
+		if (constantSIze != null) {
 			currentSize = constantSIze;
 		} else {
-			if ( sizeExp != null ) {
-				if ( sizeExp.getType().isNumber() ) {
-					double val = Cast.asFloat(scope, sizeExp.value(scope));
+			if (sizeExp != null) {
+				if (sizeExp.getType().isNumber()) {
+					final double val = Cast.asFloat(scope, sizeExp.value(scope));
 					// We do not consider the z ordinate -- see Issue #1539
 					currentSize = new GamaPoint(val, val, 0);
 				} else {
@@ -180,34 +192,34 @@ public class DrawingData {
 			}
 		}
 		/* DEPTH */
-		if ( constantDepth != null ) {
+		if (constantDepth != null) {
 			currentDepth = constantDepth;
 		} else {
-			if ( depthExp != null ) {
+			if (depthExp != null) {
 				currentDepth = Cast.asFloat(scope, depthExp.value(scope));
 			}
 		}
 
 		/* ROTATION */
-		if ( constantRotation != null ) {
+		if (constantRotation != null) {
 			currentRotation = constantRotation;
 		} else {
-			if ( rotationExp != null ) {
-				if ( rotationExp.getType().getType() == Types.PAIR ) {
+			if (rotationExp != null) {
+				if (rotationExp.getType().getType() == Types.PAIR) {
 					currentRotation = Cast.asPair(scope, rotationExp.value(scope), true);
 					currentRotation.key = Cast.asFloat(scope, currentRotation.key);
 				} else {
-					currentRotation =
-						new GamaPair(scope, rotationExp.value(scope), DEFAULT_AXIS, Types.FLOAT, Types.POINT);
+					currentRotation = new GamaPair(scope, rotationExp.value(scope), DEFAULT_AXIS, Types.FLOAT,
+							Types.POINT);
 					currentRotation.key = Cast.asFloat(scope, currentRotation.key);
 				}
 			}
 		}
 		/* LOCATION */
-		if ( constantLocation != null ) {
+		if (constantLocation != null) {
 			currentLocation = constantLocation;
 		} else {
-			if ( locationExp != null ) {
+			if (locationExp != null) {
 				currentLocation = Cast.asPoint(scope, locationExp.value(scope));
 			}
 			// else {
@@ -215,29 +227,29 @@ public class DrawingData {
 			// }
 		}
 		/* EMPTY */
-		if ( constantEmpty != null ) {
+		if (constantEmpty != null) {
 			currentEmpty = constantEmpty;
 		} else {
 			currentEmpty = Cast.asBool(scope, emptyExp.value(scope));
 		}
 
 		/* COLOR */
-		if ( constantColor != null ) {
-			currentColor = constantColor;
+		// if (constantColor != null) {
+		// currentColor = constantColor;
+		// } else {
+		if (colorExp != null) {
+			currentColor = Cast.asColor(scope, colorExp.value(scope));
 		} else {
-			if ( colorExp != null ) {
-				currentColor = Cast.asColor(scope, colorExp.value(scope));
-			} else {
-				currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
-			}
+			currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
 		}
+		// }
 
 		/* BORDER */
-		if ( hasBorder || currentEmpty ) {
-			if ( constantBorder != null ) {
+		if (hasBorder || currentEmpty) {
+			if (constantBorder != null) {
 				currentBorder = constantBorder;
 			} else {
-				if ( borderExp != null && borderExp.getType() != Types.BOOL ) {
+				if (borderExp != null && borderExp.getType() != Types.BOOL) {
 					currentBorder = Cast.asColor(scope, borderExp.value(scope));
 				} else {
 					currentBorder = currentColor;
@@ -246,10 +258,10 @@ public class DrawingData {
 		}
 
 		/* FONT */
-		if ( constantFont != null ) {
+		if (constantFont != null) {
 			currentFont = constantFont;
 		} else {
-			if ( fontExp != null ) {
+			if (fontExp != null) {
 				currentFont = GamaFontType.staticCast(scope, fontExp.value(scope), true);
 			} else {
 				currentFont = GamaFontType.DEFAULT_DISPLAY_FONT.getValue();
@@ -257,11 +269,11 @@ public class DrawingData {
 		}
 
 		/* TEXTURES */
-		if ( constantTextures != null ) {
+		if (constantTextures != null) {
 			currentTextures = constantTextures;
 		} else {
-			if ( textureExp != null ) {
-				if ( textureExp.getType().getType() == Types.LIST ) {
+			if (textureExp != null) {
+				if (textureExp.getType().getType() == Types.LIST) {
 					currentTextures = GamaListType.staticCast(scope, textureExp.value(scope), Types.STRING, false);
 				} else {
 					currentTextures = GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(scope));

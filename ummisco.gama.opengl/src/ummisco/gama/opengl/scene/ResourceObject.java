@@ -23,7 +23,6 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 public class ResourceObject extends AbstractObject {
 
@@ -93,9 +92,12 @@ public class ResourceObject extends AbstractObject {
 		}
 		// And apply its color if any
 		if (getColor() != null) { // does not work for obj files
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {(float)(getColor().getRed() / 255.0), (float)(getColor().getGreen() / 255.0),
-					(float)(getColor().getBlue() / 255.0),
-					(float)(getAlpha() * getColor().getAlpha() / 255.0)});
+			renderer.setCurrentColor(gl, getColor(), getAlpha());
+			// GLUtilGLContext.SetCurrentColor(gl, (float) (getColor().getRed()
+			// / 255.0),
+			// (float) (getColor().getGreen() / 255.0), (float)
+			// (getColor().getBlue() / 255.0),
+			// (float) (getAlpha() * getColor().getAlpha() / 255.0f));
 		}
 		// Then we draw the geometry itself
 		super.draw(gl, drawer, isPicking);

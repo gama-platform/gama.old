@@ -12,10 +12,11 @@
 package ummisco.gama.opengl.utils;
 
 import java.awt.Color;
-import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
 
-import com.jogamp.opengl.*;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLContext;
+
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 
@@ -26,8 +27,8 @@ public class GLUtilNormal {
 		// Step 1
 		// build two vectors, one pointing from A to B, the other pointing from
 		// A to C
-		double[] vector1 = new double[3];
-		double[] vector2 = new double[3];
+		final double[] vector1 = new double[3];
+		final double[] vector2 = new double[3];
 
 		vector1[0] = pointB.x - pointA.x;
 		vector2[0] = pointC.x - pointA.x;
@@ -42,10 +43,10 @@ public class GLUtilNormal {
 		// do the cross product of these two vectors to find the normal
 		// of the surface
 
-		double[] normal = new double[3];
-//		normal[0] = vector1[1] * vector2[2] - vector1[2] * vector2[1];
-//		normal[1] = vector1[2] * vector2[0] - vector1[0] * vector2[2];
-//		normal[2] = vector1[0] * vector2[1] - vector1[1] * vector2[0];
+		final double[] normal = new double[3];
+		// normal[0] = vector1[1] * vector2[2] - vector1[2] * vector2[1];
+		// normal[1] = vector1[2] * vector2[0] - vector1[0] * vector2[2];
+		// normal[2] = vector1[0] * vector2[1] - vector1[1] * vector2[0];
 		normal[0] = vector1[1] * vector2[2] - vector1[2] * vector2[1];
 		normal[1] = vector1[2] * vector2[0] - vector1[0] * vector2[2];
 		normal[2] = vector1[0] * vector2[1] - vector1[1] * vector2[0];
@@ -54,12 +55,12 @@ public class GLUtilNormal {
 		// "normalise" the normal (make sure it has length of one)
 
 		double total = 0.0d;
-		for ( int i = 0; i < 3; i++ ) {
+		for (int i = 0; i < 3; i++) {
 			total += normal[i] * normal[i];
 		}
-		double length = FastMath.sqrt(total);
+		final double length = FastMath.sqrt(total);
 
-		for ( int i = 0; i < 3; i++ ) {
+		for (int i = 0; i < 3; i++) {
 			normal[i] /= length;
 		}
 
@@ -68,7 +69,7 @@ public class GLUtilNormal {
 	}
 
 	public static Vertex GetCenter(final Vertex pointA, final Vertex pointB, final Vertex pointC) {
-		Vertex center = new Vertex();
+		final Vertex center = new Vertex();
 		center.x = (pointA.x + pointB.x + pointC.x) / 3;
 		center.y = (pointA.y + pointB.y + pointC.y) / 3;
 		center.z = (pointA.z + pointB.z + pointC.z) / 3;
@@ -76,8 +77,8 @@ public class GLUtilNormal {
 	}
 
 	public static Vertex GetCenter(final Vertex[] vertices) {
-		Vertex center = new Vertex();
-		for ( int i = 0; i < vertices.length; i++ ) {
+		final Vertex center = new Vertex();
+		for (int i = 0; i < vertices.length; i++) {
 			center.x = center.x + vertices[i].x;
 			center.y = center.y + vertices[i].y;
 			center.z = center.z + vertices[i].z;
@@ -89,19 +90,19 @@ public class GLUtilNormal {
 		return center;
 	}
 
-	public static void HandleNormal(final Vertex[] vertices, final int norm_dir1,
-		final JOGLRenderer renderer) {
-		GL2 gl = GLContext.getCurrentGL().getGL2();
-		double[] normalmean = new double[3];
-		int norm_dir = 1;
-//		for ( int i = 0; i < vertices.length - 2; i++ ) {
-		// Why do we need to compute all the normal ? Just one should be enough !
-			double[] normal = CalculateNormal(vertices[0], vertices[0 + 1], vertices[0 + 2]);
-			normalmean[0] = normalmean[0] + normal[0];
-			normalmean[1] = normalmean[1] + normal[1];
-			normalmean[2] = normalmean[2] + normal[2];
-//		}
-		
+	public static void HandleNormal(final Vertex[] vertices, final int norm_dir1, final JOGLRenderer renderer) {
+		final GL2 gl = GLContext.getCurrentGL().getGL2();
+		final double[] normalmean = new double[3];
+		final int norm_dir = 1;
+		// for ( int i = 0; i < vertices.length - 2; i++ ) {
+		// Why do we need to compute all the normal ? Just one should be enough
+		// !
+		final double[] normal = CalculateNormal(vertices[0], vertices[0 + 1], vertices[0 + 2]);
+		normalmean[0] = normalmean[0] + normal[0];
+		normalmean[1] = normalmean[1] + normal[1];
+		normalmean[2] = normalmean[2] + normal[2];
+		// }
+
 		// just one normal, no need to divide by the number of vertices.
 		normalmean[0] = norm_dir * normalmean[0];// / vertices.length;
 		normalmean[1] = norm_dir * normalmean[1];// / vertices.length;
@@ -113,15 +114,16 @@ public class GLUtilNormal {
 		normalmean[1] = renderer.getMaxEnvDim() / 20 * normalmean[1];
 		normalmean[2] = renderer.getMaxEnvDim() / 20 * normalmean[2];
 
-		if ( renderer.data.isDraw_norm() ) {
+		if (renderer.data.isDraw_norm()) {
 
 			// memorize the current color to the buffer
-			float[] previousColor = GLUtilGLContext.GetCurrentColor();
-			
-			Vertex center = GetCenter(vertices);
+			final float[] previousColor = GLUtilGLContext.GetCurrentColor();
+
+			final Vertex center = GetCenter(vertices);
 			gl.glBegin(GL.GL_LINES);
 			// set the color of the normal to red
-			GLUtilGLContext.SetCurrentColor(gl, new float[] {1.0f, 0.0f, 0.0f});
+			renderer.setCurrentColor(gl, Color.red);
+			// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 0.0f, 0.0f);
 			gl.glVertex3d(center.x, center.y, center.z);
 			gl.glVertex3d(center.x + normalmean[0], center.y + normalmean[1], center.z + normalmean[2]);
 			gl.glEnd();
@@ -130,7 +132,7 @@ public class GLUtilNormal {
 			gl.glBegin(GL.GL_POINTS);
 			gl.glVertex3d(center.x + normalmean[0], center.y + normalmean[1], center.z + normalmean[2]);
 			gl.glEnd();
-			
+
 			// reset the previous color of the opengl context.
 			GLUtilGLContext.SetCurrentColor(gl, previousColor);
 
