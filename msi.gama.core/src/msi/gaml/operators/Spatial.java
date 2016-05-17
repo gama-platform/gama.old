@@ -187,7 +187,40 @@ public abstract class Spatial {
 			final Double amplitude) {
 			return arc(scope, xRadius, heading, amplitude, true);
 		}
-
+		@operator(value = "cross", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
+			@doc(
+				value = "A cross, which radius is equal to the first operand and the width of the lines for the second",
+				examples = { @example(value = "cross(10,2)",
+				equals = "a geometry as a cross of radius 10, and with a width of 2 for the lines ",
+				test = false) },
+				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
+					"rectangle", "square", "circle", "ellipse", "triangle" })
+			public static IShape cross(final IScope scope, final Double xRadius, final Double width) {
+				GamaPoint location;
+				final IAgent a = scope.getAgentScope();
+				location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+				if ( xRadius <= 0 ) { return new GamaShape(location); }
+				return GamaGeometryType.buildCross(xRadius, width, location);
+			}
+		
+		@operator(value = "cross", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
+				concept = {})
+			@doc(
+				value = "A cross, which radius is equal to the first operand",
+				examples = { @example(value = "cross(10)",
+				equals = "a geometry as a cross of radius 10",
+				test = false) },
+				see = { "around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "super_ellipse",
+					"rectangle", "square", "circle", "ellipse", "triangle" })
+			public static IShape cross(final IScope scope, final Double xRadius) {
+				GamaPoint location;
+				final IAgent a = scope.getAgentScope();
+				location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
+				if ( xRadius <= 0 ) { return new GamaShape(location); }
+				return GamaGeometryType.buildCross(xRadius, null, location);
+			}
+		
 		@operator(value = "arc", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE },
 			concept = {})
 		@doc(

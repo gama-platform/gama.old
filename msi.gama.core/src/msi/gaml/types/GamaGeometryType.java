@@ -593,6 +593,19 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return buildMultiGeometry(list);
 	}
 
+	public static IShape buildCross(Double xRadius, Double width, GamaPoint location) {
+		if ( xRadius <= 0 ) { return new GamaShape(location); }
+		double val = xRadius/Math.sqrt(2);
+		IShape line1 = GamaGeometryType.buildLine(new GamaPoint(location.x-val,location.y-val), new GamaPoint(location.x+val,location.y+val));
+		IShape line2 = GamaGeometryType.buildLine(new GamaPoint(location.x-val,location.y+val), new GamaPoint(location.x+val,location.y-val));
+		if ( width != null && width > 0) {
+			line1 = Spatial.Transformations.enlarged_by(null, line1, width);
+			line2 = Spatial.Transformations.enlarged_by(null, line2, width);
+		}
+		
+		return Spatial.Operators.union(null, line1, line2);
+	}
+
 	// /////////////////////// 3D Shape (Not yet implemented in 3D (e.g a Sphere is displayed as a
 	// sphere but is a JTS circle) /////////////////////////////
 
