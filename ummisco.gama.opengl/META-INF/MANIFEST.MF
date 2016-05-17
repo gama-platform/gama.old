@@ -6,7 +6,7 @@ Bundle-Version: 1.7.0.qualifier
 Require-Bundle: msi.gama.ext,
  msi.gama.core;bundle-version="1.7.0",
  msi.gama.application;bundle-version="1.7.0",
- msi.gama.processor;bundle-version="1.7.0",
+ msi.gama.processor;bundle-version="1.4.0",
  org.eclipse.core.runtime;bundle-version="3.8.0",
  org.eclipse.swt,
  org.eclipse.ui;bundle-version="3.8.2"
