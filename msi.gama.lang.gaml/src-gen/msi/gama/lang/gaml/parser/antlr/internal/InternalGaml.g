@@ -4632,6 +4632,13 @@ ruleSpecialFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRul
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getAspectKeyword_14()); 
     }
+
+    |
+	kw='light:' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getLightKeyword_15()); 
+    }
 )
     ;
 

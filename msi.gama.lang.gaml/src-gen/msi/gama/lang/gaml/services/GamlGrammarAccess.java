@@ -2462,15 +2462,16 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cUsingKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
 		private final Keyword cParameterKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
 		private final Keyword cAspectKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
+		private final Keyword cLightKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
 		
 		////	"as:" | "of:" | "type:" | 'parent:' | 'species:';
 		//SpecialFacetKey:
 		//	'data:' | 'when' ':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
-		//	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:";
+		//	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:";
 		@Override public ParserRule getRule() { return rule; }
 
 		//'data:' | 'when' ':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "environment:"
-		//| 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:"
+		//| 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//'data:'
@@ -2523,6 +2524,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"aspect:"
 		public Keyword getAspectKeyword_14() { return cAspectKeyword_14; }
+
+		//"light:"
+		public Keyword getLightKeyword_15() { return cLightKeyword_15; }
 	}
 
 	public class ActionFacetKeyElements extends AbstractParserRuleElementFinder {
@@ -5665,7 +5669,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	////	"as:" | "of:" | "type:" | 'parent:' | 'species:';
 	//SpecialFacetKey:
 	//	'data:' | 'when' ':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
-	//	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:";
+	//	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:";
 	public SpecialFacetKeyElements getSpecialFacetKeyAccess() {
 		return pSpecialFacetKey;
 	}
