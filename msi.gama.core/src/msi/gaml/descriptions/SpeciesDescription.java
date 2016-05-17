@@ -37,7 +37,6 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
-import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
@@ -47,6 +46,8 @@ import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.SymbolSerializer.SpeciesSerializer;
 import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.ListExpression;
+import msi.gaml.expressions.SkillConstantExpression;
 import msi.gaml.expressions.SpeciesConstantExpression;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
@@ -164,9 +165,17 @@ public class SpeciesDescription extends TypeDescription {
 		 */
 		if (userDefinedSkills != null) {
 			final IExpression expr = userDefinedSkills.compile(this);
-			if (expr != null && expr.isConst()) {
-				final IList<ISkill> skills = (IList<ISkill>) expr.value(null);
-				skillInstances.addAll(skills);
+			if (expr instanceof ListExpression) {
+				final ListExpression list = (ListExpression) expr;
+				for (final IExpression exp : list.getElements()) {
+					if (exp instanceof SkillConstantExpression) {
+						skillInstances.add((ISkill) exp.value(null));
+					}
+				}
+				// list.getElements();
+				// final IList<ISkill> skills = (IList<ISkill>)
+				// expr.value(null);
+				// skillInstances.addAll(skills);
 			}
 			// skillNames.addAll(userDefinedSkills.getStrings(this, true));
 		}
