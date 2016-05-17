@@ -33,9 +33,9 @@ model cfp_cfp_2
 global {
 	int nbOfParticipants <- 5;
 	participant refuser;
-	list<participant> proposers <- [];
+	list<participant> proposers;
 	participant reject_proposal_participant;
-	list<participant> accept_proposal_participants <- [];
+	list<participant> accept_proposal_participants ;
 	participant failure_participant;
 	participant inform_done_participant;
 	participant inform_result_participant;
