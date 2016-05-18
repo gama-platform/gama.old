@@ -11,12 +11,11 @@ cache:
 script: sh ./build.sh
 before_deploy:
   - echo $GIT_TAG 
-  - git remote -v
   - git config --global user.email "my.gama.bot@gmail.com"
   - git config --global user.name "gama-bot"
-  - git push -u https://$TAGPERM@github.com/gama-platform/gama.git
+  - git remote set-url origin https://$TAGPERM@github.com/gama-platform/gama.git
   - git remote -v
-  - git push https://$TAGPERM@github.com/gama-platform/gama.git :refs/tags/latest/
+  - git push https://$TAGPERM@github.com/gama-platform/gama.git :refs/tags/latest
   - git tag -fa latest -m "latest"
   - git push -q --tags
 deploy:
