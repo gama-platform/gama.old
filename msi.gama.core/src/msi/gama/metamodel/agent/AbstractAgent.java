@@ -11,9 +11,6 @@
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
-import java.io.IOException;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +31,6 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
@@ -202,7 +198,7 @@ public abstract class AbstractAgent implements IAgent {
 			// scope.getGui().debug(this.getClass().getSimpleName() + " " +
 			// getName() + " .dispose (in MinimalAgent)");
 			dead = true;
-			
+
 			if (getSpecies().getDescription() instanceof SpeciesDescription) {
 				if (((SpeciesDescription) getSpecies().getDescription()).getSkillsNames().contains("socket")) {
 					((SpeciesDescription) getSpecies().getDescription()).implementsSkill("socket");
@@ -219,12 +215,12 @@ public abstract class AbstractAgent implements IAgent {
 							cSock.interrupt();
 							this.setAttribute("__socket", null);
 						}
-					} catch (Exception e) {
+					} catch (final Exception e) {
 						throw GamaRuntimeException.create(e, this.getScope());
 					}
 				}
 			}
-			
+
 			final IPopulation p = getPopulation();
 			if (p != null) {
 				p.removeValue(null, this);
@@ -563,7 +559,7 @@ public abstract class AbstractAgent implements IAgent {
 		return s;
 	}
 
-	@action(name = "die")
+	@action(name = "die", doc = @doc("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
 		final IMacroAgent currentMacro = this.getHost();
 		if (currentMacro != null)

@@ -4,7 +4,6 @@
  */
 package msi.gama.lang.gaml.generator;
 
-import java.io.IOException;
 import java.io.StringWriter;
 
 import org.eclipse.core.resources.IFile;
@@ -53,7 +52,7 @@ public class GamlGenerator implements IGenerator {
 	private String getContentsFor(final GamlResource input) {
 		final GamlProperties requires = input.getRequires();
 		final StringWriter sw = new StringWriter();
-		
+
 		requires.store(sw);
 
 		return sw.toString();

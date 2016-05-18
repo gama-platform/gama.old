@@ -20,6 +20,7 @@ import com.google.inject.Inject;
 
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.Facet;
+import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
@@ -76,6 +77,14 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 			if (s instanceof S_Definition && ((S_Definition) s).getTkey() == o) {
 				return getDocumentation(s);
 			}
+		} else if (o instanceof Function) {
+			final Function f = (Function) o;
+			if (f.getAction() instanceof ActionRef) {
+				final ActionRef ref = (ActionRef) f.getAction();
+				return getDocumentation(ref.getRef());
+			}
+		} else if (o instanceof VariableRef) {
+			return getDocumentation(((VariableRef) o).getRef());
 		}
 		final IGamlDescription description = DescriptionFactory.getGamlDocumentation(o);
 
