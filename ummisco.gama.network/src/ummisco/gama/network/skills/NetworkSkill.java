@@ -47,7 +47,6 @@ public class NetworkSkill  extends Skill {
 		agentMessage = new HashMap<String, LinkedList<Map<String, Object>>>();
 		serverList = new HashMap<String,IConnector>();
 	}
-
 	
 	@action(name = INetworkSkill.CONNECT_TOPIC, args = {
 		@arg(name = INetworkSkill.PROTOCOL, type = IType.STRING, doc = @doc("protocol type (udp, tcp, mqqt)")),
@@ -59,19 +58,25 @@ public class NetworkSkill  extends Skill {
 		String dest = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
 		String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
 		String port = (String) scope.getArg(INetworkSkill.PORT, IType.STRING);
-		
 		IConnector connector =  serverList.get(serverURL);
 		if(connector == null)
 		{
 			if(protocol != null && protocol.equals( INetworkSkill.UDP_SERVER)){
 				System.out.println("create udp serveur");
-				connector = new UDPConnector();
+				connector = new UDPConnector(true);
 			} 
+			else if(protocol != null && protocol.equals( INetworkSkill.UDP_CLIENT)){
+				System.out.println("create udp client");
+				connector = new UDPConnector(false);
+			}
 			else if(protocol != null && protocol.equals( INetworkSkill.TCP_SERVER)){
 				System.out.println("create tcp serveur");
-				connector = new TCPConnector();
+				connector = new TCPConnector(scope, true);
 			}
-			
+			else if(protocol != null && protocol.equals( INetworkSkill.TCP_CLIENT)){
+				System.out.println("create tcp client");
+				connector = new TCPConnector(scope, false);
+			}
 			else //if(protocol.equals( INetworkSkill.MQTT))
 			{
 				System.out.println("create mqtt serveur");

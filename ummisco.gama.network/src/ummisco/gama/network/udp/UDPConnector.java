@@ -9,10 +9,16 @@ import ummisco.gama.network.skills.IConnector;
 
 public class UDPConnector implements IConnector{
 
+	private boolean is_server = false;
+
+	public UDPConnector(final boolean as_server){
+		is_server = as_server;	
+	}
+	
 	@Override
-	public void connectToServer(IScope scope, String dest, String server) throws Exception {
+	public String connectToServer(IScope scope, String dest, String server) throws Exception {
 		// TODO Auto-generated method stub
-		
+		return "";
 	}
 
 	@Override
