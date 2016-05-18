@@ -92,10 +92,10 @@ class ClientServiceThread extends Thread {
 				if(m==null){
 					m=GamaMapFactory.create();
 				}
-				if(myAgent.dead()){
-					this.interrupt();
+				if(myAgent.dead()){ 
+					this.stop();
 				}
-				System.out.println("\n\n ClientServiceThread "+"messages"+myAgent+"\n\n");
+//				System.out.println("\n\n ClientServiceThread "+"messages"+myAgent+"\n\n");
 //				GamaList<String> msgs = (GamaList<String>) m.get(myAgent.getScope(), myClientSocket.toString());
 //				if (msgs == null) {				
 //					msgs = (GamaList<String>) myAgent.getAttribute("messages" + myClientSocket.toString());					

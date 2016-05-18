@@ -61,7 +61,7 @@ public class NetworkSkill  extends Skill {
 		Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
 		scope.getAgentScope().setAttribute("ip", serverURL);
 		scope.getAgentScope().setAttribute("port", port);
-		IConnector connector =  serverList.get(serverURL);
+		IConnector connector =  serverList.get(scope.getAgentScope()+serverURL);
 		
 			if(protocol != null && protocol.equals( INetworkSkill.UDP_SERVER)){
 				System.out.println("create udp serveur");
