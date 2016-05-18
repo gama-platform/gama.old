@@ -222,6 +222,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		if (dead) {
 			return;
 		}
+		executer.executeDisposeActions();
+		
 		super.dispose();
 
 		// hqnghi if simulation come from popultion extern, dispose pop first
@@ -233,7 +235,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			outputs.dispose();
 			outputs = null;
 		}
-
 		GAMA.releaseScope(scope);
 	}
 
