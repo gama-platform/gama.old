@@ -48,7 +48,7 @@ experiment mysimulation type: gui
 		display chartcontinuous
 		{
 			chart 'chartcontinuous' type: series background: rgb('lightGray') 
-			time_series: (my_SEIR_maths[0]).ttt[]
+			x_serie: (my_SEIR_maths[0]).ttt[]
 			size: { 1.0, 0.5 } position: { 0.0, 0.0 }
 			{
 				data "s_mathsc" value: (my_SEIR_maths[0]).Sm[] color: # red marker: false;
