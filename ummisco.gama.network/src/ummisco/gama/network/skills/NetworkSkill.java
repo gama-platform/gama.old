@@ -112,26 +112,21 @@ public class NetworkSkill  extends Skill {
 		mp.put(INetworkSkill.FROM,sender);
 		mp.put(INetworkSkill.CONTENT,messageContent.toString());
 		System.out.println("sender "+sender + " message"+mp);
-		String serializedMessage = xstream.toXML(mp)
-		connector.sendMessage(agent,dest, serializedMessage);
+//		String serializedMessage = xstream.toXML(mp);
+		connector.sendMessage(agent,dest, mp);
 	}
 
 	@action(name = INetworkSkill.FETCH_MESSAGE, args = {
 			@arg(name = INetworkSkill.FROM, type = IType.STRING, optional = true, doc = @doc("The network ID of the agent who receive the message")) }, doc = @doc(value = "", returns = "", examples = {
 					@example("") }))
 	
-	public GamaMap<String, String> fetchMessage(final IScope scope) {
+	public GamaMap<String, Object> fetchMessage(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		String src = (String) scope.getArg(INetworkSkill.FROM, IType.STRING);
 
 		IConnector connector=this.serverList.get(serverName);
-		GamaMap<String, String>  res;
-		if(connector instanceof TCPConnector){
-			res = ((TCPConnector)connector).fetchMessage(agent,src);
-		}else{			
-			res = connector.fetchMessageBox(agent);
-		}
+		GamaMap<String, Object>  res = connector.fetchMessageBox(agent);
 		return res; 
 
 	}
