@@ -1569,9 +1569,9 @@ public class JTSDrawer {
 
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glTexCoord2f(0.0f, 1.0f);
-		gl.glVertex3d(coords[0].x, JOGLRenderer.Y_FLAG * coords[3].y, coords[3].z);
+		gl.glVertex3d(coords[3].x, JOGLRenderer.Y_FLAG * coords[3].y, coords[3].z);
 		gl.glTexCoord2f(1.0f, 1.0f);
-		gl.glVertex3d(coords[3].x, JOGLRenderer.Y_FLAG * coords[0].y, coords[0].z);
+		gl.glVertex3d(coords[0].x, JOGLRenderer.Y_FLAG * coords[0].y, coords[0].z);
 		gl.glTexCoord2f(1.0f, 0.0f);
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
