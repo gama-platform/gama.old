@@ -224,6 +224,13 @@ public class MQTTConnectorSk implements IConnector{
 	}
 
 
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 
 
 	

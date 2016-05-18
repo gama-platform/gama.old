@@ -28,6 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gaml.skills.Skill;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
 import ummisco.gama.network.mqqt.MQTTConnectorSk;
 import ummisco.gama.network.tcp.TCPConnector;
@@ -41,11 +42,12 @@ public class NetworkSkill  extends Skill {
 	
 	private final HashMap<String, LinkedList<Map<String, Object>>> agentMessage;
 	private final HashMap<String,IConnector> serverList;
-	
+	private boolean registeredToSimulation = false;
 	public NetworkSkill()
 	{
 		agentMessage = new HashMap<String, LinkedList<Map<String, Object>>>();
 		serverList = new HashMap<String,IConnector>();
+		registeredToSimulation = false;
 	}
 	
 	@action(name = INetworkSkill.CONNECT_TOPIC, args = {
@@ -94,6 +96,20 @@ public class NetworkSkill  extends Skill {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		if(this.registeredToSimulation == false)
+		{
+			System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXcoucoufsdqf fsqdfsq" );
+			scope.getSimulationScope().postDisposeAction(new IExecutable() {
+				
+				@Override
+				public Object executeOn(IScope scope) throws GamaRuntimeException {
+					System.out.println("Close connection ... XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXcoucoufsdqf fsqdfsq" );
+					// TODO Auto-generated method stub
+					return null;
+				}
+			});
+		}
+
 	}
 
 	@action(name = INetworkSkill.SEND_MESSAGE, args = {

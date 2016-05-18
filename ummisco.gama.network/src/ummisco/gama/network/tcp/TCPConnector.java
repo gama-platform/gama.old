@@ -278,6 +278,12 @@ public class TCPConnector implements IConnector{
 		}
 	}
 
+	@Override
+	public void close() {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 
 
