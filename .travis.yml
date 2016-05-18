@@ -16,7 +16,7 @@ before_deploy:
   - git remote -v
   - git config --global user.email "my.gama.bot@gmail.com"
   - git config --global user.name "gama-bot"
-  - git push -u https://$TAGPERM@github.com/gama-platform/gama.git master
+  - git push -u https://$TAGPERM@github.com/gama-platform/gama.git
   - git remote -v
   - git push origin :refs/tags/latest/
   - git tag -fa latest
