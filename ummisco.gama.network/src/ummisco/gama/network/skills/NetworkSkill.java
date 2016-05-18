@@ -63,11 +63,11 @@ public class NetworkSkill  extends Skill {
 		
 			if(protocol != null && protocol.equals( INetworkSkill.UDP_SERVER)){
 				System.out.println("create udp serveur");
-				connector = new UDPConnector(true);
+				connector = new UDPConnector(scope,true);
 			} 
 			else if(protocol != null && protocol.equals( INetworkSkill.UDP_CLIENT)){
 				System.out.println("create udp client");
-				connector = new UDPConnector(false);
+				connector = new UDPConnector(scope,false);
 			}
 			else if(protocol != null && protocol.equals( INetworkSkill.TCP_SERVER)){
 				System.out.println("create tcp serveur");
@@ -120,7 +120,7 @@ public class NetworkSkill  extends Skill {
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		String src = (String) scope.getArg(INetworkSkill.FROM, IType.STRING);
 
-		IConnector connector=this.serverList.get(serverName);
+		IConnector connector=this.serverList.get(scope.getAgentScope()+serverName);
 		GamaMap<String, Object>  res = connector.fetchMessageBox(agent);
 		return res; 
 
