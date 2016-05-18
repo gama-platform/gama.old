@@ -37,8 +37,11 @@ import gnu.trove.set.hash.THashSet;
 import gnu.trove.set.hash.TIntHashSet;
 import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
+import msi.gama.common.interfaces.IExperimentAgentCreator;
+import msi.gama.common.interfaces.IExperimentAgentCreator.ExperimentAgentDescription;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.ExperimentManager;
 import msi.gama.common.util.JavaUtils;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
@@ -137,6 +140,12 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final DisplayDescription dd = new DisplayDescription(d, string, GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		IGui.DISPLAYS.put(string, dd);
 	}
+	
+	public void _experiment(final String string, final Class class1, final IExperimentAgentCreator d) {
+		CONSTANTS.add(string);
+		final ExperimentAgentDescription ed = new ExperimentAgentDescription(d, string, GamaBundleLoader.CURRENT_PLUGIN_NAME);
+		ExperimentManager.EXPERIMENTS.put(string, ed);
+	}	
 
 	public void _species(final String name, final Class clazz, final IAgentConstructor helper, final String... skills) {
 		final SpeciesProto proto = new SpeciesProto(name, clazz, helper, skills);
