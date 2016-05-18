@@ -28,6 +28,8 @@ public abstract class ChartOutput {
 	 static final int XY_CHART = 3;
 	 static final int BOX_WHISKER_CHART = 4;
 	static final int SCATTER_CHART = 5;
+	 static final int RADAR_CHART = 6;
+	 static final int HEATMAP_CHART = 7;
 
 	LinkedHashMap<String,Integer> serieLastUpdate=new LinkedHashMap<String,Integer>();
 	
@@ -86,90 +88,12 @@ public abstract class ChartOutput {
 			String t = Cast.asString(scope, typeexp.value(scope));
 			type =
 					IKeyword.SERIES.equals(t) ? SERIES_CHART : IKeyword.HISTOGRAM.equals(t) ? HISTOGRAM_CHART
+							: IKeyword.RADAR.equals(t) ? RADAR_CHART
 							: IKeyword.PIE.equals(t) ? PIE_CHART : IKeyword.BOX_WHISKER.equals(t) ? BOX_WHISKER_CHART
 									: IKeyword.SCATTER.equals(t) ? SCATTER_CHART : XY_CHART;
 			axesColor=new GamaColor(Color.black);
 	}
 	
-	
-//	public ChartOutput(final IScope scope, String name,HashMap<String,Object> params)
-//	{
-//
-//		axesColor = new GamaColor(Color.black);
-//		
-//		chartParameters=params;
-//		IExpression string1 = (IExpression) chartParameters.get(IKeyword.TYPE);
-//		if ( string1 != null ) {
-//			String t = Cast.asString(scope, string1.value(scope));
-//			type =
-//					IKeyword.SERIES.equals(t) ? SERIES_CHART : IKeyword.HISTOGRAM.equals(t) ? HISTOGRAM_CHART
-//							: IKeyword.PIE.equals(t) ? PIE_CHART : IKeyword.BOX_WHISKER.equals(t) ? BOX_WHISKER_CHART
-//									: IKeyword.SCATTER.equals(t) ? SCATTER_CHART : XY_CHART;
-//
-//		}
-//		IExpression color = (IExpression) chartParameters.get(IKeyword.AXES);
-//		if ( color != null ) {
-//			axesColor = Cast.asColor(scope, color.value(scope));
-//		}
-//		IExpression color1 = (IExpression) chartParameters.get(IKeyword.BACKGROUND);
-//		if ( color1 != null ) {
-//			backgroundColor = Cast.asColor(scope, color1.value(scope));
-//		}
-//		IExpression string = (IExpression) chartParameters.get(IKeyword.STYLE);
-//		if ( string != null ) {
-//			style = Cast.asString(scope, string.value(scope));
-//			// TODO Verifier style;
-//		}
-//		IExpression face = (IExpression) chartParameters.get(ChartLayerStatement.TICKFONTFACE);
-//		if ( face != null ) {
-//			tickFontFace = Cast.asString(scope, face.value(scope));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.LABELFONTFACE);
-//		if ( face != null ) {
-//			labelFontFace = Cast.asString(scope, face.value(scope));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.LEGENDFONTFACE);
-//		if ( face != null ) {
-//			legendFontFace = Cast.asString(scope, face.value(scope));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.TITLEFONTFACE);
-//		if ( face != null ) {
-//			titleFontFace = Cast.asString(scope, face.value(scope));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.TICKFONTSIZE);
-//		if ( face != null ) {
-//			tickFontSize = Cast.asInt(scope, face.value(scope));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.LABELFONTSIZE);
-//		if ( face != null ) {
-//			labelFontSize = Cast.asInt(scope, face.value(scope));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.LEGENDFONTSIZE);
-//		if ( face != null ) {
-//			legendFontSize = Cast.asInt(scope, face.value(scope));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.TITLEFONTSIZE);
-//		if ( face != null ) {
-//			titleFontSize = Cast.asInt(scope, face.value(scope));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.TICKFONTSTYLE);
-//		if ( face != null ) {
-//			tickFontStyle = toFontStyle(Cast.asString(scope, face.value(scope)));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.LABELFONTSTYLE);
-//		if ( face != null ) {
-//			labelFontStyle = toFontStyle(Cast.asString(scope, face.value(scope)));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.LEGENDFONTSTYLE);
-//		if ( face != null ) {
-//			legendFontStyle = toFontStyle(Cast.asString(scope, face.value(scope)));
-//		}
-//		face = (IExpression) chartParameters.get(ChartLayerStatement.TITLEFONTSTYLE);
-//		if ( face != null ) {
-//			titleFontStyle = toFontStyle(Cast.asString(scope, face.value(scope)));
-//		}
-//		chartParameters.put(ChartLayerStatement.TITLEFONTSTYLE, face);
-//	}
 	 public int getType() {
 		return type;
 	}
@@ -275,6 +199,21 @@ public abstract class ChartOutput {
 	}
 	
 	public void setUseXSource(IScope scope, IExpression expval) {
+		// if there is something to do to use custom X axis
+		
+		
+	}
+	public void setUseXLabels(IScope scope, IExpression expval) {
+		// if there is something to do to use custom X axis
+		
+		
+	}
+	public void setUseYSource(IScope scope, IExpression expval) {
+		// if there is something to do to use custom X axis
+		
+		
+	}
+	public void setUseYLabels(IScope scope, IExpression expval) {
 		// if there is something to do to use custom X axis
 		
 		
