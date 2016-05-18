@@ -16,10 +16,11 @@ before_deploy:
   - git remote -v
   - git config --global user.email "my.gama.bot@gmail.com"
   - git config --global user.name "gama-bot"
-  - git push -u origin master
+  - git push -u https://$TAGPERM@github.com/gama-bot/gama.git master
+  - git remote -v
   - git push origin :refs/tags/latest/
   - git tag -fa latest
-  - git push -q origin master --tags
+  - git push -q --tags
 deploy:
   provider: releases
   overwrite: true
