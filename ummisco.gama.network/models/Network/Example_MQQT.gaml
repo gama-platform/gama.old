@@ -30,6 +30,7 @@ species ping skills:[network]
 		write "ping fecth this message" + mess;
 		map<string,string> tmp <- ["name"::"ping"];
 		
+		
 	}
 	reflex send
 	{
