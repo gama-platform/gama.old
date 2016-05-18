@@ -1520,6 +1520,7 @@ public abstract class Spatial {
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double rotation,
 			final GamaPoint vector) {
 			if ( g1 == null ) { return null; }
+			vector.y=-vector.y;// This ugly trick is used to ensure that the rotate facet and the rotated_by operator are coherent. (A.G 16/05/2016)
 			return new GamaShape(g1, null, rotation, vector, g1.getLocation());
 		}
 
