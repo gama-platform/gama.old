@@ -371,7 +371,7 @@ public class GLUtilLight {
 						gl.glPushMatrix();
 						gl.glTranslated(lightPosition[0], lightPosition[1], lightPosition[2]);
 
-						final double baseSize = Math.sin(Math.toRadians(lightProperties.spotAngle) / 2) * size;
+						final double baseSize = Math.sin(Math.toRadians(lightProperties.spotAngle)) * size;
 
 						// see :
 						// http://opengl.developpez.com/tutoriels/opengl-tutorial/17-les-rotations-quaternions/

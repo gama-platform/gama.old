@@ -19,6 +19,7 @@ import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
+import ummisco.gama.network.skills.INetworkSkill;
 
 class ClientServiceThread extends Thread {
 	private Socket myClientSocket;
@@ -40,9 +41,10 @@ class ClientServiceThread extends Thread {
 		if(m == null) {
 			m = GamaMapFactory.create(Types.STRING, Types.LIST);
 		}
-		m.put(myClientSocket.toString(),msgs);
+//		m.put(myClientSocket.toString(),msgs);
+		m.put(""+a.getAttribute(INetworkSkill.NET_AGENT_NAME), msgs);
 		myAgent.setAttribute("messages", m);
-		myAgent.setAttribute("__clientCommand" + myClientSocket.toString(), msgs);
+//		myAgent.setAttribute("__clientCommand" + myClientSocket.toString(), msgs);
 
 	}
 	
@@ -84,14 +86,18 @@ class ClientServiceThread extends Thread {
 				// read incoming stream
 				String clientCommand = in.readLine();
 				// System.out.println("Client Says :" + clientCommand);
-				GamaList<String> msgs = (GamaList<String>) myAgent.getAttribute("__clientCommand" + myClientSocket.toString());
-				if (msgs != null) {
-					msgs.addValue(myAgent.getScope(),clientCommand != null ? clientCommand : "");
-					final GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) myAgent.getAttribute("messages");
-					m.put(myClientSocket.toString(),msgs);
-					myAgent.setAttribute("messages", m);
-					myAgent.setAttribute("__clientCommand" + myClientSocket.toString(), msgs);
+				GamaList<String> msgs = (GamaList<String>) myAgent.getAttribute("messages" + myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME));
+				if (msgs == null) {
+					msgs = (GamaList<String>) GamaListFactory.create(String.class);
 				}
+				msgs.addValue(myAgent.getScope(),clientCommand != null ? clientCommand : "");
+				 myAgent.setAttribute("messages" + myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME),msgs);
+				final GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) myAgent.getAttribute("messages");
+//					m.put(myClientSocket.toString(),msgs);
+				m.put(""+myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME), msgs);
+				myAgent.setAttribute("messages", m);
+//					myAgent.setAttribute("__clientCommand" + myClientSocket.toString(), msgs);
+				
 
 			}
 		} catch (Exception e) {
