@@ -65,25 +65,25 @@ public class TCPConnector implements IConnector{
 	}
 	
 	@Override
-	public void connectToServer(IScope scope, String dest, String server) throws Exception {
+	public void connectToServer(IAgent agent, String dest, String server) throws Exception {
 		// TODO Auto-generated method stub
-		ClientServiceThread c = (ClientServiceThread) scope.getAgentScope().getAttribute("__socket");
+		ClientServiceThread c = (ClientServiceThread) agent.getAttribute("__socket");
 		Socket sock = null;
 		if (c != null) {
 			sock = (Socket) c.getMyClientSocket();
 		}
 		if (sock == null) {
 			try {
-				final String serverIP = Cast.asString(scope, scope.getAgentScope().getAttribute("ip"));
-				final Integer serverPort = Cast.asInt(scope, scope.getAgentScope().getAttribute("port"));
+				final String serverIP = Cast.asString(agent.getScope(), agent.getAttribute("ip"));
+				final Integer serverPort = Cast.asInt(agent.getScope(), agent.getAttribute("port"));
 
 				sock = new Socket(serverIP, serverPort);
-				ClientServiceThread cSock = new ClientServiceThread(scope.getAgentScope(), sock);
+				ClientServiceThread cSock = new ClientServiceThread(agent, sock);
 				cSock.start();
-				scope.getAgentScope().setAttribute("__socket", cSock);
+				agent.setAttribute("__socket", cSock);
 //				return sock.toString();
 			} catch (Exception e) {
-				throw GamaRuntimeException.create(e, scope);
+				throw GamaRuntimeException.create(e, agent.getScope());
 			}
 
 		}
@@ -91,16 +91,16 @@ public class TCPConnector implements IConnector{
 	}
 
 	@Override
-	public void sendMessage(IScope scope, String dest, Map<String, String> data) {
+	public void sendMessage(IAgent agent, String dest, Object data) {
 		if(is_server){
-			primSendToClient(scope,dest,data.get("message"));
+			primSendToClient(agent,dest,data);
 		}else{
-			primSendToServer(scope, data.get("message"));
+			primSendToServer(agent, data);
 		}
 	}
 
 	@Override
-	public GamaMap<String, String> fetchMessageBox(IAgent agt) {
+	public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
 		return null;
 	}
 	
@@ -175,12 +175,12 @@ public class TCPConnector implements IConnector{
 	}
 
 
-	public void primSendToClient(final IScope scope,final String cli, final String msg) throws GamaRuntimeException {
+	public void primSendToClient(final IAgent agent,final String cli, final Object data) throws GamaRuntimeException {
 //		String cli = scope.getStringArg("cID");
 //		String msg = scope.getStringArg("msg");
-
+		final String msg="";
 		try {
-			ClientServiceThread c = ((ClientServiceThread)scope.getAgentScope().getAttribute("__client"+cli));
+			ClientServiceThread c = ((ClientServiceThread)agent.getAttribute("__client"+cli));
 			Socket sock = null;
 			if (c != null) {
 				sock = (Socket) c.getMyClientSocket();
@@ -191,7 +191,7 @@ public class TCPConnector implements IConnector{
 				pwrite.println(msg);
 				pwrite.flush();
 		} catch (Exception e) {
-			throw GamaRuntimeException.create(e, scope);
+			throw GamaRuntimeException.create(e, agent.getScope());
 		}
 	}
 
@@ -226,10 +226,11 @@ public class TCPConnector implements IConnector{
 	
 
 	
-	public void primSendToServer(final IScope scope, final String msg) throws GamaRuntimeException {
+	public void primSendToServer(final IAgent agent, Object data) throws GamaRuntimeException {
 //		String msg = scope.getStringArg("msg");
 		OutputStream ostream = null;
-		ClientServiceThread c=((ClientServiceThread)scope.getAgentScope().getAttribute("__socket"));
+		final String msg = "";
+		ClientServiceThread c=((ClientServiceThread)agent.getAttribute("__socket"));
 		Socket sock =null;
 		if(c!=null){			
 			sock = (Socket) c.getMyClientSocket();		
@@ -244,7 +245,7 @@ public class TCPConnector implements IConnector{
 			pwrite.flush(); // flush the data
 
 		} catch (Exception e) {
-			throw GamaRuntimeException.create(e, scope);
+			throw GamaRuntimeException.create(e, agent.getScope());
 		} 
 
 	}
@@ -258,17 +259,7 @@ public class TCPConnector implements IConnector{
 		}
 	}
 
-	@Override
-	public void connectToServer(IAgent agent, String dest, String server) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
-	public void sendMessage(IAgent agent, String dest, Map<String, String> data) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 }

@@ -16,17 +16,7 @@ public class UDPConnector implements IConnector{
 	}
 	
 	@Override
-	public void connectToServer(IScope scope, String dest, String server) throws Exception {
-		// TODO Auto-generated method stub
-	}
-
-	@Override
-	public void sendMessage(IScope scope, String dest, Map<String, String> data) {
-		// TODO Auto-generated method stub		
-	}
-
-	@Override
-	public GamaMap<String, String> fetchMessageBox(IAgent agt) {
+	public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -44,7 +34,7 @@ public class UDPConnector implements IConnector{
 	}
 
 	@Override
-	public void sendMessage(IAgent agent, String dest, Map<String, String> data) {
+	public void sendMessage(IAgent agent, String dest, Object data) {
 		// TODO Auto-generated method stub
 		
 	}
