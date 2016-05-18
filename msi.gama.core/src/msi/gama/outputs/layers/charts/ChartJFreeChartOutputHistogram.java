@@ -9,6 +9,7 @@ import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartRenderingInfo;
 import org.jfree.chart.axis.CategoryAxis;
 import org.jfree.chart.axis.ExtendedCategoryAxis;
 import org.jfree.chart.axis.NumberAxis;
@@ -384,7 +385,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	}
 
 	
-	private void resetDomainAxis(IScope scope) {
+	public void resetDomainAxis(IScope scope) {
 		// TODO Auto-generated method stub
 		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 		if (this.useSubAxis)
@@ -534,6 +535,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		
 	}
 
+	
 	public String getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g, Point positionInPixels) {
 		int x = xOnScreen - positionInPixels.x;
 		int y = yOnScreen - positionInPixels.y;

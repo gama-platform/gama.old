@@ -44,6 +44,7 @@ public class ChartJFreeChartOutput extends ChartOutput {
 		public ChartJFreeChartOutput(final IScope scope,String name,IExpression typeexp)
 		{
 			super(scope, name,typeexp);
+			info = new ChartRenderingInfo();
 		}
 	 
 	 
@@ -57,7 +58,9 @@ public class ChartJFreeChartOutput extends ChartOutput {
 			String t = Cast.asString(scope, string1.value(scope));
 			type =
 					IKeyword.SERIES.equals(t) ? SERIES_CHART : IKeyword.HISTOGRAM.equals(t) ? HISTOGRAM_CHART
-							: IKeyword.PIE.equals(t) ? PIE_CHART : IKeyword.BOX_WHISKER.equals(t) ? BOX_WHISKER_CHART
+							: IKeyword.PIE.equals(t) ? PIE_CHART 
+									: IKeyword.RADAR.equals(t) ? RADAR_CHART 
+									: IKeyword.BOX_WHISKER.equals(t) ? BOX_WHISKER_CHART
 									: IKeyword.SCATTER.equals(t) ? SCATTER_CHART : XY_CHART;
 
 		}
@@ -86,6 +89,10 @@ public class ChartJFreeChartOutput extends ChartOutput {
 			newChart = new ChartJFreeChartOutputHistogram(scope,name,typeexp);
 			break;
 		}
+		case RADAR_CHART: {
+			newChart = new ChartJFreeChartOutputRadar(scope,name,typeexp);
+			break;
+		}
 		default:
 		{
 			newChart = new ChartJFreeChartOutputScatter(scope,name,typeexp);			
@@ -102,7 +109,9 @@ public class ChartJFreeChartOutput extends ChartOutput {
 		getJFChart().setTextAntiAlias(true);
 
 		updateOutput(scope);
-		return chart.createBufferedImage(sizex, sizey,info);
+		BufferedImage buf=chart.createBufferedImage(sizex, sizey,info);
+		System.out.println(info);
+		return buf;
 	}
 	
 	protected void initRenderer(IScope scope) {
