@@ -50,16 +50,13 @@ import msi.gama.outputs.layers.LightStatement.LightStatementValidator;
 		@facet(name = IKeyword.UPDATE,
 		type = { IType.BOOL }, optional = true,
 		doc = @doc("specify if the light has to be updated. (default value : true).") )})
-//@doc(
-//	value = "`graphics` allows the modeler to freely draw shapes/geometries/texts without having to define a species. It works exactly like a species [Aspect161 aspect]: the draw statement can be used in the same way.",
-//	usages = { @usage(value = "The general syntax is:",
-//	examples = { @example(value = "display my_display {", isExecutable = false),
-//		@example(value = "   graphics \"my new layer\" {", isExecutable = false),
-//		@example(value = "      draw circle(5) at: {10,10} color: #red;", isExecutable = false),
-//		@example(value = "      draw \"test\" at: {10,10} size: 20 color: #black;", isExecutable = false),
-//		@example(value = "   }", isExecutable = false), @example(value = "}", isExecutable = false) }) },
-//	see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.CHART, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION,
-//		IKeyword.IMAGE, IKeyword.OVERLAY, IKeyword.POPULATION })
+@doc(
+	value = "`light` allows to define diffusion lights in your 3D display.",
+	usages = { @usage(value = "The general syntax is:",
+	examples = { @example(value = "light 1 type:point position:{20,20,20} color:255, linear_attenuation:0.01 quadratic_attenuation:0.0001 draw_light:true update:false", isExecutable = false),
+		@example(value = "light 2 type:spot position:{20,20,20} direction:{0,0,-1} color:255 spot_angle:25 linear_attenuation:0.01 quadratic_attenuation:0.0001 draw_light:true update:false", isExecutable = false),
+		@example(value = "light 3 type:point direction:{1,1,-1} color:255 draw_light:true update:false", isExecutable = false) }) },
+	see = { IKeyword.DISPLAY })
 public class LightStatement extends AbstractLayerStatement {
 	
 	public static class LightStatementValidator implements IDescriptionValidator {
