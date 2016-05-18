@@ -37,6 +37,7 @@ import ummisco.gama.mqtt.common.MQTTConnector;
 import ummisco.gama.network.common.SimpleMapSerializer;
 import ummisco.gama.network.skills.IConnector;
 import ummisco.gama.network.skills.INetworkSkill;
+import ummisco.gama.serializer.factory.StreamConverter;
 
 
 
@@ -58,7 +59,7 @@ public class MQTTConnectorSk implements IConnector{
 	protected Map<String, ArrayList<IAgent>> boxFollower;
 	
 	//received Messages
-	protected Map<IAgent,LinkedList<Map<String,String>>> receivedMessage;
+	protected Map<IAgent,LinkedList<Map<String,Object>>> receivedMessage;
    
 	
 	class MQTTConnecterListener implements Callback<Void>
@@ -102,11 +103,13 @@ public class MQTTConnectorSk implements IConnector{
 		private String server;
 		private CallbackConnection connection;
 		private MQTTConnectorSk parentSkill;
+		private IScope scope;
 		
-		MQTTListener(String serverName,CallbackConnection connect,MQTTConnectorSk agentSkill) {
+		MQTTListener(IScope scope, String serverName,CallbackConnection connect,MQTTConnectorSk agentSkill) {
 			this.server= serverName;
 			this.connection=connect;
 			this.parentSkill = agentSkill;
+			this.scope = scope;
 		}
 		
 		@Override
@@ -124,7 +127,7 @@ public class MQTTConnectorSk implements IConnector{
 		public void onPublish(UTF8Buffer topic, Buffer msg, Runnable ack) {
 			String topicName = topic.utf8().toString();
 			String body = msg.utf8().toString();
-			Map<String,String> mp = SimpleMapSerializer.string2Map(body);
+			Map<String,Object> mp = (Map<String,Object>) StreamConverter.convertStreamToObject(scope, body);
 			pushMessageToAgents(topicName,mp);
 			ack.run();
 		}
@@ -141,7 +144,7 @@ public class MQTTConnectorSk implements IConnector{
 	}
 	
 	
-	public void pushMessageToAgents(String senderName, Map<String, String> message)
+	public void pushMessageToAgents(String senderName, Map<String, Object> message)
 	{
 		
 		for(IAgent agt:boxFollower.get(senderName))
@@ -152,7 +155,8 @@ public class MQTTConnectorSk implements IConnector{
 	}
 	
 	
-	public void connectToServer(IScope scope, String agentName, String server ) throws Exception  {
+	public void connectToServer(IAgent agent, String agentName, String server ) throws Exception  {
+		IScope scope = agent.getScope();
 		if(	sendConnection == null) 
 			sendConnection= MQTTConnector.connectSender(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
 		CallbackConnection connection =  receiveConnections.get(server);
@@ -160,7 +164,7 @@ public class MQTTConnectorSk implements IConnector{
 			{
 				try {
 					connection = MQTTConnector.connectReceiver(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
-					connection.listener(new MQTTListener(server,connection,this));
+					connection.listener(new MQTTListener(agent.getScope(),server,connection,this));
 					connection.connect(new MQTTConnecterListener(connection, server,agentName));
 					receiveConnections.put(server, connection);
 					
@@ -190,42 +194,36 @@ public class MQTTConnectorSk implements IConnector{
 			{
 				agentBroadcast.add(scope.getAgentScope());
 			}
-			LinkedList<Map<String,String>> mp = receivedMessage.get(scope.getAgentScope());
+			LinkedList<Map<String,Object>> mp = receivedMessage.get(scope.getAgentScope());
 			if(mp==null )
 			{
-				this.receivedMessage.put(scope.getAgentScope(), new LinkedList<Map<String,String>>());
+				this.receivedMessage.put(scope.getAgentScope(), new LinkedList<Map<String,Object>>());
 			}
 		}
 
-	public GamaMap<String, String> fetchMessageBox(IAgent agt) {
-		LinkedList<Map<String,String>> box = this.receivedMessage.get(agt);
+	public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
+		LinkedList<Map<String,Object>> box = this.receivedMessage.get(agt);
 		if(box.isEmpty())
 			return null;
 		
-		Map<String,String> data = box.getFirst();
+		Map<String,Object> data = box.getFirst();
 		box.removeFirst();
-		return 	GamaMapFactory.create(agt.getScope(), Types.STRING, Types.STRING, data);
+		return null;    ////	GamaMapFactory.create(agt.getScope(), Types.STRING, Types.NO_TYPE, data);
 	}
 	
 	public boolean emptyMessageBox(IAgent agt) {
-		LinkedList<Map<String,String>> box = this.receivedMessage.get(agt);
+		LinkedList<Map<String,Object>> box = this.receivedMessage.get(agt);
 		return box.isEmpty();
 
 	}
 	@Override
-	public void sendMessage(IAgent agt, String dest, Map<String, String >  data) 
+	public void sendMessage(IAgent agt, String dest, Object  data) 
 	{
-		System.out.println("sent message "+ SimpleMapSerializer.map2String(data));
-		sendConnection.publish(new UTF8Buffer(dest), new AsciiBuffer(SimpleMapSerializer.map2String(data)), QoS.AT_LEAST_ONCE, false);
+		Map<String,Object> message = new HashMap<String, Object>();
+		message.put(INetworkSkill.FROM, agt.getAttribute(INetworkSkill.NET_AGENT_NAME));
+		message.put(INetworkSkill.CONTENT,data);
+		sendConnection.publish(new UTF8Buffer(dest), new AsciiBuffer(StreamConverter.convertObjectToStream(agt.getScope(),message)), QoS.AT_LEAST_ONCE, false);
 	}
-
-
-	@Override
-	public void connectToServer(IAgent agent, String dest, String server) throws Exception {
-		// TODO Auto-generated method stub
-		
-	}
-
 
 
 
