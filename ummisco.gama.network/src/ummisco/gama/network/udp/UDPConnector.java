@@ -71,8 +71,8 @@ public class UDPConnector implements IConnector{
 
 	@Override
 	public void close(final IScope scope) throws GamaNetworkException {
-	// TODO Auto-generated method stub
 		
+	
 	}
 
 }
