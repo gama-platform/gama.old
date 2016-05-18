@@ -43,7 +43,7 @@ import msi.gama.outputs.layers.LightStatement.LightStatementValidator;
 		doc = @doc("a boolean expression telling if you want this light to be switch on or not. (default value : true)") ),
 		@facet(name = IKeyword.COLOR,
 		type = { IType.INT, IType.COLOR }, optional = true,
-		doc = @doc("an int / rgb / rgba value to specify the color and the intensity of the light. (default value : (255,255,255,255) ).") ),
+		doc = @doc("an int / rgb / rgba value to specify the color and the intensity of the light. (default value : (127,127,127,255) ).") ),
 		@facet(name = IKeyword.DRAW_LIGHT,
 		type = { IType.BOOL }, optional = true,
 		doc = @doc("draw or not the light. (default value : false).") ),

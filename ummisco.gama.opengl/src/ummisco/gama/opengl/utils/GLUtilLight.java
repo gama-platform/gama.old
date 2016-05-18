@@ -189,7 +189,7 @@ public class GLUtilLight {
 			data.setLightType(1, "direction");
 			data.setLightDirection(1, new GamaPoint(0.5,0.5,-1,0) );
 			// white color
-			data.setDiffuseLightColor(1, new GamaColor(255,255,255,255));
+			data.setDiffuseLightColor(1, new GamaColor(127,127,127,255));
 		}
 
 		// set material properties which will be assigned by glColor

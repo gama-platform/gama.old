@@ -6,7 +6,7 @@ import msi.gama.util.GamaColor;
 public class LightPropertiesStructure {
 	public int id;
 	public boolean active = false;
-	public GamaColor color = new GamaColor(255,255,255,255);
+	public GamaColor color = new GamaColor(127,127,127,255);
 	public GamaPoint position = new GamaPoint(0,0,20);
 	public TYPE type = TYPE.DIRECTION;
 	public float linearAttenuation = 0;
