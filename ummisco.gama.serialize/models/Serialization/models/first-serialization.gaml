@@ -25,7 +25,7 @@ global {
 
 	graph g <- graph([]);
 //	file fi ;
-	file f_csv <- csv_file("../includes/Bary_farmers_list.csv",",",true);
+//	file f_csv <- csv_file("../includes/Bary_farmers_list.csv",",",true);
 	
 	// path
 	// topology 	
