@@ -54,6 +54,7 @@ public class NetworkSkill  extends Skill {
 		@arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = true, doc = @doc("server nameL")),
 		@arg(name = INetworkSkill.SERVER_URL, type = IType.STRING, optional = false, doc = @doc("server URL")) }, doc = @doc(value = "", returns = "", examples = { @example("") }))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
+		IAgent agt = scope.getAgentScope();
 		String serverURL = (String) scope.getArg(INetworkSkill.SERVER_URL, IType.STRING);
 		String dest = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
 		String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
@@ -91,7 +92,7 @@ public class NetworkSkill  extends Skill {
 		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_NAME, dest);
 		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_SERVER, serverURL);
 		try {
-			connector.connectToServer(scope, dest, serverURL);
+			connector.connectToServer(agt, dest, serverURL);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -111,7 +112,8 @@ public class NetworkSkill  extends Skill {
 		mp.put(INetworkSkill.FROM,sender);
 		mp.put(INetworkSkill.CONTENT,messageContent.toString());
 		System.out.println("sender "+sender + " message"+mp);
-		connector.sendMessage(scope,dest, mp);
+		String serializedMessage = xstream.toXML(mp)
+		connector.sendMessage(agent,dest, serializedMessage);
 	}
 
 	@action(name = INetworkSkill.FETCH_MESSAGE, args = {

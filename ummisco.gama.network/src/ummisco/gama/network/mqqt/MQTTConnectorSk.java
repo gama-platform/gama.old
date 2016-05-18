@@ -213,7 +213,7 @@ public class MQTTConnectorSk implements IConnector{
 
 	}
 	@Override
-	public void sendMessage(IScope scope, String dest, Map<String, String >  data) 
+	public void sendMessage(IAgent agt, String dest, Map<String, String >  data) 
 	{
 		System.out.println("sent message "+ SimpleMapSerializer.map2String(data));
 		sendConnection.publish(new UTF8Buffer(dest), new AsciiBuffer(SimpleMapSerializer.map2String(data)), QoS.AT_LEAST_ONCE, false);
@@ -227,11 +227,6 @@ public class MQTTConnectorSk implements IConnector{
 	}
 
 
-	@Override
-	public void sendMessage(IAgent agent, String dest, Map<String, String> data) {
-		// TODO Auto-generated method stub
-		
-	}
 
 
 
