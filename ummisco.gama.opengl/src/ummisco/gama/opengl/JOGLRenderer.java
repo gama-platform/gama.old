@@ -47,9 +47,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.runtime.GAMA;
@@ -368,10 +366,10 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		}
 
 		if (data.isLightOn()) {
-			 GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(),
-			 data.getAmbientLightColor());
-				 GLUtilLight.UpdateDiffuseLightValue(gl, data.getDiffuseLights(),getMaxEnvDim() / 20, data.getEnvWidth(), data.getEnvHeight()); 
-		 }
+			GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(), data.getAmbientLightColor());
+			GLUtilLight.UpdateDiffuseLightValue(gl, data.getDiffuseLights(), getMaxEnvDim() / 20, data.getEnvWidth(),
+					data.getEnvHeight());
+		}
 
 		// Blending control
 		if (BLENDING_ENABLED) {
@@ -657,7 +655,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 	@Override
 	public void dispose(final GLAutoDrawable drawable) {
+		sceneBuffer.garbageCollect((GL2) drawable.getGL());
 		sceneBuffer.dispose();
+
 		textureCache.dispose(drawable.getGL());
 		geometryCache.dispose(drawable.getGL().getGL2());
 		textRendererCache.dispose(drawable.getGL());
@@ -666,6 +666,13 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		this.currentLayer = null;
 		// this.setCurrentPickedObject(null);
 		this.currentScene = null;
+		drawable.removeGLEventListener(this);
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		dispose(getDrawable());
 	}
 
 	// Use when the rotation button is on.
