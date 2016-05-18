@@ -204,7 +204,7 @@ experiment Ant type: gui {
 		}
 		display ProportionByState {
 			chart "DataListListBar" type:histogram 
-			time_series: categnames 
+			x_serie_labels: categnames 
 			series_label_position: legend
 			{
 				datalist value:nbants legend:statesnames style:stack;

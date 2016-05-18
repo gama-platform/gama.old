@@ -60,47 +60,5 @@ experiment my_experiment type: gui {
 					color:[#black,#blue,#red];
 			}
 		}
-/*
-		display "datalist_xy_non_cumulative_chart" type:java2D {
-			chart "datalist_xy_non_cumulative_chart" type:xy {
-				datalist legend:["A","B","C"] 
-					value:[[10,10],[12,10],[20+cycle,10]]
-					accumulate_values: false 
-					x_err_values:[3,1,2]
-					y_err_values:[[9,20],[5,11],[8,10+cycle/2]] // different low/high values for yerr
-					marker_size: [1,cycle,2] 					// size keyword instead of size in values
-//					categoriesnames:["C1","C2","C3"]
-//					style:stack 
-					marker_shape:marker_circle 					// same for all
-					color:[#green,#blue,#red];
-			}
-		}
-		display "data_cumulative_serie_chart" type:java2D {
-			chart "data_cumulative_serie_chart" type:series {
-				data "A" value:[1,2];
-				data "ABC" value:[cycle,cycle] 
-					marker_shape:marker_circle
-					x_err_values:cycle
-					y_err_values:cycle
-					color:#black;
-				
-				data "BCD" value:[cycle+1,1] ;
-				data "BCC" value:[2,cycle];
-			}
-		}
-		display "my_data_cumulative_xy" type:java2D {
-			chart "my_data_cumulative_xy" type:xy {
-				data "123" value:[1,2,3] marker_shape:marker_down_triangle;
-				data "ABC" value:[cycle+1,cycle*2,cycle] 
-					marker_shape:marker_circle
-					fill:false
-					line_visible:false
-					color:#black
-					x_err_values:cycle
-					y_err_values:cycle;
-				
-			}
-		}
-*/
 	}
 }

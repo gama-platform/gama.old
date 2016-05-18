@@ -13,8 +13,8 @@ global
 experiment my_experiment type: gui {
 	float minimum_cycle_duration<-0.2;
 	output {
-		display "nice_bar_chart" {
-			chart "Nice Cumulative Bar Chart" type:histogram 
+		display "nice_radar_chart" {
+			chart "Nice Cumulative Radar Chart" type:radar 
 			 	background: #darkblue
 			 	color: #lightgreen 
 			 	axes: #lightgreen
@@ -30,30 +30,22 @@ experiment my_experiment type: gui {
 			 	legend_font: 'SanSerif'
 			 	legend_font_size: 14
 			 	legend_font_style: 'bold' 
-			 	y_range:[-20,40]
-			 	y_tick_unit:10
-			 	x_label:'Nice Xlabel'
-			 	y_label:'Nice Ylabel'
 			 {
 				data "BCC" value:10*cos(100*cycle)
 					accumulate_values: true						
-					style:stack
 					color:#yellow;
 				data "ABC" value:10*sin(100*cycle)
 					accumulate_values: true						
-					style: stack
-					color:#blue;
+					color:#lightgreen;
 				data "BCD" value:(cycle mod 10)
-					accumulate_values: true						
-					style: stack  
-					marker_shape:marker_circle ;
+					accumulate_values: true
+					color:#red;
 			}
 		} 
-		display "data_cumulative_bar_chart" type:java2D {
-			chart "data_cumulative_bar_chart" type:histogram 
-			style:stack
+		display "bounded_cumulative_radar_chart" type:java2D {
+			chart "bounded_cumulative_bar_chart" type:radar 
 			x_serie_labels:("cycle"+cycle)
-			x_range:5
+			x_range:10
 			{
 				data "BCC" value:cos(100*cycle)*cycle*cycle
 				accumulate_values: true						
@@ -68,36 +60,35 @@ experiment my_experiment type: gui {
 		} 
  		
 		display "data_non_cumulative_bar_chart" type:java2D {
-			chart "data_non_cumulative_bar_chart" type:histogram 
-			x_serie_labels: ["categ1","categ2"]
-			style:"3d"
+			chart "data_non_cumulative_bar_chart" type:radar 
+			x_serie_labels: ["axeCos","axeSin","axeCosSin"]
 			series_label_position: xaxis
 			{
-				data "BCC" value:cos(100*cycle)*cycle*cycle
-//				style:stack
-				color:#yellow;
-				data "ABC" value:cycle*cycle 
-//				style: stack
+				data "Cycle" 
+				value:[1+cos(cycle),1+sin(1*cycle),1+cos(1*cycle)*sin(cycle)]
+					color:#yellow;
+				data "2Cycle" 
+					value:[1+cos(1*cycle*2),1+sin(1*cycle*2),1+cos(1*cycle*2)*sin(1*cycle*2)]
 					color:#blue;
-				data "BCD" value:[cycle+1,cycle]
-//				style: stack  
-				marker_shape:marker_circle ;
+				data "5Cycle"
+					value:[1+cos(1*cycle*5),1+sin(1*cycle*5),1+cos(1*cycle*5)*sin(1*cycle*5)]
+					color:#red ;
 			}
 		} 
  		
-		display "datalist_bar_cchart" type:java2D {
-			chart "datalist_bar" type:histogram 
+		display "datalist_radar_chart" type:java2D {
+			chart "datalist_bar" type:radar 
 			series_label_position: onchart
 			{
 				datalist legend:["A","B","C"] 
-					style: bar
-					value:[cycle,cos(100*cycle),cos(100*(cycle+30))] 
+					accumulate_values:true
+					value:[1+sin(cycle),1+cos(100*cycle),1+cos(100*(cycle+30))] 
 					color:[#green,#black,#purple];
 			}
 		}
 
 		display "onvalue_cumulative_bar_chart" type:java2D {
-			chart "onvalue_cumulative_bar_chart" type:histogram 
+			chart "onvalue_cumulative_bar_chart" type:radar 
 			series_label_position: yaxis
 			x_label: "my_time_label"
 			{
@@ -108,7 +99,7 @@ experiment my_experiment type: gui {
 			}
 		}
 		display "data_cumulative_style_chart" type:java2D {
-			chart "Style Cumulative chart" type:histogram style:stack
+			chart "Style Cumulative chart" type:radar style:stack
 			 	{ 
 				data "Step" value:cos(100*cycle+40)
 					accumulate_values: true						
