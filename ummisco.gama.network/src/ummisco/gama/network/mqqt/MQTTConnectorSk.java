@@ -220,6 +220,20 @@ public class MQTTConnectorSk implements IConnector{
 	}
 
 
+	@Override
+	public void connectToServer(IAgent agent, String dest, String server) throws Exception {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void sendMessage(IAgent agent, String dest, Map<String, String> data) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 
 	
 }

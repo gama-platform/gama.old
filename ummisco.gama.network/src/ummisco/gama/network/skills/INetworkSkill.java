@@ -18,6 +18,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 
 public interface INetworkSkill  {
+	public final static String OPEN_TOPIC = "open";
 	public final static String CONNECT_TOPIC = "connect";
 	public final static String SERVER_URL = "to";
 	public final static String GROUP = "with_group";

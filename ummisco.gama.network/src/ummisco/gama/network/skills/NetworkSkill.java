@@ -71,10 +71,14 @@ public class NetworkSkill  extends Skill {
 			}
 			else if(protocol != null && protocol.equals( INetworkSkill.TCP_SERVER)){
 				System.out.println("create tcp serveur");
+				scope.getAgentScope().setAttribute("ip", serverURL);
+				scope.getAgentScope().setAttribute("port", port);
 				connector = new TCPConnector(scope, true);
 			}
 			else if(protocol != null && protocol.equals( INetworkSkill.TCP_CLIENT)){
 				System.out.println("create tcp client");
+				scope.getAgentScope().setAttribute("ip", serverURL);
+				scope.getAgentScope().setAttribute("port", port);
 				connector = new TCPConnector(scope, false);
 			}
 			else //if(protocol.equals( INetworkSkill.MQTT))
@@ -110,12 +114,22 @@ public class NetworkSkill  extends Skill {
 		connector.sendMessage(scope,dest, mp);
 	}
 
-	@action(name = INetworkSkill.FETCH_MESSAGE, args = {}, doc = @doc(value = "", returns = "", examples = { @example("") }))
+	@action(name = INetworkSkill.FETCH_MESSAGE, args = {
+			@arg(name = INetworkSkill.FROM, type = IType.STRING, optional = true, doc = @doc("The network ID of the agent who receive the message")) }, doc = @doc(value = "", returns = "", examples = {
+					@example("") }))
+	
 	public GamaMap<String, String> fetchMessage(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
+		String src = (String) scope.getArg(INetworkSkill.FROM, IType.STRING);
+
 		IConnector connector=this.serverList.get(serverName);
-		GamaMap<String, String>  res = connector.fetchMessageBox(agent);
+		GamaMap<String, String>  res;
+		if(connector instanceof TCPConnector){
+			res = ((TCPConnector)connector).fetchMessage(agent,src);
+		}else{			
+			res = connector.fetchMessageBox(agent);
+		}
 		return res; 
 
 	}
