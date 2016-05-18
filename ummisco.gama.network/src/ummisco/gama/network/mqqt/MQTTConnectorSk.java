@@ -12,29 +12,16 @@ import java.util.Map;
 import org.fusesource.hawtbuf.AsciiBuffer;
 import org.fusesource.hawtbuf.Buffer;
 import org.fusesource.hawtbuf.UTF8Buffer;
-import org.fusesource.mqtt.cli.Listener;
 import org.fusesource.mqtt.client.Callback;
 import org.fusesource.mqtt.client.CallbackConnection;
 import org.fusesource.mqtt.client.FutureConnection;
 import org.fusesource.mqtt.client.QoS;
 import org.fusesource.mqtt.client.Topic;
 
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
+
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
-import msi.gama.util.GamaMapFactory;
-import msi.gaml.skills.Skill;
-import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 import ummisco.gama.mqtt.common.MQTTConnector;
-import ummisco.gama.network.common.SimpleMapSerializer;
 import ummisco.gama.network.skills.IConnector;
 import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.serializer.factory.StreamConverter;
@@ -154,7 +141,7 @@ public class MQTTConnectorSk implements IConnector{
 		}
 	}
 	
-	
+	 
 	public void connectToServer(IAgent agent, String agentName, String server ) throws Exception  {
 		IScope scope = agent.getScope();
 		if(	sendConnection == null) 
@@ -164,7 +151,7 @@ public class MQTTConnectorSk implements IConnector{
 			{
 				try {
 					connection = MQTTConnector.connectReceiver(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
-					connection.listener(new MQTTListener(agent.getScope(),server,connection,this));
+					connection.listener(new MQTTListener(scope,server,connection,this));
 					connection.connect(new MQTTConnecterListener(connection, server,agentName));
 					receiveConnections.put(server, connection);
 					
@@ -194,10 +181,10 @@ public class MQTTConnectorSk implements IConnector{
 			{
 				agentBroadcast.add(scope.getAgentScope());
 			}
-			LinkedList<Map<String,Object>> mp = receivedMessage.get(scope.getAgentScope());
+			LinkedList<Map<String,Object>> mp = receivedMessage.get(agent);
 			if(mp==null )
 			{
-				this.receivedMessage.put(scope.getAgentScope(), new LinkedList<Map<String,Object>>());
+				this.receivedMessage.put(agent, new LinkedList<Map<String,Object>>());
 			}
 		}
 
