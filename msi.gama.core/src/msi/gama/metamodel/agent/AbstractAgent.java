@@ -200,8 +200,8 @@ public abstract class AbstractAgent implements IAgent {
 			dead = true;
 
 			if (getSpecies().getDescription() instanceof SpeciesDescription) {
-				if (((SpeciesDescription) getSpecies().getDescription()).getSkillsNames().contains("socket")) {
-					((SpeciesDescription) getSpecies().getDescription()).implementsSkill("socket");
+				if (((SpeciesDescription) getSpecies().getDescription()).getSkillsNames().contains("network")) {
+					((SpeciesDescription) getSpecies().getDescription()).implementsSkill("network");
 					final Integer port = Cast.asInt(this.getScope(), this.getAttribute("port"));
 					final Thread sersock = (Thread) this.getAttribute("__server" + port);
 					final Thread cSock = (Thread) this.getAttribute("__socket");

@@ -28,7 +28,7 @@ public class UDPConnector implements IConnector{
 	}
 
 	@Override
-	public void connectToServer(IAgent agent, String dest, String server) throws Exception {
+	public void connectToServer(IAgent agent, String dest, String server, int port) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}

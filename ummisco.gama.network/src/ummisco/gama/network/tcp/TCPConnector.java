@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.HashMap;
 import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
@@ -23,6 +24,7 @@ import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import ummisco.gama.network.skills.IConnector;
+import ummisco.gama.network.skills.INetworkSkill;
 
 public class TCPConnector implements IConnector{
 	private boolean is_server = false;
@@ -30,11 +32,7 @@ public class TCPConnector implements IConnector{
 	
 	public TCPConnector(final IScope scope, final boolean as_server){
 		is_server = as_server;		
-		myScope = scope;
-		if(is_server){
-			primOpenSocket(scope);
-		}
-			
+		myScope = scope;			
 	}
 	
 	public boolean isIs_server() {
@@ -65,27 +63,31 @@ public class TCPConnector implements IConnector{
 	}
 	
 	@Override
-	public void connectToServer(IAgent agent, String dest, String server) throws Exception {
-		// TODO Auto-generated method stub
-		ClientServiceThread c = (ClientServiceThread) agent.getAttribute("__socket");
-		Socket sock = null;
-		if (c != null) {
-			sock = (Socket) c.getMyClientSocket();
-		}
-		if (sock == null) {
-			try {
-				final String serverIP = Cast.asString(agent.getScope(), agent.getAttribute("ip"));
-				final Integer serverPort = Cast.asInt(agent.getScope(), agent.getAttribute("port"));
+	public void connectToServer(IAgent agent, String dest, String server, int port) throws Exception {
 
-				sock = new Socket(serverIP, serverPort);
-				ClientServiceThread cSock = new ClientServiceThread(agent, sock);
-				cSock.start();
-				agent.setAttribute("__socket", cSock);
-//				return sock.toString();
-			} catch (Exception e) {
-				throw GamaRuntimeException.create(e, agent.getScope());
+		if(is_server){
+			primOpenSocket(agent.getScope());
+		} else {
+			ClientServiceThread c = (ClientServiceThread) agent.getAttribute("__socket");
+			Socket sock = null;
+			if (c != null) {
+				sock = (Socket) c.getMyClientSocket();
 			}
+			if (sock == null) {
+				try {
+//					final String serverIP = Cast.asString(agent.getScope(), agent.getAttribute("ip"));
+//					final Integer serverPort = Cast.asInt(agent.getScope(), agent.getAttribute("port"));
+					
+					sock = new Socket(server, port);
+					ClientServiceThread cSock = new ClientServiceThread(agent, sock);
+					cSock.start();
+					agent.setAttribute("__socket", cSock);
+					// return sock.toString();
+				} catch (Exception e) {
+					throw GamaRuntimeException.create(e, agent.getScope());
+				}
 
+			}
 		}
 //		return "";
 	}
@@ -93,7 +95,7 @@ public class TCPConnector implements IConnector{
 	@Override
 	public void sendMessage(IAgent agent, String dest, Object data) {
 		if(is_server){
-			primSendToClient(agent,dest,data);
+			primSendToClient(agent, data);
 		}else{
 			primSendToServer(agent, data);
 		}
@@ -101,23 +103,19 @@ public class TCPConnector implements IConnector{
 
 	@Override
 	public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
-		return null;
-	}
-	
-	public GamaMap<String, String> fetchMessage(IAgent agt, final String cli) {
-		GamaMap<String, String> res= GamaMapFactory.create();
 		if(is_server){
-			res.put("message", primGetFromClient(agt.getScope(), cli));
+			return primGetFromClient(agt.getScope());
 		}else{
-			res.put("message", primGetFromServer(agt.getScope()));
+			return primGetFromServer(agt.getScope());
 		}
-		return res;
 	}
 
 	@Override
 	public boolean emptyMessageBox(IAgent agt) {
-		// TODO Auto-generated method stub
-		return false;
+//		GamaMap<String, Object> m=GamaMapFactory.create();
+//		agt.setAttribute("messages",m);
+
+		return true;
 	}
 
 
@@ -148,9 +146,11 @@ public class TCPConnector implements IConnector{
 	}
 
 	public Boolean primIs_Closed(final IScope scope) throws GamaRuntimeException {
-		String cli = scope.getStringArg("cID");
+		String sender = (String) scope.getAgentScope().getAttribute(INetworkSkill.NET_AGENT_NAME);
 
-		final Socket sock = (Socket) ((ClientServiceThread)scope.getAgentScope().getAttribute("__client"+cli)).getMyClientSocket();
+//		String cli = scope.getStringArg("cID");
+
+		final Socket sock = (Socket) ((ClientServiceThread)scope.getAgentScope().getAttribute("__client"+sender)).getMyClientSocket();
 		if (sock == null || sock.isClosed() || sock.isInputShutdown() || sock.isOutputShutdown()) {
 			return true;
 		}
@@ -158,27 +158,35 @@ public class TCPConnector implements IConnector{
 	}
 
 
-	public String primGetFromClient(final IScope scope,final String cli) throws GamaRuntimeException {
+	public GamaMap<String, Object> primGetFromClient(final IScope scope) throws GamaRuntimeException {
 //		String cli = scope.getStringArg("cID");
+		final String cli;
 		String receiveMessage = "";
 			
-		GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) scope.getAgentScope().getAttribute("messages");
-		GamaList<String> msgs = (GamaList<String>) m.get(scope, cli);
-
-		receiveMessage = msgs.firstValue(scope);
-		
-		msgs.remove(receiveMessage);
-		m.put(cli,msgs);
-		scope.getAgentScope().setAttribute("messages",m);
-			
-		return receiveMessage; 
+		GamaMap<String, Object> m=(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages");//(GamaMap<String, IList<String>>)
+		scope.getAgentScope().setAttribute("messages",GamaMapFactory.EMPTY_MAP);
+//		GamaList<String> msgs = (GamaList<String>) m.get(scope, cli);
+//
+//		receiveMessage = msgs.firstValue(scope);
+//		
+//		msgs.remove(receiveMessage);
+//		m.put(cli,msgs);
+//		scope.getAgentScope().setAttribute("messages",m);
+//			
+//		return receiveMessage; 
+		return m;
 	}
 
 
-	public void primSendToClient(final IAgent agent,final String cli, final Object data) throws GamaRuntimeException {
+	public void primSendToClient(final IAgent agent, final Object data) throws GamaRuntimeException {
 //		String cli = scope.getStringArg("cID");
 //		String msg = scope.getStringArg("msg");
-		final String msg="";
+		String msg = "";
+		String cli = "";
+		if (data instanceof HashMap){
+			cli = ""+((HashMap<String, Object>) data).get(INetworkSkill.FROM);
+			msg = ""+((HashMap<String, Object>) data).get(INetworkSkill.CONTENT);
+		}
 		try {
 			ClientServiceThread c = ((ClientServiceThread)agent.getAttribute("__client"+cli));
 			Socket sock = null;
@@ -197,8 +205,9 @@ public class TCPConnector implements IConnector{
 
 
 	
-	public String primGetFromServer(final IScope scope) throws GamaRuntimeException {
-		
+	public  GamaMap<String, Object>  primGetFromServer(final IScope scope) throws GamaRuntimeException {
+		GamaMap<String, Object> m=GamaMapFactory.create();//(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages");//(GamaMap<String, IList<String>>)
+
 		String receiveMessage = "";
 		ClientServiceThread c=((ClientServiceThread)scope.getAgentScope().getAttribute("__socket"));
 		Socket sock =null;
@@ -206,21 +215,20 @@ public class TCPConnector implements IConnector{
 			sock = (Socket) c.getMyClientSocket();		
 		}
 		if( sock == null){
-			return receiveMessage; 
+			return GamaMapFactory.EMPTY_MAP; 
 		}
 		try {
-			GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) scope.getAgentScope().getAttribute("messages");
+			m=(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages");//GamaMap<String, IList<String>> 
 			GamaList<String> msgs = (GamaList<String>) m.get(scope, sock.toString());
-			receiveMessage = msgs.firstValue(scope);
+			if (msgs != null) {
+				receiveMessage = msgs.firstValue(scope);
+			}
 			
-			msgs.remove(receiveMessage);
-			m.put(sock.toString(),msgs);
-			scope.getAgentScope().setAttribute("messages",m);
 		
 		} catch (Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
-		return receiveMessage; 	
+		return m; 	
 	}
 
 	
@@ -228,8 +236,11 @@ public class TCPConnector implements IConnector{
 	
 	public void primSendToServer(final IAgent agent, Object data) throws GamaRuntimeException {
 //		String msg = scope.getStringArg("msg");
+		String msg = "";
+		if (data instanceof HashMap){
+			msg = ""+((HashMap<String, Object>) data).get(INetworkSkill.CONTENT);
+		}
 		OutputStream ostream = null;
-		final String msg = "";
 		ClientServiceThread c=((ClientServiceThread)agent.getAttribute("__socket"));
 		Socket sock =null;
 		if(c!=null){			
