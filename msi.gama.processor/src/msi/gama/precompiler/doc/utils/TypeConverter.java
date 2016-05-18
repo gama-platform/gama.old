@@ -130,17 +130,35 @@ public class TypeConverter {
 		hm.put("msi.gama.util.IContainer<?,? extends msi.gama.metamodel.shape.IShape>", "container<agent>");
 		hm.put("msi.gama.util.IContainer<?,java.lang.Double>", "container<float>");
 		
+		hm.put("msi.gama.util.IList", "container");
+		hm.put("msi.gama.util.IList<KeyType,ValueType>", "list<KeyType,ValueType>");
+		hm.put("msi.gama.util.IList<?,msi.gama.metamodel.shape.IShape>", "list<geometry>");
+		hm.put("msi.gama.util.IList<?,msi.gama.metamodel.agent.IAgent>", "list<agent>");
+		hm.put("msi.gama.util.IList<?,? extends msi.gama.metamodel.shape.IShape>", "list<agent>");
+		hm.put("msi.gama.util.IList<?,java.lang.Double>", "list<float>");
+		hm.put("msi.gama.util.IList<? extends msi.gama.metamodel.shape.IShape>", "list<geometry>");
+		
 		hm.put("java.util.Map", "map");
 		hm.put("msi.gama.util.GamaMap<?,?>", "map");	
 		hm.put("java.util.Map<java.lang.String,java.lang.Object>", "map<string,unknown>");
+		hm.put("java.util.List<java.util.Map<java.lang.String,java.lang.Object>>", "list<map<string,object>>");
 		hm.put("msi.gama.util.GamaMap<java.lang.String,java.lang.Object>", "map<string,unknown>");
 		hm.put("msi.gama.util.GamaMap<java.lang.String,msi.gama.util.GamaList>", "map<string,list>");
 		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.GamaPoint,java.lang.Double>","map<point,float>");
 		hm.put("msi.gama.util.GamaMap<msi.gama.metamodel.shape.IShape,java.lang.Double>","map<agent,float>");
 		
+		hm.put("msi.gama.util.IList<java.lang.String>", "list<string>");
+		
+		hm.put("msi.gama.util.GamaFont", "font");
+		
+		hm.put("msi.gama.util.GamaRegression", "regression");
+		
+		hm.put("msi.gama.util.GamaDate","date");
+		
 		// BDI
 		hm.put("msi.gaml.architecture.simplebdi.Predicate", "predicate");	
 		hm.put("msi.gaml.architecture.simplebdi.BDIPlan", "BDIPlan");
+		hm.put("msi.gaml.architecture.simplebdi.Emotion", "emotion");
 		
 		// FIPA
 		hm.put("msi.gaml.extensions.fipa.Conversation", "conversation");
