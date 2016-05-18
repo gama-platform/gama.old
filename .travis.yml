@@ -14,16 +14,18 @@ script: sh ./build.sh
 before_deploy:
   - git config --global user.email "my.gama.bot@gmail.com"
   - git config --global user.name "gama-bot"
-  - git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git
-  - git remote -v
-  - git push https://$CI_USER_TOKEN@github.com/gama-platform/gama.git :refs/tags/latest
+  - sh -c 'git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git'
+  - sh -c 'git push https://$CI_USER_TOKEN@github.com/gama-platform/gama.git :refs/tags/latest'
+  - git pull
+  - git fetch
   - git tag -fa latest -m "latest"
   - git push -q --tags
 deploy:
   provider: releases
   overwrite: true
   api_key:
-    secure: Eq94fdL/ECS3jnSqTfor5tVQGDPE66RmdER/7heP6SB4iKnxY7bl3yn0Syjcr5QbYrZtRWGt+is9tHSUfy68faHW4MRmflZTjDLU8GnYjVqAGTbNwaB02yXPdhf+oVs6rJrAu3WEIrkA7KDyLsXrWmnvYhhn5+1DTlNMJHNbttXsaGU+NP7/wPday7aTW1BiDj5QmYxKoeIfmLB0yo9aX3UeGLwl/yuWhdmoTAzJo35VyxoC/H5Vzpb1MH3lqFIKJ25ycsdnHSHyQO/cKciBbnnzS1cxqfq6/nuN5NbduOzN5NpjzZLs4KORhzCQxnW4ZXB+1m9nXFf32kfTLl0b5HF3cFYLtIZThTSupnwqBJoCriMQ0MVLx45HG4iIkXs34KI4hMPL4Oq7huosschh4VebOfNbwc2XQfa86sRsvYBWkBOd+0yG2aqXdYOB05x8XjZYhC2XGDO+0qr3iWC5lgqNLI5/rMzQJC4wnyv1qcRuX+Gir89ITqKE1FbZ/CCL8zQM3FQYt/19DK208gkUG1x4vt992cQpLltMg63AQS9GUkdsO3X8eYILXB6jTdaOkOeSAzJ+C9eRNfstU/MxNSRUey8f6F3X/xXnO+/2A+5Qqrtqu7dm94bxGfr3LxftP9oZkhigOWHDria4d+l8f9P5OqoLCox2HvBd6kwo43E=
+    secure: "FQHQHUaDZ2XTlfiN0J8imDpRAGoJRFtkSffFDs+hXZjEf8+lWZwXERoQcbJGAKzsWMJsRn+X6GIHBn0XQaEPDhk6ePYdFMl0RQ60hi4YUPCdNAg52dkij4B19GY+xuCiUlYse5pHob1dNsl3/V7s2aR5rKidp7LoaQW5MzVC2O9ciKMir/qMMimG2L6IpRaoSQ5Fer+/NiepZEazW+MLK2O15cKKdDs/aVtiqOcCRKhP7Y0KUJAUiQN+IUHQdFi/sTSyojQVLqqyLOZ3/1rrLjQfSR8Me28ymvBH1JXoD9TP5Lll21mRY8Uo8E7O45bQJbGhEVEviRhhl79dz9+cGpY06+Nvl43r1UAKQ9dF8TJ0uB8Z9WqwqQX440zdofDTus0hTnFDM0HlJkoeh7VjfKYgmBw3GqyuMG/lPIHSY1K7pMbBW/qc0ghz0Qh+kvEsQfWiAi2npPHIkiqr5RDQ9yyCGsfA7RG4rQZUJgQ575Slq3Qa4KeRfOXBr3Tkm9g6GLLoFPzB1exI9KiO8oZ522Im17WjOfGFF1KECBTLFhmA3UQYMc25Lcox2/vTf+dGwXW/vysD6/07dOLl6S6DurFFADYxb+komNtFz35o6R3UO9Eap6T6a2ho6/bkt3a8Dlqlw6He0Gdz9kiD0dirdilUrI2OfNdG63ndqjYql6I="
+
   file:  
     - "$HOME/.m2/repository/msi/gama/msi.gama.application/1.7.0-SNAPSHOT/msi.gama.application-1.7.0-SNAPSHOT-linux.gtk.x86.zip"
     - "$HOME/.m2/repository/msi/gama/msi.gama.application/1.7.0-SNAPSHOT/msi.gama.application-1.7.0-SNAPSHOT-linux.gtk.x86_64.zip"
