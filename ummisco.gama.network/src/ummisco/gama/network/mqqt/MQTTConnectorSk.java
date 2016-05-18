@@ -137,7 +137,7 @@ public class MQTTConnectorSk implements IConnector{
 		
 		for(IAgent agt:boxFollower.get(senderName))
 		{
-			message.put(INetworkSkill.FROM, senderName);
+			//message.put(INetworkSkill.FROM, senderName);
 			this.receivedMessage.get(agt).add(message);
 		}
 	}
@@ -214,17 +214,13 @@ public class MQTTConnectorSk implements IConnector{
 		message.put(INetworkSkill.FROM, agt.getAttribute(INetworkSkill.NET_AGENT_NAME));
 		message.put(INetworkSkill.TO, dest);
 		message.put(INetworkSkill.CONTENT,data);
-		System.out.println(message);
-		System.out.println(StreamConverter.convertObjectToStream(agt.getScope(),message));
-		
 		sendConnection.publish(new UTF8Buffer(dest), new AsciiBuffer(StreamConverter.convertObjectToStream(agt.getScope(),message)), QoS.AT_LEAST_ONCE, false);
 	}
 
 
 	@Override
 	public void connectToServer(IAgent agent, String dest, String server, int port) throws Exception {
-		// TODO Auto-generated method stub
-		
+		this.connectToServer(agent, dest, server);
 	}
 
 
