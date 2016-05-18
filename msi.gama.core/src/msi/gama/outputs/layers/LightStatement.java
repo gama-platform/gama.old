@@ -102,7 +102,7 @@ public class LightStatement extends AbstractLayerStatement {
 					}
 				}
 				// light type spot
-				else if ( typeString.compareTo("type") == 0 ) {
+				else if ( typeString.compareTo("spot") == 0 ) {
 				}
 				// light type point
 				else {
