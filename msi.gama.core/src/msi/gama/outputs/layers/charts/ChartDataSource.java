@@ -51,7 +51,6 @@ public class ChartDataSource {
 	String style=IKeyword.DEFAULT;
 
 	Object lastvalue;	
-//	HashMap<String,Object> sourceParameters=new HashMap<String,Object>();	
 	LinkedHashMap<String,ChartDataSeries> mySeries=new LinkedHashMap<String,ChartDataSeries>();
 	ChartDataSet myDataset;
 	boolean isCumulative=false;
@@ -63,7 +62,6 @@ public class ChartDataSource {
 	boolean useSize=false;
 	
 
-	//	boolean useDefaultSValues=true;
 	boolean useYErrValues=false;
 	boolean useXErrValues=false;
 	boolean useYMinMaxValues=false;
@@ -141,7 +139,6 @@ public class ChartDataSource {
 	}
 
 	public void setForceCumulative(IScope scope, boolean b) {
-		// TODO Auto-generated method stub
 		this.forceCumulative = b;
 		
 	}
@@ -157,11 +154,9 @@ public class ChartDataSource {
 	}
 
 	public void setStyle(IScope scope, String stval) {
-		// TODO Auto-generated method stub
 		style=stval;
 	}
 	public String getStyle(IScope scope) {
-		// TODO Auto-generated method stub
 		if (style==IKeyword.DEFAULT) return this.getDataset().getStyle(scope);
 		return style;
 	}
@@ -233,18 +228,11 @@ public class ChartDataSource {
 	
 
 	 void updateseriewithvalue(IScope scope, ChartDataSeries myserie, Object o, int chartCycle, HashMap barvalues, int listvalue) {
-		// TODO Auto-generated method stub
 		int type_val=this.get_data_type(scope, o);
 
 		
 		//could move into outputs object... would be (a little) less complex. But less factorisation...
 				
-		//category charts (bar/pie/...)
-		if (this.isByCategory()) 
-		{
-			
-		}
-
 		if (!this.isCumulative()) 
 		{
 			myserie.clearValues(scope);
@@ -342,7 +330,7 @@ public class ChartDataSource {
 					{
 						Object o2=l1value.get(n1);
 						while (n1>=getDataset().getXSeriesValues().size())
-							getDataset().updateXValues(scope, chartCycle);
+							getDataset().updateXValues(scope, chartCycle,l1value.size());
 						myserie.addxyvalue(scope,
 								getDataset().getXSeriesValues().get(n1),
 								Cast.asFloat(scope,  o2),
@@ -755,39 +743,33 @@ public class ChartDataSource {
 
 
 	public void setYErrValueExp(IScope scope, IExpression expval) {
-		// TODO Auto-generated method stub
 		this.setUseYErrValues(true);
 		this.valueyerr=expval;
 		
 	}
 	
 	public void setXErrValueExp(IScope scope, IExpression expval) {
-		// TODO Auto-generated method stub
 		this.setUseXErrValues(true);
 		this.valuexerr=expval;
 		
 	}
 
 	public void setYMinMaxValueExp(IScope scope, IExpression expval) {
-		// TODO Auto-generated method stub
 		this.setUseYMinMaxValues(true);
 		this.valueyminmax=expval;
 		
 
 	}
 	public void setMarkerShape(IScope scope, String stval) {
-		// TODO Auto-generated method stub
 		//markerName is useless, for now creates/modifies the output
 		uniqueMarkerName=stval;
 		if (uniqueMarkerName==ChartDataStatement.MARKER_EMPTY)
 		{
 			this.setMarkerBool(scope, false);
 		}
-//		this.getDataset().getOutput().setSerieMarkerShape(scope,this.getName(),stval);
 	}
 
 	public void setMarkerSize(IScope scope, IExpression expval) {
-		// TODO Auto-generated method stub
 		this.setUseSize(scope, true);
 		this.sizeexp=expval;
 		
@@ -798,38 +780,17 @@ public class ChartDataSource {
 	}
 
 	public void setColorExp(IScope scope, IExpression expval) {
-		// TODO Auto-generated method stub
 		this.setUseColorExp(scope, true);
 		this.colorexp=expval;
 		
 	}
-/*
-	public void setMarkerShapeExp(IScope scope, IExpression expval) {
-		// TODO Auto-generated method stub
-		this.setUseMarkerShapeExp(scope, true);
-		this.markershapeexp=expval;	
-	}
-
-	
-	public void setUseMarkerShapeExp(IScope scope, boolean b) {
-		// TODO Auto-generated method stub
-		this.useMarkerShapeExp=true;
-		
-	}
-
-	public boolean isUseMarkerShapeExp() {
-		return useMarkerShapeExp;
-	}
-	*/
 	public boolean isUseSizeExp() {
-		// TODO Auto-generated method stub
 		if (this.sizeexp==null) return false;
 		return true;
 	}
 
 	
 	public void setUseColorExp(IScope scope, boolean b) {
-		// TODO Auto-generated method stub
 		this.useColorExp=b;
 		
 	}
@@ -839,29 +800,24 @@ public class ChartDataSource {
 	}
 
 	public void setMarkerBool(IScope scope, boolean boolval) {
-		// TODO Auto-generated method stub
 		useMarker=boolval;
 	}
 
 	public void setFillMarker(IScope scope, boolean boolval) {
-		// TODO Auto-generated method stub
 		fillMarker=boolval;
 	}
 
 	public void setShowLine(IScope scope, boolean boolval) {
-		// TODO Auto-generated method stub
 		showLine=boolval;
 	}
 
 
 	public void updatevalues(IScope scope, int lastUpdateCycle) {
-		// TODO Auto-generated method stub
 		
 		
 	}
 
 	public void setUseSize(IScope scope, boolean b) {
-		// TODO Auto-generated method stub
 		this.setUseSize(b);
 	}
 

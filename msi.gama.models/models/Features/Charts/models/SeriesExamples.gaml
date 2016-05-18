@@ -11,7 +11,10 @@ global
 }
 
 experiment my_experiment type: gui {
-	float minimum_cycle_duration<-0.1;
+	float minimum_cycle_duration<-0.2;
+
+
+
 	output {
 		display "data_cumulative_serie_spline_chart" type:java2D {
 			chart "Nice cumulative series chart" type:series 
@@ -32,7 +35,7 @@ experiment my_experiment type: gui {
 			 	legend_font_style: 'bold'
 			 	x_range:50
 			 	x_tick_unit:5
-			 	time_series:("T+"+cycle)
+			 	x_serie_labels:("T+"+cycle)
 			 	x_label:'Nice Xlabel'
 			 	y_label:'Nice Ylabel'
 			 	{ 
@@ -96,16 +99,17 @@ experiment my_experiment type: gui {
 		}
 		display "data_cumulative_serie_chart" type:java2D {
 			chart "data_cumulative_serie_chart" type:series 
-			time_series:(cycle*cycle)
+			x_serie_labels:(cycle*cycle)
 			{
 				data "A" value:[1,2];
 				data "ABC" value:[cycle,cycle] 
 					marker_shape:marker_circle
-					x_err_values:cos(cycle*100)
-					y_err_values:sin(cycle*100)
+					x_err_values:2*cos(cycle*100)
+					y_err_values:2*sin(cycle*100)
 					color:#black;
 				
-				data "BCD" value:[cycle+1,1] ;
+				data "BCD" value:[cycle/2+cos(cycle*100),1] 
+					style:spline;
 				data "BCC" value:[2,cycle];
 			}
 		}

@@ -542,9 +542,14 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	
 	public void setUseXSource(IScope scope, IExpression expval) {
 		// if there is something to do to use custom X axis
+		
+	}
+
+	public void setUseXLabels(IScope scope, IExpression expval) {
+		// if there is something to do to use custom X axis
 		final XYPlot pp = (XYPlot) chart.getPlot();
 		
-			((NumberAxis)pp.getDomainAxis()).setNumberFormatOverride(new NumberFormat(){
+		((NumberAxis)pp.getDomainAxis()).setNumberFormatOverride(new NumberFormat(){
 
 			    @Override
 			    public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {

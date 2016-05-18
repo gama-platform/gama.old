@@ -84,14 +84,26 @@ import org.jfree.ui.RectangleInsets;
 		optional = true,
 		doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("the background color")),
-	@facet(name = IKeyword.TIME_SERIES,
-		type = {IType.LIST, IType.FLOAT, IType.INT, IType.LABEL},
+	@facet(name = IKeyword.X_SERIE,
+		type = {IType.LIST, IType.FLOAT, IType.INT},
 		optional = true,
-		doc = @doc("for series charts, change the default serie (simulation cycle) for an other value (string or numerical).")),
+		doc = @doc("for series charts, change the default common x serie (simulation cycle) for an other value (list or numerical).")),
+	@facet(name = IKeyword.X_LABELS,
+	type = {IType.LIST, IType.FLOAT, IType.INT, IType.LABEL},
+	optional = true,
+	doc = @doc("change the default common x series labels (replace x value or categories) for an other value (string or numerical).")),
+//	@facet(name = IKeyword.Y_SERIES,
+//	type = {IType.LIST, IType.FLOAT, IType.INT},
+//	optional = true,
+//	doc = @doc("change the default common y serie for an other value (list or numerical).")),
+	@facet(name = IKeyword.Y_LABELS,
+	type = {IType.LIST, IType.FLOAT, IType.INT, IType.LABEL},
+	optional = true,
+	doc = @doc("for heatmaps/3d charts, change the default y serie for an other value (string or numerical in a list or cumulative).")),
 	@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true, doc = @doc("the axis color")),
 	@facet(name = IKeyword.TYPE,
 		type = IType.ID,
-		values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE,
+		values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE,IKeyword.RADAR,
 			IKeyword.BOX_WHISKER },
 		optional = true,
 		doc = @doc("the type of chart. It could be histogram, series, xy, pie or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
@@ -451,12 +463,37 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	    chartoutput.setChartdataset(chartdataset);
 	    chartoutput.initdataset();
 
-		expr = getFacet(IKeyword.TIME_SERIES);
+		expr = getFacet(IKeyword.X_SERIE);
 		if (expr!=null)
 		{
-			IExpression expval = getFacet(IKeyword.TIME_SERIES).resolveAgainst(scope);
+			IExpression expval = getFacet(IKeyword.X_SERIE).resolveAgainst(scope);
 			chartdataset.setXSource(scope,expval);
 			chartoutput.setUseXSource(scope,expval);
+		}
+	    
+		expr = getFacet(IKeyword.X_LABELS);
+		if (expr!=null)
+		{
+			IExpression expval = getFacet(IKeyword.X_LABELS).resolveAgainst(scope);
+			chartdataset.setXLabels(scope,expval);
+			chartoutput.setUseXLabels(scope,expval);
+		}
+	    
+/*		expr = getFacet(IKeyword.Y_SERIE);
+		if (expr!=null)
+		{
+			IExpression expval = getFacet(IKeyword.Y_SERIE).resolveAgainst(scope);
+			chartdataset.setYSource(scope,expval);
+			chartoutput.setUseYSource(scope,expval);
+		}*/
+		//will be added with 3d charts
+	    
+		expr = getFacet(IKeyword.Y_LABELS);
+		if (expr!=null)
+		{
+			IExpression expval = getFacet(IKeyword.Y_LABELS).resolveAgainst(scope);
+			chartdataset.setYLabels(scope,expval);
+			chartoutput.setUseYLabels(scope,expval);
 		}
 	    
 	    

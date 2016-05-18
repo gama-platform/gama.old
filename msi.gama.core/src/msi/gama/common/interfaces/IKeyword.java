@@ -441,7 +441,11 @@ public interface IKeyword {
 	public static final String XML = "xml";
 	// public static final String XOR = "xor";
 	public static final String XY = "xy";
+	public static final String X_LABELS = "x_serie_labels";
+	public static final String X_SERIE = "x_serie";
 	public static final String Y = "y";
+	public static final String Y_LABELS = "y_serie_labels";
+	public static final String Y_SERIE = "y_serie";
 	public static final String Z = "z";
 	public static final String ZFIGHTING = "z_fighting";
 	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE };

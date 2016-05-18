@@ -23,9 +23,14 @@ public class ChartDataSet {
 	LinkedHashMap<String,ChartDataSeries> deletedseries=new LinkedHashMap<String,ChartDataSeries>();
 	ArrayList<String> categories=new ArrayList<String>(); //for categories datasets
 	ArrayList<Double> XSeriesValues=new ArrayList<Double>(); //for series
+	ArrayList<String> Ycategories=new ArrayList<String>(); //for Y categories datasets
+	ArrayList<Double> YSeriesValues=new ArrayList<Double>(); //for 3d series
 	LinkedHashMap<String,Integer> serieCreationDate=new LinkedHashMap<String,Integer>();
 
 	IExpression xsource; //to replace default common X Source
+	IExpression ysource; //to replace default common X Labels
+	IExpression xlabels; //to replace default common Y Source
+	IExpression ylabels; //to replace default common Y Labels
 	
 	LinkedHashMap<String,Integer> serieRemovalDate=new LinkedHashMap<String,Integer>();
 	LinkedHashMap<String,Integer> serieToUpdateBefore=new LinkedHashMap<String,Integer>();
@@ -35,7 +40,11 @@ public class ChartDataSet {
 	String defaultstyle=IKeyword.DEFAULT;
 
 	boolean useXSource=false;
+	boolean useXLabels=false;
+	boolean useYSource=false;
+	boolean useYLabels=false;
 	boolean commonXSeries=false; // series
+	boolean commonYSeries=false; // heatmap & 3d
 	boolean byCategory=false; //histogram/pie
 	boolean keepOldSeries=true; // keep old series or move to deleted (to keep history)
 	
@@ -203,29 +212,48 @@ public class ChartDataSet {
 		
 	}
 
-	public void updateXValues(IScope scope, int chartCycle)
+	public void updateXValues(IScope scope, int chartCycle, int targetNb)
 	{
-		if (this.useXSource)
+		Object xval,xlab;
+		if (this.useXSource || this.useXLabels)
 		{
-			Object xval=xsource.resolveAgainst(scope).value(scope);
+			
+			if (this.useXSource)
+			{
+				xval=xsource.resolveAgainst(scope).value(scope);
+			}
+			else
+			{
+				xval=xlabels.resolveAgainst(scope).value(scope);
+			}
+			if (this.useXLabels)
+			{
+				xlab=xlabels.resolveAgainst(scope).value(scope);
+			}
+			else
+			{
+				xlab=xsource.resolveAgainst(scope).value(scope);				
+			}
+			
 			if (xval instanceof GamaList)
 			{
 				IList xv2=Cast.asList(scope, xval);
-/*
-				if (xv2.size()>0 && xv2.get(0) instanceof Number)
+				IList xl2=Cast.asList(scope, xlab);
+
+				if (this.useXSource && xv2.size()>0 && xv2.get(0) instanceof Number)
 				{
 					XSeriesValues=new ArrayList<Double>();
 					categories=new ArrayList<String>();
 					for (int i=0; i<xv2.size(); i++)
 					{
 						XSeriesValues.add(new Double(Cast.asFloat(scope, xv2.get(i))));
-						categories.add(Cast.asString(scope, xv2.get(i)));
+						categories.add(Cast.asString(scope, xl2.get(i)));
 						
 					}
+				
 					
 				}
-				else*/
-					//remove to NOT allow common X number series (I found it confusing..)
+				else
 				{
 					if (xv2.size()>categories.size())
 					{
@@ -236,36 +264,63 @@ public class ChartDataSet {
 							{
 								XSeriesValues.add(new Double(getCycleOrPlusOneForBatch(scope,chartCycle)));								
 							}
-							categories.add(Cast.asString(scope, xv2.get(i)));
+							categories.add(Cast.asString(scope, xl2.get(i)));
 						}
-//						XSeriesValues=new ArrayList<Double>();
-//						categories=new ArrayList<String>();
 						
 					}
 					
 				}				
+				if (xv2.size()<targetNb)
+				{
+				throw GamaRuntimeException.error(
+						"The x-serie length ("+xv2.size()+
+						") should NOT be shorter than any series length (" + 
+								targetNb+") !"
+							, scope);
+				}
+
 			}
 			else 
 				{
-/*				if (xval instanceof Number )
+				if (this.useXSource && xval instanceof Number )
 				{
 					double dvalue=Cast.asFloat(scope, xval);
+					String lvalue=Cast.asString(scope, xlab);
 					XSeriesValues.add(new Double(dvalue));
-					categories.add(""+xval);				
+					categories.add(lvalue);				
 				}
-				else  */ //restore to allow common X number series (I found it confusing..)
+			if (targetNb==-1)
+					targetNb=XSeriesValues.size()+1;
+				while (XSeriesValues.size()<targetNb)
 			{
 					XSeriesValues.add(new Double(getCycleOrPlusOneForBatch(scope,chartCycle)));
-					categories.add(Cast.asString(scope, xval));
+					categories.add(Cast.asString(scope, xlab));
 			}
-				}
+			}
 			
 		}
-		else
+
+		
+		if (!this.useXSource && !this.useXLabels)
+		{
+			if (targetNb==-1)
+				targetNb=XSeriesValues.size()+1;
+			while (XSeriesValues.size()<targetNb)
 		{
 			addCommonXValue(scope,getCycleOrPlusOneForBatch(scope,chartCycle));
+		}
 			
 		}
+
+		
+
+		
+	}
+	
+	public void updateXValues(IScope scope, int chartCycle)
+	{
+		updateXValues(scope, chartCycle, -1);
+
 		
 	}
 	
@@ -293,6 +348,24 @@ public class ChartDataSet {
 		// TODO Auto-generated method stub
 		this.useXSource=true;
 		this.xsource=data;
+	}
+	
+	public void setXLabels(IScope scope, IExpression data) {
+		// TODO Auto-generated method stub
+		this.useXLabels=true;
+		this.xlabels=data;
+	}
+	
+	public void setYSource(IScope scope, IExpression data) {
+		// TODO Auto-generated method stub
+		this.useYSource=true;
+		this.ysource=data;
+	}
+	
+	public void setYLabels(IScope scope, IExpression data) {
+		// TODO Auto-generated method stub
+		this.useYLabels=true;
+		this.ylabels=data;
 	}
 	
 	
