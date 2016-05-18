@@ -18,8 +18,8 @@ before_deploy:
   - git config --global user.name "gama-bot"
   - git push -u https://$TAGPERM@github.com/gama-platform/gama.git
   - git remote -v
-  - git push :refs/tags/latest/
-  - git tag -fa latest
+  - git push https://$TAGPERM@github.com/gama-platform/gama.git :refs/tags/latest/
+  - git tag -fa latest -m "latest"
   - git push -q --tags
 deploy:
   provider: releases
