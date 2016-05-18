@@ -22,8 +22,10 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
+import msi.gaml.types.GamaNoType;
 import msi.gaml.types.Types;
 import ummisco.gama.mqtt.common.MQTTConnector;
+import ummisco.gama.network.skills.GamaNetworkException;
 import ummisco.gama.network.skills.IConnector;
 import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.serializer.factory.StreamConverter;
@@ -225,8 +227,22 @@ public class MQTTConnectorSk implements IConnector{
 
 
 	@Override
-	public void close() {
-		// TODO Auto-generated method stub
+	public void close(final IScope scope) throws GamaNetworkException {
+
+		for(String backListener:receiveConnections.keySet())
+		{
+			receiveConnections.get(backListener).disconnect(new Callback<Void>() {
+
+				@Override
+				public void onFailure(Throwable arg0) {
+					throw GamaNetworkException.cannotBeDisconnectedFailure(scope);
+				}
+
+				@Override
+				public void onSuccess(Void arg0) {}
+			});
+			receiveConnections.remove(backListener);
+		}
 		
 	}
 

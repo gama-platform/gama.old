@@ -11,6 +11,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.operators.Cast;
+import ummisco.gama.network.skills.GamaNetworkException;
 import ummisco.gama.network.skills.IConnector;
 import ummisco.gama.network.tcp.MultiThreadedSocketServer;
 
@@ -69,8 +70,8 @@ public class UDPConnector implements IConnector{
 	}
 
 	@Override
-	public void close() {
-		// TODO Auto-generated method stub
+	public void close(final IScope scope) throws GamaNetworkException {
+	// TODO Auto-generated method stub
 		
 	}
 

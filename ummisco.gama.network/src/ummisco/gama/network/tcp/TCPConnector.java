@@ -23,6 +23,7 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
+import ummisco.gama.network.skills.GamaNetworkException;
 import ummisco.gama.network.skills.IConnector;
 import ummisco.gama.network.skills.INetworkSkill;
 
@@ -279,8 +280,8 @@ public class TCPConnector implements IConnector{
 	}
 
 	@Override
-	public void close() {
-		// TODO Auto-generated method stub
+	public void close(final IScope scope) throws GamaNetworkException {
+	// TODO Auto-generated method stub
 		
 	}
 

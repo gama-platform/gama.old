@@ -98,13 +98,15 @@ public class NetworkSkill  extends Skill {
 		}
 		if(this.registeredToSimulation == false)
 		{
-			System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXcoucoufsdqf fsqdfsq" );
+			registeredToSimulation = true;
 			scope.getSimulationScope().postDisposeAction(new IExecutable() {
-				
 				@Override
 				public Object executeOn(IScope scope) throws GamaRuntimeException {
-					System.out.println("Close connection ... XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXcoucoufsdqf fsqdfsq" );
-					// TODO Auto-generated method stub
+		
+					for(IConnector connection:serverList.values())
+					{
+						connection.close(scope);
+					}
 					return null;
 				}
 			});
