@@ -35,7 +35,7 @@ species NetworkingAgent skills:[network]{
 	}
 	reflex send
 	{
-		do send_message to:dest content:"This message is sent by " + name + "to " + dest;
+		do send_message to:dest content:"This message is sent by " + name + " to " + dest;
 	}
 }
 

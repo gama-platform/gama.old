@@ -10,13 +10,13 @@ import ummisco.gama.network.skills.IConnector;
 public class TCPConnector implements IConnector{
 
 	@Override
-	public void connectToServer(IAgent agent, String dest, String server, IScope scope) throws Exception {
+	public void connectToServer(IScope scope, String dest, String server) throws Exception {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void sendMessage(String dest, Map<String, String> data) {
+	public void sendMessage(IScope scope, String dest, Map<String, String> data) {
 		// TODO Auto-generated method stub
 		
 	}

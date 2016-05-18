@@ -82,7 +82,7 @@ public class NetworkSkill  extends Skill {
 		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_NAME, dest);
 		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_SERVER, serverURL);
 		try {
-			connector.connectToServer(scope.getAgentScope(), dest, serverURL, scope);
+			connector.connectToServer(scope, dest, serverURL);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -102,7 +102,7 @@ public class NetworkSkill  extends Skill {
 		mp.put(INetworkSkill.FROM,sender);
 		mp.put(INetworkSkill.CONTENT,messageContent.toString());
 		System.out.println("sender "+sender + " message"+mp);
-		connector.sendMessage(dest, mp);
+		connector.sendMessage(scope,dest, mp);
 	}
 
 	@action(name = INetworkSkill.FETCH_MESSAGE, args = {}, doc = @doc(value = "", returns = "", examples = { @example("") }))
