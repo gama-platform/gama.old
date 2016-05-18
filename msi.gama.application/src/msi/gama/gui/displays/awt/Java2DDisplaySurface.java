@@ -99,7 +99,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	protected Dimension previousPanelSize;
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
-	protected boolean disposed;
+	protected volatile boolean disposed;
 
 	private IScope scope;
 	int frames;

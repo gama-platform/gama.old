@@ -97,7 +97,6 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected LayeredDisplayMultiListener keyAndMouseListener;
 	protected DisplaySurfaceMenu menuManager;
 	protected Composite normalParentOfFullScreenControl;
-	// protected Composite controlToSetFullScreen;
 	protected Shell fullScreenShell;
 
 	public void toggleFullScreen() {
@@ -381,10 +380,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if ( surfaceComposite != null ) {
 			surfaceComposite.dispose();
 		}
-		final IDisplaySurface s = getDisplaySurface();
-		if ( s != null ) {
-			releaseLock();
-		}
+		// final IDisplaySurface s = getDisplaySurface();
+		// if ( s != null ) {
+		releaseLock();
+		// }
 		if ( updateThread != null ) {
 			updateThread.interrupt();
 		}
@@ -604,7 +603,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	@Override
 	public void update(final IDisplayOutput output) {
-		final IDisplaySurface s = getDisplaySurface();
+
 		// Fix for issue #1693
 		final boolean oldSync = output.isSynchronized();
 		if ( output.isInInitPhase() )
@@ -615,6 +614,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 				@Override
 				public void run() {
+					final IDisplaySurface s = getDisplaySurface();
 					if ( s != null && !s.isDisposed() && !disposed ) {
 						s.updateDisplay(false);
 					}
@@ -639,6 +639,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		}
 
 		if ( output.isSynchronized() ) {
+			final IDisplaySurface s = getDisplaySurface();
 			s.updateDisplay(false);
 			if ( getOutput().getData().isAutosave() && s.isRealized() ) {
 				doSnapshot();
@@ -836,6 +837,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				});
 			}
 		}
+		output.dispose();
 		outputs.remove(output);
 		if ( outputs.isEmpty() ) {
 			close();

@@ -50,7 +50,7 @@ public class NetworkSkill  extends Skill {
 	
 	@action(name = INetworkSkill.CONNECT_TOPIC, args = {
 		@arg(name = INetworkSkill.PROTOCOL, type = IType.STRING, doc = @doc("protocol type (udp, tcp, mqqt)")),
-		@arg(name = INetworkSkill.PORT, type = IType.STRING, doc = @doc("port number")),
+		@arg(name = INetworkSkill.PORT, type = IType.INT, doc = @doc("port number")),
 		@arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = true, doc = @doc("server nameL")),
 		@arg(name = INetworkSkill.SERVER_URL, type = IType.STRING, optional = false, doc = @doc("server URL")) }, doc = @doc(value = "", returns = "", examples = { @example("") }))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
@@ -58,7 +58,7 @@ public class NetworkSkill  extends Skill {
 		String serverURL = (String) scope.getArg(INetworkSkill.SERVER_URL, IType.STRING);
 		String dest = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
 		String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
-		String port = (String) scope.getArg(INetworkSkill.PORT, IType.STRING);
+		Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
 		IConnector connector =  serverList.get(serverURL);
 		if(connector == null)
 		{
@@ -92,7 +92,7 @@ public class NetworkSkill  extends Skill {
 		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_NAME, dest);
 		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_SERVER, serverURL);
 		try {
-			connector.connectToServer(agt, dest, serverURL);
+			connector.connectToServer(agt, dest, serverURL, port);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

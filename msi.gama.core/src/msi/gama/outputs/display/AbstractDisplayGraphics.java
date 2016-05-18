@@ -12,8 +12,12 @@
 package msi.gama.outputs.display;
 
 import java.awt.geom.Rectangle2D;
+
 import com.vividsolutions.jts.geom.Envelope;
-import msi.gama.common.interfaces.*;
+
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.layers.OverlayLayer;
@@ -34,6 +38,10 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		data = surface.getData();
 	}
 
+	public void dispose() {
+		currentLayer = null;
+	}
+
 	@Override
 	public void beginHighlight() {
 		highlight = true;
@@ -51,7 +59,8 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	}
 
 	protected final double xFromModelUnitsToPixels(final double mu) {
-		return getXOffsetInPixels() + getxRatioBetweenPixelsAndModelUnits() * mu /* + 0.5 */;
+		return getXOffsetInPixels()
+				+ getxRatioBetweenPixelsAndModelUnits() * mu /* + 0.5 */;
 	}
 
 	protected final double yFromModelUnitsToPixels(final double mu) {
@@ -68,7 +77,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 
 	@Override
 	public double getxRatioBetweenPixelsAndModelUnits() {
-		if ( currentLayer == null ) {
+		if (currentLayer == null) {
 			return getDisplayWidth() / data.getEnvWidth();
 		} else {
 			return currentLayer.getSizeInPixels().x / data.getEnvWidth();
@@ -77,9 +86,9 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 
 	@Override
 	public double getyRatioBetweenPixelsAndModelUnits() {
-		if ( currentLayer == null ) {
+		if (currentLayer == null) {
 			return getDisplayHeight() / data.getEnvHeight();
-		} else if ( currentLayer instanceof OverlayLayer ) {
+		} else if (currentLayer instanceof OverlayLayer) {
 			return getxRatioBetweenPixelsAndModelUnits();
 		} else {
 			return currentLayer.getSizeInPixels().y / data.getEnvHeight();
@@ -97,7 +106,8 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void beginDrawingLayers() {}
+	public void beginDrawingLayers() {
+	}
 
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
@@ -110,7 +120,8 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void endDrawingLayers() {}
+	public void endDrawingLayers() {
+	}
 
 	@Override
 	public Double getZoomLevel() {

@@ -13,6 +13,7 @@ import java.util.Calendar;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaList;
 import msi.gaml.operators.Cast;
+import ummisco.gama.network.skills.INetworkSkill;
 
 public class MultiThreadedSocketServer extends Thread {
 
@@ -77,13 +78,15 @@ public class MultiThreadedSocketServer extends Thread {
 				if (!clientSocket.isClosed() && !clientSocket.isInputShutdown()) {
 					GamaList<String> l = (GamaList<String>) Cast.asList(myAgent.getScope(),
 							myAgent.getAttribute("clients"));
-					if (l!=null && !l.contains(clientSocket.toString())) {
-						l.addValue(myAgent.getScope(), clientSocket.toString());
+					if (l!=null && !l.contains(""+myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME))) {
+						l.addValue(myAgent.getScope(), ""+myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME));
 						myAgent.setAttribute("clients", l);
 
 						final ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
 						cliThread.start();
-						myAgent.setAttribute("__client" + clientSocket.toString(), cliThread);
+						String sender = (String) myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME);
+
+						myAgent.setAttribute("__client"+sender, cliThread);
 					}
 				}
 
