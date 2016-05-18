@@ -53,7 +53,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 		this.layer = layer;
 		geometries = buildSceneObjects(new GeometryDrawer(renderer));
 		resources = buildSceneObjects(new ResourceDrawer(renderer));
-		// TODO AD True or False for strings ??
 		strings = buildSceneObjects(new StringDrawer(renderer));
 		images = buildSceneObjects(new ImageDrawer(renderer));
 		dems = buildSceneObjects(new FieldDrawer(renderer));
@@ -226,8 +225,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void clear(final GL gl) {
+		// System.out.println("Clearing " + layer.getName());
 		final int trace = getTrace();
-		// int traceSize = trace == 0 ? requestedDisplayTraceSize : trace;
 		final boolean fading = getFading();
 		geometries.clear(gl, trace, fading);
 		resources.clear(gl, trace, fading);

@@ -1073,4 +1073,11 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		return glut;
 	}
 
+	@Override
+	public boolean cannotDraw() {
+		if (currentScene == null)
+			return false;
+		return this.currentScene.cannotAdd();
+	}
+
 }

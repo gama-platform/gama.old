@@ -104,4 +104,6 @@ public interface IGraphics {
 
 	public void dispose();
 
+	boolean cannotDraw();
+
 }
