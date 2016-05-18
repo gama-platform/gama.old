@@ -11,18 +11,21 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.*;
-import com.google.common.base.Function;
-import com.google.common.collect.*;
+import java.util.Map;
+
 import gnu.trove.procedure.TObjectProcedure;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
-import msi.gaml.operators.*;
-import msi.gaml.statements.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.operators.Cast;
+import msi.gaml.operators.Strings;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
 /**
@@ -37,7 +40,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	final StatementDescription action;
 
 	public PrimitiveOperator(final OperatorProto proto, final IDescription callerContext,
-		final StatementDescription action, final IExpression call, final Arguments args) {
+			final StatementDescription action, final IExpression call, final Arguments args) {
 		super(proto, call);
 		name = action.getName();
 		type = action.getType();
@@ -53,19 +56,27 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		if ( scope == null ) { return null; }
+		if (scope == null) {
+			return null;
+		}
 		final IAgent target = Cast.asAgent(scope, arg(0).value(scope));
-		if ( target == null ) { return null; }
-		// AD 13/05/13 The target should not be pushed so early to the scope, as the arguments will be (incorrectly)
+		if (target == null) {
+			return null;
+		}
+		// AD 13/05/13 The target should not be pushed so early to the scope, as
+		// the arguments will be (incorrectly)
 		// evaluated in its context, but how to prevent it ? See Issue 401.
 		// One way is (1) to gather the executer
 		final IStatement.WithArgs executer = target.getSpecies().getAction(getName());
-		// Then, (2) to set the caller to the actual agent on the scope (in the context of which the arguments need to
+		// Then, (2) to set the caller to the actual agent on the scope (in the
+		// context of which the arguments need to
 		// be evaluated
-		if ( executer != null ) {
-			// Now done by the scope itself: parameters.setCaller(scope.getAgentScope());
-			// And finally, (3) to execute the executer on the target (it will be pushed in the scope)
-			Object[] result = new Object[1];
+		if (executer != null) {
+			// Now done by the scope itself:
+			// parameters.setCaller(scope.getAgentScope());
+			// And finally, (3) to execute the executer on the target (it will
+			// be pushed in the scope)
+			final Object[] result = new Object[1];
 			scope.execute(executer, target, parameters, result);
 			return result[0];
 		}
@@ -92,41 +103,14 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
 		sb.append("action ").append(getName()).append(" defined in species ").append(arg(0).getType().getSpeciesName())
-			.append(" returns ").append(getType().getTitle());
+				.append(" returns ").append(getType().getTitle());
 		return sb.toString();
 
 	}
 
 	@Override
 	public String getDocumentation() {
-		final StringBuilder sb = new StringBuilder(200);
-
-		if ( action.getArgNames().size() > 0 ) {
-			List<String> args =
-				ImmutableList.copyOf(Iterables.transform(action.getArgs(), new Function<IDescription, String>() {
-
-					@Override
-					public String apply(final IDescription desc) {
-						StringBuilder sb = new StringBuilder(100);
-						sb.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b> of type ")
-							.append(desc.getType());
-						if ( desc.getFacets().containsKey(IKeyword.DEFAULT) ) {
-							sb.append(" <i>(default: ")
-								.append(desc.getFacets().getExpr(IKeyword.DEFAULT).serialize(false)).append(")</i>");
-						}
-						sb.append("</li>").append(Strings.LN);
-
-						return sb.toString();
-					}
-				}));
-			sb.append("Arguments accepted : ").append("<br/><ul>").append(Strings.LN);
-			for ( String a : args ) {
-				sb.append(a);
-			}
-			sb.append("</ul><br/>");
-		}
-
-		return sb.toString();
+		return action.getDocumentation();
 	}
 
 	@Override
@@ -136,7 +120,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		parenthesize(sb, exprs[0]);
 		sb.append(".").append(literalValue()).append("(");
 		argsToGaml(sb, includingBuiltIn);
@@ -145,18 +129,20 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	}
 
 	protected String argsToGaml(final StringBuilder sb, final boolean includingBuiltIn) {
-		if ( parameters == null || parameters.isEmpty() ) { return ""; }
-		for ( Map.Entry<String, IExpressionDescription> entry : parameters.entrySet() ) {
-			String name = entry.getKey();
-			IExpressionDescription expr = entry.getValue();
-			if ( Strings.isGamaNumber(name) ) {
+		if (parameters == null || parameters.isEmpty()) {
+			return "";
+		}
+		for (final Map.Entry<String, IExpressionDescription> entry : parameters.entrySet()) {
+			final String name = entry.getKey();
+			final IExpressionDescription expr = entry.getValue();
+			if (Strings.isGamaNumber(name)) {
 				sb.append(expr.serialize(false));
 			} else {
 				sb.append(name).append(":").append(expr.serialize(includingBuiltIn));
 			}
 			sb.append(", ");
 		}
-		if ( sb.length() > 0 ) {
+		if (sb.length() > 0) {
 			sb.setLength(sb.length() - 2);
 		}
 		return sb.toString();
@@ -164,12 +150,13 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
 		meta.put(GamlProperties.PLUGINS, action.getDefiningPlugin());
-		if ( action.isBuiltIn() ) {
+		if (action.isBuiltIn()) {
 			meta.put(GamlProperties.ACTIONS, action.getName());
 		}
 		parameters.forEachValue(new TObjectProcedure<IExpressionDescription>() {

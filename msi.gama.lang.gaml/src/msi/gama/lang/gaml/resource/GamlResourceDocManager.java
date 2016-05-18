@@ -70,12 +70,14 @@ public class GamlResourceDocManager implements IDocManager {
 
 	private static class DocumentationTask {
 		EObject object;
+		boolean replace;
 		IGamlDescription description;
 
-		public DocumentationTask(final EObject object, final IGamlDescription description) {
+		public DocumentationTask(final EObject object, final IGamlDescription description, final boolean replace) {
 			super();
 			this.object = object;
 			this.description = description;
+			this.replace = replace;
 		}
 
 		public void process() {
@@ -202,8 +204,8 @@ public class GamlResourceDocManager implements IDocManager {
 	}
 
 	@Override
-	public void setGamlDocumentation(final EObject object, final IGamlDescription description) {
-		DocumentationQueue.add(new DocumentationTask(object, description));
+	public void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace) {
+		DocumentationQueue.add(new DocumentationTask(object, description, replace));
 		DocumentationJob.schedule();
 	}
 
@@ -220,7 +222,7 @@ public class GamlResourceDocManager implements IDocManager {
 		if (!CACHE2.containsKey(e.eResource().getURI())) {
 			return;
 		}
-		setGamlDocumentation(e, desc);
+		setGamlDocumentation(e, desc, true);
 		for (final IDescription d : desc.getChildren()) {
 			document(d);
 		}
