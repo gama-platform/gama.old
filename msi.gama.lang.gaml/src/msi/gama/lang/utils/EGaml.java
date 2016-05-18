@@ -128,6 +128,9 @@ public class EGaml {
 		if (obj == null) {
 			return false;
 		}
+		if (obj instanceof S_Definition) {
+			return true;
+		}
 		if (obj instanceof S_Equations) {
 			return ((S_EquationsImpl) obj).eIsSet(GamlPackage.SEQUATIONS__EQUATIONS);
 		}

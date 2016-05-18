@@ -61,8 +61,4 @@ public interface INetworkSkill  {
 	public static String FETCH_DATA = "fetch_data";
 	public static String EMPTY_BUFFER="has_received_data";
 	
-	
-	
-	
-	
 }

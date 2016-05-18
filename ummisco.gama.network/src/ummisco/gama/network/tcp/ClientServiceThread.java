@@ -1,4 +1,4 @@
-package ummisco.gama.network.skills;
+package ummisco.gama.network.tcp;
 
 import java.io.BufferedReader;
 import java.io.IOException;

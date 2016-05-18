@@ -25,6 +25,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LightPropertiesStructure;
 import msi.gama.util.GamaColor;
+import msi.gaml.operators.Maths;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class GLUtilLight {
@@ -188,7 +189,7 @@ public class GLUtilLight {
 			data.setLightType(1, "direction");
 			data.setLightDirection(1, new GamaPoint(0.5,0.5,-1,0) );
 			// white color
-			data.setDiffuseLightColor(1, new GamaColor(255,255,255,255));
+			data.setDiffuseLightColor(1, new GamaColor(127,127,127,255));
 		}
 
 		// set material properties which will be assigned by glColor
@@ -215,26 +216,89 @@ public class GLUtilLight {
 		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
-	public static void TranslateAllLights(final GL2 gl, final float[] translation) {
-		for (int id = 0; id < 8; id++) {
-			final int lightId = GLLightingFunc.GL_LIGHT0 + id;
-			if (gl.glIsEnabled(lightId)) {
-				final float[] position = new float[3];
-				gl.glGetLightfv(lightId, GLLightingFunc.GL_POSITION, position, 0);
-				gl.glLightfv(lightId, GLLightingFunc.GL_POSITION, new float[] { position[0] - translation[0],
-						position[1] - translation[1], position[2] - translation[2] }, 0);
+	public static void NotifyOpenGLTranslation(final GL2 gl, final double[] translation, final List<LightPropertiesStructure> lightPropertiesList, LayeredDisplayData data) {
+		for (final LightPropertiesStructure lightProperties : lightPropertiesList) {
+			if (lightProperties.active) {
+				final float[] position = new float[] {(float)lightProperties.position.x,(float)lightProperties.position.y,(float)lightProperties.position.z};
+				double[] newPos = new double[]{position[0] - translation[0],
+						position[1] - translation[1], position[2] - translation[2]}; 
+				gl.glLightfv(lightProperties.id, GLLightingFunc.GL_POSITION, new float[] {(float) newPos[0],(float) newPos[1],(float) newPos[2]}, 0);
+				data.setLightPosition(lightProperties.id, new GamaPoint(newPos[0],newPos[1],newPos[2]));
 			}
 		}
 	}
 	
-	public static void rotateLights(final GL2 gl, final List<LightPropertiesStructure> lightPropertiesList,final double rotation,final GamaPoint axis) {
+	public static double[] QuaternionRotate(final double[] initVector3, final double[] quaternionRotation) {
+		double[] result = new double[3];
+		// a, b, c are the normalized composants of the axis.
+		double[] axis = new double[] {quaternionRotation[0],quaternionRotation[1],quaternionRotation[2]};
+		double angle = quaternionRotation[3];
+		double a = axis[0]/(axis[0]*axis[0]+axis[1]*axis[1]+axis[2]*axis[2]);
+		double b = -axis[1]/(axis[0]*axis[0]+axis[1]*axis[1]+axis[2]*axis[2]);
+		double c = axis[2]/(axis[0]*axis[0]+axis[1]*axis[1]+axis[2]*axis[2]);
+		// x, y, z are the initial position of the light.
+		double x = initVector3[0];
+		double y = initVector3[1];
+		double z = initVector3[2];
+		result[0] = x * (a*a + (1-a*a) * Maths.cos(angle))
+				+ y * (a*b * (1-Maths.cos(angle) - c * Maths.sin(angle)))
+				+ z * (a*c * (1-Maths.cos(angle) + b * Maths.sin(angle)));
+		result[1] = x * (a*b * (1-Maths.cos(angle) + c * Maths.sin(angle)))
+				+ y * (b*b + (1-b*b) * Maths.cos(angle))
+				+ z * (b*c * (1 - Maths.cos(angle)) - a * Maths.sin(angle));
+		result[2] = x * (a*c * (1 - Maths.cos(angle)) - b * Maths.sin(angle))
+				+ y * (b*c * (1 - Maths.cos(angle)) + a * Maths.sin(angle))
+				+ z * (c*c + (1 - c*c) * Maths.cos(angle));
+		return result;
+	}
+	
+	public static void NotifyOpenGLRotation(final GL2 gl, final List<LightPropertiesStructure> lightPropertiesList,final double angle,final double[] axis, LayeredDisplayData data) {
 		for (final LightPropertiesStructure lightProperties : lightPropertiesList) {
 			if (lightProperties.active) {
-				
+				// update the position
+				// a, b, c are the normalized composants of the axis.
+				double a = axis[0]/(axis[0]*axis[0]+axis[1]*axis[1]+axis[2]*axis[2]);
+				double b = -axis[1]/(axis[0]*axis[0]+axis[1]*axis[1]+axis[2]*axis[2]);
+				double c = axis[2]/(axis[0]*axis[0]+axis[1]*axis[1]+axis[2]*axis[2]);
+				// x, y, z are the initial position of the light.
+				double x = lightProperties.position.x;
+				double y = lightProperties.position.y;
+				double z = lightProperties.position.z;
+				if (lightProperties.type == LightPropertiesStructure.TYPE.POINT) {
+					double resultX = x * (a*a + (1-a*a) * Maths.cos(angle))
+							+ y * (a*b * (1-Maths.cos(angle) - c * Maths.sin(angle)))
+							+ z * (a*c * (1-Maths.cos(angle) + b * Maths.sin(angle)));
+					double resultY = x * (a*b * (1-Maths.cos(angle) + c * Maths.sin(angle)))
+							+ y * (b*b + (1-b*b) * Maths.cos(angle))
+							+ z * (b*c * (1 - Maths.cos(angle)) - a * Maths.sin(angle));
+					double resultZ = x * (a*c * (1 - Maths.cos(angle)) - b * Maths.sin(angle))
+							+ y * (b*c * (1 - Maths.cos(angle)) + a * Maths.sin(angle))
+							+ z * (c*c + (1 - c*c) * Maths.cos(angle));
+					gl.glLightfv(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_POSITION, new float[] {(float)resultX, (float)resultY, (float)resultZ} , 0);
+					lightProperties.position = new GamaPoint(resultX,resultY,resultZ);
+				}
+				// update the direction
+				// x, y, z are the initial position of the light.
+				x = lightProperties.direction.x;
+				y = -lightProperties.direction.y;
+				z = lightProperties.direction.z;
+				if (lightProperties.type == LightPropertiesStructure.TYPE.POINT) {
+					double resultX = x * (a*a + (1-a*a) * Maths.cos(angle))
+							+ y * (a*b * (1-Maths.cos(angle) - c * Maths.sin(angle)))
+							+ z * (a*c * (1-Maths.cos(angle) + b * Maths.sin(angle)));
+					double resultY = x * (a*b * (1-Maths.cos(angle) + c * Maths.sin(angle)))
+							+ y * (b*b + (1-b*b) * Maths.cos(angle))
+							+ z * (b*c * (1 - Maths.cos(angle)) - a * Maths.sin(angle));
+					double resultZ = x * (a*c * (1 - Maths.cos(angle)) - b * Maths.sin(angle))
+							+ y * (b*c * (1 - Maths.cos(angle)) + a * Maths.sin(angle))
+							+ z * (c*c + (1 - c*c) * Maths.cos(angle));
+					gl.glLightfv(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_SPOT_DIRECTION, new float[] {(float)resultX, (float)resultY, (float)resultZ} , 0);
+					data.setLightDirection(lightProperties.id, new GamaPoint(resultX,JOGLRenderer.Y_FLAG*resultY,resultZ));
+				}
 			}
 		}
 	}
-
+	
 	public static void UpdateDiffuseLightValue(final GL2 gl, final List<LightPropertiesStructure> lightPropertiesList,
 			final double size, final double worldWidth, final double worldHeight) {
 		for (final LightPropertiesStructure lightProperties : lightPropertiesList) {
@@ -280,7 +344,7 @@ public class GLUtilLight {
 				}
 
 				// DRAW THE LIGHT IF NEEDED
-				if (lightProperties.drawLight) {
+				if (lightProperties.drawLight && (lightProperties.id != 0)) {
 					// disable the lighting during the time the light is drawn
 					gl.glDisable(GL2.GL_LIGHTING);
 
@@ -337,18 +401,13 @@ public class GLUtilLight {
 						gl.glPopMatrix();
 					}
 					else {
-						// draw direction light : a sphere in the middle of the environment, and an arrow.
+						// draw direction light : a line and an sphere at the end of the line.
 						int maxI = 3;
 						int maxJ = 3;
 						for (int i = 0; i < maxI; i++) {
 							for (int j = 0; j < maxJ; j++) {
 								double[] beginPoint = new double[] {i*worldWidth/maxI, JOGLRenderer.Y_FLAG * j*worldHeight/maxJ, size*10};
 								double[] endPoint = new double[] {i*worldWidth/maxI+xNorm*size*3, JOGLRenderer.Y_FLAG * (j*worldHeight/maxJ) + yNorm*size*3, size*10+zNorm*size*3};
-								// draw the big sphere
-//								gl.glPushMatrix();
-//								gl.glTranslated(beginPoint[0],beginPoint[1],beginPoint[2]);
-//								glut.glutSolidSphere(size, 16, 16);
-//								gl.glPopMatrix();
 								// draw the lines
 								gl.glBegin(GL2.GL_LINES);
 								gl.glLineWidth((float) (size/10));

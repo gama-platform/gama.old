@@ -166,7 +166,7 @@ public class JavaWriter {
 	}
 
 	private void writeActionsInitialization(final GamlProperties props, final StringBuilder sb) {
-		sb.append("public void initializeActions() {");
+		sb.append("public void initializeActions()  throws SecurityException, NoSuchMethodException {");
 		for (final Map.Entry<String, String> entry : props.filterFirst(ACTION_PREFIX).entrySet()) {
 			writeActionAddition(sb /* ,doc */, entry.getKey(), entry.getValue());
 		}
@@ -666,7 +666,17 @@ public class JavaWriter {
 				toClassObject(ret), "), ", toClassObject(clazz), "){", OVERRIDE, "public ",
 				ret.equals("void") ? "Object" : ret, " run(", ISCOPE, " s, ", IAGENT, " a, ", ISUPPORT,
 				" t, Object... v){ ", !ret.equals("void") ? "return" : "", " ((", clazz, ") t).", method, "(s); ",
-				ret.equals("void") ? "return null;" : "", "} },", desc, ");"));
+				ret.equals("void") ? "return null;" : "", "} },", desc, ",",
+				buildMethodCallForAction(clazz, method, false), ");"));
+	}
+
+	protected String buildMethodCallForAction(final String clazz, final String name, final boolean stat) {
+		final int index = stat ? 0 : 1;
+		final String methodName = extractMethod(name, stat);
+		final String className = toClassObject(extractClass(name, clazz, stat));
+		String result = className + ".getMethod(" + toJavaString(methodName) + ", ";
+		result += toClassObject(ISCOPE) + ")";
+		return result;
 	}
 
 	protected void writeSkill(final StringBuilder sb,

@@ -14,6 +14,7 @@ package ummisco.gama.network.skills;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -28,12 +29,15 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
+import ummisco.gama.network.mqqt.MQTTConnectorSk;
+import ummisco.gama.network.tcp.TCPConnector;
+import ummisco.gama.network.udp.UDPConnector;
 
 @vars({ @var(name = INetworkSkill.NET_AGENT_NAME, type = IType.STRING, doc = @doc("Net ID of the agent")),
 @var(name = INetworkSkill.NET_AGENT_GROUPS, type = IType.LIST, doc = @doc("Net ID of the agent")),
 @var(name = INetworkSkill.NET_AGENT_SERVER, type = IType.LIST, doc = @doc("Net ID of the agent"))})
 @skill(name = INetworkSkill.NETWORK_SKILL, concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
-public class NetworkSkill  extends Skill implements INetworkSkill{
+public class NetworkSkill  extends Skill {
 	
 	private final HashMap<String, LinkedList<Map<String, Object>>> agentMessage;
 	private final HashMap<String,IConnector> serverList;
@@ -75,10 +79,10 @@ public class NetworkSkill  extends Skill implements INetworkSkill{
 			}			
 		    serverList.put(serverURL,connector);
 		}
-		scope.getAgentScope().setAttribute(NET_AGENT_NAME, dest);
-		scope.getAgentScope().setAttribute(NET_AGENT_SERVER, serverURL);
+		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_NAME, dest);
+		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_SERVER, serverURL);
 		try {
-			connector.connectToServer(scope.getAgentScope(), dest, serverURL, scope);
+			connector.connectToServer(scope, dest, serverURL);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -98,7 +102,7 @@ public class NetworkSkill  extends Skill implements INetworkSkill{
 		mp.put(INetworkSkill.FROM,sender);
 		mp.put(INetworkSkill.CONTENT,messageContent.toString());
 		System.out.println("sender "+sender + " message"+mp);
-		connector.sendMessage(dest, mp);
+		connector.sendMessage(scope,dest, mp);
 	}
 
 	@action(name = INetworkSkill.FETCH_MESSAGE, args = {}, doc = @doc(value = "", returns = "", examples = { @example("") }))

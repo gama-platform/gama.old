@@ -1,7 +1,4 @@
 language: java
-branches:
-  only:
-  - master
 jdk:
   - oraclejdk8
 notifications:
@@ -12,6 +9,14 @@ cache:
   directories:
   - "$HOME/.m2"
 script: sh ./build.sh
+before_deploy:
+  - echo $GIT_TAG 
+  - git config --global user.email "my.gama.bot@gmail.com"
+  - git config --global user.name "gama-bot"
+  - git push -u origin master
+  - git push origin :refs/tags/latest/
+  - git tag -fa latest
+  - git push -q origin master --tags
 deploy:
   provider: releases
   overwrite: true

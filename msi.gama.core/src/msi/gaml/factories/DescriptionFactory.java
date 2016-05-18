@@ -12,17 +12,32 @@
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.AGENT;
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+
 import com.google.common.collect.Iterables;
+
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntProcedure;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.util.*;
-import msi.gaml.compilation.*;
-import msi.gaml.descriptions.*;
+import msi.gama.util.GAML;
+import msi.gama.util.TOrderedHashMap;
+import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.SyntacticFactory;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IGamlDescription;
+import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
@@ -48,6 +63,10 @@ public class DescriptionFactory {
 		return docManager.getGamlDocumentation(o);
 	}
 
+	public static void documentResource(final Resource builtInResource) {
+		docManager.document(builtInResource, true);
+	}
+
 	// Internal interface instantiated by XText
 	public interface IDocManager {
 
@@ -57,7 +76,7 @@ public class DescriptionFactory {
 
 		public IGamlDescription getGamlDocumentation(IGamlDescription o);
 
-		public void setGamlDocumentation(final EObject object, final IGamlDescription description);
+		public void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace);
 
 		public void document(Resource gamlResource, boolean accept);
 	}
@@ -85,13 +104,19 @@ public class DescriptionFactory {
 	}
 
 	public static void setGamlDocumentation(final EObject object, final IGamlDescription description) {
-		docManager.setGamlDocumentation(object, description);
+		docManager.setGamlDocumentation(object, description, true);
+	}
+
+	public static void setGamlDocumentationOfBuiltIn(final EObject object, final IGamlDescription description) {
+		docManager.setGamlDocumentation(object, description, false);
 	}
 
 	public final static SymbolProto getProto(final String keyword, final IDescription superDesc) {
-		SymbolProto p = getStatementProto(keyword);
+		final SymbolProto p = getStatementProto(keyword);
 		// If not a statement, we try to find a var declaration prototype
-		if ( p == null ) { return getVarProto(keyword, superDesc); }
+		if (p == null) {
+			return getVarProto(keyword, superDesc);
+		}
 		return p;
 	}
 
@@ -100,15 +125,22 @@ public class DescriptionFactory {
 	}
 
 	public final static SymbolProto getVarProto(final String keyword, final IDescription superDesc) {
-		SymbolProto p = VAR_KEYWORDS_PROTOS.get(keyword);
-		if ( p == null ) {
-			// If not a var declaration, we try to find if it is not a species name (in which case, it is an "agent"
+		final SymbolProto p = VAR_KEYWORDS_PROTOS.get(keyword);
+		if (p == null) {
+			// If not a var declaration, we try to find if it is not a species
+			// name (in which case, it is an "agent"
 			// declaration prototype)
-			if ( superDesc == null ) { return null; }
-			ModelDescription md = superDesc.getModelDescription();
-			if ( md == null ) { return null; }
-			IType t = md.getTypesManager().get(keyword);
-			if ( t.isAgentType() ) { return getVarProto(AGENT, null); }
+			if (superDesc == null) {
+				return null;
+			}
+			final ModelDescription md = superDesc.getModelDescription();
+			if (md == null) {
+				return null;
+			}
+			final IType t = md.getTypesManager().get(keyword);
+			if (t.isAgentType()) {
+				return getVarProto(AGENT, null);
+			}
 		}
 		return p;
 	}
@@ -126,7 +158,8 @@ public class DescriptionFactory {
 	}
 
 	public final static boolean isStatementProto(final String s) {
-		// WARNING METHOD is treated here as a special keyword, but it should be leveraged in the future
+		// WARNING METHOD is treated here as a special keyword, but it should be
+		// leveraged in the future
 		return STATEMENT_KEYWORDS_PROTOS.containsKey(s) || IKeyword.METHOD.equals(s);
 	}
 
@@ -136,21 +169,23 @@ public class DescriptionFactory {
 
 	public static String getOmissibleFacetForSymbol(final String keyword) {
 		final SymbolProto md = getProto(keyword, null);
-		if ( md == null ) { return IKeyword.NAME; }
+		if (md == null) {
+			return IKeyword.NAME;
+		}
 		return md.getOmissible();
 	}
 
 	public static void addProto(final SymbolProto md, final List<String> names) {
 		final int kind = md.getKind();
-		if ( ISymbolKind.Variable.KINDS.contains(kind) ) {
-			for ( final String s : names ) {
+		if (ISymbolKind.Variable.KINDS.contains(kind)) {
+			for (final String s : names) {
 				VAR_KEYWORDS_PROTOS.putIfAbsent(s, md);
 			}
 		} else {
 			// if ( !ISymbolKind.Variable.KINDS.contains(kind) ) {
 			// SymbolProto.nonTypeStatements.addAll(names);
 			// }
-			for ( final String s : names ) {
+			for (final String s : names) {
 				// scope.getGui().debug("DescriptionFactory.addProto " + s);
 				STATEMENT_KEYWORDS_PROTOS.putIfAbsent(s, md);
 			}
@@ -159,10 +194,12 @@ public class DescriptionFactory {
 	}
 
 	public static void addNewTypeName(final String s, final int kind) {
-		if ( VAR_KEYWORDS_PROTOS.containsKey(s) ) { return; }
+		if (VAR_KEYWORDS_PROTOS.containsKey(s)) {
+			return;
+		}
 		final SymbolProto p = KINDS_PROTOS.get(kind);
-		if ( p != null ) {
-			if ( s.equals("species") ) {
+		if (p != null) {
+			if (s.equals("species")) {
 				VAR_KEYWORDS_PROTOS.put(SyntacticFactory.SPECIES_VAR, p);
 			} else {
 				VAR_KEYWORDS_PROTOS.put(s, p);
@@ -172,14 +209,17 @@ public class DescriptionFactory {
 
 	public static SymbolFactory getFactory(final String keyword) {
 		final SymbolProto p = getProto(keyword, null);
-		if ( p != null ) { return p.getFactory(); }
+		if (p != null) {
+			return p.getFactory();
+		}
 		return null;
 	}
 
 	public static void addSpeciesNameAsType(final String name) {
-		if ( !name.equals(AGENT) && !name.equals(IKeyword.EXPERIMENT) ) {
+		if (!name.equals(AGENT) && !name.equals(IKeyword.EXPERIMENT)) {
 			// System.err.println(" =====================================");
-			// System.err.println(" Registering " + name + " as a species type in the global registry");
+			// System.err.println(" Registering " + name + " as a species type
+			// in the global registry");
 			// if ( VAR_KEYWORDS_PROTOS.containsKey(name) ) {
 			// System.err.println(" Another value has already been registered");
 			// }
@@ -189,29 +229,29 @@ public class DescriptionFactory {
 	}
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
-		final IDescription superDesc, final ChildrenProvider children, final Facets facets) {
+			final IDescription superDesc, final ChildrenProvider children, final Facets facets) {
 		// TODO Verify this
-		final IDescription result =
-			create(SyntacticFactory.create(keyword, facets, !children.getChildren().isEmpty()), superDesc, children);
+		final IDescription result = create(SyntacticFactory.create(keyword, facets, !children.getChildren().isEmpty()),
+				superDesc, children);
 		return result;
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
-		final ChildrenProvider children, final Facets facets) {
+			final ChildrenProvider children, final Facets facets) {
 		return create(getFactory(keyword), keyword, superDesc, children, facets);
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
-		final ChildrenProvider children, final String ... facets) {
+			final ChildrenProvider children, final String... facets) {
 		return create(getFactory(keyword), keyword, superDesc, children, new Facets(facets));
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDescription,
-		final String ... facets) {
+			final String... facets) {
 		return create(keyword, superDescription, ChildrenProvider.NONE, facets);
 	}
 
-	public synchronized static IDescription create(final String keyword, final String ... facets) {
+	public synchronized static IDescription create(final String keyword, final String... facets) {
 		return create(keyword, GAML.getModelContext(), facets);
 	}
 
@@ -220,47 +260,51 @@ public class DescriptionFactory {
 	}
 
 	public static Set<String> getAllowedFacetsFor(final String key) {
-		if ( key == null ) { return Collections.EMPTY_SET; }
+		if (key == null) {
+			return Collections.EMPTY_SET;
+		}
 		final SymbolProto md = getProto(key, null);
 		return md == null ? Collections.EMPTY_SET : md.getPossibleFacets().keySet();
 	}
 
 	public static SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,
-		final IDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
-		final Set<String> skills, final String plugin) {
+			final IDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
+			final Set<String> skills, final String plugin) {
 		return ((SpeciesFactory) getFactory(ISymbolKind.SPECIES)).createBuiltInSpeciesDescription(name, clazz,
-			superDesc, parent, helper, skills, new Facets(), plugin);
+				superDesc, parent, helper, skills, new Facets(), plugin);
 	}
 
 	public static ModelDescription createRootModelDescription(final String name, final Class clazz,
-		final SpeciesDescription macro, final SpeciesDescription parent) {
+			final SpeciesDescription macro, final SpeciesDescription parent) {
 		return ((ModelFactory) getFactory(ISymbolKind.MODEL)).createRootModel(name, clazz, macro, parent);
 	}
 
 	public static final IDescription create(final ISyntacticElement source, final IDescription superDesc,
-		final ChildrenProvider cp) {
-		if ( source == null ) { return null; }
-		String keyword = source.getKeyword();
+			final ChildrenProvider cp) {
+		if (source == null) {
+			return null;
+		}
+		final String keyword = source.getKeyword();
 		final SymbolProto md = DescriptionFactory.getProto(keyword, superDesc);
-		if ( md == null ) {
+		if (md == null) {
 			superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source.getElement(), keyword);
 			return null;
 		}
 		ChildrenProvider children = cp;
-		if ( children == null ) {
+		if (children == null) {
 			final List<IDescription> children_list = new ArrayList();
-			for ( final ISyntacticElement e : source.getChildren() ) {
-				IDescription desc = create(e, superDesc, null);
-				if ( desc != null ) {
+			for (final ISyntacticElement e : source.getChildren()) {
+				final IDescription desc = create(e, superDesc, null);
+				if (desc != null) {
 					children_list.add(desc);
 				}
 			}
 			children = new ChildrenProvider(children_list);
 		}
-		Facets facets = source.copyFacets(md);
-		EObject element = source.getElement();
-		final IDescription desc =
-			md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md, null);
+		final Facets facets = source.copyFacets(md);
+		final EObject element = source.getElement();
+		final IDescription desc = md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md,
+				null);
 		return desc;
 
 	}

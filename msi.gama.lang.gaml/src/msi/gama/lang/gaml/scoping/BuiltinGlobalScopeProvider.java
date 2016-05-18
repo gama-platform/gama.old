@@ -295,6 +295,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		if (r == null) {
 			r = rs.createResource(URI.createURI(uri, false));
 		}
+		DescriptionFactory.documentResource(r);
 		return r;
 	}
 
@@ -330,13 +331,14 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		return false;
 	}
 
-	static void add(final EClass eClass, final String t) {
+	static GamlDefinition add(final EClass eClass, final String t) {
 		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
 		final IEObjectDescription e = EObjectDescription.create(t,
 				stub/* , userData */);
 		descriptions.get(eClass).put(e.getName(), e);
+		return stub;
 	}
 
 	static void add(final EClass eClass, final String t, final OperatorProto o) {
@@ -357,6 +359,9 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	}
 
 	static void addVar(final EClass eClass, final String t, final IGamlDescription o, final String keyword) {
+		if (keyword == "wander") {
+			System.out.println("fff");
+		}
 		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
 		// TODO Add the fields definition here
 		stub.setName(t);
@@ -380,6 +385,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
 		final IGamlDescription d = GAMA.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
+		DescriptionFactory.setGamlDocumentationOfBuiltIn(stub, o);
 		Map<String, String> doc;
 		if (d != null) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "action");
@@ -448,7 +454,9 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			}
 			for (final IDescription t : AbstractGamlAdditions.getAllActions()) {
 				addAction(eAction, t.getName(), t);
-				add(eVar, t.getName());
+
+				final GamlDefinition def = add(eVar, t.getName());
+				DescriptionFactory.setGamlDocumentation(def, t);
 			}
 			final OperatorProto[] p = new OperatorProto[1];
 			IExpressionCompiler.OPERATORS
