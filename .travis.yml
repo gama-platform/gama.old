@@ -10,7 +10,6 @@ cache:
   - "$HOME/.m2"
 script: sh ./build.sh
 before_deploy:
-  - echo $GIT_TAG 
   - git config --global user.email "my.gama.bot@gmail.com"
   - git config --global user.name "gama-bot"
   - git remote set-url origin https://$TAGPERM@github.com/gama-platform/gama.git
