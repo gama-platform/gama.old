@@ -21,6 +21,8 @@ import org.fusesource.mqtt.client.Topic;
 
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gaml.types.Types;
 import ummisco.gama.mqtt.common.MQTTConnector;
 import ummisco.gama.network.skills.IConnector;
 import ummisco.gama.network.skills.INetworkSkill;
@@ -114,6 +116,7 @@ public class MQTTConnectorSk implements IConnector{
 		public void onPublish(UTF8Buffer topic, Buffer msg, Runnable ack) {
 			String topicName = topic.utf8().toString();
 			String body = msg.utf8().toString();
+			@SuppressWarnings("unchecked")
 			Map<String,Object> mp = (Map<String,Object>) StreamConverter.convertStreamToObject(scope, body);
 			pushMessageToAgents(topicName,mp);
 			ack.run();
@@ -195,7 +198,7 @@ public class MQTTConnectorSk implements IConnector{
 		
 		Map<String,Object> data = box.getFirst();
 		box.removeFirst();
-		return null;    ////	GamaMapFactory.create(agt.getScope(), Types.STRING, Types.NO_TYPE, data);
+		return  GamaMapFactory.createWithoutCasting(Types.STRING, Types.NO_TYPE, data); //	GamaMapFactory.create(). //create(agt.getScope(), Types.STRING, Types.NO_TYPE, data);
 	}
 	
 	public boolean emptyMessageBox(IAgent agt) {
@@ -209,6 +212,9 @@ public class MQTTConnectorSk implements IConnector{
 		Map<String,Object> message = new HashMap<String, Object>();
 		message.put(INetworkSkill.FROM, agt.getAttribute(INetworkSkill.NET_AGENT_NAME));
 		message.put(INetworkSkill.CONTENT,data);
+		System.out.println(message);
+		System.out.println(StreamConverter.convertObjectToStream(agt.getScope(),message));
+		
 		sendConnection.publish(new UTF8Buffer(dest), new AsciiBuffer(StreamConverter.convertObjectToStream(agt.getScope(),message)), QoS.AT_LEAST_ONCE, false);
 	}
 
