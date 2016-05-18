@@ -204,12 +204,17 @@ public abstract class AbstractAgent implements IAgent {
 					((SpeciesDescription) getSpecies().getDescription()).implementsSkill("network");
 					final Integer port = Cast.asInt(this.getScope(), this.getAttribute("port"));
 					final Thread sersock = (Thread) this.getAttribute("__server" + port);
+					final Thread UDPsersock = (Thread) this.getAttribute("__UDPserver" + port);
 					final Thread cSock = (Thread) this.getAttribute("__socket");
 
 					try {
 						if (sersock != null) {
 							sersock.interrupt();
 							this.setAttribute("__server" + port, null);
+						}
+						if (UDPsersock != null) {
+							UDPsersock.interrupt();
+							this.setAttribute("__UDPserver" + port, null);
 						}
 						if (cSock != null) {
 							cSock.interrupt();

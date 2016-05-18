@@ -59,26 +59,24 @@ public class NetworkSkill  extends Skill {
 		String dest = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
 		String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
 		Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
+		scope.getAgentScope().setAttribute("ip", serverURL);
+		scope.getAgentScope().setAttribute("port", port);
 		IConnector connector =  serverList.get(serverURL);
 		
 			if(protocol != null && protocol.equals( INetworkSkill.UDP_SERVER)){
 				System.out.println("create udp serveur");
-				connector = new UDPConnector(true);
+				connector = new UDPConnector(scope,true);
 			} 
 			else if(protocol != null && protocol.equals( INetworkSkill.UDP_CLIENT)){
 				System.out.println("create udp client");
-				connector = new UDPConnector(false);
+				connector = new UDPConnector(scope,false);
 			}
 			else if(protocol != null && protocol.equals( INetworkSkill.TCP_SERVER)){
 				System.out.println("create tcp serveur");
-				scope.getAgentScope().setAttribute("ip", serverURL);
-				scope.getAgentScope().setAttribute("port", port);
 				connector = new TCPConnector(scope, true);
 			}
 			else if(protocol != null && protocol.equals( INetworkSkill.TCP_CLIENT)){
 				System.out.println("create tcp client");
-				scope.getAgentScope().setAttribute("ip", serverURL);
-				scope.getAgentScope().setAttribute("port", port);
 				connector = new TCPConnector(scope, false);
 			}
 			else //if(protocol.equals( INetworkSkill.MQTT))
@@ -107,7 +105,7 @@ public class NetworkSkill  extends Skill {
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		String sender = (String) agent.getAttribute(INetworkSkill.NET_AGENT_NAME);
 		Object messageContent = scope.getArg(INetworkSkill.CONTENT, IType.NONE);
-		IConnector connector=this.serverList.get(serverName);
+		IConnector connector=this.serverList.get(scope.getAgentScope()+serverName);
 		connector.sendMessage(agent,dest, messageContent);
 	}
 
@@ -120,7 +118,7 @@ public class NetworkSkill  extends Skill {
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		String src = (String) scope.getArg(INetworkSkill.FROM, IType.STRING);
 
-		IConnector connector=this.serverList.get(serverName);
+		IConnector connector=this.serverList.get(scope.getAgentScope()+serverName);
 		GamaMap<String, Object>  res = connector.fetchMessageBox(agent);
 		return res; 
 
@@ -137,7 +135,7 @@ public class NetworkSkill  extends Skill {
 	public boolean notEmptyMessageBox(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
-		IConnector connector=this.serverList.get(serverName);
+		IConnector connector=this.serverList.get(scope.getAgentScope()+serverName);
 		
 		return !connector.emptyMessageBox(agent);
 	}
