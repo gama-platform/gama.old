@@ -11,14 +11,20 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.RenderingHints;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+
 import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaFile;
-import msi.gaml.statements.draw.*;
+import msi.gaml.statements.draw.FieldDrawingAttributes;
+import msi.gaml.statements.draw.FileDrawingAttributes;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.TextDrawingAttributes;
 
 /**
  * Written by drogoul Modified on 22 janv. 2011
@@ -36,8 +42,10 @@ public interface IGraphics {
 
 	public abstract int getDisplayHeight();
 
-	// public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
-	// final boolean isTriangulated, final boolean isGrayScaled, final boolean isShowText, GamaColor gridColor,
+	// public abstract Rectangle2D drawGrid(final IScope scope, final
+	// BufferedImage img, final double[] gridValueMatrix,
+	// final boolean isTriangulated, final boolean isGrayScaled, final boolean
+	// isShowText, GamaColor gridColor,
 	// final Envelope3D cellSize, String name);
 
 	public abstract Rectangle2D drawFile(GamaFile file, FileDrawingAttributes attributes);
@@ -66,7 +74,10 @@ public interface IGraphics {
 
 	public abstract double getxRatioBetweenPixelsAndModelUnits();
 
-	/* Returns the region of the current layer (in model units) that is visible on screen */
+	/*
+	 * Returns the region of the current layer (in model units) that is visible
+	 * on screen
+	 */
 	public abstract Envelope getVisibleRegion();
 
 	public abstract void endDrawingLayer(ILayer layer);
@@ -90,5 +101,7 @@ public interface IGraphics {
 	public abstract int getViewHeight();
 
 	public IDisplaySurface getSurface();
+
+	public void dispose();
 
 }

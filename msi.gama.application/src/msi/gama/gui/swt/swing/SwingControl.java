@@ -58,6 +58,8 @@ import org.eclipse.swt.widgets.Widget;
 
 public abstract class SwingControl extends Composite {
 
+	JApplet applet;
+
 	// Whether to print debugging information regarding size propagation
 	// and layout.
 	static final boolean verboseSizeLayout = false;
@@ -419,7 +421,7 @@ public abstract class SwingControl extends Composite {
 		// only single component that satisfies all the above. This does not imply that
 		// we have a true applet; in particular, there is no notion of an applet lifecycle in this
 		// context.
-		final JApplet applet = new ToplevelPanel();
+		applet = new ToplevelPanel();
 
 		if ( Platform.isWin32() ) {
 			// Avoid stack overflows by ensuring correct focus traversal policy
@@ -442,6 +444,10 @@ public abstract class SwingControl extends Composite {
 			final JRootPane rootPane = new ToplevelRootPane();
 			rootPane.setOpaque(true);
 			return rootPane;
+		}
+
+		public void dispose() {
+			this.removeAll();
 		}
 	}
 
@@ -1221,10 +1227,22 @@ public abstract class SwingControl extends Composite {
 		if ( focusHandler != null ) {
 			focusHandler.dispose();
 		}
+		EventQueue.invokeLater(new Runnable() {
+
+			@Override
+			public void run() {
+				frame.remove(applet);
+
+			}
+		});
+
+		display.removeListener(SWT.Settings, settingsListener);
 		if ( borderlessChild != this ) {
 			borderlessChild.dispose();
 		}
-		display.removeListener(SWT.Settings, settingsListener);
+		// if ( this.swingComponent != null )
+		// swingComponent.removeAll();
+
 	}
 
 	// ============================= Painting =============================
