@@ -19,7 +19,7 @@ import java.util.Map;
 public class JavaWriter {
 
 	public final static String ACTION_PREFIX = "!", OPERATOR_PREFIX = "?", GETTER_PREFIX = "/", SETTER_PREFIX = "-",
-			FIELD_PREFIX = "*", SPECIES_PREFIX = "&", DISPLAY_PREFIX = "\\", EXPERIMENT_PREFIX = "€", SKILL_PREFIX = ")", TYPE_PREFIX = "(",
+			FIELD_PREFIX = "*", SPECIES_PREFIX = "&", DISPLAY_PREFIX = "\\", EXPERIMENT_PREFIX = "§", SKILL_PREFIX = ")", TYPE_PREFIX = "(",
 			SYMBOL_PREFIX = "[", FACTORY_PREFIX = "]", VAR_PREFIX = "%", FILE_PREFIX = "+", DOC_PREFIX = "@",
 			CONSTANT_PREFIX = "£", POPULATIONS_LINKER_PREFIX = "�", DOC_SEP = "~", DOC_REGEX = "\\~", SEP = "$";
 	static String ln = "\n";
