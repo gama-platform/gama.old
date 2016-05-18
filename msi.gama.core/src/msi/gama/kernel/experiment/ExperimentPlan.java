@@ -83,7 +83,7 @@ import msi.gaml.variables.IVariable;
 		@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true, doc = @doc("In case of a batch experiment, expresses hom many times the simulations must be repeated")),
 		@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true, doc = @doc("In case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated")),
 		@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc("Allows the experiment, when set to true, to use multiple threads to run its simulations")),
-		@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH,
+		@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.MEMORIZE,
 				/* IKeyword.REMOTE, */IKeyword.GUI_,
 				IKeyword.HEADLESS_UI }, optional = false, doc = @doc("the type of the experiment (either 'gui' or 'batch'")) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.MODEL })
@@ -126,7 +126,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	private FileOutput log;
 	private boolean isHeadless;
 	private final boolean isMulticore;
-
+	
+	private String experimentType;
+	
 	@Override
 	public boolean isHeadless() {
 		return GAMA.isInHeadLessMode() || isHeadless;
@@ -145,10 +147,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public ExperimentPlan(final IDescription description) {
 		super(description);
 		setName(description.getName());
-		final String type = description.getFacets().getLabel(IKeyword.TYPE);
-		if (type.equals(IKeyword.BATCH)) {
+		experimentType = description.getFacets().getLabel(IKeyword.TYPE);
+		// final String type = description.getFacets().getLabel(IKeyword.TYPE);
+		if (experimentType.equals(IKeyword.BATCH)) {
 			exploration = new ExhaustiveSearch(null);
-		} else if (type.equals(IKeyword.HEADLESS_UI)) {
+		} else if (experimentType.equals(IKeyword.HEADLESS_UI)) {
 			setHeadless(true);
 		}
 		final IExpression coreExpr = description.getFacets().getExpr(IKeyword.MULTICORE);
@@ -628,4 +631,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public IOutputManager getOriginalSimulationOutputs() {
 		return originalSimulationOutputs;
 	}
+	
+	@Override
+	public String getExperimentType() {
+		return experimentType;
+	}
+
 }

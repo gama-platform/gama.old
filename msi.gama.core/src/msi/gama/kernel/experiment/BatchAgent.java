@@ -26,6 +26,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.FileOutput;
 import msi.gama.outputs.IOutputManager;
+import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -42,6 +43,7 @@ import msi.gaml.variables.IVariable;
  *
  */
 
+@experiment("batch")
 public class BatchAgent extends ExperimentAgent {
 
 	private final IExpression stopCondition;
@@ -50,6 +52,10 @@ public class BatchAgent extends ExperimentAgent {
 	private Double[] seeds;
 	private final List<Double> fitnessValues = new ArrayList();
 
+//	public BatchAgent(final Object...args) throws GamaRuntimeException {	
+//		this((Ipopulation) args[0]);
+//	}
+		
 	public BatchAgent(final IPopulation p) throws GamaRuntimeException {
 		super(p);
 		final IScope scope = getSpecies().getExperimentScope();

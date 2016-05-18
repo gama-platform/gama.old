@@ -15,6 +15,7 @@ import static msi.gama.precompiler.GamlProperties.GAML;
 import static msi.gama.precompiler.JavaWriter.ACTION_PREFIX;
 import static msi.gama.precompiler.JavaWriter.CONSTANT_PREFIX;
 import static msi.gama.precompiler.JavaWriter.DISPLAY_PREFIX;
+import static msi.gama.precompiler.JavaWriter.EXPERIMENT_PREFIX;
 import static msi.gama.precompiler.JavaWriter.DOC_SEP;
 import static msi.gama.precompiler.JavaWriter.FACTORY_PREFIX;
 import static msi.gama.precompiler.JavaWriter.FILE_PREFIX;
@@ -69,6 +70,7 @@ import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.factory;
@@ -139,6 +141,7 @@ public class GamaProcessor extends AbstractProcessor {
 				processSymbols(env);
 				processVars(env);
 				processDisplays(env);
+				processExperiments(env);				
 				processFiles(env);
 				processConstants(env);
 				processPopulationsLinkers(env);
@@ -725,6 +728,23 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 	}
 
+	private void processExperiments(final RoundEnvironment env) {
+		final List<? extends Element> experiments = sortElements(env, experiment.class);
+		for (final Element e : experiments) {
+			final experiment spec = e.getAnnotation(experiment.class);
+			final StringBuilder sb = new StringBuilder();
+			// prefix
+			sb.append(EXPERIMENT_PREFIX);
+			// name
+			sb.append(spec.value()).append(SEP);
+			// class
+			sb.append(rawNameOf(e)).append(SEP);
+			// skills
+
+			gp.put(sb.toString(), ""); /* doc */
+		}
+	}	
+	
 	/**
 	 * Format : prefix 0.name 1.class 2.[species$]*
 	 * 

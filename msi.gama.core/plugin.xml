@@ -6,6 +6,7 @@
    <extension-point id="gama.create" name="Implementations of ICreateDelegate" schema="schema/gama.create.exsd"/>
    <extension-point id="gaml.extension" name="Additions to the GAML language" schema="schema/gaml.extension.exsd"/>
    <extension-point id="gama.models" name="Allow plugins to add sample models to GAMA" schema="schema/gama.models.exsd"/>
+   <extension-point id="gama.experiment" name="Implementations of IExperimentAgent" schema="schema/gama.experiment.exsd"/>
    <extension
          point="gama.display">
       <implementation
@@ -58,6 +59,20 @@
    </extension>
    <extension
          point="gaml.extension">
+   </extension>
+   <extension
+         point="gama.experiment">
+      <implementation
+            class="msi.gama.kernel.experiment.ExperimentAgent"
+            keyword="gui">
+      </implementation>
+   </extension>
+   <extension
+         point="gama.experiment">
+      <implementation
+            class="msi.gama.kernel.experiment.BatchAgent"
+            keyword="batch">
+      </implementation>
    </extension>
 
 </plugin>

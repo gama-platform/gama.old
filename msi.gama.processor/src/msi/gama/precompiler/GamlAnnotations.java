@@ -45,6 +45,20 @@ public final class GamlAnnotations {
 		 */
 		String value();
 	}
+	
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target(ElementType.TYPE)
+	@Inherited
+	public static @interface experiment {
+
+		/**
+		 * The keyword that will allow to open this display in GAML (in
+		 * "display type: keyword").
+		 * 
+		 * @return
+		 */
+		String value();
+	}	
 
 	/**
 	 * Allows to declare a custom validator for Symbols. This validator, if

@@ -4,5 +4,13 @@
    <extension
          point="gaml.extension">
    </extension>
+   <extension
+         name="serialize"
+         point="gama.experiment">
+      <implementation
+            class="ummisco.gama.serializer.experiment.ExperimentBackwardAgent"
+            keyword="memorize">
+      </implementation>
+   </extension>
 
 </plugin>

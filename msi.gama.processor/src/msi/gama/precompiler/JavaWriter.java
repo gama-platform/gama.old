@@ -19,7 +19,7 @@ import java.util.Map;
 public class JavaWriter {
 
 	public final static String ACTION_PREFIX = "!", OPERATOR_PREFIX = "?", GETTER_PREFIX = "/", SETTER_PREFIX = "-",
-			FIELD_PREFIX = "*", SPECIES_PREFIX = "&", DISPLAY_PREFIX = "\\", SKILL_PREFIX = ")", TYPE_PREFIX = "(",
+			FIELD_PREFIX = "*", SPECIES_PREFIX = "&", DISPLAY_PREFIX = "\\", EXPERIMENT_PREFIX = "€", SKILL_PREFIX = ")", TYPE_PREFIX = "(",
 			SYMBOL_PREFIX = "[", FACTORY_PREFIX = "]", VAR_PREFIX = "%", FILE_PREFIX = "+", DOC_PREFIX = "@",
 			CONSTANT_PREFIX = "£", POPULATIONS_LINKER_PREFIX = "�", DOC_SEP = "~", DOC_REGEX = "\\~", SEP = "$";
 	static String ln = "\n";
@@ -38,7 +38,8 @@ public class JavaWriter {
 			"msi.gaml.compilation", "msi.gaml.factories", "msi.gaml.descriptions", "msi.gama.util.file",
 			"msi.gama.util.matrix", "msi.gama.util.graph", "msi.gama.util.path", "msi.gama.util",
 			"msi.gama.runtime.exceptions", "msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills",
-			"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators", "msi.gaml.extensions.genstar" },
+			"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators", "msi.gaml.extensions.genstar", 
+			"msi.gama.common.interfaces", "msi.gama.metamodel.population" },
 			EXPLICIT_IMPORTS = new String[] { "msi.gaml.operators.Random", "msi.gaml.operators.Maths",
 					"msi.gaml.operators.Points", "msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
 
@@ -116,6 +117,8 @@ public class JavaWriter {
 		sb.append(ln);
 		writeDisplaysInitialization(props, sb);
 		sb.append(ln);
+		writeExperimentsInitialization(props, sb);
+		sb.append(ln);		
 		writePopulationsLinkersInitialization(props, sb);
 		sb.append(ln);
 		writeFooter(sb);
@@ -145,6 +148,7 @@ public class JavaWriter {
 		sb.append(ln).append(tab).append("initializeSkills();");
 		sb.append(ln).append(tab).append("initializeSpecies();");
 		sb.append(ln).append(tab).append("initializeDisplays();");
+		sb.append(ln).append(tab).append("initializeExperiments();");		
 		sb.append(ln).append(tab).append("initializePopulationsLinkers();");
 		sb.append(ln).append('}');
 	}
@@ -157,6 +161,14 @@ public class JavaWriter {
 		sb.append("};");
 	}
 
+	private void writeExperimentsInitialization(final GamlProperties props, final StringBuilder sb) {
+		sb.append("public void initializeExperiments() {");
+		for (final Map.Entry<String, String> entry : props.filterFirst(EXPERIMENT_PREFIX).entrySet()) {
+			writeExperiment(sb /* ,doc */, entry.getKey(), entry.getValue());
+		}
+		sb.append("};");
+	}	
+	
 	private void writePopulationsLinkersInitialization(final GamlProperties props, final StringBuilder sb) {
 		sb.append("public void initializePopulationsLinkers() {");
 		for (final Map.Entry<String, String> entry : props.filterFirst(POPULATIONS_LINKER_PREFIX).entrySet()) {
@@ -701,6 +713,16 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
+	protected void writeExperiment(final StringBuilder sb,
+			/* final StringBuilder docBuilder, */final String s, final String doc) {
+		final String[] segments = s.split("\\$");
+		final String name = segments[0];
+		final String clazz = segments[1];
+		sb.append(concat(in, "_experiment(", toJavaString(name), ",", toClassObject(clazz), ", new IExperimentAgentCreator(){",
+				OVERRIDE, "public IExperimentAgent create(IPopulation pop){return new ", clazz, "(pop);}}"));
+		sb.append(");");
+	}	
+	
 	protected void writePopulationsLinker(final StringBuilder sb, final String s, final String doc) {
 		final String[] segments = s.split("\\$");
 		final String name = segments[0];

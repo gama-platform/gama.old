@@ -12,6 +12,8 @@
 package msi.gama.kernel.experiment;
 
 import java.util.*;
+
+import msi.gama.common.util.ExperimentManager;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.shape.ILocation;
@@ -34,7 +36,8 @@ public class ExperimentPopulation extends GamaPopulation {
 		final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled) throws GamaRuntimeException {
 		for ( int i = 0; i < number; i++ ) {
 			boolean isBatch = ((ExperimentPlan) getSpecies()).isBatch();
-			final ExperimentAgent exp = isBatch ? new BatchAgent(this) : new ExperimentAgent(this);
+			final ExperimentAgent exp = ExperimentManager.createExperimentAgent(((ExperimentPlan) getSpecies()).getExperimentType(), this);
+			// final ExperimentAgent exp = isBatch ? new BatchAgent(this) : new ExperimentAgent(this);
 			exp.setIndex(currentAgentIndex++);
 			/* agents. */add(exp);
 			createVariables(scope, exp, initialValues.isEmpty() ? Collections.EMPTY_MAP : initialValues.get(i));

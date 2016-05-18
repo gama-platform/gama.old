@@ -246,6 +246,7 @@ public interface IKeyword {
 	public static final String MAX = "max";
 	public static final String MAXIMIZE = "maximize";
 	public static final String MEMBERS = "members";
+	public static final String MEMORIZE = "memorize";	
 	public static final String MERSENNE = "mersenne";
 	public static final String MESSAGE = "message";
 	public static final String METHOD = "method";
