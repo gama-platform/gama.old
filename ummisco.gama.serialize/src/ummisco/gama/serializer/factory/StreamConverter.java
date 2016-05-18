@@ -18,7 +18,7 @@ public abstract class StreamConverter {
 	public static void registerConverter(Converter c)
 	{
 		dataStreamer.registerConverter(c);
-		Logger.getLogger(StreamConverter.class.getName()).finer("Loaded Converter :"+c.getClass().getName());
+	//	Logger.getLogger(StreamConverter.class.getName()).finer("Loaded Converter :"+c.getClass().getName());
 	}
 	
 	
@@ -35,14 +35,14 @@ public abstract class StreamConverter {
 	
 	public static String convertObjectToStream(IScope scope, Object o)
 	{
-		if(dataStreamer==null)
+		//if(dataStreamer==null)
 			loadAndBuild(scope);
 		return dataStreamer.toXML(o);
 	}
 	
 	public static Object convertStreamToObject(IScope scope,String data)
 	{
-		if(dataStreamer==null)
+		//if(dataStreamer==null)
 			loadAndBuild(scope);
 		return dataStreamer.fromXML(data);
 	}

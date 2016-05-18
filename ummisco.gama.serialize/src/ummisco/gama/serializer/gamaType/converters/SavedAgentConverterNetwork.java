@@ -31,12 +31,12 @@ import com.thoughtworks.xstream.io.*;
 
 import gnu.trove.map.hash.THashMap;
 
-public class SavedAgentConverter implements Converter {
+public class SavedAgentConverterNetwork implements Converter {
 	
 	private final static String TAG="IMacroAgent";
 	ConverterScope convertScope;
 	
-	public SavedAgentConverter(ConverterScope s){
+	public SavedAgentConverterNetwork(ConverterScope s){
 		convertScope = s;
 	}
 	
@@ -49,7 +49,9 @@ public class SavedAgentConverter implements Converter {
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		System.out.println("ConvertAnother : GamaSavedAgentConverter " + arg0.getClass());		
 		SavedAgent savedAgt = (SavedAgent) arg0;
-				
+		
+
+		
 		writer.startNode("variables");
 		context.convertAnother(savedAgt.getVariables());
 		writer.endNode();
@@ -124,6 +126,8 @@ public class SavedAgentConverter implements Converter {
 				GamaPopulation pop = (GamaPopulation) agt.getPopulation();
 				
 				pop.createAndUpdateVariablesFor(convertScope.getScope(), agentsList, agentAttrs, true);
+				
+				
 			} 
 			
 			
