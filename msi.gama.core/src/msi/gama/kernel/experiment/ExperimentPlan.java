@@ -174,7 +174,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			controller.dispose();
 		}
 		if (agent != null) {
-			GAMA.releaseScope(agent.getScope());
 			agent.dispose();
 			agent = null;
 		}
