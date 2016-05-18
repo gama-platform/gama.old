@@ -1,6 +1,8 @@
 language: java
 jdk:
   - oraclejdk8
+before_install:
+- echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
 notifications:
   email:
     recipients:
@@ -12,9 +14,9 @@ script: sh ./build.sh
 before_deploy:
   - git config --global user.email "my.gama.bot@gmail.com"
   - git config --global user.name "gama-bot"
-  - git remote set-url origin https://$TAGPERM@github.com/gama-platform/gama.git
+  - git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git
   - git remote -v
-  - git push https://$TAGPERM@github.com/gama-platform/gama.git :refs/tags/latest
+  - git push https://$CI_USER_TOKEN@github.com/gama-platform/gama.git :refs/tags/latest
   - git tag -fa latest -m "latest"
   - git push -q --tags
 deploy:
