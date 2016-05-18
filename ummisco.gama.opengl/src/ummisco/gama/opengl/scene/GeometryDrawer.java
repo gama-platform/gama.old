@@ -23,9 +23,11 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.util.GamaPair;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.jts.JTSDrawer;
+import ummisco.gama.opengl.utils.GLUtilGLContext;
 import ummisco.gama.opengl.utils.GLUtilLight;
 
 /**
@@ -51,12 +53,12 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		if (rot != null) {
 			final GamaPoint loc = geometry.getLocation();
 			// AD Change to a negative rotation to fix Issue #1514
-			final Double rotation = -rot.key;
+			final Double angle = -rot.key;
 			final GamaPoint axis = rot.value;
-			gl.glTranslated(loc.x, -loc.y, loc.z);
-			//GLUtilLight.rotateLights(renderer.data.getDiffuseLights(),rotation,axis);
-			gl.glRotated(rotation, axis.x, axis.y, axis.z);
-			gl.glTranslated(-loc.x, loc.y, -loc.z);
+			
+			GLUtilGLContext.TranslateContext(gl, new double[] {loc.x, JOGLRenderer.Y_FLAG * loc.y, loc.z}, renderer.data);
+			GLUtilGLContext.RotateContext(gl, new double[] {axis.x, axis.y, axis.z}, angle, renderer.data);
+			GLUtilGLContext.TranslateContext(gl, new double[] {-loc.x, - JOGLRenderer.Y_FLAG * loc.y, -loc.z}, renderer.data);
 		}
 		
 		final double height = geometry.getHeight();
@@ -152,6 +154,16 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 						geometry.getAlpha(), geometry.isFilled(), geometry.getBorder(), geometry, height,
 						geometry.getZ_fighting_id(), 0);
 			}
+
+		}
+		
+		if (rot != null) {
+			final GamaPoint loc = geometry.getLocation();
+			final Double angle = -rot.key;
+			final GamaPoint axis = rot.value;
+			GLUtilGLContext.TranslateContext(gl, new double[] {loc.x, JOGLRenderer.Y_FLAG * loc.y, loc.z}, renderer.data);
+			GLUtilGLContext.RotateContext(gl, new double[] {axis.x, axis.y, axis.z}, -angle, renderer.data);
+			GLUtilGLContext.TranslateContext(gl, new double[] {-loc.x, - JOGLRenderer.Y_FLAG * loc.y, -loc.z}, renderer.data);
 
 		}
 		

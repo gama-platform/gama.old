@@ -9,13 +9,11 @@
  *
  *
  **********************************************************************************************/
-package ummisco.gama.network.skills;
+package ummisco.gama.network.tcp;
 
 import java.io.*;
 import java.net.*;
 
-import ummisco.gama.network.skills.ClientServiceThread;
-import ummisco.gama.network.skills.MultiThreadedSocketServer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.precompiler.IConcept;

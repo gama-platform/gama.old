@@ -1,4 +1,4 @@
-package ummisco.gama.network.skills;
+package ummisco.gama.network.tcp;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -10,7 +10,6 @@ import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
-import ummisco.gama.network.skills.ClientServiceThread;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaList;
 import msi.gaml.operators.Cast;
