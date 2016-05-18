@@ -96,6 +96,7 @@ public class NetworkSkill  extends Skill {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		if(this.registeredToSimulation == false)
 		{
 			registeredToSimulation = true;

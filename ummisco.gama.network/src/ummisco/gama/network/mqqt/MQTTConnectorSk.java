@@ -69,7 +69,7 @@ public class MQTTConnectorSk implements IConnector{
 		
 		@Override
 		public void onFailure(Throwable arg0) {
-			System.out.println("Connection to MQTT failure!");
+			throw GamaNetworkException.cannotBeDisconnectedFailure(GAMA.getSimulation().getScope());
 		}
 
 		@Override
@@ -228,26 +228,38 @@ public class MQTTConnectorSk implements IConnector{
 
 	@Override
 	public void close(final IScope scope) throws GamaNetworkException {
-
+		MQTTCallBack listener = new MQTTCallBack(scope);
+		//Close listening connection
 		for(String backListener:receiveConnections.keySet())
 		{
-			receiveConnections.get(backListener).disconnect(new Callback<Void>() {
-
-				@Override
-				public void onFailure(Throwable arg0) {
-					throw GamaNetworkException.cannotBeDisconnectedFailure(scope);
-				}
-
-				@Override
-				public void onSuccess(Void arg0) {}
-			});
+			receiveConnections.get(backListener).disconnect(listener);
 			receiveConnections.remove(backListener);
 		}
-		
+		sendConnection.disconnect();
+
+		System.out.println("UN connected");
 	}
 
 
+	 class MQTTCallBack implements Callback<Void>
+	{
+		private IScope scope;
+		public MQTTCallBack(IScope s)
+		{
+			scope = s;
+		}
+		@Override
+		public void onFailure(Throwable arg0) {
+			throw GamaNetworkException.cannotBeDisconnectedFailure(scope);
+		}
 
+		@Override
+		public void onSuccess(Void arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 
 	
 }
