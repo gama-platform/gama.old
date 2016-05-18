@@ -75,7 +75,7 @@ public class DocProcessorAnnotations {
 				if(docElt.getElementsByTagName(XMLElements.RESULT).getLength() != 0){
 					org.w3c.dom.Element resultElt = (org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.RESULT).item(0);
 					if(("true".equals(resultElt.getAttribute(XMLElements.ATT_RES_MASTER)) && masterDoc) || (!("true".equals(resultElt.getAttribute(XMLElements.ATT_RES_MASTER))) && !masterDoc)){ 
-						resultElt.setTextContent(resultElt.getTextContent() + "/n" + value);							
+						resultElt.setTextContent(resultElt.getTextContent() + "\n" + value);							
 					} else if (!resultElt.hasAttribute(XMLElements.ATT_RES_MASTER) && masterDoc) {
 						resultElt.setTextContent(value);			
 						resultElt.setAttribute(XMLElements.ATT_RES_MASTER, "true");

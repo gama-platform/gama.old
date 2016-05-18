@@ -14,7 +14,7 @@
 
 ----
 
-## Definition 
+## Definition
 
 Operators in the GAML language are used to compose complex expressions. An operator performs a function on one, two, or n operands (which are other expressions and thus may be themselves composed of operators) and returns the result of this function. 
 
@@ -225,7 +225,8 @@ Same signification as [</xsl:text><xsl:value-of select="@alternativeNameOf"/><xs
   * <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand/@type"/></xsl:with-param></xsl:call-template>) --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template> 
 	</xsl:when>
 	<xsl:when test="count(operand) = 2">
-  * <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=0]/@type"/></xsl:with-param></xsl:call-template> <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text> <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=1]/@type"/></xsl:with-param></xsl:call-template> --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template>		
+  * <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=0]/@type"/></xsl:with-param></xsl:call-template> <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text> <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=1]/@type"/></xsl:with-param></xsl:call-template> --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template>
+  * <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=0]/@type"/></xsl:with-param></xsl:call-template> <xsl:text> , </xsl:text> <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="operand[@position=1]/@type"/></xsl:with-param></xsl:call-template>) --->  <xsl:call-template name="checkType"><xsl:with-param name="type"><xsl:value-of select="@returnType"/></xsl:with-param></xsl:call-template>		
 	</xsl:when>	
 	<xsl:otherwise>
   * <xsl:text> **`</xsl:text> <xsl:value-of select="$operatorName"/> <xsl:text>`** </xsl:text>(<xsl:for-each select="operand">
