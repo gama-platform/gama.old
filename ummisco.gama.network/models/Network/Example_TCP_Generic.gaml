@@ -12,16 +12,13 @@ global {
 	init
 	{
 		create NetworkingAgent number:1{
-			name <-clients[0];
-			dest <- clients[1];
-			do connect to:"localhost" protocol:"tcp_client" with_name:name;
+		   do connect to:"localhost" protocol:"tcp_server" port:"3001" with_name:name;
 		}
+		
 		create NetworkingAgent number:1{
-		    name <-clients[1];
-		    dest <- clients[0];
-			do connect to:"localhost" protocol:"tcp_server" port:"3001" with_name:name;
-			do send_message to:dest content:"This message is sent by " + name + " to " + dest;
+			do connect to:"localhost" protocol:"tcp_client" port:"3001" with_name:name;
 		}
+
 	}
 }
 
