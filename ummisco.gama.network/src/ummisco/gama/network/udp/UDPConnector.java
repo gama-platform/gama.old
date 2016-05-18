@@ -1,10 +1,11 @@
-package ummisco.gama.network.skills;
+package ummisco.gama.network.udp;
 
 import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
+import ummisco.gama.network.skills.IConnector;
 
 public class UDPConnector implements IConnector{
 
