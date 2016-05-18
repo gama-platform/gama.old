@@ -13,7 +13,6 @@ before_deploy:
   - echo $GIT_TAG 
   - git config --global user.email "my.gama.bot@gmail.com"
   - git config --global user.name "gama-bot"
-  - git remote add origin git@github.com:gama-platform/gama.git
   - git push -u origin master
   - git push origin :refs/tags/latest/
   - git tag -fa latest
