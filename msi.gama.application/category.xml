@@ -3,25 +3,25 @@
    <description name="GAMA Update Site">
       Site containing updates to the plugins composing GAMA
    </description>
-   <feature url="features/idees.gama.features.weka_1.7.0.201605182206.jar" id="idees.gama.features.weka" version="1.7.0.201605182206">
+   <feature url="features/idees.gama.features.weka_1.7.0.jar" id="idees.gama.features.weka" version="1.7.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.audio_1.7.0.201605182206.jar" id="ummisco.gama.feature.audio" version="1.7.0.201605182206">
+   <feature url="features/ummisco.gama.feature.audio_1.7.0.jar" id="ummisco.gama.feature.audio" version="1.7.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.core_1.7.1.201605182206.jar" id="ummisco.gama.feature.core" version="1.7.1.201605182206">
+   <feature url="features/ummisco.gama.feature.core_1.7.1.jar" id="ummisco.gama.feature.core" version="1.7.1">
       <category name="gama.core"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.models_1.7.0.201605182206.jar" id="ummisco.gama.feature.models" version="1.7.0.201605182206">
+   <feature url="features/ummisco.gama.feature.models_1.7.0.jar" id="ummisco.gama.feature.models" version="1.7.0">
       <category name="gama.models"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.stats_1.7.0.201605182206.jar" id="ummisco.gama.feature.stats" version="1.7.0.201605182206">
+   <feature url="features/ummisco.gama.feature.stats_1.7.0.jar" id="ummisco.gama.feature.stats" version="1.7.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/simtools.graphlayout.feature_1.7.0.201605182206.jar" id="simtools.graphlayout.feature" version="1.7.0.201605182206">
+   <feature url="features/simtools.graphlayout.feature_1.7.0.jar" id="simtools.graphlayout.feature" version="1.7.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.opengl.jogl2_1.7.0.201605182206.jar" id="ummisco.gama.feature.opengl.jogl2" version="1.7.0.201605182206">
+   <feature url="features/ummisco.gama.feature.opengl.jogl2_1.7.0.jar" id="ummisco.gama.feature.opengl.jogl2" version="1.7.0">
       <category name="gama.core"/>
    </feature>
    <category-def name="gama.core" label="Core plugins of GAMA"/>
