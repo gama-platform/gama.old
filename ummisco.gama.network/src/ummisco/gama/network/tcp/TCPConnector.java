@@ -95,7 +95,7 @@ public class TCPConnector implements IConnector{
 	@Override
 	public void sendMessage(IAgent agent, String dest, Object data) {
 		if(is_server){
-			primSendToClient(agent, data);
+			primSendToClient(agent, dest, data);
 		}else{
 			primSendToServer(agent, data);
 		}
@@ -162,9 +162,10 @@ public class TCPConnector implements IConnector{
 //		String cli = scope.getStringArg("cID");
 		final String cli;
 		String receiveMessage = "";
-			
-		GamaMap<String, Object> m=(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages");//(GamaMap<String, IList<String>>)
-		scope.getAgentScope().setAttribute("messages",GamaMapFactory.EMPTY_MAP);
+		System.out.println("\n\n primGetFromClient "+"messages"+scope.getAgentScope()+"\n\n");
+
+		GamaMap<String, Object> m=(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages"+scope.getAgentScope());//(GamaMap<String, IList<String>>)
+		scope.getAgentScope().setAttribute("messages"+scope.getAgentScope(),GamaMapFactory.EMPTY_MAP);
 //		GamaList<String> msgs = (GamaList<String>) m.get(scope, cli);
 //
 //		receiveMessage = msgs.firstValue(scope);
@@ -178,13 +179,12 @@ public class TCPConnector implements IConnector{
 	}
 
 
-	public void primSendToClient(final IAgent agent, final Object data) throws GamaRuntimeException {
+	public void primSendToClient(final IAgent agent, final String cli, final Object data) throws GamaRuntimeException {
 //		String cli = scope.getStringArg("cID");
 //		String msg = scope.getStringArg("msg");
 		String msg = "";
-		String cli = "";
+//		String cli = "";
 		if (data instanceof HashMap){
-			cli = ""+((HashMap<String, Object>) data).get(INetworkSkill.FROM);
 			msg = ""+((HashMap<String, Object>) data).get(INetworkSkill.CONTENT);
 		}
 		try {
@@ -206,7 +206,7 @@ public class TCPConnector implements IConnector{
 
 	
 	public  GamaMap<String, Object>  primGetFromServer(final IScope scope) throws GamaRuntimeException {
-		GamaMap<String, Object> m=GamaMapFactory.create();//(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages");//(GamaMap<String, IList<String>>)
+		GamaMap<String, Object> m = null;//(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages");//(GamaMap<String, IList<String>>)
 
 		String receiveMessage = "";
 		ClientServiceThread c=((ClientServiceThread)scope.getAgentScope().getAttribute("__socket"));
@@ -218,12 +218,16 @@ public class TCPConnector implements IConnector{
 			return GamaMapFactory.EMPTY_MAP; 
 		}
 		try {
-			m=(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages");//GamaMap<String, IList<String>> 
-			GamaList<String> msgs = (GamaList<String>) m.get(scope, sock.toString());
-			if (msgs != null) {
-				receiveMessage = msgs.firstValue(scope);
-			}
-			
+			System.out.println("\n\n primGetFromServer "+"messages"+scope.getAgentScope()+"\n\n");
+			m=(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages"+scope.getAgentScope());//GamaMap<String, IList<String>> 
+		
+//			if (msgs != null) {				
+//				receiveMessage = msgs.firstValue(scope);
+//				msgs.remove(0);
+//			}
+//			m.put(sock.toString(),msgs);
+//			scope.getAgentScope().setAttribute("messages"+scope.getAgentScope(),GamaMapFactory.EMPTY_MAP);
+
 		
 		} catch (Exception e) {
 			throw GamaRuntimeException.create(e, scope);

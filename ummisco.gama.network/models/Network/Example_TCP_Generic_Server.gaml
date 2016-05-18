@@ -28,11 +28,17 @@ species NetworkingAgent skills:[network]{
 	reflex fetch //when:has_received_message()
 	{	
 		map mess <- fetch_message();
-		write name + " fecth this message: " + mess;	
+		if(mess!=nil and length(mess.pairs)>0){			
+			list<string> msgs<-mess.pairs[0].value;
+			write msgs;
+		}
+//		write name + " fecth this message: " + mess;	
 	}
 	reflex send
 	{
-		do send_message to:dest content:"I am Server " + name + " I give order to " + dest;
+		loop id over:network_groups{
+			do send_message to:id content:"I am Server " + name + " I give order to " + id;
+		}
 	}
 }
 

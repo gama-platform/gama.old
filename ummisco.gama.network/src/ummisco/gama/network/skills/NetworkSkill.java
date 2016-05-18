@@ -60,8 +60,7 @@ public class NetworkSkill  extends Skill {
 		String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
 		Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
 		IConnector connector =  serverList.get(serverURL);
-		if(connector == null)
-		{
+		
 			if(protocol != null && protocol.equals( INetworkSkill.UDP_SERVER)){
 				System.out.println("create udp serveur");
 				connector = new UDPConnector(true);
@@ -87,7 +86,8 @@ public class NetworkSkill  extends Skill {
 				System.out.println("create mqtt serveur");
 				connector = new MQTTConnectorSk();
 			}			
-		    serverList.put(serverURL,connector);
+	    if(connector != null){
+	    	serverList.put(scope.getAgentScope()+serverURL,connector);
 		}
 		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_NAME, dest);
 		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_SERVER, serverURL);

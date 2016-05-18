@@ -42,7 +42,7 @@ class ClientServiceThread extends Thread {
 			m = GamaMapFactory.create(Types.STRING, Types.LIST);
 		}
 //		m.put(myClientSocket.toString(),msgs);
-		m.put(""+a.getAttribute(INetworkSkill.NET_AGENT_NAME), msgs);
+		m.put(""+myClientSocket.toString(), msgs);
 		myAgent.setAttribute("messages", m);
 //		myAgent.setAttribute("__clientCommand" + myClientSocket.toString(), msgs);
 
@@ -62,13 +62,14 @@ class ClientServiceThread extends Thread {
 	public void interrupt() {
 		// TODO Auto-generated method stub
 		super.interrupt();
-
+		
 		try {
 			myClientSocket.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		this.stop();
 	}
 
 	/**
@@ -86,16 +87,27 @@ class ClientServiceThread extends Thread {
 				// read incoming stream
 				String clientCommand = in.readLine();
 				// System.out.println("Client Says :" + clientCommand);
-				GamaList<String> msgs = (GamaList<String>) myAgent.getAttribute("messages" + myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME));
-				if (msgs == null) {
-					msgs = (GamaList<String>) GamaListFactory.create(String.class);
+
+				GamaMap<String, Object> m=(GamaMap<String, Object>) myAgent.getAttribute("messages"+myAgent);//GamaMap<String, IList<String>>
+				if(m==null){
+					m=GamaMapFactory.create();
 				}
+				if(myAgent.dead()){
+					this.interrupt();
+				}
+				System.out.println("\n\n ClientServiceThread "+"messages"+myAgent+"\n\n");
+//				GamaList<String> msgs = (GamaList<String>) m.get(myAgent.getScope(), myClientSocket.toString());
+//				if (msgs == null) {				
+//					msgs = (GamaList<String>) myAgent.getAttribute("messages" + myClientSocket.toString());					
+				GamaList<String> msgs = (GamaList<String>) GamaListFactory.create(String.class);
+//				}
+				
 				msgs.addValue(myAgent.getScope(),clientCommand != null ? clientCommand : "");
-				 myAgent.setAttribute("messages" + myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME),msgs);
-				final GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) myAgent.getAttribute("messages");
+//				myAgent.setAttribute("messages" + myClientSocket.toString(),msgs);
+//				final GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) myAgent.getAttribute("messages");
 //					m.put(myClientSocket.toString(),msgs);
-				m.put(""+myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME), msgs);
-				myAgent.setAttribute("messages", m);
+				m.put(""+myClientSocket.toString(), msgs);
+				myAgent.setAttribute("messages"+myAgent, m);
 //					myAgent.setAttribute("__clientCommand" + myClientSocket.toString(), msgs);
 				
 

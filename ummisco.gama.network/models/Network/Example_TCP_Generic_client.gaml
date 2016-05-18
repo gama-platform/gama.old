@@ -28,7 +28,10 @@ species NetworkingAgent skills:[network]{
 	reflex fetch //when:has_received_message()
 	{	
 		map mess <- fetch_message();
-		write name + " fecth this message: " + mess;	
+		if(mess != nil and length(mess.pairs)>0){
+			write mess.pairs[0].value;			
+		}
+//		write name + " fecth this message: " + mess;	
 	}
 	reflex send
 	{

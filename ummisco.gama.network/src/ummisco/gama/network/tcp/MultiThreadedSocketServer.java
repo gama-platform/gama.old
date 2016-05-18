@@ -77,16 +77,15 @@ public class MultiThreadedSocketServer extends Thread {
 
 				if (!clientSocket.isClosed() && !clientSocket.isInputShutdown()) {
 					GamaList<String> l = (GamaList<String>) Cast.asList(myAgent.getScope(),
-							myAgent.getAttribute("clients"));
-					if (l!=null && !l.contains(""+myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME))) {
-						l.addValue(myAgent.getScope(), ""+myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME));
-						myAgent.setAttribute("clients", l);
-
+							myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
+					if (l!=null && !l.contains(clientSocket.toString())) {
+						l.addValue(myAgent.getScope(), clientSocket.toString());
+						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, l);
+						
 						final ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
 						cliThread.start();
-						String sender = (String) myAgent.getAttribute(INetworkSkill.NET_AGENT_NAME);
 
-						myAgent.setAttribute("__client"+sender, cliThread);
+						myAgent.setAttribute("__client"+clientSocket.toString(), cliThread);
 					}
 				}
 
