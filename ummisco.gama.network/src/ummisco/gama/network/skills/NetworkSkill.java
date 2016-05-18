@@ -33,6 +33,7 @@ import msi.gaml.types.IType;
 import ummisco.gama.network.mqqt.MQTTConnectorSk;
 import ummisco.gama.network.tcp.TCPConnector;
 import ummisco.gama.network.udp.UDPConnector;
+import ummisco.gama.serializer.factory.StreamConverter;
 
 @vars({ @var(name = INetworkSkill.NET_AGENT_NAME, type = IType.STRING, doc = @doc("Net ID of the agent")),
 @var(name = INetworkSkill.NET_AGENT_GROUPS, type = IType.LIST, doc = @doc("Net ID of the agent")),
@@ -40,14 +41,13 @@ import ummisco.gama.network.udp.UDPConnector;
 @skill(name = INetworkSkill.NETWORK_SKILL, concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
 public class NetworkSkill  extends Skill {
 	
-	private final HashMap<String, LinkedList<Map<String, Object>>> agentMessage;
-	private final HashMap<String,IConnector> serverList;
+	private HashMap<String,IConnector> serverList;
 	private boolean registeredToSimulation = false;
 	public NetworkSkill()
 	{
-		agentMessage = new HashMap<String, LinkedList<Map<String, Object>>>();
 		serverList = new HashMap<String,IConnector>();
 		registeredToSimulation = false;
+		StreamConverter.closeXStream();
 	}
 	
 	@action(name = INetworkSkill.CONNECT_TOPIC, args = {
@@ -63,8 +63,10 @@ public class NetworkSkill  extends Skill {
 		Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
 		scope.getAgentScope().setAttribute("ip", serverURL);
 		scope.getAgentScope().setAttribute("port", port);
-		IConnector connector =  serverList.get(scope.getAgentScope()+serverURL);
-		
+		IConnector connector =  serverList.get(serverURL);
+		if(connector == null)
+		{
+			
 			if(protocol != null && protocol.equals( INetworkSkill.UDP_SERVER)){
 				System.out.println("create udp serveur");
 				connector = new UDPConnector(scope,true);
@@ -86,9 +88,11 @@ public class NetworkSkill  extends Skill {
 				System.out.println("create mqtt serveur");
 				connector = new MQTTConnectorSk();
 			}			
-	    if(connector != null){
-	    	serverList.put(scope.getAgentScope()+serverURL,connector);
+		    if(connector != null){
+		    	serverList.put(serverURL,connector);
+			}
 		}
+
 		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_NAME, dest);
 		scope.getAgentScope().setAttribute(INetworkSkill.NET_AGENT_SERVER, serverURL);
 		try {
@@ -103,11 +107,8 @@ public class NetworkSkill  extends Skill {
 			scope.getSimulationScope().postDisposeAction(new IExecutable() {
 				@Override
 				public Object executeOn(IScope scope) throws GamaRuntimeException {
-		
-					for(IConnector connection:serverList.values())
-					{
-						connection.close(scope);
-					}
+					closeAllConnection(scope);
+					StreamConverter.closeXStream();
 					return null;
 				}
 			});
@@ -124,7 +125,7 @@ public class NetworkSkill  extends Skill {
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		String sender = (String) agent.getAttribute(INetworkSkill.NET_AGENT_NAME);
 		Object messageContent = scope.getArg(INetworkSkill.CONTENT, IType.NONE);
-		IConnector connector=this.serverList.get(scope.getAgentScope()+serverName);
+		IConnector connector=this.serverList.get(serverName);
 		connector.sendMessage(agent,dest, messageContent);
 	}
 
@@ -137,24 +138,26 @@ public class NetworkSkill  extends Skill {
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		String src = (String) scope.getArg(INetworkSkill.FROM, IType.STRING);
 
-		IConnector connector=this.serverList.get(scope.getAgentScope()+serverName);
+		IConnector connector=this.serverList.get(serverName);
 		GamaMap<String, Object>  res = connector.fetchMessageBox(agent);
 		return res; 
 
 	}
 	
-	@action(name = INetworkSkill.LISTEN, args = {@arg(name = INetworkSkill.PORT, type = IType.STRING, doc = @doc("port number"))}, doc = @doc(value = "", returns = "", examples = { @example("") }))
-	public String listen(final IScope scope) {
-		//TO DO
-		String message = "";
-		return message;
+	public void closeAllConnection(IScope scope)
+	{
+		for(IConnector connection:serverList.values())
+		{
+			connection.close(scope);
+		}
+		serverList = new HashMap<String,IConnector>();
 	}
-
+	
 	@action(name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX, args = {}, doc = @doc(value = "", returns = "", examples = { @example("") }))
 	public boolean notEmptyMessageBox(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
-		IConnector connector=this.serverList.get(scope.getAgentScope()+serverName);
+		IConnector connector=this.serverList.get(serverName);
 		
 		return !connector.emptyMessageBox(agent);
 	}

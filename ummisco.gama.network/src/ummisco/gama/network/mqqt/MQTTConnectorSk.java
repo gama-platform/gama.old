@@ -74,10 +74,8 @@ public class MQTTConnectorSk implements IConnector{
 
 		@Override
 		public void onSuccess(Void arg0) {
-			System.out.println("Connection to MQTT server passed!");
 			receiveConnections.put(serverName, connection);
-			
-            Topic[] topics = {new Topic(mqttDest, QoS.AT_LEAST_ONCE)};
+			Topic[] topics = {new Topic(mqttDest, QoS.AT_LEAST_ONCE)};
             connection.subscribe(topics, new Callback<byte[]>() {
                 public void onSuccess(byte[] qoses) {
                 }
@@ -147,8 +145,8 @@ public class MQTTConnectorSk implements IConnector{
 	 
 	public void connectToServer(IAgent agent, String agentName, String server ) throws Exception  {
 		IScope scope = agent.getScope();
-		if(	sendConnection == null) 
-			sendConnection= MQTTConnector.connectSender(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
+		if(	this.sendConnection == null) 
+			this.sendConnection= MQTTConnector.connectSender(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
 		CallbackConnection connection =  receiveConnections.get(server);
 			if(connection == null)
 			{
@@ -236,8 +234,10 @@ public class MQTTConnectorSk implements IConnector{
 			receiveConnections.remove(backListener);
 		}
 		sendConnection.disconnect();
-
-		System.out.println("UN connected");
+		receiveConnections = new HashMap<>();
+		boxFollower = new HashMap<>();
+		receivedMessage = new HashMap<>();
+		sendConnection = null; 
 	}
 
 
