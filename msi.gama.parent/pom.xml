@@ -59,6 +59,7 @@
     <module>../irit.maelia.gaml.additions</module>
     <module>../msi.gama.documentation</module>
     <module>../msi.gama.application</module>
+
   </modules>
   
   <properties>
@@ -198,7 +199,9 @@
 	  </snapshots>
 	</repository>
   </repositories>
+
   <build>
+
   <plugins>
     <plugin>
       <groupId>org.eclipse.tycho</groupId>
