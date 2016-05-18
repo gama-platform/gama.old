@@ -108,12 +108,7 @@ public class NetworkSkill  extends Skill {
 		String sender = (String) agent.getAttribute(INetworkSkill.NET_AGENT_NAME);
 		Object messageContent = scope.getArg(INetworkSkill.CONTENT, IType.NONE);
 		IConnector connector=this.serverList.get(serverName);
-		HashMap<String, String> mp = new HashMap<>();
-		mp.put(INetworkSkill.FROM,sender);
-		mp.put(INetworkSkill.CONTENT,messageContent.toString());
-		System.out.println("sender "+sender + " message"+mp);
-//		String serializedMessage = xstream.toXML(mp);
-		connector.sendMessage(agent,dest, mp);
+		connector.sendMessage(agent,dest, messageContent);
 	}
 
 	@action(name = INetworkSkill.FETCH_MESSAGE, args = {

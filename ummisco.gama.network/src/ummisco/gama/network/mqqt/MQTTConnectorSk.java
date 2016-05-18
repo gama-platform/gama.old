@@ -18,7 +18,7 @@ import org.fusesource.mqtt.client.FutureConnection;
 import org.fusesource.mqtt.client.QoS;
 import org.fusesource.mqtt.client.Topic;
 
-
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
@@ -92,13 +92,11 @@ public class MQTTConnectorSk implements IConnector{
 		private String server;
 		private CallbackConnection connection;
 		private MQTTConnectorSk parentSkill;
-		private IScope scope;
 		
-		MQTTListener(IScope scope, String serverName,CallbackConnection connect,MQTTConnectorSk agentSkill) {
+		MQTTListener(String serverName,CallbackConnection connect,MQTTConnectorSk agentSkill) {
 			this.server= serverName;
 			this.connection=connect;
 			this.parentSkill = agentSkill;
-			this.scope = scope;
 		}
 		
 		@Override
@@ -117,7 +115,7 @@ public class MQTTConnectorSk implements IConnector{
 			String topicName = topic.utf8().toString();
 			String body = msg.utf8().toString();
 			@SuppressWarnings("unchecked")
-			Map<String,Object> mp = (Map<String,Object>) StreamConverter.convertStreamToObject(scope, body);
+			Map<String,Object> mp = (Map<String,Object>) StreamConverter.convertStreamToObject(GAMA.getSimulation().getScope(), body);
 			pushMessageToAgents(topicName,mp);
 			ack.run();
 		}
@@ -154,7 +152,7 @@ public class MQTTConnectorSk implements IConnector{
 			{
 				try {
 					connection = MQTTConnector.connectReceiver(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
-					connection.listener(new MQTTListener(scope,server,connection,this));
+					connection.listener(new MQTTListener(server,connection,this));
 					connection.connect(new MQTTConnecterListener(connection, server,agentName));
 					receiveConnections.put(server, connection);
 					
@@ -203,6 +201,9 @@ public class MQTTConnectorSk implements IConnector{
 	
 	public boolean emptyMessageBox(IAgent agt) {
 		LinkedList<Map<String,Object>> box = this.receivedMessage.get(agt);
+		if(box == null )
+			return true;
+
 		return box.isEmpty();
 
 	}
@@ -211,6 +212,7 @@ public class MQTTConnectorSk implements IConnector{
 	{
 		Map<String,Object> message = new HashMap<String, Object>();
 		message.put(INetworkSkill.FROM, agt.getAttribute(INetworkSkill.NET_AGENT_NAME));
+		message.put(INetworkSkill.TO, dest);
 		message.put(INetworkSkill.CONTENT,data);
 		System.out.println(message);
 		System.out.println(StreamConverter.convertObjectToStream(agt.getScope(),message));
