@@ -46,7 +46,7 @@ public class MultiThreadedUDPServer extends Thread {
 	public void interrupt() {
 		super.interrupt();
 		try {
-			myAgent.setAttribute("__server"+ myUDPServerSocket.getLocalPort(), null);
+			myAgent.setAttribute("__UDPserver"+ myUDPServerSocket.getLocalPort(), null);
 			myUDPServerSocket.close();				
 
 		} catch (Exception e) {

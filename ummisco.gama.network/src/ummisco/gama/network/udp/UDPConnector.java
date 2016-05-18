@@ -28,7 +28,7 @@ public class UDPConnector implements IConnector{
 	public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
 		final String cli;
 		String receiveMessage = "";
-		System.out.println("\n\n primGetFromClient "+"messages"+agt+"\n\n");
+//		System.out.println("\n\n primGetFromClient "+"messages"+agt+"\n\n");
 
 		GamaMap<String, Object> m=(GamaMap<String, Object>) agt.getAttribute("messages"+agt);
 		agt.setAttribute("messages",GamaMapFactory.EMPTY_MAP);
@@ -63,8 +63,9 @@ public class UDPConnector implements IConnector{
 
 	@Override
 	public void sendMessage(IAgent agent, String dest, Object data) {
-		// TODO Auto-generated method stub
-		
+		final Integer port = Cast.asInt(agent.getScope(), agent.getAttribute("port"));
+
+		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute("__UDPserver" + port);		
 	}
 
 }
