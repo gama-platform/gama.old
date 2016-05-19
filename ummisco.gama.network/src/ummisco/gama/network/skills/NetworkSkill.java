@@ -113,7 +113,9 @@ public class NetworkSkill  extends Skill {
 				}
 			});
 		}
-
+		//register connected agent to global groups;
+		for(String grp:INetworkSkill.DEFAULT_GROUP)
+			connector.registerToGroup(agt, grp);
 	}
 
 	@action(name = INetworkSkill.SEND_MESSAGE, args = {
@@ -132,25 +134,36 @@ public class NetworkSkill  extends Skill {
 	@action(name = INetworkSkill.FETCH_MESSAGE, args = {
 			@arg(name = INetworkSkill.FROM, type = IType.STRING, optional = true, doc = @doc("The network ID of the agent who receive the message")) }, doc = @doc(value = "", returns = "", examples = {
 					@example("") }))
-	
 	public GamaMap<String, Object> fetchMessage(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		String src = (String) scope.getArg(INetworkSkill.FROM, IType.STRING);
-
 		IConnector connector=this.serverList.get(serverName);
 		GamaMap<String, Object>  res = connector.fetchMessageBox(agent);
 		return res; 
-
 	}
+	
 	@action(name = INetworkSkill.RESGISTER_TO_GROUP, args = {
 	@arg(name = INetworkSkill.TO, type = IType.STRING, optional = true, doc = @doc("")) }, doc = @doc(value = "", returns = "", examples = {
 	@example("") }))
 	public void registerToGroup(final IScope scope)
 	{
 		IAgent agent = scope.getAgentScope();
+		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		String groupName = (String)scope.getArg(INetworkSkill.TO, IType.STRING);
-		
+		IConnector connector=this.serverList.get(serverName);
+		connector.registerToGroup(agent, groupName);
+	}
+	
+	@action(name = INetworkSkill.LEAVE_THE_GROUP, args = {
+			@arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = true, doc = @doc("name of the group agent want to leave")) }, doc = @doc(value = "leave a group of agent", returns = "", examples = {
+			@example("") }))
+	public void leaveTheGroup(final IScope scope) {
+		IAgent agent = scope.getAgentScope();
+		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
+		String groupName = (String)scope.getArg(INetworkSkill.TO, IType.STRING);
+		IConnector connector=this.serverList.get(serverName);
+		connector.leaveTheGroup(agent, groupName);
 	}
 	
 	private void closeAllConnection(IScope scope)

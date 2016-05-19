@@ -58,6 +58,7 @@ public interface INetworkSkill  {
 	public static String RESGISTER_TO_GROUP = "register_to_group";
 	public static String LEAVE_THE_GROUP = "leave_the_group";
 	public static String RETRIEVE_GROUP_MEMBER = "retrieve_member_of";
+	public static String[] DEFAULT_GROUP = {"ALL"};
 	
 	
 	// SKILL SENSING

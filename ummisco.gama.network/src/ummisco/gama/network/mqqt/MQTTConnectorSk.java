@@ -121,7 +121,7 @@ public class MQTTConnectorSk implements IConnector{
 		}
 	}
 	
-	public void registerAgentToGroup(IAgent agent, String groupName)
+	public void registerToGroup(IAgent agent, String groupName)
 	{
 		ArrayList<IAgent> agentBroadcast = this.boxFollower.get(groupName);
 		
@@ -174,7 +174,7 @@ public class MQTTConnectorSk implements IConnector{
 			receiveConnections.connect(new MQTTConnecterListener());
 		}
 
-		registerAgentToGroup(agent, agentName);
+		registerToGroup(agent, agentName);
 		
 		LinkedList<Map<String,Object>> mp = receivedMessage.get(agent);
 		if(mp==null )
@@ -251,18 +251,11 @@ public class MQTTConnectorSk implements IConnector{
 		
 	}
 
-
-	@Override
-	public void registerToGroup(IAgent agt, String groupName) {
-		
-		
-	}
-
-
 	@Override
 	public void leaveTheGroup(IAgent agt, String groupName) {
-		// TODO Auto-generated method stub
-		
+		ArrayList<IAgent> mygroup = this.boxFollower.get(groupName);
+		if(mygroup != null)
+			mygroup.remove(agt);
 	}
 
 	
