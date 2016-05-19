@@ -237,6 +237,7 @@
       </dependencies>
     </plugin>
     <plugin>
+<!-- You can see the effect of Execution Environnement here : https://wiki.eclipse.org/Tycho/Execution_Environments : Tycho ensures that package imports may only be matched against the selected execution environment , b) Tycho hides packages which are not provided by the configured execution environment. -->
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho.version}</version>

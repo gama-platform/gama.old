@@ -27,10 +27,13 @@
 					<includeAllDependencies>true</includeAllDependencies>
 				</configuration>
 			</plugin>
+		        <!-- Selection of products to be installed and configuration per product, see 
+                            http://www.eclipse.org/tycho/sitedocs/tycho-p2/tycho-p2-director-plugin/materialize-products-mojo.html -->
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-director-plugin</artifactId>
 				<version>${tycho.version}</version>
+			<!-- If the project contains more than one product file ... -->
 				<executions>
 					<execution>
 						<id>create-distributions</id>
@@ -44,7 +47,7 @@
 			</plugin>
 
 			<!-- Workaround: Use an existing config.ini file (caused by the problem 
-				that tycho will always generate a default one) -->
+				that tycho will always generate a default one) , copying /target/../ to /target/configuration/ ... -->
 			<plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
