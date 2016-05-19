@@ -395,14 +395,18 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		final Point p = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		// final Monitor primary = SwtGui.getDisplay().getPrimaryMonitor();
 		final Rectangle bounds = SwtGui.getDisplay().getBounds();
-		final int width = Math.min(p.x, bounds.width);
-		final int height = Math.min(p.y, bounds.height);
+		final int width = Math.min(p.x, bounds.width - 100);
+		final int height = Math.min(p.y, bounds.height - 100);
+
+		shell.pack();
+
+		shell.open();
 		shell.setSize(width, height);
+		shell.update();
 		final int x = (bounds.width - width) / 2;
 		final int y = (bounds.height - height) / 2;
 
 		shell.setLocation(x, y);
-		shell.open();
 
 		while (!this.shell.isDisposed() && this.shell.isVisible()) {
 			if ( !this.shell.getDisplay().readAndDispatch() ) {
