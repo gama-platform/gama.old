@@ -21,7 +21,7 @@ before_deploy:
   - git push https://$CI_USER_TOKEN@github.com/gama-platform/gama.git :refs/tags/latest
   - git tag -d latest
   - git tag -fa latest -m "latest"
-  - git push origin master --tags
+  - git push origin master --tags -f
   - git ls-remote --tags origin
   - git show-ref --tags
 
