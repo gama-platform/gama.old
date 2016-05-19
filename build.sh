@@ -5,6 +5,6 @@ cd msi.gama.parent &&
 mvn clean install &&
 cd - &&
 cd  msi.gama.application &&
-mvn clean install -f product-pom.xml &&
+mvn clean install
 cd -
 

@@ -285,6 +285,18 @@ public class TCPConnector implements IConnector{
 		
 	}
 
+	@Override
+	public void registerToGroup(IAgent agt, String groupName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void leaveTheGroup(IAgent agt, String groupName) {
+		// TODO Auto-generated method stub
+		
+	}
+
 
 
 

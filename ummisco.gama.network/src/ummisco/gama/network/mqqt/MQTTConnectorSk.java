@@ -7,6 +7,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.fusesource.hawtbuf.AsciiBuffer;
@@ -43,7 +44,8 @@ public class MQTTConnectorSk implements IConnector{
 	//static final String destination = "topic/sensors/";
 	
 	//IP orderd map
-	protected Map<String, CallbackConnection> receiveConnections;
+	//protected Map<String, CallbackConnection> receiveConnections;
+	protected CallbackConnection receiveConnections;
 	protected FutureConnection sendConnection = null;
 	
 	//Box ordered map
@@ -52,20 +54,12 @@ public class MQTTConnectorSk implements IConnector{
 	//received Messages
 	protected Map<IAgent,LinkedList<Map<String,Object>>> receivedMessage;
    
+	protected List<String> topicSuscribingPending ;
+	protected boolean isConnected = false;
+	
 	
 	class MQTTConnecterListener implements Callback<Void>
 	{
-		CallbackConnection connection;
-		String serverName;
-		String mqttDest;
-		
-		MQTTConnecterListener(CallbackConnection lst, String server,String destination)
-		{
-			super();
-			this.connection = lst;
-			this.serverName = server;
-			this.mqttDest = destination;
-		}
 		
 		@Override
 		public void onFailure(Throwable arg0) {
@@ -74,40 +68,24 @@ public class MQTTConnectorSk implements IConnector{
 
 		@Override
 		public void onSuccess(Void arg0) {
-			receiveConnections.put(serverName, connection);
-			Topic[] topics = {new Topic(mqttDest, QoS.AT_LEAST_ONCE)};
-            connection.subscribe(topics, new Callback<byte[]>() {
-                public void onSuccess(byte[] qoses) {
-                }
-                public void onFailure(Throwable value) {
-                    value.printStackTrace();
-                    System.exit(-2);
-                }
-            });
+			isConnected = true;
+			registerToTopic();
 		}
 	}
 	
 	class MQTTListener implements org.fusesource.mqtt.client.Listener
 	{
-		private String server;
-		private CallbackConnection connection;
-		private MQTTConnectorSk parentSkill;
-		
-		MQTTListener(String serverName,CallbackConnection connect,MQTTConnectorSk agentSkill) {
-			this.server= serverName;
-			this.connection=connect;
-			this.parentSkill = agentSkill;
-		}
-		
 		@Override
 		public void onConnected() {
 		}
 
 		@Override
-		public void onDisconnected() {}
+		public void onDisconnected() {
+		}
 
 		@Override
 		public void onFailure(Throwable arg0) {
+			throw GamaNetworkException.cannotBeDisconnectedFailure(null);
 		}
 
 		@Override
@@ -125,8 +103,9 @@ public class MQTTConnectorSk implements IConnector{
 	public MQTTConnectorSk()
 	{
 		super();
-		receiveConnections = new HashMap<>();
+		receiveConnections = null;//new HashMap<>();
 		boxFollower = new HashMap<>();
+		topicSuscribingPending = new ArrayList<String>();
 		receivedMessage = new HashMap<>();
 		sendConnection = null; 
 	}
@@ -142,52 +121,67 @@ public class MQTTConnectorSk implements IConnector{
 		}
 	}
 	
+	public void registerToGroup(IAgent agent, String groupName)
+	{
+		ArrayList<IAgent> agentBroadcast = this.boxFollower.get(groupName);
+		
+		if(agentBroadcast ==null)
+		{
+			this.topicSuscribingPending.add(groupName);
+			registerToTopic();
+			agentBroadcast = new ArrayList<IAgent>();
+			this.boxFollower.put(groupName, agentBroadcast);
+		}
+		if(!agentBroadcast.contains(agent))
+		{
+			agentBroadcast.add(agent);
+		}		
+	}
+	
+	private void registerToTopic()
+	{
+		if(this.isConnected)
+		{
+			for(String topic:this.topicSuscribingPending)
+			{
+				Topic[] topics = {new Topic(topic, QoS.AT_LEAST_ONCE)};
+		        this.receiveConnections.subscribe(topics, new Callback<byte[]>() {
+		        public void onSuccess(byte[] qoses) {}
+		        public void onFailure(Throwable value) {
+		        	throw GamaNetworkException.cannotBeConnectedFailure(GAMA.getSimulation().getScope());
+		        }
+		        });
+			}
+		}
+
+	}
+	
 	 
 	public void connectToServer(IAgent agent, String agentName, String server ) throws Exception  {
 		IScope scope = agent.getScope();
 		if(	this.sendConnection == null) 
 			this.sendConnection= MQTTConnector.connectSender(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
-		CallbackConnection connection =  receiveConnections.get(server);
-			if(connection == null)
-			{
-				try {
-					connection = MQTTConnector.connectReceiver(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
-					connection.listener(new MQTTListener(server,connection,this));
-					connection.connect(new MQTTConnecterListener(connection, server,agentName));
-					receiveConnections.put(server, connection);
-					
-				} catch (URISyntaxException e) {
-					e.printStackTrace();
-				} 
-			}
-			ArrayList<IAgent> agentBroadcast = this.boxFollower.get(agentName);
-			if(agentBroadcast == null)
-			{
-				if(!(this.boxFollower.keySet().contains(agentName)))
-				{
-					Topic [] tps = {new Topic(agentName, QoS.AT_LEAST_ONCE)};
-					connection.subscribe( tps,new Callback<byte[]>() {
-	                    public void onSuccess(byte[] qoses) {
-	                    }
-	                    public void onFailure(Throwable value) {
-	                        value.printStackTrace();
-	                        System.exit(-2);
-	                    }
-	                });
-				}
-				agentBroadcast = new ArrayList<IAgent>();
-				this.boxFollower.put(agentName, agentBroadcast);
-			}
-			if(!agentBroadcast.contains(scope.getAgentScope()))
-			{
-				agentBroadcast.add(scope.getAgentScope());
-			}
-			LinkedList<Map<String,Object>> mp = receivedMessage.get(agent);
-			if(mp==null )
-			{
-				this.receivedMessage.put(agent, new LinkedList<Map<String,Object>>());
-			}
+		if(this.sendConnection == null)
+			throw GamaNetworkException.cannotBeConnectedFailure(scope);
+
+		//CallbackConnection connection =  receiveConnections;//.get(server);
+		if(receiveConnections == null)
+		{
+			receiveConnections =  MQTTConnector.connectReceiver(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
+			if(receiveConnections == null)
+				throw GamaNetworkException.cannotBeConnectedFailure(scope);
+			receiveConnections.listener(new MQTTListener());
+			receiveConnections.connect(new MQTTConnecterListener());
 		}
+
+		registerToGroup(agent, agentName);
+		
+		LinkedList<Map<String,Object>> mp = receivedMessage.get(agent);
+		if(mp==null )
+		{
+			this.receivedMessage.put(agent, new LinkedList<Map<String,Object>>());
+		}
+	}
 
 	public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
 		LinkedList<Map<String,Object>> box = this.receivedMessage.get(agt);
@@ -228,13 +222,9 @@ public class MQTTConnectorSk implements IConnector{
 	public void close(final IScope scope) throws GamaNetworkException {
 		MQTTCallBack listener = new MQTTCallBack(scope);
 		//Close listening connection
-		for(String backListener:receiveConnections.keySet())
-		{
-			receiveConnections.get(backListener).disconnect(listener);
-			receiveConnections.remove(backListener);
-		}
+		receiveConnections.disconnect(listener);
+		receiveConnections = null;
 		sendConnection.disconnect();
-		receiveConnections = new HashMap<>();
 		boxFollower = new HashMap<>();
 		receivedMessage = new HashMap<>();
 		sendConnection = null; 
@@ -259,6 +249,13 @@ public class MQTTConnectorSk implements IConnector{
 			
 		}
 		
+	}
+
+	@Override
+	public void leaveTheGroup(IAgent agt, String groupName) {
+		ArrayList<IAgent> mygroup = this.boxFollower.get(groupName);
+		if(mygroup != null)
+			mygroup.remove(agt);
 	}
 
 	
