@@ -513,6 +513,9 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_DISPLAY_PERSPECTIVE = create("core.display_perspective",
 			"Continue to draw displays (in the background) when in Modeling perspective", false, IType.BOOL).in(DISPLAY)
 					.group("Behavior of displays");
+	public static final Entry<Boolean> DISPLAY_MODAL_FULLSCREEN = create("core.display_fullscreen",
+			"Disable the menu bar when displays are turned full-screen", true, IType.BOOL).in(DISPLAY)
+					.group("Behavior of displays");
 	public static final Entry<String> CORE_DISPLAY = create("core.display",
 			"Default display method when none is specified", "Java2D", IType.STRING).among("Java2D", "OpenGL")
 					.in(DISPLAY).group("Properties (settings effective after experiment relaunch)");

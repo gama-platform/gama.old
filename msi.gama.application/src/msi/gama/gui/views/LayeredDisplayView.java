@@ -140,7 +140,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	private void createFullScreenShell() {
 		if ( fullScreenShell != null )
 			return;
-		fullScreenShell = new Shell(SwtGui.getDisplay(), SWT.ON_TOP | SWT.APPLICATION_MODAL);
+		fullScreenShell = new Shell(SwtGui.getDisplay(),
+			GamaPreferences.DISPLAY_MODAL_FULLSCREEN.getValue() ? SWT.ON_TOP | SWT.APPLICATION_MODAL : SWT.NO_TRIM);
 		fullScreenShell.setBounds(SwtGui.getDisplay().getBounds());
 		final GridLayout gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
