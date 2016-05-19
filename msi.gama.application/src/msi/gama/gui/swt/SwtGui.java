@@ -1170,7 +1170,7 @@ public class SwtGui extends AbstractGui {
 				if ( exp.getParametersEditors() == null && exp.getUserCommands().isEmpty() ) { return; }
 				try {
 					final ExperimentParametersView view = (ExperimentParametersView) getPage()
-						.showView(ExperimentParametersView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
+						.showView(ExperimentParametersView.ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 					// if ( view.getExperiment() != exp ) {
 					view.addItem(exp);
 					// }
