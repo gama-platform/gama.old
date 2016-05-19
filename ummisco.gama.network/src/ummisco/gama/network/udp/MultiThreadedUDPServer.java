@@ -80,9 +80,9 @@ public class MultiThreadedUDPServer extends Thread {
 					myUDPServerSocket.send(sendPacket);
 
 				}
-				if(!OnServer){
-					System.out.println("client      ");
-				}
+//				if(!OnServer){
+//					System.out.println("client      ");
+//				}
 				byte[] receiveData = new byte[1024];
 				byte[] sendData = new byte[1024];
 				// Accept incoming connections.
@@ -94,7 +94,7 @@ public class MultiThreadedUDPServer extends Thread {
     				myAgent.setAttribute("replyIP", IPAddress);
       				myAgent.setAttribute("replyPort", port);
 
-      				System.out.println("RECEIVED: "+IPAddress+"   " +port+"\n"+myUDPServerSocket.getLocalPort());
+//      				System.out.println("RECEIVED: "+IPAddress+"   " +port+"\n"+myUDPServerSocket.getLocalPort());
 				GamaMap<String, Object> m=(GamaMap<String, Object>) myAgent.getAttribute("messages"+myAgent);//GamaMap<String, IList<String>>
 				if(m==null){
 					m=GamaMapFactory.create();
