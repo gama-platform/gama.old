@@ -50,6 +50,7 @@ public class TCPConnector implements IConnector{
 		if (scope.getAgentScope().getAttribute("__server" + port) == null) {
 			try {
 				final ServerSocket sersock = new ServerSocket(port);
+				sersock.setSoTimeout(10);
 				final MultiThreadedSocketServer ssThread = new MultiThreadedSocketServer(scope.getAgentScope(),
 						sersock);
 				ssThread.start();
@@ -80,6 +81,8 @@ public class TCPConnector implements IConnector{
 //					final Integer serverPort = Cast.asInt(agent.getScope(), agent.getAttribute("port"));
 					
 					sock = new Socket(server, port);
+					sock.setSoTimeout(10);
+
 					ClientServiceThread cSock = new ClientServiceThread(agent, sock);
 					cSock.start();
 					agent.setAttribute("__socket", cSock);
@@ -166,7 +169,7 @@ public class TCPConnector implements IConnector{
 //		System.out.println("\n\n primGetFromClient "+"messages"+scope.getAgentScope()+"\n\n");
 
 		GamaMap<String, Object> m=(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages"+scope.getAgentScope());//(GamaMap<String, IList<String>>)
-		scope.getAgentScope().setAttribute("messages"+scope.getAgentScope(),GamaMapFactory.EMPTY_MAP);
+		scope.getAgentScope().setAttribute("messages"+scope.getAgentScope(),null);
 //		GamaList<String> msgs = (GamaList<String>) m.get(scope, cli);
 //
 //		receiveMessage = msgs.firstValue(scope);
@@ -218,7 +221,7 @@ public class TCPConnector implements IConnector{
 			sock = (Socket) c.getMyClientSocket();		
 		}
 		if( sock == null){
-			return GamaMapFactory.EMPTY_MAP; 
+			return null; 
 		}
 		try {
 //			System.out.println("\n\n primGetFromServer "+"messages"+scope.getAgentScope()+"\n\n");

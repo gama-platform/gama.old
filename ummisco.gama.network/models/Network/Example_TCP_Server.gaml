@@ -1,11 +1,11 @@
 /**
-* Name: MQQT_HelloWorld
+* Name: Socket_TCP_HelloWorld_Server
 * Author: Arnaud Grignard
-* Description: Two clients are communicated throught the MQQT protocol.
+* Description: Two clients are communicated throught the Socket TCP protocol.
 * Tags: Network, MQQT
 */
 
-model MQQT_HelloWorld
+model Socket_TCP_HelloWorld_Server
 
 global {	
 	list<string> clients <-["ping","pong"];

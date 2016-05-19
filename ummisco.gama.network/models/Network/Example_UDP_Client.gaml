@@ -1,11 +1,11 @@
 /**
-* Name: Socket_TCP_HelloWorld
+* Name: Socket_UDP_HelloWorld_Client
 * Author: Arnaud Grignard & HUYNH Quang-Nghi
 * Description: Two clients are communicated throught the Socket TCP protocol.
 * Tags: Network, Socket, TCP
 */
 
-model SocketTCP_HelloWorld
+model SocketTCP_HelloWorld_Client
 
 global {	
 
@@ -41,7 +41,7 @@ species NetworkingAgent skills:[network]{
 	}
 }
 
-experiment CLient_testdd type: gui {
+experiment Client_testdd type: gui {
 	output {
 	}
 }

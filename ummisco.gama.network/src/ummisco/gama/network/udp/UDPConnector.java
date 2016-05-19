@@ -41,7 +41,7 @@ public class UDPConnector implements IConnector{
 	//		System.out.println("\n\n primGetFromClient "+"messages"+agt+"\n\n");
 				
 				m=(GamaMap<String, Object>) agt.getAttribute("messages"+agt);
-				agt.setAttribute("messages",GamaMapFactory.EMPTY_MAP);
+				agt.setAttribute("messages",null);
 //		}else{
 //			try {
 //				byte[] sendData = new byte[1024];
@@ -81,6 +81,7 @@ public class UDPConnector implements IConnector{
 			if (agent.getScope().getAgentScope().getAttribute("__UDPserver" + port) == null) {
 				try {
 					final DatagramSocket sersock = new DatagramSocket(port);
+					sersock.setSoTimeout(10);
 					final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent,
 							sersock);
 					ssThread.start();
@@ -105,6 +106,7 @@ public class UDPConnector implements IConnector{
 
 				try {
 					final DatagramSocket sersock = new DatagramSocket();
+					sersock.setSoTimeout(10);
 					final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent, sersock);
 					ssThread.OnServer = false;
 					ssThread.start();

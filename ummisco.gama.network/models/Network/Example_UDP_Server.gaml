@@ -1,11 +1,11 @@
 /**
-* Name: Socket_TCP_HelloWorld
+* Name: Socket_UDP_HelloWorld_Server
 * Author: Arnaud Grignard & HUYNH Quang-Nghi
 * Description: Two clients are communicated throught the Socket TCP protocol.
 * Tags: Network, Socket, TCP
 */
 
-model SocketTCP_HelloWorld
+model SocketUDP_HelloWorld_Server
 
 global {	
 

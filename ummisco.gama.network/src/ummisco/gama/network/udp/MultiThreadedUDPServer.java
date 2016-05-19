@@ -10,6 +10,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
@@ -25,6 +26,7 @@ public class MultiThreadedUDPServer extends Thread {
 
 	private IAgent myAgent;
 	public boolean OnServer = true;
+	private boolean closed = false;
 	private DatagramSocket myUDPServerSocket;
 	private  DatagramPacket sendPacket = null;
 	public DatagramPacket getSendPacket() {
@@ -52,18 +54,8 @@ public class MultiThreadedUDPServer extends Thread {
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#interrupt()
 	 */
-	@Override
 	public void interrupt() {
-		super.interrupt();
-		try {
-			myAgent.setAttribute("__UDPserver"+ myUDPServerSocket.getLocalPort(), null);
-			myAgent.setAttribute("__UDPclient"+ myUDPServerSocket.getLocalPort(), null);
-			myUDPServerSocket.close();				
-
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		closed =true;
 	}
 
 
@@ -74,11 +66,14 @@ public class MultiThreadedUDPServer extends Thread {
 
 	public void run() {
 		// Successfully created Server Socket. Now wait for connections.
-		while (true) {
+		while (!closed) {
 			try {
 				if(sendPacket != null){
 					myUDPServerSocket.send(sendPacket);
 
+				}
+				if(myAgent.dead()){ 
+					this.interrupt();
 				}
 //				if(!OnServer){
 //					System.out.println("client      ");
@@ -131,6 +126,9 @@ public class MultiThreadedUDPServer extends Thread {
 //					}
 //				}
 
+			} catch(SocketTimeoutException ste){
+//				System.out.println("closed ");
+
 			} catch (Exception ioe) {
 
 				if (myUDPServerSocket.isClosed()) {
@@ -140,6 +138,19 @@ public class MultiThreadedUDPServer extends Thread {
 				}
 			}
 
+		}
+
+		try {
+			myAgent.setAttribute("__UDPserver"+ myUDPServerSocket.getLocalPort(), null);
+			myAgent.setAttribute("__UDPclient"+ myUDPServerSocket.getLocalPort(), null);
+			myUDPServerSocket.close();				
+			Thread.sleep(100);
+
+			Thread.currentThread().interrupt();
+
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 
