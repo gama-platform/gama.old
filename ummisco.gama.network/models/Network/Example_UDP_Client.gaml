@@ -12,7 +12,7 @@ global {
 	init
 	{
 		create NetworkingAgent number:1{
-		   do connect to:"localhost" protocol:"udp_server" port:9876 with_name:"Server";
+		   do connect to:"localhost" protocol:"udp_client" port:9876 with_name:"Client`";
 		}
 		
 	} 
@@ -35,13 +35,13 @@ species NetworkingAgent skills:[network]{
 	reflex send
 	{
 		
-			would_like_to_send<- "Server "+ name+", at cycle" + cycle + " sent to client:" + dest;
+			would_like_to_send<- "Client "+name+", at " + cycle + ", sent to server :" + dest;
 			
 			do send_message to:"id" content:would_like_to_send;
 	}
 }
 
-experiment Server_testdd type: gui {
+experiment CLient_testdd type: gui {
 	output {
 	}
 }
