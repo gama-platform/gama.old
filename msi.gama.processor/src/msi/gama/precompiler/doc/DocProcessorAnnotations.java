@@ -62,7 +62,7 @@ public class DocProcessorAnnotations {
 		org.w3c.dom.Element docElt = docElement;
 
 		if ( docAnnot == null ) {
-			mes.printMessage(Kind.ERROR, "The element __" + eltName + "__ is not documented.");
+			mes.printMessage(Kind.WARNING, "The element __" + eltName + "__ is not documented.");
 		} else {	
 			if(docElt == null){
 				docElt = doc.createElement(XMLElements.DOCUMENTATION);
