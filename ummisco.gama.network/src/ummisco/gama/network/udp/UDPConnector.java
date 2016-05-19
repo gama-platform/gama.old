@@ -101,21 +101,21 @@ public class UDPConnector implements IConnector{
 //			byte[] receiveData = new byte[1024];
 //			sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
 			
-				if (agent.getScope().getAgentScope().getAttribute("__UDPserver" + port) == null) {
+			if (agent.getScope().getAgentScope().getAttribute("__UDPclient" + port) == null) {
 
 				try {
 					final DatagramSocket sersock = new DatagramSocket();
-					final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent,
-							sersock);
+					final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent, sersock);
+					ssThread.OnServer = false;
 					ssThread.start();
 					agent.setAttribute("__UDPclient" + port, ssThread);
-	
+
 				} catch (BindException be) {
 					throw GamaRuntimeException.create(be, agent.getScope());
 				} catch (Exception e) {
 					throw GamaRuntimeException.create(e, agent.getScope());
 				}
-				}
+			}
 		}
 	}
 	@Override
@@ -124,17 +124,18 @@ public class UDPConnector implements IConnector{
 			int port = 		(int) agent.getAttribute("port");
 
 			MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute("__UDPserver" + port);
-			if(ssThread==null) {return;}
-			  InetAddress IPAddress =(InetAddress) agent.getAttribute("replyIP");
-              int replyport =Cast.asInt(agent.getScope(), agent.getAttribute("replyPort"));
-
+			InetAddress IPAddress =(InetAddress) agent.getAttribute("replyIP");
+			int replyport =Cast.asInt(agent.getScope(), agent.getAttribute("replyPort"));
+			if(ssThread==null ||  IPAddress == null ) {return;}
+              
 				byte[] sendData = new byte[1024];
 				sendData = ((String)data).getBytes();
               DatagramPacket sendPacket =
               new DatagramPacket(sendData, sendData.length, IPAddress, replyport);
               try {
-				ssThread.getMyServerSocket().send(sendPacket);
-			} catch (IOException e) {
+				ssThread.setSendPacket(sendPacket);
+//  				System.out.println("SENT: "+replyport);
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
@@ -143,11 +144,12 @@ public class UDPConnector implements IConnector{
 				
 			final Integer port = Cast.asInt(agent.getScope(), agent.getAttribute("port"));
 	
-	//		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute("__UDPserver" + port);
-	
+			MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute("__UDPclient" + port);
+			if(ssThread==null ) {return;}
+
 			try {
 	
-				DatagramSocket clientSocket = new DatagramSocket();
+				DatagramSocket clientSocket = ssThread.getMyServerSocket();
 				InetAddress IPAddress = InetAddress.getByName((String) agent.getAttribute(INetworkSkill.SERVER_URL));
 				
 				byte[] sendData = new byte[1024];

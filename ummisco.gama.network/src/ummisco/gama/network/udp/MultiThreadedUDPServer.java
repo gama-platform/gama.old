@@ -24,8 +24,17 @@ import ummisco.gama.network.skills.INetworkSkill;
 public class MultiThreadedUDPServer extends Thread {
 
 	private IAgent myAgent;
-	boolean ServerOn = true;
+	public boolean OnServer = true;
 	private DatagramSocket myUDPServerSocket;
+	private  DatagramPacket sendPacket = null;
+	public DatagramPacket getSendPacket() {
+		return sendPacket;
+	}
+
+	public void setSendPacket(DatagramPacket sendPacket) {
+		this.sendPacket = sendPacket;
+	}
+
 	/**
 	 * @return the myServerSocket
 	 */
@@ -48,6 +57,7 @@ public class MultiThreadedUDPServer extends Thread {
 		super.interrupt();
 		try {
 			myAgent.setAttribute("__UDPserver"+ myUDPServerSocket.getLocalPort(), null);
+			myAgent.setAttribute("__UDPclient"+ myUDPServerSocket.getLocalPort(), null);
 			myUDPServerSocket.close();				
 
 		} catch (Exception e) {
@@ -64,20 +74,27 @@ public class MultiThreadedUDPServer extends Thread {
 
 	public void run() {
 		// Successfully created Server Socket. Now wait for connections.
-		while (!myUDPServerSocket.isClosed()) {
+		while (true) {
 			try {
+				if(sendPacket != null){
+					myUDPServerSocket.send(sendPacket);
+
+				}
+				if(!OnServer){
+					System.out.println("client      ");
+				}
 				byte[] receiveData = new byte[1024];
 				byte[] sendData = new byte[1024];
 				// Accept incoming connections.
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				myUDPServerSocket.receive(receivePacket);
 				String sentence = new String(receivePacket.getData());
-//				System.out.println("RECEIVED: " + sentence);
 				  InetAddress IPAddress = receivePacket.getAddress();
                   int port = receivePacket.getPort();
     				myAgent.setAttribute("replyIP", IPAddress);
       				myAgent.setAttribute("replyPort", port);
 
+      				System.out.println("RECEIVED: "+IPAddress+"   " +port+"\n"+myUDPServerSocket.getLocalPort());
 				GamaMap<String, Object> m=(GamaMap<String, Object>) myAgent.getAttribute("messages"+myAgent);//GamaMap<String, IList<String>>
 				if(m==null){
 					m=GamaMapFactory.create();
