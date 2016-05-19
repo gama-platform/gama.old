@@ -12,4 +12,7 @@ public interface IConnector {
 	public void sendMessage(IAgent agent,String dest, Object  data) ;
 	public GamaMap<String, Object> fetchMessageBox(final IAgent agt);
 	public boolean emptyMessageBox(IAgent agt);
+	public void registerToGroup(final IAgent agt, final String groupName);
+	public void leaveTheGroup(final IAgent agt, final String groupName);
+	
 }

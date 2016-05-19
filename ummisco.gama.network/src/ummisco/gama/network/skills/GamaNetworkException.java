@@ -17,6 +17,10 @@ public class GamaNetworkException extends GamaRuntimeException {
 	{
 		return new GamaNetworkException(s, DISCONNECTION_FAILURE, false);
 	}
+	public static GamaNetworkException cannotBeConnectedFailure(IScope s)
+	{
+		return new GamaNetworkException(s, CONNECTION_FAILURE, false);
+	}
 	
 	/**
 	 * 

@@ -143,8 +143,17 @@ public class NetworkSkill  extends Skill {
 		return res; 
 
 	}
+	@action(name = INetworkSkill.RESGISTER_TO_GROUP, args = {
+	@arg(name = INetworkSkill.TO, type = IType.STRING, optional = true, doc = @doc("")) }, doc = @doc(value = "", returns = "", examples = {
+	@example("") }))
+	public void registerToGroup(final IScope scope)
+	{
+		IAgent agent = scope.getAgentScope();
+		String groupName = (String)scope.getArg(INetworkSkill.TO, IType.STRING);
+		
+	}
 	
-	public void closeAllConnection(IScope scope)
+	private void closeAllConnection(IScope scope)
 	{
 		for(IConnector connection:serverList.values())
 		{
