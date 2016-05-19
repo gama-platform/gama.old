@@ -21,6 +21,7 @@ public interface IExperimentController {
 	int _CLOSE = 5;
 	int _RELOAD = 6;
 	int _NEXT = 7;
+	int _BACK = 8;
 
 	/**
 	 * @return
@@ -36,6 +37,11 @@ public interface IExperimentController {
 	 *
 	 */
 	void userStep();
+	
+	/**
+	 *
+	 */
+	void stepBack();
 
 	/**
 	 *

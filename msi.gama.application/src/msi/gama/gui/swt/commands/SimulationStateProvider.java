@@ -46,10 +46,11 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 		if ( exp != null ) {
 			state = exp.getExperimentScope().getGui().getFrontmostSimulationState();
 		}
-		String type = exp == null ? "NONE" : exp.isBatch() ? "BATCH" : "REGULAR";
+		String type = exp == null ? "NONE" : exp.isBatch() ? "BATCH" : (exp.isMemorize() ? "MEMORIZE" : "REGULAR");
 		map.put(SIMULATION_RUNNING_STATE, state);
 		map.put(SIMULATION_TYPE, type);
 
+		System.out.println("state " + state + " --- type " + type);
 		return map;
 	}
 
@@ -60,7 +61,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 	public void updateStateTo(final String state) {
 		fireSourceChanged(ISources.WORKBENCH, SIMULATION_RUNNING_STATE, state);
 		IExperimentPlan exp = GAMA.getExperiment();
-		String type = exp == null ? "NONE" : exp.isBatch() ? "BATCH" : "REGULAR";
+		String type = exp == null ? "NONE" : exp.isBatch() ? "BATCH" : (exp.isMemorize() ? "MEMORIZE" : "REGULAR");
 		fireSourceChanged(ISources.WORKBENCH, SIMULATION_TYPE, type);
 	}
 

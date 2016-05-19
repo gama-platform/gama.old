@@ -110,14 +110,14 @@ public class SavedAgent {
 
 		return restoredAgents.get(0);
 	}
-
+	
 	/**
 	 *
 	 *
 	 * @param host
 	 * @throws GamaRuntimeException
 	 */
-	void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
+	public void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
 		if ( innerPopulations != null ) {
 			for ( final String microPopName : innerPopulations.keySet() ) {
 				final IPopulation microPop = ((IMacroAgent) host).getMicroPopulation(microPopName);

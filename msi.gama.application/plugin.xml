@@ -555,6 +555,30 @@
                   label="Step Experiment"
                   style="push"
                   tooltip="Advance the experiment step by step">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isSimulationReady">
+                  </reference>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="msi.gama.application.commands.StepBackSimulation"
+                  icon="icons/menu.stepBack1.png"
+                  label="Step Back Experiment"
+                  style="push"
+                  tooltip="Make One step back in the simulation">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isSimulationReady">
+                     </reference>
+                     <reference
+                           definitionId="isSimulationMemorize">
+                     </reference>
+                  </and>
+               </visibleWhen>
             </command>
             <separator
                   name="msi.gama.application.separator1"
@@ -875,6 +899,24 @@
                   <reference
                         definitionId="isSimulationReady">
                   </reference>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="msi.gama.application.commands.StepBackSimulation"
+                  icon="icons/menu.stepBack1.png"
+                  label="Step Back"
+                  style="push"
+                  tooltip="Make One step back in the simulation">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isSimulationReady">
+                     </reference>
+                     <reference
+                           definitionId="isSimulationMemorize">
+                     </reference>
+                  </and>
                </visibleWhen>
             </command>
             <control
@@ -1252,6 +1294,10 @@
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
+      <handler
+            class="msi.gama.gui.swt.commands.StepBackHandler"
+            commandId="msi.gama.application.commands.StepBackSimulation">
+      </handler>
       <handler
             class="msi.gama.gui.swt.commands.SwitchPerspectiveHandler"
             commandId="msi.gama.application.commands.SwitchPerspective">
@@ -1646,6 +1692,20 @@
             </with>
          </and>
       </definition>
+      <definition
+            id="isSimulationMemorize">
+         <and>
+            <reference
+                  definitionId="isInSimulationPerspective">
+            </reference>
+            <with
+                  variable="msi.gama.application.commands.SimulationType">
+               <equals
+                     value="MEMORIZE">
+               </equals>
+            </with>
+         </and>
+      </definition>
    </extension>
 
    <extension
@@ -1666,6 +1726,11 @@
             categoryId="msi.gama.category"
             id="msi.gama.application.commands.StepByStepSimulation"
             name="Next Step">
+      </command>
+      <command
+            categoryId="msi.gama.category"
+            id="msi.gama.application.commands.StepBackSimulation"
+            name="Previous Step ">
       </command>
       <command
             categoryId="msi.gama.category"

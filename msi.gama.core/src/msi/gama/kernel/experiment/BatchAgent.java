@@ -43,7 +43,7 @@ import msi.gaml.variables.IVariable;
  *
  */
 
-@experiment("batch")
+@experiment(IKeyword.BATCH)
 public class BatchAgent extends ExperimentAgent {
 
 	private final IExpression stopCondition;
