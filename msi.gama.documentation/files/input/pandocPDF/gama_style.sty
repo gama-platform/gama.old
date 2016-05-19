@@ -1,0 +1,72 @@
+\usepackage{listings}
+
+%\lstset{
+%basicstyle=\small\ttfamily,
+%columns=flexible,
+%breaklines=true,
+%    extendedchars=true,
+%    literate={á}{{\'a}}1 {ã}{{\~a}}1 {é}{{\'e}}1 {è}{{\`e}}1,
+%}
+
+% Define Colors
+\usepackage{color}
+\definecolor{eclipseBlue}{RGB}{42,0.0,255}
+\definecolor{eclipseGreen}{RGB}{63,127,95}
+\definecolor{eclipsePurple}{RGB}{127,0,85}
+\definecolor{vert}{RGB}{20,200,20}
+ 
+% Define Language
+\lstdefinelanguage{gaml}
+{
+  % list of statements
+  morekeywords={
+    import, model, global, species, grid, experiment, output, display, graphics, if, init, aspect, create,
+    int, float, rgb, string
+  },
+  %list of operators
+  morekeywords=[2]{
+    one_of, rnd, file, get
+  },  
+  sensitive=false, % keywords are not case-sensitive
+  morecomment=[l]{//}, % l is for line comment
+  morecomment=[s]{/*}{*/}, % s is for start and end delimiter
+  morestring=[b]" % defines that strings are enclosed in double quotes
+} 
+
+%  moredirectives={define,elif,else,endif,error,if,ifdef,ifndef,line,%
+%      include,pragma,undef,warning}
+      
+%   procnamekeys={report,program,form,function,module},%
+   
+%   morekeywords=[2]{.align
+   
+%      morendkeywords={True,False,Start,Int,Real,Char,Bool,String,World,%
+%      File,ProcId},%
+%   moredelim=*[directive]\#,%
+  
+%     alsoother={@},%
+%   alsoletter={\%~:-/},%
+
+ 
+% Set Language
+\lstset{
+  language={gaml},
+  basicstyle=\small\ttfamily, % Global Code Style
+  captionpos=b, % Position of the Caption (t for top, b for bottom)
+  extendedchars=true, % Allows 256 instead of 128 ASCII characters
+  tabsize=2, % number of spaces indented when discovering a tab 
+  columns=fixed, % make all characters equal width
+  keepspaces=true, % does not ignore spaces to fit width, convert tabs to spaces
+  showstringspaces=false, % lets spaces in strings appear as real spaces
+  breaklines=true, % wrap lines if they don't fit
+  frame=trbl, % draw a frame at the top, right, left and bottom of the listing
+  frameround=tttt, % make the frame round at all four corners
+  framesep=4pt, % quarter circle size of the round corners
+  numbers=left, % show line numbers at the left
+  numberstyle=\tiny\ttfamily, % style of the line numbers
+  commentstyle=\color{eclipseGreen}, % style of comments
+  keywordstyle=\color{eclipsePurple}, % style of keywords
+  keywordstyle={[2]\color{vert}}, % style of keywords
+  stringstyle=\color{eclipseBlue}, % style of strings
+}
+
