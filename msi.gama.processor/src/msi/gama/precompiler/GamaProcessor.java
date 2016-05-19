@@ -91,7 +91,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 public class GamaProcessor extends AbstractProcessor {
 
 	private GamlProperties gp;
-	private final boolean alwaysDoc = false;
+	private final boolean alwaysDoc = true;
 	private GamlDocProcessor docProc;
 	private TypeMirror iSkill, iAgent;
 	private static final Charset CHARSET = Charset.forName("UTF-8");

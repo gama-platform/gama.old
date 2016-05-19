@@ -247,7 +247,11 @@ public class DocProcessorAnnotations {
 		org.w3c.dom.Element constantElt = doc.createElement(XMLElements.CONSTANT);		
 		
 		constantElt.setAttribute(XMLElements.ATT_CST_NAME, PREFIX_CONSTANT+constant.value());
-		constantElt.setAttribute(XMLElements.ATT_CST_VALUE, ((VariableElement)e).getConstantValue().toString());
+//		constantElt.setAttribute(XMLElements.ATT_CST_VALUE, ((VariableElement)e).getConstantValue().toString());
+		Object valCst = ((VariableElement)e).getConstantValue();
+		String valCstStr = valCst == null ? "No Default Value" : valCst.toString();
+		constantElt.setAttribute(XMLElements.ATT_CST_VALUE, valCstStr);
+
 		
 		String names= "";
 		for(String n : constant.altNames()){names=("".equals(names)) ? PREFIX_CONSTANT+n : names+","+PREFIX_CONSTANT+n;}

@@ -56,7 +56,8 @@
 <xsl:template name="keyword">
    <xsl:param name="category"/>
    <xsl:param name="nameGAMLElement"/>
- 	<xsl:text>[//]: # (keyword|</xsl:text><xsl:value-of select="$category"/><xsl:text>_</xsl:text> <xsl:value-of select="$nameGAMLElement"/><xsl:text>)</xsl:text>
+ 	<xsl:text>
+[//]: # (keyword|</xsl:text><xsl:value-of select="$category"/><xsl:text>_</xsl:text> <xsl:value-of select="$nameGAMLElement"/><xsl:text>)</xsl:text>
 </xsl:template>
 
 
