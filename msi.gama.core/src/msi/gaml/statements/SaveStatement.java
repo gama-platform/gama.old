@@ -394,7 +394,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			fw.close();
 		} catch (final GamaRuntimeException e) {
 			throw e;
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
 
