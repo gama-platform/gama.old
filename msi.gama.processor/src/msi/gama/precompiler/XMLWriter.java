@@ -170,7 +170,7 @@ public class XMLWriter {
 //			docElt.setTextContent(e.getAnnotation(doc.class).value());
 //			skillElt.appendChild(docElt);
 //		} else {
-//			mes.printMessage(Kind.ERROR, "The skill __" + e.getAnnotation(skill.class).name() +
+//			mes.printMessage(Kind.WARNING, "The skill __" + e.getAnnotation(skill.class).name() +
 //				"__ is not described. Add a @doc block");
 //		}
 

@@ -144,7 +144,7 @@ public class GamaProcessor extends AbstractProcessor {
 				processConstants(env);
 				processPopulationsLinkers(env);
 			} catch (final Exception e) {
-				processingEnv.getMessager().printMessage(Kind.ERROR,
+				processingEnv.getMessager().printMessage(Kind.WARNING,
 						"An exception occured in the parsing of GAML annotations: " + e.getMessage());
 				throw e;
 			}
@@ -160,7 +160,7 @@ public class GamaProcessor extends AbstractProcessor {
 					new JavaWriter().write("gaml.additions", gp, sourceBuilder/* , docBuilder */);
 					source.append(sourceBuilder);
 				} catch (final Exception e) {
-					processingEnv.getMessager().printMessage(Kind.ERROR,
+					processingEnv.getMessager().printMessage(Kind.WARNING,
 							"An exception occured in the generation of Java files: " + e.getMessage());
 				}
 				try {
@@ -1009,7 +1009,7 @@ public class GamaProcessor extends AbstractProcessor {
 			// //if (!ok) {
 			//
 			// processingEnv.getMessager()
-			// .printMessage(Kind.ERROR, "GAML: constant '" + constant.value() +
+			// .printMessage(Kind.WARNING, "GAML: constant '" + constant.value() +
 			// "' cannot be instance of "
 			// + tm.toString() + ". The type of constants must be either a
 			// primitive type or String",

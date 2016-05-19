@@ -424,7 +424,7 @@ public class GamlDocProcessor {
 								// the same operator
 								if ( !e.getAnnotation(operator.class).value()[0]
 									.equals(altElt.getAttribute(XMLElements.ATT_OP_ALT_NAME)) ) {
-									mes.printMessage(Kind.ERROR,
+									mes.printMessage(Kind.WARNING,
 										"The alternative name __" + name + "__ is used for two different operators: " +
 											e.getAnnotation(operator.class).value()[0] + " and " +
 											altElt.getAttribute("alternativeNameOf"));
