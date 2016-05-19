@@ -38,14 +38,16 @@ global {
 		int initY <- int(height_of_environment / 8);
 		
 		//Create the other balls for the pool
-		create ball number: 0 {
+		create ball number: 15 {
 			location <- { initX + (i - deltaI) * 10, initY, 5.0 };
 			heading <- 90;
 			speed <- 0.0;
 			mass <- 3.0;
 			collisionBound <- ["shape"::"sphere", "radius"::5];
 			i <- i + 1;
+			
 			if ((i mod 2) = 0) {
+	
 				color <- #red;
 			} else {
 				color <- #yellow;
@@ -208,12 +210,9 @@ species ball skills: [physics] {
 	int size <- size_of_agents;
 	float speed <- speed_of_agents;
 	int heading <- rnd(359);
-	aspect default {
-		draw circle(10) color: color depth: 1;
-	}
 
 	aspect sphere {
-		draw sphere(5);
+		draw sphere(5) color:color;
 	}
 
 }

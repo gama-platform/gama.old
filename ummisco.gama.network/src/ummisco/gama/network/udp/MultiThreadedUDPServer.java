@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
@@ -63,15 +64,19 @@ public class MultiThreadedUDPServer extends Thread {
 
 	public void run() {
 		// Successfully created Server Socket. Now wait for connections.
-		byte[] receiveData = new byte[1024];
-        byte[] sendData = new byte[1024];
 		while (!myUDPServerSocket.isClosed()) {
 			try {
+				byte[] receiveData = new byte[1024];
+				byte[] sendData = new byte[1024];
 				// Accept incoming connections.
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				myUDPServerSocket.receive(receivePacket);
 				String sentence = new String(receivePacket.getData());
 //				System.out.println("RECEIVED: " + sentence);
+				  InetAddress IPAddress = receivePacket.getAddress();
+                  int port = receivePacket.getPort();
+    				myAgent.setAttribute("replyIP", IPAddress);
+      				myAgent.setAttribute("replyPort", port);
 
 				GamaMap<String, Object> m=(GamaMap<String, Object>) myAgent.getAttribute("messages"+myAgent);//GamaMap<String, IList<String>>
 				if(m==null){

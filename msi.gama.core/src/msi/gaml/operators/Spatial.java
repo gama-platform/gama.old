@@ -1549,6 +1549,10 @@ public abstract class Spatial {
 			if (g1 == null) {
 				return null;
 			}
+			if(new GamaPoint().equals(vector)==true)
+			{
+				return g1;
+			}
 			vector.y = -vector.y;// This ugly trick is used to ensure that the
 									// rotate facet and the rotated_by operator
 									// are coherent. (A.G 16/05/2016)

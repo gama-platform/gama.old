@@ -143,6 +143,13 @@ public class ExperimentScheduler implements Runnable {
 		lock.release();
 		startThread();
 	}
+	
+	// TODO : c'est moche ..... 
+	public void stepBack() {
+		paused = true;
+	//	lock.release();
+		experiment.getAgent().backward(scopes[0]);
+	}
 
 	public void start() {
 		paused = false;

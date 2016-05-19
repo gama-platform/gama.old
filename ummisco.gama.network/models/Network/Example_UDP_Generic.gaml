@@ -12,15 +12,9 @@ global {
 	init
 	{
 		create NetworkingAgent number:1{
-			would_like_to_send<- name+" " + cycle + " sent to " + dest;
 		   do connect to:"localhost" protocol:"udp_server" port:9876 with_name:"Server";
 		}
 		
-//		create NetworkingAgent number:1{
-//			would_like_to_send<-"I am Server " + name + " I give order to " ;		
-//			do connect to:"localhost" protocol:"tcp_client" port:"3001" with_name:"Client";
-//		}
-
 	} 
 }
 
@@ -40,10 +34,10 @@ species NetworkingAgent skills:[network]{
 	}
 	reflex send
 	{
-		loop id over:network_groups{
-			write id;
-			do send_message to:id content:would_like_to_send;
-		}
+		
+			would_like_to_send<- name+" " + cycle + " sent to " + dest;
+			
+			do send_message to:"id" content:would_like_to_send;
 	}
 }
 

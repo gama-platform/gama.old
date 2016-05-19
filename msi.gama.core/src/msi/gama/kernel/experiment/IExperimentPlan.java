@@ -73,6 +73,8 @@ public interface IExperimentPlan extends ISpecies {
 	public FileOutput getLog();
 
 	public abstract boolean isBatch();
+	
+	public abstract boolean isMemorize();
 
 	public abstract Map<String, Batch> getExplorableParameters();
 

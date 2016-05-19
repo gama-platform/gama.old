@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -21,6 +23,9 @@ import msi.gama.kernel.experiment.ActionExecuter;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.agent.SimulationScope;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
@@ -554,4 +559,49 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	}
 
+	public void updateWithSavedAgent(final IScope s, final SavedAgent sa) {
+		// Update Clock
+		Object cycle = sa.getAttributeValue("cycle");
+		System.out.println("cycle \t \n r : " + cycle);
+		clock.setCycle((Integer) cycle);
+		
+		// Update Attribute
+		
+		
+		
+		// Update innerPopulations
+		// TODO tout mettre dans une methode : 
+		// Add a boolean to this one :
+		// 	public void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
+
+		Map<String, List<SavedAgent>> inPop =  sa.getInnerPopulations();
+		
+		if ( inPop != null ) {
+			for ( final String microPopName : inPop.keySet() ) {
+				final IPopulation microPop = getMicroPopulation(microPopName);
+
+				if ( microPop != null ) {
+					// microPop.dispose();
+					microPop.killMembers();
+					microPop.clear();
+					// microPop.firePopulationCleared();
+					
+					final List<SavedAgent> savedMicros = inPop.get(microPopName);
+					final List<Map> microAttrs = new ArrayList<Map>();
+					for ( final SavedAgent saMic : savedMicros ) {
+						microAttrs.add(saMic.getVariables());
+					}
+
+					final List<? extends IAgent> microAgents =
+							microPop.createAgents(scope, savedMicros.size(), microAttrs, true, true);
+
+					for ( int i = 0; i < microAgents.size(); i++ ) {
+						savedMicros.get(i).restoreMicroAgents(scope, microAgents.get(i));
+					}
+				}
+			}
+		}		
+		
+	}
+	
 }

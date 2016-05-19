@@ -152,6 +152,16 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	@Override
+	public GamaPoint getTarget() {
+		return target;
+	}
+
+	@Override
+	public GamaPoint getOrientation() {
+		return upVector;
+	}
+
+	@Override
 	public void animate() {
 		renderer.getGlu().gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.x,
 				upVector.y, upVector.z);

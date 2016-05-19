@@ -272,6 +272,12 @@ public class GAMA {
 			controller.userStep();
 		}
 	}
+	
+	public static void stepBackFrontmostExperiment() {
+		for (final IExperimentController controller : controllers) {
+			controller.stepBack();
+		}
+	}
 
 	public static void pauseFrontmostExperiment() {
 		for (final IExperimentController controller : controllers) {
