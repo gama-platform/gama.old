@@ -45,5 +45,7 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	public abstract SimulationPopulation getSimulationPopulation();
 	
 	public boolean isMemorize() ;
+	
+	public boolean canStepBack();
 
 }

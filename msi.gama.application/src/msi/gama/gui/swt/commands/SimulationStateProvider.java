@@ -23,7 +23,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	public final static String SIMULATION_RUNNING_STATE = "msi.gama.application.commands.SimulationRunningState";
 	public final static String SIMULATION_TYPE = "msi.gama.application.commands.SimulationType";
-	public final static String SIMULATION_CYCLE = "msi.gama.application.commands.SimulationCycle";
+	public final static String SIMULATION_STEPBACK = "msi.gama.application.commands.SimulationStepBack";
 
 	private final static Map<String, String> map = new HashMap<>(3);
 
@@ -37,7 +37,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public String[] getProvidedSourceNames() {
-		return new String[] { SIMULATION_RUNNING_STATE, SIMULATION_TYPE, SIMULATION_CYCLE };
+		return new String[] { SIMULATION_RUNNING_STATE, SIMULATION_TYPE, SIMULATION_STEPBACK };
 	}
 
 	@Override
@@ -50,7 +50,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 		String type = exp == null ? "NONE" : exp.isBatch() ? "BATCH" : (exp.isMemorize() ? "MEMORIZE" : "REGULAR");
 		map.put(SIMULATION_RUNNING_STATE, state);
 		map.put(SIMULATION_TYPE, type);
-		map.put(SIMULATION_CYCLE, "ZERO");
+		map.put(SIMULATION_STEPBACK, "CANNOT_STEP_BACK");
 
 		return map;
 	}
@@ -65,16 +65,15 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 		String type = exp == null ? "NONE" : exp.isBatch() ? "BATCH" : (exp.isMemorize() ? "MEMORIZE" : "REGULAR");
 		fireSourceChanged(ISources.WORKBENCH, SIMULATION_TYPE, type);
 		
-		int cycle = -1;
+		String canStepBack = "CANNOT_STEP_BACK";
 		
 		if(exp != null) {
 			if(exp.getAgent() != null) {
-				cycle = exp.getAgent().getSimulation().getCycle( exp.getAgent().getScope() );
+				canStepBack = exp.getAgent().canStepBack() ? "CAN_STEP_BACK" : "CANNOT_STEP_BACK";
 			}
 		}
 		
-		String cc = cycle <= 0 ? "ZERO" : "MORE_THAN_ZERO" ;
-		fireSourceChanged (ISources.WORKBENCH, SIMULATION_CYCLE, cc);			
+		fireSourceChanged (ISources.WORKBENCH, SIMULATION_STEPBACK, canStepBack);			
 		
 	}
 

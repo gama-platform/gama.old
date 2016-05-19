@@ -700,8 +700,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	
 	@Override
 	public boolean isMemorize() {
-		System.out.println(" ************************** isMemorize() : FALSE ");		
 		return false;
 	}	
+	
+	@Override
+	public boolean canStepBack() {
+		return false;
+	}
 
 }
