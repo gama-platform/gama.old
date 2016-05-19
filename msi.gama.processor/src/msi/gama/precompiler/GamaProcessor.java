@@ -15,8 +15,8 @@ import static msi.gama.precompiler.GamlProperties.GAML;
 import static msi.gama.precompiler.JavaWriter.ACTION_PREFIX;
 import static msi.gama.precompiler.JavaWriter.CONSTANT_PREFIX;
 import static msi.gama.precompiler.JavaWriter.DISPLAY_PREFIX;
-import static msi.gama.precompiler.JavaWriter.EXPERIMENT_PREFIX;
 import static msi.gama.precompiler.JavaWriter.DOC_SEP;
+import static msi.gama.precompiler.JavaWriter.EXPERIMENT_PREFIX;
 import static msi.gama.precompiler.JavaWriter.FACTORY_PREFIX;
 import static msi.gama.precompiler.JavaWriter.FILE_PREFIX;
 import static msi.gama.precompiler.JavaWriter.IMPORTS;
@@ -28,6 +28,7 @@ import static msi.gama.precompiler.JavaWriter.SPECIES_PREFIX;
 import static msi.gama.precompiler.JavaWriter.SYMBOL_PREFIX;
 import static msi.gama.precompiler.JavaWriter.TYPE_PREFIX;
 import static msi.gama.precompiler.JavaWriter.VAR_PREFIX;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -43,7 +44,6 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.FilerException;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedSourceVersion;
@@ -55,10 +55,8 @@ import javax.lang.model.element.Modifier;
 import javax.lang.model.element.NestingKind;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.ArrayType;
 import javax.lang.model.type.MirroredTypeException;
 import javax.lang.model.type.MirroredTypesException;
-import javax.lang.model.type.PrimitiveType;
 import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic.Kind;
@@ -141,7 +139,7 @@ public class GamaProcessor extends AbstractProcessor {
 				processSymbols(env);
 				processVars(env);
 				processDisplays(env);
-				processExperiments(env);				
+				processExperiments(env);
 				processFiles(env);
 				processConstants(env);
 				processPopulationsLinkers(env);
@@ -152,7 +150,8 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 
 			final Writer gamlWriter = createWriter(GAML);
-			if(gamlWriter != null) gp.store(gamlWriter);
+			if (gamlWriter != null)
+				gp.store(gamlWriter);
 
 			final Writer source = createSourceWriter();
 			if (source != null) {
@@ -743,8 +742,8 @@ public class GamaProcessor extends AbstractProcessor {
 
 			gp.put(sb.toString(), ""); /* doc */
 		}
-	}	
-	
+	}
+
 	/**
 	 * Format : prefix 0.name 1.class 2.[species$]*
 	 * 
@@ -1002,18 +1001,21 @@ public class GamaProcessor extends AbstractProcessor {
 	public void processConstants(final RoundEnvironment env) {
 		for (final Element e : sortElements(env, constant.class)) {
 			final VariableElement ve = (VariableElement) e;
-			final TypeMirror tm = ve.asType();
-			boolean ok = tm instanceof PrimitiveType || tm instanceof ArrayType;
-			ok |= this.rawNameOf(tm).startsWith("String");
+			// final TypeMirror tm = ve.asType();
+			// boolean ok = tm instanceof PrimitiveType || tm instanceof
+			// ArrayType;
+			// ok |= this.rawNameOf(tm).startsWith("String");
 			final constant constant = ve.getAnnotation(constant.class);
-			if (!ok) {
-
-				processingEnv.getMessager()
-						.printMessage(Kind.ERROR, "GAML: constant '" + constant.value() + "' cannot be instance of "
-								+ tm.toString() + ". The type of constants must be either a primitive type or String",
-								e);
-
-			}
+			// //if (!ok) {
+			//
+			// processingEnv.getMessager()
+			// .printMessage(Kind.ERROR, "GAML: constant '" + constant.value() +
+			// "' cannot be instance of "
+			// + tm.toString() + ". The type of constants must be either a
+			// primitive type or String",
+			// e);
+			//
+			// }
 
 			final doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
 
@@ -1080,7 +1082,8 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createWriter(final String s) {
 		try {
-			final OutputStream output = processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null).openOutputStream();
+			final OutputStream output = processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null)
+					.openOutputStream();
 			final Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
 			return writer;
 		} catch (final Exception e) {

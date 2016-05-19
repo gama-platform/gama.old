@@ -47,6 +47,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.outputs.layers.OverlayLayer;
@@ -1078,6 +1079,21 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		if (currentScene == null)
 			return false;
 		return this.currentScene.cannotAdd();
+	}
+
+	@Override
+	public ILocation getCameraPos() {
+		return camera.getPosition();
+	}
+
+	@Override
+	public ILocation getCameraTarget() {
+		return camera.getTarget();
+	}
+
+	@Override
+	public ILocation getCameraOrientation() {
+		return camera.getOrientation();
 	}
 
 }

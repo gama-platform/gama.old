@@ -18,6 +18,7 @@ import java.awt.image.BufferedImage;
 
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.file.GamaFile;
@@ -41,12 +42,6 @@ public interface IGraphics {
 	public abstract int getDisplayWidth();
 
 	public abstract int getDisplayHeight();
-
-	// public abstract Rectangle2D drawGrid(final IScope scope, final
-	// BufferedImage img, final double[] gridValueMatrix,
-	// final boolean isTriangulated, final boolean isGrayScaled, final boolean
-	// isShowText, GamaColor gridColor,
-	// final Envelope3D cellSize, String name);
 
 	public abstract Rectangle2D drawFile(GamaFile file, FileDrawingAttributes attributes);
 
@@ -93,6 +88,12 @@ public interface IGraphics {
 	public double getYOffsetInPixels();
 
 	public abstract Double getZoomLevel();
+
+	public abstract ILocation getCameraPos();
+
+	public abstract ILocation getCameraTarget();
+
+	public abstract ILocation getCameraOrientation();
 
 	public abstract boolean is2D();
 

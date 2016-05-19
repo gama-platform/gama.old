@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Map;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.IConcept;
@@ -92,6 +93,21 @@ public class IUnits {
 	// doc = @doc("This unit, only available when running aspects or declaring
 	// displays, returns the height of the view in world units") )
 	// public final static double view_height = 1;
+
+	@constant(value = "camera_location", category = IConstantCategory.GRAPHIC, concept = { IConcept.GRAPHIC,
+			IConcept.GRAPHIC_UNIT,
+			IConcept.THREED }, doc = @doc("This unit, only available when running aspects or declaring displays, returns the current position of the camera as a point"))
+	public final static GamaPoint camera_location = GamaPoint.NULL_POINT;
+
+	@constant(value = "camera_location", category = IConstantCategory.GRAPHIC, concept = { IConcept.GRAPHIC,
+			IConcept.GRAPHIC_UNIT,
+			IConcept.THREED }, doc = @doc("This unit, only available when running aspects or declaring displays, returns the current target of the camera as a point"))
+	public final static GamaPoint camera_target = GamaPoint.NULL_POINT;
+
+	@constant(value = "camera_location", category = IConstantCategory.GRAPHIC, concept = { IConcept.GRAPHIC,
+			IConcept.GRAPHIC_UNIT,
+			IConcept.THREED }, doc = @doc("This unit, only available when running aspects or declaring displays, returns the current orientation of the camera as a point"))
+	public final static GamaPoint camera_orientation = GamaPoint.NULL_POINT;
 
 	@constant(value = "zoom", category = IConstantCategory.GRAPHIC, concept = { IConcept.GRAPHIC,
 			IConcept.DISPLAY }, doc = @doc("This unit, only available when running aspects or declaring displays, returns the current zoom level of the display as a positive float, where 1.0 represent the neutral zoom (100%)"))
