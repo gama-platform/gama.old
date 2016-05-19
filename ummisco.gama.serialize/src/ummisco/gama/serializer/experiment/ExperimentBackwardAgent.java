@@ -28,6 +28,23 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 		// history = new ArrayList<String>();
 		history = new THashMap<>();
 	}
+	
+	
+	/**
+	 * Redefinition of the callback method
+	 * 
+	 * @see msi.gama.metamodel.agent.GamlAgent#_init_(msi.gama.runtime.IScope)
+	 */
+	@Override
+	public Object _init_(final IScope scope) {
+		super._init_(scope);
+		// Save simulation state in the history
+		String state = ReverseOperators.serializeAgent( scope, this.getSimulation()) ;
+//		history.add(state);
+		history.put(0, state);
+		
+		return this;
+	}	
 
 
 	@Override
@@ -55,29 +72,31 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 			// executer.executeBeginActions();
 					
 			// TODO to correct in order to avoid stepping back on the same step
-			if(history.containsKey(currentCycle)) {
-				history.remove(currentCycle);
-			}
+	//		if(history.containsKey(currentCycle)) {
+	//			history.remove(currentCycle);
+	//		}
 			
-			String previousState = history.remove(currentCycle - 1);
+			String previousState = history.get(currentCycle - 1);
 			
-			ConverterScope cScope = new ConverterScope(scope);
-			XStream xstream = ReverseOperators.newXStream(cScope);
-
-			// get the previous state 
-			SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
-
-			// Update of the simulation
-			SimulationAgent currentSimAgt = getSimulation();
-			currentSimAgt.updateWithSavedAgent(scope, agt);
-			
-			
-			// executer.executeEndActions();
-			// executer.executeOneShotActions();
-			
-			final IOutputManager outputs = getSimulation().getOutputManager();
-			if (outputs != null) {
-				outputs.step(scope);
+			if(previousState != null ){			
+				ConverterScope cScope = new ConverterScope(scope);
+				XStream xstream = ReverseOperators.newXStream(cScope);
+	
+				// get the previous state 
+				SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
+	
+				// Update of the simulation
+				SimulationAgent currentSimAgt = getSimulation();
+				currentSimAgt.updateWithSavedAgent(scope, agt);
+				
+				
+				// executer.executeEndActions();
+				// executer.executeOneShotActions();
+				
+				final IOutputManager outputs = getSimulation().getOutputManager();
+				if (outputs != null) {
+					outputs.step(scope);
+				}
 			}
 		} finally {
 			// TODO a remettre
@@ -90,5 +109,11 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 	//		}
 		}
 		return result;	
+	}
+	
+	@Override
+	public boolean canStepBack() {
+		return history.get( getSimulation().getCycle(getSimulation().getScope()) - 1 ) != null;
+	// 	return ! history.isEmpty();
 	}
 }

@@ -1297,6 +1297,21 @@
       <handler
             class="msi.gama.gui.swt.commands.StepBackHandler"
             commandId="msi.gama.application.commands.StepBackSimulation">
+         <activeWhen>
+            <with
+                  variable="msi.gama.application.commands.SimulationStepBack">
+               <equals
+                     value="CAN_STEP_BACK">
+               </equals>
+            </with></activeWhen>
+         <enabledWhen>
+            <with
+                  variable="msi.gama.application.commands.SimulationStepBack">
+               <equals
+                     value="CAN_STEP_BACK">
+               </equals>
+            </with>
+         </enabledWhen>
       </handler>
       <handler
             class="msi.gama.gui.swt.commands.SwitchPerspectiveHandler"

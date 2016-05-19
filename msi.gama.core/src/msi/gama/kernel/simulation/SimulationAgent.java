@@ -562,7 +562,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public void updateWithSavedAgent(final IScope s, final SavedAgent sa) {
 		// Update Clock
 		Object cycle = sa.getAttributeValue("cycle");
-		System.out.println("cycle \t \n r : " + cycle);
 		clock.setCycle((Integer) cycle);
 		
 		// Update Attribute
