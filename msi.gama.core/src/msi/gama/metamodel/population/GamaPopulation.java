@@ -146,7 +146,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	protected GamaPopulation(final IMacroAgent host, final ISpecies species) {
 		super(0, host == null ? Types.get(IKeyword.EXPERIMENT)
-				: host.getScope().getModelContext().getTypeNamed(species.getName()));
+				: host.getModel().getDescription().getTypeNamed(species.getName()));
 		this.host = host;
 		this.species = species;
 		architecture = species.getArchitecture();
