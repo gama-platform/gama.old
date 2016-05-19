@@ -20,7 +20,7 @@
    </feature>
    <feature url="features/ummisco.gama.feature.opengl.jogl2_0.0.0.jar" id="ummisco.gama.feature.opengl.jogl2" version="0.0.0">
       <category name="gama.core"/>
-
+   </feature>
 
    <category-def name="gama.core" label="Core plugins of GAMA"/>
    <category-def name="gama.optional" label="Optional plugins of GAMA"/>
