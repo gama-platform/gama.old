@@ -14,19 +14,20 @@ import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.types.TypeNode;
+import msi.gaml.types.TypeTree;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 import ummisco.gama.serializer.gaml.ReverseOperators;
 
 @experiment(IKeyword.MEMORIZE)
 public class ExperimentBackwardAgent extends ExperimentAgent{
 
-//	ArrayList<String> history;
-	THashMap<Integer, String> history;
+	TypeTree<String> historyTree;
+	TypeNode<String> currentNode;
 	
 	public ExperimentBackwardAgent(IPopulation s) throws GamaRuntimeException {
 		super(s);	
-		// history = new ArrayList<String>();
-		history = new THashMap<>();
+		historyTree = new TypeTree<String>();
 	}
 	
 	
@@ -40,8 +41,9 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 		super._init_(scope);
 		// Save simulation state in the history
 		String state = ReverseOperators.serializeAgent( scope, this.getSimulation()) ;
-//		history.add(state);
-		history.put(0, state);
+		
+		historyTree.setRoot(state);
+		currentNode = historyTree.getRoot();		
 		
 		return this;
 	}	
@@ -54,8 +56,8 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 		
 		// Save simulation state in the history
 		String state = ReverseOperators.serializeAgent( scope, this.getSimulation()) ;
-//		history.add(state);
-		history.put(this.getSimulation().getCycle(scope), state);
+
+		currentNode = currentNode.addChild(state);
 		
 		return result;
 	}
@@ -72,12 +74,10 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 			// executer.executeBeginActions();
 					
 			// TODO to correct in order to avoid stepping back on the same step
-	//		if(history.containsKey(currentCycle)) {
-	//			history.remove(currentCycle);
-	//		}
 			
-			String previousState = history.get(currentCycle - 1);
-			
+			currentNode = currentNode.getParent();
+			String previousState = currentNode.getData();
+						
 			if(previousState != null ){			
 				ConverterScope cScope = new ConverterScope(scope);
 				XStream xstream = ReverseOperators.newXStream(cScope);
@@ -113,7 +113,6 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 	
 	@Override
 	public boolean canStepBack() {
-		return history.get( getSimulation().getCycle(getSimulation().getScope()) - 1 ) != null;
-	// 	return ! history.isEmpty();
+		return (currentNode != null ) && (currentNode.getParent() != null);
 	}
 }
