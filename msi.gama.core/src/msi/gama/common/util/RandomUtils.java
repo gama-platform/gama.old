@@ -12,10 +12,16 @@
 package msi.gama.common.util;
 
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
+
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.util.random.*;
+import msi.gama.util.random.CellularAutomatonRNG;
+import msi.gama.util.random.GamaRNG;
+import msi.gama.util.random.JavaRNG;
+import msi.gama.util.random.MersenneTwisterRNG;
 import msi.gaml.operators.fastmaths.FastMath;
 
 public class RandomUtils {
@@ -30,7 +36,7 @@ public class RandomUtils {
 
 	public static class State {
 
-		public State(final Double seed, final String generatorName, final long usage) {
+		public State(final Double seed, final String generatorName, final int usage) {
 			this.seed = seed;
 			this.generatorName = generatorName;
 			this.usage = usage;
@@ -38,7 +44,7 @@ public class RandomUtils {
 
 		Double seed;
 		String generatorName;
-		long usage;
+		int usage;
 
 	}
 
@@ -73,9 +79,9 @@ public class RandomUtils {
 	 * Inits the generator.
 	 */
 	private void initGenerator() {
-		if ( generatorName.equals(IKeyword.CELLULAR) ) {
+		if (generatorName.equals(IKeyword.CELLULAR)) {
 			generator = new CellularAutomatonRNG(this);
-		} else if ( generatorName.equals(IKeyword.JAVA) ) {
+		} else if (generatorName.equals(IKeyword.JAVA)) {
 			generator = new JavaRNG(this);
 		} else {
 			/* By default */
@@ -83,11 +89,21 @@ public class RandomUtils {
 		}
 	}
 
+	public void setUsage(final Integer usage) {
+		generator.setUsage(usage);
+	}
+
+	public Integer getUsage() {
+		return generator.getUsage();
+	}
+
 	/**
 	 * Creates a new Continuous Uniform Generator object.
 	 *
-	 * @param min the min
-	 * @param max the max
+	 * @param min
+	 *            the min
+	 * @param max
+	 *            the max
 	 *
 	 * @return the continuous uniform generator
 	 */
@@ -98,8 +114,10 @@ public class RandomUtils {
 	/**
 	 * Creates a new Gaussian Generator object.
 	 *
-	 * @param mean the mean
-	 * @param stdv the stdv
+	 * @param mean
+	 *            the mean
+	 * @param stdv
+	 *            the stdv
 	 *
 	 * @return the gaussian generator
 	 */
@@ -110,18 +128,20 @@ public class RandomUtils {
 	/**
 	 * Creates a new Binomial Generator object.
 	 *
-	 * @param n the n
-	 * @param p the p
+	 * @param n
+	 *            the n
+	 * @param p
+	 *            the p
 	 *
 	 * @return the binomial generator
 	 */
 	public int createBinomial(final int n, final double p) {
 
 		double value = p;
-		StringBuilder bits = new StringBuilder(64);
+		final StringBuilder bits = new StringBuilder(64);
 		double bitValue = 0.5d;
 		while (value > 0) {
-			if ( value >= bitValue ) {
+			if (value >= bitValue) {
 				bits.append('1');
 				value -= bitValue;
 			} else {
@@ -135,10 +155,10 @@ public class RandomUtils {
 		int totalSuccesses = 0;
 		int pIndex = pBits.getLength() - 1;
 		while (trials > 0 && pIndex >= 0) {
-			BitString bs = new BitString(trials, generator);
-			int successes = bs.countSetBits();
+			final BitString bs = new BitString(trials, generator);
+			final int successes = bs.countSetBits();
 			trials -= successes;
-			if ( pBits.getBit(pIndex) ) {
+			if (pBits.getBit(pIndex)) {
 				totalSuccesses += successes;
 			}
 			--pIndex;
@@ -150,7 +170,8 @@ public class RandomUtils {
 	/**
 	 * Creates a new Poisson Generator object.
 	 *
-	 * @param mean the mean
+	 * @param mean
+	 *            the mean
 	 *
 	 * @return the poisson generator
 	 */
@@ -160,7 +181,7 @@ public class RandomUtils {
 		double t = 0.0;
 		while (true) {
 			t -= FastMath.log(next()) / mean;
-			if ( t > 1.0 ) {
+			if (t > 1.0) {
 				break;
 			}
 			++x;
@@ -172,34 +193,35 @@ public class RandomUtils {
 	private byte[] createSeed(final Double s, final int length) {
 		this.seed = s;
 		Double realSeed = seed;
-		if ( realSeed < 0 ) {
+		if (realSeed < 0) {
 			realSeed *= -1;
 		}
-		if ( realSeed < 1 ) {
+		if (realSeed < 1) {
 			realSeed *= Long.MAX_VALUE;
 		}
 		long l = realSeed.longValue();
-		// System.out.println("Initial seed: " + seed + "; normalized seed: " + l);
+		// System.out.println("Initial seed: " + seed + "; normalized seed: " +
+		// l);
 
 		final byte[] result = new byte[length];
 		switch (length) {
-			case 4:
-				for ( int i1 = 0; i1 < 4; i1++ ) {
-					result[i1] = (byte) (l & 0xff);
-					l >>= 8;
-				}
-				break;
-			case 8:
-				for ( int i = 0; i < 8; i++ ) {
-					result[i] = (byte) l;
-					l >>= 8;
-				}
-				break;
-			case 16:
-				for ( int i = 0; i < 8; i++ ) {
-					result[i] = result[i + 8] = (byte) (l & 0xff);
-					l >>= 8;
-				}
+		case 4:
+			for (int i1 = 0; i1 < 4; i1++) {
+				result[i1] = (byte) (l & 0xff);
+				l >>= 8;
+			}
+			break;
+		case 8:
+			for (int i = 0; i < 8; i++) {
+				result[i] = (byte) l;
+				l >>= 8;
+			}
+			break;
+		case 16:
+			for (int i = 0; i < 8; i++) {
+				result[i] = result[i + 8] = (byte) (l & 0xff);
+				l >>= 8;
+			}
 		}
 		return result;
 	}
@@ -217,10 +239,10 @@ public class RandomUtils {
 
 	public void setSeed(final Double newSeed, final boolean init) {
 		seed = newSeed;
-		if ( seed == null ) {
+		if (seed == null) {
 			seed = SEED_SOURCE.nextDouble();
 		}
-		if ( init ) {
+		if (init) {
 			initGenerator();
 		}
 	}
@@ -228,23 +250,26 @@ public class RandomUtils {
 	/**
 	 * Sets the generator.
 	 *
-	 * @param newGen the new generator
+	 * @param newGen
+	 *            the new generator
 	 */
 	public void setGenerator(final String newGen, final boolean init) {
 		generatorName = newGen;
-		if ( init ) {
+		if (init) {
 			initGenerator();
 		}
 	}
 
 	public void shuffle2(final Set list) {
-		int size = list.size();
-		if ( size < 2 ) { return; }
+		final int size = list.size();
+		if (size < 2) {
+			return;
+		}
 		final Object[] a = list.toArray(new Object[size]);
 		list.clear();
-		for ( int i = 0; i < size; i++ ) {
-			int change = between(i, size - 1);
-			Object helper = a[i];
+		for (int i = 0; i < size; i++) {
+			final int change = between(i, size - 1);
+			final Object helper = a[i];
 			a[i] = a[change];
 			a[change] = helper;
 			list.add(a[i]);
@@ -252,7 +277,7 @@ public class RandomUtils {
 	}
 
 	public List shuffle(final List list) {
-		for ( int i = list.size(); i > 1; i-- ) {
+		for (int i = list.size(); i > 1; i--) {
 			final int i1 = i - 1;
 			final int j = between(0, i - 1);
 			final Object tmp = list.get(i1);
@@ -270,7 +295,7 @@ public class RandomUtils {
 
 	public <T> T[] shuffle(final T[] array) {
 		final T[] copy = array.clone();
-		for ( int i = array.length; i > 1; i-- ) {
+		for (int i = array.length; i > 1; i--) {
 			final int i1 = i - 1;
 			final int j = between(0, i - 1);
 			final T tmp = copy[i1];
@@ -293,16 +318,18 @@ public class RandomUtils {
 	}
 
 	/**
-	 * @return an uniformly distributed int random number in [min, max] respecting the step
+	 * @return an uniformly distributed int random number in [min, max]
+	 *         respecting the step
 	 */
 	public int between(final int min, final int max, final int step) {
-		int nbSteps = (max - min) / step;
+		final int nbSteps = (max - min) / step;
 		return min + between(0, nbSteps) * step;
 	}
 
 	public double between(final double min, final double max, final double step) {
-		// uniformly distributed double random number in [min, max] respecting the step
-		double val = between(min, max);
+		// uniformly distributed double random number in [min, max] respecting
+		// the step
+		final double val = between(min, max);
 		final int nbStep = (int) ((val - min) / step);
 		final double high = (int) (FastMath.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
 		final double low = (int) ((min + nbStep * step) * 1000000) / 1000000.0;
@@ -318,7 +345,7 @@ public class RandomUtils {
 	 * @return
 	 */
 	public double[] shuffle(final double[] array) {
-		for ( int i = array.length; i > 1; i-- ) {
+		for (int i = array.length; i > 1; i--) {
 			final int i1 = i - 1;
 			final int j = between(0, i - 1);
 			final double tmp = array[i1];
@@ -329,7 +356,7 @@ public class RandomUtils {
 	}
 
 	public int[] shuffle(final int[] array) {
-		for ( int i = array.length; i > 1; i-- ) {
+		for (int i = array.length; i > 1; i--) {
 			final int i1 = i - 1;
 			final int j = between(0, i - 1);
 			final int tmp = array[i1];
@@ -340,7 +367,7 @@ public class RandomUtils {
 	}
 
 	public char[] shuffle(final char[] array) {
-		for ( int i = array.length; i > 1; i-- ) {
+		for (int i = array.length; i > 1; i--) {
 			final int i1 = i - 1;
 			final int j = between(0, i - 1);
 			final char tmp = array[i1];
@@ -366,8 +393,8 @@ public class RandomUtils {
 
 	public static void drawRandomValues(final double min, final double max, final double step) {
 		System.out.println("Drawing 100 double between " + min + " and " + max + " step " + step);
-		RandomUtils r = new RandomUtils(100.0, "mersenne");
-		for ( int i = 0; i < 100; i++ ) {
+		final RandomUtils r = new RandomUtils(100.0, "mersenne");
+		for (int i = 0; i < 100; i++) {
 			final double val = r.between(min, max);
 			final int nbStep = (int) ((val - min) / step);
 			final double high = (int) (FastMath.min(max, min + (nbStep + 1.0) * step) * 1000000) / 1000000.0;
@@ -380,9 +407,9 @@ public class RandomUtils {
 
 	public static void drawRandomValues(final int min, final int max, final int step) {
 		System.out.println("Drawing 100 int between " + min + " and " + max + " step " + step);
-		RandomUtils r = new RandomUtils(100.0, "mersenne");
-		int nbSteps = (max - min) / step;
-		for ( int i = 0; i < 100; i++ ) {
+		final RandomUtils r = new RandomUtils(100.0, "mersenne");
+		final int nbSteps = (max - min) / step;
+		for (int i = 0; i < 100; i++) {
 			final int val = min + r.between(0, nbSteps) * step;
 			System.out.print(val);
 			System.out.print(" | ");
@@ -391,9 +418,9 @@ public class RandomUtils {
 	}
 
 	public static void main(final String[] args) {
-		RandomUtils r1 = new RandomUtils(100.0, "mersenne");
-		RandomUtils r2 = new RandomUtils(100.0, "m{ersenne");
-		for ( int i = 0; i < 2000; i++ ) {
+		final RandomUtils r1 = new RandomUtils(100.0, "mersenne");
+		final RandomUtils r2 = new RandomUtils(100.0, "m{ersenne");
+		for (int i = 0; i < 2000; i++) {
 			System.out.println("r1 " + r1.next() + " | r2 " + r2.next());
 		}
 		// drawRandomValues(-0.2, 0.2, 0.1);
@@ -423,12 +450,16 @@ public class RandomUtils {
 		private final int[] data;
 
 		/**
-		 * Creates a bit string of the specified length with all bits
-		 * initially set to zero (off).
-		 * @param length The number of bits.
+		 * Creates a bit string of the specified length with all bits initially
+		 * set to zero (off).
+		 * 
+		 * @param length
+		 *            The number of bits.
 		 */
 		public BitString(final int length) {
-			if ( length < 0 ) { throw new IllegalArgumentException("Length must be non-negative."); }
+			if (length < 0) {
+				throw new IllegalArgumentException("Length must be non-negative.");
+			}
 			this.length = length;
 			this.data = new int[(length + WORD_LENGTH - 1) / WORD_LENGTH];
 		}
@@ -439,39 +470,47 @@ public class RandomUtils {
 		 * from the provided RNG is also uniform). Using this constructor is
 		 * more efficient than creating a bit string and then randomly setting
 		 * each bit individually.
-		 * @param length The number of bits.
-		 * @param rng A source of randomness.
+		 * 
+		 * @param length
+		 *            The number of bits.
+		 * @param rng
+		 *            A source of randomness.
 		 */
 		public BitString(final int length, final Random rng) {
 			this(length);
-			// We can set bits 32 at a time rather than calling rng.nextBoolean()
+			// We can set bits 32 at a time rather than calling
+			// rng.nextBoolean()
 			// and setting each one individually.
-			for ( int i = 0; i < data.length; i++ ) {
+			for (int i = 0; i < data.length; i++) {
 				data[i] = rng.nextInt();
 			}
-			// If the last word is not fully utilised, zero any out-of-bounds bits.
+			// If the last word is not fully utilised, zero any out-of-bounds
+			// bits.
 			// This is necessary because the countSetBits() methods will count
 			// out-of-bounds bits.
-			int bitsUsed = length % WORD_LENGTH;
-			if ( bitsUsed < WORD_LENGTH ) {
-				int unusedBits = WORD_LENGTH - bitsUsed;
-				int mask = 0xFFFFFFFF >>> unusedBits;
-			data[data.length - 1] &= mask;
+			final int bitsUsed = length % WORD_LENGTH;
+			if (bitsUsed < WORD_LENGTH) {
+				final int unusedBits = WORD_LENGTH - bitsUsed;
+				final int mask = 0xFFFFFFFF >>> unusedBits;
+				data[data.length - 1] &= mask;
 			}
 		}
 
 		/**
-		 * Initialises the bit string from a character string of 1s and 0s
-		 * in big-endian order.
-		 * @param value A character string of ones and zeros.
+		 * Initialises the bit string from a character string of 1s and 0s in
+		 * big-endian order.
+		 * 
+		 * @param value
+		 *            A character string of ones and zeros.
 		 */
 		public BitString(final String value) {
 			this(value.length());
-			for ( int i = 0; i < value.length(); i++ ) {
-				if ( value.charAt(i) == '1' ) {
+			for (int i = 0; i < value.length(); i++) {
+				if (value.charAt(i) == '1') {
 					setBit(value.length() - (i + 1), true);
-				} else if ( value
-					.charAt(i) != '0' ) { throw new IllegalArgumentException("Illegal character at position " + i); }
+				} else if (value.charAt(i) != '0') {
+					throw new IllegalArgumentException("Illegal character at position " + i);
+				}
 			}
 		}
 
@@ -484,30 +523,39 @@ public class RandomUtils {
 
 		/**
 		 * Returns the bit at the specified index.
-		 * @param index The index of the bit to look-up (0 is the least-significant bit).
+		 * 
+		 * @param index
+		 *            The index of the bit to look-up (0 is the
+		 *            least-significant bit).
 		 * @return A boolean indicating whether the bit is set or not.
-		 * @throws IndexOutOfBoundsException If the specified index is not a bit
-		 *             position in this bit string.
+		 * @throws IndexOutOfBoundsException
+		 *             If the specified index is not a bit position in this bit
+		 *             string.
 		 */
 		public boolean getBit(final int index) {
 			assertValidIndex(index);
-			int word = index / WORD_LENGTH;
-			int offset = index % WORD_LENGTH;
+			final int word = index / WORD_LENGTH;
+			final int offset = index % WORD_LENGTH;
 			return (data[word] & 1 << offset) != 0;
 		}
 
 		/**
 		 * Sets the bit at the specified index.
-		 * @param index The index of the bit to set (0 is the least-significant bit).
-		 * @param set A boolean indicating whether the bit should be set or not.
-		 * @throws IndexOutOfBoundsException If the specified index is not a bit
-		 *             position in this bit string.
+		 * 
+		 * @param index
+		 *            The index of the bit to set (0 is the least-significant
+		 *            bit).
+		 * @param set
+		 *            A boolean indicating whether the bit should be set or not.
+		 * @throws IndexOutOfBoundsException
+		 *             If the specified index is not a bit position in this bit
+		 *             string.
 		 */
 		public void setBit(final int index, final boolean set) {
 			assertValidIndex(index);
-			int word = index / WORD_LENGTH;
-			int offset = index % WORD_LENGTH;
-			if ( set ) {
+			final int word = index / WORD_LENGTH;
+			final int offset = index % WORD_LENGTH;
+			if (set) {
 				data[word] |= 1 << offset;
 			} else // Unset the bit.
 			{
@@ -517,12 +565,16 @@ public class RandomUtils {
 
 		/**
 		 * Helper method to check whether a bit index is valid or not.
-		 * @param index The index to check.
-		 * @throws IndexOutOfBoundsException If the index is not valid.
+		 * 
+		 * @param index
+		 *            The index to check.
+		 * @throws IndexOutOfBoundsException
+		 *             If the index is not valid.
 		 */
 		private void assertValidIndex(final int index) {
-			if ( index >= length || index < 0 ) { throw new IndexOutOfBoundsException(
-				"Invalid index: " + index + " (length: " + length + ")"); }
+			if (index >= length || index < 0) {
+				throw new IndexOutOfBoundsException("Invalid index: " + index + " (length: " + length + ")");
+			}
 		}
 
 		/**
@@ -530,10 +582,11 @@ public class RandomUtils {
 		 */
 		public int countSetBits() {
 			int count = 0;
-			for ( int x : data ) {
+			for (int x : data) {
 				while (x != 0) {
 					x &= x - 1; // Unsets the least significant on bit.
-					++count; // Count how many times we have to unset a bit before x equals zero.
+					++count; // Count how many times we have to unset a bit
+								// before x equals zero.
 				}
 			}
 			return count;

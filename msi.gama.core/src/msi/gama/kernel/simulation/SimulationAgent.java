@@ -24,7 +24,6 @@ import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.agent.SimulationScope;
 import msi.gama.metamodel.population.GamaPopulation;
@@ -80,6 +79,7 @@ import msi.gaml.types.IType;
 		@var(name = IKeyword.STEP, type = IType.FLOAT, doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles", comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
 		@var(name = SimulationAgent.TIME, type = IType.FLOAT, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
 		@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")),
+		@var(name = SimulationAgent.USAGE, type = IType.INT, doc = @doc("Returns the number of times the random number generator of the simulation has been drawn")),
 		@var(name = SimulationAgent.PAUSED, type = IType.BOOL, doc = @doc("Returns the current pausing state of the simulation")),
 		@var(name = SimulationAgent.DURATION, type = IType.STRING, doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
 		@var(name = SimulationAgent.TOTAL_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
@@ -98,6 +98,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public static final String CURRENT_DATE = "current_date";
 	public static final String STARTING_DATE = "starting_date";
 	public static final String PAUSED = "paused";
+	public static final String USAGE = "rng_usage";
 
 	final SimulationClock clock;
 	GamaColor color;
@@ -228,7 +229,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			return;
 		}
 		executer.executeDisposeActions();
-		
+
 		super.dispose();
 
 		// hqnghi if simulation come from popultion extern, dispose pop first
@@ -455,8 +456,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 							+ this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
 					newOutputName = keyName;
 				} else {
-					final String postfix = " (Simulation " + getIndex() + " of " + getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, "")
-							+ ")";
+					final String postfix = " (Simulation " + getIndex() + " of "
+							+ getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, "") + ")";
 					keyName = entry.getKey() + postfix;
 					newOutputName = output.getName() + postfix;
 				}
@@ -483,6 +484,21 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	 */
 	public void addOutput(final IOutput output) {
 		outputs.addOutput(output);
+	}
+
+	@getter(value = SimulationAgent.USAGE, initializer = false)
+	public Integer getUsage() {
+		final Integer usage = random.getUsage();
+		return usage == null ? 0 : usage;
+	}
+
+	@setter(SimulationAgent.USAGE)
+	public void setUsage(final Integer s) {
+		Integer usage = s;
+		if (s == null) {
+			usage = 0;
+		}
+		getRandomGenerator().setUsage(usage);
 	}
 
 	@getter(value = IKeyword.SEED, initializer = true)
@@ -561,46 +577,45 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public void updateWithSavedAgent(final IScope s, final SavedAgent sa) {
 		// Update Clock
-		Object cycle = sa.getAttributeValue("cycle");
+		final Object cycle = sa.getAttributeValue("cycle");
 		clock.setCycle((Integer) cycle);
-		
-		// Update Attribute
-		
-		
-		
-		// Update innerPopulations
-		// TODO tout mettre dans une methode : 
-		// Add a boolean to this one :
-		// 	public void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
 
-		Map<String, List<SavedAgent>> inPop =  sa.getInnerPopulations();
-		
-		if ( inPop != null ) {
-			for ( final String microPopName : inPop.keySet() ) {
+		// Update Attribute
+
+		// Update innerPopulations
+		// TODO tout mettre dans une methode :
+		// Add a boolean to this one :
+		// public void restoreMicroAgents(final IScope scope, final IAgent host)
+		// throws GamaRuntimeException {
+
+		final Map<String, List<SavedAgent>> inPop = sa.getInnerPopulations();
+
+		if (inPop != null) {
+			for (final String microPopName : inPop.keySet()) {
 				final IPopulation microPop = getMicroPopulation(microPopName);
 
-				if ( microPop != null ) {
+				if (microPop != null) {
 					// microPop.dispose();
 					microPop.killMembers();
 					microPop.clear();
 					// microPop.firePopulationCleared();
-					
+
 					final List<SavedAgent> savedMicros = inPop.get(microPopName);
 					final List<Map> microAttrs = new ArrayList<Map>();
-					for ( final SavedAgent saMic : savedMicros ) {
+					for (final SavedAgent saMic : savedMicros) {
 						microAttrs.add(saMic.getVariables());
 					}
 
-					final List<? extends IAgent> microAgents =
-							microPop.createAgents(scope, savedMicros.size(), microAttrs, true, true);
+					final List<? extends IAgent> microAgents = microPop.createAgents(scope, savedMicros.size(),
+							microAttrs, true, true);
 
-					for ( int i = 0; i < microAgents.size(); i++ ) {
+					for (int i = 0; i < microAgents.size(); i++) {
 						savedMicros.get(i).restoreMicroAgents(scope, microAgents.get(i));
 					}
 				}
 			}
-		}		
-		
+		}
+
 	}
-	
+
 }

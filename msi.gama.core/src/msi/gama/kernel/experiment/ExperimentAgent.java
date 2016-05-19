@@ -80,6 +80,7 @@ import msi.gaml.types.Types;
 				+ IKeyword.CELLULAR
 				+ " is a cellular automaton based generator that should be a bit faster, but less reliable; and "
 				+ IKeyword.JAVA + " invokes the standard Java generator")),
+		@var(name = SimulationAgent.USAGE, type = IType.INT, doc = @doc("Returns the number of times the random number generator of the experiment has been drawn")),
 		@var(name = ExperimentAgent.MINIMUM_CYCLE_DURATION, type = IType.FLOAT, doc = @doc(value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')", comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process")),
 		@var(name = ExperimentAgent.WORKSPACE_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the workspace of GAMA", comment = "Always terminated with a trailing separator")),
 		@var(name = ExperimentAgent.PROJECT_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the project in which the current model is located", comment = "Always terminated with a trailing separator")) })
@@ -418,6 +419,21 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		getRandomGenerator().setSeed(seed, true);
 	}
 
+	@getter(value = SimulationAgent.USAGE, initializer = false)
+	public Integer getUsage() {
+		final Integer usage = random.getUsage();
+		return usage == null ? 0 : usage;
+	}
+
+	@setter(SimulationAgent.USAGE)
+	public void setUsage(final Integer s) {
+		Integer usage = s;
+		if (s == null) {
+			usage = 0;
+		}
+		getRandomGenerator().setUsage(usage);
+	}
+
 	@getter(value = IKeyword.RNG, initializer = true)
 	public String getRng() {
 		return getRandomGenerator().getRngName();
@@ -513,8 +529,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public boolean backward(final IScope scope) {
 		throw new NullPointerException();
-	}	
-	
+	}
+
 	/**
 	 *
 	 * The class ExperimentAgentScope. A "pass through" class used when the
@@ -697,12 +713,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		executer.executeOneAction(executable);
 
 	}
-	
+
 	@Override
 	public boolean isMemorize() {
 		return false;
-	}	
-	
+	}
+
 	@Override
 	public boolean canStepBack() {
 		return false;
