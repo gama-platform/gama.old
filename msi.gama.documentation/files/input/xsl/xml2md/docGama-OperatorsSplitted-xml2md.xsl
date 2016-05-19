@@ -5,12 +5,14 @@
 <xsl:variable name="smallcase" select="'abcdefghijklmnopqrstuvwxyz'" />
 <xsl:variable name="uppercase" select="'ABCDEFGHIJKLMNOPQRSTUVWXYZ'" />
 
-<xsl:variable name="fileAK" select="'OperatorsAK'"/>
-<xsl:variable name="fileLZ" select="'OperatorsLZ'"/>
+<xsl:variable name="fileAC" select="'OperatorsAC'"/>
+<xsl:variable name="fileDM" select="'OperatorsDM'"/>
+<xsl:variable name="fileNZ" select="'OperatorsNZ'"/>
 <xsl:variable name="alphabetID" select="'*'"/>
 <xsl:variable name="fileName" select="'Operators'"/>
-<xsl:variable name="ak" select="'ak'"/>
-<xsl:variable name="lz" select="'lz'"/>
+<xsl:variable name="ac" select="'ac'"/>
+<xsl:variable name="dm" select="'dm'"/>
+<xsl:variable name="nz" select="'nz'"/>
 
 <xsl:template match="/">
  	<xsl:text>#</xsl:text> <xsl:value-of select="$fileName"/> <xsl:text>
@@ -111,7 +113,17 @@ Note that due to the fact that actions are written by modelers, the general func
 <xsl:template name="buildOperatorsByName">
 	<xsl:for-each select="/doc/operators/operator"> 
 		<xsl:sort select="@name" />
-			<xsl:text>[</xsl:text><xsl:value-of select="@name"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="@alphabetOrder = $ak"><xsl:value-of select="$fileAK"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileLZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text> <xsl:value-of select="translate(@name, $uppercase, $smallcase)"/> <xsl:text> </xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 	
+			<xsl:text>[</xsl:text><xsl:value-of select="@name"/><xsl:text>](</xsl:text><xsl:choose>
+				<xsl:when test="@alphabetOrder = $ac">
+					<xsl:value-of select="$fileAC"/>
+				</xsl:when>
+				<xsl:when test="@alphabetOrder = $dm">
+					<xsl:value-of select="$fileDM"/>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="$fileNZ"/>
+				</xsl:otherwise>
+				</xsl:choose><xsl:text>#</xsl:text> <xsl:value-of select="translate(@name, $uppercase, $smallcase)"/> <xsl:text> </xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 	
 	</xsl:for-each>
 </xsl:template>
  
@@ -132,7 +144,17 @@ Note that due to the fact that actions are written by modelers, the general func
 			<xsl:for-each select="operatorCategories/category">
 				<xsl:variable name="catItem" select="@id"/>
 				<xsl:if test="$catItem = $categoryGlobal "> 
-					<xsl:text>[</xsl:text><xsl:value-of select="$nameOp"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="$alphabetOrderOp = $ak"><xsl:value-of select="$fileAK"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileLZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate($nameOp, $uppercase, $smallcase)"/><xsl:text>), </xsl:text> 
+					<xsl:text>[</xsl:text><xsl:value-of select="$nameOp"/><xsl:text>](</xsl:text><xsl:choose>
+					<xsl:when test="$alphabetOrderOp = $ac">
+						<xsl:value-of select="$fileAC"/>
+					</xsl:when>
+					<xsl:when test="$alphabetOrderOp = $dm">
+						<xsl:value-of select="$fileDM"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$fileNZ"/>
+					</xsl:otherwise>
+					</xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate($nameOp, $uppercase, $smallcase)"/><xsl:text>), </xsl:text> 
 				</xsl:if>			
 			</xsl:for-each>
 		</xsl:for-each>    	
@@ -153,7 +175,7 @@ Note that due to the fact that actions are written by modelers, the general func
   	<xsl:if test="@alternativeNameOf">
   		<xsl:variable name="nameOpAlt" select="@alternativeNameOf"/>  	
 <xsl:text>
-Same signification as [</xsl:text><xsl:value-of select="@alternativeNameOf"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="/doc/operators/operator[@id = $nameOpAlt]/@alphabetOrder = $ak"><xsl:value-of select="$fileAK"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileLZ"/></xsl:otherwise></xsl:choose>#<xsl:value-of select="@alternativeNameOf"/><xsl:text>)</xsl:text>
+Same signification as [</xsl:text><xsl:value-of select="@alternativeNameOf"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="/doc/operators/operator[@id = $nameOpAlt]/@alphabetOrder = $ac"><xsl:value-of select="$fileAC"/></xsl:when><xsl:when test="/doc/operators/operator[@id = $nameOpAlt]/@alphabetOrder = $dm"><xsl:value-of select="$fileDM"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileNZ"/></xsl:otherwise></xsl:choose>#<xsl:value-of select="@alternativeNameOf"/><xsl:text>)</xsl:text>
   	</xsl:if>
   	
   	<xsl:if test="combinaisonIO[node()]">
@@ -206,7 +228,7 @@ Same signification as [</xsl:text><xsl:value-of select="@alternativeNameOf"/><xs
 #### See also: 
 <xsl:for-each select="documentation/seeAlso/see">
   	<xsl:variable name="idOpSee" select="@id"/>
-  <xsl:text>[</xsl:text><xsl:value-of select="@id"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $ak"><xsl:value-of select="$fileAK"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileLZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate(@id, $uppercase, $smallcase)"/><xsl:text>), </xsl:text> </xsl:for-each>
+  <xsl:text>[</xsl:text><xsl:value-of select="@id"/><xsl:text>](</xsl:text><xsl:choose><xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $ac"><xsl:value-of select="$fileAC"/></xsl:when><xsl:when test="/doc/operators/operator[@id = $idOpSee]/@alphabetOrder = $dm"><xsl:value-of select="$fileDM"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileNZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text><xsl:value-of select="translate(@id, $uppercase, $smallcase)"/><xsl:text>), </xsl:text> </xsl:for-each>
   </xsl:if>
   
   <xsl:if test="documentation/examples[node()]">

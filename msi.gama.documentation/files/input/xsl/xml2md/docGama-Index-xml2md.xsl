@@ -3,8 +3,9 @@
 <xsl:import href="docGama-utils-xml2md.xsl"/>
 
 
-<xsl:variable name="fileOperatorsAK" select="'OperatorsAK'"/>
-<xsl:variable name="fileOperatorsLZ" select="'OperatorsLZ'"/>
+<xsl:variable name="fileOperatorsAC" select="'OperatorsAC'"/>
+<xsl:variable name="fileOperatorsDM" select="'OperatorsDM'"/>
+<xsl:variable name="fileOperatorsNZ" select="'OperatorsNZ'"/>
 <xsl:variable name="fileStatements" select="'Statements'"/>
 <xsl:variable name="fileUnitsConstants" select="'UnitsAndConstants'"/>
 <xsl:variable name="fileControl" select="'BuiltInControlArchitectures'"/>
@@ -24,7 +25,7 @@
 ## Operators
 <xsl:for-each select="/doc/operators/operator"> 
 			<xsl:sort select="@name" />
-			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:choose><xsl:when test="@alphabetOrder = 'ak'"><xsl:value-of select="$fileOperatorsAK"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileOperatorsLZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
+			<xsl:text>[</xsl:text> <xsl:value-of select="@name"/> <xsl:text>](</xsl:text><xsl:choose><xsl:when test="@alphabetOrder = 'ac'"><xsl:value-of select="$fileOperatorsAC"/></xsl:when><xsl:when test="@alphabetOrder = 'dm'"><xsl:value-of select="$fileOperatorsDM"/></xsl:when><xsl:otherwise><xsl:value-of select="$fileOperatorsNZ"/></xsl:otherwise></xsl:choose><xsl:text>#</xsl:text> <xsl:value-of select="@name"/> <xsl:text>), </xsl:text> 
 	</xsl:for-each>
 			  	
 ----

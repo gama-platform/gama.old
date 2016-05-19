@@ -47,11 +47,14 @@ public class XmlToWiki {
 				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-Operators-xml2md.xsl",
 				Constants.XML2WIKI_FOLDER + File.separator + "Operators"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAK-xml2md.xsl",
-				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsAK"+suffix+".md");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsAC-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsAC"+suffix+".md");
 		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
-				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsLZ-xml2md.xsl",
-				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsLZ"+suffix+".md");
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsDM-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsDM"+suffix+".md");
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-OperatorsNZ-xml2md.xsl",
+				Constants.WIKI_FOLDER_WIKI_ONLY + File.separator + "OperatorsNZ"+suffix+".md");
 		System.out.println("Done");			
 		//
 		System.out.print("Creation of the wiki page for Statements.....");		

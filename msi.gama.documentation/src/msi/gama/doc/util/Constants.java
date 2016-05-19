@@ -74,8 +74,8 @@ public class Constants {
 //	public static String ADR_SVNGAMA = "http://gama-platform.googlecode.com/svn/wiki";
 	
 	// Commandes
-	public static String CMD_PANDOC = "/usr/local/bin/pandoc";
-	public static String CMD_PDFLATEX = "/Library/TeX/Root/bin/universal-darwin/pdflatex";
+	public static String CMD_PANDOC = "C:/Users/Julien/AppData/Local/Pandoc/pandoc";
+	public static String CMD_PDFLATEX = "\"C:/Program Files/MiKTeX 2.9/miktex/bin/x64/xelatex\"";
 	
 	// Path
 	public static String PATH = "PATH=/usr/local/bin/:${PATH}";
