@@ -202,7 +202,7 @@ public class DrawStatement extends AbstractStatementSequence {
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final IGraphics g = scope.getGraphics();
-		if (g == null) {
+		if (g == null || g.cannotDraw()) {
 			return null;
 		}
 		try {

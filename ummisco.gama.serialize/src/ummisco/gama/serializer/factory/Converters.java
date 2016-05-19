@@ -24,12 +24,11 @@ import ummisco.gama.serializer.gamaType.converters.SavedAgentConverterNetwork;
 
 public abstract class Converters {
 
-	private static Converter[] converters=null;
 	
-	private static void loadConverter(IScope scope)
+	private static Converter[] loadConverter(IScope scope)
 	{
 		ConverterScope cs = new ConverterScope(scope);
-		converters= new Converter[13];
+		 Converter[] converters= new Converter[11];
 		converters[0]= new GamaBasicTypeConverter(cs);
 		converters[1]=new GamaAgentConverterNetwork(cs);
 		converters[2]=new GamaListConverter(cs);
@@ -42,16 +41,15 @@ public abstract class Converters {
 		converters[8]=new GamaGraphConverter(cs);
 		converters[9]=new LogConverter();
 		converters[10]=new SavedAgentConverterNetwork(cs);
-		converters[11]=new LogConverter();
-		converters[12]=new LogConverter();
+		return converters;
+
 	}
 	
 	
 	public static Converter[] converterFactory(IScope scope)
 	{
-		//if(converters==null)
-			loadConverter(scope);
-		return converters;
+		
+		return loadConverter(scope);
 	}
 	
 }

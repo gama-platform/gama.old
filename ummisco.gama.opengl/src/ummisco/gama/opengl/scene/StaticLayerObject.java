@@ -51,34 +51,6 @@ public class StaticLayerObject extends LayerObject {
 	public void clear(final GL gl) {
 	}
 
-	public static class WaitingLayerObject extends StaticLayerObject {
-
-		public WaitingLayerObject(final JOGLRenderer renderer) {
-			super(renderer);
-			setAlpha(WORLD_ALPHA);
-			setOffset(WORLD_OFFSET);
-			setScale(WORLD_SCALE);
-		}
-
-		@Override
-		public void draw(final GL2 gl, final JOGLRenderer renderer) {
-			super.draw(gl, renderer);
-
-			gl.glDisable(GL.GL_BLEND);
-			renderer.setCurrentColor(gl, Color.black);
-			// GLUtilGLContext.SetCurrentColor(gl, 0.0f, 0.0f, 0.0f, 1.0f);
-			gl.glRasterPos3d(-renderer.getDisplayWidth() / 10d, renderer.getHeight() / 10d, 0);
-			gl.glScaled(8.0d, 8.0d, 8.0d);
-			final GLUT glut = new GLUT();
-			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "Loading...");
-			gl.glScaled(0.5d, 0.5d, 0.5d);
-			gl.glEnable(GL.GL_BLEND);
-			renderer.setCurrentColor(gl, Color.white);
-			// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f, 1.0f);
-		}
-
-	}
-
 	public static class WordLayerObject extends StaticLayerObject {
 
 		private final double startTime;

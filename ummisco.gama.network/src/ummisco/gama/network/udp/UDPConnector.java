@@ -1,17 +1,25 @@
 package ummisco.gama.network.udp;
 
+import java.io.IOException;
 import java.net.BindException;
+import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.ServerSocket;
+import java.net.SocketException;
 import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.operators.Cast;
+import ummisco.gama.network.skills.GamaNetworkException;
 import ummisco.gama.network.skills.IConnector;
+import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.network.tcp.MultiThreadedSocketServer;
 
 public class UDPConnector implements IConnector{
@@ -26,12 +34,35 @@ public class UDPConnector implements IConnector{
 	
 	@Override
 	public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
-		final String cli;
-		String receiveMessage = "";
-//		System.out.println("\n\n primGetFromClient "+"messages"+agt+"\n\n");
-
-		GamaMap<String, Object> m=(GamaMap<String, Object>) agt.getAttribute("messages"+agt);
-		agt.setAttribute("messages",GamaMapFactory.EMPTY_MAP);
+		GamaMap<String, Object> m = GamaMapFactory.create();
+//		if(is_server){			
+				final String cli;
+				String receiveMessage = "";
+	//		System.out.println("\n\n primGetFromClient "+"messages"+agt+"\n\n");
+				
+				m=(GamaMap<String, Object>) agt.getAttribute("messages"+agt);
+				agt.setAttribute("messages",GamaMapFactory.EMPTY_MAP);
+//		}else{
+//			try {
+//				byte[] sendData = new byte[1024];
+//				byte[] receiveData = new byte[1024];
+//				DatagramSocket clientSocket = new DatagramSocket();
+//
+//				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+//				
+//				clientSocket.receive(receivePacket);
+//				String modifiedSentence = new String(receivePacket.getData());
+//				
+//		
+//				GamaList<String> msgs = (GamaList<String>) GamaListFactory.create(String.class);
+//				
+//				msgs.addValue(agt.getScope(),modifiedSentence != null ? modifiedSentence : "");
+//				m.put(""+clientSocket.toString(), msgs);
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}
 
 		return m;
 	}
@@ -45,33 +76,103 @@ public class UDPConnector implements IConnector{
 	@Override
 	public void connectToServer(IAgent agent, String dest, String server, int port) throws Exception {
 //		final Integer port = Cast.asInt(scope, scope.getAgentScope().getAttribute("port"));
-		if (agent.getScope().getAgentScope().getAttribute("__UDPserver" + port) == null) {
-			try {
-				final DatagramSocket sersock = new DatagramSocket(port);
-				final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent,
-						sersock);
-				ssThread.start();
-				agent.setAttribute("__UDPserver" + port, ssThread);
+		if(is_server){
 
-			} catch (BindException be) {
-				throw GamaRuntimeException.create(be, agent.getScope());
-			} catch (Exception e) {
-				throw GamaRuntimeException.create(e, agent.getScope());
+			if (agent.getScope().getAgentScope().getAttribute("__UDPserver" + port) == null) {
+				try {
+					final DatagramSocket sersock = new DatagramSocket(port);
+					final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent,
+							sersock);
+					ssThread.start();
+					agent.setAttribute("__UDPserver" + port, ssThread);
+	
+				} catch (BindException be) {
+					throw GamaRuntimeException.create(be, agent.getScope());
+				} catch (Exception e) {
+					throw GamaRuntimeException.create(e, agent.getScope());
+				}
 			}
-		}		
-	}
+		}
+			else{
 
+//			InetAddress IPAddress = InetAddress.getByName("localhost");
+//
+//			byte[] sendData = new byte[1024];
+//			byte[] receiveData = new byte[1024];
+//			sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, 9876);
+			
+				if (agent.getScope().getAgentScope().getAttribute("__UDPserver" + port) == null) {
+
+				try {
+					final DatagramSocket sersock = new DatagramSocket();
+					final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent,
+							sersock);
+					ssThread.start();
+					agent.setAttribute("__UDPclient" + port, ssThread);
+	
+				} catch (BindException be) {
+					throw GamaRuntimeException.create(be, agent.getScope());
+				} catch (Exception e) {
+					throw GamaRuntimeException.create(e, agent.getScope());
+				}
+				}
+		}
+	}
 	@Override
 	public void sendMessage(IAgent agent, String dest, Object data) {
-		final Integer port = Cast.asInt(agent.getScope(), agent.getAttribute("port"));
+		if(is_server){
+			int port = 		(int) agent.getAttribute("port");
 
-		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute("__UDPserver" + port);		
+			MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute("__UDPserver" + port);
+			if(ssThread==null) {return;}
+			  InetAddress IPAddress =(InetAddress) agent.getAttribute("replyIP");
+              int replyport =Cast.asInt(agent.getScope(), agent.getAttribute("replyPort"));
+
+				byte[] sendData = new byte[1024];
+				sendData = ((String)data).getBytes();
+              DatagramPacket sendPacket =
+              new DatagramPacket(sendData, sendData.length, IPAddress, replyport);
+              try {
+				ssThread.getMyServerSocket().send(sendPacket);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		}else{
+				
+			final Integer port = Cast.asInt(agent.getScope(), agent.getAttribute("port"));
+	
+	//		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute("__UDPserver" + port);
+	
+			try {
+	
+				DatagramSocket clientSocket = new DatagramSocket();
+				InetAddress IPAddress = InetAddress.getByName((String) agent.getAttribute(INetworkSkill.SERVER_URL));
+				
+				byte[] sendData = new byte[1024];
+				byte[] receiveData = new byte[1024];
+	
+				DatagramPacket sendPacket  = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+							
+							
+				
+				sendData = ((String)data).getBytes();
+				
+				sendPacket.setData(sendData);
+				
+				clientSocket.send(sendPacket);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
-	public void close() {
-		// TODO Auto-generated method stub
+	public void close(final IScope scope) throws GamaNetworkException {
 		
+	
 	}
 
 }

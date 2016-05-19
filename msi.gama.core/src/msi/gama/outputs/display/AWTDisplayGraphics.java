@@ -410,4 +410,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		overlayRenderer = g;
 	}
 
+	@Override
+	public boolean cannotDraw() {
+		return false;
+	}
+
 }

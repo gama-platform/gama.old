@@ -20,9 +20,6 @@ import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 
-import org.apache.commons.lang.StringUtils;
-import org.jfree.chart.JFreeChart;
-
 /**
  * Written by drogoul Modified on 1 avr. 2010
  * 
@@ -31,18 +28,18 @@ import org.jfree.chart.JFreeChart;
  */
 public class ChartLayer extends AbstractLayer {
 
-//	final ChartRenderingInfo info;
+	// final ChartRenderingInfo info;
 	public ChartLayer(final ILayerStatement model) {
 		super(model);
-//		info = new ChartRenderingInfo();
+		// info = new ChartRenderingInfo();
 	}
 
-//	private JFreeChart getChart() {
-//		return ((ChartLayerStatement) definition).getChart();
-//	}
+	// private JFreeChart getChart() {
+	// return ((ChartLayerStatement) definition).getChart();
+	// }
 
 	private ChartOutput getChart() {
-	return ((ChartLayerStatement) definition).getOutput();
+		return ((ChartLayerStatement) definition).getOutput();
 	}
 
 	@Override
@@ -52,18 +49,21 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
+		if (dg == null || dg.cannotDraw())
+			return;
 		try {
-//			getChart().setAntiAlias(true);
-//			getChart().setTextAntiAlias(true);
-// moved to ChartFFreeChartOutput
+			// getChart().setAntiAlias(true);
+			// getChart().setTextAntiAlias(true);
+			// moved to ChartFFreeChartOutput
 
-			BufferedImage im = getChart().getImage(scope,getSizeInPixels().x, getSizeInPixels().y);
+			final BufferedImage im = getChart().getImage(scope, getSizeInPixels().x, getSizeInPixels().y);
 
-//			BufferedImage im = getChart().getImage(scope,getSizeInPixels().x, getSizeInPixels().y,info);
-			
-//		dg.drawChart(scope, im, 0.0);
-		FileDrawingAttributes attributes = new FileDrawingAttributes(null);
-		dg.drawImage(im, attributes);
+			// BufferedImage im = getChart().getImage(scope,getSizeInPixels().x,
+			// getSizeInPixels().y,info);
+
+			// dg.drawChart(scope, im, 0.0);
+			final FileDrawingAttributes attributes = new FileDrawingAttributes(null);
+			dg.drawImage(im, attributes);
 		} catch (IndexOutOfBoundsException | IllegalArgumentException e) {
 			// Do nothing. See Issue #1605
 		}

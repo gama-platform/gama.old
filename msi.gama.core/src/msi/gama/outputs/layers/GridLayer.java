@@ -98,6 +98,8 @@ public class GridLayer extends ImageLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
+		if (dg == null || dg.cannotDraw())
+			return;
 		buildImage(scope);
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		GamaColor lineColor = null;

@@ -83,7 +83,7 @@ import msi.gaml.types.Types;
 		@var(name = ExperimentAgent.MINIMUM_CYCLE_DURATION, type = IType.FLOAT, doc = @doc(value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')", comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process")),
 		@var(name = ExperimentAgent.WORKSPACE_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the workspace of GAMA", comment = "Always terminated with a trailing separator")),
 		@var(name = ExperimentAgent.PROJECT_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the project in which the current model is located", comment = "Always terminated with a trailing separator")) })
-@experiment("gui")
+@experiment(IKeyword.GUI_)
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public static final String MODEL_PATH = "model_path";
@@ -511,6 +511,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return result;
 	}
 
+	public boolean backward(final IScope scope) {
+		throw new NullPointerException();
+	}	
+	
 	/**
 	 *
 	 * The class ExperimentAgentScope. A "pass through" class used when the
@@ -693,5 +697,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		executer.executeOneAction(executable);
 
 	}
+	
+	@Override
+	public boolean isMemorize() {
+		System.out.println(" ************************** isMemorize() : FALSE ");		
+		return false;
+	}	
 
 }

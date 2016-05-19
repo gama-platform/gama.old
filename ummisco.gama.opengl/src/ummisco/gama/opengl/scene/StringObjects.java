@@ -28,24 +28,4 @@ public class StringObjects extends SceneObjects<StringObject> {
 		super(drawer);
 	}
 
-	/**
-	 * Method add()
-	 * 
-	 * @see ummisco.gama.opengl.scene.SceneObjects#add(ummisco.gama.opengl.scene.AbstractObject)
-	 */
-	@Override
-	public void add(final StringObject object) {
-		super.add(object);
-	}
-
-	/**
-	 * Method getObjects()
-	 * 
-	 * @see ummisco.gama.opengl.scene.SceneObjects#getObjects()
-	 */
-	@Override
-	public Iterable<StringObject> getObjects() {
-		return super.getObjects();
-	}
-
 }

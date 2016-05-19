@@ -152,15 +152,21 @@ public class ModelScene {
 		rendered = true;
 	}
 
+	public boolean cannotAdd() {
+		if (currentLayer == null)
+			return true;
+		return currentLayer.isStatic() && staticObjectsAreLocked;
+	}
+
 	public void addString(final String string, final DrawingAttributes attributes) {
-		if (currentLayer.isStatic() && staticObjectsAreLocked) {
+		if (cannotAdd()) {
 			return;
 		}
 		currentLayer.addString(string, attributes);
 	}
 
 	public void addFile(final GamaFile file, final FileDrawingAttributes attributes) {
-		if (currentLayer.isStatic() && staticObjectsAreLocked) {
+		if (cannotAdd()) {
 			return;
 		}
 		if (file instanceof GamaImageFile) {
@@ -172,14 +178,16 @@ public class ModelScene {
 	}
 
 	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
-		if (currentLayer.isStatic() && staticObjectsAreLocked) {
+		if (cannotAdd()) {
 			return;
 		}
 		currentLayer.addImage(img, attributes);
 	}
 
+	private int index;
+
 	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
-		if (currentLayer.isStatic() && staticObjectsAreLocked) {
+		if (cannotAdd()) {
 			return;
 		}
 		if (attributes.textures != null && !attributes.textures.isEmpty()) {
@@ -193,7 +201,7 @@ public class ModelScene {
 	}
 
 	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		if (currentLayer.isStatic() && staticObjectsAreLocked) {
+		if (cannotAdd()) {
 			return;
 		}
 		if (attributes.textures != null && !attributes.textures.isEmpty()) {
@@ -256,10 +264,12 @@ public class ModelScene {
 	public ModelScene copyStatic() {
 		final ModelScene newScene = new ModelScene(renderer, false);
 		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
-			if ((entry.getValue().isStatic() || entry.getValue().hasTrace()) && !entry.getValue().isInvalid()) {
-				newScene.layers.put(entry.getKey(), entry.getValue());
+			final LayerObject layer = entry.getValue();
+			if ((layer.isStatic() || layer.hasTrace()) && !layer.isInvalid()) {
+				newScene.layers.put(entry.getKey(), layer);
 			}
 		}
+		newScene.staticObjectsAreLocked = staticObjectsAreLocked;
 		return newScene;
 	}
 

@@ -148,7 +148,7 @@ public class AspectStatement extends AbstractStatementSequence {
 			final IAgent agent = scope.getAgentScope();
 			if (agent != null && !agent.dead()) {
 				final IGraphics g = scope.getGraphics();
-				if (g == null) {
+				if (g == null || g.cannotDraw()) {
 					return null;
 				}
 				try {
@@ -233,7 +233,7 @@ public class AspectStatement extends AbstractStatementSequence {
 				g = GAMA.getExperiment().getAgent().getSimulation().getScope().getGraphics();
 			}
 			// end-hqnghi
-			if (g == null) {
+			if (g == null || g.cannotDraw()) {
 				return null;
 			}
 			try {

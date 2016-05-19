@@ -13,45 +13,48 @@ import msi.gama.util.GamaMapFactory;
 import msi.gaml.types.IType;
 
 public abstract class StreamConverter {
-	private static XStream dataStreamer;
+	//private static XStream dataStreamer;
+//	private static IScope  currentScope;
 	
-	public static void registerConverter(Converter c)
+	public static void closeXStream()
+	{
+		//dataStreamer= null;
+		//currentScope = null;
+	}
+	
+	public static void registerConverter( XStream dataStreamer,Converter c)
 	{
 		dataStreamer.registerConverter(c);
-	//	Logger.getLogger(StreamConverter.class.getName()).finer("Loaded Converter :"+c.getClass().getName());
 	}
 	
 	
 	
-	public static void loadAndBuild(IScope scope)
+	public static XStream loadAndBuild(IScope scope)
 	{
-		dataStreamer = new XStream(new DomDriver());
+		XStream dataStreamer = new XStream(new DomDriver());
 		Converter[] cnv = Converters.converterFactory(scope);
 		for(Converter c:cnv)
 		{
-			StreamConverter.registerConverter(c);
+			StreamConverter.registerConverter(dataStreamer,c);
 		}
+		return dataStreamer;
 	}
 	
-	public static String convertObjectToStream(IScope scope, Object o)
+	public static synchronized String convertObjectToStream(IScope scope, Object o)
 	{
-		//if(dataStreamer==null)
-			loadAndBuild(scope);
-		return dataStreamer.toXML(o);
+		//if(dataStreamer==null|| currentScope != scope)
+			//loadAndBuild(scope);
+		return loadAndBuild(scope).toXML(o);
 	}
 	
 	public static Object convertStreamToObject(IScope scope,String data)
 	{
-		//if(dataStreamer==null)
-			loadAndBuild(scope);
-		return dataStreamer.fromXML(data);
+		//if(dataStreamer==null|| currentScope != scope)
+			//loadAndBuild(scope);
+		return loadAndBuild(scope).fromXML(data);
 	}
 	
 	
-	public static void main(String[] arg)
-	{
-		
-		
-	}
+	
 
 }

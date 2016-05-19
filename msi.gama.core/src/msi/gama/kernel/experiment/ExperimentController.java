@@ -130,6 +130,10 @@ public class ExperimentController implements Runnable, IExperimentController {
 			experiment.getExperimentScope().getGui().updateSimulationState(IGui.PAUSED);
 			scheduler.stepByStep();
 			break;
+		case IExperimentController._BACK:
+			experiment.getExperimentScope().getGui().updateSimulationState(IGui.PAUSED);
+			scheduler.stepBack();			
+			break;
 		case IExperimentController._RELOAD:
 			experiment.getExperimentScope().getGui().updateSimulationState(IGui.NOTREADY);
 			try {
@@ -170,6 +174,14 @@ public class ExperimentController implements Runnable, IExperimentController {
 			return;
 		}
 		offer(IExperimentController._STEP);
+	}
+	
+	@Override
+	public void stepBack(){
+		if (experiment == null) {
+			return;
+		}
+		offer(IExperimentController._BACK);		
 	}
 
 	@Override

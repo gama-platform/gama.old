@@ -369,6 +369,10 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		return exploration != null;
 	}
 
+	public boolean isMemorize() {
+		return IKeyword.MEMORIZE.equals(getExperimentType());
+	}
+	
 	@Override
 	public boolean isGui() {
 		return true;

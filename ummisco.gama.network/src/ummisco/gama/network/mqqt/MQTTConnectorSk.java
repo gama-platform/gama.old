@@ -22,8 +22,10 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
+import msi.gaml.types.GamaNoType;
 import msi.gaml.types.Types;
 import ummisco.gama.mqtt.common.MQTTConnector;
+import ummisco.gama.network.skills.GamaNetworkException;
 import ummisco.gama.network.skills.IConnector;
 import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.serializer.factory.StreamConverter;
@@ -67,15 +69,13 @@ public class MQTTConnectorSk implements IConnector{
 		
 		@Override
 		public void onFailure(Throwable arg0) {
-			System.out.println("Connection to MQTT failure!");
+			throw GamaNetworkException.cannotBeDisconnectedFailure(GAMA.getSimulation().getScope());
 		}
 
 		@Override
 		public void onSuccess(Void arg0) {
-			System.out.println("Connection to MQTT server passed!");
 			receiveConnections.put(serverName, connection);
-			
-            Topic[] topics = {new Topic(mqttDest, QoS.AT_LEAST_ONCE)};
+			Topic[] topics = {new Topic(mqttDest, QoS.AT_LEAST_ONCE)};
             connection.subscribe(topics, new Callback<byte[]>() {
                 public void onSuccess(byte[] qoses) {
                 }
@@ -145,8 +145,8 @@ public class MQTTConnectorSk implements IConnector{
 	 
 	public void connectToServer(IAgent agent, String agentName, String server ) throws Exception  {
 		IScope scope = agent.getScope();
-		if(	sendConnection == null) 
-			sendConnection= MQTTConnector.connectSender(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
+		if(	this.sendConnection == null) 
+			this.sendConnection= MQTTConnector.connectSender(server, MQTTConnector.DEFAULT_USER, MQTTConnector.DEFAULT_PASSWORD);
 		CallbackConnection connection =  receiveConnections.get(server);
 			if(connection == null)
 			{
@@ -225,13 +225,41 @@ public class MQTTConnectorSk implements IConnector{
 
 
 	@Override
-	public void close() {
-		// TODO Auto-generated method stub
-		
+	public void close(final IScope scope) throws GamaNetworkException {
+		MQTTCallBack listener = new MQTTCallBack(scope);
+		//Close listening connection
+		for(String backListener:receiveConnections.keySet())
+		{
+			receiveConnections.get(backListener).disconnect(listener);
+			receiveConnections.remove(backListener);
+		}
+		sendConnection.disconnect();
+		receiveConnections = new HashMap<>();
+		boxFollower = new HashMap<>();
+		receivedMessage = new HashMap<>();
+		sendConnection = null; 
 	}
 
 
+	 class MQTTCallBack implements Callback<Void>
+	{
+		private IScope scope;
+		public MQTTCallBack(IScope s)
+		{
+			scope = s;
+		}
+		@Override
+		public void onFailure(Throwable arg0) {
+			throw GamaNetworkException.cannotBeDisconnectedFailure(scope);
+		}
 
+		@Override
+		public void onSuccess(Void arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+	}
 
 	
 }

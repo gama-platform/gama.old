@@ -14,8 +14,10 @@ package msi.gama.outputs.layers;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.util.List;
+
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -44,34 +46,43 @@ public class GisLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics g) {
-		GamaColor color = colorExpression == null ? GamaColor.getInt(GamaPreferences.CORE_COLOR.getValue().getRGB())
-			: Cast.asColor(scope, colorExpression.value(scope));
-		List<IShape> shapes = buildGisLayer(scope);
-		if ( shapes != null ) {
-			for ( IShape geom : shapes ) {
-				if ( geom != null ) {
-					ShapeDrawingAttributes attributes =
-						new ShapeDrawingAttributes(geom, color, new GamaColor(Color.black));
-					Rectangle2D r = g.drawShape(geom, attributes);
+		if (g == null || g.cannotDraw())
+			return;
+		final GamaColor color = colorExpression == null
+				? GamaColor.getInt(GamaPreferences.CORE_COLOR.getValue().getRGB())
+				: Cast.asColor(scope, colorExpression.value(scope));
+		final List<IShape> shapes = buildGisLayer(scope);
+		if (shapes != null) {
+			for (final IShape geom : shapes) {
+				if (geom != null) {
+					final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(geom, color,
+							new GamaColor(Color.black));
+					final Rectangle2D r = g.drawShape(geom, attributes);
 				}
 			}
 		}
 	}
 
 	public List<IShape> buildGisLayer(final IScope scope) throws GamaRuntimeException {
-		GamaShapeFile file = getShapeFile(scope);
-		if ( file == null ) { return null; }
+		final GamaShapeFile file = getShapeFile(scope);
+		if (file == null) {
+			return null;
+		}
 		return file.getContents(scope);
 	}
 
 	private GamaShapeFile getShapeFile(final IScope scope) {
-		if ( gisExpression == null ) { return null; }
-		if ( gisExpression.getType().id() == IType.STRING ) {
-			String fileName = Cast.asString(scope, gisExpression.value(scope));
+		if (gisExpression == null) {
+			return null;
+		}
+		if (gisExpression.getType().id() == IType.STRING) {
+			final String fileName = Cast.asString(scope, gisExpression.value(scope));
 			return new GamaShapeFile(scope, fileName);
 		}
-		Object o = gisExpression.value(scope);
-		if ( o instanceof GamaShapeFile ) { return (GamaShapeFile) o; }
+		final Object o = gisExpression.value(scope);
+		if (o instanceof GamaShapeFile) {
+			return (GamaShapeFile) o;
+		}
 		return null;
 	}
 
@@ -79,6 +90,5 @@ public class GisLayer extends AbstractLayer {
 	public String getType() {
 		return "Gis layer";
 	}
-
 
 }

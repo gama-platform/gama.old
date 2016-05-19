@@ -23,7 +23,6 @@ public class MQTTConnector {
     public static CallbackConnection connectReceiver( String server, String login, String pass) throws URISyntaxException
     {
         MQTT mqtt = new MQTT();
-        System.out.println("ln "+port );
         mqtt.setHost(server, port);
         mqtt.setUserName(login);
         mqtt.setPassword(pass);
@@ -34,8 +33,7 @@ public class MQTTConnector {
 	public static FutureConnection connectSender( String server, String login, String pass) throws Exception
 	{
 		MQTT mqtt = new MQTT();
-        System.out.println("ln "+port );
-	    mqtt.setHost(server, port);
+        mqtt.setHost(server, port);
 	    mqtt.setUserName(login);
 	    mqtt.setPassword(pass);
 	    FutureConnection connection = mqtt.futureConnection();
