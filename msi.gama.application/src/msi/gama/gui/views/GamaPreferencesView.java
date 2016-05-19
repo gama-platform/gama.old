@@ -24,6 +24,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -103,7 +104,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 	private GamaPreferencesView(final Shell parent) {
 		parentShell = parent;
-		shell = new Shell(parentShell, SWT.TITLE | SWT.RESIZE | SWT.APPLICATION_MODAL | SWT.SHEET);
+		shell = new Shell(parentShell, SWT.TITLE | SWT.RESIZE | SWT.APPLICATION_MODAL);
 		final GridLayout gridLayout = new GridLayout(2, false);
 		gridLayout.marginWidth = gridLayout.marginHeight = 5;
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 5;
@@ -126,17 +127,6 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 				// preferenceManager.remove((IPreferenceNode) elem);
 			}
 		}
-		shell.layout();
-		shell.pack();
-		// final Monitor primary = SwtGui.getDisplay().getPrimaryMonitor();
-		final Rectangle bounds = parentShell.getBounds();
-		final int width = Math.min(shell.getSize().x, bounds.x);
-		final int height = Math.min(shell.getSize().y, bounds.y);
-		shell.setSize(width, height);
-		// final int x = bounds.x + (bounds.width - width) / 2;
-		// final int y = bounds.y + (bounds.height - height) / 2;
-
-		// shell.setLocation(x, y);
 
 		buildContents();
 	}
@@ -401,9 +391,19 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 	public void open() {
 		shell.layout(true, true);
+		// shell.pack();
+		final Point p = shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
+		// final Monitor primary = SwtGui.getDisplay().getPrimaryMonitor();
+		final Rectangle bounds = SwtGui.getDisplay().getBounds();
+		final int width = Math.min(p.x, bounds.width);
+		final int height = Math.min(p.y, bounds.height);
+		shell.setSize(width, height);
+		final int x = (bounds.width - width) / 2;
+		final int y = (bounds.height - height) / 2;
 
+		shell.setLocation(x, y);
 		shell.open();
-		shell.setSize(shell.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+
 		while (!this.shell.isDisposed() && this.shell.isVisible()) {
 			if ( !this.shell.getDisplay().readAndDispatch() ) {
 				this.shell.getDisplay().sleep();
