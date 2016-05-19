@@ -74,7 +74,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO are there attributes ?
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 

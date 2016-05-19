@@ -102,7 +102,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO are there attributes ?
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	// Verified

@@ -348,7 +348,7 @@ public abstract class AbstractAgent implements IAgent {
 			retVal.remove(this);
 			return retVal;
 		}
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	@Override
@@ -625,7 +625,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public IList<? extends ILocation> getPoints() {
 		if (getGeometry() == null) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 		return getGeometry().getPoints();
 	}

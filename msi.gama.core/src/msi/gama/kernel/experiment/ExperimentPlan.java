@@ -237,7 +237,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public final List<IOutputManager> getAllSimulationOutputs() {
 		if (getAgent() == null) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 		return getAgent().getAllSimulationOutputs();
 	}

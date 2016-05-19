@@ -172,7 +172,7 @@ public class SolveStatement extends AbstractStatement {
 		if(result!=null){			
 			return result.get(var.getName());
 		}
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 	
 	@Override

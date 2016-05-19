@@ -152,7 +152,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	@Override

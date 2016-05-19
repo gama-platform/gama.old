@@ -252,7 +252,7 @@ public class GamaShapeFile extends GamaGisFile {
 			try {
 				s = new ShapeInfo(getFile().toURI().toURL(), 0);
 			} catch (final MalformedURLException e) {
-				return GamaListFactory.EMPTY_LIST;
+				return GamaListFactory.create();
 			}
 		}
 		return GamaListFactory.createWithoutCasting(Types.STRING, s.attributes.keySet());

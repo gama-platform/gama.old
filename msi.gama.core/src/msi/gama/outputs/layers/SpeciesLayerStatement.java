@@ -169,7 +169,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	@Override
 	public List<? extends IAgent> computeAgents(final IScope sim) {
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	@Override

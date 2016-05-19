@@ -729,7 +729,7 @@ public class CommunicatingSkill extends Skill {
 	private IList<Message> filter(final IScope scope, final IAgent agent, final int performative) {
 		final IList<Message> inBox = getMessages(scope, agent);
 		if (inBox.isEmpty()) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 		final IList<Message> result = GamaListFactory
 				.create(scope.getModelContext().getTypeNamed(MessageType.MESSAGE_STR));

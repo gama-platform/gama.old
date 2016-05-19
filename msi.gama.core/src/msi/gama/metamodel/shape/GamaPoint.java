@@ -319,7 +319,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public GamaMap getOrCreateAttributes() {
-		return GamaMapFactory.EMPTY_MAP;
+		return GamaMapFactory.create();
 	}
 
 	@Override
@@ -467,7 +467,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public IList<GamaShape> getHoles() {
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	/**

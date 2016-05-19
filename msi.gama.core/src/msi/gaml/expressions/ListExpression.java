@@ -82,7 +82,7 @@ public class ListExpression extends AbstractExpression {
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] == null) {
 				computed = false;
-				return GamaListFactory.EMPTY_LIST;
+				return GamaListFactory.create();
 			}
 			values[i] = elements[i].value(scope);
 		}

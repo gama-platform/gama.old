@@ -165,7 +165,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	@Override
 	public IList<V> getVertexList() {
 		if (graph == null) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		} 
 		return GamaListFactory.<V> createWithoutCasting(getType().getKeyType(), Graphs.getPathVertexList(this));
 	}

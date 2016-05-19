@@ -518,7 +518,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	protected IList _listValue(final IScope scope, final IType contentType, final boolean cast) {
 		if (actualNumberOfCells == 0) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 		if (cellSpecies == null) {
 

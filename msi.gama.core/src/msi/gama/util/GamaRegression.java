@@ -63,7 +63,7 @@ public class GamaRegression implements IValue{
 	
 	@getter("parameters")
 	public IList<Double> getParameters() {
-		if (param == null) return GamaListFactory.EMPTY_LIST;
+		if (param == null) return GamaListFactory.create();
 		IList<Double> vals = GamaListFactory.create(Types.FLOAT);
 		for (int i = 0; i < param.length; i++) vals.add(param[i]);
 		return vals;

@@ -84,7 +84,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public Collection<String> getVarNames() {
 		if ( variables != null ) { return variables.keySet(); }
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	public VariableDescription getVariable(final String name) {

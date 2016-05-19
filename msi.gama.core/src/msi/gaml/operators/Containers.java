@@ -778,7 +778,7 @@ public class Containers {
 		final Iterable it = nullCheck(scope, original).iterable(scope);
 		final int size = size(it);
 		if (size == 0) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 		// if ( size == 1 ) { return
 		// GamaListFactory.createWithoutCasting(original.getType().getContentType(),

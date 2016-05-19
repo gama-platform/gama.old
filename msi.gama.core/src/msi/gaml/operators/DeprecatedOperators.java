@@ -377,7 +377,7 @@ public class DeprecatedOperators {
 			@example(value = "topology(self) neighbors_of self::10", equals = "all the agents located at a distance lower or equal to 10 to the agent applying the operator considering its topology.", test = false) }))
 	public static IList neighbours_of(final IScope scope, final ITopology t, final GamaPair pair) {
 		if (pair == null) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 		final Object agent = pair.key;
 		return Spatial.Queries._neighbors(scope,

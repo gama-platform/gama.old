@@ -47,7 +47,7 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, Strin
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO depends on the contents...
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	/**

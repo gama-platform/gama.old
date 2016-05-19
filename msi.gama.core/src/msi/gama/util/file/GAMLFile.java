@@ -137,7 +137,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO what to return ?
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	public GamlSpecies getSpecies(final String name) {

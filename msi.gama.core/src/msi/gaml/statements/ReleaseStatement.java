@@ -133,7 +133,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		IMacroAgent targetAgent;
 		ISpecies microSpecies = null;
 
-		List<IAgent> releasedMicroAgents = GamaListFactory.EMPTY_LIST;
+		List<IAgent> releasedMicroAgents = GamaListFactory.create();
 		if ( asExpr != null && inExpr != null ) {
 			targetAgent = (IMacroAgent) inExpr.value(scope);
 			if ( targetAgent != null && !targetAgent.equals(macroAgent) ) {

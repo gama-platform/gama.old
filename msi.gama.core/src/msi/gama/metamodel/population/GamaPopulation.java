@@ -214,7 +214,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		final int frequency = scheduleFrequency == null ? 1 : Cast.asInt(scope, scheduleFrequency.value(scope));
 		final int step = scope.getClock().getCycle();
 		if (frequency == 0 || step % frequency != 0) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 		final IExpression ags = getSpecies().getSchedule();
 		final IList<IAgent> agents = ags == null ? this : Cast.asList(scope, ags.value(scope));
@@ -291,7 +291,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	public IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries) {
 		final int number = geometries.length(scope);
 		if (number == 0) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 		final IList<IAgent> list = GamaListFactory.create(getType().getContentType(), number);
 		final IAgentConstructor constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
@@ -320,7 +320,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)
 			throws GamaRuntimeException {
 		if (number == 0) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 		final IList<IAgent> list = GamaListFactory.create(getType().getContentType(), number);
 		final IAgentConstructor constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
@@ -502,7 +502,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			final IType edgeType = scope.getModelContext().getTypeNamed(edgeName);
 			final IType nodeType = getType().getContentType();
 			// TODO Specifier directed quelque part dans l'esp�ce
-			final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.EMPTY_LIST, false, false,
+			final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.create(), false, false,
 					new AbstractGraphNodeAgent.NodeRelation(), edgeSpecies, scope, nodeType, edgeType);
 			this.addListener(g);
 			g.postRefreshManagementAction(scope);

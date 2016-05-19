@@ -60,7 +60,7 @@ public class MessageBroker {
 	public IList<Message> deliverMessagesFor(final IScope scope, final IAgent a) throws GamaRuntimeException {
 		final List<Message> messagesForA = messagesToDeliver.get(a);
 		if (messagesForA == null) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 
 		final IList<Message> successfulDeliveries = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
@@ -197,7 +197,7 @@ public class MessageBroker {
 
 	public IList<Message> getMessagesFor(final IAgent agent) {
 		if (!conversationsMessages.containsKey(agent)) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 
 		return conversationsMessages.get(agent).messages;
@@ -205,7 +205,7 @@ public class MessageBroker {
 
 	public List<Conversation> getConversationsFor(final IAgent agent) {
 		if (!conversationsMessages.containsKey(agent)) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 
 		return conversationsMessages.get(agent).conversations;

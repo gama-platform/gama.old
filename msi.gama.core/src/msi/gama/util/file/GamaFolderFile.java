@@ -48,7 +48,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes to speak of
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	/*

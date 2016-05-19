@@ -367,12 +367,12 @@ public class MovingSkill extends Skill {
 		final IShape edge = rt instanceof IShape ? (IShape) rt : null;
 		final ITopology topo = rt instanceof ITopology ? (ITopology) rt : scope.getTopology();
 		if ( goal == null ) {
-			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST,
+			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.create(),
 				false); }
 			return null;
 		}
 		if ( topo == null ) {
-			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST,
+			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.create(),
 				false); }
 			return null;
 		}
@@ -381,7 +381,7 @@ public class MovingSkill extends Skill {
 			goal = ((GamaSpatialMatrix) topo.getPlaces()).getAgentAt(goal.getLocation()).getLocation();
 		}
 		if ( source.equals(goal) ) {
-			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.EMPTY_LIST,
+			if ( returnPath ) { return PathFactory.newInstance(topo, source, source, GamaListFactory.create(),
 				false); }
 			return null;
 		}

@@ -2521,7 +2521,7 @@ public abstract class Spatial {
 			} else if (contentType == Types.GEOMETRY) {
 				return geomAtDistance(scope, list, distance);
 			}
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 
 		public static IList<? extends IShape> geomAtDistance(final IScope scope,
@@ -2555,7 +2555,7 @@ public abstract class Spatial {
 			} else if (contentType == Types.GEOMETRY) {
 				return geomOverlapping(scope, list, source, true);
 			}
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 
 		@operator(value = { "overlapping" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
@@ -2574,7 +2574,7 @@ public abstract class Spatial {
 			} else if (contentType == Types.GEOMETRY) {
 				return geomOverlapping(scope, list, source, false);
 			}
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 
 		public static IList<? extends IShape> geomOverlapping(final IScope scope,
@@ -2729,7 +2729,7 @@ public abstract class Spatial {
 		private static IList<IAgent> _gather(final IScope scope, final IAgentFilter filter, final Object source,
 				final boolean inside) {
 			if (filter == null || source == null) {
-				return GamaListFactory.EMPTY_LIST;
+				return GamaListFactory.create();
 			}
 			final IType type = filter.getSpecies() == null ? Types.AGENT
 					: scope.getModelContext().getTypeNamed(filter.getSpecies().getName());
@@ -2759,7 +2759,7 @@ public abstract class Spatial {
 		static IList<IAgent> _neighbors(final IScope scope, final IAgentFilter filter, final Object source,
 				final Object distance, final ITopology t) {
 			if (filter == null || source == null) {
-				return GamaListFactory.EMPTY_LIST;
+				return GamaListFactory.create();
 			}
 			final IType type = filter.getSpecies() == null ? Types.AGENT
 					: scope.getModelContext().getTypeNamed(filter.getSpecies().getName());

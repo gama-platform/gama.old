@@ -82,7 +82,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			final IList<IAgent> microAgents) throws GamaRuntimeException {
 		if (microAgents == null || microAgents.isEmpty() || microSpecies == null
 				|| !this.getSpecies().getMicroSpecies().contains(microSpecies)) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 
 		final List<IAgent> candidates = GamaListFactory.create(Types.AGENT);
@@ -287,7 +287,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public IContainer<?, IAgent> getMembers(final IScope scope) {
 		if (dead() || getAttributes() == null) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 		final MetaPopulation mp = new MetaPopulation();
 		for (final Object pop : getAttributes().values()) {
@@ -311,7 +311,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public IList<IAgent> getAgents(final IScope scope) {
 		if (!hasMembers()) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 
 		final IContainer<?, IAgent> members = getMembers(scope);
@@ -397,7 +397,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public GamaMap<String, IPopulation> getExternMicroPopulations() {
 		if (externMicroPopulations == null) {
-			return GamaMapFactory.EMPTY_MAP;
+			return GamaMapFactory.create();
 		}
 		return externMicroPopulations;
 	}

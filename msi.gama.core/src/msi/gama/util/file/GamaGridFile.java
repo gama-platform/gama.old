@@ -47,7 +47,7 @@ public class GamaGridFile extends GamaGisFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// No attributes
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	private GamaGridReader createReader(final IScope scope, final boolean fillBuffer) {

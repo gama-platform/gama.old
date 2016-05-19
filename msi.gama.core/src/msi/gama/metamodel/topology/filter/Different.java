@@ -35,7 +35,7 @@ public class Different implements IAgentFilter {
 	 */
 	@Override
 	public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	@Override

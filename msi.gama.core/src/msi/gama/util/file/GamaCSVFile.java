@@ -202,11 +202,11 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 			final CSVInfo info = getInfo(scope, null);
 			if (info != null) {
 				return info.header ? GamaListFactory.createWithoutCasting(Types.STRING, info.headers)
-						: GamaListFactory.EMPTY_LIST;
+						: GamaListFactory.create();
 			}
 		}
 		fillBuffer(scope);
-		return headers == null ? GamaListFactory.EMPTY_LIST
+		return headers == null ? GamaListFactory.create()
 				: GamaListFactory.createWithoutCasting(Types.STRING, headers);
 	}
 

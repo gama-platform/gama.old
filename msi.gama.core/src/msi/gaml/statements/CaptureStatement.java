@@ -145,7 +145,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 		}
 
 		final List<IAgent> removedComponents = GamaListFactory.create(Types.AGENT);
-		List<IAgent> capturedAgents = GamaListFactory.EMPTY_LIST;
+		List<IAgent> capturedAgents = GamaListFactory.create();
 
 		if ( !microAgents.isEmpty() ) {
 			if ( microSpeciesName != null ) { // micro-species name is specified in the "as" facet.

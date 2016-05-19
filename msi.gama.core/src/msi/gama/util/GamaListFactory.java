@@ -34,7 +34,6 @@ import msi.gaml.types.Types;
 public class GamaListFactory {
 
 	private static final int DEFAULT_SIZE = 10;
-	public static final GamaList EMPTY_LIST = new GamaList(0, Types.NO_TYPE);
 
 	/**
 	 * Create a GamaList from an array of objects, but does not attempt casting

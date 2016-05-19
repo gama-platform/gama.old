@@ -285,7 +285,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// First, we compute the number of agents to create
 		final Integer max = number == null ? null : Cast.asInt(scope, number.value(scope));
 		if (from == null && max != null && max <= 0) {
-			return GamaListFactory.EMPTY_LIST;
+			return GamaListFactory.create();
 		}
 
 		// Next, we compute the species to instantiate

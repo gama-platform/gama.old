@@ -305,7 +305,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO what to return ?
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	private void loadMaterials() {

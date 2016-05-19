@@ -50,7 +50,7 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 	@Override
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO Dont know what to return
-		return GamaListFactory.EMPTY_LIST;
+		return GamaListFactory.create();
 	}
 
 	public IList<String> getURLContent(final String u_str) {

@@ -111,7 +111,7 @@ public class MapExpression extends AbstractExpression {
 		for (int i = 0; i < keys.length; i++) {
 			if (keys[i] == null || vals[i] == null) {
 				// computed = false;
-				return GamaMapFactory.EMPTY_MAP;
+				return GamaMapFactory.create();
 			}
 			values.put(keys[i].value(scope), vals[i].value(scope));
 		}
