@@ -32,7 +32,7 @@ public class ConvertToPDF {
 		File template = new File(Constants.PANDOC_FOLDER+File.separator+"mytemplate.tex");
 		File pdfFile = new File(Constants.DOCGAMA_PDF);
 		
-		String command = Constants.CMD_PANDOC+" --template="+template.getAbsolutePath()+" --latex-engine="+Constants.CMD_PDFLATEX+" --toc";
+		String command = Constants.CMD_PANDOC+" --template="+template.getAbsolutePath()+" --latex-engine="+Constants.CMD_PDFLATEX+" --listings --toc";
 		command = command + " " + files;
 		for(Object s : prop2.keySet()) {
 			command = command + " " + "--variable " + s + "=" + prop2.getProperty(s.toString());

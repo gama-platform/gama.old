@@ -67,6 +67,17 @@ $endif$
             pdfborder={0 0 0}}
 \urlstyle{same}  % don't use monospace font for urls
 \usepackage{fancyhdr}
+
+%%Mieux que verbatim, car permet saut a la ligne automatique
+\usepackage{listings}
+\lstset{
+    basicstyle=\small\ttfamily,
+    columns=flexible,
+    breaklines=true,
+    extendedchars=true,
+    literate={á}{{\'a}}1 {ã}{{\~a}}1 {é}{{\'e}}1 {è}{{\`e}}1,
+}
+
 \pagestyle{fancy}
 \pagenumbering{arabic}
 \lhead{\itshape $title$}
