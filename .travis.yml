@@ -18,6 +18,7 @@ before_deploy:
   - git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git
   - git config --list
   - git log -n 3
+  - git fetch
   - git checkout master
   - git pull
   - git log -n 3

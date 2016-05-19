@@ -242,15 +242,15 @@
                 <version>${tycho.version}</version>
                 <configuration>
                    <filters>
-			            <!-- work around Equinox bug 348045 -->
-			            <filter>
-			              <type>p2-installable-unit</type>
-			              <id>org.eclipse.equinox.servletbridge.extensionbundle</id>
-			              <removeAll />
-			            </filter>
-		            </filters>
-					<resolver>p2</resolver>
-					<pomDependencies>consider</pomDependencies>
+	            <!-- work around Equinox bug 348045 -->
+	            <filter>
+	              <type>p2-installable-unit</type>
+	              <id>org.eclipse.equinox.servletbridge.extensionbundle</id>
+	              <removeAll />
+	            </filter>
+         	   </filters>
+			<resolver>p2</resolver>
+			<pomDependencies>consider</pomDependencies>
                     <environments>
                         <environment>
                             <os>linux</os>
