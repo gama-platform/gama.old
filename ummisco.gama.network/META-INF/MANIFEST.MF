@@ -9,8 +9,5 @@ Export-Package: ummisco.gama.network.common,
 Require-Bundle: msi.gama.processor;bundle-version="1.4.0",
  msi.gama.core;bundle-version="1.7.0",
  ummisco.gama.serialize;bundle-version="1.7.0"
-Bundle-ClassPath: ext/hawtbuf-1.9.jar,
- ext/hawtdispatch-1.21.jar,
- ext/hawtdispatch-transport-1.21.jar,
- ext/mqtt-client-1.10.jar,
- .
+Bundle-ClassPath: .,
+ ext/org.eclipse.paho.client.mqttv3-1.0.2-3.jar

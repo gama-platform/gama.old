@@ -2,13 +2,16 @@ package ummisco.gama.mqtt.common;
 
 import java.net.URISyntaxException;
 
-import org.fusesource.mqtt.client.CallbackConnection;
-import org.fusesource.mqtt.client.FutureConnection;
-import org.fusesource.mqtt.client.MQTT;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
+import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 public class MQTTConnector {
-	public static String DEFAULT_USER = env("ACTIVEMQ_USER", "admin");
-	public static String DEFAULT_PASSWORD = env("ACTIVEMQ_PASSWORD", "password");
+	//public static String DEFAULT_USER = env("ACTIVEMQ_USER", "admin");
+	//public static String DEFAULT_PASSWORD = env("ACTIVEMQ_PASSWORD", "password");
+	public static String DEFAULT_USER = env("ACTIVEMQ_USER", "guest");
+	public static String DEFAULT_PASSWORD = env("ACTIVEMQ_PASSWORD", "guest");
 	public static String DEFAULT_HOST = env("ACTIVEMQ_HOST", "localhost");
 	public static int port = Integer.parseInt(env("ACTIVEMQ_PORT", "1883"));
 	public static final String DESTINATION_PREFIX = "";//"topic/sensors/";
@@ -20,25 +23,33 @@ public class MQTTConnector {
         return rc;
     }
     
-    public static CallbackConnection connectReceiver( String server, String login, String pass) throws URISyntaxException
+    public static MqttClient connectReceiver( String server) throws MqttException  
     {
-        MQTT mqtt = new MQTT();
-        mqtt.setHost(server, port);
-        mqtt.setUserName(login);
-        mqtt.setPassword(pass);
-        CallbackConnection connection = mqtt.callbackConnection();
-        return connection;
+    	 MqttClient sampleClient = new MqttClient("tcp://"+server+":"+port, "gama@"+server, new MemoryPersistence());
+         System.out.println("Connected");
+        
+    	
+   // 	MqttClient mqtt = new MQTT();
+   //     System.out.println(mqtt.isCleanSession());
+        
+   //     mqtt.setHost(server, port);
+   //     mqtt.setUserName(login);
+   //     mqtt.setPassword(pass);
+    //    CallbackConnection connection = mqtt.callbackConnection();
+        return sampleClient;
     }
     
-	public static FutureConnection connectSender( String server, String login, String pass) throws Exception
+	public static MqttClient connectSender( String server) throws Exception
 	{
-		MQTT mqtt = new MQTT();
+		return connectReceiver(  server) ;
+/*		MQTT mqtt = new MQTT();
+		System.out.println(mqtt.isCleanSession());
         mqtt.setHost(server, port);
 	    mqtt.setUserName(login);
 	    mqtt.setPassword(pass);
 	    FutureConnection connection = mqtt.futureConnection();
 	    connection.connect().await();
-	    return connection;
+	    return connection;*/
 	}
 	
 	
