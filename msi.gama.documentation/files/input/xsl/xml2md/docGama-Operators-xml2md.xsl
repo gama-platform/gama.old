@@ -33,7 +33,6 @@ All of these alternative syntaxes are completely equivalent.
 
 Operators in GAML are purely functional, i.e. they are guaranteed to not have any side effects on their operands. For instance, the `shuffle` operator, which randomizes the positions of elements in a list, does not modify its list operand but returns a new shuffled list.
 
-&lt;br/&gt;
 ----
 
 ## Priority between operators
@@ -138,6 +137,7 @@ Note that due to the fact that actions are written by modelers, the general func
     	<xsl:variable name="operatorName" select="@name"/>
     	
 ----
+
 <xsl:call-template name="keyword">    
 	<xsl:with-param name="category" select="'operator'"/>
 	<xsl:with-param name="nameGAMLElement" select="@name"/>
