@@ -38,6 +38,10 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 
 	public abstract GamaPoint getPosition();
 
+	public abstract GamaPoint getOrientation();
+
+	public abstract GamaPoint getTarget();
+
 	public abstract Point getMousePosition();
 
 	public abstract Point getLastMousePressedPosition();
