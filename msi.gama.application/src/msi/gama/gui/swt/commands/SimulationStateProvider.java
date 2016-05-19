@@ -23,8 +23,9 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	public final static String SIMULATION_RUNNING_STATE = "msi.gama.application.commands.SimulationRunningState";
 	public final static String SIMULATION_TYPE = "msi.gama.application.commands.SimulationType";
+	public final static String SIMULATION_CYCLE = "msi.gama.application.commands.SimulationCycle";
 
-	private final static Map<String, String> map = new HashMap<>(2);
+	private final static Map<String, String> map = new HashMap<>(3);
 
 	@Override
 	public void dispose() {}
@@ -36,7 +37,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public String[] getProvidedSourceNames() {
-		return new String[] { SIMULATION_RUNNING_STATE, SIMULATION_TYPE };
+		return new String[] { SIMULATION_RUNNING_STATE, SIMULATION_TYPE, SIMULATION_CYCLE };
 	}
 
 	@Override
@@ -49,8 +50,8 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 		String type = exp == null ? "NONE" : exp.isBatch() ? "BATCH" : (exp.isMemorize() ? "MEMORIZE" : "REGULAR");
 		map.put(SIMULATION_RUNNING_STATE, state);
 		map.put(SIMULATION_TYPE, type);
+		map.put(SIMULATION_CYCLE, "ZERO");
 
-		System.out.println("state " + state + " --- type " + type);
 		return map;
 	}
 
@@ -63,6 +64,18 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 		IExperimentPlan exp = GAMA.getExperiment();
 		String type = exp == null ? "NONE" : exp.isBatch() ? "BATCH" : (exp.isMemorize() ? "MEMORIZE" : "REGULAR");
 		fireSourceChanged(ISources.WORKBENCH, SIMULATION_TYPE, type);
+		
+		int cycle = -1;
+		
+		if(exp != null) {
+			if(exp.getAgent() != null) {
+				cycle = exp.getAgent().getSimulation().getCycle( exp.getAgent().getScope() );
+			}
+		}
+		
+		String cc = cycle <= 0 ? "ZERO" : "MORE_THAN_ZERO" ;
+		fireSourceChanged (ISources.WORKBENCH, SIMULATION_CYCLE, cc);			
+		
 	}
 
 }

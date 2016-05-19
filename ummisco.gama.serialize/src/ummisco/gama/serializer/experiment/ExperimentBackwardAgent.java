@@ -4,11 +4,10 @@ import java.util.ArrayList;
 
 import com.thoughtworks.xstream.XStream;
 
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.kernel.simulation.SimulationPopulation;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IOutputManager;
@@ -21,11 +20,13 @@ import ummisco.gama.serializer.gaml.ReverseOperators;
 @experiment(IKeyword.MEMORIZE)
 public class ExperimentBackwardAgent extends ExperimentAgent{
 
-	ArrayList<String> history;
+//	ArrayList<String> history;
+	THashMap<Integer, String> history;
 	
 	public ExperimentBackwardAgent(IPopulation s) throws GamaRuntimeException {
 		super(s);	
-		history = new ArrayList<String>();
+		// history = new ArrayList<String>();
+		history = new THashMap<>();
 	}
 
 
@@ -36,7 +37,8 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 		
 		// Save simulation state in the history
 		String state = ReverseOperators.serializeAgent( scope, this.getSimulation()) ;
-		history.add(state);
+//		history.add(state);
+		history.put(this.getSimulation().getCycle(scope), state);
 		
 		return result;
 	}
@@ -48,11 +50,16 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 		boolean result = true;
 		
 		try {
+			int currentCycle = getSimulation().getCycle(scope);
 			// TODO what is this executer  ???? 
 			// executer.executeBeginActions();
 					
-			// TODO to correct in order to avoid stepping bakc on the same step
-			String previousState = history.remove(history.size() - 1);
+			// TODO to correct in order to avoid stepping back on the same step
+			if(history.containsKey(currentCycle)) {
+				history.remove(currentCycle);
+			}
+			
+			String previousState = history.remove(currentCycle - 1);
 			
 			ConverterScope cScope = new ConverterScope(scope);
 			XStream xstream = ReverseOperators.newXStream(cScope);
