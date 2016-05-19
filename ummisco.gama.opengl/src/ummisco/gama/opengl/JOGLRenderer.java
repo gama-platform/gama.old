@@ -1076,9 +1076,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 	@Override
 	public boolean cannotDraw() {
-		if (currentScene == null)
-			return false;
-		return this.currentScene.cannotAdd();
+		return sceneBuffer.getSceneToUpdate().cannotAdd();
 	}
 
 	@Override

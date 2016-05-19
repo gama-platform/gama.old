@@ -42,6 +42,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	final ILayer layer;
 	volatile boolean isInvalid;
 	volatile boolean overlay;
+	volatile boolean locked;
 
 	protected final ISceneObjects<GeometryObject> geometries;
 	protected final ISceneObjects<ResourceObject> resources;
@@ -275,6 +276,18 @@ public class LayerObject implements Iterable<GeometryObject> {
 	 */
 	public void setOverlay(final boolean b) {
 		overlay = b;
+	}
+
+	public boolean isLocked() {
+		return locked;
+	}
+
+	public void lock() {
+		locked = true;
+	}
+
+	public void unlock() {
+		locked = false;
 	}
 
 }

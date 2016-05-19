@@ -52,7 +52,6 @@ public class ModelScene {
 	protected final Map<String, LayerObject> layers = new LinkedHashMap();
 	protected LayerObject currentLayer;
 	protected final JOGLRenderer renderer;
-	private volatile boolean staticObjectsAreLocked;
 	private final Map<BufferedImage, Texture> localVolatileTextures = new HashMap(10);
 	private volatile boolean rendered = false;
 
@@ -143,6 +142,7 @@ public class ModelScene {
 			if (layer != null && !layer.isInvalid()) {
 				try {
 					layer.draw(gl, renderer);
+					layer.lock();
 				} catch (final RuntimeException r) {
 					System.err.println("Runtime error " + r.getMessage() + " in OpenGL loop");
 					r.printStackTrace();
@@ -155,7 +155,7 @@ public class ModelScene {
 	public boolean cannotAdd() {
 		if (currentLayer == null)
 			return true;
-		return currentLayer.isStatic() && staticObjectsAreLocked;
+		return currentLayer.isStatic() && currentLayer.isLocked();
 	}
 
 	public void addString(final String string, final DrawingAttributes attributes) {
@@ -183,8 +183,6 @@ public class ModelScene {
 		}
 		currentLayer.addImage(img, attributes);
 	}
-
-	private int index;
 
 	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
 		if (cannotAdd()) {
@@ -223,7 +221,7 @@ public class ModelScene {
 	}
 
 	public void endDrawingLayers() {
-		staticObjectsAreLocked = true;
+		// staticObjectsAreLocked = true;
 	}
 
 	public boolean rendered() {
@@ -231,7 +229,9 @@ public class ModelScene {
 	}
 
 	public void reload() {
-		staticObjectsAreLocked = false;
+		for (final LayerObject l : layers.values()) {
+			l.unlock();
+		}
 		dispose();
 		initWorld();
 	}
@@ -269,7 +269,6 @@ public class ModelScene {
 				newScene.layers.put(entry.getKey(), layer);
 			}
 		}
-		newScene.staticObjectsAreLocked = staticObjectsAreLocked;
 		return newScene;
 	}
 
