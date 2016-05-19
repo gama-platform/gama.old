@@ -15,6 +15,9 @@ global {
 }
 
 experiment GIS_visualization type: gui {
+	float minimum_cycle_duration <- 1#s;
+
+	
 	output {
 		// display of buildings in 3D with texture and with reading their HEIGHT attribute from the shapefile
 		display gis_displays_graphics type: opengl  {
