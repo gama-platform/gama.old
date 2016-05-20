@@ -197,6 +197,7 @@ public interface IKeyword {
 	public static final String HEADER = "header";
 	public static final String HEADING = "heading";
 	public static final String HEADLESS_UI = "headless";
+	public static final String HEATMAP = "heatmap";
 	public static final String HEIGHT = "height";
 	public static final String HER = "her";
 	public static final String HILL_CLIMBING = "hill_climbing";
@@ -340,6 +341,7 @@ public interface IKeyword {
 	public static final String RESUME_SOUND = "resume_sound";
 	public static final String RETURN = "return";
 	public static final String RETURNS = "returns";
+	public static final String REVERSE_AXIS = "reverse_axes";
 	public static final String REWRITE = "rewrite";
 	public static final String RIGHT = "right";
 	public static final String RING = "ring";

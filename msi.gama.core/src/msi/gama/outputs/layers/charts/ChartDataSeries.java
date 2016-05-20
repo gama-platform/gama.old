@@ -26,7 +26,7 @@ public class ChartDataSeries {
 	ArrayList<Double> yvaluemax=new ArrayList<Double>(); //for box and whisker
 	ArrayList<Double> yvaluemin=new ArrayList<Double>(); //for box and whisker	
 
-	GamaColor mycolor;
+	GamaColor mycolor,mymincolor,mymedcolor;
 
 
 	//	HashMap<String,Object> serieParameters=new HashMap<String,Object>();	
@@ -95,9 +95,23 @@ public class ChartDataSeries {
 	public GamaColor getMycolor() {
 		return mycolor;
 	}
+	public GamaColor getMyMedcolor() {
+		return mymedcolor;
+	}
+
+	public GamaColor getMyMincolor() {
+		return mymincolor;
+	}
+
 
 	public void setMycolor(GamaColor mycolor) {
 		this.mycolor = mycolor;
+	}
+	public void setMyMedcolor(GamaColor mycolor) {
+		this.mymedcolor = mycolor;
+	}
+	public void setMyMincolor(GamaColor mycolor) {
+		this.mymincolor = mycolor;
 	}
 	public boolean isUseYErrValues() {
 		return this.getMysource().useYErrValues;
@@ -229,8 +243,30 @@ public class ChartDataSeries {
 			Object o=getlistvalue(scope,barvalues,IKeyword.COLOR,listvalue);
 			if (o!=null)
 			{
-				GamaColor col=Cast.asColor(scope, o);
-				this.setMycolor(col);
+				if ( o instanceof GamaList )
+				{
+					IList ol=Cast.asList(scope, o);
+					if (ol.size()==1) 
+						this.setMycolor(Cast.asColor(scope, ol.get(0)));
+					if (ol.size()==2)
+						{
+						this.setMycolor(Cast.asColor(scope, ol.get(1)));
+						this.setMyMincolor(Cast.asColor(scope, ol.get(0)));
+						}
+					if (ol.size()>2)
+						{
+						this.setMyMincolor(Cast.asColor(scope, ol.get(0)));
+						this.setMyMedcolor(Cast.asColor(scope, ol.get(1)));
+						this.setMycolor(Cast.asColor(scope, ol.get(2)));
+						}
+				}
+				else
+				{
+					GamaColor col=Cast.asColor(scope, o);
+					this.setMycolor(col);
+					
+				}
+				
 			}
 			
 		}
@@ -323,8 +359,29 @@ public class ChartDataSeries {
 			Object o=getlistvalue(scope,barvalues,IKeyword.COLOR,listvalue);
 			if (o!=null)
 			{
-				GamaColor col=Cast.asColor(scope, o);
-				this.setMycolor(col);
+				if ( o instanceof GamaList )
+				{
+					IList ol=Cast.asList(scope, o);
+					if (ol.size()==1) 
+						this.setMycolor(Cast.asColor(scope, ol.get(0)));
+					if (ol.size()==2)
+						{
+						this.setMycolor(Cast.asColor(scope, ol.get(1)));
+						this.setMyMincolor(Cast.asColor(scope, ol.get(0)));
+						}
+					if (ol.size()>2)
+						{
+						this.setMyMincolor(Cast.asColor(scope, ol.get(0)));
+						this.setMyMedcolor(Cast.asColor(scope, ol.get(1)));
+						this.setMycolor(Cast.asColor(scope, ol.get(2)));
+						}
+				}
+				else
+				{
+					GamaColor col=Cast.asColor(scope, o);
+					this.setMycolor(col);
+					
+				}
 			}
 			
 		}
@@ -382,6 +439,8 @@ public class ChartDataSeries {
 		// TODO Auto-generated method stub
 		this.ongoing_update=true;
 	}
+
+
 
 
 }

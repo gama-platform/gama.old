@@ -14,6 +14,7 @@ import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.axis.AxisLocation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.NumberTickUnit;
 import org.jfree.chart.axis.ValueAxis;
@@ -24,6 +25,8 @@ import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.AbstractRenderer;
+import org.jfree.chart.renderer.GrayPaintScale;
+import org.jfree.chart.renderer.LookupPaintScale;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
@@ -32,25 +35,23 @@ import org.jfree.chart.renderer.xy.StackedXYAreaRenderer;
 import org.jfree.chart.renderer.xy.StackedXYAreaRenderer2;
 import org.jfree.chart.renderer.xy.XYAreaRenderer;
 import org.jfree.chart.renderer.xy.XYBarRenderer;
+import org.jfree.chart.renderer.xy.XYBlockRenderer;
 import org.jfree.chart.renderer.xy.XYBoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.xy.XYDotRenderer;
 import org.jfree.chart.renderer.xy.XYErrorRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
-import org.jfree.chart.renderer.xy.XYLine3DRenderer;
-import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
-import org.jfree.chart.renderer.xy.XYShapeRenderer;
-import org.jfree.chart.renderer.xy.XYSplineRenderer;
-import org.jfree.chart.renderer.xy.XYStepRenderer;
+import org.jfree.chart.title.PaintScaleLegend;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
+import org.jfree.data.xy.MatrixSeries;
+import org.jfree.data.xy.MatrixSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.data.xy.XYIntervalDataItem;
-import org.jfree.data.xy.XYIntervalSeries;
-import org.jfree.data.xy.XYIntervalSeriesCollection;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
 import org.jfree.util.ShapeUtilities;
 
@@ -61,61 +62,10 @@ import msi.gama.util.GamaColor;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
-public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
+public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 
-	public class myXYErrorRenderer extends XYErrorRenderer{
 
-		ChartJFreeChartOutputScatter myoutput;
-		String myid;
-		boolean useSize;
-		AffineTransform transform = new AffineTransform();
-
-		public boolean isUseSize() {
-			return useSize;
-		}
-
-		public void setUseSize(IScope scope, boolean useSize) {
-			this.useSize = useSize;
-
-		}
-
-		public void setMyid(String myid) {
-			this.myid = myid;
-		}
-
-		private static final long serialVersionUID = 1L;
-
-		public void setOutput(ChartJFreeChartOutput output)
-		{
-			myoutput=(ChartJFreeChartOutputScatter) output;
-		}
-
-		@Override
-		public Shape getItemShape(int row, int col) {
-			if (isUseSize()) {
-				transform.setToScale(myoutput.getScale(myid, col), myoutput.getScale(myid, col));
-				return transform.createTransformedShape(super.getItemShape(row, col));
-			} else {
-				return super.getItemShape(row, col);
-			}
-		}
-	}
-
-	double getScale(String serie, int col)
-	{
-		if (MarkerScale.containsKey(serie))
-		{
-			return MarkerScale.get(serie).get(col);
-		}
-		else
-		{
-			return 1;
-		}
-	}
-
-	HashMap<String,ArrayList<Double>> MarkerScale=new HashMap<String,ArrayList<Double>>();
-
-	public ChartJFreeChartOutputScatter(IScope scope, String name,
+	public ChartJFreeChartOutputHeatmap(IScope scope, String name,
 			IExpression typeexp) {
 		super(scope, name, typeexp);
 		// TODO Auto-generated constructor stub
@@ -128,39 +78,15 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	{
 		super.createChart(scope);
 
-		jfreedataset.add(0,new XYIntervalSeriesCollection());
+		jfreedataset.add(0,new MatrixSeriesCollection());
 		PlotOrientation orientation=PlotOrientation.VERTICAL;
 		if (reverse_axes)
 			orientation=PlotOrientation.HORIZONTAL;		
-
-		switch (type) {
-		case SERIES_CHART: {
+	
 			chart =
-					ChartFactory.createXYLineChart(getName(), "", "", (XYIntervalSeriesCollection)(jfreedataset.get(0)), orientation, true, false,
+					ChartFactory.createXYLineChart(getName(), "", "", (MatrixSeriesCollection)(jfreedataset.get(0)), orientation, true, false,
 							false);
-			break;
-		}
 
-		case XY_CHART:
-			chart =
-			ChartFactory.createXYLineChart(getName(), "", "", (XYIntervalSeriesCollection)jfreedataset.get(0),orientation, true, false,
-					false);
-			break;
-		case SCATTER_CHART:
-			chart =
-			ChartFactory.createXYLineChart(getName(), "", "", (XYIntervalSeriesCollection)jfreedataset.get(0), orientation, true, false,
-					false);
-			break;
-		case BOX_WHISKER_CHART: {
-			chart =
-					ChartFactory.createBoxAndWhiskerChart(getName(), "Time", "Value",
-							(BoxAndWhiskerCategoryDataset) jfreedataset.get(0), true);
-			chart.setBackgroundPaint(new Color(249, 231, 236));
-
-			break;
-		}    		
-
-		}
 	}
 
 	public void setDefaultPropertiesFromType(IScope scope, ChartDataSource source, Object o, int type_val) {
@@ -169,33 +95,23 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		switch (type_val)
 		{
 		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
+		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
+		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_12:
+		{
+			source.setCumulative(scope,false);				
+			source.setCumulativeY(scope,true);				
+			source.setUseSize(scope,true);				
+			
+		}
 		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
 		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
 		case ChartDataSource.DATA_TYPE_LIST_POINT:
 		case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE:
-		{
-			source.setCumulative(scope,false);
-			source.setUseSize(scope,false);				
-			break;				
-		}
-		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
-		{
-			source.setCumulative(scope,true);
-			source.setUseSize(scope,true);				
-			break;				
-
-		}
 		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
-		{
-			source.setCumulative(scope,false);
-			source.setUseSize(scope,true);				
-			break;				
-
-		}
 		default:
 		{
-			source.setCumulative(scope,true);				
-			source.setUseSize(scope,false);				
+			source.setCumulative(scope,false);				
+			source.setUseSize(scope,true);				
 		}
 		}
 
@@ -205,77 +121,37 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	public void initdataset()
 	{
 		super.initdataset();
-		if (getType()==ChartOutput.SERIES_CHART)
-		{
-			chartdataset.setCommonXSeries(true);
-			chartdataset.setByCategory(false);
-		}
-		if (getType()==ChartOutput.XY_CHART)
-		{
-			chartdataset.setCommonXSeries(false);
-			chartdataset.setByCategory(false);			
-		}
-		if (getType()==ChartOutput.SCATTER_CHART)
-		{
-			chartdataset.setCommonXSeries(false);
-			chartdataset.setByCategory(false);			
-		}
+		chartdataset.setCommonXSeries(true);
+		chartdataset.setCommonYSeries(true);
+		chartdataset.setByCategory(false);
+		chartdataset.forceNoXAccumulate=true;
+		chartdataset.forceNoYAccumulate=true;
 	}
 
 	Dataset createDataset(IScope scope)
 	{
-		return new XYIntervalSeriesCollection();
+		return new MatrixSeriesCollection();
 	}
 
 	protected AbstractRenderer createRenderer(IScope scope,String serieid)
 	{
 		String style=this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
-		AbstractRenderer newr=new myXYErrorRenderer();
+		AbstractRenderer newr=new XYBlockRenderer();
 		switch (style)
 		{
 		case IKeyword.SPLINE:
-		{
-			newr=new XYSplineRenderer();
-			break;		
-		}
 		case IKeyword.STEP:
-		{
-			newr=new XYStepRenderer();
-			break;		
-		}
 		case IKeyword.DOT:
-		{
-			newr = new XYShapeRenderer();
-			break;		
-		}
 		case IKeyword.WHISKER:
-		{
-			newr = new XYBoxAndWhiskerRenderer();
-			break;		
-		}
 		case IKeyword.AREA:
-		{
-			newr = new XYAreaRenderer();
-			break;		
-		}
 		case IKeyword.BAR:
-		{
-			newr = new XYBarRenderer();
-			break;		
-		}
 		case IKeyword.STACK:
 		case IKeyword.RING:
 		case IKeyword.EXPLODED:
 		case IKeyword.THREE_D:
-		{
-			newr = new XYLine3DRenderer();
-			break;		
-		}
 		default: 
 		{
-			newr=new myXYErrorRenderer();
-			((myXYErrorRenderer)newr).setMyid(serieid);
-			((myXYErrorRenderer)newr).setOutput(this);
+			newr=new XYBlockRenderer();
 			break;
 
 		}
@@ -283,36 +159,113 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		return newr;
 	}
 
+	protected static final LookupPaintScale createLUT(final int ncol, float vmin, float vmax, Color start, Color med, Color end) {
+		final float[][] colors = new float[][]  { 
+				{start.getRed()/255f, start.getGreen()/255f, start.getBlue()/255f, start.getAlpha()/255f},
+				{med.getRed()/255f, med.getGreen()/255f, med.getBlue()/255f, med.getAlpha()/255f},
+				{end.getRed()/255f, end.getGreen()/255f, end.getBlue()/255f, end.getAlpha()/255f}
+		};
+		final float[] limits = new float[] {0, 0.5f, 1};
+		final LookupPaintScale lut = new LookupPaintScale(vmin, vmax, med);
+		float val;
+		float r, g, b, a;
+		for (int j = 0; j < ncol; j++) {			
+			val = (float)j/(float)(ncol-0.99f);
+			int i = 0;
+			for (i = 0; i < limits.length; i++) {
+				if (val < limits[i]) {
+					break;
+				}
+			}
+			i = i - 1;
+			r = colors[i][0] + (val-limits[i])/(limits[i+1]-limits[i])*(colors[i+1][0]-colors[i][0]); 
+			g = colors[i][1] + (val-limits[i])/(limits[i+1]-limits[i])*(colors[i+1][1]-colors[i][1]); 
+			b = colors[i][2] + (val-limits[i])/(limits[i+1]-limits[i])*(colors[i+1][2]-colors[i][2]); 
+			a = colors[i][3] + (val-limits[i])/(limits[i+1]-limits[i])*(colors[i+1][3]-colors[i][3]); 
+			lut.add(val*(vmax-vmin)+vmin, new Color(r, g, b,a));
+		}
+		return lut;
+	}	
+	
+	protected static final LookupPaintScale createLUT(final int ncol, float vmin, float vmax, Color start, Color end) {
+		final float[][] colors = new float[][]  { 
+				{start.getRed()/255f, start.getGreen()/255f, start.getBlue()/255f, start.getAlpha()/255f},
+				{end.getRed()/255f, end.getGreen()/255f, end.getBlue()/255f, end.getAlpha()/255f}
+		};
+		final float[] limits = new float[] {0, 1};
+		final LookupPaintScale lut = new LookupPaintScale(vmin,vmax, start);
+		float val;
+		float r, g, b, a;
+		for (int j = 0; j < ncol; j++) {			
+			val = (float)j/(float)(ncol-0.99f);
+			int i = 0;
+			r = colors[i][0] + (val-limits[i])/(limits[i+1]-limits[i])*(colors[i+1][0]-colors[i][0]); 
+			g = colors[i][1] + (val-limits[i])/(limits[i+1]-limits[i])*(colors[i+1][1]-colors[i][1]); 
+			b = colors[i][2] + (val-limits[i])/(limits[i+1]-limits[i])*(colors[i+1][2]-colors[i][2]); 
+			a = colors[i][3] + (val-limits[i])/(limits[i+1]-limits[i])*(colors[i+1][3]-colors[i][3]); 
+			lut.add((val*(vmax-vmin)+vmin), new Color(r, g, b,a));
+		}
+		return lut;
+	}	
+	
 	protected void resetRenderer(IScope scope,String serieid)
 	{
-		AbstractXYItemRenderer newr=(AbstractXYItemRenderer)this.getOrCreateRenderer(scope, serieid);
+		XYBlockRenderer newr=(XYBlockRenderer)this.getOrCreateRenderer(scope, serieid);
 
 		//		newr.setSeriesStroke(0, new BasicStroke(0));
 		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
-
-		if (newr instanceof XYLineAndShapeRenderer)
-		{
-			((XYLineAndShapeRenderer)newr).setSeriesLinesVisible(0,myserie.getMysource().showLine);
-			((XYLineAndShapeRenderer)newr).setSeriesShapesFilled(0,myserie.getMysource().fillMarker);
-			((XYLineAndShapeRenderer)newr).setSeriesShapesVisible(0,myserie.getMysource().useMarker);
-
-		}
+		
 		if (myserie.getMycolor()!=null)
 		{
 			newr.setSeriesPaint(0,myserie.getMycolor());
 		}
-
-		if (newr instanceof myXYErrorRenderer)
+		if (myserie.getSValues(scope).size()>0)
 		{
-			((myXYErrorRenderer)newr).setDrawYError(false);
-			((myXYErrorRenderer)newr).setDrawXError(false);
-			if (myserie.isUseYErrValues()) ((myXYErrorRenderer)newr).setDrawYError(true);
-			if (myserie.isUseXErrValues()) ((myXYErrorRenderer)newr).setDrawXError(true);
-			if (myserie.getMysource().isUseSize()) ((myXYErrorRenderer)newr).setUseSize(scope, true);
+			double maxval=Collections.max(myserie.getSValues(scope));
+			double minval=Collections.min(myserie.getSValues(scope));
+			Color cdeb=new Color(0,0,0,0);
+			if (myserie.getMyMincolor()!=null)
+				cdeb=myserie.getMyMincolor();
+			Color cend=new Color(0.9f,0.9f,0.9f,1.0f);
+			if (myserie.getMycolor()!=null)
+				cend=myserie.getMycolor();
+			
+			LookupPaintScale paintscale=createLUT(100,(float)minval,(float)maxval,cdeb, cend);
+			if (myserie.getMyMedcolor()!=null)
+				paintscale=createLUT(100,(float)minval,(float)maxval,cdeb, myserie.getMyMedcolor(),cend);
+			
+			newr.setPaintScale(paintscale);
+
+		     NumberAxis scaleAxis = new NumberAxis(myserie.getName());
+		        scaleAxis.setAxisLinePaint(this.axesColor);
+		        scaleAxis.setTickMarkPaint(this.axesColor);
+		        scaleAxis.setTickLabelFont(this.getTickFont());
+		        scaleAxis.setRange(minval, maxval);
+		        scaleAxis.setAxisLinePaint(axesColor);
+		        scaleAxis.setLabelFont(getLabelFont());
+				if (textColor!=null)
+				{
+					scaleAxis.setLabelPaint(textColor);				
+					scaleAxis.setTickLabelPaint(textColor);				
+				}
+
+				PaintScaleLegend legend = new PaintScaleLegend(paintscale,
+	                scaleAxis);
+	        legend.setAxisLocation(AxisLocation.BOTTOM_OR_LEFT);
+	        legend.setAxisOffset(5.0);
+//	        legend.setMargin(new RectangleInsets(5, 5, 5, 5));
+//	        legend.setFrame(new BlockBorder(Color.red));
+//	        legend.setPadding(new RectangleInsets(10, 10, 10, 10));
+//	        legend.setStripWidth(10);
+	        legend.setPosition(RectangleEdge.RIGHT);
+	        legend.setBackgroundPaint(this.backgroundColor);
+//	        ArrayList<PaintScaleLegend> caxe=new ArrayList<PaintScaleLegend>();
+//	        caxe.add(legend);
+//	        chart.setSubtitles(caxe);
+	        if (!this.series_label_position.equals("none"))
+	        	chart.addSubtitle(legend);	
+			
 		}
-
-		if (myserie.getMysource().getUniqueMarkerName()!=null) setSerieMarkerShape(scope,myserie.getName(),myserie.getMysource().getUniqueMarkerName());
-
 	}
 
 
@@ -325,11 +278,12 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			plot.setDataset(i, null);
 			plot.setRenderer(i, null);
 		}
-		((XYIntervalSeriesCollection)jfreedataset.get(0)).removeAllSeries();
+		((MatrixSeriesCollection)jfreedataset.get(0)).removeAllSeries();
 		jfreedataset.clear();
-		jfreedataset.add(0,new XYIntervalSeriesCollection());
-		plot.setDataset((XYIntervalSeriesCollection)jfreedataset.get(0));
+		jfreedataset.add(0,new MatrixSeriesCollection());
+		plot.setDataset((MatrixSeriesCollection)jfreedataset.get(0));
 		plot.setRenderer(0, null);
+		
 		IdPosition.clear();
 	}
 
@@ -337,10 +291,10 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 	protected void createNewSerie(IScope scope, String serieid) {
 		
 		ChartDataSeries dataserie=chartdataset.getDataSeries(scope,serieid);
-		final XYIntervalSeries serie = new XYIntervalSeries(dataserie.getSerieLegend(scope), false, true);		
+		final MatrixSeries serie = new MatrixSeries((String)dataserie.getSerieLegend(scope), Math.max(1,this.getChartdataset().getYSeriesValues().size()), Math.max(1,this.getChartdataset().getXSeriesValues().size()));		
 		XYPlot plot = (XYPlot)this.chart.getPlot();
 
-		XYIntervalSeriesCollection firstdataset=(XYIntervalSeriesCollection)plot.getDataset();
+		MatrixSeriesCollection firstdataset=(MatrixSeriesCollection)plot.getDataset();
 
 		if (!IdPosition.containsKey(serieid))
 		{
@@ -354,7 +308,7 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		else
 		{
 
-			XYIntervalSeriesCollection newdataset=new XYIntervalSeriesCollection();
+			MatrixSeriesCollection newdataset=new MatrixSeriesCollection();
 			newdataset.addSeries(serie);			
 			jfreedataset.add(newdataset);
 			plot.setDataset(jfreedataset.size()-1, newdataset);
@@ -368,70 +322,33 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 	}
 
+	public void preResetSeries(IScope scope) {
+		this.clearDataSet(scope);
+        ArrayList<PaintScaleLegend> caxe=new ArrayList<PaintScaleLegend>();
+        chart.setSubtitles(caxe);
+		
+	}
 
 	protected void resetSerie(IScope scope, String serieid) {
 		// TODO Auto-generated method stub
-
+		this.createNewSerie(scope, serieid);
 		ChartDataSeries dataserie=chartdataset.getDataSeries(scope,serieid);
-		XYIntervalSeries serie=((XYIntervalSeriesCollection) jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope)))).getSeries(0);
-		serie.clear();
+		MatrixSeries serie=((MatrixSeriesCollection) jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope)))).getSeries(0);
 		ArrayList<Double> XValues=dataserie.getXValues(scope);
 		ArrayList<Double> YValues=dataserie.getYValues(scope);
 		ArrayList<Double> SValues=dataserie.getSValues(scope);
-
+		
 		if (XValues.size()>0)
 		{
 			final NumberAxis domainAxis = (NumberAxis) ((XYPlot)this.chart.getPlot()).getDomainAxis();
 			final NumberAxis rangeAxis = (NumberAxis) ((XYPlot)this.chart.getPlot()).getRangeAxis();
 			domainAxis.setAutoRange(false);
 			rangeAxis.setAutoRange(false);
-			//			domainAxis.setRange(Math.min((double)(Collections.min(XValues)),0), Math.max(Collections.max(XValues),Collections.min(XValues)+1));
-			//			rangeAxis.setRange(Math.min((double)(Collections.min(YValues)),0), Math.max(Collections.max(YValues),Collections.min(YValues)+1));
-			XYIntervalDataItem newval;
 			for(int i=0; i<XValues.size(); i++)
 			{
-				if (dataserie.isUseYErrValues())
-				{
-					if (dataserie.isUseXErrValues())
-					{
-						newval=new XYIntervalDataItem(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
-						//				serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
-					}
-					else
-					{
-						newval=new XYIntervalDataItem(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
-						//			serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),dataserie.yerrvaluesmin.get(i),dataserie.yerrvaluesmax.get(i));			
-					}
-
-				}
-				else
-				{
-					if (dataserie.isUseXErrValues())
-					{
-						newval=new XYIntervalDataItem(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
-						//				serie.add(XValues.get(i),dataserie.xerrvaluesmin.get(i),dataserie.xerrvaluesmax.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
-					}
-					else
-					{
-						newval=new XYIntervalDataItem(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
-						//				serie.add(XValues.get(i),XValues.get(i),XValues.get(i),YValues.get(i),YValues.get(i),YValues.get(i));			
-					}
-
-				}
-				serie.add(newval, false);
+				serie.update(YValues.get(i).intValue(), XValues.get(i).intValue(), SValues.get(i).doubleValue());
 			}
-//			domainAxis.setAutoRange(true);
-//			rangeAxis.setAutoRange(true);
 		}
-//		resetAutorange(scope);
-		if (SValues.size()>0)
-		{
-			MarkerScale.remove(serieid);
-			ArrayList<Double> nscale=(ArrayList<Double>) SValues.clone();
-			MarkerScale.put(serieid, nscale);
-
-		}
-
 		this.resetRenderer(scope, serieid); 
 
 	}
@@ -476,69 +393,15 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			rangeAxis.setRange(yrangemin, yrangemax);
 			
 		}
-	
 	}
 	
-	public void setSerieMarkerShape(IScope scope, String serieid, String markershape) {
-		AbstractXYItemRenderer newr=(AbstractXYItemRenderer)this.getOrCreateRenderer(scope, serieid);
-		if (newr instanceof XYLineAndShapeRenderer)
-		{
-			XYLineAndShapeRenderer serierenderer=(XYLineAndShapeRenderer) getOrCreateRenderer(scope,serieid);
-			if ( markershape != null ) {
-				if (markershape.equals(ChartDataStatement.MARKER_EMPTY))
-				{
-					serierenderer.setSeriesShapesVisible(0, false);			
-				}
-				else
-				{
-					Shape myshape=defaultmarkers[0];
-					if ( markershape.equals(ChartDataStatement.MARKER_CIRCLE) ) {
-						myshape=defaultmarkers[1];
-					} else if ( markershape.equals(ChartDataStatement.MARKER_UP_TRIANGLE) ) {
-						myshape=defaultmarkers[2];
-					} else if ( markershape.equals(ChartDataStatement.MARKER_DIAMOND) ) {
-						myshape=defaultmarkers[3];
-					} else if ( markershape.equals(ChartDataStatement.MARKER_HOR_RECTANGLE) ) {
-						myshape=defaultmarkers[4];
-					} else if ( markershape.equals(ChartDataStatement.MARKER_DOWN_TRIANGLE) ) {
-						myshape=defaultmarkers[5];
-					} else if ( markershape.equals(ChartDataStatement.MARKER_HOR_ELLIPSE) ) {
-						myshape=defaultmarkers[6];
-					} else if ( markershape.equals(ChartDataStatement.MARKER_RIGHT_TRIANGLE) ) {
-						myshape=defaultmarkers[7];
-					} else if ( markershape.equals(ChartDataStatement.MARKER_VERT_RECTANGLE) ) {
-						myshape=defaultmarkers[8];
-					} else if ( markershape.equals(ChartDataStatement.MARKER_LEFT_TRIANGLE) ) {
-						myshape=defaultmarkers[9];
-					} 
-					serierenderer.setSeriesShape(0, myshape);
-
-				}
-			}
-
-		}
-
-
-	}	
-
-	public void setUseSize(IScope scope, String name, boolean b) {
-		// TODO Auto-generated method stub
-		AbstractXYItemRenderer newr=(AbstractXYItemRenderer)this.getOrCreateRenderer(scope, name);
-		if (newr instanceof myXYErrorRenderer)
-		{
-			myXYErrorRenderer serierenderer=(myXYErrorRenderer) getOrCreateRenderer(scope,name);
-			serierenderer.setUseSize(scope,b);
-
-		}
-
-	}
 
 
 	protected void initRenderer(IScope scope) {
 		// TODO Auto-generated method stub
 		XYPlot plot = (XYPlot)this.chart.getPlot();
-		defaultrenderer = new myXYErrorRenderer();
-		plot.setRenderer((myXYErrorRenderer)defaultrenderer);
+		defaultrenderer = new XYBlockRenderer();
+		plot.setRenderer((XYBlockRenderer)defaultrenderer);
 
 
 	}
@@ -584,6 +447,42 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		
 	}
 
+	public void setUseYLabels(IScope scope, IExpression expval) {
+		// if there is something to do to use custom X axis
+		final XYPlot pp = (XYPlot) chart.getPlot();
+		
+		((NumberAxis)pp.getRangeAxis()).setNumberFormatOverride(new NumberFormat(){
+
+			    @Override
+			    public StringBuffer format(double number, StringBuffer toAppendTo, FieldPosition pos) {
+			    	int ind=chartdataset.YSeriesValues.indexOf(number);
+			    	if (ind>=0)
+			    	{
+			            return new StringBuffer(""+chartdataset.Ycategories.get(ind) );			    		
+			    	}
+			    	else
+			    	{
+				    	return new StringBuffer("");
+			    		
+			    	}
+
+			    }
+
+			    @Override
+			    public StringBuffer format(long number, StringBuffer toAppendTo, FieldPosition pos) {
+		            return new StringBuffer("n"+number);
+//			        return new StringBuffer(String.format("%s", number));
+			    }
+
+			    @Override
+			    public Number parse(String source, ParsePosition parsePosition) {
+			        return null;
+			    }
+			});
+			
+		
+	}
+
 	public void initChart(IScope scope, String chartname)
 	{
 		super.initChart(scope,chartname);
@@ -594,8 +493,10 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		pp.setDomainCrosshairPaint(axesColor);
 		pp.setRangeCrosshairPaint(axesColor);
 		pp.setAxisOffset(new RectangleInsets(5.0, 5.0, 5.0, 5.0));
-		pp.setDomainCrosshairVisible(true);
-		pp.setRangeCrosshairVisible(true);
+		pp.setDomainCrosshairVisible(false);
+		pp.setRangeCrosshairVisible(false);
+		pp.setRangeGridlinesVisible(false);
+		pp.setDomainGridlinesVisible(false);
 
 		pp.getDomainAxis().setAxisLinePaint(axesColor);
 		pp.getDomainAxis().setTickLabelFont(getTickFont());
@@ -624,16 +525,6 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 
 //		resetAutorange(scope);
 
-		if (getType()==ChartOutput.SERIES_CHART)
-		{
-			if (xlabel==null) xlabel="time";
-		}
-		if (getType()==ChartOutput.XY_CHART)
-		{
-		}
-		if (getType()==ChartOutput.SCATTER_CHART)
-		{
-		}
 		if (xlabel!=null && xlabel!="")
 		{
 			pp.getDomainAxis().setLabel(xlabel);				

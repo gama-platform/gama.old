@@ -17,6 +17,21 @@ public class ChartDataSourceList extends ChartDataSource {
 	ArrayList<String> currentseries;
 	IExpression nameExp;
 
+	
+	public boolean cloneMe(IScope scope, int chartCycle,ChartDataSource source) {
+
+		currentseries=((ChartDataSourceList)source).currentseries;
+		nameExp=((ChartDataSourceList)source).nameExp;
+		boolean res=super.cloneMe(scope, chartCycle, source);
+		return res;
+	}	
+	
+	public ChartDataSource getClone(IScope scope, int chartCycle) {
+		ChartDataSourceList res=new ChartDataSourceList();
+		res.cloneMe(scope, chartCycle, this);
+		return res;
+	}
+	
 	public ChartDataSourceList() {
 		// TODO Auto-generated constructor stub
 		super();

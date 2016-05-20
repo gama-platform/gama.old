@@ -58,7 +58,7 @@ import org.jfree.chart.renderer.xy.*;
 	@facet(name = ChartDataStatement.CUMUL_VALUES, type = IType.BOOL, optional = true, doc = @doc("Force to replace values at each step (false) or accumulate with previous steps (true)")),
 	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true, doc = @doc("Line visible or not (same for all series)")),
 	@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true, doc = @doc("Marker filled (true) or not (false), same for all series.")),
-	@facet(name = IKeyword.COLOR, type =  IType.LIST, optional = true, doc = @doc("list of colors")),
+	@facet(name = IKeyword.COLOR, type =  IType.LIST, optional = true, doc = @doc("list of colors, for heatmaps can be a list of [minColor,maxColor] or [minColor,medColor,maxColor]")),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
 		IKeyword.EXPLODED }, optional = true, doc = @doc("Style for the serie (if not the default one sepecified on chart statement)")) }, omissible = IKeyword.LEGEND)

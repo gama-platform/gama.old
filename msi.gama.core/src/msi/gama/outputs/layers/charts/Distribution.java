@@ -44,6 +44,432 @@ import msi.gama.util.*;
 public class Distribution
 {
 
+	public static GamaMap computeDistrib2d(final IScope scope, final IList lvaluex, final IList lvaluey, final int nbBarresx, final double vminx, final double vmaxx, final int nbBarresy, final double vminy, final double vmaxy)
+	{
+		int len = lvaluex.length(scope);
+		int leny = lvaluey.length(scope);
+		len=Math.min(len, leny);
+		double[] doublelistx = new double[len];
+		double[] doublelisty = new double[len];
+		double[] doublelistorx = new double[len];
+		double[] doublelistory = new double[len];
+		int[][] distribInts = new int[nbBarresx][nbBarresy];
+		int[] distribParamsx = new int[2];
+		int[] distribParamsy = new int[2];
+		String[] distribLegendx = new String[nbBarresx];
+		String[] distribLegendy = new String[nbBarresy];
+
+		double newminIntx = 0;
+		double deuxpuissancekx=0;
+		double newminInty = 0;
+		double deuxpuissanceky=0;
+		
+		//x
+		
+		for (int i = 0; i < len; i++) {
+			doublelistx[i] = Cast.asFloat(scope, lvaluex.get(i));
+			doublelistorx[i] = Cast.asFloat(scope, lvaluex.get(i));
+		}
+
+		 deuxpuissancekx=(vmaxx-vminx)/((double)nbBarresx);
+		 newminIntx=vminx;
+
+
+		distribParamsx[0] = 0;
+		distribParamsx[1] = 0;
+		
+		//y
+		
+		for (int i = 0; i < len; i++) {
+			doublelisty[i] = Cast.asFloat(scope, lvaluey.get(i));
+			doublelistory[i] = Cast.asFloat(scope, lvaluey.get(i));
+		}
+
+		 deuxpuissanceky=(vmaxy-vminy)/((double)nbBarresy);
+		 newminInty=vminy;
+
+
+		distribParamsy[0] = 0;
+		distribParamsy[1] = 0;
+		
+		
+		double[] thresholdsx = new double[nbBarresx+1];
+		double[] thresholdsy = new double[nbBarresy+1];
+		
+		  double preval = newminIntx;
+		  double postval=0;
+		  
+				for(int i=0;i<nbBarresx;i++) {
+					thresholdsx[i]=preval;
+					postval=preval;
+					preval = (double) (preval + deuxpuissancekx);
+					distribLegendx[i]="["+postval+":"+preval+"]";
+				}
+		
+				   preval = newminInty;
+				   postval=0;
+				  
+						for(int i=0;i<nbBarresy;i++) {
+							thresholdsy[i]=preval;
+							postval=preval;
+							preval = (double) (preval + deuxpuissanceky);
+							distribLegendy[i]="["+postval+":"+preval+"]";
+						}
+				
+						
+		for(int i=0;i<nbBarresx;i++) {
+			for(int j=0;j<nbBarresy;j++) {
+				distribInts[i][j]=0;
+			}
+		}
+		int nx,ny;
+		for(int k=0;k<len;k++)
+		{
+			nx=0;
+			ny=0;
+			while(thresholdsx[nx+1]<doublelistorx[k] && (nx+2)<nbBarresx)
+				nx++;
+			while(thresholdsy[ny+1]<doublelistory[k] && (ny+2)<nbBarresy)
+				ny++;
+			distribInts[nx][ny]++;
+		}
+		
+		IList[] mytlist=new IList[nbBarresx];
+		for(int i=0;i<nbBarresx;i++) {
+			final IList vallists = GamaListFactory.create(scope, Types.INT, distribInts[i]);
+			System.out.println("add "+distribInts[i]);
+			mytlist[i]=vallists;
+		}
+		System.out.println("fin "+mytlist);
+		final IList vallist = GamaListFactory.create(scope, Types.LIST, mytlist);
+
+		final GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
+		final IList parlist = GamaListFactory.create(scope, Types.INT, distribParamsx);
+		final IList leglist = GamaListFactory.create(scope, Types.STRING, distribLegendx);
+		final IList parlisty = GamaListFactory.create(scope, Types.INT, distribParamsy);
+		final IList leglisty = GamaListFactory.create(scope, Types.STRING, distribLegendy);
+		result.addValueAtIndex(scope, "values", vallist);
+		result.addValueAtIndex(scope, "legendx", leglist);
+		result.addValueAtIndex(scope, "parlistx", parlist);
+		result.addValueAtIndex(scope, "legendy", leglisty);
+		result.addValueAtIndex(scope, "parlisty", parlisty);
+
+		return result;
+		
+	}
+	
+	public static GamaMap computeDistrib2d(final IScope scope, final IList lvaluex, final IList lvaluey, final int nbBarresx, final int nbBarresy)
+	{
+		int len = lvaluex.length(scope);
+		int leny = lvaluey.length(scope);
+		len=Math.min(len, leny);
+		double[] doublelistx = new double[len];
+		double[] doublelisty = new double[len];
+		double[] doublelistorx = new double[len];
+		double[] doublelistory = new double[len];
+		int[][] distribInts = new int[nbBarresx][nbBarresy];
+		int[] distribParamsx = new int[2];
+		int[] distribParamsy = new int[2];
+		String[] distribLegendx = new String[nbBarresx];
+		String[] distribLegendy = new String[nbBarresy];
+
+		double newminIntx = 0;
+		double deuxpuissancekx=0;
+		double newminInty = 0;
+		double deuxpuissanceky=0;
+		
+		//x
+		
+		for (int i = 0; i < len; i++) {
+			doublelistx[i] = Cast.asFloat(scope, lvaluex.get(i));
+			doublelistorx[i] = Cast.asFloat(scope, lvaluex.get(i));
+		}
+		Arrays.sort(doublelistx);
+		double min = doublelistx[0];
+		double max = doublelistx[len - 1];
+		int twoExponent = 0;
+		int startMultiplier = 0;
+
+		if (min == max) {
+			twoExponent=0;
+			startMultiplier=(int)min;
+			deuxpuissancekx = (float) Math.pow(2, twoExponent);
+			newminIntx = (int)min;
+			
+		}
+
+		else {
+
+
+			double intermin = min;
+			double intermax =  max;
+
+			float minInt = (float) intermin;
+			float maxInt = (float) intermax;
+				double N = Math.log10((maxInt - minInt) / ((double)(nbBarresx - 1))) / Math.log10(2);
+//				System.out.println("Ncalc: maxmin: "+maxInt+"/"+minInt+" N "+N);
+				twoExponent = (int) N ;
+				deuxpuissancekx = (float) Math.pow(2, twoExponent);
+				newminIntx = deuxpuissancekx * (int) ((minInt / deuxpuissancekx));
+				startMultiplier = (int) ((minInt / deuxpuissancekx));
+				if (newminIntx>min)
+				{
+					newminIntx = deuxpuissancekx * (int) ((minInt / deuxpuissancekx)-1);
+					startMultiplier = (int) ((minInt / deuxpuissancekx) - 1);
+				}
+				if ((newminIntx+nbBarresx*deuxpuissancekx)<=max)
+				{
+					N=N+1;
+					twoExponent = (int) N ;
+					deuxpuissancekx = (float) Math.pow(2, twoExponent);
+					newminIntx = deuxpuissancekx * (int) ((minInt / deuxpuissancekx));
+					startMultiplier = (int) ((minInt / deuxpuissancekx));
+					if (newminIntx>min)
+					{
+						newminIntx = deuxpuissancekx * (int) ((minInt / deuxpuissancekx)-1);
+						startMultiplier = (int) ((minInt / deuxpuissancekx) - 1);
+					}
+				}
+
+
+		}
+
+		distribParamsx[0] = twoExponent;
+		distribParamsx[1] = startMultiplier;
+		
+		//y
+		
+		for (int i = 0; i < len; i++) {
+			doublelisty[i] = Cast.asFloat(scope, lvaluey.get(i));
+			doublelistory[i] = Cast.asFloat(scope, lvaluey.get(i));
+		}
+		Arrays.sort(doublelisty);
+		 min = doublelisty[0];
+		 max = doublelisty[len - 1];
+		 twoExponent = 0;
+		 startMultiplier = 0;
+
+
+		if (min == max) {
+			twoExponent=0;
+			startMultiplier=(int)min;
+			deuxpuissanceky = (float) Math.pow(2, twoExponent);
+			newminInty = (int)min;
+			
+		}
+
+		else {
+
+
+			double intermin = min;
+			double intermax =  max;
+
+			float minInt = (float) intermin;
+			float maxInt = (float) intermax;
+				double N = Math.log10((maxInt - minInt) / ((double)(nbBarresy - 1))) / Math.log10(2);
+				System.out.println("Ncalc: maxmin: "+maxInt+"/"+minInt+" N "+N);
+				twoExponent = (int) N ;
+				deuxpuissanceky = (float) Math.pow(2, twoExponent);
+				newminInty = deuxpuissanceky * (int) ((minInt / deuxpuissanceky));
+				startMultiplier = (int) ((minInt / deuxpuissanceky));
+				if (newminInty>min)
+				{
+					newminInty = deuxpuissanceky * (int) ((minInt / deuxpuissanceky)-1);
+					startMultiplier = (int) ((minInt / deuxpuissanceky) - 1);
+				}
+				if ((newminInty+nbBarresy*deuxpuissanceky)<=max)
+				{
+					N=N+1;
+					twoExponent = (int) N ;
+					deuxpuissanceky = (float) Math.pow(2, twoExponent);
+					newminInty = deuxpuissanceky * (int) ((minInt / deuxpuissanceky));
+					startMultiplier = (int) ((minInt / deuxpuissanceky));
+					if (newminInty>min)
+					{
+						newminInty = deuxpuissanceky * (int) ((minInt / deuxpuissanceky)-1);
+						startMultiplier = (int) ((minInt / deuxpuissanceky) - 1);
+					}
+				}
+
+
+		}
+
+
+		distribParamsy[0] = twoExponent;
+		distribParamsy[1] = startMultiplier;
+		
+		
+		double[] thresholdsx = new double[nbBarresx+1];
+		double[] thresholdsy = new double[nbBarresy+1];
+		
+		  double preval = newminIntx;
+		  double postval=0;
+		  
+				for(int i=0;i<nbBarresx;i++) {
+					thresholdsx[i]=preval;
+					postval=preval;
+					preval = (double) (preval + deuxpuissancekx);
+					distribLegendx[i]="["+postval+":"+preval+"]";
+				}
+		
+				   preval = newminInty;
+				   postval=0;
+				  
+						for(int i=0;i<nbBarresy;i++) {
+							thresholdsy[i]=preval;
+							postval=preval;
+							preval = (double) (preval + deuxpuissanceky);
+							distribLegendy[i]="["+postval+":"+preval+"]";
+						}
+				
+						
+		for(int i=0;i<nbBarresx;i++) {
+			for(int j=0;j<nbBarresy;j++) {
+				distribInts[i][j]=0;
+			}
+		}
+		int nx,ny;
+		for(int k=0;k<len;k++)
+		{
+			nx=0;
+			ny=0;
+			while(thresholdsx[nx+1]<doublelistorx[k] && (nx+2)<nbBarresx)
+				nx++;
+			while(thresholdsy[ny+1]<doublelistory[k] && (ny+2)<nbBarresy)
+				ny++;
+			distribInts[nx][ny]++;
+		}
+		
+		IList[] mytlist=new IList[nbBarresx];
+		for(int i=0;i<nbBarresx;i++) {
+			final IList vallists = GamaListFactory.create(scope, Types.INT, distribInts[i]);
+//			System.out.println("add "+distribInts[i]);
+			mytlist[i]=vallists;
+		}
+//		System.out.println("fin "+mytlist);
+		final IList vallist = GamaListFactory.create(scope, Types.LIST, mytlist);
+
+		final GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
+		final IList parlist = GamaListFactory.create(scope, Types.INT, distribParamsx);
+		final IList leglist = GamaListFactory.create(scope, Types.STRING, distribLegendx);
+		final IList parlisty = GamaListFactory.create(scope, Types.INT, distribParamsy);
+		final IList leglisty = GamaListFactory.create(scope, Types.STRING, distribLegendy);
+		result.addValueAtIndex(scope, "values", vallist);
+		result.addValueAtIndex(scope, "legendx", leglist);
+		result.addValueAtIndex(scope, "parlistx", parlist);
+		result.addValueAtIndex(scope, "legendy", leglisty);
+		result.addValueAtIndex(scope, "parlisty", parlisty);
+
+		return result;
+		
+	}
+	
+	
+	@operator(value = {"distribution2d_of" }, 
+			can_be_const = false, iterator = true, 
+//			index_type = ITypeProvider.SECOND_CONTENT_TYPE, 
+					index_type = IType.STRING, 
+			content_type = IType.LIST, category = {IOperatorCategory.STATISTICAL }, 
+			concept = { IConcept.STATISTIC, IConcept.CHART })
+	@doc(value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).", comment = "", examples = {
+			@example(value = "distribution_of([1,1,2,12.5],10)", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
+
+	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy, final Integer nbbarsx, final Integer nbbarsy) throws GamaRuntimeException {
+
+		if (valuesx == null) {
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
+		}
+		IList lvaluex = Cast.asList(scope, valuesx);
+		if (lvaluex.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
+
+		int nbBarresx = 10;
+			nbBarresx=nbbarsx.intValue();
+
+			IList lvaluey = Cast.asList(scope, valuesy);
+			if (lvaluey.length(scope) < 1)
+				return GamaMapFactory.create(Types.STRING, Types.LIST);
+
+			int nbBarresy = 10;
+				nbBarresy=nbbarsy.intValue();
+
+		return computeDistrib2d(scope,lvaluex,lvaluey,nbBarresx,nbBarresy);
+
+	}
+
+	
+	@operator(value = {"distribution2d_of" }, 
+			can_be_const = false, iterator = true, 
+//			index_type = ITypeProvider.SECOND_CONTENT_TYPE, 
+					index_type = IType.STRING, 
+			content_type = IType.LIST, category = {IOperatorCategory.STATISTICAL }, 
+			concept = { IConcept.STATISTIC, IConcept.CHART })
+	@doc(value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).", comment = "", examples = {
+			@example(value = "distribution_of([1,1,2,12.5],10)", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
+
+	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy, final Integer nbbarsx, final Double startvaluex, final Double endvaluex, final Integer nbbarsy, final Double startvaluey, final Double endvaluey) throws GamaRuntimeException {
+
+		if (valuesx == null) {
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
+		}
+		IList lvaluex = Cast.asList(scope, valuesx);
+		if (lvaluex.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
+
+		int nbBarresx = 10;
+			nbBarresx=nbbarsx.intValue();
+
+			IList lvaluey = Cast.asList(scope, valuesy);
+			if (lvaluey.length(scope) < 1)
+				return GamaMapFactory.create(Types.STRING, Types.LIST);
+
+			int nbBarresy = 10;
+				nbBarresy=nbbarsy.intValue();
+			double vminx  = 0.0d;
+				vminx=startvaluex.doubleValue();
+			double vmaxx = 1.0d;
+				vmaxx=endvaluex.doubleValue();
+			double vminy  = 0.0d;
+				vminy=startvaluey.doubleValue();
+			double vmaxy = 1.0d;
+				vmaxy=endvaluey.doubleValue();
+
+		return computeDistrib2d(scope,lvaluex,lvaluey,nbBarresx,vminx,vmaxx,nbBarresy,vminy,vmaxy);
+
+	}
+
+	@operator(value = {"distribution2d_of" }, 
+			can_be_const = false, iterator = true, 
+//			index_type = ITypeProvider.SECOND_CONTENT_TYPE, 
+					index_type = IType.STRING, 
+			content_type = IType.LIST, category = {IOperatorCategory.STATISTICAL }, 
+			concept = { IConcept.STATISTIC, IConcept.CHART })
+	@doc(value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts). Parameters can be (list), (list, nbbins) or (list,nbbins,valmin,valmax)", 
+			masterDoc = true,
+			comment = "", examples = {
+			@example(value = "distribution2d_of([1,1,2,12.5])", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
+
+	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy) throws GamaRuntimeException {
+
+		if (valuesx == null) {
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
+		}
+		IList lvaluex = Cast.asList(scope, valuesx);
+		if (lvaluex.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
+		IList lvaluey = Cast.asList(scope, valuesy);
+		if (lvaluey.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
+
+		int nbBarres = 10;
+
+		return computeDistrib2d(scope,lvaluex,lvaluey,nbBarres,nbBarres);
+
+	}
+
+
+	
+	
 	public static GamaMap computeDistrib(final IScope scope, final IList lvalue, final int nbBarres)
 	{
 		int len = lvalue.length(scope);
@@ -153,6 +579,59 @@ public class Distribution
 		
 	}
 	
+	public static GamaMap computeDistrib(final IScope scope, final IList lvalue, final int nbBarres, final double vmin, final double vmax)
+	{
+		int len = lvalue.length(scope);
+		double[] doublelist = new double[lvalue.length(scope)];
+
+		int[] distribInts = new int[nbBarres];
+		int[] distribParams = new int[2];
+		String[] distribLegend = new String[nbBarres];
+		
+		double deuxpuissancek=(vmax-vmin)/((double)nbBarres);
+		double newminInt=vmin;
+
+		for (int i = 0; i < lvalue.length(scope); i++) {
+			doublelist[i] = Cast.asFloat(scope, lvalue.get(i));
+		}
+		Arrays.sort(doublelist);
+		  
+		  double preval = newminInt;
+		  double postval=0;
+		  int nba=0;
+		  int nbaprec=0;
+				for(int i=0;i<nbBarres;i++) {
+					if (i!=0) {
+						preval = (double) (preval + deuxpuissancek);
+					}
+					postval = (double) (preval + deuxpuissancek);	
+					while (nba<len && doublelist[nba]<postval)
+					{
+						nba++;
+					}
+					
+					distribInts[i]=nba-nbaprec;
+					nbaprec=nba;
+					distribLegend[i]="["+preval+":"+postval+"]";
+				}
+
+
+		 
+		distribParams[0] = 0;
+		distribParams[1] = 0;
+
+		final GamaMap<String, Object> result = GamaMapFactory.create(Types.STRING, Types.NO_TYPE);
+		final IList vallist = GamaListFactory.create(scope, Types.INT, distribInts);
+		final IList parlist = GamaListFactory.create(scope, Types.INT, distribParams);
+		final IList leglist = GamaListFactory.create(scope, Types.STRING, distribLegend);
+		result.addValueAtIndex(scope, "values", vallist);
+		result.addValueAtIndex(scope, "legend", leglist);
+		result.addValueAtIndex(scope, "parlist", parlist);
+
+		return result;
+		
+	}
+	
 	@operator(value = {"distribution_of" }, 
 			can_be_const = false, iterator = true, 
 //			index_type = ITypeProvider.SECOND_CONTENT_TYPE, 
@@ -184,7 +663,7 @@ public class Distribution
 					index_type = IType.STRING, 
 			content_type = IType.LIST, category = {IOperatorCategory.STATISTICAL }, 
 			concept = { IConcept.STATISTIC, IConcept.CHART })
-	@doc(value = "Discretize a list of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).", 
+	@doc(value = "Discretize a list of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts). Parameters can be (list), (list, nbbins) or (list,nbbins,valmin,valmax)", 
 			masterDoc = true,
 			comment = "", examples = {
 			@example(value = "distribution_of([1,1,2,12.5])", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
@@ -201,6 +680,37 @@ public class Distribution
 		int nbBarres = 10;
 
 		return computeDistrib(scope,lvalue,nbBarres);
+
+	}
+
+	@operator(value = {"distribution_of" }, 
+			can_be_const = false, iterator = true, 
+//			index_type = ITypeProvider.SECOND_CONTENT_TYPE, 
+					index_type = IType.STRING, 
+			content_type = IType.LIST, category = {IOperatorCategory.STATISTICAL }, 
+			concept = { IConcept.STATISTIC, IConcept.CHART })
+	@doc(value = "Discretize a list of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).", 
+			masterDoc = false,
+			comment = "", examples = {
+			@example(value = "distribution_of([1,1,2,12.5])", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
+
+	public static GamaMap DistributionOf(final IScope scope, final IContainer values, final Integer nbbars, final Double startvalue, final Double endvalue) throws GamaRuntimeException {
+
+		if (values == null) {
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
+		}
+		IList lvalue = Cast.asList(scope, values);
+		if (lvalue.length(scope) < 1)
+			return GamaMapFactory.create(Types.STRING, Types.LIST);
+
+		int nbBarres = 10;
+			nbBarres=nbbars.intValue();
+		double vmin  = 0.0d;
+			vmin=startvalue.doubleValue();
+		double vmax = 1.0d;
+			vmax=endvalue.doubleValue();
+
+		return computeDistrib(scope,lvalue,nbBarres,vmin,vmax);
 
 	}
 	

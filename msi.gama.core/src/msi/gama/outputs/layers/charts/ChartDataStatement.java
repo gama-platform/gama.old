@@ -45,7 +45,7 @@ import org.jfree.chart.renderer.xy.*;
 	@facet(name = ChartDataStatement.XERR_VALUES, type = { IType.FLOAT, IType.LIST}, optional = true, doc = @doc("the X Error bar values to display. Has to be a List. Each element can be a number or a list with two values (low and high value)")),
 	@facet(name = ChartDataStatement.YMINMAX_VALUES, type = IType.LIST, optional = true, doc = @doc("the Y MinMax bar values to display (BW charts). Has to be a List. Each element can be a number or a list with two values (low and high value)")),
 	@facet(name = ChartDataStatement.MARKERSIZE, type = IType.LIST, optional = true, doc = @doc("Size of the marker. Can be a double (same size for every marker) or a list (different sizes for each marker.")),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true, doc = @doc("color of the serie")),
+	@facet(name = IKeyword.COLOR, type = {IType.COLOR,IType.LIST}, optional = true, doc = @doc("color of the serie, for heatmap can be a list to specify [minColor,maxColor] or [minColor,medColor,maxColor]")),
 	@facet(name = ChartDataStatement.CUMUL_VALUES, type = IType.BOOL, optional = true, doc = @doc("Force to replace values at each step (false) or accumulate with previous steps (true)")),
 	@facet(name = ChartDataStatement.LINE_VISIBLE, type = IType.BOOL, optional = true, doc = @doc("Line visible or not")),
 	@facet(name = ChartDataStatement.MARKER, type = IType.BOOL, optional = true, doc = @doc("marker visible or not")),

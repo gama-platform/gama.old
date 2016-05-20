@@ -31,7 +31,6 @@ global {
 	init{  
 		//Ant are placed randomly in the nest
 		create ant number: ants_number with: [location::any_location_in (ant_grid(center))] ;
-		
 	}
 	
 	//Reflex to diffuse the road of pheromon on the grid
@@ -186,11 +185,16 @@ experiment Ant type: gui {
 				
 			}
 			
-			chart "Proportion carrying: Bar history"  size: {0.5,0.5} position: {0.5, 0} type:histogram
-			
+			chart "Proportions carrying: Radar"  size: {0.5,0.5} position: {0.5, 0} type:radar
+			axes:#white
+
 			{
-				data "empty_ants" value:(list(ant) count (!each.hasFood)) color:°red;
-				data "carry_food_ants" value:(list(ant) count (each.hasFood)) color:°green;				
+				data "empty" value:(list(ant) count (!each.hasFood)) 
+				accumulate_values:true
+				color:°red;				
+				data "carry" value:(list(ant) count (each.hasFood)) 
+				accumulate_values:true
+				color:°blue;				
 			}
 			
 			chart "Proportion: serie"   size: {1.0,0.5} position: {0, 0.5} type:series 
@@ -202,6 +206,8 @@ experiment Ant type: gui {
 				color:[°red,°green];				
 			}
 		}
+// idem with stacked bar:
+/* 
 		display ProportionByState {
 			chart "DataListListBar" type:histogram 
 			x_serie_labels: categnames 
@@ -211,16 +217,7 @@ experiment Ant type: gui {
 			}
 			
 		}
-
-		display PositionByCarry {
-			chart "Position by carry state (data)" type:scatter
-			{
-				data "empty_ants" value:((list(ant) where (!each.hasFood)) collect each.location) color:°red line_visible:false;
-				data "carry_food_ants" value:((list(ant) where (each.hasFood)) collect each.location) color:°green line_visible:false;
-				
-			}
-			
-			}
+*/
 			// Idem with datalist:
 //		display PositionByState {
 //			chart "Position by state (datalist)" type:scatter
@@ -229,22 +226,64 @@ experiment Ant type: gui {
 //			}
 //		}
 		display CentroidPosition {
-			chart "Centroide and size by Carry state" type:scatter
+			chart "Positions and History of Centroide and size by Carry state" type:scatter
 			{
-				datalist ["carry","empty"] value:[mean((list(ant) where (each.hasFood)) collect each.location),
+				datalist ["avg-carry","avg-empty"] value:[mean((list(ant) where (each.hasFood)) collect each.location),
 					mean((list(ant) where (!each.hasFood)) collect each.location)
 				]
 				marker_size: [length(list(ant) where (each.hasFood))/20,length(list(ant) where (!each.hasFood))/20]
 					 color:[°red,°green] 
 					 fill:false
 					 line_visible:true;				
+				data "empty_ants" value:((list(ant) where (!each.hasFood)) collect each.location) color:°red 
+				accumulate_values:false
+				line_visible:false;
+				data "carry_food_ants" value:((list(ant) where (each.hasFood)) collect each.location) 
+				accumulate_values:false
+				color:°green line_visible:false;
+
 			}
 		}	
-		display DistributionPosition {
-			chart "Distribution of the X positions" type:histogram
+		display Distribution2dPosition {
+			chart "Distribution of the X positions"   size: {0.65,0.3} position: {0.05, 0} type:histogram
+			
 			{
-				datalist (distribution_of(list(ant) collect each.location.x,10) at "legend") 
-					value:(distribution_of(list(ant) collect each.location.x,10) at "values");
+				datalist (distribution_of(list(ant) collect each.location.x,10,0,100) at "legend") 
+					value:(distribution_of(list(ant) collect each.location.x,10,0,100) at "values");
+			}
+			chart "Distribution of the Y positions"   size: {0.3,0.7} position: {0.7, 0.28} type:histogram
+			reverse_axes:true
+			
+			{
+				datalist reverse(distribution_of(list(ant) collect each.location.x,10,0,100) at "legend") 
+					value:reverse(distribution_of(list(ant) collect each.location.x,10,0,100) at "values");
+			}
+
+			chart "Distribution2d of the XvsY positions- heatmap"   size: {0.7,0.7} position: {0, 0.3} type:heatmap
+			x_serie_labels: (distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "legendx")
+			y_serie_labels: (distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "legendy")
+			series_label_position:none
+			{
+				data  "XYdistrib"
+					value:(distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "values")
+					color:[#red];
+			}
+		}
+		
+		display DistributionPosition {
+			chart "Distribution of the X positions"   size: {0.92,0.3} position: {0, 0} type:histogram
+			
+			{
+				datalist (distribution_of(list(ant) collect each.location.x,10,0,100) at "legend") 
+					value:(distribution_of(list(ant) collect each.location.x,10,0,100) at "values");
+			}
+			chart "Distribution of the X positions- heatmap"   size: {1.0,0.7} position: {0, 0.3} type:heatmap
+			x_serie_labels: (distribution_of(list(ant) collect each.location.x,10,0,100) at "legend")
+			y_range:50
+			{
+				data  "Xdistrib"
+					value:(distribution_of(list(ant) collect each.location.x,10,0,100) at "values")
+					color:[#red];
 			}
 		}	
 		}
@@ -297,11 +336,14 @@ experiment AntOneDisp type: gui {
 		}
 
 		display ChartScatter {
-			chart "DataScatter" type:scatter
+			chart "Distribution2d of the XvsY positions- heatmap"   size: {0.7,0.7} position: {0, 0.3} type:heatmap
+			x_serie_labels: (distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "legendx")
+			y_serie_labels: (distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "legendy")
+			series_label_position:none
 			{
-				data "empty_ants" value:((list(ant) where (!each.hasFood)) collect each.location) color:°red line_visible:false;
-				data "carry_food_ants" value:((list(ant) where (each.hasFood)) collect each.location) color:°green line_visible:false;
-				
+				data  "XYdistrib"
+					value:(distribution2d_of(list(ant) collect each.location.x,list(ant) collect each.location.y,10,0,100,10,0,100) at "values")
+					color:[#red];
 			}
 			
 			}

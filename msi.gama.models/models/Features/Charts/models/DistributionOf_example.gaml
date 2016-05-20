@@ -22,8 +22,7 @@ global
 	{
 		add gauss(100,100) to:totest;
 		testdistrib<- distribution_of(totest,10);
-		write (testdistrib);
-		
+		write (testdistrib);		
 	}
 }
 
@@ -37,8 +36,6 @@ experiment my_experiment type: gui {
 //						accumulate_values: false;
 			}
 		} 
-
-
 	}
 }
 	
