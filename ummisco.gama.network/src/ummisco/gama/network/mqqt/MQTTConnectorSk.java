@@ -73,7 +73,7 @@ public class MQTTConnectorSk implements IConnector{
 		@Override
 		public void messageArrived(String topic, MqttMessage message) throws Exception {
 			String body =message.toString();
-			System.out.println("message recu " + body);
+			//System.out.println("message recu " + body);
 			@SuppressWarnings("unchecked")
 			Map<String,Object> mp = (Map<String,Object>) StreamConverter.convertStreamToObject(GAMA.getSimulation().getScope(), body);
 			pushMessageToAgents(topic,mp);
@@ -178,7 +178,11 @@ public class MQTTConnectorSk implements IConnector{
 			 MqttConnectOptions connOpts = new MqttConnectOptions();
 	         connOpts.setCleanSession(true);
 	         sendConnection.setCallback(new Callback());
-	 		 sendConnection.connect(connOpts);
+	         connOpts.setCleanSession(true);
+	         connOpts.setKeepAliveInterval(30);
+	         connOpts.setUserName(MQTTConnector.DEFAULT_USER);
+	         connOpts.setPassword(MQTTConnector.DEFAULT_PASSWORD.toCharArray());
+	  		 sendConnection.connect(connOpts);
 	        
 			System.out.println("creation connection emission");
 		}

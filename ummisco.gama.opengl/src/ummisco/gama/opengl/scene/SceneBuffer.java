@@ -37,7 +37,7 @@ public class SceneBuffer {
 		this.renderer = joglRenderer;
 	}
 
-	public void beginUpdatingScene() {
+	public boolean beginUpdatingScene() {
 		// If we are syncrhonized with the simulation and a backScene exists, we
 		// wait until it has been updated (put to null at the end of
 		// endUpdatingScene)
@@ -46,17 +46,20 @@ public class SceneBuffer {
 				Thread.sleep(20);
 			} catch (final InterruptedException e) {
 				// e.printStackTrace();
-				return;
+				return false;
 			}
 		}
 		// If we are not synchronized (or if the wait is over), we verify that
 		// backScene is null and create a new one
 		if (backScene != null) {
-			return;
+			// We should also prevent the draw to happen by skipping everything
+			// if it the case ?
+			return false;
 		}
 		backScene = createSceneFrom(staticScene);
 		// We prepare it for drawing
 		backScene.beginDrawingLayers();
+		return true;
 	}
 
 	public void endUpdatingScene() {
@@ -78,7 +81,14 @@ public class SceneBuffer {
 		// If there is another frontScene, we discard it (will be disposed of
 		// later)
 		if (frontScene != null) {
-			garbage.add(frontScene);
+			if (frontScene.rendered())
+				garbage.add(frontScene);
+			else {
+				garbage.add(backScene);
+				backScene = null;
+				return;
+			}
+
 		}
 		// We switch the scenes
 		frontScene = backScene;

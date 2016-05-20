@@ -575,13 +575,22 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	}
 
-	public void updateWithSavedAgent(final IScope s, final SavedAgent sa) {
+	public void updateWith(final IScope s, final SavedAgent sa) {
 		// Update Clock
 		final Object cycle = sa.getAttributeValue("cycle");
 		clock.setCycle((Integer) cycle);
 
 		// Update Attribute
-
+		Map<String,Object> attr = sa.getVariables();
+		for(String name : attr.keySet()) {
+			this.setDirectVarValue(s, name, attr.get(name));
+			// this.setAttribute(name, attr.get(name));
+		}
+		
+		// TODO
+		// Update GUI of the Experiment
+//		this.getExperiment().
+		
 		// Update innerPopulations
 		// TODO tout mettre dans une methode :
 		// Add a boolean to this one :
@@ -595,6 +604,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 				final IPopulation microPop = getMicroPopulation(microPopName);
 
 				if (microPop != null) {
+					// TODO do not kill everybody !!!!
 					// microPop.dispose();
 					microPop.killMembers();
 					microPop.clear();

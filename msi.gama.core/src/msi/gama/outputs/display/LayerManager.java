@@ -46,10 +46,10 @@ public class LayerManager implements ILayerManager {
 	public LayerManager(final IDisplaySurface surface, final LayeredDisplayOutput output) {
 		this.surface = surface;
 		final List<AbstractLayerStatement> layers = output.getLayers();
-		for ( final AbstractLayerStatement layer : layers ) {
+		for (final AbstractLayerStatement layer : layers) {
 			if (layer.isToCreate()) {
-				ILayer result = AbstractLayer.createLayer(output.getScope(), layer);
-				if ( result instanceof OverlayLayer ) {
+				final ILayer result = AbstractLayer.createLayer(output.getScope(), layer);
+				if (result instanceof OverlayLayer) {
 					overlay = (OverlayLayer) result;
 				} else {
 					addLayer(result);
@@ -159,16 +159,17 @@ public class LayerManager implements ILayerManager {
 		}
 		scope.setGraphics(g);
 		try {
-			g.beginDrawingLayers();
-			for (int i = 0, n = enabledLayers.size(); i < n; i++) {
-				if (scope.interrupted()) {
-					return;
+			if (g.beginDrawingLayers()) {
+				for (int i = 0, n = enabledLayers.size(); i < n; i++) {
+					if (scope.interrupted()) {
+						return;
+					}
+					final ILayer dis = enabledLayers.get(i);
+					dis.drawDisplay(scope, g);
 				}
-				final ILayer dis = enabledLayers.get(i);
-				dis.drawDisplay(scope, g);
-			}
-			if (overlay != null) {
-				overlay.drawDisplay(scope, g);
+				if (overlay != null) {
+					overlay.drawDisplay(scope, g);
+				}
 			}
 		} catch (final Exception e) {
 			scope.getGui().debug(e);

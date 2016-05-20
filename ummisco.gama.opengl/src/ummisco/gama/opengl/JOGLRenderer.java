@@ -861,15 +861,15 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	 * Each new step the Z value of the first layer is set to 0.
 	 */
 	@Override
-	public void beginDrawingLayers() {
+	public boolean beginDrawingLayers() {
 		while (!inited) {
 			try {
 				Thread.sleep(10);
 			} catch (final InterruptedException e) {
-				return;
+				return false;
 			}
 		}
-		sceneBuffer.beginUpdatingScene();
+		return sceneBuffer.beginUpdatingScene();
 
 	}
 
@@ -1076,7 +1076,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 	@Override
 	public boolean cannotDraw() {
-		return sceneBuffer.getSceneToUpdate().cannotAdd();
+		return sceneBuffer.getSceneToUpdate() != null && sceneBuffer.getSceneToUpdate().cannotAdd();
 	}
 
 	@Override
