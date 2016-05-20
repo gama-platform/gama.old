@@ -60,6 +60,7 @@
     <module>../msi.gama.documentation</module>
     <module>../msi.gama.application</module>
     <module>../msi.gama.p2updatesite</module>
+    <module>../msi.gama.release</module>
   </modules>
   
   <properties>
