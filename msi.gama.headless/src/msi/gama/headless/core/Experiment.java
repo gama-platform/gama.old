@@ -100,7 +100,7 @@ public class Experiment implements IExperiment {
 		if ( output == null)
 			throw GamaRuntimeException.error("Output does not exist: " + parameterName );
 		if(!(output instanceof MonitorOutput) ) 
-			throw GamaRuntimeException.error("Output " + parameterName+ " is not an ouptut." ); 
+			throw GamaRuntimeException.error("Output " + parameterName+ " is not an alphanumeric data." ); 
 		output.update();
 		return ((MonitorOutput) output).getLastValue();
 	}
