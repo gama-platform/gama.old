@@ -5,6 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -35,7 +41,7 @@ public class ConvertToPDF {
 		String command = Constants.CMD_PANDOC+" --template="+template.getAbsolutePath()+" --latex-engine="+Constants.CMD_PDFLATEX+" --listings --toc";
 		command = command + " " + files;
 		for(Object s : prop2.keySet()) {
-			command = command + " " + "--variable " + s + "=" + prop2.getProperty(s.toString());
+			command = command + " -s " + "--variable " + s + "=" + prop2.getProperty(s.toString());
 		}
 		command = command + " -o " + pdfFile.getAbsolutePath() ;
 		
@@ -49,8 +55,20 @@ public class ConvertToPDF {
 		String line;
 		try {
 			String[] env = { Constants.PATH };
-
-			Process p = Runtime.getRuntime().exec(getCommandLine(), env, new File(Constants.WIKI_FOLDER));
+			
+			// build file .bat
+			File batFile = new File("batFile.bat");
+			Files.deleteIfExists(batFile.toPath());
+			if (batFile.createNewFile() == false) {
+				System.err.println("Impossible to create the batFile...");
+				return;
+			}
+			List<String> lines = Arrays.asList("cd "+Constants.WIKI_FOLDER+" && "+getCommandLine()+"\"" );
+			Path file = Paths.get("batFile.bat");
+			Files.write(file, lines, Charset.forName("UTF-8"));
+			
+			// run the bat file
+			Process p = Runtime.getRuntime().exec("cmd /c start batFile.bat && exit");
 
 			BufferedReader bri = new BufferedReader(new InputStreamReader(
 					p.getInputStream()));
