@@ -11,10 +11,12 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers.charts;
 
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.AbstractLayer;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
@@ -32,6 +34,12 @@ public class ChartLayer extends AbstractLayer {
 	public ChartLayer(final ILayerStatement model) {
 		super(model);
 		// info = new ChartRenderingInfo();
+	}
+
+	@Override
+	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
+		// Cannot focus
+		return null;
 	}
 
 	// private JFreeChart getChart() {

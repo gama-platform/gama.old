@@ -110,7 +110,7 @@ public class MessageBroker {
 		f.setReceivers(receivers);
 		f.setPerformative(FIPAConstants.Performatives.FAILURE);
 		f.setConversation(m.getConversation());
-		f.setContents(m.getContents());
+		f.setContents(m.getContents(scope));
 		return f;
 	}
 
@@ -122,7 +122,7 @@ public class MessageBroker {
 	 */
 	public void scheduleForDelivery(final IScope scope, final FIPAMessage m) {
 		for (final IAgent a : m.getReceivers().iterable(scope)) {
-			scheduleForDelivery(m.clone(), a);
+			scheduleForDelivery(m.copy(scope), a);
 		}
 	}
 

@@ -26,7 +26,7 @@ import msi.gama.util.IList;
  * @author drogoul
  */
 
-public class FIPAMessage extends GamaMessage implements Cloneable {
+public class FIPAMessage extends GamaMessage {
 
 	/** The message. */
 	private MessageData data;
@@ -44,7 +44,7 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	 *             the gaml exception
 	 */
 	public FIPAMessage(final IScope scope) {
-		super(scope, null, null);
+		super(scope, null, null, null);
 	}
 
 	/**
@@ -60,7 +60,7 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	 *             the gaml exception
 	 */
 	public FIPAMessage(final IScope scope, final FIPAMessage m) throws GamaRuntimeException {
-		super(scope, m.getData().getSender(), m.getData().getContent());
+		super(scope, m.getData().getSender(), null, m.getData().getContent());
 		getData().setContent(m.getData().getContent());
 		getData().setConversation(m.getConversation());
 		getData().setReceivers(m.getData().getReceivers());
@@ -91,7 +91,7 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	 */
 	public FIPAMessage(final IAgent sender, final IList<IAgent> receivers, final IList content, final int performative,
 			final Conversation conversation) throws GamaRuntimeException {
-		super(sender.getScope(), sender, content);
+		super(sender.getScope(), sender, null, content);
 		setSender(sender);
 		getData().setReceivers(receivers);
 		getData().setPerformative(performative);
@@ -102,16 +102,18 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 		return getData().getConversation();
 	}
 
+	@Override
 	public IList<IAgent> getReceivers() {
 		return getData().getReceivers();
 	}
 
-	@Override
-	public FIPAMessage clone() {
-		final FIPAMessage m = new FIPAMessage(getSender(), getReceivers(), (IList<IAgent>) getContents(),
-				getPerformative(), getConversation());
-		return m;
-	}
+	// @Override
+	// public FIPAMessage clone() {
+	// final FIPAMessage m = new FIPAMessage(getSender(), getReceivers(),
+	// (IList<IAgent>) getContents(null),
+	// getPerformative(), getConversation());
+	// return m;
+	// }
 
 	/**
 	 * Gets the contents of the message.
@@ -120,7 +122,7 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	 */
 	@Override
 	@getter(GamaMessage.CONTENTS)
-	public Object getContents() {
+	public Object getContents(final IScope scope) {
 		setUnread(false);
 		return getData().getContent();
 	}
@@ -215,7 +217,9 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 
 	@Override
 	public FIPAMessage copy(final IScope scope) throws GamaRuntimeException {
-		return this.clone();
+		final FIPAMessage m = new FIPAMessage(getSender(), getReceivers(), (IList<IAgent>) getContents(scope),
+				getPerformative(), getConversation());
+		return m;
 	}
 
 	public void setReceivers(final IList receivers) {

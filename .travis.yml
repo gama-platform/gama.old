@@ -18,13 +18,12 @@ before_deploy:
   - git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git
   - git config --list
   - git log -n 3
-  - git fetch origin
+  - git config remote.origin.fetch "+refs/heads/*:refs/remotes/origin/*"
+  - git fetch
   - git checkout master
   - git pull
-  - git log -n 3
-  - git ls-remote --tags origin
   - git show-ref --tags
-  - git push https://$CI_USER_TOKEN@github.com/gama-platform/gama.git :refs/tags/latest
+  - git push origin :refs/tags/latest
   - git tag -d latest
   - git tag -fa latest -m "latest"
   - git push --tags -f

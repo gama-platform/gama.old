@@ -47,11 +47,14 @@ public class GamaMessage implements IValue {
 	public final static String EMISSION_TIMESTAMP = "emission_timestamp";
 	public final static String RECEPTION_TIMESTAMP = "recention_timestamp";
 	public final static String SENDER = "sender";
+	public final static String RECEIVERS = "receivers";
 
 	/** The unread. */
 	private boolean unread;
 
 	private Object sender;
+	
+	private Object receivers;
 
 	protected Object contents;
 
@@ -59,10 +62,11 @@ public class GamaMessage implements IValue {
 
 	private int receptionTimeStamp;
 
-	public GamaMessage(final IScope scope, final Object sender, final Object content) throws GamaRuntimeException {
+	public GamaMessage(final IScope scope, final Object sender, final Object receivers, final Object content) throws GamaRuntimeException {
 		emissionTimeStamp = scope.getClock().getCycle();
 		unread = true;
 		setSender(sender);
+		setReceivers(receivers);
 		setContents(content);
 	}
 
@@ -87,13 +91,35 @@ public class GamaMessage implements IValue {
 		this.sender = sender;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see msi.gama.extensions.fipa.IGamaMessage#getSender()
+	 */
+	@getter(GamaMessage.RECEIVERS)
+	public Object getReceivers() {
+		return receivers;
+	}
+
+	/**
+	 * Sets the receivers.
+	 *
+	 * @param sender
+	 *            the receivers
+	 */
+	@setter(GamaMessage.RECEIVERS)
+	public void setReceivers(final Object receivers) {
+		this.receivers = receivers;
+	}
+
+	
 	/**
 	 * Gets the contents of the message.
 	 *
 	 * @return the contents
 	 */
 	@getter(GamaMessage.CONTENTS)
-	public Object getContents() {
+	public Object getContents(IScope scope) {
 		setUnread(false);
 		return contents;
 	}
@@ -147,17 +173,17 @@ public class GamaMessage implements IValue {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return StringUtils.toGaml(getContents(), includingBuiltIn);
+		return StringUtils.toGaml(contents, includingBuiltIn);
 	}
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return "message[sender: " + getSender() + "; content: " + getContents() + "; content" + "]";
+		return "message[sender: " + getSender() + "; content: " + getContents(scope) + "; content" + "]";
 	}
 
 	@Override
 	public GamaMessage copy(final IScope scope) throws GamaRuntimeException {
-		return new GamaMessage(scope, getSender(), getContents());
+		return new GamaMessage(scope, getSender(), getReceivers(), getContents(scope));
 	}
 
 	/**

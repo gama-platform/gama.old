@@ -24,6 +24,7 @@ import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.charts.ChartLayer;
@@ -46,7 +47,13 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
-		return null;
+		final Envelope3D envelope = geometry.getEnvelope();
+		final Point min = this.getScreenCoordinatesFrom(envelope.getMinX(), envelope.getMinY(), s);
+		final Point max = this.getScreenCoordinatesFrom(envelope.getMaxX(), envelope.getMaxY(), s);
+		final Rectangle2D r = new Rectangle2D.Double();
+		r.add(min);
+		r.add(max);
+		return r;
 	}
 
 	protected ILayerStatement definition;

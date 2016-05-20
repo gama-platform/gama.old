@@ -20,33 +20,35 @@
     <module>../ummisco.gama.feature.dependencies</module>
     <module>../ummisco.gama.feature.opengl.jogl2</module>
     <module>../ummisco.gama.feature.core</module>
-    <module>../idees.gama.mapcomparison</module>
+    <module>../ummisco.gama.feature.serialize</module>
+    <module>../ummisco.gama.feature.network</module>    
+    
     <module>../msi.gaml.extensions.fipa</module>
     <module>../msi.gama.headless</module>
     <module>../simtools.gaml.extensions.traffic</module>
     <module>../simtools.gaml.extensions.physics</module>
-    <module>../cenres.gaml.extensions.hydro</module>
-    <module>../dream.gama.opengis</module>
+    
+    
     <module>../idees.gama.features.weka</module>
     <module>../idees.gama.weka</module>
     <module>../irit.gaml.extensions.database</module>
     <module>../irit.gaml.extensions.test</module>
     
-    <module>../msi.gama.hpc</module>
+    
     <module>../msi.gama.models</module>
     <module>../msi.gaml.architecture.simplebdi</module>
-    <module>../msi.gaml.extensions.cplex</module>
-    <module>../msi.gaml.extensions.humanmoving</module>
-    <module>../msi.gaml.extensions.traffic2d</module>
-    <module>../other.gama.feature.plugins</module>
-    <module>../simtools.gamanalyzer.fr</module>
+    
+    
+    
+    
+    
     <module>../simtools.graphanalysis.fr</module>
     <module>../simtools.graphlayout.feature</module>
-    <module>../ummisco.gama.communicator</module>
+    
     <module>../ummisco.gama.feature.audio</module>
     <module>../ummisco.gama.feature.product</module>
     <module>../ummisco.gama.feature.stats</module>
-    <module>../ummisco.gama.gpu</module>
+    
     <module>../ummisco.gama.opengl</module>
     <module>../ummisco.gama.serialize</module>
     <module>../ummisco.gama.network</module>
@@ -54,9 +56,9 @@
     <module>../ummisco.gaml.extensions.rjava</module>
     <module>../ummisco.gaml.extensions.sound</module>
     <module>../ummisco.gaml.extensions.stats</module>
-    <module>../ummisco.miro.extension</module>
-    <module>../ummisco.miro.extension.traffic</module>
-    <module>../irit.maelia.gaml.additions</module>
+    
+    
+    
     <module>../msi.gama.documentation</module>
     <module>../msi.gama.application</module>
     <module>../msi.gama.p2updatesite</module>

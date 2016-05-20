@@ -103,13 +103,18 @@ public class LayerManager implements ILayerManager {
 	 */
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
+		if (geometry == null)
+			return null;
+		Rectangle2D result = null;
 		for (final ILayer display : enabledLayers) {
 			final Rectangle2D r = display.focusOn(geometry, s);
 			if (r != null) {
-				return r;
+				if (result == null)
+					result = new Rectangle2D.Double();
+				result.add(r);
 			}
 		}
-		return null;
+		return result;
 	}
 
 	void enable(final ILayer found) {

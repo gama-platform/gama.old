@@ -43,7 +43,12 @@ public class AgentLayer extends AbstractLayer {
 
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
-		return shapes.get(geometry);
+		if (geometry instanceof IAgent) {
+			final Rectangle2D r = shapes.get(geometry);
+			if (r != null)
+				return r;
+		}
+		return super.focusOn(geometry, s);
 	}
 
 	protected final Map<IAgent, Rectangle2D> shapes = new ConcurrentHashMap();

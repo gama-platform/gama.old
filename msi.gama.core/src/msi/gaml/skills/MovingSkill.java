@@ -54,7 +54,7 @@ import msi.gaml.types.*;
 	@var(name = IKeyword.HEADING,
 		type = IType.INT,
 		init = "rnd(359)",
-		doc = @doc("Represents the absolute heading of the agent in degrees (in the range 0-359)") ),
+		doc = @doc("Represents the absolute heading of the agent in degrees.") ),
 	@var(name = IKeyword.DESTINATION,
 		type = IType.POINT,
 		depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION },
@@ -75,7 +75,8 @@ public class MovingSkill extends Skill {
 	@setter(IKeyword.HEADING)
 	public void setHeading(final IAgent agent, final int heading) {
 		if ( agent == null ) { return; }
-		agent.setAttribute(IKeyword.HEADING, heading);
+		int headingValue = heading % 360;
+		agent.setAttribute(IKeyword.HEADING, headingValue);
 	}
 
 	@getter(IKeyword.DESTINATION)
@@ -255,7 +256,7 @@ public class MovingSkill extends Skill {
 			@arg(name = IKeyword.HEADING,
 				type = IType.INT,
 				optional = true,
-				doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)") ),
+				doc = @doc("the angle (in degree) of the target direction.") ),
 			@arg(name = IKeyword.BOUNDS,
 				type = { IType.GEOMETRY, IType.AGENT },
 				optional = true,

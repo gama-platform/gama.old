@@ -240,6 +240,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		for (final IPopulation pop : this.getExternMicroPopulations().values()) {
 			pop.dispose();
 		}
+		this.getExternMicroPopulations().clear();
+		
 		if (outputs != null) {
 			outputs.dispose();
 			outputs = null;

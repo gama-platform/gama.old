@@ -308,11 +308,6 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public void updateDisplay(final boolean force) {
 		if ( disposed ) { return; }
 		rendered = false;
-		if ( temp_focus != null ) {
-			final IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()), false);
-			temp_focus = null;
-			focusOn(geometry);
-		}
 		repaint();
 	}
 
@@ -399,6 +394,12 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		getIGraphics().setGraphics2D(g2d);
 		getIGraphics().setUntranslatedGraphics2D((Graphics2D) g);
 		layerManager.drawLayersOn(iGraphics);
+		if ( temp_focus != null ) {
+			final IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()), false);
+			temp_focus = null;
+			focusOn(geometry);
+			return;
+		}
 		g2d.dispose();
 		frames++;
 		rendered = true;
