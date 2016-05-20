@@ -3,7 +3,7 @@ model SIR_EBM
 global {
 	init{
 		create agent_with_SIR_dynamic;
-	}
+	} 
 }
 
 
@@ -24,7 +24,7 @@ species agent_with_SIR_dynamic {
 	equation SIR{ 
 		diff(S,t) = (- beta *   S * I / N);
 		diff(I,t) = (  beta*  S * I / N) - (alpha * I)  ;
-		diff(R,t) = (  alpha  *  I)  * 3#s;
+		diff(R,t) = (  alpha  *  I) ;
 	}
                 
     reflex solving {

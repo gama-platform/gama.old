@@ -35,7 +35,7 @@ species LotkaVolterra_agent {
 		diff(nb_predator,t) = - nb_predator * (predator_death_rate - predation_efficiency * nb_prey); 		// evolution of the number of predator during an integration time step
       }
       reflex solving {
-       	solve lotka_volterra method: "rk4" step:integration_time_step cycle_length:1/step; 			// use of runge kutta 4 method with an integration time step of value integration_time_step
+       	solve lotka_volterra method: "rk4" step:integration_time_step ;//cycle_length:1/step; 			// use of runge kutta 4 method with an integration time step of value integration_time_step
        }
 }
 

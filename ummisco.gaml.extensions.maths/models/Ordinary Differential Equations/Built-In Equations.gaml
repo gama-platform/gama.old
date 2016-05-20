@@ -56,7 +56,7 @@ species preSI {
 	reflex solving {
 		list i_list;
 		list v_list ;
-		solve eqSI method: "rk4" step: h cycle_length: 1/h integrated_times: i_list integrated_values: v_list;
+		solve eqSI method: "rk4" step: h ;//cycle_length: 1/h integrated_times: i_list integrated_values: v_list;
 		write "i_list: " + i_list;
 		write "v_list:" + v_list;
 	}
