@@ -1,4 +1,4 @@
-package ummisco.gama.network.udp;
+package ummisco.gama.network.udp.old;
 
 import java.io.IOException;
 import java.net.BindException;
@@ -17,10 +17,11 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.operators.Cast;
+import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.skills.GamaNetworkException;
-import ummisco.gama.network.skills.IConnector;
 import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.network.tcp.MultiThreadedSocketServer;
+import ummisco.gama.network.udp.MultiThreadedUDPServer;
 
 public class UDPConnector implements IConnector{
 

@@ -1,12 +1,9 @@
 package ummisco.gama.mqtt.common;
 
 
-import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.paho.client.mqttv3.MqttClient;
 
-import ummisco.gama.network.common.SimpleMapSerializer;
 
 public class GamaSensorConnector  implements IGamaConnector {
     String boxName =  null;

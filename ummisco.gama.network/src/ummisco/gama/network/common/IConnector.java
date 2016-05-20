@@ -1,10 +1,11 @@
-package ummisco.gama.network.skills;
+package ummisco.gama.network.common;
 
 import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
+import ummisco.gama.network.skills.GamaNetworkException;
 
 public interface IConnector {
 	public void connectToServer(IAgent agent, String dest, String server, int port) throws Exception;
