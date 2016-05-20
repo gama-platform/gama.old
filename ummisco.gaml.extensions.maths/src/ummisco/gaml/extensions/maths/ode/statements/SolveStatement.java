@@ -92,6 +92,11 @@ public class SolveStatement extends AbstractStatement {
 
 		@Override
 		public void validate(final IDescription desc) {
+			final IExpression clen = desc.getFacets().getExpr(IKeyword.CYCLE_LENGTH);
+			if(clen != null){
+				desc.warning("The cycle_length is deprecated, please use the unit multiplying in equation",
+						IGamlIssue.GENERAL);
+			}
 			final IExpression method = desc.getFacets().getExpr(IKeyword.METHOD);
 			if (method != null) {
 				final String methodName = method.literalValue();
