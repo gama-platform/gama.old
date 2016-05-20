@@ -96,9 +96,9 @@ public class Experiment implements IExperiment {
 	public Object getOutput(final String parameterName) {
 		IOutput output =
 			((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
-
+//		System.out.
 		if ( output == null ||
-			!(output instanceof MonitorOutput) ) { throw GamaRuntimeException.error("Output unresolved"); }
+			!(output instanceof MonitorOutput) ) { throw GamaRuntimeException.error("Output unresolved:" + parameterName ); }
 		// this.currentExperiment.getSimulationOutputs().step(this.getScope());
 		output.update();
 		return ((MonitorOutput) output).getLastValue();
