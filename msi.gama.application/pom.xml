@@ -14,6 +14,7 @@
 	<properties>
 		<product.finalName>Gama</product.finalName>
 		<product.id>msi.gama.application.product</product.id>
+		<product.outputDirectory>${basedir}/products</product.outputDirectory>
 	</properties>
 
 <build>
