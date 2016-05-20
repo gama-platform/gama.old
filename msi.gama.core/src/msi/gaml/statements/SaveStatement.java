@@ -67,6 +67,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
@@ -74,6 +75,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.SaveStatement.SaveValidator;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import msi.gaml.variables.IVariable;
 
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, concept = { IConcept.FILE,
 		IConcept.SAVE_FILE }, with_sequence = false, with_args = true, remote_context = true)
@@ -288,42 +290,53 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	public void saveShape(final IList<? extends IShape> agents, final String path, final IScope scope)
-			throws GamaRuntimeException {
-		final StringBuilder specs = new StringBuilder(agents.size() * 20);
+	public String getGeometryType(final IList<? extends IShape> agents) {
 		String geomType = "";
 		for (final IShape be : agents) {
-			if (be.getGeometry() != null) {
-				final IShape ag = be;
-				geomType = ag.getInnerGeometry().getClass().getSimpleName();
-				if (ag.getInnerGeometry().getNumGeometries() > 1) {
-					if (ag.getInnerGeometry().getGeometryN(0).getClass() == Point.class) {
+			IShape geom = be.getGeometry();
+			if (geom != null) {
+				geomType = geom.getInnerGeometry().getClass().getSimpleName();
+				if (geom.getInnerGeometry().getNumGeometries() > 1) {
+					if (geom.getInnerGeometry().getGeometryN(0).getClass() == Point.class) {
 						geomType = MultiPoint.class.getSimpleName();
-					} else if (ag.getInnerGeometry().getGeometryN(0).getClass() == LineString.class) {
+					} else if (geom.getInnerGeometry().getGeometryN(0).getClass() == LineString.class) {
 						geomType = MultiLineString.class.getSimpleName();
-					} else if (ag.getInnerGeometry().getGeometryN(0).getClass() == Polygon.class) {
+					} else if (geom.getInnerGeometry().getGeometryN(0).getClass() == Polygon.class) {
 						geomType = MultiPolygon.class.getSimpleName();
 					}
 					break;
 				}
 			}
 		}
+		
+		if ("DynamicLineString".equals(geomType)) geomType = LineString.class.getSimpleName();
+		return geomType;
+	}
+	public void saveShape(final IList<? extends IShape> agents, final String path, final IScope scope)
+			throws GamaRuntimeException {
+		final StringBuilder specs = new StringBuilder(agents.size() * 20);
+		String geomType = getGeometryType(agents);
+		
 		specs.append("geometry:" + geomType);
 		try {
 			final SpeciesDescription species = agents instanceof IPopulation
 					? (SpeciesDescription) ((IPopulation) agents).getSpecies().getDescription()
 					: agents.getType().getContentType().getSpecies();
 			final Map<String, String> attributes = GamaMapFactory.create(Types.STRING, Types.STRING);
+			List<String> attString = new ArrayList<String>();
 			if (species != null) {
-				computeInits(scope, attributes);
+				computeInits(scope, attributes,species);
 				for (final String e : attributes.keySet()) {
 					final String var = attributes.get(e);
 					String name = e.replaceAll("\"", "");
 					name = name.replaceAll("'", "");
-					specs.append(',').append(name).append(':').append(type(species.getVariable(var).getType()));
+					String type = type(species.getVariable(var));
+					if ("String".equals(type))
+						attString.add(name);
+					specs.append(',').append(name).append(':').append(type);
 				}
 			}
-			saveShapeFile(scope, path, agents, /* featureTypeName, */specs.toString(), attributes);
+			saveShapeFile(scope, path, agents, /* featureTypeName, */specs.toString(), attributes,attString);
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Exception e) {
@@ -400,7 +413,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	public String type(final IType gamaName) {
+	public String type(final VariableDescription var) {
+		IType gamaName = var.getType();
 		if (gamaName.id() == IType.BOOL) {
 			return "Boolean";
 		}
@@ -414,19 +428,38 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	private void computeInits(final IScope scope, final Map<String, String> values) throws GamaRuntimeException {
+		computeInits(scope,values,null);
+	}
+	
+	private void computeInits(final IScope scope, final Map<String, String> values, final SpeciesDescription species) throws GamaRuntimeException {
 		if (init == null) {
 			return;
 		}
-		for (final Map.Entry<String, IExpressionDescription> f : init.entrySet()) {
-			if (f != null) {
-				values.put(f.getValue().toString(), f.getKey());
+		if (init.isEmpty() &&  species != null) {
+			final List<String> attributeNames = new ArrayList<String>();
+			attributeNames.add(IKeyword.PEERS);
+			attributeNames.add(IKeyword.LOCATION);
+			attributeNames.add(IKeyword.HOST);
+			attributeNames.add(IKeyword.AGENTS);
+			attributeNames.add(IKeyword.MEMBERS);
+			attributeNames.add(IKeyword.SHAPE);
+			for (String var: species.getVariables().keySet()) {
+				if (!attributeNames.contains(var))
+					values.put(var, var);
+			}
+		}
+		else {
+			for (final Map.Entry<String, IExpressionDescription> f : init.entrySet()) {
+				if (f != null) {
+					values.put(f.getValue().toString(), f.getKey());
+				}
 			}
 		}
 	}
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public void saveShapeFile(final IScope scope, final String path, final List<? extends IShape> agents,
-			/* final String featureTypeName, */final String specs, final Map<String, String> attributes)
+			/* final String featureTypeName, */final String specs, final Map<String, String> attributes, final List<String> stringVars)
 			throws IOException, SchemaException, GamaRuntimeException {
 
 		String code = null;
@@ -455,7 +488,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		createParents(f);
 
 		final ShapefileDataStore store = new ShapefileDataStore(f.toURI().toURL());
-
 		// The name of the type and the name of the feature source shoud now be
 		// the same.
 		final SimpleFeatureType type = DataUtilities.createType(store.getFeatureSource().getEntry().getTypeName(),
@@ -474,7 +506,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			values.add(gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry()));
 			if (ag instanceof IAgent) {
 				for (final String variable : attributeValues) {
-					values.add(((IAgent) ag).getDirectVarValue(scope, variable));
+					if (stringVars.contains(variable))
+						values.add(Cast.toGaml(((IAgent) ag).getDirectVarValue(scope, variable)));
+					else 
+						values.add(((IAgent) ag).getDirectVarValue(scope, variable));
 				}
 			}
 			// AD Assumes that the type is ok.
