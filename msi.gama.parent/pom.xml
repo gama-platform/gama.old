@@ -20,6 +20,8 @@
     <module>../ummisco.gama.feature.dependencies</module>
     <module>../ummisco.gama.feature.opengl.jogl2</module>
     <module>../ummisco.gama.feature.core</module>
+    <module>../ummisco.gama.feature.serialize</module>
+    <module>../ummisco.gama.feature.network</module>    
     <module>../idees.gama.mapcomparison</module>
     <module>../msi.gaml.extensions.fipa</module>
     <module>../msi.gama.headless</module>
