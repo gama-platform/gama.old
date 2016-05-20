@@ -52,7 +52,7 @@ public class MessagingSkill extends Skill {
 		if (contents == null) {
 			return null;
 		}
-		final GamaMessage message = createNewMessage(scope, sender, contents);
+		final GamaMessage message = createNewMessage(scope, sender, receiver, contents);
 		effectiveSend(scope, message, receiver);
 		return message;
 	}
@@ -65,8 +65,8 @@ public class MessagingSkill extends Skill {
 		return new GamaMailbox();
 	}
 
-	protected GamaMessage createNewMessage(final IScope scope, final Object sender, final Object contents) {
-		return new GamaMessage(scope, sender, contents);
+	protected GamaMessage createNewMessage(final IScope scope, final Object sender,final Object receivers, final Object contents) {
+		return new GamaMessage(scope, sender, receivers, contents);
 	}
 
 	protected void effectiveSend(final IScope scope, final GamaMessage message, final Object receiver) {
