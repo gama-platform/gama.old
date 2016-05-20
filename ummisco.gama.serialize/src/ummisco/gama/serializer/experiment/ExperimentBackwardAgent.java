@@ -73,29 +73,29 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 			// TODO what is this executer  ???? 
 			// executer.executeBeginActions();
 					
-			// TODO to correct in order to avoid stepping back on the same step
-			
-			currentNode = currentNode.getParent();
-			String previousState = currentNode.getData();
-						
-			if(previousState != null ){			
-				ConverterScope cScope = new ConverterScope(scope);
-				XStream xstream = ReverseOperators.newXStream(cScope);
-	
-				// get the previous state 
-				SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
-	
-				// Update of the simulation
-				SimulationAgent currentSimAgt = getSimulation();
-				currentSimAgt.updateWith(scope, agt);
-				
-				
-				// executer.executeEndActions();
-				// executer.executeOneShotActions();
-				
-				final IOutputManager outputs = getSimulation().getOutputManager();
-				if (outputs != null) {
-					outputs.step(scope);
+			if(canStepBack()) {
+				currentNode = currentNode.getParent();
+				String previousState = currentNode.getData();
+							
+				if(previousState != null ){			
+					ConverterScope cScope = new ConverterScope(scope);
+					XStream xstream = ReverseOperators.newXStream(cScope);
+		
+					// get the previous state 
+					SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
+		
+					// Update of the simulation
+					SimulationAgent currentSimAgt = getSimulation();
+					currentSimAgt.updateWith(scope, agt);
+					
+					
+					// executer.executeEndActions();
+					// executer.executeOneShotActions();
+					
+					final IOutputManager outputs = getSimulation().getOutputManager();
+					if (outputs != null) {
+						outputs.step(scope);
+					}
 				}
 			}
 		} finally {
