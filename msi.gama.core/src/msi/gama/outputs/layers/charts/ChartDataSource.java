@@ -54,7 +54,9 @@ public class ChartDataSource {
 	LinkedHashMap<String,ChartDataSeries> mySeries=new LinkedHashMap<String,ChartDataSeries>();
 	ChartDataSet myDataset;
 	boolean isCumulative=false;
+	boolean isCumulativeY=false;
 	boolean forceCumulative=false;
+	boolean forceCumulativeY=false;
 	boolean useMarker=true;
 	boolean fillMarker=true;
 	boolean showLine=true;
@@ -68,6 +70,48 @@ public class ChartDataSource {
 	boolean useColorExp=false;
 	boolean useMarkerShapeExp=false;
 
+	
+	public boolean cloneMe(IScope scope, int chartCycle,ChartDataSource source) {
+
+		value=source.value;
+
+
+		valueyerr=source.valueyerr   ;
+		valuexerr=source.valuexerr   ;
+		valueyminmax=source.valueyminmax   ;
+		colorexp=source.colorexp   ;
+		sizeexp=source.sizeexp   ;
+		markershapeexp=source.markershapeexp   ;
+		
+		 uniqueMarkerName=source.uniqueMarkerName   ;
+		 style=source.style   ;
+
+		myDataset=source.myDataset   ;
+		isCumulative=source.isCumulative   ;
+		isCumulativeY=source.isCumulativeY   ;
+		forceCumulative=source.forceCumulative   ;
+		forceCumulativeY=source.forceCumulativeY   ;
+		useMarker=source.useMarker   ;
+		fillMarker=source.fillMarker  ;
+		showLine=source.showLine   ;
+
+		useSize=source.useSize   ;
+		
+
+		useYErrValues=source.useYErrValues   ;
+		useXErrValues=source.useXErrValues   ;
+		useYMinMaxValues=source.useYMinMaxValues   ;
+		useColorExp=source.useColorExp   ;
+		useMarkerShapeExp=source.useMarkerShapeExp   ;
+		
+		return true;
+	}
+	public ChartDataSource getClone(IScope scope, int chartCycle) {
+		ChartDataSource res=new ChartDataSource();
+		res.cloneMe(scope, chartCycle, this);
+		return res;
+	}
+	
 	public IExpression getValueyerr() {
 		return valueyerr;
 	}
@@ -129,6 +173,10 @@ public class ChartDataSource {
 		return this.getDataset().isCommonXSeries();
 	}
 
+	public boolean isCommonYSeries() {
+		return this.getDataset().isCommonYSeries();
+	}
+
 	public boolean isCumulative() {
 		return isCumulative;
 	}
@@ -138,6 +186,21 @@ public class ChartDataSource {
 		this.isCumulative = isCumulative;
 	}
 
+	public boolean isCumulativeY() {
+		return isCumulativeY;
+	}
+
+	public void setCumulativeY(IScope scope, boolean isCumulative) {
+		if (!forceCumulativeY)
+		this.isCumulativeY = isCumulative;
+		if (this.isCumulativeY)
+			this.getDataset().setForceNoYAccumulate(false);
+	}
+
+	public void setForceCumulativeY(IScope scope, boolean b) {
+		this.forceCumulativeY = b;
+		
+	}
 	public void setForceCumulative(IScope scope, boolean b) {
 		this.forceCumulative = b;
 		
@@ -233,15 +296,17 @@ public class ChartDataSource {
 		
 		//could move into outputs object... would be (a little) less complex. But less factorisation...
 				
-		if (!this.isCumulative()) 
+		if (!this.isCumulative() && !this.isCumulativeY() ) 
 		{
 			myserie.clearValues(scope);
 			myserie.startupdate(scope);
 			
 		}
+		if (!this.isCommonYSeries())
+		{
 		
 		//series charts (series/bw/...)
-		if (this.isCommonXSeries() & !this.isByCategory()) 
+		if (this.isCommonXSeries()  & !this.isByCategory()) 
 		{
 			if (this.isCumulative()) 
 			{
@@ -253,7 +318,7 @@ public class ChartDataSource {
 				{
 					ILocation pvalue=Cast.asPoint(scope, o); 
 					myserie.addxysvalue(scope,
-							getDataset().getXSeriesValues().get(getDataset().getXSeriesValues().size()-1),
+							getDataset().getXSeriesValues().get(getDataset().getCommonXIndex()),
 							pvalue.getX(),
 							pvalue.getY(),
 							chartCycle,barvalues,listvalue);
@@ -271,14 +336,14 @@ public class ChartDataSource {
 					if (lvalue.length(scope)==1)
 					{
 						myserie.addxyvalue(scope,
-								getDataset().getXSeriesValues().get(getDataset().getXSeriesValues().size()-1),
+								getDataset().getXSeriesValues().get(getDataset().getCommonXIndex()),
 								Cast.asFloat(scope,  lvalue.get(0)),
 								chartCycle,barvalues,listvalue);
 					}
 					if (lvalue.length(scope)>1)
 					{
 						myserie.addxysvalue(scope,
-								getDataset().getXSeriesValues().get(getDataset().getXSeriesValues().size()-1),
+								getDataset().getXSeriesValues().get(getDataset().getCommonXIndex()),
 								Cast.asFloat(scope,  lvalue.get(0)),Cast.asFloat(scope,  lvalue.get(1)),
 								chartCycle,barvalues,listvalue);
 					}
@@ -294,7 +359,7 @@ public class ChartDataSource {
 				default:
 				{
 					Double dvalue=Cast.asFloat(scope, o);
-					myserie.addxyvalue(scope,getDataset().getXSeriesValues().get(getDataset().getXSeriesValues().size()-1),
+					myserie.addxyvalue(scope,getDataset().getXSeriesValues().get(getDataset().getCommonXIndex()),
 							dvalue,chartCycle,barvalues,listvalue);
 					
 					break;
@@ -452,7 +517,7 @@ public class ChartDataSource {
 				{
 					Double dvalue=Cast.asFloat(scope, o);
 					myserie.addxyvalue(scope,
-							getDataset().getXSeriesValues().get(getDataset().getXSeriesValues().size()-1),
+							getDataset().getXSeriesValues().get(getDataset().getCommonXIndex()),
 							dvalue,chartCycle,barvalues,listvalue);
 					
 					break;
@@ -549,7 +614,7 @@ public class ChartDataSource {
 				default:
 				{
 					Double dvalue=Cast.asFloat(scope, o);
-					myserie.addxyvalue(scope,getDataset().getXSeriesValues().get(getDataset().getXSeriesValues().size()-1),
+					myserie.addxyvalue(scope,getDataset().getXSeriesValues().get(getDataset().getCommonXIndex()),
 							dvalue,chartCycle,barvalues,listvalue);
 					break;
 					
@@ -719,15 +784,111 @@ public class ChartDataSource {
 			
 		}		
 			
+
+
+		
+	}
+		if (this.isCommonYSeries())
+		{
+			//heatmaps
+
+			if (!this.isCumulative()) 
+			{
+				// new non cumulative z value
+				// serie in the order of the dataset
+				
+				switch (type_val)
+				{
+				case ChartDataSource.DATA_TYPE_POINT:
+				{
+					ILocation pvalue=Cast.asPoint(scope, o); 
+					myserie.addxysvalue(scope,
+							getDataset().getXSeriesValues().get(0),
+							getDataset().getYSeriesValues().get(0),
+							pvalue.getX(),
+							chartCycle,barvalues,listvalue);
+					
+					break;
+				}
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_12:
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
+				case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
+				{
+					IList l1value=Cast.asList(scope, o); 
+					for (int n1=0; n1<l1value.size(); n1++)
+					{
+						Object o2=l1value.get(n1);
+						while (n1>=getDataset().getXSeriesValues().size())
+							getDataset().updateXValues(scope, chartCycle,l1value.size());
+						myserie.addxysvalue(scope,
+								getDataset().getXSeriesValues().get(n1),
+								getDataset().getCurrentCommonYValue(),
+								Cast.asFloat(scope,  o2),
+								chartCycle,barvalues,listvalue);
+					}
+					break;
+					
+				}
+				case ChartDataSource.DATA_TYPE_LIST_LIST_POINT:
+				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
+				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
+				case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
+				{
+					IList l1value=Cast.asList(scope, o); 
+					for (int n1=0; n1<l1value.size(); n1++)
+					{
+						Object o2=l1value.get(n1);
+						IList lvalue=Cast.asList(scope, o2); 
+						while (n1>=getDataset().getXSeriesValues().size())
+							getDataset().updateXValues(scope, chartCycle,l1value.size());
+						for (int n2=0; n2<lvalue.size(); n2++)
+						{
+							while (n2>=getDataset().getYSeriesValues().size())
+								getDataset().updateYValues(scope, chartCycle,lvalue.size());
+							myserie.addxysvalue(scope,
+									getDataset().getXSeriesValues().get(n1),
+									getDataset().getYSeriesValues().get(n2),
+									Cast.asFloat(scope,  lvalue.get(n2)),
+									chartCycle,barvalues,listvalue);
+							
+						}
+						
+					}
+					break;
+					
+				}
+				case ChartDataSource.DATA_TYPE_NULL:
+				{
+					//last value?
+					break;
+				}
+				case ChartDataSource.DATA_TYPE_DOUBLE:
+				default:
+				{
+					Double dvalue=Cast.asFloat(scope, o);
+					myserie.addxysvalue(scope,
+							getDataset().getXSeriesValues().get(0),
+							getDataset().getYSeriesValues().get(0),
+							dvalue,
+							chartCycle,barvalues,listvalue);
+					break;
+					
+				}
+				
+				}
+				
+				
+				
+			}			
+			
+		}
 		if (!this.isCumulative()) 
 		{
 			myserie.endupdate(scope);
 			
 		}
 
-
-		
-	}
+	 }		
 
 	
 	
@@ -819,6 +980,11 @@ public class ChartDataSource {
 
 	public void setUseSize(IScope scope, boolean b) {
 		this.setUseSize(b);
+	}
+
+	public void createInitialSeries(IScope scope)
+	{
+		
 	}
 
 

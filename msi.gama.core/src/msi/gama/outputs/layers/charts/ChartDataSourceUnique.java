@@ -8,18 +8,38 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaList;
 import msi.gama.util.IList;
+import msi.gama.util.random.GamaRNG;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Random;
+import msi.gaml.types.GamaType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class ChartDataSourceUnique extends ChartDataSource {
 
 	String myname;
-	GamaColor color;
 
+	public boolean cloneMe(IScope scope, int chartCycle,ChartDataSource source) {
+
+		boolean res=super.cloneMe(scope, chartCycle, source);
+		GamaColor col=new GamaColor(Random.opRnd(scope, 255),Random.opRnd(scope, 255),Random.opRnd(scope, 255),255);
+		IExpression ncol=GAML.getExpressionFactory().createConst(col, Types.COLOR);
+		this.colorexp=ncol;
+		myname=((ChartDataSourceUnique)source).myname+"*";
+		return res;
+	}	
 	
+	public ChartDataSource getClone(IScope scope, int chartCycle) {
+		ChartDataSourceUnique res=new ChartDataSourceUnique();
+		res.cloneMe(scope, chartCycle, this);
+		return res;
+	}
+
 	public ChartDataSeries getMyserie() {
 		return mySeries.get(getName());
 	}
@@ -88,74 +108,6 @@ public class ChartDataSourceUnique extends ChartDataSource {
 
 		getDataset().getOutput().setDefaultPropertiesFromType(scope,this,o,type_val);
 		
-		//move to output objects:
-/*		
-		switch (getDataset().getOutput().getType()) {
-		case ChartOutput.SERIES_CHART: {
-			this.setCumulative(true);
-			break;
-		}
-		case ChartOutput.PIE_CHART: {
-			this.setCumulative(false);
-			break;
-		}
-		case ChartOutput.HISTOGRAM_CHART: {
-			this.setCumulative(true);
-			break;
-		}
-		case ChartOutput.XY_CHART: {
-			this.setCumulative(true);
-			break;
-		}
-		case ChartOutput.SCATTER_CHART: {
-			this.setCumulative(true);
-			break;
-		}
-		case ChartOutput.BOX_WHISKER_CHART: {
-			this.setCumulative(true);
-			break;
-		}
-		default:
-		{
-			this.setCumulative(false);
-		}
-		}		
-
-		
-		if (this.getValue() != null && o!=null) //infer from initial data structure
-		{
-			switch (getDataset().getOutput().getType()) {
-			case ChartOutput.SERIES_CHART: {
-				if ( o instanceof GamaList ) { this.setCumulative(false); }
-				break;
-			}
-			case ChartOutput.XY_CHART: {
-				if ( o instanceof GamaList ) 
-					if ( Cast.asList(scope, o).size()>2 ) { this.setCumulative(false); }
-				break;
-			}
-			case ChartOutput.SCATTER_CHART: {
-				if ( o instanceof GamaList ) 
-					if ( Cast.asList(scope, o).size()>2 ) { this.setCumulative(false); }
-				break;
-			}
-			case ChartOutput.PIE_CHART: {
-				this.setCumulative(false);
-				break;
-			}
-			case ChartOutput.HISTOGRAM_CHART: {
-				if ( o instanceof GamaList ) { this.setCumulative(false); }
-				break;
-			}
-			case ChartOutput.BOX_WHISKER_CHART: {
-				if ( o instanceof GamaList ) 
-					if ( Cast.asList(scope, o).size()>2 ) { this.setCumulative(false); }
-				break;
-			}
-			}		
-			
-		}
-	*/	
 		
 	}
 	

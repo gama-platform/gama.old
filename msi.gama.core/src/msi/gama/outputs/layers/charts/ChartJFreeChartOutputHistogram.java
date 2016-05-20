@@ -77,18 +77,20 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	{
 		super.createChart(scope);
 		jfreedataset.add(0,new DefaultCategoryDataset());
-		
+		PlotOrientation orientation=PlotOrientation.VERTICAL;
+		if (reverse_axes)
+			orientation=PlotOrientation.HORIZONTAL;		
 		if ( style.equals(IKeyword.THREE_D) ) {
 			chart =
-				ChartFactory.createBarChart3D(getName(), null, null, null, PlotOrientation.VERTICAL, true,
+				ChartFactory.createBarChart3D(getName(), null, null, null, orientation, true,
 					true, false);
 		} else if ( style.equals(IKeyword.STACK) ) {
 			chart =
-				ChartFactory.createStackedBarChart(getName(), null, null, null, PlotOrientation.VERTICAL, true,
+				ChartFactory.createStackedBarChart(getName(), null, null, null, orientation, true,
 					true, false);
 		} else {
 			chart =
-				ChartFactory.createBarChart(getName(), null, null, null, PlotOrientation.VERTICAL, true, true,
+				ChartFactory.createBarChart(getName(), null, null, null, orientation, true, true,
 					false);
 
 		}		

@@ -38,7 +38,7 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.operators.Random;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
@@ -83,6 +83,7 @@ import org.jfree.ui.RectangleInsets;
 		type = IType.POINT,
 		optional = true,
 		doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
+	@facet(name = IKeyword.REVERSE_AXIS, type = IType.BOOL, optional = true, doc = @doc("reverse X and Y axis (for example to get horizental bar charts")),
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("the background color")),
 	@facet(name = IKeyword.X_SERIE,
 		type = {IType.LIST, IType.FLOAT, IType.INT},
@@ -103,10 +104,10 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true, doc = @doc("the axis color")),
 	@facet(name = IKeyword.TYPE,
 		type = IType.ID,
-		values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE,IKeyword.RADAR,
+		values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE,IKeyword.RADAR,IKeyword.HEATMAP,
 			IKeyword.BOX_WHISKER },
 		optional = true,
-		doc = @doc("the type of chart. It could be histogram, series, xy, pie or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
+		doc = @doc("the type of chart. It could be histogram, series, xy, pie, radar, heatmap or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 			IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
 			IKeyword.EXPLODED, IKeyword.DEFAULT }, 
@@ -307,6 +308,11 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		string1 = getFacet(IKeyword.STYLE);
 		if ( string1 != null ) {
 			chartoutput.setStyle(scope,Cast.asString(scope, string1.value(scope)));
+		}
+		
+		string1 = getFacet(IKeyword.REVERSE_AXIS);
+		if ( string1 != null ) {
+			chartoutput.setReverseAxis(scope,Cast.asBool(scope, string1.value(scope)));
 		}
 
 		chartoutput.createChart(scope);
@@ -528,6 +534,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	public void saveHistory() {
+		System.out.println("try to save!");
 		//TODO!!
 		
 //		IScope scope = output.getScope().copy();

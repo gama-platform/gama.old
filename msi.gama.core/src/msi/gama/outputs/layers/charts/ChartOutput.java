@@ -40,6 +40,7 @@ public abstract class ChartOutput {
 	String ylabel=null;
 	ChartDataSet chartdataset;
 	int type = SERIES_CHART;
+	boolean reverse_axes=false;
 
 	ChartOutput chartOutput = null;
 	 GamaColor backgroundColor = null, axesColor = null, textColor=null;
@@ -126,6 +127,7 @@ public abstract class ChartOutput {
 			{
 				createNewSerie(scope,serieid);
 			}
+			preResetSeries(scope);
 			for (String serieid:chartdataset.getDataSeriesIds(scope))
 			{
 				this.resetSerie(scope,serieid);
@@ -153,6 +155,7 @@ public abstract class ChartOutput {
 					toadd.put(serieid,toadd.get(serieid)-1);
 				}
 			}
+			preResetSeries(scope);
 			for (String serieid:chartdataset.getDataSeriesIds(scope))
 			{
 				this.resetSerie(scope,serieid);
@@ -167,6 +170,10 @@ public abstract class ChartOutput {
 		System.out.println("output last update:"+lastUpdateCycle);
 	}
 	
+	public void preResetSeries(IScope scope) {
+		
+	}
+
 	public void resetAxes(IScope scope) {
 		// Update axes
 		
@@ -421,6 +428,11 @@ public abstract class ChartOutput {
 
 	public String getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g, Point positionInPixels) {
 		return "";
+	}
+
+	public void setReverseAxis(IScope scope, Boolean asBool) {
+		// TODO Auto-generated method stub
+		reverse_axes=asBool;
 	}
 
 

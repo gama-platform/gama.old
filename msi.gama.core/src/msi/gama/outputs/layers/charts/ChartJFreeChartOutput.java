@@ -60,6 +60,7 @@ public class ChartJFreeChartOutput extends ChartOutput {
 					IKeyword.SERIES.equals(t) ? SERIES_CHART : IKeyword.HISTOGRAM.equals(t) ? HISTOGRAM_CHART
 							: IKeyword.PIE.equals(t) ? PIE_CHART 
 									: IKeyword.RADAR.equals(t) ? RADAR_CHART 
+									: IKeyword.HEATMAP.equals(t) ? HEATMAP_CHART 
 									: IKeyword.BOX_WHISKER.equals(t) ? BOX_WHISKER_CHART
 									: IKeyword.SCATTER.equals(t) ? SCATTER_CHART : XY_CHART;
 
@@ -91,6 +92,10 @@ public class ChartJFreeChartOutput extends ChartOutput {
 		}
 		case RADAR_CHART: {
 			newChart = new ChartJFreeChartOutputRadar(scope,name,typeexp);
+			break;
+		}
+		case HEATMAP_CHART: {
+			newChart = new ChartJFreeChartOutputHeatmap(scope,name,typeexp);
 			break;
 		}
 		default:
