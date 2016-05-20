@@ -40,8 +40,8 @@
     
     
     
-    <module>../other.gama.feature.plugins</module>
-    <module>../simtools.gamanalyzer.fr</module>
+    
+    
     <module>../simtools.graphanalysis.fr</module>
     <module>../simtools.graphlayout.feature</module>
     <module>../ummisco.gama.communicator</module>
