@@ -1,5 +1,0 @@
-<factorypath>
-    <factorypathentry kind="WKSPJAR" id="/msi.gama.processor/processor/plugins/msi.gama.processor_1.4.0.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="WKSPJAR" id="/msi.gama.hpc/lib/BaseX.jar" enabled="true" runInBatchMode="false"/>
-    <factorypathentry kind="WKSPJAR" id="/msi.gama.hpc/lib/expression4j.2.jar" enabled="true" runInBatchMode="false"/>
-</factorypath>
