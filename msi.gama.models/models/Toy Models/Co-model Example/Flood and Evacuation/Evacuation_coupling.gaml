@@ -1,6 +1,6 @@
 model Evacuation_coupling
 
-import "../../../Toy Models/Evacuation/models/continuous_move.gaml"
+import "../../../Toy Models/Evacuation/models/Continuous Move.gaml"
 experiment Evacuation_coupling_exp type: gui parent: main
 {
 	point centroid <- { 0, 180 };

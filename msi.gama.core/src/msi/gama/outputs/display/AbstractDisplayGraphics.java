@@ -38,6 +38,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		data = surface.getData();
 	}
 
+	@Override
 	public void dispose() {
 		currentLayer = null;
 	}
@@ -106,7 +107,8 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void beginDrawingLayers() {
+	public boolean beginDrawingLayers() {
+		return true;
 	}
 
 	@Override

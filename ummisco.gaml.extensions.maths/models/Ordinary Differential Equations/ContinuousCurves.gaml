@@ -8,7 +8,7 @@ model ContinuousCurves
 
 global
 {
-	float step <- 2 # s;
+	float step <- 1 # s;
 	init
 	{
 		create my_SEIR_maths;
@@ -35,7 +35,7 @@ species my_SEIR_maths
 
 	reflex solving
 	{
-		write length((my_SEIR_maths[0]).ttt[]);
+//		write length((my_SEIR_maths[0]).ttt[]);
 		solve SEIR method: rk4 step: 0.01;
 	}
 

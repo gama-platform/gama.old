@@ -22,14 +22,14 @@ species agent_with_SIR_dynamic {
 	float h <- 0.01;
    
 	equation SIR{ 
-		diff(S,t) = (- beta * S * I / N);
-		diff(I,t) = (beta * S * I / N) - (alpha * I);
-		diff(R,t) = (alpha * I);
+		diff(S,t) = (- beta *   S * I / N);
+		diff(I,t) = (  beta*  S * I / N) - (alpha * I)  ;
+		diff(R,t) = (  alpha  *  I)  * 3#s;
 	}
                 
     reflex solving {
 //    	write S;
-    	solve SIR method: "rk4" step: h cycle_length: 1/h ;
+    	solve SIR method: "rk4" step: h;// cycle_length: 1/h ;
     }    
 }
 

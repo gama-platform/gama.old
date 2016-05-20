@@ -57,7 +57,7 @@ public interface IGraphics {
 
 	public abstract void fillBackground(Color bgColor, double opacity);
 
-	public abstract void beginDrawingLayers();
+	public abstract boolean beginDrawingLayers();
 
 	public abstract void beginDrawingLayer(ILayer layer);
 

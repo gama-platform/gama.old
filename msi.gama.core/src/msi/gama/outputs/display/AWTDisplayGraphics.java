@@ -131,8 +131,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public void beginDrawingLayers() {
+	public boolean beginDrawingLayers() {
 		currentRenderer.setRenderingHints(data.isAntialias() ? QUALITY_RENDERING : SPEED_RENDERING);
+		return true;
 	}
 
 	@Override

@@ -4,9 +4,11 @@
  */
 package msi.gama.gui.navigator;
 
-import msi.gama.gui.swt.GamaIcons;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import msi.gama.gui.swt.GamaIcons;
 
 /**
  * Class GamaNavigatorMenus.
@@ -53,8 +55,10 @@ public class GamaNavigatorImportMenu extends GamaNavigatorMenu {
 	protected void fillMenu() {
 		action("Import project...", project, GamaIcons.create("navigator/navigator.import.project2").image());
 		sep();
-		action("From disk...", fromDisk, GamaIcons.create("navigator/navigator.import.disk2").image());
-		action("From archive...", fromArchive, GamaIcons.create("navigator/navigator.import.archive2").image());
+		action("Import resources into projects from disk...", fromDisk,
+			GamaIcons.create("navigator/navigator.import.disk2").image());
+		action("Import resources into projects from archive...", fromArchive,
+			GamaIcons.create("navigator/navigator.import.archive2").image());
 
 		// sep();
 		// action("Other...", newOther, GamaIcons.create("navigator/navigator.new2").image());
