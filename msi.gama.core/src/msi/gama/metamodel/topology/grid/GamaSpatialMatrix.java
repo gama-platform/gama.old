@@ -1199,6 +1199,21 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
+		public IList<? extends IAgent> createAgents(final IScope scope, final int number,
+				final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)
+				throws GamaRuntimeException {
+			
+			createAgents(scope,null);
+			// TODO : valeurs initiales
+			for(Map attr : initialValues) {
+				IAgent agt = getAgent((Integer) attr.get("grid_x"), (Integer) attr.get("grid_y"));
+				agt.setExtraAttributes(attr);
+			}
+			
+			return (IList) getAgents(scope);
+		}		
+		
+		@Override
 		public IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries) {
 			for (int i = 0; i < actualNumberOfCells; i++) {
 				final IShape s = matrix[i];
