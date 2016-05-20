@@ -37,9 +37,9 @@
     
     <module>../msi.gama.models</module>
     <module>../msi.gaml.architecture.simplebdi</module>
-    <module>../msi.gaml.extensions.cplex</module>
-    <module>../msi.gaml.extensions.humanmoving</module>
-    <module>../msi.gaml.extensions.traffic2d</module>
+    
+    
+    
     <module>../other.gama.feature.plugins</module>
     <module>../simtools.gamanalyzer.fr</module>
     <module>../simtools.graphanalysis.fr</module>
