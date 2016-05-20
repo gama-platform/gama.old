@@ -638,4 +638,9 @@ public abstract class AbstractAgent implements IAgent {
 		getGeometry().setDepth(depth);
 	}
 
+	@Override
+	public void updateWith(final IScope s, final SavedAgent sa) {
+		throw new RuntimeException("Method updateWith(final IScope s, final SavedAgent sa) has not been implemented for "+this);
+	}
+	
 }

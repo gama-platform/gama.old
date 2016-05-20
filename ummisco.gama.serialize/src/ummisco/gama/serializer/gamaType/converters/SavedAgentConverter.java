@@ -11,18 +11,12 @@
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
-import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.variables.IVariable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +43,11 @@ public class SavedAgentConverter implements Converter {
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		System.out.println("ConvertAnother : GamaSavedAgentConverter " + arg0.getClass());		
 		SavedAgent savedAgt = (SavedAgent) arg0;
-				
+
+		writer.startNode("index");
+		writer.setValue(""+savedAgt.getIndex());
+		writer.endNode();		
+		
 		writer.startNode("variables");
 		context.convertAnother(savedAgt.getVariables());
 		writer.endNode();
@@ -73,6 +71,11 @@ public class SavedAgentConverter implements Converter {
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		reader.moveDown();
+		String indexStr = reader.getValue();
+		Integer index = Integer.parseInt( indexStr);
+		reader.moveUp();		
+		
+		reader.moveDown();
 		Map<String, Object> v = (Map<String, Object>) arg1.convertAnother(null, THashMap.class);
 		reader.moveUp();
 		
@@ -84,7 +87,7 @@ public class SavedAgentConverter implements Converter {
 		Boolean isIMacroAgent = (Boolean) arg1.convertAnother(null, Boolean.class);
 		reader.moveUp();
 
-		SavedAgent agtToReturn = new SavedAgent(v, (isIMacroAgent.booleanValue())?inPop:null);
+		SavedAgent agtToReturn = new SavedAgent(index, v, (isIMacroAgent.booleanValue())?inPop:null);
 
 		SimulationAgent simAgent = convertScope.getSimulationAgent();
 		
@@ -125,9 +128,6 @@ public class SavedAgentConverter implements Converter {
 				
 				pop.createAndUpdateVariablesFor(convertScope.getScope(), agentsList, agentAttrs, true);
 			} 
-			
-			
-			
 		} 
 		return agtToReturn; 
 	}

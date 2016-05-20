@@ -20,7 +20,6 @@ import ummisco.gama.serializer.gamaType.converters.GamaScopeConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaSimulationAgentConverter;
 import ummisco.gama.serializer.gamaType.converters.LogConverter;
 import ummisco.gama.serializer.gamaType.converters.SavedAgentConverter;
-import ummisco.gama.serializer.gamaType.converters.SavedAgentConverterNetwork;
 
 public abstract class Converters {
 
@@ -40,7 +39,7 @@ public abstract class Converters {
 
 		converters[8]=new GamaGraphConverter(cs);
 		converters[9]=new LogConverter();
-		converters[10]=new SavedAgentConverterNetwork(cs);
+		converters[10]=new SavedAgentConverter(cs);
 		return converters;
 
 	}

@@ -315,6 +315,23 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	}
 
+	public IAgent createAgentAt(final IScope scope, int index, Map<String, Object> initialValues,
+			boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException {
+			
+		List<Map<String,Object>> mapInitialValues = new ArrayList<>();
+		mapInitialValues.add(initialValues);
+	
+		// TODO : think to another solution... it is ugly
+		final int tempIndexAgt = currentAgentIndex;
+		
+		currentAgentIndex = index;
+		IList<? extends IAgent> listAgt = createAgents(scope, 1, mapInitialValues, isRestored, toBeScheduled);
+		currentAgentIndex = tempIndexAgt;
+		
+		return (IAgent) listAgt.firstValue(scope);
+	}
+	
+	
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 			final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)

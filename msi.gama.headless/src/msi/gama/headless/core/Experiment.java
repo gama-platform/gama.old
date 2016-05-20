@@ -96,10 +96,11 @@ public class Experiment implements IExperiment {
 	public Object getOutput(final String parameterName) {
 		IOutput output =
 			((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
-
-		if ( output == null ||
-			!(output instanceof MonitorOutput) ) { throw GamaRuntimeException.error("Output unresolved"); }
-		// this.currentExperiment.getSimulationOutputs().step(this.getScope());
+//		System.out.
+		if ( output == null)
+			throw GamaRuntimeException.error("Output does not exist: " + parameterName );
+		if(!(output instanceof MonitorOutput) ) 
+			throw GamaRuntimeException.error("Output " + parameterName+ " is not an alphanumeric data." ); 
 		output.update();
 		return ((MonitorOutput) output).getLastValue();
 	}
@@ -108,7 +109,7 @@ public class Experiment implements IExperiment {
 	public Object getVariableOutput(final String parameterName) {
 		// this.currentExperiment.getSimulationOutputs().step(this.getScope());
 		Object res = this.currentExperiment.getCurrentSimulation().getDirectVarValue(this.getScope(), parameterName);
-		if ( res == null ) { throw GamaRuntimeException.error("Output unresolved"); }
+		if ( res == null ) { throw GamaRuntimeException.error("Output unresolved: "+ parameterName); }
 		return res;
 	}
 
