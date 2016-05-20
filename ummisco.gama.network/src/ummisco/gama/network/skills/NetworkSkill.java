@@ -30,9 +30,10 @@ import msi.gama.util.GamaMap;
 import msi.gaml.skills.Skill;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
+import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.mqqt.MQTTConnectorSk;
 import ummisco.gama.network.tcp.TCPConnector;
-import ummisco.gama.network.udp.UDPConnector;
+import ummisco.gama.network.udp.old.UDPConnector;
 import ummisco.gama.serializer.factory.StreamConverter;
 
 @vars({ @var(name = INetworkSkill.NET_AGENT_NAME, type = IType.STRING, doc = @doc("Net ID of the agent")),
