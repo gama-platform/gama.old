@@ -11,3 +11,4 @@ Bundle-ClassPath: .,
 Export-Package: 
  simtools.gaml.extensions.physics
 Bundle-ActivationPolicy: lazy
+Eclipse-BundleShape: dir

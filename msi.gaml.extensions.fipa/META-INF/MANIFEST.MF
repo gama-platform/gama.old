@@ -10,3 +10,5 @@ Export-Package:
  msi.gaml.extensions.fipa
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy
+Eclipse-BundleShape: dir
+

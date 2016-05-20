@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
+Eclipse-BundleShape: dir
 Bundle-Name: Network
 Bundle-SymbolicName: ummisco.gama.network;singleton:=true
 Bundle-Version: 1.0.0.qualifier
@@ -11,3 +12,4 @@ Require-Bundle: msi.gama.processor;bundle-version="1.4.0",
  ummisco.gama.serialize;bundle-version="1.7.0"
 Bundle-ClassPath: .,
  ext/org.eclipse.paho.client.mqttv3-1.0.2-3.jar
+ 
