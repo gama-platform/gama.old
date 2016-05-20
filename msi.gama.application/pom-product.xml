@@ -36,6 +36,20 @@
 						</goals>
 					</execution>
 				</executions>
+				<!--<configuration>
+				<products>
+				  <product>
+					<id>product.id</id>
+					<rootFolder></rootFolder>
+					<rootFolders>
+					  <macosx></macosx>
+					  <linux></linux>
+					  <win32></win32>
+					</rootFolders>
+				  </product>
+				  ...
+				</products>
+			  </configuration>-->
 			</plugin> 
 			
 			<!-- Workaround: Use an existing config.ini file (caused by the problem 
