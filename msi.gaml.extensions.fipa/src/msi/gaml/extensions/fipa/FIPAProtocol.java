@@ -178,7 +178,7 @@ abstract public class FIPAProtocol {
 	 * 
 	 * @throws ProtocolErrorException the protocol error exception
 	 */
-	protected ProtocolNode getNode(final IScope scope, final Message message, final ProtocolNode currentNode,
+	protected ProtocolNode getNode(final IScope scope, final FIPAMessage message, final ProtocolNode currentNode,
 		final int performative, final boolean senderIsInitiator) throws ProtocolErrorException {
 		if ( currentNode == null ) { return getRootNode(performative); }
 		final List<ProtocolNode> followingNodes = currentNode.getFollowingNodes();

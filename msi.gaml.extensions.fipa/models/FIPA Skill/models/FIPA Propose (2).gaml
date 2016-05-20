@@ -32,13 +32,13 @@ global {
 species Initiator skills: [fipa] {
 	reflex send_propose_message when: (time = 1) {
 		write name + ' sends a propose message';
-		do start_conversation with: [ receivers :: [p], protocol :: 'fipa-propose', performative :: 'propose', content :: ['Go swimming?'] ];
+		do start_conversation with: [ to :: [p], protocol :: 'fipa-propose', performative :: 'propose', contents :: ['Go swimming?'] ];
 	}
 
 	reflex read_accept_proposals when: !(empty(reject_proposals)) {
 		write name + ' receives reject_proposal messages';
 		loop i over: reject_proposals {
-			write 'reject_proposal message with content: ' + (string(i.content));
+			write 'reject_proposal message with content: ' + (string(i.contents));
 		}
 	}
 }
@@ -47,7 +47,7 @@ species Participant skills: [fipa] {
 	reflex accept_proposal when: !(empty(proposes)) {
 		message proposalFromInitiator <- proposes at 0;
 		
-		do reject_proposal with: [ message :: proposalFromInitiator, content :: ['No! It \'s too cold today!'] ];
+		do reject_proposal with: [ message :: proposalFromInitiator, contents :: ['No! It \'s too cold today!'] ];
 	}
 }
 

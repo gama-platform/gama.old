@@ -41,7 +41,7 @@ public class ConversationType extends GamaContainerType<Conversation> {
 
 	@Override
 	public IType getContentType() {
-		return Types.get(Message.class);
+		return Types.get(FIPAMessage.class);
 	}
 
 	@operator(value = ConversationType.CONVERSATION_STR, can_be_const = true, category = { IOperatorCategory.FIPA },
@@ -54,7 +54,7 @@ public class ConversationType extends GamaContainerType<Conversation> {
 
 	public static Conversation staticCast(final IScope scope, final Object val, final Object object) {
 		if ( val instanceof Conversation ) { return (Conversation) val; }
-		if ( val instanceof Message ) { return ((Message) val).getConversation(); }
+		if ( val instanceof FIPAMessage ) { return ((FIPAMessage) val).getConversation(); }
 		// ???
 		return null;
 	}

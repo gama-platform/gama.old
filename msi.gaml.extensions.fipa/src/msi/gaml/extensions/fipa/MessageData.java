@@ -15,8 +15,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.IList;
 
 /**
- * The Message class represents the piece of information transfered between agents capable of
- * communicating.
+ * The Message class represents the piece of information transfered between
+ * agents capable of communicating.
  */
 public class MessageData {
 
@@ -35,14 +35,10 @@ public class MessageData {
 	/** The associated conversation. */
 	private Conversation conversation;
 
-	/** The timestamp. */
-	private final String timestamp;
-
 	/**
 	 * Instantiates a new message.
 	 */
 	public MessageData() {
-		timestamp = Long.toString(System.currentTimeMillis());
 	}
 
 	public void dispose() {
@@ -64,7 +60,8 @@ public class MessageData {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.misc.current_development.IMessage#setSender(msi.gama.metamodel.agent
+	 * @see
+	 * msi.misc.current_development.IMessage#setSender(msi.gama.metamodel.agent
 	 * .interfaces.BasicEntity)
 	 */
 	public void setSender(final IAgent sender) {
@@ -104,7 +101,7 @@ public class MessageData {
 	 * @see msi.misc.current_development.IMessage#setContent(java.lang.String)
 	 */
 	public void setContent(final IList content) {
-		if ( content != null ) {
+		if (content != null) {
 			this.content = content;
 		}
 	}
@@ -130,10 +127,11 @@ public class MessageData {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.misc.current_development.IMessage#setPerformative(java.lang.String)
+	 * @see
+	 * msi.misc.current_development.IMessage#setPerformative(java.lang.String)
 	 */
 	public void setPerformativeName(final String performative) {
-		this.performative = CommunicatingSkill.performativeIndexes.get(performative);
+		this.performative = FIPASkill.performativeIndexes.get(performative);
 	}
 
 	/*
@@ -157,7 +155,8 @@ public class MessageData {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.misc.current_development.IMessage#setConversation(msi.gama.metamodel
+	 * @see
+	 * msi.misc.current_development.IMessage#setConversation(msi.gama.metamodel
 	 * .agent.interfaces.BasicEntity)
 	 */
 	public void setConversation(final Conversation conv) {
@@ -172,12 +171,12 @@ public class MessageData {
 	@Override
 	public String toString() {
 		final StringBuffer retVal = new StringBuffer();
-		retVal.append("Message[sender : " + sender + ", receivers : " + receivers + /*
-																					 * ", content : "
-																					 * + content +
-																					 */
-		", conversation : " + conversation + ", performative : " +
-			FIPAConstants.performativeNames[performative] + "]");
+		retVal.append("Message[sender : " + sender + ", receivers : " + receivers
+				+ /*
+					 * ", content : " + content +
+					 */
+				", conversation : " + conversation + ", performative : " + FIPAConstants.performativeNames[performative]
+				+ "]");
 		return retVal.toString();
 	}
 
@@ -188,15 +187,6 @@ public class MessageData {
 	 */
 	public MessageData getMessage() {
 		return this;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.extensions.fipa.IMessage#getTimestamp()
-	 */
-	public String getTimestamp() {
-		return timestamp;
 	}
 
 }

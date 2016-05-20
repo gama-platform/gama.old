@@ -39,7 +39,7 @@ import msi.gaml.types.Types;
  * sub-classes.
  */
 
-@vars({ @var(name = Conversation.MESSAGES, type = IType.LIST, of = MessageType.MESSAGE_ID, doc = {
+@vars({ @var(name = Conversation.MESSAGES, type = IType.LIST, of = IType.MESSAGE, doc = {
 		@doc("Returns the list of messages that compose this conversation") }),
 		@var(name = Conversation.PROTOCOL, type = IType.STRING, doc = {
 				@doc("Returns the name of the protocol followed by the conversation") }),
@@ -49,7 +49,7 @@ import msi.gaml.types.Types;
 				@doc("Returns the list of agents that participate to this conversation") }),
 		@var(name = Conversation.ENDED, type = IType.BOOL, init = "false", doc = {
 				@doc("Returns whether this conversation has ended or not") }) })
-public class Conversation extends GamaList<Message> {
+public class Conversation extends GamaList<FIPAMessage> {
 
 	/** The protocol. */
 	private FIPAProtocol protocol;
@@ -70,7 +70,7 @@ public class Conversation extends GamaList<Message> {
 	private final Map<IAgent, ProtocolNode> protocolNodeParticipantMap = new HashMap<IAgent, ProtocolNode>();
 
 	/** The no protocol node participant map. */
-	private final Map<IAgent, Message> noProtocolNodeParticipantMap = new HashMap<IAgent, Message>();
+	private final Map<IAgent, FIPAMessage> noProtocolNodeParticipantMap = new HashMap<IAgent, FIPAMessage>();
 
 	/** The current node in the protocol tree. */
 	// private ProtocolNode currentNode;
@@ -78,7 +78,7 @@ public class Conversation extends GamaList<Message> {
 	 * Plays the role of a mailbox, contains all the messages sent by the other
 	 * agent in this Conversation.
 	 */
-	private final IList<Message> messages = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
+	private final IList<FIPAMessage> messages = GamaListFactory.create(Types.get(IType.MESSAGE));
 
 	/** The ended. */
 	private boolean ended = false;
@@ -108,8 +108,8 @@ public class Conversation extends GamaList<Message> {
 	 *                Thrown if a Conversation class cannot be loaded for the
 	 *                given class
 	 */
-	protected Conversation(final IScope scope, final Integer p, final Message message) throws GamaRuntimeException {
-		super(0, Types.get(MessageType.MESSAGE_ID));
+	protected Conversation(final IScope scope, final Integer p, final FIPAMessage message) throws GamaRuntimeException {
+		super(0, Types.get(IType.MESSAGE));
 		final int proto = p == null ? FIPAConstants.Protocols.NO_PROTOCOL : p;
 		protocol = FIPAProtocol.named(proto);
 		if (protocol == null) {
@@ -159,7 +159,7 @@ public class Conversation extends GamaList<Message> {
 	 * @exception ConversationFinishedException
 	 *                Thrown when the conversation has already finished
 	 */
-	protected void addMessage(final IScope scope, final Message message, final IAgent receiver)
+	protected void addMessage(final IScope scope, final FIPAMessage message, final IAgent receiver)
 			throws ProtocolErrorException, InvalidConversationException, ConversationFinishedException {
 
 		// OutputManager.debug(name + " adds message " + message);
@@ -211,7 +211,7 @@ public class Conversation extends GamaList<Message> {
 			}
 		} else { // we use NoProtocol
 			final boolean senderIsInitiator = message.getSender().equals(initiator);
-			Message currentMessage;
+			FIPAMessage currentMessage;
 
 			if (senderIsInitiator) {
 				currentMessage = noProtocolNodeParticipantMap.get(receiver);
@@ -253,7 +253,7 @@ public class Conversation extends GamaList<Message> {
 	 * @return the messages
 	 */
 	@getter(MESSAGES)
-	public IList<Message> getMessages() {
+	public IList<FIPAMessage> getMessages() {
 		return messages;
 	}
 
@@ -301,7 +301,7 @@ public class Conversation extends GamaList<Message> {
 	}
 
 	public boolean areMessagesRead() {
-		for (final Message m : messages) {
+		for (final FIPAMessage m : messages) {
 			if (m.isUnread()) {
 				return false;
 			}
@@ -328,11 +328,11 @@ public class Conversation extends GamaList<Message> {
 			}
 			return true;
 		}
-		final Collection<Message> finalMsgs = noProtocolNodeParticipantMap.values();
+		final Collection<FIPAMessage> finalMsgs = noProtocolNodeParticipantMap.values();
 		if (finalMsgs.isEmpty()) {
 			return false;
 		}
-		for (final Message finalMsg : finalMsgs) {
+		for (final FIPAMessage finalMsg : finalMsgs) {
 			if (finalMsg.getPerformative() != FIPAConstants.Performatives.END_CONVERSATION) {
 				return false;
 			}

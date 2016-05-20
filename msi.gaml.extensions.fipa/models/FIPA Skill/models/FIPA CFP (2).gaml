@@ -68,14 +68,14 @@ species initiator skills: [fipa] {
 	reflex send_cfp_to_participants when: (time = 1) {
 		
 		write '(Time ' + time + '): ' + name + ' sends a cfp message to all participants';
-		do start_conversation with: [ receivers :: list(participant), protocol :: 'fipa-contract-net', performative :: 'cfp', content :: ['Go swimming'] ];
+		do start_conversation with: [ to :: list(participant), protocol :: 'fipa-contract-net', performative :: 'cfp', contents :: ['Go swimming'] ];
 	}
 	
 	reflex receive_refuse_messages when: !empty(refuses) {
 		write '(Time ' + time + '): ' + name + ' receives refuse messages';
 		
 		loop r over: refuses {
-			write '\t' + name + ' receives a refuse message from ' + r.sender.name + ' with content ' + r.content ;
+			write '\t' + name + ' receives a refuse message from ' + agent(r.sender).name + ' with content ' + r.contents ;
 		}
 	}
 	
@@ -83,28 +83,28 @@ species initiator skills: [fipa] {
 		write '(Time ' + time + '): ' + name + ' receives propose messages';
 		
 		loop p over: proposes {
-			write '\t' + name + ' receives a propose message from ' + p.sender.name + ' with content ' + p.content ;
+			write '\t' + name + ' receives a propose message from ' + agent(p.sender).name + ' with content ' + p.contents ;
 			
 			if (p.sender = reject_proposal_participant) {
 				write '\t' + name + ' sends a reject_proposal message to ' + p.sender;
-				do reject_proposal with: [ message :: p, content :: ['Not interested in your proposal'] ];
+				do reject_proposal with: [ message :: p, contents :: ['Not interested in your proposal'] ];
 			} else {
 				write '\t' + name + ' sends a accept_proposal message to ' + p.sender;
-				do accept_proposal with: [ message :: p, content :: ['Interesting proposal. Go do it'] ];
+				do accept_proposal with: [ message :: p, contents :: ['Interesting proposal. Go do it'] ];
 			}
 		}
 	}
 	
 	reflex receive_failure_messages when: !empty(failures) {
 		message f <- failures[0];
-		write '\t' + name + ' receives a failure message from ' + f.sender.name + ' with content ' + f.content ;
+		write '\t' + name + ' receives a failure message from ' + agent(f.sender).name + ' with content ' + f.contents ;
 	}
 	
 	reflex receive_inform_messages when: !empty(informs) {
 		write '(Time ' + time + '): ' + name + ' receives inform messages';
 		
 		loop i over: informs {
-			write '\t' + name + ' receives a inform message from ' + i.sender.name + ' with content ' + i.content ;
+			write '\t' + name + ' receives a inform message from ' + agent(i.sender).name + ' with content ' + i.contents ;
 		}
 	}
 }
@@ -114,41 +114,41 @@ species participant skills: [fipa] {
 	reflex receive_cfp_from_initiator when: !empty(cfps) {
 		
 		message proposalFromInitiator <- cfps[0];
-		write '(Time ' + time + '): ' + name + ' receives a cfp message from ' + proposalFromInitiator.sender.name + ' with content ' + proposalFromInitiator.content;
+		write '(Time ' + time + '): ' + name + ' receives a cfp message from ' + agent(proposalFromInitiator.sender).name + ' with content ' + proposalFromInitiator.contents;
 		
 		if (self = refuser) {
-			write '\t' + name + ' sends a refuse message to ' + proposalFromInitiator.sender.name;
-			do refuse with: [ message :: proposalFromInitiator, content :: ['I am busy today'] ];
+			write '\t' + name + ' sends a refuse message to ' + agent(proposalFromInitiator.sender).name;
+			do refuse with: [ message :: proposalFromInitiator, contents :: ['I am busy today'] ];
 		}
 		
 		if (self in proposers) {
-			write '\t' + name + ' sends a propose message to ' + proposalFromInitiator.sender.name;
-			do propose with: [ message :: proposalFromInitiator, content :: ['Ok. That sound interesting'] ];
+			write '\t' + name + ' sends a propose message to ' + agent(proposalFromInitiator.sender).name;
+			do propose with: [ message :: proposalFromInitiator, contents :: ['Ok. That sound interesting'] ];
 		}
 	}
 	
 	reflex receive_reject_proposals when: !empty(reject_proposals) {
 		message r <- reject_proposals[0];
-		write '(Time ' + time + '): ' + name + ' receives a reject_proposal message from ' + r.sender.name + ' with content ' + r.content;
+		write '(Time ' + time + '): ' + name + ' receives a reject_proposal message from ' + agent(r.sender).name + ' with content ' + r.contents;
 	}
 	
 	reflex receive_accept_proposals when: !empty(accept_proposals) {
 		message a <- accept_proposals[0];
-		write '(Time ' + time + '): ' + name + ' receives a accept_proposal message from ' + a.sender.name + ' with content ' + a.content;
+		write '(Time ' + time + '): ' + name + ' receives a accept_proposal message from ' + agent(a.sender).name + ' with content ' + a.contents;
 		
 		if (self = failure_participant) {
-			write '\t' + name + ' sends a failure message to ' + a.sender.name;
-			do failure with: [ message :: a, content :: ['Failure'] ];
+			write '\t' + name + ' sends a failure message to ' + agent(a.sender).name;
+			do failure with: [ message :: a, contents :: ['Failure'] ];
 		}
 		
 		if (self = inform_done_participant) {
-			write '\t' + name + ' sends an inform_done message to ' + a.sender.name;
-			do inform with: [ message :: a, content :: ['Inform done'] ];
+			write '\t' + name + ' sends an inform_done message to ' + agent(a.sender).name;
+			do inform with: [ message :: a, contents :: ['Inform done'] ];
 		}
 		
 		if (self = inform_result_participant) {
-			write '\t' + name + ' sends an inform_result message to ' + a.sender.name;
-			do inform with: [ message :: a, content :: ['Inform result'] ];
+			write '\t' + name + ' sends an inform_result message to ' + agent(a.sender).name;
+			do inform with: [ message :: a, contents :: ['Inform result'] ];
 		}
 	}
 }

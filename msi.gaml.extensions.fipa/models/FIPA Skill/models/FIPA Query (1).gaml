@@ -36,13 +36,13 @@ global {
 species Initiator skills: [fipa] {
 	reflex send_query_message when: (time = 1) {
 		write name + ' sends query message';
-		do start_conversation with: [ receivers :: [p], protocol :: 'fipa-query', performative :: 'query', content :: ['your name?'] ];
+		do start_conversation with: [ to :: [p], protocol :: 'fipa-query', performative :: 'query', contents :: ['your name?'] ];
 	}
 	
 	reflex read_inform_message when: !(empty(informs)) {
 		write name + ' reads inform messages';
 		loop i over: informs {
-			write 'inform message with content: ' + (string(i.content));
+			write 'inform message with content: ' + (string(i.contents));
 		}
 	}
 }
@@ -52,10 +52,10 @@ species Participant skills: [fipa] {
 	reflex reply_query_messages when: !(empty(queries)) {
 		message queryFromInitiator <- queries at 0;
 		
-		write name + ' reads a query message with content : ' + (string(queryFromInitiator.content));
+		write name + ' reads a query message with content : ' + (string(queryFromInitiator.contents));
 		
-		do agree with: [ message :: queryFromInitiator, content :: ['OK, I will answer you'] ];		
-		do inform with: [ message :: queryFromInitiator, content :: [ 'My name is ' + name ] ];
+		do agree with: [ message :: queryFromInitiator, contents :: ['OK, I will answer you'] ];		
+		do inform with: [ message :: queryFromInitiator, contents :: [ 'My name is ' + name ] ];
 	}
 }
 

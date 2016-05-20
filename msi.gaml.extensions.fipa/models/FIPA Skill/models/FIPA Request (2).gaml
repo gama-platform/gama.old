@@ -35,41 +35,41 @@ global {
 
 species Initiator skills: [fipa] {
 	reflex print_debug_infor {
-		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(messages));
+		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(mailbox));
 	}
 	
 	reflex send_request when: (time = 1) {
 		write 'send message';
-		do start_conversation with: [ receivers :: [p], protocol :: 'fipa-request', performative :: 'request', content :: ['go sleeping'] ];
+		do start_conversation (to :: [p], protocol :: 'fipa-request', performative :: 'request', contents :: ['go sleeping'] );
 	}
 	
 	reflex read_agree_message when: !(empty(agrees)) {
 		write 'read agree messages';
 		loop a over: agrees {
-			write 'agree message with content: ' + string(a.content);
+			write 'agree message with content: ' + string(a.contents);
 		}
 	}
 	
 	reflex read_failure_message when: !(empty(failures)) {
 		write 'read failure messages';
 		loop f over: failures {
-			write 'failure message with content: ' + (string(f.content));
+			write 'failure message with content: ' + (string(f.contents));
 		}
 	}
 }
 
 species Participant skills: [fipa] {
 	reflex print_debug_infor {
-		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(messages));
+		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(mailbox));
 	}
 
-	reflex reply_messages when: (!empty(messages)) {
-		message requestFromInitiator <- (messages at 0);
+	reflex reply_messages when: (!empty(mailbox)) {
+		message requestFromInitiator <- (mailbox at 0);
 		write 'agree message';
-		do agree with: [ message :: requestFromInitiator, content :: ['I will'] ];
+		do agree with: (message: requestFromInitiator, contents: ['I will']);
 		
 		write 'inform the initiator of the failure';
-		do failure with: [ message :: requestFromInitiator, content :: ['The bed is broken'] ];
+		do failure (message: requestFromInitiator, contents: ['The bed is broken']);
 	}
 }
 

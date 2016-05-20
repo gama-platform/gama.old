@@ -33,33 +33,33 @@ global {
 
 species Initiator skills: [fipa] {
 	reflex print_debug_infor {
-		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(messages));
+		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(mailbox));
 	}
 	
 	reflex send_request when: (time = 1) {
 		write 'send message';
-		do start_conversation with: [ receivers :: [p], protocol :: 'fipa-request', performative :: 'request', content :: ['go sleeping'] ];
+		do start_conversation with: [ to :: [p], protocol :: 'fipa-request', performative :: 'request', contents :: ['go sleeping'] ];
 	}
 	
 	reflex read_refuse_message when: !(empty(refuses)) {
 		write 'read refuse messages';
 		loop r over: refuses {
-			write 'refuse message with content: ' + string(r.content);
+			write 'refuse message with content: ' + string(r.contents);
 		}
 	}
 }
 
 species Participant skills: [fipa] {
 	reflex print_debug_infor {
-		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(messages));
+		write name + ' with conversations: ' + (string(conversations)) + '; messages: ' + (string(mailbox));
 	}
 
-	reflex reply_messages when: (!empty(messages)) {
+	reflex reply_messages when: (!empty(mailbox)) {
 		write name + ' sends an inform message';
 		
 		
 		write 'A GamaRuntimeException is raised to inform that the message\'s performative doesn\'t respect the \'request\' interaction protocol\' specification';
-		do inform with: [ message :: (messages at 0), content :: ['I don\'t want'] ]; // Attention: note that GAMA will raise an exception because an 'inform' message is not appropriate here.
+		do inform with: [ message :: (mailbox at 0), contents :: ['I don\'t want'] ]; // Attention: note that GAMA will raise an exception because an 'inform' message is not appropriate here.
 	}
 }
 
