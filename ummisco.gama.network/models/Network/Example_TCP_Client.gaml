@@ -10,11 +10,7 @@ model Socket_TCP_HelloWorld_Client
 global {	
 	list<string> clients <-["ping","pong"];
 	init
-	{
-//		create NetworkingAgent number:1{
-//		   do connect to:"localhost" protocol:"tcp_server" port:"3001" with_name:name;
-//		}
-		
+	{		
 		create NetworkingAgent number:1{
 			do connect to:"localhost" protocol:"tcp_client" port:"3001" with_name:"Client";
 		}

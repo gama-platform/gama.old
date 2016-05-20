@@ -14,11 +14,6 @@ global {
 		create NetworkingAgent number:1{
 		   do connect to:"localhost" protocol:"tcp_server" port:"3001" with_name:"Server";
 		}
-		
-//		create NetworkingAgent number:1{
-//			do connect to:"localhost" protocol:"tcp_client" port:"3001" with_name:name;
-//		}
-
 	} 
 }
 
