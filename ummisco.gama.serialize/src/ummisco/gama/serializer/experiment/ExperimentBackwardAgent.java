@@ -87,7 +87,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 	
 				// Update of the simulation
 				SimulationAgent currentSimAgt = getSimulation();
-				currentSimAgt.updateWithSavedAgent(scope, agt);
+				currentSimAgt.updateWith(scope, agt);
 				
 				
 				// executer.executeEndActions();
