@@ -24,8 +24,8 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.types.Types;
 import ummisco.gama.mqtt.common.MQTTConnector;
+import ummisco.gama.network.common.GamaNetworkException;
 import ummisco.gama.network.common.IConnector;
-import ummisco.gama.network.skills.GamaNetworkException;
 import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.serializer.factory.StreamConverter;
 

@@ -26,18 +26,8 @@ public class MQTTConnector {
     
     public static MqttClient connectReceiver( String server) throws MqttException  
     {
-    	 MqttClient sampleClient = new MqttClient("tcp://"+server+":"+port, "gama"+Calendar.getInstance().getTimeInMillis()+"@"+server, new MemoryPersistence());
-    	 System.out.println("Connected");
-        
-    	
-   // 	MqttClient mqtt = new MQTT();
-   //     System.out.println(mqtt.isCleanSession());
-        
-   //     mqtt.setHost(server, port);
-   //     mqtt.setUserName(login);
-   //     mqtt.setPassword(pass);
-    //    CallbackConnection connection = mqtt.callbackConnection();
-        return sampleClient;
+    	MqttClient sampleClient = new MqttClient("tcp://"+server+":"+port, "gama"+Calendar.getInstance().getTimeInMillis()+"@"+server, new MemoryPersistence());
+    	return sampleClient;
     }
     
 	public static MqttClient connectSender( String server) throws Exception
