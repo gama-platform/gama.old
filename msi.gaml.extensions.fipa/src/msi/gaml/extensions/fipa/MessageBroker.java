@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -46,7 +47,7 @@ public class MessageBroker {
 	private final Map<IAgent, ConversationsMessages> conversationsMessages = new HashMap<IAgent, ConversationsMessages>();
 
 	/** The instance. */
-	private static Map<IScope, MessageBroker> instances = new HashMap();
+	private static Map<SimulationAgent, MessageBroker> instances = new HashMap();
 
 	/**
 	 * @throws GamaRuntimeException
@@ -166,16 +167,16 @@ public class MessageBroker {
 	 * @return single instance of MessageBroker
 	 */
 	public static MessageBroker getInstance(final IScope scope) {
-		MessageBroker instance = instances.get(scope);
+		MessageBroker instance = instances.get(scope.getSimulationScope());
 		if (instance == null) {
 			instance = new MessageBroker();
-			instances.put(scope, instance);
+			instances.put(scope.getSimulationScope(), instance);
 
 			scope.getSimulationScope().postEndAction(new IExecutable() {
 
 				@Override
 				public Object executeOn(final IScope scope) throws GamaRuntimeException {
-					instances.get(scope).manageConversationsAndMessages();
+					instances.get(scope.getSimulationScope()).manageConversationsAndMessages();
 					return null;
 				}
 			});
@@ -183,9 +184,9 @@ public class MessageBroker {
 
 				@Override
 				public Object executeOn(final IScope scope) throws GamaRuntimeException {
-					if (instances.get(scope) != null)
-						instances.get(scope).schedulerDisposed();
-					instances.remove(scope);
+					if (instances.get(scope.getSimulationScope()) != null)
+						instances.get(scope.getSimulationScope()).schedulerDisposed();
+					instances.remove(scope.getSimulationScope());
 					return null;
 				}
 			});

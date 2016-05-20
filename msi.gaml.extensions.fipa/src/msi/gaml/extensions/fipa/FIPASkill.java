@@ -150,7 +150,7 @@ public class FIPASkill extends MessagingSkill {
 		if (performative != null) {
 			message.setPerformative(performativeIndexes.get(performative));
 		} else {
-			throw GamaRuntimeException.error("performative can can null", scope);
+			throw GamaRuntimeException.error("performative can not be null", scope);
 		}
 
 		if (message.getPerformative() == -1) {

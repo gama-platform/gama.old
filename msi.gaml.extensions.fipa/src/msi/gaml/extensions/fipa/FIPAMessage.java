@@ -29,11 +29,7 @@ import msi.gama.util.IList;
 public class FIPAMessage extends GamaMessage implements Cloneable {
 
 	/** The message. */
-	private final MessageData data = new MessageData();
-
-	/** The unread. */
-
-	private Conversation conversation;
+	private MessageData data;
 
 	/**
 	 * @throws GamaRuntimeException
@@ -64,12 +60,12 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	 *             the gaml exception
 	 */
 	public FIPAMessage(final IScope scope, final FIPAMessage m) throws GamaRuntimeException {
-		super(scope, m.data.getSender(), m.data.getContent());
-		data.setContent(m.data.getContent());
-		data.setConversation(m.getConversation());
-		data.setReceivers(m.data.getReceivers());
-		data.setPerformativeName(m.data.getPerformativeName());
-		data.setSender(m.data.getSender());
+		super(scope, m.getData().getSender(), m.getData().getContent());
+		getData().setContent(m.getData().getContent());
+		getData().setConversation(m.getConversation());
+		getData().setReceivers(m.getData().getReceivers());
+		getData().setPerformativeName(m.getData().getPerformativeName());
+		getData().setSender(m.getData().getSender());
 
 	}
 
@@ -96,24 +92,25 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	public FIPAMessage(final IAgent sender, final IList<IAgent> receivers, final IList content, final int performative,
 			final Conversation conversation) throws GamaRuntimeException {
 		super(sender.getScope(), sender, content);
-		this.conversation = conversation;
 		setSender(sender);
-		data.setReceivers(receivers);
-		data.setPerformative(performative);
+		getData().setReceivers(receivers);
+		getData().setPerformative(performative);
+		getData().setConversation(conversation);
 	}
 
 	public Conversation getConversation() {
-		return conversation;
+		return getData().getConversation();
 	}
 
 	public IList<IAgent> getReceivers() {
-		return data.getReceivers();
+		return getData().getReceivers();
 	}
 
 	@Override
 	public FIPAMessage clone() {
-		return new FIPAMessage(getSender(), data.getReceivers(), (IList<IAgent>) getContents(), getPerformative(),
-				conversation);
+		final FIPAMessage m = new FIPAMessage(getSender(), getReceivers(), (IList<IAgent>) getContents(),
+				getPerformative(), getConversation());
+		return m;
 	}
 
 	/**
@@ -125,7 +122,7 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	@getter(GamaMessage.CONTENTS)
 	public Object getContents() {
 		setUnread(false);
-		return data.getContent();
+		return getData().getContent();
 	}
 
 	/**
@@ -137,8 +134,7 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	@Override
 	@setter(GamaMessage.CONTENTS)
 	public void setContents(final Object content) {
-		if (data != null)
-			data.setContent((IList) content);
+		getData().setContent((IList) content);
 	}
 
 	/*
@@ -147,6 +143,8 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	 * @see msi.gama.extensions.fipa.IMessage#getMessage()
 	 */
 	public MessageData getData() {
+		if (data == null)
+			data = new MessageData();
 		return data;
 	}
 
@@ -158,7 +156,7 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	@Override
 	@getter(FIPAMessage.SENDER)
 	public IAgent getSender() {
-		return data.getSender();
+		return getData().getSender();
 	}
 
 	/**
@@ -169,8 +167,8 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	 */
 	@setter(FIPAMessage.SENDER)
 	public void setSender(final IAgent sender) {
-		if (data != null)
-			data.setSender(sender);
+		if (getData() != null)
+			getData().setSender(sender);
 	}
 
 	/*
@@ -179,7 +177,7 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	 * @see msi.gama.extensions.fipa.IMessage#getPerformative()
 	 */
 	public int getPerformative() {
-		return data.getPerformative();
+		return getData().getPerformative();
 	}
 
 	/*
@@ -188,17 +186,17 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	 * @see msi.gama.extensions.fipa.IMessage#setPerformative(int)
 	 */
 	public void setPerformative(final int performative) {
-		data.setPerformative(performative);
+		getData().setPerformative(performative);
 	}
 
 	@Override
 	public String toString() {
-		return "Proxy on " + data;
+		return "Proxy on " + getData();
 	}
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return StringUtils.toGaml(data.getContent(), includingBuiltIn);
+		return StringUtils.toGaml(getData().getContent(), includingBuiltIn);
 	}
 
 	//
@@ -210,8 +208,9 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
-		return "message[sender: " + data.getSender() + "; receivers: " + data.getReceivers() + "; performative: "
-				+ data.getPerformativeName() + "; content: " + data.getContent() + "; content" + "]";
+		return "message[sender: " + getData().getSender() + "; receivers: " + getData().getReceivers()
+				+ "; performative: " + getData().getPerformativeName() + "; content: " + getData().getContent()
+				+ "; content" + "]";
 	}
 
 	@Override
@@ -220,15 +219,15 @@ public class FIPAMessage extends GamaMessage implements Cloneable {
 	}
 
 	public void setReceivers(final IList receivers) {
-		data.setReceivers(receivers);
+		getData().setReceivers(receivers);
 	}
 
 	public String getPerformativeName() {
-		return data.getPerformativeName();
+		return getData().getPerformativeName();
 	}
 
 	public void setConversation(final Conversation conversation2) {
-		data.setConversation(conversation2);
+		getData().setConversation(conversation2);
 
 	}
 
