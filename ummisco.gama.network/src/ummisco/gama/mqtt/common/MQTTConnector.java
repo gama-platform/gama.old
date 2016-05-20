@@ -26,7 +26,7 @@ public class MQTTConnector {
     public static MqttClient connectReceiver( String server) throws MqttException  
     {
     	 MqttClient sampleClient = new MqttClient("tcp://"+server+":"+port, "gama@"+server, new MemoryPersistence());
-         System.out.println("Connected");
+    	 System.out.println("Connected");
         
     	
    // 	MqttClient mqtt = new MQTT();

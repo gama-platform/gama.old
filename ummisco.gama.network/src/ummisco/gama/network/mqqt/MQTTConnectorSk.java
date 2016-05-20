@@ -178,7 +178,11 @@ public class MQTTConnectorSk implements IConnector{
 			 MqttConnectOptions connOpts = new MqttConnectOptions();
 	         connOpts.setCleanSession(true);
 	         sendConnection.setCallback(new Callback());
-	 		 sendConnection.connect(connOpts);
+	         connOpts.setCleanSession(true);
+	         connOpts.setKeepAliveInterval(30);
+	         connOpts.setUserName(MQTTConnector.DEFAULT_USER);
+	         connOpts.setPassword(MQTTConnector.DEFAULT_PASSWORD.toCharArray());
+	  		 sendConnection.connect(connOpts);
 	        
 			System.out.println("creation connection emission");
 		}

@@ -1,5 +1,11 @@
 package ummisco.gama.network.common;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
@@ -11,10 +17,24 @@ public abstract class Connector implements IConnector{
 	private String server_URL;
 	private String server_port;
 	
+	//Box ordered map
+	protected Map<String, ArrayList<IAgent>> boxFollower;
+	
+	//received Messages
+	protected Map<IAgent,LinkedList<Map<String,Object>>> receivedMessage;
+   
+	protected List<String> topicSuscribingPending ;
+	protected boolean isConnected = false;
+
+	
 	protected Connector()
 	{
+		super();
 		server_port = "3301";
 		server_URL = "localhost";
+		boxFollower = new HashMap<>();
+		topicSuscribingPending = new ArrayList<String>();
+		receivedMessage = new HashMap<>();
 	}
 	
 	@Override
