@@ -187,13 +187,20 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		createSimulation(getParameterValues(), scheduled);
 		// We execute any behavior defined in GAML.
 		super._init_(scope);
+
+		return this;
+	}
+
+	@Override
+	public boolean init(final IScope scope) {
+		super.init(scope);
 		final IOutputManager outputs = getSpecies().getExperimentOutputs();
 		if (outputs != null) {
 			outputs.init(scope);
 		}
 		scope.getGui().informStatus("Experiment ready");
 		scope.getGui().updateSimulationState();
-		return this;
+		return true;
 	}
 
 	/**
