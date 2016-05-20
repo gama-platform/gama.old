@@ -262,7 +262,7 @@ public class ChartDataSet {
 		boolean didr=false;
 		int mychartcycle=chartCycle;
 //		int mychartcycle=scope.getSimulationScope().getCycle(scope)+1;
-		System.out.println("cycle "+mychartcycle+" last: "+lastchartcycle);
+//		System.out.println("cycle "+mychartcycle+" last: "+lastchartcycle);
 		if (lastchartcycle>=mychartcycle)
 		{
 			lastchartcycle=mychartcycle-1;			
