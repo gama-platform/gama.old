@@ -9,7 +9,7 @@
  *
  *
  **********************************************************************************************/
-package idees.gama.operators;
+package msi.gaml.operators;
 
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
