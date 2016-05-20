@@ -22,5 +22,6 @@
 					<includeAllDependencies>true</includeAllDependencies>
 				</configuration>
 			</plugin>
+	</plugins>
 	</build>
 </project>

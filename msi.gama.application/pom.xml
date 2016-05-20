@@ -13,12 +13,11 @@
 
 	<properties>
 		<product.finalName>Gama</product.finalName>
-		<product.id>msi.gama.application.product</product.id>
+		<product.id>msi.gama.application.product</product.id>		
 		<product.outputDirectory>${basedir}/products</product.outputDirectory>
 	</properties>
 
 <build>
-	
 		<plugins>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
@@ -75,7 +74,21 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--<plugin>
+				   <groupId>org.eclipse.tycho</groupId>
+				   <artifactId>tycho-packaging-plugin</artifactId>
+				   <version>${tycho.version}</version>
+				   <executions>
+						  <execution>
+								<phase>package</phase>
+								<goals>
+									   <goal>product-export</goal>
+								</goals>
+						  </execution>
+				   </executions>
+			</plugin>-->    
 		</plugins>
+
 </build>
 </project>
 
