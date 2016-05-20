@@ -18,16 +18,23 @@ public class SavedAgent {
 	static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS, IKeyword.HOST,
 		IKeyword.TOPOLOGY, IKeyword.MEMBERS, "populations");
 
+	int index;
 	Map<String, Object> variables;
 	Map<String, List<SavedAgent>> innerPopulations;
 
 	public SavedAgent(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		index = agent.getIndex();
 		saveAttributes(scope, agent);
 		if ( agent instanceof IMacroAgent ) {
 			saveMicroAgents(scope, (IMacroAgent) agent);
 		}
 	}
 
+	public SavedAgent(int ind, Map<String, Object> v, Map<String, List<SavedAgent>> inPop){
+		this(v, inPop);
+		index = ind;
+	}	
+	
 	public SavedAgent(Map<String, Object> v, Map<String, List<SavedAgent>> inPop){
 		variables = v;
 		innerPopulations = inPop;
@@ -43,6 +50,10 @@ public class SavedAgent {
 	
 	public Map<String, List<SavedAgent>> getInnerPopulations() {
 		return innerPopulations;
+	}
+	
+	public int getIndex() {
+		return index;
 	}
 	
 	/**

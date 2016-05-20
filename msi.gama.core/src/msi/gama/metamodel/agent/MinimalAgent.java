@@ -1,6 +1,9 @@
 package msi.gama.metamodel.agent;
 
+import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
+
 import com.vividsolutions.jts.geom.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
@@ -333,4 +336,13 @@ public class MinimalAgent extends AbstractAgent {
 		return geometry.isMultiple();
 	}
 
+	public void updateWith(final IScope scope, final SavedAgent sa) {
+		// Update attributes
+		Map<String,Object> mapAttr = sa.getVariables();
+		for(Entry<String, Object> attr : mapAttr.entrySet()) {
+			this.setDirectVarValue(scope, attr.getKey(), attr.getValue());			
+		}
+		
+		// Update microPop
+	}
 }

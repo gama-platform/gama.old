@@ -210,4 +210,6 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 */
 	public abstract IPopulation getPopulationFor(final String speciesName);
 
+	
+	public void updateWith(final IScope s, final SavedAgent sa) ;
 }
