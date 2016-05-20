@@ -10,7 +10,8 @@ public class LogConverter implements Converter {
 
 	@Override
 	public boolean canConvert(Class arg0) {
-				return false;
+		System.out.println("LOG Converter: "+arg0 + " super " + arg0.getSuperclass());		
+		return false;
 	}
 
 	@Override
