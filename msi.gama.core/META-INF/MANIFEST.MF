@@ -47,6 +47,7 @@ Export-Package: msi.gama.common,
  msi.gama.database.geosql,
  msi.gama.database.mdx,
  msi.gama.database.sql,
+ msi.gama.extensions.messaging,
  msi.gama.kernel.batch;
   uses:="msi.gaml.expressions,
    msi.gama.kernel.experiment,

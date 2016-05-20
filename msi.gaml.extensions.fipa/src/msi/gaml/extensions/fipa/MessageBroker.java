@@ -23,6 +23,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.statements.IExecutable;
+import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
@@ -36,7 +37,7 @@ import msi.gaml.types.Types;
 public class MessageBroker {
 
 	/** The messages to deliver. */
-	private final Map<IAgent, List<Message>> messagesToDeliver = new HashMap<IAgent, List<Message>>();
+	private final Map<IAgent, List<FIPAMessage>> messagesToDeliver = new HashMap<IAgent, List<FIPAMessage>>();
 
 	/**
 	 * Centralized storage of Conversations and Messages to facilitate Garbage
@@ -57,22 +58,22 @@ public class MessageBroker {
 	 * @throws GamlException
 	 *             the gaml exception
 	 */
-	public IList<Message> deliverMessagesFor(final IScope scope, final IAgent a) throws GamaRuntimeException {
-		final List<Message> messagesForA = messagesToDeliver.get(a);
+	public IList<FIPAMessage> deliverMessagesFor(final IScope scope, final IAgent a) throws GamaRuntimeException {
+		final List<FIPAMessage> messagesForA = messagesToDeliver.get(a);
 		if (messagesForA == null) {
 			return GamaListFactory.create();
 		}
 
-		final IList<Message> successfulDeliveries = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
-		final IList<Message> failedDeliveries = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
+		final IList<FIPAMessage> successfulDeliveries = GamaListFactory.create(Types.get(IType.MESSAGE));
+		final IList<FIPAMessage> failedDeliveries = GamaListFactory.create(Types.get(IType.MESSAGE));
 
-		for (final Message m : messagesForA) {
+		for (final FIPAMessage m : messagesForA) {
 			final Conversation conv = m.getConversation();
 			try {
 				conv.addMessage(scope, m, a);
 			} catch (final GamaRuntimeException e) {
 				failedDeliveries.add(m);
-				failureMessageInReplyTo(m);
+				failureMessageInReplyTo(scope, m);
 				conv.end();
 				throw e;
 			} finally {
@@ -96,19 +97,19 @@ public class MessageBroker {
 	 * @throws GamlException
 	 *             the gaml exception
 	 */
-	protected Message failureMessageInReplyTo(final Message m) throws GamaRuntimeException {
+	protected FIPAMessage failureMessageInReplyTo(final IScope scope, final FIPAMessage m) throws GamaRuntimeException {
 		if (m.getPerformative() == FIPAConstants.Performatives.FAILURE) {
 			return null;
 		}
 
-		final Message f = new Message();
+		final FIPAMessage f = new FIPAMessage(scope);
 		f.setSender(null);
 		final IList<IAgent> receivers = GamaListFactory.create(Types.AGENT);
 		receivers.add(m.getSender());
 		f.setReceivers(receivers);
 		f.setPerformative(FIPAConstants.Performatives.FAILURE);
 		f.setConversation(m.getConversation());
-		f.setContent(m.getContent());
+		f.setContents(m.getContents());
 		return f;
 	}
 
@@ -118,14 +119,14 @@ public class MessageBroker {
 	 * @param m
 	 *            the m
 	 */
-	public void scheduleForDelivery(final IScope scope, final Message m) {
+	public void scheduleForDelivery(final IScope scope, final FIPAMessage m) {
 		for (final IAgent a : m.getReceivers().iterable(scope)) {
 			scheduleForDelivery(m.clone(), a);
 		}
 	}
 
-	private void scheduleForDelivery(final Message m, final IAgent agent) {
-		List<Message> messages = messagesToDeliver.get(agent);
+	private void scheduleForDelivery(final FIPAMessage m, final IAgent agent) {
+		List<FIPAMessage> messages = messagesToDeliver.get(agent);
 		if (messages == null) {
 			messages = new ArrayList();
 			messagesToDeliver.put(agent, messages);
@@ -149,7 +150,7 @@ public class MessageBroker {
 	 * @throws GamlException
 	 *             the gaml exception
 	 */
-	public void scheduleForDelivery(final IScope scope, final Message m, final Integer protocol) {
+	public void scheduleForDelivery(final IScope scope, final FIPAMessage m, final Integer protocol) {
 		Conversation conv;
 		conv = new Conversation(scope, protocol, m);
 		m.setConversation(conv);
@@ -182,7 +183,8 @@ public class MessageBroker {
 
 				@Override
 				public Object executeOn(final IScope scope) throws GamaRuntimeException {
-					instances.get(scope).schedulerDisposed();
+					if (instances.get(scope) != null)
+						instances.get(scope).schedulerDisposed();
 					instances.remove(scope);
 					return null;
 				}
@@ -195,7 +197,7 @@ public class MessageBroker {
 		messagesToDeliver.clear();
 	}
 
-	public IList<Message> getMessagesFor(final IAgent agent) {
+	public IList<FIPAMessage> getMessagesFor(final IAgent agent) {
 		if (!conversationsMessages.containsKey(agent)) {
 			return GamaListFactory.create();
 		}
@@ -265,8 +267,8 @@ public class MessageBroker {
 				endedConv.dispose();
 			}
 
-			final List<Message> alreadyReadMessages = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
-			for (final Message m : conversationsMessages.get(a).messages) {
+			final List<FIPAMessage> alreadyReadMessages = GamaListFactory.create(Types.get(IType.MESSAGE));
+			for (final FIPAMessage m : conversationsMessages.get(a).messages) {
 				if (!m.isUnread()) {
 					alreadyReadMessages.add(m);
 				}
@@ -282,11 +284,11 @@ public class MessageBroker {
 		IList<Conversation> conversations;
 
 		// agent mailbox : all un-read messages of an agent
-		IList<Message> messages;
+		IList<FIPAMessage> messages;
 
 		ConversationsMessages() {
 			this.conversations = GamaListFactory.create(Types.get(ConversationType.CONV_ID));
-			this.messages = GamaListFactory.create(Types.get(MessageType.MESSAGE_ID));
+			this.messages = GamaListFactory.create(Types.get(IType.MESSAGE));
 		}
 	}
 

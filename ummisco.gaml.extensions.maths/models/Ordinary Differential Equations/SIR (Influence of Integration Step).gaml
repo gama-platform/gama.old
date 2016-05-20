@@ -8,13 +8,13 @@
 model SIR_influence_of_integration_step
 
 global { 
-	float step<-3#s;
+	float step<-1#s;
 	float beta <- 0.8 ; 	
 	float delta <- 0.01 ; 
 	
 	float s1 <- 1#s;
-	float s2 <- 2#s;
-	float s3 <- 3#s;
+	float s2 <- 1.5#s;
+	float s3 <- 2#s;
 	
 	init {
 		create SIR_agt with: [h::1,myUnit::s1];
@@ -36,13 +36,16 @@ species SIR_agt {
    	float h;   		
 	float myUnit<-1#s;
 	equation SIR{ 
-		diff(S,t) = (- beta  * S * I / N)*myUnit;
-		diff(I,t) = (beta * S * I / N) - (delta * I);
-		diff(R,t) = (delta * I);
+		diff(S,t) =myUnit* (- beta  * S * I / N);
+		diff(I,t) =myUnit* (beta * S * I / N) - (delta * I);
+		diff(R,t) =myUnit* (delta * I);
 	} 
 
 	reflex solving {
 		solve SIR method: "rk4" step: h;// cycle_length:mycycle ;
+//		S<-S*myUnit;
+//		I<-I*myUnit;
+//		R<-R*myUnit;
 	}      
 }
 

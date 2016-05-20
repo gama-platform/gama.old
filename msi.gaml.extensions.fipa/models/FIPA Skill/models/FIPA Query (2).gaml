@@ -31,13 +31,13 @@ global {
 species Initiator skills: [fipa] {
 	reflex send_query_message when: (time = 1) {
 		write name + ' sends a query message';
-		do start_conversation with: [ receivers :: [p], protocol :: 'fipa-query', performative :: 'query', content :: ['your name?'] ];
+		do start_conversation (to :: [p], protocol :: 'fipa-query', performative :: 'query', contents :: ['your name?']);
 	}
 	
 	reflex read_refuse_messages when: !(empty(refuses)) {
 		write name + ' receives refuse messages';
 		loop i over: refuses {
-			write 'refuse message with content: ' + (string(i.content));
+			write 'refuse message with content: ' + (string(i.contents));
 		}
 	}
 }
@@ -46,9 +46,9 @@ species Participant skills: [fipa] {
 	reflex reply_query_messages when: !(empty(queries)) {
 		message queryFromInitiator  <- queries at 0;
 		
-		write name + ' reads a query message with content : ' + (string(queryFromInitiator.content));
+		write name + ' reads a query message with content : ' + (string(queryFromInitiator.contents));
 		
-		do refuse with: [ message :: queryFromInitiator, content :: ['No! That is a secret!'] ];		
+		do refuse with: [ message :: queryFromInitiator, contents :: ['No! That is a secret!'] ];		
 	}
 }
 
