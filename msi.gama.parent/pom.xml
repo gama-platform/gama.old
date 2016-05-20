@@ -44,11 +44,11 @@
     
     <module>../simtools.graphanalysis.fr</module>
     <module>../simtools.graphlayout.feature</module>
-    <module>../ummisco.gama.communicator</module>
+    
     <module>../ummisco.gama.feature.audio</module>
     <module>../ummisco.gama.feature.product</module>
     <module>../ummisco.gama.feature.stats</module>
-    <module>../ummisco.gama.gpu</module>
+    
     <module>../ummisco.gama.opengl</module>
     <module>../ummisco.gama.serialize</module>
     <module>../ummisco.gama.network</module>
@@ -56,8 +56,8 @@
     <module>../ummisco.gaml.extensions.rjava</module>
     <module>../ummisco.gaml.extensions.sound</module>
     <module>../ummisco.gaml.extensions.stats</module>
-    <module>../ummisco.miro.extension</module>
-    <module>../ummisco.miro.extension.traffic</module>
+    
+    
     
     <module>../msi.gama.documentation</module>
     <module>../msi.gama.application</module>
