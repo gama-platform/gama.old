@@ -73,7 +73,7 @@ public class MQTTConnectorSk implements IConnector{
 		@Override
 		public void messageArrived(String topic, MqttMessage message) throws Exception {
 			String body =message.toString();
-			System.out.println("message recu " + body);
+			//System.out.println("message recu " + body);
 			@SuppressWarnings("unchecked")
 			Map<String,Object> mp = (Map<String,Object>) StreamConverter.convertStreamToObject(GAMA.getSimulation().getScope(), body);
 			pushMessageToAgents(topic,mp);
