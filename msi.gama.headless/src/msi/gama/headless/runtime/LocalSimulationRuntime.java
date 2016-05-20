@@ -1,6 +1,7 @@
 package msi.gama.headless.runtime;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -136,7 +137,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 	//	System.out.println("model released ") ;
 	}
 	
-	private synchronized IModel lockUnLock(File fl, String key, IModel mdl)
+	private synchronized IModel lockUnLock(File fl, String key, IModel mdl) throws IOException
 	{
 		IModel mm =null;
 		if(mdl!=null)
@@ -151,7 +152,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		return mm;
 	}
 	
-	public synchronized IModel lockModel(File fl)
+	public synchronized IModel lockModel(File fl) throws IOException
 	{
 		IModel mdl;
 		String key=fl.getAbsolutePath();
@@ -176,7 +177,7 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		return mdl;
 	}
 	
-	public synchronized IModel loadModel(File fl)
+	public synchronized IModel loadModel(File fl) throws IOException
 	{
 		//return lockUnLock( fl,null, null) ; //lockModel(fl); //
 		return HeadlessSimulationLoader.loadModel(fl); //lockModel(fl); //mdl.c;
@@ -206,7 +207,8 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 		@Override
 		public void run() {
 			try {
-				si.loadAndBuild(this.runtime);
+					si.loadAndBuild(this.runtime);
+				
 			} catch (InstantiationException e) {
 				e.printStackTrace();
 			} catch (IllegalAccessException e) {
@@ -214,6 +216,9 @@ public class LocalSimulationRuntime extends Observable implements SimulationRunt
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
 			si.play(); 
 			runtime.closeSimulation(this); 
 			runtime.releaseModel(si.getSourcePath(),si.getSimulation().getModel());

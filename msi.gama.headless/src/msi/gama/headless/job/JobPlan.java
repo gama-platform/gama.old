@@ -1,6 +1,7 @@
 package msi.gama.headless.job;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -69,7 +70,7 @@ public class JobPlan {
 		return this.originalJobs.get(name);
 	}
 	
-	public JobPlanExperimentID[] loadModelAndCompileJob(String modelPath)
+	public JobPlanExperimentID[] loadModelAndCompileJob(String modelPath) throws IOException
 	{
 		 model = HeadlessSimulationLoader.loadModel(new File(modelPath));
 		 List<IExperimentJob> jobs = JobPlan.loadAndBuildJobs(model);

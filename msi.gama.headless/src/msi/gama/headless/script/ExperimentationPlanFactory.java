@@ -131,7 +131,7 @@ public class ExperimentationPlanFactory {
 		transformer.transform(source, result);
 		
 	}
-	public static List<IExperimentJob> buildExperiment(String modelFileName)
+	public static List<IExperimentJob> buildExperiment(String modelFileName) throws IOException
 	{
 		JobPlan jb = new JobPlan();
 		jb.loadModelAndCompileJob(modelFileName);

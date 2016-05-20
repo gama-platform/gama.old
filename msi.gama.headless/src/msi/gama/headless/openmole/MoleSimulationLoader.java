@@ -12,6 +12,7 @@
 package msi.gama.headless.openmole;
 
 import java.io.File;
+import java.io.IOException;
 
 import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.kernel.model.IModel;
@@ -23,7 +24,7 @@ public abstract class MoleSimulationLoader {
 		HeadlessSimulationLoader.preloadGAMA();
 	}
 	
-	public static IModel loadModel(final File modelPath)
+	public static IModel loadModel(final File modelPath) throws IOException
 	{
 		return HeadlessSimulationLoader.loadModel(modelPath);
 	}

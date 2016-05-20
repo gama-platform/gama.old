@@ -28,7 +28,7 @@ import msi.gaml.statements.Facets;
 
 public abstract class ScriptFactory {
 	
-	public static IModel loadAndBuildJobs(String path)
+	public static IModel loadAndBuildJobs(String path) throws IOException
 	{
 		IModel model = HeadlessSimulationLoader.loadModel(new File(path));
 		return model;

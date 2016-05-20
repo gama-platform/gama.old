@@ -1,5 +1,6 @@
 package msi.gama.headless.job;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.w3c.dom.Document;
@@ -25,7 +26,7 @@ public interface IExperimentJob {
 	public long getStep();
 	public void setFinalStep(long step);
 	
-	public void loadAndBuild(RuntimeContext rtx) throws InstantiationException, IllegalAccessException, ClassNotFoundException;
+	public void loadAndBuild(RuntimeContext rtx) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException;
 	public Element asXMLDocument(Document doc);
 	
 	

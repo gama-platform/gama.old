@@ -14,6 +14,7 @@ package msi.gama.headless.runtime;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -220,7 +221,7 @@ public class Application implements IApplication {
 		return null;
 	}
 	
-	public void buildXML(String arg[]) throws ParserConfigurationException, TransformerException
+	public void buildXML(String arg[]) throws ParserConfigurationException, TransformerException, IOException
 	{
 		verbose = containVerboseParameter(arg);
 		if(this.verbose )

@@ -182,7 +182,7 @@ public class ExperimentJob implements IExperimentJob{
 		
 	}
 
-	public void loadAndBuild(RuntimeContext rtx) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public void loadAndBuild(RuntimeContext rtx) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
 
 		this.load(rtx);
 		this.listenedVariables = new ListenedVariable[outputs.size()];
@@ -201,7 +201,7 @@ public class ExperimentJob implements IExperimentJob{
 
 	}
 
-	public void load(RuntimeContext ctx) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+	public void load(RuntimeContext ctx) throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException {
 		System.setProperty("user.dir", this.sourcePath);
 		IModel mdl  = ctx.loadModel(new File(this.sourcePath));
 		this.modelName = mdl.getName();

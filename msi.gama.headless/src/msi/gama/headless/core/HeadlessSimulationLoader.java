@@ -12,6 +12,7 @@
 package msi.gama.headless.core;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.logging.Logger;
 import org.eclipse.emf.common.util.URI;
@@ -60,17 +61,23 @@ public class HeadlessSimulationLoader {
 		// SEED HACK
 	}
 
-	public static synchronized IModel loadModel(final File myFile) {
+	public static synchronized IModel loadModel(final File myFile) throws IOException  {
 		String fileName = myFile.getAbsolutePath();
+		if(!myFile.exists())
+			throw new IOException("Model file does not exist: "+fileName );
+		
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(fileName + " Model is loading...");
 		try {
 			List<GamlCompilationError> errors = new ArrayList();
 			IModel model = GAML.getModelFactory().compile(URI.createFileURI(fileName), errors);
 			if ( model == null ) {
-				System.err.println("GAMA cannot build model " + fileName);
-				for ( GamlCompilationError d : errors ) {
-					System.err.println(">> Error " + d.toString());
+				{
+					String errorData ="\n";
+					for(GamlCompilationError line:errors)
+						errorData +=line.toString()+"\n";
+					throw new GamaHeadlessException("Compilation errors: "+errorData);
 				}
+				
 			}
 			Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("Experiment created ");
 			return model;
