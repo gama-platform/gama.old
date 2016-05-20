@@ -205,7 +205,6 @@ public class Application implements IApplication {
 //		SystemLogger.removeDisplay();
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
-		args = new String[]{"F:/outputHeadless","F:/Gama/GamaWiki/tempInputForHeadless.xml","F:/outputHeadless"};
 		if(containHelpParameter(args))
 		{
 			System.out.println(showHelp());
