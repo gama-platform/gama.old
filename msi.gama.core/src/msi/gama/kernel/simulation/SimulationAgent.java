@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
@@ -24,6 +25,7 @@ import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.agent.SimulationScope;
 import msi.gama.metamodel.population.GamaPopulation;
@@ -50,6 +52,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
+import msi.gama.util.GamaList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -575,7 +578,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	}
 
-	public void updateWith(final IScope s, final SavedAgent sa) {
+	public void updateWith(final IScope scope, final SavedAgent sa) {
 		// Update Clock
 		final Object cycle = sa.getAttributeValue("cycle");
 		clock.setCycle((Integer) cycle);
@@ -583,7 +586,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// Update Attribute
 		Map<String,Object> attr = sa.getVariables();
 		for(String name : attr.keySet()) {
-			this.setDirectVarValue(s, name, attr.get(name));
+			this.setDirectVarValue(scope, name, attr.get(name));
 			// this.setAttribute(name, attr.get(name));
 		}
 		
@@ -597,30 +600,55 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// public void restoreMicroAgents(final IScope scope, final IAgent host)
 		// throws GamaRuntimeException {
 
-		final Map<String, List<SavedAgent>> inPop = sa.getInnerPopulations();
+		final Map<String, List<SavedAgent>> savedAgentInnerPop = sa.getInnerPopulations();
 
-		if (inPop != null) {
-			for (final String microPopName : inPop.keySet()) {
-				final IPopulation microPop = getMicroPopulation(microPopName);
+		if (savedAgentInnerPop != null) {
+			for (final String savedAgentMicroPopName : savedAgentInnerPop.keySet()) {
+				final IPopulation simuMicroPop = getMicroPopulation(savedAgentMicroPopName);
 
-				if (microPop != null) {
-					// TODO do not kill everybody !!!!
-					// microPop.dispose();
-					microPop.killMembers();
-					microPop.clear();
-					// microPop.firePopulationCleared();
-
-					final List<SavedAgent> savedMicros = inPop.get(microPopName);
-					final List<Map> microAttrs = new ArrayList<Map>();
-					for (final SavedAgent saMic : savedMicros) {
-						microAttrs.add(saMic.getVariables());
+				if (simuMicroPop != null) {
+					// Build a map name::innerPopAgentSavedAgt : 
+					// For each agent from the simulation innerPop, it will be updated from the corresponding agent
+					Map<String, SavedAgent> mapSavedAgtName = new THashMap<>();
+					for(SavedAgent localSA : savedAgentInnerPop.get(savedAgentMicroPopName)){
+						mapSavedAgtName.put((String) localSA.getAttributeValue("name"), localSA);
+					}					
+					
+					Map<String, IAgent> mapSimuAgtName = new THashMap<>();
+					
+				//	IAgent[] microPopArray = simuMicroPop.toArray();
+					
+					for(IAgent agt : simuMicroPop.toArray()) {
+						mapSimuAgtName.put(agt.getName(), agt);						
 					}
+					
+		//			for(int i = 0 ; i < simuMicroPop.size() ; i ++){
+		//				IAgent agt = simuMicroPop.getAgent(i);						
+		//				String t = agt.getName();
+		//				mapSimuAgtName.put((String) (simuMicroPop.getAgent(i).getName()), simuMicroPop.getAgent(i));
+		//			}					
 
-					final List<? extends IAgent> microAgents = microPop.createAgents(scope, savedMicros.size(),
-							microAttrs, true, true);
-
-					for (int i = 0; i < microAgents.size(); i++) {
-						savedMicros.get(i).restoreMicroAgents(scope, microAgents.get(i));
+					for(Entry<String, SavedAgent> e : mapSavedAgtName.entrySet()) {
+						IAgent agt = mapSimuAgtName.get(e.getKey());
+						if(agt != null) {   // the savedAgent is in the simulation, update it, and remove it from the map mapSimuAgtName
+							// TODO : implement it for GamlAgent...
+							agt.updateWith(scope, e.getValue());
+							mapSimuAgtName.remove(e.getKey());
+						} else {  // the SavedAgent is not in the Simulation, then create it
+					//		List<Map<String,Object>> initialValues = new ArrayList<>();
+					//		initialValues.add(e.getValue().getVariables());
+					//		simuMicroPop.createAgents(s, 1, initialValues, true, true);
+							simuMicroPop.createAgentAt(scope, e.getValue().getIndex(), e.getValue().getVariables(), true, true);
+						}
+					}
+					
+					// For all remaining agents in the mapSimuAgtName, kill them
+					for(IAgent remainingAgent : mapSimuAgtName.values()) {
+						// Kill them all
+						remainingAgent.dispose();
+						// simuMicroPop.killMembers();
+						//			microPop.clear();
+						// microPop.firePopulationCleared();
 					}
 				}
 			}

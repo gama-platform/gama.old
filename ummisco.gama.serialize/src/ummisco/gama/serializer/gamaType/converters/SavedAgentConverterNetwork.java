@@ -11,18 +11,12 @@
  **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.converters;
 
-import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.variables.IVariable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -47,10 +41,12 @@ public class SavedAgentConverterNetwork implements Converter {
 
 	@Override
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
-		System.out.println("ConvertAnother : GamaSavedAgentConverter " + arg0.getClass());		
+		System.out.println("ConvertAnother : SavedAgentConverterNetwork " + arg0.getClass());		
 		SavedAgent savedAgt = (SavedAgent) arg0;
 		
-
+		
+		
+		
 		
 		writer.startNode("variables");
 		context.convertAnother(savedAgt.getVariables());
@@ -69,11 +65,16 @@ public class SavedAgentConverterNetwork implements Converter {
 		context.convertAnother(new Boolean(inPop==null?false:true));
 	    writer.endNode();		
 		
-		System.out.println("===========END ConvertAnother : GamaSavedAgentConverter");	
+		System.out.println("===========END ConvertAnother : SavedAgentConverterNetwork");	
 	}
 
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+		
+		
+		
+		
+		
 		reader.moveDown();
 		Map<String, Object> v = (Map<String, Object>) arg1.convertAnother(null, THashMap.class);
 		reader.moveUp();
@@ -126,12 +127,7 @@ public class SavedAgentConverterNetwork implements Converter {
 				GamaPopulation pop = (GamaPopulation) agt.getPopulation();
 				
 				pop.createAndUpdateVariablesFor(convertScope.getScope(), agentsList, agentAttrs, true);
-				
-				
 			} 
-			
-			
-			
 		} 
 		return agtToReturn; 
 	}

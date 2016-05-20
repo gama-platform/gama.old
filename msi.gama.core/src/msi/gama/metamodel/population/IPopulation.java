@@ -84,6 +84,10 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	public abstract IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries)
 		throws GamaRuntimeException;
+	
+	public abstract IAgent createAgentAt(final IScope s, int index, Map<String, Object> initialValues,
+		boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException;
+	
 
 	// public abstract Iterator<IAgent> getAgentsList();
 
