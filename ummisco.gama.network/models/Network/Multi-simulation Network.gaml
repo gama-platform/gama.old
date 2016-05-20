@@ -37,10 +37,6 @@ global skills:[network]{
 
 
 species NetworkingAgent skills:[moving]{
-   int a;
-   float b;
-   string c;
-   bool d;	
    rgb color;
    reflex update{
      do wander;
