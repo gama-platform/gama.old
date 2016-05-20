@@ -41,7 +41,7 @@ public class ConvertToPDF {
 		String command = Constants.CMD_PANDOC+" --template="+template.getAbsolutePath()+" --latex-engine="+Constants.CMD_PDFLATEX+" --listings --toc";
 		command = command + " " + files;
 		for(Object s : prop2.keySet()) {
-			command = command + " -s " + "--variable " + s + "=" + prop2.getProperty(s.toString());
+			command = command + " " + "--variable " + s + "=" + prop2.getProperty(s.toString());
 		}
 		command = command + " -o " + pdfFile.getAbsolutePath() ;
 		
@@ -63,7 +63,7 @@ public class ConvertToPDF {
 				System.err.println("Impossible to create the batFile...");
 				return;
 			}
-			List<String> lines = Arrays.asList("cd "+Constants.WIKI_FOLDER+" && "+getCommandLine()+"\"" );
+			List<String> lines = Arrays.asList("cd "+Constants.WIKI_FOLDER+" && "+getCommandLine()+" && exit\"" );
 			Path file = Paths.get("batFile.bat");
 			Files.write(file, lines, Charset.forName("UTF-8"));
 			
