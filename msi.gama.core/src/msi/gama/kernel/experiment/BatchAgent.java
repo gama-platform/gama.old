@@ -25,7 +25,6 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.FileOutput;
-import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -52,10 +51,10 @@ public class BatchAgent extends ExperimentAgent {
 	private Double[] seeds;
 	private final List<Double> fitnessValues = new ArrayList();
 
-//	public BatchAgent(final Object...args) throws GamaRuntimeException {	
-//		this((Ipopulation) args[0]);
-//	}
-		
+	// public BatchAgent(final Object...args) throws GamaRuntimeException {
+	// this((Ipopulation) args[0]);
+	// }
+
 	public BatchAgent(final IPopulation p) throws GamaRuntimeException {
 		super(p);
 		final IScope scope = getSpecies().getExperimentScope();
@@ -103,10 +102,6 @@ public class BatchAgent extends ExperimentAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		getSpecies().getExplorationAlgorithm().initializeFor(scope, this);
-		final IOutputManager outputs = getSpecies().getExperimentOutputs();
-		if (outputs != null) {
-			outputs.init(scope);
-		}
 		return this;
 	}
 
