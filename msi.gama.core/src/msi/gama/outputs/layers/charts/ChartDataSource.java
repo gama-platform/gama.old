@@ -1,9 +1,11 @@
 package msi.gama.outputs.layers.charts;
 
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -987,6 +989,11 @@ public class ChartDataSource {
 		
 	}
 
-
+	public void savehistory(IScope scope, StringBuilder history) {
+		for (Map.Entry<String, ChartDataSeries> seriepair : this.mySeries.entrySet())
+		{
+			seriepair.getValue().savehistory(scope,history);
+		}
+	}
 
 }
