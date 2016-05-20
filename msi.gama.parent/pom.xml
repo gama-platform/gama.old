@@ -43,7 +43,7 @@
     <module>../simtools.graphanalysis.fr</module>
     <module>../simtools.graphlayout.feature</module>
     <module>../ummisco.gama.communicator</module>
-    <module>../ummisco.gama.feature.audio</module>
+    <module>../ummisco.gama.feature.audio</module> 
     <module>../ummisco.gama.feature.product</module>
     <module>../ummisco.gama.feature.stats</module>
     <module>../ummisco.gama.gpu</module>

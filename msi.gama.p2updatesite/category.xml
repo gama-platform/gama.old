@@ -8,7 +8,7 @@
    </feature>
    <feature url="features/ummisco.gama.feature.audio_0.0.0.jar" id="ummisco.gama.feature.audio" version="0.0.0">
       <category name="gama.optional"/>
-   </feature>
+   </feature> 
    <feature url="features/ummisco.gama.feature.models_0.0.0.jar" id="ummisco.gama.feature.models" version="0.0.0">
       <category name="gama.models"/>
    </feature>
