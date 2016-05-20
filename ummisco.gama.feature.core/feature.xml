@@ -21,6 +21,14 @@
       <update label="Gama 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
+   <includes
+         id="ummisco.gama.feature.serialize"
+         version="0.0.0"/>
+
+   <includes
+         id="ummisco.gama.feature.network"
+         version="0.0.0"/>
+
    <plugin
          id="idees.gama.mapcomparison"
          download-size="0"
@@ -104,13 +112,6 @@
          unpack="false"/>
 
    <plugin
-         id="ummisco.gama.serialize"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="msi.gaml.architecture.simplebdi"
          download-size="0"
          install-size="0"
@@ -121,12 +122,5 @@
          download-size="0"
          install-size="0"
          version="0.0.0"/>
-
-   <plugin
-         id="ummisco.gama.network"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
 
 </feature>
