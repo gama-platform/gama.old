@@ -13,7 +13,8 @@
   <packaging>eclipse-plugin</packaging>
   <version>1.4.0</version>
   <build>
-  <plugins combine.self="override">
+ <!-- <plugins combine.self="override"> -->
+  <plugins >
     <plugin>
       <groupId>org.eclipse.tycho</groupId>
       <artifactId>tycho-maven-plugin</artifactId>
@@ -24,7 +25,27 @@
           <target>1.7</target>
           <compilerArgument>-proc:none</compilerArgument>
       </configuration>
+<!-- FIX the JDT core due to bug in tycho https://www.eclipse.org/forums/index.php/t/1068443/ -->
     </plugin>
+	<plugin>
+	<groupId>org.eclipse.tycho</groupId>
+	<artifactId>target-platform-configuration</artifactId>
+	<version>0.25.0</version>
+		<configuration>
+		<filters>
+			<filter>
+			<type>eclipse-plugin</type>
+			<id>org.eclipse.jdt.core</id>
+			<restrictTo>
+			 <version>3.11.2.v20160128-0629</version>
+			 <!--<version>3.4.0.v20150518-1201</version>-->
+			</restrictTo>
+			</filter>
+		</filters>
+		</configuration>
+	</plugin>
    </plugins>
   </build>
 </project>
+
+

@@ -203,7 +203,6 @@
 
   <build>
 
-
 	
 <plugins>
 	<!--
@@ -239,19 +238,30 @@
       </dependencies>
     </plugin>
     <plugin>
-<!-- You can see the effect of Execution Environnement here : https://wiki.eclipse.org/Tycho/Execution_Environments : Tycho ensures that package imports may only be matched against the selected execution environment , b) Tycho hides packages which are not provided by the configured execution environment. -->
+         <!-- You can see the effect of Execution Environnement here : https://wiki.eclipse.org/Tycho/Execution_Environments : 
+         Tycho ensures that package imports may only be matched against the selected execution environment , 
+         b) Tycho hides packages which are not provided by the configured execution environment. -->
                 <groupId>org.eclipse.tycho</groupId>
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho.version}</version>
                 <configuration>
                    <filters>
-	            <!-- work around Equinox bug 348045 -->
-	            <filter>
-	              <type>p2-installable-unit</type>
-	              <id>org.eclipse.equinox.servletbridge.extensionbundle</id>
-	              <removeAll />
-	            </filter>
-         	   </filters>
+		    <!-- FIX the JDT core due to bug in tycho https://www.eclipse.org/forums/index.php/t/1068443/ -->
+					 <filter>
+						<type>eclipse-plugin</type>
+							<id>org.eclipse.jdt.core</id>
+							<restrictTo>
+								<version>3.11.2.v20160128-0629</version>
+								<!--<version>3.4.0.v20150518-1201</version>-->
+							</restrictTo>
+					</filter>
+					<!-- work around Equinox bug 348045 -->
+					<filter>
+						<type>p2-installable-unit</type>
+							<id>org.eclipse.equinox.servletbridge.extensionbundle</id>
+							<removeAll />
+					</filter>
+					</filters>
 			<resolver>p2</resolver>
 			<pomDependencies>consider</pomDependencies>
                     <environments>
