@@ -1,6 +1,7 @@
 package ummisco.gama.mqtt.common;
 
 import java.net.URISyntaxException;
+import java.util.Calendar;
 
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
@@ -25,7 +26,7 @@ public class MQTTConnector {
     
     public static MqttClient connectReceiver( String server) throws MqttException  
     {
-    	 MqttClient sampleClient = new MqttClient("tcp://"+server+":"+port, "gama@"+server, new MemoryPersistence());
+    	 MqttClient sampleClient = new MqttClient("tcp://"+server+":"+port, "gama"+Calendar.getInstance().getTimeInMillis()+"@"+server, new MemoryPersistence());
     	 System.out.println("Connected");
         
     	
