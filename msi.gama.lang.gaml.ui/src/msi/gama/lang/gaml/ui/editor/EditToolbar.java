@@ -81,6 +81,11 @@ public class EditToolbar {
 
 	public void installGesturesFor(final GamlEditor editor) {
 		final StyledText text = editor.getInternalSourceViewer().getTextWidget();
+
+		  GamlEditorKeyListener keyListener = new GamlEditorKeyListener(editor);
+		  text.addVerifyKeyListener(keyListener);
+		  text.addKeyListener(keyListener);
+		  
 		if (text != null) {
 			// text.addFocusListener(new FocusListener() {
 			//
