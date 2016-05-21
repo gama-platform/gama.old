@@ -16,8 +16,10 @@ import ummisco.gama.serializer.gamaType.converters.GamaMapConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaMatrixConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaPairConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaPointConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaPopulationConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaScopeConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaSimulationAgentConverter;
+import ummisco.gama.serializer.gamaType.converters.GamaSpeciesConverter;
 import ummisco.gama.serializer.gamaType.converters.LogConverter;
 import ummisco.gama.serializer.gamaType.converters.SavedAgentConverter;
 
@@ -27,7 +29,7 @@ public abstract class Converters {
 	private static Converter[] loadConverter(IScope scope)
 	{
 		ConverterScope cs = new ConverterScope(scope);
-		 Converter[] converters= new Converter[11];
+		 Converter[] converters= new Converter[13];
 		converters[0]= new GamaBasicTypeConverter(cs);
 		converters[1]=new GamaAgentConverterNetwork(cs);
 		converters[2]=new GamaListConverter(cs);
@@ -40,6 +42,10 @@ public abstract class Converters {
 		converters[8]=new GamaGraphConverter(cs);
 		converters[9]=new LogConverter();
 		converters[10]=new SavedAgentConverter(cs);
+		
+		converters[11]= new GamaPopulationConverter(cs);
+		converters[12]= new GamaSpeciesConverter(cs);		
+		
 		return converters;
 
 	}

@@ -28,11 +28,10 @@ public class ReverseOperators {
 		xstream.registerConverter(new GamaMatrixConverter(cs));
 		xstream.registerConverter(new GamaGraphConverter(cs));		
 		xstream.registerConverter(new GamaFileConverter(cs));
+		xstream.registerConverter(new GamaPopulationConverter(cs));
+		xstream.registerConverter(new GamaSpeciesConverter(cs));		
 		//		xstream.registerConverter(new GamaShapeFileConverter(cs));
-		
-		// xstream.registerConverter(new GamaShapeConverter());
-		// xstream.registerConverter(new GamaPointConverter());
-		// xstream.registerConverter(new GamaSimulationAgentConverter());
+
 		return xstream;
 	}
 	
@@ -55,6 +54,27 @@ public class ReverseOperators {
 		return xstream.toXML(new SavedAgent(scope, agent));
 	}
 
+	@operator(value = "serialize")
+	@doc("")
+	public static String serialize(final IScope scope, final Object o) {
+		System.out.println("**** Serialize Object ****");	
+
+		XStream xstream = newXStream(new ConverterScope(scope));
+		return xstream.toXML(o);
+	}	
+	
+	@operator(value = "unserialize")
+	@doc("")
+	public static Object unserialize(final IScope scope, final String s) {
+		System.out.println("**** unSerialize Object ****");	
+		ConverterScope cScope = new ConverterScope(scope);
+		XStream xstream = newXStream(cScope);
+
+		Object agt = xstream.fromXML(s);
+		
+		return agt;
+	}		
+	
 	@operator(value = "unSerializeSimulation")
 	@doc("")
 	public static int unSerializeSimulation(final IScope scope, final String simul) {
