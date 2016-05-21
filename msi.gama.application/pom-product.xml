@@ -42,7 +42,7 @@
                     </execution>
                     <execution>
                         <id>archive-products</id>
-                         <phase>verify</phase>
+                         <phase>pre-integration-test</phase>
                         <goals>
                             <goal>archive-products</goal>
                         </goals>
@@ -168,10 +168,31 @@
 			  </configuration>
 			</plugin> 
 		
-			
+			 <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+                <execution>
+                    <id>create-zip-files</id>
+                    <phase>install</phase>
+                    	<goals>
+							<goal>run</goal>
+						</goals>
+                    <configuration>
+                        <target> 
+                            <copy file="./extraresources/Model.icns" 
+                                 todir="./target/products/msi.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Resources/" />
+                         
+                        </target>
+                    </configuration>
+
+                </execution>
+            </executions>
+        </plugin>
+        
 			<!-- Workaround: Use an existing config.ini file (caused by the problem 
 				that tycho will always generate a default one) , copying /target/../ to /target/configuration/ ... -->
-			<plugin>
+			 <plugin>
 				<artifactId>maven-resources-plugin</artifactId>
 				<executions>
 					<execution>
@@ -188,7 +209,7 @@
 									<!-- <includes> <include>config.ini</include> </includes> -->
 									<!-- <excludes> <exclude>src</exclude> <exclude>gaml</exclude> <exclude>target</exclude> 
 										<exclude>META-INF</exclude> <exclude>bin</exclude> <exclude>products</exclude> 
-										</excludes> -->
+										</excludes> --> 
 								</resource>
 							</resources>
 							<outputDirectory>${project.build.directory}/configuration</outputDirectory>
@@ -197,6 +218,7 @@
 					</execution>
 				</executions>
 			</plugin>
+
 		</plugins>
 
 </build>
