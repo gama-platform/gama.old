@@ -13,6 +13,7 @@ package msi.gama.gui.views;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -308,6 +309,21 @@ public abstract class GamaViewPart extends ViewPart implements DisposeListener, 
 	@Override
 	public void waitToBeRealized() {
 
+	}
+
+	@Override
+	public void changePartNameWithSimulation(final SimulationAgent agent) {
+		final String old = getPartName();
+		final int first = old.indexOf('(');
+		final int second = old.indexOf(')');
+		if ( first == -1 ) {
+			if ( agent.getPopulation().size() > 1 ) {
+				setPartName(old + " (" + agent.getName() + ")");
+			}
+		} else {
+
+			setPartName(StringUtils.overlay(old, agent.getName(), first + 1, second));
+		}
 	}
 
 }
