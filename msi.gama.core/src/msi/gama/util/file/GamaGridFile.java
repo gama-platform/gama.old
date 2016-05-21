@@ -96,8 +96,11 @@ public class GamaGridFile extends GamaGisFile {
 							text.append(line + NL);
 						}
 					}
-				} catch (FileNotFoundException ex) {
-					ex.printStackTrace();
+				} catch (FileNotFoundException e2) {
+					final GamaRuntimeException ex = GamaRuntimeException
+							.error("The format of " + getFile().getName() + " is not correct. Error: " + e2.getMessage(), scope);
+						ex.addContext("for file " + getFile().getPath());
+						throw ex;
 				} finally {
 					if ( scanner != null ) {
 						scanner.close();
