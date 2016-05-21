@@ -3,6 +3,8 @@ $if(fontfamily)$
 \usepackage{$fontfamily$}
 $else$
 \usepackage{lmodern}
+\sloppy
+\usepackage[hyphens]{url}
 $endif$
 $if(linestretch)$
 \usepackage{setspace}
@@ -10,6 +12,7 @@ $if(linestretch)$
 $endif$
 \usepackage{amssymb,amsmath}
 \usepackage{ifxetex,ifluatex}
+\usepackage{hyphenat}
 \usepackage{fixltx2e} % provides \textsubscript
 \ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
   \usepackage[T1]{fontenc}
@@ -44,6 +47,7 @@ $endif$
 % use microtype if available
 \IfFileExists{microtype.sty}{%
 \usepackage{microtype}
+\usepackage{geometry}
 \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
 }{}
 $if(geometry)$
@@ -68,8 +72,8 @@ $endif$
 \urlstyle{same}  % don't use monospace font for urls
 \usepackage{fancyhdr}
 
-%%Mieux que verbatim, car permet saut a la ligne automatique
-\usepackage{gama_style}
+%%Better than verbalism
+\usepackage{ABSOLUTE_PATH/gama_style}
 
 \pagestyle{fancy}
 \pagenumbering{arabic}

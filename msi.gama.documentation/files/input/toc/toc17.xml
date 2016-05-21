@@ -1,108 +1,120 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <toc title="Full Documentation of GAMA 7">
-	<part name= "Introduction">
-		<chapter name="Introduction" file="WikiOnly/Overview"/>		
-	</part>
 	<part name="Platform">		
-		<chapter name="1 Installation and Launching" file="References/PlatformDocumentation/InstallationAndLaunching"/>	
-		<chapter name="1.1 Installation" file="References/PlatformDocumentation/InstallationAndLaunching/Installation"/>	
-	    <chapter name="1.2 Launching GAMA" file="References/PlatformDocumentation/InstallationAndLaunching/Launching"/>		
-		<chapter name="1.3 Headless Mode" file="References/PlatformDocumentation/InstallationAndLaunching/Headless"/>		
-		<chapter name="1.4 Updating GAMA" file="References/PlatformDocumentation/InstallationAndLaunching/Updating"/>		
-		<chapter name="1.5 Installing Plugins" file="References/PlatformDocumentation/InstallationAndLaunching/InstallingPlugins"/>		
-		<chapter name="1.6 Troubleshooting" file="References/PlatformDocumentation/InstallationAndLaunching/Troubleshooting"/>		
-		<chapter name="2 Workspace, Projects and Models" file="References/PlatformDocumentation/WorkspaceProjectsAndModels"/>	
-		<chapter name="2.1 Navigating in the Workspace" file="References/PlatformDocumentation/WorkspaceProjectsAndModels/NavigatingWorkspace"/>		
-		<chapter name="2.2 Changing Workspace" file="References/PlatformDocumentation/WorkspaceProjectsAndModels/ChangingWorkspace"/>		
-		<chapter name="2.3 Importing Models" file="References/PlatformDocumentation/WorkspaceProjectsAndModels/ImportingModels"/>				
-		<chapter name="3 Editing Models" file="References/PlatformDocumentation/EditingModels"/>	
-		<chapter name="3.1 GAML Editor (Generalities)" file="References/PlatformDocumentation/EditingModels/GamlEditorGeneralities"/>
-		<chapter name="3.2 GAML Editor Toolbar" file="References/PlatformDocumentation/EditingModels/GamlEditorToolbar"/>		
-		<chapter name="3.3 Validation of Models" file="References/PlatformDocumentation/EditingModels/ValidationOfModels"/>
-		<chapter name="4 Running Experiments" file="References/PlatformDocumentation/RunningExperiments"/>	
-		<chapter name="4.1 Launching Experiments" file="References/PlatformDocumentation/RunningExperiments/LaunchingExperiments"/>		
-		<chapter name="4.2 Experiments User interface" file="References/PlatformDocumentation/RunningExperiments/ExperimentsUserInterface"/>		
-		<chapter name="4.3 Menus and commands" file="References/PlatformDocumentation/RunningExperiments/MenusAndCommands"/>
-		<chapter name="4.4 Parameters view" file="References/PlatformDocumentation/RunningExperiments/ParametersView"/>			
-		<chapter name="4.5 Inspectors and monitors" file="References/PlatformDocumentation/RunningExperiments/InspectorsAndMonitors"/>
-		<chapter name="4.6 Displays" file="References/PlatformDocumentation/RunningExperiments/Displays"/>		
-		<chapter name="4.7 Batch Specific UI" file="References/PlatformDocumentation/RunningExperiments/BatchSpecific"/>
-		<chapter name="4.8 Errors View" file="References/PlatformDocumentation/RunningExperiments/ErrorsView"/>		 
-		<chapter name="5. Preferences" file="References/PlatformDocumentation/Preferences"/>
+		<subpart name="Installation and Launching" file="References/PlatformDocumentation/InstallationAndLaunching">	
+			<chapter name="1.1 Installation" file="References/PlatformDocumentation/InstallationAndLaunching/Installation"/>	
+		    <chapter name="1.2 Launching GAMA" file="References/PlatformDocumentation/InstallationAndLaunching/Launching"/>		
+			<chapter name="1.3 Headless Mode" file="References/PlatformDocumentation/InstallationAndLaunching/Headless"/>		
+			<chapter name="1.4 Updating GAMA" file="References/PlatformDocumentation/InstallationAndLaunching/Updating"/>		
+			<chapter name="1.5 Installing Plugins" file="References/PlatformDocumentation/InstallationAndLaunching/InstallingPlugins"/>		
+			<chapter name="1.6 Troubleshooting" file="References/PlatformDocumentation/InstallationAndLaunching/Troubleshooting"/>
+		</subpart>
+		<subpart name="Workspace, Projects and Models" file="References/PlatformDocumentation/WorkspaceProjectsAndModels">	
+			<chapter name="2.1 Navigating in the Workspace" file="References/PlatformDocumentation/WorkspaceProjectsAndModels/NavigatingWorkspace"/>		
+			<chapter name="2.2 Changing Workspace" file="References/PlatformDocumentation/WorkspaceProjectsAndModels/ChangingWorkspace"/>		
+			<chapter name="2.3 Importing Models" file="References/PlatformDocumentation/WorkspaceProjectsAndModels/ImportingModels"/>
+		</subpart>
+		<subpart name="Editing Models" file="References/PlatformDocumentation/EditingModels">	
+			<chapter name="3.1 GAML Editor (Generalities)" file="References/PlatformDocumentation/EditingModels/GamlEditorGeneralities"/>
+			<chapter name="3.2 GAML Editor Toolbar" file="References/PlatformDocumentation/EditingModels/GamlEditorToolbar"/>		
+			<chapter name="3.3 Validation of Models" file="References/PlatformDocumentation/EditingModels/ValidationOfModels"/>
+		</subpart>
+		<subpart name="Running Experiments" file="References/PlatformDocumentation/RunningExperiments">	
+			<chapter name="4.1 Launching Experiments" file="References/PlatformDocumentation/RunningExperiments/LaunchingExperiments"/>		
+			<chapter name="4.2 Experiments User interface" file="References/PlatformDocumentation/RunningExperiments/ExperimentsUserInterface"/>		
+			<chapter name="4.3 Menus and commands" file="References/PlatformDocumentation/RunningExperiments/MenusAndCommands"/>
+			<chapter name="4.4 Parameters view" file="References/PlatformDocumentation/RunningExperiments/ParametersView"/>			
+			<chapter name="4.5 Inspectors and monitors" file="References/PlatformDocumentation/RunningExperiments/InspectorsAndMonitors"/>
+			<chapter name="4.6 Displays" file="References/PlatformDocumentation/RunningExperiments/Displays"/>		
+			<chapter name="4.7 Batch Specific UI" file="References/PlatformDocumentation/RunningExperiments/BatchSpecific"/>
+			<chapter name="4.8 Errors View" file="References/PlatformDocumentation/RunningExperiments/ErrorsView"/>
+		</subpart>
+		<subpart name="Preferences" file="References/PlatformDocumentation/Preferences"/>
 	</part>
 	<part name="GAML (GAMA Modeling Language)">
-		<chapter name="Learn GAML step by step" file="Tutorials/LearnGAMLStepByStep"/>	
-		<chapter name="1 Introduction" file="Tutorials/LearnGAMLStepByStep/Introduction"/>
-		<chapter name="2 Start with GAML" file="Tutorials/LearnGAMLStepByStep/StartWithGAML"/>
-		<chapter name="2.1 Organization of a Model" file="Tutorials/LearnGAMLStepByStep/StartWithGAML/ModelOrganization"/>	
-		<chapter name="2.2 Basic Programming concepts in GAML" file="Tutorials/LearnGAMLStepByStep/StartWithGAML/BasicProgrammingConceptsInGAML"/>
-		<chapter name="3 Manipulate basic species" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies"/> 
-		<chapter name="3.1 GlobalSpecies" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/GlobalSpecies"/>		
-		<chapter name="3.2 Regular Species" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/RegularSpecies"/>
-		<chapter name="3.3 Defining Actions and Behaviors" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/DefiningActionsAndBehaviors"/>
-		<chapter name="3.4 Interaction between Agents" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/InteractionBetweenAgents"/>
-		<chapter name="3.5 Attaching Skills" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/AttachingSkills"/>
-		<chapter name="3.6 Inheritance" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/Inheritance"/>
-		<chapter name="4 Defining Advanced Species" file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies"/>
-		<chapter name="4.1 Grid Species" file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/GridSpecies"/>
-		<chapter name="4.2 Graph Species" file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/GraphSpecies"/>		
-		<chapter name="4.3 Mirror Species" file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/MirrorSpecies"/>
-		<chapter name="4.4 Multi-Level Architecture" file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/MultiLevelArchitecture"/>
+		<subpart name="Learn GAML step by step" file="Tutorials/LearnGAMLStepByStep"/>	
+		<subpart name="Introduction" file="Tutorials/LearnGAMLStepByStep/Introduction"/>
+		<subpart name="Start with GAML" file="Tutorials/LearnGAMLStepByStep/StartWithGAML">
+			<chapter name="2.1 Organization of a Model" file="Tutorials/LearnGAMLStepByStep/StartWithGAML/ModelOrganization"/>	
+			<chapter name="2.2 Basic Programming concepts in GAML" file="Tutorials/LearnGAMLStepByStep/StartWithGAML/BasicProgrammingConceptsInGAML"/>
+		</subpart>
+		<subpart name="Manipulate basic species" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies"> 
+			<chapter name="3.1 GlobalSpecies" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/GlobalSpecies"/>		
+			<chapter name="3.2 Regular Species" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/RegularSpecies"/>
+			<chapter name="3.3 Defining Actions and Behaviors" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/DefiningActionsAndBehaviors"/>
+			<chapter name="3.4 Interaction between Agents" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/InteractionBetweenAgents"/>
+			<chapter name="3.5 Attaching Skills" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/AttachingSkills"/>
+			<chapter name="3.6 Inheritance" file="Tutorials/LearnGAMLStepByStep/ManipulateBasicSpecies/Inheritance"/>
+		</subpart>
+		<subpart name="Defining Advanced Species" file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies">
+			<chapter name="4.1 Grid Species" file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/GridSpecies"/>
+			<chapter name="4.2 Graph Species" file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/GraphSpecies"/>		
+			<chapter name="4.3 Mirror Species" file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/MirrorSpecies"/>
+			<chapter name="4.4 Multi-Level Architecture" file="Tutorials/LearnGAMLStepByStep/DefiningAdvancedSpecies/MultiLevelArchitecture"/>
+		</subpart>
 
-		<chapter name="5 Defining GUI Experiments" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment"/>
-		<chapter name="5.1 Defining Parameters" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningParameters"/>
-		<chapter name="5.2 Defining Displays (Generalities)" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningDisplaysGeneralities"/>
-		<chapter name="5.3 Defining Charts" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningCharts"/>	
-		<chapter name="5.4 Defining 3D Displays" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/Defining3DDisplays"/>
-		<chapter name="5.5 Defining Monitors and Inspectors" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningMonitorsAndInspectors"/>
-		<chapter name="5.6 Defining Export files" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningExportFiles"/>	
-		<chapter name="5.7 Defining User Interaction" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningUserInteraction"/>
-		<chapter name="6 Exploring Models" file="Tutorials/LearnGAMLStepByStep/ExploringModels"/>
+		<subpart name="Defining GUI Experiments" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment">
+			<chapter name="5.1 Defining Parameters" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningParameters"/>
+			<chapter name="5.2 Defining Displays (Generalities)" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningDisplaysGeneralities"/>
+			<chapter name="5.3 Defining Charts" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningCharts"/>	
+			<chapter name="5.4 Defining 3D Displays" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/Defining3DDisplays"/>
+			<chapter name="5.5 Defining Monitors and Inspectors" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningMonitorsAndInspectors"/>
+			<chapter name="5.6 Defining Export files" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningExportFiles"/>	
+			<chapter name="5.7 Defining User Interaction" file="Tutorials/LearnGAMLStepByStep/DefiningGUIExperiment/DefiningUserInteraction"/>
+		</subpart>
+		<subpart name="Exploring Models" file="Tutorials/LearnGAMLStepByStep/ExploringModels">
 		
-		<chapter name="6.1 Run Several Simulations" file="Tutorials/LearnGAMLStepByStep/ExploringModels/RunSeveralSimulations"/>
-		<chapter name="6.2 Batch Experiments" file="Tutorials/LearnGAMLStepByStep/ExploringModels/BatchExperiments"/>
-		<chapter name="6.3 Exploration Methods" file="Tutorials/LearnGAMLStepByStep/ExploringModels/ExplorationMethods"/>
-		<chapter name="7 Optimizing Models" file="Tutorials/LearnGAMLStepByStep/OptimizingModelsSection"/>	
-		<chapter name="7.1 Runtime Concepts" file="Tutorials/LearnGAMLStepByStep/OptimizingModels/RuntimeConcepts"/>
-		<chapter name="7.2 Optimizing Models" file="Tutorials/LearnGAMLStepByStep/OptimizingModels/OptimizingModels"/>
+			<chapter name="6.1 Run Several Simulations" file="Tutorials/LearnGAMLStepByStep/ExploringModels/RunSeveralSimulations"/>
+			<chapter name="6.2 Batch Experiments" file="Tutorials/LearnGAMLStepByStep/ExploringModels/BatchExperiments"/>
+			<chapter name="6.3 Exploration Methods" file="Tutorials/LearnGAMLStepByStep/ExploringModels/ExplorationMethods"/>
+		</subpart>
+		<subpart name="Optimizing Models" file="Tutorials/LearnGAMLStepByStep/OptimizingModelsSection">	
+			<chapter name="7.1 Runtime Concepts" file="Tutorials/LearnGAMLStepByStep/OptimizingModels/RuntimeConcepts"/>
+			<chapter name="7.2 Optimizing Models" file="Tutorials/LearnGAMLStepByStep/OptimizingModels/OptimizingModels"/>
+		</subpart>
 		
-		<chapter name="8 Multi-Paradigm Modeling" file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling"/>
-		<chapter name="6.2 Control Architecture" file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling/ControlArchitecture"/>
-		<chapter name="6.3 Defining Equations" file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling/Equations"/>		
+		<subpart name="Multi-Paradigm Modeling" file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling">
+			<chapter name="8.1 Control Architecture" file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling/ControlArchitecture"/>
+			<chapter name="8.2 Defining Equations" file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling/Equations"/>		
+		</subpart>
 
 	</part>
 	<part name="Recipes">
-		<chapter name="1 Manipulate OSM Datas" file="Tutorials/Recipes/ManipulateOSMDatas"/> 
-		<chapter name="2 Diffusion" file="Tutorials/Recipes/Diffusion"/> 
-		<chapter name="3 Using Database" file="Tutorials/Recipes/UsingDatabase"/> 
-		<chapter name="4 Calling R" file="Tutorials/Recipes/CallingR"/> 
-		<chapter name="5 Using FIPA ACL" file="Tutorials/Recipes/UsingFIPAACL"/> 
-		<chapter name="6 Using GamAnalyzer" file="Tutorials/Recipes/GamAnalyzer"/> 
-		<chapter name="7 Using BDI" file="Tutorials/Recipes/UsingBDI"/> 
-		<chapter name="8 Using Driving Skill" file="Tutorials/Recipes/UsingDrivingSkill"/> 
-		<chapter name="9 Manipulate Dates" file="Tutorials/Recipes/ManipulateDates"/> 
-		<chapter name="10 Manipulate Lights" file="Tutorials/Recipes/ManipulateLight"/> 
-		<chapter name="11 Using Comodel" file="Tutorials/Recipes/Comodel"/> 
+		<subpart name="Recipes" file="Tutorials/Recipes">
+			<chapter name="1 Manipulate OSM Datas" file="Tutorials/Recipes/ManipulateOSMDatas"/> 
+			<chapter name="2 Diffusion" file="Tutorials/Recipes/Diffusion"/> 
+			<chapter name="3 Using Database" file="Tutorials/Recipes/UsingDatabase"/> 
+			<chapter name="4 Calling R" file="Tutorials/Recipes/CallingR"/> 
+			<chapter name="5 Using FIPA ACL" file="Tutorials/Recipes/UsingFIPAACL"/> 
+			<chapter name="6 Using GamAnalyzer" file="Tutorials/Recipes/GamAnalyzer"/>
+			<chapter name="7 Using BDI" file="Tutorials/Recipes/UsingBDI"/> 
+			<chapter name="8 Using Driving Skill" file="Tutorials/Recipes/UsingDrivingSkill"/> 
+			<chapter name="9 Manipulate Dates" file="Tutorials/Recipes/ManipulateDates"/> 
+			<chapter name="10 Manipulate Lights" file="Tutorials/Recipes/ManipulateLight"/> 
+			<chapter name="11 Using Comodel" file="Tutorials/Recipes/Comodel"/>
+		</subpart>
 	</part>
-	<part name="GAML References (Documentation)">
-		<chapter name="1 Built-in Species" file="References/GAMLReferences/BuiltInSpecies"/>
-		<chapter name="1.1 'agent'" file="References/GAMLReferences/AgentBuiltIn"/>		
-		<chapter name="1.2 'model'" file="References/GAMLReferences/ModelBuiltIn"/>		
-		<chapter name="1.3 'experiment'" file="References/GAMLReferences/ExperimentBuiltIn"/>	
-		<chapter name="2 Built-in Skills" file="References/GAMLReferences/BuiltInSkills"/>
-		<chapter name="3 Built-in Control Architectures" file="References/GAMLReferences/BuiltInArchitectures"/>
-		<chapter name="4 Statements" file="References/GAMLReferences/Statements"/>
-		<chapter name="5 Data Types" file="References/GAMLReferences/DataTypes"/>
-		<chapter name="6 File Types" file="References/GAMLReferences/FileTypes"/>
+ 	<part name="GAML References (Documentation)">
+		<subpart name="Built-in Species" file="References/GAMLReferences/BuiltInSpecies">
+			<chapter name="1.1 'agent'" file="References/GAMLReferences/AgentBuiltIn"/>		
+			<chapter name="1.2 'model'" file="References/GAMLReferences/ModelBuiltIn"/>		
+			<chapter name="1.3 'experiment'" file="References/GAMLReferences/ExperimentBuiltIn"/>	
+			<chapter name="2 Built-in Skills" file="References/GAMLReferences/BuiltInSkills"/>
+			<chapter name="3 Built-in Control Architectures" file="References/GAMLReferences/BuiltInArchitectures"/>
+			<chapter name="4 Statements" file="References/GAMLReferences/Statements"/>
+			<chapter name="5 Data Types" file="References/GAMLReferences/DataTypes"/>
+			<chapter name="6 File Types" file="References/GAMLReferences/FileTypes"/>
+		</subpart>
 
-		<chapter name="7 Expressions" file="References/GAMLReferences/Expressions"/>		
-		<chapter name="7.1 Literals" file="References/GAMLReferences/Literals"/> 
-		<chapter name="7.2 Units and constants" file="References/GAMLReferences/UnitsAndConstants"/>		
-		<chapter name="7.3 Pseudo-variables" file="References/GAMLReferences/PseudoVariables"/>		
-		<chapter name="7.4 Variables and attributes" file="References/GAMLReferences/VariablesAndAttributes"/>
-		<chapter name="7.5 Operators" file="References/GAMLReferences/Operators"/>
+		<subpart name="Expressions" file="References/GAMLReferences/Expressions">		
+			<chapter name="7.1 Literals" file="References/GAMLReferences/Literals"/> 
+			<chapter name="7.2 Units and constants" file="References/GAMLReferences/UnitsAndConstants"/>		
+			<chapter name="7.3 Pseudo-variables" file="References/GAMLReferences/PseudoVariables"/>		
+			<chapter name="7.4 Variables and attributes" file="References/GAMLReferences/VariablesAndAttributes"/>
+			<chapter name="7.5 Operators" file="References/GAMLReferences/Operators"/>
+		</subpart>
 	</part>
 	<part name="References">
-		<chapter name="References" file="WikiOnly/References"/>
+		<subpart name="References" file="WikiOnly/References"/>
 	</part> 
 </toc>		
