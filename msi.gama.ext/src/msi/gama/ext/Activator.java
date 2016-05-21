@@ -35,7 +35,9 @@ public class Activator implements BundleActivator {
 	@Override
 	public void start(final BundleContext bundleContext) throws Exception {
 		Activator.context = bundleContext;
-		System.out.println("IMAGE IO" + Arrays.toString(ImageIO.getReaderFileSuffixes()));
+		// Forces early initialisation of operation registry of JAI.
+		// It fixes initialisation problems in some third party equinox applications such as OpenMOLE.
+		javax.media.jai.JAI.getDefaultInstance().getOperationRegistry().getRegistryModes();
 	}
 
 	/*
