@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
  *
- * 'SimpleBdiPlanStatement.java', in plugin 'msi.gaml.architecture.simplebdi', is part of the source code of the 
+, * 'SimpleBdiPlanStatement.java', in plugin 'msi.gaml.architecture.simplebdi', is part of the source code of the 
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -34,7 +34,7 @@ import msi.gaml.architecture.simplebdi.SimpleBdiPlanStatement.SimpleBdiPlanValid
 
 @symbol(name = { SimpleBdiArchitecture.PLAN}, kind = ISymbolKind.BEHAVIOR, with_sequence = true,
 concept = { IConcept.BDI })
-@inside(kinds = { ISymbolKind.SPECIES })
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
 		@facet(name = SimpleBdiArchitecture.FINISHEDWHEN, type = IType.BOOL, optional = true),
 	@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true),

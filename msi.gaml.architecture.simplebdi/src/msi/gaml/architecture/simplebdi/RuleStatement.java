@@ -35,7 +35,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = RuleStatement.RULE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false,
 concept = { IConcept.BDI })
-@inside(kinds = { ISymbolKind.SPECIES })
+@inside(kinds = { ISymbolKind.SPECIES ,ISymbolKind.MODEL})
 @facets(value = {
 	@facet(name = RuleStatement.BELIEF, type = PredicateType.id, optional = true, doc = @doc("The mandatory belief")),
 	@facet(name = RuleStatement.DESIRE, type = PredicateType.id, optional = true, doc = @doc("The mandatory desire")),

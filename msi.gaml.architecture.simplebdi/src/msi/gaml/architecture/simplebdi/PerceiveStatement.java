@@ -45,7 +45,7 @@ import msi.gaml.types.IType;
 
 @symbol(name={PerceiveStatement.PERCEIVE}, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context=true,
 concept = { IConcept.BDI })
-@inside(kinds = { ISymbolKind.SPECIES })
+@inside(kinds = { ISymbolKind.SPECIES,ISymbolKind.MODEL })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the name of the perception")),
 	@facet(name = IKeyword.AS, type = IType.SPECIES, optional = true, doc = @doc("an expression that evaluates to a species")),
