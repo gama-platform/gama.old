@@ -16,6 +16,10 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
+   
+   <url>
+      <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+   </url>
 
    <includes
          id="ummisco.gama.feature.dependencies"

@@ -40,7 +40,7 @@ GOTO TOP
 :NEXT_CODE
 echo ******************************************************************
 echo * GAMA version 1.7.0                                             *
-echo * http://gama-platform.googlecode.com                            *
+echo * http://gama-platform.org				                          *
 echo * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC and Partners            *
 echo ******************************************************************
 

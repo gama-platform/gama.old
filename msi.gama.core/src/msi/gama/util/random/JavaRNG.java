@@ -5,7 +5,7 @@
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit http://gama-platform.googlecode.com for license information and developers contact.
+ * Visit http://gama-platform.org for license information and developers contact.
  *
  *
  **********************************************************************************************/
@@ -29,11 +29,14 @@ import msi.gama.common.util.RandomUtils;
 
 /**
  * <p>
- * This is the default {@link Random JDK RNG} extended to implement the {@link RepeatableRNG} interface (for consistency with the other RNGs in this package).
+ * This is the default {@link Random JDK RNG} extended to implement the
+ * {@link RepeatableRNG} interface (for consistency with the other RNGs in this
+ * package).
  * </p>
  *
  * <p>
- * The {@link MersenneTwisterRNG} should be used in preference to this class because it is statistically more random and performs slightly better.
+ * The {@link MersenneTwisterRNG} should be used in preference to this class
+ * because it is statistically more random and performs slightly better.
  * </p>
  *
  * @author Daniel Dyer
@@ -53,9 +56,12 @@ public class JavaRNG extends GamaRNG {
 
 	/**
 	 * Seed the RNG using the provided seed generation strategy.
-	 * @param seedGenerator The seed generation strategy that will provide
-	 * the seed value for this RNG.
-	 * @throws SeedException If there is a problem generating a seed.
+	 * 
+	 * @param seedGenerator
+	 *            The seed generation strategy that will provide the seed value
+	 *            for this RNG.
+	 * @throws SeedException
+	 *             If there is a problem generating a seed.
 	 */
 	public JavaRNG(final RandomUtils seedGenerator) {
 		this(seedGenerator.generateSeed(SEED_SIZE_BYTES));
@@ -63,7 +69,9 @@ public class JavaRNG extends GamaRNG {
 
 	/**
 	 * Creates an RNG and seeds it with the specified seed data.
-	 * @param seed The seed data used to initialise the RNG.
+	 * 
+	 * @param seed
+	 *            The seed data used to initialise the RNG.
 	 */
 	public JavaRNG(final byte[] seed) {
 		super(createLongSeed(seed));
@@ -81,11 +89,12 @@ public class JavaRNG extends GamaRNG {
 	 * super class.
 	 */
 	private static long createLongSeed(final byte[] seed) {
-		if ( seed == null || seed.length != SEED_SIZE_BYTES ) { throw new IllegalArgumentException(
-			"Java RNG requires a 64-bit (8-byte) seed."); }
+		if (seed == null || seed.length != SEED_SIZE_BYTES) {
+			throw new IllegalArgumentException("Java RNG requires a 64-bit (8-byte) seed.");
+		}
 		long value = 0;
-		for ( int i = 0; i < 0 + 8; i++ ) {
-			byte b = seed[i];
+		for (int i = 0; i < 0 + 8; i++) {
+			final byte b = seed[i];
 			value <<= 8;
 			value += b;
 		}
