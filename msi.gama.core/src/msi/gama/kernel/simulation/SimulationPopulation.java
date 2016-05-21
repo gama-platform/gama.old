@@ -40,7 +40,6 @@ import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -119,8 +118,7 @@ public class SimulationPopulation extends GamaPopulation {
 			final SimulationAgent world = new SimulationAgent(this);
 			world.setIndex(currentAgentIndex++);
 			world.setScheduled(toBeScheduled);
-			world.setName("Simulation #" + world.getIndex() + " of model "
-					+ getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, ""));
+			world.setName("Simulation " + world.getIndex());
 			add(world);
 			getHost().setSimulation(world);
 			if (scope.interrupted()) {

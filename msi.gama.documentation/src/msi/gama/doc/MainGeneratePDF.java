@@ -19,11 +19,14 @@ import org.tmatesoft.svn.core.SVNException;
 import org.xml.sax.SAXException;
 import msi.gama.doc.util.Constants;
 import msi.gama.doc.util.ConvertToPDF;
+import msi.gama.doc.util.GamaStyleGeneration;
 import msi.gama.doc.util.PrepareEnv;
 
 
 public class MainGeneratePDF {
 
+	public static boolean generateGamaStyle = false;
+	
 	/**
 	 * @param args
 	 * @throws IOException 
@@ -33,8 +36,12 @@ public class MainGeneratePDF {
 	 * @throws ParserConfigurationException 
 	 * @throws SVNException 
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
 		System.out.println("GENERATION OF THE PDF DOCUMENTATION");
+		
+		if (generateGamaStyle) {
+			GamaStyleGeneration.generateGamaStyle();
+		}
 
 		try {
 			System.out.print("Preparation of the folders.......................");

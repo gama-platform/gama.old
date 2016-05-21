@@ -33,6 +33,7 @@ public class ConvertToPDF {
 		
 		TOCManager toc = new TOCManager(Constants.TOC_FILE);
 		toc.createPartFiles();
+		toc.createSubpartFiles();
 		String files = toc.getTocFilesString();
 
 		File template = new File(Constants.PANDOC_FOLDER+File.separator+"mytemplate.tex");
@@ -63,7 +64,7 @@ public class ConvertToPDF {
 				System.err.println("Impossible to create the batFile...");
 				return;
 			}
-			List<String> lines = Arrays.asList("cd "+Constants.WIKI_FOLDER+" && "+getCommandLine()+" && exit\"" );
+			List<String> lines = Arrays.asList("cd "+Constants.WIKI_FOLDER+" && "+getCommandLine() );
 			Path file = Paths.get("batFile.bat");
 			Files.write(file, lines, Charset.forName("UTF-8"));
 			

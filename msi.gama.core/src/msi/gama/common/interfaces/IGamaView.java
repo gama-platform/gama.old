@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.IDisplayOutput;
 
 /**
@@ -31,9 +32,12 @@ public interface IGamaView {
 	public void removeOutput(IDisplayOutput putput);
 
 	/**
-	 * For some views (esp. the ones based on Swing), it is necessary to wait a while after opening it, in order for the view to be fully realized
+	 * For some views (esp. the ones based on Swing), it is necessary to wait a
+	 * while after opening it, in order for the view to be fully realized
 	 */
 	public void waitToBeRealized();
+
+	public void changePartNameWithSimulation(SimulationAgent agent);
 
 	// /**
 	// *

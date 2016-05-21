@@ -523,4 +523,10 @@ public class HeadlessListener extends AbstractGui {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public void updateViewTitle(final IDisplayOutput output, final SimulationAgent agent) {
+		// TODO Auto-generated method stub
+
+	}
 }

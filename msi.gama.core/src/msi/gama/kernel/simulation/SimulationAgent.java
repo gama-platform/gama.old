@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -25,7 +24,6 @@ import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.agent.SimulationScope;
 import msi.gama.metamodel.population.GamaPopulation;
@@ -52,11 +50,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaDate;
-import msi.gama.util.GamaList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
@@ -116,6 +112,15 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public Boolean getScheduled() {
 		return scheduled;
+	}
+
+	@Override
+	public void setName(final String name) {
+		final String old = getName();
+		super.setName(name);
+		final SimulationOutputManager m = getOutputManager();
+		if (m != null)
+			m.updateDisplayOutputsName(this);
 	}
 
 	public void setScheduled(final Boolean scheduled) {
@@ -241,7 +246,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			pop.dispose();
 		}
 		this.getExternMicroPopulations().clear();
-		
+
 		if (outputs != null) {
 			outputs.dispose();
 			outputs = null;
@@ -432,11 +437,24 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return null;
 	}
 
-	public String getUserFriendlyPostfixName() {
-		if (!GamaPreferences.CORE_SIMULATION_NAME.getValue())
-			return "";
-		return " (Simulation " + getIndex() + " of " + getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, "")
-				+ ")";
+	public String getShortUserFriendlyName() {
+
+		return getName();
+
+	}
+
+	public String buildPostfix() {
+		final boolean noName = !GamaPreferences.CORE_SIMULATION_NAME.getValue();
+		if (noName) {
+			if (getPopulation().size() > 1) {
+				return " (S" + getIndex() + ")";
+			} else {
+				return "";
+			}
+		} else {
+			return " (" + getName() + ")";
+		}
+
 	}
 
 	public void setOutputs(final IOutputManager iOutputManager) {
@@ -461,8 +479,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 							+ this.getExperiment().getSpecies().getName() + "#" + this.getExperiment().getIndex();
 					newOutputName = keyName;
 				} else {
-					final String postfix = " (Simulation " + getIndex() + " of "
-							+ getSpecies().getName().replace(ModelDescription.MODEL_SUFFIX, "") + ")";
+					final String postfix = buildPostfix();
 					keyName = entry.getKey() + postfix;
 					newOutputName = output.getName() + postfix;
 				}
@@ -580,22 +597,23 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	}
 
+	@Override
 	public void updateWith(final IScope scope, final SavedAgent sa) {
 		// Update Clock
 		final Object cycle = sa.getAttributeValue("cycle");
 		clock.setCycle((Integer) cycle);
 
 		// Update Attribute
-		Map<String,Object> attr = sa.getVariables();
-		for(String name : attr.keySet()) {
+		final Map<String, Object> attr = sa.getVariables();
+		for (final String name : attr.keySet()) {
 			this.setDirectVarValue(scope, name, attr.get(name));
 			// this.setAttribute(name, attr.get(name));
 		}
-		
+
 		// TODO
 		// Update GUI of the Experiment
-//		this.getExperiment().
-		
+		// this.getExperiment().
+
 		// Update innerPopulations
 		// TODO tout mettre dans une methode :
 		// Add a boolean to this one :
@@ -609,47 +627,56 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 				final IPopulation simuMicroPop = getMicroPopulation(savedAgentMicroPopName);
 
 				if (simuMicroPop != null) {
-					// Build a map name::innerPopAgentSavedAgt : 
-					// For each agent from the simulation innerPop, it will be updated from the corresponding agent
-					Map<String, SavedAgent> mapSavedAgtName = new THashMap<>();
-					for(SavedAgent localSA : savedAgentInnerPop.get(savedAgentMicroPopName)){
+					// Build a map name::innerPopAgentSavedAgt :
+					// For each agent from the simulation innerPop, it will be
+					// updated from the corresponding agent
+					final Map<String, SavedAgent> mapSavedAgtName = new THashMap<>();
+					for (final SavedAgent localSA : savedAgentInnerPop.get(savedAgentMicroPopName)) {
 						mapSavedAgtName.put((String) localSA.getAttributeValue("name"), localSA);
-					}					
-					
-					Map<String, IAgent> mapSimuAgtName = new THashMap<>();
-					
-				//	IAgent[] microPopArray = simuMicroPop.toArray();
-					
-					for(IAgent agt : simuMicroPop.toArray()) {
-						mapSimuAgtName.put(agt.getName(), agt);						
 					}
-					
-		//			for(int i = 0 ; i < simuMicroPop.size() ; i ++){
-		//				IAgent agt = simuMicroPop.getAgent(i);						
-		//				String t = agt.getName();
-		//				mapSimuAgtName.put((String) (simuMicroPop.getAgent(i).getName()), simuMicroPop.getAgent(i));
-		//			}					
 
-					for(Entry<String, SavedAgent> e : mapSavedAgtName.entrySet()) {
-						IAgent agt = mapSimuAgtName.get(e.getKey());
-						if(agt != null) {   // the savedAgent is in the simulation, update it, and remove it from the map mapSimuAgtName
+					final Map<String, IAgent> mapSimuAgtName = new THashMap<>();
+
+					// IAgent[] microPopArray = simuMicroPop.toArray();
+
+					for (final IAgent agt : simuMicroPop.toArray()) {
+						mapSimuAgtName.put(agt.getName(), agt);
+					}
+
+					// for(int i = 0 ; i < simuMicroPop.size() ; i ++){
+					// IAgent agt = simuMicroPop.getAgent(i);
+					// String t = agt.getName();
+					// mapSimuAgtName.put((String)
+					// (simuMicroPop.getAgent(i).getName()),
+					// simuMicroPop.getAgent(i));
+					// }
+
+					for (final Entry<String, SavedAgent> e : mapSavedAgtName.entrySet()) {
+						final IAgent agt = mapSimuAgtName.get(e.getKey());
+						if (agt != null) { // the savedAgent is in the
+											// simulation, update it, and remove
+											// it from the map mapSimuAgtName
 							// TODO : implement it for GamlAgent...
 							agt.updateWith(scope, e.getValue());
 							mapSimuAgtName.remove(e.getKey());
-						} else {  // the SavedAgent is not in the Simulation, then create it
-					//		List<Map<String,Object>> initialValues = new ArrayList<>();
-					//		initialValues.add(e.getValue().getVariables());
-					//		simuMicroPop.createAgents(s, 1, initialValues, true, true);
-							simuMicroPop.createAgentAt(scope, e.getValue().getIndex(), e.getValue().getVariables(), true, true);
+						} else { // the SavedAgent is not in the Simulation,
+									// then create it
+							// List<Map<String,Object>> initialValues = new
+							// ArrayList<>();
+							// initialValues.add(e.getValue().getVariables());
+							// simuMicroPop.createAgents(s, 1, initialValues,
+							// true, true);
+							simuMicroPop.createAgentAt(scope, e.getValue().getIndex(), e.getValue().getVariables(),
+									true, true);
 						}
 					}
-					
+
 					// For all remaining agents in the mapSimuAgtName, kill them
-					for(IAgent remainingAgent : mapSimuAgtName.values()) {
+					for (final IAgent remainingAgent : mapSimuAgtName.values()) {
 						// Kill them all
 						remainingAgent.dispose();
 						// simuMicroPop.killMembers();
-						//			microPop.clear();
+						// microPop.clear();
 						// microPop.firePopulationCleared();
 					}
 				}
