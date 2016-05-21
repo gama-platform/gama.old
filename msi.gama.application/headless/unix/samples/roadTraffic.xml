@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Simulation id="2" sourcePath="./roadTraffic/models/model7.gaml" finalstep="1000" experiment="road_traffic">
-  <Parameters>
-  </Parameters>
-  <Outputs>
-      <Output id="1" name="city_display" framerate="5" />
-  </Outputs>
-</Simulation>

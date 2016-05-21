@@ -24,7 +24,42 @@
 					</profileProperties>
 				</configuration>
 			</plugin>
-			 
+			 <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.7</version>
+            <executions>
+                <execution>
+                    <id>create-zip-files</id>
+                    <phase>package</phase>
+                    	<goals>
+							<goal>run</goal>
+						</goals>
+                    <configuration>
+                        <target> 
+                            <copy file="./extraresources/Model.icns" 
+                                 todir="./target/products/msi.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Resources/" />
+                             
+                             <copy todir="./target/products/msi.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/headless" >
+								<fileset dir="./extraresources/headless/unix"/>
+							 </copy>
+							 <copy todir="./target/products/msi.gama.application.product/win32/win32/x86_64/headless" >
+								<fileset dir="./extraresources/headless/windows"/>						
+							</copy>		
+							<copy todir="./target/products/msi.gama.application.product/win32/win32/x86/headless" >
+								<fileset dir="./extraresources/headless/windows"/>
+							</copy>
+							<copy todir="./target/products/msi.gama.application.product/linux/gtk/x86_64/headless" >
+								<fileset dir="./extraresources/headless/unix"/>
+							</copy>
+							<copy todir="./target/products/msi.gama.application.product/linux/gtk/x86/headless" >
+								<fileset dir="./extraresources/headless/unix"/>															            
+                            </copy>
+                        </target>
+                    </configuration>
+
+                </execution>
+            </executions>
+        </plugin>
 			 <!-- See here for resolution and usage of fix-info-plist-maven-plugin
 			 https://bugs.eclipse.org/bugs/show_bug.cgi?id=339526
 			 http://stackoverflow.com/questions/24427985/edit-the-info-plist-after-eclipse-product-build ,
@@ -40,6 +75,8 @@
                             <goal>materialize-products</goal>
                         </goals>
                     </execution>
+                    <!-- materialize and archive products need to be distant in mavenlifecycle, 
+                    the only way for our ant-maven run to inject and modify files before packaging by tycho -->
                     <execution>
                         <id>archive-products</id>
                          <phase>pre-integration-test</phase>
@@ -62,6 +99,8 @@
 					</products>
 				 </configuration>
 			</plugin>
+			<!-- inject information into the PList file for cocoa, only way to do that actually, see project fix-info-plist and
+			 https://github.com/buchen/fix-info-plist-maven-plugin/issues/1 -->
 			<plugin>
 			  <groupId>name.abuchen</groupId>
 			  <artifactId>fix-info-plist-maven-plugin</artifactId>
@@ -168,27 +207,7 @@
 			  </configuration>
 			</plugin> 
 		
-			 <plugin>
-            <artifactId>maven-antrun-plugin</artifactId>
-            <version>1.7</version>
-            <executions>
-                <execution>
-                    <id>create-zip-files</id>
-                    <phase>install</phase>
-                    	<goals>
-							<goal>run</goal>
-						</goals>
-                    <configuration>
-                        <target> 
-                            <copy file="./extraresources/Model.icns" 
-                                 todir="./target/products/msi.gama.application.product/macosx/cocoa/x86_64/Gama.app/Contents/Resources/" />
-                         
-                        </target>
-                    </configuration>
-
-                </execution>
-            </executions>
-        </plugin>
+			 
         
 			<!-- Workaround: Use an existing config.ini file (caused by the problem 
 				that tycho will always generate a default one) , copying /target/../ to /target/configuration/ ... -->
