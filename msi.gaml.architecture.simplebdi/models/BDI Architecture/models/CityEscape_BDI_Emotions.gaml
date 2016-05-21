@@ -2,9 +2,7 @@
 * Name: City Evacuation
 * Author: Mathieu Bourgais & Patrick Taillandier
 * Description:  Example model concerning the  use of the simpleBDI plug-in  with emotions. 
-* A technological hazard is simulated in one of the buildings of the city center. Drivers can perceive the hazard at a distance of 400 meters. 
-* Those who know that there is a hazard try to reach one of the evacuation sites (shelters). 
-* A driver who sees (in a radius of 10 meters) another driver trying to evacuate has a small chance to understand that a hazard is happening.
+* A technological accident is simulated in one of the buildings of the city center.
 
 * Tag : simple_bdi, emotion, evacuation
 */
