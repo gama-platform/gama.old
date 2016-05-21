@@ -11,20 +11,34 @@
  **********************************************************************************************/
 package msi.gama.gui.views.actions;
 
-import java.util.*;
-import msi.gama.common.interfaces.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.ILayer;
 import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.outputs.layers.*;
+import msi.gama.outputs.layers.AgentLayer;
+import msi.gama.outputs.layers.GraphicLayer;
+import msi.gama.outputs.layers.GridLayer;
+import msi.gama.outputs.layers.ImageLayer;
+import msi.gama.outputs.layers.SpeciesLayer;
+import msi.gama.outputs.layers.TextLayer;
 import msi.gama.outputs.layers.charts.ChartLayer;
-import msi.gama.runtime.GAMA;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
 
 /**
  * The class DisplayedAgentsMenu.
@@ -53,7 +67,7 @@ public class DisplayedAgentsMenu {
 		final boolean byLayer, final Collection<IAgent> filteredList, final ILocation userLocation,
 		final boolean isOpenGL) {
 		// Dispose ?
-		Menu menu = new Menu(parent);
+		final Menu menu = new Menu(parent);
 		fill(surface, menu, -1, withWorld, byLayer, filteredList, userLocation, isOpenGL);
 		return menu;
 	}
@@ -92,7 +106,8 @@ public class DisplayedAgentsMenu {
 		// AgentsMenu.MenuAction follow =
 		// new AgentsMenu.MenuAction(new FollowSelection(displaySurface), IGamaIcons.MENU_FOLLOW.image(), "Follow");
 		if ( withWorld ) {
-			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), userLocation, "World");
+			AgentsMenu.cascadingAgentMenuItem(menu, surface.getDisplayScope().getSimulationScope(), userLocation,
+				"World");
 			if ( filteredList != null && !filteredList.isEmpty() ) {
 				AgentsMenu.separate(menu);
 			}
@@ -104,9 +119,11 @@ public class DisplayedAgentsMenu {
 			// If the list is null or empty, no need to display anything more
 			if ( filteredList == null || filteredList.isEmpty() ) { return; }
 			// If only the world is selected, no need to display anything more
-			if ( filteredList.size() == 1 && filteredList.contains(GAMA.getSimulation()) ) { return; }
+			if ( filteredList.size() == 1 &&
+				filteredList.contains(surface.getDisplayScope().getSimulationScope()) ) { return; }
 			final FocusOnSelection adapter = new FocusOnSelection(surface);
-			AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus");
+			final AgentsMenu.MenuAction focus =
+				new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus");
 			if ( isOpenGL ) {
 				// FIXME: 18/03/2014 a.g the follow item has been temporaly removed from opengl because not yet
 				// implemented but should be available in 1.7
@@ -123,13 +140,14 @@ public class DisplayedAgentsMenu {
 					if ( pop.isEmpty() ) {
 						continue;
 					}
-					String layerName = layer.getType() + ": " + layer.getName();
+					final String layerName = layer.getType() + ": " + layer.getName();
 					final FocusOnSelection adapter = new FocusOnSelection(surface);
-					AgentsMenu.MenuAction focus =
+					final AgentsMenu.MenuAction focus =
 						new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
 
 					// if ( isOpenGL ) {
-					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus/* , follow */);
+					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation,
+						focus/* , follow */);
 					// } else {
 					// fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, userLocation, focus);
 					// }
@@ -147,7 +165,7 @@ public class DisplayedAgentsMenu {
 		final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
 		layerMenu.setText(layerName);
 		layerMenu.setImage(image);
-		Menu submenu = new Menu(layerMenu);
+		final Menu submenu = new Menu(layerMenu);
 		layerMenu.setMenu(submenu);
 		AgentsMenu.fillPopulationSubMenu(submenu, pop, userLocation, actions);
 
@@ -164,7 +182,7 @@ public class DisplayedAgentsMenu {
 
 				@Override
 				public void widgetSelected(final SelectionEvent trigger) {
-					boolean asMenu = trigger.detail == SWT.ARROW;
+					final boolean asMenu = trigger.detail == SWT.ARROW;
 					final ToolItem target = (ToolItem) trigger.widget;
 					final ToolBar toolBar = target.getParent();
 					if ( menu != null ) {
@@ -172,7 +190,7 @@ public class DisplayedAgentsMenu {
 					}
 					menu = new Menu(toolBar.getShell(), SWT.POP_UP);
 					fill(surface, menu, -1, false, true, null, null, isOpenGL);
-					Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
+					final Point point = toolBar.toDisplay(new Point(trigger.x, trigger.y));
 					menu.setLocation(point.x, point.y);
 					menu.setVisible(true);
 
