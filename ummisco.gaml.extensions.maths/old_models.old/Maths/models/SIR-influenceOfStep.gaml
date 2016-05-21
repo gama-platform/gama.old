@@ -48,7 +48,7 @@ entities {
 		} 
   
 //		equation_SIR var:[]; 
-				solve SIR method: "rk4" step: h cycle_length:mycycle{}
+				solve SIR method: "rk4" step: h ;//cycle_length:mycycle{}
                 
 //    	solve SIR method: "rk4" step: h cycle_length:mycycle discretizing_step: 10 integrated_times: dT integrated_values: [dS, dI, dR] { }       
 	}

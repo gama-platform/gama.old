@@ -4,7 +4,7 @@
 <product name="Gama" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.7" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="/msi.gama.application/icons/launcher_icons/icon205.png"/>
+      <image path="./icons/launcher_icons/icon205.png"/>
       <text>
          GAMA Platform - V1.7.0
 
@@ -41,7 +41,7 @@ openFile
       </vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="/msi.gama.application/icons/launcher_icons/icon16.png" i32="/msi.gama.application/icons/launcher_icons/icon32.png" i48="/msi.gama.application/icons/launcher_icons/icon48.png" i64="/msi.gama.application/icons/launcher_icons/icon64.png" i128="/msi.gama.application/icons/launcher_icons/icon128.png" i256="/msi.gama.application/icons/launcher_icons/icon256.png"/>
+   <windowImages i16="./icons/launcher_icons/icon16.png" i32="./icons/launcher_icons/icon32.png" i48="./icons/launcher_icons/icon48.png" i64="./icons/launcher_icons/icon64.png" i128="./icons/launcher_icons/icon128.png" i256="./icons/launcher_icons/icon256.png"/>
 
    <splash
       location="msi.gama.application"
@@ -49,19 +49,19 @@ openFile
       startupMessageRect="200,450,541,16"
       startupForegroundColor="165E93" />
    <launcher name="Gama">
-      <linux icon="/msi.gama.application/icons/launcher_icons/icon.xpm"/>
-      <macosx icon="/msi.gama.application/icons/launcher_icons/icon.icns"/>
+      <linux icon="./icons/launcher_icons/icon.xpm"/>
+      <macosx icon="./icons/launcher_icons/icon.icns"/>
       <solaris/>
       <win useIco="false">
-         <ico path="/msi.gama.application/icons/launcher_icons/icon.ico"/>
+         <ico path="./icons/launcher_icons/icon.ico"/>
          <bmp
-            winSmallHigh="/msi.gama.application/icons/launcher_icons/icon16_32.bmp"
-            winSmallLow="/msi.gama.application/icons/launcher_icons/icon16_8b.bmp"
-            winMediumHigh="/msi.gama.application/icons/launcher_icons/icon32_32b.bmp"
-            winMediumLow="/msi.gama.application/icons/launcher_icons/icon32_8b.bmp"
-            winLargeHigh="/msi.gama.application/icons/launcher_icons/icon48_32b.bmp"
-            winLargeLow="/msi.gama.application/icons/launcher_icons/icon48_8b.bmp"
-            winExtraLargeHigh="/msi.gama.application/icons/launcher_icons/icon256_32b.bmp"/>
+            winSmallHigh="./icons/launcher_icons/icon16_32.bmp"
+            winSmallLow="./icons/launcher_icons/icon16_8b.bmp"
+            winMediumHigh="./icons/launcher_icons/icon32_32b.bmp"
+            winMediumLow="./icons/launcher_icons/icon32_8b.bmp"
+            winLargeHigh="./icons/launcher_icons/icon48_32b.bmp"
+            winLargeLow="./icons/launcher_icons/icon48_8b.bmp"
+            winExtraLargeHigh="./icons/launcher_icons/icon256_32b.bmp"/>
       </win>
    </launcher>
 
@@ -255,7 +255,7 @@ openFile
    </plugins>
 
    <features>
-      <feature id="ummisco.gama.feature.jogl2.product" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.jogl2.product"/>
       <feature id="org.eclipse.equinox.p2.core.feature"/>
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature"/>
