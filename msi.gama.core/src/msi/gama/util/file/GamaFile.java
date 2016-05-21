@@ -41,7 +41,6 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		if ( pathName == null ) { throw GamaRuntimeException.error("Attempt to create a null file", scope); }
 		if ( scope != null ) {
 			path = FileUtils.constructAbsoluteFilePath(scope, pathName, false);
-			System.out.println("File " + pathName + " " + path + " " + new File(path).exists());
 			checkValidity(scope);
 			// AD 27/04/13 Let the flags of the file remain the same. Can be turned off and on using the "read" and
 			// "write" operators, so no need to decide for a default here
