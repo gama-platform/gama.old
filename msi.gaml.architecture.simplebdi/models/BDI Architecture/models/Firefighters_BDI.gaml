@@ -2,6 +2,10 @@
  *  Firefighters
  *  Author: Mathieu Bourgais
  *  Description: A simple model to show how the BDI architectures and its tools work (perceive, rule, etc). It's the model of a helicopter that fights fires.
+ * the Chopper agent has a general desire to patrol. As it is the only thing he wants at the beginning, it is its initial intention (what it is doing). 
+ * To patrol, it wanders around (its plan to patrol). When it perceives a fire, it stores this information (it has a new belief about the existence of this fire), 
+ * and it has a new desire (it wants the fire to be extinct). When it sees a fire, the Patrol intention is put on hold and a new intention is selected (to put out the fire). 
+ * To achieve this intention, the plan has two steps, i.e. two new (sub)desires: go to the fire and put water on the fire. And so on.
  *  Tags: simple_bdi, perception, rule, plan, predicate
  */
 

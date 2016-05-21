@@ -1,7 +1,11 @@
 /**-
 * Name: City Evacuation
 * Author: Mathieu Bourgais & Patrick Taillandier
-* Description:  Example model concerning the  use of the simpleBDI plug-in  with emotions
+* Description:  Example model concerning the  use of the simpleBDI plug-in  with emotions. 
+* A technological hazard is simulated in one of the buildings of the city center. Drivers can perceive the hazard at a distance of 400 meters. 
+* Those who know that there is a hazard try to reach one of the evacuation sites (shelters). 
+* A driver who sees (in a radius of 10 meters) another driver trying to evacuate has a small chance to understand that a hazard is happening.
+
 * Tag : simple_bdi, emotion, evacuation
 */
 
@@ -26,14 +30,16 @@ global {
 		create hazard from: shapefile_hazard;
 		create catastrophe;
 		create shelter from: shapefile_shelters;
+		
+		//at the begining of the simulation, we add to the people agent the desire to go to their target.
 		create people number: 200{
 			location <- any_location_in(one_of(road));
 			do add_desire(at_target);
-			if(flip(0.9)){
-				fearful<-true;
-			}else{
-				fearful <- false;
-			}
+			
+		 	//the agent has also the desire that there is no catastrophe (we set the piority of this desire to 0 as it is a general desire)
+			do add_desire(new_predicate("catastrophe",false) with_priority 0.0);
+			
+			// we give the agent a random charisma and receptivity (built-in variables linked to the emotions)
 			charisma<-rnd(1.0);
 			receptivity<-rnd(1.0);
       	}
@@ -56,56 +62,58 @@ species people skills: [moving] control: simple_bdi{
 	float speed <- 30 #km/#h;
 	rgb color <- #blue;
 	bool escape_mode <- false;
+	
+	//in order to simplify the model we define  4 desires as variables
 	predicate at_target <- new_predicate("at_target") with_priority 1;
 	predicate in_shelter <- new_predicate("shelter") with_priority 5;
 	predicate has_target <- new_predicate("has target") with_priority 2;
 	predicate has_shelter <- new_predicate("has shelter") with_priority 10;
-	predicate catastrophe <- new_predicate("catastrophe");
+
+    //we give them as well 2 beliefs as variables
+	predicate catastropheP <- new_predicate("catastrophe");
 	predicate nonCatastrophe <- new_predicate("catastrophe",false) with_priority 0.0;
 	
-	emotion fearConfirmed <- new_emotion("fear_confirmed",new_predicate("catastrophe"));
+	//at last we define 2 emotion linked to the knowledge of the catastrophe
+	emotion fearConfirmed <- new_emotion("fear_confirmed",catastropheP);
+	emotion fear <- new_emotion("fear",catastropheP);
 	
 	bool noTarget<-true;
 	
-	float charisma <- rnd(1.0)/*0.5*/;
-	float receptivity <-rnd(1.0)/*0.5*/;
-	bool fearful;
-	
+	//we set this built-in variable to true to use the emotional process
 	bool use_emotions_architecture <- true;
 
+    //if the agent perceive that their is something that is not normal (a hazard), it has a probability proba_detect_hazard to suppose (add to its unertainty base) that there is a catastrophe occuring
 	perceive target:hazard in: hazard_distance when: not escape_mode and flip(proba_detect_hazard){
 		ask myself {
-			do add_uncertainty(new_predicate("catastrophe"));
-			do add_desire(new_predicate("catastrophe",false) with_priority 0.0);
-			if(fearful){
-				do to_escape_mode;
-			}else{
-				color<-#green;
-			}
+			do add_uncertainty(catastropheP);
+			color<-#green;
 		}
 	}
 
+	//if the agent perceive the catastrophe, it adds a belief about it and pass in escape mode
 	perceive target:catastrophe in:catastrophe_distance{
 		ask myself{
-			do add_belief(new_predicate("catastrophe"));
+			do add_belief(catastropheP);
 			if(not escape_mode){
 				do to_escape_mode;
 			}
 		}
 	}
 
+	//if the agent perceives other people agents in their neighborhood that have fear, it can be contaminate by this emotion
 	perceive target:people in: other_distance when: not escape_mode {
-		unconscious_contagion emotion:fearConfirmed when:fearful;
-		unconscious_contagion emotion:new_emotion("fear_confirmed",new_predicate("catastrophe")) when: has_emotion(new_emotion("fear",new_predicate("catastrophe")));
+		unconscious_contagion emotion:fearConfirmed when: has_emotion(fear);
 		unconscious_contagion emotion:new_emotion("fear") charisma: charisma receptivity:receptivity;
-		conscious_contagion emotion_detected:new_emotion("fear_onfirmed",new_predicate("catastrophe"))
-		 emotion_created:new_emotion("fear",new_predicate("catastrophe"));
+		conscious_contagion emotion_detected:fearConfirmed emotion_created:fear;
 	}
 	
-	rule emotion:new_emotion("fear" ,new_predicate("catastrophe")) new_desire:in_shelter remove_intention:at_target when: fearful ;
-	rule emotion:new_emotion("fear_confirmed",new_predicate("catastrophe")) remove_intention: at_target new_desire:in_shelter;
-	rule belief:new_predicate("catastrophe") remove_intention:at_target new_desire:in_shelter;
+	//if the agent has a fear confirmed, it has the desire to go to a shelter
+	rule emotion:fearConfirmed remove_intention: at_target new_desire:in_shelter;
 	
+	//if the agent has the belief that there is a a catastrophe,  it has the desire to go to a shelter
+	rule belief:catastropheP remove_intention:at_target new_desire:in_shelter;
+	
+	//normal move plan
 	plan normal_move intention: at_target  {
 		if (target = nil) {
 			target <- any_location_in(one_of(road));
@@ -118,7 +126,8 @@ species people skills: [moving] control: simple_bdi{
 		}
 	}
 	
-	plan evacuationFast intention: in_shelter emotion: new_emotion("fear_confirmed",new_predicate("catastrophe")) priority:2 {
+	//fast evacuation plan in case where the agent has a fear confirmed
+	plan evacuationFast intention: in_shelter emotion: fearConfirmed priority:2 {
 		color <- #yellow;
 		speed <- 60 #km/#h;
 		if (target = nil or noTarget) {
@@ -133,6 +142,7 @@ species people skills: [moving] control: simple_bdi{
 		}
 	}	
 	
+	//normal evacuation plan
 	plan evacuation intention: in_shelter {
 		color <-#darkred;
 		if (target = nil or noTarget) {
@@ -157,7 +167,7 @@ species people skills: [moving] control: simple_bdi{
 	
 	
 	aspect default {
-		draw triangle(10) rotate: heading + 90 color: color;
+		draw triangle(20) rotate: heading + 90 color: color;
 	}
 }
 
@@ -173,7 +183,7 @@ species road {
 
 species shelter {
 	aspect default {
-		draw circle(10) color: #green;
+		draw circle(30) color: #magenta border: #black;
 	}
 }
 
