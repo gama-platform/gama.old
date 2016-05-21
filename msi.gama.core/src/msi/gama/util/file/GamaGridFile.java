@@ -132,10 +132,10 @@ public class GamaGridFile extends GamaGisFile {
 				CoordinateReferenceSystem crs = getExistingCRS(scope);
 				if ( isTiff() ) {
 					if ( crs == null ) {
-						store = new GeoTiffReader(getFile(), new Hints(Hints.USE_JAI_IMAGEREAD, false));
+						store = new GeoTiffReader(getFile(), new Hints(Hints.USE_JAI_IMAGEREAD, true));
 					} else {
 						store = new GeoTiffReader(getFile(),
-							new Hints(Hints.USE_JAI_IMAGEREAD, false, Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
+							new Hints(Hints.USE_JAI_IMAGEREAD, true, Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 					}
 				} else {
 					if ( crs == null ) {
