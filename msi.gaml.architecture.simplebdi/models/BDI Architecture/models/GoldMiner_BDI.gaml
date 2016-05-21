@@ -12,8 +12,8 @@
 model GoldBdi
 
 global {
-	int nbgold<-10;
-	int nbminer<-10;
+	int nbgold<-20;
+	int nbminer<-3;
 	base the_base;
 	geometry shape <- square(200);
 	init
@@ -132,14 +132,14 @@ species base {
 	int golds;
 	aspect default
 	{
-	  draw square(5) color: #black;
+	  draw square(20) color: #black;
 	}
 }
 
 
 experiment GoldBdi type: gui {
 	output {
-		display map
+		display map background: #lightgray
 		{
 			species base ;
 			species gold ;

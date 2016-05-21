@@ -29,7 +29,7 @@ global {
 species firefighter skills: [moving] control: simple_bdi{	
 	
 	//Here are the variables used by a helicopter. We define the predicates that will be used later.
-	rgb color;
+	rgb color <- rnd_color(150);
 	float waterValue;
 	grille maCellule <- one_of(grille);
 	predicate patrol_desire <- new_predicate("patrol") with_priority 1;
@@ -49,7 +49,7 @@ species firefighter skills: [moving] control: simple_bdi{
 	}
 	
 	//This reflex is used to update the beliefs concerning the intern variable of the agent (the amount of water it has).
-	reflex perception {
+	reflex update_variables {
 		if(waterValue>0){
 			do add_belief(water_predicate);
 			do remove_belief(no_water_predicate);
@@ -61,7 +61,7 @@ species firefighter skills: [moving] control: simple_bdi{
 	}
 	
 	//The helicopter perceive the fires at a certain distance. It just record the location of the fire it obsrves. When it sees a fire, it stops it's intention of patroling.
-	perceive target:fireArea in: 10{
+	perceive target:fireArea in: 15{
 		focus var:location priority:11;
 		ask myself{
 			do remove_intention(patrol_desire, true);
@@ -74,7 +74,7 @@ species firefighter skills: [moving] control: simple_bdi{
 	
 	//The plan to do when the intention is to patrol.
 	plan patrolling intention:patrol_desire finished_when: has_belief(new_predicate("location_fireArea")) or has_belief(no_water_predicate){
-		do wander;
+		do wander amplitude: 30 speed: 2;
 	}
 	
 	//The plan that is executed when the agent got the intention of extinguish a fire.
@@ -118,11 +118,13 @@ species firefighter skills: [moving] control: simple_bdi{
     }
 
 	aspect base {
-		draw triangle(2) color: rgb(0,0,waterValue) rotate: 90 + heading;	
+		draw triangle(2) color:color rotate: 90 + heading;	
+		draw circle(15) color: color ;	
 	}
 	
 	aspect bdi {
-		draw triangle(2) color: rgb(0,0,waterValue) rotate: 90 + heading;
+		draw triangle(2) color:color rotate: 90 + heading;	
+		draw circle(15) color: color empty: true;
 		draw ("B:" + length(belief_base) + ":" + belief_base) color:#black size:displatTextSize; 
 		draw ("D:" + length(desire_base) + ":" + desire_base) color:#black size:displatTextSize at:{location.x,location.y+displatTextSize}; 
 		draw ("I:" + length(intention_base) + ":" + intention_base) color:#black size:displatTextSize at:{location.x,location.y+2*displatTextSize}; 
@@ -154,7 +156,7 @@ species waterArea{
 }
 
 grid grille width: 25 height: 25 neighbors:4 {
-	rgb color <- #lightgreen;
+	rgb color <- #palegreen;
 }
 
 
