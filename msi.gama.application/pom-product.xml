@@ -34,8 +34,22 @@
 							<goal>materialize-products</goal>
 							<goal>archive-products</goal>
 						</goals>
+						<configuration>
+						<products>
+						  <product>
+							  <id>msi.gama.application.product</id>
+							  <rootFolders>
+								  <macosx>/mac/</macosx>
+								  <linux>/linux/</linux>
+								  <win32>/win/</win32>
+							</rootFolders>
+						   </product>
+						</products>
+					 </configuration>
 					</execution>
 				</executions>
+			
+
 				<!--<configuration>
 				<products>
 				  <product>
