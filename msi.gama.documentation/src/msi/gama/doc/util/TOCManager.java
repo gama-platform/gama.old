@@ -70,6 +70,7 @@ public class TOCManager {
 				if (line.startsWith("#") && !titleWritten) {
 					// write latex content to make the content bigger.
 					partBw.write("\\begingroup\n");
+					partBw.write("\\newpage\n");
 					partBw.write("\\fontsize{28}{34}\\selectfont\n");
 					partBw.write("\\textbf{"+subpartName+"}\n");
 					partBw.write("\\endgroup\n");
