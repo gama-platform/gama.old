@@ -22,7 +22,6 @@ import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
 import msi.gaml.types.IType;
@@ -83,7 +82,10 @@ public class AgentEditor extends ExpressionBasedEditor {
 		}, IGamaIcons.MENU_AGENT.image(), "Choose");
 
 		final Menu dropMenu = new Menu(items[CHANGE].getParent().getShell());
-		AgentsMenu.fillPopulationSubMenu(dropMenu, GAMA.getSimulation().getMicroPopulation(species), null, action);
+		final IAgent a = (IAgent) (currentValue instanceof IAgent ? currentValue : null);
+		if ( a != null )
+			AgentsMenu.fillPopulationSubMenu(dropMenu, a.getScope().getSimulationScope().getMicroPopulation(species),
+				null, action);
 		final Rectangle rect = items[CHANGE].getBounds();
 		final Point pt = items[CHANGE].getParent().toDisplay(new Point(rect.x, rect.y));
 		dropMenu.setLocation(pt.x, pt.y + rect.height);
