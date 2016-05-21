@@ -1231,7 +1231,11 @@ public abstract class SwingControl extends Composite {
 
 			@Override
 			public void run() {
-				frame.remove(applet);
+				try {
+					frame.remove(applet);
+				} catch (final Exception e) {
+
+				}
 
 			}
 		});
