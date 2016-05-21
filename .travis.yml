@@ -13,7 +13,7 @@ cache:
 script: sh ./build.sh
 before_deploy:
   - git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git
-  script: sh ./deploy.sh
+  - sh ./deploy.sh
 
 deploy:
   provider: releases
