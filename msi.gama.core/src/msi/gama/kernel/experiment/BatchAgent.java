@@ -102,6 +102,11 @@ public class BatchAgent extends ExperimentAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		getSpecies().getExplorationAlgorithm().initializeFor(scope, this);
+		// AD reput here so that permanent outputs are correctly initialized
+		// final IOutputManager outputs = getSpecies().getExperimentOutputs();
+		// if (outputs != null) {
+		// outputs.init(scope);
+		// }
 		return this;
 	}
 

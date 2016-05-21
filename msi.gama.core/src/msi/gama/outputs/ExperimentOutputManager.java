@@ -66,11 +66,11 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		if (exp != null) {
 			layout = Cast.asInt(scope, exp.value(scope));
 		}
+		return super.init(scope);
 		// scope.getGui().prepareForExperiment(scope.getExperiment().getSpecies());
 		// TODO REMOVED BECAUSE TOO INSTABLE
 		// if (super.init(scope))
 		// scope.getGui().applyLayout(getLayout());
-		return true;
 	}
 
 	protected int getLayout() {
