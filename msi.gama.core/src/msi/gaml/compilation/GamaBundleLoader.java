@@ -70,6 +70,7 @@ public class GamaBundleLoader {
 		// We retrieve the elements declared as extensions to the GAML language,
 		// either with the new or the deprecated extension
 		final Set<IExtension> extensions = new HashSet<IExtension>();
+		
 		IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
 		extensions.addAll(Arrays.asList(p.getExtensions()));
 		p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
@@ -151,20 +152,7 @@ public class GamaBundleLoader {
 
 	}
 
-	public static PrintWriter pp = null;
 
-	public static void writeLine(final String s) {
-		if (pp == null) {
-			try {
-				pp = new PrintWriter("monLog.txt");
-			} catch (final FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		pp.write(s + "\r\n");
-		pp.flush();
-	}
 
 	/**
 	 * @param contributor
@@ -195,6 +183,8 @@ public class GamaBundleLoader {
 
 	@SuppressWarnings("unchecked")
 	public static void preBuild(final String s) {
+		GamaClassLoader.getInstance().addBundle(Platform.getBundle(s));
+
 		final long start = System.currentTimeMillis();
 		Class<IGamlAdditions> gamlAdditions = null;
 		try {
