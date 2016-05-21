@@ -64,6 +64,11 @@ public class GamaGridFile extends GamaGisFile {
 				reader = new GamaGridReader(scope, fis, fillBuffer);
 			} catch (GamaRuntimeException e) {
 				if (isTiff()) {
+					GAMA.reportError(scope,
+							GamaRuntimeException.error(
+								"Problem with the file " + getFile().getName() + ": " + e.getAllText(), scope),
+							false);
+						
 					return null;
 				}
 				// A problem appeared, likely related to the wrong format of the file (see Issue 412)
