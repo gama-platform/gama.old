@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="simtools.graphlayout.feature"
-      label="GraphLayouts"
+      label="Graph Layouts"
       version="1.7.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -15,6 +15,10 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
+
+   <url>
+      <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+   </url>
 
    <requires>
       <import plugin="msi.gama.core" version="1.7.0" match="greaterOrEqual"/>

@@ -1,6 +1,6 @@
 *******************************************************************
 *GAMA version 1.7.0                                               *
-*http://gama-platform.googlecode.com                              *
+*http://gama-platform.org			                              *
 *(c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners                *
 *******************************************************************
 

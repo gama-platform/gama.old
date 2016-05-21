@@ -21,6 +21,10 @@ Aditional library:
 - colt.jar: LGPL and CERN
 - concurrent.jar: public domain and some classes from SUN Microsystems (using sun-licence)
    </license>
+   
+   <url>
+      <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+   </url>
 
    <plugin
          id="ummisco.gaml.extensions.stats"

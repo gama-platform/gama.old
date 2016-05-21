@@ -17,7 +17,7 @@
    </license>
 
    <url>
-      <update label="GAMA 1.7.x Update Site" url="http://gama-platform.googlecode.com/svn/update_site"/>
+      <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
    <plugin
