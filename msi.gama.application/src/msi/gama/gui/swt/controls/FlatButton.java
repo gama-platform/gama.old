@@ -110,10 +110,6 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		removeListener(SWT.Selection, listener);
 	}
 
-	public void fireButtonClick(){
-		doButtonClicked();
-	}
-	
 	private void doButtonClicked() {
 		if ( !enabled ) { return; }
 		Event e = new Event();
