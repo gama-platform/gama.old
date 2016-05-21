@@ -35,7 +35,7 @@ entities {
 			diff(R,t) = (alpha * I);
 		}
 	                
-	    solve SIR method: "rk4" step: h cycle_length: 1/h ;	        
+	    solve SIR method: "rk4" step: h;// cycle_length: 1/h ;	        
 	}
 }
 
