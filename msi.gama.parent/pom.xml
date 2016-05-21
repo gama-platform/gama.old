@@ -131,7 +131,19 @@
     </properties>
 
 
+   <pluginRepositories>
+	  <pluginRepository>
+		<id>buchen-maven-repo</id>
+		<url>http://buchen.github.io/maven-repo</url>
+		<layout>default</layout>
+	  </pluginRepository>
+	</pluginRepositories>
+	
     <repositories>
+	<repository>
+		<id>portfolio-non-maven-dependencies</id>
+		<url>http://buchen.github.io/maven-repo</url>
+	</repository>
     <repository>
       <id>eclipse-mars</id>
       <url>http://download.eclipse.org/releases/mars</url>
@@ -207,15 +219,6 @@
 
 	
 <plugins>
-	<!--
-	<plugin>
-		<groupId>org.eclipse.tycho</groupId>
-		<artifactId>tycho-p2-repository-plugin</artifactId>
-		<version>${tycho.version}</version>
-		<configuration>
-			<includeAllDependencies>true</includeAllDependencies>
-		</configuration>
-	</plugin>-->
   
     <plugin>
       <groupId>org.eclipse.tycho</groupId>
@@ -309,6 +312,13 @@
 			  <artifactId>tycho-p2-director-plugin</artifactId>
 			  <version>${tycho.version}</version>
 			</plugin>
+			
+			<plugin>
+				<groupId>name.abuchen</groupId>
+				<artifactId>fix-info-plist-maven-plugin</artifactId>
+				<version>1.0</version>
+			</plugin>
+				
   <plugin>
     <artifactId>maven-clean-plugin</artifactId>
     <version>3.0.0</version>

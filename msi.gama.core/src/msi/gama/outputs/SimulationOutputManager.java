@@ -12,12 +12,14 @@
 package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 
@@ -47,8 +49,18 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	public boolean init(final IScope scope) {
 		scope.getGui().waitStatus(" Building outputs ");
 		final boolean result = super.init(scope);
-
+		updateDisplayOutputsName(scope.getSimulationScope());
 		return result;
+	}
+
+	public void updateDisplayOutputsName(final SimulationAgent agent) {
+		for (final IOutput out : getOutputs().values()) {
+			if (out instanceof IDisplayOutput) {
+				final IDisplayOutput display = (IDisplayOutput) out;
+				GAMA.getGui().updateViewTitle(display, agent);
+			}
+		}
+
 	}
 
 }

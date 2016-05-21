@@ -264,4 +264,6 @@ public interface IGui {
 	// See ArrangeDisplayViews
 	void applyLayout(int layout);
 
+	void updateViewTitle(IDisplayOutput output, SimulationAgent agent);
+
 }

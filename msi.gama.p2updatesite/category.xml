@@ -1,14 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
+   <description name="GAMA Update Site">
+      Site containing updates to the plugins composing GAMA
+   </description>
    <feature url="features/ummisco.gama.feature.core_0.0.0.jar" id="ummisco.gama.feature.core" version="0.0.0">
-       <category name="gama.core"/>
+      <category name="gama.core"/>
    </feature>
-    <feature url="features/idees.gama.features.weka_0.0.0.jar" id="idees.gama.features.weka" version="0.0.0">
+   <feature url="features/idees.gama.features.weka_0.0.0.jar" id="idees.gama.features.weka" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
    <feature url="features/ummisco.gama.feature.audio_0.0.0.jar" id="ummisco.gama.feature.audio" version="0.0.0">
       <category name="gama.optional"/>
-   </feature> 
+   </feature>
    <feature url="features/ummisco.gama.feature.models_0.0.0.jar" id="ummisco.gama.feature.models" version="0.0.0">
       <category name="gama.models"/>
    </feature>
@@ -21,13 +24,13 @@
    <feature url="features/ummisco.gama.feature.opengl.jogl2_0.0.0.jar" id="ummisco.gama.feature.opengl.jogl2" version="0.0.0">
       <category name="gama.core"/>
    </feature>
-
+   <feature url="features/ummisco.gama.feature.network_1.7.0.qualifier.jar" id="ummisco.gama.feature.network" version="1.7.0.qualifier">
+      <category name="gama.optional"/>
+   </feature>
+   <feature url="features/ummisco.gama.feature.serialize_1.7.0.qualifier.jar" id="ummisco.gama.feature.serialize" version="1.7.0.qualifier">
+      <category name="gama.optional"/>
+   </feature>
    <category-def name="gama.core" label="Core plugins of GAMA"/>
    <category-def name="gama.optional" label="Optional plugins of GAMA"/>
    <category-def name="gama.models" label="GAMA Models Library"/>
-
-   <description name="GAMA Update Site">
-      Site containing updates to the plugins composing GAMA
-   </description>
-
 </site>

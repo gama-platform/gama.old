@@ -1641,4 +1641,20 @@ public class SwtGui extends AbstractGui {
 
 	}
 
+	@Override
+	public void updateViewTitle(final IDisplayOutput out, final SimulationAgent agent) {
+		final IGamaView part = this.findView(out);
+		if ( part != null )
+			this.run(new Runnable() {
+
+				@Override
+				public void run() {
+					part.changePartNameWithSimulation(agent);
+
+				}
+
+			});
+
+	}
+
 }

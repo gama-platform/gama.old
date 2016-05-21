@@ -21,14 +21,6 @@
       <update label="Gama 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
-   <includes
-         id="ummisco.gama.feature.serialize"
-         version="0.0.0"/>
-
-   <includes
-         id="ummisco.gama.feature.network"
-         version="0.0.0"/>
-
    <plugin
          id="irit.gaml.extensions.database"
          download-size="0"

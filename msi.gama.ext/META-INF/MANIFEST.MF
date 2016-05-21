@@ -3,10 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: msi.gama.ext
 Bundle-SymbolicName: msi.gama.ext;singleton:=true
 Bundle-Version: 1.7.0.qualifier
+Bundle-Activator: msi.gama.ext.Activator
 Bundle-Vendor: MSI
 Bundle-ActivationPolicy: lazy
-Export-Package: .,
- com.kitfox.svg;
+Export-Package: com.kitfox.svg;
   uses:="com.kitfox.svg.pathcmd,
    org.xml.sax.helpers,
    com.kitfox.svg.animation.parser,
@@ -14,7 +14,6 @@ Export-Package: .,
    org.xml.sax,
    com.kitfox.svg.animation,
    javax.swing",
- com.mysql.jdbc,
  com.mysql.jdbc.authentication,
  com.mysql.jdbc.exceptions,
  com.mysql.jdbc.exceptions.jdbc4,
@@ -751,8 +750,9 @@ Export-Package: .,
    javax.xml.parsers,
    javax.swing",
  rcaller.exception
-Require-Bundle: com.google.guava;bundle-version="15.0.0";visibility:=reexport
-Bundle-ClassPath:  commons-math3-3.6.1/jars/commons-math3-3.6.1.jar,
+Require-Bundle: com.google.guava;bundle-version="15.0.0";visibility:=reexport,org.eclipse.osgi
+Bundle-ClassPath: .,
+ commons-math3-3.6.1/jars/commons-math3-3.6.1.jar,
  jfreechart 1.0.19/jars/jcommon-1.0.23.jar,
  jfreechart 1.0.19/jars/jfreechart-1.0.19.jar,
  jts 1.14/jars/jts-core-1.14.0.jar,
