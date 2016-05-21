@@ -23,7 +23,10 @@ public class GamaListConverter implements Converter {
 	
 	@Override
 	public boolean canConvert(Class arg0) {
-		if(GamaList.class.equals(arg0)){return true;}
+		if(GamaList.class.equals(arg0)){
+			return true;
+		}
+		
 		Class<?>[] allInterface=arg0.getInterfaces();
 		for( Class<?> c:allInterface)
 		{

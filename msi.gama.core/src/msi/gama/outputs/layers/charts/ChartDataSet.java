@@ -1,24 +1,36 @@
 package msi.gama.outputs.layers.charts;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map.Entry;
 import java.util.Set;
 
+
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaList;
 import msi.gama.util.IList;
+import msi.gama.util.file.GAMLFile;
+import msi.gama.util.file.GAMLFile.GamlInfo;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Files;
+import msi.gaml.operators.Strings;
 
 
 public class ChartDataSet {
 
+	private static String chartFolder = "charts";
+	
+	
 	ArrayList<ChartDataSource> sources=new ArrayList<ChartDataSource>();
 	LinkedHashMap<String,ChartDataSeries> series=new LinkedHashMap<String,ChartDataSeries>();
 	LinkedHashMap<String,ChartDataSeries> deletedseries=new LinkedHashMap<String,ChartDataSeries>();
@@ -56,6 +68,8 @@ public class ChartDataSet {
 	boolean byCategory=false; //histogram/pie
 	boolean keepOldSeries=true; // keep old series or move to deleted (to keep history)
 
+	StringBuilder history;
+	
 	public int getCommonXIndex()
 	{
 		return commonXindex;
@@ -165,9 +179,14 @@ public class ChartDataSet {
 
 	public ChartDataSet()
 	{
-		
+		history=new StringBuilder();
 	}
 
+	public StringBuilder getHistory()
+	{
+		return history;
+	}
+	
 	public ChartOutput getOutput()
 	{
 		return mainoutput;
@@ -239,11 +258,21 @@ public class ChartDataSet {
 
 	public boolean didReload(IScope scope,int chartCycle)
 	{
+		
 		boolean didr=false;
-		int mychartcycle=scope.getSimulationScope().getCycle(scope);
-		if (lastchartcycle>mychartcycle)
+		int mychartcycle=chartCycle;
+//		int mychartcycle=scope.getSimulationScope().getCycle(scope)+1;
+//		System.out.println("cycle "+mychartcycle+" last: "+lastchartcycle);
+		if (lastchartcycle>=mychartcycle)
+		{
+			lastchartcycle=mychartcycle-1;			
 			didr=true;
-		lastchartcycle=mychartcycle;
+		}
+		else
+		{
+			lastchartcycle=mychartcycle;
+			
+		}
 		return didr;
 		
 	}
@@ -277,7 +306,7 @@ public class ChartDataSet {
 			ArrayList<Double> ser=this.getXSeriesValues();
 			for (int i=0; i<this.getXSeriesValues().size();i++)
 			{
-				if (ser.get(i)==chartCycle)
+				if (ser.get(i)==chartCycle-1)
 						{
 							this.commonXindex=i;				
 						}			
@@ -289,7 +318,7 @@ public class ChartDataSet {
 			ArrayList<Double> sery=this.getYSeriesValues();
 			for (int i=0; i<this.getYSeriesValues().size();i++)
 			{
-				if (sery.get(i)==chartCycle)
+				if (sery.get(i)==chartCycle-1)
 						{
 							this.commonYindex=i;				
 						}			
@@ -319,8 +348,9 @@ public class ChartDataSet {
 		for (ChartDataSource source : sources)
 		{
 			source.updatevalues(scope,chartCycle);
+			source.savehistory(scope, history);
 		}
-		
+		history.append(Strings.LN);
 	}
 
 	public void updateYValues(IScope scope, int chartCycle, int targetNb)
@@ -677,6 +707,28 @@ public class ChartDataSet {
 		// TODO Auto-generated method stub
 		this.forceNoYAccumulate=b;
 		
+	}
+
+	public void saveHistory(IScope scope,String name) {
+		if ( scope == null ) { return; }
+		try {
+			Files.newFolder(scope, chartFolder);
+			String file = chartFolder + "/" + "chart_" + name + ".csv";
+			BufferedWriter bw;
+//			file = FileUtils.constructAbsoluteFilePath(scope, file, false);
+			file = FileUtils.constructAbsoluteFilePath(scope, file, false);
+			bw = new BufferedWriter(new FileWriter(file));
+			
+			
+			bw.append(history);
+			bw.close();
+		} catch (final Exception e) {
+			e.printStackTrace();
+			return;
+		} finally {
+//			GAMA.releaseScope(scope);
+		}
+
 	}
 
 

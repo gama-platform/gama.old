@@ -125,7 +125,7 @@ public class GAMA {
 		}
 		currentExperiment.setHeadless(true);
 		for (final Map.Entry<String, Object> entry : params.entrySet()) {
-			
+
 			currentExperiment.setParameterValueByTitle(currentExperiment.getExperimentScope(), entry.getKey(),
 					entry.getValue());
 		}
@@ -254,13 +254,6 @@ public class GAMA {
 		}
 	}
 
-	// public static void shutdownAllExperiments() {
-	// for ( IExperimentController controller : controllers ) {
-	// controller.close();
-	// }
-	// controllers.clear();
-	// }
-
 	public static void startPauseFrontmostExperiment() {
 		for (final IExperimentController controller : controllers) {
 			controller.startPause();
@@ -272,7 +265,7 @@ public class GAMA {
 			controller.userStep();
 		}
 	}
-	
+
 	public static void stepBackFrontmostExperiment() {
 		for (final IExperimentController controller : controllers) {
 			controller.stepBack();
@@ -307,18 +300,6 @@ public class GAMA {
 		return controller.getScheduler().paused;
 
 	}
-
-	/**
-	 *
-	 */
-	// public static void InterruptFrontmostExperiment() {
-	// IExperimentController controller = getFrontmostController();
-	// if ( controller != null ) {
-	// controller.close();
-	// // controller.userInterrupt();
-	// }
-	// controllers.remove(controller);
-	// }
 
 	/**
 	 *

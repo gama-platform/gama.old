@@ -1,5 +1,6 @@
 package msi.gama.outputs.layers.charts;
 
+import java.io.BufferedWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -439,7 +440,86 @@ public class ChartDataSeries {
 		// TODO Auto-generated method stub
 		this.ongoing_update=true;
 	}
+	public void savelistd(IScope scope, StringBuilder history,ArrayList<Double> mylist)
+	{
+		if (mylist.size()==0)
+		{
+			history.append(",");
+			return;
+		}
+		for (int i=0; i<mylist.size(); i++)
+		{
+			history.append(Cast.asFloat(scope, mylist.get(i)).floatValue()+",");
+		}
+			
+	}
+	
+	public void savelists(IScope scope, StringBuilder history,ArrayList mylist)
+	{
+//		history.append("[");
+		if (mylist.size()==0)
+		{
+//			history.append("],");
+			return;
+		}
+		for (int i=0; i<mylist.size(); i++)
+		{
+			history.append(Cast.asString(scope, mylist.get(i))+",");
+		}
+//		history.append("],");
+			
+	}
+	
+	public void savehistory(IScope scope, StringBuilder history) {
+		// TODO Auto-generated method stub
+//		StringBuilder history=this.getDataset().getHistory();
+		history.append(this.getName()+",");
+		if (mysource.isByCategory())
+		{
+			if (this.cvalues.size()>0)
+			{
+				if (this.getMysource().isCumulative)
+					history.append(this.cvalues.get(this.cvalues.size()-1)+",");			
+				else
+					savelists(scope,history,this.cvalues);				
+			}
+		}
+		else
+		{
+			if (this.xvalues.size()>0)
+			{
+				if (this.getMysource().isCumulative)
+					history.append(this.xvalues.get(this.xvalues.size()-1)+",");			
+				else
+					savelistd(scope,history,this.xvalues);				
+				
+			}
+		}
+		if (this.yvalues.size()>0)
+		{
+			if (this.getMysource().isCumulative)
+				history.append(this.yvalues.get(this.yvalues.size()-1)+",");			
+			else
+				savelistd(scope,history,this.yvalues);				
+			
+		}
+		if (this.svalues.size()>0)
+		if (this.svalues.size()>=this.yvalues.size())
+		{
+				if (this.getMysource().isCumulative)
+					history.append(this.svalues.get(this.svalues.size()-1)+",");			
+				else
+					savelistd(scope,history,this.svalues);				
+			
+		}
+	}
 
+	public void inithistory(StringBuilder history) {
+		// TODO Auto-generated method stub
+//		StringBuilder history=this.getDataset().getHistory();
+		history.append(this.getName()+"_X"+",");
+		history.append(this.getName()+"_Y"+",");
+	}
 
 
 

@@ -534,7 +534,15 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	public void saveHistory() {
-		System.out.println("try to save!");
+//		System.out.println("try to save!");
+		IScope scope = this.getDisplayOutput().getScope().copy("toto");
+		if ( scope == null ) { return; }
+
+//		IScope scope =  output.getScope().copy();
+		try {
+		
+//			this.getDataSet().saveHistory(this.getDisplayOutput().getScope(),this.getName());
+			this.getDataSet().saveHistory(scope,this.getName());
 		//TODO!!
 		
 //		IScope scope = output.getScope().copy();
@@ -547,12 +555,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 //			bw = new BufferedWriter(new FileWriter(file));
 //			bw.append(history);
 //			bw.close();
-//		} catch (final Exception e) {
-//			e.printStackTrace();
-//			return;
-//		} finally {
-//			GAMA.releaseScope(scope);
-//		}
+		} catch (final Exception e) {
+			e.printStackTrace();
+			return;
+		} finally {
+			GAMA.releaseScope(scope);
+		}
 	}
 
 }

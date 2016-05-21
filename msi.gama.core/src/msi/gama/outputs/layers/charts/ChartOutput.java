@@ -34,6 +34,7 @@ public abstract class ChartOutput {
 	LinkedHashMap<String,Integer> serieLastUpdate=new LinkedHashMap<String,Integer>();
 	
 	public int lastUpdateCycle=-1;
+	public boolean ismyfirststep=true;
 	
 	String chname="";	
 	String xlabel=null;
@@ -105,7 +106,12 @@ public abstract class ChartOutput {
 	
 	public int getChartCycle(IScope scope)
 	{
-		return scope.getClock().getCycle();
+		if (ismyfirststep)
+		{
+			ismyfirststep=false;
+			return 0;
+		}
+		return scope.getClock().getCycle()+1;
 	}
 	
 	public void step(IScope scope)

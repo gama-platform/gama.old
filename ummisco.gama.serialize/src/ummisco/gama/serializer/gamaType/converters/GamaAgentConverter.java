@@ -15,6 +15,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.MinimalAgent;
+import msi.gama.util.GamaList;
 
 import java.util.List;
 
@@ -31,7 +32,19 @@ public class GamaAgentConverter implements Converter {
 	
 	@Override
 	public boolean canConvert(final Class arg0) {
-		return (arg0.equals(GamlAgent.class) || arg0.equals(MinimalAgent.class));
+		if(GamlAgent.class.equals(arg0) || MinimalAgent.class.equals(arg0) || GamlAgent.class.equals(arg0.getSuperclass())){
+			return true;
+		}
+		
+		Class<?>[] allInterface=arg0.getInterfaces();
+		for( Class<?> c:allInterface)
+		{
+			if(c.equals(GamlAgent.class))
+				return true;
+		}
+		
+		return false;
+		// return (arg0.equals(GamlAgent.class) || arg0.equals(MinimalAgent.class));
 	}
 
 	@Override

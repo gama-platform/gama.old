@@ -30,6 +30,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
@@ -42,6 +43,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.metamodel.topology.projection.IProjection;
@@ -75,7 +77,6 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.SaveStatement.SaveValidator;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import msi.gaml.variables.IVariable;
 
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, concept = { IConcept.FILE,
 		IConcept.SAVE_FILE }, with_sequence = false, with_args = true, remote_context = true)
@@ -293,7 +294,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	public String getGeometryType(final IList<? extends IShape> agents) {
 		String geomType = "";
 		for (final IShape be : agents) {
-			IShape geom = be.getGeometry();
+			final IShape geom = be.getGeometry();
 			if (geom != null) {
 				geomType = geom.getInnerGeometry().getClass().getSimpleName();
 				if (geom.getInnerGeometry().getNumGeometries() > 1) {
@@ -308,35 +309,46 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 			}
 		}
-		
-		if ("DynamicLineString".equals(geomType)) geomType = LineString.class.getSimpleName();
+
+		if ("DynamicLineString".equals(geomType))
+			geomType = LineString.class.getSimpleName();
 		return geomType;
 	}
+
 	public void saveShape(final IList<? extends IShape> agents, final String path, final IScope scope)
 			throws GamaRuntimeException {
+		if (agents.size() == 1 && agents.get(0).getInnerGeometry() instanceof GeometryCollection) {
+			final GeometryCollection collec = (GeometryCollection) agents.get(0).getInnerGeometry();
+			final IList<IShape> shapes = GamaListFactory.create();
+			for (int i = 0; i < collec.getNumGeometries(); i++) {
+				shapes.add(new GamaShape(collec.getGeometryN(i)));
+			}
+			saveShape(shapes, path, scope);
+			return;
+		}
 		final StringBuilder specs = new StringBuilder(agents.size() * 20);
-		String geomType = getGeometryType(agents);
-		
+		final String geomType = getGeometryType(agents);
+
 		specs.append("geometry:" + geomType);
 		try {
 			final SpeciesDescription species = agents instanceof IPopulation
 					? (SpeciesDescription) ((IPopulation) agents).getSpecies().getDescription()
 					: agents.getType().getContentType().getSpecies();
 			final Map<String, String> attributes = GamaMapFactory.create(Types.STRING, Types.STRING);
-			List<String> attString = new ArrayList<String>();
+			final List<String> attString = new ArrayList<String>();
 			if (species != null) {
-				computeInits(scope, attributes,species);
+				computeInits(scope, attributes, species);
 				for (final String e : attributes.keySet()) {
 					final String var = attributes.get(e);
 					String name = e.replaceAll("\"", "");
 					name = name.replaceAll("'", "");
-					String type = type(species.getVariable(var));
+					final String type = type(species.getVariable(var));
 					if ("String".equals(type))
 						attString.add(name);
 					specs.append(',').append(name).append(':').append(type);
 				}
 			}
-			saveShapeFile(scope, path, agents, /* featureTypeName, */specs.toString(), attributes,attString);
+			saveShapeFile(scope, path, agents, /* featureTypeName, */specs.toString(), attributes, attString);
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Exception e) {
@@ -414,7 +426,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	public String type(final VariableDescription var) {
-		IType gamaName = var.getType();
+		final IType gamaName = var.getType();
 		if (gamaName.id() == IType.BOOL) {
 			return "Boolean";
 		}
@@ -428,14 +440,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	private void computeInits(final IScope scope, final Map<String, String> values) throws GamaRuntimeException {
-		computeInits(scope,values,null);
+		computeInits(scope, values, null);
 	}
-	
-	private void computeInits(final IScope scope, final Map<String, String> values, final SpeciesDescription species) throws GamaRuntimeException {
+
+	private void computeInits(final IScope scope, final Map<String, String> values, final SpeciesDescription species)
+			throws GamaRuntimeException {
 		if (init == null) {
 			return;
 		}
-		if (init.isEmpty() &&  species != null) {
+		if (init.isEmpty() && species != null) {
 			final List<String> attributeNames = new ArrayList<String>();
 			attributeNames.add(IKeyword.PEERS);
 			attributeNames.add(IKeyword.LOCATION);
@@ -443,12 +456,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			attributeNames.add(IKeyword.AGENTS);
 			attributeNames.add(IKeyword.MEMBERS);
 			attributeNames.add(IKeyword.SHAPE);
-			for (String var: species.getVariables().keySet()) {
+			for (final String var : species.getVariables().keySet()) {
 				if (!attributeNames.contains(var))
 					values.put(var, var);
 			}
-		}
-		else {
+		} else {
 			for (final Map.Entry<String, IExpressionDescription> f : init.entrySet()) {
 				if (f != null) {
 					values.put(f.getValue().toString(), f.getKey());
@@ -459,8 +471,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	// AD 2/1/16 Replace IAgent by IShape so as to be able to save geometries
 	public void saveShapeFile(final IScope scope, final String path, final List<? extends IShape> agents,
-			/* final String featureTypeName, */final String specs, final Map<String, String> attributes, final List<String> stringVars)
-			throws IOException, SchemaException, GamaRuntimeException {
+			/* final String featureTypeName, */final String specs, final Map<String, String> attributes,
+			final List<String> stringVars) throws IOException, SchemaException, GamaRuntimeException {
 
 		String code = null;
 		if (crsCode != null) {
@@ -508,7 +520,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				for (final String variable : attributeValues) {
 					if (stringVars.contains(variable))
 						values.add(Cast.toGaml(((IAgent) ag).getDirectVarValue(scope, variable)));
-					else 
+					else
 						values.add(((IAgent) ag).getDirectVarValue(scope, variable));
 				}
 			}
