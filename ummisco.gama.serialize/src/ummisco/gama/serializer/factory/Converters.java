@@ -6,7 +6,6 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
-import ummisco.gama.serializer.gamaType.converters.GamaAgentConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverterNetwork;
 import ummisco.gama.serializer.gamaType.converters.GamaBasicTypeConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaFileConverter;
@@ -45,6 +44,7 @@ public abstract class Converters {
 		
 		converters[11]= new GamaPopulationConverter(cs);
 		converters[12]= new GamaSpeciesConverter(cs);		
+		//converters[13]= new ComplexMessageConverter(cs);		
 		
 		return converters;
 
