@@ -17,6 +17,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -223,7 +224,7 @@ public class EventLayer extends AbstractLayer {
 					args.put(listArg, ConstantExpressionDescription.create(agentset));
 				}
 			}
-			surface.runAndUpdate(new Runnable() {
+			GAMA.runAndUpdateAll(new Runnable() {
 
 				@Override
 				public void run() {

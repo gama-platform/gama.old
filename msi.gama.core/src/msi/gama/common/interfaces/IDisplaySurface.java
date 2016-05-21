@@ -89,6 +89,11 @@ public interface IDisplaySurface extends
 
 	void focusOn(IShape geometry);
 
+	/**
+	 * Run the runnable in argument and refresh the output
+	 * 
+	 * @param r
+	 */
 	void runAndUpdate(Runnable r);
 
 	/**
