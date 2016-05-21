@@ -49,19 +49,19 @@ openFile
       startupMessageRect="200,450,541,16"
       startupForegroundColor="165E93" />
    <launcher name="Gama">
-      <linux icon="/msi.gama.application/icons/launcher_icons/icon.xpm"/>
-      <macosx icon="/msi.gama.application/icons/launcher_icons/icon.icns"/>
+      <linux icon="./icons/launcher_icons/icon.xpm"/>
+      <macosx icon="./icons/launcher_icons/icon.icns"/>
       <solaris/>
       <win useIco="false">
          <ico path="/msi.gama.application/icons/launcher_icons/icon.ico"/>
          <bmp
-            winSmallHigh="/msi.gama.application/icons/launcher_icons/icon16_32.bmp"
-            winSmallLow="/msi.gama.application/icons/launcher_icons/icon16_8b.bmp"
-            winMediumHigh="/msi.gama.application/icons/launcher_icons/icon32_32b.bmp"
-            winMediumLow="/msi.gama.application/icons/launcher_icons/icon32_8b.bmp"
-            winLargeHigh="/msi.gama.application/icons/launcher_icons/icon48_32b.bmp"
-            winLargeLow="/msi.gama.application/icons/launcher_icons/icon48_8b.bmp"
-            winExtraLargeHigh="/msi.gama.application/icons/launcher_icons/icon256_32b.bmp"/>
+            winSmallHigh="./icons/launcher_icons/icon16_32.bmp"
+            winSmallLow="./icons/launcher_icons/icon16_8b.bmp"
+            winMediumHigh="./icons/launcher_icons/icon32_32b.bmp"
+            winMediumLow="./icons/launcher_icons/icon32_8b.bmp"
+            winLargeHigh="./icons/launcher_icons/icon48_32b.bmp"
+            winLargeLow="./icons/launcher_icons/icon48_8b.bmp"
+            winExtraLargeHigh="./icons/launcher_icons/icon256_32b.bmp"/>
       </win>
    </launcher>
 

@@ -10,6 +10,7 @@
   </parent>
   <artifactId>msi.gama.application.product</artifactId>
   <packaging>eclipse-repository</packaging>
+
     <build>
 		<plugins>
 			<plugin>
@@ -18,55 +19,155 @@
 				<version>${tycho.version}</version>
 				<configuration>
 					<includeAllDependencies>true</includeAllDependencies>
+					<profileProperties>
+						<macosx-bundled>true</macosx-bundled>
+					</profileProperties>
 				</configuration>
 			</plugin>
-		     <!-- Selection of products to be installed and configuration per product, see 
-                            http://www.eclipse.org/tycho/sitedocs/tycho-p2/tycho-p2-director-plugin/materialize-products-mojo.html -->
-			<!-- If the project contains more than one product file ... -->
+			 
+			 <!-- See here for resolution and usage of fix-info-plist-maven-plugin
+			 https://bugs.eclipse.org/bugs/show_bug.cgi?id=339526
+			 http://stackoverflow.com/questions/24427985/edit-the-info-plist-after-eclipse-product-build ,
+			 another solution could be to rewrite the PLIST file by a new PLIST using maven-antrun-plugin-->
 			 <plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-director-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<executions>
-					<execution>
-						<id>create-distributions</id>
-						<goals>
-							<goal>materialize-products</goal>
-							<goal>archive-products</goal>
-						</goals>
-						<!--
-						<configuration>
-						<products>
-						  <product>
-							  <id>msi.gama.application.product</id>
-							  <rootFolders>
-								  <macosx>/mac/</macosx>
-								  <linux>/linux/</linux>
-								  <win32>/win/</win32>
-							</rootFolders>
-						   </product>
-						</products>
-					 </configuration>
-					 -->
-					</execution>
-				</executions>
-			
+                    <execution>
+                        <id>materialize-products</id>
+                        <goals>
+                            <goal>materialize-products</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>archive-products</id>
+                         <phase>verify</phase>
+                        <goals>
+                            <goal>archive-products</goal>
+                        </goals>
+                    </execution>
+                </executions>
+				<configuration>
+			<!-- Selection of products to be installed and configuration per product, see 
+                            http://www.eclipse.org/tycho/sitedocs/tycho-p2/tycho-p2-director-plugin/materialize-products-mojo.html -->
+			<!-- If the project contains more than one product file ... -->
+					<products>
+					  <product>
+						  <id>msi.gama.application.product</id>
+						  <rootFolders>
+							  <macosx>Gama.app</macosx>
+						</rootFolders>
+					   </product>
+					</products>
+				 </configuration>
+			</plugin>
+			<plugin>
+			  <groupId>name.abuchen</groupId>
+			  <artifactId>fix-info-plist-maven-plugin</artifactId>
+			  <version>1.0</version>
+			  <executions>
+				<execution>
+				  <id>fix-info-plist</id>
+				  <phase>package</phase>
+				  <goals>
+					<goal>fix-info-plist</goal>
+				  </goals>
+				</execution>
+			  </executions>
+			  <configuration>
+				<productId>msi.gama.application.product</productId>
+				<appName>Gama.app</appName>
+				<properties>
+				  <property>
 
-				<!--<configuration>
-				<products>
-				  <product>
-					<id>product.id</id>
-					<rootFolder></rootFolder>
-					<rootFolders>
-					  <macosx></macosx>
-					  <linux></linux>
-					  <win32></win32>
-					</rootFolders>
-				  </product>
-				  ...
-				</products>
-			  </configuration>-->
+				  <name>CFBundleDocumentTypes</name>
+				  <value>Gama</value>
+				  </property>
+				  
+				  <property>
+				  <name>CFBundleExecutable</name>
+				  <value>Gama</value>
+				  </property>
+				  
+				  <property>
+				  <name>CFBundleGetInfoString</name>
+				  <value>Gama 1.7.0, Copyright UMMISCO IRD/UPMC and partners 2006-2016 http://gama-platform.org</value>
+				  </property>
+				  
+				  <property>
+				  <name>CFBundleIdentifier</name>
+				  <value>Gama</value>
+				  </property>
+
+				  <property>
+				  <name>CFBundleInfoDictionaryVersion</name>
+				  <value>6.0</value>
+				  </property>
+				  				  
+				  <property>
+				  <name>CFBundleName</name>
+				  <value>Gama</value>
+				  </property>
+				  
+				  <property>
+				  <name>CFBundlePackageType</name>
+				  <value>APPL</value>
+				  </property>
+				  
+				  <property>
+				  <name>CFBundleShortVersionString</name>
+				  <value>1.7.0</value>
+				  </property>
+				  
+				  <property>
+				  <name>CFBundleSignature</name>
+				  <value>GAMA</value>
+				  </property>
+
+				  <property>
+				  <name>CFBundleVersion</name>
+				  <value>1.7.0</value>
+				  </property>
+				  
+				  <property>
+				  <name>NSHighResolutionCapable</name>
+				  <value>True</value>
+				  </property>
+				  
+				  <property>
+				  <name>CFBundleDevelopmentRegion</name>
+				  <value>English</value>
+				  </property>
+				  
+				  <property>
+					<name>CFBundleDocumentTypes</name>
+					<value> <dict>
+							<key>CFBundleTypeExtensions</key>
+							<array>
+								<string>gaml</string>
+							</array>
+							<key>CFBundleTypeIconFile</key>
+							<string>Model.icns</string>
+							<key>CFBundleTypeName</key>
+							<string>Gama Model</string>
+							<key>CFBundleTypeRole</key>
+							<string>Editor</string>
+							<key>CFBundleTypeOSTypes</key>
+							<array>
+								<string>TEXT</string>
+							</array>
+						</dict></value>
+				  </property>
+				  
+				  <property>
+					<name>Eclipse</name>
+					<value /> 
+				  </property>
+				</properties>
+			  </configuration>
 			</plugin> 
+		
 			
 			<!-- Workaround: Use an existing config.ini file (caused by the problem 
 				that tycho will always generate a default one) , copying /target/../ to /target/configuration/ ... -->
@@ -96,19 +197,6 @@
 					</execution>
 				</executions>
 			</plugin>
-			<!--<plugin>
-				   <groupId>org.eclipse.tycho</groupId>
-				   <artifactId>tycho-packaging-plugin</artifactId>
-				   <version>${tycho.version}</version>
-				   <executions>
-						  <execution>
-								<phase>package</phase>
-								<goals>
-									   <goal>product-export</goal>
-								</goals>
-						  </execution>
-				   </executions>
-			</plugin>-->    
 		</plugins>
 
 </build>
