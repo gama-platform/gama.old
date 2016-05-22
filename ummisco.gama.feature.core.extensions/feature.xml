@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="ummisco.gama.feature.core"
-      label="Core plugins of GAMA"
+      id="ummisco.gama.feature.core.extensions"
+      label="Core extensions of GAMA"
       version="1.7.0.qualifier"
-      provider-name="UMMISCO">
+      provider-name="UMMISCO, IRIT &amp; IDEES">
 
    <description url="http://gama-platform.org">
-      The core of the GAMA Modeling and Simulation Platform
+      Direct extensions to the core of GAMA
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -22,37 +22,48 @@
    </url>
 
    <plugin
-         id="msi.gama.core"
+         id="irit.gaml.extensions.database"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="msi.gama.ext"
+         id="irit.gaml.extensions.test"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="msi.gaml.extensions.fipa"
          download-size="0"
          install-size="0"
          version="0.0.0"/>
 
    <plugin
-         id="msi.gama.headless"
+         id="simtools.gaml.extensions.traffic"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="msi.gama.lang.gaml"
+         id="msi.gaml.architecture.simplebdi"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
 
    <plugin
-         id="msi.gama.processor"
+         id="ummisco.gaml.extensions.maths"
          download-size="0"
          install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         version="0.0.0"/>
+
+   <plugin
+         id="simtools.gaml.extensions.physics"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

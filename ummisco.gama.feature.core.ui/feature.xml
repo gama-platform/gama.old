@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="ummisco.gama.feature.core"
-      label="Core plugins of GAMA"
+      id="ummisco.gama.feature.core.ui"
+      label="UI Components of GAMA"
       version="1.7.0.qualifier"
       provider-name="UMMISCO">
 
    <description url="http://gama-platform.org">
-      The core of the GAMA Modeling and Simulation Platform
+      The UI components of GAMA
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -22,34 +22,14 @@
    </url>
 
    <plugin
-         id="msi.gama.core"
+         id="msi.gama.application"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="msi.gama.ext"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
-
-   <plugin
-         id="msi.gama.headless"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="msi.gama.lang.gaml"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="msi.gama.processor"
+         id="msi.gama.lang.gaml.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"
