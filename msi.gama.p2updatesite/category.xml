@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <description name="GAMA Update Site">
-      Site containing updates to the plugins composing GAMA
+      Site containing updates to the GAMA platform software (see http://gama-platform.org)
    </description>
-   <feature url="features/ummisco.gama.feature.core_0.0.0.jar" id="ummisco.gama.feature.core" version="0.0.0">
-      <category name="gama.core"/>
-   </feature>
    <feature url="features/idees.gama.features.weka_0.0.0.jar" id="idees.gama.features.weka" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
@@ -21,13 +18,22 @@
    <feature url="features/simtools.graphlayout.feature_0.0.0.jar" id="simtools.graphlayout.feature" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.opengl.jogl2_0.0.0.jar" id="ummisco.gama.feature.opengl.jogl2" version="0.0.0">
+   <feature url="features/ummisco.gama.feature.core.extensions_1.7.0.qualifier.jar" id="ummisco.gama.feature.core.extensions" version="0.0.0">
       <category name="gama.core"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.network_0.0.0.jar" id="ummisco.gama.feature.network" version="0.0.0">
+   <feature url="features/ummisco.gama.feature.core.opengl_1.7.0.qualifier.jar" id="ummisco.gama.feature.core.opengl" version="0.0.0">
+      <category name="gama.core"/>
+   </feature>
+   <feature url="features/ummisco.gama.feature.core.ui_1.7.0.qualifier.jar" id="ummisco.gama.feature.core.ui" version="0.0.0">
+      <category name="gama.core"/>
+   </feature>
+   <feature url="features/ummisco.gama.feature.core_1.7.0.qualifier.jar" id="ummisco.gama.feature.core" version="0.0.0">
+      <category name="gama.core"/>
+   </feature>
+   <feature url="features/ummisco.gama.feature.network_1.7.0.qualifier.jar" id="ummisco.gama.feature.network" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.serialize_0.0.0.jar" id="ummisco.gama.feature.serialize" version="0.0.0">
+   <feature url="features/ummisco.gama.feature.serialize_1.7.0.qualifier.jar" id="ummisco.gama.feature.serialize" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
    <category-def name="gama.core" label="Core plugins of GAMA"/>
