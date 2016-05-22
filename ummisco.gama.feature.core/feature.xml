@@ -2,7 +2,7 @@
 <feature
       id="ummisco.gama.feature.core"
       label="Core plugins of GAMA"
-      version="1.7.0.qualifier"
+      version="1.7.1.qualifier"
       provider-name="UMMISCO">
 
    <description url="http://gama-platform.org">
@@ -20,6 +20,27 @@
    <url>
       <update label="Gama 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
+
+   <plugin
+         id="irit.gaml.extensions.database"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="irit.gaml.extensions.test"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="msi.gama.application"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
 
    <plugin
          id="msi.gama.core"
@@ -49,10 +70,42 @@
          unpack="false"/>
 
    <plugin
+         id="msi.gama.lang.gaml.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
          id="msi.gama.processor"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="msi.gaml.extensions.fipa"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="simtools.gaml.extensions.traffic"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="msi.gaml.architecture.simplebdi"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="ummisco.gaml.extensions.maths"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>

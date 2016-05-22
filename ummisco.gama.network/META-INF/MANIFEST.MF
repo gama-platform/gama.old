@@ -10,6 +10,7 @@ Export-Package: ummisco.gama.mqtt.common,
  ummisco.gama.network.mqqt,
  ummisco.gama.network.skills,
  ummisco.gama.network.tcp,
+ ummisco.gama.network.test,
  ummisco.gama.network.udp,
  ummisco.gama.network.udp.old
 Require-Bundle: msi.gama.processor;bundle-version="1.4.0",

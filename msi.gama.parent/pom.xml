@@ -20,9 +20,6 @@
     <module>../ummisco.gama.feature.dependencies</module>
     <module>../ummisco.gama.feature.opengl.jogl2</module>
     <module>../ummisco.gama.feature.core</module>
-    <module>../ummisco.gama.feature.core.extensions</module>
-    <module>../ummisco.gama.feature.core.ui</module>
-    <module>../ummisco.gama.feature.core.opengl</module>
     <module>../ummisco.gama.feature.serialize</module>
     <module>../ummisco.gama.feature.network</module>    
     
