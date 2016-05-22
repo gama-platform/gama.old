@@ -272,9 +272,9 @@ openFile
       <feature id="ummisco.gama.feature.core" installMode="root"/>
       <feature id="ummisco.gama.feature.dependencies" installMode="root"/>
       <feature id="ummisco.gama.feature.models" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.extensions"/>
-      <feature id="ummisco.gama.feature.core.opengl"/>
-      <feature id="ummisco.gama.feature.core.ui"/>
+      <feature id="ummisco.gama.feature.core.extensions"  installMode="root"/>
+      <feature id="ummisco.gama.feature.core.opengl" installMode="root"/>
+      <feature id="ummisco.gama.feature.core.ui" installMode="root"/>
    </features>
 
    <configurations>

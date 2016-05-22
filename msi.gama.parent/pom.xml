@@ -18,7 +18,7 @@
     
     <module>../ummisco.gama.feature.models</module>
     <module>../ummisco.gama.feature.dependencies</module>
-    <module>../ummisco.gama.feature.opengl.jogl2</module>
+    
     <module>../ummisco.gama.feature.core</module>
     <module>../ummisco.gama.feature.core.extensions</module>
     <module>../ummisco.gama.feature.core.ui</module>
