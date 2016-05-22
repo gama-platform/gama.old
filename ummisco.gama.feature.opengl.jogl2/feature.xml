@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ummisco.gama.feature.opengl.jogl2"
-      label="OpenGL for GAMA with JOGL2"
+      label="OpenGL for GAMA"
       version="1.7.0.qualifier">
 
-   <description>
-      OpenGL extension for GAMA, which allows to use OpenGL technologies to display simulations.
+   <description url="http://www.gama-platform.org">
+      Extension for GAMA that allows to use OpenGL to display simulations.
    </description>
 
    <copyright url="http://www.example.com/copyright">

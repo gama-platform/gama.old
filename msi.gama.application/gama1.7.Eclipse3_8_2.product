@@ -255,7 +255,6 @@ openFile
    </plugins>
 
    <features>
-      <feature id="ummisco.gama.feature.jogl2.product"/>
       <feature id="org.eclipse.equinox.p2.core.feature"/>
       <feature id="org.eclipse.equinox.p2.extras.feature"/>
       <feature id="org.eclipse.equinox.p2.rcp.feature"/>
@@ -270,6 +269,10 @@ openFile
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.rcp"/>
+      <feature id="ummisco.gama.feature.core" installMode="root"/>
+      <feature id="ummisco.gama.feature.dependencies" installMode="root"/>
+      <feature id="ummisco.gama.feature.models" installMode="root"/>
+      <feature id="ummisco.gama.feature.opengl.jogl2" installMode="root"/>
    </features>
 
    <configurations>
@@ -279,12 +282,14 @@ openFile
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
-      <property name="version" value="1.7" />
       <property name="eclipse.buildId" value="${build.id}" />
+      <property name="version" value="1.7" />
    </configurations>
 
    <repositories>
-      <repository location="http://gama-platform.org/updates" enabled="true" />
+      <repository location="http://updates.gama-platform.org" enabled="true" />
+      <repository location="http://updates.gama-platform.org" enabled="true" />
+      <repository location="http://updates.gama-platform.org" enabled="true" />
    </repositories>
 
    <preferencesInfo>
