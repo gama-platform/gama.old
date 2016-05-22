@@ -24,10 +24,10 @@
    <feature url="features/ummisco.gama.feature.opengl.jogl2_0.0.0.jar" id="ummisco.gama.feature.opengl.jogl2" version="0.0.0">
       <category name="gama.core"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.network_1.7.0.qualifier.jar" id="ummisco.gama.feature.network" version="1.7.0.qualifier">
+   <feature url="features/ummisco.gama.feature.network_0.0.0.jar" id="ummisco.gama.feature.network" version="1.0.0">
       <category name="gama.optional"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.serialize_1.7.0.qualifier.jar" id="ummisco.gama.feature.serialize" version="1.7.0.qualifier">
+   <feature url="features/ummisco.gama.feature.serialize_0.0.0.jar" id="ummisco.gama.feature.serialize" version="1.0.0">
       <category name="gama.optional"/>
    </feature>
    <category-def name="gama.core" label="Core plugins of GAMA"/>
