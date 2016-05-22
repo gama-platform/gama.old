@@ -39,12 +39,17 @@ species cells skills: [moving3D] {
     }
 }
 
-experiment Display  type: gui {
-	output {
-		display View1 type:opengl background:rgb(10,40,55) {
-			species cells aspect: default;
-		}
-	}
+
+experiment Tuto3D  type: gui {
+  parameter "Initial number of cells: " var: nb_cells min: 1 max: 1000 category: "Cells" ;
+  output {
+    display View1 type:opengl background:rgb(10,40,55){
+      graphics "env"{
+      	draw cube(environmentSize) color: #black empty:true;	
+      }
+      species cells;
+    }
+  }  
 }
 
 
