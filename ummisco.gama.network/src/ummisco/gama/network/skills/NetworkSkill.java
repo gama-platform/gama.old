@@ -172,9 +172,6 @@ public class NetworkSkill  extends MessagingSkill {
 		Map<String,IConnector>  connections = getRegisteredServers(scope);
 		for(String servName:serverNames)
 			connections.get(servName).send(agent, destName, message);
-		
-				
-		
 	}
 
 	
@@ -190,8 +187,7 @@ public class NetworkSkill  extends MessagingSkill {
 				final GamaMailbox mailbox = (GamaMailbox) agt.getAttribute(MAILBOX_ATTRIBUTE);
 				for(ConnectorMessage msg:messages.get(agt))
 				{
-					System.out.println("cdsds dsqfdfsqf fdsqfdsq fdsqfs q fdsq "+msg.getContent(scope).getContents(scope));
-					mailbox.addMessage(scope, msg.getContent(scope));
+					mailbox.addMessage(scope, msg.getContents(scope));
 				}
 			}
 		}

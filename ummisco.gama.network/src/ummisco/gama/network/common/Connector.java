@@ -120,6 +120,7 @@ public abstract class Connector implements IConnector{
 			CompositeGamaMessage cmsg = new CompositeGamaMessage(sender.getScope(),content);
 			if(cmsg.getSender() instanceof IAgent)
 				cmsg.setSender(sender.getAttribute(INetworkSkill.NET_AGENT_NAME));
+			String mss = StreamConverter.convertObjectToStream(sender.getScope(),cmsg);
 			NetworkMessage msg = new NetworkMessage((String)(sender.getAttribute(INetworkSkill.NET_AGENT_NAME)),receiver,StreamConverter.convertObjectToStream(sender.getScope(),cmsg));
 			this.sendMessage(sender,receiver,NetworkMessage.packMessage(msg));
 		}

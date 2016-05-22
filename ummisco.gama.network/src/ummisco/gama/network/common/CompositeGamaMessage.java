@@ -18,10 +18,10 @@ public class CompositeGamaMessage extends GamaMessage {
 	public CompositeGamaMessage(IScope scope,GamaMessage message)
 	{
 		super(scope,message.getSender(),message.getReceivers(),message.getContents(scope));
-		this.contents = StreamConverter.convertObjectToStream(scope, (String)(message.getContents(scope)));
+		this.contents = StreamConverter.convertObjectToStream(scope, (message.getContents(scope)));
 		this.emissionTimeStamp = message.getEmissionTimestamp();
 		this.setUnread(true);
-		deserializeContent="";
+		deserializeContent=null;
 	}
 	
 	private CompositeGamaMessage(IScope scope, Object sender, Object receivers, Object content,Object deserializeContent,int timeStamp) {
@@ -33,11 +33,9 @@ public class CompositeGamaMessage extends GamaMessage {
 	
 	@Override
 	public Object getContents(IScope scope) {
-		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx " );
 		this.setUnread(false);
 		if(deserializeContent == null)
-			deserializeContent = StreamConverter.convertStreamToObject(scope, (String)(super.getContents(scope)));
-		System.out.println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx " + deserializeContent+"\n\n\n\n\n\n\n"+deserializeContent);
+			deserializeContent = StreamConverter.convertStreamToObject(scope, (String)contents);//StreamConverter.convertStreamToObject(scope, (String)(super.getContents(scope)));
 		return deserializeContent; 
 	}
 }

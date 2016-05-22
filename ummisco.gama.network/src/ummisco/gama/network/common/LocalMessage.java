@@ -32,7 +32,7 @@ public class LocalMessage implements ConnectorMessage {
 	}
 	
 	@Override
-	public GamaMessage getContent(IScope scope)
+	public GamaMessage getContents(IScope scope)
 	{
 		GamaMessage message = null;
 		if(internalMessage instanceof GamaMessage) {

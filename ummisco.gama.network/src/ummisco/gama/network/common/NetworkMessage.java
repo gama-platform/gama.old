@@ -44,7 +44,7 @@ class NetworkMessage  implements ConnectorMessage {
 		return isPlainMessage;
 	}
 	
-	public GamaMessage getContent(IScope scope)
+	public GamaMessage getContents(IScope scope)
 	{
 		return isPlainMessage?getPlainContent(scope):getCompositeContent(scope);
 	}
@@ -60,19 +60,13 @@ class NetworkMessage  implements ConnectorMessage {
 	{
 		Object messageContent = StreamConverter.convertStreamToObject(scope, content);
 		GamaMessage message = null;
-		
-		System.out.println("undsqfqdg gsfgkjfsdgosdfgkjsdfngkjdfsngklfsdglks "+messageContent);
-		
 		if(messageContent instanceof CompositeGamaMessage)
 			message = (GamaMessage) messageContent;
 		else
 			message = new GamaMessage(scope, from, to, messageContent);
 		message.hasBeenReceived(scope);
 		return message;
-		
 	}
-	
-	
 	
 	public static NetworkMessage unPackMessage(String sender,String data)
 	{

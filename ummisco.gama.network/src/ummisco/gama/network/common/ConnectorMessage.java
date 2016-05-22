@@ -7,6 +7,5 @@ public interface ConnectorMessage {
 	public String getSender();
 	public String getReceiver();
 	public boolean isPlainMessage();
-	public GamaMessage getContent(IScope scope);
-	//public GamaMessage buildGamaMessage(I)
+	public GamaMessage getContents(IScope scope);
 }

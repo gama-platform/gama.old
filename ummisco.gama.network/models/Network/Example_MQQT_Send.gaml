@@ -25,21 +25,28 @@ global {
 species NetworkingAgent skills:[network]{
 	string name; 
 	string dest;
-	reflex send
+	reflex send when: cycle mod 10  = 3
 	{
 		write "sending message ";
-		do send to:"send" contents:"This message is sent by " + name;
+		do send to:"send" contents:"This message a string" + name;
+	}
+	reflex send2 when: cycle mod 10  = 5
+	{
+		write "sending message ";
+		int a <- 0;
+		do send to:"send" contents:a;
+	}
+	
+
+	reflex send3 when: cycle mod 10  = 8
+	{
+		write "sending message ";
+		do send to:"send" contents:self;
 	}
 	
 	reflex receive
 	{
-		write "length mail box "  + length(mailbox);
-		if(length(mailbox)>0 )
-		{
-					write "one element " + one_of(mailbox).contents;
-						
-		}
-		
+		write "length mail box "  + mailbox collect(each.contents);
 	}
 }
 
