@@ -10,6 +10,7 @@ public class GamaNetworkException extends GamaRuntimeException {
 	public static String DISCONNECTION_FAILURE = "Cannot be disconnected!";
 	public static String SUBSCRIBE_FAILURE = "Cannot subscribe to the expected topic!";
 	public static String SENDING_FAILURE = "Cannot send the message to agent!";
+	public static String UNSUSCRIBE_FAILURE = "Cannot unsuscribe to topic!";
 	
 	protected GamaNetworkException(IScope scope, String s, boolean warning) {
 		super(scope, s, warning);
@@ -24,11 +25,15 @@ public class GamaNetworkException extends GamaRuntimeException {
 	{
 		return new GamaNetworkException(s, CONNECTION_FAILURE, false);
 	}
-	public static GamaNetworkException cannotSubscribeToTopic(IScope s)
+	public static GamaNetworkException cannotSubscribeToTopic(IScope s, String text)
 	{
-		return new GamaNetworkException(s, SUBSCRIBE_FAILURE, false);
+		return new GamaNetworkException(s, SUBSCRIBE_FAILURE + "\n"+text, false);
 	}
 	public static GamaNetworkException cannotSendMessage(IScope s, String destName)
+	{
+		return new GamaNetworkException(s, SENDING_FAILURE+" to "+destName, false);
+	}
+	public static GamaNetworkException cannotUnsuscribeToTopic(IScope s, String destName)
 	{
 		return new GamaNetworkException(s, SENDING_FAILURE+" to "+destName, false);
 	}

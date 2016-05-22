@@ -12,20 +12,36 @@
 package msi.gama.metamodel.shape;
 
 import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
+
 import java.lang.reflect.Field;
 import java.util.Map;
 
-import org.apache.commons.math3.geometry.euclidean.threed.*;
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+
 import com.vividsolutions.jts.algorithm.PointLocator;
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateFilter;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IList;
 import msi.gaml.operators.fastmaths.FastMath;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 25 ao�t 2010
@@ -582,7 +598,13 @@ public class GamaShape implements IShape /* , IContainer */ {
 		try {
 			return geometry.covers(g.getInnerGeometry());
 		} catch (TopologyException e) {
-			return geometry.buffer(0).covers(g.getInnerGeometry().buffer(0));
+			try {
+				return geometry.buffer(0).covers(g.getInnerGeometry().buffer(0));
+			}catch (TopologyException e2) {return false;}
+		} catch (AssertionFailedException e) {
+			try {
+				return geometry.buffer(0).covers(g.getInnerGeometry().buffer(0));
+			} catch (AssertionFailedException e2) {return false;}
 		}
 		// }
 		// return operations().covers(g);
@@ -627,9 +649,15 @@ public class GamaShape implements IShape /* , IContainer */ {
 		try {
 			return getInnerGeometry().intersects(g.getInnerGeometry());
 		} catch (TopologyException e) {
-			return getInnerGeometry().buffer(0).intersects(g.getInnerGeometry().buffer(0));
+			try {
+				return getInnerGeometry().buffer(0).intersects(g.getInnerGeometry().buffer(0));
+			}catch (TopologyException e2) {
+				return false;}
 		} catch (AssertionFailedException e) {
-			return getInnerGeometry().buffer(0).intersects(g.getInnerGeometry().buffer(0));
+			try {
+				return getInnerGeometry().buffer(0).intersects(g.getInnerGeometry().buffer(0));
+			} catch (AssertionFailedException e2) {
+				return false;}
 			
 		}
 		
@@ -644,9 +672,14 @@ public class GamaShape implements IShape /* , IContainer */ {
 		try {
 			return geometry.crosses(g.getInnerGeometry());
 		} catch (TopologyException e) {
-			return getInnerGeometry().buffer(0).crosses(g.getInnerGeometry().buffer(0));
+			try {
+				return getInnerGeometry().buffer(0).crosses(g.getInnerGeometry().buffer(0));
+			}catch (TopologyException e2) {return false;}
+		} catch (AssertionFailedException e) {
+			try {
+				return getInnerGeometry().buffer(0).crosses(g.getInnerGeometry().buffer(0));
+			} catch (AssertionFailedException e2) {return false;}
 		}
-
 	}
 
 	/**

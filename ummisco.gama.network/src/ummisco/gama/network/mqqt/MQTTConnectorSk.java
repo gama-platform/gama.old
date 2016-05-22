@@ -37,7 +37,7 @@ import ummisco.gama.serializer.factory.StreamConverter;
  * @author nicolas
  *
  */
-public class MQTTConnectorSk implements IConnector{
+public class MQTTConnectorSk {
 
 	//static final String destination = "topic/sensors/";
 	
@@ -127,7 +127,6 @@ public class MQTTConnectorSk implements IConnector{
 		case 2:{
 					if(topicSuscribingPending.size()>0)
 					{
-						//List<Topic> lst = new ArrayList<>();
 						String[] topics = new String[topicSuscribingPending.size()];
 						int[] qos = new int[topicSuscribingPending.size()];
 						int i = 0;
@@ -149,7 +148,7 @@ public class MQTTConnectorSk implements IConnector{
 	 }
 	}
 	
-	public void registerToGroup(IAgent agent, String groupName) 
+	public void joinAGroup(IAgent agent, String groupName) 
 	{
 		try {
 			groupManagment(1,agent,groupName);
@@ -188,7 +187,7 @@ public class MQTTConnectorSk implements IConnector{
 		}
 		if(this.sendConnection == null)
 			throw GamaNetworkException.cannotBeConnectedFailure(scope);
-		registerToGroup(agent, agentName);
+		joinAGroup(agent, agentName);
 		
 		LinkedList<Map<String,Object>> mp = receivedMessage.get(agent);
 		if(mp==null )
@@ -215,7 +214,6 @@ public class MQTTConnectorSk implements IConnector{
 		return box.isEmpty();
 
 	}
-	@Override
 	public void sendMessage(IAgent agt, String dest, Object  data) 
 	{
 		Map<String,Object> message = new HashMap<String, Object>();
@@ -235,13 +233,11 @@ public class MQTTConnectorSk implements IConnector{
 	}
 
 
-	@Override
 	public void connectToServer(IAgent agent, String dest, String server, int port) throws Exception {
 		this.connectToServer(agent, dest, server);
 	}
 
 
-	@Override
 	public void close(final IScope scope) throws GamaNetworkException {
 		try {
 			sendConnection.disconnect();
@@ -256,7 +252,6 @@ public class MQTTConnectorSk implements IConnector{
 	}
 
 
-	@Override
 	public void leaveTheGroup(IAgent agt, String groupName) {
 		ArrayList<IAgent> mygroup = this.boxFollower.get(groupName);
 		if(mygroup != null)

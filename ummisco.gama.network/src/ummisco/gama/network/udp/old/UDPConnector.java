@@ -23,7 +23,7 @@ import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.network.tcp.MultiThreadedSocketServer;
 import ummisco.gama.network.udp.MultiThreadedUDPServer;
 
-public class UDPConnector implements IConnector{
+public class UDPConnector /*implements IConnector */{
 
 	private boolean is_server = false;
 	private IScope myScope;
@@ -33,7 +33,6 @@ public class UDPConnector implements IConnector{
 		myScope = scope;
 	}
 	
-	@Override
 	public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
 		GamaMap<String, Object> m = GamaMapFactory.create();
 //		if(is_server){			
@@ -68,13 +67,11 @@ public class UDPConnector implements IConnector{
 		return m;
 	}
 
-	@Override
 	public boolean emptyMessageBox(IAgent agt) {
 		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public void connectToServer(IAgent agent, String dest, String server, int port) throws Exception {
 //		final Integer port = Cast.asInt(scope, scope.getAgentScope().getAttribute("port"));
 		if(is_server){
@@ -121,7 +118,6 @@ public class UDPConnector implements IConnector{
 			}
 		}
 	}
-	@Override
 	public void sendMessage(IAgent agent, String dest, Object data) {
 		if(is_server){
 			int port = 		(int) agent.getAttribute("port");
@@ -174,22 +170,5 @@ public class UDPConnector implements IConnector{
 		}
 	}
 
-	@Override
-	public void close(final IScope scope) throws GamaNetworkException {
-		
-	
-	}
-
-	@Override
-	public void registerToGroup(IAgent agt, String groupName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void leaveTheGroup(IAgent agt, String groupName) {
-		// TODO Auto-generated method stub
-		
-	}
 
 }

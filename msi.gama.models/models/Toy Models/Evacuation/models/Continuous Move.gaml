@@ -107,9 +107,7 @@ species people skills:[moving]{
 experiment main type: gui {
 	parameter "nb people" var: nb_people min: 1 max: 1000;
 	output {
-		display map type: opengl camera_pos: (cycle = 0) ? {world.location.x,-world.shape.height*1.5,70} : nil
-                        camera_look_pos:  (cycle = 0) ? {world.location.x,0,0} : nil    {
-			image '../images/soil.jpg';
+		display map type: opengl {
 			species building refresh: false;
 			species people;
 			graphics "exit" refresh: false {

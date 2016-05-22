@@ -25,10 +25,11 @@ import ummisco.gama.serializer.gamaType.converters.SavedAgentConverter;
 public abstract class Converters {
 
 	
-	private static Converter[] loadConverter(IScope scope)
+//	private static Converter[] loadConverter(IScope scope)
+	private static Converter[] loadConverter(ConverterScope cs)
 	{
-		ConverterScope cs = new ConverterScope(scope);
-		 Converter[] converters= new Converter[13];
+//		ConverterScope cs = new ConverterScope(scope);
+		 Converter[] converters= new Converter[12];
 		converters[0]= new GamaBasicTypeConverter(cs);
 		converters[1]=new GamaAgentConverterNetwork(cs);
 		converters[2]=new GamaListConverter(cs);
@@ -38,23 +39,24 @@ public abstract class Converters {
 		converters[6]=new GamaGraphConverter(cs);		
 		converters[7]=new GamaFileConverter(cs);
 
-		converters[8]=new GamaGraphConverter(cs);
-		converters[9]=new LogConverter();
-		converters[10]=new SavedAgentConverter(cs);
+		converters[8]=new LogConverter();
+		converters[9]=new SavedAgentConverter(cs);
 		
-		converters[11]= new GamaPopulationConverter(cs);
-		converters[12]= new GamaSpeciesConverter(cs);		
-		//converters[13]= new ComplexMessageConverter(cs);		
+		converters[10]= new GamaPopulationConverter(cs);
+		converters[11]= new GamaSpeciesConverter(cs);		
+		//converters[12]= new ComplexMessageConverter(cs);		
 		
 		return converters;
 
 	}
 	
 	
-	public static Converter[] converterFactory(IScope scope)
+//	public static Converter[] converterFactory(IScope scope)
+	public static Converter[] converterFactory(ConverterScope cs)
 	{
-		
-		return loadConverter(scope);
+//		return loadConverter(new ConverterScope(scope));
+//		return loadConverter(scope);
+		return loadConverter(cs);
 	}
 	
 }
