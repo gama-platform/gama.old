@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="ummisco.gama.feature.opengl.jogl2"
-      label="OpenGL for GAMA"
+      id="ummisco.gama.feature.core.opengl"
+      label="OpenGL displays for GAMA"
       version="1.7.0.qualifier">
 
    <description url="http://www.gama-platform.org">
@@ -19,12 +19,6 @@
    <url>
       <update label="GAMA 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
-
-   <plugin
-         id="simtools.gaml.extensions.physics"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
 
    <plugin
          id="ummisco.gama.opengl"

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Phisics
+Bundle-Name: Physics
 Bundle-SymbolicName: simtools.gaml.extensions.physics;singleton:=true
 Bundle-Version: 1.7.0.qualifier
 Require-Bundle: msi.gama.core;bundle-version="1.4.0",
