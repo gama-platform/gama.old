@@ -73,6 +73,18 @@ public class GamaColor extends Color implements IValue,
 			colors.put((String) array[i], color);
 			int_colors.put(color.getRGB(), color);
 		}
+		//A.G add the GAMA Color corresponding to the GAMA1.7 Logo
+		final GamaColor orange = new NamedGamaColor("gamaorange", new int[]{244,165,40,1});
+		colors.put("gamaorange", orange);
+		int_colors.put(orange.getRGB(), orange);
+		
+		final GamaColor red = new NamedGamaColor("gamared", new int[]{217,72,33,1});
+		colors.put("gamared", red);
+		int_colors.put(red.getRGB(), red);
+		
+		final GamaColor blue = new NamedGamaColor("gamablue", new int[]{22,94,147,1});
+		colors.put("gamablue", blue);
+		int_colors.put(blue.getRGB(), blue);
 	}
 
 	public static class NamedGamaColor extends GamaColor {
