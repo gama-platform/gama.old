@@ -364,6 +364,16 @@ public class GAMA {
 	}
 
 	/**
+	 * Allows to update all outputs after running an experiment
+	 * 
+	 * @param r
+	 */
+	public static final void runAndUpdateAll(final Runnable r) {
+		r.run();
+		getExperiment().refreshAllOutputs();
+	}
+
+	/**
 	 *
 	 * Simulation state related utilities for Eclipse GUI
 	 *

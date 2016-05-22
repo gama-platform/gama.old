@@ -314,8 +314,8 @@ public abstract class GamaViewPart extends ViewPart implements DisposeListener, 
 	@Override
 	public void changePartNameWithSimulation(final SimulationAgent agent) {
 		final String old = getPartName();
-		final int first = old.indexOf('(');
-		final int second = old.indexOf(')');
+		final int first = old.lastIndexOf('(');
+		final int second = old.lastIndexOf(')');
 		if ( first == -1 ) {
 			if ( agent.getPopulation().size() > 1 ) {
 				setPartName(old + " (" + agent.getName() + ")");

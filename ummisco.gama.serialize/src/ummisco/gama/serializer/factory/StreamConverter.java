@@ -10,7 +10,9 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMapFactory;
+import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
+import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 
 public abstract class StreamConverter {
 	//private static XStream dataStreamer;
@@ -32,7 +34,10 @@ public abstract class StreamConverter {
 	public static XStream loadAndBuild(IScope scope)
 	{
 		XStream dataStreamer = new XStream(new DomDriver());
-		Converter[] cnv = Converters.converterFactory(scope);
+		dataStreamer.setClassLoader(GamaClassLoader.getInstance());
+
+//		Converter[] cnv = Converters.converterFactory(scope);
+		Converter[] cnv = Converters.converterFactory(new ConverterScope(scope));
 		for(Converter c:cnv)
 		{
 			StreamConverter.registerConverter(dataStreamer,c);

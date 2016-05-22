@@ -58,7 +58,7 @@ public class GamaMessage implements IValue {
 
 	protected Object contents;
 
-	private final int emissionTimeStamp;
+	protected int emissionTimeStamp;
 
 	private int receptionTimeStamp;
 
@@ -171,6 +171,7 @@ public class GamaMessage implements IValue {
 		return emissionTimeStamp;
 	}
 
+	
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return StringUtils.toGaml(contents, includingBuiltIn);

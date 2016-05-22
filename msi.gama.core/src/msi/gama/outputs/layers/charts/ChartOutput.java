@@ -41,7 +41,9 @@ public abstract class ChartOutput {
 	boolean reverse_axes = false;
 
 	ChartOutput chartOutput = null;
-	GamaColor backgroundColor = null, axesColor = null, textColor = null;
+	Color backgroundColor = GamaColor.WHITE;
+	Color axesColor = null;
+	Color textColor = null;
 
 	String tickFontFace = Font.SANS_SERIF;
 	int tickFontSize = 10;

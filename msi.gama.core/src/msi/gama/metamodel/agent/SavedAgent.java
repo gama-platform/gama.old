@@ -77,11 +77,11 @@ public class SavedAgent {
 			if ( specVar.equals(IKeyword.SHAPE) ) {
 				// variables.put(specVar, geometry.copy());
 				// Changed 3/2/12: is it necessary to make the things below ?
-				variables.put(specVar,
-						new GamaShape(agent.getGeometry()));
-				
 //				variables.put(specVar,
-//					new GamaShape(((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry()));
+//						new GamaShape(agent.getGeometry()));
+				
+				variables.put(specVar,
+					new GamaShape(((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry()));
 				continue;
 			}
 			variables.put(specVar, species.getVar(specVar).value(scope, agent));
