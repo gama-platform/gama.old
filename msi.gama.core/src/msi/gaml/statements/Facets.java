@@ -11,35 +11,55 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
+import java.util.Map;
+import java.util.Set;
+
 import gnu.trove.function.TObjectFunction;
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.*;
-import java.util.*;
-import msi.gama.common.interfaces.*;
+import gnu.trove.procedure.TObjectObjectProcedure;
+import gnu.trove.procedure.TObjectProcedure;
+import msi.gama.common.interfaces.IGamlable;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.BasicExpressionDescription;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.LabelExpressionDescription;
+import msi.gaml.descriptions.StringBasedExpressionDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 27 ao�t 2010
  * 
- * Represents a Map of Facet objects. From there, text, tokens and values of facets can be
- * retrieved.
+ * Represents a Map of Facet objects. From there, text, tokens and values of
+ * facets can be retrieved.
  * 
  */
-public class Facets extends THashMap<String, IExpressionDescription> implements IGamlable { // See if we can pack this class even further
+public class Facets extends THashMap<String, IExpressionDescription> implements IGamlable { // See
+																							// if
+																							// we
+																							// can
+																							// pack
+																							// this
+																							// class
+																							// even
+																							// further
 
-	// Strings as UTF8 encoded bytes ? Using the HashCode to store strings directly ?
+	// Strings as UTF8 encoded bytes ? Using the HashCode to store strings
+	// directly ?
 
-	public Facets(final String ... strings) {
-		setUp(strings.length / 2);
-		int index = 0;
-		if ( !(strings.length % 2 == 0) ) {
-			index = 1;
-		}
-		for ( ; index < strings.length; index += 2 ) {
-			put(strings[index], StringBasedExpressionDescription.create(strings[index + 1]));
+	public Facets(final String... strings) {
+		if (strings != null) {
+			setUp(strings.length / 2);
+			int index = 0;
+			if (!(strings.length % 2 == 0)) {
+				index = 1;
+			}
+			for (; index < strings.length; index += 2) {
+				put(strings[index], StringBasedExpressionDescription.create(strings[index + 1]));
+			}
 		}
 	}
 
@@ -64,31 +84,35 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	}
 
 	public String getLabel(final String key) {
-		IExpressionDescription f = get(key);
-		if ( f == null ) { return null; }
+		final IExpressionDescription f = get(key);
+		if (f == null) {
+			return null;
+		}
 		return StringUtils.toJavaString(f.toString());
 	}
 
-	public IExpression getExpr(final String ... keys) {
-		IExpressionDescription desc = getDescr(keys);
+	public IExpression getExpr(final String... keys) {
+		final IExpressionDescription desc = getDescr(keys);
 		return desc == null ? null : desc.getExpression();
 	}
 
-	public IExpressionDescription getDescr(final String ... keys) {
-		for ( String s : keys ) {
-			IExpressionDescription f = get(s);
-			if ( f != null ) { return f; }
+	public IExpressionDescription getDescr(final String... keys) {
+		for (final String s : keys) {
+			final IExpressionDescription f = get(s);
+			if (f != null) {
+				return f;
+			}
 		}
 		return null;
 	}
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		StringBuilder sb = new StringBuilder(size() * 20);
-		for ( final Map.Entry<String, IExpressionDescription> e : entrySet() ) {
-			if ( e != null && e.getKey() != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
-				IExpressionDescription ed = e.getValue();
-				String exprString = ed == null ? "N/A" : ed.serialize(includingBuiltIn);
+		final StringBuilder sb = new StringBuilder(size() * 20);
+		for (final Map.Entry<String, IExpressionDescription> e : entrySet()) {
+			if (e != null && e.getKey() != null && !e.getKey().equals(IKeyword.KEYWORD)) {
+				final IExpressionDescription ed = e.getValue();
+				final String exprString = ed == null ? "N/A" : ed.serialize(includingBuiltIn);
 				sb.append(e.getKey()).append(": ").append(exprString).append(" ");
 			}
 		}
@@ -100,8 +124,10 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	}
 
 	public IType getTypeDenotedBy(final String key, final IDescription context, final IType noType) {
-		IExpressionDescription f = get(key);
-		if ( f == null ) { return noType; }
+		final IExpressionDescription f = get(key);
+		if (f == null) {
+			return noType;
+		}
 		return f.getDenotedType(context);
 	}
 
@@ -110,8 +136,8 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	}
 
 	public IExpressionDescription put(final String key, final IExpression expr) {
-		IExpressionDescription result = get(key);
-		if ( result != null ) {
+		final IExpressionDescription result = get(key);
+		if (result != null) {
 			result.setExpression(expr);
 			return result;
 		}
@@ -119,7 +145,9 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	}
 
 	/**
-	 * Adds the facet without performing any check, assuming it is not present in the map
+	 * Adds the facet without performing any check, assuming it is not present
+	 * in the map
+	 * 
 	 * @param key
 	 * @param expr
 	 * @return
@@ -131,9 +159,9 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 
 	@Override
 	public IExpressionDescription put(final String key, final IExpressionDescription expr) {
-		IExpressionDescription previous = get(key);
-		if ( previous != null ) {
-			if ( previous.getTarget() != null && expr.getTarget() == null ) {
+		final IExpressionDescription previous = get(key);
+		if (previous != null) {
+			if (previous.getTarget() != null && expr.getTarget() == null) {
 				expr.setTarget(previous.getTarget());
 			}
 		}
@@ -141,21 +169,20 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	}
 
 	public boolean equals(final String key, final String o) {
-		IExpressionDescription f = get(key);
+		final IExpressionDescription f = get(key);
 		return f == null ? o == null : f.equalsString(o);
 	}
 
-	static TObjectFunction<IExpressionDescription, IExpressionDescription> cleanCopy =
-		new TObjectFunction<IExpressionDescription, IExpressionDescription>() {
+	static TObjectFunction<IExpressionDescription, IExpressionDescription> cleanCopy = new TObjectFunction<IExpressionDescription, IExpressionDescription>() {
 
-			@Override
-			public IExpressionDescription execute(final IExpressionDescription value) {
-				return value.cleanCopy();
-			}
-		};
+		@Override
+		public IExpressionDescription execute(final IExpressionDescription value) {
+			return value.cleanCopy();
+		}
+	};
 
 	public Facets cleanCopy() {
-		Facets result = new Facets(this);
+		final Facets result = new Facets(this);
 		result.transformValues(cleanCopy);
 		return result;
 	}

@@ -22,6 +22,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.factories.DescriptionFactory;
 
 /**
  * The Class OutputManager.
@@ -40,6 +41,10 @@ import msi.gaml.descriptions.IDescription;
 				@example(value = "}", isExecutable = false) }) }, see = { IKeyword.DISPLAY, IKeyword.MONITOR,
 						IKeyword.INSPECT, IKeyword.OUTPUT_FILE, IKeyword.LAYOUT })
 public class SimulationOutputManager extends AbstractOutputManager {
+
+	public static SimulationOutputManager createEmpty() {
+		return new SimulationOutputManager(DescriptionFactory.create(IKeyword.OUTPUT, null));
+	}
 
 	public SimulationOutputManager(final IDescription desc) {
 		super(desc);

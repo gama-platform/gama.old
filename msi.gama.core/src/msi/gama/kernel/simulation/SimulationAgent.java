@@ -505,6 +505,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	 * @param inspectDisplayOutput
 	 */
 	public void addOutput(final IOutput output) {
+		if (outputs == null) {
+
+		}
 		outputs.addOutput(output);
 	}
 

@@ -98,11 +98,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// private final List<SimpleBdiPlanStatement> _plans = new
 	// ArrayList<SimpleBdiPlanStatement>();
 	private final List<PerceiveStatement> _perceptions = new ArrayList<PerceiveStatement>();
-
+	
+	
 	// WARNING
 	// AD: These values depend on the scope (i.e. the agent)
-	// An architecture should be stateless and stock the scope dependent values
-	// in the
+	// An architecture should be stateless and stock the scope dependent values in the 
 	// agent(s).
 	private final List<BDIPlan> _plans = new ArrayList<BDIPlan>();
 	private int _plansNumber = 0;

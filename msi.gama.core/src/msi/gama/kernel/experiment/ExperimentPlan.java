@@ -126,9 +126,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	private FileOutput log;
 	private boolean isHeadless;
 	private final boolean isMulticore;
-	
-	private String experimentType;
-	
+
+	private final String experimentType;
+
 	@Override
 	public boolean isHeadless() {
 		return GAMA.isInHeadLessMode() || isHeadless;
@@ -300,7 +300,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			}
 		}
 		if (originalSimulationOutputs == null) {
-			originalSimulationOutputs = new SimulationOutputManager(null);
+			originalSimulationOutputs = SimulationOutputManager.createEmpty();
 		}
 		if (experimentOutputs == null) {
 			experimentOutputs = new ExperimentOutputManager(null);
@@ -308,6 +308,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		if (fileOutputDescription != null) {
 			createOutput(fileOutputDescription);
 		}
+
 	}
 
 	private void createOutput(final BatchOutput output) throws GamaRuntimeException {
@@ -369,10 +370,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		return exploration != null;
 	}
 
+	@Override
 	public boolean isMemorize() {
 		return IKeyword.MEMORIZE.equals(getExperimentType());
 	}
-	
+
 	@Override
 	public boolean isGui() {
 		return true;
@@ -393,11 +395,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		checkGetParameter(name).setValue(scope, val);
 	}
 
-	public void setParameterValueByTitle(final IScope scope, final String name, final Object val) throws GamaRuntimeException {
+	public void setParameterValueByTitle(final IScope scope, final String name, final Object val)
+			throws GamaRuntimeException {
 		checkGetParameterByTitle(name).setValue(scope, val);
 	}
 
-	
 	// @Override
 	public Object getParameterValue(final String name) throws GamaRuntimeException {
 		return checkGetParameter(name).value(scope);
@@ -409,16 +411,14 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		return getParameter(name) != null;
 	}
 
-	public IParameter.Batch getParameterByTitle(final String title)
-	{
-		for(IParameter p:parameters.values())
-		{
-			if(p.getTitle().equals(title) && p instanceof IParameter.Batch)
-				return (IParameter.Batch)p;
+	public IParameter.Batch getParameterByTitle(final String title) {
+		for (final IParameter p : parameters.values()) {
+			if (p.getTitle().equals(title) && p instanceof IParameter.Batch)
+				return (IParameter.Batch) p;
 		}
 		return null;
 	}
-	
+
 	public IParameter.Batch getParameter(final String name) {
 		final IParameter p = parameters.get(name);
 		if (p != null && p instanceof IParameter.Batch) {
@@ -446,6 +446,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 		return v;
 	}
+
 	protected IParameter.Batch checkGetParameter(final String name) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameter(name);
 		if (v == null) {
@@ -634,7 +635,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public IOutputManager getOriginalSimulationOutputs() {
 		return originalSimulationOutputs;
 	}
-	
+
 	@Override
 	public String getExperimentType() {
 		return experimentType;

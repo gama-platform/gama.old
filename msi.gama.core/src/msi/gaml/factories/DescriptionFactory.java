@@ -242,6 +242,11 @@ public class DescriptionFactory {
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
+			final ChildrenProvider children) {
+		return create(getFactory(keyword), keyword, superDesc, children, new Facets());
+	}
+
+	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
 			final ChildrenProvider children, final String... facets) {
 		return create(getFactory(keyword), keyword, superDesc, children, new Facets(facets));
 	}
