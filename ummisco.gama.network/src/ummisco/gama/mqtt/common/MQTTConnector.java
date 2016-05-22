@@ -8,7 +8,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
-public class MQTTConnector {
+public final class MQTTConnector {
 	//public static String DEFAULT_USER = env("ACTIVEMQ_USER", "admin");
 	//public static String DEFAULT_PASSWORD = env("ACTIVEMQ_PASSWORD", "password");
 	public static String DEFAULT_USER = env("ACTIVEMQ_USER", "guest");

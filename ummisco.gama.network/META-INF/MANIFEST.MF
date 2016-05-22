@@ -5,8 +5,14 @@ Bundle-Name: Network
 Bundle-SymbolicName: ummisco.gama.network;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: ummisco.gama.network.common,
- ummisco.gama.network.skills
+Export-Package: ummisco.gama.mqtt.common,
+ ummisco.gama.network.common,
+ ummisco.gama.network.mqqt,
+ ummisco.gama.network.skills,
+ ummisco.gama.network.tcp,
+ ummisco.gama.network.test,
+ ummisco.gama.network.udp,
+ ummisco.gama.network.udp.old
 Require-Bundle: msi.gama.processor;bundle-version="1.4.0",
  msi.gama.core;bundle-version="1.7.0",
  ummisco.gama.serialize;bundle-version="1.7.0"

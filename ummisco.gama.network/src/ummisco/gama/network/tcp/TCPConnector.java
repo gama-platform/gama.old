@@ -6,6 +6,7 @@ import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import msi.gama.metamodel.agent.IAgent;
@@ -23,11 +24,12 @@ import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
+import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.GamaNetworkException;
 import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.skills.INetworkSkill;
 
-public class TCPConnector implements IConnector{
+public class TCPConnector /*implements IConnector*/{
 	private boolean is_server = false;
 	private IScope myScope;
 	
@@ -64,8 +66,8 @@ public class TCPConnector implements IConnector{
 		}
 	}
 	
-	@Override
-	public void connectToServer(IAgent agent, String dest, String server, int port) throws Exception {
+
+/*	public void connectToServer(IAgent agent, String dest, String server, int port) throws Exception {
 
 		if(is_server){
 			primOpenSocket(agent.getScope());
@@ -95,8 +97,8 @@ public class TCPConnector implements IConnector{
 		}
 //		return "";
 	}
+*/
 
-	@Override
 	public void sendMessage(IAgent agent, String dest, Object data) {
 		if(is_server){
 			primSendToClient(agent, dest, data);
@@ -105,16 +107,14 @@ public class TCPConnector implements IConnector{
 		}
 	}
 
-	@Override
-	public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
+	/*public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
 		if(is_server){
 			return primGetFromClient(agt.getScope());
 		}else{
 			return primGetFromServer(agt.getScope());
 		}
 	}
-
-	@Override
+*/
 	public boolean emptyMessageBox(IAgent agt) {
 //		GamaMap<String, Object> m=GamaMapFactory.create();
 //		agt.setAttribute("messages",m);
@@ -281,26 +281,4 @@ public class TCPConnector implements IConnector{
 			sersock.interrupt();
 		}
 	}
-
-	@Override
-	public void close(final IScope scope) throws GamaNetworkException {
-	// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void registerToGroup(IAgent agt, String groupName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void leaveTheGroup(IAgent agt, String groupName) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-
-
 }
