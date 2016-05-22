@@ -8,12 +8,14 @@
 model Tuto3D
 
 global {
-	geometry shape <- cube(100);
-	init { 
-		create cells number: 1000{ 
-			location <- {rnd(100), rnd(100), rnd(100)};	
-		} 
-	}  
+  int nb_cells <-100;
+  int environmentSize <-100;
+  geometry shape <- cube(environmentSize);	
+  init { 
+    create cells number: nb_cells { 
+      location <- {rnd(environmentSize), rnd(environmentSize), rnd(environmentSize)};       
+    } 
+  }  
 } 
     
 species cells skills: [moving3D] {  
@@ -30,7 +32,7 @@ species cells skills: [moving3D] {
     }
 		
 	aspect default {
-		draw sphere(10) color:#orange;
+		draw sphere(environmentSize*0.01) color:#orange;
 		loop pp over: neighbors {
 			draw line([self.location,pp.location]);
 		}	
