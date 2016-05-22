@@ -11,6 +11,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
+import ummisco.gama.serializer.factory.StreamConverter;
 import ummisco.gama.serializer.gamaType.converters.*;
 
 public class ReverseOperators {
@@ -59,8 +60,10 @@ public class ReverseOperators {
 	public static String serialize(final IScope scope, final Object o) {
 		System.out.println("**** Serialize Object ****");	
 
-		XStream xstream = newXStream(new ConverterScope(scope));
-		return xstream.toXML(o);
+//		XStream xstream = newXStream(new ConverterScope(scope));
+//		return xstream.toXML(o);
+		return StreamConverter.convertObjectToStream(scope, o);
+
 	}	
 	
 	@operator(value = "unserialize")
