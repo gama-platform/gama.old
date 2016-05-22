@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ummisco.gama.feature.core"
-      label="Core feature"
+      label="Core plugins of GAMA"
       version="1.7.1.qualifier"
       provider-name="UMMISCO">
 
-   <description url="http://www.example.com/description">
-      The core of the gama-platform, which does not include the sample models.
+   <description url="http://gama-platform.org">
+      The core of the GAMA Modeling and Simulation Platform
    </description>
 
    <copyright url="http://www.example.com/copyright">

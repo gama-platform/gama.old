@@ -6,8 +6,8 @@
       provider-name="UMMISCO"
       colocation-affinity="ummisco.gama.feature.core">
 
-   <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+   <description url="http://www.gama-platform.org">
+      The library of models of GAMA 1.7.x
    </description>
 
    <copyright url="http://www.example.com/copyright">

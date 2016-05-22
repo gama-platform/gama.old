@@ -15,7 +15,7 @@
     <module>../msi.gama.lang.gaml</module>
     <module>../msi.gama.lang.gaml.ui</module>
 
-    <module>../ummisco.gama.feature.jogl2.product</module>
+    
     <module>../ummisco.gama.feature.models</module>
     <module>../ummisco.gama.feature.dependencies</module>
     <module>../ummisco.gama.feature.opengl.jogl2</module>
@@ -46,7 +46,7 @@
     <module>../simtools.graphlayout.feature</module>
     
     <module>../ummisco.gama.feature.audio</module>
-    <module>../ummisco.gama.feature.product</module>
+    
     <module>../ummisco.gama.feature.stats</module>
     
     <module>../ummisco.gama.opengl</module>
