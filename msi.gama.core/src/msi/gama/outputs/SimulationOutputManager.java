@@ -43,7 +43,7 @@ import msi.gaml.factories.DescriptionFactory;
 public class SimulationOutputManager extends AbstractOutputManager {
 
 	public static SimulationOutputManager createEmpty() {
-		return new SimulationOutputManager(DescriptionFactory.create(IKeyword.OUTPUT, null));
+		return new SimulationOutputManager(DescriptionFactory.create(IKeyword.OUTPUT, (String[]) null));
 	}
 
 	public SimulationOutputManager(final IDescription desc) {

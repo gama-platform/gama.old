@@ -22,6 +22,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 
 /**
@@ -48,6 +49,10 @@ import msi.gaml.operators.Cast;
 				@example(value = "		}", isExecutable = false), @example(value = "	}", isExecutable = false),
 				@example(value = "}", isExecutable = false) }) })
 public class ExperimentOutputManager extends AbstractOutputManager {
+
+	public static ExperimentOutputManager createEmpty() {
+		return new ExperimentOutputManager(DescriptionFactory.create(IKeyword.PERMANENT, (String[]) null));
+	}
 
 	private IScope scope;
 	private int layout = 0;/*

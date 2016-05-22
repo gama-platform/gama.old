@@ -303,7 +303,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			originalSimulationOutputs = SimulationOutputManager.createEmpty();
 		}
 		if (experimentOutputs == null) {
-			experimentOutputs = new ExperimentOutputManager(null);
+			experimentOutputs = ExperimentOutputManager.createEmpty();
 		}
 		if (fileOutputDescription != null) {
 			createOutput(fileOutputDescription);
