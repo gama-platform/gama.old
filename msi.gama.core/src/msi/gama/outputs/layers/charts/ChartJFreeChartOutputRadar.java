@@ -222,10 +222,12 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		ArrayList<Double> SValues=dataserie.getSValues(scope);
 		if (CValues.size()>0)
 		{
-			// TODO Hack to speed up, change!!!
-		for(int i=0; i<CValues.size(); i++)
+			int deb=0;
+			if (this.usexrangeinterval && CValues.size()>this.xrangeinterval)
+				deb=CValues.size()-(int)this.xrangeinterval;
+		for(int i=deb; i<CValues.size(); i++)
 		{
-				serie.addValue(YValues.get(i), serieid, CValues.get(i)); 
+				serie.addValue(YValues.get(i), serieid, CValues.get(i-deb)); 
 //				((ExtendedCategoryAxis)domainAxis).addSubLabel(CValues.get(i), serieid);;
 		}
 		}
@@ -241,7 +243,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
 	public void resetAxes(IScope scope)
 	{
-		
+
 	}
 
 	
@@ -310,8 +312,13 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		{
 	//		pp.getDomainAxis().setLabel(xlabel);				
 		}
+
+        if (this.series_label_position.equals("none"))
+			pp.setLabelPaint(this.backgroundColor);				
+		
 		
 	}
+	
 	
 	protected void initRenderer(IScope scope) {
 		
