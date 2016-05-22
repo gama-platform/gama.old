@@ -75,7 +75,7 @@ public class Application implements IApplication {
 		 "\n      -p        -- start piplines to interact with another framework" +
 		 "\n" +
 		 "\n" +
-		 " sh ./gama-headless.sh -xml gamlFile xmlOutputFile\n" +
+		 " sh ./gama-headless.sh -xml experimentName gamlFile xmlOutputFile\n" +
 		 "\n      build an xml parameter file from a model" +
 		 "\n" +
 		 "\n";
