@@ -509,7 +509,7 @@ public abstract class AbstractScope implements IScope {
 			} else if (statement instanceof RemoteSequence) {
 				((RemoteSequence) statement).setMyself(caller);
 				// We delegate to the remote scope
-				result[0] = statement.executeOn(this);			
+				result[0] = statement.executeOn(this);
 				return true;
 			}
 			result[0] = statement.executeOn(this);
@@ -835,6 +835,9 @@ public abstract class AbstractScope implements IScope {
 		final boolean pushed = push(a);
 		try {
 			a.getPopulation().updateVariables(this, a);
+
+		} catch (final GamaRuntimeException g) {
+			GAMA.reportAndThrowIfNeeded(this, g, true);
 		} finally {
 			if (pushed) {
 				pop(a);
