@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
@@ -24,7 +25,9 @@ public class WorldExpression extends VariableExpression {
 
 	@Override
 	public Object value(final IScope scope) {
-		return scope.getSimulationScope();
+//		return scope.getSimulationScope();
+		IAgent sc=scope.getAgentScope();
+		return sc.getScope().getRoot().getScope().getSimulationScope();
 	}
 
 	/**
