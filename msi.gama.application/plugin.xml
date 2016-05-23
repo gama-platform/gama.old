@@ -1521,6 +1521,38 @@
             </and>
          </activeWhen>
       </handler>
+      <handler
+            class="msi.gama.gui.swt.commands.HelpHandler"
+            commandId="org.eclipse.ui.help.displayHelp">
+         <activeWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchWindow">
+               </instanceof>
+            </with>
+         </activeWhen>
+               </handler>
+      <handler
+            class="msi.gama.gui.swt.commands.HelpHandler"
+            commandId="org.eclipse.ui.help.dynamicHelp">
+         <activeWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchWindow">
+               </instanceof>
+            </with>
+         </activeWhen>
+         <enabledWhen>
+            <with
+                  variable="activeWorkbenchWindow">
+               <instanceof
+                     value="org.eclipse.ui.IWorkbenchWindow">
+               </instanceof>
+            </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.services">

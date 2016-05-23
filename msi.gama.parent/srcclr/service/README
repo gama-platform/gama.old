@@ -1,0 +1,9 @@
+This directory contains files for deploying srcclr as a
+linux service.  It allows you to run a srcclr agent
+continueously in the background.  When a callback from
+github (or other SCM tool) via a webhook, the SourceClear
+platform will automatically kick off a scan.
+
+Details on setting up srcclr to run as service are
+found on https://srcclr.help
+

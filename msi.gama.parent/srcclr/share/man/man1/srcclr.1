@@ -1,0 +1,243 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "SRCCLR" "1" "May 2016" "SourceClear, Inc" ""
+.
+.SH "NAME"
+\fBsrcclr\fR \- the command\-line interface to SourceClear functionality
+.
+.SH "SYNOPSIS"
+\fBsrcclr\fR [\fIGLOBAL OPTIONS\fR] \fBactivate\fR
+.
+.br
+\fBsrcclr\fR [\fIGLOBAL OPTIONS\fR] \fBconfig\fR \fICONFIG OPTIONS\fR
+.
+.br
+\fBsrcclr\fR [\fIGLOBAL OPTIONS\fR] \fBlist\fR [\fILIST OPTIONS\fR]
+.
+.br
+\fBsrcclr\fR [\fIGLOBAL OPTIONS\fR] \fBscan\fR [\fISCAN OPTIONS\fR]
+.
+.br
+\fBsrcclr\fR [\fIGLOBAL OPTIONS\fR] \fBserver\fR
+.
+.br
+\fBsrcclr\fR [\fIGLOBAL OPTIONS\fR] \fBtest\fR [\fITEST OPTIONS\fR]
+.
+.SH "DESCRIPTION"
+The srcclr(1) command, herein referred to as "CLI", permits scanning Git repositories and interacting with the SourceClear API
+.
+.SH "OPTIONS"
+For each of the following sections, the option and value will be shown as separated by a space, however they also accept the equals sign (\fB=\fR) if you prefer that syntax\.
+.
+.SS "GLOBAL OPTIONS"
+These are options that one may provide before the verb, in order to alter the behaviors that are not verb specific\.
+.
+.TP
+\fB\-\-config\fR \fICONFIG\-FILENAME\fR
+Read in an additional config file that supplements \- not replaces \- the default one, described in \fICONFIG FILE\fR\.
+.
+.TP
+\fB\-\-help\fR
+Display a summary of the available program options and each verb offered, such as \fBconfig\fR or \fBscan\fR, for example\.
+.
+.TP
+\fB\-\-insecure\fR
+Suppress the file permission check for every config file provided, which includes the default one\. This permits using the product when writing the config file may not be under your direct control, such as in a continuous integration situation, but it is on a machine which you trust and are willing to relax the filesystem permission requirements\.
+.
+.TP
+\fB\-\-version\fR
+Print the current version and exit\.
+.
+.SS "OPTIONS FOR THE ACTIVATE VERB"
+The "activate" verb does not accept any command\-line options, rather it will read the activation token (as provided by the SourceClear web application) from the interactive terminal
+.
+.SS "OPTIONS FOR THE CONFIG VERB"
+.
+.TP
+\fB\-\-get\fR \fICONFIG\-KEY\fR
+Write to standard output the value of the named configuration key (as one would find in the \fICONFIG FILE\fR\.
+.
+.IP
+If the provided \fICONFIG\-KEY\fR is not recognized, the CLI will emit an error message to that effect and exit with status 1\.
+.
+.TP
+\fB\-\-list\fR
+Print all known configuration keys as well as the value associated with each one, with the key and the value separated by an equals sign (\fB=\fR)\.
+.
+.SS "OPTIONS FOR THE LIST VERB"
+When no options are provided, the "list" verb will interrogate GitHub to discover every repository that is visible to the personal access token (as set in the \fBscmToken\fR configuration field), encompassing both the personal ones as well as those which belong to any organization visible to that key\.
+.
+.P
+The "list" verb will emit textual information about those repositories to standard output and then exit\.
+.
+.TP
+\fB\-\-only\-orgs\fR
+Interrogates only the GitHub organizations identified by the provided personal account token (as set in the \fBscmToken\fR configuration field)
+.
+.TP
+\fB\-\-only\-user\fR
+Skips any repositories which belong to organizations, listing only those which belong to the user account specifically
+.
+.P
+It is an error condition to specify both the \fBonly\-user\fR and the \fBonly\-orgs\fR options simultaneously\.
+.
+.SS "OPTIONS FOR THE SCAN VERB"
+Unless directed otherwise, \fBscan\fR will examine the current directory\. One may alter this behavior by specifying the filesystem path to an existing project, or providing the \fB\-\-url\fR option to scan a remote source repository\.
+.
+.TP
+\fB\-\-install\-first\fR
+Causes CLI to request "installation" of the project from its build system before proceeding with the scan\. The definition of "installation" changes per build system\.
+.
+.TP
+\fB\-\-list\-libs\fR
+By passes the normal summary view at the end of the scan process, choosing only to emit the direct and transitive library dependencies as identified by the build process inspection system\. The libraries are marked as "Direct" or "Transitive" and the transitive ones are indented under their direct owners by the tab character\.
+.
+.TP
+\fB\-\-no\-upload\fR
+Bypasses the normal behavior of storing the matched library results in your SourceClear account for ease of viewing in the Report View\.
+.
+.IP
+This option may be helpful if you wish to casually examine a repository, but do not choose to view more detailed information about the findings\.
+.
+.TP
+\fB\-\-skip\-compile\fR
+Causes CLI to not request "compilation" of the project from its build system before proceeding with the scan\. The definition of "compilation" changes per build system\.
+.
+.TP
+\fB\-\-url\fR
+Clone the provided source repository URL into a temporary directory and then execute the scan upon that directory\. The temporary copy of the project will be deleted after the scan process completes\.
+.
+.SS "OPTIONS FOR THE SERVER VERB"
+The "server" verb does not require any options, as it starts up the CLI in a mode where it accepts commands sent down from the SourceClear API, such as to scan a repository of your selection, or to discover all of the repositories the personal access token can see, so they may be manipulated by the SourceClear web application\.
+.
+.SS "OPTIONS FOR THE TEST VERB"
+Without any other options provided, the \fBtest\fR verb will gather relevant executable paths and versions, then print a summary to standard out and exit\. The options listed below are available for a more comprehensive system test, which will include the complete scan lifecycle for each of the supported build systems\.
+.
+.P
+Because they are complete lifecycle tests, a valid configuration file, along with a working \fBuserToken\fR therein, are required for the comprehensive tests\.
+.
+.TP
+\fB\-\-gem\fR
+Clones a known\-good Ruby project from the Internet and executes a scan upon it\.
+.
+.TP
+\fB\-\-gradle\fR
+Clones a known\-good Gradle project from the Internet and executes a scan upon it\.
+.
+.TP
+\fB\-\-maven\fR
+Clones a known\-good Maven project from the Internet and executes a scan upon it\.
+.
+.TP
+\fB\-\-npm\fR
+Clones a known\-good npm project from the Internet and executes a scan upon it\.
+.
+.TP
+\fB\-\-pip\fR
+Clones a known\-good Python project from the Internet and executes a scan upon it\.
+.
+.SH "EXIT STATUS"
+.
+.TP
+\fB0\fR
+Success, generally speaking\.
+.
+.TP
+\fB1\fR
+Failure, hopefully accompanied by a helpful message indicating what went wrong and how one can correct the problem\.
+.
+.SH "FILES"
+This section describes the kinds of files used by \fBsrcclr\fR\.
+.
+.SS "CONFIG FILE"
+The srcclr(1) command expects a configuration file in one of the following locations, and they are evaluated in this order:
+.
+.IP "1." 4
+\fB/etc/srcclr/agent\.yml\fR
+.
+.IP "2." 4
+\fB$HOME/\.srcclr/agent\.yml\fR
+.
+.IP "3." 4
+the \fB$SRCCLR_CONFIG\fR environment variable (see \fIENVIRONMENT VARIABLES\fR)
+.
+.IP "4." 4
+any additional configuration files specified by \fB\-\-config\fR, and they are evaluated in the order they are specified on the command line
+.
+.IP "" 0
+.
+.P
+If there is not yet a configuration file, one may obtain one via the "activate" verb, in conjunction with the "New Agent" page on the SourceClear web application\.
+.
+.P
+The srcclr(1) configuration file is in YaML format, as defined by the YAML website \fIhttp://yaml\.org/\fR This format is exceptionally rich, but the CLI uses only a few features and benefits greatly from the ability to have in\-line comments
+.
+.P
+\fITop level keys\fR
+.
+.TP
+\fBagentAuthorization\fR
+The authorization string provided by the SourceClear API during the activation process, which uniquely identifies the Agent on your Team
+.
+.TP
+\fBheartbeatIntervalMs\fR
+\fIOptional\fR The duration in milliseconds between transmission of heartbeat messages to the SourceClear API in order to maintain the connection between the CLI and the API\.
+.
+.TP
+\fBinitialBackoffMs\fR
+\fIOptional\fR The initial amount of time, in milliseconds, that the CLI will wait before attempting to re\-establish a connection in the event of a loss of connectivity\. The CLI will double the amount of time it waits in between successive retries, until it reaches the upper bound specified by \fBmaxBackoffMs\fR\.
+.
+.TP
+\fBmaxBackoffMs\fR
+\fIOptional\fR The maximum number of milliseconds the CLI will wait before giving up in the case of lost connectivity to the SourceClear API\. This value should be greater than \fBinitialBackoffMs\fR\.
+.
+.TP
+\fBmaxErrorLines\fR
+\fIOptional\fR The maximum number of lines of build error messages that the CLI should transmit to the SourceClear API when reporting a build failure\.
+.
+.TP
+\fBscanMaxConcurrency\fR
+\fIOptional\fR The maximum number of scan processes the CLI will launch when operating in "server" mode
+.
+.TP
+\fBscmUsername\fR
+Specifies any username that is required to perform a clone of a source repository given to the \fB\-\-url\fR option of \fBscan\fR, or by a scan request sent to the CLI in "server" mode by the SourceClear API\.
+.
+.IP
+This is superseded by the \fBscmToken\fR configuration discussed below\.
+.
+.TP
+\fBscmPassword\fR
+Only required if the source repository requires credentials to allow CLI to clone via the \fB\-\-url\fR option of \fBscan\fR, or by a scan request sent to the CLI in "server" mode by the SourceClear API\.
+.
+.IP
+This is superseded by the \fBscmToken\fR configuration discussed below\.
+.
+.TP
+\fBscmToken\fR
+Only required if the source repository requires an authentication token to clone via the \fB\-\-url\fR option of \fBscan\fR, or would be required to action a scan request sent by the SourceClear API\.
+.
+.TP
+\fBskipVersionCheck\fR
+\fIOptional\fR a boolean to have the CLI bypass checking for new versions from the SourceClear API, if your network would benefit from not performing this check at the risk of not having the best release available\.
+.
+.SH "ENVIRONMENT VARIABLES"
+.
+.TP
+\fBSRCCLR_API_TOKEN\fR
+Provides an alternate means of supplying the \fBagentAuthorization\fR value required to use the SourceClear API\. If present, this supersedes the configuration file\.
+.
+.TP
+\fBJAVA_OPTS\fR
+Permits altering the behavior (or system properties) of the underlying Java(R) runtime system that is used by the \fBsrcclr\fR command\.
+.
+.TP
+\fBSRCCLR_CONFIG\fR
+Provides an explicit means of specifying the SourceClear configuration file location\. If this variable is populated, the program will use that path instead of any other stationary config locations, but it is still possible to provide additional settings via the \fB\-\-config\fR command line flag\.
+.
+.IP
+If it is populated but points to an invalid path, the program will halt in error\.
+.
+.SH "LICENSE"
+For the full license, please view the \fBLICENSE\fR file that came with the \fBsrcclr\fR application, or visit https://srcclr\.com/legal

@@ -1,0 +1,11 @@
+If you have not already installed the SourceClear command line (CLI) 
+interface please do so by running the install.sh script in
+this directory.
+
+The srcclr CLI is configured on the website at https://srcclr.com.
+After installation the second step is to create a new agent and 
+run "srcclr activate" to create a config file.
+
+Alternativly, you can copy or create a config file in 
+$HOME/.srcclr/agent.yaml.  Be sure to include a JWT token to 
+authenticate the agent with the platform.
