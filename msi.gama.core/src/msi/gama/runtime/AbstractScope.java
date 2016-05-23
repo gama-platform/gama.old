@@ -509,14 +509,7 @@ public abstract class AbstractScope implements IScope {
 			} else if (statement instanceof RemoteSequence) {
 				((RemoteSequence) statement).setMyself(caller);
 				// We delegate to the remote scope
-				/*
-				result[0] = statement.executeOn(this);
-				hqnghi I think the caller in line 497 is equal this.getAgentScope(), 
-				so the remote scope must be the agent.getScope, instead of the "this" ?
-				*/
-//				result[0] = statement.executeOn(this);
-
-				result[0] = statement.executeOn(agent.getScope());				
+				result[0] = statement.executeOn(this);			
 				return true;
 			}
 			result[0] = statement.executeOn(this);
