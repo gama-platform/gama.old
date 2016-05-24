@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
@@ -711,13 +712,14 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public IDescription getChildWithKeyword(final String keyword) {
-		return Iterables.find(getChildren(), new Predicate<IDescription>() {
+		final Optional<IDescription> optional = Iterables.tryFind(getChildren(), new Predicate<IDescription>() {
 
 			@Override
 			public boolean apply(final IDescription input) {
 				return input.getKeyword().equals(keyword);
 			}
 		});
+		return optional.orNull();
 	}
 
 	@Override
