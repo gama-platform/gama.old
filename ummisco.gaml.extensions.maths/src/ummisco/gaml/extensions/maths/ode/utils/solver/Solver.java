@@ -74,10 +74,10 @@ public abstract class Solver {
 				final double[] y = new double[eq.variables_diff.size()];
 				final List<IExpression> equationValues = new ArrayList(eq.variables_diff.values());
 				for (int i = 0, n = equationValues.size(); i < n; i++) {
-					if (integrationValues.size() < n) {
-						integrationValues.put(equationValues.get(i).getName(), GamaListFactory.create(Double.class));
-					}
 					final IAgent a = equationAgents.get(i);
+					if (integrationValues.size() < n) {
+						integrationValues.put(equationValues.get(i).toString()+a, GamaListFactory.create(Double.class));
+					}
 					if (!a.dead()) {
 						final boolean pushed = scope.push(a);
 						try {

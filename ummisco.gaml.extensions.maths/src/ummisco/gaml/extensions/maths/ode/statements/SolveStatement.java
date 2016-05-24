@@ -175,7 +175,7 @@ public class SolveStatement extends AbstractStatement {
 		// if a not null
 		GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) a.getAttribute("__integrated_values");
 		if(result!=null){			
-			return result.get(var.getName());
+			return result.get(var.getName()+a);
 		}
 		return GamaListFactory.create();
 	}

@@ -21,9 +21,9 @@ global {
 	float t;   					// simulation time : t = n * integration_time_step  where n is the number of already computed time step
 	
 	
-	float integration_time_step1 ;  // first integration time step to compare 
-	float integration_time_step2 ;  // second integration time step to compare 
-	float integration_time_step3 ;  // third integration time step to compare 
+	float integration_time_step1  <- 1.0;  // first integration time step to compare 
+	float integration_time_step2  <- 0.1;  // second integration time step to compare 
+	float integration_time_step3  <- 0.01;  // third integration time step to compare 
 	
 	list<LotkaVolterra_agent> LV_agents;
 	
