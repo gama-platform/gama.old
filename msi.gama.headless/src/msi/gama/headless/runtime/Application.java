@@ -205,6 +205,10 @@ public class Application implements IApplication {
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 //		SystemLogger.removeDisplay();
+		if (buildModelLibrary) {
+			modelLibraryGenerator.start(this);
+			return null;
+		}
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
 		if(containHelpParameter(args))
@@ -277,6 +281,7 @@ public class Application implements IApplication {
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(dd);
 		File output = new File(outputPath);
+		output.createNewFile();
 		StreamResult result = new StreamResult(output);
 		transformer.transform(source, result);
 		SystemLogger.activeDisplay(); 

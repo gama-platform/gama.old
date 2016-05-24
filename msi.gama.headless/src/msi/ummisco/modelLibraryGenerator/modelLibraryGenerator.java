@@ -34,7 +34,7 @@ public class modelLibraryGenerator {
 	// inputs / outputs
 	static String wikiFolder = "F:/Gama/GamaWiki/";
 	static String sourceFolder = "F:/Gama/GamaSource/";
-	static String[] inputPathToModelLibrary = {/*sourceFolder+"msi.gama.models/models/",*/
+	static String[] inputPathToModelLibrary = {sourceFolder+"msi.gama.models/models/",
 			sourceFolder+"ummisco.gaml.extensions.maths/models"/*,
 			sourceFolder+"msi.gaml.extensions.fipa/models",
 			sourceFolder+"simtools.gaml.extensions.physics/models"*/};
@@ -44,7 +44,10 @@ public class modelLibraryGenerator {
 	static String inputModelScreenshot = wikiFolder + "modelScreenshot.xml";
 	static String headlessBatPath = wikiFolder + "headless.bat";
 	
-	static String[] listNonScreenshot = {"Database Usage","Unit Test","Syntax"};
+	static String[] listNoScreenshot = {"msi.gama.models/models/Syntax",
+			"msi.gama.models/models/Features/Co-model Usage/Syntax",
+			"msi.gama.models/models/Features/Data Importation",
+			"msi.gama.models/models/Features/Database Usage"};
 	
 	static HashMap<String,ScreenshotStructure> mapModelScreenshot;
 	static HashMap<String,String> mainKeywordsMap; // the key is the name of the model, the value is the metadata formated which contains all the important keywords of the model.
@@ -87,9 +90,23 @@ public class modelLibraryGenerator {
 		// set the output (which will not be used, we just need to specify one. We will destroy it as soon as the headless execution is finish) 
 		Globals.OUTPUT_PATH = "/F:/outputHeadless";
 		// build the xml and run the headless
+		ArrayList<File> gamlFilesForScreenshot = new ArrayList<File>();
+		for (File gamlFile : gamlFiles) {
+			String gamlFilePath = gamlFile.getAbsoluteFile().toString().replace("\\","/");
+			gamlFilesForScreenshot.add(gamlFile);
+			for (String folderWithoutScreenshot : listNoScreenshot) {
+				if (gamlFilePath.contains(sourceFolder+folderWithoutScreenshot)) {
+					gamlFilesForScreenshot.remove(gamlFile);
+				}
+				if (gamlFilePath.split("/")[gamlFilePath.split("/").length-2].compareTo("include") == 0 
+						|| gamlFilePath.split("/")[gamlFilePath.split("/").length-2].compareTo("includes") == 0) {
+					gamlFilesForScreenshot.remove(gamlFile);
+				}
+			}
+		}
 		try {
 			// build the xml
-			headlessApplication.buildXMLForModelLibrary(gamlFiles,inputFileForHeadlessExecution);
+			headlessApplication.buildXMLForModelLibrary(gamlFilesForScreenshot,inputFileForHeadlessExecution);
 			// run the headless
 			headlessApplication.runXMLForModelLibrary(inputFileForHeadlessExecution);
 		} catch (ParserConfigurationException | TransformerException e1) {
@@ -315,7 +332,7 @@ public class modelLibraryGenerator {
 			expeNames = Utils.getExpeNames(modelFile);
 			
 	        boolean stop = false;
-	        for (String str : listNonScreenshot) {
+	        for (String str : listNoScreenshot) {
 	        	if (modelFile.getAbsolutePath().contains(str)) {
 	        		stop = true;
 	        	}
