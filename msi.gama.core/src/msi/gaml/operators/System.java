@@ -68,21 +68,27 @@ public class System {
 
 	@operator(value = "console", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM,
 			IConcept.COMMUNICATION })
+	@doc("console allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string")
 
-	public static String opConsole(final IScope scope, final String s) {
+	public static String cpnsole(final IScope scope, final String s) {
+		if (s == null || s.isEmpty())
+			return "";
 		final StringBuilder output = new StringBuilder();
 		final List<String> commands = new ArrayList();
 		// commands.add(Platform.getOS().equals(Platform.OS_WIN32) ? "cmd.exe" :
 		// "/bin/sh");
 		commands.addAll(Arrays.asList(s.split(" ")));
+		final boolean nonBlocking = commands.get(commands.size() - 1).equals("&");
+		if (nonBlocking) {
+			commands.remove(commands.size() - 1);
+		}
 		final ProcessBuilder b = new ProcessBuilder(commands);
-		// b.redirectInput(Redirect.INHERIT);
-		// b.redirectOutput(Redirect.INHERIT);
 		b.redirectErrorStream(true);
-		// b.inheritIO();
 		b.directory(new File(scope.getSimulationScope().getExperiment().getWorkingPath()));
 		try {
 			final Process p = b.start();
+			if (nonBlocking)
+				return "";
 			final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
 			final int returnValue = p.waitFor();
 			String line = "";
