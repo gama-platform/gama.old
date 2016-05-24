@@ -35,9 +35,11 @@ import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
 import msi.gama.headless.script.ExperimentationPlanFactory;
+import msi.gama.headless.util.WorkspaceManager;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
+import msi.ummisco.modelLibraryGenerator.modelLibraryGenerator;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -55,7 +57,7 @@ public class Application implements IApplication {
 	final public static String HELP_PARAMERTER = "-help";
 	final public static String BUILD_XML_PARAMERTER = "-xml";
 	
-	
+	public static boolean buildModelLibrary = false;
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
 	public boolean consoleMode = false;
@@ -256,6 +258,46 @@ public class Application implements IApplication {
 		transformer.transform(source, result);
 		SystemLogger.activeDisplay(); 
 		System.out.println("Parameter file saved at: " + output.getAbsolutePath());
+	}
+	
+	public void buildXMLForModelLibrary(ArrayList<File> modelPaths,String outputPath) throws ParserConfigurationException, TransformerException, IOException
+	{
+		// "arg[]" are the paths to the different models
+		HeadlessSimulationLoader.preloadGAMA();
+		ArrayList<IExperimentJob> selectedJob = new ArrayList<IExperimentJob>();
+		for (File modelFile : modelPaths) {
+			List<IExperimentJob> jb = ExperimentationPlanFactory.buildExperiment(modelFile.getAbsolutePath());
+			for (IExperimentJob j : jb) {
+				selectedJob.add(j);
+			}
+		}
+		
+		Document dd =ExperimentationPlanFactory.buildXmlDocumentForModelLibrary(selectedJob);
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(dd);
+		File output = new File(outputPath);
+		StreamResult result = new StreamResult(output);
+		transformer.transform(source, result);
+		SystemLogger.activeDisplay(); 
+		System.out.println("Parameter file saved at: " + output.getAbsolutePath());
+	}
+	
+	public void runXMLForModelLibrary(String xmlPath) throws FileNotFoundException {
+		
+		processorQueue = new LocalSimulationRuntime(SimulationRuntime.UNDEFINED_QUEUE_SIZE);
+		Reader in = new Reader(xmlPath);
+		in.parseXmlFile();
+		 this.buildAndRunSimulation(in.getSimulation());
+		 in.dispose();
+		 while (processorQueue.isPerformingSimulation()) {
+			  try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		 }
 	}
 	
 	public void runSimulation(String args[]) throws FileNotFoundException, InterruptedException

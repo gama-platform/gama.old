@@ -110,7 +110,7 @@ public class Reader {
 
 		String seed = e.getAttribute(XmlTAG.SEED_TAG);
 		long selectedSeed = seed == null || seed.length() == 0 ? 0l : Long.valueOf(seed).longValue();
-		if ( sourcePath.charAt(0) != '/' ) {
+		if ( sourcePath.charAt(0) != '/' && sourcePath.charAt(0) != '\\' ) {
 			String pr;
 			if ( fileName != null ) {
 				String prt;

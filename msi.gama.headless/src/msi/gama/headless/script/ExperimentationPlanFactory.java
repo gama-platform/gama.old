@@ -22,8 +22,11 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Node;
 
 import msi.gama.headless.job.IExperimentJob;
 import msi.gama.headless.job.JobPlan;
@@ -151,6 +154,44 @@ public class ExperimentationPlanFactory {
 		for(IExperimentJob job:jobs)
 		{
 			Element jb = job.asXMLDocument(doc);
+			rootElement.appendChild(jb);
+		}
+		
+		return doc;
+	}
+	
+	public static Document buildXmlDocumentForModelLibrary(List<IExperimentJob> jobs) throws ParserConfigurationException
+	{
+		// this class will be executed if "buildModelLibrary" is turn to true. (automatic generation for the website)
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		Document doc = docBuilder.newDocument();
+		Element rootElement = doc.createElement(XmlTAG.EXPERIMENT_PLAN_TAG);
+		doc.appendChild(rootElement);
+
+		
+		for(int i = 0 ; i < jobs.size() ; i++)
+		{
+			IExperimentJob job = jobs.get(i);
+			
+			Element jb = job.asXMLDocument(doc);
+			// make sure the pathSeparator is correct
+			String modelPath = jb.getAttribute(XmlTAG.SOURCE_PATH_TAG).replace("\\", "/");
+			// add the character pathSeparator at the beginning of the string.
+			jb.setAttribute(XmlTAG.SOURCE_PATH_TAG, "/" +jb.getAttribute(XmlTAG.SOURCE_PATH_TAG));
+			// set the final step to 11
+			jb.setAttribute(XmlTAG.FINAL_STEP_TAG, "11");
+			
+			Node outputRoot = jb.getElementsByTagName("Outputs").item(0);
+			NodeList outputs = outputRoot.getChildNodes();
+			for (int outputId = 0 ; outputId < outputs.getLength() ; outputId++) {
+				// add the attribute "output_path" with the path : path + name_of_display
+				Element output = (Element)outputs.item(outputId);
+				String outputName = output.getAttribute(XmlTAG.NAME_TAG);
+				output.setAttribute(XmlTAG.OUTPUT_PATH, modelPath.substring(0,modelPath.length()-5)+"/"+outputName);
+				// set the framerate to 10
+				output.setAttribute(XmlTAG.FRAMERATE_TAG, "10");
+			}
 			rootElement.appendChild(jb);
 		}
 		
