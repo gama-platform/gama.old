@@ -11,6 +11,13 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -57,6 +64,42 @@ public class System {
 	public static Boolean opEvery(final IScope scope, final Integer period) {
 		final int time = scope.getClock().getCycle();
 		return period > 0 && time >= period && time % period == 0;
+	}
+
+	@operator(value = "console", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM,
+			IConcept.COMMUNICATION })
+
+	public static String opConsole(final IScope scope, final String s) {
+		final StringBuilder output = new StringBuilder();
+		final List<String> commands = new ArrayList();
+		// commands.add(Platform.getOS().equals(Platform.OS_WIN32) ? "cmd.exe" :
+		// "/bin/sh");
+		commands.addAll(Arrays.asList(s.split(" ")));
+		final ProcessBuilder b = new ProcessBuilder(commands);
+		// b.redirectInput(Redirect.INHERIT);
+		// b.redirectOutput(Redirect.INHERIT);
+		b.redirectErrorStream(true);
+		// b.inheritIO();
+		b.directory(new File(scope.getSimulationScope().getExperiment().getWorkingPath()));
+		try {
+			final Process p = b.start();
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			final int returnValue = p.waitFor();
+			String line = "";
+			while ((line = reader.readLine()) != null) {
+				output.append(line + "\n");
+			}
+
+			if (returnValue != 0) {
+				throw GamaRuntimeException.error("Error in console command." + output.toString(), scope);
+			}
+		} catch (final IOException | InterruptedException e) {
+			throw GamaRuntimeException.error("Error in console command. " + e.getMessage(), scope);
+		} finally {
+
+		}
+		return output.toString();
+
 	}
 
 	@operator(value = { IKeyword._DOT,
