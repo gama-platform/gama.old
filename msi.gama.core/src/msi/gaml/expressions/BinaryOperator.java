@@ -83,6 +83,8 @@ public class BinaryOperator extends NAryOperator {
 			final Object result = prototype.helper.run(scope, leftVal, rightVal);
 			return result;
 		} catch (final RuntimeException ex) {
+			System.out.println(ex + " when applying the " + literalValue() + " operator on " + Cast.toGaml(leftVal) + " and "
+					+ Cast.toGaml(rightVal));
 			final GamaRuntimeException e1 = GamaRuntimeException.create(ex, scope);
 			e1.addContext("when applying the " + literalValue() + " operator on " + Cast.toGaml(leftVal) + " and "
 					+ Cast.toGaml(rightVal));
