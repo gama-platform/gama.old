@@ -8,8 +8,8 @@
 model tutorial_gis_city_traffic
 
 global {
-	file buildings_shapefile <- file("../includes/buildings.shp");
-	file roads_shapefile <- file("../includes/street.shp");
+	file buildings_shapefile <- file("../includes/building.shp");
+	file roads_shapefile <- file("../includes/road.shp");
 	geometry shape <- envelope(envelope(buildings_shapefile) + envelope(roads_shapefile));
 	float step <- 10 #mn;
 	
