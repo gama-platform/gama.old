@@ -35,7 +35,6 @@ import msi.gama.headless.core.HeadlessSimulationLoader;
 import msi.gama.headless.job.ExperimentJob;
 import msi.gama.headless.job.IExperimentJob;
 import msi.gama.headless.script.ExperimentationPlanFactory;
-import msi.gama.headless.util.WorkspaceManager;
 import msi.gama.headless.xml.ConsoleReader;
 import msi.gama.headless.xml.Reader;
 import msi.gama.headless.xml.XMLWriter;
@@ -57,7 +56,7 @@ public class Application implements IApplication {
 	final public static String HELP_PARAMERTER = "-help";
 	final public static String BUILD_XML_PARAMERTER = "-xml";
 	
-	public static boolean buildModelLibrary = false;
+	public static boolean buildModelLibrary = true;
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
 	public boolean consoleMode = false;

@@ -192,10 +192,10 @@ experiment multicriteria type: gui {
 	parameter "veto threshold of the price criterion" var:v_price category: "Veto";
 	parameter "veto threshold of the distance criterion" var:v_distance category: "Veto";
 	parameter "veto threshold of the area criterion" var:v_area category: "Veto";
-	parameter "max prefence value of the standing criterion" var:v_standing category: "Max preference value";
-	parameter "max prefence value of the price criterion" var:v_price category: "Max preference value";
-	parameter "max prefence value of the distance criterion" var:v_distance category: "Max preference value";
-	parameter "max prefence value of the area criterion" var:v_area category: "Max preference value";
+	parameter "max preference value of the standing criterion" var:v_standing category: "Max preference value";
+	parameter "max preference value of the price criterion" var:v_price category: "Max preference value";
+	parameter "max preference value of the distance criterion" var:v_distance category: "Max preference value";
+	parameter "max preference value of the area criterion" var:v_area category: "Max preference value";
 	parameter "min criterion threshold of the standing criterion" var:s1_standing category: "Evidence Theory";
 	parameter "min criterion threshold of the price criterion" var:s1_price category: "Evidence Theory";
 	parameter "min criterion threshold of the distance criterion" var:s1_distance category: "Evidence Theory";
