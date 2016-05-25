@@ -18,7 +18,7 @@ public class Constants {
 
 	//
 	public static String RELEASE_APPLICATION = "msi.gama.application";
-	public static String RELEASE_PRODUCT = "gama1.7.Eclipse3_8_2.product";
+	public static String RELEASE_PRODUCT = "gama.product";
 
 	// Repositories containing used files
 
