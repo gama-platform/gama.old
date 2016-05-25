@@ -56,7 +56,7 @@ public class Application implements IApplication {
 	final public static String HELP_PARAMERTER = "-help";
 	final public static String BUILD_XML_PARAMERTER = "-xml";
 	
-	public static boolean buildModelLibrary = false;
+	public static boolean buildModelLibrary = true;
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
 	public boolean consoleMode = false;

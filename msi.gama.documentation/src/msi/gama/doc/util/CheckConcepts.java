@@ -1,4 +1,4 @@
-package msi.gama.doc.websiteGen;
+package msi.gama.doc.util;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -20,18 +20,16 @@ import msi.gama.doc.websiteGen.utilClasses.ConceptManager;
 import msi.gama.doc.websiteGen.utilClasses.Utils;
 import msi.gama.doc.websiteGen.utilClasses.ConceptManager.WebsitePart;
 
-public class mainCheckConcepts {
+public class CheckConcepts {
 	// this class will check if all the concepts present in the documentations are conform. It will then build a report about repartition of concept keywords.
 	
-	public static String PATH_TO_MODEL_LIBRARY = "F:/gama_doc_17.wiki/References/ModelLibrary";
-	public static String PATH_TO_GAML_REFERENCES = "F:/gama_doc_17.wiki/References/GAMLReferences";
-	public static String PATH_TO_DOCUMENTATION = "F:/gama_doc_17.wiki/Tutorials";
+	public static String PATH_TO_MODEL_LIBRARY = Constants.WIKI_FOLDER + File.separator + "References" + File.separator + "ModelLibrary";
+	public static String PATH_TO_GAML_REFERENCES = Constants.WIKI_FOLDER+File.separator+"References" + File.separator + "GAMLReferences";
+	public static String PATH_TO_DOCUMENTATION = Constants.WIKI_FOLDER+File.separator+"Tutorials";
 	
-	public static String PATH_TO_KEYWORDS_XML = "F:/gama_doc_17.wiki/keywords.xml";
+	public static String PATH_TO_MD_REPORT = Constants.WIKI_FOLDER+File.separator+"WikiOnly" + File.separator + "DevelopingExtensions" + File.separator + "WebsiteGeneration.md";
 	
-	public static String PATH_TO_MD_REPORT = "F:/gama_doc_17.wiki/WikiOnly/DevelopingExtensions/WebsiteGeneration.md";
-	
-	public static void main(String[] args) throws IOException, IllegalArgumentException, IllegalAccessException {
+	public static void CheckConcepts() throws IOException, IllegalArgumentException, IllegalAccessException {
 		// get all the concepts.
 		ConceptManager.loadConcepts();
 		
@@ -42,7 +40,7 @@ public class mainCheckConcepts {
 		executeForAWebsitePart(PATH_TO_DOCUMENTATION, WebsitePart.DOCUMENTATION.toString());
 		
 		// browse keywords.xml to find which concepts is linked with which keywords.
-		browseKeywords(PATH_TO_KEYWORDS_XML);
+		browseKeywords(Constants.PATH_TO_KEYWORDS_XML);
 		
 		// print statistics		
 		ConceptManager.printStatistics();

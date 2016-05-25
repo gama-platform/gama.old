@@ -46,7 +46,7 @@ public class modelLibraryGenerator {
 	static String headlessBatPath = wikiFolder + "headless.bat";
 	
 	static String[] listNoScreenshot = {"msi.gama.models/models/Syntax", // no need to run those models
-//			"msi.gama.models/models/Features/3D Visualization",	// opengl advanced setting -> not available yet on headless
+			"msi.gama.models/models/Features/3D Visualization",	// opengl advanced setting -> not available yet on headless
 //			"msi.gama.models/models/Features/Co-model Usage",	// cause an error of path
 //			"msi.gama.models/models/Features/Unit Test",		// cause an error
 //			"msi.gama.models/models/Features/Database Usage",	// cause an error

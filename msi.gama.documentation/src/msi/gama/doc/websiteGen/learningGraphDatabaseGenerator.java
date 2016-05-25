@@ -5,6 +5,7 @@ import javax.xml.parsers.DocumentBuilder;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import msi.gama.doc.util.Constants;
 import msi.gama.doc.websiteGen.utilClasses.LearningConcept;
 import msi.gama.doc.websiteGen.utilClasses.Topic;
 
@@ -25,9 +26,8 @@ public class learningGraphDatabaseGenerator {
 
 	public static void main(String[] args) throws FileNotFoundException {
 		
-		String inputFilePath = "F:/gama_doc_17.wiki/learningGraph.xml";
-		String outputFilePath = "F:/gama_doc_17.wiki/nodesDatabase.js";
-		String imageFolder = "resources/images/miniaturesLearningGraph/";
+		String inputFilePath = Constants.WIKI_FOLDER + File.separator + "learningGraph.xml";
+		String outputFilePath = Constants.WIKI_FOLDER + File.separator + "nodesDatabase.js";
 		
 		///////// read the xml ///////////
 		float coeff = 700;
@@ -145,7 +145,7 @@ public class learningGraphDatabaseGenerator {
 	    			+", category:'highlightLearningConcept'},\n";
 	    	input += "{id:"+idNodeWithLabel+", label:'"+lc.m_name
 	    			+"', x:"+lc.m_xPos+", y:"+lc.m_yPos
-	    			+", category:'learningConceptWithLabel', imagePath:'"+imageFolder+lc.m_id+"', description:'"+lc.m_description+"'},\n";
+	    			+", category:'learningConceptWithLabel', description:'"+lc.m_description+"'},\n";
 	    	idNb++;
 	    }
 	    // write the topics

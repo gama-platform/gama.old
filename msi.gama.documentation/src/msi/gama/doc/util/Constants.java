@@ -17,7 +17,7 @@ public class Constants {
 	
 	// 
 	public static String RELEASE_APPLICATION = "msi.gama.application";
-	public static String RELEASE_PRODUCT = "gama1.7.Eclipse3_8_2.product";
+	public static String RELEASE_PRODUCT = "gama.product";
 	
 	// Repositories containing used files
 	
@@ -48,6 +48,7 @@ public class Constants {
 	public static String PDF_FOLDER = GEN_FOLDER + File.separator + "pdf";
 	public static String TOC_GEN_FOLDER = GEN_FOLDER + File.separator + "toc2pdf";
 	public static String XML_KEYWORD_GEN_FOLDER = GEN_FOLDER + File.separator + "xmlKeywords";
+	public static String PATH_TO_KEYWORDS_XML = Constants.WIKI_FOLDER+File.separator+"keywords.xml";
 		
 	
 	// Inputs Folders

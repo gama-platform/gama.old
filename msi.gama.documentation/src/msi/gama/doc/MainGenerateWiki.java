@@ -21,7 +21,9 @@ import org.tmatesoft.svn.core.SVNException;
 import org.xml.sax.SAXException;
 
 import msi.gama.doc.transform.XmlToWiki;
+import msi.gama.doc.util.CheckConcepts;
 import msi.gama.doc.util.Constants;
+import msi.gama.doc.util.GenerateCategoryXML;
 import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.UnifyDoc;
 
@@ -39,6 +41,11 @@ public class MainGenerateWiki {
 	public static void main(String[] args) 
 			throws IOException, JDOMException, ParserConfigurationException, SAXException, 
 					TransformerException, SVNException {
+		
+		// build the file keywords.xml
+		GenerateCategoryXML.GenerateKeywordsXML();
+		
+		// generate the wiki documentation
 		System.out.println("GENERATION OF THE WIKI DOCUMENTATION FROM JAVA CODE");
 		System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
 		System.out.print("Preparation of the folders................");
@@ -54,13 +61,12 @@ public class MainGenerateWiki {
 		XmlToWiki.createExtentionsWiki();
 		System.out.println("DONE");		
 		
-		// TODO commit and push created files to the GIT repository
+		// check the concept used, print a report and write it in the file "website generation"
 		try {
-			System.out.print("TODO: commit, pull and push created files to the GIT repository................");		
-			// SVNUtils.checkoutSVNGamaDoc();		
-			System.out.println("DONE");			
-		} catch (Exception e){
-			System.out.println("NO AVAILABLE CONNECTION");
+			CheckConcepts.CheckConcepts();
+		} catch (IllegalArgumentException | IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 

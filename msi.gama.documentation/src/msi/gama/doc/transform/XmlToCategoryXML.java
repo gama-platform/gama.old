@@ -22,7 +22,7 @@ public class XmlToCategoryXML {
 		System.out.print("Creation of the wiki page for Operators.....");
 		createKeywordXML(Constants.DOCGAMA_GLOBAL_FILE,
 				Constants.XSL_XML2KEYWORDS_XML_FOLDER + File.separator + "docGama-KeywordsXML.xsl",
-				Constants.XML_KEYWORD_GEN_FOLDER + File.separator + "keywords.xml");
+				Constants.PATH_TO_KEYWORDS_XML);
 //		removeDuplications(Constants.XML_KEYWORD_GEN_FOLDER + File.separator + "keywords.xml");
 		System.out.println("Done");				
 	}
