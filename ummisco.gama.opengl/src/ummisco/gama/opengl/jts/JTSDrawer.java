@@ -284,44 +284,32 @@ public class JTSDrawer {
 		setColor(gl, Color.white, 1);
 		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
 
-		// Why when nb points > 2 ?????????
-		// if (p.getNumPoints() > 2) {
-		drawTriangulatedPolygon(gl, p, false, texture);
+		if (p.getNumPoints() > 5) {
+			drawTriangulatedPolygon(gl, p, false, texture);
 
-		// } else {
-		//
-		// if (renderer.getComputeNormal()) {
-		// final Vertex[] vertices = this.getExteriorRingVertices(p);
-		// if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
-		// p_norm_dir = 1;
-		// } else {
-		// p_norm_dir = -1;
-		// }
-		// GLUtilNormal.HandleNormal(vertices, null, 0, p_norm_dir, renderer);
-		// }
-		// gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
-		// // and texture mixture
-		// gl.glBegin(GL2ES3.GL_QUADS);
-		// gl.glTexCoord2f(0.0f, 1.0f);
-		// gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(),
-		// JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(3).getY(),
-		// p.getExteriorRing().getCoordinateN(3).z);
-		// gl.glTexCoord2f(1.0f, 1.0f);
-		// ;
-		// gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(),
-		// JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(2).getY(),
-		// p.getExteriorRing().getCoordinateN(2).z);
-		// gl.glTexCoord2f(1.0f, 0.0f);
-		// ;
-		// gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(),
-		// JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(1).getY(),
-		// p.getExteriorRing().getCoordinateN(1).z);
-		// gl.glTexCoord2f(0.0f, 0.0f);
-		// gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(),
-		// JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(0).getY(),
-		// p.getExteriorRing().getCoordinateN(0).z);
-		// gl.glEnd();
-		// }
+		} else {
+			
+			if (renderer.getComputeNormal()) {
+				final Vertex[] vertices = this.getExteriorRingVertices(p);
+				GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
+			}
+			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
+										// and texture mixture
+			gl.glBegin(GL2ES3.GL_QUADS);
+			gl.glTexCoord2f(0.0f, 0.0f);
+			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(),
+					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(0).getY(), p.getExteriorRing().getCoordinateN(0).z);
+			gl.glTexCoord2f(0.0f, 1.0f);
+			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(),
+					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(1).getY(), p.getExteriorRing().getCoordinateN(1).z);
+			gl.glTexCoord2f(1.0f, 1.0f);
+			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(),
+					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(2).getY(), p.getExteriorRing().getCoordinateN(2).z);
+			gl.glTexCoord2f(1.0f, 0.0f);
+			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(),
+					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(3).getY(), p.getExteriorRing().getCoordinateN(3).z);
+			gl.glEnd();
+		}
 		if (texture != null) {
 			texture.disable(gl);
 		}
@@ -398,14 +386,8 @@ public class JTSDrawer {
 		// (with the Y_FLAG) is not Clockwise.
 		final Point[] pointList = new Point[polygon.getExteriorRing().getNumPoints()];
 		final Vertex[] vertices = getExteriorRingVertices(polygon);
-		if (false/* isClockwise(vertices) */) {
-			for (int i = 0; i < polygon.getExteriorRing().getNumPoints(); i++) {
-				pointList[polygon.getExteriorRing().getNumPoints() - i - 1] = polygon.getExteriorRing().getPointN(i);
-			}
-		} else {
-			for (int i = 0; i < polygon.getExteriorRing().getNumPoints(); i++) {
-				pointList[i] = polygon.getExteriorRing().getPointN(i);
-			}
+		for (int i = 0; i < polygon.getExteriorRing().getNumPoints(); i++) {
+			pointList[i] = polygon.getExteriorRing().getPointN(i);
 		}
 
 		if (showTriangulation) {
@@ -422,7 +404,7 @@ public class JTSDrawer {
 				gl.glBegin(GL.GL_LINES); // draw using triangles
 				gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
 						pointList[0].getCoordinate().z);
-				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
+				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(),
 						pointList[1].getCoordinate().z);
 				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(),
 						pointList[1].getCoordinate().z);
@@ -440,17 +422,7 @@ public class JTSDrawer {
 				if (texture != null) {
 					setColor(gl, Color.white, 1);
 					// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f); //
-					// Set
-					// the
-					// color
-					// to
-					// white
-					// to
-					// avoid
-					// color
-					// and
-					// texture
-					// mixture
+					// Set the color to white to avoid color and texture mixture
 					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
 					gl.glTexCoord2f(0.0f, 1.0f);
 					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(), 0.0d);
@@ -471,18 +443,8 @@ public class JTSDrawer {
 			} else {
 				if (texture != null) {
 					setColor(gl, Color.white, 1);
-					// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f,
-					// 1.0f, 1.0f }); // Set
-					// the
-					// color
-					// to
-					// white
-					// to
-					// avoid
-					// color
-					// and
-					// texture
-					// mixture
+					// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f, 1.0f, 1.0f });
+					// Set the color to white to avoid color and texture mixture
 					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
 					gl.glTexCoord2f(0.0f, 1.0f);
 					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
@@ -697,17 +659,8 @@ public class JTSDrawer {
 			GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
 			gl.glBegin(GL2ES3.GL_QUADS);
 			setColor(gl, Color.white, 1);
-			// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f); // Set
-			// the
-			// color
-			// to
-			// white
-			// to
-			// avoid
-			// color
-			// and
-			// texture
-			// mixture
+			// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f); 
+			// Set the color to white to avoid color and texture mixture
 			gl.glTexCoord2f(0.0f, 0.0f);
 			gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
 			gl.glTexCoord2f(1.0f, 0.0f);
