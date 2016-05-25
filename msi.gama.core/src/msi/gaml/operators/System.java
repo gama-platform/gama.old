@@ -66,9 +66,9 @@ public class System {
 		return period > 0 && time >= period && time % period == 0;
 	}
 
-	@operator(value = "console", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM,
+	@operator(value = "command", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM,
 			IConcept.COMMUNICATION })
-	@doc("console allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string")
+	@doc("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string")
 
 	public static String cpnsole(final IScope scope, final String s) {
 		if (s == null || s.isEmpty())
