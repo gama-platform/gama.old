@@ -16,35 +16,32 @@ import ummisco.gama.serializer.gamaType.converters.*;
 
 public class ReverseOperators {
 
-	public static XStream newXStream(ConverterScope cs) {
-		// TODO check whether a BinaryStreamDriver could not be better ... 
-		XStream xstream = new XStream(new DomDriver());
-		xstream.registerConverter(new LogConverter());
-		xstream.registerConverter(new GamaBasicTypeConverter(cs));
-		xstream.registerConverter(new GamaAgentConverter(cs));
-		xstream.registerConverter(new GamaListConverter(cs));
-		xstream.registerConverter(new GamaMapConverter(cs));
-		xstream.registerConverter(new SavedAgentConverter(cs));
-		xstream.registerConverter(new GamaPairConverter());
-		xstream.registerConverter(new GamaMatrixConverter(cs));
-		xstream.registerConverter(new GamaGraphConverter(cs));		
-		xstream.registerConverter(new GamaFileConverter(cs));
-		xstream.registerConverter(new GamaPopulationConverter(cs));
-		xstream.registerConverter(new GamaSpeciesConverter(cs));		
-		//		xstream.registerConverter(new GamaShapeFileConverter(cs));
-
-		return xstream;
-	}
+//	public static XStream newXStream(ConverterScope cs) {
+//		// TODO check whether a BinaryStreamDriver could not be better ... 
+//		XStream xstream = new XStream(new DomDriver());
+//		xstream.registerConverter(new LogConverter());
+//		xstream.registerConverter(new GamaBasicTypeConverter(cs));
+//		xstream.registerConverter(new GamaAgentConverter(cs));
+//		xstream.registerConverter(new GamaListConverter(cs));
+//		xstream.registerConverter(new GamaMapConverter(cs));
+//		xstream.registerConverter(new SavedAgentConverter(cs));
+//		xstream.registerConverter(new GamaPairConverter());
+//		xstream.registerConverter(new GamaMatrixConverter(cs));
+//		xstream.registerConverter(new GamaGraphConverter(cs));		
+//		xstream.registerConverter(new GamaFileConverter(cs));
+//		xstream.registerConverter(new GamaPopulationConverter(cs));
+//		xstream.registerConverter(new GamaSpeciesConverter(cs));		
+//		//		xstream.registerConverter(new GamaShapeFileConverter(cs));
+//
+//		return xstream;
+//	}
 	
 	@operator(value = "serializeAgent")
 	@doc("")
 //	public static String serializeSimulation(final IScope scope, final int i) {
 	public static String serializeAgent(final IScope scope, final IAgent agent) {
 
-	XStream xstream = newXStream(new ConverterScope(scope));
-
-	//	ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
-	//	SimulationAgent simAgt = expAgt.getSimulation();
+//	XStream xstream = newXStream(new ConverterScope(scope));
 
 		System.out.println("**** TODO list = Problème dans les displays");
 //		System.out.println("**** TODO list = Get an agent as parameter");
@@ -52,7 +49,9 @@ public class ReverseOperators {
 		System.out.println("**** TODO list = Case of multi-simulation ?");
 		System.out.println("**** TODO list Improvment = simplify GamaShape");		
 
-		return xstream.toXML(new SavedAgent(scope, agent));
+//		return xstream.toXML(new SavedAgent(scope, agent));
+		return StreamConverter.convertObjectToStream(scope, new SavedAgent(scope, agent));
+		
 	}
 
 	@operator(value = "serialize")
@@ -70,20 +69,23 @@ public class ReverseOperators {
 	@doc("")
 	public static Object unserialize(final IScope scope, final String s) {
 		System.out.println("**** unSerialize Object ****");	
-		ConverterScope cScope = new ConverterScope(scope);
-		XStream xstream = newXStream(cScope);
+//		ConverterScope cScope = new ConverterScope(scope);
+//		XStream xstream = newXStream(cScope);
 
-		Object agt = xstream.fromXML(s);
+//		Object agt = xstream.fromXML(s);
 		
-		return agt;
+//		return agt;
+		return StreamConverter.convertStreamToObject(scope, s);
 	}		
 	
 	@operator(value = "unSerializeSimulation")
 	@doc("")
 	public static int unSerializeSimulation(final IScope scope, final String simul) {
 		ConverterScope cScope = new ConverterScope(scope);
-		XStream xstream = newXStream(cScope);
+//		XStream xstream = newXStream(cScope);
 
+		XStream xstream = StreamConverter.loadAndBuild(cScope);
+		
 		SavedAgent agt = (SavedAgent) xstream.fromXML(simul);
 
 		ExperimentAgent exp = (ExperimentAgent) scope.getExperiment();

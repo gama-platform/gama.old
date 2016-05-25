@@ -31,13 +31,14 @@ public abstract class StreamConverter {
 	
 	
 	
-	public static XStream loadAndBuild(IScope scope)
+//	public static XStream loadAndBuild(IScope scope)
+	public static XStream loadAndBuild(ConverterScope cs)	
 	{
 		XStream dataStreamer = new XStream(new DomDriver());
 		dataStreamer.setClassLoader(GamaClassLoader.getInstance());
 
-//		Converter[] cnv = Converters.converterFactory(scope);
-		Converter[] cnv = Converters.converterFactory(new ConverterScope(scope));
+		Converter[] cnv = Converters.converterFactory(cs);
+//		Converter[] cnv = Converters.converterFactory(new ConverterScope(scope));
 		for(Converter c:cnv)
 		{
 			StreamConverter.registerConverter(dataStreamer,c);
@@ -49,16 +50,25 @@ public abstract class StreamConverter {
 	{
 		//if(dataStreamer==null|| currentScope != scope)
 			//loadAndBuild(scope);
-		return loadAndBuild(scope).toXML(o);
+		return loadAndBuild(new ConverterScope(scope)).toXML(o);
 	}
+	
+	public static synchronized String convertObjectToStream(ConverterScope scope, Object o)
+	{
+		return loadAndBuild(scope).toXML(o);
+	}	
 	
 	public static Object convertStreamToObject(IScope scope,String data)
 	{
 		//if(dataStreamer==null|| currentScope != scope)
 			//loadAndBuild(scope);
-		return loadAndBuild(scope).fromXML(data);
+		return loadAndBuild(new ConverterScope(scope)).fromXML(data);
 	}
 	
+	public static Object convertStreamToObject(ConverterScope scope,String data)
+	{
+		return loadAndBuild(scope).fromXML(data);
+	}
 	
 	
 

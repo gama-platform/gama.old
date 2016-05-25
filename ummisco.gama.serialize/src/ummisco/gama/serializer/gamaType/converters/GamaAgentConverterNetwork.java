@@ -35,7 +35,12 @@ public class GamaAgentConverterNetwork implements Converter {
 	
 	@Override
 	public boolean canConvert(final Class arg0) {
-		return (arg0.equals(GamlAgent.class) || arg0.equals(MinimalAgent.class));
+//		return (arg0.equals(GamlAgent.class) || arg0.equals(MinimalAgent.class));
+		if(GamlAgent.class.equals(arg0) || MinimalAgent.class.equals(arg0) || GamlAgent.class.equals(arg0.getSuperclass())){
+			return true;
+		}		
+		
+		return false;
 	}
 
 	@Override
