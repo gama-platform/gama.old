@@ -133,6 +133,11 @@ public class GamlCompatibilityConverter {
 	// GamaFileType.extensionsToFullType.keySet();
 
 	public static SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
+		if (root instanceof Block) {
+			final SyntacticModelElement elt = (SyntacticModelElement) SyntacticFactory.create("model", root, true);
+			convertBlock(elt, (Block) root, errors);
+			return elt;
+		}
 		if (!(root instanceof Model)) {
 			return null;
 		}
@@ -368,6 +373,10 @@ public class GamlCompatibilityConverter {
 
 	private static void convertBlock(final Statement stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		final Block block = stm.getBlock();
+		convertBlock(elt, block, errors);
+	}
+
+	public static void convertBlock(final ISyntacticElement elt, final Block block, final Set<Diagnostic> errors) {
 		if (block != null) {
 			final Expression function = block.getFunction();
 			if (function != null) {

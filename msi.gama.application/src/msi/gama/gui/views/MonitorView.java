@@ -111,7 +111,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 			}).getEditor();
 
 		final IExpression expr =
-			GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulationScope());
+			GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulationScope(), true);
 
 		final Text c = (Text) EditorFactory.createExpression(output.getScope(), compo, "Expression:",
 			output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, new EditorListener<IExpression>() {

@@ -34,6 +34,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
@@ -77,6 +78,8 @@ public class GamlResource extends LazyLinkingResource {
 	private volatile boolean isEdited;
 	private final GamlProperties requires = new GamlProperties();
 	private volatile boolean hasValidatedPlugins = false;
+	// in case of a synthetic resource
+	private GamlResource linkToRealModelResource;
 
 	public ErrorCollector getErrorCollector() {
 		if (collector == null) {
@@ -238,7 +241,7 @@ public class GamlResource extends LazyLinkingResource {
 					final TOrderedHashMap<GamlResource, Import> imports = gr.loadImports(set);
 					for (final Map.Entry<GamlResource, Import> entry : imports.entrySet()) {
 						final ImportImpl impl = (ImportImpl) entry.getValue();
-						if (impl.eIsSet(GamlPackage.IMPORT__NAME)) {
+						if (impl != null && impl.eIsSet(GamlPackage.IMPORT__NAME)) {
 							newResources.put(entry.getKey(), impl.getName());
 						} else {
 							// "normal" Import (no "as")
@@ -252,8 +255,21 @@ public class GamlResource extends LazyLinkingResource {
 
 	}
 
+	public void setRealResource(final GamlResource r) {
+		linkToRealModelResource = r;
+	}
+
+	public GamlResource getRealResource() {
+		return linkToRealModelResource;
+	}
+
 	public TOrderedHashMap<GamlResource, Import> loadImports(final ResourceSet resourceSet) {
 		final TOrderedHashMap<GamlResource, Import> localImports = new TOrderedHashMap();
+		final EObject e = getContents().get(0);
+		if (!(e instanceof Model)) {
+			localImports.put(getRealResource(), null);
+			return localImports;
+		}
 		final Model model = (Model) getContents().get(0);
 		for (final Import imp : model.getImports()) {
 			final String importUri = imp.getImportURI();
@@ -519,15 +535,17 @@ public class GamlResource extends LazyLinkingResource {
 		return requires;
 	}
 
-	@Override
-	public void update(final int offset, final int replacedTextLength, final String newText) {
-		// final long begin = System.nanoTime();
-		super.update(offset, replacedTextLength, newText);
-		// System.out.println("'" + getURI().lastSegment() + "'" + " updated in
-		// " + (System.nanoTime() - begin) / 1000000d
-		// + " ms in Thread [" + Thread.currentThread().getName() + "]");
-		// System.out.println("****************************************************");
-	}
+	// @Override
+	// public void update(final int offset, final int replacedTextLength, final
+	// String newText) {
+	// // final long begin = System.nanoTime();
+	// super.update(offset, replacedTextLength, newText);
+	// // System.out.println("'" + getURI().lastSegment() + "'" + " updated in
+	// // " + (System.nanoTime() - begin) / 1000000d
+	// // + " ms in Thread [" + Thread.currentThread().getName() + "]");
+	// //
+	// System.out.println("****************************************************");
+	// }
 
 	@Override
 	public void resolveLazyCrossReferences(final CancelIndicator mon) {

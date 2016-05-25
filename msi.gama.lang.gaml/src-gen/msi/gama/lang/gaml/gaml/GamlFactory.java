@@ -41,15 +41,6 @@ public interface GamlFactory extends EFactory
   StringEvaluator createStringEvaluator();
 
   /**
-   * Returns a new object of class '<em>Action Editor</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Action Editor</em>'.
-   * @generated
-   */
-  ActionEditor createActionEditor();
-
-  /**
    * Returns a new object of class '<em>Model</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

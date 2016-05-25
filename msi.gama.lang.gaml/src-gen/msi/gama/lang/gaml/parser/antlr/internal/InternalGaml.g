@@ -100,11 +100,11 @@ ruleEntry returns [EObject current=null]
 
     |
     { 
-        newCompositeNode(grammarAccess.getEntryAccess().getActionEditorParserRuleCall_2()); 
+        newCompositeNode(grammarAccess.getEntryAccess().getBlockParserRuleCall_2()); 
     }
-    this_ActionEditor_2=ruleActionEditor
+    this_Block_2=ruleBlock
     { 
-        $current = $this_ActionEditor_2.current; 
+        $current = $this_Block_2.current; 
         afterParserOrEnumRuleCall();
     }
 )
@@ -164,49 +164,6 @@ ruleStringEvaluator returns [EObject current=null]
        			"expr",
         		lv_expr_2_0, 
         		"msi.gama.lang.gaml.Gaml.Expression");
-	        afterParserOrEnumRuleCall();
-	    }
-
-)
-))
-;
-
-
-
-
-
-// Entry rule entryRuleActionEditor
-entryRuleActionEditor returns [EObject current=null] 
-	:
-	{ newCompositeNode(grammarAccess.getActionEditorRule()); }
-	 iv_ruleActionEditor=ruleActionEditor 
-	 { $current=$iv_ruleActionEditor.current; } 
-	 EOF 
-;
-
-// Rule ActionEditor
-ruleActionEditor returns [EObject current=null] 
-    @init { enterRule(); 
-    }
-    @after { leaveRule(); }:
-(	otherlv_0='$$$' 
-    {
-    	newLeafNode(otherlv_0, grammarAccess.getActionEditorAccess().getDollarSignDollarSignDollarSignKeyword_0());
-    }
-(
-(
-		{ 
-	        newCompositeNode(grammarAccess.getActionEditorAccess().getActionS_DefinitionParserRuleCall_1_0()); 
-	    }
-		lv_action_1_0=ruleS_Definition		{
-	        if ($current==null) {
-	            $current = createModelElementForParent(grammarAccess.getActionEditorRule());
-	        }
-       		set(
-       			$current, 
-       			"action",
-        		lv_action_1_0, 
-        		"msi.gama.lang.gaml.Gaml.S_Definition");
 	        afterParserOrEnumRuleCall();
 	    }
 

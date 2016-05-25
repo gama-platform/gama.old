@@ -18,6 +18,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
 
@@ -28,6 +29,7 @@ import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Block;
+import msi.gama.lang.gaml.gaml.EquationRef;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
@@ -217,7 +219,7 @@ public class EGaml {
 			}
 			return s;
 		case GamlPackage.TYPE_REF:
-			s = NodeModelUtils.getTokenText(NodeModelUtils.getNode(object));
+			s = getNameOfRef(object);
 			if (s.contains("<")) {
 				s = s.split("<")[0];
 				// Special case for the 'species<xxx>' case
@@ -231,13 +233,33 @@ public class EGaml {
 		case GamlPackage.ACTION_REF:
 		case GamlPackage.SKILL_REF:
 		case GamlPackage.EQUATION_REF:
-			return NodeModelUtils.getTokenText(NodeModelUtils.getNode(object));
+			return getNameOfRef(object);
 		case GamlPackage.STRING_LITERAL:
 			return ((StringLiteral) object).getOp();
 		default:
 			final List<EClass> eSuperTypes = clazz.getESuperTypes();
 			return eSuperTypes.isEmpty() ? null : getKeyOf(object, eSuperTypes.get(0));
 		}
+	}
+
+	public static String getNameOfRef(final EObject o) {
+		final ICompositeNode n = NodeModelUtils.getNode(o);
+		if (n != null)
+			return NodeModelUtils.getTokenText(n);
+		if (o instanceof VariableRef) {
+			return ((VariableRef) o).getRef().getName();
+		} else if (o instanceof UnitName) {
+			return ((UnitName) o).getRef().getName();
+		} else if (o instanceof ActionRef) {
+			return ((ActionRef) o).getRef().getName();
+		} else if (o instanceof SkillRef) {
+			return ((SkillRef) o).getRef().getName();
+		} else if (o instanceof EquationRef) {
+			return ((EquationRef) o).getRef().getName();
+		} else if (o instanceof TypeRef) {
+			return ((TypeRef) o).getRef().getName();
+		} else
+			return "";
 	}
 
 	public static GamlFactory getFactory() {

@@ -80,7 +80,7 @@ public class GAML {
 		if (expression == null || expression.isEmpty()) {
 			throw GamaRuntimeException.error("Enter a valid expression", a.getScope());
 		}
-		final IExpression expr = compileExpression(expression, a);
+		final IExpression expr = compileExpression(expression, a, true);
 		if (expr == null) {
 			return null;
 		}
@@ -90,9 +90,27 @@ public class GAML {
 		return o;
 	}
 
-	public static IExpression compileExpression(final String expression, final IAgent agent)
-			throws GamaRuntimeException {
-		return getExpressionFactory().createExpr(expression, agent.getSpecies().getDescription());
+	public static IExpression compileExpression(final String expression, final IAgent agent,
+			final boolean onlyExpression) throws GamaRuntimeException {
+		if (agent == null)
+			throw GamaRuntimeException.error("");
+		try {
+			final IExpression result = getExpressionFactory().createExpr(expression,
+					agent.getSpecies().getDescription());
+			return result;
+		} catch (final Exception e) {
+			// Maybe it is a statement instead ?
+			if (!onlyExpression)
+				try {
+					final IExpression result = getExpressionFactory().createTemporaryActionForAgent(agent, expression);
+					return result;
+				} catch (final Exception e2) {
+					throw GamaRuntimeException.create(e2, agent.getScope());
+				}
+			else {
+				throw GamaRuntimeException.create(e, agent.getScope());
+			}
+		}
 	}
 
 	public static ModelDescription getModelContext() {

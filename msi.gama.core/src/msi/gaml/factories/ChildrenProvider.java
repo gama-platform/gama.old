@@ -11,13 +11,22 @@
  **********************************************************************************************/
 package msi.gaml.factories;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import msi.gaml.descriptions.IDescription;
 
 public class ChildrenProvider {
 
 	private final List<IDescription> children;
 	public static final ChildrenProvider NONE = new ChildrenProvider(null);
+	public static final ChildrenProvider FUTURE = new ChildrenProvider(new ArrayList()) {
+		@Override
+		public boolean hasChildren() {
+			return true;
+		}
+	};
 
 	public ChildrenProvider(final List descs) {
 		children = descs;
@@ -25,6 +34,10 @@ public class ChildrenProvider {
 
 	public List<IDescription> getChildren() {
 		return children == null ? Collections.EMPTY_LIST : children;
+	}
+
+	public boolean hasChildren() {
+		return children != null && !children.isEmpty();
 	}
 
 }

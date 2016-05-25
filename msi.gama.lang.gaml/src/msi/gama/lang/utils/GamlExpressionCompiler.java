@@ -49,6 +49,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
@@ -99,7 +100,9 @@ import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.SyntacticFactory;
+import msi.gaml.compilation.SyntacticModelElement;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -174,24 +177,25 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return s.getExpression();
 		}
 		setCurrentExpressionDescription(s);
-		boolean synthetic = false;
-		EObject o = s.getTarget();
+		// final boolean synthetic = false;
+		final EObject o = s.getTarget();
 		if (o == null && s instanceof StringBasedExpressionDescription) {
-			synthetic = true;
-			final String expString = s.toString();
-			final IExpression result = cache.get(expString);
-			if (result != null) {
-				return result;
-			}
-			o = getEObjectOf(expString);
+			return compile(s.toString(), parsingContext);
+			// synthetic = true;
+			// final String expString = s.toString();
+			// final IExpression result = cache.get(expString);
+			// if (result != null) {
+			// return result;
+			// }
+			// o = getEObjectOf(expString);
 		}
 		final EObject e = o;
 		final IDescription previous = setContext(parsingContext);
 		try {
 			final IExpression result = compile(e);
-			if (synthetic) {
-				cache.put(s.toString(), result);
-			}
+			// if (synthetic) {
+			// cache.put(s.toString(), result);
+			// }
 			return result;
 		} finally {
 			setContext(previous);
@@ -200,6 +204,25 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// synthetic = false;
 		}
 
+	}
+
+	@Override
+	public IExpression compile(final String expression, final IDescription parsingContext) {
+		final IDescription previous = setContext(parsingContext);
+		try {
+
+			IExpression result = cache.get(expression);
+			if (result != null) {
+				return result;
+			}
+			final EObject o = getEObjectOf(expression);
+			result = compile(o);
+			cache.put(expression, result);
+			return result;
+		} finally {
+			setContext(previous);
+			setCurrentExpressionDescription(null);
+		}
 	}
 
 	private IExpression compile(final EObject s) {
@@ -855,7 +878,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				for (final IDescription L : lst) {
 					if (L.getKeyword().equals("equation")) {
 						final SystemOfEquationsStatement soe = (SystemOfEquationsStatement) L.compile();
-						if (soe.variables_diff.values().toString().contains(varDiff.getName()) || soe.variable_time.toString().equals(varDiff.getName()))
+						if (soe.variables_diff.values().toString().contains(varDiff.getName())
+								|| soe.variable_time.toString().equals(varDiff.getName()))
 							return factory.createOperator("internal_integrated_value", getContext(), object,
 									((IVarExpression.Agent) container).getOwner(), varDiff);
 					}
@@ -1171,6 +1195,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		} else {
 			resource.unload();
 		}
+		if (context != null && context.getUnderlyingElement(null) != null) {
+			final GamlResource real = (GamlResource) context.getUnderlyingElement(null).eResource();
+			resource.setRealResource(real);
+		}
 		return resource;
 	}
 
@@ -1201,6 +1229,36 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		// if ( result instanceof TerminalExpression ) {
 
 		// }
+		return result;
+	}
+
+	@Override
+	public List<IDescription> compileBlock(final String string, final IDescription actionContext)
+			throws GamaRuntimeException {
+		final List<IDescription> result = new ArrayList();
+		final String s = "{" + string + "}";
+		final GamlResource resource = getFreshResource();
+		final InputStream is = new ByteArrayInputStream(s.getBytes());
+		try {
+			resource.load(is, null);
+			EcoreUtil.resolveAll(resource);
+		} catch (final Exception e1) {
+			e1.printStackTrace();
+			return null;
+		}
+
+		if (resource.getErrors().isEmpty()) {
+			final SyntacticModelElement elt = resource.getParseResult().getSyntacticContents();
+			for (final ISyntacticElement e : elt.getChildren()) {
+				final IDescription desc = DescriptionFactory.create(e, actionContext, null);
+				result.add(desc);
+			}
+
+		} else {
+			final Resource.Diagnostic d = resource.getErrors().get(0);
+			throw GamaRuntimeException.error(d.getMessage());
+		}
+
 		return result;
 	}
 

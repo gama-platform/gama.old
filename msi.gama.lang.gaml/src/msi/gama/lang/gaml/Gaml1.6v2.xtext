@@ -4,15 +4,12 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 
 Entry:
-	Model | StringEvaluator | ActionEditor;
+	Model | StringEvaluator | Block ;
 
 
 
 StringEvaluator:
 	toto=ID "<-" expr=Expression;
-
-ActionEditor:
-	"$$$" action=S_Definition;
 
 
 Model:

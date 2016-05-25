@@ -37,18 +37,7 @@ import msi.gaml.types.Types;
  * facets can be retrieved.
  * 
  */
-public class Facets extends THashMap<String, IExpressionDescription> implements IGamlable { // See
-																							// if
-																							// we
-																							// can
-																							// pack
-																							// this
-																							// class
-																							// even
-																							// further
-
-	// Strings as UTF8 encoded bytes ? Using the HashCode to store strings
-	// directly ?
+public class Facets extends THashMap<String, IExpressionDescription> implements IGamlable {
 
 	public Facets(final String... strings) {
 		if (strings != null) {

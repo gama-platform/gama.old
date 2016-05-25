@@ -12,9 +12,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//StringEvaluator/toto"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//StringEvaluator/expr"/>
     </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//ActionEditor">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//ActionEditor/action"/>
-    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Model">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/pragmas"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/imports"/>
@@ -162,6 +159,9 @@
     <genClasses ecoreClass="Gaml.ecore#//StringLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//BooleanLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//ReservedLiteral"/>
+    <genClasses ecoreClass="Gaml.ecore#//ActionEditor">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//ActionEditor/action"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Monitor">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/key"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Monitor/firstFacet"/>

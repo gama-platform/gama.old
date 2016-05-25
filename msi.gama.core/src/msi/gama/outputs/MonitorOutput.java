@@ -150,7 +150,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	public boolean setNewExpressionText(final String string) {
 		expressionText = string;
-		setValue(GAML.compileExpression(string, getScope().getSimulationScope()));
+		setValue(GAML.compileExpression(string, getScope().getSimulationScope(), true));
 		return getScope().step(this);
 	}
 

@@ -28,12 +28,16 @@ import com.google.common.collect.Ordering;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
+import msi.gaml.factories.ChildrenProvider;
+import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
@@ -333,6 +337,22 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public EObject getFacetExpression(final IDescription context, final EObject facet) {
 		return getParser().getFacetExpression(context, facet);
+	}
+
+	@Override
+	public IExpression createTemporaryActionForAgent(final IAgent agent, final String action) {
+		final IDescription context = agent.getSpecies().getDescription();
+		final IDescription desc = DescriptionFactory.create(IKeyword.ACTION, context, ChildrenProvider.FUTURE,
+				IKeyword.TYPE, IKeyword.STRING, IKeyword.NAME, "temporary_action");
+		final List<IDescription> children = getParser().compileBlock(action, context);
+		for (final IDescription child : children) {
+			desc.addChild(child);
+		}
+		desc.validate();
+		context.addChild(desc);
+		final ActionStatement a = (ActionStatement) desc.compile();
+		agent.getSpecies().addTemporaryAction(a);
+		return getParser().compile("temporary_action()", context);
 	}
 
 }

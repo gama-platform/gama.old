@@ -7,7 +7,6 @@ import com.google.inject.Inject;
 import java.util.Set;
 import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ActionArguments;
-import msi.gama.lang.gaml.gaml.ActionEditor;
 import msi.gama.lang.gaml.gaml.ActionFakeDefinition;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
@@ -101,9 +100,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 			case GamlPackage.ACTION_ARGUMENTS:
 				sequence_ActionArguments(context, (ActionArguments) semanticObject); 
 				return; 
-			case GamlPackage.ACTION_EDITOR:
-				sequence_ActionEditor(context, (ActionEditor) semanticObject); 
-				return; 
 			case GamlPackage.ACTION_FAKE_DEFINITION:
 				sequence_ActionFakeDefinition(context, (ActionFakeDefinition) semanticObject); 
 				return; 
@@ -123,7 +119,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				sequence_Binary(context, (Binary) semanticObject); 
 				return; 
 			case GamlPackage.BLOCK:
-				if (rule == grammarAccess.getBlockRule()) {
+				if (rule == grammarAccess.getEntryRule()
+						|| rule == grammarAccess.getBlockRule()) {
 					sequence_Block(context, (Block) semanticObject); 
 					return; 
 				}
@@ -549,25 +546,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
-	 *     Entry returns ActionEditor
-	 *     ActionEditor returns ActionEditor
-	 *
-	 * Constraint:
-	 *     action=S_Definition
-	 */
-	protected void sequence_ActionEditor(ISerializationContext context, ActionEditor semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.ACTION_EDITOR__ACTION) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.ACTION_EDITOR__ACTION));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getActionEditorAccess().getActionS_DefinitionParserRuleCall_1_0(), semanticObject.getAction());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     Facet returns Facet
 	 *
 	 * Constraint:
@@ -841,6 +819,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
+	 *     Entry returns Block
 	 *     Block returns Block
 	 *
 	 * Constraint:

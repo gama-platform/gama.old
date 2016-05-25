@@ -5,7 +5,6 @@ package msi.gama.lang.gaml.gaml.impl;
 import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.ActionDefinition;
-import msi.gama.lang.gaml.gaml.ActionEditor;
 import msi.gama.lang.gaml.gaml.ActionFakeDefinition;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
@@ -106,13 +105,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass stringEvaluatorEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass actionEditorEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -705,26 +697,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EReference getStringEvaluator_Expr()
   {
     return (EReference)stringEvaluatorEClass.getEStructuralFeatures().get(1);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getActionEditor()
-  {
-    return actionEditorEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EReference getActionEditor_Action()
-  {
-    return (EReference)actionEditorEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1933,9 +1905,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     createEAttribute(stringEvaluatorEClass, STRING_EVALUATOR__TOTO);
     createEReference(stringEvaluatorEClass, STRING_EVALUATOR__EXPR);
 
-    actionEditorEClass = createEClass(ACTION_EDITOR);
-    createEReference(actionEditorEClass, ACTION_EDITOR__ACTION);
-
     modelEClass = createEClass(MODEL);
     createEReference(modelEClass, MODEL__PRAGMAS);
     createEReference(modelEClass, MODEL__IMPORTS);
@@ -2154,9 +2123,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     // Add supertypes to classes
     stringEvaluatorEClass.getESuperTypes().add(this.getEntry());
-    actionEditorEClass.getESuperTypes().add(this.getEntry());
     modelEClass.getESuperTypes().add(this.getEntry());
     modelEClass.getESuperTypes().add(this.getVarDefinition());
+    blockEClass.getESuperTypes().add(this.getEntry());
     importEClass.getESuperTypes().add(this.getVarDefinition());
     s_GlobalEClass.getESuperTypes().add(this.getStatement());
     s_EntitiesEClass.getESuperTypes().add(this.getStatement());
@@ -2233,9 +2202,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEClass(stringEvaluatorEClass, StringEvaluator.class, "StringEvaluator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStringEvaluator_Toto(), ecorePackage.getEString(), "toto", null, 0, 1, StringEvaluator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStringEvaluator_Expr(), this.getExpression(), null, "expr", null, 0, 1, StringEvaluator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-    initEClass(actionEditorEClass, ActionEditor.class, "ActionEditor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getActionEditor_Action(), this.getS_Definition(), null, "action", null, 0, 1, ActionEditor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getModel_Pragmas(), this.getPragma(), null, "pragmas", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -66,7 +66,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
     {
       case GamlPackage.ENTRY: return createEntry();
       case GamlPackage.STRING_EVALUATOR: return createStringEvaluator();
-      case GamlPackage.ACTION_EDITOR: return createActionEditor();
       case GamlPackage.MODEL: return createModel();
       case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.IMPORT: return createImport();
@@ -162,17 +161,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     StringEvaluatorImpl stringEvaluator = new StringEvaluatorImpl();
     return stringEvaluator;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ActionEditor createActionEditor()
-  {
-    ActionEditorImpl actionEditor = new ActionEditorImpl();
-    return actionEditor;
   }
 
   /**

@@ -408,7 +408,7 @@ public class SwtGui extends AbstractGui {
 
 	private void writeToConsole(final String msg, final ITopLevelAgent root, final GamaUIColor color) {
 		if ( console != null ) {
-			console.append(msg, root, color);
+			console.append(msg, root, color, false);
 		} else {
 			consoleBuffer.append(msg);
 		}
@@ -599,8 +599,9 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public void showConsoleView(final ITopLevelAgent agent) {
 		console = (ConsoleView) showView(CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+		console.setExecutorAgent(agent);
 		if ( consoleBuffer.length() > 0 ) {
-			console.append(consoleBuffer.toString(), agent, null);
+			console.append(consoleBuffer.toString(), agent, null, false);
 			consoleBuffer.setLength(0);
 		}
 	}
@@ -1323,14 +1324,14 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public void prepareForSimulation(final SimulationAgent agent) {
 		clearErrors();
-		if ( !agent.getExperiment().getSpecies().isBatch() ) {
-			showConsoleView(agent);
-			// resetMonitorView();
-		} else {
-			if ( console == null ) {
-				showConsoleView(agent);
-			}
-		}
+		// if ( !agent.getExperiment().getSpecies().isBatch() ) {
+		// showConsoleView(agent);
+		// // resetMonitorView();
+		// } else {
+		// if ( console == null ) {
+		// showConsoleView(agent);
+		// }
+		// }
 	}
 
 	@Override
@@ -1354,6 +1355,7 @@ public class SwtGui extends AbstractGui {
 			// OutputSynchronizer.waitForViewsToBeClosed();
 			// }
 			// end-hqnghi
+			showConsoleView(exp.getAgent());
 		} else {
 			status = null;
 		}

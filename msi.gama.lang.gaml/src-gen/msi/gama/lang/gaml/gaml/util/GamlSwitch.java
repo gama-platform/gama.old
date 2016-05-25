@@ -87,14 +87,6 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.ACTION_EDITOR:
-      {
-        ActionEditor actionEditor = (ActionEditor)theEObject;
-        T result = caseActionEditor(actionEditor);
-        if (result == null) result = caseEntry(actionEditor);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case GamlPackage.MODEL:
       {
         Model model = (Model)theEObject;
@@ -109,6 +101,7 @@ public class GamlSwitch<T> extends Switch<T>
       {
         Block block = (Block)theEObject;
         T result = caseBlock(block);
+        if (result == null) result = caseEntry(block);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -730,22 +723,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseStringEvaluator(StringEvaluator object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Action Editor</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Action Editor</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseActionEditor(ActionEditor object)
   {
     return null;
   }

@@ -100,7 +100,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 					new Provider<LinkedHashSet<URI>>() {
 						@Override
 						public LinkedHashSet<URI> get() {
-							System.out.println("Getting imported URIS from " + resource);
+							// System.out.println("Getting imported URIS from "
+							// + resource);
 							final Set<URI> uris = ((GamlResource) resource)
 									.computeAllImportedURIs(resource.getResourceSet()).keySet();
 							if (uris.size() <= 1)

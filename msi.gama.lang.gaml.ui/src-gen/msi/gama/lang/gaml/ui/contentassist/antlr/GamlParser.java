@@ -110,7 +110,6 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getValid_IDAccess().getAlternatives(), "rule__Valid_ID__Alternatives");
 					put(grammarAccess.getTerminalExpressionAccess().getAlternatives(), "rule__TerminalExpression__Alternatives");
 					put(grammarAccess.getStringEvaluatorAccess().getGroup(), "rule__StringEvaluator__Group__0");
-					put(grammarAccess.getActionEditorAccess().getGroup(), "rule__ActionEditor__Group__0");
 					put(grammarAccess.getModelAccess().getGroup(), "rule__Model__Group__0");
 					put(grammarAccess.getModelBlockAccess().getGroup(), "rule__ModelBlock__Group__0");
 					put(grammarAccess.getImportAccess().getGroup(), "rule__Import__Group__0");
@@ -250,7 +249,6 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getTerminalExpressionAccess().getGroup_5(), "rule__TerminalExpression__Group_5__0");
 					put(grammarAccess.getStringEvaluatorAccess().getTotoAssignment_0(), "rule__StringEvaluator__TotoAssignment_0");
 					put(grammarAccess.getStringEvaluatorAccess().getExprAssignment_2(), "rule__StringEvaluator__ExprAssignment_2");
-					put(grammarAccess.getActionEditorAccess().getActionAssignment_1(), "rule__ActionEditor__ActionAssignment_1");
 					put(grammarAccess.getModelAccess().getPragmasAssignment_0(), "rule__Model__PragmasAssignment_0");
 					put(grammarAccess.getModelAccess().getNameAssignment_2(), "rule__Model__NameAssignment_2");
 					put(grammarAccess.getModelAccess().getImportsAssignment_3(), "rule__Model__ImportsAssignment_3");

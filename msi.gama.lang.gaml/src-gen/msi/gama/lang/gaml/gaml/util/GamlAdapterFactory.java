@@ -85,11 +85,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createStringEvaluatorAdapter();
       }
       @Override
-      public Adapter caseActionEditor(ActionEditor object)
-      {
-        return createActionEditorAdapter();
-      }
-      @Override
       public Adapter caseModel(Model object)
       {
         return createModelAdapter();
@@ -487,21 +482,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createStringEvaluatorAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.ActionEditor <em>Action Editor</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.ActionEditor
-   * @generated
-   */
-  public Adapter createActionEditorAdapter()
   {
     return null;
   }

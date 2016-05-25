@@ -139,7 +139,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			} else {
 				// return evaluateExpression ? GAML.evaluateExpression(s, agent) : GAML.compileExpression(s, agent);
 				setCurrentValue(
-					evaluateExpression ? GAML.evaluateExpression(s, agent) : GAML.compileExpression(s, agent));
+					evaluateExpression ? GAML.evaluateExpression(s, agent) : GAML.compileExpression(s, agent, true));
 			}
 		} catch (final Exception e) {
 			currentException = e;

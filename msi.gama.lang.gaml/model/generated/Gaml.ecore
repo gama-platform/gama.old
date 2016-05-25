@@ -7,10 +7,6 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="expr" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ActionEditor" eSuperTypes="#//Entry">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//S_Definition"
-        containment="true"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Model" eSuperTypes="#//Entry #//VarDefinition">
     <eStructuralFeatures xsi:type="ecore:EReference" name="pragmas" upperBound="-1"
         eType="#//Pragma" containment="true"/>
@@ -19,7 +15,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="block" eType="#//Block"
         containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Block">
+  <eClassifiers xsi:type="ecore:EClass" name="Block" eSuperTypes="#//Entry">
     <eStructuralFeatures xsi:type="ecore:EReference" name="statements" upperBound="-1"
         eType="#//Statement" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="function" eType="#//Expression"

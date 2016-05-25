@@ -49,6 +49,8 @@ public interface IExpressionCompiler<T> {
 
 	public abstract IExpression compile(final IExpressionDescription s, final IDescription parsingContext);
 
+	public IExpression compile(final String expression, final IDescription parsingContext);
+
 	Map<String, IExpressionDescription> parseArguments(StatementDescription action, EObject eObject,
 			IDescription context, boolean compileArgValues);
 
@@ -70,5 +72,7 @@ public interface IExpressionCompiler<T> {
 	 * @return
 	 */
 	public abstract EObject getFacetExpression(IDescription context, EObject facet);
+
+	public List<IDescription> compileBlock(final String string, final IDescription actionContext);
 
 }

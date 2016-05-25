@@ -11,18 +11,28 @@
  **********************************************************************************************/
 package msi.gaml.species;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.*;
-import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.population.IPopulationSet;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
-import msi.gama.util.*;
+import msi.gama.util.IAddressableContainer;
+import msi.gama.util.IList;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.*;
+import msi.gaml.statements.ActionStatement;
+import msi.gaml.statements.IExecutable;
+import msi.gaml.statements.IStatement;
+import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
@@ -33,9 +43,9 @@ import msi.gaml.variables.IVariable;
  *
  */
 @vars({ @var(name = IKeyword.ATTRIBUTES, type = IType.LIST, of = IType.STRING),
-	@var(name = IKeyword.PARENT, type = IType.SPECIES), @var(name = IKeyword.NAME, type = IType.STRING),
-	@var(name = ISpecies.SUBSPECIES, type = IType.LIST, of = IType.SPECIES),
-	@var(name = ISpecies.POPULATION, type = IType.LIST, of = ITypeProvider.FIRST_CONTENT_TYPE) })
+		@var(name = IKeyword.PARENT, type = IType.SPECIES), @var(name = IKeyword.NAME, type = IType.STRING),
+		@var(name = ISpecies.SUBSPECIES, type = IType.LIST, of = IType.SPECIES),
+		@var(name = ISpecies.POPULATION, type = IType.LIST, of = ITypeProvider.FIRST_CONTENT_TYPE) })
 public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent, Integer, IAgent>, IPopulationSet {
 
 	public static final String stepActionName = "_step_";
@@ -55,6 +65,7 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 
 	/**
 	 * Return all the direct subspecies of this species, properly typed for GAMA
+	 * 
 	 * @return
 	 */
 	@getter(SUBSPECIES)
@@ -66,10 +77,8 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 	public abstract String getName();
 
 	/**
-	 * Returns all the micro-species.
-	 * Micro-species includes:
-	 * 1. the "direct" micro-species;
-	 * 2. the micro-species of the parent-species.
+	 * Returns all the micro-species. Micro-species includes: 1. the "direct"
+	 * micro-species; 2. the micro-species of the parent-species.
 	 *
 	 * @return
 	 */
@@ -86,14 +95,13 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 	/**
 	 * Verifies if this species has micro-species or not.
 	 *
-	 * @return
-	 * true if this species has micro-species
-	 * false otherwise
+	 * @return true if this species has micro-species false otherwise
 	 */
 	public abstract boolean hasMicroSpecies();
 
 	/**
-	 * Verifies of the specified species is a micro-species of this species of not.
+	 * Verifies of the specified species is a micro-species of this species of
+	 * not.
 	 *
 	 * @param species
 	 * @return
@@ -149,7 +157,9 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 	public abstract Collection<String> getVarNames();
 
 	/**
-	 * Similar to getVarNames(), but returns a correctly initialized IList of attribute names
+	 * Similar to getVarNames(), but returns a correctly initialized IList of
+	 * attribute names
+	 * 
 	 * @param scope
 	 * @return the list of all the attributes defined in this species
 	 */
@@ -179,7 +189,9 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 	public abstract boolean isStepOverriden();
 
 	/**
-	 * Returns the population of agents that belong to this species and that are hosted in the same host
+	 * Returns the population of agents that belong to this species and that are
+	 * hosted in the same host
+	 * 
 	 * @param scope
 	 * @return
 	 *
@@ -187,5 +199,7 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 	@getter(POPULATION)
 	@doc("Returns the population of agents that belong to this species")
 	public abstract IPopulation getPopulation(IScope scope);
+
+	public abstract void addTemporaryAction(ActionStatement a);
 
 }

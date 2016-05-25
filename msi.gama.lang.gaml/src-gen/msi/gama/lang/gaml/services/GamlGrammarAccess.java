@@ -22,13 +22,13 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final RuleCall cModelParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cStringEvaluatorParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		private final RuleCall cActionEditorParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
+		private final RuleCall cBlockParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
 		//Entry:
-		//	Model | StringEvaluator | ActionEditor;
+		//	Model | StringEvaluator | Block;
 		@Override public ParserRule getRule() { return rule; }
 
-		//Model | StringEvaluator | ActionEditor
+		//Model | StringEvaluator | Block
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//Model
@@ -37,8 +37,8 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//StringEvaluator
 		public RuleCall getStringEvaluatorParserRuleCall_1() { return cStringEvaluatorParserRuleCall_1; }
 
-		//ActionEditor
-		public RuleCall getActionEditorParserRuleCall_2() { return cActionEditorParserRuleCall_2; }
+		//Block
+		public RuleCall getBlockParserRuleCall_2() { return cBlockParserRuleCall_2; }
 	}
 
 	public class StringEvaluatorElements extends AbstractParserRuleElementFinder {
@@ -71,30 +71,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//Expression
 		public RuleCall getExprExpressionParserRuleCall_2_0() { return cExprExpressionParserRuleCall_2_0; }
-	}
-
-	public class ActionEditorElements extends AbstractParserRuleElementFinder {
-		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.ActionEditor");
-		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword cDollarSignDollarSignDollarSignKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Assignment cActionAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cActionS_DefinitionParserRuleCall_1_0 = (RuleCall)cActionAssignment_1.eContents().get(0);
-		
-		//ActionEditor:
-		//	"$$$" action=S_Definition;
-		@Override public ParserRule getRule() { return rule; }
-
-		//"$$$" action=S_Definition
-		public Group getGroup() { return cGroup; }
-
-		//"$$$"
-		public Keyword getDollarSignDollarSignDollarSignKeyword_0() { return cDollarSignDollarSignDollarSignKeyword_0; }
-
-		//action=S_Definition
-		public Assignment getActionAssignment_1() { return cActionAssignment_1; }
-
-		//S_Definition
-		public RuleCall getActionS_DefinitionParserRuleCall_1_0() { return cActionS_DefinitionParserRuleCall_1_0; }
 	}
 
 	public class ModelElements extends AbstractParserRuleElementFinder {
@@ -4800,7 +4776,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	private final EntryElements pEntry;
 	private final StringEvaluatorElements pStringEvaluator;
-	private final ActionEditorElements pActionEditor;
 	private final ModelElements pModel;
 	private final ModelBlockElements pModelBlock;
 	private final ImportElements pImport;
@@ -4926,7 +4901,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		this.grammar = internalFindGrammar(grammarProvider);
 		this.pEntry = new EntryElements();
 		this.pStringEvaluator = new StringEvaluatorElements();
-		this.pActionEditor = new ActionEditorElements();
 		this.pModel = new ModelElements();
 		this.pModelBlock = new ModelBlockElements();
 		this.pImport = new ImportElements();
@@ -5070,7 +5044,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//Entry:
-	//	Model | StringEvaluator | ActionEditor;
+	//	Model | StringEvaluator | Block;
 	public EntryElements getEntryAccess() {
 		return pEntry;
 	}
@@ -5087,16 +5061,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getStringEvaluatorRule() {
 		return getStringEvaluatorAccess().getRule();
-	}
-
-	//ActionEditor:
-	//	"$$$" action=S_Definition;
-	public ActionEditorElements getActionEditorAccess() {
-		return pActionEditor;
-	}
-	
-	public ParserRule getActionEditorRule() {
-		return getActionEditorAccess().getRule();
 	}
 
 	//Model:
