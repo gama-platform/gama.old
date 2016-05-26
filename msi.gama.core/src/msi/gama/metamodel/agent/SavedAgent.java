@@ -79,9 +79,20 @@ public class SavedAgent {
 				// Changed 3/2/12: is it necessary to make the things below ?
 //				variables.put(specVar,
 //						new GamaShape(agent.getGeometry()));
+				// Changed 26/5/16: additional variables exist in the shape. To keep them in the SavedAgent, we add them at hand in the geometry.
+				// We cannot keep all the GamaShape, because it contains populations too.
+				GamaShape shape = new GamaShape(((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry());
 				
-				variables.put(specVar,
-					new GamaShape(((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry()));
+				for(Object keyAttr : agent.getAttributes().getKeys()) {
+					String attrName = (String) keyAttr;
+					if( UNSAVABLE_VARIABLES.contains(attrName)) { continue; }
+					if(species.getVarNames().contains(attrName)) { continue; }
+					if(agent.getAttribute(keyAttr) instanceof IPopulation) {continue;}
+					shape.setAttribute(attrName, agent.getAttribute(keyAttr));
+				}					
+				
+				variables.put(specVar, shape);			
+				
 				continue;
 			}
 			variables.put(specVar, species.getVar(specVar).value(scope, agent));
