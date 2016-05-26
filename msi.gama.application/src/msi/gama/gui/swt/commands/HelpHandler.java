@@ -11,8 +11,10 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
-import org.eclipse.core.commands.*;
-import msi.gama.runtime.GAMA;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import msi.gama.gui.swt.SwtGui;
 
 public class HelpHandler extends AbstractHandler {
 
@@ -20,7 +22,7 @@ public class HelpHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.getGui().showWebEditor("http://doc.gama-platform.org", null);
+		SwtGui.showWeb2Editor("http://doc.gama-platform.org", null);
 		return null;
 	}
 }

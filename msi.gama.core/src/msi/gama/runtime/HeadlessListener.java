@@ -284,17 +284,6 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	/**
-	 * Method showWebEditor()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#showWebEditor(java.lang.String,
-	 *      java.lang.String)
-	 */
-	@Override
-	public Object showWebEditor(final String url, final String html) {
-		return null;
-	}
-
-	/**
 	 * Method beginSubStatus()
 	 * 
 	 * @see msi.gama.common.interfaces.IGui#beginSubStatus(java.lang.String)
