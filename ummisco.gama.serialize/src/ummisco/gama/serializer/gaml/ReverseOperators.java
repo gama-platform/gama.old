@@ -16,88 +16,56 @@ import ummisco.gama.serializer.gamaType.converters.*;
 
 public class ReverseOperators {
 
-//	public static XStream newXStream(ConverterScope cs) {
-//		// TODO check whether a BinaryStreamDriver could not be better ... 
-//		XStream xstream = new XStream(new DomDriver());
-//		xstream.registerConverter(new LogConverter());
-//		xstream.registerConverter(new GamaBasicTypeConverter(cs));
-//		xstream.registerConverter(new GamaAgentConverter(cs));
-//		xstream.registerConverter(new GamaListConverter(cs));
-//		xstream.registerConverter(new GamaMapConverter(cs));
-//		xstream.registerConverter(new SavedAgentConverter(cs));
-//		xstream.registerConverter(new GamaPairConverter());
-//		xstream.registerConverter(new GamaMatrixConverter(cs));
-//		xstream.registerConverter(new GamaGraphConverter(cs));		
-//		xstream.registerConverter(new GamaFileConverter(cs));
-//		xstream.registerConverter(new GamaPopulationConverter(cs));
-//		xstream.registerConverter(new GamaSpeciesConverter(cs));		
-//		//		xstream.registerConverter(new GamaShapeFileConverter(cs));
-//
-//		return xstream;
-//	}
-	
-	@operator(value = "serializeAgent")
-	@doc("")
-//	public static String serializeSimulation(final IScope scope, final int i) {
-	public static String serializeAgent(final IScope scope, final IAgent agent) {
-
-//	XStream xstream = newXStream(new ConverterScope(scope));
-
-		System.out.println("**** TODO list = Problème dans les displays");
-//		System.out.println("**** TODO list = Get an agent as parameter");
-		System.out.println("**** TODO list = Reducer for any kind of file");
-		System.out.println("**** TODO list = Case of multi-simulation ?");
-		System.out.println("**** TODO list Improvment = simplify GamaShape");		
-
-//		return xstream.toXML(new SavedAgent(scope, agent));
-		return StreamConverter.convertObjectToStream(scope, new SavedAgent(scope, agent));
-		
-	}
-
 	@operator(value = "serialize")
-	@doc("")
+	@doc("It serializes any object, i.e. transform it into a string.")
 	public static String serialize(final IScope scope, final Object o) {
 		System.out.println("**** Serialize Object ****");	
-
-//		XStream xstream = newXStream(new ConverterScope(scope));
-//		return xstream.toXML(o);
 		return StreamConverter.convertObjectToStream(scope, o);
-
 	}	
 	
 	@operator(value = "unserialize")
 	@doc("")
 	public static Object unserialize(final IScope scope, final String s) {
 		System.out.println("**** unSerialize Object ****");	
-//		ConverterScope cScope = new ConverterScope(scope);
-//		XStream xstream = newXStream(cScope);
-
-//		Object agt = xstream.fromXML(s);
-		
-//		return agt;
 		return StreamConverter.convertStreamToObject(scope, s);
+	}
+	
+
+	
+	@operator(value = "serializeAgent")
+	@doc("")
+	public static String serializeAgent(final IScope scope, final IAgent agent) {
+
+		System.out.println("**** TODO list = Problème dans les displays");
+		System.out.println("**** TODO list = Reducer for any kind of file");
+		System.out.println("**** TODO list = Case of multi-simulation ?");
+		System.out.println("**** TODO list Improvment = simplify GamaShape");		
+
+		return StreamConverter.convertObjectToStream(scope, new SavedAgent(scope, agent));		
 	}		
 	
 	@operator(value = "unSerializeSimulation")
 	@doc("")
 	public static int unSerializeSimulation(final IScope scope, final String simul) {
 		ConverterScope cScope = new ConverterScope(scope);
-//		XStream xstream = newXStream(cScope);
-
 		XStream xstream = StreamConverter.loadAndBuild(cScope);
 		
-		SavedAgent agt = (SavedAgent) xstream.fromXML(simul);
-
 		ExperimentAgent exp = (ExperimentAgent) scope.getExperiment();
-		exp.getSimulation().dispose();
+		exp.getSimulation().dispose();		
+		
+//		SavedAgent agt = (SavedAgent) xstream.fromXML(simul);
+		SimulationAgent simAgt = (SimulationAgent) xstream.fromXML(simul);
 
-		SimulationPopulation simPop = exp.getSimulationPopulation();
-		agt.restoreTo(scope, simPop);
+
+
+//		SimulationPopulation simPop = exp.getSimulationPopulation();
+//		agt.restoreTo(scope, simPop);
 		
-		SimulationAgent simAgt = exp.getSimulation();
-		cScope.setSimulationAgent(simAgt);
+//		SimulationAgent simAgt = exp.getSimulation();
+//		cScope.setSimulationAgent(simAgt);
 		
-		agt = (SavedAgent) xstream.fromXML(simul);
+//		agt = (SavedAgent) xstream.fromXML(simul);
+//		simAgt = (SimulationAgent) xstream.fromXML(simul);
 
 		return 1;
 	}

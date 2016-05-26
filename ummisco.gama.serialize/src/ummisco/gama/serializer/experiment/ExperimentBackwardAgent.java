@@ -1,10 +1,7 @@
 package ummisco.gama.serializer.experiment;
 
-import java.util.ArrayList;
-
 import com.thoughtworks.xstream.XStream;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -58,10 +55,6 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 		// Save simulation state in the history
 		String state = ReverseOperators.serializeAgent( scope, this.getSimulation()) ;
 
-		System.out.println("*********SERIALI*********************");
-		System.out.println(state);		
-		System.out.println("******************************");
-	
 		currentNode = currentNode.addChild(state);
 		
 		return result;
@@ -84,7 +77,6 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 							
 				if(previousState != null ){			
 					ConverterScope cScope = new ConverterScope(scope);
-		//			XStream xstream = ReverseOperators.newXStream(cScope);
 					XStream xstream = StreamConverter.loadAndBuild(cScope);
 		
 					// get the previous state 
