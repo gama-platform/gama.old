@@ -5,10 +5,10 @@ global
 {
 }
 
-experiment FliesCouplingExperiment parent:FliesExperiment type: gui
+experiment Simple type: gui
 {
-	list<Flies> get_flies{
-		return list(Flies);
+	list<Fly> get_flies{
+		return list(Fly);
 	}
 	
 	//if we redefine the output, i.e, a blank output, the displays in parent experiement dont show.

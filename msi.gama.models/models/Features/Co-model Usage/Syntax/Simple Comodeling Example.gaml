@@ -6,8 +6,8 @@
 */
 model simple_comodeling_example
 
-import "Flies.gaml" as MyFliesCouplingAliasName
-import "Mosquitos.gaml" as MyMosquitosCouplingAliasName
+import "Flies.gaml" as Flies
+import "Mosquitos.gaml" as Mosquitos
 
 
 global
@@ -15,47 +15,47 @@ global
 	init
 	{
 	//micro_model must be instantiated by create statement. We create an experiment inside the micro-model and the simulation will be created implicitly (1 experiment have only 1 simulation).
-		create MyFliesCouplingAliasName.FliesExperiment  number: 5;
-		create MyMosquitosCouplingAliasName.MosquitosExperiment;
+		create Flies.Simple  number: 5;
+		create Mosquitos.Generic;
 	}
 
 	reflex simulate_micro_models
 	{
 
 	//tell the first experiment of micro_model_1 do 1 step;
-		ask first(MyFliesCouplingAliasName.FliesExperiment).simulation
+		ask first(Flies.Simple).simulation
 		{
 			do _step_;
 		}
 
 		//tell the  experiment at 3 of micro_model_1 do 1 step;
-		ask (MyFliesCouplingAliasName.FliesExperiment at 3).simulation
+		ask (Flies.Simple at 3).simulation
 		{
 			do _step_;
 		}
 
 		//tell all experiments of micro_model_1 do 1 step;
-		ask (MyFliesCouplingAliasName.FliesExperiment collect each.simulation)
+		ask (Flies.Simple collect each.simulation)
 		{
 			do _step_;
 		}
 
 		//tell all experiments of micro_model_2 do 1 step;
-		ask (MyMosquitosCouplingAliasName.MosquitosExperiment collect each.simulation)
+		ask (Mosquitos.Generic collect each.simulation)
 		{
 			do _step_;
 		}
 		
 		//kill simulation  of micro_model and recreate then
-		ask  (MyMosquitosCouplingAliasName.MosquitosExperiment collect each.simulation){
+		ask  (Mosquitos.Generic collect each.simulation){
 			do die;
 		}
-		ask (MyMosquitosCouplingAliasName.MosquitosExperiment){
+		ask (Mosquitos.Generic){
 			create simulation{do _init_;}
 		}
 	}
 }
 
-experiment SimpleComodelingExampleExp type: gui
+experiment main type: gui
 {
 }

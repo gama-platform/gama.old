@@ -86,7 +86,7 @@ species road {
 		draw (shape + 3 * speed_coeff) color: #red;
 	}
 }
-experiment trafic type: gui {
+experiment traffic type: gui {
 	float minimum_cycle_duration <- 0.01;
 	output {
 		display carte type: opengl{

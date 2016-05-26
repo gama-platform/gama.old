@@ -1,7 +1,7 @@
 model evacuation_coupling
 
 import "../../../../Toy Models/Evacuation/models/Continuous Move.gaml"
-experiment EvacuationCouplingExperiment type: gui parent: main
+experiment main type: gui
 {
 	point centroid <- { 0, 180 };
 	list<building> get_building

@@ -8,12 +8,12 @@ global
 	int n <- 50;
 	init
 	{
-		create Mosquitos number: n;
+		create Mosquito number: n;
 	}
 
 }
 
-species Mosquitos skills: [moving]
+species Mosquito skills: [moving]
 {
 	geometry shape<-circle(1);
 	int durability<- rnd(100);
@@ -29,13 +29,13 @@ species Mosquitos skills: [moving]
 
 }
 
-experiment MosquitosExperiment type: gui
+experiment Generic type: gui
 { 
 	output
 	{
 		display "Mosquitos display"
 		{
-			species Mosquitos aspect: default;
+			species Mosquito aspect: default;
 		}
 
 	}

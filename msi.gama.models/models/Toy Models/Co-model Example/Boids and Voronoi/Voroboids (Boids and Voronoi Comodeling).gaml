@@ -17,34 +17,34 @@ global
 	init
 	{	
 		//create experiment from micro-model myBoids
-		create myBoids.BoidsCouplingExperiment with: [shape::square(0.5), width_and_height_of_environment::100, number_of_agents::100];
+		create myBoids.boids_gui with: [shape::square(0.5), width_and_height_of_environment::100, number_of_agents::100];
 		//create experiment form micro-model myVoronoi
-		create myVoronoi.VoronoiCouplingExperiment with:[num_points::100, env_width::100, env_height::100];
+		create myVoronoi.voronoi with:[num_points::100, env_width::100, env_height::100];
 	}
 
 	reflex simulate_micro_models
 	{
 		//tell myBoids to step a cycle
-		ask (myBoids.BoidsCouplingExperiment collect each.simulation){ do _step_;}
+		ask (myBoids.boids_gui collect each.simulation){ do _step_;}
 		//get all boids's location into a list
-		list<point> theLocations<-(myBoids.BoidsCouplingExperiment accumulate each.get_boids()) collect each.location;
+		list<point> theLocations<-(myBoids.boids_gui accumulate each.get_boids()) collect each.location;
 		//myVoronoi do a step with the location of their agent from the location list above 
-		ask (myVoronoi.VoronoiCouplingExperiment collect each.simulation){ ask center{location<-theLocations at (int(self)); }do _step_;}
+		ask (myVoronoi.voronoi collect each.simulation){ ask center{location<-theLocations at (int(self)); }do _step_;}
 	}
 
 }
 
-experiment VoroboidsExperiment type: gui
+experiment main type: gui
 {
 	output
 	{
 		display "comodel_disp" 
 		{
-			agents "cell" value: (myVoronoi.VoronoiCouplingExperiment accumulate each.get_cell());
+			agents "cell" value: (myVoronoi.voronoi accumulate each.get_cell());
 			
-			agents "boids_goal" value: (myBoids.BoidsCouplingExperiment accumulate each.get_boids_goal()) {draw circle(5) color:#red;}
+			agents "boids_goal" value: (myBoids.boids_gui accumulate each.get_boids_goal()) {draw circle(5) color:#red;}
 			
-			agents "boids" value: (myBoids.BoidsCouplingExperiment accumulate each.get_boids()) {draw circle(1) color:#blue;}
+			agents "boids" value: (myBoids.boids_gui accumulate each.get_boids()) {draw circle(1) color:#blue;}
 			
 		}
 

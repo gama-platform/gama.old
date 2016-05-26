@@ -6,8 +6,8 @@
 */
 model comodel_mix_behaviors
 
-import "Prey Predator Coupling.gaml" as MyPreyPredatorAliasName
-import "Ants Coupling.gaml" as MyAntsAliasName
+import "Prey Predator Coupling.gaml" as Organism
+import "Ants Coupling.gaml" as Ant
 
 
 global
@@ -22,17 +22,17 @@ global
 	init
 	{
 		//create the Ants micro-model with the size of grid is 100 and the population have 500 ants.
-		create MyAntsAliasName.AntsCouplingExperiment with: [gridsize::100,ants_number::500];
+		create Ant.Simple with: [gridsize::100,ants_number::500];
 		//create the PreyPredator micro-model with the parameters and the number of the prey is equal with the size of ants population
-		create MyPreyPredatorAliasName.PreyPredatorCouplingExperiment with: [shape::square(100), preyinit::MyAntsAliasName.AntsCouplingExperiment[0].simulation.ants_number, predatorinit::3]  
+		create Organism.Complex with: [shape::square(100), preyinit::Ant.Simple[0].simulation.ants_number, predatorinit::2]  
 		{
 			// set the size of micro-model PreyPredator equal with the size of the grid of myAnt
 			shape <- square(100);
 		}
 
 		// save the original population of the Ants and the Preys
-		theAnts <- MyAntsAliasName.AntsCouplingExperiment accumulate each.get_ants();
-		thePreys <- list<prey>(MyPreyPredatorAliasName.PreyPredatorCouplingExperiment accumulate each.get_prey());
+		theAnts <- Ant.Simple accumulate each.get_ants();
+		thePreys <- list<prey>(Organism.Complex accumulate each.get_prey());
 
 
 	}
@@ -40,12 +40,12 @@ global
 	reflex simulate_micro_models
 	{
 		// ask myAnt do a step
-		ask (MyAntsAliasName.AntsCouplingExperiment collect each.simulation)
+		ask (Ant.Simple collect each.simulation)
 		{
 			do _step_;
 		}
 		// ask myPreyPredator do a step, too
-		ask (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment collect each.simulation)
+		ask (Organism.Complex collect each.simulation)
 		{
 			do _step_;
 		}
@@ -80,15 +80,15 @@ global
 
 }
 
-experiment comodel_mix_behaviors_exp type: gui
+experiment main type: gui
 {
 	output
 	{
-		display "comodel"
+		display "Comodel display"
 		{
-			agents "ant_grid" value: MyAntsAliasName.AntsCouplingExperiment accumulate each.get_ant_grid() transparency: 0.7;			
-			agents "agentprey" value: (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment accumulate each.get_prey());
-			agents "agentpredator" value: (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment accumulate each.get_predator());
+			agents "ant_grid" value: Ant.Simple accumulate each.get_ant_grid() transparency: 0.7;			
+			agents "agentprey" value: (Organism.Complex accumulate each.get_prey());
+			agents "agentpredator" value: (Organism.Complex accumulate each.get_predator());
 		}
 
 	}

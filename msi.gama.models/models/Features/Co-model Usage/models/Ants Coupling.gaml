@@ -9,7 +9,7 @@ model ants_coupling
 import "../../../Toy Models/Ants (Foraging and Sorting)/models/Ant Foraging (Complex).gaml"
 
 //this is the experiment that supposed to uses
-experiment AntsCouplingExperiment type: gui parent: Complete
+experiment Simple type: gui parent: Complete
 {
 	list<ant> get_ants
 	{

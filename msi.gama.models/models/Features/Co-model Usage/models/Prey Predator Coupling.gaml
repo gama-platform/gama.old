@@ -13,7 +13,7 @@ global
 {
 }
 
-experiment PreyPredatorCouplingExperiment parent: "Prey Predator Exp" type: gui
+experiment Complex parent: "Prey Predator Exp" type: gui
 {
 	geometry shape <- square(100);
 	list<prey> get_prey

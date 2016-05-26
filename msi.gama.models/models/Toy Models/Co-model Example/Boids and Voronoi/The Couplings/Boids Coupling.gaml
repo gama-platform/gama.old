@@ -3,7 +3,7 @@ model boids_coupling
 import "../../../../Toy Models/Boids/models/Boids.gaml"
 
 
-experiment BoidsCouplingExperiment type:gui  parent:boids_gui{
+experiment boids_gui type:gui  {
 	
 	list<boids_goal> get_boids_goal{
 		return list(boids_goal);

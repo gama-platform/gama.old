@@ -3,7 +3,7 @@ model voronoi_coupling
 import "../../../../Toy Models/Voronoi/Voronoi.gaml"
 
 
-experiment VoronoiCouplingExperiment type:gui  parent:voronoi{
+experiment voronoi type:gui  {
 	
 	list<center> get_center{
 		return list(center);

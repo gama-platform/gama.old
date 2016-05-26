@@ -8,12 +8,12 @@ global
 	int n <- 50;
 	init
 	{
-		create Flies number: n;
+		create Fly number: n;
 	}
 
 }
 
-species Flies skills: [moving]
+species Fly skills: [moving]
 {
 	geometry shape<-circle(1);
 	int durability<- rnd(100);
@@ -29,13 +29,13 @@ species Flies skills: [moving]
 
 }
 
-experiment FliesExperiment type: gui
+experiment Simple type: gui
 { 
 	output
 	{
 		display "Flies display"
 		{
-			species Flies aspect: default;
+			species Fly aspect: default;
 		}
 
 	}

@@ -6,7 +6,7 @@
 */ 
 model comodeling_example_populations_mutating
 
-import "Prey Predator Coupling.gaml" as MyPreyPredatorAliasName
+import "Prey Predator Coupling.gaml" as Organism
 
 
 global
@@ -16,45 +16,45 @@ global
 	init
 	{
 		//instantiate three instant of micro-model PreyPredator
-		create MyPreyPredatorAliasName.PreyPredatorCouplingExperiment with: [shape::square(100), preyinit::rnd(20), predatorinit::1] number: 3;
+		create Organism.Complex with: [shape::square(100), preyinit::rnd(20), predatorinit::1] number: 3;
 		
 		//explicitly save the orginal population of predator and original population of prey of each micro-model
 		
 		//the predator population of experiment 0 saved into the list lstpredator0  
-		list<agent> lstpredator0 <- MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[0].get_predator();
+		list<agent> lstpredator0 <- Organism.Complex[0].get_predator();
 		//the prey population of experiment 0 saved into the list lstprey0
-		list<agent> lstprey0 <- MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[0].get_prey();
+		list<agent> lstprey0 <- Organism.Complex[0].get_prey();
 		
 		//the predator population of experiment 1 saved into the list lstpredator1
-		list<agent> lstpredator1 <-MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[1].get_predator();
+		list<agent> lstpredator1 <-Organism.Complex[1].get_predator();
 		//the prey population of experiment 1 saved into the list lstprey1
-		list<agent> lstprey1 <- MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[1].get_prey();
+		list<agent> lstprey1 <- Organism.Complex[1].get_prey();
 
 		//the predator population of experiment 2 saved into the list lstpredator2
-		list<agent> lstpredator2 <- MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[2].get_predator();
+		list<agent> lstpredator2 <- Organism.Complex[2].get_predator();
 		//the prey population of experiment 2 saved into the list lstprey2
-		list<agent> lstprey2 <- MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[2].get_prey();
+		list<agent> lstprey2 <- Organism.Complex[2].get_prey();
 		
 		
 		//mutate the popuplation of micro-model by assigning the list above to  the population of micro-models
 		
 		
-		(MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[0].simulation).lstPredator <- lstpredator2;
-		(MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[1].simulation).lstPredator <- lstprey2;
-		(MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[2].simulation).lstPredator <- lstprey1;
+		(Organism.Complex[0].simulation).lstPredator <- lstpredator2;
+		(Organism.Complex[1].simulation).lstPredator <- lstprey2;
+		(Organism.Complex[2].simulation).lstPredator <- lstprey1;
 		
 		
-		(MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[0].simulation).lstPrey <- lstprey0 + lstprey1;
-		(MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[1].simulation).lstPrey <- lstpredator1;
-		(MyPreyPredatorAliasName.PreyPredatorCouplingExperiment[2].simulation).lstPrey <- lstpredator0 + lstprey2;
+		(Organism.Complex[0].simulation).lstPrey <- lstprey0 + lstprey1;
+		(Organism.Complex[1].simulation).lstPrey <- lstpredator1;
+		(Organism.Complex[2].simulation).lstPrey <- lstpredator0 + lstprey2;
 		
 		//change the shape correspond with the new role of agent in the new populations
-		ask (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment accumulate each.simulation.lstPredator)
+		ask (Organism.Complex accumulate each.simulation.lstPredator)
 		{
 			shape <- triangle(2);
 		}
 
-		ask (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment accumulate each.simulation.lstPrey)
+		ask (Organism.Complex accumulate each.simulation.lstPrey)
 		{
 			shape <- circle(0.5);
 		}
@@ -64,7 +64,7 @@ global
 	reflex simulate_micro_models
 	{
 		// ask all simulation do their job
-		ask (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment collect each.simulation)
+		ask (Organism.Complex collect each.simulation)
 		{
 			do _step_;
 		}
@@ -80,8 +80,8 @@ experiment main type: gui
 		//a mixing display of all agents from all populations
 		display "Comodel display"
 		{
-			agents "agentprey" value: (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment accumulate each.get_prey());
-			agents "agentpredator" value: (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment accumulate each.get_predator());
+			agents "agentprey" value: (Organism.Complex accumulate each.get_prey());
+			agents "agentpredator" value: (Organism.Complex accumulate each.get_predator());
 		}
 
 	}
