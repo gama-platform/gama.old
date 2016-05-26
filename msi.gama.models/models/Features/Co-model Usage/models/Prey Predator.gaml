@@ -1,18 +1,26 @@
-model PreyPredator
- global
+/**
+* Name: prey predator
+* Author: HUYNH Quang Nghi
+* Description: This is a simple comodel serve to demonstrate the mixing behaviors of preyPredator with the Ants. Ants are the prey, fleeing from Predators, when they are not chasing, they try to do job of the ants.
+* Tags: comodel
+*/
+model prey_predator
+
+
+global
 {
 	geometry shape <- square(100);
 	float perceipt_radius <- 20.0;
 	int preyinit <- 500;
 	int predatorinit <- 3;
-	list<agent> lstPredator <- list<agent>(predator);
-	list<agent> lstPrey <- list<agent>(prey);
+	list<agent> lstPredator <- list<agent> (predator);
+	list<agent> lstPrey <- list<agent> (prey);
 	init
 	{
 		create prey number: preyinit;
 		create predator number: predatorinit;
-		lstPredator <- list<agent>(predator);
-		lstPrey <- list<agent>(prey);
+		lstPredator <- list<agent> (predator);
+		lstPrey <- list<agent> (prey);
 	}
 
 }
@@ -138,12 +146,11 @@ species predator parent: generic_species
 
 }
 
-experiment prey_predator_exp type: gui
+experiment "Prey Predator Exp" type: gui
 {
 	output
 	{
 		display main_display
-
 		{
 			species prey;
 			species predator;

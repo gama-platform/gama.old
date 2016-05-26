@@ -4,10 +4,10 @@
 * Description: This is a simple comodel serve to demonstrate the importation and instatiation of micro-model without using the couplings  
 * Tags: comodel
 */
-model Comodel_simple
+model simple_comodeling_example
 
-import "m1.gaml" as micro_model_1
-import "m2.gaml" as micro_model_2
+import "Flies.gaml" as MyFliesCouplingAliasName
+import "Mosquitos.gaml" as MyMosquitosCouplingAliasName
 
 
 global
@@ -15,47 +15,47 @@ global
 	init
 	{
 	//micro_model must be instantiated by create statement. We create an experiment inside the micro-model and the simulation will be created implicitly (1 experiment have only 1 simulation).
-		create micro_model_1.M1_exp number: 5;
-		create micro_model_2.M2_exp;
+		create MyFliesCouplingAliasName.FliesExperiment  number: 5;
+		create MyMosquitosCouplingAliasName.MosquitosExperiment;
 	}
 
 	reflex simulate_micro_models
 	{
 
 	//tell the first experiment of micro_model_1 do 1 step;
-		ask first(micro_model_1.M1_exp).simulation
+		ask first(MyFliesCouplingAliasName.FliesExperiment).simulation
 		{
 			do _step_;
 		}
 
 		//tell the  experiment at 3 of micro_model_1 do 1 step;
-		ask (micro_model_1.M1_exp at 3).simulation
+		ask (MyFliesCouplingAliasName.FliesExperiment at 3).simulation
 		{
 			do _step_;
 		}
 
 		//tell all experiments of micro_model_1 do 1 step;
-		ask (micro_model_1.M1_exp collect each.simulation)
+		ask (MyFliesCouplingAliasName.FliesExperiment collect each.simulation)
 		{
 			do _step_;
 		}
 
 		//tell all experiments of micro_model_2 do 1 step;
-		ask (micro_model_2.M2_exp collect each.simulation)
+		ask (MyMosquitosCouplingAliasName.MosquitosExperiment collect each.simulation)
 		{
 			do _step_;
 		}
 		
 		//kill simulation  of micro_model and recreate then
-		ask  (micro_model_2.M2_exp collect each.simulation){
+		ask  (MyMosquitosCouplingAliasName.MosquitosExperiment collect each.simulation){
 			do die;
 		}
-		ask (micro_model_2.M2_exp){
+		ask (MyMosquitosCouplingAliasName.MosquitosExperiment){
 			create simulation{do _init_;}
 		}
 	}
 }
 
-experiment Comodel_simple_exp type: gui
+experiment SimpleComodelingExampleExp type: gui
 {
 }

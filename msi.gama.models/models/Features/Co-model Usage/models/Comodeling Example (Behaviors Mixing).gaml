@@ -1,13 +1,13 @@
 /**
-* Name: comodel with mixed behaviors 
+* Name: comodel_mix_behaviors
 * Author: HUYNH Quang Nghi
 * Description: This is a simple comodel serve to demonstrate the mixing behaviors of preyPredator with the Ants. Ants are the prey, fleeing from Predators, when they are not chasing, they try to do job of the ants.
 * Tags: comodel
 */
 model comodel_mix_behaviors
 
-import "PreyPredator_coupling.gaml" as myPreyPredator
-import "Ants_coupling.gaml" as myAnt
+import "Prey Predator Coupling.gaml" as MyPreyPredatorAliasName
+import "Ants Coupling.gaml" as MyAntsAliasName
 
 
 global
@@ -22,17 +22,17 @@ global
 	init
 	{
 		//create the Ants micro-model with the size of grid is 100 and the population have 500 ants.
-		create myAnt.Ants_coupling_exp with: [gridsize::100,ants_number::500];
+		create MyAntsAliasName.AntsCouplingExperiment with: [gridsize::100,ants_number::500];
 		//create the PreyPredator micro-model with the parameters and the number of the prey is equal with the size of ants population
-		create myPreyPredator.PreyPredator_coupling_exp with: [shape::square(100), preyinit::myAnt.Ants_coupling_exp[0].simulation.ants_number, predatorinit::3]  
+		create MyPreyPredatorAliasName.PreyPredatorCouplingExperiment with: [shape::square(100), preyinit::MyAntsAliasName.AntsCouplingExperiment[0].simulation.ants_number, predatorinit::3]  
 		{
 			// set the size of micro-model PreyPredator equal with the size of the grid of myAnt
 			shape <- square(100);
 		}
 
 		// save the original population of the Ants and the Preys
-		theAnts <- myAnt.Ants_coupling_exp accumulate each.getAnts();
-		thePreys <- list<prey>(myPreyPredator.PreyPredator_coupling_exp accumulate each.getPrey());
+		theAnts <- MyAntsAliasName.AntsCouplingExperiment accumulate each.get_ants();
+		thePreys <- list<prey>(MyPreyPredatorAliasName.PreyPredatorCouplingExperiment accumulate each.get_prey());
 
 
 	}
@@ -40,12 +40,12 @@ global
 	reflex simulate_micro_models
 	{
 		// ask myAnt do a step
-		ask (myAnt.Ants_coupling_exp collect each.simulation)
+		ask (MyAntsAliasName.AntsCouplingExperiment collect each.simulation)
 		{
 			do _step_;
 		}
 		// ask myPreyPredator do a step, too
-		ask (myPreyPredator.PreyPredator_coupling_exp collect each.simulation)
+		ask (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment collect each.simulation)
 		{
 			do _step_;
 		}
@@ -86,9 +86,9 @@ experiment comodel_mix_behaviors_exp type: gui
 	{
 		display "comodel"
 		{
-			agents "ant_grid" value: myAnt.Ants_coupling_exp accumulate each.getAnt_grid() transparency: 0.7;
-			agents "agentprey" value: (myPreyPredator.PreyPredator_coupling_exp accumulate each.getPrey());
-			agents "agentpredator" value: (myPreyPredator.PreyPredator_coupling_exp accumulate each.getPredator());
+			agents "ant_grid" value: MyAntsAliasName.AntsCouplingExperiment accumulate each.get_ant_grid() transparency: 0.7;			
+			agents "agentprey" value: (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment accumulate each.get_prey());
+			agents "agentpredator" value: (MyPreyPredatorAliasName.PreyPredatorCouplingExperiment accumulate each.get_predator());
 		}
 
 	}
