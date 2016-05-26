@@ -52,12 +52,15 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 	private IOConsole msgConsole;
 	IOConsoleViewer viewer;
 	boolean paused = false;
-	private final StringBuilder pauseBuffer = new StringBuilder(GamaPreferences.CORE_CONSOLE_BUFFER.getValue());
+	private final StringBuilder pauseBuffer = new StringBuilder(
+		GamaPreferences.CORE_CONSOLE_BUFFER.getValue() == -1 ? 0 : GamaPreferences.CORE_CONSOLE_BUFFER.getValue());
 	private final HashMap<Color, BufferedWriter> writers = new HashMap();
 	BufferedReader listeningReader;
 
 	public void setCharacterLimit(final int limit) {
-		msgConsole.setWaterMarks(limit, limit * 2);
+		if ( limit == -1 )
+			msgConsole.setWaterMarks(-1, -1);
+		else msgConsole.setWaterMarks(limit, limit * 2);
 	}
 
 	@Override
