@@ -65,11 +65,11 @@ grid cells_diffuse_on_mask height: grid_size width: grid_size {
 
 experiment diffusion type: gui {
 	output {
-		display a type: opengl {
+		display diffusion_avoiding_mask type: opengl {
 			// Display the grid with elevation
 			grid cells_avoid_mask elevation: true triangulation: true;
 		}
-		display b type: opengl {
+		display diffusion_on_mask type: opengl {
 			// Display the grid with elevation
 			grid cells_diffuse_on_mask elevation: true triangulation: true;
 		}
