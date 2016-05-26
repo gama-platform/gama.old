@@ -19,12 +19,12 @@ species Mosquitos skills: [moving]
 	int durability<- rnd(100);
 	reflex dolive
 	{	
-		do wander amplitude:90;		
+		do wander amplitude:rnd(30) speed:0.5;		
 	}
 
 	aspect default
 	{
-		draw icon size:5 color: # green rotate:heading+180;
+		draw icon size:4 color: # green rotate:heading+180;
 	}
 
 }

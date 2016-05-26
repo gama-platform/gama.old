@@ -35,8 +35,8 @@ experiment ComodelingExampleComplex type: gui{
 	output{
 		display "Comodel Display" {
 			//to display the agents of micro-models, we use the agent layer with the values come from the coupling.
-			agents "agentA" value:(MyFliesCouplingAliasName.FliesCouplingExperiment accumulate each.get_flies());
 			agents "agentB" value:(MyMosquitosCouplingAliasName.MosquitosCouplingExperiment accumulate each.get_mosquitos());
+			agents "agentA" value:(MyFliesCouplingAliasName.FliesCouplingExperiment accumulate each.get_flies());
 		}
 	}
 }

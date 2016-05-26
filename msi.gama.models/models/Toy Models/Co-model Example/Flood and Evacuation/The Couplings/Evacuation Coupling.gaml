@@ -1,15 +1,15 @@
-model Evacuation_coupling
+model evacuation_coupling
 
-import "../../../Toy Models/Evacuation/models/Continuous Move.gaml"
-experiment Evacuation_coupling_exp type: gui parent: main
+import "../../../../Toy Models/Evacuation/models/Continuous Move.gaml"
+experiment EvacuationCouplingExperiment type: gui parent: main
 {
 	point centroid <- { 0, 180 };
-	list<building> getBuilding
+	list<building> get_building
 	{
 		return list(building);
 	}
 
-	action transform_environement
+	action transform_environment
 	{
 		loop t over: list(building)
 		{
@@ -29,7 +29,7 @@ experiment Evacuation_coupling_exp type: gui parent: main
 		target_point <- point(target_point translated_by centroid);
 	}
 
-	list<people> getPeople
+	list<people> get_people
 	{
 		return list(people);
 	}

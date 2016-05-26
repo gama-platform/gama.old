@@ -4,7 +4,7 @@ model Flies
 global
 {
 	geometry shape<-square(100);
-	file icon<-file("../img/fly.png");
+	file icon<-file("../img/fly.gif");
 	int n <- 50;
 	init
 	{
@@ -24,7 +24,7 @@ species Flies skills: [moving]
 
 	aspect default
 	{
-		draw icon size:5 color: # green rotate:heading+180;
+		draw icon size:4 color: # green rotate:heading+180;
 	}
 
 }
