@@ -44,10 +44,12 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 		}
 		final double width = img.getDimensions().x;
 		final double height = img.getDimensions().y;
-
-		final double x = img.getLocation().x;
-		final double y = img.getLocation().y;
-		final double z = img.getLocation().z;
+		double x = 0, y = 0, z = 0;
+		if (img.getLocation() != null) {
+			x = img.getLocation().x;
+			y = img.getLocation().y;
+			z = img.getLocation().z;
+		}
 		// System.out.println("Drawing at " + x + " " + y + " " + z);
 		// Binds the texture
 		curTexture.bind(gl);
