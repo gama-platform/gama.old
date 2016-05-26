@@ -93,7 +93,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public static final String MINIMUM_CYCLE_DURATION = "minimum_cycle_duration";
 
 	private final IScope scope;
-	protected SimulationAgent simulation;
+	// protected SimulationAgent simulation;
 	final ActionExecuter executer;
 	final Map<String, Object> extraParametersMap = new TOrderedHashMap();
 	protected RandomUtils random;
@@ -159,7 +159,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (!getSpecies().isBatch()) {
 			scope.getGui().cleanAfterSimulation();
 		}
-		simulation = null;
+		// simulation = null;
 		// populationOfSimulations = null;
 	}
 
@@ -474,18 +474,18 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(IKeyword.SIMULATION)
 	public SimulationAgent getSimulation() {
-		return simulation;
+		return getSimulationPopulation().lastSimulationCreated();
 	}
 
 	@setter(IKeyword.SIMULATION)
 	public void setSimulation(final IAgent sim) {
-		if (sim instanceof SimulationAgent) {
-			if (simulation != null && simulation.getScope().interrupted()) {
-				simulation.dispose();
-			}
-			simulation = (SimulationAgent) sim;
-			simulation.setOutputs(getSpecies().getOriginalSimulationOutputs());
-		}
+		// if (sim instanceof SimulationAgent) {
+		// if (simulation != null && simulation.getScope().interrupted()) {
+		// simulation.dispose();
+		// }
+		// simulation = (SimulationAgent) sim;
+		// simulation.setOutputs(getSpecies().getOriginalSimulationOutputs());
+		// }
 	}
 
 	@Override
@@ -524,14 +524,18 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			}
 		} finally {
 			clock.step(this.scope);
-			final int nbThreads = this.getSimulationPopulation().getNumberOfActiveThreads();
 
-			if (!getSpecies().isBatch() && getSimulation() != null) {
-				scope.getGui().informStatus(
-						getSimulation().getClock().getInfo() + (nbThreads > 1 ? " (" + nbThreads + " threads)" : ""));
-			}
+			informStatus();
 		}
 		return result;
+	}
+
+	public void informStatus() {
+		final int nbThreads = this.getSimulationPopulation().getNumberOfActiveThreads();
+		if (!getSpecies().isBatch() && getSimulation() != null) {
+			getScope().getGui()
+					.informStatus(getClock().getInfo() + (nbThreads > 1 ? " (" + nbThreads + " threads)" : ""));
+		}
 	}
 
 	public boolean backward(final IScope scope) {

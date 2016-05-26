@@ -31,6 +31,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.shape.ILocation;
@@ -46,6 +47,8 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.variables.IVariable;
 
 public class SimulationPopulation extends GamaPopulation {
+
+	private SimulationAgent currentSimulation;
 
 	final ThreadFactory factory = new ThreadFactoryBuilder().setThreadFactory(Executors.defaultThreadFactory())
 			.setNameFormat("Simulation thread #%d of experiment " + getSpecies().getName()).build();
@@ -115,29 +118,30 @@ public class SimulationPopulation extends GamaPopulation {
 			throws GamaRuntimeException {
 		for (int i = 0; i < number; i++) {
 			scope.getGui().waitStatus("Initializing simulation");
-			final SimulationAgent world = new SimulationAgent(this);
-			world.setIndex(currentAgentIndex++);
-			world.setScheduled(toBeScheduled);
-			world.setName("Simulation " + world.getIndex());
-			add(world);
-			getHost().setSimulation(world);
+			currentSimulation = new SimulationAgent(this);
+			currentSimulation.setIndex(currentAgentIndex++);
+			currentSimulation.setScheduled(toBeScheduled);
+			currentSimulation.setName("Simulation " + currentSimulation.getIndex());
+			add(currentSimulation);
+			currentSimulation.setOutputs(((ExperimentPlan) host.getSpecies()).getOriginalSimulationOutputs());
 			if (scope.interrupted()) {
 				return null;
 			}
 			scope.getGui().waitStatus("Instantiating agents");
-			createVariablesFor(world.getScope(), Collections.singletonList(world), initialValues);
+			createVariablesFor(currentSimulation.getScope(), Collections.singletonList(currentSimulation),
+					initialValues);
 			if (toBeScheduled) {
 				if (isRestored) {
-					world.prepareGuiForSimulation(scope);
-					world.initOutputs();
+					currentSimulation.prepareGuiForSimulation(scope);
+					currentSimulation.initOutputs();
 				} else {
-					world.schedule(scope);
+					currentSimulation.schedule(scope);
 				}
-				runnables.put(world, new Callable<Object>() {
+				runnables.put(currentSimulation, new Callable<Object>() {
 
 					@Override
 					public Object call() {
-						return world.step(scope);
+						return currentSimulation.step(scope);
 
 					}
 				});
@@ -219,6 +223,10 @@ public class SimulationPopulation extends GamaPopulation {
 	 */
 	public boolean hasScheduledSimulations() {
 		return runnables.size() > 0;
+	}
+
+	public SimulationAgent lastSimulationCreated() {
+		return currentSimulation;
 	}
 
 }

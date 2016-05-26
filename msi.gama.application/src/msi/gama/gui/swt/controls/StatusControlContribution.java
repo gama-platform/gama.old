@@ -13,22 +13,34 @@ package msi.gama.gui.swt.controls;
 
 import java.util.Map;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
-import msi.gama.common.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.gui.swt.*;
+import msi.gama.common.IStatusMessage;
+import msi.gama.common.StatusMessage;
+import msi.gama.common.SubTaskMessage;
+import msi.gama.common.UserStatusMessage;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IUpdaterTarget;
+import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaMapFactory;
 import msi.gaml.operators.Dates;
-import msi.gaml.operators.Strings;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
 
@@ -69,13 +81,13 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	protected Control createControl(final Composite parent) {
 		// parent.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		// this.parent = parent;
-		Composite compo = new Composite(parent, SWT.DOUBLE_BUFFERED);
+		final Composite compo = new Composite(parent, SWT.DOUBLE_BUFFERED);
 		// compo.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
-		GridLayout layout = new GridLayout(1, false);
+		final GridLayout layout = new GridLayout(1, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		compo.setLayout(layout);
-		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = WIDTH;
 		data.heightHint = 24;
 		label = FlatButton.label(compo, IGamaColors.NEUTRAL, "No simulation running");
@@ -86,10 +98,11 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			@Override
 			public void mouseDown(final MouseEvent e) {
 				if ( GAMA.getExperiment() == null ) { return; }
-				ExperimentAgent exp = GAMA.getExperiment().getAgent();
+				final ExperimentAgent exp = GAMA.getExperiment().getAgent();
 				if ( exp == null ) { return; }
 				exp.getClock().toggleDisplay();
 				exp.getSimulation().getClock().toggleDisplay();
+				exp.informStatus();
 			}
 		});
 		popup = new Popup(this, label);
@@ -108,31 +121,31 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	@Override
 	public Map<GamaUIColor, String> getPopupText() {
 		if ( !GAMA.getGui().isSimulationPerspective() ) { return null; }
-		Map<GamaUIColor, String> result = GamaMapFactory.create();
+		final Map<GamaUIColor, String> result = GamaMapFactory.create();
 
 		if ( state == IGui.ERROR || state == IGui.WAIT ) {
-			GamaUIColor color = state == IGui.ERROR ? IGamaColors.ERROR : IGamaColors.WARNING;
+			final GamaUIColor color = state == IGui.ERROR ? IGamaColors.ERROR : IGamaColors.WARNING;
 			result.put(color, label.getText());
 			return result;
 		}
 
-		ExperimentAgent agent = GAMA.getExperiment().getAgent();
+		final ExperimentAgent agent = GAMA.getExperiment().getAgent();
 		if ( agent == null ) {
 			result.put(IGamaColors.NEUTRAL, "No experiment opened");
 			return result;
 		}
 
-		StringBuilder sb = new StringBuilder(300);
+		final StringBuilder sb = new StringBuilder(300);
 		SimulationClock clock = agent.getClock();
-		sb.append(String.format("%-20s %-10d\n", "Cycles elapsed: ", clock.getCycle()));
+		sb.append(String.format("%-20s %-10d\n", "Experiment cycles elapsed: ", clock.getCycle()));
 		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 			(int) clock.getAverageDuration(), clock.getTotalDuration()));
 		result.put(GamaColors.get(agent.getColor()), sb.toString());
-		IAgent[] simulations = agent.getSimulationPopulation().toArray();
+		final IAgent[] simulations = agent.getSimulationPopulation().toArray();
 
-		for ( IAgent a : simulations ) {
+		for ( final IAgent a : simulations ) {
 			sb.setLength(0);
-			SimulationAgent sim = (SimulationAgent) a;
+			final SimulationAgent sim = (SimulationAgent) a;
 			clock = sim.getClock();
 
 			sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
@@ -185,8 +198,8 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		isUpdating = true;
 		if ( m instanceof SubTaskMessage ) {
 			if ( InUserStatus ) { return; }
-			SubTaskMessage m2 = (SubTaskMessage) m;
-			Boolean beginOrEnd = m2.getBeginOrEnd();
+			final SubTaskMessage m2 = (SubTaskMessage) m;
+			final Boolean beginOrEnd = m2.getBeginOrEnd();
 			if ( beginOrEnd == null ) {
 				// completion
 				subTaskCompletion = ((SubTaskMessage) m).getCompletion();
@@ -201,13 +214,13 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				subTaskCompletion = null;
 			}
 		} else if ( m instanceof UserStatusMessage ) {
-			String s = m.getText();
+			final String s = m.getText();
 			if ( s == null ) {
 				resume();
 			} else {
 				inSubTask = false; // in case
 				InUserStatus = true;
-				GamaColor c = m.getColor();
+				final GamaColor c = m.getColor();
 				if ( c == null ) {
 					color = null;
 					state = IGui.NEUTRAL;
@@ -224,7 +237,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		}
 
 		// updater.run();
-		if (m.getIcon() != null) {
+		if ( m.getIcon() != null ) {
 			label.setImage(GamaIcons.create(m.getIcon()).image());
 		} else {
 			label.setImage(null);
