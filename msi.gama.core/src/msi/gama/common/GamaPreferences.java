@@ -434,6 +434,9 @@ public class GamaPreferences {
 	public static final Entry<Integer> CORE_CONSOLE_BUFFER = create("core.console_buffer",
 			"Max. number of characters to keep in memory when console is paused (-1 means no limit)", 20000, IType.INT)
 					.in(UI).group("Console");
+	public static final Entry<Boolean> CORE_CONSOLE_WRAP = create("core.console_wrap",
+			"Automatically wrap long lines in the console (can slow down output)", false, IType.BOOL).in(UI)
+					.group("Console");
 	// EDITOR PAGE
 	public static final Entry<Boolean> CORE_PERSPECTIVE = create("core.perspective",
 			"Automatically switch to modeling perspective when editing a model", false, IType.BOOL).in(EDITOR)

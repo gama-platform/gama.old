@@ -81,7 +81,7 @@ public class ConsoleView extends GamaViewPart implements IToolbarDecoratedView.S
 			}
 		});
 		viewer = new IOConsoleViewer(parent, msgConsole);
-		viewer.setWordWrap(true);
+		viewer.setWordWrap(GamaPreferences.CORE_CONSOLE_WRAP.getValue());
 
 		msgConsole.getDocument().addDocumentListener(new IDocumentListener() {
 
