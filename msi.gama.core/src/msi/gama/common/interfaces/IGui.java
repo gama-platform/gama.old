@@ -187,7 +187,7 @@ public interface IGui {
 	 * @param html
 	 * @return
 	 */
-	Object showWebEditor(String url, String html);
+	// Object showWebEditor(String url, String html);
 
 	/**
 	 * @return

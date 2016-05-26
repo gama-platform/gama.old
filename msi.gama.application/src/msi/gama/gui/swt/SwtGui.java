@@ -538,14 +538,14 @@ public class SwtGui extends AbstractGui {
 		return true;
 	}
 
-	@Override
-	public Object showWebEditor(final String url, final String html) {
+	// @Override
+	public static Object showWeb2Editor(final String url, final String html) {
 		if ( url != null && url.contains("http") ) {
 			if ( !isInternetReachable() ) { return null; }
 		}
 
 		final Object[] result = new Object[1];
-		run(new Runnable() {
+		getDisplay().syncExec(new Runnable() {
 
 			@Override
 			public void run() {

@@ -27,18 +27,25 @@ openFile
       </programArgs>
       <vmArgs>-server
 -noverify
--Xms256m -Xmx2048m
 -Xmn128m
 -Xss2m
 -XX:+UseParallelGC
 -XX:+UseAdaptiveSizePolicy
 -XX:+OptimizeStringConcat
--XX:MaxPermSize=512m
       </vmArgs>
+      <vmArgsLin>
+         <argsX86>-Xms256m -Xmx1024m</argsX86>
+         <argsX86_64>-Xms256m -Xmx2048m</argsX86_64>
+      </vmArgsLin>
       <vmArgsMac>-XstartOnFirstThread 
 -Dorg.eclipse.swt.internal.carbon.smallFonts
+-Xms256m -Xmx2048m
          <argsX86>-d32</argsX86>
       </vmArgsMac>
+      <vmArgsWin>
+         <argsX86>-Xms256m -Xmx1024m</argsX86>
+         <argsX86_64>-Xms256m -Xmx2048m</argsX86_64>
+      </vmArgsWin>
    </launcherArgs>
 
    <windowImages i16="./icons/launcher_icons/icon16.png" i32="./icons/launcher_icons/icon32.png" i48="./icons/launcher_icons/icon48.png" i64="./icons/launcher_icons/icon64.png" i128="./icons/launcher_icons/icon128.png" i256="./icons/launcher_icons/icon256.png"/>
@@ -272,7 +279,7 @@ openFile
       <feature id="ummisco.gama.feature.core" installMode="root"/>
       <feature id="ummisco.gama.feature.dependencies" installMode="root"/>
       <feature id="ummisco.gama.feature.models" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.extensions"  installMode="root"/>
+      <feature id="ummisco.gama.feature.core.extensions" installMode="root"/>
       <feature id="ummisco.gama.feature.core.opengl" installMode="root"/>
       <feature id="ummisco.gama.feature.core.ui" installMode="root"/>
    </features>

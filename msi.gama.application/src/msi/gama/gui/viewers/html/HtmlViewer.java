@@ -5,22 +5,33 @@
 package msi.gama.gui.viewers.html;
 
 import java.io.IOException;
-import java.net.*;
-import org.eclipse.core.runtime.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.browser.*;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.browser.ProgressEvent;
+import org.eclipse.swt.browser.ProgressListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.part.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.FileEditorInput;
 import org.osgi.framework.Bundle;
 import msi.gama.common.GamaPreferences;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.runtime.GAMA;
 
 /**
  * Class BrowserEditor.
@@ -37,18 +48,18 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 		if ( ifEmpty && SwtGui.getPage().getActiveEditor() != null ) { return; }
 		if ( ifEmpty && !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return; }
 		if ( HOME_URL == null ) {
-			Bundle bundle = Platform.getBundle("msi.gama.ext");
+			final Bundle bundle = Platform.getBundle("msi.gama.ext");
 			URL url = bundle.getEntry("/images/welcome.html");
 			try {
 				url = FileLocator.toFileURL(url);
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 				return;
 			}
 			HOME_URL = url.toString();
 		}
 		if ( HOME_URL != null ) {
-			GAMA.getGui().showWebEditor(HOME_URL, null);
+			SwtGui.showWeb2Editor(HOME_URL, null);
 		}
 	}
 
@@ -83,7 +94,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 	@Override
 	public void createPartControl(final Composite parent) {
-		Composite compo = GamaToolbarFactory.createToolbars(this, parent);
+		final Composite compo = GamaToolbarFactory.createToolbars(this, parent);
 		browser = new Browser(compo, SWT.NONE);
 		browser.addProgressListener(new ProgressListener() {
 
@@ -98,10 +109,10 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 		});
 		parent.layout();
 		if ( getEditorInput() instanceof FileEditorInput ) {
-			FileEditorInput input = (FileEditorInput) getEditorInput();
+			final FileEditorInput input = (FileEditorInput) getEditorInput();
 			try {
 				this.setUrl(input.getURI().toURL().toString());
-			} catch (MalformedURLException e) {
+			} catch (final MalformedURLException e) {
 				e.printStackTrace();
 			}
 		}
