@@ -149,7 +149,7 @@ experiment Displays type: gui {
 	float inc <- 0.001;
 	float pos <- 0.0;
 	reflex moving_quadrant {
-	//pos <- pos + inc;
+	pos <- pos + inc;
 		if (pos > 0.5 or pos <= 0) {
 			inc <- -inc;
 		}
@@ -161,8 +161,28 @@ experiment Displays type: gui {
 			image '../images/soil.jpg' position: { pos, pos } size: quadrant_size;
 			agents "agents" transparency: 0.5 position: { pos, pos } size: quadrant_size value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { pos, pos } size: quadrant_size aspect: icon;
-			grid ant_grid lines: #darkgray position: { 0.5, 0 } size: quadrant_size;
-			species ant position: { 0.5, 0 } size: quadrant_size aspect: info;
+			grid ant_grid lines: #darkgray position: { 0.5 - pos, pos } size: quadrant_size;
+			species ant position: { 0.5 - pos, pos } size: quadrant_size aspect: info;
+			
+			chart "Proportions carrying: Pie"  size: quadrant_size position: {pos, 0.5 - pos} type:pie 
+			{
+				data "empty_ants" value:(list(ant) count (!each.has_food)) color:°red;
+				data "carry_food_ants" value:(list(ant) count (each.has_food)) color:°green;
+				
+			}
+			
+			chart "Proportions carrying: Radar"  size: quadrant_size position: {0.5 - pos, 0.5 - pos} type:radar
+			axes:#white
+
+			{
+				data "empty" value:(list(ant) count (!each.has_food)) 
+				accumulate_values:true
+				color:°red;				
+				data "carry" value:(list(ant) count (each.has_food)) 
+				accumulate_values:true
+				color:°blue;				
+			}
+			
 		}
 	}
 }

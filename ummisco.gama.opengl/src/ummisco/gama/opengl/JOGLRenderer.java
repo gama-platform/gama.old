@@ -775,7 +775,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			return null;
 		}
 		if (attributes.size == null) {
-			final double proportion = (double) img.getWidth() / (double) img.getHeight();
+			final double proportion = 1.0;
+			// final double proportion = (double) img.getWidth() / (double)
+			// img.getHeight();
 			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight() / proportion);
 		}
 		sceneBuffer.getSceneToUpdate().addImage(img, attributes);

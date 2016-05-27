@@ -156,7 +156,7 @@ public abstract class ChartOutput {
 		updateImage(scope);
 
 		lastUpdateCycle = scope.getClock().getCycle();
-		System.out.println("output last update:" + lastUpdateCycle);
+		// System.out.println("output last update:" + lastUpdateCycle);
 	}
 
 	public void preResetSeries(final IScope scope) {
