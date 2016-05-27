@@ -60,16 +60,7 @@ public class ChartLayer extends AbstractLayer {
 		if (dg == null || dg.cannotDraw())
 			return;
 		try {
-			// getChart().setAntiAlias(true);
-			// getChart().setTextAntiAlias(true);
-			// moved to ChartFFreeChartOutput
-
 			final BufferedImage im = getChart().getImage(scope, getSizeInPixels().x, getSizeInPixels().y);
-
-			// BufferedImage im = getChart().getImage(scope,getSizeInPixels().x,
-			// getSizeInPixels().y,info);
-
-			// dg.drawChart(scope, im, 0.0);
 			final FileDrawingAttributes attributes = new FileDrawingAttributes(null);
 			dg.drawImage(im, attributes);
 		} catch (IndexOutOfBoundsException | IllegalArgumentException e) {
