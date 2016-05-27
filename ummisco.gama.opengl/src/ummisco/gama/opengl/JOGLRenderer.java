@@ -332,9 +332,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	public void display(final GLAutoDrawable drawable) {
 
 		// fail fast
-		if (GAMA.getSimulation() == null) {
-			return;
-		}
+		// if (GAMA.getSimulation() == null) {
+		// return;
+		// }
 		currentScene = sceneBuffer.getSceneToRender();
 		if (currentScene == null) {
 			return;
@@ -775,7 +775,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			return null;
 		}
 		if (attributes.size == null) {
-			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
+			final double proportion = (double) img.getWidth() / (double) img.getHeight();
+			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight() / proportion);
 		}
 		sceneBuffer.getSceneToUpdate().addImage(img, attributes);
 
