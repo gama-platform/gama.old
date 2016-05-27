@@ -35,6 +35,5 @@ Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.utils,
  msi.gama.lang.gaml.generator,
  msi.gama.lang.gaml.serializer
-Import-Package: org.apache.log4j;version="1.2.15",
- ummisco.gaml.extensions.maths.ode.statements
+Import-Package: org.apache.log4j;version="1.2.15"
 Bundle-ActivationPolicy: lazy

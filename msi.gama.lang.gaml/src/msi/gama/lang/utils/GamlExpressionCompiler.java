@@ -127,7 +127,6 @@ import msi.gaml.types.IType;
 import msi.gaml.types.ParametricType;
 import msi.gaml.types.Types;
 import msi.gaml.types.TypesManager;
-import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
 /**
  * The Class ExpressionParser.
@@ -873,16 +872,15 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (container instanceof IVarExpression.Agent && ((IVarExpression.Agent) container).getOwner() != null) {
 			varDiff = ((IVarExpression.Agent) container).getVar();
 
-			final List<IDescription> lst = varDiff.getDefinitionDescription().getSpeciesContext().getChildren();
-			if (lst != null) {
-				for (final IDescription L : lst) {
-					if (L.getKeyword().equals("equation")) {
-						final SystemOfEquationsStatement soe = (SystemOfEquationsStatement) L.compile();
-						if (soe.variables_diff.values().toString().contains(varDiff.getName())
-								|| soe.variable_time.toString().equals(varDiff.getName()))
-							return factory.createOperator("internal_integrated_value", getContext(), object,
-									((IVarExpression.Agent) container).getOwner(), varDiff);
+			final SpeciesDescription species = varDiff.getDefinitionDescription().getSpeciesContext();
+			if (species != null) {
+				final Iterable<IDescription> equations = species.getChildrenWithKeyword(IKeyword.EQUATION);
+				for (final IDescription equation : equations) {
+					if (equation.hasVar(varDiff.getName())) {
+						return factory.createOperator("internal_integrated_value", getContext(), object,
+								((IVarExpression.Agent) container).getOwner(), varDiff);
 					}
+
 				}
 			}
 		}

@@ -177,10 +177,6 @@ public class SingleEquationStatement extends AbstractStatement {
 		this.var.set(index, v);
 	}
 
-	public IExpression getVar_t() {
-		return var_t;
-	}
-
 	public void setVar_t(final IVarExpression vt) {
 		this.var_t = vt;
 	}
@@ -198,9 +194,9 @@ public class SingleEquationStatement extends AbstractStatement {
 		int i = 0;
 		for (i = 0; i < ((AbstractNAryOperator) function).numArg() - 1; i++) {
 			final IExpression tmp = ((AbstractNAryOperator) function).arg(i);
-				var.add(i, tmp);
+			var.add(i, tmp);
 		}
-		var_t =((AbstractNAryOperator) function).arg(i);
+		var_t = ((AbstractNAryOperator) function).arg(i);
 	}
 
 	/**

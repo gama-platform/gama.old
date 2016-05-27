@@ -31,12 +31,10 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
-import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -133,7 +131,6 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 	}
 
-
 	/**
 	 * This method separates regular statements and equations.
 	 *
@@ -184,9 +181,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 					final IExpression v = ((SingleEquationStatement) s).getVar(i);
 					if (((SingleEquationStatement) s).getOrder() > 0) {
 						variables_diff.put(((SingleEquationStatement) s).toString(), v);
-					}					
+					}
 				}
-				variable_time = ((SingleEquationStatement) s).getVar_t();
+				variable_time = ((SingleEquationStatement) s).getVarTime();
 			} else {
 				others.add(s);
 			}
@@ -209,8 +206,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 			if (!remoteAgent.dead()) {
 				pushed = scope.push(remoteAgent);
 				try {
-					if (s.getVar_t() instanceof IVarExpression) {
-						((IVarExpression) s.getVar_t()).setVal(scope, time, false);
+					if (s.getVarTime() instanceof IVarExpression) {
+						((IVarExpression) s.getVarTime()).setVal(scope, time, false);
 					}
 					if (variableValues.get(i) instanceof IVarExpression) {
 						((IVarExpression) variableValues.get(i)).setVal(scope, y[i], false);

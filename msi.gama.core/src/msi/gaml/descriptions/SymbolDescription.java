@@ -341,7 +341,12 @@ public abstract class SymbolDescription implements IDescription {
 		return enclosing;
 	}
 
-	protected boolean hasVar(final String name) {
+	@Override
+	public boolean hasVar(final String name) {
+		return false;
+	}
+
+	public boolean manipulatesVar(final String name) {
 		return false;
 	}
 

@@ -11,15 +11,30 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import static msi.gama.precompiler.ITypeProvider.*;
+import static msi.gama.precompiler.ITypeProvider.BOTH;
+import static msi.gama.precompiler.ITypeProvider.FIRST_CONTENT_TYPE;
+import static msi.gama.precompiler.ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE;
+import static msi.gama.precompiler.ITypeProvider.FIRST_KEY_TYPE;
+import static msi.gama.precompiler.ITypeProvider.FIRST_TYPE;
+import static msi.gama.precompiler.ITypeProvider.NONE;
+import static msi.gama.precompiler.ITypeProvider.SECOND_CONTENT_TYPE;
+import static msi.gama.precompiler.ITypeProvider.SECOND_CONTENT_TYPE_OR_TYPE;
+import static msi.gama.precompiler.ITypeProvider.SECOND_KEY_TYPE;
+import static msi.gama.precompiler.ITypeProvider.SECOND_TYPE;
+import static msi.gama.precompiler.ITypeProvider.WRAPPED;
+
 import java.util.Arrays;
+
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.OperatorProto;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * AbstractBinaryOperator
+ * 
  * @author drogoul 23 august 07
  */
 public abstract class AbstractNAryOperator extends AbstractExpression implements IOperator {
@@ -27,12 +42,12 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	protected final IExpression[] exprs;
 	protected OperatorProto prototype;
 
-	public AbstractNAryOperator(final OperatorProto proto, final IExpression ... expressions) {
+	public AbstractNAryOperator(final OperatorProto proto, final IExpression... expressions) {
 		// Copy introduced in order to circumvent issue 1060
 		exprs = Arrays.copyOf(expressions, expressions.length);
 		// this.exprs = expressions;
 		this.prototype = proto;
-		if ( prototype != null ) {
+		if (prototype != null) {
 			type = prototype.returnType;
 			computeType();
 		} else {
@@ -47,45 +62,50 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	protected void computeType() {
 		type = computeType(prototype.typeProvider, type, GamaType.TYPE);
-		if ( type.isContainer() ) {
-			IType contentType = computeType(prototype.contentTypeProvider, type.getContentType(), GamaType.CONTENT);
-			IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType(), GamaType.KEY);
+		if (type.isContainer()) {
+			final IType contentType = computeType(prototype.contentTypeProvider, type.getContentType(),
+					GamaType.CONTENT);
+			final IType keyType = computeType(prototype.keyTypeProvider, type.getKeyType(), GamaType.KEY);
 			type = GamaType.from(type, keyType, contentType);
 		}
 	}
 
 	protected IType computeType(final int t, final IType def, final int kind) {
 		switch (t) {
-			case WRAPPED:
-				return arg(0).getType().getWrappedType();
-			case NONE:
-				return def;
-			case BOTH:
-				return GamaType.findCommonType(exprs, kind);
-			case FIRST_TYPE:
-				return exprs[0].getType();
-			case FIRST_CONTENT_TYPE_OR_TYPE:
-				IType leftType = exprs[0].getType();
-				final IType t2 = leftType.getContentType();
-				if ( t2 == Types.NO_TYPE ) { return leftType; }
-				return t2;
-			case SECOND_TYPE:
-				return exprs[1].getType();
-			case FIRST_CONTENT_TYPE:
-				return exprs[0].getType().getContentType();
-			case FIRST_KEY_TYPE:
-				return exprs[0].getType().getKeyType();
-			case SECOND_CONTENT_TYPE:
-				return exprs[1].getType().getContentType();
-			case SECOND_CONTENT_TYPE_OR_TYPE:
-				final IType rightType = exprs[1].getType();
-				final IType t3 = rightType.getContentType();
-				if ( t3 == Types.NO_TYPE ) { return rightType; }
-				return t3;
-			case SECOND_KEY_TYPE:
-				return exprs[1].getType().getKeyType();
-			default:
-				return t >= 0 ? Types.get(t) : def;
+		case WRAPPED:
+			return arg(0).getType().getWrappedType();
+		case NONE:
+			return def;
+		case BOTH:
+			return GamaType.findCommonType(exprs, kind);
+		case FIRST_TYPE:
+			return exprs[0].getType();
+		case FIRST_CONTENT_TYPE_OR_TYPE:
+			final IType leftType = exprs[0].getType();
+			final IType t2 = leftType.getContentType();
+			if (t2 == Types.NO_TYPE) {
+				return leftType;
+			}
+			return t2;
+		case SECOND_TYPE:
+			return exprs[1].getType();
+		case FIRST_CONTENT_TYPE:
+			return exprs[0].getType().getContentType();
+		case FIRST_KEY_TYPE:
+			return exprs[0].getType().getKeyType();
+		case SECOND_CONTENT_TYPE:
+			return exprs[1].getType().getContentType();
+		case SECOND_CONTENT_TYPE_OR_TYPE:
+			final IType rightType = exprs[1].getType();
+			final IType t3 = rightType.getContentType();
+			if (t3 == Types.NO_TYPE) {
+				return rightType;
+			}
+			return t3;
+		case SECOND_KEY_TYPE:
+			return exprs[1].getType().getKeyType();
+		default:
+			return t >= 0 ? Types.get(t) : def;
 		}
 	}
 
@@ -94,7 +114,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public IOperator resolveAgainst(final IScope scope) {
 		final AbstractNAryOperator copy = copy();
-		for ( int i = 0; i < exprs.length; i++ ) {
+		for (int i = 0; i < exprs.length; i++) {
 			copy.exprs[i] = exprs[i].resolveAgainst(scope);
 		}
 		return copy;
@@ -102,9 +122,13 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	@Override
 	public boolean isConst() {
-		if ( !prototype.canBeConst ) { return false; }
-		for ( int i = 0; i < exprs.length; i++ ) {
-			if ( !exprs[i].isConst() ) { return false; }
+		if (!prototype.canBeConst) {
+			return false;
+		}
+		for (int i = 0; i < exprs.length; i++) {
+			if (!exprs[i].isConst()) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -117,9 +141,9 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public String toString() {
 		String result = literalValue() + "(";
-		if ( exprs != null ) {
-			for ( int i = 0; i < exprs.length; i++ ) {
-				String l = exprs[i] == null ? "null" : exprs[i].toString();
+		if (exprs != null) {
+			for (int i = 0; i < exprs.length; i++) {
+				final String l = exprs[i] == null ? "null" : exprs[i].toString();
 				result += l + (i != exprs.length - 1 ? "," : "");
 			}
 		}
@@ -129,9 +153,9 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		String result = literalValue() + "(";
-		if ( exprs != null ) {
-			for ( int i = 0; i < exprs.length; i++ ) {
-				String l = exprs[i] == null ? "nil" : exprs[i].serialize(includingBuiltIn);
+		if (exprs != null) {
+			for (int i = 0; i < exprs.length; i++) {
+				final String l = exprs[i] == null ? "nil" : exprs[i].serialize(includingBuiltIn);
 				result += l + (i != exprs.length - 1 ? "," : "");
 			}
 		}
@@ -148,25 +172,29 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	@Override
 	public IExpression arg(final int i) {
-		if ( exprs == null ) { return null; }
+		if (exprs == null) {
+			return null;
+		}
+		if (i >= exprs.length)
+			return null;
 		return exprs[i];
 	}
 
 	@Override
 	public String getTitle() {
-		StringBuilder sb = new StringBuilder(50);
+		final StringBuilder sb = new StringBuilder(50);
 		sb.append("operator ").append(getName()).append(" (");
-		if ( exprs != null ) {
-			for ( IExpression expr : exprs ) {
+		if (exprs != null) {
+			for (final IExpression expr : exprs) {
 				sb.append(expr == null ? "nil" : expr.getType().getTitle());
 				sb.append(',');
 			}
 			sb.setLength(sb.length() - 1);
-		} else if ( prototype.signature != null ) {
+		} else if (prototype.signature != null) {
 			sb.append("Argument types: " + prototype.signature.toString());
 		}
 		sb.append(") returns ");
-		IType type = getType();
+		final IType type = getType();
 		sb.append(type.getTitle());
 		return sb.toString();
 	}
@@ -183,14 +211,15 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
 		prototype.collectMetaInformation(meta);
 		meta.put(GamlProperties.OPERATORS, name);
-		for ( IExpression e : exprs ) {
-			if ( e != null ) {
+		for (final IExpression e : exprs) {
+			if (e != null) {
 				e.collectMetaInformation(meta);
 			}
 		}
@@ -198,6 +227,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	/**
 	 * Method getDocumentationObject()
+	 * 
 	 * @see msi.gaml.expressions.IOperator#getDocumentationObject()
 	 */
 	// @Override
