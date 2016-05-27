@@ -11,15 +11,34 @@
  **********************************************************************************************/
 package msi.gama.gui.wizards.files;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.*;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import msi.gaml.operators.Strings;
 
@@ -61,13 +80,13 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		final String title = page.getModelName();
 		final String desc = page.getDescription();
 		final boolean htmlTemplate = page.getValueHtmlTemplate();
-		IRunnableWithProgress op = new IRunnableWithProgress() {
+		final IRunnableWithProgress op = new IRunnableWithProgress() {
 
 			@Override
 			public void run(final IProgressMonitor monitor) throws InvocationTargetException {
 				try {
 					doFinish(containerName, typeOfModel, fileName, author, title, desc, htmlTemplate, monitor);
-				} catch (CoreException e) {
+				} catch (final CoreException e) {
 					e.printStackTrace();
 					throw new InvocationTargetException(e);
 				} finally {
@@ -78,12 +97,12 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		};
 		try {
 			getContainer().run(true, false, op);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 			return false;
-		} catch (InvocationTargetException e) {
+		} catch (final InvocationTargetException e) {
 			e.printStackTrace();
-			Throwable realException = e.getTargetException();
+			final Throwable realException = e.getTargetException();
 			MessageDialog.openError(getShell(), "Error", realException.getMessage());
 			return false;
 		}
@@ -99,36 +118,43 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		final IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask("Creating " + fileName, 2);
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IResource resource = root.findMember(new Path(containerName));
+		final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IResource container = root.findMember(new Path(containerName));
 
-		if ( !resource.exists() || !(resource instanceof IContainer) ) {
-			// MessageDialog.openError(getShell(), "Container \"" + containerName +
-			// "\" does not exist. Creating it automatically", "");
-			// IFolder folder = root.getFolder(new Path(containerName));
-			// folder.create(true, true, monitor);
-			// resource = folder;
+		if ( !container.exists() ) {
+			final boolean create = MessageDialog.openConfirm(getShell(), "Folder does not exist",
+				"Folder \"" + containerName + "\" does not exist. Create it automatically ?");
+			if ( create ) {
+				final IFolder folder = root.getFolder(new Path(containerName));
+				folder.create(true, true, monitor);
+				container = folder;
+			} else return;
+		} else if ( !(container instanceof IContainer) ) {
+			MessageDialog.openError(getShell(), "Not a folder", containerName + " is not a folder. Cannot proceed");
+			return;
 		}
-
-		IContainer container = resource.getProject();
+		IContainer folder = (IContainer) container;
+		final IContainer project = folder.getProject();
 
 		/* Add the models folder */
-		final IFolder modelFolder = container.getFolder(new Path("models"));
-		if ( !modelFolder.exists() ) {
-			modelFolder.create(true, true, monitor);
+		if ( project == container ) {
+			final IFolder modelFolder = folder.getFolder(new Path("models"));
+			if ( !modelFolder.exists() ) {
+				modelFolder.create(true, true, monitor);
+			}
+			folder = modelFolder;
 		}
 
 		/* Add the doc folder */
-		final IFolder libFolder = container.getFolder(new Path("doc"));
+		final IFolder libFolder = project.getFolder(new Path("doc"));
 		if ( !libFolder.exists() ) {
 			libFolder.create(true, true, monitor);
 		}
 
-		final IFile file = container.getFile(new Path("models/" + fileName));
+		final IFile file = folder.getFile(new Path(fileName));
 
 		fileHeader = "/**\n" + "* Name: " + title + "\n" + "* Author: " + author + "\n" + "* Description: " + desc +
 			"\n" + "* Tags: Tag1, Tag2, TagN\n*/";
-		// "/**\n * " + title + "\n" + " * Author: " + author + "\n" + " * Description: " + desc + "\n" + " */\n\n";
 
 		InputStream streamModel = null;
 
@@ -147,8 +173,8 @@ public class NewFileWizard extends Wizard implements INewWizard {
 				try {
 					file.create(streamModel, true, monitor);
 					if ( htmlTemplate ) {
-						final IFile htmlFile = container.getFile(new Path("doc/" + title + ".html"));
-						InputStream resourceStream = openContentStreamHtmlFile(title, desc, author);
+						final IFile htmlFile = project.getFile(new Path("doc/" + title + ".html"));
+						final InputStream resourceStream = openContentStreamHtmlFile(title, desc, author);
 						htmlFile.create(resourceStream, true, monitor);
 						resourceStream.close();
 					}
@@ -157,7 +183,7 @@ public class NewFileWizard extends Wizard implements INewWizard {
 				}
 			}
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		monitor.worked(1);
@@ -166,10 +192,10 @@ public class NewFileWizard extends Wizard implements INewWizard {
 
 			@Override
 			public void run() {
-				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
 					IDE.openEditor(page, file, true);
-				} catch (PartInitException e) {
+				} catch (final PartInitException e) {
 					e.printStackTrace();
 				}
 			}
@@ -181,11 +207,11 @@ public class NewFileWizard extends Wizard implements INewWizard {
 	private InputStream addFileHeader(final InputStream streamModel, final String title, final String desc)
 		throws CoreException {
 		String line = "";
-		StringWriter writer = new StringWriter();
+		final StringWriter writer = new StringWriter();
 		try {
-			InputStreamReader streamReader = new InputStreamReader(streamModel);
+			final InputStreamReader streamReader = new InputStreamReader(streamModel);
 			/* The buffer for the readline */
-			BufferedReader buffer = new BufferedReader(streamReader);
+			final BufferedReader buffer = new BufferedReader(streamReader);
 			try {
 				while ((line = buffer.readLine()) != null) {
 					writer.write(line + "\n");
@@ -194,14 +220,15 @@ public class NewFileWizard extends Wizard implements INewWizard {
 				buffer.close();
 				streamReader.close();
 			}
-		} catch (IOException ioe) {
+		} catch (final IOException ioe) {
 			ioe.printStackTrace();
-			IStatus status = new Status(IStatus.ERROR, "ExampleWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
+			final IStatus status =
+				new Status(IStatus.ERROR, "ExampleWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
 			throw new CoreException(status);
 		}
 		/* Final output in the String */
-		String str = writer.toString();
-		String output = fileHeader + Strings.LN + Strings.LN + str.replaceAll("\\$TITLE\\$", title);
+		final String str = writer.toString();
+		final String output = fileHeader + Strings.LN + Strings.LN + str.replaceAll("\\$TITLE\\$", title);
 
 		return new ByteArrayInputStream(output.getBytes());
 	}
@@ -223,10 +250,11 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		throws CoreException {
 		final String newline = "\n";
 		String line;
-		StringBuffer sb = new StringBuffer();
+		final StringBuffer sb = new StringBuffer();
 		try {
-			InputStream input = this.getClass().getResourceAsStream("/templates/description-html-template.resource");
-			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
+			final InputStream input =
+				this.getClass().getResourceAsStream("/templates/description-html-template.resource");
+			final BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 			try {
 				while ((line = reader.readLine()) != null) {
 					line = line.replaceAll("authorModel", "By " + author);
@@ -240,9 +268,10 @@ public class NewFileWizard extends Wizard implements INewWizard {
 				reader.close();
 			}
 
-		} catch (IOException ioe) {
+		} catch (final IOException ioe) {
 			ioe.printStackTrace();
-			IStatus status = new Status(IStatus.ERROR, "ExampleWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
+			final IStatus status =
+				new Status(IStatus.ERROR, "ExampleWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
 			throw new CoreException(status);
 		}
 

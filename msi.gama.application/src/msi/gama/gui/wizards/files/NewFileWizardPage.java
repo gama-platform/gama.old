@@ -12,15 +12,27 @@
 package msi.gama.gui.wizards.files;
 
 import java.net.InetAddress;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 
 /**
@@ -52,8 +64,8 @@ public class NewFileWizardPage extends WizardPage {
 
 	@Override
 	public void createControl(final Composite parent) {
-		Composite container = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
+		final Composite container = new Composite(parent, SWT.NULL);
+		final GridLayout layout = new GridLayout();
 		container.setLayout(layout);
 		layout.numColumns = 3;
 		layout.verticalSpacing = 9;
@@ -71,7 +83,7 @@ public class NewFileWizardPage extends WizardPage {
 			}
 		});
 
-		Button button = new Button(container, SWT.PUSH);
+		final Button button = new Button(container, SWT.PUSH);
 		button.setText("Browse...");
 		button.addSelectionListener(new SelectionAdapter() {
 
@@ -135,9 +147,9 @@ public class NewFileWizardPage extends WizardPage {
 
 			@Override
 			public void modifyText(final ModifyEvent e) {
-				Text t = (Text) e.getSource();
-				String fname = t.getText();
-				int i = fname.lastIndexOf(".gaml");
+				final Text t = (Text) e.getSource();
+				final String fname = t.getText();
+				final int i = fname.lastIndexOf(".gaml");
 				if ( i > 0 ) {
 					// model title = filename less extension less all non alphanumeric characters
 					titleText.setText(fname.substring(0, i).replaceAll("[^\\p{Alnum}]", ""));
@@ -226,7 +238,7 @@ public class NewFileWizardPage extends WizardPage {
 		yesButton = new Button(middleComposite, SWT.RADIO);
 		yesButton.setText("Yes");
 		yesButton.setSelection(true);
-		Button noButton = new Button(middleComposite, SWT.RADIO);
+		final Button noButton = new Button(middleComposite, SWT.RADIO);
 		noButton.setText("No");
 		yesButton.addSelectionListener(new SelectionAdapter() {
 
@@ -276,9 +288,9 @@ public class NewFileWizardPage extends WizardPage {
 	/** Tests if the current workbench selection is a suitable container to use. */
 	private void initialize() {
 		if ( selection != null && selection.isEmpty() == false && selection instanceof IStructuredSelection ) {
-			IStructuredSelection ssel = (IStructuredSelection) selection;
+			final IStructuredSelection ssel = (IStructuredSelection) selection;
 			if ( ssel.size() > 1 ) { return; }
-			Object obj = ssel.getFirstElement();
+			final Object obj = ssel.getFirstElement();
 			if ( obj instanceof IResource ) {
 				IContainer container;
 				if ( obj instanceof IContainer ) {
@@ -296,10 +308,10 @@ public class NewFileWizardPage extends WizardPage {
 	 * Uses the standard container selection dialog to choose the new value for the container field.
 	 */
 	private void handleBrowse() {
-		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
-			ResourcesPlugin.getWorkspace().getRoot(), false, "Select a project as a container");
+		final ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
+			ResourcesPlugin.getWorkspace().getRoot(), false, "Select a project or a folder");
 		if ( dialog.open() == Window.OK ) {
-			Object[] result = dialog.getResult();
+			final Object[] result = dialog.getResult();
 			if ( result.length == 1 ) {
 				containerText.setText(((Path) result[0]).toString());
 			}
@@ -308,60 +320,64 @@ public class NewFileWizardPage extends WizardPage {
 
 	/** Ensures that controls are correctly set. */
 	private void dialogChanged() {
-		IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(getContainerName()));
-		if ( resource == null ) {
-			updateStatus("File container must be specified");
-			return;
-		}
-		IContainer container = (IContainer) resource;
-		String fileName = getFileName();
-		String author = getAuthor();
-		String titleName = getModelName();
-
-		final IFile modelfile = container.getFile(new Path("models/" + fileName));
-		final IFile htmlfile = container.getFile(new Path("doc/" + titleName + ".html"));
-
 		if ( getContainerName().length() == 0 ) {
-			updateStatus("File container must be specified");
+			updateStatus("The name of the containing folder must be specified");
 			return;
 		}
-		if ( (resource.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0 ) {
-			updateStatus("File container must exist");
-			return;
-		}
-		if ( !resource.isAccessible() ) {
-			updateStatus("Project must be writable");
-			return;
-		}
+		final String fileName = getFileName();
 		if ( fileName.length() == 0 ) {
-			updateStatus("File name must be specified");
+			updateStatus("The name of the model file must be specified");
 			return;
 		}
 		if ( fileName.replace('\\', '/').indexOf('/', 1) > 0 ) {
-			updateStatus("File name must be valid");
+			updateStatus("The name of the model file is not valid");
 			return;
 		}
 		if ( !fileName.endsWith(".gaml") ) {
-			updateStatus("File extension must be \".gaml\"");
+			updateStatus("GAML file extension must be \".gaml\"");
 			return;
 		}
+
+		final String author = getAuthor();
+		final String titleName = getModelName();
 		if ( author.length() == 0 ) {
-			updateStatus("Author name must be specified");
-			return;
-		}
-		if ( modelfile.exists() ) {
-			updateStatus("File already exists");
-			return;
-		}
-		if ( htmlfile.exists() ) {
-			updateStatus("Model name already defined");
+			updateStatus("The name of the author must be specified");
 			return;
 		}
 
 		if ( titleName.length() == 0 ) {
-			updateStatus("Model name must be specified");
+			updateStatus("The name of the model must be specified");
 			return;
 		}
+
+		final IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(getContainerName()));
+		// if ( resource == null ) {
+		// updateStatus("File container must be specified");
+		// return;
+		// }
+		final IContainer container = (IContainer) resource;
+
+		if ( container != null ) {
+			final IFile modelfile = container.getFile(new Path(fileName));
+			final IFile htmlfile = container.getProject().getFile(new Path("doc/" + titleName + ".html"));
+			if ( modelfile.exists() ) {
+				updateStatus("A model file with the same name already exists");
+				return;
+			}
+			if ( htmlfile.exists() ) {
+				updateStatus("Model name already defined in documentation");
+				return;
+			}
+		}
+
+		// if ( (resource.getType() & (IResource.PROJECT | IResource.FOLDER)) == 0 ) {
+		// updateStatus("File container must exist");
+		// return;
+		// }
+		// if ( !resource.isAccessible() ) {
+		// updateStatus("Project must be writable");
+		// return;
+		// }
 		updateStatus(null);
 	}
 
