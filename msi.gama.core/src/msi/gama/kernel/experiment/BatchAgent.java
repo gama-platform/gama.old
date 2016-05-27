@@ -115,17 +115,19 @@ public class BatchAgent extends ExperimentAgent {
 		// We first save the results of the various simulations
 		final IExpression fitness = getSpecies().getExplorationAlgorithm().getFitnessExpression();
 		final FileOutput output = getSpecies().getLog();
+		final boolean hasSimulations = getSimulationPopulation() != null;
 		try {
-			for (final IAgent sim : getSimulationPopulation().toArray()) {
-				double lastFitnessValue = 0;
-				if (fitness != null) {
-					lastFitnessValue = Cast.asFloat(sim.getScope(), fitness.value(sim.getScope()));
-					fitnessValues.add(lastFitnessValue);
+			if (hasSimulations)
+				for (final IAgent sim : getSimulationPopulation().toArray()) {
+					double lastFitnessValue = 0;
+					if (fitness != null) {
+						lastFitnessValue = Cast.asFloat(sim.getScope(), fitness.value(sim.getScope()));
+						fitnessValues.add(lastFitnessValue);
+					}
+					if (output != null) {
+						getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue);
+					}
 				}
-				if (output != null) {
-					getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue);
-				}
-			}
 
 		} catch (final GamaRuntimeException e) {
 			e.addContext("in saving the results of the batch");

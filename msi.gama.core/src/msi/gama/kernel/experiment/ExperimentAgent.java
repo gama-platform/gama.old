@@ -102,7 +102,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	final protected ExperimentClock clock = new ExperimentClock();
 	protected boolean warningsAsErrors = GamaPreferences.CORE_WARNINGS.getValue();
 	protected String ownModelPath;
-	protected SimulationPopulation populationOfSimulations;
+	// protected SimulationPopulation populationOfSimulations;
 	private Boolean scheduled = false;
 	private volatile boolean isOnUserHold = false;
 
@@ -234,10 +234,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return ps;
 	}
 
-	@Override
-	protected Object stepSubPopulations(final IScope scope) {
-		return scope.step(populationOfSimulations);
-	}
+	// @Override
+	// protected Object stepSubPopulations(final IScope scope) {
+	// return scope.step(populationOfSimulations);
+	// }
 
 	@Override
 	public RandomUtils getRandomGenerator() {
@@ -262,14 +262,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	protected void createSimulationPopulation() {
-		final SimulationPopulation pop = getSimulationPopulation();
-		pop.initializeFor(scope);
-		setAttribute(getModel().getName(), pop);
-		// pop.setHost(this);
-		// if ( scheduler != null ) {
-		// scheduler.dispose();
-		// }
-		// scheduler = new ActionExecuter(scope, pop);
+		final IModel model = getModel();
+		SimulationPopulation pop = (SimulationPopulation) this.getMicroPopulation(model);
+		if (pop == null) {
+			pop = new SimulationPopulation(this, model);
+			setAttribute(model.getName(), pop);
+			pop.initializeFor(scope);
+		}
 	}
 
 	@Override
@@ -452,13 +451,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public SimulationPopulation getSimulationPopulation() {
-		if (populationOfSimulations == null) {
-			populationOfSimulations = (SimulationPopulation) getMicroPopulation(getModel());
-			if (populationOfSimulations == null) {
-				populationOfSimulations = new SimulationPopulation(this, getModel());
-			}
-		}
-		return populationOfSimulations;
+		// Lazy initialization of the population, in case
+		// createSimulationPopulation();
+		return (SimulationPopulation) getMicroPopulation(getModel());
 	}
 
 	@getter(IKeyword.SIMULATIONS)
@@ -473,7 +468,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(IKeyword.SIMULATION)
 	public SimulationAgent getSimulation() {
-		return getSimulationPopulation().lastSimulationCreated();
+		if (getSimulationPopulation() != null)
+			return getSimulationPopulation().lastSimulationCreated();
+		return null;
 	}
 
 	@setter(IKeyword.SIMULATION)
@@ -591,7 +588,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		@Override
 		public Object getGlobalVarValue(final String name) {
-			if (ExperimentAgent.this.hasAttribute(name)) {
+			if (ExperimentAgent.this.hasAttribute(name) || getSpecies().hasVar(name)) {
 				return super.getGlobalVarValue(name);
 			} else if (getSimulation() != null && !getSimulation().dead()) {
 				return getSimulation().getScope().getGlobalVarValue(name);
