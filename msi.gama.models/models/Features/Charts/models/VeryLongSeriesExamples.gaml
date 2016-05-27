@@ -18,7 +18,7 @@ global
 			 		{
 			 		loop i from: 0 to: serie_length 
 			 		{
-			 			base<-i;
+			 			base<-float(i);
 			 			add base to:xlist;
 			 			add cos(base/1000) to:coslist;
 			 			add sin(base/1000) to:sinlist;
@@ -32,7 +32,7 @@ global
 //			 		sinlist<-[];
 			 		loop i from: 0 to: serie_length 
 			 		{
-				 		base<-serie_length*cycle+i;
+				 		base<-float(serie_length*cycle+i);
 			 			add base to:xlist;
 			 			add cos(base/1000) to:coslist;
 			 			add sin(base/1000) to:sinlist;
