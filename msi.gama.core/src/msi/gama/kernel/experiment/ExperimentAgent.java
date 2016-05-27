@@ -220,7 +220,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (pop == null) {
 			return;
 		}
-		// 'simulation' is set by a callback call to setSimulation()
 		final ParametersSet ps = getParameterValues();
 		ps.putAll(parameters);
 		final IList<Map> list = GamaListFactory.create(Types.MAP);

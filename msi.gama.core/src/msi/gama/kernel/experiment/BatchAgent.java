@@ -194,8 +194,10 @@ public class BatchAgent extends ExperimentAgent {
 			for (final IAgent sim : getSimulationPopulation().toArray()) {
 				final SimulationAgent agent = (SimulationAgent) sim;
 				// cycles += " " + simulation.getClock().getCycle();
-				final boolean mustStop = agent.dead() || agent.getScope().isPaused()
-						|| Cast.asBool(sim.getScope(), sim.getScope().evaluate(stopCondition, sim));
+				// test the condition first in case it is paused
+				final boolean stopConditionMet = Cast.asBool(sim.getScope(),
+						sim.getScope().evaluate(stopCondition, sim));
+				final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 				if (mustStop) {
 					getSimulationPopulation().unscheduleSimulation(agent);
 				}

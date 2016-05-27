@@ -104,6 +104,7 @@ public class SimulationPopulation extends GamaPopulation {
 			}
 			executor = null;
 		}
+		currentSimulation = null;
 		super.dispose();
 	}
 
@@ -137,11 +138,14 @@ public class SimulationPopulation extends GamaPopulation {
 				} else {
 					currentSimulation.schedule(scope);
 				}
+				// Necessary to put it in a final variable here, so that the
+				// runnable does not point on the instance variable (see #1836)
+				final SimulationAgent simulation = currentSimulation;
 				runnables.put(currentSimulation, new Callable<Object>() {
 
 					@Override
 					public Object call() {
-						return currentSimulation.step(scope);
+						return simulation.step(simulation.getScope());
 
 					}
 				});
