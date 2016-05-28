@@ -315,23 +315,23 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	}
 
-	public IAgent createAgentAt(final IScope scope, int index, Map<String, Object> initialValues,
-			boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException {
-			
-		List<Map<String,Object>> mapInitialValues = new ArrayList<>();
+	@Override
+	public IAgent createAgentAt(final IScope scope, final int index, final Map<String, Object> initialValues,
+			final boolean isRestored, final boolean toBeScheduled) throws GamaRuntimeException {
+
+		final List<Map<String, Object>> mapInitialValues = new ArrayList<>();
 		mapInitialValues.add(initialValues);
-	
+
 		// TODO : think to another solution... it is ugly
 		final int tempIndexAgt = currentAgentIndex;
-		
+
 		currentAgentIndex = index;
-		IList<? extends IAgent> listAgt = createAgents(scope, 1, mapInitialValues, isRestored, toBeScheduled);
+		final IList<? extends IAgent> listAgt = createAgents(scope, 1, mapInitialValues, isRestored, toBeScheduled);
 		currentAgentIndex = tempIndexAgt;
-		
-		return (IAgent) listAgt.firstValue(scope);
+
+		return listAgt.firstValue(scope);
 	}
-	
-	
+
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 			final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)
@@ -489,7 +489,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		if (filter == null) {
 			return null;
 		}
-		return topology.getAgentClosestTo(scope, coord, filter);
+
+		return topology == null ? null : topology.getAgentClosestTo(scope, coord, filter);
 	}
 
 	/**
@@ -668,7 +669,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	@Override
 	public void removeValue(final IScope scope, final Object value) {
 		if (value instanceof IAgent && super.remove(value)) {
-			topology.removeAgent((IAgent) value);
+			if (topology != null)
+				topology.removeAgent((IAgent) value);
 			fireAgentRemoved((IAgent) value);
 		}
 	}
