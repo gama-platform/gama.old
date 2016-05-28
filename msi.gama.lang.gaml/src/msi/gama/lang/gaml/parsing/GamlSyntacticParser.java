@@ -66,6 +66,7 @@ public class GamlSyntacticParser extends GamlParser {
 				return;
 			}
 			final Set<URI> set = element.getImports();
+			element.setImports(set);
 			if (set.isEmpty()) {
 				return;
 			}

@@ -124,7 +124,7 @@ public class GamlResource extends LazyLinkingResource {
 		if (r == null) {
 			return null;
 		}
-		r.fixURIsWith(this);
+		// r.fixURIsWith(this);
 		return r;
 	}
 

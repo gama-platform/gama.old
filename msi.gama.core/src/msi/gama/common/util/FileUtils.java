@@ -16,6 +16,8 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.runtime.GAMA;
@@ -86,18 +88,19 @@ public class FileUtils {
 	static public String constructAbsoluteFilePath(final IScope scope, final String fp, final boolean mustExist)
 			throws GamaRuntimeException {
 		String filePath = null;
-		String baseDirectory = null;
+		final List<String> baseDirectories = new ArrayList();
 		final IExperimentAgent a = scope.getExperiment();
-		final String referenceDirectory = a.getWorkingPath();
+		final List<String> referenceDirectories = a.getWorkingPaths();
 		try {
-			baseDirectory = URLDecoder.decode(referenceDirectory, "UTF-8");
+			for (final String ref : referenceDirectories) {
+				baseDirectories.add(URLDecoder.decode(ref, "UTF-8"));
+			}
 			filePath = URLDecoder.decode(fp, "UTF-8");
 		} catch (final UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-		// scope.getGui().debug("FileUtils.constructAbsoluteFilePath
-		// baseDirectory = " + baseDirectory);
-		final GamaRuntimeException ex;
+		final GamaRuntimeException ex = new GamaRuntimeFileException(scope,
+				"File denoted by " + filePath + " not found! Tried the following paths : ");
 		File file = null;
 		if (isAbsolutePath(filePath)) {
 			file = new File(filePath);
@@ -109,39 +112,39 @@ public class FileUtils {
 					return file.getAbsolutePath();
 				}
 			}
-			ex = new GamaRuntimeFileException(scope,
-					"File denoted by " + file.getAbsolutePath() + " not found! Tried the following paths : ");
-			ex.addContext(file.getAbsolutePath());
-			file = new File(baseDirectory + File.separator + removeRoot(filePath));
-			if (file.exists()) {
-				try {
-					return file.getCanonicalPath();
-				} catch (final IOException e) {
-					e.printStackTrace();
-					return file.getAbsolutePath();
-				}
-			}
-			ex.addContext(file.getAbsolutePath());
-		} else {
-			file = new File(baseDirectory + File.separatorChar + filePath);
-			if (file.exists() || !mustExist) {
-				try {
-					// We have to try if the test is necessary.
-
-					if (GAMA.isInHeadLessMode()) {
-						return file.getAbsolutePath();
-					} else {
+			for (final String baseDirectory : baseDirectories) {
+				file = new File(baseDirectory + File.separator + removeRoot(filePath));
+				if (file.exists()) {
+					try {
 						return file.getCanonicalPath();
+					} catch (final IOException e) {
+						e.printStackTrace();
+						return file.getAbsolutePath();
 					}
-
-				} catch (final IOException e) {
-					e.printStackTrace();
-					return file.getAbsolutePath();
 				}
+				ex.addContext(file.getAbsolutePath());
 			}
-			ex = new GamaRuntimeFileException(scope,
-					"File denoted by " + file.getAbsolutePath() + " not found! Tried the following paths : ");
-			ex.addContext(file.getAbsolutePath());
+		} else {
+			for (final String baseDirectory : baseDirectories) {
+				file = new File(baseDirectory + filePath);
+				if (file.exists() || !mustExist) {
+					try {
+						// We have to try if the test is necessary.
+
+						if (GAMA.isInHeadLessMode()) {
+							return file.getAbsolutePath();
+						} else {
+							return file.getCanonicalPath();
+						}
+
+					} catch (final IOException e) {
+						e.printStackTrace();
+						return file.getAbsolutePath();
+					}
+				}
+
+				ex.addContext(file.getAbsolutePath());
+			}
 		}
 
 		throw ex;

@@ -11,7 +11,10 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import msi.gama.kernel.simulation.*;
+import java.util.List;
+
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.SimulationPopulation;
 
 public interface IExperimentAgent extends ITopLevelAgent {
 
@@ -19,6 +22,8 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	public abstract IExperimentPlan getSpecies();
 
 	public String getWorkingPath();
+
+	public List<String> getWorkingPaths();
 
 	/**
 	 * @return
@@ -43,9 +48,9 @@ public interface IExperimentAgent extends ITopLevelAgent {
 	 * @return
 	 */
 	public abstract SimulationPopulation getSimulationPopulation();
-	
-	public boolean isMemorize() ;
-	
+
+	public boolean isMemorize();
+
 	public boolean canStepBack();
 
 }

@@ -93,7 +93,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public static final String MINIMUM_CYCLE_DURATION = "minimum_cycle_duration";
 
 	private final IScope scope;
-	// protected SimulationAgent simulation;
 	final ActionExecuter executer;
 	final Map<String, Object> extraParametersMap = new TOrderedHashMap();
 	protected RandomUtils random;
@@ -372,6 +371,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return ownModelPath;
 	}
 
+	@Override
+	public List<String> getWorkingPaths() {
+		final List<String> result = new ArrayList();
+		result.add(getWorkingPath());
+		result.addAll(getModel().getImportedPaths());
+		return result;
+	}
+
 	@setter(ExperimentAgent.MODEL_PATH)
 	public void setWorkingPath(final String p) {
 		if (p.endsWith("/")) {
@@ -386,11 +393,21 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		final URL url = Platform.getInstanceLocation().getURL();
 		return url.getPath();
 	}
+	//
+	// @setter(value = WORKSPACE_PATH)
+	// public void setWorkspacePath() {
+	//
+	// }
 
 	@getter(PROJECT_PATH)
 	public String getProjectPath() {
 		return getModel().getProjectPath() + "/";
 	}
+
+	// @setter(value = PROJECT_PATH)
+	// public void setProjectPath() {
+	//
+	// }
 
 	@Override
 	@getter(value = GAMA._WARNINGS, initializer = true)

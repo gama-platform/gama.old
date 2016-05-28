@@ -11,7 +11,9 @@
  **********************************************************************************************/
 package msi.gama.kernel.model;
 
+import java.util.List;
 import java.util.Map;
+
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.ISpecies;
@@ -25,12 +27,10 @@ import msi.gaml.species.ISpecies;
 public interface IModel extends ISpecies {
 
 	public abstract ISpecies getSpecies(String speciesName);
-	
+
 	public abstract ISpecies getSpecies(String speciesName, SpeciesDescription specDes);
 
 	public abstract IExperimentPlan getExperiment(final String s);
-
-	// String getRelativeFilePath(IScope scope, String filePath, boolean shouldExist);
 
 	String getWorkingPath();
 
@@ -41,5 +41,7 @@ public interface IModel extends ISpecies {
 	public abstract boolean isTorus();
 
 	public abstract Map<String, ISpecies> getAllSpecies();
+
+	public abstract List<String> getImportedPaths();
 
 }

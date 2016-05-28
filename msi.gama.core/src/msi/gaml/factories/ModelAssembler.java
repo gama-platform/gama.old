@@ -148,11 +148,16 @@ public class ModelAssembler {
 				speciesNodes.put(speciesNode.getName(), speciesNode);
 			}
 		}
+
+		// We build a list of working paths from which the composite model will
+		// be able to look for resources
 		List<String> importStrings = Collections.EMPTY_LIST;
+		final URI modelFolderPath = URI.createFileURI(modelPath).trimSegments(1);
+
 		if (!imports.isEmpty()) {
 			importStrings = new ArrayList();
 			for (final URI uri : imports) {
-				importStrings.add(uri.toFileString());
+				importStrings.add(modelFolderPath.appendSegments(uri.trimSegments(1).segments()).path() + "/");
 			}
 		}
 		final ModelDescription model = new ModelDescription(modelName, null, projectPath,

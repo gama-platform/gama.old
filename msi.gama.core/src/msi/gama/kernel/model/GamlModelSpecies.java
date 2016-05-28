@@ -67,6 +67,11 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		return (ModelDescription) description;
 	}
 
+	@Override
+	public List<String> getImportedPaths() {
+		return getDescription().getImports();
+	}
+
 	// @Override
 	// public String getRelativeFilePath(final IScope scope, final String
 	// filePath, final boolean shouldExist) {
@@ -243,11 +248,6 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 			addExperiment(exp);
 			exp.setChildren(forExperiment);
 		}
-	}
-
-	public Map<String, IExperimentPlan> getExperiments() {
-		// TODO Auto-generated method stub
-		return experiments;
 	}
 
 }
