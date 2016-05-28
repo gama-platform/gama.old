@@ -141,8 +141,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if ( fullScreenShell != null )
 			return;
 		fullScreenShell = new Shell(SwtGui.getDisplay(),
-			GamaPreferences.DISPLAY_MODAL_FULLSCREEN.getValue() ? SWT.ON_TOP | SWT.APPLICATION_MODAL : SWT.NO_TRIM);
+			(GamaPreferences.DISPLAY_MODAL_FULLSCREEN.getValue() ? SWT.ON_TOP : SWT.APPLICATION_MODAL) | SWT.NO_TRIM);
 		fullScreenShell.setBounds(SwtGui.getDisplay().getBounds());
+
+		// fullScreenShell.setMaximized(true);
 		final GridLayout gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
 		gl.marginHeight = 0;
@@ -244,7 +246,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		form = new SashForm(c, SWT.HORIZONTAL);
 		form.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		form.setBackground(IGamaColors.WHITE.color());
-		form.setSashWidth(3);
+		form.setSashWidth(0);
 
 		sidePanel = new Composite(form, SWT.NONE);
 		final GridLayout layout = new GridLayout(1, true);
@@ -254,15 +256,15 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		layout.marginWidth = 0;
 		sidePanel.setLayout(layout);
 		sidePanel.setBackground(IGamaColors.WHITE.color());
-		sidePanel.setData("NAME", "Side panel");
-		final Composite centralPanel = new Composite(form, SWT.NONE);
+		final Composite centralPanel =
+			new Composite(form, GamaPreferences.CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
 		GridLayout gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
 		gl.verticalSpacing = 0;
 		centralPanel.setLayout(gl);
-		parent = new Composite(centralPanel, SWT.BORDER) {
+		parent = new Composite(centralPanel, SWT.NONE) {
 
 			@Override
 			public boolean setFocus() {

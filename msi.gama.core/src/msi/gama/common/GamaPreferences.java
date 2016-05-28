@@ -543,6 +543,9 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_DISPLAY_ORDER = create("core.display_order",
 			"Stack displays on screen in the order defined by the model", true, IType.BOOL).in(DISPLAY)
 					.group("Layout (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CORE_DISPLAY_BORDER = create("core.display_border",
+			"Display a border around the view", true, IType.BOOL).in(DISPLAY)
+					.group("Properties (settings effective after experiment relaunch)");
 
 	// TODO REMOVED Because too much instability
 	public static final List<String> LAYOUTS = Arrays.asList("Npne", "Stacked", "Split", "Horizontal", "Vertical");
