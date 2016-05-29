@@ -914,9 +914,14 @@ public abstract class Spatial {
 				} catch (final Exception e) {
 					// AD 12/04/13 : Addition of a third method in case of
 					// exception
-					geom = geom1.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT)
+					try {
+						geom = geom1.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT)
+					
 							.intersection(geom2.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS,
 									BufferParameters.CAP_FLAT));
+					} catch  (final Exception e2) {
+						return null;
+					}
 				}
 			}
 			if (geom == null || geom.isEmpty()) {

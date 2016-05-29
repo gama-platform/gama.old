@@ -13,7 +13,6 @@ package msi.gaml.skills;
 
 import java.util.Map;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
@@ -30,7 +29,9 @@ import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.path.*;
 import msi.gaml.operators.*;
+import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.operators.Spatial.Punctal;
+import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.types.*;
 
 /**
@@ -234,7 +235,7 @@ public class MovingSkill extends Skill {
 			if ( bounds != null ) {
 				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
 				if ( geom != null && geom.getInnerGeometry() != null ) {
-					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
+					loc = computeLocationForward(scope, dist, loc, geom);
 				}
 			}
 			// pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
@@ -278,7 +279,7 @@ public class MovingSkill extends Skill {
 			if ( bounds != null ) {
 				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
 				if ( geom != null && geom.getInnerGeometry() != null ) {
-					loc = computeLocationForward(scope, dist, loc, geom.getInnerGeometry());
+					loc = computeLocationForward(scope, dist, loc, geom);
 				}
 			}
 			// pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
@@ -770,36 +771,24 @@ public class MovingSkill extends Skill {
 	}
 
 	private ILocation computeLocationForward(final IScope scope, final double dist, final ILocation loc,
-		final Geometry geom) {
-
-		final Point locPt = GeometryUtils.FACTORY.createPoint(getCurrentAgent(scope).getLocation().toCoordinate());
-		final Geometry buff = locPt.buffer(dist);
-		final Geometry test = locPt.buffer(dist / 100, 4);
-		Geometry frontier = null;
-		try {
-			frontier = buff.intersection(geom);
-		} catch (final Exception e) {
-			// frontier = buff.intersection(geom.buffer(0.0));
-			final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-			frontier = GeometryPrecisionReducer.reducePointwise(geom, pm)
-				.intersection(GeometryPrecisionReducer.reducePointwise(buff, pm));
-
-		}
-
-		Geometry geomsSimp = null;
-		if ( frontier instanceof GeometryCollection ) {
-			final GeometryCollection gc = (GeometryCollection) frontier;
-			final int nb = gc.getNumGeometries();
-			for ( int i = 0; i < nb; i++ ) {
-				if ( !gc.getGeometryN(i).disjoint(test) ) {
-					geomsSimp = gc.getGeometryN(i);
+		final IShape geom) {
+		
+		IShape buff = Transformations.enlarged_by(scope, loc, dist);
+		IShape frontier = Operators.inter(scope, buff, geom);
+		if (frontier == null) return getCurrentAgent(scope).getLocation();
+		final IShape test = new GamaShape(loc, loc.getInnerGeometry().buffer(dist/100.0, 4));
+		IShape geomsSimp = null;
+		if ( frontier.getGeometries().size() > 1 ) {
+			for (IShape g : frontier.getGeometries() ) {
+				if ( g.intersects(test) ) {
+					geomsSimp = g;
 					break;
 				}
 			}
-			if ( geomsSimp == null || geomsSimp.isEmpty() ) { return getCurrentAgent(scope).getLocation(); }
+			if ( geomsSimp == null || geomsSimp.getPoints().isEmpty()) { return getCurrentAgent(scope).getLocation(); }
 			frontier = geomsSimp;
 		}
-		final ILocation computedPt = Punctal._closest_point_to(loc, new GamaShape(frontier));
+		final ILocation computedPt = Punctal._closest_point_to(loc, frontier);
 		if ( computedPt != null ) { return computedPt; }
 		return getCurrentAgent(scope).getLocation();
 	}
