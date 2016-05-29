@@ -1,3 +1,9 @@
+/**
+* Name: Flies
+* Author: HUYNH Quang Nghi
+* Description: This is a dummy model that show the randomly movement of the flies.
+* Tags: comodel
+*/
 model Mosquitos
 
 

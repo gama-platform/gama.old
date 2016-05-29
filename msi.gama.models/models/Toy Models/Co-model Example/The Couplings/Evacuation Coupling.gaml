@@ -1,6 +1,12 @@
+/**
+* Name: evacuation_coupling
+* Author: HUYNH Quang Nghi
+* Description: It is NOT supposed to launch. This is the coupling of Evacuation model. It is used in the "Flood and Evacuation" as an interface. 
+* Tags: comodel
+*/
 model evacuation_coupling
 
-import "../../../../Toy Models/Evacuation/models/Continuous Move.gaml"
+import "../../../Toy Models/Evacuation/models/Continuous Move.gaml"
 experiment main type: gui
 {
 	point centroid <- { 0, 180 };
@@ -26,7 +32,7 @@ experiment main type: gui
 			t.location <- t.location * 8;
 		}
 
-		target_point <- point(target_point translated_by centroid);
+		target_point <- { 99, 999 };
 	}
 
 	list<people> get_people

@@ -1,3 +1,9 @@
+/**
+* Name: flies_coupling
+* Author: HUYNH Quang Nghi
+* Description: It is NOT supposed to launch. This is the coupling of Flies model. It is used in the "Complex Comodeling Example" as an interface. 
+* Tags: comodel
+*/
 model flies_coupling
 import "Flies.gaml"
 

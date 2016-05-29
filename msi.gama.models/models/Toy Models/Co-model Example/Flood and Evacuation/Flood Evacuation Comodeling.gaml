@@ -6,8 +6,8 @@
  */
 model flood_evacuation_comodeling
  
-import "The Couplings/Flood Coupling.gaml" as myFlood 
-import "The Couplings/Evacuation Coupling.gaml" as myEvacuation
+import "../The Couplings/Flood Coupling.gaml" as myFlood 
+import "../The Couplings/Evacuation Coupling.gaml" as myEvacuation
 
 
 global
@@ -19,10 +19,10 @@ global
 	init
 	{
 		//create experiment from micro-model myFlood with corresponding parameters
-		create myFlood.main_gui with:
-		[buildings_shapefile::file("../../../Toy Models/Flood Simulation/includes/Building.shp"), river_shapefile::file("../../../Toy Models/Flood Simulation/includes/RedRiver.shp"), dykes_shapefile::file("../../../Toy Models/Flood Simulation/includes/Dykes.shp"), dem_file::file("../../../Toy Models/Flood Simulation/includes/mnt50.asc")];
+		create myFlood.main_gui;
+	
 		//create the Evacuation micro-model's experiment
-		create myEvacuation.main with: [nb_people::200, target_point::{ 0, 1580 }, building_shapefile::file("../../../Toy Models/Evacuation/includes/building.shp")]
+		create myEvacuation.main 
 		{
 			//transform the environment and the agents to new location (near the river)
 			do transform_environment;
@@ -71,10 +71,14 @@ experiment simple type: gui
 {
 	output
 	{
-		display "comodel_disp"
+		display "Comodel Display"
 		{
 			agents "building" value: first(myEvacuation.main).get_building();
 			agents "people" value: first(myEvacuation.main).get_people();
+			graphics "exit" {
+				draw "EXIT" at: first(myEvacuation.main).simulation.target_point-110;
+				draw sphere(100) at: first(myEvacuation.main).simulation.target_point color: #green;	
+			}
 			agents "cell" value: first(myFlood.main_gui).get_cell();
 			agents "dyke" value: first(myFlood.main_gui).get_dyke();
 			graphics 'CasualtyView'

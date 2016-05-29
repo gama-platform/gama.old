@@ -5,8 +5,8 @@
 * Tags: comodel
  */
 model Voroboids
-import "The Couplings/Boids Coupling.gaml" as myBoids
-import "The Couplings/Voronoi Coupling.gaml" as myVoronoi
+import "../The Couplings/Boids Coupling.gaml" as myBoids
+import "../The Couplings/Voronoi Coupling.gaml" as myVoronoi
 
 
 global
@@ -38,7 +38,7 @@ experiment main type: gui
 {
 	output
 	{
-		display "comodel_disp" 
+		display "Comodel Display" 
 		{
 			agents "cell" value: (myVoronoi.voronoi accumulate each.get_cell());
 			

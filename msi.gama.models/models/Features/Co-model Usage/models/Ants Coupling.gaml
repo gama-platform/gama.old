@@ -1,7 +1,7 @@
 /**
 * Name: ants_coupling
 * Author: HUYNH Quang Nghi
-* Description: This is the coupling of Ants model. It is supposed to use in the Comodeling Example as an interface. 
+* Description:  It is NOT supposed to launch. This is the coupling of Ants model. It is supposed to use in the Comodeling Example as an interface. 
 * Tags: comodel
 */
 model ants_coupling

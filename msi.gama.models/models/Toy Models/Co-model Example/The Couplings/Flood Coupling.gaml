@@ -1,6 +1,12 @@
+/**
+* Name: flood_coupling
+* Author: HUYNH Quang Nghi
+* Description: It is NOT supposed to launch. This is the coupling of Flood model. It is used in the "Flood and Evacuation" as an interface. 
+* Tags: comodel
+*/
 model flood_coupling
 
-import "../../../../Toy Models/Flood Simulation/models/Hydrological Model.gaml"
+import "../../../Toy Models/Flood Simulation/models/Hydrological Model.gaml"
 experiment main_gui type: gui
 {
 	point newSize <- { 0.07, 0.07 };
