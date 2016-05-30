@@ -40,34 +40,9 @@ species Switch
 		//if the size of S population and I population are bigger than a threshold, use the EBM
 		if (S > threshold_to_Maths and I > threshold_to_Maths)
 		{
-			ask world
-			{
 				unknown call;
-				call <- first(SIR_1.SIR_EBM_coupling_exp).set_num_S_I_R(myself.S, myself.I, myself.R);
+				call <- first(SIR_1.SIR_EBM_coupling_exp).set_num_S_I_R(S, I, R);
 				ask first(SIR_1.SIR_EBM_coupling_exp).simulation
-				{
-					loop times: 5
-					{
-						do _step_;
-					}
-
-				}
-
-				myself.S <- first(SIR_1.SIR_EBM_coupling_exp).get_num_S();
-				myself.I <- first(SIR_1.SIR_EBM_coupling_exp).get_num_I();
-				myself.R <- first(SIR_1.SIR_EBM_coupling_exp).get_num_R();
-			}
-
-		}
-		
-		//if the size of S population or  I population are smaller  than a threshold, use the ABM
-		if (I < threshold_to_IBM or S < threshold_to_IBM)
-		{
-			ask world
-			{
-				unknown call;
-				call <- first(SIR_2.SIR_ABM_coupling_exp).set_num_S_I_R(myself.S, myself.I, myself.R);
-				ask first(SIR_2.SIR_ABM_coupling_exp).simulation
 				{
 					loop times: 1
 					{
@@ -76,11 +51,28 @@ species Switch
 
 				}
 
-				myself.S <- first(SIR_2.SIR_ABM_coupling_exp).get_num_S();
-				myself.I <- first(SIR_2.SIR_ABM_coupling_exp).get_num_I();
-				myself.R <- first(SIR_2.SIR_ABM_coupling_exp).get_num_R();
-			}
+				S <- first(SIR_1.SIR_EBM_coupling_exp).get_num_S();
+				I <- first(SIR_1.SIR_EBM_coupling_exp).get_num_I();
+				R <- first(SIR_1.SIR_EBM_coupling_exp).get_num_R();
+		}
+		
+		//if the size of S population or  I population are smaller  than a threshold, use the ABM
+		if (I < threshold_to_IBM or S < threshold_to_IBM)
+		{
+				unknown call;
+				call <- first(SIR_2.SIR_ABM_coupling_exp).set_num_S_I_R(S, I, R);
+				ask first(SIR_2.SIR_ABM_coupling_exp).simulation
+				{
+					loop times: 10
+					{
+						do _step_;
+					}
 
+				}
+
+				S <- first(SIR_2.SIR_ABM_coupling_exp).get_num_S();
+				I <- first(SIR_2.SIR_ABM_coupling_exp).get_num_I();
+				R <- first(SIR_2.SIR_ABM_coupling_exp).get_num_R();
 		}
 
 	}

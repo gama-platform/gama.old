@@ -523,7 +523,14 @@ public abstract class AbstractAgent implements IAgent {
 		if (a == null) {
 			return null;
 		}
-		return getHost().getPopulationFor(speciesName);
+//		return getHost().getPopulationFor(speciesName);
+
+		IPopulation pop = getHost().getPopulationFor(speciesName);
+		//If pop is null, try to get the extern population of micro-model
+		if(pop == null){
+			pop = a.getExternMicroPopulationFor(speciesName);
+		}
+		return pop;
 	}
 
 	/**
