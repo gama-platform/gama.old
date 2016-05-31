@@ -37,7 +37,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 				if ( pop != null ) { return pop.getSpecies(); }
 				return scope.getSimulationScope().getModel().getSpecies((String) value);
 			} else {
-				IPopulation pop = scope.getRoot().getExternMicroPopulationFor((String) value);
+				IPopulation pop = scope.getRoot().getExternMicroPopulationFor((String) micro.getAlias()+"."+value);
 				if ( pop != null ) { return pop.getSpecies(); }
 				return scope.getSimulationScope().getModel().getSpecies((String) value,
 					this.getType().getContentType().getSpecies());

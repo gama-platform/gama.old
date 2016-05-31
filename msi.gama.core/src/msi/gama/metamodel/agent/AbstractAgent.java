@@ -34,6 +34,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -509,7 +510,19 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public IPopulation getPopulationFor(final ISpecies microSpecies) {
-		return getPopulationFor(microSpecies.getName());
+//		return getPopulationFor(microSpecies.getName());
+
+
+		IPopulation pop =  getPopulationFor(microSpecies.getName());
+		//If pop is null, try to get the extern population of micro-model
+		if(pop == null){
+			final ModelDescription micro = microSpecies.getDescription().getModelDescription();
+			final ModelDescription main = (ModelDescription) this.getModel().getDescription();
+			if (main.getMicroModel(micro.getAlias()) != null && getHost() != null) {
+				pop = getHost().getExternMicroPopulationFor(micro.getAlias()+"."+microSpecies.getName());
+			}
+		}
+		return pop;
 	}
 
 	/**
@@ -523,14 +536,7 @@ public abstract class AbstractAgent implements IAgent {
 		if (a == null) {
 			return null;
 		}
-//		return getHost().getPopulationFor(speciesName);
-
-		IPopulation pop = getHost().getPopulationFor(speciesName);
-		//If pop is null, try to get the extern population of micro-model
-		if(pop == null){
-			pop = a.getExternMicroPopulationFor(speciesName);
-		}
-		return pop;
+		return getHost().getPopulationFor(speciesName);
 	}
 
 	/**
