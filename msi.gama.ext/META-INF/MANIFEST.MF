@@ -881,3 +881,4 @@ Bundle-ClassPath: .,
  geotools 13.4/jars/geodb-0.7-RC2.jar,
  geotools 13.4/jars/jdom-1.1.3.jar,
  jodatime 2.9/jars/joda-time-2.9.3.jar
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

@@ -31,7 +31,7 @@ public class SavePerspectiveHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) {
 
-		msi.gama.gui.swt.perspectives.SavePerspectiveHandler.execute();
+		// msi.gama.gui.swt.perspectives.SavePerspectiveHandler.execute();
 
 		// final IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 		// if ( activeWorkbenchWindow != null ) {

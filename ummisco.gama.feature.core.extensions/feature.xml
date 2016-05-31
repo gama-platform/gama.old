@@ -21,6 +21,10 @@
       <update label="Gama 1.7.x Update Site" url="http://updates.gama-platform.org"/>
    </url>
 
+   <requires>
+      <import feature="ummisco.gama.feature.core" version="1.7.0.qualifier"/>
+   </requires>
+
    <plugin
          id="irit.gaml.extensions.database"
          download-size="0"

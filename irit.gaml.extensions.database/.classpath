@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry excluding="irit/gaml/extensions/database/skills/XmlaTest.java|irit/gaml/extensions/database/skills/MondrianApp.java|irit/gaml/extensions/database/skills/MondrianXmlaApp.java|irit/gaml/extensions/database/skills/MyAPP.java|irit/gaml/extensions/database/skills/MDXApp.java|irit/gaml/extensions/database/skills/QueryLab.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="gaml"/>

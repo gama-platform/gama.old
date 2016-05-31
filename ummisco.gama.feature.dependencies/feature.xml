@@ -274,13 +274,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.team.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.ltk.ui.refactoring"
          download-size="0"
          install-size="0"
@@ -349,13 +342,6 @@
 
    <plugin
          id="org.eclipse.ui.browser"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="com.google.guava"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -448,13 +434,6 @@
 
    <plugin
          id="org.eclipse.help"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.team.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -872,13 +851,6 @@
          unpack="false"/>
 
    <plugin
-         id="ummisco.gaml.editbox"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.xtext"
          download-size="0"
          install-size="0"
@@ -1014,6 +986,27 @@
 
    <plugin
          id="org.eclipse.xtend.lib.macro"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="com.google.guava"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.team.core"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.team.ui"
          download-size="0"
          install-size="0"
          version="0.0.0"

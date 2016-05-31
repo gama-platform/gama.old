@@ -72,8 +72,9 @@ openFile
       </win>
    </launcher>
 
+
    <vm>
-      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</macos>
+      <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
    </vm>
 
    <license>
@@ -276,28 +277,27 @@ openFile
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.rcp"/>
-      <feature id="ummisco.gama.feature.core" installMode="root"/>
-      <feature id="ummisco.gama.feature.dependencies" installMode="root"/>
-      <feature id="ummisco.gama.feature.models" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.extensions" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.opengl" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.ui" installMode="root"/>
+      <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.core.opengl" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier"/>
    </features>
 
    <configurations>
-      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4" />
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="1" />
       <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="2" />
       <plugin id="org.eclipse.equinox.p2.reconciler.dropins" autoStart="true" startLevel="5" />
       <plugin id="org.eclipse.equinox.simpleconfigurator" autoStart="true" startLevel="1" />
       <property name="eclipse.buildId" value="${build.id}" />
+      <property name="org.eclipse.update.reconcile" value="false" />
       <property name="version" value="1.7" />
    </configurations>
 
    <repositories>
-      <repository location="http://updates.gama-platform.org" enabled="true" />
-      <repository location="http://updates.gama-platform.org" enabled="true" />
       <repository location="http://updates.gama-platform.org" enabled="true" />
    </repositories>
 

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import com.jogamp.common.nio.Buffers;
@@ -186,6 +187,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		canvas.setAutoSwapBufferMode(true);
 		new SWTGLAnimator(canvas);
 		canvas.addGLEventListener(this);
+		final FillLayout gl = new FillLayout();
+		canvas.setLayout(gl);
 		return canvas;
 	}
 
