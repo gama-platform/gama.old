@@ -117,7 +117,7 @@ public class BatchAgent extends ExperimentAgent {
 		final FileOutput output = getSpecies().getLog();
 		final boolean hasSimulations = getSimulationPopulation() != null;
 		try {
-			if (hasSimulations)
+			if (hasSimulations) {
 				for (final IAgent sim : getSimulationPopulation().toArray()) {
 					double lastFitnessValue = 0;
 					if (fitness != null) {
@@ -128,6 +128,8 @@ public class BatchAgent extends ExperimentAgent {
 						getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue);
 					}
 				}
+				getSimulationPopulation().clear();
+			}
 
 		} catch (final GamaRuntimeException e) {
 			e.addContext("in saving the results of the batch");
@@ -137,6 +139,7 @@ public class BatchAgent extends ExperimentAgent {
 		final int cycle = clock.getCycle();
 		final long totalDuration = clock.getTotalDuration();
 		final long lastDuration = clock.getDuration();
+		
 		super.reset();
 		clock.setCycle(cycle);
 		clock.setTotalDuration(totalDuration);
@@ -241,6 +244,7 @@ public class BatchAgent extends ExperimentAgent {
 		// We update the parameters
 		getScope().getGui().showParameterView(getSpecies());
 
+		
 		// We then return the combination (average, min or max) of the different
 		// fitness values computed by the
 		// different simulation.

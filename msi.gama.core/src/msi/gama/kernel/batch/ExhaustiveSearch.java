@@ -28,6 +28,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.operators.Maths;
 import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.EXHAUSTIVE }, kind = ISymbolKind.BATCH_METHOD, with_sequence = false, concept = {
@@ -99,7 +100,7 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 				} else {
 					testSolutions(scope, solution, index + 1);
 				}
-				varValue = (int) ((varValue + var.getStepValue(scope).doubleValue()) * 100000 + 0.5) / 100000.0;
+				varValue = varValue + var.getStepValue(scope).doubleValue();
 			}
 		}
 
