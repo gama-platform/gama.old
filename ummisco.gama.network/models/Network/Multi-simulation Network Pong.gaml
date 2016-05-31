@@ -1,28 +1,28 @@
 /**
-* Name: Multi Simulation Network Round Trip
+* Name: Multi Simulation Network
 * Author: Arnaud Grignard
 * Description: Model to show how to use network skillls in a multi-simulation
 * Tags: multi_simulation, network
 */
 
-model multi_simulation_Network_Round_Trip
+model multi_simulation_Network
 
 global skills:[network]{
 	string simulationName <-"sender";
+	point targetleft <-{0,50};
+	point targetright <-{100,50};
 	init {
 		if(simulationName = "sender"){
 		  do connect to:"localhost" with_name:"sender";
-		  create NetworkingAgent number:1 returns: networkAgt{ 	
+		  create NetworkingAgent number:1{	
+		    location <-targetleft ;
+		    target_loc <- targetright;
 		    color <- #black;	
-			shape <-cube(5);
+			shape <-circle(5);
+			senderSim<-true;
+			goforward<-true;
+			is_arrived<-false;
 		  }
-			//write "creation: "	 + serializeAgent(first(networkAgt));
-			//write "creation: "	 + serialize(first(networkAgt).shape);
-		  
-		  /*create NormalAgent{
-		  	color <- #blue;	
-			shape <-cube(5);
-		  }*/
 		}
 		if(simulationName = "reciever"){
 		  do connect to:"localhost" with_name:"reciever";
@@ -35,47 +35,57 @@ global skills:[network]{
 	}
 	
 	action teletransportation (NetworkingAgent a, string s){
-		
-	  write "teleport";//	 + serializeAgent(a);	
 	  do send_message to:s content:a;
-	 // write serialize(a);
 	}
 }
 
-
-
 species NetworkingAgent skills:[moving]{
+   point target_loc;
    rgb color;
-   reflex updateState when:every(10){
-   	if(simulationName = "sender"){
-   			write "teleportation from sender to reciever";
+   bool senderSim;
+   bool goforward;
+   bool is_arrived;
+   
+   reflex updateState{
+   	write "senderSim" + senderSim;
+   	if(senderSim){
+   		if(location = targetright and goforward=true){
+   			write "teleportation from sender to reciver";
+   			location <- targetleft;
+   			target_loc<-targetright;
+   			senderSim<-false;
+   			goforward<-true;
    			ask world{
 	          do teletransportation(myself,"reciever");	
 	        } 
-	        do die;	
+	        do die;
+   		}
    	}
    	else{
+   	    if(location = targetright){
+   			target_loc<-targetleft;
+   			goforward<-false;
+   		}
+   		if(location = targetleft and goforward =false){
    			write "teleportation from reciever to sender";
+   			location <- targetright;
+   			target_loc<-targetleft;
+   			senderSim<-true;
+   			goforward<-false;
    			ask world{
 	          do teletransportation(myself,"sender");	
 	        } 
-	        do die;		
+	        do die;
+   		}
+   			
    	}
    }
-   
-   reflex up{
-   	//create NormalAgent number:1;
-   }
-
+      
+   reflex update{
+     do goto target:target_loc speed:10;
+   }	
    aspect base{
    	draw shape color:color;
-   }	
-}
-
-species NormalAgent{
-   rgb color;
-   aspect base{
-   	draw square(10) color:color;
    }	
 }
 
@@ -90,8 +100,7 @@ experiment main type: gui {
 	}
 	output {
 		display map type:opengl {
-			species NetworkingAgent aspect:base;
-			species NormalAgent aspect:base;
+			species NetworkingAgent;
 		}
 	}
 }

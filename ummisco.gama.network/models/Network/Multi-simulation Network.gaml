@@ -9,7 +9,7 @@ model multi_simulation_Network
 
 global skills:[network]{
 	string simulationName <-"sender";
-	//string name <- "ee";
+
 	init {
 		if(simulationName = "sender"){
 		  do connect to:"localhost" with_name:"sender";
@@ -25,7 +25,7 @@ global skills:[network]{
 	
 	reflex updateSimulation{
 		if(simulationName = "sender"){
-		      do send_message to:"reciever" content:9 among NetworkingAgent;	
+		  do send_message to:"reciever" content:9 among NetworkingAgent;	
 		}
 		if(simulationName = "reciever"){
 		  if(has_received_message()){
