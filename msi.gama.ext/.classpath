@@ -1,13 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="lib" path="jodatime 2.9/jars/joda-time-2.9.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/jdom-1.1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/geodb-0.7-RC2.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/commons-dbcp-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/commons-collections-3.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/batik-transcoder-1.7.jar"/>
-	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/mysql-connector-java-5.1.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="commons-math3-3.6.1/jars/commons-math3-3.6.1.jar" sourcepath="commons-math3-3.6.1/commons-math3-3.6.1-src.zip"/>
+	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jcommon-1.0.23.jar"/>
+	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jfreechart-1.0.19.jar" sourcepath="jfreechart 1.0.19/src.zip"/>
+	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-core-1.14.0.jar" sourcepath="jts 1.14/src.zip"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/aopalliance-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/commons-dbcp-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/commons-pool-1.5.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/jpf-1.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/mysql-connector-java-5.1.21.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/netty-3.2.7.Final.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-apidb-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-areafilter-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-core-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-dataset-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-extract-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-hstore-jdbc-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-osm-binary-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-pbf-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-pbf2-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-pgsimple-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-pgsnapshot-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-replication-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-replication-http-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-set-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-tagfilter-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-tagtransform-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-xml-0.43.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/plexus-classworlds-2.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/postgis-jdbc-1.3.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/postgresql-9.1-901-1.jdbc4.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/protobuf-java-2.4.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-aop-3.1.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-asm-3.1.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-beans-3.1.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-context-3.1.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-core-3.1.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-expression-3.1.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-jdbc-3.1.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-tx-3.1.2.RELEASE.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/stax2-api-3.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/woodstox-core-lgpl-4.1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/xz-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="rcaller 2.5/jars/RCaller-2.5.jar"/>
+	<classpathentry exported="true" kind="lib" path="svgsalamander 1.0/jars/svg-salamander-1.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="trove 3.0.3/jars/trove-3.0.3.jar" sourcepath="trove 3.0.3/src.zip"/>
+	<classpathentry exported="true" kind="lib" path="vecmath 1.5.2/jars/vecmath-1.5.2.jar"/>
+	<classpathentry exported="true" kind="lib" path="jgrapht 0.9.1/jars/jgrapht-core-0.9.1.jar" sourcepath="jgrapht 0.9.1/src.zip"/>
+	<classpathentry exported="true" kind="lib" path="kabeja 0.4/jars/kabeja-0.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-algo-1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-core-1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="prefuse 2007-10-21/jars/prefuse.jar"/>
+	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-1.2.0.jar"/>
+	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-xmla-1.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/commons-pool-1.5.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-api-13.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/gt-arcgrid-13.4.jar" sourcepath="geotools 13.4/src.zip"/>
@@ -77,60 +125,12 @@
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/postgresql-8.4-701.jdbc3.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/spatialite-jdbc-3.7.2-2.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/sqlite-jdbc-3.8.6.jar"/>
-	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-1.2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-xmla-1.2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="prefuse 2007-10-21/jars/prefuse.jar"/>
-	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-algo-1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="graphstream 1.3/jars/gs-core-1.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="kabeja 0.4/jars/kabeja-0.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="jgrapht 0.9.1/jars/jgrapht-core-0.9.1.jar" sourcepath="jgrapht 0.9.1/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="vecmath 1.5.2/jars/vecmath-1.5.2.jar"/>
-	<classpathentry exported="true" kind="lib" path="trove 3.0.3/jars/trove-3.0.3.jar" sourcepath="trove 3.0.3/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="svgsalamander 1.0/jars/svg-salamander-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="rcaller 2.5/jars/RCaller-2.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/aopalliance-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/commons-dbcp-1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/commons-pool-1.5.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/jpf-1.5.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/mysql-connector-java-5.1.21.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/netty-3.2.7.Final.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-apidb-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-areafilter-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-core-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-dataset-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-extract-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-hstore-jdbc-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-osm-binary-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-pbf-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-pbf2-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-pgsimple-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-pgsnapshot-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-replication-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-replication-http-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-set-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-tagfilter-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-tagtransform-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/osmosis-xml-0.43.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/plexus-classworlds-2.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/postgis-jdbc-1.3.3.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/postgresql-9.1-901-1.jdbc4.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/protobuf-java-2.4.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-aop-3.1.2.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-asm-3.1.2.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-beans-3.1.2.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-context-3.1.2.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-core-3.1.2.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-expression-3.1.2.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-jdbc-3.1.2.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/spring-tx-3.1.2.RELEASE.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/stax2-api-3.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/woodstox-core-lgpl-4.1.4.jar"/>
-	<classpathentry exported="true" kind="lib" path="osmosis 0.43.1/jars/xz-1.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-core-1.14.0.jar" sourcepath="jts 1.14/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jcommon-1.0.23.jar"/>
-	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jfreechart-1.0.19.jar" sourcepath="jfreechart 1.0.19/src.zip"/>
-	<classpathentry exported="true" kind="lib" path="commons-math3-3.6.1/jars/commons-math3-3.6.1.jar" sourcepath="commons-math3-3.6.1/commons-math3-3.6.1-src.zip"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
+	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/mysql-connector-java-5.1.17.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/batik-transcoder-1.7.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/commons-collections-3.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/commons-dbcp-1.4.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/geodb-0.7-RC2.jar"/>
+	<classpathentry exported="true" kind="lib" path="geotools 13.4/jars/jdom-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="jodatime 2.9/jars/joda-time-2.9.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

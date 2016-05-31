@@ -214,8 +214,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		if (additions == null) {
 			additions = new ArrayList();
 		}
-		for (final Class c : JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, ADDITIONS.keySet())) {
-			final List<IDescription> add = getAdditions(c);
+		for (final Object c : JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, ADDITIONS.keySet())) {
+			final List<IDescription> add = getAdditions((Class) c);
 			if (add != null) {
 				additions.addAll(add);
 			}

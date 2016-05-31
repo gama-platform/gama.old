@@ -306,7 +306,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				pop = new ExperimentPopulation(s);
 				final IScope sc = ((ExperimentPlan) s).getExperimentScope();
 				pop.initializeFor(sc);
-				((IMacroAgent) executor).addExternMicroPopulation(s.getName(), pop);
+				((IMacroAgent) executor).addExternMicroPopulation(s.getDescription().getModelDescription().getAlias()+"."+s.getName(), pop);
 			}
 			// end-hqnghi
 		}

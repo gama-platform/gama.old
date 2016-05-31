@@ -428,7 +428,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
 		if (fromMicroModel) {
 			final ExperimentAgent exp = (ExperimentAgent) scope.getRoot()
-					.getExternMicroPopulationFor(this.getDescription().getOriginName()).getAgent(0);
+					.getExternMicroPopulationFor(micro.getAlias()+"."+this.getDescription().getOriginName()).getAgent(0);
 			sim = exp.getSimulation();
 		}
 		// end-hqnghi

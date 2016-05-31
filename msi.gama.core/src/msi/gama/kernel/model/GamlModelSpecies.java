@@ -190,7 +190,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 			sp = getExperiment(speciesName);
 			if (sp == null) {
 				for (final ISpecies mm : getAllSpecies().values()) {
-					if (mm instanceof GamlModelSpecies) {
+					if (mm instanceof GamlModelSpecies && specDes.getOriginName().equals(mm.getName())) {
 						sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
 						if (sp != null) {
 							return sp;

@@ -4,15 +4,15 @@ Bundle-Name: Headless version of GAMA
 Bundle-SymbolicName: msi.gama.headless;singleton:=true
 Bundle-Version: 1.7.0.qualifier
 Bundle-Activator: msi.gama.headless.runtime.Activator
-Require-Bundle: com.ibm.icu;bundle-version="4.4.2",
- msi.gama.core;bundle-version="1.7.0",
+Require-Bundle: com.ibm.icu,
+ msi.gama.core,
  msi.gama.lang.gaml,
  org.eclipse.core.runtime,
- msi.gama.processor;bundle-version="1.4.0",
- msi.gama.ext;bundle-version="1.0.0",
- simtools.gaml.extensions.traffic;bundle-version="1.0.0",
- ummisco.gaml.extensions.maths;bundle-version="1.0.0",
- irit.gaml.extensions.database;bundle-version="1.0.0"
+ msi.gama.processor,
+ msi.gama.ext,
+ simtools.gaml.extensions.traffic,
+ ummisco.gaml.extensions.maths,
+ irit.gaml.extensions.database
 Bundle-ActivationPolicy: lazy
 Export-Package: 
  msi.gama.headless.classLoader,
@@ -40,3 +40,4 @@ Export-Package:
  msi.gama.headless.util,
  msi.gama.headless.xml;uses:="msi.gama.headless.core"
 Bundle-ClassPath: .
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
