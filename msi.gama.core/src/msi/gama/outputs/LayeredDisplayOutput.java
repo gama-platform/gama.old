@@ -100,6 +100,7 @@ import msi.gaml.types.Types;
 				IType.AGENT }, optional = true, doc = @doc("Allows to define the position of the camera")),
 		@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true, doc = @doc("Allows to define the direction of the camera")),
 		@facet(name = IKeyword.CAMERA_UP_VECTOR, type = IType.POINT, optional = true, doc = @doc("Allows to define the orientation of the camera")),
+		@facet(name = IKeyword.CAMERA_LENS, internal = true, type = IType.INT, optional = true, doc = @doc("Allows to define the lens of the camera")),
 		@facet(name = IKeyword.CAMERA_INTERACTION, type = IType.BOOL, optional = true, doc = @doc("If false, the user will not be able to modify the position and the orientation of the camera, and neither using the ROI. Default is true.")),
 		@facet(name = IKeyword.POLYGONMODE, internal = true, type = IType.BOOL, optional = true, doc = @doc("")),
 		@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL,
@@ -189,7 +190,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				}
 			}
 
-			final IExpressionDescription camera = d.getFacets().getDescr(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR);
+			final IExpressionDescription camera = d.getFacets().getDescr(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR, CAMERA_LENS);
 			if (!isOpenGLWanted && camera != null) {
 				d.warning(
 						"camera-related facets will have no effect on 2D displays. Use 'focus:' instead if you want to change the default zoom and position.",
@@ -398,6 +399,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			location.setY(-location.getY()); // y component need to be reverted
 			this.data.setCameraUpVector(location);
 			cameraFix = true;
+		}
+		
+		// Set the up vector of the opengl Camera (see gluPerspective)
+		final IExpression cameraLens = getFacet(IKeyword.CAMERA_LENS);
+		if (cameraLens != null) {
+			final int lens = Cast.asInt(getScope(), cameraLens.value(getScope()));
+			this.data.setCameraLens(lens);
 		}
 
 		final IExpression poly = getFacet(IKeyword.POLYGONMODE);

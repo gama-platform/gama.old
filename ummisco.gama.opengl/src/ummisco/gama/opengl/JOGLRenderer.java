@@ -453,7 +453,8 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			try {
 				final double zNear = maxDim / 1000;
 				double fW, fH;
-				final double fovY = 45.0d;
+				//final double fovY = 45.0d;
+				final double fovY = this.data.getCameralens();
 				if (aspect > 1.0) {
 					fH = FastMath.tan(fovY / 360 * Math.PI) * zNear;
 					fW = fH * aspect;

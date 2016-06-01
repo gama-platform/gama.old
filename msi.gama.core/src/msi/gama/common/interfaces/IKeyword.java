@@ -62,6 +62,7 @@ public interface IKeyword {
 	public static final String CAMERA_POS = "camera_pos";
 	public static final String CAMERA_LOOK_POS = "camera_look_pos";
 	public static final String CAMERA_UP_VECTOR = "camera_up_vector";
+	public static final String CAMERA_LENS = "camera_lens";
 	public static final String CAMERA_INTERACTION = "camera_interaction";
 	public static final String CAPTURE = "capture";
 	public static final String CATEGORY = "category";

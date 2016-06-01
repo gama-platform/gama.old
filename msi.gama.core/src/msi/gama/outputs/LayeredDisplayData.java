@@ -91,6 +91,7 @@ public class LayeredDisplayData {
 	private ILocation cameraPos = getNoChange();
 	private ILocation cameraLookPos = getNoChange();
 	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
+	private int cameraLens = 45;
 	private boolean isDrawingPolygons = true;
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
@@ -433,6 +434,25 @@ public class LayeredDisplayData {
 			notifyListeners(Changes.CAMERA_POS, true);
 		}
 	}
+	
+	/**
+	 * @return the cameraLens
+	 */
+	public int getCameralens() {
+		return cameraLens;
+	}
+	
+	/**
+	 * @param cameraLens
+	 *            the cameraLens to set
+	 */
+	public void setCameraLens(final int cameraLens) {
+		if (this.cameraLens != cameraLens) {
+			this.cameraLens = cameraLens;
+		}
+	}
+
+	
 
 	/**
 	 * @return the polygonMode
