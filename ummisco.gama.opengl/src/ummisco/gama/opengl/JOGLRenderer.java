@@ -508,7 +508,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		}
 		// we draw the scene on screen
 		currentScene.draw(gl);
-
 	}
 
 	// Picking method
