@@ -24,7 +24,7 @@ global
 		//create the Ants micro-model with the size of grid is 100 and the population have 500 ants.
 		create Ant.Simple with: [gridsize::100,ants_number::500];
 		//create the PreyPredator micro-model with the parameters and the number of the prey is equal with the size of ants population
-		create Organism.Complex with: [shape::square(100), preyinit::Ant.Simple[0].simulation.ants_number, predatorinit::2]  
+		create Organism.Simple with: [shape::square(100), preyinit::Ant.Simple[0].simulation.ants_number, predatorinit::2]  
 		{
 			// set the size of micro-model PreyPredator equal with the size of the grid of myAnt
 			shape <- square(100);
@@ -32,7 +32,7 @@ global
 
 		// save the original population of the Ants and the Preys
 		theAnts <- Ant.Simple accumulate each.get_ants();
-		thePreys <- list<prey>(Organism.Complex accumulate each.get_prey());
+		thePreys <- list<prey>(Organism.Simple accumulate each.get_prey());
 
 
 	}
@@ -45,7 +45,7 @@ global
 			do _step_;
 		}
 		// ask myPreyPredator do a step, too
-		ask (Organism.Complex collect each.simulation)
+		ask (Organism.Simple collect each.simulation)
 		{
 			do _step_;
 		}
@@ -87,8 +87,8 @@ experiment main type: gui
 		display "Comodel display"
 		{
 			agents "ant_grid" value: Ant.Simple accumulate each.get_ant_grid() transparency: 0.7;			
-			agents "agentprey" value: (Organism.Complex accumulate each.get_prey());
-			agents "agentpredator" value: (Organism.Complex accumulate each.get_predator());
+			agents "agentprey" value: (Organism.Simple accumulate each.get_prey());
+			agents "agentpredator" value: (Organism.Simple accumulate each.get_predator());
 		}
 
 	}
