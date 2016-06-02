@@ -14,13 +14,15 @@ package msi.gama.application;
 import java.net.URL;
 import java.util.Arrays;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.equinox.app.*;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.equinox.internal.app.CommandLineArgs;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import msi.gama.application.projects.WorkspaceModelsManager;
 import msi.gama.gui.swt.ApplicationWorkbenchAdvisor;
@@ -39,7 +41,7 @@ public class Application implements IApplication {
 		System.err.println(
 			"If you are running the developer version of GAMA, be sure to perform a clean build of your projects before launching it. Unexpected compilation errors can occur if the annotations are somehow out of sync with the code.");
 
-		Display display = PlatformUI.createDisplay();
+		final Display display = PlatformUI.createDisplay();
 		WorkspaceModelsManager.createProcessor(display);
 		// OpenDocumentEventProcessor openDocProcessor = new OpenDocumentEventProcessor(display);
 		// display.addListener(SWT.OpenDocument, openDocProcessor);
@@ -57,8 +59,8 @@ public class Application implements IApplication {
 		String lastUsedWs = null;
 		if ( instanceLoc.isSet() ) {
 			lastUsedWs = instanceLoc.getURL().getFile();
-			String ret = PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(), lastUsedWs,
-				false, false, false);
+			final String ret = PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(),
+				lastUsedWs, false, false, false);
 			if ( ret != null ) {
 				GAMA.getGui().debug(ret);
 				// remember = false;
@@ -83,7 +85,7 @@ public class Application implements IApplication {
 				/*
 				 * If there's any problem with the workspace, force a dialog
 				 */
-				String ret = PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(),
+				final String ret = PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(),
 					lastUsedWs, false, false, false);
 				if ( ret != null ) {
 					if ( ret.equals("models") ) {
@@ -101,13 +103,13 @@ public class Application implements IApplication {
 
 		/* If we don't remember the workspace, show the dialog */
 		if ( !remember ) {
-			PickWorkspaceDialog pwd = new PickWorkspaceDialog();
-			int pick = pwd.open();
+			final PickWorkspaceDialog pwd = new PickWorkspaceDialog();
+			final int pick = pwd.open();
 			/* If the user cancelled, we can't do anything as we need a workspace */
 			if ( pick == Window.CANCEL && pwd.getSelectedWorkspaceLocation() == null ) {
 				MessageDialog.openError(display.getActiveShell(), "Error",
 					"The application can not start without a workspace and will now exit.");
-				PlatformUI.getWorkbench().close();
+				// PlatformUI.getWorkbench().close();
 				System.exit(0);
 				return IApplication.EXIT_OK;
 			}
@@ -121,7 +123,7 @@ public class Application implements IApplication {
 		}
 
 		try {
-			int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
+			final int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 			if ( returnCode == PlatformUI.RETURN_RESTART ) { return IApplication.EXIT_RESTART; }
 			return IApplication.EXIT_OK;
 		} finally {
