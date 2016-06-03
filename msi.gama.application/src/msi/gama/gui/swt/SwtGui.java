@@ -97,6 +97,7 @@ import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.gui.views.ConsoleView;
 import msi.gama.gui.views.ErrorView;
 import msi.gama.gui.views.ExperimentParametersView;
+import msi.gama.gui.views.GamaViewPart;
 import msi.gama.gui.views.InteractiveConsoleView;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.gui.views.MonitorView;
@@ -1666,6 +1667,38 @@ public class SwtGui extends AbstractGui {
 
 			});
 
+	}
+
+	private static volatile boolean isRequesting;
+
+	public static void requestUserAttention(final GamaViewPart part, final String tempMessage) {
+		if ( isRequesting )
+			return;
+		// rate at which the title will change in milliseconds
+		final int rateOfChange = 200;
+		final int numberOfTimes = 2;
+
+		// flash n times and thats it
+		final String orgText = part.getPartName();
+
+		for ( int x = 0; x < numberOfTimes; x++ ) {
+			getDisplay().timerExec(2 * rateOfChange * x - rateOfChange, new Runnable() {
+
+				@Override
+				public void run() {
+					isRequesting = true;
+					part.setName(tempMessage);
+				}
+			});
+			getDisplay().timerExec(2 * rateOfChange * x, new Runnable() {
+
+				@Override
+				public void run() {
+					part.setName(orgText);
+					isRequesting = false;
+				}
+			});
+		}
 	}
 
 }

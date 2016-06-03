@@ -129,7 +129,7 @@ public abstract class GamaViewPart extends ViewPart implements DisposeListener, 
 				if ( sim != null ) {
 					final String[] stemp = id.split("#");
 					if ( stemp.length > 1 ) {
-						final IPopulation externPop = sim.getExternMicroPopulationFor(stemp[1]+"."+stemp[2]);
+						final IPopulation externPop = sim.getExternMicroPopulationFor(stemp[1] + "." + stemp[2]);
 						if ( externPop != null ) {
 							for ( final IAgent expAgent : externPop ) {
 								final SimulationAgent spec = ((ExperimentAgent) expAgent).getSimulation();
@@ -324,6 +324,11 @@ public abstract class GamaViewPart extends ViewPart implements DisposeListener, 
 
 			setPartName(StringUtils.overlay(old, agent.getName(), first + 1, second));
 		}
+	}
+
+	public void setName(final String name) {
+		super.setPartName(name);
+
 	}
 
 }

@@ -1,16 +1,22 @@
 package msi.gama.gui.views;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
+import java.util.List;
+import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.VerifyEvent;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.console.IOConsole;
@@ -18,6 +24,7 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.metamodel.agent.IAgent;
@@ -31,9 +38,11 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	private IOConsole msgConsole;
 	IOConsoleViewer viewer;
-	private BufferedWriter resultWriter, errorWriter;
+	private OutputStreamWriter resultWriter, errorWriter;
 	private BufferedReader reader;
 	private IAgent listeningAgent;
+	private final List<String> history = new ArrayList();
+	private int indexInHistory = 0;
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
@@ -41,10 +50,10 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 		reader = new BufferedReader(new InputStreamReader(msgConsole.getInputStream()));
 		IOConsoleOutputStream stream = msgConsole.newOutputStream();
 		stream.setColor(IGamaColors.NEUTRAL.color());
-		resultWriter = new BufferedWriter(new OutputStreamWriter(stream));
+		resultWriter = new OutputStreamWriter(stream);
 		stream = msgConsole.newOutputStream();
 		stream.setColor(IGamaColors.ERROR.color());
-		errorWriter = new BufferedWriter(new OutputStreamWriter(stream));
+		errorWriter = new OutputStreamWriter(stream);
 		viewer = new IOConsoleViewer(parent, msgConsole);
 		viewer.setWordWrap(true);
 
@@ -69,27 +78,105 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 			}
 		});
+
+		viewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+
+			@Override
+			public void verifyKey(final VerifyEvent e) {
+				if ( e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN ) {
+					final StyledText text = (StyledText) e.widget;
+					final Point selection = text.getSelection();
+					final int line = text.getLineAtOffset(selection.y);
+					if ( line == text.getLineCount() - 1 ) {
+						e.doit = false;
+						insertHistory(e.keyCode == SWT.ARROW_UP);
+
+					}
+				}
+			}
+
+		});
 		showPrompt();
 
 	}
 
+	public static final String PROMPT = "gaml> ";
+
 	private void showPrompt() {
-		append(Strings.LN + "gaml> ", false, false);
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				append(Strings.LN + PROMPT, false, false);
+				try {
+					// Wait for the output stream to finish
+					Thread.sleep(200);
+				} catch (final InterruptedException e) {}
+				GAMA.getGui().run(new Runnable() {
+
+					@Override
+					public void run() {
+						if ( viewer != null && viewer.getTextWidget() != null && !viewer.getTextWidget().isDisposed() )
+							viewer.getTextWidget().setCaretOffset(viewer.getTextWidget().getCharCount());
+
+					}
+				});
+
+			}
+		}).start();;
+
+	}
+
+	private void insertHistory(final boolean back) {
+
+		if ( history.size() == 0 ) {
+			SwtGui.requestUserAttention(this, "No history");
+			return;
+		}
+		if ( indexInHistory <= 0 ) {
+			if ( back )
+				SwtGui.requestUserAttention(this, "No more history");
+			indexInHistory = 0;
+		} else if ( indexInHistory >= history.size() - 1 ) {
+			if ( !back )
+				SwtGui.requestUserAttention(this, "No more history");
+			indexInHistory = history.size() - 1;
+		}
+		try {
+			final StyledText text = viewer.getTextWidget();
+			final int lineIndex = text.getLineCount() - 1;
+			final int nbChars = text.getCharCount();
+			final int firstOffset = text.getOffsetAtLine(lineIndex) + PROMPT.length();
+			viewer.getDocument().replace(firstOffset, nbChars - firstOffset, history.get(indexInHistory));
+			text.setCaretOffset(text.getCharCount());
+			if ( back ) {
+				indexInHistory--;
+			} else indexInHistory++;
+		} catch (final BadLocationException e1) {}
+
 	}
 
 	/**
 	 * Append the text to the console.
 	 * @param text to display in the console
 	 */
-	public void append(final String text, final boolean error, final boolean cr) {
+	public void append(final String text, final boolean error, final boolean showPrompt) {
 
-		try {
-			final BufferedWriter writer = error ? errorWriter : resultWriter;
-			writer.append(text);
-			writer.flush();
-			if ( cr )
-				showPrompt();
-		} catch (final IOException e) {}
+		final OutputStreamWriter writer = error ? errorWriter : resultWriter;
+		GAMA.getGui().asyncRun(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					writer.append(text);
+					writer.flush();
+					if ( showPrompt )
+						showPrompt();
+				} catch (final IOException e) {}
+
+			}
+		});
 
 	}
 
@@ -178,6 +265,9 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 		if ( listeningAgent == null || listeningAgent.dead() ) {
 			setExecutorAgent(null);
 		} else {
+			final String entered = s.trim();
+			history.add(entered);
+			indexInHistory = history.size() - 1;
 			String result = null;
 			boolean error = false;
 			try {
