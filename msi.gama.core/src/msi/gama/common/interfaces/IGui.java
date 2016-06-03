@@ -267,4 +267,6 @@ public interface IGui {
 
 	void updateViewTitle(IDisplayOutput output, SimulationAgent agent);
 
+	IGamaView getInteractiveConsole();
+
 }

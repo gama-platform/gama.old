@@ -91,7 +91,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected volatile boolean disposed;
 	protected volatile boolean realized = false;
 	protected ToolItem overlayItem, sideControlsItem;
-	boolean sideControlsVisible = false; // TODO Make it a preference
+	boolean sideControlsVisible = false, interactiveConsoleVisible = false; // TODO Make it a preference
 	int[] sideControlWeights = new int[] { 30, 70 };
 	protected final java.awt.Rectangle surfaceCompositeBounds = new java.awt.Rectangle();
 	protected LayeredDisplayMultiListener keyAndMouseListener;
@@ -101,6 +101,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	public void toggleFullScreen() {
 		if ( isFullScreen() ) {
+			if ( interactiveConsoleVisible )
+				toggleInteractiveConsole();
 			controlToSetFullScreen().setParent(normalParentOfFullScreenControl);
 			createOverlay();
 			normalParentOfFullScreenControl.layout(true, true);
@@ -226,6 +228,28 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		sideControlsItem.setSelection(sideControlsVisible);
 	}
 
+	public void toggleInteractiveConsole() {
+		// TODO Reprogram it a little bit more carefully ('view.parent', etc.)
+		if ( !sideControlsVisible )
+			toggleSideControls();
+		if ( interactiveConsoleVisible ) {
+			final InteractiveConsoleView view = (InteractiveConsoleView) GAMA.getGui().getInteractiveConsole();
+			if ( view == null )
+				return;
+			view.getControlToDisplayInFullScreen().setParent(view.parentOfControlToDisplayFullScreen);
+			view.parentOfControlToDisplayFullScreen.layout();
+			interactiveConsoleVisible = false;
+		} else {
+			final InteractiveConsoleView view = (InteractiveConsoleView) GAMA.getGui().getInteractiveConsole();
+			if ( view == null )
+				return;
+			view.getControlToDisplayInFullScreen().setParent(sidePanel);
+			interactiveConsoleVisible = true;
+		}
+		sidePanel.layout(true, true);
+
+	}
+
 	public Composite getSurfaceComposite() {
 		return surfaceComposite;
 	}
@@ -246,9 +270,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		form = new SashForm(c, SWT.HORIZONTAL);
 		form.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		form.setBackground(IGamaColors.WHITE.color());
-		form.setSashWidth(0);
+		form.setSashWidth(4);
 
-		sidePanel = new Composite(form, SWT.NONE);
+		sidePanel = new Composite(form, SWT.BORDER);
 		final GridLayout layout = new GridLayout(1, true);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;

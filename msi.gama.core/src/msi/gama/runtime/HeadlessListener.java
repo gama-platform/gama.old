@@ -518,4 +518,10 @@ public class HeadlessListener extends AbstractGui {
 		// TODO Auto-generated method stub
 
 	}
+
+	@Override
+	public IGamaView getInteractiveConsole() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

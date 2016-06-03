@@ -17,6 +17,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.console.IOConsole;
@@ -43,9 +45,27 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	private IAgent listeningAgent;
 	private final List<String> history = new ArrayList();
 	private int indexInHistory = 0;
+	private Composite controlToDisplayInFullScreen;
+	Composite parentOfControlToDisplayFullScreen;
 
 	@Override
-	public void ownCreatePartControl(final Composite parent) {
+	public void createPartControl(final Composite composite) {
+		parentOfControlToDisplayFullScreen = composite;
+		final GridLayout layout = new GridLayout(1, true);
+		layout.horizontalSpacing = 0;
+		layout.verticalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		parentOfControlToDisplayFullScreen.setLayout(layout);
+		controlToDisplayInFullScreen = new Composite(composite, SWT.BORDER);
+		controlToDisplayInFullScreen.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		super.createPartControl(controlToDisplayInFullScreen);
+
+	}
+
+	@Override
+	public void ownCreatePartControl(final Composite p) {
+
 		msgConsole = new IOConsole("GAMA Console", null);
 		reader = new BufferedReader(new InputStreamReader(msgConsole.getInputStream()));
 		IOConsoleOutputStream stream = msgConsole.newOutputStream();
@@ -54,7 +74,8 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 		stream = msgConsole.newOutputStream();
 		stream.setColor(IGamaColors.ERROR.color());
 		errorWriter = new OutputStreamWriter(stream);
-		viewer = new IOConsoleViewer(parent, msgConsole);
+		viewer = new IOConsoleViewer(p, msgConsole);
+
 		viewer.setWordWrap(true);
 
 		msgConsole.getDocument().addDocumentListener(new IDocumentListener() {
@@ -96,8 +117,13 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 			}
 
 		});
+		p.layout(true, true);
 		showPrompt();
 
+	}
+
+	public Composite getControlToDisplayInFullScreen() {
+		return controlToDisplayInFullScreen;
 	}
 
 	public static final String PROMPT = "gaml> ";

@@ -259,6 +259,17 @@ public class SwtGui extends AbstractGui {
 	}
 
 	@Override
+	public IGamaView getInteractiveConsole() {
+		final IWorkbenchPage page = getPage();
+		if ( page == null ) { return null; } // Closing the workbench
+		final IViewReference ref = page.findViewReference(this.INTERACTIVE_CONSOLE_VIEW_ID);
+		if ( ref == null ) { return null; }
+		final IViewPart part = ref.getView(true);
+		if ( !(part instanceof IGamaView) ) { return null; }
+		return (IGamaView) part;
+	}
+
+	@Override
 	public void debug(final String msg) {
 		// System.out.println("[GAMA " + Thread.currentThread().getName() + "] " + msg);
 		WorkbenchPlugin.log(msg);

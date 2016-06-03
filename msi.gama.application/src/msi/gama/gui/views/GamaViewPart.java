@@ -170,7 +170,7 @@ public abstract class GamaViewPart extends ViewPart implements DisposeListener, 
 	}
 
 	@Override
-	public final void createPartControl(final Composite composite) {
+	public void createPartControl(final Composite composite) {
 		// this.rootComposite = composite;
 		composite.addDisposeListener(this);
 		if ( needsOutput() && getOutput() == null )
