@@ -31,6 +31,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -326,6 +327,45 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		final Button buttonAdvanced = new Button(group1, SWT.PUSH | SWT.FLAT);
 		buttonAdvanced.setText("Advanced...");
 		buttonAdvanced.setToolTipText("Access to advanced preferences");
+
+		final Button buttonImport = new Button(group1, SWT.PUSH | SWT.FLAT);
+		buttonImport.setText("Import...");
+		buttonImport.setToolTipText("Import preferences from a file...");
+		buttonImport.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				final FileDialog fd = new FileDialog(shell, SWT.OPEN);
+				fd.setFilterExtensions(new String[] { "*.prefs" });
+				final String path = fd.open();
+				if ( path == null )
+					return;
+				GamaPreferences.applyPreferencesFrom(path, modelValues);
+				for ( final IParameterEditor ed : editors.values() ) {
+					ed.updateValue();
+				}
+			}
+
+		});
+
+		final Button buttonExport = new Button(group1, SWT.PUSH | SWT.FLAT);
+		buttonExport.setText("Export...");
+		buttonExport.setToolTipText("Export preferences to a file...");
+		buttonExport.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				final FileDialog fd = new FileDialog(shell, SWT.SAVE);
+				fd.setFileName("gama.prefs");
+				fd.setFilterExtensions(new String[] { "*.prefs" });
+				fd.setOverwrite(false);
+				final String path = fd.open();
+				if ( path == null )
+					return;
+				GamaPreferences.savePreferencesTo(path);
+			}
+
+		});
 
 		final Composite group2 = new Composite(shell, SWT.NONE);
 		group2.setLayout(new FillLayout());

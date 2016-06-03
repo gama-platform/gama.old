@@ -13,6 +13,8 @@ package msi.gama.common;
 
 import java.awt.Color;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
+import java.util.prefs.InvalidPreferencesFormatException;
 import java.util.prefs.Preferences;
 
 import org.geotools.referencing.CRS;
@@ -902,6 +905,38 @@ public class GamaPreferences {
 			e.set(e.initial);
 		}
 
+	}
+
+	private static void reloadPreferences(final Map<String, Object> modelValues) {
+		final List<Entry> entries = new ArrayList(prefs.values());
+		for (final Entry e : entries) {
+			register(e);
+			modelValues.put(e.key, e.getValue());
+		}
+	}
+
+	public static void applyPreferencesFrom(final String path, final Map<String, Object> modelValues) {
+		System.out.println("Apply preferences from " + path);
+		try {
+			final FileInputStream is = new FileInputStream(path);
+			store.importPreferences(is);
+			is.close();
+			reloadPreferences(modelValues);
+		} catch (final IOException | InvalidPreferencesFormatException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void savePreferencesTo(final String path) {
+		System.out.println("Save preferences to " + path);
+		try {
+			final FileOutputStream os = new FileOutputStream(path);
+			store.exportNode(os);
+			os.close();
+		} catch (final IOException | BackingStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 }
