@@ -115,11 +115,15 @@ public class Application implements IApplication {
 			}
 			/* Tell Eclipse what the selected location was and continue */
 			instanceLoc.set(new URL("file", null, pwd.getSelectedWorkspaceLocation()), false);
+			if ( pwd.applyPrefs() ) {
+				pwd.applyEclipsePreferences(pwd.getSelectedWorkspaceLocation());
+			}
 		} else {
 			if ( !instanceLoc.isSet() ) {
 				/* Set the last used location and continue */
 				instanceLoc.set(new URL("file", null, lastUsedWs), false);
 			}
+
 		}
 
 		try {

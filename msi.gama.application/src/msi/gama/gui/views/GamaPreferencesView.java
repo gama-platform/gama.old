@@ -138,20 +138,17 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			@Override
 			public void widgetSelected(final org.eclipse.swt.events.SelectionEvent event) {
 				tabFolder.layout(true);
-//				tabFolder.update();
+				// tabFolder.update();
 				final Point p = tabFolder.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 				// final Monitor primary = SwtGui.getDisplay().getPrimaryMonitor();
 				final Rectangle bounds = shell.getBounds();
 				final int width = Math.min(p.x, bounds.width - 26);
 				final int height = Math.min(p.y, bounds.height - 81);
 
-				
+				// tabFolder.pack();
 
-//				tabFolder.pack();
-
-
-//				tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
-				tabFolder.setSize(width,height);
+				// tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+				tabFolder.setSize(width, height);
 				tabFolder.update();
 
 			}

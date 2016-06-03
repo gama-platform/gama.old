@@ -11,12 +11,15 @@
  **********************************************************************************************/
 package msi.gama.gui.swt;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -27,6 +30,7 @@ import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import msi.gama.application.projects.WorkspaceModelsManager;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
 
@@ -167,12 +171,25 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	@Override
 	public boolean preShutdown() {
 		try {
+			saveEclipsePreferences();
 			GAMA.closeAllExperiments(true, true);
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
 		return super.preShutdown();
+
+	}
+
+	private void saveEclipsePreferences() {
+		final IPreferencesService service = Platform.getPreferencesService();
+
+		try {
+			final String name = Platform.getInstanceLocation().getURL().getPath().toString() + "/.gama.epf";
+			final FileOutputStream outputStream = new FileOutputStream(name);
+			service.exportPreferences(service.getRootNode(), PickWorkspaceDialog.getPreferenceFilters(), outputStream);
+			outputStream.close();
+		} catch (final CoreException | IOException e1) {}
 
 	}
 
