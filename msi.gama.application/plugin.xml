@@ -322,6 +322,15 @@
             name="User Control"
             restorable="false">
       </view>
+      <view
+            allowMultiple="false"
+            category="msi.gama.gui.category.gama"
+            class="msi.gama.gui.views.InteractiveConsoleView"
+            icon="icons/view.interactive2.png"
+            id="msi.gama.application.view.InteractiveConsoleView"
+            name="Interactive console"
+            restorable="false">
+      </view>
 
    </extension>
 

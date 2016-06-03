@@ -97,6 +97,7 @@ import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.gui.views.ConsoleView;
 import msi.gama.gui.views.ErrorView;
 import msi.gama.gui.views.ExperimentParametersView;
+import msi.gama.gui.views.InteractiveConsoleView;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.gui.views.MonitorView;
 import msi.gama.gui.views.UserControlView;
@@ -408,7 +409,7 @@ public class SwtGui extends AbstractGui {
 
 	private void writeToConsole(final String msg, final ITopLevelAgent root, final GamaUIColor color) {
 		if ( console != null ) {
-			console.append(msg, root, color, false);
+			console.append(msg, root, color);
 		} else {
 			consoleBuffer.append(msg);
 		}
@@ -599,11 +600,15 @@ public class SwtGui extends AbstractGui {
 	@Override
 	public void showConsoleView(final ITopLevelAgent agent) {
 		console = (ConsoleView) showView(CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-		console.setExecutorAgent(agent);
+		// console.setExecutorAgent(agent);
 		if ( consoleBuffer.length() > 0 ) {
-			console.append(consoleBuffer.toString(), agent, null, false);
+			console.append(consoleBuffer.toString(), agent, null);
 			consoleBuffer.setLength(0);
 		}
+		final InteractiveConsoleView icv =
+			(InteractiveConsoleView) showView(INTERACTIVE_CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+		if ( icv != null )
+			icv.setExecutorAgent(agent);
 	}
 
 	static void initFonts() {
@@ -1372,6 +1377,10 @@ public class SwtGui extends AbstractGui {
 		hideView(IGui.PARAMETER_VIEW_ID);
 		hideMonitorView();
 		eraseConsole(true);
+		final InteractiveConsoleView icv =
+			(InteractiveConsoleView) showView(INTERACTIVE_CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+		if ( icv != null )
+			icv.setExecutorAgent(null);
 	}
 
 	/**

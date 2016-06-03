@@ -33,7 +33,10 @@ public class SimulationPerspective implements IPerspectiveFactory {
 		navigAndParam.addView(IGui.NAVIGATOR_VIEW_ID);
 		navigAndParam.addPlaceholder(IGui.ERROR_VIEW_ID);
 
-		lay.addView(IGui.CONSOLE_VIEW_ID, IPageLayout.BOTTOM, 0.70f, "navigAndParam");
+		final IFolderLayout consoleFolder = lay.createFolder("consoles", IPageLayout.BOTTOM, 0.70f, "navigAndParam");
+
+		consoleFolder.addView(IGui.CONSOLE_VIEW_ID);
+		consoleFolder.addView(IGui.INTERACTIVE_CONSOLE_VIEW_ID);
 
 		final IPlaceholderFolderLayout displays =
 			lay.createPlaceholderFolder("displays", IPageLayout.TOP, 0.7f, editor);

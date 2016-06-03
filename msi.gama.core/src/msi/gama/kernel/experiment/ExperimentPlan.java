@@ -344,7 +344,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			open();
 		} else {
 			agent.reset();
-			agent.getScope().getGui().eraseConsole(true);
+			agent.getScope().getGui().eraseConsole(false);
 			agent.init(agent.getScope());
 
 			agent.getScope().getGui().updateParameterView(this);

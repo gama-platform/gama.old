@@ -56,6 +56,7 @@ public interface IGui {
 	public static final String PERSPECTIVE_SIMULATION_FRAGMENT = "Simulation";
 	public static final String PERSPECTIVE_HPC_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 	public static final String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
+	public static final String INTERACTIVE_CONSOLE_VIEW_ID = "msi.gama.application.view.InteractiveConsoleView";
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
 	public static final String TABLE_VIEW_ID = "msi.gama.application.view.TableAgentInspectView";
 	public static final String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
