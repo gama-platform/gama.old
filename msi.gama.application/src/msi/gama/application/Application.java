@@ -11,8 +11,18 @@
  **********************************************************************************************/
 package msi.gama.application;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
@@ -25,9 +35,13 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import msi.gama.application.projects.WorkspaceModelsManager;
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.ApplicationWorkbenchAdvisor;
 import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
+import msi.gama.gui.views.GamaPreferencesView;
 import msi.gama.runtime.GAMA;
+import msi.gaml.types.IType;
 
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
@@ -126,6 +140,26 @@ public class Application implements IApplication {
 
 		}
 
+		final int memory = readMaxMemoryInMegabytes();
+		if ( memory > 0 ) {
+			final GamaPreferences.Entry<Integer> p = GamaPreferences
+				.create("core_max_memory", "Maximum memory allocated to GAMA in megabytes", memory, IType.INT)
+				.in(GamaPreferences.EXPERIMENTAL).group("Memory (restart GAMA for it to take effect)");
+			p.addChangeListener(new IPreferenceChangeListener<Integer>() {
+
+				@Override
+				public boolean beforeValueChange(final Integer newValue) {
+					return true;
+				}
+
+				@Override
+				public void afterValueChange(final Integer newValue) {
+					changeMaxMemory(newValue);
+					GamaPreferencesView.setRestartRequired();
+				}
+			});
+		}
+
 		try {
 			final int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
 			if ( returnCode == PlatformUI.RETURN_RESTART ) { return IApplication.EXIT_RESTART; }
@@ -139,6 +173,7 @@ public class Application implements IApplication {
 				instanceLoc.release();
 			}
 		}
+
 	}
 
 	@Override
@@ -155,6 +190,91 @@ public class Application implements IApplication {
 				}
 			}
 		});
+	}
+
+	public static int readMaxMemoryInMegabytes() {
+		String loc;
+		try {
+			loc = Platform.getConfigurationLocation().getURL().getPath();
+			File dir = new File(loc);
+			dir = dir.getParentFile();
+			final File ini = new File(dir.getAbsolutePath() + "/Gama.ini");
+			System.out.println("ini file " + ini.getAbsolutePath());
+			if ( ini.exists() ) {
+				try (final FileInputStream stream = new FileInputStream(ini);
+					final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {
+					String s = reader.readLine();
+					while (s != null) {
+						if ( s.startsWith("-Xmx") ) {
+							final char last = s.charAt(s.length() - 1);
+							double divider = 1000000;
+							boolean unit = false;
+							switch (last) {
+								case 'k':
+								case 'K':
+									unit = true;
+									divider = 1000;
+									break;
+								case 'm':
+								case 'M':
+									unit = true;
+									divider = 1;
+									break;
+								case 'g':
+								case 'G':
+									unit = true;
+									divider = 0.001;
+									break;
+							}
+							String trim = s;
+							trim = trim.replace("-Xmx", "");
+							if ( unit )
+								trim = trim.substring(0, trim.length() - 1);
+							final int result = Integer.parseInt(trim);
+							return (int) (result / divider);
+
+						}
+						s = reader.readLine();
+					}
+				}
+			}
+		} catch (final IOException e) {}
+		return 0;
+
+	}
+
+	public static void changeMaxMemory(final int memory) {
+		final int mem = memory < 128 ? 128 : memory;
+		String loc;
+		try {
+			loc = Platform.getConfigurationLocation().getURL().getPath();
+			File dir = new File(loc);
+			dir = dir.getParentFile();
+			final File ini = new File(dir.getAbsolutePath() + "/Gama.ini");
+			final List<String> contents = new ArrayList();
+			if ( ini.exists() ) {
+				try (final FileInputStream stream = new FileInputStream(ini);
+					final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {
+					String s = reader.readLine();
+					while (s != null) {
+						if ( s.startsWith("-Xmx") ) {
+							s = "-Xmx" + mem + "m";
+						}
+						contents.add(s);
+						s = reader.readLine();
+					}
+				}
+				try (final FileOutputStream os = new FileOutputStream(ini);
+					final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os));) {
+					for ( final String line : contents ) {
+						writer.write(line);
+						writer.newLine();
+					}
+					writer.flush();
+				}
+			}
+		} catch (final IOException e) {}
+
 	}
 
 }

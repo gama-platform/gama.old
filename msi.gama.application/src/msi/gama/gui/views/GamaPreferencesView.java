@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -64,6 +65,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 	public static Map<String, Image> prefs_images = new LinkedHashMap();
 
 	static GamaPreferencesView instance;
+	private static boolean restartRequired;
 
 	public static void show() {
 		if ( instance == null || instance.shell == null || instance.shell.isDisposed() ) {
@@ -395,8 +397,16 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 				// pn.getPage().performOk();
 				// }
 				// shell.close();
-				shell.setVisible(false);
+
 				GamaPreferences.setNewPreferences(modelValues);
+				if ( restartRequired ) {
+					restartRequired = false;
+					final boolean restart =
+						MessageDialog.openConfirm(SwtGui.getShell(), "Restart ?", "Restart GAMA now ?");
+					if ( restart ) {
+						PlatformUI.getWorkbench().restart(true);
+					}
+				} else shell.setVisible(false);
 			}
 
 		});
@@ -464,6 +474,11 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 				this.shell.getDisplay().sleep();
 			}
 		}
+
+	}
+
+	public static void setRestartRequired() {
+		restartRequired = true;
 
 	}
 
