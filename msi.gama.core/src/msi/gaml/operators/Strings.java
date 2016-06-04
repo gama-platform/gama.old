@@ -338,6 +338,28 @@ public class Strings {
 		String indented = s.replaceAll("(?m)^", t);
 		return indented;
 	}
+	
+	@operator(value = "lower_case", can_be_const = true, category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc(value ="Converts all of the characters in the string operand to lower case",
+	examples = @example(value = "lower_case(\"Abc\")",
+	equals = "'abc'"),
+	see = { "upper_case"})
+	static public String toLowerCase(final String s) {
+		if ( s == null ) { return s; }
+		return s.toLowerCase();
+	}
+	
+	@operator(value = "upper_case", can_be_const = true, category = { IOperatorCategory.STRING },
+			concept = { IConcept.STRING })
+	@doc(value ="Converts all of the characters in the string operand to upper case",
+			examples = @example(value = "upper_case(\"Abc\")",
+			equals = "'ABC'"),
+	see = { "lower_case"})
+	static public String toUpperCase(final String s) {
+		if ( s == null ) { return s; }
+		return s.toUpperCase();
+	}
 
 
 }
