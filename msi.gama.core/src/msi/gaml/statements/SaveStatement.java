@@ -20,14 +20,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.SchemaException;
+import org.geotools.gce.geotiff.GeoTiffWriter;
+import org.geotools.geometry.Envelope2D;
+import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.referencing.FactoryException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -83,7 +89,7 @@ import msi.gaml.types.Types;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 @facets(value = {
 		@facet(name = IKeyword.TYPE, type = IType.ID, optional = true, values = { "shp", "text", "csv",
-				"asc" }, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"text\" or \"csv\") ")),
+				"asc", "geotiff" }, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"text\" or \"csv\") ")),
 		@facet(name = IKeyword.DATA, type = IType.NONE, optional = true, doc = @doc("any expression, that will be saved in the file")),
 		@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it")),
 		@facet(name = IKeyword.HEADER, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist")),
@@ -91,7 +97,7 @@ import msi.gaml.types.Types;
 		@facet(name = "crs", type = IType.NONE, optional = true, doc = @doc("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
 		@facet(name = IKeyword.WITH, type = {
 				IType.MAP }, optional = true, doc = @doc("Not yet used")) }, omissible = IKeyword.DATA)
-@doc(value = "Allows to save data in a file. The type of file can be \"shp\", \"asc\", \"text\" or \"csv\".", usages = {
+@doc(value = "Allows to save data in a file. The type of file can be \"shp\", \"asc\", \"geotiff\", \"text\" or \"csv\".", usages = {
 		@usage(value = "Its simple syntax is:", examples = {
 				@example(value = "save data to: output_file type: a_type_file;", isExecutable = false) }),
 		@usage(value = "To save data in a text file:", examples = {
@@ -104,6 +110,8 @@ import msi.gaml.types.Types;
 				@example(value = "save species_of(self) to: \"save_shapefile.shp\" type: \"shp\" with: [name::\"nameAgent\", location::\"locationAgent\"] crs: \"EPSG:4326\";") }),
 		@usage(value = "To save the grid_value attributes of all the cells of a grid into an ESRI ASCII Raster file:", examples = {
 				@example(value = "save grid to: \"save_grid.asc\" type: \"asc\";") }),
+		@usage(value = "To save the grid_value attributes of all the cells of a grid into geotiff:", examples = {
+				@example(value = "save grid to: \"save_grid.tif\" type: \"geotiff\";") }),
 		@usage(value = "The save statement can be use in an init block, a reflex, an action or in a user command. Do not use it in experiments.") })
 @validator(SaveValidator.class)
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
@@ -219,6 +227,17 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 
 			saveAsc(species, path, scope);
+		} else if (type.equals("geotiff")) {
+			ISpecies species;
+			if (item == null) {
+				return null;
+			}
+			species = Cast.asSpecies(scope, item.value(scope));
+			if (species == null || !species.isGrid()) {
+				return null;
+			}
+
+			saveGeotiff(species, path, scope);
 		} else if (AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase())) {
 
 			IGraph g;
@@ -292,6 +311,50 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 
 	}
+	
+	public void saveGeotiff(final ISpecies species, final String path, final IScope scope) {
+		final File f = new File(path);
+		if (f.exists()) {
+			f.delete();
+		}
+		final GridPopulation gp = (GridPopulation) species.getPopulation(scope);
+		final int cols = gp.getNbCols();
+		final int rows = gp.getNbRows();
+		
+		float[][] imagePixelData = new float[rows][cols]; 
+	    for (int row = 0; row < rows; row++) {
+	        for (int col = 0; col < cols; col++) {
+	            imagePixelData[row][col] = gp.getGridValue(col, row).floatValue();
+	        }
+	       
+	    }
+	    final boolean nullProjection = scope.getSimulationScope().getProjectionFactory().getWorld() == null;
+		final double x = (nullProjection ? 0: scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX());
+		final double y = (nullProjection ? 0: scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY());
+		final double width = scope.getSimulationScope().getEnvelope().getWidth();
+		final double height = scope.getSimulationScope().getEnvelope().getHeight() ;
+
+	    Envelope2D refEnvelope;
+	    CoordinateReferenceSystem crs = null;
+		try {
+			crs = nullProjection ? CRS.decode("EPSG:2154") : scope.getSimulationScope().getProjectionFactory().getWorld().getTargetCRS();
+		} catch (NoSuchAuthorityCodeException e1) {
+			e1.printStackTrace();
+		} catch (FactoryException e1) {
+			e1.printStackTrace();
+		}
+		refEnvelope = new Envelope2D(crs, x, y, width, height);
+		
+	    GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
+	    try {
+	        GeoTiffWriter writer = new GeoTiffWriter(f);
+	        writer.write(coverage,null);
+	       
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	}
+		
 
 	public String getGeometryType(final IList<? extends IShape> agents) {
 		String geomType = "";

@@ -7,7 +7,7 @@
 
 
 model SavetoText
-
+ 
 global {
 	init {
 		//Create the agents that will be saved in the text file.
@@ -21,7 +21,7 @@ global {
 	}
 	//Reflex that will pause the simulation when the number of cycles reach 100.
 	reflex end_simulation when: cycle = 100 {
-		do pause;
+		do pause; 
 	}
 }
 
