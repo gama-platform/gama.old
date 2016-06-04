@@ -387,4 +387,13 @@ public class MinimalAgent extends AbstractAgent {
 
 		// Update microPop
 	}
+	@Override
+	public void dispose() {
+		// TODO Auto-generated method stub
+		for(Object obj : getGeometry().getAttributes().getValues()){
+			obj = null;
+		}
+		getGeometry().getAttributes().clear();
+		super.dispose();
+	}
 }
