@@ -18,7 +18,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Menu;
 
@@ -93,7 +92,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	public SWTOpenGLDisplaySurface(final Composite parent, final LayeredDisplayOutput output) {
 		this.output = output;
 		this.parent = parent;
-		parent.setLayout(new GridLayout(1, false));
+		// parent.setLayout(new GridLayout(1, false));
 		output.getData().addListener(this);
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySuface"));
