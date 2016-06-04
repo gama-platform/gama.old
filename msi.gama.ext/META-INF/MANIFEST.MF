@@ -5,6 +5,7 @@ Bundle-SymbolicName: msi.gama.ext;singleton:=true
 Bundle-Version: 1.7.0.qualifier
 Bundle-Activator: msi.gama.ext.Activator
 Bundle-Vendor: MSI
+Eclipse-BundleShape: dir
 Bundle-ActivationPolicy: lazy
 Export-Package: com.kitfox.svg;
   uses:="com.kitfox.svg.pathcmd,
