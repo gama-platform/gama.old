@@ -247,6 +247,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		}
 		this.getExternMicroPopulations().clear();
 
+		getGeometry().getAttributes().clear();
+		
 		if (outputs != null) {
 			outputs.dispose();
 			outputs = null;
