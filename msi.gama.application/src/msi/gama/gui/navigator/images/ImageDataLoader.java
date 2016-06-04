@@ -324,13 +324,35 @@ public class ImageDataLoader {
 
 			java.awt.image.WritableRaster raster = image.getRaster();
 			int[] pixelArray = colorModel.getComponentSize();
-			for (int y = 0; y < data.height; y++) {
-				for (int x = 0; x < data.width; x++) {
-					raster.getPixel(x, y, pixelArray);
-					int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
-					data.setPixel(x, y, pixel);
+			if (pixelArray.length == 1) {
+				int maxVal = Integer.MIN_VALUE;
+				int minVal = Integer.MAX_VALUE;
+				for (int y = 0; y < data.height; y++) {
+					for (int x = 0; x < data.width; x++) {
+						raster.getPixel(x, y, pixelArray);
+						int val = pixelArray[0];
+						if ( val > maxVal) maxVal = val;
+						if ( val < minVal) minVal = val;
+					}
+				}
+				for (int y = 0; y < data.height; y++) {
+					for (int x = 0; x < data.width; x++) {
+						raster.getPixel(x, y, pixelArray);
+						int val = (int) (maxVal == minVal ? 0 : (pixelArray[0] - minVal) /(0.0 + maxVal-minVal) * 255) ;
+						int pixel = palette.getPixel(new RGB(val, val, val));
+						data.setPixel(x, y, pixel);		
+					}
+				}
+			} else {
+				for (int y = 0; y < data.height; y++) {
+					for (int x = 0; x < data.width; x++) {
+						raster.getPixel(x, y, pixelArray);
+						int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
+						data.setPixel(x, y, pixel);	
+					}
 				}
 			}
+			
 			return data;
 		}
 		return null;
