@@ -64,15 +64,6 @@ public class BatchAgent extends ExperimentAgent {
 			innerLoopRepeat = Cast.asInt(scope, expr.value(scope));
 		}
 		setSeeds(new Double[innerLoopRepeat]);
-		// expr = getSpecies().getFacet(IKeyword.KEEP_SEED);
-		// if ( expr != null && expr.isConst() ) {
-		// boolean keepSeed = Cast.asBool(scope, expr.value(scope));
-		// if ( keepSeed ) {
-		// for ( int i = 0; i < innerLoopRepeat; i++ ) {
-		// getSeeds()[i] = GAMA.getRandom().between(0d, Long.MAX_VALUE);
-		// }
-		// }
-		// }
 
 		if (getSpecies().hasFacet(IKeyword.UNTIL)) {
 			stopCondition = getSpecies().getFacet(IKeyword.UNTIL);
@@ -102,11 +93,6 @@ public class BatchAgent extends ExperimentAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		getSpecies().getExplorationAlgorithm().initializeFor(scope, this);
-		// AD reput here so that permanent outputs are correctly initialized
-		// final IOutputManager outputs = getSpecies().getExperimentOutputs();
-		// if (outputs != null) {
-		// outputs.init(scope);
-		// }
 		return this;
 	}
 
@@ -139,7 +125,7 @@ public class BatchAgent extends ExperimentAgent {
 		final int cycle = clock.getCycle();
 		final long totalDuration = clock.getTotalDuration();
 		final long lastDuration = clock.getDuration();
-		
+
 		super.reset();
 		clock.setCycle(cycle);
 		clock.setTotalDuration(totalDuration);
@@ -185,45 +171,54 @@ public class BatchAgent extends ExperimentAgent {
 			}
 		}
 		// We then create a number of simulations with the same solution
-		for (int repeatIndex = 0; repeatIndex < getSeeds().length; repeatIndex++) {
-			setSeed(getSeeds()[repeatIndex]);
-			createSimulation(currentSolution, true);
-		}
-		int i = 0;
-		while (getSimulationPopulation().hasScheduledSimulations()) {
-			// We step all the simulations
-			getSimulationPopulation().step(getScope());
-			// String cycles = "";
-			// We evaluate their stopCondition and unschedule the ones who
-			// return true
-			for (final IAgent sim : getSimulationPopulation().toArray()) {
-				final SimulationAgent agent = (SimulationAgent) sim;
-				// cycles += " " + simulation.getClock().getCycle();
-				// test the condition first in case it is paused
-				final boolean stopConditionMet = Cast.asBool(sim.getScope(),
-						sim.getScope().evaluate(stopCondition, sim));
-				final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
-				if (mustStop) {
-					getSimulationPopulation().unscheduleSimulation(agent);
-				}
-			}
-			// We inform the status line
 
-			getScope().getGui().setStatus(
-					"Run " + runNumber + " | " + seeds.length + " simulations (using "
-							+ getSimulationPopulation().getNumberOfActiveThreads() + " threads)",
-					"small.batch" + i / 5);
-			if (++i == 20) {
-				i = 0;
+		final int numberOfCores = getSimulationPopulation().getMaxNumberOfConcurrentSimulations();
+		int repeatIndex = 0;
+		while (repeatIndex < getSeeds().length) {
+			for (int coreIndex = 0; coreIndex < numberOfCores; coreIndex++) {
+				setSeed(getSeeds()[repeatIndex]);
+				createSimulation(currentSolution, true);
+				repeatIndex++;
+				if (repeatIndex == getSeeds().length)
+					break;
 			}
-			// We then verify that the front scheduler has not been paused
-			while (getSpecies().getController().getScheduler().paused && !dead) {
-				try {
-					Thread.sleep(100);
-				} catch (final InterruptedException e) {
-					e.printStackTrace();
+			int i = 0;
+			while (getSimulationPopulation().hasScheduledSimulations()) {
+				// We step all the simulations
+				getSimulationPopulation().step(getScope());
+				// String cycles = "";
+				// We evaluate their stopCondition and unschedule the ones who
+				// return true
+				for (final IAgent sim : getSimulationPopulation().toArray()) {
+					final SimulationAgent agent = (SimulationAgent) sim;
+					// cycles += " " + simulation.getClock().getCycle();
+					// test the condition first in case it is paused
+					final boolean stopConditionMet = Cast.asBool(sim.getScope(),
+							sim.getScope().evaluate(stopCondition, sim));
+					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
+					if (mustStop) {
+						getSimulationPopulation().unscheduleSimulation(agent);
+					}
+				}
+				// We inform the status line
+
+				getScope().getGui().setStatus(
+						"Run " + runNumber + " | " + seeds.length + " simulations (using "
+								+ getSimulationPopulation().getNumberOfActiveThreads() + " threads)",
+						"small.batch" + i / 5);
+				if (++i == 20) {
+					i = 0;
+				}
+				// We then verify that the front scheduler has not been paused
+				while (getSpecies().getController().getScheduler().paused && !dead) {
+					try {
+						Thread.sleep(100);
+					} catch (final InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}
+
 		}
 
 		// When the simulations are finished, we give a chance to the outputs of
@@ -244,7 +239,6 @@ public class BatchAgent extends ExperimentAgent {
 		// We update the parameters
 		getScope().getGui().showParameterView(getSpecies());
 
-		
 		// We then return the combination (average, min or max) of the different
 		// fitness values computed by the
 		// different simulation.
