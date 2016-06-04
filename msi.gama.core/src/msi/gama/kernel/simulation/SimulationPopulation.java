@@ -76,6 +76,11 @@ public class SimulationPopulation extends GamaPopulation {
 		return executor;
 	}
 
+	public int getMaxNumberOfConcurrentSimulations() {
+		final boolean isMultiThreaded = getHost().getSpecies().isMulticore();
+		return isMultiThreaded ? GamaPreferences.NUMBERS_OF_THREADS.getValue() : 1;
+	}
+
 	/**
 	 * Method fireAgentRemoved()
 	 * 
@@ -128,16 +133,9 @@ public class SimulationPopulation extends GamaPopulation {
 			if (scope.interrupted()) {
 				return null;
 			}
-			scope.getGui().waitStatus("Instantiating agents");
-			createVariablesFor(currentSimulation.getScope(), Collections.singletonList(currentSimulation),
-					initialValues);
+			initSimulation(scope, currentSimulation, initialValues, isRestored, toBeScheduled);
 			if (toBeScheduled) {
-				if (isRestored) {
-					currentSimulation.prepareGuiForSimulation(scope);
-					currentSimulation.initOutputs();
-				} else {
-					currentSimulation.schedule(scope);
-				}
+
 				// Necessary to put it in a final variable here, so that the
 				// runnable does not point on the instance variable (see #1836)
 				final SimulationAgent simulation = currentSimulation;
@@ -152,6 +150,20 @@ public class SimulationPopulation extends GamaPopulation {
 			}
 		}
 		return this;
+	}
+
+	private void initSimulation(final IScope scope, final SimulationAgent sim, final List<? extends Map> initialValues,
+			final boolean isRestored, final boolean toBeScheduled) {
+		scope.getGui().waitStatus("Instantiating agents");
+		createVariablesFor(sim.getScope(), Collections.singletonList(sim), initialValues);
+		if (toBeScheduled) {
+			if (isRestored) {
+				sim.prepareGuiForSimulation(scope);
+				sim.initOutputs();
+			} else {
+				sim.schedule(scope);
+			}
+		}
 	}
 
 	@Override
