@@ -85,7 +85,7 @@ species NetworkingAgent skills:[network]{
 	reflex readMessage
 	{	
 		//Get the map of all the messages sent to the client
-		map mess <- fetch_message();
+		map mess <- mailbox;
 		//If we have messages then we can try to process them
 		if(mess != nil and length(mess.pairs)>0){
 			//We get the first string sent by the server and we know that the server send only one string but equals to something like 'Server:value1:value2:value3'
@@ -194,7 +194,7 @@ species NetworkingAgent skills:[network]{
 		if(myMessage!=name)
 		{
 			//We finally send the message to the server
-			do send_message to:"Server" content:myMessage;
+			do send to:"Server" contents:myMessage;
 		}
 		//We reinitialize the message to the name of the client
 		myMessage<-name;

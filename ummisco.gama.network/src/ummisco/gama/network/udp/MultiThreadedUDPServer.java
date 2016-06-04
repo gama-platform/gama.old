@@ -20,7 +20,10 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.operators.Cast;
+import ummisco.gama.network.common.ConnectorMessage;
+import ummisco.gama.network.common.NetworkMessage;
 import ummisco.gama.network.skills.INetworkSkill;
+import ummisco.gama.network.tcp.ClientServiceThread;
 
 public class MultiThreadedUDPServer extends Thread {
 
@@ -54,9 +57,9 @@ public class MultiThreadedUDPServer extends Thread {
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#interrupt()
 	 */
-	public void interrupt() {
-		closed =true;
-	}
+//	public void interrupt() {
+//		closed =true;
+//	}
 
 
 	public MultiThreadedUDPServer(final IAgent a, final DatagramSocket ss) {
@@ -89,28 +92,28 @@ public class MultiThreadedUDPServer extends Thread {
     				myAgent.setAttribute("replyIP", IPAddress);
       				myAgent.setAttribute("replyPort", port);
 
+//    				if (!clientSocket.isClosed() && !clientSocket.isInputShutdown()) {
+//    					GamaList<String> list_net_agents = (GamaList<String>) Cast.asList(myAgent.getScope(),
+//    							myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
+//    					if (list_net_agents!=null && !list_net_agents.contains(clientSocket.toString())) {
+//    						list_net_agents.addValue(myAgent.getScope(), clientSocket.toString());
+//    						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);
+//    					}
+//    				}
 //      				System.out.println("RECEIVED: "+IPAddress+"   " +port+"\n"+myUDPServerSocket.getLocalPort());
-				GamaMap<String, Object> m=(GamaMap<String, Object>) myAgent.getAttribute("messages"+myAgent);//GamaMap<String, IList<String>>
-				if(m==null){
-					m=GamaMapFactory.create();
-				}
+      				GamaList<ConnectorMessage> msgs =(GamaList<ConnectorMessage>) myAgent.getAttribute("messages" + myAgent);
+    				if (msgs == null) {
+    					msgs =  (GamaList<ConnectorMessage>) GamaListFactory.create(ConnectorMessage.class);
+    				}
 				if(myAgent.dead()){
 					this.interrupt();
 				}
-//				System.out.println("\n\n ClientServiceThread "+"messages"+myAgent+"\n\n");
-//				GamaList<String> msgs = (GamaList<String>) m.get(myAgent.getScope(), myClientSocket.toString());
-//				if (msgs == null) {				
-//					msgs = (GamaList<String>) myAgent.getAttribute("messages" + myClientSocket.toString());					
-				GamaList<String> msgs = (GamaList<String>) GamaListFactory.create(String.class);
-//				}
-				
-				msgs.addValue(myAgent.getScope(),sentence != null ? sentence : "");
-//				myAgent.setAttribute("messages" + myClientSocket.toString(),msgs);
-//				final GamaMap<String, IList<String>> m=(GamaMap<String, IList<String>>) myAgent.getAttribute("messages");
-//					m.put(myClientSocket.toString(),msgs);
-				m.put(""+myUDPServerSocket.toString(), msgs);
-				myAgent.setAttribute("messages"+myAgent, m);
-				
+
+				NetworkMessage msg=new NetworkMessage(myUDPServerSocket.toString(), sentence != null ? sentence : "");
+				msgs.addValue(myAgent.getScope(),msg);
+
+				myAgent.setAttribute("messages"+myAgent, msgs);
+
 				
 //				if (!clientSocket.isClosed() && !clientSocket.isInputShutdown()) {
 //					GamaList<String> l = (GamaList<String>) Cast.asList(myAgent.getScope(),

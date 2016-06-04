@@ -89,7 +89,7 @@ species NetworkingServer skills:[network]
 	reflex readMessage
 	{
 		//Get all the messages
-		map mess<-fetch_message();
+		map mess<-mailbox;
 		
 		//If we have message then we can start the processing
 		if(mess!=nil and length(mess.pairs)>0)
@@ -166,7 +166,7 @@ species NetworkingServer skills:[network]
 		{	
 			loop aClient over: network_groups
 			{
-				do send_message to: aClient content:infoModel;
+				do send  to: aClient contents:infoModel;
 			}
 		}
 	}

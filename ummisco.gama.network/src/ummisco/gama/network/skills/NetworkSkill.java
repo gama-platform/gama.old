@@ -42,7 +42,7 @@ import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.mqqt.MQTTConnector;
 import ummisco.gama.network.mqqt.MQTTConnectorSk;
 import ummisco.gama.network.tcp.TCPConnector;
-import ummisco.gama.network.udp.old.UDPConnector;
+import ummisco.gama.network.udp.UDPConnector;
 import ummisco.gama.serializer.factory.StreamConverter;
 
 @vars({ @var(name = INetworkSkill.NET_AGENT_NAME, type = IType.STRING, doc = @doc("Net ID of the agent")),
@@ -76,19 +76,28 @@ public class NetworkSkill  extends MessagingSkill {
 			
 			if(protocol != null && protocol.equals( INetworkSkill.UDP_SERVER)){
 				System.out.println("create udp serveur");
-			//	connector = new UDPConnector(scope,true);
+				connector = new UDPConnector(scope,true);
+				connector.configure(IConnector.SERVER_URL,serverURL);
+				connector.configure(IConnector.SERVER_PORT,""+port);
 			} 
 			else if(protocol != null && protocol.equals( INetworkSkill.UDP_CLIENT)){
 				System.out.println("create udp client");
-			//	connector = new UDPConnector(scope,false);
+				connector = new UDPConnector(scope,false);
+				connector.configure(IConnector.SERVER_URL,serverURL);
+				connector.configure(IConnector.SERVER_PORT,""+port);
 			}
 			else if(protocol != null && protocol.equals( INetworkSkill.TCP_SERVER)){
 				System.out.println("create tcp serveur");
-			//	connector = new TCPConnector(scope, true);
+				connector = new TCPConnector(scope, true);
+				connector.configure(IConnector.SERVER_URL,serverURL);
+				connector.configure(IConnector.SERVER_PORT,""+port);
+
 			}
 			else if(protocol != null && protocol.equals( INetworkSkill.TCP_CLIENT)){
 				System.out.println("create tcp client");
-				//connector = new TCPConnector(scope, false);
+				connector = new TCPConnector(scope, false);
+				connector.configure(IConnector.SERVER_URL,serverURL);
+				connector.configure(IConnector.SERVER_PORT,""+port);
 			}
 			else //if(protocol.equals( INetworkSkill.MQTT))
 			{
@@ -185,6 +194,7 @@ public class NetworkSkill  extends MessagingSkill {
 			for(IAgent agt:messages.keySet())
 			{
 				final GamaMailbox mailbox = (GamaMailbox) agt.getAttribute(MAILBOX_ATTRIBUTE);
+				if(!(connection instanceof MQTTConnector)){ mailbox.clear();}
 				for(ConnectorMessage msg:messages.get(agt))
 				{
 					mailbox.addMessage(scope, msg.getContents(scope));

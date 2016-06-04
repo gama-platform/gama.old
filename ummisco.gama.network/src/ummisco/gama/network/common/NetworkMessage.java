@@ -5,7 +5,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.factory.StreamConverter;
 
-class NetworkMessage  implements ConnectorMessage {
+public class NetworkMessage  implements ConnectorMessage {
 	private static final byte[]  keyChain = {3,5,8,13};
 	private static final String UNDEFINED = "undefined";
 	private static final int MAX_HEADER_SIZE = 1024;
@@ -15,7 +15,7 @@ class NetworkMessage  implements ConnectorMessage {
 	private boolean isPlainMessage = false;
 	
 	
-	private NetworkMessage(String from,String data)
+	public NetworkMessage(String from,String data)
 	{
 		this.content = data;
 		this.from=from;

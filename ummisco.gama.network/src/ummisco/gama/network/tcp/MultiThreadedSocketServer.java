@@ -39,20 +39,10 @@ public class MultiThreadedSocketServer extends Thread {
 	/* (non-Javadoc)
 	 * @see java.lang.Thread#interrupt()
 	 */
-
+	@Override
 	public void interrupt() {
 		closed= true;
-//
-//		try {
-//			myAgent.setAttribute("__server"+ myServerSocket.getLocalPort(), null);
-//			myServerSocket.close();				
-//			Thread.sleep(100);
-//			
-//	        Thread.currentThread().interrupt();
-//		} catch (Exception e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
+		super.interrupt();
 	}
 
 
@@ -67,43 +57,45 @@ public class MultiThreadedSocketServer extends Thread {
 			try {
 				// Accept incoming connections.
 				if(myAgent.dead()){ 
+					closed=true;
 					this.interrupt();
+					return;
 				}
+//				System.out.println(myServerSocket+" server waiting for connection");
+
 				Socket clientSocket = myServerSocket.accept();
-
-				// accept() will block until a client connects to the server.
-				// If execution reaches this point, then it means that a client
-				// socket has been accepted.
-
-				// For each client, we will start a service thread to
-				// service the client requests. This is to demonstrate a
-				// Multi-Threaded server. Starting a thread also lets our
-				// MultiThreadedSocketServer accept multiple connections
-				// simultaneously.
-
-				// Start a Service thread
+				System.out.println(clientSocket+" connected");
 
 				if (!clientSocket.isClosed() && !clientSocket.isInputShutdown()) {
-					GamaList<String> l = (GamaList<String>) Cast.asList(myAgent.getScope(),
+					GamaList<String> list_net_agents = (GamaList<String>) Cast.asList(myAgent.getScope(),
 							myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
-					if (l!=null && !l.contains(clientSocket.toString())) {
-						l.addValue(myAgent.getScope(), clientSocket.toString());
-						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, l);
-						
+					if (list_net_agents!=null && !list_net_agents.contains(clientSocket.toString())) {
+						list_net_agents.addValue(myAgent.getScope(), clientSocket.toString());
+						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);
+						clientSocket.setSoTimeout(10);
+						clientSocket.setKeepAlive(true);				
+
 						final ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
 						cliThread.start();
 
-						myAgent.setAttribute("__client"+clientSocket.toString(), cliThread);
+						myAgent.setAttribute(TCPConnector._TCP_CLIENT+clientSocket.toString(), cliThread);
 					}
 				}
 
 			} catch(SocketTimeoutException ste){
-//				System.out.println("closed ");
-
+//				System.out.println("server waiting time out ");
+//				try {
+//					Thread.sleep(1000);
+//				} catch(InterruptedException ie){
+//				}
+//				catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
 			} catch (Exception ioe) {
 
 				if (myServerSocket.isClosed()) {
-					this.interrupt();
+					closed=true;
 				} else {
 					ioe.printStackTrace();
 				}
@@ -111,7 +103,7 @@ public class MultiThreadedSocketServer extends Thread {
 		}
 //		System.out.println("closed ");
 		try {
-			myAgent.setAttribute("__server"+ myServerSocket.getLocalPort(), null);
+			myAgent.setAttribute(TCPConnector._TCP_SERVER+ myServerSocket.getLocalPort(), null);
 			myServerSocket.close();				
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

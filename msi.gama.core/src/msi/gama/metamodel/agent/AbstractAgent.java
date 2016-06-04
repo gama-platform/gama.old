@@ -200,32 +200,32 @@ public abstract class AbstractAgent implements IAgent {
 			// getName() + " .dispose (in MinimalAgent)");
 			dead = true;
 
-			if (getSpecies().getDescription() instanceof SpeciesDescription) {
-				if (((SpeciesDescription) getSpecies().getDescription()).getSkillsNames().contains("network")) {
-					((SpeciesDescription) getSpecies().getDescription()).implementsSkill("network");
-					final Integer port = Cast.asInt(this.getScope(), this.getAttribute("port"));
-					final Thread sersock = (Thread) this.getAttribute("__server" + port);
-					final Thread UDPsersock = (Thread) this.getAttribute("__UDPserver" + port);
-					final Thread cSock = (Thread) this.getAttribute("__socket");
-
-					try {
-						if (sersock != null) {
-							sersock.interrupt();
-							this.setAttribute("__server" + port, null);
-						}
-						if (UDPsersock != null) {
-							UDPsersock.interrupt();
-							this.setAttribute("__UDPserver" + port, null);
-						}
-						if (cSock != null) {
-							cSock.interrupt();
-							this.setAttribute("__socket", null);
-						}
-					} catch (final Exception e) {
-						throw GamaRuntimeException.create(e, this.getScope());
-					}
-				}
-			}
+//			if (getSpecies().getDescription() instanceof SpeciesDescription) {
+//				if (((SpeciesDescription) getSpecies().getDescription()).getSkillsNames().contains("network")) {
+//					((SpeciesDescription) getSpecies().getDescription()).implementsSkill("network");
+//					final Integer port = Cast.asInt(this.getScope(), this.getAttribute("port"));
+//					final Thread sersock = (Thread) this.getAttribute("__server" + port);
+//					final Thread UDPsersock = (Thread) this.getAttribute("__UDPserver" + port);
+//					final Thread cSock = (Thread) this.getAttribute("__socket");
+//
+//					try {
+//						if (sersock != null) {
+//							sersock.interrupt();
+//							this.setAttribute("__server" + port, null);
+//						}
+//						if (UDPsersock != null) {
+//							UDPsersock.interrupt();
+//							this.setAttribute("__UDPserver" + port, null);
+//						}
+//						if (cSock != null) {
+//							cSock.interrupt();
+//							this.setAttribute("__socket", null);
+//						}
+//					} catch (final Exception e) {
+//						throw GamaRuntimeException.create(e, this.getScope());
+//					}
+//				}
+//			}
 
 			final IPopulation p = getPopulation();
 			if (p != null) {

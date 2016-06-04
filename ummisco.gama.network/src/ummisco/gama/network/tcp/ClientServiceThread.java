@@ -10,6 +10,8 @@ import java.net.SocketTimeoutException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
+import msi.gama.extensions.messaging.GamaMailbox;
+import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
@@ -20,9 +22,11 @@ import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
+import ummisco.gama.network.common.ConnectorMessage;
+import ummisco.gama.network.common.NetworkMessage;
 import ummisco.gama.network.skills.INetworkSkill;
 
-class ClientServiceThread extends Thread {
+public class ClientServiceThread extends Thread {
 	private Socket myClientSocket;
 	private boolean closed = false;
 	boolean m_bRunThread = true;
@@ -42,26 +46,18 @@ class ClientServiceThread extends Thread {
 		if(m == null) {
 			m = GamaMapFactory.create(Types.STRING, Types.LIST);
 		}
-//		m.put(myClientSocket.toString(),msgs);
 		m.put(""+myClientSocket.toString(), msgs);
 		myAgent.setAttribute("messages", m);
-//		myAgent.setAttribute("__clientCommand" + myClientSocket.toString(), msgs);
 
 	}
 	
-	/**
-	 * @return the myClientSocket
-	 */
 	public Socket getMyClientSocket() {
 		return myClientSocket;
 	}
-	
-	/* (non-Javadoc)
-	 * @see java.lang.Thread#interrupt()
-	 */
+
 	public void interrupt() {
-		// TODO Auto-generated method stub		
 		closed = true;
+		super.interrupt();
 	}
 
 	/**
@@ -78,12 +74,13 @@ class ClientServiceThread extends Thread {
 			try { // read incoming stream
 				in = new BufferedReader(new InputStreamReader(myClientSocket.getInputStream()));
 				String clientCommand = in.readLine();
+
 				// System.out.println("Client Says :" + clientCommand);
 
-				GamaMap<String, Object> m = (GamaMap<String, Object>) myAgent.getAttribute("messages" + myAgent);// GamaMap<String,
-																													// IList<String>>
-				if (m == null) {
-					m = GamaMapFactory.create();
+//				GamaMap<String, Object> m = (GamaMap<String, Object>) myAgent.getAttribute("messages" + myAgent);
+				GamaList<ConnectorMessage> msgs =(GamaList<ConnectorMessage>) myAgent.getAttribute("messages" + myAgent);
+				if (msgs == null) {
+					msgs =  (GamaList<ConnectorMessage>) GamaListFactory.create(ConnectorMessage.class);
 				}
 				if (myAgent.dead()) {
 					this.interrupt();
@@ -95,33 +92,44 @@ class ClientServiceThread extends Thread {
 				// if (msgs == null) {
 				// msgs = (GamaList<String>) myAgent.getAttribute("messages" +
 				// myClientSocket.toString());
-				GamaList<String> msgs = (GamaList<String>) GamaListFactory.create(String.class);
 				// }
 
-				msgs.addValue(myAgent.getScope(), clientCommand != null ? clientCommand : "");
+				NetworkMessage msg=new NetworkMessage(myClientSocket.toString(), clientCommand);
+				msgs.addValue(myAgent.getScope(), msg);
+				
+//				final GamaMailbox mailbox = (GamaMailbox) myAgent.getAttribute("messaging_skill_mailbox");
+//				mailbox.addMessage(myAgent.getScope(), msg);
+				
 				// myAgent.setAttribute("messages" +
 				// myClientSocket.toString(),msgs);
 				// final GamaMap<String, IList<String>> m=(GamaMap<String,
 				// IList<String>>) myAgent.getAttribute("messages");
 				// m.put(myClientSocket.toString(),msgs);
-				m.put("" + myClientSocket.toString(), msgs);
-				myAgent.setAttribute("messages" + myAgent, m);
+//				m.put("" + myClientSocket.toString(), msgs);
+				myAgent.setAttribute("messages" + myAgent, msgs);
 				// myAgent.setAttribute("__clientCommand" +
 				// myClientSocket.toString(), msgs);
-
-			} catch(SocketTimeoutException ste){
-//				System.out.println("closed ");
-
-			}  catch (Exception e) {
+			}catch(SocketTimeoutException ste){
+//				System.out.println("SocketTimeoutException");
+//				try {
+//					Thread.sleep(1000);
+//				} catch(InterruptedException ie){				
+//				} catch (Exception e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+			} catch(java.net.SocketException se){
+				closed = true;
+			}catch (Exception e) {
 				if (myClientSocket.isClosed() || myClientSocket.isInputShutdown()
 						|| myClientSocket.isOutputShutdown()) {
-					myAgent.setAttribute("__client" + myClientSocket.toString(), null);
-					GamaList<String> l = (GamaList<String>) Cast.asList(myAgent.getScope(),
-							myAgent.getAttribute("clients"));
-					if (l.contains(myClientSocket.toString())) {
-						l.remove(myClientSocket.toString());
-						myAgent.setAttribute("clients", l);
-					}
+//					myAgent.setAttribute(TCPConnector._TCP_CLIENT + myClientSocket.toString(), null);
+//					GamaList<String> l = (GamaList<String>) Cast.asList(myAgent.getScope(),
+//							myAgent.getAttribute("clients"));
+//					if (l.contains(myClientSocket.toString())) {
+//						l.remove(myClientSocket.toString());
+//						myAgent.setAttribute("clients", l);
+//					}
 					this.interrupt();
 				} else {
 					e.printStackTrace();
@@ -131,8 +139,7 @@ class ClientServiceThread extends Thread {
 		} 	
 		try {
 			myClientSocket.close();
-			Thread.sleep(100);
-	        Thread.currentThread().interrupt();
+			this.interrupt();
 
 		} catch (Exception e) {
 			// TODO Auto-generated catch block

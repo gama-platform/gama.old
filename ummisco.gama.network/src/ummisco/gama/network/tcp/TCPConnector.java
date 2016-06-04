@@ -5,39 +5,35 @@ import java.io.PrintWriter;
 import java.net.BindException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.arg;
-import msi.gama.precompiler.GamlAnnotations.doc;
-import msi.gama.precompiler.GamlAnnotations.example;
-import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaMapFactory;
-import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
+import ummisco.gama.network.common.Connector;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.GamaNetworkException;
-import ummisco.gama.network.common.IConnector;
-import ummisco.gama.network.skills.INetworkSkill;
 
-public class TCPConnector /*implements IConnector*/{
+public class TCPConnector extends Connector {
 	private boolean is_server = false;
 	private IScope myScope;
-	
-	public TCPConnector(final IScope scope, final boolean as_server){
-		is_server = as_server;		
-		myScope = scope;			
+	public static String _TCP_SERVER = "__tcp_server";
+	public static String _TCP_SOCKET= "__tcp_socket";
+	public static String _TCP_CLIENT= "__tcp_client";
+
+	public static String DEFAULT_HOST = "localhost";
+	public static String DEFAULT_PORT = "1988";
+
+	public TCPConnector(final IScope scope, final boolean as_server) {
+		is_server = as_server;
+		myScope = scope;
 	}
-	
+
 	public boolean isIs_server() {
 		return is_server;
 	}
@@ -46,239 +42,176 @@ public class TCPConnector /*implements IConnector*/{
 		this.is_server = is_server;
 	}
 
-	//	@action(name = "open_socket", doc = @doc(examples = { @example("d;") }, value = "."))
-	public void primOpenSocket(final IScope scope) throws GamaRuntimeException {
-		final Integer port = Cast.asInt(scope, scope.getAgentScope().getAttribute("port"));
-		if (scope.getAgentScope().getAttribute("__server" + port) == null) {
+	public void openServerSocket(final IAgent agent) throws GamaRuntimeException {
+		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
+		if (agent.getScope().getSimulationScope().getAttribute(_TCP_SERVER + port) == null) {
 			try {
 				final ServerSocket sersock = new ServerSocket(port);
 				sersock.setSoTimeout(10);
-				final MultiThreadedSocketServer ssThread = new MultiThreadedSocketServer(scope.getAgentScope(),
-						sersock);
+				final MultiThreadedSocketServer ssThread = new MultiThreadedSocketServer(agent, sersock);
 				ssThread.start();
-				scope.getAgentScope().setAttribute("__server" + port, ssThread);
+				agent.getScope().getSimulationScope().setAttribute(_TCP_SERVER + port, ssThread);
 
 			} catch (BindException be) {
-				throw GamaRuntimeException.create(be, scope);
+				throw GamaRuntimeException.create(be, agent.getScope());
 			} catch (Exception e) {
-				throw GamaRuntimeException.create(e, scope);
+				throw GamaRuntimeException.create(e, agent.getScope());
 			}
 		}
 	}
-	
 
-/*	public void connectToServer(IAgent agent, String dest, String server, int port) throws Exception {
-
-		if(is_server){
-			primOpenSocket(agent.getScope());
-		} else {
-			ClientServiceThread c = (ClientServiceThread) agent.getAttribute("__socket");
-			Socket sock = null;
-			if (c != null) {
-				sock = (Socket) c.getMyClientSocket();
-			}
-			if (sock == null) {
-				try {
-//					final String serverIP = Cast.asString(agent.getScope(), agent.getAttribute("ip"));
-//					final Integer serverPort = Cast.asInt(agent.getScope(), agent.getAttribute("port"));
-					
-					sock = new Socket(server, port);
-					sock.setSoTimeout(10);
-
-					ClientServiceThread cSock = new ClientServiceThread(agent, sock);
-					cSock.start();
-					agent.setAttribute("__socket", cSock);
-					// return sock.toString();
-				} catch (Exception e) {
-					throw GamaRuntimeException.create(e, agent.getScope());
-				}
-
-			}
-		}
-//		return "";
-	}
-*/
-
-	public void sendMessage(IAgent agent, String dest, Object data) {
-		if(is_server){
-			primSendToClient(agent, dest, data);
-		}else{
-			primSendToServer(agent, data);
-		}
-	}
-
-	/*public GamaMap<String, Object> fetchMessageBox(IAgent agt) {
-		if(is_server){
-			return primGetFromClient(agt.getScope());
-		}else{
-			return primGetFromServer(agt.getScope());
-		}
-	}
-*/
-	public boolean emptyMessageBox(IAgent agt) {
-//		GamaMap<String, Object> m=GamaMapFactory.create();
-//		agt.setAttribute("messages",m);
-
-		return true;
-	}
-
-
-
-	
-	public String primConnectSocket(final IScope scope) throws GamaRuntimeException {
-		ClientServiceThread c = (ClientServiceThread) scope.getAgentScope().getAttribute("__socket");
+	public void connectToServerSocket(final IAgent agent) throws GamaRuntimeException {
+		ClientServiceThread c = (ClientServiceThread) agent.getAttribute(_TCP_SOCKET);
 		Socket sock = null;
 		if (c != null) {
 			sock = (Socket) c.getMyClientSocket();
 		}
 		if (sock == null) {
 			try {
-				final String serverIP = Cast.asString(scope, scope.getAgentScope().getAttribute("ip"));
-				final Integer serverPort = Cast.asInt(scope, scope.getAgentScope().getAttribute("port"));
 
-				sock = new Socket(serverIP, serverPort);
-				ClientServiceThread cSock = new ClientServiceThread(scope.getAgentScope(), sock);
+				String server = this.getConfigurationParameter(SERVER_URL);
+				String port = this.getConfigurationParameter(SERVER_PORT);
+				server = (server == null ? DEFAULT_HOST : server);
+				port = (port == null ? DEFAULT_PORT : port);
+				sock = new Socket(server, Cast.asInt(agent.getScope(), port));
+				sock.setSoTimeout(10);
+
+				ClientServiceThread cSock = new ClientServiceThread(agent, sock);
 				cSock.start();
-				scope.getAgentScope().setAttribute("__socket", cSock);
-				return sock.toString();
+				agent.setAttribute(_TCP_SOCKET, cSock);
+				// return sock.toString();
 			} catch (Exception e) {
-				throw GamaRuntimeException.create(e, scope);
+				throw GamaRuntimeException.create(e, agent.getScope());
 			}
 
 		}
-		return null;
 	}
 
-	public Boolean primIs_Closed(final IScope scope) throws GamaRuntimeException {
-		String sender = (String) scope.getAgentScope().getAttribute(INetworkSkill.NET_AGENT_NAME);
-
-//		String cli = scope.getStringArg("cID");
-
-		final Socket sock = (Socket) ((ClientServiceThread)scope.getAgentScope().getAttribute("__client"+sender)).getMyClientSocket();
-		if (sock == null || sock.isClosed() || sock.isInputShutdown() || sock.isOutputShutdown()) {
-			return true;
+	@Override
+	protected void connectToServer(final IAgent agent) throws GamaNetworkException {
+		if (is_server) {
+			openServerSocket(agent);
+		} else {
+			connectToServerSocket(agent);
 		}
-		return false; 
 	}
-
-
-	public GamaMap<String, Object> primGetFromClient(final IScope scope) throws GamaRuntimeException {
-//		String cli = scope.getStringArg("cID");
-		final String cli;
-		String receiveMessage = "";
-//		System.out.println("\n\n primGetFromClient "+"messages"+scope.getAgentScope()+"\n\n");
-
-		GamaMap<String, Object> m=(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages"+scope.getAgentScope());//(GamaMap<String, IList<String>>)
-		scope.getAgentScope().setAttribute("messages"+scope.getAgentScope(),null);
-//		GamaList<String> msgs = (GamaList<String>) m.get(scope, cli);
-//
-//		receiveMessage = msgs.firstValue(scope);
-//		
-//		msgs.remove(receiveMessage);
-//		m.put(cli,msgs);
-//		scope.getAgentScope().setAttribute("messages",m);
-//			
-//		return receiveMessage; 
-		return m;
-	}
-
-
-	public void primSendToClient(final IAgent agent, final String cli, final Object data) throws GamaRuntimeException {
-//		String cli = scope.getStringArg("cID");
-//		String msg = scope.getStringArg("msg");
-		String msg = "";
-//		String cli = "";
-		if (data instanceof HashMap){
-			msg = ""+((HashMap<String, Object>) data).get(INetworkSkill.CONTENT);
-		}else{
-			msg = ""+data;
-		}
+	
+	public void sendToClient(final IAgent agent, final String cli, final Object data) throws GamaRuntimeException {
 		try {
-			ClientServiceThread c = ((ClientServiceThread)agent.getAttribute("__client"+cli));
+			ClientServiceThread c = ((ClientServiceThread) agent.getAttribute(_TCP_CLIENT + cli));
 			Socket sock = null;
 			if (c != null) {
 				sock = (Socket) c.getMyClientSocket();
-			}	
-			if(sock == null) {return;}
-				OutputStream ostream = sock.getOutputStream();
-				PrintWriter pwrite = new PrintWriter(ostream, true);
-				pwrite.println(msg);
-				pwrite.flush();
+			}
+			if (sock == null) {
+				return;
+			}
+			OutputStream ostream = sock.getOutputStream();
+			PrintWriter pwrite = new PrintWriter(ostream, true);
+			pwrite.println(data);
+			pwrite.flush();
 		} catch (Exception e) {
 			throw GamaRuntimeException.create(e, agent.getScope());
 		}
 	}
 
-
-	
-	public  GamaMap<String, Object>  primGetFromServer(final IScope scope) throws GamaRuntimeException {
-		GamaMap<String, Object> m = null;//(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages");//(GamaMap<String, IList<String>>)
-
-		String receiveMessage = "";
-		ClientServiceThread c=((ClientServiceThread)scope.getAgentScope().getAttribute("__socket"));
-		Socket sock =null;
-		if(c!=null){			
-			sock = (Socket) c.getMyClientSocket();		
-		}
-		if( sock == null){
-			return null; 
-		}
-		try {
-//			System.out.println("\n\n primGetFromServer "+"messages"+scope.getAgentScope()+"\n\n");
-			m=(GamaMap<String, Object>) scope.getAgentScope().getAttribute("messages"+scope.getAgentScope());//GamaMap<String, IList<String>> 
-		
-//			if (msgs != null) {				
-//				receiveMessage = msgs.firstValue(scope);
-//				msgs.remove(0);
-//			}
-//			m.put(sock.toString(),msgs);
-//			scope.getAgentScope().setAttribute("messages"+scope.getAgentScope(),GamaMapFactory.EMPTY_MAP);
-
-		
-		} catch (Exception e) {
-			throw GamaRuntimeException.create(e, scope);
-		}
-		return m; 	
-	}
-
-	
-
-	
-	public void primSendToServer(final IAgent agent, Object data) throws GamaRuntimeException {
-//		String msg = scope.getStringArg("msg");
-		String msg = "";
-		if (data instanceof HashMap){
-			msg = ""+((HashMap<String, Object>) data).get(INetworkSkill.CONTENT);
-		}else{
-			msg = ""+data;
-		}
+	public void sendToServer(final IAgent agent, Object data) throws GamaRuntimeException {
 		OutputStream ostream = null;
-		ClientServiceThread c=((ClientServiceThread)agent.getAttribute("__socket"));
-		Socket sock =null;
-		if(c!=null){			
-			sock = (Socket) c.getMyClientSocket();		
+		ClientServiceThread c = ((ClientServiceThread) agent.getAttribute(_TCP_SOCKET));
+		Socket sock = null;
+		if (c != null) {
+			sock = (Socket) c.getMyClientSocket();
 		}
-		if( sock == null){
-			return; 
+		if (sock == null || sock.isClosed() || sock.isInputShutdown()) {
+			return;
 		}
 		try {
 			ostream = sock.getOutputStream();
 			PrintWriter pwrite = new PrintWriter(ostream, true);
-			pwrite.println(msg); // sending to server
-			pwrite.flush(); // flush the data
-
+			pwrite.println(data);
+			pwrite.flush();
 		} catch (Exception e) {
 			throw GamaRuntimeException.create(e, agent.getScope());
-		} 
+		}
 
 	}
 
-
-	private void closeSocket(final IScope scope) {
-		final Integer port = Cast.asInt(scope, scope.getAgentScope().getAttribute("port"));
-		final Thread sersock = (Thread) scope.getAgentScope().getAttribute("__server" + port);
-		if (sersock != null ){
-			sersock.interrupt();
+	@Override
+	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
+		if (is_server) {
+			sendToClient(sender, receiver, content.getContents(myScope));
+		} else {
+			sendToServer(sender, content.getContents(myScope));
 		}
+	}
+
+	@Override
+	public List<ConnectorMessage> fetchMessageBox(IAgent agent) {
+		// TODO Auto-generated method stub
+		return super.fetchMessageBox(agent);
+	}
+
+	@Override
+	public Map<IAgent, LinkedList<ConnectorMessage>> fetchAllMessages() {
+		for (IAgent agt : this.receivedMessage.keySet()) {
+			// IScope scope = agt.getScope();
+			GamaList<ConnectorMessage> m = null;
+
+			m = (GamaList<ConnectorMessage>) agt.getAttribute("messages" + agt);
+			// receivedMessage.get(agt).addAll(m);
+			for (ConnectorMessage cm : m) {
+				receivedMessage.get(agt).add(cm);
+			}
+			m.clear();
+			agt.setAttribute("message" + agt, m);
+			// scope.getAgentScope().setAttribute("messages" +
+			// scope.getAgentScope(), null);
+		}
+		return super.fetchAllMessages();
+	}
+
+	@Override
+	protected void subscribeToGroup(IAgent agt, String boxName) throws GamaNetworkException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void unsubscribeGroup(IAgent agt, String boxName) throws GamaNetworkException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	protected void releaseConnection(IScope scope) throws GamaNetworkException {
+		String server = this.getConfigurationParameter(SERVER_URL);
+		String sport = this.getConfigurationParameter(SERVER_PORT);
+		final Integer port = Cast.asInt(scope, sport);
+		final Thread sersock = (Thread) scope.getSimulationScope().getAttribute(_TCP_SERVER + port);
+		final Thread cSock = (Thread) scope.getAgentScope().getAttribute(_TCP_SOCKET);
+
+		try {
+			if (sersock != null) {
+				sersock.interrupt();
+				scope.getSimulationScope().setAttribute(_TCP_SERVER + port, null);
+			}
+			if (cSock != null) {
+				cSock.interrupt();
+				scope.getAgentScope().setAttribute(_TCP_SOCKET, null);
+			}
+		} catch (final Exception e) {
+			throw GamaRuntimeException.create(e, scope);
+		}
+	}
+
+	@Override
+	protected void sendMessage(IAgent sender, String receiver, String content) throws GamaNetworkException {
+
+		// content = content.replaceAll("(\r|\n)", "");
+		// if(is_server){
+		// primSendToClient(sender, receiver, content);
+		// }else{
+		// primSendToServer(sender, content);
+		// }
 	}
 }
