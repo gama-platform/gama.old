@@ -94,10 +94,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String CURRENT_PLAN = "current_plan";
 	public static final String UNCERTAINTY_BASE = "uncertainty_base";
 
-	// private IScope _consideringScope;
-	// private final List<SimpleBdiPlanStatement> _plans = new
-	// ArrayList<SimpleBdiPlanStatement>();
-	private final List<PerceiveStatement> _perceptions = new ArrayList<PerceiveStatement>();
 	
 	
 	// WARNING
@@ -105,13 +101,23 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	// An architecture should be stateless and stock the scope dependent values in the 
 	// agent(s).
 	private final List<BDIPlan> _plans = new ArrayList<BDIPlan>();
+	private final List<PerceiveStatement> _perceptions = new ArrayList<PerceiveStatement>();
+	private final List<RuleStatement> _rules = new ArrayList<RuleStatement>();
 	private int _plansNumber = 0;
 	private int _perceptionNumber = 0;
 	private boolean iscurrentplaninstantaneous = false;
 
-	private final List<RuleStatement> _rules = new ArrayList<RuleStatement>();
 	private int _rulesNumber = 0;
 
+	
+	@Override
+	protected void clearBehaviors() {
+		super.clearBehaviors();
+		_plans.clear();
+		_rules.clear();
+		_perceptions.clear();
+	}
+	
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
 		clearBehaviors();
