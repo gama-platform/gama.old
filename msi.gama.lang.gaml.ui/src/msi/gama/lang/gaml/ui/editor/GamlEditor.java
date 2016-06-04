@@ -101,7 +101,6 @@ import msi.gama.gui.swt.controls.ITooltipDisplayer;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.GamlModelBuilder;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
@@ -111,6 +110,7 @@ import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.IDescription;
 import ummisco.gaml.editbox.EditBox;
@@ -371,7 +371,7 @@ public class GamlEditor extends XtextEditor
 					@Override
 					public IModel exec(final XtextResource state) throws Exception {
 						// List<GamlCompilationError> errors = new ArrayList();
-						return /* GamlModelBuilder.getInstance() */new GamlModelBuilder().compile(state);
+						return /* GamlModelBuilder.getInstance() */GAML.getModelFactory().compile(state);
 					}
 
 				});
@@ -432,26 +432,37 @@ public class GamlEditor extends XtextEditor
 
 							@Override
 							public void widgetSelected(final SelectionEvent e) {
+								final Map<String, URI> msgs = newState.getImportedErrors();
+								if (!msgs.isEmpty()) {
+									final GamaMenu menu = new GamaMenu() {
 
-								final GamaMenu menu = new GamaMenu() {
+										@Override
+										protected void fillMenu() {
 
-									@Override
-									protected void fillMenu() {
-										final Map<String, URI> msgs = newState.getImportedErrors();
-										for (final String s : msgs.keySet()) {
-											action(s, new SelectionAdapter() {
+											for (final String s : msgs.keySet()) {
+												action(s, new SelectionAdapter() {
 
-												@Override
-												public void widgetSelected(final SelectionEvent e1) {
-													GAMA.getGui().editModel(msgs.get(s));
-												}
+													@Override
+													public void widgetSelected(final SelectionEvent e1) {
+														GAMA.getGui().editModel(msgs.get(s));
+													}
 
-											}, null);
+												}, null);
+											}
+
 										}
+									};
+									menu.open(toolbar.getToolbar(SWT.LEFT), e);
+								} else {
+									getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
-									}
-								};
-								menu.open(toolbar.getToolbar(SWT.LEFT), e);
+										@Override
+										public void process(final XtextResource state) throws Exception {
+											final GamlResource gr = (GamlResource) state;
+											GAML.getModelFactory().compile(state);
+										}
+									});
+								}
 
 							}
 
