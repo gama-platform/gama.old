@@ -91,7 +91,7 @@ import msi.gaml.types.Types;
 		@facet(name = "crs", type = IType.NONE, optional = true, doc = @doc("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
 		@facet(name = IKeyword.WITH, type = {
 				IType.MAP }, optional = true, doc = @doc("Not yet used")) }, omissible = IKeyword.DATA)
-@doc(value = "Allows to save data in a file. The type of file can be \"shp\", \"text\" or \"csv\".", usages = {
+@doc(value = "Allows to save data in a file. The type of file can be \"shp\", \"asc\", \"text\" or \"csv\".", usages = {
 		@usage(value = "Its simple syntax is:", examples = {
 				@example(value = "save data to: output_file type: a_type_file;", isExecutable = false) }),
 		@usage(value = "To save data in a text file:", examples = {
@@ -102,6 +102,8 @@ import msi.gaml.types.Types;
 				@example(value = "save species_of(self) to: \"save_csvfile.csv\" type: \"csv\" header: false;") }),
 		@usage(value = "To save the geometries of all the agents of a species into a shapefile (with optional attributes):", examples = {
 				@example(value = "save species_of(self) to: \"save_shapefile.shp\" type: \"shp\" with: [name::\"nameAgent\", location::\"locationAgent\"] crs: \"EPSG:4326\";") }),
+		@usage(value = "To save the grid_value attributes of all the cells of a grid into an ESRI ASCII Raster file:", examples = {
+				@example(value = "save grid to: \"save_grid.asc\" type: \"asc\";") }),
 		@usage(value = "The save statement can be use in an init block, a reflex, an action or in a user command. Do not use it in experiments.") })
 @validator(SaveValidator.class)
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
