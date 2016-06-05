@@ -277,12 +277,12 @@ openFile
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.rcp"/>
-      <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.core.opengl" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier"/>
-      <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier"/>
+      <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core.opengl" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier" installMode="root"/>
    </features>
 
    <configurations>
