@@ -127,7 +127,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 
 		@Override
 		public void mouseEnter(final MouseEvent e) {
-			if ( GAMA.getExperiment().isBatch() )
+			if ( GAMA.getExperiment()!=null && GAMA.getExperiment().isBatch() )
 				return;
 			showToolbar();
 		}
@@ -135,7 +135,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		@Override
 		public void mouseExit(final MouseEvent e) {
 			if ( isCombo && combo != null && combo.getListVisible() ) { return; }
-			if ( GAMA.getExperiment().isBatch() )
+			if ( GAMA.getExperiment()!=null && GAMA.getExperiment().isBatch() )
 				return;
 			hideToolbar();
 		}
@@ -339,7 +339,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 				}
 			});
 		}
-		if ( !GAMA.getExperiment().isBatch() )
+		if ( GAMA.getExperiment()!=null && !GAMA.getExperiment().isBatch() )
 			hideToolbar();
 	}
 

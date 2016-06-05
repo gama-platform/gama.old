@@ -65,7 +65,9 @@ public class RearrangeMenus {
 				if ( item instanceof MenuManager ) {
 					menu = (MenuManager) item;
 				} else if ( item instanceof ActionSetContributionItem ) {
-					menu = (MenuManager) ((ActionSetContributionItem) item).getInnerItem();
+					if(((ActionSetContributionItem) item).getInnerItem() instanceof MenuManager){
+						menu = (MenuManager) ((ActionSetContributionItem) item).getInnerItem();
+					}
 				}
 				if ( menu != null ) {
 					// printItemIds(menu);
