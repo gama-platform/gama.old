@@ -28,6 +28,7 @@ import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.feature.SchemaException;
 import org.geotools.gce.geotiff.GeoTiffWriter;
+import org.geotools.gce.image.WorldImageWriter;
 import org.geotools.geometry.Envelope2D;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.simple.SimpleFeature;
@@ -89,7 +90,7 @@ import msi.gaml.types.Types;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 @facets(value = {
 		@facet(name = IKeyword.TYPE, type = IType.ID, optional = true, values = { "shp", "text", "csv",
-				"asc", "geotiff" }, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"text\" or \"csv\") ")),
+				"asc", "geotiff", "image"}, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
 		@facet(name = IKeyword.DATA, type = IType.NONE, optional = true, doc = @doc("any expression, that will be saved in the file")),
 		@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it")),
 		@facet(name = IKeyword.HEADER, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist")),
@@ -112,6 +113,8 @@ import msi.gaml.types.Types;
 				@example(value = "save grid to: \"save_grid.asc\" type: \"asc\";") }),
 		@usage(value = "To save the grid_value attributes of all the cells of a grid into geotiff:", examples = {
 				@example(value = "save grid to: \"save_grid.tif\" type: \"geotiff\";") }),
+		@usage(value = "To save the grid_value attributes of all the cells of a grid into png (with a worldfile):", examples = {
+				@example(value = "save grid to: \"save_grid.png\" type: \"image\";") }),
 		@usage(value = "The save statement can be use in an init block, a reflex, an action or in a user command. Do not use it in experiments.") })
 @validator(SaveValidator.class)
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
@@ -227,7 +230,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 
 			saveAsc(species, path, scope);
-		} else if (type.equals("geotiff")) {
+		} else if (type.equals("geotiff") || type.equals("image")) {
 			ISpecies species;
 			if (item == null) {
 				return null;
@@ -237,7 +240,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				return null;
 			}
 
-			saveGeotiff(species, path, scope);
+			saveRasterImage(species, path, scope,type.equals("geotiff"));
 		} else if (AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase())) {
 
 			IGraph g;
@@ -312,7 +315,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 	
-	public void saveGeotiff(final ISpecies species, final String path, final IScope scope) {
+	public void saveRasterImage(final ISpecies species, final String path, final IScope scope, final boolean toGeotiff) {
 		final File f = new File(path);
 		if (f.exists()) {
 			f.delete();
@@ -347,14 +350,20 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		
 	    GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
 	    try {
-	        GeoTiffWriter writer = new GeoTiffWriter(f);
-	        writer.write(coverage,null);
+	    	if (toGeotiff) {
+		        GeoTiffWriter writer = new GeoTiffWriter(f);
+		        writer.write(coverage,null);
+	    	} else {
+	    		WorldImageWriter writer = new WorldImageWriter(f);
+	  	        writer.write(coverage,null);
+	  	      
+	    	}
 	       
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
 	}
-		
+	
 
 	public String getGeometryType(final IList<? extends IShape> agents) {
 		String geomType = "";
