@@ -20,6 +20,8 @@ import org.apache.commons.math3.stat.clustering.Cluster;
 import org.apache.commons.math3.stat.clustering.DBSCANClusterer;
 import org.apache.commons.math3.stat.clustering.EuclideanDoublePoint;
 import org.apache.commons.math3.stat.clustering.KMeansPlusPlusClusterer;
+import org.apache.commons.math3.stat.descriptive.moment.Kurtosis;
+import org.apache.commons.math3.stat.descriptive.moment.Skewness;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
@@ -903,6 +905,36 @@ public class Stats {
 		}
 		return results;
 	}
+	
+	@operator(value = "skewness", can_be_const = false, type = IType.LIST, category = {
+			IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
+	@doc(value = "returns skewness value computed from the operand list of values", special_cases = "if the length of the list is lower than 3, returns NaN", examples = {
+			@example("skewness ([1,2,3,4,5])") })
+	public static Double skewness(final IScope scope, final GamaList data)
+			throws GamaRuntimeException {
+		Skewness sk = new Skewness();
+		double[] values = new double[data.length(scope)];
+		for (int i = 0; i < values.length;i++) {
+			values[i] = Cast.asFloat(scope, data.get(i));
+		}
+		return sk.evaluate(values);
+	}
+
+
+	@operator(value = "kurtosis", can_be_const = false, type = IType.LIST, category = {
+			IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
+	@doc(value = "returns kurtosis value computed from the operand list of values", special_cases = "if the length of the list is lower than 3, returns NaN", examples = {
+			@example("kurtosis ([1,2,3,4,5])") })
+	public static Double kurtosis(final IScope scope, final GamaList data)
+			throws GamaRuntimeException {
+		Kurtosis k = new Kurtosis();
+		double[] values = new double[data.length(scope)];
+		for (int i = 0; i < values.length;i++) {
+			values[i] = Cast.asFloat(scope, data.get(i));
+		}
+		return k.evaluate(values);
+	}
+
 
 	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = {
 			IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
