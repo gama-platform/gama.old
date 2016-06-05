@@ -113,6 +113,7 @@ public class BatchAgent extends ExperimentAgent {
 					if (output != null) {
 						getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue);
 					}
+					sim.dispose();
 				}
 				getSimulationPopulation().clear();
 			}
@@ -235,7 +236,7 @@ public class BatchAgent extends ExperimentAgent {
 		}
 		// We reset the experiment agent to erase traces of the current
 		// simulations
-		reset();
+		this.reset();
 		// We update the parameters
 		getScope().getGui().showParameterView(getSpecies());
 
