@@ -15,6 +15,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
@@ -23,7 +24,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.GamaGeometryType;
 
-@species(name = IKeyword.AGENT)
+@species(name = IKeyword.AGENT, doc = @doc("The species parent of all agent species"))
 public class MinimalAgent extends AbstractAgent {
 
 	/** The population that this agent belongs to. */
@@ -387,13 +388,5 @@ public class MinimalAgent extends AbstractAgent {
 
 		// Update microPop
 	}
-	@Override
-	public void dispose() {
-		// TODO Auto-generated method stub
-		for(Object obj : getGeometry().getAttributes().getValues()){
-			obj = null;
-		}
-		getGeometry().getAttributes().clear();
-		super.dispose();
-	}
+
 }

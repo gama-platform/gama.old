@@ -35,7 +35,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
 import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
@@ -172,14 +171,6 @@ public abstract class AbstractAgent implements IAgent {
 	public boolean crosses(final IShape g) {
 		return getGeometry().crosses(g);
 	}
-	//
-	// /**
-	// * @see msi.gama.interfaces.IGeometry#getPerimeter()
-	// */
-	// @Override
-	// public double getPerimeter() {
-	// return getGeometry().getPerimeter();
-	// }
 
 	/**
 	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
@@ -191,58 +182,19 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void dispose() {
-		if (dead()) {
+		if (dead) {
 			return;
 		}
-		// acquireLock();
-		try {
-			// scope.getGui().debug(this.getClass().getSimpleName() + " " +
-			// getName() + " .dispose (in MinimalAgent)");
-			dead = true;
-
-//			if (getSpecies().getDescription() instanceof SpeciesDescription) {
-//				if (((SpeciesDescription) getSpecies().getDescription()).getSkillsNames().contains("network")) {
-//					((SpeciesDescription) getSpecies().getDescription()).implementsSkill("network");
-//					final Integer port = Cast.asInt(this.getScope(), this.getAttribute("port"));
-//					final Thread sersock = (Thread) this.getAttribute("__server" + port);
-//					final Thread UDPsersock = (Thread) this.getAttribute("__UDPserver" + port);
-//					final Thread cSock = (Thread) this.getAttribute("__socket");
-//
-//					try {
-//						if (sersock != null) {
-//							sersock.interrupt();
-//							this.setAttribute("__server" + port, null);
-//						}
-//						if (UDPsersock != null) {
-//							UDPsersock.interrupt();
-//							this.setAttribute("__UDPserver" + port, null);
-//						}
-//						if (cSock != null) {
-//							cSock.interrupt();
-//							this.setAttribute("__socket", null);
-//						}
-//					} catch (final Exception e) {
-//						throw GamaRuntimeException.create(e, this.getScope());
-//					}
-//				}
-//			}
-
-			final IPopulation p = getPopulation();
-			if (p != null) {
-				p.removeValue(null, this);
-			}
-
-			final IShape s = getGeometry();
-			if (s != null) {
-				s.dispose();
-			}
-			// if ( attributes != null ) {
-			// attributes.clear();
-			// attributes = null;
-			// }
-		} finally {
-			// releaseLock();
+		dead = true;
+		final IPopulation p = getPopulation();
+		if (p != null) {
+			p.removeValue(null, this);
 		}
+		final IShape s = getGeometry();
+		if (s != null) {
+			s.dispose();
+		}
+
 	}
 
 	@Override
@@ -510,16 +462,15 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public IPopulation getPopulationFor(final ISpecies microSpecies) {
-//		return getPopulationFor(microSpecies.getName());
+		// return getPopulationFor(microSpecies.getName());
 
-
-		IPopulation pop =  getPopulationFor(microSpecies.getName());
-		//If pop is null, try to get the extern population of micro-model
-		if(pop == null){
+		IPopulation pop = getPopulationFor(microSpecies.getName());
+		// If pop is null, try to get the extern population of micro-model
+		if (pop == null) {
 			final ModelDescription micro = microSpecies.getDescription().getModelDescription();
 			final ModelDescription main = (ModelDescription) this.getModel().getDescription();
 			if (main.getMicroModel(micro.getAlias()) != null && getHost() != null) {
-				pop = getHost().getExternMicroPopulationFor(micro.getAlias()+"."+microSpecies.getName());
+				pop = getHost().getExternMicroPopulationFor(micro.getAlias() + "." + microSpecies.getName());
 			}
 		}
 		return pop;
@@ -653,7 +604,8 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void updateWith(final IScope s, final SavedAgent sa) {
-		throw new RuntimeException("Method updateWith(final IScope s, final SavedAgent sa) has not been implemented for "+this);
+		throw new RuntimeException(
+				"Method updateWith(final IScope s, final SavedAgent sa) has not been implemented for " + this);
 	}
-	
+
 }

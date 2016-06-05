@@ -232,28 +232,24 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public void dispose() {
-		// System.out.println("SimulationAgent.dipose BEGIN");
 		if (dead) {
 			return;
 		}
 		executer.executeDisposeActions();
-
-		super.dispose();
-
 		// hqnghi if simulation come from popultion extern, dispose pop first
 		// and then their outputs
-		for (final IPopulation pop : this.getExternMicroPopulations().values()) {
+		for (final IPopulation pop : getExternMicroPopulations().values()) {
 			pop.dispose();
 		}
 		this.getExternMicroPopulations().clear();
 
-		getGeometry().getAttributes().clear();
-		
 		if (outputs != null) {
 			outputs.dispose();
 			outputs = null;
 		}
 		GAMA.releaseScope(scope);
+		super.dispose();
+
 	}
 
 	@Override

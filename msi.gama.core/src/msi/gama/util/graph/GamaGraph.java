@@ -11,30 +11,71 @@
  **********************************************************************************************/
 package msi.gama.util.graph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
-import org.jgrapht.*;
+import java.util.Set;
+
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.EdgeFactory;
+import org.jgrapht.Graph;
+import org.jgrapht.GraphPath;
 import org.jgrapht.Graphs;
-import org.jgrapht.alg.*;
-import org.jgrapht.graph.*;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.WeightedGraph;
+import org.jgrapht.alg.BellmanFordShortestPath;
+import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.alg.HamiltonianCycle;
+import org.jgrapht.alg.KShortestPaths;
+import org.jgrapht.alg.KruskalMinimumSpanningTree;
+import org.jgrapht.graph.AsUndirectedGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.util.VertexPair;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.FloydWarshallShortestPathsGAMA;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
+import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
-import msi.gama.util.matrix.*;
-import msi.gama.util.path.*;
-import msi.gaml.operators.*;
+import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.GamaIntMatrix;
+import msi.gama.util.matrix.GamaMatrix;
+import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
+import msi.gaml.operators.Cast;
 import msi.gaml.operators.Spatial.Creation;
+import msi.gaml.operators.Strings;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.AbstractContainerStatement.*;
-import msi.gaml.types.*;
+import msi.gaml.statements.AbstractContainerStatement.EdgeToAdd;
+import msi.gaml.statements.AbstractContainerStatement.GraphObjectToAdd;
+import msi.gaml.statements.AbstractContainerStatement.NodeToAdd;
+import msi.gaml.statements.AbstractContainerStatement.NodesToAdd;
+import msi.gaml.types.GamaListType;
+import msi.gaml.types.GamaPairType;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class GamaGraph<V, E> implements IGraph<V, E> {
 
@@ -82,14 +123,16 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public GamaGraph(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
-		final VertexRelationship rel, final ISpecies edgesSpecies, final IType nodeType, final IType edgeType) {
+			final VertexRelationship rel, final ISpecies edgesSpecies, final IType nodeType, final IType edgeType) {
 		vertexMap = new TOrderedHashMap();
 		edgeMap = new TOrderedHashMap();
 		shortestPathComputed = new TOrderedHashMap<VertexPair<V>, IList<IList<E>>>();
 		this.scope = scope;
 		// WARNING TODO Verify this
-		// IType nodeType = byEdge ? Types.NO_TYPE : edgesOrVertices.getType().getContentType();
-		// IType edgeType = byEdge ? edgesOrVertices.getType().getContentType() : Types.NO_TYPE;
+		// IType nodeType = byEdge ? Types.NO_TYPE :
+		// edgesOrVertices.getType().getContentType();
+		// IType edgeType = byEdge ? edgesOrVertices.getType().getContentType()
+		// : Types.NO_TYPE;
 		//
 		type = Types.GRAPH.of(nodeType, edgeType);
 		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies);
@@ -104,36 +147,36 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	protected void init(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge,
-		final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies) {
+			final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies) {
 		this.directed = directed;
 		edgeBased = byEdge;
 		vertexRelation = rel;
 		edgeSpecies = edgesSpecies;
-		agentEdge = edgesSpecies != null ||
-			byEdge && edgesOrVertices != null && edgesOrVertices.firstValue(scope) instanceof IAgent;
-		if ( byEdge ) {
+		agentEdge = edgesSpecies != null
+				|| byEdge && edgesOrVertices != null && edgesOrVertices.firstValue(scope) instanceof IAgent;
+		if (byEdge) {
 			buildByEdge(scope, edgesOrVertices);
 		} else {
 			buildByVertices(scope, edgesOrVertices);
 		}
 		version = 1;
 	}
-	
+
 	protected void init(final IScope scope, final IContainer edgesOrVertices, final boolean byEdge,
 			final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies, final Double tolerance) {
-			this.directed = directed;
-			edgeBased = byEdge;
-			vertexRelation = rel;
-			edgeSpecies = edgesSpecies;
-			agentEdge = edgesSpecies != null ||
-				byEdge && edgesOrVertices != null && edgesOrVertices.firstValue(scope) instanceof IAgent;
-			if ( byEdge ) {
-				buildByEdge(scope, edgesOrVertices, tolerance);
-			} else {
-				buildByVertices(scope, edgesOrVertices);
-			}
-			version = 1;
+		this.directed = directed;
+		edgeBased = byEdge;
+		vertexRelation = rel;
+		edgeSpecies = edgesSpecies;
+		agentEdge = edgesSpecies != null
+				|| byEdge && edgesOrVertices != null && edgesOrVertices.firstValue(scope) instanceof IAgent;
+		if (byEdge) {
+			buildByEdge(scope, edgesOrVertices, tolerance);
+		} else {
+			buildByVertices(scope, edgesOrVertices);
 		}
+		version = 1;
+	}
 
 	@Override
 	public IContainerType getType() {
@@ -147,75 +190,70 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 		// display the list of verticies
 		sb.append("graph { \nvertices (").append(vertexSet().size()).append("): ").append("[");
-		for ( final Object v : vertexSet() ) {
+		for (final Object v : vertexSet()) {
 			sb.append(v.toString()).append(",");
 		}
 		sb.append("]").append(Strings.LN);
 		sb.append("edges (").append(edgeSet().size()).append("): [").append(Strings.LN);
 		// display each edge
-		for ( final Entry<E, _Edge<V, E>> entry : edgeMap.entrySet() ) {
+		for (final Entry<E, _Edge<V, E>> entry : edgeMap.entrySet()) {
 			final E e = entry.getKey();
 			final _Edge<V, E> v = entry.getValue();
 			sb.append(e.toString()).append(Strings.TAB).append("(").append(v.toString()).append("),")
-			.append(Strings.LN);
+					.append(Strings.LN);
 		}
 		sb.append("]\n}");
 		/*
-		 * old aspect, kept if someone prefers this one.
-		 * List<String> renderedVertices = new ArrayList<String>();
-		 * List<String> renderedEdges = new ArrayList<String>();
-		 * StringBuffer sb = new StringBuffer();
-		 * for ( Object e : edgeSet() ) {
-		 * sb.append(e.toString()).append("=(").append(getEdgeSource(e)).append(",")
-		 * .append(getEdgeTarget(e)).append(")");
-		 * renderedEdges.add(sb.toString());
-		 * sb.setLength(0);
-		 * }
-		 * for ( Object v : vertexSet() ) {
-		 * sb.append(v.toString()).append(": in").append(incomingEdgesOf(v)).append(" + out")
-		 * .append(outgoingEdgesOf(v));
-		 * renderedVertices.add(sb.toString());
-		 * sb.setLength(0);
-		 * }
+		 * old aspect, kept if someone prefers this one. List<String>
+		 * renderedVertices = new ArrayList<String>(); List<String>
+		 * renderedEdges = new ArrayList<String>(); StringBuffer sb = new
+		 * StringBuffer(); for ( Object e : edgeSet() ) {
+		 * sb.append(e.toString()).append("=(").append(getEdgeSource(e)).append(
+		 * ",") .append(getEdgeTarget(e)).append(")");
+		 * renderedEdges.add(sb.toString()); sb.setLength(0); } for ( Object v :
+		 * vertexSet() ) { sb.append(v.toString()).append(": in"
+		 * ).append(incomingEdgesOf(v)).append(" + out")
+		 * .append(outgoingEdgesOf(v)); renderedVertices.add(sb.toString());
+		 * sb.setLength(0); }
 		 */
 		return sb.toString();
 		// return "(" + renderedVertices + ", " + renderedEdges + ")";
 	}
 
 	protected void buildByVertices(final IScope scope, final IContainer<?, E> vertices) {
-		for ( final E p : vertices.iterable(scope) ) {
+		for (final E p : vertices.iterable(scope)) {
 			addVertex(p);
 		}
 	}
 
 	protected void buildByEdge(final IScope scope, final IContainer edges) {
-		for ( final Object p : edges.iterable(scope) ) {
+		for (final Object p : edges.iterable(scope)) {
 			addEdge(p);
-			Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
-			if ( p2 instanceof IShape ) {
-				_Edge ed = getEdge(p2);
-				if ( ed != null ) {
+			final Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
+			if (p2 instanceof IShape) {
+				final _Edge ed = getEdge(p2);
+				if (ed != null) {
 					ed.setWeight(((IShape) p2).getPerimeter());
 				}
 			}
 		}
 	}
-	
+
 	protected void buildByEdge(final IScope scope, final IContainer vertices, final Double tolerance) {
-		for ( final Object p : vertices.iterable(scope) ) {
+		for (final Object p : vertices.iterable(scope)) {
 			addEdge(p);
-			Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
-			if ( p2 instanceof IShape ) {
-				_Edge ed = getEdge(p2);
-				if ( ed != null ) {
+			final Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
+			if (p2 instanceof IShape) {
+				final _Edge ed = getEdge(p2);
+				if (ed != null) {
 					ed.setWeight(((IShape) p2).getPerimeter());
 				}
 			}
 		}
 	}
 
-	protected void buildByEdge(final IScope scope, final IContainer edges, final IContainer vertices) {}
-
+	protected void buildByEdge(final IScope scope, final IContainer edges, final IContainer vertices) {
+	}
 
 	public _Edge<V, E> getEdge(final Object e) {
 		return edgeMap.get(e);
@@ -227,10 +265,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Object addEdge(final Object e) {
-		if ( e instanceof GamaPair ) {
+		if (e instanceof GamaPair) {
 			final GamaPair p = (GamaPair) e;
 			return addEdge(p.first(), p.last());
-		} else if ( e instanceof GraphObjectToAdd ) {
+		} else if (e instanceof GraphObjectToAdd) {
 			addValue(scope, (GraphObjectToAdd) e);
 			return ((GraphObjectToAdd) e).getObject();
 		}
@@ -240,19 +278,19 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void addValue(final IScope scope, final GraphObjectToAdd value) {
-		if ( value instanceof EdgeToAdd ) {
-			EdgeToAdd edge = (EdgeToAdd) value;
-			if ( edge.object == null ) {
+		if (value instanceof EdgeToAdd) {
+			final EdgeToAdd edge = (EdgeToAdd) value;
+			if (edge.object == null) {
 				edge.object = addEdge(edge.source, edge.target);
 			}
 			addEdge(edge.source, edge.target, edge.object);
-			if ( edge.weight != null ) {
+			if (edge.weight != null) {
 				setEdgeWeight(edge.object, edge.weight);
 			}
 		} else {
-			NodeToAdd node = (NodeToAdd) value;
+			final NodeToAdd node = (NodeToAdd) value;
 			this.addVertex(node.object);
-			if ( node.weight != null ) {
+			if (node.weight != null) {
 				this.setVertexWeight(node.object, node.weight);
 			}
 		}
@@ -261,9 +299,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void addValueAtIndex(final IScope scope, final Object idx, final GraphObjectToAdd value) {
-		GamaPair index = buildIndex(scope, idx);
-		EdgeToAdd edge = new EdgeToAdd(index.key, index.value, null, null);
-		if ( value instanceof EdgeToAdd ) {
+		final GamaPair index = buildIndex(scope, idx);
+		final EdgeToAdd edge = new EdgeToAdd(index.key, index.value, null, null);
+		if (value instanceof EdgeToAdd) {
 			edge.object = ((EdgeToAdd) value).object;
 			edge.weight = ((EdgeToAdd) value).weight;
 		} else {
@@ -281,14 +319,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void addValues(final IScope scope, final IContainer values) {
-		if ( values instanceof GamaGraph ) {
-			for ( final Object o : ((GamaGraph) values).edgeSet() ) {
+		if (values instanceof GamaGraph) {
+			for (final Object o : ((GamaGraph) values).edgeSet()) {
 				addEdge(o);
 			}
 			return;
 		}
-		for ( final Object o : values.iterable(scope) ) {
-			if ( o instanceof GraphObjectToAdd ) {
+		for (final Object o : values.iterable(scope)) {
+			if (o instanceof GraphObjectToAdd) {
 				addValue(scope, (GraphObjectToAdd) o);
 			}
 		}
@@ -302,45 +340,47 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void removeValue(final IScope scope, final Object value) {
-		if ( value instanceof EdgeToAdd ) {
-			EdgeToAdd edge = (EdgeToAdd) value;
-			if ( edge.object != null ) {
+		if (value instanceof EdgeToAdd) {
+			final EdgeToAdd edge = (EdgeToAdd) value;
+			if (edge.object != null) {
 				removeEdge(edge.object);
-			} else if ( edge.source != null && edge.target != null ) {
+			} else if (edge.source != null && edge.target != null) {
 				removeAllEdges(edge.source, edge.target);
 			}
-		} else if ( value instanceof NodeToAdd ) {
+		} else if (value instanceof NodeToAdd) {
 			removeVertex(((NodeToAdd) value).object);
-		} else if ( !removeVertex(value) ) {
+		} else if (!removeVertex(value)) {
 			removeEdge(value);
 		}
 	}
 
 	@Override
 	public void removeIndex(final IScope scope, final Object index) {
-		if ( index instanceof GamaPair ) {
-			GamaPair p = (GamaPair) index;
+		if (index instanceof GamaPair) {
+			final GamaPair p = (GamaPair) index;
 			removeAllEdges(p.key, p.value);
 		}
 	}
 
 	/**
 	 * Method removeIndexes()
-	 * @see msi.gama.util.IContainer.Modifiable#removeIndexes(msi.gama.runtime.IScope, msi.gama.util.IContainer)
+	 * 
+	 * @see msi.gama.util.IContainer.Modifiable#removeIndexes(msi.gama.runtime.IScope,
+	 *      msi.gama.util.IContainer)
 	 */
 	@Override
 	public void removeIndexes(final IScope scope, final IContainer<?, Object> index) {
-		for ( Object pair : index.iterable(scope) ) {
+		for (final Object pair : index.iterable(scope)) {
 			removeIndex(scope, pair);
 		}
 	}
 
 	@Override
 	public void removeValues(final IScope scope, final IContainer<?, ?> values) {
-		if ( values instanceof IGraph ) {
+		if (values instanceof IGraph) {
 			removeAllEdges(((IGraph) values).edgeSet());
 		} else {
-			for ( Object o : values.iterable(scope) ) {
+			for (final Object o : values.iterable(scope)) {
 				removeValue(scope, o);
 			}
 
@@ -354,19 +394,25 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Object addEdge(final Object v1, final Object v2) {
-		if ( v1 instanceof GamaPair ) {
+		if (v1 instanceof GamaPair) {
 			final GamaPair p = (GamaPair) v1;
-			if ( addEdge(p.first(), p.last(), v2) ) { return v2; }
+			if (addEdge(p.first(), p.last(), v2)) {
+				return v2;
+			}
 			return null;
 		}
 		final Object p = createNewEdgeObjectFromVertices(v1, v2);
 
-		if ( addEdge(v1, v2, p) ) { return p; }
+		if (addEdge(v1, v2, p)) {
+			return p;
+		}
 		return null;
 	}
 
 	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
-		if ( edgeSpecies == null ) { return generateEdgeObject(v1, v2); }
+		if (edgeSpecies == null) {
+			return generateEdgeObject(v1, v2);
+		}
 		final Map<String, Object> map = new TOrderedHashMap();
 		final List initVal = new ArrayList();
 		map.put(IKeyword.SOURCE, v1);
@@ -382,8 +428,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	protected IAgent generateEdgeAgent(final List<Map> attributes) {
 		final IAgent agent = scope.getAgentScope().getPopulationFor(edgeSpecies)
-			.createAgents(scope, 1, attributes, false, true).firstValue(scope);
-		if ( agent != null ) {
+				.createAgents(scope, 1, attributes, false, true).firstValue(scope);
+		if (agent != null) {
 			generatedEdges.add(agent);
 		}
 		return agent;
@@ -391,8 +437,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public boolean addEdge(final Object v1, final Object v2, final Object e) {
-		if ( e == null ) { return addEdge(v1, v2) != null; }
-		if ( containsEdge(e) ) { return false; }
+		if (e == null) {
+			return addEdge(v1, v2) != null;
+		}
+		if (containsEdge(e)) {
+			return false;
+		}
 		addVertex(v1);
 		addVertex(v2);
 		_Edge<V, E> edge;
@@ -419,16 +469,18 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public boolean addVertex(final Object v) {
-		if ( v instanceof GraphObjectToAdd ) {
-			if ( v instanceof IAgent ) {
-				if ( !this.getVertices().isEmpty() && ((IAgent) v).getSpecies() != vertexSpecies ) {
+		if (v instanceof GraphObjectToAdd) {
+			if (v instanceof IAgent) {
+				if (!this.getVertices().isEmpty() && ((IAgent) v).getSpecies() != vertexSpecies) {
 					vertexSpecies = null;
 				}
 			}
 			addValue(scope, (GraphObjectToAdd) v);
 			return ((GraphObjectToAdd) v).getObject() != null;
 		}
-		if ( v == null || containsVertex(v) ) { return false; }
+		if (v == null || containsVertex(v)) {
+			return false;
+		}
 		_Vertex<V, E> vertex;
 		try {
 			vertex = newVertex(v);
@@ -492,9 +544,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public Set getAllEdges(final Object v1, final Object v2) {
 		final Set s = new HashSet();
-		if ( !containsVertex(v1) || !containsVertex(v2) ) { return s; }
+		if (!containsVertex(v1) || !containsVertex(v2)) {
+			return s;
+		}
 		s.addAll(getVertex(v1).edgesTo(v2));
-		if ( !directed ) {
+		if (!directed) {
 			s.addAll(getVertex(v2).edgesTo(v1));
 		}
 		return s;
@@ -502,7 +556,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Object getEdge(final Object v1, final Object v2) {
-		if ( !containsVertex(v1) || !containsVertex(v2) ) { return null; }
+		if (!containsVertex(v1) || !containsVertex(v2)) {
+			return null;
+		}
 		final Object o = getVertex(v1).edgeTo(v2);
 		return o == null && !directed ? getVertex(v2).edgeTo(v1) : o;
 	}
@@ -514,32 +570,44 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Object getEdgeSource(final Object e) {
-		if ( !containsEdge(e) ) { return null; }
+		if (!containsEdge(e)) {
+			return null;
+		}
 		return getEdge(e).getSource();
 	}
 
 	@Override
 	public Object getEdgeTarget(final Object e) {
-		if ( !containsEdge(e) ) { return null; }
+		if (!containsEdge(e)) {
+			return null;
+		}
 		return getEdge(e).getTarget();
 	}
 
 	@Override
 	public double getEdgeWeight(final Object e) {
-		if ( !containsEdge(e) ) { return WeightedGraph.DEFAULT_EDGE_WEIGHT; }
+		if (!containsEdge(e)) {
+			return WeightedGraph.DEFAULT_EDGE_WEIGHT;
+		}
 		return getEdge(e).getWeight();
 	}
 
 	@Override
 	public double getVertexWeight(final Object v) {
-		if ( !containsVertex(v) ) { return WeightedGraph.DEFAULT_EDGE_WEIGHT; }
+		if (!containsVertex(v)) {
+			return WeightedGraph.DEFAULT_EDGE_WEIGHT;
+		}
 		return getVertex(v).getWeight();
 	}
 
 	@Override
 	public Double getWeightOf(final Object v) {
-		if ( containsVertex(v) ) { return getVertexWeight(v); }
-		if ( containsEdge(v) ) { return getEdgeWeight(v); }
+		if (containsVertex(v)) {
+			return getVertexWeight(v);
+		}
+		if (containsEdge(v)) {
+			return getEdgeWeight(v);
+		}
 		return null;
 	}
 
@@ -573,7 +641,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public boolean removeAllEdges(final Collection edges) {
 		boolean result = false;
-		for ( final Object e : edges ) {
+		for (final Object e : edges) {
 			result = result || removeEdge(e);
 		}
 		return result;
@@ -587,7 +655,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			result.add(edge);
 			edge = removeEdge(v1, v2);
 		}
-		if ( !directed ) {
+		if (!directed) {
 			edge = removeEdge(v2, v1);
 			while (edge != null) {
 				result.add(edge);
@@ -600,7 +668,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public boolean removeAllVertices(final Collection vertices) {
 		boolean result = false;
-		for ( final Object o : vertices.toArray() ) {
+		for (final Object o : vertices.toArray()) {
 			result = result || removeVertex(o);
 		}
 		return result;
@@ -608,15 +676,20 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public boolean removeEdge(final Object e) {
-		if ( e == null ) { return false; }
+		if (e == null) {
+			return false;
+		}
 		final _Edge<V, E> edge = getEdge(e);
-		if ( edge == null &&
-			e instanceof GamaPair ) { return removeEdge(((GamaPair) e).first(), ((GamaPair) e).last()) != null; }
+		if (edge == null && e instanceof GamaPair) {
+			return removeEdge(((GamaPair) e).first(), ((GamaPair) e).last()) != null;
+		}
 
-		if ( edge == null ) { return false; }
+		if (edge == null) {
+			return false;
+		}
 		edge.removeFromVerticesAs(e);
 		edgeMap.remove(e);
-		if ( generatedEdges.contains(e) ) {
+		if (generatedEdges.contains(e)) {
 			((IAgent) e).dispose();
 		}
 		dispatchEvent(new GraphEvent(scope, this, this, e, null, GraphEventType.EDGE_REMOVED));
@@ -626,16 +699,20 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public Object removeEdge(final Object v1, final Object v2) {
 		final Object edge = getEdge(v1, v2);
-		if ( removeEdge(edge) ) { return edge; }
+		if (removeEdge(edge)) {
+			return edge;
+		}
 		return null;
 
 	}
 
 	@Override
 	public boolean removeVertex(final Object v) {
-		if ( !containsVertex(v) ) { return false; }
+		if (!containsVertex(v)) {
+			return false;
+		}
 		final Set edges = edgesOf(v);
-		for ( final Object e : edges ) {
+		for (final Object e : edges) {
 			removeEdge(e);
 		}
 
@@ -646,13 +723,17 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void setEdgeWeight(final Object e, final double weight) {
-		if ( !containsEdge(e) ) { return; }
+		if (!containsEdge(e)) {
+			return;
+		}
 		getEdge(e).setWeight(weight);
 	}
 
 	@Override
 	public void setVertexWeight(final Object v, final double weight) {
-		if ( !containsVertex(v) ) { return; }
+		if (!containsVertex(v)) {
+			return;
+		}
 		getVertex(v).setWeight(weight);
 	}
 
@@ -663,26 +744,28 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public void setOptimizerType(final String s) {
-		if ( "AStar".equals(s) ) {
+		if ("AStar".equals(s)) {
 			optimizerType = 4;
-		} else if ( "Dijkstra".equals(s) ) {
+		} else if ("Dijkstra".equals(s)) {
 			optimizerType = 3;
-		} else if ( "Bellmann".equals(s) ) {
+		} else if ("Bellmann".equals(s)) {
 			optimizerType = 2;
 		} else {
 			optimizerType = 1;
 		}
 	}
 
-	// protected IPath<V,E> pathFromEdges(final Object source, final Object target, final IList<E> edges) {
+	// protected IPath<V,E> pathFromEdges(final Object source, final Object
+	// target, final IList<E> edges) {
 	protected IPath<V, E, IGraph<V, E>> pathFromEdges(final IScope scope, final V source, final V target,
-		final IList<E> edges) {
+			final IList<E> edges) {
 		// return new GamaPath(this, source, target, edges);
 		return PathFactory.newInstance(this, source, target, edges);
 	}
 
 	@Override
-	// public IPath<V,E> computeShortestPathBetween(final Object source, final Object target) {
+	// public IPath<V,E> computeShortestPathBetween(final Object source, final
+	// Object target) {
 	public IPath<V, E, IGraph<V, E>> computeShortestPathBetween(final IScope scope, final V source, final V target) {
 		return pathFromEdges(scope, source, target, computeBestRouteBetween(scope, source, target));
 	}
@@ -691,87 +774,91 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public IList<E> computeBestRouteBetween(final IScope scope, final V source, final V target) {
 
 		switch (optimizerType) {
-			case 1:
-				if ( optimizer == null ) {
-					optimizer = new FloydWarshallShortestPathsGAMA<V, E>(this);
-				}
-				GraphPath<V, E> path = optimizer.getShortestPath(source, target);
-				if ( path == null ) { return GamaListFactory.create(getType().getContentType()); }
-				return GamaListFactory.create(scope, getType().getContentType(), path.getEdgeList());
-			case 2:
-				VertexPair<V> nodes1 = new VertexPair<V>(source, target);
-				IList<IList<E>> sp1 = shortestPathComputed.get(nodes1);
-				IList<E> spl1 = null;
-				if ( sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty() ) {
+		case 1:
+			if (optimizer == null) {
+				optimizer = new FloydWarshallShortestPathsGAMA<V, E>(this);
+			}
+			final GraphPath<V, E> path = optimizer.getShortestPath(source, target);
+			if (path == null) {
+				return GamaListFactory.create(getType().getContentType());
+			}
+			return GamaListFactory.create(scope, getType().getContentType(), path.getEdgeList());
+		case 2:
+			final VertexPair<V> nodes1 = new VertexPair<V>(source, target);
+			final IList<IList<E>> sp1 = shortestPathComputed.get(nodes1);
+			IList<E> spl1 = null;
+			if (sp1 == null || sp1.isEmpty() || sp1.get(0).isEmpty()) {
+				spl1 = GamaListFactory.create(getType().getContentType());
+				final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<V, E>(getProxyGraph(), source);
+				final List<E> re = p1.getPathEdgeList(target);
+				if (re == null) {
 					spl1 = GamaListFactory.create(getType().getContentType());
-					final BellmanFordShortestPath<V, E> p1 = new BellmanFordShortestPath<V, E>(getProxyGraph(), source);
-					List<E> re = p1.getPathEdgeList(target);
-					if ( re == null ) {
-						spl1 = GamaListFactory.create(getType().getContentType());
-					} else {
-						spl1 = GamaListFactory.create(scope, getType().getContentType(), re);
-					}
-					if ( saveComputedShortestPaths ) {
-						saveShortestPaths(spl1, source, target);
-					}
 				} else {
-					spl1 = GamaListFactory.create(scope, getType().getContentType(), sp1.get(0));
+					spl1 = GamaListFactory.create(scope, getType().getContentType(), re);
 				}
-				return spl1;
-			case 3:
-				// long t1 = java.lang.System.currentTimeMillis();
-				VertexPair<V> nodes2 = new VertexPair<V>(source, target);
-				// System.out.println("nodes2 : " + nodes2);
-				IList<IList<E>> sp2 = shortestPathComputed.get(nodes2);
-				IList<E> spl2 = null;
+				if (saveComputedShortestPaths) {
+					saveShortestPaths(spl1, source, target);
+				}
+			} else {
+				spl1 = GamaListFactory.create(scope, getType().getContentType(), sp1.get(0));
+			}
+			return spl1;
+		case 3:
+			// long t1 = java.lang.System.currentTimeMillis();
+			final VertexPair<V> nodes2 = new VertexPair<V>(source, target);
+			// System.out.println("nodes2 : " + nodes2);
+			final IList<IList<E>> sp2 = shortestPathComputed.get(nodes2);
+			IList<E> spl2 = null;
 
-				if ( sp2 == null || sp2.isEmpty() || sp2.get(0).isEmpty() ) {
-					spl2 = GamaListFactory.create(getType().getContentType());
+			if (sp2 == null || sp2.isEmpty() || sp2.get(0).isEmpty()) {
+				spl2 = GamaListFactory.create(getType().getContentType());
 
-					try {
-						final DijkstraShortestPath<GamaShape, GamaShape> p2 =
-							new DijkstraShortestPath(getProxyGraph(), source, target);
-						List re = p2.getPathEdgeList();
-						if ( re == null ) {
-							spl2 = GamaListFactory.create(getType().getContentType());
-						} else {
-							spl2 = GamaListFactory.create(scope, getType().getContentType(), re);
-						}
-
-					} catch (IllegalArgumentException e) {
+				try {
+					final DijkstraShortestPath<GamaShape, GamaShape> p2 = new DijkstraShortestPath(getProxyGraph(),
+							source, target);
+					final List re = p2.getPathEdgeList();
+					if (re == null) {
 						spl2 = GamaListFactory.create(getType().getContentType());
+					} else {
+						spl2 = GamaListFactory.create(scope, getType().getContentType(), re);
 					}
-					if ( saveComputedShortestPaths ) {
-						saveShortestPaths(spl2, source, target);
-					}
-				} else {
-					spl2 = GamaListFactory.create(scope, getType().getContentType(), sp2.get(0));
+
+				} catch (final IllegalArgumentException e) {
+					spl2 = GamaListFactory.create(getType().getContentType());
 				}
-				// java.lang.System.out.println("DijkstraShortestPath : " + (java.lang.System.currentTimeMillis() - t1
-				// ));
-				return spl2;
-			case 4:
-				// t1 = java.lang.System.currentTimeMillis();
+				if (saveComputedShortestPaths) {
+					saveShortestPaths(spl2, source, target);
+				}
+			} else {
+				spl2 = GamaListFactory.create(scope, getType().getContentType(), sp2.get(0));
+			}
+			// java.lang.System.out.println("DijkstraShortestPath : " +
+			// (java.lang.System.currentTimeMillis() - t1
+			// ));
+			return spl2;
+		case 4:
+			// t1 = java.lang.System.currentTimeMillis();
 
-				VertexPair<V> nodes3 = new VertexPair<V>(source, target);
-				IList<IList<E>> sp3 = shortestPathComputed.get(nodes3);
-				IList<E> spl3 = null;
-				if ( sp3 == null || sp3.isEmpty() || sp3.get(0).isEmpty() ) {
-					spl3 = GamaListFactory.create(getType().getContentType());
-					msi.gama.metamodel.topology.graph.AStar astarAlgo =
-						new msi.gama.metamodel.topology.graph.AStar(this, source, target);
-					astarAlgo.compute();
-					spl3 = GamaListFactory.create(scope, getType().getContentType(), astarAlgo.getShortestPath());
-					if ( saveComputedShortestPaths ) {
-						saveShortestPaths(spl3, source, target);
-					}
-
-				} else {
-					spl3 = GamaListFactory.create(scope, getType().getContentType(), sp3.get(0));
+			final VertexPair<V> nodes3 = new VertexPair<V>(source, target);
+			final IList<IList<E>> sp3 = shortestPathComputed.get(nodes3);
+			IList<E> spl3 = null;
+			if (sp3 == null || sp3.isEmpty() || sp3.get(0).isEmpty()) {
+				spl3 = GamaListFactory.create(getType().getContentType());
+				final msi.gama.metamodel.topology.graph.AStar astarAlgo = new msi.gama.metamodel.topology.graph.AStar(
+						this, source, target);
+				astarAlgo.compute();
+				spl3 = GamaListFactory.create(scope, getType().getContentType(), astarAlgo.getShortestPath());
+				if (saveComputedShortestPaths) {
+					saveShortestPaths(spl3, source, target);
 				}
 
-				// java.lang.System.out.println("ASTAR : " + (java.lang.System.currentTimeMillis() - t1 ));
-				return spl3;
+			} else {
+				spl3 = GamaListFactory.create(scope, getType().getContentType(), sp3.get(0));
+			}
+
+			// java.lang.System.out.println("ASTAR : " +
+			// (java.lang.System.currentTimeMillis() - t1 ));
+			return spl3;
 
 		}
 		return GamaListFactory.create(getType().getContentType());
@@ -780,23 +867,23 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	private void saveShortestPaths(final List<E> edges, final V source, final V target) {
 		V s = source;
-		IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
+		final IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
 		spl.add(GamaListFactory.createWithoutCasting(getType().getContentType(), edges));
 		shortestPathComputed.put(new VertexPair<V>(source, target), spl);
-		List<E> edges2 = GamaListFactory.create(scope, getType().getContentType(), edges);
-		for ( E edge : edges ) {
+		final List<E> edges2 = GamaListFactory.create(scope, getType().getContentType(), edges);
+		for (final E edge : edges) {
 			edges2.remove(0);
-			if ( edges2.isEmpty() ) {
+			if (edges2.isEmpty()) {
 				break;
 			}
 			// System.out.println("s : " + s + " j : " + j + " i: " + i);
 			V nwS = (V) this.getEdgeTarget(edge);
-			if ( !directed && nwS == s ) {
+			if (!directed && nwS == s) {
 				nwS = (V) this.getEdgeSource(edge);
 			}
-			VertexPair<V> pp = new VertexPair<V>(nwS, target);
-			if ( !shortestPathComputed.containsKey(pp) ) {
-				IList<IList<E>> spl2 = GamaListFactory.create(getType().getContentType());
+			final VertexPair<V> pp = new VertexPair<V>(nwS, target);
+			if (!shortestPathComputed.containsKey(pp)) {
+				final IList<IList<E>> spl2 = GamaListFactory.create(getType().getContentType());
 				spl2.add(GamaListFactory.createWithoutCasting(getType().getContentType(), edges2));
 				shortestPathComputed.put(pp, spl2);
 			}
@@ -807,11 +894,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IList<IPath<V, E, IGraph<V, E>>> computeKShortestPathsBetween(final IScope scope, final V source,
-		final V target, final int k) {
+			final V target, final int k) {
 		final IList<IList<E>> pathLists = computeKBestRoutesBetween(scope, source, target, k);
-		IList<IPath<V, E, IGraph<V, E>>> paths = GamaListFactory.create(Types.PATH);
+		final IList<IPath<V, E, IGraph<V, E>>> paths = GamaListFactory.create(Types.PATH);
 
-		for ( IList<E> p : pathLists ) {
+		for (final IList<E> p : pathLists) {
 			paths.add(pathFromEdges(scope, source, target, p));
 		}
 		return paths;
@@ -819,24 +906,24 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IList<IList<E>> computeKBestRoutesBetween(final IScope scope, final V source, final V target, final int k) {
-		VertexPair<V> pp = new VertexPair<V>(source, target);
-		IList<IList<E>> paths = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
-		IList<IList<E>> sps = shortestPathComputed.get(pp);
-		if ( sps != null && sps.size() >= k ) {
-			for ( IList<E> sp : sps ) {
+		final VertexPair<V> pp = new VertexPair<V>(source, target);
+		final IList<IList<E>> paths = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
+		final IList<IList<E>> sps = shortestPathComputed.get(pp);
+		if (sps != null && sps.size() >= k) {
+			for (final IList<E> sp : sps) {
 				paths.add(GamaListFactory.create(scope, getType().getContentType(), sp));
 			}
 		} else {
 			final KShortestPaths<V, E> kp = new KShortestPaths<V, E>(getProxyGraph(), source, k);
-			List<GraphPath<V, E>> pathsJGT = kp.getPaths(target);
-			IList<IList<E>> el = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
-			for ( GraphPath<V, E> p : pathsJGT ) {
+			final List<GraphPath<V, E>> pathsJGT = kp.getPaths(target);
+			final IList<IList<E>> el = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
+			for (final GraphPath<V, E> p : pathsJGT) {
 				paths.add(GamaListFactory.create(scope, getType().getContentType(), p.getEdgeList()));
-				if ( saveComputedShortestPaths ) {
+				if (saveComputedShortestPaths) {
 					el.add(GamaListFactory.create(scope, getType().getContentType(), p.getEdgeList()));
 				}
 			}
-			if ( saveComputedShortestPaths ) {
+			if (saveComputedShortestPaths) {
 				shortestPathComputed.put(pp, el);
 			}
 		}
@@ -852,7 +939,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		// TODO V�rifier ceci.
 
 		return GamaListType.staticCast(scope, edgeSet(), contentsType, false);
-		// final GamaList list = edgeBased ? new GamaList(edgeSet()) : new GamaList(vertexSet());
+		// final GamaList list = edgeBased ? new GamaList(edgeSet()) : new
+		// GamaList(vertexSet());
 		// return list.listValue(scope, contentsType);
 	}
 
@@ -870,7 +958,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
-		final boolean copy) {
+			final boolean copy) {
 		// TODO Representation of the graph as a matrix ?
 		return null;
 	}
@@ -883,12 +971,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy) {
 		final GamaMap m = GamaMapFactory.create(Types.PAIR.of(getType().getKeyType(), getType().getKeyType()),
-			getType().getContentType());
-		// WARNING Does not respect the contract regarding keyType and contentsType
-		for ( final Object edge : edgeSet() ) {
-			m.put(
-				new GamaPair(getEdgeSource(edge), getEdgeTarget(edge), getType().getKeyType(), getType().getKeyType()),
-				edge);
+				getType().getContentType());
+		// WARNING Does not respect the contract regarding keyType and
+		// contentsType
+		for (final Object edge : edgeSet()) {
+			m.put(new GamaPair(getEdgeSource(edge), getEdgeTarget(edge), getType().getKeyType(),
+					getType().getKeyType()), edge);
 		}
 		return m;
 	}
@@ -902,16 +990,20 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public List<E> get(final IScope scope, final GamaPair<V, V> index) {
 		return GamaListFactory.create(scope, getType().getContentType(), getAllEdges(index.key, index.value));
 		// if ( containsVertex(index) ) { return new GamaList(edgesOf(index)); }
-		// if ( containsEdge(index) ) { return new GamaPair(getEdgeSource(index), getEdgeTarget(index)); }
+		// if ( containsEdge(index) ) { return new
+		// GamaPair(getEdgeSource(index), getEdgeTarget(index)); }
 		// return null;
 	}
 
 	@Override
 	public List<E> getFromIndicesList(final IScope scope, final IList<GamaPair<V, V>> indices)
-		throws GamaRuntimeException {
-		if ( indices == null || indices.isEmpty(scope) ) { return null; }
+			throws GamaRuntimeException {
+		if (indices == null || indices.isEmpty(scope)) {
+			return null;
+		}
 		return get(scope, indices.firstValue(scope));
-		// Maybe we should consider the case where two indices that represent vertices are passed
+		// Maybe we should consider the case where two indices that represent
+		// vertices are passed
 		// (instead of a pair).
 	}
 
@@ -929,7 +1021,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public E lastValue(final IScope scope) {
 		// Solution d�bile. On devrait conserver le dernier entr�.
-		return listValue(scope, Types.NO_TYPE, false).lastValue(scope);// Attention a l'ordre
+		return listValue(scope, Types.NO_TYPE, false).lastValue(scope);// Attention
+																		// a
+																		// l'ordre
 	}
 
 	@Override
@@ -945,7 +1039,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public IContainer reverse(final IScope scope) {
 		final GamaGraph g = new GamaGraph(scope, GamaListFactory.create(type.getKeyType()), false, directed,
-			vertexRelation, edgeSpecies, type.getKeyType(), type.getContentType());
+				vertexRelation, edgeSpecies, type.getKeyType(), type.getContentType());
 		Graphs.addGraphReversed(g, this);
 		return g;
 	}
@@ -973,7 +1067,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		final List vertices = HamiltonianCycle.getApproximateOptimalForCompleteGraph(g);
 		final int size = vertices.size();
 		final IList edges = GamaListFactory.create(getType().getContentType());
-		for ( int i = 0; i < size - 1; i++ ) {
+		for (int i = 0; i < size - 1; i++) {
 			edges.add(this.getEdge(vertices.get(i), vertices.get(i + 1)));
 		}
 		return pathFromEdges(scope, null, null, edges);
@@ -982,7 +1076,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public Boolean getConnected() {
 		ConnectivityInspector c;
-		if ( directed ) {
+		if (directed) {
 			c = new ConnectivityInspector((DirectedGraph) this);
 		} else {
 			c = new ConnectivityInspector((UndirectedGraph) this);
@@ -1002,8 +1096,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IGraph copy(final IScope scope) {
-		final GamaGraph g = new GamaGraph(scope, GamaListFactory.create(), true, directed, vertexRelation,
-			edgeSpecies, type.getKeyType(), type.getContentType());
+		final GamaGraph g = new GamaGraph(scope, GamaListFactory.create(), true, directed, vertexRelation, edgeSpecies,
+				type.getKeyType(), type.getContentType());
 		Graphs.addAllEdges(g, this, this.edgeSet());
 		return g;
 	}
@@ -1016,13 +1110,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public void setWeights(final Map w) {
 		final Map<Object, Double> weights = w;
-		for ( final Map.Entry<Object, Double> entry : weights.entrySet() ) {
+		for (final Map.Entry<Object, Double> entry : weights.entrySet()) {
 			Object target = entry.getKey();
-			if ( target instanceof GamaPair ) {
+			if (target instanceof GamaPair) {
 				target = getEdge(((GamaPair) target).first(), ((GamaPair) target).last());
 				setEdgeWeight(target, Cast.asFloat(scope, entry.getValue()));
 			} else {
-				if ( containsEdge(target) ) {
+				if (containsEdge(target)) {
 					setEdgeWeight(target, Cast.asFloat(scope, entry.getValue()));
 				} else {
 					setVertexWeight(target, Cast.asFloat(scope, entry.getValue()));
@@ -1037,7 +1131,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 */
 	@Override
 	public E anyValue(final IScope scope) {
-		if ( vertexMap.isEmpty() ) { return null; }
+		if (vertexMap.isEmpty()) {
+			return null;
+		}
 		final E[] array = (E[]) vertexMap.keySet().toArray();
 		final int i = scope.getRandom().between(0, array.length - 1);
 		return array[i];
@@ -1046,7 +1142,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public void addListener(final IGraphEventListener listener) {
 		synchronized (listeners) {
-			if ( !listeners.contains(listener) ) {
+			if (!listeners.contains(listener)) {
 				listeners.add(listener);
 			}
 		}
@@ -1063,8 +1159,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public void dispatchEvent(final GraphEvent event) {
 		synchronized (listeners) {
-			if ( listeners.isEmpty() ) { return; }
-			for ( final IGraphEventListener l : listeners ) {
+			if (listeners.isEmpty()) {
+				return;
+			}
+			for (final IGraphEventListener l : listeners) {
 				l.receiveEvent(event);
 			}
 		}
@@ -1097,7 +1195,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public double computeWeight(final IPath gamaPath) {
 		double result = 0;
 		final List l = gamaPath.getEdgeList();
-		for ( final Object o : l ) {
+		for (final Object o : l) {
 			result += getEdgeWeight(o);
 		}
 		return result;
@@ -1106,10 +1204,10 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public double computeTotalWeight() {
 		double result = 0;
-		for ( final Object o : edgeSet() ) {
+		for (final Object o : edgeSet()) {
 			result += getEdgeWeight(o);
 		}
-		for ( final Object o : vertexSet() ) {
+		for (final Object o : vertexSet()) {
 			result += getEdgeWeight(o);
 		}
 		return result;
@@ -1144,20 +1242,20 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public void loadShortestPaths(final IScope scope, final GamaMatrix matrix) {
-		GamaList<V> vertices = (GamaList<V>) getVertices();
-		int nbvertices = matrix.numCols;
+		final GamaList<V> vertices = (GamaList<V>) getVertices();
+		final int nbvertices = matrix.numCols;
 		shortestPathComputed = new TOrderedHashMap<VertexPair<V>, IList<IList<E>>>();
-		GamaIntMatrix mat = GamaIntMatrix.from(scope, matrix);
+		final GamaIntMatrix mat = GamaIntMatrix.from(scope, matrix);
 
-		Map<Integer, E> edgesVertices = GamaMapFactory.create(Types.INT, getType().getContentType());
-		for ( int i = 0; i < nbvertices; i++ ) {
-			V v1 = vertices.get(i);
-			for ( int j = 0; j < nbvertices; j++ ) {
-				V v2 = vertices.get(j);
-				VertexPair<V> vv = new VertexPair<V>(v1, v2);
-				IList<E> edges = GamaListFactory.create(getType().getContentType());
-				if ( v1 == v2 ) {
-					IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
+		final Map<Integer, E> edgesVertices = GamaMapFactory.create(Types.INT, getType().getContentType());
+		for (int i = 0; i < nbvertices; i++) {
+			final V v1 = vertices.get(i);
+			for (int j = 0; j < nbvertices; j++) {
+				final V v2 = vertices.get(j);
+				final VertexPair<V> vv = new VertexPair<V>(v1, v2);
+				final IList<E> edges = GamaListFactory.create(getType().getContentType());
+				if (v1 == v2) {
+					final IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
 					spl.add(edges);
 					shortestPathComputed.put(vv, spl);
 					continue;
@@ -1165,26 +1263,26 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				V vs = v1;
 				int previous = i;
 				Integer next = mat.get(scope, j, i);
-				if ( i == next ) {
-					IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
+				if (i == next) {
+					final IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
 					spl.add(edges);
 					shortestPathComputed.put(vv, spl);
 					continue;
 				}
 				do {
-					V vn = vertices.get(next);
-					Integer id = previous * nbvertices + next;
+					final V vn = vertices.get(next);
+					final Integer id = previous * nbvertices + next;
 					E edge = edgesVertices.get(id);
-					if ( edge == null ) {
-						Set<E> eds = this.getAllEdges(vs, vn);
-						for ( E ed : eds ) {
-							if ( edge == null || getEdgeWeight(ed) < getEdgeWeight(edge) ) {
+					if (edge == null) {
+						final Set<E> eds = this.getAllEdges(vs, vn);
+						for (final E ed : eds) {
+							if (edge == null || getEdgeWeight(ed) < getEdgeWeight(edge)) {
 								edge = ed;
 							}
 						}
 						edgesVertices.put(id, edge);
 					}
-					if ( edge == null ) {
+					if (edge == null) {
 						break;
 					}
 					edges.add(edge);
@@ -1193,7 +1291,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 					vs = vn;
 				} while (previous != j);
-				IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
+				final IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
 				spl.add(edges);
 				shortestPathComputed.put(vv, spl);
 			}
@@ -1201,26 +1299,30 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public IList getPath(final int M[], final GamaList vertices, final int nbvertices, final Object v1, final Object vt,
-		final int i, final int j) {
+			final int i, final int j) {
 		// VertexPair vv = new VertexPair(v1, vt);
-		IList<E> edges = GamaListFactory.create(getType().getContentType());
-		if ( v1 == vt ) { return edges; }
+		final IList<E> edges = GamaListFactory.create(getType().getContentType());
+		if (v1 == vt) {
+			return edges;
+		}
 		Object vc = vt;
 		int previous = j;
 		int next = M[j];
-		if ( j == next || next == -1 ) { return edges; }
+		if (j == next || next == -1) {
+			return edges;
+		}
 		do {
-			Object vn = vertices.get(next);
+			final Object vn = vertices.get(next);
 
-			Set<E> eds = this.getAllEdges(vn, vc);
+			final Set<E> eds = this.getAllEdges(vn, vc);
 
 			E edge = null;
-			for ( E ed : eds ) {
-				if ( edge == null || getEdgeWeight(ed) < getEdgeWeight(edge) ) {
+			for (final E ed : eds) {
+				if (edge == null || getEdgeWeight(ed) < getEdgeWeight(edge)) {
 					edge = ed;
 				}
 			}
-			if ( edge == null ) {
+			if (edge == null) {
 				break;
 			}
 			edges.add(0, edge);
@@ -1232,32 +1334,32 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public IList savePaths(final int M[], final GamaList vertices, final int nbvertices, final Object v1, final int i,
-		final int t) {
+			final int t) {
 		IList edgesVertices = GamaListFactory.create(getType().getContentType());
-		for ( int j = 0; j < nbvertices; j++ ) {
-			IList<E> edges = GamaListFactory.create(getType().getContentType());
-			V vt = (V) vertices.get(j);
-			if ( v1 == vt ) {
+		for (int j = 0; j < nbvertices; j++) {
+			final IList<E> edges = GamaListFactory.create(getType().getContentType());
+			final V vt = (V) vertices.get(j);
+			if (v1 == vt) {
 				continue;
 			}
 			Object vc = vt;
 			int previous = j;
 			int next = M[j];
-			if ( j == next || next == -1 ) {
+			if (j == next || next == -1) {
 				continue;
 			}
 			do {
-				Object vn = vertices.get(next);
+				final Object vn = vertices.get(next);
 
-				Set<E> eds = this.getAllEdges(vn, vc);
+				final Set<E> eds = this.getAllEdges(vn, vc);
 
 				E edge = null;
-				for ( E ed : eds ) {
-					if ( edge == null || getEdgeWeight(ed) < getEdgeWeight(edge) ) {
+				for (final E ed : eds) {
+					if (edge == null || getEdgeWeight(ed) < getEdgeWeight(edge)) {
 						edge = ed;
 					}
 				}
-				if ( edge == null ) {
+				if (edge == null) {
 					break;
 				}
 				edges.add(0, edge);
@@ -1265,13 +1367,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				next = M[next];
 				vc = vn;
 			} while (previous != i);
-			VertexPair vv = new VertexPair(v1, vt);
-			if ( !shortestPathComputed.containsKey(vv) ) {
-				IList<IList<E>> ssp = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
+			final VertexPair vv = new VertexPair(v1, vt);
+			if (!shortestPathComputed.containsKey(vv)) {
+				final IList<IList<E>> ssp = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
 				ssp.add(edges);
 				shortestPathComputed.put(vv, ssp);
 			}
-			if ( j == t ) {
+			if (j == t) {
 				edgesVertices = edges;
 			}
 		}
@@ -1279,71 +1381,72 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public GamaIntMatrix saveShortestPaths(final IScope scope) {
-		GamaMap<V, Integer> indexVertices = GamaMapFactory.create(getType().getKeyType(), Types.INT);
-		GamaList<V> vertices = (GamaList<V>) getVertices();
+		final GamaMap<V, Integer> indexVertices = GamaMapFactory.create(getType().getKeyType(), Types.INT);
+		final GamaList<V> vertices = (GamaList<V>) getVertices();
 
-		for ( int i = 0; i < vertexMap.size(); i++ ) {
+		for (int i = 0; i < vertexMap.size(); i++) {
 			indexVertices.put(vertices.get(i), i);
 		}
-		GamaIntMatrix matrix = new GamaIntMatrix(vertices.size(), vertices.size());
-		for ( int i = 0; i < vertices.size(); i++ ) {
-			for ( int j = 0; j < vertices.size(); j++ ) {
+		final GamaIntMatrix matrix = new GamaIntMatrix(vertices.size(), vertices.size());
+		for (int i = 0; i < vertices.size(); i++) {
+			for (int j = 0; j < vertices.size(); j++) {
 				matrix.set(scope, j, i, i);
 			}
 		}
-		if ( optimizer != null ) {
-			for ( int i = 0; i < vertices.size(); i++ ) {
-				V v1 = vertices.get(i);
-				for ( int j = 0; j < vertices.size(); j++ ) {
-					V v2 = vertices.get(j);
-					GraphPath<V, E> path = optimizer.getShortestPath(v1, v2);
-					if ( path == null || path.getEdgeList() == null || path.getEdgeList().isEmpty() ) {
+		if (optimizer != null) {
+			for (int i = 0; i < vertices.size(); i++) {
+				final V v1 = vertices.get(i);
+				for (int j = 0; j < vertices.size(); j++) {
+					final V v2 = vertices.get(j);
+					final GraphPath<V, E> path = optimizer.getShortestPath(v1, v2);
+					if (path == null || path.getEdgeList() == null || path.getEdgeList().isEmpty()) {
 						continue;
 					}
 					matrix.set(scope, j, i, nextVertice(scope, path.getEdgeList().get(0), v1, indexVertices, directed));
 				}
 			}
 		} else {
-			if ( optimizerType == 1 ) {
+			if (optimizerType == 1) {
 				optimizer = new FloydWarshallShortestPathsGAMA(getProxyGraph());
 				optimizer.lazyCalculateMatrix();
-				for ( int i = 0; i < vertexMap.size(); i++ ) {
-					for ( int j = 0; j < vertexMap.size(); j++ ) {
-						if ( i == j ) {
+				for (int i = 0; i < vertexMap.size(); i++) {
+					for (int j = 0; j < vertexMap.size(); j++) {
+						if (i == j) {
 							continue;
 						}
 						matrix.set(scope, j, i, optimizer.succRecur(i, j));
 					}
 				}
 			} else {
-				for ( int i = 0; i < vertexMap.size(); i++ ) {
-					V v1 = vertices.get(i);
-					for ( int j = 0; j < vertexMap.size(); j++ ) {
-						if ( i == j ) {
+				for (int i = 0; i < vertexMap.size(); i++) {
+					final V v1 = vertices.get(i);
+					for (int j = 0; j < vertexMap.size(); j++) {
+						if (i == j) {
 							continue;
 						}
-						if ( matrix.get(scope, j, i) != i ) {
+						if (matrix.get(scope, j, i) != i) {
 							continue;
 						}
-						V v2 = vertices.get(j);
-						List edges = computeBestRouteBetween(scope, v1, v2);
+						final V v2 = vertices.get(j);
+						final List edges = computeBestRouteBetween(scope, v1, v2);
 						// System.out.println("edges : " + edges);
-						if ( edges == null ) {
+						if (edges == null) {
 							continue;
 						}
 						V source = v1;
 						int s = i;
-						for ( Object edge : edges ) {
-							// System.out.println("s : " + s + " j : " + j + " i: " + i);
-							if ( s != i && matrix.get(scope, j, s) != s ) {
+						for (final Object edge : edges) {
+							// System.out.println("s : " + s + " j : " + j + "
+							// i: " + i);
+							if (s != i && matrix.get(scope, j, s) != s) {
 								break;
 							}
 
 							V target = (V) this.getEdgeTarget(edge);
-							if ( !directed && target == source ) {
+							if (!directed && target == source) {
 								target = (V) this.getEdgeSource(edge);
 							}
-							Integer k = indexVertices.get(scope, target);
+							final Integer k = indexVertices.get(scope, target);
 							// System.out.println("k : " +k);
 							matrix.set(scope, j, s, k);
 							s = k;
@@ -1360,11 +1463,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	private Integer nextVertice(final IScope scope, final E edge, V source, final GamaMap<V, Integer> indexVertices,
-		final boolean isDirected) {
-		if ( isDirected ) { return indexVertices.get(scope, (V) this.getEdgeTarget(edge)); }
+			final boolean isDirected) {
+		if (isDirected) {
+			return indexVertices.get(scope, (V) this.getEdgeTarget(edge));
+		}
 
-		V target = (V) this.getEdgeTarget(edge);
-		if ( target != source ) {
+		final V target = (V) this.getEdgeTarget(edge);
+		if (target != source) {
 			// source = target;
 			return indexVertices.get(scope, target);
 		}
@@ -1377,9 +1482,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public IList<E> getShortestPath(final V s, final V t) {
-		VertexPair<V> vp = new VertexPair<V>(s, t);
-		IList<IList<E>> ppc = shortestPathComputed.get(vp);
-		if ( ppc == null || ppc.isEmpty() ) { return null; }
+		final VertexPair<V> vp = new VertexPair<V>(s, t);
+		final IList<IList<E>> ppc = shortestPathComputed.get(vp);
+		if (ppc == null || ppc.isEmpty()) {
+			return null;
+		}
 		return ppc.get(0);
 	}
 
@@ -1389,32 +1496,40 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	/**
 	 * Method buildValue()
-	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope, java.lang.Object, msi.gaml.types.IContainerType)
+	 * 
+	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope,
+	 *      java.lang.Object, msi.gaml.types.IContainerType)
 	 */
 	@Override
 	public GraphObjectToAdd buildValue(final IScope scope, final Object object) {
-		if ( object instanceof NodeToAdd ) { return new NodeToAdd(
-			type.getKeyType().cast(scope, ((NodeToAdd) object).object, null, false), ((NodeToAdd) object).weight); }
-		if ( object instanceof EdgeToAdd ) { return new EdgeToAdd(
-			type.getKeyType().cast(scope, ((EdgeToAdd) object).source, null, false),
-			type.getKeyType().cast(scope, ((EdgeToAdd) object).target, null, false),
-			type.getContentType().cast(scope, ((EdgeToAdd) object).object, null, false), ((EdgeToAdd) object).weight); }
+		if (object instanceof NodeToAdd) {
+			return new NodeToAdd(type.getKeyType().cast(scope, ((NodeToAdd) object).object, null, false),
+					((NodeToAdd) object).weight);
+		}
+		if (object instanceof EdgeToAdd) {
+			return new EdgeToAdd(type.getKeyType().cast(scope, ((EdgeToAdd) object).source, null, false),
+					type.getKeyType().cast(scope, ((EdgeToAdd) object).target, null, false),
+					type.getContentType().cast(scope, ((EdgeToAdd) object).object, null, false),
+					((EdgeToAdd) object).weight);
+		}
 		return new EdgeToAdd(null, null, type.getContentType().cast(scope, object, null, false), 0.0);
 	}
 
 	/**
 	 * Method buildValues()
-	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope, msi.gama.util.IContainer, msi.gaml.types.IContainerType)
+	 * 
+	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope,
+	 *      msi.gama.util.IContainer, msi.gaml.types.IContainerType)
 	 */
 	@Override
 	public IContainer<?, GraphObjectToAdd> buildValues(final IScope scope, final IContainer objects) {
-		IList list = GamaListFactory.create();
-		if ( !(objects instanceof NodesToAdd) ) {
-			for ( Object o : objects.iterable(scope) ) {
+		final IList list = GamaListFactory.create();
+		if (!(objects instanceof NodesToAdd)) {
+			for (final Object o : objects.iterable(scope)) {
 				list.add(buildValue(scope, o));
 			}
 		} else {
-			for ( Object o : objects.iterable(scope) ) {
+			for (final Object o : objects.iterable(scope)) {
 				list.add(buildValue(scope, new NodeToAdd(o)));
 			}
 		}
@@ -1423,7 +1538,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	/**
 	 * Method buildIndex()
-	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope, java.lang.Object, msi.gaml.types.IContainerType)
+	 * 
+	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope,
+	 *      java.lang.Object, msi.gaml.types.IContainerType)
 	 */
 	@Override
 	public GamaPair<V, V> buildIndex(final IScope scope, final Object object) {
@@ -1432,8 +1549,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IContainer<?, GamaPair<V, V>> buildIndexes(final IScope scope, final IContainer value) {
-		IList<GamaPair<V, V>> result = GamaListFactory.create(Types.PAIR);
-		for ( Object o : value.iterable(scope) ) {
+		final IList<GamaPair<V, V>> result = GamaListFactory.create(Types.PAIR);
+		for (final Object o : value.iterable(scope)) {
 			result.add(buildIndex(scope, o));
 		}
 		return result;
@@ -1448,17 +1565,19 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	public GamaFloatMatrix toMatrix(final IScope scope) {
-		int nbVertices = this.getVertices().size();
-		if ( nbVertices == 0 ) { return null; }
-		GamaFloatMatrix mat = new GamaFloatMatrix(nbVertices, nbVertices);
+		final int nbVertices = this.getVertices().size();
+		if (nbVertices == 0) {
+			return null;
+		}
+		final GamaFloatMatrix mat = new GamaFloatMatrix(nbVertices, nbVertices);
 		mat.setAllValues(scope, Double.POSITIVE_INFINITY);
-		for ( int i = 0; i < nbVertices; i++ ) {
-			for ( int j = 0; j < nbVertices; j++ ) {
-				if ( i == j ) {
+		for (int i = 0; i < nbVertices; i++) {
+			for (int j = 0; j < nbVertices; j++) {
+				if (i == j) {
 					mat.set(scope, i, j, 0);
 				} else {
-					Object edge = getEdge(getVertices().get(i), getVertices().get(j));
-					if ( edge != null ) {
+					final Object edge = getEdge(getVertices().get(i), getVertices().get(j));
+					if (edge != null) {
 						mat.set(scope, i, j, getWeightOf(edge));
 					}
 				}
@@ -1475,6 +1594,17 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public ISpecies getEdgeSpecies() {
 		return edgeSpecies;
+	}
+
+	public void disposeVertex(final IAgent agent) {
+		final Set edgesToModify = edgesOf(agent);
+		removeVertex(agent);
+
+		for (final Object obj : edgesToModify) {
+			if (obj instanceof IAgent) {
+				((IAgent) obj).dispose();
+			}
+		}
 	}
 
 }

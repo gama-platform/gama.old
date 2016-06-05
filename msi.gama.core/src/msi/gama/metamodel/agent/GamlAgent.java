@@ -12,8 +12,6 @@
 package msi.gama.metamodel.agent;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.Iterables;
 
@@ -200,44 +198,21 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public void dispose() {
-		if (dead()) {
+		if (dead) {
 			return;
 		}
-		// scope.getGui().debug(this.getClass().getSimpleName() + " " +
-		// getName() + " .dispose (in GamlAgent)");
-		try {
-			// acquireLock();
-			if (getAttributes() != null) {
-				for (final Map.Entry<Object, Object> entry : getAttributes().entrySet()) {
-					if (entry.getValue() instanceof IPopulation) {
-						final IPopulation microPop = (IPopulation) entry.getValue();
-						// microPop.killMembers();
-						microPop.dispose();
-					}
-				}
-			}
-			final GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
-			if (graph != null) {
+		final IPopulation[] microPops = getMicroPopulations();
+		for (final IPopulation pop : microPops) {
+			pop.dispose();
+		}
 
-				final Set edgesToModify = graph.edgesOf(this);
-				graph.removeVertex(this);
+		final Object graph = getAttribute("attached_graph");
+		if (graph instanceof GamaGraph) {
+			((GamaGraph) graph).disposeVertex(this);
 
-				for (final Object obj : edgesToModify) {
-					if (obj instanceof IAgent) {
-						((IAgent) obj).dispose();
-					}
-				}
-			}
-		} finally {
-			// releaseLock();
 		}
 		super.dispose();
 	}
-
-	// @Override
-	// public void hostChangesShape() {
-	// setLocation(new GamaPoint(getLocation()));
-	// }
 
 	static IPopulation[] NO_POP = new IPopulation[0];
 
@@ -339,7 +314,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 				microPopulation = getHost().getPopulationFor(species);
 			}
 		} else {
-			microPopulation = this.getExternMicroPopulationFor(micro.getAlias()+"."+species.getName());
+			microPopulation = this.getExternMicroPopulationFor(micro.getAlias() + "." + species.getName());
 		}
 		// end-hqnghi
 		return microPopulation;
