@@ -55,8 +55,8 @@ public class Application implements IApplication {
 	final public static String VERBOSE_PARAMERTER = "-v";
 	final public static String HELP_PARAMERTER = "-help";
 	final public static String BUILD_XML_PARAMERTER = "-xml";
+	final public static String CHECK_MODEL_PARAMERTER = "-check";
 	
-	public static boolean buildModelLibrary = true;
 	public static boolean headLessSimulation = false;
 	public int numberOfThread = -1;
 	public boolean consoleMode = false;
@@ -96,6 +96,11 @@ public class Application implements IApplication {
 	private static boolean containConsoleParameter(final String[] args)
 	{
 		return containParameter(args, CONSOLE_PARAMETER);
+	}
+
+	private static boolean containCheckModelsCommandParameter(final String[] args)
+	{
+		return containParameter(args, CHECK_MODEL_PARAMERTER);
 	}
 
 	private static boolean containHelpParameter(final String[] args)
@@ -204,16 +209,17 @@ public class Application implements IApplication {
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 //		SystemLogger.removeDisplay();
-		if (buildModelLibrary) {
-			modelLibraryGenerator.start(this);
-			return null;
-		}
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
 		if(containHelpParameter(args))
 		{
 			System.out.println(showHelp());
 		} 
+		else if(containCheckModelsCommandParameter(args))
+		{
+			modelLibraryGenerator.start(this,args);
+	
+		}
 		else if(containXMLParameter(args))
 		{
 			buildXML(args);

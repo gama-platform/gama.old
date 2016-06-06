@@ -62,12 +62,24 @@ public class modelLibraryGenerator {
 	// the experiments have been used.
 	static List<Path> imagesCreatedPath = new ArrayList<Path>();
 
-	public static void start(Application headlessApplication) throws IOException, TransformerException {
+	private static void updatePath()
+	{
+		outputPathToModelLibrary = wikiFolder + "/References/ModelLibrary";
+		modelLibraryImagesPath = wikiFolder + "/resources/images/modelLibraryScreenshots";
+		inputFileForHeadlessExecution = wikiFolder + "/tempInputForHeadless.xml";
+		inputModelScreenshot = wikiFolder + "/modelScreenshot.xml";
+		headlessBatPath = wikiFolder + "/headless.bat";
+	}
+	
+	public static void start(Application headlessApplication, String [] args) throws IOException, TransformerException {
 		
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
 		// parse all the models of the model library, in order to build "input" files for a headless execution.
 		/////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
+		wikiFolder =  args[args.length-2];
+		sourceFolder = args[args.length-3];
+		Globals.OUTPUT_PATH = args[args.length-1];
+		updatePath();
 		// get all the gaml files in the model folder
 		ArrayList<File> listFiles = new ArrayList<File>();
 		for (String path : inputPathToModelLibrary) {
@@ -82,7 +94,12 @@ public class modelLibraryGenerator {
 		// read modelScreenshot.xml
 		System.out.println("----- Start to load the file "+inputModelScreenshot+" -----");
 		loadModelScreenshot();
-		System.out.println("----> file "+inputModelScreenshot+" loaded properly !");
+		System.out.println("----> file "+inputModelScreenshot+" loaded properly !" );
+		
+		for(File s:gamlFiles)
+		{
+			System.out.println("path "+ s.getAbsolutePath());
+		}
 		
 		// create input file if experiment is found
 		System.out.println("----- Start to write the input xml for headless -----");
@@ -94,7 +111,7 @@ public class modelLibraryGenerator {
 		///////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		// run the headless
-		System.out.println("----- Run the headless -----");
+		System.out.println("----- Run the headless -----" + inputFileForHeadlessExecution);
 		headlessApplication.runXMLForModelLibrary(inputFileForHeadlessExecution);
 		System.out.println("----- Headless executed properly ! -----");
 		
@@ -130,7 +147,7 @@ public class modelLibraryGenerator {
 	
 	public static void prepareInputFileForHeadless(ArrayList<File> gamlFiles, Application headlessApplication) {
 		// set the output (which will not be used, we just need to specify one. We will destroy it as soon as the headless execution is finish) 
-		Globals.OUTPUT_PATH = "/F:/outputHeadless";
+	//	Globals.OUTPUT_PATH = "/F:/outputHeadless";
 		// build the xml and run the headless
 		ArrayList<File> gamlFilesForScreenshot = new ArrayList<File>();
 		for (File gamlFile : gamlFiles) {
