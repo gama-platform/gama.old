@@ -25,5 +25,5 @@ echo "* (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners              *"
 echo "******************************************************************"
 passWork=.work$RANDOM
 
-java -cp ../plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar -Xms512m -Xmx$memory  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork $PARAM $mfull $outputFile
+java -cp ../eclipse/plugins/org.eclipse.equinox.launcher_1.3.100.v20150511-1540.jar -Xms512m -Xmx$memory  -Djava.awt.headless=true org.eclipse.core.launcher.Main  -application msi.gama.headless.id4 -data $passWork $PARAM $mfull $outputFile
 rm -rf $passWork
