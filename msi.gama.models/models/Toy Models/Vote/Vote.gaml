@@ -135,8 +135,8 @@ global {
 		 	}
 		 	//Compute the list of elector according to their distance
 			list<list<elector>> Groups;
-			geometry geoms <- union(elector collect ((each.shape) buffer (["distance"::float(threshold_attraction_electors) , "quadrantSegments"::4, "endCapStyle"::1])));
-			loop geom over: geoms.geometries { 
+			geometry geoms <- union(elector collect (each.shape + (threshold_attraction_electors, 4, #round)));
+					loop geom over: geoms.geometries { 
 				if (geom != nil and !empty(geom.points)) {
 					list<elector> els  <- (elector inside geom); 
 					add els to: Groups;
