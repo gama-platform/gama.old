@@ -27,7 +27,7 @@ global {
 		// Test of the connection to the database
 		if (first(DB_Accessor) testConnection [params::PARAMS] = false) {
 			write "Connection impossible";
-			do halt;
+			do pause;
 		}
 
 		ask (DB_Accessor) {

@@ -38,7 +38,7 @@ global {
 		}
 	}
 	reflex end_simulation when: infected_rate = 1.0 {
-		do halt;
+		do pause;
 	}
 }
 

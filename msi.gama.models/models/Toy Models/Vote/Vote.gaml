@@ -123,7 +123,7 @@ global {
 		candidate elected <- active_candidates with_max_of (each.percentage_vote);
 		//Display a window telling who is the winner and halt the model
 		do tell message: "The winner is " + elected.name; 
-		do halt;
+		do pause;
 	}
 	
 	//Reflex to compute the creation of group when one candidate chooses this strategy

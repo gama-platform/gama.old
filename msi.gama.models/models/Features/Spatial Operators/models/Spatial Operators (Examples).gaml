@@ -29,7 +29,7 @@ global {
 	
 
 	reflex stop when: empty ( object ) {
-		do halt;
+		do pause;
   	} 
 
 }

@@ -43,7 +43,7 @@ global {
 		}
 
 		write "DROP the result table";
-		do halt; 
+		do pause; 
 	}
 
 }
@@ -77,7 +77,7 @@ species DB_accessor skills: [SQLSKILL] {
 		if (not (self testConnection [params::PARAMS])) {
 			write "Connection impossible";
 			ask (world) {
-				do halt;
+				do pause;
 			}
 
 		} else {

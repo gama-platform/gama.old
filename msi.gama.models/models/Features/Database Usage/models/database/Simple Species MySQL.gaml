@@ -56,7 +56,7 @@ global {
 				do close;
 			}
 
-			do halt;
+			do pause;
 		} else {
 			write "" + first(DB_Accessor) getParameter ();
 		}
