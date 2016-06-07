@@ -79,7 +79,8 @@ public class GamlSyntacticParser extends GamlParser {
 				} else {
 					IPath p = path.append(u.path());
 					p = p.uptoSegment(p.segmentCount() - 1);
-					newUri = URI.createURI(p.toOSString());
+					//@AD:Please test it on UNIX as it had mentioned in ex: C:/myfile.text is absolute but /myfile.text is relative on Windows though absolute on Unix-style file systems.
+					newUri = URI.createFileURI(p.toOSString());
 				}
 				newSet.add(newUri);
 			}
