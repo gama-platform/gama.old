@@ -59,7 +59,7 @@ openFile
       <linux icon="./icons/launcher_icons/icon.xpm"/>
       <macosx icon="./icons/launcher_icons/icon.icns"/>
       <solaris/>
-      <win useIco="false">
+      <win useIco="true">
          <ico path="./icons/launcher_icons/icon.ico"/>
          <bmp
             winSmallHigh="./icons/launcher_icons/icon16_32.bmp"
