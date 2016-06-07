@@ -24,6 +24,7 @@ import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.NetworkMessage;
 import ummisco.gama.network.skills.INetworkSkill;
 import ummisco.gama.network.tcp.ClientServiceThread;
+import ummisco.gama.network.tcp.TCPConnector;
 
 public class MultiThreadedUDPServer extends Thread {
 
@@ -31,7 +32,8 @@ public class MultiThreadedUDPServer extends Thread {
 	public boolean OnServer = true;
 	private boolean closed = false;
 	private DatagramSocket myUDPServerSocket;
-	private  DatagramPacket sendPacket = null;
+	private DatagramPacket sendPacket = null;
+
 	public DatagramPacket getSendPacket() {
 		return sendPacket;
 	}
@@ -48,19 +50,21 @@ public class MultiThreadedUDPServer extends Thread {
 	}
 
 	/**
-	 * @param myServerSocket the myServerSocket to set
+	 * @param myServerSocket
+	 *            the myServerSocket to set
 	 */
 	public void setMyServerSocket(DatagramSocket u) {
 		this.myUDPServerSocket = u;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Thread#interrupt()
 	 */
-//	public void interrupt() {
-//		closed =true;
-//	}
-
+	// public void interrupt() {
+	// closed =true;
+	// }
 
 	public MultiThreadedUDPServer(final IAgent a, final DatagramSocket ss) {
 		myAgent = a;
@@ -71,66 +75,52 @@ public class MultiThreadedUDPServer extends Thread {
 		// Successfully created Server Socket. Now wait for connections.
 		while (!closed) {
 			try {
-				if(sendPacket != null){
+				if (sendPacket != null) {
 					myUDPServerSocket.send(sendPacket);
-
+					sendPacket = null;
 				}
-				if(myAgent.dead()){ 
+				if (myAgent.dead()) {
 					this.interrupt();
 				}
-//				if(!OnServer){
-//					System.out.println("client      ");
-//				}
+				// if(!OnServer){
+				// System.out.println("client ");
+				// }
 				byte[] receiveData = new byte[1024];
-				byte[] sendData = new byte[1024];
+//				byte[] sendData = new byte[1024];
 				// Accept incoming connections.
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				myUDPServerSocket.receive(receivePacket);
 				String sentence = new String(receivePacket.getData());
-				  InetAddress IPAddress = receivePacket.getAddress();
-                  int port = receivePacket.getPort();
-    				myAgent.setAttribute("replyIP", IPAddress);
-      				myAgent.setAttribute("replyPort", port);
+				InetAddress IPAddress = receivePacket.getAddress();
+				int port = receivePacket.getPort();
+				myAgent.setAttribute("replyIP", IPAddress);
+				myAgent.setAttribute("replyPort", port);
 
-//    				if (!clientSocket.isClosed() && !clientSocket.isInputShutdown()) {
-//    					GamaList<String> list_net_agents = (GamaList<String>) Cast.asList(myAgent.getScope(),
-//    							myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
-//    					if (list_net_agents!=null && !list_net_agents.contains(clientSocket.toString())) {
-//    						list_net_agents.addValue(myAgent.getScope(), clientSocket.toString());
-//    						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);
-//    					}
-//    				}
-//      				System.out.println("RECEIVED: "+IPAddress+"   " +port+"\n"+myUDPServerSocket.getLocalPort());
-      				GamaList<ConnectorMessage> msgs =(GamaList<ConnectorMessage>) myAgent.getAttribute("messages" + myAgent);
-    				if (msgs == null) {
-    					msgs =  (GamaList<ConnectorMessage>) GamaListFactory.create(ConnectorMessage.class);
-    				}
-				if(myAgent.dead()){
+				GamaList<String> list_net_agents = (GamaList<String>) Cast.asList(myAgent.getScope(),
+						myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
+				if (list_net_agents!=null && !list_net_agents.contains(IPAddress.toString()+"_"+port)) {
+					list_net_agents.addValue(myAgent.getScope(), IPAddress.toString()+"_"+port);
+					myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);
+				}
+				// System.out.println("RECEIVED: "+IPAddress+" "
+				// +port+"\n"+myUDPServerSocket.getLocalPort());
+				GamaList<ConnectorMessage> msgs = (GamaList<ConnectorMessage>) myAgent
+						.getAttribute("messages" + myAgent);
+				if (msgs == null) {
+					msgs = (GamaList<ConnectorMessage>) GamaListFactory.create(ConnectorMessage.class);
+				}
+				if (myAgent.dead()) {
 					this.interrupt();
 				}
 
-				NetworkMessage msg=new NetworkMessage(myUDPServerSocket.toString(), sentence != null ? sentence : "");
-				msgs.addValue(myAgent.getScope(),msg);
+				NetworkMessage msg = new NetworkMessage(myUDPServerSocket.toString(), sentence != null ? sentence : "");
+				msgs.addValue(myAgent.getScope(), msg);
 
-				myAgent.setAttribute("messages"+myAgent, msgs);
+				myAgent.setAttribute("messages" + myAgent, msgs);
 
-				
-//				if (!clientSocket.isClosed() && !clientSocket.isInputShutdown()) {
-//					GamaList<String> l = (GamaList<String>) Cast.asList(myAgent.getScope(),
-//							myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
-//					if (l!=null && !l.contains(clientSocket.toString())) {
-//						l.addValue(myAgent.getScope(), clientSocket.toString());
-//						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, l);
-						
-//						final ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);
-//						cliThread.start();
 
-//						myAgent.setAttribute("__client"+clientSocket.toString(), cliThread);
-//					}
-//				}
-
-			} catch(SocketTimeoutException ste){
-//				System.out.println("closed ");
+			} catch (SocketTimeoutException ste) {
+				// System.out.println("closed ");
 
 			} catch (Exception ioe) {
 
@@ -144,9 +134,9 @@ public class MultiThreadedUDPServer extends Thread {
 		}
 
 		try {
-			myAgent.setAttribute("__UDPserver"+ myUDPServerSocket.getLocalPort(), null);
-			myAgent.setAttribute("__UDPclient"+ myUDPServerSocket.getLocalPort(), null);
-			myUDPServerSocket.close();				
+			myAgent.getScope().getSimulationScope().setAttribute(UDPConnector._UDP_SERVER + myUDPServerSocket.getLocalPort(), null);
+			myAgent.getScope().getSimulationScope().setAttribute(UDPConnector._UDP_CLIENT + myUDPServerSocket.getLocalPort(), null);
+			myUDPServerSocket.close();
 			Thread.sleep(100);
 
 			Thread.currentThread().interrupt();

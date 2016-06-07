@@ -2,7 +2,7 @@
 * Name: Socket_UDP_HelloWorld_Server
 * Author: Arnaud Grignard & HUYNH Quang-Nghi
 * Description: Two clients are communicated throught the Socket TCP protocol.
-* Tags: Network, Socket, TCP
+* Tags: Network, Socket, UDP
 */
 
 model SocketUDP_HelloWorld_Server
@@ -24,20 +24,20 @@ species NetworkingAgent skills:[network]{
 	string would_like_to_send<-"";
 	reflex fetch //when:has_received_message()
 	{	
-		map mess <- fetch_message();
-		write ""+self+" "+mess;
-		if(mess!=nil and length(mess.pairs)>0){			
-			list<string> msgs<-mess.pairs[0].value;
-			write msgs;
+		if (length(mailbox) > 0)
+		{
+			write mailbox;
 		}
+
 //		write name + " fecth this message: " + mess;	
 	}
 	reflex send
 	{
 		
-			would_like_to_send<- "Server "+ name+", at cycle" + cycle + " sent to client:" + dest;
-			
-			do send_message to:"id" content:would_like_to_send;
+		loop id over: network_groups
+		{
+			do send to: id contents: "I am Server " + name + " I give order to " + id;
+		}
 	}
 }
 

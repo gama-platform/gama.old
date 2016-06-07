@@ -23,6 +23,10 @@ import ummisco.gama.network.skills.INetworkSkill;
 
 public class UDPConnector extends Connector {
 
+	public static String _UDP_SERVER = "__udp_server";
+	public static String _UDP_SOCKET= "__udp_socket";
+	public static String _UDP_CLIENT= "__udp_client";
+	
 	private boolean is_server = false;
 	private IScope myScope;
 
@@ -96,13 +100,13 @@ public class UDPConnector extends Connector {
 	public void openServerSocket(final IAgent agent) {
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
 
-		if (agent.getScope().getSimulationScope().getAttribute("__UDPserver" + port) == null) {
+		if (agent.getScope().getSimulationScope().getAttribute(_UDP_SERVER + port) == null) {
 			try {
 				final DatagramSocket sersock = new DatagramSocket(port);
 				sersock.setSoTimeout(10);
 				final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent, sersock);
 				ssThread.start();
-				agent.getScope().getSimulationScope().setAttribute("__UDPserver" + port, ssThread);
+				agent.getScope().getSimulationScope().setAttribute(_UDP_SERVER + port, ssThread);
 
 			} catch (BindException be) {
 				throw GamaRuntimeException.create(be, agent.getScope());
@@ -122,7 +126,7 @@ public class UDPConnector extends Connector {
 		// 9876);
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
 
-		if (agent.getAttribute("__UDPclient" + port) == null) {
+		if (agent.getAttribute(_UDP_CLIENT + port) == null) {
 
 			try {
 				final DatagramSocket sersock = new DatagramSocket();
@@ -130,7 +134,7 @@ public class UDPConnector extends Connector {
 				final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent, sersock);
 				ssThread.OnServer = false;
 				ssThread.start();
-				agent.setAttribute("__UDPclient" + port, ssThread);
+				agent.setAttribute(_UDP_CLIENT + port, ssThread);
 
 			} catch (BindException be) {
 				throw GamaRuntimeException.create(be, agent.getScope());
@@ -150,16 +154,16 @@ public class UDPConnector extends Connector {
 	}
 	
 	public void sendToClient(final IAgent agent, final String cli, final Object data) throws GamaRuntimeException {
-		int port = (int) agent.getAttribute("port");
+//		int port = (int) agent.getAttribute("port");
+		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
 
-		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute("__UDPserver" + port);
+		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getScope().getSimulationScope().getAttribute(_UDP_SERVER + port);
 		InetAddress IPAddress = (InetAddress) agent.getAttribute("replyIP");
 		int replyport = Cast.asInt(agent.getScope(), agent.getAttribute("replyPort"));
 		if (ssThread == null || IPAddress == null) {
 			return;
 		}
-		byte[] sendData = new byte[1024];
-		sendData = ((String) data).getBytes();
+		byte[] sendData = ((String) data).getBytes();
 		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, replyport);
 		try {
 			ssThread.setSendPacket(sendPacket);
@@ -173,17 +177,15 @@ public class UDPConnector extends Connector {
 	public void sendToServer(final IAgent agent, Object data) throws GamaRuntimeException {
 		final String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(agent.getScope(), sport);		
-		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute("__UDPclient" + port);
+		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute(_UDP_CLIENT + port);
 		if (ssThread == null) {
 			return;
 		}
 		try {
 			DatagramSocket clientSocket = ssThread.getMyServerSocket();
 			InetAddress IPAddress = InetAddress.getByName((String) agent.getAttribute(INetworkSkill.SERVER_URL));
-			byte[] sendData = new byte[1024];
-			byte[] receiveData = new byte[1024];
+			byte[] sendData = ((String) data).getBytes();
 			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
-			sendData = ((String) data).getBytes();
 			sendPacket.setData(sendData);
 			clientSocket.send(sendPacket);
 		} catch (Exception e) {
@@ -229,11 +231,11 @@ public class UDPConnector extends Connector {
 		String server = this.getConfigurationParameter(SERVER_URL);
 		String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(scope, sport);
-		final Thread UDPsersock = (Thread) scope.getAgentScope().getAttribute("__UDPserver" + port);
+		final Thread UDPsersock = (Thread) scope.getSimulationScope().getAttribute(_UDP_SERVER + port);
 		try {
 			if (UDPsersock != null) {
 				UDPsersock.interrupt();
-				scope.getAgentScope().setAttribute("__UDPserver" + port, null);
+				scope.getSimulationScope().setAttribute(_UDP_SERVER + port, null);
 			}
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);
