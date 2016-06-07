@@ -76,7 +76,7 @@ public class ModelAssembler {
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 			final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
-			final Map<String, ModelDescription> mm, final Collection<URI> imports) {
+			final Map<String, ModelDescription> mm, final Collection<URI> absoluteAlternatePaths) {
 		final Map<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
 		final Map<String, Map<String, ISyntacticElement>> experimentNodes = new TOrderedHashMap();
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
@@ -150,19 +150,24 @@ public class ModelAssembler {
 		}
 
 		// We build a list of working paths from which the composite model will
-		// be able to look for resources
-		List<String> importStrings = Collections.EMPTY_LIST;
-		final URI modelFolderPath = URI.createFileURI(modelPath).trimSegments(1);
+		// be able to look for resources. These working paths come from the
+		// imported models
+		List<String> absoluteAlternatePathAsStrings = new ArrayList();
 
-		if (!imports.isEmpty()) {
-			importStrings = new ArrayList();
-			for (final URI uri : imports) {
-				importStrings.add(modelFolderPath.appendSegments(uri.trimSegments(1).segments()).path() + "/");
+		if (!absoluteAlternatePaths.isEmpty()) {
+			absoluteAlternatePathAsStrings = new ArrayList();
+			for (final URI uri : absoluteAlternatePaths) {
+				String path = uri.path();
+				if (!path.endsWith("/"))
+					path = path + "/";
+				absoluteAlternatePathAsStrings.add(path);
 			}
 		}
+		Collections.reverse(absoluteAlternatePathAsStrings);
 		final ModelDescription model = new ModelDescription(modelName, null, projectPath,
 				modelPath, /* lastGlobalNode.getElement() */
-				source.getElement(), null, ModelDescription.ROOT, globalFacets, collector, importStrings);
+				source.getElement(), null, ModelDescription.ROOT, globalFacets, collector,
+				absoluteAlternatePathAsStrings);
 
 		// model.setGlobal(true);
 		model.addSpeciesType(model);

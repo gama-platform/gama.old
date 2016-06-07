@@ -11,11 +11,14 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import gnu.trove.set.hash.TLinkedHashSet;
-import java.util.*;
-import msi.gaml.statements.Facets;
+import java.util.Collections;
+import java.util.Set;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+
+import gnu.trove.set.hash.TLinkedHashSet;
+import msi.gaml.statements.Facets;
 
 /**
  * Class SyntacticModelElement.
@@ -26,33 +29,36 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class SyntacticModelElement extends SyntacticComposedElement {
 
-	final Set<URI> imports;
+	final Set<URI> absoluteAlternatePaths;
 	boolean urisFixed = false;
 
 	public SyntacticModelElement(final String keyword, final Facets facets, final EObject statement,
-		final Object ... imports) {
+			final Object... imports) {
 		super(keyword, facets, statement);
-		if ( imports == null || imports.length == 0 ) {
-			this.imports = Collections.EMPTY_SET;
+		if (imports == null || imports.length == 0) {
+			this.absoluteAlternatePaths = Collections.EMPTY_SET;
 		} else {
-			this.imports = new TLinkedHashSet();
-			for ( Object o : imports ) {
-				this.imports.add((URI) o);
+			this.absoluteAlternatePaths = new TLinkedHashSet();
+			for (final Object o : imports) {
+				if (o instanceof URI)
+					this.absoluteAlternatePaths.add((URI) o);
 			}
 		}
 	}
 
-	public Set<URI> getImports() {
-		return imports;
+	public Set<URI> getAbsoluteAlternatePaths() {
+		return absoluteAlternatePaths;
 	}
 
 	public boolean areURIFixed() {
 		return urisFixed;
 	}
 
-	public void setImports(final Set<URI> uris) {
-		imports.clear();
-		imports.addAll(uris);
+	public void setAbsoluteAlternatePaths(final Set<URI> uris) {
+		if (uris != absoluteAlternatePaths) {
+			absoluteAlternatePaths.clear();
+			absoluteAlternatePaths.addAll(uris);
+		}
 		urisFixed = true;
 	}
 

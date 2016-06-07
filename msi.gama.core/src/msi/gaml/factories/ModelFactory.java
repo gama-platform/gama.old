@@ -11,18 +11,31 @@
  **********************************************************************************************/
 package msi.gaml.factories;
 
-import static msi.gama.common.interfaces.IKeyword.*;
+import static msi.gama.common.interfaces.IKeyword.KEYWORD;
+import static msi.gama.common.interfaces.IKeyword.MODEL;
+import static msi.gama.common.interfaces.IKeyword.NAME;
+
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.file.GAMLFile;
-import msi.gaml.compilation.*;
-import msi.gaml.descriptions.*;
+import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.IModelBuilder;
+import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.descriptions.ErrorCollector;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
 
 /**
@@ -46,13 +59,13 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	}
 
 	public ModelDescription createModelDescription(final String projectPath, final String modelPath,
-		final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
-		final Map<String, ModelDescription> mm, final Collection<URI> set) {
-		return assembler.assemble(projectPath, modelPath, models, collector, document, mm, set);
+			final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
+			final Map<String, ModelDescription> mm, final Collection<URI> absoluteAlternatePaths) {
+		return assembler.assemble(projectPath, modelPath, models, collector, document, mm, absoluteAlternatePaths);
 	}
 
 	public ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
-		final SpeciesDescription parent) {
+			final SpeciesDescription parent) {
 		final Facets f = new Facets(NAME, name, KEYWORD, MODEL);
 		ModelDescription.ROOT = new ModelDescription(name, clazz, macro, parent, f);
 		return ModelDescription.ROOT;
@@ -60,7 +73,8 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto, final String plugin) {
+			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto,
+			final String plugin) {
 		// This method is actually never called.
 		return null;
 	}
@@ -72,6 +86,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	/**
 	 * Method validate()
+	 * 
 	 * @see msi.gaml.compilation.IModelBuilder#validate(org.eclipse.emf.ecore.resource.Resource)
 	 */
 	@Override
@@ -81,6 +96,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	/**
 	 * Method validate()
+	 * 
 	 * @see msi.gaml.compilation.IModelBuilder#validate(org.eclipse.emf.common.util.URI)
 	 */
 	@Override
@@ -90,6 +106,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	/**
 	 * Method compile()
+	 * 
 	 * @see msi.gaml.compilation.IModelBuilder#compile(org.eclipse.emf.ecore.resource.Resource)
 	 */
 	@Override
@@ -99,6 +116,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	/**
 	 * Method compile()
+	 * 
 	 * @see msi.gaml.compilation.IModelBuilder#compile(org.eclipse.emf.common.util.URI)
 	 */
 	@Override
@@ -108,7 +126,9 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	/**
 	 * Method compile()
-	 * @see msi.gaml.compilation.IModelBuilder#compile(org.eclipse.emf.ecore.resource.Resource, java.util.List)
+	 * 
+	 * @see msi.gaml.compilation.IModelBuilder#compile(org.eclipse.emf.ecore.resource.Resource,
+	 *      java.util.List)
 	 */
 	@Override
 	public IModel compile(final Resource resource, final List<GamlCompilationError> errors) {
@@ -117,7 +137,9 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	/**
 	 * Method compile()
-	 * @see msi.gaml.compilation.IModelBuilder#compile(org.eclipse.emf.common.util.URI, java.util.List)
+	 * 
+	 * @see msi.gaml.compilation.IModelBuilder#compile(org.eclipse.emf.common.util.URI,
+	 *      java.util.List)
 	 */
 	@Override
 	public IModel compile(final URI uri, final List<GamlCompilationError> errors) {
@@ -126,7 +148,9 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	/**
 	 * Method compile()
-	 * @see msi.gaml.compilation.IModelBuilder#compile(java.io.InputStream, java.util.List)
+	 * 
+	 * @see msi.gaml.compilation.IModelBuilder#compile(java.io.InputStream,
+	 *      java.util.List)
 	 */
 	@Override
 	public IModel compile(final InputStream contents, final List<GamlCompilationError> errors) {

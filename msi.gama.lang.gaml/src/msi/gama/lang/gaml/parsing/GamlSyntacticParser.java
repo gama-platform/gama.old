@@ -16,8 +16,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.antlr.runtime.CharStream;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.nodemodel.impl.NodeModelBuilder;
 import org.eclipse.xtext.parser.IParseResult;
@@ -58,26 +58,32 @@ public class GamlSyntacticParser extends GamlParser {
 		/**
 		 * @param uri
 		 */
-		public void fixURIsWith(final GamlResource r) {
+		public void computeAbsoluteAlternatePathsUsing(final GamlResource r) {
 			if (element == null) {
 				return;
 			}
 			if (element.areURIFixed()) {
 				return;
 			}
-			final Set<URI> set = element.getImports();
-			element.setImports(set);
+			final Set<URI> set = element.getAbsoluteAlternatePaths();
 			if (set.isEmpty()) {
+				element.setAbsoluteAlternatePaths(set);
 				return;
 			}
 			final Set<URI> newSet = new TLinkedHashSet();
+			final IPath path = r.getAbsoluteContainerFolderPath();
 			for (final URI u : set) {
-				final URI newUri = u.resolve(r.getURI());
-				if (EcoreUtil2.isValidUri(r, newUri)) {
-					newSet.add(newUri);
+				URI newUri;
+				if (!u.isRelative()) {
+					newUri = u;
+				} else {
+					IPath p = path.append(u.path());
+					p = p.uptoSegment(p.segmentCount() - 1);
+					newUri = URI.createURI(p.toOSString());
 				}
+				newSet.add(newUri);
 			}
-			element.setImports(newSet);
+			element.setAbsoluteAlternatePaths(newSet);
 		}
 	}
 

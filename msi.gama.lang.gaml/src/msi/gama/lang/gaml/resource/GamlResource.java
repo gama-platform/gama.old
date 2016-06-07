@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import static msi.gaml.factories.DescriptionFactory.getModelFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -124,7 +122,6 @@ public class GamlResource extends LazyLinkingResource {
 		if (r == null) {
 			return null;
 		}
-		// r.fixURIsWith(this);
 		return r;
 	}
 
@@ -167,11 +164,15 @@ public class GamlResource extends LazyLinkingResource {
 	private ModelDescription buildModelDescription(final Map<GamlResource, String> resources) {
 
 		// AD -> Nghi: microModels to use
+		final Set<URI> allAbsolutePaths = new LinkedHashSet();
 		final Map<ISyntacticElement, String> microModels = new TOrderedHashMap();
 		final List<ISyntacticElement> models = new ArrayList();
 		for (final Map.Entry<GamlResource, String> entry : resources.entrySet()) {
 			if (entry.getValue() == null) {
-				models.add(entry.getKey().getSyntacticContents());
+				entry.getKey().getParseResult().computeAbsoluteAlternatePathsUsing(entry.getKey());
+				final SyntacticModelElement m = (SyntacticModelElement) entry.getKey().getSyntacticContents();
+				allAbsolutePaths.addAll(m.getAbsoluteAlternatePaths());
+				models.add(m);
 			} else {
 				microModels.put(entry.getKey().getSyntacticContents(), entry.getValue());
 			}
@@ -201,15 +202,16 @@ public class GamlResource extends LazyLinkingResource {
 			aliasName = (String) microModels.values().toArray()[0];
 			final List<ISyntacticElement> res = getListMicroSyntacticElement(microModels, aliasName);
 			microModels.keySet().removeAll(res);
-			final ModelDescription mic = getModelFactory().createModelDescription(projectPath, modelPath, res,
+			final ModelDescription mic = GAML.getModelFactory().createModelDescription(projectPath, modelPath, res,
 					getErrorCollector(), isEdited, Collections.<String, ModelDescription> emptyMap(),
-					((SyntacticModelElement) res.get(0)).getImports());
+					((SyntacticModelElement) res.get(0)).getAbsoluteAlternatePaths());
 			mic.setAlias(aliasName);
 			mm.put(aliasName, mic);
 		}
 		// end-hqnghi
-		return getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(), isEdited,
-				mm, ((SyntacticModelElement) getSyntacticContents()).getImports());
+
+		return GAML.getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(),
+				isEdited, mm, allAbsolutePaths);
 	}
 
 	private List<ISyntacticElement> getListMicroSyntacticElement(final Map<ISyntacticElement, String> microModels,
@@ -511,6 +513,27 @@ public class GamlResource extends LazyLinkingResource {
 		}
 		path = new Path(URLDecoder.decode(path.toOSString()));
 		return path;
+	}
+
+	public IPath getAbsoluteContainerFolderPath() {
+		URI uri = getURI();
+		if (uri.isFile()) {
+			uri = uri.trimSegments(1);
+			return Path.fromOSString(uri.path());
+		}
+		final IPath path = getAbsolutePath();
+		if (path == null)
+			return null;
+		return path.uptoSegment(path.segmentCount() - 1);
+	}
+
+	public IPath getAbsolutePath() {
+		if (getURI().isFile())
+			return getPath();
+		final IPath path = getPath();
+		final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		final IPath fullPath = file.getLocation();
+		return fullPath;
 	}
 
 	public boolean isValidating() {
