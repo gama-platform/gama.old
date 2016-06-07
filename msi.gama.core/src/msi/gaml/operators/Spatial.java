@@ -916,10 +916,10 @@ public abstract class Spatial {
 					// exception
 					try {
 						geom = geom1.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS, BufferParameters.CAP_FLAT)
-					
-							.intersection(geom2.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS,
-									BufferParameters.CAP_FLAT));
-					} catch  (final Exception e2) {
+
+								.intersection(geom2.buffer(0.01, BufferParameters.DEFAULT_QUADRANT_SEGMENTS,
+										BufferParameters.CAP_FLAT));
+					} catch (final Exception e2) {
 						return null;
 					}
 				}
@@ -1474,11 +1474,11 @@ public abstract class Spatial {
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, category = { IOperatorCategory.SPATIAL,
 				IOperatorCategory.SP_TRANSFORMATIONS }, concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION,
 						IConcept.SPATIAL_TRANSFORMATION })
-		@doc(value = "", usages = @usage(value = "if the left-hand operand is a geometry and the right-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters", examples = @example(value = "shape + [\"distance\"::5.0, \"quadrantSegments\"::4, \"endCapStyle\":: 2]", equals = "a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment", test = false)))
+		@doc(value = "", deprecated = "Please use +(distance, number_of_segments) or +(distance, number_of_segments, end_cap) instead", usages = @usage(value = "if the left-hand operand is a geometry and the right-hand operand a map (with [distance::float, quadrantSegments:: int (the number of line segments used to represent a quadrant of a circle), endCapStyle::int (1: (default) a semi-circle, 2: a straight line perpendicular to the end segment, 3: a half-square)]), returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged considering the right-hand operand parameters", examples = @example(value = "shape + [\"distance\"::5.0, \"quadrantSegments\"::4, \"endCapStyle\":: 2]", equals = "a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5, with 4 segments to represent a quadrant of a circle and a straight line perpendicular to the end segment", test = false)))
 		public static IShape enlarged_by(final IScope scope, final IShape g, final GamaMap parameters) {
-			final Double distance = (Double) parameters.get("distance");
-			final Integer quadrantSegments = (Integer) parameters.get("quadrantSegments");
-			final Integer endCapStyle = (Integer) parameters.get("endCapStyle");
+			final Double distance = Cast.asFloat(scope, parameters.get("distance"));
+			final Integer quadrantSegments = Cast.asInt(scope, parameters.get("quadrantSegments"));
+			final Integer endCapStyle = Cast.asInt(scope, parameters.get("endCapStyle"));
 			if (endCapStyle == null) {
 				return new GamaShape(g, g.getInnerGeometry().buffer(distance, quadrantSegments));
 			}
@@ -1488,7 +1488,49 @@ public abstract class Spatial {
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, category = { IOperatorCategory.SPATIAL,
 				IOperatorCategory.SP_TRANSFORMATIONS }, concept = {})
 		@doc(usages = {
-				@usage(value = "if the left-hand operand is a geometry and the right-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance", examples = {
+				@usage(value = "if the left-hand operand is a geometry and the right-hand operands a float and an integer, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the first right-hand operand (distance), using a number of segments equal to the second right-hand operand", examples = {
+						@example(value = "circle(5) + (5,32)",
+								// equals = "a geometry corresponding to the
+								// geometry of the agent applying the operator
+								// enlarged by a distance of 5", test = false
+								equals = "circle(10)") }) })
+		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size,
+				final Integer numberOfSegments) {
+			if (g == null) {
+				return null;
+			}
+			final Geometry gg = g.getInnerGeometry().buffer(size, numberOfSegments);
+			if (gg != null && !gg.isEmpty()) {
+				return new GamaShape(g, gg);
+			}
+			return null;
+		}
+
+		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, category = { IOperatorCategory.SPATIAL,
+				IOperatorCategory.SP_TRANSFORMATIONS }, concept = {})
+		@doc(usages = {
+				@usage(value = "if the left-hand operand is a geometry and the right-hand operands a float, an integer and one of #round, #square or #flat, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the first right-hand operand (distance), using a number of segments equal to the second right-hand operand and a flat, square or round end cap style", examples = {
+						@example(value = "circle(5) + (5,32,#round)",
+								// equals = "a geometry corresponding to the
+								// geometry of the agent applying the operator
+								// enlarged by a distance of 5", test = false
+								equals = "circle(10)") }) })
+		public static IShape enlarged_by(final IScope scope, final IShape g, final Double size,
+				final Integer numberOfSegments, final Integer endCap) {
+			if (g == null) {
+				return null;
+			}
+			final Geometry gg = g.getInnerGeometry().buffer(size, numberOfSegments, endCap);
+			if (gg != null && !gg.isEmpty()) {
+				return new GamaShape(g, gg);
+			}
+			return null;
+		}
+
+		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" }, category = { IOperatorCategory.SPATIAL,
+				IOperatorCategory.SP_TRANSFORMATIONS }, concept = {})
+		@doc(usages = {
+				@usage(value = "if the left-hand operand is a geometry and the right-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance. The number of segments used by default is 8 and the end cap style is #round", examples = {
 						@example(value = "circle(5) + 5",
 								// equals = "a geometry corresponding to the
 								// geometry of the agent applying the operator
@@ -1554,8 +1596,7 @@ public abstract class Spatial {
 			if (g1 == null) {
 				return null;
 			}
-			if(new GamaPoint().equals(vector)==true)
-			{
+			if (new GamaPoint().equals(vector) == true) {
 				return g1;
 			}
 			vector.y = -vector.y;// This ugly trick is used to ensure that the

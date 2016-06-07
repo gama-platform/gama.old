@@ -30,6 +30,21 @@ import msi.gaml.types.Types;
 public class IUnits {
 
 	/**
+	 * Buffer constants
+	 */
+	@constant(value = "round", category = { IConstantCategory.GRAPHIC }, concept = { IConcept.GEOMETRY,
+			IConcept.CONSTANT }, doc = @doc("This constant represents a round line buffer end cap style"))
+	public final static int round = 1;
+
+	@constant(value = "flat", category = { IConstantCategory.GRAPHIC }, concept = { IConcept.GEOMETRY,
+			IConcept.CONSTANT }, doc = @doc("This constant represents a flat line buffer end cap style"))
+	public final static int flat = 2;
+
+	@constant(value = "square", category = { IConstantCategory.GRAPHIC }, concept = { IConcept.GEOMETRY,
+			IConcept.CONSTANT }, doc = @doc("This constant represents a square line buffer end cap style"))
+	public final static int square = 3;
+
+	/**
 	 * Layout constants
 	 *
 	 */
