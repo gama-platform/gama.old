@@ -226,6 +226,7 @@ public interface IKeyword {
 	public static final String JAVA = "java";
 	public static final String KEEP = "keep";
 	public static final String KEEP_SEED = "keep_seed";
+	public static final String KEEP_SIMULATIONS = "keep_simulations";
 	public static final String KEY = "key";
 	public static final String KEYWORD = "keyword";
 	public static final String KILL = "kill";
@@ -248,7 +249,7 @@ public interface IKeyword {
 	public static final String MAX = "max";
 	public static final String MAXIMIZE = "maximize";
 	public static final String MEMBERS = "members";
-	public static final String MEMORIZE = "memorize";	
+	public static final String MEMORIZE = "memorize";
 	public static final String MERSENNE = "mersenne";
 	public static final String MESSAGE = "message";
 	public static final String METHOD = "method";

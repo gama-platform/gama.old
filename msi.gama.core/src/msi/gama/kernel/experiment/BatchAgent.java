@@ -22,6 +22,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.FileOutput;
@@ -78,13 +79,9 @@ public class BatchAgent extends ExperimentAgent {
 		super.schedule(scope);
 		// Necessary to run it here, as if the seed has been fixed in the
 		// experiment, it is now defined and initialized
-		final IExpression expr = getSpecies().getFacet(IKeyword.KEEP_SEED);
-		if (expr != null && expr.isConst()) {
-			final boolean keepSeed = Cast.asBool(getScope(), expr.value(getScope()));
-			if (keepSeed) {
-				for (int i = 0; i < seeds.length; i++) {
-					getSeeds()[i] = getScope().getRandom().between(0d, Long.MAX_VALUE);
-				}
+		if (getSpecies().keepsSeed()) {
+			for (int i = 0; i < seeds.length; i++) {
+				getSeeds()[i] = getScope().getRandom().between(0d, Long.MAX_VALUE);
 			}
 		}
 
@@ -99,23 +96,14 @@ public class BatchAgent extends ExperimentAgent {
 	@Override
 	public void reset() {
 		// We first save the results of the various simulations
-		final IExpression fitness = getSpecies().getExplorationAlgorithm().getFitnessExpression();
-		final FileOutput output = getSpecies().getLog();
-		final boolean hasSimulations = getSimulationPopulation() != null;
+		final SimulationPopulation pop = getSimulationPopulation();
+		final boolean hasSimulations = pop != null && !pop.isEmpty();
 		try {
 			if (hasSimulations) {
-				for (final IAgent sim : getSimulationPopulation().toArray()) {
-					double lastFitnessValue = 0;
-					if (fitness != null) {
-						lastFitnessValue = Cast.asFloat(sim.getScope(), fitness.value(sim.getScope()));
-						fitnessValues.add(lastFitnessValue);
-					}
-					if (output != null) {
-						getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue);
-					}
-					sim.dispose();
+				for (final IAgent sim : pop.toArray()) {
+					memorizeFitnessAndCloseSimulation(sim);
 				}
-				getSimulationPopulation().clear();
+				pop.clear();
 			}
 
 		} catch (final GamaRuntimeException e) {
@@ -131,6 +119,20 @@ public class BatchAgent extends ExperimentAgent {
 		clock.setCycle(cycle);
 		clock.setTotalDuration(totalDuration);
 		clock.setLastDuration(lastDuration);
+	}
+
+	public void memorizeFitnessAndCloseSimulation(final IAgent sim) {
+		final IExpression fitness = getSpecies().getExplorationAlgorithm().getFitnessExpression();
+		final FileOutput output = getSpecies().getLog();
+		double lastFitnessValue = 0;
+		if (fitness != null) {
+			lastFitnessValue = Cast.asFloat(sim.getScope(), fitness.value(sim.getScope()));
+			fitnessValues.add(lastFitnessValue);
+		}
+		if (output != null) {
+			getSpecies().getLog().doRefreshWriteAndClose(currentSolution, lastFitnessValue);
+		}
+		sim.dispose();
 	}
 
 	/**
@@ -160,6 +162,7 @@ public class BatchAgent extends ExperimentAgent {
 
 	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
+		final SimulationPopulation pop = getSimulationPopulation();
 		currentSolution = new ParametersSet(sol);
 		fitnessValues.clear();
 		runNumber = runNumber + 1;
@@ -173,7 +176,7 @@ public class BatchAgent extends ExperimentAgent {
 		}
 		// We then create a number of simulations with the same solution
 
-		final int numberOfCores = getSimulationPopulation().getMaxNumberOfConcurrentSimulations();
+		final int numberOfCores = pop.getMaxNumberOfConcurrentSimulations();
 		int repeatIndex = 0;
 		while (repeatIndex < getSeeds().length) {
 			for (int coreIndex = 0; coreIndex < numberOfCores; coreIndex++) {
@@ -184,13 +187,13 @@ public class BatchAgent extends ExperimentAgent {
 					break;
 			}
 			int i = 0;
-			while (getSimulationPopulation().hasScheduledSimulations()) {
+			while (pop.hasScheduledSimulations()) {
 				// We step all the simulations
-				getSimulationPopulation().step(getScope());
+				pop.step(getScope());
 				// String cycles = "";
 				// We evaluate their stopCondition and unschedule the ones who
 				// return true
-				for (final IAgent sim : getSimulationPopulation().toArray()) {
+				for (final IAgent sim : pop.toArray()) {
 					final SimulationAgent agent = (SimulationAgent) sim;
 					// cycles += " " + simulation.getClock().getCycle();
 					// test the condition first in case it is paused
@@ -198,15 +201,15 @@ public class BatchAgent extends ExperimentAgent {
 							sim.getScope().evaluate(stopCondition, sim));
 					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 					if (mustStop) {
-						getSimulationPopulation().unscheduleSimulation(agent);
+						pop.unscheduleSimulation(agent);
+						if (!getSpecies().keepsSimulations())
+							memorizeFitnessAndCloseSimulation(agent);
 					}
 				}
 				// We inform the status line
 
-				getScope().getGui().setStatus(
-						"Run " + runNumber + " | " + seeds.length + " simulations (using "
-								+ getSimulationPopulation().getNumberOfActiveThreads() + " threads)",
-						"small.batch" + i / 5);
+				getScope().getGui().setStatus("Run " + runNumber + " | " + seeds.length + " simulations (using "
+						+ pop.getNumberOfActiveThreads() + " threads)", "small.batch" + i / 5);
 				if (++i == 20) {
 					i = 0;
 				}
@@ -235,7 +238,7 @@ public class BatchAgent extends ExperimentAgent {
 			return 0.0;
 		}
 		// We reset the experiment agent to erase traces of the current
-		// simulations
+		// simulations if any
 		this.reset();
 		// We update the parameters
 		getScope().getGui().showParameterView(getSpecies());

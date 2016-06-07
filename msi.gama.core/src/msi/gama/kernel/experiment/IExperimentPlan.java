@@ -11,13 +11,16 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.outputs.*;
+import msi.gama.outputs.FileOutput;
+import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.IScope;
 import msi.gaml.species.ISpecies;
 
@@ -73,7 +76,7 @@ public interface IExperimentPlan extends ISpecies {
 	public FileOutput getLog();
 
 	public abstract boolean isBatch();
-	
+
 	public abstract boolean isMemorize();
 
 	public abstract Map<String, Batch> getExplorableParameters();
@@ -86,8 +89,12 @@ public interface IExperimentPlan extends ISpecies {
 	public abstract boolean isHeadless();
 
 	public abstract void setHeadless(boolean headless);
-	
+
 	public abstract String getExperimentType();
+
+	public abstract boolean keepsSeed();
+
+	public abstract boolean keepsSimulations();
 
 	// public abstract void setController(ExperimentController controller);
 

@@ -51,6 +51,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
@@ -59,10 +60,7 @@ import msi.gaml.variables.IVariable;
  * Written by drogoul Modified on 28 mai 2011 Apr. 2013: Important modifications
  * to enable running true experiment agents
  *
- * Principe de base du batch : - si batch, créer un agent "spécial"
- * (BatchExperimentAgent ?) - faire que ce soit lui qui gère tout ce qu'il y a
- * dans BatchExperimentSpecies
- *
+ * 
  * Dec 2015: ExperimentPlans now manage their own controller. They are entirely
  * responsible for its life-cycle (creation, disposal)
  * 
@@ -80,8 +78,9 @@ import msi.gaml.variables.IVariable;
 		@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true, internal = true, doc = @doc("the execution frequence of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.")),
 		@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true, internal = true, doc = @doc("an ordered list of agents giving the order of their execution")),
 		@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL, optional = true, doc = @doc("")),
-		@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true, doc = @doc("In case of a batch experiment, expresses hom many times the simulations must be repeated")),
-		@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true, doc = @doc("In case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated")),
+		@facet(name = IKeyword.KEEP_SIMULATIONS, type = IType.BOOL, optional = true, doc = @doc("In the case of a batch experiment, specifies whether or not the simulations should be kept in memory for further analysis or immediately discarded with only their fitness kept in memory")),
+		@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true, doc = @doc("In the case of a batch experiment, expresses hom many times the simulations must be repeated")),
+		@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true, doc = @doc("In the case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated")),
 		@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc("Allows the experiment, when set to true, to use multiple threads to run its simulations")),
 		@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.MEMORIZE,
 				/* IKeyword.REMOTE, */IKeyword.GUI_,
@@ -126,6 +125,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	private FileOutput log;
 	private boolean isHeadless;
 	private final boolean isMulticore;
+	private final boolean keepSeed;
+	private final boolean keepSimulations;
 
 	private final String experimentType;
 
@@ -154,15 +155,35 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		} else if (experimentType.equals(IKeyword.HEADLESS_UI)) {
 			setHeadless(true);
 		}
-		final IExpression coreExpr = description.getFacets().getExpr(IKeyword.MULTICORE);
+		final IExpression coreExpr = getFacet(IKeyword.MULTICORE);
 		isMulticore = (coreExpr == null ? GamaPreferences.MULTITHREADED_SIMULATIONS.getValue()
 				: coreExpr.literalValue().equals(IKeyword.TRUE)) && !isHeadless();
+		final IExpression expr = getFacet(IKeyword.KEEP_SEED);
+		if (expr != null && expr.isConst())
+			keepSeed = Cast.asBool(scope, expr.value(scope));
+		else
+			keepSeed = false;
+		final IExpression ksExpr = getFacet(IKeyword.KEEP_SEED);
+		if (ksExpr != null && ksExpr.isConst())
+			keepSimulations = Cast.asBool(scope, ksExpr.value(scope));
+		else
+			keepSimulations = true;
 
 	}
 
 	@Override
 	public boolean isMulticore() {
 		return isMulticore;
+	}
+
+	@Override
+	public boolean keepsSeed() {
+		return keepSeed;
+	}
+
+	@Override
+	public boolean keepsSimulations() {
+		return keepSimulations;
 	}
 
 	@Override
