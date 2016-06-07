@@ -5,36 +5,41 @@
 package msi.gaml.statements.draw;
 
 import java.util.List;
+
+import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.util.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaPair;
 
 public class FileDrawingAttributes extends DrawingAttributes {
 
-	public final IAgent agent;
+	public final AgentIdentifier agentIdentifier;
 	public GamaColor border;
 
 	public FileDrawingAttributes(final ILocation size, final GamaPair<Double, GamaPoint> rotation,
-		final ILocation location, final GamaColor color, final GamaColor border, final IAgent agent) {
+			final ILocation location, final GamaColor color, final GamaColor border, final IAgent agent) {
 		super(size, rotation, location, color);
-		this.agent = agent;
+		this.agentIdentifier = AgentIdentifier.of(agent);
 		this.border = border;
 	}
 
 	public FileDrawingAttributes(final ILocation location) {
 		super(null, null, location, null);
-		agent = null;
+		agentIdentifier = null;
 		border = null;
 	}
 
 	public FileDrawingAttributes(final ILocation location, final GamaColor color, final GamaColor border) {
 		super(null, null, location, color);
-		agent = null;
+		agentIdentifier = null;
 		this.border = border;
 	}
 
 	/**
 	 * Method getTextures()
+	 * 
 	 * @see msi.gaml.statements.draw.DrawingAttributes#getTextures()
 	 */
 	@Override
@@ -44,6 +49,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 
 	/**
 	 * Method isEmpty()
+	 * 
 	 * @see msi.gaml.statements.draw.DrawingAttributes#isEmpty()
 	 */
 	@Override
@@ -53,15 +59,17 @@ public class FileDrawingAttributes extends DrawingAttributes {
 
 	/**
 	 * Method getAgent()
+	 * 
 	 * @see msi.gaml.statements.draw.DrawingAttributes#getAgent()
 	 */
-	@Override
-	public IAgent getAgent() {
-		return agent;
-	}
+	// @Override
+	// public IAgent getAgent() {
+	// return agent;
+	// }
 
 	/**
 	 * Method getBorder()
+	 * 
 	 * @see msi.gaml.statements.draw.DrawingAttributes#getBorder()
 	 */
 	@Override
@@ -71,11 +79,17 @@ public class FileDrawingAttributes extends DrawingAttributes {
 
 	/**
 	 * Method getDepth()
+	 * 
 	 * @see msi.gaml.statements.draw.DrawingAttributes#getDepth()
 	 */
 	@Override
 	public double getDepth() {
 		return 0;
+	}
+
+	@Override
+	public AgentIdentifier getAgentIdentifier() {
+		return agentIdentifier;
 	}
 
 }

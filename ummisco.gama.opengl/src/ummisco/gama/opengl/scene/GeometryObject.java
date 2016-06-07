@@ -13,6 +13,7 @@ package ummisco.gama.opengl.scene;
 
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gaml.statements.draw.DrawingAttributes;
@@ -37,9 +38,15 @@ public class GeometryObject extends AbstractObject {
 		if (getType() == IShape.Type.GRIDLINE) {
 			return super.getZ_fighting_id();
 		}
-		if (getAgent() != null && getAgent().getLocation().getZ() == 0d && getHeight() == 0d) {
-			return super.getZ_fighting_id() + 1 / (double) (getAgent().getIndex() + 10);
+		final AgentIdentifier id = attributes.getAgentIdentifier();
+		if (id != null) {
+			return super.getZ_fighting_id() + 1 / (double) (id.getIndex() + 10);
 		}
+		// if (getAgent() != null && getAgent().getLocation().getZ() == 0d &&
+		// getHeight() == 0d) {
+		// return super.getZ_fighting_id() + 1 / (double) (getAgent().getIndex()
+		// + 10);
+		// }
 		return super.getZ_fighting_id();
 	}
 

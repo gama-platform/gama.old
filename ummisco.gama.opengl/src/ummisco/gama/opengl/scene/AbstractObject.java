@@ -19,7 +19,6 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
@@ -147,9 +146,9 @@ public abstract class AbstractObject {
 		return attributes.getDepth();
 	}
 
-	public IAgent getAgent() {
-		return attributes.getAgent();
-	}
+	// public IAgent getAgent() {
+	// return attributes.getAgent();
+	// }
 
 	public double getRotationAngle() {
 		if (attributes.rotation == null || attributes.rotation.key == null) {

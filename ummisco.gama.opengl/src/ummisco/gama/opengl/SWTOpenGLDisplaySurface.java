@@ -34,6 +34,7 @@ import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -567,7 +568,9 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				ag = scope.getRoot().getPopulationFor(attributes.getSpeciesName()).getAgent(scope,
 						new GamaPoint(pickedPoint.x, -pickedPoint.y));
 			} else {
-				ag = attributes.getAgent();
+				final AgentIdentifier id = attributes.getAgentIdentifier();
+				if (id != null)
+					ag = id.getAgent(scope);
 			}
 		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag, cleanup);
 	}

@@ -16,7 +16,6 @@ import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.util.GamaPair;
 import msi.gama.util.file.Gama3DGeometryFile;
 import msi.gama.util.file.GamaGeometryFile;
@@ -46,10 +45,12 @@ public class ResourceObject extends AbstractObject {
 		// agent if it exists
 		if (attributes.location != null) {
 			gl.glTranslated(attributes.location.x, JOGLRenderer.Y_FLAG * attributes.location.y, attributes.location.z);
-		} else if (attributes.getAgent() != null) {
-			final ILocation loc = attributes.getAgent().getLocation();
-			gl.glTranslated(loc.getX(), JOGLRenderer.Y_FLAG * loc.getY(), loc.getZ());
 		}
+		// else if (attributes.getAgent() != null) {
+		// final ILocation loc = attributes.getAgent().getLocation();
+		// gl.glTranslated(loc.getX(), JOGLRenderer.Y_FLAG * loc.getY(),
+		// loc.getZ());
+		// }
 
 		final GamaPoint size = getDimensions();
 

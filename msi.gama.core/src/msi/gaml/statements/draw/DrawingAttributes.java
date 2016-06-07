@@ -5,9 +5,12 @@
 package msi.gaml.statements.draw;
 
 import java.util.List;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.util.*;
+
+import msi.gama.metamodel.agent.AgentIdentifier;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaPair;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
 
@@ -19,11 +22,12 @@ public abstract class DrawingAttributes {
 	public GamaColor color;
 
 	public DrawingAttributes(final ILocation size, final GamaPair<Double, GamaPoint> rotation, final ILocation location,
-		final GamaColor color) {
+			final GamaColor color) {
 		this.size = size == null ? null : new GamaPoint(size);
-		
+
 		if (rotation != null) {
-			this.rotation = new GamaPair(Cast.asFloat(null, rotation.key), Cast.asPoint(null, rotation.value), Types.FLOAT,Types.POINT);
+			this.rotation = new GamaPair(Cast.asFloat(null, rotation.key), Cast.asPoint(null, rotation.value),
+					Types.FLOAT, Types.POINT);
 		} else {
 			this.rotation = null;
 		}
@@ -41,7 +45,7 @@ public abstract class DrawingAttributes {
 	}
 
 	public void setLocationIfAbsent(final GamaPoint point) {
-		if ( location == null ) {
+		if (location == null) {
 			location = point;
 		}
 	}
@@ -50,7 +54,7 @@ public abstract class DrawingAttributes {
 
 	public abstract boolean isEmpty();
 
-	public abstract IAgent getAgent();
+	public abstract AgentIdentifier getAgentIdentifier();
 
 	public abstract GamaColor getBorder();
 
