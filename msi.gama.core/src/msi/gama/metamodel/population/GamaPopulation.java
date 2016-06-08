@@ -550,7 +550,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		// exp = species.getFacet(IKeyword.TORUS);
 		// final boolean isTorus = exp != null && Cast.asBool(scope,
 		// exp.value(scope));
-		final boolean isTorus = host.getPopulation().getTopology().isTorus();
+		final boolean isTorus = host.getTopology().isTorus();
 		exp = species.getFacet("use_individual_shapes");
 		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet("use_neighbors_cache");

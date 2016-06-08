@@ -32,6 +32,8 @@ import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.continuous.RootTopology;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.metamodel.topology.projection.WorldProjection;
 import msi.gama.outputs.IOutput;
@@ -53,6 +55,8 @@ import msi.gama.util.GamaDate;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
@@ -109,14 +113,26 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	private volatile boolean isOnUserHold;
 	private final RandomUtils random;
 	private final ActionExecuter executer;
+	private RootTopology topology;
 
 	public Boolean getScheduled() {
 		return scheduled;
 	}
 
+	public void setTopology(final IScope scope, final IShape shape) {
+		// A topology has already been computed. We update it and updates all
+		// the agents present in the spatial index
+		if (topology instanceof RootTopology) {
+			topology.updateEnvironment(shape);
+		} else {
+			final IExpression expr = getSpecies().getFacet(IKeyword.TORUS);
+			final boolean torus = expr == null ? false : Cast.as(expr.value(scope), Boolean.class, false);
+			topology = new RootTopology(scope, shape, torus);
+		}
+	}
+
 	@Override
 	public void setName(final String name) {
-		final String old = getName();
 		super.setName(name);
 		final SimulationOutputManager m = getOutputManager();
 		if (m != null)
@@ -147,6 +163,11 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			color = new GamaColor(GamaPreferences.SIMULATION_COLORS[getIndex() % 5].getValue());
 		}
 		return color;
+	}
+
+	@Override
+	public ITopology getTopology() {
+		return topology;
 	}
 
 	@setter(IKeyword.COLOR)
@@ -220,11 +241,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return projectionFactory;
 	}
 
-	// @Override
-	// public ActionExecuter getScheduler() {
-	// return scheduler;
-	// }
-
 	@Override
 	public SimulationClock getClock() {
 		return clock;
@@ -246,6 +262,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		if (outputs != null) {
 			outputs.dispose();
 			outputs = null;
+		}
+		if (topology != null) {
+			topology.dispose();
+			topology = null;
 		}
 		GAMA.releaseScope(scope);
 		super.dispose();
@@ -270,13 +290,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
 		// We systematically translate the geometry to {0,0}
 		final Envelope3D env = geom.getEnvelope();
-		if (getProjectionFactory() != null && getProjectionFactory().getWorld() != null) {
+		if (getProjectionFactory().getWorld() != null) {
 			((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
 		}
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY(), -env.getMinZ());
 		geometry.setGeometry(Transformations.translated_by(getScope(), geom, p));
-		// projectionFactory.setWorldProjectionEnv(env);
-		getPopulation().setTopology(getScope(), geometry);
+		setTopology(getScope(), geometry);
 
 	}
 

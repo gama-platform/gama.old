@@ -83,16 +83,9 @@ public class StringDrawer extends ObjectDrawer<StringObject> {
 			gl.glDisable(GLLightingFunc.GL_LIGHTING);
 			gl.glDisable(GL.GL_BLEND);
 			renderer.setCurrentColor(gl, s.getColor(), s.getAlpha());
-			// GLUtilGLContext.SetCurrentColor(gl, (float)
-			// (s.getColor().getRed() / 255.0),
-			// (float) (s.getColor().getGreen() / 255.0), (float)
-			// (s.getColor().getBlue() / 255.0),
-			// (float) (s.getColor().getAlpha() / 255.0 * s.getAlpha()));
 			gl.glRasterPos3d(x, y, z);
 			renderer.getGlut().glutBitmapString(fontToUse, s.string);
 			renderer.setCurrentColor(gl, Color.white);
-			// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f, 1.0f,
-			// 1.0f, 1.0f });
 			gl.glEnable(GL.GL_BLEND);
 			gl.glEnable(GLLightingFunc.GL_LIGHTING);
 			gl.glPopMatrix();

@@ -11,50 +11,54 @@
  **********************************************************************************************/
 package msi.gama.metamodel.topology.projection;
 
-
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import com.vividsolutions.jts.geom.*;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateFilter;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 public class WorldProjection extends Projection {
 
 	public CoordinateFilter gisToAbsoluteTranslation, absoluteToGisTranslation;
 
-	// public CoordinateReferenceSystem targetCRS;
-
 	public WorldProjection(final CoordinateReferenceSystem crs, final Envelope env, final ProjectionFactory fact) {
 		super(null, crs, env, fact);
 		// referenceProjection = this;
-		/*Remove the translation: this one is computed only when the world agent geometry is modified.
-		 * if ( env != null ) {
-			createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
-		}*/
+		/*
+		 * Remove the translation: this one is computed only when the world
+		 * agent geometry is modified. if ( env != null ) {
+		 * createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(),
+		 * projectedEnv.getMinY()); }
+		 */
 	}
-	
 
 	@Override
 	public void translate(final Geometry geom) {
-		if ( gisToAbsoluteTranslation != null ) {
+		if (gisToAbsoluteTranslation != null) {
 			geom.apply(gisToAbsoluteTranslation);
 		}
 	}
 
 	@Override
 	public void inverseTranslate(final Geometry geom) {
-		if ( absoluteToGisTranslation != null ) {
+		if (absoluteToGisTranslation != null) {
 			geom.apply(absoluteToGisTranslation);
 		}
 	}
-	public void updateTranslations(Envelope env) {
-		if ( env != null ) {
-			// We project the envelope and we use it for initializing the translations
-			//projectedEnv = transform(env, false);
+
+	public void updateTranslations(final Envelope env) {
+		if (env != null) {
 			projectedEnv = env;
-			// createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
 		}
 		createTranslations(projectedEnv.getMinX(), projectedEnv.getHeight(), projectedEnv.getMinY());
 	}
+
 	public void createTranslations(final double minX, final double height, final double minY) {
-		if ( gisToAbsoluteTranslation != null && absoluteToGisTranslation != null ) { return; }
+		// if (gisToAbsoluteTranslation != null && absoluteToGisTranslation !=
+		// null) {
+		// return;
+		// }
 		gisToAbsoluteTranslation = new CoordinateFilter() {
 
 			@Override
@@ -72,18 +76,5 @@ public class WorldProjection extends Projection {
 			}
 		};
 	}
-
-	// @Override
-	// public CoordinateReferenceSystem getTargetCRS() {
-	// return ProjectionFactory.getTargetCRS();
-	// // if ( targetCRS == null ) {
-	// // ProjectionFactory.computeDefaultCRS(GamaPreferences.LIB_TARGET_CRS.getValue(), true);
-	// // }
-	// // return targetCRS;
-	// }
-
-	// void setTargetCRS(final CoordinateReferenceSystem tcrs) {
-	// targetCRS = tcrs;
-	// }
 
 }

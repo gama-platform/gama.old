@@ -35,14 +35,10 @@ import msi.gama.kernel.experiment.ExperimentPlan;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.AbstractTopology.RootTopology;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.variables.IVariable;
 
@@ -189,12 +185,6 @@ public class SimulationPopulation extends GamaPopulation {
 
 	public void setHost(final ExperimentAgent agent) {
 		host = agent;
-	}
-
-	public void setTopology(final IScope scope, final IShape shape) {
-		final IExpression expr = species.getFacet(IKeyword.TORUS);
-		final boolean torus = expr == null ? false : Cast.as(expr.value(scope), Boolean.class, false);
-		topology = new RootTopology(scope, shape, torus);
 	}
 
 	@Override

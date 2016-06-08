@@ -12,7 +12,9 @@
 package msi.gama.metamodel.topology;
 
 import java.util.Collection;
+
 import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
@@ -27,8 +29,6 @@ import msi.gaml.species.ISpecies;
  */
 public interface ISpatialIndex {
 
-	// public final static Envelope ENVELOPE = new Envelope();
-
 	public abstract void insert(IAgent agent);
 
 	public abstract void remove(final Envelope previous, final IAgent agent);
@@ -36,17 +36,18 @@ public interface ISpatialIndex {
 	public abstract IAgent firstAtDistance(IScope scope, final IShape source, final double dist, final IAgentFilter f);
 
 	public abstract Collection<IAgent> allInEnvelope(IScope scope, final IShape source, final Envelope envelope,
-		final IAgentFilter f, boolean contained);
-
-	// public abstract void drawOn(Graphics2D g2, int width, int height);
+			final IAgentFilter f, boolean contained);
 
 	Collection<IAgent> allAtDistance(IScope scope, IShape source, double dist, IAgentFilter f);
+
+	public abstract void dispose();
 
 	public interface Compound extends ISpatialIndex {
 
 		public abstract void add(ISpatialIndex index, ISpecies species);
 
-		public abstract void dispose();
+		public abstract void updateQuadtree(Envelope envelope);
+
 	}
 
 }

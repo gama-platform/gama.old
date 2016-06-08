@@ -12,12 +12,36 @@
 package msi.gama.metamodel.topology.filter;
 
 import java.util.Collection;
+
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gaml.species.ISpecies;
 
 public interface IAgentFilter {
+
+	public static final IAgentFilter NONE = new IAgentFilter() {
+
+		@Override
+		public ISpecies getSpecies() {
+			return null;
+		}
+
+		@Override
+		public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
+			return GamaListFactory.create();
+		}
+
+		@Override
+		public boolean accept(final IScope scope, final IShape source, final IShape a) {
+			return true;
+		}
+
+		@Override
+		public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
+		}
+	};
 
 	public ISpecies getSpecies();
 

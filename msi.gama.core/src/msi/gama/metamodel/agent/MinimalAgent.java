@@ -65,7 +65,7 @@ public class MinimalAgent extends AbstractAgent {
 			return;
 		}
 
-		final ITopology topology = population.getTopology();
+		final ITopology topology = getTopology();
 		final ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
 
 		// if the old geometry is "shared" with another agent, we create a new
@@ -116,7 +116,7 @@ public class MinimalAgent extends AbstractAgent {
 			return;
 		}
 		final ILocation newLocation = point.copy(getScope());
-		final ITopology topology = population.getTopology();
+		final ITopology topology = getTopology();
 		if (topology == null) {
 			return;
 		}
@@ -164,7 +164,7 @@ public class MinimalAgent extends AbstractAgent {
 	public/* synchronized */ILocation getLocation() {
 		if (geometry == null || geometry.getInnerGeometry() == null) {
 			final IScope scope = this.getScope();
-			final ITopology t = population.getTopology();
+			final ITopology t = getTopology();
 			final ILocation randomLocation = t == null ? null : t.getRandomLocation(scope);
 			if (randomLocation == null) {
 				return null;
