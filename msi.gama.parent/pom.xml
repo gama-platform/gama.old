@@ -253,16 +253,46 @@
                 <artifactId>target-platform-configuration</artifactId>
                 <version>${tycho.version}</version>
                 <configuration>
+                <dependency-resolution>
+        			<optionalDependencies>ignore</optionalDependencies>
+     		 	</dependency-resolution>
                    <filters>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.jdt.core</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.jdt.ui</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.debug.core</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.debug.ui</id><removeAll/></filter>
+                   <!-- <filter> <type>eclipse-plugin</type><id>org.antlr.runtime</id><removeAll/></filter> -->
+                   <filter> <type>eclipse-plugin</type><id>org.apache.ant</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.codegen.ecore</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.codegen</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.ecore.editor</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.ecore.edit</id><removeAll/></filter>
+                   <!--<filter> <type>eclipse-plugin</type><id>org.eclipse.equinox.concurrent</id><removeAll/></filter>-->
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.jdt.debug</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.jdt.launching</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.xpand</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.xtend.typesystem.emf</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.xtend</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.xtext.common.types.ui</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.xtext.common.types</id><removeAll/></filter>
+                   <!-- <filter> <type>eclipse-plugin</type><id>org.eclipse.xtext.ecore</id><removeAll/></filter>-->
+                  <filter> <type>eclipse-plugin</type><id>org.eclipse.xtext.generator</id><removeAll/></filter>
+                  <filter> <type>eclipse-plugin</type><id>org.eclipse.xtext.xtext.generator</id><removeAll/></filter>
+
 		    <!-- FIX the JDT core due to bug in tycho https://www.eclipse.org/forums/index.php/t/1068443/ -->
-					 <filter>
+ 					 <filter>
+					 	<type>eclipse-plugin</type>
+					 	<id>org.eclipse.xtext.generator</id>
+					 	<removeAll />
+					 	</filter>
+					 	<filter>
 						<type>eclipse-plugin</type>
 							<id>org.eclipse.jdt.core</id>
 							<restrictTo>
 								<version>3.11.2.v20160128-0629</version>
-								<!--<version>3.4.0.v20150518-1201</version>-->
+	
 							</restrictTo>
-					</filter>
+					</filter> 
 					<!-- work around Equinox bug 348045 -->
 					<filter>
 						<type>p2-installable-unit</type>
