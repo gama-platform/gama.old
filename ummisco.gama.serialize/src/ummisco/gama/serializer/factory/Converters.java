@@ -6,6 +6,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import msi.gama.runtime.IScope;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
+import ummisco.gama.serializer.gamaType.converters.GamaAgentConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaAgentConverterNetwork;
 import ummisco.gama.serializer.gamaType.converters.GamaBasicTypeConverter;
 import ummisco.gama.serializer.gamaType.converters.GamaFileConverter;
@@ -24,12 +25,40 @@ import ummisco.gama.serializer.gamaType.converters.SavedAgentConverter;
 
 public abstract class Converters {
 
-	
-//	private static Converter[] loadConverter(IScope scope)
 	private static Converter[] loadConverter(ConverterScope cs)
 	{
-//		ConverterScope cs = new ConverterScope(scope);
-		 Converter[] converters= new Converter[12];
+		Converter[] converters= new Converter[12];
+		converters[0]= new GamaBasicTypeConverter(cs);
+		converters[1]=new GamaAgentConverter(cs);
+		converters[2]=new GamaListConverter(cs);
+		converters[3]=new GamaMapConverter(cs);
+		converters[4]=new GamaPairConverter();
+		converters[5]=new GamaMatrixConverter(cs);
+		converters[6]=new GamaGraphConverter(cs);		
+		converters[7]=new GamaFileConverter(cs);
+
+		converters[8]=new LogConverter();
+		converters[9]=new SavedAgentConverter(cs);
+		
+		converters[10]= new GamaPopulationConverter(cs);
+		converters[11]= new GamaSpeciesConverter(cs);		
+		//converters[12]= new ComplexMessageConverter(cs);		
+		
+		return converters;
+	}
+	
+	
+	public static Converter[] converterFactory(ConverterScope cs)
+	{
+		return loadConverter(cs);
+	}
+
+	
+	
+	// TODO Remove when possible
+	private static Converter[] loadConverterNetwork(ConverterScope cs)
+	{
+		Converter[] converters= new Converter[12];
 		converters[0]= new GamaBasicTypeConverter(cs);
 		converters[1]=new GamaAgentConverterNetwork(cs);
 		converters[2]=new GamaListConverter(cs);
@@ -47,16 +76,12 @@ public abstract class Converters {
 		//converters[12]= new ComplexMessageConverter(cs);		
 		
 		return converters;
-
 	}
 	
-	
-//	public static Converter[] converterFactory(IScope scope)
-	public static Converter[] converterFactory(ConverterScope cs)
+	public static Converter[] converterNetworkFactory(ConverterScope cs)
 	{
-//		return loadConverter(new ConverterScope(scope));
-//		return loadConverter(scope);
-		return loadConverter(cs);
-	}
+		return loadConverterNetwork(cs);
+	}	
 	
+	// END TODO
 }

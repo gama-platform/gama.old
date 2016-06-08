@@ -29,16 +29,12 @@ public abstract class StreamConverter {
 		dataStreamer.registerConverter(c);
 	}
 	
-	
-	
-//	public static XStream loadAndBuild(IScope scope)
 	public static XStream loadAndBuild(ConverterScope cs)	
 	{
 		XStream dataStreamer = new XStream(new DomDriver());
 		dataStreamer.setClassLoader(GamaClassLoader.getInstance());
 
 		Converter[] cnv = Converters.converterFactory(cs);
-//		Converter[] cnv = Converters.converterFactory(new ConverterScope(scope));
 		for(Converter c:cnv)
 		{
 			StreamConverter.registerConverter(dataStreamer,c);
@@ -48,8 +44,6 @@ public abstract class StreamConverter {
 	
 	public static synchronized String convertObjectToStream(IScope scope, Object o)
 	{
-		//if(dataStreamer==null|| currentScope != scope)
-			//loadAndBuild(scope);
 		return loadAndBuild(new ConverterScope(scope)).toXML(o);
 	}
 	
@@ -60,8 +54,6 @@ public abstract class StreamConverter {
 	
 	public static Object convertStreamToObject(IScope scope,String data)
 	{
-		//if(dataStreamer==null|| currentScope != scope)
-			//loadAndBuild(scope);
 		return loadAndBuild(new ConverterScope(scope)).fromXML(data);
 	}
 	
@@ -72,4 +64,40 @@ public abstract class StreamConverter {
 	
 	
 
+	
+	// TODO To remove when possible
+	public static XStream loadAndBuildNetwork(ConverterScope cs)	
+	{
+		XStream dataStreamer = new XStream(new DomDriver());
+		dataStreamer.setClassLoader(GamaClassLoader.getInstance());
+
+		Converter[] cnv = Converters.converterNetworkFactory(cs);
+		for(Converter c:cnv)
+		{
+			StreamConverter.registerConverter(dataStreamer,c);
+		}
+		return dataStreamer;
+	}	
+
+	public static synchronized String convertNetworkObjectToStream(ConverterScope scope, Object o)
+	{
+		return loadAndBuildNetwork(scope).toXML(o);
+	}	
+	
+	public static synchronized String convertNetworkObjectToStream(IScope scope, Object o)
+	{
+		return loadAndBuild(new ConverterScope(scope)).toXML(o);
+	}
+	
+	public static Object convertNetworkStreamToObject(ConverterScope scope,String data)
+	{
+		return loadAndBuildNetwork(scope).fromXML(data);
+	}
+	
+	public static Object convertNetworkStreamToObject(IScope scope,String data)
+	{
+		return loadAndBuild(new ConverterScope(scope)).fromXML(data);
+	}	
+	
+	// END TODO
 }

@@ -11,26 +11,20 @@ global {
 	int speed <- 1;
 	
 	init {
-		create sp number: 2;
-		create autreSpecies number: 1;
+		create autreSpecies number: 2;
+		create sp number: 1 {
+			autreAgent <- one_of(autreSpecies);
+		}		
 	}
 	
-	reflex toto {
-		write cycle;
-	}
-	
-	reflex create {
-		create sp number: 2;
-	}
-	
-	reflex dead  {
-		ask one_of(sp) {
-			do die;
-		}
+	reflex dead when: cycle = 3 {
+		ask sp {do die;}
 	}
 }
 
 species sp {
+	autreSpecies autreAgent;
+	
 	reflex moveSP {
 		location <- location + {speed,0,0};
 	}
@@ -45,9 +39,9 @@ species autreSpecies {}
 experiment experimentSerialize type: memorize {
 	parameter "speed" var: speed ;
 	
-	reflex aff {
-		write  serializeAgent(self.simulation);
-	}
+//	reflex aff {
+//		write  serializeAgent(self.simulation);
+//	}
 	
 	output {
 		display display1 {
@@ -56,7 +50,7 @@ experiment experimentSerialize type: memorize {
 		
 		display d2 {
 			chart "loc" type: series {
-				data "loc" value: first(sp).location.x color: #blue;
+//				data "loc" value: first(sp).location.x color: #blue;
 			}
 		}
 	}

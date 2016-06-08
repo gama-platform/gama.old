@@ -83,13 +83,15 @@ public class SavedAgent {
 				// We cannot keep all the GamaShape, because it contains populations too.
 				GamaShape shape = new GamaShape(((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry());
 				
-				for(Object keyAttr : agent.getAttributes().getKeys()) {
-					String attrName = (String) keyAttr;
-					if( UNSAVABLE_VARIABLES.contains(attrName)) { continue; }
-					if(species.getVarNames().contains(attrName)) { continue; }
-					if(agent.getAttribute(keyAttr) instanceof IPopulation) {continue;}
-					shape.setAttribute(attrName, agent.getAttribute(keyAttr));
-				}					
+				if(agent.getAttributes() != null) {
+					for(Object keyAttr : agent.getAttributes().getKeys()) {
+						String attrName = (String) keyAttr;
+						if( UNSAVABLE_VARIABLES.contains(attrName)) { continue; }
+						if(species.getVarNames().contains(attrName)) { continue; }
+						if(agent.getAttribute(keyAttr) instanceof IPopulation) {continue;}
+						shape.setAttribute(attrName, agent.getAttribute(keyAttr));
+					}	
+				}
 				
 				variables.put(specVar, shape);			
 				

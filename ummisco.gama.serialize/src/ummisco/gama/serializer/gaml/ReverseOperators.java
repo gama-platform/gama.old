@@ -101,5 +101,23 @@ public class ReverseOperators {
 
 		return saveAgent(scope, simAgt, pathname);
 	}	
+	
+	
 
+	// TODO to remove when possible
+	@operator(value = "serializeNetwork")
+	@doc("[For network purpose] It serializes any object, i.e. transform it into a string.")
+	public static String serializeNetwork(final IScope scope, final Object o) {
+		System.out.println("**** Serialize Object ****");	
+		return StreamConverter.convertNetworkObjectToStream(scope, o);
+	}	
+	
+	@operator(value = "unserializeNetwork")
+	@doc("[For network purpose]")
+	public static Object unserializeNetwork(final IScope scope, final String s) {
+		System.out.println("**** unSerialize Object ****");	
+		return StreamConverter.convertStreamToObject(scope, s);
+	}	
+	// END TODO 
+	
 }

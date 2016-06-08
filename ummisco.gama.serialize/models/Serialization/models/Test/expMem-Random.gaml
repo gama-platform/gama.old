@@ -7,35 +7,27 @@
 
 model experimentSerialize
 
-global {
-	int cycleSq ;
-	int speed <- 1;
-	
+global {	
 	init {
-		create sp number: 2;
-	}
-	
-	reflex toto {
-		write cycle;
-		cycleSq <- cycle * cycle;
+		create sp number: 1 {
+			shape <- cube(cycle + 2);
+		}
 	}
 }
 
 species sp {
 	reflex moveSP {
-		location <- location + {speed,0,0};
+		location <- any_location_in(world.shape);
 	}
 	
 	aspect circle {
-		draw circle(1) border: #black;
+		draw shape border: #black;
 	}
 }
 
-experiment experimentSerialize type: memorize {
-	parameter "speed" var: speed ;
-	
+experiment experimentSerialize type: memorize {	
 	output {
-		display display1 {
+		display display1 type: opengl {
 			species sp aspect: circle;
 		}
 		
