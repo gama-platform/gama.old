@@ -89,17 +89,17 @@ species NetworkingServer skills:[network]
 	reflex readMessage
 	{
 		//Get all the messages
-		map mess<-mailbox;
-		
+		list mess<-mailbox collect each.contents;
+		write mailbox;
 		//If we have message then we can start the processing
-		if(mess!=nil and length(mess.pairs)>0)
+		if(mess!=nil and length(mess)>0)
 		{
 			//We loop over all the messages to process them one by one
-			loop aMess over: mess.pairs
+			loop aMess over: mess
 			{
 
 				//We split the message by : to get a list of values for each message
-				list<string> infoInMess<-aMess.value[0] split_with ":";
+				list<string> infoInMess<-aMess split_with ":";
 				
 				//If there are more than 0 value and it's different from the previous message, we can process it
 				if(length(infoInMess)>0)and(infoInMess!=prevInfoInMess)

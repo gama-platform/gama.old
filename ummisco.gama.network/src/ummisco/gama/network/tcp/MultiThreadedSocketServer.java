@@ -72,7 +72,7 @@ public class MultiThreadedSocketServer extends Thread {
 					if (list_net_agents!=null && !list_net_agents.contains(clientSocket.toString())) {
 						list_net_agents.addValue(myAgent.getScope(), clientSocket.toString());
 						myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);
-						clientSocket.setSoTimeout(10);
+						clientSocket.setSoTimeout(TCPConnector._TCP_SO_TIMEOUT);
 						clientSocket.setKeepAlive(true);				
 
 						final ClientServiceThread cliThread = new ClientServiceThread(myAgent, clientSocket);

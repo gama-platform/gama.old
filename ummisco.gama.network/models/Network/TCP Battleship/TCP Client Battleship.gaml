@@ -85,11 +85,11 @@ species NetworkingAgent skills:[network]{
 	reflex readMessage
 	{	
 		//Get the map of all the messages sent to the client
-		map mess <- mailbox;
+		list mess <- mailbox collect each.contents;
 		//If we have messages then we can try to process them
-		if(mess != nil and length(mess.pairs)>0){
+		if(mess != nil and length(mess)>0){
 			//We get the first string sent by the server and we know that the server send only one string but equals to something like 'Server:value1:value2:value3'
-			string infoMess<- mess.pairs[0].value[0];
+			string infoMess<- mess[0];
 			
 			//As we have a string like 'Server:value1:value2:value3', we split the string using ':' to get a list of values
 			list<string> dataMess <- infoMess split_with ":";
@@ -312,6 +312,13 @@ experiment launchClient type: gui {
 			species bullet aspect: default;
 			
 			//The different controls allowed for the user, having event[y] means the action will be launched when the y key is pressed
+			/*
+			event["w"] action: doUp;
+			event["a"] action: doLeft;
+			event["d"] action: doRight;
+			event["q"] action: doBulletLeft;
+			event["e"] action: doBulletRight;
+			*/
 			event["z"] action: doUp;
 			event["q"] action: doLeft;
 			event["d"] action: doRight;

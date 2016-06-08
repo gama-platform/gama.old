@@ -25,6 +25,7 @@ public class TCPConnector extends Connector {
 	public static String _TCP_SERVER = "__tcp_server";
 	public static String _TCP_SOCKET= "__tcp_socket";
 	public static String _TCP_CLIENT= "__tcp_client";
+	public static Integer _TCP_SO_TIMEOUT= 100;
 
 	public static String DEFAULT_HOST = "localhost";
 	public static String DEFAULT_PORT = "1988";
@@ -34,20 +35,12 @@ public class TCPConnector extends Connector {
 		myScope = scope;
 	}
 
-	public boolean isIs_server() {
-		return is_server;
-	}
-
-	public void setIs_server(boolean is_server) {
-		this.is_server = is_server;
-	}
-
 	public void openServerSocket(final IAgent agent) throws GamaRuntimeException {
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
 		if (agent.getScope().getSimulationScope().getAttribute(_TCP_SERVER + port) == null) {
 			try {
 				final ServerSocket sersock = new ServerSocket(port);
-				sersock.setSoTimeout(10);
+				sersock.setSoTimeout(_TCP_SO_TIMEOUT);
 				final MultiThreadedSocketServer ssThread = new MultiThreadedSocketServer(agent, sersock);
 				ssThread.start();
 				agent.getScope().getSimulationScope().setAttribute(_TCP_SERVER + port, ssThread);
@@ -74,7 +67,7 @@ public class TCPConnector extends Connector {
 				server = (server == null ? DEFAULT_HOST : server);
 				port = (port == null ? DEFAULT_PORT : port);
 				sock = new Socket(server, Cast.asInt(agent.getScope(), port));
-				sock.setSoTimeout(10);
+				sock.setSoTimeout(_TCP_SO_TIMEOUT);
 
 				ClientServiceThread cSock = new ClientServiceThread(agent, sock);
 				cSock.start();
