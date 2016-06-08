@@ -49,10 +49,10 @@ public class ModelScene {
 	private static int number = 0;
 	private final int id;
 	public static final String ENV_KEY = "__env__0";
-	protected final Map<String, LayerObject> layers = new LinkedHashMap();
+	protected final Map<String, LayerObject> layers = new LinkedHashMap<String, LayerObject>();
 	protected LayerObject currentLayer;
 	protected final JOGLRenderer renderer;
-	private final Map<BufferedImage, Texture> localVolatileTextures = new HashMap(10);
+	private final Map<BufferedImage, Texture> localVolatileTextures = new HashMap<BufferedImage, Texture>(10);
 	private volatile boolean rendered = false;
 
 	public ModelScene(final JOGLRenderer renderer, final boolean withWorld) {

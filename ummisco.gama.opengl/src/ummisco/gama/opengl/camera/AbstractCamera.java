@@ -501,9 +501,6 @@ public abstract class AbstractCamera implements ICamera {
 					case '2':
 						quickDownTurn();
 						break;
-					case 'f':
-						flipView();
-						break;
 					default:
 						return true;
 					}
@@ -526,10 +523,6 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected void quickDownTurn() {
-	}
-
-	protected void flipView() {
-		flipped = !flipped;
 	}
 
 	/**
