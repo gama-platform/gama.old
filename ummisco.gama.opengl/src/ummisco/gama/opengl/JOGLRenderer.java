@@ -282,15 +282,14 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 		}
 
-		// Blending control
-		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		// Blending & alpha control
 		gl.glEnable(GL.GL_BLEND);
+		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 		gl.glEnable(GL2.GL_ALPHA_TEST);
 		gl.glAlphaFunc(GL2.GL_GREATER, 0.01f);
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString
-		BLENDING_ENABLED = true;
 		updatePerspective(gl);
 		// We mark the renderer as inited
 		inited = true;
@@ -376,15 +375,6 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(), data.getAmbientLightColor());
 			GLUtilLight.UpdateDiffuseLightValue(gl, data.getDiffuseLights(), getMaxEnvDim() / 20, data.getEnvWidth(),
 					data.getEnvHeight());
-		}
-
-		// Blending control
-		if (BLENDING_ENABLED) {
-			gl.glEnable(GL.GL_BLEND); // Turn blending on
-
-		} else {
-			gl.glDisable(GL.GL_BLEND); // Turn blending off
-			gl.glEnable(GL.GL_DEPTH_TEST);
 		}
 
 		// Line width ? Disable line smoothing seems to improve rendering time

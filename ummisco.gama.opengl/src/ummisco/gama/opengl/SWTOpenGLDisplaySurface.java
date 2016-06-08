@@ -441,7 +441,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public Collection<IAgent> selectAgent(final int x, final int y) {
 		final ILocation pp = getModelCoordinatesFrom(x, y, null, null);
-		return scope.getRoot().getPopulation().getTopology().getNeighborsOf(scope, new GamaPoint(pp.getX(), pp.getY()),
+		return scope.getRoot().getTopology().getNeighborsOf(scope, new GamaPoint(pp.getX(), pp.getY()),
 				renderer.getMaxEnvDim() / 100, Different.with());
 	}
 
@@ -588,7 +588,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 		final Envelope3D envInWorld = Envelope3D.withYNegated(env);
 		final Collection<IAgent> agents = scope.getTopology().getSpatialIndex().allInEnvelope(scope,
-				envInWorld.centre(), envInWorld, new Different(), true);
+				envInWorld.centre(), envInWorld, new Different(), false);
 		final Map<String, Runnable> actions = new LinkedHashMap();
 		final Map<String, Image> images = new HashMap();
 		images.put(renderer.camera.isROISticky() ? "Hide region" : "Keep region visible",
