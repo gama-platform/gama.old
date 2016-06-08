@@ -19,6 +19,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 
+import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
@@ -95,7 +96,7 @@ public abstract class AbstractObject {
 		drawer.draw(gl, this);
 		if (picked && !renderer.getPickingState().isMenuOn()) {
 			renderer.getPickingState().setMenuOn(true);
-			System.out.println("Object " + pickingIndex + " showing menu");
+			// System.out.println("Object " + pickingIndex + " showing menu");
 			renderer.getSurface().selectAgent(attributes);
 		}
 	}
@@ -108,7 +109,10 @@ public abstract class AbstractObject {
 	}
 
 	public double getZ_fighting_id() {
-		return layer == null ? 0 : layer.getOrder();
+		final AgentIdentifier id = attributes.getAgentIdentifier();
+		final double offset = id == null ? 0 : 1 / (double) (id.getIndex() + 10);
+		// final double offset = 0;
+		return (layer == null ? 0 : layer.getOrder()) + offset;
 	}
 
 	public double getLayerZ() {

@@ -285,6 +285,9 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		// Blending control
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glEnable(GL.GL_BLEND);
+		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+		gl.glEnable(GL2.GL_ALPHA_TEST);
+		gl.glAlphaFunc(GL2.GL_GREATER, 0.01f);
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString
 		BLENDING_ENABLED = true;
@@ -453,7 +456,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 			try {
 				final double zNear = maxDim / 1000;
 				double fW, fH;
-				//final double fovY = 45.0d;
+				// final double fovY = 45.0d;
 				final double fovY = this.data.getCameralens();
 				if (aspect > 1.0) {
 					fH = FastMath.tan(fovY / 360 * Math.PI) * zNear;

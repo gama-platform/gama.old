@@ -38,6 +38,7 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 
 	@Override
 	protected void _draw(final GL2 gl, final ImageObject img) {
+
 		final Texture curTexture = img.getTexture(gl, renderer, 0);
 		if (curTexture == null) {
 			return;
@@ -48,14 +49,11 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 		if (img.getLocation() != null) {
 			x = img.getLocation().x;
 			y = img.getLocation().y;
-			z = img.getLocation().z;
+			z = img.getLocation().z;// + img.getZ_fighting_id();
 		}
-		// System.out.println("Drawing at " + x + " " + y + " " + z);
 		// Binds the texture
 		curTexture.bind(gl);
 		renderer.setCurrentColor(gl, Color.white, img.getAlpha());
-		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f,
-		// img.getAlpha().floatValue());
 		final TextureCoords textureCoords = curTexture.getImageTexCoords();
 		final float textureTop = textureCoords.top();
 		final float textureBottom = textureCoords.bottom();
@@ -93,8 +91,6 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 			GLUtilNormal.HandleNormal(vertices, -1, renderer);
 		}
 		renderer.setCurrentColor(gl, Color.white, img.getAlpha());
-		// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f, 1.0f, 1.0f,
-		// (float) (double) img.getAlpha() });
 		gl.glBegin(GL2ES3.GL_QUADS);
 		// bottom-left of the texture and quad
 		gl.glTexCoord2f(textureLeft, textureBottom);
