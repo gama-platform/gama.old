@@ -14,22 +14,55 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.operators.Cast;
 
-public class SliderIntEditor extends AbstractEditor {
+/**
+ * A slider for choosing values between a max and a min, with an optional step
+ * @author drogoul
+ *
+ */
+public abstract class SliderEditor<T extends Number> extends AbstractEditor {
 
-	private static final int[] NULL = new int[0];
+	private static final int[] ITEMS = new int[] { REVERT };
+
+	public static class Int extends SliderEditor<Integer> {
+
+		public Int(final IScope scope, final IAgent a, final IParameter variable, final EditorListener l) {
+			super(scope, a, variable, l);
+		}
+
+		@Override
+		protected Integer computeValue(final double position) {
+			return (int) (minValue.intValue() + Math.round(position * (maxValue.intValue() - minValue.intValue())));
+		}
+	}
+
+	public static class Float extends SliderEditor<Double> {
+
+		public Float(final IScope scope, final IAgent a, final IParameter variable, final EditorListener l) {
+			super(scope, a, variable, l);
+		}
+
+		@Override
+		protected Double computeValue(final double position) {
+			return minValue.doubleValue() + position * (maxValue.doubleValue() - minValue.doubleValue());
+		}
+
+	}
+
 	SimpleSlider slider;
-	Integer stepValue;
+	T stepValue;
 
-	public SliderIntEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener l) {
+	public SliderEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener l) {
 		super(scope, a, variable);
 	}
 
 	@Override
 	protected int[] getToolItems() {
-		// TODO Auto-generated method stub
-		return NULL;
+		return ITEMS;
+	}
+
+	protected T getStep() {
+		return (T) param.getStepValue(getScope());
 	}
 
 	@Override
@@ -41,15 +74,10 @@ public class SliderIntEditor extends AbstractEditor {
 	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
 
 		slider = new SimpleSlider(composite, IGamaColors.OK.color(), IGamaColors.GRAY_LABEL.lighter(),
-			GamaIcons.create("small.slider2").image(), false) {
-
-		};
-		final Number step = param.getStepValue(getScope());
-		if ( step != null ) {
-			stepValue = Cast.asInt(getScope(), step);
-			final Integer min = Cast.asInt(getScope(), minValue);
-			final Integer max = Cast.asInt(getScope(), maxValue);
-			final Double realStep = stepValue.doubleValue() / max.doubleValue() - min.doubleValue();
+			GamaIcons.create("small.slider2").image(), false) {};
+		stepValue = getStep();
+		if ( stepValue != null ) {
+			final Double realStep = stepValue.doubleValue() / maxValue.doubleValue() - minValue.doubleValue();
 			slider.setStep(realStep);
 		}
 
@@ -57,7 +85,7 @@ public class SliderIntEditor extends AbstractEditor {
 
 			@Override
 			public void positionChanged(final double position) {
-				modifyValue(computeValue(position));
+				modifyAndDisplayValue(computeValue(position));
 				unitItem.setText(computeUnitLabel());
 				toolbar.layout();
 				toolbar.pack();
@@ -99,15 +127,13 @@ public class SliderIntEditor extends AbstractEditor {
 	@Override
 	protected void addToolbarHiders(final Control ... c) {}
 
-	private int computeValue(final double position) {
-		return (int) (minValue.intValue() + Math.round(position * (maxValue.intValue() - minValue.intValue())));
-	}
+	protected abstract T computeValue(final double position);
 
 	@Override
 	protected void displayParameterValue() {
-		final int p = (int) this.getParameterValue();
+		final T p = (T) currentValue;
 		final double position =
-			(double) (p - minValue.intValue()) / (double) (maxValue.intValue() - minValue.intValue());
+			(p.doubleValue() - minValue.doubleValue()) / (maxValue.doubleValue() - minValue.doubleValue());
 		slider.updateSlider(position, false);
 
 	}
