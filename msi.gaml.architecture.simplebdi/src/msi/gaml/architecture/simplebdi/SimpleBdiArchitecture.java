@@ -250,8 +250,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 					}
 					_persistentTask = selectExecutablePlanWithHighestPriority(scope);
 					agent.setAttribute(CURRENT_PLAN, _persistentTask);
-					addThoughts(scope, "ok, new intention: " + currentIntention(scope) + " with plan "
-							+ _persistentTask.getName());
+					if (_persistentTask != null)
+						addThoughts(scope, "ok, new intention: " + currentIntention(scope) + " with plan "
+								+ _persistentTask.getName());
 				}
 				if (_persistentTask == null && currentIntention(scope) != null) {
 					_persistentTask = selectExecutablePlanWithHighestPriority(scope);
