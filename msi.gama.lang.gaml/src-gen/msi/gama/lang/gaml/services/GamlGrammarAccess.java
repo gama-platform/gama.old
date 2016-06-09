@@ -3606,24 +3606,33 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cOpFullStopKeyword_1_1_1_0_0 = (Keyword)cOpAssignment_1_1_1_0.eContents().get(0);
 		private final Assignment cRightAssignment_1_1_1_1 = (Assignment)cGroup_1_1_1.eContents().get(1);
 		private final RuleCall cRightAbstractRefParserRuleCall_1_1_1_1_0 = (RuleCall)cRightAssignment_1_1_1_1.eContents().get(0);
+		private final Group cGroup_1_1_2 = (Group)cAlternatives_1_1.eContents().get(2);
+		private final Assignment cOpAssignment_1_1_2_0 = (Assignment)cGroup_1_1_2.eContents().get(0);
+		private final Keyword cOpFullStopKeyword_1_1_2_0_0 = (Keyword)cOpAssignment_1_1_2_0.eContents().get(0);
+		private final Assignment cNamed_expAssignment_1_1_2_1 = (Assignment)cGroup_1_1_2.eContents().get(1);
+		private final RuleCall cNamed_expSTRINGTerminalRuleCall_1_1_2_1_0 = (RuleCall)cNamed_expAssignment_1_1_2_1.eContents().get(0);
 		
+		////Access returns Expression:
+		////	Primary ({Access.left = current} ((op='[' args=ExpressionList? ']') | (op="." right=AbstractRef)))*
+		////;
 		//Access Expression:
-		//	Primary ({Access.left=current} (op='[' args=ExpressionList? ']' | op="." right=AbstractRef))*
+		//	Primary ({Access.left=current} (op='[' args=ExpressionList? ']' | op="." right=AbstractRef | op="."
+		//	named_exp=STRING))*
 		@Override public ParserRule getRule() { return rule; }
 
-		//Primary ({Access.left=current} (op='[' args=ExpressionList? ']' | op="." right=AbstractRef))*
+		//Primary ({Access.left=current} (op='[' args=ExpressionList? ']' | op="." right=AbstractRef | op="." named_exp=STRING))*
 		public Group getGroup() { return cGroup; }
 
 		//Primary
 		public RuleCall getPrimaryParserRuleCall_0() { return cPrimaryParserRuleCall_0; }
 
-		//({Access.left=current} (op='[' args=ExpressionList? ']' | op="." right=AbstractRef))*
+		//({Access.left=current} (op='[' args=ExpressionList? ']' | op="." right=AbstractRef | op="." named_exp=STRING))*
 		public Group getGroup_1() { return cGroup_1; }
 
 		//{Access.left=current}
 		public Action getAccessLeftAction_1_0() { return cAccessLeftAction_1_0; }
 
-		//(op='[' args=ExpressionList? ']' | op="." right=AbstractRef)
+		//(op='[' args=ExpressionList? ']' | op="." right=AbstractRef | op="." named_exp=STRING)
 		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
 
 		//op='[' args=ExpressionList? ']'
@@ -3658,6 +3667,21 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//AbstractRef
 		public RuleCall getRightAbstractRefParserRuleCall_1_1_1_1_0() { return cRightAbstractRefParserRuleCall_1_1_1_1_0; }
+
+		//op="." named_exp=STRING
+		public Group getGroup_1_1_2() { return cGroup_1_1_2; }
+
+		//op="."
+		public Assignment getOpAssignment_1_1_2_0() { return cOpAssignment_1_1_2_0; }
+
+		//"."
+		public Keyword getOpFullStopKeyword_1_1_2_0_0() { return cOpFullStopKeyword_1_1_2_0_0; }
+
+		//named_exp=STRING
+		public Assignment getNamed_expAssignment_1_1_2_1() { return cNamed_expAssignment_1_1_2_1; }
+
+		//STRING
+		public RuleCall getNamed_expSTRINGTerminalRuleCall_1_1_2_1_0() { return cNamed_expSTRINGTerminalRuleCall_1_1_2_1_0; }
 	}
 
 	public class PrimaryElements extends AbstractParserRuleElementFinder {
@@ -5882,8 +5906,12 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getUnaryAccess().getRule();
 	}
 
+	////Access returns Expression:
+	////	Primary ({Access.left = current} ((op='[' args=ExpressionList? ']') | (op="." right=AbstractRef)))*
+	////;
 	//Access Expression:
-	//	Primary ({Access.left=current} (op='[' args=ExpressionList? ']' | op="." right=AbstractRef))*
+	//	Primary ({Access.left=current} (op='[' args=ExpressionList? ']' | op="." right=AbstractRef | op="."
+	//	named_exp=STRING))*
 	public AccessElements getAccessAccess() {
 		return pAccess;
 	}

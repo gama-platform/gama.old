@@ -514,6 +514,24 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return true;
 	}
 
+	private IExpression compileNamedExperimentFieldExpr(final Expression leftExpr, final String name) {
+		final IExpression owner = compile(leftExpr);
+		if (owner == null) {
+			return null;
+		}
+		final IType type = owner.getType();
+		if (type instanceof ParametricType && type.getType().id() == IType.SPECIES) {
+			if (type.getContentType().getSpecies() instanceof ModelDescription) {
+				final ModelDescription sd = (ModelDescription) type.getContentType().getSpecies();
+				if (sd.hasExperiment(name)) {
+					return factory.createConst(name, GamaType.from(sd.getExperiment(name)));
+				}
+			}
+		}
+		context.error("Only experiments can be accessed using their plain name", IGamlIssue.UNKNOWN_FIELD);
+		return null;
+	}
+
 	private IExpression compileFieldExpr(final Expression leftExpr, final Expression fieldExpr) {
 		final IExpression owner = compile(leftExpr);
 		if (owner == null) {
@@ -826,7 +844,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	// @Override
 	public IExpression caseDot(final Access object) {
-		return compileFieldExpr(object.getLeft(), object.getRight());
+		if (object.getRight() != null)
+			return compileFieldExpr(object.getLeft(), object.getRight());
+		else if (object.getNamed_exp() != null) {
+			return compileNamedExperimentFieldExpr(object.getLeft(), object.getNamed_exp());
+		}
+		return null;
 	}
 
 	@Override

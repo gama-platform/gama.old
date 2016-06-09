@@ -4,7 +4,7 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 
 Entry:
-	Model | StringEvaluator | Block ;
+	Model | StringEvaluator ;
 
 
 
@@ -31,83 +31,85 @@ Pragma:
  */
 
 S_Section returns Statement:
-	S_Entities | S_Global | S_Species | S_Experiment | S_Environment
+	 S_Global | S_Species | S_Experiment 
 ;
 
 S_Global :
 	key="global" (facets+=Facet)* (block=Block | ';')
 ;
 
-S_Entities:
-	key="entities" block=Block
-;
-
-S_Environment :
-	key="environment" (facets+=Facet)* (block=Block | ';')
-;
-
 S_Species :
-	(key=_SpeciesKey (firstFacet='name:')? name=ID (facets+=Facet)* (block=Block | ';'));
+	(key=_SpeciesKey name=ID (facets+=Facet)* (block=Block | ';'));
 
 S_Experiment :
-	key="experiment" (firstFacet="name:")? name=(Valid_ID | STRING) (facets+=Facet)* (block=ExperimentBlock | ';');
+	key="experiment" name=(Valid_ID | STRING) (facets+=Facet)* (block=ExperimentBlock | ';');
 
 /**
  * Statements
  */
 Statement:
-	(=> S_Declaration |
-	((=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Equations)));
+	
+	(
+		=> S_Other 
+		| 
+		S_Declaration 
+		| 
+		(
+			(
+				=> S_Assignment  
+				| S_Do 
+				| S_Return 
+				| S_Solve 
+				| S_If 
+				| S_Equations
+			)
+		)
+	)
+;
 
-S_1Expr_Facets_BlockOrEnd returns Statement:
-	key=_1Expr_Facets_BlockOrEnd_Key (firstFacet=FirstFacetKey)? expr=Expression (facets+=Facet)* (block=Block | ";");
+//S_1Expr_Facets_BlockOrEnd returns Statement:
+//	key=_1Expr_Facets_BlockOrEnd_Key expr=Expression (facets+=Facet)* (block=Block | ";");
 
 S_Do:
-	key=_DoKey (firstFacet="action:")? expr=AbstractRef (facets+=Facet)* (block=Block | ';');
+	key=_DoKey expr=AbstractRef (facets+=Facet)* (block=Block | ';');
 
 S_Loop:
 	key="loop" (name=ID)? (facets+=Facet)* block=Block;
 
 S_If:
-	key='if' (firstFacet="condition:")? expr=Expression block=Block (=> 'else' else=(S_If | Block))?;
+	key='if' expr=Expression block=Block (=> 'else' else=(S_If | Block))?;
 
 S_Other:
-	key=ID (facets+=Facet)* (block=Block | ';');
+	key=ID (expr=Expression)? (facets+=Facet)* (block=Block | ';');
 
 S_Return:
-	key='return' (firstFacet="value:")? expr=Expression? ';';
+	key='return' expr=Expression? ';';
 
 
 	/*
  * DECLARATIONS
  */
 S_Declaration:
-	=>S_Definition | S_Species | S_Reflex | S_Action | S_Var | S_Loop ;
+	=>S_Definition | S_Species | S_Reflex | S_Action  | S_Loop  ; // S_Var
 
 S_Reflex:
-	key=_ReflexKey (firstFacet="name:")? name=Valid_ID? ("when"":" expr=Expression)? block=Block;
+	key=_ReflexKey name=ID? ("when"":" expr=Expression)? block=Block;
 
 S_Definition:
-	tkey=(TypeRef) (firstFacet="name:")? name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
+	tkey=(TypeRef) name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
 
 S_Action returns S_Definition:
-	{S_Action} key="action" (firstFacet='name:')? name=Valid_ID ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
+	{S_Action} key="action" name=Valid_ID ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
 
-S_Var returns S_Definition:
-	{S_Var} key=_VarOrConstKey (firstFacet="name:")? name=Valid_ID (facets+=Facet)* ';';
+//S_Var returns S_Definition:
+//	{S_Var} key=_VarOrConstKey (firstFacet="name:")? name=Valid_ID (facets+=Facet)* ';';
 
 
 	/*
  * ASSIGNMENTS
  */
 S_Assignment:
-	S_DirectAssignment | S_Set;
-
-S_DirectAssignment:
 	(expr=Expression key=(_AssignmentKey) value=Expression (facets+=Facet)*) ';';
-
-S_Set:
-	key="set" expr=Expression ("value:" | "<-") value=Expression ";";
 
 S_Equations:
 	key=_EquationsKey name=Valid_ID (facets+=Facet)* ('{' (equations+=S_Equation ';')* '}' | ';');
@@ -116,26 +118,25 @@ S_Equation returns S_Assignment:
 	expr=(Function|VariableRef) key="=" value=Expression;
 
 S_Solve:
-	key=_SolveKey (firstFacet="equation:")? expr=EquationRef (facets+=Facet)* (block=Block | ';');
+	key=_SolveKey expr=EquationRef (facets+=Facet)* (block=Block | ';');
 
 
 
 /**
  * DISPLAYS
  */
- 
 
-//S_Monitor:
+//S_Monitor :
 //	key="monitor" (firstFacet="name:")? name=(Valid_ID|STRING) facets+=Facet ";"
 //;
 
 S_Display:
-	key="display" (firstFacet="name:")? name=(Valid_ID|STRING) (facets+=Facet)* block=displayBlock
+	key="display" name=(Valid_ID|STRING) (facets+=Facet)* block=Block
 ;
 
-displayBlock returns Block:
-	{Block} '{' (statements+=displayStatement)* '}'
-;
+//displayBlock returns Block:
+//	{Block} '{' (statements+=displayStatement)* '}'
+//;
 
 ExperimentBlock returns Block:
 	{Block} '{' (statements+=experimentStatement)* '}'
@@ -147,28 +148,34 @@ experimentStatement returns Statement:
 
 
 S_Output returns Statement:
-	key=("output"|"permanent") (facets+=Facet)* block=outputBlock
+	key=("output"|"permanent") block=outputBlock
 ;
 
 outputBlock returns Block:
 	{Block} '{' (statements += outputStatement)* '}'
 ;
 
-outputStatement returns Statement:
-	Statement | S_Display 
-;
-displayStatement returns Statement:
-	speciesOrGridDisplayStatement | S_1Expr_Facets_BlockOrEnd
-;
+outputStatement returns Statement
+	:
+	Statement 
+	| 
+	S_Display 
+//	| 
+//	S_Monitor
+	
+	;
+//displayStatement returns Statement:
+//	speciesOrGridDisplayStatement | Statement
+//;
 
-speciesOrGridDisplayStatement:
-	key=_SpeciesKey expr=Expression (facets+=Facet)* (block=displayBlock | ";")
-;
+//speciesOrGridDisplayStatement:
+//	key=_SpeciesKey expr=Expression (facets+=Facet)* (block=displayBlock | ";")
+//;
 
 	/**
- * Statement keys
+ * Statement keys 
  */
-_EquationsKey:
+_EquationsKey: 
 	"equation";
 
 _SolveKey:
@@ -177,18 +184,16 @@ _SolveKey:
 _SpeciesKey:
 	"species" | "grid";
 
-_1Expr_Facets_BlockOrEnd_Key:
-	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "inspect" | "browse" |
-	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" | "status";
-
-_LayerKey:
-	"light" | "camera" | "text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay" | "datalist"
-;
+//_1Expr_Facets_BlockOrEnd_Key:
+//	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "inspect" | "browse" |
+//	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" | "status";
+//
+//_LayerKey:
+//	"text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" |  "event" | "overlay" | "datalist" | "camera" | "light"
+//;
 _DoKey:
 	"do";
 
-_VarOrConstKey:
-	"var" | "const" | "let" | "arg" | "signal" ;
 
 _ReflexKey:
 	"init" | "reflex" | "aspect";
@@ -214,13 +219,10 @@ ArgumentDefinition:
 Facet:
 	DefinitionFacet | FunctionFacet | ClassicFacet | TypeFacet | VarFacet | ActionFacet;
 
-FirstFacetKey:
-	DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | VarFacetKey | ActionFacetKey | ClassicFacetKey ;
-
-ClassicFacetKey: (ID ':');
+ClassicFacetKey: ID ':';
 
 DefinitionFacetKey:
-	"name:" | "returns:" ; /*| "var:" */
+	/*"name:" |*/ "returns:" ; /*| "var:" */
 
 TypeFacetKey:
 	("as:" | "of:" | "parent:" | "species:"|"type:");
@@ -229,7 +231,7 @@ TypeFacetKey:
 
 SpecialFacetKey:
 	'data:' | 'when'':' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
-	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:";
+	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:";
 
 ActionFacetKey:
 	"action:";
@@ -241,7 +243,7 @@ ClassicFacet returns Facet:
 	(key=ClassicFacetKey | key='<-' | key=SpecialFacetKey) expr=Expression;
 
 DefinitionFacet returns Facet:
-	((=> key=DefinitionFacetKey) name=(Valid_ID | STRING));
+	((=> key=DefinitionFacetKey) name=(Valid_ID));
 
 FunctionFacet returns Facet:
 	(key='function:' | key='->') '{' expr=Expression '}';
@@ -342,7 +344,9 @@ Unary returns Expression:
 	right=Unary));
 
 Access returns Expression:
-	Primary ({Access.left = current} ((op='[' args=ExpressionList? ']') | (op="." right=AbstractRef)))*
+	Primary ({Access.left = current} (
+		(op='[' args=ExpressionList? ']') | (op="." right=AbstractRef) | (op="." named_exp=STRING)
+	))*
 ;
 
 
@@ -432,7 +436,7 @@ EquationFakeDefinition:
 	'**equation*' name=Valid_ID;
 
 Valid_ID:
-	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID;
+	ID; // _VarOrConsKey
 
 	/**
  * Terminals
@@ -447,8 +451,6 @@ TerminalExpression:
 
 terminal KEYWORD:
 	'each' | 'self' | 'myself' | 'nil' | 'world' | 'user_location';
-
-//terminal INTEGER : ('0'..'9')+;
 
 terminal INTEGER:
 	'0' | ('1'..'9' ('0'..'9')*);
@@ -465,9 +467,6 @@ terminal COLOR:
 terminal DOUBLE:
 	'1'..'9' ('0'..'9')* ('.' '0'..'9'+)? (('E' | 'e') ('+' | '-')? '0'..'9'+)? | '0' ('.' '0'..'9'+)? (('E' | 'e') ('+' |
 '-')? '0'..'9'+)?;
-//DOUBLE hidden(): INTEGER '.' (EXP_INT | INTEGER); // INT ? '.' (EXT_INT | INT);
-
-//terminal EXP_INT: INTEGER ('e'|'E')('-'|'+')? INTEGER;
 
 terminal STRING:
 	'"' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '"' | '\\') | !('\\' | '"'))* '"' | "'" ('\\' ('b' | 't' | 'n' | 'f' |

@@ -3112,13 +3112,22 @@ public interface GamlPackage extends EPackage
   int ACCESS__ARGS = EXPRESSION_FEATURE_COUNT + 0;
 
   /**
+   * The feature id for the '<em><b>Named exp</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACCESS__NAMED_EXP = EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
    * The number of structural features of the '<em>Access</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACCESS_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+  int ACCESS_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ArrayImpl <em>Array</em>}' class.
@@ -4867,6 +4876,17 @@ public interface GamlPackage extends EPackage
   EReference getAccess_Args();
 
   /**
+   * Returns the meta object for the attribute '{@link msi.gama.lang.gaml.gaml.Access#getNamed_exp <em>Named exp</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Named exp</em>'.
+   * @see msi.gama.lang.gaml.gaml.Access#getNamed_exp()
+   * @see #getAccess()
+   * @generated
+   */
+  EAttribute getAccess_Named_exp();
+
+  /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Array <em>Array</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6027,6 +6047,14 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EReference ACCESS__ARGS = eINSTANCE.getAccess_Args();
+
+    /**
+     * The meta object literal for the '<em><b>Named exp</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ACCESS__NAMED_EXP = eINSTANCE.getAccess_Named_exp();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.ArrayImpl <em>Array</em>}' class.

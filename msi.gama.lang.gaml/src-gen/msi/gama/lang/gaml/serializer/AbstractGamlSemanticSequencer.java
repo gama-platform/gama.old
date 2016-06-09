@@ -525,7 +525,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     Access.Access_1_0 returns Access
 	 *
 	 * Constraint:
-	 *     (left=Access_Access_1_0 ((op='[' args=ExpressionList?) | (op='.' right=AbstractRef)))
+	 *     (left=Access_Access_1_0 ((op='[' args=ExpressionList?) | (op='.' right=AbstractRef) | (op='.' named_exp=STRING)))
 	 */
 	protected void sequence_Access(ISerializationContext context, Access semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

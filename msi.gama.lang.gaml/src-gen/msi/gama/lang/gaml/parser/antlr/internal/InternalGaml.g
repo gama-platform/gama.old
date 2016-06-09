@@ -6593,6 +6593,40 @@ ruleAccess returns [EObject current=null]
 	    }
 
 )
+))
+    |((
+(
+		lv_op_7_0=	'.' 
+    {
+        newLeafNode(lv_op_7_0, grammarAccess.getAccessAccess().getOpFullStopKeyword_1_1_2_0_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getAccessRule());
+	        }
+       		setWithLastConsumed($current, "op", lv_op_7_0, ".");
+	    }
+
+)
+)(
+(
+		lv_named_exp_8_0=RULE_STRING
+		{
+			newLeafNode(lv_named_exp_8_0, grammarAccess.getAccessAccess().getNamed_expSTRINGTerminalRuleCall_1_1_2_1_0()); 
+		}
+		{
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getAccessRule());
+	        }
+       		setWithLastConsumed(
+       			$current, 
+       			"named_exp",
+        		lv_named_exp_8_0, 
+        		"msi.gama.lang.gaml.Gaml.STRING");
+	    }
+
+)
 ))))*)
 ;
 

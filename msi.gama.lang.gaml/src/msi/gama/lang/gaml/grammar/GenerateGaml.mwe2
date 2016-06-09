@@ -4,7 +4,7 @@ import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.generator.*
 import org.eclipse.xtext.ui.generator.*
 
-var grammarURI = "classpath:/msi/gama/lang/gaml/Gaml1.6v2.xtext"
+var grammarURI = "classpath:/msi/gama/lang/gaml/grammar/Gaml1.6v2.xtext"
 var file.extensions = "gaml"
 var projectName = "msi.gama.lang.gaml"
 var runtimeProject = "../${projectName}"

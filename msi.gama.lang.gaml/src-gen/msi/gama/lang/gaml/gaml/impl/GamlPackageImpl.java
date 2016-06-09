@@ -1644,6 +1644,16 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EAttribute getAccess_Named_exp()
+  {
+    return (EAttribute)accessEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getArray()
   {
     return arrayEClass;
@@ -2054,6 +2064,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     accessEClass = createEClass(ACCESS);
     createEReference(accessEClass, ACCESS__ARGS);
+    createEAttribute(accessEClass, ACCESS__NAMED_EXP);
 
     arrayEClass = createEClass(ARRAY);
     createEReference(arrayEClass, ARRAY__EXPRS);
@@ -2352,6 +2363,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(accessEClass, Access.class, "Access", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getAccess_Args(), this.getExpressionList(), null, "args", null, 0, 1, Access.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getAccess_Named_exp(), ecorePackage.getEString(), "named_exp", null, 0, 1, Access.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(arrayEClass, Array.class, "Array", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getArray_Exprs(), this.getExpressionList(), null, "exprs", null, 0, 1, Array.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
