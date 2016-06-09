@@ -54,6 +54,19 @@ public class ParametricFileType extends ParametricType {
 	}
 
 	@Override
+	public int hashCode() {
+		return id;
+	}
+
+	@Override
+	public boolean equals(final Object c) {
+		if (c instanceof ParametricFileType) {
+			return ((ParametricFileType) c).id() == id();
+		}
+		return false;
+	}
+
+	@Override
 	public IGamaFile cast(final IScope scope, final Object obj, final Object param, final IType keyType,
 			final IType contentType, final boolean copy) {
 		if (obj == null) {
