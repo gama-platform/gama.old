@@ -1,0 +1,121 @@
+/**
+* Name: Heatmap Examples
+* Author: Philippe Caillou
+* Description: A demonstration of charts composed of heatmaps
+* Tags: gui, chart
+*/
+model heatmaps
+
+
+global
+{
+	list<float> myldata <- [];
+	list<list<float>> mylldata <- [[]];
+	list<list<float>> mylldata2 <- [[]];
+	int xsize <- 100;
+	int ysize <- 100;
+	init
+	{
+		do update_chart();
+	}
+
+	reflex do_action
+	{
+		do update_chart();
+	}
+
+	action update_chart
+	{
+		myldata <- [];
+		mylldata <- [];
+		loop xi from: 0 to: xsize - 1
+		{
+			add cos((xi + cycle * 20) * 2) to: myldata;
+			add [] to: mylldata;
+			loop yi from: 0 to: ysize - 1
+			{
+				add cos((xi + cycle * 10)) + cos((yi + cycle * 10)) to: mylldata[xi];
+			}
+
+		}
+
+		mylldata2 <- [];
+		loop xi from: 0 to: xsize - 1
+		{
+			add [] to: mylldata2;
+			loop yi from: 0 to: ysize - 1
+			{
+				add sin((xi + cycle * 10)) + sin((yi)) to: mylldata2[xi];
+			}
+
+		}
+
+	}
+
+}
+
+experiment "Different heatmaps" type: gui
+{
+	float minimum_cycle_duration <- 0.2;
+	output
+	{
+		display "NIce Heatmap" type: java2D
+		{
+			chart "Nice Heatmap" type: heatmap background: # darkblue color: # lightgreen axes: # lightgreen title_font: 'Serif' title_font_size: 32.0 title_font_style: 'italic' tick_font:
+			'Monospaced' tick_font_size: 14 tick_font_style: 'bold' label_font: 'Serif' label_font_size: 18 label_font_style: 'plain' legend_font: 'SanSerif' legend_font_size: 18
+			legend_font_style: 'bold' x_label: 'Nice Xlabel' y_label: 'Nice Ylabel'
+			{
+				data "test" value: mylldata color: [# darkblue, # orange] accumulate_values: false;
+			}
+
+		}
+
+		display "listOflist_heatmap" type: java2D
+		{
+			chart "listOflist_heatmap" type: heatmap
+			{
+				data "cosX" value: mylldata color: [# blue] accumulate_values: false;
+				data "sinY" value: mylldata2 color: [# darkred] accumulate_values: false;
+			}
+
+		}
+
+		display "list_heatmap" type: java2D
+		{
+			chart "list_heatmap" type: heatmap
+			{
+				data "test" value: myldata color: [# cyan, # red] accumulate_values: false;
+			}
+
+		}
+
+		display "simple_heatmap2" type: java2D
+		{
+			chart "simple heatmap2" type: heatmap
+			{
+				data "test" value: [[1, 2, 3, 4, 5], [6, 7, 8, 9, 10]] color: [# cyan, # red] accumulate_values: false;
+			}
+
+		}
+
+	}
+
+}
+
+experiment Heatmap type: gui
+{
+	float minimum_cycle_duration <- 0.2;
+	output
+	{
+		display "list_heatmap" type: java2D
+		{
+			chart "list_heatmap" type: heatmap
+			{
+				data "test" value: myldata color: [# cyan, # red] accumulate_values: false;
+			}
+
+		}
+
+	}
+
+}

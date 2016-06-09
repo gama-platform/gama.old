@@ -1,6 +1,6 @@
 /**
 * Name: Ant Foraging (Charts examples)
-* Author: 
+* Author: Philippe Caillou
 * Description: Toy Model ant using the question of how ants search food and use pheromons to return to their 
 * nest once they did find food. In this model, the charts are particularly used.
 * Tags: gui, skill, chart, grid, diffusion
@@ -127,7 +127,7 @@ species ant skills: [moving] control: fsm {
 		draw circle(1.0) empty: !hasFood color: #orange ; 
 	}
 }
-experiment Ant type: gui {
+experiment "Several charts" type: gui {
 	//Parameters to play with  in the gui
 	parameter 'Number of ants:' var: ants_number category: 'Model' ;
 	parameter 'Evaporation of the signal (unit/cycle):' var: evaporation_per_cycle category: 'Model' ;
@@ -164,11 +164,8 @@ experiment Ant type: gui {
 				}
 			add nl to:nbantsbydist;
 			}
-//			add length((list(world.ant) collect (each.next_place distance_to each.location)) where (each=x)) to:nbants;
 		}
-		//write("nbants"+nbants);
-		//write("nbantsbydist"+nbantsbydist);
-		//write("states"+statesnames);		
+	
 	}
 	
 	//The different displays
@@ -206,25 +203,7 @@ experiment Ant type: gui {
 				color:[°red,°green];				
 			}
 		}
-// idem with stacked bar:
-/* 
-		display ProportionByState {
-			chart "DataListListBar" type:histogram 
-			x_serie_labels: categnames 
-			series_label_position: legend
-			{
-				datalist value:nbants legend:statesnames style:stack;
-			}
-			
-		}
-*/
-			// Idem with datalist:
-//		display PositionByState {
-//			chart "Position by state (datalist)" type:scatter
-//			{
-//				datalist ["empty","carry"] value:[((list(ant) where (!each.hasFood))  collect each.location),((list(ant) where (each.hasFood))  collect each.location)] color:[°red,°green] line_visible:false;				
-//			}
-//		}
+
 		display CentroidPosition {
 			chart "Positions and History of Centroide and size by Carry state" type:scatter
 			{
@@ -291,7 +270,7 @@ experiment Ant type: gui {
 	}
 	
 //Experiment with only two display : the grid and the ants, and a chart
-experiment AntOneDisp type: gui {
+experiment "One chart" type: gui {
 	parameter 'Number of ants:' var: ants_number category: 'Model' ;
 	parameter 'Evaporation of the signal unit/cycle):' var: evaporation_per_cycle category: 'Model' ;
 	parameter 'Rate of diffusion of the signal (%/cycle):' var: diffusion_rate category: 'Model' ;

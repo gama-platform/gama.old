@@ -1,16 +1,17 @@
 /**
- *  newtest
- *  Author: HPhi
- *  Description: 
- */
+* Name: Bar Examples
+* Author: Philippe Caillou
+* Description: A demonstration of charts composed of bars
+* Tags: gui, chart
+*/
 
-model newtest
+model bars
 
 global
 {
 }
 
-experiment my_experiment type: gui {
+experiment "Multiple displays" type: gui {
 	float minimum_cycle_duration<-0.2;
 	output {
 		display "nice_bar_chart" {
