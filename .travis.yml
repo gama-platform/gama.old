@@ -10,10 +10,11 @@ notifications:
 cache:
   directories:
   - "$HOME/.m2"
+before_script:
+  - sh ./travis-git-update.sh
 script: sh ./build.sh
 before_deploy:
   - git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git
-  - sh ./travis-git-update.sh
 
 deploy:
   provider: releases
