@@ -27,6 +27,7 @@ global {
 	geometry shape <- envelope(BOUNDS);		  	
 		  	
 	init {
+		write "This model will work only if the corresponding database is installed";
 		create DB_accessor {
 			create buildings from: (self select [params:: PARAMS, select:: QUERY]) 
 							 with:[ 'name'::"name",'type'::"type", 'shape':: geometry("geom")];

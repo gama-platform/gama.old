@@ -96,7 +96,7 @@ experiment 'Run 5 simulations' type: batch repeat: 5 keep_seed: true until: ( ti
 		//in this example, we ask all the simulation agents of the run to save (at the end of the simulation) the people population in a shapefile with their is_infected and is_immune attributes 
 		ask simulations
 		{
-			save people type: "shp" to: "people_shape" + cpt + ".shp" with: [is_infected::"INFECTED", is_immune::"IMMUNE"];
+			save people type: "shp" to: "result/people_shape" + cpt + ".shp" with: [is_infected::"INFECTED", is_immune::"IMMUNE"];
 			cpt <- cpt + 1;
 		}
 	}

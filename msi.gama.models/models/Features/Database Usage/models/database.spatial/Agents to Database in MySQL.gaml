@@ -24,6 +24,7 @@ global {
 				                  'port'::'8889','user'::'root','passwd'::'root'];
 
 	init {
+		write "This model will work only if the corresponding database is installed";
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
 		create bounds from: boundsShp;
 		

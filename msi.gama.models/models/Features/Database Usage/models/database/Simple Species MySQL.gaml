@@ -40,6 +40,8 @@ model simpleSQL_DBSpecies_MySQL
 global {
 	map<string, string> PARAMS <- ['host'::'localhost', 'dbtype'::'MySQL', 'database'::'meteo_DB', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
 	init {
+		write "This model will work only if the corresponding database is installed" color: #red;
+
 		create DB_Accessor number: 1 {
 			if (self testConnection (params::PARAMS) = false) {
 				write "Impossible connection";

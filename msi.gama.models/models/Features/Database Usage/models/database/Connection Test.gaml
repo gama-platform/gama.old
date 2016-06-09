@@ -13,6 +13,8 @@ global {
 	map<string, string> POSTGRES <- ['host'::'localhost', 'dbtype'::'Postgres', 'database'::'bgaudou', 'port'::'5432', 'user'::'bgaudou', 'passwd'::''];
 	map<string, string> SQLITE <- ['dbtype'::'sqlite', 'database'::'../../includes/meteo.db'];
 	init {
+		write "This model will work only if the corresponding database is installed" color: #red;
+
 		create DB_connection_tester;
 	}
 

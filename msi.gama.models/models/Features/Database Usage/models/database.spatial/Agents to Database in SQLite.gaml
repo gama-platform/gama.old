@@ -26,6 +26,7 @@ global {
 
 
 	init {
+		write "This model will work only if the corresponding database is installed" color: #red;
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
 		create bounds from: boundsShp;
 		

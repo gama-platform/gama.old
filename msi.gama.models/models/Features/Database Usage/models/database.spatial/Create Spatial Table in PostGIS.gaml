@@ -12,6 +12,8 @@ global
 	map<string, string> PARAMS <- ['host'::'localhost', 'dbtype'::'Postgres', 'database'::'', 'port'::'5433', 'user'::'postgres', 'passwd'::'tmt'];
 	init
 	{
+		write "This model will work only if the corresponding database is installed" color: #red;
+
 		create dummy;
 		ask dummy
 		{

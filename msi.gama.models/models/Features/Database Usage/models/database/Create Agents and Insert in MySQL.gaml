@@ -23,6 +23,8 @@ global {
 	string SQLquery_idPoint <- "SELECT `idPointgrille`, AVG(`RRmm`) AS RR, AVG(`Tmin`) AS Tmin, AVG(`Tmax`) AS Tmax, AVG(`Rglot`) AS Rglot, AVG(`ETPmm`) AS ETPmm
     			FROM meteo_table GROUP BY `idPointgrille`";
 	init {
+		write "This model will work only if the corresponding database is installed" color: #red;
+
 		create DB_accessor;
 		ask DB_accessor {
 			do executeUpdate params: PARAMS updateComm: "CREATE TABLE `result_DB` (

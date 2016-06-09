@@ -11,6 +11,8 @@ global {
 	map PARAMS <- ['dbtype'::'sqlite','database'::'../../includes/spatialite.db'];
 
 	init {
+		write "This model will work only if the corresponding database is installed" color: #red;
+
 		create dummy ;
 		ask (dummy)	
 		{ 

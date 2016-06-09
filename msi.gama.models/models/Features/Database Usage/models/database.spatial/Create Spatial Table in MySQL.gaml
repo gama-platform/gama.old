@@ -12,6 +12,8 @@ global
 	map<string, string> PARAMS <- ['host'::'localhost', 'dbtype'::'MySQL', 'database'::'', 'port'::'8889', 'user'::'root', 'passwd'::'root'];
 	init
 	{
+		write "This model will work only if the corresponding database is installed" color: #red;
+
 		create test_species number: 1;
 		ask test_species
 		{
