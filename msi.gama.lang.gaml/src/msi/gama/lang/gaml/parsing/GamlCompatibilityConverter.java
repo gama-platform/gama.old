@@ -215,42 +215,27 @@ public class GamlCompatibilityConverter {
 					"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
 		}
 
-		// else if (keyword.equals(ENTITIES)) {
-		// convertBlock(stm, upper, errors);
-		// return null;
-		// }
-
 		else {
 			keyword = convertKeyword(keyword, upper.getKeyword());
 		}
-		final ISyntacticElement elt = SyntacticFactory.create(keyword, stm, EGaml.hasChildren(stm));
 
-		// if (keyword.equals(ENVIRONMENT)) {
-		// convertBlock(stm, upper, errors);
-		// } else
+		final ISyntacticElement elt = SyntacticFactory.create(keyword, stm, EGaml.hasChildren(stm));
 
 		if (stm instanceof S_Assignment) {
 			keyword = convertAssignment((S_Assignment) stm, keyword, elt, stm.getExpr(), errors);
-			// } else if ( stm instanceof S_Definition &&
-			// !SymbolProto.nonTypeStatements.contains(keyword) ) {
 		} else if (stm instanceof S_Definition && !DescriptionFactory.isStatementProto(keyword)) {
 			final S_Definition def = (S_Definition) stm;
 			// If we define a variable with this statement
 			final TypeRef t = (TypeRef) def.getTkey();
-
-			// 20/01/14: The type is now passed plainly
 			if (t != null) {
 				addFacet(elt, TYPE, convExpr(t, errors), errors);
 			}
-			// convertType(elt, t, errors);
 			if (t != null && doesNotDefineAttributes(upper.getKeyword())) {
 				// Translation of "type var ..." to "let var type: type ..." if
 				// we are not in a
 				// top-level statement (i.e. not in the declaration of a species
 				// or an experiment)
 				elt.setKeyword(LET);
-				// addFacet(elt, TYPE, convertToConstantString(null, keyword),
-				// errors);
 				keyword = LET;
 			} else {
 				// Translation of "type1 ID1 (type2 ID2, type3 ID3) {...}" to
@@ -259,8 +244,6 @@ public class GamlCompatibilityConverter {
 				final Block b = def.getBlock();
 				if (b != null && b.getFunction() == null) {
 					elt.setKeyword(ACTION);
-					// addFacet(elt, TYPE, convertToConstantString(null,
-					// keyword), errors);
 					keyword = ACTION;
 				}
 				convertArgs(def.getArgs(), elt, errors);
@@ -307,28 +290,6 @@ public class GamlCompatibilityConverter {
 		// We apply some conversions to the facets expressed in the statement
 		convertFacets(stm, keyword, elt, errors);
 
-		// if (stm instanceof S_Var && (keyword.equals(CONST) ||
-		// keyword.equals(VAR))) {
-		// // We modify the "var", "const" declarations in order to replace the
-		// // keyword by the type
-		// final IExpressionDescription type = elt.getExpressionAt(TYPE);
-		// if (type == null) {
-		// addWarning("Facet 'type' is missing, set by default to 'unknown'",
-		// stm, errors);
-		// elt.setKeyword(UNKNOWN);
-		// } else {
-		//
-		// // WARNING FALSE (type is now more TypeRef)
-		// elt.setKeyword(type.toString());
-		// }
-		// if (keyword.equals(CONST)) {
-		// final IExpressionDescription constant = elt.getExpressionAt(CONST);
-		// if (constant != null && constant.toString().equals(FALSE)) {
-		// addWarning("Is this variable constant or not ?", stm, errors);
-		// }
-		// elt.setFacet(CONST, ConstantExpressionDescription.create(true));
-		// }
-		// } else
 		if (stm instanceof S_Experiment) {
 			// We do it also for experiments, and change their name
 			final IExpressionDescription type = elt.getExpressionAt(TYPE);
@@ -336,26 +297,14 @@ public class GamlCompatibilityConverter {
 				addInfo("Facet 'type' is missing, set by default to 'gui'", stm, errors);
 				elt.setFacet(TYPE, ConstantExpressionDescription.create(GUI_));
 			}
-			// if ( type == null ) {
-			// addWarning("Facet 'type' is missing, set by default to 'gui'",
-			// stm, errors);
-			// elt.setFacet(TYPE, ConstantExpressionDescription.create(GUI_));
-			// elt.setKeyword(GUI_);
-			// } else {
-			// elt.setKeyword(type);
-			// }
 			// We modify the names of experiments so as not to confuse them with
 			// species
 			final String name = elt.getName();
 			elt.setFacet(TITLE, convertToLabel(null, "Experiment " + name));
 			elt.setFacet(NAME, convertToLabel(null, name));
-		} else // TODO Change this by implementing only one class of methods
-				// (that delegates to
-				// others)
-		if (keyword.equals(METHOD)) {
+		} else if (keyword.equals(METHOD)) {
 			// We apply some conversion for methods (to get the name instead of
-			// the "method"
-			// keyword)
+			// the "method" keyword)
 			final String type = elt.getName();
 			if (type != null) {
 				elt.setKeyword(type);
