@@ -16,13 +16,13 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
 
-public class SliderIntEditor extends AbstractEditor {
+public class SliderFloatEditor extends AbstractEditor {
 
 	private static final int[] NULL = new int[0];
 	SimpleSlider slider;
-	Integer stepValue;
+	Double stepValue;
 
-	public SliderIntEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener l) {
+	public SliderFloatEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener l) {
 		super(scope, a, variable);
 	}
 
@@ -46,9 +46,9 @@ public class SliderIntEditor extends AbstractEditor {
 		};
 		final Number step = param.getStepValue(getScope());
 		if ( step != null ) {
-			stepValue = Cast.asInt(getScope(), step);
-			final Integer min = Cast.asInt(getScope(), minValue);
-			final Integer max = Cast.asInt(getScope(), maxValue);
+			stepValue = Cast.asFloat(getScope(), step);
+			final Double min = Cast.asFloat(getScope(), minValue);
+			final Double max = Cast.asFloat(getScope(), maxValue);
 			final Double realStep = stepValue.doubleValue() / max.doubleValue() - min.doubleValue();
 			slider.setStep(realStep);
 		}
@@ -99,15 +99,14 @@ public class SliderIntEditor extends AbstractEditor {
 	@Override
 	protected void addToolbarHiders(final Control ... c) {}
 
-	private int computeValue(final double position) {
-		return (int) (minValue.intValue() + Math.round(position * (maxValue.intValue() - minValue.intValue())));
+	private double computeValue(final double position) {
+		return minValue.doubleValue() + position * (maxValue.doubleValue() - minValue.doubleValue());
 	}
 
 	@Override
 	protected void displayParameterValue() {
-		final int p = (int) this.getParameterValue();
-		final double position =
-			(double) (p - minValue.intValue()) / (double) (maxValue.intValue() - minValue.intValue());
+		final double p = (double) this.getParameterValue();
+		final double position = (p - minValue.doubleValue()) / (maxValue.doubleValue() - minValue.doubleValue());
 		slider.updateSlider(position, false);
 
 	}

@@ -49,6 +49,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	final Panel leftRegion;
 	boolean mouseDown = false;
 	private int sliderHeight;
+	private Double step = null;
 
 	public class Thumb extends Canvas implements PaintListener {
 
@@ -276,21 +277,28 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	void moveThumbHorizontally(final int pos) {
 		thumb.setFocus();
-
-		final int x = pos - thumb.getBounds().width / 2;
-		int width = x < 0 ? 0 : x;
-		if ( width > getClientArea().width - thumb.getBounds().width ) {
-			width = getClientArea().width - thumb.getBounds().width;
-		}
-		leftRegion.updatePosition(width);
-		layout();
-		double percentage = 0;
-		final double leftWidth = leftRegion.getBounds().width;
+		final int thumbsWidth = thumb.getBounds().width;
 		final double clientWidth = getClientArea().width;
-		final double thumbsWidth = thumb.getBounds().width;
-		percentage = leftWidth / (clientWidth - thumbsWidth);
+		final int x = pos - thumbsWidth / 2;
+		int width = x < 0 ? 0 : x;
+		if ( width > clientWidth - thumbsWidth ) {
+			width = (int) (clientWidth - thumbsWidth);
+		}
+
+		double percentage = width / (clientWidth - thumbsWidth);
+		if ( step != null ) {
+			percentage = Math.round(percentage / step) * step;
+		}
+		//
+		width = Maths.round(clientWidth * percentage);
+		if ( width > clientWidth - thumbsWidth ) {
+			width = (int) (clientWidth - thumbsWidth);
+		}
 		updatePositionListeners(percentage);
 		previousPosition = percentage;
+
+		leftRegion.updatePosition(width);
+		layout();
 
 	}
 
@@ -354,6 +362,9 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			percentage = 0;
 		} else if ( percentage > 1 ) {
 			percentage = 1;
+		}
+		if ( step != null ) {
+			percentage = Math.round(percentage / step) * step;
 		}
 		//
 		final int usefulWidth = getClientArea().width/* - thumb.getBounds().width */;
@@ -436,5 +447,10 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	public void specifyHeight(final int heightsize) {
 		sliderHeight = heightsize;
+	}
+
+	public void setStep(final Double realStep) {
+		if ( realStep != null && realStep > 0d )
+			step = realStep;
 	}
 }

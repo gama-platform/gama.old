@@ -137,10 +137,11 @@ public class EditorFactory implements IEditorFactory {
 			case IType.COLOR:
 				return new ColorEditor(scope, agent, var, l);
 			case IType.FLOAT:
+				if ( var.getMaxValue(scope) != null && var.getMinValue(scope) != null )
+					return new SliderFloatEditor(scope, agent, var, l);
 				return new FloatEditor(scope, agent, var, canBeNull, l);
 			case IType.INT:
-				if ( var.getMaxValue(scope) != null && var.getMinValue(scope) != null &&
-					var.getStepValue(scope) == null )
+				if ( var.getMaxValue(scope) != null && var.getMinValue(scope) != null )
 					return new SliderIntEditor(scope, agent, var, l);
 				return new IntEditor(scope, agent, var, canBeNull, l);
 			case IType.LIST:
