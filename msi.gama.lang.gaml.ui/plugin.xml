@@ -135,6 +135,12 @@
             id="msi.gama.lang.gaml.Gaml.validate"
             name="Validate">
       </command>
+      <command
+            name="Collapse comments"
+            description="collapses strings"
+            categoryId="org.eclipse.ui.category.textEditor"
+            id="org.xtext.example.folding.ui.folding.collapseStrings">
+      </command>
     </extension>
     <extension point="org.eclipse.ui.menus">
 		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">

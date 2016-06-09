@@ -32,6 +32,7 @@ import org.eclipse.xtext.ui.editor.actions.IActionContributor;
 import org.eclipse.xtext.ui.editor.autoedit.AbstractEditStrategyProvider;
 import org.eclipse.xtext.ui.editor.contentassist.ITemplateProposalProvider;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
+import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.model.ResourceForIEditorInputFactory;
@@ -54,6 +55,8 @@ import msi.gama.lang.gaml.ui.editor.GamlEditorTickUpdater;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.lang.gaml.ui.editor.GamlMarkOccurrenceActionContributor;
 import msi.gama.lang.gaml.ui.editor.GamlSyntaxErrorMessageProvider;
+import msi.gama.lang.gaml.ui.folding.GamaFoldingActionContributor;
+import msi.gama.lang.gaml.ui.folding.GamaFoldingRegionProvider;
 import msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration;
 import msi.gama.lang.gaml.ui.highlight.GamlReconciler;
 import msi.gama.lang.gaml.ui.highlight.GamlSemanticHighlightingCalculator;
@@ -108,6 +111,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	@Override
 	public Class<? extends ITemplateProposalProvider> bindITemplateProposalProvider() {
 		return GamlTemplateProposalProvider.class;
+	}
+
+	public Class<? extends IFoldingRegionProvider> bindFoldingRegionProvider() {
+		return GamaFoldingRegionProvider.class;
 	}
 
 	@Override
@@ -187,6 +194,19 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	@Override
 	public Class<? extends IHyperlinkDetector> bindIHyperlinkDetector() {
 		return GamlHyperlinkDetector.class;
+	}
+
+	@Override
+	public void configureBracketMatchingAction(final Binder binder) {
+		// actually we want to override the first binding only...
+		binder.bind(IActionContributor.class).annotatedWith(Names.named("foldingActionGroup")).to( //$NON-NLS-1$
+				GamaFoldingActionContributor.class);
+		binder.bind(IActionContributor.class).annotatedWith(Names.named("bracketMatcherAction")).to( //$NON-NLS-1$
+				org.eclipse.xtext.ui.editor.bracketmatching.GoToMatchingBracketAction.class);
+		binder.bind(IPreferenceStoreInitializer.class).annotatedWith(Names.named("bracketMatcherPrefernceInitializer")) //$NON-NLS-1$
+				.to(org.eclipse.xtext.ui.editor.bracketmatching.BracketMatchingPreferencesInitializer.class);
+		binder.bind(IActionContributor.class).annotatedWith(Names.named("selectionActionGroup")).to( //$NON-NLS-1$
+				org.eclipse.xtext.ui.editor.selection.AstSelectionActionContributor.class);
 	}
 
 	@Override

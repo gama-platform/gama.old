@@ -21,6 +21,9 @@ import java.util.Set;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -38,6 +41,7 @@ import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.IVerticalRulerColumn;
 import org.eclipse.jface.text.source.ImageUtilities;
 import org.eclipse.jface.text.source.SourceViewer;
+import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
 import org.eclipse.jface.text.templates.DocumentTemplateContext;
 import org.eclipse.jface.text.templates.Template;
@@ -74,8 +78,10 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.DefaultMarkerAnnotationAccess;
+import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.ui.XtextUIMessages;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
 import org.eclipse.xtext.ui.editor.outline.quickoutline.QuickOutlinePopup;
@@ -152,12 +158,6 @@ public class GamlEditor extends XtextEditor
 
 	@Inject
 	IResourceSetProvider resourceSetProvider;
-	//
-	// @Inject
-	// private CompoundXtextEditorCallback callback;
-	//
-	// @Inject
-	// private GamlJavaValidator validator;
 
 	@Inject
 	Injector injector;
@@ -208,6 +208,78 @@ public class GamlEditor extends XtextEditor
 			}
 
 		};
+	}
+
+	@Override
+	protected void rulerContextMenuAboutToShow(final IMenuManager menu) {
+		super.rulerContextMenuAboutToShow(menu);
+		// remove the projection menu introduced by super call
+		// unfortunately we cannot call super.super.rulerC...
+		menu.remove("projection");
+
+		final IMenuManager foldingMenu = new MenuManager(XtextUIMessages.Editor_FoldingMenu_name, "projection"); //$NON-NLS-1$
+		menu.appendToGroup(ITextEditorActionConstants.GROUP_RULERS, foldingMenu);
+		IAction action = getAction("FoldingToggle"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action = getAction("FoldingExpandAll"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action = getAction("FoldingCollapseAll"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action = getAction("FoldingCollapseStrings"); //$NON-NLS-1$
+		foldingMenu.add(action);
+		action = getAction("FoldingRestore"); //$NON-NLS-1$
+		foldingMenu.add(action);
+	}
+
+	private void foldRegionsOnStartup(final ProjectionAnnotationModel model) {
+		//
+		// // TODO retrieve set of types to fold from helper, as other types
+		// might
+		// // be added
+		// final Set<EClass> typesToFold = new HashSet<EClass>();
+		// if
+		// (preferencStore.getBoolean(TurtlePreferenceConstants.FOLD_TRIPLES_KEY))
+		// {
+		// typesToFold.add(XturtlePackage.Literals.TRIPLES);
+		// }
+		// if
+		// (preferencStore.getBoolean(TurtlePreferenceConstants.FOLD_STRINGS_KEY))
+		// {
+		// typesToFold.add(XturtlePackage.Literals.STRING_LITERAL);
+		// }
+		// if
+		// (preferencStore.getBoolean(TurtlePreferenceConstants.FOLD_DIRECTIVES_KEY))
+		// {
+		// typesToFold.add(XturtlePackage.Literals.DIRECTIVES);
+		// }
+		// if
+		// (preferencStore.getBoolean(TurtlePreferenceConstants.FOLD_BLANK_COLL))
+		// {
+		// typesToFold.add(XturtlePackage.Literals.BLANK_COLLECTION);
+		// }
+		// if
+		// (preferencStore.getBoolean(TurtlePreferenceConstants.FOLD_BLANK_OBJ))
+		// {
+		// typesToFold.add(XturtlePackage.Literals.BLANK_OBJECTS);
+		// }
+		// if (!typesToFold.isEmpty()) {
+		// final List<Annotation> changes = new ArrayList<Annotation>();
+		// final Iterator<?> iterator = model.getAnnotationIterator();
+		// while (iterator.hasNext()) {
+		// final Object next = iterator.next();
+		// if (next instanceof ProjectionAnnotation) {
+		// final ProjectionAnnotation pa = (ProjectionAnnotation) next;
+		// final Position position = model.getPosition(pa);
+		// if (position instanceof TypedFoldedRegion
+		// && typesToFold.contains(((TypedFoldedRegion) position).getType())) {
+		// pa.markCollapsed();
+		// changes.add(pa);
+		// }
+		// }
+		// }
+		// model.modifyAnnotations(null, null, changes.toArray(new
+		// Annotation[0]));
+		// }
 	}
 
 	@Override
