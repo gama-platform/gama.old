@@ -29,8 +29,6 @@ public interface IPopupProvider {
 
 	public Shell getControllingShell();
 
-	// public GamaUIColor getPopupBackground();
-
 	public Point getAbsoluteOrigin();
 
 }

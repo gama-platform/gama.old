@@ -123,6 +123,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 	Composite parent;
 	protected ToolBar toolbar;
 	protected Set<Control> controlsThatShowHideToolbars = new HashSet<Control>();
+	protected ToolItem unitItem;
 	private final MouseTrackListener hideShowToolbarListener = new MouseTrackListener() {
 
 		@Override
@@ -373,7 +374,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		// }
 	}
 
-	private String computeUnitLabel() {
+	protected String computeUnitLabel() {
 		String s = typeToDisplay();
 		if ( minValue != null ) {
 			final String min = StringUtils.toGaml(minValue, false);
@@ -407,7 +408,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		t.setLayoutData(d);
 		final String unitText = computeUnitLabel();
 		if ( !unitText.isEmpty() ) {
-			final ToolItem unitItem = new ToolItem(t, SWT.READ_ONLY | SWT.FLAT);
+			unitItem = new ToolItem(t, SWT.READ_ONLY | SWT.FLAT);
 			unitItem.setText(unitText);
 			unitItem.setEnabled(false);
 		}

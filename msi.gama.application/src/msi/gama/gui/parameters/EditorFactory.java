@@ -139,6 +139,8 @@ public class EditorFactory implements IEditorFactory {
 			case IType.FLOAT:
 				return new FloatEditor(scope, agent, var, canBeNull, l);
 			case IType.INT:
+				if ( var.getMaxValue(scope) != null && var.getMinValue(scope) != null )
+					return new SliderIntEditor(scope, agent, var, l);
 				return new IntEditor(scope, agent, var, canBeNull, l);
 			case IType.LIST:
 				return new ListEditor(scope, agent, var, l);
