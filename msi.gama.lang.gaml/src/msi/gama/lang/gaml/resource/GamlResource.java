@@ -168,13 +168,13 @@ public class GamlResource extends LazyLinkingResource {
 		final Map<ISyntacticElement, String> microModels = new TOrderedHashMap();
 		final List<ISyntacticElement> models = new ArrayList();
 		for (final Map.Entry<GamlResource, String> entry : resources.entrySet()) {
+			entry.getKey().getParseResult().computeAbsoluteAlternatePathsUsing(entry.getKey());
+			final SyntacticModelElement m = (SyntacticModelElement) entry.getKey().getSyntacticContents();
+			allAbsolutePaths.addAll(m.getAbsoluteAlternatePaths());
 			if (entry.getValue() == null) {
-				entry.getKey().getParseResult().computeAbsoluteAlternatePathsUsing(entry.getKey());
-				final SyntacticModelElement m = (SyntacticModelElement) entry.getKey().getSyntacticContents();
-				allAbsolutePaths.addAll(m.getAbsoluteAlternatePaths());
 				models.add(m);
 			} else {
-				microModels.put(entry.getKey().getSyntacticContents(), entry.getValue());
+				microModels.put(m, entry.getValue());
 			}
 		}
 		GAML.getExpressionFactory().resetParser();
