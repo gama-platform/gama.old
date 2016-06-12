@@ -6,10 +6,10 @@
 */
 model boids_coupling
 
-import "../../../Toy Models/Boids/models/Boids.gaml"
+import "../../../../Toy Models/Boids/models/Boids.gaml"
 
 
-experiment boids_gui type:gui  {
+experiment "Coupling Experiment" type:gui  {
 	
 	list<boids_goal> get_boids_goal{
 		return list(boids_goal);

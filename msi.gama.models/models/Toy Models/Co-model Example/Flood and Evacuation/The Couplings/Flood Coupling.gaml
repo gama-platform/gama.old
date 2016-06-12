@@ -6,8 +6,8 @@
 */
 model flood_coupling
 
-import "../../../Toy Models/Flood Simulation/models/Hydrological Model.gaml"
-experiment main_gui type: gui
+import "../../../../Toy Models/Flood Simulation/models/Hydrological Model.gaml"
+experiment "Coupling Experiment" type: gui
 {
 	point newSize <- { 0.07, 0.07 };
 	cell get_cell_at (geometry p)

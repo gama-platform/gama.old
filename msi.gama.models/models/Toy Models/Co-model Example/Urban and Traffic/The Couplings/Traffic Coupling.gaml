@@ -6,8 +6,8 @@
 */
 model traffic_coupling
 
-import "../../../Toy Models/Traffic/models/Simple traffic model.gaml"
-experiment traffic type: gui
+import "../../../../Toy Models/Traffic/models/Simple traffic model.gaml"
+experiment "Coupling Experiment" type: gui
 {
 	list<building> get_building
 	{
