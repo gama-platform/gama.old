@@ -3,8 +3,54 @@ package ummisco.gama.modernOpenGL;
 import java.nio.FloatBuffer;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
+
+import ummisco.gama.opengl.camera.ICamera;
 
 public class Maths {
+	
+	static public Matrix4f createTransformationMatrix(Vector3f positions, float rx, float ry, float rz, float scale) {
+		Matrix4f matrix = new Matrix4f();
+		Matrix4f tmpMatrix = new Matrix4f();
+		matrix.setIdentity();
+		
+		// translation
+		matrix.setTranslation(positions);
+		
+		// scale
+		matrix.setScale(scale);
+		
+		// rotation
+		tmpMatrix.rotX(rx);
+		matrix.mul(tmpMatrix);
+		tmpMatrix.rotY(ry);
+		matrix.mul(tmpMatrix);
+		tmpMatrix.rotZ(rz);
+		matrix.mul(tmpMatrix);
+
+		return matrix;
+	}
+	
+	public static Matrix4f createViewMatrix(ICamera camera) {
+		Matrix4f viewMatrix = new Matrix4f();
+		Matrix4f tmpMatrix = new Matrix4f();
+		viewMatrix.setIdentity();
+		
+		// rotate
+//		tmpMatrix.rotX(camera.getPitch());
+//		viewMatrix.mul(tmpMatrix);
+//		tmpMatrix.rotY(camera.getYaw());
+//		viewMatrix.mul(tmpMatrix);
+//		tmpMatrix.rotZ(camera.getRoll());
+//		viewMatrix.mul(tmpMatrix);
+		
+		// translate
+		Vector3f cameraPos = new Vector3f((float)camera.getPosition().getX(),(float)camera.getPosition().getY(),(float)camera.getPosition().getZ());
+		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x,-cameraPos.y,-cameraPos.z);
+		viewMatrix.setTranslation(negativeCameraPos);
+		
+		return viewMatrix;
+	}
 	
 	static public void glMultMatrixf(FloatBuffer a, FloatBuffer b, FloatBuffer d) {
 		final int aP = a.position();

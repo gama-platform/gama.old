@@ -13,36 +13,45 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 
 import com.google.common.collect.Iterables;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
+import msi.gama.precompiler.GamlAnnotations.display;
+import ummisco.gama.modernOpenGL.Camera;
 import ummisco.gama.modernOpenGL.Maths;
 import ummisco.gama.modernOpenGL.ShaderProgram;
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.camera.ICamera;
 
 public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> {
 	
 	boolean isInit = false;
 	ShaderProgram shaderProgram;
+	ICamera camera;
 	int[] vboHandles;
-	int ModelViewProjectionMatrix_location;
-	static final int COLOR_IDX = 0;
-	static int VERTICES_IDX = 1;
+	static final int COLOR_IDX = 1;
+	static final int VERTICES_IDX = 0;
 	private static final float FOV = 70;
 	private static final float NEAR_PLANE = 0.1f;
 	private static final float FAR_PLANE = 1000f;
 	
+	private List<Integer> vbos = new ArrayList<Integer> ();
+	
 	private double t0 = System.currentTimeMillis();
 	private double theta=0;
 	private double s;
+	
+	private GL2 gl;
 	
 	private Matrix4f projectionMatrix;
 	private Matrix4f transformationMatrix;
@@ -143,7 +152,7 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 	}
 	
 	private void createProjectionMatrix() {
-		float aspectRatio = 4.0f/3.0f;//(float) Display.getWidth() / (float)Display.getHeight();
+		float aspectRatio = drawer.getRenderer().getDisplayWidth() / drawer.getRenderer().getDisplayHeight();
 		float y_scale = (1f / (float)Math.tan(Math.toRadians(FOV/2f))) * aspectRatio;
 		float x_scale = y_scale / aspectRatio;
 		float frustum_length = FAR_PLANE - NEAR_PLANE;
@@ -166,6 +175,10 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 	}
 	
 	public void initShader(final GL2 gl) {
+		this.gl = gl;
+		
+		camera = drawer.getRenderer().camera;
+		
 		createProjectionMatrix();
 		createTransformationMatrix();
 		
@@ -176,7 +189,26 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 
 		
 		vboHandles = new int[2];
-		gl.glGenBuffers(2, vboHandles, 0);
+		this.gl.glGenBuffers(2, vboHandles, 0);
+	}
+	
+	private void storeDataInAttributeList(int attributeNumber,int coordinateSize, float[] data) {
+
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[attributeNumber]);
+		FloatBuffer fbuff = storeDataInFloatBuffer(data);
+		
+		int numBytes = data.length * 4;
+		
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, fbuff, GL2.GL_STATIC_DRAW);
+		gl.glVertexAttribPointer(attributeNumber, coordinateSize, GL2.GL_FLOAT, false, 0, 0);
+
+	}
+	
+	private FloatBuffer storeDataInFloatBuffer(float[] data) {
+		FloatBuffer buffer = FloatBuffer.allocate(data.length);
+		buffer.put(data);
+		buffer.flip();
+		return buffer;
 	}
 
 	@Override
@@ -212,79 +244,33 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		gl.glClearColor(1, 0, 1, 0.5f);  // Purple
 		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT   );
 		
-//		transformationMatrix.rotZ((float) s);
-		transformationMatrix.rotX((float) s);
-//		transformationMatrix.rotY((float) s);
+		transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), (float) -s, 0, 0, 1);
 		shaderProgram.loadTransformationMatrix(transformationMatrix);
+		shaderProgram.loadViewMatrix(camera);
 
-		/*
-		*  Render a triangle:
-		*  The OpenGL ES2 code below basically match this OpenGL code.
-		*
-		*    gl.glBegin(GL_TRIANGLES);                      // Drawing Using Triangles
-		*    gl.glVertex3f( 0.0f, 1.0f, 0.0f);              // Top
-		*    gl.glVertex3f(-1.0f,-1.0f, 0.0f);              // Bottom Left
-		*    gl.glVertex3f( 1.0f,-1.0f, 0.0f);              // Bottom Right
-		*    gl.glEnd();                            // Finished Drawing The Triangle
-		*/
 
 		float[] vertices = {  0.0f,  1.0f, 0.0f, //Top
 					-1.0f, -1.0f, 0.0f, //Bottom Left
 					1.0f, -1.0f, 0.0f  //Bottom Right
         };
-
-		// Observe that the vertex data passed to glVertexAttribPointer must stay valid
-		// through the OpenGL rendering lifecycle.
-		// Therefore it is mandatory to allocate a NIO Direct buffer that stays pinned in memory
-		// and thus can not get moved by the java garbage collector.
-		// Also we need to keep a reference to the NIO Direct buffer around up until
-		// we call glDisableVertexAttribArray first then will it be safe to garbage collect the memory.
-		// I will here use the com.jogamp.common.nio.Buffers to quickly wrap the array in a Direct NIO buffer.
-		FloatBuffer fbVertices = Buffers.newDirectFloatBuffer(vertices);
-
-		// Select the VBO, GPU memory data, to use for vertices
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[VERTICES_IDX]);
-
-		// transfer data to VBO, this perform the copy of data from CPU -> GPU memory
-		int numBytes = vertices.length * 4;
-		gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbVertices, GL.GL_STATIC_DRAW);
-		fbVertices = null; // It is OK to release CPU vertices memory after transfer to GPU
-
-		// Associate Vertex attribute 0 with the last bound VBO
-		gl.glVertexAttribPointer(0 /* the vertex attribute */, 3,
-                 GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
-                 0 /* The bound VBO data offset */);
-
-		// VBO
-		// gl.glBindBuffer(GL2ES2.GL_ARRAY_BUFFER, 0); // You can unbind the VBO after it have been associated using glVertexAttribPointer
-
-		gl.glEnableVertexAttribArray(0);
+		
+		storeDataInAttributeList(VERTICES_IDX,3,vertices);
 
 		float[] colors = {    1.0f, 0.0f, 0.0f, 1.0f, //Top color (red)
 		0.0f, 0.0f, 0.0f, 1.0f, //Bottom Left color (black)
 		1.0f, 1.0f, 0.0f, 0.9f  //Bottom Right color (yellow) with 10% transparence
 		};
-
-		FloatBuffer fbColors = Buffers.newDirectFloatBuffer(colors);
 		
-		// Select the VBO, GPU memory data, to use for colors
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[COLOR_IDX]);
- 
-		numBytes = colors.length * 4;
-		gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbColors, GL.GL_STATIC_DRAW);
-		fbColors = null; // It is OK to release CPU color memory after transfer to GPU
+		storeDataInAttributeList(COLOR_IDX,4,colors);
 
-		// Associate Vertex attribute 1 with the last bound VBO
-		gl.glVertexAttribPointer(1 /* the vertex attribute */, 4 /* four positions used for each vertex */,
-		GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
-		0 /* The bound VBO data offset */);
-
-		gl.glEnableVertexAttribArray(1);
+		gl.glEnableVertexAttribArray(VERTICES_IDX);
+		gl.glEnableVertexAttribArray(COLOR_IDX);
 
 		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, 3); //Draw the vertices as triangle
+//		gl.glDrawElements(GL2.GL_TRIANGLES, 3, GL2.GL_UNSIGNED_INT, 0);
 
-		gl.glDisableVertexAttribArray(0); // Allow release of vertex position memory
-		gl.glDisableVertexAttribArray(1); // Allow release of vertex color memory
+		gl.glDisableVertexAttribArray(VERTICES_IDX); // Allow release of vertex position memory
+		gl.glDisableVertexAttribArray(COLOR_IDX); // Allow release of vertex color memory
 		
 		shaderProgram.stop();
 		

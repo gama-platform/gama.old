@@ -10,6 +10,8 @@ import javax.vecmath.Matrix4f;
 
 import com.jogamp.opengl.GL2;
 
+import ummisco.gama.opengl.camera.ICamera;
+
 public class ShaderProgram {
 	
 	private GL2 gl;
@@ -32,7 +34,8 @@ public class ShaderProgram {
 		"#endif \n" +
 		
 		"uniform mat4    transformationMatrix; \n" + //
-		"uniform mat4    projectionMatrix; \n" + // 
+		"uniform mat4    projectionMatrix; \n" + //
+		"uniform mat4    viewMatrix; \n" + // 
 		"attribute vec4  attribute_Position; \n" + // the vertex shader
 		"attribute vec4  attribute_Color; \n" +    // uniform and attributes
 		
@@ -41,7 +44,9 @@ public class ShaderProgram {
 		"void main(void) \n" +
 		"{ \n" +
 		"  varying_Color = attribute_Color; \n" +
-		"  gl_Position = projectionMatrix * transformationMatrix * attribute_Position; \n" +
+		"  //gl_Position = projectionMatrix * viewMatrix * transformationMatrix * attribute_Position; \n" +
+		"  //gl_Position = transformationMatrix * attribute_Position; \n" +
+		"  gl_Position = attribute_Position; \n" +
 		"} ";
 		
 	private final static String fragmentShaderString =
@@ -71,6 +76,7 @@ public class ShaderProgram {
 	
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
+	private int location_viewMatrix;
 	
 	private static FloatBuffer matrixBuffer = FloatBuffer.allocate(16);
 	
@@ -80,55 +86,6 @@ public class ShaderProgram {
 	}
 	
 	public void loadShader() {
-//		String vertexShaderString =
-//	// For GLSL 1 and 1.1 code i highly recommend to not include a
-//	// GLSL ES language #version line, GLSL ES section 3.4
-//	// Many GPU drivers refuse to compile the shader if #version is different from
-//	// the drivers internal GLSL version.
-//	//
-//	// This demo use GLSL version 1.1 (the implicit version)			 
-//			"#if __VERSION__ >= 130\n" + // GLSL 130+ uses in and out
-//			"  #define attribute in\n" + // instead of attribute and varying
-//			"  #define varying out\n" +  // used by OpenGL 3 core and later.
-//			"#endif\n" +
-//			
-//			"#ifdef GL_ES \n" +
-//			"precision mediump float; \n" + // Precision Qualifiers
-//			"precision mediump int; \n" +   // GLSL ES section 4.5.2
-//			"#endif \n" +
-//			
-//			"uniform mat4    uniform_Projection; \n" + // Incoming data used by
-//			"attribute vec4  attribute_Position; \n" + // the vertex shader
-//			"attribute vec4  attribute_Color; \n" +    // uniform and attributes
-//			
-//			"varying vec4    varying_Color; \n" + // Outgoing varying data
-//			                                      // sent to the fragment shader
-//			"void main(void) \n" +
-//			"{ \n" +
-//			"  varying_Color = attribute_Color; \n" +
-//			"  gl_Position = uniform_Projection * attribute_Position; \n" +
-//			"} ";
-//			
-//			String fragmentShaderString =
-//			"#if __VERSION__ >= 130\n" +
-//			"  #define varying in\n" +
-//			"  out vec4 mgl_FragColor;\n" +
-//			"  #define texture2D texture\n" +
-//			"  #define gl_FragColor mgl_FragColor\n" +
-//			"#endif\n" +
-//			
-//			"#ifdef GL_ES \n" +
-//			"precision mediump float; \n" +
-//			"precision mediump int; \n" +
-//			"#endif \n" +
-//			
-//			"varying   vec4    varying_Color; \n" + //incoming varying data to the
-//			                                        //fragment shader
-//			                                        //sent from the vertex shader
-//			"void main (void) \n" +
-//			"{ \n" +
-//			"  gl_FragColor = varying_Color; \n" +
-//			"} ";
 			
 			// Create GPU shader handles
 			// OpenGL ES returns a index id to be stored for future reference.
@@ -230,6 +187,7 @@ public class ShaderProgram {
 	protected void getAllUniformLocations() {
 		location_transformationMatrix = getUniformLocation("transformationMatrix");
 		location_projectionMatrix = getUniformLocation("projectionMatrix");
+		location_viewMatrix = getUniformLocation("viewMatrix");
 	}
 	
 	public void loadTransformationMatrix(Matrix4f matrix) {
@@ -238,6 +196,11 @@ public class ShaderProgram {
 	
 	public void loadProjectionMatrix(Matrix4f matrix) {
 		loadMatrix(location_projectionMatrix, matrix);
+	}
+	
+	public void loadViewMatrix(ICamera camera) {
+		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
+		loadMatrix(location_viewMatrix, viewMatrix);
 	}
 	
 	protected void loadMatrix(int location, Matrix4f matrix) {

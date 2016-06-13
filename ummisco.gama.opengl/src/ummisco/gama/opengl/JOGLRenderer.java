@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
@@ -63,6 +64,7 @@ import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
+import ummisco.gama.modernOpenGL.Camera;
 import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
 import ummisco.gama.opengl.camera.ICamera;
@@ -243,6 +245,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 				getCanvas().addMouseMoveListener(camera);
 				getCanvas().addMouseWheelListener(camera);
 				getCanvas().addMouseTrackListener(camera);
+				//getCanvas().addKeyListener((KeyListener) Camera.getCamera());
 
 			}
 		});
