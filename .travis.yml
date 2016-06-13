@@ -15,12 +15,6 @@ cache:
 script: sh ./build.sh
 before_deploy:
   - git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git
-  - git config --global user.email "my.gama.bot@gmail.com"
-  - git config --global user.name "gama-bot"
-  - export GIT_TAG=$TRAVIS_BRANCH
-  - git tag $GIT_TAG -a -m "Generated tag from TravisCI"
-  - git push -q https://$CI_USER_TOKEN@github.com/gama-platform --tags
-  - ls -R
 deploy:
   provider: releases
   overwrite: true
