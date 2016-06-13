@@ -29,5 +29,9 @@ deploy:
     - "$HOME/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-macosx.cocoa.x86_64.zip"
   skip_cleanup: true
   on:
+    tags: false
     all_branches: true
     repo: gama-platform/gama
+branches:
+  only:
+    - master
