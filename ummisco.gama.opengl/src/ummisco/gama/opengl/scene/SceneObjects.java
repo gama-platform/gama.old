@@ -165,7 +165,7 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
 		projectionMatrix.m33 = 0;
 		
-		projectionMatrix.setIdentity();
+		//projectionMatrix.setIdentity();
 	}
 	
 	private void createTransformationMatrix() {
@@ -244,14 +244,14 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		gl.glClearColor(1, 0, 1, 0.5f);  // Purple
 		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT   );
 		
-		transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), (float) -s, 0, 0, 1);
+		transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), 0, 0, 0, 1);
 		shaderProgram.loadTransformationMatrix(transformationMatrix);
 		shaderProgram.loadViewMatrix(camera);
 
 
-		float[] vertices = {  0.0f,  1.0f, 0.0f, //Top
-					-1.0f, -1.0f, 0.0f, //Bottom Left
-					1.0f, -1.0f, 0.0f  //Bottom Right
+		float[] vertices = {  0.0f,  1.0f, -2.0f, //Top
+					-1.0f, -1.0f, -2.0f, //Bottom Left
+					1.0f, -1.0f, -2.0f  //Bottom Right
         };
 		
 		storeDataInAttributeList(VERTICES_IDX,3,vertices);

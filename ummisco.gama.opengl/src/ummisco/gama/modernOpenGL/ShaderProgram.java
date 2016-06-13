@@ -45,8 +45,8 @@ public class ShaderProgram {
 		"{ \n" +
 		"  varying_Color = attribute_Color; \n" +
 		"  //gl_Position = projectionMatrix * viewMatrix * transformationMatrix * attribute_Position; \n" +
-		"  //gl_Position = transformationMatrix * attribute_Position; \n" +
-		"  gl_Position = attribute_Position; \n" +
+		"  gl_Position = projectionMatrix * transformationMatrix * attribute_Position; \n" +
+		"  //gl_Position = attribute_Position; \n" +
 		"} ";
 		
 	private final static String fragmentShaderString =
