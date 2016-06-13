@@ -51,7 +51,7 @@ public interface INetworkSkill  {
 	public static String SEND_MESSAGE = "send_message";
 	public static String FETCH_MESSAGE = "fetch_message";
 	public static String LISTEN = "listen";
-	public static String HAS_MORE_MESSAGE_IN_BOX="has_received_message";
+	public static String HAS_MORE_MESSAGE_IN_BOX="has_more_message";
 	public static String BROADCAST_RECEIVER = "all";
 	
 	///// GROUP MANAGEMENT
