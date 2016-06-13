@@ -136,6 +136,24 @@ public class NetworkSkill  extends MessagingSkill {
 			connector.joinAGroup(agt, grp);
 	}
 
+	@action(name = INetworkSkill.FETCH_MESSAGE)
+	public GamaMessage fetchMessage(final IScope scope)
+	{
+		IAgent agent = scope.getAgentScope();
+		GamaMailbox box = getMailbox(agent);
+		GamaMessage msg = box.get(0);
+		box.remove(0);
+		return msg;
+	}
+	
+	@action(name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX)
+	public boolean hasMoreMessage(final IScope scope)
+	{
+		IAgent agent = scope.getAgentScope();
+		GamaMailbox box = getMailbox(agent);
+		return !box.isEmpty();
+	}	
+	
 /*	
 	@action(name = INetworkSkill.RESGISTER_TO_GROUP, args = {
 	@arg(name = INetworkSkill.TO, type = IType.STRING, optional = true, doc = @doc("")) }, doc = @doc(value = "", returns = "", examples = {
