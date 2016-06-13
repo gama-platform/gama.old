@@ -8,13 +8,11 @@ notifications:
     recipients:
     - my.gama.bot@gmail.com
     on_success: change
-    on_failure: change
+    on_failure: always
 cache:
   directories:
   - "$HOME/.m2"
 script: sh ./build.sh
-after_success: sh ./travis-git-update.sh
-after_failure: sh ./travis-git-update.sh
 before_deploy:
   - git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git
 deploy:
@@ -31,6 +29,5 @@ deploy:
     - "$HOME/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-macosx.cocoa.x86_64.zip"
   skip_cleanup: true
   on:
-    tags: true
-    all_branches: true
+    branch: master
     repo: gama-platform/gama
