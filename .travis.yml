@@ -13,6 +13,7 @@ cache:
   directories:
   - "$HOME/.m2"
 script: sh ./build.sh
+after_success: sh ./github-release.sh "gama-platform/gama" "`head -1 src/VERSION`" $HOME/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/*
 before_deploy:
   - git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git
 deploy:
