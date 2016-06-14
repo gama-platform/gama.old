@@ -2,7 +2,7 @@
  * Created by drogoul, 16 nov. 2014
  * 
  */
-package ummisco.gaml.editbox;
+package msi.gama.lang.gaml.ui.editbox;
 
 /**
  * Class IBoxEnabledEditor.

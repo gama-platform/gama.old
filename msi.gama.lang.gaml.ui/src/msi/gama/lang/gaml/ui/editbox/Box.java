@@ -1,4 +1,4 @@
-package ummisco.gaml.editbox;
+package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.ArrayList;
 import java.util.Collections;

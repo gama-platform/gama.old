@@ -1,9 +1,7 @@
-package ummisco.gaml.editbox.impl;
+package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.LinkedList;
 import java.util.List;
-
-import ummisco.gaml.editbox.Box;
 
 
 public class BoxBuilderImpl extends AbstractBoxBuilder {

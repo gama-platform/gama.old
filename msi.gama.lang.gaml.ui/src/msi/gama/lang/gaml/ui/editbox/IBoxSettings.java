@@ -1,4 +1,4 @@
-package ummisco.gaml.editbox;
+package msi.gama.lang.gaml.ui.editbox;
 
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -1,6 +1,4 @@
-package ummisco.gaml.editbox.impl;
-
-import ummisco.gaml.editbox.Box;
+package msi.gama.lang.gaml.ui.editbox;
 
 public class JavaBoxBuilder extends BoxBuilderImpl {
 

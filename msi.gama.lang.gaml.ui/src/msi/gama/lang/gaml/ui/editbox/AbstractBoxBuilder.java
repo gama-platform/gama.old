@@ -1,7 +1,4 @@
-package ummisco.gaml.editbox.impl;
-
-import ummisco.gaml.editbox.IBoxBuilder;
-
+package msi.gama.lang.gaml.ui.editbox;
 
 public abstract class AbstractBoxBuilder implements IBoxBuilder {
 

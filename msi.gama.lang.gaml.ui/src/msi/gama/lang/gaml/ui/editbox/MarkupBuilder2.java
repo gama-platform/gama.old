@@ -1,9 +1,7 @@
-package ummisco.gaml.editbox.impl;
+package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import ummisco.gaml.editbox.Box;
 
 
 public class MarkupBuilder2 extends MarkupBoxBuilder {

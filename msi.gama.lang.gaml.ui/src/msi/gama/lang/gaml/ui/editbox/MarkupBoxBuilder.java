@@ -1,4 +1,4 @@
-package ummisco.gaml.editbox.impl;
+package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.LinkedList;
 

@@ -8,7 +8,7 @@
   <packaging>pom</packaging>
   
   <modules>
-    <module>../ummisco.gaml.editbox</module>
+    
     <module>../msi.gama.ext</module>
     <!--<module>../msi.gama.processor</module>-->
     <module>../msi.gama.core</module>

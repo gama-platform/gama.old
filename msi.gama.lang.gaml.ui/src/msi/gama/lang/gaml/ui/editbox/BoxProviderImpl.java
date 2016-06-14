@@ -1,11 +1,14 @@
-package ummisco.gaml.editbox.impl;
+package msi.gama.lang.gaml.ui.editbox;
 
-import java.util.*;
-import org.eclipse.jface.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Map;
+
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPart;
-import ummisco.gaml.editbox.*;
 
 public class BoxProviderImpl implements IBoxProvider {
 
@@ -19,7 +22,7 @@ public class BoxProviderImpl implements IBoxProvider {
 
 	@Override
 	public BoxSettingsStoreImpl getSettingsStore() {
-		if ( settingsStore == null ) {
+		if (settingsStore == null) {
 			settingsStore = createSettingsStore();
 			settingsStore.setProviderId(id);
 		}
@@ -28,17 +31,16 @@ public class BoxProviderImpl implements IBoxProvider {
 
 	@Override
 	public IBoxSettings getEditorsBoxSettings() {
-		if ( editorsSettings == null ) {
+		if (editorsSettings == null) {
 			editorsSettings = createSettings0();
 			getSettingsStore().loadDefaults(editorsSettings);
 			editorsSettings.addPropertyChangeListener(new IPropertyChangeListener() {
 
 				@Override
 				public void propertyChange(final PropertyChangeEvent event) {
-					String p = event.getProperty();
-					if ( p != null &&
-						(p.equals(IBoxSettings.PropertiesKeys.FileNames.name()) || p
-							.equals(IBoxSettings.PropertiesKeys.ALL.name())) ) {
+					final String p = event.getProperty();
+					if (p != null && (p.equals(IBoxSettings.PropertiesKeys.FileNames.name())
+							|| p.equals(IBoxSettings.PropertiesKeys.ALL.name()))) {
 						matchers = null;
 					}
 				}
@@ -49,17 +51,23 @@ public class BoxProviderImpl implements IBoxProvider {
 
 	@Override
 	public IBoxDecorator decorate(final IWorkbenchPart editorPart) {
-		if ( !(editorPart instanceof IBoxEnabledEditor) ) { return null; }
-		IBoxSettings settings = getEditorsBoxSettings();
-		if ( !settings.getEnabled() ) { return null; }
+		if (!(editorPart instanceof IBoxEnabledEditor)) {
+			return null;
+		}
+		final IBoxSettings settings = getEditorsBoxSettings();
+		if (!settings.getEnabled()) {
+			return null;
+		}
 		((IBoxEnabledEditor) editorPart).createDecorator();
 		return ((IBoxEnabledEditor) editorPart).getDecorator();
 	}
 
 	protected StyledText getStyledText(final IWorkbenchPart editorPart) {
-		if ( editorPart != null ) {
-			Object obj = editorPart.getAdapter(Control.class);
-			if ( obj instanceof StyledText ) { return (StyledText) obj; }
+		if (editorPart != null) {
+			final Object obj = editorPart.getAdapter(Control.class);
+			if (obj instanceof StyledText) {
+				return (StyledText) obj;
+			}
 		}
 
 		return null;
@@ -67,25 +75,27 @@ public class BoxProviderImpl implements IBoxProvider {
 
 	@Override
 	public boolean supports(final IWorkbenchPart editorPart) {
-		return editorPart.getAdapter(Control.class) instanceof StyledText &&
-			(supportsFile(editorPart.getTitle()) || supportsFile(editorPart.getTitleToolTip()));
+		return editorPart.getAdapter(Control.class) instanceof StyledText
+				&& (supportsFile(editorPart.getTitle()) || supportsFile(editorPart.getTitleToolTip()));
 	}
 
 	protected boolean supportsFile(final String fileName) {
-		if ( fileName != null ) {
-			for ( Matcher matcher : getMatchers() ) {
-				if ( matcher.matches(fileName) ) { return true; }
+		if (fileName != null) {
+			for (final Matcher matcher : getMatchers()) {
+				if (matcher.matches(fileName)) {
+					return true;
+				}
 			}
 		}
 		return false;
 	}
 
 	protected Collection<Matcher> getMatchers() {
-		if ( matchers == null ) {
+		if (matchers == null) {
 			matchers = new ArrayList<Matcher>();
-			Collection<String> fileNames = getEditorsBoxSettings().getFileNames();
-			if ( fileNames != null ) {
-				for ( String pattern : fileNames ) {
+			final Collection<String> fileNames = getEditorsBoxSettings().getFileNames();
+			if (fileNames != null) {
+				for (final String pattern : fileNames) {
 					matchers.add(new Matcher(pattern));
 				}
 			}
@@ -112,7 +122,7 @@ public class BoxProviderImpl implements IBoxProvider {
 	}
 
 	protected BoxSettingsStoreImpl createSettingsStore() {
-		BoxSettingsStoreImpl result = new BoxSettingsStoreImpl();
+		final BoxSettingsStoreImpl result = new BoxSettingsStoreImpl();
 		result.setDefaultSettingsCatalog(defaultSettingsCatalog);
 		return result;
 	}
@@ -123,7 +133,7 @@ public class BoxProviderImpl implements IBoxProvider {
 
 	@Override
 	public IBoxSettings createSettings() {
-		BoxSettingsImpl result = createSettings0();
+		final BoxSettingsImpl result = createSettings0();
 		result.copyFrom(getEditorsBoxSettings());
 		return result;
 	}
@@ -134,7 +144,7 @@ public class BoxProviderImpl implements IBoxProvider {
 
 	@Override
 	public IBoxDecorator createDecorator() {
-		BoxDecoratorImpl result = new BoxDecoratorImpl();
+		final BoxDecoratorImpl result = new BoxDecoratorImpl();
 		result.setProvider(this);
 		return result;
 	}
@@ -151,14 +161,16 @@ public class BoxProviderImpl implements IBoxProvider {
 	@Override
 	public IBoxBuilder createBoxBuilder(final String name) {
 		Class c = null;
-		if ( name != null && builders != null ) {
+		if (name != null && builders != null) {
 			c = builders.get(name);
 		}
-		if ( c == null ) { return new BoxBuilderImpl(); }
+		if (c == null) {
+			return new BoxBuilderImpl();
+		}
 		try {
 			return (IBoxBuilder) c.newInstance();
-		} catch (Exception e) {
-			EditBox.logError(this, "Cannot create box builder: " + name, e);
+		} catch (final Exception e) {
+			// EditBox.logError(this, "Cannot create box builder: " + name, e);
 		}
 		return null;
 	}

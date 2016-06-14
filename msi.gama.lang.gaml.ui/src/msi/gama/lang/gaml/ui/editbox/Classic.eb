@@ -1,0 +1,23 @@
+#Editbox Eclipse Plugin Settings
+#Sun Aug 15 14:46:24 CEST 2010
+HighlightOne=false
+FillGradient=false
+FillSelected=true
+RoundBox=true
+BorderColorType=1
+Name=Classic
+BorderDrawLine=false
+FillOnMove=true
+HighlightWidth=1
+BorderWidth=1
+HighlightColor=acb3b7
+BorderColor=c0c0c0
+FillKeyModifier=Alt
+HighlightColorType=3
+FillGradientColor=dadcc2
+Builder=GAML
+HighlightDrawLine=false
+FillSelectedColor=ffffff
+Colors=dadcc2-d0dd9b-c4d0ac-dcf2b3
+CirculateLevelColors=false
+BorderLineStyle=2

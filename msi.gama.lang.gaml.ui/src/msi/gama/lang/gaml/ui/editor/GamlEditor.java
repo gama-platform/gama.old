@@ -110,6 +110,10 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
+import msi.gama.lang.gaml.ui.editbox.BoxProviderRegistry;
+import msi.gama.lang.gaml.ui.editbox.IBoxDecorator;
+import msi.gama.lang.gaml.ui.editbox.IBoxEnabledEditor;
+import msi.gama.lang.gaml.ui.editbox.IBoxProvider;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialog;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
@@ -119,10 +123,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.IDescription;
-import ummisco.gaml.editbox.EditBox;
-import ummisco.gaml.editbox.IBoxDecorator;
-import ummisco.gaml.editbox.IBoxEnabledEditor;
-import ummisco.gaml.editbox.IBoxProvider;
 
 /*
  * The class GamlEditor.
@@ -622,7 +622,7 @@ public class GamlEditor extends XtextEditor
 	}
 
 	/**
-	 * @see ummisco.gaml.editbox.IBoxEnabledEditor#getDecorator()
+	 * @see msi.gama.lang.gaml.ui.editbox.IBoxEnabledEditor#getDecorator()
 	 */
 	@Override
 	public IBoxDecorator getDecorator() {
@@ -633,14 +633,14 @@ public class GamlEditor extends XtextEditor
 	}
 
 	/**
-	 * @see ummisco.gaml.editbox.IBoxEnabledEditor#createDecorator(ummisco.gaml.editbox.IBoxProvider)
+	 * @see msi.gama.lang.gaml.ui.editbox.IBoxEnabledEditor#createDecorator(msi.gama.lang.gaml.ui.editbox.IBoxProvider)
 	 */
 	@Override
 	public void createDecorator() {
 		if (decorator != null) {
 			return;
 		}
-		final IBoxProvider provider = EditBox.getDefault().getGamlProvider();
+		final IBoxProvider provider = BoxProviderRegistry.getInstance().getGamlProvider();
 		decorator = provider.createDecorator();
 		decorator.setStyledText(getStyledText());
 		decorator.setSettings(provider.getEditorsBoxSettings());
@@ -654,7 +654,7 @@ public class GamlEditor extends XtextEditor
 	}
 
 	/**
-	 * @see ummisco.gaml.editbox.IBoxEnabledEditor#decorate()
+	 * @see msi.gama.lang.gaml.ui.editbox.IBoxEnabledEditor#decorate()
 	 */
 	@Override
 	public void decorate(final boolean doIt) {

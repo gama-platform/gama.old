@@ -1,0 +1,27 @@
+#Editbox Eclipse Plugin Settings
+#Thu May 01 01:04:44 GMT+07:00 2014
+HighlightOne=false
+FillGradient=false
+FillSelected=true
+RoundBox=true
+BorderColorType=1
+Name=GAML
+ExpandBox=true
+BorderDrawLine=true
+FillOnMove=false
+Alpha=173
+HighlightWidth=1
+BorderWidth=1
+HighlightColor=acb3b7
+BorderColor=c0c0c0
+FillKeyModifier=Alt
+HighlightColorType=3
+FillGradientColor=dadcc2
+Builder=GAML
+HighlightDrawLine=false
+FillSelectedColor=ffffff
+BorderLineStyle=2
+Colors=eef2ce-e0e3b6-d2d49e-c4c586
+HighlightLineStyle=2
+NoBackground=true
+CirculateLevelColors=true

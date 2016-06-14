@@ -1,4 +1,4 @@
-package ummisco.gaml.editbox;
+package msi.gama.lang.gaml.ui.editbox;
 
 import java.util.Collection;
 import org.eclipse.ui.IWorkbenchPart;

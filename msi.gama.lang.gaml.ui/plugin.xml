@@ -108,6 +108,12 @@
                  id="msi.gama.lang.gaml.ui.keyword_Gaml">
            </keywordReference>
         </page>
+        <page
+              category="msi.gama.lang.gaml.Gaml"
+              class="msi.gama.lang.gaml.ui.editbox.EditboxPreferencePage"
+              id="pm.eclipse.editbox.pref.default"
+              name="EditBox">
+        </page>
     </extension>
     <extension
                 point="org.eclipse.ui.propertyPages">

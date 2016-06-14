@@ -5,7 +5,8 @@
 package msi.gama.lang.gaml.ui.editor;
 
 import org.eclipse.ui.*;
-import ummisco.gaml.editbox.IBoxEnabledEditor;
+
+import msi.gama.lang.gaml.ui.editbox.IBoxEnabledEditor;
 
 public class BoxDecoratorPartListener implements IPartListener2 {
 
