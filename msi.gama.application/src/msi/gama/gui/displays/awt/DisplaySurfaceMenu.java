@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
+import msi.gama.application.Platform;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
@@ -37,18 +38,17 @@ import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.commands.AgentsMenu.MenuAction;
-import msi.gama.gui.swt.swing.Platform;
 import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.AgentLayer;
-import msi.gama.outputs.layers.charts.ChartLayer;
 import msi.gama.outputs.layers.GraphicLayer;
 import msi.gama.outputs.layers.GridLayer;
 import msi.gama.outputs.layers.ImageLayer;
 import msi.gama.outputs.layers.SpeciesLayer;
 import msi.gama.outputs.layers.TextLayer;
+import msi.gama.outputs.layers.charts.ChartLayer;
 import msi.gama.runtime.GAMA;
 
 public class DisplaySurfaceMenu {

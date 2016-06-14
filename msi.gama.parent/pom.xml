@@ -53,6 +53,7 @@
     <module>../ummisco.gama.feature.stats</module>
     
     <module>../ummisco.gama.opengl</module>
+    <module>../ummisco.gama.java2d</module>
     <module>../ummisco.gama.serialize</module>
     <module>../ummisco.gama.network</module>
     <module>../ummisco.gaml.extensions.maths</module>

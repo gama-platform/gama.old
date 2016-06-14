@@ -8,7 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPartReference;
-import msi.gama.gui.swt.swing.Platform;
+import msi.gama.application.Platform;
 
 /**
  * Class WorkaroundForIssue1353. Only for MacOS X, Eclipse Mars and Java 1.7

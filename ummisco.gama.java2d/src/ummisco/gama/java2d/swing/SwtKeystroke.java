@@ -9,7 +9,7 @@
  * SAS Institute Inc. - initial API and implementation
  * ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing;
+package ummisco.gama.java2d.swing;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;

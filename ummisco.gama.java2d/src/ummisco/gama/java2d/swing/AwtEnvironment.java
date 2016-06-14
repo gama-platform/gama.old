@@ -10,7 +10,7 @@
  * SAS Institute Inc. - initial API and implementation
  * ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing;
+package ummisco.gama.java2d.swing;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -39,6 +39,8 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+
+import msi.gama.application.Platform;
 
 /**
  * An environment to enable the proper display of AWT/Swing windows within a SWT or RCP

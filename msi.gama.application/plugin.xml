@@ -278,15 +278,6 @@
             restorable="false">
       </view>
       <view
-            allowMultiple="true"
-            category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.AWTDisplayView"
-            icon="icons/view.display2.png"
-            id="msi.gama.application.view.LayeredDisplayView"
-            name="Display"
-            restorable="false">
-      </view>
-      <view
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ExperimentParametersView"
@@ -2077,16 +2068,6 @@
       </commonFilter>
 
    </extension>
-      <extension
-            point="gama.display">
-         <implementation
-               class="msi.gama.gui.displays.awt.Java2DDisplaySurface"
-               keyword="java2D">
-         </implementation>
-      </extension>
-      <extension
-            point="gaml.extension">
-      </extension>
       <extension
             point="org.eclipse.ui.actionSets">
          <actionSet

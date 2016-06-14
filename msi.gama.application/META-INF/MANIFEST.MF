@@ -30,7 +30,8 @@ Bundle-Vendor: UMMISCO
 Bundle-Version: 1.7.0.qualifier
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: msi.gama.application;singleton:=true
-Export-Package: msi.gama.gui.displays.awt,
+Export-Package: msi.gama.application,
+ msi.gama.gui.displays.awt,
  msi.gama.gui.displays.layers,
  msi.gama.gui.navigator,
  msi.gama.gui.navigator.commands,
@@ -39,7 +40,6 @@ Export-Package: msi.gama.gui.displays.awt,
  msi.gama.gui.swt.commands,
  msi.gama.gui.swt.controls,
  msi.gama.gui.swt.perspectives,
- msi.gama.gui.swt.swing,
  msi.gama.gui.views,
  msi.gama.gui.views.actions
 Bundle-ClassPath: .

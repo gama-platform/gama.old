@@ -1,4 +1,4 @@
-package msi.gama.gui.swt.swing;
+package ummisco.gama.java2d.swing;
 
 import java.awt.Component;
 import java.awt.EventQueue;

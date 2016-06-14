@@ -11,13 +11,19 @@
  **********************************************************************************************/
 package msi.gama.gui.navigator;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.graphics.Image;
-import msi.gama.application.projects.*;
-import msi.gama.gui.swt.*;
+import msi.gama.application.Platform;
+import msi.gama.application.projects.BuiltinNature;
+import msi.gama.application.projects.GamaNature;
+import msi.gama.application.projects.PluginNature;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.swing.Platform;
+import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaColors;
+import msi.gama.gui.swt.IGamaIcons;
 
 public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 
@@ -27,7 +33,8 @@ public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 
 	@Override
 	public Image getImage() {
-		if (Platform.isGtk()) return IGamaIcons.FOLDER_USER_16.image();
+		if ( Platform.isGtk() )
+			return IGamaIcons.FOLDER_USER_16.image();
 		return IGamaIcons.FOLDER_USER.image(); // FOLDER_USER
 	}
 

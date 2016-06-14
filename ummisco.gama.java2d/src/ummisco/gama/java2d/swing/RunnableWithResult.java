@@ -9,7 +9,7 @@
  * SAS Institute Inc. - initial API and implementation
  * ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing;
+package ummisco.gama.java2d.swing;
 
 /**
  * A Runnable that produces a result, but nevertheless can be used as a

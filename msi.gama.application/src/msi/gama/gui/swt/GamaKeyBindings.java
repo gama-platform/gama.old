@@ -6,7 +6,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
-import msi.gama.gui.swt.swing.Platform;
+import msi.gama.application.Platform;
 import msi.gama.runtime.GAMA;
 
 /**

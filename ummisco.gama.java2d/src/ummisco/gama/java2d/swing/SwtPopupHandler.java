@@ -9,7 +9,7 @@
  * SAS Institute Inc. - initial API and implementation
  * ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing;
+package ummisco.gama.java2d.swing;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
@@ -19,6 +19,8 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
+
+import msi.gama.application.Platform;
 
 public class SwtPopupHandler {
 

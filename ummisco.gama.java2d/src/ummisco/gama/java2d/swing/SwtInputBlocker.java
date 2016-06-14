@@ -9,12 +9,14 @@
  * SAS Institute Inc. - initial API and implementation
  * ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing;
+package ummisco.gama.java2d.swing;
 
 import java.util.Stack;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
+
+import msi.gama.application.Platform;
 
 /**
  * This class, together with {@link AwtDialogListener}, ensures the proper

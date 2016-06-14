@@ -9,7 +9,7 @@
  * SAS Institute Inc. - initial API and implementation
  * ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing;
+package ummisco.gama.java2d.swing;
 
 import java.awt.*;
 import java.io.PrintStream;
@@ -18,6 +18,8 @@ import javax.swing.plaf.FontUIResource;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+
+import msi.gama.application.Platform;
 
 /**
  * This class deals with the customization of the look&amp;feel

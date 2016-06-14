@@ -9,7 +9,7 @@
  * SAS Institute Inc. - initial API and implementation
  * ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing;
+package ummisco.gama.java2d.swing;
 
 import java.awt.Component;
 import java.awt.Container;
@@ -55,6 +55,8 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
+
+import msi.gama.application.Platform;
 
 public abstract class SwingControl extends Composite {
 

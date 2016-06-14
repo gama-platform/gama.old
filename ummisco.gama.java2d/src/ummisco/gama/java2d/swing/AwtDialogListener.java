@@ -9,7 +9,7 @@
  * SAS Institute Inc. - initial API and implementation
  * ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing;
+package ummisco.gama.java2d.swing;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -17,6 +17,8 @@ import java.lang.reflect.*;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.swt.widgets.Display;
+
+import msi.gama.application.Platform;
 
 /**
  * A listener that insures the proper modal behavior of Swing dialogs when running

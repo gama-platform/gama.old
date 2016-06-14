@@ -11,7 +11,7 @@
  * ILOG S.A. - initial API and implementation
  * IBM Corporation - Java/SWT versioning code (from org.eclipse.swt.internal.Library)
  *******************************************************************************/
-package msi.gama.gui.swt.swing;
+package msi.gama.application;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.internal.Library;
