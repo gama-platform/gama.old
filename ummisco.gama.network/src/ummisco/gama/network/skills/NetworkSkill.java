@@ -58,13 +58,17 @@ public class NetworkSkill  extends MessagingSkill {
 		@arg(name = INetworkSkill.PROTOCOL, type = IType.STRING, doc = @doc("protocol type (udp, tcp, mqqt)")),
 		@arg(name = INetworkSkill.PORT, type = IType.INT, doc = @doc("port number")),
 		@arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = true, doc = @doc("server nameL")),
+		@arg(name = INetworkSkill.LOGIN, type = IType.STRING, optional = true, doc = @doc("server nameL")),
+		@arg(name = INetworkSkill.PASSWORD, type = IType.STRING, optional = true, doc = @doc("server nameL")),
 		@arg(name = INetworkSkill.SERVER_URL, type = IType.STRING, optional = false, doc = @doc("server URL")) }, doc = @doc(value = "", returns = "", examples = { @example("") }))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
 		if(!scope.getSimulationScope().getAttributes().keySet().contains(REGISTRED_SERVER))
 			this.startSkill(scope);
 		IAgent agt = scope.getAgentScope();
-		
 		String serverURL = (String) scope.getArg(INetworkSkill.SERVER_URL, IType.STRING);
+		String login = (String) scope.getArg(INetworkSkill.LOGIN, IType.STRING);
+		System.out.println(" ligonfds "+login);
+		String password = (String) scope.getArg(INetworkSkill.PASSWORD, IType.STRING);
 		String networkName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
 		String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
 		Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
@@ -103,8 +107,14 @@ public class NetworkSkill  extends MessagingSkill {
 			{
 				System.out.println("create mqtt serveur");
 				connector = new MQTTConnector(scope);
-				connector.configure(IConnector.LOGIN,"admin");
-				connector.configure(IConnector.PASSWORD,"password");
+				if(serverURL != null)
+					connector.configure(IConnector.SERVER_URL,serverURL);
+				if(login != null)
+				{
+					connector.configure(IConnector.LOGIN,login);
+				}
+				if(password != null)
+					connector.configure(IConnector.PASSWORD,password);
 			}			
 		    if(connector != null){
 		    	myConnectors.put(serverURL,connector);

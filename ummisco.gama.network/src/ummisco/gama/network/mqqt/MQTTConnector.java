@@ -111,7 +111,7 @@ public final class MQTTConnector extends Connector{
 			try {
 				sendConnection = new MqttClient("tcp://"+server+":"+port, localName, new MemoryPersistence());
 				MqttConnectOptions connOpts = new MqttConnectOptions();
-		        connOpts.setCleanSession(true);
+				connOpts.setCleanSession(true);
 		        sendConnection.setCallback(new Callback());
 		        connOpts.setCleanSession(true);
 		        connOpts.setKeepAliveInterval(30);

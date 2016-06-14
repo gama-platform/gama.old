@@ -3,17 +3,37 @@ Bundle-ManifestVersion: 2
 Eclipse-BundleShape: dir
 Bundle-Name: Network
 Bundle-SymbolicName: ummisco.gama.network;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.7.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: ummisco.gama.mqtt.common,
- ummisco.gama.network.common,
- ummisco.gama.network.mqqt,
- ummisco.gama.network.skills,
- ummisco.gama.network.tcp,
- ummisco.gama.network.udp
+Export-Package: ummisco.gama.mqtt.common;uses:="org.eclipse.paho.client.mqttv3",
+ ummisco.gama.network.common;
+  uses:="msi.gama.extensions.messaging,
+   msi.gama.metamodel.agent,
+   msi.gama.runtime.exceptions,
+   msi.gama.runtime",
+ ummisco.gama.network.mqqt;
+  uses:="msi.gama.metamodel.agent,
+   org.eclipse.paho.client.mqttv3,
+   msi.gama.runtime,
+   ummisco.gama.network.common,
+   msi.gama.util",
+ ummisco.gama.network.skills;uses:="msi.gama.extensions.messaging,msi.gama.runtime",
+ ummisco.gama.network.tcp;
+  uses:="msi.gama.extensions.messaging,
+   msi.gama.metamodel.agent,
+   msi.gama.runtime,
+   ummisco.gama.network.common",
+ ummisco.gama.network.test;uses:="msi.gaml.skills",
+ ummisco.gama.network.udp;
+  uses:="msi.gama.extensions.messaging,
+   msi.gama.metamodel.agent,
+   msi.gama.runtime,
+   msi.gama.util,
+   ummisco.gama.network.common"
 Require-Bundle: msi.gama.processor;bundle-version="1.4.0",
  msi.gama.core;bundle-version="1.7.0",
  ummisco.gama.serialize;bundle-version="1.7.0"
 Bundle-ClassPath: .,
  ext/org.eclipse.paho.client.mqttv3-1.0.2-3.jar
+Bundle-ActivationPolicy: lazy
  

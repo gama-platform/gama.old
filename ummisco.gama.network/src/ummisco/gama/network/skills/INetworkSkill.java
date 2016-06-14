@@ -21,6 +21,8 @@ public interface INetworkSkill  {
 	public final static String OPEN_TOPIC = "open";
 	public final static String CONNECT_TOPIC = "connect";
 	public final static String SERVER_URL = "to";
+	public final static String LOGIN = "login";
+	public final static String PASSWORD = "password";
 	public final static String GROUP = "with_group";
 	public final static String WITHNAME = "with_name";
 	public final static String PROTOCOL = "protocol";
