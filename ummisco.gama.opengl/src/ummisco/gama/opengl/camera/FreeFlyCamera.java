@@ -205,4 +205,22 @@ public class FreeFlyCamera extends AbstractCamera {
 	protected void drawRotationHelper() {
 	}
 
+	@Override
+	public double getPitch() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getYaw() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public double getRoll() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

@@ -479,4 +479,48 @@ public class CameraArcBall extends AbstractCamera {
 		}
 	}
 
+	@Override
+	public double getPitch() {
+		// compute the angle between the vector (0,0,1) and the vector (x,y,z),
+		// where (x,y,z) is the orthogonal projection of the vector from the  on the plan (y=0).y and z are the normalized components of the vector from the camera
+		// position to the target position.
+		double x = target.x - position.x;
+		double y = target.y - position.y;
+		double z = target.z - position.z;
+		double sum = Math.abs(x) + 0 + Math.abs(z);
+		y = Math.abs(y / sum); // normalize
+		z = Math.abs(z / sum); // normalize
+		// the angle between the two vectors is computed like this : cos(angle) = u dot v.
+		double cosAngle = z;
+		double angle = Math.acos(cosAngle);
+		double angleInDeg = Math.toDegrees(angle);
+		return angle;
+//		return Math.toRadians(-phi);
+	}
+
+	@Override
+	public double getYaw() {
+		// compute the angle between the vector (0,0,1) and the vector (0,y,z),
+		// where y and z are the normalized components of the vector from the camera
+		// position to the target position.
+		double x = target.x - position.x;
+		double y = target.y - position.y;
+		double z = target.z - position.z;
+		double sum = 0 + Math.abs(y) + Math.abs(z);
+		y = Math.abs(y / sum); // normalize
+		z = Math.abs(z / sum); // normalize
+		// the angle between the two vectors is computed like this : cos(angle) = u dot v.
+		double cosAngle = z;
+		double angle = Math.acos(cosAngle);
+		double angleInDeg = Math.toDegrees(angle);
+		return angle;
+//		return Math.toRadians(-theta-90);
+	}
+
+	@Override
+	public double getRoll() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }// End of Class CameraArcBall

@@ -16,13 +16,13 @@ public class ShaderProgram {
 	
 	private GL2 gl;
 	
-	private final static String vertexShaderString =
+	private static String vertexShaderString =
 	// For GLSL 1 and 1.1 code i highly recommend to not include a
 	// GLSL ES language #version line, GLSL ES section 3.4
 	// Many GPU drivers refuse to compile the shader if #version is different from
 	// the drivers internal GLSL version.
 	//
-	// This demo use GLSL version 1.1 (the implicit version)			 
+	// This demo use GLSL version 1.1 (the implicit version)	
 		"#if __VERSION__ >= 130\n" + // GLSL 130+ uses in and out
 		"  #define attribute in\n" + // instead of attribute and varying
 		"  #define varying out\n" +  // used by OpenGL 3 core and later.
@@ -36,20 +36,33 @@ public class ShaderProgram {
 		"uniform mat4    transformationMatrix; \n" + //
 		"uniform mat4    projectionMatrix; \n" + //
 		"uniform mat4    viewMatrix; \n" + // 
-		"attribute vec4  attribute_Position; \n" + // the vertex shader
+		"uniform mat4    inverseYMatrix; \n" + // 
+		"attribute vec3  attribute_Position; \n" + // the vertex shader
 		"attribute vec4  attribute_Color; \n" +    // uniform and attributes
 		
 		"varying vec4    varying_Color; \n" + // Outgoing varying data
 		                                      // sent to the fragment shader
 		"void main(void) \n" +
 		"{ \n" +
+		"mat4 translateMatrix = mat4( \n" +
+	   "1.0, 0.0, 0.0, 0.0, \n" + // first column (not row!)
+	   "0.0, 1.0, 0.0, 0.0, \n" + // second column
+	   "0.0, 0.0, 1.0, 0.0,  \n" + // third column
+	   "50.0, -50.0, 0.0, 1.0  \n" + // fourth column
+	   "); \n" +
+	   "mat4 inverseTranslateMatrix = mat4( \n" +
+	   "1.0, 0.0, 0.0, 0.0, \n" + // first column (not row!)
+	   "0.0, 1.0, 0.0, 0.0, \n" + // second column
+	   "0.0, 0.0, 1.0, 0.0,  \n" + // third column
+	   "-50.0, 50.0, 0.0, 1.0  \n" + // fourth column
+	   "); \n" +
 		"  varying_Color = attribute_Color; \n" +
-		"  //gl_Position = projectionMatrix * viewMatrix * transformationMatrix * attribute_Position; \n" +
-		"  gl_Position = projectionMatrix * transformationMatrix * attribute_Position; \n" +
-		"  //gl_Position = attribute_Position; \n" +
+		"  //gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(attribute_Position,1.0); \n" +
+		"  //gl_Position = projectionMatrix * transformationMatrix * vec4(attribute_Position,1.0); \n" +
+		"  gl_Position = inverseYMatrix * projectionMatrix * viewMatrix * transformationMatrix * vec4(attribute_Position,1.0); \n" +
 		"} ";
 		
-	private final static String fragmentShaderString =
+	private static String fragmentShaderString =
 		"#if __VERSION__ >= 130\n" +
 		"  #define varying in\n" +
 		"  out vec4 mgl_FragColor;\n" +
@@ -77,6 +90,7 @@ public class ShaderProgram {
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
+	private int location_inverseYMatrix;
 	
 	private static FloatBuffer matrixBuffer = FloatBuffer.allocate(16);
 	
@@ -91,6 +105,12 @@ public class ShaderProgram {
 			// OpenGL ES returns a index id to be stored for future reference.
 			int vertShader = gl.glCreateShader(GL2.GL_VERTEX_SHADER);
 			int fragShader = gl.glCreateShader(GL2.GL_FRAGMENT_SHADER);
+			
+			if(gl.isGL3core()){
+	            System.out.println("GL3 core detected: explicit add #version 130 to shaders");
+	            vertexShaderString = "#version 130\n"+vertexShaderString;
+	            fragmentShaderString = "#version 130\n"+fragmentShaderString;
+	        }
 			
 			//Compile the vertexShader String into a program.
 			String[] vlines = new String[] { vertexShaderString };
@@ -188,6 +208,7 @@ public class ShaderProgram {
 		location_transformationMatrix = getUniformLocation("transformationMatrix");
 		location_projectionMatrix = getUniformLocation("projectionMatrix");
 		location_viewMatrix = getUniformLocation("viewMatrix");
+		location_inverseYMatrix = getUniformLocation("inverseYMatrix");
 	}
 	
 	public void loadTransformationMatrix(Matrix4f matrix) {
@@ -201,6 +222,10 @@ public class ShaderProgram {
 	public void loadViewMatrix(ICamera camera) {
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		loadMatrix(location_viewMatrix, viewMatrix);
+	}
+	
+	public void loadInverseYMatrix(Matrix4f matrix) {
+		loadMatrix(location_inverseYMatrix, matrix);
 	}
 	
 	protected void loadMatrix(int location, Matrix4f matrix) {

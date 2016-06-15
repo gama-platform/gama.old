@@ -31,23 +31,111 @@ public class Maths {
 		return matrix;
 	}
 	
+	public static double[] CrossProduct(final double[] vect1, final double[] vect2) {
+		final double[] result = new double[3];
+		result[0] = vect1[1] * vect2[2] - vect1[2] * vect2[1];
+		result[1] = vect1[2] * vect2[0] - vect1[0] * vect2[2];
+		result[2] = vect1[0] * vect2[1] - vect1[1] * vect2[0];
+		return result;
+	}
+	
+	public static double ScalarProduct(final double[] vect1, final double[] vect2) {
+		return vect1[0]*vect2[0]+vect1[1]*vect2[1]+vect1[2]*vect2[2];
+	}
+	
+	public static double[] Normalize(final double[] vect) {
+		double[] result = new double[vect.length];
+		double sum = 0;
+		for (int i = 0; i < vect.length ; i++) {
+			sum += Math.abs(vect[i]);
+		}
+		for (int i = 0; i < vect.length ; i++) {
+			result[i] = vect[i] / sum;
+		}
+		return result;
+	}
+	
 	public static Matrix4f createViewMatrix(ICamera camera) {
+		// see http://in2gpu.com/2015/05/17/view-matrix/
 		Matrix4f viewMatrix = new Matrix4f();
-		Matrix4f tmpMatrix = new Matrix4f();
-		viewMatrix.setIdentity();
 		
-		// rotate
-//		tmpMatrix.rotX(camera.getPitch());
-//		viewMatrix.mul(tmpMatrix);
-//		tmpMatrix.rotY(camera.getYaw());
-//		viewMatrix.mul(tmpMatrix);
-//		tmpMatrix.rotZ(camera.getRoll());
-//		viewMatrix.mul(tmpMatrix);
+		double[] fVect = new double[3]; // forward vector : direction vector of the camera.
+		double[] sVect = new double[3]; // orthogonal vector : "right" or "sideways" vector.
+		double[] vVect = new double[3]; // cross product between f and s.
+		double[] pVect = new double[3]; // camera position.
 		
-		// translate
-		Vector3f cameraPos = new Vector3f((float)camera.getPosition().getX(),(float)camera.getPosition().getY(),(float)camera.getPosition().getZ());
-		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x,-cameraPos.y,-cameraPos.z);
-		viewMatrix.setTranslation(negativeCameraPos);
+		double sum = Math.abs(camera.getTarget().x - camera.getPosition().x)
+				+ Math.abs(camera.getTarget().y - camera.getPosition().y)
+				+ Math.abs(camera.getTarget().z - camera.getPosition().z);
+		fVect[0] = -(camera.getTarget().x - camera.getPosition().x) / sum;
+		fVect[1] = (camera.getTarget().y - camera.getPosition().y) / sum;
+		fVect[2] = -(camera.getTarget().z - camera.getPosition().z) / sum;
+		
+		double[] crossProduct = CrossProduct(fVect,new double[]{camera.getOrientation().x,
+				-camera.getOrientation().y,camera.getOrientation().z});
+		sVect = Normalize(crossProduct);
+		
+		vVect = CrossProduct(sVect,fVect);
+		
+		pVect = new double[]{camera.getPosition().x,
+				-camera.getPosition().y,camera.getPosition().z};
+		
+		viewMatrix.m00 = (float) sVect[0];
+		viewMatrix.m01 = (float) sVect[1];
+		viewMatrix.m02 = (float) sVect[2];
+		viewMatrix.m03 = (float) -ScalarProduct(sVect,pVect);
+		viewMatrix.m10 = (float) vVect[0];
+		viewMatrix.m11 = (float) vVect[1];
+		viewMatrix.m12 = (float) vVect[2];
+		viewMatrix.m13 = (float) -ScalarProduct(vVect,pVect);
+		viewMatrix.m20 = (float) fVect[0];
+		viewMatrix.m21 = (float) fVect[1];
+		viewMatrix.m22 = (float) fVect[2];
+		viewMatrix.m23 = (float) -ScalarProduct(fVect,pVect);
+		viewMatrix.m30 = (float) 0;
+		viewMatrix.m31 = (float) 0;
+		viewMatrix.m32 = (float) 0;
+		viewMatrix.m33 = (float) 1;
+		
+//		viewMatrix.m00 = (float) sVect[0];
+//		viewMatrix.m01 = (float) vVect[0];
+//		viewMatrix.m02 = (float) fVect[0];
+//		viewMatrix.m03 = (float) pVect[0];
+//		viewMatrix.m10 = (float) sVect[1];
+//		viewMatrix.m11 = (float) vVect[1];
+//		viewMatrix.m12 = (float) fVect[1];
+//		viewMatrix.m13 = (float) pVect[1];
+//		viewMatrix.m20 = (float) sVect[2];
+//		viewMatrix.m21 = (float) vVect[2];
+//		viewMatrix.m22 = (float) fVect[2];
+//		viewMatrix.m23 = (float) pVect[2];
+//		viewMatrix.m30 = (float) 0;
+//		viewMatrix.m31 = (float) 0;
+//		viewMatrix.m32 = (float) 0;
+//		viewMatrix.m33 = (float) 1;
+		
+		viewMatrix.transpose();
+		
+		
+//		Matrix4f viewMatrix = new Matrix4f();
+//		Matrix4f tmpMatrix = new Matrix4f();
+//		viewMatrix.setIdentity();
+//		
+//		// rotate
+//		tmpMatrix.rotX((float) camera.getPitch());
+//		viewMatrix.mul(tmpMatrix);
+//		tmpMatrix.rotY((float) camera.getYaw());
+//		viewMatrix.mul(tmpMatrix);
+//		tmpMatrix.rotZ((float) camera.getRoll());
+//		viewMatrix.mul(tmpMatrix);
+//		
+//		// translate
+//		Vector3f cameraPos = new Vector3f((float)camera.getPosition().getX(),(float)camera.getPosition().getY(),(float)camera.getPosition().getZ());
+//		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x,-cameraPos.y,-cameraPos.z);
+////		Vector3f negativeCameraPos = new Vector3f(0,0,0);
+//		viewMatrix.setTranslation(negativeCameraPos);
+//		
+//		viewMatrix.transpose();
 		
 		return viewMatrix;
 	}

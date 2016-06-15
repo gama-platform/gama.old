@@ -35,6 +35,12 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 	public final static double INIT_Z_FACTOR = 1.5;
 
 	// Positions
+	
+	public abstract double getPitch();
+	
+	public abstract double getYaw();
+	
+	public abstract double getRoll();
 
 	public abstract GamaPoint getPosition();
 
