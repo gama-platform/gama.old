@@ -8,7 +8,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.views.LayeredDisplayView;
+import msi.gama.gui.swt.controls.GamaToolbar2;
+import msi.gama.gui.views.displays.LayeredDisplayView;
 import msi.gama.runtime.GAMA;
 
 /**
@@ -83,6 +84,12 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 			}
 		}
 		overlay.update();
+	}
+
+	@Override
+	public void createToolItems(final GamaToolbar2 tb) {
+		super.createToolItems(tb);
+		new OpenGLToolbarMenu().createItem(tb, this);
 	}
 
 	/**

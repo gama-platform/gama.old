@@ -4,13 +4,26 @@
  */
 package msi.gama.gui.navigator;
 
-import java.io.*;
+import java.io.File;
+import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.util.*;
-import java.util.concurrent.*;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.content.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.PlatformUI;
@@ -18,12 +31,17 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.gui.navigator.images.ImageDataLoader;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.file.*;
 import msi.gama.util.file.GAMLFile.GamlInfo;
+import msi.gama.util.file.GamaCSVFile;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
+import msi.gama.util.file.GamaFileMetaData;
 import msi.gama.util.file.GamaImageFile.ImageInfo;
+import msi.gama.util.file.GamaOsmFile;
 import msi.gama.util.file.GamaOsmFile.OSMInfo;
+import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import msi.gama.util.file.IFileMetaDataProvider;
+import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.factories.DescriptionFactory;
 
 /**
@@ -82,7 +100,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 		public GenericFileInfo(final String propertiesString) {
 			super(propertiesString);
-			String[] segments = split(propertiesString);
+			final String[] segments = split(propertiesString);
 			suffix = segments[1];
 		}
 
@@ -108,13 +126,13 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 		public ProjectInfo(final IProject project) throws CoreException {
 			super(project.getModificationStamp());
-			IProjectDescription desc = project.getDescription();
+			final IProjectDescription desc = project.getDescription();
 			comment = desc.getComment();
 		}
 
 		public ProjectInfo(final String propertiesString) {
 			super(propertiesString);
-			String[] segments = split(propertiesString);
+			final String[] segments = split(propertiesString);
 			comment = segments[1];
 		}
 
@@ -159,21 +177,21 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	@Override
 	public String getDecoratorSuffix(final Object element) {
-		IGamaFileMetaData data = getMetaData(element, false, true);
+		final IGamaFileMetaData data = getMetaData(element, false, true);
 		if ( data == null ) { return ""; }
 		return data.getSuffix();
 	}
 
 	private static IGamaFileMetaData getMetaData(final IProject project, final boolean includeOutdated) {
 		if ( !project.isAccessible() ) { return null; }
-		String ct = "project";
-		Class infoClass = CLASSES.get(ct);
+		final String ct = "project";
+		final Class infoClass = CLASSES.get(ct);
 		if ( infoClass == null ) { return null; }
-		IGamaFileMetaData data = readMetadata(project, infoClass, includeOutdated);
+		final IGamaFileMetaData data = readMetadata(project, infoClass, includeOutdated);
 		if ( data == null ) {
 			try {
 				storeMetadata(project, new ProjectInfo(project), false);
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				e.printStackTrace();
 				return null;
 			}
@@ -193,19 +211,19 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 		if ( file == null ) {
 			if ( element instanceof java.io.File ) {
-				IPath p = Path.fromOSString(((java.io.File) element).getAbsolutePath());
+				final IPath p = Path.fromOSString(((java.io.File) element).getAbsolutePath());
 				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(p);
 			}
 			if ( file == null || !file.exists() ) { return null; }
 		} else if ( !file.isAccessible() ) { return null; }
 		final String ct = getContentTypeId(file);
-		Class infoClass = CLASSES.get(ct);
+		final Class infoClass = CLASSES.get(ct);
 		if ( infoClass == null ) { return null; }
 		final IGamaFileMetaData[] data = new IGamaFileMetaData[] { readMetadata(file, infoClass, includeOutdated) };
 		if ( data[0] == null ) {
 
 			final IFile theFile = file;
-			Runnable create = new Runnable() {
+			final Runnable create = new Runnable() {
 
 				@Override
 				public void run() {
@@ -240,7 +258,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 					try {
 
 						theFile.refreshLocal(IResource.DEPTH_ZERO, null);
-					} catch (CoreException e) {
+					} catch (final CoreException e) {
 						e.printStackTrace();
 					}
 					GAMA.getGui().asyncRun(new Runnable() {
@@ -271,16 +289,16 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	private static <T extends IGamaFileMetaData> T readMetadata(final IResource file, final Class<T> clazz,
 		final boolean includeOutdated) {
 		IGamaFileMetaData result = null;
-		long modificationStamp = file.getModificationStamp();
+		final long modificationStamp = file.getModificationStamp();
 		try {
-			byte[] b = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(CACHE_KEY, file);
+			final byte[] b = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(CACHE_KEY, file);
 			if ( b != null ) {
-				String s = new String(b, "UTF-8");
+				final String s = new String(b, "UTF-8");
 				// String s = file.getPersistentProperty(CACHE_KEY);
 				result = GamaFileMetaData.from(s, modificationStamp, clazz, includeOutdated);
 				if ( !clazz.isInstance(result) ) { return null; }
 			}
-		} catch (Exception ignore) {
+		} catch (final Exception ignore) {
 			System.err.println("Error loading metadata for " + file.getName() + " : " + ignore.getMessage());
 		}
 		return (T) result;
@@ -288,9 +306,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	@Override
 	public void storeMetadata(final File f, final IGamaFileMetaData data) {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IPath location = Path.fromOSString(f.getAbsolutePath());
-		IFile file = workspace.getRoot().getFileForLocation(location);
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		final IPath location = Path.fromOSString(f.getAbsolutePath());
+		final IFile file = workspace.getRoot().getFileForLocation(location);
 		storeMetadata(file, data, false);
 
 	}
@@ -306,7 +324,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				data.setModificationStamp(file.getModificationStamp());
 			}
 
-			Runnable runnable = new Runnable() {
+			final Runnable runnable = new Runnable() {
 
 				@Override
 				public void run() {
@@ -339,7 +357,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			// }
 			// });
 
-		} catch (Exception ignore) {
+		} catch (final Exception ignore) {
 			ignore.printStackTrace();
 			System.err.println("Error storing metadata for " + file.getName() + " : " + ignore.getMessage());
 		}
@@ -391,7 +409,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		ShapeInfo info = null;
 		try {
 			info = new ShapeInfo(file.getLocationURI().toURL(), file.getModificationStamp());
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 		}
 		return info;
@@ -402,7 +420,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		OSMInfo info = null;
 		try {
 			info = new OSMInfo(file.getLocationURI().toURL(), file.getModificationStamp());
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 		}
 		return info;
@@ -411,10 +429,10 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	static GenericFileInfo createShapeFileSupportMetaData(final IFile file) {
 		GenericFileInfo info = null;
-		IResource r = shapeFileSupportedBy(file);
+		final IResource r = shapeFileSupportedBy(file);
 		if ( r == null ) { return null; }
-		String ext = file.getFileExtension();
-		String type = longNames.containsKey(ext) ? longNames.get(ext) : "Data";
+		final String ext = file.getFileExtension();
+		final String type = longNames.containsKey(ext) ? longNames.get(ext) : "Data";
 		info = new GenericFileInfo(file.getModificationStamp(), "" + type + " for '" + r.getName() + "'");
 		return info;
 
@@ -430,27 +448,10 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		return p != null && "gaml".equals(p.getFileExtension())/* GAML_CT_ID.equals(getContentTypeId(p)) */;
 	}
 
-	public static String getContentTypeIdOld(final IFile p) {
-		IContentDescription desc;
-		try {
-			desc = p.getContentDescription();
-			if ( desc != null ) {
-				IContentType type = desc.getContentType();
-				if ( type != null ) { return type.getId(); }
-			}
-		} catch (CoreException e) {}
-		String ext = p.getFileExtension();
-		if ( "gaml".equals(ext) ) { return GAML_CT_ID; }
-		if ( "shp".equals(ext) ) { return SHAPEFILE_CT_ID; }
-		if ( OSMExt.contains(ext) ) { return OSM_CT_ID; }
-		if ( longNames.contains(ext) ) { return SHAPEFILE_SUPPORT_CT_ID; }
-		return "";
-	}
-
 	public static String getContentTypeId(final IFile p) {
-		IContentType ct = Platform.getContentTypeManager().findContentTypeFor(p.getFullPath().toOSString());
+		final IContentType ct = Platform.getContentTypeManager().findContentTypeFor(p.getFullPath().toOSString());
 		if ( ct != null ) { return ct.getId(); }
-		String ext = p.getFileExtension();
+		final String ext = p.getFileExtension();
 		if ( "gaml".equals(ext) ) { return GAML_CT_ID; }
 		if ( "shp".equals(ext) ) { return SHAPEFILE_CT_ID; }
 		if ( OSMExt.contains(ext) ) { return OSM_CT_ID; }
@@ -459,7 +460,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	public static boolean isShapeFileSupport(final IFile p) {
-		String ext = p.getFileExtension();
+		final String ext = p.getFileExtension();
 		return longNames.contains(ext);
 	}
 
@@ -469,7 +470,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if ( fileName.endsWith(".shp.xml") ) {
 			fileName = fileName.replace(".xml", "");
 		} else {
-			String extension = r.getFileExtension();
+			final String extension = r.getFileExtension();
 			if ( !longNames.contains(extension) ) { return null; }
 			fileName = fileName.replace(extension, "shp");
 		}
@@ -477,7 +478,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	}
 
 	public static boolean isSupport(final IFile shapefile, final IFile other) {
-		IResource r = shapeFileSupportedBy(other);
+		final IResource r = shapeFileSupportedBy(other);
 		return shapefile.equals(r);
 	}
 

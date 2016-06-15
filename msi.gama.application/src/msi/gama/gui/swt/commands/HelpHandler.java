@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -22,7 +24,12 @@ public class HelpHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		SwtGui.showWeb2Editor("http://doc.gama-platform.org", null);
+		try {
+			SwtGui.showWeb2Editor(new URL("http://doc.gama-platform.org"));
+		} catch (final MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 }

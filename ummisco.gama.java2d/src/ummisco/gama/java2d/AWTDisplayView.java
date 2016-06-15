@@ -20,7 +20,7 @@ import msi.gama.application.Platform;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.swt.WorkaroundForIssue1353;
-import msi.gama.gui.views.LayeredDisplayView;
+import msi.gama.gui.views.displays.LayeredDisplayView;
 import ummisco.gama.java2d.swing.SwingControl;
 
 public class AWTDisplayView extends LayeredDisplayView {

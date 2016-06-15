@@ -15,7 +15,6 @@ Require-Bundle: org.eclipse.ui.console,
  org.eclipse.equinox.p2.engine,
  org.eclipse.equinox.p2.operations,
  org.eclipse.equinox.p2.metadata.repository,
- org.eclipse.ui.editors,
  msi.gama.processor,
  org.eclipse.ui.navigator.resources,
  msi.gama.ext,
@@ -25,22 +24,24 @@ Require-Bundle: org.eclipse.ui.console,
  org.eclipse.e4.core.contexts,
  org.eclipse.e4.ui.workbench,
  org.eclipse.e4.ui.model.workbench,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.ui.workbench,
+ org.eclipse.core.filesystem;bundle-version="1.5.0"
 Bundle-Vendor: UMMISCO
 Bundle-Version: 1.7.0.qualifier
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: msi.gama.application;singleton:=true
 Export-Package: msi.gama.application,
- msi.gama.gui.displays.awt,
- msi.gama.gui.displays.layers,
  msi.gama.gui.navigator,
  msi.gama.gui.navigator.commands,
+ msi.gama.gui.navigator.images,
  msi.gama.gui.parameters,
  msi.gama.gui.swt,
  msi.gama.gui.swt.commands,
  msi.gama.gui.swt.controls,
  msi.gama.gui.swt.perspectives,
  msi.gama.gui.views,
- msi.gama.gui.views.actions
+ msi.gama.gui.views.actions,
+ msi.gama.gui.views.displays
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

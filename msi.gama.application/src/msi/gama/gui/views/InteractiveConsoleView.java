@@ -46,17 +46,17 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	private final List<String> history = new ArrayList();
 	private int indexInHistory = 0;
 	private Composite controlToDisplayInFullScreen;
-	Composite parentOfControlToDisplayFullScreen;
+	private Composite parentOfControlToDisplayFullScreen;
 
 	@Override
 	public void createPartControl(final Composite composite) {
-		parentOfControlToDisplayFullScreen = composite;
+		setParentOfControlToDisplayFullScreen(composite);
 		final GridLayout layout = new GridLayout(1, true);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
-		parentOfControlToDisplayFullScreen.setLayout(layout);
+		getParentOfControlToDisplayFullScreen().setLayout(layout);
 		controlToDisplayInFullScreen = new Composite(composite, SWT.BORDER);
 		controlToDisplayInFullScreen.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		super.createPartControl(controlToDisplayInFullScreen);
@@ -313,6 +313,14 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 				GAMA.getExperiment().refreshAllOutputs();
 		}
 
+	}
+
+	public Composite getParentOfControlToDisplayFullScreen() {
+		return parentOfControlToDisplayFullScreen;
+	}
+
+	public void setParentOfControlToDisplayFullScreen(Composite parentOfControlToDisplayFullScreen) {
+		this.parentOfControlToDisplayFullScreen = parentOfControlToDisplayFullScreen;
 	}
 
 }

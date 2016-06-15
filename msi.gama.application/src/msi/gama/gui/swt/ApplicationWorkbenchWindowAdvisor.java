@@ -22,7 +22,6 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.viewers.html.HtmlViewer;
 import msi.gama.runtime.GAMA;
 
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
@@ -104,7 +103,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 	@Override
 	public void postWindowOpen() {
-		HtmlViewer.openWelcomePage(true);
+		SwtGui.openWelcomePage(true);
 		RearrangeMenus.run();
 	}
 

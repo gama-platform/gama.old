@@ -10,7 +10,6 @@
   <modules>
     
     <module>../msi.gama.ext</module>
-    <!--<module>../msi.gama.processor</module>-->
     <module>../msi.gama.core</module>
     <module>../msi.gama.lang.gaml</module>
     <module>../msi.gama.lang.gaml.ui</module>
@@ -54,6 +53,7 @@
     
     <module>../ummisco.gama.opengl</module>
     <module>../ummisco.gama.java2d</module>
+    <module>../ummisco.gama.ui.viewers</module>
     <module>../ummisco.gama.serialize</module>
     <module>../ummisco.gama.network</module>
     <module>../ummisco.gaml.extensions.maths</module>
@@ -66,7 +66,6 @@
     
     <module>../msi.gama.application</module>
     <module>../msi.gama.p2updatesite</module>
-    <!--<module>../msi.gama.release</module> -->
   </modules>
   
   <properties>

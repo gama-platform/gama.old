@@ -25,13 +25,18 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -60,6 +65,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -86,22 +92,21 @@ import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.navigator.NavigatorBaseLighweightDecorator;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.parameters.EditorsDialog;
-import msi.gama.gui.parameters.UserControlDialog;
 import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.commands.ArrangeDisplayViews;
 import msi.gama.gui.swt.commands.GamaColorMenu;
-import msi.gama.gui.swt.controls.SWTChartEditor.SWTUtils;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
-import msi.gama.gui.viewers.html.HtmlViewer;
+import msi.gama.gui.swt.dialogs.UserControlDialog;
 import msi.gama.gui.views.ConsoleView;
 import msi.gama.gui.views.ErrorView;
 import msi.gama.gui.views.ExperimentParametersView;
 import msi.gama.gui.views.GamaViewPart;
 import msi.gama.gui.views.InteractiveConsoleView;
-import msi.gama.gui.views.LayeredDisplayView;
 import msi.gama.gui.views.MonitorView;
 import msi.gama.gui.views.UserControlView;
+import msi.gama.gui.views.displays.LayeredDisplayView;
+import msi.gama.gui.views.displays.SWTChartEditor.SWTUtils;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -135,6 +140,12 @@ public class SwtGui extends AbstractGui {
 
 	static {
 		if ( !GAMA.isInHeadLessMode() ) {
+			try {
+				HOME_URL = FileLocator.toFileURL(Platform.getBundle("msi.gama.ext").getEntry("/images/welcome.html"));
+			} catch (final IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			// GAMA.setGui(new SwtGui());
 			// WorkaroundForIssue1358.install();
 		} else {
@@ -494,7 +505,11 @@ public class SwtGui extends AbstractGui {
 		return result[0];
 	}
 
-	static final IEditorInput input = new IEditorInput() {
+	static final HtmlInput input = new HtmlInput();
+
+	static class HtmlInput implements IEditorInput {
+
+		String url;
 
 		@Override
 		public Object getAdapter(final Class adapter) {
@@ -551,39 +566,43 @@ public class SwtGui extends AbstractGui {
 		return true;
 	}
 
-	// @Override
-	public static Object showWeb2Editor(final String url, final String html) {
-		if ( url != null && url.contains("http") ) {
-			if ( !isInternetReachable() ) { return null; }
+	public static URL HOME_URL;
+
+	public static void openWelcomePage(final boolean ifEmpty) {
+		if ( ifEmpty && SwtGui.getPage().getActiveEditor() != null ) { return; }
+		if ( ifEmpty && !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return; }
+		if ( HOME_URL != null ) {
+			showWeb2Editor(HOME_URL);
+		}
+	}
+
+	public static void showWeb2Editor(final URL url) {
+
+		// get the workspace
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+
+		// create the path to the file
+		final IPath location = new Path(url.getPath());
+
+		// try to get the IFile (returns null if it could not be found in the workspace)
+		final IFile file = workspace.getRoot().getFileForLocation(location);
+		IEditorInput input;
+		if ( file == null ) {
+			// not found in the workspace, get the IFileStore (external files)
+			final IFileStore fileStore = EFS.getLocalFileSystem().getStore(location);
+			input = new FileStoreEditorInput(fileStore);
+
+		} else {
+			input = new FileEditorInput(file);
 		}
 
-		final Object[] result = new Object[1];
-		getDisplay().syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					getPage().zoomOut();
-					final IEditorPart p = getPage().findEditor(input);
-					if ( p == null ) {
-						result[0] = getPage().openEditor(input, "msi.gama.application.browser", true);
-					} else {
-						result[0] = p;
-					}
-				} catch (final PartInitException e) {
-					result[0] = e;
-				}
-			}
-		});
-		if ( result[0] instanceof HtmlViewer ) {
-			final HtmlViewer be = (HtmlViewer) result[0];
-			if ( url != null ) {
-				be.setUrl(url);
-			} else if ( html != null ) {
-				be.setHtml(html);
-			}
+		try {
+			SwtGui.getPage().openEditor(input, "msi.gama.application.browser");
+		} catch (final PartInitException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return result[0];
+		// SwtGui.showWeb2Editor(HOME_URL);
 
 	}
 

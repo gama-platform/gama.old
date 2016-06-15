@@ -3,14 +3,19 @@ package msi.gama.gui.navigator.images;
 import java.text.NumberFormat;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.viewers.image.ImageViewer;
 import msi.gaml.operators.fastmaths.FastMath;
 
 /**
@@ -31,28 +36,28 @@ public class ImagePropertyPage extends PropertyPage implements IWorkbenchPropert
 		ImageData imageData = null;
 		try {
 			imageData = getImageData();
-		} catch (SWTException ex) {
+		} catch (final SWTException ex) {
 			// bad image file, fall through
-		} catch (CoreException ex) {
+		} catch (final CoreException ex) {
 			// unable to read file, fall through
 		}
 		if ( imageData == null ) {
-			Label l = new Label(parent, SWT.LEFT);
+			final Label l = new Label(parent, SWT.LEFT);
 			l.setText("Not available");
 			return l;
 		}
 
-		Composite main = new Composite(parent, SWT.NONE);
+		final Composite main = new Composite(parent, SWT.NONE);
 		main.setLayout(new GridLayout(2, false));
-		NumberFormat numFormat = NumberFormat.getNumberInstance();
+		final NumberFormat numFormat = NumberFormat.getNumberInstance();
 
 		// width, height, type
 		createLabelAndText(main, "Width:", "" + imageData.width + " pixels");
 		createLabelAndText(main, "Height:", "" + imageData.height + " pixels");
 		createLabelAndText(main, "Type:", ImageContentTypeDescriber.getLongLabel(imageData.type));
 		createLabelAndText(main, "Image Size (Uncompressed):", "" + imageData.data.length + " bytes");
-		Label sep = new Label(main, SWT.SEPARATOR | SWT.HORIZONTAL);
-		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
+		final Label sep = new Label(main, SWT.SEPARATOR | SWT.HORIZONTAL);
+		final GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalSpan = 2;
 		sep.setLayoutData(gd);
 
@@ -62,16 +67,16 @@ public class ImagePropertyPage extends PropertyPage implements IWorkbenchPropert
 		// transparent (from transparentPixel/alpha/alphaData)
 		if ( imageData.transparentPixel >= 0 && imageData.palette != null ) {
 			try {
-				RGB color = imageData.palette.getRGB(imageData.transparentPixel);
+				final RGB color = imageData.palette.getRGB(imageData.transparentPixel);
 				createLabelAndText(main, "Transparent pixel:",
 					"RGB[" + color.red + "," + color.green + "," + color.blue + "]");
-			} catch (SWTException ex) {
+			} catch (final SWTException ex) {
 				createLabelAndText(main, "No transparency", " ");
 			}
 		} else {
 			// show this as a % since it's global
 			if ( imageData.alpha >= 0 && imageData.alpha <= 255 ) {
-				int pct = (int) FastMath.round(100.0d * (imageData.alpha / 255.0d));
+				final int pct = (int) FastMath.round(100.0d * (imageData.alpha / 255.0d));
 				createLabelAndText(main, "Transparency:", "" + pct + "%");
 			} else if ( imageData.alphaData != null ) {
 				createLabelAndText(main, "Transparency:", "per pixel");
@@ -89,9 +94,9 @@ public class ImagePropertyPage extends PropertyPage implements IWorkbenchPropert
 	}
 
 	private void createLabelAndText(final Composite parent, final String label, final String text) {
-		Label l = new Label(parent, SWT.LEFT);
+		final Label l = new Label(parent, SWT.LEFT);
 		l.setText(label);
-		Text t = new Text(parent, SWT.SINGLE | SWT.READ_ONLY);
+		final Text t = new Text(parent, SWT.SINGLE | SWT.READ_ONLY);
 		t.setBackground(parent.getBackground());
 		t.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		t.setText(text);
@@ -105,29 +110,9 @@ public class ImagePropertyPage extends PropertyPage implements IWorkbenchPropert
 		ImageData data = SwtGui.adaptTo(getElement(), ImageData.class);
 		if ( data == null ) {
 			// try to get it from the file
-			IFile f = SwtGui.adaptTo(getElement(), IFile.class, IFile.class);
+			final IFile f = SwtGui.adaptTo(getElement(), IFile.class, IFile.class);
 			if ( f != null ) {
-				// if open in an editor, use that to get the image data.
-				for ( IEditorReference ref : PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage()
-					.getEditorReferences() ) {
-					if ( "msi.gama.gui.images.editor.ImageViewer".equals(ref.getId()) ) {
-						IEditorInput input = ref.getEditorInput();
-						IFile inputFile = SwtGui.adaptTo(input, IFile.class, IFile.class);
-						if ( inputFile != null && f.equals(inputFile) ) {
-							IEditorPart editor = ref.getEditor(false);
-							if ( editor instanceof ImageViewer ) {
-								data = ((ImageViewer) editor).getImageData();
-								if ( data != null ) {
-									break;
-								}
-							}
-						}
-					}
-				}
-				// load it from the file
-				if ( data == null ) {
-					data = ImageDataLoader.getImageData(f);
-				}
+				data = ImageDataLoader.getImageData(f);
 			}
 		}
 		return data;

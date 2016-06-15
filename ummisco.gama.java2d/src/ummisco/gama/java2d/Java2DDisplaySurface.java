@@ -45,7 +45,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
+import msi.gama.gui.views.displays.DisplaySurfaceMenu;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;

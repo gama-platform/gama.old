@@ -2,65 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension
-         point="org.eclipse.core.contenttype.contentTypes">
-      <content-type
-            default-charset="UTF-8"
-            file-extensions="qml,QML,cpg,CPG,prj,shx,dbf,xml,sbn,sbx,qix,qpj,fix,PRJ,SHX,DBF,XML,SBN,SBX,QIX,QPJ,FIX"
-            id="msi.gama.gui.shapefile.support.type"
-            name="Shapefile support"
-            priority="high">
-         <property
-               name="msi.gama.support.target">
-         </property>
-      </content-type>
-      <content-type
-            describer="msi.gama.gui.navigator.images.ImageContentTypeDescriber"
-            file-extensions="PNG,png,GIF,gif,JPEG,jpeg,JPG,jpg,BMP,bmp,ICO,ico,TIFF,tiff,TIF,tif,ASC,asc,PGM,pgm"
-            id="msi.gama.gui.images.type"
-            name="Image"
-            priority="high">
-         <property name="msi.gama.image.width"/>
-         <property name="msi.gama.image.height"/>
-         <property name="msi.gama.image.depth"/>
-         <property name="msi.gama.image.type"/>
-      </content-type>
-      <content-type
-            base-type="org.eclipse.core.runtime.text"
-            default-charset="UTF-8"
-            file-extensions="CSV,csv,TSV,tsv"
-            id="msi.gama.gui.csv.type"
-            name="CSV"
-            priority="high">
-      </content-type>
-      <content-type
-            file-extensions="shp,SHP"
-            id="msi.gama.gui.shapefile.type"
-            name="Shapefile"
-            priority="high">
-      </content-type>
-      <content-type
-            base-type="org.eclipse.core.runtime.text"
-            default-charset="UTF-8"
-            file-extensions="gaml"
-            id="msi.gama.gui.gaml.type"
-            name="GAML"
-            priority="high">
-      </content-type>
-      <content-type
-            base-type="org.eclipse.core.runtime.text"
-            file-extensions="html, HTML, htm, HTM, svg, SVG"
-            id="msi.gama.gui.html.type"
-            name="HTML (in GAMA)"
-            priority="normal">
-      </content-type>
-      <content-type
-            file-extensions="osm,OSM,pbf,PBF,bz2,BZ2,gz,GZ"
-            id="msi.gama.gui.osm.type"
-            name="OSM"
-            priority="high">
-      </content-type>
-   </extension>
 
 
    <extension
@@ -125,114 +66,6 @@
                   state="false">
             </decorator>
    </extension>
-
-
-      <extension
-         point="org.eclipse.ui.keywords">
-      <keyword
-            id="msi.gama.gui.images"
-            label="image images jpeg jpg gif png bmp tiff ico asc pgm">
-      </keyword>
-   </extension>
-
-
-      <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            class="msi.gama.gui.navigator.images.ImagePropertyPage"
-            id="msi.gama.gui.images"
-            name="Image">
-         <enabledWhen>
-            <or>
-               <!-- From files -->
-               <adapt type="org.eclipse.core.resources.IResource">
-                  <instanceof value="org.eclipse.core.resources.IFile"/>
-                  <test
-                        args="isKindOf"
-                        property="org.eclipse.core.resources.contentTypeId"
-                        value="msi.gama.gui.images.type"/>
-               </adapt>
-               <!-- Screenshots will have one of these. Adapt only uses
-                    IAdapterFactories, so we need to do both here
-                 -->
-               <instanceof value="msi.gama.gui.viewers.image.ImageDataEditorInput"/>
-               <adapt type="org.eclipse.swt.graphics.ImageData"/>
-            </or>
-         </enabledWhen>
-         <keywordReference id="msi.gama.gui.images"/>
-      </page>
-   </extension>
-
-
-   <extension
-         point="org.eclipse.ui.editors">
-      <editor
-            class="msi.gama.gui.viewers.image.ImageViewer"
-            contributorClass="msi.gama.gui.viewers.image.ImageViewerActionBarContributor"
-            default="false"
-            extensions="JPG,jpg,JPEG,jpeg,PNG,png,BMP,bmp,TIFF,tiff,TIF,tif,ICO,ico,ASC,asc,PGM,pgm"
-            icon="icons/file.image2.png"
-            id="msi.gama.gui.images.editor.ImageViewer"
-            name="Image Viewer">
-         <contentTypeBinding
-               contentTypeId="msi.gama.gui.images.type">
-         </contentTypeBinding>
-      </editor>
-      <editor
-            class="msi.gama.gui.viewers.csv.MultiPageCSVEditor"
-            default="true"
-            extensions="CSV,csv"
-            icon="icons/file.csv2.png"
-            id="msi.gama.gui.csv.editor.CustomizableCSVEditor"
-            name="CSV Editor">
-         <contentTypeBinding
-               contentTypeId="msi.gama.gui.csv.type">
-         </contentTypeBinding>
-      </editor>
-      <editor
-            class="msi.gama.gui.viewers.html.HtmlViewer"
-            default="false"
-            extensions="html, htm, HTML, HTM, svg, SVG"
-            icon="icons/file.html2.png"
-            id="msi.gama.application.browser"
-            name="HTML Viewer">
-         <contentTypeBinding
-               contentTypeId="msi.gama.gui.html.type">
-         </contentTypeBinding>
-      </editor>
-      <editor
-            class="msi.gama.gui.viewers.gis.ShapeFileViewer"
-            default="true"
-            extensions="shp"
-            icon="icons/file.shape2.png"
-            id="msi.gama.application.shape.viewer"
-            name="ShapeFile Viewer">
-         <contentTypeBinding
-               contentTypeId="msi.gama.gui.shapefile.type">
-         </contentTypeBinding>
-      </editor>
-      <editor
-            class="msi.gama.gui.viewers.gis.OSMFileViewer"
-            default="true"
-            extensions="gz,osm,pbf,bz2"
-            icon="icons/file.osm2.png"
-            id="msi.gama.application.osm.viewer"
-            name="OSM Viewer">
-         <contentTypeBinding
-               contentTypeId="msi.gama.gui.osm.type">
-         </contentTypeBinding>
-      </editor>
-   </extension>
-
-
-
-
-
-
-
-
-
-
 
    <extension
          point="org.eclipse.ui.views">
@@ -735,12 +568,12 @@
                         id="msi.gama.application.showView">
                   </dynamic>
                </menu>
-               <command
+  <!--             <command
                      commandId="org.eclipse.ui.window.savePerspective"
                      icon="icons/menu.save.perspective.png"
                      label="Save Perspective"
                      style="push">
-               </command>
+               </command> -->
                <command
                      commandId="org.eclipse.ui.window.resetPerspective"
                      icon="icons/menu.reset.perspective2.png"
@@ -1453,7 +1286,7 @@
             </or>
          </activeWhen>
       </handler>
-      <handler
+  <!--    <handler
             class="msi.gama.gui.swt.commands.SavePerspectiveHandler"
             commandId="org.eclipse.ui.window.savePerspective">
          <activeWhen>
@@ -1466,7 +1299,7 @@
                </reference>
             </or>
          </activeWhen>
-      </handler>
+      </handler> -->
       <handler
             class="msi.gama.gui.swt.commands.ArrangeDisplayViews"
             commandId="msi.gama.application.layoutDisplays">
@@ -1850,12 +1683,6 @@
             id="msi.gama.application.commands.OpenFile"
             name="Open File">
       </command>
-      <command
-            categoryId="msi.gama.category"
-            defaultHandler="msi.gama.gui.swt.commands.LoadPerspectiveHandler"
-            id="msi.gama.application.perspective.load"
-            name="Load Perspective">
-      </command>
       <category
             id="msi.gama.category"
             name="Specific to GAMA">
@@ -2068,22 +1895,6 @@
       </commonFilter>
 
    </extension>
-      <extension
-            point="org.eclipse.ui.actionSets">
-         <actionSet
-               id="trial"
-               label="label"
-               visible="true">
-            <action
-                  class="msi.gama.gui.swt.commands.DelegateForAllElements"
-                  id="msi.gama.application.action1"
-                  label="All Elements…"
-                  menubarPath="org.eclipse.search.menu/extraSearchGroup"
-                  style="push"
-                  tooltip="Search for any element defined in the GAML models present in the workspace">
-            </action>
-         </actionSet>
-      </extension>
          <extension
          point="org.eclipse.ui.commandImages">
       <image

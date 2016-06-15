@@ -36,22 +36,6 @@ public class FrequencyController {
 		this.view = view;
 	}
 
-	// double getInit() {
-	// // refresh every 1 = 1d ; refresh every 100 = 0d;
-	// IDisplayOutput output = view.getOutput();
-	// if ( output == null ) { return 1d; }
-	// int refresh = output.getRefreshRate();
-	// if ( refresh >= 100 || refresh == 0 ) { return 0d; }
-	// return (100 - refresh) / 100d;
-	// }
-
-	int getRefresh(final double slider) {
-		// slider = 0d, refresh = 100; slider= 1d = , refresh = 1
-		if ( slider == 0d ) { return 100; }
-		if ( slider == 1d ) { return 1; }
-		return (int) (100 * (1 - slider));
-	}
-
 	void toggle() {
 		view.pauseChanged();
 	}
@@ -106,21 +90,9 @@ public class FrequencyController {
 					final IOutput output = view.getOutput();
 					if ( output != null ) {
 						if ( output.isPaused() ) {
-							// output.getScope().getExperiment().getSpecies().getController().userStart();
-							// hqnghi resume thread of co-experiment
-							// WARNING: AD the pause button can be invoked on any view: why pause the thread, then ?
-							// if ( !output.getDescription().getModelDescription().getAlias().equals("") ) {
-							// GAMA.getController(output.getDescription().getModelDescription().getAlias()).offer(
-							// ExperimentController._START);
-							// }
-							// end-hqnghi
 							resume((ToolItem) e.widget, output);
 						} else {
 							pause((ToolItem) e.widget, output);
-							// hqnghi pause thread of co-experiment
-							// WARNING: AD the pause button can be invoked on any view: why pause the thread, then ?
-							// output.getScope().getExperiment().getSpecies().getController().userPause();
-							// end-hqnghi
 						}
 					} else {
 						toggle();
@@ -131,31 +103,5 @@ public class FrequencyController {
 			}, SWT.RIGHT);
 
 	}
-
-	/**
-	 * @param tb
-	 */
-	// private void createFrequencyItem(final GamaToolbar2 tb) {
-	//
-	// SpeedContributionItem i = new SpeedContributionItem(getInit(), new IPositionChangeListener() {
-	//
-	// @Override
-	// public void positionChanged(final double position) {
-	// IDisplayOutput output = view.getOutput();
-	// if ( output == null ) { return; }
-	// output.setRefreshRate(getRefresh(position));
-	// }
-	// }, new IToolTipProvider() {
-	//
-	// @Override
-	// public String getToolTipText(final double value) {
-	// int i = getRefresh(value);
-	// return "Update every" + (i > 1 ? " " + i + " steps" : " step");
-	// }
-	// }, IGamaIcons.DISPLAY_TOOLBAR_KNOB.image(), IGamaColors.BLUE, IGamaColors.GRAY_LABEL);
-	// Control c = i.createControl(tb.getToolbar(SWT.RIGHT));
-	// tb.control(c, SWT.DEFAULT, SWT.RIGHT);
-	//
-	// }
 
 }

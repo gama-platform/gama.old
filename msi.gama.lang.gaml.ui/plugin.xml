@@ -586,5 +586,21 @@
              verticalRulerPreferenceValue="true">
        </specification>
     </extension>
+    <extension
+          point="org.eclipse.ui.actionSets">
+       <actionSet
+             id="msi.gama.lang.gaml.ui.actionSet1"
+             label="label"
+             visible="true">
+          <action
+                class="msi.gama.lang.gaml.ui.DelegateForAllElements"
+                id="msi.gama.application.action1"
+                label="All Elements…"
+                menubarPath="org.eclipse.search.menu/extraSearchGroup"
+                style="push"
+                tooltip="Search for any element defined in the GAML models present in the workspace">
+          </action>
+       </actionSet>
+    </extension>
 
 </plugin>

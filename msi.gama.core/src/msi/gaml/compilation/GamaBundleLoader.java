@@ -12,8 +12,6 @@
 package msi.gaml.compilation;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -30,8 +28,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.joda.time.Chronology;
-import org.joda.time.LocalDateTime;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -70,7 +66,7 @@ public class GamaBundleLoader {
 		// We retrieve the elements declared as extensions to the GAML language,
 		// either with the new or the deprecated extension
 		final Set<IExtension> extensions = new HashSet<IExtension>();
-		
+
 		IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
 		extensions.addAll(Arrays.asList(p.getExtensions()));
 		p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
@@ -122,13 +118,11 @@ public class GamaBundleLoader {
 		final Set<IExtension> contentExtensions = new HashSet<IExtension>();
 		contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
 		for (final IExtension ext : contentExtensions) {
-			if (GAMA_PLUGINS.contains(ext.getContributor().getName())) {
-				final IConfigurationElement[] configs = ext.getConfigurationElements();
-				for (final IConfigurationElement config : configs) {
-					HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(config.getAttribute("file-extensions").split(",")));
-					// System.out.println(ext.getContributor().getName() + ": "
-					// + config.getAttribute("file-extensions"));
-				}
+			final IConfigurationElement[] configs = ext.getConfigurationElements();
+			for (final IConfigurationElement config : configs) {
+				final String s = config.getAttribute("file-extensions");
+				if (s != null)
+					HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(",")));
 			}
 		}
 
@@ -151,8 +145,6 @@ public class GamaBundleLoader {
 		}).start();
 
 	}
-
-
 
 	/**
 	 * @param contributor

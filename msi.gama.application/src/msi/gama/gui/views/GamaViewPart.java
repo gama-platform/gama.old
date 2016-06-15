@@ -50,7 +50,7 @@ public abstract class GamaViewPart extends ViewPart implements DisposeListener, 
 	Action toggle;
 	// private Composite rootComposite;
 
-	enum UpdatePriority {
+	public enum UpdatePriority {
 		HIGH, LOW, HIGHEST, LOWEST;
 	}
 

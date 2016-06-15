@@ -101,10 +101,6 @@ public class DisplayedAgentsMenu {
 	public void fill(final IDisplaySurface surface, final Menu menu, final int index, final boolean withWorld,
 		final boolean byLayer, final Collection<IAgent> filteredList, final ILocation userLocation,
 		final boolean isOpenGL) {
-		// final LayeredDisplayView view2 = (LayeredDisplayView) view;
-		// final IDisplaySurface displaySurface = view2.getDisplaySurface();
-		// AgentsMenu.MenuAction follow =
-		// new AgentsMenu.MenuAction(new FollowSelection(displaySurface), IGamaIcons.MENU_FOLLOW.image(), "Follow");
 		if ( withWorld ) {
 			AgentsMenu.cascadingAgentMenuItem(menu, surface.getDisplayScope().getSimulationScope(), userLocation,
 				"World");

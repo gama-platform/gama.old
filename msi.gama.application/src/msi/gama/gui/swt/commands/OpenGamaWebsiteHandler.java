@@ -11,8 +11,10 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.commands;
 
-import msi.gama.gui.viewers.html.HtmlViewer;
-import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import msi.gama.gui.swt.SwtGui;
 
 public class OpenGamaWebsiteHandler extends AbstractHandler {
 
@@ -22,7 +24,7 @@ public class OpenGamaWebsiteHandler extends AbstractHandler {
 	 */
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		HtmlViewer.openWelcomePage(false);
+		SwtGui.openWelcomePage(false);
 		return null;
 	}
 
