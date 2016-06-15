@@ -4,8 +4,9 @@
  */
 package msi.gama.lang.gaml.ui.editor;
 
-import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.controls.GamaToolbarSimple;
+import ummisco.gama.ui.resources.IGamaColors;
+
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;

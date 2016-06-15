@@ -21,6 +21,8 @@ import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.IToolbarDecoratedView.Colorizable;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * The class GamaToolbarFactory.

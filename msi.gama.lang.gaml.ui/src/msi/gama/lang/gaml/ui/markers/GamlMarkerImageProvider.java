@@ -3,6 +3,8 @@ package msi.gama.lang.gaml.ui.markers;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.ui.internal.ide.IMarkerImageProvider;
 import msi.gama.gui.swt.*;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.GamaIcons;
 
 public class GamlMarkerImageProvider implements IMarkerImageProvider {
 

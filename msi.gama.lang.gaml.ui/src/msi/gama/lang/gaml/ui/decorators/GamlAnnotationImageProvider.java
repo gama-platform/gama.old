@@ -2,6 +2,9 @@ package msi.gama.lang.gaml.ui.decorators;
 
 import java.util.*;
 import msi.gama.gui.swt.*;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.GamaIcons;
+
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.swt.graphics.Image;

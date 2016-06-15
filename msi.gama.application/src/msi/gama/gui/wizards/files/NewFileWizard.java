@@ -208,17 +208,10 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		throws CoreException {
 		String line = "";
 		final StringWriter writer = new StringWriter();
-		try {
-			final InputStreamReader streamReader = new InputStreamReader(streamModel);
-			/* The buffer for the readline */
-			final BufferedReader buffer = new BufferedReader(streamReader);
-			try {
-				while ((line = buffer.readLine()) != null) {
-					writer.write(line + "\n");
-				}
-			} finally {
-				buffer.close();
-				streamReader.close();
+		try (final InputStreamReader streamReader = new InputStreamReader(streamModel);
+			final BufferedReader buffer = new BufferedReader(streamReader);) {
+			while ((line = buffer.readLine()) != null) {
+				writer.write(line + "\n");
 			}
 		} catch (final IOException ioe) {
 			ioe.printStackTrace();

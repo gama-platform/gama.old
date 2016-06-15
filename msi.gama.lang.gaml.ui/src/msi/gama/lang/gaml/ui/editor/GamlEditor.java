@@ -94,11 +94,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.swt.GamaColors;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.GamaIcons;
-import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.GamaMenu;
 import msi.gama.gui.swt.controls.FlatButton;
@@ -123,6 +118,11 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.IDescription;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /*
  * The class GamlEditor.

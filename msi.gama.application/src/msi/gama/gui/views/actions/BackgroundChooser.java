@@ -8,12 +8,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.commands.GamaColorMenu.IColorRunnable;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.util.GamaColor;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
  * Class FontSizer.

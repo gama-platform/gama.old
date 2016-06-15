@@ -267,7 +267,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		}
 		currentRenderer.setColor(highlight ? data.getHighlightColor() : attributes.color);
 		double curX, curY;
-		final double curZ;
+		// final double curZ;
 		if (attributes.location == null) {
 			curX = getXOffsetInPixels();
 			curY = getYOffsetInPixels();

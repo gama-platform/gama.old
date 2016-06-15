@@ -8,7 +8,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IWorkbenchPartReference;
-import msi.gama.application.Platform;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.Platform;
 
 /**
  * Class WorkaroundForIssue1353. Only for MacOS X, Eclipse Mars and Java 1.7
@@ -76,7 +77,7 @@ public class WorkaroundForIssue1353 {
 			shell = new Shell(SwtGui.getDisplay(), SWT.APPLICATION_MODAL);
 			shell.setSize(5, 5);
 			shell.setAlpha(0);
-			shell.setBackground(IGamaColors.BLACK.active);
+			shell.setBackground(IGamaColors.BLACK.color());
 		}
 
 	}

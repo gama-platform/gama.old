@@ -4,7 +4,7 @@
 <product name="Gama" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.7" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="./icons/launcher_icons/icon205.png"/>
+      <image path="./launcher_icons/icon205.png"/>
       <text>
          GAMA Platform - V1.7.0
 
@@ -48,7 +48,7 @@ openFile
       </vmArgsWin>
    </launcherArgs>
 
-   <windowImages i16="./icons/launcher_icons/icon16.png" i32="./icons/launcher_icons/icon32.png" i48="./icons/launcher_icons/icon48.png" i64="./icons/launcher_icons/icon64.png" i128="./icons/launcher_icons/icon128.png" i256="./icons/launcher_icons/icon256.png"/>
+   <windowImages i16="./launcher_icons/icon16.png" i32="./launcher_icons/icon32.png" i48="./launcher_icons/icon48.png" i64="./launcher_icons/icon64.png" i128="./launcher_icons/icon128.png" i256="./launcher_icons/icon256.png"/>
 
    <splash
       location="msi.gama.application"
@@ -56,11 +56,11 @@ openFile
       startupMessageRect="200,450,541,16"
       startupForegroundColor="165E93" />
    <launcher name="Gama">
-      <linux icon="./icons/launcher_icons/icon.xpm"/>
-      <macosx icon="./icons/launcher_icons/icon.icns"/>
+      <linux icon="./launcher_icons/icon.xpm"/>
+      <macosx icon="./launcher_icons/icon.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="./icons/launcher_icons/icon.ico"/>
+         <ico path="./launcher_icons/icon.ico"/>
          <bmp
             winSmallHigh="./icons/launcher_icons/icon16_32.bmp"
             winSmallLow="./icons/launcher_icons/icon16_8b.bmp"

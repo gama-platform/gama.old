@@ -30,7 +30,7 @@ public class WorkaroundForIssue1594 {
 
 			@Override
 			public void partOpened(final IWorkbenchPartReference partRef) {
-				if (!msi.gama.application.Platform.isWin32()) {
+				if (!ummisco.gama.ui.utils.Platform.isWin32()) {
 					return;
 				}
 				// Fix for Issue #1594

@@ -16,6 +16,8 @@ import msi.gama.gui.swt.*;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * The class SimulationSpeedContributionItem.

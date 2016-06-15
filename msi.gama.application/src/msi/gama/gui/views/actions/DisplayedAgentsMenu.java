@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.metamodel.agent.IAgent;
@@ -39,6 +38,7 @@ import msi.gama.outputs.layers.ImageLayer;
 import msi.gama.outputs.layers.SpeciesLayer;
 import msi.gama.outputs.layers.TextLayer;
 import msi.gama.outputs.layers.charts.ChartLayer;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class DisplayedAgentsMenu.
@@ -178,7 +178,7 @@ public class DisplayedAgentsMenu {
 
 				@Override
 				public void widgetSelected(final SelectionEvent trigger) {
-					final boolean asMenu = trigger.detail == SWT.ARROW;
+					// final boolean asMenu = trigger.detail == SWT.ARROW;
 					final ToolItem target = (ToolItem) trigger.widget;
 					final ToolBar toolBar = target.getParent();
 					if ( menu != null ) {

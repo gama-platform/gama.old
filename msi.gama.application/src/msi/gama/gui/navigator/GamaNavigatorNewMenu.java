@@ -4,9 +4,9 @@
  */
 package msi.gama.gui.navigator;
 
-import msi.gama.gui.swt.GamaIcons;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.*;
+import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * Class GamaNavigatorMenus.

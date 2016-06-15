@@ -53,10 +53,6 @@ import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.swt.GamaColors;
-import msi.gama.gui.swt.GamaIcons;
-import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.swt.controls.ParameterExpandBar;
@@ -79,6 +75,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Files;
 import msi.gaml.operators.Maths;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 public abstract class LayeredDisplayView extends GamaViewPart implements DisplayDataListener, IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable {
 

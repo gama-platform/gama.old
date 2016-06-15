@@ -10,8 +10,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.*;
-import msi.gama.gui.swt.IGamaColors;
+
 import msi.gama.gui.swt.commands.*;
+import ummisco.gama.ui.resources.IGamaColors;
 
 public abstract class EditToolbarMenu extends GamaMenu {
 

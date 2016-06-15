@@ -14,7 +14,7 @@ package msi.gama.gui.swt.controls;
 import java.util.Map;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
  * The class IPopupProvider.

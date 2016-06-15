@@ -18,6 +18,7 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
+import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * Class RemoveUnwantedMenus.

@@ -9,7 +9,8 @@ Require-Bundle: msi.gama.ext,
  msi.gama.processor;bundle-version="1.4.0",
  org.eclipse.core.runtime;bundle-version="3.8.0",
  org.eclipse.swt,
- org.eclipse.ui;bundle-version="3.8.2"
+ org.eclipse.ui;bundle-version="3.8.2",
+ ummisco.gama.ui.shared
 Bundle-ActivationPolicy: lazy
 Import-Package: com.vividsolutions.jts.geom,
  org.apache.commons.lang;version="2.6.0",

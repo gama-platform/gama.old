@@ -8,7 +8,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import msi.gama.gui.swt.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * Class GamaNavigatorMenus.

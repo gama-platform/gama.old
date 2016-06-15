@@ -8,6 +8,8 @@ import java.util.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.graphics.*;
 import msi.gama.gui.swt.*;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * Class ImportFolder.

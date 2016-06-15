@@ -17,6 +17,8 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.*;
 import msi.gaml.operators.fastmaths.CmnFastMath;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * Instances of this class are simple switch button.

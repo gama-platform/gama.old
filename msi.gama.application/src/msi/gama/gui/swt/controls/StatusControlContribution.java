@@ -28,10 +28,6 @@ import msi.gama.common.SubTaskMessage;
 import msi.gama.common.UserStatusMessage;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IUpdaterTarget;
-import msi.gama.gui.swt.GamaColors;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.GamaIcons;
-import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
@@ -41,6 +37,10 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.operators.Dates;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
 

@@ -29,11 +29,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.GamaColors;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.GamaIcons;
-import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.runtime.GAMA;
@@ -42,6 +37,11 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 public class UserControlView extends GamaViewPart {
 

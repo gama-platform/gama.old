@@ -31,8 +31,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
-import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.controls.FlatButton;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.kernel.model.IModel;
@@ -41,6 +39,8 @@ import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ISyntacticElement;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class OtherExperimentsButton.

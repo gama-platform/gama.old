@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-import msi.gama.application.Platform;
+import ummisco.gama.ui.utils.Platform;
 
 public class FocusHandler {
 

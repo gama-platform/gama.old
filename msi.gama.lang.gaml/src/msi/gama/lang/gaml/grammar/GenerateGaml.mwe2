@@ -7,7 +7,9 @@ import org.eclipse.xtext.ui.generator.*
 var grammarURI = "classpath:/msi/gama/lang/gaml/grammar/Gaml1.6v2.xtext"
 var file.extensions = "gaml"
 var projectName = "msi.gama.lang.gaml"
+var uiProjectName = "ummisco.gama.ui.modeling"
 var runtimeProject = "../${projectName}"
+var uiRuntimeProject = "../${uiProjectName}"
 
 Workflow {
 	bean = StandaloneSetup {
@@ -20,14 +22,14 @@ Workflow {
 	}
 
 	component = DirectoryCleaner { 
-		directory = "${runtimeProject}.ui/src-gen"
+		directory = "${uiRuntimeProject}/src-gen"
 	}
 
 	component = Generator {
 		pathRtProject = runtimeProject
-		pathUiProject = "${runtimeProject}.ui"// pathTestProject = "${runtimeProject}.tests"
+		pathUiProject = uiRuntimeProject// pathTestProject = "${runtimeProject}.tests"
 		projectNameRt = projectName
-		projectNameUi = "${projectName}.ui"
+		projectNameUi = uiProjectName
 		language = auto-inject {
 			uri = grammarURI
 			fileExtensions = file.extensions

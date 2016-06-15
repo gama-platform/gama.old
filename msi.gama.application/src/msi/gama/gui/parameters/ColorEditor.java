@@ -19,9 +19,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.MenuItem;
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.gui.swt.GamaColors;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.commands.GamaColorMenu.IColorRunnable;
 import msi.gama.gui.swt.controls.FlatButton;
@@ -31,6 +28,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 public class ColorEditor extends AbstractEditor {
 

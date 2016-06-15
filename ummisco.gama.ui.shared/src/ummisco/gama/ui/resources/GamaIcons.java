@@ -9,20 +9,28 @@
  *
  *
  **********************************************************************************************/
-package msi.gama.gui.swt;
+package ummisco.gama.ui.resources;
 
 import java.util.Map;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
  * Class GamaIcons.
@@ -45,12 +53,12 @@ public class GamaIcons /* implements IGamaIcons */ {
 
 	Map<String, GamaIcon> iconCache = new THashMap<String, GamaIcon>();
 	Map<String, Image> imageCache = new THashMap<String, Image>();
-	public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS = GamaPreferences
-		.create("core.icons_brightness", "Icons and buttons dark mode (restart to see the change)", true, IType.BOOL)
-		.in(GamaPreferences.UI).group("Icons");
+	public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS = GamaPreferences.create("core.icons_brightness",
+			"Icons and buttons dark mode (restart to see the change)", true, IType.BOOL).in(GamaPreferences.UI)
+			.group("Icons");
 	public static GamaPreferences.Entry<Integer> CORE_ICONS_HEIGHT = GamaPreferences
-		.create("core.icons_size", "Size of the icons in the UI (restart to see the change)", 24, IType.INT)
-		.among(16, 24).in(GamaPreferences.UI).group("Icons");
+			.create("core.icons_size", "Size of the icons in the UI (restart to see the change)", 24, IType.INT)
+			.among(16, 24).in(GamaPreferences.UI).group("Icons");
 
 	GamaIcon getIcon(final String name) {
 		return iconCache.get(name);
@@ -58,21 +66,21 @@ public class GamaIcons /* implements IGamaIcons */ {
 
 	public boolean exist(final String name) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID,
-			GamaIcons.DEFAULT_PATH + name + ".png") != null;
+				GamaIcons.DEFAULT_PATH + name + ".png") != null;
 	}
 
 	Image putImageInCache(final String name, final Image image) {
-		int height = image.getBounds().height;
-		int width = image.getBounds().width;
-		int desiredHeight = CORE_ICONS_HEIGHT.getValue();
-		if ( desiredHeight == 16 ) {
-			if ( height <= desiredHeight || name.startsWith("sizer") ) {
+		final int height = image.getBounds().height;
+		final int width = image.getBounds().width;
+		final int desiredHeight = CORE_ICONS_HEIGHT.getValue();
+		if (desiredHeight == 16) {
+			if (height <= desiredHeight || name.startsWith("sizer")) {
 				imageCache.put(name, image);
 				return image;
 			}
-			double ratio = height / (double) width;
-			int desiredWidth = (int) (desiredHeight * ratio);
-			Image new_image = scaleImage(SwtGui.getDisplay(), image, desiredWidth, desiredHeight);
+			final double ratio = height / (double) width;
+			final int desiredWidth = (int) (desiredHeight * ratio);
+			final Image new_image = scaleImage(Display.getCurrent(), image, desiredWidth, desiredHeight);
 			image.dispose();
 			imageCache.put(name, new_image);
 			return new_image;
@@ -91,12 +99,13 @@ public class GamaIcons /* implements IGamaIcons */ {
 	}
 
 	public static GamaIcon createSizer(final Color color, final int width, final int height) {
-		String name = SIZER_PREFIX + width + "x" + height + color.hashCode();
+		final String name = SIZER_PREFIX + width + "x" + height + color.hashCode();
 		GamaIcon sizer = getInstance().getIcon(name);
-		if ( sizer == null ) {
-			// RGB c = new RGB(color.getRed(), color.getGreen(), color.getBlue());
-			Image sizerImage = new Image(Display.getDefault(), width, height);
-			GC gc = new GC(sizerImage);
+		if (sizer == null) {
+			// RGB c = new RGB(color.getRed(), color.getGreen(),
+			// color.getBlue());
+			final Image sizerImage = new Image(Display.getDefault(), width, height);
+			final GC gc = new GC(sizerImage);
 			gc.setBackground(color);
 			gc.fillRectangle(0, 0, width, height);
 			gc.dispose();
@@ -117,7 +126,7 @@ public class GamaIcons /* implements IGamaIcons */ {
 
 	public static GamaIcon create(final String code, final String path, final String plugin) {
 		GamaIcon result = getInstance().getIcon(code);
-		if ( result == null ) {
+		if (result == null) {
 			result = new GamaIcon(code, path, plugin);
 			getInstance().putIconInCache(code, result);
 		}
@@ -125,19 +134,20 @@ public class GamaIcons /* implements IGamaIcons */ {
 	}
 
 	public static GamaIcon createColorIcon(final String s, final GamaUIColor gcolor, final int width,
-		final int height) {
-		String name = COLOR_PREFIX + s;
+			final int height) {
+		final String name = COLOR_PREFIX + s;
 		GamaIcon icon = getInstance().getIcon(s);
-		if ( icon == null ) {
+		if (icon == null) {
 			// Color color = gcolor.color();
-			// RGB c = new RGB(color.getRed(), color.getGreen(), color.getBlue());
-			Image image = new Image(Display.getDefault(), width, height);
-			GC gc = new GC(image);
+			// RGB c = new RGB(color.getRed(), color.getGreen(),
+			// color.getBlue());
+			final Image image = new Image(Display.getDefault(), width, height);
+			final GC gc = new GC(image);
 			gc.setAntialias(SWT.ON);
 			gc.setBackground(gcolor.color());
 			gc.fillRoundRectangle(0, 0, width, height, width / 3, height / 3);
 			gc.dispose();
-			ImageData data = image.getImageData();
+			final ImageData data = image.getImageData();
 			data.transparentPixel = data.palette.getPixel(new RGB(255, 255, 255));
 			icon = new GamaIcon(name);
 			getInstance().putImageInCache(name, new Image(Display.getDefault(), data));
@@ -149,23 +159,26 @@ public class GamaIcons /* implements IGamaIcons */ {
 
 	/**
 	 * Creates an icon that needs to be disposed afterwards
+	 * 
 	 * @param gcolor
 	 * @param width
 	 * @param height
 	 * @return
 	 */
 	public static Image createTempColorIcon(final GamaUIColor gcolor) {
-		String name = "color" + gcolor.getRGB().toString();
-		GamaIcon icon = getInstance().getIcon(name);
-		if ( icon != null ) { return icon.image(); }
+		final String name = "color" + gcolor.getRGB().toString();
+		final GamaIcon icon = getInstance().getIcon(name);
+		if (icon != null) {
+			return icon.image();
+		}
 		// Color color = gcolor.color();
-		GamaIcon blank = create("display.color2");
-		Image image = new Image(Display.getDefault(), blank.image().getImageData());
-		GC gc = new GC(image);
+		final GamaIcon blank = create("display.color2");
+		final Image image = new Image(Display.getDefault(), blank.image().getImageData());
+		final GC gc = new GC(image);
 		gc.setAntialias(SWT.ON);
 		gc.setBackground(gcolor.color());
 		gc.fillRoundRectangle(6, 6, 12, 12, 4, 4);
-		if ( !gcolor.isDark() ) {
+		if (!gcolor.isDark()) {
 			gc.setForeground(IGamaColors.BLACK.color());
 			gc.drawRoundRectangle(6, 6, 12, 12, 4, 4);
 		}
@@ -176,17 +189,19 @@ public class GamaIcons /* implements IGamaIcons */ {
 	}
 
 	public static Image createTempRoundColorIcon(final GamaUIColor gcolor) {
-		String name = "roundcolor" + gcolor.getRGB().toString();
-		GamaIcon icon = getInstance().getIcon(name);
-		if ( icon != null ) { return icon.image(); }
+		final String name = "roundcolor" + gcolor.getRGB().toString();
+		final GamaIcon icon = getInstance().getIcon(name);
+		if (icon != null) {
+			return icon.image();
+		}
 		// Color color = gcolor.color();
-		GamaIcon blank = create("display.color3");
-		Image image = new Image(Display.getDefault(), blank.image().getImageData());
-		GC gc = new GC(image);
+		final GamaIcon blank = create("display.color3");
+		final Image image = new Image(Display.getDefault(), blank.image().getImageData());
+		final GC gc = new GC(image);
 		gc.setAntialias(SWT.ON);
 		gc.setBackground(gcolor.color());
 		gc.fillOval(6, 6, 12, 12);
-		if ( !gcolor.isDark() ) {
+		if (!gcolor.isDark()) {
 			gc.setForeground(IGamaColors.BLACK.color());
 			gc.drawOval(6, 6, 12, 12);
 		}
@@ -208,12 +223,14 @@ public class GamaIcons /* implements IGamaIcons */ {
 	}
 
 	public static Image scaleImage(final Device d, final Image im, final int width, final int height) {
-		Rectangle curBounds = im.getBounds();
+		final Rectangle curBounds = im.getBounds();
 		// no change required
-		if ( curBounds.width == width && curBounds.height == height ) { return im; }
+		if (curBounds.width == width && curBounds.height == height) {
+			return im;
+		}
 
 		// create a new image
-		Image newIm = new Image(d, width, height);
+		final Image newIm = new Image(d, width, height);
 		GC gc = null;
 		try {
 			gc = new GC(newIm);
@@ -223,27 +240,27 @@ public class GamaIcons /* implements IGamaIcons */ {
 			// gc.drawRectangle(0, 0, width - 1, height - 1);
 
 			// image is smaller than requested since, so center
-			if ( curBounds.width <= width && curBounds.height <= height ) {
+			if (curBounds.width <= width && curBounds.height <= height) {
 				gc.drawImage(im, 0, 0, curBounds.width, curBounds.height, (width - curBounds.width) / 2,
-					(height - curBounds.height) / 2, curBounds.width, curBounds.height);
+						(height - curBounds.height) / 2, curBounds.width, curBounds.height);
 			} else // too wide or too tall
 			{
 				// shortcut if the image is perfectly proportional to avoid
 				// some of the math below
-				if ( curBounds.width == curBounds.height ) {
+				if (curBounds.width == curBounds.height) {
 					gc.drawImage(im, 0, 0, curBounds.width, curBounds.height, 0, 0, width, height);
 				}
 				// try to keep the proportions of the original image
 				// wider than tall
-				else if ( curBounds.width > curBounds.height ) {
+				else if (curBounds.width > curBounds.height) {
 					// the proportional new height
-					int newHt = (int) (height * ((double) curBounds.height / (double) curBounds.width));
+					final int newHt = (int) (height * ((double) curBounds.height / (double) curBounds.width));
 					// and center that
 					gc.drawImage(im, 0, 0, curBounds.width, curBounds.height, 0, (height - newHt) / 2, width, newHt);
 				} else // taller than wide
 				{
 					// the proportional new width
-					int newWd = (int) (width * ((double) curBounds.width / (double) curBounds.height));
+					final int newWd = (int) (width * ((double) curBounds.width / (double) curBounds.height));
 					// and center that
 					gc.drawImage(im, 0, 0, curBounds.width, curBounds.height, (width - newWd) / 2, 0, newWd, height);
 
@@ -252,11 +269,11 @@ public class GamaIcons /* implements IGamaIcons */ {
 			// clear this up since we successfully created a new image
 			im.dispose();
 			return newIm;
-		} catch (RuntimeException ex) {
+		} catch (final RuntimeException ex) {
 			newIm.dispose();
 			throw ex;
 		} finally {
-			if ( gc != null ) {
+			if (gc != null) {
 				gc.dispose();
 			}
 		}

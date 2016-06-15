@@ -29,13 +29,6 @@
          unpack="false"/>
 
    <plugin
-         id="msi.gama.lang.gaml.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="ummisco.gama.java2d"
          download-size="0"
          install-size="0"
@@ -44,6 +37,20 @@
 
    <plugin
          id="ummisco.gama.ui.viewers"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ummisco.gama.ui.shared"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ummisco.gama.ui.modeling"
          download-size="0"
          install-size="0"
          version="0.0.0"

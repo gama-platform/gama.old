@@ -17,7 +17,6 @@ import org.eclipse.swt.SWT;
 
 import com.jogamp.opengl.glu.GLU;
 
-import msi.gama.gui.swt.GamaKeyBindings;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -27,6 +26,7 @@ import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.ui.resources.GamaKeyBindings;
 
 public class FreeFlyCamera extends AbstractCamera {
 

@@ -41,113 +41,120 @@ import org.eclipse.swt.widgets.Display;
 @SuppressWarnings("nls")
 public class ImageCache {
 
-    public static final String CHECKED = "/icons/geotools/checked.gif";
-    public static final String UNCHECKED = "/icons/geotools/unchecked.gif";
-    public static final String STYLE = "/icons/geotools/style.gif";
-    public static final String GRID = "/icons/geotools/grid.gif";
-    public static final String FEATURE = "/icons/geotools/feature.gif";
-    public static final String UP = "/icons/geotools/up.gif";
-    public static final String DOWN = "/icons/geotools/down.gif";
-    public static final String OPEN = "/icons/geotools/open.gif";
-    public static final String ALPHA = "/icons/geotools/alpha.gif";
-    public static final String REMOVE_LAYER = "/icons/geotools/remove_layer.gif";
-    public static final String IMAGE_INFO = "/icons/geotools/info_mode.gif";
-    public static final String IMAGE_INFO_ICON = "/icons/geotools/info_source.gif";
-    public static final String IMAGE_PAN = "/icons/geotools/pan_mode.gif";
-    public static final String IMAGE_ZOOMIN = "/icons/geotools/zoom_in_co.gif";
-    public static final String IMAGE_ZOOMOUT = "/icons/geotools/zoom_out_co.gif";
-    public static final String IMAGE_FULLEXTENT = "/icons/geotools/zoom_extent_co.gif";
+	public static final String CHECKED = "/icons/checked.gif";
+	public static final String UNCHECKED = "/icons/unchecked.gif";
+	public static final String STYLE = "/icons/style.gif";
+	public static final String GRID = "/icons/grid.gif";
+	public static final String FEATURE = "/icons/feature.gif";
+	public static final String UP = "/icons/up.gif";
+	public static final String DOWN = "/icons/down.gif";
+	public static final String OPEN = "/icons/open.gif";
+	public static final String ALPHA = "/icons/alpha.gif";
+	public static final String REMOVE_LAYER = "/icons/remove_layer.gif";
+	public static final String IMAGE_INFO = "/icons/info_mode.gif";
+	public static final String IMAGE_INFO_ICON = "/icons/info_source.gif";
+	public static final String IMAGE_PAN = "/icons/pan_mode.gif";
+	public static final String IMAGE_ZOOMIN = "/icons/zoom_in_co.gif";
+	public static final String IMAGE_ZOOMOUT = "/icons/zoom_out_co.gif";
+	public static final String IMAGE_FULLEXTENT = "/icons/zoom_extent_co.gif";
 
-    private static ImageCache imageCache;
+	private static ImageCache imageCache;
 
-    private HashMap<String, Image> imageMap = new HashMap<String, Image>();
+	private final HashMap<String, Image> imageMap = new HashMap<String, Image>();
 
-    private ImageCache() {
-    }
+	private ImageCache() {
+	}
 
-    public static ImageCache getInstance() {
-        if (imageCache == null) {
-            imageCache = new ImageCache();
-        }
-        return imageCache;
-    }
+	public static ImageCache getInstance() {
+		if (imageCache == null) {
+			imageCache = new ImageCache();
+		}
+		return imageCache;
+	}
 
-    /**
-     * Get an image for a certain key.
-     * 
-     * <p><b>The only keys to be used are the static strings in this class</b></p>
-     * 
-     * @param key a file key, as for example {@link ImageCache#IMAGE_PAN}.
-     * 
-     * @return the image.
-     */
-    public Image getImage( String key ) {
-        Image image = imageMap.get(key);
-        if (image == null) {
-            image = createImage(key);
-            imageMap.put(key, image);
-        }
-        return image;
-    }
+	/**
+	 * Get an image for a certain key.
+	 * 
+	 * <p>
+	 * <b>The only keys to be used are the static strings in this class</b>
+	 * </p>
+	 * 
+	 * @param key
+	 *            a file key, as for example {@link ImageCache#IMAGE_PAN}.
+	 * 
+	 * @return the image.
+	 */
+	public Image getImage(final String key) {
+		Image image = imageMap.get(key);
+		if (image == null) {
+			image = createImage(key);
+			imageMap.put(key, image);
+		}
+		return image;
+	}
 
-    private Image createImage( String key ) {
-        Image image = null;
-        try {
+	private Image createImage(final String key) {
+		Image image = null;
+		try {
 
-            File tempDir = new File(System.getProperty("java.io.tmpdir"));
-            File temporaryFile = new File(tempDir, key);
-            temporaryFile.getParentFile().mkdirs();
-            InputStream in = getClass().getResourceAsStream(key);
-            FileOutputStream out = new FileOutputStream(temporaryFile);
-            byte[] buffer = new byte[1024];
-            int len;
-            while( (len = in.read(buffer)) != -1 ) {
-                out.write(buffer, 0, len);
-            }
+			final File tempDir = new File(System.getProperty("java.io.tmpdir"));
+			final File temporaryFile = new File(tempDir, key);
+			temporaryFile.getParentFile().mkdirs();
+			final InputStream in = getClass().getResourceAsStream(key);
+			final FileOutputStream out = new FileOutputStream(temporaryFile);
+			final byte[] buffer = new byte[1024];
+			int len;
+			while ((len = in.read(buffer)) != -1) {
+				out.write(buffer, 0, len);
+			}
 
-            // File resourceFile = new File(resourceUrl.toURI());
-            image = new Image(Display.getCurrent(), temporaryFile.getAbsolutePath());
-            // } catch (URISyntaxException e) {
-            // e.printStackTrace();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        return image;
-    }
+			// File resourceFile = new File(resourceUrl.toURI());
+			image = new Image(Display.getCurrent(), temporaryFile.getAbsolutePath());
+			// } catch (URISyntaxException e) {
+			// e.printStackTrace();
+		} catch (final IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return image;
+	}
 
-    /**
-     * Disposes the images and clears the internal map.
-     */
-    public void dispose() {
-        Set<Entry<String, Image>> entrySet = imageMap.entrySet();
-        for( Entry<String, Image> entry : entrySet ) {
-            entry.getValue().dispose();
-        }
-        imageMap.clear();
-    }
+	/**
+	 * Disposes the images and clears the internal map.
+	 */
+	public void dispose() {
+		final Set<Entry<String, Image>> entrySet = imageMap.entrySet();
+		for (final Entry<String, Image> entry : entrySet) {
+			entry.getValue().dispose();
+		}
+		imageMap.clear();
+	}
 
-    /**
-     * Method to add images with key.
-     * 
-     * <p>This is handy for example in cases in which 
-     * it is not possible to retrieve the images from
-     * within the bundle. Ex. eclipse plugin environment.
-     *
-     * @param key the key for the image.
-     * @param image the image to add.
-     */
-    public void addImage( String key, Image image ) {
-        imageMap.put(key, image);
-    }
+	/**
+	 * Method to add images with key.
+	 * 
+	 * <p>
+	 * This is handy for example in cases in which it is not possible to
+	 * retrieve the images from within the bundle. Ex. eclipse plugin
+	 * environment.
+	 *
+	 * @param key
+	 *            the key for the image.
+	 * @param image
+	 *            the image to add.
+	 */
+	public void addImage(final String key, final Image image) {
+		imageMap.put(key, image);
+	}
 
-    /**
-     * Getter for the list of keys of the images, which are also the relative path.
-     * 
-     * @return the list of keys.
-     */
-    public List<String> getRelativePaths() {
-        return Arrays.asList(CHECKED, UNCHECKED, STYLE, GRID, FEATURE, UP, DOWN, OPEN, REMOVE_LAYER, IMAGE_INFO, IMAGE_INFO_ICON,
-                IMAGE_PAN, IMAGE_ZOOMIN, IMAGE_ZOOMOUT, IMAGE_FULLEXTENT);
-    }
+	/**
+	 * Getter for the list of keys of the images, which are also the relative
+	 * path.
+	 * 
+	 * @return the list of keys.
+	 */
+	public List<String> getRelativePaths() {
+		return Arrays.asList(CHECKED, UNCHECKED, STYLE, GRID, FEATURE, UP, DOWN, OPEN, REMOVE_LAYER, IMAGE_INFO,
+				IMAGE_INFO_ICON, IMAGE_PAN, IMAGE_ZOOMIN, IMAGE_ZOOMOUT, IMAGE_FULLEXTENT);
+	}
 }

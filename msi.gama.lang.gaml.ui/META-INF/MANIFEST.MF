@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Gama Modelling Language UI
 Bundle-Vendor: MSI
 Bundle-Version: 1.7.0.qualifier
-Bundle-SymbolicName: msi.gama.lang.gaml.ui; singleton:=true
+Bundle-SymbolicName: ummisco.gama.ui.modeling;singleton:=true
 Bundle-ActivationPolicy: lazy
 Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
  org.eclipse.xtext.ui,
@@ -19,7 +19,8 @@ Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
  org.eclipse.ui.editors,
  org.eclipse.ui,
  org.eclipse.core.expressions;bundle-version="3.5.0",
- org.eclipse.jface
+ org.eclipse.jface,
+ ummisco.gama.ui.shared;bundle-version="1.7.0"
 Import-Package: gnu.trove.map.hash,
  org.apache.commons.lang;version="2.6.0",
  org.apache.log4j,

@@ -45,12 +45,12 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IOverlayProvider;
 import msi.gama.common.interfaces.IUpdaterTarget;
-import msi.gama.gui.swt.GamaColors;
-import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.ThreadedOverlayUpdater;
 import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * The class DisplayOverlay.

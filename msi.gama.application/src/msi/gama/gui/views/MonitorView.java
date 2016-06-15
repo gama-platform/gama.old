@@ -27,9 +27,6 @@ import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.GamaColors;
-import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.outputs.IDisplayOutput;
@@ -41,6 +38,9 @@ import msi.gama.util.GamaColor;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * @author Alexis Drogoul

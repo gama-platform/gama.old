@@ -13,9 +13,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gaml.operators.Strings;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
  * Class GamaToolbar. A declarative wrapper around 2 toolbars (left, right).

@@ -22,12 +22,14 @@ import org.eclipse.ui.part.*;
 import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.navigator.images.ImageDataLoader;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.fastmaths.FastMath;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
  * A simple image viewer editor.
@@ -728,7 +730,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 	/**
 	 * Method setColor()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#setColor(int, msi.gama.gui.swt.GamaColors.GamaUIColor)
+	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#setColor(int, ummisco.gama.ui.resources.GamaColors.GamaUIColor)
 	 */
 	@Override
 	public void setColor(final int index, final GamaUIColor c) {

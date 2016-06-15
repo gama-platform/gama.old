@@ -43,13 +43,13 @@ import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.gui.parameters.AbstractEditor;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.GamaIcons;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.ParameterExpandBar;
 import msi.gama.gui.swt.controls.ParameterExpandItem;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * Class GamaPreferencesView.

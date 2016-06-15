@@ -16,14 +16,14 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.graphics.Image;
-import msi.gama.application.Platform;
 import msi.gama.application.projects.BuiltinNature;
 import msi.gama.application.projects.GamaNature;
 import msi.gama.application.projects.PluginNature;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.GamaIcons;
-import msi.gama.gui.swt.IGamaColors;
-import msi.gama.gui.swt.IGamaIcons;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.utils.Platform;
 
 public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 

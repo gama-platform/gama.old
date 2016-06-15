@@ -11,7 +11,8 @@ import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.IImageHelper.IImageDescriptorHelper;
 import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
-import msi.gama.gui.swt.GamaIcons;
+
+import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * The class GamlImageHelper.

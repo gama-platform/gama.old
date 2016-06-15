@@ -18,13 +18,13 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 public class AgentEditor extends ExpressionBasedEditor {
 

@@ -15,10 +15,11 @@
  */
 package ummisco.gama.ui.viewers.csv.text;
 
-import msi.gama.gui.swt.IGamaColors;
 import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.swt.SWT;
+
+import ummisco.gama.ui.resources.IGamaColors;
 
 public class CSVToken extends Token {
 

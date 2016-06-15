@@ -14,8 +14,9 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import msi.gama.gui.swt.IGamaColors;
+
 import msi.gama.gui.swt.controls.GamaToolbarSimple;
+import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * The class EditToolbarFindControls.

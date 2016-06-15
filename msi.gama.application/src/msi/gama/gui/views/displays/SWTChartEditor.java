@@ -36,8 +36,8 @@ import org.jfree.chart.axis.*;
 import org.jfree.chart.editor.ChartEditor;
 import org.jfree.chart.plot.*;
 import org.jfree.chart.title.*;
-import msi.gama.gui.swt.GamaColors;
 import msi.gaml.operators.fastmaths.FastMath;
+import ummisco.gama.ui.resources.GamaColors;
 
 /**
  * An editor for chart properties.

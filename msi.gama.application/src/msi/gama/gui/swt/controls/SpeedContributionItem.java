@@ -17,7 +17,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import msi.gama.common.interfaces.ISpeedDisplayer;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 public class SpeedContributionItem extends WorkbenchWindowControlContribution implements ISpeedDisplayer, IPositionChangeListener, IToolTipProvider {
 

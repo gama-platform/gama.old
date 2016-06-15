@@ -11,4 +11,5 @@ Require-Bundle: msi.gama.processor;bundle-version="1.4.0",
  msi.gama.ext,
  msi.gama.core,
  org.eclipse.ui;bundle-version="3.107.0",
- org.eclipse.core.runtime;bundle-version="3.11.1"
+ org.eclipse.core.runtime;bundle-version="3.11.1",
+ ummisco.gama.ui.shared

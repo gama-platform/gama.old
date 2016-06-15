@@ -6,6 +6,7 @@ package msi.gama.gui.navigator;
 
 import msi.gama.gui.swt.*;
 import msi.gaml.descriptions.IDescription;
+import ummisco.gama.ui.resources.IGamaColors;
 import org.eclipse.swt.graphics.*;
 
 /**

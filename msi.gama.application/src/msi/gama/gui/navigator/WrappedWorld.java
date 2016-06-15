@@ -4,8 +4,8 @@
  */
 package msi.gama.gui.navigator;
 
-import msi.gama.gui.swt.GamaIcons;
 import msi.gaml.descriptions.ModelDescription;
+import ummisco.gama.ui.resources.GamaIcons;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.swt.graphics.Image;
 

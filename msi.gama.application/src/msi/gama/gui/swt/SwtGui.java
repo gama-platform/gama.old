@@ -92,7 +92,6 @@ import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.navigator.NavigatorBaseLighweightDecorator;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.parameters.EditorsDialog;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.commands.ArrangeDisplayViews;
 import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.StatusControlContribution;
@@ -126,6 +125,9 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
@@ -141,7 +143,8 @@ public class SwtGui extends AbstractGui {
 	static {
 		if ( !GAMA.isInHeadLessMode() ) {
 			try {
-				HOME_URL = FileLocator.toFileURL(Platform.getBundle("msi.gama.ext").getEntry("/images/welcome.html"));
+				HOME_URL = FileLocator
+					.toFileURL(Platform.getBundle("ummisco.gama.ui.shared").getEntry("/welcome/welcome.html"));
 			} catch (final IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

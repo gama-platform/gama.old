@@ -33,7 +33,6 @@ import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.gui.parameters.AbstractEditor;
 import msi.gama.gui.parameters.AgentAttributesEditorsList;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -43,6 +42,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * The class EditorsDialog.

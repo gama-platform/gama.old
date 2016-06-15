@@ -23,6 +23,7 @@ import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.resources.GamaKeyBindings;
 
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 

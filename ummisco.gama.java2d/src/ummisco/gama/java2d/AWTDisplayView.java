@@ -16,12 +16,12 @@ import javax.swing.JComponent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 
-import msi.gama.application.Platform;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.swt.WorkaroundForIssue1353;
 import msi.gama.gui.views.displays.LayeredDisplayView;
 import ummisco.gama.java2d.swing.SwingControl;
+import ummisco.gama.ui.utils.Platform;
 
 public class AWTDisplayView extends LayeredDisplayView {
 

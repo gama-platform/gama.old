@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-import msi.gama.application.Platform;
+import ummisco.gama.ui.utils.Platform;
 
 /**
  * An environment to enable the proper display of AWT/Swing windows within a SWT or RCP

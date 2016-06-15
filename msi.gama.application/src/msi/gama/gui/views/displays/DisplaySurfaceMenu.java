@@ -30,11 +30,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
-import msi.gama.application.Platform;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.commands.AgentsMenu.MenuAction;
@@ -49,6 +47,8 @@ import msi.gama.outputs.layers.SpeciesLayer;
 import msi.gama.outputs.layers.TextLayer;
 import msi.gama.outputs.layers.charts.ChartLayer;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.Platform;
 
 public class DisplaySurfaceMenu {
 

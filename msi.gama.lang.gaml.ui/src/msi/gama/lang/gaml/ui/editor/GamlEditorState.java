@@ -12,11 +12,11 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.IGamaColors;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 class GamlEditorState {
 

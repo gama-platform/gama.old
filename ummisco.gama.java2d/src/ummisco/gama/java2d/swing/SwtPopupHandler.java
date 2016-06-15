@@ -20,7 +20,7 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 
-import msi.gama.application.Platform;
+import ummisco.gama.ui.utils.Platform;
 
 public class SwtPopupHandler {
 

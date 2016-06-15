@@ -37,9 +37,6 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 
 import msi.gama.gui.navigator.FileMetaDataProvider;
-import msi.gama.gui.swt.GamaColors;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
-import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.controls.FlatButton;
@@ -47,6 +44,9 @@ import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.viewers.gis.geotools.styling.simple.Mode;
 import ummisco.gama.ui.viewers.gis.geotools.styling.simple.SLDs;
 import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
@@ -286,7 +286,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 	 * Method setColor()
 	 * 
 	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#setColor(int,
-	 *      msi.gama.gui.swt.GamaColors.GamaUIColor)
+	 *      ummisco.gama.ui.resources.GamaColors.GamaUIColor)
 	 */
 	@Override
 	public void setColor(final int index, final GamaUIColor gc) {

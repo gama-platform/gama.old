@@ -16,9 +16,13 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.fastmaths.CmnFastMath;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
  * Instances of this class represent a selectable user interface object that represents a expandable

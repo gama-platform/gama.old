@@ -4,9 +4,10 @@
  */
 package msi.gama.lang.gaml.ui.outline;
 
-import msi.gama.gui.swt.GamaIcons;
 import org.eclipse.jface.action.Action;
 import org.eclipse.xtext.ui.editor.outline.actions.SortOutlineContribution;
+
+import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * The class GamlSortOutlineContribution.

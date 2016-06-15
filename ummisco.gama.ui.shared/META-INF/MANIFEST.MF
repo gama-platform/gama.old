@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Shared UI components
+Bundle-SymbolicName: ummisco.gama.ui.shared;singleton:=true
+Bundle-Version: 1.7.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.swt;bundle-version="3.104.2",
+ org.eclipse.jface,
+ msi.gama.core,
+ org.eclipse.ui.workbench,
+ msi.gama.ext
+Export-Package: ummisco.gama.ui.resources,
+ ummisco.gama.ui.utils

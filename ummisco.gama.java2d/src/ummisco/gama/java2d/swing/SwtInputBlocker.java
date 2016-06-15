@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 
-import msi.gama.application.Platform;
+import ummisco.gama.ui.utils.Platform;
 
 /**
  * This class, together with {@link AwtDialogListener}, ensures the proper

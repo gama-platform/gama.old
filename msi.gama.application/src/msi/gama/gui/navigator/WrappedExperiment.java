@@ -10,6 +10,8 @@ import org.eclipse.swt.graphics.*;
 import msi.gama.gui.swt.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GAMLFile;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
 
 /**
  * Class WrappedExperiment.

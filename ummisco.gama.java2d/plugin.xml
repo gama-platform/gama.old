@@ -14,7 +14,7 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="ummisco.gama.java2d.AWTDisplayView"
-            icon="platform:/plugin/msi.gama.application/icons/view.display2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.display2.png"
             id="msi.gama.application.view.LayeredDisplayView"
             name="Display"
             restorable="false">

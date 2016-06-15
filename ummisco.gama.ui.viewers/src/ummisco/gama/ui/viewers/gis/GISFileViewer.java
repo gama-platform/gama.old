@@ -14,12 +14,13 @@ import org.geotools.map.*;
 import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
 import org.opengis.feature.simple.SimpleFeature;
-import msi.gama.gui.swt.GamaColors;
+
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gaml.operators.Strings;
+import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.viewers.gis.geotools.SwtMapPane;
 import ummisco.gama.ui.viewers.gis.geotools.event.MapMouseEvent;
 import ummisco.gama.ui.viewers.gis.geotools.tool.CursorTool;

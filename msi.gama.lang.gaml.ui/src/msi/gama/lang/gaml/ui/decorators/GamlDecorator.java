@@ -27,7 +27,7 @@ import org.eclipse.jface.viewers.*;
  *
  */
 import msi.gama.gui.navigator.*;
-import msi.gama.gui.swt.GamaIcons;
+import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * Simple decorator for error and warning

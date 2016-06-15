@@ -9,8 +9,10 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gaml.operators.fastmaths.CmnFastMath;
+import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 public class FlatButton extends Canvas implements PaintListener, Listener {
 

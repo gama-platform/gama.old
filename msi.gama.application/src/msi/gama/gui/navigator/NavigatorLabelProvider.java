@@ -18,6 +18,9 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import msi.gama.gui.swt.*;
 import msi.gaml.compilation.GamaBundleLoader;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 public class NavigatorLabelProvider extends CellLabelProvider implements ILabelProvider, IColorProvider, IFontProvider {
 

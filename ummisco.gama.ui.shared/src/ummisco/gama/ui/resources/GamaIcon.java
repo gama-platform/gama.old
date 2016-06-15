@@ -2,7 +2,7 @@
  * Created by drogoul, 15 févr. 2015
  *
  */
-package msi.gama.gui.swt;
+package ummisco.gama.ui.resources;
 
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;

@@ -2,10 +2,10 @@
  * Created by drogoul, 24 nov. 2014
  * 
  */
-package msi.gama.gui.swt;
+package ummisco.gama.ui.resources;
 
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import org.eclipse.swt.SWT;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
  * Class IGamaColors.

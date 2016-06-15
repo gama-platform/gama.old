@@ -9,7 +9,7 @@
  *
  *
  **********************************************************************************************/
-package msi.gama.gui.swt;
+package ummisco.gama.ui.resources;
 
 /**
  * Class IGamaIcons.

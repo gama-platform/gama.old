@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.swt.controls;
 
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
  * The class ITooltipDisplayer. 

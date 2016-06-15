@@ -1,10 +1,11 @@
 package ummisco.gama.ui.viewers.image;
 
-import msi.gama.gui.swt.GamaIcons;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.*;
+
+import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * An editor input for directly displaying ImageData in the ImageViewer.

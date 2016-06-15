@@ -12,6 +12,9 @@
 package msi.gama.lang.gaml.ui.editor;
 
 import msi.gama.gui.swt.*;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.viewers.*;

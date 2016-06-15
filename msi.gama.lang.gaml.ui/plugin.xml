@@ -9,7 +9,7 @@
               contributorClass="org.eclipse.ui.editors.text.TextEditorActionContributor"
               default="true"
               extensions="gaml"
-              icon="platform:/plugin/msi.gama.application/icons/file.icon2.png"
+              icon="platform:/plugin/ummisco.gama.ui.shared/icons/file.icon2.png"
               id="msi.gama.lang.gaml.Gaml"
               name="Gaml Editor">
            <contentTypeBinding
@@ -152,7 +152,7 @@
 		<menuContribution locationURI="popup:#TextEditorContext?endof=group.find">
 			<command
          commandId="org.eclipse.xtext.ui.editor.FindReferences"
-         icon="platform:/plugin/msi.gama.application/icons/navigator/navigator.search2.png">
+         icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.search2.png">
 				<visibleWhen checkEnabled="false">
                 	<reference definitionId="msi.gama.lang.gaml.Gaml.Editor.opened">
                 	</reference>
@@ -163,7 +163,7 @@
         locationURI="popup:#TextEditorContext?after=group.edit">
      <command
            commandId="msi.gama.lang.gaml.Gaml.validate"
-           icon="platform:/plugin/msi.gama.application/icons/editor.validate2.png"
+           icon="platform:/plugin/ummisco.gama.ui.shared/icons/editor.validate2.png"
            style="push"
            tooltip="Trigger expensive validation">
         <visibleWhen
@@ -178,7 +178,7 @@
         locationURI="popup:#TextEditorContext?after=group.open">
      <command
            commandId="org.eclipse.xtext.ui.editor.outline.QuickOutline"
-           icon="platform:/plugin/msi.gama.application/icons/editor.outline2.png"
+           icon="platform:/plugin/ummisco.gama.ui.shared/icons/editor.outline2.png"
            style="push"
            tooltip="Open Quick Outline">
         <visibleWhen
@@ -338,7 +338,7 @@
              allowMultiple="false"
              category="msi.gama.gui.category.gama"
              class="org.eclipse.ui.views.contentoutline.ContentOutline"
-             icon="platform:/plugin/msi.gama.application/icons/view.outline2.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.outline2.png"
              id="msi.gama.application.outline"
              name="Outline"
              restorable="true">
@@ -347,7 +347,7 @@
              allowMultiple="false"
              category="msi.gama.gui.category.gama"
              class="msi.gama.lang.gaml.ui.SyntaxErrorsView"
-             icon="platform:/plugin/msi.gama.application/icons/view.problems2.png"
+             icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.problems2.png"
              id="msi.gama.application.problems"
              name="Validation"
              restorable="true">

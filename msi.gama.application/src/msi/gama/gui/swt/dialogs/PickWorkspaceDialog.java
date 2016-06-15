@@ -390,14 +390,11 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			}
 		} else {
 			/* This was not a directory, so lets just copy the file */
-			FileInputStream fin = null;
-			FileOutputStream fout = null;
 			final byte[] buffer = new byte[4096];
 			int bytesRead;
-			try {
+			try (FileInputStream fin = new FileInputStream(src); FileOutputStream fout = new FileOutputStream(dest);) {
 				/* Open the files for input and output */
-				fin = new FileInputStream(src);
-				fout = new FileOutputStream(dest);
+
 				/* While bytesRead indicates a successful read, lets write... */
 				while ((bytesRead = fin.read(buffer)) >= 0) {
 					fout.write(buffer, 0, bytesRead);
@@ -409,13 +406,6 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 				wrapper.setStackTrace(e.getStackTrace());
 				throw wrapper;
 				/* Ensure that the files are closed (if they were open). */
-			} finally {
-				if ( fin != null ) {
-					fin.close();
-				}
-				if ( fout != null ) {
-					fout.close();
-				}
 			}
 		}
 	}

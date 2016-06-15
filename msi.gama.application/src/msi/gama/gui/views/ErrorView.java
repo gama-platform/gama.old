@@ -34,10 +34,10 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.gui.swt.GamaColors;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import ummisco.gama.ui.resources.GamaColors;
 
 public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* implements IToolbarDecoratedView.Pausable */ {
 

@@ -11,6 +11,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
 import msi.gama.gui.swt.*;
+import ummisco.gama.ui.resources.GamaColors;
 
 /**
  * Class WrappedFile.

@@ -32,7 +32,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.displays.DisplaySurfaceMenu;
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
@@ -52,6 +51,7 @@ import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * Class OpenGLSWTDisplaySurface.

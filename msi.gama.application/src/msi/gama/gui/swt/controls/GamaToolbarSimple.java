@@ -5,6 +5,8 @@
 package msi.gama.gui.swt.controls;
 
 import msi.gama.gui.swt.*;
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaColors;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;

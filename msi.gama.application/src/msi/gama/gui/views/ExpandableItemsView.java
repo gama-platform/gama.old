@@ -21,11 +21,11 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.gui.swt.GamaColors.GamaUIColor;
 import msi.gama.gui.swt.controls.ParameterExpandBar;
 import msi.gama.gui.swt.controls.ParameterExpandItem;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 public abstract class ExpandableItemsView<T> extends GamaViewPart implements ItemList<T> {
 

@@ -56,7 +56,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
-import msi.gama.application.Platform;
+import ummisco.gama.ui.utils.Platform;
 
 public abstract class SwingControl extends Composite {
 

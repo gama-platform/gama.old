@@ -77,7 +77,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ConsoleView"
-            icon="icons/view.console2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.console2.png"
             id="msi.gama.application.view.ConsoleView"
             name="Console"
             restorable="false">
@@ -87,7 +87,7 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.PopulationInspectView"
-            icon="icons/view.browser2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.browser2.png"
             id="msi.gama.application.view.TableAgentInspectView"
             name="Browser"
             restorable="false">
@@ -96,7 +96,7 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.AgentInspectView"
-            icon="icons/view.inspector2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.inspector2.png"
             id="msi.gama.application.view.AgentInspectView"
             name="Inspector"
             restorable="false">
@@ -105,7 +105,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.MonitorView"
-            icon="icons/view.monitors2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.monitors2.png"
             id="msi.gama.application.view.MonitorView"
             name="Monitors"
             restorable="false">
@@ -114,7 +114,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ExperimentParametersView"
-            icon="icons/view.parameters2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.parameters2.png"
             id="msi.gama.application.view.ParameterView"
             name="Parameters"
             restorable="false">
@@ -123,7 +123,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ErrorView"
-            icon="icons/view.errors2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.errors2.png"
             id="msi.gama.application.view.ErrorView"
             name="Errors"
             restorable="false">
@@ -132,7 +132,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.navigator.GamaNavigator"
-            icon="icons/view.navigator2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.navigator2.png"
             id="msi.gama.gui.view.GamaNavigator"
             name="Models"
             restorable="true">
@@ -141,7 +141,7 @@
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.UserControlView"
             fastViewWidthRatio="0.2"
-            icon="icons/view.panel2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.panel2.png"
             id="msi.gama.views.userControlView"
             name="User Control"
             restorable="false">
@@ -150,7 +150,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.InteractiveConsoleView"
-            icon="icons/view.interactive2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.interactive2.png"
             id="msi.gama.application.view.InteractiveConsoleView"
             name="Interactive console"
             restorable="false">
@@ -177,7 +177,7 @@
       <perspective
             class="msi.gama.gui.swt.perspectives.ModelingPerspective"
             fixed="false"
-            icon="icons/perspective.modeling2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.png"
             id="msi.gama.application.perspectives.ModelingPerspective"
             name="Modeling">
          <description>
@@ -187,7 +187,7 @@
       <perspective
             class="msi.gama.gui.swt.perspectives.SimulationPerspective"
             fixed="false"
-            icon="icons/perspective.simulation2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.simulation2.png"
             id="msi.gama.application.perspectives.SimulationPerspective"
             name="Simulation">
          <description>
@@ -319,7 +319,7 @@
             </visibleWhen>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
-                  icon="icons/menu.run4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.run4.png"
                   label="Run Experiment"
                   style="push">
                <visibleWhen
@@ -331,7 +331,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
-                  icon="icons/menu.pause4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.pause4.png"
                   label="Pause Experiment"
                   mnemonic="M1+P"
                   style="push">
@@ -344,7 +344,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
-                  icon="icons/menu.step4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.step4.png"
                   label="Step Experiment"
                   style="push"
                   tooltip="Advance the experiment step by step">
@@ -357,7 +357,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepBackSimulation"
-                  icon="icons/menu.stepBack1.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.stepBack1.png"
                   label="Step Back Experiment"
                   style="push"
                   tooltip="Make One step back in the simulation">
@@ -379,7 +379,7 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
-                  icon="icons/menu.reload4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.reload4.png"
                   label="Reload Experiment"
                   mnemonic="M1+M2+R"
                   style="push">
@@ -390,19 +390,19 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.PauseAndEdit"
-                  icon="icons/menu.stop2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.stop2.png"
                   label="Stop at first error"
                   style="toggle">
             </command>
             <command
                   commandId="msi.gama.application.commands.WarningsAsErrors"
-                  icon="icons/menu.warning2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.warning2.png"
                   label="Treat warnings like errors"
                   style="toggle">
             </command>
             <command
                   commandId="msi.gama.application.ShowErrors"
-                  icon="icons/menu.show2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.show2.png"
                   label="Display errors and warnings"
                   style="toggle">
             </command>
@@ -412,7 +412,7 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.Cancel"
-                  icon="icons/toolbar.stop2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/toolbar.stop2.png"
                   label="Close Experiment"
                   style="push"
                   tooltip="Stops the current experiment and dispose of it.">
@@ -447,14 +447,14 @@
                label="Views">
             <command
                   commandId="msi.gama.application.preferences"
-                  icon="icons/menu.open.preferences2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.preferences2.png"
                   label="Preferences"
                   style="push"
                   tooltip="Open preferences">
             </command>
             <command
                   commandId="msi.gama.application.command.web"
-                  icon="icons/menu.open.web2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.web2.png"
                   label="Welcome page"
                   style="push">
             </command>
@@ -464,7 +464,7 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.ShowHideParametersView"
-                  icon="icons/menu.open.parameters2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.parameters2.png"
                   label="Parameters"
                   style="push">
                <visibleWhen
@@ -476,7 +476,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.ShowHideConsoleView"
-                  icon="icons/menu.open.console2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.console2.png"
                   label="Console"
                   style="push">
                <visibleWhen
@@ -488,7 +488,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.AddMonitor"
-                  icon="icons/menu.monitor2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.monitor2.png"
                   label="Add Monitor"
                   style="push">
                <visibleWhen
@@ -503,11 +503,11 @@
                   visible="true">
             </separator>
             <menu
-                  icon="icons/menu.layout.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.layout.png"
                   label="Arrange Display Views...">
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="icons/layout.stack.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.stack.png"
                      label="Stacked"
                      style="push">
                   <parameter
@@ -517,7 +517,7 @@
                </command>
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="icons/layout.grid.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.grid.png"
                      label="Split"
                      style="push">
                   <parameter
@@ -527,7 +527,7 @@
                </command>
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="icons/layout.horizontal.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.horizontal.png"
                      label="Horizontally"
                      style="push">
                   <parameter
@@ -537,7 +537,7 @@
                </command>
                <command
                      commandId="msi.gama.application.layoutDisplays"
-                     icon="icons/layout.vertical.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/layout.vertical.png"
                      label="Vertically"
                      style="push">
                   <parameter
@@ -558,10 +558,10 @@
                </visibleWhen>
             </menu>
             <menu
-                  icon="icons/menu.other.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.other.png"
                   label="Other...">
                <menu
-                     icon="icons/menu.open.perspective2.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.perspective2.png"
                      label="Open Perspective">
                   <dynamic
                         class="msi.gama.gui.swt.commands.OpenPerspectiveContributionItem"
@@ -570,13 +570,13 @@
                </menu>
   <!--             <command
                      commandId="org.eclipse.ui.window.savePerspective"
-                     icon="icons/menu.save.perspective.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.save.perspective.png"
                      label="Save Perspective"
                      style="push">
                </command> -->
                <command
                      commandId="org.eclipse.ui.window.resetPerspective"
-                     icon="icons/menu.reset.perspective2.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.reset.perspective2.png"
                      label="Reset Perspective..."
                      style="push">
                </command>
@@ -585,7 +585,7 @@
                      visible="true">
                </separator>
                <menu
-                     icon="icons/menu.open.view2.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.view2.png"
                      label="Show View">
                   <dynamic
                         class="msi.gama.gui.swt.commands.ShowViewContributionItem"
@@ -594,7 +594,7 @@
                </menu>
                <command
                      commandId="org.eclipse.ui.ToggleCoolbarAction"
-                     icon="icons/menu.toolbar2.png"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.toolbar2.png"
                      label="Toggle Toolbar"
                      style="push"
                      tooltip="Toggle the main toolbar on and off">
@@ -609,7 +609,7 @@
                label="Common controls">
             <command
                   commandId="msi.gama.application.goto.modeling"
-                  icon="icons/perspective.modeling2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.png"
                   label="Modeling perspective"
                   style="push"
                   tooltip="Open modeling perspective">
@@ -624,7 +624,7 @@
             </command>
             <command
                   commandId="msi.gama.application.goto.simulation"
-                  icon="icons/perspective.simulation2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.simulation2.png"
                   label="Simulation perspective"
                   style="push"
                   tooltip="Open simulation perspective">
@@ -657,7 +657,7 @@
             </control>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
-                  icon="icons/menu.run4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.run4.png"
                   label="Run Experiment"
                   style="push"
                   tooltip="Run the currently opened experiment">
@@ -670,7 +670,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
-                  icon="icons/menu.pause4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.pause4.png"
                   label="Pause Experiment"
                   style="push"
                   tooltip="Pause the currently opened experiment">
@@ -683,7 +683,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
-                  icon="icons/menu.step4.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.step4.png"
                   label="Step Experiment"
                   style="push"
                   tooltip="Advance the experiment step by step">
@@ -696,7 +696,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepBackSimulation"
-                  icon="icons/menu.stepBack1.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.stepBack1.png"
                   label="Step Back"
                   style="push"
                   tooltip="Make One step back in the simulation">
@@ -744,7 +744,7 @@
             </control>
             <command
                   commandId="msi.gama.application.commands.Cancel"
-                  icon="icons/toolbar.stop2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/toolbar.stop2.png"
                   label="Close Experiment"
                   style="push"
                   tooltip="Stops the currently opened experiment and closes its perspective">
@@ -766,13 +766,13 @@
             allPopups="true"
             locationURI="popup:msi.gama.gui.view.GamaNavigator?after=group.new">
          <menu
-               icon="icons/navigator/navigator.new2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.new2.png"
                id="menu.new"
                label="New...">
             <command
                   commandId="org.eclipse.ui.newWizard"
                   disabledIcon=""
-                  icon="icons/navigator/new.project2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.project2.png"
                   label="Project..."
                   style="push">
                <parameter
@@ -782,7 +782,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.newWizard"
-                  icon="icons/navigator/new.model2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
                   label="Model…"
                   style="push">
                <parameter
@@ -796,20 +796,20 @@
             </separator>
             <command
                   commandId="org.eclipse.ui.newWizard"
-                  icon="icons/navigator/navigator.new2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.new2.png"
                   label="Other..."
                   style="push">
             </command>
          </menu>
          <menu
-               icon="icons/navigator/navigator.import2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import2.png"
                id="menu.gama.import"
                label="Import..."
                mnemonic=" ">
             <command
                   commandId="org.eclipse.ui.file.import"
                   hoverIcon=""
-                  icon="icons/navigator/navigator.import.project2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.project2.png"
                   label="Project…"
                   style="push">
                <parameter
@@ -819,7 +819,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/navigator.import.disk2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.disk2.png"
                   label="From disk..."
                   style="push">
                <parameter
@@ -829,7 +829,7 @@
             </command>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/navigator.import.archive2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.archive2.png"
                   label="From archive..."
                   style="push">
                <parameter
@@ -843,14 +843,14 @@
             </separator>
             <command
                   commandId="org.eclipse.ui.file.import"
-                  icon="icons/navigator/navigator.import2.png"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import2.png"
                   label="Other..."
                   style="push">
             </command>
          </menu>
          <command
                commandId="msi.gama.application.commands.CopyProjectToWorkspace"
-               icon="icons/navigator/navigator.copy2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.copy2.png"
                label="Copy to User Models"
                mnemonic="C"
                style="push">
@@ -874,7 +874,7 @@
          </separator>
          <command
                commandId="msi.gama.application.commands.UpdateBuiltInModelsCommand"
-               icon="icons/navigator/navigator.update2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.update2.png"
                label="Update Library"
                style="push">
             <visibleWhen
@@ -897,21 +897,21 @@
          </separator>
          <command
                commandId="msi.gama.application.commands.OpenFile"
-               icon="icons/navigator/navigator.open2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.open2.png"
                label="Open External File..."
                mnemonic="O"
                style="push">
          </command>
          <command
                commandId="org.eclipse.ui.navigate.openResource"
-               icon="icons/navigator/navigator.search2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.search2.png"
                label="Search file name..."
                mnemonic="S"
                style="push">
          </command>
          <command
                commandId="msi.gama.gui.gamaNavigator.commands.Refresh"
-               icon="icons/navigator/navigator.refresh2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.refresh2.png"
                label="Erase metadata"
                style="push">
             <visibleWhen>
@@ -971,7 +971,7 @@
             locationURI="menu:new?after=new">
          <command
                commandId="org.eclipse.ui.newWizard"
-               icon="icons/navigator/new.project2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.project2.png"
                label="GAMA Project..."
                style="push">
             <parameter
@@ -981,7 +981,7 @@
          </command>
          <command
                commandId="org.eclipse.ui.newWizard"
-               icon="icons/navigator/new.model2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
                label="Model File…"
                style="push">
             <parameter
@@ -991,7 +991,7 @@
          </command>
          <command
                commandId="org.eclipse.ui.newWizard"
-               icon="icons/navigator/navigator.new2.png"
+               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.new2.png"
                label="Other..."
                style="push">
          </command>
@@ -1004,7 +1004,7 @@
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="icons/folder.icon2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/folder.icon2.png"
             id="msi.gama.application.nature.gamaNature.img"
             natureId="msi.gama.application.gamaNature">
       </image>
@@ -1739,7 +1739,7 @@
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="msi.gama.gui.wizards.files.NewFileWizard"
-            icon="icons/navigator/new.model2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
             id="msi.gama.gui.wizards.NewFileWizard"
             name="Model file"
             project="false">
@@ -1747,7 +1747,7 @@
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="msi.gama.gui.wizards.projects.NewProjectWizard"
-            icon="icons/navigator/new.project2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.project2.png"
             id="msi.gama.gui.wizards.newProjectWizard"
             name="Gama Project"
             project="true">
@@ -1899,63 +1899,63 @@
          point="org.eclipse.ui.commandImages">
       <image
             commandId="org.eclipse.ui.edit.copy"
-            icon="icons/menu.copy2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.copy2.png">
       </image>
       <image
             commandId="org.eclipse.ui.edit.cut"
-            icon="icons/menu.cut2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.cut2.png">
       </image>
       <image
             commandId="org.eclipse.ui.edit.delete"
-            icon="icons/menu.delete2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.delete2.png">
       </image>
       <image
             commandId="org.eclipse.ui.edit.paste"
-            icon="icons/menu.paste2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.paste2.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.print"
-            icon="icons/menu.print2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.print2.png">
       </image>
       <image
             commandId="org.eclipse.ui.edit.undo"
-            icon="icons/menu.undo2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.undo2.png">
       </image>
       <image
             commandId="org.eclipse.ui.edit.redo"
-            icon="icons/menu.redo2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.redo2.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.save"
-            icon="icons/menu.save2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.save2.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.saveAll"
-            icon="icons/menu.saveall2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.saveall2.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.saveAs"
-            icon="icons/menu.saveas2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.saveas2.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.refresh"
-            icon="icons/navigator/navigator.refresh2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.refresh2.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.export"
-            icon="icons/menu.export2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.export2.png">
       </image>
       <image
             commandId="org.eclipse.ui.file.import"
-            icon="icons/menu.import2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.import2.png">
       </image>
       <image
             commandId="org.eclipse.ui.navigate.collapseAll"
-            icon="icons/navigator/navigator.collapse2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.collapse2.png">
       </image>
       <image
             commandId="org.eclipse.ui.window.preferences"
-            icon="icons/menu.open.preferences2.png">
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.open.preferences2.png">
       </image>
    </extension>
       <extension
@@ -2009,7 +2009,7 @@
                   name="Gama">
                <property
                      name="windowImages"
-                     value="./icons/launcher_icons/icon16.png,./icons/launcher_icons/icon32.png,./icons/launcher_icons/icon48.png,./icons/launcher_icons/icon64.png,./icons/launcher_icons/icon128.png,./icons/launcher_icons/icon256.png">
+                     value="./launcher_icons/icon16.png,./launcher_icons/icon32.png,./launcher_icons/icon48.png,./launcher_icons/icon64.png,./launcher_icons/icon128.png,./launcher_icons/icon256.png">
                </property>
                <property
                      name="aboutText"
@@ -2017,7 +2017,7 @@
                </property>
                <property
                      name="aboutImage"
-                     value="./icons/launcher_icons/icon205.png">
+                     value="./launcher_icons/icon205.png">
                </property>
                <property
                      name="startupForegroundColor"

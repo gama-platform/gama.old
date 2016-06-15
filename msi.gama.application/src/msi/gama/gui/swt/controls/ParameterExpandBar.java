@@ -20,6 +20,8 @@ import org.eclipse.swt.widgets.*;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.gui.swt.*;
 import msi.gaml.operators.fastmaths.CmnFastMath;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
  * Instances of this class support the layout of selectable expand bar items.

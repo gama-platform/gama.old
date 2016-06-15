@@ -13,7 +13,6 @@ import org.eclipse.swt.browser.ProgressEvent;
 import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolItem;
@@ -24,7 +23,6 @@ import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
-import msi.gama.gui.swt.IGamaColors;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
@@ -104,7 +102,8 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 			@Override
 			public void completed(final ProgressEvent event) {
-				toolbar.status((Image) null, browser.getUrl(), IGamaColors.NEUTRAL, SWT.LEFT);
+				// toolbar.status((Image) null, browser.getUrl(),
+				// IGamaColors.NEUTRAL, SWT.LEFT);
 				checkButtons();
 			}
 		});
@@ -191,8 +190,5 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 		}, SWT.RIGHT);
 
 	}
-	//
-	// @Override
-	// public void setToogle(final Action toggle) {}
 
 }

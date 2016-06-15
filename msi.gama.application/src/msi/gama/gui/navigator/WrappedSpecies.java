@@ -6,9 +6,9 @@ package msi.gama.gui.navigator;
 
 import java.util.*;
 import org.eclipse.swt.graphics.Image;
-import msi.gama.gui.swt.GamaIcons;
 import msi.gama.runtime.GAMA;
 import msi.gaml.descriptions.SpeciesDescription;
+import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * Class WrappedSpecies.
