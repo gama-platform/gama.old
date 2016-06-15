@@ -64,7 +64,6 @@ import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
-import ummisco.gama.modernOpenGL.Camera;
 import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
 import ummisco.gama.opengl.camera.ICamera;

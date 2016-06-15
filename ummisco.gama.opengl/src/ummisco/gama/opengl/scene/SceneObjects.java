@@ -27,7 +27,6 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
 import msi.gama.precompiler.GamlAnnotations.display;
-import ummisco.gama.modernOpenGL.Camera;
 import ummisco.gama.modernOpenGL.Maths;
 import ummisco.gama.modernOpenGL.ShaderProgram;
 import ummisco.gama.opengl.JOGLRenderer;
