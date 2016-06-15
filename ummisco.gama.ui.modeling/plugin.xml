@@ -265,7 +265,7 @@
             point="org.eclipse.ui.ide.markerResolution">
         <markerResolutionGenerator
             class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="msi.gama.lang.gaml.ui.gaml.check.fast">
+            markerType="ummisco.gama.ui.modeling.gaml.check.fast">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -273,7 +273,7 @@
         </markerResolutionGenerator>
         <markerResolutionGenerator
             class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="msi.gama.lang.gaml.ui.gaml.check.normal">
+            markerType="ummisco.gama.ui.modeling.gaml.check.normal">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -281,7 +281,7 @@
         </markerResolutionGenerator>
         <markerResolutionGenerator
             class="msi.gama.lang.gaml.ui.GamlExecutableExtensionFactory:org.eclipse.xtext.ui.editor.quickfix.MarkerResolutionGenerator"
-            markerType="msi.gama.lang.gaml.ui.gaml.check.expensive">
+            markerType="ummisco.gama.ui.modeling.gaml.check.expensive">
             <attribute
                 name="FIXABLE_KEY"
                 value="true">
@@ -387,13 +387,13 @@
              
              
           <markerTypeReference
-                id="msi.gama.lang.gaml.ui.gaml.check.expensive">
+                id="ummisco.gama.ui.modeling.gaml.check.expensive">
           </markerTypeReference>
           <markerTypeReference
-                id="msi.gama.lang.gaml.ui.gaml.check.normal">
+                id="ummisco.gama.ui.modeling.gaml.check.normal">
           </markerTypeReference>
           <markerTypeReference
-                id="msi.gama.lang.gaml.ui.gaml.check.fast">
+                id="ummisco.gama.ui.modeling.gaml.check.fast">
           </markerTypeReference>
              
          <markerGrouping
@@ -422,7 +422,7 @@
             <markerAttributeGrouping
                   attribute="severity"
                   defaultGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
-                  markerType="msi.gama.lang.gaml.ui.gaml.check.fast">
+                  markerType="ummisco.gama.ui.modeling.gaml.check.fast">
                <markerAttributeMapping
                      markerGroupingEntry="org.eclipse.ui.ide.allmarkers.errorSeverity"
                      value="2">
@@ -443,7 +443,7 @@
                         <markerAttributeGrouping
                               attribute="severity"
                               defaultGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
-                              markerType="msi.gama.lang.gaml.ui.gaml.check.normal">
+                              markerType="ummisco.gama.ui.modeling.gaml.check.normal">
                <markerAttributeMapping
                      markerGroupingEntry="org.eclipse.ui.ide.allmarkers.errorSeverity"
                      value="2">
@@ -464,7 +464,7 @@
                         <markerAttributeGrouping
                               attribute="severity"
                               defaultGroupingEntry="org.eclipse.ui.ide.allmarkers.other"
-                              markerType="msi.gama.lang.gaml.ui.gaml.check.expensive">
+                              markerType="ummisco.gama.ui.modeling.gaml.check.expensive">
                <markerAttributeMapping
                      markerGroupingEntry="org.eclipse.ui.ide.allmarkers.errorSeverity"
                      value="2">
@@ -545,17 +545,17 @@
        <imageprovider
              class="msi.gama.lang.gaml.ui.markers.GamlMarkerImageProvider"
              id="msi.gama.lang.gaml.ui.imageprovider.normal"
-             markertype="msi.gama.lang.gaml.ui.gaml.check.normal">
+             markertype="ummisco.gama.ui.modeling.gaml.check.normal">
        </imageprovider>
        <imageprovider
              class="msi.gama.lang.gaml.ui.markers.GamlMarkerImageProvider"
              id="msi.gama.lang.gaml.ui.imageprovider.expensive"
-             markertype="msi.gama.lang.gaml.ui.gaml.check.expensive">
+             markertype="ummisco.gama.ui.modeling.gaml.check.expensive">
        </imageprovider>
        <imageprovider
              class="msi.gama.lang.gaml.ui.markers.GamlMarkerImageProvider"
              id="msi.gama.lang.gaml.ui.imageprovider.fast"
-             markertype="msi.gama.lang.gaml.ui.gaml.check.fast">
+             markertype="ummisco.gama.ui.modeling.gaml.check.fast">
        </imageprovider>
     </extension>
     <extension
