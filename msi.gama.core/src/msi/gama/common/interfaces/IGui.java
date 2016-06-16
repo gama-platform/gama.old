@@ -67,6 +67,7 @@ public interface IGui {
 	public static final String HEADLESSPARAM_ID = "msi.gama.application.view.HeadlessParam";
 	public static final String HEADLESS_CHART_ID = "msi.gama.hpc.gui.HeadlessChart";
 	public static final String NAVIGATOR_VIEW_ID = "msi.gama.gui.view.GamaNavigator";
+	public static final String NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID = "msi.gama.application.decorator";
 	public static final String CONSOLE_VIEW_ID = "msi.gama.application.view.ConsoleView";
 
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";

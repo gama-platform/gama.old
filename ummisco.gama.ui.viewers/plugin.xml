@@ -13,7 +13,7 @@
       <extension
          point="org.eclipse.ui.propertyPages">
       <page
-            class="msi.gama.gui.navigator.images.ImagePropertyPage"
+            class="msi.gama.gui.metadata.images.ImagePropertyPage"
             id="msi.gama.gui.images"
             name="Image">
          <enabledWhen>
@@ -116,7 +116,7 @@
          </property>
       </content-type>
       <content-type
-            describer="msi.gama.gui.navigator.images.ImageContentTypeDescriber"
+            describer="msi.gama.gui.metadata.images.ImageContentTypeDescriber"
             file-extensions="PNG,png,GIF,gif,JPEG,jpeg,JPG,jpg,BMP,bmp,ICO,ico,TIFF,tiff,TIF,tif,ASC,asc,PGM,pgm"
             id="msi.gama.gui.images.type"
             name="Image"

@@ -86,8 +86,7 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ISpeedDisplayer;
 import msi.gama.common.util.AbstractGui;
-import msi.gama.gui.navigator.FileMetaDataProvider;
-import msi.gama.gui.navigator.NavigatorBaseLighweightDecorator;
+import msi.gama.gui.metadata.FileMetaDataProvider;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.parameters.EditorsDialog;
 import msi.gama.gui.swt.commands.ArrangeDisplayViews;
@@ -995,7 +994,7 @@ public class SwtGui extends AbstractGui {
 			public void afterValueChange(final Boolean newValue) {
 				final IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
 				try {
-					mgr.setEnabled(NavigatorBaseLighweightDecorator.ID, newValue);
+					mgr.setEnabled(NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID, newValue);
 				} catch (final CoreException e) {
 					e.printStackTrace();
 				}

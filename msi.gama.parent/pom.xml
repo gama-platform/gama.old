@@ -14,6 +14,7 @@
     <module>../msi.gama.lang.gaml</module>
     <module>../ummisco.gama.ui.modeling</module>
     <module>../ummisco.gama.ui.shared</module>
+    <module>../ummisco.gama.ui.navigator</module>
     
     <module>../ummisco.gama.feature.models</module>
     <module>../ummisco.gama.feature.dependencies</module>

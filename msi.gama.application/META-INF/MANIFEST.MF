@@ -33,10 +33,10 @@ Bundle-Version: 1.7.0.qualifier
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: msi.gama.application;singleton:=true
 Export-Package: msi.gama.application,
+ msi.gama.application.projects,
  msi.gama.gui,
- msi.gama.gui.navigator,
- msi.gama.gui.navigator.commands,
- msi.gama.gui.navigator.images,
+ msi.gama.gui.metadata,
+ msi.gama.gui.metadata.images,
  msi.gama.gui.parameters,
  msi.gama.gui.swt,
  msi.gama.gui.swt.commands,

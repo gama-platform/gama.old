@@ -24,6 +24,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.GamaKeyBindings;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.utils.UICleanup;
 
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 
@@ -96,9 +97,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	public void postWindowCreate() {
 		final IWorkbenchWindow window = getWindowConfigurer().getWindow();
 		window.getShell().setMaximized(GamaPreferences.CORE_SHOW_MAXIMIZED.getValue());
-		RemoveUnwantedWizards.run();
-		RemoveUnwantedActionSets.run();
-		RearrangeMenus.run();
+		UICleanup.run();
 		GamaKeyBindings.install();
 
 	}

@@ -4,68 +4,6 @@
 
 
 
-   <extension
-         point="org.eclipse.ui.decorators">
-            <decorator
-                  adaptable="false"
-                  class="msi.gama.gui.navigator.NavigatorBaseLighweightDecorator"
-                  id="msi.gama.application.decorator"
-                  label="Metadata Decorator"
-                  lightweight="true"
-                  location="REPLACE"
-                  state="true">
-               <enablement>
-            <or>
-               <objectClass
-                     name="msi.gama.gui.navigator.WrappedFile">
-               </objectClass>
-               <and>
-                  <objectClass
-                        name="org.eclipse.core.resources.IFile">
-                  </objectClass>
-                  <or>
-                  <objectState
-                        name="contentTypeId"
-                        value="msi.gama.gui.gaml.type">
-                  </objectState>
-                  <objectState
-                        name="contentTypeId"
-                        value="msi.gama.gui.shapefile.type">
-                  </objectState>
-                  <objectState
-                        name="contentTypeId"
-                        value="msi.gama.gui.csv.type">
-                  </objectState>
-                  <objectState
-                        name="contentTypeId"
-                        value="msi.gama.gui.images.type">
-                  </objectState>
-                  <objectState
-                        name="contentTypeId"
-                        value="msi.gama.gui.shapefile.support.type">
-                  </objectState>
-                  <objectState
-                        name="contentTypeId"
-                        value="msi.gama.gui.osm.type">
-                  </objectState>
-                  </or>
-               </and>
-               <objectClass
-                     name="org.eclipse.core.resources.IProject">
-               </objectClass>
-            </or>
-               </enablement>
-            </decorator>
-            <decorator
-                  adaptable="true"
-                  class="msi.gama.gui.navigator.NavigatorDateLighweightDecorator"
-                  id="msi.gama.application.date.decorator"
-                  label="Date Decorator"
-                  lightweight="true"
-                  objectClass="org.eclipse.core.resources.IResource"
-                  state="false">
-            </decorator>
-   </extension>
 
    <extension
          point="org.eclipse.ui.views">
@@ -127,15 +65,6 @@
             id="msi.gama.application.view.ErrorView"
             name="Errors"
             restorable="false">
-      </view>
-      <view
-            allowMultiple="false"
-            category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.navigator.GamaNavigator"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.navigator2.png"
-            id="msi.gama.gui.view.GamaNavigator"
-            name="Models"
-            restorable="true">
       </view>
       <view
             category="msi.gama.gui.category.gama"
@@ -712,195 +641,6 @@
          </toolbar>
        </menuContribution>
       <menuContribution
-            allPopups="true"
-            locationURI="popup:msi.gama.gui.view.GamaNavigator?after=group.new">
-         <menu
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.new2.png"
-               id="menu.new"
-               label="New...">
-            <command
-                  commandId="org.eclipse.ui.newWizard"
-                  disabledIcon=""
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.project2.png"
-                  label="Project..."
-                  style="push">
-               <parameter
-                     name="newWizardId"
-                     value="msi.gama.gui.wizards.newProjectWizard">
-               </parameter>
-            </command>
-            <command
-                  commandId="org.eclipse.ui.newWizard"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
-                  label="Model…"
-                  style="push">
-               <parameter
-                     name="newWizardId"
-                     value="msi.gama.gui.wizards.NewFileWizard">
-               </parameter>
-            </command>
-            <separator
-                  name="msi.gama.application.separator2"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="org.eclipse.ui.newWizard"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.new2.png"
-                  label="Other..."
-                  style="push">
-            </command>
-         </menu>
-         <menu
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import2.png"
-               id="menu.gama.import"
-               label="Import..."
-               mnemonic=" ">
-            <command
-                  commandId="org.eclipse.ui.file.import"
-                  hoverIcon=""
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.project2.png"
-                  label="Project…"
-                  style="push">
-               <parameter
-                     name="importWizardId"
-                     value="org.eclipse.ui.wizards.import.ExternalProject">
-               </parameter>
-            </command>
-            <command
-                  commandId="org.eclipse.ui.file.import"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.disk2.png"
-                  label="From disk..."
-                  style="push">
-               <parameter
-                     name="importWizardId"
-                     value="org.eclipse.ui.wizards.import.FileSystem">
-               </parameter>
-            </command>
-            <command
-                  commandId="org.eclipse.ui.file.import"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import.archive2.png"
-                  label="From archive..."
-                  style="push">
-               <parameter
-                     name="importWizardId"
-                     value="org.eclipse.ui.wizards.import.ZipFile">
-               </parameter>
-            </command>
-            <separator
-                  name="msi.gama.application.separator1"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="org.eclipse.ui.file.import"
-                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.import2.png"
-                  label="Other..."
-                  style="push">
-            </command>
-         </menu>
-         <command
-               commandId="msi.gama.application.commands.CopyProjectToWorkspace"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.copy2.png"
-               label="Copy to User Models"
-               mnemonic="C"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-               <and>
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IProject">
-                     </adapt>
-                  </iterate>
-                  <count
-                        value="+">
-                  </count>
-               </and>
-            </visibleWhen>
-         </command>
-         <separator
-               name="msi.gama.gui.gamaNavigator.separator1"
-               visible="true">
-         </separator>
-         <command
-               commandId="msi.gama.application.commands.UpdateBuiltInModelsCommand"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.update2.png"
-               label="Update Library"
-               style="push">
-            <visibleWhen
-                  checkEnabled="true">
-               <with
-                     variable="selection">
-                  <iterate
-                        ifEmpty="true"
-                        operator="and">
-                     <instanceof
-                           value="msi.gama.gui.navigator.ModelsLibraryFolder">
-                     </instanceof>
-                  </iterate>
-               </with>
-            </visibleWhen>
-         </command>
-         <separator
-               name="msi.gama.gui.gamaNavigator.separator3"
-               visible="true">
-         </separator>
-         <command
-               commandId="msi.gama.application.commands.OpenFile"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.open2.png"
-               label="Open External File..."
-               mnemonic="O"
-               style="push">
-         </command>
-         <command
-               commandId="org.eclipse.ui.navigate.openResource"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.search2.png"
-               label="Search file name..."
-               mnemonic="S"
-               style="push">
-         </command>
-         <command
-               commandId="msi.gama.gui.gamaNavigator.commands.Refresh"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.refresh2.png"
-               label="Erase metadata"
-               style="push">
-            <visibleWhen>
-               <and>
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <or>
-                           <test
-                                 property="org.eclipse.core.resources.contentTypeId"
-                                 value="msi.gama.gui.images.type">
-                           </test>
-                           <test
-                                 property="org.eclipse.core.resources.contentTypeId"
-                                 value="msi.gama.gui.csv.type">
-                           </test>
-                           <test
-                                 property="org.eclipse.core.resources.contentTypeId"
-                                 value="msi.gama.gui.shapefile.type">
-                           </test>
-                           <test
-                                 property="org.eclipse.core.resources.contentTypeId"
-                                 value="msi.gama.gui.gaml.type">
-                           </test>
-                           <adapt
-                                 type="org.eclipse.core.resources.IResource">
-                           </adapt>
-                        </or>
-                     </adapt>
-                  </iterate>
-                  <not>
-                     <count
-                           value="0">
-                     </count>
-                  </not>
-               </and>
-            </visibleWhen>
-         </command>
-      </menuContribution>
-      <menuContribution
             allPopups="false"
             locationURI="menu:file?after=open.ext">
          <command
@@ -908,45 +648,11 @@
                style="push">
          </command>
       </menuContribution>
-      <menuContribution
-            allPopups="false"
-            locationURI="menu:new?after=new">
-         <command
-               commandId="org.eclipse.ui.newWizard"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.project2.png"
-               label="GAMA Project..."
-               style="push">
-            <parameter
-                  name="newWizardId"
-                  value="msi.gama.gui.wizards.newProjectWizard">
-            </parameter>
-         </command>
-         <command
-               commandId="org.eclipse.ui.newWizard"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
-               label="Model File…"
-               style="push">
-            <parameter
-                  name="newWizardId"
-                  value="msi.gama.gui.wizards.NewFileWizard">
-            </parameter>
-         </command>
-         <command
-               commandId="org.eclipse.ui.newWizard"
-               icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.new2.png"
-               label="Other..."
-               style="push">
-         </command>
-         <separator
-               name="msi.gama.application.separator10"
-               visible="true">
-         </separator>
-      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
       <image
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/folder.icon2.png"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/folder.model3.png"
             id="msi.gama.application.nature.gamaNature.img"
             natureId="msi.gama.application.gamaNature">
       </image>
@@ -1193,18 +899,6 @@
       <handler
             class="msi.gama.gui.swt.commands.HelpHandler"
             commandId="org.eclipse.ui.help.helpContents">
-         <activeWhen>
-            <with
-                  variable="activeWorkbenchWindow">
-               <instanceof
-                     value="org.eclipse.ui.IWorkbenchWindow">
-               </instanceof>
-            </with>
-         </activeWhen>
-      </handler>
-      <handler
-            class="msi.gama.gui.navigator.commands.ResourceRefreshHandler"
-            commandId="msi.gama.gui.gamaNavigator.commands.Refresh">
          <activeWhen>
             <with
                   variable="activeWorkbenchWindow">
@@ -1558,18 +1252,6 @@
             name="Cancel">
       </command>
       <command
-            categoryId="msi.gama.category"
-            defaultHandler="msi.gama.gui.navigator.commands.RefreshHandler"
-            id="msi.gama.gui.gamaNavigator.commands.Refresh"
-            name="Refresh">
-      </command>
-      <command
-            categoryId="msi.gama.category"
-            defaultHandler="msi.gama.gui.navigator.commands.CopyProjectToWorkspaceHandler"
-            id="msi.gama.application.commands.CopyProjectToWorkspace"
-            name="Copy to Workspace">
-      </command>
-      <command
             id="msi.gama.application.commands.ShowHideHeadlessParamView"
             name="Show Headless Param View">
       </command>
@@ -1609,12 +1291,6 @@
       </command>
       <command
             categoryId="msi.gama.category"
-            defaultHandler="msi.gama.gui.navigator.commands.UpdateBuiltInModelsHandler"
-            id="msi.gama.application.commands.UpdateBuiltInModelsCommand"
-            name="Update Built-In Models">
-      </command>
-      <command
-            categoryId="msi.gama.category"
             defaultHandler="msi.gama.gui.swt.commands.OpenGamaWebsiteHandler"
             id="msi.gama.application.command.web"
             name="Welcome page">
@@ -1644,171 +1320,7 @@
                typeId="msi.gama.application.String">
          </commandParameter>
       </command>
-   </extension> <extension
-         point="org.eclipse.ui.newWizards">
-      <category
-            id="msi.gama.gui.wizards.GAMA"
-            name="GAMA">
-      </category>
-      <wizard
-            category="msi.gama.gui.wizards.GAMA"
-            class="msi.gama.gui.wizards.files.NewFileWizard"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.model2.png"
-            id="msi.gama.gui.wizards.NewFileWizard"
-            name="Model file"
-            project="false">
-      </wizard>
-      <wizard
-            category="msi.gama.gui.wizards.GAMA"
-            class="msi.gama.gui.wizards.projects.NewProjectWizard"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/new.project2.png"
-            id="msi.gama.gui.wizards.newProjectWizard"
-            name="Gama Project"
-            project="true">
-      </wizard>
-   </extension>
-      <extension
-         point="org.eclipse.ui.navigator.viewer">
-      <viewerActionBinding
-            viewerId="msi.gama.gui.view.GamaNavigator">
-         <includes>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.OpenActions">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.EditActions">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.UndoRedoActionProvider">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.PropertiesActionProvider">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.RefactorActions">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.ResourceMgmtActions">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.NewActionProvider">
-            </actionExtension>
-         </includes>
-         <excludes>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.WorkManagementActionProvider">
-            </actionExtension>
-            <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.WorkingSetActionProvider">
-            </actionExtension>
-         </excludes>
-      </viewerActionBinding>
-      <viewerContentBinding
-            viewerId="msi.gama.gui.view.GamaNavigator">
-         <includes>
-            <contentExtension
-                  isRoot="true"
-                  pattern="msi.gama.application.resourceVirtualNavigatorContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.eclipse.ui.navigator.resourceContent">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.eclipse.ui.navigator.resources.filters.*">
-            </contentExtension>
-            <contentExtension
-                  pattern="org.eclipse.ui.navigator.resources.linkHelper">
-            </contentExtension>
-            <contentExtension
-                  pattern="msi.gama.application.shapefile.filter">
-            </contentExtension>
-         </includes>
-      </viewerContentBinding>
-      <dragAssistant
-            class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
-            viewerId="msi.gama.gui.view.GamaNavigator">
-
-      </dragAssistant>
-   </extension>
-      <extension
-         point="org.eclipse.ui.navigator.navigatorContent">
-      <navigatorContent
-            activeByDefault="true"
-            appearsBefore="org.eclipse.ui.navigator.resourceContent"
-            contentProvider="msi.gama.gui.navigator.NavigatorContentProvider"
-            id="msi.gama.application.resourceVirtualNavigatorContent"
-            labelProvider="msi.gama.gui.navigator.NavigatorLabelProvider"
-            name="Virtual GamaNavigator Content"
-            priority="highest"
-            providesSaveables="false">
-         <triggerPoints>
-            <or>
-               <instanceof
-                     value="msi.gama.gui.navigator.NavigatorRoot">
-               </instanceof>
-               <instanceof
-                     value="msi.gama.gui.navigator.VirtualContent">
-               </instanceof>
-               <instanceof
-                     value="org.eclipse.core.resources.IResource">
-               </instanceof>
-               <instanceof
-                     value="msi.gama.gui.navigator.WrappedGamlObject">
-               </instanceof>
-               <instanceof
-                     value="msi.gama.gui.navigator.WrappedFile">
-               </instanceof>
-            </or>
-         </triggerPoints>
-        <possibleChildren>
-           <or>
-              <instanceof
-                    value="msi.gama.gui.navigator.VirtualContent" />
-              <instanceof
-                     value="org.eclipse.core.resources.IResource" />
-              <instanceof
-                    value="msi.gama.gui.navigator.NavigatorRoot">
-              </instanceof>
-         </or>
-         </possibleChildren>
-        <commonSorter
-              class="msi.gama.gui.navigator.NavigatorSorter"
-              id="msi.gama.navigator.sorter">
-           <parentExpression>
-              <instanceof
-                    value="org.eclipse.core.resources.IFile">
-              </instanceof>
-           </parentExpression>
-        </commonSorter>
-        <commonSorter
-              class="msi.gama.gui.navigator.FileFolderSorter">
-           <parentExpression>
-              <instanceof
-                    value="org.eclipse.core.resources.IContainer">
-              </instanceof>
-           </parentExpression>
-        </commonSorter>
-        <dropAssistant
-              class="msi.gama.gui.navigator.NavigatorDropAssistant"
-              id="msi.gama.application.dropAssistant1">
-           <possibleDropTargets>
-              <or>
-                 <instanceof
-                       value="msi.gama.gui.navigator.VirtualContent">
-                 </instanceof>
-              </or>
-           </possibleDropTargets>
-        </dropAssistant>
-      </navigatorContent>
-      <commonFilter
-            activeByDefault="true"
-            class="msi.gama.gui.navigator.NavigatorFilter"
-            id="msi.gama.application.shapefile.filter"
-            name="Filters Shapefile support files"
-            visibleInUI="true">
-      </commonFilter>
-
-   </extension>
+   </extension> 
          <extension
          point="org.eclipse.ui.commandImages">
       <image

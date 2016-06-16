@@ -8,7 +8,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Require-Bundle: org.eclipse.jface,
  org.eclipse.ui.workbench,
  org.eclipse.core.resources,
- msi.gama.application,
  org.eclipse.core.runtime;bundle-version="3.11.1",
  msi.gama.core,
  msi.gama.ext,
@@ -17,5 +16,6 @@ Require-Bundle: org.eclipse.jface,
  org.eclipse.jface.text;bundle-version="3.10.0",
  org.eclipse.ui.ide,
  org.eclipse.ui.browser;bundle-version="3.4.300",
- ummisco.gama.ui.shared
+ ummisco.gama.ui.shared,
+ msi.gama.application;bundle-version="1.7.0"
 Bundle-ActivationPolicy: lazy

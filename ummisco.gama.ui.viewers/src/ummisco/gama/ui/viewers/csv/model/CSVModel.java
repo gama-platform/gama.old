@@ -25,7 +25,8 @@ import java.util.Arrays;
 import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
-import msi.gama.gui.navigator.FileMetaDataProvider;
+
+import msi.gama.gui.metadata.FileMetaDataProvider;
 import msi.gama.util.file.CsvReader;
 import msi.gama.util.file.CsvWriter;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;

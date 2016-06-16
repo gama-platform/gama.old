@@ -19,8 +19,9 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.*;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.*;
-import msi.gama.gui.navigator.FileMetaDataProvider;
-import msi.gama.gui.navigator.images.ImageDataLoader;
+
+import msi.gama.gui.metadata.FileMetaDataProvider;
+import msi.gama.gui.metadata.images.ImageDataLoader;
 import msi.gama.gui.swt.*;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;

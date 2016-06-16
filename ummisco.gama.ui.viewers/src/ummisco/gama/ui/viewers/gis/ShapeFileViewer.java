@@ -36,7 +36,7 @@ import org.geotools.styling.StyleBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 
-import msi.gama.gui.navigator.FileMetaDataProvider;
+import msi.gama.gui.metadata.FileMetaDataProvider;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.views.IToolbarDecoratedView;

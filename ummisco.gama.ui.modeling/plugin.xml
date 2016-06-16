@@ -333,7 +333,7 @@
                       name="org.eclipse.core.resources.IResource">
                 </objectClass>
                 <objectClass
-                      name="msi.gama.gui.navigator.VirtualContent">
+                      name="ummisco.gama.ui.navigator.VirtualContent">
                 </objectClass>
              </or>
           </enablement>

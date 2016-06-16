@@ -15,18 +15,11 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
-/**
- * Copyright (c) 2011 Cloudsmith Inc. and other contributors, as listed below.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- * Cloudsmith
- *
- */
-import msi.gama.gui.navigator.*;
+
+import msi.gama.gui.metadata.*;
+import ummisco.gama.ui.navigator.NavigatorLabelProvider;
+import ummisco.gama.ui.navigator.VirtualContent;
+import ummisco.gama.ui.navigator.WrappedFile;
 import ummisco.gama.ui.resources.GamaIcons;
 
 /**

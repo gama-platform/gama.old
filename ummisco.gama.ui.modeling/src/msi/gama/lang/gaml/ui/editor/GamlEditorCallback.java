@@ -30,8 +30,8 @@ import org.eclipse.xtext.validation.IResourceValidator;
 
 import com.google.inject.Inject;
 
-import msi.gama.gui.navigator.commands.RefreshHandler;
 import msi.gama.lang.gaml.resource.GamlResource;
+import ummisco.gama.ui.commands.RefreshHandler;
 
 /**
  * The class GamlEditorCallback. Calls the functionalities of
