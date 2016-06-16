@@ -322,6 +322,12 @@
             id="msi.gama.application.commands.UpdateBuiltInModelsCommand"
             name="Update Built-In Models">
       </command>
+      <command
+            categoryId="msi.gama.category"
+            defaultHandler="ummisco.gama.ui.commands.FileOpen"
+            id="msi.gama.application.commands.OpenFile"
+            name="Open File">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">

@@ -38,27 +38,14 @@ import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.ApplicationWorkbenchAdvisor;
 import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
 import msi.gama.gui.views.GamaPreferencesView;
-import msi.gama.runtime.GAMA;
-import msi.gaml.types.IType;
 
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		// System.out.println(Arrays.toString(CommandLineArgs.getAllArgs()));
-		// System.out.println(Platform.getProduct() == null ? "No product" : Platform.getProduct().getId() + " version " +
-		// Platform.getProduct().getDefiningBundle().getVersion());
-
-		// System.err.println(
-		// "If you are running the developer version of GAMA, be sure to perform a clean build of your projects before launching it. Unexpected compilation errors can occur if the annotations are
-		// somehow out of sync with the code.");
-
 		final Display display = PlatformUI.createDisplay();
 		WorkspaceModelsManager.createProcessor(display);
-		// OpenDocumentEventProcessor openDocProcessor = new OpenDocumentEventProcessor(display);
-		// display.addListener(SWT.OpenDocument, openDocProcessor);
-		// DelayedEventsProcessor delayedProcessor = new DelayedEventsProcessor(display);
 		/* Fetch the Location that we will be modifying */
 		Location instanceLoc = Platform.getInstanceLocation();
 		if ( instanceLoc == null ) {
@@ -75,8 +62,6 @@ public class Application implements IApplication {
 			final String ret = PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(),
 				lastUsedWs, false, false, false);
 			if ( ret != null ) {
-				GAMA.getGui().debug(ret);
-				// remember = false;
 				/* If we dont or cant remember and the location is set, we cant do anything as we need a workspace */
 				MessageDialog.openError(display.getActiveShell(), "Error",
 					"The workspace provided as argument cannot be used. Please change or remove it");
@@ -107,7 +92,6 @@ public class Application implements IApplication {
 							"The workspace contains an old version of the models library. Do you want to create a new workspace ?");
 
 					} else {
-						GAMA.getGui().debug(ret);
 						remember = false;
 					}
 				}
@@ -122,7 +106,6 @@ public class Application implements IApplication {
 			if ( pick == Window.CANCEL && pwd.getSelectedWorkspaceLocation() == null ) {
 				MessageDialog.openError(display.getActiveShell(), "Error",
 					"The application can not start without a workspace and will now exit.");
-				// PlatformUI.getWorkbench().close();
 				System.exit(0);
 				return IApplication.EXIT_OK;
 			}
@@ -141,9 +124,9 @@ public class Application implements IApplication {
 
 		final int memory = readMaxMemoryInMegabytes();
 		if ( memory > 0 ) {
-			final GamaPreferences.Entry<Integer> p = GamaPreferences
-				.create("core_max_memory", "Maximum memory allocated to GAMA in megabytes", memory, IType.INT)
-				.in(GamaPreferences.EXPERIMENTAL).group("Memory (restart GAMA for it to take effect)");
+			final GamaPreferences.Entry<Integer> p =
+				GamaPreferences.create("core_max_memory", "Maximum memory allocated to GAMA in megabytes", memory, 1)
+					.in(GamaPreferences.EXPERIMENTAL).group("Memory (restart GAMA for it to take effect)");
 			p.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
 				@Override
@@ -198,7 +181,6 @@ public class Application implements IApplication {
 			File dir = new File(loc);
 			dir = dir.getParentFile();
 			final File ini = new File(dir.getAbsolutePath() + "/Gama.ini");
-			// System.out.println("ini file " + ini.getAbsolutePath());
 			if ( ini.exists() ) {
 				try (final FileInputStream stream = new FileInputStream(ini);
 					final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {

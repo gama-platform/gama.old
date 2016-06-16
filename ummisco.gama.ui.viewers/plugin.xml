@@ -1,43 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-      <extension
-         point="org.eclipse.ui.keywords">
-      <keyword
-            id="msi.gama.gui.images"
-            label="image images jpeg jpg gif png bmp tiff ico asc pgm">
-      </keyword>
-   </extension>
-
-
-      <extension
-         point="org.eclipse.ui.propertyPages">
-      <page
-            class="msi.gama.gui.metadata.images.ImagePropertyPage"
-            id="msi.gama.gui.images"
-            name="Image">
-         <enabledWhen>
-            <or>
-               <!-- From files -->
-               <adapt type="org.eclipse.core.resources.IResource">
-                  <instanceof value="org.eclipse.core.resources.IFile"/>
-                  <test
-                        args="isKindOf"
-                        property="org.eclipse.core.resources.contentTypeId"
-                        value="msi.gama.gui.images.type"/>
-               </adapt>
-               <!-- Screenshots will have one of these. Adapt only uses
-                    IAdapterFactories, so we need to do both here
-                 -->
-               <instanceof value="ummisco.gama.ui.viewers.image.ImageDataEditorInput"/>
-               <adapt type="org.eclipse.swt.graphics.ImageData"/>
-            </or>
-         </enabledWhen>
-         <keywordReference id="msi.gama.gui.images"/>
-      </page>
-   </extension>
-
-
    <extension
          point="org.eclipse.ui.editors">
       <editor
@@ -116,23 +79,10 @@
          </property>
       </content-type>
       <content-type
-            describer="msi.gama.gui.metadata.images.ImageContentTypeDescriber"
             file-extensions="PNG,png,GIF,gif,JPEG,jpeg,JPG,jpg,BMP,bmp,ICO,ico,TIFF,tiff,TIF,tif,ASC,asc,PGM,pgm"
             id="msi.gama.gui.images.type"
             name="Image"
             priority="high">
-         <property
-               name="msi.gama.image.width">
-         </property>
-         <property
-               name="msi.gama.image.height">
-         </property>
-         <property
-               name="msi.gama.image.depth">
-         </property>
-         <property
-               name="msi.gama.image.type">
-         </property>
       </content-type>
       <content-type
             base-type="org.eclipse.core.runtime.text"

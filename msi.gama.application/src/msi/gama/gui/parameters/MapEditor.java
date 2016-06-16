@@ -12,14 +12,11 @@
 package msi.gama.gui.parameters;
 
 import java.util.Map;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Composite;
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaMap;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -45,23 +42,13 @@ public class MapEditor extends ExpressionBasedEditor<Map> {
 	}
 
 	@Override
-	public void applyEdit() {
-
-		final MapEditorDialog mapParameterDialog =
-			new MapEditorDialog(getScope(), SwtGui.getShell(), (GamaMap) currentValue);
-		if ( mapParameterDialog.open() == IDialogConstants.OK_ID ) {
-			modifyValue(mapParameterDialog.getMap());
-		}
-	}
-
-	@Override
 	public IType getExpectedType() {
 		return Types.MAP;
 	}
 
 	@Override
 	protected int[] getToolItems() {
-		return new int[] { EDIT, REVERT };
+		return new int[] { REVERT };
 	}
 
 }

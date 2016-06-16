@@ -9,7 +9,7 @@
  *
  *
  **********************************************************************************************/
-package msi.gama.gui.swt.commands;
+package ummisco.gama.ui.commands;
 
 import org.eclipse.core.commands.*;
 import org.eclipse.swt.SWT;

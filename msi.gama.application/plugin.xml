@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-
-
-
-
    <extension
          point="org.eclipse.ui.views">
       <category
@@ -1252,14 +1248,6 @@
             name="Cancel">
       </command>
       <command
-            id="msi.gama.application.commands.ShowHideHeadlessParamView"
-            name="Show Headless Param View">
-      </command>
-      <command
-            id="msi.gama.hpc.gui.ShowHideHeadlessChartView"
-            name="Show Headless Chart View">
-      </command>
-      <command
             categoryId="msi.gama.category"
             id="msi.gama.application.commands.PauseAndEdit"
             name="Pause at first error">
@@ -1294,12 +1282,6 @@
             defaultHandler="msi.gama.gui.swt.commands.OpenGamaWebsiteHandler"
             id="msi.gama.application.command.web"
             name="Welcome page">
-      </command>
-      <command
-            categoryId="msi.gama.category"
-            defaultHandler="msi.gama.gui.swt.commands.FileOpen"
-            id="msi.gama.application.commands.OpenFile"
-            name="Open File">
       </command>
       <category
             id="msi.gama.category"
