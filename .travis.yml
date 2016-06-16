@@ -13,7 +13,25 @@ cache:
   directories:
   - "$HOME/.m2"
 script: sh ./build.sh
-after_success: sh ./github-release.sh
+before_deploy:
+  - git remote set-url origin https://$CI_USER_TOKEN@github.com/gama-platform/gama.git
+deploy:
+  provider: releases
+  overwrite: true
+  api_key:
+    secure: "FQHQHUaDZ2XTlfiN0J8imDpRAGoJRFtkSffFDs+hXZjEf8+lWZwXERoQcbJGAKzsWMJsRn+X6GIHBn0XQaEPDhk6ePYdFMl0RQ60hi4YUPCdNAg52dkij4B19GY+xuCiUlYse5pHob1dNsl3/V7s2aR5rKidp7LoaQW5MzVC2O9ciKMir/qMMimG2L6IpRaoSQ5Fer+/NiepZEazW+MLK2O15cKKdDs/aVtiqOcCRKhP7Y0KUJAUiQN+IUHQdFi/sTSyojQVLqqyLOZ3/1rrLjQfSR8Me28ymvBH1JXoD9TP5Lll21mRY8Uo8E7O45bQJbGhEVEviRhhl79dz9+cGpY06+Nvl43r1UAKQ9dF8TJ0uB8Z9WqwqQX440zdofDTus0hTnFDM0HlJkoeh7VjfKYgmBw3GqyuMG/lPIHSY1K7pMbBW/qc0ghz0Qh+kvEsQfWiAi2npPHIkiqr5RDQ9yyCGsfA7RG4rQZUJgQ575Slq3Qa4KeRfOXBr3Tkm9g6GLLoFPzB1exI9KiO8oZ522Im17WjOfGFF1KECBTLFhmA3UQYMc25Lcox2/vTf+dGwXW/vysD6/07dOLl6S6DurFFADYxb+komNtFz35o6R3UO9Eap6T6a2ho6/bkt3a8Dlqlw6He0Gdz9kiD0dirdilUrI2OfNdG63ndqjYql6I="
+
+  file:  
+    - "$HOME/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-linux.gtk.x86.zip"
+    - "$HOME/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-linux.gtk.x86_64.zip"
+    - "$HOME/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-win32.win32.x86.zip"
+    - "$HOME/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-win32.win32.x86_64.zip"
+    - "$HOME/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-macosx.cocoa.x86_64.zip"
+  skip_cleanup: true
+  on:
+    tags: false
+    branch: master
+    repo: gama-platform/gama
 branches:
   only:
     - master
