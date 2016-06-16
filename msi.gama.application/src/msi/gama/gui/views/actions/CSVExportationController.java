@@ -6,8 +6,8 @@ package msi.gama.gui.views.actions;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView.CSVExportable;
+import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**

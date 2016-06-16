@@ -38,6 +38,7 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaFonts;
 
 public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* implements IToolbarDecoratedView.Pausable */ {
 
@@ -153,7 +154,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException>/* imple
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		final Table t = new Table(compo, SWT.H_SCROLL | SWT.V_SCROLL);
-		t.setFont(SwtGui.getExpandfont());
+		t.setFont(GamaFonts.getExpandfont());
 
 		t.addSelectionListener(new SelectionListener() {
 

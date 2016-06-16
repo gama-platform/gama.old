@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.swt.controls;
+package ummisco.gama.ui.controls;
 
 /**
  * An interface for the users of <code>CoolSlider</code> to listen to mouse hover and mouse over

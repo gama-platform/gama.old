@@ -11,11 +11,22 @@
  **********************************************************************************************/
 package msi.gama.gui.swt.controls;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import msi.gama.gui.swt.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
+import msi.gama.common.interfaces.ISpeedDisplayer;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
+import ummisco.gama.ui.controls.IPositionChangeListener;
+import ummisco.gama.ui.controls.IToolTipProvider;
+import ummisco.gama.ui.controls.SimpleSlider;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 
@@ -28,11 +39,16 @@ import ummisco.gama.ui.resources.IGamaColors;
  * @modification now obeys a cubic power law from 0 to BASE_UNIT milliseconds
  *
  */
-public class SimulationSpeedContributionItem extends SpeedContributionItem {
+public class SimulationSpeedContributionItem extends WorkbenchWindowControlContribution implements ISpeedDisplayer, IPositionChangeListener, IToolTipProvider {
 
 	double max = 1000;
+	protected final GamaUIColor popupColor;
+	protected final GamaUIColor sliderColor;
+	public final static int widthSize = 100;
+	public final static int heightSize = 16;
+	protected SimpleSlider slider;
 
-	private static Image knob = GamaIcons.create("toolbar.knob4").image();
+	private static final Image KNOB = GamaIcons.create("toolbar.knob4").image();
 
 	/**
 	 *
@@ -42,6 +58,11 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 	public double positionFromValue(final double v) {
 		// returns a percentage between 0 and 1 (0 -> max milliseconds; 1 -> 0 milliseconds).
 		return 1 - v / max;
+	}
+
+	@Override
+	protected int computeWidth(final Control control) {
+		return control.computeSize(widthSize, SWT.DEFAULT, true).x;
 	}
 
 	/**
@@ -54,14 +75,39 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 	}
 
 	public SimulationSpeedContributionItem() {
-		super(0, null, null, knob, IGamaColors.GRAY_LABEL, IGamaColors.OK);
+		popupColor = IGamaColors.OK;
+		sliderColor = IGamaColors.GRAY_LABEL;
 		SwtGui.setSpeedControl(this);
 	}
 
-
 	@Override
+	public Control createControl(final Composite parent) {
+		final Composite composite = new Composite(parent, SWT.DOUBLE_BUFFERED);
+		final GridLayout layout = new GridLayout(1, false);
+		layout.horizontalSpacing = 4;
+		layout.verticalSpacing = 0;
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		composite.setLayout(layout);
+		composite.setBackground(parent.getBackground());
+		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		data.widthHint = widthSize;
+		data.minimumWidth = widthSize;
+		slider = new SimpleSlider(composite, sliderColor.color(), KNOB);
+		slider.setTooltipInterperter(this);
+		slider.setLayoutData(data);
+		slider.setSize(widthSize, heightSize);
+		slider.specifyHeight(heightSize); // fix the problem of wrong position
+		// for the tooltip. Certainly not the best way but it does the trick
+		slider.addPositionChangeListener(this);
+		slider.setPopupBackground(popupColor);
+		slider.updateSlider(getInitialValue(), false);
+		slider.setBackground(parent.getBackground());
+		return composite;
+	}
+
 	protected double getInitialValue() {
-		ExperimentAgent a = GAMA.getExperiment() == null ? null : GAMA.getExperiment().getAgent();
+		final ExperimentAgent a = GAMA.getExperiment() == null ? null : GAMA.getExperiment().getAgent();
 		double value = 0d;
 		double maximum = 1000d;
 		if ( a != null ) {
@@ -82,12 +128,14 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 		if ( i > max ) {
 			max = i;
 		}
-		super.setInit(positionFromValue(i), notify);
+		if ( slider == null ) { return; }
+		if ( slider.isDisposed() ) { return; }
+		slider.updateSlider(i, notify);
 	}
 
 	/**
 	 * Method getToolTipText()
-	 * @see msi.gama.gui.swt.controls.IToolTipProvider#getToolTipText(double)
+	 * @see ummisco.gama.ui.controls.IToolTipProvider#getToolTipText(double)
 	 */
 	@Override
 	public String getToolTipText(final double position) {
@@ -96,7 +144,7 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 
 	/**
 	 * Method positionChanged()
-	 * @see msi.gama.gui.swt.controls.IPositionChangeListener#positionChanged(double)
+	 * @see ummisco.gama.ui.controls.IPositionChangeListener#positionChanged(double)
 	 */
 	@Override
 	public void positionChanged(final double position) {

@@ -37,15 +37,16 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.operators.Dates;
+import ummisco.gama.ui.controls.FlatButton;
+import ummisco.gama.ui.controls.IPopupProvider;
+import ummisco.gama.ui.controls.Popup;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
 
-	// private Composite compo;
-	// private Composite parent;
 	volatile boolean isUpdating;
 	FlatButton label;
 	private Popup popup;
@@ -116,7 +117,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	}
 
 	/**
-	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupText()
+	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupText()
 	 */
 	@Override
 	public Map<GamaUIColor, String> getPopupText() {
@@ -161,7 +162,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	}
 
 	/**
-	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
+	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupBackground()
 	 */
 	// @Override
 	public GamaUIColor getPopupBackground() {

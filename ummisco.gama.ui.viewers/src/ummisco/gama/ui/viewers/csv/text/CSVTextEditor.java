@@ -19,9 +19,10 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.editors.text.TextEditor;
-import msi.gama.gui.swt.controls.GamaToolbar2;
+
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import ummisco.gama.ui.controls.GamaToolbar2;
 
 /**
  * {@link CSVTextEditor} extends basic {@link TextEditor} adding syntax highlighting
@@ -64,7 +65,7 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 
 	/**
 	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.controls.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

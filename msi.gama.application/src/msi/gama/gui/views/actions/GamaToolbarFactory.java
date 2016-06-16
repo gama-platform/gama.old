@@ -26,10 +26,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchSite;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.swt.controls.ITooltipDisplayer;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.IToolbarDecoratedView.Colorizable;
+import ummisco.gama.ui.controls.GamaToolbar2;
+import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 

@@ -13,7 +13,6 @@ package msi.gama.gui.swt;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Arrays;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -38,8 +37,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	public ApplicationWorkbenchAdvisor() {
 		super(WorkspaceModelsManager.processor);
-		System.out.println("Welcome to GAMA version " + WorkspaceModelsManager.BUILTIN_VERSION);
-		// openDocProcessor = openProcessor;
 	}
 
 	@Override
@@ -85,7 +82,9 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	public void postStartup() {
 		super.postStartup();
 		final String[] args = Platform.getApplicationArgs();
-		System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
+		if ( args.length > 0 && args[0].contains("launcher.defaultAction") )
+			return;
+		// System.out.println("Arguments received by GAMA : " + Arrays.toString(args));
 		if ( args.length >= 1 ) {
 			WorkspaceModelsManager.instance.openModelPassedAsArgument(args[args.length - 1]);
 		}

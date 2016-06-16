@@ -9,6 +9,7 @@ import org.eclipse.swt.graphics.*;
 import msi.gama.gui.swt.*;
 import msi.gaml.compilation.GamaBundleLoader;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 
 /**
@@ -44,7 +45,7 @@ public class WrappedPlugin extends VirtualContent {
 
 	@Override
 	public Font getFont() {
-		return SwtGui.getNavigLinkFont(); // by default
+		return GamaFonts.getNavigLinkFont(); // by default
 	}
 
 	/**

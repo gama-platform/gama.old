@@ -9,7 +9,7 @@
  *
  *
  **********************************************************************************************/
-package msi.gama.gui.swt.controls;
+package ummisco.gama.ui.controls;
 
 import java.util.Map;
 import org.eclipse.swt.graphics.Point;

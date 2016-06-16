@@ -587,7 +587,7 @@
                </visibleWhen>
             </command>
             <control
-                  class="msi.gama.gui.swt.controls.Separator"
+                  class="ummisco.gama.ui.controls.Separator"
                   id="separator1">
             </control>
             <control
@@ -595,7 +595,7 @@
                   id="msi.gama.application.status">
             </control>
             <control
-                  class="msi.gama.gui.swt.controls.Separator"
+                  class="ummisco.gama.ui.controls.Separator"
                   id="separator2">
                <visibleWhen
                      checkEnabled="false">
@@ -662,7 +662,7 @@
                </visibleWhen>
             </command>
             <control
-                  class="msi.gama.gui.swt.controls.Separator"
+                  class="ummisco.gama.ui.controls.Separator"
                   id="separator4">
                <visibleWhen
                      checkEnabled="false">
@@ -682,7 +682,7 @@
                </visibleWhen>
             </control>
             <control
-                  class="msi.gama.gui.swt.controls.Separator"
+                  class="ummisco.gama.ui.controls.Separator"
                   id="separator3">
                <visibleWhen
                      checkEnabled="false">
@@ -1632,34 +1632,6 @@
       <commandParameterType
             id="msi.gama.application.String"
             type="java.lang.String">
-         <commandParameter
-               id="msi.gama.displays.layout"
-               name="layout"
-               optional="false"
-               typeId="msi.gama.application.String">
-         </commandParameter>
-         <commandParameter
-               id="LAYOUT"
-               name="layout"
-               optional="false"
-               typeId="msi.gama.application.String">
-         </commandParameter>
-         <commandParameter
-               id="LAYOUT"
-               name="layout"
-               optional="true"
-               typeId="msi.gama.application.String">
-         </commandParameter>
-         <commandParameter
-               id="LAYOUT"
-               name="layout"
-               optional="true">
-         </commandParameter>
-         <commandParameter
-               id="LAYOUT"
-               name="name"
-               optional="true">
-         </commandParameter>
       </commandParameterType>
       <command
             categoryId="msi.gama.category"

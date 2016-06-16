@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.Platform;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.ICreateDelegate;
-import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Dates;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
@@ -130,7 +129,7 @@ public class GamaBundleLoader {
 		Types.init();
 		performStaticInitializations();
 		//
-		GAMA.getGui().debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
+		System.out.println(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
 
 	private static void performStaticInitializations() {
@@ -140,7 +139,8 @@ public class GamaBundleLoader {
 			public void run() {
 				final long start = System.currentTimeMillis();
 				Dates.initializeAllFormats();
-				GAMA.getGui().debug(">> JodaTime initialized in " + (System.currentTimeMillis() - start) + " ms.");
+				System.out
+						.println(">> GAMA JodaTime initialization in " + (System.currentTimeMillis() - start) + " ms.");
 			}
 		}).start();
 
@@ -182,30 +182,30 @@ public class GamaBundleLoader {
 		try {
 			gamlAdditions = (Class<IGamlAdditions>) Platform.getBundle(s).loadClass(ADDITIONS);
 		} catch (final ClassNotFoundException e1) {
-			GAMA.getGui().debug(">> Impossible to load additions from " + s + " because of " + e1);
+			System.out.println(">> Impossible to load additions from " + s + " because of " + e1);
 			return;
 		}
 		IGamlAdditions add = null;
 		try {
 			add = gamlAdditions.newInstance();
 		} catch (final InstantiationException e) {
-			GAMA.getGui().debug(">> Impossible to instantiate additions from " + s);
+			System.out.println(">> Impossible to instantiate additions from " + s);
 			return;
 		} catch (final IllegalAccessException e) {
-			GAMA.getGui().debug(">> Impossible to access additions from " + s);
+			System.out.println(">> Impossible to access additions from " + s);
 			return;
 		}
 		try {
 			add.initialize();
 		} catch (final SecurityException e) {
-			GAMA.getGui().debug(">> Impossible to instantiate additions from " + s);
+			System.out.println(">> Impossible to instantiate additions from " + s);
 			return;
 		} catch (final NoSuchMethodException e) {
-			GAMA.getGui().debug(">> Impossible to instantiate additions from " + s);
+			System.out.println(">> Impossible to instantiate additions from " + s);
 			return;
 		}
-		GAMA.getGui()
-				.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
+		System.out
+				.println(">> GAMA plugin loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
 
 	}
 

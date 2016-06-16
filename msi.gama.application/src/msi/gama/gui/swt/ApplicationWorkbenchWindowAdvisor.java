@@ -43,7 +43,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		final IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		// configurer.setInitialSize(new Point(700, 550));
 		// configurer.setShowFastViewBars(false);
-		System.out.println("Attaching the perspective listener to automatically launch modeling");
+		// System.out.println("Attaching the perspective listener to automatically launch modeling");
 
 		configurer.getWindow().addPerspectiveListener(new IPerspectiveListener() {
 
@@ -54,7 +54,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			@Override
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 				if ( perspective.getId().contains(IGui.PERSPECTIVE_SIMULATION_FRAGMENT) ) {
-					System.out.println("Running the perspective listener to automatically launch modeling");
+					// System.out.println("Running the perspective listener to automatically launch modeling");
 					final IPerspectiveDescriptor desc = page.getPerspective();
 					page.closePerspective(desc, false, false);
 					GAMA.getGui().openModelingPerspective(true);
@@ -98,6 +98,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		window.getShell().setMaximized(GamaPreferences.CORE_SHOW_MAXIMIZED.getValue());
 		RemoveUnwantedWizards.run();
 		RemoveUnwantedActionSets.run();
+		RearrangeMenus.run();
 		GamaKeyBindings.install();
 
 	}
@@ -105,7 +106,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	@Override
 	public void postWindowOpen() {
 		SwtGui.openWelcomePage(true);
-		RearrangeMenus.run();
+
 	}
 
 }

@@ -6,8 +6,8 @@ package msi.gama.gui.views;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchSite;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.outputs.IDisplayOutput;
+import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**

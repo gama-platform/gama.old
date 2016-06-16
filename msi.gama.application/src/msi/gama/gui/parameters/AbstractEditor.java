@@ -39,7 +39,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -49,6 +48,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -271,7 +271,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		label.setBackground(parent.getBackground());
 		final GridData d = new GridData(SWT.END, SWT.CENTER, false, true);
 		label.setLayoutData(d);
-		label.setFont(SwtGui.getLabelfont());
+		label.setFont(GamaFonts.getLabelfont());
 		label.setText(title);
 		return label;
 	}
@@ -305,7 +305,7 @@ public abstract class AbstractEditor<T> implements SelectionListener, ModifyList
 		composite.setLayout(layout);
 		if ( isSubParameter ) {
 			titleLabel = createLeftLabel(composite, name);
-			titleLabel.setFont(SwtGui.getNavigFolderFont());
+			titleLabel.setFont(GamaFonts.getNavigFolderFont());
 			final GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			d.grabExcessHorizontalSpace = false;
 			titleLabel.setLayoutData(d);

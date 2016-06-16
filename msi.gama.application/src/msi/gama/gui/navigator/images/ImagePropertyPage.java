@@ -16,7 +16,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.dialogs.PropertyPage;
 import msi.gama.gui.swt.SwtGui;
-import msi.gaml.operators.fastmaths.FastMath;
 
 /**
  * A property page for image data objects. The element must either adapt to
@@ -76,7 +75,7 @@ public class ImagePropertyPage extends PropertyPage implements IWorkbenchPropert
 		} else {
 			// show this as a % since it's global
 			if ( imageData.alpha >= 0 && imageData.alpha <= 255 ) {
-				final int pct = (int) FastMath.round(100.0d * (imageData.alpha / 255.0d));
+				final int pct = (int) Math.round(100.0d * (imageData.alpha / 255.0d));
 				createLabelAndText(main, "Transparency:", "" + pct + "%");
 			} else if ( imageData.alphaData != null ) {
 				createLabelAndText(main, "Transparency:", "per pixel");

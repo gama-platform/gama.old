@@ -22,11 +22,11 @@ import org.eclipse.ui.part.*;
 import msi.gama.gui.navigator.FileMetaDataProvider;
 import msi.gama.gui.navigator.images.ImageDataLoader;
 import msi.gama.gui.swt.*;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.fastmaths.FastMath;
+import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -694,7 +694,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 	/**
 	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.controls.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

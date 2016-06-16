@@ -40,7 +40,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-import msi.gaml.operators.Strings;
 
 /**
  * The role of this wizard is to create a new file resource in the provided container. If
@@ -221,7 +220,8 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		}
 		/* Final output in the String */
 		final String str = writer.toString();
-		final String output = fileHeader + Strings.LN + Strings.LN + str.replaceAll("\\$TITLE\\$", title);
+		final String output = fileHeader + java.lang.System.getProperty("line.separator") +
+			java.lang.System.getProperty("line.separator") + str.replaceAll("\\$TITLE\\$", title);
 
 		return new ByteArrayInputStream(output.getBytes());
 	}

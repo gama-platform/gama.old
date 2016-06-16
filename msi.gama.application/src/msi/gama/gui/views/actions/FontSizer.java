@@ -9,9 +9,9 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.Control;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gaml.operators.fastmaths.FastMath;
+import ummisco.gama.ui.controls.GamaToolbar2;
 
 /**
  * Class FontSizer.

@@ -96,9 +96,6 @@ import com.google.inject.Injector;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.GamaMenu;
-import msi.gama.gui.swt.controls.FlatButton;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.swt.controls.ITooltipDisplayer;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.model.IModel;
@@ -118,6 +115,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.IDescription;
+import ummisco.gama.ui.controls.FlatButton;
+import ummisco.gama.ui.controls.GamaToolbar2;
+import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -802,7 +802,7 @@ public class GamlEditor extends XtextEditor
 
 	/**
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int,
-	 *      msi.gama.gui.swt.controls.GamaToolbar2)
+	 *      ummisco.gama.ui.controls.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

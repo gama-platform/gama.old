@@ -58,8 +58,6 @@ import msi.gama.gui.parameters.ExpressionControl;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.swt.commands.GamaMenu;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.swt.controls.SwitchButton;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -78,7 +76,10 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import ummisco.gama.ui.controls.GamaToolbar2;
+import ummisco.gama.ui.controls.SwitchButton;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 
@@ -112,7 +113,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 	// private String speciesName;
 
 	IAgent[] elements = new IAgent[0];
-	Font currentFont = new Font(SwtGui.getDisplay(), SwtGui.getSmallFont().getFontData());
+	Font currentFont = new Font(SwtGui.getDisplay(), GamaFonts.getSmallFont().getFontData());
 	Map<String, List<String>> selectedColumns = new HashMap();
 
 	class AgentContentProvider implements ILazyContentProvider {
@@ -346,7 +347,7 @@ public class PopulationInspectView extends GamaViewPart implements IToolbarDecor
 		}
 		Label attributesLabel = new Label(attributesMenu, SWT.NONE);
 		attributesLabel.setText("Attributes");
-		attributesLabel.setFont(SwtGui.getNavigHeaderFont());
+		attributesLabel.setFont(GamaFonts.getNavigHeaderFont());
 		attributesLabel = new Label(attributesMenu, SWT.None);
 		attributesLabel.setText(" ");
 		String tooltipText;

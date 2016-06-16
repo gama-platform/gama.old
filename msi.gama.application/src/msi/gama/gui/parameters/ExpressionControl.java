@@ -23,7 +23,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.controls.ITooltipDisplayer;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -33,6 +32,7 @@ import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
@@ -244,7 +244,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	public void widgetSelected(final SelectionEvent e) {}
 
 	/**
-	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupText()
+	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupText()
 	 */
 	public String getPopupText() {
 		String result = "";

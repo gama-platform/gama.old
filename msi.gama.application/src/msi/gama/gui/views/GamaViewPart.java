@@ -24,8 +24,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.UIJob;
 import msi.gama.common.interfaces.IGamaView;
-import msi.gama.gui.swt.controls.GamaToolbar2;
-import msi.gama.gui.swt.controls.ITooltipDisplayer;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
@@ -36,6 +34,8 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.controls.GamaToolbar2;
+import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
@@ -259,7 +259,7 @@ public abstract class GamaViewPart extends ViewPart implements DisposeListener, 
 	/**
 	 * Needs to be redefined for views that use the left toolbar (so that they maintain their previous state)
 	 * Method stopDisplayingTooltips()
-	 * @see msi.gama.gui.swt.controls.ITooltipDisplayer#stopDisplayingTooltips()
+	 * @see ummisco.gama.ui.controls.ITooltipDisplayer#stopDisplayingTooltips()
 	 */
 	@Override
 	public void stopDisplayingTooltips() {

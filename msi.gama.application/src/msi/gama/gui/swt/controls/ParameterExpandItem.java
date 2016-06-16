@@ -12,17 +12,22 @@
 package msi.gama.gui.swt.controls;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Item;
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.gui.swt.*;
-import msi.gama.util.GamaColor;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
  * Instances of this class represent a selectable user interface object that represents a expandable
@@ -82,7 +87,7 @@ public class ParameterExpandItem extends Item {
 
 	void drawItem(final GC gc, final boolean drawHover) {
 		if ( parent == null ) { return; }
-		int headerHeight = parent.bandHeight;
+		final int headerHeight = parent.bandHeight;
 		gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		gc.fillRoundRectangle(x, y, width, headerHeight + (expanded ? height + ParameterExpandItem.BORDER : 0), 6, 6);
@@ -95,7 +100,7 @@ public class ParameterExpandItem extends Item {
 
 		// gc.drawRoundRectangle(x, y, width, headerHeight + (expanded ? height : 0), 6, 6);
 		int drawX = x;
-		int imageY = y /*- 1*/ + (headerHeight - imageHeight) / 2;
+		final int imageY = y /*- 1*/ + (headerHeight - imageHeight) / 2;
 		if ( getImage() != null ) {
 			drawX += ParameterExpandItem.TEXT_INSET;
 			gc.drawImage(getImage(), drawX, imageY);
@@ -108,21 +113,21 @@ public class ParameterExpandItem extends Item {
 			gc.drawImage(IGamaIcons.SMALL_CLOSE.image(), endX, imageY);
 		}
 		if ( parent.hasPausableToggle ) {
-			Image image = isPaused ? IGamaIcons.SMALL_RESUME.image() : IGamaIcons.SMALL_PAUSE.image();
+			final Image image = isPaused ? IGamaIcons.SMALL_RESUME.image() : IGamaIcons.SMALL_PAUSE.image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			pausePosition = endX;
 			gc.drawImage(image, endX, imageY);
 		}
 
 		if ( parent.hasVisibleToggle ) {
-			Image image =
+			final Image image =
 				isVisible ? GamaIcons.create("small.inspect").image() : GamaIcons.create("small.hidden").image();
-				endX -= 2 * TEXT_INSET + imageWidth;
-				visiblePosition = endX;
-				gc.drawImage(image, endX, imageY);
+			endX -= 2 * TEXT_INSET + imageWidth;
+			visiblePosition = endX;
+			gc.drawImage(image, endX, imageY);
 		}
 		if ( parent.hasSelectableToggle ) {
-			Image image = isSelectable ? GamaIcons.create("small.selectable").image()
+			final Image image = isSelectable ? GamaIcons.create("small.selectable").image()
 				: GamaIcons.create("small.unselectable").image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			selectablePosition = endX;
@@ -130,14 +135,14 @@ public class ParameterExpandItem extends Item {
 		}
 		if ( getText().length() > 0 ) {
 			String title, other = null;
-			int i = getText().indexOf(ItemList.SEPARATION_CODE);
+			final int i = getText().indexOf(ItemList.SEPARATION_CODE);
 			if ( i != -1 ) {
 				title = getText().substring(0, i) + ": ";
 				other = getText().substring(i + 1);
 			} else {
 				title = getText();
 			}
-			gc.setFont(SwtGui.getExpandfont());
+			gc.setFont(GamaFonts.getExpandfont());
 			drawX += 2 * ParameterExpandItem.TEXT_INSET;
 			Point size = gc.stringExtent(title);
 			gc.setForeground(
@@ -146,9 +151,9 @@ public class ParameterExpandItem extends Item {
 			gc.drawString(title, drawX, y + (headerHeight - size.y) / 2, true);
 			// gc.setFont(SwtGui.getUnitFont());
 			if ( other != null ) {
-				int j = other.indexOf(ItemList.ERROR_CODE);
-				int k = other.indexOf(ItemList.INFO_CODE);
-				int l = other.indexOf(ItemList.WARNING_CODE);
+				final int j = other.indexOf(ItemList.ERROR_CODE);
+				final int k = other.indexOf(ItemList.INFO_CODE);
+				final int l = other.indexOf(ItemList.WARNING_CODE);
 				if ( j != -1 ) {
 					other = other.substring(j + 1);
 					gc.setForeground(IGamaColors.ERROR.color());
@@ -165,9 +170,9 @@ public class ParameterExpandItem extends Item {
 				drawX += size.x + 2 * SEPARATION;
 				size = gc.stringExtent(other);
 
-				//gc.setClipping(drawX, y, endX - drawX, headerHeight);
+				// gc.setClipping(drawX, y, endX - drawX, headerHeight);
 				gc.drawString(other, drawX, y + (headerHeight - size.y) / 2, true);
-				//gc.setClipping(parent.getClientArea());
+				// gc.setClipping(parent.getClientArea());
 			}
 		}
 	}
@@ -186,7 +191,7 @@ public class ParameterExpandItem extends Item {
 	public int getHeaderHeight() {
 		// checkWidget();
 		if ( parent == null ) { return imageHeight; }
-		return CmnFastMath.max(parent.bandHeight, imageHeight);
+		return Math.max(parent.bandHeight, imageHeight);
 	}
 
 	int getPreferredWidth(final GC gc) {
@@ -195,7 +200,7 @@ public class ParameterExpandItem extends Item {
 			width += ParameterExpandItem.TEXT_INSET + imageWidth;
 		}
 		if ( getText().length() > 0 ) {
-			gc.setFont(SwtGui.getExpandfont());
+			gc.setFont(GamaFonts.getExpandfont());
 			width += gc.stringExtent(getText()).x;
 		}
 		if ( control != null ) {
@@ -206,7 +211,7 @@ public class ParameterExpandItem extends Item {
 
 	void redraw() {
 		if ( parent == null ) { return; }
-		int headerHeight = parent.bandHeight;
+		final int headerHeight = parent.bandHeight;
 		if ( imageHeight > headerHeight ) {
 			parent.redraw(x + TEXT_INSET, y + headerHeight - imageHeight, imageWidth, imageHeight, false);
 		}
@@ -217,7 +222,7 @@ public class ParameterExpandItem extends Item {
 		final boolean size) {
 		redraw();
 		if ( parent == null ) { return; }
-		int headerHeight = parent.bandHeight;
+		final int headerHeight = parent.bandHeight;
 		int y1 = y;
 		if ( move ) {
 			if ( imageHeight > headerHeight ) {
@@ -273,8 +278,8 @@ public class ParameterExpandItem extends Item {
 		this.control = control;
 		if ( control != null ) {
 			control.setVisible(expanded);
-			int headerHeight = parent.bandHeight;
-			control.setBounds(x + BORDER, y + headerHeight, CmnFastMath.max(0, width - 2 * BORDER),
+			final int headerHeight = parent.bandHeight;
+			control.setBounds(x + BORDER, y + headerHeight, Math.max(0, width - 2 * BORDER),
 				Math.max(0, height + BORDER));
 			control.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		}
@@ -301,9 +306,9 @@ public class ParameterExpandItem extends Item {
 	@Override
 	public void setImage(final Image image) {
 		super.setImage(image);
-		int oldImageHeight = imageHeight;
+		final int oldImageHeight = imageHeight;
 		if ( image != null ) {
-			Rectangle bounds = image.getBounds();
+			final Rectangle bounds = image.getBounds();
 			imageHeight = bounds.height;
 			imageWidth = bounds.width;
 		} else {
@@ -344,10 +349,10 @@ public class ParameterExpandItem extends Item {
 	}
 
 	private boolean clickIn(final int x2, final int y2, final int xmin) {
-		int xmax = xmin + imageWidth;
-		int headerHeight = parent.bandHeight;
-		int ymin = y + (headerHeight - imageHeight) / 2;
-		int ymax = ymin + imageHeight;
+		final int xmax = xmin + imageWidth;
+		final int headerHeight = parent.bandHeight;
+		final int ymin = y + (headerHeight - imageHeight) / 2;
+		final int ymax = ymin + imageHeight;
 		return x2 >= xmin && x2 <= xmax && y2 >= ymin && y2 <= ymax;
 	}
 
@@ -374,7 +379,7 @@ public class ParameterExpandItem extends Item {
 	/**
 	 * @param itemDisplayColor
 	 */
-	public void setColor(final GamaColor color) {
+	public void setColor(final java.awt.Color color) {
 		if ( color != null ) {
 			backgroundColor = GamaColors.get(color).color();
 		}

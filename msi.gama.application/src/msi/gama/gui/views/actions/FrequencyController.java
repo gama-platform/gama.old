@@ -16,9 +16,9 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.GamaPreferences;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.outputs.IOutput;
+import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**

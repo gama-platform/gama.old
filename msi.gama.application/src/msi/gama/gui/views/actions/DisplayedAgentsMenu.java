@@ -28,7 +28,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.gui.swt.commands.AgentsMenu;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.AgentLayer;
@@ -38,6 +37,7 @@ import msi.gama.outputs.layers.ImageLayer;
 import msi.gama.outputs.layers.SpeciesLayer;
 import msi.gama.outputs.layers.TextLayer;
 import msi.gama.outputs.layers.charts.ChartLayer;
+import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**

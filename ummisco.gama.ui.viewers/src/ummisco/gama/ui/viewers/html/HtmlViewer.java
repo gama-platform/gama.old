@@ -24,9 +24,9 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import ummisco.gama.ui.controls.GamaToolbar2;
 
 /**
  * Class BrowserEditor.
@@ -138,7 +138,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 	 * Method createToolItem()
 	 * 
 	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int,
-	 *      msi.gama.gui.swt.controls.GamaToolbar2)
+	 *      ummisco.gama.ui.controls.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

@@ -12,7 +12,7 @@
 package msi.gama.gui.navigator;
 
 import org.eclipse.swt.graphics.*;
-import msi.gama.gui.swt.SwtGui;
+import ummisco.gama.ui.resources.GamaFonts;
 
 public abstract class VirtualContent {
 
@@ -55,7 +55,7 @@ public abstract class VirtualContent {
 	public abstract Color getColor();
 
 	public Font getFont() {
-		return SwtGui.getNavigFolderFont(); // by default
+		return GamaFonts.getNavigFolderFont(); // by default
 	}
 
 	// public abstract boolean isParentOf(Object element);

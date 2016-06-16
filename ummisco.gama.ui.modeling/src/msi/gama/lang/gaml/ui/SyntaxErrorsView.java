@@ -14,9 +14,9 @@ import org.eclipse.ui.internal.views.markers.ConfigureContentsDialogHandler;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.IToolbarDecoratedView;
 import msi.gama.gui.views.actions.GamaToolbarFactory;
+import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.resources.IGamaColors;
 
 public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecoratedView {

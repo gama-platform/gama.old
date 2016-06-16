@@ -29,14 +29,14 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolItem;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.controls.FlatButton;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
+import ummisco.gama.ui.controls.FlatButton;
+import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -172,7 +172,7 @@ public class UserControlView extends GamaViewPart {
 
 	/**
 	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, msi.gama.gui.swt.controls.GamaToolbar2)
+	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.controls.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.swt.controls;
+package ummisco.gama.ui.controls;
 /**
  * Listener interface for position change events of CoolSlider
  * 

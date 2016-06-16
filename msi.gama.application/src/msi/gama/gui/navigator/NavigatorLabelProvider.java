@@ -18,6 +18,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import msi.gama.gui.swt.*;
 import msi.gaml.compilation.GamaBundleLoader;
+import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -105,10 +106,10 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 	@Override
 	public Font getFont(final Object element) {
 		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).getFont(); }
-		if ( element instanceof IProject ) { return SwtGui.getNavigHeaderFont(); }
-		if ( element instanceof IFolder && isResource((IFolder) element) ) { return SwtGui.getResourceFont(); }
-		if ( element instanceof IFile ) { return SwtGui.getNavigFileFont(); }
-		return SwtGui.getNavigFolderFont();
+		if ( element instanceof IProject ) { return GamaFonts.getNavigHeaderFont(); }
+		if ( element instanceof IFolder && isResource((IFolder) element) ) { return GamaFonts.getResourceFont(); }
+		if ( element instanceof IFile ) { return GamaFonts.getNavigFileFont(); }
+		return GamaFonts.getNavigFolderFont();
 	}
 
 	/**

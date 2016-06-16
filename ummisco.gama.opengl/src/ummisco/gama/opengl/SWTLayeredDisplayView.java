@@ -8,9 +8,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.GamaToolbar2;
 import msi.gama.gui.views.displays.LayeredDisplayView;
 import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.controls.GamaToolbar2;
 
 /**
  * Class OpenGLLayeredDisplayView.

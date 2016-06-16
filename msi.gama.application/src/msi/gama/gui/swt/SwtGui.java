@@ -43,8 +43,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -95,7 +93,6 @@ import msi.gama.gui.parameters.EditorsDialog;
 import msi.gama.gui.swt.commands.ArrangeDisplayViews;
 import msi.gama.gui.swt.commands.GamaColorMenu;
 import msi.gama.gui.swt.controls.StatusControlContribution;
-import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.swt.dialogs.UserControlDialog;
 import msi.gama.gui.views.ConsoleView;
 import msi.gama.gui.views.ErrorView;
@@ -105,7 +102,6 @@ import msi.gama.gui.views.InteractiveConsoleView;
 import msi.gama.gui.views.MonitorView;
 import msi.gama.gui.views.UserControlView;
 import msi.gama.gui.views.displays.LayeredDisplayView;
-import msi.gama.gui.views.displays.SWTChartEditor.SWTUtils;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
@@ -125,8 +121,10 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.dialogs.ExceptionDetailsDialog;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 
 /**
@@ -173,18 +171,6 @@ public class SwtGui extends AbstractGui {
 	// Needed by RCP for displaying the simulation state
 	public static ISimulationStateProvider state = null;
 
-	private static Font expandFont;
-	private static Font smallFont;
-	private static Font smallNavigFont;
-	private static Font smallNavigLinkFont;
-	private static Font labelFont;
-	private static Font navigRegularFont;
-	private static Font navigFileFont;
-	private static Font parameterEditorsFont;
-	private static Font navigResourceFont;
-	private static Font navigHeaderFont;
-
-	private static Font unitFont;
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	// private static Logger log;
 	private static ThreadedUpdater<IStatusMessage> status = new ThreadedUpdater<>("Status refresh");
@@ -220,13 +206,9 @@ public class SwtGui extends AbstractGui {
 		.create("image.viewer.background", "Default image viewer background color", Color.white, IType.COLOR)
 		.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
 
-	static FontData baseData = getDisplay().getSystemFont().getFontData()[0];
-	static String baseFont = baseData.getName();
-	static int baseSize = 11;
-
 	public static final Entry<GamaFont> BASE_BUTTON_FONT = GamaPreferences
 		.create("base_button_font", "Font of buttons (applies to new buttons)",
-			new GamaFont(baseFont, SWT.BOLD, baseSize), IType.FONT)
+			new GamaFont(GamaFonts.baseFont, SWT.BOLD, GamaFonts.baseSize), IType.FONT)
 		.in(GamaPreferences.UI).group("Fonts")
 		.addChangeListener(new GamaPreferences.IPreferenceChangeListener<GamaFont>() {
 
@@ -237,10 +219,13 @@ public class SwtGui extends AbstractGui {
 
 			@Override
 			public void afterValueChange(final GamaFont newValue) {
-				final FontData fd = SWTUtils.toSwtFontData(SwtGui.getDisplay(), newValue, true);
-				setLabelFont(new Font(getDisplay(), fd));
+				GamaFonts.setLabelFont(newValue);
 			}
 		});
+
+	static {
+		GamaFonts.setLabelFont(BASE_BUTTON_FONT.getValue());
+	}
 
 	static final QualifiedName updateProperty = new QualifiedName("msi.gama.application", "update");
 
@@ -655,42 +640,6 @@ public class SwtGui extends AbstractGui {
 			(InteractiveConsoleView) showView(INTERACTIVE_CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 		if ( icv != null )
 			icv.setExecutorAgent(agent);
-	}
-
-	static void initFonts() {
-
-		final GamaFont font = BASE_BUTTON_FONT.getValue();
-		FontData fd = new FontData(font.getName(), font.getSize(), font.getStyle());
-		labelFont = new Font(getDisplay(), fd);
-		final FontData fd2 = new FontData(fd.getName(), fd.getHeight(), SWT.BOLD);
-		expandFont = new Font(Display.getDefault(), fd2);
-		fd = new FontData(fd.getName(), fd.getHeight(), SWT.ITALIC);
-		unitFont = new Font(Display.getDefault(), fd);
-		smallNavigLinkFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(fd.getName(), fd.getHeight() + 1, SWT.BOLD);
-		// bigFont = new Font(Display.getDefault(), fd);
-		navigHeaderFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(fd.getName(), fd.getHeight() - 1, SWT.NORMAL);
-		smallFont = new Font(Display.getDefault(), fd);
-		smallNavigFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(fd.getName(), fd.getHeight(), SWT.NORMAL);
-		parameterEditorsFont = new Font(Display.getDefault(), fd);
-		navigFileFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(fd.getName(), fd.getHeight(), SWT.NORMAL);
-		navigRegularFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(fd.getName(), fd.getHeight(), SWT.ITALIC);
-		navigResourceFont = new Font(Display.getDefault(), fd);
-	}
-
-	private static void setLabelFont(final Font f) {
-		if ( labelFont == null ) {
-			labelFont = f;
-			return;
-		} else {
-			// ???
-			// labelFont.dispose();
-			labelFont = f;
-		}
 	}
 
 	@Override
@@ -1255,89 +1204,12 @@ public class SwtGui extends AbstractGui {
 		});
 	}
 
-	public static Font getLabelfont() {
-		if ( labelFont == null ) {
-			initFonts();
-		}
-		return labelFont;
-	}
-
 	// public static Font getBigfont() {
 	// if ( bigFont == null ) {
 	// initFonts();
 	// }
 	// return bigFont;
 	// }
-
-	public static Font getSmallFont() {
-		if ( smallFont == null ) {
-			initFonts();
-		}
-		return smallFont;
-	}
-
-	public static Font getExpandfont() {
-		if ( expandFont == null ) {
-			initFonts();
-		}
-		return expandFont;
-	}
-
-	public static Font getParameterEditorsFont() {
-		if ( parameterEditorsFont == null ) {
-			initFonts();
-		}
-		return parameterEditorsFont;
-	}
-
-	public static Font getNavigFolderFont() {
-		if ( navigRegularFont == null ) {
-			initFonts();
-		}
-		return navigRegularFont;
-	}
-
-	public static Font getNavigLinkFont() {
-		if ( smallNavigLinkFont == null ) {
-			initFonts();
-		}
-		return smallNavigLinkFont;
-	}
-
-	public static Font getNavigFileFont() {
-		if ( navigFileFont == null ) {
-			initFonts();
-		}
-		return navigFileFont;
-	}
-
-	public static Font getNavigSmallFont() {
-		if ( smallNavigFont == null ) {
-			initFonts();
-		}
-		return smallNavigFont;
-	}
-
-	public static Font getNavigHeaderFont() {
-		if ( navigHeaderFont == null ) {
-			initFonts();
-		}
-		return navigHeaderFont;
-	}
-
-	public static Font getResourceFont() {
-		if ( navigResourceFont == null ) {
-			initFonts();
-		}
-		return navigResourceFont;
-	}
-
-	public static Font getUnitFont() {
-		if ( unitFont == null ) {
-			initFonts();
-		}
-		return unitFont;
-	}
 
 	/**
 	 * Method setSelectedAgent()

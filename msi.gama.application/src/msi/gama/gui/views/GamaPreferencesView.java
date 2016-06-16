@@ -48,6 +48,7 @@ import msi.gama.gui.swt.controls.ParameterExpandBar;
 import msi.gama.gui.swt.controls.ParameterExpandItem;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
+import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 
@@ -166,7 +167,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		final Map<String, Map<String, List<Entry>>> prefs = GamaPreferences.organizePrefs();
 		for ( final String tabName : prefs.keySet() ) {
 			final CTabItem item = new CTabItem(tabFolder, SWT.NONE);
-			item.setFont(SwtGui.getNavigHeaderFont());
+			item.setFont(GamaFonts.getNavigHeaderFont());
 			item.setText(tabName);
 			item.setImage(prefs_images.get(tabName));
 			item.setShowClose(false);

@@ -32,8 +32,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.GamaToolbarSimple;
 import msi.gama.lang.gaml.ui.XtextGui;
+import ummisco.gama.ui.controls.GamaToolbarSimple;
 
 /**
  * This class implements the GAML editors' toolbar

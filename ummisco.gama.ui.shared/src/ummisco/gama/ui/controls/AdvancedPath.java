@@ -2,7 +2,7 @@
  * Created by drogoul, 7 mars 2015
  * 
  */
-package msi.gama.gui.swt.controls;
+package ummisco.gama.ui.controls;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;

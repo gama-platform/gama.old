@@ -25,7 +25,7 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfigurati
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfigurationAcceptor;
 import org.eclipse.xtext.ui.editor.utils.TextStyle;
 
-import msi.gama.gui.swt.SwtGui;
+import ummisco.gama.ui.resources.GamaFonts;
 
 public class GamlHighlightingConfiguration extends DefaultHighlightingConfiguration {
 
@@ -167,7 +167,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	@Override
 	public TextStyle taskTextStyle() {
 		final TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setFontData(SwtGui.getNavigHeaderFont().getFontData());
+		textStyle.setFontData(GamaFonts.getNavigHeaderFont().getFontData());
 		textStyle.setColor(new RGB(150, 132, 106));
 		textStyle.setStyle(SWT.ITALIC | SWT.BOLD);
 		return textStyle;
@@ -176,7 +176,7 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	@Override
 	public TextStyle commentTextStyle() {
 		final TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setFontData(SwtGui.getNavigFolderFont().getFontData());
+		textStyle.setFontData(GamaFonts.getNavigFolderFont().getFontData());
 		textStyle.setColor(new RGB(63, 127, 95));
 		return textStyle;
 	}

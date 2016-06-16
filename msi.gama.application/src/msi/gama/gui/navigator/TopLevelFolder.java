@@ -15,6 +15,7 @@ import msi.gama.gui.swt.*;
 import msi.gaml.compilation.GamaBundleLoader;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaFonts;
 
 /**
  * Class TopLevelFolder.
@@ -44,7 +45,7 @@ public abstract class TopLevelFolder extends VirtualContent {
 
 	@Override
 	public Font getFont() {
-		return SwtGui.getNavigHeaderFont();
+		return GamaFonts.getNavigHeaderFont();
 	}
 
 	@Override

@@ -12,6 +12,7 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.part.FileEditorInput;
 import msi.gama.gui.swt.*;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaFonts;
 
 /**
  * Class WrappedFile.
@@ -49,7 +50,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 
 	@Override
 	public Font getFont() {
-		return SwtGui.getNavigLinkFont(); // by default
+		return GamaFonts.getNavigLinkFont(); // by default
 	}
 
 	/**

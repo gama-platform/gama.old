@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.swt.dialogs;
+package ummisco.gama.ui.dialogs;
 
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;

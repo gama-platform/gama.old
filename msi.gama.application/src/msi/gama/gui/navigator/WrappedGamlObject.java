@@ -6,6 +6,7 @@ package msi.gama.gui.navigator;
 
 import msi.gama.gui.swt.*;
 import msi.gaml.descriptions.IDescription;
+import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
 import org.eclipse.swt.graphics.*;
 
@@ -36,7 +37,7 @@ public abstract class WrappedGamlObject extends VirtualContent implements Compar
 
 	@Override
 	public Font getFont() {
-		return SwtGui.getNavigFileFont(); // by default
+		return GamaFonts.getNavigFileFont(); // by default
 	}
 
 	@Override

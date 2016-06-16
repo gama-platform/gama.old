@@ -42,6 +42,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
+import ummisco.gama.ui.dialogs.AbstractDetailsDialog;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**

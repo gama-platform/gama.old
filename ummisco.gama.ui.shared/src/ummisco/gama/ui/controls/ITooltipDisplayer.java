@@ -2,7 +2,7 @@
  * Created by drogoul, 8 déc. 2014
  * 
  */
-package msi.gama.gui.swt.controls;
+package ummisco.gama.ui.controls;
 
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 

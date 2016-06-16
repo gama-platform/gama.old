@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-import msi.gama.gui.swt.controls.GamaToolbarSimple;
+import ummisco.gama.ui.controls.GamaToolbarSimple;
 import ummisco.gama.ui.resources.IGamaColors;
 
 /**

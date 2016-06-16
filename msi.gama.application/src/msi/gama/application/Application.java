@@ -21,12 +21,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.eclipse.equinox.internal.app.CommandLineArgs;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -48,12 +46,13 @@ public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		System.out.println(Arrays.toString(CommandLineArgs.getAllArgs()));
+		// System.out.println(Arrays.toString(CommandLineArgs.getAllArgs()));
 		// System.out.println(Platform.getProduct() == null ? "No product" : Platform.getProduct().getId() + " version " +
 		// Platform.getProduct().getDefiningBundle().getVersion());
 
-		System.err.println(
-			"If you are running the developer version of GAMA, be sure to perform a clean build of your projects before launching it. Unexpected compilation errors can occur if the annotations are somehow out of sync with the code.");
+		// System.err.println(
+		// "If you are running the developer version of GAMA, be sure to perform a clean build of your projects before launching it. Unexpected compilation errors can occur if the annotations are
+		// somehow out of sync with the code.");
 
 		final Display display = PlatformUI.createDisplay();
 		WorkspaceModelsManager.createProcessor(display);
@@ -199,7 +198,7 @@ public class Application implements IApplication {
 			File dir = new File(loc);
 			dir = dir.getParentFile();
 			final File ini = new File(dir.getAbsolutePath() + "/Gama.ini");
-			System.out.println("ini file " + ini.getAbsolutePath());
+			// System.out.println("ini file " + ini.getAbsolutePath());
 			if ( ini.exists() ) {
 				try (final FileInputStream stream = new FileInputStream(ini);
 					final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {

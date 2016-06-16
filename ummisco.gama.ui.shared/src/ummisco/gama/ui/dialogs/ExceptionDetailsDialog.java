@@ -1,7 +1,7 @@
 /*********************************************************************************************
  * 
  *
- * 'ExceptionDetailsDialog.java', in plugin 'msi.gama.application', is part of the source code of the 
+ * 'ExceptionDetailsDialog.java', in plugin 'msi.gama.application', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
@@ -9,17 +9,24 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.gui.swt.dialogs;
+package ummisco.gama.ui.dialogs;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.InvocationTargetException;
-import msi.gama.gui.swt.SwtGui;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.window.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * A dialog to display one or more errors to the user, as contained in an <code>IStatus</code>
@@ -51,8 +58,8 @@ public class ExceptionDetailsDialog extends AbstractDetailsDialog {
 	 * @param plugin The plugin triggering this deatils dialog and whose information is to be shown
 	 *            in the details area or <code>null</code> if no plugin details should be shown.
 	 */
-	public ExceptionDetailsDialog(final Shell parentShell, final String title, final Image image,
-		final String message, final Object details) {
+	public ExceptionDetailsDialog(final Shell parentShell, final String title, final Image image, final String message,
+		final Object details) {
 		this(new SameShellProvider(parentShell), title, image, message, details);
 	}
 
@@ -70,8 +77,8 @@ public class ExceptionDetailsDialog extends AbstractDetailsDialog {
 	 * @param plugin The plugin triggering this deatils dialog and whose information is to be shown
 	 *            in the details area or <code>null</code> if no plugin details should be shown.
 	 */
-	private ExceptionDetailsDialog(final IShellProvider parentShell, final String title,
-		final Image image, final String message, final Object details) {
+	private ExceptionDetailsDialog(final IShellProvider parentShell, final String title, final Image image,
+		final String message, final Object details) {
 		super(parentShell, getTitle(title, details), getImage(image, details), message);
 
 		this.details = details;
@@ -113,8 +120,7 @@ public class ExceptionDetailsDialog extends AbstractDetailsDialog {
 	private Control createDetailsViewer(final Composite parent) {
 		if ( details == null ) { return null; }
 
-		final Text text =
-			new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
+		final Text text = new Text(parent, SWT.MULTI | SWT.READ_ONLY | SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		text.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		// Create the content.
@@ -166,7 +172,7 @@ public class ExceptionDetailsDialog extends AbstractDetailsDialog {
 	 */
 	private static Image getImage(final Image image, final Object details) {
 		if ( image != null ) { return image; }
-		final Display display = SwtGui.getDisplay();
+		final Display display = Display.getCurrent();
 		if ( details instanceof IStatus ) {
 			switch (((IStatus) details).getSeverity()) {
 				case IStatus.ERROR:
@@ -243,8 +249,7 @@ public class ExceptionDetailsDialog extends AbstractDetailsDialog {
 	 * @param CommandStatus the CommandStatus
 	 * @param nesting the nesting
 	 */
-	private static void appendCommandStatus(final PrintWriter writer, final IStatus CommandStatus,
-		final int nesting) {
+	private static void appendCommandStatus(final PrintWriter writer, final IStatus CommandStatus, final int nesting) {
 		for ( int i = 0; i < nesting; i++ ) {
 			writer.print("  ");
 		}

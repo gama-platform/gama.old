@@ -1,4 +1,4 @@
-package msi.gama.gui.swt.controls;
+package ummisco.gama.ui.controls;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;

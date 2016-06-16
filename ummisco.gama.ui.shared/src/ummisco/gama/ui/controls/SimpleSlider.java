@@ -1,10 +1,11 @@
-package msi.gama.gui.swt.controls;
+package ummisco.gama.ui.controls;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
@@ -27,10 +28,9 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
-import msi.gaml.operators.Comparison;
-import msi.gaml.operators.Maths;
-import ummisco.gama.ui.resources.IGamaColors;
+
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.IGamaColors;
 
 public class SimpleSlider extends Composite implements IPopupProvider {
 
@@ -84,6 +84,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 		/**
 		 * Method paintControl()
+		 * 
 		 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
 		 */
 		@Override
@@ -101,8 +102,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	/**
-	 * The class implementing this interface will be asked to give a user understandable <code>String</code> to the
-	 * slider's current position
+	 * The class implementing this interface will be asked to give a user
+	 * understandable <code>String</code> to the slider's current position
 	 */
 	private IToolTipProvider toolTipInterperter;
 	// /** the minimum width of the slider */
@@ -111,7 +112,10 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	// private final int minHeight;
 	/** A list of position changed listeners */
 	private final List<IPositionChangeListener> positionChangedListeners = new ArrayList<>();
-	/** stores the previous position that was sent out to the position changed listeners */
+	/**
+	 * stores the previous position that was sent out to the position changed
+	 * listeners
+	 */
 	double previousPosition = 0;
 
 	GamaUIColor popupColor = IGamaColors.GRAY_LABEL;
@@ -123,12 +127,12 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor,
-		final Image thumbImageNormal) {
+			final Image thumbImageNormal) {
 		this(parent, leftColor, rightColor, thumbImageNormal, true);
 	}
 
 	public SimpleSlider(final Composite parent, final Color leftColor, final Color rightColor,
-		final Image thumbImageNormal, final boolean withPopup) {
+			final Image thumbImageNormal, final boolean withPopup) {
 		super(parent, SWT.DOUBLE_BUFFERED);
 		this.parent = parent;
 		final GridLayout gl = new GridLayout(3, false);
@@ -156,7 +160,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 			@Override
 			public void mouseMove(final MouseEvent e) {
-				if ( mouseDown ) {
+				if (mouseDown) {
 					moveThumbHorizontally(e.x);
 				}
 			}
@@ -180,7 +184,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 			@Override
 			public void mouseMove(final MouseEvent e) {
-				if ( mouseDown ) {
+				if (mouseDown) {
 					moveThumbHorizontally(leftRegion.getBounds().width + e.x);
 				}
 			}
@@ -204,7 +208,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 			@Override
 			public void mouseMove(final MouseEvent e) {
-				if ( mouseDown ) {
+				if (mouseDown) {
 					moveThumbHorizontally(leftRegion.getBounds().width + thumb.getBounds().width + e.x);
 
 				}
@@ -234,10 +238,11 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 				e.doit = true;
 			}
 		});
-		if ( withPopup ) {
+		if (withPopup) {
 			addPositionChangeListener(popupListener);
 			popup = new Popup(this, leftRegion, thumb, rightRegion);
-		} else popup = null;
+		} else
+			popup = null;
 
 	}
 
@@ -249,7 +254,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	public void addPositionChangeListener(final IPositionChangeListener listener) {
 		synchronized (positionChangedListeners) {
-			if ( !positionChangedListeners.contains(listener) ) {
+			if (!positionChangedListeners.contains(listener)) {
 				positionChangedListeners.add(listener);
 			}
 		}
@@ -257,15 +262,18 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 	/**
 	 *
-	 * @return the position of the slider in the from of a percentage. Note the range is from 0 to 1
+	 * @return the position of the slider in the from of a percentage. Note the
+	 *         range is from 0 to 1
 	 */
 	public double getCurrentPosition() {
 		return previousPosition;
 	}
 
 	private void updatePositionListeners(final double perc) {
-		if ( !notify ) { return; }
-		if ( Comparison.different(previousPosition, -1d) && Comparison.different(perc, previousPosition) ) {
+		if (!notify) {
+			return;
+		}
+		if (previousPosition != -1d && perc != previousPosition) {
 			synchronized (positionChangedListeners) {
 				final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
 				while (iter.hasNext()) {
@@ -281,17 +289,17 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		final double clientWidth = getClientArea().width;
 		final int x = pos - thumbsWidth / 2;
 		int width = x < 0 ? 0 : x;
-		if ( width > clientWidth - thumbsWidth ) {
+		if (width > clientWidth - thumbsWidth) {
 			width = (int) (clientWidth - thumbsWidth);
 		}
 
 		double percentage = width / (clientWidth - thumbsWidth);
-		if ( step != null ) {
+		if (step != null) {
 			percentage = Math.round(percentage / step) * step;
 		}
 		//
-		width = Maths.round(clientWidth * percentage);
-		if ( width > clientWidth - thumbsWidth ) {
+		width = (int) Math.round(clientWidth * percentage);
+		if (width > clientWidth - thumbsWidth) {
 			width = (int) (clientWidth - thumbsWidth);
 		}
 		updatePositionListeners(percentage);
@@ -333,6 +341,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 
 		/**
 		 * Method paintControl()
+		 * 
 		 * @see org.eclipse.swt.events.PaintListener#paintControl(org.eclipse.swt.events.PaintEvent)
 		 */
 		@Override
@@ -352,23 +361,27 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	/**
 	 * Method to update current position of the slider
 	 *
-	 * @param percentage between 0 and 1 (i.e 0% to 100%)
+	 * @param percentage
+	 *            between 0 and 1 (i.e 0% to 100%)
 	 */
 	public void updateSlider(final double p, final boolean n) {
 		checkWidget();
 		double percentage = p;
 		this.notify = n;
-		if ( percentage < 0 ) {
+		if (percentage < 0) {
 			percentage = 0;
-		} else if ( percentage > 1 ) {
+		} else if (percentage > 1) {
 			percentage = 1;
 		}
-		if ( step != null ) {
+		if (step != null) {
 			percentage = Math.round(percentage / step) * step;
 		}
 		//
-		final int usefulWidth = getClientArea().width/* - thumb.getBounds().width */;
-		final int width = Maths.round(usefulWidth * percentage + thumb.getBounds().width / 2);
+		final int usefulWidth = getClientArea().width/*
+														 * - thumb.getBounds().
+														 * width
+														 */;
+		final int width = (int) Math.round(usefulWidth * percentage + thumb.getBounds().width / 2);
 		moveThumbHorizontally(width);
 		previousPosition = percentage;
 		this.notify = true;
@@ -411,13 +424,13 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	/**
-	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupText()
+	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupText()
 	 */
 	@Override
 	public Map<GamaUIColor, String> getPopupText() {
 		final double value = getCurrentPosition();
-		final String text =
-			toolTipInterperter == null ? String.valueOf(value) : toolTipInterperter.getToolTipText(value);
+		final String text = toolTipInterperter == null ? String.valueOf(value)
+				: toolTipInterperter.getToolTipText(value);
 		// GamaUIColor color = popupColor;
 		return new HashMap() {
 
@@ -428,7 +441,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	/**
-	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
+	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupBackground()
 	 */
 	// @Override
 	// public GamaUIColor getPopupBackground() {
@@ -450,7 +463,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	}
 
 	public void setStep(final Double realStep) {
-		if ( realStep != null && realStep > 0d )
+		if (realStep != null && realStep > 0d)
 			step = realStep;
 	}
 }
