@@ -128,26 +128,49 @@ public class WorkspaceModelsManager {
 		}
 		final IFile file = findAndLoadIFile(filePath);
 		if ( file != null ) {
-			try {
-				System.out.println("Rebuilding the model " + filePath);
-				// Force the project to rebuild itself in order to load the various XText plugins.
-				file.touch(null);
-				file.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
-			} catch (final CoreException e) {
-				System.out.println("File " + file.getFullPath() + " cannot be built");
-				return;
-			}
-			if ( expName == null ) {
-				System.out.println("Opening the model " + filePath + " in the editor");
-				GAMA.getGui().editModel(file);
-			} else {
-				try {
-					System.out.println("Trying to run experiment " + expName);
-					GAMA.getGui().runModel(file, expName);
-				} catch (final CoreException e) {
-					e.printStackTrace();
+			final String fp = filePath;
+			final String en = expName;
+			final Runnable run = new Runnable() {
+
+				@Override
+				public void run() {
+					try {
+						System.out.println(Thread.currentThread().getName() + ": Rebuilding the model " + fp);
+						// Force the project to rebuild itself in order to load the various XText plugins.
+						file.touch(null);
+						file.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
+					} catch (final CoreException e) {
+						System.out.println(
+							Thread.currentThread().getName() + ": File " + file.getFullPath() + " cannot be built");
+						return;
+					}
+					while (GAMA.getRegularGui() == null) {
+						try {
+							Thread.sleep(100);
+							System.out.println(Thread.currentThread().getName() +
+								": waiting for the modeling and simulation environments to be available");
+						} catch (final InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
+					if ( en == null ) {
+						System.out
+							.println(Thread.currentThread().getName() + ": Opening the model " + fp + " in the editor");
+						GAMA.getGui().editModel(file);
+					} else {
+						try {
+							System.out.println(Thread.currentThread().getName() + ": Trying to run experiment " + en);
+							GAMA.getGui().runModel(file, en);
+						} catch (final CoreException e) {
+							e.printStackTrace();
+						}
+					}
+
 				}
-			}
+			};
+			new Thread(run, "Automatic opening of " + filePath).start();
+
 		}
 	}
 
