@@ -91,7 +91,8 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 public class GamaProcessor extends AbstractProcessor {
 
 	private GamlProperties gp;
-	private final boolean alwaysDoc = true;
+	private final static boolean PRODUCES_DOC = true;
+	private final static boolean PRODUCES_WARNING = false;
 	private GamlDocProcessor docProc;
 	private TypeMirror iSkill, iAgent;
 	private static final Charset CHARSET = Charset.forName("UTF-8");
@@ -115,9 +116,18 @@ public class GamaProcessor extends AbstractProcessor {
 		} catch (final Exception e) {
 			gp = new GamlProperties();
 		}
-		if ("true".equals(pe.getOptions().get("doc")) || alwaysDoc) {
+		if ("true".equals(pe.getOptions().get("doc")) || PRODUCES_DOC) {
 			docProc = new GamlDocProcessor(processingEnv);
 		}
+	}
+
+	private void emitWarning(final String s, final Element e) {
+		if (!PRODUCES_WARNING)
+			return;
+		if (e == null)
+			processingEnv.getMessager().printMessage(Kind.WARNING, s);
+		else
+			processingEnv.getMessager().printMessage(Kind.WARNING, s, e);
 	}
 
 	@Override
@@ -144,8 +154,7 @@ public class GamaProcessor extends AbstractProcessor {
 				processConstants(env);
 				processPopulationsLinkers(env);
 			} catch (final Exception e) {
-				processingEnv.getMessager().printMessage(Kind.WARNING,
-						"An exception occured in the parsing of GAML annotations: " + e.getMessage());
+				emitWarning("An exception occured in the parsing of GAML annotations: " + e.getMessage(), null);
 				throw e;
 			}
 
@@ -160,8 +169,7 @@ public class GamaProcessor extends AbstractProcessor {
 					new JavaWriter().write("gaml.additions", gp, sourceBuilder/* , docBuilder */);
 					source.append(sourceBuilder);
 				} catch (final Exception e) {
-					processingEnv.getMessager().printMessage(Kind.WARNING,
-							"An exception occured in the generation of Java files: " + e.getMessage());
+					emitWarning("An exception occured in the generation of Java files: " + e.getMessage(), null);
 				}
 				try {
 					source.close();
@@ -244,8 +252,7 @@ public class GamaProcessor extends AbstractProcessor {
 			for (final var s : vars.value()) {
 				final doc[] docs = s.doc();
 				if (docs.length == 0) {
-					processingEnv.getMessager().printMessage(Kind.WARNING,
-							"GAML: var '" + s.name() + "' is not documented", e);
+					emitWarning("GAML: var '" + s.name() + "' is not documented", e);
 				}
 				final StringBuilder sb = new StringBuilder();
 				final int type = s.type();
@@ -364,8 +371,7 @@ public class GamaProcessor extends AbstractProcessor {
 				doc = docs[0];
 			}
 			if (doc == null) {
-				processingEnv.getMessager().printMessage(Kind.WARNING,
-						"GAML: file declaration '" + f.name() + "' is not documented", e);
+				emitWarning("GAML: file declaration '" + f.name() + "' is not documented", e);
 			}
 
 			final StringBuilder sb = new StringBuilder();
@@ -535,8 +541,7 @@ public class GamaProcessor extends AbstractProcessor {
 			final doc doc = e.getAnnotation(doc.class);
 
 			if (doc == null) {
-				processingEnv.getMessager().printMessage(Kind.WARNING,
-						"GAML: symbol '" + symbol.name()[0] + "' is not documented", e);
+				emitWarning("GAML: symbol '" + symbol.name()[0] + "' is not documented", e);
 			}
 			gp.put(sb.toString(), "" /* docToString(doc) */); /* doc */
 		}
@@ -575,8 +580,7 @@ public class GamaProcessor extends AbstractProcessor {
 			for (final facet f : facets.value()) {
 				final doc[] docs = f.doc();
 				if (docs.length == 0) {
-					processingEnv.getMessager().printMessage(Kind.WARNING,
-							"GAML: facet '" + f.name() + "' is not documented", e);
+					emitWarning("GAML: facet '" + f.name() + "' is not documented", e);
 				}
 				sb.append(facetToString(f)).append(SEP);
 			}
@@ -702,8 +706,7 @@ public class GamaProcessor extends AbstractProcessor {
 				doc = docs[0];
 			}
 			if (doc == null) {
-				processingEnv.getMessager().printMessage(Kind.WARNING,
-						"GAML: species '" + spec.name() + "' is not documented", e);
+				emitWarning("GAML: species '" + spec.name() + "' is not documented", e);
 			}
 
 			gp.put(sb.toString(), "" /* docToString(spec.doc()) */); /* doc */
@@ -772,8 +775,7 @@ public class GamaProcessor extends AbstractProcessor {
 				doc = docs[0];
 			}
 			if (doc == null) {
-				processingEnv.getMessager().printMessage(Kind.WARNING,
-						"GAML: skill '" + skill.name() + "' is not documented", e);
+				emitWarning("GAML: skill '" + skill.name() + "' is not documented", e);
 			}
 
 			gp.put(sb.toString(), "" /* docToString(skill.doc()) */); /* doc */
@@ -824,8 +826,7 @@ public class GamaProcessor extends AbstractProcessor {
 				doc = docs[0];
 			}
 			if (doc == null) {
-				processingEnv.getMessager().printMessage(Kind.WARNING,
-						"GAML: type '" + t.name() + "' is not documented", e);
+				emitWarning("GAML: type '" + t.name() + "' is not documented", e);
 			}
 
 			gp.put(sb.toString(), ""/* docToString(t.doc()) */);
@@ -852,8 +853,7 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 
 			if (documentation == null) {
-				processingEnv.getMessager().printMessage(Kind.WARNING,
-						"GAML: operator '" + op.value()[0] + "' is not documented", e);
+				emitWarning("GAML: operator '" + op.value()[0] + "' is not documented", e);
 			}
 
 			final boolean stat = ex.getModifiers().contains(Modifier.STATIC);
@@ -976,8 +976,7 @@ public class GamaProcessor extends AbstractProcessor {
 					sb.append(arg.optional()).append(SEP);
 					final doc[] docs = arg.doc();
 					if (docs.length == 0) {
-						processingEnv.getMessager().printMessage(Kind.WARNING,
-								"GAML: argument '" + arg.name() + "' is not documented", e);
+						emitWarning("GAML: argument '" + arg.name() + "' is not documented", e);
 					}
 					sb.append(docToString(arg.doc())).append(SEP);
 					strings.add(args[i].name());
@@ -1009,7 +1008,8 @@ public class GamaProcessor extends AbstractProcessor {
 			// //if (!ok) {
 			//
 			// processingEnv.getMessager()
-			// .printMessage(Kind.WARNING, "GAML: constant '" + constant.value() +
+			// .printMessage(Kind.WARNING, "GAML: constant '" + constant.value()
+			// +
 			// "' cannot be instance of "
 			// + tm.toString() + ". The type of constants must be either a
 			// primitive type or String",
@@ -1020,8 +1020,7 @@ public class GamaProcessor extends AbstractProcessor {
 			final doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
 
 			if (documentation == null) {
-				processingEnv.getMessager().printMessage(Kind.WARNING,
-						"GAML: constant '" + constant.value() + "' is not documented", e);
+				emitWarning("GAML: constant '" + constant.value() + "' is not documented", e);
 			}
 
 			final String ret = rawNameOf(ve.asType());
@@ -1087,7 +1086,7 @@ public class GamaProcessor extends AbstractProcessor {
 			final Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
 			return writer;
 		} catch (final Exception e) {
-			processingEnv.getMessager().printMessage(Kind.WARNING, e.getMessage());
+			emitWarning(e.getMessage(), null);
 		}
 		return null;
 	}
@@ -1099,7 +1098,7 @@ public class GamaProcessor extends AbstractProcessor {
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {
-			processingEnv.getMessager().printMessage(Kind.WARNING, e.getMessage());
+			emitWarning(e.getMessage(), null);
 		}
 		return null;
 	}

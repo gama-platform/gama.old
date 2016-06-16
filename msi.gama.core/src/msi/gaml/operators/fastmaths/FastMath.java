@@ -31,15 +31,15 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 
 /**
- * Class providing math treatments that:
- * - are meant to be faster than java.lang.Math class equivalents (if any),
- * - are still somehow accurate and robust (handling of NaN and such),
- * - do not (or not directly) generate objects at run time (no "new").
+ * Class providing math treatments that: - are meant to be faster than
+ * java.lang.Math class equivalents (if any), - are still somehow accurate and
+ * robust (handling of NaN and such), - do not (or not directly) generate
+ * objects at run time (no "new").
  *
  * Other than optimized treatments, a valuable feature of this class is the
  * presence of angles normalization methods, derived from those used in
- * java.lang.Math (for which, sadly, no API is provided, letting everyone
- * with the terrible responsibility of writing their own ones).
+ * java.lang.Math (for which, sadly, no API is provided, letting everyone with
+ * the terrible responsibility of writing their own ones).
  *
  * Non-redefined methods Math methods are also available, for easy replacement,
  * even though for some of them, such as for incrementExact, you might want to
@@ -49,45 +49,39 @@ import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
  * call to initTables().
  *
  * Depending on JVM, or JVM options, these treatments can actually be slower
- * than Math ones.
- * In particular, they can be slower if not optimized by the JIT, which you
- * can see with -Xint JVM option.
- * Another cause of slowness can be cache-misses on look-up tables.
- * Also, look-up tables initialization typically takes multiple hundreds of
- * milliseconds (and is about twice slower in J6 than in J5, and in J7 than in
- * J6, possibly due to intrinsifications preventing optimizations such as use
- * of hardware sqrt, and Math delegating to StrictMath with JIT optimizations
- * not yet up during class load).
- * As a result, you might want to make these treatments not use tables,
- * and delegate to corresponding Math methods, when they are available in the
- * lowest supported Java version, by using the appropriate property (see below).
+ * than Math ones. In particular, they can be slower if not optimized by the
+ * JIT, which you can see with -Xint JVM option. Another cause of slowness can
+ * be cache-misses on look-up tables. Also, look-up tables initialization
+ * typically takes multiple hundreds of milliseconds (and is about twice slower
+ * in J6 than in J5, and in J7 than in J6, possibly due to intrinsifications
+ * preventing optimizations such as use of hardware sqrt, and Math delegating to
+ * StrictMath with JIT optimizations not yet up during class load). As a result,
+ * you might want to make these treatments not use tables, and delegate to
+ * corresponding Math methods, when they are available in the lowest supported
+ * Java version, by using the appropriate property (see below).
  *
- * Methods with same signature than Math ones, are meant to return
- * "good" approximations on all range.
- * Methods terminating with "Fast" are meant to return "good" approximation
- * on a reduced range only.
- * Methods terminating with "Quick" are meant to be quick, but do not
- * return a good approximation, and might only work on a reduced range.
+ * Methods with same signature than Math ones, are meant to return "good"
+ * approximations on all range. Methods terminating with "Fast" are meant to
+ * return "good" approximation on a reduced range only. Methods terminating with
+ * "Quick" are meant to be quick, but do not return a good approximation, and
+ * might only work on a reduced range.
  *
  * Properties:
  *
- * - jafama.usejdk (boolean, default is false):
- * If true, for redefined methods, as well as their "Fast" or "Quick"
- * terminated counterparts, instead of using redefined computations,
- * delegating to Math, when available in required Java version.
+ * - jafama.usejdk (boolean, default is false): If true, for redefined methods,
+ * as well as their "Fast" or "Quick" terminated counterparts, instead of using
+ * redefined computations, delegating to Math, when available in required Java
+ * version.
  *
- * - jafama.fastlog (boolean, default is false):
- * If true, using redefined computations for log(double) and
- * log10(double), else they delegate to Math.log(double) and
- * Math.log10(double).
- * False by default because Math.log(double) and Math.log10(double)
- * seem usually fast (redefined log(double) might be even faster,
- * but is less accurate).
+ * - jafama.fastlog (boolean, default is false): If true, using redefined
+ * computations for log(double) and log10(double), else they delegate to
+ * Math.log(double) and Math.log10(double). False by default because
+ * Math.log(double) and Math.log10(double) seem usually fast (redefined
+ * log(double) might be even faster, but is less accurate).
  *
- * - jafama.fastsqrt (boolean, default is false):
- * If true, using redefined computation for sqrt(double),
- * else it delegates to Math.sqrt(double).
- * False by default because Math.sqrt(double) seems usually fast.
+ * - jafama.fastsqrt (boolean, default is false): If true, using redefined
+ * computation for sqrt(double), else it delegates to Math.sqrt(double). False
+ * by default because Math.sqrt(double) seems usually fast.
  */
 public final class FastMath extends CmnFastMath {
 
@@ -128,26 +122,29 @@ public final class FastMath extends CmnFastMath {
 	 */
 
 	/**
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Angle sine.
 	 */
 	public static double sin(double angle) {
-		if ( USE_JDK_MATH ) { return Math.sin(angle); }
+		if (USE_JDK_MATH) {
+			return Math.sin(angle);
+		}
 		boolean negateResult = false;
-		if ( angle < 0.0 ) {
+		if (angle < 0.0) {
 			angle = -angle;
 			negateResult = true;
 		}
-		if ( angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO ) {
+		if (angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO) {
 			final long remAndQuad = remainderPiO2(angle);
 			angle = decodeRemainder(remAndQuad);
 			final double sin;
 			final int q = decodeQuadrant(remAndQuad);
-			if ( q == 0 ) {
+			if (q == 0) {
 				sin = sin(angle);
-			} else if ( q == 1 ) {
+			} else if (q == 1) {
 				sin = cos(angle);
-			} else if ( q == 2 ) {
+			} else if (q == 2) {
 				sin = -sin(angle);
 			} else {
 				sin = -cos(angle);
@@ -156,49 +153,55 @@ public final class FastMath extends CmnFastMath {
 		}
 		// index: possibly outside tables range.
 		int index = (int) (angle * SIN_COS_INDEXER + 0.5);
-		double delta = angle - index * SIN_COS_DELTA_HI - index * SIN_COS_DELTA_LO;
+		final double delta = angle - index * SIN_COS_DELTA_HI - index * SIN_COS_DELTA_LO;
 		// Making sure index is within tables range.
 		// Last value of each table is the same than first,
 		// so we ignore it (tabs size minus one) for modulo.
 		index &= SIN_COS_TABS_SIZE - 2; // index % (SIN_COS_TABS_SIZE-1)
-		double indexSin = MyTSinCos.sinTab[index];
-		double indexCos = MyTSinCos.cosTab[index];
-		double result = indexSin + delta * (indexCos +
-			delta * (-indexSin * ONE_DIV_F2 + delta * (-indexCos * ONE_DIV_F3 + delta * indexSin * ONE_DIV_F4)));
+		final double indexSin = MyTSinCos.sinTab[index];
+		final double indexCos = MyTSinCos.cosTab[index];
+		final double result = indexSin + delta * (indexCos
+				+ delta * (-indexSin * ONE_DIV_F2 + delta * (-indexCos * ONE_DIV_F3 + delta * indexSin * ONE_DIV_F4)));
 		return negateResult ? -result : result;
 	}
 
 	/**
-	 * Quick sin, with accuracy of about 1.6e-3 (PI/<look-up tabs size>)
-	 * for |angle| < 6588395.0 (Integer.MAX_VALUE * (2*PI/<look-up tabs size>) - 2)
-	 * (- 2 due to removing PI/2 before using cosine tab),
-	 * and no accuracy at all for larger values.
+	 * Quick sin, with accuracy of about 1.6e-3 (PI/<look-up tabs size>) for
+	 * |angle| < 6588395.0 (Integer.MAX_VALUE * (2*PI/<look-up tabs size>) - 2)
+	 * (- 2 due to removing PI/2 before using cosine tab), and no accuracy at
+	 * all for larger values.
 	 *
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Angle sine.
 	 */
 	public static double sinQuick(final double angle) {
-		if ( USE_JDK_MATH ) { return Math.sin(angle); }
+		if (USE_JDK_MATH) {
+			return Math.sin(angle);
+		}
 		return MyTSinCos.cosTab[(int) (Math.abs(angle - Math.PI / 2) * SIN_COS_INDEXER + 0.5) & SIN_COS_TABS_SIZE - 2];
 	}
 
 	/**
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Angle cosine.
 	 */
 	public static double cos(double angle) {
-		if ( USE_JDK_MATH ) { return Math.cos(angle); }
+		if (USE_JDK_MATH) {
+			return Math.cos(angle);
+		}
 		angle = Math.abs(angle);
-		if ( angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO ) {
+		if (angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO) {
 			final long remAndQuad = remainderPiO2(angle);
 			angle = decodeRemainder(remAndQuad);
 			final double cos;
 			final int q = decodeQuadrant(remAndQuad);
-			if ( q == 0 ) {
+			if (q == 0) {
 				cos = cos(angle);
-			} else if ( q == 1 ) {
+			} else if (q == 1) {
 				cos = -sin(angle);
-			} else if ( q == 2 ) {
+			} else if (q == 2) {
 				cos = -cos(angle);
 			} else {
 				cos = sin(angle);
@@ -207,61 +210,66 @@ public final class FastMath extends CmnFastMath {
 		}
 		// index: possibly outside tables range.
 		int index = (int) (angle * SIN_COS_INDEXER + 0.5);
-		double delta = angle - index * SIN_COS_DELTA_HI - index * SIN_COS_DELTA_LO;
+		final double delta = angle - index * SIN_COS_DELTA_HI - index * SIN_COS_DELTA_LO;
 		// Making sure index is within tables range.
 		// Last value of each table is the same than first,
 		// so we ignore it (tabs size minus one) for modulo.
 		index &= SIN_COS_TABS_SIZE - 2; // index % (SIN_COS_TABS_SIZE-1)
-		double indexCos = MyTSinCos.cosTab[index];
-		double indexSin = MyTSinCos.sinTab[index];
-		return indexCos + delta * (-indexSin +
-			delta * (-indexCos * ONE_DIV_F2 + delta * (indexSin * ONE_DIV_F3 + delta * indexCos * ONE_DIV_F4)));
+		final double indexCos = MyTSinCos.cosTab[index];
+		final double indexSin = MyTSinCos.sinTab[index];
+		return indexCos + delta * (-indexSin
+				+ delta * (-indexCos * ONE_DIV_F2 + delta * (indexSin * ONE_DIV_F3 + delta * indexCos * ONE_DIV_F4)));
 	}
 
 	/**
-	 * Quick cos, with accuracy of about 1.6e-3 (PI/<look-up tabs size>)
-	 * for |angle| < 6588397.0 (Integer.MAX_VALUE * (2*PI/<look-up tabs size>)),
-	 * and no accuracy at all for larger values.
+	 * Quick cos, with accuracy of about 1.6e-3 (PI/<look-up tabs size>) for
+	 * |angle| < 6588397.0 (Integer.MAX_VALUE * (2*PI/<look-up tabs size>)), and
+	 * no accuracy at all for larger values.
 	 *
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Angle cosine.
 	 */
 	public static double cosQuick(final double angle) {
-		if ( USE_JDK_MATH ) { return Math.cos(angle); }
+		if (USE_JDK_MATH) {
+			return Math.cos(angle);
+		}
 		return MyTSinCos.cosTab[(int) (Math.abs(angle) * SIN_COS_INDEXER + 0.5) & SIN_COS_TABS_SIZE - 2];
 	}
 
 	/**
 	 * Computes sine and cosine together.
 	 *
-	 * @param angle Angle in radians.
-	 * @param cosine (out) Angle cosine.
+	 * @param angle
+	 *            Angle in radians.
+	 * @param cosine
+	 *            (out) Angle cosine.
 	 * @return Angle sine.
 	 */
 	public static double sinAndCos(double angle, final DoubleWrapper cosine) {
-		if ( USE_JDK_MATH ) {
+		if (USE_JDK_MATH) {
 			cosine.value = Math.cos(angle);
 			return Math.sin(angle);
 		}
 		// Using the same algorithm than sin(double) method,
 		// and computing also cosine at the end.
 		boolean negateResult = false;
-		if ( angle < 0.0 ) {
+		if (angle < 0.0) {
 			angle = -angle;
 			negateResult = true;
 		}
-		if ( angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO ) {
+		if (angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO) {
 			final long remAndQuad = remainderPiO2(angle);
 			angle = decodeRemainder(remAndQuad);
 			final double sin;
 			final int q = decodeQuadrant(remAndQuad);
-			if ( q == 0 ) {
+			if (q == 0) {
 				sin = sin(angle);
 				cosine.value = cos(angle);
-			} else if ( q == 1 ) {
+			} else if (q == 1) {
 				sin = cos(angle);
 				cosine.value = -sin(angle);
-			} else if ( q == 2 ) {
+			} else if (q == 2) {
 				sin = -sin(angle);
 				cosine.value = -cos(angle);
 			} else {
@@ -271,36 +279,41 @@ public final class FastMath extends CmnFastMath {
 			return negateResult ? -sin : sin;
 		}
 		int index = (int) (angle * SIN_COS_INDEXER + 0.5);
-		double delta = angle - index * SIN_COS_DELTA_HI - index * SIN_COS_DELTA_LO;
+		final double delta = angle - index * SIN_COS_DELTA_HI - index * SIN_COS_DELTA_LO;
 		index &= SIN_COS_TABS_SIZE - 2; // index % (SIN_COS_TABS_SIZE-1)
-		double indexSin = MyTSinCos.sinTab[index];
-		double indexCos = MyTSinCos.cosTab[index];
-		// Could factor some multiplications (delta * factorials), but then is less accurate.
-		cosine.value = indexCos + delta * (-indexSin +
-			delta * (-indexCos * ONE_DIV_F2 + delta * (indexSin * ONE_DIV_F3 + delta * indexCos * ONE_DIV_F4)));
-		double result = indexSin + delta * (indexCos +
-			delta * (-indexSin * ONE_DIV_F2 + delta * (-indexCos * ONE_DIV_F3 + delta * indexSin * ONE_DIV_F4)));
+		final double indexSin = MyTSinCos.sinTab[index];
+		final double indexCos = MyTSinCos.cosTab[index];
+		// Could factor some multiplications (delta * factorials), but then is
+		// less accurate.
+		cosine.value = indexCos + delta * (-indexSin
+				+ delta * (-indexCos * ONE_DIV_F2 + delta * (indexSin * ONE_DIV_F3 + delta * indexCos * ONE_DIV_F4)));
+		final double result = indexSin + delta * (indexCos
+				+ delta * (-indexSin * ONE_DIV_F2 + delta * (-indexCos * ONE_DIV_F3 + delta * indexSin * ONE_DIV_F4)));
 		return negateResult ? -result : result;
 	}
 
 	/**
-	 * Can have very bad relative error near +-PI/2,
-	 * but of the same magnitude than the relative delta between
-	 * StrictMath.tan(PI/2) and StrictMath.tan(nextDown(PI/2)).
+	 * Can have very bad relative error near +-PI/2, but of the same magnitude
+	 * than the relative delta between StrictMath.tan(PI/2) and
+	 * StrictMath.tan(nextDown(PI/2)).
 	 *
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Angle tangent.
 	 */
-	public static double tan(double angle) {
-		if ( USE_JDK_MATH ) { return Math.tan(angle); }
+	public static double tan(final double a) {
+		double angle = a;
+		if (USE_JDK_MATH) {
+			return Math.tan(angle);
+		}
 		boolean negateResult = false;
-		if ( angle < 0.0 ) {
+		if (angle < 0.0) {
 			angle = -angle;
 			negateResult = true;
 		}
-		if ( angle > TAN_MAX_VALUE_FOR_INT_MODULO ) {
+		if (angle > TAN_MAX_VALUE_FOR_INT_MODULO) {
 			angle = remainderPi(angle);
-			if ( angle < 0.0 ) {
+			if (angle < 0.0) {
 				angle = -angle;
 				negateResult = !negateResult;
 			}
@@ -310,67 +323,75 @@ public final class FastMath extends CmnFastMath {
 		double delta = angle - index * TAN_DELTA_HI - index * TAN_DELTA_LO;
 		// Making sure index is within tables range.
 		// index modulo PI, i.e. 2*(virtual tab size minus one).
-		index &= 2 * (TAN_VIRTUAL_TABS_SIZE - 1) - 1; // index % (2*(TAN_VIRTUAL_TABS_SIZE-1))
-		// Here, index is in [0,2*(TAN_VIRTUAL_TABS_SIZE-1)-1], i.e. indicates an angle in [0,PI[.
-		if ( index > TAN_VIRTUAL_TABS_SIZE - 1 ) {
+		index &= 2 * (TAN_VIRTUAL_TABS_SIZE - 1) - 1; // index %
+														// (2*(TAN_VIRTUAL_TABS_SIZE-1))
+		// Here, index is in [0,2*(TAN_VIRTUAL_TABS_SIZE-1)-1], i.e. indicates
+		// an angle in [0,PI[.
+		if (index > TAN_VIRTUAL_TABS_SIZE - 1) {
 			index = 2 * (TAN_VIRTUAL_TABS_SIZE - 1) - index;
 			delta = -delta;
 			negateResult = !negateResult;
 		}
 		double result;
-		if ( index < TAN_TABS_SIZE ) {
-			result =
-				MyTTan.tanTab[index] + delta * (MyTTan.tanDer1DivF1Tab[index] + delta * (MyTTan.tanDer2DivF2Tab[index] +
-					delta * (MyTTan.tanDer3DivF3Tab[index] + delta * MyTTan.tanDer4DivF4Tab[index])));
-		} else { // angle in ]TAN_MAX_VALUE_FOR_TABS,TAN_MAX_VALUE_FOR_INT_MODULO], or angle is NaN
-			// Using tan(angle) == 1/tan(PI/2-angle) formula: changing angle (index and delta), and inverting.
+		if (index < TAN_TABS_SIZE) {
+			result = MyTTan.tanTab[index]
+					+ delta * (MyTTan.tanDer1DivF1Tab[index] + delta * (MyTTan.tanDer2DivF2Tab[index]
+							+ delta * (MyTTan.tanDer3DivF3Tab[index] + delta * MyTTan.tanDer4DivF4Tab[index])));
+		} else { // angle in
+					// ]TAN_MAX_VALUE_FOR_TABS,TAN_MAX_VALUE_FOR_INT_MODULO], or
+					// angle is NaN
+			// Using tan(angle) == 1/tan(PI/2-angle) formula: changing angle
+			// (index and delta), and inverting.
 			index = TAN_VIRTUAL_TABS_SIZE - 1 - index;
-			result = 1 / (MyTTan.tanTab[index] -
-				delta * (MyTTan.tanDer1DivF1Tab[index] - delta * (MyTTan.tanDer2DivF2Tab[index] -
-					delta * (MyTTan.tanDer3DivF3Tab[index] - delta * MyTTan.tanDer4DivF4Tab[index]))));
+			result = 1 / (MyTTan.tanTab[index]
+					- delta * (MyTTan.tanDer1DivF1Tab[index] - delta * (MyTTan.tanDer2DivF2Tab[index]
+							- delta * (MyTTan.tanDer3DivF3Tab[index] - delta * MyTTan.tanDer4DivF4Tab[index]))));
 		}
 		return negateResult ? -result : result;
 	}
 
 	/**
-	 * @param value Value in [-1,1].
+	 * @param value
+	 *            Value in [-1,1].
 	 * @return Value arcsine, in radians, in [-PI/2,PI/2].
 	 */
 	public static double asin(double value) {
-		if ( USE_JDK_MATH ) { return Math.asin(value); }
+		if (USE_JDK_MATH) {
+			return Math.asin(value);
+		}
 		boolean negateResult = false;
-		if ( value < 0.0 ) {
+		if (value < 0.0) {
 			value = -value;
 			negateResult = true;
 		}
-		if ( value <= ASIN_MAX_VALUE_FOR_TABS ) {
-			int index = (int) (value * ASIN_INDEXER + 0.5);
-			double delta = value - index * ASIN_DELTA;
-			double result = MyTAsin.asinTab[index] +
-				delta * (MyTAsin.asinDer1DivF1Tab[index] + delta * (MyTAsin.asinDer2DivF2Tab[index] +
-					delta * (MyTAsin.asinDer3DivF3Tab[index] + delta * MyTAsin.asinDer4DivF4Tab[index])));
+		if (value <= ASIN_MAX_VALUE_FOR_TABS) {
+			final int index = (int) (value * ASIN_INDEXER + 0.5);
+			final double delta = value - index * ASIN_DELTA;
+			final double result = MyTAsin.asinTab[index]
+					+ delta * (MyTAsin.asinDer1DivF1Tab[index] + delta * (MyTAsin.asinDer2DivF2Tab[index]
+							+ delta * (MyTAsin.asinDer3DivF3Tab[index] + delta * MyTAsin.asinDer4DivF4Tab[index])));
 			return negateResult ? -result : result;
-		} else if ( USE_POWTABS_FOR_ASIN && value <= ASIN_MAX_VALUE_FOR_POWTABS ) {
-			int index = (int) (powFast(value * ASIN_POWTABS_ONE_DIV_MAX_VALUE, ASIN_POWTABS_POWER) *
-				ASIN_POWTABS_SIZE_MINUS_ONE + 0.5);
-			double delta = value - MyTAsinPow.asinParamPowTab[index];
-			double result = MyTAsinPow.asinPowTab[index] +
-				delta * (MyTAsinPow.asinDer1DivF1PowTab[index] + delta * (MyTAsinPow.asinDer2DivF2PowTab[index] +
-					delta * (MyTAsinPow.asinDer3DivF3PowTab[index] + delta * MyTAsinPow.asinDer4DivF4PowTab[index])));
+		} else if (USE_POWTABS_FOR_ASIN && value <= ASIN_MAX_VALUE_FOR_POWTABS) {
+			final int index = (int) (powFast(value * ASIN_POWTABS_ONE_DIV_MAX_VALUE, ASIN_POWTABS_POWER)
+					* ASIN_POWTABS_SIZE_MINUS_ONE + 0.5);
+			final double delta = value - MyTAsinPow.asinParamPowTab[index];
+			final double result = MyTAsinPow.asinPowTab[index] + delta
+					* (MyTAsinPow.asinDer1DivF1PowTab[index] + delta * (MyTAsinPow.asinDer2DivF2PowTab[index] + delta
+							* (MyTAsinPow.asinDer3DivF3PowTab[index] + delta * MyTAsinPow.asinDer4DivF4PowTab[index])));
 			return negateResult ? -result : result;
 		} else { // value > ASIN_MAX_VALUE_FOR_TABS, or value is NaN
 			// This part is derived from fdlibm.
-			if ( value < 1.0 ) {
-				double t = (1.0 - value) * 0.5;
-				double p =
-					t * (ASIN_PS0 + t * (ASIN_PS1 + t * (ASIN_PS2 + t * (ASIN_PS3 + t * (ASIN_PS4 + t * ASIN_PS5)))));
-				double q = 1.0 + t * (ASIN_QS1 + t * (ASIN_QS2 + t * (ASIN_QS3 + t * ASIN_QS4)));
-				double s = sqrt(t);
-				double z = s + s * (p / q);
-				double result = ASIN_PIO2_HI - (z + z - ASIN_PIO2_LO);
+			if (value < 1.0) {
+				final double t = (1.0 - value) * 0.5;
+				final double p = t
+						* (ASIN_PS0 + t * (ASIN_PS1 + t * (ASIN_PS2 + t * (ASIN_PS3 + t * (ASIN_PS4 + t * ASIN_PS5)))));
+				final double q = 1.0 + t * (ASIN_QS1 + t * (ASIN_QS2 + t * (ASIN_QS3 + t * ASIN_QS4)));
+				final double s = sqrt(t);
+				final double z = s + s * (p / q);
+				final double result = ASIN_PIO2_HI - (z + z - ASIN_PIO2_LO);
 				return negateResult ? -result : result;
 			} else { // value >= 1.0, or value is NaN
-				if ( value == 1.0 ) {
+				if (value == 1.0) {
 					return negateResult ? -Math.PI / 2 : Math.PI / 2;
 				} else {
 					return Double.NaN;
@@ -380,15 +401,17 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * If value is not NaN and is outside [-1,1] range, closest value in this range is used.
+	 * If value is not NaN and is outside [-1,1] range, closest value in this
+	 * range is used.
 	 *
-	 * @param value Value in [-1,1].
+	 * @param value
+	 *            Value in [-1,1].
 	 * @return Value arcsine, in radians, in [-PI/2,PI/2].
 	 */
 	public static double asinInRange(final double value) {
-		if ( value <= -1.0 ) {
+		if (value <= -1.0) {
 			return -Math.PI / 2;
-		} else if ( value >= 1.0 ) {
+		} else if (value >= 1.0) {
 			return Math.PI / 2;
 		} else {
 			return asin(value);
@@ -396,25 +419,29 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value Value in [-1,1].
+	 * @param value
+	 *            Value in [-1,1].
 	 * @return Value arccosine, in radians, in [0,PI].
 	 */
 	public static double acos(final double value) {
-		if ( USE_JDK_MATH ) { return Math.acos(value); }
+		if (USE_JDK_MATH) {
+			return Math.acos(value);
+		}
 		return Math.PI / 2 - asin(value);
 	}
 
 	/**
-	 * If value is not NaN and is outside [-1,1] range,
-	 * closest value in this range is used.
+	 * If value is not NaN and is outside [-1,1] range, closest value in this
+	 * range is used.
 	 *
-	 * @param value Value in [-1,1].
+	 * @param value
+	 *            Value in [-1,1].
 	 * @return Value arccosine, in radians, in [0,PI].
 	 */
 	public static double acosInRange(final double value) {
-		if ( value <= -1.0 ) {
+		if (value <= -1.0) {
 			return Math.PI;
-		} else if ( value >= 1.0 ) {
+		} else if (value >= 1.0) {
 			return 0.0;
 		} else {
 			return acos(value);
@@ -422,39 +449,42 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value arctangent, in radians, in [-PI/2,PI/2].
 	 */
 	public static double atan(double value) {
-		if ( USE_JDK_MATH ) { return Math.atan(value); }
+		if (USE_JDK_MATH) {
+			return Math.atan(value);
+		}
 		boolean negateResult = false;
-		if ( value < 0.0 ) {
+		if (value < 0.0) {
 			value = -value;
 			negateResult = true;
 		}
-		if ( value == 1.0 ) {
+		if (value == 1.0) {
 			// We want "exact" result for 1.0.
 			return negateResult ? -Math.PI / 4 : Math.PI / 4;
-		} else if ( value <= ATAN_MAX_VALUE_FOR_TABS ) {
-			int index = (int) (value * ATAN_INDEXER + 0.5);
-			double delta = value - index * ATAN_DELTA;
-			double result = MyTAtan.atanTab[index] +
-				delta * (MyTAtan.atanDer1DivF1Tab[index] + delta * (MyTAtan.atanDer2DivF2Tab[index] +
-					delta * (MyTAtan.atanDer3DivF3Tab[index] + delta * MyTAtan.atanDer4DivF4Tab[index])));
+		} else if (value <= ATAN_MAX_VALUE_FOR_TABS) {
+			final int index = (int) (value * ATAN_INDEXER + 0.5);
+			final double delta = value - index * ATAN_DELTA;
+			final double result = MyTAtan.atanTab[index]
+					+ delta * (MyTAtan.atanDer1DivF1Tab[index] + delta * (MyTAtan.atanDer2DivF2Tab[index]
+							+ delta * (MyTAtan.atanDer3DivF3Tab[index] + delta * MyTAtan.atanDer4DivF4Tab[index])));
 			return negateResult ? -result : result;
 		} else { // value > ATAN_MAX_VALUE_FOR_TABS, or value is NaN
 			// This part is derived from fdlibm.
-			if ( value < TWO_POW_66 ) {
-				double x = -1 / value;
-				double x2 = x * x;
-				double x4 = x2 * x2;
-				double s1 = x2 *
-					(ATAN_AT0 + x4 * (ATAN_AT2 + x4 * (ATAN_AT4 + x4 * (ATAN_AT6 + x4 * (ATAN_AT8 + x4 * ATAN_AT10)))));
-				double s2 = x4 * (ATAN_AT1 + x4 * (ATAN_AT3 + x4 * (ATAN_AT5 + x4 * (ATAN_AT7 + x4 * ATAN_AT9))));
-				double result = ATAN_HI3 - (x * (s1 + s2) - ATAN_LO3 - x);
+			if (value < TWO_POW_66) {
+				final double x = -1 / value;
+				final double x2 = x * x;
+				final double x4 = x2 * x2;
+				final double s1 = x2 * (ATAN_AT0
+						+ x4 * (ATAN_AT2 + x4 * (ATAN_AT4 + x4 * (ATAN_AT6 + x4 * (ATAN_AT8 + x4 * ATAN_AT10)))));
+				final double s2 = x4 * (ATAN_AT1 + x4 * (ATAN_AT3 + x4 * (ATAN_AT5 + x4 * (ATAN_AT7 + x4 * ATAN_AT9))));
+				final double result = ATAN_HI3 - (x * (s1 + s2) - ATAN_LO3 - x);
 				return negateResult ? -result : result;
 			} else { // value >= 2^66, or value is NaN
-				if ( value != value ) {
+				if (value != value) {
 					return Double.NaN;
 				} else {
 					return negateResult ? -Math.PI / 2 : Math.PI / 2;
@@ -467,34 +497,41 @@ public final class FastMath extends CmnFastMath {
 	 * For special values for which multiple conventions could be adopted,
 	 * behaves like Math.atan2(double,double).
 	 *
-	 * @param y Coordinate on y axis.
-	 * @param x Coordinate on x axis.
-	 * @return Angle from x axis positive side to (x,y) position, in radians, in [-PI,PI].
-	 *         Angle measure is positive when going from x axis to y axis (positive sides).
+	 * @param y
+	 *            Coordinate on y axis.
+	 * @param x
+	 *            Coordinate on x axis.
+	 * @return Angle from x axis positive side to (x,y) position, in radians, in
+	 *         [-PI,PI]. Angle measure is positive when going from x axis to y
+	 *         axis (positive sides).
 	 */
 	public static double atan2(final double y, final double x) {
-		if ( USE_JDK_MATH ) { return Math.atan2(y, x); }
+		if (USE_JDK_MATH) {
+			return Math.atan2(y, x);
+		}
 		/*
-		 * Using sub-methods, to make method lighter for general case,
-		 * and to avoid JIT-optimization crash on NaN.
+		 * Using sub-methods, to make method lighter for general case, and to
+		 * avoid JIT-optimization crash on NaN.
 		 */
-		if ( x > 0.0 ) {
-			if ( y == 0.0 ) {
+		if (x > 0.0) {
+			if (y == 0.0) {
 				// +-0.0
 				return y;
 			}
-			if ( x == Double.POSITIVE_INFINITY ) {
+			if (x == Double.POSITIVE_INFINITY) {
 				return atan2_pinf_yyy(y);
 			} else {
 				return atan(y / x);
 			}
-		} else if ( x < 0.0 ) {
-			if ( y == 0.0 ) { return signFromBit(y) * Math.PI; }
-			if ( x == Double.NEGATIVE_INFINITY ) {
+		} else if (x < 0.0) {
+			if (y == 0.0) {
+				return signFromBit(y) * Math.PI;
+			}
+			if (x == Double.NEGATIVE_INFINITY) {
 				return atan2_ninf_yyy(y);
-			} else if ( y > 0.0 ) {
+			} else if (y > 0.0) {
 				return Math.PI / 2 - atan(x / y);
-			} else if ( y < 0.0 ) {
+			} else if (y < 0.0) {
 				return -Math.PI / 2 - atan(x / y);
 			} else {
 				return Double.NaN;
@@ -505,34 +542,44 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Gives same result as Math.toRadians for some particular values
-	 * like 90.0, 180.0 or 360.0, but is faster (no division).
+	 * Gives same result as Math.toRadians for some particular values like 90.0,
+	 * 180.0 or 360.0, but is faster (no division).
 	 *
-	 * @param angdeg Angle value in degrees.
+	 * @param angdeg
+	 *            Angle value in degrees.
 	 * @return Angle value in radians.
 	 */
 	public static double toRadians(final double angdeg) {
-		if ( USE_JDK_MATH ) { return Math.toRadians(angdeg); }
+		if (USE_JDK_MATH) {
+			return Math.toRadians(angdeg);
+		}
 		return angdeg * (Math.PI / 180);
 	}
 
 	/**
-	 * Gives same result as Math.toDegrees for some particular values
-	 * like Math.PI/2, Math.PI or 2*Math.PI, but is faster (no division).
+	 * Gives same result as Math.toDegrees for some particular values like
+	 * Math.PI/2, Math.PI or 2*Math.PI, but is faster (no division).
 	 *
-	 * @param angrad Angle value in radians.
+	 * @param angrad
+	 *            Angle value in radians.
 	 * @return Angle value in degrees.
 	 */
 	public static double toDegrees(final double angrad) {
-		if ( USE_JDK_MATH ) { return Math.toDegrees(angrad); }
+		if (USE_JDK_MATH) {
+			return Math.toDegrees(angrad);
+		}
 		return angrad * (180 / Math.PI);
 	}
 
 	/**
-	 * @param sign Sign of the angle: true for positive, false for negative.
-	 * @param degrees Degrees, in [0,180].
-	 * @param minutes Minutes, in [0,59].
-	 * @param seconds Seconds, in [0.0,60.0[.
+	 * @param sign
+	 *            Sign of the angle: true for positive, false for negative.
+	 * @param degrees
+	 *            Degrees, in [0,180].
+	 * @param minutes
+	 *            Minutes, in [0,59].
+	 * @param seconds
+	 *            Seconds, in [0.0,60.0[.
 	 * @return Angle in radians.
 	 */
 	public static double toRadians(final boolean sign, final int degrees, final int minutes, final double seconds) {
@@ -540,30 +587,39 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param sign Sign of the angle: true for positive, false for negative.
-	 * @param degrees Degrees, in [0,180].
-	 * @param minutes Minutes, in [0,59].
-	 * @param seconds Seconds, in [0.0,60.0[.
+	 * @param sign
+	 *            Sign of the angle: true for positive, false for negative.
+	 * @param degrees
+	 *            Degrees, in [0,180].
+	 * @param minutes
+	 *            Minutes, in [0,59].
+	 * @param seconds
+	 *            Seconds, in [0.0,60.0[.
 	 * @return Angle in degrees.
 	 */
 	public static double toDegrees(final boolean sign, final int degrees, final int minutes, final double seconds) {
-		double signFactor = sign ? 1.0 : -1.0;
+		final double signFactor = sign ? 1.0 : -1.0;
 		return signFactor * (degrees + 1.0 / 60 * (minutes + 1.0 / 60 * seconds));
 	}
 
 	/**
-	 * @param angrad Angle in radians.
-	 * @param degrees (out) Degrees, in [0,180].
-	 * @param minutes (out) Minutes, in [0,59].
-	 * @param seconds (out) Seconds, in [0.0,60.0[.
-	 * @return true if the resulting angle in [-180deg,180deg] is positive, false if it is negative.
+	 * @param angrad
+	 *            Angle in radians.
+	 * @param degrees
+	 *            (out) Degrees, in [0,180].
+	 * @param minutes
+	 *            (out) Minutes, in [0,59].
+	 * @param seconds
+	 *            (out) Seconds, in [0.0,60.0[.
+	 * @return true if the resulting angle in [-180deg,180deg] is positive,
+	 *         false if it is negative.
 	 */
 	public static boolean toDMS(final double angrad, final IntWrapper degrees, final IntWrapper minutes,
-		final DoubleWrapper seconds) {
+			final DoubleWrapper seconds) {
 		// Computing longitude DMS.
 		double tmp = toDegrees(normalizeMinusPiPi(angrad));
-		boolean isNeg = tmp < 0.0;
-		if ( isNeg ) {
+		final boolean isNeg = tmp < 0.0;
+		if (isNeg) {
 			tmp = -tmp;
 		}
 		degrees.value = (int) tmp;
@@ -574,28 +630,33 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * NB: Since 2*Math.PI < 2*PI, a span of 2*Math.PI does not mean full angular range.
-	 * ex.: isInClockwiseDomain(0.0, 2*Math.PI, -1e-20) returns false.
-	 * ---> For full angular range, use a span > 2*Math.PI, like 2*PI_SUP constant of this class.
+	 * NB: Since 2*Math.PI < 2*PI, a span of 2*Math.PI does not mean full
+	 * angular range. ex.: isInClockwiseDomain(0.0, 2*Math.PI, -1e-20) returns
+	 * false. ---> For full angular range, use a span > 2*Math.PI, like 2*PI_SUP
+	 * constant of this class.
 	 *
-	 * @param startAngRad An angle, in radians.
-	 * @param angSpanRad An angular span, >= 0.0, in radians.
-	 * @param angRad An angle, in radians.
-	 * @return true if angRad is in the clockwise angular domain going from startAngRad, over angSpanRad,
-	 *         extremities included, false otherwise.
+	 * @param startAngRad
+	 *            An angle, in radians.
+	 * @param angSpanRad
+	 *            An angular span, >= 0.0, in radians.
+	 * @param angRad
+	 *            An angle, in radians.
+	 * @return true if angRad is in the clockwise angular domain going from
+	 *         startAngRad, over angSpanRad, extremities included, false
+	 *         otherwise.
 	 */
 	public static boolean isInClockwiseDomain(double startAngRad, final double angSpanRad, final double angRad) {
-		if ( Math.abs(angRad) < -TWO_MATH_PI_IN_MINUS_PI_PI ) {
+		if (Math.abs(angRad) < -TWO_MATH_PI_IN_MINUS_PI_PI) {
 			// special case for angular values of small magnitude
-			if ( angSpanRad <= 2 * Math.PI ) {
-				if ( angSpanRad < 0.0 ) {
+			if (angSpanRad <= 2 * Math.PI) {
+				if (angSpanRad < 0.0) {
 					// empty domain
 					return false;
 				}
 				// angSpanRad is in [0,2*PI]
 				startAngRad = normalizeMinusPiPi(startAngRad);
-				double endAngRad = normalizeMinusPiPi(startAngRad + angSpanRad);
-				if ( startAngRad <= endAngRad ) {
+				final double endAngRad = normalizeMinusPiPi(startAngRad + angSpanRad);
+				if (startAngRad <= endAngRad) {
 					return angRad >= startAngRad && angRad <= endAngRad;
 				} else {
 					return angRad >= startAngRad || angRad <= endAngRad;
@@ -614,31 +675,31 @@ public final class FastMath extends CmnFastMath {
 	 */
 
 	/**
-	 * Some properties of sinh(x) = (exp(x)-exp(-x))/2:
-	 * 1) defined on ]-Infinity,+Infinity[
-	 * 2) result in ]-Infinity,+Infinity[
-	 * 3) sinh(x) = -sinh(-x) (implies sinh(0) = 0)
-	 * 4) sinh(epsilon) ~= epsilon
-	 * 5) lim(sinh(x),x->+Infinity) = +Infinity
-	 * (y increasing exponentially faster than x)
-	 * 6) reaches +Infinity (double overflow) for x >= 710.475860073944,
+	 * Some properties of sinh(x) = (exp(x)-exp(-x))/2: 1) defined on
+	 * ]-Infinity,+Infinity[ 2) result in ]-Infinity,+Infinity[ 3) sinh(x) =
+	 * -sinh(-x) (implies sinh(0) = 0) 4) sinh(epsilon) ~= epsilon 5)
+	 * lim(sinh(x),x->+Infinity) = +Infinity (y increasing exponentially faster
+	 * than x) 6) reaches +Infinity (double overflow) for x >= 710.475860073944,
 	 * i.e. a bit further than exp(x)
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value hyperbolic sine.
 	 */
 	public static double sinh(double value) {
-		if ( USE_JDK_MATH ) { return Math.sinh(value); }
+		if (USE_JDK_MATH) {
+			return Math.sinh(value);
+		}
 		// sinh(x) = (exp(x)-exp(-x))/2
 		double h;
-		if ( value < 0.0 ) {
+		if (value < 0.0) {
 			value = -value;
 			h = -0.5;
 		} else {
 			h = 0.5;
 		}
-		if ( value < 22.0 ) {
-			if ( value < TWO_POW_N28 ) {
+		if (value < 22.0) {
+			if (value < TWO_POW_N28) {
 				return h < 0.0 ? -value : value;
 			} else {
 				// sinh(x)
@@ -647,79 +708,80 @@ public final class FastMath extends CmnFastMath {
 				// = (expm1(x) + 1 - 1/(expm1(x)+1))/2
 				// = (expm1(x) + (expm1(x)+1)/(expm1(x)+1) - 1/(expm1(x)+1))/2
 				// = (expm1(x) + expm1(x)/(expm1(x)+1))/2
-				double t = expm1(value);
-				// Might be more accurate, if value < 1: return h*((t+t)-t*t/(t+1.0)).
+				final double t = expm1(value);
+				// Might be more accurate, if value < 1: return
+				// h*((t+t)-t*t/(t+1.0)).
 				return h * (t + t / (t + 1.0));
 			}
-		} else if ( value < LOG_DOUBLE_MAX_VALUE ) {
+		} else if (value < LOG_DOUBLE_MAX_VALUE) {
 			return h * exp(value);
 		} else {
-			double t = exp(value * 0.5);
+			final double t = exp(value * 0.5);
 			return h * t * t;
 		}
 	}
 
 	/**
-	 * Some properties of cosh(x) = (exp(x)+exp(-x))/2:
-	 * 1) defined on ]-Infinity,+Infinity[
-	 * 2) result in [1,+Infinity[
-	 * 3) cosh(0) = 1
-	 * 4) cosh(x) = cosh(-x)
-	 * 5) lim(cosh(x),x->+Infinity) = +Infinity
-	 * (y increasing exponentially faster than x)
-	 * 6) reaches +Infinity (double overflow) for x >= 710.475860073944,
-	 * i.e. a bit further than exp(x)
+	 * Some properties of cosh(x) = (exp(x)+exp(-x))/2: 1) defined on
+	 * ]-Infinity,+Infinity[ 2) result in [1,+Infinity[ 3) cosh(0) = 1 4)
+	 * cosh(x) = cosh(-x) 5) lim(cosh(x),x->+Infinity) = +Infinity (y increasing
+	 * exponentially faster than x) 6) reaches +Infinity (double overflow) for x
+	 * >= 710.475860073944, i.e. a bit further than exp(x)
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value hyperbolic cosine.
 	 */
 	public static double cosh(double value) {
-		if ( USE_JDK_MATH ) { return Math.cosh(value); }
+		if (USE_JDK_MATH) {
+			return Math.cosh(value);
+		}
 		// cosh(x) = (exp(x)+exp(-x))/2
-		if ( value < 0.0 ) {
+		if (value < 0.0) {
 			value = -value;
 		}
-		if ( value < LOG_TWO_POW_27 ) {
-			if ( value < TWO_POW_N27 ) {
+		if (value < LOG_TWO_POW_27) {
+			if (value < TWO_POW_N27) {
 				// cosh(x)
 				// = (exp(x)+exp(-x))/2
 				// = ((1+x+x^2/2!+...) + (1-x+x^2/2!-...))/2
 				// = 1+x^2/2!+x^4/4!+...
-				// For value of x small in magnitude, the sum of the terms does not add to 1.
+				// For value of x small in magnitude, the sum of the terms does
+				// not add to 1.
 				return 1;
 			} else {
 				// cosh(x)
 				// = (exp(x)+exp(-x))/2
 				// = (exp(x)+1/exp(x))/2
-				double t = exp(value);
+				final double t = exp(value);
 				return 0.5 * (t + 1 / t);
 			}
-		} else if ( value < LOG_DOUBLE_MAX_VALUE ) {
+		} else if (value < LOG_DOUBLE_MAX_VALUE) {
 			return 0.5 * exp(value);
 		} else {
-			double t = exp(value * 0.5);
+			final double t = exp(value * 0.5);
 			return 0.5 * t * t;
 		}
 	}
 
 	/**
-	 * Much more accurate than cosh(value)-1,
-	 * for arguments (and results) close to zero.
+	 * Much more accurate than cosh(value)-1, for arguments (and results) close
+	 * to zero.
 	 *
-	 * coshm1(-0.0) = -0.0, for homogeneity with
-	 * acosh1p(-0.0) = -0.0.
+	 * coshm1(-0.0) = -0.0, for homogeneity with acosh1p(-0.0) = -0.0.
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value hyperbolic cosine, minus 1.
 	 */
 	public static double coshm1(double value) {
 		// cosh(x)-1 = (exp(x)+exp(-x))/2 - 1
-		if ( value < 0.0 ) {
+		if (value < 0.0) {
 			value = -value;
 		}
-		if ( value < LOG_TWO_POW_27 ) {
-			if ( value < TWO_POW_N27 ) {
-				if ( value == 0.0 ) {
+		if (value < LOG_TWO_POW_27) {
+			if (value < TWO_POW_N27) {
+				if (value == 0.0) {
 					// +-0.0
 					return value;
 				}
@@ -743,11 +805,11 @@ public final class FastMath extends CmnFastMath {
 				// = (expm1(x)+expm1(-x))/2
 				return 0.5 * (expm1(value) + expm1(-value));
 			}
-		} else if ( value < LOG_DOUBLE_MAX_VALUE ) {
+		} else if (value < LOG_DOUBLE_MAX_VALUE) {
 			return 0.5 * exp(value) - 1.0;
 		} else {
 			// No need to subtract 1 from result.
-			double t = exp(value * 0.5);
+			final double t = exp(value * 0.5);
 			return 0.5 * t * t;
 		}
 	}
@@ -755,19 +817,21 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * Computes hyperbolic sine and hyperbolic cosine together.
 	 *
-	 * @param value A double value.
-	 * @param hcosine (out) Value hyperbolic cosine.
+	 * @param value
+	 *            A double value.
+	 * @param hcosine
+	 *            (out) Value hyperbolic cosine.
 	 * @return Value hyperbolic sine.
 	 */
 	public static double sinhAndCosh(double value, final DoubleWrapper hcosine) {
-		if ( USE_JDK_MATH ) {
+		if (USE_JDK_MATH) {
 			hcosine.value = Math.cosh(value);
 			return Math.sinh(value);
 		}
 		// Mixup of sinh and cosh treatments: if you modify them,
 		// you might want to also modify this.
 		double h;
-		if ( value < 0.0 ) {
+		if (value < 0.0) {
 			value = -value;
 			h = -0.5;
 		} else {
@@ -775,31 +839,31 @@ public final class FastMath extends CmnFastMath {
 		}
 		final double hsine;
 		// LOG_TWO_POW_27 = 18.714973875118524
-		if ( value < LOG_TWO_POW_27 ) { // test from cosh
+		if (value < LOG_TWO_POW_27) { // test from cosh
 			// sinh
-			if ( value < TWO_POW_N28 ) {
+			if (value < TWO_POW_N28) {
 				hsine = h < 0.0 ? -value : value;
 			} else {
-				double t = expm1(value);
+				final double t = expm1(value);
 				hsine = h * (t + t / (t + 1.0));
 			}
 			// cosh
-			if ( value < TWO_POW_N27 ) {
+			if (value < TWO_POW_N27) {
 				hcosine.value = 1;
 			} else {
-				double t = exp(value);
+				final double t = exp(value);
 				hcosine.value = 0.5 * (t + 1 / t);
 			}
-		} else if ( value < 22.0 ) { // test from sinh
+		} else if (value < 22.0) { // test from sinh
 			// Here, value is in [18.714973875118524,22.0[.
-			double t = expm1(value);
+			final double t = expm1(value);
 			hsine = h * (t + t / (t + 1.0));
 			hcosine.value = 0.5 * (t + 1.0);
 		} else {
-			if ( value < LOG_DOUBLE_MAX_VALUE ) {
+			if (value < LOG_DOUBLE_MAX_VALUE) {
 				hsine = h * exp(value);
 			} else {
-				double t = exp(value * 0.5);
+				final double t = exp(value * 0.5);
 				hsine = h * t * t;
 			}
 			hcosine.value = Math.abs(hsine);
@@ -809,34 +873,35 @@ public final class FastMath extends CmnFastMath {
 
 	/**
 	 * Some properties of tanh(x) = sinh(x)/cosh(x) = (exp(2*x)-1)/(exp(2*x)+1):
-	 * 1) defined on ]-Infinity,+Infinity[
-	 * 2) result in ]-1,1[
-	 * 3) tanh(x) = -tanh(-x) (implies tanh(0) = 0)
-	 * 4) tanh(epsilon) ~= epsilon
-	 * 5) lim(tanh(x),x->+Infinity) = 1
-	 * 6) reaches 1 (double loss of precision) for x = 19.061547465398498
+	 * 1) defined on ]-Infinity,+Infinity[ 2) result in ]-1,1[ 3) tanh(x) =
+	 * -tanh(-x) (implies tanh(0) = 0) 4) tanh(epsilon) ~= epsilon 5)
+	 * lim(tanh(x),x->+Infinity) = 1 6) reaches 1 (double loss of precision) for
+	 * x = 19.061547465398498
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value hyperbolic tangent.
 	 */
 	public static double tanh(double value) {
-		if ( USE_JDK_MATH ) { return Math.tanh(value); }
+		if (USE_JDK_MATH) {
+			return Math.tanh(value);
+		}
 		// tanh(x) = sinh(x)/cosh(x)
 		// = (exp(x)-exp(-x))/(exp(x)+exp(-x))
 		// = (exp(2*x)-1)/(exp(2*x)+1)
 		boolean negateResult = false;
-		if ( value < 0.0 ) {
+		if (value < 0.0) {
 			value = -value;
 			negateResult = true;
 		}
 		double z;
-		if ( value < TANH_1_THRESHOLD ) {
-			if ( value < TWO_POW_N55 ) {
+		if (value < TANH_1_THRESHOLD) {
+			if (value < TWO_POW_N55) {
 				return negateResult ? -value * (1.0 - value) : value * (1.0 + value);
-			} else if ( value >= 1 ) {
+			} else if (value >= 1) {
 				z = 1.0 - 2.0 / (expm1(value + value) + 2.0);
 			} else {
-				double t = expm1(-(value + value));
+				final double t = expm1(-(value + value));
 				z = -t / (t + 2.0);
 			}
 		} else {
@@ -846,51 +911,50 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Some properties of asinh(x) = log(x + sqrt(x^2 + 1))
-	 * 1) defined on ]-Infinity,+Infinity[
-	 * 2) result in ]-Infinity,+Infinity[
-	 * 3) asinh(x) = -asinh(-x) (implies asinh(0) = 0)
-	 * 4) asinh(epsilon) ~= epsilon
-	 * 5) lim(asinh(x),x->+Infinity) = +Infinity
-	 * (y increasing logarithmically slower than x)
+	 * Some properties of asinh(x) = log(x + sqrt(x^2 + 1)) 1) defined on
+	 * ]-Infinity,+Infinity[ 2) result in ]-Infinity,+Infinity[ 3) asinh(x) =
+	 * -asinh(-x) (implies asinh(0) = 0) 4) asinh(epsilon) ~= epsilon 5)
+	 * lim(asinh(x),x->+Infinity) = +Infinity (y increasing logarithmically
+	 * slower than x)
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value hyperbolic arcsine.
 	 */
 	public static double asinh(double value) {
 		// asinh(x) = log(x + sqrt(x^2 + 1))
 		boolean negateResult = false;
-		if ( value < 0.0 ) {
+		if (value < 0.0) {
 			value = -value;
 			negateResult = true;
 		}
 		double result;
 		// (about) smallest possible for
 		// non-log1p case to be accurate.
-		if ( value < ASINH_LOG1P_THRESHOLD ) {
+		if (value < ASINH_LOG1P_THRESHOLD) {
 			// Around this range, FDLIBM uses
 			// log1p(value+value*value/(1+sqrt(value*value+1))),
 			// but it's slower, so we don't use it.
 			/*
-			 * If x is close to zero, log argument is close to 1,
-			 * so to avoid precision loss we use log1p(double),
-			 * with
-			 * (1+x)^p = 1 + p * x + (p*(p-1))/2! * x^2 + (p*(p-1)*(p-2))/3! * x^3 + ...
-			 * (1+x)^p = 1 + p * x * (1 + (p-1)/2 * x * (1 + (p-2)/3 * x + ...)
-			 * (1+x)^0.5 = 1 + 0.5 * x * (1 + (0.5-1)/2 * x * (1 + (0.5-2)/3 * x + ...)
-			 * (1+x^2)^0.5 = 1 + 0.5 * x^2 * (1 + (0.5-1)/2 * x^2 * (1 + (0.5-2)/3 * x^2 + ...)
-			 * x + (1+x^2)^0.5 = 1 + x * (1 + 0.5 * x * (1 + (0.5-1)/2 * x^2 * (1 + (0.5-2)/3 * x^2 + ...))
-			 * so
-			 * asinh(x) = log1p(x * (1 + 0.5 * x * (1 + (0.5-1)/2 * x^2 * (1 + (0.5-2)/3 * x^2 + ...)))
+			 * If x is close to zero, log argument is close to 1, so to avoid
+			 * precision loss we use log1p(double), with (1+x)^p = 1 + p * x +
+			 * (p*(p-1))/2! * x^2 + (p*(p-1)*(p-2))/3! * x^3 + ... (1+x)^p = 1 +
+			 * p * x * (1 + (p-1)/2 * x * (1 + (p-2)/3 * x + ...) (1+x)^0.5 = 1
+			 * + 0.5 * x * (1 + (0.5-1)/2 * x * (1 + (0.5-2)/3 * x + ...)
+			 * (1+x^2)^0.5 = 1 + 0.5 * x^2 * (1 + (0.5-1)/2 * x^2 * (1 +
+			 * (0.5-2)/3 * x^2 + ...) x + (1+x^2)^0.5 = 1 + x * (1 + 0.5 * x *
+			 * (1 + (0.5-1)/2 * x^2 * (1 + (0.5-2)/3 * x^2 + ...)) so asinh(x) =
+			 * log1p(x * (1 + 0.5 * x * (1 + (0.5-1)/2 * x^2 * (1 + (0.5-2)/3 *
+			 * x^2 + ...)))
 			 */
 			final double x = value;
 			final double x2 = x * x;
 			// Enough terms for good accuracy,
 			// given our threshold.
-			final double argLog1p = x * (1 + 0.5 * x * (1 +
-				(0.5 - 1) / 2 * x2 * (1 + (0.5 - 2) / 3 * x2 * (1 + (0.5 - 3) / 4 * x2 * (1 + (0.5 - 4) / 5 * x2)))));
+			final double argLog1p = x * (1 + 0.5 * x * (1 + (0.5 - 1) / 2 * x2
+					* (1 + (0.5 - 2) / 3 * x2 * (1 + (0.5 - 3) / 4 * x2 * (1 + (0.5 - 4) / 5 * x2)))));
 			result = log1p(argLog1p);
-		} else if ( value < ASINH_ACOSH_SQRT_ELISION_THRESHOLD ) {
+		} else if (value < ASINH_ACOSH_SQRT_ELISION_THRESHOLD) {
 			// Around this range, FDLIBM uses
 			// log(2*value+1/(value+sqrt(value*value+1))),
 			// but it involves an additional division
@@ -905,28 +969,27 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Some properties of acosh(x) = log(x + sqrt(x^2 - 1)):
-	 * 1) defined on [1,+Infinity[
-	 * 2) result in ]0,+Infinity[ (by convention, since cosh(x) = cosh(-x))
-	 * 3) acosh(1) = 0
-	 * 4) acosh(1+epsilon) ~= log(1 + sqrt(2*epsilon)) ~= sqrt(2*epsilon)
-	 * 5) lim(acosh(x),x->+Infinity) = +Infinity
-	 * (y increasing logarithmically slower than x)
+	 * Some properties of acosh(x) = log(x + sqrt(x^2 - 1)): 1) defined on
+	 * [1,+Infinity[ 2) result in ]0,+Infinity[ (by convention, since cosh(x) =
+	 * cosh(-x)) 3) acosh(1) = 0 4) acosh(1+epsilon) ~= log(1 + sqrt(2*epsilon))
+	 * ~= sqrt(2*epsilon) 5) lim(acosh(x),x->+Infinity) = +Infinity (y
+	 * increasing logarithmically slower than x)
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value hyperbolic arccosine.
 	 */
 	public static double acosh(final double value) {
-		if ( !(value > 1.0) ) {
+		if (!(value > 1.0)) {
 			// NaN, or value <= 1
-			if ( ANTI_JIT_OPTIM_CRASH_ON_NAN ) {
+			if (ANTI_JIT_OPTIM_CRASH_ON_NAN) {
 				return value < 1.0 ? Double.NaN : value - 1.0;
 			} else {
 				return value == 1.0 ? 0.0 : Double.NaN;
 			}
 		}
 		double result;
-		if ( value < ASINH_ACOSH_SQRT_ELISION_THRESHOLD ) {
+		if (value < ASINH_ACOSH_SQRT_ELISION_THRESHOLD) {
 			// Around this range, FDLIBM uses
 			// log(2*value-1/(value+sqrt(value*value-1))),
 			// but it involves an additional division
@@ -941,28 +1004,28 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Much more accurate than acosh(1+value),
-	 * for arguments (and results) close to zero.
+	 * Much more accurate than acosh(1+value), for arguments (and results) close
+	 * to zero.
 	 *
-	 * acosh1p(-0.0) = -0.0, for homogeneity with
-	 * sqrt(-0.0) = -0.0, which looks about the same
-	 * near 0.
+	 * acosh1p(-0.0) = -0.0, for homogeneity with sqrt(-0.0) = -0.0, which looks
+	 * about the same near 0.
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Hyperbolic arccosine of (1+value).
 	 */
 	public static double acosh1p(final double value) {
-		if ( !(value > 0.0) ) {
+		if (!(value > 0.0)) {
 			// NaN, or value <= 0.
 			// If value is -0.0, returning -0.0.
-			if ( ANTI_JIT_OPTIM_CRASH_ON_NAN ) {
+			if (ANTI_JIT_OPTIM_CRASH_ON_NAN) {
 				return value < 0.0 ? Double.NaN : value;
 			} else {
 				return value == 0.0 ? value : Double.NaN;
 			}
 		}
 		double result;
-		if ( value < ASINH_ACOSH_SQRT_ELISION_THRESHOLD - 1 ) {
+		if (value < ASINH_ACOSH_SQRT_ELISION_THRESHOLD - 1) {
 			// acosh(1+x)
 			// = log((1+x) + sqrt((1+x)^2 - 1))
 			// = log(1 + x + sqrt(1 + 2*x + x^2 - 1))
@@ -976,27 +1039,25 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Some properties of atanh(x) = log((1+x)/(1-x))/2:
-	 * 1) defined on ]-1,1[
-	 * 2) result in ]-Infinity,+Infinity[
-	 * 3) atanh(-1) = -Infinity (by continuity)
-	 * 4) atanh(1) = +Infinity (by continuity)
-	 * 5) atanh(epsilon) ~= epsilon
-	 * 6) lim(atanh(x),x->1) = +Infinity
+	 * Some properties of atanh(x) = log((1+x)/(1-x))/2: 1) defined on ]-1,1[ 2)
+	 * result in ]-Infinity,+Infinity[ 3) atanh(-1) = -Infinity (by continuity)
+	 * 4) atanh(1) = +Infinity (by continuity) 5) atanh(epsilon) ~= epsilon 6)
+	 * lim(atanh(x),x->1) = +Infinity
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value hyperbolic arctangent.
 	 */
 	public static double atanh(double value) {
 		boolean negateResult = false;
-		if ( value < 0.0 ) {
+		if (value < 0.0) {
 			value = -value;
 			negateResult = true;
 		}
 		double result;
-		if ( !(value < 1.0) ) {
+		if (!(value < 1.0)) {
 			// NaN, or value >= 1
-			if ( ANTI_JIT_OPTIM_CRASH_ON_NAN ) {
+			if (ANTI_JIT_OPTIM_CRASH_ON_NAN) {
 				result = value > 1.0 ? Double.NaN : Double.POSITIVE_INFINITY + value;
 			} else {
 				result = value == 1.0 ? Double.POSITIVE_INFINITY : Double.NaN;
@@ -1019,11 +1080,14 @@ public final class FastMath extends CmnFastMath {
 	 */
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return e^value.
 	 */
 	public static double exp(final double value) {
-		if ( USE_JDK_MATH ) { return Math.exp(value); }
+		if (USE_JDK_MATH) {
+			return Math.exp(value);
+		}
 		// exp(x) = exp([x])*exp(y)
 		// with [x] the integer part of x, and y = x-[x]
 		// ===>
@@ -1032,21 +1096,26 @@ public final class FastMath extends CmnFastMath {
 		// exp(x) = exp([x])*(exp(z)*exp(epsilon))
 		// with epsilon = y - z
 		// ===>
-		// We have exp([x]) and exp(z) pre-computed in tables, we "just" have to compute exp(epsilon).
+		// We have exp([x]) and exp(z) pre-computed in tables, we "just" have to
+		// compute exp(epsilon).
 		//
-		// We use the same indexing (cast to int) to compute x integer part and the
+		// We use the same indexing (cast to int) to compute x integer part and
+		// the
 		// table index corresponding to z, to avoid two int casts.
-		// Also, to optimize index multiplication and division, we use powers of two,
+		// Also, to optimize index multiplication and division, we use powers of
+		// two,
 		// so that we can do it with bits shifts.
 
-		if ( value > EXP_OVERFLOW_LIMIT ) {
+		if (value > EXP_OVERFLOW_LIMIT) {
 			return Double.POSITIVE_INFINITY;
-		} else if ( !(value >= EXP_UNDERFLOW_LIMIT) ) { return value != value ? Double.NaN : 0.0; }
+		} else if (!(value >= EXP_UNDERFLOW_LIMIT)) {
+			return value != value ? Double.NaN : 0.0;
+		}
 
 		final int indexes = (int) (value * EXP_LO_INDEXING);
 
 		final int valueInt;
-		if ( indexes >= 0 ) {
+		if (indexes >= 0) {
 			valueInt = indexes >> EXP_LO_INDEXING_DIV_SHIFT;
 		} else {
 			valueInt = -(-indexes >> EXP_LO_INDEXING_DIV_SHIFT);
@@ -1065,22 +1134,25 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Quick exp, with a max relative error of about 2.94e-2 for |value| < 700.0 or so,
-	 * and no accuracy at all outside this range.
-	 * Derived from a note by Nicol N. Schraudolph, IDSIA, 1998.
+	 * Quick exp, with a max relative error of about 2.94e-2 for |value| < 700.0
+	 * or so, and no accuracy at all outside this range. Derived from a note by
+	 * Nicol N. Schraudolph, IDSIA, 1998.
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return e^value.
 	 */
 	public static double expQuick(final double value) {
-		if ( USE_JDK_MATH ) { return Math.exp(value); }
+		if (USE_JDK_MATH) {
+			return Math.exp(value);
+		}
 		/*
 		 * Cast of double values, even in long range, into long, is slower than
-		 * from double to int for values in int range, and then from int to long.
-		 * For that reason, we only work with integer values in int range
+		 * from double to int for values in int range, and then from int to
+		 * long. For that reason, we only work with integer values in int range
 		 * (corresponding to the 32 first bits of the long, containing sign,
-		 * exponent, and highest significant bits of double's mantissa),
-		 * and cast twice.
+		 * exponent, and highest significant bits of double's mantissa), and
+		 * cast twice.
 		 *
 		 * Constants determined empirically, using a random-based metaheuristic.
 		 * Should be possible to find better ones.
@@ -1089,14 +1161,17 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Much more accurate than exp(value)-1,
-	 * for arguments (and results) close to zero.
+	 * Much more accurate than exp(value)-1, for arguments (and results) close
+	 * to zero.
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return e^value-1.
 	 */
 	public static double expm1(final double value) {
-		if ( USE_JDK_MATH ) { return Math.expm1(value); }
+		if (USE_JDK_MATH) {
+			return Math.expm1(value);
+		}
 		// If value is far from zero, we use exp(value)-1.
 		//
 		// If value is close to zero, we use the following formula:
@@ -1107,12 +1182,12 @@ public final class FastMath extends CmnFastMath {
 		// = exp(valueApprox)*((1-exp(-valueApprox))+epsilon+epsilon^2/2!+...)
 		// exp(valueApprox) and exp(-valueApprox) being stored in tables.
 
-		if ( Math.abs(value) < EXP_LO_DISTANCE_TO_ZERO ) {
+		if (Math.abs(value) < EXP_LO_DISTANCE_TO_ZERO) {
 			// Taking int part instead of rounding, which takes too long.
-			int i = (int) (value * EXP_LO_INDEXING);
-			double delta = value - i * (1.0 / EXP_LO_INDEXING);
-			return MyTExp.expLoPosTab[i + EXP_LO_TAB_MID_INDEX] * (MyTExp.expLoNegTab[i + EXP_LO_TAB_MID_INDEX] +
-				delta * (1 + delta * (1.0 / 2 + delta * (1.0 / 6 + delta * (1.0 / 24 + delta * (1.0 / 120))))));
+			final int i = (int) (value * EXP_LO_INDEXING);
+			final double delta = value - i * (1.0 / EXP_LO_INDEXING);
+			return MyTExp.expLoPosTab[i + EXP_LO_TAB_MID_INDEX] * (MyTExp.expLoNegTab[i + EXP_LO_TAB_MID_INDEX]
+					+ delta * (1 + delta * (1.0 / 2 + delta * (1.0 / 6 + delta * (1.0 / 24 + delta * (1.0 / 120))))));
 		} else {
 			return exp(value) - 1;
 		}
@@ -1123,22 +1198,29 @@ public final class FastMath extends CmnFastMath {
 	 */
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value logarithm (base e).
 	 */
 	public static double log(double value) {
-		if ( USE_JDK_MATH || !USE_REDEFINED_LOG ) { return Math.log(value); }
-		if ( value > 0.0 ) {
-			if ( value == Double.POSITIVE_INFINITY ) { return Double.POSITIVE_INFINITY; }
+		if (USE_JDK_MATH || !USE_REDEFINED_LOG) {
+			return Math.log(value);
+		}
+		if (value > 0.0) {
+			if (value == Double.POSITIVE_INFINITY) {
+				return Double.POSITIVE_INFINITY;
+			}
 
 			// For normal values not close to 1.0, we use the following formula:
 			// log(value)
 			// = log(2^exponent*1.mantissa)
 			// = log(2^exponent) + log(1.mantissa)
 			// = exponent * log(2) + log(1.mantissa)
-			// = exponent * log(2) + log(1.mantissaApprox) + log(1.mantissa/1.mantissaApprox)
+			// = exponent * log(2) + log(1.mantissaApprox) +
+			// log(1.mantissa/1.mantissaApprox)
 			// = exponent * log(2) + log(1.mantissaApprox) + log(1+epsilon)
-			// = exponent * log(2) + log(1.mantissaApprox) + epsilon-epsilon^2/2+epsilon^3/3-epsilon^4/4+...
+			// = exponent * log(2) + log(1.mantissaApprox) +
+			// epsilon-epsilon^2/2+epsilon^3/3-epsilon^4/4+...
 			// with:
 			// 1.mantissaApprox <= 1.mantissa,
 			// log(1.mantissaApprox) in table,
@@ -1150,15 +1232,15 @@ public final class FastMath extends CmnFastMath {
 			// with z=(x-1)/(x+1)
 
 			double h;
-			if ( value > 0.95 ) {
-				if ( value < 1.14 ) {
-					double z = (value - 1.0) / (value + 1.0);
-					double z2 = z * z;
-					return z *
-						(2 + z2 * (2.0 / 3 + z2 * (2.0 / 5 + z2 * (2.0 / 7 + z2 * (2.0 / 9 + z2 * (2.0 / 11))))));
+			if (value > 0.95) {
+				if (value < 1.14) {
+					final double z = (value - 1.0) / (value + 1.0);
+					final double z2 = z * z;
+					return z * (2
+							+ z2 * (2.0 / 3 + z2 * (2.0 / 5 + z2 * (2.0 / 7 + z2 * (2.0 / 9 + z2 * (2.0 / 11))))));
 				}
 				h = 0.0;
-			} else if ( value < DOUBLE_MIN_NORMAL ) {
+			} else if (value < DOUBLE_MIN_NORMAL) {
 				// Ensuring value is normal.
 				value *= TWO_POW_52;
 				// log(x*2^52)
@@ -1169,10 +1251,10 @@ public final class FastMath extends CmnFastMath {
 				h = 0.0;
 			}
 
-			int valueBitsHi = (int) (Double.doubleToRawLongBits(value) >> 32);
-			int valueExp = (valueBitsHi >> 20) - MAX_DOUBLE_EXPONENT;
+			final int valueBitsHi = (int) (Double.doubleToRawLongBits(value) >> 32);
+			final int valueExp = (valueBitsHi >> 20) - MAX_DOUBLE_EXPONENT;
 			// Getting the first LOG_BITS bits of the mantissa.
-			int xIndex = valueBitsHi << 12 >>> 32 - LOG_BITS;
+			final int xIndex = valueBitsHi << 12 >>> 32 - LOG_BITS;
 
 			// 1.mantissa/1.mantissaApprox - 1
 			double z = value * twoPowNormalOrSubnormal(-valueExp) * MyTLog.logXInvTab[xIndex] - 1;
@@ -1181,7 +1263,7 @@ public final class FastMath extends CmnFastMath {
 
 			return h + valueExp * LOG_2 + (MyTLog.logXLogTab[xIndex] + z);
 
-		} else if ( value == 0.0 ) {
+		} else if (value == 0.0) {
 			return Double.NEGATIVE_INFINITY;
 		} else { // value < 0.0, or value is NaN
 			return Double.NaN;
@@ -1189,19 +1271,22 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Quick log, with a max relative error of about 1.9e-3
-	 * for values in ]Double.MIN_NORMAL,+Infinity[, and
-	 * worse accuracy outside this range.
+	 * Quick log, with a max relative error of about 1.9e-3 for values in
+	 * ]Double.MIN_NORMAL,+Infinity[, and worse accuracy outside this range.
 	 *
-	 * @param value A double value, in ]0,+Infinity[ (strictly positive and finite).
+	 * @param value
+	 *            A double value, in ]0,+Infinity[ (strictly positive and
+	 *            finite).
 	 * @return Value logarithm (base e).
 	 */
 	public static double logQuick(double value) {
-		if ( USE_JDK_MATH ) { return Math.log(value); }
+		if (USE_JDK_MATH) {
+			return Math.log(value);
+		}
 		/*
 		 * Inverse of Schraudolph's method for exp, is very inaccurate near 1,
-		 * and not that fast (even using floats), especially with added if's
-		 * to deal with values near 1, so we don't use it, and use a simplified
+		 * and not that fast (even using floats), especially with added if's to
+		 * deal with values near 1, so we don't use it, and use a simplified
 		 * version of our log's redefined algorithm.
 		 */
 
@@ -1209,29 +1294,34 @@ public final class FastMath extends CmnFastMath {
 		// log(value) ~= exponent * log(2) + log(1.mantissaApprox)
 
 		double h;
-		if ( value > 0.87 ) {
-			if ( value < 1.16 ) { return 2.0 * (value - 1.0) / (value + 1.0); }
+		if (value > 0.87) {
+			if (value < 1.16) {
+				return 2.0 * (value - 1.0) / (value + 1.0);
+			}
 			h = 0.0;
-		} else if ( value < DOUBLE_MIN_NORMAL ) {
+		} else if (value < DOUBLE_MIN_NORMAL) {
 			value *= TWO_POW_52;
 			h = -52 * LOG_2;
 		} else {
 			h = 0.0;
 		}
 
-		int valueBitsHi = (int) (Double.doubleToRawLongBits(value) >> 32);
-		int valueExp = (valueBitsHi >> 20) - MAX_DOUBLE_EXPONENT;
-		int xIndex = valueBitsHi << 12 >>> 32 - LOG_BITS;
+		final int valueBitsHi = (int) (Double.doubleToRawLongBits(value) >> 32);
+		final int valueExp = (valueBitsHi >> 20) - MAX_DOUBLE_EXPONENT;
+		final int xIndex = valueBitsHi << 12 >>> 32 - LOG_BITS;
 
 		return h + valueExp * LOG_2 + MyTLog.logXLogTab[xIndex];
 	}
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value logarithm (base 10).
 	 */
 	public static double log10(final double value) {
-		if ( USE_JDK_MATH || !USE_REDEFINED_LOG ) { return Math.log10(value); }
+		if (USE_JDK_MATH || !USE_REDEFINED_LOG) {
+			return Math.log10(value);
+		}
 		// INV_LOG_10 is < 1, but there is no risk of log(double)
 		// overflow (positive or negative) while the end result shouldn't,
 		// since log(Double.MIN_VALUE) and log(Double.MAX_VALUE) have
@@ -1240,16 +1330,21 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Much more accurate than log(1+value),
-	 * for arguments (and results) close to zero.
+	 * Much more accurate than log(1+value), for arguments (and results) close
+	 * to zero.
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Logarithm (base e) of (1+value).
 	 */
 	public static double log1p(final double value) {
-		if ( USE_JDK_MATH ) { return Math.log1p(value); }
-		if ( value > -1.0 ) {
-			if ( value == Double.POSITIVE_INFINITY ) { return Double.POSITIVE_INFINITY; }
+		if (USE_JDK_MATH) {
+			return Math.log1p(value);
+		}
+		if (value > -1.0) {
+			if (value == Double.POSITIVE_INFINITY) {
+				return Double.POSITIVE_INFINITY;
+			}
 
 			// ln'(x) = 1/x
 			// so
@@ -1261,21 +1356,22 @@ public final class FastMath extends CmnFastMath {
 			// log(1+value)
 			// = log(u+epsilon)
 			// ~= log(u) + epsilon/value
-			// We compute log(u) as done in log(double), and then add the corrective term.
+			// We compute log(u) as done in log(double), and then add the
+			// corrective term.
 
-			double valuePlusOne = 1.0 + value;
-			if ( valuePlusOne == 1.0 ) {
+			final double valuePlusOne = 1.0 + value;
+			if (valuePlusOne == 1.0) {
 				return value;
-			} else if ( Math.abs(value) < 0.15 ) {
-				double z = value / (value + 2.0);
-				double z2 = z * z;
+			} else if (Math.abs(value) < 0.15) {
+				final double z = value / (value + 2.0);
+				final double z2 = z * z;
 				return z * (2 + z2 * (2.0 / 3 + z2 * (2.0 / 5 + z2 * (2.0 / 7 + z2 * (2.0 / 9 + z2 * (2.0 / 11))))));
 			}
 
-			int valuePlusOneBitsHi = (int) (Double.doubleToRawLongBits(valuePlusOne) >> 32) & 0x7FFFFFFF;
-			int valuePlusOneExp = (valuePlusOneBitsHi >> 20) - MAX_DOUBLE_EXPONENT;
+			final int valuePlusOneBitsHi = (int) (Double.doubleToRawLongBits(valuePlusOne) >> 32) & 0x7FFFFFFF;
+			final int valuePlusOneExp = (valuePlusOneBitsHi >> 20) - MAX_DOUBLE_EXPONENT;
 			// Getting the first LOG_BITS bits of the mantissa.
-			int xIndex = valuePlusOneBitsHi << 12 >>> 32 - LOG_BITS;
+			final int xIndex = valuePlusOneBitsHi << 12 >>> 32 - LOG_BITS;
 
 			// 1.mantissa/1.mantissaApprox - 1
 			double z = valuePlusOne * twoPowNormalOrSubnormal(-valuePlusOneExp) * MyTLog.logXInvTab[xIndex] - 1;
@@ -1287,9 +1383,9 @@ public final class FastMath extends CmnFastMath {
 			// epsilon = value - (valuePlusOne-1)
 			// (valuePlusOne + epsilon ~= 1+value (not rounded))
 
-			return valuePlusOneExp * LOG_2 + MyTLog.logXLogTab[xIndex] +
-				(z + (value - (valuePlusOne - 1)) / valuePlusOne);
-		} else if ( value == -1.0 ) {
+			return valuePlusOneExp * LOG_2 + MyTLog.logXLogTab[xIndex]
+					+ (z + (value - (valuePlusOne - 1)) / valuePlusOne);
+		} else if (value == -1.0) {
 			return Double.NEGATIVE_INFINITY;
 		} else { // value < -1.0, or value is NaN
 			return Double.NaN;
@@ -1303,52 +1399,62 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * 1e-13ish accuracy or better on whole double range.
 	 *
-	 * @param value A double value.
-	 * @param power A power.
+	 * @param value
+	 *            A double value.
+	 * @param power
+	 *            A power.
 	 * @return value^power.
 	 */
 	public static double pow(final double value, final double power) {
-		if ( USE_JDK_MATH ) { return Math.pow(value, power); }
-		if ( power == 0.0 ) {
+		if (USE_JDK_MATH) {
+			return Math.pow(value, power);
+		}
+		if (power == 0.0) {
 			return 1.0;
-		} else if ( power == 1.0 ) { return value; }
-		if ( value <= 0.0 ) {
+		} else if (power == 1.0) {
+			return value;
+		}
+		if (value <= 0.0) {
 			// powerInfo: 0 if not integer, 1 if even integer, -1 if odd integer
 			int powerInfo;
-			if ( Math.abs(power) >= TWO_POW_52 * 2 ) {
+			if (Math.abs(power) >= TWO_POW_52 * 2) {
 				// The binary digit just before comma is outside mantissa,
 				// thus it is always 0: power is an even integer.
 				powerInfo = 1;
 			} else {
-				// If power's magnitude permits, we cast into int instead of into long,
+				// If power's magnitude permits, we cast into int instead of
+				// into long,
 				// as it is faster.
-				if ( Math.abs(power) <= Integer.MAX_VALUE ) {
-					int powerAsInt = (int) power;
-					if ( power == powerAsInt ) {
+				if (Math.abs(power) <= Integer.MAX_VALUE) {
+					final int powerAsInt = (int) power;
+					if (power == powerAsInt) {
 						powerInfo = (powerAsInt & 1) == 0 ? 1 : -1;
-					} else { // power is not an integer (and not NaN, due to test against Integer.MAX_VALUE)
+					} else { // power is not an integer (and not NaN, due to
+								// test against Integer.MAX_VALUE)
 						powerInfo = 0;
 					}
 				} else {
-					long powerAsLong = (long) power;
-					if ( power == powerAsLong ) {
+					final long powerAsLong = (long) power;
+					if (power == powerAsLong) {
 						powerInfo = (powerAsLong & 1) == 0 ? 1 : -1;
 					} else { // power is not an integer, or is NaN
-						if ( power != power ) { return Double.NaN; }
+						if (power != power) {
+							return Double.NaN;
+						}
 						powerInfo = 0;
 					}
 				}
 			}
 
-			if ( value == 0.0 ) {
-				if ( power < 0.0 ) {
+			if (value == 0.0) {
+				if (power < 0.0) {
 					return powerInfo < 0 ? 1 / value : Double.POSITIVE_INFINITY;
 				} else { // power > 0.0 (0 and NaN cases already treated)
 					return powerInfo < 0 ? value : 0.0;
 				}
 			} else { // value < 0.0
-				if ( value == Double.NEGATIVE_INFINITY ) {
-					if ( powerInfo < 0 ) { // power odd integer
+				if (value == Double.NEGATIVE_INFINITY) {
+					if (powerInfo < 0) { // power odd integer
 						return power < 0.0 ? -0.0 : Double.NEGATIVE_INFINITY;
 					} else { // power even integer, or not an integer
 						return power < 0.0 ? 0.0 : Double.POSITIVE_INFINITY;
@@ -1363,35 +1469,44 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Quick pow, with a max relative error of about 1e-2
-	 * for value >= Double.MIN_NORMAL and 1e-10 < |value^power| < 1e10,
-	 * of about 6e-2 for value >= Double.MIN_NORMAL and 1e-40 < |value^power| < 1e40,
-	 * and worse accuracy otherwise.
+	 * Quick pow, with a max relative error of about 1e-2 for value >=
+	 * Double.MIN_NORMAL and 1e-10 < |value^power| < 1e10, of about 6e-2 for
+	 * value >= Double.MIN_NORMAL and 1e-40 < |value^power| < 1e40, and worse
+	 * accuracy otherwise.
 	 *
-	 * @param value A double value, in ]0,+Infinity[ (strictly positive and finite).
-	 * @param power A double value.
+	 * @param value
+	 *            A double value, in ]0,+Infinity[ (strictly positive and
+	 *            finite).
+	 * @param power
+	 *            A double value.
 	 * @return value^power.
 	 */
 	public static double powQuick(final double value, final double power) {
-		if ( USE_JDK_MATH ) { return Math.pow(value, power); }
+		if (USE_JDK_MATH) {
+			return Math.pow(value, power);
+		}
 		return exp(power * logQuick(value));
 	}
 
 	/**
-	 * This treatment is somehow accurate for low values of |power|,
-	 * and for |power*getExponent(value)| < 1023 or so (to stay away
-	 * from double extreme magnitudes (large and small)).
+	 * This treatment is somehow accurate for low values of |power|, and for
+	 * |power*getExponent(value)| < 1023 or so (to stay away from double extreme
+	 * magnitudes (large and small)).
 	 *
-	 * @param value A double value.
-	 * @param power A power.
+	 * @param value
+	 *            A double value.
+	 * @param power
+	 *            A power.
 	 * @return value^power.
 	 */
 	public static double powFast(double value, int power) {
-		if ( USE_JDK_MATH ) { return Math.pow(value, power); }
-		if ( power < 3 ) {
-			if ( power < 0 ) {
+		if (USE_JDK_MATH) {
+			return Math.pow(value, power);
+		}
+		if (power < 3) {
+			if (power < 0) {
 				// Opposite of Integer.MIN_VALUE does not exist as int.
-				if ( power == Integer.MIN_VALUE ) {
+				if (power == Integer.MIN_VALUE) {
 					// Integer.MAX_VALUE = -(power+1)
 					return 1.0 / (powFast(value, Integer.MAX_VALUE) * value);
 				} else {
@@ -1399,9 +1514,9 @@ public final class FastMath extends CmnFastMath {
 				}
 			} else {
 				// Here, power is in [0,2].
-				if ( power == 2 ) { // Most common case first.
+				if (power == 2) { // Most common case first.
 					return value * value;
-				} else if ( power == 0 ) {
+				} else if (power == 0) {
 					return 1.0;
 				} else { // power == 1
 					return value;
@@ -1412,18 +1527,18 @@ public final class FastMath extends CmnFastMath {
 			// If power <= 5, faster to finish outside the loop.
 			while (power > 5) {
 				// Test if power is odd.
-				if ( (power & 1) != 0 ) {
+				if ((power & 1) != 0) {
 					oddRemains *= value;
 				}
 				value *= value;
 				power >>= 1; // power = power / 2
 			}
 			// Here, power is in [3,5].
-			if ( power == 3 ) {
+			if (power == 3) {
 				return oddRemains * value * value * value;
 			} else { // power in [4,5].
-				double v2 = value * value;
-				if ( power == 4 ) {
+				final double v2 = value * value;
+				if (power == 4) {
 					return oddRemains * v2 * v2;
 				} else { // power == 5
 					return oddRemains * v2 * v2 * value;
@@ -1433,7 +1548,8 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A float value.
+	 * @param value
+	 *            A float value.
 	 * @return value*value.
 	 */
 	public static float pow2(final float value) {
@@ -1441,7 +1557,8 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return value*value.
 	 */
 	public static double pow2(final double value) {
@@ -1449,7 +1566,8 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A float value.
+	 * @param value
+	 *            A float value.
 	 * @return value*value*value.
 	 */
 	public static float pow3(final float value) {
@@ -1457,7 +1575,8 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return value*value*value.
 	 */
 	public static double pow3(final double value) {
@@ -1469,35 +1588,40 @@ public final class FastMath extends CmnFastMath {
 	 */
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value square root.
 	 */
 	public static double sqrt(double value) {
-		if ( USE_JDK_MATH || !USE_REDEFINED_SQRT ) { return Math.sqrt(value); }
+		if (USE_JDK_MATH || !USE_REDEFINED_SQRT) {
+			return Math.sqrt(value);
+		}
 		// See cbrt for comments, sqrt uses the same ideas.
 
-		if ( !(value > 0.0) ) { // value <= 0.0, or value is NaN
-			if ( ANTI_JIT_OPTIM_CRASH_ON_NAN ) {
+		if (!(value > 0.0)) { // value <= 0.0, or value is NaN
+			if (ANTI_JIT_OPTIM_CRASH_ON_NAN) {
 				return value < 0.0 ? Double.NaN : value;
 			} else {
 				return value == 0.0 ? value : Double.NaN;
 			}
-		} else if ( value == Double.POSITIVE_INFINITY ) { return Double.POSITIVE_INFINITY; }
+		} else if (value == Double.POSITIVE_INFINITY) {
+			return Double.POSITIVE_INFINITY;
+		}
 
 		double h;
-		if ( value < DOUBLE_MIN_NORMAL ) {
+		if (value < DOUBLE_MIN_NORMAL) {
 			value *= TWO_POW_52;
 			h = 2 * TWO_POW_N26;
 		} else {
 			h = 2.0;
 		}
 
-		int valueBitsHi = (int) (Double.doubleToRawLongBits(value) >> 32);
-		int valueExponentIndex = (valueBitsHi >> 20) + -MAX_DOUBLE_EXPONENT - MIN_DOUBLE_EXPONENT;
-		int xIndex = valueBitsHi << 12 >>> 32 - SQRT_LO_BITS;
+		final int valueBitsHi = (int) (Double.doubleToRawLongBits(value) >> 32);
+		final int valueExponentIndex = (valueBitsHi >> 20) + -MAX_DOUBLE_EXPONENT - MIN_DOUBLE_EXPONENT;
+		final int xIndex = valueBitsHi << 12 >>> 32 - SQRT_LO_BITS;
 
 		double result = MyTSqrt.sqrtXSqrtHiTab[valueExponentIndex] * MyTSqrt.sqrtXSqrtLoTab[xIndex];
-		double slope = MyTSqrt.sqrtSlopeHiTab[valueExponentIndex] * MyTSqrt.sqrtSlopeLoTab[xIndex];
+		final double slope = MyTSqrt.sqrtSlopeHiTab[valueExponentIndex] * MyTSqrt.sqrtSlopeLoTab[xIndex];
 		value *= 0.25;
 
 		result += (value - result * result) * slope;
@@ -1506,15 +1630,18 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Quick sqrt, with with a max relative error of about 3.41e-2
-	 * for values in [Double.MIN_NORMAL,Double.MAX_VALUE], and worse
-	 * accuracy outside this range.
+	 * Quick sqrt, with with a max relative error of about 3.41e-2 for values in
+	 * [Double.MIN_NORMAL,Double.MAX_VALUE], and worse accuracy outside this
+	 * range.
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value square root.
 	 */
 	public static double sqrtQuick(final double value) {
-		if ( USE_JDK_MATH ) { return Math.sqrt(value); }
+		if (USE_JDK_MATH) {
+			return Math.sqrt(value);
+		}
 		final long bits = Double.doubleToRawLongBits(value);
 		/*
 		 * Constant determined empirically, using a random-based metaheuristic.
@@ -1528,50 +1655,55 @@ public final class FastMath extends CmnFastMath {
 	 * for values in [Double.MIN_NORMAL,Double.MAX_VALUE], and worse accuracy
 	 * outside this range.
 	 *
-	 * This implementation uses zero step of Newton's method.
-	 * Here are the max relative errors on [Double.MIN_NORMAL,Double.MAX_VALUE]
-	 * depending on number of steps, if you want to copy-paste this code
-	 * and use your own number:
-	 * n=0: about 3.44e-2
-	 * n=1: about 1.75e-3
-	 * n=2: about 4.6e-6
-	 * n=3: about 3.17e-11
-	 * n=4: about 3.92e-16
-	 * n=5: about 3.03e-16
+	 * This implementation uses zero step of Newton's method. Here are the max
+	 * relative errors on [Double.MIN_NORMAL,Double.MAX_VALUE] depending on
+	 * number of steps, if you want to copy-paste this code and use your own
+	 * number: n=0: about 3.44e-2 n=1: about 1.75e-3 n=2: about 4.6e-6 n=3:
+	 * about 3.17e-11 n=4: about 3.92e-16 n=5: about 3.03e-16
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Inverse of value square root.
 	 */
 	public static double invSqrtQuick(final double value) {
-		if ( USE_JDK_MATH ) { return 1 / Math.sqrt(value); }
+		if (USE_JDK_MATH) {
+			return 1 / Math.sqrt(value);
+		}
 		return Double.longBitsToDouble(0x5FE6EB50C7B537A9L - (Double.doubleToRawLongBits(value) >> 1));
 	}
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value cubic root.
 	 */
 	public static double cbrt(double value) {
-		if ( USE_JDK_MATH ) { return Math.cbrt(value); }
+		if (USE_JDK_MATH) {
+			return Math.cbrt(value);
+		}
 		double h;
-		if ( value < 0.0 ) {
-			if ( value == Double.NEGATIVE_INFINITY ) { return Double.NEGATIVE_INFINITY; }
+		if (value < 0.0) {
+			if (value == Double.NEGATIVE_INFINITY) {
+				return Double.NEGATIVE_INFINITY;
+			}
 			value = -value;
 			// Making sure value is normal.
-			if ( value < DOUBLE_MIN_NORMAL ) {
+			if (value < DOUBLE_MIN_NORMAL) {
 				value *= TWO_POW_52 * TWO_POW_26;
-				// h = <result_sign> * <result_multiplicator_to_avoid_overflow> / <cbrt(value_multiplicator_to_avoid_subnormal)>
+				// h = <result_sign> * <result_multiplicator_to_avoid_overflow>
+				// / <cbrt(value_multiplicator_to_avoid_subnormal)>
 				h = -2 * TWO_POW_N26;
 			} else {
 				h = -2.0;
 			}
 		} else {
-			if ( !(value < Double.POSITIVE_INFINITY) ) { // value is +Infinity, or value is NaN
+			if (!(value < Double.POSITIVE_INFINITY)) { // value is +Infinity, or
+														// value is NaN
 				return value;
 			}
 			// Making sure value is normal.
-			if ( value < DOUBLE_MIN_NORMAL ) {
-				if ( value == 0.0 ) {
+			if (value < DOUBLE_MIN_NORMAL) {
+				if (value == 0.0) {
 					// cbrt(0.0) = 0.0, cbrt(-0.0) = -0.0
 					return value;
 				}
@@ -1583,28 +1715,35 @@ public final class FastMath extends CmnFastMath {
 		}
 
 		// Normal value is (2^<value exponent> * <a value in [1,2[>).
-		// First member cubic root is computed, and multiplied with an approximation
-		// of the cubic root of the second member, to end up with a good guess of
+		// First member cubic root is computed, and multiplied with an
+		// approximation
+		// of the cubic root of the second member, to end up with a good guess
+		// of
 		// the result before using Newton's (or Archimedes's) method.
-		// To compute the cubic root approximation, we use the formula "cbrt(value) = cbrt(x) * cbrt(value/x)",
-		// choosing x as close to value as possible but inferior to it, so that cbrt(value/x) is close to 1
-		// (we could iterate on this method, using value/x as new value for each iteration,
+		// To compute the cubic root approximation, we use the formula
+		// "cbrt(value) = cbrt(x) * cbrt(value/x)",
+		// choosing x as close to value as possible but inferior to it, so that
+		// cbrt(value/x) is close to 1
+		// (we could iterate on this method, using value/x as new value for each
+		// iteration,
 		// but finishing with Newton's method is faster).
 
-		// Shift and cast into an int, which overall is faster than working with a long.
-		int valueBitsHi = (int) (Double.doubleToRawLongBits(value) >> 32);
-		int valueExponentIndex = (valueBitsHi >> 20) + -MAX_DOUBLE_EXPONENT - MIN_DOUBLE_EXPONENT;
+		// Shift and cast into an int, which overall is faster than working with
+		// a long.
+		final int valueBitsHi = (int) (Double.doubleToRawLongBits(value) >> 32);
+		final int valueExponentIndex = (valueBitsHi >> 20) + -MAX_DOUBLE_EXPONENT - MIN_DOUBLE_EXPONENT;
 		// Getting the first CBRT_LO_BITS bits of the mantissa.
-		int xIndex = valueBitsHi << 12 >>> 32 - CBRT_LO_BITS;
+		final int xIndex = valueBitsHi << 12 >>> 32 - CBRT_LO_BITS;
 		double result = MyTCbrt.cbrtXCbrtHiTab[valueExponentIndex] * MyTCbrt.cbrtXCbrtLoTab[xIndex];
-		double slope = MyTCbrt.cbrtSlopeHiTab[valueExponentIndex] * MyTCbrt.cbrtSlopeLoTab[xIndex];
+		final double slope = MyTCbrt.cbrtSlopeHiTab[valueExponentIndex] * MyTCbrt.cbrtSlopeLoTab[xIndex];
 
 		// Lowering values to avoid overflows when using Newton's method
 		// (we will then just have to return twice the result).
 		// result^3 = value
 		// (result/2)^3 = value/8
 		value *= 0.125;
-		// No need to divide result here, as division is factorized in result computation tables.
+		// No need to divide result here, as division is factorized in result
+		// computation tables.
 		// result *= 0.5;
 
 		// Newton's method, looking for y = x^(1/p):
@@ -1617,7 +1756,8 @@ public final class FastMath extends CmnFastMath {
 		// For p=3:
 		// y(n) = y(n-1) + (x-y(n-1)^3) * (1/(3*y(n-1)^2))
 
-		// To save time, we don't recompute the slope between Newton's method steps,
+		// To save time, we don't recompute the slope between Newton's method
+		// steps,
 		// as initial slope is good enough for a few iterations.
 		//
 		// NB: slope = 1/(3*trueResult*trueResult)
@@ -1642,29 +1782,31 @@ public final class FastMath extends CmnFastMath {
 	 * @return sqrt(x^2+y^2) without intermediate overflow or underflow.
 	 */
 	public static double hypot(double x, double y) {
-		if ( USE_JDK_MATH ) { return Math.hypot(x, y); }
+		if (USE_JDK_MATH) {
+			return Math.hypot(x, y);
+		}
 		x = Math.abs(x);
 		y = Math.abs(y);
 		// Ensuring x <= y.
-		if ( y < x ) {
-			double a = x;
+		if (y < x) {
+			final double a = x;
 			x = y;
 			y = a;
-		} else if ( !(y >= x) ) { // Testing if we have some NaN.
+		} else if (!(y >= x)) { // Testing if we have some NaN.
 			return hypot_NaN(x, y);
 		}
 
-		if ( y - x == y ) {
+		if (y - x == y) {
 			// x too small to subtract from y.
 			return y;
 		} else {
 			double factor;
-			if ( y > HYPOT_MAX_MAG ) {
+			if (y > HYPOT_MAX_MAG) {
 				// y is too large: scaling down.
 				x *= 1 / HYPOT_FACTOR;
 				y *= 1 / HYPOT_FACTOR;
 				factor = HYPOT_FACTOR;
-			} else if ( x < 1 / HYPOT_MAX_MAG ) {
+			} else if (x < 1 / HYPOT_MAX_MAG) {
 				// x is too small: scaling up.
 				x *= HYPOT_FACTOR;
 				y *= HYPOT_FACTOR;
@@ -1680,7 +1822,7 @@ public final class FastMath extends CmnFastMath {
 	 * @return sqrt(x^2+y^2+z^2) without intermediate overflow or underflow.
 	 */
 	public static double hypot(double x, double y, double z) {
-		if ( USE_JDK_MATH ) {
+		if (USE_JDK_MATH) {
 			// No simple JDK equivalent.
 		}
 		x = Math.abs(x);
@@ -1691,43 +1833,43 @@ public final class FastMath extends CmnFastMath {
 		 * hence ensuring z <= y <= x, and not x <= y <= z, for less swaps.
 		 */
 		// Ensuring z <= y.
-		if ( z > y ) {
+		if (z > y) {
 			// y < z: swapping y and z
-			double a = z;
+			final double a = z;
 			z = y;
 			y = a;
-		} else if ( !(z <= y) ) { // Testing if y or z is NaN.
+		} else if (!(z <= y)) { // Testing if y or z is NaN.
 			return hypot_NaN(x, y, z);
 		}
 		// Ensuring y <= x.
-		if ( z > x ) {
+		if (z > x) {
 			// x < z <= y: moving x
-			double oldZ = z;
+			final double oldZ = z;
 			z = x;
-			double oldY = y;
+			final double oldY = y;
 			y = oldZ;
 			x = oldY;
-		} else if ( y > x ) {
+		} else if (y > x) {
 			// z <= x < y: swapping x and y
-			double a = y;
+			final double a = y;
 			y = x;
 			x = a;
-		} else if ( x != x ) { // Testing if x is NaN.
+		} else if (x != x) { // Testing if x is NaN.
 			return hypot_NaN(x, y, z);
 		}
 
-		if ( x - y == x ) {
+		if (x - y == x) {
 			// y, hence z, too small to subtract from x.
 			return x;
-		} else if ( y - z == y ) {
+		} else if (y - z == y) {
 			// z too small to subtract from y, hence x.
 			double factor;
-			if ( x > HYPOT_MAX_MAG ) {
+			if (x > HYPOT_MAX_MAG) {
 				// x is too large: scaling down.
 				x *= 1 / HYPOT_FACTOR;
 				y *= 1 / HYPOT_FACTOR;
 				factor = HYPOT_FACTOR;
-			} else if ( y < 1 / HYPOT_MAX_MAG ) {
+			} else if (y < 1 / HYPOT_MAX_MAG) {
 				// y is too small: scaling up.
 				x *= HYPOT_FACTOR;
 				y *= HYPOT_FACTOR;
@@ -1738,13 +1880,13 @@ public final class FastMath extends CmnFastMath {
 			return factor * sqrt(x * x + y * y);
 		} else {
 			double factor;
-			if ( x > HYPOT_MAX_MAG ) {
+			if (x > HYPOT_MAX_MAG) {
 				// x is too large: scaling down.
 				x *= 1 / HYPOT_FACTOR;
 				y *= 1 / HYPOT_FACTOR;
 				z *= 1 / HYPOT_FACTOR;
 				factor = HYPOT_FACTOR;
-			} else if ( z < 1 / HYPOT_MAX_MAG ) {
+			} else if (z < 1 / HYPOT_MAX_MAG) {
 				// z is too small: scaling up.
 				x *= HYPOT_FACTOR;
 				y *= HYPOT_FACTOR;
@@ -1763,24 +1905,25 @@ public final class FastMath extends CmnFastMath {
 	 */
 
 	/**
-	 * @param value A float value.
+	 * @param value
+	 *            A float value.
 	 * @return Floor of value.
 	 */
 	public static float floor(final float value) {
 		final int exponent = getExponent(value);
-		if ( exponent < 0 ) {
+		if (exponent < 0) {
 			// abs(value) < 1.
-			if ( value < 0.0f ) {
+			if (value < 0.0f) {
 				return -1.0f;
 			} else {
 				// 0.0f, or -0.0f if value is -0.0f
 				return 0.0f * value;
 			}
-		} else if ( exponent < 23 ) {
+		} else if (exponent < 23) {
 			// A bit faster than using casts.
 			final int bits = Float.floatToRawIntBits(value);
 			final int anteCommaBits = bits & 0xFF800000 >> exponent;
-			if ( value < 0.0f && anteCommaBits != bits ) {
+			if (value < 0.0f && anteCommaBits != bits) {
 				return Float.intBitsToFloat(anteCommaBits) - 1.0f;
 			} else {
 				return Float.intBitsToFloat(anteCommaBits);
@@ -1792,37 +1935,41 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Floor of value.
 	 */
 	public static double floor(final double value) {
-		if ( USE_JDK_MATH ) { return Math.floor(value); }
-		if ( ANTI_SLOW_CASTS ) {
-			double valueAbs = Math.abs(value);
-			if ( valueAbs <= Integer.MAX_VALUE ) {
-				if ( value > 0.0 ) {
+		if (USE_JDK_MATH) {
+			return Math.floor(value);
+		}
+		if (ANTI_SLOW_CASTS) {
+			final double valueAbs = Math.abs(value);
+			if (valueAbs <= Integer.MAX_VALUE) {
+				if (value > 0.0) {
 					return (int) value;
-				} else if ( value < 0.0 ) {
-					double anteCommaDigits = (int) value;
-					if ( value != anteCommaDigits ) {
+				} else if (value < 0.0) {
+					final double anteCommaDigits = (int) value;
+					if (value != anteCommaDigits) {
 						return anteCommaDigits - 1.0;
 					} else {
 						return anteCommaDigits;
 					}
-				} else { // value is +-0.0 (not NaN due to test against Integer.MAX_VALUE)
+				} else { // value is +-0.0 (not NaN due to test against
+							// Integer.MAX_VALUE)
 					return value;
 				}
-			} else if ( valueAbs < TWO_POW_52 ) {
+			} else if (valueAbs < TWO_POW_52) {
 				// We split the value in two:
 				// high part, which is a mathematical integer,
 				// and the rest, for which we can get rid of the
 				// post comma digits by casting into an int.
-				double highPart = (int) (value * TWO_POW_N26) * TWO_POW_26;
-				if ( value > 0.0 ) {
+				final double highPart = (int) (value * TWO_POW_N26) * TWO_POW_26;
+				if (value > 0.0) {
 					return highPart + (int) (value - highPart);
 				} else {
-					double anteCommaDigits = highPart + (int) (value - highPart);
-					if ( value != anteCommaDigits ) {
+					final double anteCommaDigits = highPart + (int) (value - highPart);
+					if (value != anteCommaDigits) {
 						return anteCommaDigits - 1.0;
 					} else {
 						return anteCommaDigits;
@@ -1833,19 +1980,19 @@ public final class FastMath extends CmnFastMath {
 			}
 		} else {
 			final int exponent = getExponent(value);
-			if ( exponent < 0 ) {
+			if (exponent < 0) {
 				// abs(value) < 1.
-				if ( value < 0.0 ) {
+				if (value < 0.0) {
 					return -1.0;
 				} else {
 					// 0.0, or -0.0 if value is -0.0
 					return 0.0 * value;
 				}
-			} else if ( exponent < 52 ) {
+			} else if (exponent < 52) {
 				// A bit faster than working on bits.
 				final long matIntPart = (long) value;
 				final double matIntToValue = value - matIntPart;
-				if ( matIntToValue >= 0.0 ) {
+				if (matIntToValue >= 0.0) {
 					return matIntPart;
 				} else {
 					return matIntPart - 1;
@@ -1858,7 +2005,8 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A float value.
+	 * @param value
+	 *            A float value.
 	 * @return Ceiling of value.
 	 */
 	public static float ceil(final float value) {
@@ -1866,19 +2014,23 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Ceiling of value.
 	 */
 	public static double ceil(final double value) {
-		if ( USE_JDK_MATH ) { return Math.ceil(value); }
+		if (USE_JDK_MATH) {
+			return Math.ceil(value);
+		}
 		return -floor(-value);
 	}
 
 	/**
-	 * Might have different semantics than Math.round(float),
-	 * see bugs 6430675 and 8010430.
+	 * Might have different semantics than Math.round(float), see bugs 6430675
+	 * and 8010430.
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value rounded to nearest int, choosing superior int in case two
 	 *         are equally close (i.e. rounding-up).
 	 */
@@ -1890,10 +2042,10 @@ public final class FastMath extends CmnFastMath {
 		// Shift to get rid of bits past comma except first one: will need to
 		// 1-shift to the right to end up with correct magnitude.
 		final int shift = 23 - 1 + MAX_FLOAT_EXPONENT - biasedExp;
-		if ( (shift & -32) == 0 ) {
+		if ((shift & -32) == 0) {
 			// shift in [0,31], so unbiased exp in [-9,22].
 			int extendedMantissa = 0x00800000 | bits & 0x007FFFFF;
-			if ( bits < 0 ) {
+			if (bits < 0) {
 				extendedMantissa = -extendedMantissa;
 			}
 			// If value is positive and first bit past comma is 0, rounding
@@ -1906,10 +2058,11 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * Might have different semantics than Math.round(double),
-	 * see bugs 6430675 and 8010430.
+	 * Might have different semantics than Math.round(double), see bugs 6430675
+	 * and 8010430.
 	 *
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value rounded to nearest long, choosing superior long in case two
 	 *         are equally close (i.e. rounding-up).
 	 */
@@ -1919,10 +2072,10 @@ public final class FastMath extends CmnFastMath {
 		// Shift to get rid of bits past comma except first one: will need to
 		// 1-shift to the right to end up with correct magnitude.
 		final int shift = 52 - 1 + MAX_DOUBLE_EXPONENT - biasedExp;
-		if ( (shift & -64) == 0 ) {
+		if ((shift & -64) == 0) {
 			// shift in [0,63], so unbiased exp in [-12,51].
 			long extendedMantissa = 0x0010000000000000L | bits & 0x000FFFFFFFFFFFFFL;
-			if ( bits < 0 ) {
+			if (bits < 0) {
 				extendedMantissa = -extendedMantissa;
 			}
 			// If value is positive and first bit past comma is 0, rounding
@@ -1931,9 +2084,10 @@ public final class FastMath extends CmnFastMath {
 			return (extendedMantissa >> shift) + 1L >> 1;
 		} else {
 			// +-Infinity, NaN, or a mathematical integer.
-			if ( ANTI_SLOW_CASTS ) {
-				if ( Math.abs(value) >= -(double) Long.MIN_VALUE ) {
-					// +-Infinity or a mathematical integer (mostly) out of long range.
+			if (ANTI_SLOW_CASTS) {
+				if (Math.abs(value) >= -(double) Long.MIN_VALUE) {
+					// +-Infinity or a mathematical integer (mostly) out of long
+					// range.
 					return value < 0.0 ? Long.MIN_VALUE : Long.MAX_VALUE;
 				}
 				// NaN or a mathematical integer (mostly) in long range.
@@ -1943,24 +2097,26 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A float value.
-	 * @return Value rounded to nearest int, choosing even int in case two
-	 *         are equally close.
+	 * @param value
+	 *            A float value.
+	 * @return Value rounded to nearest int, choosing even int in case two are
+	 *         equally close.
 	 */
 	public static int roundEven(float value) {
 		final int sign = signFromBit(value);
 		value = Math.abs(value);
-		if ( ANTI_SLOW_CASTS ) {
-			if ( value < TWO_POW_23_F ) {
+		if (ANTI_SLOW_CASTS) {
+			if (value < TWO_POW_23_F) {
 				// Getting rid of post-comma bits.
 				value = value + TWO_POW_23_F - TWO_POW_23_F;
 				return sign * (int) value;
-			} else if ( value < Integer.MAX_VALUE ) { // <= doesn't work because of float precision
+			} else if (value < Integer.MAX_VALUE) { // <= doesn't work because
+													// of float precision
 				// value is in [-Integer.MAX_VALUE,Integer.MAX_VALUE]
 				return sign * (int) value;
 			}
 		} else {
-			if ( value < TWO_POW_23_F ) {
+			if (value < TWO_POW_23_F) {
 				// Getting rid of post-comma bits.
 				value = value + TWO_POW_23_F - TWO_POW_23_F;
 			}
@@ -1969,19 +2125,20 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A double value.
-	 * @return Value rounded to nearest long, choosing even long in case two
-	 *         are equally close.
+	 * @param value
+	 *            A double value.
+	 * @return Value rounded to nearest long, choosing even long in case two are
+	 *         equally close.
 	 */
 	public static long roundEven(double value) {
 		final int sign = (int) signFromBit(value);
 		value = Math.abs(value);
-		if ( value < TWO_POW_52 ) {
+		if (value < TWO_POW_52) {
 			// Getting rid of post-comma bits.
 			value = value + TWO_POW_52 - TWO_POW_52;
 		}
-		if ( ANTI_SLOW_CASTS ) {
-			if ( value <= Integer.MAX_VALUE ) {
+		if (ANTI_SLOW_CASTS) {
+			if (value <= Integer.MAX_VALUE) {
 				// value is in [-Integer.MAX_VALUE,Integer.MAX_VALUE]
 				return sign * (int) value;
 			}
@@ -1990,15 +2147,16 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A float value.
+	 * @param value
+	 *            A float value.
 	 * @return The float mathematical integer closest to the specified value,
-	 *         choosing even one if two are equally close, or respectively
-	 *         NaN, +-Infinity or +-0.0f if the value is any of these.
+	 *         choosing even one if two are equally close, or respectively NaN,
+	 *         +-Infinity or +-0.0f if the value is any of these.
 	 */
 	public static float rint(float value) {
 		final int sign = signFromBit(value);
 		value = Math.abs(value);
-		if ( value < TWO_POW_23_F ) {
+		if (value < TWO_POW_23_F) {
 			// Getting rid of post-comma bits.
 			value = TWO_POW_23_F + value - TWO_POW_23_F;
 		}
@@ -2007,16 +2165,19 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return The double mathematical integer closest to the specified value,
-	 *         choosing even one if two are equally close, or respectively
-	 *         NaN, +-Infinity or +-0.0 if the value is any of these.
+	 *         choosing even one if two are equally close, or respectively NaN,
+	 *         +-Infinity or +-0.0 if the value is any of these.
 	 */
 	public static double rint(double value) {
-		if ( USE_JDK_MATH ) { return Math.rint(value); }
+		if (USE_JDK_MATH) {
+			return Math.rint(value);
+		}
 		final int sign = (int) signFromBit(value);
 		value = Math.abs(value);
-		if ( value < TWO_POW_52 ) {
+		if (value < TWO_POW_52) {
 			// Getting rid of post-comma bits.
 			value = TWO_POW_52 + value - TWO_POW_52;
 		}
@@ -2029,9 +2190,12 @@ public final class FastMath extends CmnFastMath {
 	 */
 
 	/**
-	 * @param min A float value.
-	 * @param max A float value.
-	 * @param value A float value.
+	 * @param min
+	 *            A float value.
+	 * @param max
+	 *            A float value.
+	 * @param value
+	 *            A float value.
 	 * @return min if value < min, max if value > max, value otherwise.
 	 */
 	public static float toRange(final float min, final float max, final float value) {
@@ -2039,9 +2203,12 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param min A double value.
-	 * @param max A double value.
-	 * @param value A double value.
+	 * @param min
+	 *            A double value.
+	 * @param max
+	 *            A double value.
+	 * @param value
+	 *            A double value.
 	 * @return min if value < min, max if value > max, value otherwise.
 	 */
 	public static double toRange(final double min, final double max, final double value) {
@@ -2054,51 +2221,49 @@ public final class FastMath extends CmnFastMath {
 
 	/**
 	 * Returns dividend - divisor * n, where n is the mathematical integer
-	 * closest to dividend/divisor.
-	 * If dividend/divisor is equally close to surrounding integers,
-	 * we choose n to be the integer of smallest magnitude, which makes
-	 * this treatment differ from Math.IEEEremainder(double,double),
-	 * where n is chosen to be the even integer.
-	 * Note that the choice of n is not done considering the double
-	 * approximation of dividend/divisor, because it could cause
-	 * result to be outside [-|divisor|/2,|divisor|/2] range.
-	 * The practical effect is that if multiple results would be possible,
-	 * we always choose the result that is the closest to (and has the same
-	 * sign as) the dividend.
-	 * Ex. :
-	 * - for (-3.0,2.0), this method returns -1.0,
-	 * whereas Math.IEEEremainder returns 1.0.
-	 * - for (-5.0,2.0), both this method and Math.IEEEremainder return -1.0.
+	 * closest to dividend/divisor. If dividend/divisor is equally close to
+	 * surrounding integers, we choose n to be the integer of smallest
+	 * magnitude, which makes this treatment differ from
+	 * Math.IEEEremainder(double,double), where n is chosen to be the even
+	 * integer. Note that the choice of n is not done considering the double
+	 * approximation of dividend/divisor, because it could cause result to be
+	 * outside [-|divisor|/2,|divisor|/2] range. The practical effect is that if
+	 * multiple results would be possible, we always choose the result that is
+	 * the closest to (and has the same sign as) the dividend. Ex. : - for
+	 * (-3.0,2.0), this method returns -1.0, whereas Math.IEEEremainder returns
+	 * 1.0. - for (-5.0,2.0), both this method and Math.IEEEremainder return
+	 * -1.0.
 	 *
-	 * If the remainder is zero, its sign is the same as the sign of the first argument.
-	 * If either argument is NaN, or the first argument is infinite,
-	 * or the second argument is positive zero or negative zero,
-	 * then the result is NaN.
-	 * If the first argument is finite and the second argument is
+	 * If the remainder is zero, its sign is the same as the sign of the first
+	 * argument. If either argument is NaN, or the first argument is infinite,
+	 * or the second argument is positive zero or negative zero, then the result
+	 * is NaN. If the first argument is finite and the second argument is
 	 * infinite, then the result is the same as the first argument.
 	 *
-	 * NB:
-	 * - Modulo operator (%) returns a value in ]-|divisor|,|divisor|[,
-	 * which sign is the same as dividend.
-	 * - As for modulo operator, the sign of the divisor has no effect on the result.
-	 * - On some architecture, % operator has been observed to return NaN
-	 * for some subnormal values of divisor, when dividend exponent is 1023,
-	 * which impacts the correctness of this method.
+	 * NB: - Modulo operator (%) returns a value in ]-|divisor|,|divisor|[,
+	 * which sign is the same as dividend. - As for modulo operator, the sign of
+	 * the divisor has no effect on the result. - On some architecture, %
+	 * operator has been observed to return NaN for some subnormal values of
+	 * divisor, when dividend exponent is 1023, which impacts the correctness of
+	 * this method.
 	 *
-	 * @param dividend Dividend.
-	 * @param divisor Divisor.
-	 * @return Remainder of dividend/divisor, i.e. a value in [-|divisor|/2,|divisor|/2].
+	 * @param dividend
+	 *            Dividend.
+	 * @param divisor
+	 *            Divisor.
+	 * @return Remainder of dividend/divisor, i.e. a value in
+	 *         [-|divisor|/2,|divisor|/2].
 	 */
 	public static double remainder(final double dividend, final double divisor) {
-		if ( Double.isInfinite(divisor) ) {
-			if ( Double.isInfinite(dividend) ) {
+		if (Double.isInfinite(divisor)) {
+			if (Double.isInfinite(dividend)) {
 				return Double.NaN;
 			} else {
 				return dividend;
 			}
 		}
-		double value = dividend % divisor;
-		if ( Math.abs(value + value) > Math.abs(divisor) ) {
+		final double value = dividend % divisor;
+		if (Math.abs(value + value) > Math.abs(divisor)) {
 			return value + (value > 0.0 ? -Math.abs(divisor) : Math.abs(divisor));
 		} else {
 			return value;
@@ -2106,36 +2271,45 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return The same angle, in radians, but in [-PI,PI].
 	 */
 	public static double normalizeMinusPiPi(final double angle) {
 		// Not modifying values in output range.
-		if ( angle >= -Math.PI && angle <= Math.PI ) { return angle; }
+		if (angle >= -Math.PI && angle <= Math.PI) {
+			return angle;
+		}
 		return remainderTwoPi(angle);
 	}
 
 	/**
 	 * Not accurate for large values.
 	 *
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return The same angle, in radians, but in [-PI,PI].
 	 */
 	public static double normalizeMinusPiPiFast(final double angle) {
 		// Not modifying values in output range.
-		if ( angle >= -Math.PI && angle <= Math.PI ) { return angle; }
+		if (angle >= -Math.PI && angle <= Math.PI) {
+			return angle;
+		}
 		return remainderTwoPiFast(angle);
 	}
 
 	/**
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return The same angle, in radians, but in [0,2*PI].
 	 */
 	public static double normalizeZeroTwoPi(double angle) {
 		// Not modifying values in output range.
-		if ( angle >= 0.0 && angle <= 2 * Math.PI ) { return angle; }
+		if (angle >= 0.0 && angle <= 2 * Math.PI) {
+			return angle;
+		}
 		angle = remainderTwoPi(angle);
-		if ( angle < 0.0 ) {
+		if (angle < 0.0) {
 			// LO then HI is theoretically better (when starting near 0).
 			return angle + TWOPI_LO + TWOPI_HI;
 		} else {
@@ -2146,14 +2320,17 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * Not accurate for large values.
 	 *
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return The same angle, in radians, but in [0,2*PI].
 	 */
 	public static double normalizeZeroTwoPiFast(double angle) {
 		// Not modifying values in output range.
-		if ( angle >= 0.0 && angle <= 2 * Math.PI ) { return angle; }
+		if (angle >= 0.0 && angle <= 2 * Math.PI) {
+			return angle;
+		}
 		angle = remainderTwoPiFast(angle);
-		if ( angle < 0.0 ) {
+		if (angle < 0.0) {
 			// LO then HI is theoretically better (when starting near 0).
 			return angle + TWOPI_LO + TWOPI_HI;
 		} else {
@@ -2162,24 +2339,30 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Angle value modulo PI, in radians, in [-PI/2,PI/2].
 	 */
 	public static double normalizeMinusHalfPiHalfPi(final double angle) {
 		// Not modifying values in output range.
-		if ( angle >= -Math.PI / 2 && angle <= Math.PI / 2 ) { return angle; }
+		if (angle >= -Math.PI / 2 && angle <= Math.PI / 2) {
+			return angle;
+		}
 		return remainderPi(angle);
 	}
 
 	/**
 	 * Not accurate for large values.
 	 *
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Angle value modulo PI, in radians, in [-PI/2,PI/2].
 	 */
 	public static double normalizeMinusHalfPiHalfPiFast(final double angle) {
 		// Not modifying values in output range.
-		if ( angle >= -Math.PI / 2 && angle <= Math.PI / 2 ) { return angle; }
+		if (angle >= -Math.PI / 2 && angle <= Math.PI / 2) {
+			return angle;
+		}
 		return remainderPiFast(angle);
 	}
 
@@ -2188,23 +2371,28 @@ public final class FastMath extends CmnFastMath {
 	 */
 
 	/**
-	 * @param value A float value.
-	 * @return true if the specified value is NaN or +-Infinity, false otherwise.
+	 * @param value
+	 *            A float value.
+	 * @return true if the specified value is NaN or +-Infinity, false
+	 *         otherwise.
 	 */
 	public static boolean isNaNOrInfinite(final float value) {
 		return NumbersUtils.isNaNOrInfinite(value);
 	}
 
 	/**
-	 * @param value A double value.
-	 * @return true if the specified value is NaN or +-Infinity, false otherwise.
+	 * @param value
+	 *            A double value.
+	 * @return true if the specified value is NaN or +-Infinity, false
+	 *         otherwise.
 	 */
 	public static boolean isNaNOrInfinite(final double value) {
 		return NumbersUtils.isNaNOrInfinite(value);
 	}
 
 	/**
-	 * @param value A float value.
+	 * @param value
+	 *            A float value.
 	 * @return Value unbiased exponent.
 	 */
 	public static int getExponent(final float value) {
@@ -2212,7 +2400,8 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return Value unbiased exponent.
 	 */
 	public static int getExponent(final double value) {
@@ -2220,25 +2409,35 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A float value.
-	 * @return -1.0f if the specified value is < 0, 1.0f if it is > 0,
-	 *         and the value itself if it is NaN or +-0.0f.
+	 * @param value
+	 *            A float value.
+	 * @return -1.0f if the specified value is < 0, 1.0f if it is > 0, and the
+	 *         value itself if it is NaN or +-0.0f.
 	 */
 	public static float signum(final float value) {
-		if ( USE_JDK_MATH ) { return Math.signum(value); }
-		if ( value == 0.0f || value != value ) { return value; }
+		if (USE_JDK_MATH) {
+			return Math.signum(value);
+		}
+		if (value == 0.0f || value != value) {
+			return value;
+		}
 		return signFromBit(value);
 	}
 
 	/**
-	 * @param value A double value.
-	 * @return -1.0 if the specified value is < 0, 1.0 if it is > 0,
-	 *         and the value itself if it is NaN or +-0.0.
+	 * @param value
+	 *            A double value.
+	 * @return -1.0 if the specified value is < 0, 1.0 if it is > 0, and the
+	 *         value itself if it is NaN or +-0.0.
 	 */
 	public static double signum(final double value) {
-		if ( USE_JDK_MATH ) { return Math.signum(value); }
-		if ( value == 0.0 || value != value ) { return value; }
-		if ( ANTI_SLOW_CASTS ) {
+		if (USE_JDK_MATH) {
+			return Math.signum(value);
+		}
+		if (value == 0.0 || value != value) {
+			return value;
+		}
+		if (ANTI_SLOW_CASTS) {
 			return (int) signFromBit(value);
 		} else {
 			return signFromBit(value);
@@ -2246,7 +2445,8 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A float value.
+	 * @param value
+	 *            A float value.
 	 * @return -1 if sign bit is 1, 1 if sign bit is 0.
 	 */
 	public static int signFromBit(final float value) {
@@ -2254,7 +2454,8 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param value A double value.
+	 * @param value
+	 *            A double value.
 	 * @return -1 if sign bit is 1, 1 if sign bit is 0.
 	 */
 	public static long signFromBit(final double value) {
@@ -2265,54 +2466,61 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * A sign of NaN can be interpreted as positive or negative.
 	 *
-	 * @param magnitude A float value.
-	 * @param sign A float value.
-	 * @return A value with the magnitude of the first argument, and the sign
-	 *         of the second argument.
+	 * @param magnitude
+	 *            A float value.
+	 * @param sign
+	 *            A float value.
+	 * @return A value with the magnitude of the first argument, and the sign of
+	 *         the second argument.
 	 */
 	public static float copySign(final float magnitude, final float sign) {
-		return Float.intBitsToFloat(
-			Float.floatToRawIntBits(sign) & Integer.MIN_VALUE | Float.floatToRawIntBits(magnitude) & Integer.MAX_VALUE);
+		return Float.intBitsToFloat(Float.floatToRawIntBits(sign) & Integer.MIN_VALUE
+				| Float.floatToRawIntBits(magnitude) & Integer.MAX_VALUE);
 	}
 
 	/**
 	 * A sign of NaN can be interpreted as positive or negative.
 	 *
-	 * @param magnitude A double value.
-	 * @param sign A double value.
-	 * @return A value with the magnitude of the first argument, and the sign
-	 *         of the second argument.
+	 * @param magnitude
+	 *            A double value.
+	 * @param sign
+	 *            A double value.
+	 * @return A value with the magnitude of the first argument, and the sign of
+	 *         the second argument.
 	 */
 	public static double copySign(final double magnitude, final double sign) {
-		return Double.longBitsToDouble(
-			Double.doubleToRawLongBits(sign) & Long.MIN_VALUE | Double.doubleToRawLongBits(magnitude) & Long.MAX_VALUE);
+		return Double.longBitsToDouble(Double.doubleToRawLongBits(sign) & Long.MIN_VALUE
+				| Double.doubleToRawLongBits(magnitude) & Long.MAX_VALUE);
 	}
 
 	/**
 	 * The ULP (Unit in the Last Place) is the distance to the next value larger
 	 * in magnitude.
 	 *
-	 * @param value A float value.
-	 * @return The size of an ulp of the specified value, or Float.MIN_VALUE
-	 *         if it is +-0.0f, or +Infinity if it is +-Infinity, or NaN
-	 *         if it is NaN.
+	 * @param value
+	 *            A float value.
+	 * @return The size of an ulp of the specified value, or Float.MIN_VALUE if
+	 *         it is +-0.0f, or +Infinity if it is +-Infinity, or NaN if it is
+	 *         NaN.
 	 */
 	public static float ulp(final float value) {
-		if ( USE_JDK_MATH ) { return Math.ulp(value); }
+		if (USE_JDK_MATH) {
+			return Math.ulp(value);
+		}
 		/*
-		 * Look-up table not really worth it in micro-benchmark,
-		 * so should be worse with cache-misses.
+		 * Look-up table not really worth it in micro-benchmark, so should be
+		 * worse with cache-misses.
 		 */
 		final int exponent = getExponent(value);
-		if ( exponent >= MIN_FLOAT_NORMAL_EXPONENT + 23 ) {
-			if ( exponent == MAX_FLOAT_EXPONENT + 1 ) {
+		if (exponent >= MIN_FLOAT_NORMAL_EXPONENT + 23) {
+			if (exponent == MAX_FLOAT_EXPONENT + 1) {
 				// NaN or +-Infinity
 				return Math.abs(value);
 			}
 			// normal: returning 2^(exponent-23)
 			return Float.intBitsToFloat(exponent + MAX_FLOAT_EXPONENT - 23 << 23);
 		} else {
-			if ( exponent == MIN_FLOAT_NORMAL_EXPONENT - 1 ) {
+			if (exponent == MIN_FLOAT_NORMAL_EXPONENT - 1) {
 				// +-0.0f or subnormal
 				return Float.MIN_VALUE;
 			}
@@ -2325,27 +2533,30 @@ public final class FastMath extends CmnFastMath {
 	 * The ULP (Unit in the Last Place) is the distance to the next value larger
 	 * in magnitude.
 	 *
-	 * @param value A double value.
-	 * @return The size of an ulp of the specified value, or Double.MIN_VALUE
-	 *         if it is +-0.0, or +Infinity if it is +-Infinity, or NaN
-	 *         if it is NaN.
+	 * @param value
+	 *            A double value.
+	 * @return The size of an ulp of the specified value, or Double.MIN_VALUE if
+	 *         it is +-0.0, or +Infinity if it is +-Infinity, or NaN if it is
+	 *         NaN.
 	 */
 	public static double ulp(final double value) {
-		if ( USE_JDK_MATH ) { return Math.ulp(value); }
+		if (USE_JDK_MATH) {
+			return Math.ulp(value);
+		}
 		/*
-		 * Look-up table not really worth it in micro-benchmark,
-		 * so should be worse with cache-misses.
+		 * Look-up table not really worth it in micro-benchmark, so should be
+		 * worse with cache-misses.
 		 */
 		final int exponent = getExponent(value);
-		if ( exponent >= MIN_DOUBLE_NORMAL_EXPONENT + 52 ) {
-			if ( exponent == MAX_DOUBLE_EXPONENT + 1 ) {
+		if (exponent >= MIN_DOUBLE_NORMAL_EXPONENT + 52) {
+			if (exponent == MAX_DOUBLE_EXPONENT + 1) {
 				// NaN or +-Infinity
 				return Math.abs(value);
 			}
 			// normal: returning 2^(exponent-52)
 			return Double.longBitsToDouble(exponent + (MAX_DOUBLE_EXPONENT - 52L) << 52);
 		} else {
-			if ( exponent == MIN_DOUBLE_NORMAL_EXPONENT - 1 ) {
+			if (exponent == MIN_DOUBLE_NORMAL_EXPONENT - 1) {
 				// +-0.0f or subnormal
 				return Double.MIN_VALUE;
 			}
@@ -2357,31 +2568,33 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * If both arguments are +-0.0(f), (float)direction is returned.
 	 *
-	 * If both arguments are +Infinity or -Infinity,
-	 * respectively +Infinity or -Infinity is returned.
+	 * If both arguments are +Infinity or -Infinity, respectively +Infinity or
+	 * -Infinity is returned.
 	 *
-	 * @param start A float value.
-	 * @param direction A double value.
+	 * @param start
+	 *            A float value.
+	 * @param direction
+	 *            A double value.
 	 * @return The float adjacent to start towards direction, considering that
 	 *         +(-)Float.MIN_VALUE is adjacent to +(-)0.0f, and that
-	 *         +(-)Float.MAX_VALUE is adjacent to +(-)Infinity,
-	 *         or NaN if any argument is NaN.
+	 *         +(-)Float.MAX_VALUE is adjacent to +(-)Infinity, or NaN if any
+	 *         argument is NaN.
 	 */
 	public static float nextAfter(final float start, final double direction) {
-		if ( direction < start ) {
+		if (direction < start) {
 			// Going towards -Infinity.
-			if ( start == 0.0f ) {
+			if (start == 0.0f) {
 				// +-0.0f
 				return -Float.MIN_VALUE;
 			}
 			final int bits = Float.floatToRawIntBits(start);
 			return Float.intBitsToFloat(bits + (bits > 0 ? -1 : 1));
-		} else if ( direction > start ) {
+		} else if (direction > start) {
 			// Going towards +Infinity.
 			// +0.0f to get rid of eventual -0.0f
 			final int bits = Float.floatToRawIntBits(start + 0.0f);
 			return Float.intBitsToFloat(bits + (bits >= 0 ? 1 : -1));
-		} else if ( start == direction ) {
+		} else if (start == direction) {
 			return (float) direction;
 		} else {
 			// Returning a NaN derived from the input NaN(s).
@@ -2392,31 +2605,33 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * If both arguments are +-0.0, direction is returned.
 	 *
-	 * If both arguments are +Infinity or -Infinity,
-	 * respectively +Infinity or -Infinity is returned.
+	 * If both arguments are +Infinity or -Infinity, respectively +Infinity or
+	 * -Infinity is returned.
 	 *
-	 * @param start A double value.
-	 * @param direction A double value.
+	 * @param start
+	 *            A double value.
+	 * @param direction
+	 *            A double value.
 	 * @return The double adjacent to start towards direction, considering that
 	 *         +(-)Double.MIN_VALUE is adjacent to +(-)0.0, and that
-	 *         +(-)Double.MAX_VALUE is adjacent to +(-)Infinity,
-	 *         or NaN if any argument is NaN.
+	 *         +(-)Double.MAX_VALUE is adjacent to +(-)Infinity, or NaN if any
+	 *         argument is NaN.
 	 */
 	public static double nextAfter(final double start, final double direction) {
-		if ( direction < start ) {
+		if (direction < start) {
 			// Going towards -Infinity.
-			if ( start == 0.0 ) {
+			if (start == 0.0) {
 				// +-0.0
 				return -Double.MIN_VALUE;
 			}
 			final long bits = Double.doubleToRawLongBits(start);
 			return Double.longBitsToDouble(bits + (bits > 0 ? -1 : 1));
-		} else if ( direction > start ) {
+		} else if (direction > start) {
 			// Going towards +Infinity.
 			// +0.0 to get rid of eventual -0.0
 			final long bits = Double.doubleToRawLongBits(start + 0.0f);
 			return Double.longBitsToDouble(bits + (bits >= 0 ? 1 : -1));
-		} else if ( start == direction ) {
+		} else if (start == direction) {
 			return direction;
 		} else {
 			// Returning a NaN derived from the input NaN(s).
@@ -2428,14 +2643,14 @@ public final class FastMath extends CmnFastMath {
 	 * Semantically equivalent to nextAfter(start,Double.NEGATIVE_INFINITY).
 	 */
 	public static float nextDown(final float start) {
-		if ( start > Float.NEGATIVE_INFINITY ) {
-			if ( start == 0.0f ) {
+		if (start > Float.NEGATIVE_INFINITY) {
+			if (start == 0.0f) {
 				// +-0.0f
 				return -Float.MIN_VALUE;
 			}
 			final int bits = Float.floatToRawIntBits(start);
 			return Float.intBitsToFloat(bits + (bits > 0 ? -1 : 1));
-		} else if ( start == Float.NEGATIVE_INFINITY ) {
+		} else if (start == Float.NEGATIVE_INFINITY) {
 			return Float.NEGATIVE_INFINITY;
 		} else {
 			// NaN
@@ -2447,14 +2662,14 @@ public final class FastMath extends CmnFastMath {
 	 * Semantically equivalent to nextAfter(start,Double.NEGATIVE_INFINITY).
 	 */
 	public static double nextDown(final double start) {
-		if ( start > Double.NEGATIVE_INFINITY ) {
-			if ( start == 0.0 ) {
+		if (start > Double.NEGATIVE_INFINITY) {
+			if (start == 0.0) {
 				// +-0.0
 				return -Double.MIN_VALUE;
 			}
 			final long bits = Double.doubleToRawLongBits(start);
 			return Double.longBitsToDouble(bits + (bits > 0 ? -1 : 1));
-		} else if ( start == Double.NEGATIVE_INFINITY ) {
+		} else if (start == Double.NEGATIVE_INFINITY) {
 			return Double.NEGATIVE_INFINITY;
 		} else {
 			// NaN
@@ -2466,11 +2681,11 @@ public final class FastMath extends CmnFastMath {
 	 * Semantically equivalent to nextAfter(start,Double.POSITIVE_INFINITY).
 	 */
 	public static float nextUp(final float start) {
-		if ( start < Float.POSITIVE_INFINITY ) {
+		if (start < Float.POSITIVE_INFINITY) {
 			// +0.0f to get rid of eventual -0.0f
 			final int bits = Float.floatToRawIntBits(start + 0.0f);
 			return Float.intBitsToFloat(bits + (bits >= 0 ? 1 : -1));
-		} else if ( start == Float.POSITIVE_INFINITY ) {
+		} else if (start == Float.POSITIVE_INFINITY) {
 			return Float.POSITIVE_INFINITY;
 		} else {
 			// NaN
@@ -2482,11 +2697,11 @@ public final class FastMath extends CmnFastMath {
 	 * Semantically equivalent to nextAfter(start,Double.POSITIVE_INFINITY).
 	 */
 	public static double nextUp(final double start) {
-		if ( start < Double.POSITIVE_INFINITY ) {
+		if (start < Double.POSITIVE_INFINITY) {
 			// +0.0 to get rid of eventual -0.0
 			final long bits = Double.doubleToRawLongBits(start + 0.0);
 			return Double.longBitsToDouble(bits + (bits >= 0 ? 1 : -1));
-		} else if ( start == Double.POSITIVE_INFINITY ) {
+		} else if (start == Double.POSITIVE_INFINITY) {
 			return Double.POSITIVE_INFINITY;
 		} else {
 			// NaN
@@ -2497,10 +2712,12 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * Precision may be lost if the result is subnormal.
 	 *
-	 * @param value A float value.
-	 * @param scaleFactor An int value.
-	 * @return value * 2^scaleFactor, or a value equivalent to the specified
-	 *         one if it is NaN, +-Infinity or +-0.0f.
+	 * @param value
+	 *            A float value.
+	 * @param scaleFactor
+	 *            An int value.
+	 * @return value * 2^scaleFactor, or a value equivalent to the specified one
+	 *         if it is NaN, +-Infinity or +-0.0f.
 	 */
 	public static float scalb(final float value, int scaleFactor) {
 		// Large enough to imply overflow or underflow for
@@ -2516,13 +2733,15 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * Precision may be lost if the result is subnormal.
 	 *
-	 * @param value A double value.
-	 * @param scaleFactor An int value.
-	 * @return value * 2^scaleFactor, or a value equivalent to the specified
-	 *         one if it is NaN, +-Infinity or +-0.0.
+	 * @param value
+	 *            A double value.
+	 * @param scaleFactor
+	 *            An int value.
+	 * @return value * 2^scaleFactor, or a value equivalent to the specified one
+	 *         if it is NaN, +-Infinity or +-0.0.
 	 */
 	public static double scalb(double value, int scaleFactor) {
-		if ( scaleFactor > -MAX_DOUBLE_EXPONENT && scaleFactor <= MAX_DOUBLE_EXPONENT ) {
+		if (scaleFactor > -MAX_DOUBLE_EXPONENT && scaleFactor <= MAX_DOUBLE_EXPONENT) {
 			// Quick case (as done in apache FastMath).
 			return value * twoPowNormal(scaleFactor);
 		}
@@ -2535,7 +2754,7 @@ public final class FastMath extends CmnFastMath {
 		final int exponentAdjust;
 		final int scaleIncrement;
 		final double exponentDelta;
-		if ( scaleFactor < 0 ) {
+		if (scaleFactor < 0) {
 			scaleFactor = Math.max(scaleFactor, -MAX_SCALE);
 			scaleIncrement = -512;
 			exponentDelta = TWO_POW_N512;
@@ -2604,35 +2823,40 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * Non-instantiable.
 	 */
-	private FastMath() {}
+	private FastMath() {
+	}
 
 	/*
 	 * Remainders (accurate).
 	 */
 
 	/**
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Remainder of (angle % (2*PI)), in [-PI,PI].
 	 */
-	private static double remainderTwoPi(double angle) {
-		if ( USE_JDK_MATH ) { return jdkRemainderTwoPi(angle); }
+	private static double remainderTwoPi(final double a) {
+		double angle = a;
+		if (USE_JDK_MATH) {
+			return jdkRemainderTwoPi(angle);
+		}
 		boolean negateResult = false;
-		if ( angle < 0.0 ) {
+		if (angle < 0.0) {
 			angle = -angle;
 			negateResult = true;
 		}
-		if ( angle <= 4 * NORMALIZE_ANGLE_MAX_MEDIUM_DOUBLE_PIO2 ) {
-			double fn = (int) (angle * TWOPI_INV + 0.5);
+		if (angle <= 4 * NORMALIZE_ANGLE_MAX_MEDIUM_DOUBLE_PIO2) {
+			final double fn = (int) (angle * TWOPI_INV + 0.5);
 			angle = angle - fn * TWOPI_HI - fn * TWOPI_LO;
 			// Ensuring range.
 			// HI/LO can help a bit, even though we are always far from 0.
-			if ( angle < -Math.PI ) {
+			if (angle < -Math.PI) {
 				angle = angle + TWOPI_HI + TWOPI_LO;
-			} else if ( angle > Math.PI ) {
+			} else if (angle > Math.PI) {
 				angle = angle - TWOPI_HI - TWOPI_LO;
 			}
 			return negateResult ? -angle : angle;
-		} else if ( angle < Double.POSITIVE_INFINITY ) {
+		} else if (angle < Double.POSITIVE_INFINITY) {
 			angle = heavyRemainderTwoPi(angle);
 			return negateResult ? -angle : angle;
 		} else { // angle is +Infinity or NaN
@@ -2641,28 +2865,32 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Remainder of (angle % PI), in [-PI/2,PI/2].
 	 */
-	private static double remainderPi(double angle) {
-		if ( USE_JDK_MATH ) { return jdkRemainderPi(angle); }
+	private static double remainderPi(final double a) {
+		double angle = a;
+		if (USE_JDK_MATH) {
+			return jdkRemainderPi(angle);
+		}
 		boolean negateResult = false;
-		if ( angle < 0.0 ) {
+		if (angle < 0.0) {
 			angle = -angle;
 			negateResult = true;
 		}
-		if ( angle <= 2 * NORMALIZE_ANGLE_MAX_MEDIUM_DOUBLE_PIO2 ) {
-			double fn = (int) (angle * PI_INV + 0.5);
+		if (angle <= 2 * NORMALIZE_ANGLE_MAX_MEDIUM_DOUBLE_PIO2) {
+			final double fn = (int) (angle * PI_INV + 0.5);
 			angle = angle - fn * PI_HI - fn * PI_LO;
 			// Ensuring range.
 			// HI/LO can help a bit, even though we are always far from 0.
-			if ( angle < -Math.PI / 2 ) {
+			if (angle < -Math.PI / 2) {
 				angle = angle + PI_HI + PI_LO;
-			} else if ( angle > Math.PI / 2 ) {
+			} else if (angle > Math.PI / 2) {
 				angle = angle - PI_HI - PI_LO;
 			}
 			return negateResult ? -angle : angle;
-		} else if ( angle < Double.POSITIVE_INFINITY ) {
+		} else if (angle < Double.POSITIVE_INFINITY) {
 			angle = heavyRemainderPi(angle);
 			return negateResult ? -angle : angle;
 		} else { // angle is +Infinity or NaN
@@ -2671,35 +2899,38 @@ public final class FastMath extends CmnFastMath {
 	}
 
 	/**
-	 * @param angle Angle in radians.
-	 * @return Bits of double corresponding to remainder of (angle % (PI/2)),
-	 *         in [-PI/4,PI/4], with quadrant encoded in exponent bits.
+	 * @param angle
+	 *            Angle in radians.
+	 * @return Bits of double corresponding to remainder of (angle % (PI/2)), in
+	 *         [-PI/4,PI/4], with quadrant encoded in exponent bits.
 	 */
 	private static long remainderPiO2(double angle) {
-		if ( USE_JDK_MATH ) { return jdkRemainderPiO2(angle, false); }
+		if (USE_JDK_MATH) {
+			return jdkRemainderPiO2(angle, false);
+		}
 		boolean negateResult = false;
-		if ( angle < 0.0 ) {
+		if (angle < 0.0) {
 			angle = -angle;
 			negateResult = true;
 		}
-		if ( angle <= NORMALIZE_ANGLE_MAX_MEDIUM_DOUBLE_PIO2 ) {
+		if (angle <= NORMALIZE_ANGLE_MAX_MEDIUM_DOUBLE_PIO2) {
 			int n = (int) (angle * PIO2_INV + 0.5);
-			double fn = n;
+			final double fn = n;
 			angle = angle - fn * PIO2_HI - fn * PIO2_LO;
 			// Ensuring range.
 			// HI/LO can help a bit, even though we are always far from 0.
-			if ( angle < -Math.PI / 4 ) {
+			if (angle < -Math.PI / 4) {
 				angle = angle + PIO2_HI + PIO2_LO;
 				n--;
-			} else if ( angle > Math.PI / 4 ) {
+			} else if (angle > Math.PI / 4) {
 				angle = angle - PIO2_HI - PIO2_LO;
 				n++;
 			}
-			if ( negateResult ) {
+			if (negateResult) {
 				angle = -angle;
 			}
 			return encodeRemainderAndQuadrant(angle, n & 3);
-		} else if ( angle < Double.POSITIVE_INFINITY ) {
+		} else if (angle < Double.POSITIVE_INFINITY) {
 			return heavyRemainderPiO2(angle, negateResult);
 		} else { // angle is +Infinity or NaN
 			return encodeRemainderAndQuadrant(Double.NaN, 0);
@@ -2713,13 +2944,16 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * Not accurate for large values.
 	 *
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Remainder of (angle % (2*PI)), in [-PI,PI].
 	 */
 	private static double remainderTwoPiFast(double angle) {
-		if ( USE_JDK_MATH ) { return jdkRemainderTwoPi(angle); }
+		if (USE_JDK_MATH) {
+			return jdkRemainderTwoPi(angle);
+		}
 		boolean negateResult = false;
-		if ( angle < 0.0 ) {
+		if (angle < 0.0) {
 			angle = -angle;
 			negateResult = true;
 		}
@@ -2728,32 +2962,32 @@ public final class FastMath extends CmnFastMath {
 		// - For large values, we don't use % because it might be very slow,
 		// and we split computation in two, because cast from double to int
 		// with large numbers might be very slow also.
-		if ( angle <= TWO_POW_26 * (2 * Math.PI) ) {
+		if (angle <= TWO_POW_26 * (2 * Math.PI)) {
 			// ok
-		} else if ( angle <= TWO_POW_52 * (2 * Math.PI) ) {
+		} else if (angle <= TWO_POW_52 * (2 * Math.PI)) {
 			// Computing remainder of angle modulo TWO_POW_26*(2*PI).
-			double fn = (int) (angle * (TWOPI_INV / TWO_POW_26) + 0.5);
+			final double fn = (int) (angle * (TWOPI_INV / TWO_POW_26) + 0.5);
 			angle = angle - fn * (TWOPI_HI * TWO_POW_26) - fn * (TWOPI_LO * TWO_POW_26);
 			// Here, angle is in [-TWO_POW_26*PI,TWO_POW_26*PI], or so.
-			if ( angle < 0.0 ) {
+			if (angle < 0.0) {
 				angle = -angle;
 				negateResult = !negateResult;
 			}
-		} else if ( angle < Double.POSITIVE_INFINITY ) {
+		} else if (angle < Double.POSITIVE_INFINITY) {
 			return 0.0;
 		} else { // angle is +Infinity or NaN
 			return Double.NaN;
 		}
 
 		// Computing remainder of angle modulo 2*PI.
-		double fn = (int) (angle * TWOPI_INV + 0.5);
+		final double fn = (int) (angle * TWOPI_INV + 0.5);
 		angle = angle - fn * TWOPI_HI - fn * TWOPI_LO;
 
 		// Ensuring range.
 		// HI/LO can help a bit, even though we are always far from 0.
-		if ( angle < -Math.PI ) {
+		if (angle < -Math.PI) {
 			angle = angle + TWOPI_HI + TWOPI_LO;
-		} else if ( angle > Math.PI ) {
+		} else if (angle > Math.PI) {
 			angle = angle - TWOPI_HI - TWOPI_LO;
 		}
 		return negateResult ? -angle : angle;
@@ -2762,13 +2996,16 @@ public final class FastMath extends CmnFastMath {
 	/**
 	 * Not accurate for large values.
 	 *
-	 * @param angle Angle in radians.
+	 * @param angle
+	 *            Angle in radians.
 	 * @return Remainder of (angle % PI), in [-PI/2,PI/2].
 	 */
 	private static double remainderPiFast(double angle) {
-		if ( USE_JDK_MATH ) { return jdkRemainderPi(angle); }
+		if (USE_JDK_MATH) {
+			return jdkRemainderPi(angle);
+		}
 		boolean negateResult = false;
-		if ( angle < 0.0 ) {
+		if (angle < 0.0) {
 			angle = -angle;
 			negateResult = true;
 		}
@@ -2777,32 +3014,32 @@ public final class FastMath extends CmnFastMath {
 		// - For large values, we don't use % because it might be very slow,
 		// and we split computation in two, because cast from double to int
 		// with large numbers might be very slow also.
-		if ( angle <= TWO_POW_26 * Math.PI ) {
+		if (angle <= TWO_POW_26 * Math.PI) {
 			// ok
-		} else if ( angle <= TWO_POW_52 * Math.PI ) {
+		} else if (angle <= TWO_POW_52 * Math.PI) {
 			// Computing remainder of angle modulo TWO_POW_26*PI.
-			double fn = (int) (angle * (PI_INV / TWO_POW_26) + 0.5);
+			final double fn = (int) (angle * (PI_INV / TWO_POW_26) + 0.5);
 			angle = angle - fn * (PI_HI * TWO_POW_26) - fn * (PI_LO * TWO_POW_26);
 			// Here, angle is in [-TWO_POW_26*PI/2,TWO_POW_26*PI/2], or so.
-			if ( angle < 0.0 ) {
+			if (angle < 0.0) {
 				angle = -angle;
 				negateResult = !negateResult;
 			}
-		} else if ( angle < Double.POSITIVE_INFINITY ) {
+		} else if (angle < Double.POSITIVE_INFINITY) {
 			return 0.0;
 		} else { // angle is +Infinity or NaN
 			return Double.NaN;
 		}
 
 		// Computing remainder of angle modulo PI.
-		double fn = (int) (angle * PI_INV + 0.5);
+		final double fn = (int) (angle * PI_INV + 0.5);
 		angle = angle - fn * PI_HI - fn * PI_LO;
 
 		// Ensuring range.
 		// HI/LO can help a bit, even though we are always far from 0.
-		if ( angle < -Math.PI / 2 ) {
+		if (angle < -Math.PI / 2) {
 			angle = angle + PI_HI + PI_LO;
-		} else if ( angle > Math.PI / 2 ) {
+		} else if (angle > Math.PI / 2) {
 			angle = angle - PI_HI - PI_LO;
 		}
 		return negateResult ? -angle : angle;
