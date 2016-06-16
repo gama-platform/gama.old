@@ -79,10 +79,73 @@
 
 set -e
 
-REPO=$1 && shift
-RELEASE=$1 && shift
-RELEASEFILES=$@
+REPO="gama-platform/gama"
+RELEASE="latest"
+thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT"
 
-echo REPO
-echo RELEASE
-echo RELEASEFILES
+
+RELEASEFILES="$thePATH-linux.gtk.x86.zip $thePATH-linux.gtk.x86_64.zip $thePATH-macosx.cocoa.x86_64.zip $thePATH-win32.win32.x86.zip $thePATH-win32.win32.x86_64.zip"
+echo $RELEASEFILES
+echo "Getting info of latest tag..."
+echo 
+LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
+
+  RESULT=` curl -s -X GET \
+  -H "X-Parse-Application-Id: sensitive" \
+  -H "X-Parse-REST-API-Key: sensitive" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"value"}' \
+    "$LK"`
+RELEASEID=`echo "$RESULT" | sed -ne 's/^  "id": \(.*\),$/\1/p'`
+
+
+  LK="https://api.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets"
+  
+  RESULT=` curl -s -X GET \
+  -H "X-Parse-Application-Id: sensitive" \
+  -H "X-Parse-REST-API-Key: sensitive" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"value"}' \
+    "$LK"`
+	
+check=${#RESULT}
+
+if [ $check -ge 5 ]; then
+	echo "Remove old files..."
+	echo
+	json=$RESULT
+	prop='id'
+	
+    temp=`echo $json | sed 's/\\\\\//\//g' | sed 's/[{}]//g' | awk -v k="text" '{n=split($0,a,","); for (i=1; i<=n; i++) print a[i]}' | sed 's/\"\:\"/\|/g' | sed 's/[\,]/ /g' | sed 's/\"//g' | grep -w $prop`
+    
+	assets=`echo ${temp##*|}`
+
+	for theid in $assets; do
+		if [ "$theid" != "id:" ] &&  [ "$theid"  != "19405477" ]; then
+		  LK1="https://api.github.com/repos/gama-platform/gama/releases/assets/$theid"
+		  RESULT1=`curl  -s -X  "DELETE"                \
+			-H "Authorization: token $HQN_TOKEN"   \
+			"$LK1"`
+		fi
+	done 
+fi
+
+
+
+
+for FILE in $RELEASEFILES; do
+  FILESIZE=`stat -c '%s' "$FILE"`
+  FILENAME=`basename $FILE`
+  echo   "Uploading $FILENAME...  "
+  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$FILENAME"
+  echo $LK
+  RESULT=`curl -s -w  "\n%{http_code}\n"                   \
+    -H "Authorization: token $HQN_TOKEN"                \
+    -H "Accept: application/vnd.github.manifold-preview"  \
+    -H "Content-Type: application/zip"                    \
+    --data-binary "@$FILE"                                \
+    "$LK"`
+
+done 
+
+echo DONE
