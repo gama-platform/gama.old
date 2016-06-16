@@ -216,6 +216,7 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 						+ " compilation errors");
 				return;
 			}
+			System.out.println("Model " + file.getFullPath() + " can be run safely with experiment " + exp);
 			runModel(model, exp);
 		}
 	}

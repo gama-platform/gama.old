@@ -66,8 +66,10 @@ public class GAMA {
 	 * @param model
 	 */
 	public static void runGuiExperiment(final String id, final IModel model) {
+		System.out.println("Launching experiment " + id + " of model " + model.getFilePath());
 		final IExperimentPlan newExperiment = model.getExperiment(id);
 		if (newExperiment == null) {
+			System.out.println("No experiment " + id + " in model " + model.getFilePath());
 			return;
 		}
 		IExperimentController controller = getFrontmostController();
@@ -90,6 +92,8 @@ public class GAMA {
 			controller.userOpen();
 		} else {
 			// we are unable to launch the perspective.
+			System.out.println("Unable to launch simulation perspective for experiment " + id + " of model "
+					+ model.getFilePath());
 			getGui().openModelingPerspective(true);
 		}
 
