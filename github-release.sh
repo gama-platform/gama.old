@@ -101,6 +101,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
   -d '{"name":"value"}' \
     "$LK"`
 RELEASEID=`echo "$RESULT" | sed -ne 's/^  "id": \(.*\),$/\1/p'`
+echo $RELEASEID
 
 
   LK="https://api.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets"
@@ -111,7 +112,7 @@ RELEASEID=`echo "$RESULT" | sed -ne 's/^  "id": \(.*\),$/\1/p'`
   -H "Content-Type: application/json" \
   -d '{"name":"value"}' \
     "$LK"`
-	
+	echo $RESULT
 check=${#RESULT}
 
 if [ $check -ge 5 ]; then
