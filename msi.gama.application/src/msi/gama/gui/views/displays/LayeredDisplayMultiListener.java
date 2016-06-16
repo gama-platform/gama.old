@@ -16,10 +16,10 @@ import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
+import msi.gama.gui.GamaKeyBindings;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.WorkaroundForIssue1353;
 import msi.gama.runtime.GAMA;
-import ummisco.gama.ui.resources.GamaKeyBindings;
 
 public class LayeredDisplayMultiListener implements MenuDetectListener, MouseListener, MouseMoveListener, MouseTrackListener, MouseWheelListener, KeyListener, DragDetectListener, FocusListener {
 

@@ -1,4 +1,4 @@
-package ummisco.gama.ui.resources;
+package msi.gama.gui;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;

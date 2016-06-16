@@ -49,7 +49,7 @@ public interface IGui {
 	public static final int INFORM = 2;
 	public static final int NEUTRAL = 3;
 	public static final int USER = 4;
-	public static final String PLUGIN_ID = "ummisco.gama.ui.shared";
+
 	public static final Map<String, IDisplayCreator> DISPLAYS = new THashMap();
 	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";

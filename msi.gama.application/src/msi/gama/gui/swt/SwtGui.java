@@ -1633,9 +1633,7 @@ public class SwtGui extends AbstractGui {
 		updateSimulationState(getFrontmostSimulationState());
 	}
 
-	static GamaColor[] SIMULATION_COLORS =
-		new GamaColor[] { IGamaColors.BLUE.toGamaColor(), IGamaColors.OK.toGamaColor(),
-			IGamaColors.NEUTRAL.toGamaColor(), IGamaColors.WARNING.toGamaColor(), IGamaColors.BROWN.toGamaColor() };
+	static GamaColor[] SIMULATION_COLORS;
 
 	/**
 	 * @param index
@@ -1643,7 +1641,15 @@ public class SwtGui extends AbstractGui {
 	 */
 	@Override
 	public GamaColor getColorForSimulationNumber(final int index) {
+		if ( SIMULATION_COLORS == null ) {
+			SIMULATION_COLORS = new GamaColor[] { toGamaColor(IGamaColors.BLUE), toGamaColor(IGamaColors.OK),
+				toGamaColor(IGamaColors.NEUTRAL), toGamaColor(IGamaColors.WARNING), toGamaColor(IGamaColors.BROWN) };
+		}
 		return SIMULATION_COLORS[index % 5];
+	}
+
+	private GamaColor toGamaColor(final GamaUIColor color) {
+		return new GamaColor(GamaColors.toAwtColor(color.color()));
 	}
 
 	/*

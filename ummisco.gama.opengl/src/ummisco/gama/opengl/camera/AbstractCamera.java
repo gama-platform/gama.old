@@ -19,6 +19,7 @@ import org.eclipse.swt.events.MouseEvent;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLRunnable;
 
+import msi.gama.gui.GamaKeyBindings;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -26,7 +27,6 @@ import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.ui.resources.GamaKeyBindings;
 
 public abstract class AbstractCamera implements ICamera {
 

@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
 
+import org.apache.commons.math3.util.FastMath;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -19,8 +20,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gama.util.GamaColor;
-import msi.gaml.operators.fastmaths.FastMath;
 
 /**
  * Class GamaIcons.
@@ -43,20 +42,16 @@ public class GamaColors {
 		// user's choice (see GamaIcons.CORE_ICONS_BRIGHTNESS). Used only for
 		// the basic palette
 		public GamaUIColor validate() {
-			if (GamaIcons.CORE_ICONS_BRIGHTNESS.getValue()) {
-				return this;
-			} else {
-				return GamaColors.get(lighter().getRGB());
-			}
+			// if (GamaIcons.CORE_ICONS_BRIGHTNESS.getValue()) {
+			return this;
+			// } else {
+			// return GamaColors.get(lighter().getRGB());
+			// }
 		}
 
 		@Override
 		public String toString() {
 			return active.getRed() + ", " + active.getGreen() + ", " + active.getBlue();
-		}
-
-		public GamaColor toGamaColor() {
-			return new GamaColor(toAwtColor(active));
 		}
 
 		public int luminance() {
@@ -150,7 +145,7 @@ public class GamaColors {
 		final float[] newHsb = new float[3];
 		newHsb[0] = hsb[0];
 		newHsb[1] = hsb[1] / 2;
-		newHsb[2] = FastMath.min(1.0f, hsb[2] + 0.2f);
+		newHsb[2] = Math.min(1.0f, hsb[2] + 0.2f);
 		final RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}
@@ -161,7 +156,7 @@ public class GamaColors {
 		final float[] newHsb = new float[3];
 		newHsb[0] = hsb[0];
 		newHsb[1] = hsb[1];
-		newHsb[2] = FastMath.max(0.0f, hsb[2] - 0.1f);
+		newHsb[2] = Math.max(0.0f, hsb[2] - 0.1f);
 		final RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}

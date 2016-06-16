@@ -7,7 +7,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Bundle-ActivationPolicy: lazy
 Require-Bundle: org.eclipse.swt;bundle-version="3.104.2",
  org.eclipse.jface,
- msi.gama.core,
  org.eclipse.ui.workbench,
  msi.gama.ext
 Export-Package: ummisco.gama.ui.resources,

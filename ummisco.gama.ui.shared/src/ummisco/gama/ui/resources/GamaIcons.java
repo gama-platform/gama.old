@@ -27,9 +27,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IGui;
-import msi.gaml.types.IType;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
@@ -40,6 +37,8 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
  *
  */
 public class GamaIcons /* implements IGamaIcons */ {
+
+	public static final String PLUGIN_ID = "ummisco.gama.ui.shared";
 
 	static private GamaIcons instance = new GamaIcons();
 
@@ -53,41 +52,35 @@ public class GamaIcons /* implements IGamaIcons */ {
 
 	Map<String, GamaIcon> iconCache = new THashMap<String, GamaIcon>();
 	Map<String, Image> imageCache = new THashMap<String, Image>();
-	public static GamaPreferences.Entry<Boolean> CORE_ICONS_BRIGHTNESS = GamaPreferences.create("core.icons_brightness",
-			"Icons and buttons dark mode (restart to see the change)", true, IType.BOOL).in(GamaPreferences.UI)
-			.group("Icons");
-	public static GamaPreferences.Entry<Integer> CORE_ICONS_HEIGHT = GamaPreferences
-			.create("core.icons_size", "Size of the icons in the UI (restart to see the change)", 24, IType.INT)
-			.among(16, 24).in(GamaPreferences.UI).group("Icons");
 
 	GamaIcon getIcon(final String name) {
 		return iconCache.get(name);
 	}
 
 	public boolean exist(final String name) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID,
-				GamaIcons.DEFAULT_PATH + name + ".png") != null;
+		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, GamaIcons.DEFAULT_PATH + name + ".png") != null;
 	}
 
 	Image putImageInCache(final String name, final Image image) {
-		final int height = image.getBounds().height;
-		final int width = image.getBounds().width;
-		final int desiredHeight = CORE_ICONS_HEIGHT.getValue();
-		if (desiredHeight == 16) {
-			if (height <= desiredHeight || name.startsWith("sizer")) {
-				imageCache.put(name, image);
-				return image;
-			}
-			final double ratio = height / (double) width;
-			final int desiredWidth = (int) (desiredHeight * ratio);
-			final Image new_image = scaleImage(Display.getCurrent(), image, desiredWidth, desiredHeight);
-			image.dispose();
-			imageCache.put(name, new_image);
-			return new_image;
-		} else {
-			imageCache.put(name, image);
-			return image;
-		}
+		// final int height = image.getBounds().height;
+		// final int width = image.getBounds().width;
+		// final int desiredHeight = CORE_ICONS_HEIGHT.getValue();
+		// if (desiredHeight == 16) {
+		// if (height <= desiredHeight || name.startsWith("sizer")) {
+		// imageCache.put(name, image);
+		// return image;
+		// }
+		// final double ratio = height / (double) width;
+		// final int desiredWidth = (int) (desiredHeight * ratio);
+		// final Image new_image = scaleImage(Display.getCurrent(), image,
+		// desiredWidth, desiredHeight);
+		// image.dispose();
+		// imageCache.put(name, new_image);
+		// return new_image;
+		// } else {
+		imageCache.put(name, image);
+		return image;
+		// }
 	}
 
 	void putIconInCache(final String name, final GamaIcon icon) {
@@ -117,7 +110,7 @@ public class GamaIcons /* implements IGamaIcons */ {
 	}
 
 	public static GamaIcon create(final String s) {
-		return create(s, IGui.PLUGIN_ID);
+		return create(s, PLUGIN_ID);
 	}
 
 	public static GamaIcon create(final String code, final String plugin) {
