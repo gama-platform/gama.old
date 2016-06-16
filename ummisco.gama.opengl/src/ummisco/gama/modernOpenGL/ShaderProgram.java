@@ -36,7 +36,6 @@ public class ShaderProgram {
 		"uniform mat4    transformationMatrix; \n" + //
 		"uniform mat4    projectionMatrix; \n" + //
 		"uniform mat4    viewMatrix; \n" + // 
-		"uniform mat4    inverseYMatrix; \n" + // 
 		"attribute vec3  attribute_Position; \n" + // the vertex shader
 		"attribute vec4  attribute_Color; \n" +    // uniform and attributes
 		
@@ -44,22 +43,10 @@ public class ShaderProgram {
 		                                      // sent to the fragment shader
 		"void main(void) \n" +
 		"{ \n" +
-		"mat4 translateMatrix = mat4( \n" +
-	   "1.0, 0.0, 0.0, 0.0, \n" + // first column (not row!)
-	   "0.0, 1.0, 0.0, 0.0, \n" + // second column
-	   "0.0, 0.0, 1.0, 0.0,  \n" + // third column
-	   "50.0, -50.0, 0.0, 1.0  \n" + // fourth column
-	   "); \n" +
-	   "mat4 inverseTranslateMatrix = mat4( \n" +
-	   "1.0, 0.0, 0.0, 0.0, \n" + // first column (not row!)
-	   "0.0, 1.0, 0.0, 0.0, \n" + // second column
-	   "0.0, 0.0, 1.0, 0.0,  \n" + // third column
-	   "-50.0, 50.0, 0.0, 1.0  \n" + // fourth column
-	   "); \n" +
 		"  varying_Color = attribute_Color; \n" +
 		"  //gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(attribute_Position,1.0); \n" +
 		"  //gl_Position = projectionMatrix * transformationMatrix * vec4(attribute_Position,1.0); \n" +
-		"  gl_Position = inverseYMatrix * projectionMatrix * viewMatrix * transformationMatrix * vec4(attribute_Position,1.0); \n" +
+		"  gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(attribute_Position,1.0); \n" +
 		"} ";
 		
 	private static String fragmentShaderString =
@@ -90,7 +77,6 @@ public class ShaderProgram {
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
-	private int location_inverseYMatrix;
 	
 	private static FloatBuffer matrixBuffer = FloatBuffer.allocate(16);
 	
@@ -208,7 +194,6 @@ public class ShaderProgram {
 		location_transformationMatrix = getUniformLocation("transformationMatrix");
 		location_projectionMatrix = getUniformLocation("projectionMatrix");
 		location_viewMatrix = getUniformLocation("viewMatrix");
-		location_inverseYMatrix = getUniformLocation("inverseYMatrix");
 	}
 	
 	public void loadTransformationMatrix(Matrix4f matrix) {
@@ -222,10 +207,6 @@ public class ShaderProgram {
 	public void loadViewMatrix(ICamera camera) {
 		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
 		loadMatrix(location_viewMatrix, viewMatrix);
-	}
-	
-	public void loadInverseYMatrix(Matrix4f matrix) {
-		loadMatrix(location_inverseYMatrix, matrix);
 	}
 	
 	protected void loadMatrix(int location, Matrix4f matrix) {

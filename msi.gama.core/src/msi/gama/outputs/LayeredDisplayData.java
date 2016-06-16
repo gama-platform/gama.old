@@ -86,6 +86,7 @@ public class LayeredDisplayData {
 	public boolean isComputingNormals = true;
 	private boolean isDisplayingAsACube = false; // GamaPreferences.CORE_CUBEDISPLAY.getValue();
 	private boolean ortho = false;
+	private boolean useShader = false;
 	private boolean disableCameraInteraction = false; // "fixed_camera" facet of
 														// the display
 	private boolean isShowingFPS = false; // GamaPreferences.CORE_SHOW_FPS.getValue();
@@ -262,6 +263,21 @@ public class LayeredDisplayData {
 	 */
 	public void setOrtho(final boolean ortho) {
 		this.ortho = ortho;
+	}
+	
+	/**
+	 * @return the ortho
+	 */
+	public boolean isUseShader() {
+		return useShader;
+	}
+
+	/**
+	 * @param ortho
+	 *            the ortho to set
+	 */
+	public void setUseShader(final boolean use_shader) {
+		this.useShader = use_shader;
 	}
 
 	/**

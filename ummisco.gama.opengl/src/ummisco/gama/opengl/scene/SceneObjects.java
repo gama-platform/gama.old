@@ -25,8 +25,10 @@ import com.google.common.collect.Iterables;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
+import com.vividsolutions.jts.geom.Coordinate;
 
-import msi.gama.precompiler.GamlAnnotations.display;
+import msi.gama.metamodel.shape.IShape;
+import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.modernOpenGL.Maths;
 import ummisco.gama.modernOpenGL.ShaderProgram;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -40,15 +42,8 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 	int[] vboHandles;
 	static final int COLOR_IDX = 0;
 	static final int VERTICES_IDX = 1;
-	private static final float FOV = 20;
-	private static final float NEAR_PLANE = 0.1f;
-	private static final float FAR_PLANE = 1000f;
 	
-	private List<Integer> vbos = new ArrayList<Integer> ();
-	
-	private double t0 = System.currentTimeMillis();
-	private double theta=0;
-	private double s;
+	ArrayList<ArrayList<float[]>> vbos = new ArrayList<ArrayList<float[]>>();
 	
 	private GL2 gl;
 	
@@ -153,16 +148,42 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 	
 	private void createProjectionMatrix() {
 		float aspectRatio = drawer.getRenderer().getDisplayWidth() / drawer.getRenderer().getDisplayHeight();
-		float y_scale = (1f / (float)Math.tan(Math.toRadians(FOV/2f))) * aspectRatio;
-		float x_scale = y_scale / aspectRatio;
-		float frustum_length = FAR_PLANE - NEAR_PLANE;
+//		float y_scale = (1f / (float)Math.tan(Math.toRadians(FOV/2f))); //* aspectRatio;
+//		float x_scale = y_scale / aspectRatio;
+//		float frustum_length = FAR_PLANE - NEAR_PLANE;
+		
+		final int height = drawer.getRenderer().getDrawable().getSurfaceHeight();
+		final double aspect = (double) drawer.getRenderer().getDrawable().getSurfaceWidth() / (double) (height == 0 ? 1 : height);
+		final double maxDim = drawer.getRenderer().getMaxEnvDim();
+		final double zNear = maxDim / 1000;
+		final double zFar = maxDim*10;
+		final double frustum_length = zFar - zNear;
+		double fW, fH;
+		//final double fovY = 45.0d;
+		final double fovY = drawer.getRenderer().data.getCameralens();
+		if (aspect > 1.0) {
+			fH = FastMath.tan(fovY / 360 * Math.PI) * zNear;
+			fW = fH * aspect;
+		} else {
+			fW = FastMath.tan(fovY / 360 * Math.PI) * zNear;
+			fH = fW / aspect;
+		}
+		float y_scale = (1f / (float)Math.tan(Math.toRadians(fovY/2f))); //* aspectRatio;
+		float x_scale = (float) (y_scale / aspect);
 		
 		projectionMatrix = new Matrix4f();
+//		projectionMatrix.m00 = (float) (zNear / fW);
+//		projectionMatrix.m11 = (float) (zNear / fH);
+//		projectionMatrix.m22 = (float) ((zFar + zNear) / frustum_length);
+//		projectionMatrix.m23 = -1;
+//		projectionMatrix.m32 = (float) ((2 * zNear * zFar) / frustum_length);
+//		projectionMatrix.m33 = 0;
+		
 		projectionMatrix.m00 = x_scale;
 		projectionMatrix.m11 = y_scale;
-		projectionMatrix.m22 = -((FAR_PLANE + NEAR_PLANE) / frustum_length);
+		projectionMatrix.m22 = (float) -((zFar + zNear) / frustum_length);
 		projectionMatrix.m23 = -1;
-		projectionMatrix.m32 = -((2 * NEAR_PLANE * FAR_PLANE) / frustum_length);
+		projectionMatrix.m32 = (float) -((2 * zNear * zFar) / frustum_length);
 		projectionMatrix.m33 = 0;
 	}
 	
@@ -172,13 +193,6 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		transformationMatrix.setIdentity();
 	}
 	
-	private void createInverseYMatrix() {
-		// create entity matrix
-		inverseYMatrix = new Matrix4f();
-		inverseYMatrix.setIdentity();
-//		inverseYMatrix.m11 = -1;
-	}
-	
 	public void initShader(final GL2 gl) {
 		this.gl = gl;
 		
@@ -186,15 +200,12 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		
 		createProjectionMatrix();
 		createTransformationMatrix();
-		createInverseYMatrix();
 		
 		shaderProgram = new ShaderProgram(gl);
 		shaderProgram.start();
 		shaderProgram.loadProjectionMatrix(projectionMatrix);
-		shaderProgram.loadInverseYMatrix(inverseYMatrix);
 		shaderProgram.stop();
 
-		
 		vboHandles = new int[2];
 		this.gl.glGenBuffers(2, vboHandles, 0);
 	}
@@ -230,26 +241,150 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		if (picking) {
 			drawPicking(gl, renderer);
 			return;
-		}		
+		}
 		
-		/////////////////////////////////////////////////////////////////////
+		if (drawer.getRenderer().data.isUseShader()) {
+			drawWithShader(gl, picking);
+		}
+		else {
+			drawWithoutShader(gl, picking);
+		}
+		
+	}
+	
+	private void drawWithoutShader(final GL2 gl, final boolean picking) {
+		Integer index = openGLListIndex;
+		if (index == null) {
+			index = gl.glGenLists(1);
+			gl.glNewList(index, GL2.GL_COMPILE);
+			double alpha = 0d;
+			final int size = objects.size();
+			final double delta = size == 0 ? 0 : 1d / size;
+			for (final List<T> list : objects) {
+				alpha = alpha + delta;
+				for (final T object : list) {
+					if (isFading) {
+						final double originalAlpha = object.getAlpha();
+						object.setAlpha(originalAlpha * alpha);
+						object.draw(gl, drawer, picking);
+						object.setAlpha(originalAlpha);
+					} else {
+						object.draw(gl, drawer, picking);
+					}
+				}
+			}
+			gl.glEndList();
+		}
+		gl.glCallList(index);
+		openGLListIndex = index;
+	}
+	
+	private void drawWithShader(final GL2 gl, final boolean picking) {
 		
 		if (!isInit) {
 			initShader(gl);
 			isInit=true;
 		}
 		
-		//////: DISPLAY PART
+		Integer index = openGLListIndex;
+		if (index == null) {
+			for (final List<T> list : objects) {
+				for (final T object : list) {
+					ArrayList<float[]> vao = new ArrayList<float[]>();
+					vao.add(getObjectVertices(object));
+					vao.add(getObjectColors(object));
+					vao.add(getObjectIndexBuffer(object));
+					vbos.add(vao);
+				}
+			}
+		}
+		openGLListIndex = index;		
 		
-	    double t1 = System.currentTimeMillis();
-        theta += (t1-t0)*0.005f;
-        t0 = t1;
-        s = /*Math.sin(*/theta/*)*/;
+		if (vbos.size()>0)
+		{
+			// Clear screen
+			gl.glClearColor(1, 0, 1, 0.5f);  // Purple
+			gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT   );
 		
-		// Clear screen
-		gl.glClearColor(1, 0, 1, 0.5f);  // Purple
-		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT   );
+			for (ArrayList<float[]> vbo : vbos) {
+				float[] vtxPos = vbo.get(0);
+				float[] vtxCol = vbo.get(1);
+				float[] vtxIdxBuff = vbo.get(2);
+				if (vtxPos == null || vtxCol == null) {
+					int i = 5;
+				}
+				else if (vtxPos.length > 2 && vtxCol[2] == 100)
+					newDraw(vtxPos,vtxCol,vtxIdxBuff);
+			}
+		}
 		
+		vbos.clear();
+	}
+	
+	private float[] getObjectVertices(AbstractObject object) {
+		float[] result = null;
+		if (object instanceof GeometryObject) {
+			GeometryObject geomObj = (GeometryObject)object;
+			final IShape.Type type = geomObj.getType();
+			Coordinate[] coords = geomObj.geometry.getCoordinates();
+			
+			result = new float[coords.length*3];
+			for (int i = 0 ; i < coords.length ; i++) {
+				result[3*i] = (float) coords[i].x;
+				result[3*i+1] = (float) coords[i].y;
+				result[3*i+2] = (float) coords[i].z;
+			}
+		}
+		return result;
+	}
+	
+	private float[] getObjectColors(AbstractObject object) {
+		float[] result = null;
+		if (object instanceof GeometryObject) {
+			GeometryObject geomObj = (GeometryObject)object;
+			final IShape.Type type = geomObj.getType();
+			Coordinate[] coords = geomObj.geometry.getCoordinates();
+
+			float[] color = new float[]{ object.attributes.color.red(),
+					object.attributes.color.green(), 
+					object.attributes.color.blue(),
+					object.attributes.color.alpha()};
+			result = new float[coords.length*4];
+			for (int i = 0 ; i < coords.length ; i++) {
+				result[4*i] = (float) color[0];
+				result[4*i+1] = (float) color[1];
+				result[4*i+2] = (float) color[2];
+				result[4*i+3] = (float) color[3];
+			}
+		}
+		return result;
+	}
+	
+	private float[] getObjectIndexBuffer(AbstractObject object) {
+		// TODO : optimize this
+		float[] result = null;
+		if (object instanceof GeometryObject) {
+			GeometryObject geomObj = (GeometryObject)object;
+			final IShape.Type type = geomObj.getType();
+			Coordinate[] coords = geomObj.geometry.getCoordinates();
+			
+			result = new float[(int) Math.pow(coords.length,3)];
+			for (int i = 0 ; i < coords.length ; i++) {
+				for (int j = 0 ; j < coords.length ; j++) {
+					for (int k = 0 ; k < coords.length ; k++) {
+						if (i != j && i != k && j != k) {
+							result[i*j*k] = i;
+							result[i*j*k+1] = j;
+							result[i*j*k+2] = k;
+						}
+					}
+				}
+			}
+		}
+		return result;
+	}
+	
+	private void newDraw(float[] vertices, float[] colors, float[] idxBuffer) {		
 		shaderProgram.start();
 		
 		transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), 0, 0, 0, 1);
@@ -274,10 +409,10 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 //		gl.glEnableVertexAttribArray(VERTICES_IDX);
 //		gl.glEnableVertexAttribArray(COLOR_IDX);
 		
-        float[] vertices = {  50.0f,  0.0f, 0.0f, //Top
-                0.0f, 100.0f, 0.0f, //Bottom Left
-                 100.0f, 100.0f, 0.0f  //Bottom Right
-                                 };
+//        float[] vertices = {  50.0f,  0.0f, 0.0f, //Top
+//                0.0f, 100.0f, 0.0f, //Bottom Left
+//                 100.0f, 100.0f, 0.0f  //Bottom Right
+//                                 };
 
 
 		// Observe that the vertex data passed to glVertexAttribPointer must stay valid
@@ -309,10 +444,10 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		
 		
 		
-		float[] colors = {    1.0f, 0.0f, 0.0f, 1.0f, //Top color (red)
-		                 0.0f, 0.0f, 0.0f, 1.0f, //Bottom Left color (black)
-		                 1.0f, 1.0f, 0.0f, 0.9f  //Bottom Right color (yellow) with 10% transparence
-		                                      };
+//		float[] colors = {    1.0f, 0.0f, 0.0f, 1.0f, //Top color (red)
+//		                 0.0f, 0.0f, 0.0f, 1.0f, //Bottom Left color (black)
+//		                 1.0f, 1.0f, 0.0f, 0.9f  //Bottom Right color (yellow) with 10% transparence
+//		                                      };
 		
 		FloatBuffer fbColors = Buffers.newDirectFloatBuffer(colors);
 		
@@ -330,41 +465,13 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		
 		gl.glEnableVertexAttribArray(1);
 
-		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, 3); //Draw the vertices as triangle
+		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, vertices.length); //Draw the vertices as triangle
 //		gl.glDrawElements(GL2.GL_TRIANGLES, 3, GL2.GL_UNSIGNED_INT, 0);
 
 		gl.glDisableVertexAttribArray(VERTICES_IDX); // Allow release of vertex position memory
 		gl.glDisableVertexAttribArray(COLOR_IDX); // Allow release of vertex color memory
 		
 		shaderProgram.stop();
-		
-		/////////////////////////////////////////////////////////////
-
-//		Integer index = openGLListIndex;
-//		if (index == null) {
-//			index = gl.glGenLists(1);
-//			gl.glNewList(index, GL2.GL_COMPILE);
-//			double alpha = 0d;
-//			final int size = objects.size();
-//			final double delta = size == 0 ? 0 : 1d / size;
-//			for (final List<T> list : objects) {
-//				alpha = alpha + delta;
-//				for (final T object : list) {
-//					if (isFading) {
-//						final double originalAlpha = object.getAlpha();
-//						object.setAlpha(originalAlpha * alpha);
-//						object.draw(gl, drawer, picking);
-//						object.setAlpha(originalAlpha);
-//					} else {
-//						object.draw(gl, drawer, picking);
-//					}
-//				}
-//			}
-//			gl.glEndList();
-//		}
-//		gl.glCallList(index);
-//		openGLListIndex = index;
-
 	}
 
 	@Override

@@ -102,6 +102,7 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.CAMERA_UP_VECTOR, type = IType.POINT, optional = true, doc = @doc("Allows to define the orientation of the camera")),
 		@facet(name = IKeyword.CAMERA_LENS, internal = true, type = IType.INT, optional = true, doc = @doc("Allows to define the lens of the camera")),
 		@facet(name = IKeyword.CAMERA_INTERACTION, type = IType.BOOL, optional = true, doc = @doc("If false, the user will not be able to modify the position and the orientation of the camera, and neither using the ROI. Default is true.")),
+		@facet(name = "use_shader", type = IType.BOOL, optional = true, doc = @doc("Under construction...")),
 		@facet(name = IKeyword.POLYGONMODE, internal = true, type = IType.BOOL, optional = true, doc = @doc("")),
 		@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL,
 				IType.POINT }, optional = true, doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
@@ -311,6 +312,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression fixed_cam = getFacet(IKeyword.CAMERA_INTERACTION);
 		if (fixed_cam != null) {
 			this.data.disableCameraInteractions(!Cast.asBool(getScope(), fixed_cam.value(getScope())));
+		}
+		
+		final IExpression use_shader = getFacet("use_shader");
+		if (use_shader != null) {
+			this.data.setUseShader(Cast.asBool(getScope(), use_shader.value(getScope())));
 		}
 
 		final IExpression lightOn = getFacet(IKeyword.IS_LIGHT_ON);
