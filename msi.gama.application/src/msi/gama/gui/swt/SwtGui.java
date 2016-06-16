@@ -571,9 +571,7 @@ public class SwtGui extends AbstractGui {
 	public static void openWelcomePage(final boolean ifEmpty) {
 		if ( ifEmpty && SwtGui.getPage().getActiveEditor() != null ) { return; }
 		if ( ifEmpty && !GamaPreferences.CORE_SHOW_PAGE.getValue() ) { return; }
-		if ( HOME_URL != null ) {
-			showWeb2Editor(HOME_URL);
-		}
+		showWeb2Editor(getWelcomePageURL());
 	}
 
 	public static void showWeb2Editor(final URL url) {
