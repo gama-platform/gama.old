@@ -175,16 +175,6 @@
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
-            class="msi.gama.gui.swt.perspectives.ModelingPerspective"
-            fixed="false"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.png"
-            id="msi.gama.application.perspectives.ModelingPerspective"
-            name="Modeling">
-         <description>
-            The perspective used to edit GAMA models
-         </description>
-      </perspective>
-      <perspective
             class="msi.gama.gui.swt.perspectives.SimulationPerspective"
             fixed="false"
             icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.simulation2.png"
@@ -199,47 +189,6 @@
          point="org.eclipse.ui.perspectiveExtensions">
 
 
-      <perspectiveExtension
-            targetID="msi.gama.application.perspectives.ModelingPerspective">
-         <view
-               closeable="false"
-               id="msi.gama.gui.view.GamaNavigator"
-               minimized="false"
-               moveable="true"
-               ratio="0.25"
-               relationship="left"
-               relative="org.eclipse.ui.editorss"
-               visible="true">
-         </view>
-         <view
-               closeable="true"
-               id="msi.gama.application.outline"
-               minimized="false"
-               moveable="true"
-               ratio="0.70"
-               relationship="bottom"
-               relative="msi.gama.gui.view.GamaNavigator"
-               visible="false">
-         </view>
-         <view
-               closeable="true"
-               id="msi.gama.application.problems"
-               minimized="false"
-               moveable="true"
-               relationship="stack"
-               relative="msi.gama.application.outline"
-               visible="false">
-         </view>
-         <viewShortcut
-               id="msi.gama.application.outline">
-         </viewShortcut>
-         <viewShortcut
-               id="msi.gama.application.problems">
-         </viewShortcut>
-         <perspectiveShortcut
-               id="msi.gama.application.perspectives.SimulationPerspective">
-         </perspectiveShortcut>
-      </perspectiveExtension>
       <perspectiveExtension
             targetID="*">
          <hiddenMenuItem

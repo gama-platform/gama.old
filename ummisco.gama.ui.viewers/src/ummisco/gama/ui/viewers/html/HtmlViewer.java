@@ -157,7 +157,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				browser.setUrl(SwtGui.HOME_URL.toString());
+				browser.setUrl(SwtGui.getWelcomePageURL().toString());
 				checkButtons();
 			}
 

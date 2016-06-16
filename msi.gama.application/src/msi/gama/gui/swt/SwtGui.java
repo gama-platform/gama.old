@@ -140,8 +140,26 @@ public class SwtGui extends AbstractGui {
 	private IAgent highlightedAgent;
 	// public static boolean MOUSE_DOWN;
 
-	static {
-		if ( !GAMA.isInHeadLessMode() ) {
+	private static URL HOME_URL;
+
+	// static {
+	// if ( !GAMA.isInHeadLessMode() ) {
+	// try {
+	// HOME_URL = FileLocator
+	// .toFileURL(Platform.getBundle("ummisco.gama.ui.shared").getEntry("/welcome/welcome.html"));
+	// } catch (final IOException e) {
+	// // TODO Auto-generated catch block
+	// e.printStackTrace();
+	// }
+	// GAMA.setGui(new SwtGui());
+	// // WorkaroundForIssue1358.install();
+	// } else {
+	// System.out.println("Configuring HEADLESS MODE");
+	// }
+	// }
+
+	public static URL getWelcomePageURL() {
+		if ( HOME_URL == null )
 			try {
 				HOME_URL = FileLocator
 					.toFileURL(Platform.getBundle("ummisco.gama.ui.shared").getEntry("/welcome/welcome.html"));
@@ -149,11 +167,7 @@ public class SwtGui extends AbstractGui {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			// GAMA.setGui(new SwtGui());
-			// WorkaroundForIssue1358.install();
-		} else {
-			System.out.println("Configuring HEADLESS MODE");
-		}
+		return HOME_URL;
 	}
 
 	// Needed by RCP for displaying the simulation state
@@ -568,8 +582,6 @@ public class SwtGui extends AbstractGui {
 		}
 		return true;
 	}
-
-	public static URL HOME_URL;
 
 	public static void openWelcomePage(final boolean ifEmpty) {
 		if ( ifEmpty && SwtGui.getPage().getActiveEditor() != null ) { return; }
