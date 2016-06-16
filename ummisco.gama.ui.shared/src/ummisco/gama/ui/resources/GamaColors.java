@@ -11,15 +11,14 @@
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
 
-import org.apache.commons.math3.util.FastMath;
+import java.util.HashMap;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-
-import gnu.trove.map.hash.THashMap;
 
 /**
  * Class GamaIcons.
@@ -137,7 +136,7 @@ public class GamaColors {
 		}
 	}
 
-	static THashMap<RGB, GamaUIColor> colors = new THashMap();
+	static HashMap<RGB, GamaUIColor> colors = new HashMap();
 
 	private static Color computeInactive(final Color c) {
 		final RGB data = c.getRGB();
@@ -172,7 +171,7 @@ public class GamaColors {
 		final float[] newHsb = new float[3];
 		newHsb[0] = hsb[0];
 		newHsb[1] = hsb[1];
-		newHsb[2] = FastMath.min(1f, hsb[2] + 0.2f);
+		newHsb[2] = Math.min(1f, hsb[2] + 0.2f);
 		final RGB newData = new RGB(newHsb[0], newHsb[1], newHsb[2]);
 		return getColor(newData.red, newData.green, newData.blue);
 	}

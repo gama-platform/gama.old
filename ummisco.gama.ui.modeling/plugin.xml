@@ -202,6 +202,13 @@
         </visibleWhen>
      </command>
   </menuContribution>
+  <menuContribution
+        locationURI="menu:org.eclipse.search.menu?after=dialogGroup">
+     <command
+           commandId="org.eclipse.xtext.ui.shared.OpenXtextElementCommand"
+           label="Elements in models...">
+     </command>
+  </menuContribution>
 	</extension>
 
 <!-- adding resource factories -->

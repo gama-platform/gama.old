@@ -11,9 +11,9 @@
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
 
+import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
@@ -23,10 +23,7 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
-import gnu.trove.map.hash.THashMap;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
@@ -46,19 +43,15 @@ public class GamaIcons /* implements IGamaIcons */ {
 		return instance;
 	}
 
-	static final String DEFAULT_PATH = "/icons/";
+	static public final String DEFAULT_PATH = "/icons/";
 	static final String SIZER_PREFIX = "sizer_";
 	static final String COLOR_PREFIX = "color_";
 
-	Map<String, GamaIcon> iconCache = new THashMap<String, GamaIcon>();
-	Map<String, Image> imageCache = new THashMap<String, Image>();
+	Map<String, GamaIcon> iconCache = new HashMap<String, GamaIcon>();
+	Map<String, Image> imageCache = new HashMap<String, Image>();
 
 	GamaIcon getIcon(final String name) {
 		return iconCache.get(name);
-	}
-
-	public boolean exist(final String name) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, GamaIcons.DEFAULT_PATH + name + ".png") != null;
 	}
 
 	Image putImageInCache(final String name, final Image image) {
@@ -207,13 +200,15 @@ public class GamaIcons /* implements IGamaIcons */ {
 	/*
 	 * Use "ISharedImages.field"
 	 */
-	public static ImageDescriptor getEclipseIconDescriptor(final String icon) {
-		return PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(icon);
-	}
-
-	public static Image system(final String icon) {
-		return PlatformUI.getWorkbench().getSharedImages().getImage(icon);
-	}
+	// public static ImageDescriptor getEclipseIconDescriptor(final String icon)
+	// {
+	// return
+	// PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(icon);
+	// }
+	//
+	// public static Image system(final String icon) {
+	// return PlatformUI.getWorkbench().getSharedImages().getImage(icon);
+	// }
 
 	public static Image scaleImage(final Device d, final Image im, final int width, final int height) {
 		final Rectangle curBounds = im.getBounds();

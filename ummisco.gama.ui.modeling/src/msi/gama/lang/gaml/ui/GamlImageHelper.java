@@ -5,10 +5,13 @@
 package msi.gama.lang.gaml.ui;
 
 import java.util.Map;
+
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.IImageHelper.IImageDescriptorHelper;
+
 import com.google.common.collect.Maps;
 import com.google.inject.Singleton;
 
@@ -27,16 +30,21 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	private static final String path = "gaml";
 	private final Map<ImageDescriptor, Image> registry = Maps.newHashMapWithExpectedSize(10);
 
+	public boolean exist(final String name) {
+		return AbstractUIPlugin.imageDescriptorFromPlugin(GamaIcons.PLUGIN_ID,
+				GamaIcons.DEFAULT_PATH + name + ".png") != null;
+	}
+
 	/**
 	 * @see org.eclipse.xtext.ui.IImageHelper.IImageDescriptorHelper#getImageDescriptor(java.lang.String)
 	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(final String name) {
 		String s = name;
-		if ( s.endsWith(".png") ) {
+		if (s.endsWith(".png")) {
 			s = s.replace(".png", "");
 		}
-		if ( GamaIcons.getInstance().exist(path + "/" + s) ) {
+		if (exist(path + "/" + s)) {
 			return GamaIcons.create(path + "/" + s).descriptor();
 		} else {
 			return GamaIcons.create(path + "/_agent").descriptor();
@@ -49,10 +57,12 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(final Image image) {
-		for ( Map.Entry<ImageDescriptor, Image> entry : registry.entrySet() ) {
-			if ( entry.getValue().equals(image) ) { return entry.getKey(); }
+		for (final Map.Entry<ImageDescriptor, Image> entry : registry.entrySet()) {
+			if (entry.getValue().equals(image)) {
+				return entry.getKey();
+			}
 		}
-		ImageDescriptor newDescriptor = ImageDescriptor.createFromImage(image);
+		final ImageDescriptor newDescriptor = ImageDescriptor.createFromImage(image);
 		registry.put(newDescriptor, image);
 		return newDescriptor;
 
@@ -64,10 +74,10 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	@Override
 	public Image getImage(final String name) {
 		String s = name;
-		if ( s.endsWith(".png") ) {
+		if (s.endsWith(".png")) {
 			s = s.replace(".png", "");
 		}
-		if ( GamaIcons.getInstance().exist(path + "/" + s) ) {
+		if (exist(path + "/" + s)) {
 			return GamaIcons.create(path + "/" + s).image();
 		} else {
 			return GamaIcons.create(path + "/_agent").image();
@@ -79,14 +89,16 @@ public class GamlImageHelper implements IImageHelper, IImageDescriptorHelper {
 	 */
 	@Override
 	public Image getImage(ImageDescriptor descriptor) {
-		if ( descriptor == null ) {
+		if (descriptor == null) {
 			descriptor = ImageDescriptor.getMissingImageDescriptor();
 		}
 
 		Image result = registry.get(descriptor);
-		if ( result != null ) { return result; }
+		if (result != null) {
+			return result;
+		}
 		result = descriptor.createImage();
-		if ( result != null ) {
+		if (result != null) {
 			registry.put(descriptor, result);
 		}
 		return result;
