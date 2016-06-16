@@ -16,9 +16,12 @@ public class Maths {
 		
 		// translation
 		matrix.setTranslation(positions);
+//		tmpMatrix.setTranslation(new Vector3f(-50,50,0));
+//		matrix.mul(tmpMatrix);
 		
 		// scale
 		matrix.setScale(scale);
+//		matrix.mul(tmpMatrix);
 		
 		// rotation
 		tmpMatrix.rotX(rx);
@@ -27,6 +30,9 @@ public class Maths {
 		matrix.mul(tmpMatrix);
 		tmpMatrix.rotZ(rz);
 		matrix.mul(tmpMatrix);
+		
+//		tmpMatrix.setTranslation(new Vector3f(50,-50,0));
+//		matrix.mul(tmpMatrix);
 
 		return matrix;
 	}
@@ -47,10 +53,10 @@ public class Maths {
 		double[] result = new double[vect.length];
 		double sum = 0;
 		for (int i = 0; i < vect.length ; i++) {
-			sum += Math.abs(vect[i]);
+		    sum += Math.pow(vect[i], 2);
 		}
 		for (int i = 0; i < vect.length ; i++) {
-			result[i] = vect[i] / sum;
+		    result[i] = vect[i] / Math.sqrt(sum);
 		}
 		return result;
 	}
@@ -64,12 +70,12 @@ public class Maths {
 		double[] vVect = new double[3]; // cross product between f and s.
 		double[] pVect = new double[3]; // camera position.
 		
-		double sum = Math.abs(camera.getTarget().x - camera.getPosition().x)
-				+ Math.abs(camera.getTarget().y - camera.getPosition().y)
-				+ Math.abs(camera.getTarget().z - camera.getPosition().z);
-		fVect[0] = -(camera.getTarget().x - camera.getPosition().x) / sum;
-		fVect[1] = (camera.getTarget().y - camera.getPosition().y) / sum;
-		fVect[2] = -(camera.getTarget().z - camera.getPosition().z) / sum;
+		double sum = Math.pow(camera.getTarget().x - camera.getPosition().x,2)
+				+ Math.pow(camera.getTarget().y - camera.getPosition().y,2)
+				+ Math.pow(camera.getTarget().z - camera.getPosition().z,2);
+		fVect[0] = -(camera.getTarget().x - camera.getPosition().x) / Math.sqrt(sum);
+		fVect[1] = (camera.getTarget().y - camera.getPosition().y) / Math.sqrt(sum);
+		fVect[2] = -(camera.getTarget().z - camera.getPosition().z) / Math.sqrt(sum);
 		
 		double[] crossProduct = CrossProduct(fVect,new double[]{camera.getOrientation().x,
 				-camera.getOrientation().y,camera.getOrientation().z});
