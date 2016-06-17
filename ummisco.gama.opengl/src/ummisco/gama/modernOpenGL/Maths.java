@@ -189,4 +189,65 @@ public class Maths {
 		result[15]=matrix.m33;
 		return result;
 	}
+	
+	static public float[] setTranslationToVertex(float[] coordinates, float x, float y, float z) {
+		float[] result = new float[coordinates.length];
+		int vertexNb = coordinates.length/3;
+		for (int i = 0 ; i < vertexNb ; i++) {
+			result[3*i] = coordinates[i*3] + x;
+			result[3*i+1] = coordinates[i*3+1] + y;
+			result[3*i+2] = coordinates[i*3+2] + z;
+		}
+		return result;
+	}
+	
+	static public float[] setRotationToVertex(float[] coordinates, float a, float x, float y, float z) {
+		float[] result = new float[coordinates.length];
+		int vertexNb = coordinates.length/3;
+		for (int i = 0 ; i < vertexNb ; i++) {
+			// get the result of the rotation
+			double[] tmpResult = QuaternionRotate(new double[]{coordinates[i*3],coordinates[i*3+1],coordinates[i*3+2]},
+					new double[]{x,y,z,a});
+			result[3*i] = (float) tmpResult[0];
+			result[3*i+1] = (float) tmpResult[1];
+			result[3*i+2] = (float) tmpResult[2];
+		}
+		return result;
+	}
+	
+	static public float[] setScalingToVertex(float[] coordinates, float x, float y, float z) {
+		float[] result = new float[coordinates.length];
+		int vertexNb = coordinates.length/3;
+		for (int i = 0 ; i < vertexNb ; i++) {
+			result[3*i] = (float) coordinates[3*i]*x;
+			result[3*i+1] = (float) coordinates[3*i+1]*y;
+			result[3*i+2] = (float) coordinates[3*i+2]*z;
+		}
+		return result;
+	}
+	
+	public static double[] QuaternionRotate(final double[] initVector3, final double[] quaternionRotation) {
+		double[] result = new double[3];
+		// a, b, c are the normalized composants of the axis.
+		double[] axis = new double[] {quaternionRotation[0],quaternionRotation[1],quaternionRotation[2]};
+		double angle = quaternionRotation[3];
+		double a = axis[0]/Math.sqrt(axis[0]*axis[0]+axis[1]*axis[1]+axis[2]*axis[2]);
+		double b = -axis[1]/Math.sqrt(axis[0]*axis[0]+axis[1]*axis[1]+axis[2]*axis[2]);
+		double c = axis[2]/Math.sqrt(axis[0]*axis[0]+axis[1]*axis[1]+axis[2]*axis[2]);
+		// x, y, z are the initial position of the light.
+		double x = initVector3[0];
+		double y = initVector3[1];
+		double z = initVector3[2];
+		
+		result[0] = x * (Math.cos(angle) + a*a * (1 - Math.cos(angle)))
+				+ y * (a*b * (1-Math.cos(angle)) - c * Math.sin(angle))
+				+ z * (a*c * (1-Math.cos(angle)) + b * Math.sin(angle));
+		result[1] = x * (a*b * (1-Math.cos(angle)) + c * Math.sin(angle))
+				+ y * (Math.cos(angle) + b*b * (1 - Math.cos(angle)))
+				+ z * (b*c * (1 - Math.cos(angle)) - a * Math.sin(angle));
+		result[2] = x * (a*c * (1 - Math.cos(angle)) - b * Math.sin(angle))
+				+ y * (b*c * (1 - Math.cos(angle)) + a * Math.sin(angle))
+				+ z * (Math.cos(angle) + c*c * (1 - Math.cos(angle)));
+		return result;
+	}
 }

@@ -16,11 +16,12 @@ public class ShaderProgram extends AbstractShader {
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
-//	private int location_lightPosition;
-//	private int location_lightColor;
+	private int location_lightPosition;
+	private int location_lightColor;
 	
 	public static final int POSITION_ATTRIBUTE_IDX = 0;
 	public static final int COLOR_ATTRIBUTE_IDX = 1;
+	public static final int NORMAL_ATTRIBUTE_IDX = 2;
 	
 	public ShaderProgram(GL2 gl) {
 		super(gl,VERTEX_FILE,FRAGMENT_FILE);
@@ -37,8 +38,8 @@ public class ShaderProgram extends AbstractShader {
 		location_transformationMatrix = getUniformLocation("transformationMatrix");
 		location_projectionMatrix = getUniformLocation("projectionMatrix");
 		location_viewMatrix = getUniformLocation("viewMatrix");
-		//location_lightPosition = getUniformLocation("lightPosition");
-		//location_lightColor = getUniformLocation("lightColor");
+		location_lightPosition = getUniformLocation("lightPosition");
+		location_lightColor = getUniformLocation("lightColor");
 	}
 	
 	public void loadTransformationMatrix(Matrix4f matrix) {
@@ -46,8 +47,8 @@ public class ShaderProgram extends AbstractShader {
 	}
 	
 	public void loadLight(Light light) {
-//		super.loadVector(location_lightPosition,light.getPosition());
-//		super.loadVector(location_lightColor,light.getColor());
+		super.loadVector(location_lightPosition,light.getPosition());
+		super.loadVector(location_lightColor,light.getColor());
 	}
 	
 	public void loadProjectionMatrix(Matrix4f matrix) {

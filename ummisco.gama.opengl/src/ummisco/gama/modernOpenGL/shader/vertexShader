@@ -11,13 +11,23 @@
 uniform mat4    transformationMatrix;
 uniform mat4    projectionMatrix;
 uniform mat4    viewMatrix;
-//uniform vec3    lightPosition;
+uniform vec3    lightPosition;
+
 attribute vec3  attribute_Position;
 attribute vec4  attribute_Color;
+attribute vec3  attribute_Normal;
+
 varying vec4    varying_Color;
+varying vec3	surfaceNormal;
+varying vec3	toLightVector;
 
 void main(void)
 {
+	vec4 worldPosition = transformationMatrix * vec4(attribute_Position,1.0);
+	
 	varying_Color = attribute_Color;
-	gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(attribute_Position,1.0);
+	gl_Position = projectionMatrix * viewMatrix * worldPosition;
+	
+	surfaceNormal = (transformationMatrix * vec4(attribute_Normal,0.0)).xyz;
+	toLightVector = lightPosition - worldPosition.xyz;
 }

@@ -21,7 +21,6 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4d;
 import javax.vecmath.Vector3f;
 
 import com.google.common.collect.Iterables;
@@ -30,8 +29,11 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Coordinate;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.util.GamaPair;
 import msi.gaml.operators.fastmaths.FastMath;
+import ummisco.gama.modernOpenGL.Light;
 import ummisco.gama.modernOpenGL.Maths;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -46,6 +48,7 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 	static final int COLOR_IDX = 0;
 	static final int VERTICES_IDX = 1;
 	static final int IDX_BUFF_IDX = 2;
+	static final int NORMAL_IDX = 3;
 	
 	ArrayList<ArrayList<float[]>> vbos = new ArrayList<ArrayList<float[]>>();
 	
@@ -53,7 +56,6 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 	
 	private Matrix4f projectionMatrix;
 	private Matrix4f transformationMatrix;
-	private Matrix4f inverseYMatrix;
 
 	public static class Static<T extends AbstractObject> extends SceneObjects<T> {
 
@@ -191,8 +193,8 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		shaderProgram.loadProjectionMatrix(projectionMatrix);
 		shaderProgram.stop();
 
-		vboHandles = new int[3];
-		this.gl.glGenBuffers(3, vboHandles, 0);
+		vboHandles = new int[4];
+		this.gl.glGenBuffers(4, vboHandles, 0);
 	}
 
 	@Override
@@ -251,24 +253,20 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 //			isInit=true;
 		}
 		
-		Integer index = openGLListIndex;
-		if (index == null) {
-			for (final List<T> list : objects) {
-				for (final T object : list) {
-					if (object instanceof GeometryObject) {
-						GeometryObject geomObj = (GeometryObject)object;
-						if (geomObj.getType() == IShape.Type.POLYGON || geomObj.getType() == IShape.Type.SPHERE) {
-							ArrayList<float[]> vao = new ArrayList<float[]>();
-							vao.add(getObjectVertices(object));
-							vao.add(getObjectColors(object));
-							vao.add(getObjectIndexBuffer(object));
-							vbos.add(vao);
-						}
+		for (final List<T> list : objects) {
+			for (final T object : list) {
+				if (object instanceof GeometryObject) {
+					GeometryObject geomObj = (GeometryObject)object;
+					if (geomObj.getType() == IShape.Type.POLYGON || geomObj.getType() == IShape.Type.SPHERE) {
+						ArrayList<float[]> vao = new ArrayList<float[]>();
+						vao.add(getObjectVertices(object));
+						vao.add(getObjectColors(object));
+						vao.add(getObjectIndexBuffer(object));
+						vbos.add(vao);
 					}
 				}
 			}
-		}
-		openGLListIndex = index;		
+		}	
 		
 		if (vbos.size()>0)
 		{
@@ -296,6 +294,10 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		if (object instanceof GeometryObject) {
 			GeometryObject geomObj = (GeometryObject)object;
 			final IShape.Type type = geomObj.getType();
+			GamaPoint position = geomObj.attributes.location;
+			GamaPair<Double,GamaPoint> rotation = geomObj.attributes.rotation;
+			GamaPoint size = geomObj.attributes.size;
+			
 			Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
 			Coordinate[] coords = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 			
@@ -304,6 +306,26 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 				result[3*i] = (float) coords[i].x;
 				result[3*i+1] = (float) coords[i].y;
 				result[3*i+2] = (float) coords[i].z;
+			}
+			
+			// apply transform to the coords if needed
+			// apply rotation (if facet "rotate" for draw is used)
+			if (rotation != null) {
+				// translate the object to (0,0,0)
+				result = Maths.setTranslationToVertex(result, (float) -position.x, (float) -position.y, (float) -position.z);
+				// apply the rotation
+				result = Maths.setRotationToVertex(result, (float) Math.toRadians(rotation.key.floatValue()), (float) rotation.value.x, (float) rotation.value.y, (float) rotation.value.z);
+				// go back to the first translation
+				result = Maths.setTranslationToVertex(result, (float) position.x, (float) position.y, (float) position.z);
+			}
+			// apply scaling (if facet "size" for draw is used)
+			if (size != null) {
+				// translate the object to (0,0,0)
+				result = Maths.setTranslationToVertex(result, (float) -position.x, (float) -position.y, (float) -position.z);
+				// apply the rotation
+				result = Maths.setScalingToVertex(result, (float) size.x, (float) size.y, (float) size.z);
+				// go back to the first translation
+				result = Maths.setTranslationToVertex(result, (float) position.x, (float) position.y, (float) position.z);
 			}
 		}
 		return result;
@@ -377,6 +399,11 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), 0, 0, 0, 1);
 		shaderProgram.loadTransformationMatrix(transformationMatrix);
 		shaderProgram.loadViewMatrix(camera);
+		
+		Light light = new Light(new Vector3f(0,0,-30),new Vector3f(1,1,1));
+		shaderProgram.loadLight(light);
+		
+		float[] normals = new float[] {0,0,-1,0,0,-1,0,0,-1,0,0,-1};
 
 
 		// VERTICES POSITIONS BUFFER
@@ -413,23 +440,37 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		                    0 /* The bound VBO data offset */);
 		gl.glEnableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX);
 		
+		// NORMAL BUFFER
+		FloatBuffer fbNormal = Buffers.newDirectFloatBuffer(normals);
+		// Select the VBO, GPU memory data, to use for colors
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[NORMAL_IDX]);
+		numBytes = normals.length * 4;
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, fbNormal, GL2.GL_STATIC_DRAW);
+		fbNormal.rewind(); // It is OK to release CPU color memory after transfer to GPU
+		// Associate Vertex attribute 1 with the last bound VBO
+		gl.glVertexAttribPointer(ShaderProgram.NORMAL_ATTRIBUTE_IDX /* the vertex attribute */, 3 /* three positions used for each vertex */,
+		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
+		                    0 /* The bound VBO data offset */);
+		gl.glEnableVertexAttribArray(ShaderProgram.NORMAL_ATTRIBUTE_IDX);
+		
 		// INDEX BUFFER
 		int[] intIdxBuff = new int[idxBuffer.length];
 		for (int i = 0; i < idxBuffer.length ; i++) {
 			intIdxBuff[i] = (int) idxBuffer[i];
 		}
-		IntBuffer fbIdxBuff = Buffers.newDirectIntBuffer(intIdxBuff);
+		IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuff);
 		// Select the VBO, GPU memory data, to use for colors
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[IDX_BUFF_IDX]);
 		numBytes = colors.length * 4;
-		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, fbIdxBuff, GL2.GL_STATIC_DRAW);
-		fbIdxBuff.rewind();
+		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
+		ibIdxBuff.rewind();
 
 //		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, idxBuffer.length); //Draw the vertices as triangle
 		gl.glDrawElements(GL2.GL_TRIANGLES, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
 
 		gl.glDisableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX); // Allow release of vertex position memory
 		gl.glDisableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX); // Allow release of vertex color memory
+		gl.glDisableVertexAttribArray(ShaderProgram.NORMAL_ATTRIBUTE_IDX); // Allow release of vertex normal memory
 		
 		shaderProgram.stop();
 	}
