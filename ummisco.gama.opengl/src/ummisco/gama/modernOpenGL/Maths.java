@@ -103,45 +103,7 @@ public class Maths {
 		viewMatrix.m32 = (float) 0;
 		viewMatrix.m33 = (float) 1;
 		
-//		viewMatrix.m00 = (float) sVect[0];
-//		viewMatrix.m01 = (float) vVect[0];
-//		viewMatrix.m02 = (float) fVect[0];
-//		viewMatrix.m03 = (float) pVect[0];
-//		viewMatrix.m10 = (float) sVect[1];
-//		viewMatrix.m11 = (float) vVect[1];
-//		viewMatrix.m12 = (float) fVect[1];
-//		viewMatrix.m13 = (float) pVect[1];
-//		viewMatrix.m20 = (float) sVect[2];
-//		viewMatrix.m21 = (float) vVect[2];
-//		viewMatrix.m22 = (float) fVect[2];
-//		viewMatrix.m23 = (float) pVect[2];
-//		viewMatrix.m30 = (float) 0;
-//		viewMatrix.m31 = (float) 0;
-//		viewMatrix.m32 = (float) 0;
-//		viewMatrix.m33 = (float) 1;
-		
 		viewMatrix.transpose();
-		
-		
-//		Matrix4f viewMatrix = new Matrix4f();
-//		Matrix4f tmpMatrix = new Matrix4f();
-//		viewMatrix.setIdentity();
-//		
-//		// rotate
-//		tmpMatrix.rotX((float) camera.getPitch());
-//		viewMatrix.mul(tmpMatrix);
-//		tmpMatrix.rotY((float) camera.getYaw());
-//		viewMatrix.mul(tmpMatrix);
-//		tmpMatrix.rotZ((float) camera.getRoll());
-//		viewMatrix.mul(tmpMatrix);
-//		
-//		// translate
-//		Vector3f cameraPos = new Vector3f((float)camera.getPosition().getX(),(float)camera.getPosition().getY(),(float)camera.getPosition().getZ());
-//		Vector3f negativeCameraPos = new Vector3f(-cameraPos.x,-cameraPos.y,-cameraPos.z);
-////		Vector3f negativeCameraPos = new Vector3f(0,0,0);
-//		viewMatrix.setTranslation(negativeCameraPos);
-//		
-//		viewMatrix.transpose();
 		
 		return viewMatrix;
 	}

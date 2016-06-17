@@ -33,7 +33,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import msi.gama.metamodel.shape.IShape;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.modernOpenGL.Maths;
-import ummisco.gama.modernOpenGL.ShaderProgram;
+import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.camera.ICamera;
 
@@ -372,10 +372,8 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 	}
 	
 	private void newDraw(float[] vertices, float[] colors, float[] idxBuffer) {
-//		idxBuffer = new float[]{0,1,2,0,2,3};
 		shaderProgram.start();
-		
-		double angle = Math.toRadians( 30*( (int)(System.currentTimeMillis()/30 % 360) / 30) );		
+			
 		transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), 0, 0, 0, 1);
 		shaderProgram.loadTransformationMatrix(transformationMatrix);
 		shaderProgram.loadViewMatrix(camera);
@@ -397,10 +395,10 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbVertices, GL.GL_STATIC_DRAW);
 		fbVertices.rewind(); // It is OK to release CPU vertices memory after transfer to GPU
 		// Associate Vertex attribute 0 with the last bound VBO
-		gl.glVertexAttribPointer(0 /* the vertex attribute */, 3,
+		gl.glVertexAttribPointer(ShaderProgram.POSITION_ATTRIBUTE_IDX /* the vertex attribute */, 3,
 		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
 		                    0 /* The bound VBO data offset */);
-		gl.glEnableVertexAttribArray(0);
+		gl.glEnableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX);
 		
 		// COLORS BUFFER
 		FloatBuffer fbColors = Buffers.newDirectFloatBuffer(colors);
@@ -410,10 +408,10 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, fbColors, GL2.GL_STATIC_DRAW);
 		fbColors.rewind(); // It is OK to release CPU color memory after transfer to GPU
 		// Associate Vertex attribute 1 with the last bound VBO
-		gl.glVertexAttribPointer(1 /* the vertex attribute */, 4 /* four positions used for each vertex */,
+		gl.glVertexAttribPointer(ShaderProgram.COLOR_ATTRIBUTE_IDX /* the vertex attribute */, 4 /* four positions used for each vertex */,
 		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
 		                    0 /* The bound VBO data offset */);
-		gl.glEnableVertexAttribArray(1);
+		gl.glEnableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX);
 		
 		// INDEX BUFFER
 		int[] intIdxBuff = new int[idxBuffer.length];
@@ -430,8 +428,8 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 //		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, idxBuffer.length); //Draw the vertices as triangle
 		gl.glDrawElements(GL2.GL_TRIANGLES, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
 
-		gl.glDisableVertexAttribArray(VERTICES_IDX); // Allow release of vertex position memory
-		gl.glDisableVertexAttribArray(COLOR_IDX); // Allow release of vertex color memory
+		gl.glDisableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX); // Allow release of vertex position memory
+		gl.glDisableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX); // Allow release of vertex color memory
 		
 		shaderProgram.stop();
 	}

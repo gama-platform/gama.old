@@ -1,0 +1,23 @@
+#if __VERSION__ >= 130
+	#define attribute in
+	#define varying out
+#endif
+		
+#ifdef GL_ES
+	precision mediump float;
+	precision mediump int;
+#endif
+		
+uniform mat4    transformationMatrix;
+uniform mat4    projectionMatrix;
+uniform mat4    viewMatrix;
+//uniform vec3    lightPosition;
+attribute vec3  attribute_Position;
+attribute vec4  attribute_Color;
+varying vec4    varying_Color;
+
+void main(void)
+{
+	varying_Color = attribute_Color;
+	gl_Position = projectionMatrix * viewMatrix * transformationMatrix * vec4(attribute_Position,1.0);
+}
