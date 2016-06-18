@@ -13,19 +13,38 @@ package ummisco.gama.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.*;
+import org.eclipse.ui.INewWizard;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.WizardNewProjectCreationPage;
-import msi.gama.application.projects.WorkspaceModelsManager;
+
+import msi.gama.application.workspace.WorkspaceModelsManager;
 
 public class NewProjectWizard extends Wizard implements INewWizard, IExecutableExtension {
 
-	/** Use the WizardNewProjectCreationPage, which is provided by the Eclipse framework. */
+	/**
+	 * Use the WizardNewProjectCreationPage, which is provided by the Eclipse
+	 * framework.
+	 */
 	public static final String NATURE_ID = "msi.gama.application.nature.gamaNature";
 	private WizardNewProjectCreationPage wizardPage;
 	// private IConfigurationElement config;
@@ -46,16 +65,21 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 	@Override
 	public boolean performFinish() {
 
-		if ( project != null ) { return true; }
+		if (project != null) {
+			return true;
+		}
 
 		final IProject projectHandle = wizardPage.getProjectHandle();
-		URI projectURI = !wizardPage.useDefaults() ? wizardPage.getLocationURI() : null;
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		final URI projectURI = !wizardPage.useDefaults() ? wizardPage.getLocationURI() : null;
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProjectDescription desc = workspace.newProjectDescription(projectHandle.getName());
 		desc.setLocationURI(projectURI);
 
-		/** An operation object that modifies workspaces in order to create new projects. */
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
+		/**
+		 * An operation object that modifies workspaces in order to create new
+		 * projects.
+		 */
+		final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
 
 			@Override
 			protected void execute(final IProgressMonitor monitor) throws CoreException {
@@ -65,10 +89,10 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 
 		try {
 			getContainer().run(true, true, op);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			return false;
-		} catch (InvocationTargetException e) {
-			Throwable realException = e.getTargetException();
+		} catch (final InvocationTargetException e) {
+			final Throwable realException = e.getTargetException();
 			MessageDialog.openError(getShell(), "Error", realException.getMessage());
 			return false;
 		}
@@ -93,23 +117,25 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 	 * @throws OperationCanceledException
 	 */
 	void createProject(final IProjectDescription description, final IProject proj, final IProgressMonitor monitor)
-		throws CoreException, OperationCanceledException {
+			throws CoreException, OperationCanceledException {
 		try {
 
 			monitor.beginTask("", 2000);
 			proj.create(description, new SubProgressMonitor(monitor, 1000));
 
-			if ( monitor.isCanceled() ) { throw new OperationCanceledException(); }
+			if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
+			}
 			proj.open(new SubProgressMonitor(monitor, 1000));
 			// proj.open(IResource., new SubProgressMonitor(monitor, 1000));
 
 			WorkspaceModelsManager.setValuesProjectDescription(proj, false, false, null);
 
 			/*
-			 * We now have the project and we can do more things with it before updating
-			 * the perspective.
+			 * We now have the project and we can do more things with it before
+			 * updating the perspective.
 			 */
-			IContainer container = proj;
+			final IContainer container = proj;
 
 			/* Add the doc folder */
 			final IFolder libFolder = container.getFolder(new Path("doc"));
@@ -131,8 +157,9 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			final IFolder imFolder = container.getFolder(new Path("images"));
 			imFolder.create(true, true, monitor);
 
-		} catch (CoreException ioe) {
-			IStatus status = new Status(IStatus.ERROR, "ProjectWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
+		} catch (final CoreException ioe) {
+			final IStatus status = new Status(IStatus.ERROR, "ProjectWizard", IStatus.OK, ioe.getLocalizedMessage(),
+					null);
 			throw new CoreException(status);
 		} finally {
 			monitor.done();
@@ -154,7 +181,7 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 	/** Sets the initialization data for the wizard. */
 	@Override
 	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data)
-		throws CoreException {
+			throws CoreException {
 		// snipped...
 	}
 }

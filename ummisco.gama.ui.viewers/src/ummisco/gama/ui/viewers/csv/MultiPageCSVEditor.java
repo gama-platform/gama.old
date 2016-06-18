@@ -24,12 +24,13 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.part.*;
-import msi.gama.gui.swt.commands.GamaMenu;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
-import ummisco.gama.ui.controls.GamaToolbar2;
+
+import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.viewers.csv.model.*;
 import ummisco.gama.ui.viewers.csv.text.*;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
+import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
+import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 /**
  *
@@ -502,7 +503,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart implements IResource
 
 	/**
 	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.controls.GamaToolbar2)
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

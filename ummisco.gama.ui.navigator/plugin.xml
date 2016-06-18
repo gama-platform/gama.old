@@ -213,43 +213,8 @@
          <command
                commandId="msi.gama.gui.gamaNavigator.commands.Refresh"
                icon="platform:/plugin/ummisco.gama.ui.shared/icons/navigator/navigator.refresh2.png"
-               label="Erase metadata"
+               label="Refresh metadata"
                style="push">
-            <visibleWhen>
-               <and>
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IResource">
-                        <or>
-                           <test
-                                 property="org.eclipse.core.resources.contentTypeId"
-                                 value="msi.gama.gui.images.type">
-                           </test>
-                           <test
-                                 property="org.eclipse.core.resources.contentTypeId"
-                                 value="msi.gama.gui.csv.type">
-                           </test>
-                           <test
-                                 property="org.eclipse.core.resources.contentTypeId"
-                                 value="msi.gama.gui.shapefile.type">
-                           </test>
-                           <test
-                                 property="org.eclipse.core.resources.contentTypeId"
-                                 value="msi.gama.gui.gaml.type">
-                           </test>
-                           <adapt
-                                 type="org.eclipse.core.resources.IResource">
-                           </adapt>
-                        </or>
-                     </adapt>
-                  </iterate>
-                  <not>
-                     <count
-                           value="0">
-                     </count>
-                  </not>
-               </and>
-            </visibleWhen>
          </command>
       </menuContribution>
       <menuContribution

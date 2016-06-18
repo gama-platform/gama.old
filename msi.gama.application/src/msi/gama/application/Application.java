@@ -19,6 +19,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,48 +27,65 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import msi.gama.application.projects.WorkspaceModelsManager;
+import msi.gama.application.workbench.ApplicationWorkbenchAdvisor;
+import msi.gama.application.workspace.PickWorkspaceDialog;
+import msi.gama.application.workspace.WorkspaceModelsManager;
+import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.gui.swt.ApplicationWorkbenchAdvisor;
-import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
-import msi.gama.gui.views.GamaPreferencesView;
+import msi.gama.runtime.GAMA;
 
 /** This class controls all aspects of the application's execution */
 public class Application implements IApplication {
 
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
-		final Display display = PlatformUI.createDisplay();
-		WorkspaceModelsManager.createProcessor(display);
-		/* Fetch the Location that we will be modifying */
-		Location instanceLoc = Platform.getInstanceLocation();
+		Display.setAppName("Gama Platform");
+		Display.setAppVersion("1.7.0");
+		WorkspaceModelsManager.createProcessor();
+		if ( checkWorkspace() == EXIT_OK )
+			return EXIT_OK;
+		Display display = null;
+		try {
+			display = Display.getDefault();
+			final int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
+			if ( returnCode == PlatformUI.RETURN_RESTART ) { return IApplication.EXIT_RESTART; }
+			return IApplication.EXIT_OK;
+		} finally {
+			if ( display != null )
+				display.dispose();
+			final Location instanceLoc = Platform.getInstanceLocation();
+			if ( instanceLoc != null ) {
+				instanceLoc.release();
+			}
+		}
+
+	}
+
+	public static Object checkWorkspace() throws IOException, MalformedURLException {
+		final Location instanceLoc = Platform.getInstanceLocation();
 		if ( instanceLoc == null ) {
 			// -data @none was specified but GAMA requires a workspace
-			MessageDialog.openError(display.getActiveShell(),
-				IDEWorkbenchMessages.IDEApplication_workspaceMandatoryTitle,
-				IDEWorkbenchMessages.IDEApplication_workspaceMandatoryMessage);
+			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+				"A workspace is required to run GAMA");
 			return EXIT_OK;
 		}
 		boolean remember = false;
 		String lastUsedWs = null;
 		if ( instanceLoc.isSet() ) {
 			lastUsedWs = instanceLoc.getURL().getFile();
-			final String ret = PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(),
-				lastUsedWs, false, false, false);
+			final String ret = WorkspacePreferences.checkWorkspaceDirectory(lastUsedWs, false, false, false);
 			if ( ret != null ) {
 				/* If we dont or cant remember and the location is set, we cant do anything as we need a workspace */
-				MessageDialog.openError(display.getActiveShell(), "Error",
-					"The workspace provided as argument cannot be used. Please change or remove it");
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+					"The workspace provided cannot be used. Please change it");
 				PlatformUI.getWorkbench().close();
 				System.exit(0);
-				return IApplication.EXIT_OK;
+				return EXIT_OK;
 			}
 		} else {
 
@@ -83,8 +101,7 @@ public class Application implements IApplication {
 				/*
 				 * If there's any problem with the workspace, force a dialog
 				 */
-				final String ret = PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(),
-					lastUsedWs, false, false, false);
+				final String ret = WorkspacePreferences.checkWorkspaceDirectory(lastUsedWs, false, false, false);
 				if ( ret != null ) {
 					if ( ret.equals("models") ) {
 						remember = !MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
@@ -100,19 +117,18 @@ public class Application implements IApplication {
 
 		/* If we don't remember the workspace, show the dialog */
 		if ( !remember ) {
-			final PickWorkspaceDialog pwd = new PickWorkspaceDialog();
-			final int pick = pwd.open();
+			final int pick = new PickWorkspaceDialog().open();
 			/* If the user cancelled, we can't do anything as we need a workspace */
-			if ( pick == Window.CANCEL && pwd.getSelectedWorkspaceLocation() == null ) {
-				MessageDialog.openError(display.getActiveShell(), "Error",
+			if ( pick == 1 /* Window.CANCEL */ && WorkspacePreferences.getSelectedWorkspaceRootLocation() == null ) {
+				MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
 					"The application can not start without a workspace and will now exit.");
 				System.exit(0);
 				return IApplication.EXIT_OK;
 			}
 			/* Tell Eclipse what the selected location was and continue */
-			instanceLoc.set(new URL("file", null, pwd.getSelectedWorkspaceLocation()), false);
-			if ( pwd.applyPrefs() ) {
-				pwd.applyEclipsePreferences(pwd.getSelectedWorkspaceLocation());
+			instanceLoc.set(new URL("file", null, WorkspacePreferences.getSelectedWorkspaceRootLocation()), false);
+			if ( WorkspacePreferences.applyPrefs() ) {
+				WorkspacePreferences.applyEclipsePreferences(WorkspacePreferences.getSelectedWorkspaceRootLocation());
 			}
 		} else {
 			if ( !instanceLoc.isSet() ) {
@@ -137,25 +153,12 @@ public class Application implements IApplication {
 				@Override
 				public void afterValueChange(final Integer newValue) {
 					changeMaxMemory(newValue);
-					GamaPreferencesView.setRestartRequired();
+					GAMA.getGui().setRestartRequiredAfterPreferenceSet();
+					// GamaPreferencesView.setRestartRequired();
 				}
 			});
 		}
-
-		try {
-			final int returnCode = PlatformUI.createAndRunWorkbench(display, new ApplicationWorkbenchAdvisor());
-			if ( returnCode == PlatformUI.RETURN_RESTART ) { return IApplication.EXIT_RESTART; }
-			return IApplication.EXIT_OK;
-		} finally {
-			if ( display != null ) {
-				display.dispose();
-			}
-			instanceLoc = Platform.getInstanceLocation();
-			if ( instanceLoc != null ) {
-				instanceLoc.release();
-			}
-		}
-
+		return null;
 	}
 
 	@Override

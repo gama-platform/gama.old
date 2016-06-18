@@ -11,11 +11,15 @@
  **********************************************************************************************/
 package ummisco.gama.ui.commands;
 
-import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import msi.gama.application.projects.WorkspaceModelsManager;
+
+import msi.gama.application.workspace.WorkspaceModelsManager;
 
 /**
  * Opens a file
@@ -25,13 +29,13 @@ public class FileOpen extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		FileDialog dialog = new FileDialog(shell, SWT.OPEN);
+		final Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 		dialog.setFilterExtensions(new String[] { "*.gaml", "*.*" });
 		dialog.setFilterNames(new String[] { "GAML model files", "All Files" });
-		String fileSelected = dialog.open();
+		final String fileSelected = dialog.open();
 
-		if ( fileSelected != null && fileSelected.endsWith(".gaml") ) {
+		if (fileSelected != null && fileSelected.endsWith(".gaml")) {
 			// Perform Action, like open the file.
 			WorkspaceModelsManager.instance.openModelPassedAsArgument(fileSelected);
 		}

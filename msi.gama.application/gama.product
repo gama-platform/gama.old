@@ -72,7 +72,6 @@ openFile
       </win>
    </launcher>
 
-
    <vm>
       <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
    </vm>
@@ -275,14 +274,15 @@ openFile
       <feature id="org.eclipse.ecf.filetransfer.feature"/>
       <feature id="org.eclipse.ecf.core.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
+      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" installMode="root"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.rcp"/>
       <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.opengl" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.modeling.ui" version="1.7.0.qualifier" installMode="root"/>
    </features>
 
    <configurations>

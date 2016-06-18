@@ -91,12 +91,17 @@ public interface IGamaIcons {
 	public static final GamaIcon MENU_SIMULATION_PERSPECTIVE = GamaIcons.create("menu.simulation2");
 	public static final GamaIcon MENU_RUN_ACTION = GamaIcons.create("menu.action2");
 	public static final GamaIcon MENU_RUN = GamaIcons.create("menu.run4");
-	// public static final GamaIcon MENU_PAUSE = GamaIcons.create("menu.pause2");
+	// public static final GamaIcon MENU_PAUSE =
+	// GamaIcons.create("menu.pause2");
 	// public static final GamaIcon MENU_STEP = GamaIcons.create("menu.step2");
-	// public static final GamaIcon MENU_RELOAD = GamaIcons.create("menu.reload2");
-	// public static final GamaIcon MENU_ERROR_STOP = GamaIcons.create("toolbar.stop2");
-	// public static final GamaIcon MENU_ERROR_WARNING = GamaIcons.create("menu.warning2");
-	// public static final GamaIcon MENU_ERROR_DISPLAY = GamaIcons.create("menu.show2");
+	// public static final GamaIcon MENU_RELOAD =
+	// GamaIcons.create("menu.reload2");
+	// public static final GamaIcon MENU_ERROR_STOP =
+	// GamaIcons.create("toolbar.stop2");
+	// public static final GamaIcon MENU_ERROR_WARNING =
+	// GamaIcons.create("menu.warning2");
+	// public static final GamaIcon MENU_ERROR_DISPLAY =
+	// GamaIcons.create("menu.show2");
 
 	// Layers
 
@@ -127,9 +132,11 @@ public interface IGamaIcons {
 	// public static final GamaIcon TOOLBAR_STEP = MENU_STEP;
 	// public static final GamaIcon TOOLBAR_RELOAD = MENU_RELOAD;
 	// public static final GamaIcon TOOLBAR_STOP = MENU_ERROR_STOP;
-	public static final GamaIcon TOOLBAR_KNOB = GamaIcons.create("toolbar.knob4");
-	public static final GamaIcon TOOLBAR_KNOB_HOVER = GamaIcons.create("toolbar.knob5");
-	public static final GamaIcon TOOLBAR_SLIDER = GamaIcons.create("toolbar.slider2");
+	public static final GamaIcon TOOLBAR_KNOB = GamaIcons.create("toolbar.knob2");
+	// public static final GamaIcon TOOLBAR_KNOB_HOVER =
+	// GamaIcons.create("toolbar.knob5");
+	// public static final GamaIcon TOOLBAR_SLIDER =
+	// GamaIcons.create("toolbar.slider2");
 
 	// User Panels
 

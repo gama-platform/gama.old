@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-import ummisco.gama.ui.utils.Platform;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 public class FocusHandler {
 
@@ -275,7 +275,7 @@ public class FocusHandler {
 	}
 
 	public boolean handleForceFocus(boolean result) {
-		if ( Platform.isWin32() ) {
+		if ( PlatformHelper.isWin32() ) {
 			// On Windows, focus queries are unreliable while traversing SwingControls
 			// In some cases this causes forceFocus() to incorrectly return false, causing
 			// the SwingControl to be skipped while tabbing. Try to fix it here by resetting
@@ -309,7 +309,7 @@ public class FocusHandler {
 	 */
 	protected void synthesizeWindowActivation(final boolean activate) {
 		assert Display.getCurrent() != null; // On SWT event thread
-		assert Platform.isWin32(); // Only done on Windows
+		assert PlatformHelper.isWin32(); // Only done on Windows
 
 		EventQueue.invokeLater(new Runnable() {
 
@@ -344,7 +344,7 @@ public class FocusHandler {
 	}
 
 	private void getSynthesizeMethod(final Class clazz) {
-		if ( Platform.isWin32() && !synthesizeMethodInitialized ) {
+		if ( PlatformHelper.isWin32() && !synthesizeMethodInitialized ) {
 			synthesizeMethodInitialized = true;
 			try {
 				synthesizeMethod = clazz.getMethod("synthesizeWindowActivation", new Class[] { boolean.class });
@@ -476,12 +476,12 @@ public class FocusHandler {
 		// the deactivation altogether, the subsequent Activate triggered by this event, does
 		// nothing and the embedded frame never gets focus. So we do the deactivate right here,
 		// just before the activation.
-		if ( Platform.isWin32() && pendingDeactivate ) {
+		if ( PlatformHelper.isWin32() && pendingDeactivate ) {
 			synthesizeWindowActivation(false);
 			pendingDeactivate = false;
 		}
 
-		if ( Platform.isWin32() && synthesizeMethod != null ) {
+		if ( PlatformHelper.isWin32() && synthesizeMethod != null ) {
 			// Activate the window now
 			synthesizeWindowActivation(true);
 		}
@@ -521,7 +521,7 @@ public class FocusHandler {
 
 						// On windows, the actual activation needs to be deferred until doActivation() to
 						// prevent the problem described above, so veto the activation normally done by SWT_AWT.
-						if ( Platform.isWin32() && synthesizeMethod != null ) {
+						if ( PlatformHelper.isWin32() && synthesizeMethod != null ) {
 							if ( verboseFocusEvents ) {
 								trace("Consuming SWT.Activate event: " + event);
 							}
@@ -539,7 +539,7 @@ public class FocusHandler {
 						// To work around this problem, we defer the deactivation
 						// of the embedded frame here. See the SWT.Activate case above for processing of the
 						// deferred event.
-						if ( Platform.isWin32() && synthesizeMethod != null ) {
+						if ( PlatformHelper.isWin32() && synthesizeMethod != null ) {
 							pendingDeactivate = true;
 							// Prevent the SWT_AWT-installed listener from running (and deactivating the frame).
 							if ( verboseFocusEvents ) {
@@ -578,7 +578,7 @@ public class FocusHandler {
 
 		@Override
 		public void windowLostFocus(final WindowEvent e) {
-			if ( Platform.isWin32() ) {
+			if ( PlatformHelper.isWin32() ) {
 				hideTextSelection();
 				processTypeAheadKeys(pendingTraverseOutSeqNum);
 			}
@@ -592,7 +592,7 @@ public class FocusHandler {
 		public boolean dispatchKeyEvent(final KeyEvent e) {
 			boolean result = false;
 
-			if ( Platform.isWin32() ) {
+			if ( PlatformHelper.isWin32() ) {
 				result = checkForTraverseOut(e);
 			}
 			return result;

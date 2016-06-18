@@ -18,8 +18,6 @@ import java.util.Map;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.GamaPreferences;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ISymbol;
@@ -167,9 +165,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 				}
 			}
 
-		}
-		if (GamaPreferences.CORE_AUTO_RUN.getValue()) {
-			GAMA.startFrontmostExperiment();
 		}
 		return true;
 	}

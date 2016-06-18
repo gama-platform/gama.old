@@ -7,10 +7,9 @@ package ummisco.gama.opengl;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 
-import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.views.displays.LayeredDisplayView;
-import msi.gama.runtime.GAMA;
-import ummisco.gama.ui.controls.GamaToolbar2;
+import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.displays.LayeredDisplayView;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 /**
  * Class OpenGLLayeredDisplayView.
@@ -53,7 +52,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	@Override
 	public void close() {
 
-		GAMA.getGui().asyncRun(new Runnable() {
+		WorkbenchHelper.asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
@@ -104,12 +103,11 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	@Override
 	public void waitToBeRealized() {
 
-		GAMA.getGui().asyncRun(new Runnable() {
+		WorkbenchHelper.asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
-				SwtGui.getPage().bringToTop(SWTLayeredDisplayView.this);
-
+				WorkbenchHelper.getPage().bringToTop(SWTLayeredDisplayView.this);
 			}
 		});
 	}

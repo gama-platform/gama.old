@@ -15,6 +15,7 @@
     <module>../ummisco.gama.ui.modeling</module>
     <module>../ummisco.gama.ui.shared</module>
     <module>../ummisco.gama.ui.navigator</module>
+    <module>../ummisco.gama.ui.experiment</module>
     
     <module>../ummisco.gama.feature.models</module>
     <module>../ummisco.gama.feature.dependencies</module>
@@ -22,7 +23,8 @@
     <module>../ummisco.gama.feature.core</module>
     <module>../ummisco.gama.feature.core.extensions</module>
     <module>../ummisco.gama.feature.core.ui</module>
-    <module>../ummisco.gama.feature.core.opengl</module>
+    <module>../ummisco.gama.feature.experiment.ui</module>
+    <module>../ummisco.gama.feature.modeling.ui</module>
     <module>../ummisco.gama.feature.serialize</module>
     <module>../ummisco.gama.feature.network</module>    
     

@@ -31,9 +31,10 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.gui.swt.SwtGui;
+import ummisco.gama.ui.utils.SwtGui;
 import msi.gama.lang.gaml.ui.XtextGui;
-import ummisco.gama.ui.controls.GamaToolbarSimple;
+import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
 /**
  * This class implements the GAML editors' toolbar
@@ -64,7 +65,7 @@ public class EditToolbar {
 	}
 
 	public static void visitToolbars(final IToolbarVisitor visitor) {
-		final IEditorReference[] eds = SwtGui.getPage().getEditorReferences();
+		final IEditorReference[] eds = WorkbenchHelper.getPage().getEditorReferences();
 		for (final IEditorReference ed : eds) {
 			final IEditorPart e = ed.getEditor(false);
 			if (e instanceof GamlEditor) {
@@ -292,7 +293,7 @@ public class EditToolbar {
 			public void widgetSelected(final SelectionEvent e) {
 				if (e.detail != SWT.ARROW) {
 					try {
-						SwtGui.getPage().showView("msi.gama.application.outline", null, IWorkbenchPage.VIEW_VISIBLE);
+						WorkbenchHelper.getPage().showView("msi.gama.application.outline", null, IWorkbenchPage.VIEW_VISIBLE);
 					} catch (final PartInitException ex) {
 						ex.printStackTrace();
 					}
@@ -438,7 +439,7 @@ public class EditToolbar {
 		// if ( font != null && !font.isDisposed() ) {
 		// font.dispose();
 		// }
-		font = new Font(SwtGui.getDisplay(), data);
+		font = new Font(WorkbenchHelper.getDisplay(), data);
 		minus.setEnabled(data.height >= 6);
 		text.setFont(font);
 		text.update();

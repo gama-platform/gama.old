@@ -21,8 +21,8 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
-import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 /**
  * The class FocusItem.

@@ -149,8 +149,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public SimulationAgent(final SimulationPopulation pop) throws GamaRuntimeException {
 		super(pop);
-		clock = new SimulationClock(this);
 		scope = new SimulationScope(this);
+		clock = new SimulationClock(scope);
 		executer = new ActionExecuter(scope);
 		projectionFactory = new ProjectionFactory();
 		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());

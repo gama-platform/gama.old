@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="ummisco.gama.feature.core.ui"
-      label="UI Components of GAMA"
+      label="Common UI Components of GAMA"
       version="1.7.0.qualifier"
       provider-name="UMMISCO">
 
    <description url="http://gama-platform.org">
-      The UI components of GAMA
+      The common UI components of GAMA
    </description>
 
    <copyright url="http://www.example.com/copyright">
@@ -29,35 +29,7 @@
          unpack="false"/>
 
    <plugin
-         id="ummisco.gama.java2d"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ummisco.gama.ui.viewers"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="ummisco.gama.ui.shared"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ummisco.gama.ui.modeling"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="ummisco.gama.ui.navigator"
          download-size="0"
          install-size="0"
          version="0.0.0"

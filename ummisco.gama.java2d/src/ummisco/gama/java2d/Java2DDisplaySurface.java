@@ -45,7 +45,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.views.displays.DisplaySurfaceMenu;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -64,6 +63,8 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
+import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
 @display("java2D")
 public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
@@ -695,7 +696,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			return;
 		}
 		final ILocation modelCoordinates = layers.get(0).getModelCoordinatesFrom(xc, yc, this);
-		scope.getGui().run(new Runnable() {
+		WorkbenchHelper.run(new Runnable() {
 
 			@Override
 			public void run() {

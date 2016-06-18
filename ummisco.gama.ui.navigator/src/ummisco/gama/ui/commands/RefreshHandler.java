@@ -19,9 +19,10 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
+
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.swt.SwtGui;
 import ummisco.gama.ui.navigator.GamaNavigator;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class RefreshHandler extends AbstractHandler {
 
@@ -33,17 +34,19 @@ public class RefreshHandler extends AbstractHandler {
 
 	public static void run(final IResource resource) {
 		final Display d = PlatformUI.getWorkbench().getDisplay();
-		if ( d.isDisposed() )
+		if (d.isDisposed())
 			return;
 		d.asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				final IWorkbenchPage page = SwtGui.getPage();
-				if ( page == null )
+				final IWorkbenchPage page = WorkbenchHelper.getPage();
+				if (page == null)
 					return;
 				final IViewPart view = page.findView(IGui.NAVIGATOR_VIEW_ID);
-				if ( view == null ) { return; }
+				if (view == null) {
+					return;
+				}
 				((GamaNavigator) view).safeRefresh(resource == null ? null : resource.getParent());
 			}
 		});

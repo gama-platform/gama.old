@@ -7,12 +7,19 @@ package ummisco.gama.ui.navigator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.ui.IEditorDescriptor;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.FileEditorInput;
-import msi.gama.gui.swt.*;
+
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * Class WrappedFile.
@@ -41,6 +48,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 
 	/**
 	 * Method hasChildren()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#hasChildren()
 	 */
 	@Override
@@ -55,6 +63,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 
 	/**
 	 * Method getNavigatorChildren()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getNavigatorChildren()
 	 */
 	@Override
@@ -64,6 +73,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 
 	/**
 	 * Method getImage()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getImage()
 	 */
 	@Override
@@ -74,6 +84,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 
 	/**
 	 * Method getColor()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getColor()
 	 */
 	@Override
@@ -83,6 +94,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 
 	/**
 	 * Method isParentOf()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#isParentOf(java.lang.Object)
 	 */
 	// @Override
@@ -92,13 +104,15 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 
 	@Override
 	public boolean handleDoubleClick() {
-		IEditorInput editorInput = new FileEditorInput(file);
-		IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
-		if ( desc == null ) { return false; }
-		IWorkbenchPage page = SwtGui.getPage();
+		final IEditorInput editorInput = new FileEditorInput(file);
+		final IEditorDescriptor desc = PlatformUI.getWorkbench().getEditorRegistry().getDefaultEditor(file.getName());
+		if (desc == null) {
+			return false;
+		}
+		final IWorkbenchPage page = WorkbenchHelper.getPage();
 		try {
 			page.openEditor(editorInput, desc.getId());
-		} catch (PartInitException e) {
+		} catch (final PartInitException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -114,6 +128,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 
 	/**
 	 * Method getAdapter()
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	@Override

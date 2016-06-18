@@ -4,12 +4,17 @@
  */
 package msi.gama.lang.gaml.ui.editor;
 
-import msi.gama.gui.swt.commands.*;
-import msi.gama.gui.swt.commands.GamaColorMenu.IColorRunnable;
-import msi.gama.util.GamaColor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+
+import msi.gama.util.GamaColor;
+import ummisco.gama.ui.menus.GamaColorMenu;
+import ummisco.gama.ui.menus.GamaColorMenu.IColorRunnable;
 
 /**
  * The class EditToolbarColorMenu.
@@ -21,7 +26,8 @@ import org.eclipse.swt.widgets.*;
 public class EditToolbarColorMenu extends EditToolbarMenu {
 
 	// static {
-	// GamaColorMenu.COLOR_MENU_SORT.addChangeListener(new IPreferenceChangeListener<String>() {
+	// GamaColorMenu.COLOR_MENU_SORT.addChangeListener(new
+	// IPreferenceChangeListener<String>() {
 	//
 	// @Override
 	// public boolean beforeValueChange(final String newValue) {
@@ -45,7 +51,7 @@ public class EditToolbarColorMenu extends EditToolbarMenu {
 
 		@Override
 		public void run(final int r, final int g, final int b) {
-			GamaColor c = new GamaColor(r, g, b, 255);
+			final GamaColor c = new GamaColor(r, g, b, 255);
 			applyText(c.serialize(true));
 		}
 	};
@@ -54,16 +60,16 @@ public class EditToolbarColorMenu extends EditToolbarMenu {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			MenuItem i = (MenuItem) e.widget;
+			final MenuItem i = (MenuItem) e.widget;
 			applyText(i.getText());
 		}
 	};
 
 	@Override
 	protected void open(final GamlEditor editor, final SelectionEvent trigger) {
-		boolean asMenu = trigger.detail == SWT.ARROW;
+		final boolean asMenu = trigger.detail == SWT.ARROW;
 		setEditor(editor);
-		if ( !asMenu ) {
+		if (!asMenu) {
 			openView();
 		} else {
 			final ToolItem target = (ToolItem) trigger.widget;

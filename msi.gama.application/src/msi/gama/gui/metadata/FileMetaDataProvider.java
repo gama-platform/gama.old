@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -26,10 +27,6 @@ import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.ui.PlatformUI;
-import gnu.trove.map.hash.THashMap;
-import msi.gama.gui.metadata.images.ImageDataLoader;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GAMLFile.GamlInfo;
 import msi.gama.util.file.GamaCSVFile;
@@ -53,6 +50,35 @@ import msi.gaml.factories.DescriptionFactory;
  */
 public class FileMetaDataProvider implements IFileMetaDataProvider {
 
+	/**
+	 * Adapt the specific object to the specified class, supporting the
+	 * IAdaptable interface as well.
+	 */
+	public static <T> T adaptTo(final Object o, final Class<T> cl) {
+		return adaptTo(o, cl, cl);
+	}
+
+	/**
+	 * Adapt the specific object to the specified classes, supporting the
+	 * IAdaptable interface as well.
+	 *
+	 * @param o
+	 *            the object.
+	 * @param actualType
+	 *            the actual type that must be returned.
+	 * @param adapterType
+	 *            the adapter type to check for.
+	 */
+	public static <T> T adaptTo(Object o, final Class<T> actualType, final Class<?> adapterType) {
+		if ( actualType.isInstance(o) ) {
+			return actualType.cast(o);
+		} else if ( o instanceof IAdaptable ) {
+			o = ((IAdaptable) o).getAdapter(adapterType);
+			if ( actualType.isInstance(o) ) { return actualType.cast(o); }
+		}
+		return null;
+	}
+
 	public static final QualifiedName CACHE_KEY = new QualifiedName("msi.gama.application", "metadata");
 	public static final String CSV_CT_ID = "msi.gama.gui.csv.type";
 	public static final String IMAGE_CT_ID = "msi.gama.gui.images.type";
@@ -72,7 +98,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			add("bz2");
 		}
 	};
-	public static final THashMap<String, String> longNames = new THashMap() {
+	public static final HashMap<String, String> longNames = new HashMap() {
 
 		{
 			put("prj", "Projection data");
@@ -207,7 +233,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated,
 		final boolean immediately) {
 		if ( element instanceof IProject ) { return getMetaData((IProject) element, includeOutdated); }
-		IFile file = SwtGui.adaptTo(element, IFile.class, IFile.class);
+		IFile file = adaptTo(element, IFile.class, IFile.class);
 
 		if ( file == null ) {
 			if ( element instanceof java.io.File ) {
@@ -261,16 +287,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 					} catch (final CoreException e) {
 						e.printStackTrace();
 					}
-					GAMA.getGui().asyncRun(new Runnable() {
-
-						@Override
-						public void run() {
-							// Fire a LabelProviderChangedEvent to notify eclipse views
-							// that label provider has been changed for the resources
-							// System.out.println("Finally: updating the decorator manager");
-							PlatformUI.getWorkbench().getDecoratorManager().update("msi.gama.application.decorator");
-						}
-					});
+					GAMA.getGui().updateDecorator("msi.gama.application.decorator");
 
 				}
 
@@ -455,13 +472,13 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		if ( "gaml".equals(ext) ) { return GAML_CT_ID; }
 		if ( "shp".equals(ext) ) { return SHAPEFILE_CT_ID; }
 		if ( OSMExt.contains(ext) ) { return OSM_CT_ID; }
-		if ( longNames.contains(ext) ) { return SHAPEFILE_SUPPORT_CT_ID; }
+		if ( longNames.containsKey(ext) ) { return SHAPEFILE_SUPPORT_CT_ID; }
 		return "";
 	}
 
 	public static boolean isShapeFileSupport(final IFile p) {
 		final String ext = p.getFileExtension();
-		return longNames.contains(ext);
+		return longNames.containsKey(ext);
 	}
 
 	public static IResource shapeFileSupportedBy(final IFile r) {
@@ -471,7 +488,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			fileName = fileName.replace(".xml", "");
 		} else {
 			final String extension = r.getFileExtension();
-			if ( !longNames.contains(extension) ) { return null; }
+			if ( !longNames.containsKey(extension) ) { return null; }
 			fileName = fileName.replace(extension, "shp");
 		}
 		return r.getParent().findMember(fileName);

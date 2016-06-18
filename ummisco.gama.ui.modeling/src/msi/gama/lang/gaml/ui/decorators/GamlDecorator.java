@@ -11,12 +11,19 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.decorators;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
-import msi.gama.gui.metadata.*;
+import msi.gama.gui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.NavigatorLabelProvider;
 import ummisco.gama.ui.navigator.VirtualContent;
 import ummisco.gama.ui.navigator.WrappedFile;
@@ -35,7 +42,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 		@Override
 		public boolean visit(final IResource resource) throws CoreException {
-			if ( resource instanceof IFile && FileMetaDataProvider.isGAML((IFile) resource) ) {
+			if (resource instanceof IFile && FileMetaDataProvider.isGAML((IFile) resource)) {
 				overlay[0] = getOkImageDescriptor();
 				return false;
 			}
@@ -43,11 +50,13 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 		}
 	};
 
-	// private final IResourceChangeListener listener = new IResourceChangeListener() {
+	// private final IResourceChangeListener listener = new
+	// IResourceChangeListener() {
 	//
 	// @Override
 	// public void resourceChanged(final IResourceChangeEvent event) {
-	// IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IMarker.PROBLEM, true);
+	// IMarkerDelta[] markerDeltas = event.findMarkerDeltas(IMarker.PROBLEM,
+	// true);
 	// if ( markerDeltas.length > 0 ) {
 	// PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 	//
@@ -69,105 +78,113 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.jface.viewers.
-	 * ILabelProviderListener)
+	 * @see
+	 * org.eclipse.jface.viewers.IBaseLabelProvider#addListener(org.eclipse.
+	 * jface.viewers. ILabelProviderListener)
 	 */
 	@Override
-	public void addListener(final ILabelProviderListener listener) {}
+	public void addListener(final ILabelProviderListener listener) {
+	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.Object,
-	 * org.eclipse.jface.viewers.IDecoration)
+	 * @see
+	 * org.eclipse.jface.viewers.ILightweightLabelDecorator#decorate(java.lang.
+	 * Object, org.eclipse.jface.viewers.IDecoration)
 	 */
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
-		if ( element instanceof WrappedFile ) {
+		if (element instanceof WrappedFile) {
 			decorate((WrappedFile) element, decoration);
 			return;
 		}
-		if ( element instanceof VirtualContent ) {
+		if (element instanceof VirtualContent) {
 			decorate((VirtualContent) element, decoration);
 			return;
 		}
 		// See plugin.xml . Only applicable to IResource or VirtualContent
-		IResource resource = (IResource) element;
-		if ( !resource.isAccessible() ) {
-			if ( resource instanceof IProject ) {
+		final IResource resource = (IResource) element;
+		if (!resource.isAccessible()) {
+			if (resource instanceof IProject) {
 				decoration.addOverlay(getClosedImageDescriptor(), IDecoration.BOTTOM_LEFT);
 				return;
 			}
 		}
-		if ( NavigatorLabelProvider.isResource(resource) ) { return; }
+		if (NavigatorLabelProvider.isResource(resource)) {
+			return;
+		}
 		int severity = -1;
 		try {
 			severity = resource.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-		} catch (CoreException e) {
+		} catch (final CoreException e) {
 			// e.printStackTrace();
 		}
 		overlay[0] = null;
-		if ( severity == IMarker.SEVERITY_ERROR ) {
+		if (severity == IMarker.SEVERITY_ERROR) {
 			overlay[0] = getErrorImageDescriptor();
-		} else if ( severity == IMarker.SEVERITY_WARNING ) {
+		} else if (severity == IMarker.SEVERITY_WARNING) {
 			overlay[0] = getWarningImageDescriptor();
-		} else if ( resource instanceof IFile && FileMetaDataProvider.isGAML((IFile) resource) ) {
+		} else if (resource instanceof IFile && FileMetaDataProvider.isGAML((IFile) resource)) {
 			overlay[0] = getOkImageDescriptor();
-		} else if ( resource instanceof IContainer ) {
+		} else if (resource instanceof IContainer) {
 			try {
 				((IContainer) resource).accept(visitor);
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				e.printStackTrace();
 			}
 		}
-		if ( overlay[0] != null ) {
+		if (overlay[0] != null) {
 			decoration.addOverlay(overlay[0], IDecoration.BOTTOM_LEFT);
 		}
 	}
 
 	private void decorate(final WrappedFile element, final IDecoration decoration) {
-		IFile file = element.getFile();
-		if ( FileMetaDataProvider.isGAML(file) ) {
+		final IFile file = element.getFile();
+		if (FileMetaDataProvider.isGAML(file)) {
 			try {
-				int severity = file.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-				if ( severity == IMarker.SEVERITY_ERROR ) {
+				final int severity = file.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+				if (severity == IMarker.SEVERITY_ERROR) {
 					decoration.addOverlay(getErrorImageDescriptor(), IDecoration.BOTTOM_LEFT);
-				} else if ( severity == IMarker.SEVERITY_WARNING ) {
+				} else if (severity == IMarker.SEVERITY_WARNING) {
 					decoration.addOverlay(getWarningImageDescriptor(), IDecoration.BOTTOM_LEFT);
 				} else {
 					decoration.addOverlay(getOkImageDescriptor(), IDecoration.BOTTOM_LEFT);
 				}
-			} catch (CoreException e) {
+			} catch (final CoreException e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	private void decorate(final VirtualContent element, final IDecoration decoration) {
-		if ( !element.canBeDecorated() ) { return; }
-		Object[] resources = element.getNavigatorChildren();
+		if (!element.canBeDecorated()) {
+			return;
+		}
+		final Object[] resources = element.getNavigatorChildren();
 		int severity = -1;
-		for ( Object o : resources ) {
-			if ( o instanceof IResource ) {
+		for (final Object o : resources) {
+			if (o instanceof IResource) {
 				try {
-					IResource r = (IResource) o;
-					if ( r.isAccessible() ) {
-						int s = ((IResource) o).findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
-						if ( s > severity ) {
+					final IResource r = (IResource) o;
+					if (r.isAccessible()) {
+						final int s = ((IResource) o).findMaxProblemSeverity(IMarker.PROBLEM, true,
+								IResource.DEPTH_INFINITE);
+						if (s > severity) {
 							severity = s;
 						}
-						if ( severity == IMarker.SEVERITY_ERROR ) {
+						if (severity == IMarker.SEVERITY_ERROR) {
 							break;
 						}
 					}
-				} catch (CoreException e) {
+				} catch (final CoreException e) {
 					e.printStackTrace();
 				}
 			}
 		}
-		if ( severity == IMarker.SEVERITY_ERROR ) {
+		if (severity == IMarker.SEVERITY_ERROR) {
 			decoration.addOverlay(getErrorImageDescriptor(), IDecoration.BOTTOM_LEFT);
-		} else if ( severity == IMarker.SEVERITY_WARNING ) {
+		} else if (severity == IMarker.SEVERITY_WARNING) {
 			decoration.addOverlay(getWarningImageDescriptor(), IDecoration.BOTTOM_LEFT);
 		} else {
 			decoration.addOverlay(getOkImageDescriptor(), IDecoration.BOTTOM_LEFT);
@@ -207,8 +224,9 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.Object,
-	 * java.lang.String)
+	 * @see
+	 * org.eclipse.jface.viewers.IBaseLabelProvider#isLabelProperty(java.lang.
+	 * Object, java.lang.String)
 	 */
 	@Override
 	public boolean isLabelProperty(final Object element, final String property) {
@@ -218,10 +236,12 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.jface.viewers.
-	 * ILabelProviderListener)
+	 * @see
+	 * org.eclipse.jface.viewers.IBaseLabelProvider#removeListener(org.eclipse.
+	 * jface.viewers. ILabelProviderListener)
 	 */
 	@Override
-	public void removeListener(final ILabelProviderListener listener) {}
+	public void removeListener(final ILabelProviderListener listener) {
+	}
 
 }

@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -49,44 +50,52 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 
 	@Override
 	public Object getParent(final Object element) {
-		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).getParent(); }
-		if ( element instanceof IProject ) {
-			for ( final TopLevelFolder folder : virtualFolders ) {
-				if ( folder.accepts((IProject) element) ) { return folder; }
+		if (element instanceof VirtualContent) {
+			return ((VirtualContent) element).getParent();
+		}
+		if (element instanceof IProject) {
+			for (final TopLevelFolder folder : virtualFolders) {
+				if (folder.accepts((IProject) element)) {
+					return folder;
+				}
 			}
 		}
-		if ( element instanceof IFile && FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID
-			.equals(FileMetaDataProvider.getContentTypeId((IFile) element)) ) {
+		if (element instanceof IFile && FileMetaDataProvider.SHAPEFILE_SUPPORT_CT_ID
+				.equals(FileMetaDataProvider.getContentTypeId((IFile) element))) {
 			final IResource r = FileMetaDataProvider.shapeFileSupportedBy((IFile) element);
-			if ( r != null ) { return r; }
+			if (r != null) {
+				return r;
+			}
 		}
 		return super.getParent(element);
 	}
 
 	@Override
 	public Object[] getChildren(final Object p) {
-		if ( p instanceof NavigatorRoot ) {
-			if ( virtualFolders == null ) {
+		if (p instanceof NavigatorRoot) {
+			if (virtualFolders == null) {
 				initializeVirtualFolders(p);
 			}
 			return virtualFolders;
 		}
-		if ( p instanceof VirtualContent ) { return ((VirtualContent) p).getNavigatorChildren(); }
-		if ( p instanceof IFile ) {
+		if (p instanceof VirtualContent) {
+			return ((VirtualContent) p).getNavigatorChildren();
+		}
+		if (p instanceof IFile) {
 			final String ctid = FileMetaDataProvider.getContentTypeId((IFile) p);
-			if ( ctid.equals(FileMetaDataProvider.GAML_CT_ID) ) {
+			if (ctid.equals(FileMetaDataProvider.GAML_CT_ID)) {
 				final IGamaFileMetaData metaData = FileMetaDataProvider.getInstance().getMetaData(p, false, true);
-				if ( metaData instanceof GAMLFile.GamlInfo ) {
+				if (metaData instanceof GAMLFile.GamlInfo) {
 					final GAMLFile.GamlInfo info = (GAMLFile.GamlInfo) metaData;
 
 					final List l = new ArrayList();
-					for ( final String s : info.experiments ) {
+					for (final String s : info.experiments) {
 						l.add(new WrappedExperiment((IFile) p, s));
 					}
-					if ( !info.imports.isEmpty() ) {
+					if (!info.imports.isEmpty()) {
 						l.add(new WrappedFolder((IFile) p, info.imports, "Imports"));
 					}
-					if ( !info.uses.isEmpty() ) {
+					if (!info.uses.isEmpty()) {
 						l.add(new WrappedFolder((IFile) p, info.uses, "Uses"));
 					}
 					addPluginsTo((IFile) p, l);
@@ -94,12 +103,12 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 				}
 				return VirtualContent.EMPTY;
 
-			} else if ( ctid.equals(FileMetaDataProvider.SHAPEFILE_CT_ID) ) {
+			} else if (ctid.equals(FileMetaDataProvider.SHAPEFILE_CT_ID)) {
 				try {
 					final IContainer folder = ((IFile) p).getParent();
 					final List<IResource> sub = new ArrayList();
-					for ( final IResource r : folder.members() ) {
-						if ( r instanceof IFile && FileMetaDataProvider.isSupport((IFile) p, (IFile) r) ) {
+					for (final IResource r : folder.members()) {
+						if (r instanceof IFile && FileMetaDataProvider.isSupport((IFile) p, (IFile) r)) {
 							sub.add(r);
 						}
 					}
@@ -124,7 +133,9 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 		final String s = ".metadata/" + path.toPortableString() + ".meta";
 		path = Path.fromPortableString(s);
 		final IResource r = p.findMember(path);
-		if ( r == null || !(r instanceof IFile) ) { return; }
+		if (r == null || !(r instanceof IFile)) {
+			return;
+		}
 		final IFile m = (IFile) r;
 		try {
 			final InputStream is = m.getContents();
@@ -132,7 +143,9 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 			final GamlProperties props = new GamlProperties(in);
 			final Set<String> contents = props.get(GamlProperties.PLUGINS);
 
-			if ( contents == null || contents.isEmpty() ) { return; }
+			if (contents == null || contents.isEmpty()) {
+				return;
+			}
 			l.add(new WrappedPlugins(f, contents, "Requires"));
 		} catch (final CoreException e) {
 			e.printStackTrace();
@@ -141,12 +154,16 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 
 	@Override
 	public boolean hasChildren(final Object element) {
-		if ( element instanceof VirtualContent ) { return ((VirtualContent) element).hasChildren(); }
-		if ( element instanceof NavigatorRoot ) { return true; }
-		if ( element instanceof IFile ) {
+		if (element instanceof VirtualContent) {
+			return ((VirtualContent) element).hasChildren();
+		}
+		if (element instanceof NavigatorRoot) {
+			return true;
+		}
+		if (element instanceof IFile) {
 			final String ext = FileMetaDataProvider.getContentTypeId((IFile) element);
-			return (FileMetaDataProvider.GAML_CT_ID.equals(ext) || FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext)) &&
-				getChildren(element).length > 0;
+			return (FileMetaDataProvider.GAML_CT_ID.equals(ext) || FileMetaDataProvider.SHAPEFILE_CT_ID.equals(ext))
+					&& getChildren(element).length > 0;
 		}
 		return super.hasChildren(element);
 	}
@@ -165,8 +182,8 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 
 	private void initializeVirtualFolders(final Object parentElement) {
 		virtualFolders = new TopLevelFolder[] { new UserProjectsFolder(parentElement, "User models"),
-			new PluginsModelsFolder(parentElement, "Plugin models"),
-			new ModelsLibraryFolder(parentElement, "Library models") };
+				new PluginsModelsFolder(parentElement, "Plugin models"),
+				new ModelsLibraryFolder(parentElement, "Library models") };
 	}
 
 	@Override

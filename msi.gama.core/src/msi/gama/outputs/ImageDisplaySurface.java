@@ -20,8 +20,6 @@ import java.io.DataOutputStream;
 import java.io.FileOutputStream;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 import javax.imageio.ImageIO;
 
@@ -46,7 +44,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Files;
-import msi.gaml.types.Types;
 
 @display("image")
 public class ImageDisplaySurface implements IDisplaySurface {
@@ -409,17 +406,19 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public IList<IAgent> selectAgent(final int xc, final int yc) {
-		final IList<IAgent> result = GamaListFactory.create(Types.AGENT);
-		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
-		for (final ILayer layer : layers) {
-			if (layer.isSelectable()) {
-				final Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
-				if (!agents.isEmpty()) {
-					result.addAll(agents);
-				}
-			}
-		}
-		return result;
+		return GamaListFactory.create();
+		// final IList<IAgent> result = GamaListFactory.create(Types.AGENT);
+		// final List<ILayer> layers = getManager().getLayersIntersecting(xc,
+		// yc);
+		// for (final ILayer layer : layers) {
+		// if (layer.isSelectable()) {
+		// final Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);
+		// if (!agents.isEmpty()) {
+		// result.addAll(agents);
+		// }
+		// }
+		// }
+		// return result;
 	}
 
 	/**

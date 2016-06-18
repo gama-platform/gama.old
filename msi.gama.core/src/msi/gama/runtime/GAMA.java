@@ -94,7 +94,7 @@ public class GAMA {
 			// we are unable to launch the perspective.
 			System.out.println("Unable to launch simulation perspective for experiment " + id + " of model "
 					+ model.getFilePath());
-			getGui().openModelingPerspective(true);
+			// getGui().openModelingPerspective(true);
 		}
 
 	}

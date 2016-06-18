@@ -16,7 +16,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 
-import ummisco.gama.ui.utils.Platform;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
  * This class, together with {@link AwtDialogListener}, ensures the proper
@@ -80,7 +80,7 @@ public class SwtInputBlocker {
 		shell.setSize(0, 0);
 
 		// Add listener(s) to force focus back to the AWT dialog if SWT gets control
-		if ( Platform.isGtk() ) {
+		if ( PlatformHelper.isGtk() ) {
 			// Under GTK, focus events are not available to detect this condition,
 			// so use the activate event.
 			// TODO: is it necessary to do this for all parents?
@@ -117,7 +117,7 @@ public class SwtInputBlocker {
 	private void close() {
 		assert shell != null;
 
-		if ( Platform.isGtk() ) {
+		if ( PlatformHelper.isGtk() ) {
 			while (!shellsWithActivateListener.isEmpty()) {
 				Shell shell = (Shell) shellsWithActivateListener.pop();
 				if ( !shell.isDisposed() ) {

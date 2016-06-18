@@ -5,7 +5,7 @@ import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPartService;
 import org.eclipse.ui.IWorkbenchPartReference;
 
-import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class WorkaroundForIssue1594 {
 
@@ -30,7 +30,7 @@ public class WorkaroundForIssue1594 {
 
 			@Override
 			public void partOpened(final IWorkbenchPartReference partRef) {
-				if (!ummisco.gama.ui.utils.Platform.isWin32()) {
+				if (!ummisco.gama.ui.utils.PlatformHelper.isWin32()) {
 					return;
 				}
 				// Fix for Issue #1594
@@ -39,7 +39,7 @@ public class WorkaroundForIssue1594 {
 					// AD: Reworked to address Issue 535. It seems necessary to
 					// read the size of the composite inside an SWT
 					// thread and run the sizing inside an AWT thread
-					GAMA.getGui().asyncRun(new Runnable() {
+					WorkbenchHelper.asyncRun(new Runnable() {
 
 						@Override
 						public void run() {
@@ -55,7 +55,7 @@ public class WorkaroundForIssue1594 {
 										return;
 									}
 									displaySurface.setBounds(r.x, r.y, r.width, r.height);
-									GAMA.getGui().asyncRun(new Runnable() {
+									WorkbenchHelper.asyncRun(new Runnable() {
 
 										@Override
 										public void run() {

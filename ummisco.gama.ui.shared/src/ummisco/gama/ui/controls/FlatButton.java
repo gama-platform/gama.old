@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.TypedListener;
 
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 

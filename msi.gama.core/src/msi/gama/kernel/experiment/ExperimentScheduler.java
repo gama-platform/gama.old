@@ -63,7 +63,7 @@ public class ExperimentScheduler implements Runnable {
 				e.printStackTrace();
 				final GamaRuntimeException ee = GamaRuntimeException.create(e, experiment.getExperimentScope());
 				ee.addContext("Error in front end scheduler. Reloading thread, but it would be safer to reload GAMA");
-				experiment.getExperimentScope().getGui().raise(ee);
+				experiment.getExperimentScope().getGui().debug(ee.getMessage());
 				executionThread = new Thread(null, this, "Front end scheduler");
 				executionThread.start();
 			}
@@ -143,11 +143,11 @@ public class ExperimentScheduler implements Runnable {
 		lock.release();
 		startThread();
 	}
-	
-	// TODO : c'est moche ..... 
+
+	// TODO : c'est moche .....
 	public void stepBack() {
 		paused = true;
-	//	lock.release();
+		// lock.release();
 		experiment.getAgent().backward(scopes[0]);
 	}
 

@@ -9,9 +9,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.xtext.ui.editor.outline.impl.OutlinePage;
 
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
-import ummisco.gama.ui.controls.GamaToolbar2;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
+import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
+import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 /**
  * The class GamlOutlinePage.
@@ -59,7 +59,7 @@ public class GamlOutlinePage extends OutlinePage implements IToolbarDecoratedVie
 	}
 
 	/**
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.controls.GamaToolbar2)
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

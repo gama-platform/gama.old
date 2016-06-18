@@ -4,7 +4,7 @@
  */
 package ummisco.gama.ui.navigator;
 
-import msi.gama.gui.swt.*;
+
 import msi.gaml.descriptions.IDescription;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;

@@ -13,12 +13,13 @@ package ummisco.gama.ui.navigator;
 
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.swt.graphics.Image;
+
 import msi.gama.application.projects.BuiltinNature;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.utils.Platform;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 public class ModelsLibraryFolder extends TopLevelFolder {
 
@@ -28,7 +29,7 @@ public class ModelsLibraryFolder extends TopLevelFolder {
 
 	@Override
 	public Image getImage() {
-		if ( Platform.isGtk() )
+		if (PlatformHelper.isGtk())
 			return IGamaIcons.FOLDER_BUILTIN_16.image();
 		return IGamaIcons.FOLDER_BUILTIN.image(); // FOLDER_BUILTIN
 	}
@@ -50,6 +51,7 @@ public class ModelsLibraryFolder extends TopLevelFolder {
 
 	/**
 	 * Method accepts()
+	 * 
 	 * @see ummisco.gama.ui.navigator.TopLevelFolder#accepts(org.eclipse.core.resources.IProjectDescription)
 	 */
 	@Override
@@ -59,6 +61,7 @@ public class ModelsLibraryFolder extends TopLevelFolder {
 
 	/**
 	 * Method getModelsLocation()
+	 * 
 	 * @see ummisco.gama.ui.navigator.TopLevelFolder#getModelsLocation()
 	 */
 	@Override

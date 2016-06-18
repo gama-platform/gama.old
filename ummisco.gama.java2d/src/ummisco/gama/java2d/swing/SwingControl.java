@@ -56,7 +56,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
-import ummisco.gama.ui.utils.Platform;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 public abstract class SwingControl extends Composite {
 
@@ -425,7 +425,7 @@ public abstract class SwingControl extends Composite {
 		// context.
 		applet = new ToplevelPanel();
 
-		if ( Platform.isWin32() ) {
+		if ( PlatformHelper.isWin32() ) {
 			// Avoid stack overflows by ensuring correct focus traversal policy
 			// (see comments in scheduleComponentCreation() for details)
 			applet.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
@@ -581,7 +581,7 @@ public abstract class SwingControl extends Composite {
 	// valid any more!
 	static final boolean INITIAL_CLIENT_AREA_WORKAROUND =
 		// This code is found in SWT_AWT.new_Frame for gtk, motif, win32.
-		Platform.isGtk() || Platform.isMotif() || Platform.isWin32();
+		PlatformHelper.isGtk() || PlatformHelper.isMotif() || PlatformHelper.isWin32();
 	private Rectangle initialClientArea;
 
 	/*
@@ -768,7 +768,7 @@ public abstract class SwingControl extends Composite {
 	 * the AWT event queue.
 	 * On platforms where you are not sure, set this constant to false.
 	 */
-	static final boolean AUTOMATIC_SET_AWT_SIZE = Platform.isGtk() || Platform.isCarbon();
+	static final boolean AUTOMATIC_SET_AWT_SIZE = PlatformHelper.isGtk() || PlatformHelper.isCarbon();
 
 	/**
 	 * This class represents a queue of requests to set the AWT frame's size.
@@ -925,7 +925,7 @@ public abstract class SwingControl extends Composite {
 		// we don't need to do it explicitly.
 		// But it's nevertheless needed for the initial display sometimes, see below.
 		// TODO: research the initial content display problem further
-		if ( !AUTOMATIC_SET_AWT_SIZE || Platform.isGtk() && Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) ) {
+		if ( !AUTOMATIC_SET_AWT_SIZE || PlatformHelper.isGtk() && PlatformHelper.JAVA_VERSION < PlatformHelper.javaVersion(1, 6, 0) ) {
 			// Pass on the desired size to the embedded component, but only if it could
 			// be reasonably calculated (i.e. we have cached preferred sizes) and if
 			// computeSize took it into account.
@@ -944,7 +944,7 @@ public abstract class SwingControl extends Composite {
 			// TODO: research the initial content display problem further
 			synchronized (this) {
 				if ( cachedSizesInitialized >= 2 ||
-					Platform.isGtk() && Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) || Platform.isWin32() ) {
+					PlatformHelper.isGtk() && PlatformHelper.JAVA_VERSION < PlatformHelper.javaVersion(1, 6, 0) || PlatformHelper.isWin32() ) {
 					setAWTSize(Math.max(width - 2 * borderWidth, 0), Math.max(height - 2 * borderWidth, 0));
 				}
 			}
@@ -1136,7 +1136,7 @@ public abstract class SwingControl extends Composite {
 		// test view.
 		// - In JDK 1.6: There is much less "garbage"; the repaint is quicker.
 		// The CleanResizeListener's effect is mostly visible as flickering.
-		if ( Platform.isWin32() && Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) ) {
+		if ( PlatformHelper.isWin32() && PlatformHelper.JAVA_VERSION < PlatformHelper.javaVersion(1, 6, 0) ) {
 			setCleanResizeEnabled(true);
 		}
 	}
@@ -1571,7 +1571,7 @@ public abstract class SwingControl extends Composite {
 
 	// ==================== Swing Popup Management ================================
 
-	private static final boolean HIDE_SWING_POPUPS_ON_SWT_SHELL_BOUNDS_CHANGE = Platform.isWin32(); // Win32: all JDKs
+	private static final boolean HIDE_SWING_POPUPS_ON_SWT_SHELL_BOUNDS_CHANGE = PlatformHelper.isWin32(); // Win32: all JDKs
 
 	// Dismiss Swing popups when the main window is moved or resized. (It would be
 	// better to dismiss popups whenever the titlebar or trim is clicked, but
@@ -1657,7 +1657,7 @@ public abstract class SwingControl extends Composite {
 		assert Display.getCurrent() != null; // On SWT event thread
 
 		// Platform-specific default consumed keystrokes
-		if ( Platform.isWin32() ) {
+		if ( PlatformHelper.isWin32() ) {
 			// Shift-F10 is normally used to display a context popup menu.
 			// When this happens in Windows and inside of a Swing component,
 			// the consumption of the key is unknown to SWT. As a result,

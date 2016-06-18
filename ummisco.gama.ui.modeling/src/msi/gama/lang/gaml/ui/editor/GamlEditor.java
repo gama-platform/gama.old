@@ -94,10 +94,6 @@ import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.commands.GamaMenu;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.XtextGui;
@@ -116,13 +112,17 @@ import msi.gama.util.GAML;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.IDescription;
 import ummisco.gama.ui.controls.FlatButton;
-import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
+import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaColors;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
+import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
+import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 /*
  * The class GamlEditor.
@@ -406,7 +406,7 @@ public class GamlEditor extends XtextEditor
 	private void gotoEditor(final GamaRuntimeException exception) {
 		final EObject o = exception.getEditorContext();
 		if (o != null) {
-			GAMA.getGui().asyncRun(new Runnable() {
+			WorkbenchHelper.asyncRun(new Runnable() {
 
 				@Override
 				public void run() {
@@ -428,7 +428,7 @@ public class GamlEditor extends XtextEditor
 			}
 			GamlEditor.this.performSave(true, null);
 			if (XtextGui.EDITOR_SAVE.getValue()) {
-				SwtGui.getPage().saveAllEditors(XtextGui.EDITOR_SAVE_ASK.getValue());
+				WorkbenchHelper.getPage().saveAllEditors(XtextGui.EDITOR_SAVE_ASK.getValue());
 			}
 			String name = ((FlatButton) evt.widget).getText();
 			final int i = state.abbreviations.indexOf(name);
@@ -801,8 +801,8 @@ public class GamlEditor extends XtextEditor
 	}
 
 	/**
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int,
-	 *      ummisco.gama.ui.controls.GamaToolbar2)
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
+	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

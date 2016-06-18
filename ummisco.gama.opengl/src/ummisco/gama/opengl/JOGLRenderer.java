@@ -52,7 +52,6 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
 import msi.gama.outputs.layers.OverlayLayer;
-import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
@@ -70,6 +69,7 @@ import ummisco.gama.opengl.jts.JTSDrawer;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.scene.SceneBuffer;
 import ummisco.gama.opengl.utils.GLUtilLight;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * This class plays the role of Renderer and IGraphics. Class JOGLRenderer.
@@ -218,7 +218,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 	protected void initializeCanvasListeners() {
 
-		GAMA.getGui().asyncRun(new Runnable() {
+		WorkbenchHelper.asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
@@ -238,7 +238,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
-		GAMA.getGui().run(new Runnable() {
+		WorkbenchHelper.run(new Runnable() {
 
 			@Override
 			public void run() {
@@ -401,7 +401,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 		if (!visible) {
 			// We make the canvas visible only after a first display has occured
 			visible = true;
-			GAMA.getGui().run(new Runnable() {
+			WorkbenchHelper.run(new Runnable() {
 
 				@Override
 				public void run() {
@@ -616,7 +616,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 	public void switchCamera() {
 		final ICamera oldCamera = camera;
-		GAMA.getGui().asyncRun(new Runnable() {
+		WorkbenchHelper.asyncRun(new Runnable() {
 
 			@Override
 			public void run() {

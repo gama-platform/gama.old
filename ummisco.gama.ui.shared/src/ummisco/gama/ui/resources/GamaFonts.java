@@ -5,7 +5,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
 
-import ummisco.gama.ui.utils.SWTUtils;
+import ummisco.gama.ui.utils.GraphicsHelper;
 
 public class GamaFonts {
 
@@ -59,7 +59,7 @@ public class GamaFonts {
 
 	public static void setLabelFont(final java.awt.Font font) {
 		awtBaseFont = font;
-		final FontData fd = SWTUtils.toSwtFontData(Display.getCurrent(), font, true);
+		final FontData fd = GraphicsHelper.toSwtFontData(Display.getCurrent(), font, true);
 		setLabelFont(new Font(Display.getCurrent(), fd));
 	}
 

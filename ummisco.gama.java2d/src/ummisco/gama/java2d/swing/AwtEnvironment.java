@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-import ummisco.gama.ui.utils.Platform;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
  * An environment to enable the proper display of AWT/Swing windows within a SWT or RCP
@@ -247,8 +247,8 @@ public final class AwtEnvironment {
 	 */
 
 	private static final boolean HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN =
-		Platform.isGtk() && Platform.JAVA_VERSION < Platform.javaVersion(1, 6, 0) || // GTK: pre-Java1.6
-			Platform.isWin32(); // Win32: all JDKs
+		PlatformHelper.isGtk() && PlatformHelper.JAVA_VERSION < PlatformHelper.javaVersion(1, 6, 0) || // GTK: pre-Java1.6
+			PlatformHelper.isWin32(); // Win32: all JDKs
 
 	private void initSwingPopupsDismissal() {
 		if ( HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN ) {
@@ -496,7 +496,7 @@ public final class AwtEnvironment {
 		// this problem, temporarily make the shell (and frame) visible. To
 		// avoid flicker, temporarily set the size to 0.
 		// (Note: the shell location must be correctly set before this will work)
-		if ( Platform.isGtk() ) {
+		if ( PlatformHelper.isGtk() ) {
 			shell.setSize(0, 0);
 			shell.setVisible(true);
 			shell.setVisible(false);
@@ -543,7 +543,7 @@ public final class AwtEnvironment {
 	 * @return
 	 */
 	public Shell getSwtPopupParent(final SwingControl control) {
-		if ( Platform.isGtk() ) {
+		if ( PlatformHelper.isGtk() ) {
 			if ( true && popupParent == null ) {
 				// System.err.println("*** Creating separate popup parent shell");
 				popupParent = new Shell(display, SWT.NO_TRIM | SWT.NO_FOCUS | SWT.ON_TOP);

@@ -177,7 +177,7 @@ public class LayerManager implements ILayerManager {
 				}
 			}
 		} catch (final Exception e) {
-			scope.getGui().debug(e);
+			scope.getGui().debug(e.getMessage());
 		} finally {
 			g.endDrawingLayers();
 		}

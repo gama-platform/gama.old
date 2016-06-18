@@ -95,7 +95,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			gc.setBackground(getParent().getBackground());
 			gc.fillRectangle(r);
 			final int height = parent.getSize().y;
-			final double y = (height - image.getBounds().height) / 2 /* + 1 */;
+			final double y = (height - (double) image.getBounds().height) / 2;
 			gc.drawImage(image, 0, (int) y);
 		}
 
@@ -351,8 +351,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 			gc.setBackground(getParent().getBackground());
 			gc.fillRectangle(r);
 			gc.setBackground(color);
-			r.y = parent.getSize().y / 2 - 2;
-			r.height = 4;
+			r.y = (int) ((double) parent.getSize().y / 2 - 2d);
+			r.height = 3;
 			gc.fillRoundRectangle(r.x, r.y, r.width, r.height, 3, 3);
 		}
 

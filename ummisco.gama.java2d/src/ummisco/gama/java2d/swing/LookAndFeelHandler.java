@@ -19,7 +19,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 
-import ummisco.gama.ui.utils.Platform;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
  * This class deals with the customization of the look&amp;feel
@@ -78,7 +78,7 @@ public class LookAndFeelHandler {
 	{
 		// On JDK 1.6, we have to avoid the Swing Gtk look&feel, to work around
 		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=126931
-		if ( Platform.JAVA_VERSION >= Platform.javaVersion(1, 6, 0) ) {
+		if ( PlatformHelper.JAVA_VERSION >= PlatformHelper.javaVersion(1, 6, 0) ) {
 			lafChoice = LAFChoiceNativeSystemNoGtk;
 		} else {
 			// Set the default to LAFChoiceNativeSystemPreferGtk, so that on
@@ -216,7 +216,7 @@ public class LookAndFeelHandler {
 			laf = UIManager.getSystemLookAndFeelClassName();
 		} else if ( LAFChoiceNativeSystemPreferGtk.equals(laf) ) {
 			laf = UIManager.getSystemLookAndFeelClassName();
-			if ( Platform.isGtk() && laf.equals(UIManager.getCrossPlatformLookAndFeelClassName()) ) {
+			if ( PlatformHelper.isGtk() && laf.equals(UIManager.getCrossPlatformLookAndFeelClassName()) ) {
 
 				laf = GTK_LOOK_AND_FEEL_NAME;
 			}

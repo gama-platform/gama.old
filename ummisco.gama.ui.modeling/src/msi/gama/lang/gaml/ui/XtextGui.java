@@ -38,7 +38,6 @@ import com.google.inject.Injector;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.Entry;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlModelBuilder;
 import msi.gama.lang.gaml.resource.GamlResource;
@@ -50,6 +49,8 @@ import msi.gama.lang.gaml.ui.internal.GamlActivator;
 import msi.gama.util.GamaFont;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.utils.SwtGui;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The class XtextGui.
@@ -58,7 +59,7 @@ import msi.gaml.types.IType;
  * @since 21 janv. 2013
  *
  */
-public class XtextGui extends msi.gama.gui.swt.SwtGui {
+public class XtextGui extends SwtGui {
 
 	public static GamaPreferences.Entry<String> OPERATORS_MENU_SORT = GamaPreferences
 			.create("menu.operators.sort", "Sort operators menu by", "Category", IType.STRING).among("Name", "Category")
@@ -174,7 +175,7 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 
 				@Override
 				public void afterValueChange(final Boolean newValue) {
-					final IEditorReference[] eds = SwtGui.getPage().getEditorReferences();
+					final IEditorReference[] eds = WorkbenchHelper.getPage().getEditorReferences();
 					for (final IEditorReference ed : eds) {
 						final IEditorPart e = ed.getEditor(false);
 						if (e instanceof GamlEditor) {
@@ -219,16 +220,6 @@ public class XtextGui extends msi.gama.gui.swt.SwtGui {
 			System.out.println("Model " + file.getFullPath() + " can be run safely with experiment " + exp);
 			runModel(model, exp);
 		}
-	}
-
-	/**
-	 * Method getName()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#getName()
-	 */
-	@Override
-	public String getName() {
-		return "SWT+XText-based UI";
 	}
 
 	private static java.awt.Color getDefaultBackground() {

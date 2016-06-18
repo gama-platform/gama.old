@@ -14,7 +14,6 @@ package msi.gama.kernel.experiment;
 import java.util.List;
 import java.util.Map;
 
-import msi.gama.common.interfaces.ItemList;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.model.IModel;
@@ -52,8 +51,6 @@ public interface IExperimentPlan extends ISpecies {
 	public abstract boolean isGui();
 
 	public boolean isMulticore();
-
-	public abstract ItemList getParametersEditors();
 
 	public abstract boolean hasParameter(String name);
 
@@ -95,6 +92,8 @@ public interface IExperimentPlan extends ISpecies {
 	public abstract boolean keepsSeed();
 
 	public abstract boolean keepsSimulations();
+
+	public abstract boolean hasParametersOrUserCommands();
 
 	// public abstract void setController(ExperimentController controller);
 

@@ -1,7 +1,7 @@
 package msi.gama.lang.gaml.ui.decorators;
 
 import java.util.*;
-import msi.gama.gui.swt.*;
+
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 

@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -19,11 +20,10 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.operators.Cast;
 
 /**
  * The Class OutputManager.
@@ -55,10 +55,11 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	}
 
 	private IScope scope;
-	private int layout = 0;/*
-							 * GamaPreferences.LAYOUTS.indexOf(GamaPreferences.
-							 * CORE_DISPLAY_LAYOUT.getValue())
-							 */;
+	private final int layout = 0;/*
+									 * GamaPreferences.LAYOUTS.indexOf(
+									 * GamaPreferences.
+									 * CORE_DISPLAY_LAYOUT.getValue())
+									 */;
 
 	public ExperimentOutputManager(final IDescription desc) {
 		super(desc);
@@ -67,11 +68,17 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	@Override
 	public boolean init(final IScope scope) {
 		this.scope = scope;
-		final IExpression exp = getFacet(IKeyword.LAYOUT);
-		if (exp != null) {
-			layout = Cast.asInt(scope, exp.value(scope));
-		}
-		return super.init(scope);
+		// final IExpression exp = getFacet(IKeyword.LAYOUT);
+		// if (exp != null) {
+		// layout = Cast.asInt(scope, exp.value(scope));
+		// }
+		if (super.init(scope)) {
+			if (GamaPreferences.CORE_AUTO_RUN.getValue()) {
+				GAMA.startFrontmostExperiment();
+			}
+			return true;
+		} else
+			return false;
 		// scope.getGui().prepareForExperiment(scope.getExperiment().getSpecies());
 		// TODO REMOVED BECAUSE TOO INSTABLE
 		// if (super.init(scope))

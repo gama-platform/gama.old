@@ -52,11 +52,12 @@ import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.IDescriptionProvider;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
-import ummisco.gama.ui.controls.GamaToolbar2;
+
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
+import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
+import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedView, ISelectionChangedListener {
 
@@ -206,7 +207,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 	/**
 	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.controls.GamaToolbar2)
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

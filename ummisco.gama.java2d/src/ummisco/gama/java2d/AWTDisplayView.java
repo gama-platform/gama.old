@@ -18,10 +18,10 @@ import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.gui.swt.WorkaroundForIssue1353;
-import msi.gama.gui.views.displays.LayeredDisplayView;
 import ummisco.gama.java2d.swing.SwingControl;
-import ummisco.gama.ui.utils.Platform;
+import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.views.WorkaroundForIssue1353;
+import ummisco.gama.ui.views.displays.LayeredDisplayView;
 
 public class AWTDisplayView extends LayeredDisplayView {
 
@@ -36,49 +36,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 	@Override
 	protected Composite createSurfaceComposite(final Composite parent) {
-		// getSite().getService(IPartService.class).addPartListener(new
-		// IPartListener2() {
-		//
-		// @Override
-		// public void partActivated(final IWorkbenchPartReference partRef) {
-		// if ( partRef.getPart(false).equals(AWTDisplayView.this) )
-		// isVisible = true;
-		// }
-		//
-		// @Override
-		// public void partBroughtToTop(final IWorkbenchPartReference partRef) {
-		// if ( partRef.getPart(false).equals(AWTDisplayView.this) )
-		//
-		// isVisible = true;
-		// }
-		//
-		// @Override
-		// public void partClosed(final IWorkbenchPartReference partRef) {}
-		//
-		// @Override
-		// public void partDeactivated(final IWorkbenchPartReference partRef) {}
-		//
-		// @Override
-		// public void partOpened(final IWorkbenchPartReference partRef) {}
-		//
-		// @Override
-		// public void partHidden(final IWorkbenchPartReference partRef) {
-		// if ( partRef.getPart(false).equals(AWTDisplayView.this) )
-		//
-		// isVisible = false;
-		// }
-		//
-		// @Override
-		// public void partVisible(final IWorkbenchPartReference partRef) {
-		// if ( partRef.getPart(false).equals(AWTDisplayView.this) )
-		//
-		// isVisible = true;
-		// }
-		//
-		// @Override
-		// public void partInputChanged(final IWorkbenchPartReference partRef)
-		// {}
-		// });
+
 		if (getOutput() == null) {
 			return null;
 		}
@@ -140,7 +98,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 	@Override
 	public void waitToBeRealized() {
-		if (Platform.isWin32()) {
+		if (PlatformHelper.isWin32()) {
 			return;
 		}
 		final long start = System.currentTimeMillis();

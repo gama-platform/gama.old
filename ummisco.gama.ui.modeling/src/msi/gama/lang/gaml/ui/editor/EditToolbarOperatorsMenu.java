@@ -16,12 +16,12 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gama.gui.swt.commands.GamaMenuItem;
 import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.Signature;
+import ummisco.gama.ui.menus.GamaMenuItem;
 
 /**
  * The class EditToolbarTemplateMenu.

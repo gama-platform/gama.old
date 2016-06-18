@@ -16,14 +16,15 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.graphics.Image;
+
 import msi.gama.application.projects.BuiltinNature;
 import msi.gama.application.projects.GamaNature;
 import msi.gama.application.projects.PluginNature;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.utils.Platform;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 
@@ -33,7 +34,7 @@ public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 
 	@Override
 	public Image getImage() {
-		if ( Platform.isGtk() )
+		if (PlatformHelper.isGtk())
 			return IGamaIcons.FOLDER_USER_16.image();
 		return IGamaIcons.FOLDER_USER.image(); // FOLDER_USER
 	}
@@ -55,18 +56,25 @@ public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 
 	/**
 	 * Method accepts()
+	 * 
 	 * @see ummisco.gama.ui.navigator.TopLevelFolder#accepts(org.eclipse.core.resources.IProjectDescription)
 	 */
 	@Override
 	protected boolean accepts(final IProjectDescription desc) {
-		// Addition of a test regarding the "old" versions thay may still be labeled as 'built-in'. The simplest way is to verify that no other natures have been added to the project (i.e. it only has
-		// Xtext and GAMA). If the number of versions is greater than 2 we return false.
-		if ( !desc.hasNature(GamaNature.NATURE_ID) || desc.getNatureIds().length > 2 ) { return false; }
+		// Addition of a test regarding the "old" versions thay may still be
+		// labeled as 'built-in'. The simplest way is to verify that no other
+		// natures have been added to the project (i.e. it only has
+		// Xtext and GAMA). If the number of versions is greater than 2 we
+		// return false.
+		if (!desc.hasNature(GamaNature.NATURE_ID) || desc.getNatureIds().length > 2) {
+			return false;
+		}
 		return !(desc.hasNature(BuiltinNature.NATURE_ID) || desc.hasNature(PluginNature.NATURE_ID));
 	}
 
 	/**
 	 * Method getModelsLocation()
+	 * 
 	 * @see ummisco.gama.ui.navigator.TopLevelFolder#getModelsLocation()
 	 */
 	@Override
@@ -76,12 +84,17 @@ public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 
 	/**
 	 * Method getAdapter()
+	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	@Override
 	public Object getAdapter(final Class adapter) {
-		if ( adapter == getClass() ) { return this; }
-		if ( IContainer.class.isAssignableFrom(adapter) ) { return ResourcesPlugin.getWorkspace(); }
+		if (adapter == getClass()) {
+			return this;
+		}
+		if (IContainer.class.isAssignableFrom(adapter)) {
+			return ResourcesPlugin.getWorkspace();
+		}
 		return null;
 	}
 

@@ -11,9 +11,7 @@
  **********************************************************************************************/
 package msi.gama.runtime;
 
-import java.awt.Color;
 import java.util.Map;
-import java.util.Set;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
@@ -24,7 +22,6 @@ import org.eclipse.core.runtime.CoreException;
 import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IEditorFactory;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.util.AbstractGui;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -87,23 +84,8 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public void setStatus(final String error, final int code) {
-	}
-
-	@Override
 	public void run(final Runnable block) {
 		block.run();
-	}
-
-	@Override
-	public void asyncRun(final Runnable block) {
-		block.run();
-	}
-
-	@Override
-	public void raise(final Throwable ex) {
-		System.out.println("Error: " + ex.getMessage());
-		// System.out.println("Error: " + ex.getMessage());
 	}
 
 	@Override
@@ -149,20 +131,9 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public void warn(final String string) {
-		System.out.println("Warning: " + string);
-		// System.out.println("Warning: " + string);
-	}
-
-	@Override
 	public void runtimeError(final GamaRuntimeException g) {
 		System.out.println("Runtime error: " + g.getMessage());
 		// System.out.println("Runtime error: " + g.getMessage());
-	}
-
-	@Override
-	public IEditorFactory getEditorFactory() {
-		return null;
 	}
 
 	@Override
@@ -178,37 +149,10 @@ public class HeadlessListener extends AbstractGui {
 	public void showConsoleView(final ITopLevelAgent agent) {
 	}
 
-	@Override
-	public void setWorkbenchWindowTitle(final String string) {
-	}
-
-	//
 	// @Override
-	// public void closeViewOf(final IDisplayOutput out) {}
-
-	@Override
-	public IGamaView hideView(final String viewId) {
-		return null;
-	}
-
-	@Override
-	public boolean isModelingPerspective() {
-		return true;
-	}
-
-	@Override
-	public boolean openModelingPerspective(final boolean immediately) {
-		return false;
-	}
-
-	@Override
-	public boolean isSimulationPerspective() {
-		return true;
-	}
-
-	@Override
-	public void togglePerspective(final boolean immediately) {
-	}
+	// public boolean openModelingPerspective(final boolean immediately) {
+	// return false;
+	// }
 
 	@Override
 	public boolean openSimulationPerspective(final IModel model, final String id, final boolean immediately) {
@@ -260,15 +204,6 @@ public class HeadlessListener extends AbstractGui {
 	@Override
 	public void cleanAfterSimulation() {
 	}
-	//
-	// @Override
-	// public void waitForViewsToBeInitialized() {
-	// }
-
-	@Override
-	public void debug(final Exception e) {
-		e.printStackTrace();
-	}
 
 	@Override
 	public void runModel(final Object object, final String exp) throws CoreException {
@@ -308,16 +243,6 @@ public class HeadlessListener extends AbstractGui {
 	 */
 	@Override
 	public void setSubStatusCompletion(final double status) {
-	}
-
-	/**
-	 * Method getName()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#getName()
-	 */
-	@Override
-	public String getName() {
-		return "Headless";
 	}
 
 	/**
@@ -448,27 +373,6 @@ public class HeadlessListener extends AbstractGui {
 		this.informConsole(s, root);
 	}
 
-	/**
-	 * Method getColorForSimulationNumber()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#getColorForSimulationNumber(int)
-	 */
-	@Override
-	public GamaColor getColorForSimulationNumber(final int index) {
-		return new GamaColor(Color.BLACK);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gama.common.interfaces.IGui#setStatusInternal(java.lang.String,
-	 * msi.gama.util.GamaColor, java.lang.String)
-	 */
-	@Override
-	public void setStatusInternal(final String msg, final GamaColor color, final String icon) {
-		System.out.println(msg);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 *
@@ -480,37 +384,10 @@ public class HeadlessListener extends AbstractGui {
 		System.out.println(msg);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gama.common.interfaces.IGui#registerView(java.lang.String,
-	 * java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void registerView(final String modelName, final String expeName, final String name) {
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#getViews(java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public Set<String> getViews(final String modelName, final String expeName) {
-		return null;
-	}
-
 	@Override
 	public boolean openSimulationPerspective(final boolean immediately) {
 		// TODO Auto-generated method stub
 		return false;
-	}
-
-	@Override
-	public void applyLayout(final int layout) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -520,8 +397,57 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public IGamaView getInteractiveConsole() {
+	public void setRestartRequiredAfterPreferenceSet() {
 		// TODO Auto-generated method stub
-		return null;
+
 	}
+
+	@Override
+	public boolean confirm(final String string, final String string2) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void openModelingPerspective(final boolean immediately) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean isSimulationPerspective() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public void openWelcomePage(final boolean b) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void updateDecorator(final String string) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void asyncRun(final Runnable runnable) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void cleanUpUI() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void informStatus(final String string, final String string2) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

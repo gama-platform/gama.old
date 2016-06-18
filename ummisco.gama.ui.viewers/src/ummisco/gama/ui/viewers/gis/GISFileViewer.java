@@ -15,15 +15,15 @@ import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
 import org.opengis.feature.simple.SimpleFeature;
 
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
 import msi.gama.metamodel.shape.IShape;
 import msi.gaml.operators.Strings;
-import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.viewers.gis.geotools.SwtMapPane;
 import ummisco.gama.ui.viewers.gis.geotools.event.MapMouseEvent;
 import ummisco.gama.ui.viewers.gis.geotools.tool.CursorTool;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
+import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
+import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 public abstract class GISFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.CSVExportable {
 
@@ -154,7 +154,7 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 
 	/**
 	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.controls.GamaToolbar2)
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
@@ -163,7 +163,7 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 
 	/**
 	 * Method zoomWhenScrolling()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
 	 */
 	@Override
 	public boolean zoomWhenScrolling() {

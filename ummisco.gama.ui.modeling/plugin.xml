@@ -656,7 +656,7 @@
     <extension
           point="org.eclipse.ui.perspectives">
        <perspective
-             class="msi.gama.lang.gaml.ModelingPerspective"
+             class="ummisco.gama.ui.perspective.ModelingPerspective"
              fixed="false"
              icon="platform:/plugin/ummisco.gama.ui.shared/icons/perspective.modeling2.png"
              id="msi.gama.application.perspectives.ModelingPerspective"

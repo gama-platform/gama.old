@@ -19,8 +19,8 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PartInitException;
 
-import msi.gama.gui.swt.SwtGui;
 import msi.gaml.operators.Strings;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
  * The class EditToolbarTemplateMenu.
@@ -237,7 +237,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 	}
 
 	@Override
-	protected void reset() {
+	public void reset() {
 		super.reset();
 		tree.clear();
 		tree = null;
@@ -265,7 +265,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 	@Override
 	protected void openView() {
 		try {
-			SwtGui.getPage().showView("msi.gama.lang.gaml.ui.templates");
+			WorkbenchHelper.getPage().showView("msi.gama.lang.gaml.ui.templates");
 		} catch (final PartInitException e) {
 			e.printStackTrace();
 		}

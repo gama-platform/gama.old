@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
-import msi.gama.gui.swt.*;
+
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 

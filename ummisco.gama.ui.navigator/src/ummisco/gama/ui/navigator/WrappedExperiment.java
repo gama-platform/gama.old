@@ -7,7 +7,7 @@ package ummisco.gama.ui.navigator;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.swt.graphics.*;
-import msi.gama.gui.swt.*;
+
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GAMLFile;
 import ummisco.gama.ui.resources.GamaIcons;

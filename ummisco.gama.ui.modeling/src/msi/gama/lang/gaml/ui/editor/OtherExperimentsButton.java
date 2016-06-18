@@ -38,9 +38,9 @@ import msi.gama.lang.gaml.ui.XtextGui;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ISyntacticElement;
 import ummisco.gama.ui.controls.FlatButton;
-import ummisco.gama.ui.controls.GamaToolbar2;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 /**
  * The class OtherExperimentsButton.

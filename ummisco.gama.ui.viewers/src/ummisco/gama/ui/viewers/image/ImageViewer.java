@@ -1,41 +1,82 @@
 package ummisco.gama.ui.viewers.image;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
+import org.eclipse.core.resources.IResourceRuleFactory;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.jobs.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.MultiRule;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.*;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageLoader;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorSite;
+import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.IStorageEditorInput;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
-import org.eclipse.ui.part.*;
+import org.eclipse.ui.part.EditorPart;
+import org.eclipse.ui.part.FileEditorInput;
 
 import msi.gama.gui.metadata.FileMetaDataProvider;
-import msi.gama.gui.metadata.images.ImageDataLoader;
-import msi.gama.gui.swt.*;
-import msi.gama.gui.views.IToolbarDecoratedView;
-import msi.gama.gui.views.actions.GamaToolbarFactory;
-import msi.gama.runtime.GAMA;
-import msi.gaml.operators.fastmaths.FastMath;
-import ummisco.gama.ui.controls.GamaToolbar2;
+import msi.gama.gui.metadata.ImageDataLoader;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.SwtGui;
+import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
+import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
+import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 /**
  * A simple image viewer editor.
  */
-public class ImageViewer extends EditorPart implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
+public class ImageViewer extends EditorPart
+		implements IReusableEditor, IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.Colorizable {
 
 	GamaToolbar2 toolbar;
 	private Image image;
@@ -50,8 +91,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
 		// we need either an IStorage or an input that can return an ImageData
-		if ( !(input instanceof IStorageEditorInput) &&
-			input.getAdapter(ImageData.class) == null ) { throw new PartInitException("Unable to read input: " + input); //$NON-NLS-1$
+		if (!(input instanceof IStorageEditorInput) && input.getAdapter(ImageData.class) == null) {
+			throw new PartInitException("Unable to read input: " + input); //$NON-NLS-1$
 		}
 		setSite(site);
 		setInput(input, false);
@@ -63,11 +104,11 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	}
 
 	private void setInput(final IEditorInput input, final boolean notify) {
-		IEditorInput old = getEditorInput();
-		if ( input != old ) {
+		final IEditorInput old = getEditorInput();
+		if (input != old) {
 			unregisterResourceListener(old);
 			setPartName(input);
-			if ( notify ) {
+			if (notify) {
 				super.setInputWithNotify(input);
 			} else {
 				super.setInput(input);
@@ -85,18 +126,18 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 */
 	private void setPartName(final IEditorInput input) {
 		String imageName = null;
-		if ( input instanceof IStorageEditorInput ) {
+		if (input instanceof IStorageEditorInput) {
 			try {
 				imageName = ((IStorageEditorInput) input).getStorage().getName();
-			} catch (CoreException ex) {
+			} catch (final CoreException ex) {
 				// intentionally blank
 			}
 		}
 		// this will catch ImageDataEditorInput as well
-		if ( imageName == null ) {
+		if (imageName == null) {
 			imageName = input.getName();
 		}
-		if ( imageName == null ) {
+		if (imageName == null) {
 			imageName = getSite().getRegisteredName();
 		}
 		setPartName(imageName);
@@ -107,13 +148,15 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 * none.
 	 */
 	private IFile getFileFor(final IEditorInput input) {
-		if ( input instanceof IFileEditorInput ) {
+		if (input instanceof IFileEditorInput) {
 			return ((IFileEditorInput) input).getFile();
-		} else if ( input instanceof IStorageEditorInput ) {
+		} else if (input instanceof IStorageEditorInput) {
 			try {
-				IStorage storage = ((IStorageEditorInput) input).getStorage();
-				if ( storage instanceof IFile ) { return (IFile) storage; }
-			} catch (CoreException ignore) {
+				final IStorage storage = ((IStorageEditorInput) input).getStorage();
+				if (storage instanceof IFile) {
+					return (IFile) storage;
+				}
+			} catch (final CoreException ignore) {
 				// intentionally blank
 			}
 		}
@@ -121,8 +164,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	}
 
 	private void displayInfoString() {
-		GamaUIColor color = IGamaColors.OK;
-		String result = FileMetaDataProvider.getInstance().getDecoratorSuffix(getFileFor(getEditorInput()));
+		final GamaUIColor color = IGamaColors.OK;
+		final String result = FileMetaDataProvider.getInstance().getDecoratorSuffix(getFileFor(getEditorInput()));
 		toolbar.button(color, result, new SelectionAdapter() {
 
 			@Override
@@ -138,7 +181,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 * Unregister any change listeners for the specified input.
 	 */
 	protected void unregisterResourceListener(final IEditorInput input) {
-		if ( input != null && inputListener != null ) {
+		if (input != null && inputListener != null) {
 			inputListener.stop();
 			inputListener = null;
 		}
@@ -148,13 +191,13 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 * Register any change listeners on the specified new input.
 	 */
 	protected void registerResourceListener(final IEditorInput input) {
-		if ( input != null ) {
-			if ( inputListener != null ) {
+		if (input != null) {
+			if (inputListener != null) {
 				inputListener.stop();
 			}
 			inputListener = null;
-			IFile file = getFileFor(input);
-			if ( file != null ) {
+			final IFile file = getFileFor(input);
+			if (file != null) {
 				inputListener = new ImageResourceChangeListener(file);
 				inputListener.start();
 			}
@@ -166,7 +209,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 */
 	@Override
 	public void createPartControl(final Composite composite) {
-		Composite parent = GamaToolbarFactory.createToolbars(this, composite);
+		final Composite parent = GamaToolbarFactory.createToolbars(this, composite);
 
 		scroll = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
 		// TODO: fixup scrolling (page) increment as things resize
@@ -185,7 +228,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 		// Intermediate composite
 		intermediate = new Composite(scroll, SWT.None);
-		GridLayout layout = new GridLayout(1, false);
+		final GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -195,7 +238,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 		// Image canvas
 		imageCanvas = new Canvas(intermediate, SWT.NONE);
-		GridData data = new GridData(SWT.CENTER, SWT.CENTER, true, true);
+		final GridData data = new GridData(SWT.CENTER, SWT.CENTER, true, true);
 		imageCanvas.setLayoutData(data);
 		imageCanvas.setBackground(getColor(0).color());
 		// Scroll composite
@@ -206,14 +249,15 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 			@Override
 			public void paintControl(final PaintEvent e) {
-				Rectangle bounds = imageCanvas.getBounds();
+				final Rectangle bounds = imageCanvas.getBounds();
 				// showImage() should be setting the imageCanvas bounds to the
 				// zoomed size
 				e.gc.setBackground(getColor(0).color());
 				e.gc.fillRectangle(bounds);
-				// System.out.println("Painting image at size " + bounds.width + "x" + bounds.height);
-				if ( image != null ) {
-					Rectangle imBounds = image.getBounds();
+				// System.out.println("Painting image at size " + bounds.width +
+				// "x" + bounds.height);
+				if (image != null) {
+					final Rectangle imBounds = image.getBounds();
 					e.gc.drawImage(image, 0, 0, imBounds.width, imBounds.height, 0, 0, bounds.width, bounds.height);
 				}
 			}
@@ -223,22 +267,23 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	}
 
 	private void resizeCanvas(final Point p) {
-		Rectangle scrollSize = scroll.getClientArea();
-		int width = p.x > scrollSize.width ? p.x : scrollSize.width;
-		int height = p.y > scrollSize.height ? p.y : scrollSize.height;
+		final Rectangle scrollSize = scroll.getClientArea();
+		final int width = p.x > scrollSize.width ? p.x : scrollSize.width;
+		final int height = p.y > scrollSize.height ? p.y : scrollSize.height;
 		intermediate.setSize(width, height);
 		imageCanvas.setSize(p);
-		GridData data = (GridData) imageCanvas.getLayoutData();
+		final GridData data = (GridData) imageCanvas.getLayoutData();
 		data.widthHint = p.x;
 		data.heightHint = p.y;
 
-		// System.out.println("Resizing intermediate to " + intermediate.getSize().x + "x" + intermediate.getSize().y);
+		// System.out.println("Resizing intermediate to " +
+		// intermediate.getSize().x + "x" + intermediate.getSize().y);
 		intermediate.layout();
 		int x = 0, y = 0;
-		if ( width > scrollSize.width ) {
+		if (width > scrollSize.width) {
 			x = (width - scrollSize.width) / 2;
 		}
-		if ( height > scrollSize.height ) {
+		if (height > scrollSize.height) {
 			y = (height - scrollSize.height) / 2;
 		}
 		scroll.setOrigin(x, y);
@@ -251,13 +296,15 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	private void startImageLoad() {
 		// skip if the UI hasn't been initialized yet, because
 		// createPartControl() will do this
-		if ( imageCanvas == null ) { return; }
+		if (imageCanvas == null) {
+			return;
+		}
 		// clear out the current image
-		Runnable r = new Runnable() {
+		final Runnable r = new Runnable() {
 
 			@Override
 			public void run() {
-				if ( image != null ) {
+				if (image != null) {
 					image.dispose();
 					imageData = null;
 					image = null;
@@ -266,10 +313,10 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 				}
 			}
 		};
-		GAMA.getGui().asyncRun(r);
+		WorkbenchHelper.asyncRun(r);
 
 		// load the image in the background to keep the ui fresh
-		Job job = new Job(MessageFormat.format("Load Image {0}", getPartName())) {
+		final Job job = new Job(MessageFormat.format("Load Image {0}", getPartName())) {
 
 			@Override
 			protected IStatus run(final IProgressMonitor monitor) {
@@ -278,7 +325,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 					loadImageData();
 
 					// show the image on the next SWT exec
-					Runnable r = new Runnable() {
+					final Runnable r = new Runnable() {
 
 						@Override
 						public void run() {
@@ -286,12 +333,12 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 							displayInfoString();
 						}
 					};
-					GAMA.getGui().asyncRun(r);
+					WorkbenchHelper.asyncRun(r);
 
 					return Status.OK_STATUS;
-				} catch (CoreException ex) {
+				} catch (final CoreException ex) {
 					return ex.getStatus();
-				} catch (SWTException ex) {
+				} catch (final SWTException ex) {
 					return new Status(IStatus.ERROR, "msi.gama.application", ex.getMessage());
 				} finally {
 					monitor.done();
@@ -307,12 +354,12 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 * take time and should not be called on the ui thread.
 	 */
 	private void loadImageData() throws CoreException {
-		IEditorInput input = getEditorInput();
-		Object o = input.getAdapter(ImageData.class);
-		if ( o instanceof ImageData ) {
+		final IEditorInput input = getEditorInput();
+		final Object o = input.getAdapter(ImageData.class);
+		if (o instanceof ImageData) {
 			imageData = (ImageData) o;
-		} else if ( input instanceof IStorageEditorInput ) {
-			IFile file = getFileFor(input);
+		} else if (input instanceof IStorageEditorInput) {
+			final IFile file = getFileFor(input);
 			imageData = ImageDataLoader.getImageData(file);
 		}
 		// save this away so we don't compute it all the time
@@ -328,19 +375,20 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 *            to reuse.
 	 */
 	private void showImage(final boolean createImage) {
-		if ( imageData != null ) {
+		if (imageData != null) {
 			imageCanvas.setCursor(imageCanvas.getDisplay().getSystemCursor(SWT.CURSOR_WAIT));
 			try {
-				if ( createImage || image == null ) {
+				if (createImage || image == null) {
 					// dispose of the old image
-					if ( image != null && !image.isDisposed() ) {
+					if (image != null && !image.isDisposed()) {
 						image.dispose();
 						image = null;
 					}
 					image = new Image(imageCanvas.getDisplay(), imageData);
 				}
-				Rectangle imageSize = image.getBounds();
-				Point newSize = new Point((int) (imageSize.width * zoomFactor), (int) (imageSize.height * zoomFactor));
+				final Rectangle imageSize = image.getBounds();
+				final Point newSize = new Point((int) (imageSize.width * zoomFactor),
+						(int) (imageSize.height * zoomFactor));
 				resizeCanvas(newSize);
 				scroll.redraw();
 			} finally {
@@ -351,7 +399,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 	@Override
 	public void setFocus() {
-		if ( scroll != null && !scroll.isDisposed() ) {
+		if (scroll != null && !scroll.isDisposed()) {
 			scroll.setFocus();
 		}
 	}
@@ -360,11 +408,11 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	public void dispose() {
 		super.dispose();
 		// do this directly
-		if ( this.inputListener != null ) {
+		if (this.inputListener != null) {
 			inputListener.stop();
 			inputListener = null;
 		}
-		if ( image != null && !image.isDisposed() ) {
+		if (image != null && !image.isDisposed()) {
 			image.dispose();
 			image = null;
 		}
@@ -376,46 +424,53 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	}
 
 	@Override
-	public void doSave(final IProgressMonitor monitor) {}
+	public void doSave(final IProgressMonitor monitor) {
+	}
 
 	@Override
 	public void doSaveAs() {
 		// get a new path from the user
-		SaveImageAsDialog d = new SaveImageAsDialog(getSite().getShell());
+		final SaveImageAsDialog d = new SaveImageAsDialog(getSite().getShell());
 		// initialize the dialog path and file, as best as possible, including
 		// pre-selecting the image type.
 		int origImageType = imageData.type;
 		// default to PNG, if the imageData doesn't yet have a type (i.e. as
 		// from screenshot)
-		if ( origImageType < 0 ) {
+		if (origImageType < 0) {
 			origImageType = SWT.IMAGE_PNG;
 		}
-		IFile origFile = getFileFor(getEditorInput());
-		if ( origFile != null ) {
+		final IFile origFile = getFileFor(getEditorInput());
+		if (origFile != null) {
 			d.setOriginalFile(origFile, origImageType);
 		} else {
-			IPath initialFileName = Path.fromPortableString(getPartName()).removeFileExtension();
+			final IPath initialFileName = Path.fromPortableString(getPartName()).removeFileExtension();
 			d.setOriginalName(initialFileName.toPortableString(), origImageType);
 		}
 		d.create();
-		if ( d.open() != Window.OK ) { return; }
+		if (d.open() != Window.OK) {
+			return;
+		}
 
 		// get the selected file path
 		IPath path = d.getResult();
-		if ( path == null ) { return; }
+		if (path == null) {
+			return;
+		}
 		// add a file extension if there isn't one
-		if ( path.getFileExtension() == null ) {
+		if (path.getFileExtension() == null) {
 			path = path.addFileExtension(d.getSaveAsImageExt());
 		}
 
 		final IFile dest = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-		if ( dest == null || origFile != null && dest.equals(origFile) ) { return; }
+		if (dest == null || origFile != null && dest.equals(origFile)) {
+			return;
+		}
 		final int imageType = d.getSaveAsImageType();
 
 		// create a scheduling rule for the file edit/creation
-		IResourceRuleFactory ruleFactory = dest.getWorkspace().getRuleFactory();
+		final IResourceRuleFactory ruleFactory = dest.getWorkspace().getRuleFactory();
 		ISchedulingRule rule = null;
-		if ( dest.exists() ) {
+		if (dest.exists()) {
 			rule = ruleFactory.modifyRule(dest);
 			rule = MultiRule.combine(rule, ruleFactory.validateEditRule(new IResource[] { dest }));
 		} else {
@@ -428,71 +483,74 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 			}
 		}
 		// create the file
-		WorkspaceModifyOperation op = new WorkspaceModifyOperation(rule) {
+		final WorkspaceModifyOperation op = new WorkspaceModifyOperation(rule) {
 
 			@Override
 			protected void execute(final IProgressMonitor monitor)
-				throws CoreException, InvocationTargetException, InterruptedException {
+					throws CoreException, InvocationTargetException, InterruptedException {
 				try {
-					if ( dest.exists() ) {
-						if ( !dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell())
-							.isOK() ) { return; }
+					if (dest.exists()) {
+						if (!dest.getWorkspace().validateEdit(new IFile[] { dest }, getSite().getShell()).isOK()) {
+							return;
+						}
 					}
 					saveTo(imageData, dest, imageType, monitor);
-				} catch (IOException ex) {
+				} catch (final IOException ex) {
 					throw new InvocationTargetException(ex);
 				}
 			}
 		};
-		ProgressMonitorDialog pmd = new ProgressMonitorDialog(getSite().getShell());
+		final ProgressMonitorDialog pmd = new ProgressMonitorDialog(getSite().getShell());
 		try {
 			pmd.run(true, true, op);
 			// reset our editor input to the file, if weren't not open on a
 			// file.
-			if ( getFileFor(getEditorInput()) == null ) {
+			if (getFileFor(getEditorInput()) == null) {
 				setInput(new FileEditorInput(dest));
 			}
-		} catch (InvocationTargetException ex) {
-			Throwable t = ex.getCause();
+		} catch (final InvocationTargetException ex) {
+			final Throwable t = ex.getCause();
 
-			String title = "Error Saving";
-			String mesg = MessageFormat.format("Failed to save {0}", path.toPortableString());
+			final String title = "Error Saving";
+			final String mesg = MessageFormat.format("Failed to save {0}", path.toPortableString());
 			// ImagesActivator.getDefault().log(IStatus.WARNING, mesg, t);
 			IStatus st = null;
-			if ( t instanceof CoreException ) {
+			if (t instanceof CoreException) {
 				st = ((CoreException) t).getStatus();
 			} else {
 				st = new Status(IStatus.ERROR, "msi.gama.application", 0, t.toString(), t);
 			}
-			if ( st.getSeverity() != IStatus.CANCEL ) {
+			if (st.getSeverity() != IStatus.CANCEL) {
 				ErrorDialog.openError(getSite().getShell(), title, mesg, st);
 			}
-		} catch (InterruptedException ex) {
+		} catch (final InterruptedException ex) {
 			// ignore
 		}
 	}
 
 	private void saveTo(final ImageData imageData, final IFile dest, final int imageType,
-		final IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
+			final IProgressMonitor monitor) throws CoreException, InterruptedException, IOException {
 		// do an indeterminate progress monitor so that something shows, since
 		// the generation of the image data doesn't report progress
 		monitor.beginTask(dest.getFullPath().toPortableString(), IProgressMonitor.UNKNOWN/* taskSize */);
 		try {
-			if ( !dest.getParent().exists() ) {
-				ContainerGenerator gen = new ContainerGenerator(dest.getFullPath().removeLastSegments(1));
+			if (!dest.getParent().exists()) {
+				final ContainerGenerator gen = new ContainerGenerator(dest.getFullPath().removeLastSegments(1));
 				gen.generateContainer(new SubProgressMonitor(monitor, 500));
-				if ( monitor.isCanceled() ) { throw new InterruptedException(); }
+				if (monitor.isCanceled()) {
+					throw new InterruptedException();
+				}
 			}
 			final ImageLoader loader = new ImageLoader();
 			loader.data = new ImageData[] { imageData };
 
 			// but, let's use pipes instead so we don't have to buffer the whole
 			// thing unnecessarily in memory
-			PipedInputStream pin = new PipedInputStream();
+			final PipedInputStream pin = new PipedInputStream();
 			final PipedOutputStream pout = new PipedOutputStream(pin);
 			// the write to the pipe has to happen in a different thread or
 			// else we get deadlock
-			Job writeJob = new Job("Write image data to pipe") {
+			final Job writeJob = new Job("Write image data to pipe") {
 
 				@Override
 				protected IStatus run(final IProgressMonitor monitor) {
@@ -500,25 +558,25 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 					try {
 						loader.save(pout, imageType);
 						pout.flush();
-					} catch (Exception ex) {
+					} catch (final Exception ex) {
 						status = new Status(IStatus.ERROR, "msi.gama.application",
-							MessageFormat.format("Error getting image data for {0}", dest.getFullPath()), ex);
+								MessageFormat.format("Error getting image data for {0}", dest.getFullPath()), ex);
 					} finally {
 						try {
 							pout.close();
-						} catch (IOException e) {
+						} catch (final IOException e) {
 							System.out.println("Exception ignored in ImageViewer saveTo: " + e.getMessage());
 						}
 					}
 					// always do our own error dialog
-					if ( !status.isOK() ) {
+					if (!status.isOK()) {
 						final IStatus fstatus = status;
 						getSite().getShell().getDisplay().asyncExec(new Runnable() {
 
 							@Override
 							public void run() {
 								ErrorDialog.openError(getSite().getShell(), "Error Saving",
-									MessageFormat.format("Failed to save {0}", dest.getFullPath()), fstatus);
+										MessageFormat.format("Failed to save {0}", dest.getFullPath()), fstatus);
 							}
 						});
 					}
@@ -529,17 +587,17 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 			writeJob.setUser(false);
 			writeJob.schedule();
 
-			BufferedInputStream in = new BufferedInputStream(pin);
+			final BufferedInputStream in = new BufferedInputStream(pin);
 			try {
 				// try reading one byte to make sure that loader.save() actually
 				// worked before we destroy or create a file.
 				in.mark(1);
-				int first = in.read();
+				final int first = in.read();
 				// the Job should have shown the error dialog if we don't get a
 				// first byte
-				if ( first != -1 ) {
+				if (first != -1) {
 					in.reset();
-					if ( dest.exists() ) {
+					if (dest.exists()) {
 						dest.setContents(in, true, true, new SubProgressMonitor(monitor, 500));
 					} else {
 						dest.create(in, true, new SubProgressMonitor(monitor, 500));
@@ -568,7 +626,9 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 * @return { SWT.IMAGE_* type, width, height } or null for no image
 	 */
 	public int[] getCurrentImageInformation() {
-		if ( imageData != null ) { return new int[] { imageData.type, imageData.width, imageData.height }; }
+		if (imageData != null) {
+			return new int[] { imageData.type, imageData.width, imageData.height };
+		}
 		return null;
 	}
 
@@ -576,10 +636,10 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 * Determine the max zoom factor for the current image size.
 	 */
 	private double determineMaxZoomFactor() {
-		if ( imageData != null ) {
-			double maxWidth = (double) Integer.MAX_VALUE / imageData.width;
-			double maxHeight = (double) Integer.MAX_VALUE / imageData.height;
-			return FastMath.min(maxWidth, maxHeight);
+		if (imageData != null) {
+			final double maxWidth = (double) Integer.MAX_VALUE / imageData.width;
+			final double maxHeight = (double) Integer.MAX_VALUE / imageData.height;
+			return Math.min(maxWidth, maxHeight);
 		}
 		return 1.0d;
 	}
@@ -599,20 +659,20 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 	 */
 	public void setZoomFactor(double newZoom) {
 		// don't go bigger than the maz zoom
-		newZoom = FastMath.min(newZoom, maxZoomFactor);
-		if ( zoomFactor != newZoom && newZoom > 0.0d ) {
+		newZoom = Math.min(newZoom, maxZoomFactor);
+		if (zoomFactor != newZoom && newZoom > 0.0d) {
 			// Double old = Double.valueOf(zoomFactor);
 			this.zoomFactor = newZoom;
 			// redraw the image
-			if ( imageCanvas != null ) {
-				Runnable r = new Runnable() {
+			if (imageCanvas != null) {
+				final Runnable r = new Runnable() {
 
 					@Override
 					public void run() {
 						showImage(false);
 					}
 				};
-				GAMA.getGui().run(r);
+				WorkbenchHelper.run(r);
 			}
 		}
 	}
@@ -629,7 +689,7 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 	@Override
 	public void zoomFit() {
-		if ( imageData.width > imageData.height ) {
+		if (imageData.width > imageData.height) {
 			setZoomFactor((double) scroll.getSize().x / (double) imageData.width);
 		} else {
 			setZoomFactor((double) scroll.getSize().y / (double) imageData.height);
@@ -668,11 +728,11 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 		@Override
 		public void resourceChanged(final IResourceChangeEvent event) {
-			IResourceDelta delta = event.getDelta().findMember(imageFile.getFullPath());
-			if ( delta != null ) {
+			final IResourceDelta delta = event.getDelta().findMember(imageFile.getFullPath());
+			if (delta != null) {
 				// file deleted -- close the editor
-				if ( delta.getKind() == IResourceDelta.REMOVED ) {
-					Runnable r = new Runnable() {
+				if (delta.getKind() == IResourceDelta.REMOVED) {
+					final Runnable r = new Runnable() {
 
 						@Override
 						public void run() {
@@ -683,9 +743,9 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 					getSite().getShell().getDisplay().asyncExec(r);
 				}
 				// file changed -- reload image
-				else if ( delta.getKind() == IResourceDelta.CHANGED ) {
-					int flags = delta.getFlags();
-					if ( (flags & IResourceDelta.CONTENT) != 0 || (flags & IResourceDelta.LOCAL_CHANGED) != 0 ) {
+				else if (delta.getKind() == IResourceDelta.CHANGED) {
+					final int flags = delta.getFlags();
+					if ((flags & IResourceDelta.CONTENT) != 0 || (flags & IResourceDelta.LOCAL_CHANGED) != 0) {
 						startImageLoad();
 					}
 				}
@@ -695,7 +755,9 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 	/**
 	 * Method createToolItem()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.controls.GamaToolbar2)
+	 * 
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
+	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
@@ -713,7 +775,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 	/**
 	 * Method getColorLabels()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#getColorLabels()
+	 * 
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Colorizable#getColorLabels()
 	 */
 	@Override
 	public String[] getColorLabels() {
@@ -722,7 +785,8 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 	/**
 	 * Method getColor()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#getColor(int)
+	 * 
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Colorizable#getColor(int)
 	 */
 	@Override
 	public GamaUIColor getColor(final int index) {
@@ -731,12 +795,14 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 
 	/**
 	 * Method setColor()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView.Colorizable#setColor(int, ummisco.gama.ui.resources.GamaColors.GamaUIColor)
+	 * 
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Colorizable#setColor(int,
+	 *      ummisco.gama.ui.resources.GamaColors.GamaUIColor)
 	 */
 	@Override
 	public void setColor(final int index, final GamaUIColor c) {
-		if ( imageCanvas != null ) {
-			Runnable rr = new Runnable() {
+		if (imageCanvas != null) {
+			final Runnable rr = new Runnable() {
 
 				@Override
 				public void run() {
@@ -744,14 +810,15 @@ public class ImageViewer extends EditorPart implements IReusableEditor, IToolbar
 					showImage(false);
 				}
 			};
-			GAMA.getGui().run(rr);
+			WorkbenchHelper.run(rr);
 		}
 
 	}
 
 	/**
 	 * Method zoomWhenScrolling()
-	 * @see msi.gama.gui.views.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
+	 * 
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
 	 */
 	@Override
 	public boolean zoomWhenScrolling() {

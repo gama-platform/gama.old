@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.swt.widgets.Display;
 
-import ummisco.gama.ui.utils.Platform;
+import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
  * A listener that insures the proper modal behavior of Swing dialogs when running
@@ -32,7 +32,7 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 	private static boolean verboseModalityHandling = false;
 
 	protected static boolean USING_ALWAYS_ON_TOP =
-		Platform.isGtk() && Platform.JAVA_VERSION >= Platform.javaVersion(1, 5, 0);
+		PlatformHelper.isGtk() && PlatformHelper.JAVA_VERSION >= PlatformHelper.javaVersion(1, 5, 0);
 	private static boolean alwaysOnTopMethodsInitialized = false;
 	private static Method setAlwaysOnTopMethod = null;
 	private static Method isAlwaysOnTopMethod = null;

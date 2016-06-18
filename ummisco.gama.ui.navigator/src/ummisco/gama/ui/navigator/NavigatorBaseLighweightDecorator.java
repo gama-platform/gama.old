@@ -9,8 +9,8 @@ import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
 import msi.gama.gui.metadata.FileMetaDataProvider;
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.util.file.IGamaFileMetaData;
+import ummisco.gama.ui.utils.SwtGui;
 
 /**
  * Class NavigatorBaseLighweightDecorator.
