@@ -12,8 +12,10 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.jogamp.opengl.GL;
@@ -33,6 +35,9 @@ import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.TextureCache;
 import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
+import ummisco.gama.webgl.SceneReceiver;
+import ummisco.gama.webgl.SimpleLayer;
+import ummisco.gama.webgl.SimpleScene;
 
 /**
  *
@@ -221,7 +226,17 @@ public class ModelScene {
 	}
 
 	public void endDrawingLayers() {
-		// staticObjectsAreLocked = true;
+		if (!SceneReceiver.getInstance().canReceive())
+			return;
+		SceneReceiver.getInstance().receive(this.toSimpleScene());
+	}
+
+	private SimpleScene toSimpleScene() {
+		final List<SimpleLayer> simpleLayers = new ArrayList();
+		for (final LayerObject layer : this.layers.values()) {
+			simpleLayers.add(layer.toSimpleLayer());
+		}
+		return new SimpleScene(simpleLayers);
 	}
 
 	public boolean rendered() {

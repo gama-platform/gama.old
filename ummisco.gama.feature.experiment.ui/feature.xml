@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="ummisco.gama.feature.experiment.ui"
+      label="UI Components for running experiments in  GAMA"
+      version="1.7.0.qualifier"
+      provider-name="UMMISCO">
+
+   <description url="http://gama-platform.org">
+      The UI components for running experiments in GAMA
+   </description>
+
+   <copyright url="http://www.example.com/copyright">
+      [Enter Copyright Description here.]
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <url>
+      <update label="Gama 1.7.x Update Site" url="http://updates.gama-platform.org"/>
+   </url>
+
+   <requires>
+      <import feature="ummisco.gama.feature.core.ui" version="1.7.0.qualifier"/>
+   </requires>
+
+   <plugin
+         id="ummisco.gama.java2d"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ummisco.gama.ui.experiment"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="ummisco.gama.opengl"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

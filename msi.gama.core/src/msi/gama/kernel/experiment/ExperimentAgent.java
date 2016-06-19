@@ -98,7 +98,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected RandomUtils random;
 	protected Double initialMinimumDuration = null;
 	protected Double currentMinimumDuration = 0d;
-	final protected ExperimentClock clock = new ExperimentClock();
+	final protected ExperimentClock clock;
 	protected boolean warningsAsErrors = GamaPreferences.CORE_WARNINGS.getValue();
 	protected String ownModelPath;
 	// protected SimulationPopulation populationOfSimulations;
@@ -109,6 +109,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		super(s);
 		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
 		scope = new ExperimentAgentScope(this);
+		clock = new ExperimentClock(scope);
 		executer = new ActionExecuter(scope);
 		reset();
 	}
@@ -232,11 +233,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ps.putAll(extraParametersMap);
 		return ps;
 	}
-
-	// @Override
-	// protected Object stepSubPopulations(final IScope scope) {
-	// return scope.step(populationOfSimulations);
-	// }
 
 	@Override
 	public RandomUtils getRandomGenerator() {
@@ -513,7 +509,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public IPopulation getPopulationFor(final ISpecies species) {
-		// TODO Auto-generated method stub
 		if (species == getModel()) {
 			return getSimulationPopulation();
 		}
@@ -546,8 +541,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void informStatus() {
 		final int nbThreads = this.getSimulationPopulation().getNumberOfActiveThreads();
 		if (!getSpecies().isBatch() && getSimulation() != null) {
-			getScope().getGui()
-					.informStatus(getClock().getInfo() + (nbThreads > 1 ? " (" + nbThreads + " threads)" : ""));
+			final StringBuilder sb = new StringBuilder(200);
+			sb.append(getClock().getInfo());
+			if (getScope().isOnUserHold())
+				sb.append(" (waiting)");
+			else if (nbThreads > 1)
+				sb.append(" (" + nbThreads + " threads)");
+			getScope().getGui().informStatus(sb.toString(), "status.clock");
 		}
 	}
 

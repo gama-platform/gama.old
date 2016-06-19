@@ -11,14 +11,24 @@
  **********************************************************************************************/
 package msi.gama.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaIntegerType;
+import msi.gaml.types.GamaMatrixType;
+import msi.gaml.types.GamaPairType;
+import msi.gaml.types.GamaType;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 21 nov. 2008
@@ -47,13 +57,15 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 */
 	@Override
 	public IList listValue(final IScope scope, final IType contentsType, final boolean copy) {
-		if ( !GamaType.requiresCasting(contentsType, getType().getContentType()) ) {
-			if ( copy ) { return this.cloneWithContentType(contentsType); }
+		if (!GamaType.requiresCasting(contentsType, getType().getContentType())) {
+			if (copy) {
+				return this.cloneWithContentType(contentsType);
+			}
 			return this;
 		}
-		GamaList clone = this.cloneWithContentType(contentsType);
-		int n = size();
-		for ( int i = 0; i < n; i++ ) {
+		final GamaList clone = this.cloneWithContentType(contentsType);
+		final int n = size();
+		for (int i = 0; i < n; i++) {
 			clone.setValueAtIndex(scope, i, get(i));
 		}
 		return clone;
@@ -73,11 +85,13 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gaml.attributes.interfaces.IGamaValue#matrixValue(msi.gaml.types.GamaPoint)
+	 * @see
+	 * msi.gaml.attributes.interfaces.IGamaValue#matrixValue(msi.gaml.types.
+	 * GamaPoint)
 	 */
 	@Override
 	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
-		final boolean copy) {
+			final boolean copy) {
 		return GamaMatrixType.from(scope, this, contentsType, preferredSize);
 	}
 
@@ -90,8 +104,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(size() * 10);
 		sb.append('[');
-		for ( int i = 0; i < size(); i++ ) {
-			if ( i != 0 ) {
+		for (int i = 0; i < size(); i++) {
+			if (i != 0) {
 				sb.append(',');
 			}
 			sb.append(StringUtils.toGaml(get(i), includingBuiltIn));
@@ -102,13 +116,16 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy) {
-		// 08/01/14: Change of behavior. A list now returns a map containing its contents casted to pairs.
+		// 08/01/14: Change of behavior. A list now returns a map containing its
+		// contents casted to pairs.
 		// Allows to build sets with the idiom: list <- map(list).values;
-		IType kt = GamaType.findSpecificType(keyType, type.getContentType()); // not keyType() !
-		IType ct = GamaType.findSpecificType(contentsType, type.getContentType());
+		final IType kt = GamaType.findSpecificType(keyType, type.getContentType()); // not
+																					// keyType()
+																					// !
+		final IType ct = GamaType.findSpecificType(contentsType, type.getContentType());
 
 		final GamaMap result = GamaMapFactory.create(kt, ct);
-		for ( final E e : this ) {
+		for (final E e : this) {
 			result.addValue(scope, GamaPairType.staticCast(scope, e, kt, ct, copy));
 		}
 		return result;
@@ -136,8 +153,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	public void setAllValues(final IScope scope, final E value) {
-		E element = buildValue(scope, value);
-		for ( int i = 0, n = size(); i < n; i++ ) {
+		final E element = buildValue(scope, value);
+		for (int i = 0, n = size(); i < n; i++) {
 			super.set(i, element);
 		}
 	}
@@ -145,10 +162,11 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	/**
 	 *
 	 * Method add()
+	 * 
 	 * @see java.util.ArrayList#add(java.lang.Object)
-	 * @deprecated This method DOES NOT ensure type safety. Use addValue(IScope, Object) instead
+	 * @warning This method DOES NOT ensure type safety. Use addValue(IScope,
+	 *          Object) instead
 	 */
-	@Deprecated
 	@Override
 	public boolean add(final E value) {
 		return super.add(value);
@@ -157,10 +175,11 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	/**
 	 *
 	 * Method add()
+	 * 
 	 * @see java.util.ArrayList#add(int, java.lang.Object)
-	 * @deprecated This method DOES NOT ensure type safety. Use addValue(IScope, Integer, Object) instead
+	 * @warning This method DOES NOT ensure type safety. Use addValue(IScope,
+	 *          Integer, Object) instead
 	 */
-	@Deprecated
 	@Override
 	public void add(final int index, final E value) {
 		super.add(index, value);
@@ -169,10 +188,11 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	/**
 	 *
 	 * Method set()
+	 * 
 	 * @see java.util.ArrayList#set(int, java.lang.Object)
-	 * @deprecated This method DOES NOT ensure type safety. Use setValueAtIndex(IScope, Integer, Object) instead
+	 * @warning This method DOES NOT ensure type safety. Use
+	 *          setValueAtIndex(IScope, Integer, Object) instead
 	 */
-	@Deprecated
 	@Override
 	public E set(final int index, final E value) {
 		return super.set(index, value);
@@ -181,10 +201,11 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	/**
 	 *
 	 * Method addAll()
+	 * 
 	 * @see java.util.ArrayList#addAll(java.util.Collection)
-	 * @deprecated This method DOES NOT ensure type safety. Use addValues(IScope, IContainer) instead
+	 * @warning This method DOES NOT ensure type safety. Use addValues(IScope,
+	 *          IContainer) instead
 	 */
-	@Deprecated
 	@Override
 	public boolean addAll(final Collection<? extends E> values) {
 		return super.addAll(values);
@@ -193,10 +214,10 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	/**
 	 *
 	 * Method addAll()
+	 * 
 	 * @see java.util.ArrayList#addAll(int, java.util.Collection)
-	 * @deprecated This method DOES NOT ensure type safety.
+	 * @warning This method DOES NOT ensure type safety.
 	 */
-	@Deprecated
 	@Override
 	public boolean addAll(final int index, final Collection<? extends E> values) {
 		return super.addAll(index, values);
@@ -209,14 +230,14 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	public void removeIndex(final IScope scope, final Object index) {
-		if ( index instanceof Integer ) {
+		if (index instanceof Integer) {
 			remove(((Integer) index).intValue());
 		}
 	}
 
 	@Override
 	public void removeValues(final IScope scope, final IContainer values) {
-		if ( values instanceof Collection ) {
+		if (values instanceof Collection) {
 			removeAll((Collection) values);
 		} else {
 			removeAll(values.listValue(scope, Types.NO_TYPE, false));
@@ -225,9 +246,9 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {
-		for ( final Iterator iterator = iterator(); iterator.hasNext(); ) {
+		for (final Iterator iterator = iterator(); iterator.hasNext();) {
 			final Object obj = iterator.next();
-			if ( obj.equals(value) ) {
+			if (obj.equals(value)) {
 				iterator.remove();
 			}
 		}
@@ -235,13 +256,17 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	public E firstValue(final IScope scope) {
-		if ( size() == 0 ) { return null; }
+		if (size() == 0) {
+			return null;
+		}
 		return get(0);
 	}
 
 	@Override
 	public E lastValue(final IScope scope) {
-		if ( size() == 0 ) { return null; }
+		if (size() == 0) {
+			return null;
+		}
 		return get(size() - 1);
 	}
 
@@ -263,7 +288,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	public GamaList cloneWithContentType(final IType contentType) {
-		GamaList clone = (GamaList) super.clone();
+		final GamaList clone = (GamaList) super.clone();
 		clone.type = Types.LIST.of(contentType);
 		return clone;
 	}
@@ -281,14 +306,16 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 */
 	@Override
 	public boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
-		if ( object instanceof Integer ) {
-			Integer index = (Integer) object;
+		if (object instanceof Integer) {
+			final Integer index = (Integer) object;
 			final int size = size();
 			final boolean upper = forAdding ? index <= size : index < size;
 			return index >= 0 && upper;
-		} else if ( object instanceof IContainer ) {
-			for ( Object o : ((IContainer) object).iterable(scope) ) {
-				if ( !checkBounds(scope, o, forAdding) ) { return false; }
+		} else if (object instanceof IContainer) {
+			for (final Object o : ((IContainer) object).iterable(scope)) {
+				if (!checkBounds(scope, o, forAdding)) {
+					return false;
+				}
 			}
 		}
 		return false;
@@ -296,7 +323,9 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	public E anyValue(final IScope scope) {
-		if ( isEmpty() ) { return null; }
+		if (isEmpty()) {
+			return null;
+		}
 		final int i = scope.getRandom().between(0, size() - 1);
 		return get(i);
 	}
@@ -318,37 +347,46 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	public E getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
-		if ( indices == null || indices.isEmpty() ) { return null; }
+		if (indices == null || indices.isEmpty()) {
+			return null;
+		}
 		return get(scope, Cast.asInt(scope, indices.get(0)));
-		// We do not consider the case where multiple indices are used. Maybe could be used in the
+		// We do not consider the case where multiple indices are used. Maybe
+		// could be used in the
 		// future to return a list of values ?
 	}
 
 	/**
 	 * Method removeIndexes()
-	 * @see msi.gama.util.IContainer.Modifiable#removeIndexes(msi.gama.runtime.IScope, msi.gama.util.IContainer)
+	 * 
+	 * @see msi.gama.util.IContainer.Modifiable#removeIndexes(msi.gama.runtime.IScope,
+	 *      msi.gama.util.IContainer)
 	 */
 	@Override
 	public void removeIndexes(final IScope scope, final IContainer<?, Object> index) {
-		IList<Integer> l = index.listValue(scope, Types.INT, false);
+		final IList<Integer> l = index.listValue(scope, Types.INT, false);
 		Collections.sort(l, Collections.reverseOrder());
-		for ( Integer i : l ) {
+		for (final Integer i : l) {
 			remove(i.intValue());
 		}
 	}
 
 	/**
 	 * Method buildValue()
-	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope, java.lang.Object, msi.gaml.types.IContainerType)
+	 * 
+	 * @see msi.gama.util.IContainer.Modifiable#buildValue(msi.gama.runtime.IScope,
+	 *      java.lang.Object, msi.gaml.types.IContainerType)
 	 */
 	protected E buildValue(final IScope scope, final Object object) {
-		IType ct = type.getContentType();
+		final IType ct = type.getContentType();
 		return (E) ct.cast(scope, object, null, false);
 	}
 
 	/**
 	 * Method buildValues()
-	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope, msi.gama.util.IContainer, msi.gaml.types.IContainerType)
+	 * 
+	 * @see msi.gama.util.IContainer.Modifiable#buildValues(msi.gama.runtime.IScope,
+	 *      msi.gama.util.IContainer, msi.gaml.types.IContainerType)
 	 */
 	protected IList<E> buildValues(final IScope scope, final IContainer objects) {
 		return (IList<E>) type.cast(scope, objects, null, false);
@@ -356,15 +394,17 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	/**
 	 * Method buildIndex()
-	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope, java.lang.Object, msi.gaml.types.IContainerType)
+	 * 
+	 * @see msi.gama.util.IContainer.Modifiable#buildIndex(msi.gama.runtime.IScope,
+	 *      java.lang.Object, msi.gaml.types.IContainerType)
 	 */
 	protected Integer buildIndex(final IScope scope, final Object object) {
 		return GamaIntegerType.staticCast(scope, object, null, false);
 	}
 
 	protected IContainer<?, Integer> buildIndexes(final IScope scope, final IContainer value) {
-		IList<Integer> result = GamaListFactory.create(Types.INT);
-		for ( Object o : value.iterable(scope) ) {
+		final IList<Integer> result = GamaListFactory.create(Types.INT);
+		for (final Object o : value.iterable(scope)) {
 			result.add(buildIndex(scope, o));
 		}
 		return result;

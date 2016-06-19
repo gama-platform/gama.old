@@ -6,7 +6,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.ui.IStartup;
 import com.jogamp.common.util.JarUtil;
 import com.jogamp.opengl.GLProfile;
-import msi.gama.gui.swt.SwtGui;
+import ummisco.gama.ui.utils.SwtGui;
 
 public class GamaOpenGLStartup implements IStartup {
 

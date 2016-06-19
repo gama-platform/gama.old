@@ -87,7 +87,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	private Graphics2D currentRenderer, overlayRenderer, normalRenderer;
 	private final ShapeWriter sw = new ShapeWriter(this);
-	private boolean highlight;
 	private static final Font defaultFont = new Font("Helvetica", Font.BOLD, 12);
 
 	static {
@@ -114,8 +113,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	public AWTDisplayGraphics(final IDisplaySurface surface, final Graphics2D g2) {
 		super(surface);
-		currentRenderer = g2;
-		currentRenderer.setFont(defaultFont);
+		setGraphics2D(g2);
 
 	}
 
@@ -267,7 +265,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		}
 		currentRenderer.setColor(highlight ? data.getHighlightColor() : attributes.color);
 		double curX, curY;
-		final double curZ;
+		// final double curZ;
 		if (attributes.location == null) {
 			curX = getXOffsetInPixels();
 			curY = getYOffsetInPixels();
@@ -294,15 +292,20 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		if (geometry == null) {
 			return null;
 		}
+		if (highlight) {
+			attributes.color = GamaColor.getInt(data.getHighlightColor().getRGB());
+			if (attributes.border != null)
+				attributes.border = attributes.color;
+		}
 		final Geometry geom = geometry.getInnerGeometry();
 		final Shape s = sw.toShape(geom);
 		try {
 			final Rectangle2D r = s.getBounds2D();
-			currentRenderer.setColor(highlight ? data.getHighlightColor() : attributes.color);
+			currentRenderer.setColor(attributes.color);
 			if (geom instanceof Lineal || geom instanceof Puntal ? false : !attributes.empty) {
 				currentRenderer.fill(s);
 				if (attributes.border != null) {
-					currentRenderer.setColor(highlight ? data.getHighlightColor() : attributes.border);
+					currentRenderer.setColor(attributes.border);
 				}
 			}
 			if (attributes.border != null) {
@@ -406,6 +409,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public void setGraphics2D(final Graphics2D g) {
 		normalRenderer = g;
 		currentRenderer = g;
+		if (g != null) {
+			g.setFont(defaultFont);
+		}
 	}
 
 	public void setUntranslatedGraphics2D(final Graphics2D g) {

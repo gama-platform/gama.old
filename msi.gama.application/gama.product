@@ -4,7 +4,7 @@
 <product name="Gama" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.7" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="./icons/launcher_icons/icon205.png"/>
+      <image path="./launcher_icons/icon205.png"/>
       <text>
          GAMA Platform - V1.7.0
 
@@ -48,7 +48,7 @@ openFile
       </vmArgsWin>
    </launcherArgs>
 
-   <windowImages i16="./icons/launcher_icons/icon16.png" i32="./icons/launcher_icons/icon32.png" i48="./icons/launcher_icons/icon48.png" i64="./icons/launcher_icons/icon64.png" i128="./icons/launcher_icons/icon128.png" i256="./icons/launcher_icons/icon256.png"/>
+   <windowImages i16="./launcher_icons/icon16.png" i32="./launcher_icons/icon32.png" i48="./launcher_icons/icon48.png" i64="./launcher_icons/icon64.png" i128="./launcher_icons/icon128.png" i256="./launcher_icons/icon256.png"/>
 
    <splash
       location="msi.gama.application"
@@ -56,11 +56,11 @@ openFile
       startupMessageRect="200,450,541,16"
       startupForegroundColor="165E93" />
    <launcher name="Gama">
-      <linux icon="./icons/launcher_icons/icon.xpm"/>
-      <macosx icon="./icons/launcher_icons/icon.icns"/>
+      <linux icon="./launcher_icons/icon.xpm"/>
+      <macosx icon="./launcher_icons/icon.icns"/>
       <solaris/>
       <win useIco="true">
-         <ico path="./icons/launcher_icons/icon.ico"/>
+         <ico path="./launcher_icons/icon.ico"/>
          <bmp
             winSmallHigh="./icons/launcher_icons/icon16_32.bmp"
             winSmallLow="./icons/launcher_icons/icon16_8b.bmp"
@@ -71,7 +71,6 @@ openFile
             winExtraLargeHigh="./icons/launcher_icons/icon256_32b.bmp"/>
       </win>
    </launcher>
-
 
    <vm>
       <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>
@@ -275,14 +274,15 @@ openFile
       <feature id="org.eclipse.ecf.filetransfer.feature"/>
       <feature id="org.eclipse.ecf.core.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
+      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" installMode="root"/>
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.rcp"/>
       <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.opengl" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.modeling.ui" version="1.7.0.qualifier" installMode="root"/>
    </features>
 
    <configurations>

@@ -21,6 +21,8 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.IGamaView.Display;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
@@ -78,22 +80,20 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc(value = "Allows to refresh the display every n time steps (default is 1)", deprecated = "Use refresh: every(n) instead")),
 		@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true, doc = @doc("Indicates the condition under which this output should be refreshed (default is true)")),
 		@facet(name = IKeyword.FULLSCREEN, type = IType.BOOL, optional = true, doc = @doc("Indicates whether or not the display should cover the whole screen (default is false")),
-		@facet(name = IKeyword.TESSELATION,internal = true,type = IType.BOOL, optional = true, doc = @doc("")),
-		@facet(name = IKeyword.ZFIGHTING,internal = true, type = IType.BOOL, optional = true, doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
+		@facet(name = IKeyword.TESSELATION, internal = true, type = IType.BOOL, optional = true, doc = @doc("")),
+		@facet(name = IKeyword.ZFIGHTING, internal = true, type = IType.BOOL, optional = true, doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
 		@facet(name = IKeyword.TRACE, type = { IType.BOOL,
 				IType.INT }, optional = true, doc = @doc(deprecated = "The value of the trace must instead be defined in each layer's definition now.", value = "Allows to aggregate the visualization of agents at each timestep on the display. Default is false. If set to an int value, only the last n-th steps will be visualized. If set to true, no limit of timesteps is applied. This facet can also be applied to individual layers")),
 		@facet(name = IKeyword.SCALE, type = { IType.BOOL,
 				IType.FLOAT }, optional = true, doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
-		@facet(name = IKeyword.SHOWFPS, internal = true,type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
+		@facet(name = IKeyword.SHOWFPS, internal = true, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
 		@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
 		@facet(name = IKeyword.ORTHOGRAPHIC_PROJECTION, internal = true, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the orthographic projection. Default can be configured in Preferences")),
 		@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT,
 				IType.COLOR }, optional = true, doc = @doc("Allows to define the value of the ambient light either using an int (ambient_light:(125)) or a rgb color ((ambient_light:rgb(255,255,255)). default is rgb(127,127,127,255)")),
 		@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT,
-				IType.COLOR }, optional = true, doc = @doc(value = "Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is (127,127,127,255)",
-						deprecated = "Use statement \"light\" instead")),
-		@facet(name = IKeyword.DIFFUSE_LIGHT_POS, type = IType.POINT, optional = true, doc = @doc(value = "Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width`*`2}",
-				deprecated = "Use statement \"light\" instead")),
+				IType.COLOR }, optional = true, doc = @doc(value = "Allows to define the value of the diffuse light either using an int (diffuse_light:(125)) or a rgb color ((diffuse_light:rgb(255,255,255)). default is (127,127,127,255)", deprecated = "Use statement \"light\" instead")),
+		@facet(name = IKeyword.DIFFUSE_LIGHT_POS, type = IType.POINT, optional = true, doc = @doc(value = "Allows to define the position of the diffuse light either using an point (diffuse_light_pos:{x,y,z}). default is {world.shape.width/2,world.shape.height/2,world.shape.width`*`2}", deprecated = "Use statement \"light\" instead")),
 		@facet(name = IKeyword.IS_LIGHT_ON, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the light. Default is true")),
 		@facet(name = IKeyword.DRAW_DIFFUSE_LIGHT, type = IType.BOOL, optional = true, doc = @doc(value = "Allows to show/hide a representation of the lights. Default is false.")),
 		@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT,
@@ -105,7 +105,7 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.POLYGONMODE, internal = true, type = IType.BOOL, optional = true, doc = @doc("")),
 		@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL,
 				IType.POINT }, optional = true, doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
-		@facet(name = IKeyword.OUTPUT3D,internal = true, type = { IType.BOOL,
+		@facet(name = IKeyword.OUTPUT3D, internal = true, type = { IType.BOOL,
 				IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @validator(InfoValidator.class)
@@ -190,7 +190,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				}
 			}
 
-			final IExpressionDescription camera = d.getFacets().getDescr(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR, CAMERA_LENS);
+			final IExpressionDescription camera = d.getFacets().getDescr(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR,
+					CAMERA_LENS);
 			if (!isOpenGLWanted && camera != null) {
 				d.warning(
 						"camera-related facets will have no effect on 2D displays. Use 'focus:' instead if you want to change the default zoom and position.",
@@ -231,7 +232,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		layers = new ArrayList<>();
 		final String modelName = desc.getModelDescription().getName();
 		final String expeName = desc.getExperimentContext().getName();
-		GAMA.getGui().registerView(modelName, expeName, getViewId() + ":" + getName() + "*");
 	}
 
 	public IOverlayProvider getOverlayProvider() {
@@ -334,10 +334,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (light2 != null) {
 			this.data.setLightActive(1, true);
 			if (light2.getType().equals(Types.COLOR)) {
-				this.data.setDiffuseLightColor(1,Cast.asColor(getScope(), light2.value(getScope())));
+				this.data.setDiffuseLightColor(1, Cast.asColor(getScope(), light2.value(getScope())));
 			} else {
 				final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
-				this.data.setDiffuseLightColor(1,new GamaColor(meanValue, meanValue, meanValue, 255));
+				this.data.setDiffuseLightColor(1, new GamaColor(meanValue, meanValue, meanValue, 255));
 			}
 		}
 
@@ -345,27 +345,29 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		// this facet is deprecated...
 		if (light3 != null) {
 			this.data.setLightActive(1, true);
-			this.data.setLightDirection(1,(GamaPoint)Cast.asPoint(getScope(), light3.value(getScope())));
+			this.data.setLightDirection(1, (GamaPoint) Cast.asPoint(getScope(), light3.value(getScope())));
 		}
-		
+
 		final IExpression drawLights = getFacet(IKeyword.DRAW_DIFFUSE_LIGHT);
 		if (drawLights != null) {
-			if ( Cast.asBool(getScope(), drawLights.value(getScope())) == true ) {
-				// set the drawLight attribute to true for all the already existing light 
-				for (int i = 0 ; i < 8 ; i++) {
+			if (Cast.asBool(getScope(), drawLights.value(getScope())) == true) {
+				// set the drawLight attribute to true for all the already
+				// existing light
+				for (int i = 0; i < 8; i++) {
 					boolean lightAlreadyCreated = false;
-					for (LightPropertiesStructure lightProp : this.data.getDiffuseLights()) {
+					for (final LightPropertiesStructure lightProp : this.data.getDiffuseLights()) {
 						if (lightProp.id == i) {
 							lightProp.drawLight = true;
 							lightAlreadyCreated = true;
 						}
 					}
-					// if the light does not exist yet, create it by using the method "setLightActive", and set the drawLight attr to true.
+					// if the light does not exist yet, create it by using the
+					// method "setLightActive", and set the drawLight attr to
+					// true.
 					if (!lightAlreadyCreated) {
 						if (i < 2) {
 							this.data.setLightActive(i, true);
-						}
-						else {
+						} else {
 							this.data.setLightActive(i, false);
 						}
 						this.data.setDrawLight(i, true);
@@ -400,7 +402,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			this.data.setCameraUpVector(location);
 			cameraFix = true;
 		}
-		
+
 		// Set the up vector of the opengl Camera (see gluPerspective)
 		final IExpression cameraLens = getFacet(IKeyword.CAMERA_LENS);
 		if (cameraLens != null) {
@@ -436,7 +438,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
 		if (fromMicroModel) {
 			final ExperimentAgent exp = (ExperimentAgent) scope.getRoot()
-					.getExternMicroPopulationFor(micro.getAlias()+"."+this.getDescription().getOriginName()).getAgent(0);
+					.getExternMicroPopulationFor(micro.getAlias() + "." + this.getDescription().getOriginName())
+					.getAgent(0);
 			sim = exp.getSimulation();
 		}
 		// end-hqnghi
@@ -457,11 +460,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return true;
 	}
 
+	protected IGamaView.Display getView() {
+		return (Display) view;
+	}
+
 	@Override
 	public void open() {
 		super.open();
-		if (view != null)
-			view.waitToBeRealized();
+		if (getView() != null)
+			getView().waitToBeRealized();
 	}
 
 	@Override
@@ -601,15 +608,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		}
 		setLayers(list);
-//		
-//		final List<LightStatement> lightList = new ArrayList();
-//		for (final ISymbol s : commands) {
-//			if (s instanceof OverlayStatement && ((OverlayStatement) s).hasInfo()) {
-//				overlayInfo = (OverlayStatement) s;
-//			}
-//			lightList.add((LightStatement) s);
-//
-//		}
+		//
+		// final List<LightStatement> lightList = new ArrayList();
+		// for (final ISymbol s : commands) {
+		// if (s instanceof OverlayStatement && ((OverlayStatement)
+		// s).hasInfo()) {
+		// overlayInfo = (OverlayStatement) s;
+		// }
+		// lightList.add((LightStatement) s);
+		//
+		// }
 	}
 
 	public void setSurface(final IDisplaySurface surface) {

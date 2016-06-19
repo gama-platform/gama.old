@@ -11,7 +11,9 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.util.GamaColor;
 
 /**
@@ -43,23 +45,12 @@ public interface ItemList<T> {
 
 	void updateItemValues();
 
-	/**
-	 * @param data
-	 * @param b
-	 */
 	void makeItemSelectable(T data, boolean b);
 
 	void makeItemVisible(T obj, boolean b);
 
-	/**
-	 * @param data
-	 * @return
-	 */
 	GamaColor getItemDisplayColor(T data);
 
-	/**
-	 * @param data
-	 */
 	Map<String, Runnable> handleMenu(T data, int x, int y);
 
 }

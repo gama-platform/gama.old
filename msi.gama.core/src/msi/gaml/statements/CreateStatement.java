@@ -306,7 +306,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				pop = new ExperimentPopulation(s);
 				final IScope sc = ((ExperimentPlan) s).getExperimentScope();
 				pop.initializeFor(sc);
-				((IMacroAgent) executor).addExternMicroPopulation(s.getDescription().getModelDescription().getAlias()+"."+s.getName(), pop);
+				((IMacroAgent) executor).addExternMicroPopulation(
+						s.getDescription().getModelDescription().getAlias() + "." + s.getName(), pop);
 			}
 			// end-hqnghi
 		}
@@ -339,7 +340,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation population,
 			final List<Map> inits) {
-		final boolean hasSequence = sequence != null && !sequence.isEmpty();
+		// final boolean hasSequence = sequence != null && !sequence.isEmpty();
 		boolean shouldBeScheduled = false;
 		// If we create simulations within a single experiment, we must schedule
 		// them

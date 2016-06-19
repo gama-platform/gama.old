@@ -550,4 +550,17 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return false;
 	}
 
+	@Override
+	public double getOrdinate(final int i) {
+		switch (i) {
+		case 0:
+			return x;
+		case 1:
+			return y;
+		case 2:
+			return z;
+		}
+		return 0d;
+	}
+
 }

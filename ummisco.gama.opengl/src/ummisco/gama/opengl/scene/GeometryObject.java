@@ -17,6 +17,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import ummisco.gama.webgl.SimpleGeometryObject;
 
 public class GeometryObject extends AbstractObject {
 
@@ -42,6 +43,11 @@ public class GeometryObject extends AbstractObject {
 	@Override
 	public boolean isFilled() {
 		return super.isFilled() && getType() != IShape.Type.GRIDLINE;
+	}
+
+	public SimpleGeometryObject toSimpleGeometryObject() {
+		return new SimpleGeometryObject(geometry, getColor(), this.getBorder(), attributes.getDepth(),
+				attributes.rotation, getLocation(), attributes.size, getType(), !isFilled(), attributes.getTextures());
 	}
 
 }

@@ -12,8 +12,6 @@
 package msi.gaml.compilation;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Paths;
@@ -30,13 +28,10 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.joda.time.Chronology;
-import org.joda.time.LocalDateTime;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.ICreateDelegate;
-import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Dates;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
@@ -70,7 +65,7 @@ public class GamaBundleLoader {
 		// We retrieve the elements declared as extensions to the GAML language,
 		// either with the new or the deprecated extension
 		final Set<IExtension> extensions = new HashSet<IExtension>();
-		
+
 		IExtensionPoint p = registry.getExtensionPoint(GRAMMAR_EXTENSION);
 		extensions.addAll(Arrays.asList(p.getExtensions()));
 		p = registry.getExtensionPoint(GRAMMAR_EXTENSION_DEPRECATED);
@@ -122,13 +117,11 @@ public class GamaBundleLoader {
 		final Set<IExtension> contentExtensions = new HashSet<IExtension>();
 		contentExtensions.addAll(Arrays.asList(contentType.getExtensions()));
 		for (final IExtension ext : contentExtensions) {
-			if (GAMA_PLUGINS.contains(ext.getContributor().getName())) {
-				final IConfigurationElement[] configs = ext.getConfigurationElements();
-				for (final IConfigurationElement config : configs) {
-					HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(config.getAttribute("file-extensions").split(",")));
-					// System.out.println(ext.getContributor().getName() + ": "
-					// + config.getAttribute("file-extensions"));
-				}
+			final IConfigurationElement[] configs = ext.getConfigurationElements();
+			for (final IConfigurationElement config : configs) {
+				final String s = config.getAttribute("file-extensions");
+				if (s != null)
+					HANDLED_FILE_EXTENSIONS.addAll(Arrays.asList(s.split(",")));
 			}
 		}
 
@@ -136,7 +129,7 @@ public class GamaBundleLoader {
 		Types.init();
 		performStaticInitializations();
 		//
-		GAMA.getGui().debug(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
+		System.out.println(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
 
 	private static void performStaticInitializations() {
@@ -146,13 +139,12 @@ public class GamaBundleLoader {
 			public void run() {
 				final long start = System.currentTimeMillis();
 				Dates.initializeAllFormats();
-				GAMA.getGui().debug(">> JodaTime initialized in " + (System.currentTimeMillis() - start) + " ms.");
+				System.out
+						.println(">> GAMA JodaTime initialization in " + (System.currentTimeMillis() - start) + " ms.");
 			}
 		}).start();
 
 	}
-
-
 
 	/**
 	 * @param contributor
@@ -190,30 +182,30 @@ public class GamaBundleLoader {
 		try {
 			gamlAdditions = (Class<IGamlAdditions>) Platform.getBundle(s).loadClass(ADDITIONS);
 		} catch (final ClassNotFoundException e1) {
-			GAMA.getGui().debug(">> Impossible to load additions from " + s + " because of " + e1);
+			System.out.println(">> Impossible to load additions from " + s + " because of " + e1);
 			return;
 		}
 		IGamlAdditions add = null;
 		try {
 			add = gamlAdditions.newInstance();
 		} catch (final InstantiationException e) {
-			GAMA.getGui().debug(">> Impossible to instantiate additions from " + s);
+			System.out.println(">> Impossible to instantiate additions from " + s);
 			return;
 		} catch (final IllegalAccessException e) {
-			GAMA.getGui().debug(">> Impossible to access additions from " + s);
+			System.out.println(">> Impossible to access additions from " + s);
 			return;
 		}
 		try {
 			add.initialize();
 		} catch (final SecurityException e) {
-			GAMA.getGui().debug(">> Impossible to instantiate additions from " + s);
+			System.out.println(">> Impossible to instantiate additions from " + s);
 			return;
 		} catch (final NoSuchMethodException e) {
-			GAMA.getGui().debug(">> Impossible to instantiate additions from " + s);
+			System.out.println(">> Impossible to instantiate additions from " + s);
 			return;
 		}
-		GAMA.getGui()
-				.debug(">> GAMA bundle loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
+		System.out
+				.println(">> GAMA plugin loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
 
 	}
 

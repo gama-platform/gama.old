@@ -12,7 +12,9 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -26,6 +28,8 @@ import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.webgl.SimpleGeometryObject;
+import ummisco.gama.webgl.SimpleLayer;
 
 /**
  * Class LayerObject.
@@ -288,6 +292,14 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public void unlock() {
 		locked = false;
+	}
+
+	public SimpleLayer toSimpleLayer() {
+		final List<SimpleGeometryObject> geom = new ArrayList();
+		for (final GeometryObject object : geometries.getObjects()) {
+			geom.add(object.toSimpleGeometryObject());
+		}
+		return new SimpleLayer(offset, scale, alpha, geom);
 	}
 
 }

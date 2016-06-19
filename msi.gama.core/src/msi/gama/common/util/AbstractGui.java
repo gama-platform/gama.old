@@ -13,10 +13,12 @@ package msi.gama.common.util;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.util.GamaColor;
+import msi.gaml.factories.ModelFactory;
 
 /**
- * The class scope.getGui(). A static bridge to the SWT environment. The actual dependency on SWT is
- * represented by an instance of IGui, which must be initialize when the UI plugin launches.
+ * The class scope.getGui(). A static bridge to the SWT environment. The actual
+ * dependency on SWT is represented by an instance of IGui, which must be
+ * initialize when the UI plugin launches.
  *
  * @author drogoul
  * @since 18 dec. 2011
@@ -34,6 +36,7 @@ public abstract class AbstractGui implements IGui {
 
 	/**
 	 * Method called by headless builder to change the GUI Mode
+	 * 
 	 * @see ModelFactory
 	 */
 
@@ -60,9 +63,12 @@ public abstract class AbstractGui implements IGui {
 		setStatus(message, IGui.NEUTRAL);
 	}
 
+	protected void setStatus(final String msg, final int code) {
+	}
+
 	@Override
 	public void setStatus(final String message, final GamaColor color) {
-		if ( message == null ) {
+		if (message == null) {
 			resumeStatus();
 		} else {
 			setStatusInternal(message, color);

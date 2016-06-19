@@ -11,13 +11,50 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.IDisplayOutput;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
+import msi.gaml.architecture.user.UserPanelStatement;
 
 /**
  * @author drogoul
  */
 public interface IGamaView {
+
+	public interface Display {
+		IDisplaySurface getDisplaySurface();
+
+		/**
+		 * For some views (esp. the ones based on Swing), it is necessary to
+		 * wait a while after opening it, in order for the view to be fully
+		 * realized
+		 */
+		public void waitToBeRealized();
+	}
+
+	public interface Error {
+		public void addNewError(GamaRuntimeException e);
+	}
+
+	public interface Parameters {
+		public void addItem(IExperimentPlan exp);
+
+		public void updateItemValues();
+	}
+
+	public interface Console {
+
+		void append(String msg, ITopLevelAgent root, GamaColor color);
+
+	}
+
+	public interface User {
+		public void initFor(final IScope scope, final UserPanelStatement panel);
+	}
 
 	public void update(IDisplayOutput output);
 
@@ -27,26 +64,14 @@ public interface IGamaView {
 
 	public void close();
 
-	// public void outputReloaded(IDisplayOutput output);
-
 	public void removeOutput(IDisplayOutput putput);
-
-	/**
-	 * For some views (esp. the ones based on Swing), it is necessary to wait a
-	 * while after opening it, in order for the view to be fully realized
-	 */
-	public void waitToBeRealized();
 
 	public void changePartNameWithSimulation(SimulationAgent agent);
 
-	// /**
-	// *
-	// */
-	// public void hideToolbar();
-	//
-	// /**
-	// *
-	// */
-	// public void showToolbar();
+	public void reset();
+
+	public String getPartName();
+
+	public void setName(String name);
 
 }

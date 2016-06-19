@@ -17,7 +17,7 @@ global skills:[network]{
 	}
 	reflex sendAgent{
 		write "send agent on the network";
-		do send_message to:"reciever" content:9 among NetworkingAgent;	
+		do send to:"reciever" contents:(9 among NetworkingAgent);	
 	}
 }
 

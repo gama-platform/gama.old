@@ -1,46 +1,39 @@
 Manifest-Version: 1.0
 Bundle-ActivationPolicy: lazy
 Bundle-Name: GamaApplication
-Require-Bundle: org.eclipse.ui.console,
- msi.gama.core,
- org.eclipse.ui.navigator,
+Require-Bundle: msi.gama.core,
  org.eclipse.core.runtime,
  org.eclipse.core.resources,
- org.eclipse.jface.text,
- org.eclipse.ui,
- org.eclipse.ui.ide.application,
- org.eclipse.ui.ide,
- org.apache.commons.lang,
  org.eclipse.equinox.p2.core,
  org.eclipse.equinox.p2.engine,
  org.eclipse.equinox.p2.operations,
  org.eclipse.equinox.p2.metadata.repository,
- org.eclipse.ui.editors,
+ org.eclipse.rcp;bundle-version="4.5.2",
  msi.gama.processor,
- org.eclipse.ui.navigator.resources,
- msi.gama.ext,
+ org.eclipse.ui.ide.application,
  org.eclipse.swt,
- org.eclipse.rcp,
- org.eclipse.e4.core.services,
- org.eclipse.e4.core.contexts,
- org.eclipse.e4.ui.workbench,
- org.eclipse.e4.ui.model.workbench,
- org.eclipse.core.expressions
+ org.eclipse.core.expressions,
+ org.eclipse.core.filesystem;bundle-version="1.5.0",
+ org.eclipse.ui;bundle-version="3.107.0",
+ org.eclipse.ui.ide;bundle-version="3.11.0",
+ org.apache.commons.lang;bundle-version="2.6.0",
+ msi.gama.ext,
+ org.eclipse.e4.ui.workbench;bundle-version="1.3.1"
 Bundle-Vendor: UMMISCO
 Bundle-Version: 1.7.0.qualifier
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: msi.gama.application;singleton:=true
-Export-Package: msi.gama.gui.displays.awt,
- msi.gama.gui.displays.layers,
- msi.gama.gui.navigator,
- msi.gama.gui.navigator.commands,
- msi.gama.gui.parameters,
- msi.gama.gui.swt,
- msi.gama.gui.swt.commands,
- msi.gama.gui.swt.controls,
- msi.gama.gui.swt.perspectives,
- msi.gama.gui.swt.swing,
- msi.gama.gui.views,
- msi.gama.gui.views.actions
+Export-Package: msi.gama.application;uses:="org.eclipse.ui,org.eclipse.equinox.app",
+ msi.gama.application.projects;
+  uses:="org.eclipse.core.runtime,
+   org.eclipse.ui.internal.ide.application,
+   org.eclipse.swt.widgets,
+   org.eclipse.core.resources",
+ msi.gama.application.workspace,
+ msi.gama.gui.metadata;
+  uses:="org.eclipse.core.runtime,
+   gnu.trove.map.hash,
+   org.eclipse.core.resources,
+   msi.gama.util.file"
 Bundle-ClassPath: .
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

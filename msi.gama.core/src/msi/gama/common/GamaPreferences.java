@@ -508,7 +508,7 @@ public class GamaPreferences {
 	static {
 		for (int i = 0; i < 5; i++) {
 			SIMULATION_COLORS[i] = create("simulation.ui.color" + i, "Color of Simulation " + i, BASIC_COLORS[i],
-					IType.COLOR).in(SIMULATIONS).group("Simulation colors in the interface (console, views)");
+					IType.COLOR).in(EXPERIMENTS).group("Simulation colors in the interface (console, views)");
 		}
 	}
 
@@ -551,7 +551,7 @@ public class GamaPreferences {
 					.group("Properties (settings effective after experiment relaunch)");
 
 	// TODO REMOVED Because too much instability
-	public static final List<String> LAYOUTS = Arrays.asList("Npne", "Stacked", "Split", "Horizontal", "Vertical");
+	public static final List<String> LAYOUTS = Arrays.asList("None", "Stacked", "Split", "Horizontal", "Vertical");
 	// public static final Entry<String> CORE_DISPLAY_LAYOUT =
 	// create("core.display.layout",
 	// "Default layout of display views", "None",

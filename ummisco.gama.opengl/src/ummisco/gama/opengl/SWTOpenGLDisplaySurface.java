@@ -32,8 +32,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
-import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.Envelope3D;
@@ -52,6 +50,9 @@ import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
 /**
  * Class OpenGLSWTDisplaySurface.
@@ -456,7 +457,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 			@Override
 			public void run() {
-				scope.getGui().asyncRun(new Runnable() {
+				WorkbenchHelper.asyncRun(new Runnable() {
 
 					@Override
 					public void run() {
@@ -539,7 +540,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 		@Override
 		public void run() {
-			GAMA.getGui().asyncRun(new Runnable() {
+			WorkbenchHelper.asyncRun(new Runnable() {
 
 				@Override
 				public void run() {
@@ -608,7 +609,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				renderer.camera.zoomRoi(env);
 			}
 		});
-		GAMA.getGui().run(new Runnable() {
+		WorkbenchHelper.run(new Runnable() {
 
 			@Override
 			public void run() {
@@ -620,7 +621,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 					public void menuHidden(final MenuEvent e) {
 						animator.resume();
 						// Will be run after the selection
-						GAMA.getGui().asyncRun(new Runnable() {
+						WorkbenchHelper.asyncRun(new Runnable() {
 
 							@Override
 							public void run() {

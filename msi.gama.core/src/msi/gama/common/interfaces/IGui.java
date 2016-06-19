@@ -11,9 +11,7 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
 
@@ -42,19 +40,13 @@ import msi.gaml.types.IType;
  */
 public interface IGui {
 
-	public static Map<String, Set<String>> MODEL_VIEWS = new HashMap<>();
-
 	public static final int ERROR = 0;
 	public static final int WAIT = 1;
 	public static final int INFORM = 2;
 	public static final int NEUTRAL = 3;
 	public static final int USER = 4;
-	public static final String PLUGIN_ID = "msi.gama.application";
+
 	public static final Map<String, IDisplayCreator> DISPLAYS = new THashMap();
-	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
-	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
-	public static final String PERSPECTIVE_SIMULATION_FRAGMENT = "Simulation";
-	public static final String PERSPECTIVE_HPC_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 	public static final String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
 	public static final String INTERACTIVE_CONSOLE_VIEW_ID = "msi.gama.application.view.InteractiveConsoleView";
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
@@ -67,8 +59,9 @@ public interface IGui {
 	public static final String HEADLESSPARAM_ID = "msi.gama.application.view.HeadlessParam";
 	public static final String HEADLESS_CHART_ID = "msi.gama.hpc.gui.HeadlessChart";
 	public static final String NAVIGATOR_VIEW_ID = "msi.gama.gui.view.GamaNavigator";
+	public static final String NAVIGATOR_LIGHTWEIGHT_DECORATOR_ID = "msi.gama.application.decorator";
 	public static final String CONSOLE_VIEW_ID = "msi.gama.application.view.ConsoleView";
-
+	public static final String USER_CONTROL_VIEW_ID = "msi.gama.views.userControlView";
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
 	public static final String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 
@@ -77,10 +70,9 @@ public interface IGui {
 	public final static String NOTREADY = "NOTREADY";
 	public final static String ONUSERHOLD = "ONUSERHOLD";
 	public final static String NONE = "NONE";
+	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";;
 
 	void setSubStatusCompletion(double status);
-
-	void setStatus(String error, int code);
 
 	void setStatus(String msg, GamaColor color);
 
@@ -91,10 +83,6 @@ public interface IGui {
 	void endSubStatus(String name);
 
 	void run(Runnable block);
-
-	void asyncRun(Runnable block);
-
-	void raise(Throwable ex);
 
 	IGamaView showView(String viewId, String name, int code);
 
@@ -112,35 +100,15 @@ public interface IGui {
 
 	void informConsole(String s, ITopLevelAgent root);
 
-	// void updateViewOf(IDisplayOutput output);
-
 	void debug(String string);
 
-	void warn(String string);
-
 	void runtimeError(GamaRuntimeException g);
-
-	IEditorFactory getEditorFactory();
 
 	boolean confirmClose(IExperimentPlan experiment);
 
 	void showConsoleView(ITopLevelAgent agent);
 
-	void setWorkbenchWindowTitle(String string);
-
-	// void closeViewOf(IDisplayOutput out);
-
-	IGamaView hideView(String viewId);
-
 	IGamaView findView(final IDisplayOutput output);
-
-	boolean isModelingPerspective();
-
-	boolean openModelingPerspective(boolean immediately);
-
-	boolean isSimulationPerspective();
-
-	void togglePerspective(boolean immediately);
 
 	boolean openSimulationPerspective(boolean immediately);
 
@@ -171,10 +139,6 @@ public interface IGui {
 
 	void cleanAfterSimulation();
 
-	// void waitForViewsToBeInitialized();
-
-	void debug(Exception e);
-
 	void editModel(Object eObject);
 
 	public abstract void runModel(final Object object, final String exp) throws CoreException;
@@ -183,90 +147,46 @@ public interface IGui {
 
 	void updateSpeedDisplay(Double d, boolean notify);
 
-	/**
-	 * @param url
-	 * @param html
-	 * @return
-	 */
-	// Object showWebEditor(String url, String html);
-
-	/**
-	 * @return
-	 */
-	String getName();
-
-	/**
-	 *
-	 */
-	void resumeStatus();
-
 	IFileMetaDataProvider getMetaDataProvider();
 
-	/**
-	 *
-	 */
 	void closeSimulationViews(boolean andOpenModelingPerspective, boolean immediately);
 
 	public DisplayDescription getDisplayDescriptionFor(final String name);
 
-	/**
-	 * @param string
-	 */
+	void resumeStatus();
+
 	void waitStatus(String string);
 
-	/**
-	 * @param string
-	 */
 	void informStatus(String string);
 
-	/**
-	 * @param message
-	 */
 	void errorStatus(String message);
 
-	/**
-	 * @return
-	 */
 	String getFrontmostSimulationState();
 
-	/**
-	 * @param notready
-	 */
 	void updateSimulationState(String state);
 
-	/**
-	 *
-	 */
 	void updateSimulationState();
 
-	/**
-	 * @param b
-	 */
 	void eraseConsole(boolean b);
-
-	public GamaColor getColorForSimulationNumber(final int index);
-
-	/**
-	 * @param msg
-	 * @param color
-	 * @param icon
-	 */
-	void setStatusInternal(String msg, GamaColor color, String icon);
-
-	/**
-	 * @param modelName
-	 * @param expeName
-	 * @param name
-	 */
-	void registerView(String modelName, String expeName, String name);
-
-	Set<String> getViews(String modelName, String expeName);
-
-	// See ArrangeDisplayViews
-	void applyLayout(int layout);
 
 	void updateViewTitle(IDisplayOutput output, SimulationAgent agent);
 
-	IGamaView getInteractiveConsole();
+	void setRestartRequiredAfterPreferenceSet();
+
+	boolean confirm(String string, String string2);
+
+	void openModelingPerspective(boolean b);
+
+	boolean isSimulationPerspective();
+
+	void openWelcomePage(boolean b);
+
+	void updateDecorator(String string);
+
+	void asyncRun(Runnable runnable);
+
+	void cleanUpUI();
+
+	void informStatus(String string, String string2);
 
 }

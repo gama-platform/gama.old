@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="ummisco.gama.ui.viewers.image.ImageViewer"
+            contributorClass="ummisco.gama.ui.viewers.image.ImageViewerActionBarContributor"
+            default="false"
+            extensions="JPG,jpg,JPEG,jpeg,PNG,png,BMP,bmp,TIFF,tiff,TIF,tif,ICO,ico,ASC,asc,PGM,pgm"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/file.image2.png"
+            id="msi.gama.gui.images.editor.ImageViewer"
+            name="Image Viewer">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.images.type">
+         </contentTypeBinding>
+      </editor>
+        <editor
+            class="ummisco.gama.ui.viewers.csv.MultiPageCSVEditor"
+            default="true"
+            extensions="CSV,csv"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/file.csv2.png"
+            id="msi.gama.gui.csv.editor.CustomizableCSVEditor"
+            name="CSV Editor">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.csv.type">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="ummisco.gama.ui.viewers.html.HtmlViewer"
+            default="false"
+            extensions="html, htm, HTML, HTM, svg, SVG"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/file.html2.png"
+            id="msi.gama.application.browser"
+            name="HTML Viewer">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.html.type">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="ummisco.gama.ui.viewers.gis.ShapeFileViewer"
+            default="true"
+            extensions="shp"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/file.shape2.png"
+            id="msi.gama.application.shape.viewer"
+            name="ShapeFile Viewer">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.shapefile.type">
+         </contentTypeBinding>
+      </editor>
+      <editor
+            class="ummisco.gama.ui.viewers.gis.OSMFileViewer"
+            default="true"
+            extensions="gz,osm,pbf,bz2"
+            icon="platform:/plugin/ummisco.gama.ui.shared/icons/file.osm2.png"
+            id="msi.gama.application.osm.viewer"
+            name="OSM Viewer">
+         <contentTypeBinding
+               contentTypeId="msi.gama.gui.osm.type">
+         </contentTypeBinding>
+      </editor>
+   </extension>
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            file-extensions="shp,SHP"
+            id="msi.gama.gui.shapefile.type"
+            name="Shapefile"
+            priority="high">
+      </content-type>
+      <content-type
+            default-charset="UTF-8"
+            file-extensions="qml,QML,cpg,CPG,prj,shx,dbf,xml,sbn,sbx,qix,qpj,fix,PRJ,SHX,DBF,XML,SBN,SBX,QIX,QPJ,FIX"
+            id="msi.gama.gui.shapefile.support.type"
+            name="Shapefile support"
+            priority="high">
+         <property
+               name="msi.gama.support.target">
+         </property>
+      </content-type>
+      <content-type
+            file-extensions="PNG,png,GIF,gif,JPEG,jpeg,JPG,jpg,BMP,bmp,ICO,ico,TIFF,tiff,TIF,tif,ASC,asc,PGM,pgm"
+            id="msi.gama.gui.images.type"
+            name="Image"
+            priority="high">
+      </content-type>
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            default-charset="UTF-8"
+            file-extensions="CSV,csv,TSV,tsv"
+            id="msi.gama.gui.csv.type"
+            name="CSV"
+            priority="high">
+      </content-type>
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            default-charset="UTF-8"
+            file-extensions="gaml"
+            id="msi.gama.gui.gaml.type"
+            name="GAML"
+            priority="high">
+      </content-type>
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="html, HTML, htm, HTM, svg, SVG"
+            id="msi.gama.gui.html.type"
+            name="HTML (in GAMA)"
+            priority="normal">
+      </content-type>
+      <content-type
+            file-extensions="osm,OSM,pbf,PBF,bz2,BZ2,gz,GZ"
+            id="msi.gama.gui.osm.type"
+            name="OSM"
+            priority="high">
+      </content-type>
+   </extension>
+
+</plugin>

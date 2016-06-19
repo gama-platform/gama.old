@@ -11,9 +11,16 @@ public class StatusMessage implements IStatusMessage {
 
 	String message = "";
 	protected int code = IGui.INFORM;
+	protected String icon;
 
 	public StatusMessage(final String msg, final int s) {
 		message = msg;
+		code = s;
+	}
+
+	public StatusMessage(final String msg, final int s, final String icon) {
+		message = msg;
+		this.icon = icon;
 		code = s;
 	}
 
@@ -34,6 +41,7 @@ public class StatusMessage implements IStatusMessage {
 
 	/**
 	 * Method getColor()
+	 * 
 	 * @see msi.gama.common.IStatusMessage#getColor()
 	 */
 	@Override
@@ -48,7 +56,7 @@ public class StatusMessage implements IStatusMessage {
 	 */
 	@Override
 	public String getIcon() {
-		return null;
+		return icon;
 	}
 
 }

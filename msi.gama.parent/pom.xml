@@ -8,13 +8,14 @@
   <packaging>pom</packaging>
   
   <modules>
-    <module>../ummisco.gaml.editbox</module>
+    
     <module>../msi.gama.ext</module>
-    <!--<module>../msi.gama.processor</module>-->
     <module>../msi.gama.core</module>
     <module>../msi.gama.lang.gaml</module>
-    <module>../msi.gama.lang.gaml.ui</module>
-
+    <module>../ummisco.gama.ui.modeling</module>
+    <module>../ummisco.gama.ui.shared</module>
+    <module>../ummisco.gama.ui.navigator</module>
+    <module>../ummisco.gama.ui.experiment</module>
     
     <module>../ummisco.gama.feature.models</module>
     <module>../ummisco.gama.feature.dependencies</module>
@@ -22,7 +23,8 @@
     <module>../ummisco.gama.feature.core</module>
     <module>../ummisco.gama.feature.core.extensions</module>
     <module>../ummisco.gama.feature.core.ui</module>
-    <module>../ummisco.gama.feature.core.opengl</module>
+    <module>../ummisco.gama.feature.experiment.ui</module>
+    <module>../ummisco.gama.feature.modeling.ui</module>
     <module>../ummisco.gama.feature.serialize</module>
     <module>../ummisco.gama.feature.network</module>    
     
@@ -53,6 +55,8 @@
     <module>../ummisco.gama.feature.stats</module>
     
     <module>../ummisco.gama.opengl</module>
+    <module>../ummisco.gama.java2d</module>
+    <module>../ummisco.gama.ui.viewers</module>
     <module>../ummisco.gama.serialize</module>
     <module>../ummisco.gama.network</module>
     <module>../ummisco.gaml.extensions.maths</module>
@@ -65,7 +69,6 @@
     
     <module>../msi.gama.application</module>
     <module>../msi.gama.p2updatesite</module>
-    <!--<module>../msi.gama.release</module> -->
   </modules>
   
   <properties>

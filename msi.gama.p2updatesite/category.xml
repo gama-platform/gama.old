@@ -21,11 +21,14 @@
    <feature url="features/ummisco.gama.feature.core.extensions_1.7.0.qualifier.jar" id="ummisco.gama.feature.core.extensions" version="0.0.0">
       <category name="gama.core"/>
    </feature>
-   <feature url="features/ummisco.gama.feature.core.opengl_1.7.0.qualifier.jar" id="ummisco.gama.feature.core.opengl" version="0.0.0">
-      <category name="gama.core"/>
+   <feature url="features/ummisco.gama.feature.experiment.ui_1.7.0.qualifier.jar" id="ummisco.gama.feature.experiment.ui" version="0.0.0">
+      <category name="gama.ui"/>
+   </feature>
+   <feature url="features/ummisco.gama.feature.modeling.ui_1.7.0.qualifier.jar" id="ummisco.gama.feature.modeling.ui" version="0.0.0">
+      <category name="gama.ui"/>
    </feature>
    <feature url="features/ummisco.gama.feature.core.ui_1.7.0.qualifier.jar" id="ummisco.gama.feature.core.ui" version="0.0.0">
-      <category name="gama.core"/>
+      <category name="gama.ui"/>
    </feature>
    <feature url="features/ummisco.gama.feature.core_1.7.0.qualifier.jar" id="ummisco.gama.feature.core" version="0.0.0">
       <category name="gama.core"/>
@@ -36,7 +39,8 @@
    <feature url="features/ummisco.gama.feature.serialize_1.7.0.qualifier.jar" id="ummisco.gama.feature.serialize" version="0.0.0">
       <category name="gama.optional"/>
    </feature>
-   <category-def name="gama.core" label="Core plugins of GAMA"/>
-   <category-def name="gama.optional" label="Optional plugins of GAMA"/>
+   <category-def name="gama.ui" label="UI components of GAMA"/>
+   <category-def name="gama.core" label="Core components of GAMA"/>
+   <category-def name="gama.optional" label="Optional components of GAMA"/>
    <category-def name="gama.models" label="GAMA Models Library"/>
 </site>

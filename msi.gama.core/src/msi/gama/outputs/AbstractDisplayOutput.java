@@ -37,9 +37,9 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 		@Override
 		public void run() {
-			if (view == null) {
-				view = getScope().getGui().showView(getViewId(), isUnique() ? null : getName(), 3); // IWorkbenchPage.VIEW_CREATE
-			}
+			// if (view == null) {
+			view = getScope().getGui().showView(getViewId(), isUnique() ? null : getName(), 3); // IWorkbenchPage.VIEW_CREATE
+			// }
 			if (view == null) {
 				return;
 			}

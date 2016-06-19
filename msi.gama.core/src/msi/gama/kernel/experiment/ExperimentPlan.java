@@ -12,7 +12,6 @@
 package msi.gama.kernel.experiment;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +19,6 @@ import java.util.Map;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.batch.BatchOutput;
 import msi.gama.kernel.batch.ExhaustiveSearch;
@@ -115,7 +113,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	// duplicated in all the simulations)
 	protected IOutputManager originalSimulationOutputs;
 	protected IOutputManager experimentOutputs;
-	private ItemList parametersEditors;
+	// private ItemList parametersEditors;
 	protected final Map<String, IParameter> parameters = new TOrderedHashMap();
 	protected final Map<String, IParameter.Batch> explorableParameters = new TOrderedHashMap();
 	protected ExperimentAgent agent;
@@ -189,7 +187,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public void dispose() {
 		// System.out.println("ExperimentPlan.dipose BEGIN");
-		parametersEditors = null;
 		// Dec 2015 Addition
 		if (controller != null) {
 			controller.dispose();
@@ -361,7 +358,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public void reload() {
 		if (isBatch()) {
 			agent.dispose();
-			parametersEditors = null;
 			open();
 		} else {
 			agent.reset();
@@ -373,16 +369,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	@Override
-	public ItemList getParametersEditors() {
-		if (parameters.isEmpty() && explorableParameters.isEmpty()) {
-			return null;
-		}
-		if (parametersEditors == null) {
-			final Collection<IParameter> params = new ArrayList(getParameters().values());
-			params.addAll(explorableParameters.values());
-			parametersEditors = new ExperimentsParametersList(agent.getScope(), params);
-		}
-		return parametersEditors;
+	public boolean hasParametersOrUserCommands() {
+		return !parameters.isEmpty() || !explorableParameters.isEmpty() || !getUserCommands().isEmpty();
 	}
 
 	// @Override
