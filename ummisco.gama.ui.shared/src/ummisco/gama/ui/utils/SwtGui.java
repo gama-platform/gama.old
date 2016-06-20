@@ -535,11 +535,13 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateExperimentState(final String forcedState) {
+		System.out.println("STATE: " + forcedState);
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
+		// stateProvider.updateStateTo(forcedState);
 		if (stateProvider != null) {
-			WorkbenchHelper.asyncRun(new Runnable() {
+			WorkbenchHelper.run(new Runnable() {
 
 				@Override
 				public void run() {

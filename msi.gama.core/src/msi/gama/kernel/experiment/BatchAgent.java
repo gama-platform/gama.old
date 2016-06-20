@@ -18,6 +18,7 @@ import java.util.Map;
 
 import org.jfree.data.statistics.Statistics;
 
+import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.IParameter.Batch;
@@ -153,6 +154,7 @@ public class BatchAgent extends ExperimentAgent {
 		scope.getGui().getStatus()
 				.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
 		dispose();
+		GAMA.getGui().updateExperimentState(IGui.NOTREADY);
 		return true;
 	}
 
