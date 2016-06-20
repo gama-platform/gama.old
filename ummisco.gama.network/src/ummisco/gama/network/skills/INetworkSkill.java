@@ -38,7 +38,7 @@ public interface INetworkSkill  {
 	public final static String FROM = "from";
 	public final static String CONTENT = "content";
 	public final static String BROADCAST = "all";
-	
+
 	
 	// CONNECTION PROTOCOL
 	public final static String UDP_SERVER = "udp_server";
