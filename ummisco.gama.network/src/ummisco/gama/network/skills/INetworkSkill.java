@@ -47,7 +47,6 @@ public interface INetworkSkill  {
 	public final static String TCP_CLIENT = "tcp_client";
 	public final static String MQTT = "mqtt";
 	
-	
 	///// SKILL NETWORK
 	public static String NETWORK_SKILL = "network";
 	public static String SEND_MESSAGE = "send_message";
