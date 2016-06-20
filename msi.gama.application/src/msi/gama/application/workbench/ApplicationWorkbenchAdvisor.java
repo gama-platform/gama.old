@@ -31,7 +31,6 @@ import msi.gama.application.workspace.WorkspaceModelsManager;
 import msi.gama.application.workspace.WorkspacePreferences;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.GamaBundleLoader;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
@@ -61,15 +60,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
-		/* Early build of the contributions made by plugins to GAMA */
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				GamaBundleLoader.preBuildContributions();
-			}
-		}).start();
 
 		/* Linking the stock models with the workspace if they are not already */
 		if ( checkCopyOfBuiltInModels() ) {
