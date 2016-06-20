@@ -151,8 +151,21 @@ public class WorkbenchHelper {
 
 	}
 
+
 	public static <T> T getService(final Class<T> class1) {
-		return getWorkbench().getService(class1);
+
+		// final Object[] result = new Object[1];
+		// run(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// result[0] = getWorkbench().getService(class1);
+		//
+		// }
+		// });
+		// return (T) result[0];
+		final T result = getWorkbench().getService(class1);
+		return result;
 	}
 
 }

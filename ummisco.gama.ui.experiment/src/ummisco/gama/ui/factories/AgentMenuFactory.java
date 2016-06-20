@@ -13,8 +13,6 @@ import ummisco.gama.ui.menus.MenuAction;
 
 public class AgentMenuFactory extends AbstractServiceFactory implements ummisco.gama.ui.interfaces.IAgentMenuFactory {
 
-	static AgentMenuFactory instance = new AgentMenuFactory();
-
 	@Override
 	public void fillPopulationSubMenu(final Menu menu, final Collection<IAgent> species, final ILocation userLocation,
 			final MenuAction... actions) {
@@ -25,7 +23,7 @@ public class AgentMenuFactory extends AbstractServiceFactory implements ummisco.
 	@Override
 	public Object create(final Class serviceInterface, final IServiceLocator parentLocator,
 			final IServiceLocator locator) {
-		return instance;
+		return this;
 	}
 
 }

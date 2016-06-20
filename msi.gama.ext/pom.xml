@@ -16,19 +16,6 @@
   <artifactId>msi.gama.ext</artifactId>
   <packaging>eclipse-plugin</packaging>
 
-  <repositories>
-    <repository>
-      <id>jzy3d-snapshots</id>
-      <name>Jzy3d Snapshots</name>
-      <url>http://maven.jzy3d.org/snapshots</url>
-    </repository>
-    <repository>
-      <id>jzy3d-releases</id>
-      <name>Jzy3d Snapshots</name>
-      <url>http://maven.jzy3d.org/releases</url>
-    </repository>
-  </repositories>
-
   <!-- <packaging>jar</packaging> -->
   
     <dependencies>
@@ -37,190 +24,8 @@
 		<artifactId>commons-math3</artifactId>
 		<version>${math3.version}</version>
 	  </dependency>
-	  <!-- eclipse dependencies -->
-	 <!-- plugins -->		 
-	 <!--  <dependency>
-		<groupId>org.eclipse.core</groupId>
-		<artifactId>filebuffers</artifactId>
-		<version>3.3.0-v20070606-0010</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.eclipse.core</groupId>
-		<artifactId>expressions</artifactId>
-		<version>${org.eclipse.core.expressions.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.mod4j.org.eclipse.core.databinding</groupId>
-		<artifactId>observable</artifactId
-		<version>${org.mod4j.org.eclipse.core.databinding.observable.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.mod4j.org.eclipse.core.databinding</groupId>
-		<artifactId>property</artifactId>
-		<version>${org.mod4j.org.eclipse.core.databinding.property.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.eclipse.core.databinding</groupId>
-		<artifactId>beans</artifactId>
-		<version>${org.eclipse.core.databinding.beans.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.eclipse.core</groupId>
-		<artifactId>databinding</artifactId>
-		<version>${org.eclipse.core.databinding.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.eclipse.core</groupId>
-		<artifactId>contenttype</artifactId>
-		<version>${org.eclipse.core.contenttype.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.eclipse.core</groupId>
-		<artifactId>commands</artifactId>
-		<version>${org.eclipse.core.commands.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.mod4j.org.eclipse.compare</groupId>
-		<artifactId>core</artifactId>
-		<version>${org.mod4j.org.eclipse.compare.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>log4j</groupId>
-		<artifactId>log4j</artifactId>
-		<version>${log4j.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.apache.httpcomponents</groupId>
-		<artifactId>httpcore</artifactId>
-		<version>${httpcore.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.apache.httpcomponents</groupId>
-		<artifactId>httpclient</artifactId>
-		<version>${httpclient.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.apache.felix</groupId>
-		<artifactId>org.apache.felix.gogo.shell</artifactId>
-		<version>${org.apache.felix.gogo.shell.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.apache.felix</groupId>
-		<artifactId>org.apache.felix.gogo.runtime</artifactId>
-		<version>${org.apache.felix.gogo.runtime.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.apache.felix</groupId>
-		<artifactId>org.apache.felix.gogo.command</artifactId>
-		<version>${org.apache.felix.gogo.command.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>commons-logging</groupId>
-		<artifactId>commons-logging</artifactId>
-		<version>${commons-logging.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>commons-jxpath</groupId>
-		<artifactId>commons-jxpath</artifactId>
-		<version>${commons-jxpath.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>commons-io</groupId>
-		<artifactId>commons-io</artifactId>
-		<version>${commons-io.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>commons-codec</groupId>
-		<artifactId>commons-codec</artifactId>
-		<version>${commons-codec.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>commons-cli</groupId>
-		<artifactId>commons-cli</artifactId>
-		<version>${commons-cli.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>batik</groupId>
-		<artifactId>batik-gui-util</artifactId>
-		<version>${batik.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>batik</groupId>
-		<artifactId>batik-util</artifactId>
-		<version>${batik.version}</version>
-      </dependency>
-	  <dependency>
-		<groupId>batik</groupId>
-		<artifactId>batik-css</artifactId>
-		<version>${batik.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>org.antlr</groupId>
-		<artifactId>antlr-runtime</artifactId>
-		<version>${antlr-runtime.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>xml-apis</groupId>
-		<artifactId>xml-apis</artifactId>
-		<version>${xml-apis.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>javax.inject</groupId>
-		<artifactId>javax.inject</artifactId>
-		<version>${javax.inject.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>javax.annotation</groupId>
-		<artifactId>javax.annotation-api</artifactId>
-		<version>${javax.annotation.version}</version>
-	  </dependency>
-	  <dependency>
-		<groupId>com.ibm.icu</groupId>
-		<artifactId>icu4j</artifactId>
-		<version>${com.ibm.icu.version}</version>
-	  </dependency>
-	   -->
-	  <!--  plugins end
-	  <dependency>
-		<groupId>org.eclipse.scout.sdk.deps</groupId>
-		<artifactId>org.eclipse.core.runtime</artifactId>
-		<version>${org.eclipse.core.runtime.version}</version>
-		</dependency>
-	  	<dependency>
-			<groupId>org.eclipse.emf</groupId>
-			<artifactId>org.eclipse.emf.common</artifactId>
-			<version>${org.eclipse.emf.common.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-			<version>${common-lang.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.eclipse.emf</groupId>
-			<artifactId>org.eclipse.emf.ecore</artifactId>
-			<version>${org.eclipse.emf.ecore.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
-			<version>${com.google.inject.version}</version>
-		</dependency>
-		 -->
-	  <!-- end guava dependencies -->
-	  <!--  eclipse dependencies end -->
 	  
 	  <!--  dependencies needed by others -->
-          <dependency>
-                <groupId>org.jzy3d</groupId>
-                <artifactId>jzy3d-api</artifactId>
-                <version>0.9.1</version>
-          </dependency>
-	  <dependency>
-	        <groupId>org.jogamp.jogl</groupId>
-	        <artifactId>jogl-all</artifactId>
-	        <version>2.3.2</version>
-	  </dependency>
 	  <dependency>
 		<groupId>com.google.guava</groupId>
 		<artifactId>guava</artifactId>
@@ -993,7 +798,7 @@
 	  	</exclusions>
 	  </dependency>
 	  
-	   <dependency>
+<!-- 	   <dependency>
          <groupId>org.geotools</groupId>
          <artifactId>gt-swing</artifactId>
          <version>${geotools.version}</version>
@@ -1003,7 +808,7 @@
       		 <artifactId>jts</artifactId>
 	  	  </exclusion>
 	  	 </exclusions>
-       </dependency>
+       </dependency> -->
        <dependency>
         <groupId>org.geotools</groupId>
   		<artifactId>gt-wms</artifactId>

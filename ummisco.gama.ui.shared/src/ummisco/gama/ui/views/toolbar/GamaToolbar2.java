@@ -211,6 +211,7 @@ public class GamaToolbar2 extends Composite {
 	 * @return
 	 */
 	public void wipe(final int side /* SWT.LEFT or SWT.RIGHT */, final boolean includingToolItems) {
+
 		final ToolItem[] items = getToolbar(side).getItems();
 		for (final ToolItem t : items) {
 			final Control c = t.getControl();
@@ -223,6 +224,7 @@ public class GamaToolbar2 extends Composite {
 		}
 		prepareToolbar(side);
 		refresh(true);
+
 	}
 
 	public void item(final IContributionItem item, final int side) {

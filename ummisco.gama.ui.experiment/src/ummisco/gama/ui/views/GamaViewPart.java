@@ -238,7 +238,7 @@ public abstract class GamaViewPart extends ViewPart
 			if (toolbar != null) {
 				toolbar.wipe(SWT.LEFT, true);
 				toolbar.wipe(SWT.RIGHT, true);
-				GamaToolbarFactory.buildToolbar(this, toolbar);
+				GamaToolbarFactory.buildToolbar(GamaViewPart.this, toolbar);
 			}
 
 		}

@@ -72,8 +72,6 @@ public interface IGui {
 
 	IConsoleDisplayer getConsole();
 
-	void run(Runnable block);
-
 	IGamaView showView(String viewId, String name, int code);
 
 	void tell(String message);
@@ -138,5 +136,7 @@ public interface IGui {
 	void openWelcomePage(boolean b);
 
 	void updateDecorator(String string);
+
+	void run(Runnable opener);
 
 }

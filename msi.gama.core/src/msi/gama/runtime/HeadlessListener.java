@@ -78,11 +78,6 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void run(final Runnable block) {
-		block.run();
-	}
-
-	@Override
 	public IGamaView showView(final String viewId, final String name, final int code) {
 		return null;
 	}
@@ -391,6 +386,12 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void clearErrors() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void run(final Runnable opener) {
 		// TODO Auto-generated method stub
 
 	}

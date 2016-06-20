@@ -228,11 +228,6 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void run(final Runnable r) {
-		WorkbenchHelper.run(r);
-	}
-
-	@Override
 	public DisplayDescription getDisplayDescriptionFor(final String name) {
 		return (DisplayDescription) DISPLAYS.get(name);
 	}
@@ -255,7 +250,7 @@ public class SwtGui implements IGui {
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
 			final Map<String, Object> initialValues, final Map<String, IType> types) {
 		final Map<String, Object> result = new THashMap();
-		run(new Runnable() {
+		WorkbenchHelper.run(new Runnable() {
 
 			@Override
 			public void run() {
@@ -268,7 +263,7 @@ public class SwtGui implements IGui {
 	}
 
 	public void openUserControlDialog(final IScope scope, final UserPanelStatement panel) {
-		run(new Runnable() {
+		WorkbenchHelper.run(new Runnable() {
 
 			@Override
 			public void run() {
@@ -283,7 +278,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {
-		run(new Runnable() {
+		WorkbenchHelper.run(new Runnable() {
 
 			@Override
 			public void run() {
@@ -343,7 +338,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void updateParameterView(final IExperimentPlan exp) {
 
-		run(new Runnable() {
+		WorkbenchHelper.run(new Runnable() {
 
 			@Override
 			public void run() {
@@ -363,7 +358,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void showParameterView(final IExperimentPlan exp) {
 
-		run(new Runnable() {
+		WorkbenchHelper.run(new Runnable() {
 
 			@Override
 			public void run() {
@@ -596,6 +591,12 @@ public class SwtGui implements IGui {
 	@Override
 	public IConsoleDisplayer getConsole() {
 		return WorkbenchHelper.getService(IConsoleDisplayer.class);
+	}
+
+	@Override
+	public void run(final Runnable r) {
+		WorkbenchHelper.run(r);
+
 	}
 
 }

@@ -140,13 +140,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.emf.mwe2.runtime"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.log4j"
          download-size="0"
          install-size="0"
@@ -162,13 +155,6 @@
 
    <plugin
          id="org.eclipse.ui.ide"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.jface.databinding"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -363,13 +349,6 @@
 
    <plugin
          id="org.eclipse.emf.ecore.xmi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.emf.mwe.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -713,13 +692,6 @@
          unpack="false"/>
 
    <plugin
-         id="com.ibm.icu"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.apache.commons.cli"
          download-size="0"
          install-size="0"
@@ -735,13 +707,6 @@
 
    <plugin
          id="org.eclipse.search"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.emf.mwe.utils"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -929,21 +894,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.xtext.xbase.lib"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.eclipse.xtext.ide"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.emf.mwe2.lib"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -978,20 +929,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.xtend.lib"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.xtend.lib.macro"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="com.google.guava"
          download-size="0"
          install-size="0"
@@ -1007,6 +944,27 @@
 
    <plugin
          id="org.eclipse.team.ui"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtend.lib"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtext.xbase.lib"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.eclipse.xtend.lib.macro"
          download-size="0"
          install-size="0"
          version="0.0.0"

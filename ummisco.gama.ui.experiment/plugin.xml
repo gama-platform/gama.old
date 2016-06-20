@@ -1009,7 +1009,6 @@
       </serviceFactory>
       <serviceFactory
             factoryClass="ummisco.gama.ui.factories.ConsoleDisplayerFactory">
-         <service></service>
          <service
                serviceClass="msi.gama.common.interfaces.IConsoleDisplayer">
          </service>

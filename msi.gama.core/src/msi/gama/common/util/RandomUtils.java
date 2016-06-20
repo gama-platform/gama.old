@@ -402,7 +402,7 @@ public class RandomUtils {
 			System.out.print(val - low < high - val ? low : high);
 			System.out.print(" | ");
 		}
-		System.out.println();
+		// System.out.println();
 	}
 
 	public static void drawRandomValues(final int min, final int max, final int step) {
@@ -414,7 +414,7 @@ public class RandomUtils {
 			System.out.print(val);
 			System.out.print(" | ");
 		}
-		System.out.println();
+		// System.out.println();
 	}
 
 	public static void main(final String[] args) {

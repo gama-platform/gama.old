@@ -97,9 +97,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		@Override
 		protected void collectMetaInformationInFacetValue(final SpeciesDescription desc, final String key,
 				final GamlProperties plugins) {
-			if (key.equals(SKILLS)) {
-				System.out.println();
-			}
+			// if (key.equals(SKILLS)) {
+			// System.out.println();
+			// }
 			final IExpressionDescription ed = desc.getFacets().get(key);
 			if (ed == null) {
 				return;

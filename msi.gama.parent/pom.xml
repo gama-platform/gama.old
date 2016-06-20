@@ -264,12 +264,18 @@
                    <filter> <type>eclipse-plugin</type><id>org.eclipse.jdt.ui</id><removeAll/></filter>
                    <filter> <type>eclipse-plugin</type><id>org.eclipse.debug.core</id><removeAll/></filter>
                    <filter> <type>eclipse-plugin</type><id>org.eclipse.debug.ui</id><removeAll/></filter>
+                  <!--  <filter> <type>eclipse-plugin</type><id>com.ibm.icu</id><removeAll/></filter>-->
                    <!-- <filter> <type>eclipse-plugin</type><id>org.antlr.runtime</id><removeAll/></filter> -->
                    <filter> <type>eclipse-plugin</type><id>org.apache.ant</id><removeAll/></filter>
                    <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.codegen.ecore</id><removeAll/></filter>
                    <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.codegen</id><removeAll/></filter>
                    <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.ecore.editor</id><removeAll/></filter>
                    <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.ecore.edit</id><removeAll/></filter>
+                 <!--  <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.edit</id><removeAll/></filter>-->
+                 <!--   <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.edit.ui</id><removeAll/></filter>-->
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.mwe2.runtime</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.mwe.core</id><removeAll/></filter>
+                   <filter> <type>eclipse-plugin</type><id>org.eclipse.emf.mwe.utils</id><removeAll/></filter>
                    <!--<filter> <type>eclipse-plugin</type><id>org.eclipse.equinox.concurrent</id><removeAll/></filter>-->
                    <filter> <type>eclipse-plugin</type><id>org.eclipse.jdt.debug</id><removeAll/></filter>
                    <filter> <type>eclipse-plugin</type><id>org.eclipse.jdt.launching</id><removeAll/></filter>

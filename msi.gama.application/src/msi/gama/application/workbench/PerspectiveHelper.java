@@ -83,14 +83,14 @@ public class PerspectiveHelper {
 		if ( perspectiveId.equals(currentPerspectiveId) )
 			return true;
 
-		IWorkbenchPage activePage = null;
-		try {
-			activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().openPage(perspectiveId, null);
-		} catch (final WorkbenchException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-			return false;
-		}
+		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+		if ( activePage == null && perspectiveId != null )
+			try {
+				activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().openPage(perspectiveId, null);
+			} catch (final WorkbenchException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 		final IPerspectiveDescriptor oldDescriptor = activePage.getPerspective();
 		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
 		final IWorkbenchPage page = activePage;
