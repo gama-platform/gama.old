@@ -176,7 +176,8 @@ public class ExperimentScheduler implements Runnable {
 			if (scope != null && scope.interrupted()) {
 				toStop.add(stepable);
 			} else {
-				GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
+				if (!(e instanceof GamaRuntimeException))
+					GAMA.reportError(scope, GamaRuntimeException.create(e, scope), true);
 			}
 		}
 

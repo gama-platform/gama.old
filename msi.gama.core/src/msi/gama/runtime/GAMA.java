@@ -225,7 +225,9 @@ public class GAMA {
 			g.printStackTrace();
 			return true;
 		}
+
 		scope.getGui().runtimeError(g);
+		g.setReported();
 
 		final boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
 		final boolean shouldStop = isError && shouldStopSimulation && GamaPreferences.CORE_REVEAL_AND_STOP.getValue();

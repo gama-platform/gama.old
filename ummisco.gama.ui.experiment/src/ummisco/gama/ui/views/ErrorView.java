@@ -14,6 +14,7 @@ package ummisco.gama.ui.views;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -50,7 +51,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	public static String ID = IGui.ERROR_VIEW_ID;
 	int numberOfDisplayedErrors = GamaPreferences.CORE_ERRORS_NUMBER.getValue();
 	boolean mostRecentFirst = GamaPreferences.CORE_RECENT.getValue();
-	private final ArrayList<GamaRuntimeException> exceptions = new ArrayList();
+	private final LinkedHashSet<GamaRuntimeException> exceptions = new LinkedHashSet();
 
 	@Override
 	protected boolean areItemsClosable() {
@@ -59,7 +60,9 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	@Override
 	public boolean addItem(final GamaRuntimeException e) {
+		// System.out.println("Adding " + e + " as item");
 		createItem(parent, e, false, null);
+
 		return true;
 	}
 
@@ -84,7 +87,6 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 		if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
 			reset();
-			displayItems();
 		}
 	}
 
@@ -192,7 +194,8 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		final int end = size;
 		int begin = end - numberOfDisplayedErrors;
 		begin = begin < 0 ? 0 : begin;
-		errors.addAll(exceptions.subList(begin, end));
+		final List<GamaRuntimeException> except = new ArrayList(exceptions);
+		errors.addAll(except.subList(begin, end));
 		if (mostRecentFirst) {
 			Collections.reverse(errors);
 		}

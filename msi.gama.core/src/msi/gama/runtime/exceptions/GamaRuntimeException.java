@@ -11,18 +11,24 @@
  **********************************************************************************************/
 package msi.gama.runtime.exceptions;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
+
 import msi.gama.kernel.simulation.SimulationClock;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.IStatement;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
  *
- * A kind of exception thrown when an abnormal situation happens while running a model.
+ * A kind of exception thrown when an abnormal situation happens while running a
+ * model.
  *
  */
 
@@ -41,58 +47,70 @@ public class GamaRuntimeException extends RuntimeException {
 	// Factory methods
 	/**
 	 * This call is deprecated. Use the equivalent method that passes the scope
+	 * 
 	 * @param s
 	 * @return
 	 */
 	// @Deprecated
 	// public static GamaRuntimeException create(final Throwable ex) {
-	// // Uses the dangerous and error-prone GAMA.getDefaultScope() method, which can return null or the scope of
+	// // Uses the dangerous and error-prone GAMA.getDefaultScope() method,
+	// which can return null or the scope of
 	// // another simulation
 	// return create(ex, GAMA.getRuntimeScope());
 	// }
 
 	public static GamaRuntimeException create(final Throwable ex, final IScope scope) {
-		if ( ex instanceof GamaRuntimeException ) { return (GamaRuntimeException) ex; }
-		if ( ex instanceof IOException ||
-			ex instanceof FileNotFoundException ) { return new GamaRuntimeFileException(scope, ex); }
+		if (ex instanceof GamaRuntimeException) {
+			return (GamaRuntimeException) ex;
+		}
+		if (ex instanceof IOException || ex instanceof FileNotFoundException) {
+			return new GamaRuntimeFileException(scope, ex);
+		}
 		return new GamaRuntimeException(scope, ex);
 	}
 
 	/**
-	 * This method is deprecated. Use the equivalent method that passes the scope
+	 * This method is deprecated. Use the equivalent method that passes the
+	 * scope
+	 * 
 	 * @param s
 	 * @return
 	 */
 	@Deprecated
 	public static GamaRuntimeException error(final String s) {
-		// Uses the dangerous and error-prone GAMA.getRuntimeScope() method, which can return null or the scope of
+		// Uses the dangerous and error-prone GAMA.getRuntimeScope() method,
+		// which can return null or the scope of
 		// another simulation
 		return error(s, GAMA.getRuntimeScope());
 	}
 
 	public static GamaRuntimeException error(final String s, final IScope scope) {
-		GamaRuntimeException ex = new GamaRuntimeException(scope, s, false);
-		if ( scope == null ) { return ex; }
-		IStatement statement = scope.getStatement();
-		if ( statement != null ) {
+		final GamaRuntimeException ex = new GamaRuntimeException(scope, s, false);
+		if (scope == null) {
+			return ex;
+		}
+		final IStatement statement = scope.getStatement();
+		if (statement != null) {
 			ex.addContext(statement);
 		}
 		return ex;
 	}
 
 	public static GamaRuntimeException warning(final String s, final IScope scope) {
-		GamaRuntimeException ex = new GamaRuntimeException(scope, s, true);
+		final GamaRuntimeException ex = new GamaRuntimeException(scope, s, true);
 		return ex;
 	}
 
 	/**
 	 * This call is deprecated. Use the equivalent method that passes the scope
+	 * 
 	 * @param s
 	 * @return
 	 */
 	@Deprecated
 	public static GamaRuntimeException warning(final String s) {
-		// Uses the dangerous and error-prone GAMA.getDefaultScope() method, which can return null or the scope of
+		// Uses the dangerous and error-prone GAMA.getDefaultScope() method,
+		// which can return null or the scope of
 		// another simulation
 		return warning(s, GAMA.getRuntimeScope());
 	}
@@ -117,15 +135,15 @@ public class GamaRuntimeException extends RuntimeException {
 
 	protected GamaRuntimeException(final IScope scope, final Throwable ex) {
 		super(ex == null ? "Unknown error" : ex.toString(), ex);
-		if ( scope != null ) {
-			IStatement statement = scope.getStatement();
-			if ( statement != null ) {
+		if (scope != null) {
+			final IStatement statement = scope.getStatement();
+			if (statement != null) {
 				addContext(statement);
 			}
 		}
-		if ( ex != null ) {
+		if (ex != null) {
 			addContext(ex.toString());
-			for ( StackTraceElement element : ex.getStackTrace() ) {
+			for (final StackTraceElement element : ex.getStackTrace()) {
 				addContext(element.toString());
 			}
 		}
@@ -137,9 +155,9 @@ public class GamaRuntimeException extends RuntimeException {
 
 	protected GamaRuntimeException(final IScope scope, final String s, final boolean warning) {
 		super(s);
-		if ( scope != null ) {
-			IStatement statement = scope.getStatement();
-			if ( statement != null ) {
+		if (scope != null) {
+			final IStatement statement = scope.getStatement();
+			if (statement != null) {
 				addContext(statement);
 			}
 		}
@@ -156,7 +174,7 @@ public class GamaRuntimeException extends RuntimeException {
 	public void addContext(final IStatement s) {
 		addContext("in " + s.serialize(false));
 		final EObject e = s.getDescription().getUnderlyingElement(null);
-		if ( e != null ) {
+		if (e != null) {
 			editorContext = e;
 		}
 	}
@@ -167,12 +185,14 @@ public class GamaRuntimeException extends RuntimeException {
 
 	public void addAgent(final String agent) {
 		occurrences++;
-		if ( agentsNames.contains(agent) ) { return; }
+		if (agentsNames.contains(agent)) {
+			return;
+		}
 		agentsNames.add(agent);
 	}
 
 	public void addAgents(final List<String> agents) {
-		for ( String agent : agents ) {
+		for (final String agent : agents) {
 			addAgent(agent);
 		}
 	}
@@ -182,10 +202,10 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public String getAgentSummary() {
-		int size = agentsNames.size();
-		String agents = size == 0 ? "" : size == 1 ? agentsNames.get(0) : String.valueOf(size) + " agents";
-		String occurence =
-			occurrences == 0 ? "" : occurrences == 1 ? "1 occurence in " : String.valueOf(occurrences) + " occurrences in ";
+		final int size = agentsNames.size();
+		final String agents = size == 0 ? "" : size == 1 ? agentsNames.get(0) : String.valueOf(size) + " agents";
+		final String occurence = occurrences == 0 ? ""
+				: occurrences == 1 ? "1 occurence in " : String.valueOf(occurrences) + " occurrences in ";
 		return occurence + agents;
 	}
 
@@ -194,31 +214,38 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public long computeCycle(final IScope scope) {
-		SimulationClock clock = scope == null ? null : scope.getClock();
+		final SimulationClock clock = scope == null ? null : scope.getClock();
 		return clock == null ? 0l : clock.getCycle();
 	}
 
 	public List<String> getContextAsList() {
-		List<String> result = new ArrayList();
+		final List<String> result = new ArrayList();
 		result.addAll(context);
-		int size = agentsNames.size();
-		if ( size == 0 ) { return result; }
-		if ( size == 1 ) {
+		final int size = agentsNames.size();
+		if (size == 0) {
+			return result;
+		}
+		if (size == 1) {
 			result.add("in agent " + agentsNames.get(0));
 		} else {
-			String s = "in agents " + agentsNames.get(0);
-			for ( int i = 1; i < agentsNames.size(); i++ ) {
-				s += ", " + agentsNames.get(i);
+			final StringBuilder sb = new StringBuilder();
+			sb.append("in agents ").append(agentsNames.get(0));
+			for (int i = 1; i < agentsNames.size(); i++) {
+				sb.append(", ").append(agentsNames.get(i));
+				if (sb.length() > 100) {
+					sb.append("...");
+					break;
+				}
 			}
-			result.add(s);
+			result.add(sb.toString());
 		}
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		String s = getClass().getName();
-		String message = getLocalizedMessage();
+		final String s = getClass().getName();
+		final String message = getLocalizedMessage();
 		return message != null ? message : s;
 	}
 
@@ -247,12 +274,12 @@ public class GamaRuntimeException extends RuntimeException {
 	public String getAllText() {
 		final StringBuilder sb = new StringBuilder(300);
 		final String a = getAgentSummary();
-		if ( a != null ) {
+		if (a != null) {
 			sb.append(a).append(" at ");
 		}
 		sb.append("cycle ").append(getCycle()).append(": ").append(getMessage());
-		List<String> strings = getContextAsList();
-		for ( String s : strings ) {
+		final List<String> strings = getContextAsList();
+		for (final String s : strings) {
 			sb.append(Strings.LN).append(s);
 		}
 		return sb.toString();

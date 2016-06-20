@@ -108,6 +108,8 @@ public class SwtGui implements IGui {
 		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) {
 			return;
 		}
+		if (g.isReported())
+			return;
 
 		if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
 			final IGamaView.Error v = (Error) showView(ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
@@ -117,6 +119,7 @@ public class SwtGui implements IGui {
 					@Override
 					public void run() {
 						v.addNewError(g);
+						g.setReported();
 					}
 				});
 			}
@@ -129,7 +132,14 @@ public class SwtGui implements IGui {
 		if (v == null) {
 			return;
 		}
-		v.reset();
+		WorkbenchHelper.asyncRun(new Runnable() {
+
+			@Override
+			public void run() {
+				v.reset();
+			}
+		});
+
 	}
 
 	private Object internalShowView(final String viewId, final String secondaryId, final int code) {
