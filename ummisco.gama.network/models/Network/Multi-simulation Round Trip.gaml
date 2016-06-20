@@ -37,7 +37,7 @@ global skills:[network]{
 	action teletransportation (NetworkingAgent a, string s){
 		
 	  write "teleport";//	 + serializeAgent(a);	
-	  do send_message to:s content:a;
+	  do send to:s content:a;
 	 // write serialize(a);
 	}
 }

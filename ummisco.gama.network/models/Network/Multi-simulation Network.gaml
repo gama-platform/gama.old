@@ -25,7 +25,7 @@ global skills:[network]{
 	
 	reflex updateSimulation{
 		if(simulationName = "sender"){
-		  do send_message to:"reciever" content:9 among NetworkingAgent;	
+		  do send to:"reciever" content:9 among NetworkingAgent;	
 		}
 		if(simulationName = "reciever"){
 		  if(has_received_message()){

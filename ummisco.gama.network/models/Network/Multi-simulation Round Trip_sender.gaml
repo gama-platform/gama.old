@@ -21,7 +21,7 @@ global skills:[network]{
 	}
 	
 	action teletransportation (NetworkingAgent a, string s){
-	  do send_message to:s content:a;
+	  do send to:s content:a;
 	}
 }
 
