@@ -236,7 +236,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		}
 	}
 
-	private final ThreadLocal<Arguments> init = new ThreadLocal();
+	// private final ThreadLocal<Arguments> init = new ThreadLocal();
+	private Arguments init;
 	private final IExpression from, number, species, header;
 	private final String returns;
 	private final RemoteSequence sequence;
@@ -317,7 +318,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		final Object source = getSource(scope);
 		for (final ICreateDelegate delegate : delegates) {
 			if (delegate.acceptSource(source)) {
-				delegate.createFrom(scope, inits, max, source, init.get(), this);
+				delegate.createFrom(scope, inits, max, source, init, this);
 			}
 		}
 		// and we create and return the agent(s)
@@ -388,13 +389,13 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 	// TODO Call it before calling the ICreateDelegate createFrom method !
 	void fillWithUserInit(final IScope scope, final Map values) {
-		if (init.get() == null) {
+		if (init == null) {
 			return;
 		}
 		scope.pushReadAttributes(values);
 		// Files.tempAttributes.push(values);
 		try {
-			for (final Map.Entry<String, IExpressionDescription> f : init.get().entrySet()) {
+			for (final Map.Entry<String, IExpressionDescription> f : init.entrySet()) {
 				if (f != null) {
 					values.put(f.getKey(), f.getValue().getExpression().value(scope));
 				}
@@ -406,7 +407,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 	@Override
 	public void setFormalArgs(final Arguments args) {
-		init.set(args);
+		init = args;
 	}
 
 	@Override
