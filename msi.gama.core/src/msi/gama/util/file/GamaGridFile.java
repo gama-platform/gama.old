@@ -22,6 +22,7 @@ import java.util.Scanner;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.io.AbstractGridCoverage2DReader;
+import org.geotools.data.DataSourceException;
 import org.geotools.data.PrjFileReader;
 import org.geotools.factory.Hints;
 import org.geotools.gce.arcgrid.ArcGridReader;
@@ -410,7 +411,15 @@ public class GamaGridFile extends GamaGisFile {
 					}
 				}
 			}
+		} else if (isTiff()) {
+			try {
+				GeoTiffReader store = new GeoTiffReader(getFile(), new Hints(Hints.USE_JAI_IMAGEREAD, true));
+				return store.getCoordinateReferenceSystem();
+			} catch (DataSourceException e) {
+				e.printStackTrace();
+			}
 		}
+		
 		return null;
 	}
 
