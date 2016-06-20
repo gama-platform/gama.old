@@ -71,75 +71,6 @@ public class AspectStatement extends AbstractStatementSequence {
 		}
 	};
 
-	// public static IExecutable HIGHLIGHTED_ASPECT = new IExecutable() {
-	//
-	// @Override
-	// public Rectangle2D executeOn(final IScope scope) throws
-	// GamaRuntimeException {
-	// IAgent agent = scope.getAgentScope();
-	// if ( agent != null && !agent.dead() ) {
-	// final IGraphics g = scope.getGraphics();
-	// if ( g == null ) { return null; }
-	// try {
-	// agent.acquireLock();
-	// // if ( agent.dead() ) { return null; }
-	// // Normally always highlighted
-	// if ( agent == scope.getGui().getHighlightedAgent() ) {
-	// g.beginHighlight();
-	// }
-	// final Color c = GamaPreferences.CORE_HIGHLIGHT.getValue();
-	// String defaultShape = GamaPreferences.CORE_SHAPE.getValue();
-	// int index = SHAPES.get(defaultShape);
-	// IShape ag;
-	//
-	// if ( index != Constants.DEFAULT_INT_NO_ENTRY_VALUE ) {
-	// Double defaultSize = GamaPreferences.CORE_SIZE.getValue();
-	// ILocation point = agent.getLocation();
-	//
-	// switch (SHAPES.get(defaultShape)) {
-	// case 1:
-	// ag = GamaGeometryType.buildCircle(defaultSize, point);
-	// break;
-	// case 2:
-	// ag = GamaGeometryType.buildSquare(defaultSize, point);
-	// break;
-	// case 3:
-	// ag = GamaGeometryType.buildTriangle(defaultSize, point);
-	// break;
-	// case 4:
-	// ag = GamaGeometryType.buildSphere(defaultSize, point);
-	// break;
-	// case 5:
-	// ag = GamaGeometryType.buildCube(defaultSize, point);
-	// break;
-	// case 6:
-	// ag = GamaGeometryType.createPoint(point);
-	// break;
-	// default:
-	// ag = agent.getGeometry();
-	// }
-	// } else {
-	// ag = agent.getGeometry();
-	// }
-	//
-	// final IShape ag2 = ag.copy(scope);
-	// final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black,
-	// false);
-	// return r;
-	// } catch (GamaRuntimeException e) {
-	// // cf. Issue 1052: exceptions are not thrown, just displayed
-	// e.printStackTrace();
-	// } finally {
-	// g.endHighlight();
-	// agent.releaseLock();
-	// }
-	// }
-	// return null;
-	// }
-	//
-	// };
-	//
-
 	public static GamaColor borderColor = GamaColor.getInt(Color.black.getRGB());
 	public static IExecutable DEFAULT_ASPECT = new IExecutable() {
 
@@ -237,7 +168,6 @@ public class AspectStatement extends AbstractStatementSequence {
 				return null;
 			}
 			try {
-				// agent.acquireLock();
 				if (scope.interrupted()) {
 					return null;
 				}
@@ -245,11 +175,6 @@ public class AspectStatement extends AbstractStatementSequence {
 					g.beginHighlight();
 				}
 				return (Rectangle2D) super.executeOn(scope);
-				// Object[] result = new Object[1];
-				// if ( scope.execute(this, agent, null, result) && result[0]
-				// instanceof Rectangle2D ) { return
-				// (Rectangle2D) result[0]; }
-				// return null;
 			} catch (final GamaRuntimeException e) {
 				// cf. Issue 1052: exceptions are not thrown, just displayed
 				e.printStackTrace();
@@ -264,31 +189,6 @@ public class AspectStatement extends AbstractStatementSequence {
 		return null;
 
 	}
-
-	// @Override
-	// public Rectangle2D drawOverlay(final IScope scope, final IAgent agent)
-	// throws GamaRuntimeException {
-	// if ( agent != null ) {
-	// final IGraphics g = scope.getGraphics();
-	// if ( g == null ) { return null; }
-	// try {
-	// agent.acquireLock();
-	// if ( agent.dead() ) { return null; }
-	// final Color c =
-	// agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
-	// agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
-	// final IShape ag = agent.getGeometry();
-	// final IShape ag2 = (IShape) ag.copy(scope);
-	// final Rectangle2D r = g.drawGamaShapeOverlay(scope, ag2, c, true,
-	// Color.black, 0, false);
-	// return r;
-	// } finally {
-	// agent.releaseLock();
-	// }
-	// }
-	// return null;
-	//
-	// }
 
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope stack) throws GamaRuntimeException {

@@ -18,7 +18,7 @@ import msi.gaml.statements.IStatement.WithArgs;
  */
 public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence implements WithArgs {
 
-	ThreadLocal<Arguments> actualArgs = new ThreadLocal<>();
+	final ThreadLocal<Arguments> actualArgs = new ThreadLocal<>();
 
 	/**
 	 * @param desc
