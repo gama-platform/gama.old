@@ -170,7 +170,6 @@ public class GamaGridFile extends GamaGisFile {
 						genv.getMaximum(1));
 				computeProjection(scope, env);
 				final Envelope envP = gis.getProjectedEnvelope();
-				System.out.println("envP: " + envP);
 				final double cellHeight = envP.getHeight() / numRows;
 				final double cellWidth = envP.getWidth() / numCols;
 				final IList<IShape> shapes = GamaListFactory.create(Types.GEOMETRY);
