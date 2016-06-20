@@ -61,12 +61,12 @@ import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
-import msi.gama.gui.metadata.FileMetaDataProvider;
-import msi.gama.gui.metadata.ImageDataLoader;
+import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.metadata.ImageDataLoader;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.SwtGui;
+import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -165,7 +165,7 @@ public class ImageViewer extends EditorPart
 
 	private void displayInfoString() {
 		final GamaUIColor color = IGamaColors.OK;
-		final String result = FileMetaDataProvider.getInstance().getDecoratorSuffix(getFileFor(getEditorInput()));
+		final String result = GAMA.getGui().getMetaDataProvider().getDecoratorSuffix(getFileFor(getEditorInput()));
 		toolbar.button(color, result, new SelectionAdapter() {
 
 			@Override
@@ -790,7 +790,7 @@ public class ImageViewer extends EditorPart
 	 */
 	@Override
 	public GamaUIColor getColor(final int index) {
-		return GamaColors.get(SwtGui.IMAGE_VIEWER_BACKGROUND.getValue());
+		return GamaColors.get(PreferencesHelper.IMAGE_VIEWER_BACKGROUND.getValue());
 	}
 
 	/**

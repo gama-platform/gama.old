@@ -46,13 +46,6 @@
    <extension
          point="gama.create">
       <implementation
-            class="msi.gaml.statements.CreateFromDatabaseDelegate"
-            description="Create agents from databases">
-      </implementation>
-   </extension>
-   <extension
-         point="gama.create">
-      <implementation
             class="msi.gaml.statements.CreateFromGenstarDelegate"
             description="Create agents from CSV Genstar files">
       </implementation>

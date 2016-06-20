@@ -108,7 +108,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	@Override
 	public synchronized void dispose() {
 		if (scope != null) {
-			scope.getGui().cleanAfterExperiment(scope.getExperiment().getSpecies());
+			scope.getGui().cleanAfterExperiment();
 		}
 		super.dispose();
 	}

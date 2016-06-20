@@ -16,7 +16,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gama.lang.gaml.ui.XtextGui;
+import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
@@ -37,7 +37,7 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 	@Override
 	protected void fillMenu() {
 		if (byName == null) {
-			byName = XtextGui.OPERATORS_MENU_SORT.getValue().equals("Name");
+			byName = AutoStartup.OPERATORS_MENU_SORT.getValue().equals("Name");
 		}
 		final Menu sub = sub("Sort by...");
 		sep();

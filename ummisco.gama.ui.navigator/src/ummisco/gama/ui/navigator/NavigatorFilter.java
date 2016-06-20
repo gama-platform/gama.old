@@ -7,7 +7,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
-import msi.gama.gui.metadata.FileMetaDataProvider;
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
 
 public class NavigatorFilter extends ViewerFilter {
 

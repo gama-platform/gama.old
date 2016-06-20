@@ -49,7 +49,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		}
 		if (layout < 0 || layout >= GamaPreferences.LAYOUTS.size())
 			return;
-		System.out.println("Executing layout " + GamaPreferences.LAYOUTS.get(layout));
+		// System.out.println("Executing layout " +
+		// GamaPreferences.LAYOUTS.get(layout));
 		final List<MPlaceholder> holders = modelService.findElements(application, MPlaceholder.class,
 				EModelService.IN_ACTIVE_PERSPECTIVE, new Selector() {
 
@@ -65,7 +66,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 
 					}
 				});
-		System.out.println("Found " + holders.size() + " place holders to rearrange");
+		// System.out.println("Found " + holders.size() + " place holders to
+		// rearrange");
 		if (holders.size() == 1)
 			return;
 		final List<MPartStack> stacks = modelService.findElements(application, MPartStack.class,

@@ -12,12 +12,13 @@
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.widgets.Composite;
-import msi.gama.common.interfaces.EditorListener;
+
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.interfaces.EditorListener;
 
 public class GenericEditor<T> extends ExpressionBasedEditor<T> {
 

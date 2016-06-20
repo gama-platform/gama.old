@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="ummisco.gama.ui.startup.Startup">
-      </startup>
-   </extension>
+
+
    <extension
          point="org.eclipse.ui.perspectives">
       <perspective
@@ -705,6 +701,25 @@
             </and>
          </activeWhen>
       </handler>
+      <handler
+            class="ummisco.gama.ui.commands.SwitchToSimulation"
+            commandId="msi.gama.application.goto.simulation">
+         <activeWhen>
+            <and>
+               <reference
+                     definitionId="isInModelingPerspective">
+               </reference>
+               <not>
+                  <with
+                        variable="ummisco.gama.ui.experiment.SimulationRunningState">
+                     <equals
+                           value="NONE">
+                     </equals>
+                  </with>
+               </not>
+            </and>
+         </activeWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">
@@ -717,11 +732,6 @@
             commandId="msi.gama.application.commands.PauseSimulation"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+P">
-      </key>
-      <key
-            commandId="msi.gama.application.commands.SwitchPerspective"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="F6">
       </key>
       <key
             commandId="msi.gama.application.commands.StepByStepSimulation"
@@ -752,13 +762,13 @@
             </reference>
             <or>
                <with
-                     variable="msi.gama.application.commands.SimulationRunningState">
+                     variable="ummisco.gama.ui.experiment.SimulationRunningState">
                   <equals
                         value="RUNNING">
                   </equals>
                </with>
                <with
-                     variable="msi.gama.application.commands.SimulationRunningState">
+                     variable="ummisco.gama.ui.experiment.SimulationRunningState">
                   <equals
                         value="STOPPED">
                   </equals>
@@ -773,7 +783,7 @@
                   definitionId="isInSimulationPerspective">
             </reference>
             <with
-                  variable="msi.gama.application.commands.SimulationRunningState">
+                  variable="ummisco.gama.ui.experiment.SimulationRunningState">
                <equals
                      value="RUNNING">
                </equals>
@@ -787,7 +797,7 @@
                   definitionId="isInSimulationPerspective">
             </reference>
             <with
-                  variable="msi.gama.application.commands.SimulationRunningState">
+                  variable="ummisco.gama.ui.experiment.SimulationRunningState">
                <equals
                      value="STOPPED">
                </equals>
@@ -802,7 +812,7 @@
             </reference>
             <not>
                <with
-                     variable="msi.gama.application.commands.SimulationRunningState">
+                     variable="ummisco.gama.ui.experiment.SimulationRunningState">
                   <equals
                         value="NONE">
                   </equals>
@@ -833,7 +843,7 @@
                   definitionId="isInSimulationPerspective">
             </reference>
             <with
-                  variable="msi.gama.application.commands.SimulationType">
+                  variable="ummisco.gama.ui.experiment.SimulationType">
                <equals
                      value="BATCH">
                </equals>
@@ -847,12 +857,31 @@
                   definitionId="isInSimulationPerspective">
             </reference>
             <with
-                  variable="msi.gama.application.commands.SimulationType">
+                  variable="ummisco.gama.ui.experiment.SimulationType">
                <equals
                      value="MEMORIZE">
                </equals>
             </with>
          </and>
+      </definition>
+      <definition
+            id="isInModelingPerspective">
+         <with
+               variable="activeWorkbenchWindow.activePerspective">
+            <equals
+                  value="msi.gama.application.perspectives.ModelingPerspective">
+            </equals>
+         </with>
+      </definition>
+      <definition
+            id="isInSimulationPerspective">
+         <with
+               variable="activeWorkbenchWindow.activePerspective">
+            <test
+                  property="ummisco.gama.ui.containsString"
+                  value="Simulation">
+            </test>
+         </with>
       </definition>
    </extension>
    <extension
@@ -937,6 +966,64 @@
                typeId="msi.gama.application.String">
          </commandParameter>
       </command>
+      <command
+            categoryId="msi.gama.category"
+            id="msi.gama.application.goto.simulation"
+            name="Switch to simulation perspective">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.services">
+      <serviceFactory
+            factoryClass="ummisco.gama.ui.factories.AgentMenuFactory">
+         <service
+               serviceClass="ummisco.gama.ui.interfaces.IAgentMenuFactory"></service>
+      </serviceFactory>
+      <serviceFactory
+            factoryClass="ummisco.gama.ui.factories.UserDialogFactory">
+         <service
+               serviceClass="ummisco.gama.ui.interfaces.IUserDialogFactory"></service>
+      </serviceFactory>
+      <sourceProvider
+            provider="ummisco.gama.ui.commands.SimulationStateProvider">
+         <variable
+               name="ummisco.gama.ui.experiment.SimulationRunningState"
+               priorityLevel="workbench">
+         </variable>
+         <variable
+               name="ummisco.gama.ui.experiment.SimulationType"
+               priorityLevel="workbench">
+         </variable>
+      </sourceProvider>
+      <serviceFactory
+            factoryClass="ummisco.gama.ui.factories.SpeedDisplayerFactory">
+         <service
+               serviceClass="ummisco.gama.ui.interfaces.ISpeedDisplayer">
+         </service>
+      </serviceFactory>
+      <serviceFactory
+            factoryClass="ummisco.gama.ui.factories.StatusDisplayerFactory">
+         <service
+               serviceClass="msi.gama.common.interfaces.IStatusDisplayer">
+         </service>
+      </serviceFactory>
+      <serviceFactory
+            factoryClass="ummisco.gama.ui.factories.ConsoleDisplayerFactory">
+         <service></service>
+         <service
+               serviceClass="msi.gama.common.interfaces.IConsoleDisplayer">
+         </service>
+      </serviceFactory>
+   </extension>
+   <extension
+         point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+            class="ummisco.gama.ui.perspective.PerspectiveNamePropertyTester"
+            id="ummisco.gama.ui.PerspectiveNamePropertyTester"
+            namespace="ummisco.gama.ui"
+            properties="containsString"
+            type="java.lang.Object">
+      </propertyTester>
    </extension>
 
 </plugin>

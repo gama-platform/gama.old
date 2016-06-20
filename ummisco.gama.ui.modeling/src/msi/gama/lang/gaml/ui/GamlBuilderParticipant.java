@@ -31,7 +31,8 @@ public class GamlBuilderParticipant extends ParallelBuilderParticipant {
 		try {
 			super.cleanDerivedResources(delta, derivedResources, context, access, deleteMonitor);
 		} catch (final IllegalArgumentException e) {
-			System.out.println("Catching harmless exception in the cleansing of derived resources");
+			// System.out.println("Catching harmless exception in the cleansing
+			// of derived resources");
 		}
 	}
 
@@ -41,7 +42,8 @@ public class GamlBuilderParticipant extends ParallelBuilderParticipant {
 		try {
 			super.cleanOutput(ctx, config, monitor);
 		} catch (final IllegalArgumentException e) {
-			System.out.println("Catching harmless exception in the cleansing of derived resources");
+			// System.out.println("Catching harmless exception in the cleansing
+			// of derived resources");
 		}
 	}
 

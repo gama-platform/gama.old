@@ -380,13 +380,16 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected abstract boolean canSelectOnRelease(org.eclipse.swt.events.MouseEvent arg0);
-
-	protected void dump() {
-		System.out.println("xPos:" + position.x + " yPos:" + position.y + " zPos:" + position.z);
-		System.out.println("xLPos:" + target.x + " yLPos:" + target.y + " zLPos:" + target.z);
-		System.out.println("upX" + upVector.x + " upY:" + upVector.y + " upZ:" + upVector.z);
-		System.out.println("_phi " + phi + " _theta " + theta);
-	}
+	//
+	// protected void dump() {
+	// System.out.println("xPos:" + position.x + " yPos:" + position.y + "
+	// zPos:" + position.z);
+	// System.out.println("xLPos:" + target.x + " yLPos:" + target.y + " zLPos:"
+	// + target.z);
+	// System.out.println("upX" + upVector.x + " upY:" + upVector.y + " upZ:" +
+	// upVector.z);
+	// System.out.println("_phi " + phi + " _theta " + theta);
+	// }
 
 	@Override
 	public Point getMousePosition() {

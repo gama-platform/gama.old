@@ -26,7 +26,6 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 
 import msi.gama.common.interfaces.IGamaView;
-import ummisco.gama.ui.utils.SwtGui;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
@@ -37,6 +36,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.GamaViewPart;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -166,16 +166,16 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	private void insertHistory(final boolean back) {
 
 		if (history.size() == 0) {
-			SwtGui.requestUserAttention(this, "No history");
+			ViewsHelper.requestUserAttention(this, "No history");
 			return;
 		}
 		if (indexInHistory <= 0) {
 			if (back)
-				SwtGui.requestUserAttention(this, "No more history");
+				ViewsHelper.requestUserAttention(this, "No more history");
 			indexInHistory = 0;
 		} else if (indexInHistory >= history.size() - 1) {
 			if (!back)
-				SwtGui.requestUserAttention(this, "No more history");
+				ViewsHelper.requestUserAttention(this, "No more history");
 			indexInHistory = history.size() - 1;
 		}
 		try {

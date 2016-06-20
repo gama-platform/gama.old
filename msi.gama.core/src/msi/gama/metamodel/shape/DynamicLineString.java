@@ -3,11 +3,25 @@
  */
 package msi.gama.metamodel.shape;
 
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateFilter;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.CoordinateSequenceComparator;
+import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryComponentFilter;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.GeometryFilter;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Lineal;
+import com.vividsolutions.jts.geom.Point;
 
+import msi.gama.common.util.GeometryUtils;
 
 /**
  * A dynamical geometry that represents a link between two IShape.
+ * 
  * @author drogoul
  *
  */
@@ -28,7 +42,8 @@ public class DynamicLineString extends LineString implements Lineal {
 	// }
 	// classes.set(null, list.toArray(new Class[] {}));
 	// }
-	// } catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+	// } catch (NoSuchFieldException | SecurityException |
+	// IllegalArgumentException | IllegalAccessException e) {
 	// e.printStackTrace();
 	// }
 	// }
@@ -37,7 +52,8 @@ public class DynamicLineString extends LineString implements Lineal {
 
 	/**
 	 * @param factory
-	 * @param source, target Should not be null !
+	 * @param source,
+	 *            target Should not be null !
 	 */
 	public DynamicLineString(final GeometryFactory factory, final IShape source, final IShape target) {
 		super(null, factory);
@@ -45,7 +61,9 @@ public class DynamicLineString extends LineString implements Lineal {
 		this.target = target;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#getGeometryType()
 	 */
 	@Override
@@ -53,20 +71,25 @@ public class DynamicLineString extends LineString implements Lineal {
 		return "LineString";
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#getCoordinate()
 	 */
 	@Override
 	public Coordinate getCoordinate() {
-		return source.getLocation().toCoordinate();
+		return GeometryUtils.toCoordinate(source.getLocation());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#getCoordinates()
 	 */
 	@Override
 	public Coordinate[] getCoordinates() {
-		return new Coordinate[] { source.getLocation().toCoordinate(), target.getLocation().toCoordinate() };
+		return new Coordinate[] { GeometryUtils.toCoordinate(source.getLocation()),
+				GeometryUtils.toCoordinate(target.getLocation()) };
 	}
 
 	@Override
@@ -74,7 +97,9 @@ public class DynamicLineString extends LineString implements Lineal {
 		return getFactory().getCoordinateSequenceFactory().create(getCoordinates());
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#getNumPoints()
 	 */
 	@Override
@@ -82,7 +107,9 @@ public class DynamicLineString extends LineString implements Lineal {
 		return 2;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#isEmpty()
 	 */
 	@Override
@@ -90,7 +117,9 @@ public class DynamicLineString extends LineString implements Lineal {
 		return false;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#getDimension()
 	 */
 	@Override
@@ -98,7 +127,9 @@ public class DynamicLineString extends LineString implements Lineal {
 		return 1;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#getBoundary()
 	 */
 	@Override
@@ -113,10 +144,12 @@ public class DynamicLineString extends LineString implements Lineal {
 
 	@Override
 	public Point getEndPoint() {
-		return getFactory().createPoint(target.getLocation().toCoordinate());
+		return getFactory().createPoint(GeometryUtils.toCoordinate(target.getLocation()));
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#getBoundaryDimension()
 	 */
 	@Override
@@ -124,7 +157,9 @@ public class DynamicLineString extends LineString implements Lineal {
 		return 0;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#reverse()
 	 */
 	@Override
@@ -132,49 +167,73 @@ public class DynamicLineString extends LineString implements Lineal {
 		return new DynamicLineString(getFactory(), target, source);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vividsolutions.jts.geom.Geometry#equalsExact(com.vividsolutions.jts.geom.Geometry, double)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vividsolutions.jts.geom.Geometry#equalsExact(com.vividsolutions.jts.
+	 * geom.Geometry, double)
 	 */
 	@Override
 	public boolean equalsExact(final Geometry other, final double tolerance) {
-		if ( !(other instanceof DynamicLineString) ) { return false; }
-		DynamicLineString dls = (DynamicLineString) other;
+		if (!(other instanceof DynamicLineString)) {
+			return false;
+		}
+		final DynamicLineString dls = (DynamicLineString) other;
 		return dls.source == source && dls.target == target;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.CoordinateFilter)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.
+	 * CoordinateFilter)
 	 */
 	@Override
 	public void apply(final CoordinateFilter filter) {
 		filter.filter(getCoordinate());
-		filter.filter(target.getLocation().toCoordinate());
+		filter.filter(GeometryUtils.toCoordinate(target.getLocation()));
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.CoordinateSequenceFilter)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.
+	 * CoordinateSequenceFilter)
 	 */
 	@Override
 	public void apply(final CoordinateSequenceFilter filter) {
-		CoordinateSequence points = getCoordinateSequence();
+		final CoordinateSequence points = getCoordinateSequence();
 		filter.filter(points, 0);
-		if ( filter.isDone() ) { return; }
+		if (filter.isDone()) {
+			return;
+		}
 		filter.filter(points, 1);
-		if ( filter.isGeometryChanged() ) {
+		if (filter.isGeometryChanged()) {
 			geometryChanged();
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.GeometryFilter)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.
+	 * GeometryFilter)
 	 */
 	@Override
 	public void apply(final GeometryFilter filter) {
 		filter.filter(this);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.GeometryComponentFilter)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vividsolutions.jts.geom.Geometry#apply(com.vividsolutions.jts.geom.
+	 * GeometryComponentFilter)
 	 */
 	@Override
 	public void apply(final GeometryComponentFilter filter) {
@@ -191,45 +250,59 @@ public class DynamicLineString extends LineString implements Lineal {
 		return true;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#normalize()
 	 */
 	@Override
-	public void normalize() {}
+	public void normalize() {
+	}
 
 	@Override
 	public Object clone() {
-		DynamicLineString s = new DynamicLineString(getFactory(), source, target);
+		final DynamicLineString s = new DynamicLineString(getFactory(), source, target);
 		s.setUserData(getUserData());
 		return s;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.vividsolutions.jts.geom.Geometry#computeEnvelopeInternal()
 	 */
 	@Override
 	protected Envelope computeEnvelopeInternal() {
-		CoordinateSequence points = getFactory().getCoordinateSequenceFactory().create(getCoordinates());
+		final CoordinateSequence points = getFactory().getCoordinateSequenceFactory().create(getCoordinates());
 		return points.expandEnvelope(new Envelope());
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object)
 	 */
 	@Override
 	protected int compareToSameClass(final Object o) {
-		DynamicLineString line = (DynamicLineString) o;
-		int comparison = source.getLocation().compareTo(line.source.getLocation());
-		if ( comparison != 0 ) { return comparison; }
+		final DynamicLineString line = (DynamicLineString) o;
+		final int comparison = source.getLocation().compareTo(line.source.getLocation());
+		if (comparison != 0) {
+			return comparison;
+		}
 		return target.getLocation().compareTo(line.target.getLocation());
 	}
 
-	/* (non-Javadoc)
-	 * @see com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object, com.vividsolutions.jts.geom.CoordinateSequenceComparator)
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.vividsolutions.jts.geom.Geometry#compareToSameClass(java.lang.Object,
+	 * com.vividsolutions.jts.geom.CoordinateSequenceComparator)
 	 */
 	@Override
 	protected int compareToSameClass(final Object o, final CoordinateSequenceComparator comp) {
-		DynamicLineString line = (DynamicLineString) o;
+		final DynamicLineString line = (DynamicLineString) o;
 		return comp.compare(getCoordinateSequence(), line.getCoordinateSequence());
 	}
 
@@ -250,15 +323,23 @@ public class DynamicLineString extends LineString implements Lineal {
 
 	@Override
 	public Point getPointN(final int n) {
-		if ( n == 0 ) { return getFactory().createPoint(getCoordinate()); }
-		if ( n == 1 ) { return getFactory().createPoint(target.getLocation().toCoordinate()); }
+		if (n == 0) {
+			return getFactory().createPoint(getCoordinate());
+		}
+		if (n == 1) {
+			return getFactory().createPoint(GeometryUtils.toCoordinate(target.getLocation()));
+		}
 		return null;
 	}
 
 	@Override
 	public Coordinate getCoordinateN(final int n) {
-		if ( n == 0 ) { return getCoordinate(); }
-		if ( n == 1 ) { return target.getLocation().toCoordinate(); }
+		if (n == 0) {
+			return getCoordinate();
+		}
+		if (n == 1) {
+			return GeometryUtils.toCoordinate(target.getLocation());
+		}
 		return null;
 
 	}

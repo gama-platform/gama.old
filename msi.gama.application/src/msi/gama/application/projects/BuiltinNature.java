@@ -1,11 +1,10 @@
 package msi.gama.application.projects;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 
 public class BuiltinNature implements IProjectNature {
-
-	public static final String NATURE_ID = "msi.gama.application.builtinNature";
 
 	private IProject project;
 

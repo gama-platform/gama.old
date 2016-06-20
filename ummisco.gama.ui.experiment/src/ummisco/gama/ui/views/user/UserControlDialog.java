@@ -30,8 +30,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
@@ -43,6 +41,8 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.dialogs.AbstractDetailsDialog;
 import ummisco.gama.ui.experiment.parameters.AgentAttributesEditorsList;
+import ummisco.gama.ui.interfaces.EditorListener;
+import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.resources.IGamaIcons;

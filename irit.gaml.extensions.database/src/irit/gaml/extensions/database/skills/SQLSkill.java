@@ -12,17 +12,28 @@
 package irit.gaml.extensions.database.skills;
 
 import java.sql.Connection;
-import java.text.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import msi.gama.database.sql.*;
+
+import msi.gama.database.sql.SqlConnection;
+import msi.gama.database.sql.SqlUtils;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gama.util.matrix.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
+import msi.gama.util.matrix.GamaObjectMatrix;
+import msi.gama.util.matrix.IMatrix;
 import msi.gaml.skills.Skill;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /*
  * @Author TRUONG Minh Thai
@@ -67,58 +78,40 @@ import msi.gaml.types.*;
 @skill(name = "SQLSKILL", concept = { IConcept.DATABASE, IConcept.SKILL })
 public class SQLSkill extends Skill {
 
-	private static final boolean DEBUG = false; // Change DEBUG = false for release version
-
-	/*
-	 * for test only
-	 */
-	@action(name = "helloWorld")
-	public Object helloWorld(final IScope scope) throws GamaRuntimeException {
-		scope.getGui().informConsole("Hello World", scope.getRoot());
-		return null;
-	}
+	private static final boolean DEBUG = false; // Change DEBUG = false for
+												// release version
 
 	// Get current time of system
 	// added from MaeliaSkill
 	@action(name = "timeStamp")
 	public Long timeStamp(final IScope scope) throws GamaRuntimeException {
-		Long timeStamp = System.currentTimeMillis();
+		final Long timeStamp = System.currentTimeMillis();
 		return timeStamp;
 	}
 
 	// Get current time of system
-	@action(name = "getCurrentDateTime",
-		args = { @arg(name = "dateFormat",
-			type = IType.STRING,
-			optional = false,
-			doc = @doc("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ") ) })
+	@action(name = "getCurrentDateTime", args = {
+			@arg(name = "dateFormat", type = IType.STRING, optional = false, doc = @doc("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ")) })
 	public String getCurrentDateTime(final IScope scope) throws GamaRuntimeException {
-		String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);
-		DateFormat datef = new SimpleDateFormat(dateFormat);
-		Calendar c = Calendar.getInstance();
+		final String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);
+		final DateFormat datef = new SimpleDateFormat(dateFormat);
+		final Calendar c = Calendar.getInstance();
 		return datef.format(c.getTime());
 	}
 
-	@action(name = "getDateOffset",
-		args = {
-			@arg(name = "dateFormat",
-				type = IType.STRING,
-				optional = false,
-				doc = @doc("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ") ),
-			@arg(name = "dateStr", type = IType.STRING, optional = false, doc = @doc("Start date") ),
-			@arg(name = "offset",
-				type = IType.STRING,
-				optional = false,
-				doc = @doc("number on day to increase or decrease") ) })
+	@action(name = "getDateOffset", args = {
+			@arg(name = "dateFormat", type = IType.STRING, optional = false, doc = @doc("date format examples: 'yyyy-MM-dd' , 'yyyy-MM-dd HH:mm:ss' ")),
+			@arg(name = "dateStr", type = IType.STRING, optional = false, doc = @doc("Start date")),
+			@arg(name = "offset", type = IType.STRING, optional = false, doc = @doc("number on day to increase or decrease")) })
 	public String getDateOffset(final IScope scope) throws GamaRuntimeException {
-		String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);
-		String dateStr = (String) scope.getArg("dateStr", IType.STRING);
-		int dateOffset = Integer.parseInt(scope.getArg("offset", IType.INT).toString());
-		DateFormat datef = new SimpleDateFormat(dateFormat);
-		Calendar c = Calendar.getInstance();
+		final String dateFormat = (String) scope.getArg("dateFormat", IType.STRING);
+		final String dateStr = (String) scope.getArg("dateStr", IType.STRING);
+		final int dateOffset = Integer.parseInt(scope.getArg("offset", IType.INT).toString());
+		final DateFormat datef = new SimpleDateFormat(dateFormat);
+		final Calendar c = Calendar.getInstance();
 		try {
 			c.setTime(datef.parse(dateStr));
-		} catch (ParseException e) {
+		} catch (final ParseException e) {
 			// TODO Auto-generated catch block
 			// e.printStackTrace();
 			throw GamaRuntimeException.error("getDate error: Date format may not correct!" + e.toString(), scope);
@@ -132,84 +125,66 @@ public class SQLSkill extends Skill {
 	/*
 	 * Make a connection to BDMS
 	 *
-	 * @syntax: do action: connectDB {
-	 * arg params value:[
-	 * "dbtype":"SQLSERVER", //MySQL/sqlserver/sqlite
-	 * "url":"host address",
-	 * "port":"port number",
-	 * "database":"database name",
-	 * "user": "user name",
-	 * "passwd": "password"
-	 * ];
+	 * @syntax: do action: connectDB { arg params value:[ "dbtype":"SQLSERVER",
+	 * //MySQL/sqlserver/sqlite "url":"host address", "port":"port number",
+	 * "database":"database name", "user": "user name", "passwd": "password" ];
 	 * }
 	 */
-	@action(name = "testConnection",
-		args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters") ) })
+	@action(name = "testConnection", args = {
+			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
 	public boolean testConnection(final IScope scope) {
 
 		SqlConnection sqlConn;
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
-			Connection conn = sqlConn.connectDB();
+			final Connection conn = sqlConn.connectDB();
 			conn.close();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// e.printStackTrace();
-			// throw new GamaRuntimeException("SQLSkill.connectDB: " + e.toString());
+			// throw new GamaRuntimeException("SQLSkill.connectDB: " +
+			// e.toString());
 			return false;
 		}
 		return true;
 	}
 
 	/*
-	 * - Make a connection to BDMS
-	 * - Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT,
-	 * UPDATE or DELETE statement; or an SQL statement that returns nothing, such as a DDL
+	 * - Make a connection to BDMS - Executes the SQL statement in this
+	 * PreparedStatement object, which must be an SQL INSERT, UPDATE or DELETE
+	 * statement; or an SQL statement that returns nothing, such as a DDL
 	 * statement.
 	 *
-	 * @syntax: do action: executeUpdate {
-	 * arg params value:[
-	 * "dbtype":"MSSQL",
-	 * "url":"host address",
-	 * "port":"port number",
-	 * "database":"database name",
-	 * "user": "user name",
-	 * "passwd": "password",
-	 * ],
-	 * arg updateComm value: " SQL statement string with question marks"
-	 * arg values value [List of values that are used to replace question marks]
-	 * }
+	 * @syntax: do action: executeUpdate { arg params value:[ "dbtype":"MSSQL",
+	 * "url":"host address", "port":"port number", "database":"database name",
+	 * "user": "user name", "passwd": "password", ], arg updateComm value:
+	 * " SQL statement string with question marks" arg values value [List of
+	 * values that are used to replace question marks] }
 	 */
-	@action(name = "executeUpdate",
-		args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters") ),
-			@arg(name = "updateComm",
-				type = IType.STRING,
-				optional = false,
-				doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark") ),
-			@arg(name = "values",
-				type = IType.LIST,
-				optional = true,
-				doc = @doc("List of values that are used to replace question mark") ) })
+	@action(name = "executeUpdate", args = {
+			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+			@arg(name = "updateComm", type = IType.STRING, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
+			@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question mark")) })
 	public int executeUpdate_QM(final IScope scope) throws GamaRuntimeException {
 
-		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
-		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
+		final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+		final String updateComm = (String) scope.getArg("updateComm", IType.STRING);
+		final GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
 		int row_count = -1;
 		SqlConnection sqlConn;
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
-			if ( values.size() > 0 ) {
+			if (values.size() > 0) {
 				row_count = sqlConn.executeUpdateDB(scope, updateComm, values);
 			} else {
 				row_count = sqlConn.executeUpdateDB(scope, updateComm);
 			}
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLSkill.executeUpdateDB: " + e.toString(), scope);
 		}
-		if ( DEBUG ) {
+		if (DEBUG) {
 			scope.getGui().debug(updateComm + " was run");
 		}
 
@@ -221,43 +196,44 @@ public class SQLSkill extends Skill {
 	/*
 	 * Make a connection to BDMS and execute the insert statement
 	 *
-	 * @syntax do insert with: [into:: table_name, columns:column_list, values:value_list];
+	 * @syntax do insert with: [into:: table_name, columns:column_list,
+	 * values:value_list];
 	 *
 	 * @return an integer
 	 */
-	@action(name = "insert",
-		args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters") ),
-			@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name") ),
-			@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table") ),
-			@arg(name = "values",
-				type = IType.LIST,
-				optional = false,
-				doc = @doc("List of values that are used to insert into table. Columns and values must have same size") )
-		// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc =
-		// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+	@action(name = "insert", args = {
+			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+			@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name")),
+			@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table")),
+			@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size"))
+			// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc
+			// =
+			// @doc("if transform = true then geometry will be tranformed from
+			// absolute to gis otherways it will be not transformed. Default
+			// value is false "))
 	})
 	public int insert(final IScope scope) throws GamaRuntimeException {
 
 		SqlConnection sqlConn;
-		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		String table_name = (String) scope.getArg("into", IType.STRING);
-		GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);
-		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
+		final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+		final String table_name = (String) scope.getArg("into", IType.STRING);
+		final GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);
+		final GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
 		int rec_no = -1;
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
 			// Connection conn=sqlConn.connectDB();
-			if ( cols.size() > 0 ) {
+			if (cols.size() > 0) {
 				rec_no = sqlConn.insertDB(scope, table_name, cols, values);
 			} else {
 				rec_no = sqlConn.insertDB(scope, table_name, values);
 			}
 			// conn.close();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLSkill.insert: " + e.toString(), scope);
 		}
-		if ( DEBUG ) {
+		if (DEBUG) {
 			scope.getGui().debug("Insert into " + " was run");
 		}
 
@@ -268,51 +244,42 @@ public class SQLSkill extends Skill {
 	/*
 	 * Make a connection to BDMS and execute the select statement
 	 *
-	 * @syntax do action:
-	 * select {
-	 * arg params value:[
-	 * "dbtype":"SQLSERVER",
-	 * "url":"host address",
-	 * "port":"port number",
-	 * "database":"database name",
-	 * "user": "user name",
-	 * "passwd": "password"
-	 * ];
-	 * arg select value: "select string with question marks";
-	 * arg values value [List of values that are used to replace question marks]
-	 * }
+	 * @syntax do action: select { arg params value:[ "dbtype":"SQLSERVER",
+	 * "url":"host address", "port":"port number", "database":"database name",
+	 * "user": "user name", "passwd": "password" ]; arg select value:
+	 * "select string with question marks"; arg values value [List of values
+	 * that are used to replace question marks] }
 	 *
 	 * @return GamaList<GamaList<Object>>
 	 */
-	@action(name = "select",
-		args = { @arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters") ),
-			@arg(name = "select",
-				type = IType.STRING,
-				optional = false,
-				doc = @doc("select string with question marks") ),
-			@arg(name = "values",
-				type = IType.LIST,
-				optional = true,
-				doc = @doc("List of values that are used to replace question marks") )
-		// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc =
-		// @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+	@action(name = "select", args = {
+			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+			@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
+			@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks"))
+			// ,@arg(name = "transform", type = IType.BOOL, optional = true, doc
+			// =
+			// @doc("if transform = true then geometry will be tranformed from
+			// absolute to gis otherways it will be not transformed. Default
+			// value is false "))
 
 	})
 	public IList select_QM(final IScope scope) throws GamaRuntimeException {
 
-		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-		String selectComm = (String) scope.getArg("select", IType.STRING);
-		IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
+		final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+		final String selectComm = (String) scope.getArg("select", IType.STRING);
+		final IList<Object> values = (IList<Object>) scope.getArg("values", IType.LIST);
 		// thai.truongminh@gmail.com
 		// Move transform arg of select to a key in params
-		// boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : true;
-		// boolean transform = params.containsKey("transform") ? (Boolean) params.get("transform") : true;
+		// boolean transform = scope.hasArg("transform") ? (Boolean)
+		// scope.getArg("transform", IType.BOOL) : true;
+		// boolean transform = params.containsKey("transform") ? (Boolean)
+		// params.get("transform") : true;
 
 		SqlConnection sqlConn;
 		IList<? super IList<Object>> repRequest = GamaListFactory.create();
 		try {
 			sqlConn = SqlUtils.createConnectionObject(scope);
-			if ( values.size() > 0 ) {
+			if (values.size() > 0) {
 				repRequest = sqlConn.executeQueryDB(scope, selectComm, values);
 			} else {
 				repRequest = sqlConn.selectDB(scope, selectComm);
@@ -325,7 +292,7 @@ public class SQLSkill extends Skill {
 			// return repRequest;
 			// }
 			return repRequest;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLSkill.select_QM: " + e.toString(), scope);
@@ -335,58 +302,46 @@ public class SQLSkill extends Skill {
 
 	}
 
-	@action(name = "list2Matrix",
-		args = {
-			@arg(name = "param",
-				type = IType.LIST,
-				optional = false,
-				doc = @doc(value = "Param: a list of records and metadata") ),
-			@arg(name = "getName",
-				type = IType.BOOL,
-				optional = true,
-				doc = @doc(value = "getType: a boolean value, optional parameter",
-					comment = "if it is true then the action will return columnNames and data. default is true") ),
-			@arg(name = "getType",
-				type = IType.BOOL,
-				optional = true,
-				doc = @doc(value = "getType: a boolean value, optional parameter",
-					comment = "if it is true then the action will return columnTypes and data. default is false") )
+	@action(name = "list2Matrix", args = {
+			@arg(name = "param", type = IType.LIST, optional = false, doc = @doc(value = "Param: a list of records and metadata")),
+			@arg(name = "getName", type = IType.BOOL, optional = true, doc = @doc(value = "getType: a boolean value, optional parameter", comment = "if it is true then the action will return columnNames and data. default is true")),
+			@arg(name = "getType", type = IType.BOOL, optional = true, doc = @doc(value = "getType: a boolean value, optional parameter", comment = "if it is true then the action will return columnTypes and data. default is false"))
 
 	})
 	public IMatrix List2matrix(final IScope scope) throws GamaRuntimeException {
 		try {
-			boolean getName = scope.hasArg("getName") ? (Boolean) scope.getArg("getName", IType.BOOL) : true;
-			boolean getType = scope.hasArg("getType") ? (Boolean) scope.getArg("getType", IType.BOOL) : false;
-			GamaList<Object> value = (GamaList<Object>) scope.getArg("param", IType.LIST);
-			GamaList<Object> columnNames = (GamaList<Object>) value.get(0);
-			GamaList<Object> columnTypes = (GamaList<Object>) value.get(1);
-			GamaList<Object> records = (GamaList<Object>) value.get(2);
-			int columnSize = columnNames.size();
-			int lineSize = records.size();
+			final boolean getName = scope.hasArg("getName") ? (Boolean) scope.getArg("getName", IType.BOOL) : true;
+			final boolean getType = scope.hasArg("getType") ? (Boolean) scope.getArg("getType", IType.BOOL) : false;
+			final GamaList<Object> value = (GamaList<Object>) scope.getArg("param", IType.LIST);
+			final GamaList<Object> columnNames = (GamaList<Object>) value.get(0);
+			final GamaList<Object> columnTypes = (GamaList<Object>) value.get(1);
+			final GamaList<Object> records = (GamaList<Object>) value.get(2);
+			final int columnSize = columnNames.size();
+			final int lineSize = records.size();
 
-			final IMatrix matrix =
-				new GamaObjectMatrix(columnSize, lineSize + (getType ? 1 : 0) + (getName ? 1 : 0), Types.NO_TYPE);
+			final IMatrix matrix = new GamaObjectMatrix(columnSize, lineSize + (getType ? 1 : 0) + (getName ? 1 : 0),
+					Types.NO_TYPE);
 			// Add ColumnNames to Matrix
-			if ( getName == true ) {
-				for ( int j = 0; j < columnSize; j++ ) {
+			if (getName == true) {
+				for (int j = 0; j < columnSize; j++) {
 					matrix.set(scope, j, 0, columnNames.get(j));
 				}
 			}
 			// Add Columntype to Matrix
-			if ( getType == true ) {
-				for ( int j = 0; j < columnSize; j++ ) {
+			if (getType == true) {
+				for (int j = 0; j < columnSize; j++) {
 					matrix.set(scope, j, 0 + (getName ? 1 : 0), columnTypes.get(j));
 				}
 			}
 			// Add Records to Matrix
-			for ( int i = 0; i < lineSize; i++ ) {
-				GamaList<Object> record = (GamaList<Object>) records.get(i);
-				for ( int j = 0; j < columnSize; j++ ) {
+			for (int i = 0; i < lineSize; i++) {
+				final GamaList<Object> record = (GamaList<Object>) records.get(i);
+				for (int j = 0; j < columnSize; j++) {
 					matrix.set(scope, j, i + (getType ? 1 : 0) + (getName ? 1 : 0), record.get(j));
 				}
 			}
 			return matrix;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;

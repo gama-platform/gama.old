@@ -141,7 +141,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	public void relocateOverlay(final Shell newShell) {
 		if (popup.setParent(newShell)) {
-			System.out.println("Relocating overlay");
+			// System.out.println("Relocating overlay");
 			popup.moveAbove(referenceComposite);
 		}
 	}

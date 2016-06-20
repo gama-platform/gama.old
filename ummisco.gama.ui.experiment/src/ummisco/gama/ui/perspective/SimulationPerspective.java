@@ -27,8 +27,6 @@ public class SimulationPerspective implements IPerspectiveFactory {
 		lay.setEditorAreaVisible(false);
 		final String editor = lay.getEditorArea();
 
-		// lay.addPerspectiveShortcut(PerspectiveHelper.PERSPECTIVE_MODELING_ID);
-
 		final IFolderLayout navigAndParam = lay.createFolder("navigAndParam", IPageLayout.LEFT, 0.3f, editor);
 		navigAndParam.addView(IGui.PARAMETER_VIEW_ID);
 		navigAndParam.addView(IGui.NAVIGATOR_VIEW_ID);

@@ -96,7 +96,7 @@ import com.google.inject.Injector;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.ui.XtextGui;
+import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
 import msi.gama.lang.gaml.ui.editbox.BoxProviderRegistry;
 import msi.gama.lang.gaml.ui.editbox.IBoxDecorator;
@@ -152,8 +152,8 @@ public class GamlEditor extends XtextEditor
 	GamaToolbar2 toolbar;
 	Composite toolbarParent;
 	EditToolbar editToolbar;
-	boolean decorationEnabled = XtextGui.EDITBOX_ENABLED.getValue();
-	boolean editToolbarEnabled = XtextGui.EDITOR_SHOW_TOOLBAR.getValue();
+	boolean decorationEnabled = AutoStartup.EDITBOX_ENABLED.getValue();
+	boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
 	// OtherExperimentsButton other;
 
 	@Inject
@@ -423,12 +423,9 @@ public class GamlEditor extends XtextEditor
 		public void widgetSelected(final SelectionEvent evt) {
 			final IGui gui = GAMA.getRegularGui();
 			// We refuse to run if there is no XtextGui available.
-			if (!(gui instanceof XtextGui)) {
-				return;
-			}
 			GamlEditor.this.performSave(true, null);
-			if (XtextGui.EDITOR_SAVE.getValue()) {
-				WorkbenchHelper.getPage().saveAllEditors(XtextGui.EDITOR_SAVE_ASK.getValue());
+			if (AutoStartup.EDITOR_SAVE.getValue()) {
+				WorkbenchHelper.getPage().saveAllEditors(AutoStartup.EDITOR_SAVE_ASK.getValue());
 			}
 			String name = ((FlatButton) evt.widget).getText();
 			final int i = state.abbreviations.indexOf(name);
@@ -603,7 +600,7 @@ public class GamlEditor extends XtextEditor
 	}
 
 	private void beforeSave() {
-		if (!XtextGui.EDITOR_CLEAN_UP.getValue()) {
+		if (!AutoStartup.EDITOR_CLEAN_UP.getValue()) {
 			return;
 		}
 		final SourceViewer sv = (SourceViewer) getInternalSourceViewer();
@@ -817,12 +814,13 @@ public class GamlEditor extends XtextEditor
 			// this.fSourceViewerDecorationSupport.updateOverviewDecorations();
 
 			this.getVerticalRuler().getControl()
-					.setBackground(GamaColors.get(XtextGui.EDITOR_BACKGROUND_COLOR.getValue()).color());
+					.setBackground(GamaColors.get(AutoStartup.EDITOR_BACKGROUND_COLOR.getValue()).color());
 
 			final Iterator e = ((CompositeRuler) getVerticalRuler()).getDecoratorIterator();
 			while (e.hasNext()) {
 				final IVerticalRulerColumn column = (IVerticalRulerColumn) e.next();
-				column.getControl().setBackground(GamaColors.get(XtextGui.EDITOR_BACKGROUND_COLOR.getValue()).color());
+				column.getControl()
+						.setBackground(GamaColors.get(AutoStartup.EDITOR_BACKGROUND_COLOR.getValue()).color());
 				column.redraw();
 			}
 			// this.getVerticalRuler().getControl().redraw();

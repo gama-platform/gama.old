@@ -55,13 +55,13 @@ public class CRSChooserDialog extends Dialog {
 	}
 
 	public static void main(final String[] args) {
-		final CRSChooserDialog dialog =
-			new CRSChooserDialog(new Shell(Display.getDefault()), DefaultGeographicCRS.WGS84);
+		final CRSChooserDialog dialog = new CRSChooserDialog(new Shell(Display.getDefault()),
+				DefaultGeographicCRS.WGS84);
 		dialog.setBlockOnOpen(true);
 		dialog.open();
 
 		final CoordinateReferenceSystem crs = dialog.getResult();
-		System.out.println(crs);
+		// System.out.println(crs);
 
 	}
 }

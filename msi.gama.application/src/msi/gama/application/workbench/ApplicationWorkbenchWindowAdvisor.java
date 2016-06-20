@@ -42,11 +42,11 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 			@Override
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
-				if ( GAMA.getGui().isSimulationPerspective() ) {
+				if ( PerspectiveHelper.isSimulationPerspective() ) {
 					// System.out.println("Running the perspective listener to automatically launch modeling");
 					final IPerspectiveDescriptor desc = page.getPerspective();
 					page.closePerspective(desc, false, false);
-					GAMA.getGui().openModelingPerspective(true);
+					PerspectiveHelper.openModelingPerspective(true);
 				}
 				configurer.getWindow().removePerspectiveListener(this);
 
@@ -57,7 +57,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			@Override
 			public void pageActivated(final IWorkbenchPage page) {
 				configurer.getWindow().removePageListener(this);
-				GAMA.getGui().openModelingPerspective(true);
+				PerspectiveHelper.openModelingPerspective(true);
 			}
 
 			@Override

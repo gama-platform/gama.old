@@ -916,7 +916,7 @@ public class GamaPreferences {
 	}
 
 	public static void applyPreferencesFrom(final String path, final Map<String, Object> modelValues) {
-		System.out.println("Apply preferences from " + path);
+		// System.out.println("Apply preferences from " + path);
 		try {
 			final FileInputStream is = new FileInputStream(path);
 			store.importPreferences(is);
@@ -928,7 +928,7 @@ public class GamaPreferences {
 	}
 
 	public static void savePreferencesTo(final String path) {
-		System.out.println("Save preferences to " + path);
+		// System.out.println("Save preferences to " + path);
 		try {
 			final FileOutputStream os = new FileOutputStream(path);
 			store.exportNode(os);

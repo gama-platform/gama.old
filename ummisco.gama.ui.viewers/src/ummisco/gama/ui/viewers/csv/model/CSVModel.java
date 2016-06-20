@@ -27,7 +27,7 @@ import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 
-import msi.gama.gui.metadata.FileMetaDataProvider;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.file.CsvReader;
 import msi.gama.util.file.CsvWriter;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
@@ -409,7 +409,8 @@ public class CSVModel implements IRowChangesListener {
 		info.cols--;
 		for (final CSVRow row : rows) {
 			if (!row.isCommentLine()) {
-				System.out.println("remove elmt:[" + colIndex + "] in row [" + row + "]");
+				// System.out.println("remove elmt:[" + colIndex + "] in row ["
+				// + row + "]");
 				row.removeElementAt(colIndex);
 			}
 		}
@@ -495,7 +496,7 @@ public class CSVModel implements IRowChangesListener {
 	public void saveMetaData() {
 		// System.out.println("Saving the following metadata: " +
 		// getInfo().getSuffix());
-		FileMetaDataProvider.storeMetadata(file, getInfo(), true);
+		GAMA.getGui().getMetaDataProvider().storeMetadata(file, getInfo(), true);
 	}
 
 	/**
@@ -514,12 +515,12 @@ public class CSVModel implements IRowChangesListener {
 	 */
 	public CSVInfo getInfo() {
 		if (currentInfo == null) {
-			final IGamaFileMetaData metaData = FileMetaDataProvider.getInstance().getMetaData(file, false, true);
+			final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 			if (metaData instanceof CSVInfo) {
 				currentInfo = (CSVInfo) metaData;
 			} else {
-				FileMetaDataProvider.storeMetadata(file, null, true);
-				currentInfo = (CSVInfo) FileMetaDataProvider.getInstance().getMetaData(file, false, true);
+				GAMA.getGui().getMetaDataProvider().storeMetadata(file, null, true);
+				currentInfo = (CSVInfo) GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 			}
 		}
 		return currentInfo;

@@ -14,7 +14,8 @@ package ummisco.gama.ui.commands;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import ummisco.gama.ui.utils.PerspectiveHelper;
+
+import msi.gama.application.workbench.PerspectiveHelper;
 
 public class SwitchToModeling extends AbstractHandler {
 

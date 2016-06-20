@@ -119,7 +119,7 @@ public class SimulationPopulation extends GamaPopulation {
 			final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)
 			throws GamaRuntimeException {
 		for (int i = 0; i < number; i++) {
-			scope.getGui().waitStatus("Initializing simulation");
+			scope.getGui().getStatus().waitStatus("Initializing simulation");
 			currentSimulation = new SimulationAgent(this);
 			currentSimulation.setIndex(currentAgentIndex++);
 			currentSimulation.setScheduled(toBeScheduled);
@@ -150,7 +150,7 @@ public class SimulationPopulation extends GamaPopulation {
 
 	private void initSimulation(final IScope scope, final SimulationAgent sim, final List<? extends Map> initialValues,
 			final boolean isRestored, final boolean toBeScheduled) {
-		scope.getGui().waitStatus("Instantiating agents");
+		scope.getGui().getStatus().waitStatus("Instantiating agents");
 		createVariablesFor(sim.getScope(), Collections.singletonList(sim), initialValues);
 		if (toBeScheduled) {
 			if (isRestored) {

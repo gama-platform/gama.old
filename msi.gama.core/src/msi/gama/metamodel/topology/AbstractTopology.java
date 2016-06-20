@@ -249,7 +249,7 @@ public abstract class AbstractTopology implements ITopology {
 		}
 
 		if (isTorus()) {
-			final Point pt = GeometryUtils.FACTORY.createPoint(point.toCoordinate());
+			final Point pt = GeometryUtils.FACTORY.createPoint(GeometryUtils.toCoordinate(point));
 
 			for (int cnt = 0; cnt < 8; cnt++) {
 				final AffineTransformation at = new AffineTransformation();

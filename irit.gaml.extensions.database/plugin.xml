@@ -4,5 +4,14 @@
    <extension
          point="gaml.extension">
    </extension>
+   
+     <extension
+         point="gama.create">
+      <implementation
+            class="msi.gama.database.CreateFromDatabaseDelegate"
+            description="Create agents from databases">
+      </implementation>
+   </extension>
+ 
 
 </plugin>

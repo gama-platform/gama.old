@@ -6,7 +6,8 @@ Bundle-Version: 1.7.0.qualifier
 Require-Bundle: org.eclipse.core.runtime,
  msi.gama.processor,
  org.eclipse.emf.ecore;visibility:=reexport,
- msi.gama.ext
+ msi.gama.ext,
+ org.eclipse.core.resources
 Bundle-ActivationPolicy: lazy
 Export-Package: msi.gama.common,
  msi.gama.common.interfaces;
@@ -44,9 +45,6 @@ Export-Package: msi.gama.common,
    org.opengis.referencing.operation,
    com.vividsolutions.jts.geom,
    msi.gama.runtime.exceptions",
- msi.gama.database.geosql,
- msi.gama.database.mdx,
- msi.gama.database.sql,
  msi.gama.extensions.messaging,
  msi.gama.kernel.batch;
   uses:="msi.gaml.expressions,

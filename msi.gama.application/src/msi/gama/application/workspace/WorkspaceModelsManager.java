@@ -44,13 +44,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.equinox.internal.app.CommandLineArgs;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
-import msi.gama.application.projects.BuiltinNature;
-import msi.gama.application.projects.GamaNature;
-import msi.gama.application.projects.PluginNature;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
 
@@ -62,6 +60,11 @@ import msi.gaml.compilation.GamaBundleLoader;
  *
  */
 public class WorkspaceModelsManager {
+
+	public final static String GAMA_NATURE = "msi.gama.application.gamaNature";
+	public final static String XTEXT_NATURE = "org.eclipse.xtext.ui.shared.xtextNature";
+	public final static String PLUGIN_NATURE = "msi.gama.application.pluginNature";
+	public final static String BUILTIN_NATURE = "msi.gama.application.builtinNature";
 
 	public final static WorkspaceModelsManager instance = new WorkspaceModelsManager();
 	public static OpenDocumentEventProcessor processor;
@@ -104,10 +107,6 @@ public class WorkspaceModelsManager {
 
 	public static QualifiedName BUILTIN_PROPERTY = new QualifiedName("gama.builtin", "models");
 	public static String BUILTIN_VERSION = Platform.getProduct().getDefiningBundle().getVersion().toString();
-	public final static String GAMA_NATURE = GamaNature.NATURE_ID;
-	public final static String XTEXT_NATURE = "org.eclipse.xtext.ui.shared.xtextNature";
-	public final static String PLUGIN_NATURE = PluginNature.NATURE_ID;
-	public final static String BUILTIN_NATURE = BuiltinNature.NATURE_ID;
 
 	public void openModelPassedAsArgument(final String modelPath) {
 
@@ -133,7 +132,7 @@ public class WorkspaceModelsManager {
 				@Override
 				public void run() {
 					try {
-						System.out.println(Thread.currentThread().getName() + ": Rebuilding the model " + fp);
+						// System.out.println(Thread.currentThread().getName() + ": Rebuilding the model " + fp);
 						// Force the project to rebuild itself in order to load the various XText plugins.
 						file.touch(null);
 						file.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
@@ -145,24 +144,20 @@ public class WorkspaceModelsManager {
 					while (GAMA.getRegularGui() == null) {
 						try {
 							Thread.sleep(100);
-							System.out.println(Thread.currentThread().getName() +
-								": waiting for the modeling and simulation environments to be available");
+							// System.out.println(Thread.currentThread().getName() +
+							// ": waiting for the modeling and simulation environments to be available");
 						} catch (final InterruptedException e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 					}
 					if ( en == null ) {
-						System.out
-							.println(Thread.currentThread().getName() + ": Opening the model " + fp + " in the editor");
+						// System.out
+						// .println(Thread.currentThread().getName() + ": Opening the model " + fp + " in the editor");
 						GAMA.getGui().editModel(file);
 					} else {
-						try {
-							System.out.println(Thread.currentThread().getName() + ": Trying to run experiment " + en);
-							GAMA.getGui().runModel(file, en);
-						} catch (final CoreException e) {
-							e.printStackTrace();
-						}
+						// System.out.println(Thread.currentThread().getName() + ": Trying to run experiment " + en);
+						GAMA.getGui().runModel(file, en);
 					}
 
 				}
@@ -177,7 +172,7 @@ public class WorkspaceModelsManager {
 	 * @return
 	 */
 	private IFile findAndLoadIFile(final String filePath) {
-		GAMA.getGui().debug("WorkspaceModelsManager.findAndLoadIFile " + filePath);
+		// GAMA.getGui().debug("WorkspaceModelsManager.findAndLoadIFile " + filePath);
 		// No error in case of an empty argument
 		if ( filePath == null || filePath.isEmpty() || StringUtils.isWhitespace(filePath) ) { return null; }
 		final IPath path = new Path(filePath);
@@ -214,7 +209,7 @@ public class WorkspaceModelsManager {
 	}
 
 	private IFile findOutsideWorkspace(final IPath originalPath) {
-		GAMA.getGui().debug("WorkspaceModelsManager.findOutsideWorkspace " + originalPath);
+		// GAMA.getGui().debug("WorkspaceModelsManager.findOutsideWorkspace " + originalPath);
 		final File modelFile = new File(originalPath.toOSString());
 		// TODO If the file does not exist we return null (might be a good idea to check other locations)
 		if ( !modelFile.exists() ) { return null; }
@@ -237,7 +232,8 @@ public class WorkspaceModelsManager {
 		}
 
 		if ( dotFile == null || projectFileBean == null ) {
-			GAMA.getGui().tell("The model '" + modelFile.getAbsolutePath() +
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "No project", "The model '" +
+				modelFile.getAbsolutePath() +
 				"' does not seem to belong to an existing GAML project. It will be imported as part of the 'Unclassified models' project.");
 			return createUnclassifiedModelsProjectAndAdd(originalPath);
 		}
@@ -264,7 +260,8 @@ public class WorkspaceModelsManager {
 							final String name = description.getName();
 							for ( final IProject p : projects ) {
 								if ( p.getName().equals(name) ) {
-									GAMA.getGui().tell(
+									MessageDialog.openInformation(Display.getDefault().getActiveShell(),
+										"Existing project",
 										"A project with the same name already exists in the workspace. The model '" +
 											modelFile.getAbsolutePath() +
 											" will be imported as part of the 'Unclassified models' project.");
@@ -350,8 +347,8 @@ public class WorkspaceModelsManager {
 			return iFile;
 		} catch (final CoreException e) {
 			e.printStackTrace();
-			GAMA.getGui()
-				.tell("The file " + (iFile == null ? location.lastSegment() : iFile.getFullPath().lastSegment()) +
+			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "Error in creation",
+				"The file " + (iFile == null ? location.lastSegment() : iFile.getFullPath().lastSegment()) +
 					" cannot be created because of the following exception " + e.getMessage());
 			return null;
 		}
@@ -423,7 +420,7 @@ public class WorkspaceModelsManager {
 			 */
 
 		// File modelsRep = new File(urlRep.getPath());
-		System.out.println("chargemen" + modelsRep.getAbsolutePath());
+		// System.out.println("chargemen" + modelsRep.getAbsolutePath());
 		final Map<File, IPath> foundProjects = new HashMap();
 		findProjects(modelsRep, foundProjects);
 		importBuiltInProjects(plugin, core, workspace, foundProjects);
@@ -609,42 +606,12 @@ public class WorkspaceModelsManager {
 
 			final long time = modelsRep.lastModified();
 			gamaStamp = ".built_in_models_" + time;
-			System.out.println("Welcome to GAMA version " + WorkspaceModelsManager.BUILTIN_VERSION);
+			System.out.println(">> GAMA version " + WorkspaceModelsManager.BUILTIN_VERSION + " loading...");
 			System.out.println(">> GAMA models library version: " + gamaStamp);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		return gamaStamp;
-	}
-
-	public static void printAllGuaranteedProperties() {
-		System.out.println("Arguments received by GAMA: " + Arrays.toString(Platform.getApplicationArgs()));
-		System.out.println("Platform.instanceLocation: " + Platform.getInstanceLocation().getURL());
-		System.out.println("Platform.configurationLocation: " + Platform.getConfigurationLocation().getURL());
-
-		System.out.println("Platform.installLocation: " + Platform.getInstallLocation().getURL());
-
-		System.out.println("Platform.location: " + Platform.getLocation());
-		System.out.println("Location of '.'" + new File(".").getAbsolutePath());
-		printAProperty("java.version", "Java version number");
-		printAProperty("java.vendor", "Java vendor specific string");
-		printAProperty("java.vendor.url", "Java vendor URL");
-		printAProperty("java.home", "Java installation directory");
-		printAProperty("java.class.version", "Java class version number");
-		printAProperty("java.class.path", "Java classpath");
-		printAProperty("os.name", "Operating System Name");
-		printAProperty("os.arch", "Operating System Architecture");
-		printAProperty("os.version", "Operating System Version");
-		printAProperty("file.separator", "File separator");
-		printAProperty("path.separator", "Path separator");
-		printAProperty("line.separator", "Line separator");
-		printAProperty("user.name", "User account name");
-		printAProperty("user.home", "User home directory");
-		printAProperty("user.dir", "User's current working directory");
-	}
-
-	public static void printAProperty(final String propName, final String desc) {
-		System.out.println(desc + " = " + System.getProperty(propName) + ".");
 	}
 
 }

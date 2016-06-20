@@ -13,12 +13,9 @@ package msi.gama.common.interfaces;
 
 import java.util.Map;
 
-import org.eclipse.core.runtime.CoreException;
-
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.kernel.experiment.IExperimentPlan;
-import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -26,7 +23,6 @@ import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
@@ -72,15 +68,9 @@ public interface IGui {
 	public final static String NONE = "NONE";
 	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";;
 
-	void setSubStatusCompletion(double status);
+	IStatusDisplayer getStatus();
 
-	void setStatus(String msg, GamaColor color);
-
-	void setStatus(String msg, String icon);
-
-	void beginSubStatus(String name);
-
-	void endSubStatus(String name);
+	IConsoleDisplayer getConsole();
 
 	void run(Runnable block);
 
@@ -92,23 +82,13 @@ public interface IGui {
 
 	void showParameterView(IExperimentPlan exp);
 
-	void debugConsole(int cycle, String s, ITopLevelAgent root, GamaColor color);
-
-	void debugConsole(int cycle, String s, ITopLevelAgent root);
-
-	void informConsole(String s, ITopLevelAgent root, GamaColor color);
-
-	void informConsole(String s, ITopLevelAgent root);
-
 	void debug(String string);
+
+	void clearErrors();
 
 	void runtimeError(GamaRuntimeException g);
 
 	boolean confirmClose(IExperimentPlan experiment);
-
-	void showConsoleView(ITopLevelAgent agent);
-
-	IGamaView findView(final IDisplayOutput output);
 
 	boolean openSimulationPerspective(boolean immediately);
 
@@ -133,17 +113,11 @@ public interface IGui {
 
 	void prepareForExperiment(IExperimentPlan exp);
 
-	void cleanAfterExperiment(IExperimentPlan exp);
-
-	void prepareForSimulation(SimulationAgent sim);
-
-	void cleanAfterSimulation();
+	void cleanAfterExperiment();
 
 	void editModel(Object eObject);
 
-	public abstract void runModel(final Object object, final String exp) throws CoreException;
-
-	public abstract void runModel(final IModel object, final String exp);
+	void runModel(final Object object, final String exp);
 
 	void updateSpeedDisplay(Double d, boolean notify);
 
@@ -153,40 +127,16 @@ public interface IGui {
 
 	public DisplayDescription getDisplayDescriptionFor(final String name);
 
-	void resumeStatus();
+	String getExperimentState();
 
-	void waitStatus(String string);
+	void updateExperimentState(String state);
 
-	void informStatus(String string);
-
-	void errorStatus(String message);
-
-	String getFrontmostSimulationState();
-
-	void updateSimulationState(String state);
-
-	void updateSimulationState();
-
-	void eraseConsole(boolean b);
+	void updateExperimentState();
 
 	void updateViewTitle(IDisplayOutput output, SimulationAgent agent);
-
-	void setRestartRequiredAfterPreferenceSet();
-
-	boolean confirm(String string, String string2);
-
-	void openModelingPerspective(boolean b);
-
-	boolean isSimulationPerspective();
 
 	void openWelcomePage(boolean b);
 
 	void updateDecorator(String string);
-
-	void asyncRun(Runnable runnable);
-
-	void cleanUpUI();
-
-	void informStatus(String string, String string2);
 
 }

@@ -441,12 +441,16 @@ public class GamlResource extends LazyLinkingResource {
 			}
 
 			//
-			System.out.println("****************************************************");
-			System.out.println("Thread [" + Thread.currentThread().getName() + "] | Resource set ["
-					+ getResourceSet().getResources().size() + " resources]");
-			System.out.println("'" + getURI().lastSegment() + "' validated in " + (System.nanoTime() - begin) / 1000000d
-					+ " ms [ ~" + (mem - Runtime.getRuntime().freeMemory()) / mb + " kb used ]");
-			System.out.println("****************************************************");
+			// System.out.println("****************************************************");
+			// System.out.println("Thread [" + Thread.currentThread().getName()
+			// + "] | Resource set ["
+			// + getResourceSet().getResources().size() + " resources]");
+			// System.out.println("[" + Thread.currentThread().getName() + "] '"
+			// + getURI().lastSegment()
+			// + "' validated in " + (System.nanoTime() - begin) / 1000000d + "
+			// ms [ ~"
+			// + (mem - Runtime.getRuntime().freeMemory()) / mb + " kb used ]");
+			// System.out.println("****************************************************");
 
 			// return !getErrorCollector().hasInternalErrors();
 		} catch (final Exception e) {
@@ -464,9 +468,11 @@ public class GamlResource extends LazyLinkingResource {
 		// We make sure the resource is loaded in the ResourceSet passed
 		set.getResource(getURI(), true);
 
-		System.out.println("Thread [" + Thread.currentThread().getName() + "]");
-		System.out.println("Resource " + getURI().lastSegment() + " building");
-		System.out.println("****************************************************");
+		// System.out.println("Thread [" + Thread.currentThread().getName() +
+		// "]");
+		// System.out.println("Resource " + getURI().lastSegment() + "
+		// building");
+		// System.out.println("****************************************************");
 
 		// Syntactic errors detected, we cannot build the resource
 		if (!getErrors().isEmpty()) {

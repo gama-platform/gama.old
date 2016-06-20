@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
-import msi.gama.gui.metadata.FileMetaDataProvider;
+import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.navigator.NavigatorLabelProvider;
 import ummisco.gama.ui.navigator.VirtualContent;
 import ummisco.gama.ui.navigator.WrappedFile;
@@ -42,7 +42,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 		@Override
 		public boolean visit(final IResource resource) throws CoreException {
-			if (resource instanceof IFile && FileMetaDataProvider.isGAML((IFile) resource)) {
+			if (resource instanceof IFile && GAMA.getGui().getMetaDataProvider().isGAML((IFile) resource)) {
 				overlay[0] = getOkImageDescriptor();
 				return false;
 			}
@@ -125,7 +125,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 			overlay[0] = getErrorImageDescriptor();
 		} else if (severity == IMarker.SEVERITY_WARNING) {
 			overlay[0] = getWarningImageDescriptor();
-		} else if (resource instanceof IFile && FileMetaDataProvider.isGAML((IFile) resource)) {
+		} else if (resource instanceof IFile && GAMA.getGui().getMetaDataProvider().isGAML((IFile) resource)) {
 			overlay[0] = getOkImageDescriptor();
 		} else if (resource instanceof IContainer) {
 			try {
@@ -141,7 +141,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 	private void decorate(final WrappedFile element, final IDecoration decoration) {
 		final IFile file = element.getFile();
-		if (FileMetaDataProvider.isGAML(file)) {
+		if (GAMA.getGui().getMetaDataProvider().isGAML(file)) {
 			try {
 				final int severity = file.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
 				if (severity == IMarker.SEVERITY_ERROR) {

@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -36,15 +37,16 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceDialog;
+
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.Entry;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.dialogs.Messages;
+import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.resources.GamaFonts;
@@ -69,15 +71,10 @@ public class GamaPreferencesView {
 	private static boolean restartRequired;
 
 	public static void show() {
-		if ( instance == null || instance.shell == null || instance.shell.isDisposed() ) {
+		if (instance == null || instance.shell == null || instance.shell.isDisposed()) {
 			instance = new GamaPreferencesView(WorkbenchHelper.getShell());
 		}
-		for ( final IParameterEditor ed : instance.editors.values() ) {
-			if ( ed.getParam() instanceof GamaPreferences.Entry ) {
-				if ( ((GamaPreferences.Entry) ed.getParam()).getKey().equals("editor.info.enabled") ) {
-					System.out.println("editor.info.enabled");
-				}
-			}
+		for (final IParameterEditor ed : instance.editors.values()) {
 			ed.updateValue();
 
 		}
@@ -94,9 +91,11 @@ public class GamaPreferencesView {
 		prefs_images.put(GamaPreferences.EXPERIMENTS, GamaIcons.create("prefs.simulations2").image());
 		prefs_images.put(GamaPreferences.SIMULATIONS, IGamaIcons.PREFS_GENERAL.image());
 		prefs_images.put(GamaPreferences.DISPLAY, IGamaIcons.PREFS_DISPLAY.image());
-		// prefs_images.put(GamaPreferences.CODE, IGamaIcons.PREFS_CODE.image());
+		// prefs_images.put(GamaPreferences.CODE,
+		// IGamaIcons.PREFS_CODE.image());
 
-		// prefs_images.put(GamaPreferences.WORKSPACE, IGamaIcons.PREFS_WORKSPACE.image());
+		// prefs_images.put(GamaPreferences.WORKSPACE,
+		// IGamaIcons.PREFS_WORKSPACE.image());
 		prefs_images.put(GamaPreferences.LIBRARIES, IGamaIcons.PREFS_LIBS.image());
 
 	}
@@ -116,15 +115,15 @@ public class GamaPreferencesView {
 		final PreferenceManager preferenceManager = PlatformUI.getWorkbench().getPreferenceManager();
 
 		// We clean the default preference manager to remove useless preferences
-		for ( final Object elem : preferenceManager.getElements(PreferenceManager.POST_ORDER) ) {
-			if ( elem instanceof IPreferenceNode ) {
+		for (final Object elem : preferenceManager.getElements(PreferenceManager.POST_ORDER)) {
+			if (elem instanceof IPreferenceNode) {
 				final String id = ((IPreferenceNode) elem).getId();
-				if ( preferenceNames.containsKey(id) ) {
+				if (preferenceNames.containsKey(id)) {
 					preferencePages.put(preferenceNames.get(id), (IPreferenceNode) elem);
 				}
-				if ( id.contains("debug.ui") || id.contains("help.ui") || id.contains("search") ||
-					id.contains("Spelling") || id.contains("Linked") || id.contains("Perspectives") ||
-					id.contains("Content") ) {
+				if (id.contains("debug.ui") || id.contains("help.ui") || id.contains("search")
+						|| id.contains("Spelling") || id.contains("Linked") || id.contains("Perspectives")
+						|| id.contains("Content")) {
 					preferenceManager.remove((IPreferenceNode) elem);
 				}
 				// scope.getGui().debug(((IPreferenceNode) elem).getId());
@@ -144,14 +143,16 @@ public class GamaPreferencesView {
 				tabFolder.layout(true);
 				// tabFolder.update();
 				final Point p = tabFolder.getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-				// final Monitor primary = SwtGui.getDisplay().getPrimaryMonitor();
+				// final Monitor primary =
+				// SwtGui.getDisplay().getPrimaryMonitor();
 				final Rectangle bounds = shell.getBounds();
 				final int width = Math.min(p.x, bounds.width - 26);
 				final int height = Math.min(p.y, bounds.height - 81);
 
 				// tabFolder.pack();
 
-				// tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+				// tabFolder.setSize(tabFolder.computeSize(SWT.DEFAULT,
+				// SWT.DEFAULT, true));
 				tabFolder.setSize(width, height);
 				tabFolder.update();
 
@@ -165,7 +166,7 @@ public class GamaPreferencesView {
 		final Label sep = new Label(this.shell, SWT.SEPARATOR | SWT.HORIZONTAL);
 		sep.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, true, 2, 1));
 		final Map<String, Map<String, List<Entry>>> prefs = GamaPreferences.organizePrefs();
-		for ( final String tabName : prefs.keySet() ) {
+		for (final String tabName : prefs.keySet()) {
 			final CTabItem item = new CTabItem(tabFolder, SWT.NONE);
 			item.setFont(GamaFonts.getNavigHeaderFont());
 			item.setText(tabName);
@@ -174,7 +175,8 @@ public class GamaPreferencesView {
 			buildContentsFor(item, prefs.get(tabName));
 		}
 
-		// Aborted attempt to put Eclipse pages within this view. The problem is that the preference store seems to be
+		// Aborted attempt to put Eclipse pages within this view. The problem is
+		// that the preference store seems to be
 		// not set for some preferences pages (Editors in particular).
 
 		// for ( String tabName : preferencePages.keySet() ) {
@@ -210,7 +212,7 @@ public class GamaPreferencesView {
 		//
 		viewer.setSpacing(10);
 		tab.setControl(viewer);
-		for ( final String groupName : entries.keySet() ) {
+		for (final String groupName : entries.keySet()) {
 			final ParameterExpandItem item = new ParameterExpandItem(viewer, entries.get(groupName), SWT.NONE, null);
 			item.setText(groupName);
 			item.setColor(new GamaColor(230, 230, 230, 255));
@@ -233,17 +235,17 @@ public class GamaPreferencesView {
 	final Map<String, Boolean> activations = new HashMap();
 
 	private void checkActivables(final Entry e, final Object value) {
-		if ( e.getActivable() != null ) {
-			for ( final String activable : e.getActivable() ) {
+		if (e.getActivable() != null) {
+			for (final String activable : e.getActivable()) {
 				final IParameterEditor ed = editors.get(activable);
-				if ( ed == null ) {
-					if ( value instanceof Boolean ) {
+				if (ed == null) {
+					if (value instanceof Boolean) {
 						activations.put(activable, (Boolean) value);
 					} else {
 						activations.put(activable, true);
 					}
 				} else {
-					if ( value instanceof Boolean ) {
+					if (value instanceof Boolean) {
 						ed.setActive((Boolean) value);
 					} else {
 						ed.setActive(true);
@@ -251,10 +253,10 @@ public class GamaPreferencesView {
 				}
 			}
 		}
-		if ( e.getDeactivable() != null && value instanceof Boolean ) {
-			for ( final String deactivable : e.getDeactivable() ) {
+		if (e.getDeactivable() != null && value instanceof Boolean) {
+			for (final String deactivable : e.getDeactivable()) {
 				final IParameterEditor ed = editors.get(deactivable);
-				if ( ed == null ) {
+				if (ed == null) {
 					activations.put(deactivable, !(Boolean) value);
 				} else {
 					ed.setActive(!(Boolean) value);
@@ -266,7 +268,7 @@ public class GamaPreferencesView {
 	@SuppressWarnings("rawtypes")
 	private void buildGroupContents(final Composite compo, final List<Entry> list) {
 
-		for ( final Entry e : list ) {
+		for (final Entry e : list) {
 			modelValues.put(e.getKey(), e.getValue());
 			// Initial activations of editors
 			checkActivables(e, e.getValue());
@@ -279,7 +281,7 @@ public class GamaPreferencesView {
 
 				@Override
 				public void afterValueChange(final Object value) {
-					if ( e.acceptChange(value) ) {
+					if (e.acceptChange(value)) {
 						modelValues.put(e.getKey(), value);
 						checkActivables(e, value);
 					} else {
@@ -296,9 +298,9 @@ public class GamaPreferencesView {
 		}
 
 		// Initial activations of editors
-		for ( final String s : activations.keySet() ) {
+		for (final String s : activations.keySet()) {
 			final IParameterEditor ed = editors.get(s);
-			if ( ed != null ) {
+			if (ed != null) {
 				ed.setActive(activations.get(s));
 			}
 		}
@@ -341,10 +343,10 @@ public class GamaPreferencesView {
 				final FileDialog fd = new FileDialog(shell, SWT.OPEN);
 				fd.setFilterExtensions(new String[] { "*.prefs" });
 				final String path = fd.open();
-				if ( path == null )
+				if (path == null)
 					return;
 				GamaPreferences.applyPreferencesFrom(path, modelValues);
-				for ( final IParameterEditor ed : editors.values() ) {
+				for (final IParameterEditor ed : editors.values()) {
 					ed.updateValue();
 				}
 			}
@@ -363,7 +365,7 @@ public class GamaPreferencesView {
 				fd.setFilterExtensions(new String[] { "*.prefs" });
 				fd.setOverwrite(false);
 				final String path = fd.open();
-				if ( path == null )
+				if (path == null)
 					return;
 				GamaPreferences.savePreferencesTo(path);
 			}
@@ -400,13 +402,14 @@ public class GamaPreferencesView {
 				// shell.close();
 
 				GamaPreferences.setNewPreferences(modelValues);
-				if ( restartRequired ) {
+				if (restartRequired) {
 					restartRequired = false;
 					final boolean restart = Messages.confirm("Restart ?", "Restart GAMA now ?");
-					if ( restart ) {
+					if (restart) {
 						PlatformUI.getWorkbench().restart(true);
 					}
-				} else shell.setVisible(false);
+				} else
+					shell.setVisible(false);
 			}
 
 		});
@@ -418,7 +421,7 @@ public class GamaPreferencesView {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				GamaPreferences.revertToDefaultValues(modelValues);
-				for ( final IParameterEditor ed : editors.values() ) {
+				for (final IParameterEditor ed : editors.values()) {
 					ed.updateValue();
 				}
 			}
@@ -470,7 +473,7 @@ public class GamaPreferencesView {
 		shell.setLocation(x, y);
 
 		while (!this.shell.isDisposed() && this.shell.isVisible()) {
-			if ( !this.shell.getDisplay().readAndDispatch() ) {
+			if (!this.shell.getDisplay().readAndDispatch()) {
 				this.shell.getDisplay().sleep();
 			}
 		}
@@ -484,16 +487,20 @@ public class GamaPreferencesView {
 
 	// /**
 	// * Method openPage()
-	// * @see org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#openPage(java.lang.String, java.lang.Object)
+	// * @see
+	// org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#openPage(java.lang.String,
+	// java.lang.Object)
 	// */
 	// @Override
-	// public boolean openPage(final String preferencePageId, final Object data) {
+	// public boolean openPage(final String preferencePageId, final Object data)
+	// {
 	// return false;
 	// }
 	//
 	// /**
 	// * Method getWorkingCopyManager()
-	// * @see org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#getWorkingCopyManager()
+	// * @see
+	// org.eclipse.ui.preferences.IWorkbenchPreferenceContainer#getWorkingCopyManager()
 	// */
 	// @Override
 	// public IWorkingCopyManager getWorkingCopyManager() {
@@ -510,7 +517,8 @@ public class GamaPreferencesView {
 	//
 	// /**
 	// * Method getPreferenceStore()
-	// * @see org.eclipse.jface.preference.IPreferencePageContainer#getPreferenceStore()
+	// * @see
+	// org.eclipse.jface.preference.IPreferencePageContainer#getPreferenceStore()
 	// */
 	// @Override
 	// public IPreferenceStore getPreferenceStore() {
@@ -519,21 +527,24 @@ public class GamaPreferencesView {
 	//
 	// /**
 	// * Method updateButtons()
-	// * @see org.eclipse.jface.preference.IPreferencePageContainer#updateButtons()
+	// * @see
+	// org.eclipse.jface.preference.IPreferencePageContainer#updateButtons()
 	// */
 	// @Override
 	// public void updateButtons() {}
 	//
 	// /**
 	// * Method updateMessage()
-	// * @see org.eclipse.jface.preference.IPreferencePageContainer#updateMessage()
+	// * @see
+	// org.eclipse.jface.preference.IPreferencePageContainer#updateMessage()
 	// */
 	// @Override
 	// public void updateMessage() {}
 	//
 	// /**
 	// * Method updateTitle()
-	// * @see org.eclipse.jface.preference.IPreferencePageContainer#updateTitle()
+	// * @see
+	// org.eclipse.jface.preference.IPreferencePageContainer#updateTitle()
 	// */
 	// @Override
 	// public void updateTitle() {}

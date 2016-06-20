@@ -22,7 +22,7 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
-import msi.gama.common.interfaces.EditorListener;
+
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.common.interfaces.ItemList;
@@ -35,6 +35,7 @@ import msi.gama.util.GamaColor;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;

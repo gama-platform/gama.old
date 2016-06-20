@@ -349,8 +349,8 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		agent.schedule(agent.getScope());
 		// agent.scheduleAndExecute(null);
 		if (isBatch()) {
-			agent.getScope().getGui().informStatus(" Batch ready ");
-			agent.getScope().getGui().updateSimulationState();
+			agent.getScope().getGui().getStatus().informStatus(" Batch ready ");
+			agent.getScope().getGui().updateExperimentState();
 		}
 	}
 
@@ -361,7 +361,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			open();
 		} else {
 			agent.reset();
-			agent.getScope().getGui().eraseConsole(false);
+			agent.getScope().getGui().getConsole().eraseConsole(false);
 			agent.init(agent.getScope());
 
 			agent.getScope().getGui().updateParameterView(this);

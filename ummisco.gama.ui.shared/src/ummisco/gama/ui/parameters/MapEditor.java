@@ -13,12 +13,13 @@ package ummisco.gama.ui.parameters;
 
 import java.util.Map;
 import org.eclipse.swt.widgets.Composite;
-import msi.gama.common.interfaces.EditorListener;
+
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.interfaces.EditorListener;
 
 public class MapEditor extends ExpressionBasedEditor<Map> {
 

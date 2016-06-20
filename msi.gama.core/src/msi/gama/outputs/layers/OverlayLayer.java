@@ -99,7 +99,8 @@ public class OverlayLayer extends GraphicLayer {
 		final double absolute_height = FastMath.abs(h) <= 1 ? pixelHeight * h : yRatioBetweenPixelsAndModelUnits * h;
 		sizeInPixels.setLocation(absolute_width, absolute_height);
 		positionInPixels.setLocation(absolute_x, absolute_y);
-		System.out.println("Overlay position: " + positionInPixels + " size: " + sizeInPixels);
+		// System.out.println("Overlay position: " + positionInPixels + " size:
+		// " + sizeInPixels);
 		definition.getBox().setConstantBoundingBox(true);
 		computed = true;
 	}

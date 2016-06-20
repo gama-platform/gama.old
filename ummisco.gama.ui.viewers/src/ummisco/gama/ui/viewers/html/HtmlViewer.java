@@ -23,7 +23,7 @@ import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.FileEditorInput;
 
-import ummisco.gama.ui.utils.SwtGui;
+import ummisco.gama.ui.utils.WebHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -157,7 +157,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				browser.setUrl(SwtGui.getWelcomePageURL().toString());
+				browser.setUrl(WebHelper.getWelcomePageURL().toString());
 				checkButtons();
 			}
 

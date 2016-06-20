@@ -114,7 +114,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 			now = System.currentTimeMillis();
 			openable = now - start > REALIZATION_TIME_OUT || this.getDisplaySurface().isRealized();
 		}
-		System.out.println("Realized in " + (now - start) + "ms");
+		// System.out.println("Realized in " + (now - start) + "ms");
 
 	}
 

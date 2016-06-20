@@ -150,7 +150,7 @@ public class BatchAgent extends ExperimentAgent {
 		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is
 		// killed.
-		scope.getGui()
+		scope.getGui().getStatus()
 				.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
 		dispose();
 		return true;
@@ -208,8 +208,8 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				// We inform the status line
 
-				getScope().getGui().setStatus("Run " + runNumber + " | " + seeds.length + " simulations (using "
-						+ pop.getNumberOfActiveThreads() + " threads)", "small.batch" + i / 5);
+				getScope().getGui().getStatus().setStatus("Run " + runNumber + " | " + seeds.length
+						+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)", "small.batch" + i / 5);
 				if (++i == 20) {
 					i = 0;
 				}

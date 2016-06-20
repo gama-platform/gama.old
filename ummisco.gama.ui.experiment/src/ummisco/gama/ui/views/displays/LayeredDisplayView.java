@@ -47,15 +47,16 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 
+import msi.gama.application.workbench.PerspectiveHelper;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.util.FileUtils;
 import msi.gama.common.util.ImageUtils;
-import ummisco.gama.ui.utils.SwtGui;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.ILocation;
@@ -76,7 +77,6 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.PerspectiveHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.GamaViewPart;
 import ummisco.gama.ui.views.console.InteractiveConsoleView;
@@ -243,20 +243,17 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	public void toggleInteractiveConsole() {
-		// TODO Reprogram it a little bit more carefully ('view.parent', etc.)
 		if (!sideControlsVisible)
 			toggleSideControls();
+		final InteractiveConsoleView view = (InteractiveConsoleView) WorkbenchHelper
+				.findView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, true);
+		if (view == null)
+			return;
 		if (interactiveConsoleVisible) {
-			final InteractiveConsoleView view = (InteractiveConsoleView) SwtGui.getInteractiveConsole();
-			if (view == null)
-				return;
 			view.getControlToDisplayInFullScreen().setParent(view.getParentOfControlToDisplayFullScreen());
 			view.getParentOfControlToDisplayFullScreen().layout();
 			interactiveConsoleVisible = false;
 		} else {
-			final InteractiveConsoleView view = (InteractiveConsoleView) SwtGui.getInteractiveConsole();
-			if (view == null)
-				return;
 			view.getControlToDisplayInFullScreen().setParent(sidePanel);
 			interactiveConsoleVisible = true;
 		}

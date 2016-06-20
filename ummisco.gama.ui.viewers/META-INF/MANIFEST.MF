@@ -17,5 +17,7 @@ Require-Bundle: org.eclipse.jface,
  org.eclipse.ui.ide,
  org.eclipse.ui.browser;bundle-version="3.4.300",
  ummisco.gama.ui.shared,
- msi.gama.application
+ msi.gama.application,
+ ummisco.gama.ui.navigator;bundle-version="1.7.0"
 Bundle-ActivationPolicy: lazy
+

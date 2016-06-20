@@ -69,7 +69,8 @@ public class GAMA {
 		System.out.println("Launching experiment " + id + " of model " + model.getFilePath());
 		final IExperimentPlan newExperiment = model.getExperiment(id);
 		if (newExperiment == null) {
-			System.out.println("No experiment " + id + " in model " + model.getFilePath());
+			// System.out.println("No experiment " + id + " in model " +
+			// model.getFilePath());
 			return;
 		}
 		IExperimentController controller = getFrontmostController();
@@ -172,7 +173,6 @@ public class GAMA {
 		}
 		controllers.clear();
 		getGui().closeSimulationViews(andOpenModelingPerspective, immediately);
-		// scope.getGui().wipeExperiments();
 	}
 
 	/**

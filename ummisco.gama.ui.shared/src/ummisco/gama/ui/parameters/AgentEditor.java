@@ -18,16 +18,16 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
-import msi.gama.common.interfaces.EditorListener;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
 import msi.gaml.types.IType;
+import ummisco.gama.ui.interfaces.EditorListener;
+import ummisco.gama.ui.interfaces.IAgentMenuFactory;
 import ummisco.gama.ui.menus.MenuAction;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.SwtGui;
-import ummisco.gama.ui.utils.SwtGui.IAgentMenuFactory;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class AgentEditor extends ExpressionBasedEditor {
 
@@ -88,7 +88,7 @@ public class AgentEditor extends ExpressionBasedEditor {
 		final Menu dropMenu = new Menu(items[CHANGE].getParent().getShell());
 		final IAgent a = (IAgent) (currentValue instanceof IAgent ? currentValue : null);
 		if (a != null) {
-			final IAgentMenuFactory factory = SwtGui.getAgentMenuFactory();
+			final IAgentMenuFactory factory = WorkbenchHelper.getService(IAgentMenuFactory.class);
 			if (factory != null)
 				factory.fillPopulationSubMenu(dropMenu, a.getScope().getSimulationScope().getMicroPopulation(species),
 						null, action);

@@ -17,13 +17,13 @@ import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
-import org.eclipse.core.runtime.CoreException;
-
+import msi.gama.common.interfaces.IConsoleDisplayer;
 import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.util.AbstractGui;
+import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
@@ -38,7 +38,7 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
 
-public class HeadlessListener extends AbstractGui {
+public class HeadlessListener implements IGui {
 
 	static Logger LOGGER = LogManager.getLogManager().getLogger("");
 
@@ -50,12 +50,6 @@ public class HeadlessListener extends AbstractGui {
 				h.setLevel(Level.ALL);
 			}
 			LOGGER.setLevel(Level.ALL);
-			// Handler h = new ConsoleHandler();
-			// h.setLevel(Level.ALL);
-			// LOGGER.addHandler(h);
-			// System.out.println("Configuring Headless Mode");
-			// System.out.println("Configuring Headless Mode");
-
 		}
 		GAMA.setHeadlessGui(new HeadlessListener());
 	}
@@ -110,18 +104,6 @@ public class HeadlessListener extends AbstractGui {
 	public void showParameterView(final IExperimentPlan exp) {
 	}
 
-	@Override
-	public void debugConsole(final int cycle, final String s, final ITopLevelAgent root) {
-		System.out.println("Debug (step " + cycle + "): " + s);
-		// System.out.println("Debug (step " + cycle + "): " + s);
-	}
-
-	@Override
-	public void informConsole(final String s, final ITopLevelAgent root) {
-		System.out.println("Information: " + s);
-		// System.out.println("Information: " + s);
-	}
-
 	// @Override
 	// public void updateViewOf(final IDisplayOutput output) {}
 
@@ -143,10 +125,6 @@ public class HeadlessListener extends AbstractGui {
 
 	@Override
 	public void prepareForExperiment(final IExperimentPlan exp) {
-	}
-
-	@Override
-	public void showConsoleView(final ITopLevelAgent agent) {
 	}
 
 	// @Override
@@ -194,19 +172,11 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public void cleanAfterExperiment(final IExperimentPlan exp) {
+	public void cleanAfterExperiment() {
 	}
 
 	@Override
-	public void prepareForSimulation(final SimulationAgent agent) {
-	}
-
-	@Override
-	public void cleanAfterSimulation() {
-	}
-
-	@Override
-	public void runModel(final Object object, final String exp) throws CoreException {
+	public void runModel(final Object object, final String exp) {
 	}
 
 	/**
@@ -216,63 +186,6 @@ public class HeadlessListener extends AbstractGui {
 	 */
 	@Override
 	public void updateSpeedDisplay(final Double d, final boolean notify) {
-	}
-
-	/**
-	 * Method beginSubStatus()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#beginSubStatus(java.lang.String)
-	 */
-	@Override
-	public void beginSubStatus(final String name) {
-	}
-
-	/**
-	 * Method endSubStatus()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#endSubStatus(java.lang.String)
-	 */
-	@Override
-	public void endSubStatus(final String name) {
-	}
-
-	/**
-	 * Method setSubStatusCompletion()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#setSubStatusCompletion(double)
-	 */
-	@Override
-	public void setSubStatusCompletion(final double status) {
-	}
-
-	/**
-	 * Method setStatus()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#setStatus(java.lang.String,
-	 *      msi.gama.util.GamaColor)
-	 */
-	@Override
-	public void setStatusInternal(final String msg, final GamaColor color) {
-		System.out.println(msg);
-	}
-
-	/**
-	 * Method resumeStatus()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#resumeStatus()
-	 */
-	@Override
-	public void resumeStatus() {
-	}
-
-	/**
-	 * Method findView()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#findView(msi.gama.outputs.IDisplayOutput)
-	 */
-	@Override
-	public IGamaView findView(final IDisplayOutput output) {
-		return null;
 	}
 
 	/**
@@ -307,81 +220,29 @@ public class HeadlessListener extends AbstractGui {
 	/**
 	 * Method getFrontmostSimulationState()
 	 * 
-	 * @see msi.gama.common.interfaces.IGui#getFrontmostSimulationState()
+	 * @see msi.gama.common.interfaces.IGui#getExperimentState()
 	 */
 	@Override
-	public String getFrontmostSimulationState() {
+	public String getExperimentState() {
 		return RUNNING; // ???
 	}
 
 	/**
 	 * Method updateSimulationState()
 	 * 
-	 * @see msi.gama.common.interfaces.IGui#updateSimulationState(java.lang.String)
+	 * @see msi.gama.common.interfaces.IGui#updateExperimentState(java.lang.String)
 	 */
 	@Override
-	public void updateSimulationState(final String state) {
+	public void updateExperimentState(final String state) {
 	}
 
 	/**
 	 * Method updateSimulationState()
 	 * 
-	 * @see msi.gama.common.interfaces.IGui#updateSimulationState()
+	 * @see msi.gama.common.interfaces.IGui#updateExperimentState()
 	 */
 	@Override
-	public void updateSimulationState() {
-	}
-
-	/**
-	 * Method runModel()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#runModel(msi.gama.kernel.model.IModel,
-	 *      java.lang.String)
-	 */
-	@Override
-	public void runModel(final IModel object, final String exp) {
-	}
-
-	/**
-	 * Method eraseConsole()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#eraseConsole(boolean)
-	 */
-	@Override
-	public void eraseConsole(final boolean b) {
-	}
-
-	/**
-	 * Method debugConsole()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#debugConsole(int, java.lang.String,
-	 *      msi.gama.metamodel.agent.IMacroAgent, msi.gama.util.GamaColor)
-	 */
-	@Override
-	public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
-		this.debugConsole(cycle, s, root);
-	}
-
-	/**
-	 * Method informConsole()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#informConsole(java.lang.String,
-	 *      msi.gama.metamodel.agent.IMacroAgent, msi.gama.util.GamaColor)
-	 */
-	@Override
-	public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
-		this.informConsole(s, root);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gama.common.interfaces.IGui#setStatus(java.lang.String,
-	 * java.lang.String)
-	 */
-	@Override
-	public void setStatus(final String msg, final String icon) {
-		System.out.println(msg);
+	public void updateExperimentState() {
 	}
 
 	@Override
@@ -397,30 +258,6 @@ public class HeadlessListener extends AbstractGui {
 	}
 
 	@Override
-	public void setRestartRequiredAfterPreferenceSet() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean confirm(final String string, final String string2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void openModelingPerspective(final boolean immediately) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public boolean isSimulationPerspective() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void openWelcomePage(final boolean b) {
 		// TODO Auto-generated method stub
 
@@ -432,20 +269,128 @@ public class HeadlessListener extends AbstractGui {
 
 	}
 
-	@Override
-	public void asyncRun(final Runnable runnable) {
-		// TODO Auto-generated method stub
+	IStatusDisplayer status = new IStatusDisplayer() {
 
+		@Override
+		public void resumeStatus() {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void waitStatus(final String string) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void informStatus(final String string) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void errorStatus(final String message) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void setSubStatusCompletion(final double status) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void setStatus(final String msg, final GamaColor color) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void informStatus(final String message, final String icon) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void setStatus(final String msg, final String icon) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void beginSubStatus(final String name) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void endSubStatus(final String name) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void neutralStatus(final String string) {
+			// TODO Auto-generated method stub
+
+		}
+
+	};
+
+	IConsoleDisplayer console = new IConsoleDisplayer() {
+
+		@Override
+		public void debugConsole(final int cycle, final String s, final ITopLevelAgent root, final GamaColor color) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void debugConsole(final int cycle, final String s, final ITopLevelAgent root) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void informConsole(final String s, final ITopLevelAgent root, final GamaColor color) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void informConsole(final String s, final ITopLevelAgent root) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void showConsoleView(final ITopLevelAgent agent) {
+			// TODO Auto-generated method stub
+
+		}
+
+		@Override
+		public void eraseConsole(final boolean setToNull) {
+			// TODO Auto-generated method stub
+
+		}
+
+	};
+
+	@Override
+	public IStatusDisplayer getStatus() {
+		return status;
 	}
 
 	@Override
-	public void cleanUpUI() {
-		// TODO Auto-generated method stub
-
+	public IConsoleDisplayer getConsole() {
+		return console;
 	}
 
 	@Override
-	public void informStatus(final String string, final String string2) {
+	public void clearErrors() {
 		// TODO Auto-generated method stub
 
 	}

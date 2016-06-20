@@ -10,7 +10,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
-import msi.gama.gui.metadata.FileMetaDataProvider;
+import msi.gama.runtime.GAMA;
 
 public class ResourceRefreshHandler extends AbstractHandler {
 
@@ -31,7 +31,7 @@ public class ResourceRefreshHandler extends AbstractHandler {
 
 			@Override
 			public void run() {
-				FileMetaDataProvider.getInstance().storeMetadata(file, null, false);
+				GAMA.getGui().getMetaDataProvider().storeMetadata(file, null, false);
 			}
 		});
 	}

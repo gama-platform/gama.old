@@ -103,7 +103,7 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 
 		public void setPickedIndex(final int pickedIndex) {
 			this.pickedIndex = pickedIndex;
-			System.out.println("Picked object = " + pickedIndex);
+			// System.out.println("Picked object = " + pickedIndex);
 			if (pickedIndex == WORLD && !isMenuOn) {
 				// Selection occured, but no object have been selected
 				isMenuOn = true;

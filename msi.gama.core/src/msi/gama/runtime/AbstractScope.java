@@ -395,8 +395,9 @@ public abstract class AbstractScope implements IScope {
 		try {
 			final IAgent a = agents.pop();
 			if (a != null && !a.equals(agent)) {
-				System.out.println(
-						"Problem with the scope. Trying to pop  " + agent + " but " + a + " was in the stack...");
+				// System.out.println(
+				// "Problem with the scope. Trying to pop " + agent + " but " +
+				// a + " was in the stack...");
 				// Thread.dumpStack();
 			}
 			if (traceAgents) {
@@ -443,7 +444,7 @@ public abstract class AbstractScope implements IScope {
 			sb.append(Strings.TAB);
 		}
 		sb.append(currentStatement.getTrace(this));
-		this.getGui().informConsole(sb.toString(), root);
+		this.getGui().getConsole().informConsole(sb.toString(), root);
 	}
 
 	@Override

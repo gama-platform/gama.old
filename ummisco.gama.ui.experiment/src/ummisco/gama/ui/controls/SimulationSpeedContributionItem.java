@@ -18,14 +18,13 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
-import msi.gama.common.interfaces.ISpeedDisplayer;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.SwtGui;
 
 /**
  * The class SimulationSpeedContributionItem.
@@ -39,6 +38,7 @@ import ummisco.gama.ui.utils.SwtGui;
 public class SimulationSpeedContributionItem extends WorkbenchWindowControlContribution
 		implements ISpeedDisplayer, IPositionChangeListener, IToolTipProvider {
 
+	private static SimulationSpeedContributionItem instance;
 	double max = 1000;
 	protected final GamaUIColor popupColor;
 	protected final GamaUIColor sliderColor;
@@ -76,7 +76,7 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	public SimulationSpeedContributionItem() {
 		popupColor = IGamaColors.OK;
 		sliderColor = IGamaColors.GRAY_LABEL;
-		SwtGui.setSpeedControl(this);
+		instance = this;
 	}
 
 	@Override
@@ -154,6 +154,11 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	@Override
 	public void positionChanged(final double position) {
 		GAMA.getExperiment().getAgent().setMinimumDurationExternal(valueFromPosition(position) / 1000);
+	}
+
+	public static SimulationSpeedContributionItem getInstance() {
+		// TODO Auto-generated method stub
+		return instance;
 	}
 
 }

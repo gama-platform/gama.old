@@ -36,8 +36,8 @@ import org.geotools.styling.StyleBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 
-import msi.gama.gui.metadata.FileMetaDataProvider;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
 import ummisco.gama.ui.controls.FlatButton;
@@ -45,7 +45,7 @@ import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.SwtGui;
+import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.viewers.gis.geotools.styling.simple.Mode;
 import ummisco.gama.ui.viewers.gis.geotools.styling.simple.SLDs;
 import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
@@ -78,8 +78,8 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 				fts = null;
 			}
 			if (fts != null) {
-				this.setFillColor(SwtGui.SHAPEFILE_VIEWER_FILL.getValue(), mode, fts);
-				this.setStrokeColor(SwtGui.SHAPEFILE_VIEWER_LINE_COLOR.getValue(), mode, fts);
+				this.setFillColor(PreferencesHelper.SHAPEFILE_VIEWER_FILL.getValue(), mode, fts);
+				this.setStrokeColor(PreferencesHelper.SHAPEFILE_VIEWER_LINE_COLOR.getValue(), mode, fts);
 				((StyleLayer) layer).setStyle(style);
 			}
 			content.addLayer(layer);
@@ -95,7 +95,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 		String s;
 		GamaUIColor color;
 
-		final GamaShapeFile.ShapeInfo info = (ShapeInfo) FileMetaDataProvider.getInstance().getMetaData(file, false,
+		final GamaShapeFile.ShapeInfo info = (ShapeInfo) GAMA.getGui().getMetaDataProvider().getMetaData(file, false,
 				true);
 		if (info == null) {
 			s = "Error in reading file information";

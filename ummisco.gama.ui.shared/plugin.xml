@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-        <extension
-               point="org.eclipse.ui.startup">
-            <startup
-                  class="ummisco.gama.ui.Startup">
-            </startup>
-         </extension>
 
    <extension
          point="org.eclipse.ui.ide.projectNatureImages">
@@ -49,52 +43,6 @@
             id="msi.gama.gui.category.gama"
             name="Gama">
       </category>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.definitions">
-      <definition
-            id="isInModelingPerspective">
-         <with
-               variable="activeWorkbenchWindow.activePerspective">
-            <equals
-                  value="msi.gama.application.perspectives.ModelingPerspective">
-            </equals>
-         </with>
-      </definition>
-      <definition
-            id="isInSimulationPerspective">
-         <with
-               variable="activeWorkbenchWindow.activePerspective">
-            <test
-                  property="msi.gama.containsString"
-                  value="Simulation">
-            </test>
-         </with>
-      </definition>
-   </extension>
-   <extension
-         point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="ummisco.gama.ui.perspective.PerspectiveNamePropertyTester"
-            id="msi.gama.application.PerspectiveNamePropertyTester"
-            namespace="msi.gama"
-            properties="containsString"
-            type="java.lang.Object">
-      </propertyTester>
-   </extension>
-   <extension
-         point="org.eclipse.ui.services">
-      <sourceProvider
-            provider="ummisco.gama.ui.commands.SimulationStateProvider">
-         <variable
-               name="msi.gama.application.commands.SimulationRunningState"
-               priorityLevel="workbench">
-         </variable>
-         <variable
-               name="msi.gama.application.commands.SimulationType"
-               priorityLevel="workbench">
-         </variable>
-      </sourceProvider>
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -283,11 +231,6 @@
          point="org.eclipse.ui.commands">
       <command
             categoryId="msi.gama.category"
-            id="msi.gama.application.commands.SwitchPerspective"
-            name="Switch Perspective">
-      </command>
-      <command
-            categoryId="msi.gama.category"
             defaultHandler="ummisco.gama.ui.commands.SwitchWorkspaceHandler"
             id="org.eclipse.ui.file.switchWorkspace"
             name="Switch Workspace">
@@ -297,11 +240,6 @@
             defaultHandler="ummisco.gama.ui.commands.PreferencesHandler"
             id="msi.gama.application.preferences"
             name="Preferences">
-      </command>
-      <command
-            categoryId="msi.gama.category"
-            id="msi.gama.application.goto.simulation"
-            name="Switch to simulation perspective">
       </command>
    </extension>
    <extension
@@ -320,25 +258,12 @@
             </or>
          </activeWhen>
       </handler>
-               <handler
-                     class="ummisco.gama.ui.commands.SwitchToSimulation"
-                     commandId="msi.gama.application.goto.simulation">
-                  <activeWhen>
-                     <and>
-                        <reference
-                              definitionId="isInModelingPerspective">
-                        </reference>
-                        <not>
-                           <with
-                                 variable="msi.gama.application.commands.SimulationRunningState">
-                              <equals
-                                    value="NONE">
-                              </equals>
-                           </with>
-                        </not>
-                     </and>
-                  </activeWhen>
-               </handler>
+   </extension>
+   <extension
+         point="org.eclipse.ui.startup">
+      <startup
+            class="ummisco.gama.ui.Startup">
+      </startup>
    </extension>
 
 </plugin>

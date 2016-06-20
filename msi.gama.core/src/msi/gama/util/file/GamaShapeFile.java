@@ -288,7 +288,7 @@ public class GamaShapeFile extends GamaGisFile {
 	}
 
 	protected void readShapes(final IScope scope) {
-		scope.getGui().beginSubStatus("Reading file" + getName());
+		scope.getGui().getStatus().beginSubStatus("Reading file" + getName());
 		ShapefileDataStore store = null;
 		FeatureReader reader = null;
 		final File file = getFile();
@@ -303,7 +303,7 @@ public class GamaShapeFile extends GamaGisFile {
 			reader = store.getFeatureReader();
 
 			while (reader.hasNext()) {
-				scope.getGui().setSubStatusCompletion(index++ / size);
+				scope.getGui().getStatus().setSubStatusCompletion(index++ / size);
 				final Feature feature = reader.next();
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
@@ -333,7 +333,7 @@ public class GamaShapeFile extends GamaGisFile {
 			if (store != null) {
 				store.dispose();
 			}
-			scope.getGui().endSubStatus("Reading file " + getName());
+			scope.getGui().getStatus().endSubStatus("Reading file " + getName());
 		}
 		if (size > list.size()) {
 			GAMA.reportError(scope, GamaRuntimeException.warning("Problem with file " + getFile() + ": only "
@@ -347,7 +347,7 @@ public class GamaShapeFile extends GamaGisFile {
 		FeatureIterator<SimpleFeature> it = null;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> features = null;
 		try {
-			scope.getGui().beginSubStatus((returnIt ? "Reading file" : "Measuring file ") + getName());
+			scope.getGui().getStatus().beginSubStatus((returnIt ? "Reading file" : "Measuring file ") + getName());
 			store = new ShapefileDataStore(file.toURI().toURL());
 			features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
 			final Envelope env = store.getFeatureSource().getBounds();
@@ -361,7 +361,7 @@ public class GamaShapeFile extends GamaGisFile {
 				// return returnIt ? features.features() : null;
 				int i = 0;
 				while (it.hasNext()) {
-					scope.getGui().setSubStatusCompletion(i++ / size);
+					scope.getGui().getStatus().setSubStatusCompletion(i++ / size);
 					final SimpleFeature feature = it.next();
 					Geometry g = (Geometry) feature.getDefaultGeometry();
 					if (g != null && !g.isEmpty() /* Fix for Issue 725 */ ) {
@@ -389,7 +389,7 @@ public class GamaShapeFile extends GamaGisFile {
 			if (store != null) {
 				store.dispose();
 			}
-			scope.getGui().endSubStatus("Opening file " + getName());
+			scope.getGui().getStatus().endSubStatus("Opening file " + getName());
 		}
 	}
 

@@ -13,9 +13,10 @@ package ummisco.gama.ui.views.inspectors;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.interfaces.IParameterEditor;
+
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
+import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 
 import org.eclipse.swt.SWT;

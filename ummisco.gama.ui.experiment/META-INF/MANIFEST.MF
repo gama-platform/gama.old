@@ -24,3 +24,4 @@ Export-Package: ummisco.gama.ui.bindings,
  ummisco.gama.ui.views,
  ummisco.gama.ui.views.displays
 Bundle-ActivationPolicy: lazy
+Bundle-Activator: ummisco.gama.ui.activator.ExperimentUIActivator

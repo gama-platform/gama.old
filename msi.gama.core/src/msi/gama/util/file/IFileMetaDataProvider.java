@@ -6,6 +6,9 @@ package msi.gama.util.file;
 
 import java.io.File;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+
 /**
  * Class IFileMetaDataProvider.
  *
@@ -26,5 +29,9 @@ public interface IFileMetaDataProvider {
 	String getDecoratorSuffix(Object element);
 
 	public void storeMetadata(final File f, final IGamaFileMetaData data);
+
+	public void storeMetadata(final IResource file, final IGamaFileMetaData data, final boolean immediately);
+
+	boolean isGAML(IFile resource);
 
 }

@@ -79,7 +79,9 @@ public class GamlSyntacticParser extends GamlParser {
 				} else {
 					IPath p = path.append(URI.decode(u.path()));
 					p = p.uptoSegment(p.segmentCount() - 1);
-					//@AD:Please test it on UNIX as it had mentioned in ex: C:/myfile.text is absolute but /myfile.text is relative on Windows though absolute on Unix-style file systems.
+					// @AD:Please test it on UNIX as it had mentioned in ex:
+					// C:/myfile.text is absolute but /myfile.text is relative
+					// on Windows though absolute on Unix-style file systems.
 					newUri = URI.createFileURI(p.toOSString());
 				}
 				newSet.add(newUri);
@@ -100,9 +102,10 @@ public class GamlSyntacticParser extends GamlParser {
 		final long begin = System.nanoTime();
 		final IParseResult result = super.doReparse(previousParseResult, replaceRegion);
 		final GamlParseResult r = new GamlParseResult(result);
-		System.out.println(" reparsed in " + (System.nanoTime() - begin) / 1000000d + " ms in Thread ["
-				+ Thread.currentThread().getName() + "]");
-		System.out.println("****************************************************");
+		// System.out.println(" reparsed in " + (System.nanoTime() - begin) /
+		// 1000000d + " ms in Thread ["
+		// + Thread.currentThread().getName() + "]");
+		// System.out.println("****************************************************");
 		return r;
 	}
 

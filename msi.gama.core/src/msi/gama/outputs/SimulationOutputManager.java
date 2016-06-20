@@ -52,10 +52,10 @@ public class SimulationOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
-		scope.getGui().waitStatus(" Building outputs ");
+		scope.getGui().getStatus().waitStatus(" Building outputs ");
 		final boolean result = super.init(scope);
 		updateDisplayOutputsName(scope.getSimulationScope());
-		scope.getGui().informStatus(" " + scope.getRoot().getName() + " ready");
+		scope.getGui().getStatus().informStatus(" " + scope.getRoot().getName() + " ready");
 		return result;
 	}
 

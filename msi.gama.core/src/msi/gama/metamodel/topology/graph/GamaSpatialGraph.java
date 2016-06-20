@@ -22,6 +22,7 @@ import org.jgrapht.Graphs;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -93,9 +94,10 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
 		this(scope, nodeType, edgeType);
 		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies);
 	}
+
 	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
 			final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope, final IType nodeType,
-			final IType edgeType, Double tolerance) {
+			final IType edgeType, final Double tolerance) {
 		this(scope, nodeType, edgeType);
 		this.tolerance = tolerance;
 		init(scope, edgesOrVertices, byEdge, directed, rel, edgesSpecies, tolerance);
@@ -282,10 +284,11 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
 	public IShape getBuiltVertex(final Coordinate vertex) {
 		if (tolerance == 0)
 			return verticesBuilt.get(vertex.hashCode());
-		IShape sh = verticesBuilt.get(vertex.hashCode());
-		if (sh != null) return sh;
-		for (Object v : verticesBuilt.values()) {
-			if (vertex.distance3D(((IShape) v).getLocation().toCoordinate()) <= tolerance) {
+		final IShape sh = verticesBuilt.get(vertex.hashCode());
+		if (sh != null)
+			return sh;
+		for (final Object v : verticesBuilt.values()) {
+			if (vertex.distance3D(GeometryUtils.toCoordinate(((IShape) v).getLocation())) <= tolerance) {
 				return (IShape) v;
 			}
 		}
@@ -397,12 +400,13 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
 			}
 		}
 	}
+
 	public double getTolerance() {
 		return tolerance;
 	}
-	public void setTolerance(double tolerance) {
+
+	public void setTolerance(final double tolerance) {
 		this.tolerance = tolerance;
 	}
-	
 
 }

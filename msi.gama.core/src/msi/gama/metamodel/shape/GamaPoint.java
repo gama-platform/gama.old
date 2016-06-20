@@ -174,7 +174,6 @@ public class GamaPoint extends Coordinate implements ILocation {
 		setZ(z + loc.getZ());
 	}
 
-	@Override
 	public Coordinate toCoordinate() {
 		return new Coordinate(x, y, z);
 	}

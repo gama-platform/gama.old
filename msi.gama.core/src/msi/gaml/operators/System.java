@@ -198,7 +198,7 @@ public class System {
 			final IExpression e = GAML.getExpressionFactory().createExpr(gaml, d);
 			return scope.evaluate(e, agent);
 		} catch (final GamaRuntimeException e) {
-			scope.getGui().informConsole(
+			scope.getGui().getConsole().informConsole(
 					"Error in evaluating Gaml code : '" + gaml + "' in " + scope.getAgentScope()
 							+ java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage(),
 					scope.getRoot());

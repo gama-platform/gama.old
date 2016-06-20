@@ -1064,7 +1064,7 @@ public abstract class Spatial {
 				geom_Tmp = GeometryUtils.FACTORY.createLineString(coord);
 			} else if (geometry instanceof MultiPoint) {
 				final Coordinate[] coordinates = new Coordinate[geometry.getNumPoints() + 1];
-				coordinates[coordinates.length - 1] = p.toCoordinate();
+				coordinates[coordinates.length - 1] = GeometryUtils.toCoordinate(p);
 				geom_Tmp = GeometryUtils.FACTORY.createMultiPoint(coordinates);
 			} else if (geometry instanceof LineString) {
 				geom_Tmp = createLineStringWithPoint(geometry, point);
@@ -1201,7 +1201,7 @@ public abstract class Spatial {
 			final Geometry visiblePercept = GeometryUtils.FACTORY.createGeometry(source.getInnerGeometry());
 			final boolean isPoint = source.isPoint();
 			if (obstacles != null && !obstacles.isEmpty(scope)) {
-				final Geometry pt = GeometryUtils.FACTORY.createPoint(location.toCoordinate());
+				final Geometry pt = GeometryUtils.FACTORY.createPoint(GeometryUtils.toCoordinate(location));
 				final Geometry locG = pt.buffer(0.01).getEnvelope();
 				double percep_dist = 0;
 				for (final ILocation p : source.getPoints()) {
@@ -1215,10 +1215,10 @@ public abstract class Spatial {
 				for (int k = 1; k < gbuff.getNumPoints(); k++) {
 
 					final Coordinate[] coordinates = new Coordinate[4];
-					coordinates[0] = location.toCoordinate();
+					coordinates[0] = GeometryUtils.toCoordinate(location);
 					coordinates[1] = gbuff.getCoordinates()[k - 1];
 					coordinates[2] = gbuff.getCoordinates()[k];
-					coordinates[3] = location.toCoordinate();
+					coordinates[3] = GeometryUtils.toCoordinate(location);
 					final LinearRing closeRing = GeometryUtils.FACTORY.createLinearRing(coordinates);
 					final Geometry gg = source.getGeometry().getInnerGeometry()
 							.intersection(GeometryUtils.FACTORY.createPolygon(closeRing, null));
@@ -2470,7 +2470,7 @@ public abstract class Spatial {
 				return pt;
 			}
 			final PointPairDistance ppd = new PointPairDistance();
-			DistanceToPoint.computeDistance(geom.getInnerGeometry(), pt.toCoordinate(), ppd);
+			DistanceToPoint.computeDistance(geom.getInnerGeometry(), GeometryUtils.toCoordinate(pt), ppd);
 			return new GamaPoint(ppd.getCoordinate(0));
 		}
 

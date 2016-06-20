@@ -1326,7 +1326,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public ModelDescription createModelDescriptionFromFile(final String fileName) {
-		System.out.println(fileName + " model is loading...");
+		// System.out.println(fileName + " model is loading...");
 
 		final GamlResource resource = (GamlResource) getContext().getModelDescription().getUnderlyingElement(null)
 				.eResource();

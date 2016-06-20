@@ -64,7 +64,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	public static void staticInitialize() {
 		if (!initialized) {
-			System.out.println(">> Registering GAML expression compiler.");
+			// System.out.println(">> Registering GAML expression compiler.");
 			GamlExpressionFactory.registerParserProvider(new GamlExpressionCompilerProvider());
 			ModelFactory.registerModelBuilderProvider(new IModelBuilderProvider() {
 

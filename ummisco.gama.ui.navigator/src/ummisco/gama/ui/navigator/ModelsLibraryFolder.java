@@ -14,12 +14,12 @@ package ummisco.gama.ui.navigator;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.swt.graphics.Image;
 
-import msi.gama.application.projects.BuiltinNature;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class ModelsLibraryFolder extends TopLevelFolder {
 
@@ -56,7 +56,7 @@ public class ModelsLibraryFolder extends TopLevelFolder {
 	 */
 	@Override
 	protected boolean accepts(final IProjectDescription desc) {
-		return desc.hasNature(BuiltinNature.NATURE_ID);
+		return desc.hasNature(WorkbenchHelper.BUILTIN_NATURE);
 	}
 
 	/**

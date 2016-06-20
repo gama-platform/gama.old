@@ -51,7 +51,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public void open() {
 		super.open();
-		getScope().getGui().run(opener);
+		opener.run();
 	}
 
 	@Override

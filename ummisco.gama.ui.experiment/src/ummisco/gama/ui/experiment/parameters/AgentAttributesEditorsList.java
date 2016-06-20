@@ -19,11 +19,11 @@ import java.util.Map;
 import java.util.Set;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaColor;
+import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 
 public class AgentAttributesEditorsList extends EditorsList<IAgent> {

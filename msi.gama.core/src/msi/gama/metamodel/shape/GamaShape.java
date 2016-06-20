@@ -359,7 +359,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	@Override
 	public void setLocation(final ILocation l) {
 		final GamaPoint previous = getLocation();
-		final Coordinate location = l.toCoordinate();
+		final Coordinate location = GeometryUtils.toCoordinate(l);
 		if (previous != null) {
 			if (isPoint()) {
 				geometry = GeometryUtils.FACTORY.createPoint(location);

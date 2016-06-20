@@ -12,7 +12,14 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
+import msi.gama.application.workspace.WorkspaceModelsManager;
+
 public class WorkbenchHelper {
+
+	public final static String GAMA_NATURE = WorkspaceModelsManager.GAMA_NATURE;
+	public final static String XTEXT_NATURE = WorkspaceModelsManager.XTEXT_NATURE;
+	public final static String PLUGIN_NATURE = WorkspaceModelsManager.PLUGIN_NATURE;
+	public final static String BUILTIN_NATURE = WorkspaceModelsManager.BUILTIN_NATURE;
 
 	public static void asyncRun(final Runnable r) {
 		final Display d = getDisplay();
@@ -142,6 +149,10 @@ public class WorkbenchHelper {
 		} // Closing the workbenc
 		activePage.hideView(gamaViewPart);
 
+	}
+
+	public static <T> T getService(final Class<T> class1) {
+		return getWorkbench().getService(class1);
 	}
 
 }

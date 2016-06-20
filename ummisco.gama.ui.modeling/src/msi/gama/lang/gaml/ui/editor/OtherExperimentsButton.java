@@ -34,7 +34,7 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlModelBuilder;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.ui.XtextGui;
+import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ISyntacticElement;
 import ummisco.gama.ui.controls.FlatButton;
@@ -58,7 +58,7 @@ public class OtherExperimentsButton {
 	public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar2 toolbar) {
 		this.editor = editor;
 		this.parent = toolbar;
-		if (XtextGui.EDITOR_SHOW_OTHER.getValue()) {
+		if (AutoStartup.EDITOR_SHOW_OTHER.getValue()) {
 			createButton();
 		}
 	}

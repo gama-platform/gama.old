@@ -14,13 +14,14 @@ package ummisco.gama.ui.parameters;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolItem;
-import msi.gama.common.interfaces.EditorListener;
+
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {

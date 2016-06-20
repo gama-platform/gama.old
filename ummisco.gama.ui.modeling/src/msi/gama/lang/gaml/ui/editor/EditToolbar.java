@@ -31,8 +31,8 @@ import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
-import ummisco.gama.ui.utils.SwtGui;
-import msi.gama.lang.gaml.ui.XtextGui;
+import msi.gama.lang.gaml.ui.AutoStartup;
+import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
@@ -54,9 +54,9 @@ public class EditToolbar {
 
 	static {
 		// Fake operations to force the preferences to load and show
-		SwtGui.COLOR_MENU_SORT.getKey();
-		SwtGui.COLOR_MENU_REVERSE.getKey();
-		XtextGui.OPERATORS_MENU_SORT.getKey();
+		PreferencesHelper.COLOR_MENU_SORT.getKey();
+		PreferencesHelper.COLOR_MENU_REVERSE.getKey();
+		AutoStartup.OPERATORS_MENU_SORT.getKey();
 	}
 
 	public static interface IToolbarVisitor {
@@ -293,7 +293,8 @@ public class EditToolbar {
 			public void widgetSelected(final SelectionEvent e) {
 				if (e.detail != SWT.ARROW) {
 					try {
-						WorkbenchHelper.getPage().showView("msi.gama.application.outline", null, IWorkbenchPage.VIEW_VISIBLE);
+						WorkbenchHelper.getPage().showView("msi.gama.application.outline", null,
+								IWorkbenchPage.VIEW_VISIBLE);
 					} catch (final PartInitException ex) {
 						ex.printStackTrace();
 					}

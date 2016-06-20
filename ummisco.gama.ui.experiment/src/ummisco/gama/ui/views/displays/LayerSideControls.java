@@ -14,7 +14,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
-import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
@@ -31,6 +30,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 

@@ -5,8 +5,8 @@
 package ummisco.gama.ui.navigator;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GAMLFile;
@@ -64,11 +64,7 @@ public class WrappedExperiment extends WrappedGamlObject {
 
 	@Override
 	public boolean handleDoubleClick() {
-		try {
-			GAMA.getGui().runModel(getParent(), internalName);
-		} catch (CoreException e) {
-			e.printStackTrace();
-		}
+		GAMA.getGui().runModel(getParent(), internalName);
 		return true;
 	}
 

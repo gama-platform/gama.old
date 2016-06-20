@@ -498,8 +498,8 @@ public abstract class AbstractAgent implements IAgent {
 			@arg(name = "message", type = IType.STRING, doc = @doc("The message to display")) })
 	public final Object primDebug(final IScope scope) throws GamaRuntimeException {
 		final String m = (String) scope.getArg("message", IType.STRING);
-		scope.getGui().debugConsole(scope.getClock().getCycle(), m + "\nsender: " + Cast.asMap(scope, this, false),
-				scope.getRoot());
+		scope.getGui().getConsole().debugConsole(scope.getClock().getCycle(),
+				m + "\nsender: " + Cast.asMap(scope, this, false), scope.getRoot());
 		return m;
 	}
 
@@ -509,7 +509,7 @@ public abstract class AbstractAgent implements IAgent {
 	@Deprecated
 	public final Object primWrite(final IScope scope) throws GamaRuntimeException {
 		final String s = (String) scope.getArg("message", IType.STRING);
-		scope.getGui().informConsole(s, scope.getRoot());
+		scope.getGui().getConsole().informConsole(s, scope.getRoot());
 		return s;
 	}
 

@@ -38,8 +38,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
-import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
@@ -49,6 +47,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.interfaces.EditorListener;
+import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;

@@ -17,7 +17,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FileDialog;
-import msi.gama.common.interfaces.EditorListener;
+
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -26,6 +26,7 @@ import msi.gaml.operators.Files;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.FlatButton;
+import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.IGamaColors;
 
 public class FileEditor extends AbstractEditor<IGamaFile> {

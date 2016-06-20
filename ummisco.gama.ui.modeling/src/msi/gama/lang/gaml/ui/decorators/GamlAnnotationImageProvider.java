@@ -1,18 +1,21 @@
 package msi.gama.lang.gaml.ui.decorators;
 
-import java.util.*;
-
-import ummisco.gama.ui.resources.GamaIcon;
-import ummisco.gama.ui.resources.GamaIcons;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.texteditor.*;
+import org.eclipse.ui.texteditor.AnnotationPreference;
+import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.model.XtextMarkerAnnotationImageProvider;
 import org.eclipse.xtext.ui.editor.validation.XtextAnnotation;
+
 import com.google.inject.Inject;
+
+import ummisco.gama.ui.resources.GamaIcon;
+import ummisco.gama.ui.resources.GamaIcons;
 
 public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvider {
 
@@ -45,42 +48,47 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 	};
 
 	@Inject
-	public GamlAnnotationImageProvider() {}
+	public GamlAnnotationImageProvider() {
+	}
 
 	@Override
 	public Image getManagedImage(final Annotation annotation) {
 
-		AnnotationPreference pref;
+		final AnnotationPreference pref;
 		GamaIcon result = null;
-		if ( annotation.isMarkedDeleted() ) {
+		if (annotation.isMarkedDeleted()) {
 			result = deleted.get(annotation.getType());
 		} else {
-			if ( annotation instanceof MarkerAnnotation ) {
-				MarkerAnnotation ma = (MarkerAnnotation) annotation;
-				if ( ma.isQuickFixableStateSet() && ma.isQuickFixable() ) {
+			if (annotation instanceof MarkerAnnotation) {
+				final MarkerAnnotation ma = (MarkerAnnotation) annotation;
+				if (ma.isQuickFixableStateSet() && ma.isQuickFixable()) {
 					result = fixables.get(annotation.getType());
 				} else {
 					result = nonFixables.get(annotation.getType());
 				}
-			} else if ( annotation instanceof ProjectionAnnotation ) {
+			} else if (annotation instanceof ProjectionAnnotation) {
 				return null;
-				// ProjectionAnnotation projection = (ProjectionAnnotation) annotation;
+				// ProjectionAnnotation projection = (ProjectionAnnotation)
+				// annotation;
 				// if ( projection.isCollapsed() ) {
 				// return GamaIcons.create("marker.collapsed2").image();
 				// } else {
 				// return GamaIcons.create("marker.expanded2").image();
 				// }
-			} else if ( annotation instanceof XtextAnnotation ) {
-				XtextAnnotation ma = (XtextAnnotation) annotation;
-				if ( ma.isQuickFixable() ) {
+			} else if (annotation instanceof XtextAnnotation) {
+				final XtextAnnotation ma = (XtextAnnotation) annotation;
+				if (ma.isQuickFixable()) {
 					result = fixables.get(annotation.getType());
 				} else {
 					result = nonFixables.get(annotation.getType());
 				}
 			}
 		}
-		if ( result != null ) { return result.image(); }
-		System.out.println("Image not found for type: " + annotation.getType());
+		if (result != null) {
+			return result.image();
+		}
+		// System.out.println("Image not found for type: " +
+		// annotation.getType());
 		return super.getManagedImage(annotation);
 	}
 

@@ -206,8 +206,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 			}
 		}
 		fillBuffer(scope);
-		return headers == null ? GamaListFactory.create()
-				: GamaListFactory.createWithoutCasting(Types.STRING, headers);
+		return headers == null ? GamaListFactory.create() : GamaListFactory.createWithoutCasting(Types.STRING, headers);
 	}
 
 	private CSVInfo getInfo(final IScope scope, final String CSVSep) {
@@ -254,7 +253,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 			return;
 		}
 		if (csvSeparator == null || contentsType == null || userSize == null) {
-			scope.getGui().beginSubStatus("Opening file " + getName());
+			scope.getGui().getStatus().beginSubStatus("Opening file " + getName());
 			final CSVInfo stats = getInfo(scope, csvSeparator);
 			csvSeparator = csvSeparator == null ? "" + stats.delimiter : csvSeparator;
 			contentsType = contentsType == null ? stats.type : contentsType;
@@ -262,7 +261,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 			// AD We take the decision for the modeler is he/she hasn't
 			// specified if the header must be read or not.
 			hasHeader = hasHeader == null ? stats.header : hasHeader;
-			scope.getGui().endSubStatus("");
+			scope.getGui().getStatus().endSubStatus("");
 		}
 		CsvReader reader = null;
 		try {
@@ -311,14 +310,14 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 		double percentage = 0;
 		IMatrix matrix;
 		try {
-			scope.getGui().beginSubStatus("Reading file " + getName());
+			scope.getGui().getStatus().beginSubStatus("Reading file " + getName());
 			if (t == IType.INT) {
 				matrix = new GamaIntMatrix(userSize);
 				final int[] m = ((GamaIntMatrix) matrix).getMatrix();
 				int i = 0;
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
-					scope.getGui().setSubStatusCompletion(percentage);
+					scope.getGui().getStatus().setSubStatusCompletion(percentage);
 					int nbC = 0;
 					for (final String s : reader.getValues()) {
 						m[i++] = Cast.asInt(scope, s);
@@ -335,7 +334,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 				int i = 0;
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
-					scope.getGui().setSubStatusCompletion(percentage);
+					scope.getGui().getStatus().setSubStatusCompletion(percentage);
 					int nbC = 0;
 					for (final String s : reader.getValues()) {
 						m[i++] = Cast.asFloat(scope, s);
@@ -352,7 +351,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 				int i = 0;
 				while (reader.readRecord()) {
 					percentage = reader.getCurrentRecord() / userSize.y;
-					scope.getGui().setSubStatusCompletion(percentage);
+					scope.getGui().getStatus().setSubStatusCompletion(percentage);
 					int nbC = 0;
 
 					for (final String s : reader.getValues()) {
@@ -373,7 +372,7 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 
 			return matrix;
 		} finally {
-			scope.getGui().endSubStatus("Reading CSV File");
+			scope.getGui().getStatus().endSubStatus("Reading CSV File");
 		}
 	}
 

@@ -42,7 +42,6 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.SwtGui;
 
 public class StatusControlContribution extends WorkbenchWindowControlContribution
 		implements IPopupProvider, IUpdaterTarget<IStatusMessage> {
@@ -59,11 +58,19 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	private final static int WIDTH = 400;
 	private GamaUIColor color;
 
+	static StatusControlContribution instance;
+
+	public static StatusControlContribution getInstance() {
+		return instance;
+	}
+
 	public StatusControlContribution() {
+		instance = this;
 	}
 
 	public StatusControlContribution(final String id) {
 		super(id);
+		instance = this;
 	}
 
 	@Override
@@ -112,7 +119,6 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			}
 		});
 		popup = new Popup(this, label);
-		SwtGui.setStatusControl(this);
 		return compo;
 	}
 

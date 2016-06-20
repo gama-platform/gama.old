@@ -8,9 +8,9 @@ import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 
-import msi.gama.gui.metadata.FileMetaDataProvider;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
-import ummisco.gama.ui.utils.SwtGui;
+import ummisco.gama.ui.utils.PreferencesHelper;
 
 /**
  * Class NavigatorBaseLighweightDecorator.
@@ -23,8 +23,8 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
-		if (SwtGui.NAVIGATOR_METADATA.getValue()) {
-			final IGamaFileMetaData data = FileMetaDataProvider.getInstance().getMetaData(element, false, false);
+		if (PreferencesHelper.NAVIGATOR_METADATA.getValue()) {
+			final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(element, false, false);
 			if (data == null) {
 				decoration.addSuffix(" ");
 				return;

@@ -15,13 +15,14 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import msi.gama.common.interfaces.EditorListener;
+
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.SwitchButton;
+import ummisco.gama.ui.interfaces.EditorListener;
 
 public class BooleanEditor extends AbstractEditor {
 

@@ -17,14 +17,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.graphics.Image;
 
-import msi.gama.application.projects.BuiltinNature;
-import msi.gama.application.projects.GamaNature;
-import msi.gama.application.projects.PluginNature;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 
@@ -66,10 +64,10 @@ public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 		// natures have been added to the project (i.e. it only has
 		// Xtext and GAMA). If the number of versions is greater than 2 we
 		// return false.
-		if (!desc.hasNature(GamaNature.NATURE_ID) || desc.getNatureIds().length > 2) {
+		if (!desc.hasNature(WorkbenchHelper.GAMA_NATURE) || desc.getNatureIds().length > 2) {
 			return false;
 		}
-		return !(desc.hasNature(BuiltinNature.NATURE_ID) || desc.hasNature(PluginNature.NATURE_ID));
+		return !(desc.hasNature(WorkbenchHelper.BUILTIN_NATURE) || desc.hasNature(WorkbenchHelper.PLUGIN_NATURE));
 	}
 
 	/**

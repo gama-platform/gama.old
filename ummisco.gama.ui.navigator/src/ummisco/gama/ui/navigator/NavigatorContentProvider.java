@@ -30,10 +30,11 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
-import msi.gama.gui.metadata.FileMetaDataProvider;
 import msi.gama.precompiler.GamlProperties;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.file.GAMLFile;
 import msi.gama.util.file.IGamaFileMetaData;
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
 
 public class NavigatorContentProvider extends WorkbenchContentProvider {
 
@@ -84,7 +85,7 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 		if (p instanceof IFile) {
 			final String ctid = FileMetaDataProvider.getContentTypeId((IFile) p);
 			if (ctid.equals(FileMetaDataProvider.GAML_CT_ID)) {
-				final IGamaFileMetaData metaData = FileMetaDataProvider.getInstance().getMetaData(p, false, true);
+				final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, true);
 				if (metaData instanceof GAMLFile.GamlInfo) {
 					final GAMLFile.GamlInfo info = (GAMLFile.GamlInfo) metaData;
 

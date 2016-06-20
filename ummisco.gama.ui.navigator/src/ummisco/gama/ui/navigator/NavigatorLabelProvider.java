@@ -28,8 +28,9 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import msi.gama.gui.metadata.FileMetaDataProvider;
+import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
+import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -52,7 +53,7 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 
 	public static boolean isResource(final IResource r) {
 		if (r instanceof IFile) {
-			return !FileMetaDataProvider.isGAML((IFile) r);
+			return !GAMA.getGui().getMetaDataProvider().isGAML((IFile) r);
 		}
 		if (r instanceof IContainer) {
 			try {

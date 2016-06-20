@@ -184,13 +184,16 @@ public class FreeFlyCamera extends AbstractCamera {
 		return GamaKeyBindings.shift(arg0) /* || alt(arg0) */;
 	}
 
-	@Override
-	public void dump() {
-		System.out.println("xPos:" + position.x + " yPos:" + position.y + " zPos:" + position.z);
-		System.out.println("xLPos:" + target.x + " yLPos:" + target.y + " zLPos:" + target.z);
-		System.out.println("_forwardX:" + forward.x + " _forwardY:" + forward.y + " _forwardZ:" + forward.z);
-		System.out.println("_phi : " + phi + " _theta : " + theta);
-	}
+	// @Override
+	// public void dump() {
+	// System.out.println("xPos:" + position.x + " yPos:" + position.y + "
+	// zPos:" + position.z);
+	// System.out.println("xLPos:" + target.x + " yLPos:" + target.y + " zLPos:"
+	// + target.z);
+	// System.out.println("_forwardX:" + forward.x + " _forwardY:" + forward.y +
+	// " _forwardZ:" + forward.z);
+	// System.out.println("_phi : " + phi + " _theta : " + theta);
+	// }
 
 	@Override
 	public boolean isViewInXYPlan() {

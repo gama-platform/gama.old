@@ -14,13 +14,14 @@ package ummisco.gama.ui.commands;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
+
 import msi.gama.runtime.GAMA;
 
 public class ShowHideConsoleViewHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.getGui().showConsoleView(GAMA.getSimulation());
+		GAMA.getGui().getConsole().showConsoleView(GAMA.getSimulation());
 		return null;
 	}
 }

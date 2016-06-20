@@ -157,7 +157,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			getSimulationPopulation().dispose();
 		}
 		if (!getSpecies().isBatch()) {
-			scope.getGui().cleanAfterSimulation();
+			scope.getGui().setSelectedAgent(null);
+			scope.getGui().setHighlightedAgent(null);
+			scope.getGui().getStatus().resumeStatus();
+			// AD: Fix for issue #1342 -- verify that it does not break
+			// something
+			// else in the dynamics of closing/opening
+			scope.getGui().closeDialogs();
 		}
 		// simulation = null;
 		// populationOfSimulations = null;
@@ -198,8 +204,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if (outputs != null) {
 			outputs.init(scope);
 		}
-		scope.getGui().informStatus("Experiment ready");
-		scope.getGui().updateSimulationState();
+		scope.getGui().getStatus().informStatus("Experiment ready");
+		scope.getGui().updateExperimentState();
 		return true;
 	}
 
@@ -425,7 +431,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
-		System.out.println("experiment agent set seed: " + s);
+		// System.out.println("experiment agent set seed: " + s);
 		Double seed;
 		if (s == null) {
 			seed = null;
@@ -547,7 +553,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 				sb.append(" (waiting)");
 			else if (nbThreads > 1)
 				sb.append(" (" + nbThreads + " threads)");
-			getScope().getGui().informStatus(sb.toString(), "status.clock");
+			getScope().getGui().getStatus().informStatus(sb.toString(), "status.clock");
 		}
 	}
 

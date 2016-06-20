@@ -132,7 +132,8 @@ public class CleanupHelper {
 			for (final IWizardDescriptor wizard : getAllWizards(cats.toArray(new IWizardCategory[0]))) {
 				final String id = wizard.getCategory().getId();
 				if (CATEGORIES_TO_REMOVE.contains(id) || IDS_TO_REMOVE.contains(wizard.getId())) {
-					System.out.println("Removing wizard " + wizard.getId() + " in category " + id);
+					// System.out.println("Removing wizard " + wizard.getId() +
+					// " in category " + id);
 					final WorkbenchWizardElement element = (WorkbenchWizardElement) wizard;
 					r.removeExtension(element.getConfigurationElement().getDeclaringExtension(),
 							new Object[] { element });

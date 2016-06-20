@@ -360,9 +360,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	}
 
 	static void addVar(final EClass eClass, final String t, final IGamlDescription o, final String keyword) {
-		if (keyword == "wander") {
-			System.out.println("fff");
-		}
+
 		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
 		// TODO Add the fields definition here
 		stub.setName(t);

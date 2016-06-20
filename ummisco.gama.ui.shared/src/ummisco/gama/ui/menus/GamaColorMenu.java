@@ -26,7 +26,7 @@ import org.eclipse.swt.widgets.Shell;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
-import ummisco.gama.ui.utils.SwtGui;
+import ummisco.gama.ui.utils.PreferencesHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -167,7 +167,7 @@ public class GamaColorMenu extends GamaMenu {
 	@Override
 	public void fillMenu() {
 		if (colorComp == null) {
-			final String pref = SwtGui.COLOR_MENU_SORT.getValue();
+			final String pref = PreferencesHelper.COLOR_MENU_SORT.getValue();
 			if (pref.equals(SORT_NAMES[0])) {
 				colorComp = byRGB;
 			} else if (pref.equals(SORT_NAMES[1])) {
@@ -179,10 +179,10 @@ public class GamaColorMenu extends GamaMenu {
 			}
 		}
 		if (reverse == null) {
-			reverse = SwtGui.COLOR_MENU_REVERSE.getValue() ? -1 : 1;
+			reverse = PreferencesHelper.COLOR_MENU_REVERSE.getValue() ? -1 : 1;
 		}
 		if (breakdown == null) {
-			breakdown = SwtGui.COLOR_MENU_GROUP.getValue();
+			breakdown = PreferencesHelper.COLOR_MENU_GROUP.getValue();
 		}
 		action("Custom...", new SelectionAdapter() {
 

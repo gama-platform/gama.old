@@ -666,5 +666,13 @@
           </description>
        </perspective>
     </extension>
+    <extension
+          point="org.eclipse.ui.services">
+       <serviceFactory
+             factoryClass="msi.gama.lang.gaml.ui.ModelRunner">
+          <service
+                serviceClass="ummisco.gama.ui.interfaces.IModelRunner"></service>
+       </serviceFactory>
+    </extension>
 
 </plugin>

@@ -232,7 +232,8 @@ public class Distribution {
 			final float minInt = (float) intermin;
 			final float maxInt = (float) intermax;
 			double N = Math.log10((maxInt - minInt) / (double) (nbBarresy - 1)) / Math.log10(2);
-			System.out.println("Ncalc: maxmin: " + maxInt + "/" + minInt + " N " + N);
+			// System.out.println("Ncalc: maxmin: " + maxInt + "/" + minInt + "
+			// N " + N);
 			twoExponent = (int) N;
 			deuxpuissanceky = (float) Math.pow(2, twoExponent);
 			newminInty = deuxpuissanceky * (int) (minInt / deuxpuissanceky);

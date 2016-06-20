@@ -15,11 +15,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
+import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 
 public class ExperimentsParametersList extends EditorsList<String> {
