@@ -1,9 +1,13 @@
 package ummisco.gama.modernOpenGL;
 
 import java.nio.FloatBuffer;
+import java.util.HashMap;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.PlatformUI;
 
 import ummisco.gama.opengl.camera.ICamera;
 
@@ -16,12 +20,9 @@ public class Maths {
 		
 		// translation
 		matrix.setTranslation(positions);
-//		tmpMatrix.setTranslation(new Vector3f(-50,50,0));
-//		matrix.mul(tmpMatrix);
 		
 		// scale
 		matrix.setScale(scale);
-//		matrix.mul(tmpMatrix);
 		
 		// rotation
 		tmpMatrix.rotX(rx);
@@ -30,9 +31,6 @@ public class Maths {
 		matrix.mul(tmpMatrix);
 		tmpMatrix.rotZ(rz);
 		matrix.mul(tmpMatrix);
-		
-//		tmpMatrix.setTranslation(new Vector3f(50,-50,0));
-//		matrix.mul(tmpMatrix);
 
 		return matrix;
 	}
@@ -248,6 +246,58 @@ public class Maths {
 		result[2] = x * (a*c * (1 - Math.cos(angle)) - b * Math.sin(angle))
 				+ y * (b*c * (1 - Math.cos(angle)) + a * Math.sin(angle))
 				+ z * (Math.cos(angle) + c*c * (1 - Math.cos(angle)));
+		return result;
+	}
+	
+	public static float[] getNormals(final float[] coordinates, final float[] idxBuffer) {
+		
+		float[] result = new float[coordinates.length];
+		
+		int vertexNb = coordinates.length / 3;
+		
+		for (int i = 0 ; i < vertexNb ; i++) {
+			
+			float xVal = 0;
+			float yVal = 0;
+			float zVal = 0;
+			float sum = 0;
+			
+			// search the triangle where the vertex is
+			for (int j = 0 ; j < idxBuffer.length ; j++) {
+				if ( (int)idxBuffer[j] == i ) {
+					int positionInTriangle = j % 3;
+					
+					int idxOfPreviousTriangle = (int) ((positionInTriangle == 0) ? idxBuffer[j+2] : idxBuffer[j-1]);
+					int idxOfNextTriangle = (int) ((positionInTriangle == 2) ? idxBuffer[j-2] : idxBuffer[j+1]);
+					
+					double[] firstVect = new double[] {
+							coordinates[idxOfPreviousTriangle*3] - coordinates[(int) ((idxBuffer[j])*3)],
+							coordinates[idxOfPreviousTriangle*3+1] - coordinates[(int) ((idxBuffer[j])*3)+1],
+							coordinates[idxOfPreviousTriangle*3+2] - coordinates[(int) ((idxBuffer[j])*3)+2],
+					};
+					double[] secondVect = new double[] {
+							coordinates[idxOfNextTriangle*3] - coordinates[(int) ((idxBuffer[j])*3)],
+							coordinates[idxOfNextTriangle*3+1] - coordinates[(int) ((idxBuffer[j])*3)+1],
+							coordinates[idxOfNextTriangle*3+2] - coordinates[(int) ((idxBuffer[j])*3)+2],
+					};
+					double[] vectProduct = CrossProduct(firstVect,secondVect);
+					
+					sum = (float) (vectProduct[0]*vectProduct[0] + vectProduct[1]*	vectProduct[1] + vectProduct[2]*vectProduct[2]);
+					xVal += vectProduct[0] / Math.sqrt(sum);
+					yVal += vectProduct[1] / Math.sqrt(sum);
+					zVal += vectProduct[2] / Math.sqrt(sum);
+				}
+			}
+			sum = xVal*xVal + yVal*yVal + zVal*zVal;
+			xVal = (float) (xVal / Math.sqrt(sum));
+			yVal = (float) (yVal / Math.sqrt(sum));
+			zVal = (float) (zVal / Math.sqrt(sum));
+			
+			result[3*i] = xVal;
+			result[3*i+1] = yVal;
+			result[3*i+2] = zVal;
+		}
+		
 		return result;
 	}
 }

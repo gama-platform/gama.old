@@ -28,7 +28,6 @@ void main (void)
 		vec3 diffuse = brightness * lightColor;
 		
 		gl_FragColor = vec4(diffuse,1.0) * varying_Color;
-		//gl_FragColor = varying_Color;
 	}
 	else
 	{
@@ -40,6 +39,5 @@ void main (void)
 		vec3 diffuse = brightness * lightColor;
 		
 		gl_FragColor = vec4(diffuse,1.0) * varying_Color;
-		//gl_FragColor = varying_Color;
 	}
 }

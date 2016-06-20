@@ -26,6 +26,12 @@ public abstract class AbstractShader {
 	
 	public AbstractShader(GL2 gl, String vertexFile, String fragmentFile) {
 		this.gl = gl;
+		
+		String absolutePathToShaderFolder = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() 
+				+ "src"
+				+ this.getClass().getResource("../shader").getPath();
+		vertexFile = absolutePathToShaderFolder + vertexFile;
+		fragmentFile = absolutePathToShaderFolder + fragmentFile;
 
 		vertexShaderID = loadShader(vertexFile,GL2.GL_VERTEX_SHADER);
 		fragmentShaderID = loadShader(fragmentFile,GL2.GL_FRAGMENT_SHADER);
@@ -145,6 +151,9 @@ public abstract class AbstractShader {
 	static String readFile(String path, Charset encoding) 
 			  throws IOException 
 	{
+		if (path.startsWith("/")) {
+			path = path.substring(1);
+		}
 	  byte[] encoded = Files.readAllBytes(Paths.get(path));
 	  return new String(encoded, encoding);
 	}

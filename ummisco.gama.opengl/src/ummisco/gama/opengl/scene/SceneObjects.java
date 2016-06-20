@@ -278,10 +278,7 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 				float[] vtxPos = vbo.get(0);
 				float[] vtxCol = vbo.get(1);
 				float[] vtxIdxBuff = vbo.get(2);
-				if (vtxPos == null || vtxCol == null) {
-					int i = 5;
-				}
-				else if (vtxPos.length > 2)
+				if (vtxPos.length > 2)
 					newDraw(vtxPos,vtxCol,vtxIdxBuff);
 			}
 		}
@@ -299,8 +296,10 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 			GamaPoint size = geomObj.attributes.size;
 			
 			Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
+			// the last coordinate is the same as the first one, no need for this
 			Coordinate[] coords = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 			
+			// convert the coordinate array into float array
 			result = new float[coords.length*3];
 			for (int i = 0 ; i < coords.length ; i++) {
 				result[3*i] = (float) coords[i].x;
@@ -336,13 +335,15 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		if (object instanceof GeometryObject) {
 			GeometryObject geomObj = (GeometryObject)object;
 			final IShape.Type type = geomObj.getType();
+			
 			Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
+			// the last coordinate is the same as the first one, no need for this
 			Coordinate[] coords = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 
-			float[] color = new float[]{ object.attributes.color.red(),
-					object.attributes.color.green(), 
-					object.attributes.color.blue(),
-					object.attributes.color.alpha()};
+			float[] color = new float[]{ (float)(object.attributes.color.red()) /255f,
+					(float)(object.attributes.color.green()) /255f, 
+					(float)(object.attributes.color.blue()) /255f,
+					(float)(object.attributes.color.alpha()) /255f};
 			result = new float[coords.length*4];
 			for (int i = 0 ; i < coords.length ; i++) {
 				result[4*i] = (float) color[0];
@@ -360,31 +361,39 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		if (object instanceof GeometryObject) {
 			GeometryObject geomObj = (GeometryObject)object;
 			final IShape.Type type = geomObj.getType();
+			
 			Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
+			// the last coordinate is the same as the first one, no need for this
 			Coordinate[] coords = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 			
-			int idx = 0;
-			for (int i = 0 ; i < coords.length-2 ; i++) {
-				for (int j = 0 ; j < coords.length-1 ; j++) {
-					for (int k = 0 ; k < coords.length ; k++) {
-						if (i != j && i != k && j != k) {
-							idx+=3;
+			if (coords.length == 4) {
+				// case of rectangle
+				result = new float[]{0,2,1,0,3,2};
+			}
+			else {
+				int idx = 0;
+				for (int i = 0 ; i < coords.length-2 ; i++) {
+					for (int j = 0 ; j < coords.length-1 ; j++) {
+						for (int k = 0 ; k < coords.length ; k++) {
+							if (i != j && i != k && j != k) {
+								idx+=3;
+							}
 						}
 					}
 				}
-			}
-			result = new float[idx];
-			idx = 0;
-			for (int i = 0 ; i < coords.length-2 ; i++) {
-				for (int j = 0 ; j < coords.length-1 ; j++) {
-					for (int k = 0 ; k < coords.length ; k++) {
-						if (i != j && i != k && j != k) {
-							result[idx] = i;
-							idx++;
-							result[idx] = j;
-							idx++;
-							result[idx] = k;
-							idx++;
+				result = new float[idx];
+				idx = 0;
+				for (int i = 0 ; i < coords.length-2 ; i++) {
+					for (int j = 0 ; j < coords.length-1 ; j++) {
+						for (int k = 0 ; k < coords.length ; k++) {
+							if (i != j && i != k && j != k) {
+								result[idx] = i;
+								idx++;
+								result[idx] = j;
+								idx++;
+								result[idx] = k;
+								idx++;
+							}
 						}
 					}
 				}
@@ -400,10 +409,10 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		shaderProgram.loadTransformationMatrix(transformationMatrix);
 		shaderProgram.loadViewMatrix(camera);
 		
-		Light light = new Light(new Vector3f(0,0,-30),new Vector3f(1,1,1));
+		Light light = new Light(new Vector3f(50,50,100),new Vector3f(1,1,1));
 		shaderProgram.loadLight(light);
 		
-		float[] normals = new float[] {0,0,-1,0,0,-1,0,0,-1,0,0,-1};
+		float[] normals = Maths.getNormals(vertices,idxBuffer);
 
 
 		// VERTICES POSITIONS BUFFER

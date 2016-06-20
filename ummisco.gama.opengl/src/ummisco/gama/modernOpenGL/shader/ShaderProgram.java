@@ -1,5 +1,9 @@
 package ummisco.gama.modernOpenGL.shader;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import javax.vecmath.Matrix4f;
 
 import com.jogamp.opengl.GL2;
@@ -10,8 +14,8 @@ import ummisco.gama.opengl.camera.ICamera;
 
 public class ShaderProgram extends AbstractShader {
 	
-	private static String VERTEX_FILE = "F:/Gama/GamaSource/ummisco.gama.opengl/src/ummisco/gama/modernOpenGL/shader/vertexShader";		
-	private static String FRAGMENT_FILE = "F:/Gama/GamaSource/ummisco.gama.opengl/src/ummisco/gama/modernOpenGL/shader/fragmentShader";
+	private static String VERTEX_FILE = "vertexShader";		
+	private static String FRAGMENT_FILE = "fragmentShader";
 	
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
