@@ -43,6 +43,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.operators.Spatial;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -168,14 +169,18 @@ public class GamaGridFile extends GamaGisFile {
 				final Envelope env = new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1),
 						genv.getMaximum(1));
 				computeProjection(scope, env);
-				final double cellHeight = genv.getSpan(1) / numRows;
-				final double cellWidth = genv.getSpan(0) / numCols;
+				final Envelope envP = gis.getProjectedEnvelope();
+				System.out.println("envP: " + envP);
+				final double cellHeight = envP.getHeight() / numRows;
+				final double cellWidth = envP.getWidth() / numCols;
 				final IList<IShape> shapes = GamaListFactory.create(Types.GEOMETRY);
-				final double originX = genv.getMinimum(0);
-				final double maxY = genv.getMaximum(1);
-				shapes.add(new GamaPoint(originX, genv.getMinimum(1)));
-				shapes.add(new GamaPoint(genv.getMaximum(0), genv.getMinimum(1)));
-				shapes.add(new GamaPoint(genv.getMaximum(0), maxY));
+				final double originX = envP.getMinX();
+				final double originY = envP.getMinY();
+				final double maxY =envP.getMaxY();
+				final double maxX = envP.getMaxX();
+				shapes.add(new GamaPoint(originX, originY));
+				shapes.add(new GamaPoint(maxX, originY));
+				shapes.add(new GamaPoint(maxX, maxY));
 				shapes.add(new GamaPoint(originX, maxY));
 				shapes.add(shapes.get(0));
 				geom = GamaGeometryType.buildPolygon(shapes);
@@ -192,6 +197,13 @@ public class GamaGridFile extends GamaGisFile {
 				boolean intValues = false;
 				boolean longValues = false;
 				boolean byteValues = false;
+				final double cellHeightP = genv.getSpan(1) / numRows;
+				final double cellWidthP = genv.getSpan(0) / numCols;
+				final double originXP = genv.getMinimum(0);
+				final double maxYP = genv.getMaximum(1);
+				final double cmxP = cellWidthP / 2;
+				final double cmyP = cellHeightP / 2;
+			
 				for (int i = 0, n = numRows * numCols; i < n; i++) {
 					scope.getGui().getStatus().setSubStatusCompletion(i / (double) n);
 					final int yy = i / numCols;
@@ -199,9 +211,8 @@ public class GamaGridFile extends GamaGisFile {
 					p.x = originX + xx * cellWidth + cmx;
 					p.y = maxY - (yy * cellHeight + cmy);
 					GamaShape rect = (GamaShape) GamaGeometryType.buildRectangle(cellWidth, cellHeight, p);
-
 					final Object vals = coverage
-							.evaluate(new DirectPosition2D(rect.getLocation().getX(), rect.getLocation().getY()));
+							.evaluate(new DirectPosition2D(originXP + xx * cellWidthP + cmxP, maxYP - (yy * cellHeightP + cmyP)));
 					if (i == 0) {
 						doubleValues = vals instanceof double[];
 						intValues = vals instanceof int[];
