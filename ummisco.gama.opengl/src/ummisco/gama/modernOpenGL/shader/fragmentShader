@@ -13,31 +13,34 @@
 varying   vec4    varying_Color;
 varying   vec3    surfaceNormal;
 varying   vec3    toLightVector;
+varying   vec3 	  toCameraVector;
 
 uniform   vec3    lightColor;
+uniform   float   shineDamper;
+uniform   float   reflectivity;
 
 void main (void)
 {
-	if (gl_FrontFacing)
+	vec3 unitNormal = normalize(surfaceNormal);
+	if (!gl_FrontFacing)
 	{
-		vec3 unitNormal = normalize(surfaceNormal);
-		vec3 unitLightVector = normalize(toLightVector);
-		
-		float nDot1 = dot(unitNormal,unitLightVector);
-		float brightness = max(nDot1,0.0);
-		vec3 diffuse = brightness * lightColor;
-		
-		gl_FragColor = vec4(diffuse,1.0) * varying_Color;
+		unitNormal = -normalize(surfaceNormal);
 	}
-	else
-	{
-		vec3 unitNormal = -normalize(surfaceNormal);
-		vec3 unitLightVector = normalize(toLightVector);
+	
+	vec3 unitLightVector = normalize(toLightVector);
 		
-		float nDot1 = dot(unitNormal,unitLightVector);
-		float brightness = max(nDot1,0.0);
-		vec3 diffuse = brightness * lightColor;
-		
-		gl_FragColor = vec4(diffuse,1.0) * varying_Color;
-	}
+	float nDot1 = dot(unitNormal,unitLightVector);
+	float brightness = max(nDot1,0.0);
+	vec3 diffuse = brightness * lightColor;
+	
+	vec3 unitVectorToCamera = normalize(toCameraVector);
+	vec3 lightDirection = -unitLightVector;
+	vec3 reflectedLightDirection = reflect(lightDirection,unitNormal);
+	
+	float specularFactor = dot(reflectedLightDirection, unitVectorToCamera);
+	specularFactor = max(specularFactor,0.0);
+	float damperFactor = pow(specularFactor,shineDamper);
+	vec3 finalSpecular = damperFactor * lightColor;
+	
+	gl_FragColor = vec4(diffuse,1.0) * varying_Color + vec4(finalSpecular,1.0);
 }

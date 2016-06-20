@@ -412,6 +412,8 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		Light light = new Light(new Vector3f(50,50,100),new Vector3f(1,1,1));
 		shaderProgram.loadLight(light);
 		
+		shaderProgram.loadShineVariables(10.0f, 1.0f);
+		
 		float[] normals = Maths.getNormals(vertices,idxBuffer);
 
 

@@ -22,6 +22,8 @@ public class ShaderProgram extends AbstractShader {
 	private int location_viewMatrix;
 	private int location_lightPosition;
 	private int location_lightColor;
+	private int location_shineDamper;	// for specular light
+	private int location_reflectivity;	// for specular light
 	
 	public static final int POSITION_ATTRIBUTE_IDX = 0;
 	public static final int COLOR_ATTRIBUTE_IDX = 1;
@@ -44,6 +46,13 @@ public class ShaderProgram extends AbstractShader {
 		location_viewMatrix = getUniformLocation("viewMatrix");
 		location_lightPosition = getUniformLocation("lightPosition");
 		location_lightColor = getUniformLocation("lightColor");
+		location_shineDamper = getUniformLocation("shineDamper");
+		location_reflectivity = getUniformLocation("reflectivity");
+	}
+	
+	public void loadShineVariables(float damper, float reflectivity) {
+		super.loadFloat(location_shineDamper, damper);
+		super.loadFloat(location_reflectivity, reflectivity);
 	}
 	
 	public void loadTransformationMatrix(Matrix4f matrix) {

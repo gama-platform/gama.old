@@ -20,6 +20,7 @@ attribute vec3  attribute_Normal;
 varying vec4    varying_Color;
 varying vec3	surfaceNormal;
 varying vec3	toLightVector;
+varying vec3 	toCameraVector;
 
 void main(void)
 {
@@ -30,4 +31,5 @@ void main(void)
 	
 	surfaceNormal = (transformationMatrix * vec4(attribute_Normal,0.0)).xyz;
 	toLightVector = lightPosition - worldPosition.xyz;
+	toCameraVector = (inverse(viewMatrix) * vec4(0.0,0.0,0.0,1.0)).xyz - worldPosition.xyz;
 }
