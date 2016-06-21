@@ -97,6 +97,11 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		@Override
 		public void validate(final IDescription desc) {
 			final String type = desc.getFacets().getLabel(IKeyword.TYPE);
+			if (type.equals(IKeyword.MEMORIZE)) {
+				desc.warning(
+						"The memorize experiment is still in development. It should not be used.",
+						IGamlIssue.DEPRECATED);				
+			}			
 			if (!type.equals(IKeyword.BATCH)) {
 				return;
 			}

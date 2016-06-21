@@ -17,14 +17,14 @@ import ummisco.gama.serializer.gamaType.converters.*;
 public class ReverseOperators {
 
 	@operator(value = "serialize")
-	@doc("It serializes any object, i.e. transform it into a string.")
+	@doc(value="It serializes any object, i.e. transform it into a string.", deprecated ="Still in alpha version, do not use it.")
 	public static String serialize(final IScope scope, final Object o) {
 		System.out.println("**** Serialize Object ****");	
 		return StreamConverter.convertObjectToStream(scope, o);
 	}	
 	
 	@operator(value = "unserialize")
-	@doc("")
+	@doc(value="", deprecated ="Still in alpha version, do not use it.")
 	public static Object unserialize(final IScope scope, final String s) {
 		System.out.println("**** unSerialize Object ****");	
 		return StreamConverter.convertStreamToObject(scope, s);
@@ -33,7 +33,7 @@ public class ReverseOperators {
 
 	
 	@operator(value = "serializeAgent")
-	@doc("")
+	@doc(value="", deprecated ="Still in alpha version, do not use it.")
 	public static String serializeAgent(final IScope scope, final IAgent agent) {
 
 		System.out.println("**** TODO list = Problème dans les displays");
@@ -45,7 +45,7 @@ public class ReverseOperators {
 	}		
 	
 	@operator(value = "unSerializeSimulation")
-	@doc("")
+	@doc(value="", deprecated ="Still in alpha version, do not use it.")
 	public static int unSerializeSimulation(final IScope scope, final String simul) {
 		ConverterScope cScope = new ConverterScope(scope);
 		XStream xstream = StreamConverter.loadAndBuild(cScope);
@@ -71,7 +71,7 @@ public class ReverseOperators {
 	}
 
 	@operator(value = "saveAgent")
-	@doc("")
+	@doc(value="", deprecated ="Still in alpha version, do not use it.")
 	public static int saveAgent(final IScope scope, final IAgent agent, final String pathname) {
 		String path = FileUtils.constructAbsoluteFilePath(scope, pathname, false);
 
@@ -94,7 +94,7 @@ public class ReverseOperators {
 	}
 	
 	@operator(value = "saveSimulation")
-	@doc("")
+	@doc(value="", deprecated ="Still in alpha version, do not use it.")
 	public static int saveSimulation(final IScope scope, final String pathname) {
 		ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
 		SimulationAgent simAgt = expAgt.getSimulation();
@@ -106,14 +106,14 @@ public class ReverseOperators {
 
 	// TODO to remove when possible
 	@operator(value = "serializeNetwork")
-	@doc("[For network purpose] It serializes any object, i.e. transform it into a string.")
+	@doc(value="[For network purpose] It serializes any object, i.e. transform it into a string.", deprecated ="Still in alpha version, do not use it.")
 	public static String serializeNetwork(final IScope scope, final Object o) {
 		System.out.println("**** Serialize Object ****");	
 		return StreamConverter.convertNetworkObjectToStream(scope, o);
 	}	
 	
 	@operator(value = "unserializeNetwork")
-	@doc("[For network purpose]")
+	@doc(value="[For network purpose]", deprecated ="Still in alpha version, do not use it.")
 	public static Object unserializeNetwork(final IScope scope, final String s) {
 		System.out.println("**** unSerialize Object ****");	
 		return StreamConverter.convertStreamToObject(scope, s);
