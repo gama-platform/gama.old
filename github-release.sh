@@ -125,11 +125,12 @@ if [ $check -ge 5 ]; then
 	assets=`echo ${temp##*|}`
 
 	for theid in $assets; do
-		if [ "$theid" != "id:" ] &&  [ "$theid"  != "19405477" ]; then
+		if [ "$theid" != "id:" ]; then
 		  LK1="https://api.github.com/repos/gama-platform/gama/releases/assets/$theid"
 		  RESULT1=`curl  -s -X  "DELETE"                \
 			-H "Authorization: token $HQN_TOKEN"   \
-			"$LK1"`
+			"$LK1"`	
+			echo $RESULT1
 		fi
 	done 
 fi
