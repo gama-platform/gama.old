@@ -84,32 +84,32 @@ public abstract class AbstractGamlUiModule extends org.eclipse.xtext.ui.DefaultU
 
 	// contributed by org.eclipse.xtext.ui.generator.labeling.LabelProviderFragment
 	public Class<? extends org.eclipse.jface.viewers.ILabelProvider> bindILabelProvider() {
-		return ummisco.gama.ui.modeling.labeling.GamlLabelProvider.class;
+		return msi.gama.lang.gaml.ui.labeling.GamlLabelProvider.class;
 	}
 
 	// contributed by org.eclipse.xtext.ui.generator.labeling.LabelProviderFragment
 	public void configureResourceUIServiceLabelProvider(com.google.inject.Binder binder) {
-		binder.bind(org.eclipse.jface.viewers.ILabelProvider.class).annotatedWith(org.eclipse.xtext.ui.resource.ResourceServiceDescriptionLabelProvider.class).to(ummisco.gama.ui.modeling.labeling.GamlDescriptionLabelProvider.class);
+		binder.bind(org.eclipse.jface.viewers.ILabelProvider.class).annotatedWith(org.eclipse.xtext.ui.resource.ResourceServiceDescriptionLabelProvider.class).to(msi.gama.lang.gaml.ui.labeling.GamlDescriptionLabelProvider.class);
 	}
 
 	// contributed by org.eclipse.xtext.ui.generator.outline.OutlineTreeProviderFragment
 	public Class<? extends org.eclipse.xtext.ui.editor.outline.IOutlineTreeProvider> bindIOutlineTreeProvider() {
-		return ummisco.gama.ui.modeling.outline.GamlOutlineTreeProvider.class;
+		return msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider.class;
 	}
 
 	// contributed by org.eclipse.xtext.ui.generator.outline.OutlineTreeProviderFragment
 	public Class<? extends org.eclipse.xtext.ui.editor.outline.impl.IOutlineTreeStructureProvider> bindIOutlineTreeStructureProvider() {
-		return ummisco.gama.ui.modeling.outline.GamlOutlineTreeProvider.class;
+		return msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider.class;
 	}
 
 	// contributed by org.eclipse.xtext.ui.generator.quickfix.QuickfixProviderFragment
 	public Class<? extends org.eclipse.xtext.ui.editor.quickfix.IssueResolutionProvider> bindIssueResolutionProvider() {
-		return ummisco.gama.ui.modeling.quickfix.GamlQuickfixProvider.class;
+		return msi.gama.lang.gaml.ui.quickfix.GamlQuickfixProvider.class;
 	}
 
 	// contributed by org.eclipse.xtext.ui.generator.contentAssist.JavaBasedContentAssistFragment
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.IContentProposalProvider> bindIContentProposalProvider() {
-		return ummisco.gama.ui.modeling.contentassist.GamlProposalProvider.class;
+		return msi.gama.lang.gaml.ui.contentassist.GamlProposalProvider.class;
 	}
 
 	// contributed by org.eclipse.xtext.generator.parser.antlr.XtextAntlrUiGeneratorFragment
