@@ -20,7 +20,7 @@ global {
 		    name <-clients[1];
 		    dest <- clients[0];
 			do connect to:"localhost" with_name:name;
-			do send to:dest content:"This message is sent by " + name + " to " + dest;
+			do send to:dest contents:"This message is sent by " + name + " to " + dest;
 		}
 	}
 }
@@ -30,12 +30,12 @@ species NetworkingAgent skills:[network]{
 	string dest;
 	reflex fetch when:has_more_message()
 	{	
-		map mess <- fetch_message();
-		write name + " fecth this message: " + mess;	
+		message mess <- fetch_message();
+		write name + " fecth this message: " + mess.contents;	
 	}
 	reflex send
 	{
-		do send to:dest content:"This message is sent by " + name + " to " + dest;
+		do send to:dest contents:"This message is sent by " + name + " to " + dest;
 	}
 }
 

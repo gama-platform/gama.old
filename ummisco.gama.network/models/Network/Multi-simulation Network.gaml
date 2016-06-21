@@ -25,11 +25,11 @@ global skills:[network]{
 	
 	reflex updateSimulation{
 		if(simulationName = "sender"){
-		  do send to:"reciever" content:9 among NetworkingAgent;	
+		  do send to:"reciever" contents:9 among NetworkingAgent;	
 		}
 		if(simulationName = "reciever"){
-		  if(has_received_message()){
-		      map mess <- fetch_message();
+		  if(has_more_message()){
+		      message mess <- fetch_message();
 		   }	
 		}
 	}

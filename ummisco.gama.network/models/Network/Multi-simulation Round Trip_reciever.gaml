@@ -12,12 +12,12 @@ global skills:[network]{
 		  do connect to:"localhost" with_name:"reciever";
 	}
 	
-	reflex updateSimulation when:has_received_message(){
-		map mess <- fetch_message();
+	reflex updateSimulation when:has_more_message(){
+		message mess <- fetch_message();
 	}
 	
 	action teletransportation (NetworkingAgent a, string s){
-	  do send to:s content:a;
+	  do send to:s contents:a;
 	}
 }
 

@@ -22,10 +22,10 @@ global {
 species NetworkingAgent skills:[network]{
 	string name;
 	string dest;
-	reflex fetch when:has_received_message()
+	reflex fetch when:has_more_message()
 	{	
-		map mess <- fetch_message();
-		write name + " fecth this message: " + mess;	
+		message mess <- fetch_message();
+		write name + " fecth this message: " + mess.contents;	
 	}
 }
 

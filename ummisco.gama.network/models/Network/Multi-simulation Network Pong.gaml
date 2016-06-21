@@ -29,13 +29,13 @@ global skills:[network]{
 		}
 	}
 	
-	reflex updateSimulation when:has_received_message(){
-		map mess <- fetch_message();
-		write simulationName + ": "+ mess ;
+	reflex updateSimulation when:has_more_message(){
+		message mess <- fetch_message();
+		write simulationName + ": "+ mess.contents ;
 	}
 	
 	action teletransportation (NetworkingAgent a, string s){
-	  do send to:s content:a;
+	  do send to:s contents:a;
 	}
 }
 

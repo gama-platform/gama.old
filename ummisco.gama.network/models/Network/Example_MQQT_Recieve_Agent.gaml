@@ -12,10 +12,10 @@ global skills:[network]{
 	{   do connect to:"localhost" with_name:"reciever";
 		
 	}
-	reflex recieveAgent when:has_received_message(){
+	reflex recieveAgent when:has_more_message(){
 		write "fetch agent on the network";
-		map mess <- fetch_message();
-		write name + " fecth this message: " + mess;	
+		message mess <- fetch_message();
+		write name + " fecth this message: " + mess.contents;	
 	}
 }
 

@@ -1,14 +1,11 @@
 /**
-* Name: User Ship
-* Author: damienphilippon
-* Description: This model must be used with an other instance of Gama having the Server Ship model launched. It shows 
-* 	how to use the skill network to produce a client-server architecture. The client model has user interaction, which are
-* 	sent to the server model to change the location of the ship, or to launch bullets. 
-* Tags: User Interaction, Network
+* Name: TCPServerBattleship2
+* Author: nicolas
+* Description: Describe here the model and its experiments
+* Tags: Tag1, Tag2, TagN
 */
 
-model server
-/*
+model TCPServerBattleship
 global
 {
 	//Id of the bullets that will be incrementally updated when a Bullet is created
@@ -67,9 +64,7 @@ global
 		wind<-{valueX,valueY};
 	}
 }
-*/
 
-/*
 
 //Species which represent the recif in the worlds
 species Recif
@@ -80,10 +75,7 @@ species Recif
 		draw shape at:{world.shape.width/2,world.shape.height/2,0};
 	}
 }
-*/
 
-
-/*
 //Species which represent the server using the skill network
 species NetworkingServer skills:[network]
 {
@@ -177,8 +169,8 @@ species NetworkingServer skills:[network]
 			}
 		}
 	}
-}*/
-/*
+}
+
 //Species which represent the bullets, using the skill moving
 species bullet skills:[moving]
 {
@@ -261,8 +253,10 @@ species bullet skills:[moving]
 	{
 		draw image_file("./images/bullet.png") at: location size:10#m rotate: heading;
 	}
-}*/
-/*
+}
+
+
+
 //Species that represent the ships using the skill moving
 species ship skills:[moving]
 {
@@ -406,11 +400,12 @@ species ship skills:[moving]
 		draw rectangle(life/2,2) color:#red rotate:heading+90;
 		draw name at:location color:#silver;
 	}
-}*/
-//Experiment to launch the server
-experiment launchServer type: gui
-{
-	/*float minimum_cycle_duration<-0.10#s;
+}
+
+
+
+experiment launchServer type: gui {
+	float minimum_cycle_duration<-0.10#s;
 	output
 	{
 		display info type:java2D 
@@ -426,5 +421,5 @@ experiment launchServer type: gui
 			species bullet aspect: default;
 			
 		}
-	}*/
+	}
 }
