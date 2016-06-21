@@ -11,11 +11,16 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
@@ -47,56 +52,21 @@ public class LayerObject implements Iterable<GeometryObject> {
 	volatile boolean isInvalid;
 	volatile boolean overlay;
 	volatile boolean locked;
-
-	protected final ISceneObjects<GeometryObject> geometries;
-	protected final ISceneObjects<ResourceObject> resources;
-	protected final ISceneObjects<ImageObject> images;
-	protected final ISceneObjects<FieldObject> dems;
-	protected final ISceneObjects<StringObject> strings;
+	final JOGLRenderer renderer;
+	final LinkedList<List<AbstractObject>> objects = new LinkedList();
+	List<AbstractObject> currentList;
+	Integer openGLListIndex;
+	boolean isFading;
 
 	public LayerObject(final JOGLRenderer renderer, final ILayer layer) {
+		this.renderer = renderer;
 		this.layer = layer;
-		geometries = buildSceneObjects(new GeometryDrawer(renderer));
-		resources = buildSceneObjects(new ResourceDrawer(renderer));
-		strings = buildSceneObjects(new StringDrawer(renderer));
-		images = buildSceneObjects(new ImageDrawer(renderer));
-		dems = buildSceneObjects(new FieldDrawer(renderer));
+		currentList = newCurrentList();
+		objects.add(currentList);
 	}
 
-	protected ISceneObjects<GeometryObject> getGeometries() {
-		return geometries;
-	}
-
-	/**
-	 * @return the images
-	 */
-	protected ISceneObjects<ImageObject> getImages() {
-		return images;
-	}
-
-	/**
-	 * @return the dems
-	 */
-	protected ISceneObjects<FieldObject> getDems() {
-		return dems;
-	}
-
-	/**
-	 * @return the strings
-	 */
-	protected ISceneObjects<StringObject> getStrings() {
-		return strings;
-	}
-
-	/**
-	 * @return the resources
-	 */
-	protected ISceneObjects<ResourceObject> getResources() {
-		return resources;
-	}
-
-	protected ISceneObjects buildSceneObjects(final ObjectDrawer drawer) {
-		return new SceneObjects(drawer);
+	private List newCurrentList() {
+		return new CopyOnWriteArrayList();
 	}
 
 	private boolean isPickable() {
@@ -116,45 +86,83 @@ public class LayerObject implements Iterable<GeometryObject> {
 					renderer.getMaxEnvDim());
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 			gl.glLoadIdentity();
-			// gl.glDisable(GL.GL_CULL_FACE);
-			// gl.glClear(GL.GL_DEPTH_BUFFER_BIT);
 		}
-		gl.glPushMatrix();
-		gl.glTranslated(offset.x, -offset.y, offset.z);
-		gl.glScaled(scale.x, scale.y, scale.z);
-		// NOTE: In the same layer if geometries and image are drawn images are
-		// drawn first and then the geometries.
-		// To be sure that the line of a grid is well displayed we decide to
-		// draw first the image that corresponds to the grid and then the line
-		// as geometries. (otherwise the lines are invisible)
-		gl.glEnable(GL.GL_TEXTURE_2D);
-		final boolean picking = renderer.getPickingState().isPicking() && isPickable();
+		try {
+			gl.glPushMatrix();
+			gl.glTranslated(offset.x, -offset.y, offset.z);
+			gl.glScaled(scale.x, scale.y, scale.z);
+			final boolean picking = renderer.getPickingState().isPicking() && isPickable();
+			if (objects.size() == 0) {
+				return;
+			}
+			renderer.setCurrentColor(gl, Color.white);
+			if (picking) {
+				drawPicking(gl);
+				return;
+			}
+			Integer index = openGLListIndex;
+			if (index == null) {
+				index = gl.glGenLists(1);
+				gl.glNewList(index, GL2.GL_COMPILE);
+				double alpha = 0d;
+				final int size = objects.size();
+				final double delta = size == 0 ? 0 : 1d / size;
+				for (final List<AbstractObject> list : objects) {
+					alpha = alpha + delta;
+					for (final AbstractObject object : list) {
+						final ObjectDrawer drawer = renderer.getDrawerFor(object.getClass());
+						if (isFading) {
+							final double originalAlpha = object.getAlpha();
+							object.setAlpha(originalAlpha * alpha);
+							object.draw(gl, drawer, picking);
+							object.setAlpha(originalAlpha);
+						} else {
+							object.draw(gl, drawer, picking);
+						}
+					}
+				}
+				gl.glEndList();
+			}
+			gl.glCallList(index);
+			openGLListIndex = index;
+		} finally {
+			gl.glPopMatrix();
+		}
 
-		images.draw(gl, picking);
-		gl.glDisable(GL.GL_TEXTURE_2D);
-		resources.draw(gl, picking);
-		geometries.draw(gl, picking);
-		//
-		strings.draw(gl, picking);
-		gl.glPopMatrix();
-
-		gl.glPushMatrix();
-		// DEMS are treated apart for the moment, since they have a very special
-		// draw that already applies the scale
-		// and offset...
-		// FIXME this needs to be changed
-		dems.draw(gl, picking);
-
-		gl.glPopMatrix();
 		if (overlay) {
 			// Making sure we can render 3d again
 			gl.glEnable(GL.GL_DEPTH_TEST);
 			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
 			gl.glPopMatrix();
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-			// glPopMatrix(); ----and this?
 		}
-		// gl.glFlush();
+	}
+
+	private void drawPicking(final GL2 gl) {
+		gl.glPushMatrix();
+		gl.glInitNames();
+		gl.glPushName(0);
+		double alpha = 0d;
+		final int size = objects.size();
+		final double delta = size == 0 ? 0 : 1d / size;
+		for (final List<AbstractObject> list : objects) {
+			alpha = alpha + delta;
+			for (final AbstractObject object : list) {
+				final ObjectDrawer drawer = renderer.getDrawerFor(object.getClass());
+				if (isFading) {
+					final double originalAlpha = object.getAlpha();
+					object.setAlpha(originalAlpha * alpha);
+					object.draw(gl, drawer, true);
+					object.setAlpha(originalAlpha);
+				} else {
+					object.draw(gl, drawer, true);
+				}
+			}
+		}
+
+		gl.glPopName();
+		gl.glPopMatrix();
+
 	}
 
 	public boolean isStatic() {
@@ -186,27 +194,27 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void addString(final String string, final DrawingAttributes attributes) {
-		strings.add(new StringObject(string, attributes, this));
+		currentList.add(new StringObject(string, attributes, this));
 	}
 
 	public void addFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
-		resources.add(new ResourceObject(file, attributes, this));
+		currentList.add(new ResourceObject(file, attributes, this));
 	}
 
 	public void addImage(final GamaImageFile img, final DrawingAttributes attributes) {
-		images.add(new ImageObject(img, attributes, this));
+		currentList.add(new ImageObject(img, attributes, this));
 	}
 
 	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
-		images.add(new ImageObject(img, attributes, this));
+		currentList.add(new ImageObject(img, attributes, this));
 	}
 
 	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		dems.add(new FieldObject(fieldValues, attributes, this));
+		currentList.add(new FieldObject(fieldValues, attributes, this));
 	}
 
 	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
-		geometries.add(new GeometryObject(geometry, attributes, this));
+		currentList.add(new GeometryObject(geometry, attributes, this));
 	}
 
 	public int getOrder() {
@@ -230,29 +238,34 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void clear(final GL gl) {
-		// System.out.println("Clearing " + layer.getName());
-		final int trace = getTrace();
+		final int sizeLimit = getTrace();
 		final boolean fading = getFading();
-		geometries.clear(gl, trace, fading);
-		resources.clear(gl, trace, fading);
-		images.clear(gl, trace, fading);
-		dems.clear(gl, trace, fading);
-		strings.clear(gl, trace, fading);
+
+		isFading = fading;
+
+		final int size = objects.size();
+		for (int i = 0, n = size - sizeLimit; i < n; i++) {
+			final List<AbstractObject> list = objects.poll();
+			for (final AbstractObject t : list) {
+				t.dispose(gl);
+			}
+		}
+
+		currentList = newCurrentList();
+		objects.offer(currentList);
+		final Integer index = openGLListIndex;
+		if (index != null) {
+			gl.getGL2().glDeleteLists(index, 1);
+			openGLListIndex = null;
+		}
+
 	}
 
-	/**
-	 * Method iterator()
-	 * 
-	 * @see java.lang.Iterable#iterator()
-	 */
 	@Override
 	public Iterator<GeometryObject> iterator() {
-		return geometries.getObjects().iterator();
+		return Iterators.filter(currentList.iterator(), GeometryObject.class);
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean isInvalid() {
 		return isInvalid;
 	}
@@ -261,23 +274,19 @@ public class LayerObject implements Iterable<GeometryObject> {
 		isInvalid = true;
 	}
 
-	/**
-	 * @return
-	 */
 	public boolean hasTrace() {
 		return getTrace() > 0;
 	}
 
-	/**
-	 * @param gl
-	 */
 	public void preload(final GL2 gl) {
-		resources.preload(gl);
+		if (objects.size() == 0) {
+			return;
+		}
+		for (final AbstractObject object : currentList) {
+			object.preload(gl, renderer);
+		}
 	}
 
-	/**
-	 * @param b
-	 */
 	public void setOverlay(final boolean b) {
 		overlay = b;
 	}
@@ -296,7 +305,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public SimpleLayer toSimpleLayer() {
 		final List<SimpleGeometryObject> geom = new ArrayList();
-		for (final GeometryObject object : geometries.getObjects()) {
+		for (final GeometryObject object : Iterables.filter(currentList, GeometryObject.class)) {
 			geom.add(object.toSimpleGeometryObject());
 		}
 		return new SimpleLayer(offset, scale, alpha, geom);

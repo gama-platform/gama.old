@@ -12,8 +12,11 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
+
 import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
+
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
@@ -40,12 +43,12 @@ public class ImageObject extends AbstractObject {
 	@Override
 	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
 		Texture texture = null;
-		if ( image == null ) {
+		if (image == null) {
 			texture = renderer.getCurrentScene().getTexture(gl, file);
 		} else {
 			texture = renderer.getCurrentScene().getTexture(gl, image);
 		}
-		if ( getDimensions() == null ) {
+		if (getDimensions() == null) {
 			attributes.size = new GamaPoint(renderer.data.getEnvWidth(), renderer.data.getEnvHeight());
 		}
 		return texture;
@@ -59,6 +62,13 @@ public class ImageObject extends AbstractObject {
 	@Override
 	public boolean isFilled() {
 		return true;
+	}
+
+	@Override
+	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean isPicking) {
+		gl.glEnable(GL.GL_TEXTURE_2D);
+		super.draw(gl, drawer, isPicking);
+		gl.glDisable(GL.GL_TEXTURE_2D);
 	}
 
 }

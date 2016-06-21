@@ -18,6 +18,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.BufferOverflowException;
 import java.nio.IntBuffer;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -66,8 +67,20 @@ import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
 import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.jts.JTSDrawer;
+import ummisco.gama.opengl.scene.AbstractObject;
+import ummisco.gama.opengl.scene.FieldDrawer;
+import ummisco.gama.opengl.scene.FieldObject;
+import ummisco.gama.opengl.scene.GeometryDrawer;
+import ummisco.gama.opengl.scene.GeometryObject;
+import ummisco.gama.opengl.scene.ImageDrawer;
+import ummisco.gama.opengl.scene.ImageObject;
 import ummisco.gama.opengl.scene.ModelScene;
+import ummisco.gama.opengl.scene.ObjectDrawer;
+import ummisco.gama.opengl.scene.ResourceDrawer;
+import ummisco.gama.opengl.scene.ResourceObject;
 import ummisco.gama.opengl.scene.SceneBuffer;
+import ummisco.gama.opengl.scene.StringDrawer;
+import ummisco.gama.opengl.scene.StringObject;
 import ummisco.gama.opengl.utils.GLUtilLight;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -1091,6 +1104,20 @@ public class JOGLRenderer extends AbstractDisplayGraphics implements IGraphics, 
 	@Override
 	public ILocation getCameraOrientation() {
 		return camera.getOrientation();
+	}
+
+	Map<Class, ObjectDrawer> drawers;
+
+	public ObjectDrawer getDrawerFor(final Class<? extends AbstractObject> class1) {
+		if (drawers == null) {
+			drawers = new HashMap();
+			drawers.put(GeometryObject.class, new GeometryDrawer(this));
+			drawers.put(ImageObject.class, new ImageDrawer(this));
+			drawers.put(FieldObject.class, new FieldDrawer(this));
+			drawers.put(StringObject.class, new StringDrawer(this));
+			drawers.put(ResourceObject.class, new ResourceDrawer(this));
+		}
+		return drawers.get(class1);
 	}
 
 }
