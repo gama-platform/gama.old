@@ -85,7 +85,6 @@ thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0
 
 
 RELEASEFILES="$thePATH-linux.gtk.x86.zip $thePATH-linux.gtk.x86_64.zip $thePATH-macosx.cocoa.x86_64.zip $thePATH-win32.win32.x86.zip $thePATH-win32.win32.x86_64.zip"
-echo $RELEASEFILES
 
 
 
@@ -112,7 +111,7 @@ echo $RELEASEID
   -H "Content-Type: application/json" \
   -d '{"name":"value"}' \
     "$LK"`
-	echo $RESULT
+
 check=${#RESULT}
 
 if [ $check -ge 5 ]; then
@@ -131,7 +130,6 @@ if [ $check -ge 5 ]; then
 		  RESULT1=`curl  -s -X  "DELETE"                \
 			-H "Authorization: token $HQN_TOKEN"   \
 			"$LK1"`
-			echo $RESULT1
 		fi
 	done 
 fi
@@ -139,6 +137,8 @@ fi
 
 
 
+echo "Upload new files..."
+echo
 for FILE in $RELEASEFILES; do
   FILESIZE=`stat -c '%s' "$FILE"`
   FILENAME=`basename $FILE`
