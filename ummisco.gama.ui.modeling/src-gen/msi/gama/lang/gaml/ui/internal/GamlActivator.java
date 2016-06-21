@@ -82,7 +82,7 @@ public class GamlActivator extends AbstractUIPlugin {
 	
 	protected Module getUiModule(String grammar) {
 		if (MSI_GAMA_LANG_GAML_GAML.equals(grammar)) {
-			return new msi.gama.lang.gaml.ui.GamlUiModule(this);
+			return new ummisco.gama.ui.modeling.GamlUiModule(this);
 		}
 		
 		throw new IllegalArgumentException(grammar);

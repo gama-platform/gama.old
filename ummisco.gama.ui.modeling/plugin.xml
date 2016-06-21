@@ -110,7 +110,7 @@
         </page>
         <page
               category="msi.gama.lang.gaml.Gaml"
-              class="msi.gama.lang.gaml.ui.editbox.EditboxPreferencePage"
+              class="ummisco.gama.ui.modeling.editbox.EditboxPreferencePage"
               id="pm.eclipse.editbox.pref.default"
               name="EditBox">
         </page>
@@ -318,7 +318,7 @@
     <extension point="org.eclipse.ui.decorators">
            <decorator
                  adaptable="true"
-                 class="msi.gama.lang.gaml.ui.decorators.GamlDecorator"
+                 class="ummisco.gama.ui.modeling.decorators.GamlDecorator"
                  id="msi.gama.light.decorator"
                  label="Gaml Errors"
                  lightweight="true"
@@ -353,14 +353,14 @@
        <view
              allowMultiple="false"
              category="msi.gama.gui.category.gama"
-             class="msi.gama.lang.gaml.ui.SyntaxErrorsView"
+             class="ummisco.gama.ui.modeling.SyntaxErrorsView"
              icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.problems2.png"
              id="msi.gama.application.problems"
              name="Validation"
              restorable="true">
        </view>
        <view
-             class="msi.gama.lang.gaml.ui.templates.TemplatesView"
+             class="ummisco.gama.ui.modeling.templates.TemplatesView"
              id="msi.gama.lang.gaml.ui.templates"
              name="Templates"
              restorable="true">
@@ -369,7 +369,7 @@
     <extension
           point="org.eclipse.ui.startup">
        <startup
-             class="msi.gama.lang.gaml.ui.AutoStartup">
+             class="ummisco.gama.ui.modeling.AutoStartup">
        </startup>
     </extension>
     <extension
@@ -517,7 +517,7 @@
                 id="msi.gama.lang.gaml.ui.markerFieldConfiguration1"
                 name="Problems"
                 scope="ON_ANY"
-                values="msi.gama.lang.gaml.ui.GamlProblems">
+                values="ummisco.gama.ui.modeling.GamlProblems">
           </markerFieldConfiguration>
           <markerFieldReference
                 id="msi.gama.lang.gaml.ui.description.field"
@@ -537,12 +537,12 @@
           </markerFieldReference>
        </markerContentGenerator>
        <markerField
-             class="msi.gama.lang.gaml.ui.markers.ProjectMarkerField"
+             class="ummisco.gama.ui.modeling.markers.ProjectMarkerField"
              id="msi.gama.lang.gaml.ui.project.field"
              name="Project">
        </markerField>
        <markerField
-             class="msi.gama.lang.gaml.ui.markers.GamlDescriptionMarkerField"
+             class="ummisco.gama.ui.modeling.markers.GamlDescriptionMarkerField"
              id="msi.gama.lang.gaml.ui.description.field"
              name="Description">
        </markerField>
@@ -550,17 +550,17 @@
     <extension
           point="org.eclipse.ui.ide.markerImageProviders">
        <imageprovider
-             class="msi.gama.lang.gaml.ui.markers.GamlMarkerImageProvider"
+             class="ummisco.gama.ui.modeling.markers.GamlMarkerImageProvider"
              id="msi.gama.lang.gaml.ui.imageprovider.normal"
              markertype="ummisco.gama.ui.modeling.gaml.check.normal">
        </imageprovider>
        <imageprovider
-             class="msi.gama.lang.gaml.ui.markers.GamlMarkerImageProvider"
+             class="ummisco.gama.ui.modeling.markers.GamlMarkerImageProvider"
              id="msi.gama.lang.gaml.ui.imageprovider.expensive"
              markertype="ummisco.gama.ui.modeling.gaml.check.expensive">
        </imageprovider>
        <imageprovider
-             class="msi.gama.lang.gaml.ui.markers.GamlMarkerImageProvider"
+             class="ummisco.gama.ui.modeling.markers.GamlMarkerImageProvider"
              id="msi.gama.lang.gaml.ui.imageprovider.fast"
              markertype="ummisco.gama.ui.modeling.gaml.check.fast">
        </imageprovider>
@@ -600,7 +600,7 @@
              label="label"
              visible="true">
           <action
-                class="msi.gama.lang.gaml.ui.DelegateForAllElements"
+                class="ummisco.gama.ui.modeling.DelegateForAllElements"
                 id="msi.gama.application.action1"
                 label="All Elements…"
                 menubarPath="org.eclipse.search.menu/extraSearchGroup"
@@ -669,7 +669,7 @@
     <extension
           point="org.eclipse.ui.services">
        <serviceFactory
-             factoryClass="msi.gama.lang.gaml.ui.ModelRunner">
+             factoryClass="ummisco.gama.ui.modeling.ModelRunner">
           <service
                 serviceClass="ummisco.gama.ui.interfaces.IModelRunner"></service>
        </serviceFactory>

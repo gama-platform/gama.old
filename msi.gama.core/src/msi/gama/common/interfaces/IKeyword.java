@@ -201,6 +201,7 @@ public interface IKeyword {
 	public static final String HEATMAP = "heatmap";
 	public static final String HEIGHT = "height";
 	public static final String HER = "her";
+	public static final String HIGHLIGHT = "highlight";
 	public static final String HILL_CLIMBING = "hill_climbing";
 	public static final String HIS = "his";
 	public static final String HISTOGRAM = "histogram";
