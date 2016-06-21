@@ -1882,17 +1882,19 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cMatch_oneKeyword_21 = (Keyword)cAlternatives.eContents().get(21);
 		private final Keyword cParameterKeyword_22 = (Keyword)cAlternatives.eContents().get(22);
 		private final Keyword cStatusKeyword_23 = (Keyword)cAlternatives.eContents().get(23);
+		private final Keyword cHighlightKeyword_24 = (Keyword)cAlternatives.eContents().get(24);
+		private final Keyword cFocus_onKeyword_25 = (Keyword)cAlternatives.eContents().get(25);
 		
 		//_1Expr_Facets_BlockOrEnd_Key:
 		//	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
 		//	"inspect" | "browse" |
 		//	"draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" |
-		//	"status";
+		//	"status" | "highlight" | "focus_on";
 		@Override public ParserRule getRule() { return rule; }
 
 		//_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
 		//"inspect" | "browse" | "draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one"
-		//| "parameter" | "status"
+		//| "parameter" | "status" | "highlight" | "focus_on"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//_LayerKey
@@ -1966,6 +1968,12 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"status"
 		public Keyword getStatusKeyword_23() { return cStatusKeyword_23; }
+
+		//"highlight"
+		public Keyword getHighlightKeyword_24() { return cHighlightKeyword_24; }
+
+		//"focus_on"
+		public Keyword getFocus_onKeyword_25() { return cFocus_onKeyword_25; }
 	}
 
 	public class _LayerKeyElements extends AbstractParserRuleElementFinder {
@@ -5510,7 +5518,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	//	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
 	//	"inspect" | "browse" |
 	//	"draw" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" |
-	//	"status";
+	//	"status" | "highlight" | "focus_on";
 	public _1Expr_Facets_BlockOrEnd_KeyElements get_1Expr_Facets_BlockOrEnd_KeyAccess() {
 		return p_1Expr_Facets_BlockOrEnd_Key;
 	}

@@ -179,7 +179,7 @@ _SpeciesKey:
 
 _1Expr_Facets_BlockOrEnd_Key:
 	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "inspect" | "browse" |
-	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" | "status";
+	"draw"  | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" | "match_one" | "parameter" | "status" | "highlight" | "focus_on" ;
 
 _LayerKey:
 	"light" | "camera" | "text" | "image" | "data" | "chart" | "agents" | "graphics" | "display_population" | "display_grid" | "quadtree" | "event" | "overlay" | "datalist"

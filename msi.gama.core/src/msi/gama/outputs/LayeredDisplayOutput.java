@@ -564,6 +564,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		surface = null;
 		getLayers().clear();
+		data.dispose();
 	}
 
 	protected void createSurface(final IScope scope) {

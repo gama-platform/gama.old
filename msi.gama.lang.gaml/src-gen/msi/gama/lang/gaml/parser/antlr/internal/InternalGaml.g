@@ -3645,6 +3645,20 @@ rule_1Expr_Facets_BlockOrEnd_Key returns [AntlrDatatypeRuleToken current=new Ant
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getStatusKeyword_23()); 
     }
+
+    |
+	kw='highlight' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getHighlightKeyword_24()); 
+    }
+
+    |
+	kw='focus_on' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getFocus_onKeyword_25()); 
+    }
 )
     ;
 

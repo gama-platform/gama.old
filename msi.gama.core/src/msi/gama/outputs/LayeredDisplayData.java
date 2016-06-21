@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Set;
 
 import msi.gama.common.GamaPreferences;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.util.GamaColor;
@@ -53,8 +54,10 @@ public class LayeredDisplayData {
 	 * Colors
 	 */
 	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
-	private Color ambientColor = new GamaColor(127, 127, 127, 255); // default value
+	private Color ambientColor = new GamaColor(127, 127, 127, 255); // default
+																	// value
 	private Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
+
 	/**
 	 * Properties
 	 */
@@ -66,7 +69,7 @@ public class LayeredDisplayData {
 	private boolean isAntialiasing = GamaPreferences.CORE_ANTIALIAS.getValue();
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 	private Double zoomLevel = null;
-	private LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
+	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
 
 	/**
 	 * OpenGL
@@ -108,6 +111,28 @@ public class LayeredDisplayData {
 	/**
 	 *
 	 */
+
+	IPreferenceChangeListener highlightListener = new IPreferenceChangeListener<Color>() {
+
+		@Override
+		public boolean beforeValueChange(final Color newValue) {
+			return true;
+		}
+
+		@Override
+		public void afterValueChange(final Color newValue) {
+			setHighlightColor(newValue);
+
+		}
+	};
+
+	public LayeredDisplayData() {
+		GamaPreferences.CORE_HIGHLIGHT.addChangeListener(highlightListener);
+	}
+
+	public void dispose() {
+		GamaPreferences.CORE_HIGHLIGHT.removeChangeListener(highlightListener);
+	}
 
 	/**
 	 * @return the backgroundColor
@@ -298,10 +323,10 @@ public class LayeredDisplayData {
 	public void setLightOn(final boolean isLightOn) {
 		this.isLightOn = isLightOn;
 	}
-	
+
 	public List<LightPropertiesStructure> getDiffuseLights() {
-		ArrayList<LightPropertiesStructure> result = new ArrayList<LightPropertiesStructure>();
-		for (LightPropertiesStructure lightProp : lights) {
+		final ArrayList<LightPropertiesStructure> result = new ArrayList<LightPropertiesStructure>();
+		for (final LightPropertiesStructure lightProp : lights) {
 			if (lightProp != null) {
 				// TODO : check if the light is active
 				result.add(lightProp);
@@ -309,52 +334,50 @@ public class LayeredDisplayData {
 		}
 		return result;
 	}
-	
-	public void setLightActive(int lightId, boolean value) {
+
+	public void setLightActive(final int lightId, final boolean value) {
 		if (lights[lightId] == null) {
 			lights[lightId] = new LightPropertiesStructure();
 		}
 		lights[lightId].id = lightId;
 		lights[lightId].active = value;
 	}
-	
-	public void setLightType(int lightId, String type) {
+
+	public void setLightType(final int lightId, final String type) {
 		if (type.compareTo("direction") == 0) {
 			lights[lightId].type = LightPropertiesStructure.TYPE.DIRECTION;
-		}
-		else if (type.compareTo("point") == 0){
+		} else if (type.compareTo("point") == 0) {
 			lights[lightId].type = LightPropertiesStructure.TYPE.POINT;
-		}
-		else {
+		} else {
 			lights[lightId].type = LightPropertiesStructure.TYPE.SPOT;
 		}
 	}
-	
-	public void setLightPosition(int lightId, GamaPoint position) {
+
+	public void setLightPosition(final int lightId, final GamaPoint position) {
 		lights[lightId].position = position;
 	}
-	
-	public void setLightDirection(int lightId, GamaPoint direction) {
+
+	public void setLightDirection(final int lightId, final GamaPoint direction) {
 		lights[lightId].direction = direction;
 	}
-	
-	public void setDiffuseLightColor(int lightId, GamaColor color) {
+
+	public void setDiffuseLightColor(final int lightId, final GamaColor color) {
 		lights[lightId].color = color;
 	}
-	
-	public void setSpotAngle(int lightId, float angle) {
+
+	public void setSpotAngle(final int lightId, final float angle) {
 		lights[lightId].spotAngle = angle;
 	}
-	
-	public void setLinearAttenuation(int lightId, float linearAttenuation) {
+
+	public void setLinearAttenuation(final int lightId, final float linearAttenuation) {
 		lights[lightId].linearAttenuation = linearAttenuation;
 	}
-	
-	public void setQuadraticAttenuation(int lightId, float quadraticAttenuation) {
+
+	public void setQuadraticAttenuation(final int lightId, final float quadraticAttenuation) {
 		lights[lightId].quadraticAttenuation = quadraticAttenuation;
 	}
-	
-	public void setDrawLight(int lightId, boolean value) {
+
+	public void setDrawLight(final int lightId, final boolean value) {
 		lights[lightId].drawLight = value;
 	}
 
@@ -434,14 +457,14 @@ public class LayeredDisplayData {
 			notifyListeners(Changes.CAMERA_POS, true);
 		}
 	}
-	
+
 	/**
 	 * @return the cameraLens
 	 */
 	public int getCameralens() {
 		return cameraLens;
 	}
-	
+
 	/**
 	 * @param cameraLens
 	 *            the cameraLens to set
@@ -451,8 +474,6 @@ public class LayeredDisplayData {
 			this.cameraLens = cameraLens;
 		}
 	}
-
-	
 
 	/**
 	 * @return the polygonMode

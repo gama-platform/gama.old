@@ -19,6 +19,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.runtime.IScope;
@@ -138,5 +139,7 @@ public interface IGui {
 	void updateDecorator(String string);
 
 	void run(Runnable opener);
+
+	void setFocusOn(IShape o);
 
 }

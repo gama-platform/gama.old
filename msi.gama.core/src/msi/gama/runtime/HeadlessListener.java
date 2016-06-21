@@ -29,6 +29,7 @@ import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.display.NullDisplaySurface;
@@ -392,6 +393,12 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void run(final Runnable opener) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void setFocusOn(final IShape o) {
 		// TODO Auto-generated method stub
 
 	}

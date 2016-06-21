@@ -168,6 +168,7 @@ public interface IKeyword {
 	public static final String OUTPUT_FILE = "output_file";
 	public static final String FILL_WITH = "fill_with";
 	public static final String FOCUS = "focus";
+	public static final String FOCUS_ON = "focus_on";
 	public static final String FONT = "font";
 	public static final String FOOTER = "footer";
 	public static final String FRAMERATE = "framerate";

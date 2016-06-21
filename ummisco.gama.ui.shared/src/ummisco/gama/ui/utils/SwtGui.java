@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.window.Window;
@@ -44,6 +46,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -476,6 +479,19 @@ public class SwtGui implements IGui {
 		return null;
 	}
 
+	public static List<IDisplaySurface> allDisplaySurfaces() {
+		final List<IDisplaySurface> result = new ArrayList();
+		final IViewReference[] viewRefs = WorkbenchHelper.getPage().getViewReferences();
+		for (final IViewReference ref : viewRefs) {
+			final IWorkbenchPart part = ref.getPart(false);
+			if (part instanceof IGamaView.Display) {
+
+				result.add(((IGamaView.Display) part).getDisplaySurface());
+			}
+		}
+		return result;
+	}
+
 	/**
 	 * Method updateSpeedDisplay()
 	 * 
@@ -608,6 +624,13 @@ public class SwtGui implements IGui {
 	public void run(final Runnable r) {
 		WorkbenchHelper.run(r);
 
+	}
+
+	@Override
+	public void setFocusOn(final IShape shape) {
+		for (final IDisplaySurface surface : this.allDisplaySurfaces()) {
+			surface.focusOn(shape);
+		}
 	}
 
 }

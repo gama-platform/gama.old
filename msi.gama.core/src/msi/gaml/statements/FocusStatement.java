@@ -11,9 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -26,7 +26,6 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -39,43 +38,35 @@ import msi.gaml.types.IType;
  * 
  */
 
-@symbol(name = IKeyword.HIGHLIGHT, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
-		IConcept.DISPLAY, IConcept.COLOR })
+@symbol(name = IKeyword.FOCUS_ON, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
+		IConcept.DISPLAY, IConcept.GEOMETRY })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @facets(value = {
-		@facet(name = IKeyword.COLOR, type = IType.COLOR, doc = @doc("An optional color to highlight the agent. Note that this color will become the default color for further higlight operations"), optional = true),
-		@facet(name = IKeyword.VALUE, type = IType.AGENT, optional = false, doc = @doc("The agent to hightlight")) }, omissible = IKeyword.VALUE)
-@doc(value = "Allows to highlight the agent passed in parameter in all available displays, optionaly setting a color. Passing 'nil' for the agent will remove the current highlight", usages = {
-		@usage(value = "Highlighting an agent", examples = { @example("highlight my_species(0) color: #blue;") }) })
-public class HighlightStatement extends AbstractStatement {
+		@facet(name = IKeyword.VALUE, type = IType.NONE, optional = false, doc = @doc("The agent, list of agents, geometry to focus on")) }, omissible = IKeyword.VALUE)
+@doc(value = "Allows to focus on the passed parameter in all available displays. Passing 'nil' for the parameter will make all screens return to their normal zoom", usages = {
+		@usage(value = "Focuses on an agent, a geometry, a set of agents, etc...)", examples = {
+				@example("focus_on my_species(0);") }) })
+public class FocusStatement extends AbstractStatement {
 
 	@Override
 	public String getTrace(final IScope scope) {
-		// We dont trace highlight statements
+		// We dont trace focus statements
 		return "";
 	}
 
 	final IExpression value;
-	final IExpression color;
 
-	public HighlightStatement(final IDescription desc) {
+	public FocusStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
-		color = getFacet(IKeyword.COLOR);
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = scope.getAgentScope();
 		if (agent != null && !agent.dead()) {
-			final IAgent o = Cast.asAgent(scope, value.value(scope));
-			if (color != null) {
-				final GamaColor c = Cast.asColor(scope, color.value(scope));
-				if (c != null) {
-					GamaPreferences.CORE_HIGHLIGHT.set(c);
-				}
-			}
-			GAMA.getGui().setHighlightedAgent(o);
+			final IShape o = Cast.asGeometry(scope, value.value(scope));
+			GAMA.getGui().setFocusOn(o);
 		}
 		return value.value(scope);
 	}
