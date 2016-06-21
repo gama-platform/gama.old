@@ -11,9 +11,12 @@
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
+
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
@@ -25,7 +28,43 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
  */
 public interface IPopupProvider {
 
-	public Map<GamaUIColor, String> getPopupText();
+	public static class PopupText {
+
+		public static PopupText with(final GamaUIColor color, final String text) {
+			final PopupText p = new PopupText();
+			p.add(color, text);
+			return p;
+		}
+
+		public void add(final GamaUIColor color, final String text) {
+			contents.add(new Pair(color, text));
+		}
+
+		final List<Pair> contents = new ArrayList();
+
+		public class Pair {
+			GamaUIColor color;
+			String text;
+
+			public Pair(final GamaUIColor color, final String text) {
+				super();
+				this.color = color;
+				this.text = text;
+			}
+
+		}
+
+		public boolean isEmpty() {
+			return contents.isEmpty();
+		}
+
+		public int size() {
+			return contents.size();
+		}
+
+	}
+
+	public PopupText getPopupText();
 
 	public Shell getControllingShell();
 

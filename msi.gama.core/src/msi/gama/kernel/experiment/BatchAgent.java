@@ -210,8 +210,10 @@ public class BatchAgent extends ExperimentAgent {
 				}
 				// We inform the status line
 
-				getScope().getGui().getStatus().setStatus("Run " + runNumber + " | " + seeds.length
-						+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)", "small.batch" + i / 5);
+				getScope().getGui().getStatus()
+						.setStatus("Run " + runNumber + " | " + repeatIndex + "/" + seeds.length
+								+ " simulations (using " + pop.getNumberOfActiveThreads() + " threads)",
+								"small.batch" + i / 5);
 				if (++i == 20) {
 					i = 0;
 				}

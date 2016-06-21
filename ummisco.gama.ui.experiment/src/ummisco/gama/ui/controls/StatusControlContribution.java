@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
 
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -34,9 +32,9 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaColor;
-import msi.gama.util.GamaMapFactory;
 import msi.gaml.operators.Dates;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -131,19 +129,18 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupText()
 	 */
 	@Override
-	public Map<GamaUIColor, String> getPopupText() {
-
-		final Map<GamaUIColor, String> result = GamaMapFactory.create();
+	public PopupText getPopupText() {
+		final PopupText result = new PopupText();
 
 		if (state == IGui.ERROR || state == IGui.WAIT) {
 			final GamaUIColor color = state == IGui.ERROR ? IGamaColors.ERROR : IGamaColors.WARNING;
-			result.put(color, label.getText());
+			result.add(color, label.getText());
 			return result;
 		}
 
 		final ExperimentAgent agent = GAMA.getExperiment().getAgent();
 		if (agent == null) {
-			result.put(IGamaColors.NEUTRAL, "No experiment opened");
+			result.add(IGamaColors.NEUTRAL, "No experiment available");
 			return result;
 		}
 
@@ -152,8 +149,13 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		sb.append(String.format("%-20s %-10d\n", "Experiment cycles elapsed: ", clock.getCycle()));
 		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 				(int) clock.getAverageDuration(), clock.getTotalDuration()));
-		result.put(GamaColors.get(agent.getColor()), sb.toString());
-		final IAgent[] simulations = agent.getSimulationPopulation().toArray();
+		result.add(GamaColors.get(agent.getColor()), sb.toString());
+		final IPopulation pop = agent.getSimulationPopulation();
+		if (pop == null) {
+			result.add(IGamaColors.NEUTRAL, "No simulations available");
+			return result;
+		}
+		final IAgent[] simulations = pop.toArray();
 
 		for (final IAgent a : simulations) {
 			sb.setLength(0);
@@ -165,7 +167,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 							: Dates.asDate(clock.getStartingDate(), clock.getCurrentDate(), null)));
 			sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 					(int) clock.getAverageDuration(), clock.getTotalDuration()));
-			result.put(GamaColors.get(sim.getColor()), sb.toString());
+			result.add(GamaColors.get(sim.getColor()), sb.toString());
 
 		}
 

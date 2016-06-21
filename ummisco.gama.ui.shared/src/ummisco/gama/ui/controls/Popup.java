@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
 
-import java.util.Map;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackListener;
@@ -28,8 +26,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
+import ummisco.gama.ui.controls.IPopupProvider.PopupText;
 import ummisco.gama.ui.resources.GamaColors;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -125,7 +123,7 @@ public class Popup {
 		}
 
 		// We then grab the text and hide if it is null or empty
-		final Map<GamaUIColor, String> s = provider.getPopupText();
+		final PopupText s = provider.getPopupText();
 		if (s == null || s.isEmpty()) {
 			hide();
 			return;
@@ -140,18 +138,18 @@ public class Popup {
 			}
 			labels = new Control[s.size()];
 			int i = 0;
-			for (final Map.Entry<GamaUIColor, String> entry : s.entrySet()) {
+			for (final PopupText.Pair entry : s.contents) {
 				final Label label = new Label(popup, SWT.None);
 				label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-				label.setBackground(entry.getKey().color());
-				label.setForeground(GamaColors.getTextColorForBackground(entry.getKey()).color());
-				label.setText(entry.getValue());
+				label.setBackground(entry.color.color());
+				label.setForeground(GamaColors.getTextColorForBackground(entry.color.color()).color());
+				label.setText(entry.text);
 				labels[i++] = label;
 			}
 		} else
-			for (final Map.Entry<GamaUIColor, String> entry : s.entrySet()) {
+			for (final PopupText.Pair entry : s.contents) {
 				final Label label = (Label) labels[index++];
-				label.setText(entry.getValue());
+				label.setText(entry.text);
 			}
 
 		final Point point = provider.getAbsoluteOrigin();
