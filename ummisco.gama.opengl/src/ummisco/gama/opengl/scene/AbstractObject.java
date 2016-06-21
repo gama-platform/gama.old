@@ -150,10 +150,6 @@ public abstract class AbstractObject {
 		return attributes.getDepth();
 	}
 
-	// public IAgent getAgent() {
-	// return attributes.getAgent();
-	// }
-
 	public double getRotationAngle() {
 		if (attributes.rotation == null || attributes.rotation.key == null) {
 			return 0;

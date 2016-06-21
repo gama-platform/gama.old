@@ -38,11 +38,6 @@ public class StaticLayerObject extends LayerObject {
 	}
 
 	@Override
-	protected ISceneObjects buildSceneObjects(final ObjectDrawer drawer) {
-		return new SceneObjects.Static(drawer);
-	}
-
-	@Override
 	public boolean isStatic() {
 		return true;
 	}
@@ -126,21 +121,21 @@ public class StaticLayerObject extends LayerObject {
 			final GamaPoint origin = new GamaPoint();
 
 			IShape g = GamaGeometryType.buildLine(origin, new GamaPoint(w, 0));
-			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
+			currentList.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 			g = GamaGeometryType.buildLine(new GamaPoint(w, 0), new GamaPoint(w, h));
-			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
+			currentList.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 			g = GamaGeometryType.buildLine(new GamaPoint(w, h), new GamaPoint(0, h));
-			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
+			currentList.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 			g = GamaGeometryType.buildLine(new GamaPoint(0, h), origin);
-			geometries.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
+			currentList.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 		}
 
 		public void drawAxes(final double w, final double h) {
 			for (final GeometryObject geomObj : geomObjList) {
-				geometries.remove(geomObj);
+				objects.remove(geomObj);
 			}
 			for (final StringObject strObj : stringObjList) {
-				strings.remove(strObj);
+				objects.remove(strObj);
 			}
 			// geometries.clear(gl, getTrace(), false);
 			double size = (w > h ? w : h) / 10;
@@ -158,33 +153,33 @@ public class StaticLayerObject extends LayerObject {
 					new GamaPoint(size + origin.x, 0 - origin.y, 0 + origin.z));
 			GeometryObject geomObj = new GeometryObject(g, c, IShape.Type.LINESTRING, this);
 			geomObjList.add(geomObj);
-			geometries.add(geomObj);
+			currentList.add(geomObj);
 			c = GamaColor.getInt(Color.green.getRGB());
 			g = GamaGeometryType.buildLine(new GamaPoint(origin.x, -origin.y, origin.z),
 					new GamaPoint(0 + origin.x, size - origin.y, 0 + origin.z));
 			geomObj = new GeometryObject(g, c, IShape.Type.LINESTRING, this);
 			geomObjList.add(geomObj);
-			geometries.add(geomObj);
+			currentList.add(geomObj);
 			c = GamaColor.getInt(Color.blue.getRGB());
 			g = GamaGeometryType.buildLine(new GamaPoint(origin.x, -origin.y, origin.z),
 					new GamaPoint(0 + origin.x, 0 - origin.y, size + origin.z));
 			geomObj = new GeometryObject(g, c, IShape.Type.LINESTRING, this);
 			geomObjList.add(geomObj);
-			geometries.add(geomObj);
+			currentList.add(geomObj);
 
 			// add the legends
 			StringObject strObj = new StringObject("X",
 					new GamaPoint(1.2f * size + origin.x, 0.0d + origin.y, 0.0d + origin.z), this);
 			stringObjList.add(strObj);
-			strings.add(strObj);
+			currentList.add(strObj);
 			strObj = new StringObject("Y", new GamaPoint(0.0d + origin.x, -1.2f * size + origin.y, 0.0 + origin.z),
 					this);
 			stringObjList.add(strObj);
-			strings.add(strObj);
+			currentList.add(strObj);
 			strObj = new StringObject("Z", new GamaPoint(0.0d + origin.x, 0.0d + origin.y, 1.2f * size + origin.z),
 					this);
 			stringObjList.add(strObj);
-			strings.add(strObj);
+			currentList.add(strObj);
 
 			// add the triangles
 			c = GamaColor.getInt(Color.red.getRGB());
@@ -192,20 +187,20 @@ public class StaticLayerObject extends LayerObject {
 					new GamaPoint(size + size / 10 + origin.x, 0 - origin.y, 0 + origin.z), size / 6, size / 6, true);
 			geomObj = new GeometryObject(g, c, IShape.Type.POLYGON, this);
 			geomObjList.add(geomObj);
-			geometries.add(geomObj);
+			currentList.add(geomObj);
 			c = GamaColor.getInt(Color.green.getRGB());
 			g = GamaGeometryType.buildArrow(new GamaPoint(origin.x, -origin.y, origin.z),
 					new GamaPoint(0 + origin.x, size + size / 10 - origin.y, 0 + origin.z), size / 6, size / 6, true);
 			geomObj = new GeometryObject(g, c, IShape.Type.POLYGON, this);
 			geomObjList.add(geomObj);
-			geometries.add(geomObj);
+			currentList.add(geomObj);
 			c = GamaColor.getInt(Color.blue.getRGB());
 			g = GamaGeometryType.buildArrow(new GamaPoint(origin.x, -origin.y, origin.z),
 					new GamaPoint(0 + origin.x, 0 - origin.y, size + size / 10 + origin.z), size / 6, size / 6, true);
 			// FIXME See Issue 832: depth cannot be applied here.
 			geomObj = new GeometryObject(g, c, IShape.Type.POLYGON, this);
 			geomObjList.add(geomObj);
-			geometries.add(geomObj);
+			currentList.add(geomObj);
 
 		}
 
