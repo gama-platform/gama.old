@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.controls.IPopupProvider.PopupText;
 import ummisco.gama.ui.resources.IGamaColors;
 
 public class SimpleSlider extends Composite implements IPopupProvider {
@@ -427,17 +428,14 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupText()
 	 */
 	@Override
-	public Map<GamaUIColor, String> getPopupText() {
+	public PopupText getPopupText() {
 		final double value = getCurrentPosition();
 		final String text = toolTipInterperter == null ? String.valueOf(value)
 				: toolTipInterperter.getToolTipText(value);
 		// GamaUIColor color = popupColor;
-		return new HashMap() {
-
-			{
-				put(popupColor, text);
-			}
-		};
+		final PopupText result = new PopupText();
+		result.add(popupColor, text);
+		return result;
 	}
 
 	/**
