@@ -18,6 +18,7 @@ import java.util.List;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -30,6 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
@@ -40,6 +42,8 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IStatement;
+import msi.gaml.statements.StatementTracer;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -51,7 +55,8 @@ import msi.gaml.types.Types;
 @SuppressWarnings("unchecked")
 @symbol(name = { IKeyword.INSPECT, IKeyword.BROWSE }, kind = ISymbolKind.OUTPUT, with_sequence = false, concept = {
 		IConcept.INSPECTOR })
-@inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
+@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = { IKeyword.OUTPUT,
+		IKeyword.PERMANENT })
 @facets(value = {
 		@facet(name = IKeyword.NAME, type = IType.NONE, optional = false, doc = @doc("the identifier of the inspector")),
 		@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc(value = "Allows to refresh the inspector every n time steps (default is 1)", deprecated = "Use refresh: every(n) instead")),
@@ -65,7 +70,7 @@ import msi.gaml.types.Types;
 		+ IKeyword.BROWSE + "` is used, type: default value is table, whereas when`" + IKeyword.INSPECT
 		+ "` is used, type: default value is agent.", usages = { @usage(value = "An example of syntax is:", examples = {
 				@example(value = "inspect \"my_inspector\" value: ant attributes: [\"name\", \"location\"];", isExecutable = false) }) })
-public class InspectDisplayOutput extends MonitorOutput {
+public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 
 	public static final short INSPECT_AGENT = 0;
 	public static final short INSPECT_TABLE = 3;
@@ -90,7 +95,8 @@ public class InspectDisplayOutput extends MonitorOutput {
 			for (final IAgent agent : agents) {
 				final IPopulation agentPop = agent.getPopulation();
 				root = agentPop.getHost();
-				break;
+				if (root != null)
+					break;
 			}
 			if (root == null)
 				return;
@@ -99,14 +105,63 @@ public class InspectDisplayOutput extends MonitorOutput {
 	}
 
 	public static void browse(final IMacroAgent root, final Collection<IAgent> agents) {
-		new InspectDisplayOutput(root, agents).launch(root.getScope());
+		final IMacroAgent realRoot = findRootOf(root, agents);
+		if (realRoot == null) {
+			GamaRuntimeException.error("Impossible to find a common host agent for " + agents, root.getScope());
+		}
+		new InspectDisplayOutput(realRoot, agents).launch(realRoot.getScope());
+	}
+
+	private static IMacroAgent findRootOf(final IMacroAgent root, final Collection<IAgent> agents) {
+		if (agents instanceof IPopulation) {
+			return ((IPopulation) agents).getHost();
+		}
+		IMacroAgent result = null;
+		for (final IAgent a : agents) {
+			if (result == null) {
+				result = a.getHost();
+			} else {
+				if (a.getHost() != result)
+					return null;
+			}
+		}
+		return result;
+
 	}
 
 	public static void browse(final IMacroAgent root, final ISpecies species) {
+		if (!root.getSpecies().getMicroSpecies().contains(species)) {
+			if (root instanceof ExperimentAgent) {
+				final IMacroAgent realRoot = ((ExperimentAgent) root).getSimulation();
+				browse(realRoot, species);
+			} else {
+				GamaRuntimeException.error("Agent " + root + " has no access to populations of " + species.getName(),
+						root.getScope());
+			}
+			return;
+		}
 		new InspectDisplayOutput(root, species).launch(root.getScope());
 	}
 
 	public static void browse(final IMacroAgent root, final IExpression expr) {
+		final SpeciesDescription species = expr.getType().isContainer() ? expr.getType().getContentType().getSpecies()
+				: expr.getType().getSpecies();
+		if (species == null) {
+			GamaRuntimeException.error("Expression '" + expr.serialize(true) + "' does not reference agents",
+					root.getScope());
+			return;
+		}
+		final ISpecies rootSpecies = root.getSpecies();
+		if (rootSpecies.getMicroSpecies(species.getName()) == null) {
+			if (root instanceof ExperimentAgent) {
+				final IMacroAgent realRoot = ((ExperimentAgent) root).getSimulation();
+				browse(realRoot, expr);
+			} else {
+				GamaRuntimeException.error("Agent " + root + " has no access to populations of " + species.getName(),
+						root.getScope());
+			}
+			return;
+		}
 		new InspectDisplayOutput(root, expr).launch(root.getScope());
 	}
 
@@ -285,6 +340,22 @@ public class InspectDisplayOutput extends MonitorOutput {
 		super.dispose();
 		rootAgent = null;
 		attributes = null;
+	}
+
+	@Override
+	public Object executeOn(final IScope scope) throws GamaRuntimeException {
+		final IType type = value.getType();
+		if (type.isAgentType()) {
+			GAMA.getGui().setSelectedAgent((IAgent) value.value(scope));
+		} else if (type.isContainer()) {
+			browse(scope.getRoot(), value);
+		}
+		return value.value(scope);
+	}
+
+	@Override
+	public String getTrace(final IScope scope) {
+		return new StatementTracer().trace(scope, this);
 	}
 
 }

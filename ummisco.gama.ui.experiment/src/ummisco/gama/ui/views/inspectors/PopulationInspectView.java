@@ -390,7 +390,9 @@ public class PopulationInspectView extends GamaViewPart
 		}
 		attributesMenu.setToolTipText(tooltipText);
 		final boolean hasPreviousSelection = selectedColumns.get(speciesName) != null;
-		final List<String> names = new ArrayList(getOutput().getSpecies().getVarNames());
+		final InspectDisplayOutput output = getOutput();
+		final ISpecies species = output.getSpecies();
+		final List<String> names = new ArrayList(species.getVarNames());
 		Collections.sort(names);
 		for (final String name : names) {
 			final SwitchButton b = new SwitchButton(attributesMenu, SWT.NONE, "   ", "   ", name);
