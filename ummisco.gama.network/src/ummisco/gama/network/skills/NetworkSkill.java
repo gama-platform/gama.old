@@ -67,7 +67,6 @@ public class NetworkSkill  extends MessagingSkill {
 		IAgent agt = scope.getAgentScope();
 		String serverURL = (String) scope.getArg(INetworkSkill.SERVER_URL, IType.STRING);
 		String login = (String) scope.getArg(INetworkSkill.LOGIN, IType.STRING);
-		System.out.println(" ligonfds "+login);
 		String password = (String) scope.getArg(INetworkSkill.PASSWORD, IType.STRING);
 		String networkName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
 		String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
@@ -79,7 +78,6 @@ public class NetworkSkill  extends MessagingSkill {
 		{
 			
 			if(protocol != null && protocol.equals( INetworkSkill.UDP_SERVER)){
-				System.out.println("create udp serveur");
 				connector = new UDPConnector(scope,true);
 				connector.configure(IConnector.SERVER_URL,serverURL);
 				connector.configure(IConnector.SERVER_PORT,""+port);
@@ -105,7 +103,7 @@ public class NetworkSkill  extends MessagingSkill {
 			}
 			else //if(protocol.equals( INetworkSkill.MQTT))
 			{
-				System.out.println("create mqtt serveur");
+				System.out.println("create mqtt serveur "+ login+ " "+ password);
 				connector = new MQTTConnector(scope);
 				if(serverURL != null)
 					connector.configure(IConnector.SERVER_URL,serverURL);

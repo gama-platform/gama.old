@@ -19,7 +19,6 @@ import ummisco.gama.network.common.GamaNetworkException;
 public final class MQTTConnector extends Connector{
 	public static String DEFAULT_USER = "admin";
 	public static String DEFAULT_LOCAL_NAME = "gama-"+Calendar.getInstance().getTimeInMillis()+"@";
-	
 	public static String DEFAULT_PASSWORD = "password";
 	public static String DEFAULT_HOST =  "localhost";
 	public static String DEFAULT_PORT =  "1883";
@@ -105,8 +104,6 @@ public final class MQTTConnector extends Connector{
 			userName = (userName==null?DEFAULT_USER:userName);
 			password = (password==null?DEFAULT_PASSWORD:userName);
 			localName = (localName==null?DEFAULT_LOCAL_NAME+server:localName);
-			
-			System.out.println("agent creation "+ agent.getName());
 			
 			try {
 				sendConnection = new MqttClient("tcp://"+server+":"+port, localName, new MemoryPersistence());

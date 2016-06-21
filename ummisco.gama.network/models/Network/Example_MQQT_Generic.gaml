@@ -14,12 +14,15 @@ global {
 		create NetworkingAgent number:1{
 			name <-clients[0];
 			dest <- clients[1];
-			do connect to:"localhost" with_name:name;
+			//default activemq mqtt login is "admin", the password is "password"
+			do connect to:"localhost" with_name:name login:"admin" password:"password";
 		}
 		create NetworkingAgent number:1{
 		    name <-clients[1];
 		    dest <- clients[0];
-			do connect to:"localhost" with_name:name;
+			//default activemq mqtt login is "admin", the password is "password"
+			do connect to:"localhost" with_name:name login:"admin" password:"password";
+			//send a message to the destination
 			do send to:dest contents:"This message is sent by " + name + " to " + dest;
 		}
 	}
@@ -30,16 +33,17 @@ species NetworkingAgent skills:[network]{
 	string dest;
 	reflex fetch when:has_more_message()
 	{	
+		//read a message
 		message mess <- fetch_message();
+		//display the message 
 		write name + " fecth this message: " + mess.contents;	
-	}
-	reflex send
-	{
+		//send a message
 		do send to:dest contents:"This message is sent by " + name + " to " + dest;
 	}
+
 }
 
-experiment testdd type: gui {
+experiment start type: gui {
 	output {
 	}
 }
