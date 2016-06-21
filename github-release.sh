@@ -84,11 +84,13 @@ RELEASE="latest"
 thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT"
 
 
+
+
 RELEASEFILES="$thePATH-linux.gtk.x86.zip $thePATH-linux.gtk.x86_64.zip $thePATH-macosx.cocoa.x86_64.zip $thePATH-win32.win32.x86.zip $thePATH-win32.win32.x86_64.zip"
 
 
 
-
+echo 
 echo "Getting info of latest tag..."
 echo 
 LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
@@ -99,6 +101,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
   -H "Content-Type: application/json" \
   -d '{"name":"value"}' \
     "$LK"`
+echo $RESULT	
 RELEASEID=`echo "$RESULT" | sed -ne 's/^  "id": \(.*\),$/\1/p'`
 echo $RELEASEID
 
@@ -115,6 +118,7 @@ echo $RELEASEID
 check=${#RESULT}
 
 if [ $check -ge 5 ]; then
+	echo 
 	echo "Remove old files..."
 	echo
 	json=$RESULT
@@ -127,6 +131,8 @@ if [ $check -ge 5 ]; then
 	for theid in $assets; do
 		if [ "$theid" != "id:" ]; then
 		  LK1="https://api.github.com/repos/gama-platform/gama/releases/assets/$theid"
+		  
+			echo   "Deleting $LK1...  "
 		  RESULT1=`curl  -s -X  "DELETE"                \
 			-H "Authorization: token $HQN_TOKEN"   \
 			"$LK1"`	
@@ -138,6 +144,7 @@ fi
 
 
 
+echo 
 echo "Upload new files..."
 echo
 for FILE in $RELEASEFILES; do
@@ -152,6 +159,7 @@ for FILE in $RELEASEFILES; do
     -H "Content-Type: application/zip"                    \
     --data-binary "@$FILE"                                \
     "$LK"`
+	echo $RESULT
 done 
 
 echo DONE
