@@ -24,7 +24,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.services.ISourceProviderService;
 
 import gnu.trove.map.hash.THashMap;
@@ -80,7 +79,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void debug(final String msg) {
-		WorkbenchPlugin.log(msg);
+		System.err.println(msg);
 	}
 
 	@Override
