@@ -1213,16 +1213,13 @@ public abstract class Spatial {
 				final Geometry gbuff = pt.buffer(percep_dist, precision / 4);
 				final List<IShape> geoms = new ArrayList<IShape>();
 				for (int k = 1; k < gbuff.getNumPoints(); k++) {
-
-					final Coordinate[] coordinates = new Coordinate[4];
-					coordinates[0] = GeometryUtils.toCoordinate(location);
-					coordinates[1] = gbuff.getCoordinates()[k - 1];
-					coordinates[2] = gbuff.getCoordinates()[k];
-					coordinates[3] = GeometryUtils.toCoordinate(location);
-					final LinearRing closeRing = GeometryUtils.FACTORY.createLinearRing(coordinates);
-					final Geometry gg = source.getGeometry().getInnerGeometry()
-							.intersection(GeometryUtils.FACTORY.createPolygon(closeRing, null));
-					if (isPoint || !(gg instanceof Point)) {
+					final IList coordinates = GamaListFactory.create(Types.POINT, 4);
+					coordinates.add(location);
+					coordinates.add(new GamaPoint(gbuff.getCoordinates()[k - 1]));
+					coordinates.add(new GamaPoint(gbuff.getCoordinates()[k]));
+					coordinates.add(location);
+					final IShape gg = Spatial.Operators.inter(scope, source, Spatial.Creation.polygon(scope, coordinates));
+					if (gg != null && (isPoint || !(gg.isPoint()))) {
 						geoms.add(new GamaShape(gg));
 					}
 				}
@@ -1233,7 +1230,7 @@ public abstract class Spatial {
 					if (!intersection(geom, obst)) {
 						geomsVisible.addValue(scope, geom);
 					} else {
-						final IShape perceptReal = difference(geom, obst, ref);
+						final IShape perceptReal = difference(scope,geom, obst, ref);
 
 						if (perceptReal != null && (isPoint || !perceptReal.isPoint())) {
 							geomsVisible.addValue(scope, perceptReal);
@@ -1264,43 +1261,30 @@ public abstract class Spatial {
 			return false;
 		}
 
-		private static IShape difference(final IShape geom, final List<IShape> geoms, final PreparedGeometry ref) {
+		private static IShape difference(final IScope scope,final IShape geom, final List<IShape> geoms, final PreparedGeometry ref) {
 			if (geom == null) {
 				return null;
 			}
-			Geometry gR = geom.getInnerGeometry();
-			if (gR == null) {
-				return null;
-			}
+			IShape gR = new GamaShape(geom);
 			for (final IShape g : geoms) {
 
 				if (g != null && gR != null && geom.intersects(g)) {
-					try {
-						gR = gR.difference(g.getInnerGeometry());
-
-					} catch (final TopologyException e) {
-						final IShape gp = new GamaShape(g, null, 1.0, null);
-						gR = gR.difference(gp.getInnerGeometry());
-					}
-					if (gR instanceof GeometryCollection) {
-						final GeometryCollection gc = (GeometryCollection) gR;
-						gR = null;
-						final int nb = gc.getNumGeometries();
-						for (int i1 = 0; i1 < nb; i1++) {
-							if (!ref.disjoint(gc.getGeometryN(i1))) {
-								gR = gc.getGeometryN(i1);
+					gR = Spatial.Operators.minus(scope, gR, g);
+					if (gR == null) return null;
+					if (gR.getGeometries().size() > 1) {
+						for (IShape sh : gR.getGeometries()) {
+							if (!ref.disjoint(sh.getInnerGeometry())) {
+								gR = sh;
 								break;
 							}
 						}
-					} else if (ref.disjoint(gR)) {
+					} else if (ref.disjoint(gR.getInnerGeometry())) {
 						return null;
 					}
 				}
 			}
-			if (gR != null) {
-				return new GamaShape(gR);
-			}
-			return null;
+			
+			return gR;
 		}
 
 		@operator(value = "masked_by", category = { IOperatorCategory.SPATIAL }, concept = {})
