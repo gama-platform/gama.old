@@ -463,22 +463,6 @@ public class SwtGui implements IGui {
 		modelRunner.runModel(object, exp);
 	}
 
-	/**
-	 * Method getFirstDisplaySurface()
-	 * 
-	 * @see msi.gama.common.interfaces.IGui#getFirstDisplaySurface()
-	 */
-	public static IDisplaySurface getFirstDisplaySurface() {
-		final IViewReference[] viewRefs = WorkbenchHelper.getPage().getViewReferences();
-		for (final IViewReference ref : viewRefs) {
-			final IWorkbenchPart part = ref.getPart(false);
-			if (part instanceof IGamaView.Display) {
-				return ((IGamaView.Display) part).getDisplaySurface();
-			}
-		}
-		return null;
-	}
-
 	public static List<IDisplaySurface> allDisplaySurfaces() {
 		final List<IDisplaySurface> result = new ArrayList();
 		final IViewReference[] viewRefs = WorkbenchHelper.getPage().getViewReferences();
@@ -631,6 +615,7 @@ public class SwtGui implements IGui {
 		for (final IDisplaySurface surface : this.allDisplaySurfaces()) {
 			surface.focusOn(shape);
 		}
+		GAMA.getExperiment().refreshAllOutputs();
 	}
 
 }

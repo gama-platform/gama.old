@@ -29,7 +29,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
-import ummisco.gama.ui.utils.SwtGui;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationPopulation;
@@ -47,11 +46,10 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.Types;
-import ummisco.gama.ui.menus.GamaMenu;
-import ummisco.gama.ui.menus.MenuAction;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.SwtGui;
 
 public class AgentsMenu extends ContributionItem {
 
@@ -174,25 +172,21 @@ public class AgentsMenu extends ContributionItem {
 
 	public static class Focuser extends SelectionAdapter {
 
-		final IDisplaySurface surface;
-
-		public Focuser(final IDisplaySurface s) {
-			surface = s;
+		public Focuser() {
 		}
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			if (surface == null) {
-				return;
-			}
+			final List<IDisplaySurface> surfaces = SwtGui.allDisplaySurfaces();
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
-			if (a instanceof ITopLevelAgent) {
-				surface.zoomFit();
-			} else if (a != null && !a.dead()) {
-				surface.focusOn(a);
-				GAMA.getExperiment().refreshAllOutputs();
-			}
+			for (final IDisplaySurface surface : surfaces)
+				if (a instanceof ITopLevelAgent) {
+					surface.zoomFit();
+				} else if (a != null && !a.dead()) {
+					surface.focusOn(a);
+				}
+			GAMA.getExperiment().refreshAllOutputs();
 		}
 	}
 
@@ -276,10 +270,7 @@ public class AgentsMenu extends ContributionItem {
 				"Inspect" + (topLevel ? " experiment" : ""));
 		if (!topLevel) {
 			actionAgentMenuItem(menu, agent, highlighter, IGamaIcons.MENU_HIGHLIGHT.image(), "Highlight");
-			if (SwtGui.getFirstDisplaySurface() != null && actions == null || actions.length == 0) {
-				actionAgentMenuItem(menu, agent, new Focuser(SwtGui.getFirstDisplaySurface()),
-						IGamaIcons.MENU_FOCUS.image(), "Focus");
-			}
+			actionAgentMenuItem(menu, agent, new Focuser(), IGamaIcons.MENU_FOCUS.image(), "Focus");
 		}
 		if (actions != null) {
 			for (final MenuAction ma : actions) {

@@ -14,10 +14,10 @@ package ummisco.gama.java2d;
 import javax.swing.JComponent;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IGui;
 import ummisco.gama.java2d.swing.SwingControl;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.views.WorkaroundForIssue1353;
@@ -25,7 +25,6 @@ import ummisco.gama.ui.views.displays.LayeredDisplayView;
 
 public class AWTDisplayView extends LayeredDisplayView {
 
-	public static final String ID = IGui.LAYER_VIEW_ID;
 	public static long REALIZATION_TIME_OUT = 1000;
 	public boolean isVisible;
 
@@ -49,6 +48,12 @@ public class AWTDisplayView extends LayeredDisplayView {
 			}
 
 			@Override
+			protected void preferredSizeChanged(final Point minSize, final Point prefSize, final Point maxSize) {
+				surfaceComposite.setSize(prefSize);
+				parent.layout(true, true);
+			}
+
+			@Override
 			public Composite getLayoutAncestor() {
 				// AD 02/16 Seems necessary to return null for displays to show
 				// up and correctly initialize their graphics environment
@@ -66,6 +71,15 @@ public class AWTDisplayView extends LayeredDisplayView {
 					overlay.setVisible(true);
 				}
 				WorkaroundForIssue1353.install();
+				// surfaceComposite.addControlListener(new ControlAdapter() {
+				//
+				// @Override
+				// public void controlResized(final ControlEvent e) {
+				// System.out.println("Resize SWT component : " +
+				// surfaceComposite.getSize());
+				//
+				// }
+				// });
 			}
 
 			@Override
@@ -75,9 +89,6 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 			@Override
 			public void afterComponentCreatedAWTThread() {
-				// if ( getDisplaySurface() != null )
-				// new DisplaySurfaceMenu(getDisplaySurface(), surfaceComposite,
-				// AWTDisplayView.this);
 			}
 		};
 		surfaceComposite.setEnabled(false);

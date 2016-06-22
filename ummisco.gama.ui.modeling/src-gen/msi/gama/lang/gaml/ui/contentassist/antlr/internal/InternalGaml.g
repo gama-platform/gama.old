@@ -3994,6 +3994,22 @@ rule___1Expr_Facets_BlockOrEnd_Key__Alternatives
 { after(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getStatusKeyword_23()); }
 )
 
+    |(
+{ before(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getHighlightKeyword_24()); }
+
+	'highlight' 
+
+{ after(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getHighlightKeyword_24()); }
+)
+
+    |(
+{ before(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getFocus_onKeyword_25()); }
+
+	'focus_on' 
+
+{ after(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getFocus_onKeyword_25()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);
