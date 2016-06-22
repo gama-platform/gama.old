@@ -87,16 +87,14 @@ thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0
 
 
 
-
-
-
-
 RELEASEFILES="$thePATH-linux.gtk.x86 $thePATH-linux.gtk.x86_64 $thePATH-macosx.cocoa.x86_64 $thePATH-win32.win32.x86 $thePATH-win32.win32.x86_64"
 
 
-
-
-
+COMMIT="(${COMMIT:0:7})"
+echo $COMMIT
+timestamp=$(date '+_%D_%T')
+echo $timestamp
+SUFFIX="$timestamp$COMMIT.zip"
 echo
 echo "Getting info of $RELEASE tag..."
 echo 
@@ -157,8 +155,8 @@ echo
 for FILE in $RELEASEFILES; do
   
   FILENAME=`basename $FILE`
-  echo   "Uploading $FILENAME.zip...  "
-  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$FILENAME.$COMMIT.zip"
+  echo   "Uploading $FILENAME$SUFFIX...  "
+  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$FILENAME$SUFFIX"
   
   RESULT=`curl -s -w  "\n%{http_code}\n"                   \
     -H "Authorization: token $HQN_TOKEN"                \
