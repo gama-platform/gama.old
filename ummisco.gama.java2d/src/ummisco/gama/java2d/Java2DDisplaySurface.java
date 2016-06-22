@@ -330,8 +330,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		}
 		final double xScale = getWidth() / r.getWidth();
 		final double yScale = getHeight() / r.getHeight();
-		double zoomFactor = FastMath.min(xScale, yScale);
-		final Point center = new Point((int) FastMath.round(r.getCenterX()), (int) FastMath.round(r.getCenterY()));
+		double zoomFactor = Math.max(xScale, yScale);
+		final Point center = new Point((int) Math.round(r.getCenterX()), (int) Math.round(r.getCenterY()));
 
 		zoomFactor = applyZoom(zoomFactor);
 		center.setLocation(center.x * zoomFactor, center.y * zoomFactor);
@@ -350,8 +350,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			y = getHeight() / 2;
 		}
 		final double zoomFactor = applyZoom(1.0 + (in ? 1 : -1) * zoomIncrement);
-		final double newx = FastMath.round(zoomFactor * (x - origin.x) - x + getWidth() / 2d);
-		final double newy = FastMath.round(zoomFactor * (y - origin.y) - y + getHeight() / 2d);
+		final double newx = Math.round(zoomFactor * (x - origin.x) - x + getWidth() / 2d);
+		final double newy = Math.round(zoomFactor * (y - origin.y) - y + getHeight() / 2d);
 		centerOnDisplayCoordinates(new Point((int) newx, (int) newy));
 		updateDisplay(true);
 	}
