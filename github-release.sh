@@ -78,10 +78,12 @@
 # https://github.com/bwipp/postscriptbarcode
 
 set -e
+COMMIT=$@"_"
 
 REPO="gama-platform/gama"
-RELEASE="latest"
+RELEASE="test_no_touch"
 thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT"
+
 
 
 
@@ -90,8 +92,9 @@ RELEASEFILES="$thePATH-linux.gtk.x86.zip $thePATH-linux.gtk.x86_64.zip $thePATH-
 
 
 
-echo 
-echo "Getting info of latest tag..."
+
+echo
+echo "Getting info of $RELEASE tag..."
 echo 
 LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
 
@@ -151,7 +154,7 @@ for FILE in $RELEASEFILES; do
   FILESIZE=`stat -c '%s' "$FILE"`
   FILENAME=`basename $FILE`
   echo   "Uploading $FILENAME...  "
-  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$FILENAME"
+  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$COMMIT$FILENAME"
   
   RESULT=`curl -s -w  "\n%{http_code}\n"                   \
     -H "Authorization: token $HQN_TOKEN"                \
