@@ -78,17 +78,21 @@
 # https://github.com/bwipp/postscriptbarcode
 
 set -e
-COMMIT=$@"_"
+COMMIT=$@
 
 REPO="gama-platform/gama"
-RELEASE="test_no_touch"
+RELEASE="latest"
 thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT"
 
 
 
 
 
-RELEASEFILES="$thePATH-linux.gtk.x86.zip $thePATH-linux.gtk.x86_64.zip $thePATH-macosx.cocoa.x86_64.zip $thePATH-win32.win32.x86.zip $thePATH-win32.win32.x86_64.zip"
+
+
+
+RELEASEFILES="$thePATH-linux.gtk.x86 $thePATH-linux.gtk.x86_64 $thePATH-macosx.cocoa.x86_64 $thePATH-win32.win32.x86 $thePATH-win32.win32.x86_64"
+
 
 
 
@@ -151,16 +155,16 @@ echo
 echo "Upload new files..."
 echo
 for FILE in $RELEASEFILES; do
-  FILESIZE=`stat -c '%s' "$FILE"`
+  
   FILENAME=`basename $FILE`
-  echo   "Uploading $FILENAME...  "
-  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$COMMIT$FILENAME"
+  echo   "Uploading $FILENAME.zip...  "
+  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$FILENAME.$COMMIT.zip"
   
   RESULT=`curl -s -w  "\n%{http_code}\n"                   \
     -H "Authorization: token $HQN_TOKEN"                \
     -H "Accept: application/vnd.github.manifold-preview"  \
     -H "Content-Type: application/zip"                    \
-    --data-binary "@$FILE"                                \
+    --data-binary "@$FILE.zip"                                \
     "$LK"`
 	echo $RESULT
 done 
