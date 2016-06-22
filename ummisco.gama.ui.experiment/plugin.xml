@@ -1013,6 +1013,12 @@
                serviceClass="msi.gama.common.interfaces.IConsoleDisplayer">
          </service>
       </serviceFactory>
+      <serviceFactory
+            factoryClass="ummisco.gama.ui.factories.DisplayLayoutFactory">
+         <service
+               serviceClass="ummisco.gama.ui.interfaces.IDisplayLayoutManager">
+         </service>
+      </serviceFactory>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">

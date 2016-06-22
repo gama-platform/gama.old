@@ -403,4 +403,10 @@ public class HeadlessListener implements IGui {
 
 	}
 
+	@Override
+	public void applyLayout(final int layout) {
+		// TODO Auto-generated method stub
+
+	}
+
 }

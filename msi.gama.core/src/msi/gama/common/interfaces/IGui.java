@@ -142,4 +142,6 @@ public interface IGui {
 
 	void setFocusOn(IShape o);
 
+	void applyLayout(int layout);
+
 }

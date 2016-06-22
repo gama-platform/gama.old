@@ -102,10 +102,12 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		handleBlock(c, elem.getLeftCurlyBracketKeyword_1(), elem.getRightCurlyBracketKeyword_2_1_1(), 2);
 		handleBlock(c, g.getDisplayBlockAccess().getLeftCurlyBracketKeyword_1(),
 				g.getDisplayBlockAccess().getRightCurlyBracketKeyword_3(), 2);
-		handleBlock(c, g.getExperimentBlockAccess().getLeftCurlyBracketKeyword_1(),
-				g.getExperimentBlockAccess().getRightCurlyBracketKeyword_3(), 2);
-		handleBlock(c, g.getOutputBlockAccess().getLeftCurlyBracketKeyword_1(),
-				g.getOutputBlockAccess().getRightCurlyBracketKeyword_3(), 2);
+		// handleBlock(c,
+		// g.getExperimentBlockAccess().getLeftCurlyBracketKeyword_1(),
+		// g.getExperimentBlockAccess().getRightCurlyBracketKeyword_3(), 2);
+		// handleBlock(c,
+		// g.getOutputBlockAccess().getLeftCurlyBracketKeyword_1(),
+		// g.getOutputBlockAccess().getRightCurlyBracketKeyword_3(), 2);
 		handleBlock(c, g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0(),
 				g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2(), 2);
 		// Functions

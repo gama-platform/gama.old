@@ -58,6 +58,7 @@ import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.dialogs.Messages;
+import ummisco.gama.ui.interfaces.IDisplayLayoutManager;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.interfaces.IOpenGLInitializer;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
@@ -616,6 +617,14 @@ public class SwtGui implements IGui {
 			surface.focusOn(shape);
 		}
 		GAMA.getExperiment().refreshAllOutputs();
+	}
+
+	@Override
+	public void applyLayout(final int layout) {
+		final IDisplayLayoutManager manager = WorkbenchHelper.getService(IDisplayLayoutManager.class);
+		if (manager != null) {
+			manager.applyLayout(layout);
+		}
 	}
 
 }
