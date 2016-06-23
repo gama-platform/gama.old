@@ -1,6 +1,7 @@
 package ummisco.gama.modernOpenGL;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import javax.vecmath.Matrix4f;
@@ -43,7 +44,19 @@ public class Maths {
 		return result;
 	}
 	
+	public static float[] CrossProduct(final float[] vect1, final float[] vect2) {
+		final float[] result = new float[3];
+		result[0] = vect1[1] * vect2[2] - vect1[2] * vect2[1];
+		result[1] = vect1[2] * vect2[0] - vect1[0] * vect2[2];
+		result[2] = vect1[0] * vect2[1] - vect1[1] * vect2[0];
+		return result;
+	}
+	
 	public static double ScalarProduct(final double[] vect1, final double[] vect2) {
+		return vect1[0]*vect2[0]+vect1[1]*vect2[1]+vect1[2]*vect2[2];
+	}
+	
+	public static float ScalarProduct(final float[] vect1, final float[] vect2) {
 		return vect1[0]*vect2[0]+vect1[1]*vect2[1]+vect1[2]*vect2[2];
 	}
 	
@@ -55,6 +68,18 @@ public class Maths {
 		}
 		for (int i = 0; i < vect.length ; i++) {
 		    result[i] = vect[i] / Math.sqrt(sum);
+		}
+		return result;
+	}
+	
+	public static float[] Normalize(final float[] vect) {
+		float[] result = new float[vect.length];
+		float sum = 0;
+		for (int i = 0; i < vect.length ; i++) {
+		    sum += Math.pow(vect[i], 2);
+		}
+		for (int i = 0; i < vect.length ; i++) {
+		    result[i] = (float) (vect[i] / Math.sqrt(sum));
 		}
 		return result;
 	}
@@ -261,31 +286,60 @@ public class Maths {
 			float yVal = 0;
 			float zVal = 0;
 			float sum = 0;
-			
 			// search the triangle where the vertex is
 			for (int j = 0 ; j < idxBuffer.length ; j++) {
 				if ( (int)idxBuffer[j] == i ) {
+					boolean computeNormal = true;
+					
 					int positionInTriangle = j % 3;
 					
 					int idxOfPreviousTriangle = (int) ((positionInTriangle == 0) ? idxBuffer[j+2] : idxBuffer[j-1]);
 					int idxOfNextTriangle = (int) ((positionInTriangle == 2) ? idxBuffer[j-2] : idxBuffer[j+1]);
 					
-					double[] firstVect = new double[] {
-							coordinates[idxOfPreviousTriangle*3] - coordinates[(int) ((idxBuffer[j])*3)],
-							coordinates[idxOfPreviousTriangle*3+1] - coordinates[(int) ((idxBuffer[j])*3)+1],
-							coordinates[idxOfPreviousTriangle*3+2] - coordinates[(int) ((idxBuffer[j])*3)+2],
-					};
-					double[] secondVect = new double[] {
-							coordinates[idxOfNextTriangle*3] - coordinates[(int) ((idxBuffer[j])*3)],
-							coordinates[idxOfNextTriangle*3+1] - coordinates[(int) ((idxBuffer[j])*3)+1],
-							coordinates[idxOfNextTriangle*3+2] - coordinates[(int) ((idxBuffer[j])*3)+2],
-					};
-					double[] vectProduct = CrossProduct(firstVect,secondVect);
+					// check if the line from the current vertex to the previous/next vertex represents the diagonal of a rectangular face
+					// we assume that indices of vertices for rectangular faces are all grouped 6 by 6
+					int startIdxOfFace = (j/6)*6; // 7 -> 6, 8 -> 6.
+					// we search first the number of occurences of each vertices in the index array (to determine which vertices compose the diagonal)
+					HashMap<Integer,Integer> mapOccurencesIdx = new HashMap<Integer,Integer>();
+					for (int k = 0 ; k < 6 ; k++) {
+						if (mapOccurencesIdx.containsKey((int)idxBuffer[startIdxOfFace+k])) {
+							mapOccurencesIdx.put((int) idxBuffer[startIdxOfFace+k], mapOccurencesIdx.get((int)idxBuffer[startIdxOfFace+k])+1);
+						}
+						else {
+							mapOccurencesIdx.put((int) idxBuffer[startIdxOfFace+k], 1);
+						}
+					}
+					// we check if the current vertex is in the diagonal (if its occurence is equal to 2).
+//					if ((mapOccurencesIdx.containsKey((int)idxBuffer[j])) && (mapOccurencesIdx.get((int)idxBuffer[j]) == 2))
+//					{
+//						// if it is the case, we check if both of the previous and next vertices are not in the diagonal. 
+//						if ((mapOccurencesIdx.containsKey((int)idxOfPreviousTriangle)) && (mapOccurencesIdx.get((int)idxOfPreviousTriangle) == 2)
+//								|| (mapOccurencesIdx.containsKey((int)idxOfNextTriangle)) && (mapOccurencesIdx.get((int)idxOfNextTriangle) == 2))
+//						{
+//							// if it is the case, we do not compute this normal.
+//							computeNormal = false;
+//						}
+//					}
 					
-					sum = (float) (vectProduct[0]*vectProduct[0] + vectProduct[1]*	vectProduct[1] + vectProduct[2]*vectProduct[2]);
-					xVal += vectProduct[0] / Math.sqrt(sum);
-					yVal += vectProduct[1] / Math.sqrt(sum);
-					zVal += vectProduct[2] / Math.sqrt(sum);
+					if (computeNormal) 
+					{
+						double[] firstVect = new double[] {
+								coordinates[idxOfPreviousTriangle*3] - coordinates[(int) ((idxBuffer[j])*3)],
+								coordinates[idxOfPreviousTriangle*3+1] - coordinates[(int) ((idxBuffer[j])*3)+1],
+								coordinates[idxOfPreviousTriangle*3+2] - coordinates[(int) ((idxBuffer[j])*3)+2],
+						};
+						double[] secondVect = new double[] {
+								coordinates[idxOfNextTriangle*3] - coordinates[(int) ((idxBuffer[j])*3)],
+								coordinates[idxOfNextTriangle*3+1] - coordinates[(int) ((idxBuffer[j])*3)+1],
+								coordinates[idxOfNextTriangle*3+2] - coordinates[(int) ((idxBuffer[j])*3)+2],
+						};
+						double[] vectProduct = CrossProduct(firstVect,secondVect);
+						
+						sum = (float) (vectProduct[0]*vectProduct[0] + vectProduct[1]*	vectProduct[1] + vectProduct[2]*vectProduct[2]);
+						xVal += vectProduct[0] / Math.sqrt(sum);
+						yVal += vectProduct[1] / Math.sqrt(sum);
+						zVal += vectProduct[2] / Math.sqrt(sum);
+					}
 				}
 			}
 			sum = xVal*xVal + yVal*yVal + zVal*zVal;

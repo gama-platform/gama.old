@@ -56,6 +56,10 @@ public abstract class AbstractObject {
 	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer) {
 		this(attributes, layer, attributes.getTextures() != null ? new Texture[attributes.getTextures().size()] : null);
 	}
+	
+	public DrawingAttributes getAttributes() {
+		return attributes;
+	}
 
 	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
 		if (textures == null) {

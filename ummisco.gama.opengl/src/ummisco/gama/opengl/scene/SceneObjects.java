@@ -15,7 +15,6 @@ import java.awt.Color;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -27,14 +26,11 @@ import com.google.common.collect.Iterables;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import com.vividsolutions.jts.geom.Coordinate;
 
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.util.GamaPair;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.modernOpenGL.Light;
 import ummisco.gama.modernOpenGL.Maths;
+import ummisco.gama.modernOpenGL.VAOExtractor;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.camera.ICamera;
@@ -256,14 +252,17 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		for (final List<T> list : objects) {
 			for (final T object : list) {
 				if (object instanceof GeometryObject) {
-					GeometryObject geomObj = (GeometryObject)object;
-					if (geomObj.getType() == IShape.Type.POLYGON || geomObj.getType() == IShape.Type.SPHERE) {
-						ArrayList<float[]> vao = new ArrayList<float[]>();
-						vao.add(getObjectVertices(object));
-						vao.add(getObjectColors(object));
-						vao.add(getObjectIndexBuffer(object));
-						vbos.add(vao);
-					}
+					ArrayList<float[]> vao = new ArrayList<float[]>();
+					
+					float[] vertices = VAOExtractor.getObjectVertices(object);
+					float[] colors = VAOExtractor.getObjectColors(object,vertices.length/3);
+					float[] indices = VAOExtractor.getObjectIndexBuffer(object);
+					
+					vao.add(vertices);
+					vao.add(colors);
+					vao.add(indices);
+					
+					vbos.add(vao);
 				}
 			}
 		}	
@@ -286,122 +285,6 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		vbos.clear();
 	}
 	
-	private float[] getObjectVertices(AbstractObject object) {
-		float[] result = null;
-		if (object instanceof GeometryObject) {
-			GeometryObject geomObj = (GeometryObject)object;
-			final IShape.Type type = geomObj.getType();
-			GamaPoint position = geomObj.attributes.location;
-			GamaPair<Double,GamaPoint> rotation = geomObj.attributes.rotation;
-			GamaPoint size = geomObj.attributes.size;
-			
-			Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
-			// the last coordinate is the same as the first one, no need for this
-			Coordinate[] coords = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
-			
-			// convert the coordinate array into float array
-			result = new float[coords.length*3];
-			for (int i = 0 ; i < coords.length ; i++) {
-				result[3*i] = (float) coords[i].x;
-				result[3*i+1] = (float) coords[i].y;
-				result[3*i+2] = (float) coords[i].z;
-			}
-			
-			// apply transform to the coords if needed
-			// apply rotation (if facet "rotate" for draw is used)
-			if (rotation != null) {
-				// translate the object to (0,0,0)
-				result = Maths.setTranslationToVertex(result, (float) -position.x, (float) -position.y, (float) -position.z);
-				// apply the rotation
-				result = Maths.setRotationToVertex(result, (float) Math.toRadians(rotation.key.floatValue()), (float) rotation.value.x, (float) rotation.value.y, (float) rotation.value.z);
-				// go back to the first translation
-				result = Maths.setTranslationToVertex(result, (float) position.x, (float) position.y, (float) position.z);
-			}
-			// apply scaling (if facet "size" for draw is used)
-			if (size != null) {
-				// translate the object to (0,0,0)
-				result = Maths.setTranslationToVertex(result, (float) -position.x, (float) -position.y, (float) -position.z);
-				// apply the rotation
-				result = Maths.setScalingToVertex(result, (float) size.x, (float) size.y, (float) size.z);
-				// go back to the first translation
-				result = Maths.setTranslationToVertex(result, (float) position.x, (float) position.y, (float) position.z);
-			}
-		}
-		return result;
-	}
-	
-	private float[] getObjectColors(AbstractObject object) {
-		float[] result = null;
-		if (object instanceof GeometryObject) {
-			GeometryObject geomObj = (GeometryObject)object;
-			final IShape.Type type = geomObj.getType();
-			
-			Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
-			// the last coordinate is the same as the first one, no need for this
-			Coordinate[] coords = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
-
-			float[] color = new float[]{ (float)(object.attributes.color.red()) /255f,
-					(float)(object.attributes.color.green()) /255f, 
-					(float)(object.attributes.color.blue()) /255f,
-					(float)(object.attributes.color.alpha()) /255f};
-			result = new float[coords.length*4];
-			for (int i = 0 ; i < coords.length ; i++) {
-				result[4*i] = (float) color[0];
-				result[4*i+1] = (float) color[1];
-				result[4*i+2] = (float) color[2];
-				result[4*i+3] = (float) color[3];
-			}
-		}
-		return result;
-	}
-	
-	private float[] getObjectIndexBuffer(AbstractObject object) {
-		// TODO : optimize this
-		float[] result = null;
-		if (object instanceof GeometryObject) {
-			GeometryObject geomObj = (GeometryObject)object;
-			final IShape.Type type = geomObj.getType();
-			
-			Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
-			// the last coordinate is the same as the first one, no need for this
-			Coordinate[] coords = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
-			
-			if (coords.length == 4) {
-				// case of rectangle
-				result = new float[]{0,2,1,0,3,2};
-			}
-			else {
-				int idx = 0;
-				for (int i = 0 ; i < coords.length-2 ; i++) {
-					for (int j = 0 ; j < coords.length-1 ; j++) {
-						for (int k = 0 ; k < coords.length ; k++) {
-							if (i != j && i != k && j != k) {
-								idx+=3;
-							}
-						}
-					}
-				}
-				result = new float[idx];
-				idx = 0;
-				for (int i = 0 ; i < coords.length-2 ; i++) {
-					for (int j = 0 ; j < coords.length-1 ; j++) {
-						for (int k = 0 ; k < coords.length ; k++) {
-							if (i != j && i != k && j != k) {
-								result[idx] = i;
-								idx++;
-								result[idx] = j;
-								idx++;
-								result[idx] = k;
-								idx++;
-							}
-						}
-					}
-				}
-			}
-		}
-		return result;
-	}
-	
 	private void newDraw(float[] vertices, float[] colors, float[] idxBuffer) {
 		shaderProgram.start();
 			
@@ -414,7 +297,12 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		
 		shaderProgram.loadShineVariables(10.0f, 1.0f);
 		
-		float[] normals = Maths.getNormals(vertices,idxBuffer);
+		float[][] newArraysWithSmoothShading = VAOExtractor.setSmoothShading(vertices,colors,idxBuffer,60f);
+		vertices = newArraysWithSmoothShading[0];
+		colors = newArraysWithSmoothShading[1];
+		idxBuffer = newArraysWithSmoothShading[2];
+		
+		float[] normals = Maths.getNormals(vertices,idxBuffer/*VAOExtractor.getExtendedIndicesForRectangularFaces(idxBuffer)*/);
 
 
 		// VERTICES POSITIONS BUFFER
@@ -422,9 +310,9 @@ public class SceneObjects<T extends AbstractObject> implements ISceneObjects<T> 
 		// through the OpenGL rendering lifecycle.
 		// Therefore it is mandatory to allocate a NIO Direct buffer that stays pinned in memory
 		// and thus can not get moved by the java garbage collector.
-		// Also we need to keep a reference to the NIO Direct buffer around up untill
+		// Also we need to keep a reference to the NIO Direct buffer around up until
 		// we call glDisableVertexAttribArray first then will it be safe to garbage collect the memory.
-		// I will here use the com.jogamp.common.nio.Buffers to quicly wrap the array in a Direct NIO buffer.
+		// I will here use the com.jogamp.common.nio.Buffers to quickly wrap the array in a Direct NIO buffer.
 		FloatBuffer fbVertices = Buffers.newDirectFloatBuffer(vertices);
 		// Select the VBO, GPU memory data, to use for vertices
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[VERTICES_IDX]);
