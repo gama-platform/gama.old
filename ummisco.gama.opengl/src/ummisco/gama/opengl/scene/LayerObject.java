@@ -13,14 +13,20 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
+
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
@@ -30,9 +36,15 @@ import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
+import ummisco.gama.modernOpenGL.Light;
+import ummisco.gama.modernOpenGL.Maths;
+import ummisco.gama.modernOpenGL.VAOExtractor;
+import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.webgl.SimpleGeometryObject;
 import ummisco.gama.webgl.SimpleLayer;
 
@@ -57,6 +69,31 @@ public class LayerObject implements Iterable<GeometryObject> {
 	List<AbstractObject> currentList;
 	Integer openGLListIndex;
 	boolean isFading;
+	
+	
+	
+	
+	
+	boolean isInit = false;
+	ShaderProgram shaderProgram;
+	ICamera camera;
+	int[] vboHandles;
+	static final int COLOR_IDX = 0;
+	static final int VERTICES_IDX = 1;
+	static final int IDX_BUFF_IDX = 2;
+	static final int NORMAL_IDX = 3;
+	
+	ArrayList<ArrayList<float[]>> vbos = new ArrayList<ArrayList<float[]>>();
+	
+	private GL2 gl;
+	
+	private Matrix4f projectionMatrix;
+	private Matrix4f transformationMatrix;
+	
+	
+	
+	
+	
 
 	public LayerObject(final JOGLRenderer renderer, final ILayer layer) {
 		this.renderer = renderer;
@@ -77,6 +114,59 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if (isInvalid()) {
 			return;
 		}
+		
+		if (this.renderer.data.isUseShader()) {
+			drawWithShader(gl, renderer);
+		}
+		else {
+			drawWithoutShader(gl, renderer);
+		}
+	}
+	
+	public void drawWithShader(final GL2 gl, final JOGLRenderer renderer) {
+		if (!isInit) {
+			initShader(gl);
+			isInit=true;
+		}
+		
+		for (final List<AbstractObject> list : objects) {
+			for (final AbstractObject object : list) {
+				if (object instanceof GeometryObject) {
+					ArrayList<float[]> vao = new ArrayList<float[]>();
+					
+					float[] vertices = VAOExtractor.getObjectVertices(object);
+					float[] colors = VAOExtractor.getObjectColors(object,vertices.length/3);
+					float[] indices = VAOExtractor.getObjectIndexBuffer(object);
+					
+					vao.add(vertices);
+					vao.add(colors);
+					vao.add(indices);
+					
+					vbos.add(vao);
+				}
+			}
+		}	
+		
+		if (vbos.size()>0)
+		{
+			// Clear screen
+			gl.glClearColor(1, 0, 1, 0.5f);  // Purple
+			gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT   );
+		
+			for (ArrayList<float[]> vbo : vbos) {
+				float[] vtxPos = vbo.get(0);
+				float[] vtxCol = vbo.get(1);
+				float[] vtxIdxBuff = vbo.get(2);
+				if (vtxPos.length > 2)
+					newDraw(vtxPos,vtxCol,vtxIdxBuff);
+			}
+		}
+		
+		vbos.clear();
+	}
+	
+	public void drawWithoutShader(final GL2 gl, final JOGLRenderer renderer) {
+		
 		if (overlay) {
 			gl.glDisable(GL.GL_DEPTH_TEST);
 			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
@@ -136,6 +226,140 @@ public class LayerObject implements Iterable<GeometryObject> {
 			gl.glPopMatrix();
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 		}
+	}
+	
+	public void initShader(final GL2 gl) {
+		this.gl = gl;
+		
+		camera = renderer.camera;
+		
+		createProjectionMatrix();
+		
+		shaderProgram = new ShaderProgram(gl);
+		shaderProgram.start();
+		shaderProgram.loadProjectionMatrix(projectionMatrix);
+		shaderProgram.stop();
+
+		vboHandles = new int[4];
+		this.gl.glGenBuffers(4, vboHandles, 0);
+	}
+	
+	private void createProjectionMatrix() {
+		
+		final int height = renderer.getDrawable().getSurfaceHeight();
+		final double aspect = (double) renderer.getDrawable().getSurfaceWidth() / (double) (height == 0 ? 1 : height);
+		final double maxDim = renderer.getMaxEnvDim();
+		final double zNear = maxDim / 1000;
+		final double zFar = maxDim*10;
+		final double frustum_length = zFar - zNear;
+		double fW, fH;
+		//final double fovY = 45.0d;
+		final double fovY = renderer.data.getCameralens();
+		if (aspect > 1.0) {
+			fH = FastMath.tan(fovY / 360 * Math.PI) * zNear;
+			fW = fH * aspect;
+		} else {
+			fW = FastMath.tan(fovY / 360 * Math.PI) * zNear;
+			fH = fW / aspect;
+		}
+		
+		projectionMatrix = new Matrix4f();
+		
+		projectionMatrix.m00 = (float) (zNear / fW);
+		projectionMatrix.m11 = (float) (zNear / fH);
+		projectionMatrix.m22 = (float) -((zFar + zNear) / frustum_length);
+		projectionMatrix.m23 = -1;
+		projectionMatrix.m32 = (float) -((2 * zNear * zFar) / frustum_length);
+		projectionMatrix.m33 = 0;
+	}
+	
+	private void newDraw(float[] vertices, float[] colors, float[] idxBuffer) {
+		shaderProgram.start();
+			
+		transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), 0, 0, 0, 1);
+		shaderProgram.loadTransformationMatrix(transformationMatrix);
+		shaderProgram.loadViewMatrix(camera);
+		
+		Light light = new Light(new Vector3f(50,50,100),new Vector3f(1,1,1));
+		shaderProgram.loadLight(light);
+		
+		shaderProgram.loadShineVariables(10.0f, 1.0f);
+		
+		float[][] newArraysWithSmoothShading = VAOExtractor.setSmoothShading(vertices,colors,idxBuffer,60f);
+		vertices = newArraysWithSmoothShading[0];
+		colors = newArraysWithSmoothShading[1];
+		idxBuffer = newArraysWithSmoothShading[2];
+		
+		float[] normals = Maths.getNormals(vertices,idxBuffer/*VAOExtractor.getExtendedIndicesForRectangularFaces(idxBuffer)*/);
+
+
+		// VERTICES POSITIONS BUFFER
+		// Observe that the vertex data passed to glVertexAttribPointer must stay valid
+		// through the OpenGL rendering lifecycle.
+		// Therefore it is mandatory to allocate a NIO Direct buffer that stays pinned in memory
+		// and thus can not get moved by the java garbage collector.
+		// Also we need to keep a reference to the NIO Direct buffer around up until
+		// we call glDisableVertexAttribArray first then will it be safe to garbage collect the memory.
+		// I will here use the com.jogamp.common.nio.Buffers to quickly wrap the array in a Direct NIO buffer.
+		FloatBuffer fbVertices = Buffers.newDirectFloatBuffer(vertices);
+		// Select the VBO, GPU memory data, to use for vertices
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[VERTICES_IDX]);
+		// transfer data to VBO, this perform the copy of data from CPU -> GPU memory
+		int numBytes = vertices.length * 4;
+		gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbVertices, GL.GL_STATIC_DRAW);
+		fbVertices.rewind(); // It is OK to release CPU vertices memory after transfer to GPU
+		// Associate Vertex attribute 0 with the last bound VBO
+		gl.glVertexAttribPointer(ShaderProgram.POSITION_ATTRIBUTE_IDX /* the vertex attribute */, 3,
+		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
+		                    0 /* The bound VBO data offset */);
+		gl.glEnableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX);
+		
+		// COLORS BUFFER
+		FloatBuffer fbColors = Buffers.newDirectFloatBuffer(colors);
+		// Select the VBO, GPU memory data, to use for colors
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[COLOR_IDX]);
+		numBytes = colors.length * 4;
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, fbColors, GL2.GL_STATIC_DRAW);
+		fbColors.rewind(); // It is OK to release CPU color memory after transfer to GPU
+		// Associate Vertex attribute 1 with the last bound VBO
+		gl.glVertexAttribPointer(ShaderProgram.COLOR_ATTRIBUTE_IDX /* the vertex attribute */, 4 /* four positions used for each vertex */,
+		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
+		                    0 /* The bound VBO data offset */);
+		gl.glEnableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX);
+		
+		// NORMAL BUFFER
+		FloatBuffer fbNormal = Buffers.newDirectFloatBuffer(normals);
+		// Select the VBO, GPU memory data, to use for colors
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[NORMAL_IDX]);
+		numBytes = normals.length * 4;
+		gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, fbNormal, GL2.GL_STATIC_DRAW);
+		fbNormal.rewind(); // It is OK to release CPU color memory after transfer to GPU
+		// Associate Vertex attribute 1 with the last bound VBO
+		gl.glVertexAttribPointer(ShaderProgram.NORMAL_ATTRIBUTE_IDX /* the vertex attribute */, 3 /* three positions used for each vertex */,
+		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
+		                    0 /* The bound VBO data offset */);
+		gl.glEnableVertexAttribArray(ShaderProgram.NORMAL_ATTRIBUTE_IDX);
+		
+		// INDEX BUFFER
+		int[] intIdxBuff = new int[idxBuffer.length];
+		for (int i = 0; i < idxBuffer.length ; i++) {
+			intIdxBuff[i] = (int) idxBuffer[i];
+		}
+		IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuff);
+		// Select the VBO, GPU memory data, to use for colors
+		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[IDX_BUFF_IDX]);
+		numBytes = colors.length * 4;
+		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
+		ibIdxBuff.rewind();
+
+//		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, idxBuffer.length); //Draw the vertices as triangle
+		gl.glDrawElements(GL2.GL_TRIANGLES, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
+
+		gl.glDisableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX); // Allow release of vertex position memory
+		gl.glDisableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX); // Allow release of vertex color memory
+		gl.glDisableVertexAttribArray(ShaderProgram.NORMAL_ATTRIBUTE_IDX); // Allow release of vertex normal memory
+		
+		shaderProgram.stop();
 	}
 
 	private void drawPicking(final GL2 gl) {
