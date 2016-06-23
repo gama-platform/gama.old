@@ -89,28 +89,23 @@ thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0
 
 
 
-RELEASEFILES[0]="$thePATH-linux.gtk.x86.zip"
-RELEASEFILES[1]="$thePATH-linux.gtk.x86_64.zip"
-RELEASEFILES[2]="$thePATH-macosx.cocoa.x86_64.zip"
-RELEASEFILES[3]="$thePATH-win32.win32.x86.zip"
-RELEASEFILES[4]="$thePATH-win32.win32.x86_64.zip"
 
 
-COMMIT="(${COMMIT:0:7})"
+
+
+
+RELEASEFILES=("$thePATH-linux.gtk.x86.zip" "$thePATH-linux.gtk.x86_64.zip" "$thePATH-macosx.cocoa.x86_64.zip" "$thePATH-win32.win32.x86.zip" "$thePATH-win32.win32.x86_64.zip");
+
+
+COMMIT="${COMMIT:0:7}"
 
 timestamp=$(date '+_%D')
 
-SUFFIX="$timestamp$COMMIT.zip"
+SUFFIX="$timestamp.$COMMIT.zip"
 echo $SUFFIX
 
 
-NEWFILES[0]="GAMA1.7-Linux.x86$SUFFIX"
-NEWFILES[1]="GAMA1.7-Linux.x64$SUFFIX"
-NEWFILES[2]="GAMA1.7-Mac.x64$SUFFIX"
-NEWFILES[3]="GAMA1.7-Win.x86$SUFFIX"
-NEWFILES[4]="GAMA1.7-Win.x64$SUFFIX"
-
-
+NEWFILES=("GAMA1.7-Linux.x86$SUFFIX" "GAMA1.7-Linux.x64$SUFFIX" "GAMA1.7-Mac.x64$SUFFIX" "GAMA1.7-Win.x86$SUFFIX" "GAMA1.7-Win.x64$SUFFIX");
 
 
 
