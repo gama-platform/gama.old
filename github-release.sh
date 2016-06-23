@@ -87,14 +87,33 @@ thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0
 
 
 
-RELEASEFILES="$thePATH-linux.gtk.x86 $thePATH-linux.gtk.x86_64 $thePATH-macosx.cocoa.x86_64 $thePATH-win32.win32.x86 $thePATH-win32.win32.x86_64"
+
+
+RELEASEFILES[0]="$thePATH-linux.gtk.x86"
+RELEASEFILES[1]="$thePATH-linux.gtk.x86_64"
+RELEASEFILES[2]="$thePATH-macosx.cocoa.x86_64"
+RELEASEFILES[3]="$thePATH-win32.win32.x86"
+RELEASEFILES[4]="$thePATH-win32.win32.x86_64"
 
 
 COMMIT="(${COMMIT:0:7})"
-echo $COMMIT
-timestamp=$(date '+_%D_%T')
-echo $timestamp
+
+timestamp=$(date '+_%D')
+
 SUFFIX="$timestamp$COMMIT.zip"
+echo $SUFFIX
+
+
+NEWFILES[0]="GAMA1.7-Linux.x86$SUFFIX"
+NEWFILES[1]="GAMA1.7-Linux.x64$SUFFIX"
+NEWFILES[2]="GAMA1.7-Mac.x64$SUFFIX"
+NEWFILES[3]="GAMA1.7-Win.x86$SUFFIX"
+NEWFILES[4]="GAMA1.7-Win.x64$SUFFIX"
+
+
+
+
+
 echo
 echo "Getting info of $RELEASE tag..."
 echo 
@@ -147,16 +166,18 @@ if [ $check -ge 5 ]; then
 fi
 
 
-
-
 echo 
 echo "Upload new files..."
 echo
-for FILE in $RELEASEFILES; do
-  
+
+for (( i=0; i<5; i++ ))
+do     
+	FILE="${RELEASEFILES[$i]}"
+	NFILE="${NEWFILES[$i]}"
+
   FILENAME=`basename $FILE`
   echo   "Uploading $FILENAME$SUFFIX...  "
-  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$FILENAME$SUFFIX"
+  LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$NFILE"
   
   RESULT=`curl -s -w  "\n%{http_code}\n"                   \
     -H "Authorization: token $HQN_TOKEN"                \
