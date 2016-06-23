@@ -12,7 +12,6 @@
 package msi.gama.runtime;
 
 import java.util.ArrayDeque;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -55,8 +54,8 @@ public abstract class AbstractScope implements IScope {
 
 	private static int ScopeNumber = 0;
 	private final String name;
-	private final Deque<IAgent> agents = new ArrayDeque(3);
-	private final Deque<IRecord> statements = new ArrayDeque(5);
+	private final Deque<IAgent> agentsStack = new ArrayDeque(3);
+	private final Deque<Record> statementContextsStack = new ArrayDeque(5);
 	private Deque<Map> fileAttributesStack;
 	private IGraphics graphics;
 	private ITopology topology;
@@ -72,7 +71,7 @@ public abstract class AbstractScope implements IScope {
 		// this.root = root;
 		final int number = ScopeNumber++;
 		if (root != null) {
-			agents.push(root);
+			agentsStack.push(root);
 			// IMacroAgent a = root;
 			// while (!(a instanceof SimulationAgent) && a != null) {
 			// a = root.getHost();
@@ -83,14 +82,14 @@ public abstract class AbstractScope implements IScope {
 			// simulation = null;
 			name = "Scope without root #" + number;
 		}
-		statements.push(new NullRecord());
+		statementContextsStack.push(new Record(null));
 	}
 
 	public AbstractScope(final ITopLevelAgent root, final String otherName) {
 		// this.root = root;
 		final int number = ScopeNumber++;
 		if (root != null) {
-			agents.push(root);
+			agentsStack.push(root);
 			// IMacroAgent a = root;
 			// while (!(a instanceof SimulationAgent) && a != null) {
 			// a = root.getHost();
@@ -101,7 +100,7 @@ public abstract class AbstractScope implements IScope {
 			// simulation = null;
 			name = "Scope without root (" + otherName + ") #" + number;
 		}
-		statements.push(new NullRecord());
+		statementContextsStack.push(new Record(null));
 	}
 
 	/**
@@ -111,8 +110,8 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void clear() {
-		agents.clear();
-		statements.clear();
+		agentsStack.clear();
+		statementContextsStack.clear();
 		each = null;
 		graphics = null;
 		topology = null;
@@ -141,120 +140,11 @@ public abstract class AbstractScope implements IScope {
 		_trace = t;
 	}
 
-	final static class NullRecord implements IRecord {
+	private class Record extends THashMap<String, Object> {
 
-		@Override
-		public void setVar(final String name, final Object value) {
-		}
+		Record previous;
 
-		@Override
-		public Object getVar(final String name) {
-			return null;
-		}
-
-		@Override
-		public boolean hasVar(final String name) {
-			return false;
-		}
-
-		@Override
-		public Object put(final String name, final Object value) {
-			return null;
-		}
-
-		@Override
-		public Object get(final Object name) {
-			return null;
-		}
-
-		@Override
-		public boolean contains(final Object name) {
-			return false;
-		}
-
-		@Override
-		public void clear() {
-		}
-
-		@Override
-		public Map<? extends String, ? extends Object> getMap() {
-			return Collections.EMPTY_MAP;
-		}
-
-	}
-
-	private static interface IRecord {
-
-		/**
-		 * Adds this variable to the record
-		 * 
-		 * @param name
-		 * @param value
-		 * @return
-		 */
-		Object put(final String name, final Object value);
-
-		/**
-		 * Allows to set either a local variable or a variable belonging to the
-		 * previous record
-		 * 
-		 * @param name
-		 * @param value
-		 */
-		void setVar(final String name, final Object value);
-
-		/**
-		 * Allows to get the value of a local variable or a variable belonging
-		 * to the previous record
-		 * 
-		 * @param name
-		 * @return
-		 */
-		Object getVar(final String name);
-
-		/**
-		 * Gets the value of a local var. Null if not found.
-		 * 
-		 * @param name
-		 * @return
-		 */
-		Object get(final Object name);
-
-		/**
-		 * Checks if this record or a previous record has a variable of this
-		 * name
-		 * 
-		 * @param name
-		 * @return
-		 */
-		boolean hasVar(final String name);
-
-		/**
-		 * Checks if this record has a variable of this name
-		 * 
-		 * @param name
-		 * @return
-		 */
-		public boolean contains(final Object name);
-
-		/**
-		 * Removes all variables from the record
-		 */
-		void clear();
-
-		/**
-		 * Returns the backing map
-		 * 
-		 * @return
-		 */
-		Map<? extends String, ? extends Object> getMap();
-	}
-
-	private final static class Record extends THashMap<String, Object> implements IRecord {
-
-		IRecord previous;
-
-		public Record(final IRecord previous) {
+		public Record(final Record previous) {
 			super(5);
 			this.previous = previous;
 		}
@@ -271,33 +161,28 @@ public abstract class AbstractScope implements IScope {
 			return super.equals(other);
 		}
 
-		@Override
 		public void setVar(final String name, final Object value) {
 			final int i = index(name);
 			if (i == -1) {
-				previous.setVar(name, value);
+				if (previous != null)
+					previous.setVar(name, value);
 			} else {
 				_values[i] = value;
 			}
 		}
 
-		@Override
 		public Object getVar(final String name) {
 			final int i = index(name);
 			if (i < 0) {
+				if (previous == null)
+					return null;
 				return previous.getVar(name);
 			}
 			return _values[i];
 		}
 
-		@Override
 		public boolean hasVar(final String name) {
-			return index(name) >= 0 || previous.hasVar(name);
-		}
-
-		@Override
-		public Map<? extends String, ? extends Object> getMap() {
-			return this;
+			return index(name) >= 0 || previous != null && previous.hasVar(name);
 		}
 
 	}
@@ -353,11 +238,11 @@ public abstract class AbstractScope implements IScope {
 	// @Override
 	@Override
 	public synchronized boolean push(final IAgent agent) {
-		final IAgent a = agents.peek();
+		final IAgent a = agentsStack.peek();
 		if (a != null && a.equals(agent)) {
 			return false;
 		}
-		agents.push(agent);
+		agentsStack.push(agent);
 		return true;
 	}
 
@@ -369,10 +254,10 @@ public abstract class AbstractScope implements IScope {
 	// @Override
 	@Override
 	public void pop(final IAgent agent) {
-		if (agents.size() == 0) {
+		if (agentsStack.size() == 0) {
 			return;
 		}
-		agents.pop();
+		agentsStack.pop();
 		_agent_halted = false;
 	}
 
@@ -384,7 +269,7 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void push(final ISymbol statement) {
 		setCurrentSymbol(statement);
-		statements.push(new Record(statements.peek()));
+		statementContextsStack.push(new Record(statementContextsStack.peek()));
 	}
 
 	@Override
@@ -400,7 +285,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	private void writeTrace() {
 		final StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < statements.size(); i++) {
+		for (int i = 0; i < statementContextsStack.size(); i++) {
 			sb.append(Strings.TAB);
 		}
 		sb.append(currentSymbol.getTrace(this));
@@ -425,7 +310,7 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void pop(final ISymbol symbol) {
 		try {
-			statements.pop();
+			statementContextsStack.pop();
 		} catch (final NoSuchElementException e) {
 			return;
 		}
@@ -590,7 +475,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Object getVarValue(final String varName) {
-		return statements.peek().getVar(varName);
+		return statementContextsStack.peek().getVar(varName);
 	}
 
 	/**
@@ -601,7 +486,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void setVarValue(final String varName, final Object val) {
-		statements.peek().setVar(varName, val);
+		statementContextsStack.peek().setVar(varName, val);
 	}
 
 	/**
@@ -611,7 +496,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void saveAllVarValuesIn(final Map<String, Object> varsToSave) {
-		varsToSave.putAll(statements.peek().getMap());
+		varsToSave.putAll(statementContextsStack.peek());
 	}
 
 	/**
@@ -621,7 +506,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void removeAllVars() {
-		final IRecord r = statements.peek();
+		final Record r = statementContextsStack.peek();
 		r.clear();
 
 	}
@@ -634,7 +519,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void addVarWithValue(final String varName, final Object val) {
-		statements.peek().put(varName, val);
+		statementContextsStack.peek().put(varName, val);
 	}
 
 	/**
@@ -664,7 +549,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Object getArg(final String string, final int type) throws GamaRuntimeException {
-		return Types.get(type).cast(this, statements.peek().get(string), null, false);
+		return Types.get(type).cast(this, statementContextsStack.peek().get(string), null, false);
 	}
 
 	@Override
@@ -699,7 +584,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public boolean hasArg(final String name) {
-		return statements.peek().contains(name);
+		return statementContextsStack.peek().contains(name);
 	}
 
 	/**
@@ -709,7 +594,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public boolean hasVar(final String name) {
-		return statements.peek().hasVar(name);
+		return statementContextsStack.peek().hasVar(name);
 	}
 
 	/**
@@ -846,7 +731,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public ITopology getTopology() {
-		return topology != null ? topology : agents.peek().getTopology();
+		return topology != null ? topology : agentsStack.peek().getTopology();
 	}
 
 	/**
@@ -888,7 +773,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public IAgent getAgentScope() {
-		return agents.peek();
+		return agentsStack.peek();
 	}
 
 	/**
@@ -960,8 +845,8 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public IAgent[] getAgentsStack() {
-		final IAgent[] result = new IAgent[agents.size()];
-		return agents.toArray(result);
+		final IAgent[] result = new IAgent[agentsStack.size()];
+		return agentsStack.toArray(result);
 	}
 
 	/**
@@ -1014,7 +899,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public ITopLevelAgent getRoot() {
-		return (ITopLevelAgent) agents.getLast();
+		return (ITopLevelAgent) agentsStack.getLast();
 	}
 
 	@Override

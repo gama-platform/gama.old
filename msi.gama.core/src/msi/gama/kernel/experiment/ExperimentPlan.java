@@ -98,10 +98,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		public void validate(final IDescription desc) {
 			final String type = desc.getFacets().getLabel(IKeyword.TYPE);
 			if (type.equals(IKeyword.MEMORIZE)) {
-				desc.warning(
-						"The memorize experiment is still in development. It should not be used.",
-						IGamlIssue.DEPRECATED);				
-			}			
+				desc.warning("The memorize experiment is still in development. It should not be used.",
+						IGamlIssue.DEPRECATED);
+			}
 			if (!type.equals(IKeyword.BATCH)) {
 				return;
 			}
@@ -570,7 +569,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 
 		@Override
-		public void setInterrupted(final boolean interrupted) {
+		public void setInterrupted() {
 			this.interrupted = interrupted;
 		}
 

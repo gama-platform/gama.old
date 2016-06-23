@@ -146,7 +146,7 @@ public interface IScope {
 
 	public boolean interrupted();
 
-	public void setInterrupted(boolean interrupted);
+	public void setInterrupted();
 
 	public abstract Object getGlobalVarValue(String name) throws GamaRuntimeException;
 

@@ -25,7 +25,6 @@ import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
-import msi.gama.metamodel.agent.SimulationScope;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.Envelope3D;
@@ -47,6 +46,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.AbstractScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -106,14 +106,66 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	final SimulationClock clock;
 	GamaColor color;
 
-	final IScope scope;
-	IOutputManager outputs;
+	final SimulationScope scope;
+	private SimulationOutputManager outputs;
 	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
 	private volatile boolean isOnUserHold;
 	private final RandomUtils random;
 	private final ActionExecuter executer;
 	private RootTopology topology;
+
+	class SimulationScope extends AbstractScope {
+
+		volatile boolean interrupted = false;
+
+		public SimulationScope() {
+			super(SimulationAgent.this);
+		}
+
+		public SimulationScope(final String additionalName) {
+			super(SimulationAgent.this, additionalName);
+		}
+
+		@Override
+		protected boolean _root_interrupted() {
+			return interrupted || SimulationAgent.this.dead();
+		}
+
+		@Override
+		public void setInterrupted() {
+			this.interrupted = true;
+		}
+
+		@Override
+		public IScope copy(final String additionalName) {
+			return new SimulationScope(additionalName);
+		}
+
+		/**
+		 * Method getRandom()
+		 * 
+		 * @see msi.gama.runtime.IScope#getRandom()
+		 */
+		@Override
+		public RandomUtils getRandom() {
+			return SimulationAgent.this.getRandomGenerator();
+		}
+
+	}
+
+	public SimulationAgent(final IPopulation pop) {
+		this((SimulationPopulation) pop);
+	}
+
+	public SimulationAgent(final SimulationPopulation pop) throws GamaRuntimeException {
+		super(pop);
+		scope = new SimulationScope();
+		clock = new SimulationClock(scope);
+		executer = new ActionExecuter(scope);
+		projectionFactory = new ProjectionFactory();
+		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());
+	}
 
 	public Boolean getScheduled() {
 		return scheduled;
@@ -146,19 +198,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public void setScheduled(final Boolean scheduled) {
 		this.scheduled = scheduled;
-	}
-
-	public SimulationAgent(final IPopulation pop) {
-		this((SimulationPopulation) pop);
-	}
-
-	public SimulationAgent(final SimulationPopulation pop) throws GamaRuntimeException {
-		super(pop);
-		scope = new SimulationScope(this);
-		clock = new SimulationClock(scope);
-		executer = new ActionExecuter(scope);
-		projectionFactory = new ProjectionFactory();
-		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());
 	}
 
 	@Override
@@ -487,7 +526,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			if (des == null) {
 				return;
 			}
-			outputs = (IOutputManager) des.compile();
+			outputs = (SimulationOutputManager) des.compile();
 			final Map<String, IOutput> mm = new TOrderedHashMap<>();
 			for (final Map.Entry<String, ? extends IOutput> entry : outputs.getOutputs().entrySet()) {
 				final IOutput output = entry.getValue();
@@ -510,14 +549,14 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 				outputs.addOutput(output.getKey(), output.getValue());
 			}
 		} else {
-			outputs = iOutputManager;
+			outputs = (SimulationOutputManager) iOutputManager;
 		}
 		// end-hqnghi
 	}
 
 	@Override
 	public SimulationOutputManager getOutputManager() {
-		return (SimulationOutputManager) outputs;
+		return outputs;
 	}
 
 	/**

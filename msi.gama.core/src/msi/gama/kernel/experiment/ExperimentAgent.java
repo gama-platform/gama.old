@@ -30,7 +30,6 @@ import msi.gama.kernel.simulation.SimulationClock.ExperimentClock;
 import msi.gama.kernel.simulation.SimulationPopulation;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.SimulationScope;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
@@ -44,6 +43,7 @@ import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
+import msi.gama.runtime.AbstractScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -108,7 +108,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
-		scope = new ExperimentAgentScope(this);
+		scope = new ExperimentAgentScope();
 		clock = new ExperimentClock(scope);
 		executer = new ActionExecuter(scope);
 		reset();
@@ -485,6 +485,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// Forbidden
 	}
 
+	@Override
 	@getter(IKeyword.SIMULATION)
 	public SimulationAgent getSimulation() {
 		if (getSimulationPopulation() != null)
@@ -575,23 +576,49 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @since 22 avr. 2013
 	 *
 	 */
-	public class ExperimentAgentScope extends SimulationScope {
+	public class ExperimentAgentScope extends AbstractScope {
+
+		volatile boolean interrupted = false;
+
+		@Override
+		protected boolean _root_interrupted() {
+			return interrupted || ExperimentAgent.this.dead();
+		}
+
+		@Override
+		public void setInterrupted() {
+			this.interrupted = true;
+		}
+
+		/**
+		 * Method getRandom()
+		 * 
+		 * @see msi.gama.runtime.IScope#getRandom()
+		 */
+		@Override
+		public RandomUtils getRandom() {
+			return ExperimentAgent.this.random;
+		}
 
 		/**
 		 * @param agent
 		 */
-		public ExperimentAgentScope(final ITopLevelAgent agent) {
-			super(agent);
+		public ExperimentAgentScope() {
+			super(ExperimentAgent.this);
+		}
+
+		public ExperimentAgentScope(final String name) {
+			super(ExperimentAgent.this, name);
 		}
 
 		@Override
 		public IScope copy(final String additionalName) {
-			return new ExperimentAgentScope(ExperimentAgent.this);
+			return new ExperimentAgentScope(additionalName);
 		}
 
 		@Override
 		public SimulationAgent getSimulationScope() {
-			return getSimulation();
+			return ExperimentAgent.this.getSimulation();
 		}
 
 		@Override
@@ -623,18 +650,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		@Override
 		public void setGlobalVarValue(final String name, final Object v) {
-			// if ( name.equals(IKeyword.SEED) ) {
-			// scope.getGui().debug("ExperimentAgent.ExperimentAgentScope.setGlobalVarValue");
-			// }
 			if (getSpecies().hasVar(name)) {
 				super.setGlobalVarValue(name, v);
 			} else if (getSimulation() != null && !getSimulation().dead()
 					&& getSimulation().getSpecies().hasVar(name)) {
 				getSimulation().getScope().setGlobalVarValue(name, v);
-				// TODO extraParameter does not contains model's variables???
-				// } else if ( getSpecies().hasParameter(name) ) {
-				// getSpecies().getExperimentScope().setGlobalVarValue(name,
-				// v);// scope.getGui().updateParameterView(getSpecies());
 			} else {
 				extraParametersMap.put(name, v);
 			}
@@ -664,11 +684,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			} else {
 				return GAMA.getRegularGui();
 			}
-		}
-
-		@Override
-		public RandomUtils getRandom() {
-			return ExperimentAgent.this.random;
 		}
 
 	}

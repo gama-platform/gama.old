@@ -319,7 +319,7 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#setInterrupted(boolean) No interruption
 	 */
 	@Override
-	public void setInterrupted(final boolean interrupted) {
+	public void setInterrupted() {
 	}
 
 	/**

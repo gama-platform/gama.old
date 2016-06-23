@@ -110,14 +110,9 @@ public class ExperimentScheduler implements Runnable {
 			for (final IStepable s : toStop) {
 				final IScope scope = toStep.get(s);
 				if (scope != null && !scope.interrupted()) {
-					// scope.getGui().debug("ExperimentScheduler.clean :
-					// Interrupting " + scope);
-					scope.setInterrupted(true);
+					scope.setInterrupted();
 				}
 				toStep.remove(s);
-				// scope.getGui().debug("ExperimentScheduler.clean : Removed " +
-				// s);
-				// s.dispose();
 			}
 			if (toStep.isEmpty()) {
 				this.pause();
@@ -206,7 +201,7 @@ public class ExperimentScheduler implements Runnable {
 
 				final IScope scope = toStep.get(ss);
 				if (!scope.interrupted()) {
-					scope.setInterrupted(true);
+					scope.setInterrupted();
 				}
 				beRemoved.add(ss);
 			}
@@ -220,7 +215,7 @@ public class ExperimentScheduler implements Runnable {
 
 	public void unschedule(final IStepable scheduler) {
 		if (toStep.containsKey(scheduler)) {
-			toStep.get(scheduler).setInterrupted(true);
+			toStep.get(scheduler).setInterrupted();
 		}
 	}
 

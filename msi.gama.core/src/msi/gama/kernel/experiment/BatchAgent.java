@@ -383,7 +383,7 @@ public class BatchAgent extends ExperimentAgent {
 		// We interrupt the simulation scope directly (as it cannot be
 		// interrupted by the global scheduler)
 		if (getSimulation() != null) {
-			getSimulation().getScope().setInterrupted(true);
+			getSimulation().getScope().setInterrupted();
 		}
 	}
 
