@@ -122,10 +122,18 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void displayErrors() {
-		final IGamaView.Error v = (Error) showView(ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
-		if (v != null)
-			v.displayErrors();
+	public void displayErrors(final List<GamaRuntimeException> exceptions) {
+		if (exceptions == null) // close it
+		{
+			final IViewReference ref = WorkbenchHelper.getPage().findViewReference(ERROR_VIEW_ID);
+			if (ref != null) {
+				WorkbenchHelper.getPage().hideView(ref);
+			}
+		} else {
+			final IGamaView.Error v = (Error) showView(ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+			if (v != null)
+				v.displayErrors();
+		}
 	}
 
 	@Override

@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
+import java.util.List;
 import java.util.Map;
 
 import gnu.trove.map.hash.THashMap;
@@ -144,6 +145,6 @@ public interface IGui {
 
 	void applyLayout(int layout);
 
-	void displayErrors();
+	void displayErrors(List<GamaRuntimeException> newExceptions);
 
 }

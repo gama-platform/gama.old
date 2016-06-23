@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.runtime;
 
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Handler;
 import java.util.logging.Level;
@@ -404,7 +405,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void displayErrors() {
+	public void displayErrors(final List<GamaRuntimeException> list) {
 	}
 
 }

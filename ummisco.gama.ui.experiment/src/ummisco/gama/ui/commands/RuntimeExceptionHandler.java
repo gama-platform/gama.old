@@ -114,7 +114,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 			cleanExceptions = newExceptions;
 		}
 
-		GAMA.getGui().displayErrors();
+		GAMA.getGui().displayErrors(newExceptions);
 	}
 
 	@Override
