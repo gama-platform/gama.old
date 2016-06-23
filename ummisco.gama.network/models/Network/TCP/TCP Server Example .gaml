@@ -25,7 +25,7 @@ species Networking_Server skills: [network]
 	string name;
 	string dest;
 	reflex receive
-	{
+	{   write "mailbox";
 		if (length(mailbox) > 0)
 		{
 			write mailbox;
