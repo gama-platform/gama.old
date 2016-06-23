@@ -18,11 +18,11 @@ thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0
 
 
 
-RELEASEFILES[0]='/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-linux.gtk.x86.zip'
-RELEASEFILES[1]='/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-linux.gtk.x86_64.zip'
-RELEASEFILES[2]='/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-macosx.cocoa.x86_64.zip'
-RELEASEFILES[3]='/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-win32.win32.x86.zip'
-RELEASEFILES[4]='/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT-win32.win32.x86_64.zip' 
+RELEASEFILES['0']=$thePATH'-linux.gtk.x86.zip'
+RELEASEFILES['1']=$thePATH'-linux.gtk.x86_64.zip'
+RELEASEFILES['2']=$thePATH'-macosx.cocoa.x86_64.zip'
+RELEASEFILES['3']=$thePATH'-win32.win32.x86.zip'
+RELEASEFILES['4']=$thePATH'-win32.win32.x86_64.zip' 
 
 COMMIT="${COMMIT:0:7}"
 
@@ -33,11 +33,25 @@ echo $SUFFIX
 
 
 
-NEWFILES[0]='GAMA1.7-Linux.x86'$SUFFIX
-NEWFILES[1]='GAMA1.7-Linux.x64'$SUFFIX
-NEWFILES[2]='GAMA1.7-Mac.x64'$SUFFIX
-NEWFILES[3]='GAMA1.7-Win.x86'$SUFFIX
-NEWFILES[4]='GAMA1.7-Win.x64'$SUFFIX
+NEWFILES['0']='GAMA1.7-Linux.x86'$SUFFIX
+NEWFILES['1']='GAMA1.7-Linux.x64'$SUFFIX
+NEWFILES['2']='GAMA1.7-Mac.x64'$SUFFIX
+NEWFILES['3']='GAMA1.7-Win.x86'$SUFFIX
+NEWFILES['4']='GAMA1.7-Win.x64'$SUFFIX
+
+
+for (( i=0; i<5; i++ ))
+do     
+	FILE="${RELEASEFILES[$i]}"
+	NFILE="${NEWFILES[$i]}"
+	echo $FILE
+	echo $NFILE
+done
+
+
+
+
+
 
 echo
 echo "Getting info of $RELEASE tag..."
