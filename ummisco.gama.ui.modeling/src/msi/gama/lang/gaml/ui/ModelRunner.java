@@ -47,19 +47,18 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class ModelRunner extends AbstractServiceFactory implements IModelRunner {
 
-	@Override
-	public void editModel(final Object eObject) {
+	private void editModelInternal(final Object eObject) {
 		if (eObject instanceof URI) {
 			final URI uri = (URI) eObject;
 			final Injector injector = GamlActivator.getInstance().getInjector("msi.gama.lang.gaml.Gaml");
 			final IURIEditorOpener opener = injector.getInstance(IURIEditorOpener.class);
 			opener.open(uri, true);
 		} else if (eObject instanceof EObject) {
-			editModel(EcoreUtil.getURI((EObject) eObject));
+			editModelInternal(EcoreUtil.getURI((EObject) eObject));
 		} else if (eObject instanceof String) {
 			final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 			final IFile file = workspace.getRoot().getFile(new Path((String) eObject));
-			editModel(file);
+			editModelInternal(file);
 		} else if (eObject instanceof IFile) {
 			final IFile file = (IFile) eObject;
 			if (!file.exists()) {
@@ -75,6 +74,17 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 			}
 		}
 
+	}
+
+	@Override
+	public void editModel(final Object eObject) {
+		WorkbenchHelper.run(new Runnable() {
+
+			@Override
+			public void run() {
+				editModelInternal(eObject);
+			}
+		});
 	}
 
 	@Override
@@ -103,8 +113,6 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 						+ errors.size() + " compilation errors");
 				return;
 			}
-			// System.out.println("Model " + file.getFullPath() + " can be run
-			// safely with experiment " + exp);
 			runModel(model, exp);
 		}
 	}

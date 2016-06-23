@@ -14,7 +14,6 @@ package msi.gama.runtime;
 import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -45,45 +44,33 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * Class TrialScope.
+ * Class AbstractScope.
  *
  * @author drogoul
  * @since 23 mai 2013
  *
  */
 
-// TODO : PEUT ETRE FAIRE L'INVERSE : A CHAQUE FOIS QUE L'AGENT MEURT ("die"),
-// QU'UNE BOUCLE EST INTERROMPUE ("break")
-// OU QU'UNE ACTION AUSSI ("return"), CALCULER LA VALEUR DE INTERRUPTED AU LIEU
-// DE L'EVALUER TOUT LE TEMPS ICI.
 public abstract class AbstractScope implements IScope {
 
 	private static int ScopeNumber = 0;
 	private final String name;
 	private final Deque<IAgent> agents = new ArrayDeque(3);
-	private final Deque<IRecord> statements = new ArrayDeque();
+	private final Deque<IRecord> statements = new ArrayDeque(5);
+	private Deque<Map> fileAttributesStack;
 	private IGraphics graphics;
 	private ITopology topology;
-	private volatile boolean _action_halted, _loop_halted, _agent_halted;
-	// protected final ITopLevelAgent root;
-	// protected final SimulationAgent simulation;
-	private Object each = null;
-	private final int number = ScopeNumber++;
+	private volatile boolean _action_halted, _loop_halted, _agent_halted, _trace;
+	private Object each;
 	private ISymbol currentSymbol;
-	private int tabLevel = -1;
-	private boolean trace;
-	public Deque<Map> readAttributes = new LinkedList();
 
 	// Allows to disable error reporting for this scope (the value will be read
 	// by the error reporting mechnanism).
 	private boolean reportErrors = true;
 
-	// Allows (for debugging purposes) to trace how the agents are popped and
-	// pushed to the scope
-	public boolean traceAgents = false;
-
 	public AbstractScope(final ITopLevelAgent root) {
 		// this.root = root;
+		final int number = ScopeNumber++;
 		if (root != null) {
 			agents.push(root);
 			// IMacroAgent a = root;
@@ -101,6 +88,7 @@ public abstract class AbstractScope implements IScope {
 
 	public AbstractScope(final ITopLevelAgent root, final String otherName) {
 		// this.root = root;
+		final int number = ScopeNumber++;
 		if (root != null) {
 			agents.push(root);
 			// IMacroAgent a = root;
@@ -129,7 +117,8 @@ public abstract class AbstractScope implements IScope {
 		graphics = null;
 		topology = null;
 		currentSymbol = null;
-		readAttributes.clear();
+		if (fileAttributesStack != null)
+			fileAttributesStack.clear();
 	}
 
 	@Override
@@ -149,7 +138,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public void setTrace(final boolean t) {
-		trace = t;
+		_trace = t;
 	}
 
 	final static class NullRecord implements IRecord {
@@ -368,12 +357,6 @@ public abstract class AbstractScope implements IScope {
 		if (a != null && a.equals(agent)) {
 			return false;
 		}
-		if (traceAgents) {
-			for (int i = 0; i < agents.size(); i++) {
-				System.out.print("\t");
-			}
-			System.out.println("" + agent + " pushed to " + this + " / " + Thread.currentThread().getName());
-		}
 		agents.push(agent);
 		return true;
 	}
@@ -386,26 +369,10 @@ public abstract class AbstractScope implements IScope {
 	// @Override
 	@Override
 	public void pop(final IAgent agent) {
-		try {
-			final IAgent a = agents.pop();
-			if (a != null && !a.equals(agent)) {
-				// System.out.println(
-				// "Problem with the scope. Trying to pop " + agent + " but " +
-				// a + " was in the stack...");
-				// Thread.dumpStack();
-			}
-			if (traceAgents) {
-				for (int i = 0; i < agents.size(); i++) {
-					System.out.print("\t");
-				}
-				System.out.println("" + a + " popped from " + this + " / " + Thread.currentThread().getName());
-
-			}
-		} catch (final NoSuchElementException e) {
-			System.out.println("Problem with the scope. Trying to pop " + agent + " but the scope is empty");
+		if (agents.size() == 0) {
 			return;
 		}
-
+		agents.pop();
 		_agent_halted = false;
 	}
 
@@ -416,7 +383,6 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void push(final ISymbol statement) {
-		tabLevel++;
 		setCurrentSymbol(statement);
 		statements.push(new Record(statements.peek()));
 	}
@@ -424,7 +390,7 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void setCurrentSymbol(final ISymbol statement) {
 		currentSymbol = statement;
-		if (trace) {
+		if (_trace) {
 			writeTrace();
 		}
 	}
@@ -434,7 +400,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	private void writeTrace() {
 		final StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < tabLevel; i++) {
+		for (int i = 0; i < statements.size(); i++) {
 			sb.append(Strings.TAB);
 		}
 		sb.append(currentSymbol.getTrace(this));
@@ -462,9 +428,6 @@ public abstract class AbstractScope implements IScope {
 			statements.pop();
 		} catch (final NoSuchElementException e) {
 			return;
-		}
-		if (trace) {
-			tabLevel--;
 		}
 	}
 
@@ -941,7 +904,6 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public IExperimentAgent getExperiment() {
 		return getRoot().getExperiment();
-		// return simulation == null ? null : simulation.getExperiment();
 	}
 
 	/**
@@ -1009,7 +971,10 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void pushReadAttributes(final Map values) {
-		readAttributes.push(values);
+		if (fileAttributesStack == null) {
+			fileAttributesStack = new ArrayDeque<>();
+		}
+		fileAttributesStack.push(values);
 	}
 
 	/**
@@ -1019,12 +984,19 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Map popReadAttributes() {
-		return readAttributes.pop();
+		if (fileAttributesStack == null)
+			return null;
+		final Map result = fileAttributesStack.pop();
+		if (fileAttributesStack.isEmpty())
+			fileAttributesStack = null;
+		return result;
 	}
 
 	@Override
 	public Map peekReadAttributes() {
-		return readAttributes.peek();
+		if (fileAttributesStack == null)
+			return null;
+		return fileAttributesStack.peek();
 	}
 
 	@Override
