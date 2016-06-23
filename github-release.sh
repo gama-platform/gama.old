@@ -17,7 +17,7 @@ thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0
 
 
 
-declare -a RELEASEFILES 
+
 RELEASEFILES[0]=$thePATH'-linux.gtk.x86.zip'
 RELEASEFILES[1]=$thePATH'-linux.gtk.x86_64.zip'
 RELEASEFILES[2]=$thePATH'-macosx.cocoa.x86_64.zip'
@@ -32,7 +32,7 @@ SUFFIX="$timestamp.$COMMIT.zip"
 echo $SUFFIX
 
 
-declare -a NEWFILES
+
 NEWFILES[0]='GAMA1.7-Linux.x86'$SUFFIX
 NEWFILES[1]='GAMA1.7-Linux.x64'$SUFFIX
 NEWFILES[2]='GAMA1.7-Mac.x64'$SUFFIX
