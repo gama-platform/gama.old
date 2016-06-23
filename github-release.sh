@@ -89,11 +89,11 @@ thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0
 
 
 
-RELEASEFILES[0]="$thePATH-linux.gtk.x86"
-RELEASEFILES[1]="$thePATH-linux.gtk.x86_64"
-RELEASEFILES[2]="$thePATH-macosx.cocoa.x86_64"
-RELEASEFILES[3]="$thePATH-win32.win32.x86"
-RELEASEFILES[4]="$thePATH-win32.win32.x86_64"
+RELEASEFILES[0]="$thePATH-linux.gtk.x86.zip"
+RELEASEFILES[1]="$thePATH-linux.gtk.x86_64.zip"
+RELEASEFILES[2]="$thePATH-macosx.cocoa.x86_64.zip"
+RELEASEFILES[3]="$thePATH-win32.win32.x86.zip"
+RELEASEFILES[4]="$thePATH-win32.win32.x86_64.zip"
 
 
 COMMIT="(${COMMIT:0:7})"
@@ -176,14 +176,14 @@ do
 	NFILE="${NEWFILES[$i]}"
 
   FILENAME=`basename $FILE`
-  echo   "Uploading $FILENAME$SUFFIX...  "
+  echo   "Uploading $NFILE...  "
   LK="https://uploads.github.com/repos/gama-platform/gama/releases/$RELEASEID/assets?name=$NFILE"
   
   RESULT=`curl -s -w  "\n%{http_code}\n"                   \
     -H "Authorization: token $HQN_TOKEN"                \
     -H "Accept: application/vnd.github.manifold-preview"  \
     -H "Content-Type: application/zip"                    \
-    --data-binary "@$FILE.zip"                                \
+    --data-binary "@$FILE"                                \
     "$LK"`
 	echo $RESULT
 done 
