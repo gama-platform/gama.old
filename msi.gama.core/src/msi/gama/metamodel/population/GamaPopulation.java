@@ -183,6 +183,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	@Override
 	public void updateVariables(final IScope scope, final IAgent a) {
 		for (final IVariable v : updatableVars) {
+			scope.setCurrentSymbol(v);
 			v.setVal(scope, a, v.getUpdatedValue(scope));
 			// updatableVars[j].updateFor(scope, a);
 		}

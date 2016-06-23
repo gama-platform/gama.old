@@ -21,6 +21,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Arguments;
@@ -75,7 +76,7 @@ class TemporaryScope implements IScope {
 	 *      statements
 	 */
 	@Override
-	public void push(final IStatement statement) {
+	public void push(final ISymbol statement) {
 	}
 
 	/**
@@ -95,7 +96,7 @@ class TemporaryScope implements IScope {
 	 *      statements
 	 */
 	@Override
-	public void pop(final IStatement statement) {
+	public void pop(final ISymbol statement) {
 	}
 
 	/**
@@ -565,7 +566,7 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#getStatement()
 	 */
 	@Override
-	public IStatement getStatement() {
+	public IStatement getCurrentSymbol() {
 		return null;
 	}
 
@@ -585,7 +586,7 @@ class TemporaryScope implements IScope {
 	 *      Nothing to do here
 	 */
 	@Override
-	public void setStatement(final IStatement abstractStatement) {
+	public void setCurrentSymbol(final ISymbol abstractStatement) {
 	}
 
 	RandomUtils random = null;

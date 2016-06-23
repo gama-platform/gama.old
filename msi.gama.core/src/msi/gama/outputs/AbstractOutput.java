@@ -84,6 +84,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		if (refresh != null) {
 			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
 		}
+		getScope().setCurrentSymbol(this);
 		return true;
 	}
 
@@ -167,7 +168,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		final Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
 		if (fromMicroModel) {
 			final ExperimentAgent exp = (ExperimentAgent) scope.getRoot()
-					.getExternMicroPopulationFor(micro.getAlias()+"."+this.getDescription().getOriginName()).getAgent(0);
+					.getExternMicroPopulationFor(micro.getAlias() + "." + this.getDescription().getOriginName())
+					.getAgent(0);
 			this.scope = exp.getSimulation().getScope();
 		} else {
 			this.scope = scope;

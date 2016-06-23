@@ -40,7 +40,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		Object result = null;
 		try {
-			scope.setStatement(this);
+			scope.setCurrentSymbol(this);
 			result = privateExecuteIn(scope);
 		} catch (final GamaRuntimeException e) {
 			e.addContext(this);
@@ -58,11 +58,6 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	@Override
 	public String toString() {
 		return name + description.getFacets();
-	}
-
-	@Override
-	public String getTrace(final IScope scope) {
-		return new StatementTracer().trace(scope, this);
 	}
 
 	@Override

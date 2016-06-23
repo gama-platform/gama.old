@@ -36,6 +36,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.IContainer;
+import msi.gaml.compilation.SymbolTracer;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
@@ -43,7 +44,6 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
-import msi.gaml.statements.StatementTracer;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -260,6 +260,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 			if (getScope().interrupted()) {
 				return false;
 			}
+			getScope().setCurrentSymbol(this);
 			lastValue = getScope().evaluate(getValue(), rootAgent);
 		}
 		return true;
@@ -355,7 +356,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 
 	@Override
 	public String getTrace(final IScope scope) {
-		return new StatementTracer().trace(scope, this);
+		return new SymbolTracer().trace(scope, this);
 	}
 
 }

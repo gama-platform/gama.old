@@ -26,11 +26,11 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IExecutable;
-import msi.gaml.statements.IStatement;
 
 /**
  * Written by drogoul Modified on 18 janv. 2011
@@ -59,7 +59,7 @@ public interface IScope {
 	 * @param statement
 	 */
 
-	public abstract void push(IStatement statement);
+	public abstract void push(ISymbol statement);
 
 	/**
 	 * Removes the current agent
@@ -74,7 +74,7 @@ public interface IScope {
 	 * @param statement
 	 */
 
-	public abstract void pop(IStatement statement);
+	public abstract void pop(ISymbol statement);
 
 	/**
 	 * Executes the statement on this agent. Equivalent to: scope.push(agent);
@@ -267,14 +267,14 @@ public interface IScope {
 	/**
 	 * @return the current statement or null if none
 	 */
-	public abstract IStatement getStatement();
+	public abstract ISymbol getCurrentSymbol();
 
 	public abstract void setTrace(boolean trace);
 
 	/**
 	 * @param abstractStatement
 	 */
-	public abstract void setStatement(IStatement abstractStatement);
+	public abstract void setCurrentSymbol(ISymbol abstractStatement);
 
 	/**
 	 * @return

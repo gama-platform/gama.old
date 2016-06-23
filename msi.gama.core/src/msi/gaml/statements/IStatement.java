@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
 
 /**
@@ -33,7 +32,5 @@ public interface IStatement extends ISymbol, IExecutable {
 	public interface Breakable extends IStatement {
 		// Unused tagging interface (for the moment)
 	}
-
-	public abstract String getTrace(IScope scope);
 
 }

@@ -1,4 +1,4 @@
-package msi.gaml.statements;
+package msi.gaml.compilation;
 
 import java.util.Map;
 
@@ -8,9 +8,9 @@ import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
-public class StatementTracer {
+public class SymbolTracer {
 
-	public String trace(final IScope scope, final IStatement statement) {
+	public String trace(final IScope scope, final ISymbol statement) {
 
 		final String n = statement.getFacet(IKeyword.NAME).literalValue();
 		final String k = statement.getFacet(IKeyword.KEYWORD).literalValue();

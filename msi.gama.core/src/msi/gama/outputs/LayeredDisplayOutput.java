@@ -313,7 +313,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (fixed_cam != null) {
 			this.data.disableCameraInteractions(!Cast.asBool(getScope(), fixed_cam.value(getScope())));
 		}
-		
+
 		final IExpression use_shader = getFacet("use_shader");
 		if (use_shader != null) {
 			this.data.setUseShader(Cast.asBool(getScope(), use_shader.value(getScope())));
@@ -480,6 +480,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		for (final ILayerStatement layer : getLayers()) {
+			getScope().setCurrentSymbol(layer);
 			getScope().step(layer);
 		}
 		return true;

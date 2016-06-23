@@ -12,7 +12,10 @@
 package msi.gaml.compilation;
 
 import java.util.List;
-import msi.gama.common.interfaces.*;
+
+import msi.gama.common.interfaces.IGamlable;
+import msi.gama.common.interfaces.INamed;
+import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 
@@ -30,13 +33,16 @@ public interface ISymbol extends INamed, IGamlable {
 
 	/**
 	 * Returns the expression located at the first facet of 'keys'
+	 * 
 	 * @param keys
 	 * @return
 	 */
-	public abstract IExpression getFacet(String ... keys);
+	public abstract IExpression getFacet(String... keys);
 
 	public abstract boolean hasFacet(String key);
 
 	public abstract void setChildren(List<? extends ISymbol> children);
+
+	public abstract String getTrace(IScope abstractScope);
 
 }

@@ -344,7 +344,7 @@ public class Variable extends Symbol implements IVariable {
 	@Override
 	public void initializeWith(final IScope scope, final IAgent a, final Object v) throws GamaRuntimeException {
 		try {
-			// doUpdate = false;
+			scope.setCurrentSymbol(this);
 			if (v != null) {
 				_setVal(a, scope, v);
 			} else if (initExpression != null) {
@@ -353,7 +353,6 @@ public class Variable extends Symbol implements IVariable {
 				final Object val = initer.run(scope, a, gSkill == null ? a : gSkill);
 				_setVal(a, scope, val);
 			} else {
-				// doUpdate = true;
 				_setVal(a, scope, getType().getDefault());
 			}
 		} catch (final GamaRuntimeException e) {
@@ -401,7 +400,6 @@ public class Variable extends Symbol implements IVariable {
 
 	protected void _setVal(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
 		Object val;
-
 		val = coerce(agent, scope, v);
 		val = checkAmong(agent, scope, val);
 		if (setter != null) {

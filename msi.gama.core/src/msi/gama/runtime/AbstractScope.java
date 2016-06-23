@@ -32,6 +32,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
@@ -68,7 +69,7 @@ public abstract class AbstractScope implements IScope {
 	// protected final SimulationAgent simulation;
 	private Object each = null;
 	private final int number = ScopeNumber++;
-	private IStatement currentStatement;
+	private ISymbol currentSymbol;
 	private int tabLevel = -1;
 	private boolean trace;
 	public Deque<Map> readAttributes = new LinkedList();
@@ -127,7 +128,7 @@ public abstract class AbstractScope implements IScope {
 		each = null;
 		graphics = null;
 		topology = null;
-		currentStatement = null;
+		currentSymbol = null;
 		readAttributes.clear();
 	}
 
@@ -414,15 +415,15 @@ public abstract class AbstractScope implements IScope {
 	 * @see msi.gama.runtime.IScope#push(msi.gaml.statements.IStatement)
 	 */
 	@Override
-	public void push(final IStatement statement) {
+	public void push(final ISymbol statement) {
 		tabLevel++;
-		setStatement(statement);
+		setCurrentSymbol(statement);
 		statements.push(new Record(statements.peek()));
 	}
 
 	@Override
-	public void setStatement(final IStatement statement) {
-		currentStatement = statement;
+	public void setCurrentSymbol(final ISymbol statement) {
+		currentSymbol = statement;
 		if (trace) {
 			writeTrace();
 		}
@@ -436,7 +437,7 @@ public abstract class AbstractScope implements IScope {
 		for (int i = 0; i < tabLevel; i++) {
 			sb.append(Strings.TAB);
 		}
-		sb.append(currentStatement.getTrace(this));
+		sb.append(currentSymbol.getTrace(this));
 		this.getGui().getConsole().informConsole(sb.toString(), getRoot());
 	}
 
@@ -456,7 +457,7 @@ public abstract class AbstractScope implements IScope {
 	 * @see msi.gama.runtime.IScope#pop(msi.gaml.statements.IStatement)
 	 */
 	@Override
-	public void pop(final IStatement statement) {
+	public void pop(final ISymbol symbol) {
 		try {
 			statements.pop();
 		} catch (final NoSuchElementException e) {
@@ -468,8 +469,8 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public IStatement getStatement() {
-		return currentStatement;
+	public ISymbol getCurrentSymbol() {
+		return currentSymbol;
 	}
 
 	/**
@@ -812,7 +813,6 @@ public abstract class AbstractScope implements IScope {
 		final boolean pushed = push(agent);
 		try {
 			agent.setDirectVarValue(this, name, v);
-			// setAgentVarValue(name, v);
 		} finally {
 			if (pushed) {
 				pop(agent);

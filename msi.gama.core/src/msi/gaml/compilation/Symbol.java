@@ -12,14 +12,16 @@
 package msi.gaml.compilation;
 
 import java.util.List;
+
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
- * Written by drogoul Modified on 13 mai 2010 A simple class to serve as the root of all Gaml
- * Symbols
+ * Written by drogoul Modified on 13 mai 2010 A simple class to serve as the
+ * root of all Gaml Symbols
  * 
  * @todo Description
  * 
@@ -40,26 +42,33 @@ public abstract class Symbol implements ISymbol {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		if ( description == null ) { return ""; }
+		if (description == null) {
+			return "";
+		}
 		return description.serialize(includingBuiltIn);
 	}
 
 	@Override
-	public final IExpression getFacet(final String ... keys) {
-		if ( description == null ) { return null; }
+	public final IExpression getFacet(final String... keys) {
+		if (description == null) {
+			return null;
+		}
 		IExpression result = null;
-		for ( String key : keys ) {
-			if ( description.getFacets().containsKey(key) ) {
+		for (final String key : keys) {
+			if (description.getFacets().containsKey(key)) {
 				result = description.getFacets().getExpr(key);
 				break;
 			}
 		}
-		// if ( result == null ) { throw GamaRuntimeException.error("Facet " + key + " could not be compiled."); }
+		// if ( result == null ) { throw GamaRuntimeException.error("Facet " +
+		// key + " could not be compiled."); }
 		return result;
 	}
 
-	// public IExpression getFacet(final String key, final IExpression ifAbsent) {
-	// return description == null ? ifAbsent : description.getFacets().getExpr(key, ifAbsent);
+	// public IExpression getFacet(final String key, final IExpression ifAbsent)
+	// {
+	// return description == null ? ifAbsent :
+	// description.getFacets().getExpr(key, ifAbsent);
 	// }
 
 	public Object getFacetValue(final IScope scope, final String key) throws GamaRuntimeException {
@@ -67,8 +76,8 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	public final <T> T getFacetValue(final IScope scope, final String key, final T defaultValue)
-		throws GamaRuntimeException {
-		IExpression exp = getFacet(key);
+			throws GamaRuntimeException {
+		final IExpression exp = getFacet(key);
 		return (T) (exp == null ? defaultValue : exp.value(scope));
 	}
 
@@ -77,12 +86,14 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	public String getLiteral(final String key, final String defaultValue) {
-		IExpression exp = getFacet(key);
+		final IExpression exp = getFacet(key);
 		return exp == null ? defaultValue : exp.literalValue();
 	}
 
 	protected void setFacet(final String key, final IExpressionDescription expr) {
-		if ( description == null ) { return; }
+		if (description == null) {
+			return;
+		}
 		description.getFacets().put(key, expr);
 	}
 
@@ -107,6 +118,11 @@ public abstract class Symbol implements ISymbol {
 	@Override
 	public void dispose() {
 
+	}
+
+	@Override
+	public String getTrace(final IScope scope) {
+		return new SymbolTracer().trace(scope, this);
 	}
 
 }

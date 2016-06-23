@@ -115,6 +115,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	@Override
 	public boolean step(final IScope scope) {
+		getScope().setCurrentSymbol(this);
 		if (getScope().interrupted()) {
 			return false;
 		}

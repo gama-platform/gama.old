@@ -281,6 +281,7 @@ public class FileOutput extends AbstractOutput {
 		if (getScope().interrupted()) {
 			return false;
 		}
+		getScope().setCurrentSymbol(this);
 		setLastValue(data.value(getScope()));
 		return true;
 	}

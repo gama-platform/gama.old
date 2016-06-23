@@ -22,8 +22,8 @@ import org.eclipse.emf.ecore.EObject;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Strings;
-import msi.gaml.statements.IStatement;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
@@ -87,13 +87,6 @@ public class GamaRuntimeException extends RuntimeException {
 
 	public static GamaRuntimeException error(final String s, final IScope scope) {
 		final GamaRuntimeException ex = new GamaRuntimeException(scope, s, false);
-		if (scope == null) {
-			return ex;
-		}
-		final IStatement statement = scope.getStatement();
-		if (statement != null) {
-			ex.addContext(statement);
-		}
 		return ex;
 	}
 
@@ -168,9 +161,9 @@ public class GamaRuntimeException extends RuntimeException {
 	protected GamaRuntimeException(final IScope scope, final Throwable ex) {
 		super(ex == null ? "Unknown error" : "Java error: " + getExceptionName(ex), ex);
 		if (scope != null) {
-			final IStatement statement = scope.getStatement();
-			if (statement != null) {
-				addContext(statement);
+			final ISymbol symbol = scope.getCurrentSymbol();
+			if (symbol != null) {
+				addContext(symbol);
 			}
 		}
 		if (ex != null) {
@@ -191,9 +184,9 @@ public class GamaRuntimeException extends RuntimeException {
 	protected GamaRuntimeException(final IScope scope, final String s, final boolean warning) {
 		super(s);
 		if (scope != null) {
-			final IStatement statement = scope.getStatement();
-			if (statement != null) {
-				addContext(statement);
+			final ISymbol symbol = scope.getCurrentSymbol();
+			if (symbol != null) {
+				addContext(symbol);
 			}
 		}
 		cycle = computeCycle(scope);
@@ -206,7 +199,7 @@ public class GamaRuntimeException extends RuntimeException {
 		context.add(c);
 	}
 
-	public void addContext(final IStatement s) {
+	public void addContext(final ISymbol s) {
 		addContext("in " + s.serialize(false));
 		final EObject e = s.getDescription().getUnderlyingElement(null);
 		if (e != null) {
