@@ -117,14 +117,16 @@ public class SwtGui implements IGui {
 		if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
 			final IGamaView.Error v = (Error) showView(ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 			if (v != null) {
-				WorkbenchHelper.asyncRun(new Runnable() {
-
-					@Override
-					public void run() {
-						v.addNewError(g);
-						g.setReported();
-					}
-				});
+				v.addNewError(g);
+				g.setReported();
+				// WorkbenchHelper.asyncRun(new Runnable() {
+				//
+				// @Override
+				// public void run() {
+				// v.addNewError(g);
+				// g.setReported();
+				// }
+				// });
 			}
 		}
 	}

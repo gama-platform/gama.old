@@ -14,10 +14,15 @@ package ummisco.gama.ui.views;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -32,7 +37,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamaView;
@@ -51,7 +55,98 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	public static String ID = IGui.ERROR_VIEW_ID;
 	int numberOfDisplayedErrors = GamaPreferences.CORE_ERRORS_NUMBER.getValue();
 	boolean mostRecentFirst = GamaPreferences.CORE_RECENT.getValue();
-	private final LinkedHashSet<GamaRuntimeException> exceptions = new LinkedHashSet();
+	private volatile List<GamaRuntimeException> exceptions = new ArrayList<>();
+	private final ExceptionGatherer collector = new ExceptionGatherer();
+
+	class ExceptionGatherer extends Job {
+
+		public ExceptionGatherer() {
+			super("Runtime error collector");
+		}
+
+		final BlockingQueue<GamaRuntimeException> queue = new LinkedBlockingQueue();
+		volatile boolean running;
+
+		void offer(final GamaRuntimeException ex) {
+			queue.offer(ex);
+		}
+
+		@Override
+		protected IStatus run(final IProgressMonitor monitor) {
+			while (running) {
+				while (queue.isEmpty()) {
+					try {
+						Thread.sleep(500);
+					} catch (final InterruptedException e) {
+						return Status.OK_STATUS;
+					}
+				}
+				if (!running)
+					return Status.CANCEL_STATUS;
+				process();
+			}
+			return Status.OK_STATUS;
+		}
+
+		public void stop() {
+			running = false;
+		}
+
+		private synchronized void process() {
+			final ArrayList<GamaRuntimeException> array = new ArrayList(queue);
+			queue.clear();
+			final GamaRuntimeException firstEx = array.get(0);
+			if (GamaPreferences.CORE_REVEAL_AND_STOP.getValue()) {
+				firstEx.setReported();
+				gotoEditor(firstEx);
+				if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
+					final List<GamaRuntimeException> newList = new ArrayList();
+					newList.add(firstEx);
+					updateUI(newList);
+				}
+
+			} else if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
+				final ArrayList<GamaRuntimeException> oldExcp = new ArrayList(exceptions);
+				for (final GamaRuntimeException newEx : array) {
+					if (oldExcp.size() == 0) {
+						oldExcp.add(newEx);
+					} else {
+						boolean toAdd = true;
+						for (final GamaRuntimeException oldEx : oldExcp.toArray(new GamaRuntimeException[0])) {
+							if (oldEx.equivalentTo(newEx)) {
+								if (oldEx != newEx)
+									oldEx.addAgents(newEx.getAgentsNames());
+								toAdd = false;
+							}
+						}
+						if (toAdd)
+							oldExcp.add(newEx);
+
+					}
+				}
+				updateUI(oldExcp);
+			}
+
+		}
+
+		public void updateUI(final List<GamaRuntimeException> newExceptions) {
+			WorkbenchHelper.asyncRun(new Runnable() {
+
+				@Override
+				public void run() {
+					exceptions = newExceptions;
+					reset();
+				}
+			});
+		}
+
+		public void start() {
+			running = true;
+			schedule();
+
+		}
+
+	}
 
 	@Override
 	protected boolean areItemsClosable() {
@@ -60,34 +155,17 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	@Override
 	public boolean addItem(final GamaRuntimeException e) {
-		// System.out.println("Adding " + e + " as item");
 		createItem(parent, e, false, null);
 
 		return true;
 	}
 
 	@Override
-	public synchronized void addNewError(final GamaRuntimeException ex) {
-		for (final GamaRuntimeException e : exceptions) {
-			if (e.equivalentTo(ex) && e != ex) {
-				e.addAgents(ex.getAgentsNames());
-				updateItemValues();
-
-				return;
-			}
+	public void addNewError(final GamaRuntimeException ex) {
+		if (!collector.running) {
+			collector.start();
 		}
-		if (!exceptions.contains(ex)) {
-			WorkbenchPlugin.log("GamaRuntimeException " + ex.getMessage(), ex);
-			exceptions.add(ex);
-		}
-		if (GamaPreferences.CORE_REVEAL_AND_STOP.getValue() && !ex.isReported()) {
-			ex.setReported();
-			gotoEditor(ex);
-		}
-
-		if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
-			reset();
-		}
+		collector.offer(ex);
 	}
 
 	@Override
@@ -111,12 +189,12 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	@Override
 	protected Composite createItemContentsFor(final GamaRuntimeException exception) {
-		final ScrolledComposite compo = new ScrolledComposite(getViewer(), SWT.NONE);
+		final ScrolledComposite compo = new ScrolledComposite(getViewer(), SWT.H_SCROLL);
 		final GridLayout layout = new GridLayout(1, false);
 		final GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
-		final Table t = new Table(compo, SWT.H_SCROLL | SWT.V_SCROLL);
+		final Table t = new Table(compo, SWT.H_SCROLL);
 		t.setFont(GamaFonts.getExpandfont());
 
 		t.addSelectionListener(new SelectionListener() {
@@ -143,9 +221,10 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		}
 		c.pack();
 		column2.pack();
-		t.setSize(t.computeSize(SWT.DEFAULT, 300));
+		t.setSize(t.computeSize(SWT.DEFAULT, SWT.DEFAULT));
+		t.pack();
 		compo.setContent(t);
-		// compo.setAlwaysShowScrollBars(true);
+		compo.pack();
 		return compo;
 	}
 
@@ -250,6 +329,15 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	@Override
 	protected boolean needsOutput() {
 		return false;
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		collector.stop();
+		if (WorkbenchHelper.getWorkbench() != null && WorkbenchHelper.getWorkbench().isClosing())
+			collector.cancel();
+
 	}
 
 }

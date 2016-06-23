@@ -257,7 +257,8 @@ public abstract class GamaViewPart extends ViewPart
 
 	@Override
 	public void dispose() {
-		System.err.println("+++ Part " + this.getPartName() + " is being disposed");
+		// System.err.println("+++ Part " + this.getPartName() + " is being
+		// disposed");
 		super.dispose();
 	}
 

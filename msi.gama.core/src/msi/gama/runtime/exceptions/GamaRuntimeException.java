@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.kernel.simulation.SimulationClock;
@@ -133,8 +134,39 @@ public class GamaRuntimeException extends RuntimeException {
 
 	}
 
+	protected static String getExceptionName(final Throwable ex) {
+		final String s = ex.getClass().getName();
+		if (s.contains("geotools") || s.contains("opengis")) {
+			return "exception in GeoTools library";
+		} else if (s.contains("jts")) {
+			return "exception in JTS library";
+		} else if (s.contains("rcaller")) {
+			return "exception in RCaller library";
+		} else if (s.contains("jogamp"))
+			return "exception in JOGL library";
+		else if (s.contains("weka"))
+			return "exception in Weka library";
+		else if (s.contains("math3"))
+			return "exception in Math library";
+		if (ex instanceof NullPointerException) {
+			return "nil value detected";
+		} else if (ex instanceof IndexOutOfBoundsException) {
+			return "index out of bounds";
+		} else if (ex instanceof IOException) {
+			return "I/O error";
+		} else if (ex instanceof CoreException) {
+			return "exception in Eclipse";
+		} else if (ex instanceof ClassCastException) {
+			return "wrong casting";
+		} else if (ex instanceof IllegalArgumentException) {
+			return "illegal argument";
+		}
+
+		return ex.getClass().getSimpleName();
+	}
+
 	protected GamaRuntimeException(final IScope scope, final Throwable ex) {
-		super(ex == null ? "Unknown error" : ex.toString(), ex);
+		super(ex == null ? "Unknown error" : "Java error: " + getExceptionName(ex), ex);
 		if (scope != null) {
 			final IStatement statement = scope.getStatement();
 			if (statement != null) {
@@ -142,9 +174,12 @@ public class GamaRuntimeException extends RuntimeException {
 			}
 		}
 		if (ex != null) {
-			addContext(ex.toString());
+			addContext(ex.getClass().getSimpleName() + ": " + ex.getMessage());
+			int i = 0;
 			for (final StackTraceElement element : ex.getStackTrace()) {
 				addContext(element.toString());
+				if (i++ > 5)
+					break;
 			}
 		}
 		cycle = computeCycle(scope);
@@ -250,7 +285,8 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public boolean equivalentTo(final GamaRuntimeException ex) {
-		return editorContext == ex.editorContext && getMessage().equals(ex.getMessage()) && getCycle() == ex.getCycle();
+		return this == ex || editorContext == ex.editorContext && getMessage().equals(ex.getMessage())
+				&& getCycle() == ex.getCycle();
 	}
 
 	public void setReported() {
