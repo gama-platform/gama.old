@@ -393,20 +393,18 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void run(final Runnable opener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void setFocusOn(final IShape o) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void applyLayout(final int layout) {
-		// TODO Auto-generated method stub
+	}
 
+	@Override
+	public void displayErrors() {
 	}
 
 }

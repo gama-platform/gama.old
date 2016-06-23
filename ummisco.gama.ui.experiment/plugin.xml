@@ -1019,6 +1019,12 @@
                serviceClass="ummisco.gama.ui.interfaces.IDisplayLayoutManager">
          </service>
       </serviceFactory>
+      <serviceFactory
+            factoryClass="ummisco.gama.ui.factories.RuntimeExceptionHandlerFactory">
+         <service
+               serviceClass="msi.gama.common.interfaces.IRuntimeExceptionHandler">
+         </service>
+      </serviceFactory>
    </extension>
    <extension
          point="org.eclipse.core.expressions.propertyTesters">

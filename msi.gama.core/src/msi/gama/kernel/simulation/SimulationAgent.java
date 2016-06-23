@@ -177,11 +177,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public void schedule(final IScope scope) {
-		// Necessary to put it here as the output manager is initialized *after*
-		// the agent, meaning it will remove
-		// everything in the errors/console view that is being written by the
-		// init of the simulation
-		this.prepareGuiForSimulation(scope);
+
+		// this.prepareGuiForSimulation(scope);
 		super.schedule(this.scope);
 	}
 

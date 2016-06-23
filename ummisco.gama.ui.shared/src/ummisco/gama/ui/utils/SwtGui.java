@@ -40,6 +40,7 @@ import msi.gama.common.interfaces.IGamaView.Error;
 import msi.gama.common.interfaces.IGamaView.Parameters;
 import msi.gama.common.interfaces.IGamaView.User;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -108,43 +109,31 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void runtimeError(final GamaRuntimeException g) {
+		if (g.isReported())
+			return;
 		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) {
 			return;
 		}
-		if (g.isReported())
+		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
+		if (handler == null)
 			return;
+		handler.offer(g);
+		g.setReported();
+	}
 
-		if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
-			final IGamaView.Error v = (Error) showView(ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
-			if (v != null) {
-				v.addNewError(g);
-				g.setReported();
-				// WorkbenchHelper.asyncRun(new Runnable() {
-				//
-				// @Override
-				// public void run() {
-				// v.addNewError(g);
-				// g.setReported();
-				// }
-				// });
-			}
-		}
+	@Override
+	public void displayErrors() {
+		final IGamaView.Error v = (Error) showView(ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
+		if (v != null)
+			v.displayErrors();
 	}
 
 	@Override
 	public void clearErrors() {
-		final IGamaView v = (IGamaView) WorkbenchHelper.findView(ERROR_VIEW_ID, null, false);
-		if (v == null) {
+		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
+		if (handler == null)
 			return;
-		}
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				v.reset();
-			}
-		});
-
+		handler.clearErrors();
 	}
 
 	private Object internalShowView(final String viewId, final String secondaryId, final int code) {
@@ -446,6 +435,10 @@ public class SwtGui implements IGui {
 		final IGamaView icv = (IGamaView) WorkbenchHelper.findView(INTERACTIVE_CONSOLE_VIEW_ID, null, false);
 		if (icv != null)
 			icv.reset();
+		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
+		if (handler != null) {
+			handler.stop();
+		}
 	}
 
 	/**
@@ -547,7 +540,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateExperimentState(final String forcedState) {
-		System.out.println("STATE: " + forcedState);
+		// System.out.println("STATE: " + forcedState);
 		final ISourceProviderService service = WorkbenchHelper.getService(ISourceProviderService.class);
 		final ISimulationStateProvider stateProvider = (ISimulationStateProvider) service
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");

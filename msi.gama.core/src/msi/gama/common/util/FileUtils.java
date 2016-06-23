@@ -100,7 +100,7 @@ public class FileUtils {
 			e1.printStackTrace();
 		}
 		final GamaRuntimeException ex = new GamaRuntimeFileException(scope,
-				"File denoted by " + filePath + " not found! Tried the following paths : ");
+				"File denoted by " + filePath + " not found.");
 		File file = null;
 		if (isAbsolutePath(filePath)) {
 			file = new File(filePath);

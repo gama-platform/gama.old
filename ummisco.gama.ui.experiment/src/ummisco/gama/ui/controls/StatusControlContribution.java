@@ -138,11 +138,12 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			return result;
 		}
 
-		final ExperimentAgent agent = GAMA.getExperiment().getAgent();
-		if (agent == null) {
+		if (GAMA.getExperiment() == null || GAMA.getExperiment().getAgent() == null) {
 			result.add(IGamaColors.NEUTRAL, "No experiment available");
 			return result;
 		}
+
+		final ExperimentAgent agent = GAMA.getExperiment().getAgent();
 
 		final StringBuilder sb = new StringBuilder(300);
 		SimulationClock clock = agent.getClock();

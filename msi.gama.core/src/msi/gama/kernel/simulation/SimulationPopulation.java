@@ -151,10 +151,20 @@ public class SimulationPopulation extends GamaPopulation {
 	private void initSimulation(final IScope scope, final SimulationAgent sim, final List<? extends Map> initialValues,
 			final boolean isRestored, final boolean toBeScheduled) {
 		scope.getGui().getStatus().waitStatus("Instantiating agents");
+		if (toBeScheduled) {
+			// Necessary to put it here as the output manager is initialized
+			// *after*
+			// the agent, and variables may contain populations generating
+			// errors.
+			// Doing it after will remove
+			// everything in the errors/console view that is being written by
+			// the
+			// init of the simulation
+			sim.prepareGuiForSimulation(scope);
+		}
 		createVariablesFor(sim.getScope(), Collections.singletonList(sim), initialValues);
 		if (toBeScheduled) {
 			if (isRestored) {
-				sim.prepareGuiForSimulation(scope);
 				sim.initOutputs();
 			} else {
 				sim.schedule(scope);

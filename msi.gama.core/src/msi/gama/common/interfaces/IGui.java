@@ -144,4 +144,6 @@ public interface IGui {
 
 	void applyLayout(int layout);
 
+	void displayErrors();
+
 }

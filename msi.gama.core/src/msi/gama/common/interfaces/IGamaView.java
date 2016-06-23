@@ -16,7 +16,6 @@ import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gaml.architecture.user.UserPanelStatement;
 
@@ -37,7 +36,9 @@ public interface IGamaView {
 	}
 
 	public interface Error {
-		public void addNewError(GamaRuntimeException e);
+
+		public void displayErrors();
+
 	}
 
 	public interface Parameters {

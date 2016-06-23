@@ -16,13 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -41,6 +35,7 @@ import org.eclipse.swt.widgets.TableItem;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -55,98 +50,6 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	public static String ID = IGui.ERROR_VIEW_ID;
 	int numberOfDisplayedErrors = GamaPreferences.CORE_ERRORS_NUMBER.getValue();
 	boolean mostRecentFirst = GamaPreferences.CORE_RECENT.getValue();
-	private volatile List<GamaRuntimeException> exceptions = new ArrayList<>();
-	private final ExceptionGatherer collector = new ExceptionGatherer();
-
-	class ExceptionGatherer extends Job {
-
-		public ExceptionGatherer() {
-			super("Runtime error collector");
-		}
-
-		final BlockingQueue<GamaRuntimeException> queue = new LinkedBlockingQueue();
-		volatile boolean running;
-
-		void offer(final GamaRuntimeException ex) {
-			queue.offer(ex);
-		}
-
-		@Override
-		protected IStatus run(final IProgressMonitor monitor) {
-			while (running) {
-				while (queue.isEmpty()) {
-					try {
-						Thread.sleep(500);
-					} catch (final InterruptedException e) {
-						return Status.OK_STATUS;
-					}
-				}
-				if (!running)
-					return Status.CANCEL_STATUS;
-				process();
-			}
-			return Status.OK_STATUS;
-		}
-
-		public void stop() {
-			running = false;
-		}
-
-		private synchronized void process() {
-			final ArrayList<GamaRuntimeException> array = new ArrayList(queue);
-			queue.clear();
-			final GamaRuntimeException firstEx = array.get(0);
-			if (GamaPreferences.CORE_REVEAL_AND_STOP.getValue()) {
-				firstEx.setReported();
-				gotoEditor(firstEx);
-				if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
-					final List<GamaRuntimeException> newList = new ArrayList();
-					newList.add(firstEx);
-					updateUI(newList);
-				}
-
-			} else if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
-				final ArrayList<GamaRuntimeException> oldExcp = new ArrayList(exceptions);
-				for (final GamaRuntimeException newEx : array) {
-					if (oldExcp.size() == 0) {
-						oldExcp.add(newEx);
-					} else {
-						boolean toAdd = true;
-						for (final GamaRuntimeException oldEx : oldExcp.toArray(new GamaRuntimeException[0])) {
-							if (oldEx.equivalentTo(newEx)) {
-								if (oldEx != newEx)
-									oldEx.addAgents(newEx.getAgentsNames());
-								toAdd = false;
-							}
-						}
-						if (toAdd)
-							oldExcp.add(newEx);
-
-					}
-				}
-				updateUI(oldExcp);
-			}
-
-		}
-
-		public void updateUI(final List<GamaRuntimeException> newExceptions) {
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					exceptions = newExceptions;
-					reset();
-				}
-			});
-		}
-
-		public void start() {
-			running = true;
-			schedule();
-
-		}
-
-	}
 
 	@Override
 	protected boolean areItemsClosable() {
@@ -161,11 +64,8 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	}
 
 	@Override
-	public void addNewError(final GamaRuntimeException ex) {
-		if (!collector.running) {
-			collector.start();
-		}
-		collector.offer(ex);
+	public void displayErrors() {
+		reset();
 	}
 
 	@Override
@@ -196,6 +96,18 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		compo.setLayout(layout);
 		final Table t = new Table(compo, SWT.H_SCROLL);
 		t.setFont(GamaFonts.getExpandfont());
+		// t.addMouseWheelListener(new MouseWheelListener() {
+		//
+		// @Override
+		// public void mouseScrolled(final MouseEvent e) {
+		// final Event ee = new Event();
+		// ee.display = WorkbenchHelper.getDisplay();
+		// ee.widget = compo;
+		// ee.count = e.count;
+		// ee.type = SWT.MouseVerticalWheel;
+		// WorkbenchHelper.getDisplay().post(ee);
+		// }
+		// });
 
 		t.addSelectionListener(new SelectionListener() {
 
@@ -233,9 +145,13 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	}
 
+	private IRuntimeExceptionHandler getExceptionHandler() {
+		return WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
+	}
+
 	@Override
 	public void removeItem(final GamaRuntimeException obj) {
-		exceptions.remove(obj);
+		getExceptionHandler().remove(obj);
 	}
 
 	@Override
@@ -266,6 +182,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	@Override
 	public List<GamaRuntimeException> getItems() {
 		final List<GamaRuntimeException> errors = new ArrayList();
+		final List<GamaRuntimeException> exceptions = getExceptionHandler().getCleanExceptions();
 		final int size = exceptions.size();
 		if (size == 0) {
 			return errors;
@@ -289,13 +206,15 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	@Override
 	public void reset() {
 		super.reset();
-		for (final GamaRuntimeException exception : new ArrayList<GamaRuntimeException>(exceptions)) {
-			if (exception.isInvalid()) {
-				exceptions.remove(exception);
+		WorkbenchHelper.run(new Runnable() {
+
+			@Override
+			public void run() {
+				displayItems();
+
 			}
-		}
-		// exceptions.clear();
-		displayItems();
+		});
+
 	}
 
 	/**
@@ -334,10 +253,6 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	@Override
 	public void dispose() {
 		super.dispose();
-		collector.stop();
-		if (WorkbenchHelper.getWorkbench() != null && WorkbenchHelper.getWorkbench().isClosing())
-			collector.cancel();
-
 	}
 
 }
