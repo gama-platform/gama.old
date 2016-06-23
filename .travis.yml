@@ -13,7 +13,7 @@ cache:
   directories:
   - "$HOME/.m2"
 script: sh ./build.sh
-after_success: sh ./github-release.sh "$TRAVIS_COMMIT" 
+after_success: bash ./github-release.sh "$TRAVIS_COMMIT" 
 branches:
   only:
     - master
