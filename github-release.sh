@@ -95,7 +95,9 @@ thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0
 
 
 
-declare -a RELEASEFILES=("$thePATH-linux.gtk.x86.zip" "$thePATH-linux.gtk.x86_64.zip" "$thePATH-macosx.cocoa.x86_64.zip" "$thePATH-win32.win32.x86.zip" "$thePATH-win32.win32.x86_64.zip")
+
+
+declare -a RELEASEFILES= ( "$thePATH-linux.gtk.x86.zip" "$thePATH-linux.gtk.x86_64.zip" "$thePATH-macosx.cocoa.x86_64.zip" "$thePATH-win32.win32.x86.zip" "$thePATH-win32.win32.x86_64.zip" )
 
 
 COMMIT="${COMMIT:0:7}"
@@ -106,9 +108,17 @@ SUFFIX="$timestamp.$COMMIT.zip"
 echo $SUFFIX
 
 
-declare -a NEWFILES=("GAMA1.7-Linux.x86$SUFFIX" "GAMA1.7-Linux.x64$SUFFIX" "GAMA1.7-Mac.x64$SUFFIX" "GAMA1.7-Win.x86$SUFFIX" "GAMA1.7-Win.x64$SUFFIX")
+declare -a NEWFILES=( "GAMA1.7-Linux.x86$SUFFIX" "GAMA1.7-Linux.x64$SUFFIX" "GAMA1.7-Mac.x64$SUFFIX" "GAMA1.7-Win.x86$SUFFIX" "GAMA1.7-Win.x64$SUFFIX" )
 
 
+
+for (( i=0; i<5; i++ ))
+do     
+	FILE="${RELEASEFILES[$i]}"
+	NFILE="${NEWFILES[$i]}"
+	echo $FILE
+	echo $NFILE
+done
 
 echo
 echo "Getting info of $RELEASE tag..."
