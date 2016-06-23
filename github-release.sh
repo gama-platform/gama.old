@@ -1,5 +1,3 @@
-#!/bin/bash
-
 # Copyright (c) 2014 Terry Burton
 #
 # https://github.com/terryburton/travis-github-release
@@ -97,7 +95,7 @@ thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0
 
 
 
-declare -a RELEASEFILES= ( "$thePATH-linux.gtk.x86.zip" "$thePATH-linux.gtk.x86_64.zip" "$thePATH-macosx.cocoa.x86_64.zip" "$thePATH-win32.win32.x86.zip" "$thePATH-win32.win32.x86_64.zip" )
+declare -a RELEASEFILES=( "$thePATH-linux.gtk.x86.zip" "$thePATH-linux.gtk.x86_64.zip" "$thePATH-macosx.cocoa.x86_64.zip" "$thePATH-win32.win32.x86.zip" "$thePATH-win32.win32.x86_64.zip" )
 
 
 COMMIT="${COMMIT:0:7}"
