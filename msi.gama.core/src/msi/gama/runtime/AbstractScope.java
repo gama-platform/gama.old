@@ -66,7 +66,7 @@ public abstract class AbstractScope implements IScope {
 	private ITopology topology;
 	private volatile boolean _action_halted, _loop_halted, _agent_halted;
 	protected final ITopLevelAgent root;
-	protected final SimulationAgent simulation;
+	// protected final SimulationAgent simulation;
 	private Object each = null;
 	private final int number = ScopeNumber++;
 	private IStatement currentStatement;
@@ -90,10 +90,10 @@ public abstract class AbstractScope implements IScope {
 			while (!(a instanceof SimulationAgent) && a != null) {
 				a = root.getHost();
 			}
-			simulation = (SimulationAgent) a;
+			// simulation = (SimulationAgent) a;
 			name = "Scope of " + root + " #" + number;
 		} else {
-			simulation = null;
+			// simulation = null;
 			name = "Scope without root #" + number;
 		}
 		statements.push(new NullRecord());
@@ -107,10 +107,10 @@ public abstract class AbstractScope implements IScope {
 			while (!(a instanceof SimulationAgent) && a != null) {
 				a = root.getHost();
 			}
-			simulation = (SimulationAgent) a;
+			// simulation = (SimulationAgent) a;
 			name = "Scope of " + root + " (" + otherName + ") #" + number;
 		} else {
-			simulation = null;
+			// simulation = null;
 			name = "Scope without root (" + otherName + ") #" + number;
 		}
 		statements.push(new NullRecord());
@@ -323,8 +323,6 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public final boolean interrupted() {
 		return _root_interrupted() || _action_halted || _loop_halted || _agent_halted;
-		// final IAgent a = agents.peek();
-		// return a == null || a.dead();
 	}
 
 	@Override
@@ -335,10 +333,6 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void setOnUserHold(final boolean state) {
 		root.setOnUserHold(state);
-		// if (state)
-		// getGui().updateSimulationState(IGui.ONUSERHOLD);
-		// else
-		// getGui().updateSimulationState();
 	}
 
 	@Override
@@ -654,7 +648,6 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void saveAllVarValuesIn(final Map<String, Object> varsToSave) {
-		// final IRecord r = statements.peek();
 		varsToSave.putAll(statements.peek().getMap());
 	}
 
@@ -943,12 +936,13 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public SimulationAgent getSimulationScope() {
-		return simulation;
+		return root == null ? null : root.getSimulation();
 	}
 
 	@Override
 	public IExperimentAgent getExperiment() {
-		return simulation == null ? null : simulation.getExperiment();
+		return root == null ? null : root.getExperiment();
+		// return simulation == null ? null : simulation.getExperiment();
 	}
 
 	/**

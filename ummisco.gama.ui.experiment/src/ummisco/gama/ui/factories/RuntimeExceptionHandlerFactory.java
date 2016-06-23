@@ -14,8 +14,6 @@ public class RuntimeExceptionHandlerFactory extends AbstractServiceFactory {
 		if (handler == null) {
 			handler = new RuntimeExceptionHandler();
 		}
-		if (!handler.isRunning())
-			handler.start();
 		return handler;
 	}
 

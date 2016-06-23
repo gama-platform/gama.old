@@ -393,7 +393,6 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			return;
 		}
 		scope.pushReadAttributes(values);
-		// Files.tempAttributes.push(values);
 		try {
 			for (final Map.Entry<String, IExpressionDescription> f : init.entrySet()) {
 				if (f != null) {

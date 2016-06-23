@@ -119,6 +119,11 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return scheduled;
 	}
 
+	@Override
+	public SimulationAgent getSimulation() {
+		return this;
+	}
+
 	public void setTopology(final IScope scope, final IShape shape) {
 		// A topology has already been computed. We update it and updates all
 		// the agents present in the spatial index

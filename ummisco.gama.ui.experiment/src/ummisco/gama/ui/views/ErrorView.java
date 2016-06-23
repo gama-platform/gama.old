@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.dnd.Clipboard;
@@ -72,21 +71,6 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	public void ownCreatePartControl(final Composite view) {
 	}
 
-	private void gotoEditor(final GamaRuntimeException exception) {
-
-		final EObject o = exception.getEditorContext();
-		if (o != null) {
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					GAMA.getGui().editModel(o);
-				}
-			});
-		}
-
-	}
-
 	@Override
 	protected Composite createItemContentsFor(final GamaRuntimeException exception) {
 		final ScrolledComposite compo = new ScrolledComposite(getViewer(), SWT.H_SCROLL);
@@ -96,24 +80,12 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		compo.setLayout(layout);
 		final Table t = new Table(compo, SWT.H_SCROLL);
 		t.setFont(GamaFonts.getExpandfont());
-		// t.addMouseWheelListener(new MouseWheelListener() {
-		//
-		// @Override
-		// public void mouseScrolled(final MouseEvent e) {
-		// final Event ee = new Event();
-		// ee.display = WorkbenchHelper.getDisplay();
-		// ee.widget = compo;
-		// ee.count = e.count;
-		// ee.type = SWT.MouseVerticalWheel;
-		// WorkbenchHelper.getDisplay().post(ee);
-		// }
-		// });
 
 		t.addSelectionListener(new SelectionListener() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				gotoEditor(exception);
+				GAMA.getGui().editModel(exception.getEditorContext());
 			}
 
 			@Override
@@ -205,13 +177,13 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	@Override
 	public void reset() {
-		super.reset();
 		WorkbenchHelper.run(new Runnable() {
 
 			@Override
 			public void run() {
+				ErrorView.super.reset();
 				displayItems();
-
+				parent.layout(true, true);
 			}
 		});
 
@@ -239,7 +211,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 			@Override
 			public void run() {
-				gotoEditor(item);
+				GAMA.getGui().editModel(item.getEditorContext());
 			}
 		});
 		return result;

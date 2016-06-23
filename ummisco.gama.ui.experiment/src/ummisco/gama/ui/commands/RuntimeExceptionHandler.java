@@ -69,8 +69,10 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 		final ArrayList<GamaRuntimeException> array = new ArrayList(incomingExceptions);
 		// System.out.println("Processing " + array.size() + " exceptions");
 		incomingExceptions.clear();
-		final GamaRuntimeException firstEx = array.get(0);
+
 		if (GamaPreferences.CORE_REVEAL_AND_STOP.getValue()) {
+			final GamaRuntimeException firstEx = array.get(0);
+			GAMA.getGui().editModel(firstEx.getEditorContext());
 			firstEx.setReported();
 			if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
 				final List<GamaRuntimeException> newList = new ArrayList();

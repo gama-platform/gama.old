@@ -5,6 +5,7 @@
 package msi.gama.kernel.experiment;
 
 import msi.gama.common.util.RandomUtils;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.outputs.IOutputManager;
@@ -39,5 +40,7 @@ public interface ITopLevelAgent extends IMacroAgent {
 	public boolean isOnUserHold();
 
 	public void setOnUserHold(boolean state);
+
+	public SimulationAgent getSimulation();
 
 }

@@ -13,6 +13,8 @@ package msi.gaml.operators;
 
 import static msi.gama.util.GAML.nullCheck;
 
+import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -520,6 +522,26 @@ public class DeprecatedOperators {
 		// return graph.computeShortestPathBetween(sourTarg.key,
 		// sourTarg.value);
 
+	}
+
+	@operator(value = { "read", "get" }, category = IOperatorCategory.FILE, concept = { IConcept.ATTRIBUTE,
+			IConcept.FILE })
+	@doc(deprecated = "use the 'attributes` field of the file or database read to obtain the name of the ith attribute.", value = "Reads an attribute of the agent. The attribute index is specified by the operand.", examples = {
+			@example(value = "read (2)", var = "second_variable", equals = "reads the second variable of agent then assigns the returned value to the 'second_variable' variable. ", test = false) })
+	public static Object opRead(final IScope scope, final Integer index) throws GamaRuntimeException {
+		// First try to read in the temp attributes
+		final Map attributes = scope.peekReadAttributes();
+		if (attributes != null) {
+			return attributes.get(index);
+		}
+		// Try to read in the agent, if it has been created from a GIS/CSV file.
+		// final IAgent g = scope.getAgentScope();
+		// final IList<String> attributes =
+		// g.getPopulation().getSpecies().getAttributeNames(scope);
+		// if (index > 0 && index < attributes.size())
+		// return g.getAttribute(attributes.get(index));
+		return null;
+	
 	}
 
 	// @Deprecated

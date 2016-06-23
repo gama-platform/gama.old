@@ -115,8 +115,8 @@ public class SwtGui implements IGui {
 			return;
 		}
 		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
-		if (handler == null)
-			return;
+		if (!handler.isRunning())
+			handler.start();
 		handler.offer(g);
 		g.setReported();
 	}
@@ -131,8 +131,6 @@ public class SwtGui implements IGui {
 	@Override
 	public void clearErrors() {
 		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
-		if (handler == null)
-			return;
 		handler.clearErrors();
 	}
 
@@ -436,9 +434,7 @@ public class SwtGui implements IGui {
 		if (icv != null)
 			icv.reset();
 		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
-		if (handler != null) {
-			handler.stop();
-		}
+		handler.stop();
 	}
 
 	/**
