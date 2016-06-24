@@ -76,7 +76,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 	
 	boolean isInit = false;
 	ShaderProgram shaderProgram;
-	ICamera camera;
 	int[] vboHandles;
 	static final int COLOR_IDX = 0;
 	static final int VERTICES_IDX = 1;
@@ -115,12 +114,12 @@ public class LayerObject implements Iterable<GeometryObject> {
 			return;
 		}
 		
-		if (this.renderer.data.isUseShader()) {
-			drawWithShader(gl, renderer);
-		}
-		else {
+//		if (this.renderer.data.isUseShader()) {
+//			drawWithShader(gl, renderer);
+//		}
+//		else {
 			drawWithoutShader(gl, renderer);
-		}
+//		}
 	}
 	
 	public void drawWithShader(final GL2 gl, final JOGLRenderer renderer) {
@@ -231,8 +230,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 	public void initShader(final GL2 gl) {
 		this.gl = gl;
 		
-		camera = renderer.camera;
-		
 		createProjectionMatrix();
 		
 		shaderProgram = new ShaderProgram(gl);
@@ -278,7 +275,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 			
 		transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), 0, 0, 0, 1);
 		shaderProgram.loadTransformationMatrix(transformationMatrix);
-		shaderProgram.loadViewMatrix(camera);
+		shaderProgram.loadViewMatrix(renderer.camera);
 		
 		Light light = new Light(new Vector3f(50,50,100),new Vector3f(1,1,1));
 		shaderProgram.loadLight(light);

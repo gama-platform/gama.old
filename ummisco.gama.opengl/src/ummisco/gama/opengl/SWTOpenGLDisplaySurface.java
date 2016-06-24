@@ -98,7 +98,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		output.getData().addListener(this);
 		output.setSurface(this);
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySuface"));
-		renderer = createRenderer();
+		if (getOutput().useShader()) {
+			renderer = createModernRenderer();
+		}
+		else {
+			renderer = createJOGLRenderer();
+		}
 		animator = createAnimator();
 		animator.setUpdateFPSFrames(FPSCounter.DEFAULT_FRAMES_PER_INTERVAL, null);
 		layerManager = new LayerManager(this, output);
@@ -737,7 +742,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return parent;
 	}
 
-	private JOGLRenderer createRenderer() {
+	private JOGLRenderer createJOGLRenderer() {
+		return new JOGLRenderer(this);
+	}
+	
+	private JOGLRenderer createModernRenderer() {
 		return new JOGLRenderer(this);
 	}
 

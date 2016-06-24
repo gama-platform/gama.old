@@ -23,7 +23,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
 public class CameraArcBall extends AbstractCamera {
@@ -32,7 +32,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	private final boolean isDrawingRotateHelper = GamaPreferences.DRAW_ROTATE_HELPER.getValue();
 
-	public CameraArcBall(final JOGLRenderer joglawtglRenderer) {
+	public CameraArcBall(final Abstract3DRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
 		reset();
 	}

@@ -25,7 +25,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
 public class FreeFlyCamera extends AbstractCamera {
@@ -35,7 +35,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	private final GamaPoint left = new GamaPoint(0, 0, 0);
 	private final double speed = getRenderer().getMaxEnvDim() * 0.0001;
 
-	public FreeFlyCamera(final JOGLRenderer renderer) {
+	public FreeFlyCamera(final Abstract3DRenderer renderer) {
 		super(renderer);
 		reset();
 	}

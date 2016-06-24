@@ -214,12 +214,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	private final List<AbstractLayerStatement> layers;
 	protected IDisplaySurface surface;
+	private boolean useShader = false;
 	private boolean constantBackground = true;
 	private boolean constantAmbientLight = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
 	public volatile boolean cameraFix = false; // Means that the camera has been
-												// set by the modeller.
+												// set by the modeler.
 	final LayeredDisplayData data = new LayeredDisplayData();
 	// Specific to overlays
 	OverlayStatement overlayInfo;
@@ -231,8 +232,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			data.setDisplayType(getLiteral(IKeyword.TYPE));
 		}
 		layers = new ArrayList<>();
-		final String modelName = desc.getModelDescription().getName();
-		final String expeName = desc.getExperimentContext().getName();
 	}
 
 	public IOverlayProvider getOverlayProvider() {
@@ -316,7 +315,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		final IExpression use_shader = getFacet("use_shader");
 		if (use_shader != null) {
-			this.data.setUseShader(Cast.asBool(getScope(), use_shader.value(getScope())));
+			this.useShader = Cast.asBool(getScope(), use_shader.value(getScope()));
 		}
 
 		final IExpression lightOn = getFacet(IKeyword.IS_LIGHT_ON);
@@ -676,10 +675,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public LayeredDisplayData getData() {
 		return data;
 	}
+	
+	public boolean useShader() {
+		return useShader;
+	}
 
 	// Keeping in sync the two implementations of synchronized, so that OpenGL
 	// objects can have an easy access to the value (and modify it). Also allows
-	// modellers to declare this property directly in the model.
+	// modelers to declare this property directly in the model.
 
 	@Override
 	public void setSynchronized(final boolean sync) {

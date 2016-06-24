@@ -25,12 +25,12 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.fastmaths.FastMath;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
 public abstract class AbstractCamera implements ICamera {
 
-	private JOGLRenderer renderer;
+	private Abstract3DRenderer renderer;
 
 	// picking
 	// private boolean isPickedPressed = false;
@@ -66,7 +66,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean ctrlPressed = false;
 	protected boolean shiftPressed = false;
 
-	public AbstractCamera(final JOGLRenderer renderer) {
+	public AbstractCamera(final Abstract3DRenderer renderer) {
 		setRenderer(renderer);
 		setMousePosition(new Point(0, 0));
 		upVectorAngle = 0.0;
@@ -434,11 +434,11 @@ public abstract class AbstractCamera implements ICamera {
 		return strafeRight;
 	}
 
-	protected JOGLRenderer getRenderer() {
+	protected Abstract3DRenderer getRenderer() {
 		return renderer;
 	}
 
-	protected void setRenderer(final JOGLRenderer renderer) {
+	protected void setRenderer(final Abstract3DRenderer renderer) {
 		this.renderer = renderer;
 	}
 
