@@ -331,7 +331,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		} else {
-			final GamaList<Predicate> desireBase = (GamaList<Predicate>) scope.getExperiment().getRandomGenerator()
+			final GamaList<Predicate> desireBase = (GamaList<Predicate>) scope.getSimulationScope().getRandomGenerator()
 					.shuffle(getBase(scope, DESIRE_BASE));
 			final GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
 			double maxpriority = Double.NEGATIVE_INFINITY;
@@ -378,7 +378,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		double highestPriority = Double.MIN_VALUE;
 		final List<SimpleBdiPlanStatement> temp_plan = new ArrayList<SimpleBdiPlanStatement>();
 		final IList priorities = GamaListFactory.create(Types.FLOAT);
-		for (final Object BDIPlanstatement : scope.getExperiment().getRandomGenerator().shuffle(_plans)) {
+		for (final Object BDIPlanstatement : scope.getSimulationScope().getRandomGenerator().shuffle(_plans)) {
 			final SimpleBdiPlanStatement statement = ((BDIPlan) BDIPlanstatement).getPlanStatement();
 			final boolean isContextConditionSatisfied = statement.getContextExpression() == null
 					|| msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
@@ -568,14 +568,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						desbase.remove(intention);
 						intentionbase.remove(intention);
 						for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-							if (((Predicate) statement).getSubintentions() != null) {
-								if (((Predicate) statement).getSubintentions().contains(intention)) {
-									((Predicate) statement).getSubintentions().remove(intention);
+							List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions() ;
+							if (statementSubintention != null) {
+								if (statementSubintention.contains(intention)) {
+									statementSubintention.remove(intention);
 								}
 							}
-							if ((ArrayList) ((Predicate) statement).getOnHoldUntil() != null) {
-								if (((ArrayList) ((Predicate) statement).getOnHoldUntil()).contains(intention)) {
-									((ArrayList) ((Predicate) statement).getOnHoldUntil()).remove(intention);
+							List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+							if (statementOnHoldUntil != null) {
+								if (statementOnHoldUntil.contains(intention)) {
+									statementOnHoldUntil.remove(intention);
 								}
 							}
 						}
@@ -598,14 +600,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 								desbase.remove(((ArrayList) cond).get(0));
 							}
 							for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-								if (((Predicate) statement).getSubintentions() != null) {
-									if (((Predicate) statement).getSubintentions().contains(intention)) {
-										((Predicate) statement).getSubintentions().remove(intention);
+								List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions() ;
+								if (statementSubintention != null) {
+									if (statementSubintention.contains(intention)) {
+										statementSubintention.remove(intention);
 									}
 								}
-								if ((ArrayList) ((Predicate) statement).getOnHoldUntil() != null) {
-									if (((ArrayList) ((Predicate) statement).getOnHoldUntil()).contains(intention)) {
-										((ArrayList) ((Predicate) statement).getOnHoldUntil()).remove(intention);
+								List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+								if (statementOnHoldUntil != null) {
+									if (statementOnHoldUntil.contains(intention)) {
+										statementOnHoldUntil.remove(intention);
 									}
 								}
 							}
@@ -725,19 +729,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				removeFromBase(scope, predicateDirect, UNCERTAINTY_BASE);
 			}
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-				if (((Predicate) statement).getSubintentions() != null) {
-					if (((Predicate) statement).getSubintentions().contains(predicateDirect)) {
-						((Predicate) statement).getSubintentions().remove(predicateDirect);
+				List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions() ;
+				if (statementSubintention != null) {
+					if (statementSubintention.contains(predicateDirect)) {
+						statementSubintention.remove(predicateDirect);
 					}
 				}
-				if ((ArrayList) ((Predicate) statement).getOnHoldUntil() != null) {
-					if (((ArrayList) ((Predicate) statement).getOnHoldUntil()).contains(predicateDirect)) {
-						((ArrayList) ((Predicate) statement).getOnHoldUntil()).remove(predicateDirect);
-					}
-				}
-				if ((ArrayList) ((Predicate) statement).getSubintentions() != null) {
-					if (((ArrayList) ((Predicate) statement).getSubintentions()).contains(predicateDirect)) {
-						((ArrayList) ((Predicate) statement).getSubintentions()).remove(predicateDirect);
+				List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+				if (statementOnHoldUntil != null) {
+					if (statementOnHoldUntil.contains(predicateDirect)) {
+						statementOnHoldUntil.remove(predicateDirect);
 					}
 				}
 			}
@@ -1078,19 +1079,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				removeFromBase(scope, newPredicate, DESIRE_BASE);
 			}
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-				if (((Predicate) statement).getSubintentions() != null) {
-					if (((Predicate) statement).getSubintentions().contains(newPredicate)) {
-						((Predicate) statement).getSubintentions().remove(newPredicate);
+				List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions() ;
+				if (statementSubintention != null) {
+					if (statementSubintention.contains(newPredicate)) {
+						statementSubintention.remove(newPredicate);
 					}
 				}
-				if ((GamaList) ((Predicate) statement).getOnHoldUntil() != null) {
-					if (((GamaList) ((Predicate) statement).getOnHoldUntil()).contains(newPredicate)) {
-						((GamaList) ((Predicate) statement).getOnHoldUntil()).remove(newPredicate);
-					}
-				}
-				if ((ArrayList) ((Predicate) statement).getSubintentions() != null) {
-					if (((ArrayList) ((Predicate) statement).getSubintentions()).contains(newPredicate)) {
-						((ArrayList) ((Predicate) statement).getSubintentions()).remove(newPredicate);
+				List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+				if (statementOnHoldUntil != null) {
+					if (statementOnHoldUntil.contains(newPredicate)) {
+						statementOnHoldUntil.remove(newPredicate);
 					}
 				}
 			}
@@ -1103,14 +1101,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		getBase(scope, DESIRE_BASE).remove(pred);
 		getBase(scope, INTENTION_BASE).remove(pred);
 		for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-			if (((Predicate) statement).getSubintentions() != null) {
-				if (((Predicate) statement).getSubintentions().contains(pred)) {
-					((Predicate) statement).getSubintentions().remove(pred);
+			List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions() ;
+			if (statementSubintention != null) {
+				if (statementSubintention.contains(pred)) {
+					statementSubintention.remove(pred);
 				}
 			}
-			if ((ArrayList) ((Predicate) statement).getOnHoldUntil() != null) {
-				if (((ArrayList) ((Predicate) statement).getOnHoldUntil()).contains(pred)) {
-					((ArrayList) ((Predicate) statement).getOnHoldUntil()).remove(pred);
+			List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+			if (statementOnHoldUntil != null) {
+				if (statementOnHoldUntil.contains(pred)) {
+					statementOnHoldUntil.remove(pred);
 				}
 			}
 		}
@@ -1208,19 +1208,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static Boolean removeIntention(final IScope scope, final Predicate pred) {
 		getBase(scope, INTENTION_BASE).remove(pred);
 		for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-			if (((Predicate) statement).getSubintentions() != null) {
-				if (((Predicate) statement).getSubintentions().contains(pred)) {
-					((Predicate) statement).getSubintentions().remove(pred);
+			List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions() ;
+			if (statementSubintention != null) {
+				if (statementSubintention.contains(pred)) {
+					statementSubintention.remove(pred);
 				}
 			}
-			if ((ArrayList) ((Predicate) statement).getOnHoldUntil() != null) {
-				if (((ArrayList) ((Predicate) statement).getOnHoldUntil()).contains(pred)) {
-					((ArrayList) ((Predicate) statement).getOnHoldUntil()).remove(pred);
-				}
-			}
-			if ((ArrayList) ((Predicate) statement).getSubintentions() != null) {
-				if (((ArrayList) ((Predicate) statement).getSubintentions()).contains(pred)) {
-					((ArrayList) ((Predicate) statement).getSubintentions()).remove(pred);
+			List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+			if (statementOnHoldUntil != null) {
+				if (statementOnHoldUntil.contains(pred)) {
+					statementOnHoldUntil.remove(pred);
 				}
 			}
 		}
@@ -1245,19 +1242,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if (predicateDirect.equals(currentIntention(scope)))
 				scope.getAgentScope().setAttribute(CURRENT_PLAN, null);
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
-				if (((Predicate) statement).getSubintentions() != null) {
-					if (((Predicate) statement).getSubintentions().contains(predicateDirect)) {
-						((Predicate) statement).getSubintentions().remove(predicateDirect);
+				List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions() ;
+				if (statementSubintention != null) {
+					if (statementSubintention.contains(predicateDirect)) {
+						statementSubintention.remove(predicateDirect);
 					}
 				}
-				if ((ArrayList) ((Predicate) statement).getOnHoldUntil() != null) {
-					if (((ArrayList) ((Predicate) statement).getOnHoldUntil()).contains(predicateDirect)) {
-						((ArrayList) ((Predicate) statement).getOnHoldUntil()).remove(predicateDirect);
-					}
-				}
-				if ((ArrayList) ((Predicate) statement).getSubintentions() != null) {
-					if (((ArrayList) ((Predicate) statement).getSubintentions()).contains(predicateDirect)) {
-						((ArrayList) ((Predicate) statement).getSubintentions()).remove(predicateDirect);
+				List<Predicate> statementOnHoldUntil = ((Predicate) statement).getOnHoldUntil();
+				if (statementOnHoldUntil != null) {
+					if (statementOnHoldUntil.contains(predicateDirect)) {
+						statementOnHoldUntil.remove(predicateDirect);
 					}
 				}
 			}
