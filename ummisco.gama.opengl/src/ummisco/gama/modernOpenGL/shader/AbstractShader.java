@@ -12,7 +12,7 @@ import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
-import ummisco.gama.modernOpenGL.Maths;
+import ummisco.gama.opengl.vaoGenerator.GeomMathUtils;
 
 public abstract class AbstractShader {
 	
@@ -127,7 +127,7 @@ public abstract class AbstractShader {
 	protected abstract void getAllUniformLocations();
 	
 	protected void loadMatrix(int location, Matrix4f matrix) {
-		matrixBuffer = Maths.getFloatBuffer(matrix);
+		matrixBuffer = GeomMathUtils.getFloatBuffer(matrix);
 		matrixBuffer.flip();
 		gl.glUniformMatrix4fv(location, 1, false, matrixBuffer.array() , 0);
 	}

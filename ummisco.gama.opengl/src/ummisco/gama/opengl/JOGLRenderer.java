@@ -59,9 +59,6 @@ import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
-import ummisco.gama.opengl.camera.CameraArcBall;
-import ummisco.gama.opengl.camera.FreeFlyCamera;
-import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.jts.JTSDrawer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.FieldDrawer;
@@ -74,7 +71,6 @@ import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.ResourceDrawer;
 import ummisco.gama.opengl.scene.ResourceObject;
-import ummisco.gama.opengl.scene.SceneBuffer;
 import ummisco.gama.opengl.scene.StringDrawer;
 import ummisco.gama.opengl.scene.StringObject;
 import ummisco.gama.opengl.utils.GLUtilLight;
@@ -89,74 +85,11 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class JOGLRenderer extends Abstract3DRenderer {
 
-	public class PickingState {
-
-		final static int NONE = -2;
-		final static int WORLD = -1;
-
-		volatile boolean isPicking;
-		volatile boolean isMenuOn;
-		volatile int pickedIndex = NONE;
-
-		public void setPicking(final boolean isPicking) {
-			this.isPicking = isPicking;
-			if (!isPicking) {
-				pickedIndex = NONE;
-				isMenuOn = false;
-			}
-		}
-
-		public void setMenuOn(final boolean isMenuOn) {
-			this.isMenuOn = isMenuOn;
-		}
-
-		public void setPickedIndex(final int pickedIndex) {
-			this.pickedIndex = pickedIndex;
-			// System.out.println("Picked object = " + pickedIndex);
-			if (pickedIndex == WORLD && !isMenuOn) {
-				// Selection occured, but no object have been selected
-				isMenuOn = true;
-				getSurface().selectAgent(null);
-			}
-		}
-
-		public boolean isPicked(final int objectIndex) {
-			return pickedIndex == objectIndex;
-		}
-
-		public boolean isBeginningPicking() {
-			return isPicking && pickedIndex == NONE;
-		}
-
-		public boolean isMenuOn() {
-			return isMenuOn;
-		}
-
-		public boolean isPicking() {
-			return isPicking;
-		}
-
-	}
-
-	public static int Y_FLAG = -1;
-
-	GLCanvas canvas;
-	public ICamera camera;
-	public final SceneBuffer sceneBuffer;
-	public double currentZRotation = 0;
 	private final PickingState pickingState = new PickingState();
 	private boolean drawRotationHelper = false;
 	private GamaPoint rotationHelperPosition = null;
-	// private Integer pickedObjectIndex = null;
-	// private AbstractObject currentPickedObject;
-	int[] viewport = new int[4];
-	double mvmatrix[] = new double[16];
-	double projmatrix[] = new double[16];
-	public boolean colorPicking = false;
-	private GLU glu;
 	private final GLUT glut = new GLUT();
 	private Envelope3D ROIEnvelope = null;
-	private ModelScene currentScene;
 	private volatile boolean inited;
 
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
@@ -172,8 +105,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
 		super(d);
-		camera = new CameraArcBall(this);
-		sceneBuffer = new SceneBuffer(this);
 		jtsDrawer = new JTSDrawer(this);
 	}
 
@@ -198,10 +129,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		final FillLayout gl = new FillLayout();
 		canvas.setLayout(gl);
 		return canvas;
-	}
-
-	public ModelScene getCurrentScene() {
-		return currentScene;
 	}
 
 	public void defineROI(final Point start, final Point end) {
@@ -308,10 +235,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	@Override
 	public void display(final GLAutoDrawable drawable) {
 
-		// fail fast
-		// if (GAMA.getSimulation() == null) {
-		// return;
-		// }
 		currentScene = sceneBuffer.getSceneToRender();
 		if (currentScene == null) {
 			return;

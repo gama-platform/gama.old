@@ -39,12 +39,12 @@ import msi.gama.util.file.GamaImageFile;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
+import ummisco.gama.modernOpenGL.Entity;
 import ummisco.gama.modernOpenGL.Light;
-import ummisco.gama.modernOpenGL.Maths;
-import ummisco.gama.modernOpenGL.VAOExtractor;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.JOGLRenderer;
-import ummisco.gama.opengl.camera.ICamera;
+import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
+import ummisco.gama.opengl.vaoGenerator.VAOGenerator;
 import ummisco.gama.webgl.SimpleGeometryObject;
 import ummisco.gama.webgl.SimpleLayer;
 
@@ -84,6 +84,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 	
 	ArrayList<ArrayList<float[]>> vbos = new ArrayList<ArrayList<float[]>>();
 	
+	ArrayList<Entity> entities = new ArrayList<Entity>();
+	
 	private GL2 gl;
 	
 	private Matrix4f projectionMatrix;
@@ -114,12 +116,12 @@ public class LayerObject implements Iterable<GeometryObject> {
 			return;
 		}
 		
-//		if (this.renderer.data.isUseShader()) {
-//			drawWithShader(gl, renderer);
-//		}
-//		else {
+		if (this.renderer.useShader()) {
+			drawWithShader(gl, renderer);
+		}
+		else {
 			drawWithoutShader(gl, renderer);
-//		}
+		}
 	}
 	
 	public void drawWithShader(final GL2 gl, final JOGLRenderer renderer) {
@@ -131,37 +133,28 @@ public class LayerObject implements Iterable<GeometryObject> {
 		for (final List<AbstractObject> list : objects) {
 			for (final AbstractObject object : list) {
 				if (object instanceof GeometryObject) {
-					ArrayList<float[]> vao = new ArrayList<float[]>();
-					
-					float[] vertices = VAOExtractor.getObjectVertices(object);
-					float[] colors = VAOExtractor.getObjectColors(object,vertices.length/3);
-					float[] indices = VAOExtractor.getObjectIndexBuffer(object);
-					
-					vao.add(vertices);
-					vao.add(colors);
-					vao.add(indices);
-					
-					vbos.add(vao);
+					entities.add(VAOGenerator.GenerateVAO(object));
 				}
 			}
 		}	
 		
-		if (vbos.size()>0)
+		if (entities.size()>0)
 		{
 			// Clear screen
 			gl.glClearColor(1, 0, 1, 0.5f);  // Purple
 			gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT   );
 		
-			for (ArrayList<float[]> vbo : vbos) {
-				float[] vtxPos = vbo.get(0);
-				float[] vtxCol = vbo.get(1);
-				float[] vtxIdxBuff = vbo.get(2);
-				if (vtxPos.length > 2)
-					newDraw(vtxPos,vtxCol,vtxIdxBuff);
-			}
+			newDraw();
+//			for (ArrayList<float[]> vbo : vbos) {
+//				float[] vtxPos = vbo.get(0);
+//				float[] vtxCol = vbo.get(1);
+//				float[] vtxIdxBuff = vbo.get(2);
+//				if (vtxPos.length > 2)
+//					newDraw(vtxPos,vtxCol,vtxIdxBuff);
+//			}
 		}
 		
-		vbos.clear();
+		entities.clear();
 	}
 	
 	public void drawWithoutShader(final GL2 gl, final JOGLRenderer renderer) {
@@ -270,91 +263,91 @@ public class LayerObject implements Iterable<GeometryObject> {
 		projectionMatrix.m33 = 0;
 	}
 	
-	private void newDraw(float[] vertices, float[] colors, float[] idxBuffer) {
+	private void newDraw() {
 		shaderProgram.start();
 			
-		transformationMatrix = Maths.createTransformationMatrix(new Vector3f(0,0,0), 0, 0, 0, 1);
+		transformationMatrix = TransformationMatrix.createTransformationMatrix(new Vector3f(0,0,0), 0, 0, 0, 1);
 		shaderProgram.loadTransformationMatrix(transformationMatrix);
 		shaderProgram.loadViewMatrix(renderer.camera);
 		
 		Light light = new Light(new Vector3f(50,50,100),new Vector3f(1,1,1));
 		shaderProgram.loadLight(light);
 		
-		shaderProgram.loadShineVariables(10.0f, 1.0f);
-		
-		float[][] newArraysWithSmoothShading = VAOExtractor.setSmoothShading(vertices,colors,idxBuffer,60f);
-		vertices = newArraysWithSmoothShading[0];
-		colors = newArraysWithSmoothShading[1];
-		idxBuffer = newArraysWithSmoothShading[2];
-		
-		float[] normals = Maths.getNormals(vertices,idxBuffer/*VAOExtractor.getExtendedIndicesForRectangularFaces(idxBuffer)*/);
-
-
-		// VERTICES POSITIONS BUFFER
-		// Observe that the vertex data passed to glVertexAttribPointer must stay valid
-		// through the OpenGL rendering lifecycle.
-		// Therefore it is mandatory to allocate a NIO Direct buffer that stays pinned in memory
-		// and thus can not get moved by the java garbage collector.
-		// Also we need to keep a reference to the NIO Direct buffer around up until
-		// we call glDisableVertexAttribArray first then will it be safe to garbage collect the memory.
-		// I will here use the com.jogamp.common.nio.Buffers to quickly wrap the array in a Direct NIO buffer.
-		FloatBuffer fbVertices = Buffers.newDirectFloatBuffer(vertices);
-		// Select the VBO, GPU memory data, to use for vertices
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[VERTICES_IDX]);
-		// transfer data to VBO, this perform the copy of data from CPU -> GPU memory
-		int numBytes = vertices.length * 4;
-		gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbVertices, GL.GL_STATIC_DRAW);
-		fbVertices.rewind(); // It is OK to release CPU vertices memory after transfer to GPU
-		// Associate Vertex attribute 0 with the last bound VBO
-		gl.glVertexAttribPointer(ShaderProgram.POSITION_ATTRIBUTE_IDX /* the vertex attribute */, 3,
-		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
-		                    0 /* The bound VBO data offset */);
-		gl.glEnableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX);
-		
-		// COLORS BUFFER
-		FloatBuffer fbColors = Buffers.newDirectFloatBuffer(colors);
-		// Select the VBO, GPU memory data, to use for colors
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[COLOR_IDX]);
-		numBytes = colors.length * 4;
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, fbColors, GL2.GL_STATIC_DRAW);
-		fbColors.rewind(); // It is OK to release CPU color memory after transfer to GPU
-		// Associate Vertex attribute 1 with the last bound VBO
-		gl.glVertexAttribPointer(ShaderProgram.COLOR_ATTRIBUTE_IDX /* the vertex attribute */, 4 /* four positions used for each vertex */,
-		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
-		                    0 /* The bound VBO data offset */);
-		gl.glEnableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX);
-		
-		// NORMAL BUFFER
-		FloatBuffer fbNormal = Buffers.newDirectFloatBuffer(normals);
-		// Select the VBO, GPU memory data, to use for colors
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[NORMAL_IDX]);
-		numBytes = normals.length * 4;
-		gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, fbNormal, GL2.GL_STATIC_DRAW);
-		fbNormal.rewind(); // It is OK to release CPU color memory after transfer to GPU
-		// Associate Vertex attribute 1 with the last bound VBO
-		gl.glVertexAttribPointer(ShaderProgram.NORMAL_ATTRIBUTE_IDX /* the vertex attribute */, 3 /* three positions used for each vertex */,
-		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
-		                    0 /* The bound VBO data offset */);
-		gl.glEnableVertexAttribArray(ShaderProgram.NORMAL_ATTRIBUTE_IDX);
-		
-		// INDEX BUFFER
-		int[] intIdxBuff = new int[idxBuffer.length];
-		for (int i = 0; i < idxBuffer.length ; i++) {
-			intIdxBuff[i] = (int) idxBuffer[i];
+		for (Entity entity : entities) {
+			shaderProgram.loadShineVariables(10.0f, 1.0f);
+			
+			float[] vertices = entity.getVertices();
+			float[] colors = entity.getColors();
+			float[] idxBuffer = entity.getIndices();
+			float[] normals = entity.getNormals();
+	
+	
+			// VERTICES POSITIONS BUFFER
+			// Observe that the vertex data passed to glVertexAttribPointer must stay valid
+			// through the OpenGL rendering lifecycle.
+			// Therefore it is mandatory to allocate a NIO Direct buffer that stays pinned in memory
+			// and thus can not get moved by the java garbage collector.
+			// Also we need to keep a reference to the NIO Direct buffer around up until
+			// we call glDisableVertexAttribArray first then will it be safe to garbage collect the memory.
+			// I will here use the com.jogamp.common.nio.Buffers to quickly wrap the array in a Direct NIO buffer.
+			FloatBuffer fbVertices = Buffers.newDirectFloatBuffer(vertices);
+			// Select the VBO, GPU memory data, to use for vertices
+			gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[VERTICES_IDX]);
+			// transfer data to VBO, this perform the copy of data from CPU -> GPU memory
+			int numBytes = vertices.length * 4;
+			gl.glBufferData(GL.GL_ARRAY_BUFFER, numBytes, fbVertices, GL.GL_STATIC_DRAW);
+			fbVertices.rewind(); // It is OK to release CPU vertices memory after transfer to GPU
+			// Associate Vertex attribute 0 with the last bound VBO
+			gl.glVertexAttribPointer(ShaderProgram.POSITION_ATTRIBUTE_IDX /* the vertex attribute */, 3,
+			                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
+			                    0 /* The bound VBO data offset */);
+			gl.glEnableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX);
+			
+			// COLORS BUFFER
+			FloatBuffer fbColors = Buffers.newDirectFloatBuffer(colors);
+			// Select the VBO, GPU memory data, to use for colors
+			gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[COLOR_IDX]);
+			numBytes = colors.length * 4;
+			gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, fbColors, GL2.GL_STATIC_DRAW);
+			fbColors.rewind(); // It is OK to release CPU color memory after transfer to GPU
+			// Associate Vertex attribute 1 with the last bound VBO
+			gl.glVertexAttribPointer(ShaderProgram.COLOR_ATTRIBUTE_IDX /* the vertex attribute */, 4 /* four positions used for each vertex */,
+			                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
+			                    0 /* The bound VBO data offset */);
+			gl.glEnableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX);
+			
+			// NORMAL BUFFER
+			FloatBuffer fbNormal = Buffers.newDirectFloatBuffer(normals);
+			// Select the VBO, GPU memory data, to use for colors
+			gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[NORMAL_IDX]);
+			numBytes = normals.length * 4;
+			gl.glBufferData(GL2.GL_ARRAY_BUFFER, numBytes, fbNormal, GL2.GL_STATIC_DRAW);
+			fbNormal.rewind(); // It is OK to release CPU color memory after transfer to GPU
+			// Associate Vertex attribute 1 with the last bound VBO
+			gl.glVertexAttribPointer(ShaderProgram.NORMAL_ATTRIBUTE_IDX /* the vertex attribute */, 3 /* three positions used for each vertex */,
+			                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
+			                    0 /* The bound VBO data offset */);
+			gl.glEnableVertexAttribArray(ShaderProgram.NORMAL_ATTRIBUTE_IDX);
+			
+			// INDEX BUFFER
+			int[] intIdxBuff = new int[idxBuffer.length];
+			for (int i = 0; i < idxBuffer.length ; i++) {
+				intIdxBuff[i] = (int) idxBuffer[i];
+			}
+			IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuff);
+			// Select the VBO, GPU memory data, to use for colors
+			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[IDX_BUFF_IDX]);
+			numBytes = colors.length * 4;
+			gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
+			ibIdxBuff.rewind();
+	
+	//		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, idxBuffer.length); //Draw the vertices as triangle
+			gl.glDrawElements(GL2.GL_TRIANGLES, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
+	
+			gl.glDisableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX); // Allow release of vertex position memory
+			gl.glDisableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX); // Allow release of vertex color memory
+			gl.glDisableVertexAttribArray(ShaderProgram.NORMAL_ATTRIBUTE_IDX); // Allow release of vertex normal memory
 		}
-		IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuff);
-		// Select the VBO, GPU memory data, to use for colors
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[IDX_BUFF_IDX]);
-		numBytes = colors.length * 4;
-		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
-		ibIdxBuff.rewind();
-
-//		gl.glDrawArrays(GL2.GL_TRIANGLES, 0, idxBuffer.length); //Draw the vertices as triangle
-		gl.glDrawElements(GL2.GL_TRIANGLES, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
-
-		gl.glDisableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX); // Allow release of vertex position memory
-		gl.glDisableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX); // Allow release of vertex color memory
-		gl.glDisableVertexAttribArray(ShaderProgram.NORMAL_ATTRIBUTE_IDX); // Allow release of vertex normal memory
 		
 		shaderProgram.stop();
 	}
@@ -525,7 +518,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public SimpleLayer toSimpleLayer() {
-		final List<SimpleGeometryObject> geom = new ArrayList();
+		final List<SimpleGeometryObject> geom = new ArrayList<SimpleGeometryObject>();
 		for (final GeometryObject object : Iterables.filter(currentList, GeometryObject.class)) {
 			geom.add(object.toSimpleGeometryObject());
 		}

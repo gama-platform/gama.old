@@ -1,16 +1,12 @@
 package ummisco.gama.modernOpenGL.shader;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import javax.vecmath.Matrix4f;
 
 import com.jogamp.opengl.GL2;
 
 import ummisco.gama.modernOpenGL.Light;
-import ummisco.gama.modernOpenGL.Maths;
 import ummisco.gama.opengl.camera.ICamera;
+import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public class ShaderProgram extends AbstractShader {
 	
@@ -69,7 +65,7 @@ public class ShaderProgram extends AbstractShader {
 	}
 	
 	public void loadViewMatrix(ICamera camera) {
-		Matrix4f viewMatrix = Maths.createViewMatrix(camera);
+		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(camera);
 		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 }

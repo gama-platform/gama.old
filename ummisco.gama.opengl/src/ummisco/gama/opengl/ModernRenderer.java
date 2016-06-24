@@ -15,7 +15,6 @@ import java.awt.Color;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.nio.BufferOverflowException;
 import java.nio.IntBuffer;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,12 +28,9 @@ import org.eclipse.swt.widgets.Composite;
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.GL2ES1;
-import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLProfile;
-import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
@@ -50,16 +46,13 @@ import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
-import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.scene.ModelScene;
-import ummisco.gama.opengl.scene.SceneBuffer;
-import ummisco.gama.opengl.utils.GLUtilLight;
+import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -70,74 +63,13 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  *
  */
 public class ModernRenderer extends Abstract3DRenderer {
-
-	public class PickingState {
-
-		final static int NONE = -2;
-		final static int WORLD = -1;
-
-		volatile boolean isPicking;
-		volatile boolean isMenuOn;
-		volatile int pickedIndex = NONE;
-
-		public void setPicking(final boolean isPicking) {
-			this.isPicking = isPicking;
-			if (!isPicking) {
-				pickedIndex = NONE;
-				isMenuOn = false;
-			}
-		}
-
-		public void setMenuOn(final boolean isMenuOn) {
-			this.isMenuOn = isMenuOn;
-		}
-
-		public void setPickedIndex(final int pickedIndex) {
-			this.pickedIndex = pickedIndex;
-			// System.out.println("Picked object = " + pickedIndex);
-			if (pickedIndex == WORLD && !isMenuOn) {
-				// Selection occured, but no object have been selected
-				isMenuOn = true;
-				getSurface().selectAgent(null);
-			}
-		}
-
-		public boolean isPicked(final int objectIndex) {
-			return pickedIndex == objectIndex;
-		}
-
-		public boolean isBeginningPicking() {
-			return isPicking && pickedIndex == NONE;
-		}
-
-		public boolean isMenuOn() {
-			return isMenuOn;
-		}
-
-		public boolean isPicking() {
-			return isPicking;
-		}
-
-	}
 	
 	private Matrix4f projectionMatrix;
 	private Matrix4f transformationMatrix;
 
-	public static int Y_FLAG = -1;
-
-	private static boolean BLENDING_ENABLED; // blending on/off
-	GLCanvas canvas;
-	public ICamera camera;
-	public final SceneBuffer sceneBuffer = null;
-	public double currentZRotation = 0;
 	private final PickingState pickingState = new PickingState();
 	private boolean drawRotationHelper = false;
 	private GamaPoint rotationHelperPosition = null;
-	// private Integer pickedObjectIndex = null;
-	// private AbstractObject currentPickedObject;
-	int[] viewport = new int[4];
-	double mvmatrix[] = new double[16];
-	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
 	private Envelope3D ROIEnvelope = null;
 	private ModelScene currentScene;
@@ -175,10 +107,6 @@ public class ModernRenderer extends Abstract3DRenderer {
 		return canvas;
 	}
 
-	public ModelScene getCurrentScene() {
-		return currentScene;
-	}
-
 	public void defineROI(final Point start, final Point end) {
 		final GamaPoint startInWorld = getRealWorldPointFromWindowPoint(start);
 		final GamaPoint endInWorld = getRealWorldPointFromWindowPoint(end);
@@ -214,6 +142,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
+		glu = new GLU();
 		WorkbenchHelper.run(new Runnable() {
 
 			@Override
@@ -239,10 +168,6 @@ public class ModernRenderer extends Abstract3DRenderer {
 	@Override
 	public void display(final GLAutoDrawable drawable) {
 
-		// fail fast
-		// if (GAMA.getSimulation() == null) {
-		// return;
-		// }
 		currentScene = sceneBuffer.getSceneToRender();
 		if (currentScene == null) {
 			return;
@@ -290,38 +215,14 @@ public class ModernRenderer extends Abstract3DRenderer {
 		}
 		updatePerspective();
 	}
-
+	
 	public final void updatePerspective() {
-		
 		final int height = getDrawable().getSurfaceHeight();
-		final double aspect = (double) getDrawable().getSurfaceWidth() / (double) (height == 0 ? 1 : height);
-		final double maxDim = getMaxEnvDim();		
-		if (!data.isOrtho()) {
-			final double zNear = maxDim / 1000;
-			final double zFar = maxDim*10;
-			final double frustum_length = zFar - zNear;
-			double fW, fH;
-			//final double fovY = 45.0d;
-			final double fovY = data.getCameralens();
-			if (aspect > 1.0) {
-				fH = FastMath.tan(fovY / 360 * Math.PI) * zNear;
-				fW = fH * aspect;
-			} else {
-				fW = FastMath.tan(fovY / 360 * Math.PI) * zNear;
-				fH = fW / aspect;
-			}
-			
-			projectionMatrix = new Matrix4f();
-			
-			projectionMatrix.m00 = (float) (zNear / fW);
-			projectionMatrix.m11 = (float) (zNear / fH);
-			projectionMatrix.m22 = (float) -((zFar + zNear) / frustum_length);
-			projectionMatrix.m23 = -1;
-			projectionMatrix.m32 = (float) -((2 * zNear * zFar) / frustum_length);
-			projectionMatrix.m33 = 0;
-		} else {
-			// TODO
-		}
+		final int width = getDrawable().getSurfaceWidth();
+		final double maxDim = getMaxEnvDim();
+		final double fov = data.getCameralens();
+
+		projectionMatrix = TransformationMatrix.createProjectionMatrix(data.isOrtho(),height,width,maxDim,fov);
 
 		camera.animate();
 	}

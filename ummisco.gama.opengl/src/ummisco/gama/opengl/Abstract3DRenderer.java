@@ -42,6 +42,7 @@ import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
 import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.scene.ModelScene;
+import ummisco.gama.opengl.scene.SceneBuffer;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -52,19 +53,70 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  *
  */
 public abstract class Abstract3DRenderer extends AbstractDisplayGraphics implements IGraphics, GLEventListener {
+	
+	public class PickingState {
+
+		final static int NONE = -2;
+		final static int WORLD = -1;
+
+		volatile boolean isPicking;
+		volatile boolean isMenuOn;
+		volatile int pickedIndex = NONE;
+
+		public void setPicking(final boolean isPicking) {
+			this.isPicking = isPicking;
+			if (!isPicking) {
+				pickedIndex = NONE;
+				isMenuOn = false;
+			}
+		}
+
+		public void setMenuOn(final boolean isMenuOn) {
+			this.isMenuOn = isMenuOn;
+		}
+
+		public void setPickedIndex(final int pickedIndex) {
+			this.pickedIndex = pickedIndex;
+			// System.out.println("Picked object = " + pickedIndex);
+			if (pickedIndex == WORLD && !isMenuOn) {
+				// Selection occured, but no object have been selected
+				isMenuOn = true;
+				getSurface().selectAgent(null);
+			}
+		}
+
+		public boolean isPicked(final int objectIndex) {
+			return pickedIndex == objectIndex;
+		}
+
+		public boolean isBeginningPicking() {
+			return isPicking && pickedIndex == NONE;
+		}
+
+		public boolean isMenuOn() {
+			return isMenuOn;
+		}
+
+		public boolean isPicking() {
+			return isPicking;
+		}
+
+	}
 
 	public static int Y_FLAG = -1;
 	
-	private boolean useShaders = false; 
+	protected boolean useShader = false; 
 
-	GLCanvas canvas;
+	public SceneBuffer sceneBuffer;
+	protected ModelScene currentScene;
+	protected GLCanvas canvas;
 	public ICamera camera;
 	public double currentZRotation = 0;
 	int[] viewport = new int[4];
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
-	private GLU glu;
+	protected GLU glu;
 
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
@@ -73,6 +125,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public Abstract3DRenderer(final SWTOpenGLDisplaySurface d) {
 		super(d);
 		camera = new CameraArcBall(this);
+		sceneBuffer = new SceneBuffer(this);
 	}
 
 	public GLAutoDrawable createDrawable(final Composite parent) {
@@ -97,8 +150,14 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		canvas.setLayout(gl);
 		return canvas;
 	}
+	
+	public abstract void initScene();
+	
+	public abstract PickingState getPickingState();
 
-	public abstract ModelScene getCurrentScene();
+	public final ModelScene getCurrentScene() {
+		return currentScene;
+	}
 	
 	public abstract void defineROI(final Point start, final Point end);
 	
@@ -313,8 +372,8 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		return camera.getOrientation();
 	}
 	
-	public final void useShader() {
-		
+	public final boolean useShader() {
+		return useShader;
 	}
 	
 	public abstract boolean mouseInROI(final Point mousePosition);

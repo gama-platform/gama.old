@@ -65,7 +65,7 @@ import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	final GLAnimatorControl animator;
-	final JOGLRenderer renderer;
+	final Abstract3DRenderer renderer;
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
 	Set<IEventLayerListener> listeners = new HashSet();
@@ -746,8 +746,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		return new JOGLRenderer(this);
 	}
 	
-	private JOGLRenderer createModernRenderer() {
-		return new JOGLRenderer(this);
+	private ModernRenderer createModernRenderer() {
+		return new ModernRenderer(this);
 	}
 
 	private GLAnimatorControl createAnimator() {
