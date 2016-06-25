@@ -51,8 +51,8 @@ public class BDIPlan implements IValue {
 	}
 	
 	@getter(SimpleBdiPlanStatement.INTENTION)
-	public Predicate getIntention() {
-		return (Predicate)this.planstatement._intention;
+	public Predicate getIntention(IScope scope) {
+		return (Predicate)this.planstatement._intention.value(scope);
 	}
 	
 	@getter(SimpleBdiArchitecture.INSTANTANEAOUS)

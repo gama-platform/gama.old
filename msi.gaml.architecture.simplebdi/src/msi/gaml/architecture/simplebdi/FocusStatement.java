@@ -24,6 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
@@ -156,6 +157,7 @@ public class FocusStatement extends AbstractStatement {
 					}
 				}
 			}
+			GAMA.releaseScope(scopeMySelf);
 		}
 		return null;
 	}
