@@ -26,9 +26,9 @@ import org.eclipse.swt.widgets.TypedListener;
 
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
 public class FlatButton extends Canvas implements PaintListener, Listener {
 
@@ -212,11 +212,11 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	private int drawImage(final GC gc, final int x, final int y) {
-		if (image == null) {
+		if (getImage() == null) {
 			return x;
 		}
-		gc.drawImage(image, x, y);
-		return x + image.getBounds().width + imagePadding;
+		gc.drawImage(getImage(), x, y);
+		return x + getImage().getBounds().width + imagePadding;
 	}
 
 	@Override

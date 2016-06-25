@@ -430,23 +430,14 @@
                id="msi.gama.application.experiment.toolbar"
                label="Experiment">
             <control
-                  class="ummisco.gama.ui.controls.Separator"
-                  id="separator2765">
-            </control>
-            <control
                   class="ummisco.gama.ui.controls.StatusControlContribution"
                   id="msi.gama.application.status">
             </control>
-            <control
-                  class="ummisco.gama.ui.controls.Separator"
-                  id="separator2003">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="isSimulationReady">
-                  </reference>
-               </visibleWhen>
-            </control>
+            <command
+                  commandId="ummisco.gama.ui.experiment.dummy"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/windows_spacer.png"
+                  style="push">
+            </command>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.run4.png"
@@ -505,28 +496,8 @@
                </visibleWhen>
             </command>
             <control
-                  class="ummisco.gama.ui.controls.Separator"
-                  id="separator4">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="isSimulationReady">
-                  </reference>
-               </visibleWhen>
-            </control>
-            <control
                   class="ummisco.gama.ui.controls.SimulationSpeedContributionItem"
                   id="msi.gama.application.speed">
-               <visibleWhen
-                     checkEnabled="false">
-                  <reference
-                        definitionId="isSimulationReady">
-                  </reference>
-               </visibleWhen>
-            </control>
-            <control
-                  class="ummisco.gama.ui.controls.Separator"
-                  id="separator3">
                <visibleWhen
                      checkEnabled="false">
                   <reference
@@ -970,6 +941,11 @@
             categoryId="msi.gama.category"
             id="msi.gama.application.goto.simulation"
             name="Switch to simulation perspective">
+      </command>
+      <command
+            defaultHandler="ummisco.gama.ui.commands.DummyHandler"
+            id="ummisco.gama.ui.experiment.dummy"
+            name="    ">
       </command>
    </extension>
    <extension

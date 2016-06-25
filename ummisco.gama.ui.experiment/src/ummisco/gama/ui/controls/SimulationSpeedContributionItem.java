@@ -21,8 +21,8 @@ import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
-import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
+import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 
@@ -81,12 +81,13 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 
 	@Override
 	public Control createControl(final Composite parent) {
+
 		final Composite composite = new Composite(parent, SWT.DOUBLE_BUFFERED);
 		final GridLayout layout = new GridLayout(1, false);
-		layout.horizontalSpacing = 4;
+		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginHeight = 0;
-		layout.marginWidth = 0;
+		layout.marginWidth = 16;
 		composite.setLayout(layout);
 		composite.setBackground(parent.getBackground());
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
