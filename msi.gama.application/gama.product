@@ -4,7 +4,7 @@
 <product name="Gama" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.7" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="./launcher_icons/icon205.png"/>
+      <image path="./launcher_icons/icon128.png"/>
       <text>
          GAMA Platform - V1.7.0
 
@@ -71,6 +71,7 @@ openFile
             winExtraLargeHigh="./icons/launcher_icons/icon256_32b.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <solaris include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7</solaris>

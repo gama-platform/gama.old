@@ -11,6 +11,10 @@
  **********************************************************************************************/
 package msi.gama.application.workbench;
 
+import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
@@ -19,6 +23,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
+import org.osgi.framework.Bundle;
 import msi.gama.common.GamaPreferences;
 import msi.gama.runtime.GAMA;
 
@@ -27,6 +32,11 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
 		final IWorkbenchWindowConfigurer configurer) {
 		super(adv, configurer);
+		final Bundle bundle = Platform.getBundle("msi.gama.application");
+
+		final ImageDescriptor myImage =
+			ImageDescriptor.createFromURL(FileLocator.find(bundle, new Path("launcher_icons/icon32.png"), null));
+		configurer.getWindow().getShell().setImage(myImage.createImage());
 	}
 
 	@Override

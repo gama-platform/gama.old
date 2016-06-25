@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ActivationPolicy: lazy
+Eclipse-BundleShape: dir
 Bundle-Name: GamaApplication
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
