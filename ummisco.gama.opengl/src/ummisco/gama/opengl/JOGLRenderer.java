@@ -330,7 +330,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * First pass pepare select buffer for select mode by clearing it, prepare
+	 * First pass prepare select buffer for select mode by clearing it, prepare
 	 * openGL to select mode and tell it where should draw object by using
 	 * gluPickMatrix() method
 	 * 

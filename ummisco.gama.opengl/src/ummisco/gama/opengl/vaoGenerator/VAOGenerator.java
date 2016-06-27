@@ -76,18 +76,39 @@ public class VAOGenerator {
 				}
 				else {
 					// case of 3D polygon : a second 2D polygon is built with an elevation of "depth"
-					result = new float[2*coords.length*3];
-					// we build the polygon witch will correspond to the button face
-					for (int i = 0 ; i < coords.length ; i++) {
-						result[3*i] = (float) coords[i].x;
-						result[3*i+1] = (float) coords[i].y;
-						result[3*i+2] = (float) coords[i].z;
+					if (type == IShape.Type.PYRAMID) {
+						result = new float[(coords.length+1)*3];
+						// We build just one summit
+						float sumX = 0;
+						float sumY = 0;
+						float sumZ = 0;
+						for (int i = 0 ; i < coords.length ; i++) {
+							result[3*i] = (float) coords[i].x;
+							sumX += result[3*i];
+							result[3*i+1] = (float) coords[i].y;
+							sumY += result[3*i+1];
+							result[3*i+2] = (float) coords[i].z;
+							sumZ += result[3*i+2];
+						}
+						// we build the summit of the pyramid
+						result[coords.length*3] = sumX / coords.length;
+						result[coords.length*3+1] = sumY / coords.length;
+						result[coords.length*3+2] = sumZ / coords.length + (float) geomObj.getAttributes().getDepth();
 					}
-					// we build the polygon witch will correspond to the top face
-					for (int i = 0 ; i < coords.length ; i++) {
-						result[coords.length*3+3*i] = (float) coords[i].x;
-						result[coords.length*3+3*i+1] = (float) coords[i].y;
-						result[coords.length*3+3*i+2] = (float) coords[i].z + (float) geomObj.getAttributes().getDepth();
+					else {
+						result = new float[2*coords.length*3];
+						// we build the polygon witch will correspond to the button face
+						for (int i = 0 ; i < coords.length ; i++) {
+							result[3*i] = (float) coords[i].x;
+							result[3*i+1] = (float) coords[i].y;
+							result[3*i+2] = (float) coords[i].z;
+						}
+						// we build the polygon witch will correspond to the top face
+						for (int i = 0 ; i < coords.length ; i++) {
+							result[coords.length*3+3*i] = (float) coords[i].x;
+							result[coords.length*3+3*i+1] = (float) coords[i].y;
+							result[coords.length*3+3*i+2] = (float) coords[i].z + (float) geomObj.getAttributes().getDepth();
+						}
 					}
 				}
 			}
@@ -157,6 +178,11 @@ public class VAOGenerator {
 				case CUBE:
 				{
 					result = UsualShapeFactory.getCubeOrder();
+					break;
+				}
+				case PYRAMID:
+				{
+					result = UsualShapeFactory.getPyramidOrder();
 					break;
 				}
 			}

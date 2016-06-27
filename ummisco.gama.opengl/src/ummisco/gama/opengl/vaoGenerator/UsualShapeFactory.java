@@ -25,4 +25,18 @@ public class UsualShapeFactory {
 				4,7,6,4,6,5};	// top face
 	}
 	
+	public static float[] getPyramidOrder() {
+		//        4
+		//      / | \
+		//     1--|--2 
+		//      \|    \
+		//       0-----3
+		return new float[]{
+				0,1,2,0,2,3, 	// buttom face
+				3,4,0,
+				0,4,1,
+				1,4,2,
+				2,4,3};
+	}
+	
 }

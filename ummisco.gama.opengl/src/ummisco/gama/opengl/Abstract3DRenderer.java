@@ -34,7 +34,6 @@ import com.jogamp.opengl.util.awt.TextRenderer;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IGraphics;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;

@@ -46,6 +46,8 @@ import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
+import ummisco.gama.modernOpenGL.ModernDrawer;
+import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -60,15 +62,18 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class ModernRenderer extends Abstract3DRenderer {
 	
 	private Matrix4f projectionMatrix;
-	private Matrix4f transformationMatrix;
 
+	private ShaderProgram shaderProgram;
+	int[] vboHandles;
+	private ModernDrawer drawer;
+	
 	private final PickingState pickingState = new PickingState();
 	private boolean drawRotationHelper = false;
 	private GamaPoint rotationHelperPosition = null;
 	public boolean colorPicking = false;
 	private Envelope3D ROIEnvelope = null;
-	private ModelScene currentScene;
 	private volatile boolean inited;
+	GL2 gl;
 
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
@@ -105,23 +110,29 @@ public class ModernRenderer extends Abstract3DRenderer {
 		});
 		
 		glu = new GLU();
-		final GL2 gl = drawable.getContext().getGL().getGL2();
+		gl = drawable.getContext().getGL().getGL2();
 		final Color background = data.getBackgroundColor();
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
 				1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
 
-
 		initializeCanvasListeners();
 		
 		// TODO
+		
+		initShader(gl);
+		drawer = new ModernDrawer(this,gl,shaderProgram);
 
 		updateCameraPosition();
 		updatePerspective();
+		
 		// We mark the renderer as inited
 		inited = true;
-
+	}
+	
+	private void initShader(final GL2 gl) {
+		shaderProgram = new ShaderProgram(gl);
 	}
 
 	private boolean visible;
@@ -184,6 +195,11 @@ public class ModernRenderer extends Abstract3DRenderer {
 		final double fov = data.getCameralens();
 
 		projectionMatrix = TransformationMatrix.createProjectionMatrix(data.isOrtho(),height,width,maxDim,fov);
+		
+		shaderProgram.start();
+		shaderProgram.loadProjectionMatrix(projectionMatrix);
+		shaderProgram.loadViewMatrix(camera);
+		shaderProgram.stop();
 
 		camera.animate();
 	}
@@ -350,6 +366,10 @@ public class ModernRenderer extends Abstract3DRenderer {
 			gl.glRotated(currentZRotation, 0, 0, 1);
 			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
 		}
+	}
+	
+	public ModernDrawer getDrawer() {
+		return drawer;
 	}
 
 	public Envelope3D getROIEnvelope() {
@@ -526,7 +546,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 	 */
 	@Override
 	public void endDrawingLayers() {
-		// TODO
+		sceneBuffer.endUpdatingScene();
+		getSurface().invalidateVisibleRegions();
 	}
 
 	public GamaPoint getRealWorldPointFromWindowPoint(final Point windowPoint) {
@@ -561,19 +582,18 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	@Override
 	public boolean cannotDraw() {
-		// TODO Auto-generated method stub
-		return false;
+		return sceneBuffer.getSceneToUpdate() != null && sceneBuffer.getSceneToUpdate().cannotAdd();
 	}
 
 	@Override
 	public void drawROI(GL2 gl) {
-		// TODO Auto-generated method stub
+		// TODO
 		
 	}
 
 	@Override
 	public void drawRotationHelper(GL2 gl) {
-		// TODO Auto-generated method stub
+		// TODO
 		
 	}
 
