@@ -12,6 +12,7 @@
 package ummisco.gama.opengl;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -21,23 +22,16 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.vecmath.Matrix4f;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.swt.GLCanvas;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -45,6 +39,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
@@ -82,29 +77,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	public ModernRenderer(final SWTOpenGLDisplaySurface d) {
 		super(d);
-	}
-
-	public GLAutoDrawable createDrawable(final Composite parent) {
-		final boolean useSharedContext = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue();
-		final GLProfile profile = useSharedContext ? TextureCache.getSharedContext().getGLProfile()
-				: GLProfile.getDefault();
-		final GLCapabilities cap = new GLCapabilities(profile);
-		cap.setStencilBits(8);
-		cap.setDoubleBuffered(true);
-		cap.setHardwareAccelerated(true);
-		cap.setSampleBuffers(true);
-		cap.setAlphaBits(4);
-		cap.setNumSamples(4);
-		canvas = new GLCanvas(parent, SWT.NONE, cap, null);
-		if (useSharedContext) {
-			canvas.setSharedAutoDrawable(TextureCache.getSharedContext());
-		}
-		canvas.setAutoSwapBufferMode(true);
-		new SWTGLAnimator(canvas);
-		canvas.addGLEventListener(this);
-		final FillLayout gl = new FillLayout();
-		canvas.setLayout(gl);
-		return canvas;
+		useShader = true;
 	}
 
 	public void defineROI(final Point start, final Point end) {
@@ -119,30 +92,9 @@ public class ModernRenderer extends Abstract3DRenderer {
 		ROIEnvelope = null;
 	}
 
-	protected void initializeCanvasListeners() {
-
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				if (getCanvas() == null || getCanvas().isDisposed()) {
-					return;
-				}
-				getCanvas().addKeyListener(camera);
-				getCanvas().addMouseListener(camera);
-				getCanvas().addMouseMoveListener(camera);
-				getCanvas().addMouseWheelListener(camera);
-				getCanvas().addMouseTrackListener(camera);
-				//getCanvas().addKeyListener((KeyListener) Camera.getCamera());
-
-			}
-		});
-
-	}
-
 	@Override
 	public void init(final GLAutoDrawable drawable) {
-		glu = new GLU();
+		
 		WorkbenchHelper.run(new Runnable() {
 
 			@Override
@@ -151,6 +103,15 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 			}
 		});
+		
+		glu = new GLU();
+		final GL2 gl = drawable.getContext().getGL().getGL2();
+		final Color background = data.getBackgroundColor();
+		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
+				1.0f);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
+		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
+
 
 		initializeCanvasListeners();
 		
@@ -243,7 +204,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		// we draw the scene on screen
 		currentScene.draw(gl);
 	}
-
+	
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -357,6 +318,18 @@ public class ModernRenderer extends Abstract3DRenderer {
 	@Override
 	public void dispose(final GLAutoDrawable drawable) {
 		// TODO
+		sceneBuffer.garbageCollect((GL2) drawable.getGL());
+		sceneBuffer.dispose();
+
+		textureCache.dispose(drawable.getGL());
+		geometryCache.dispose(drawable.getGL().getGL2());
+		textRendererCache.dispose(drawable.getGL());
+		this.canvas = null;
+		this.camera = null;
+		this.currentLayer = null;
+		// this.setCurrentPickedObject(null);
+		this.currentScene = null;
+		drawable.removeGLEventListener(this);
 	}
 
 	@Override
@@ -602,6 +575,18 @@ public class ModernRenderer extends Abstract3DRenderer {
 	public void drawRotationHelper(GL2 gl) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public Integer getGeometryListFor(GL2 gl, GamaGeometryFile file) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TextRenderer getTextRendererFor(Font font) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -12,6 +12,7 @@
 package ummisco.gama.opengl;
 
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Point;
 import java.nio.IntBuffer;
 import java.util.Map;
@@ -29,6 +30,7 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
+import com.jogamp.opengl.util.awt.TextRenderer;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.GamaPreferences;
@@ -37,6 +39,7 @@ import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
+import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
@@ -46,13 +49,13 @@ import ummisco.gama.opengl.scene.SceneBuffer;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
- * This class plays the role of Renderer and IGraphics. Class JOGLRenderer.
+ * This class plays the role of Renderer and IGraphics. Class Abstract3DRenderer.
  *
  * @author drogoul
  * @since 27 avr. 2015
  *
  */
-public abstract class Abstract3DRenderer extends AbstractDisplayGraphics implements IGraphics, GLEventListener {
+public abstract class Abstract3DRenderer extends AbstractDisplayGraphics implements GLEventListener {
 	
 	public class PickingState {
 
@@ -117,6 +120,11 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
 	protected GLU glu;
+	
+	protected final GeometryCache geometryCache = new GeometryCache();
+	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
+	protected final TextureCache textureCache = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()
+			? TextureCache.getSharedInstance() : new TextureCache();
 
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
@@ -158,6 +166,10 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public final ModelScene getCurrentScene() {
 		return currentScene;
 	}
+	
+	public abstract Integer getGeometryListFor(final GL2 gl, final GamaGeometryFile file);
+
+	public abstract TextRenderer getTextRendererFor(final Font font);
 	
 	public abstract void defineROI(final Point start, final Point end);
 	
@@ -361,7 +373,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public final ILocation getCameraPos() {
 		return camera.getPosition();
 	}
-
 	@Override
 	public final ILocation getCameraTarget() {
 		return camera.getTarget();
@@ -376,6 +387,30 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		return useShader;
 	}
 	
+	public TextureCache getSharedTextureCache() {
+		return textureCache;
+	}
+	
 	public abstract boolean mouseInROI(final Point mousePosition);
+	
+	// TODO : maybe those following functions are to put anywhere else...
+	public void setCurrentColor(final GL2 gl, final Color c, final double alpha) {
+		if (c == null)
+			return;
+		setCurrentColor(gl, c.getRed() / 255d, c.getGreen() / 255d, c.getBlue() / 255d, c.getAlpha() / 255d * alpha);
+	}
+
+	public void setCurrentColor(final GL2 gl, final Color c) {
+		setCurrentColor(gl, c, 1);
+	}
+
+	public void setCurrentColor(final GL2 gl, final double red, final double green, final double blue,
+			final double alpha) {
+		gl.glColor4d(red, green, blue, alpha);
+	}
+
+	public void setCurrentColor(final GL2 gl, final double value) {
+		setCurrentColor(gl, value, value, value, 1);
+	}
 
 }

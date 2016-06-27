@@ -42,7 +42,9 @@ import msi.gaml.statements.draw.FieldDrawingAttributes;
 import ummisco.gama.modernOpenGL.Entity;
 import ummisco.gama.modernOpenGL.Light;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
+import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 import ummisco.gama.opengl.vaoGenerator.VAOGenerator;
 import ummisco.gama.webgl.SimpleGeometryObject;
@@ -64,7 +66,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	volatile boolean isInvalid;
 	volatile boolean overlay;
 	volatile boolean locked;
-	final JOGLRenderer renderer;
+	final Abstract3DRenderer renderer;
 	final LinkedList<List<AbstractObject>> objects = new LinkedList();
 	List<AbstractObject> currentList;
 	Integer openGLListIndex;
@@ -96,8 +98,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 	
 	
 
-	public LayerObject(final JOGLRenderer renderer, final ILayer layer) {
-		this.renderer = renderer;
+	public LayerObject(final Abstract3DRenderer renderer2, final ILayer layer) {
+		this.renderer = renderer2;
 		this.layer = layer;
 		currentList = newCurrentList();
 		objects.add(currentList);
@@ -111,20 +113,20 @@ public class LayerObject implements Iterable<GeometryObject> {
 		return layer == null ? false : layer.isSelectable();
 	}
 
-	public void draw(final GL2 gl, final JOGLRenderer renderer) {
+	public void draw(final GL2 gl, final Abstract3DRenderer renderer) {
 		if (isInvalid()) {
 			return;
 		}
 		
 		if (this.renderer.useShader()) {
-			drawWithShader(gl, renderer);
+			drawWithShader(gl, (ModernRenderer)renderer);
 		}
 		else {
-			drawWithoutShader(gl, renderer);
+			drawWithoutShader(gl, (JOGLRenderer)renderer);
 		}
 	}
 	
-	public void drawWithShader(final GL2 gl, final JOGLRenderer renderer) {
+	public void drawWithShader(final GL2 gl, final ModernRenderer renderer) {
 		if (!isInit) {
 			initShader(gl);
 			isInit=true;
@@ -362,7 +364,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		for (final List<AbstractObject> list : objects) {
 			alpha = alpha + delta;
 			for (final AbstractObject object : list) {
-				final ObjectDrawer drawer = renderer.getDrawerFor(object.getClass());
+				final ObjectDrawer drawer = ((JOGLRenderer)renderer).getDrawerFor(object.getClass());
 				if (isFading) {
 					final double originalAlpha = object.getAlpha();
 					object.setAlpha(originalAlpha * alpha);

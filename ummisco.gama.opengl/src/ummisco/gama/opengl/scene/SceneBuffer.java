@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.jogamp.opengl.GL2;
 
+import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.JOGLRenderer;
 
 /**
@@ -27,14 +28,14 @@ import ummisco.gama.opengl.JOGLRenderer;
  */
 public class SceneBuffer {
 
-	final JOGLRenderer renderer;
+	final Abstract3DRenderer renderer;
 	volatile ModelScene backScene;
 	volatile ModelScene staticScene;
 	volatile ModelScene frontScene;
 	private final Queue<ModelScene> garbage = new ConcurrentLinkedQueue<ModelScene>();
 
-	public SceneBuffer(final JOGLRenderer joglRenderer) {
-		this.renderer = joglRenderer;
+	public SceneBuffer(final Abstract3DRenderer renderer) {
+		this.renderer = renderer;
 	}
 
 	public boolean beginUpdatingScene() {

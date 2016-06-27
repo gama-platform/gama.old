@@ -24,7 +24,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gaml.types.GamaGeometryType;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.Abstract3DRenderer;
 
 public class StaticLayerObject extends LayerObject {
 
@@ -33,7 +33,7 @@ public class StaticLayerObject extends LayerObject {
 	static final GamaPoint WORLD_SCALE = new GamaPoint(1, 1, 1);
 	static final Double WORLD_ALPHA = 1d;
 
-	public StaticLayerObject(final JOGLRenderer renderer) {
+	public StaticLayerObject(final Abstract3DRenderer renderer) {
 		super(renderer, null);
 	}
 
@@ -61,7 +61,7 @@ public class StaticLayerObject extends LayerObject {
 		protected List<GeometryObject> geomObjList = new ArrayList<GeometryObject>();
 		protected List<StringObject> stringObjList = new ArrayList<StringObject>();
 
-		public WordLayerObject(final JOGLRenderer renderer) {
+		public WordLayerObject(final Abstract3DRenderer renderer) {
 			super(renderer);
 			startTime = System.currentTimeMillis();
 			setAlpha(WORLD_ALPHA);
@@ -81,7 +81,7 @@ public class StaticLayerObject extends LayerObject {
 		}
 
 		@Override
-		public void draw(final GL2 gl, final JOGLRenderer renderer) {
+		public void draw(final GL2 gl, final Abstract3DRenderer renderer) {
 			gl.glDisable(GL2.GL_LIGHTING);
 			super.draw(gl, renderer);
 			if (renderer.data.isDrawEnv() && !planDrawn) {

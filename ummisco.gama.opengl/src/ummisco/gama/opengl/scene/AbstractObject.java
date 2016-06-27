@@ -23,6 +23,7 @@ import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public abstract class AbstractObject {
@@ -93,7 +94,7 @@ public abstract class AbstractObject {
 	}
 
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean isPicking) {
-		final JOGLRenderer renderer = drawer.renderer;
+		final Abstract3DRenderer renderer = drawer.renderer;
 		picked = renderer.getPickingState().isPicked(pickingIndex);
 		if (isPicking)
 			gl.glLoadName(pickingIndex);
@@ -131,7 +132,7 @@ public abstract class AbstractObject {
 		this.alpha = alpha;
 	}
 
-	public void preload(final GL2 gl, final JOGLRenderer renderer) {
+	public void preload(final GL2 gl, final Abstract3DRenderer renderer) {
 	}
 
 	public boolean isFilled() {

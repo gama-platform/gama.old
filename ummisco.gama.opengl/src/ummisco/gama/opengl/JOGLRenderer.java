@@ -22,28 +22,20 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-
 import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES1;
 import com.jogamp.opengl.GL2GL3;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -95,40 +87,11 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
-	// Use to inverse y composant
-	// public int yFlag;
-	private final GeometryCache geometryCache = new GeometryCache();
-	private final TextRenderersCache textRendererCache = new TextRenderersCache();
-	private final TextureCache textureCache = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()
-			? TextureCache.getSharedInstance() : new TextureCache();
 	private final JTSDrawer jtsDrawer;
 
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
 		super(d);
 		jtsDrawer = new JTSDrawer(this);
-	}
-
-	public GLAutoDrawable createDrawable(final Composite parent) {
-		final boolean useSharedContext = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue();
-		final GLProfile profile = useSharedContext ? TextureCache.getSharedContext().getGLProfile()
-				: GLProfile.getDefault();
-		final GLCapabilities cap = new GLCapabilities(profile);
-		cap.setStencilBits(8);
-		cap.setDoubleBuffered(true);
-		cap.setHardwareAccelerated(true);
-		cap.setSampleBuffers(true);
-		cap.setAlphaBits(4);
-		cap.setNumSamples(4);
-		canvas = new GLCanvas(parent, SWT.NONE, cap, null);
-		if (useSharedContext) {
-			canvas.setSharedAutoDrawable(TextureCache.getSharedContext());
-		}
-		canvas.setAutoSwapBufferMode(true);
-		new SWTGLAnimator(canvas);
-		canvas.addGLEventListener(this);
-		final FillLayout gl = new FillLayout();
-		canvas.setLayout(gl);
-		return canvas;
 	}
 
 	public void defineROI(final Point start, final Point end) {
@@ -201,25 +164,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		// We mark the renderer as inited
 		inited = true;
 
-	}
-
-	public void setCurrentColor(final GL2 gl, final Color c, final double alpha) {
-		if (c == null)
-			return;
-		setCurrentColor(gl, c.getRed() / 255d, c.getGreen() / 255d, c.getBlue() / 255d, c.getAlpha() / 255d * alpha);
-	}
-
-	public void setCurrentColor(final GL2 gl, final Color c) {
-		setCurrentColor(gl, c, 1);
-	}
-
-	public void setCurrentColor(final GL2 gl, final double red, final double green, final double blue,
-			final double alpha) {
-		gl.glColor4d(red, green, blue, alpha);
-	}
-
-	public void setCurrentColor(final GL2 gl, final double value) {
-		setCurrentColor(gl, value, value, value, 1);
 	}
 
 	public Integer getGeometryListFor(final GL2 gl, final GamaGeometryFile file) {
@@ -469,7 +413,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 		// 7. Seach the select buffer to find the nearest object
 
-		// code below derive which ocjects is nearest from monitor
+		// code below derive which objects is nearest from monitor
 		//
 		if (howManyObjects > 0) {
 			// simple searching algorithm
@@ -808,10 +752,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	@Override
 	public void endOverlay() {
 
-	}
-
-	public TextureCache getSharedTextureCache() {
-		return textureCache;
 	}
 
 	public boolean mouseInROI(final Point mousePosition) {

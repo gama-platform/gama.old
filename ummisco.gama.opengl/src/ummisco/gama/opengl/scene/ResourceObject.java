@@ -21,6 +21,7 @@ import msi.gama.util.file.Gama3DGeometryFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class ResourceObject extends AbstractObject {
@@ -108,7 +109,7 @@ public class ResourceObject extends AbstractObject {
 	}
 
 	@Override
-	public void preload(final GL2 gl, final JOGLRenderer renderer) {
+	public void preload(final GL2 gl, final Abstract3DRenderer renderer) {
 		renderer.getGeometryListFor(gl, file);
 	}
 }
