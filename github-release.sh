@@ -4,7 +4,7 @@ COMMIT=$@
 
 REPO="gama-platform/gama"
 RELEASE="latest"
-thePATH="/home/travis/.m2/repository/msi/gama/msi.gama.application.product/1.7.0-SNAPSHOT/msi.gama.application.product-1.7.0-SNAPSHOT"
+thePATH="/home/travis/build/gama-platform/gama/ummisco.gama.product/target/products/Gama1.7"
 
 
 
