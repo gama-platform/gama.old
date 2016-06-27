@@ -2,27 +2,13 @@ package ummisco.gama.modernOpenGL;
 
 public class Entity {
 	
-	private TexturedModel model;
-	
 	private float[] vertices;
 	private float[] colors;
 	private float[] indices;
 	private float[] normals;
 	
-	public Entity(TexturedModel model) {
-		this.model = model;
-	}
-	
 	public Entity() {
 		
-	}
-
-	public TexturedModel getModel() {
-		return model;
-	}
-
-	public void setModel(TexturedModel model) {
-		this.model = model;
 	}
 
 	public float[] getVertices() {
