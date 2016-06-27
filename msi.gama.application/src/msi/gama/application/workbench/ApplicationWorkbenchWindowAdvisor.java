@@ -32,10 +32,13 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
 		final IWorkbenchWindowConfigurer configurer) {
 		super(adv, configurer);
+
+		// Hack and workaround for the inability to find launcher icons...
+
 		final Bundle bundle = Platform.getBundle("msi.gama.application");
 
 		final ImageDescriptor myImage =
-			ImageDescriptor.createFromURL(FileLocator.find(bundle, new Path("launcher_icons/icon32.png"), null));
+			ImageDescriptor.createFromURL(FileLocator.find(bundle, new Path("branding_icons/icon256.png"), null));
 		configurer.getWindow().getShell().setImage(myImage.createImage());
 	}
 

@@ -3,6 +3,48 @@
 <plugin>
 
    <extension
+         id="product"
+         name="Base product"
+         point="org.eclipse.core.runtime.products">
+      <product
+            application="msi.gama.application.GamaApplication"
+            name="Gama">
+         <property
+               name="windowImages"
+               value="branding_icons/icon16.png,branding_icons/icon32.png,branding_icons/icon48.png,branding_icons/icon64.png,branding_icons/icon128.png,branding_icons/icon256.png">
+         </property>
+         <property
+               name="aboutText"
+               value="GAMA Platform - V1.7.0&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2016 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;&#x0A;Visit http://gama-platform.org">
+         </property>
+         <property
+               name="aboutImage"
+               value="branding_icons/icon128.png">
+         </property>
+         <property
+               name="startupForegroundColor"
+               value="165E93">
+         </property>
+         <property
+               name="startupProgressRect"
+               value="23,468,527,12">
+         </property>
+         <property
+               name="startupMessageRect"
+               value="200,450,541,16">
+         </property>
+         <property
+               name="appName"
+               value="Gama">
+         </property>
+         <property
+               name="preferenceCustomization"
+               value="plugin_customization.ini">
+         </property>
+      </product>
+   </extension>
+
+   <extension
          id="GamaApplication"
          name="Gama"
          point="org.eclipse.core.runtime.applications">
@@ -23,7 +65,7 @@
          point="org.eclipse.core.resources.natures">
       <runtime>
          <run
-               class="msi.gama.application.projects.GamaNature">
+               class="msi.gama.application.projects.GamaNature"> 
          </run>
       </runtime>
       <content-type
@@ -53,45 +95,5 @@
                      class="msi.gama.application.projects.PluginNature">
                </run>
             </runtime>
-         </extension>
-          <extension
-               id="product"
-               point="org.eclipse.core.runtime.products">
-            <product
-                  application="msi.gama.application.GamaApplication"
-                  name="Gama">
-               <property
-                     name="windowImages"
-                     value="./launcher_icons/icon16.png,./launcher_icons/icon32.png,./launcher_icons/icon48.png,./launcher_icons/icon64.png,./launcher_icons/icon128.png,./launcher_icons/icon256.png">
-               </property>
-               <property
-                     name="aboutText"
-                     value="GAMA Platform - V1.7.0&#x0A;&#x0A;(c) 2007-2008 IRD-UR GEODES (France) &amp; IFI-MSI (Vietnam)&#x0A;(c) 2009-2011 UMI 209 UMMISCO IRD/UPMC - MSI (Vietnam)&#x0A;(c) 2012-2016 UMI 209 UMMISCO IRD/UPMC &amp; Partners&#x0A;&#x0A;Visit http://gama-platform.org">
-               </property>
-               <property
-                     name="aboutImage"
-                     value="./launcher_icons/icon205.png">
-               </property>
-               <property
-                     name="startupForegroundColor"
-                     value="165E93">
-               </property>
-               <property
-                     name="startupProgressRect"
-                     value="23,468,527,12">
-               </property>
-               <property
-                     name="startupMessageRect"
-                     value="200,450,541,16">
-               </property>
-               <property
-                     name="appName"
-                     value="Gama">
-               </property>
-               <property
-                     name="preferenceCustomization"
-                     value="plugin_customization.ini">
-               </property>
-            </product>
          </extension>
 </plugin>
