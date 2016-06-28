@@ -729,6 +729,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	static IAgent testPlace(final IScope scope, final IShape source, final IAgentFilter filter, final IShape toTest) {
+		if (filter.accept(scope, source, toTest)) return toTest.getAgent();
 		final List<IAgent> agents = new ArrayList<>(scope.getTopology().getAgentsIn(scope, toTest, filter, false));
 		agents.remove(source);
 		if (agents.isEmpty()) {
