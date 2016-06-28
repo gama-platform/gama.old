@@ -239,7 +239,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final double heightEnv = environmentFrame.getEnvelope().getHeight();
 		double xmin = environmentFrame.getEnvelope().getMinX();
 		double ymin = environmentFrame.getEnvelope().getMinY();
-		final GamaShape gbg = new GamaShape(environmentFrame.getInnerGeometry().buffer(0.1, 2));
+		//final GamaShape gbg = new GamaShape(environmentFrame.getInnerGeometry().buffer(0.1, 2));
 		cellWidth = widthEnv / (numCols * 0.75 + 0.25);
 		cellHeight = heightEnv / (numRows + 0.5);
 		xmin += cellWidth / 2.0;
@@ -249,10 +249,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		int i = 0;
 		for (int l = 0; l < numRows; l++) {
 			for (int c = 0; c < numCols; c = c + 2) {
-				i = c + numRows * l;
+				i = c + numCols * l;
 				final GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight,
 						new GamaPoint(xmin + c * cellWidth * 0.75, ymin + l * cellHeight));
-				if (gbg.covers(poly)) {
+				//if (gbg.covers(poly)) {
 					if (firstCell == -1) {
 						firstCell = i;
 					}
@@ -260,15 +260,18 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					hexAgentToLoc.put(poly, new GamaPoint(c, l));
 					actualNumberOfCells++;
 					lastCell = CmnFastMath.max(lastCell, i);
-				}
+				//}
 			}
 		}
+		
 		for (int l = 0; l < numRows; l++) {
 			for (int c = 1; c < numCols; c = c + 2) {
-				i = c + numRows * l;
+				i = c + numCols * l;
+				
 				final GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight,
 						new GamaPoint(xmin + c * cellWidth * 0.75, ymin + (l + 0.5) * cellHeight));
-				if (gbg.covers(poly)) {
+				
+			//	if (gbg.covers(poly)) {
 					if (firstCell == -1) {
 						firstCell = i;
 					}
@@ -276,7 +279,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					hexAgentToLoc.put(poly, new GamaPoint(c, l));
 					actualNumberOfCells++;
 					lastCell = CmnFastMath.max(lastCell, i);
-				}
+				//}
 			}
 		}
 	}
