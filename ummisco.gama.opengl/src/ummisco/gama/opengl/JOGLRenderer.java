@@ -94,12 +94,14 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		jtsDrawer = new JTSDrawer(this);
 	}
 
+	@Override
 	public void defineROI(final Point start, final Point end) {
 		final GamaPoint startInWorld = getRealWorldPointFromWindowPoint(start);
 		final GamaPoint endInWorld = getRealWorldPointFromWindowPoint(end);
 		ROIEnvelope = new Envelope3D(new Envelope(startInWorld.x, endInWorld.x, startInWorld.y, endInWorld.y));
 	}
 
+	@Override
 	public void cancelROI() {
 		if (camera.isROISticky())
 			return;
@@ -166,10 +168,12 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	}
 
+	@Override
 	public Integer getGeometryListFor(final GL2 gl, final GamaGeometryFile file) {
 		return geometryCache.get(gl, this, file);
 	}
 
+	@Override
 	public TextRenderer getTextRendererFor(final Font font) {
 		return textRendererCache.get(font);
 	}
@@ -240,7 +244,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (!visible) {
 			// We make the canvas visible only after a first display has occured
 			visible = true;
-			WorkbenchHelper.run(new Runnable() {
+			WorkbenchHelper.asyncRun(new Runnable() {
 
 				@Override
 				public void run() {
@@ -482,7 +486,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	public Envelope3D getROIEnvelope() {
 		return ROIEnvelope;
 	}
-	
+
+	@Override
 	public PickingState getPickingState() {
 		return pickingState;
 	}
@@ -490,6 +495,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	// This method is normally called either when the graphics is created or
 	// when the output is changed
 	// @Override
+	@Override
 	public void initScene() {
 		if (sceneBuffer != null) {
 			final ModelScene scene = sceneBuffer.getSceneToRender();
@@ -521,6 +527,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	}
 
+	@Override
 	public void startDrawRotationHelper(final GamaPoint pos) {
 		rotationHelperPosition = pos;
 		drawRotationHelper = true;
@@ -532,6 +539,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 			currentScene.startDrawRotationHelper(pos, size);
 	}
 
+	@Override
 	public void stopDrawRotationHelper() {
 		rotationHelperPosition = null;
 		drawRotationHelper = false;
@@ -539,6 +547,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 			currentScene.stopDrawRotationHelper();
 	}
 
+	@Override
 	public void drawRotationHelper(final GL2 gl) {
 		final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
 				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
@@ -705,6 +714,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		getSurface().invalidateVisibleRegions();
 	}
 
+	@Override
 	public GamaPoint getRealWorldPointFromWindowPoint(final Point windowPoint) {
 		if (glu == null) {
 			return null;
@@ -754,6 +764,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	}
 
+	@Override
 	public boolean mouseInROI(final Point mousePosition) {
 		final Envelope3D env = getROIEnvelope();
 		if (env == null)

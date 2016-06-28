@@ -41,6 +41,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	public static void execute(final int layout) {
+		if (layout == IUnits.none)
+			return;
 		if (modelService == null) {
 			final IEclipseContext context = WorkbenchHelper.getWindow().getService(IEclipseContext.class);
 			modelService = context.get(EModelService.class);

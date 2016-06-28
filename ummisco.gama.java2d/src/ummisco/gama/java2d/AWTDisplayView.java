@@ -20,6 +20,7 @@ import org.eclipse.swt.widgets.Composite;
 import msi.gama.common.GamaPreferences;
 import ummisco.gama.java2d.swing.SwingControl;
 import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.WorkaroundForIssue1353;
 import ummisco.gama.ui.views.displays.LayeredDisplayView;
 
@@ -49,8 +50,15 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 			@Override
 			protected void preferredSizeChanged(final Point minSize, final Point prefSize, final Point maxSize) {
-				surfaceComposite.setSize(prefSize);
-				parent.layout(true, true);
+				WorkbenchHelper.asyncRun(new Runnable() {
+
+					@Override
+					public void run() {
+						surfaceComposite.setSize(prefSize);
+						parent.layout(true, true);
+					}
+				});
+
 			}
 
 			@Override
@@ -71,15 +79,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 					overlay.setVisible(true);
 				}
 				WorkaroundForIssue1353.install();
-				// surfaceComposite.addControlListener(new ControlAdapter() {
-				//
-				// @Override
-				// public void controlResized(final ControlEvent e) {
-				// System.out.println("Resize SWT component : " +
-				// surfaceComposite.getSize());
-				//
-				// }
-				// });
+
 			}
 
 			@Override

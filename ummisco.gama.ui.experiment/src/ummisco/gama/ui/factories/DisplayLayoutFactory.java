@@ -17,10 +17,11 @@ public class DisplayLayoutFactory extends AbstractServiceFactory implements IDis
 
 	@Override
 	public void applyLayout(final int layout) {
-		WorkbenchHelper.run(new Runnable() {
+		WorkbenchHelper.asyncRun(new Runnable() {
 
 			@Override
 			public void run() {
+				//System.out.println("Executing layout");
 				ArrangeDisplayViews.execute(layout);
 
 			}

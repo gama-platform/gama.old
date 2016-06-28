@@ -152,16 +152,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	}
 
 	@Override
-	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {// Construire
-																										// l'image
-																										// a
-																										// partir
-																										// du
-																										// tableau
-																										// de
-																										// doubles
-																										// et
-																										// l'afficher
+	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
 		if (attributes.textures == null) {
 			return null;
 		}
@@ -283,8 +274,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		}
 		currentRenderer.drawString(string, (int) curX, (int) curY);
 		currentRenderer.setTransform(saved);
-		return currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
-
+		final Rectangle2D result = currentRenderer.getFontMetrics().getStringBounds(string, currentRenderer);
+		result.setFrame(curX, curY, result.getWidth(), result.getHeight());
+		return result;
 	}
 
 	@Override
