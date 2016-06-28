@@ -20,7 +20,7 @@ import com.jogamp.opengl.util.texture.Texture;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
-import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.Abstract3DRenderer;
 
 public class ImageObject extends AbstractObject {
 
@@ -41,7 +41,7 @@ public class ImageObject extends AbstractObject {
 	}
 
 	@Override
-	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
+	public Texture getTexture(final GL gl, final Abstract3DRenderer renderer, final int order) {
 		Texture texture = null;
 		if (image == null) {
 			texture = renderer.getCurrentScene().getTexture(gl, file);

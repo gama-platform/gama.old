@@ -6,7 +6,17 @@ public class Entity {
 	private float[] colors;
 	private float[] indices;
 	private float[] normals;
+	private float[] uvMapping;
+	private int textID;
 	
+	public float[] getUvMapping() {
+		return uvMapping;
+	}
+
+	public void setUvMapping(float[] uvMapping) {
+		this.uvMapping = uvMapping;
+	}
+
 	public Entity() {
 		
 	}
@@ -43,6 +53,12 @@ public class Entity {
 		this.normals = normals;
 	}
 	
+	public int getTextureID() {
+		return textID;
+	}
 	
+	public void setTextureID(int id) {
+		this.textID = id;
+	}
 	
 }

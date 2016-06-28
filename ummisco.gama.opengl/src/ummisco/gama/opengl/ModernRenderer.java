@@ -224,7 +224,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * First pass pepare select buffer for select mode by clearing it, prepare
+	 * First pass prepare select buffer for select mode by clearing it, prepare
 	 * openGL to select mode and tell it where should draw object by using
 	 * gluPickMatrix() method
 	 * 
@@ -255,7 +255,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		 * only a small area around the place where the mouse was clicked. In
 		 * order to do that it is necessary to set the matrix mode to
 		 * GL_PROJECTION. Afterwards, the application should push the current
-		 * matrix to save the normal rendering mode settings. Next initialise
+		 * matrix to save the normal rendering mode settings. Next initialize
 		 * the matrix
 		 */
 
@@ -305,9 +305,9 @@ public class ModernRenderer extends Abstract3DRenderer {
 		gl.glPopMatrix();
 		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 
-		// 7. Seach the select buffer to find the nearest object
+		// 7. Search the select buffer to find the nearest object
 
-		// code below derive which ocjects is nearest from monitor
+		// code below derive which objects is nearest from monitor
 		//
 		if (howManyObjects > 0) {
 			// simple searching algorithm
@@ -370,6 +370,10 @@ public class ModernRenderer extends Abstract3DRenderer {
 	
 	public ModernDrawer getDrawer() {
 		return drawer;
+	}
+	
+	public GL2 getContext() {
+		return gl;
 	}
 
 	public Envelope3D getROIEnvelope() {

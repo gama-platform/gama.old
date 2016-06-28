@@ -3,12 +3,14 @@ package ummisco.gama.opengl.vaoGenerator;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaPair;
 import ummisco.gama.modernOpenGL.Entity;
+import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
 
@@ -23,13 +25,25 @@ public class VAOGenerator {
 	
 	public static final float SMOOTH_SHADING_ANGLE = 60f; // in degree
 	
-	public static Entity GenerateVAO(AbstractObject object) {
+	private ModernRenderer renderer;
+	
+	public VAOGenerator(ModernRenderer renderer) {
+		this.renderer = renderer;
+	}
+	
+	public Entity GenerateVAO(AbstractObject object) {
 		
 		Entity result = new Entity();
 		
 		float[] vertices = getObjectVertices(object);
 		float[] colors = getObjectColors(object,vertices.length/3);
 		float[] indices = getObjectIndexBuffer(object);
+		int textId = loadTexture(object);
+		if (textId != -1) {
+			float[] uvMapping = getObjectUVMaping(object);
+			result.setUvMapping(uvMapping);
+			result.setTextureID(textId);
+		}
 		
 		// use smooth angle
 		float[][] newArraysWithSmoothShading = ApplySmoothShading.setSmoothShading(vertices,colors,indices,SMOOTH_SHADING_ANGLE);
@@ -47,7 +61,18 @@ public class VAOGenerator {
 		return result;
 	}
 	
-	public static float[] getObjectVertices(AbstractObject object) {
+	public int loadTexture(AbstractObject object) {
+		Texture texture = object.getTexture(renderer.getContext(), renderer, 0);
+		if (texture == null) {
+			return -1;
+		}
+		else {
+			int textureID = texture.getTextureObject();
+			return textureID;
+		}
+	}
+	
+	public float[] getObjectVertices(AbstractObject object) {
 		float[] result = null;
 		if (object instanceof GeometryObject) {
 			GeometryObject geomObj = (GeometryObject)object;
@@ -136,7 +161,7 @@ public class VAOGenerator {
 		return result;
 	}
 	
-	public static float[] getObjectColors(AbstractObject object, int verticesNb) {
+	public float[] getObjectColors(AbstractObject object, int verticesNb) {
 		float[] result = null;
 		if (object instanceof GeometryObject) {
 
@@ -155,7 +180,7 @@ public class VAOGenerator {
 		return result;
 	}
 	
-	public static float[] getObjectIndexBuffer(AbstractObject object) {
+	public float[] getObjectIndexBuffer(AbstractObject object) {
 
 		float[] result = null;
 		if (object instanceof GeometryObject) {
@@ -190,7 +215,7 @@ public class VAOGenerator {
 		return result;
 	}
 	
-	public static float[] getObjectNormals(final float[] coordinates, final float[] idxBuffer) {
+	public float[] getObjectNormals(final float[] coordinates, final float[] idxBuffer) {
 		
 		
 		
@@ -259,6 +284,16 @@ public class VAOGenerator {
 			result[3*i+2] = zVal;
 		}
 		
+		return result;
+	}
+	
+	public float[] getObjectUVMaping(AbstractObject object) {
+		float[] result = new float[] {
+				0,1,
+				0,0,
+				1,0,
+				1,1
+		};
 		return result;
 	}
 

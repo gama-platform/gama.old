@@ -14,13 +14,22 @@ varying   vec4    varying_Color;
 varying   vec3    surfaceNormal;
 varying   vec3    toLightVector;
 varying   vec3 	  toCameraVector;
+varying   vec2    pass_textureCoords;
 
 uniform   vec3    lightColor;
 uniform   float   shineDamper;
 uniform   float   reflectivity;
+uniform   sampler2D textureSampler;
+uniform   float   useTexture; // 0 for no, 1 for yes
 
 void main (void)
 {
+	vec4 inputColor = varying_Color;
+	if (useTexture > 0.5)
+	{
+		inputColor = texture(textureSampler,pass_textureCoords);
+	}
+
 	vec3 unitNormal = normalize(surfaceNormal);
 	if (!gl_FrontFacing)
 	{
@@ -42,5 +51,5 @@ void main (void)
 	float damperFactor = pow(specularFactor,shineDamper);
 	vec3 finalSpecular = damperFactor * lightColor;
 	
-	gl_FragColor = vec4(diffuse,1.0) * varying_Color + vec4(finalSpecular,1.0);
+	gl_FragColor = vec4(diffuse,1.0) * inputColor + vec4(finalSpecular,1.0);
 }

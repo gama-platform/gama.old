@@ -24,7 +24,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.Abstract3DRenderer;
-import ummisco.gama.opengl.JOGLRenderer;
 
 public abstract class AbstractObject {
 
@@ -62,7 +61,7 @@ public abstract class AbstractObject {
 		return attributes;
 	}
 
-	public Texture getTexture(final GL gl, final JOGLRenderer renderer, final int order) {
+	public Texture getTexture(final GL gl, final Abstract3DRenderer renderer, final int order) {
 		if (textures == null) {
 			return null;
 		}
@@ -75,7 +74,7 @@ public abstract class AbstractObject {
 		return textures[order];
 	}
 
-	private Texture computeTexture(final GL gl, final JOGLRenderer renderer, final int order) {
+	private Texture computeTexture(final GL gl, final Abstract3DRenderer renderer, final int order) {
 		final Object obj = attributes.getTextures().get(order);
 		if (obj instanceof BufferedImage) {
 			return renderer.getCurrentScene().getTexture(gl, (BufferedImage) obj);

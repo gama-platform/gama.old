@@ -136,6 +136,10 @@ public abstract class AbstractShader {
 		gl.glUniform1f(location, value);
 	}
 	
+	protected void loadInt(int location, int value) {
+		gl.glUniform1i(location, value);
+	}
+	
 	protected void loadVector(int location, Vector3f vector) {
 		gl.glUniform3f(location, vector.x, vector.y, vector.z);
 	}

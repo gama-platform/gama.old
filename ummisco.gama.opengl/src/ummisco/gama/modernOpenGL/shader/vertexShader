@@ -16,11 +16,13 @@ uniform vec3    lightPosition;
 attribute vec3  attribute_Position;
 attribute vec4  attribute_Color;
 attribute vec3  attribute_Normal;
+attribute vec3  attribute_TextureCoords;
 
 varying vec4    varying_Color;
 varying vec3	surfaceNormal;
 varying vec3	toLightVector;
 varying vec3 	toCameraVector;
+varying vec2    pass_textureCoords;
 
 void main(void)
 {
@@ -32,4 +34,6 @@ void main(void)
 	surfaceNormal = (transformationMatrix * vec4(attribute_Normal,0.0)).xyz;
 	toLightVector = lightPosition - worldPosition.xyz;
 	toCameraVector = (inverse(viewMatrix) * vec4(0.0,0.0,0.0,1.0)).xyz - worldPosition.xyz;
+	
+	pass_textureCoords = attribute_TextureCoords;
 }

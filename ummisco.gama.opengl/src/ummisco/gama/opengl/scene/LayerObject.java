@@ -59,17 +59,21 @@ public class LayerObject implements Iterable<GeometryObject> {
 	final LinkedList<List<AbstractObject>> objects = new LinkedList();
 	List<AbstractObject> currentList;
 	Integer openGLListIndex;
-	boolean isFading;	
+	boolean isFading;
+	VAOGenerator vaoGenerator;
 	
 	boolean isInit = false;
 	
 
-	public LayerObject(final Abstract3DRenderer renderer2, final ILayer layer) {
-		this.renderer = renderer2;
+	public LayerObject(final Abstract3DRenderer renderer, final ILayer layer) {
+		this.renderer = renderer;
 		this.layer = layer;
 		currentList = newCurrentList();
 		objects.add(currentList);
-		
+		if (renderer.useShader())
+		{
+			vaoGenerator = new VAOGenerator((ModernRenderer)renderer);
+		}
 	}
 
 	private List newCurrentList() {
@@ -98,7 +102,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		for (final List<AbstractObject> list : objects) {
 			for (final AbstractObject object : list) {
 				if (object instanceof GeometryObject) {
-					renderer.getDrawer().addEntity(VAOGenerator.GenerateVAO(object));
+					renderer.getDrawer().addEntity(vaoGenerator.GenerateVAO(object));
 				}
 			}
 		}	
