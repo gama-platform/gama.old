@@ -56,7 +56,7 @@ public class VAOGenerator {
 		// the last coordinate is the same as the first one, no need for this
 		Coordinate[] coords = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 		
-		result = UVMappingGenerator.getObjectUVMaping(type, coords);
+		//result = UVMappingGenerator.getObjectUVMaping(type, coords);
 		
 		return result;
 	}
