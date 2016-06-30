@@ -1,14 +1,11 @@
 package ummisco.gama.opengl.vaoGenerator;
 
 import java.util.Arrays;
-import java.util.HashMap;
 
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Coordinate;
 
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.util.GamaPair;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;

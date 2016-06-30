@@ -26,7 +26,6 @@ public class ManyFacedShape {
 	private ArrayList<int[]> faces; // way to construct a face from the indices of the coordinates (anti clockwise for front face)
 	private float[] coords;
 	private float[] uvMapping;
-	private float[] colors;
 	private float[] normals;
 	private int textId = -1; // "-1" for "no texture"
 	
@@ -59,20 +58,37 @@ public class ManyFacedShape {
 		// the last coordinate is the same as the first one, no need for this
 		this.coordinates = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 		
-		if (depth > 0) {
-			// 3D shape
-			buildBottomFace();
-			buildTopFace();
-			buildLateralFaces();
+		if (isStandardGeometry())
+		{
+			if (depth > 0) {
+				// 3D shape
+				buildBottomFace();
+				buildTopFace();
+				buildLateralFaces();
+			}
+			else {
+				// 2D shape
+				buildTopFace();
+			}
 		}
-		else {
-			// 2D shape
-			buildTopFace();
-		}
+		
 		applySmoothShading();
 		applyTransformation();
 		computeNormals();
 		triangulate();
+	}
+	
+	private boolean isStandardGeometry() {
+		// a standard geometry is a geometry which can be build with
+		// a bottom face and a top face, linked with some lateral faces.
+		// In case the standard geometry is a 2D shape, we only build
+		// the top face.
+		if (type != IShape.Type.SPHERE
+				&& type != IShape.Type.CONE
+				&& type != IShape.Type.PYRAMID) {
+			return true;
+		}
+		return false;
 	}
 	
 	private void buildBottomFace() {
@@ -203,13 +219,13 @@ public class ManyFacedShape {
 		return normals;
 	}
 	
-	public float[] getColors() {
+	public float[] getColorArray(GamaColor gamaColor) {
 		int verticesNb = coords.length / 3;
 		float[] result = null;
-		float[] color = new float[]{ (float)(this.color.red()) /255f,
-				(float)(this.color.green()) /255f, 
-				(float)(this.color.blue()) /255f,
-				(float)(this.color.alpha()) /255f};
+		float[] color = new float[]{ (float)(gamaColor.red()) /255f,
+				(float)(gamaColor.green()) /255f, 
+				(float)(gamaColor.blue()) /255f,
+				(float)(gamaColor.alpha()) /255f};
 		result = new float[verticesNb*4];
 		for (int i = 0 ; i < verticesNb ; i++) {
 			result[4*i] = (float) color[0];
@@ -272,22 +288,41 @@ public class ManyFacedShape {
 		// if triangulate, returns only one result
 		// TODO
 		// if not triangulate, then returns 2 results if draw border
-		
-		result = new DrawingEntity[1];
-		DrawingEntity entity = new DrawingEntity();
-		entity.setVertices(coords);
-		entity.setNormals(normals);
-		entity.setIndices(getIdxBuffer());
-		entity.setColors(getColors());
-		entity.type = DrawingEntity.Type.FILLED;
-		entity.setMaterial(new Material(1,5));
-		if (textId != -1)
-		{
-			entity.setTextureID(textId);
-			entity.setUvMapping(uvMapping);
+		if (borderColor != null) {
+			// two drawing entities
+			result = new DrawingEntity[2];
+			
+			// configure the drawing entity for the border
+			DrawingEntity borderEntity = new DrawingEntity();
+			borderEntity.setVertices(coords);
+			borderEntity.setNormals(normals);
+			borderEntity.setIndices(getIdxBuffer());
+			borderEntity.setColors(getColorArray(borderColor));
+			borderEntity.type = DrawingEntity.Type.BORDER;
+			borderEntity.setMaterial(new Material(1,5));
+			
+			result[1] = borderEntity;
+		}
+		else {
+			// only one drawing entity
+			result = new DrawingEntity[1];
 		}
 		
-		result[0] = entity;
+		// configure the drawing entity for the filled faces
+		DrawingEntity filledEntity = new DrawingEntity();
+		filledEntity.setVertices(coords);
+		filledEntity.setNormals(normals);
+		filledEntity.setIndices(getIdxBuffer());
+		filledEntity.setColors(getColorArray(color));
+		filledEntity.type = DrawingEntity.Type.FILLED;
+		filledEntity.setMaterial(new Material(1,5));
+		if (textId != -1)
+		{
+			filledEntity.setTextureID(textId);
+			filledEntity.setUvMapping(uvMapping);
+		}
+		
+		result[0] = filledEntity;
 		
 		return result;
 	}

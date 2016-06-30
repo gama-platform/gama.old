@@ -62,12 +62,13 @@ public class ModernDrawer {
 	}
 	
 	public void addBorderEntity(DrawingEntity newEntity) {
-		ArrayList<DrawingEntity> borderEntity = mapEntities.get(DrawingEntity.Type.BORDER.toString());
+		ArrayList<DrawingEntity> borderEntities = mapEntities.get(DrawingEntity.Type.BORDER.toString());
 		ArrayList<DrawingEntity> listToAdd = new ArrayList<DrawingEntity>();
-		if (borderEntity == null) {
+		if (borderEntities == null) {
 			listToAdd.add(newEntity);
 		}
 		else {
+			listToAdd = borderEntities;
 			DrawingEntity entity = listToAdd.get(0); // only one element for "border"
 			// we concatenate newEntity with the other entities
 			listToAdd.add(entity.concatenateWith(newEntity));
