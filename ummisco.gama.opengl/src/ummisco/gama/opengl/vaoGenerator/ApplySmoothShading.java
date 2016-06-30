@@ -10,8 +10,8 @@ public class ApplySmoothShading {
 		// the vertices witch belongs to two faces with an angle bigger than the smoothAngle.
 		float[][] result = new float[3][]; // result[0] for posVertices, result[1] for colorVertices, result[2] for idxVertices
 		
-		// a default value
-		smoothAngle = (float) Math.toRadians(60);
+		// to radians
+		smoothAngle = (float) Math.toRadians(smoothAngle);
 		
 		int lastIdx = posVertices.length/3;
 		

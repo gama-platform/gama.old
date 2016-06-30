@@ -23,12 +23,10 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.util.GamaPair;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.jts.JTSDrawer;
 import ummisco.gama.opengl.utils.GLUtilGLContext;
-import ummisco.gama.opengl.utils.GLUtilLight;
 
 /**
  *

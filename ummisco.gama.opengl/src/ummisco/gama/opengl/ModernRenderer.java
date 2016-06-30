@@ -50,6 +50,7 @@ import ummisco.gama.modernOpenGL.ModernDrawer;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
+import ummisco.gama.opengl.vaoGenerator.VAOGenerator;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -66,6 +67,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 	private ShaderProgram shaderProgram;
 	int[] vboHandles;
 	private ModernDrawer drawer;
+	private VAOGenerator vaoGenerator;
 	
 	private final PickingState pickingState = new PickingState();
 	private boolean drawRotationHelper = false;
@@ -109,6 +111,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 			}
 		});
 		
+		vaoGenerator = new VAOGenerator(this);
+		
 		glu = new GLU();
 		gl = drawable.getContext().getGL().getGL2();
 		final Color background = data.getBackgroundColor();
@@ -147,6 +151,15 @@ public class ModernRenderer extends Abstract3DRenderer {
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
+		
+		final Color background = data.getBackgroundColor();
+		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
+				1.0f);
+		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT   );
+		
+		gl.glClearDepth(1.0f);
+		gl.glEnable(GL.GL_DEPTH_TEST); // enables depth testing
+		gl.glDepthFunc(GL.GL_LEQUAL); // the type of depth test to do
 
 		// TODO Is this line necessary ? The changes are made in init and
 		// reshape
@@ -370,6 +383,10 @@ public class ModernRenderer extends Abstract3DRenderer {
 	
 	public ModernDrawer getDrawer() {
 		return drawer;
+	}
+	
+	public VAOGenerator getVAOGenerator() {
+		return vaoGenerator;
 	}
 	
 	public GL2 getContext() {
