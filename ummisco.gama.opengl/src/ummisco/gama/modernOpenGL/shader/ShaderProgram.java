@@ -21,6 +21,7 @@ public class ShaderProgram extends AbstractShader {
 	private int location_shineDamper;	// for specular light
 	private int location_reflectivity;	// for specular light
 	private int location_useTexture;	// 0 for no, 1 for yes
+	private int location_useNormals;	// 0 for no, 1 for yes
 	private int location_texture;
 	
 	public static final int POSITION_ATTRIBUTE_IDX = 0;
@@ -49,6 +50,7 @@ public class ShaderProgram extends AbstractShader {
 		location_shineDamper = getUniformLocation("shineDamper");
 		location_reflectivity = getUniformLocation("reflectivity");
 		location_useTexture = getUniformLocation("useTexture");
+		location_useNormals = getUniformLocation("useNormals");
 		location_texture = getUniformLocation("textureSampler");
 	}
 	
@@ -78,5 +80,13 @@ public class ShaderProgram extends AbstractShader {
 	public void loadTexture(int textureId) {
 		super.loadFloat(location_useTexture,1f);
 		super.loadInt(location_texture,textureId);
+	}
+	
+	public void disableNormal() {
+		super.loadFloat(location_useNormals, 0f);
+	}
+	
+	public void enableNormal() {
+		super.loadFloat(location_useNormals, 1f);
 	}
 }

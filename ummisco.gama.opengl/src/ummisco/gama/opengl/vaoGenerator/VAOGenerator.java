@@ -26,7 +26,7 @@ public class VAOGenerator {
 		
 		GeometryObject geomObj = (GeometryObject)object;
 		int textId = loadTexture(object);
-		ManyFacedShape shape = new ManyFacedShape(geomObj,textId);	
+		ManyFacedShape shape = new ManyFacedShape(geomObj,textId,renderer.data.isTriangulation());	
 		
 		return shape.getDrawingEntities();
 	}

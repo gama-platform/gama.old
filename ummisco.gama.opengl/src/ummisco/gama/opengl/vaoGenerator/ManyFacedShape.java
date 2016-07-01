@@ -22,12 +22,16 @@ import ummisco.gama.opengl.utils.Utils;
 public class ManyFacedShape {
 	
 	public static float SMOOTH_SHADING_ANGLE = 60f; // in degree
+	public static GamaColor TRIANGULATION_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
 	
+	private boolean isTriangulation;
 	private ArrayList<int[]> faces; // way to construct a face from the indices of the coordinates (anti clockwise for front face)
 	private float[] coords;
 	private float[] uvMapping;
 	private float[] normals;
 	private int textId = -1; // "-1" for "no texture"
+	private float[] coordsForBorder;
+	private float[] idxForBorder;
 	
 	private int[] topFace;
 	private int[] bottomFace;
@@ -42,7 +46,7 @@ public class ManyFacedShape {
 	private GamaColor borderColor;
 	private Coordinate[] coordinates;
 	
-	public ManyFacedShape(GeometryObject geomObj, int textId) {
+	public ManyFacedShape(GeometryObject geomObj, int textId, boolean isTriangulation) {
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
 		this.type = geomObj.getType();
@@ -53,6 +57,7 @@ public class ManyFacedShape {
 		this.color = geomObj.getAttributes().color;
 		this.borderColor = geomObj.getAttributes().getBorder();
 		this.textId = textId;
+		this.isTriangulation = isTriangulation;
 		
 		Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
 		// the last coordinate is the same as the first one, no need for this
@@ -71,11 +76,20 @@ public class ManyFacedShape {
 				buildTopFace();
 			}
 		}
+		else if (isPyramid())
+		{
+			buildBottomFace();
+			buildPyramidSummit();
+			buildLateralFaces();
+		}
+		
+		initBorder();
 		
 		applySmoothShading();
 		applyTransformation();
 		computeNormals();
-		computeUVMapping();
+		if (textId != -1)
+			computeUVMapping();
 		triangulate();
 	}
 	
@@ -89,7 +103,28 @@ public class ManyFacedShape {
 				&& type != IShape.Type.PYRAMID) {
 			return true;
 		}
+		else if (type == IShape.Type.CONE) {
+			// cone 2D is a standard geometry
+			if (depth == 0) {
+				return true;
+			}
+		}
 		return false;
+	}
+	
+	private boolean isPyramid() {
+		// a pyramid geometry is either a 3D cone or a pyramid (made with a base, a summit and
+		// generated lateral faces)
+		if ( (type == IShape.Type.CONE && depth > 0)
+				|| type == IShape.Type.PYRAMID) {
+			return true;
+		}
+		return false;
+	}
+	
+	private void initBorder() {
+		idxForBorder = getIdxBufferForLines();
+		coordsForBorder = coords;
 	}
 	
 	private void computeUVMapping() {
@@ -102,17 +137,17 @@ public class ManyFacedShape {
 		for (int i = 0 ; i < faces.size() ; i++) {
 			// TODO : for other shape, for the moment it's just for squared face !!
 			// vertex 1 :
-			uvMapping[idx++] = 1;
-			uvMapping[idx++] = 1;
+			uvMapping[idx++] = 0;
+			uvMapping[idx++] = 0;
 			// vertex 2 :
-			uvMapping[idx++] = 1;
 			uvMapping[idx++] = 0;
+			uvMapping[idx++] = 1;
 			// vertex 3 :
-			uvMapping[idx++] = 0;
-			uvMapping[idx++] = 0;
-			// vertex 4 :
-			uvMapping[idx++] = 0;
 			uvMapping[idx++] = 1;
+			uvMapping[idx++] = 1;
+			// vertex 4 :
+			uvMapping[idx++] = 1;
+			uvMapping[idx++] = 0;
 		}
 	}
 	
@@ -150,20 +185,61 @@ public class ManyFacedShape {
 		this.coords = Utils.concatFloatArrays(this.coords,result);
 	}
 	
+	private void buildPyramidSummit() {
+		float[] center = new float[2];
+		float[] coordSum = new float[2];
+		// 1) compute the center of the base
+		// sum the coordinates
+		for (int i = 0 ; i < coordinates.length ; i++) {
+			coordSum[0] += (float) coordinates[i].x;
+			coordSum[1] += (float) coordinates[i].y;
+		}
+		// divide by the number of vertices to get the center
+		center[0] = coordSum[0] / coordinates.length;
+		center[1] = coordSum[1] / coordinates.length;
+		
+		// 2) determine the coordinate of the summit
+		float[] summitCoordinates = new float[] {
+				center[0],
+				center[1],
+				(float) depth
+		};
+		
+		// 3) add this summit to the "coords", set the topFace.
+		int[] vtxIdxForSummit = new int[]{coordinates.length};
+		topFace = vtxIdxForSummit;
+		this.coords = Utils.concatFloatArrays(this.coords,summitCoordinates);
+	}
+	
 	private void buildLateralFaces() {
-		for (int i = 0 ; i < topFace.length ; i++) {
-			int[] newFace = new int[4];
-			newFace[0] = topFace[i];
-			newFace[1] = bottomFace[bottomFace.length-i-1];
-			if (i < topFace.length - 1)
-				newFace[2] = bottomFace[bottomFace.length-i-2];
-			else
-				newFace[2] = bottomFace[bottomFace.length-1];
-			if (i < topFace.length - 1)
-				newFace[3] = topFace[i+1];
-			else
-				newFace[3] = topFace[0];
-			faces.add(newFace);
+		if (topFace.length == 1) {
+			// case of pyramid : the topFace is just the summit
+			for (int i = 0 ; i < bottomFace.length ; i++) {
+				int[] newFace = new int[3];
+				newFace[0] = topFace[0];
+				newFace[1] = bottomFace[bottomFace.length-i-1];
+				if (i < bottomFace.length - 1)
+					newFace[2] = bottomFace[bottomFace.length-i-2];
+				else
+					newFace[2] = bottomFace[bottomFace.length-1];
+				faces.add(newFace);
+			}
+		}
+		else {
+			for (int i = 0 ; i < topFace.length ; i++) {
+				int[] newFace = new int[4];
+				newFace[0] = topFace[i];
+				newFace[1] = bottomFace[bottomFace.length-i-1];
+				if (i < topFace.length - 1)
+					newFace[2] = bottomFace[bottomFace.length-i-2];
+				else
+					newFace[2] = bottomFace[bottomFace.length-1];
+				if (i < topFace.length - 1)
+					newFace[3] = topFace[i+1];
+				else
+					newFace[3] = topFace[0];
+				faces.add(newFace);
+			}
 		}
 	}
 	
@@ -230,6 +306,26 @@ public class ManyFacedShape {
 		for (int[] face : faces) {
 			for (int i : face) {
 				result[cpt] = i;
+				cpt++;
+			}
+		}
+		return result;
+	}
+	
+	public float[] getIdxBufferForLines() {
+		
+		int sizeOfBuffer = 0;
+		for (int[] face : faces) {
+			sizeOfBuffer += face.length;
+		}
+		float[] result = new float[sizeOfBuffer*2];
+		int cpt = 0;
+		for (int[] face : faces) {
+			for (int i = 0 ; i < face.length ; i++) {
+				result[cpt] = face[i];
+				cpt++;
+				int nextIdx = (i == face.length-1) ? face[0] : face[i+1];
+				result[cpt] = nextIdx;
 				cpt++;
 			}
 		}
@@ -311,43 +407,59 @@ public class ManyFacedShape {
 		// in case it has been asked to draw the border)
 		DrawingEntity[] result = null;
 		// if triangulate, returns only one result
-		// TODO
-		// if not triangulate, then returns 2 results if draw border
-		if (borderColor != null) {
-			// two drawing entities
-			result = new DrawingEntity[2];
+		if (isTriangulation) {
+			result = new DrawingEntity[1];
 			
 			// configure the drawing entity for the border
 			DrawingEntity borderEntity = new DrawingEntity();
 			borderEntity.setVertices(coords);
 			borderEntity.setNormals(normals);
-			borderEntity.setIndices(getIdxBuffer());
-			borderEntity.setColors(getColorArray(borderColor));
+			borderEntity.setIndices(getIdxBufferForLines());
+			borderEntity.setColors(getColorArray(TRIANGULATION_COLOR));
 			borderEntity.type = DrawingEntity.Type.BORDER;
 			borderEntity.setMaterial(new Material(1,5));
 			
-			result[1] = borderEntity;
+			result[0] = borderEntity;
 		}
 		else {
-			// only one drawing entity
-			result = new DrawingEntity[1];
+			// if not triangulate, then returns 2 results if draw border
+			if (borderColor != null) {
+				// two drawing entities
+				result = new DrawingEntity[2];
+				
+				// configure the drawing entity for the border
+				DrawingEntity borderEntity = new DrawingEntity();
+				borderEntity.setVertices(coordsForBorder);
+				borderEntity.setNormals(normals);
+				borderEntity.setIndices(idxForBorder);
+				borderEntity.setColors(getColorArray(borderColor));
+				borderEntity.type = DrawingEntity.Type.BORDER;
+				borderEntity.setMaterial(new Material(1,5));
+				
+				result[1] = borderEntity;
+			}
+			else {
+				// only one drawing entity
+				result = new DrawingEntity[1];
+			}
+			
+			// configure the drawing entity for the filled faces
+			DrawingEntity filledEntity = new DrawingEntity();
+			filledEntity.setVertices(coords);
+			filledEntity.setNormals(normals);
+			filledEntity.setIndices(getIdxBuffer());
+			filledEntity.setColors(getColorArray(color));
+			filledEntity.type = DrawingEntity.Type.FILLED;
+			filledEntity.setMaterial(new Material(1,5));
+			if (textId != -1)
+			{
+				filledEntity.type = DrawingEntity.Type.TEXTURED;
+				filledEntity.setTextureID(textId);
+				filledEntity.setUvMapping(uvMapping);
+			}
+			
+			result[0] = filledEntity;
 		}
-		
-		// configure the drawing entity for the filled faces
-		DrawingEntity filledEntity = new DrawingEntity();
-		filledEntity.setVertices(coords);
-		filledEntity.setNormals(normals);
-		filledEntity.setIndices(getIdxBuffer());
-		filledEntity.setColors(getColorArray(color));
-		filledEntity.type = DrawingEntity.Type.FILLED;
-		filledEntity.setMaterial(new Material(1,5));
-		if (textId != -1)
-		{
-			filledEntity.setTextureID(textId);
-			filledEntity.setUvMapping(uvMapping);
-		}
-		
-		result[0] = filledEntity;
 		
 		return result;
 	}
@@ -396,17 +508,17 @@ public class ManyFacedShape {
 		int[] face = faces.get(faceIdx);
 		for (int faceIdxToCompare = 0 ; faceIdxToCompare < faces.size() ; faceIdxToCompare++) {
 			if (faceIdxToCompare != faceIdx) {
-				boolean vertexInBothFaces = false;
 				int[] faceToCompare = faces.get(faceIdxToCompare);
+				int cpt = 0;
 				for (int vIdx : face) {
 					for (int vIdx2 : faceToCompare) {
 						if ( vIdx == vIdx2 ) {
-							vertexInBothFaces = true;
+							cpt++;
 							break;
 						}
 					}
 				}
-				if (vertexInBothFaces) {
+				if (cpt > 1) {
 					// some vertices are in common with the current face --> the face is a connexe one
 					list.add(faceIdxToCompare);
 				}

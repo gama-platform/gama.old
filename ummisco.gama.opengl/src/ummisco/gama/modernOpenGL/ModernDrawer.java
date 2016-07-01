@@ -26,6 +26,8 @@ public class ModernDrawer {
 	HashMap<String,ArrayList<DrawingEntity>> mapEntities = new HashMap<String,ArrayList<DrawingEntity>>();
 	final ModernRenderer renderer;
 	GL2 gl;
+	
+	ArrayList<Integer> listOfVAOUsed = new ArrayList<Integer>();
 
 	static final int COLOR_IDX = 0;
 	static final int VERTICES_IDX = 1;
@@ -107,8 +109,34 @@ public class ModernDrawer {
 		mapEntities.put(DrawingEntity.Type.FILLED.toString(), listToAdd);
 	}
 	
-	public void addTexturedEntity(DrawingEntity entity) {
-		// TODO
+	public void addTexturedEntity(DrawingEntity newEntity) {
+		ArrayList<DrawingEntity> filledEntities = mapEntities.get(DrawingEntity.Type.TEXTURED.toString());
+		ArrayList<DrawingEntity> listToAdd = new ArrayList<DrawingEntity>();
+		if (filledEntities == null) {
+			listToAdd.add(newEntity);
+		}
+		else {
+			listToAdd = filledEntities;
+			// add to the entities with the same material
+			boolean entityAdded = false;
+			for (int i = 0 ; i < filledEntities.size() ; i++) {
+				DrawingEntity entity = filledEntities.get(i);
+				if (entity.getMaterial().equalsTo(newEntity.getMaterial()) 
+						&& entity.getTextureID() == newEntity.getTextureID()) {
+					// same material --> we concatenate newEntity with the other entities with the same material
+					listToAdd.add(entity.concatenateWith(newEntity));
+					// we remove the old entity
+					listToAdd.remove(i);
+					// we change the value of the flag
+					entityAdded = true;
+				}
+			}
+			if (!entityAdded) {
+				// the material of newEntity has not been added yet. Create a new entity
+				listToAdd.add(newEntity);
+			}
+		}
+		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), listToAdd);
 	}
 	
 	public void clearEntityList() {
@@ -141,15 +169,23 @@ public class ModernDrawer {
 				}
 			}
 		}
-		mapEntities.clear();
 		
 		shaderProgram.stop();
+		
+		mapEntities.clear();
 	}
 	
 	private void genericDrawMethod(DrawingEntity entity, String drawingType) {
-		float shineDamper = entity.getMaterial().getShineDamper();
-		float reflectivity = entity.getMaterial().getReflectivity();
-		shaderProgram.loadShineVariables(shineDamper,reflectivity);
+		boolean useNormals = (drawingType.equals(DrawingEntity.Type.BORDER.toString())) ? false : true;
+		if (useNormals) {
+			shaderProgram.enableNormal();
+			float shineDamper = entity.getMaterial().getShineDamper();
+			float reflectivity = entity.getMaterial().getReflectivity();
+			shaderProgram.loadShineVariables(shineDamper,reflectivity);
+		}
+		else {
+			shaderProgram.disableNormal();
+		}
 		
 		float[] vertices = entity.getVertices();
 		float[] colors = entity.getColors();
@@ -175,7 +211,8 @@ public class ModernDrawer {
 		}
 		
 		// NORMAL BUFFER
-		storeDataInAttributeList(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,normals);
+		if (useNormals)
+			storeDataInAttributeList(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,normals);
 		
 		// INDEX BUFFER
 		int[] intIdxBuff = new int[idxBuffer.length];
@@ -191,18 +228,14 @@ public class ModernDrawer {
 
 		if (drawingType.equals(DrawingEntity.Type.BORDER.toString())) {
 			// draw border (lines)
-			gl.glDrawElements(GL2.GL_LINE, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
+			gl.glDrawElements(GL2.GL_LINES, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
 		}
 		else {
 			// draw triangles
 			gl.glDrawElements(GL2.GL_TRIANGLES, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
 		}
 
-		gl.glDisableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX); // Allow release of vertex position memory
-		gl.glDisableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX); // Allow release of vertex color memory
-		gl.glDisableVertexAttribArray(ShaderProgram.NORMAL_ATTRIBUTE_IDX); // Allow release of vertex normal memory
-		if (uvMapping != null)
-			gl.glDisableVertexAttribArray(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX); // Allow release of uvMapping memory
+		releaseVAOMemory();
 	}
 	
 	private void storeDataInAttributeList(int shaderAttributeNumber, int bufferAttributeNumber, float[] data) {
@@ -225,6 +258,14 @@ public class ModernDrawer {
 		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
 		                    0 /* The bound VBO data offset */);
 		gl.glEnableVertexAttribArray(shaderAttributeNumber);
+		listOfVAOUsed.add(shaderAttributeNumber);
+	}
+	
+	private void releaseVAOMemory() {
+		for (Integer vao : listOfVAOUsed) {
+			gl.glDisableVertexAttribArray(vao);
+		}
+		listOfVAOUsed.clear();
 	}
 
 }

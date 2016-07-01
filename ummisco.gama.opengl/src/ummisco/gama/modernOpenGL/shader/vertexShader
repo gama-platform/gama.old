@@ -12,6 +12,7 @@ uniform mat4    transformationMatrix;
 uniform mat4    projectionMatrix;
 uniform mat4    viewMatrix;
 uniform vec3    lightPosition;
+uniform float   useNormals; // 0 for no, 1 for yes
 
 attribute vec3  attribute_Position;
 attribute vec4  attribute_Color;
@@ -23,6 +24,7 @@ varying vec3	surfaceNormal;
 varying vec3	toLightVector;
 varying vec3 	toCameraVector;
 varying vec2    pass_textureCoords;
+varying float   varying_useNormals;
 
 void main(void)
 {
@@ -31,9 +33,14 @@ void main(void)
 	varying_Color = attribute_Color;
 	gl_Position = projectionMatrix * viewMatrix * worldPosition;
 	
-	surfaceNormal = (transformationMatrix * vec4(attribute_Normal,0.0)).xyz;
-	toLightVector = lightPosition - worldPosition.xyz;
-	toCameraVector = (inverse(viewMatrix) * vec4(0.0,0.0,0.0,1.0)).xyz - worldPosition.xyz;
+	varying_useNormals = useNormals;
 	
-	pass_textureCoords = attribute_TextureCoords;
+	if (useNormals > 0.5)
+	{
+		surfaceNormal = (transformationMatrix * vec4(attribute_Normal,0.0)).xyz;
+		toLightVector = lightPosition - worldPosition.xyz;
+		toCameraVector = (inverse(viewMatrix) * vec4(0.0,0.0,0.0,1.0)).xyz - worldPosition.xyz;
+		
+		pass_textureCoords = attribute_TextureCoords;
+	}
 }

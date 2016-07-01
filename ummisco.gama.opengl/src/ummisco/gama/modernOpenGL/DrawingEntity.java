@@ -79,7 +79,7 @@ public class DrawingEntity {
 	public DrawingEntity concatenateWith(DrawingEntity entity) {
 		DrawingEntity result = new DrawingEntity();
 		// we store the number of vertices (we will need to add this value to the idx of the second entity)
-		int nbVertices = vertices.length;
+		int nbVertices = vertices.length/3;
 		result.setColors(Utils.concatFloatArrays(colors, entity.getColors()));
 		result.setVertices(Utils.concatFloatArrays(vertices, entity.getVertices()));
 		result.setNormals(Utils.concatFloatArrays(normals, entity.getNormals()));
