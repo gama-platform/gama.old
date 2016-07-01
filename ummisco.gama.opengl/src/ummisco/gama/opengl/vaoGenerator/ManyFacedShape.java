@@ -75,6 +75,7 @@ public class ManyFacedShape {
 		applySmoothShading();
 		applyTransformation();
 		computeNormals();
+		computeUVMapping();
 		triangulate();
 	}
 	
@@ -89,6 +90,30 @@ public class ManyFacedShape {
 			return true;
 		}
 		return false;
+	}
+	
+	private void computeUVMapping() {
+		int sizeArray = 0;
+		for (int i = 0 ; i < faces.size() ; i++) {
+			sizeArray += faces.get(i).length;
+		}
+		int idx = 0;
+		uvMapping = new float[sizeArray*2];
+		for (int i = 0 ; i < faces.size() ; i++) {
+			// TODO : for other shape, for the moment it's just for squared face !!
+			// vertex 1 :
+			uvMapping[idx++] = 1;
+			uvMapping[idx++] = 1;
+			// vertex 2 :
+			uvMapping[idx++] = 1;
+			uvMapping[idx++] = 0;
+			// vertex 3 :
+			uvMapping[idx++] = 0;
+			uvMapping[idx++] = 0;
+			// vertex 4 :
+			uvMapping[idx++] = 0;
+			uvMapping[idx++] = 1;
+		}
 	}
 	
 	private void buildBottomFace() {

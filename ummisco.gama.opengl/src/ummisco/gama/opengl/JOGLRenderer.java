@@ -17,12 +17,9 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.BufferOverflowException;
-import java.nio.IntBuffer;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES1;
@@ -84,9 +81,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	private Envelope3D ROIEnvelope = null;
 	private volatile boolean inited;
 
-	public static Boolean isNonPowerOf2TexturesAvailable = false;
-	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
-	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 	private final JTSDrawer jtsDrawer;
 
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {

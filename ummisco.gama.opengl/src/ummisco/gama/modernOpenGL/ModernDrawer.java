@@ -140,8 +140,8 @@ public class ModernDrawer {
 					genericDrawMethod(entity,key);
 				}
 			}
-			
 		}
+		mapEntities.clear();
 		
 		shaderProgram.stop();
 	}
@@ -185,7 +185,7 @@ public class ModernDrawer {
 		IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuff);
 		// Select the VBO, GPU memory data, to use for colors
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[IDX_BUFF_IDX]);
-		int numBytes = colors.length * 4;
+		int numBytes = idxBuffer.length * 4;
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
 		ibIdxBuff.rewind();
 
@@ -201,7 +201,8 @@ public class ModernDrawer {
 		gl.glDisableVertexAttribArray(ShaderProgram.POSITION_ATTRIBUTE_IDX); // Allow release of vertex position memory
 		gl.glDisableVertexAttribArray(ShaderProgram.COLOR_ATTRIBUTE_IDX); // Allow release of vertex color memory
 		gl.glDisableVertexAttribArray(ShaderProgram.NORMAL_ATTRIBUTE_IDX); // Allow release of vertex normal memory
-		gl.glDisableVertexAttribArray(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX); // Allow release of uvMapping memory
+		if (uvMapping != null)
+			gl.glDisableVertexAttribArray(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX); // Allow release of uvMapping memory
 	}
 	
 	private void storeDataInAttributeList(int shaderAttributeNumber, int bufferAttributeNumber, float[] data) {
