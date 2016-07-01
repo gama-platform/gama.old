@@ -1,6 +1,7 @@
 package ummisco.gama.modernOpenGL.shader;
 
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
@@ -23,6 +24,7 @@ public class ShaderProgram extends AbstractShader {
 	private int location_useTexture;	// 0 for no, 1 for yes
 	private int location_useNormals;	// 0 for no, 1 for yes
 	private int location_texture;
+	private int location_ambientLight;
 	
 	public static final int POSITION_ATTRIBUTE_IDX = 0;
 	public static final int COLOR_ATTRIBUTE_IDX = 1;
@@ -52,6 +54,7 @@ public class ShaderProgram extends AbstractShader {
 		location_useTexture = getUniformLocation("useTexture");
 		location_useNormals = getUniformLocation("useNormals");
 		location_texture = getUniformLocation("textureSampler");
+		location_ambientLight = getUniformLocation("ambientLight");
 	}
 	
 	public void loadShineVariables(float damper, float reflectivity) {
@@ -66,6 +69,10 @@ public class ShaderProgram extends AbstractShader {
 	public void loadLight(Light light) {
 		super.loadVector(location_lightPosition,light.getPosition());
 		super.loadVector(location_lightColor,light.getColor());
+	}
+	
+	public void loadAmbientLight(Vector3f light) {
+		super.loadVector(location_ambientLight,light);
 	}
 	
 	public void loadProjectionMatrix(Matrix4f matrix) {

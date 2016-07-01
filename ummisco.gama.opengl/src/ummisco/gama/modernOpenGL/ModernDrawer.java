@@ -182,6 +182,10 @@ public class ModernDrawer {
 			float shineDamper = entity.getMaterial().getShineDamper();
 			float reflectivity = entity.getMaterial().getReflectivity();
 			shaderProgram.loadShineVariables(shineDamper,reflectivity);
+			shaderProgram.loadAmbientLight(new Vector3f(
+					(float) renderer.data.getAmbientLightColor().getRed() / 255f,
+					(float) renderer.data.getAmbientLightColor().getGreen() / 255f,
+					(float) renderer.data.getAmbientLightColor().getBlue() / 255f));
 		}
 		else {
 			shaderProgram.disableNormal();
