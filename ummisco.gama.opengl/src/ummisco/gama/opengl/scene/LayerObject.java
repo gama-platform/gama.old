@@ -35,7 +35,6 @@ import msi.gaml.statements.draw.FieldDrawingAttributes;
 import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.ModernRenderer;
-import ummisco.gama.opengl.vaoGenerator.VAOGenerator;
 import ummisco.gama.webgl.SimpleGeometryObject;
 import ummisco.gama.webgl.SimpleLayer;
 
