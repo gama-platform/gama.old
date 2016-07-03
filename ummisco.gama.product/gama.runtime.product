@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Gama" uid="ummisco.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.7.0.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="Gama (runtime)" uid="ummisco.gama.application.runtime.product" id="msi.gama.application.runtime" application="msi.gama.application.GamaApplication" version="1.7.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <aboutInfo>
       <image path="branding_icons/icon128.png"/>
@@ -274,16 +274,16 @@ openFile
       <feature id="org.eclipse.ecf.filetransfer.feature"/>
       <feature id="org.eclipse.ecf.core.ssl.feature"/>
       <feature id="org.eclipse.ecf.filetransfer.ssl.feature"/>
-      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" />
       <feature id="org.eclipse.e4.rcp"/>
       <feature id="org.eclipse.rcp"/>
-      <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier" installMode="root"/>
-      <feature id="ummisco.gama.feature.modeling.ui" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core.extensions" version="1.7.0.qualifier" />
+      <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier" />
+      <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier" />
+      <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier" />
+      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" />
+      <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier" />
+      <feature id="ummisco.gama.feature.modeling.ui" version="1.7.0.qualifier" />
    </features>
 
    <configurations>
