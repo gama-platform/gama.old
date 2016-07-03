@@ -282,6 +282,7 @@ openFile
       <feature id="ummisco.gama.feature.core" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.dependencies" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.models" version="1.7.0.qualifier" installMode="root"/>
+      <feature id="ummisco.gama.feature.core.ui" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.experiment.ui" version="1.7.0.qualifier" installMode="root"/>
       <feature id="ummisco.gama.feature.modeling.ui" version="1.7.0.qualifier" installMode="root"/>
    </features>

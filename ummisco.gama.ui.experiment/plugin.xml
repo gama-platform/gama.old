@@ -945,7 +945,7 @@
       <command
             defaultHandler="ummisco.gama.ui.commands.DummyHandler"
             id="ummisco.gama.ui.experiment.dummy"
-            name="    ">
+            name="Separator">
       </command>
    </extension>
    <extension

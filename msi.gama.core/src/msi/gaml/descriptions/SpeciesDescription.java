@@ -412,7 +412,8 @@ public class SpeciesDescription extends TypeDescription {
 			} else {
 				agentConstructor = IAgentConstructor.CONSTRUCTORS.get(getJavaBase());
 			}
-			System.out.println("Agent constructor for " + this + " based on :" + getJavaBase());
+			// System.out.println("Agent constructor for " + this + " based on
+			// :" + getJavaBase());
 		}
 		return agentConstructor;
 	}

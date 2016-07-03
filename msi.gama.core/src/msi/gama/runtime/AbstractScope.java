@@ -206,7 +206,9 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public void setOnUserHold(final boolean state) {
-		getRoot().setOnUserHold(state);
+		ITopLevelAgent root = getRoot();
+		if (root == null) return ;
+		root.setOnUserHold(state);
 	}
 
 	@Override
@@ -694,7 +696,9 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Object getGlobalVarValue(final String name) throws GamaRuntimeException {
-		return getRoot().getDirectVarValue(this, name);
+		ITopLevelAgent root = getRoot();
+		if (root == null) return null;
+		return root.getDirectVarValue(this, name);
 	}
 
 	/**
@@ -705,7 +709,9 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
-		getRoot().setDirectVarValue(this, name, v);
+		ITopLevelAgent root = getRoot();
+		if (root == null) return ;
+	root.setDirectVarValue(this, name, v);
 	}
 
 	/**
@@ -783,12 +789,16 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public SimulationAgent getSimulationScope() {
-		return getRoot().getSimulation();
+		ITopLevelAgent root = getRoot();
+		if (root == null) return null;
+		return root.getSimulation();
 	}
 
 	@Override
 	public IExperimentAgent getExperiment() {
-		return getRoot().getExperiment();
+		ITopLevelAgent root = getRoot();
+		if (root == null) return null;
+		return root.getExperiment();
 	}
 
 	/**
@@ -798,6 +808,8 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public IModel getModel() {
+		ITopLevelAgent root = getRoot();
+		if (root == null) return null;
 		return getRoot().getModel();
 	}
 
@@ -836,11 +848,12 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public SimulationClock getClock() {
-		// if (root == null) {
-		// return null;
-		// }
+		ITopLevelAgent root = getRoot();
+		if (root == null) {
+		 return null;
+		 }
 		// if ( root == null ) { return new SimulationClock(); }
-		return getRoot().getClock();
+		return root.getClock();
 	}
 
 	@Override
@@ -899,7 +912,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public ITopLevelAgent getRoot() {
-		return (ITopLevelAgent) agentsStack.getLast();
+		return (ITopLevelAgent) agentsStack.peekLast();
 	}
 
 	@Override

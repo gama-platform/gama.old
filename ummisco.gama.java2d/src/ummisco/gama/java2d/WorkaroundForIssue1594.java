@@ -30,12 +30,13 @@ public class WorkaroundForIssue1594 {
 
 			@Override
 			public void partOpened(final IWorkbenchPartReference partRef) {
+				final IPartListener2 listener = this;
 				if (!ummisco.gama.ui.utils.PlatformHelper.isWin32()) {
+					ps.removePartListener(listener);
 					return;
 				}
 				// Fix for Issue #1594
 				if (partRef.getPart(false).equals(view)) {
-					final IPartListener2 listener = this;
 					// AD: Reworked to address Issue 535. It seems necessary to
 					// read the size of the composite inside an SWT
 					// thread and run the sizing inside an AWT thread
@@ -46,6 +47,8 @@ public class WorkaroundForIssue1594 {
 							if (parent.isDisposed()) {
 								return;
 							}
+							
+							
 							final org.eclipse.swt.graphics.Rectangle r = parent.getBounds();
 							java.awt.EventQueue.invokeLater(new Runnable() {
 
@@ -58,10 +61,10 @@ public class WorkaroundForIssue1594 {
 									WorkbenchHelper.asyncRun(new Runnable() {
 
 										@Override
-										public void run() {
-											parent.layout(true, true);
-											displaySurface.zoomFit();
+										public void run() {						
+											view.getSash().setMaximizedControl(null);
 											ps.removePartListener(listener);
+											view.getSash().setMaximizedControl(parent.getParent());
 										}
 									});
 								}

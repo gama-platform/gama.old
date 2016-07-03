@@ -50,9 +50,7 @@ public abstract class AbstractLayer implements ILayer {
 		final Envelope3D envelope = geometry.getEnvelope();
 		final Point min = this.getScreenCoordinatesFrom(envelope.getMinX(), envelope.getMinY(), s);
 		final Point max = this.getScreenCoordinatesFrom(envelope.getMaxX(), envelope.getMaxY(), s);
-		final Rectangle2D r = new Rectangle2D.Double();
-		r.add(min);
-		r.add(max);
+		final Rectangle2D r = new Rectangle2D.Double(min.x, min.y, max.x - min.x, max.y - min.y);
 		return r;
 	}
 

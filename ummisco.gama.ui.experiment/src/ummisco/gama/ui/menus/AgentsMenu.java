@@ -262,15 +262,11 @@ public class AgentsMenu extends ContributionItem {
 			return;
 		}
 		GamaMenu.separate(menu, "Actions");
-		if (topLevel) {
-			// browsePopulationMenuItem(menu, agent.getPopulation(),
-			// IGamaIcons.MENU_BROWSE.image());
-		}
 		actionAgentMenuItem(menu, agent, inspector, IGamaIcons.MENU_INSPECT.image(),
 				"Inspect" + (topLevel ? " experiment" : ""));
 		if (!topLevel) {
 			actionAgentMenuItem(menu, agent, highlighter, IGamaIcons.MENU_HIGHLIGHT.image(), "Highlight");
-			actionAgentMenuItem(menu, agent, new Focuser(), IGamaIcons.MENU_FOCUS.image(), "Focus");
+			actionAgentMenuItem(menu, agent, new Focuser(), IGamaIcons.MENU_FOCUS.image(), "Focus on all displays");
 		}
 		if (actions != null) {
 			for (final MenuAction ma : actions) {

@@ -41,8 +41,6 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	}
 
 	public static void execute(final int layout) {
-		if (layout == IUnits.none)
-			return;
 		if (modelService == null) {
 			final IEclipseContext context = WorkbenchHelper.getWindow().getService(IEclipseContext.class);
 			modelService = context.get(EModelService.class);
@@ -90,41 +88,26 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		case IUnits.split:
 			grid(displayStack, holders);
 			break;
-		default:
+		case IUnits.horizontal:
+		case IUnits.vertical:
 			horizontalOrVertical(displayStack, holders, layout == IUnits.horizontal);
+		case IUnits.none:
+			//none(displayStack, holders);
 
 		}
-		// clean(displayStack.getParent());
 
 	}
-
-	// private static void clean(final MElementContainer parent) {
-	// final List<MUIElement> toRemove = new ArrayList();
-	// collectChildrenToClean(parent, toRemove);
-	// // System.out.println("Cleaning " + toRemove.size() + " useless
-	// containers");
-	// for ( final MUIElement element : toRemove ) {
-	// element.getParent().getChildren().remove(element);
-	// }
-	//
-	// }
-
-	// private static void collectChildrenToClean(final MElementContainer
-	// parent, final List<MUIElement> toRemove) {
-	// for ( final Object object : parent.getChildren() ) {
-	// final MUIElement element = (MUIElement) object;
-	// if ( element.getTransientData().containsKey("Dynamic") ) {
-	// final MElementContainer container = (MElementContainer) element;
-	// if ( container.getChildren().isEmpty() ) {
-	// toRemove.add(container);
-	// } else collectChildrenToClean(container, toRemove);
-	// }
-	// }
-	// }
+	
 
 	static void stack(final MPartStack displayStack, final List<MPlaceholder> holders) {
 		for (int i = 0; i < holders.size(); i++) {
-			associate(displayStack, holders.get(i));
+			associate(displayStack, holders.get(i), false);
+		}
+	}
+	
+	static void none(final MPartStack displayStack, final List<MPlaceholder> holders) {
+		for (int i = 0; i < holders.size(); i++) {
+			associate(displayStack, holders.get(i), true);
 		}
 	}
 
@@ -134,7 +117,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		final List<MElementContainer> containers = new ArrayList();
 		createContainers(currentSash, containers, size, true);
 		for (int i = 0; i < holders.size(); i++) {
-			associate(containers.get(i), holders.get(i));
+			associate(containers.get(i), holders.get(i), false);
 		}
 	}
 
@@ -143,7 +126,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		final MElementContainer rootSash = displayStack.getParent();
 		((MPartSashContainer) rootSash).setHorizontal(horizontal);
 		for (int i = 0; i < holders.size(); i++) {
-			associate(createContainer(rootSash), holders.get(i));
+			associate(createContainer(rootSash), holders.get(i), false);
 		}
 	}
 
@@ -186,7 +169,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		}
 	}
 
-	static void associate(final MElementContainer container, final MPlaceholder holder) {
+	static void associate(final MElementContainer container, final MPlaceholder holder, boolean removeFirst) {
+		if (removeFirst) container.getChildren().remove(holder);
 		container.getChildren().add(holder);
 		partService.activate((MPart) holder.getRef());
 	}

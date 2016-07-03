@@ -131,6 +131,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public Control controlToSetFullScreen() {
 		return form;
 	}
+	
+	public SashForm getSash() {
+		return form;
+	}
+
 
 	public void createOverlay() {
 		boolean wasVisible = false;
@@ -283,7 +288,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		form = new SashForm(c, SWT.HORIZONTAL);
 		form.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		form.setBackground(IGamaColors.WHITE.color());
-		form.setSashWidth(4);
+		form.setSashWidth(8);
 
 		sidePanel = new Composite(form, SWT.BORDER);
 		final GridLayout layout = new GridLayout(1, true);

@@ -12,7 +12,6 @@
 package msi.gama.outputs.layers;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -41,27 +40,20 @@ import msi.gaml.statements.draw.FieldDrawingAttributes;
 public class GridLayer extends ImageLayer {
 
 	static GamaColor defaultLineColor = GamaColor.getInt(Color.black.getRGB());
-	// BufferedImage image;
+
+	public boolean turnGridOn;
+	private final GamaPoint cellSize;
+	BufferedImage image;
 
 	@Override
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		final IAgent a = geometry.getAgent();
-		if (a == null) {
+		if (a == null || a.getSpecies() != g.getEnvironment().getCellSpecies()) {
 			return null;
 		}
-		if (a.getSpecies() != g.getEnvironment().getCellSpecies()) {
-			return null;
-		}
-		final Envelope env = a.getEnvelope();
-		final Point min = this.getScreenCoordinatesFrom(env.getMinX(), env.getMinY(), s);
-		final Point max = this.getScreenCoordinatesFrom(env.getMaxX(), env.getMaxY(), s);
-		return new Rectangle2D.Double(min.x, min.y, max.x - min.x, max.y - min.y);
+		return super.focusOn(a, s);
 	}
-
-	public boolean turnGridOn;
-	private final GamaPoint cellSize;
-	BufferedImage image;
 
 	public GridLayer(final IScope scope, final ILayerStatement layer) {
 		super(scope, layer);

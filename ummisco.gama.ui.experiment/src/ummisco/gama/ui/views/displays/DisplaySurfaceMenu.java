@@ -206,11 +206,6 @@ public class DisplaySurfaceMenu {
 
 	private Menu fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer,
 			final Collection<IAgent> filteredList, final ILocation userLocation) {
-		// final LayeredDisplayView view2 = (LayeredDisplayView) view;
-		// final IDisplaySurface displaySurface = view2.getDisplaySurface();
-		// AgentsMenu.MenuAction follow =
-		// new AgentsMenu.MenuAction(new FollowSelection(displaySurface),
-		// IGamaIcons.MENU_FOLLOW.image(), "Follow");
 		if (withWorld) {
 			AgentsMenu.cascadingAgentMenuItem(menu, surface.getDisplayScope().getSimulationScope(), userLocation,
 					"World");
@@ -233,15 +228,8 @@ public class DisplaySurfaceMenu {
 				return menu;
 			}
 			final FocusOnSelection adapter = new FocusOnSelection(surface);
-			final MenuAction focus = new MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus");
-			if (view.isOpenGL()) {
-				// FIXME: 18/03/2014 a.g the follow item has been temporaly
-				// removed from opengl because not yet
-				// implemented but should be available in 1.7
-				AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus /* , follow */);
-			} else {
-				AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus);
-			}
+			final MenuAction focus = new MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on this display");
+			AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus);
 		} else {
 
 			for (final ILayer layer : surface.getManager().getItems()) {
@@ -253,7 +241,8 @@ public class DisplaySurfaceMenu {
 					}
 					final String layerName = layer.getType() + ": " + layer.getName();
 					final FocusOnSelection adapter = new FocusOnSelection(surface);
-					final MenuAction focus = new MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
+					final MenuAction focus = new MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(),
+							"Focus on this display");
 					final MenuAction[] actions = { focus };
 
 					if (filteredList != null) {

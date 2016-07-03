@@ -40,7 +40,7 @@ public interface IDisplaySurface extends
 
 	static final String SNAPSHOT_FOLDER_NAME = "snapshots";
 	static final double MIN_ZOOM_FACTOR = 0.1;
-	static final int MAX_ZOOM_FACTOR = 4;
+	static final int MAX_ZOOM_FACTOR = 10;
 
 	public interface OpenGL extends IDisplaySurface {
 

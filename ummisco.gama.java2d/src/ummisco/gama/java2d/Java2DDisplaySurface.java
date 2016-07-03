@@ -61,8 +61,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 
@@ -143,7 +141,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 					}
 					updateDisplay(true);
 				}
-				final double newZoom = FastMath.min(getWidth() / getDisplayWidth(), getHeight() / getDisplayHeight());
+				final double newZoom = Math.min(getWidth() / getDisplayWidth(), getHeight() / getDisplayHeight());
 				newZoomLevel(1 / newZoom);
 				previousPanelSize = getSize();
 			}
@@ -295,8 +293,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	protected void centerImage() {
-		setOrigin((int) FastMath.round((getWidth() - getDisplayWidth()) / 2),
-				(int) FastMath.round((getHeight() - getDisplayHeight()) / 2));
+		setOrigin((int) Math.round((getWidth() - getDisplayWidth()) / 2),
+				(int) Math.round((getHeight() - getDisplayHeight()) / 2));
 	}
 
 	protected int getOriginX() {
@@ -396,8 +394,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		}
 		// java.lang.System.out.println("Resize display : " + x + " " + y);
 		final int[] point = computeBoundsFrom(x, y);
-		final int imageWidth = CmnFastMath.max(1, point[0]);
-		final int imageHeight = CmnFastMath.max(1, point[1]);
+		final int imageWidth = Math.max(1, point[0]);
+		final int imageHeight = Math.max(1, point[1]);
 		setDisplayHeight(imageHeight);
 		setDisplayWidth(imageWidth);
 		iGraphics = new AWTDisplayGraphics(this, (Graphics2D) this.getGraphics());
@@ -536,11 +534,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		final int[] dim = new int[2];
 		final double widthHeightConstraint = getEnvHeight() / getEnvWidth();
 		if (widthHeightConstraint < 1) {
-			dim[1] = CmnFastMath.min(vheight, (int) FastMath.round(vwidth * widthHeightConstraint));
-			dim[0] = CmnFastMath.min(vwidth, (int) FastMath.round(dim[1] / widthHeightConstraint));
+			dim[1] = Math.min(vheight, (int) Math.round(vwidth * widthHeightConstraint));
+			dim[0] = Math.min(vwidth, (int) Math.round(dim[1] / widthHeightConstraint));
 		} else {
-			dim[0] = CmnFastMath.min(vwidth, (int) FastMath.round(vheight / widthHeightConstraint));
-			dim[1] = CmnFastMath.min(vheight, (int) FastMath.round(dim[0] * widthHeightConstraint));
+			dim[0] = Math.min(vwidth, (int) Math.round(vheight / widthHeightConstraint));
+			dim[1] = Math.min(vheight, (int) Math.round(dim[0] * widthHeightConstraint));
 		}
 		return dim;
 	}
@@ -652,11 +650,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	double applyZoom(final double factor) {
-		double real_factor = FastMath.min(factor, 10 / getZoomLevel());
-		real_factor = FastMath.max(MIN_ZOOM_FACTOR, real_factor);
-		real_factor = FastMath.min(MAX_ZOOM_FACTOR, real_factor);
-		final boolean success = resizeImage(CmnFastMath.max(1, (int) FastMath.round(getDisplayWidth() * real_factor)),
-				Math.max(1, (int) FastMath.round(getDisplayHeight() * real_factor)), false);
+		double real_factor = Math.min(factor, 10 / getZoomLevel());
+		real_factor = Math.max(MIN_ZOOM_FACTOR, real_factor);
+		real_factor = Math.min(MAX_ZOOM_FACTOR, real_factor);
+		final boolean success = resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * real_factor)),
+				Math.max(1, (int) Math.round(getDisplayHeight() * real_factor)), false);
 
 		if (success) {
 			zoomFit = false;
@@ -673,8 +671,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	private void centerOnViewCoordinates(final Point p) {
 		final Point origin = getOrigin();
-		final int translationX = p.x - FastMath.round(getWidth() / (float) 2);
-		final int translationY = p.y - FastMath.round(getHeight() / (float) 2);
+		final int translationX = p.x - Math.round(getWidth() / (float) 2);
+		final int translationY = p.y - Math.round(getHeight() / (float) 2);
 		setOrigin(origin.x - translationX, origin.y - translationY);
 
 	}
