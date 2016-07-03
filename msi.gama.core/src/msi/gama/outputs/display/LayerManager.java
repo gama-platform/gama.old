@@ -110,8 +110,9 @@ public class LayerManager implements ILayerManager {
 			final Rectangle2D r = display.focusOn(geometry, s);
 			if (r != null) {
 				if (result == null)
-					result = new Rectangle2D.Double();
-				result.add(r);
+					result = new Rectangle2D.Double(r.getX(), r.getY(), r.getWidth(), r.getHeight());
+				else
+					result.add(r);
 			}
 		}
 		return result;
