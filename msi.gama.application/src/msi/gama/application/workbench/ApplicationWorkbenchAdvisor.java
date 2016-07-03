@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.ui.IDecoratorManager;
@@ -192,6 +193,9 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 			@Override
 			public void handle(final StatusAdapter statusAdapter, final int style) {
+				final int severity = statusAdapter.getStatus().getSeverity();
+				if ( severity == IStatus.INFO || severity == IStatus.CANCEL )
+					return;
 				final Throwable e = statusAdapter.getStatus().getException();
 				System.err
 					.println("GAMA Caught a workbench message : " + statusAdapter.getStatus().getMessage() + " " + e);
