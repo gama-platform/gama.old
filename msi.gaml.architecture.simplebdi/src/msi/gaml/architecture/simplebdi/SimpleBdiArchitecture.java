@@ -378,7 +378,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		double highestPriority = Double.MIN_VALUE;
 		final List<SimpleBdiPlanStatement> temp_plan = new ArrayList<SimpleBdiPlanStatement>();
 		final IList priorities = GamaListFactory.create(Types.FLOAT);
-		for (final Object BDIPlanstatement : scope.getSimulationScope().getRandomGenerator().shuffle(_plans)) {
+		for (final Object BDIPlanstatement : scope.getSimulationScope().getRandomGenerator().shuffle(new ArrayList(_plans))) {
 			final SimpleBdiPlanStatement statement = ((BDIPlan) BDIPlanstatement).getPlanStatement();
 			final boolean isContextConditionSatisfied = statement.getContextExpression() == null
 					|| msi.gaml.operators.Cast.asBool(scope, statement.getContextExpression().value(scope));
@@ -517,7 +517,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	protected final List<SimpleBdiPlanStatement> listExecutablePlans(final IScope scope) {
 		final IAgent agent = getCurrentAgent(scope);
 		final List<SimpleBdiPlanStatement> plans = new ArrayList<SimpleBdiPlanStatement>();
-		for (final Object BDIPlanstatement : scope.getRandom().shuffle(_plans)) {
+		for (final Object BDIPlanstatement : scope.getRandom().shuffle(new ArrayList(_plans))) {
 			final SimpleBdiPlanStatement statement = ((BDIPlan) BDIPlanstatement).getPlanStatement();
 
 			if (statement.getContextExpression() != null
