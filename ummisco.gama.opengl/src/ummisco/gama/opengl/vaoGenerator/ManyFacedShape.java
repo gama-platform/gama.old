@@ -25,8 +25,8 @@ public class ManyFacedShape {
 	public static GamaColor TRIANGULATION_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
 	
 	private boolean isTriangulation;
-	private ArrayList<int[]> faces; // way to construct a face from the indices of the coordinates (anti clockwise for front face)
-	private ArrayList<int[]> edgeToSmooth; // list that store all the edges erased thanks to the smooth shading (those edges must
+	private ArrayList<int[]> faces = new ArrayList<int[]>(); // way to construct a face from the indices of the coordinates (anti clockwise for front face)
+	private ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); // list that store all the edges erased thanks to the smooth shading (those edges must
 	// not be displayed when displaying the borders !)
 	private float[] coords;
 	private float[] uvMapping;
@@ -145,6 +145,26 @@ public class ManyFacedShape {
 	private void correctBorders() {
 		// delete all the edges that are present in the list edgeToSmooth
 		// TODO
+		for (int idx = 0 ; idx < idxForBorder.length ;) {
+			boolean edgeIsToDelete = false;
+			for (int[] edgeToSmooth : edgesToSmooth) {
+				if (
+						( (int)idxForBorder[idx] == edgeToSmooth[0] && (int)idxForBorder[idx+1] == edgeToSmooth[1])
+						|| ( (int)idxForBorder[idx] == edgeToSmooth[1] && (int)idxForBorder[idx+1] == edgeToSmooth[0])
+						) {
+					edgeIsToDelete = true;
+					break;
+				}
+			}
+			if (edgeIsToDelete) {
+				float[] begin = Arrays.copyOfRange(idxForBorder, 0, idx);
+				float[] end = Arrays.copyOfRange(idxForBorder, idx+2, idxForBorder.length);
+				idxForBorder = Utils.concatFloatArrays(begin, end);
+			}
+			else {
+				idx += 2;
+			}
+		}
 	}
 	
 	private void computeUVMapping() {
@@ -293,7 +313,12 @@ public class ManyFacedShape {
 	
 	private void saveEdgeToSmooth(int face1Idx, int face2Idx) {
 		int[] idxArray = getMutualVertexIdx(face1Idx, face2Idx);
-		// TODO
+		if (idxArray.length == 2) {
+			int idxV1 = getOriginalIdx(idxArray[0]);
+			int idxV2 = getOriginalIdx(idxArray[1]);
+			int[] edge = new int[] {idxV1,idxV2};
+			edgesToSmooth.add(edge);
+		}
 	}
 	
 	private void triangulate() {
@@ -637,14 +662,16 @@ public class ManyFacedShape {
 			}
 		}
 		// report the idx changes to the map "mapOfOriginalIdx"
+		HashMap<Integer,Integer> mapCopy = new HashMap<Integer, Integer>(mapOfOriginalIdx); // create a copy to avoid concurrentModificationException
 		for (int i : map.keySet()) {
 			for (int j : mapOfOriginalIdx.keySet()) {
 				if (mapOfOriginalIdx.get(j) == i) {
 					// we replace the value by the new one
-					mapOfOriginalIdx.put(j, i);
+					mapCopy.put(map.get(i),i);
 				}
 			}
 		}
+		mapOfOriginalIdx = mapCopy;
 	}
 	
 	int[] getMutualVertexIdx(int idxFace1, int idxFace2) {
