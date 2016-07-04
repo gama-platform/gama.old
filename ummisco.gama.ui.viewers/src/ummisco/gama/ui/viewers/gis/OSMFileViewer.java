@@ -210,19 +210,22 @@ public class OSMFileViewer extends GISFileViewer {
 
 	@Override
 	public void saveAsCSV() {
-		final HashSet<String> atts = new HashSet<String>();
+
 		final Layer layer = mapLayerTable.getMapLayerTableViewer().getSelectedMapLayer();
+		if (layer == null)
+			return;
+		final HashSet<String> atts = new HashSet<String>();
+
 		final String layerName = layer.getFeatureSource().getName().toString();
 		for (final String at : attributes.keySet()) {
 			final String[] dec = at.split(";");
 
-			if (layer == null || layerName.equals(dec[0])) {
+			if (layerName.equals(dec[0])) {
 				atts.add(dec[1]);
 
 			}
 		}
-		final List<IShape> geoms = layer == null ? new ArrayList<IShape>(osmfile.getContents(null))
-				: osmfile.getLayers().get(layerName);
+		final List<IShape> geoms = osmfile.getLayers().get(layerName);
 		final List<String> attsOrd = new ArrayList<String>(atts);
 		Collections.sort(attsOrd);
 		saveAsCSV(attsOrd, geoms, layerName);

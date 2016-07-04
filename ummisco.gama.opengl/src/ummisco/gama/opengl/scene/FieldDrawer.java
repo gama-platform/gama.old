@@ -165,14 +165,14 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 							}
 
 							// Last rows
-							if (j == rows - 1 && i < columns - 1) {
+							if (j == (int) rows - 1 && i < columns - 1) {
 								z1 = zValue;
 								z4 = demObj.values[(int) (j * columns + (i + 1))];
 								z2 = z1;
 								z3 = z4;
 							}
 							// Last cols
-							if (i == columns - 1 && j < rows - 1) {
+							if (i == (int) columns - 1 && j < rows - 1) {
 								z1 = zValue;
 								z2 = demObj.values[(int) ((j + 1) * columns + i)];
 								z3 = z2;
@@ -180,7 +180,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 							}
 
 							// last cell
-							if (i == columns - 1 && j == rows - 1) {
+							if (i == (int) columns - 1 && j == (int) rows - 1) {
 								z1 = zValue;
 								z2 = z1;
 								z3 = z1;

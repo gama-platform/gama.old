@@ -21,6 +21,7 @@ import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gaml.operators.Comparison;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
 
@@ -719,7 +720,8 @@ public class Envelope3D extends Envelope {
 		if (isNull()) {
 			return otherEnvelope.isNull();
 		}
-		if (super.equals(other) && minz == otherEnvelope.getMinZ() && maxz == otherEnvelope.getMaxZ()) {
+		if (super.equals(other) && Comparison.equal(minz, otherEnvelope.getMinZ())
+				&& Comparison.equal(maxz, otherEnvelope.getMaxZ())) {
 			return true;
 		}
 		return false;

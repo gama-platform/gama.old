@@ -474,6 +474,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	static GenericFileInfo createGenericFileMetaData(final IFile file) {
 		String ext = file.getFileExtension();
+		if (ext == null)
+			return new GenericFileInfo(file.getModificationStamp(), "Generic file");
 		ext = ext.toUpperCase();
 		return new GenericFileInfo(file.getModificationStamp(), "Generic " + ext + " file");
 	}

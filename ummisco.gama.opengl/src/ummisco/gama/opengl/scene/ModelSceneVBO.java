@@ -32,7 +32,6 @@ import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.TextureCache;
-import ummisco.gama.opengl.scene.StaticLayerObject.WordLayerObject;
 
 /**
  *
@@ -48,7 +47,8 @@ public class ModelSceneVBO {
 
 	private static int number = 0;
 	private final int id;
-	public static final String ENV_KEY = "__env__0";
+	public static final String AXES_KEY = "__axes__0";
+	public static final String FRAME_KEY = "__frame__0";
 	protected final Map<String, LayerObject> layers = new LinkedHashMap<String, LayerObject>();
 	protected LayerObject currentLayer;
 	protected final JOGLRenderer renderer;
@@ -68,8 +68,13 @@ public class ModelSceneVBO {
 	}
 
 	protected void initWorld() {
-		currentLayer = new WordLayerObject(renderer);
-		layers.put(ENV_KEY, currentLayer);
+		if (renderer.data.isDrawEnv()) {
+			LayerObject object = new AxesLayerObject(renderer);
+			layers.put(AXES_KEY, object);
+			object = new FrameLayerObject(renderer);
+			layers.put(FRAME_KEY, object);
+
+		}
 	}
 
 	/**
@@ -291,14 +296,21 @@ public class ModelSceneVBO {
 	}
 
 	public void startDrawRotationHelper(final GamaPoint pivotPoint, final double size) {
-		final WordLayerObject worldLayer = (WordLayerObject) layers.get(ENV_KEY);
-		worldLayer.startDrawRotationHelper(pivotPoint, size);
+		final AxesLayerObject worldLayer = (AxesLayerObject) layers.get(AXES_KEY);
+		if (worldLayer != null) {
+			worldLayer.setOffset(pivotPoint.yNegated());
+			final double ratio = size / renderer.getMaxEnvDim();
+			worldLayer.setScale(new GamaPoint(ratio, ratio, ratio));
+
+		}
 	}
 
 	public void stopDrawRotationHelper() {
-		final WordLayerObject worldLayer = (WordLayerObject) layers.get(ENV_KEY);
-		if (worldLayer != null)
-			worldLayer.stopDrawRotationHelper();
-	}
+		final AxesLayerObject worldLayer = (AxesLayerObject) layers.get(AXES_KEY);
+		if (worldLayer != null) {
+			worldLayer.setOffset(GamaPoint.NULL_POINT);
+			worldLayer.setScale(new GamaPoint(.15, .15, .15));
+		}
 
+	}
 }

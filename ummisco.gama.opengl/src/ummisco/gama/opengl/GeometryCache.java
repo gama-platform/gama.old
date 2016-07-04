@@ -42,10 +42,10 @@ public class GeometryCache {
 		if (index == null) {
 			try {
 				index = buildList(gl, renderer, file);
+				cache.put(file.getPath(), index);
 			} catch (final FileNotFoundException e) {
 				e.printStackTrace();
 			}
-			cache.put(file.getPath(), index);
 		}
 		return index;
 	}

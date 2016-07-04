@@ -58,7 +58,7 @@ public class TextureCache {
 	}
 
 	final Map<String, Texture> textures = new ConcurrentHashMap(100, 0.75f, 4);
-	private static TextureAsyncBuilder BUILDER;
+	private static volatile TextureAsyncBuilder BUILDER;
 
 	public static GLAutoDrawable getSharedContext() {
 		if (BUILDER == null) {
@@ -290,7 +290,7 @@ public class TextureCache {
 		}
 	}
 
-	private static TextureCache sharedInstance;
+	private static volatile TextureCache sharedInstance;
 
 	/**
 	 * @return

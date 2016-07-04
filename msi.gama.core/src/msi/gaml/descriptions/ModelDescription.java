@@ -206,7 +206,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public void dispose() {
-//		System.out.println("Disposing model " + getName());
+		// System.out.println("Disposing model " + getName());
 
 		if ( /* isDisposed || */isBuiltIn()) {
 			return;
@@ -266,7 +266,8 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public IDescription addChild(final IDescription child) {
-
+		if (child == null)
+			return null;
 		if (!child.isBuiltIn() && child.getName().equals(SimulationAgent.STARTING_DATE)) {
 			isStartingDateDefined = true;
 		}
@@ -279,7 +280,7 @@ public class ModelDescription extends SpeciesDescription {
 			// child.getOriginName() + " to " + getName() +
 			// "...");
 			// addSpeciesType((TypeDescription) child);
-		} else if (child != null && child.getKeyword().equals(OUTPUT)) {
+		} else if (child.getKeyword().equals(OUTPUT)) {
 			if (output == null) {
 				output = child;
 			} else {

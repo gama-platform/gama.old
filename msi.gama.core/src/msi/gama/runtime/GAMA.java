@@ -225,7 +225,7 @@ public class GAMA {
 			g.printStackTrace();
 			return true;
 		}
-		if (scope != null)
+		if (scope != null && scope.getGui() != null)
 			scope.getGui().runtimeError(g);
 		g.setReported();
 

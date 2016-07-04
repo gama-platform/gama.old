@@ -79,6 +79,7 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Comparison;
 import msi.gaml.operators.Strings;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.SaveStatement.SaveValidator;
@@ -89,8 +90,9 @@ import msi.gaml.types.Types;
 		IConcept.SAVE_FILE }, with_sequence = false, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 @facets(value = {
-		@facet(name = IKeyword.TYPE, type = IType.ID, optional = true, values = { "shp", "text", "csv",
-				"asc", "geotiff", "image"}, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
+		@facet(name = IKeyword.TYPE, type = IType.ID, optional = true, values = { "shp", "text", "csv", "asc",
+				"geotiff",
+				"image" }, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
 		@facet(name = IKeyword.DATA, type = IType.NONE, optional = true, doc = @doc("any expression, that will be saved in the file")),
 		@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it")),
 		@facet(name = IKeyword.HEADER, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist")),
@@ -240,7 +242,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				return null;
 			}
 
-			saveRasterImage(species, path, scope,type.equals("geotiff"));
+			saveRasterImage(species, path, scope, type.equals("geotiff"));
 		} else if (AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase())) {
 
 			IGraph g;
@@ -293,7 +295,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					+ Strings.LN;
 			final double dx = scope.getSimulationScope().getEnvelope().getWidth() / nbCols;
 			final double dy = scope.getSimulationScope().getEnvelope().getHeight() / nbRows;
-			if (dx == dy) {
+			if (Comparison.equal(dx, dy)) {
 				header += "cellsize      " + dx + Strings.LN;
 			} else {
 				header += "dx            " + dx + Strings.LN;
@@ -314,8 +316,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 
 	}
-	
-	public void saveRasterImage(final ISpecies species, final String path, final IScope scope, final boolean toGeotiff) {
+
+	public void saveRasterImage(final ISpecies species, final String path, final IScope scope,
+			final boolean toGeotiff) {
 		final File f = new File(path);
 		if (f.exists()) {
 			f.delete();
@@ -323,47 +326,49 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final GridPopulation gp = (GridPopulation) species.getPopulation(scope);
 		final int cols = gp.getNbCols();
 		final int rows = gp.getNbRows();
-		
-		float[][] imagePixelData = new float[rows][cols]; 
-	    for (int row = 0; row < rows; row++) {
-	        for (int col = 0; col < cols; col++) {
-	            imagePixelData[row][col] = gp.getGridValue(col, row).floatValue();
-	        }
-	       
-	    }
-	    final boolean nullProjection = scope.getSimulationScope().getProjectionFactory().getWorld() == null;
-		final double x = (nullProjection ? 0: scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX());
-		final double y = (nullProjection ? 0: scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY());
-		final double width = scope.getSimulationScope().getEnvelope().getWidth();
-		final double height = scope.getSimulationScope().getEnvelope().getHeight() ;
 
-	    Envelope2D refEnvelope;
-	    CoordinateReferenceSystem crs = null;
+		final float[][] imagePixelData = new float[rows][cols];
+		for (int row = 0; row < rows; row++) {
+			for (int col = 0; col < cols; col++) {
+				imagePixelData[row][col] = gp.getGridValue(col, row).floatValue();
+			}
+
+		}
+		final boolean nullProjection = scope.getSimulationScope().getProjectionFactory().getWorld() == null;
+		final double x = nullProjection ? 0
+				: scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX();
+		final double y = nullProjection ? 0
+				: scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY();
+		final double width = scope.getSimulationScope().getEnvelope().getWidth();
+		final double height = scope.getSimulationScope().getEnvelope().getHeight();
+
+		Envelope2D refEnvelope;
+		CoordinateReferenceSystem crs = null;
 		try {
-			crs = nullProjection ? CRS.decode("EPSG:2154") : scope.getSimulationScope().getProjectionFactory().getWorld().getTargetCRS();
-		} catch (NoSuchAuthorityCodeException e1) {
+			crs = nullProjection ? CRS.decode("EPSG:2154")
+					: scope.getSimulationScope().getProjectionFactory().getWorld().getTargetCRS();
+		} catch (final NoSuchAuthorityCodeException e1) {
 			e1.printStackTrace();
-		} catch (FactoryException e1) {
+		} catch (final FactoryException e1) {
 			e1.printStackTrace();
 		}
 		refEnvelope = new Envelope2D(crs, x, y, width, height);
-		
-	    GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
-	    try {
-	    	if (toGeotiff) {
-		        GeoTiffWriter writer = new GeoTiffWriter(f);
-		        writer.write(coverage,null);
-	    	} else {
-	    		WorldImageWriter writer = new WorldImageWriter(f);
-	  	        writer.write(coverage,null);
-	  	      
-	    	}
-	       
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+
+		final GridCoverage2D coverage = new GridCoverageFactory().create("data", imagePixelData, refEnvelope);
+		try {
+			if (toGeotiff) {
+				final GeoTiffWriter writer = new GeoTiffWriter(f);
+				writer.write(coverage, null);
+			} else {
+				final WorldImageWriter writer = new WorldImageWriter(f);
+				writer.write(coverage, null);
+
+			}
+
+		} catch (final Exception e) {
+			e.printStackTrace();
+		}
 	}
-	
 
 	public String getGeometryType(final IList<? extends IShape> agents) {
 		String geomType = "";

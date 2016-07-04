@@ -76,7 +76,8 @@ public abstract class Solver {
 				for (int i = 0, n = equationValues.size(); i < n; i++) {
 					final IAgent a = equationAgents.get(i);
 					if (integrationValues.size() < n) {
-						integrationValues.put(equationValues.get(i).toString()+a, GamaListFactory.create(Double.class));
+						integrationValues.put(equationValues.get(i).toString() + a,
+								GamaListFactory.create(Double.class));
 					}
 					if (!a.dead()) {
 						final boolean pushed = scope.push(a);
@@ -92,7 +93,7 @@ public abstract class Solver {
 					}
 
 				}
-				if(integrationValues.get(eq.variable_time.getName())==null){					
+				if (integrationValues.get(eq.variable_time.getName()) == null) {
 					integrationValues.put(eq.variable_time.getName(), GamaListFactory.create(Double.class));
 				}
 
@@ -115,13 +116,12 @@ public abstract class Solver {
 
 	private void storeValues(final double time, final double[] y,
 			final GamaMap<String, IList<Double>> integrationValues) {
-		// if (integrationTimes != null)
-		// integrationTimes.add(time);
-		if (integrationValues != null)
+		if (integrationValues != null) {
 			for (int i = 0; i < y.length; i++) {
 				integrationValues.getValues().get(i).add(y[i]);
 			}
-		integrationValues.getValues().get(y.length).add(time);
+			integrationValues.getValues().get(y.length).add(time);
+		}
 
 	}
 }

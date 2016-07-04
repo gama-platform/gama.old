@@ -122,7 +122,7 @@ public class GamlResourceDocManager implements IDocManager {
 
 	private static THashMap<URI, THashMap<String, IGamlDescription>> CACHE2 = new THashMap();
 
-	private static IDocManager instance;
+	private static volatile IDocManager instance;
 
 	public static class DocumentationNode implements IGamlDescription {
 

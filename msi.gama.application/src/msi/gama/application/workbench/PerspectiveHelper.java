@@ -80,6 +80,8 @@ public class PerspectiveHelper {
 
 	public static boolean openPerspective(final String perspectiveId, final boolean immediately,
 		final boolean withAutoSave) {
+		if ( perspectiveId == null )
+			return false;
 		if ( perspectiveId.equals(currentPerspectiveId) )
 			return true;
 
@@ -91,6 +93,8 @@ public class PerspectiveHelper {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 			}
+		if ( activePage == null )
+			return false;
 		final IPerspectiveDescriptor oldDescriptor = activePage.getPerspective();
 		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
 		final IWorkbenchPage page = activePage;

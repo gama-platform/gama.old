@@ -267,7 +267,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		if (!notify) {
 			return;
 		}
-		if (previousPosition != -1d && perc != previousPosition) {
+		if (Math.abs(previousPosition - 1d) < 0.000001 && Math.abs(perc - previousPosition) < 0.000001) {
 			synchronized (positionChangedListeners) {
 				final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
 				while (iter.hasNext()) {

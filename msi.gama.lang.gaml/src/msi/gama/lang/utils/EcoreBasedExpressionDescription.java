@@ -95,8 +95,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 
 			final String name = EGaml.getKeyOf(expr);
 			if (skills && !AbstractGamlAdditions.getSkillClasses().containsKey(name)) {
-				context.error("Unknown " + type + " " + name,
-						skills ? IGamlIssue.UNKNOWN_SKILL : IGamlIssue.UNKNOWN_VAR, expr);
+				context.error("Unknown " + type + " " + name, IGamlIssue.UNKNOWN_SKILL, expr);
 			} else {
 				result.add(name);
 			}

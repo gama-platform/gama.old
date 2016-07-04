@@ -352,7 +352,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		if (settingsChangeListener != null) {
 			settings.removePropertyChangeListener(settingsChangeListener);
 		}
-		if (boxText.isDisposed()) {
+		if (boxText == null || boxText.isDisposed()) {
 			return;
 		}
 		decorated = false;

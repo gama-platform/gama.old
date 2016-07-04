@@ -194,21 +194,21 @@ public class OtherExperimentsButton {
 		final IContainer container = myWorkspaceRoot.getContainerForLocation(path);
 
 		try {
-			IResource[] iResources;
-			iResources = container.members();
-			for (final IResource iR : iResources) {
-				// for gama files
-				if ("gaml".equalsIgnoreCase(iR.getFileExtension())) {
-					final URI uri = URI.createPlatformResourceURI(iR.getFullPath().toString(), true);
-					if (!uri.equals(without)) {
-						allGamaFiles.add(uri);
+			final IResource[] iResources = container.members();
+			if (iResources != null)
+				for (final IResource iR : iResources) {
+					// for gama files
+					if ("gaml".equalsIgnoreCase(iR.getFileExtension())) {
+						final URI uri = URI.createPlatformResourceURI(iR.getFullPath().toString(), true);
+						if (!uri.equals(without)) {
+							allGamaFiles.add(uri);
+						}
+					}
+					if (iR.getType() == IResource.FOLDER) {
+						final IPath tempPath = iR.getLocation();
+						recursiveFindGamaFiles(allGamaFiles, tempPath, myWorkspaceRoot, without);
 					}
 				}
-				if (iR.getType() == IResource.FOLDER) {
-					final IPath tempPath = iR.getLocation();
-					recursiveFindGamaFiles(allGamaFiles, tempPath, myWorkspaceRoot, without);
-				}
-			}
 		} catch (final CoreException e) {
 			e.printStackTrace();
 		}

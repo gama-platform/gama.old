@@ -239,8 +239,8 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					// LOADS MATERIALS
 					if (newline.charAt(0) == 'm' && newline.charAt(1) == 't' && newline.charAt(2) == 'l'
 							&& newline.charAt(3) == 'l' && newline.charAt(4) == 'i' && newline.charAt(5) == 'b') {
-						String[] coordstext = new String[3];
-						coordstext = newline.split("\\s+");
+						// String[] coordstext = new String[3];
+						// coordstext = newline.split("\\s+");
 						if (mtlPath != null) {
 							loadMaterials();
 						}

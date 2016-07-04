@@ -53,8 +53,8 @@ import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -75,15 +75,17 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 			@Override
 			public String getDescription(final Object anElement) {
-				if ( anElement instanceof IStructuredSelection ) {
+				if (anElement instanceof IStructuredSelection) {
 					final IStructuredSelection selection = (IStructuredSelection) anElement;
-					if ( selection.isEmpty() ) { return ""; }
+					if (selection.isEmpty()) {
+						return "";
+					}
 					String message = null;
-					if ( selection.size() > 1 ) {
+					if (selection.size() > 1) {
 						message = "Multiple elements";
-					} else if ( selection.getFirstElement() instanceof VirtualContent ) {
+					} else if (selection.getFirstElement() instanceof VirtualContent) {
 						message = ((VirtualContent) selection.getFirstElement()).getName();
-					} else if ( selection.getFirstElement() instanceof IResource ) {
+					} else if (selection.getFirstElement() instanceof IResource) {
 						message = ((IResource) selection.getFirstElement()).getName();
 					}
 					return message;
@@ -102,14 +104,14 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 		super.createPartControl(parent);
 		final IToolBarManager toolbar = getViewSite().getActionBars().getToolBarManager();
-		for ( final IContributionItem item : toolbar.getItems() ) {
-			if ( item instanceof ActionContributionItem ) {
+		for (final IContributionItem item : toolbar.getItems()) {
+			if (item instanceof ActionContributionItem) {
 				final ActionContributionItem aci = (ActionContributionItem) item;
 				final IAction action = aci.getAction();
-				if ( action instanceof LinkEditorAction ) {
+				if (action instanceof LinkEditorAction) {
 					link = action;
 					toolbar.remove(aci);
-				} else if ( action instanceof org.eclipse.ui.internal.navigator.actions.CollapseAllAction ) {
+				} else if (action instanceof org.eclipse.ui.internal.navigator.actions.CollapseAllAction) {
 					collapse = action;
 					toolbar.remove(aci);
 				}
@@ -134,20 +136,24 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 			@Override
 			public void resourceChanged(final IResourceChangeEvent event) {
-				if ( event.getType() == IResourceChangeEvent.PRE_BUILD ||
-					event.getType() == IResourceChangeEvent.PRE_CLOSE ||
-					event.getType() == IResourceChangeEvent.PRE_DELETE ) { return; }
+				if (event.getType() == IResourceChangeEvent.PRE_BUILD
+						|| event.getType() == IResourceChangeEvent.PRE_CLOSE
+						|| event.getType() == IResourceChangeEvent.PRE_DELETE) {
+					return;
+				}
 
 				Display.getDefault().asyncExec(new Runnable() {
 
 					@Override
 					public void run() {
-						if ( viewer.getControl().isDisposed() ) { return; }
+						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) {
+							return;
+						}
 
 						final IResourceDelta d = event == null ? null : event.getDelta();
-						if ( d != null ) {
+						if (d != null) {
 							final IResourceDelta[] addedChildren = d.getAffectedChildren(IResourceDelta.ADDED);
-							if ( addedChildren.length > 0 && viewer != null ) {
+							if (addedChildren.length > 0 && viewer != null) {
 								safeRefresh(d.getResource().getParent());
 							}
 
@@ -165,7 +171,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	public void dispose() {
 		super.dispose();
-		if ( listener != null ) {
+		if (listener != null) {
 			ResourcesPlugin.getWorkspace().removeResourceChangeListener(listener);
 			listener = null;
 		}
@@ -180,13 +186,13 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	protected void handleDoubleClick(final DoubleClickEvent anEvent) {
 		final IStructuredSelection selection = (IStructuredSelection) anEvent.getSelection();
 		final Object element = selection.getFirstElement();
-		if ( element instanceof IFile ) {
+		if (element instanceof IFile) {
 			final TreeViewer viewer = getCommonViewer();
-			if ( viewer.isExpandable(element) ) {
+			if (viewer.isExpandable(element)) {
 				viewer.setExpandedState(element, !viewer.getExpandedState(element));
 			}
 		}
-		if ( element instanceof VirtualContent && ((VirtualContent) element).handleDoubleClick() ) {
+		if (element instanceof VirtualContent && ((VirtualContent) element).handleDoubleClick()) {
 			return;
 		} else {
 			super.handleDoubleClick(anEvent);
@@ -207,7 +213,9 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 	/**
 	 * Method createToolItem()
-	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.views.toolbar.GamaToolbar2)
+	 * 
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
+	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
@@ -218,8 +226,8 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 			@Override
 			public void widgetSelected(final SelectionEvent trigger) {
-				final GamaNavigatorImportMenu menu =
-					new GamaNavigatorImportMenu((IStructuredSelection) getCommonViewer().getSelection());
+				final GamaNavigatorImportMenu menu = new GamaNavigatorImportMenu(
+						(IStructuredSelection) getCommonViewer().getSelection());
 				final ToolItem target = (ToolItem) trigger.widget;
 				final ToolBar toolBar = target.getParent();
 				menu.open(toolBar, trigger);
@@ -231,8 +239,8 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 			@Override
 			public void widgetSelected(final SelectionEvent trigger) {
-				final GamaNavigatorNewMenu menu =
-					new GamaNavigatorNewMenu((IStructuredSelection) getCommonViewer().getSelection());
+				final GamaNavigatorNewMenu menu = new GamaNavigatorNewMenu(
+						(IStructuredSelection) getCommonViewer().getSelection());
 				final ToolItem target = (ToolItem) trigger.widget;
 				final ToolBar toolBar = target.getParent();
 				menu.open(toolBar, trigger);
@@ -280,6 +288,7 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 	/**
 	 * Method selectionChanged()
+	 * 
 	 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
 	 */
 	@Override
@@ -289,10 +298,10 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		Image img = null;
 		SelectionListener l;
 		GamaUIColor color = null;
-		if ( selection == null || selection.isEmpty() ) {
+		if (selection == null || selection.isEmpty()) {
 			toolbar.wipe(SWT.LEFT, true);
 			return;
-		} else if ( selection.getFirstElement() instanceof TopLevelFolder && selection.size() == 1 ) {
+		} else if (selection.getFirstElement() instanceof TopLevelFolder && selection.size() == 1) {
 			final TopLevelFolder folder = (TopLevelFolder) selection.getFirstElement();
 			message = folder.getMessageForStatus();
 			img = folder.getImageForStatus();
@@ -306,9 +315,9 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					final IAction action =
-						getViewSite().getActionBars().getGlobalActionHandler(ActionFactory.PROPERTIES.getId());
-					if ( action != null ) {
+					final IAction action = getViewSite().getActionBars()
+							.getGlobalActionHandler(ActionFactory.PROPERTIES.getId());
+					if (action != null) {
 						action.run();
 					}
 				}
@@ -324,8 +333,10 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 	public Menu getSubMenu(final String text) {
 		final Menu m = getCommonViewer().getTree().getMenu();
-		for ( final MenuItem mi : m.getItems() ) {
-			if ( text.equals(mi.getText()) ) { return mi.getMenu(); }
+		for (final MenuItem mi : m.getItems()) {
+			if (text.equals(mi.getText())) {
+				return mi.getMenu();
+			}
 		}
 		return m;
 	}
@@ -337,21 +348,27 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 
 		final CommonViewer localViewer = getCommonViewer();
 
-		if ( localViewer == null || localViewer.getControl().isDisposed() ) { return; }
+		if (localViewer == null || localViewer.getControl().isDisposed()) {
+			return;
+		}
 		final Display display = localViewer.getControl().getDisplay();
-		if ( display.isDisposed() ) { return; }
+		if (display.isDisposed()) {
+			return;
+		}
 		display.syncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				if ( localViewer.getControl().isDisposed() ) { return; }
+				if (localViewer.getControl().isDisposed()) {
+					return;
+				}
 				final Object[] expanded = localViewer.getExpandedElements();
 				SafeRunner.run(new NavigatorSafeRunnable() {
 
 					@Override
 					public void run() throws Exception {
 						localViewer.getControl().setRedraw(false);
-						if ( resource == null ) {
+						if (resource == null) {
 							localViewer.refresh();
 						} else {
 							localViewer.refresh(resource);

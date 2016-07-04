@@ -106,7 +106,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 									.computeAllImportedURIs(resource.getResourceSet()).keySet();
 							if (uris.size() <= 1)
 								return EMPTY_SET;
-							uris.remove(resource);
+							uris.remove(resource.getURI());
 							return new LinkedHashSet(uris);
 						}
 					});
