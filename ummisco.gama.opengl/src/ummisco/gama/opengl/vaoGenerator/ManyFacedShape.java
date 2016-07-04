@@ -26,12 +26,16 @@ public class ManyFacedShape {
 	
 	private boolean isTriangulation;
 	private ArrayList<int[]> faces; // way to construct a face from the indices of the coordinates (anti clockwise for front face)
+	private ArrayList<int[]> edgeToSmooth; // list that store all the edges erased thanks to the smooth shading (those edges must
+	// not be displayed when displaying the borders !)
 	private float[] coords;
 	private float[] uvMapping;
 	private float[] normals;
 	private int textId = -1; // "-1" for "no texture"
 	private float[] coordsForBorder;
 	private float[] idxForBorder;
+	
+	private HashMap<Integer,Integer> mapOfOriginalIdx = new HashMap<Integer,Integer>(); 
 	
 	private int[] topFace;
 	private int[] bottomFace;
@@ -83,7 +87,7 @@ public class ManyFacedShape {
 			buildLateralFaces();
 		}
 		
-		initBorder();
+		initBorders();
 		
 		applySmoothShading();
 		applyTransformation();
@@ -91,6 +95,8 @@ public class ManyFacedShape {
 		if (textId != -1)
 			computeUVMapping();
 		triangulate();
+		
+		correctBorders();
 	}
 	
 	private boolean isStandardGeometry() {
@@ -122,9 +128,23 @@ public class ManyFacedShape {
 		return false;
 	}
 	
-	private void initBorder() {
+	private int getOriginalIdx(int idx) {
+		// this function is used to get the original idx (from the idx buffer) before the smooth shading
+		return mapOfOriginalIdx.get(idx);
+	}
+	
+	private void initBorders() {
 		idxForBorder = getIdxBufferForLines();
 		coordsForBorder = coords;
+		// init the mapOfOriginalIdx
+		for (float i : idxForBorder) {
+			mapOfOriginalIdx.put((int)i, (int)i);
+		}
+	}
+	
+	private void correctBorders() {
+		// delete all the edges that are present in the list edgeToSmooth
+		// TODO
 	}
 	
 	private void computeUVMapping() {
@@ -132,22 +152,36 @@ public class ManyFacedShape {
 		for (int i = 0 ; i < faces.size() ; i++) {
 			sizeArray += faces.get(i).length;
 		}
-		int idx = 0;
 		uvMapping = new float[sizeArray*2];
 		for (int i = 0 ; i < faces.size() ; i++) {
-			// TODO : for other shape, for the moment it's just for squared face !!
-			// vertex 1 :
-			uvMapping[idx++] = 0;
-			uvMapping[idx++] = 0;
-			// vertex 2 :
-			uvMapping[idx++] = 0;
-			uvMapping[idx++] = 1;
-			// vertex 3 :
-			uvMapping[idx++] = 1;
-			uvMapping[idx++] = 1;
-			// vertex 4 :
-			uvMapping[idx++] = 1;
-			uvMapping[idx++] = 0;
+			int[] face = faces.get(i);
+			if (face.length == 4) {
+				// case of squared faces :
+				// vertex 1 :
+				uvMapping[face[0]*2] = 0;
+				uvMapping[face[0]*2+1] = 0;
+				// vertex 2 :
+				uvMapping[face[1]*2] = 0;
+				uvMapping[face[1]*2+1] = 1;
+				// vertex 3 :
+				uvMapping[face[2]*2] = 1;
+				uvMapping[face[2]*2+1] = 1;
+				// vertex 4 :
+				uvMapping[face[3]*2] = 1;
+				uvMapping[face[3]*2+1] = 0;
+			}
+			else if (face.length == 3) {
+				// case of triangular faces :
+				// vertex 1 (summit) :
+				uvMapping[face[0]*2] = 0.5f;
+				uvMapping[face[0]*2+1] = 1;
+				// vertex 2 :
+				uvMapping[face[1]*2] = 0;
+				uvMapping[face[1]*2+1] = 0;
+				// vertex 3 :
+				uvMapping[face[2]*2] = 1;
+				uvMapping[face[2]*2+1] = 0;
+			}
 		}
 	}
 	
@@ -228,16 +262,16 @@ public class ManyFacedShape {
 		else {
 			for (int i = 0 ; i < topFace.length ; i++) {
 				int[] newFace = new int[4];
-				newFace[0] = topFace[i];
-				newFace[1] = bottomFace[bottomFace.length-i-1];
+				newFace[2] = topFace[i];
+				newFace[3] = bottomFace[bottomFace.length-i-1];
 				if (i < topFace.length - 1)
-					newFace[2] = bottomFace[bottomFace.length-i-2];
+					newFace[0] = bottomFace[bottomFace.length-i-2];
 				else
-					newFace[2] = bottomFace[bottomFace.length-1];
+					newFace[0] = bottomFace[bottomFace.length-1];
 				if (i < topFace.length - 1)
-					newFace[3] = topFace[i+1];
+					newFace[1] = topFace[i+1];
 				else
-					newFace[3] = topFace[0];
+					newFace[1] = topFace[0];
 				faces.add(newFace);
 			}
 		}
@@ -250,8 +284,16 @@ public class ManyFacedShape {
 				if (getAngleBetweenFaces(faces.get(idxConnexeFaces[idxConnexeFace]),faces.get(faceIdx)) > SMOOTH_SHADING_ANGLE) {
 					splitFaces(faceIdx,idxConnexeFaces[idxConnexeFace]);
 				}
+				else {
+					saveEdgeToSmooth(idxConnexeFaces[idxConnexeFace],faceIdx);
+				}
 			}
 		}
+	}
+	
+	private void saveEdgeToSmooth(int face1Idx, int face2Idx) {
+		int[] idxArray = getMutualVertexIdx(face1Idx, face2Idx);
+		// TODO
 	}
 	
 	private void triangulate() {
@@ -592,6 +634,15 @@ public class ManyFacedShape {
 				}
 				faces.remove(faceIdx);
 				faces.add(faceIdx,face);
+			}
+		}
+		// report the idx changes to the map "mapOfOriginalIdx"
+		for (int i : map.keySet()) {
+			for (int j : mapOfOriginalIdx.keySet()) {
+				if (mapOfOriginalIdx.get(j) == i) {
+					// we replace the value by the new one
+					mapOfOriginalIdx.put(j, i);
+				}
 			}
 		}
 	}
