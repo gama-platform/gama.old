@@ -570,7 +570,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 		@Override
 		public void setInterrupted() {
-			this.interrupted = interrupted;
+			this.interrupted = true;
 		}
 
 		@Override

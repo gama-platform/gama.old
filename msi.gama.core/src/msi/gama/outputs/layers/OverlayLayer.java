@@ -60,7 +60,8 @@ public class OverlayLayer extends GraphicLayer {
 		}
 
 		g.beginDrawingLayer(this);
-		g.setOpacity(definition.getTransparency());
+		if (definition != null)
+			g.setOpacity(definition.getTransparency());
 		g.beginOverlay(this);
 		privateDrawDisplay(scope, g);
 		g.endOverlay();

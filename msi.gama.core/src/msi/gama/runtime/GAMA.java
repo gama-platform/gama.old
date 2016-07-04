@@ -225,8 +225,8 @@ public class GAMA {
 			g.printStackTrace();
 			return true;
 		}
-
-		scope.getGui().runtimeError(g);
+		if (scope != null)
+			scope.getGui().runtimeError(g);
 		g.setReported();
 
 		final boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();

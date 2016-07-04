@@ -341,6 +341,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation population,
 			final List<Map> inits) {
+		if (population == null)
+			return GamaListFactory.create();
 		// final boolean hasSequence = sequence != null && !sequence.isEmpty();
 		boolean shouldBeScheduled = false;
 		// If we create simulations within a single experiment, we must schedule

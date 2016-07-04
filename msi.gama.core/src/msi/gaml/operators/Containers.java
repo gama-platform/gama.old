@@ -108,7 +108,7 @@ public class Containers {
 		public static IList range(final IScope scope, final Integer start, final Integer end, final Integer step) {
 			if (step == 0)
 				throw GamaRuntimeException.error("The step of a range should not be equal to 0", scope);
-			if (start == end)
+			if (start.equals(end))
 				return GamaListFactory.create(scope, Types.INT, start);
 			if (end > start) {
 				if (step < 0) {

@@ -108,6 +108,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		final IMacroAgent realRoot = findRootOf(root, agents);
 		if (realRoot == null) {
 			GamaRuntimeException.error("Impossible to find a common host agent for " + agents, root.getScope());
+			return;
 		}
 		new InspectDisplayOutput(realRoot, agents).launch(realRoot.getScope());
 	}

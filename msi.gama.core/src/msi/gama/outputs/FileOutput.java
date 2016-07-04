@@ -60,8 +60,6 @@ import msi.gaml.types.IType;
 				IKeyword.XML }, optional = true, doc = @doc(value = "The type of your output data")) }, omissible = IKeyword.NAME)
 public class FileOutput extends AbstractOutput {
 
-	final static SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_MM_dd_HH_mm_ss");
-
 	/**
 	 * @throws GamaRuntimeException
 	 *             The Constructor.
@@ -251,7 +249,9 @@ public class FileOutput extends AbstractOutput {
 
 		file = new File(dir, fileName + "." + extensions.get(type));
 		final boolean exist = file.exists();
+
 		if (exist && !getRewrite()) {
+			final SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_MM_dd_HH_mm_ss");
 			this.fileName = fileName + sdf.format(Calendar.getInstance().getTime());
 		}
 		file = new File(dir, fileName + "." + extensions.get(type));
@@ -369,6 +369,7 @@ public class FileOutput extends AbstractOutput {
 
 	private String getHeader() {
 		if (header == null) {
+			final SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_MM_dd_HH_mm_ss");
 			setHeader(getName() + " " + sdf.format(Calendar.getInstance().getTime()));
 		}
 		return header;
@@ -380,6 +381,7 @@ public class FileOutput extends AbstractOutput {
 
 	private String getFooter() {
 		if (footer == null) {
+			final SimpleDateFormat sdf = new SimpleDateFormat("_yyyy_MM_dd_HH_mm_ss");
 			setFooter("End of " + getName() + " " + sdf.format(Calendar.getInstance().getTime()));
 		}
 		return footer;

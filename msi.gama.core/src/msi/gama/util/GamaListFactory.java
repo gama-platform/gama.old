@@ -145,11 +145,41 @@ public class GamaListFactory {
 		return list;
 	}
 
+	public static IList create(final IScope scope, final IType contentType, final byte[] ints) {
+		final IList list = create(contentType, ints == null ? 0 : ints.length);
+		if (ints != null) {
+			for (final int o : ints) {
+				castAndAdd(scope, list, Integer.valueOf(o));
+			}
+		}
+		return list;
+	}
+
 	public static IList create(final IScope scope, final IType contentType, final int[] ints) {
 		final IList list = create(contentType, ints == null ? 0 : ints.length);
 		if (ints != null) {
 			for (final int o : ints) {
 				castAndAdd(scope, list, Integer.valueOf(o));
+			}
+		}
+		return list;
+	}
+
+	public static IList create(final IScope scope, final IType contentType, final long[] ints) {
+		final IList list = create(contentType, ints == null ? 0 : ints.length);
+		if (ints != null) {
+			for (final long o : ints) {
+				castAndAdd(scope, list, Long.valueOf(o).intValue());
+			}
+		}
+		return list;
+	}
+
+	public static IList create(final IScope scope, final IType contentType, final float[] doubles) {
+		final IList list = create(contentType, doubles == null ? 0 : doubles.length);
+		if (doubles != null) {
+			for (final float o : doubles) {
+				castAndAdd(scope, list, Double.valueOf(o));
 			}
 		}
 		return list;

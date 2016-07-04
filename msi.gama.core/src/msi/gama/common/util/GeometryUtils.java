@@ -643,7 +643,7 @@ public class GeometryUtils {
 			final Polygon polygon = (Polygon) geom;
 			final Set<Double> zVals = new HashSet<Double>();
 			for (final Coordinate c : polygon.getCoordinates()) {
-				if (c.z != Double.NaN) {
+				if (!Double.isNaN(c.z)) {
 					zVals.add(c.z);
 					zValue = c.z;
 					if (zVals.size() > 1) {
