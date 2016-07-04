@@ -1048,7 +1048,7 @@ public abstract class Spatial {
 		@operator(value = { "add_point" }, category = { IOperatorCategory.SPATIAL,
 				IOperatorCategory.POINT }, concept = { IConcept.POINT, IConcept.GEOMETRY,
 						IConcept.SPATIAL_COMPUTATION })
-		@doc(value = "A geometry resulting from the addition of the right point (coordinate) to the left-hand geometry", examples = {
+		@doc(value = "A new geometry resulting from the addition of the right point (coordinate) to the left-hand geometry. Note that adding a point to a line or polyline will always return a closed contour. Also note that the position at which the added point will appear in the geometry is not necessarily the last one, as points are always ordered in a clockwise fashion in geometries", examples = {
 				@example(value = "polygon([{10,10},{10,20},{20,20}]) add_point {20,10}", returnType = "geometry", equals = "polygon([{10,10},{10,20},{20,20},{20,10}])") })
 		public static IShape add_point(final IScope scope, final IShape g, final ILocation p) {
 			if (p == null) {
@@ -1218,8 +1218,9 @@ public abstract class Spatial {
 					coordinates.add(new GamaPoint(gbuff.getCoordinates()[k - 1]));
 					coordinates.add(new GamaPoint(gbuff.getCoordinates()[k]));
 					coordinates.add(location);
-					final IShape gg = Spatial.Operators.inter(scope, source, Spatial.Creation.polygon(scope, coordinates));
-					if (gg != null && (isPoint || !(gg.isPoint()))) {
+					final IShape gg = Spatial.Operators.inter(scope, source,
+							Spatial.Creation.polygon(scope, coordinates));
+					if (gg != null && (isPoint || !gg.isPoint())) {
 						geoms.add(new GamaShape(gg));
 					}
 				}
@@ -1230,7 +1231,7 @@ public abstract class Spatial {
 					if (!intersection(geom, obst)) {
 						geomsVisible.addValue(scope, geom);
 					} else {
-						final IShape perceptReal = difference(scope,geom, obst, ref);
+						final IShape perceptReal = difference(scope, geom, obst, ref);
 
 						if (perceptReal != null && (isPoint || !perceptReal.isPoint())) {
 							geomsVisible.addValue(scope, perceptReal);
@@ -1261,7 +1262,8 @@ public abstract class Spatial {
 			return false;
 		}
 
-		private static IShape difference(final IScope scope,final IShape geom, final List<IShape> geoms, final PreparedGeometry ref) {
+		private static IShape difference(final IScope scope, final IShape geom, final List<IShape> geoms,
+				final PreparedGeometry ref) {
 			if (geom == null) {
 				return null;
 			}
@@ -1270,9 +1272,10 @@ public abstract class Spatial {
 
 				if (g != null && gR != null && geom.intersects(g)) {
 					gR = Spatial.Operators.minus(scope, gR, g);
-					if (gR == null) return null;
+					if (gR == null)
+						return null;
 					if (gR.getGeometries().size() > 1) {
-						for (IShape sh : gR.getGeometries()) {
+						for (final IShape sh : gR.getGeometries()) {
 							if (!ref.disjoint(sh.getInnerGeometry())) {
 								gR = sh;
 								break;
@@ -1283,7 +1286,7 @@ public abstract class Spatial {
 					}
 				}
 			}
-			
+
 			return gR;
 		}
 
