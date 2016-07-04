@@ -58,7 +58,7 @@ void main (void)
 		float specularFactor = dot(reflectedLightDirection, unitVectorToCamera);
 		specularFactor = max(specularFactor,0.0);
 		float damperFactor = pow(specularFactor,shineDamper);
-		vec3 finalSpecular = damperFactor * lightColor;
+		vec3 finalSpecular = damperFactor * reflectivity * lightColor;
 		
 		gl_FragColor = vec4(diffuse,1.0) * inputColor + vec4(finalSpecular,1.0);
 	}

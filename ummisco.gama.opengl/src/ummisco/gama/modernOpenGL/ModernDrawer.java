@@ -110,17 +110,17 @@ public class ModernDrawer {
 	}
 	
 	public void addTexturedEntity(DrawingEntity newEntity) {
-		ArrayList<DrawingEntity> filledEntities = mapEntities.get(DrawingEntity.Type.TEXTURED.toString());
+		ArrayList<DrawingEntity> texturedEntities = mapEntities.get(DrawingEntity.Type.TEXTURED.toString());
 		ArrayList<DrawingEntity> listToAdd = new ArrayList<DrawingEntity>();
-		if (filledEntities == null) {
+		if (texturedEntities == null) {
 			listToAdd.add(newEntity);
 		}
 		else {
-			listToAdd = filledEntities;
+			listToAdd = texturedEntities;
 			// add to the entities with the same material
 			boolean entityAdded = false;
-			for (int i = 0 ; i < filledEntities.size() ; i++) {
-				DrawingEntity entity = filledEntities.get(i);
+			for (int i = 0 ; i < texturedEntities.size() ; i++) {
+				DrawingEntity entity = texturedEntities.get(i);
 				if (entity.getMaterial().equalsTo(newEntity.getMaterial()) 
 						&& entity.getTextureID() == newEntity.getTextureID()) {
 					// same material --> we concatenate newEntity with the other entities with the same material

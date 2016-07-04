@@ -144,7 +144,6 @@ public class ManyFacedShape {
 	
 	private void correctBorders() {
 		// delete all the edges that are present in the list edgeToSmooth
-		// TODO
 		for (int idx = 0 ; idx < idxForBorder.length ;) {
 			boolean edgeIsToDelete = false;
 			for (int[] edgeToSmooth : edgesToSmooth) {
@@ -201,6 +200,29 @@ public class ManyFacedShape {
 				// vertex 3 :
 				uvMapping[face[2]*2] = 1;
 				uvMapping[face[2]*2+1] = 0;
+			}
+			else {
+				// generic case : the rectangular and triangular faces are computed aside for a matter of performance
+				// find the bounds of the face
+				float minX = Float.MAX_VALUE;
+				float minY = Float.MAX_VALUE;
+				float maxX = Float.MIN_VALUE;
+				float maxY = Float.MIN_VALUE;
+				for (int vIdx = 0 ; vIdx < face.length ; vIdx++) {
+					if (coords[face[vIdx]*3] < minX) minX = coords[face[vIdx]*3];
+					if (coords[face[vIdx]*3+1] < minY) minY = coords[face[vIdx]*3+1];
+					if (coords[face[vIdx]*3] > maxX) maxX = coords[face[vIdx]*3];
+					if (coords[face[vIdx]*3+1] > maxY) maxY = coords[face[vIdx]*3+1];
+				}
+				float width = maxX - minX;
+				float height = maxY - minY;
+				for (int vIdx = 0 ; vIdx < face.length ; vIdx++) {
+					// compute u and v as the percentage of maximum bounds
+					float uCoords = (coords[face[vIdx]*3] - minX) / width;
+					float vCoords = (coords[face[vIdx]*3+1] - minY) / height;
+					uvMapping[face[vIdx]*2] = uCoords;
+					uvMapping[face[vIdx]*2+1] = 1-vCoords;
+				}
 			}
 		}
 	}
