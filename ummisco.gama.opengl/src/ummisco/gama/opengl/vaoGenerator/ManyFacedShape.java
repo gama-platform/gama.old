@@ -86,6 +86,10 @@ public class ManyFacedShape {
 			buildPyramidSummit();
 			buildLateralFaces();
 		}
+		else if (isSphere()) 
+		{
+			buildSphere();
+		}
 		
 		initBorders();
 		
@@ -126,6 +130,10 @@ public class ManyFacedShape {
 			return true;
 		}
 		return false;
+	}
+	
+	private boolean isSphere() {
+		return (type == IShape.Type.SPHERE);
 	}
 	
 	private int getOriginalIdx(int idx) {
@@ -288,35 +296,166 @@ public class ManyFacedShape {
 	}
 	
 	private void buildLateralFaces() {
+		ArrayList<int[]> facesToAdd = buildLateralFaces(topFace,bottomFace);
+		for (int[] face : facesToAdd) {
+			faces.add(face);
+		}
+	}
+	
+	private ArrayList<int[]> buildLateralFaces(int[] topFace, int[] botFace) {
+		ArrayList<int[]> result = new ArrayList<int[]>();
 		if (topFace.length == 1) {
 			// case of pyramid : the topFace is just the summit
-			for (int i = 0 ; i < bottomFace.length ; i++) {
+			for (int i = 0 ; i < botFace.length ; i++) {
 				int[] newFace = new int[3];
 				newFace[0] = topFace[0];
-				newFace[1] = bottomFace[bottomFace.length-i-1];
-				if (i < bottomFace.length - 1)
-					newFace[2] = bottomFace[bottomFace.length-i-2];
+				newFace[1] = botFace[botFace.length-i-1];
+				if (i < botFace.length - 1)
+					newFace[2] = botFace[botFace.length-i-2];
 				else
-					newFace[2] = bottomFace[bottomFace.length-1];
-				faces.add(newFace);
+					newFace[2] = botFace[botFace.length-1];
+				result.add(newFace);
 			}
 		}
 		else {
 			for (int i = 0 ; i < topFace.length ; i++) {
 				int[] newFace = new int[4];
 				newFace[2] = topFace[i];
-				newFace[3] = bottomFace[bottomFace.length-i-1];
+				newFace[3] = botFace[botFace.length-i-1];
 				if (i < topFace.length - 1)
-					newFace[0] = bottomFace[bottomFace.length-i-2];
+					newFace[0] = botFace[botFace.length-i-2];
 				else
-					newFace[0] = bottomFace[bottomFace.length-1];
+					newFace[0] = botFace[botFace.length-1];
 				if (i < topFace.length - 1)
 					newFace[1] = topFace[i+1];
 				else
 					newFace[1] = topFace[0];
-				faces.add(newFace);
+				result.add(newFace);
 			}
 		}
+		return result;
+	}
+	
+	private ArrayList<int[]> buildSphereFaces(int[] topFace, int[] botFace) {
+		ArrayList<int[]> result = new ArrayList<int[]>();
+		if (topFace.length == 1 || botFace.length == 1) {
+			// case of the top and the bottom of the sphere
+			if (topFace.length == 1)
+			{
+				for (int i = 0 ; i < botFace.length ; i++) {
+					int[] newFace = new int[3];
+					newFace[0] = topFace[0];
+					newFace[1] = botFace[i];
+					if (i < botFace.length - 1)
+						newFace[2] = botFace[i+1];
+					else
+						newFace[2] = botFace[0];
+					result.add(newFace);
+				}
+			}
+			else if (botFace.length == 1)
+			{
+				for (int i = 0 ; i < topFace.length ; i++) {
+					int[] newFace = new int[3];
+					newFace[2] = botFace[0];
+					newFace[1] = topFace[i];
+					if (i < topFace.length - 1)
+						newFace[0] = topFace[i+1];
+					else
+						newFace[0] = topFace[0];
+					result.add(newFace);
+				}
+			}
+		}
+		else {
+			for (int i = 0 ; i < topFace.length ; i++) {
+				int[] newFace = new int[4];
+				newFace[2] = topFace[i];
+				newFace[3] = botFace[i];
+				if (i < topFace.length - 1)
+					newFace[0] = botFace[i+1];
+				else
+					newFace[0] = botFace[0];
+				if (i < topFace.length - 1)
+					newFace[1] = topFace[i+1];
+				else
+					newFace[1] = topFace[0];
+				result.add(newFace);
+			}
+		}
+		return result;
+	}
+	
+	private void buildSphere() {
+		
+		// find the radius of the sphere
+		float minX = Float.MAX_VALUE;
+		float maxX = Float.MIN_VALUE;
+		for (int i = 0 ; i < coordinates.length ; i++) {
+			if (coordinates[i].x < minX) minX = (float) coordinates[i].x;
+			if (coordinates[i].x > maxX) maxX = (float) coordinates[i].x;
+		}
+		float radius = (maxX - minX) / 2;
+		
+		// find the position of the center
+		float[] center = new float[2];
+		float[] coordSum = new float[2];
+		// sum the coordinates
+		for (int i = 0 ; i < coordinates.length ; i++) {
+			coordSum[0] += (float) coordinates[i].x;
+			coordSum[1] += (float) coordinates[i].y;
+		}
+		// divide by the number of vertices to get the center
+		center[0] = coordSum[0] / coordinates.length;
+		center[1] = coordSum[1] / coordinates.length;
+		
+		// build a serie of circles on the z axis
+		int sliceNb = 16;// coordinates.length;
+		ArrayList<int[]> circles = new ArrayList<int[]>();
+		int idx = 0;
+		for (int i = 0 ; i < sliceNb ; i++) {
+			float zVal = 2*i * (radius/(sliceNb-1)) - radius;
+			float angle = (float) Math.asin(zVal/radius); // <-- sin(angle) = zVal / radius
+			float circleRadius = (float) (radius * Math.cos(angle)); // <-- cos(angle) = circleRadius * cos(angle)
+			float[] circleCoordinates = buildCircle(new float[]{center[0],center[1],zVal},circleRadius,sliceNb);
+			// special case : the top and the bottom of the sphere
+			if (i == 0 || i == sliceNb-1) {
+				circleCoordinates = new float[]{center[0],center[1],zVal};
+			}
+			// we add those coordinates to the array "coords"
+			coords = Utils.concatFloatArrays(coords, circleCoordinates);
+			// build the index array for this circle
+			int[] vertexIdxArray = new int[circleCoordinates.length/3];
+			for (int j = 0 ; j < circleCoordinates.length/3 ; j++) {
+				vertexIdxArray[j] = idx;
+				idx++;
+			}
+			circles.add(vertexIdxArray);
+		}
+		
+		// join all those circles
+		for (int i = 0 ; i < circles.size()-1 ; i++) {
+			ArrayList<int[]> faces = buildSphereFaces(circles.get(i+1), circles.get(i));
+			// add the faces create to the attribute "faces".
+			for (int[] face : faces) {
+				this.faces.add(face);
+			}
+		}
+	}
+	
+	private float[] buildCircle(float[] center, float radius, int nbVertex) {
+		// this is a utility method to build a sphere. It returns a list of coordinates
+		float[] result = new float[nbVertex*3];
+		float angle = (float) Math.toRadians(360 / nbVertex);
+		// we build points starting with the vertex at 3 o'clock
+		for (int i = 0 ; i < nbVertex ; i++) {
+			float xTranslate = (float) (radius * Math.cos(i*angle));
+			float yTranslate = (float) (radius * Math.sin(i*angle));
+			result[3*i] = center[0] + xTranslate; // x composant
+			result[3*i+1] = center[1] + yTranslate; // y composant
+			result[3*i+2] = center[2]; // z composant
+		}
+		return result;
 	}
 	
 	private void applySmoothShading() {
@@ -336,6 +475,16 @@ public class ManyFacedShape {
 	private void saveEdgeToSmooth(int face1Idx, int face2Idx) {
 		int[] idxArray = getMutualVertexIdx(face1Idx, face2Idx);
 		if (idxArray.length == 2) {
+			if (idxArray[0] > 3071 || idxArray[1] > 3071) {
+				System.out.println(idxArray[0] + "  " + idxArray[1]);
+			}
+			try {
+				getOriginalIdx(idxArray[0]);
+				getOriginalIdx(idxArray[1]);
+			}
+			catch (NullPointerException e) {
+				System.out.println(idxArray[0] + "  " + idxArray[1]);
+			}
 			int idxV1 = getOriginalIdx(idxArray[0]);
 			int idxV2 = getOriginalIdx(idxArray[1]);
 			int[] edge = new int[] {idxV1,idxV2};
@@ -689,7 +838,8 @@ public class ManyFacedShape {
 		HashMap<Integer,Integer> mapCopy = new HashMap<Integer, Integer>(mapOfOriginalIdx); // create a copy to avoid concurrentModificationException
 		for (int i : map.keySet()) {
 			for (int j : mapOfOriginalIdx.keySet()) {
-				if (mapOfOriginalIdx.get(j) == i) {
+				//if (mapOfOriginalIdx.get(j) == i) {
+				if (j == i) {
 					// we replace the value by the new one
 					mapCopy.put(map.get(i),i);
 				}
