@@ -363,7 +363,12 @@ public class ManyFacedShape {
 	}
 	
 	private void applyTransformation() {
-		// apply transform to the coords if needed
+		// apply transform to the coords if needed, and also to the coordsForBorders
+		coords = applyTransformation(coords);
+		coordsForBorder = applyTransformation(coordsForBorder);
+	}
+	
+	private float[] applyTransformation(float[] coords) {
 		// apply rotation (if facet "rotate" for draw is used)
 		if (rotation != null) {
 			// translate the object to (0,0,0)
@@ -382,6 +387,7 @@ public class ManyFacedShape {
 			// go back to the first translation
 			coords = GeomMathUtils.setTranslationToVertex(coords, (float) translation.x, (float) translation.y, (float) translation.z);
 		}
+		return coords;
 	}
 	
 	public float[] getIdxBuffer() {
@@ -502,11 +508,9 @@ public class ManyFacedShape {
 			// configure the drawing entity for the border
 			DrawingEntity borderEntity = new DrawingEntity();
 			borderEntity.setVertices(coords);
-			borderEntity.setNormals(normals);
 			borderEntity.setIndices(getIdxBufferForLines());
 			borderEntity.setColors(getColorArray(TRIANGULATION_COLOR));
 			borderEntity.type = DrawingEntity.Type.BORDER;
-			borderEntity.setMaterial(new Material(1,5));
 			
 			result[0] = borderEntity;
 		}
@@ -519,11 +523,9 @@ public class ManyFacedShape {
 				// configure the drawing entity for the border
 				DrawingEntity borderEntity = new DrawingEntity();
 				borderEntity.setVertices(coordsForBorder);
-				borderEntity.setNormals(normals);
 				borderEntity.setIndices(idxForBorder);
 				borderEntity.setColors(getColorArray(borderColor));
 				borderEntity.type = DrawingEntity.Type.BORDER;
-				borderEntity.setMaterial(new Material(1,5));
 				
 				result[1] = borderEntity;
 			}
@@ -539,7 +541,7 @@ public class ManyFacedShape {
 			filledEntity.setIndices(getIdxBuffer());
 			filledEntity.setColors(getColorArray(color));
 			filledEntity.type = DrawingEntity.Type.FILLED;
-			filledEntity.setMaterial(new Material(1,5));
+			filledEntity.setMaterial(new Material(10,0.5f));
 			if (textId != -1)
 			{
 				filledEntity.type = DrawingEntity.Type.TEXTURED;
