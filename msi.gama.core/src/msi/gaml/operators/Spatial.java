@@ -25,7 +25,6 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.algorithm.distance.DistanceToPoint;
 import com.vividsolutions.jts.algorithm.distance.PointPairDistance;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -116,8 +115,6 @@ public abstract class Spatial {
 	 * @since 29 nov. 2011
 	 *
 	 */
-
-	final static PointLocator pl = new PointLocator();
 
 	public static abstract class Common {
 
