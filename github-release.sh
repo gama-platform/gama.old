@@ -31,19 +31,19 @@ echo $SUFFIX
 
 n=0
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86.zip"
-NEWFILES[$n]='GAMA1.7-Linux.x86'$SUFFIX
+NEWFILES[$n]='GAMA1.7_Linux_32_'$SUFFIX
 n=1
 RELEASEFILES[$n]="$thePATH-linux.gtk.x86_64.zip"
-NEWFILES[$n]='GAMA1.7-Linux.x64'$SUFFIX
+NEWFILES[$n]='GAMA1.7_Linux_64_'$SUFFIX
 n=2
 RELEASEFILES[$n]="$thePATH-macosx.cocoa.x86_64.zip"
-NEWFILES[$n]='GAMA1.7-Mac.x64'$SUFFIX
+NEWFILES[$n]='GAMA1.7_Mac_64_'$SUFFIX
 n=3
 RELEASEFILES[$n]="$thePATH-win32.win32.x86.zip"
-NEWFILES[$n]='GAMA1.7-Win.x86'$SUFFIX
+NEWFILES[$n]='GAMA1.7_Win_32_'$SUFFIX
 n=4
 RELEASEFILES[$n]="$thePATH-win32.win32.x86_64.zip" 
-NEWFILES[$n]='GAMA1.7-Win.x64'$SUFFIX
+NEWFILES[$n]='GAMA1.7_Win_64_'$SUFFIX
 
 i=0
 for (( i=0; i<5; i++ ))
