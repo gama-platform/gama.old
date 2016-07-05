@@ -21,7 +21,7 @@ import ummisco.gama.opengl.utils.Utils;
 
 public class ManyFacedShape {
 	
-	public static float SMOOTH_SHADING_ANGLE = 60f; // in degree
+	public static float SMOOTH_SHADING_ANGLE = 40f; // in degree
 	public static GamaColor TRIANGULATION_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
 	
 	private boolean isTriangulation;
@@ -31,7 +31,7 @@ public class ManyFacedShape {
 	private float[] coords;
 	private float[] uvMapping;
 	private float[] normals;
-	private int textId = -1; // "-1" for "no texture"
+	private int[] textIds = null; // null for "no texture"
 	private float[] coordsForBorder;
 	private float[] idxForBorder;
 	
@@ -50,7 +50,7 @@ public class ManyFacedShape {
 	private GamaColor borderColor;
 	private Coordinate[] coordinates;
 	
-	public ManyFacedShape(GeometryObject geomObj, int textId, boolean isTriangulation) {
+	public ManyFacedShape(GeometryObject geomObj, int[] textIds, boolean isTriangulation) {
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
 		this.type = geomObj.getType();
@@ -60,7 +60,7 @@ public class ManyFacedShape {
 		this.size = geomObj.getAttributes().size;
 		this.color = geomObj.getAttributes().color;
 		this.borderColor = geomObj.getAttributes().getBorder();
-		this.textId = textId;
+		this.textIds = textIds;
 		this.isTriangulation = isTriangulation;
 		
 		Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
@@ -111,7 +111,7 @@ public class ManyFacedShape {
 		applySmoothShading();
 		applyTransformation();
 		computeNormals();
-		if (textId != -1)
+		if (textIds != null)
 			computeUVMapping();
 		triangulate();
 		
@@ -770,12 +770,13 @@ public class ManyFacedShape {
 	}
 	
 	private DrawingEntity[] getStandardDrawingEntities() {
-		DrawingEntity[] result = new DrawingEntity[1];
+		// the number of drawing entity is equal to the number of textured applied + 1 if there is a border.
+		// If no texture is used, return 1 (+1 if there is a border).
+		int numberOfDrawingEntity = (textIds == null) ? 1 + ((borderColor!=null)? 1:0) : textIds.length + ((borderColor!=null)? 1:0);
+		DrawingEntity[] result = new DrawingEntity[numberOfDrawingEntity];
 		
-		// returns 2 results if draw border
 		if (borderColor != null) {
-			// two drawing entities
-			result = new DrawingEntity[2];
+			// if there is a border
 			
 			// configure the drawing entity for the border
 			DrawingEntity borderEntity = new DrawingEntity();
@@ -784,29 +785,92 @@ public class ManyFacedShape {
 			borderEntity.setColors(getColorArray(borderColor,coordsForBorder));
 			borderEntity.type = DrawingEntity.Type.LINE;
 			
-			result[1] = borderEntity;
-		}
-		else {
-			// only one drawing entity
-			result = new DrawingEntity[1];
+			result[numberOfDrawingEntity-1] = borderEntity;
 		}
 		
-		// configure the drawing entity for the filled faces
-		DrawingEntity filledEntity = new DrawingEntity();
-		filledEntity.setVertices(coords);
-		filledEntity.setNormals(normals);
-		filledEntity.setIndices(getIdxBuffer());
-		filledEntity.setColors(getColorArray(color,coords));
-		filledEntity.type = DrawingEntity.Type.FACE;
-		filledEntity.setMaterial(new Material(10,0.5f));
-		if (textId != -1)
+		if (textIds == null || textIds.length == 1 || (topFace == null && bottomFace == null))
 		{
-			filledEntity.type = DrawingEntity.Type.TEXTURED;
-			filledEntity.setTextureID(textId);
-			filledEntity.setUvMapping(uvMapping);
+			// configure the drawing entity for the filled faces
+			DrawingEntity filledEntity = new DrawingEntity();
+			filledEntity.setVertices(coords);
+			filledEntity.setNormals(normals);
+			filledEntity.setIndices(getIdxBuffer());
+			filledEntity.setColors(getColorArray(color,coords));
+			filledEntity.type = DrawingEntity.Type.FACE;
+			filledEntity.setMaterial(new Material(10,0.5f));
+			if (textIds != null)
+			{
+				filledEntity.type = DrawingEntity.Type.TEXTURED;
+				filledEntity.setTextureID(textIds[0]);
+				filledEntity.setUvMapping(uvMapping);
+			}
+			
+			result[0] = filledEntity;
 		}
-		
-		result[0] = filledEntity;
+		else
+		{
+			// for multi-textured object, we split into 2 entities : the first will be the bottom + top face, the second will be the rest of the shape.
+			// build the bot/top entity
+			DrawingEntity botTopEntity = new DrawingEntity();
+			int numberOfSpecialFaces = 
+					(topFace != null && topFace.length>1) ? 
+					(bottomFace != null && bottomFace.length>1) ? 2:1 : 1; // a "specialFace" is either a top or a bottom face.
+			int[] idxBuffer = faces.get(0);
+			if (numberOfSpecialFaces == 2) {
+				idxBuffer = Utils.concatIntArrays(faces.get(0), faces.get(1));
+			}
+			float[] botTopIndices = new float[idxBuffer.length];
+			int vtxNumber = 0;
+			for (int i = 0 ; i < idxBuffer.length ; i++) {
+				botTopIndices[i] = (int) idxBuffer[i];
+				if (vtxNumber<=botTopIndices[i])
+					vtxNumber = (int) botTopIndices[i]+1;
+			}
+			float[] botTopCoords = new float[vtxNumber*3];
+			for (int i = 0 ; i < vtxNumber ; i++) {
+				botTopCoords[3*i] = coords[3*i];
+				botTopCoords[3*i+1] = coords[3*i+1];
+				botTopCoords[3*i+2] = coords[3*i+2];
+			}
+			float[] botTopNormals = Arrays.copyOfRange(normals, 0, vtxNumber*3);
+			float[] botTopUVMapping = Arrays.copyOfRange(uvMapping, 0, vtxNumber*2);
+			
+			botTopEntity.setVertices(botTopCoords);
+			botTopEntity.setNormals(botTopNormals);
+			botTopEntity.setIndices(botTopIndices);
+			botTopEntity.type = DrawingEntity.Type.TEXTURED;
+			botTopEntity.setMaterial(new Material(10,0.5f));
+			botTopEntity.setTextureID(textIds[0]);
+			botTopEntity.setUvMapping(botTopUVMapping);
+			
+			// build the rest of the faces
+			DrawingEntity otherEntity = new DrawingEntity();
+			// removing the "special faces" from the list of faces
+			faces.remove(0);
+			if (numberOfSpecialFaces == 2) {
+				// remove a second face !
+				faces.remove(0);
+			}
+			coords = Arrays.copyOfRange(coords, vtxNumber*3, coords.length);
+			normals = Arrays.copyOfRange(normals, vtxNumber*3, normals.length);
+			uvMapping = Arrays.copyOfRange(uvMapping, vtxNumber*2, uvMapping.length);
+			float[] idxArray = getIdxBuffer();
+			// removing vtxNumber to every idx
+			for (int i = 0 ; i < idxArray.length ; i++) {
+				idxArray[i] = idxArray[i] - vtxNumber;
+			}
+			
+			otherEntity.setVertices(coords);
+			otherEntity.setNormals(normals);
+			otherEntity.setIndices(idxArray);
+			otherEntity.type = DrawingEntity.Type.TEXTURED;
+			otherEntity.setMaterial(new Material(10,0.5f));
+			otherEntity.setTextureID(textIds[1]);
+			otherEntity.setUvMapping(uvMapping);
+			
+			result[0] = botTopEntity;
+			result[1] = otherEntity;
+		}
 		
 		return result;
 	}

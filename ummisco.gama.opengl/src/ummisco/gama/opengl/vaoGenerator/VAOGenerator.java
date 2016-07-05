@@ -25,8 +25,8 @@ public class VAOGenerator {
 	public DrawingEntity[] GenerateVAO(AbstractObject object) {
 		
 		GeometryObject geomObj = (GeometryObject)object;
-		int textId = loadTexture(object);
-		ManyFacedShape shape = new ManyFacedShape(geomObj,textId,renderer.data.isTriangulation());	
+		int[] textIds = object.getTextureIDs(renderer.getContext(), renderer);
+		ManyFacedShape shape = new ManyFacedShape(geomObj,textIds,renderer.data.isTriangulation());	
 		
 		return shape.getDrawingEntities();
 	}

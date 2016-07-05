@@ -14,5 +14,18 @@ public class Utils {
 		}
 		return result;
 	}
+	
+	public static int[] concatIntArrays(int[] l1, int[] l2) {
+		if (l1 == null) return l2;
+		if (l2 == null) return l1;
+		int[] result = new int[l1.length+l2.length];
+		for (int i = 0 ; i < l1.length ; i++) {
+			result[i] = l1[i];
+		}
+		for (int i = 0 ; i < l2.length ; i++) {
+			result[i+l1.length] = l2[i];
+		}
+		return result;
+	}
 
 }
