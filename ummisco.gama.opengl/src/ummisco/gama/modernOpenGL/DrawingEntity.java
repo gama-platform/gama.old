@@ -4,7 +4,7 @@ import ummisco.gama.opengl.utils.Utils;
 
 public class DrawingEntity {
 	
-	static public enum Type { TEXTURED, FILLED, BORDER }; // border == triangulate
+	static public enum Type { TEXTURED, FACE, LINE, POINT }; // border == triangulate
 	
 	public Type type;
 	

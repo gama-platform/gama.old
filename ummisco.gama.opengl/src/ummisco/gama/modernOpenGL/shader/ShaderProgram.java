@@ -85,8 +85,15 @@ public class ShaderProgram extends AbstractShader {
 	}
 	
 	public void loadTexture(int textureId) {
-		super.loadFloat(location_useTexture,1f);
 		super.loadInt(location_texture,textureId);
+	}
+	
+	public void enableTexture() {
+		super.loadFloat(location_useTexture,1f);
+	}
+	
+	public void disableTexture() {
+		super.loadFloat(location_useTexture,0f);
 	}
 	
 	public void disableNormal() {
