@@ -80,19 +80,21 @@ public class LayerObject implements Iterable<GeometryObject> {
 		return layer == null ? false : layer.isSelectable();
 	}
 
-	public void draw(final GL2 gl, final Abstract3DRenderer renderer) {
+	public void draw(final GL2 gl) {
 		if (isInvalid()) {
 			return;
 		}
-
-		if (this.renderer.useShader()) {
-			drawWithShader(gl, (ModernRenderer) renderer);
+		if (renderer.useShader()) {
+			drawWithShader(gl);
 		} else {
 			drawWithoutShader(gl);
 		}
 	}
 
-	public void drawWithShader(final GL2 gl, final ModernRenderer renderer) {
+	private void drawWithShader(final GL2 gl) {
+		if (!(renderer instanceof ModernRenderer))
+			return;
+		final ModernRenderer renderer = (ModernRenderer) this.renderer;
 		renderer.getDrawer().clearEntityList();
 		for (final List<AbstractObject> list : objects) {
 			for (final AbstractObject object : list) {
@@ -105,8 +107,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	}
 
-	public void drawWithoutShader(final GL2 gl) {
-
+	private void drawWithoutShader(final GL2 gl) {
 		if (overlay) {
 			gl.glDisable(GL.GL_DEPTH_TEST);
 			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);

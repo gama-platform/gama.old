@@ -148,7 +148,7 @@ public class ModelScene {
 		for (final LayerObject layer : array) {
 			if (layer != null && !layer.isInvalid()) {
 				try {
-					layer.draw(gl, renderer);
+					layer.draw(gl);
 					layer.lock();
 				} catch (final RuntimeException r) {
 					System.err.println("Runtime error " + r.getMessage() + " in OpenGL loop");

@@ -26,13 +26,13 @@ public class StaticLayerObject extends LayerObject {
 		}
 
 		@Override
-		public void drawWithoutShader(final GL2 gl) {
+		public void draw(final GL2 gl) {
 			gl.glDisable(GL2.GL_LIGHTING);
 			if (currentList.isEmpty()) {
 				fillWithObjects(currentList);
 			}
 			gl.glEnable(GL2.GL_LIGHTING);
-			super.drawWithoutShader(gl);
+			super.draw(gl);
 		}
 
 		abstract void fillWithObjects(List<AbstractObject> currentList);
