@@ -62,6 +62,7 @@ import ummisco.gama.opengl.scene.ResourceDrawer;
 import ummisco.gama.opengl.scene.ResourceObject;
 import ummisco.gama.opengl.scene.StringDrawer;
 import ummisco.gama.opengl.scene.StringObject;
+import ummisco.gama.opengl.utils.FPSDrawer;
 import ummisco.gama.opengl.utils.GLUtilLight;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -173,6 +174,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	}
 
 	private boolean visible;
+	private final FPSDrawer fpsDrawer = new FPSDrawer();
 
 	@Override
 	public void display(final GLAutoDrawable drawable) {
@@ -225,6 +227,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		}
 
 		this.rotateModel(gl);
+		if (data.isShowfps())
+			fpsDrawer.draw(gl, this);
 		drawScene(gl);
 
 		gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);

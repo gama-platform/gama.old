@@ -88,7 +88,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if (this.renderer.useShader()) {
 			drawWithShader(gl, (ModernRenderer) renderer);
 		} else {
-			drawWithoutShader(gl, (JOGLRenderer) renderer);
+			drawWithoutShader(gl);
 		}
 	}
 
@@ -105,7 +105,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	}
 
-	public void drawWithoutShader(final GL2 gl, final JOGLRenderer renderer) {
+	public void drawWithoutShader(final GL2 gl) {
 
 		if (overlay) {
 			gl.glDisable(GL.GL_DEPTH_TEST);
@@ -269,7 +269,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		return fading == null ? false : fading;
 	}
 
-	public void clear(final GL gl) {
+	public void clear(final GL2 gl) {
 		final int sizeLimit = getTrace();
 		final boolean fading = getFading();
 

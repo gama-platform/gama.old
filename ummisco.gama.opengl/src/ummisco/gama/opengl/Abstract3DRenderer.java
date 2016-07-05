@@ -43,19 +43,22 @@ import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
 import ummisco.gama.opengl.camera.ICamera;
+import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.ModelScene;
+import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.SceneBuffer;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
- * This class plays the role of Renderer and IGraphics. Class Abstract3DRenderer.
+ * This class plays the role of Renderer and IGraphics. Class
+ * Abstract3DRenderer.
  *
  * @author drogoul
  * @since 27 avr. 2015
  *
  */
 public abstract class Abstract3DRenderer extends AbstractDisplayGraphics implements GLEventListener {
-	
+
 	public class PickingState {
 
 		final static int NONE = -2;
@@ -106,8 +109,8 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	}
 
 	public static int Y_FLAG = -1;
-	
-	protected boolean useShader = false; 
+
+	protected boolean useShader = false;
 
 	public SceneBuffer sceneBuffer;
 	protected ModelScene currentScene;
@@ -119,7 +122,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
 	protected GLU glu;
-	
+
 	protected final GeometryCache geometryCache = new GeometryCache();
 	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
 	protected final TextureCache textureCache = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()
@@ -157,21 +160,21 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		canvas.setLayout(gl);
 		return canvas;
 	}
-	
+
 	public abstract void initScene();
-	
+
 	public abstract PickingState getPickingState();
 
 	public final ModelScene getCurrentScene() {
 		return currentScene;
 	}
-	
+
 	public abstract Integer getGeometryListFor(final GL2 gl, final GamaGeometryFile file);
 
 	public abstract TextRenderer getTextRendererFor(final Font font);
-	
+
 	public abstract void defineROI(final Point start, final Point end);
-	
+
 	public abstract void cancelROI();
 
 	public final GLCanvas getCanvas() {
@@ -196,7 +199,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 				getCanvas().addMouseMoveListener(camera);
 				getCanvas().addMouseWheelListener(camera);
 				getCanvas().addMouseTrackListener(camera);
-				//getCanvas().addKeyListener((KeyListener) Camera.getCamera());
+				// getCanvas().addKeyListener((KeyListener) Camera.getCamera());
 
 			}
 		});
@@ -262,15 +265,15 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public final void updateCameraPosition() {
 		camera.update();
 	}
-	
+
 	public abstract void drawROI(final GL2 gl);
-	
+
 	public abstract Envelope3D getROIEnvelope();
-	
+
 	public abstract void startDrawRotationHelper(final GamaPoint pos);
-	
+
 	public abstract void stopDrawRotationHelper();
-	
+
 	public abstract void drawRotationHelper(final GL2 gl);
 
 	@Override
@@ -372,6 +375,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public final ILocation getCameraPos() {
 		return camera.getPosition();
 	}
+
 	@Override
 	public final ILocation getCameraTarget() {
 		return camera.getTarget();
@@ -381,17 +385,17 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public final ILocation getCameraOrientation() {
 		return camera.getOrientation();
 	}
-	
+
 	public final boolean useShader() {
 		return useShader;
 	}
-	
+
 	public TextureCache getSharedTextureCache() {
 		return textureCache;
 	}
-	
+
 	public abstract boolean mouseInROI(final Point mousePosition);
-	
+
 	// TODO : maybe those following functions are to put anywhere else...
 	public void setCurrentColor(final GL2 gl, final Color c, final double alpha) {
 		if (c == null)
@@ -410,6 +414,10 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public void setCurrentColor(final GL2 gl, final double value) {
 		setCurrentColor(gl, value, value, value, 1);
+	}
+
+	public ObjectDrawer getDrawerFor(final Class<? extends AbstractObject> class1) {
+		return null;
 	}
 
 }

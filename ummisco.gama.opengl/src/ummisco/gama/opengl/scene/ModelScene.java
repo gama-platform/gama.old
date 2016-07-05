@@ -84,7 +84,7 @@ public class ModelScene {
 	 *            Called every new iteration when updateDisplay() is called on
 	 *            the surface
 	 */
-	public void wipe(final GL gl) {
+	public void wipe(final GL2 gl) {
 		// The display is cleared every iteration if not in a trace display mode
 		// or when reloading a simulation
 		// int traceSize = FastMath.max(requestedTraceSize, 0);

@@ -11,19 +11,32 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import com.jogamp.opengl.GL;
-import com.vividsolutions.jts.geom.Geometry;
+import java.util.List;
 
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gaml.types.GamaGeometryType;
+import com.jogamp.opengl.GL2;
+
 import ummisco.gama.opengl.Abstract3DRenderer;
 
 public class StaticLayerObject extends LayerObject {
 
-	static Geometry NULL_GEOM = GamaGeometryType.buildRectangle(0, 0, new GamaPoint(0, 0)).getInnerGeometry();
-	static final GamaPoint WORLD_OFFSET = new GamaPoint();
-	static final GamaPoint WORLD_SCALE = new GamaPoint(1, 1, 1);
-	static final Double WORLD_ALPHA = 1d;
+	static abstract class World extends StaticLayerObject {
+
+		public World(final Abstract3DRenderer renderer) {
+			super(renderer);
+		}
+
+		@Override
+		public void drawWithoutShader(final GL2 gl) {
+			gl.glDisable(GL2.GL_LIGHTING);
+			if (currentList.isEmpty()) {
+				fillWithObjects(currentList);
+			}
+			gl.glEnable(GL2.GL_LIGHTING);
+			super.drawWithoutShader(gl);
+		}
+
+		abstract void fillWithObjects(List<AbstractObject> currentList);
+	}
 
 	public StaticLayerObject(final Abstract3DRenderer renderer) {
 		super(renderer, null);
@@ -35,7 +48,7 @@ public class StaticLayerObject extends LayerObject {
 	}
 
 	@Override
-	public void clear(final GL gl) {
+	public void clear(final GL2 gl) {
 	}
 
 }
