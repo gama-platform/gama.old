@@ -47,8 +47,11 @@ import ummisco.gama.webgl.SimpleLayer;
  */
 public class LayerObject implements Iterable<GeometryObject> {
 
-	GamaPoint offset = new GamaPoint();
-	GamaPoint scale = new GamaPoint(1, 1, 1);
+	final static GamaPoint NULL_OFFSET = new GamaPoint();
+	final static GamaPoint NULL_SCALE = new GamaPoint(1, 1, 1);
+
+	GamaPoint offset = NULL_OFFSET;
+	GamaPoint scale = NULL_SCALE;
 	Double alpha = 1d;
 	final ILayer layer;
 	volatile boolean isInvalid;
@@ -59,9 +62,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 	List<AbstractObject> currentList;
 	Integer openGLListIndex;
 	boolean isFading;
-	
+
 	boolean isInit = false;
-	
 
 	public LayerObject(final Abstract3DRenderer renderer, final ILayer layer) {
 		this.renderer = renderer;
@@ -82,15 +84,14 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if (isInvalid()) {
 			return;
 		}
-		
+
 		if (this.renderer.useShader()) {
-			drawWithShader(gl, (ModernRenderer)renderer);
-		}
-		else {
-			drawWithoutShader(gl, (JOGLRenderer)renderer);
+			drawWithShader(gl, (ModernRenderer) renderer);
+		} else {
+			drawWithoutShader(gl, (JOGLRenderer) renderer);
 		}
 	}
-	
+
 	public void drawWithShader(final GL2 gl, final ModernRenderer renderer) {
 		renderer.getDrawer().clearEntityList();
 		for (final List<AbstractObject> list : objects) {
@@ -99,13 +100,13 @@ public class LayerObject implements Iterable<GeometryObject> {
 					renderer.getDrawer().addDrawingEntities(renderer.getVAOGenerator().GenerateVAO(object));
 				}
 			}
-		}	
+		}
 		renderer.getDrawer().draw();
-		
+
 	}
-	
+
 	public void drawWithoutShader(final GL2 gl, final JOGLRenderer renderer) {
-		
+
 		if (overlay) {
 			gl.glDisable(GL.GL_DEPTH_TEST);
 			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
@@ -118,7 +119,9 @@ public class LayerObject implements Iterable<GeometryObject> {
 		}
 		try {
 			gl.glPushMatrix();
+			final GamaPoint offset = getOffset();
 			gl.glTranslated(offset.x, -offset.y, offset.z);
+			final GamaPoint scale = getScale();
 			gl.glScaled(scale.x, scale.y, scale.z);
 			final boolean picking = renderer.getPickingState().isPicking() && isPickable();
 			if (objects.size() == 0) {
@@ -177,7 +180,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		for (final List<AbstractObject> list : objects) {
 			alpha = alpha + delta;
 			for (final AbstractObject object : list) {
-				final ObjectDrawer drawer = ((JOGLRenderer)renderer).getDrawerFor(object.getClass());
+				final ObjectDrawer drawer = ((JOGLRenderer) renderer).getDrawerFor(object.getClass());
 				if (isFading) {
 					final double originalAlpha = object.getAlpha();
 					object.setAlpha(originalAlpha * alpha);
@@ -207,7 +210,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public GamaPoint getOffset() {
-		return offset;
+		return offset == null ? NULL_OFFSET : offset;
 	}
 
 	public void setOffset(final GamaPoint offset) {
@@ -215,7 +218,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public GamaPoint getScale() {
-		return scale;
+		return scale == null ? NULL_SCALE : scale;
 	}
 
 	public void setScale(final GamaPoint scale) {
@@ -337,7 +340,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		for (final GeometryObject object : Iterables.filter(currentList, GeometryObject.class)) {
 			geom.add(object.toSimpleGeometryObject());
 		}
-		return new SimpleLayer(offset, scale, alpha, geom);
+		return new SimpleLayer(getOffset(), getScale(), alpha, geom);
 	}
 
 }

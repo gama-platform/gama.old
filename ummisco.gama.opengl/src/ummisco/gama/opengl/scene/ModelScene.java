@@ -320,8 +320,8 @@ public class ModelScene {
 	public void stopDrawRotationHelper() {
 		final AxesLayerObject worldLayer = (AxesLayerObject) layers.get(AXES_KEY);
 		if (worldLayer != null) {
-			worldLayer.setOffset(GamaPoint.NULL_POINT);
-			worldLayer.setScale(new GamaPoint(.15, .15, .15));
+			worldLayer.setOffset(null);
+			worldLayer.setScale(null);
 		}
 
 	}

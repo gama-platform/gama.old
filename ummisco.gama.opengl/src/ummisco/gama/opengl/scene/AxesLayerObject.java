@@ -18,6 +18,7 @@ public class AxesLayerObject extends StaticLayerObject {
 	final static String[] LABELS = new String[] { "X", "Y", "Z" };
 	final static GamaColor[] COLORS = new GamaColor[] { GamaColor.getInt(Color.red.getRGB()),
 			GamaColor.getInt(Color.green.getRGB()), GamaColor.getInt(Color.blue.getRGB()) };
+	final static GamaPoint DEFAULT_SCALE = new GamaPoint(.15, .15, .15);
 	final double size;
 
 	public AxesLayerObject(final Abstract3DRenderer renderer) {
@@ -26,6 +27,11 @@ public class AxesLayerObject extends StaticLayerObject {
 		setAlpha(WORLD_ALPHA);
 		setOffset(WORLD_OFFSET);
 		setScale(WORLD_SCALE);
+	}
+
+	@Override
+	public GamaPoint getScale() {
+		return scale == null ? DEFAULT_SCALE : scale;
 	}
 
 	@Override

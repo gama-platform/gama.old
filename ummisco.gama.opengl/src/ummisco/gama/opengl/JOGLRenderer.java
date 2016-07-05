@@ -528,7 +528,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
 				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
 				+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
-		final double size = distance / 15; // the size of the displayed axis
+		final double size = distance / 10; // the size of the displayed axis
 		if (currentScene != null)
 			currentScene.startDrawRotationHelper(pos, size);
 	}
