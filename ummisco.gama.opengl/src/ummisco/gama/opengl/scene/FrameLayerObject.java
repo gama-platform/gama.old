@@ -20,7 +20,6 @@ public class FrameLayerObject extends StaticLayerObject {
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 00.00f;
-	public boolean planDrawn = false;
 
 	public FrameLayerObject(final Abstract3DRenderer renderer) {
 		super(renderer);
@@ -44,8 +43,14 @@ public class FrameLayerObject extends StaticLayerObject {
 	@Override
 	public void drawWithoutShader(final GL2 gl, final JOGLRenderer renderer) {
 		gl.glDisable(GL2.GL_LIGHTING);
-		if (currentList.isEmpty())
-			drawXYPlan(renderer.data.getEnvWidth(), renderer.data.getEnvHeight());
+		if (currentList.isEmpty()) {
+			final double w = renderer.data.getEnvWidth();
+			final double h = renderer.data.getEnvHeight();
+			// add the world
+			final GamaColor c = new GamaColor(150, 150, 150, 255);
+			final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));
+			currentList.add(new GeometryObject(g, c, false, IShape.Type.POLYGON, this));
+		}
 		super.drawWithoutShader(gl, renderer);
 
 		if (renderer.data.isShowfps()) {
@@ -59,22 +64,7 @@ public class FrameLayerObject extends StaticLayerObject {
 			gl.glScaled(0.125d, 0.125d, 0.125d);
 			gl.glEnable(GL.GL_BLEND);
 		}
-		renderer.setCurrentColor(gl, Color.white);
 		gl.glEnable(GL2.GL_LIGHTING);
-	}
-
-	public void drawXYPlan(final double w, final double h) {
-		// add the world
-		final GamaColor c = new GamaColor(150, 150, 150, 255);
-		final GamaPoint origin = new GamaPoint();
-		IShape g = GamaGeometryType.buildLine(origin, new GamaPoint(w, 0));
-		currentList.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
-		g = GamaGeometryType.buildLine(new GamaPoint(w, 0), new GamaPoint(w, h));
-		currentList.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
-		g = GamaGeometryType.buildLine(new GamaPoint(w, h), new GamaPoint(0, h));
-		currentList.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
-		g = GamaGeometryType.buildLine(new GamaPoint(0, h), origin);
-		currentList.add(new GeometryObject(g, c, IShape.Type.LINESTRING, this));
 	}
 
 }

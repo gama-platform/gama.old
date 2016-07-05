@@ -30,7 +30,12 @@ public class GeometryObject extends AbstractObject {
 
 	// Package protected as it is only used by the static layers
 	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final LayerObject layer) {
-		this(geometry.getInnerGeometry(), new ShapeDrawingAttributes(geometry, color, color), layer);
+		this(geometry, color, true, type, layer);
+	}
+
+	GeometryObject(final IShape geometry, final GamaColor color, final boolean filled, final IShape.Type type,
+			final LayerObject layer) {
+		this(geometry.getInnerGeometry(), new ShapeDrawingAttributes(geometry, filled ? color : null, color), layer);
 	}
 
 	public IShape.Type getType() {

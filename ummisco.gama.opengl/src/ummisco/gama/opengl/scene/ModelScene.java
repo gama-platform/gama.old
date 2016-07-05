@@ -74,11 +74,8 @@ public class ModelScene {
 
 	protected void initWorld() {
 		if (renderer.data.isDrawEnv()) {
-			LayerObject object = new AxesLayerObject(renderer);
-			layers.put(AXES_KEY, object);
-			object = new FrameLayerObject(renderer);
-			layers.put(FRAME_KEY, object);
-
+			layers.put(FRAME_KEY, new FrameLayerObject(renderer));
+			layers.put(AXES_KEY, new AxesLayerObject(renderer));
 		}
 	}
 
