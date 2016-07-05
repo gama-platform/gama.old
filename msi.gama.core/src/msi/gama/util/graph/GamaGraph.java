@@ -772,7 +772,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IList<E> computeBestRouteBetween(final IScope scope, final V source, final V target) {
-
+		if (source.equals(target)) return GamaListFactory.create(getType().getContentType());
 		switch (optimizerType) {
 		case 1:
 			if (optimizer == null) {
@@ -847,7 +847,12 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				final msi.gama.metamodel.topology.graph.AStar astarAlgo = new msi.gama.metamodel.topology.graph.AStar(
 						this, source, target);
 				astarAlgo.compute();
-				spl3 = GamaListFactory.create(scope, getType().getContentType(), astarAlgo.getShortestPath());
+				final List re = astarAlgo.getShortestPath();
+				if (re == null) {
+					spl3 = GamaListFactory.create(getType().getContentType());
+				} else {
+					spl3 = GamaListFactory.create(scope, getType().getContentType(), re);
+				}
 				if (saveComputedShortestPaths) {
 					saveShortestPaths(spl3, source, target);
 				}
