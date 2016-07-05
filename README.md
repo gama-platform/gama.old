@@ -6,9 +6,9 @@ Please post issues about GAMA here:
 
 https://github.com/gama-platform/gama/issues
 
-Please post issues regarding the website (http://gama-platform.org) and the documentation here: 
+Issues regarding the website (http://gama-platform.org) and the documentation should be posted here: 
 
-https://github.com/mazarsju/gama_doc_17/issues
+https://github.com/gama-platform/gama.doc/issues
 
 
 
