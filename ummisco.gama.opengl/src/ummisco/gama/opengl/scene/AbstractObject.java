@@ -73,6 +73,20 @@ public abstract class AbstractObject {
 		}
 		return textures[order];
 	}
+	
+	public int[] getTextureIDs(final GL gl, final Abstract3DRenderer renderer) {
+		if (textures == null) {
+			return null;
+		}
+		int[] result = new int[textures.length];
+		for (int order = 0 ; order < textures.length ; order++) {
+			if (textures[order] == null) {
+				textures[order] = computeTexture(gl, renderer, order);
+			}
+			result[order] = textures[order].getTextureObject();
+		}
+		return result;
+	}
 
 	private Texture computeTexture(final GL gl, final Abstract3DRenderer renderer, final int order) {
 		final Object obj = attributes.getTextures().get(order);
