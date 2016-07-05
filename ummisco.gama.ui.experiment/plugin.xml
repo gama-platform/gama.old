@@ -436,7 +436,8 @@
             <command
                   commandId="ummisco.gama.ui.experiment.dummy"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/windows_spacer.png"
-                  style="push">
+                  style="push"
+                  tooltip="  ">
             </command>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"

@@ -8,8 +8,12 @@ public class DummyHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return false;
 	}
 
 }
