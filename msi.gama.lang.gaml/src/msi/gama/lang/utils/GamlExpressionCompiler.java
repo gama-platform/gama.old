@@ -899,7 +899,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			if (species != null) {
 				final Iterable<IDescription> equations = species.getChildrenWithKeyword(IKeyword.EQUATION);
 				for (final IDescription equation : equations) {
-					if (equation.hasVar(varDiff.getName())) {
+					if (equation.manipulatesVar(varDiff.getName())) {
 						return factory.createOperator("internal_integrated_value", getContext(), object,
 								((IVarExpression.Agent) container).getOwner(), varDiff);
 					}
@@ -1147,22 +1147,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 
 		if (getContext() != null) {
-
-			// Short circuiting the use of keyword in "draw ..." to ensure
-			// backward
-			// compatibility while providing a useful warning.
-
-			// if ( getContext().getKeyword().equals(DRAW) ) {
-			// if ( DrawStatement.SHAPES.keySet().contains(varName) ) {
-			// getContext().warning(
-			// "The symbol " + varName +
-			// " is not used anymore in draw. Please use geometries instead,
-			// e.g. '" + varName + "(size)'",
-			// IGamlIssue.UNKNOWN_KEYWORD, object, varName);
-			// return factory.createConst(varName + "__deprecated",
-			// Types.STRING);
-			// }
-			// }
 
 			// Finally, a last possibility (enabled in rare occasions, like in
 			// the "elevation" facet of grid layers), is

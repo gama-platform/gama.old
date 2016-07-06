@@ -262,7 +262,6 @@ public class SingleEquationStatement extends AbstractStatement {
 
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return function.toString() + " = " + expression.toString();
 	}
 
