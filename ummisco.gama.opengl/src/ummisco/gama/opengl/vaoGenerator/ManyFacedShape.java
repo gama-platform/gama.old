@@ -9,7 +9,9 @@ import com.vividsolutions.jts.geom.Coordinate;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
+import msi.gaml.types.GamaMaterialType;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.Material;
 import ummisco.gama.opengl.scene.GeometryObject;
@@ -21,7 +23,7 @@ import ummisco.gama.opengl.utils.Utils;
 
 public class ManyFacedShape {
 	
-	public static float SMOOTH_SHADING_ANGLE = 60f; // in degree
+	public static float SMOOTH_SHADING_ANGLE = 40f; // in degree
 	public static GamaColor TRIANGULATION_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
 	
 	private boolean isTriangulation;
@@ -31,7 +33,7 @@ public class ManyFacedShape {
 	private float[] coords;
 	private float[] uvMapping;
 	private float[] normals;
-	private int textId = -1; // "-1" for "no texture"
+	private int[] textIds = null; // null for "no texture"
 	private float[] coordsForBorder;
 	private float[] idxForBorder;
 	
@@ -49,8 +51,9 @@ public class ManyFacedShape {
 	private GamaColor color;
 	private GamaColor borderColor;
 	private Coordinate[] coordinates;
+	private GamaMaterial material;
 	
-	public ManyFacedShape(GeometryObject geomObj, int textId, boolean isTriangulation) {
+	public ManyFacedShape(GeometryObject geomObj, int[] textIds, boolean isTriangulation) {
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
 		this.type = geomObj.getType();
@@ -60,25 +63,26 @@ public class ManyFacedShape {
 		this.size = geomObj.getAttributes().size;
 		this.color = geomObj.getAttributes().color;
 		this.borderColor = geomObj.getAttributes().getBorder();
-		this.textId = textId;
+		this.textIds = textIds;
 		this.isTriangulation = isTriangulation;
+		this.material = geomObj.getAttributes().getMaterial();
+		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
 		
 		Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
 		// the last coordinate is the same as the first one, no need for this
 		this.coordinates = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 		
-		if (isStandardGeometry())
+		if (is1DShape())
 		{
-			if (depth > 0) {
-				// 3D shape
-				buildBottomFace();
-				buildTopFace();
-				buildLateralFaces();
-			}
-			else {
-				// 2D shape
-				buildTopFace();
-			}
+			// special case for 1D shape : no repetition of vertex
+			coordinates = geomObj.geometry.getCoordinates();
+			build1DShape();
+		}
+		else if (isPolyplan()) 
+		{
+			// special case for plan/polyplan : no repetition of vertex
+			coordinates = geomObj.geometry.getCoordinates();
+			buildPolyplan();
 		}
 		else if (isPyramid())
 		{
@@ -90,36 +94,33 @@ public class ManyFacedShape {
 		{
 			buildSphere();
 		}
+		else
+		{
+			// case of standard geometry : a standard geometry is a geometry which can be build with
+			// a bottom face and a top face, linked with some lateral faces. In case the standard 
+			// geometry is a 2D shape, we only build the top face.
+			if (depth > 0) {
+				// 3D shape
+				buildBottomFace();
+				buildTopFace();
+				buildLateralFaces();
+			}
+			else {
+				// 2D shape
+				buildTopFace();
+			}
+		}
 		
 		initBorders();
 		
 		applySmoothShading();
 		applyTransformation();
 		computeNormals();
-		if (textId != -1)
+		if (textIds != null)
 			computeUVMapping();
 		triangulate();
 		
 		correctBorders();
-	}
-	
-	private boolean isStandardGeometry() {
-		// a standard geometry is a geometry which can be build with
-		// a bottom face and a top face, linked with some lateral faces.
-		// In case the standard geometry is a 2D shape, we only build
-		// the top face.
-		if (type != IShape.Type.SPHERE
-				&& type != IShape.Type.CONE
-				&& type != IShape.Type.PYRAMID) {
-			return true;
-		}
-		else if (type == IShape.Type.CONE) {
-			// cone 2D is a standard geometry
-			if (depth == 0) {
-				return true;
-			}
-		}
-		return false;
 	}
 	
 	private boolean isPyramid() {
@@ -136,12 +137,32 @@ public class ManyFacedShape {
 		return (type == IShape.Type.SPHERE);
 	}
 	
+	private boolean is1DShape() {
+		// a 1D shape is a line, polyline or point. It cannot have a border, and it does not have faces
+		if ( type == IShape.Type.POINT
+				|| type == IShape.Type.LINEARRING
+				|| type == IShape.Type.LINESTRING) {
+			return true;
+		}
+		return false;
+	}
+	
+	private boolean isPolyplan() {
+		// a plan / polyplan are a bit particular : they are build out of a line, and the depth attribute gives the height of the plan.
+		if ( type == IShape.Type.PLAN
+				|| type == IShape.Type.POLYPLAN) {
+			return true;
+		}
+		return false;
+	}
+	
 	private int getOriginalIdx(int idx) {
 		// this function is used to get the original idx (from the idx buffer) before the smooth shading
 		return mapOfOriginalIdx.get(idx);
 	}
 	
 	private void initBorders() {
+		if (is1DShape()) return; // not apply for 1DShape
 		idxForBorder = getIdxBufferForLines();
 		coordsForBorder = coords;
 		// init the mapOfOriginalIdx
@@ -152,6 +173,7 @@ public class ManyFacedShape {
 	
 	private void correctBorders() {
 		// delete all the edges that are present in the list edgeToSmooth
+		if (is1DShape()) return; // not apply for 1DShape
 		for (int idx = 0 ; idx < idxForBorder.length ;) {
 			boolean edgeIsToDelete = false;
 			for (int[] edgeToSmooth : edgesToSmooth) {
@@ -175,10 +197,12 @@ public class ManyFacedShape {
 	}
 	
 	private void computeUVMapping() {
+		if (is1DShape()) return; // not apply for 1DShape
 		int sizeArray = 0;
 		for (int i = 0 ; i < faces.size() ; i++) {
 			sizeArray += faces.get(i).length;
 		}
+		sizeArray = coords.length/3;
 		uvMapping = new float[sizeArray*2];
 		for (int i = 0 ; i < faces.size() ; i++) {
 			int[] face = faces.get(i);
@@ -203,10 +227,10 @@ public class ManyFacedShape {
 				uvMapping[face[0]*2] = 0.5f;
 				uvMapping[face[0]*2+1] = 1;
 				// vertex 2 :
-				uvMapping[face[1]*2] = 0;
+				uvMapping[face[1]*2] = 1;
 				uvMapping[face[1]*2+1] = 0;
 				// vertex 3 :
-				uvMapping[face[2]*2] = 1;
+				uvMapping[face[2]*2] = 0;
 				uvMapping[face[2]*2+1] = 0;
 			}
 			else {
@@ -232,6 +256,27 @@ public class ManyFacedShape {
 					uvMapping[face[vIdx]*2+1] = 1-vCoords;
 				}
 			}
+		}
+	}
+	
+	private void build1DShape() {
+		// we build the shape as if it was only a border
+		coordsForBorder = new float[coordinates.length*3];
+		idxForBorder = new float[(coordinates.length-1)*2];
+		// fill the coordinates array
+		for (int i = 0 ; i < coordinates.length ; i++) {
+			coordsForBorder[3*i] = (float) coordinates[i].x;
+			coordsForBorder[3*i+1] = (float) coordinates[i].y;
+			coordsForBorder[3*i+2] = (float) coordinates[i].z;
+		}
+		// fill the index buffer
+		for (int i = 0 ; i < coordinates.length-1 ; i++) {
+			idxForBorder[2*i] = i;
+			idxForBorder[2*i+1] = i+1;
+		}
+		// case when the shape is just a point :
+		if (idxForBorder.length == 0) {
+			idxForBorder = new float[]{0};
 		}
 	}
 	
@@ -458,7 +503,30 @@ public class ManyFacedShape {
 		return result;
 	}
 	
+	private void buildPolyplan() {
+		// build the coordinates
+		coords = new float[(coordinates.length*3)*2]; // 3 components, twice because one line at z=0 and one line at z=depth
+		for (int i = 0 ; i < coordinates.length ; i++) {
+			coords[3*i] = (float) coordinates[i].x;
+			coords[3*i+1] = (float) coordinates[i].y;
+			coords[3*i+2] = (float) coordinates[i].z;
+			coords[(coordinates.length*3)+(3*i)] = (float) coordinates[i].x;
+			coords[(coordinates.length*3)+(3*i+1)] = (float) coordinates[i].y;
+			coords[(coordinates.length*3)+(3*i+2)] = (float) (coordinates[i].z + depth);
+		}
+		// build the faces
+		for (int i = 0 ; i < coordinates.length-1 ; i++) {
+			int[] face = new int[4];
+			face[0] = i;
+			face[1] = i+1;
+			face[2] = coordinates.length+i+1;
+			face[3] = coordinates.length+i;
+			faces.add(face);
+		}
+	}
+	
 	private void applySmoothShading() {
+		if (is1DShape()) return; // not apply for 1DShape
 		for (int faceIdx = 0 ; faceIdx < faces.size() ; faceIdx++) {
 			int[] idxConnexeFaces = getConnexeFaces(faceIdx);
 			for (int idxConnexeFace = 0 ; idxConnexeFace < idxConnexeFaces.length ; idxConnexeFace++) {
@@ -475,16 +543,19 @@ public class ManyFacedShape {
 	private void saveEdgeToSmooth(int face1Idx, int face2Idx) {
 		int[] idxArray = getMutualVertexIdx(face1Idx, face2Idx);
 		if (idxArray.length == 2) {
-			if (idxArray[0] > 3071 || idxArray[1] > 3071) {
-				System.out.println(idxArray[0] + "  " + idxArray[1]);
+			// remove the excedent uvMapping
+			if (uvMapping != null)
+			{
+				float[] begin = Arrays.copyOfRange(uvMapping, 0, idxArray[0]);
+				float[] end = Arrays.copyOfRange(uvMapping, idxArray[0]+2, uvMapping.length);
+				uvMapping = Utils.concatFloatArrays(begin, end);
+				begin = Arrays.copyOfRange(uvMapping, 0, idxArray[1]);
+				end = Arrays.copyOfRange(uvMapping, idxArray[1]+2, uvMapping.length);
+				uvMapping = Utils.concatFloatArrays(begin, end);
 			}
-			try {
-				getOriginalIdx(idxArray[0]);
-				getOriginalIdx(idxArray[1]);
-			}
-			catch (NullPointerException e) {
-				System.out.println(idxArray[0] + "  " + idxArray[1]);
-			}
+			
+			getOriginalIdx(idxArray[0]);
+			getOriginalIdx(idxArray[1]);
 			int idxV1 = getOriginalIdx(idxArray[0]);
 			int idxV2 = getOriginalIdx(idxArray[1]);
 			int[] edge = new int[] {idxV1,idxV2};
@@ -493,6 +564,7 @@ public class ManyFacedShape {
 	}
 	
 	private void triangulate() {
+		if (is1DShape()) return; // not apply for 1DShape
 		for (int i = 0 ; i < faces.size() ; i++) {
 			int[] faceTriangulated = triangulateFace(faces.get(i));
 			faces.remove(i);
@@ -584,8 +656,8 @@ public class ManyFacedShape {
 		return normals;
 	}
 	
-	public float[] getColorArray(GamaColor gamaColor) {
-		int verticesNb = coords.length / 3;
+	public float[] getColorArray(GamaColor gamaColor, float[] coordsArray) {
+		int verticesNb = coordsArray.length / 3;
 		float[] result = null;
 		float[] color = new float[]{ (float)(gamaColor.red()) /255f,
 				(float)(gamaColor.green()) /255f, 
@@ -602,6 +674,7 @@ public class ManyFacedShape {
 	}
 	
 	private void computeNormals() {
+		if (is1DShape()) return; // not apply for 1DShape
 		float[] result = new float[coords.length];
 		
 		for (int vIdx = 0 ; vIdx < coords.length/3 ; vIdx++) {
@@ -652,53 +725,156 @@ public class ManyFacedShape {
 		DrawingEntity[] result = null;
 		// if triangulate, returns only one result
 		if (isTriangulation) {
-			result = new DrawingEntity[1];
+			result = getTriangulationDrawingEntity();
+		}
+		else {
+			// if not triangulate
+			if (is1DShape()) {
+				result = get1DDrawingEntity();
+			}
+			else {
+				result = getStandardDrawingEntities();
+			}
+		}
+		
+		return result;
+	}
+	
+	private DrawingEntity[] getTriangulationDrawingEntity() {
+		DrawingEntity[] result = new DrawingEntity[1];
+		
+		// configure the drawing entity for the border
+		DrawingEntity borderEntity = new DrawingEntity();
+		borderEntity.setVertices(coords);
+		borderEntity.setIndices(getIdxBufferForLines());
+		borderEntity.setColors(getColorArray(TRIANGULATION_COLOR,coords));
+		borderEntity.type = DrawingEntity.Type.LINE;
+		
+		result[0] = borderEntity;
+		
+		return result;
+	}
+	
+	private DrawingEntity[] get1DDrawingEntity() {
+		// particular case if the geometry is a point or a line : we only draw the "borders" with the color "color" (and not the "bordercolor" !!)
+		DrawingEntity[] result = new DrawingEntity[1];
+		
+		// configure the drawing entity for the border
+		DrawingEntity borderEntity = new DrawingEntity();
+		borderEntity.setVertices(coordsForBorder);
+		borderEntity.setIndices(idxForBorder);
+		borderEntity.setColors(getColorArray(color,coordsForBorder));
+		if (idxForBorder.length > 1)
+			borderEntity.type = DrawingEntity.Type.LINE;
+		else
+			borderEntity.type = DrawingEntity.Type.POINT;
+		
+		result[0] = borderEntity;
+		
+		return result;
+	}
+	
+	private DrawingEntity[] getStandardDrawingEntities() {
+		// the number of drawing entity is equal to the number of textured applied + 1 if there is a border.
+		// If no texture is used, return 1 (+1 if there is a border).
+		int numberOfDrawingEntity = (textIds == null) ? 1 + ((borderColor!=null)? 1:0) : textIds.length + ((borderColor!=null)? 1:0);
+		DrawingEntity[] result = new DrawingEntity[numberOfDrawingEntity];
+		
+		if (borderColor != null) {
+			// if there is a border
 			
 			// configure the drawing entity for the border
 			DrawingEntity borderEntity = new DrawingEntity();
-			borderEntity.setVertices(coords);
-			borderEntity.setIndices(getIdxBufferForLines());
-			borderEntity.setColors(getColorArray(TRIANGULATION_COLOR));
-			borderEntity.type = DrawingEntity.Type.BORDER;
+			borderEntity.setVertices(coordsForBorder);
+			borderEntity.setIndices(idxForBorder);
+			borderEntity.setColors(getColorArray(borderColor,coordsForBorder));
+			borderEntity.type = DrawingEntity.Type.LINE;
 			
-			result[0] = borderEntity;
+			result[numberOfDrawingEntity-1] = borderEntity;
 		}
-		else {
-			// if not triangulate, then returns 2 results if draw border
-			if (borderColor != null) {
-				// two drawing entities
-				result = new DrawingEntity[2];
-				
-				// configure the drawing entity for the border
-				DrawingEntity borderEntity = new DrawingEntity();
-				borderEntity.setVertices(coordsForBorder);
-				borderEntity.setIndices(idxForBorder);
-				borderEntity.setColors(getColorArray(borderColor));
-				borderEntity.type = DrawingEntity.Type.BORDER;
-				
-				result[1] = borderEntity;
-			}
-			else {
-				// only one drawing entity
-				result = new DrawingEntity[1];
-			}
-			
+		
+		if (textIds == null || textIds.length == 1 || (topFace == null && bottomFace == null))
+		{
 			// configure the drawing entity for the filled faces
 			DrawingEntity filledEntity = new DrawingEntity();
 			filledEntity.setVertices(coords);
 			filledEntity.setNormals(normals);
 			filledEntity.setIndices(getIdxBuffer());
-			filledEntity.setColors(getColorArray(color));
-			filledEntity.type = DrawingEntity.Type.FILLED;
-			filledEntity.setMaterial(new Material(10,0.5f));
-			if (textId != -1)
+			filledEntity.setColors(getColorArray(color,coords));
+			filledEntity.type = DrawingEntity.Type.FACE;
+			filledEntity.setMaterial(new Material(material.getDamper(),material.getReflectivity()));
+			if (textIds != null)
 			{
 				filledEntity.type = DrawingEntity.Type.TEXTURED;
-				filledEntity.setTextureID(textId);
+				filledEntity.setTextureID(textIds[0]);
 				filledEntity.setUvMapping(uvMapping);
 			}
 			
 			result[0] = filledEntity;
+		}
+		else
+		{
+			// for multi-textured object, we split into 2 entities : the first will be the bottom + top face, the second will be the rest of the shape.
+			// build the bot/top entity
+			DrawingEntity botTopEntity = new DrawingEntity();
+			int numberOfSpecialFaces = 
+					(topFace != null && topFace.length>1) ? 
+					(bottomFace != null && bottomFace.length>1) ? 2:1 : 1; // a "specialFace" is either a top or a bottom face.
+			int[] idxBuffer = faces.get(0);
+			if (numberOfSpecialFaces == 2) {
+				idxBuffer = Utils.concatIntArrays(faces.get(0), faces.get(1));
+			}
+			float[] botTopIndices = new float[idxBuffer.length];
+			int vtxNumber = 0;
+			for (int i = 0 ; i < idxBuffer.length ; i++) {
+				botTopIndices[i] = (int) idxBuffer[i];
+				if (vtxNumber<=botTopIndices[i])
+					vtxNumber = (int) botTopIndices[i]+1;
+			}
+			float[] botTopCoords = new float[vtxNumber*3];
+			for (int i = 0 ; i < vtxNumber ; i++) {
+				botTopCoords[3*i] = coords[3*i];
+				botTopCoords[3*i+1] = coords[3*i+1];
+				botTopCoords[3*i+2] = coords[3*i+2];
+			}
+			float[] botTopNormals = Arrays.copyOfRange(normals, 0, vtxNumber*3);
+			float[] botTopUVMapping = Arrays.copyOfRange(uvMapping, 0, vtxNumber*2);
+			
+			botTopEntity.setVertices(botTopCoords);
+			botTopEntity.setNormals(botTopNormals);
+			botTopEntity.setIndices(botTopIndices);
+			botTopEntity.type = DrawingEntity.Type.TEXTURED;
+			botTopEntity.setMaterial(new Material(material.getDamper(),material.getReflectivity()));
+			botTopEntity.setTextureID(textIds[0]);
+			botTopEntity.setUvMapping(botTopUVMapping);
+			
+			// build the rest of the faces
+			DrawingEntity otherEntity = new DrawingEntity();
+			// removing the "special faces" from the list of faces
+			faces.remove(0);
+			if (numberOfSpecialFaces == 2) {
+				// remove a second face !
+				faces.remove(0);
+			}
+			coords = Arrays.copyOfRange(coords, vtxNumber*3, coords.length);
+			normals = Arrays.copyOfRange(normals, vtxNumber*3, normals.length);
+			uvMapping = Arrays.copyOfRange(uvMapping, vtxNumber*2, uvMapping.length);
+			float[] idxArray = getIdxBuffer();
+			// removing vtxNumber to every idx
+			for (int i = 0 ; i < idxArray.length ; i++) {
+				idxArray[i] = idxArray[i] - vtxNumber;
+			}
+			
+			otherEntity.setVertices(coords);
+			otherEntity.setNormals(normals);
+			otherEntity.setIndices(idxArray);
+			otherEntity.type = DrawingEntity.Type.TEXTURED;
+			otherEntity.setMaterial(new Material(material.getDamper(),material.getReflectivity()));
+			otherEntity.setTextureID(textIds[1]);
+			otherEntity.setUvMapping(uvMapping);
+			
+			result[0] = botTopEntity;
+			result[1] = otherEntity;
 		}
 		
 		return result;

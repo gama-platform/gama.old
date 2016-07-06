@@ -44,44 +44,64 @@ public class ModernDrawer {
 		this.gl.glGenBuffers(5, vboHandles, 0);
 		
 		// init map
-		mapEntities.put(DrawingEntity.Type.BORDER.toString(), null);
-		mapEntities.put(DrawingEntity.Type.FILLED.toString(), null);
+		mapEntities.put(DrawingEntity.Type.LINE.toString(), null);
+		mapEntities.put(DrawingEntity.Type.FACE.toString(), null);
 		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), null);
 	}
 	
 	public void addDrawingEntities(DrawingEntity[] entities) {
 		for (DrawingEntity entity : entities) {
-			if (entity.type.equals(DrawingEntity.Type.BORDER)) {
-				addBorderEntity(entity);
+			if (entity.type.equals(DrawingEntity.Type.LINE)) {
+				addLineEntity(entity);
 			}
-			else if (entity.type.equals(DrawingEntity.Type.FILLED)) {
+			else if (entity.type.equals(DrawingEntity.Type.FACE)) {
 				addFilledEntity(entity);
 			}
 			else if (entity.type.equals(DrawingEntity.Type.TEXTURED)) {
 				addTexturedEntity(entity);
 			}
+			else if (entity.type.equals(DrawingEntity.Type.POINT)) {
+				addPointEntity(entity);
+			}
 		}
 	}
 	
-	public void addBorderEntity(DrawingEntity newEntity) {
-		ArrayList<DrawingEntity> borderEntities = mapEntities.get(DrawingEntity.Type.BORDER.toString());
+	public void addLineEntity(DrawingEntity newEntity) {
+		ArrayList<DrawingEntity> lineEntities = mapEntities.get(DrawingEntity.Type.LINE.toString());
 		ArrayList<DrawingEntity> listToAdd = new ArrayList<DrawingEntity>();
-		if (borderEntities == null) {
+		if (lineEntities == null) {
 			listToAdd.add(newEntity);
 		}
 		else {
-			listToAdd = borderEntities;
-			DrawingEntity entity = listToAdd.get(0); // only one element for "border"
+			listToAdd = lineEntities;
+			DrawingEntity entity = listToAdd.get(0); // only one element for "line"
 			// we concatenate newEntity with the other entities
 			listToAdd.add(entity.concatenateWith(newEntity));
 			// we remove the old entity
 			listToAdd.remove(0);
 		}
-		mapEntities.put(DrawingEntity.Type.BORDER.toString(), listToAdd);
+		mapEntities.put(DrawingEntity.Type.LINE.toString(), listToAdd);
+	}
+	
+	public void addPointEntity(DrawingEntity newEntity) {
+		ArrayList<DrawingEntity> pointEntities = mapEntities.get(DrawingEntity.Type.POINT.toString());
+		ArrayList<DrawingEntity> listToAdd = new ArrayList<DrawingEntity>();
+		if (pointEntities == null) {
+			listToAdd.add(newEntity);
+		}
+		else {
+			listToAdd = pointEntities;
+			DrawingEntity entity = listToAdd.get(0); // only one element for "point"
+			// we concatenate newEntity with the other entities
+			listToAdd.add(entity.concatenateWith(newEntity));
+			// we remove the old entity
+			listToAdd.remove(0);
+		}
+		mapEntities.put(DrawingEntity.Type.POINT.toString(), listToAdd);
 	}
 	
 	public void addFilledEntity(DrawingEntity newEntity) {
-		ArrayList<DrawingEntity> filledEntities = mapEntities.get(DrawingEntity.Type.FILLED.toString());
+		ArrayList<DrawingEntity> filledEntities = mapEntities.get(DrawingEntity.Type.FACE.toString());
 		ArrayList<DrawingEntity> listToAdd = new ArrayList<DrawingEntity>();
 		if (filledEntities == null) {
 			listToAdd.add(newEntity);
@@ -106,7 +126,7 @@ public class ModernDrawer {
 				listToAdd.add(newEntity);
 			}
 		}
-		mapEntities.put(DrawingEntity.Type.FILLED.toString(), listToAdd);
+		mapEntities.put(DrawingEntity.Type.FACE.toString(), listToAdd);
 	}
 	
 	public void addTexturedEntity(DrawingEntity newEntity) {
@@ -175,12 +195,19 @@ public class ModernDrawer {
 		mapEntities.clear();
 	}
 	
+	private boolean useNormals(String drawingType) {
+		if (drawingType.equals(DrawingEntity.Type.LINE.toString())
+				|| drawingType.equals(DrawingEntity.Type.POINT.toString()))
+			return false;
+		return true;
+	}
+	
 	private void genericDrawMethod(DrawingEntity entity, String drawingType) {
-		boolean useNormals = (drawingType.equals(DrawingEntity.Type.BORDER.toString())) ? false : true;
+		boolean useNormals = useNormals(drawingType);
 		if (useNormals) {
 			shaderProgram.enableNormal();
-			float shineDamper = entity.getMaterial().getShineDamper();
-			float reflectivity = entity.getMaterial().getReflectivity();
+			float shineDamper = (float) entity.getMaterial().getShineDamper();
+			float reflectivity = (float) entity.getMaterial().getReflectivity();
 			shaderProgram.loadShineVariables(shineDamper,reflectivity);
 			shaderProgram.loadAmbientLight(new Vector3f(
 					(float) renderer.data.getAmbientLightColor().getRed() / 255f,
@@ -203,11 +230,13 @@ public class ModernDrawer {
 		
 		// COLORS BUFFER (If no texture is defined)
 		if (uvMapping == null) {
+			shaderProgram.disableTexture();
 			storeDataInAttributeList(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,colors);
 		}
 		
 		// UV MAPPING (If a texture is defined)
 		else {
+			shaderProgram.enableTexture();
 			shaderProgram.loadTexture(0);
 			storeDataInAttributeList(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,uvMapping);
 			gl.glActiveTexture(GL.GL_TEXTURE0);
@@ -230,7 +259,11 @@ public class ModernDrawer {
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
 		ibIdxBuff.rewind();
 
-		if (drawingType.equals(DrawingEntity.Type.BORDER.toString())) {
+		if (drawingType.equals(DrawingEntity.Type.POINT.toString())) {
+			// particular case : drawing just a point
+			gl.glDrawElements(GL2.GL_POINTS, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
+		}
+		else if (drawingType.equals(DrawingEntity.Type.LINE.toString())) {
 			// draw border (lines)
 			gl.glDrawElements(GL2.GL_LINES, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
 		}

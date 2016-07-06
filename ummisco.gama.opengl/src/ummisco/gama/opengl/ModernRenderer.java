@@ -136,6 +136,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 	}
 	
 	private void initShader(final GL2 gl) {
+//		gl.glEnable(GL.GL_BLEND);
+//		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		shaderProgram = new ShaderProgram(gl);
 	}
 
