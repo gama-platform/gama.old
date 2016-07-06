@@ -11,7 +11,8 @@ Require-Bundle: msi.gama.ext,
  org.eclipse.ui;bundle-version="3.8.2",
  ummisco.gama.ui.shared,
  ummisco.gama.ui.experiment;bundle-version="1.7.0",
- msi.gama.application;bundle-version="1.7.0"
+ msi.gama.application;bundle-version="1.7.0",
+ com.google.gson;bundle-version="2.2.4"
 Bundle-ActivationPolicy: lazy
 Import-Package: com.vividsolutions.jts.geom,
  org.apache.commons.lang;version="2.6.0",
@@ -31,6 +32,5 @@ Bundle-ClassPath: gluegen-rt-natives-linux-amd64.jar,
  jogl-all-natives-windows-amd64.jar,
  jogl-all-natives-windows-i586.jar,
  jogl-all.jar,
- gson-2.3.1.jar,
  .
 Bundle-Vendor: UMMISCO
