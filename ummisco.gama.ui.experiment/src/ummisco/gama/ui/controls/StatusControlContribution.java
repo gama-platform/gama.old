@@ -51,7 +51,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	volatile String mainTaskName;
 	volatile String subTaskName;
 	volatile boolean inSubTask = false;
-	volatile boolean InUserStatus = false;
+	volatile boolean inUserStatus = false;
 	volatile Double subTaskCompletion;
 	private final static int WIDTH = 400;
 	private GamaUIColor color;
@@ -180,7 +180,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	// @Override
 	public GamaUIColor getPopupBackground() {
-		if (InUserStatus && color != null) {
+		if (inUserStatus && color != null) {
 			return color;
 		}
 		return state == IGui.ERROR ? IGamaColors.ERROR
@@ -218,7 +218,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		}
 		isUpdating = true;
 		if (m instanceof SubTaskMessage) {
-			if (InUserStatus) {
+			if (inUserStatus) {
 				return;
 			}
 			final SubTaskMessage m2 = (SubTaskMessage) m;
@@ -242,7 +242,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				resume();
 			} else {
 				inSubTask = false; // in case
-				InUserStatus = true;
+				inUserStatus = true;
 				final GamaColor c = m.getColor();
 				if (c == null) {
 					color = null;
@@ -253,7 +253,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 				mainTaskName = m.getText();
 			}
 		} else if (m instanceof StatusMessage) {
-			if (InUserStatus) {
+			if (inUserStatus) {
 				return;
 			}
 			inSubTask = false; // in case
@@ -278,7 +278,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			popup.display();
 		}
 		isUpdating = false;
-		InUserStatus = false;
+		inUserStatus = false;
 
 	}
 
@@ -299,7 +299,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	@Override
 	public void resume() {
-		InUserStatus = false;
+		inUserStatus = false;
 		color = null;
 		mainTaskName = null;
 	}

@@ -158,7 +158,6 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 	}
 
 	public static SimulationSpeedContributionItem getInstance() {
-		// TODO Auto-generated method stub
 		return instance;
 	}
 
