@@ -10,6 +10,7 @@ import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.Types;
@@ -59,6 +60,8 @@ public abstract class DrawingAttributes {
 	public abstract GamaColor getBorder();
 
 	public abstract double getDepth();
+	
+	public abstract GamaMaterial getMaterial();
 
 	public String getSpeciesName() {
 		return null;

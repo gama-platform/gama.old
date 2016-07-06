@@ -9,7 +9,9 @@ import com.vividsolutions.jts.geom.Coordinate;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
+import msi.gaml.types.GamaMaterialType;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.Material;
 import ummisco.gama.opengl.scene.GeometryObject;
@@ -49,6 +51,7 @@ public class ManyFacedShape {
 	private GamaColor color;
 	private GamaColor borderColor;
 	private Coordinate[] coordinates;
+	private GamaMaterial material;
 	
 	public ManyFacedShape(GeometryObject geomObj, int[] textIds, boolean isTriangulation) {
 		this.faces = new ArrayList<int[]>();
@@ -62,6 +65,8 @@ public class ManyFacedShape {
 		this.borderColor = geomObj.getAttributes().getBorder();
 		this.textIds = textIds;
 		this.isTriangulation = isTriangulation;
+		this.material = geomObj.getAttributes().getMaterial();
+		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
 		
 		Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
 		// the last coordinate is the same as the first one, no need for this
@@ -797,7 +802,7 @@ public class ManyFacedShape {
 			filledEntity.setIndices(getIdxBuffer());
 			filledEntity.setColors(getColorArray(color,coords));
 			filledEntity.type = DrawingEntity.Type.FACE;
-			filledEntity.setMaterial(new Material(10,0.5f));
+			filledEntity.setMaterial(new Material(material.getDamper(),material.getReflectivity()));
 			if (textIds != null)
 			{
 				filledEntity.type = DrawingEntity.Type.TEXTURED;
@@ -839,7 +844,7 @@ public class ManyFacedShape {
 			botTopEntity.setNormals(botTopNormals);
 			botTopEntity.setIndices(botTopIndices);
 			botTopEntity.type = DrawingEntity.Type.TEXTURED;
-			botTopEntity.setMaterial(new Material(10,0.5f));
+			botTopEntity.setMaterial(new Material(material.getDamper(),material.getReflectivity()));
 			botTopEntity.setTextureID(textIds[0]);
 			botTopEntity.setUvMapping(botTopUVMapping);
 			
@@ -864,7 +869,7 @@ public class ManyFacedShape {
 			otherEntity.setNormals(normals);
 			otherEntity.setIndices(idxArray);
 			otherEntity.type = DrawingEntity.Type.TEXTURED;
-			otherEntity.setMaterial(new Material(10,0.5f));
+			otherEntity.setMaterial(new Material(material.getDamper(),material.getReflectivity()));
 			otherEntity.setTextureID(textIds[1]);
 			otherEntity.setUvMapping(uvMapping);
 			

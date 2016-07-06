@@ -2,12 +2,12 @@ package ummisco.gama.modernOpenGL;
 
 public class Material {
 	
-	float shineDamper = 5;
-	float reflectivity = 1;
+	double shineDamper;
+	double reflectivity;
 	
-	public Material(float shineDamper, float reflectivity) {
-		this.shineDamper = shineDamper;
-		this.reflectivity = reflectivity;
+	public Material(double d, double e) {
+		this.shineDamper = d;
+		this.reflectivity = e;
 	}
 	
 	public boolean equalsTo(Material otherMaterial) {
@@ -18,11 +18,11 @@ public class Material {
 		else return false;
 	}
 
-	public float getShineDamper() {
+	public double getShineDamper() {
 		return shineDamper;
 	}
 
-	public float getReflectivity() {
+	public double getReflectivity() {
 		return reflectivity;
 	}
 

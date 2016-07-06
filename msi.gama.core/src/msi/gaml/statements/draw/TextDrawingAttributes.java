@@ -11,6 +11,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
+import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 
 public class TextDrawingAttributes extends DrawingAttributes {
@@ -73,6 +74,17 @@ public class TextDrawingAttributes extends DrawingAttributes {
 	@Override
 	public double getDepth() {
 		return 0;
+	}
+	
+	/**
+	 * Method getMaterial()
+	 * 
+	 * @see msi.gaml.statements.draw.DrawingAttributes#getMaterial()
+	 */
+	@Override
+	public GamaMaterial getMaterial() {
+		// TODO
+		return null;
 	}
 
 	@Override

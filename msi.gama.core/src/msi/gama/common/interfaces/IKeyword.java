@@ -92,6 +92,7 @@ public interface IKeyword {
 	public static final String CREATE = "create";
 	public static final String CSV = "csv";
 	public static final String CURRENT_STATE = "currentState";
+	public static final String DAMPER = "damper";
 	public static final String DARKER = "darker";
 	public static final String DATA = "data";
 	public static final String DECAY = "decay";
@@ -244,6 +245,7 @@ public interface IKeyword {
 	public static final String LOOP = "loop";
 	public static final String LOOK_AT = "look_at";
 	public static final String MAPPING = "mapping";
+	public static final String MATERIAL = "material";
 	public static final String MATCH = "match";
 	public static final String MATCH_BETWEEN = "match_between";
 	public static final String MATCH_ONE = "match_one";
@@ -334,6 +336,7 @@ public interface IKeyword {
 	public static final String RANGE = "range";
 	public static final String REACTIVE_TABU = "reactive_tabu";
 	public static final String READABLE = "readable";
+	public static final String REFLECTIVITY = "reflectivity";
 	public static final String REFLEX = "reflex";
 	public static final String REFRESH = "refresh";
 	public static final String REFRESH_EVERY = "refresh_every";

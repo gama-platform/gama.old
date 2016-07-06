@@ -13,12 +13,14 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaFontType;
 import msi.gaml.types.GamaListType;
+import msi.gaml.types.GamaMaterialType;
 import msi.gaml.types.Types;
 
 /**
@@ -44,6 +46,7 @@ public class DrawingData {
 	final IExpression colorExp;
 	final IExpression fontExp;
 	final IExpression textureExp;
+	final IExpression materialExp;
 	final IExpression perspectiveExp;
 
 	ILocation constantSIze;
@@ -55,6 +58,7 @@ public class DrawingData {
 	// GamaColor constantColor;
 	GamaFont constantFont;
 	IList constantTextures;
+	GamaMaterial constantMaterial;
 	Boolean constantperspective;
 	Boolean hasBorder;
 	Boolean hasColor;
@@ -68,11 +72,12 @@ public class DrawingData {
 	GamaColor currentColor;
 	GamaFont currentFont;
 	IList currentTextures = null;
+	GamaMaterial currentMaterial = null;
 	Boolean currentperspective;
 
 	public DrawingData(final IExpression sizeExp, final IExpression depthExp, final IExpression rotationExp,
 			final IExpression locationExp, final IExpression emptyExp, final IExpression borderExp,
-			final IExpression colorExp, final IExpression fontExp, final IExpression textureExp,
+			final IExpression colorExp, final IExpression fontExp, final IExpression textureExp, final IExpression materialExp,
 			final IExpression perspectiveExp) {
 		this.sizeExp = sizeExp;
 		this.depthExp = depthExp;
@@ -83,6 +88,7 @@ public class DrawingData {
 		this.colorExp = colorExp;
 		this.fontExp = fontExp;
 		this.textureExp = textureExp;
+		this.materialExp = materialExp;
 		this.perspectiveExp = perspectiveExp;
 		initializeConstants();
 	}
@@ -166,6 +172,11 @@ public class DrawingData {
 			} else {
 				constantTextures = GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(null));
 			}
+		}
+		
+		/* MATERIAL */
+		if (materialExp != null && materialExp.isConst()) {
+			constantMaterial = GamaMaterialType.staticCast(null, materialExp.value(null), true);
 		}
 	}
 
@@ -278,6 +289,17 @@ public class DrawingData {
 				} else {
 					currentTextures = GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(scope));
 				}
+			}
+		}
+		
+		/* MATERIAL */
+		if (constantMaterial != null) {
+			currentMaterial = constantMaterial;
+		} else {
+			if (materialExp != null) {
+				currentMaterial = GamaMaterialType.staticCast(scope, materialExp.value(scope), true);
+			} else {
+				currentMaterial = null;
 			}
 		}
 

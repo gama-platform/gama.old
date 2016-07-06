@@ -79,6 +79,7 @@ import msi.gaml.types.Types;
 		@facet(name = DrawStatement.END_ARROW, type = { IType.INT,
 				IType.FLOAT }, optional = true, doc = @doc("the size of the arrow, located at the end of the drawn geometry")),
 		@facet(name = PERSPECTIVE, type = IType.BOOL, optional = true, doc = @doc(value = "Whether to render the text in perspective or facing the user. Default is true.")),
+		@facet(name = IKeyword.MATERIAL, type = IType.MATERIAL, optional = true, doc = @doc(value = "Set a particular material to the object (only if you are in the \"use_shader\" mode).")),
 		@facet(name = "bitmap", type = IType.BOOL, optional = true, doc = @doc(deprecated = "use 'perspective' instead.", value = "Whether to render the text in 3D or not")) },
 
 		omissible = IKeyword.GEOMETRY)
@@ -163,7 +164,7 @@ public class DrawStatement extends AbstractStatementSequence {
 	public static final String BEGIN_ARROW = "begin_arrow";
 
 	private final DrawExecuter executer;
-	private final IExpression size, depth, rotate, at, empty, border, color, font, texture, perspective;
+	private final IExpression size, depth, rotate, at, empty, border, color, font, texture, perspective, material;
 	// private final ThreadLocal<DrawingData> data = new ThreadLocal();
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
@@ -177,6 +178,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		color = getFacet(COLOR);
 		font = getFacet(FONT);
 		texture = getFacet(TEXTURE);
+		material = getFacet(IKeyword.MATERIAL);
 		perspective = getFacet("bitmap", PERSPECTIVE);
 		final IExpression item = getFacet(IKeyword.GEOMETRY);
 		if (item == null) {
@@ -206,7 +208,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			return null;
 		}
 		try {
-			final DrawingData data = new DrawingData(size, depth, rotate, at, empty, border, color, font, texture,
+			final DrawingData data = new DrawingData(size, depth, rotate, at, empty, border, color, font, texture, material,
 					perspective);
 			data.computeAttributes(scope);
 			return executer.executeOn(scope, g, data);

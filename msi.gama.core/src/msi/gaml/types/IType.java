@@ -66,6 +66,7 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public final static int SKILL = 22;
 	public final static int DATE = 23;
 	public final static int MESSAGE = 24;
+	public final static int MATERIAL = 25;
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 
