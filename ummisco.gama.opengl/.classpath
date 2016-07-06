@@ -20,5 +20,6 @@
 	<classpathentry exported="true" kind="lib" path="jogl-all-natives-windows-amd64.jar"/>
 	<classpathentry exported="true" kind="lib" path="jogl-all-natives-windows-i586.jar"/>
 	<classpathentry exported="true" kind="lib" path="jogl-all.jar" sourcepath="jogl.2.3.2.src.zip"/>
+	<classpathentry exported="true" kind="lib" path="gson-2.3.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
