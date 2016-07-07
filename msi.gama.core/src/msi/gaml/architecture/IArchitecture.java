@@ -11,9 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.architecture;
 
+import msi.gama.common.interfaces.ISkill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 

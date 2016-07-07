@@ -13,12 +13,11 @@ package msi.gaml.types;
 
 import java.util.Map;
 
+import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.common.interfaces.ITyped;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IGamlDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
@@ -70,10 +69,9 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 
-	public Support cast(IScope scope, Object obj, Object param, boolean copy) throws GamaRuntimeException;
+	public Support cast(IScope scope, Object obj, Object param, boolean copy);
 
-	public Support cast(IScope scope, Object obj, Object param, IType keyType, IType contentType, boolean copy)
-			throws GamaRuntimeException;
+	public Support cast(IScope scope, Object obj, Object param, IType keyType, IType contentType, boolean copy);
 
 	public int id();
 

@@ -39,6 +39,7 @@ import org.eclipse.xtext.util.Tuples;
 
 import com.google.inject.Inject;
 
+import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.gaml.ActionDefinition;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.Facet;
@@ -49,7 +50,6 @@ import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.utils.EGaml;
 import msi.gaml.descriptions.FacetProto;
-import msi.gaml.descriptions.IGamlDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
 

@@ -11,11 +11,16 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Set;
+
 import gnu.trove.set.hash.THashSet;
-import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.*;
-import msi.gaml.types.*;
+import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.common.interfaces.IGamlable;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlProperties;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGamlable {
 
@@ -37,7 +42,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 	static FacetProto NAME = NAME();
 
 	public FacetProto(final String name, final int[] types, final int ct, final int kt, final String[] values,
-		final boolean optional, final boolean internal, final String doc) {
+			final boolean optional, final boolean internal, final String doc) {
 		this.name = name;
 		this.types = types;
 		this.contentType = ct;
@@ -48,12 +53,12 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 		isId = isLabel && types[0] != IType.LABEL;
 		isType = types[0] == IType.TYPE_ID;
 		this.values = new THashSet(Arrays.asList(values));
-		if ( doc != null ) {
-			String[] strings = doc.split(JavaWriter.DOC_SEP, -1);
+		if (doc != null) {
+			final String[] strings = doc.split(GamlProperties.SEPARATOR, -1);
 			this.doc = strings[0];
-			if ( strings.length > 1 ) {
+			if (strings.length > 1) {
 				this.deprecated = strings[1];
-				if ( deprecated.length() == 0 ) {
+				if (deprecated.length() == 0) {
 					deprecated = null;
 				}
 			}
@@ -66,7 +71,8 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 
 	@Override
 	public String getDefiningPlugin() {
-		// returns null as facets cannot be defined alone (the symbol already carries this information)
+		// returns null as facets cannot be defined alone (the symbol already
+		// carries this information)
 		return null;
 	}
 
@@ -80,22 +86,23 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 
 	static FacetProto DEPENDS_ON() {
 		return new FacetProto(IKeyword.DEPENDS_ON, new int[] { IType.LIST }, IType.STRING, IType.INT, new String[0],
-			true, true, "the dependencies of expressions (internal)");
+				true, true, "the dependencies of expressions (internal)");
 	}
 
 	static FacetProto KEYWORD() {
 		return new FacetProto(IKeyword.KEYWORD, new int[] { IType.ID }, IType.NONE, IType.NONE, new String[0], true,
-			true, "the declared keyword (internal)");
+				true, "the declared keyword (internal)");
 	}
 
 	static FacetProto NAME() {
 		return new FacetProto(IKeyword.NAME, new int[] { IType.LABEL }, IType.NONE, IType.NONE, new String[0], true,
-			true, "the declared name (internal)");
+				true, "the declared name (internal)");
 	}
 
 	/**
 	 * Method getTitle()
-	 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
+	 * 
+	 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
 	 */
 	@Override
 	public String getTitle() {
@@ -104,37 +111,38 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 	}
 
 	public String typesToString() {
-		StringBuilder s = new StringBuilder(30);
+		final StringBuilder s = new StringBuilder(30);
 		s.append(types.length < 2 ? " " : " any type in [");
-		for ( int i = 0; i < types.length; i++ ) {
+		for (int i = 0; i < types.length; i++) {
 			switch (types[i]) {
-				case IType.ID:
-					s.append("an identifier");
-					break;
-				case IType.LABEL:
-					s.append("a label");
-					break;
-				case IType.NEW_TEMP_ID:
-					s.append("a new identifier");
-					break;
-				case IType.NEW_VAR_ID:
-					s.append("a new identifier");
-					break;
-				case IType.TYPE_ID:
-					s.append("a datatype identifier");
-					break;
-				case IType.NONE:
-					s.append("any type");
-					break;
-				default:
-					// TODO AD 2/16 Document the types with the new possibility to include of and index
-					s.append(Types.get(types[i]).toString());
+			case IType.ID:
+				s.append("an identifier");
+				break;
+			case IType.LABEL:
+				s.append("a label");
+				break;
+			case IType.NEW_TEMP_ID:
+				s.append("a new identifier");
+				break;
+			case IType.NEW_VAR_ID:
+				s.append("a new identifier");
+				break;
+			case IType.TYPE_ID:
+				s.append("a datatype identifier");
+				break;
+			case IType.NONE:
+				s.append("any type");
+				break;
+			default:
+				// TODO AD 2/16 Document the types with the new possibility to
+				// include of and index
+				s.append(Types.get(types[i]).toString());
 			}
-			if ( i != types.length - 1 ) {
+			if (i != types.length - 1) {
 				s.append(", ");
 			}
 		}
-		if ( types.length >= 2 ) {
+		if (types.length >= 2) {
 			s.append("]");
 		}
 		return s.toString();
@@ -142,21 +150,22 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 
 	/**
 	 * Method getDocumentation()
-	 * @see msi.gaml.descriptions.IGamlDescription#getDocumentation()
+	 * 
+	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
 	public String getDocumentation() {
-		StringBuilder sb = new StringBuilder(100);
+		final StringBuilder sb = new StringBuilder(100);
 		sb.append("<b>").append(name).append("</b>, ")
-			.append(deprecated != null ? "deprecated" : optional ? "optional" : "required").append("")
-			.append(", expects ").append(typesToString());
-		if ( values.size() > 0 ) {
+				.append(deprecated != null ? "deprecated" : optional ? "optional" : "required").append("")
+				.append(", expects ").append(typesToString());
+		if (values.size() > 0) {
 			sb.append(", takes values in ").append(values).append(". ");
 		}
-		if ( doc != null && doc.length() > 0 ) {
+		if (doc != null && doc.length() > 0) {
 			sb.append(" - ").append(doc);
 		}
-		if ( deprecated != null ) {
+		if (deprecated != null) {
 			sb.append(" <b>[");
 			sb.append(deprecated);
 			sb.append("]</b>");
@@ -166,7 +175,8 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 
 	/**
 	 * Method getName()
-	 * @see msi.gaml.descriptions.IGamlDescription#getName()
+	 * 
+	 * @see msi.gama.common.interfaces.IGamlDescription#getName()
 	 */
 	@Override
 	public String getName() {
@@ -180,6 +190,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 
 	/**
 	 * Method compareTo()
+	 * 
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
 	@Override
@@ -189,22 +200,29 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 
 	/**
 	 * Method serialize()
+	 * 
 	 * @see msi.gama.common.interfaces.IGamlable#serialize(boolean)
 	 */
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		if ( deprecated != null ) { return ""; }
-		if ( SymbolSerializer.uselessFacets.contains(name) ) { return ""; }
-		return name + (optional ? ": optional" : ": required") + " (" +
-			(types.length < 2 ? typesToString().substring(1) : typesToString()) + ")";
+		if (deprecated != null) {
+			return "";
+		}
+		if (SymbolSerializer.uselessFacets.contains(name)) {
+			return "";
+		}
+		return name + (optional ? ": optional" : ": required") + " ("
+				+ (types.length < 2 ? typesToString().substring(1) : typesToString()) + ")";
 	}
 
 	/**
 	 * Method collectPlugins()
-	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 * 
+	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final GamlProperties meta) {}
+	public void collectMetaInformation(final GamlProperties meta) {
+	}
 
 	/**
 	 * @return

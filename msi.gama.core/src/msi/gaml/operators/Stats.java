@@ -43,7 +43,6 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaRegression;
 import msi.gama.util.IContainer;
-import msi.gama.util.Instance;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.expressions.IExpression;
@@ -62,6 +61,29 @@ import rcaller.exception.ParseException;
  *
  */
 public class Stats {
+
+	public static class Instance extends EuclideanDoublePoint {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		int id;
+
+		public Instance(final int id, final double[] point) {
+			super(point);
+			this.id = id;
+		}
+
+		public int getId() {
+			return id;
+		}
+
+		public void setId(final int id) {
+			this.id = id;
+		}
+
+	}
 
 	private static class DataSet {
 
@@ -619,16 +641,16 @@ public class Stats {
 	// TODO Penser a faire ces calculs sur les points, egalement (et les entiers
 	// ?)
 
-	
 	@operator(value = "median", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
 			IType.INT, IType.FLOAT, IType.POINT, IType.COLOR }, category = { IOperatorCategory.STATISTICAL,
 					IOperatorCategory.CONTAINER,
 					IOperatorCategory.COLOR }, concept = { IConcept.STATISTIC, IConcept.COLOR })
 	@doc(value = "the median of all the elements of the operand.", special_cases = {
-			"if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" }, examples = { @example(value = "median ([4.5, 3.5, 5.5, 3.4, 7.0])", equals = "5.0") }, see = { "mean" })
+			"if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" }, examples = {
+					@example(value = "median ([4.5, 3.5, 5.5, 3.4, 7.0])", equals = "5.0") }, see = { "mean" })
 	public static Object opMedian(final IScope scope, final IContainer values) {
-		
-		IType contentType = values.getType().getContentType();
+
+		final IType contentType = values.getType().getContentType();
 		if (values.length(scope) == 0) {
 			return contentType.cast(scope, 0d, null, false);
 		}
@@ -659,7 +681,7 @@ public class Stats {
 			final DataSet r = new DataSet();
 			final DataSet g = new DataSet();
 			final DataSet b = new DataSet();
-			for (final Object o :values.iterable(scope)) {
+			for (final Object o : values.iterable(scope)) {
 				final GamaColor p = (GamaColor) o;
 				r.addValue(p.getRed());
 				g.addValue(p.getGreen());
@@ -905,36 +927,32 @@ public class Stats {
 		}
 		return results;
 	}
-	
+
 	@operator(value = "skewness", can_be_const = false, type = IType.LIST, category = {
 			IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc(value = "returns skewness value computed from the operand list of values", special_cases = "if the length of the list is lower than 3, returns NaN", examples = {
 			@example("skewness ([1,2,3,4,5])") })
-	public static Double skewness(final IScope scope, final GamaList data)
-			throws GamaRuntimeException {
-		Skewness sk = new Skewness();
-		double[] values = new double[data.length(scope)];
-		for (int i = 0; i < values.length;i++) {
+	public static Double skewness(final IScope scope, final GamaList data) throws GamaRuntimeException {
+		final Skewness sk = new Skewness();
+		final double[] values = new double[data.length(scope)];
+		for (int i = 0; i < values.length; i++) {
 			values[i] = Cast.asFloat(scope, data.get(i));
 		}
 		return sk.evaluate(values);
 	}
 
-
 	@operator(value = "kurtosis", can_be_const = false, type = IType.LIST, category = {
 			IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc(value = "returns kurtosis value computed from the operand list of values", special_cases = "if the length of the list is lower than 3, returns NaN", examples = {
 			@example("kurtosis ([1,2,3,4,5])") })
-	public static Double kurtosis(final IScope scope, final GamaList data)
-			throws GamaRuntimeException {
-		Kurtosis k = new Kurtosis();
-		double[] values = new double[data.length(scope)];
-		for (int i = 0; i < values.length;i++) {
+	public static Double kurtosis(final IScope scope, final GamaList data) throws GamaRuntimeException {
+		final Kurtosis k = new Kurtosis();
+		final double[] values = new double[data.length(scope)];
+		for (int i = 0; i < values.length; i++) {
 			values[i] = Cast.asFloat(scope, data.get(i));
 		}
 		return k.evaluate(values);
 	}
-
 
 	@operator(value = "kmeans", can_be_const = false, type = IType.LIST, category = {
 			IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CLUSTERING })

@@ -169,7 +169,7 @@ public class Containers {
 		if (shape == null) {
 			return null;
 		}
-		final GamaMap map = shape.getAttributes();
+		final GamaMap map = (GamaMap) shape.getAttributes();
 		if (map == null) {
 			return null;
 		}

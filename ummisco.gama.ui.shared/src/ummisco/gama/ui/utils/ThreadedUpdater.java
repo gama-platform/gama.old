@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.progress.UIJob;
+
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IUpdaterMessage;
 import msi.gama.common.interfaces.IUpdaterTarget;
@@ -48,7 +49,9 @@ public class ThreadedUpdater<Message extends IUpdaterMessage> extends UIJob impl
 
 	@Override
 	public void updateWith(final Message m) {
-		if ( isDisposed() || !isVisible() || isBusy() || m == null || m.isEmpty() ) { return; }
+		if (isDisposed() || !isVisible() || isBusy() || m == null) {
+			return;
+		}
 		message = m;
 		schedule();
 	}
@@ -69,8 +72,12 @@ public class ThreadedUpdater<Message extends IUpdaterMessage> extends UIJob impl
 
 	@Override
 	public IStatus runInUIThread(final IProgressMonitor monitor) {
-		if ( control.isDisposed() ) { return Status.CANCEL_STATUS; }
-		if ( control.isBusy() || !control.isVisible() ) { return Status.OK_STATUS; }
+		if (control.isDisposed()) {
+			return Status.CANCEL_STATUS;
+		}
+		if (control.isBusy() || !control.isVisible()) {
+			return Status.OK_STATUS;
+		}
 		control.updateWith(message);
 		return Status.OK_STATUS;
 	}

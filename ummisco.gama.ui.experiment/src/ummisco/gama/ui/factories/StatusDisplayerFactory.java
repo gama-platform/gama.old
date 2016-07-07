@@ -3,12 +3,12 @@ package ummisco.gama.ui.factories;
 import org.eclipse.ui.services.AbstractServiceFactory;
 import org.eclipse.ui.services.IServiceLocator;
 
-import msi.gama.common.IStatusMessage;
 import msi.gama.common.StatusMessage;
 import msi.gama.common.SubTaskMessage;
 import msi.gama.common.UserStatusMessage;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStatusDisplayer;
+import msi.gama.common.interfaces.IStatusMessage;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.controls.StatusControlContribution;
 import ummisco.gama.ui.utils.ThreadedUpdater;

@@ -30,8 +30,7 @@ Export-Package: ummisco.gama.mqtt.common;uses:="org.eclipse.paho.client.mqttv3",
    msi.gama.runtime,
    msi.gama.util,
    ummisco.gama.network.common"
-Require-Bundle: msi.gama.processor;bundle-version="1.4.0",
- msi.gama.core;bundle-version="1.7.0",
+Require-Bundle: msi.gama.core;bundle-version="1.7.0",
  ummisco.gama.serialize;bundle-version="1.7.0"
 Bundle-ClassPath: .,
  ext/org.eclipse.paho.client.mqttv3-1.0.2-3.jar

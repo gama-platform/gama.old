@@ -149,6 +149,7 @@ public class Popup {
 		} else
 			for (final PopupText.Pair entry : s.contents) {
 				final Label label = (Label) labels[index++];
+				label.setBackground(entry.color.color());
 				label.setText(entry.text);
 			}
 

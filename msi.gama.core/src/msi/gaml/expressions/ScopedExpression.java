@@ -40,7 +40,7 @@ public class ScopedExpression implements IExpression {
 
 	/**
 	 * Method dispose()
-	 * @see msi.gaml.descriptions.IGamlDescription#dispose()
+	 * @see msi.gama.common.interfaces.IGamlDescription#dispose()
 	 */
 	@Override
 	public void dispose() {
@@ -54,7 +54,7 @@ public class ScopedExpression implements IExpression {
 
 	/**
 	 * Method getTitle()
-	 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
+	 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
 	 */
 	@Override
 	public String getTitle() {
@@ -63,7 +63,7 @@ public class ScopedExpression implements IExpression {
 
 	/**
 	 * Method getDocumentation()
-	 * @see msi.gaml.descriptions.IGamlDescription#getDocumentation()
+	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
 	public String getDocumentation() {
@@ -72,7 +72,7 @@ public class ScopedExpression implements IExpression {
 
 	/**
 	 * Method getName()
-	 * @see msi.gaml.descriptions.IGamlDescription#getName()
+	 * @see msi.gama.common.interfaces.IGamlDescription#getName()
 	 */
 	@Override
 	public String getName() {
@@ -172,7 +172,7 @@ public class ScopedExpression implements IExpression {
 
 	/**
 	 * Method collectPlugins()
-	 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {

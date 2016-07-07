@@ -127,7 +127,7 @@ experiment road_traffic type: gui {
 	parameter 'minimal speed' var: min_speed category: 'People';
 	parameter 'maximal speed' var: max_speed category: 'People';
 	output {
-		display city_display type: opengl {
+		display city_display type: opengl show_fps: true{
 			species building aspect: base;
 			species road aspect: base;
 			species people aspect: base;

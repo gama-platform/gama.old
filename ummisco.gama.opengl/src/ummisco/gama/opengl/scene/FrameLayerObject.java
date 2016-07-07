@@ -18,8 +18,7 @@ public class FrameLayerObject extends StaticLayerObject.World {
 	void fillWithObjects(final List<AbstractObject> list) {
 		final double w = renderer.data.getEnvWidth();
 		final double h = renderer.data.getEnvHeight();
-		final GamaColor c = new GamaColor(150, 150, 150, 255);
 		final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));
-		list.add(new GeometryObject(g, c, false, IShape.Type.POLYGON, this));
+		list.add(new GeometryObject(g, new GamaColor(150, 150, 150, 255), false, IShape.Type.POLYGON, this));
 	}
 }

@@ -12,13 +12,13 @@
 package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ISkill;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.skills.ISkill;
 
 /**
  * The type used for representing species objects (since they can be manipulated in a model)

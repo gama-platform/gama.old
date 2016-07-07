@@ -18,6 +18,7 @@ import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvide
 
 import com.google.inject.Inject;
 
+import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
@@ -31,7 +32,6 @@ import msi.gama.lang.utils.EGaml;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.descriptions.FacetProto;
-import msi.gaml.descriptions.IGamlDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;

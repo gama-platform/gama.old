@@ -20,7 +20,7 @@
 	<classpathentry kind="lib" path="libs/xml-apis-ext-1.3.04.jar"/>
 	<classpathentry kind="lib" path="libs/xmlgraphics-commons-1.4.jar"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/msi.gama.ext"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/msi.gama.processor"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/ummisco.gama.annotations"/>
 	<classpathentry kind="lib" path="libs/jdom-2.0.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -5,6 +5,7 @@
 package msi.gama.common;
 
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IStatusMessage;
 import msi.gama.util.GamaColor;
 
 public class StatusMessage implements IStatusMessage {
@@ -25,11 +26,6 @@ public class StatusMessage implements IStatusMessage {
 	}
 
 	@Override
-	public boolean isEmpty() {
-		return message == null;
-	}
-
-	@Override
 	public String getText() {
 		return message;
 	}
@@ -42,7 +38,7 @@ public class StatusMessage implements IStatusMessage {
 	/**
 	 * Method getColor()
 	 * 
-	 * @see msi.gama.common.IStatusMessage#getColor()
+	 * @see msi.gama.common.interfaces.IStatusMessage#getColor()
 	 */
 	@Override
 	public GamaColor getColor() {

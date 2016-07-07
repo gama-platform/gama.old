@@ -123,7 +123,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if (source == null) {
 			return;
 		}
-		final GamaMap<Object, Object> attr = source.getAttributes();
+		final GamaMap<Object, Object> attr = (GamaMap) source.getAttributes();
 		if (attr == null) {
 			return;
 		}

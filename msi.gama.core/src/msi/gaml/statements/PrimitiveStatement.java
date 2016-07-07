@@ -12,6 +12,7 @@
 package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ISkill;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -27,7 +28,6 @@ import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IDescriptionValidator.NullValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.PrimitiveDescription;
-import msi.gaml.skills.ISkill;
 import msi.gaml.types.IType;
 
 /**

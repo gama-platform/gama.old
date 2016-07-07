@@ -436,7 +436,7 @@ public class ParametricType implements IContainerType {
 	/**
 	 * Method getTitle()
 	 * 
-	 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
+	 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
 	 */
 	@Override
 	public String getTitle() {
@@ -446,7 +446,7 @@ public class ParametricType implements IContainerType {
 	/**
 	 * Method getDocumentation()
 	 * 
-	 * @see msi.gaml.descriptions.IGamlDescription#getDocumentation()
+	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
 	public String getDocumentation() {
@@ -456,7 +456,7 @@ public class ParametricType implements IContainerType {
 	/**
 	 * Method getName()
 	 * 
-	 * @see msi.gaml.descriptions.IGamlDescription#getName()
+	 * @see msi.gama.common.interfaces.IGamlDescription#getName()
 	 */
 	@Override
 	public String getName() {

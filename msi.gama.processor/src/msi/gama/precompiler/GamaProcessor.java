@@ -191,7 +191,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	TypeMirror getISkill() {
 		if (iSkill == null) {
-			iSkill = processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
+			iSkill = processingEnv.getElementUtils().getTypeElement("msi.gama.common.interfaces.ISkill").asType();
 		}
 		return iSkill;
 	}

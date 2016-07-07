@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.controls;
 
+import java.awt.Color;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -22,19 +24,20 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
-import msi.gama.common.IStatusMessage;
 import msi.gama.common.StatusMessage;
 import msi.gama.common.SubTaskMessage;
 import msi.gama.common.UserStatusMessage;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IStatusMessage;
 import msi.gama.common.interfaces.IUpdaterTarget;
-import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.IExperimentPlan;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.GAMA;
-import msi.gama.util.GamaColor;
 import msi.gaml.operators.Dates;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -55,6 +58,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	volatile Double subTaskCompletion;
 	private final static int WIDTH = 400;
 	private GamaUIColor color;
+	int agentIndex; // 0 for experiments, > 0 for simulation(s)
 
 	static StatusControlContribution instance;
 
@@ -74,9 +78,6 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	@Override
 	protected int computeWidth(final Control control) {
 		return WIDTH;
-		// return label.computeMinWidth();
-		// return compo.getBounds().y;
-		// return control.computeSize(SWT.DEFAULT, SWT.DEFAULT, true).x;
 	}
 
 	@Override
@@ -86,10 +87,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 	@Override
 	protected Control createControl(final Composite parent) {
-		// parent.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
-		// this.parent = parent;
 		final Composite compo = new Composite(parent, SWT.DOUBLE_BUFFERED);
-		// compo.setBackground(IGamaColors.VERY_LIGHT_GRAY.color());
 		final GridLayout layout = new GridLayout(1, false);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
@@ -104,15 +102,15 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 
 			@Override
 			public void mouseDown(final MouseEvent e) {
-				if (GAMA.getExperiment() == null) {
+				final ITopLevelAgent agent = getStatusAgent();
+				if (agent == null)
 					return;
-				}
-				final ExperimentAgent exp = GAMA.getExperiment().getAgent();
-				if (exp == null) {
-					return;
-				}
-				exp.getClock().toggleDisplay();
-				exp.getSimulation().getClock().toggleDisplay();
+
+				final IExperimentAgent exp = agent.getExperiment();
+				final int all = exp.getSimulationPopulation().size() + 1;
+				agentIndex++;
+				if (agentIndex > all)
+					agentIndex = 0;
 				exp.informStatus();
 			}
 		});
@@ -123,6 +121,27 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	@Override
 	public boolean isDisposed() {
 		return label.isDisposed();
+	}
+
+	private ITopLevelAgent getStatusAgent() {
+		if (agentIndex < 0)
+			agentIndex = 0;
+		final IExperimentPlan exp = GAMA.getExperiment();
+		if (exp == null)
+			return null;
+		final ITopLevelAgent agent;
+		if (agentIndex == 0) {
+			return exp.getAgent();
+		}
+		final IPopulation pop = exp.getAgent().getSimulationPopulation();
+		if (pop.isEmpty())
+			return null;
+		final IAgent[] simulations = pop.toArray();
+		if (agentIndex > simulations.length) {
+			agentIndex = 0;
+			return exp.getAgent();
+		}
+		return (ITopLevelAgent) simulations[agentIndex - 1];
 	}
 
 	/**
@@ -138,20 +157,21 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			return result;
 		}
 
-		if (GAMA.getExperiment() == null || GAMA.getExperiment().getAgent() == null) {
+		final ITopLevelAgent agent = getStatusAgent();
+
+		if (agent == null) {
 			result.add(IGamaColors.NEUTRAL, "No experiment available");
 			return result;
 		}
-
-		final ExperimentAgent agent = GAMA.getExperiment().getAgent();
+		final IExperimentAgent exp = agent.getExperiment();
 
 		final StringBuilder sb = new StringBuilder(300);
-		SimulationClock clock = agent.getClock();
+		SimulationClock clock = exp.getClock();
 		sb.append(String.format("%-20s %-10d\n", "Experiment cycles elapsed: ", clock.getCycle()));
 		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 				(int) clock.getAverageDuration(), clock.getTotalDuration()));
-		result.add(GamaColors.get(agent.getColor()), sb.toString());
-		final IPopulation pop = agent.getSimulationPopulation();
+		result.add(GamaColors.get(exp.getColor()), sb.toString());
+		final IPopulation pop = exp.getSimulationPopulation();
 		if (pop == null) {
 			result.add(IGamaColors.NEUTRAL, "No simulations available");
 			return result;
@@ -198,14 +218,6 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		return label.toDisplay(new Point(label.getLocation().x, label.getSize().y));
 	}
 
-	//
-	// Runnable updater = new Runnable() {
-	//
-	// @Override
-	// public void run() {}
-	//
-	// };
-
 	/**
 	 * Method updateWith()
 	 * 
@@ -243,7 +255,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			} else {
 				inSubTask = false; // in case
 				inUserStatus = true;
-				final GamaColor c = m.getColor();
+				final Color c = m.getColor();
 				if (c == null) {
 					color = null;
 					state = IGui.NEUTRAL;
@@ -268,11 +280,15 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			label.setImage(null);
 		}
 		label.setColor(getPopupBackground());
+		if (!inUserStatus && !inSubTask && mainTaskName == null) {
+			label.setColor(GamaColors.get(getStatusAgent().getColor()));
+		}
+
 		if (inSubTask) {
 			label.setText(
 					subTaskName + (subTaskCompletion != null ? " [" + (int) (subTaskCompletion * 100) + "%]" : ""));
 		} else {
-			label.setText(mainTaskName == null ? "" : mainTaskName);
+			label.setText(mainTaskName == null ? getClockMessage() : mainTaskName);
 		}
 		if (popup.isVisible()) {
 			popup.display();
@@ -280,6 +296,21 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		isUpdating = false;
 		inUserStatus = false;
 
+	}
+
+	private String getClockMessage() {
+		final ITopLevelAgent agent = getStatusAgent();
+		if (agent == null)
+			return "";
+		final StringBuilder sb = new StringBuilder(200);
+		sb.append(agent.getClock().getInfo());
+		final IExperimentAgent exp = agent.getExperiment();
+		final int nbThreads = exp.getSimulationPopulation().getNumberOfActiveThreads();
+		if (agent.getScope().isOnUserHold())
+			sb.append(" (waiting)");
+		else if (nbThreads > 1)
+			sb.append(" (" + nbThreads + " threads)");
+		return sb.toString();
 	}
 
 	@Override

@@ -545,16 +545,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return result;
 	}
 
+	@Override
 	public void informStatus() {
-		final int nbThreads = this.getSimulationPopulation().getNumberOfActiveThreads();
 		if (!getSpecies().isBatch() && getSimulation() != null) {
-			final StringBuilder sb = new StringBuilder(200);
-			sb.append(getClock().getInfo());
-			if (getScope().isOnUserHold())
-				sb.append(" (waiting)");
-			else if (nbThreads > 1)
-				sb.append(" (" + nbThreads + " threads)");
-			getScope().getGui().getStatus().informStatus(sb.toString(), "status.clock");
+			getScope().getGui().getStatus().informStatus(null, "status.clock");
 		}
 	}
 

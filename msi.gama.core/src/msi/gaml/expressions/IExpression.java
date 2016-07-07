@@ -14,7 +14,6 @@ package msi.gaml.expressions;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IGamlDescription;
 
 /**
  * Written by drogoul Modified on 25 d�c. 2010

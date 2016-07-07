@@ -9,9 +9,8 @@
  *
  *
  **********************************************************************************************/
-package msi.gaml.descriptions;
+package msi.gama.common.interfaces;
 
-import msi.gama.common.interfaces.INamed;
 import msi.gama.precompiler.GamlProperties;
 
 /**

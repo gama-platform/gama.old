@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.architecture.reflex;
 
+import msi.gama.common.interfaces.ISkill;
 import msi.gama.runtime.IScope;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.descriptions.IDescription;

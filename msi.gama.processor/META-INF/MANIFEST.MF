@@ -8,5 +8,5 @@ Export-Package: msi.gama.precompiler;
   uses:="javax.annotation.processing,
    msi.gama.precompiler.doc.utils,
    javax.lang.model.type,
-   javax.lang.model.element",
- msi.gama.precompiler.constants
+   javax.lang.model.element"
+Require-Bundle: ummisco.gama.annotations;bundle-version="1.7.0"

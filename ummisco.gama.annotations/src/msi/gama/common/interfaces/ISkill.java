@@ -9,10 +9,9 @@
  *
  *
  **********************************************************************************************/
-package msi.gaml.skills;
+package msi.gama.common.interfaces;
 
 import msi.gama.common.interfaces.IVarAndActionSupport;
-import msi.gaml.descriptions.IGamlDescription;
 
 /**
  * SkillInterface - convenience interface for any object that might be used as a "skill" for an

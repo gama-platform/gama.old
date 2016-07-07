@@ -15,7 +15,7 @@ import java.util.*;
 import com.google.common.collect.*;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import msi.gaml.skills.ISkill;
+import msi.gama.common.interfaces.ISkill;
 
 /**
  * Written by drogoul Modified on 28 d�c. 2010

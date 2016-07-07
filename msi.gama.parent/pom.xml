@@ -96,6 +96,7 @@
 
 		<!-- <module>../gama.target.platform</module> -->
 
+		<module>../ummisco.gama.annotations</module>
 		<module>../msi.gama.ext</module>
 		<module>../msi.gama.core</module>
 		<module>../msi.gama.lang.gaml</module>

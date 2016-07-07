@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.common.interfaces.INamed;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -96,7 +97,7 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 	/**
 	 * Method getTitle()
 	 * 
-	 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
+	 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
 	 */
 	@Override
 	public String getTitle() {

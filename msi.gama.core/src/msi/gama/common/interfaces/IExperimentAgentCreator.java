@@ -14,7 +14,6 @@ package msi.gama.common.interfaces;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlProperties;
-import msi.gaml.descriptions.IGamlDescription;
 
 public interface IExperimentAgentCreator {
 
@@ -65,7 +64,7 @@ public interface IExperimentAgentCreator {
 
 		/**
 		 * Method getTitle()
-		 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
+		 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
 		 */
 		@Override
 		public String getTitle() {
@@ -74,7 +73,7 @@ public interface IExperimentAgentCreator {
 
 		/**
 		 * Method getDocumentation()
-		 * @see msi.gaml.descriptions.IGamlDescription#getDocumentation()
+		 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 		 */
 		@Override
 		public String getDocumentation() {
@@ -83,7 +82,7 @@ public interface IExperimentAgentCreator {
 
 		/**
 		 * Method getDefiningPlugin()
-		 * @see msi.gaml.descriptions.IGamlDescription#getDefiningPlugin()
+		 * @see msi.gama.common.interfaces.IGamlDescription#getDefiningPlugin()
 		 */
 		@Override
 		public String getDefiningPlugin() {
@@ -92,7 +91,7 @@ public interface IExperimentAgentCreator {
 
 		/**
 		 * Method collectPlugins()
-		 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+		 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 		 */
 		@Override
 		public void collectMetaInformation(final GamlProperties meta) {

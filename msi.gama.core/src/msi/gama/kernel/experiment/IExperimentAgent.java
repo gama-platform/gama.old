@@ -53,4 +53,6 @@ public interface IExperimentAgent extends ITopLevelAgent {
 
 	public boolean canStepBack();
 
+	public abstract void informStatus();
+
 }

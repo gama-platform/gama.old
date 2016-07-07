@@ -444,4 +444,5 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		if (realStep != null && realStep > 0d)
 			step = realStep;
 	}
+
 }

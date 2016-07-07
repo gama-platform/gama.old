@@ -6,5 +6,4 @@ package msi.gama.common.interfaces;
 
 public interface IUpdaterMessage {
 
-	public boolean isEmpty();
 }

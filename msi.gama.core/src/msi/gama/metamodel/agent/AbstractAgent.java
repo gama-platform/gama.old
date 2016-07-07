@@ -232,7 +232,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public GamaMap<Object, Object> getAttributes() {
-		return getGeometry().getAttributes();
+		return (GamaMap) getGeometry().getAttributes();
 		// return attributes;
 	}
 

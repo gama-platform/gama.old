@@ -83,10 +83,6 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 			this.colors = colors;
 		}
 
-		@Override
-		public boolean isEmpty() {
-			return infos == null;
-		}
 	}
 
 	public OverlayStatement(final IDescription desc) throws GamaRuntimeException {

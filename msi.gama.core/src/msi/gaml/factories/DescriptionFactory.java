@@ -25,6 +25,7 @@ import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntProcedure;
+import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
@@ -34,7 +35,6 @@ import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.SyntacticFactory;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IGamlDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.SymbolProto;

@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.interfaces.IDisposable;
+import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ITyped;

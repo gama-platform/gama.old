@@ -11,8 +11,8 @@
  **********************************************************************************************/
 package msi.gama.precompiler.doc.utils;
 
-public class XMLElements {
-	public static final String ACTIONS = "actions";	
+public interface XMLElements {
+	public static final String ACTIONS = "actions";
 	public static final String ACTION = "action";
 	public static final String ARGS = "args";
 	public static final String ARG = "arg";
@@ -36,7 +36,7 @@ public class XMLElements {
 	public static final String INSIDE_STAT_KINDS = "insideStatementKinds";
 	public static final String INSIDE_STAT_KIND = "insideStatementKind";
 	public static final String INSIDE_STAT_SYMBOLS = "insideStatementSymbols";
-	public static final String INSIDE_STAT_SYMBOL = "insideStatementSymbol";	
+	public static final String INSIDE_STAT_SYMBOL = "insideStatementSymbol";
 	public static final String KINDS = "kinds";
 	public static final String KIND = "kind";
 	public static final String OPERATORS = "operators";
@@ -66,53 +66,52 @@ public class XMLElements {
 	public static final String USAGES_EXAMPLES = "usagesExamples";
 	public static final String USAGES_NO_EXAMPLE = "usagesNoExample";
 	public static final String VARS = "vars";
-	public static final String VAR = "var";	
-	
-	
+	public static final String VAR = "var";
+
 	public static final String ARCHITECTURES = "architectures";
 	public static final String ARCHITECTURE = "architecture";
 
 	// Attributes of DOC element
-	public static final String ATT_DOC_PLUGINNAME = "plugin";	
-	
+	public static final String ATT_DOC_PLUGINNAME = "plugin";
+
 	// Attributes of CATEGORY element
 	public static final String ATT_CAT_ID = "id";
 
 	// Attributes of OPERATOR element
-//	public static final String ATT_OP_CATEGORY = "category";
+	// public static final String ATT_OP_CATEGORY = "category";
 	public static final String ATT_OP_NAME = "name";
 	public static final String ATT_OP_ID = "id";
 	public static final String ATT_OP_ALT_NAME = "alternativeNameOf";
 	public static final String ATT_ALPHABET_ORDER = "alphabetOrder";
-	
+
 	// Attributes of OPERANDS element
 	public static final String ATT_OPERANDS_CLASS = "class";
-	public static final String ATT_OPERANDS_CONTENT_TYPE = "contentType";	
-	public static final String ATT_OPERANDS_RETURN_TYPE = "returnType";	
-	public static final String ATT_OPERANDS_TYPE = "type";	
+	public static final String ATT_OPERANDS_CONTENT_TYPE = "contentType";
+	public static final String ATT_OPERANDS_RETURN_TYPE = "returnType";
+	public static final String ATT_OPERANDS_TYPE = "type";
 
 	// Attributes of OPERAND element
-	public static final String ATT_OPERAND_NAME = "name";	
-	public static final String ATT_OPERAND_POSITION = "position";	
-	public static final String ATT_OPERAND_TYPE = "type";	
+	public static final String ATT_OPERAND_NAME = "name";
+	public static final String ATT_OPERAND_POSITION = "position";
+	public static final String ATT_OPERAND_TYPE = "type";
 
 	// Attributes of USAGE element
-	public static final String ATT_USAGE_DESC = "descUsageElt";	
+	public static final String ATT_USAGE_DESC = "descUsageElt";
 
 	// Attributes of EXAMPLE element
-	public static final String ATT_EXAMPLE_CODE = "code";	
-	public static final String ATT_EXAMPLE_IS_TEST_ONLY = "isTestOnly";	
+	public static final String ATT_EXAMPLE_CODE = "code";
+	public static final String ATT_EXAMPLE_IS_TEST_ONLY = "isTestOnly";
 	public static final String ATT_EXAMPLE_IS_EXECUTABLE = "isExecutable";
 	public static final String ATT_EXAMPLE_IS_TESTABLE = "test";
-	public static final String ATT_EXAMPLE_VAR = "var";	
-	public static final String ATT_EXAMPLE_EQUALS = "equals";	
-	public static final String ATT_EXAMPLE_IS_NOT = "isNot";	
+	public static final String ATT_EXAMPLE_VAR = "var";
+	public static final String ATT_EXAMPLE_EQUALS = "equals";
+	public static final String ATT_EXAMPLE_IS_NOT = "isNot";
 	public static final String ATT_EXAMPLE_RAISES = "raises";
 	public static final String ATT_EXAMPLE_INDEX = "index";
-//	public static final String ATT_EXAMPLE_RETURN_TYPE = "returnType";
-	
-	public static final String ATT_EXAMPLE_TYPE = "type";	
-	
+	// public static final String ATT_EXAMPLE_RETURN_TYPE = "returnType";
+
+	public static final String ATT_EXAMPLE_TYPE = "type";
+
 	// Attributes of FACET element
 	public static final String ATT_FACET_NAME = "name";
 	public static final String ATT_FACET_TYPE = "type";
@@ -124,32 +123,32 @@ public class XMLElements {
 	public static final String ATT_CST_NAME = "name";
 	public static final String ATT_CST_VALUE = "value";
 	public static final String ATT_CST_NAMES = "altNames";
-	
+
 	// Attributes of RESULT element
 	public static final String ATT_RES_MASTER = "masterDoc";
-	
+
 	// Attributes of SEE element
 	public static final String ATT_SEE_ID = "id";
-	
+
 	// Attributes of ACTION element
-	public static final String ATT_ACTION_NAME= "name";
-	public static final String ATT_ACTION_RETURNTYPE= "returnType";
-	
+	public static final String ATT_ACTION_NAME = "name";
+	public static final String ATT_ACTION_RETURNTYPE = "returnType";
+
 	// Attributes of ARG element
 	public static final String ATT_ARG_NAME = "name";
 	public static final String ATT_ARG_TYPE = "type";
 	public static final String ATT_ARG_OPTIONAL = "optional";
-	
+
 	// Attributes of SKILL element
 	public static final String ATT_SKILL_ID = "id";
 	public static final String ATT_SKILL_NAME = "name";
 	public static final String ATT_SKILL_CLASS = "class";
 	public static final String ATT_SKILL_EXTENDS = "extends";
-	
+
 	// Attributes of ARCHITECTURE element
 	public static final String ATT_ARCHI_ID = "id";
 	public static final String ATT_ARCHI_NAME = "name";
-	
+
 	// Attributes of VAR element
 	public static final String ATT_VAR_NAME = "name";
 	public static final String ATT_VAR_TYPE = "type";
@@ -159,23 +158,22 @@ public class XMLElements {
 	// Attributes of SPECIES element
 	public static final String ATT_SPECIES_ID = "id";
 	public static final String ATT_SPECIES_NAME = "name";
-	public static final String ATT_SPECIES_SKILL = "name";	
-	
+	public static final String ATT_SPECIES_SKILL = "name";
+
 	// Attributes of STATEMENT element
 	public static final String ATT_STAT_ID = "id";
 	public static final String ATT_STAT_NAME = "name";
 	public static final String ATT_STAT_KIND = "kind";
-	
+
 	// Attributes of TYPE element
 	public static final String ATT_TYPE_NAME = "name";
 	public static final String ATT_TYPE_ID = "id";
 	public static final String ATT_TYPE_KIND = "kind";
-	
+
 	// Attributes of INSIDE_STAT element
 	public static final String ATT_INSIDE_STAT_SYMBOL = "symbol";
-	
+
 	// Attributes of KIND element
 	public static final String ATT_KIND_STAT = "symbol";
-
 
 }

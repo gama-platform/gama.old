@@ -24,9 +24,9 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IGamlDescription;
 import msi.gaml.factories.DescriptionFactory.IDocManager;
 
 /**
@@ -144,7 +144,7 @@ public class GamlResourceDocManager implements IDocManager {
 		/**
 		 * Method collectPlugins()
 		 * 
-		 * @see msi.gaml.descriptions.IGamlDescription#collectPlugins(java.util.Set)
+		 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 		 */
 		@Override
 		public void collectMetaInformation(final GamlProperties meta) {

@@ -11,10 +11,10 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import msi.gama.common.interfaces.ISkill;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.skills.ISkill;
 import msi.gaml.types.IType;
 
 public class SkillConstantExpression extends ConstantExpression {

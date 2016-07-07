@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
@@ -255,8 +256,9 @@ public class SimulationClock {
 
 	public String getInfo() {
 		final int cycle = getCycle();
-		final String info = displayCycles ? "" + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed"
-				: starting_date == null ? Dates.asDate(time, null) : current_date.toString();
+		final ITopLevelAgent agent = scope.getRoot();
+		final String info = agent.getName() + ": " + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed ["
+				+ (starting_date == null ? Dates.asDate(time, null) : current_date.toString()) + " ]";
 		return info;
 	}
 
@@ -279,6 +281,13 @@ public class SimulationClock {
 
 		public void setLastDuration(final long duration) {
 			this.duration = duration;
+		}
+
+		@Override
+		public String getInfo() {
+			final int cycle = getCycle();
+			final String info = "Experiment: " + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed";
+			return info;
 		}
 
 	}

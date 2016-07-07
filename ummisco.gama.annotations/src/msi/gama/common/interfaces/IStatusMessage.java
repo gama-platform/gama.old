@@ -2,10 +2,9 @@
  * Created by drogoul, 5 nov. 2014
  *
  */
-package msi.gama.common;
+package msi.gama.common.interfaces;
 
-import msi.gama.common.interfaces.IUpdaterMessage;
-import msi.gama.util.GamaColor;
+import java.awt.Color;
 
 /**
  * Class IStatusMessage.
@@ -20,7 +19,7 @@ public interface IStatusMessage extends IUpdaterMessage {
 
 	public int getCode();
 
-	public GamaColor getColor();
+	public Color getColor();
 
 	public String getIcon();
 }

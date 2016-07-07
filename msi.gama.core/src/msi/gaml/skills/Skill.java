@@ -12,6 +12,8 @@
 package msi.gaml.skills;
 
 import java.util.*;
+
+import msi.gama.common.interfaces.ISkill;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -105,7 +107,7 @@ public class Skill extends AbstractProto implements ISkill {
 
 	/**
 	 * By default, skills are singletons. This behavior is redefined in AbstractArchitecture
-	 * @see msi.gaml.skills.ISkill#duplicate()
+	 * @see msi.gama.common.interfaces.ISkill#duplicate()
 	 */
 	@Override
 	public ISkill duplicate() {
@@ -124,7 +126,7 @@ public class Skill extends AbstractProto implements ISkill {
 
 	/**
 	 * Method getTitle()
-	 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
+	 * @see msi.gama.common.interfaces.IGamlDescription#getTitle()
 	 */
 	@Override
 	public String getTitle() {

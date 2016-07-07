@@ -10,7 +10,6 @@
   </parent>-->
   <groupId>msi.gama</groupId>
   <artifactId>msi.gama.processor</artifactId>
-  <packaging>eclipse-plugin</packaging>
   <version>1.4.0</version>
   <build>
  <!-- <plugins combine.self="override"> -->
@@ -46,6 +45,7 @@
 	</plugin>
    </plugins>
   </build>
+  <packaging>eclipse-plugin</packaging>
 </project>
 
 

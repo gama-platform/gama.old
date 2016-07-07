@@ -5,6 +5,7 @@
 package msi.gama.common;
 
 import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.IStatusMessage;
 import msi.gama.util.GamaColor;
 
 /**
@@ -32,17 +33,9 @@ public class SubTaskMessage implements IStatusMessage {
 	}
 
 	/**
-	 * Method isEmpty()
-	 * @see msi.gama.common.util.ThreadedUpdater.IUpdaterMessage#isEmpty()
-	 */
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
-
-	/**
 	 * Method getText()
-	 * @see msi.gama.common.IStatusMessage#getText()
+	 * 
+	 * @see msi.gama.common.interfaces.IStatusMessage#getText()
 	 */
 	@Override
 	public String getText() {
@@ -51,7 +44,8 @@ public class SubTaskMessage implements IStatusMessage {
 
 	/**
 	 * Method getCode()
-	 * @see msi.gama.common.IStatusMessage#getCode()
+	 * 
+	 * @see msi.gama.common.interfaces.IStatusMessage#getCode()
 	 */
 	@Override
 	public int getCode() {
@@ -68,7 +62,8 @@ public class SubTaskMessage implements IStatusMessage {
 
 	/**
 	 * Method getColor()
-	 * @see msi.gama.common.IStatusMessage#getColor()
+	 * 
+	 * @see msi.gama.common.interfaces.IStatusMessage#getColor()
 	 */
 	@Override
 	public GamaColor getColor() {

@@ -16,7 +16,7 @@ global
 
 }
 species my_SEIR_maths
-{
+{ 
 	float ttt;
 	float Sm <- 0.0658;
 	float Em <- 0.007;

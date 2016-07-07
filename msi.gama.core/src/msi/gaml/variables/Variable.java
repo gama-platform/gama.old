@@ -16,6 +16,7 @@ import java.util.List;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ISkill;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -39,7 +40,6 @@ import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.Cast;
-import msi.gaml.skills.ISkill;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaListType;
 import msi.gaml.types.IType;

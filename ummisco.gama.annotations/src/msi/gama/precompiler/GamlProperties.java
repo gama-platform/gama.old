@@ -11,8 +11,16 @@
  **********************************************************************************************/
 package msi.gama.precompiler;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Written by drogoul Modified on 27 juil. 2010
@@ -36,7 +44,7 @@ public class GamlProperties {
 	public final static String ARCHITECTURES = "architectures";
 	public final static String TYPES = "types";
 	public final static String PLUGINS = "plugins";
-	public final static String SEPARATOR = JavaWriter.DOC_SEP;
+	public final static String SEPARATOR = "~";
 
 	static final String NULL = "";
 
@@ -62,9 +70,11 @@ public class GamlProperties {
 	}
 
 	public String getFirst(final String key) {
-		Set<String> result = get(key);
-		if ( result == null ) { return null; }
-		for ( Iterator<String> it = result.iterator(); it.hasNext(); ) {
+		final Set<String> result = get(key);
+		if (result == null) {
+			return null;
+		}
+		for (final Iterator<String> it = result.iterator(); it.hasNext();) {
 			return it.next();
 		}
 		return null;
@@ -75,16 +85,16 @@ public class GamlProperties {
 	}
 
 	public void put(final String key, final String value) {
-		if ( !map.containsKey(key) ) {
+		if (!map.containsKey(key)) {
 			map.put(key, new LinkedHashSet<String>());
 		}
-		if ( value != null ) {
+		if (value != null) {
 			map.get(key).add(value);
 		}
 	}
 
 	public void put(final String key, final Set<String> values) {
-		if ( !map.containsKey(key) ) {
+		if (!map.containsKey(key)) {
 			map.put(key, new LinkedHashSet(values));
 		} else {
 			map.get(key).addAll(values);
@@ -92,32 +102,32 @@ public class GamlProperties {
 	}
 
 	public void putAll(final GamlProperties m) {
-		for ( Iterator<Map.Entry<String, LinkedHashSet<String>>> it = m.map.entrySet().iterator(); it.hasNext(); ) {
-			Map.Entry<String, LinkedHashSet<String>> entry = it.next();
+		for (final Iterator<Map.Entry<String, LinkedHashSet<String>>> it = m.map.entrySet().iterator(); it.hasNext();) {
+			final Map.Entry<String, LinkedHashSet<String>> entry = it.next();
 			put(entry.getKey(), (LinkedHashSet<String>) entry.getValue().clone());
 		}
 	}
 
 	public void store(final Writer writer) {
-		Properties prop = new Properties();
-		for ( Iterator<Map.Entry<String, LinkedHashSet<String>>> it = map.entrySet().iterator(); it.hasNext(); ) {
-			Map.Entry<String, LinkedHashSet<String>> entry = it.next();
+		final Properties prop = new Properties();
+		for (final Iterator<Map.Entry<String, LinkedHashSet<String>>> it = map.entrySet().iterator(); it.hasNext();) {
+			final Map.Entry<String, LinkedHashSet<String>> entry = it.next();
 			prop.setProperty(entry.getKey(), toString(entry.getValue()));
 		}
 		try {
 			prop.store(writer, NULL);
 			writer.flush();
 			writer.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw new java.io.IOError(e);
 		}
 
 	}
 
 	public static String toString(final Set<String> strings) {
-		if ( !strings.isEmpty() ) {
-			StringBuilder sb = new StringBuilder();
-			for ( String value : strings ) {
+		if (!strings.isEmpty()) {
+			final StringBuilder sb = new StringBuilder();
+			for (final String value : strings) {
 				sb.append(value).append(SEPARATOR);
 			}
 			sb.setLength(sb.length() - 1);
@@ -128,10 +138,10 @@ public class GamlProperties {
 	}
 
 	public Map<String, String> filterFirst(final String c) {
-		Map<String, String> gp = new LinkedHashMap();
-		for ( String original : map.keySet() ) {
-			if ( c.charAt(0) == original.charAt(0) ) {
-				String key = original.substring(1);
+		final Map<String, String> gp = new LinkedHashMap();
+		for (final String original : map.keySet()) {
+			if (c.charAt(0) == original.charAt(0)) {
+				final String key = original.substring(1);
 				gp.put(key, getFirst(original));
 			}
 		}
@@ -139,10 +149,10 @@ public class GamlProperties {
 	}
 
 	public Map<String, Set<String>> filterAll(final String c) {
-		Map<String, Set<String>> gp = new LinkedHashMap();
-		for ( String original : map.keySet() ) {
-			if ( c.charAt(0) == original.charAt(0) ) {
-				String key = original.substring(1);
+		final Map<String, Set<String>> gp = new LinkedHashMap();
+		for (final String original : map.keySet()) {
+			if (c.charAt(0) == original.charAt(0)) {
+				final String key = original.substring(1);
 				gp.put(key, get(original));
 			}
 		}
@@ -150,23 +160,25 @@ public class GamlProperties {
 	}
 
 	public GamlProperties load(final Reader reader) {
-		Properties prop = new Properties();
+		final Properties prop = new Properties();
 		try {
 			prop.load(reader);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			try {
 				reader.close();
-			} catch (IOException e1) {}
+			} catch (final IOException e1) {
+			}
 			return null;
 		}
-		for ( String s : prop.stringPropertyNames() ) {
-			String[] array = prop.getProperty(s, "").split(SEPARATOR);
-			LinkedHashSet<String> values = new LinkedHashSet(Arrays.asList(array));
+		for (final String s : prop.stringPropertyNames()) {
+			final String[] array = prop.getProperty(s, "").split(SEPARATOR);
+			final LinkedHashSet<String> values = new LinkedHashSet(Arrays.asList(array));
 			put(s, values);
 		}
 		try {
 			reader.close();
-		} catch (IOException e) {}
+		} catch (final IOException e) {
+		}
 		return this;
 	}
 
