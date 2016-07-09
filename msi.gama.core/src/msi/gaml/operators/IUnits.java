@@ -317,6 +317,16 @@ public class IUnits {
 	@constant(value = "stone", altNames = { "st" }, category = { IConstantCategory.WEIGHT }, concept = {
 			IConcept.DIMENSION, IConcept.WEIGHT_UNIT }, doc = { @doc("stone unit") })
 	public final static double stone = 14 * pound, st = stone;
+	
+	/** The Constant short ton. */
+	@constant(value = "shortton", altNames = { "ston" }, category = { IConstantCategory.WEIGHT }, concept = {
+			IConcept.DIMENSION, IConcept.WEIGHT_UNIT }, doc = { @doc("short ton unit") })
+	public final static double shortton = 2000 * pound, ston = shortton;
+	
+	/** The Constant long ton. */
+	@constant(value = "longton", altNames = { "lton" }, category = { IConstantCategory.WEIGHT }, concept = {
+			IConcept.DIMENSION, IConcept.WEIGHT_UNIT }, doc = { @doc("short ton unit") })
+	public final static double longton = 2240 * pound, lton = longton;
 
 	/*
 	 *
