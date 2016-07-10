@@ -7,7 +7,8 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  msi.gama.ext,
  org.eclipse.core.resources,
- ummisco.gama.annotations;bundle-version="1.7.0";visibility:=reexport
+ ummisco.gama.annotations;bundle-version="1.7.0";visibility:=reexport,
+ msi.gama.processor;bundle-version="1.4.0";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Export-Package: msi.gama.common,
  msi.gama.common.interfaces;
