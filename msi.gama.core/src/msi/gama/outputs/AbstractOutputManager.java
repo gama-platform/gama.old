@@ -157,6 +157,12 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 				if (initialStep(scope, output)) {
 					try {
 						output.open();
+						try {
+							Thread.sleep(200);
+						} catch (final InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 						output.update();
 					} catch (final RuntimeException e) {
 						e.printStackTrace();
