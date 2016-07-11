@@ -118,7 +118,7 @@ public class AWTDisplayView extends LayeredDisplayView {
 
 		while (/* isVisible && */ !openable) {
 			try {
-				Thread.sleep(50);
+				Thread.sleep(GamaPreferences.CORE_OUTPUT_DELAY.getValue());
 			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
