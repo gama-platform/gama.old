@@ -15,7 +15,6 @@ import java.util.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
-import msi.gaml.operators.Maths;
 
 public class AStar<V, E> {
 
@@ -103,55 +102,47 @@ public class AStar<V, E> {
 		isPathFound = false;
 	}
 
+	
 	protected void aStar(final V sourceNode, final V targetNode) {
 		cleanAll();
 		openMap.put(sourceNode, new ASNode(sourceNode, null, null, 0, heuristic(sourceNode, targetNode)));
-
+		
 		isPathFound = false;
 
 		while (!openMap.isEmpty()) {
 			ASNode current = getNextBetterNode();
-
 			assert current != null;
-
 			if ( current.node.equals(targetNode) ) {
 				assert current.edge != null;
 				isPathFound = true;
 				result = buildPath(current);
-
 				return;
 			} else {
 				openMap.remove(current.node);
 				closedMap.put(current.node, current);
 				_Vertex<V, E> node = graph.getVertex(current.node);
-				Set<E> edges = node.getOutEdges();
+				Set<E> edges = new HashSet<E>(node.getOutEdges());
 				if ( !graph.isDirected() ) {
 					edges.addAll(node.getInEdges());
+					
 				}
 				for ( E edge : edges ) {
 					_Edge<V, E> eg = graph.getEdge(edge);
-
-					V next = (V) eg.getOther(current.node);
+					V next = (V)(eg.getTarget().equals(current.node) ? eg.getSource() : eg.getTarget());
+					if ( closedMap.containsKey(next))
+						continue;
+					
 					double h = heuristic(next, targetNode);
 					double g = current.g + eg.getWeight();
-					double f = g + h;
-					ASNode alreadyInOpen = openMap.get(next);
-
-					if ( alreadyInOpen != null && alreadyInOpen.rank <= f ) {
+					ASNode openNode = openMap.get(next);
+					if (openNode == null)
+						openMap.put(next, new ASNode(next, edge, current, g, h));
+					else if (g >= openNode.rank) {
 						continue;
 					}
-
-					ASNode alreadyInClosed = closedMap.get(next);
-
-					if ( alreadyInClosed != null && alreadyInClosed.rank <= f ) {
-						continue;
-					}
-
-					closedMap.remove(next);
-					openMap.put(next, new ASNode(next, edge, current, g, h));
 				}
 			}
-		}
+		}	
 	}
 
 	protected double heuristic(final Object node1, final Object node2) {
