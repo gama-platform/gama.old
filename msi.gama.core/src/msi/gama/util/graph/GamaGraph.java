@@ -876,14 +876,14 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		spl.add(GamaListFactory.createWithoutCasting(getType().getContentType(), edges));
 		shortestPathComputed.put(new VertexPair<V>(source, target), spl);
 		final List<E> edges2 = GamaListFactory.create(scope, getType().getContentType(), edges);
-		for (final E edge : edges) {
-			edges2.remove(0);
+		for (int i = 0; i < edges.size();i++) {
+			E edge = edges2.remove(0);
 			if (edges2.isEmpty()) {
 				break;
 			}
 			// System.out.println("s : " + s + " j : " + j + " i: " + i);
 			V nwS = (V) this.getEdgeTarget(edge);
-			if (!directed && nwS == s) {
+			if (!directed && nwS.equals(s)) {
 				nwS = (V) this.getEdgeSource(edge);
 			}
 			final VertexPair<V> pp = new VertexPair<V>(nwS, target);
