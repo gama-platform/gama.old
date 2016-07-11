@@ -725,7 +725,7 @@ public class GamaPreferences {
 			false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Integer> CORE_OUTPUT_DELAY = create("core.output_delay",
 			"Delay (in ms) between the opening of display views (increase if you experience freezes when opening displays, esp. Java2D displays)",
-			200, IType.INT).between(0, 1000);
+			200, IType.INT).between(0, 1000).in(EXPERIMENTAL).group(DISPLAY);;
 	public static final Entry<Boolean> MULTITHREADED_SIMULATIONS = create("core.multithreaded_simulations",
 			"Run multiple simulations in multiple threads", true, IType.BOOL).activates("core.threads_number")
 					.in(EXPERIMENTAL).group(SIMULATIONS);
