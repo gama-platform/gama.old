@@ -81,8 +81,8 @@
 			</snapshots>
 		</repository>
 		<repository>
-			<id>my-local-repo</id>
-			<url>file://${basedir}/../localrepo/</url>
+			<id>annot-local-repo</id>
+			<url>file://${basedir}/../msi.gama.processor/processor/plugins/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
@@ -90,6 +90,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
+		
 	</repositories>
 
 	<modules>

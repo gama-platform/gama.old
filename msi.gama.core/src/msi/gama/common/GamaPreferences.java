@@ -723,6 +723,9 @@ public class GamaPreferences {
 	public static final Entry<Boolean> DISPLAY_NO_ACCELERATION = create("core.java2D_no_acceleration",
 			"Disable graphics hardware acceleration for Java2D displays (can be necessary on some configurations)",
 			false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
+	public static final Entry<Integer> CORE_OUTPUT_DELAY = create("core.output_delay",
+			"Delay (in ms) between the opening of display views (increase if you experience freezes when opening displays, esp. Java2D displays)",
+			200, IType.INT).between(0, 1000).in(EXPERIMENTAL).group(DISPLAY);;
 	public static final Entry<Boolean> MULTITHREADED_SIMULATIONS = create("core.multithreaded_simulations",
 			"Run multiple simulations in multiple threads", true, IType.BOOL).activates("core.threads_number")
 					.in(EXPERIMENTAL).group(SIMULATIONS);
