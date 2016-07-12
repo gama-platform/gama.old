@@ -4368,13 +4368,20 @@ ruleActionFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRule
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
-
+(
 	kw='action:' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getActionFacetKeyAccess().getActionKeyword()); 
+        newLeafNode(kw, grammarAccess.getActionFacetKeyAccess().getActionKeyword_0()); 
     }
 
+    |
+	kw='on_change:' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getActionFacetKeyAccess().getOn_changeKeyword_1()); 
+    }
+)
     ;
 
 
@@ -4769,10 +4776,10 @@ ruleActionFacet returns [EObject current=null]
 	    }
 
 )
-)(
+)((
 (
 		{ 
-	        newCompositeNode(grammarAccess.getActionFacetAccess().getExprActionRefParserRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getActionFacetAccess().getExprActionRefParserRuleCall_1_0_0()); 
 	    }
 		lv_expr_1_0=ruleActionRef		{
 	        if ($current==null) {
@@ -4787,7 +4794,26 @@ ruleActionFacet returns [EObject current=null]
 	    }
 
 )
-))
+)
+    |(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getActionFacetAccess().getBlockBlockParserRuleCall_1_1_0()); 
+	    }
+		lv_block_2_0=ruleBlock		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getActionFacetRule());
+	        }
+       		set(
+       			$current, 
+       			"block",
+        		lv_block_2_0, 
+        		"msi.gama.lang.gaml.Gaml.Block");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)))
 ;
 
 
@@ -8180,7 +8206,7 @@ ruleTerminalExpression returns [EObject current=null]
 
 
 
-RULE_KEYWORD : ('each'|'self'|'myself'|'nil'|'world'|'user_location');
+RULE_KEYWORD : ('each'|'self'|'myself'|'nil'|'world');
 
 RULE_INTEGER : ('0'|'1'..'9' ('0'..'9')*);
 

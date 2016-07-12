@@ -33,11 +33,8 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.AgentLayer;
 import msi.gama.outputs.layers.GraphicLayer;
 import msi.gama.outputs.layers.GridLayer;
@@ -107,8 +104,7 @@ public class DisplaySurfaceMenu {
 
 	org.eclipse.swt.widgets.Menu menu;
 
-	public void buildMenu(final int mousex, final int mousey, final int x, final int y,
-			final ILocation modelCoordinates, final List<ILayer> displays) {
+	public void buildMenu(final int mousex, final int mousey, final int x, final int y, final List<ILayer> displays) {
 		if (displays.isEmpty()) {
 			return;
 		}
@@ -126,19 +122,18 @@ public class DisplaySurfaceMenu {
 				all.addAll(agents);
 			}
 		}
-		buildMenu(true, mousex, mousey, modelCoordinates, all, null);
+		buildMenu(true, mousex, mousey, all, null);
 	}
 
 	public void buildMenu(final int mousex, final int mousey, final IAgent agent, final Runnable cleanup) {
 		// cleanup is an optional runnable to do whatever is necessary after the
 		// menu has disappeared
-		final GamaPoint modelCoordinates = agent == null ? null : (GamaPoint) agent.getLocation();
-		buildMenu(false, mousex, mousey, modelCoordinates,
-				agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent), cleanup);
+		buildMenu(false, mousex, mousey, agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent),
+				cleanup);
 	}
 
-	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final ILocation modelCoordinates,
-			final Collection<IAgent> agents, final Runnable cleanup) {
+	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final Collection<IAgent> agents,
+			final Runnable cleanup) {
 		WorkbenchHelper.asyncRun(new Runnable() {
 
 			@Override
@@ -146,8 +141,7 @@ public class DisplaySurfaceMenu {
 				if (menu != null && !menu.isDisposed()) {
 					menu.dispose();
 				}
-				menu = fill(new Menu(swtControl), -1, true, byLayer, agents, modelCoordinates);
-				menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
+				menu = fill(new Menu(swtControl), -1, true, byLayer, agents);
 				menu.setLocation(swtControl.toDisplay(mousex, mousey));
 				menu.setVisible(true);
 				// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :
@@ -171,7 +165,7 @@ public class DisplaySurfaceMenu {
 	}
 
 	public void buildToolbarMenu(final Menu menu) {
-		fill(menu, -1, false, true, null, null);
+		fill(menu, -1, false, true, null);
 	}
 
 	static int MAX_RETRIES = 10;
@@ -205,10 +199,9 @@ public class DisplaySurfaceMenu {
 	}
 
 	private Menu fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer,
-			final Collection<IAgent> filteredList, final ILocation userLocation) {
+			final Collection<IAgent> filteredList) {
 		if (withWorld) {
-			AgentsMenu.cascadingAgentMenuItem(menu, surface.getDisplayScope().getSimulationScope(), userLocation,
-					"World");
+			AgentsMenu.cascadingAgentMenuItem(menu, surface.getDisplayScope().getSimulationScope(), "World");
 			if (filteredList != null && !filteredList.isEmpty()) {
 				GamaMenu.separate(menu);
 			} else {
@@ -229,7 +222,7 @@ public class DisplaySurfaceMenu {
 			}
 			final FocusOnSelection adapter = new FocusOnSelection(surface);
 			final MenuAction focus = new MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on this display");
-			AgentsMenu.fillPopulationSubMenu(menu, filteredList, userLocation, focus);
+			AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus);
 		} else {
 
 			for (final ILayer layer : surface.getManager().getItems()) {
@@ -256,7 +249,7 @@ public class DisplaySurfaceMenu {
 					layerMenu.setImage(layer_images.get(layer.getClass()));
 					final Menu submenu = new Menu(layerMenu);
 					layerMenu.setMenu(submenu);
-					AgentsMenu.fillPopulationSubMenu(submenu, pop, userLocation, actions);
+					AgentsMenu.fillPopulationSubMenu(submenu, pop, actions);
 				}
 			}
 		}
@@ -264,13 +257,12 @@ public class DisplaySurfaceMenu {
 	}
 
 	public Menu buildROIMenu(final int x, final int y, final Collection<IAgent> agents,
-			final ILocation modelCoordinates, final Map<String, Runnable> actions, final Map<String, Image> images) {
+			final Map<String, Runnable> actions, final Map<String, Image> images) {
 
 		if (menu != null && !menu.isDisposed()) {
 			menu.dispose();
 		}
-		menu = fill(new Menu(swtControl), -1, false, true, agents, modelCoordinates);
-		menu.setData(IKeyword.USER_LOCATION, modelCoordinates);
+		menu = fill(new Menu(swtControl), -1, false, true, agents);
 		menu.setLocation(swtControl.toDisplay(x, y));
 		int i = 0;
 		for (final String s : actions.keySet()) {

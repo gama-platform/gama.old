@@ -532,7 +532,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *         (key=DefinitionFacetKey (name=Valid_ID | name=STRING)) | 
 	 *         ((key='function:' | key='->') expr=Expression) | 
 	 *         (key=TypeFacetKey (expr=TypeRef | expr=Expression)) | 
-	 *         (key=ActionFacetKey expr=ActionRef) | 
+	 *         (key=ActionFacetKey (expr=ActionRef | block=Block)) | 
 	 *         (key=VarFacetKey expr=VariableRef)
 	 *     )
 	 */
@@ -546,19 +546,10 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     ActionFacet returns Facet
 	 *
 	 * Constraint:
-	 *     (key=ActionFacetKey expr=ActionRef)
+	 *     (key=ActionFacetKey (expr=ActionRef | block=Block))
 	 */
 	protected void sequence_ActionFacet(ISerializationContext context, Facet semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.FACET__KEY) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.FACET__KEY));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.FACET__EXPR) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.FACET__EXPR));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getActionFacetAccess().getKeyActionFacetKeyParserRuleCall_0_0(), semanticObject.getKey());
-		feeder.accept(grammarAccess.getActionFacetAccess().getExprActionRefParserRuleCall_1_0(), semanticObject.getExpr());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	

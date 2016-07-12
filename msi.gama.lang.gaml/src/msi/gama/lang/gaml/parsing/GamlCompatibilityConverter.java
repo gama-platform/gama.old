@@ -113,6 +113,7 @@ import msi.gaml.descriptions.OperatorExpressionDescription;
 import msi.gaml.descriptions.StringListExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.statements.Facets;
 
 /**
  *
@@ -531,10 +532,27 @@ public class GamlCompatibilityConverter {
 		return result;
 	}
 
+	private static final IExpressionDescription convExpr(final ISyntacticElement expr, final Set<Diagnostic> errors) {
+		if (expr == null) {
+			return null;
+		}
+		final IExpressionDescription result = EcoreBasedExpressionDescription.create(expr, errors);
+		return result;
+	}
+
+	private static int SYNTHETIC_ACTION = 0;
+
 	private static final IExpressionDescription convExpr(final Facet facet, final boolean label,
 			final Set<Diagnostic> errors) {
 		if (facet != null) {
 			final Expression expr = facet.getExpr();
+			if (expr == null && facet.getBlock() != null) {
+				final Block b = facet.getBlock();
+				final ISyntacticElement elt = SyntacticFactory.create(ACTION,
+						new Facets(NAME, "synthetic" + SYNTHETIC_ACTION++), true);
+				convertBlock(elt, b, errors);
+				return convExpr(elt, errors);
+			}
 			if (expr != null) {
 				return label ? convertToLabel(expr, EGaml.getKeyOf(expr)) : convExpr(expr, errors);
 			}

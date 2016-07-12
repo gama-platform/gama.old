@@ -232,7 +232,7 @@ SpecialFacetKey:
 	"environment:" | 'text:' | 'image:' | 'using:' | "parameter:" | "aspect:" | "light:";
 
 ActionFacetKey:
-	"action:";
+	"action:" | "on_change:";
 
 VarFacetKey:
 	"var:";
@@ -250,7 +250,7 @@ TypeFacet returns Facet:
 	key=TypeFacetKey (=>(expr=TypeRef) | expr= Expression);
 
 ActionFacet returns Facet:
-	key=ActionFacetKey expr=ActionRef;
+	key=ActionFacetKey (expr=ActionRef | block=Block);
 
 VarFacet returns Facet:
 	key= VarFacetKey expr=VariableRef;
@@ -450,7 +450,7 @@ TerminalExpression:
 	{ReservedLiteral} op=KEYWORD;
 
 terminal KEYWORD:
-	'each' | 'self' | 'myself' | 'nil' | 'world' | 'user_location';
+	'each' | 'self' | 'myself' | 'nil' | 'world' ;
 
 //terminal INTEGER : ('0'..'9')+;
 

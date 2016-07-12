@@ -2394,14 +2394,22 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	public class ActionFacetKeyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.ActionFacetKey");
-		private final Keyword cActionKeyword = (Keyword)rule.eContents().get(1);
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Keyword cActionKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
+		private final Keyword cOn_changeKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		
 		//ActionFacetKey:
-		//	"action:";
+		//	"action:" | "on_change:";
 		@Override public ParserRule getRule() { return rule; }
 
+		//"action:" | "on_change:"
+		public Alternatives getAlternatives() { return cAlternatives; }
+
 		//"action:"
-		public Keyword getActionKeyword() { return cActionKeyword; }
+		public Keyword getActionKeyword_0() { return cActionKeyword_0; }
+
+		//"on_change:"
+		public Keyword getOn_changeKeyword_1() { return cOn_changeKeyword_1; }
 	}
 
 	public class VarFacetKeyElements extends AbstractParserRuleElementFinder {
@@ -2597,14 +2605,17 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cKeyActionFacetKeyParserRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
-		private final Assignment cExprAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cExprActionRefParserRuleCall_1_0 = (RuleCall)cExprAssignment_1.eContents().get(0);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Assignment cExprAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
+		private final RuleCall cExprActionRefParserRuleCall_1_0_0 = (RuleCall)cExprAssignment_1_0.eContents().get(0);
+		private final Assignment cBlockAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
+		private final RuleCall cBlockBlockParserRuleCall_1_1_0 = (RuleCall)cBlockAssignment_1_1.eContents().get(0);
 		
 		//ActionFacet Facet:
-		//	key=ActionFacetKey expr=ActionRef
+		//	key=ActionFacetKey (expr=ActionRef | block=Block)
 		@Override public ParserRule getRule() { return rule; }
 
-		//key=ActionFacetKey expr=ActionRef
+		//key=ActionFacetKey (expr=ActionRef | block=Block)
 		public Group getGroup() { return cGroup; }
 
 		//key=ActionFacetKey
@@ -2613,11 +2624,20 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//ActionFacetKey
 		public RuleCall getKeyActionFacetKeyParserRuleCall_0_0() { return cKeyActionFacetKeyParserRuleCall_0_0; }
 
+		//(expr=ActionRef | block=Block)
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
+
 		//expr=ActionRef
-		public Assignment getExprAssignment_1() { return cExprAssignment_1; }
+		public Assignment getExprAssignment_1_0() { return cExprAssignment_1_0; }
 
 		//ActionRef
-		public RuleCall getExprActionRefParserRuleCall_1_0() { return cExprActionRefParserRuleCall_1_0; }
+		public RuleCall getExprActionRefParserRuleCall_1_0_0() { return cExprActionRefParserRuleCall_1_0_0; }
+
+		//block=Block
+		public Assignment getBlockAssignment_1_1() { return cBlockAssignment_1_1; }
+
+		//Block
+		public RuleCall getBlockBlockParserRuleCall_1_1_0() { return cBlockBlockParserRuleCall_1_1_0; }
 	}
 
 	public class VarFacetElements extends AbstractParserRuleElementFinder {
@@ -5512,7 +5532,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//ActionFacetKey:
-	//	"action:";
+	//	"action:" | "on_change:";
 	public ActionFacetKeyElements getActionFacetKeyAccess() {
 		return pActionFacetKey;
 	}
@@ -5572,7 +5592,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//ActionFacet Facet:
-	//	key=ActionFacetKey expr=ActionRef
+	//	key=ActionFacetKey (expr=ActionRef | block=Block)
 	public ActionFacetElements getActionFacetAccess() {
 		return pActionFacet;
 	}
@@ -6045,7 +6065,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//terminal KEYWORD:
-	//	'each' | 'self' | 'myself' | 'nil' | 'world' | 'user_location';
+	//	'each' | 'self' | 'myself' | 'nil' | 'world';
 	public TerminalRule getKEYWORDRule() {
 		return tKEYWORD;
 	} 

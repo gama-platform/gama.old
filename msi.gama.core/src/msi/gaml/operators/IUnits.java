@@ -109,17 +109,21 @@ public class IUnits {
 	// displays, returns the height of the view in world units") )
 	// public final static double view_height = 1;
 
+	@constant(value = "user_location", category = IConstantCategory.GRAPHIC, concept = {
+			IConcept.DISPLAY }, doc = @doc("This unit contains in permanence the location of the mouse on the display in which it is situated. The latest location is provided when it is out of a display"))
+	public final static GamaPoint user_location = GamaPoint.NULL_POINT;
+
 	@constant(value = "camera_location", category = IConstantCategory.GRAPHIC, concept = { IConcept.GRAPHIC,
 			IConcept.GRAPHIC_UNIT,
 			IConcept.THREED }, doc = @doc("This unit, only available when running aspects or declaring displays, returns the current position of the camera as a point"))
 	public final static GamaPoint camera_location = GamaPoint.NULL_POINT;
 
-	@constant(value = "camera_location", category = IConstantCategory.GRAPHIC, concept = { IConcept.GRAPHIC,
+	@constant(value = "camera_target", category = IConstantCategory.GRAPHIC, concept = { IConcept.GRAPHIC,
 			IConcept.GRAPHIC_UNIT,
 			IConcept.THREED }, doc = @doc("This unit, only available when running aspects or declaring displays, returns the current target of the camera as a point"))
 	public final static GamaPoint camera_target = GamaPoint.NULL_POINT;
 
-	@constant(value = "camera_location", category = IConstantCategory.GRAPHIC, concept = { IConcept.GRAPHIC,
+	@constant(value = "camera_orientation", category = IConstantCategory.GRAPHIC, concept = { IConcept.GRAPHIC,
 			IConcept.GRAPHIC_UNIT,
 			IConcept.THREED }, doc = @doc("This unit, only available when running aspects or declaring displays, returns the current orientation of the camera as a point"))
 	public final static GamaPoint camera_orientation = GamaPoint.NULL_POINT;
@@ -317,12 +321,12 @@ public class IUnits {
 	@constant(value = "stone", altNames = { "st" }, category = { IConstantCategory.WEIGHT }, concept = {
 			IConcept.DIMENSION, IConcept.WEIGHT_UNIT }, doc = { @doc("stone unit") })
 	public final static double stone = 14 * pound, st = stone;
-	
+
 	/** The Constant short ton. */
 	@constant(value = "shortton", altNames = { "ston" }, category = { IConstantCategory.WEIGHT }, concept = {
 			IConcept.DIMENSION, IConcept.WEIGHT_UNIT }, doc = { @doc("short ton unit") })
 	public final static double shortton = 2000 * pound, ston = shortton;
-	
+
 	/** The Constant long ton. */
 	@constant(value = "longton", altNames = { "lton" }, category = { IConstantCategory.WEIGHT }, concept = {
 			IConcept.DIMENSION, IConcept.WEIGHT_UNIT }, doc = { @doc("short ton unit") })

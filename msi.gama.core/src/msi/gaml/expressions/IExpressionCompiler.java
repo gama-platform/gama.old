@@ -40,8 +40,7 @@ public interface IExpressionCompiler<T> {
 	public static final String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
 
 	public static final List<String> RESERVED = Arrays.asList(IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE,
-			IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER, IKeyword.THEIR, IKeyword.ITS,
-			IKeyword.USER_LOCATION);
+			IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER, IKeyword.THEIR, IKeyword.ITS);
 	public static final List<String> IGNORED = Arrays.asList(IKeyword.THE, IKeyword.THEIR, IKeyword.HIS, IKeyword.ITS,
 			IKeyword.HER);
 	public static final THashMap<String, THashMap<Signature, OperatorProto>> OPERATORS = new THashMap();

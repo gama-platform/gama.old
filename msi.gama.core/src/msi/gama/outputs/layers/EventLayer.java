@@ -20,15 +20,10 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaListFactory;
-import msi.gama.util.IContainer;
-import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;
-import msi.gaml.types.Types;
 
 /**
  * Written by marilleau
@@ -42,15 +37,10 @@ public class EventLayer extends AbstractLayer {
 	}
 
 	EventListener listener;
-	private final String pointArg, listArg;
 	IScope scope;
 
 	public EventLayer(final ILayerStatement layer) {
 		super(layer);
-		IExpression exp = layer.getFacet(EventLayerStatement.defaultPointArg);
-		pointArg = exp == null ? null : exp.literalValue();
-		exp = layer.getFacet(EventLayerStatement.defaultListArg);
-		listArg = exp == null ? null : exp.literalValue();
 	}
 
 	@Override
@@ -207,23 +197,26 @@ public class EventLayer extends AbstractLayer {
 			}
 			if (pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= surface.getEnvWidth()
 					|| pp.getY() >= surface.getEnvHeight()) {
-				if (MOUSE_EXITED == listenedEvent) {
-					executeEvent(x, y);
-				}
-				return;
-			}
-			final Arguments args = new Arguments();
-			if (x > -1 && y > -1) {
-				if (pointArg != null) {
-					args.put(pointArg, ConstantExpressionDescription.create(new GamaPoint(pp.getX(), pp.getY())));
-				}
-				if (listArg != null && listenedEvent != MOUSE_MOVED && listenedEvent != MOUSE_ENTERED
-						&& listenedEvent != MOUSE_EXITED) {
-					final IContainer<Integer, IAgent> agentset = GamaListFactory.createWithoutCasting(Types.AGENT,
-							surface.selectAgent(x, y));
-					args.put(listArg, ConstantExpressionDescription.create(agentset));
+				if (MOUSE_EXITED != listenedEvent) {
+					return;
 				}
 			}
+			// final Arguments args = new Arguments();
+			// if (x > -1 && y > -1) {
+			// if (pointArg != null) {
+			// args.put(pointArg, ConstantExpressionDescription.create(new
+			// GamaPoint(pp.getX(), pp.getY())));
+			// }
+			// if (listArg != null && listenedEvent != MOUSE_MOVED &&
+			// listenedEvent != MOUSE_ENTERED
+			// && listenedEvent != MOUSE_EXITED) {
+			// final IContainer<Integer, IAgent> agentset =
+			// GamaListFactory.createWithoutCasting(Types.AGENT,
+			// surface.selectAgent(x, y));
+			// args.put(listArg,
+			// ConstantExpressionDescription.create(agentset));
+			// }
+			// }
 			GAMA.runAndUpdateAll(new Runnable() {
 
 				@Override
@@ -233,7 +226,7 @@ public class EventLayer extends AbstractLayer {
 
 						@Override
 						public Object executeOn(final IScope scope) {
-							executer.setRuntimeArgs(args);
+							// executer.setRuntimeArgs(args);
 							executer.executeOn(scope);
 							return null;
 						}

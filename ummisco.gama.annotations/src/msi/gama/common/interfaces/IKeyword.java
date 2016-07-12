@@ -419,7 +419,6 @@ public interface IKeyword {
 	public static final String UPDATE = "update";
 	public static final String UP_VECTOR = "up_vector";
 	public static final String USER_CONTROLLED = "user_controlled";
-	public static final String USER_LOCATION = "user_location";
 	public static final String USER_COMMAND = "user_command";
 	public static final String USER_INPUT = "user_input";
 	public static final String USER_ONLY = "user_only";

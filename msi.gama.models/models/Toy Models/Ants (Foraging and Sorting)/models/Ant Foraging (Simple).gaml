@@ -31,19 +31,21 @@ global {
 	} 
 	
 	//Different actions triggered by an user interaction
-	action press (point loc, list selected_agents)
+	action press 
 	{
+		point loc <- #user_location;
+		list<ant> selected_agents <- ant overlapping (circle(10) at_location #user_location);
 		write("press " + loc.x + " " + loc.y + " "+selected_agents);
 	}
-	action release (point loc, list selected_agents)
+	action release 
 	{
 		write("release");
 	}
-	action click  (point loc, list selected_agents)
+	action click  
 	{
 		write("click");
 	}
-	action click2   (point loc, list selected_agents)
+	action click2   
 	{
 		write("click2");
 	}

@@ -23,7 +23,7 @@ global {
 	//These commands are displayed in the world layer
 	//User command to create an agent according to the location where the user right click
 	user_command "Create an agent" {
-   		create cell number: nbAgent with: [location::user_location]  {
+   		create cell number: nbAgent with: [location::#user_location]  {
    			color <-°green;
    		} 
 	}

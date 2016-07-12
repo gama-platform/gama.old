@@ -25,7 +25,6 @@ import static msi.gama.common.interfaces.IKeyword.SIGNAL;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 import static msi.gama.common.interfaces.IKeyword.TRUE;
 import static msi.gama.common.interfaces.IKeyword.UNKNOWN;
-import static msi.gama.common.interfaces.IKeyword.USER_LOCATION;
 import static msi.gama.common.interfaces.IKeyword.WORLD_AGENT_NAME;
 import static msi.gama.common.interfaces.IKeyword._DOT;
 import static msi.gaml.expressions.IExpressionFactory.FALSE_EXPR;
@@ -1095,8 +1094,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return null;
 		}
 		switch (varName) {
-		case USER_LOCATION:
-			return factory.createVar(USER_LOCATION, Types.POINT, true, IVarExpression.TEMP, getContext());
 		case EACH:
 			return getEachExpr(object);
 		case NULL:

@@ -40,9 +40,9 @@ global torus: torus_environment{
 	int ymax <- (width_and_height_of_environment - bounds);   
 	
 	//Action to move the goal to the mouse location
-	action move_goal(point mouse) {
+	action move_goal {
 		ask first(boids_goal) {
-			do goto target: mouse speed: 30;
+			do goto target: #user_location speed: 30;
 		}
 	}
 	

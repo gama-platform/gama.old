@@ -12,7 +12,8 @@
 package msi.gaml.expressions;
 
 import msi.gama.runtime.IScope;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Abstract class that defines the structure of all expression classes.
@@ -46,15 +47,16 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	@Override
-	public void dispose() {}
+	public void dispose() {
+	}
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
 		return this;
 	}
 
-	protected final void parenthesize(final StringBuilder sb, final IExpression ... exp) {
-		if ( exp.length == 1 && !exp[0].shouldBeParenthesized() ) {
+	protected final void parenthesize(final StringBuilder sb, final IExpression... exp) {
+		if (exp.length == 1 && !exp[0].shouldBeParenthesized()) {
 			sb.append(exp[0].serialize(false));
 		} else {
 			surround(sb, '(', ')', exp);
@@ -62,16 +64,16 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	protected final String surround(final StringBuilder sb, final char first, final char last,
-		final IExpression ... exp) {
+			final IExpression... exp) {
 		sb.append(first);
-		for ( int i = 0; i < exp.length; i++ ) {
-			if ( i > 0 ) {
+		for (int i = 0; i < exp.length; i++) {
+			if (i > 0) {
 				sb.append(',');
 			}
 			sb.append(exp[i] == null ? "nil" : exp[i].serialize(false));
 		}
-		int length = sb.length();
-		if ( length > 2 && sb.charAt(length - 1) == ' ' ) {
+		final int length = sb.length();
+		if (length > 2 && sb.charAt(length - 1) == ' ') {
 			sb.setLength(length - 1);
 		}
 		sb.append(last);

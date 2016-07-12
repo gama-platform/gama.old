@@ -1234,6 +1234,16 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EReference getFacet_Block()
+  {
+    return (EReference)facetEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getExpression()
   {
     return expressionEClass;
@@ -1996,6 +2006,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     facetEClass = createEClass(FACET);
     createEAttribute(facetEClass, FACET__KEY);
     createEReference(facetEClass, FACET__EXPR);
+    createEReference(facetEClass, FACET__BLOCK);
 
     expressionEClass = createEClass(EXPRESSION);
     createEReference(expressionEClass, EXPRESSION__LEFT);
@@ -2295,6 +2306,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEClass(facetEClass, Facet.class, "Facet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getFacet_Key(), ecorePackage.getEString(), "key", null, 0, 1, Facet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFacet_Expr(), this.getExpression(), null, "expr", null, 0, 1, Facet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getFacet_Block(), this.getBlock(), null, "block", null, 0, 1, Facet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(expressionEClass, Expression.class, "Expression", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getExpression_Left(), this.getExpression(), null, "left", null, 0, 1, Expression.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

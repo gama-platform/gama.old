@@ -45,7 +45,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 		name = action.getName();
 		type = action.getType();
 		this.action = action;
-		parameters = args;
+		parameters = args == null ? new Arguments() : args;
 
 	}
 
@@ -59,7 +59,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 		if (scope == null) {
 			return null;
 		}
-		final IAgent target = Cast.asAgent(scope, arg(0).value(scope));
+		final IAgent target = numArg() == 0 ? scope.getAgentScope() : Cast.asAgent(scope, arg(0).value(scope));
 		if (target == null) {
 			return null;
 		}

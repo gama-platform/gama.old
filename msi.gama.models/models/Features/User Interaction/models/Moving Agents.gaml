@@ -20,7 +20,7 @@ global
 		create being number: 100;
 	}
 
-	action kill (list<agent> selectedAgent, point mousePosition)
+	action kill 
 	{
 		ask moved_agents
 		{
@@ -30,21 +30,21 @@ global
 		moved_agents <- list<being>([]);
 	}
 
-	action duplicate (list<agent> selectedAgent, point mousePosition)
+	action duplicate 
 	{
 		geometry available_space <- (zone at_location target) - (union(moved_agents) + 10);
 		create being number: length(moved_agents) with: (location: any_location_in(available_space));
 	}
 
-	action click (list<agent> selectedAgent, point mousePosition)
+	action click 
 	{
 		if (empty(moved_agents))
 		{
-			list<being> selected_agents <- being inside (zone at_location mousePosition);
+			list<being> selected_agents <- being inside (zone at_location #user_location);
 			moved_agents <- selected_agents;
 			ask selected_agents
 			{
-				difference <- mousePosition - location;
+				difference <- #user_location - location;
 				color <- # olive;
 			}
 
@@ -60,15 +60,15 @@ global
 
 	}
 
-	action move (list<agent> selectedAgent, point mousePosition)
+	action move 
 	{
 		can_drop <- true;
-		target <- mousePosition;
-		list<being> other_agents <- (being inside (zone at_location mousePosition)) - moved_agents;
+		target <- #user_location;
+		list<being> other_agents <- (being inside (zone at_location #user_location)) - moved_agents;
 		geometry occupied <- geometry(other_agents);
 		ask moved_agents
 		{
-			location <- mousePosition - difference;
+			location <- #user_location - difference;
 			if (occupied intersects self)
 			{
 				color <- # red;

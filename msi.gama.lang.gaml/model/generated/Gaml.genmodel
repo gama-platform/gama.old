@@ -78,6 +78,7 @@
     <genClasses ecoreClass="Gaml.ecore#//Facet">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Facet/key"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Facet/expr"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Facet/block"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Expression">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Expression/left"/>

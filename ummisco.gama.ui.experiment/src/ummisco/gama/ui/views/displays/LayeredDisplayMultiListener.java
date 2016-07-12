@@ -17,6 +17,7 @@ import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
+import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.WorkaroundForIssue1353;
@@ -118,7 +119,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		if ((e.stateMask & SWT.MODIFIER_MASK) != 0)
 			return;
 
-		view.getDisplaySurface().setMousePosition(e.x, e.y);
+		setMousePosition(e.x, e.y);
 		if (e.button > 0)
 			return;
 		lastEnterTime = System.currentTimeMillis();
@@ -135,7 +136,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		if (currentTime - lastEnterTime < 100 && lastEnterPosition.x == e.x && lastEnterPosition.y == e.y) {
 			return;
 		}
-		view.getDisplaySurface().setMousePosition(-1, -1);
+		setMousePosition(-1, -1);
 		if (e.button > 0)
 			return;
 		// System.out.println("Mouse exiting " + e);
@@ -161,11 +162,11 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		if ((e.stateMask & SWT.MODIFIER_MASK) != 0)
 			return;
 		// System.out.println("Mouse moving on " + view.getPartName());
+		setMousePosition(e.x, e.y);
 		if (mouseIsDown) {
 			view.getDisplaySurface().draggedTo(e.x, e.y);
 			view.getDisplaySurface().dispatchMouseEvent(SWT.DragDetect);
 		} else {
-			view.getDisplaySurface().setMousePosition(e.x, e.y);
 			view.getDisplaySurface().dispatchMouseEvent(SWT.MouseMove);
 		}
 
@@ -181,7 +182,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	public void mouseDown(final MouseEvent e) {
 		if (!ok())
 			return;
-		view.getDisplaySurface().setMousePosition(e.x, e.y);
+		setMousePosition(e.x, e.y);
 		if (inMenu) {
 			inMenu = false;
 			return;
@@ -201,7 +202,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		// In case the mouse has moved (for example on a menu)
 		if (!mouseIsDown)
 			return;
-		view.getDisplaySurface().setMousePosition(e.x, e.y);
+		setMousePosition(e.x, e.y);
 		if ((e.stateMask & SWT.MODIFIER_MASK) != 0)
 			return;
 		mouseIsDown = false;
@@ -221,7 +222,7 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		final int x = p.x;
 		final int y = p.y;
 		inMenu = true;
-		view.getDisplaySurface().setMousePosition(x, y);
+		setMousePosition(x, y);
 		view.getDisplaySurface().selectAgentsAroundMouse();
 	}
 
@@ -263,6 +264,11 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 			WorkbenchHelper.getPage().activate(view);
 		}
 		return surfaceOk;
+	}
+
+	private void setMousePosition(final int x, final int y) {
+		view.getDisplaySurface().setMousePosition(x, y);
+		GAMA.getGui().setMouseLocationInModel(view.getDisplaySurface().getModelCoordinates());
 	}
 
 }

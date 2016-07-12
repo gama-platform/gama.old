@@ -2017,13 +2017,22 @@ public interface GamlPackage extends EPackage
   int FACET__EXPR = VAR_DEFINITION_FEATURE_COUNT + 1;
 
   /**
+   * The feature id for the '<em><b>Block</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FACET__BLOCK = VAR_DEFINITION_FEATURE_COUNT + 2;
+
+  /**
    * The number of structural features of the '<em>Facet</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int FACET_FEATURE_COUNT = VAR_DEFINITION_FEATURE_COUNT + 2;
+  int FACET_FEATURE_COUNT = VAR_DEFINITION_FEATURE_COUNT + 3;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ArgumentPairImpl <em>Argument Pair</em>}' class.
@@ -4452,6 +4461,17 @@ public interface GamlPackage extends EPackage
   EReference getFacet_Expr();
 
   /**
+   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Facet#getBlock <em>Block</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Block</em>'.
+   * @see msi.gama.lang.gaml.gaml.Facet#getBlock()
+   * @see #getFacet()
+   * @generated
+   */
+  EReference getFacet_Block();
+
+  /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Expression <em>Expression</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5665,6 +5685,14 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EReference FACET__EXPR = eINSTANCE.getFacet_Expr();
+
+    /**
+     * The meta object literal for the '<em><b>Block</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference FACET__BLOCK = eINSTANCE.getFacet_Block();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.ExpressionImpl <em>Expression</em>}' class.

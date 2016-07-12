@@ -20,6 +20,7 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -146,5 +147,9 @@ public interface IGui {
 	void applyLayout(int layout);
 
 	void displayErrors(List<GamaRuntimeException> newExceptions);
+
+	ILocation getMouseLocationInModel();
+
+	void setMouseLocationInModel(ILocation modelCoordinates);
 
 }

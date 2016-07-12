@@ -100,8 +100,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySuface"));
 		if (getOutput().useShader()) {
 			renderer = createModernRenderer();
-		}
-		else {
+		} else {
 			renderer = createJOGLRenderer();
 		}
 		animator = createAnimator();
@@ -619,7 +618,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			@Override
 			public void run() {
 				final Menu menu = menuManager.buildROIMenu(renderer.camera.getMousePosition().x,
-						renderer.camera.getMousePosition().y, agents, getModelCoordinates(), actions, images);
+						renderer.camera.getMousePosition().y, agents, actions, images);
 				menu.addMenuListener(new MenuListener() {
 
 					@Override
@@ -745,7 +744,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	private JOGLRenderer createJOGLRenderer() {
 		return new JOGLRenderer(this);
 	}
-	
+
 	private ModernRenderer createModernRenderer() {
 		return new ModernRenderer(this);
 	}

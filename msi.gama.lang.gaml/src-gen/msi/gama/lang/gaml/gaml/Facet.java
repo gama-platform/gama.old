@@ -14,6 +14,7 @@ package msi.gama.lang.gaml.gaml;
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.Facet#getKey <em>Key</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Facet#getExpr <em>Expr</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Facet#getBlock <em>Block</em>}</li>
  * </ul>
  *
  * @see msi.gama.lang.gaml.gaml.GamlPackage#getFacet()
@@ -73,5 +74,31 @@ public interface Facet extends VarDefinition
    * @generated
    */
   void setExpr(Expression value);
+
+  /**
+   * Returns the value of the '<em><b>Block</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Block</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Block</em>' containment reference.
+   * @see #setBlock(Block)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getFacet_Block()
+   * @model containment="true"
+   * @generated
+   */
+  Block getBlock();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Facet#getBlock <em>Block</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Block</em>' containment reference.
+   * @see #getBlock()
+   * @generated
+   */
+  void setBlock(Block value);
 
 } // Facet

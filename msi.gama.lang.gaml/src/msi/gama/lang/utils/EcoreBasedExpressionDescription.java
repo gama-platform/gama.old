@@ -32,6 +32,7 @@ import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.descriptions.BasicExpressionDescription;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IDescription;
@@ -47,7 +48,7 @@ import msi.gaml.factories.DescriptionFactory;
  */
 public class EcoreBasedExpressionDescription extends BasicExpressionDescription {
 
-	private EcoreBasedExpressionDescription(final EObject exp) {
+	protected EcoreBasedExpressionDescription(final EObject exp) {
 		super(exp);
 	}
 
@@ -167,9 +168,13 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 
 	}
 
+	public static IExpressionDescription create(final ISyntacticElement e, final Set<Diagnostic> errors) {
+		final IExpressionDescription ed = new BlockExpressionDescription(e);
+		return ed;
+	}
+
 	public static IExpressionDescription create(final EObject expr, final Set<Diagnostic> errors) {
 		final IExpressionDescription result = new ExpressionBuilder(errors).doSwitch(expr);
-
 		result.setTarget(expr);
 		return result;
 	}

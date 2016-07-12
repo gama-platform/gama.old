@@ -22,30 +22,34 @@ public class UnitConstantExpression extends ConstantExpression {
 
 	public static UnitConstantExpression create(final Object val, final IType t, final String unit, final String doc,
 			final String[] names) {
-		if (unit.equals("zoom")) {
+
+		switch (unit) {
+		case "zoom":
 			return new ZoomUnitExpression(unit, doc);
-		}
-		if (unit.equals("pixels") || unit.equals("px")) {
+		case "pixels":
+		case "px":
 			return new PixelUnitExpression(unit, doc);
-		}
-		if (unit.equals("display_width")) {
+		case "display_width":
 			return new DisplayWidthUnitExpression(doc);
-		}
-		if (unit.equals("display_height")) {
+		case "display_height":
 			return new DisplayHeightUnitExpression(doc);
-		}
-		if (unit.equals("view_x") || unit.equals("view_y") || unit.equals("view_width") || unit.equals("view_height")) {
+		case "view_x":
+		case "view_y":
+		case "view_width":
+		case "view_height":
 			return new ViewUnitExpression(unit, doc);
-		}
-		if (unit.equals("now")) {
+		case "now":
 			return new NowUnitExpression(unit, doc);
-		}
-		if (unit.equals("camera_location"))
+		case "camera_location":
 			return new CameraPositionUnitExpression(doc);
-		if (unit.equals("camera_target"))
+		case "camera_target":
 			return new CameraTargetUnitExpression(doc);
-		if (unit.equals("camera_orientation"))
+		case "camera_orientation":
 			return new CameraOrientationUnitExpression(doc);
+		case "user_location":
+			return new UserLocationUnitExpression(doc);
+		}
+
 		return new UnitConstantExpression(val, t, unit, doc, names);
 	}
 

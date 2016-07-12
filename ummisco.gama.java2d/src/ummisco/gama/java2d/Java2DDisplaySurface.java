@@ -693,12 +693,11 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if (layers.isEmpty()) {
 			return;
 		}
-		final ILocation modelCoordinates = layers.get(0).getModelCoordinatesFrom(xc, yc, this);
 		WorkbenchHelper.run(new Runnable() {
 
 			@Override
 			public void run() {
-				menuManager.buildMenu(mousex, mousey, xc, yc, modelCoordinates, layers);
+				menuManager.buildMenu(mousex, mousey, xc, yc, layers);
 			}
 		});
 	}

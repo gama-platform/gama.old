@@ -461,7 +461,7 @@ public class PopulationInspectView extends GamaViewPart
 				if (agent != null) {
 					manager.removeAll();
 					manager.update(true);
-					AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, null, false);
+					AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, false);
 				}
 			}
 		});

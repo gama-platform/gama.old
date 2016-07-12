@@ -74,10 +74,12 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getDefinitionFacetKeyAccess().getAlternatives(), "rule__DefinitionFacetKey__Alternatives");
 					put(grammarAccess.getTypeFacetKeyAccess().getAlternatives(), "rule__TypeFacetKey__Alternatives");
 					put(grammarAccess.getSpecialFacetKeyAccess().getAlternatives(), "rule__SpecialFacetKey__Alternatives");
+					put(grammarAccess.getActionFacetKeyAccess().getAlternatives(), "rule__ActionFacetKey__Alternatives");
 					put(grammarAccess.getClassicFacetAccess().getAlternatives_0(), "rule__ClassicFacet__Alternatives_0");
 					put(grammarAccess.getDefinitionFacetAccess().getNameAlternatives_1_0(), "rule__DefinitionFacet__NameAlternatives_1_0");
 					put(grammarAccess.getFunctionFacetAccess().getAlternatives_0(), "rule__FunctionFacet__Alternatives_0");
 					put(grammarAccess.getTypeFacetAccess().getAlternatives_1(), "rule__TypeFacet__Alternatives_1");
+					put(grammarAccess.getActionFacetAccess().getAlternatives_1(), "rule__ActionFacet__Alternatives_1");
 					put(grammarAccess.getBlockAccess().getAlternatives_2(), "rule__Block__Alternatives_2");
 					put(grammarAccess.getExpressionAccess().getAlternatives(), "rule__Expression__Alternatives");
 					put(grammarAccess.getArgumentPairAccess().getAlternatives_0_0(), "rule__ArgumentPair__Alternatives_0_0");
@@ -365,7 +367,8 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getTypeFacetAccess().getExprAssignment_1_0_0(), "rule__TypeFacet__ExprAssignment_1_0_0");
 					put(grammarAccess.getTypeFacetAccess().getExprAssignment_1_1(), "rule__TypeFacet__ExprAssignment_1_1");
 					put(grammarAccess.getActionFacetAccess().getKeyAssignment_0(), "rule__ActionFacet__KeyAssignment_0");
-					put(grammarAccess.getActionFacetAccess().getExprAssignment_1(), "rule__ActionFacet__ExprAssignment_1");
+					put(grammarAccess.getActionFacetAccess().getExprAssignment_1_0(), "rule__ActionFacet__ExprAssignment_1_0");
+					put(grammarAccess.getActionFacetAccess().getBlockAssignment_1_1(), "rule__ActionFacet__BlockAssignment_1_1");
 					put(grammarAccess.getVarFacetAccess().getKeyAssignment_0(), "rule__VarFacet__KeyAssignment_0");
 					put(grammarAccess.getVarFacetAccess().getExprAssignment_1(), "rule__VarFacet__ExprAssignment_1");
 					put(grammarAccess.getBlockAccess().getFunctionAssignment_2_0_0_0(), "rule__Block__FunctionAssignment_2_0_0_0");

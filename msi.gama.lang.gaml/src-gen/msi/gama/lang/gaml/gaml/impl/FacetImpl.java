@@ -2,6 +2,7 @@
  */
 package msi.gama.lang.gaml.gaml.impl;
 
+import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.GamlPackage;
@@ -24,6 +25,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.FacetImpl#getKey <em>Key</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.FacetImpl#getExpr <em>Expr</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.FacetImpl#getBlock <em>Block</em>}</li>
  * </ul>
  *
  * @generated
@@ -59,6 +61,16 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
    * @ordered
    */
   protected Expression expr;
+
+  /**
+   * The cached value of the '{@link #getBlock() <em>Block</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getBlock()
+   * @generated
+   * @ordered
+   */
+  protected Block block;
 
   /**
    * <!-- begin-user-doc -->
@@ -157,6 +169,54 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
    * <!-- end-user-doc -->
    * @generated
    */
+  public Block getBlock()
+  {
+    return block;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetBlock(Block newBlock, NotificationChain msgs)
+  {
+    Block oldBlock = block;
+    block = newBlock;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.FACET__BLOCK, oldBlock, newBlock);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setBlock(Block newBlock)
+  {
+    if (newBlock != block)
+    {
+      NotificationChain msgs = null;
+      if (block != null)
+        msgs = ((InternalEObject)block).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FACET__BLOCK, null, msgs);
+      if (newBlock != null)
+        msgs = ((InternalEObject)newBlock).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.FACET__BLOCK, null, msgs);
+      msgs = basicSetBlock(newBlock, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.FACET__BLOCK, newBlock, newBlock));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
@@ -164,6 +224,8 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
     {
       case GamlPackage.FACET__EXPR:
         return basicSetExpr(null, msgs);
+      case GamlPackage.FACET__BLOCK:
+        return basicSetBlock(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -182,6 +244,8 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
         return getKey();
       case GamlPackage.FACET__EXPR:
         return getExpr();
+      case GamlPackage.FACET__BLOCK:
+        return getBlock();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -201,6 +265,9 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
         return;
       case GamlPackage.FACET__EXPR:
         setExpr((Expression)newValue);
+        return;
+      case GamlPackage.FACET__BLOCK:
+        setBlock((Block)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -222,6 +289,9 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
       case GamlPackage.FACET__EXPR:
         setExpr((Expression)null);
         return;
+      case GamlPackage.FACET__BLOCK:
+        setBlock((Block)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -240,6 +310,8 @@ public class FacetImpl extends VarDefinitionImpl implements Facet
         return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
       case GamlPackage.FACET__EXPR:
         return expr != null;
+      case GamlPackage.FACET__BLOCK:
+        return block != null;
     }
     return super.eIsSet(featureID);
   }

@@ -346,6 +346,7 @@ public abstract class SymbolDescription implements IDescription {
 		return false;
 	}
 
+	@Override
 	public boolean manipulatesVar(final String name) {
 		return false;
 	}
@@ -560,7 +561,6 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	private final boolean validateFacets(final boolean document) {
-
 		// final Facets facets = getFacets();
 		// Special case for "do", which can accept (at parsing time) any facet
 		final boolean isDo = keyword.equals(DO);
