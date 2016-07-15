@@ -248,6 +248,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 			removeOutput(found);
 		}
 		updatePartName();
+		super.removeItem(a);
 	}
 
 	public void updatePartName() {
