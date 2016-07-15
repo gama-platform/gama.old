@@ -64,7 +64,6 @@ public class GamaToolbar2 extends Composite {
 		data.horizontalAlignment = SWT.LEFT;
 		data.minimumWidth = height * 2;
 		left.setLayoutData(data);
-		prepareToolbar(SWT.LEFT);
 
 		right = new GamaToolbarSimple(this, SWT.FLAT | SWT.HORIZONTAL | SWT.NO_FOCUS);
 		data = new GridData(SWT.FILL, SWT.FILL, true, false);
@@ -72,7 +71,6 @@ public class GamaToolbar2 extends Composite {
 		data.horizontalAlignment = SWT.RIGHT;
 		data.minimumWidth = height * 2;
 		right.setLayoutData(data);
-		prepareToolbar(SWT.RIGHT);
 
 	}
 
@@ -222,7 +220,7 @@ public class GamaToolbar2 extends Composite {
 				t.dispose();
 			}
 		}
-		prepareToolbar(side);
+		normalizeToolbars();
 		refresh(true);
 
 	}
@@ -252,15 +250,14 @@ public class GamaToolbar2 extends Composite {
 		if (control != null) {
 			button.setControl(control);
 		}
+		normalizeToolbars();
+
 		return button;
 	}
 
-	private void prepareToolbar(final int side) {
-		// GamaToolbarSimple tb = getToolbar(side);
-		// if ( tb.getItemCount() > 0 ) { return; }
-		// if ( side == SWT.LEFT ) {
-		// sep(1, side);
-		// }
+	private void normalizeToolbars() {
+		final int n = right.getItemCount();
+		((GridData) right.getLayoutData()).minimumWidth = n * 32;
 	}
 
 	/**
