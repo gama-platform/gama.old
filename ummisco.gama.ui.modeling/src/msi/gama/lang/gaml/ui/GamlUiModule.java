@@ -46,6 +46,7 @@ import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
+import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.ui.contentassist.GamlTemplateProposalProvider;
 import msi.gama.lang.gaml.ui.editor.GamaAutoEditStrategyProvider;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
@@ -53,7 +54,6 @@ import msi.gama.lang.gaml.ui.editor.GamlEditorCallback;
 import msi.gama.lang.gaml.ui.editor.GamlEditorTickUpdater;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.lang.gaml.ui.editor.GamlMarkOccurrenceActionContributor;
-import msi.gama.lang.gaml.ui.editor.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.ui.editor.GamlEditor.GamaSourceViewerConfiguration;
 import msi.gama.lang.gaml.ui.folding.GamaFoldingActionContributor;
 import msi.gama.lang.gaml.ui.folding.GamaFoldingRegionProvider;

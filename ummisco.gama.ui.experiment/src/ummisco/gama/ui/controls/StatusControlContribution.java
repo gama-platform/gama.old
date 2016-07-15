@@ -133,6 +133,8 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		if (agentIndex == 0) {
 			return exp.getAgent();
 		}
+		if (exp.getAgent() == null)
+			return null;
 		final IPopulation pop = exp.getAgent().getSimulationPopulation();
 		if (pop.isEmpty())
 			return null;
@@ -281,7 +283,10 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		}
 		label.setColor(getPopupBackground());
 		if (!inUserStatus && !inSubTask && mainTaskName == null) {
-			label.setColor(GamaColors.get(getStatusAgent().getColor()));
+			if (getStatusAgent() == null)
+				label.setColor(IGamaColors.NEUTRAL);
+			else
+				label.setColor(GamaColors.get(getStatusAgent().getColor()));
 		}
 
 		if (inSubTask) {

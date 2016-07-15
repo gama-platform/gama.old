@@ -137,7 +137,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 					} catch (final GamaRuntimeFileException ex) {
 						constantImage = null;
 						throw ex;
-					} catch (final Exception e) {
+					} catch (final Throwable e) {
 						constantImage = null;
 						throw GamaRuntimeException.create(e, scope);
 					}

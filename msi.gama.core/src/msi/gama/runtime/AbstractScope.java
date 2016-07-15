@@ -206,8 +206,9 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public void setOnUserHold(final boolean state) {
-		ITopLevelAgent root = getRoot();
-		if (root == null) return ;
+		final ITopLevelAgent root = getRoot();
+		if (root == null)
+			return;
 		root.setOnUserHold(state);
 	}
 
@@ -439,7 +440,7 @@ public abstract class AbstractScope implements IScope {
 		final boolean pushed = isAgent && push((IAgent) agent);
 		try {
 			result = agent.step(this);
-		} catch (final Exception ex) {
+		} catch (final Throwable ex) {
 			final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
 			GAMA.reportAndThrowIfNeeded(this, g, true);
 		} finally {
@@ -696,8 +697,9 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Object getGlobalVarValue(final String name) throws GamaRuntimeException {
-		ITopLevelAgent root = getRoot();
-		if (root == null) return null;
+		final ITopLevelAgent root = getRoot();
+		if (root == null)
+			return null;
 		return root.getDirectVarValue(this, name);
 	}
 
@@ -709,9 +711,10 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
-		ITopLevelAgent root = getRoot();
-		if (root == null) return ;
-	root.setDirectVarValue(this, name, v);
+		final ITopLevelAgent root = getRoot();
+		if (root == null)
+			return;
+		root.setDirectVarValue(this, name, v);
 	}
 
 	/**
@@ -789,15 +792,17 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public SimulationAgent getSimulationScope() {
-		ITopLevelAgent root = getRoot();
-		if (root == null) return null;
+		final ITopLevelAgent root = getRoot();
+		if (root == null)
+			return null;
 		return root.getSimulation();
 	}
 
 	@Override
 	public IExperimentAgent getExperiment() {
-		ITopLevelAgent root = getRoot();
-		if (root == null) return null;
+		final ITopLevelAgent root = getRoot();
+		if (root == null)
+			return null;
 		return root.getExperiment();
 	}
 
@@ -808,8 +813,9 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public IModel getModel() {
-		ITopLevelAgent root = getRoot();
-		if (root == null) return null;
+		final ITopLevelAgent root = getRoot();
+		if (root == null)
+			return null;
 		return getRoot().getModel();
 	}
 
@@ -848,10 +854,10 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public SimulationClock getClock() {
-		ITopLevelAgent root = getRoot();
+		final ITopLevelAgent root = getRoot();
 		if (root == null) {
-		 return null;
-		 }
+			return null;
+		}
 		// if ( root == null ) { return new SimulationClock(); }
 		return root.getClock();
 	}

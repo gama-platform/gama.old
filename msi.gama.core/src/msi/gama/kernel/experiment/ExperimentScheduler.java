@@ -59,7 +59,7 @@ public class ExperimentScheduler implements Runnable {
 		} else if (!executionThread.isAlive()) {
 			try {
 				executionThread.start();
-			} catch (final Exception e) {
+			} catch (final Throwable e) {
 				e.printStackTrace();
 				final GamaRuntimeException ee = GamaRuntimeException.create(e, experiment.getExperimentScope());
 				ee.addContext("Error in front end scheduler. Reloading thread, but it would be safer to reload GAMA");
@@ -167,7 +167,7 @@ public class ExperimentScheduler implements Runnable {
 			if (!scope.init(stepable)) {
 				toStop.add(stepable);
 			}
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
 			if (scope != null && scope.interrupted()) {
 				toStop.add(stepable);
 			} else {

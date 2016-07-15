@@ -117,7 +117,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 				if (os != null) {
 					os.close();
 				}
-			} catch (final Exception ex) {
+			} catch (final Throwable ex) {
 				final GamaRuntimeException e = GamaRuntimeException.create(ex, scope);
 				e.addContext("Unable to close output stream for snapshot image");
 				GAMA.reportError(getDisplayScope(), e, false);

@@ -148,7 +148,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 				}
 			} catch (final GamaRuntimeException e) {
 				closeExperiment(e);
-			} catch (final Exception e) {
+			} catch (final Throwable e) {
 				closeExperiment(GamaRuntimeException.create(e, experiment.getExperimentScope()));
 			} finally {
 				experiment.getExperimentScope().getGui().updateExperimentState();

@@ -212,7 +212,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 					if (variableValues.get(i) instanceof IVarExpression) {
 						((IVarExpression) variableValues.get(i)).setVal(scope, y[i], false);
 					}
-				} catch (final Exception ex1) {
+				} catch (final Throwable ex1) {
 					GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(ex1, scope), true);
 				} finally {
 					if (pushed) {
@@ -269,7 +269,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 				final Object[] result = new Object[1];
 				currentScope.execute(equationValues.get(i), equaAgents.get(i), null, result);
 				ydot[i] = Cast.asFloat(currentScope, result[0]);
-			} catch (final Exception e2) {
+			} catch (final Throwable e2) {
 				GAMA.reportAndThrowIfNeeded(currentScope, GamaRuntimeException.create(e2, currentScope), true);
 			}
 		}

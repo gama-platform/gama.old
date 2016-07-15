@@ -98,13 +98,13 @@ public class GAML {
 			final IExpression result = getExpressionFactory().createExpr(expression,
 					agent.getSpecies().getDescription());
 			return result;
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
 			// Maybe it is a statement instead ?
 			if (!onlyExpression)
 				try {
 					final IExpression result = getExpressionFactory().createTemporaryActionForAgent(agent, expression);
 					return result;
-				} catch (final Exception e2) {
+				} catch (final Throwable e2) {
 					throw GamaRuntimeException.create(e2, agent.getScope());
 				}
 			else {

@@ -84,7 +84,7 @@ public class BinaryOperator extends NAryOperator {
 			return result;
 		} catch (final GamaRuntimeException ge) {
 			throw ge;
-		} catch (final RuntimeException ex) {
+		} catch (final Throwable ex) {
 			// System.out.println(ex + " when applying the " + literalValue() +
 			// " operator on " + Cast.toGaml(leftVal)
 			// + " and " + Cast.toGaml(rightVal));

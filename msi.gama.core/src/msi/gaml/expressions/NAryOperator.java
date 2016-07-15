@@ -86,7 +86,7 @@ public class NAryOperator extends AbstractNAryOperator {
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + Arrays.toString(values));
 			throw e1;
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
 			final GamaRuntimeException ee = GamaRuntimeException.create(e, scope);
 			ee.addContext("when applying the " + literalValue() + " operator on " + Arrays.toString(values));
 			throw ee;

@@ -430,7 +430,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			saveShapeFile(scope, path, agents, /* featureTypeName, */specs.toString(), attributes, attString);
 		} catch (final GamaRuntimeException e) {
 			throw e;
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
 
@@ -498,7 +498,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			fw.close();
 		} catch (final GamaRuntimeException e) {
 			throw e;
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
 

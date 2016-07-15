@@ -202,7 +202,7 @@ public class SwtGui implements IGui {
 			}
 			o = GamaRuntimeException.error("Impossible to open view " + viewId);
 		}
-		if (o instanceof Exception) {
+		if (o instanceof Throwable) {
 			GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.create((Exception) o, GAMA.getRuntimeScope()),
 					false);
 		}
@@ -633,6 +633,7 @@ public class SwtGui implements IGui {
 		return mouseLocationInModel;
 	}
 
+	@Override
 	public void setMouseLocationInModel(final ILocation location) {
 		mouseLocationInModel = location;
 	}

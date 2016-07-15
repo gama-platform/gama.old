@@ -9,12 +9,17 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gama.lang.gaml.ui.editor;
+package msi.gama.lang.gaml.parsing;
 
-import org.antlr.runtime.*;
+import org.antlr.runtime.MismatchedTokenException;
+import org.antlr.runtime.MissingTokenException;
+import org.antlr.runtime.NoViableAltException;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.Token;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.nodemodel.SyntaxErrorMessage;
+import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.parser.antlr.SyntaxErrorMessageProvider;
 
 /**
@@ -24,37 +29,36 @@ import org.eclipse.xtext.parser.antlr.SyntaxErrorMessageProvider;
  * @since 15 sept. 2013
  * 
  */
-public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
+public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider implements ISyntaxErrorMessageProvider {
 
 	@Override
 	public SyntaxErrorMessage getSyntaxErrorMessage(final IParserErrorContext context) {
-		EObject contextobj = context.getCurrentContext();
-		RecognitionException ex = context.getRecognitionException();
+		final EObject contextobj = context.getCurrentContext();
+		final RecognitionException ex = context.getRecognitionException();
 		String msg = context.getDefaultMessage();
-		if ( ex == null ) {
-			if ( msg.endsWith("'_'") ) {
+		if (ex == null) {
+			if (msg.endsWith("'_'")) {
 				msg = "Illegal identifier";
-			} else if ( msg.startsWith("mismatched ch") ) {
+			} else if (msg.startsWith("mismatched ch")) {
 				msg = "Identifier cannot end with '_'";
 			}
 		}
-		if ( ex instanceof MissingTokenException ) {
+		if (ex instanceof MissingTokenException) {
 			msg = msg.replaceFirst("RULE_ID at", "identifier before");
 		}
-		if ( ex instanceof MismatchedTokenException ) {
+		if (ex instanceof MismatchedTokenException) {
 			// mismatched input 'xxx' expecting 'end'
 			msg = msg.replaceFirst("mismatched input", "Not allowed: ");
 		}
-		if ( ex instanceof NoViableAltException ) {
+		if (ex instanceof NoViableAltException) {
 			// no viable alternative at input 'xxx'
-			Token t = ((NoViableAltException) ex).token;
-			String s = t == null ? " this symbol " : t.getText();
-			msg =
-				msg.replaceFirst("no viable alternative at input", "Error at: ") +
-					". Previous keyword may be out of place or the block introduced by '" + s +
-					"' may not be correctly terminated.";
+			final Token t = ((NoViableAltException) ex).token;
+			final String s = t == null ? " this symbol " : t.getText();
+			msg = msg.replaceFirst("no viable alternative at input", "Error at: ")
+					+ ". Previous keyword may be out of place or the block introduced by '" + s
+					+ "' may not be correctly terminated.";
 		}
-		if ( contextobj == null ) {
+		if (contextobj == null) {
 			msg = "Incomplete model or species";
 		}
 		return new SyntaxErrorMessage(msg, Diagnostic.SYNTAX_DIAGNOSTIC);
