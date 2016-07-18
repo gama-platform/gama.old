@@ -19,6 +19,9 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.IConstantCategory;
+import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -48,12 +51,19 @@ public class GamaMaterial implements IValue {
 	static {
 		final GamaMaterial steel = new NamedGamaMaterial("steelMaterial", 5, 1);
 		materials.put("steelMaterial", steel);
-//		int_materials.put(steel.getRGB(), steel);
+//		int_materials.put(steel.getMatId(), steel);
 		
 		final GamaMaterial gum = new NamedGamaMaterial("gumMaterial", 1, 0);
 		materials.put("gumMaterial", gum);
-//		int_materials.put(red.getRGB(), red);
+//		int_materials.put(gum.getMatId(), gum);
 	}
+	
+//	/** The steel material. */
+//	@constant(value = "steelMaterial", category = {  }, concept = {  }, doc = { @doc("TODO") })
+//	public final static GamaMaterial steelMaterial = new GamaMaterial(5,1);
+//	/** The gum material. */
+//	@constant(value = "gumMaterial", category = {  }, concept = {  }, doc = { @doc("TODO") })
+//	public final static GamaMaterial gumMaterial = new GamaMaterial(1,0);
 
 	public static class NamedGamaMaterial extends GamaMaterial {
 
@@ -107,12 +117,12 @@ public class GamaMaterial implements IValue {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "material (" + getDamper() + ", " + getReflectivity() + ")";
+		return "material (damper value : " + getDamper() + ", reflectivity value : " + getReflectivity() + ")";
 	}
 
 	@Override
 	public String stringValue(final IScope scope) {
-		return "material (" + getDamper() + ", " + getReflectivity() + ")";
+		return "material (damper value : " + getDamper() + ", reflectivity value : " + getReflectivity() + ")";
 	}
 
 	@getter(IKeyword.REFLECTIVITY)

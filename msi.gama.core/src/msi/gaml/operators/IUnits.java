@@ -23,6 +23,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IConstantCategory;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaMaterial;
 import msi.gaml.expressions.UnitConstantExpression;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -413,6 +414,12 @@ public class IUnits {
 			final String doc = "standard CSS color corresponding to " + "rgb (" + c.red() + ", " + c.green() + ", "
 					+ c.blue() + "," + c.getAlpha() + ")";
 			add(entry.getKey(), c, doc, null);
+		}
+		
+		for (final Map.Entry<String, GamaMaterial> entry : GamaMaterial.materials.entrySet()) {
+			final GamaMaterial m = entry.getValue();
+			final String doc = "standard materials.";
+			add(entry.getKey(), m, doc, null);
 		}
 
 		for (final Field f : IUnits.class.getDeclaredFields()) {
