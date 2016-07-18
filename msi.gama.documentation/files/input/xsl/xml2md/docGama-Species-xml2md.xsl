@@ -26,9 +26,6 @@ So, for instance, to be able to use clustering techniques in the model:
 ```
 create cluster_builder returns: clusterer;
 ```
-
-[Top of the page](#table-of-contents) 
-
 	</xsl:text>
 
 
@@ -74,8 +71,6 @@ create cluster_builder returns: clusterer;
 </xsl:if>	
 		
 </xsl:for-each>			
-
-[Top of the page](#table-of-contents) 
 	</xsl:for-each>
 </xsl:template>
   

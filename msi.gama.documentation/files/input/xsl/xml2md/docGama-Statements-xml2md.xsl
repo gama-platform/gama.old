@@ -42,9 +42,6 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
      statement_keyword3 expression1 facet2: expression2...;
 }
 ```
-
-[Top of the page](#table-of-contents)
-
 	</xsl:text>
 		<xsl:call-template name="buildStatements"/>
 
@@ -63,9 +60,6 @@ statement_keyword1 expression1 facet2: expression2... { // a sequence statement
 		<xsl:call-template name="buildFacets"/>
 		<xsl:call-template name="buildDefinition"/>				
 		<xsl:call-template name="buildEmbedments"/>
-
-[Top of the page](#table-of-contents)
-		
 	</xsl:for-each>
 </xsl:template>
 

@@ -50,8 +50,6 @@ if speed = 5 {
 }
 ```
 
-[Top of the page](#table-of-contents)
-
 ----
 
 
@@ -123,8 +121,6 @@ if speed = 5 {
 </xsl:if>	
 		
 		</xsl:for-each>	
-
-[Top of the page](#table-of-contents)
 	</xsl:template>
   
 </xsl:stylesheet>

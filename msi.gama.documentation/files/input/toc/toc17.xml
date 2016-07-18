@@ -77,9 +77,6 @@
 			<chapter name="8.1 Control Architecture" file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling/ControlArchitecture"/>
 			<chapter name="8.2 Defining Equations" file="Tutorials/LearnGAMLStepByStep/MultiParadigmModeling/Equations"/>		
 		</subpart>
-
-	</part>
-	<part name="Recipes">
 		<subpart name="Recipes" file="Tutorials/Recipes">
 			<chapter name="1 Manipulate OSM Datas" file="Tutorials/Recipes/ManipulateOSMDatas"/> 
 			<chapter name="2 Diffusion" file="Tutorials/Recipes/Diffusion"/> 

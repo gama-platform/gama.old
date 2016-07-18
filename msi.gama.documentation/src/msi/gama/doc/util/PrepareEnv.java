@@ -24,8 +24,8 @@ public class PrepareEnv {
 		File genFolder = new File(Constants.GEN_FOLDER);
 		File testFolder = new File(Constants.TEST_FOLDER);
 		
-		if(genFolder.exists()) {FileUtils.deleteDirectory(genFolder);}
-		if(testFolder.exists()) {FileUtils.deleteDirectory(testFolder);}
+		if(genFolder.exists()) {deleteDirectory(genFolder);}
+		if(testFolder.exists()) {deleteDirectory(testFolder);}
 
 		genFolder.mkdir();	
 		new File(Constants.JAVA2XML_FOLDER).mkdirs();	
@@ -38,6 +38,20 @@ public class PrepareEnv {
 		new File(Constants.XML_KEYWORD_GEN_FOLDER).mkdirs();
 
 //		copyPythonTemplate();
+	}
+	
+	static public boolean deleteDirectory(File path) {
+	    if (path.exists()) {
+	        File[] files = path.listFiles();
+	        for (int i = 0; i < files.length; i++) {
+	            if (files[i].isDirectory()) {
+	                deleteDirectory(files[i]);
+	            } else {
+	                files[i].delete();
+	            }
+	        }
+	    }
+	    return (path.delete());
 	}
 
 //	private static void copyPythonTemplate() throws IOException{

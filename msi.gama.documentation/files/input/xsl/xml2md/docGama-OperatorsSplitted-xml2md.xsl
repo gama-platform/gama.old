@@ -91,7 +91,6 @@ If the action doesn't have any operands, the syntax to use is `my_agent the_acti
 
 Note that due to the fact that actions are written by modelers, the general functional contract is not respected in that case: actions might perfectly have side effects on their operands (including the agent).
 
-[Top of the page](#table-of-contents)
 	</xsl:text>
 
 ----
@@ -235,8 +234,6 @@ Same signification as [</xsl:text><xsl:value-of select="@alternativeNameOf"/><xs
   
 ``` <xsl:for-each select="documentation" > <xsl:call-template name="generateExamples"/> </xsl:for-each> ```
 </xsl:if>
-
-[Top of the page](#table-of-contents)
   	</xsl:for-each>
  </xsl:template>   
  

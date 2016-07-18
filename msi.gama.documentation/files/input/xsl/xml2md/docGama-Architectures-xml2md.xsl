@@ -14,8 +14,6 @@
 
 ## INTRODUCTION
 
-[Top of the page](#table-of-contents) 
-
 ----
 
 ## Table of Contents
@@ -78,8 +76,6 @@
 </xsl:if>	
 		
 		</xsl:for-each>	
-
-[Top of the page](#table-of-contents) 
 	</xsl:template>
   
 <xsl:template name="buildSkillsByName">

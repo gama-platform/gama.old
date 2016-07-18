@@ -16,7 +16,7 @@ public class Constants {
 	public static boolean ONLINE = false;
 	
 	// 
-	public static String RELEASE_APPLICATION = "msi.gama.application";
+	public static String RELEASE_APPLICATION = "ummisco.gama.product";
 	public static String RELEASE_PRODUCT = "gama.product";
 	
 	// Repositories containing used files
