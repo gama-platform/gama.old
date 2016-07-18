@@ -19,9 +19,6 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.IConstantCategory;
-import msi.gama.precompiler.GamlAnnotations.constant;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -117,7 +114,7 @@ public class GamaMaterial implements IValue {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "material (damper value : " + getDamper() + ", reflectivity value : " + getReflectivity() + ")";
+		return "material (" + getDamper() + ", " + getReflectivity() + ")";
 	}
 
 	@Override
