@@ -1,4 +1,4 @@
 cd msi.gama.parent &&
-mvn -U clean && mvn -X dependency:purge-local-repository  clean install &&
+mvn -X clean install &&
 cd -
 
