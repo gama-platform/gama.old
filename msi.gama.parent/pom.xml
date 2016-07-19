@@ -84,7 +84,16 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		
+		<repository>
+			<id>annot-local-repo</id>
+			<url>${project.baseUri}../msi.gama.processor/processor/plugins</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 		
 	</repositories>
 
