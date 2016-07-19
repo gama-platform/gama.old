@@ -16,7 +16,7 @@
 		</pluginRepository>
                 <pluginRepository>
 			<id>annot-local-repo</id>
-			<url>file://${project.baseUri}/../msi.gama.processor/processor/plugins</url>
+			<url>${project.baseUri}../msi.gama.processor/processor/plugins</url>
 		</pluginRepository>
 	</pluginRepositories>
 
