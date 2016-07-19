@@ -1,4 +1,4 @@
 cd msi.gama.parent &&
-mvn clean install &&
+mvn -X clean install &&
 cd -
 
