@@ -82,7 +82,7 @@
 		</repository>
 		<repository>
 			<id>annot-local-repo</id>
-			<url>file://${basedir}/../msi.gama.processor/processor/plugins/</url>
+			<url>file://${project.baseUri}/../msi.gama.processor/processor/plugins/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
