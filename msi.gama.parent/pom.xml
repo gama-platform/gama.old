@@ -14,6 +14,10 @@
 			<url>http://buchen.github.io/maven-repo</url>
 			<layout>default</layout>
 		</pluginRepository>
+                <pluginRepository>
+			<id>annot-local-repo</id>
+			<url>file://${project.baseUri}/../msi.gama.processor/processor/plugins</url>
+		</pluginRepository>
 	</pluginRepositories>
 
 	<repositories>
