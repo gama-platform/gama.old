@@ -4,6 +4,8 @@ import java.nio.FloatBuffer;
 
 import javax.vecmath.Matrix4f;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 public class GeomMathUtils {
 	
 	public static double[] CrossProduct(final double[] vect1, final double[] vect2) {
@@ -107,6 +109,16 @@ public class GeomMathUtils {
 		return result;
 	}
 	
+	static public Coordinate[] setTranslationToCoordArray(Coordinate[] coordinates, double x, double y, double z) {
+		Coordinate[] result = new Coordinate[coordinates.length];
+		for (int i = 0 ; i < coordinates.length ; i++) {
+			result[i] = new Coordinate(coordinates[i].x + x,
+					coordinates[i].y + y,
+					coordinates[i].z + z);
+		}
+		return result;
+	}
+	
 	static public float[] setRotationToVertex(float[] coordinates, float a, float x, float y, float z) {
 		float[] result = new float[coordinates.length];
 		int vertexNb = coordinates.length/3;
@@ -128,6 +140,16 @@ public class GeomMathUtils {
 			result[3*i] = (float) coordinates[3*i]*x;
 			result[3*i+1] = (float) coordinates[3*i+1]*y;
 			result[3*i+2] = (float) coordinates[3*i+2]*z;
+		}
+		return result;
+	}
+	
+	static public Coordinate[] setScalingToCoordArray(Coordinate[] coordinates, double x, double y, double z) {
+		Coordinate[] result = new Coordinate[coordinates.length];
+		for (int i = 0 ; i < coordinates.length ; i++) {
+			result[i] = new Coordinate(coordinates[i].x * x,
+					coordinates[i].y * y,
+					coordinates[i].z * z);
 		}
 		return result;
 	}

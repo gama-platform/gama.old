@@ -44,7 +44,7 @@ public class ManyFacedShape {
 	
 	// private fields from the GeometryObject
 	private IShape.Type type;
-	private final double depth;
+	private double depth;
 	private GamaPoint translation;
 	private GamaPair<Double,GamaPoint> rotation;
 	private GamaPoint size;
@@ -53,14 +53,17 @@ public class ManyFacedShape {
 	private Coordinate[] coordinates;
 	private GamaMaterial material;
 	
+	public ManyFacedShape(ManyFacedShape obj) {
+		loadManyFacedShape(obj);
+	}
+	
 	public ManyFacedShape(GeometryObject geomObj, int[] textIds, boolean isTriangulation) {
+		
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
 		this.type = geomObj.getType();
 		this.depth = geomObj.getAttributes().getDepth();
-		this.translation = geomObj.getAttributes().location;
-		this.rotation = geomObj.getAttributes().rotation;
-		this.size = geomObj.getAttributes().size;
+		
 		this.color = geomObj.getAttributes().color;
 		this.borderColor = geomObj.getAttributes().getBorder();
 		this.textIds = textIds;
@@ -69,58 +72,117 @@ public class ManyFacedShape {
 		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
 		
 		Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
+		
+		this.translation = geomObj.getAttributes().location;
+		this.rotation = geomObj.getAttributes().rotation;
+		this.size = getObjSize(geomObj);
+		coordsWithDoublons = cancelTransformation(coordsWithDoublons);
+		
 		// the last coordinate is the same as the first one, no need for this
 		this.coordinates = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 		
-		if (is1DShape())
+		if (!ShapeCache.isLoaded(type.toString()))
 		{
-			// special case for 1D shape : no repetition of vertex
-			coordinates = geomObj.geometry.getCoordinates();
-			build1DShape();
-		}
-		else if (isPolyplan()) 
-		{
-			// special case for plan/polyplan : no repetition of vertex
-			coordinates = geomObj.geometry.getCoordinates();
-			buildPolyplan();
-		}
-		else if (isPyramid())
-		{
-			buildBottomFace();
-			buildPyramidSummit();
-			buildLateralFaces();
-		}
-		else if (isSphere()) 
-		{
-			buildSphere();
-		}
-		else
-		{
-			// case of standard geometry : a standard geometry is a geometry which can be build with
-			// a bottom face and a top face, linked with some lateral faces. In case the standard 
-			// geometry is a 2D shape, we only build the top face.
-			if (depth > 0) {
-				// 3D shape
+		
+			if (is1DShape())
+			{
+				// special case for 1D shape : no repetition of vertex
+				coordinates = geomObj.geometry.getCoordinates();
+				build1DShape();
+			}
+			else if (isPolyplan()) 
+			{
+				// special case for plan/polyplan : no repetition of vertex
+				coordinates = geomObj.geometry.getCoordinates();
+				buildPolyplan();
+			}
+			else if (isPyramid())
+			{
 				buildBottomFace();
-				buildTopFace();
+				buildPyramidSummit();
 				buildLateralFaces();
 			}
-			else {
-				// 2D shape
-				buildTopFace();
+			else if (isSphere()) 
+			{
+				buildSphere();
 			}
+			else
+			{
+				// case of standard geometry : a standard geometry is a geometry which can be build with
+				// a bottom face and a top face, linked with some lateral faces. In case the standard 
+				// geometry is a 2D shape, we only build the top face.
+				if (depth > 0) {
+					// 3D shape
+					buildBottomFace();
+					buildTopFace();
+					buildLateralFaces();
+				}
+				else {
+					// 2D shape
+					buildTopFace();
+				}
+			}
+			
+			initBorders();
+			applySmoothShading();
+			computeNormals();
+			if (textIds != null)
+				computeUVMapping();
+			triangulate();
+			correctBorders();
+			ShapeCache.preloadShape(type.toString(), new ManyFacedShape(this));
 		}
-		
-		initBorders();
-		
-		applySmoothShading();
+		else {
+			loadManyFacedShape(ShapeCache.loadShape(type.toString()));
+		}
 		applyTransformation();
-		computeNormals();
-		if (textIds != null)
-			computeUVMapping();
-		triangulate();
+	}
+	
+	private GamaPoint getObjSize(GeometryObject geomObj) {
+		float minX = Float.MAX_VALUE;
+		float maxX = Float.MIN_VALUE;
+		float minY = Float.MAX_VALUE;
+		float maxY = Float.MIN_VALUE;
+		Coordinate[] coordinates = geomObj.geometry.getCoordinates();
+		for (int i = 0 ; i < coordinates.length ; i++) {
+			if (coordinates[i].x < minX) minX = (float) coordinates[i].x;
+			if (coordinates[i].x > maxX) maxX = (float) coordinates[i].x;
+			if (coordinates[i].y < minY) minY = (float) coordinates[i].y;
+			if (coordinates[i].y > maxY) maxY = (float) coordinates[i].y;
+		}
+		float XSize = (maxX - minX) / 2;
+		float YSize = (maxY - minY) / 2;
+		float ZSize = (XSize < YSize) ? YSize : XSize;
 		
-		correctBorders();
+		GamaPoint attrSize = (geomObj.getAttributes().size == null) ? new GamaPoint(1,1,1) : geomObj.getAttributes().size;
+		
+		return new GamaPoint( (attrSize.getX()*XSize),
+				(attrSize.getY()*YSize),
+				(attrSize.getZ()*ZSize));
+	}
+	
+	private Coordinate[] cancelTransformation(Coordinate[] coords) {
+		// This function will cancel the transformation of size and position. The purpose of it is to optimize and create a "basic" shape which will be stored to the ShapeCache.
+		Coordinate[] result = coords;
+		result = GeomMathUtils.setTranslationToCoordArray(result, -translation.x, -translation.y, -translation.z);
+		result = GeomMathUtils.setScalingToCoordArray(result, 1/size.x, 1/size.y, 1/size.z);
+		return result;
+	}
+	
+	private void loadManyFacedShape(ManyFacedShape shape) {
+		faces = shape.faces;
+//		edgesToSmooth = shape.edgesToSmooth;
+		coords = shape.coords;
+		uvMapping = shape.uvMapping;
+		normals = shape.normals;
+		textIds = shape.textIds;
+		coordsForBorder = shape.coordsForBorder;
+		idxForBorder = shape.idxForBorder;
+		
+//		mapOfOriginalIdx = shape.mapOfOriginalIdx; 
+		
+		topFace = shape.topFace;
+		bottomFace = shape.bottomFace;
 	}
 	
 	private boolean isPyramid() {
@@ -587,27 +649,23 @@ public class ManyFacedShape {
 		// apply transform to the coords if needed, and also to the coordsForBorders
 		coords = applyTransformation(coords);
 		coordsForBorder = applyTransformation(coordsForBorder);
+		if (rotation != null) {
+			normals = GeomMathUtils.setRotationToVertex(normals, (float) Math.toRadians(rotation.key.floatValue()), (float) rotation.value.x, (float) rotation.value.y, (float) rotation.value.z);
+		}
 	}
 	
 	private float[] applyTransformation(float[] coords) {
 		// apply rotation (if facet "rotate" for draw is used)
 		if (rotation != null) {
-			// translate the object to (0,0,0)
-			coords = GeomMathUtils.setTranslationToVertex(coords, (float) -translation.x, (float) -translation.y, (float) -translation.z);
 			// apply the rotation
 			coords = GeomMathUtils.setRotationToVertex(coords, (float) Math.toRadians(rotation.key.floatValue()), (float) rotation.value.x, (float) rotation.value.y, (float) rotation.value.z);
-			// go back to the first translation
-			coords = GeomMathUtils.setTranslationToVertex(coords, (float) translation.x, (float) translation.y, (float) translation.z);
 		}
 		// apply scaling (if facet "size" for draw is used)
 		if (size != null) {
-			// translate the object to (0,0,0)
-			coords = GeomMathUtils.setTranslationToVertex(coords, (float) -translation.x, (float) -translation.y, (float) -translation.z);
 			// apply the rotation
 			coords = GeomMathUtils.setScalingToVertex(coords, (float) size.x, (float) size.y, (float) size.z);
-			// go back to the first translation
-			coords = GeomMathUtils.setTranslationToVertex(coords, (float) translation.x, (float) translation.y, (float) translation.z);
 		}
+		coords = GeomMathUtils.setTranslationToVertex(coords, (float) translation.x, (float) translation.y, (float) translation.z);
 		return coords;
 	}
 	
@@ -736,6 +794,8 @@ public class ManyFacedShape {
 				result = getStandardDrawingEntities();
 			}
 		}
+		
+//		System.out.println("time for creating ManyFacedShape : "+(System.currentTimeMillis()-tmp)+" (timestamp : "+System.currentTimeMillis()+")");
 		
 		return result;
 	}

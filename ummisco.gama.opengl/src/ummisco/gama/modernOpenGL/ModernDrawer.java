@@ -68,94 +68,41 @@ public class ModernDrawer {
 	
 	public void addLineEntity(DrawingEntity newEntity) {
 		ArrayList<DrawingEntity> lineEntities = mapEntities.get(DrawingEntity.Type.LINE.toString());
-		ArrayList<DrawingEntity> listToAdd = new ArrayList<DrawingEntity>();
+		ArrayList<DrawingEntity> listToAdd = lineEntities;
 		if (lineEntities == null) {
-			listToAdd.add(newEntity);
+			listToAdd = new ArrayList<DrawingEntity>();
 		}
-		else {
-			listToAdd = lineEntities;
-			DrawingEntity entity = listToAdd.get(0); // only one element for "line"
-			// we concatenate newEntity with the other entities
-			listToAdd.add(entity.concatenateWith(newEntity));
-			// we remove the old entity
-			listToAdd.remove(0);
-		}
+		listToAdd.add(newEntity);
 		mapEntities.put(DrawingEntity.Type.LINE.toString(), listToAdd);
 	}
 	
 	public void addPointEntity(DrawingEntity newEntity) {
 		ArrayList<DrawingEntity> pointEntities = mapEntities.get(DrawingEntity.Type.POINT.toString());
-		ArrayList<DrawingEntity> listToAdd = new ArrayList<DrawingEntity>();
+		ArrayList<DrawingEntity> listToAdd = pointEntities;
 		if (pointEntities == null) {
-			listToAdd.add(newEntity);
+			listToAdd = new ArrayList<DrawingEntity>();
 		}
-		else {
-			listToAdd = pointEntities;
-			DrawingEntity entity = listToAdd.get(0); // only one element for "point"
-			// we concatenate newEntity with the other entities
-			listToAdd.add(entity.concatenateWith(newEntity));
-			// we remove the old entity
-			listToAdd.remove(0);
-		}
+		listToAdd.add(newEntity);
 		mapEntities.put(DrawingEntity.Type.POINT.toString(), listToAdd);
 	}
 	
 	public void addFilledEntity(DrawingEntity newEntity) {
 		ArrayList<DrawingEntity> filledEntities = mapEntities.get(DrawingEntity.Type.FACE.toString());
-		ArrayList<DrawingEntity> listToAdd = new ArrayList<DrawingEntity>();
+		ArrayList<DrawingEntity> listToAdd = filledEntities;
 		if (filledEntities == null) {
-			listToAdd.add(newEntity);
+			listToAdd = new ArrayList<DrawingEntity>();
 		}
-		else {
-			listToAdd = filledEntities;
-			// add to the entities with the same material
-			boolean entityAdded = false;
-			for (int i = 0 ; i < filledEntities.size() ; i++) {
-				DrawingEntity entity = filledEntities.get(i);
-				if (entity.getMaterial().equalsTo(newEntity.getMaterial())) {
-					// same material --> we concatenate newEntity with the other entities with the same material
-					listToAdd.add(entity.concatenateWith(newEntity));
-					// we remove the old entity
-					listToAdd.remove(i);
-					// we change the value of the flag
-					entityAdded = true;
-				}
-			}
-			if (!entityAdded) {
-				// the material of newEntity has not been added yet. Create a new entity
-				listToAdd.add(newEntity);
-			}
-		}
+		listToAdd.add(newEntity);
 		mapEntities.put(DrawingEntity.Type.FACE.toString(), listToAdd);
 	}
 	
 	public void addTexturedEntity(DrawingEntity newEntity) {
 		ArrayList<DrawingEntity> texturedEntities = mapEntities.get(DrawingEntity.Type.TEXTURED.toString());
-		ArrayList<DrawingEntity> listToAdd = new ArrayList<DrawingEntity>();
+		ArrayList<DrawingEntity> listToAdd = texturedEntities;
 		if (texturedEntities == null) {
-			listToAdd.add(newEntity);
+			listToAdd = new ArrayList<DrawingEntity>();
 		}
-		else {
-			listToAdd = texturedEntities;
-			// add to the entities with the same material
-			boolean entityAdded = false;
-			for (int i = 0 ; i < texturedEntities.size() ; i++) {
-				DrawingEntity entity = texturedEntities.get(i);
-				if (entity.getMaterial().equalsTo(newEntity.getMaterial()) 
-						&& entity.getTextureID() == newEntity.getTextureID()) {
-					// same material --> we concatenate newEntity with the other entities with the same material
-					listToAdd.add(entity.concatenateWith(newEntity));
-					// we remove the old entity
-					listToAdd.remove(i);
-					// we change the value of the flag
-					entityAdded = true;
-				}
-			}
-			if (!entityAdded) {
-				// the material of newEntity has not been added yet. Create a new entity
-				listToAdd.add(newEntity);
-			}
-		}
+		listToAdd.add(newEntity);
 		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), listToAdd);
 	}
 	
@@ -193,6 +140,7 @@ public class ModernDrawer {
 		shaderProgram.stop();
 		
 		mapEntities.clear();
+		
 	}
 	
 	private boolean useNormals(String drawingType) {
