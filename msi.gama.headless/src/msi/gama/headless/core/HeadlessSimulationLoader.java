@@ -45,16 +45,6 @@ public class HeadlessSimulationLoader {
 		configureHeadLessSimulation();
 		GAMA.setHeadlessGui(new HeadlessListener());
 
-		try {
-			// We initialize the extensions of Gaml
-			GamaBundleLoader.preBuildContributions();
-			// We initialize XText and Gaml.
-			GamlStandaloneSetup.doSetup();
-		} catch (Exception e1) {
-			throw GamaRuntimeException.create(e1, null);
-		}
-		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer("GAMA loading complete");
-
 		// SEED HACK // WARNING AD : Why ?
 		GamaPreferences.CORE_SEED_DEFINED.set(true);
 		GamaPreferences.CORE_SEED.set(1.0);
