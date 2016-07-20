@@ -31,6 +31,7 @@ public class ManyFacedShape {
 	private ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); // list that store all the edges erased thanks to the smooth shading (those edges must
 	// not be displayed when displaying the borders !)
 	private float[] coords;
+	private Coordinate[] coordsWithDoublons;
 	private float[] uvMapping;
 	private float[] normals;
 	private int[] textIds = null; // null for "no texture"
@@ -61,6 +62,7 @@ public class ManyFacedShape {
 		
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
+		this.coordsForBorder = new float[0];
 		this.type = geomObj.getType();
 		this.depth = geomObj.getAttributes().getDepth();
 		
@@ -71,29 +73,29 @@ public class ManyFacedShape {
 		this.material = geomObj.getAttributes().getMaterial();
 		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
 		
-		Coordinate[] coordsWithDoublons = geomObj.geometry.getCoordinates();
+		coordsWithDoublons = geomObj.geometry.getCoordinates();
 		
 		this.translation = geomObj.getAttributes().location;
 		this.rotation = geomObj.getAttributes().rotation;
 		this.size = getObjSize(geomObj);
-		coordsWithDoublons = cancelTransformation(coordsWithDoublons);
+		cancelTransformation();
 		
 		// the last coordinate is the same as the first one, no need for this
 		this.coordinates = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 		
-		if (!ShapeCache.isLoaded(type.toString()))
+		if (!ShapeCache.isLoaded(getHashCode()))
 		{
 		
 			if (is1DShape())
 			{
 				// special case for 1D shape : no repetition of vertex
-				coordinates = geomObj.geometry.getCoordinates();
+				coordinates = coordsWithDoublons;
 				build1DShape();
 			}
 			else if (isPolyplan()) 
 			{
 				// special case for plan/polyplan : no repetition of vertex
-				coordinates = geomObj.geometry.getCoordinates();
+				coordinates = coordsWithDoublons;
 				buildPolyplan();
 			}
 			else if (isPyramid())
@@ -126,16 +128,40 @@ public class ManyFacedShape {
 			initBorders();
 			applySmoothShading();
 			computeNormals();
-			if (textIds != null)
-				computeUVMapping();
+			computeUVMapping();
 			triangulate();
 			correctBorders();
-			ShapeCache.preloadShape(type.toString(), new ManyFacedShape(this));
+			
+			ShapeCache.preloadShape(getHashCode(), new ManyFacedShape(this));
+			
 		}
 		else {
-			loadManyFacedShape(ShapeCache.loadShape(type.toString()));
+			loadManyFacedShape( ShapeCache.loadShape(getHashCode()) );
 		}
 		applyTransformation();
+	}
+	
+	public String getHashCode() {
+		// returns the hashcode used in the shape cache.
+		String result;
+		if ( (type.toString() == "SPHERE")
+				|| (type.toString() == "PYRAMID")
+				|| (type.toString() == "CONE")
+				|| (type.toString() == "CUBE")
+				|| (type.toString() == "CYLINDER")
+				) {
+			result = type.toString();
+		}
+		else {
+			String coordsInString = "";
+			for (Coordinate c : coordsWithDoublons) {
+				coordsInString += c.x;
+				coordsInString += c.y;
+				coordsInString += c.z;
+			}
+			result = type.toString()+coordsInString;
+		}
+		return result;
 	}
 	
 	private GamaPoint getObjSize(GeometryObject geomObj) {
@@ -152,7 +178,7 @@ public class ManyFacedShape {
 		}
 		float XSize = (maxX - minX) / 2;
 		float YSize = (maxY - minY) / 2;
-		float ZSize = (XSize < YSize) ? YSize : XSize;
+		float ZSize = (this.depth==0) ? 1 : (float)this.depth;
 		
 		GamaPoint attrSize = (geomObj.getAttributes().size == null) ? new GamaPoint(1,1,1) : geomObj.getAttributes().size;
 		
@@ -161,25 +187,20 @@ public class ManyFacedShape {
 				(attrSize.getZ()*ZSize));
 	}
 	
-	private Coordinate[] cancelTransformation(Coordinate[] coords) {
+	private void cancelTransformation() {
 		// This function will cancel the transformation of size and position. The purpose of it is to optimize and create a "basic" shape which will be stored to the ShapeCache.
-		Coordinate[] result = coords;
-		result = GeomMathUtils.setTranslationToCoordArray(result, -translation.x, -translation.y, -translation.z);
-		result = GeomMathUtils.setScalingToCoordArray(result, 1/size.x, 1/size.y, 1/size.z);
-		return result;
+		this.depth = this.depth * 1/size.z;
+		coordsWithDoublons = GeomMathUtils.setTranslationToCoordArray(coordsWithDoublons, -translation.x, -translation.y, -translation.z);
+		coordsWithDoublons = GeomMathUtils.setScalingToCoordArray(coordsWithDoublons, 1/size.x, 1/size.y, 1/size.z);
 	}
 	
 	private void loadManyFacedShape(ManyFacedShape shape) {
 		faces = shape.faces;
-//		edgesToSmooth = shape.edgesToSmooth;
 		coords = shape.coords;
 		uvMapping = shape.uvMapping;
 		normals = shape.normals;
-		textIds = shape.textIds;
 		coordsForBorder = shape.coordsForBorder;
 		idxForBorder = shape.idxForBorder;
-		
-//		mapOfOriginalIdx = shape.mapOfOriginalIdx; 
 		
 		topFace = shape.topFace;
 		bottomFace = shape.bottomFace;
