@@ -85,7 +85,7 @@ float one_cubic_inch &lt;- 1 °sqin * 1 °inch;
 					<xsl:with-param name="nameGAMLElement" select="$unitName"/>
 				</xsl:call-template>				
 						<xsl:text>
-* **`\</xsl:text> <xsl:value-of select="$unitName"/> <xsl:text>`**</xsl:text> <xsl:if test="../../@altNames"> <xsl:text> (</xsl:text> <xsl:value-of select="$unitAltNames"/> <xsl:text>)</xsl:text></xsl:if><xsl:text>, value= </xsl:text> <xsl:value-of select="$unitValue"/> 
+* **`</xsl:text> <xsl:value-of select="$unitName"/> <xsl:text>`**</xsl:text> <xsl:if test="../../@altNames"> <xsl:text> (</xsl:text> <xsl:value-of select="$unitAltNames"/> <xsl:text>)</xsl:text></xsl:if><xsl:text>, value= </xsl:text> <xsl:value-of select="$unitValue"/> 
   	<xsl:if test="../../documentation/result[text()]"> <xsl:text>, Comment: </xsl:text> <xsl:value-of select="../../documentation/result[text()]"/>  
     </xsl:if>
 				</xsl:if>		 
@@ -119,7 +119,7 @@ rgb my_color &lt;- °teal;
 	<xsl:with-param name="nameGAMLElement" select="$unitName"/>
 </xsl:call-template>	
 			<xsl:text>
-* **`\</xsl:text> <xsl:value-of select="$unitName"/> <xsl:text>`**</xsl:text> <xsl:if test="@altNames"> <xsl:text> (</xsl:text> <xsl:value-of select="$unitAltNames"/> <xsl:text>)</xsl:text></xsl:if><xsl:text>, value= </xsl:text> <xsl:value-of select="$unitValue"/> 
+* **`</xsl:text> <xsl:value-of select="$unitName"/> <xsl:text>`**</xsl:text> <xsl:if test="@altNames"> <xsl:text> (</xsl:text> <xsl:value-of select="$unitAltNames"/> <xsl:text>)</xsl:text></xsl:if><xsl:text>, value= </xsl:text> <xsl:value-of select="$unitValue"/> 
   	<xsl:if test="documentation/result[text()]"> <xsl:text>, Comment: </xsl:text> <xsl:value-of select="documentation/result[text()]"/>  
     </xsl:if>	
 	</xsl:for-each>
