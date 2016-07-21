@@ -47,7 +47,6 @@ import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.modernOpenGL.ModernDrawer;
-import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 import ummisco.gama.opengl.vaoGenerator.VAOGenerator;
@@ -64,7 +63,6 @@ public class ModernRenderer extends Abstract3DRenderer {
 	
 	private Matrix4f projectionMatrix;
 
-	private ShaderProgram shaderProgram;
 	int[] vboHandles;
 	private ModernDrawer drawer;
 	private VAOGenerator vaoGenerator;
@@ -124,21 +122,14 @@ public class ModernRenderer extends Abstract3DRenderer {
 		initializeCanvasListeners();
 		
 		// TODO
-		
-		initShader(gl);
-		drawer = new ModernDrawer(this,gl,shaderProgram);
+
+		drawer = new ModernDrawer(this,gl);
 
 		updateCameraPosition();
 		updatePerspective();
 		
 		// We mark the renderer as inited
 		inited = true;
-	}
-	
-	private void initShader(final GL2 gl) {
-//		gl.glEnable(GL.GL_BLEND);
-//		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-		shaderProgram = new ShaderProgram(gl);
 	}
 
 	private boolean visible;
@@ -211,12 +202,16 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 		projectionMatrix = TransformationMatrix.createProjectionMatrix(data.isOrtho(),height,width,maxDim,fov);
 		
-		shaderProgram.start();
-		shaderProgram.loadProjectionMatrix(projectionMatrix);
-		shaderProgram.loadViewMatrix(camera);
-		shaderProgram.stop();
+//		shaderProgram.start();
+//		shaderProgram.loadProjectionMatrix(projectionMatrix);
+//		shaderProgram.loadViewMatrix(camera);
+//		shaderProgram.stop();
 
 		camera.animate();
+	}
+	
+	public Matrix4f getProjectionMatrix() {
+		return projectionMatrix;
 	}
 
 	public void drawScene(final GL2 gl) {
@@ -224,6 +219,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		if (currentScene == null) {
 			return;
 		}
+		
 		// Do some garbage collecting in model scenes
 		sceneBuffer.garbageCollect(gl);
 		// if picking, we draw a first pass to pick the color

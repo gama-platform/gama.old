@@ -16,7 +16,7 @@ import ummisco.gama.opengl.vaoGenerator.GeomMathUtils;
 
 public abstract class AbstractShader {
 	
-	private GL2 gl;
+	protected GL2 gl;
 	
 	private int programID;
 	private int vertexShaderID;
@@ -74,8 +74,7 @@ public abstract class AbstractShader {
 		//Check compile status.
 		int[] compiled = new int[1];
 		gl.glGetShaderiv(shaderID, GL2.GL_COMPILE_STATUS, compiled,0);
-		if(compiled[0]!=0){System.out.println("Horray! vertex shader compiled");}
-		else {
+		if(compiled[0]==0){
 			int[] logLength = new int[1];
 			gl.glGetShaderiv(shaderID, GL2.GL_INFO_LOG_LENGTH, logLength, 0);
 

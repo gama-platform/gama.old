@@ -90,16 +90,17 @@ public class LayerObject implements Iterable<GeometryObject> {
 			drawWithoutShader(gl);
 		}
 	}
+	
+	private boolean flag = true; 
 
 	private void drawWithShader(final GL2 gl) {
 		if (!(renderer instanceof ModernRenderer))
 			return;
 		final ModernRenderer renderer = (ModernRenderer) this.renderer;
-		renderer.getDrawer().clearEntityList();
 		for (final List<AbstractObject> list : objects) {
 			for (final AbstractObject object : list) {
 				if (object instanceof GeometryObject) {
-					renderer.getDrawer().addDrawingEntities(renderer.getVAOGenerator().GenerateVAO(object));
+					renderer.getDrawer().addDrawingEntities(renderer.getVAOGenerator().GenerateVAO(object,gl));
 				}
 			}
 		}

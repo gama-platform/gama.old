@@ -1,10 +1,13 @@
 package ummisco.gama.modernOpenGL.shader;
 
+import java.util.List;
+
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
+import msi.gama.outputs.LightPropertiesStructure;
 import ummisco.gama.modernOpenGL.Light;
 import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
@@ -33,6 +36,10 @@ public class ShaderProgram extends AbstractShader {
 	
 	public ShaderProgram(GL2 gl) {
 		super(gl,VERTEX_FILE,FRAGMENT_FILE);
+	}
+	
+	public ShaderProgram(ShaderProgram shader) {
+		super(shader.gl,VERTEX_FILE,FRAGMENT_FILE);
 	}
 	
 	@Override
@@ -102,5 +109,12 @@ public class ShaderProgram extends AbstractShader {
 	
 	public void enableNormal() {
 		super.loadFloat(location_useNormals, 1f);
+	}
+
+	public void loadDiffuseLights(List<LightPropertiesStructure> diffuseLights) {
+		// TODO Auto-generated method stub
+		LightPropertiesStructure light = diffuseLights.get(0);
+		super.loadVector(location_lightPosition,light.getPosition());
+		super.loadVector(location_lightColor,light.getColor());
 	}
 }

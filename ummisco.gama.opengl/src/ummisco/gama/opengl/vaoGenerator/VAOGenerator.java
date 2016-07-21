@@ -1,5 +1,6 @@
 package ummisco.gama.opengl.vaoGenerator;
 
+import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 
 import ummisco.gama.modernOpenGL.DrawingEntity;
@@ -22,11 +23,12 @@ public class VAOGenerator {
 		this.renderer = renderer;
 	}
 	
-	public DrawingEntity[] GenerateVAO(AbstractObject object) {
+	public DrawingEntity[] GenerateVAO(AbstractObject object, GL2 gl) {
 		GeometryObject geomObj = (GeometryObject)object;
 		int[] textIds = object.getTextureIDs(renderer.getContext(), renderer);
 		ManyFacedShape shape = new ManyFacedShape(geomObj,textIds,renderer.data.isTriangulation());	
-		return shape.getDrawingEntities();
+		DrawingEntity[] result = shape.getDrawingEntities();
+		return result;
 	}
 	
 	public int loadTexture(AbstractObject object) {

@@ -1,5 +1,8 @@
 package ummisco.gama.modernOpenGL;
 
+import com.jogamp.opengl.GL2;
+
+import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.utils.Utils;
 
 public class DrawingEntity {
@@ -15,6 +18,8 @@ public class DrawingEntity {
 	private float[] uvMapping;
 	private int textID;
 	private Material material;
+	
+	private ShaderProgram shader;
 	
 	public Material getMaterial() {
 		return material;
