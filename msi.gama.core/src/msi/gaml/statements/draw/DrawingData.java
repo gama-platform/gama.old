@@ -141,7 +141,7 @@ public class DrawingData {
 				constantBorder = Cast.asColor(null, borderExp.value(null));
 			}
 		} else if (borderExp == null) {
-			hasBorder = true;
+			hasBorder = false;
 			// AD commented in order to allow for the color to be chosen when
 			// computing the border color
 			// constantBorder = DEFAULT_BORDER_COLOR;

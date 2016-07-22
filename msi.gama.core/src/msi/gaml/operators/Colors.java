@@ -218,7 +218,7 @@ public class Colors {
 		return new GamaColor(grayValue, grayValue, grayValue, c.getAlpha());
 	}
 
-	@operator(value = "rnd_color", category = { IOperatorCategory.COLOR }, concept = {IConcept.COLOR, IConcept.RANDOM_OPERATOR} )
+	@operator(value = "rnd_color", category = { IOperatorCategory.COLOR }, concept = {IConcept.COLOR, IConcept.RANDOM } )
 	@doc(value = "rgb color",
 	comment = "Return a random color equivalent to rgb(rnd(operand),rnd(operand),rnd(operand))",
 	examples = @example(value = "rnd_color(255)",

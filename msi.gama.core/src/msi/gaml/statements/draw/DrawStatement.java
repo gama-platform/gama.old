@@ -85,7 +85,7 @@ import msi.gaml.types.Types;
 		omissible = IKeyword.GEOMETRY)
 @inside(symbols = { ASPECT }, kinds = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 @doc(value = "`" + DRAW
-		+ "` is used in an aspect block to expresse how agents of the species will be drawn. It is evaluated each time the agent has to be drawn. It can also be used in the graphics block.", usages = {
+		+ "` is used in an aspect block to express how agents of the species will be drawn. It is evaluated each time the agent has to be drawn. It can also be used in the graphics block.", usages = {
 				@usage(value = "Any kind of geometry as any location can be drawn when displaying an agent (independently of his shape)", examples = {
 						@example(value = "aspect geometryAspect {", isExecutable = false),
 						@example(value = "	draw circle(1.0) empty: !hasFood color: #orange ;", isExecutable = false),
