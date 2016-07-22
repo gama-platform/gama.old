@@ -29,6 +29,9 @@ public class ShaderProgram extends AbstractShader {
 	private int location_texture;
 	private int location_ambientLight;
 	
+	private boolean useNormal = false;
+	private boolean useTexture = false;
+	
 	public static final int POSITION_ATTRIBUTE_IDX = 0;
 	public static final int COLOR_ATTRIBUTE_IDX = 1;
 	public static final int NORMAL_ATTRIBUTE_IDX = 2;
@@ -96,19 +99,31 @@ public class ShaderProgram extends AbstractShader {
 	}
 	
 	public void enableTexture() {
+		useTexture = true;
 		super.loadFloat(location_useTexture,1f);
 	}
 	
 	public void disableTexture() {
+		useTexture = false;
 		super.loadFloat(location_useTexture,0f);
 	}
 	
 	public void disableNormal() {
+		useNormal = false;
 		super.loadFloat(location_useNormals, 0f);
 	}
 	
 	public void enableNormal() {
+		useNormal = true;
 		super.loadFloat(location_useNormals, 1f);
+	}
+	
+	public boolean useTexture() {
+		return useTexture;
+	}
+	
+	public boolean useNormal() {
+		return useNormal;
 	}
 
 	public void loadDiffuseLights(List<LightPropertiesStructure> diffuseLights) {

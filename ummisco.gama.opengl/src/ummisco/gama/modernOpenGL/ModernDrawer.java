@@ -48,8 +48,8 @@ public class ModernDrawer {
 		this.renderer = renderer;
 		this.gl = gl;
 		
-		vboHandles = new int[5];
-		this.gl.glGenBuffers(5, vboHandles, 0);
+//		vboHandles = new int[5];
+//		this.gl.glGenBuffers(5, vboHandles, 0);
 		
 		// init map
 		mapEntities.put(DrawingEntity.Type.LINE.toString(), null);
@@ -206,12 +206,13 @@ public class ModernDrawer {
 		
 		clearVBO();
 		
-//		vboHandles = new int[numberOfShader];
-//		this.gl.glGenBuffers(numberOfShader, vboHandles, 0);
+		vboHandles = new int[numberOfShader*5];
+		this.gl.glGenBuffers(numberOfShader*5, vboHandles, 0);
 		
 		for (String key : mapEntities.keySet()) {
 			ArrayList<ArrayList<DrawingEntity>> listOfListOfEntities = mapEntities.get(key);
 			if (listOfListOfEntities != null) {
+				int shaderNumber = 0;
 				for (ArrayList<DrawingEntity> listOfEntities : listOfListOfEntities) {
 					// all those entities are using the same shader
 					ShaderProgram shaderProgram = listOfEntities.get(0).getShader();
@@ -221,11 +222,12 @@ public class ModernDrawer {
 					prepareShader(listOfEntities.get(0),key,shaderProgram);
 					
 					drawLights(renderer.data.getDiffuseLights());
-					loadVBO(listOfEntities,key);
-					
-					drawVBO(typeOfDrawingMap.get(shaderProgram));
+					loadVBO(listOfEntities,key,shaderNumber);
+					lOfEntities.add(listOfEntities);
+					drawVBO(typeOfDrawingMap.get(shaderProgram),shaderNumber);
 					
 					shaderProgram.stop();
+					shaderNumber++;
 				}
 			}
 		}
@@ -234,15 +236,44 @@ public class ModernDrawer {
 		
 	}
 	
+	private ArrayList<ArrayList<DrawingEntity>> lOfEntities = new ArrayList<ArrayList<DrawingEntity>>();
+	
 	public void refresh() {
+		int shaderNumber = 0;
 		for (ShaderProgram shader : shaderLoaded) {
 			shader.start();
 			
 			shader.loadViewMatrix(renderer.camera);
 			int[] typeOfDrawing = typeOfDrawingMap.get(shader);
-			drawVBO(typeOfDrawing);
+			
+			///////////////////////////////////////:
+			// VERTICES POSITIONS BUFFER
+			storeDataInAttributeListBis(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,shaderNumber);
+			
+			// COLORS BUFFER (If no texture is defined)
+			if (!shader.useTexture())
+			{
+				storeDataInAttributeListBis(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,shaderNumber);
+			}
+			else {
+				storeDataInAttributeListBis(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,shaderNumber);
+				gl.glActiveTexture(GL.GL_TEXTURE0);
+				//gl.glBindTexture(GL.GL_TEXTURE_2D, listEntities.get(0).getTextureID()); TODO
+			}
+			
+			// NORMAL BUFFER
+			if (shader.useNormal())
+				storeDataInAttributeListBis(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,shaderNumber);
+			
+			// INDEX BUFFER
+			// Select the VBO, GPU memory data, to use for colors
+			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[shaderNumber*5+IDX_BUFF_IDX]);
+			//////////////////////////////////
+			
+			drawVBO(typeOfDrawing,shaderNumber);
 			
 			shader.stop();
+			shaderNumber++;
 		}
 	}
 	
@@ -261,7 +292,7 @@ public class ModernDrawer {
 		return true;
 	}
 	
-	private void drawVBO(int[] typeOfDrawing) {
+	private void drawVBO(int[] typeOfDrawing, int shaderNumber) {
 		gl.glDrawElements(typeOfDrawing[0], typeOfDrawing[1], GL2.GL_UNSIGNED_INT, 0);
 	}
 	
@@ -296,7 +327,7 @@ public class ModernDrawer {
 		}
 	}
 	
-	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType) {
+	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber) {
 		
 		ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		ArrayList<float[]> listColors = new ArrayList<float[]>();
@@ -314,23 +345,23 @@ public class ModernDrawer {
 
 
 		// VERTICES POSITIONS BUFFER
-		storeDataInAttributeList(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,listVertices);
+		storeDataInAttributeList(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,listVertices,shaderNumber);
 		
 		// COLORS BUFFER (If no texture is defined)
 		if (listUvMapping.size() == 0) {
-			storeDataInAttributeList(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,listColors);
+			storeDataInAttributeList(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,listColors,shaderNumber);
 		}
 		
 		// UV MAPPING (If a texture is defined)
 		else {
-			storeDataInAttributeList(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping);
+			storeDataInAttributeList(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
 			gl.glActiveTexture(GL.GL_TEXTURE0);
 			gl.glBindTexture(GL.GL_TEXTURE_2D, listEntities.get(0).getTextureID());
 		}
 		
 		// NORMAL BUFFER
 		if (useNormals(drawingType))
-			storeDataInAttributeList(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,listNormals);
+			storeDataInAttributeList(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,listNormals,shaderNumber);
 		
 		// INDEX BUFFER
 		int sizeIdxBuffer = 0;
@@ -352,11 +383,12 @@ public class ModernDrawer {
 			cpt += maxIdx+1;
 		}
 		IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuffer);
+		intBuffList.add(intIdxBuffer);
 		// Select the VBO, GPU memory data, to use for colors
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[IDX_BUFF_IDX]);
+		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[shaderNumber*5+IDX_BUFF_IDX]);
 		int numBytes = intIdxBuffer.length * 4;
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
-		ibIdxBuff.rewind();
+		//ibIdxBuff.rewind();
 
 		int[] newElement = new int[2];
 		if (drawingType.equals(DrawingEntity.Type.POINT.toString())) {
@@ -380,7 +412,26 @@ public class ModernDrawer {
 		//releaseVAOMemory();
 	}
 	
-	private void storeDataInAttributeList(int shaderAttributeNumber, int bufferAttributeNumber, ArrayList<float[]> listData) {
+	private void loadVBOBis(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber) {
+
+		// VERTICES POSITIONS BUFFER
+		storeDataInAttributeListBis(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,shaderNumber);
+		
+		// COLORS BUFFER (If no texture is defined)
+		storeDataInAttributeListBis(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,shaderNumber);
+		
+		// NORMAL BUFFER
+		if (useNormals(drawingType))
+			storeDataInAttributeListBis(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,shaderNumber);
+		
+		// INDEX BUFFER
+		// Select the VBO, GPU memory data, to use for colors
+		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[shaderNumber*5+IDX_BUFF_IDX]);
+	}
+	
+	private ArrayList<int[]> intBuffList = new ArrayList<int[]>();
+	
+	private void storeDataInAttributeList(int shaderAttributeNumber, int bufferAttributeNumber, ArrayList<float[]> listData, int shaderNumber) {
 		int coordinateSize = 0;
 		switch (shaderAttributeNumber) {
 		// recognize the type of VAO to determine the size of the coordinates
@@ -390,7 +441,7 @@ public class ModernDrawer {
 			case ShaderProgram.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
 		}
 		// Select the VBO, GPU memory data, to use for data
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[bufferAttributeNumber]);
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[shaderNumber*5+bufferAttributeNumber]);
 		// compute the total size of the buffer :
 		int numBytes = 0;
 		for (float[] data : listData) {
@@ -416,6 +467,23 @@ public class ModernDrawer {
 		{
 			listOfVAOUsed.add(shaderAttributeNumber);
 		}
+	}
+	private void storeDataInAttributeListBis(int shaderAttributeNumber, int bufferAttributeNumber, int shaderNumber) {
+		int coordinateSize = 0;
+		switch (shaderAttributeNumber) {
+		// recognize the type of VAO to determine the size of the coordinates
+			case ShaderProgram.COLOR_ATTRIBUTE_IDX : coordinateSize = 4; break; // r, g, b, a
+			case ShaderProgram.POSITION_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
+			case ShaderProgram.NORMAL_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
+			case ShaderProgram.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
+		}
+		// Select the VBO, GPU memory data, to use for data
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[shaderNumber*5+bufferAttributeNumber]);
+		
+		// Associate Vertex attribute with the last bound VBO
+		gl.glVertexAttribPointer(shaderAttributeNumber, coordinateSize,
+		                    GL2.GL_FLOAT, false /* normalized? */, 0 /* stride */,
+		                    0 /* The bound VBO data offset */);
 	}
 
 }
