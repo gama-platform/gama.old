@@ -1,7 +1,5 @@
 package ummisco.gama.modernOpenGL;
 
-import com.jogamp.opengl.GL2;
-
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.utils.Utils;
 
@@ -98,6 +96,14 @@ public class DrawingEntity {
 		}
 		result.setIndices(Utils.concatFloatArrays(indices,secondIdxArray));
 		return result;
+	}
+	
+	public void setShader(ShaderProgram shader) {
+		this.shader = shader;
+	}
+	
+	public ShaderProgram getShader() {
+		return shader;
 	}
 	
 }

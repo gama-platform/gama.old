@@ -97,14 +97,22 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if (!(renderer instanceof ModernRenderer))
 			return;
 		final ModernRenderer renderer = (ModernRenderer) this.renderer;
-		for (final List<AbstractObject> list : objects) {
-			for (final AbstractObject object : list) {
-				if (object instanceof GeometryObject) {
-					renderer.getDrawer().addDrawingEntities(renderer.getVAOGenerator().GenerateVAO(object,gl));
+		
+		Integer index = openGLListIndex;
+		if (index == null) {
+			for (final List<AbstractObject> list : objects) {
+				for (final AbstractObject object : list) {
+					if (object instanceof GeometryObject) {
+						renderer.getDrawer().addDrawingEntities(renderer.getVAOGenerator().GenerateVAO(object,gl));
+					}
 				}
 			}
+			renderer.getDrawer().redraw();
+			openGLListIndex = 1; // TODO changing it.
 		}
-		renderer.getDrawer().draw();
+		else {
+			renderer.getDrawer().refresh();
+		}
 
 	}
 

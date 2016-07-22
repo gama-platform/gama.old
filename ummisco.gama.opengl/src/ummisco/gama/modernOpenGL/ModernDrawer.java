@@ -28,14 +28,15 @@ public class ModernDrawer {
 	GL2 gl;
 	
 	ArrayList<Integer> listOfVAOUsed = new ArrayList<Integer>();
+	ArrayList<ShaderProgram> shaderLoaded = new ArrayList<ShaderProgram>();
+	HashMap<ShaderProgram,int[]> typeOfDrawingMap = new HashMap<ShaderProgram,int[]>();
 	
-	ArrayList<int[]> typeOfDrawingBuffer = new ArrayList<int[]>(); 	// this variable will store the types of drawing with the place
-																	// in the buffer, so that all objects can be in the same VBO :
-																	// int[0] : type of drawing ("GL2.GL_POINTS" / "GL2.GL_TRIANGLES"...)
-																	// int[1] : the position in the draw buffer
-																	// int[2] : the length of the element
-	HashMap<Integer,Integer> currentPositionInBuffer = new HashMap<Integer,Integer>();
-	int idxBuffPositionInVBO = 0;
+//	ArrayList<int[]> typeOfDrawingBuffer = new ArrayList<int[]>(); 	// this variable will store the types of drawing with the place
+//																	// in the buffer, so that all objects can be in the same VBO :
+//																	// int[0] : type of drawing ("GL2.GL_POINTS" / "GL2.GL_TRIANGLES"...)
+//																	// int[1] : the position in the draw buffer
+//																	// int[2] : the length of the element
+	int numberOfShader = 0;
 	
 	static final int COLOR_IDX = 0;
 	static final int VERTICES_IDX = 1;
@@ -79,11 +80,16 @@ public class ModernDrawer {
 		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
 		if (lineEntities == null) {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
+			// we create a new shader and we set it to the entity
+			newEntity.setShader(new ShaderProgram(gl));
+			numberOfShader++;
 			entityList.add(newEntity);
 			listToAdd.add(entityList);
 		}
 		else {
 			listToAdd = lineEntities;
+			// we link the new entity to the shader used for the other entities of the list.
+			newEntity.setShader(listToAdd.get(0).get(0).getShader());
 			listToAdd.get(0).add(newEntity);
 		}
 		mapEntities.put(DrawingEntity.Type.LINE.toString(), listToAdd);
@@ -95,11 +101,16 @@ public class ModernDrawer {
 		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
 		if (pointEntities == null) {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
+			// we create a new shader and we set it to the entity
+			newEntity.setShader(new ShaderProgram(gl));
+			numberOfShader++;
 			entityList.add(newEntity);
 			listToAdd.add(entityList);
 		}
 		else {
 			listToAdd = pointEntities;
+			// we link the new entity to the shader used for the other entities of the list.
+			newEntity.setShader(listToAdd.get(0).get(0).getShader());
 			listToAdd.get(0).add(newEntity);
 		}
 		mapEntities.put(DrawingEntity.Type.POINT.toString(), listToAdd);
@@ -110,6 +121,9 @@ public class ModernDrawer {
 		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
 		if (filledEntities == null) {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
+			// we create a new shader and we set it to the entity
+			newEntity.setShader(new ShaderProgram(gl));
+			numberOfShader++;
 			entityList.add(newEntity);
 			listToAdd.add(entityList);
 		}
@@ -120,7 +134,8 @@ public class ModernDrawer {
 			for (int i = 0 ; i < filledEntities.size() ; i++) {
 				DrawingEntity entity = filledEntities.get(i).get(0);
 				if (entity.getMaterial().equalsTo(newEntity.getMaterial())) {
-					// same material --> we concatenate newEntity with the other entities with the same material
+					// same material --> we add newEntity to the list which use the same shader, and we link the shader used for the other entities of the list to this entity
+					newEntity.setShader(listToAdd.get(i).get(0).getShader());
 					listToAdd.get(i).add(newEntity);
 					// we change the value of the flag
 					entityAdded = true;
@@ -129,6 +144,9 @@ public class ModernDrawer {
 			if (!entityAdded) {
 				// the material of newEntity has not been added yet. Create a new entity
 				ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
+				// we create a new shader and we set it to the entity
+				newEntity.setShader(new ShaderProgram(gl));
+				numberOfShader++;
 				entityList.add(newEntity);
 				listToAdd.add(entityList);
 			}
@@ -141,6 +159,8 @@ public class ModernDrawer {
 		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
 		if (texturedEntities == null) {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
+			newEntity.setShader(new ShaderProgram(gl));
+			numberOfShader++;
 			entityList.add(newEntity);
 			listToAdd.add(entityList);
 		}
@@ -152,7 +172,8 @@ public class ModernDrawer {
 				DrawingEntity entity = texturedEntities.get(i).get(0);
 				if (entity.getMaterial().equalsTo(newEntity.getMaterial()) 
 						&& entity.getTextureID() == newEntity.getTextureID()) {
-					// same material --> we concatenate newEntity with the other entities with the same material
+					// same material, same texture --> we add newEntity to the list which use the same shader, and we link the shader used for the other entities of the list to this entity
+					newEntity.setShader(listToAdd.get(i).get(0).getShader());
 					listToAdd.get(i).add(newEntity);
 					// we change the value of the flag
 					entityAdded = true;
@@ -161,6 +182,9 @@ public class ModernDrawer {
 			if (!entityAdded) {
 				// the material of newEntity has not been added yet. Create a new entity
 				ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
+				// we create a new shader and we set it to the entity
+				newEntity.setShader(new ShaderProgram(gl));
+				numberOfShader++;
 				entityList.add(newEntity);
 				listToAdd.add(entityList);
 			}
@@ -173,39 +197,33 @@ public class ModernDrawer {
 			gl.glDisableVertexAttribArray(vao);
 		}
 		listOfVAOUsed.clear();
-		typeOfDrawingBuffer.clear();
-		currentPositionInBuffer.clear();
-		
-		// reinit currentPositionInBuffer
-		currentPositionInBuffer.put(ShaderProgram.COLOR_ATTRIBUTE_IDX, 0);
-		currentPositionInBuffer.put(ShaderProgram.NORMAL_ATTRIBUTE_IDX, 0);
-		currentPositionInBuffer.put(ShaderProgram.POSITION_ATTRIBUTE_IDX, 0);
-		currentPositionInBuffer.put(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX, 0);
-		idxBuffPositionInVBO = 0;
+		shaderLoaded.clear();
+		typeOfDrawingMap.clear();
+//		numberOfShader=0;
 	}
 	
-	public void draw() {
+	public void redraw() {
 		
-//		if (!flag) {
-//			simpleDrawMethod();
-//		}
-//		else {
 		clearVBO();
+		
+//		vboHandles = new int[numberOfShader];
+//		this.gl.glGenBuffers(numberOfShader, vboHandles, 0);
+		
 		for (String key : mapEntities.keySet()) {
 			ArrayList<ArrayList<DrawingEntity>> listOfListOfEntities = mapEntities.get(key);
 			if (listOfListOfEntities != null) {
 				for (ArrayList<DrawingEntity> listOfEntities : listOfListOfEntities) {
 					// all those entities are using the same shader
-					ShaderProgram shaderProgram = new ShaderProgram(gl);
+					ShaderProgram shaderProgram = listOfEntities.get(0).getShader();
+					shaderLoaded.add(shaderProgram);
 					shaderProgram.start();
-						
+					
 					prepareShader(listOfEntities.get(0),key,shaderProgram);
 					
 					drawLights(renderer.data.getDiffuseLights());
 					loadVBO(listOfEntities,key);
 					
-					drawVBO();
-					clearVBO();
+					drawVBO(typeOfDrawingMap.get(shaderProgram));
 					
 					shaderProgram.stop();
 				}
@@ -214,6 +232,18 @@ public class ModernDrawer {
 		
 		mapEntities.clear();
 		
+	}
+	
+	public void refresh() {
+		for (ShaderProgram shader : shaderLoaded) {
+			shader.start();
+			
+			shader.loadViewMatrix(renderer.camera);
+			int[] typeOfDrawing = typeOfDrawingMap.get(shader);
+			drawVBO(typeOfDrawing);
+			
+			shader.stop();
+		}
 	}
 	
 	private void drawLights(List<LightPropertiesStructure> lights) {
@@ -231,10 +261,8 @@ public class ModernDrawer {
 		return true;
 	}
 	
-	private void drawVBO() {
-		for (int[] elem : typeOfDrawingBuffer) {
-			gl.glDrawElements(elem[0], elem[2], GL2.GL_UNSIGNED_INT, elem[1]);
-		}
+	private void drawVBO(int[] typeOfDrawing) {
+		gl.glDrawElements(typeOfDrawing[0], typeOfDrawing[1], GL2.GL_UNSIGNED_INT, 0);
 	}
 	
 	private void prepareShader(DrawingEntity entity, String drawingType, ShaderProgram shaderProgram) {
@@ -330,7 +358,7 @@ public class ModernDrawer {
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
 		ibIdxBuff.rewind();
 
-		int[] newElement = new int[3];
+		int[] newElement = new int[2];
 		if (drawingType.equals(DrawingEntity.Type.POINT.toString())) {
 			// particular case : drawing just a point
 			newElement[0] = GL2.GL_POINTS;
@@ -346,10 +374,8 @@ public class ModernDrawer {
 			newElement[0] = GL2.GL_TRIANGLES;
 			//gl.glDrawElements(GL2.GL_TRIANGLES, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
 		}
-		newElement[1] = idxBuffPositionInVBO;
-		newElement[2] = intIdxBuffer.length;
-		typeOfDrawingBuffer.add(newElement);
-		idxBuffPositionInVBO += intIdxBuffer.length;
+		newElement[1] = intIdxBuffer.length;
+		typeOfDrawingMap.put(listEntities.get(0).getShader(),newElement);
 
 		//releaseVAOMemory();
 	}
