@@ -49,6 +49,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	final static GamaPoint NULL_OFFSET = new GamaPoint();
 	final static GamaPoint NULL_SCALE = new GamaPoint(1, 1, 1);
+	
+	private boolean sceneIsInitialized = false;
 
 	GamaPoint offset = NULL_OFFSET;
 	GamaPoint scale = NULL_SCALE;
@@ -90,16 +92,14 @@ public class LayerObject implements Iterable<GeometryObject> {
 			drawWithoutShader(gl);
 		}
 	}
-	
-	private boolean flag = true; 
 
 	private void drawWithShader(final GL2 gl) {
 		if (!(renderer instanceof ModernRenderer))
 			return;
 		final ModernRenderer renderer = (ModernRenderer) this.renderer;
 		
-		Integer index = openGLListIndex;
-		if (index == null) {
+		if (!sceneIsInitialized) {
+			renderer.getDrawer().prepareMapForLayer(this);
 			for (final List<AbstractObject> list : objects) {
 				for (final AbstractObject object : list) {
 					if (object instanceof GeometryObject) {
@@ -108,10 +108,10 @@ public class LayerObject implements Iterable<GeometryObject> {
 				}
 			}
 			renderer.getDrawer().redraw();
-			openGLListIndex = 1; // TODO changing it.
+			sceneIsInitialized = true;
 		}
 		else {
-			renderer.getDrawer().refresh();
+			renderer.getDrawer().refresh(this);
 		}
 
 	}
@@ -300,6 +300,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 			gl.getGL2().glDeleteLists(index, 1);
 			openGLListIndex = null;
 		}
+		
+		sceneIsInitialized = false;
 
 	}
 

@@ -219,7 +219,6 @@ public class ModernRenderer extends Abstract3DRenderer {
 		if (currentScene == null) {
 			return;
 		}
-		
 		// Do some garbage collecting in model scenes
 		sceneBuffer.garbageCollect(gl);
 		// if picking, we draw a first pass to pick the color

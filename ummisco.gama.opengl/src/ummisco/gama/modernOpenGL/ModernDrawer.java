@@ -16,27 +16,28 @@ import com.jogamp.opengl.GL2;
 import msi.gama.outputs.LightPropertiesStructure;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.ModernRenderer;
+import ummisco.gama.opengl.scene.LayerObject;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public class ModernDrawer {
 	
 	private Matrix4f transformationMatrix;
 
-	int[] vboHandles;
-	HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities = new HashMap<String,ArrayList<ArrayList<DrawingEntity>>>();
+	HashMap<LayerObject,int[]> mapOfVBOHandles = new HashMap<LayerObject,int[]>();
+	LayerObject currentLayer;
+	HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities;
 	final ModernRenderer renderer;
 	GL2 gl;
 	
+	public boolean isDrawing = true;
+	
 	ArrayList<Integer> listOfVAOUsed = new ArrayList<Integer>();
+	HashMap<LayerObject,ArrayList<ShaderProgram>> mapLayerShader = new HashMap<LayerObject,ArrayList<ShaderProgram>>();
 	ArrayList<ShaderProgram> shaderLoaded = new ArrayList<ShaderProgram>();
 	HashMap<ShaderProgram,int[]> typeOfDrawingMap = new HashMap<ShaderProgram,int[]>();
 	
-//	ArrayList<int[]> typeOfDrawingBuffer = new ArrayList<int[]>(); 	// this variable will store the types of drawing with the place
-//																	// in the buffer, so that all objects can be in the same VBO :
-//																	// int[0] : type of drawing ("GL2.GL_POINTS" / "GL2.GL_TRIANGLES"...)
-//																	// int[1] : the position in the draw buffer
-//																	// int[2] : the length of the element
-	int numberOfShader = 0;
+	int numberOfShaderInTheCurrentLayer = 0;
+	int currentShaderNumber = 0;
 	
 	static final int COLOR_IDX = 0;
 	static final int VERTICES_IDX = 1;
@@ -46,15 +47,18 @@ public class ModernDrawer {
 	
 	public ModernDrawer(ModernRenderer renderer, GL2 gl) {
 		this.renderer = renderer;
-		this.gl = gl;
-		
-//		vboHandles = new int[5];
-//		this.gl.glGenBuffers(5, vboHandles, 0);
-		
+		this.gl = gl;		
+	}
+	
+	public void prepareMapForLayer(LayerObject layer) {
 		// init map
+		mapEntities = new HashMap<String,ArrayList<ArrayList<DrawingEntity>>>();
 		mapEntities.put(DrawingEntity.Type.LINE.toString(), null);
 		mapEntities.put(DrawingEntity.Type.FACE.toString(), null);
 		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), null);
+		currentLayer = layer;
+		numberOfShaderInTheCurrentLayer=0;
+		currentShaderNumber = 0;
 	}
 	
 	public void addDrawingEntities(DrawingEntity[] entities) {
@@ -82,7 +86,7 @@ public class ModernDrawer {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 			// we create a new shader and we set it to the entity
 			newEntity.setShader(new ShaderProgram(gl));
-			numberOfShader++;
+			numberOfShaderInTheCurrentLayer++;
 			entityList.add(newEntity);
 			listToAdd.add(entityList);
 		}
@@ -103,7 +107,7 @@ public class ModernDrawer {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 			// we create a new shader and we set it to the entity
 			newEntity.setShader(new ShaderProgram(gl));
-			numberOfShader++;
+			numberOfShaderInTheCurrentLayer++;
 			entityList.add(newEntity);
 			listToAdd.add(entityList);
 		}
@@ -123,7 +127,7 @@ public class ModernDrawer {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 			// we create a new shader and we set it to the entity
 			newEntity.setShader(new ShaderProgram(gl));
-			numberOfShader++;
+			numberOfShaderInTheCurrentLayer++;
 			entityList.add(newEntity);
 			listToAdd.add(entityList);
 		}
@@ -146,7 +150,7 @@ public class ModernDrawer {
 				ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 				// we create a new shader and we set it to the entity
 				newEntity.setShader(new ShaderProgram(gl));
-				numberOfShader++;
+				numberOfShaderInTheCurrentLayer++;
 				entityList.add(newEntity);
 				listToAdd.add(entityList);
 			}
@@ -160,7 +164,7 @@ public class ModernDrawer {
 		if (texturedEntities == null) {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 			newEntity.setShader(new ShaderProgram(gl));
-			numberOfShader++;
+			numberOfShaderInTheCurrentLayer++;
 			entityList.add(newEntity);
 			listToAdd.add(entityList);
 		}
@@ -184,7 +188,7 @@ public class ModernDrawer {
 				ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 				// we create a new shader and we set it to the entity
 				newEntity.setShader(new ShaderProgram(gl));
-				numberOfShader++;
+				numberOfShaderInTheCurrentLayer++;
 				entityList.add(newEntity);
 				listToAdd.add(entityList);
 			}
@@ -199,20 +203,19 @@ public class ModernDrawer {
 		listOfVAOUsed.clear();
 		shaderLoaded.clear();
 		typeOfDrawingMap.clear();
-//		numberOfShader=0;
+		mapLayerShader.clear();
 	}
 	
 	public void redraw() {
 		
-		clearVBO();
-		
-		vboHandles = new int[numberOfShader*5];
-		this.gl.glGenBuffers(numberOfShader*5, vboHandles, 0);
+		int[] vboHandles = new int[numberOfShaderInTheCurrentLayer*5];
+		this.gl.glGenBuffers(numberOfShaderInTheCurrentLayer*5, vboHandles, 0);
+		mapOfVBOHandles.put(currentLayer, vboHandles);
 		
 		for (String key : mapEntities.keySet()) {
 			ArrayList<ArrayList<DrawingEntity>> listOfListOfEntities = mapEntities.get(key);
 			if (listOfListOfEntities != null) {
-				int shaderNumber = 0;
+				
 				for (ArrayList<DrawingEntity> listOfEntities : listOfListOfEntities) {
 					// all those entities are using the same shader
 					ShaderProgram shaderProgram = listOfEntities.get(0).getShader();
@@ -222,25 +225,28 @@ public class ModernDrawer {
 					prepareShader(listOfEntities.get(0),key,shaderProgram);
 					
 					drawLights(renderer.data.getDiffuseLights());
-					loadVBO(listOfEntities,key,shaderNumber);
-					lOfEntities.add(listOfEntities);
-					drawVBO(typeOfDrawingMap.get(shaderProgram),shaderNumber);
+					loadVBO(listOfEntities,key,currentShaderNumber);
+					drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
 					
 					shaderProgram.stop();
-					shaderNumber++;
+					currentShaderNumber++;
 				}
 			}
 		}
 		
+		mapLayerShader.put(currentLayer, (ArrayList<ShaderProgram>) shaderLoaded.clone());
+		
+		shaderLoaded.clear();
 		mapEntities.clear();
 		
 	}
 	
-	private ArrayList<ArrayList<DrawingEntity>> lOfEntities = new ArrayList<ArrayList<DrawingEntity>>();
-	
-	public void refresh() {
-		int shaderNumber = 0;
-		for (ShaderProgram shader : shaderLoaded) {
+	public void refresh(LayerObject layer) {
+		ArrayList<ShaderProgram> shaderList = mapLayerShader.get(layer);
+		for (ShaderProgram shader : shaderList) {
+			// set the current layer drawn
+			currentLayer = layer;
+			
 			shader.start();
 			
 			shader.loadViewMatrix(renderer.camera);
@@ -248,32 +254,31 @@ public class ModernDrawer {
 			
 			///////////////////////////////////////:
 			// VERTICES POSITIONS BUFFER
-			storeDataInAttributeListBis(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,shaderNumber);
+			storeDataInAttributeListBis(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,typeOfDrawing[2]);
 			
 			// COLORS BUFFER (If no texture is defined)
 			if (!shader.useTexture())
 			{
-				storeDataInAttributeListBis(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,shaderNumber);
+				storeDataInAttributeListBis(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
 			}
 			else {
-				storeDataInAttributeListBis(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,shaderNumber);
+				storeDataInAttributeListBis(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
 				gl.glActiveTexture(GL.GL_TEXTURE0);
 				//gl.glBindTexture(GL.GL_TEXTURE_2D, listEntities.get(0).getTextureID()); TODO
 			}
 			
 			// NORMAL BUFFER
 			if (shader.useNormal())
-				storeDataInAttributeListBis(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,shaderNumber);
+				storeDataInAttributeListBis(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,typeOfDrawing[2]);
 			
 			// INDEX BUFFER
 			// Select the VBO, GPU memory data, to use for colors
-			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[shaderNumber*5+IDX_BUFF_IDX]);
+			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, mapOfVBOHandles.get(currentLayer)[typeOfDrawing[2]*5+IDX_BUFF_IDX]);
 			//////////////////////////////////
 			
-			drawVBO(typeOfDrawing,shaderNumber);
+			drawVBO(typeOfDrawing,typeOfDrawing[2]);
 			
 			shader.stop();
-			shaderNumber++;
 		}
 	}
 	
@@ -383,14 +388,13 @@ public class ModernDrawer {
 			cpt += maxIdx+1;
 		}
 		IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuffer);
-		intBuffList.add(intIdxBuffer);
 		// Select the VBO, GPU memory data, to use for colors
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[shaderNumber*5+IDX_BUFF_IDX]);
+		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, mapOfVBOHandles.get(currentLayer)[shaderNumber*5+IDX_BUFF_IDX]);
 		int numBytes = intIdxBuffer.length * 4;
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
 		//ibIdxBuff.rewind();
 
-		int[] newElement = new int[2];
+		int[] newElement = new int[3];
 		if (drawingType.equals(DrawingEntity.Type.POINT.toString())) {
 			// particular case : drawing just a point
 			newElement[0] = GL2.GL_POINTS;
@@ -407,29 +411,11 @@ public class ModernDrawer {
 			//gl.glDrawElements(GL2.GL_TRIANGLES, idxBuffer.length, GL2.GL_UNSIGNED_INT, 0);
 		}
 		newElement[1] = intIdxBuffer.length;
+		newElement[2] = shaderNumber;
 		typeOfDrawingMap.put(listEntities.get(0).getShader(),newElement);
 
 		//releaseVAOMemory();
 	}
-	
-	private void loadVBOBis(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber) {
-
-		// VERTICES POSITIONS BUFFER
-		storeDataInAttributeListBis(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,shaderNumber);
-		
-		// COLORS BUFFER (If no texture is defined)
-		storeDataInAttributeListBis(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,shaderNumber);
-		
-		// NORMAL BUFFER
-		if (useNormals(drawingType))
-			storeDataInAttributeListBis(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,shaderNumber);
-		
-		// INDEX BUFFER
-		// Select the VBO, GPU memory data, to use for colors
-		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, vboHandles[shaderNumber*5+IDX_BUFF_IDX]);
-	}
-	
-	private ArrayList<int[]> intBuffList = new ArrayList<int[]>();
 	
 	private void storeDataInAttributeList(int shaderAttributeNumber, int bufferAttributeNumber, ArrayList<float[]> listData, int shaderNumber) {
 		int coordinateSize = 0;
@@ -441,7 +427,7 @@ public class ModernDrawer {
 			case ShaderProgram.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
 		}
 		// Select the VBO, GPU memory data, to use for data
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[shaderNumber*5+bufferAttributeNumber]);
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, mapOfVBOHandles.get(currentLayer)[shaderNumber*5+bufferAttributeNumber]);
 		// compute the total size of the buffer :
 		int numBytes = 0;
 		for (float[] data : listData) {
@@ -478,7 +464,7 @@ public class ModernDrawer {
 			case ShaderProgram.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
 		}
 		// Select the VBO, GPU memory data, to use for data
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, vboHandles[shaderNumber*5+bufferAttributeNumber]);
+		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, mapOfVBOHandles.get(currentLayer)[shaderNumber*5+bufferAttributeNumber]);
 		
 		// Associate Vertex attribute with the last bound VBO
 		gl.glVertexAttribPointer(shaderAttributeNumber, coordinateSize,
