@@ -52,10 +52,37 @@ public class ConvertToPDF {
 		
 	}
 	
-	public static void convert(){
+	public static void convertMacOs(){
+		System.out.println("Start of convert for MacOS");
 		String line;
 		try {
 			String[] env = { Constants.PATH };
+
+			Process p = Runtime.getRuntime().exec(getCommandLine(), env, new File(Constants.WIKI_FOLDER));
+
+			BufferedReader bri = new BufferedReader(new InputStreamReader(p.getInputStream()));
+			BufferedReader bre = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+			while ((line = bri.readLine()) != null) {
+				System.out.println(line);
+			}
+			bri.close();
+			while ((line = bre.readLine()) != null) {
+				System.out.println(line);
+			}
+			bre.close();
+			p.waitFor();
+			System.out.println("PDF generated.");
+		} catch (Exception err) {
+			err.printStackTrace();
+		}		
+	}
+	
+	public static void convertWindows(){
+		System.out.println("Start of convert for Windows");
+		
+		String line;
+		try {
+//			String[] env = { Constants.PATH };
 			
 			// build file .bat
 			File batFile = new File("batFile.bat");
@@ -89,10 +116,21 @@ public class ConvertToPDF {
 			err.printStackTrace();
 		}
 	}
+
+	public static void convert() {
+		if(OSUtils.isWindows()) {
+			convertWindows();
+		} else if(OSUtils.isMacOS()) {
+			convertMacOs();
+		} else {
+			throw new RuntimeException("This OS is not managed yet.");
+		}
+		
+	}
 	
-	public static void main(String[] argc) throws ParserConfigurationException, SAXException, IOException{
+	public static void main(String[] argc) throws ParserConfigurationException, SAXException, IOException {
 		
 		convert();
 	
-	}
+	}	
 }

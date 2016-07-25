@@ -13,7 +13,6 @@ package msi.gama.doc.util;
 
 import java.io.File;
 import java.io.IOException;
-import org.apache.commons.io.FileUtils;
 
 public class PrepareEnv {
 	
