@@ -29,7 +29,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 
 	@Override
 	void fillWithObjects(final List<AbstractObject> list) {
-		final double size = renderer.getMaxEnvDim() / 6;
+		final double size = renderer.getMaxEnvDim();
 		for (int i = 0; i < 3; i++) {
 			final GamaPoint p = new GamaPoint(i == 0 ? size : 0, i == 1 ? size : 0, i == 2 ? size : 0);
 			list.add(new GeometryObject(GamaGeometryType.buildLine(p), COLORS[i], LINESTRING, this));

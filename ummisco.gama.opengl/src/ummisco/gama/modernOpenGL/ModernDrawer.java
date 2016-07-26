@@ -246,11 +246,11 @@ public class ModernDrawer {
 	}
 	
 	public void refresh(LayerObject layer) {
+		currentLayer = layer;
 		ArrayList<ShaderProgram> shaderList = layerStructureMap.get(currentLayer).shaderList;
 		
 		for (ShaderProgram shader : shaderList) {
 			// set the current layer drawn
-			currentLayer = layer;
 			
 			shader.start();
 			
