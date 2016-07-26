@@ -369,13 +369,6 @@ public class ModernRenderer extends Abstract3DRenderer {
 		if (data.isRotationOn()) {
 			currentZRotation++;
 		}
-		if (currentZRotation != 0) {
-			final double env_width = data.getEnvWidth();
-			final double env_height = data.getEnvHeight();
-			gl.glTranslated(env_width / 2, -env_height / 2, 0);
-			gl.glRotated(currentZRotation, 0, 0, 1);
-			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
-		}
 	}
 	
 	public ModernDrawer getDrawer() {

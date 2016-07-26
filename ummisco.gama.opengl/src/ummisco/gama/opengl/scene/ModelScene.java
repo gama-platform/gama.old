@@ -79,7 +79,7 @@ public class ModelScene {
 		if (renderer.data.isDrawEnv()) {
 			layers.put(FRAME_KEY, new FrameLayerObject(renderer));
 			layers.put(AXES_KEY, new AxesLayerObject(renderer));
-			layers.put(LIGHTS_KEY, new LightsLayerObject(renderer));
+//			layers.put(LIGHTS_KEY, new LightsLayerObject(renderer));
 		}
 	}
 

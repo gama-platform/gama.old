@@ -32,6 +32,7 @@ import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
+import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.ModernRenderer;
@@ -103,7 +104,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 			for (final List<AbstractObject> list : objects) {
 				for (final AbstractObject object : list) {
 					if (object instanceof GeometryObject) {
-						renderer.getDrawer().addDrawingEntities(renderer.getVAOGenerator().GenerateVAO(object,gl));
+						DrawingEntity[] drawingEntity = renderer.getVAOGenerator().GenerateVAO(object,gl);
+						renderer.getDrawer().addDrawingEntities(drawingEntity);
 					}
 				}
 			}

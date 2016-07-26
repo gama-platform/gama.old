@@ -1,6 +1,8 @@
 package ummisco.gama.opengl.vaoGenerator;
 
+import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
+import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import msi.gaml.operators.fastmaths.FastMath;
@@ -96,24 +98,18 @@ public class TransformationMatrix {
 		return viewMatrix;
 	}
 	
-	static public Matrix4f createTransformationMatrix(Vector3f positions, float rx, float ry, float rz, float scale) {
+	static public Matrix4f createTransformationMatrix(Vector3f positions, float[] quat, float scale, float env_width, float env_height) {
 		Matrix4f matrix = new Matrix4f();
-		Matrix4f tmpMatrix = new Matrix4f();
 		matrix.setIdentity();
 		
+		// rotation
+//		matrix = GeomMathUtils.rotateMatrixAroundLocal(quat, -env_width / 2, env_height / 2, 0, matrix); // FIXME : does not work...
+		
 		// translation
-		matrix.setTranslation(positions);
+		matrix = GeomMathUtils.translateMatrix(positions.x, positions.y, positions.z, matrix);
 		
 		// scale
 		matrix.setScale(scale);
-		
-		// rotation
-		tmpMatrix.rotX(rx);
-		matrix.mul(tmpMatrix);
-		tmpMatrix.rotY(ry);
-		matrix.mul(tmpMatrix);
-		tmpMatrix.rotZ(rz);
-		matrix.mul(tmpMatrix);
 
 		return matrix;
 	}

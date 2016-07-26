@@ -419,5 +419,9 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public ObjectDrawer getDrawerFor(final Class<? extends AbstractObject> class1) {
 		return null;
 	}
+	
+	public double getZRotation() {
+		return currentZRotation;
+	}
 
 }
