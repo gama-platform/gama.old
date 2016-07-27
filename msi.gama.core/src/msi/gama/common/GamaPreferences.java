@@ -450,13 +450,13 @@ public class GamaPreferences {
 	/**
 	 * Validation
 	 */
-	public static final GamaPreferences.Entry<Boolean> WARNINGS_ENABLED = GamaPreferences
-			.create("editor.warnings.enabled", "Show warning markers when editing a model", true, IType.BOOL)
-			.in(GamaPreferences.EDITOR).group("Validation");
+	public static final Entry<Boolean> WARNINGS_ENABLED = GamaPreferences
+			.create("editor.warnings.enabled", "Show warning markers when editing a model", true, IType.BOOL).in(EDITOR)
+			.group("Validation");
 
-	public static final GamaPreferences.Entry<Boolean> INFO_ENABLED = GamaPreferences
-			.create("editor.info.enabled", "Show information markers when editing a model", true, IType.BOOL)
-			.in(GamaPreferences.EDITOR).group("Validation");
+	public static final Entry<Boolean> INFO_ENABLED = GamaPreferences
+			.create("editor.info.enabled", "Show information markers when editing a model", true, IType.BOOL).in(EDITOR)
+			.group("Validation");
 	/**
 	 * Random Number Generation
 	 */
@@ -703,17 +703,11 @@ public class GamaPreferences {
 		return "";
 	}
 
-	// SIMULATIONS PAGE
-	// Corresponds to IGamaColors.BLUE.toGamaColor(),
-	// IGamaColors.OK.toGamaColor(),
-	// IGamaColors.NEUTRAL.toGamaColor(), IGamaColors.WARNING.toGamaColor(),
-	// IGamaColors.BROWN.toGamaColor()
-
 	public static final Entry<Boolean> DISPLAY_ONLY_VISIBLE = create("core.display_visible",
 			"Only process for display the agents that are visible", false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
-	public static final Entry<Boolean> DISPLAY_SHARED_CONTEXT = create("core.shared_context",
+	public static final Entry<Boolean> DISPLAY_SHARED_CONTEXT = create("core.shared_context2",
 			"Enable OpenGL background loading of textures (can cause problems with some graphics cards on Linux and Windows)",
-			true, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
+			false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Boolean> DISPLAY_FAST_SNAPSHOT = create("core.fast_snapshot",
 			"Enable fast snapshots of displays (uncomplete when the display is obscured by other views but much faster than normal snapshots)",
 			false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
