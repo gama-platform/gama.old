@@ -170,9 +170,9 @@ public class ManyFacedShape {
 	
 	private GamaPoint getObjSize(GeometryObject geomObj) {
 		float minX = Float.MAX_VALUE;
-		float maxX = Float.MIN_VALUE;
+		float maxX = -Float.MAX_VALUE;
 		float minY = Float.MAX_VALUE;
-		float maxY = Float.MIN_VALUE;
+		float maxY = -Float.MAX_VALUE;
 		Coordinate[] coordinates = geomObj.geometry.getCoordinates();
 		for (int i = 0 ; i < coordinates.length ; i++) {
 			if (coordinates[i].x < minX) minX = (float) coordinates[i].x;
