@@ -551,7 +551,8 @@ public class ManyFacedShape {
 		ArrayList<int[]> circles = new ArrayList<int[]>();
 		int idx = 0;
 		for (int i = 0 ; i < sliceNb ; i++) {
-			float zVal = 2*i * (radius/(sliceNb-1)) - radius;
+			float zVal = (float)Math.cos(((float)i/(float)sliceNb)*Math.PI)*radius;
+//			float zVal = 2*i * (radius/(sliceNb-1)) - radius;
 			float angle = (float) Math.asin(zVal/radius); // <-- sin(angle) = zVal / radius
 			float circleRadius = (float) (radius * Math.cos(angle)); // <-- cos(angle) = circleRadius * cos(angle)
 			float[] circleCoordinates = buildCircle(new float[]{center[0],center[1],zVal},circleRadius,sliceNb);
