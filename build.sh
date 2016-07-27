@@ -1,3 +1,4 @@
+export MAVEN_OPTS='-Xmx512m'
 cd ummisco.gama.annotations &&
 mvn install &&
 cd - &&
