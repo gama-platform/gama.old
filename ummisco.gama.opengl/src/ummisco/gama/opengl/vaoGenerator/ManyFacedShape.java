@@ -763,7 +763,7 @@ public class ManyFacedShape {
 	}
 	
 	private void computeNormals() {
-		if (!isLightInteraction || isWireframe) return; // not apply for shapes without light interaction, and nor for wireframe shapes
+		if (isWireframe || is1DShape()) return; // not apply for wireframe shapes, and nor for 1D shapes
 		float[] result = new float[coords.length];
 		
 		for (int vIdx = 0 ; vIdx < coords.length/3 ; vIdx++) {
