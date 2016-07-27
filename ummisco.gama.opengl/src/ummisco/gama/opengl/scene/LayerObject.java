@@ -50,13 +50,18 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	final static GamaPoint NULL_OFFSET = new GamaPoint();
 	final static GamaPoint NULL_SCALE = new GamaPoint(1, 1, 1);
-	
+
 	private boolean sceneIsInitialized = false;
-	protected boolean constantRedrawnLayer = false; // flag that indicate if the layer has to be redrawn at every frame, even in the same simulation step
-													// (basically, it is the case for the helper layer)
+	protected boolean constantRedrawnLayer = false; // flag that indicate if the
+													// layer has to be redrawn
+													// at every frame, even in
+													// the same simulation step
+													// (basically, it is the
+													// case for the helper
+													// layer)
 
 	GamaPoint offset = NULL_OFFSET;
-	GamaPoint scale = NULL_SCALE;
+	GamaPoint scale = null;
 	Double alpha = 1d;
 	final ILayer layer;
 	volatile boolean isInvalid;
@@ -100,20 +105,19 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if (!(renderer instanceof ModernRenderer))
 			return;
 		final ModernRenderer renderer = (ModernRenderer) this.renderer;
-		
+
 		if (!sceneIsInitialized || constantRedrawnLayer) {
 			renderer.getDrawer().prepareMapForLayer(this);
 			for (final List<AbstractObject> list : objects) {
 				for (final AbstractObject object : list) {
-					DrawingEntity[] drawingEntity = renderer.getVAOGenerator().GenerateVAO(object,gl);
+					final DrawingEntity[] drawingEntity = renderer.getVAOGenerator().GenerateVAO(object, gl);
 					if (drawingEntity != null)
 						renderer.getDrawer().addDrawingEntities(drawingEntity);
 				}
 			}
 			renderer.getDrawer().redraw();
 			sceneIsInitialized = true;
-		}
-		else {
+		} else {
 			renderer.getDrawer().refresh(this);
 		}
 
@@ -303,7 +307,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 			gl.getGL2().glDeleteLists(index, 1);
 			openGLListIndex = null;
 		}
-		
+
 		sceneIsInitialized = false;
 
 	}
