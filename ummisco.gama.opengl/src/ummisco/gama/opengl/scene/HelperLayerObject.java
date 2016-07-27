@@ -43,10 +43,11 @@ public class HelperLayerObject extends LayerObject {
 			GeometryObject interiorSphere = new GeometryObject(interiorSphereShape,new GamaColor(0.5,0.5,0.5,1.0),IShape.Type.SPHERE,this);
 			interiorSphere.disableLightInteraction();
 			newElem.add(interiorSphere);
-//			// exterior sphere
-//			IShape exteriorSphereShape = GamaGeometryType.buildSphere(49.0 * (distance / 500), pos);
-//			GeometryObject exteriorSphere = new GeometryObject(exteriorSphereShape,new GamaColor(0.5,0.5,0.5,0.1),IShape.Type.SPHERE,this);
-//			newElem.add(exteriorSphere);
+			// exterior sphere
+			IShape exteriorSphereShape = GamaGeometryType.buildSphere(49.0 * (distance / 500), pos);
+			GeometryObject exteriorSphere = new GeometryObject(exteriorSphereShape,new GamaColor(0.5,0.5,0.5,0.1),IShape.Type.SPHERE,this);
+			exteriorSphere.disableLightInteraction();
+			newElem.add(exteriorSphere);
 			// wireframe sphere
 			IShape wireframeSphereShape = GamaGeometryType.buildSphere(50.0 * (distance / 500), pos);
 			GeometryObject wireframeSphere = new GeometryObject(wireframeSphereShape,new GamaColor(0.5,0.5,0.5,1.0),IShape.Type.SPHERE,this);

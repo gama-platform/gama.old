@@ -70,6 +70,8 @@ public abstract class AbstractShader {
 		int[] vlengths = new int[] { vlines[0].length() };
 		gl.glShaderSource(shaderID, vlines.length, vlines, vlengths, 0);
 		gl.glCompileShader(shaderID);
+		gl.glEnable(GL2.GL_BLEND);
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 		
 		//Check compile status.
 		int[] compiled = new int[1];
