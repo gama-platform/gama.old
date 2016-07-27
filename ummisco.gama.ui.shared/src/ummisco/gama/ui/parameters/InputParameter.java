@@ -12,6 +12,7 @@
 package ummisco.gama.ui.parameters;
 
 import java.util.List;
+
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;

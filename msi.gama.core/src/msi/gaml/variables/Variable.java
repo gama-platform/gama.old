@@ -548,6 +548,14 @@ public class Variable extends Symbol implements IVariable {
 	public void setDefined(final boolean b) {
 	}
 
+	@Override
+	public boolean acceptsSlider(final IScope scope) {
+		// No facets are available to describe whether or not a slider should be
+		// defined.
+
+		return false;
+	}
+
 	/**
 	 * Method getContentType()
 	 * 

@@ -184,4 +184,9 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	public void setDefined(final boolean defined) {
 	}
 
+	@Override
+	public boolean acceptsSlider(final IScope scope) {
+		return false;
+	}
+
 }

@@ -203,6 +203,7 @@ public class GamaPreferences {
 		final int type;
 		List<T> values;
 		Number min, max;
+		boolean slider = true; // by default
 		String[] activates, deactivates;
 		Set<IPreferenceChangeListener<T>> listeners = new HashSet<IPreferenceChangeListener<T>>();
 
@@ -214,6 +215,11 @@ public class GamaPreferences {
 
 		public Entry<T> group(final String g) {
 			this.group = g;
+			return this;
+		}
+
+		public Entry<T> noSlider() {
+			slider = false;
 			return this;
 		}
 
@@ -415,6 +421,11 @@ public class GamaPreferences {
 			final Map<String, Object> map = new THashMap();
 			map.put(getName(), getValue());
 			GamaPreferences.setNewPreferences(map);
+		}
+
+		@Override
+		public boolean acceptsSlider(final IScope scope) {
+			return slider;
 		}
 	}
 

@@ -54,6 +54,7 @@ import msi.gaml.variables.Variable;
 		@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true, doc = @doc("a category label, used to group parameters in the interface")),
 		@facet(name = IKeyword.VAR, type = IType.ID, optional = false, doc = @doc("the name of the variable (that should be declared in the global)")),
 		@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true, doc = @doc("the variable unit")),
+		@facet(name = "slider", type = IType.BOOL, optional = true, doc = @doc("Whether or not to display a slider for entering an int or float value. Default is true when max and min values are defined, false otherwise. If no max or min value is defined, setting this facet to true will have no effect")),
 		@facet(name = IKeyword.STEP, type = IType.FLOAT, optional = true, doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)")),
 		@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values")) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.PARAMETER }, kind = ISymbolKind.PARAMETER, with_sequence = false, concept = {
@@ -79,7 +80,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	boolean isEditable/* , isLabel */;
 	boolean canBeNull;
 	boolean isDefined = true;
-	final IExpression init, among, min, max, step;
+	final IExpression init, among, min, max, step, slider;
 
 	public ExperimentParameter(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
@@ -98,6 +99,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		max = getFacet(IKeyword.MAX);
 		step = getFacet(IKeyword.STEP);
 		among = getFacet(IKeyword.AMONG);
+		slider = getFacet("slider");
 		init = this.hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT)
 				: targetedGlobalVar.getFacets().getExpr(IKeyword.INIT);
 		order = desc.getDefinitionOrder();
@@ -116,7 +118,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public ExperimentParameter(final IScope scope, final IParameter p, final String title, final String category,
 			final String unit, final List among, final boolean canBeNull) {
 		super(null);
-
+		this.slider = null;
 		this.title = title;
 		this.canBeNull = canBeNull;
 		this.order = p.getDefinitionOrder();
@@ -479,6 +481,13 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	Object getValue(final IScope scope) {
 		tryToInit(scope);
 		return value;
+	}
+
+	@Override
+	public boolean acceptsSlider(final IScope scope) {
+		if (slider == null)
+			return true;
+		return Cast.asBool(scope, slider.value(scope));
 	}
 
 	/**

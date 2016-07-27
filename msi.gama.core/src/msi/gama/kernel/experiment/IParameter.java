@@ -56,6 +56,8 @@ public interface IParameter {
 
 	public abstract boolean isEditable();
 
+	public abstract boolean acceptsSlider(IScope scope);
+
 	public abstract Number getStepValue(IScope scope);
 
 	public boolean isDefined();

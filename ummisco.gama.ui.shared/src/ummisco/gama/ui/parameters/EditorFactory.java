@@ -150,11 +150,11 @@ public class EditorFactory {
 		case IType.COLOR:
 			return new ColorEditor(scope, agent, var, l);
 		case IType.FLOAT:
-			if (var.getMaxValue(scope) != null && var.getMinValue(scope) != null)
+			if (var.getMaxValue(scope) != null && var.getMinValue(scope) != null && var.acceptsSlider(scope))
 				return new SliderEditor.Float(scope, agent, var, l);
 			return new FloatEditor(scope, agent, var, canBeNull, l);
 		case IType.INT:
-			if (var.getMaxValue(scope) != null && var.getMinValue(scope) != null)
+			if (var.getMaxValue(scope) != null && var.getMinValue(scope) != null && var.acceptsSlider(scope))
 				return new SliderEditor.Int(scope, agent, var, l);
 			return new IntEditor(scope, agent, var, canBeNull, l);
 		case IType.LIST:

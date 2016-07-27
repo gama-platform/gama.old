@@ -28,6 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractPlaceHolderStatement;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -45,6 +46,7 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("the variable type")),
 		@facet(name = IKeyword.INIT, type = IType.NONE, optional = true, doc = @doc("the init value")),
 		@facet(name = IKeyword.MIN, type = IType.FLOAT, optional = true, doc = @doc("the minimum value")),
+		@facet(name = "slider", type = IType.BOOL, optional = true, doc = @doc("Whether to display a slider or not when applicable")),
 		@facet(name = IKeyword.MAX, type = IType.FLOAT, optional = true, doc = @doc("the maximum value")),
 		@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = false, doc = @doc("a new local variable containing the value given by the user")),
 		@facet(name = IKeyword.AMONG, type = IType.LIST, of = IType.STRING, optional = true, doc = @doc("the set of acceptable values for the variable")) }, omissible = IKeyword.NAME)
@@ -60,7 +62,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	static int index;
 	boolean isValued;
 	Object initialValue, currentValue;
-	IExpression min, max, among, init;
+	IExpression min, max, among, init, slider;
 	String tempVar;
 
 	public UserInputStatement(final IDescription desc) {
@@ -70,6 +72,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		min = getFacet(IKeyword.MIN);
 		max = getFacet(IKeyword.MAX);
 		among = getFacet(IKeyword.AMONG);
+		slider = getFacet("slider");
 		tempVar = getLiteral(IKeyword.RETURNS);
 	}
 
@@ -186,6 +189,13 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	 */
 	@Override
 	public void setDefined(final boolean b) {
+	}
+
+	@Override
+	public boolean acceptsSlider(final IScope scope) {
+		if (slider == null)
+			return true;
+		return Cast.asBool(scope, slider.value(scope));
 	}
 
 }
