@@ -4,15 +4,27 @@ public class Material {
 	
 	double shineDamper;
 	double reflectivity;
+	boolean useLight = true;
 	
-	public Material(double d, double e) {
+	public Material(double d, double r) {
 		this.shineDamper = d;
-		this.reflectivity = e;
+		this.reflectivity = r;
+	}
+	
+	public Material(double d, double r, boolean useLight) {
+		this.shineDamper = d;
+		this.reflectivity = r;
+		this.useLight = useLight;
+	}
+	
+	public void disableLight() {
+		useLight = false;
 	}
 	
 	public boolean equalsTo(Material otherMaterial) {
 		if ( (shineDamper == otherMaterial.getShineDamper())
-				&& (reflectivity == otherMaterial.getReflectivity())) {
+				&& (reflectivity == otherMaterial.getReflectivity())
+				&& (useLight == otherMaterial.useLight())) {
 			return true;
 		}
 		else return false;
@@ -24,6 +36,10 @@ public class Material {
 
 	public double getReflectivity() {
 		return reflectivity;
+	}
+	
+	public boolean useLight() {
+		return useLight;
 	}
 
 }

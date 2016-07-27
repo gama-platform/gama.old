@@ -36,6 +36,8 @@ public abstract class AbstractObject {
 	public final int pickingIndex = index++;
 	private boolean picked = false;
 	protected final Texture[] textures;
+	
+	private boolean lightInteraction = true;
 
 	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer, final Texture[] textures) {
 		this.attributes = attributes;
@@ -174,5 +176,17 @@ public abstract class AbstractObject {
 		}
 		// AD Change to a negative rotation to fix Issue #1514
 		return -attributes.rotation.key;
+	}
+	
+	public void enableLightInteraction() {
+		lightInteraction = true;
+	}
+	
+	public void disableLightInteraction() {
+		lightInteraction = false;
+	}
+	
+	public boolean isLightInteraction() {
+		return lightInteraction;
 	}
 }

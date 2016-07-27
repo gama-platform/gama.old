@@ -14,7 +14,6 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
 import msi.gama.outputs.LightPropertiesStructure;
-import msi.gaml.operators.Maths;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.LayerObject;
@@ -208,6 +207,9 @@ public class ModernDrawer {
 	
 	public void redraw() {
 		
+		if (numberOfShaderInTheCurrentLayer == 0) {
+			return; // if nothing is to draw for this layer, do nothing.
+		}
 		int[] vboHandles = new int[numberOfShaderInTheCurrentLayer*5];
 		this.gl.glGenBuffers(numberOfShaderInTheCurrentLayer*5, vboHandles, 0);
 		ModernLayerStructure layerStructure = new ModernLayerStructure();
@@ -224,10 +226,11 @@ public class ModernDrawer {
 					shaderLoaded.add(shaderProgram);
 					shaderProgram.start();
 					
-					prepareShader(listOfEntities.get(0),key,shaderProgram);
+					updateTransformationMatrix(shaderProgram);
+					prepareShader(listOfEntities.get(0), shaderProgram);
 					
 					drawLights(renderer.data.getDiffuseLights());
-					loadVBO(listOfEntities,key,currentShaderNumber);
+					loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram.useNormal());
 					drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
 					
 					shaderProgram.stop();
@@ -247,6 +250,9 @@ public class ModernDrawer {
 	
 	public void refresh(LayerObject layer) {
 		currentLayer = layer;
+		if (layerStructureMap.get(currentLayer) == null) {
+			return; // if nothing is to draw for this layer, do nothing.
+		}
 		ArrayList<ShaderProgram> shaderList = layerStructureMap.get(currentLayer).shaderList;
 		
 		for (ShaderProgram shader : shaderList) {
@@ -297,28 +303,23 @@ public class ModernDrawer {
 		}
 	}
 	
-	private boolean useNormals(String drawingType) {
-		if (drawingType.equals(DrawingEntity.Type.LINE.toString())
-				|| drawingType.equals(DrawingEntity.Type.POINT.toString()))
-			return false;
-		return true;
-	}
-	
 	private void drawVBO(int[] typeOfDrawing, int shaderNumber) {
 		gl.glDrawElements(typeOfDrawing[0], typeOfDrawing[1], GL2.GL_UNSIGNED_INT, 0);
 	}
 	
-	private void prepareShader(DrawingEntity entity, String drawingType, ShaderProgram shaderProgram) {
+	private void updateTransformationMatrix(ShaderProgram shaderProgram) {
 		shaderProgram.loadTransformationMatrix(getTransformationMatrix());
 		shaderProgram.loadViewMatrix(renderer.camera);
 		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
-		
+	}
+	
+	private void prepareShader(DrawingEntity entity, ShaderProgram shaderProgram) {
 		shaderProgram.loadAmbientLight(new Vector3f(
 				(float) renderer.data.getAmbientLightColor().getRed() / 255f,
 				(float) renderer.data.getAmbientLightColor().getGreen() / 255f,
 				(float) renderer.data.getAmbientLightColor().getBlue() / 255f));
 		shaderProgram.loadDiffuseLights(renderer.data.getDiffuseLights());
-		boolean useNormals = useNormals(drawingType);
+		boolean useNormals = entity.getMaterial().useLight;
 		if (useNormals) {
 			shaderProgram.enableNormal();
 			float shineDamper = (float) entity.getMaterial().getShineDamper();
@@ -351,7 +352,7 @@ public class ModernDrawer {
 		return TransformationMatrix.createTransformationMatrix(layerTranslation, quat, scale, env_width, env_height);
 	}
 	
-	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber) {
+	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber, boolean useNormals) {
 		
 		ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		ArrayList<float[]> listColors = new ArrayList<float[]>();
@@ -384,7 +385,7 @@ public class ModernDrawer {
 		}
 		
 		// NORMAL BUFFER
-		if (useNormals(drawingType))
+		if (useNormals)
 			storeDataInAttributeList(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,listNormals,shaderNumber);
 		
 		// INDEX BUFFER

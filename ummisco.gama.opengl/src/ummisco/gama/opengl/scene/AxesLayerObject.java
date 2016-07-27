@@ -34,7 +34,9 @@ public class AxesLayerObject extends StaticLayerObject.World {
 			final GamaPoint p = new GamaPoint(i == 0 ? size : 0, i == 1 ? size : 0, i == 2 ? size : 0);
 			list.add(new GeometryObject(GamaGeometryType.buildLine(p), COLORS[i], LINESTRING, this));
 			list.add(new StringObject(LABELS[i], p.times(1.2).yNegated(), this));
-			list.add(new GeometryObject(GamaGeometryType.buildArrow(p.times(1.1), size / 6 ), COLORS[i], POLYGON, this));
+			GeometryObject arrow = new GeometryObject(GamaGeometryType.buildArrow(p.times(1.1), size / 6 ), COLORS[i], POLYGON, this);
+			arrow.disableLightInteraction();
+			list.add(arrow);
 		}
 	}
 }

@@ -21,6 +21,7 @@ public abstract class DrawingAttributes {
 	public final GamaPair<Double, GamaPoint> rotation;
 	public GamaPoint location;
 	public GamaColor color;
+	public boolean wireframe = false;
 
 	public DrawingAttributes(final ILocation size, final GamaPair<Double, GamaPoint> rotation, final ILocation location,
 			final GamaColor color) {

@@ -24,9 +24,11 @@ import ummisco.gama.opengl.utils.Utils;
 public class ManyFacedShape {
 	
 	public static float SMOOTH_SHADING_ANGLE = 40f; // in degree
-	public static GamaColor TRIANGULATION_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
+	public static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0,1.0,0.0,1.0); // in degree
 	
 	private boolean isTriangulation;
+	private boolean isLightInteraction;
+	private boolean isWireframe;
 	private ArrayList<int[]> faces = new ArrayList<int[]>(); // way to construct a face from the indices of the coordinates (anti clockwise for front face)
 	private ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); // list that store all the edges erased thanks to the smooth shading (those edges must
 	// not be displayed when displaying the borders !)
@@ -78,6 +80,8 @@ public class ManyFacedShape {
 		this.translation = geomObj.getAttributes().location;
 		this.rotation = geomObj.getAttributes().rotation;
 		this.size = getObjSize(geomObj);
+		this.isWireframe = geomObj.getAttributes().wireframe;
+		this.isLightInteraction = (geomObj.isLightInteraction() && !is1DShape() && !isWireframe);
 		cancelTransformation();
 		
 		// the last coordinate is the same as the first one, no need for this
@@ -150,7 +154,7 @@ public class ManyFacedShape {
 				|| (type.toString() == "CUBE")
 				|| (type.toString() == "CYLINDER")
 				) {
-			result = type.toString();
+			result = type.toString() + ((isWireframe) ? "_wireframe" : "");
 		}
 		else {
 			String coordsInString = "";
@@ -181,6 +185,11 @@ public class ManyFacedShape {
 		float ZSize = (this.depth==0) ? 1 : (float)this.depth;
 		
 		GamaPoint attrSize = (geomObj.getAttributes().size == null) ? new GamaPoint(1,1,1) : geomObj.getAttributes().size;
+		
+		if (isSphere()) {
+			float realSize = Math.max(YSize, XSize);
+			XSize = YSize = ZSize = realSize;
+		}
 		
 		return new GamaPoint( (attrSize.getX()*XSize),
 				(attrSize.getY()*YSize),
@@ -609,7 +618,7 @@ public class ManyFacedShape {
 	}
 	
 	private void applySmoothShading() {
-		if (is1DShape()) return; // not apply for 1DShape
+		if (is1DShape() || isWireframe) return; // not apply for 1DShape, and nor for wireframe shape
 		for (int faceIdx = 0 ; faceIdx < faces.size() ; faceIdx++) {
 			int[] idxConnexeFaces = getConnexeFaces(faceIdx);
 			for (int idxConnexeFace = 0 ; idxConnexeFace < idxConnexeFaces.length ; idxConnexeFace++) {
@@ -647,7 +656,7 @@ public class ManyFacedShape {
 	}
 	
 	private void triangulate() {
-		if (is1DShape()) return; // not apply for 1DShape
+		if (is1DShape() || isWireframe) return; // not apply for 1DShape, and nor for wireframe shape
 		for (int i = 0 ; i < faces.size() ; i++) {
 			int[] faceTriangulated = triangulateFace(faces.get(i));
 			faces.remove(i);
@@ -753,7 +762,7 @@ public class ManyFacedShape {
 	}
 	
 	private void computeNormals() {
-		if (is1DShape()) return; // not apply for 1DShape
+		if (!isLightInteraction || isWireframe) return; // not apply for shapes without light interaction, and nor for wireframe shapes
 		float[] result = new float[coords.length];
 		
 		for (int vIdx = 0 ; vIdx < coords.length/3 ; vIdx++) {
@@ -801,13 +810,17 @@ public class ManyFacedShape {
 	public DrawingEntity[] getDrawingEntities() {
 		// returns the DrawingEntities corresponding to this shape (can be 2 DrawingEntities
 		// in case it has been asked to draw the border)
-		DrawingEntity[] result = null;
-		// if triangulate, returns only one result
+		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
 		if (isTriangulation) {
+			// if triangulate, returns only one result
 			result = getTriangulationDrawingEntity();
 		}
+		else if (isWireframe) {
+			// if wireframe, returns only one result
+			result = getWireframeDrawingEntity();
+		}
 		else {
-			// if not triangulate
+			// if not triangulate and not wireframe
 			if (is1DShape()) {
 				result = get1DDrawingEntity();
 			}
@@ -816,66 +829,68 @@ public class ManyFacedShape {
 			}
 		}
 		
-//		System.out.println("time for creating ManyFacedShape : "+(System.currentTimeMillis()-tmp)+" (timestamp : "+System.currentTimeMillis()+")");
+		DrawingEntity[] resultInArray = new DrawingEntity[result.size()];
+		for (int i = 0 ; i < resultInArray.length ; i++) {
+			resultInArray[i] = result.get(i);
+		}
 		
-		return result;
+		return resultInArray;
 	}
 	
-	private DrawingEntity[] getTriangulationDrawingEntity() {
-		DrawingEntity[] result = new DrawingEntity[1];
+	private ArrayList<DrawingEntity> getTriangulationDrawingEntity() {
+		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
 		
 		// configure the drawing entity for the border
-		DrawingEntity borderEntity = new DrawingEntity();
-		borderEntity.setVertices(coords);
-		borderEntity.setIndices(getIdxBufferForLines());
-		borderEntity.setColors(getColorArray(TRIANGULATION_COLOR,coords));
-		borderEntity.type = DrawingEntity.Type.LINE;
+		DrawingEntity borderEntity = createBorderEntity(coords,getIdxBufferForLines(),getColorArray(TRIANGULATE_COLOR,coords));
 		
-		result[0] = borderEntity;
+		if (borderEntity != null)
+			result.add(borderEntity);
 		
 		return result;
 	}
 	
-	private DrawingEntity[] get1DDrawingEntity() {
+	private ArrayList<DrawingEntity> getWireframeDrawingEntity() {
+		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
+		
+		// configure the drawing entity for the border
+		DrawingEntity borderEntity = createBorderEntity(coords,getIdxBufferForLines(),getColorArray(color,coords));
+		
+		if (borderEntity != null)
+			result.add(borderEntity);
+		
+		return result;
+	}
+	
+	private ArrayList<DrawingEntity> get1DDrawingEntity() {
 		// particular case if the geometry is a point or a line : we only draw the "borders" with the color "color" (and not the "bordercolor" !!)
-		DrawingEntity[] result = new DrawingEntity[1];
+		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
 		
 		// configure the drawing entity for the border
-		DrawingEntity borderEntity = new DrawingEntity();
-		borderEntity.setVertices(coordsForBorder);
-		borderEntity.setIndices(idxForBorder);
-		borderEntity.setColors(getColorArray(color,coordsForBorder));
-		if (idxForBorder.length > 1)
-			borderEntity.type = DrawingEntity.Type.LINE;
-		else
-			borderEntity.type = DrawingEntity.Type.POINT;
+		DrawingEntity borderEntity = createBorderEntity(coordsForBorder,idxForBorder,getColorArray(color,coordsForBorder));
 		
-		result[0] = borderEntity;
+		if (borderEntity != null)
+			result.add(borderEntity);
 		
 		return result;
 	}
 	
-	private DrawingEntity[] getStandardDrawingEntities() {
+	private ArrayList<DrawingEntity> getStandardDrawingEntities() {
 		// the number of drawing entity is equal to the number of textured applied + 1 if there is a border.
 		// If no texture is used, return 1 (+1 if there is a border).
-		int numberOfDrawingEntity = (textIds == null) ? ((color!=null)? 1:0) + ((borderColor!=null)? 1:0) : textIds.length + ((borderColor!=null)? 1:0);
-		DrawingEntity[] result = new DrawingEntity[numberOfDrawingEntity];
+		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
 		
 		if (borderColor != null) {
 			// if there is a border
 			
 			// configure the drawing entity for the border
-			DrawingEntity borderEntity = new DrawingEntity();
-			borderEntity.setVertices(coordsForBorder);
-			borderEntity.setIndices(idxForBorder);
-			borderEntity.setColors(getColorArray(borderColor,coordsForBorder));
-			borderEntity.type = DrawingEntity.Type.LINE;
+			DrawingEntity borderEntity = createBorderEntity(coordsForBorder,idxForBorder,getColorArray(borderColor,coordsForBorder));
 			
-			result[numberOfDrawingEntity-1] = borderEntity;
+			if (borderEntity != null)			
+				result.add(borderEntity);
 		}
 		
 		if (textIds == null && color == null) {
-			// the geometry is not filled.
+			// the geometry is not filled. We create no more entity.
 		}
 		else {
 			if (textIds == null || textIds.length == 1 || (topFace == null && bottomFace == null))
@@ -886,8 +901,8 @@ public class ManyFacedShape {
 				filledEntity.setNormals(normals);
 				filledEntity.setIndices(getIdxBuffer());
 				filledEntity.setColors(getColorArray(color,coords));
+				filledEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
 				filledEntity.type = DrawingEntity.Type.FACE;
-				filledEntity.setMaterial(new Material(material.getDamper(),material.getReflectivity()));
 				if (textIds != null)
 				{
 					filledEntity.type = DrawingEntity.Type.TEXTURED;
@@ -895,7 +910,7 @@ public class ManyFacedShape {
 					filledEntity.setUvMapping(uvMapping);
 				}
 				
-				result[0] = filledEntity;
+				result.add(filledEntity);
 			}
 			else
 			{
@@ -929,7 +944,7 @@ public class ManyFacedShape {
 				botTopEntity.setNormals(botTopNormals);
 				botTopEntity.setIndices(botTopIndices);
 				botTopEntity.type = DrawingEntity.Type.TEXTURED;
-				botTopEntity.setMaterial(new Material(material.getDamper(),material.getReflectivity()));
+				botTopEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
 				botTopEntity.setTextureID(textIds[0]);
 				botTopEntity.setUvMapping(botTopUVMapping);
 				
@@ -954,16 +969,34 @@ public class ManyFacedShape {
 				otherEntity.setNormals(normals);
 				otherEntity.setIndices(idxArray);
 				otherEntity.type = DrawingEntity.Type.TEXTURED;
-				otherEntity.setMaterial(new Material(material.getDamper(),material.getReflectivity()));
+				otherEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
 				otherEntity.setTextureID(textIds[1]);
 				otherEntity.setUvMapping(uvMapping);
 				
-				result[0] = botTopEntity;
-				result[1] = otherEntity;
+				result.add(botTopEntity);
+				result.add(otherEntity);
 			}
 		}
 		
 		return result;
+	}
+	
+	private DrawingEntity createBorderEntity(float[] coordsArray, float[] idxArray, float[] colorArray) {
+		// utility method to build border entities, triangulated entities, wireframe entities and polyline geometries.
+		DrawingEntity borderEntity = new DrawingEntity();
+		borderEntity.setVertices(coordsArray);
+		borderEntity.setIndices(idxArray);
+		borderEntity.setColors(colorArray);
+		borderEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),false));
+		if (idxForBorder.length > 1)
+			borderEntity.type = DrawingEntity.Type.LINE;
+		else
+			borderEntity.type = DrawingEntity.Type.POINT;
+		if (borderEntity.getIndices().length == 0) {
+			// if the list of indices is empty, return null.
+			return null;
+		}
+		return borderEntity;
 	}
 	
 	///////////////////////////////////

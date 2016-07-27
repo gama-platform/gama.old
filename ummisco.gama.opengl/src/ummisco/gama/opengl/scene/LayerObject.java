@@ -52,6 +52,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 	final static GamaPoint NULL_SCALE = new GamaPoint(1, 1, 1);
 	
 	private boolean sceneIsInitialized = false;
+	protected boolean constantRedrawnLayer = false; // flag that indicate if the layer has to be redrawn at every frame, even in the same simulation step
+													// (basically, it is the case for the helper layer)
 
 	GamaPoint offset = NULL_OFFSET;
 	GamaPoint scale = NULL_SCALE;
@@ -99,14 +101,13 @@ public class LayerObject implements Iterable<GeometryObject> {
 			return;
 		final ModernRenderer renderer = (ModernRenderer) this.renderer;
 		
-		if (!sceneIsInitialized) {
+		if (!sceneIsInitialized || constantRedrawnLayer) {
 			renderer.getDrawer().prepareMapForLayer(this);
 			for (final List<AbstractObject> list : objects) {
 				for (final AbstractObject object : list) {
-					if (object instanceof GeometryObject) {
-						DrawingEntity[] drawingEntity = renderer.getVAOGenerator().GenerateVAO(object,gl);
+					DrawingEntity[] drawingEntity = renderer.getVAOGenerator().GenerateVAO(object,gl);
+					if (drawingEntity != null)
 						renderer.getDrawer().addDrawingEntities(drawingEntity);
-					}
 				}
 			}
 			renderer.getDrawer().redraw();

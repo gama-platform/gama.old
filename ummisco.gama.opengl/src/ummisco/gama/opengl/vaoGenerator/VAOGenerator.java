@@ -24,10 +24,13 @@ public class VAOGenerator {
 	}
 	
 	public DrawingEntity[] GenerateVAO(AbstractObject object, GL2 gl) {
-		GeometryObject geomObj = (GeometryObject)object;
-		int[] textIds = object.getTextureIDs(renderer.getContext(), renderer);
-		ManyFacedShape shape = new ManyFacedShape(geomObj,textIds,renderer.data.isTriangulation());	
-		DrawingEntity[] result = shape.getDrawingEntities();
+		DrawingEntity[] result = null;
+		if (object instanceof GeometryObject) {
+			GeometryObject geomObj = (GeometryObject)object;
+			int[] textIds = object.getTextureIDs(renderer.getContext(), renderer);
+			ManyFacedShape shape = new ManyFacedShape(geomObj,textIds,renderer.data.isTriangulation());	
+			result = shape.getDrawingEntities();
+		}	
 		return result;
 	}
 	

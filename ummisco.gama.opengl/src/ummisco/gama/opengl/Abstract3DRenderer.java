@@ -122,6 +122,8 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
 	protected GLU glu;
+	protected boolean drawRotationHelper = false;
+	protected GamaPoint rotationHelperPosition = null;
 
 	protected final GeometryCache geometryCache = new GeometryCache();
 	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
@@ -422,6 +424,14 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	
 	public double getZRotation() {
 		return currentZRotation;
+	}
+	
+	public boolean isDrawRotationHelper() {
+		return drawRotationHelper;
+	}
+	
+	public GamaPoint getRotationHelperPosition() {
+		return rotationHelperPosition;
 	}
 
 }

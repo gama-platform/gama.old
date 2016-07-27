@@ -68,8 +68,6 @@ public class ModernRenderer extends Abstract3DRenderer {
 	private VAOGenerator vaoGenerator;
 	
 	private final PickingState pickingState = new PickingState();
-	private boolean drawRotationHelper = false;
-	private GamaPoint rotationHelperPosition = null;
 	public boolean colorPicking = false;
 	private Envelope3D ROIEnvelope = null;
 	private volatile boolean inited;

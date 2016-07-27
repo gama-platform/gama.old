@@ -76,8 +76,6 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class JOGLRenderer extends Abstract3DRenderer {
 
 	private final PickingState pickingState = new PickingState();
-	private boolean drawRotationHelper = false;
-	private GamaPoint rotationHelperPosition = null;
 	private final GLUT glut = new GLUT();
 	private Envelope3D ROIEnvelope = null;
 	private volatile boolean inited;

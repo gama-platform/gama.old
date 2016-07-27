@@ -38,8 +38,6 @@ import ummisco.gama.webgl.SceneReceiver;
 import ummisco.gama.webgl.SimpleLayer;
 import ummisco.gama.webgl.SimpleScene;
 
-import ummisco.gama.opengl.scene.LightsLayerObject;
-
 /**
  *
  * The class ModelScene. A repository for all the objects that constitute the
@@ -56,6 +54,7 @@ public class ModelScene {
 	private final int id;
 	public static final String AXES_KEY = "__axes__0";
 	public static final String FRAME_KEY = "__frame__0";
+	public static final String ROTATION_HELPER_KEY = "__rotation__0";
 	public static final String LIGHTS_KEY = "__lights__0";
 	protected final Map<String, LayerObject> layers = new LinkedHashMap<String, LayerObject>();
 	protected LayerObject currentLayer;
@@ -69,6 +68,9 @@ public class ModelScene {
 		if (withWorld) {
 			initWorld();
 		}
+		if (renderer.useShader()) {
+			layers.put(ROTATION_HELPER_KEY, new HelperLayerObject(renderer));
+		}
 	}
 
 	public int getId() {
@@ -79,7 +81,6 @@ public class ModelScene {
 		if (renderer.data.isDrawEnv()) {
 			layers.put(FRAME_KEY, new FrameLayerObject(renderer));
 			layers.put(AXES_KEY, new AxesLayerObject(renderer));
-//			layers.put(LIGHTS_KEY, new LightsLayerObject(renderer));
 		}
 	}
 
