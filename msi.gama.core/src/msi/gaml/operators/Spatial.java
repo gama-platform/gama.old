@@ -367,9 +367,9 @@ public abstract class Spatial {
 
 		@operator(value = "cone3D", category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE,
 				IOperatorCategory.THREED }, concept = { IConcept.SHAPE, IConcept.GEOMETRY, IConcept.THREED })
-		@doc(value = "A cone geometry which radius is equal to the operand.", special_cases = {
+		@doc(value = "A cone geometry which base radius size is equal to the first operand, and which the height is equal to the second operand.", special_cases = {
 				"returns a point if the operand is lower or equal to 0." }, comment = "the center of the cone is by default the location of the current agent in which has been called this operator.", examples = {
-						@example(value = "cone3D(10.0,10.0)", equals = "a geometry as a circle of radius 10 but displays a cone.", test = false) }, see = {
+						@example(value = "cone3D(10.0,5.0)", equals = "a geometry as a cone with a base circle of radius 10 and a height of 5.", test = false) }, see = {
 								"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle",
 								"square", "triangle" })
 		public static IShape cone3D(final IScope scope, final Double radius, final Double height) {
