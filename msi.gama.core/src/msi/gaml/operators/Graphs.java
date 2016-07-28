@@ -550,8 +550,14 @@ public class Graphs {
 
 		GamaMap mapResult = GamaMapFactory.create(graph.getType().getKeyType(), Types.FLOAT);
 		GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
-		for ( Object v1 : vertices ) {
-			for ( Object v2 : vertices ) {
+		for ( Object v : vertices ) {
+			mapResult.put(v, 0.0);
+		}
+		boolean directed = graph.isDirected();
+		for ( int i = 0; i < vertices.size();i++ ) {
+			for ( int j = (directed ? 0 : i+1); j < vertices.size();j++ ) {
+				Object v1 = vertices.get(i);
+				Object v2 = vertices.get(j);
 				if ( v1 == v2 ) {
 					continue;
 				}
@@ -559,17 +565,14 @@ public class Graphs {
 				if ( edges == null ) {
 					continue;
 				}
+				Object vc = v1;
 				for ( Object edge : edges ) {
 					Object node = graph.getEdgeTarget(edge);
-					if ( node != v2 ) {
-						Double val = (Double) mapResult.get(node);
-						if ( val == null ) {
-							val = 1.0;
-						} else {
-							val += 1;
-						}
-						mapResult.put(node, val);
+					if (node == vc) node = graph.getEdgeSource(edge);
+					if ( node != v2 && node != v1) {
+						mapResult.put(node, (Double) mapResult.get(node)+1);
 					}
+					vc= node;
 				}
 			}
 		}
