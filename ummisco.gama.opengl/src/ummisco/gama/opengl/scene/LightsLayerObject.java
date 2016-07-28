@@ -1,58 +1,67 @@
 package ummisco.gama.opengl.scene;
 
-import static msi.gama.metamodel.shape.IShape.Type.LINESTRING;
-import static msi.gama.metamodel.shape.IShape.Type.POLYGON;
+import java.util.ArrayList;
 
-import java.awt.Color;
-import java.util.List;
+import com.jogamp.opengl.GL2;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LightPropertiesStructure;
-import msi.gama.util.GamaColor;
+import msi.gama.util.GamaPair;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.Types;
 import ummisco.gama.opengl.Abstract3DRenderer;
-import ummisco.gama.opengl.ModernRenderer;
 
-public class LightsLayerObject extends StaticLayerObject.World {
-
-	final static String[] LABELS = new String[] { "X", "Y", "Z" };
-	final static GamaColor[] COLORS = new GamaColor[] { GamaColor.getInt(Color.red.getRGB()),
-			GamaColor.getInt(Color.green.getRGB()), GamaColor.getInt(Color.blue.getRGB()) };
-	final static GamaPoint DEFAULT_SCALE = new GamaPoint(.15, .15, .15);
+public class LightsLayerObject extends LayerObject {
 
 	public LightsLayerObject(final Abstract3DRenderer renderer) {
-		super(renderer);
+		super(renderer, null);
+		constantRedrawnLayer = true;
 	}
 
 	@Override
-	public GamaPoint getScale() {
-		return scale == null ? DEFAULT_SCALE : super.getScale();
+	public void clear(final GL2 gl) {
 	}
 	
-	public void updateLights() {
-		List<LightPropertiesStructure> lights = renderer.data.getDiffuseLights();
-		for (LightPropertiesStructure light : lights) {
-			if (light.isDrawLight()) {
-//				if (light.type.equals(LightPropertiesStructure.TYPE.POINT)) {
-//					GeometryObject geomObj = new GeometryObject(GamaGeometryType.buildSphere(5, light.position),light.color,IShape.Type.SPHERE,this);
-//					((ModernRenderer)renderer).getDrawer().addDrawingEntities(((ModernRenderer)renderer).getVAOGenerator().GenerateVAO(geomObj));
-//				}
+	@Override
+	public void draw(final GL2 gl) {
+		updateObjectList();
+		super.draw(gl);
+	}
+	
+	public void updateObjectList() {
+		objects.clear();
+		for (LightPropertiesStructure light : renderer.data.getDiffuseLights()) {
+			if (light.drawLight && light.id != 0) {
+				
+				double size = renderer.getMaxEnvDim() / 20;
+				
+				ArrayList<AbstractObject> newElem = new ArrayList<AbstractObject>();
+				GamaPoint pos = light.position;
+
+				if (light.type == LightPropertiesStructure.TYPE.POINT) {
+					IShape sphereShape = GamaGeometryType.buildSphere(size, pos);
+					GeometryObject pointLight = new GeometryObject(sphereShape,light.color,IShape.Type.SPHERE,this);
+					pointLight.disableLightInteraction();
+					newElem.add(pointLight);
+				}
+				else if (light.type == LightPropertiesStructure.TYPE.SPOT) {
+					// TODO
+//					final double baseSize = Math.sin(Math.toRadians(light.spotAngle)) * size;
+//					IShape coneShape = GamaGeometryType.buildCone3D(baseSize, size, pos);
+//					GeometryObject spotLight = new GeometryObject(coneShape,light.color,IShape.Type.CONE,this);
+//					spotLight.getAttributes().rotation = new GamaPair(Cast.asFloat(null, 0), Cast.asPoint(null, light.direction),
+//							Types.FLOAT, Types.POINT);
+//					spotLight.disableLightInteraction();
+//					newElem.add(spotLight);
+				}
+				else {
+					// TODO
+				}
+				objects.add(newElem);
 			}
 		}
 	}
 
-	@Override
-	void fillWithObjects(final List<AbstractObject> list) {
-		
-		
-		
-		final double size = renderer.getMaxEnvDim();
-		for (int i = 0; i < 3; i++) {
-			final GamaPoint p = new GamaPoint(i == 0 ? size : 0, i == 1 ? size : 0, i == 2 ? size : 0);
-			list.add(new GeometryObject(GamaGeometryType.buildLine(p), COLORS[i], LINESTRING, this));
-			list.add(new StringObject(LABELS[i], p.times(1.2).yNegated(), this));
-			list.add(new GeometryObject(GamaGeometryType.buildArrow(p.times(1.1), size / 6), COLORS[i], POLYGON, this));
-		}
-	}
 }

@@ -1,7 +1,9 @@
 package ummisco.gama.opengl.vaoGenerator;
 
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 
+import javax.vecmath.Matrix4d;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
@@ -78,8 +80,50 @@ public class GeomMathUtils {
 		return result;
 	}
 	
+	static public DoubleBuffer getDoubleBuffer(Matrix4d matrix) {
+		DoubleBuffer result = DoubleBuffer.allocate(16);
+		result.put(0,matrix.m00);
+		result.put(1,matrix.m01);
+		result.put(2,matrix.m02);
+		result.put(3,matrix.m03);
+		result.put(4,matrix.m10);
+		result.put(5,matrix.m11);
+		result.put(6,matrix.m12);
+		result.put(7,matrix.m13);
+		result.put(8,matrix.m20);
+		result.put(9,matrix.m21);
+		result.put(10,matrix.m22);
+		result.put(11,matrix.m23);
+		result.put(12,matrix.m30);
+		result.put(13,matrix.m31);
+		result.put(14,matrix.m32);
+		result.put(15,matrix.m33);
+		return result;
+	}
+	
 	static public float[] getFloatArray(Matrix4f matrix) {
 		float[] result = new float[16];
+		result[0]=matrix.m00;
+		result[1]=matrix.m01;
+		result[2]=matrix.m02;
+		result[3]=matrix.m03;
+		result[4]=matrix.m10;
+		result[5]=matrix.m11;
+		result[6]=matrix.m12;
+		result[7]=matrix.m13;
+		result[8]=matrix.m20;
+		result[9]=matrix.m21;
+		result[10]=matrix.m22;
+		result[11]=matrix.m23;
+		result[12]=matrix.m30;
+		result[13]=matrix.m31;
+		result[14]=matrix.m32;
+		result[15]=matrix.m33;
+		return result;
+	}
+	
+	static public double[] getDoubleArray(Matrix4d matrix) {
+		double[] result = new double[16];
 		result[0]=matrix.m00;
 		result[1]=matrix.m01;
 		result[2]=matrix.m02;

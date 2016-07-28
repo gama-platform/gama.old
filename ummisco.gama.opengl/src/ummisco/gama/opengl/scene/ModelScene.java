@@ -68,9 +68,6 @@ public class ModelScene {
 		if (withWorld) {
 			initWorld();
 		}
-		if (renderer.useShader()) {
-			layers.put(ROTATION_HELPER_KEY, new HelperLayerObject(renderer));
-		}
 	}
 
 	public int getId() {
@@ -81,6 +78,10 @@ public class ModelScene {
 		if (renderer.data.isDrawEnv()) {
 			layers.put(FRAME_KEY, new FrameLayerObject(renderer));
 			layers.put(AXES_KEY, new AxesLayerObject(renderer));
+		}
+		if (renderer.useShader()) {
+			layers.put(ROTATION_HELPER_KEY, new HelperLayerObject(renderer));
+			layers.put(LIGHTS_KEY, new LightsLayerObject(renderer));
 		}
 	}
 
@@ -150,6 +151,14 @@ public class ModelScene {
 	public void draw(final GL2 gl) {
 		// System.out.println("Beginning rendering Model front scene #" + id);
 		//((LightsLayerObject) layers.get(LIGHTS_KEY)).updateLights();
+		
+		// if the rotation helper layer exists, put it at the end of the map (otherwise, transparency issues)
+		LayerObject rotLayer = layers.get(ROTATION_HELPER_KEY);
+		if (rotLayer != null) {
+			layers.remove(ROTATION_HELPER_KEY);
+			layers.put(ROTATION_HELPER_KEY, rotLayer);
+		}
+		
 		final LayerObject[] array = layers.values().toArray(new LayerObject[0]);
 		for (final LayerObject layer : array) {
 			if (layer != null && !layer.isInvalid()) {

@@ -1,8 +1,6 @@
 package ummisco.gama.opengl.vaoGenerator;
 
-import javax.vecmath.AxisAngle4f;
 import javax.vecmath.Matrix4f;
-import javax.vecmath.Quat4f;
 import javax.vecmath.Vector3f;
 
 import msi.gaml.operators.fastmaths.FastMath;

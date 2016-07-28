@@ -1219,10 +1219,21 @@ public class JTSDrawer {
 			final Color c = g.getColor();
 			setColor(gl, c, g.getAlpha());
 		}
+		
+		// compute the size of the base : we find the max distance between the x coordinates.
+		float minX = Float.MAX_VALUE;
+		float maxX = -Float.MAX_VALUE;
+		Coordinate[] coordinates = g.geometry.getCoordinates();
+		for (int i = 0 ; i < coordinates.length ; i++) {
+			if (coordinates[i].x < minX) minX = (float) coordinates[i].x;
+			if (coordinates[i].x > maxX) maxX = (float) coordinates[i].x;
+		}
+		float radius = (maxX - minX)/2;
+		
 		if (!renderer.data.isTriangulation()) {
-			glut.glutSolidCone(g.getHeight(), g.getHeight(), 10, 10);
+			glut.glutSolidCone(radius, g.getAttributes().getDepth(), 10, 10);
 		} else {
-			glut.glutWireCone(g.getHeight(), g.getHeight(), 10, 10);
+			glut.glutWireCone(radius, g.getAttributes().getDepth(), 10, 10);
 		}
 
 		gl.glPopMatrix();
