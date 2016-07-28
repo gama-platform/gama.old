@@ -229,7 +229,6 @@ public class ModernDrawer {
 					updateTransformationMatrix(shaderProgram);
 					prepareShader(listOfEntities.get(0), shaderProgram);
 					
-					drawLights(renderer.data.getDiffuseLights());
 					loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram.useNormal());
 					drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
 					
@@ -292,14 +291,6 @@ public class ModernDrawer {
 			drawVBO(typeOfDrawing,typeOfDrawing[2]);
 			
 			shader.stop();
-		}
-	}
-	
-	private void drawLights(List<LightPropertiesStructure> lights) {
-		for (LightPropertiesStructure light : lights) {
-			if (light.isDrawLight()) {
-				
-			}
 		}
 	}
 	

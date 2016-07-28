@@ -48,7 +48,6 @@ void main (void)
 		float brightnessR = max(nDot1,ambientLight.x);
 		float brightnessG = max(nDot1,ambientLight.y);
 		float brightnessB = max(nDot1,ambientLight.z);
-		//float brightness = max(nDot1,0.0);
 		vec3 diffuse = vec3(brightnessR*lightColor.x,brightnessG*lightColor.y,brightnessB*lightColor.z);
 		
 		vec3 unitVectorToCamera = normalize(toCameraVector);
