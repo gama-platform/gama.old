@@ -64,6 +64,7 @@ import ummisco.gama.opengl.scene.StringDrawer;
 import ummisco.gama.opengl.scene.StringObject;
 import ummisco.gama.opengl.utils.FPSDrawer;
 import ummisco.gama.opengl.utils.GLUtilLight;
+import ummisco.gama.opengl.vaoGenerator.DrawingEntityGenerator;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -111,6 +112,9 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 			}
 		});
+		
+		// here, the drawingEntityGenerator is used only when there is a webgl display
+		drawingEntityGenerator = new DrawingEntityGenerator(this);
 
 		// see
 		// https://jogamp.org/deployment/v2.1.1/javadoc/jogl/javadoc/javax/media/opengl/glu/gl2/GLUgl2.html
@@ -181,7 +185,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (currentScene == null) {
 			return;
 		}
-		final GL2 gl = drawable.getContext().getGL().getGL2();
+		gl = drawable.getContext().getGL().getGL2();
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
 

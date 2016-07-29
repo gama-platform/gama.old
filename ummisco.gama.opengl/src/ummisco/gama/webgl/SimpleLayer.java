@@ -3,6 +3,7 @@ package ummisco.gama.webgl;
 import java.util.List;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import ummisco.gama.modernOpenGL.DrawingEntity;
 
 /**
  * A simplified representation of a LayerObject
@@ -15,10 +16,10 @@ public class SimpleLayer {
 	final GamaPoint offset;
 	final GamaPoint scale;
 	final Double alpha;
-	final List<SimpleGeometryObject> objects;
+	final List<DrawingEntity> objects;
 
 	public SimpleLayer(final GamaPoint offset, final GamaPoint scale, final Double alpha,
-			final List<SimpleGeometryObject> objects) {
+			final List<DrawingEntity> objects) {
 		this.offset = offset;
 		this.scale = scale;
 		this.alpha = alpha;

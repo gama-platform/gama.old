@@ -49,7 +49,7 @@ import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.modernOpenGL.ModernDrawer;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
-import ummisco.gama.opengl.vaoGenerator.VAOGenerator;
+import ummisco.gama.opengl.vaoGenerator.DrawingEntityGenerator;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -65,13 +65,12 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	int[] vboHandles;
 	private ModernDrawer drawer;
-	private VAOGenerator vaoGenerator;
 	
 	private final PickingState pickingState = new PickingState();
 	public boolean colorPicking = false;
 	private Envelope3D ROIEnvelope = null;
 	private volatile boolean inited;
-	GL2 gl;
+	
 
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
@@ -107,7 +106,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 			}
 		});
 		
-		vaoGenerator = new VAOGenerator(this);
+		drawingEntityGenerator = new DrawingEntityGenerator(this);
 		
 		glu = new GLU();
 		gl = drawable.getContext().getGL().getGL2();
@@ -371,14 +370,6 @@ public class ModernRenderer extends Abstract3DRenderer {
 	
 	public ModernDrawer getDrawer() {
 		return drawer;
-	}
-	
-	public VAOGenerator getVAOGenerator() {
-		return vaoGenerator;
-	}
-	
-	public GL2 getContext() {
-		return gl;
 	}
 
 	public Envelope3D getROIEnvelope() {

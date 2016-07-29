@@ -48,13 +48,13 @@ public class LightsLayerObject extends LayerObject {
 				}
 				else if (light.type == LightPropertiesStructure.TYPE.SPOT) {
 					// TODO
-//					final double baseSize = Math.sin(Math.toRadians(light.spotAngle)) * size;
-//					IShape coneShape = GamaGeometryType.buildCone3D(baseSize, size, pos);
-//					GeometryObject spotLight = new GeometryObject(coneShape,light.color,IShape.Type.CONE,this);
+					final double baseSize = Math.sin(Math.toRadians(light.spotAngle)) * size;
+					IShape coneShape = GamaGeometryType.buildCone3D(baseSize, size, pos);
+					GeometryObject spotLight = new GeometryObject(coneShape,light.color,IShape.Type.CONE,this);
 //					spotLight.getAttributes().rotation = new GamaPair(Cast.asFloat(null, 0), Cast.asPoint(null, light.direction),
 //							Types.FLOAT, Types.POINT);
-//					spotLight.disableLightInteraction();
-//					newElem.add(spotLight);
+					spotLight.disableLightInteraction();
+					newElem.add(spotLight);
 				}
 				else {
 					// TODO

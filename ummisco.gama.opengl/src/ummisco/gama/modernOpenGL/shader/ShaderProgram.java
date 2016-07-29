@@ -32,6 +32,8 @@ public class ShaderProgram extends AbstractShader {
 	private boolean useNormal = false;
 	private boolean useTexture = false;
 	
+	private int textureIDStored = -1;
+	
 	public static final int POSITION_ATTRIBUTE_IDX = 0;
 	public static final int COLOR_ATTRIBUTE_IDX = 1;
 	public static final int NORMAL_ATTRIBUTE_IDX = 2;
@@ -131,5 +133,13 @@ public class ShaderProgram extends AbstractShader {
 		LightPropertiesStructure light = diffuseLights.get(0);
 		super.loadVector(location_lightPosition,light.getPosition());
 		super.loadVector(location_lightColor,light.getColor());
+	}
+
+	public void storeTextureID(int textureID) {
+		textureIDStored = textureID;
+	}
+	
+	public int getTextureID() {
+		return textureIDStored;
 	}
 }

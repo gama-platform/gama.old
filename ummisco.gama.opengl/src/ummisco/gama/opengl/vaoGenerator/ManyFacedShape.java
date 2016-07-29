@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
@@ -36,7 +37,7 @@ public class ManyFacedShape {
 	private Coordinate[] coordsWithDoublons;
 	private float[] uvMapping;
 	private float[] normals;
-	private int[] textIds = null; // null for "no texture"
+	private Texture[] textures = null; // null for "no texture"
 	private float[] coordsForBorder;
 	private float[] idxForBorder;
 	
@@ -60,7 +61,7 @@ public class ManyFacedShape {
 		loadManyFacedShape(obj);
 	}
 	
-	public ManyFacedShape(GeometryObject geomObj, int[] textIds, boolean isTriangulation) {
+	public ManyFacedShape(GeometryObject geomObj, Texture[] textures, boolean isTriangulation) {
 		
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
@@ -70,7 +71,7 @@ public class ManyFacedShape {
 		
 		this.color = geomObj.getAttributes().color;
 		this.borderColor = geomObj.getAttributes().getBorder();
-		this.textIds = textIds;
+		this.textures = textures;
 		this.isTriangulation = isTriangulation;
 		this.material = geomObj.getAttributes().getMaterial();
 		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
@@ -890,11 +891,11 @@ public class ManyFacedShape {
 				result.add(borderEntity);
 		}
 		
-		if (textIds == null && color == null) {
+		if (textures == null && color == null) {
 			// the geometry is not filled. We create no more entity.
 		}
 		else {
-			if (textIds == null || textIds.length == 1 || (topFace == null && bottomFace == null))
+			if (textures == null || textures.length == 1 || (topFace == null && bottomFace == null))
 			{
 				// configure the drawing entity for the filled faces
 				DrawingEntity filledEntity = new DrawingEntity();
@@ -904,10 +905,10 @@ public class ManyFacedShape {
 				filledEntity.setColors(getColorArray(color,coords));
 				filledEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
 				filledEntity.type = DrawingEntity.Type.FACE;
-				if (textIds != null)
+				if (textures != null)
 				{
 					filledEntity.type = DrawingEntity.Type.TEXTURED;
-					filledEntity.setTextureID(textIds[0]);
+					filledEntity.setTexture(textures[0]);
 					filledEntity.setUvMapping(uvMapping);
 				}
 				
@@ -946,7 +947,7 @@ public class ManyFacedShape {
 				botTopEntity.setIndices(botTopIndices);
 				botTopEntity.type = DrawingEntity.Type.TEXTURED;
 				botTopEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
-				botTopEntity.setTextureID(textIds[0]);
+				botTopEntity.setTexture(textures[0]);
 				botTopEntity.setUvMapping(botTopUVMapping);
 				
 				// build the rest of the faces
@@ -971,7 +972,7 @@ public class ManyFacedShape {
 				otherEntity.setIndices(idxArray);
 				otherEntity.type = DrawingEntity.Type.TEXTURED;
 				otherEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
-				otherEntity.setTextureID(textIds[1]);
+				otherEntity.setTexture(textures[1]);
 				otherEntity.setUvMapping(uvMapping);
 				
 				result.add(botTopEntity);

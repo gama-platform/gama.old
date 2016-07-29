@@ -1,7 +1,8 @@
 package ummisco.gama.modernOpenGL;
 
+import com.jogamp.opengl.util.texture.Texture;
+
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
-import ummisco.gama.opengl.utils.Utils;
 
 public class DrawingEntity {
 	
@@ -14,7 +15,7 @@ public class DrawingEntity {
 	private float[] indices;
 	private float[] normals;
 	private float[] uvMapping;
-	private int textID;
+	private Texture texture;
 	private Material material;
 	
 	private ShaderProgram shader;
@@ -71,31 +72,12 @@ public class DrawingEntity {
 		this.normals = normals;
 	}
 	
+	public void setTexture(Texture texture) {
+		this.texture = texture;
+	}
+	
 	public int getTextureID() {
-		return textID;
-	}
-	
-	public void setTextureID(int id) {
-		this.textID = id;
-	}
-	
-	public DrawingEntity concatenateWith(DrawingEntity entity) {
-		DrawingEntity result = new DrawingEntity();
-		// we store the number of vertices (we will need to add this value to the idx of the second entity)
-		int nbVertices = vertices.length/3;
-		result.setColors(Utils.concatFloatArrays(colors, entity.getColors()));
-		result.setVertices(Utils.concatFloatArrays(vertices, entity.getVertices()));
-		result.setNormals(Utils.concatFloatArrays(normals, entity.getNormals()));
-		result.setUvMapping(Utils.concatFloatArrays(uvMapping, entity.getUvMapping()));
-		result.setMaterial(entity.getMaterial());
-		result.type = type;
-		result.setTextureID(textID);
-		float[] secondIdxArray = new float[entity.getIndices().length];
-		for (int i = 0 ; i < secondIdxArray.length ; i++) {
-			secondIdxArray[i] = entity.getIndices()[i] + nbVertices;
-		}
-		result.setIndices(Utils.concatFloatArrays(indices,secondIdxArray));
-		return result;
+		return texture.getTextureObject();
 	}
 	
 	public void setShader(ShaderProgram shader) {

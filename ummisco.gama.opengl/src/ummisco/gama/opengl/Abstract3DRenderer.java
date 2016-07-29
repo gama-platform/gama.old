@@ -47,6 +47,7 @@ import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.SceneBuffer;
+import ummisco.gama.opengl.vaoGenerator.DrawingEntityGenerator;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -109,6 +110,9 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	}
 
 	public static int Y_FLAG = -1;
+	
+	protected GL2 gl;
+	protected DrawingEntityGenerator drawingEntityGenerator;
 
 	protected boolean useShader = false;
 
@@ -230,6 +234,14 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public final double getEnvHeight() {
 		return data.getEnvHeight();
+	}
+	
+	public GL2 getContext() {
+		return gl;
+	}
+	
+	public DrawingEntityGenerator getDrawingEntityGenerator() {
+		return drawingEntityGenerator;
 	}
 
 	public final void switchCamera() {

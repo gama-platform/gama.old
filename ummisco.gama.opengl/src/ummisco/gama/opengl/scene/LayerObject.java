@@ -19,7 +19,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -36,7 +35,6 @@ import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.ModernRenderer;
-import ummisco.gama.webgl.SimpleGeometryObject;
 import ummisco.gama.webgl.SimpleLayer;
 
 /**
@@ -110,7 +108,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 			renderer.getDrawer().prepareMapForLayer(this);
 			for (final List<AbstractObject> list : objects) {
 				for (final AbstractObject object : list) {
-					final DrawingEntity[] drawingEntity = renderer.getVAOGenerator().GenerateVAO(object, gl);
+					final DrawingEntity[] drawingEntity = renderer.getDrawingEntityGenerator().GenerateDrawingEntities(object);
 					if (drawingEntity != null)
 						renderer.getDrawer().addDrawingEntities(drawingEntity);
 				}
@@ -355,11 +353,22 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public SimpleLayer toSimpleLayer() {
-		final List<SimpleGeometryObject> geom = new ArrayList<SimpleGeometryObject>();
-		for (final GeometryObject object : Iterables.filter(currentList, GeometryObject.class)) {
-			geom.add(object.toSimpleGeometryObject());
+		
+		final List<DrawingEntity> drawingEntityList = new ArrayList<DrawingEntity>();
+		// we don't send the "constantRedrawnLayer" (like the rotation helper)
+		if (!constantRedrawnLayer) {
+			for (final List<AbstractObject> list : objects) {
+				for (final AbstractObject object : list) {
+					final DrawingEntity[] drawingEntities = renderer.getDrawingEntityGenerator().GenerateDrawingEntities(object);
+					if (drawingEntities != null) {
+						for (DrawingEntity drawingEntity : drawingEntities) {
+							drawingEntityList.add(drawingEntity);
+						}
+					}
+				}
+			}
 		}
-		return new SimpleLayer(getOffset(), getScale(), alpha, geom);
+		return new SimpleLayer(getOffset(), getScale(), alpha, drawingEntityList);
 	}
 
 }
