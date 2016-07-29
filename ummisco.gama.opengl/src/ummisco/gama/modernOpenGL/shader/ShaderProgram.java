@@ -130,7 +130,7 @@ public class ShaderProgram extends AbstractShader {
 
 	public void loadDiffuseLights(List<LightPropertiesStructure> diffuseLights) {
 		// TODO Auto-generated method stub
-		LightPropertiesStructure light = diffuseLights.get(0);
+		LightPropertiesStructure light = diffuseLights.get(1);
 		super.loadVector(location_lightPosition,light.getPosition());
 		super.loadVector(location_lightColor,light.getColor());
 	}

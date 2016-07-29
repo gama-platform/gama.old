@@ -253,7 +253,7 @@ public class ModelScene {
 		for (final LayerObject layer : this.layers.values()) {
 			simpleLayers.add(layer.toSimpleLayer());
 		}
-		return new SimpleScene(simpleLayers);
+		return new SimpleScene(simpleLayers,this.renderer.data.getDiffuseLights(),renderer.data.getBackgroundColor());
 	}
 
 	public boolean rendered() {

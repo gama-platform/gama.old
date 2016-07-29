@@ -48,6 +48,7 @@ import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.modernOpenGL.ModernDrawer;
 import ummisco.gama.opengl.scene.ModelScene;
+import ummisco.gama.opengl.utils.GLUtilLight;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 import ummisco.gama.opengl.vaoGenerator.DrawingEntityGenerator;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -124,6 +125,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 		updateCameraPosition();
 		updatePerspective();
+		
+		GLUtilLight.InitializeLighting(gl, data);
 		
 		// We mark the renderer as inited
 		inited = true;
