@@ -11,12 +11,22 @@
  **********************************************************************************************/
 package msi.gaml.factories;
 
-import static msi.gama.common.interfaces.IKeyword.*;
-import java.util.*;
+import static msi.gama.common.interfaces.IKeyword.ON_CHANGE;
+import static msi.gama.common.interfaces.IKeyword.PARAMETER;
+import static msi.gama.common.interfaces.IKeyword.VAR;
+
+import java.util.List;
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EObject;
+
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.FacetProto;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.SymbolProto;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.statements.Facets;
 
 /**
@@ -25,7 +35,7 @@ import msi.gaml.statements.Facets;
  * @todo Description
  */
 @factory(handles = { ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER, ISymbolKind.Variable.REGULAR,
-	ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
+		ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
 public class VariableFactory extends SymbolFactory {
 
 	public VariableFactory(final List<Integer> handles) {
@@ -34,17 +44,21 @@ public class VariableFactory extends SymbolFactory {
 
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-		final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto, final String plugin) {
-		if ( keyword.equals(PARAMETER) ) {
+			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto,
+			final String plugin) {
+		if (keyword.equals(PARAMETER)) {
 
 			final Map<String, FacetProto> possibleFacets = proto.getPossibleFacets();
-			// We copy the relevant facets from the targeted var of the parameter
+			// We copy the relevant facets from the targeted var of the
+			// parameter
 			final VariableDescription targetedVar = enclosing.getModelDescription().getVariable(facets.getLabel(VAR));
-			if ( targetedVar != null ) {
-				Facets targetFacets = targetedVar.getFacets();
-				for ( String key : possibleFacets.keySet() ) {
-					IExpressionDescription expr = targetFacets.get(key);
-					if ( expr != null ) {
+			if (targetedVar != null) {
+				final Facets targetFacets = targetedVar.getFacets();
+				for (final String key : possibleFacets.keySet()) {
+					if (key.equals(ON_CHANGE))
+						continue;
+					final IExpressionDescription expr = targetFacets.get(key);
+					if (expr != null) {
 						facets.putIfAbsent(key, expr);
 					}
 				}

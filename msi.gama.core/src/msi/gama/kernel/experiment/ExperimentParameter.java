@@ -40,6 +40,7 @@ import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.fastmaths.FastMath;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
@@ -54,6 +55,7 @@ import msi.gaml.variables.Variable;
 		@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true, doc = @doc("a category label, used to group parameters in the interface")),
 		@facet(name = IKeyword.VAR, type = IType.ID, optional = false, doc = @doc("the name of the variable (that should be declared in the global)")),
 		@facet(name = IKeyword.UNIT, type = IType.LABEL, optional = true, doc = @doc("the variable unit")),
+		@facet(name = IKeyword.ON_CHANGE, type = IType.NONE, optional = true, doc = @doc("Provides a block of statements that will be executed whenever the value of the parameter changes")),
 		@facet(name = "slider", type = IType.BOOL, optional = true, doc = @doc("Whether or not to display a slider for entering an int or float value. Default is true when max and min values are defined, false otherwise. If no max or min value is defined, setting this facet to true will have no effect")),
 		@facet(name = IKeyword.STEP, type = IType.FLOAT, optional = true, doc = @doc("the increment step (mainly used in batch mode to express the variation step between simulation)")),
 		@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true, doc = @doc("the list of possible values")) }, omissible = IKeyword.NAME)
@@ -76,11 +78,11 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	Number minValue, maxValue, stepValue;
 	private List amongValue;
 	String varName, title, category, unitLabel;
-	IType type = Types.NO_TYPE/* , contentType = Types.NO_TYPE */;
-	boolean isEditable/* , isLabel */;
+	IType type = Types.NO_TYPE;
+	boolean isEditable;
 	boolean canBeNull;
 	boolean isDefined = true;
-	final IExpression init, among, min, max, step, slider;
+	final IExpression init, among, min, max, step, slider, onChange;
 
 	public ExperimentParameter(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
@@ -99,6 +101,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		max = getFacet(IKeyword.MAX);
 		step = getFacet(IKeyword.STEP);
 		among = getFacet(IKeyword.AMONG);
+		onChange = getFacet(IKeyword.ON_CHANGE);
 		slider = getFacet("slider");
 		init = this.hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT)
 				: targetedGlobalVar.getFacets().getExpr(IKeyword.INIT);
@@ -146,6 +149,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		} else {
 			step = null;
 		}
+		onChange = null;
 		setName(p.getName());
 		setCategory(category);
 		setType(p.getType());
@@ -190,6 +194,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		isEditable = editable;
 	}
 
+	private static Object[] JunkResults = new Object[1];
+
 	public void setAndVerifyValue(final IScope scope, final Object val) {
 		Object newValue = val;
 		if (minValue != null) {
@@ -218,6 +224,15 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			if (!getAmongValue(scope).contains(newValue)) {
 				newValue = getAmongValue(scope).get(0);
 			}
+		}
+		if (value != UNDEFINED && onChange != null) {
+			// Already initialized, we call the on_change behavior
+			final IExecutable on_changer = scope.getAgentScope().getSpecies()
+					.getAction(Cast.asString(scope, onChange.value(scope)));
+			scope.getExperiment().executeAction(on_changer);
+			// scope.execute(on_changer, scope.getAgentScope(), null,
+			// JunkResults);
+
 		}
 		value = newValue;
 	}
@@ -362,29 +377,12 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			minValue = (Number) min.value(scope);
 		}
 		return minValue;
-
-		// GAMA.run(new InScope.Void() {
-		//
-		// @Override
-		// public void process(final IScope scope) {
-		// minValue = (Number) min.value(scope);
-		// }
-		// });
-		// }
-		// return minValue;
 	}
 
 	@Override
 	public Number getMaxValue(final IScope scope) {
 		if (maxValue == null && max != null) {
 			maxValue = (Number) max.value(scope);
-			// GAMA.run(new InScope.Void() {
-			//
-			// @Override
-			// public void process(final IScope scope) {
-			// maxValue = (Number) max.value(scope);
-			// }
-			// });
 		}
 		return maxValue;
 	}
@@ -393,13 +391,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public List getAmongValue(final IScope scope) {
 		if (amongValue == null && among != null) {
 			amongValue = (List) among.value(scope);
-			// GAMA.run(new InScope.Void() {
-			//
-			// @Override
-			// public void process(final IScope scope) {
-			// amongValue = (List) among.value(scope);
-			// }
-			// });
 		}
 		return amongValue;
 	}
@@ -408,13 +399,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public Number getStepValue(final IScope scope) {
 		if (stepValue == null && step != null) {
 			stepValue = (Number) step.value(scope);
-			// GAMA.run(new InScope.Void() {
-			//
-			// @Override
-			// public void process(final IScope scope) {
-			// stepValue = (Number) step.value(scope);
-			// }
-			// });
 		}
 		return stepValue;
 	}
@@ -489,15 +473,5 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			return true;
 		return Cast.asBool(scope, slider.value(scope));
 	}
-
-	/**
-	 * Method getContentType()
-	 * 
-	 * @see msi.gama.kernel.experiment.IParameter#getContentType()
-	 */
-	// @Override
-	// public IType getContentType() {
-	// return contentType;
-	// }
 
 }

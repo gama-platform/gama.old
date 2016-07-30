@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -163,23 +164,26 @@ public class ModelDescription extends SpeciesDescription {
 		if (newVar.isBuiltIn()) {
 			return;
 		}
-		if (existingVar.isBuiltIn()) {
+		if (existingVar.getUnderlyingElement(null) == null) {
 			newVar.info(
 					"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
 					IGamlIssue.REDEFINES, NAME);
 			return;
 		}
 
-		final EObject newResource = newVar.getUnderlyingElement(null).eContainer();
-		final EObject existingResource = existingVar.getUnderlyingElement(null).eContainer();
-		if (newResource.equals(existingResource)) {
+		final EObject newResource = newVar.getUnderlyingElement(null) == null ? null
+				: newVar.getUnderlyingElement(null).eContainer();
+		final EObject existingResource = existingVar.getUnderlyingElement(null) == null ? null
+				: existingVar.getUnderlyingElement(null).eContainer();
+		if (Objects.equals(newResource, existingResource)) {
 			existingVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION,
 					NAME);
 			newVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION, NAME);
 			return;
 		}
-		newVar.info("This definition of " + newVar.getName() + " supersedes the one in imported file "
-				+ existingResource.eResource().getURI().lastSegment(), IGamlIssue.REDEFINES, NAME);
+		if (existingResource != null)
+			newVar.info("This definition of " + newVar.getName() + " supersedes the one in imported file "
+					+ existingResource.eResource().getURI().lastSegment(), IGamlIssue.REDEFINES, NAME);
 	}
 
 	/**

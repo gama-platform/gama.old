@@ -293,6 +293,7 @@ public interface IKeyword {
 	public static final String NB_ROWS = "nb_rows";
 	public static final String OF = "of";
 	public static final String ON = "on";
+	public static final String ON_CHANGE = "on_change";
 	public static final String OPEN_EXP = "(";
 	public static final String OPEN_LIST = "[";
 	public static final String OPEN_POINT = "{";

@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Iterators;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -171,7 +170,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = computeAgentsToSchedule(scope);
-		final Iterator<IAgent> agentsToSchedule = Iterators.forArray(agents.toArray(new IAgent[0]));
+		final List<IAgent> list = new ArrayList(agents);
+		final Iterator<IAgent> agentsToSchedule = list.iterator();
 		while (agentsToSchedule.hasNext()) {
 			if (!scope.step(agentsToSchedule.next())) {
 				continue;

@@ -14,6 +14,8 @@ package msi.gaml.variables;
 import java.util.Arrays;
 import java.util.List;
 
+import com.google.common.base.Objects;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
@@ -41,6 +43,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaListType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -69,6 +72,8 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.UPDATE,
 				// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 				type = IType.NONE, optional = true, doc = @doc("An expression that will be evaluated each cycle to compute a new value for the attribute")),
+		@facet(name = IKeyword.ON_CHANGE, type = IType.NONE, optional = true, doc = @doc("Provides a block of statements that will be executed whenever the value of the attribute changes")),
+
 		@facet(name = IKeyword.FUNCTION,
 				// AD 02/16 TODO Allow to declare ITypeProvider.OWNER_TYPE here
 				type = IType.NONE, optional = true, doc = @doc("Used to specify an expression that will be evaluated each time the attribute is accessed. This facet is incompatible with both 'init:' and 'update:'")),
@@ -100,7 +105,7 @@ public class Variable extends Symbol implements IVariable {
 			final String name = cd.getName();
 			// Verifying that the name is not null
 			if (name == null) {
-				cd.error("The variable name is missing", IGamlIssue.MISSING_NAME);
+				cd.error("The attribute name is missing", IGamlIssue.MISSING_NAME);
 				return;
 			}
 
@@ -108,13 +113,13 @@ public class Variable extends Symbol implements IVariable {
 				// Verifying that the name is not a type
 				final IType t = cd.getEnclosingDescription().getTypeNamed(name);
 				if (t != Types.NO_TYPE && !t.isAgentType()) {
-					cd.error(name + " is a type name. It cannot be used as a variable name", IGamlIssue.IS_A_TYPE, NAME,
-							name);
+					cd.error(name + " is a type name. It cannot be used as an attribute name", IGamlIssue.IS_A_TYPE,
+							NAME, name);
 					return;
 				}
 				// Verifying that the name is not reserved
 				if (IExpressionCompiler.RESERVED.contains(name)) {
-					cd.error(name + " is a reserved keyword. It cannot be used as a variable name",
+					cd.error(name + " is a reserved keyword. It cannot be used as an attribute name",
 							IGamlIssue.IS_RESERVED, NAME, name);
 					return;
 				}
@@ -123,15 +128,17 @@ public class Variable extends Symbol implements IVariable {
 			final Facets ff = cd.getFacets();
 			// Verifying that 'function' is not used in conjunction with other
 			// "value" facets
-			if (ff.containsKey(FUNCTION) && (ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE))) {
-				cd.error("A function cannot have an 'init' or 'update' facet", IGamlIssue.REMOVE_VALUE, FUNCTION);
+			if (ff.containsKey(FUNCTION) && (ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)
+					|| ff.contains(ON_CHANGE))) {
+				cd.error("A function cannot have an 'init', 'on_change' or 'update' facet", IGamlIssue.REMOVE_VALUE,
+						FUNCTION);
 				return;
 			}
 			// Verifying that a constant has not 'update' or 'function' facet
 			// and is not a parameter
 			if (ff.equals(CONST, TRUE)) {
-				if (ff.containsKey(VALUE) | ff.containsKey(UPDATE)) {
-					cd.warning("A constant variable cannot have an update value (use init or <- instead)",
+				if (ff.containsKey(VALUE) || ff.containsKey(UPDATE)) {
+					cd.warning("A constant attribute cannot have an update value (use init or <- instead)",
 							IGamlIssue.REMOVE_CONST, UPDATE);
 				} else if (ff.containsKey(FUNCTION)) {
 					cd.error("A function cannot be constant (use init or <- instead)", IGamlIssue.REMOVE_CONST,
@@ -141,6 +148,9 @@ public class Variable extends Symbol implements IVariable {
 					cd.error("Parameter '" + cd.getParameterName() + "'  cannot be declared as constant ",
 							IGamlIssue.REMOVE_CONST);
 					return;
+				} else if (ff.containsKey(ON_CHANGE)) {
+					cd.warning("A constant attribute cannot declare an on_change facet", IGamlIssue.REMOVE_CONST,
+							ON_CHANGE);
 				}
 			}
 			if (cd.isParameter()) {
@@ -227,11 +237,12 @@ public class Variable extends Symbol implements IVariable {
 
 	}
 
-	protected IExpression updateExpression, initExpression, amongExpression, functionExpression;
+	protected IExpression updateExpression, initExpression, amongExpression, functionExpression, onChangeExpression;
 	protected IType type/* , contentType */;
 	protected boolean isNotModifiable /* , doUpdate */;
 	private final int definitionOrder;
 	public GamaHelper getter, initer, setter;
+	private IExecutable on_changer;
 	protected String /* gName, sName, iName, */ pName, cName;
 	protected ISkill gSkill/* , iSkill */, sSkill;
 
@@ -246,6 +257,7 @@ public class Variable extends Symbol implements IVariable {
 		functionExpression = getFacet(IKeyword.FUNCTION);
 		initExpression = getFacet(IKeyword.INIT);
 		amongExpression = getFacet(IKeyword.AMONG);
+		onChangeExpression = getFacet(IKeyword.ON_CHANGE);
 		isNotModifiable = desc.isNotModifiable();
 		type = desc.getType();
 		// contentType = desc.getContentType();
@@ -264,6 +276,7 @@ public class Variable extends Symbol implements IVariable {
 		if (setter != null) {
 			sSkill = species.getSkillFor(setter.getSkillClass());
 		}
+
 	}
 
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
@@ -390,12 +403,21 @@ public class Variable extends Symbol implements IVariable {
 		this.name = name;
 	}
 
+	private static Object[] JunkResults = new Object[1];
+
 	@Override
 	public final void setVal(final IScope scope, final IAgent agent, final Object v) throws GamaRuntimeException {
 		if (isNotModifiable) {
 			return;
 		}
+		final Object oldValue = value(scope, agent);
 		_setVal(agent, scope, v);
+		if (!Objects.equal(oldValue, v) && onChangeExpression != null) {
+			if (on_changer == null) {
+				on_changer = agent.getSpecies().getAction(Cast.asString(scope, onChangeExpression.value(scope)));
+			}
+			scope.execute(on_changer, agent, null, JunkResults);
+		}
 	}
 
 	protected void _setVal(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
@@ -520,15 +542,6 @@ public class Variable extends Symbol implements IVariable {
 		return true;
 	}
 
-	// @Override
-	// public boolean isLabel() {
-	// return false;
-	// }
-
-	// public ISkill getgSkill() {
-	// return gSkill;
-	// }
-
 	/**
 	 * Method isDefined()
 	 * 
@@ -555,15 +568,5 @@ public class Variable extends Symbol implements IVariable {
 
 		return false;
 	}
-
-	/**
-	 * Method getContentType()
-	 * 
-	 * @see msi.gama.kernel.experiment.IParameter#getContentType()
-	 */
-	// @Override
-	// public IType getContentType() {
-	// return contentType;
-	// }
 
 }

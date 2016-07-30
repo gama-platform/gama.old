@@ -11,18 +11,27 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
-import gnu.trove.set.hash.*;
+
+import gnu.trove.set.hash.THashSet;
+import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.descriptions.SymbolSerializer.VarSerializer;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IVarExpression;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaIntegerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
@@ -33,7 +42,8 @@ import msi.gaml.types.*;
 public class VariableDescription extends SymbolDescription {
 
 	private Set<VariableDescription> dependencies;
-	// Represents the variable that are not declared in the species but that the variable depends
+	// Represents the variable that are not declared in the species but that the
+	// variable depends
 	// on.
 	private Set<String> extraDependencies;
 	private String plugin;
@@ -47,9 +57,9 @@ public class VariableDescription extends SymbolDescription {
 	private GamaHelper get, init, set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
-		final EObject source, final Facets facets) {
+			final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, source, facets);
-		if ( !facets.containsKey(TYPE) && !isExperimentParameter() ) {
+		if (!facets.containsKey(TYPE) && !isExperimentParameter()) {
 			facets.putAsLabel(TYPE, keyword);
 		}
 		_isGlobal = superDesc instanceof ModelDescription;
@@ -73,8 +83,10 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if ( /* isDisposed || */isBuiltIn() ) { return; }
-		if ( dependencies != null ) {
+		if ( /* isDisposed || */isBuiltIn()) {
+			return;
+		}
+		if (dependencies != null) {
 			dependencies.clear();
 		}
 		// varExpr = null;
@@ -84,40 +96,36 @@ public class VariableDescription extends SymbolDescription {
 
 	public void copyFrom(final VariableDescription v2) {
 		// Special cases for functions
-		boolean isFunction = this.getFacets().containsKey(FUNCTION);
+		final boolean isFunction = this.getFacets().containsKey(FUNCTION);
 		// We dont replace existing facets
-		for ( Map.Entry<String, IExpressionDescription> entry : v2.facets.entrySet() ) {
-			if ( entry == null ) {
+		for (final Map.Entry<String, IExpressionDescription> entry : v2.facets.entrySet()) {
+			if (entry == null) {
 				continue;
 			}
-			String facetName = entry.getKey();
-			if ( isFunction ) {
-				if ( facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE) ) {
+			final String facetName = entry.getKey();
+			if (isFunction) {
+				if (facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE)) {
 					continue;
 				}
 			}
-			if ( !facets.containsKey(facetName) ) {
+			if (!facets.containsKey(facetName)) {
 				facets.put(facetName, entry.getValue());
 			}
 		}
-		if ( get == null ) {
+		if (get == null) {
 			get = v2.get;
 		}
-		if ( set == null ) {
+		if (set == null) {
 			set = v2.set;
 		}
-		if ( init == null ) {
+		if (init == null) {
 			init = v2.init;
 		}
-		// originName = v2.originName;
-		// if ( originName == null ) {
-		// originName = v2.originName;
-		// }
 	}
 
 	@Override
 	public VariableDescription copy(final IDescription into) {
-		VariableDescription vd = new VariableDescription(getKeyword(), into, null, element, facets.cleanCopy());
+		final VariableDescription vd = new VariableDescription(getKeyword(), into, null, element, facets.cleanCopy());
 		vd.addHelpers(get, init, set);
 		vd.originName = originName;
 		return vd;
@@ -130,71 +138,79 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getType() {
-		if ( type == null ) {
+		if (type == null) {
 			type = super.getType();
 		}
 		return type;
 	}
 
 	/**
-	 * Returns the type denoted by this string. This is a contextual retrieval, as the string can contain the value of one of the ITypeProvider constants.
-	 * Method getTypeNamed()
+	 * Returns the type denoted by this string. This is a contextual retrieval,
+	 * as the string can contain the value of one of the ITypeProvider
+	 * constants. Method getTypeNamed()
+	 * 
 	 * @see msi.gaml.descriptions.SymbolDescription#getTypeNamed(java.lang.String)
 	 */
 	@Override
 	public IType getTypeNamed(final String s) {
-		IType result = super.getTypeNamed(s);
-		if ( result == Types.NO_TYPE ) {
-			int provider = GamaIntegerType.staticCast(null, s, null, false);
+		final IType result = super.getTypeNamed(s);
+		if (result == Types.NO_TYPE) {
+			final int provider = GamaIntegerType.staticCast(null, s, null, false);
 			switch (provider) {
-				case ITypeProvider.MACRO_TYPE:
-					IDescription species = this.getEnclosingDescription();
-					IDescription macro = species.getEnclosingDescription();
-					if ( macro == null ) { return Types.AGENT; }
-					return macro.getType();
-				case ITypeProvider.OWNER_TYPE: // This represents the type of the agents of the enclosing species
-					if ( this.getEnclosingDescription() == null ) {
-						return Types.AGENT;
+			case ITypeProvider.MACRO_TYPE:
+				final IDescription species = this.getEnclosingDescription();
+				final IDescription macro = species.getEnclosingDescription();
+				if (macro == null) {
+					return Types.AGENT;
+				}
+				return macro.getType();
+			case ITypeProvider.OWNER_TYPE: // This represents the type of the
+											// agents of the enclosing species
+				if (this.getEnclosingDescription() == null) {
+					return Types.AGENT;
+				}
+				return this.getEnclosingDescription().getType();
+			case ITypeProvider.MODEL_TYPE: // This represents the type of the
+											// model (used for simulations)
+				final ModelDescription md = this.getModelDescription();
+				if (md == null) {
+					return Types.get("model");
+				}
+				return md.getType();
+			case ITypeProvider.MIRROR_TYPE:
+				if (getEnclosingDescription() == null) {
+					return null;
+				}
+				final IExpression mirrors = getEnclosingDescription().getFacets().getExpr(MIRRORS);
+				if (mirrors != null) {
+					// We try to change the type of the 'target' variable if the
+					// expression contains only agents from the
+					// same species
+					final IType t = mirrors.getType().getContentType();
+					if (t.isAgentType() && t.id() != IType.AGENT) {
+						getEnclosingDescription().info("The 'target' attribute will be of type " + t.getSpeciesName(),
+								IGamlIssue.GENERAL, MIRRORS);
 					}
-					return this.getEnclosingDescription().getType();
-				case ITypeProvider.MODEL_TYPE: // This represents the type of the model (used for simulations)
-					ModelDescription md = this.getModelDescription();
-					if ( md == null ) { return Types.get("model"); }
-					return md.getType();
-				case ITypeProvider.MIRROR_TYPE:
-					if ( getEnclosingDescription() == null ) {
-						return null;
-					}
-					IExpression mirrors = getEnclosingDescription().getFacets().getExpr(MIRRORS);
-					if ( mirrors != null ) {
-						// We try to change the type of the 'target' variable if the expression contains only agents from the
-						// same species
-						IType t = mirrors.getType().getContentType();
-						if ( t.isAgentType() && t.id() != IType.AGENT ) {
-							getEnclosingDescription().info(
-								"The 'target' attribute will be of type " + t.getSpeciesName(), IGamlIssue.GENERAL,
-								MIRRORS);
-						}
-						return t;
-					} else {
-						getEnclosingDescription().info(
+					return t;
+				} else {
+					getEnclosingDescription().info(
 							"No common species detected in 'mirrors'. The 'target' variable will be of generic type 'agent'",
 							IGamlIssue.WRONG_TYPE, MIRRORS);
-					}
+				}
 			}
 		}
 		return result;
 	}
 
 	public Set<VariableDescription> usedVariablesIn(final Map<String, VariableDescription> vars) {
-		if ( dependencies == null ) {
+		if (dependencies == null) {
 			dependencies = new TLinkedHashSet();
 			extraDependencies = new TLinkedHashSet();
-			IExpressionDescription depends = facets.get(DEPENDS_ON);
-			if ( depends != null ) {
-				for ( final String s : depends.getStrings(getSpeciesContext(), false) ) {
-					VariableDescription v = vars.get(s);
-					if ( v != null ) {
+			final IExpressionDescription depends = facets.get(DEPENDS_ON);
+			if (depends != null) {
+				for (final String s : depends.getStrings(getSpeciesContext(), false)) {
+					final VariableDescription v = vars.get(s);
+					if (v != null) {
 						dependencies.add(v);
 					} else {
 						extraDependencies.add(s);
@@ -209,8 +225,8 @@ public class VariableDescription extends SymbolDescription {
 
 	public void expandDependencies(final List<VariableDescription> without) {
 		final Set<VariableDescription> accumulator = new THashSet();
-		for ( final VariableDescription dep : dependencies ) {
-			if ( !without.contains(dep) ) {
+		for (final VariableDescription dep : dependencies) {
+			if (!without.contains(dep)) {
 				without.add(this);
 				dep.expandDependencies(without);
 				accumulator.addAll(dep.getDependencies());
@@ -235,10 +251,6 @@ public class VariableDescription extends SymbolDescription {
 		_isUpdatable = b;
 	}
 
-	// public boolean isFunction() {
-	// return _isFunction;
-	// }
-
 	public boolean isNotModifiable() {
 		return _isNotModifiable;
 	}
@@ -249,18 +261,10 @@ public class VariableDescription extends SymbolDescription {
 
 	// If hasField is true, should not try to build a GlobalVarExpr
 	public IExpression getVarExpr(final boolean asField) {
-		boolean asGlobal = _isGlobal && !asField;
+		final boolean asGlobal = _isGlobal && !asField;
 
-		// if ( varExpr != null ) {
-		// if (asGlobal && ((IVarExpression)varExpr).)
-		//
-		//
-		// return varExpr;
-		//
-		//
-		// }
-		IExpression varExpr = GAML.getExpressionFactory().createVar(getName(), getType(), isNotModifiable(),
-			asGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
+		final IExpression varExpr = GAML.getExpressionFactory().createVar(getName(), getType(), isNotModifiable(),
+				asGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getEnclosingDescription());
 		return varExpr;
 	}
 
@@ -279,24 +283,28 @@ public class VariableDescription extends SymbolDescription {
 
 	public String getParameterName() {
 		final String pName = facets.getLabel(PARAMETER);
-		if ( pName == null || pName.equals(TRUE) ) { return getName(); }
+		if (pName == null || pName.equals(TRUE)) {
+			return getName();
+		}
 		return pName;
 	}
 
 	@Override
 	public String getTitle() {
-		String title =
-			"Definition of " + (isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ");
-		return title + " " + getName() /* + " of type " + getType().getTitle() */;
+		final String title = "Definition of "
+				+ (isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ");
+		return title + " "
+				+ getName() /* + " of type " + getType().getTitle() */;
 	}
 
 	@Override
 	public String getDocumentation() {
-		String title = "a" + (isParameter() ? "  parameter " : isNotModifiable() ? " constant " : "n attribute ");
-		if ( getEnclosingDescription() == null ) { return "This statement declares " + getName() + " as " + title +
-			"<br/>" + super.getDocumentation(); }
-		String s = "This statement declares " + getName() + " as " + title + ", of type " + getType().getTitle() +
-			", in " + this.getEnclosingDescription().getTitle() + "<br/>";
+		final String title = "a" + (isParameter() ? "  parameter " : isNotModifiable() ? " constant " : "n attribute ");
+		if (getEnclosingDescription() == null) {
+			return "This statement declares " + getName() + " as " + title + "<br/>" + super.getDocumentation();
+		}
+		final String s = "This statement declares " + getName() + " as " + title + ", of type " + getType().getTitle()
+				+ ", in " + this.getEnclosingDescription().getTitle() + "<br/>";
 		return s + super.getDocumentation();
 	}
 
@@ -333,7 +341,8 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	/**
-	 * @param plugin name
+	 * @param plugin
+	 *            name
 	 */
 	@Override
 	public void setDefiningPlugin(final String plugin) {

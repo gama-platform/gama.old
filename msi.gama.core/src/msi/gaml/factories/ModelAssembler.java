@@ -459,7 +459,7 @@ public class ModelAssembler {
 		SpeciesDescription parent = lookupSpecies(p, cache);
 		// DEBUG
 		if (parent == null) {
-			System.out.println("Null parent for species " + micro.getName());
+			System.out.println("No parent for species " + micro.getName());
 			parent = model.getSpeciesDescription(p);
 		}
 		mDesc.setParent(parent);

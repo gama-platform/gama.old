@@ -44,6 +44,7 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true, doc = @doc("Indicates whether this attribute can be subsequently modified or not")),
 		@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true, doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
 		@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true, doc = @doc("Soon to be deprecated. Declare the parameter in an experiment instead")),
+		@facet(name = IKeyword.ON_CHANGE, type = IType.NONE, optional = true, doc = @doc("Provides a block of statements that will be executed whenever the value of the attribute changes")),
 		@facet(name = IKeyword.MIN, type = { IType.INT,
 				IType.FLOAT }, optional = true, doc = @doc("The minimum value this attribute can take")),
 		@facet(name = IKeyword.MAX, type = { IType.INT,

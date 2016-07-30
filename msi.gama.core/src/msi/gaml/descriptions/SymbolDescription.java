@@ -481,7 +481,7 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public boolean isBuiltIn() {
-		return element == null;
+		return element == null && (enclosing == null || enclosing.isBuiltIn());
 	}
 
 	@Override

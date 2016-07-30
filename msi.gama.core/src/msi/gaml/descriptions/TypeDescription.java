@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -193,15 +194,17 @@ public abstract class TypeDescription extends SymbolDescription {
 			newVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION, NAME);
 			return;
 		}
-		if (existingVar.isBuiltIn()) {
+		if (existingVar.getUnderlyingElement(null) == null) {
 			newVar.info(
 					"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
 					IGamlIssue.REDEFINES, NAME);
 		} else {
 			// Possibily different resources
-			final Resource newResource = newVar.getUnderlyingElement(null).eResource();
-			final Resource existingResource = existingVar.getUnderlyingElement(null).eResource();
-			if (newResource.equals(existingResource)) {
+			final Resource newResource = newVar.getUnderlyingElement(null) == null ? null
+					: newVar.getUnderlyingElement(null).eResource();
+			final Resource existingResource = existingVar.getUnderlyingElement(null) == null ? null
+					: existingVar.getUnderlyingElement(null).eResource();
+			if (Objects.equals(newResource, existingResource)) {
 				newVar.info("This definition of " + newVar.getName() + " supersedes the one in "
 						+ existingVar.getOriginName(), IGamlIssue.REDEFINES, NAME);
 			} else {

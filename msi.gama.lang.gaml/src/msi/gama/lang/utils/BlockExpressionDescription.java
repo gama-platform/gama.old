@@ -21,9 +21,9 @@ public class BlockExpressionDescription extends EcoreBasedExpressionDescription 
 
 	@Override
 	public IExpression compile(final IDescription context) {
-		SpeciesDescription sd = context.getSpeciesContext();
-		if (sd.isExperiment())
-			sd = sd.getModelDescription();
+		final SpeciesDescription sd = context.getSpeciesContext();
+		// if (sd.isExperiment())
+		// sd = sd.getModelDescription();
 		final StatementDescription action = (StatementDescription) DescriptionFactory.create(element, sd, null);
 		if (action != null) {
 			sd.addChild(action);

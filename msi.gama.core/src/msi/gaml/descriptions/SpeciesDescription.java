@@ -893,40 +893,6 @@ public class SpeciesDescription extends TypeDescription {
 		return skills;
 	}
 
-	public Class getJavaBaseOld() {
-		// if ( getName().equals(AGENT) ) {
-		// javaBase = MinimalAgent.class;
-		// return javaBase;
-		// }
-		// Takes care of invalid species (see Issue 711)
-		if (javaBase == null && parent != null && parent != this && !parent.getName().equals(AGENT)) {
-			javaBase = getParent().getJavaBase();
-		}
-		if (javaBase == null) {
-			boolean useMinimalAgents = GamaPreferences.AGENT_OPTIMIZATION.getValue()
-					|| FALSE.equals(facets.getLabel("use_regular_agents"));
-			if (useMinimalAgents && TRUE.equals(facets.getLabel("use_regular_agents"))) {
-				useMinimalAgents = false;
-			}
-			if (useMinimalAgents) {
-				for (final SpeciesDescription subSpecies : getSelfWithAllSubSpecies()) {
-					if (subSpecies.hasMicroSpecies()) {
-						useMinimalAgents = false;
-						break;
-					}
-				}
-
-			}
-			if (useMinimalAgents) {
-				javaBase = isGrid() ? MinimalGridAgent.class : MinimalAgent.class;
-			} else {
-				javaBase = isGrid() ? GamlGridAgent.class : GamlAgent.class;
-			}
-		}
-		System.out.println("GetJavaBase() for " + this + " : " + javaBase);
-		return javaBase;
-	}
-
 	@Override
 	public Class<? extends IAgent> getJavaBase() {
 		if (javaBase == null) {

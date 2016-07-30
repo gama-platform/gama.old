@@ -399,11 +399,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	// @Override
-	// public boolean hasParameters() {
-	// return targetedVars.size() != 0;
-	// }
-
-	// @Override
 	public void setParameterValue(final IScope scope, final String name, final Object val) throws GamaRuntimeException {
 		checkGetParameter(name).setValue(scope, val);
 	}
@@ -441,8 +436,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	public void addParameter(final IParameter p) {
-		// scope.getGui().debug("ExperimentPlan.addParameter " + p.getName());
-		// TODO Verify this
 		final String name = p.getName();
 		final IParameter already = parameters.get(name);
 		if (already != null) {
@@ -472,8 +465,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public Map<String, IParameter> getParameters() {
 		return parameters;
-		// result.addAll(systemParameters);
-		// return result;
 	}
 
 	@Override
@@ -483,13 +474,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 		return agent.getSimulation();
 	}
-
-	//
-	// @Override
-	// public boolean isLoading() {
-	// if ( agent == null ) { return false; }
-	// return agent.isLoading();
-	// }
 
 	/**
 	 * A short-circuited scope that represents the scope of the experiment. If a

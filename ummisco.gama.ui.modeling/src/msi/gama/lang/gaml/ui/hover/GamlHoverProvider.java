@@ -47,7 +47,6 @@ import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
-import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.utils.EGaml;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
@@ -242,11 +241,13 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 				if (def != null)
 					return getFirstLine(def);
 			}
-		} else
-
-		if (o instanceof VariableRef) {
-			return getFirstLine(((VariableRef) o).getRef());
 		}
+
+		// else
+
+		// if (o instanceof VariableRef) {
+		// return getFirstLine(((VariableRef) o).getRef());
+		// }
 
 		final IGamlDescription description = DescriptionFactory.getGamlDocumentation(o);
 		if (description == null) {

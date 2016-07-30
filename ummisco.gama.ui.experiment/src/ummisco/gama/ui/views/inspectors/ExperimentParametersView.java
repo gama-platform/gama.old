@@ -37,9 +37,9 @@ import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
-import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
 public class ExperimentParametersView extends AttributesEditorsView<String> implements IGamaView.Parameters {
 
@@ -81,11 +81,6 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 		}
 	}
 
-	// @Override
-	// public/* final */void createPartControl(final Composite composite) {
-	// super.createPartControl(composite);
-	// }
-
 	@Override
 	public void displayItems() {
 		super.displayItems();
@@ -95,12 +90,6 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	protected void displayCommands() {
 		toolbar.wipe(SWT.LEFT, true);
 		final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
-		//
-		// String expInfo = "Model " +
-		// experiment.getModel().getDescription().getTitle() + " / " +
-		// StringUtils.capitalize(experiment.getDescription().getTitle());
-		// toolbar.status((Image) null, expInfo, IGamaColors.NEUTRAL, SWT.LEFT);
-		// toolbar.sep(2, SWT.LEFT);
 		for (final UserCommandStatement command : userCommands) {
 			GamaUIColor color = GamaColors.get(command.getColor(GAMA.getRuntimeScope()));
 			if (color == null)

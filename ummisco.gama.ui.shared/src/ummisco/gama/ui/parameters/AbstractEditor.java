@@ -215,16 +215,19 @@ public abstract class AbstractEditor<T>
 	}
 
 	private final void valueModified(final Object newValue) throws GamaRuntimeException {
+
 		IAgent a = agent;
 		if (a == null) {
 			final IExperimentPlan exp = GAMA.getExperiment();
 			if (exp != null) {
 				a = exp.getAgent();
 			}
-			param.setValue(a == null ? null : a.getScope(), newValue);
 		}
 		if (a != null && GAMA.getExperiment() != null && GAMA.getExperiment().getAgent() != null) {
 			GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
+		}
+		if (agent == null) {
+			param.setValue(a == null ? null : a.getScope(), newValue);
 		}
 	}
 
@@ -494,7 +497,6 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected void setParameterValue(final T val) {
-		// if ( listener == null ) { return; }
 		WorkbenchHelper.run(new Runnable() {
 
 			@Override
@@ -599,17 +601,9 @@ public abstract class AbstractEditor<T>
 		return param;
 	}
 
-	// protected String getTooltipText() {
-	// String s = param.getName() + " (of type " +
-	// getExpectedType().serialize(true);
-	// if ( isValueModified() ) {
-	// s += ", with an initial value of " +
-	// StringUtils.toGaml(getOriginalValue(), false);
-	// }
-	// return s + ")";
-	// }
-
 	protected void modifyValue(final T val) throws GamaRuntimeException {
+		if (!isValueDifferent(val))
+			return;
 		currentValue = val;
 		if (titleLabel != null && !titleLabel.isDisposed()) {
 			titleLabel
@@ -692,14 +686,6 @@ public abstract class AbstractEditor<T>
 	protected void setOriginalValue(final T originalValue) {
 		this.originalValue = originalValue;
 	}
-
-	// public boolean acceptPopup() {
-	// return acceptPopup;
-	// }
-	//
-	// public void acceptPopup(final boolean accept) {
-	// acceptPopup = accept;
-	// }
 
 	protected T applyPlus() {
 		return null;

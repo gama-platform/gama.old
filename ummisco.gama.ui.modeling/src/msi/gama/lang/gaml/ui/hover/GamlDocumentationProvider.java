@@ -83,9 +83,11 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 				final ActionRef ref = (ActionRef) f.getAction();
 				return getDocumentation(ref.getRef());
 			}
-		} else if (o instanceof VariableRef) {
-			return getDocumentation(((VariableRef) o).getRef());
 		}
+
+		// else if (o instanceof VariableRef) {
+		// return getDocumentation(((VariableRef) o).getRef());
+		// }
 		final IGamlDescription description = DescriptionFactory.getGamlDocumentation(o);
 
 		// TODO Add a swtich for constants
