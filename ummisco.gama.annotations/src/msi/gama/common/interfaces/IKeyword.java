@@ -393,6 +393,7 @@ public interface IKeyword {
 	public static final String STRATEGY = "scheduling_strategy";
 	public static final String STYLE = "style";
 	public static final String SWITCH = "switch";
+	public static final String SYNTHETIC = "__synthetic__";
 	public static final String TABU = "tabu";
 	public static final String TARGET = "target";
 	public static final String TARGETS = "scheduling_targets";

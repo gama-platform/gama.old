@@ -1201,7 +1201,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		} else {
 			resource.unload();
 		}
-		if (context != null && context.getUnderlyingElement(null) != null) {
+		if (context != null && !context.isBuiltIn()) {
 			final GamlResource real = (GamlResource) context.getUnderlyingElement(null).eResource();
 			resource.setRealResource(real);
 		}
@@ -1311,7 +1311,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public ModelDescription createModelDescriptionFromFile(final String fileName) {
-		// System.out.println(fileName + " model is loading...");
 
 		final GamlResource resource = (GamlResource) getContext().getModelDescription().getUnderlyingElement(null)
 				.eResource();

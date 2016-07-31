@@ -481,7 +481,11 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public boolean isBuiltIn() {
-		return element == null && (enclosing == null || enclosing.isBuiltIn());
+		return element == null && !isSynthetic();
+	}
+
+	public boolean isSynthetic() {
+		return getName().startsWith(SYNTHETIC);
 	}
 
 	@Override

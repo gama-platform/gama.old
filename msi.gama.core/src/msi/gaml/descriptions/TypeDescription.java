@@ -194,7 +194,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			newVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION, NAME);
 			return;
 		}
-		if (existingVar.getUnderlyingElement(null) == null) {
+		if (existingVar.isBuiltIn()) {
 			newVar.info(
 					"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
 					IGamlIssue.REDEFINES, NAME);
@@ -202,8 +202,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			// Possibily different resources
 			final Resource newResource = newVar.getUnderlyingElement(null) == null ? null
 					: newVar.getUnderlyingElement(null).eResource();
-			final Resource existingResource = existingVar.getUnderlyingElement(null) == null ? null
-					: existingVar.getUnderlyingElement(null).eResource();
+			final Resource existingResource = existingVar.getUnderlyingElement(null).eResource();
 			if (Objects.equals(newResource, existingResource)) {
 				newVar.info("This definition of " + newVar.getName() + " supersedes the one in "
 						+ existingVar.getOriginName(), IGamlIssue.REDEFINES, NAME);

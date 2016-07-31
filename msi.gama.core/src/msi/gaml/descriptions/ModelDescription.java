@@ -164,17 +164,15 @@ public class ModelDescription extends SpeciesDescription {
 		if (newVar.isBuiltIn()) {
 			return;
 		}
-		if (existingVar.getUnderlyingElement(null) == null) {
+		if (existingVar.isBuiltIn()) {
 			newVar.info(
 					"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
 					IGamlIssue.REDEFINES, NAME);
 			return;
 		}
 
-		final EObject newResource = newVar.getUnderlyingElement(null) == null ? null
-				: newVar.getUnderlyingElement(null).eContainer();
-		final EObject existingResource = existingVar.getUnderlyingElement(null) == null ? null
-				: existingVar.getUnderlyingElement(null).eContainer();
+		final EObject newResource = newVar.getUnderlyingElement(null).eContainer();
+		final EObject existingResource = existingVar.getUnderlyingElement(null).eContainer();
 		if (Objects.equals(newResource, existingResource)) {
 			existingVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION,
 					NAME);

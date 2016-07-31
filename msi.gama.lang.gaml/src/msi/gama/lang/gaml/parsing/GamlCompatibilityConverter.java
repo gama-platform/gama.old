@@ -51,6 +51,7 @@ import static msi.gama.common.interfaces.IKeyword.SAVE;
 import static msi.gama.common.interfaces.IKeyword.SAVE_BATCH;
 import static msi.gama.common.interfaces.IKeyword.SET;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
+import static msi.gama.common.interfaces.IKeyword.SYNTHETIC;
 import static msi.gama.common.interfaces.IKeyword.TITLE;
 import static msi.gama.common.interfaces.IKeyword.TO;
 import static msi.gama.common.interfaces.IKeyword.TYPE;
@@ -549,7 +550,7 @@ public class GamlCompatibilityConverter {
 			if (expr == null && facet.getBlock() != null) {
 				final Block b = facet.getBlock();
 				final ISyntacticElement elt = SyntacticFactory.create(ACTION,
-						new Facets(NAME, "synthetic" + SYNTHETIC_ACTION++), true);
+						new Facets(NAME, SYNTHETIC + SYNTHETIC_ACTION++), true);
 				convertBlock(elt, b, errors);
 				return convExpr(elt, errors);
 			}
