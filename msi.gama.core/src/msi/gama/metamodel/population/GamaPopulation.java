@@ -27,6 +27,7 @@ import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
@@ -548,9 +549,6 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 						: 100
 				: Cast.asInt(scope, exp.value(scope));
 
-		// exp = species.getFacet(IKeyword.TORUS);
-		// final boolean isTorus = exp != null && Cast.asBool(scope,
-		// exp.value(scope));
 		final boolean isTorus = host.getTopology().isTorus();
 		exp = species.getFacet("use_individual_shapes");
 		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
@@ -564,11 +562,18 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
 		exp = species.getFacet(IKeyword.FILE);
 		final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
+		GridTopology result;
 		if (file == null) {
-			return new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, useIndividualShapes,
+			result = new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon, useIndividualShapes,
 					useNeighborsCache);
-		}
-		return new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache);
+		} else
+			result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache);
+		final Envelope3D env = result.getPlaces().getEnvironmentFrame().getEnvelope();
+		final Envelope3D world = host.getEnvelope();
+		final Envelope3D newEnvelope = new Envelope3D(0, Math.max(env.getWidth(), world.getWidth()), 0,
+				Math.max(env.getHeight(), world.getHeight()), 0, Math.max(env.getDepth(), world.getDepth()));
+		host.setGeometry(new GamaShape(newEnvelope));
+		return result;
 	}
 
 	@Override
