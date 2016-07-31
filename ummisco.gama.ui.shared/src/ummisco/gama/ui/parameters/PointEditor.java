@@ -55,7 +55,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	}
 
 	PointEditor(final IScope scope, final Composite parent, final String title, final ILocation value,
-		final EditorListener<ILocation> whenModified) {
+			final EditorListener<ILocation> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
@@ -64,7 +64,8 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
 		pointEditor = new Composite(comp, SWT.NONE);
-		// final GridData pointEditorGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
+		// final GridData pointEditorGridData = new GridData(GridData.FILL,
+		// GridData.CENTER, true, false);
 		// pointEditorGridData.widthHint = 100;
 		// pointEditor.setLayoutData(pointEditorGridData);
 		final GridLayout pointEditorLayout = new GridLayout(3, true);
@@ -75,7 +76,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 		pointEditor.setLayout(pointEditorLayout);
 		pointEditor.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 
-		for ( int i = 0; i < 3; i++ ) {
+		for (int i = 0; i < 3; i++) {
 			final Composite xComposite = new Composite(pointEditor, SWT.NO_BACKGROUND);
 			xComposite.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
 			final GridLayout subCompositeLayout = new GridLayout(2, false);
@@ -113,10 +114,14 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 
 	@Override
 	public void verifyText(final VerifyEvent event) {
-		if ( internalModification ) { return; }
-		if ( !allowVerification ) { return; }
+		if (internalModification) {
+			return;
+		}
+		if (!allowVerification) {
+			return;
+		}
 		final char myChar = event.character;
-		if ( myChar == '\0' ) {
+		if (myChar == '\0') {
 
 		}
 		// Last one is for texts
@@ -127,8 +132,8 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 	protected void displayParameterValue() {
 		allowVerification = false;
 		final GamaPoint p = (GamaPoint) currentValue;
-		for ( int i = 0; i < 3; i++ ) {
-			if ( isReverting || !ordinates[i].isFocusControl() ) {
+		for (int i = 0; i < 3; i++) {
+			if (isReverting || !ordinates[i].isFocusControl()) {
 				ordinates[i].setText(currentValue == null ? "0.0" : StringUtils.toGaml(p.getOrdinate(i), false));
 			}
 		}
@@ -138,10 +143,14 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 
 	@Override
 	public void modifyText(final ModifyEvent me) {
-		if ( internalModification ) { return; }
-		if ( !allowVerification ) { return; }
+		if (internalModification) {
+			return;
+		}
+		if (!allowVerification) {
+			return;
+		}
 		modifyAndDisplayValue(new GamaPoint(Cast.asFloat(getScope(), ordinates[0].getText()),
-			Cast.asFloat(getScope(), ordinates[1].getText()), Cast.asFloat(getScope(), ordinates[1].getText())));
+				Cast.asFloat(getScope(), ordinates[1].getText()), Cast.asFloat(getScope(), ordinates[2].getText())));
 
 	}
 

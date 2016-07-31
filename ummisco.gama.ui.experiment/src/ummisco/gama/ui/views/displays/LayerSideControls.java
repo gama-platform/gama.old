@@ -124,6 +124,7 @@ public class LayerSideControls {
 					@Override
 					public void valueModified(final ILocation newValue) {
 						layer.setPosition(newValue);
+						updateIfPaused(layer, container);
 					}
 
 				});
