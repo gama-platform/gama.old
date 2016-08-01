@@ -9,29 +9,33 @@ import org.eclipse.ui.views.markers.MarkerItem;
 
 public class GamlDescriptionMarkerField extends MarkerSeverityAndDescriptionField {
 
-	public GamlDescriptionMarkerField() {}
+	public GamlDescriptionMarkerField() {
+	}
 
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see org.eclipse.ui.views.markers.MarkerField#update(org.eclipse.jface.viewers.ViewerCell)
+	 * @see
+	 * org.eclipse.ui.views.markers.MarkerField#update(org.eclipse.jface.viewers
+	 * .ViewerCell)
 	 */
 	@Override
 	public void update(final ViewerCell cell) {
-		MarkerItem item = (MarkerItem) cell.getElement();
+		final MarkerItem item = (MarkerItem) cell.getElement();
 		Image image = null;
-		if ( item.getMarker() == null ) {
+		if (item.getMarker() == null) {
 			image = GamlMarkerImageProvider.getImage(item.getAttributeValue(IMarker.MESSAGE, "")).image();
 		} else {
 			try {
-				if ( item.getMarker().isSubtypeOf(IMarker.TASK) ) {
+				if (item.getMarker().isSubtypeOf(IMarker.TASK)) {
 					image = GamlMarkerImageProvider.getImage(-1).image();
 				} else {
 					image = GamlMarkerImageProvider
-						.getImage(item.getMarker().getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING)).image();
+							.getImage(item.getMarker().getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING))
+							.image();
 				}
-			} catch (CoreException e) {
-				e.printStackTrace();
+			} catch (final CoreException e) {
+				// e.printStackTrace();
 			}
 		}
 
