@@ -23,7 +23,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.IExecutable;
-import msi.gaml.statements.IStatement;
 
 /**
  * Written by marilleau
@@ -104,18 +103,13 @@ public class EventLayer extends AbstractLayer {
 		private final static int KEY_PRESSED = 3;
 
 		private final int listenedEvent;
-		private final IStatement.WithArgs executer;
 		private final IDisplaySurface surface;
-		private final String event;
+		private final String event, actionName;
 
 		public EventListener(final IDisplaySurface display, final String event, final String action) {
+			actionName = action;
 			this.event = event;
 			listenedEvent = getListeningEvent(event);
-			IAgent a = display.getDisplayScope().getSimulationScope();
-			if (a == null) {
-				a = display.getDisplayScope().getExperiment();
-			}
-			executer = a.getSpecies().getAction(action);
 			surface = display;
 		}
 
@@ -188,6 +182,9 @@ public class EventLayer extends AbstractLayer {
 		}
 
 		private void executeEvent(final int x, final int y) {
+			final IAgent agent = ((EventLayerStatement) definition).executesInSimulation() ? scope.getSimulationScope()
+					: scope.getExperiment();
+			final IExecutable executer = agent == null ? null : agent.getSpecies().getAction(actionName);
 			if (executer == null) {
 				return;
 			}
@@ -201,36 +198,13 @@ public class EventLayer extends AbstractLayer {
 					return;
 				}
 			}
-			// final Arguments args = new Arguments();
-			// if (x > -1 && y > -1) {
-			// if (pointArg != null) {
-			// args.put(pointArg, ConstantExpressionDescription.create(new
-			// GamaPoint(pp.getX(), pp.getY())));
-			// }
-			// if (listArg != null && listenedEvent != MOUSE_MOVED &&
-			// listenedEvent != MOUSE_ENTERED
-			// && listenedEvent != MOUSE_EXITED) {
-			// final IContainer<Integer, IAgent> agentset =
-			// GamaListFactory.createWithoutCasting(Types.AGENT,
-			// surface.selectAgent(x, y));
-			// args.put(listArg,
-			// ConstantExpressionDescription.create(agentset));
-			// }
-			// }
 			GAMA.runAndUpdateAll(new Runnable() {
+
+				final Object[] result = new Object[1];
 
 				@Override
 				public void run() {
-
-					scope.getSimulationScope().executeAction(new IExecutable() {
-
-						@Override
-						public Object executeOn(final IScope scope) {
-							// executer.setRuntimeArgs(args);
-							executer.executeOn(scope);
-							return null;
-						}
-					});
+					scope.execute(executer, agent, null, result);
 				}
 			});
 

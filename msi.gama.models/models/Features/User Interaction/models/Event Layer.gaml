@@ -78,6 +78,7 @@ experiment Displays type: gui
 			species cell aspect: default;
 
 			//event, launches the action change_color if the event mouse_down (ie. the user clicks on the layer event) is triggered
+			// the action can be either in the experiment or in the global section. If it is defined in both, the one in the experiment will be chosen in priority
 			event [mouse_down] action: change_color;
 		}
 
@@ -86,7 +87,8 @@ experiment Displays type: gui
 			species cell;
 
 			//event, launches the action change_shape if the event mouse_down (ie. the user clicks on the layer event) is triggered
-			event [mouse_down] action: {do change_shape;};
+			// The block is executed in the context of the experiment, so we have to ask the simulation to do it. 
+			event [mouse_down] action: {ask simulation {do change_shape;}};
 		}
 
 	}

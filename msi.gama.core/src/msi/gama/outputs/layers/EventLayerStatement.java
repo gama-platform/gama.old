@@ -78,14 +78,9 @@ public class EventLayerStatement extends AbstractLayerStatement {
 			final String actionName = exp.literalValue();
 			StatementDescription sd = description.getModelDescription().getAction(actionName);
 			if (sd == null) {
-				// display
-				IDescription superDesc = description.getEnclosingDescription();
-				// output or permanent
-				superDesc = superDesc.getEnclosingDescription();
-				if (superDesc.getKeyword() == IKeyword.PERMANENT) {
-					// we look into experiment
-					sd = superDesc.getEnclosingDescription().getAction(actionName);
-				}
+				// we look into the experiment
+				final IDescription superDesc = description.getSpeciesContext();
+				sd = superDesc.getAction(actionName);
 			}
 			if (sd == null) {
 				description.error("Action '" + actionName + "' is not defined in neither 'global' nor 'experiment'",
@@ -100,8 +95,18 @@ public class EventLayerStatement extends AbstractLayerStatement {
 		}
 	}
 
+	private final boolean executesInSimulation;
+
 	public EventLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);
+		final IExpression exp = description.getFacets().getExpr(IKeyword.ACTION);
+		final String actionName = exp.literalValue();
+		final StatementDescription sd = description.getSpeciesContext().getAction(actionName);
+		executesInSimulation = sd == null;
+	}
+
+	public boolean executesInSimulation() {
+		return executesInSimulation;
 	}
 
 	@Override
