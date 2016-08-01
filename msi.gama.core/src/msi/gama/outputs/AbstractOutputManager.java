@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import msi.gama.runtime.IScope;
@@ -179,25 +178,19 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean step(final IScope scope) {
-		final List<AbstractOutput> out = ImmutableList.copyOf(outputs.values());
-		final boolean[] update = new boolean[out.size()];
-		int i = 0;
-		for (final AbstractOutput o : out) {
-			if (!o.isPaused() && o.isOpen() && o.isRefreshable()) {
-				update[i++] = o.getScope().step(o);
+		final AbstractOutput[] array = outputs.values().toArray(new AbstractOutput[0]);
+		for (int i = 0; i < array.length; i++) {
+			final AbstractOutput o = array[i];
+			if (!o.isRefreshable() || !o.getScope().step(o)) {
+				array[i] = null;
 			}
 		}
-		i = 0;
-		for (final AbstractOutput o : out) {
-			if (update[i++]) {
-				try {
-					o.update();
-				} catch (final RuntimeException e) {
-					e.printStackTrace();
-					continue;
-				}
+		for (final AbstractOutput o : array) {
+			if (o != null) {
+				o.update();
 			}
 		}
+
 		return true;
 	}
 

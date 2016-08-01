@@ -111,6 +111,10 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	// @Override
 	boolean isRefreshable() {
+		if (!isOpen())
+			return false;
+		if (isPaused())
+			return true;
 		final IScope scope = getScope();
 		return Cast.asBool(scope, refresh.value(scope)) && refreshRate > 0
 				&& scope.getClock().getCycle() % refreshRate == 0;
