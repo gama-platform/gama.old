@@ -41,6 +41,7 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.expressions.ListExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets;
 import msi.gaml.statements.IExecutable;
@@ -159,6 +160,29 @@ public class Variable extends Symbol implements IVariable {
 				assertValueFacetsTypes(cd, ff, cd.getType());
 			}
 			assertAssignmentFacetsTypes(cd, ff);
+			assertAmongValues(cd, ff);
+		}
+
+		public void assertAmongValues(final VariableDescription vd, final Facets facets) {
+			// if (vd.isParameter() && vd.getSpeciesContext().isExperiment()
+			// && ((ExperimentDescription) vd.getSpeciesContext()).isBatch())
+			// return;
+			final IExpression amongExpression = facets.getExpr(AMONG);
+			final IExpression initExpression = facets.getExpr(INIT);
+			if (amongExpression == null || initExpression == null)
+				return;
+			if (!(amongExpression instanceof ListExpression) || !initExpression.isConst())
+				return;
+			final ListExpression list = (ListExpression) amongExpression;
+			final Object init = initExpression.value(null);
+			if (!list.containsValue(init)) {
+				vd.warning(
+						"The initial value of " + vd.getName()
+								+ " does not belong to the list of possible values. It will be initialized to "
+								+ list.getElements()[0].serialize(true) + " instead.",
+						IGamlIssue.WRONG_VALUE, IKeyword.AMONG);
+			}
+
 		}
 
 		public void assertAssignmentFacetsTypes(final VariableDescription vd, final Facets facets) {

@@ -62,6 +62,20 @@ public class ListExpression extends AbstractExpression {
 		return elements;
 	}
 
+	public boolean containsValue(final Object o) {
+		if (o == null)
+			return false;
+		for (final IExpression exp : elements) {
+			if (!(exp instanceof ConstantExpression)) {
+				return false;
+			}
+			final Object e = exp.value(null);
+			if (o.equals(e))
+				return true;
+		}
+		return false;
+	}
+
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
 		final ListExpression copy = new ListExpression(Arrays.asList(elements));

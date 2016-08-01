@@ -218,8 +218,8 @@ experiment Complete type: gui {
 //Batch experiment to find the best way to maximize the food gathered using exhaustive method
 experiment Batch type: batch repeat: 4 keep_seed: true until: (food_gathered = food_placed) or (time > 1000) {
 	parameter 'Size of the grid:' var: gridsize init: 75 unit: 'width and height';
-	parameter 'Number:' var: ants_number among:[10,20,50] unit: 'ants';
-	parameter  'Evaporation:' var: evaporation_per_cycle among: [0.1, 0.5, 2.0, 10.0] unit: 'units every cycle';
+	parameter 'Number:' var: ants_number <- 10 among:[10,20,50] unit: 'ants'; 
+	parameter  'Evaporation:' var: evaporation_per_cycle <- 0.1 among: [0.1, 0.5, 2.0, 10.0] unit: 'units every cycle';
 	parameter  'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.2;
 	method exhaustive maximize: food_gathered;
 
@@ -237,8 +237,8 @@ experiment Batch type: batch repeat: 4 keep_seed: true until: (food_gathered = f
 //Batch experiment to find the best way to maximize the food gathered using genetic method
 experiment Genetic type: batch repeat: 2 keep_seed: true until: (food_gathered = food_placed) or (time > 1000) {
 	parameter 'Size of the grid:' var: gridsize init: 75 unit: '(width and height)';
-	parameter 'Number:' var: ants_number among:[10,20,50] unit: 'ants';
-	parameter  'Evaporation:' var: evaporation_per_cycle among: [0.1, 0.5, 2.0, 10.0] unit: 'units every cycle';
+	parameter 'Number:' var: ants_number <- 10 among:[10,20,50] unit: 'ants';
+	parameter  'Evaporation:' var: evaporation_per_cycle <- 0.1 among: [0.1, 0.5, 2.0, 10.0] unit: 'units every cycle';
 	parameter 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.2;
 	method genetic maximize: food_gathered pop_dim: 5 crossover_prob: 0.7 mutation_prob: 0.1 nb_prelim_gen: 1 max_gen: 20;
 	
