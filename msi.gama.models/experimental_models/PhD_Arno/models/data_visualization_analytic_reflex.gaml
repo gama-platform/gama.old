@@ -79,7 +79,7 @@ global {
 	
 	reflex Cluster when: analyticReflex = "Cluster"{
 		description <- "Given a set of data cases, find clusters of similar attribute values.";
-		pseudocode <-"Which data cases in a set S of data cases are similar in value for attributes {X, Y, Z, …}?";
+		pseudocode <-"Which data cases in a set S of data cases are similar in value for attributes {X, Y, Z, ...}?";
 		int cluster1 <-0;
 		int cluster2 <-0;
 		ask cells{
