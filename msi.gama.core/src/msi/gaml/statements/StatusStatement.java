@@ -43,7 +43,7 @@ import msi.gaml.types.IType;
 		@facet(name = IKeyword.MESSAGE, type = IType.NONE, optional = false, doc = @doc("Allows to display a necessarily short message in the status box in the upper left corner. No formatting characters (carriage returns, tabs, or Unicode characters) should be used, but a background color can be specified. The message will remain in place until it is replaced by another one or by nil, in which case the standard status (number of cycles) will be displayed again")) }, omissible = IKeyword.MESSAGE)
 @doc(value = "The statement makes the agent output an arbitrary message in the status box.", usages = {
 		@usage(value = "Outputting a message", examples = {
-				@example("status ('This is my status ' + self) color: °yellow;") }) })
+				@example("status ('This is my status ' + self) color: #yellow;") }) })
 public class StatusStatement extends AbstractStatement {
 
 	@Override
