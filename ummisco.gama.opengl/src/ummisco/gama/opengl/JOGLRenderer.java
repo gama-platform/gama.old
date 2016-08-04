@@ -112,8 +112,9 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 			}
 		});
-		
-		// here, the drawingEntityGenerator is used only when there is a webgl display
+
+		// here, the drawingEntityGenerator is used only when there is a webgl
+		// display
 		drawingEntityGenerator = new DrawingEntityGenerator(this);
 
 		// see
@@ -589,7 +590,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		}
 
 		if (file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath())) {
-			envelopes.put(file.getPath(), file.computeEnvelope(surface.getDisplayScope()));
+			envelopes.put(file.getPath(), file.computeEnvelope(surface.getScope()));
 		}
 		sceneBuffer.getSceneToUpdate().addFile(file, attributes);
 		return rect;
@@ -788,6 +789,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	Map<Class, ObjectDrawer> drawers;
 
+	@Override
 	public ObjectDrawer getDrawerFor(final Class<? extends AbstractObject> class1) {
 		if (drawers == null) {
 			drawers = new HashMap();

@@ -201,7 +201,7 @@ public class DisplaySurfaceMenu {
 	private Menu fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer,
 			final Collection<IAgent> filteredList) {
 		if (withWorld) {
-			AgentsMenu.cascadingAgentMenuItem(menu, surface.getDisplayScope().getSimulationScope(), "World");
+			AgentsMenu.cascadingAgentMenuItem(menu, surface.getScope().getSimulationScope(), "World");
 			if (filteredList != null && !filteredList.isEmpty()) {
 				GamaMenu.separate(menu);
 			} else {
@@ -217,7 +217,7 @@ public class DisplaySurfaceMenu {
 				return menu;
 			}
 			// If only the world is selected, no need to display anything more
-			if (filteredList.size() == 1 && filteredList.contains(surface.getDisplayScope().getSimulationScope())) {
+			if (filteredList.size() == 1 && filteredList.contains(surface.getScope().getSimulationScope())) {
 				return menu;
 			}
 			final FocusOnSelection adapter = new FocusOnSelection(surface);
@@ -227,7 +227,7 @@ public class DisplaySurfaceMenu {
 
 			for (final ILayer layer : surface.getManager().getItems()) {
 				if (layer.isSelectable()) {
-					Collection<IAgent> pop = layer.getAgentsForMenu(surface.getDisplayScope());
+					Collection<IAgent> pop = layer.getAgentsForMenu(surface.getScope());
 					pop = new ArrayList(pop);
 					if (pop.isEmpty()) {
 						continue;

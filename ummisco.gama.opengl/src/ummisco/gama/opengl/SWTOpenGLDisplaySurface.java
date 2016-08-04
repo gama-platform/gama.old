@@ -169,7 +169,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 			// EXPERIMENTAL
 
 			if (temp_focus != null) {
-				final IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()));
+				final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()));
 				if (geometry != null) {
 					temp_focus = null;
 					focusOn(geometry);
@@ -273,7 +273,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void runAndUpdate(final Runnable r) {
 		r.run();
-		if (getDisplayScope().isPaused()) {
+		if (getScope().isPaused()) {
 			updateDisplay(true);
 		}
 		if (animator.isPaused()) {
@@ -312,7 +312,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void outputReloaded() {
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySurface"));
-		getDisplayScope().disableErrorReporting();
+		getScope().disableErrorReporting();
 		renderer.initScene();
 		layerManager.outputChanged();
 
@@ -407,7 +407,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
 		if (currentLayer instanceof OverlayLayer) {
-			return getDisplayScope().getSimulationScope().getEnvelope();
+			return getScope().getSimulationScope().getEnvelope();
 		}
 		Envelope e = currentLayer.getVisibleRegion();
 		if (e == null) {
@@ -499,7 +499,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#getDisplayScope()
 	 */
 	@Override
-	public IScope getDisplayScope() {
+	public IScope getScope() {
 		return scope;
 	}
 
@@ -674,7 +674,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		this.menuManager = null;
 		this.listeners.clear();
 
-		GAMA.releaseScope(getDisplayScope());
+		GAMA.releaseScope(getScope());
 		setDisplayScope(null);
 	}
 

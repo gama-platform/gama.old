@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package ummisco.gama.ui.interfaces;
 
+import msi.gama.common.interfaces.IScoped;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gaml.types.IType;
 
@@ -21,7 +22,7 @@ import msi.gaml.types.IType;
  * @since 18 d�c. 2011
  * 
  */
-public interface IParameterEditor<T> {
+public interface IParameterEditor<T> extends IScoped {
 
 	public abstract IType getExpectedType();
 

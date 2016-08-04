@@ -26,7 +26,6 @@ import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LayeredDisplayData.DisplayDataListener;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.IEventLayerListener;
-import msi.gama.runtime.IScope;
 import msi.gaml.statements.draw.DrawingAttributes;
 
 /**
@@ -35,8 +34,7 @@ import msi.gaml.statements.draw.DrawingAttributes;
  * @todo Description
  *
  */
-public interface IDisplaySurface extends
-		DisplayDataListener /* extends IPerspectiveListener, IPartListener */ {
+public interface IDisplaySurface extends DisplayDataListener, IScoped {
 
 	static final String SNAPSHOT_FOLDER_NAME = "snapshots";
 	static final double MIN_ZOOM_FACTOR = 0.1;
@@ -136,8 +134,6 @@ public interface IDisplaySurface extends
 	double getZoomLevel();
 
 	void setSize(int x, int y);
-
-	IScope getDisplayScope();
 
 	LayeredDisplayOutput getOutput();
 

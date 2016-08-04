@@ -370,7 +370,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					f = new File(path);
 					if (f.exists()) {
 						texture = renderer.getCurrentScene().getTexture(gl,
-								new GamaImageFile(renderer.getSurface().getDisplayScope(), f.getAbsolutePath()));
+								new GamaImageFile(renderer.getSurface().getScope(), f.getAbsolutePath()));
 						// BufferedImage im;
 						// try {
 						// im = ImageUtils.getInstance().getImageFromFile(f);

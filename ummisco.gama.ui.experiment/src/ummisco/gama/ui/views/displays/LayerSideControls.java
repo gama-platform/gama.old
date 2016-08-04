@@ -53,7 +53,7 @@ public class LayerSideControls {
 	}
 
 	public static void fill(final Composite compo, final IDisplaySurface container) {
-		EditorFactory.create(container.getDisplayScope(), compo, "Antialias:", container.getData().isAntialias(),
+		EditorFactory.create(container.getScope(), compo, "Antialias:", container.getData().isAntialias(),
 				new EditorListener<Boolean>() {
 
 					@Override
@@ -62,8 +62,8 @@ public class LayerSideControls {
 						updateIfPaused(null, container);
 					}
 				});
-		EditorFactory.create(container.getDisplayScope(), compo, "Background:",
-				container.getData().getBackgroundColor(), new EditorListener<Color>() {
+		EditorFactory.create(container.getScope(), compo, "Background:", container.getData().getBackgroundColor(),
+				new EditorListener<Color>() {
 
 					@Override
 					public void valueModified(final Color newValue) {
@@ -71,7 +71,7 @@ public class LayerSideControls {
 						updateIfPaused(null, container);
 					}
 				});
-		EditorFactory.create(container.getDisplayScope(), compo, "Highlight:", container.getData().getHighlightColor(),
+		EditorFactory.create(container.getScope(), compo, "Highlight:", container.getData().getHighlightColor(),
 				new EditorListener<Color>() {
 
 					@Override
@@ -81,7 +81,7 @@ public class LayerSideControls {
 					}
 				});
 		if (container.getOutput().isOpenGL() && container.getOutput().cameraFix) {
-			EditorFactory.create(container.getDisplayScope(), compo, "Camera Lock:", container.getData().isCameraLock(),
+			EditorFactory.create(container.getScope(), compo, "Camera Lock:", container.getData().isCameraLock(),
 					new EditorListener<Boolean>() {
 
 						@Override
@@ -108,8 +108,8 @@ public class LayerSideControls {
 		// updateIfPaused(layer, container);
 		// }
 		// });
-		EditorFactory.create(container.getDisplayScope(), compo, "Transparency:", definition.getTransparency(), 0.0,
-				1.0, 0.1, false, new EditorListener<Double>() {
+		EditorFactory.create(container.getScope(), compo, "Transparency:", definition.getTransparency(), 0.0, 1.0, 0.1,
+				false, new EditorListener<Double>() {
 
 					@Override
 					public void valueModified(final Double newValue) {
@@ -118,7 +118,7 @@ public class LayerSideControls {
 					}
 
 				});
-		EditorFactory.create(container.getDisplayScope(), compo, "Position:", definition.getBox().getPosition(),
+		EditorFactory.create(container.getScope(), compo, "Position:", definition.getBox().getPosition(),
 				new EditorListener<ILocation>() {
 
 					@Override
@@ -128,7 +128,7 @@ public class LayerSideControls {
 					}
 
 				});
-		EditorFactory.create(container.getDisplayScope(), compo, "Size:", definition.getBox().getSize(),
+		EditorFactory.create(container.getScope(), compo, "Size:", definition.getBox().getSize(),
 				new EditorListener<ILocation>() {
 
 					@Override
@@ -142,7 +142,7 @@ public class LayerSideControls {
 		switch (definition.getType()) {
 
 		case ILayerStatement.GRID: {
-			EditorFactory.create(container.getDisplayScope(), compo, "Draw grid:",
+			EditorFactory.create(container.getScope(), compo, "Draw grid:",
 					((GridLayerStatement) definition).drawLines(), new EditorListener<Boolean>() {
 
 						@Override
@@ -159,7 +159,7 @@ public class LayerSideControls {
 				expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
 			}
 			if (expr != null) {
-				EditorFactory.createExpression(container.getDisplayScope(), compo, "Agents:", expr,
+				EditorFactory.createExpression(container.getScope(), compo, "Agents:", expr,
 						new EditorListener<IExpression>() {
 
 							@Override
@@ -172,7 +172,7 @@ public class LayerSideControls {
 			break;
 		}
 		case ILayerStatement.SPECIES: {
-			EditorFactory.choose(container.getDisplayScope(), compo, "Aspect:",
+			EditorFactory.choose(container.getScope(), compo, "Aspect:",
 					((SpeciesLayerStatement) definition).getAspectName(), true,
 					((SpeciesLayerStatement) definition).getAspects(), new EditorListener<String>() {
 
@@ -219,7 +219,7 @@ public class LayerSideControls {
 		// }
 		case ILayerStatement.IMAGE: {
 			if (definition instanceof ImageLayerStatement) {
-				EditorFactory.create(container.getDisplayScope(), compo, "Image:",
+				EditorFactory.create(container.getScope(), compo, "Image:",
 						((ImageLayerStatement) definition).getImageFileName(), false, new EditorListener<String>() {
 
 							@Override
@@ -234,7 +234,7 @@ public class LayerSideControls {
 
 		}
 		case ILayerStatement.GIS: {
-			EditorFactory.createFile(container.getDisplayScope(), compo, "Shapefile:",
+			EditorFactory.createFile(container.getScope(), compo, "Shapefile:",
 					((ImageLayerStatement) definition).getImageFileName(), new EditorListener<IGamaFile>() {
 
 						@Override

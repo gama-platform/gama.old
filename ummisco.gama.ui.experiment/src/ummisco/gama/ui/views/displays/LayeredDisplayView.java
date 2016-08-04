@@ -131,11 +131,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public Control controlToSetFullScreen() {
 		return form;
 	}
-	
+
 	public SashForm getSash() {
 		return form;
 	}
-
 
 	public void createOverlay() {
 		boolean wasVisible = false;
@@ -739,7 +738,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if (snapshot == null) {
 			snapshot = getDisplaySurface().getImage(width, height);
 		}
-		saveSnapshot(getDisplaySurface().getDisplayScope(), snapshot);
+		saveSnapshot(getDisplaySurface().getScope(), snapshot);
 	}
 
 	/**

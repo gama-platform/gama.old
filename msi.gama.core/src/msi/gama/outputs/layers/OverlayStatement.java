@@ -158,7 +158,7 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 	@Override
 	public void setTarget(final IUpdaterTarget overlay, final IDisplaySurface surface) {
 		this.overlay = overlay;
-		_step(surface.getDisplayScope());
+		_step(surface.getScope());
 	}
 
 	/**

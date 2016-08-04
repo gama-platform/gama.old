@@ -51,7 +51,7 @@ public class NullDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public IScope getDisplayScope() {
+	public IScope getScope() {
 		return null;
 	}
 

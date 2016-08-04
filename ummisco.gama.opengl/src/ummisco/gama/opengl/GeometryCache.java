@@ -63,7 +63,7 @@ public class GeometryCache {
 			((GamaObjFile) file).drawToOpenGL(gl, renderer);
 		} else {
 			final IDisplaySurface surface = renderer.getSurface();
-			final IShape shape = file.getGeometry(surface.getDisplayScope());
+			final IShape shape = file.getGeometry(surface.getScope());
 			if (shape == null) {
 				return index;
 			}

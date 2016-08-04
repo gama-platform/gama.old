@@ -224,7 +224,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		// We first copy the scope
 		setDisplayScope(output.getScope().copy("in Java2DDisplaySurface"));
 		// We disable error reporting
-		getDisplayScope().disableErrorReporting();
+		getScope().disableErrorReporting();
 
 		layerManager.outputChanged();
 
@@ -236,7 +236,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public IScope getDisplayScope() {
+	public IScope getScope() {
 		return scope;
 	}
 
@@ -416,7 +416,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		getIGraphics().setUntranslatedGraphics2D((Graphics2D) g);
 		layerManager.drawLayersOn(iGraphics);
 		if (temp_focus != null) {
-			final IShape geometry = Cast.asGeometry(getDisplayScope(), temp_focus.value(getDisplayScope()), false);
+			final IShape geometry = Cast.asGeometry(getScope(), temp_focus.value(getScope()), false);
 			temp_focus = null;
 			focusOn(geometry);
 			return;
@@ -558,7 +558,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
 		if (currentLayer instanceof OverlayLayer) {
-			return getDisplayScope().getSimulationScope().getEnvelope();
+			return getScope().getSimulationScope().getEnvelope();
 		}
 		final Envelope e = new Envelope();
 		final Point origin = getOrigin();
@@ -585,7 +585,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			@Override
 			public void run() {
 				r.run();
-				if (output.isPaused() || getDisplayScope().isPaused()) {
+				if (output.isPaused() || getScope().isPaused()) {
 					updateDisplay(true);
 				}
 			}
@@ -604,7 +604,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			layerManager.dispose();
 		}
 
-		GAMA.releaseScope(getDisplayScope());
+		GAMA.releaseScope(getScope());
 		setDisplayScope(null);
 	}
 

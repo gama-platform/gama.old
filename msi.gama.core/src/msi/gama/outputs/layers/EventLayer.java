@@ -58,7 +58,7 @@ public class EventLayer extends AbstractLayer {
 		super.firstLaunchOn(surface);
 		final IExpression eventType = definition.getFacet(IKeyword.NAME);
 		final IExpression actionName = definition.getFacet(IKeyword.ACTION);
-		scope = surface.getDisplayScope().copy("of EventLayer");
+		scope = surface.getScope().copy("of EventLayer");
 
 		final String currentEvent = Cast.asString(scope, eventType.value(scope));
 		final String currentAction = Cast.asString(scope, actionName.value(scope));
