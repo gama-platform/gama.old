@@ -16,9 +16,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.eclipse.core.runtime.Platform;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
@@ -75,12 +76,13 @@ public class System {
 			return "";
 		final StringBuilder output = new StringBuilder();
 		final List<String> commands = new ArrayList();
-		// commands.add(Platform.getOS().equals(Platform.OS_WIN32) ? "cmd.exe" :
-		// "/bin/sh");
-		commands.addAll(Arrays.asList(s.split(" ")));
-		final boolean nonBlocking = commands.get(commands.size() - 1).equals("&");
+		commands.add(Platform.getOS().equals(Platform.OS_WIN32) ? "cmd.exe" : "/bin/bash");
+		commands.add(Platform.getOS().equals(Platform.OS_WIN32) ? "/C" : "-c");
+		commands.add(s.trim());
+		// commands.addAll(Arrays.asList(s.split(" ")));
+		final boolean nonBlocking = commands.get(commands.size() - 1).endsWith("&");
 		if (nonBlocking) {
-			commands.remove(commands.size() - 1);
+			// commands.(commands.size() - 1);
 		}
 		final ProcessBuilder b = new ProcessBuilder(commands);
 		b.redirectErrorStream(true);
@@ -93,7 +95,7 @@ public class System {
 			final int returnValue = p.waitFor();
 			String line = "";
 			while ((line = reader.readLine()) != null) {
-				output.append(line + "\n");
+				output.append(line + Strings.LN);
 			}
 
 			if (returnValue != 0) {
