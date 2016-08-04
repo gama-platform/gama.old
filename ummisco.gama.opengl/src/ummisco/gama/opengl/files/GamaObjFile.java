@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.files;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -24,11 +23,8 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureData;
-import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
 import msi.gama.common.util.FileUtils;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
@@ -39,10 +35,11 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gama.util.file.Gama3DGeometryFile;
-import msi.gaml.operators.fastmaths.FastMath;
+import msi.gama.util.file.GamaImageFile;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 /**
@@ -250,8 +247,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					if (newline.charAt(0) == 'u' && newline.charAt(1) == 's' && newline.charAt(2) == 'e'
 							&& newline.charAt(3) == 'm' && newline.charAt(4) == 't' && newline.charAt(5) == 'l') {
 						final String[] coords = new String[2];
-						String[] coordstext = new String[3];
-						coordstext = newline.split("\\s+");
+						final String[] coordstext = newline.split("\\s+");
 						coords[0] = coordstext[1];
 						coords[1] = facecounter + "";
 						matTimings.add(coords);
@@ -332,7 +328,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	protected void flushBuffer() throws GamaRuntimeException {
 	}
 
-	public void drawToOpenGL(final GL2 gl) {
+	public void drawToOpenGL(final GL2 gl, final JOGLRenderer renderer) {
 		loadObject();
 		int nextmat = -1;
 		int matcount = 0;
@@ -373,16 +369,22 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					}
 					f = new File(path);
 					if (f.exists()) {
-						BufferedImage im;
-						try {
-							im = ImageUtils.getInstance().getImageFromFile(f);
-							final TextureData data = AWTTextureIO.newTextureData(gl.getGLProfile(), im, false);
-							texture = new Texture(gl, data);
-							texture.enable(gl);
-							texture.bind(gl);
-						} catch (final IOException e) {
-							// e.printStackTrace();
-						}
+						texture = renderer.getCurrentScene().getTexture(gl,
+								new GamaImageFile(renderer.getSurface().getDisplayScope(), f.getAbsolutePath()));
+						// BufferedImage im;
+						// try {
+						// im = ImageUtils.getInstance().getImageFromFile(f);
+						// final TextureData data =
+						// AWTTextureIO.newTextureData(gl.getGLProfile(), im,
+						// false);
+						// texture = new Texture(gl, data);
+						texture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
+						texture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+						texture.enable(gl);
+						texture.bind(gl);
+						// } catch (final IOException e) {
+						// e.printStackTrace();
+						// }
 					}
 
 				}
@@ -426,7 +428,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					if (valy >= 0 && valy <= 1.0) {
 						gl.glTexCoord3f(textempx, valy, textempz);
 					} else {
-						gl.glTexCoord3f(textempx, FastMath.abs(textempy), textempz);
+						gl.glTexCoord3f(textempx, Math.abs(textempy), textempz);
 					}
 				}
 

@@ -60,7 +60,7 @@ public class GeometryCache {
 		gl.glPushMatrix();
 		// We draw the file in the list
 		if (extension.equals("obj")) {
-			((GamaObjFile) file).drawToOpenGL(gl);
+			((GamaObjFile) file).drawToOpenGL(gl, renderer);
 		} else {
 			final IDisplaySurface surface = renderer.getSurface();
 			final IShape shape = file.getGeometry(surface.getDisplayScope());
