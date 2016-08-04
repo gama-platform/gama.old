@@ -289,7 +289,7 @@ public class SpeciesDescription extends TypeDescription {
 		return desc;
 	}
 
-	private void addBehavior(final StatementDescription r) {
+	protected void addBehavior(final StatementDescription r) {
 		final String behaviorName = r.getName();
 		if (behaviors == null) {
 			behaviors = new TOrderedHashMap<String, StatementDescription>();
