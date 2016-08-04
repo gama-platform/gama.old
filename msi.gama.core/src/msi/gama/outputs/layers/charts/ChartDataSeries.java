@@ -475,4 +475,8 @@ public class ChartDataSeries {
 		history.append(this.getName() + "_Y" + ",");
 	}
 
+	public double getLineThickness() {
+		return getMysource().getLineThickness();
+	}
+
 }

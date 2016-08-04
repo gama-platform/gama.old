@@ -53,6 +53,7 @@ import msi.gaml.types.IType;
 				ChartDataStatement.MARKER_VERT_RECTANGLE,
 				ChartDataStatement.MARKER_LEFT_TRIANGLE }, optional = true, doc = @doc("Shape of the marker")),
 		@facet(name = ChartDataStatement.FILL, type = IType.BOOL, optional = true, doc = @doc("Marker filled (true) or not (false)")),
+		@facet(name = ChartDataStatement.THICKNESS, type = IType.FLOAT, optional = true, doc = @doc("The thickness of the lines to draw")),
 		@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 				IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D,
 				IKeyword.RING,
@@ -80,6 +81,7 @@ public class ChartDataStatement extends AbstractStatement {
 	public static final String MARKER_RIGHT_TRIANGLE = "marker_right_triangle";
 	public static final String MARKER_VERT_RECTANGLE = "marker_vert_rectangle";
 	public static final String MARKER_LEFT_TRIANGLE = "marker_left_triangle";
+	public static final String THICKNESS = "thickness";
 
 	public static final Shape[] defaultmarkers = org.jfree.chart.plot.DefaultDrawingSupplier
 			.createStandardSeriesShapes();
@@ -151,6 +153,11 @@ public class ChartDataStatement extends AbstractStatement {
 
 		}
 
+		expval = getFacet(ChartDataStatement.THICKNESS);
+		if (expval != null) {
+			expval = expval.resolveAgainst(scope);
+			data.setLineThickness(Cast.asFloat(scope, expval.value(scope)));
+		}
 		final Object forcecumul = getFacetValue(scope, ChartDataStatement.CUMUL_VALUES, null);
 		if (forcecumul != null) {
 			data.setCumulative(scope, Cast.asBool(scope, forcecumul));
