@@ -145,7 +145,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		super.executeOn(scope);
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		if (agent.dead()) {
 			return null;
 		}
@@ -328,7 +328,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		} else {
-			final GamaList<Predicate> desireBase = (GamaList<Predicate>) scope.getSimulationScope().getRandomGenerator()
+			final GamaList<Predicate> desireBase = (GamaList<Predicate>) scope.getSimulation().getRandomGenerator()
 					.shuffle(getBase(scope, DESIRE_BASE));
 			final GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
 			double maxpriority = Double.NEGATIVE_INFINITY;
@@ -375,7 +375,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		double highestPriority = Double.MIN_VALUE;
 		final List<SimpleBdiPlanStatement> temp_plan = new ArrayList<SimpleBdiPlanStatement>();
 		final IList priorities = GamaListFactory.create(Types.FLOAT);
-		for (final Object BDIPlanstatement : scope.getSimulationScope().getRandomGenerator()
+		for (final Object BDIPlanstatement : scope.getSimulation().getRandomGenerator()
 				.shuffle(new ArrayList(_plans))) {
 			final SimpleBdiPlanStatement statement = ((BDIPlan) BDIPlanstatement).getPlanStatement();
 			final boolean isContextConditionSatisfied = statement.getContextExpression() == null
@@ -662,13 +662,13 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	public static GamaList<Predicate> getBase(final IScope scope, final String basename) {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		return (GamaList<Predicate>) (scope.hasArg(basename) ? scope.getListArg(basename)
 				: (GamaList<Predicate>) agent.getAttribute(basename));
 	}
 
 	public static GamaList<Emotion> getEmotionBase(final IScope scope, final String basename) {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		return (GamaList<Emotion>) (scope.hasArg(basename) ? scope.getListArg(basename)
 				: (GamaList<Emotion>) agent.getAttribute(basename));
 	}
@@ -1240,7 +1240,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				getBase(scope, DESIRE_BASE).remove(predicateDirect);
 			}
 			if (predicateDirect.equals(currentIntention(scope)))
-				scope.getAgentScope().setAttribute(CURRENT_PLAN, null);
+				scope.getAgent().setAttribute(CURRENT_PLAN, null);
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
 				final List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions();
 				if (statementSubintention != null) {
@@ -1280,7 +1280,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			@example("") }))
 	public Boolean primClearIntention(final IScope scope) {
 		getBase(scope, INTENTION_BASE).clear();
-		scope.getAgentScope().setAttribute(CURRENT_PLAN, null);
+		scope.getAgent().setAttribute(CURRENT_PLAN, null);
 		return true;
 	}
 

@@ -80,7 +80,7 @@ public class StartSoundStatement extends AbstractStatementSequence {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 
-		IAgent currentAgent = scope.getAgentScope();
+		IAgent currentAgent = scope.getAgent();
 
 		GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
 		String soundFilePath = FileUtils.constructAbsoluteFilePath(scope, (String) source.value(scope), false);

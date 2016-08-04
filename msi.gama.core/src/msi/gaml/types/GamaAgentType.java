@@ -56,10 +56,10 @@ public class GamaAgentType extends GamaType<IAgent> {
 		}
 		if ( species == null ) { return (IAgent) Types.AGENT.cast(scope, obj, param, copy); }
 		if ( obj instanceof IAgent ) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
-		if ( obj instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species)
+		if ( obj instanceof Integer ) { return scope.getAgent().getPopulationFor(species)
 			.getAgent((Integer) obj); }
 		if ( obj instanceof ILocation ) {
-			final IAgent result = scope.getAgentScope().getPopulationFor(species).getAgent(scope, (ILocation) obj);
+			final IAgent result = scope.getAgent().getPopulationFor(species).getAgent(scope, (ILocation) obj);
 			return result;
 		}
 		return null;
@@ -97,7 +97,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 		final boolean b = super.canBeTypeOf(scope, obj);
 		if ( b ) { return true; }
 		if ( obj instanceof IAgent ) {
-			final ISpecies s = scope.getSimulationScope().getModel().getSpecies(getSpeciesName());
+			final ISpecies s = scope.getSimulation().getModel().getSpecies(getSpeciesName());
 			return ((IAgent) obj).isInstanceOf(s, false);
 		}
 		return false;

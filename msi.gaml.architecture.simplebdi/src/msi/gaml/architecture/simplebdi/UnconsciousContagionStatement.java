@@ -75,7 +75,7 @@ public class UnconsciousContagionStatement extends AbstractStatement {
 				if (SimpleBdiArchitecture.hasEmotion(scope, (Emotion) emotion.value(scope))) {
 					if (charisma != null) {
 						charismaValue = (Double) charisma.value(scope);
-					}else{charismaValue = (Double) scope.getAgentScope().getAttribute(CHARISMA);}
+					}else{charismaValue = (Double) scope.getAgent().getAttribute(CHARISMA);}
 					if (receptivity != null) {
 						receptivityValue = (Double) receptivity.value(scopeMySelf);
 					}else{receptivityValue = (Double) mySelfAgent.getAttribute(RECEPTIVITY);}

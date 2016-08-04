@@ -53,7 +53,7 @@ public class WarnStatement extends AbstractStatement {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		IAgent agent = scope.getAgentScope();
+		IAgent agent = scope.getAgent();
 		String mes = null;
 		if ( agent != null && !agent.dead() ) {
 			mes = Cast.asString(scope, message.value(scope));

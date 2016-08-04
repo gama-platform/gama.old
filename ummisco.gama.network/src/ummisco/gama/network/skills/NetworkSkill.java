@@ -62,9 +62,9 @@ public class NetworkSkill  extends MessagingSkill {
 		@arg(name = INetworkSkill.PASSWORD, type = IType.STRING, optional = true, doc = @doc("server nameL")),
 		@arg(name = INetworkSkill.SERVER_URL, type = IType.STRING, optional = false, doc = @doc("server URL")) }, doc = @doc(value = "", returns = "", examples = { @example("") }))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
-		if(!scope.getSimulationScope().getAttributes().keySet().contains(REGISTRED_SERVER))
+		if(!scope.getSimulation().getAttributes().keySet().contains(REGISTRED_SERVER))
 			this.startSkill(scope);
-		IAgent agt = scope.getAgentScope();
+		IAgent agt = scope.getAgent();
 		String serverURL = (String) scope.getArg(INetworkSkill.SERVER_URL, IType.STRING);
 		String login = (String) scope.getArg(INetworkSkill.LOGIN, IType.STRING);
 		String password = (String) scope.getArg(INetworkSkill.PASSWORD, IType.STRING);
@@ -147,7 +147,7 @@ public class NetworkSkill  extends MessagingSkill {
 	@action(name = INetworkSkill.FETCH_MESSAGE)
 	public GamaMessage fetchMessage(final IScope scope)
 	{
-		IAgent agent = scope.getAgentScope();
+		IAgent agent = scope.getAgent();
 		GamaMailbox box = getMailbox(agent);
 		GamaMessage msg = box.get(0);
 		box.remove(0);
@@ -157,7 +157,7 @@ public class NetworkSkill  extends MessagingSkill {
 	@action(name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX)
 	public boolean hasMoreMessage(final IScope scope)
 	{
-		IAgent agent = scope.getAgentScope();
+		IAgent agent = scope.getAgent();
 		GamaMailbox box = getMailbox(agent);
 		return !box.isEmpty();
 	}	
@@ -181,7 +181,7 @@ public class NetworkSkill  extends MessagingSkill {
 			@arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = true, doc = @doc("name of the group agent want to leave")) }, doc = @doc(value = "leave a group of agent", returns = "", examples = {
 			@example("") }))
 	public void leaveTheGroup(final IScope scope) {
-		IAgent agent = scope.getAgentScope();
+		IAgent agent = scope.getAgent();
 		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		String groupName = (String)scope.getArg(INetworkSkill.TO, IType.STRING);
 		IConnector connector=getRegisteredServers(scope).get(serverName);
@@ -202,7 +202,7 @@ public class NetworkSkill  extends MessagingSkill {
 			destName=(String) mReceiver.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		}
 		
-		IAgent agent = scope.getAgentScope();
+		IAgent agent = scope.getAgent();
 		List<String> serverNames = (List<String>)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		Map<String,IConnector>  connections = getRegisteredServers(scope);
 		for(String servName:serverNames)
@@ -232,7 +232,7 @@ public class NetworkSkill  extends MessagingSkill {
 	
 	@SuppressWarnings("unchecked")
 	private List<IAgent> getRegisteredAgents(IScope scope){
-		return (List<IAgent>)scope.getSimulationScope().getAttribute(REGISTERED_AGENTS);
+		return (List<IAgent>)scope.getSimulation().getAttribute(REGISTERED_AGENTS);
 	}
 	
 	private void registeredAgent(IScope scope, IAgent agt){
@@ -242,12 +242,12 @@ public class NetworkSkill  extends MessagingSkill {
 	@SuppressWarnings("unchecked")
 	private Map<String,IConnector> getRegisteredServers(IScope scope)
 	{
-		return (Map<String,IConnector>)scope.getSimulationScope().getAttribute(REGISTRED_SERVER);
+		return (Map<String,IConnector>)scope.getSimulation().getAttribute(REGISTRED_SERVER);
 	}
 	
 	private void initialize(IScope scope){
-		scope.getSimulationScope().setAttribute(REGISTRED_SERVER,  new HashMap<String,IConnector>());
-		scope.getSimulationScope().setAttribute(REGISTERED_AGENTS, new ArrayList<IAgent>());
+		scope.getSimulation().setAttribute(REGISTRED_SERVER,  new HashMap<String,IConnector>());
+		scope.getSimulation().setAttribute(REGISTERED_AGENTS, new ArrayList<IAgent>());
 	}
 	
 	
@@ -259,7 +259,7 @@ public class NetworkSkill  extends MessagingSkill {
 	}
 	private void registerSimulationEvent(IScope scope)
 	{
-		scope.getSimulationScope().postEndAction(new IExecutable() {
+		scope.getSimulation().postEndAction(new IExecutable() {
 			@Override
 			public Object executeOn(IScope scope) throws GamaRuntimeException {
 				fetchMessagesOfAgents(scope);
@@ -267,7 +267,7 @@ public class NetworkSkill  extends MessagingSkill {
 			}
 		});
 	
-		scope.getSimulationScope().postDisposeAction(new IExecutable() {
+		scope.getSimulation().postDisposeAction(new IExecutable() {
 			@Override
 			public Object executeOn(IScope scope) throws GamaRuntimeException {
 				closeAllConnection(scope);

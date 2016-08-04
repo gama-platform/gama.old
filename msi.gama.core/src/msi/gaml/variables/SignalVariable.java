@@ -216,7 +216,7 @@ public class SignalVariable extends NumberVariable {
 	}
 
 	private IGrid getEnvironment(final IScope scope) {
-		return (IGrid) scope.getSimulationScope().getPopulationFor(envName).getTopology().getPlaces();
+		return (IGrid) scope.getSimulation().getPopulationFor(envName).getTopology().getPlaces();
 	}
 
 }

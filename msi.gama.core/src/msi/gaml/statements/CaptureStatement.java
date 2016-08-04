@@ -125,7 +125,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> microAgents = GamaListFactory.create(Types.AGENT);
-		final IMacroAgent macroAgent = (IMacroAgent) scope.getAgentScope();
+		final IMacroAgent macroAgent = (IMacroAgent) scope.getAgent();
 		final ISpecies macroSpecies = macroAgent.getSpecies();
 
 		final Object t = target.value(scope);

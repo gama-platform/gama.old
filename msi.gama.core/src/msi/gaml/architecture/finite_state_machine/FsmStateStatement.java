@@ -189,7 +189,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 	}
 
 	protected boolean beginExecution(final IScope scope) throws GamaRuntimeException {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		if ( scope.interrupted() ) { return false; }
 		final Boolean enter = (Boolean) agent.getAttribute(ENTER);
 		Map<String, Object> memory = (Map) agent.getAttribute(STATE_MEMORY);
@@ -216,7 +216,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 	}
 
 	protected String evaluateTransitions(final IScope scope) throws GamaRuntimeException {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		for ( int i = 0; i < transitionsSize; i++ ) {
 			final FsmTransitionStatement transition = transitions.get(i);
 

@@ -24,7 +24,7 @@ public class SelfExpression extends VariableExpression {
 
 	@Override
 	public Object value(final IScope scope) {
-		return scope.getAgentScope();
+		return scope.getAgent();
 	}
 
 	@Override

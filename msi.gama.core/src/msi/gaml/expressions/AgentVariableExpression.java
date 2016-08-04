@@ -30,13 +30,13 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		return scope.getAgentVarValue(scope.getAgentScope(), getName());
+		return scope.getAgentVarValue(scope.getAgent(), getName());
 	}
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
 		if ( isNotModifiable ) { return; }
-		scope.setAgentVarValue(scope.getAgentScope(), getName(), v);
+		scope.setAgentVarValue(scope.getAgent(), getName(), v);
 	}
 
 	@Override

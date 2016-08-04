@@ -63,7 +63,7 @@ public class GraphTopology extends AbstractTopology {
 
 	// The default topologies for graphs.
 	public GraphTopology(final IScope scope, final GamaSpatialGraph graph) {
-		this(scope, scope.getSimulationScope().getGeometry(), graph);
+		this(scope, scope.getSimulation().getGeometry(), graph);
 	}
 
 	@Override
@@ -110,14 +110,14 @@ public class GraphTopology extends AbstractTopology {
 			if ( !sourceNode ) {
 				edgeS = getPathEdge(scope,source);
 				if (edgeS == null)
-					edgeS = scope.getSimulationScope().getAgent().getTopology().getAgentClosestTo(scope, source, filter);
+					edgeS = scope.getSimulation().getAgent().getTopology().getAgentClosestTo(scope, source, filter);
 				// We avoid computing the target if we cannot find any source.
 				if ( edgeS == null ) { return null; }
 			}
 			if ( !targetNode ) {
 				edgeT = getPathEdge(scope,target);
 				if (edgeT == null)
-					edgeT = scope.getSimulationScope().getAgent().getTopology().getAgentClosestTo(scope, target, filter);
+					edgeT = scope.getSimulation().getAgent().getTopology().getAgentClosestTo(scope, target, filter);
 				if ( edgeT == null ) { return null; }
 			}
 		} else {
@@ -847,7 +847,7 @@ public class GraphTopology extends AbstractTopology {
 		if(filter.getSpecies() != null) 
 			agentsTotest = filter.getSpecies().getAgents(scope);
 		else 
-			agentsTotest = scope.getSimulationScope().getAgents(scope);
+			agentsTotest = scope.getSimulation().getAgents(scope);
 		final Set<IShape> edges = getNeighborsOfRec(scope, realS,true,distance, graph, new THashSet<IShape>());	
 		for (Object ob : agentsTotest.iterable(scope)) {
 			IShape ag = (IShape) ob;
@@ -908,7 +908,7 @@ public class GraphTopology extends AbstractTopology {
 		} else if (filter instanceof In) {
 			listAgents = new ArrayList<IAgent>(filter.getAgents(scope).listValue(scope, Types.AGENT, false));
 		} else {
-			listAgents = new ArrayList<IAgent>(scope.getSimulationScope().getAgents(scope).listValue(scope, Types.AGENT, false));
+			listAgents = new ArrayList<IAgent>(scope.getSimulation().getAgents(scope).listValue(scope, Types.AGENT, false));
 		}
 		listAgents.remove(source);
 		IAgent closest = null;

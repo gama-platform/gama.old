@@ -23,7 +23,7 @@ public class Clustering {
 		for ( String att : attributes ) {
 			attribs.addElement(new Attribute(att));
 		}
-		Instances dataset = new Instances(scope.getAgentScope().getName(), attribs, agents.length(scope));
+		Instances dataset = new Instances(scope.getAgent().getName(), attribs, agents.length(scope));
 		for ( IAgent ag : agents.iterable(scope) ) {
 
 			int nb = attributes.size();

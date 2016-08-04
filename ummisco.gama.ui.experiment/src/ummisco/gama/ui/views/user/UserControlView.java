@@ -91,12 +91,12 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 		}
 		inspectItem.setEnabled(true);
 		continueItem.setEnabled(true);
-		setPartName("[" + scope.getAgentScope().getName() + " in " + scope.getSimulationScope().getName() + "] "
+		setPartName("[" + scope.getAgent().getName() + " in " + scope.getSimulation().getName() + "] "
 				+ panel.getName());
 		parent.setLayout(new FillLayout());
 		parent.setBackground(IGamaColors.WHITE.color());
 		toolbar.status((Image) null,
-				"User control, agent " + scope.getAgentScope().getName() + ", cycle " + scope.getClock().getCycle(),
+				"User control, agent " + scope.getAgent().getName() + ", cycle " + scope.getClock().getCycle(),
 				IGamaColors.NEUTRAL, SWT.LEFT);
 		body = new Composite(parent, SWT.None);
 		GridLayout layout = new GridLayout(3, false);
@@ -194,7 +194,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				scope.getGui().setSelectedAgent(scope.getAgentScope());
+				scope.getGui().setSelectedAgent(scope.getAgent());
 			}
 
 		}, SWT.RIGHT);

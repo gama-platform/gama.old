@@ -43,7 +43,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	protected CoordinateReferenceSystem getExistingCRS(final IScope scope) {
 		if ( initialCRSCode != null ) {
 			try {
-				return scope.getSimulationScope().getProjectionFactory().getCRS(initialCRSCode);
+				return scope.getSimulation().getProjectionFactory().getCRS(initialCRSCode);
 			} catch (GamaRuntimeException e) {
 				throw GamaRuntimeException.error("The code " + initialCRSCode +
 					" does not correspond to a known EPSG code. GAMA is unable to load " + getPath(), scope);
@@ -51,7 +51,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		}
 		if ( initialCRSCodeStr != null ) {
 			try {
-				return scope.getSimulationScope().getProjectionFactory().getCRS(initialCRSCodeStr);
+				return scope.getSimulation().getProjectionFactory().getCRS(initialCRSCodeStr);
 			} catch (GamaRuntimeException e) {
 				throw GamaRuntimeException.error("The code " + initialCRSCodeStr +
 					" does not correspond to a known CRS code. GAMA is unable to load " + getPath(), scope);
@@ -59,7 +59,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		}
 		CoordinateReferenceSystem crs = getOwnCRS();
 		if ( crs == null && scope != null ) {
-			crs = scope.getSimulationScope().getProjectionFactory().getDefaultInitialCRS();
+			crs = scope.getSimulation().getProjectionFactory().getDefaultInitialCRS();
 		}
 		return crs;
 	}
@@ -72,7 +72,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	protected void computeProjection(final IScope scope, final Envelope env) {
 		if ( scope == null ) { return; }
 		CoordinateReferenceSystem crs = getExistingCRS(scope);
-		ProjectionFactory pf = scope.getSimulationScope().getProjectionFactory();
+		ProjectionFactory pf = scope.getSimulation().getProjectionFactory();
 		gis = pf.fromCRS(crs, env);
 	}
 

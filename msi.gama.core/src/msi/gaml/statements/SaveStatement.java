@@ -286,15 +286,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final int nbRows = gp.getNbRows();
 			header += "ncols         " + nbCols + Strings.LN;
 			header += "nrows         " + nbRows + Strings.LN;
-			final boolean nullProjection = scope.getSimulationScope().getProjectionFactory().getWorld() == null;
+			final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
 			header += "xllcorner     " + (nullProjection ? "0"
-					: scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX())
+					: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX())
 					+ Strings.LN;
 			header += "yllcorner     " + (nullProjection ? "0"
-					: scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY())
+					: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY())
 					+ Strings.LN;
-			final double dx = scope.getSimulationScope().getEnvelope().getWidth() / nbCols;
-			final double dy = scope.getSimulationScope().getEnvelope().getHeight() / nbRows;
+			final double dx = scope.getSimulation().getEnvelope().getWidth() / nbCols;
+			final double dy = scope.getSimulation().getEnvelope().getHeight() / nbRows;
 			if (Comparison.equal(dx, dy)) {
 				header += "cellsize      " + dx + Strings.LN;
 			} else {
@@ -334,19 +334,19 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 
 		}
-		final boolean nullProjection = scope.getSimulationScope().getProjectionFactory().getWorld() == null;
+		final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
 		final double x = nullProjection ? 0
-				: scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX();
+				: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX();
 		final double y = nullProjection ? 0
-				: scope.getSimulationScope().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY();
-		final double width = scope.getSimulationScope().getEnvelope().getWidth();
-		final double height = scope.getSimulationScope().getEnvelope().getHeight();
+				: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY();
+		final double width = scope.getSimulation().getEnvelope().getWidth();
+		final double height = scope.getSimulation().getEnvelope().getHeight();
 
 		Envelope2D refEnvelope;
 		CoordinateReferenceSystem crs = null;
 		try {
 			crs = nullProjection ? CRS.decode("EPSG:2154")
-					: scope.getSimulationScope().getProjectionFactory().getWorld().getTargetCRS();
+					: scope.getSimulation().getProjectionFactory().getWorld().getTargetCRS();
 		} catch (final NoSuchAuthorityCodeException e1) {
 			e1.printStackTrace();
 		} catch (final FactoryException e1) {
@@ -564,10 +564,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 		IProjection gis;
 		if (code == null) {
-			gis = scope.getSimulationScope().getProjectionFactory().getWorld();
+			gis = scope.getSimulation().getProjectionFactory().getWorld();
 		} else {
 			try {
-				gis = scope.getSimulationScope().getProjectionFactory().forSavingWith(code);
+				gis = scope.getSimulation().getProjectionFactory().forSavingWith(code);
 			} catch (final FactoryException e1) {
 				throw GamaRuntimeException.error("The code " + code
 						+ " does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);

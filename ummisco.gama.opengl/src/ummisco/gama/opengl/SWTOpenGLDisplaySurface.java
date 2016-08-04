@@ -407,7 +407,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
 		if (currentLayer instanceof OverlayLayer) {
-			return getScope().getSimulationScope().getEnvelope();
+			return getScope().getSimulation().getEnvelope();
 		}
 		Envelope e = currentLayer.getVisibleRegion();
 		if (e == null) {

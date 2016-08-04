@@ -181,7 +181,7 @@ public class DiffusionStatement extends AbstractStatement {
 	int nbRows, nbCols;
 
 	private IGrid getEnvironment(final IScope scope) {
-		return (IGrid) scope.getSimulationScope().getPopulationFor(envName).getTopology().getPlaces();
+		return (IGrid) scope.getSimulation().getPopulationFor(envName).getTopology().getPlaces();
 	}
 
 	public double[][] translateMatrix(final IScope scope, final IMatrix<?> mm) {

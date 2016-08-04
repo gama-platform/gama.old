@@ -299,19 +299,19 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private Set<IAgent> getExternalAgents(final IScope scope) {
-		Set<IAgent> result = (Set<IAgent>) scope.getAgentScope().getAttribute("__externalAgents");
+		Set<IAgent> result = (Set<IAgent>) scope.getAgent().getAttribute("__externalAgents");
 		if (result == null) {
 			result = new HashSet();
-			scope.getAgentScope().setAttribute("__externalAgents", result);
+			scope.getAgent().setAttribute("__externalAgents", result);
 		}
 		return result;
 	}
 
 	public IList<IAgent> getEquationAgents(final IScope scope) {
-		IList<IAgent> result = (IList<IAgent>) scope.getAgentScope().getAttribute("__equationAgents");
+		IList<IAgent> result = (IList<IAgent>) scope.getAgent().getAttribute("__equationAgents");
 		if (result == null) {
 			result = GamaListFactory.create();
-			scope.getAgentScope().setAttribute("__equationAgents", result);
+			scope.getAgent().setAttribute("__equationAgents", result);
 		}
 		return result;
 
@@ -338,7 +338,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private void addInternalAgents(final IScope scope) {
-		getEquationAgents(scope).addAll(Collections.nCopies(equations.size(), scope.getAgentScope()));
+		getEquationAgents(scope).addAll(Collections.nCopies(equations.size(), scope.getAgent()));
 	}
 
 	private void addExternalAgents(final IScope scope) {
@@ -399,7 +399,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	private void addExternalAgents(final IScope scope, final Object toAdd, final Set<IAgent> externalAgents) {
 		if (toAdd instanceof IExpression) {
 			addExternalAgents(scope, ((IExpression) toAdd).value(scope), externalAgents);
-		} else if (toAdd instanceof IAgent && !toAdd.equals(scope.getAgentScope()) && !((IAgent) toAdd).dead())
+		} else if (toAdd instanceof IAgent && !toAdd.equals(scope.getAgent()) && !((IAgent) toAdd).dead())
 			externalAgents.add((IAgent) toAdd);
 		else if (toAdd instanceof GamlSpecies)
 			addExternalAgents(scope, ((GamlSpecies) toAdd).getPopulation(scope), externalAgents);

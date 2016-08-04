@@ -44,7 +44,7 @@ public class MessagingSkill extends Skill {
 			@arg(name = IKeyword.TO, type = IType.NONE, optional = true, doc = @doc("The agent, or server, to which this message will be sent to")),
 			@arg(name = GamaMessage.CONTENTS, type = IType.NONE, optional = false, doc = @doc("The contents of the message, an arbitrary object")) })
 	public GamaMessage primSendMessage(final IScope scope) throws GamaRuntimeException {
-		final IAgent sender = scope.getAgentScope();
+		final IAgent sender = scope.getAgent();
 		Object receiver = scope.getArg("to", IType.NONE);
 		if (receiver == null)
 			receiver = sender;

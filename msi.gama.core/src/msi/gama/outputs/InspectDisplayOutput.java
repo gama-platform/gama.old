@@ -241,7 +241,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 			return;
 		}
 		// What to do in case of multi-simulations ???
-		scope.getSimulationScope().addOutput(InspectDisplayOutput.this);
+		scope.getSimulation().addOutput(InspectDisplayOutput.this);
 		setPaused(false);
 		open();
 		step(scope);

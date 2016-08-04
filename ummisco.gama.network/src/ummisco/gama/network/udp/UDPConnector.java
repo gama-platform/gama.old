@@ -100,13 +100,13 @@ public class UDPConnector extends Connector {
 	public void openServerSocket(final IAgent agent) {
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
 
-		if (agent.getScope().getSimulationScope().getAttribute(_UDP_SERVER + port) == null) {
+		if (agent.getScope().getSimulation().getAttribute(_UDP_SERVER + port) == null) {
 			try {
 				final DatagramSocket sersock = new DatagramSocket(port);
 				sersock.setSoTimeout(10);
 				final MultiThreadedUDPServer ssThread = new MultiThreadedUDPServer(agent, sersock);
 				ssThread.start();
-				agent.getScope().getSimulationScope().setAttribute(_UDP_SERVER + port, ssThread);
+				agent.getScope().getSimulation().setAttribute(_UDP_SERVER + port, ssThread);
 
 			} catch (BindException be) {
 				throw GamaRuntimeException.create(be, agent.getScope());
@@ -157,7 +157,7 @@ public class UDPConnector extends Connector {
 //		int port = (int) agent.getAttribute("port");
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
 
-		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getScope().getSimulationScope().getAttribute(_UDP_SERVER + port);
+		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getScope().getSimulation().getAttribute(_UDP_SERVER + port);
 		InetAddress IPAddress = (InetAddress) agent.getAttribute("replyIP");
 		int replyport = Cast.asInt(agent.getScope(), agent.getAttribute("replyPort"));
 		if (ssThread == null || IPAddress == null) {
@@ -231,11 +231,11 @@ public class UDPConnector extends Connector {
 		String server = this.getConfigurationParameter(SERVER_URL);
 		String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(scope, sport);
-		final Thread UDPsersock = (Thread) scope.getSimulationScope().getAttribute(_UDP_SERVER + port);
+		final Thread UDPsersock = (Thread) scope.getSimulation().getAttribute(_UDP_SERVER + port);
 		try {
 			if (UDPsersock != null) {
 				UDPsersock.interrupt();
-				scope.getSimulationScope().setAttribute(_UDP_SERVER + port, null);
+				scope.getSimulation().setAttribute(_UDP_SERVER + port, null);
 			}
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);

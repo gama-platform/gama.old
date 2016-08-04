@@ -396,20 +396,20 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method getAgentScope()
 	 * 
-	 * @see msi.gama.runtime.IScope#getAgentScope() No agent there
+	 * @see msi.gama.runtime.IScope#getAgent() No agent there
 	 */
 	@Override
-	public IAgent getAgentScope() {
+	public IAgent getAgent() {
 		return null;
 	}
 
 	/**
 	 * Method getSimulationScope()
 	 * 
-	 * @see msi.gama.runtime.IScope#getSimulationScope() No simulation here
+	 * @see msi.gama.runtime.IScope#getSimulation() No simulation here
 	 */
 	@Override
-	public SimulationAgent getSimulationScope() {
+	public SimulationAgent getSimulation() {
 		return null;
 	}
 

@@ -61,7 +61,7 @@ public class TestStatement extends AbstractStatementSequence {
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if ( setup == null && !setupLookedFor ) {
 			setupLookedFor = true;
-			setup = scope.getAgentScope().getSpecies().getStatement(SetUpStatement.class, null);
+			setup = scope.getAgent().getSpecies().getStatement(SetUpStatement.class, null);
 		}
 
 		if ( setup != null ) {

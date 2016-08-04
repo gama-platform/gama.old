@@ -154,7 +154,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 				runtimeArgs = null;
 				return result;
 			}
-			ISpecies context = scope.getAgentScope().getSpecies();
+			ISpecies context = scope.getAgent().getSpecies();
 			IStatement.WithArgs executer = context.getAction(actionName);
 			boolean isWorkaroundForIssue1595 = false;
 			if (executer == null) {

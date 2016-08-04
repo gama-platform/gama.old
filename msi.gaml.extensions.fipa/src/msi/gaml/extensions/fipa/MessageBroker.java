@@ -167,26 +167,26 @@ public class MessageBroker {
 	 * @return single instance of MessageBroker
 	 */
 	public static MessageBroker getInstance(final IScope scope) {
-		MessageBroker instance = instances.get(scope.getSimulationScope());
+		MessageBroker instance = instances.get(scope.getSimulation());
 		if (instance == null) {
 			instance = new MessageBroker();
-			instances.put(scope.getSimulationScope(), instance);
+			instances.put(scope.getSimulation(), instance);
 
-			scope.getSimulationScope().postEndAction(new IExecutable() {
+			scope.getSimulation().postEndAction(new IExecutable() {
 
 				@Override
 				public Object executeOn(final IScope scope) throws GamaRuntimeException {
-					instances.get(scope.getSimulationScope()).manageConversationsAndMessages();
+					instances.get(scope.getSimulation()).manageConversationsAndMessages();
 					return null;
 				}
 			});
-			scope.getSimulationScope().postDisposeAction(new IExecutable() {
+			scope.getSimulation().postDisposeAction(new IExecutable() {
 
 				@Override
 				public Object executeOn(final IScope scope) throws GamaRuntimeException {
-					if (instances.get(scope.getSimulationScope()) != null)
-						instances.get(scope.getSimulationScope()).schedulerDisposed();
-					instances.remove(scope.getSimulationScope());
+					if (instances.get(scope.getSimulation()) != null)
+						instances.get(scope.getSimulation()).schedulerDisposed();
+					instances.remove(scope.getSimulation());
 					return null;
 				}
 			});

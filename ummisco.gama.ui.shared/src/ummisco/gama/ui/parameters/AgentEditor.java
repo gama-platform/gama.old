@@ -90,7 +90,7 @@ public class AgentEditor extends ExpressionBasedEditor {
 		if (a != null) {
 			final IAgentMenuFactory factory = WorkbenchHelper.getService(IAgentMenuFactory.class);
 			if (factory != null)
-				factory.fillPopulationSubMenu(dropMenu, a.getScope().getSimulationScope().getMicroPopulation(species),
+				factory.fillPopulationSubMenu(dropMenu, a.getScope().getSimulation().getMicroPopulation(species),
 						null, action);
 		}
 		final Rectangle rect = items[CHANGE].getBounds();

@@ -76,7 +76,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 		@Override
 		public Rectangle2D executeOn(final IScope scope) throws GamaRuntimeException {
-			final IAgent agent = scope.getAgentScope();
+			final IAgent agent = scope.getAgent();
 			if (agent != null && !agent.dead()) {
 				final IGraphics g = scope.getGraphics();
 				if (g == null || g.cannotDraw()) {
@@ -155,7 +155,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 	@Override
 	public Rectangle2D executeOn(final IScope scope) {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		final boolean shouldHighlight = agent == scope.getGui().getHighlightedAgent() && !isHighlightAspect;
 		if (agent != null && !agent.dead()) {
 			IGraphics g = scope.getGraphics();

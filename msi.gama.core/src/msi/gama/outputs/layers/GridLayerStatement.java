@@ -177,7 +177,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			showText = Cast.asBool(scope, textExp.value(scope));
 		}
 
-		final IPopulation gridPop = scope.getAgentScope().getPopulationFor(getName());
+		final IPopulation gridPop = scope.getAgent().getPopulationFor(getName());
 		if ( gridPop == null ) {
 			throw GamaRuntimeException.error("missing environment for output " + getName(), scope);
 		} else if ( !gridPop

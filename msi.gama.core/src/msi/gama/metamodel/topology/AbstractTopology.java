@@ -72,7 +72,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	protected void setRoot(final IScope scope, final RootTopology root) {
-		this.root = (RootTopology) (root == null ? scope.getSimulationScope().getTopology() : root);
+		this.root = (RootTopology) (root == null ? scope.getSimulation().getTopology() : root);
 	}
 
 	@Override
@@ -427,7 +427,7 @@ public abstract class AbstractTopology implements ITopology {
 		if (filter != null) {
 			shps = filter.getAgents(scope);
 		} else {
-			shps = scope.getSimulationScope().getAgents(scope);
+			shps = scope.getSimulation().getAgents(scope);
 		}
 		return shps;
 	}

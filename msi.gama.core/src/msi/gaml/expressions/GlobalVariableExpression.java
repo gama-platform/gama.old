@@ -49,14 +49,14 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 //		return scope.getGlobalVarValue(getName());
-		final IAgent sc=scope.getAgentScope();
+		final IAgent sc=scope.getAgent();
 		return sc.getScope().getRoot().getScope().getGlobalVarValue(getName());
 	}
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
 		if ( isNotModifiable ) { return; }
-		final IAgent sc=scope.getAgentScope();
+		final IAgent sc=scope.getAgent();
 		sc.getScope().getRoot().getScope().setGlobalVarValue(getName(), v);
 	}
 

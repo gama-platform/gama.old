@@ -171,7 +171,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 					}
 					// We run into the scope provided by the agent
 					final IScope runningScope = agent.getScope();
-					runningScope.getSimulationScope().executeAction(new IExecutable() {
+					runningScope.getSimulation().executeAction(new IExecutable() {
 
 						@Override
 						public Object executeOn(final IScope scope) {

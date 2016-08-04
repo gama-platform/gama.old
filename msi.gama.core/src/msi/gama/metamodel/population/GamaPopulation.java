@@ -160,7 +160,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			updatableVars[i] = species.getVar(s);
 		}
 		if (species.isMirror() && host != null) {
-			host.getScope().getSimulationScope()
+			host.getScope().getSimulation()
 					.postEndAction(new MirrorPopulationManagement(species.getFacet(IKeyword.MIRRORS)));
 		}
 
@@ -518,7 +518,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		} else if (species.isGraph()) {
 			final IExpression spec = species.getFacet(IKeyword.EDGE_SPECIES);
 			final String edgeName = spec == null ? "base_edge" : spec.literalValue();
-			final ISpecies edgeSpecies = scope.getSimulationScope().getModel().getSpecies(edgeName);
+			final ISpecies edgeSpecies = scope.getSimulation().getModel().getSpecies(edgeName);
 			final IType edgeType = scope.getModelContext().getTypeNamed(edgeName);
 			final IType nodeType = getType().getContentType();
 			// TODO Specifier directed quelque part dans l'esp�ce
@@ -537,14 +537,14 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		IExpression exp = species.getFacet(IKeyword.WIDTH);
 		final int rows = exp == null
 				? species.hasFacet(IKeyword.CELL_WIDTH)
-						? (int) (scope.getSimulationScope().getGeometry().getEnvelope().getWidth()
+						? (int) (scope.getSimulation().getGeometry().getEnvelope().getWidth()
 								/ Cast.asInt(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope)))
 						: 100
 				: Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.HEIGHT);
 		final int columns = exp == null
 				? species.hasFacet(IKeyword.CELL_HEIGHT)
-						? (int) (scope.getSimulationScope().getGeometry().getEnvelope().getHeight()
+						? (int) (scope.getSimulation().getGeometry().getEnvelope().getHeight()
 								/ Cast.asInt(scope, species.getFacet(IKeyword.CELL_HEIGHT).value(scope)))
 						: 100
 				: Cast.asInt(scope, exp.value(scope));

@@ -128,7 +128,7 @@ public interface IScope {
 
 	public abstract ITopLevelAgent getRoot();
 
-	public abstract SimulationAgent getSimulationScope();
+	public abstract SimulationAgent getSimulation();
 
 	public abstract IExperimentAgent getExperiment();
 
@@ -146,7 +146,7 @@ public interface IScope {
 
 	public abstract boolean push(IAgent iAgent);
 
-	public abstract IAgent getAgentScope();
+	public abstract IAgent getAgent();
 
 	public IAgent[] getAgentsStack();
 

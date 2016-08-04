@@ -25,7 +25,7 @@ public class GraphicLayer extends AbstractLayer {
 	@Override
 	protected void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		Object[] result = new Object[1];
-		IAgent agent = scope.getAgentScope();
+		IAgent agent = scope.getAgent();
 		scope.execute(((GraphicLayerStatement) definition).getAspect(), agent, null, result);
 	}
 

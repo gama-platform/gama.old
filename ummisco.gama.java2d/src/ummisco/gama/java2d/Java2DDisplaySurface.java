@@ -558,7 +558,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	@Override
 	public Envelope getVisibleRegionForLayer(final ILayer currentLayer) {
 		if (currentLayer instanceof OverlayLayer) {
-			return getScope().getSimulationScope().getEnvelope();
+			return getScope().getSimulation().getEnvelope();
 		}
 		final Envelope e = new Envelope();
 		final Point origin = getOrigin();

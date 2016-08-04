@@ -244,8 +244,8 @@ public class GAMA {
 			}
 		}
 		// System.out.println("reportAndThrowIfNeeded : " + g.getMessage());
-		if (scope != null && scope.getAgentScope() != null) {
-			final String name = scope.getAgentScope().getName();
+		if (scope != null && scope.getAgent() != null) {
+			final String name = scope.getAgent().getName();
 			if (!g.getAgentsNames().contains(name)) {
 				g.addAgent(name);
 			}

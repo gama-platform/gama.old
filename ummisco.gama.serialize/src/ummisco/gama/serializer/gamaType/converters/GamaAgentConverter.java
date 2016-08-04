@@ -66,7 +66,7 @@ public class GamaAgentConverter implements Converter {
 		SimulationAgent simAgt = convertScope.getSimulationAgent();
 		List<IAgent> lagt;
 		if(simAgt == null) {
-			lagt = (convertScope.getScope()).getSimulationScope().getAgents(convertScope.getScope());
+			lagt = (convertScope.getScope()).getSimulation().getAgents(convertScope.getScope());
 		} else {
 			lagt = simAgt.getAgents(convertScope.getScope());
 		}

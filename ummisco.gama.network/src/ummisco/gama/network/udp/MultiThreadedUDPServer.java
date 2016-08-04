@@ -134,8 +134,8 @@ public class MultiThreadedUDPServer extends Thread {
 		}
 
 		try {
-			myAgent.getScope().getSimulationScope().setAttribute(UDPConnector._UDP_SERVER + myUDPServerSocket.getLocalPort(), null);
-			myAgent.getScope().getSimulationScope().setAttribute(UDPConnector._UDP_CLIENT + myUDPServerSocket.getLocalPort(), null);
+			myAgent.getScope().getSimulation().setAttribute(UDPConnector._UDP_SERVER + myUDPServerSocket.getLocalPort(), null);
+			myAgent.getScope().getSimulation().setAttribute(UDPConnector._UDP_CLIENT + myUDPServerSocket.getLocalPort(), null);
 			myUDPServerSocket.close();
 			Thread.sleep(100);
 

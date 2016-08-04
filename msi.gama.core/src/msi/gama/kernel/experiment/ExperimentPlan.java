@@ -523,8 +523,18 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		}
 
 		@Override
-		public SimulationAgent getSimulationScope() {
+		public SimulationAgent getSimulation() {
 			return getCurrentSimulation();
+		}
+
+		/**
+		 * Method getAgentScope()
+		 * 
+		 * @see msi.gama.runtime.IScope#getAgent()
+		 */
+		@Override
+		public ExperimentAgent getAgent() {
+			return ExperimentPlan.this.getAgent();
 		}
 
 		@Override

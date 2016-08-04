@@ -436,7 +436,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			this.data.setFullScreen(Cast.asBool(scope, fs.value(scope)));
 		}
 
-		SimulationAgent sim = getScope().getSimulationScope();
+		SimulationAgent sim = getScope().getSimulation();
 		// hqnghi if layer come from micro-model
 		final ModelDescription micro = this.getDescription().getModelDescription();
 		final ModelDescription main = (ModelDescription) scope.getModel().getDescription();

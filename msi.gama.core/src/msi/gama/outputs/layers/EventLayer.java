@@ -36,7 +36,7 @@ public class EventLayer extends AbstractLayer {
 	}
 
 	EventListener listener;
-	IScope scope;
+	IScope executionScope;
 
 	public EventLayer(final ILayerStatement layer) {
 		super(layer);
@@ -58,10 +58,12 @@ public class EventLayer extends AbstractLayer {
 		super.firstLaunchOn(surface);
 		final IExpression eventType = definition.getFacet(IKeyword.NAME);
 		final IExpression actionName = definition.getFacet(IKeyword.ACTION);
-		scope = surface.getScope().copy("of EventLayer");
+		executionScope = surface.getScope().copy("of EventLayer");
 
-		final String currentEvent = Cast.asString(scope, eventType.value(scope));
-		final String currentAction = Cast.asString(scope, actionName.value(scope));
+		// Evaluated in the display surface scope to gather variables defined in
+		// there
+		final String currentEvent = Cast.asString(surface.getScope(), eventType.value(surface.getScope()));
+		final String currentAction = Cast.asString(surface.getScope(), actionName.value(surface.getScope()));
 
 		listener = new EventListener(surface, currentEvent, currentAction);
 		surface.addListener(listener);
@@ -182,8 +184,8 @@ public class EventLayer extends AbstractLayer {
 		}
 
 		private void executeEvent(final int x, final int y) {
-			final IAgent agent = ((EventLayerStatement) definition).executesInSimulation() ? scope.getSimulationScope()
-					: scope.getExperiment();
+			final IAgent agent = ((EventLayerStatement) definition).executesInSimulation()
+					? executionScope.getSimulation() : executionScope.getExperiment();
 			final IExecutable executer = agent == null ? null : agent.getSpecies().getAction(actionName);
 			if (executer == null) {
 				return;
@@ -204,7 +206,7 @@ public class EventLayer extends AbstractLayer {
 
 				@Override
 				public void run() {
-					scope.execute(executer, agent, null, result);
+					executionScope.execute(executer, agent, null, result);
 				}
 			});
 

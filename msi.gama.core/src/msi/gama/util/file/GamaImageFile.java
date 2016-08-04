@@ -382,7 +382,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 				if (geodataFile != null) {
 					IProjection pr;
 					try {
-						pr = scope.getSimulationScope().getProjectionFactory().forSavingWith(file.gis.getTargetCRS());
+						pr = scope.getSimulation().getProjectionFactory().forSavingWith(file.gis.getTargetCRS());
 						minCorner = new GamaShape(pr.transform(minCorner.getInnerGeometry())).getLocation();
 						maxCorner = new GamaShape(pr.transform(maxCorner.getInnerGeometry())).getLocation();
 					} catch (final FactoryException e1) {

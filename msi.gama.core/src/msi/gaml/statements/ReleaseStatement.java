@@ -122,7 +122,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		} else if ( t instanceof IAgent ) {
 			microAgents.add((IAgent) t);
 		}
-		final IAgent macroAgent = scope.getAgentScope();
+		final IAgent macroAgent = scope.getAgent();
 		final Iterator<IAgent> it = microAgents.iterator();
 		while (it.hasNext()) {
 			if ( !it.next().getHost().equals(macroAgent) ) {

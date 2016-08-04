@@ -122,7 +122,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 	@Override
 	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
 		// TODO Verify it is a macro agent
-		final IMacroAgent executor = (IMacroAgent) stack.getAgentScope();
+		final IMacroAgent executor = (IMacroAgent) stack.getAgent();
 		final IList<IAgent> immigrants = GamaListFactory.create(Types.AGENT);
 
 		final ISpecies targetMicroSpecies = executor.getSpecies().getMicroSpecies(target);

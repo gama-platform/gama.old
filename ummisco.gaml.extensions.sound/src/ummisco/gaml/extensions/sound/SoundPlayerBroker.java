@@ -61,7 +61,7 @@ public class SoundPlayerBroker {
 
 		synchronized (soundPlayerOfAgents) {
 			final IScope scope = agent.getScope();
-			final SimulationAgent simulation = scope.getSimulationScope();
+			final SimulationAgent simulation = scope.getSimulation();
 
 			Map<IAgent, GamaSoundPlayer> soundPlayersOfSimulation = soundPlayerOfAgents.get(simulation);
 			if (soundPlayersOfSimulation == null) {

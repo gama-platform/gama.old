@@ -262,7 +262,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
 	}
 
 	public void postRefreshManagementAction(final IScope scope) {
-		scope.getSimulationScope().postEndAction(new IExecutable() {
+		scope.getSimulation().postEndAction(new IExecutable() {
 
 			@Override
 			public Object executeOn(final IScope scope) throws GamaRuntimeException {

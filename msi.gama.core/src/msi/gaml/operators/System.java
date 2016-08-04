@@ -84,7 +84,7 @@ public class System {
 		}
 		final ProcessBuilder b = new ProcessBuilder(commands);
 		b.redirectErrorStream(true);
-		b.directory(new File(scope.getSimulationScope().getExperiment().getWorkingPath()));
+		b.directory(new File(scope.getSimulation().getExperiment().getWorkingPath()));
 		try {
 			final Process p = b.start();
 			if (nonBlocking)
@@ -154,7 +154,7 @@ public class System {
 					@example(value = "assert (values at \"Location\") equals: {10,10};", isTestOnly = true),
 					@example(value = "create bug number: int(values at \"Number\") with: [location:: (point(values at \"Location\"))];", isExecutable = false) })
 	public static GamaMap<String, Object> userInput(final IScope scope, final IExpression map) {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
 	}
 
@@ -192,14 +192,14 @@ public class System {
 	@doc(value = "evaluates the given GAML string.", examples = {
 			@example(value = "eval_gaml(\"2+3\")", equals = "5") })
 	public static Object opEvalGaml(final IScope scope, final String gaml) {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		final IDescription d = agent.getSpecies().getDescription();
 		try {
 			final IExpression e = GAML.getExpressionFactory().createExpr(gaml, d);
 			return scope.evaluate(e, agent);
 		} catch (final GamaRuntimeException e) {
 			scope.getGui().getConsole().informConsole(
-					"Error in evaluating Gaml code : '" + gaml + "' in " + scope.getAgentScope()
+					"Error in evaluating Gaml code : '" + gaml + "' in " + scope.getAgent()
 							+ java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage(),
 					scope.getRoot());
 

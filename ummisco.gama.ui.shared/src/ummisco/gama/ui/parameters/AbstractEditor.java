@@ -663,7 +663,7 @@ public abstract class AbstractEditor<T>
 		}
 		if (scope == null)
 			return null;
-		return scope.getSimulationScope();
+		return scope.getSimulation();
 
 	}
 

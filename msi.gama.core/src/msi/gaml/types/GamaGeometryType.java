@@ -92,7 +92,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		// obj); }
 		// if ( obj instanceof IShape ) { return ((IShape) obj).getGeometry(); }
 		if (obj instanceof ISpecies) {
-			return geometriesToGeometry(scope, scope.getAgentScope().getPopulationFor((ISpecies) obj));
+			return geometriesToGeometry(scope, scope.getAgent().getPopulationFor((ISpecies) obj));
 		}
 		if (obj instanceof GamaPair) {
 			return pairToGeometry(scope, (GamaPair) obj);

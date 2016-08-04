@@ -227,7 +227,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		}
 		if (value != UNDEFINED && onChange != null) {
 			// Already initialized, we call the on_change behavior
-			final IExecutable on_changer = scope.getAgentScope().getSpecies()
+			final IExecutable on_changer = scope.getAgent().getSpecies()
 					.getAction(Cast.asString(scope, onChange.value(scope)));
 			scope.getExperiment().executeAction(on_changer);
 			// scope.execute(on_changer, scope.getAgentScope(), null,

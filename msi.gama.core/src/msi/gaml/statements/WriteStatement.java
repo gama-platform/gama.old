@@ -66,7 +66,7 @@ public class WriteStatement extends AbstractStatement {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		String mes = null;
 		if (agent != null && !agent.dead()) {
 			mes = Cast.asString(scope, message.value(scope));

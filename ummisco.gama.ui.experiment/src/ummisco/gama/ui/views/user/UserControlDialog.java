@@ -80,7 +80,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	private final IScope scope;
 
 	public UserControlDialog(final IScope scope, final UserPanelStatement panel) {
-		super((Shell) null, "[" + scope.getAgentScope().getName() + "] " + panel.getName(), null, null);
+		super((Shell) null, "[" + scope.getAgent().getName() + "] " + panel.getName(), null, null);
 		setShellStyle(SWT.CLOSE | SWT.BORDER | SWT.TOOL | SWT.MODELESS | SWT.RESIZE);
 		userCommands = panel.getUserCommands();
 		this.scope = scope;
@@ -125,7 +125,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	protected void createButtonsForButtonBar(final Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, "Continue", true);
 		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
-				"Inspect " + scope.getAgentScope().getName() + "...", false);
+				"Inspect " + scope.getAgent().getName() + "...", false);
 		detailsButton.setImage(IGamaIcons.MENU_INSPECT.image());
 
 	}
@@ -245,7 +245,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		final GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 0;
 		compo.setLayout(layout);
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		final AgentAttributesEditorsList editors = new AgentAttributesEditorsList();
 		editors.add(new ArrayList<IParameter>(agent.getSpecies().getVars()), agent);
 		final Map<String, IParameterEditor> parameters = editors.getCategories().get(agent);

@@ -148,7 +148,7 @@ public abstract class Spatial {
 								"square", "triangle" })
 		public static IShape circle(final IScope scope, final Double radius) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (radius <= 0) {
 				return new GamaShape(location);
@@ -181,7 +181,7 @@ public abstract class Spatial {
 								"square", "circle", "squircle", "triangle" })
 		public static IShape ellipse(final IScope scope, final Double xRadius, final Double yRadius) {
 			GamaPoint location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
 			if (xRadius <= 0) {
 				if (yRadius <= 0) {
@@ -200,7 +200,7 @@ public abstract class Spatial {
 								"super_ellipse", "rectangle", "square", "circle", "ellipse", "triangle" })
 		public static IShape squicle(final IScope scope, final Double xRadius, final Double power) {
 			GamaPoint location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
 			if (xRadius <= 0) {
 				return new GamaShape(location);
@@ -227,7 +227,7 @@ public abstract class Spatial {
 						"rectangle", "square", "circle", "ellipse", "triangle" })
 		public static IShape cross(final IScope scope, final Double xRadius, final Double width) {
 			GamaPoint location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
 			if (xRadius <= 0) {
 				return new GamaShape(location);
@@ -242,7 +242,7 @@ public abstract class Spatial {
 						"rectangle", "square", "circle", "ellipse", "triangle" })
 		public static IShape cross(final IScope scope, final Double xRadius) {
 			GamaPoint location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
 			if (xRadius <= 0) {
 				return new GamaShape(location);
@@ -259,7 +259,7 @@ public abstract class Spatial {
 		public static IShape arc(final IScope scope, final Double xRadius, final Double heading, final Double amplitude,
 				final boolean filled) {
 			GamaPoint location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = (GamaPoint) (a != null ? a.getLocation() : new GamaPoint(0, 0));
 			if (xRadius <= 0) {
 				return new GamaShape(location);
@@ -276,7 +276,7 @@ public abstract class Spatial {
 								"square", "triangle" })
 		public static IShape cylinder(final IScope scope, final Double radius, final Double depth) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (radius <= 0) {
 				return new GamaShape(location);
@@ -293,7 +293,7 @@ public abstract class Spatial {
 								"square", "triangle" })
 		public static IShape sphere(final IScope scope, final Double radius) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (radius <= 0) {
 				return new GamaShape(location);
@@ -310,7 +310,7 @@ public abstract class Spatial {
 								"square", "triangle" })
 		public static IShape teapot(final IScope scope, final Double size) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (size <= 0) {
 				return new GamaShape(location);
@@ -331,7 +331,7 @@ public abstract class Spatial {
 			}
 			final Integer min_angle = Maths.checkHeading(p1);
 			final Integer max_angle = Maths.checkHeading(p2);
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			final ILocation origin = a.getLocation() == null ? new GamaPoint(0, 0) : a.getLocation();
 			final double originx = origin.getX();
 			final double originy = origin.getY();
@@ -374,7 +374,7 @@ public abstract class Spatial {
 								"square", "triangle" })
 		public static IShape cone3D(final IScope scope, final Double radius, final Double height) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (radius <= 0) {
 				return new GamaShape(location);
@@ -391,7 +391,7 @@ public abstract class Spatial {
 								"rectangle", "triangle" })
 		public static IShape square(final IScope scope, final Double side_size) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (side_size <= 0) {
 				return new GamaShape(location);
@@ -408,7 +408,7 @@ public abstract class Spatial {
 								"rectangle", "triangle" })
 		public static IShape cube(final IScope scope, final Double side_size) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (side_size <= 0) {
 				return new GamaShape(location);
@@ -425,7 +425,7 @@ public abstract class Spatial {
 								"square", "triangle" })
 		public static IShape rectangle(final IScope scope, final GamaPoint p) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildRectangle(p.x, p.y, location);
 		}
@@ -438,7 +438,7 @@ public abstract class Spatial {
 								"square", "triangle" })
 		public static IShape rectangle(final IScope scope, final double x, final double y) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildRectangle(x, y, location);
 		}
@@ -469,7 +469,7 @@ public abstract class Spatial {
 								"polyline", "square", "cube", "triangle" })
 		public static IShape box(final IScope scope, final GamaPoint p) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildBox(p.x, p.y, p.z, location);
 		}
@@ -483,7 +483,7 @@ public abstract class Spatial {
 								"polyline", "square", "cube", "triangle" })
 		public static IShape box(final IScope scope, final double x, final double y, final double z) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return GamaGeometryType.buildBox(x, y, z, location);
 		}
@@ -497,7 +497,7 @@ public abstract class Spatial {
 								"rectangle", "square" })
 		public static IShape triangle(final IScope scope, final Double side_size) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (side_size <= 0) {
 				return new GamaShape(location);
@@ -514,7 +514,7 @@ public abstract class Spatial {
 								"rectangle", "square" })
 		public static IShape pyramid(final IScope scope, final Double side_size) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (side_size <= 0) {
 				return new GamaShape(location);
@@ -531,7 +531,7 @@ public abstract class Spatial {
 								"rectangle", "triangle" })
 		public static IShape hexagon(final IScope scope, final Double size) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if (size <= 0) {
 				return new GamaShape(location);
@@ -548,7 +548,7 @@ public abstract class Spatial {
 								"rectangle", "triangle" })
 		public static IShape hexagon(final IScope scope, final GamaPoint size) {
 			ILocation location;
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			final Double width = size.x;
 			final Double height = size.y;
@@ -1188,7 +1188,7 @@ public abstract class Spatial {
 				@example(value = "perception_geom masked_by obstacle_list", equals = "the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list.", isExecutable = false) })
 		public static IShape masked_by(final IScope scope, final IShape source, final IContainer<?, IShape> obstacles,
 				Integer precision) {
-			final IAgent a = scope.getAgentScope();
+			final IAgent a = scope.getAgent();
 			final List<IShape> obst = obstacles == null ? new ArrayList<IShape>()
 					: obstacles.listValue(scope, Types.GEOMETRY, false);
 			final ILocation location = a != null ? a.getLocation() : new GamaPoint(0, 0);
@@ -2371,7 +2371,7 @@ public abstract class Spatial {
 				throw GamaRuntimeException.error("Impossible to compute points_at", scope);
 			}
 			final IList<ILocation> locations = GamaListFactory.create(Types.POINT);
-			final ILocation loc = scope.getAgentScope().getLocation();
+			final ILocation loc = scope.getAgent().getLocation();
 			final double angle1 = scope.getRandom().between(0, 2 * CmnFastMath.PI);
 
 			for (int i = 0; i < nbLoc; i++) {
@@ -2535,10 +2535,10 @@ public abstract class Spatial {
 			if (GamaPreferences.AT_DISTANCE_OPTIMIZATION.getValue() && !scope.getTopology().isTorus()
 					&& (scope.getTopology() instanceof AmorphousTopology
 							|| scope.getTopology() instanceof ContinuousTopology)
-					&& scope.getAgentScope().isPoint()
-					&& (list.length(scope) + 0.0) / scope.getSimulationScope().getNbAgents() < 0.1) {
+					&& scope.getAgent().isPoint()
+					&& (list.length(scope) + 0.0) / scope.getSimulation().getNbAgents() < 0.1) {
 				final IList<IAgent> results = GamaListFactory.create();
-				final IAgent ag = scope.getAgentScope();
+				final IAgent ag = scope.getAgent();
 				for (final IShape sp : list.iterable(scope)) {
 					if (ag.euclidianDistanceTo(sp) <= distance)
 						results.add((IAgent) sp);
@@ -2547,7 +2547,7 @@ public abstract class Spatial {
 			}
 			final IType contentType = list.getType().getContentType();
 			if (contentType.isAgentType()) {
-				return _neighbors(scope, In.list(scope, list), scope.getAgentScope(), distance);
+				return _neighbors(scope, In.list(scope, list), scope.getAgent(), distance);
 			} else if (contentType == Types.GEOMETRY) {
 				return geomAtDistance(scope, list, distance);
 			}
@@ -2556,7 +2556,7 @@ public abstract class Spatial {
 
 		public static IList<? extends IShape> geomAtDistance(final IScope scope,
 				final IContainer<?, ? extends IShape> list, final Double distance) {
-			final IShape ag = scope.getAgentScope();
+			final IShape ag = scope.getAgent();
 			final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 			for (final Object shape : list.listValue(scope, Types.GEOMETRY, false)) {
 				if (shape == null || !(shape instanceof IShape)) {
@@ -2751,7 +2751,7 @@ public abstract class Spatial {
 						"neighbors_at", "neighbors_of", "agent_closest_to", "agents_inside", "closest_to", "inside",
 						"overlapping", "at_distance" })
 		public static IList agents_at_distance(final IScope scope, final Double distance) {
-			return _neighbors(scope, Different.with(), scope.getAgentScope(), distance);
+			return _neighbors(scope, Different.with(), scope.getAgent(), distance);
 		}
 
 		// Support methods used by the different queries
@@ -3240,7 +3240,7 @@ public abstract class Spatial {
 				@usage(value = "returns the geometry corresponding to the transformation of the given geometry by the current CRS (Coordinate Reference System), the one corresponding to the world's agent one", examples = {
 						@example(value = "CRS_transform(shape)", equals = "a geometry corresponding to the agent geometry transformed into the current CRS", test = false) }) })
 		public static IShape transform_CRS(final IScope scope, final IShape g) {
-			final IProjection gis = scope.getSimulationScope().getProjectionFactory().getWorld();
+			final IProjection gis = scope.getSimulation().getProjectionFactory().getWorld();
 			if (gis == null) {
 				return g.copy(scope);
 			}
@@ -3258,7 +3258,7 @@ public abstract class Spatial {
 				@usage(value = "returns the geometry corresponding to the transformation of the given geometry to the GAMA CRS (Coordinate Reference System) assuming the given geometry is referenced by the current CRS, the one corresponding to the world's agent one", examples = {
 						@example(value = "to_GAMA_CRS({121,14})", equals = "a geometry corresponding to the agent geometry transformed into the GAMA CRS", test = false) }) })
 		public static IShape to_GAMA_CRS(final IScope scope, final IShape g) {
-			final IProjection gis = scope.getSimulationScope().getProjectionFactory().getWorld();
+			final IProjection gis = scope.getSimulation().getProjectionFactory().getWorld();
 			if (gis == null) {
 				return g.copy(scope);
 			}
@@ -3277,7 +3277,7 @@ public abstract class Spatial {
 		public static IShape to_GAMA_CRS(final IScope scope, final IShape g, final String code) {
 			IProjection gis;
 			try {
-				gis = scope.getSimulationScope().getProjectionFactory().forSavingWith(code);
+				gis = scope.getSimulation().getProjectionFactory().forSavingWith(code);
 			} catch (final FactoryException e) {
 				throw GamaRuntimeException.error("The code " + code + " does not correspond to a known EPSG code",
 						scope);
@@ -3301,7 +3301,7 @@ public abstract class Spatial {
 		public static IShape transform_CRS(final IScope scope, final IShape g, final String code) {
 			IProjection gis;
 			try {
-				gis = scope.getSimulationScope().getProjectionFactory().forSavingWith(code);
+				gis = scope.getSimulation().getProjectionFactory().forSavingWith(code);
 			} catch (final FactoryException e) {
 				throw GamaRuntimeException.error("The code " + code + " does not correspond to a known EPSG code",
 						scope);

@@ -291,7 +291,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 
 		// Next, we compute the species to instantiate
 		IPopulation pop;
-		final IAgent executor = scope.getAgentScope();
+		final IAgent executor = scope.getAgent();
 		if (species == null) {
 			pop = executor.getPopulationFor(description.getSpeciesContext().getName());
 		} else {

@@ -57,9 +57,9 @@ class FileExecuter extends DrawExecuter {
 
 	FileDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final boolean imageFile) {
 		final FileDrawingAttributes attributes = new FileDrawingAttributes(data.currentSize, data.currentRotation,
-				data.currentLocation, data.currentColor, imageFile ? null : data.currentBorder, scope.getAgentScope());
+				data.currentLocation, data.currentColor, imageFile ? null : data.currentBorder, scope.getAgent());
 		// We push the location of the agent if none has been provided
-		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgentScope().getLocation()));
+		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgent().getLocation()));
 		if (imageFile) {
 			// If the size is provided, we automatically center the file
 			if (attributes.size != null) {

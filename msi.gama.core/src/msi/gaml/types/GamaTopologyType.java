@@ -60,7 +60,7 @@ public class GamaTopologyType extends GamaType<ITopology> {
 			return ((IPopulation) obj).getTopology();
 		}
 		if (obj instanceof ISpecies) {
-			return staticCast(scope, scope.getAgentScope().getPopulationFor((ISpecies) obj), copy);
+			return staticCast(scope, scope.getAgent().getPopulationFor((ISpecies) obj), copy);
 		}
 		if (obj instanceof IShape) {
 			return from(scope, (IShape) obj);

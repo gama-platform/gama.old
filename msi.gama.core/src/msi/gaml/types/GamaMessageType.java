@@ -53,7 +53,7 @@ public class GamaMessageType extends GamaType<GamaMessage> {
 			return (GamaMessage) val;
 		}
 		// ??? ??? Demander au skill la classe de message à produire ! 
-		return new GamaMessage(scope, scope.getAgentScope(),null, val);
+		return new GamaMessage(scope, scope.getAgent(),null, val);
 	}
 
 	@Override

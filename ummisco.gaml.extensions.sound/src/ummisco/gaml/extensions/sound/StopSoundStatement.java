@@ -64,7 +64,7 @@ public class StopSoundStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		IAgent currentAgent = scope.getAgentScope();
+		IAgent currentAgent = scope.getAgent();
 		
 		GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
 		soundPlayer.stop(false);

@@ -227,7 +227,7 @@ public class AgentsMenu extends ContributionItem {
 
 			if (c != null && a != null && !a.dead()) {
 				final IScope runningScope = a.getScope();
-				runningScope.getSimulationScope().executeAction(new IExecutable() {
+				runningScope.getSimulation().executeAction(new IExecutable() {
 
 					@Override
 					public Object executeOn(final IScope scope) {

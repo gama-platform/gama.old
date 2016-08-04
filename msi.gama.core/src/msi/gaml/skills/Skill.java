@@ -98,7 +98,7 @@ public class Skill extends AbstractProto implements ISkill {
 	}
 
 	protected IAgent getCurrentAgent(final IScope scope) {
-		return scope.getAgentScope();
+		return scope.getAgent();
 	}
 
 	protected ITopology getTopology(final IAgent agent) {

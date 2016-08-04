@@ -105,7 +105,7 @@ public class Cast {
 	public static Boolean isA(final IScope scope, final Object a, final IExpression b) throws GamaRuntimeException {
 		final IType type = asType(scope, b);
 		if (type.isAgentType()) {
-			final ISpecies s = scope.getSimulationScope().getModel().getSpecies(type.getSpeciesName());
+			final ISpecies s = scope.getSimulation().getModel().getSpecies(type.getSpeciesName());
 			if (a instanceof IAgent) {
 				return ((IAgent) a).isInstanceOf(s, false);
 			}
@@ -129,7 +129,7 @@ public class Cast {
 	public static IType asType(final IScope scope, final IExpression expr) throws GamaRuntimeException {
 		final Object value = expr.value(scope);
 		if (value instanceof String) {
-			final IModel m = scope.getSimulationScope().getModel();
+			final IModel m = scope.getSimulation().getModel();
 			return m.getDescription().getTypeNamed((String) value);
 		} else if (value instanceof ISpecies) {
 			return ((ISpecies) value).getDescription().getType();

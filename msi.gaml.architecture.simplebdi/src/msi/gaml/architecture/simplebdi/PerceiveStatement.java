@@ -120,7 +120,7 @@ public class PerceiveStatement extends AbstractStatementSequence {
 		if (_when == null || Cast.asBool(scope, _when.value(scope))) {
 			final Object obj = target.value(scope);
 			Object inArg = null;
-			final IAgent ag = scope.getAgentScope();
+			final IAgent ag = scope.getAgent();
 			if (_in != null) {
 				inArg = _in.value(scope);
 			}

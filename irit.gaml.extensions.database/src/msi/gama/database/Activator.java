@@ -44,7 +44,7 @@ public class Activator implements BundleActivator {
 				// Projection:" + env);
 
 				IProjection gis;
-				gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
+				gis = scope.getSimulation().getProjectionFactory().fromParams(params, env);
 				env = gis.getProjectedEnvelope();
 
 				// scope.getGui().debug("GeometryUtils.computeEnvelopeFromSQLData.After

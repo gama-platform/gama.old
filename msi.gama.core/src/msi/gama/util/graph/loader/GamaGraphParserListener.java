@@ -66,7 +66,7 @@ public class GamaGraphParserListener implements IGraphParserListener {
 
 		// retrieve IPopulations from species
 		if ( scope != null ) {
-			final IAgent executor = scope.getAgentScope();
+			final IAgent executor = scope.getAgent();
 			this.populationNodes = nodeSpecies == null ? null : executor.getPopulationFor(nodeSpecies);
 			this.populationEdges = edgeSpecies == null ? null : executor.getPopulationFor(edgeSpecies);
 		}

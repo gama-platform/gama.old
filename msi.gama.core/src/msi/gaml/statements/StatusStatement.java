@@ -63,7 +63,7 @@ public class StatusStatement extends AbstractStatement {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		final String mes = null;
 		if (agent != null && !agent.dead()) {
 			final Object o = message.value(scope);

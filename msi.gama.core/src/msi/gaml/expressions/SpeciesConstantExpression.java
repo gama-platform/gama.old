@@ -26,20 +26,20 @@ public class SpeciesConstantExpression extends ConstantExpression {
 
 	@Override
 	public Object value(final IScope scope) {
-		IAgent a = scope.getAgentScope();
+		IAgent a = scope.getAgent();
 		if ( a != null ) {
 			// hqnghi if main description contains micro-description then species comes from micro-model
 			ModelDescription micro = this.getType().getContentType().getSpecies().getModelDescription();
 			ModelDescription main = (ModelDescription) scope.getModel().getDescription();
 			Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
 			if ( !fromMicroModel ) {
-				IPopulation pop = scope.getAgentScope().getPopulationFor((String) value);
+				IPopulation pop = scope.getAgent().getPopulationFor((String) value);
 				if ( pop != null ) { return pop.getSpecies(); }
-				return scope.getSimulationScope().getModel().getSpecies((String) value);
+				return scope.getSimulation().getModel().getSpecies((String) value);
 			} else {
 				IPopulation pop = scope.getRoot().getExternMicroPopulationFor((String) micro.getAlias()+"."+value);
 				if ( pop != null ) { return pop.getSpecies(); }
-				return scope.getSimulationScope().getModel().getSpecies((String) value,
+				return scope.getSimulation().getModel().getSpecies((String) value,
 					this.getType().getContentType().getSpecies());
 			}
 			// end-hqnghi

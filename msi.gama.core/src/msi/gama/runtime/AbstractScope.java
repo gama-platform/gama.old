@@ -340,7 +340,7 @@ public abstract class AbstractScope implements IScope {
 		// been marked as INTERRUPTED
 		// IScope scope = agent == null ? this :(statement instanceof
 		// RemoteSequence ? this : agent.getScope());
-		final IAgent caller = this.getAgentScope();
+		final IAgent caller = this.getAgent();
 		if (statement == null || agent == null || interrupted() || agent.dead()) {
 			return false;
 		}
@@ -778,20 +778,20 @@ public abstract class AbstractScope implements IScope {
 	/**
 	 * Method getAgentScope()
 	 * 
-	 * @see msi.gama.runtime.IScope#getAgentScope()
+	 * @see msi.gama.runtime.IScope#getAgent()
 	 */
 	@Override
-	public IAgent getAgentScope() {
+	public IAgent getAgent() {
 		return agentsStack.peek();
 	}
 
 	/**
 	 * Method getSimulationScope()
 	 * 
-	 * @see msi.gama.runtime.IScope#getSimulationScope()
+	 * @see msi.gama.runtime.IScope#getSimulation()
 	 */
 	@Override
-	public SimulationAgent getSimulationScope() {
+	public SimulationAgent getSimulation() {
 		final ITopLevelAgent root = getRoot();
 		if (root == null)
 			return null;

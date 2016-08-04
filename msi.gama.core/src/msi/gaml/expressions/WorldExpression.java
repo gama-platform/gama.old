@@ -26,8 +26,8 @@ public class WorldExpression extends VariableExpression {
 	@Override
 	public Object value(final IScope scope) {
 //		return scope.getSimulationScope();
-		IAgent sc=scope.getAgentScope();
-		return sc.getScope().getRoot().getScope().getSimulationScope();
+		IAgent sc=scope.getAgent();
+		return sc.getScope().getRoot().getScope().getSimulation();
 	}
 
 	/**

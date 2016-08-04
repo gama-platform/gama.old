@@ -179,7 +179,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		final ISpecies context = scope.getAgentScope().getSpecies();
+		final ISpecies context = scope.getAgent().getSpecies();
 		final IStatement.WithArgs executer = context.getAction(name);
 		Object result = null;
 		if ( executer != null ) {

@@ -92,7 +92,7 @@ public class FocusStatement extends AbstractStatement {
 					if (name != null) {
 						namePred = (String) name.value(scope);
 					} else {
-						namePred = variable.getName() + "_" + scope.getAgentScope().getSpeciesName();
+						namePred = variable.getName() + "_" + scope.getAgent().getSpeciesName();
 					}
 					String nameVarTemp;
 					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,
@@ -118,7 +118,7 @@ public class FocusStatement extends AbstractStatement {
 					if (name != null) {
 						namePred = (String) name.value(scope);
 					} else {
-						namePred = variable.getName() + "_" + scope.getAgentScope().getSpeciesName();
+						namePred = variable.getName() + "_" + scope.getAgent().getSpeciesName();
 					}
 					final String nameVar = variable.getName();
 					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,
@@ -142,7 +142,7 @@ public class FocusStatement extends AbstractStatement {
 					if (name != null) {
 						namePred = (String) name.value(scope);
 					} else {
-						namePred = "expression" + "_" + scope.getAgentScope().getSpeciesName();
+						namePred = "expression" + "_" + scope.getAgent().getSpeciesName();
 					}
 					final String nameVar = "expression";
 					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,

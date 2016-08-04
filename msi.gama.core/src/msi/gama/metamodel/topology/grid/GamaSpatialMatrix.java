@@ -323,7 +323,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 		}
 		if (!useIndividualShapes) {
-			scope.getSimulationScope().addSubAgents(actualNumberOfCells);
+			scope.getSimulation().addSubAgents(actualNumberOfCells);
 		}
 	}
 
@@ -896,7 +896,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return diffuser_deprecated;
 		}
 		diffuser_deprecated = new GridDiffuser_deprecated(this);
-		scope.getSimulationScope().postEndAction(new IExecutable() {
+		scope.getSimulation().postEndAction(new IExecutable() {
 
 			@Override
 			public Object executeOn(final IScope s) throws GamaRuntimeException {
@@ -913,7 +913,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return diffuser;
 		}
 		diffuser = new GridDiffuser();
-		scope.getSimulationScope().postEndAction(new IExecutable() {
+		scope.getSimulation().postEndAction(new IExecutable() {
 
 			@Override
 			public Object executeOn(final IScope s) throws GamaRuntimeException {

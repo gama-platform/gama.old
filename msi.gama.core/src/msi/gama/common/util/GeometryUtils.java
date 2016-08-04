@@ -606,7 +606,7 @@ public class GeometryUtils {
 	public static IList<IShape> voronoi(final IScope scope, final IList<GamaPoint> points) {
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
 		final VoronoiDiagramBuilder dtb = new VoronoiDiagramBuilder();
-		dtb.setClipEnvelope(scope.getSimulationScope().getEnvelope());
+		dtb.setClipEnvelope(scope.getSimulation().getEnvelope());
 		dtb.setSites(points);
 		final GeometryCollection g = (GeometryCollection) dtb.getDiagram(FACTORY);
 		final int nb = g.getNumGeometries();

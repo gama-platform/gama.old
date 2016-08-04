@@ -37,13 +37,13 @@ public class TCPConnector extends Connector {
 
 	public void openServerSocket(final IAgent agent) throws GamaRuntimeException {
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
-		if (agent.getScope().getSimulationScope().getAttribute(_TCP_SERVER + port) == null) {
+		if (agent.getScope().getSimulation().getAttribute(_TCP_SERVER + port) == null) {
 			try {
 				final ServerSocket sersock = new ServerSocket(port);
 				sersock.setSoTimeout(_TCP_SO_TIMEOUT);
 				final MultiThreadedSocketServer ssThread = new MultiThreadedSocketServer(agent, sersock);
 				ssThread.start();
-				agent.getScope().getSimulationScope().setAttribute(_TCP_SERVER + port, ssThread);
+				agent.getScope().getSimulation().setAttribute(_TCP_SERVER + port, ssThread);
 
 			} catch (BindException be) {
 				throw GamaRuntimeException.create(be, agent.getScope());
@@ -180,17 +180,17 @@ public class TCPConnector extends Connector {
 		String server = this.getConfigurationParameter(SERVER_URL);
 		String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(scope, sport);
-		final Thread sersock = (Thread) scope.getSimulationScope().getAttribute(_TCP_SERVER + port);
-		final Thread cSock = (Thread) scope.getAgentScope().getAttribute(_TCP_SOCKET);
+		final Thread sersock = (Thread) scope.getSimulation().getAttribute(_TCP_SERVER + port);
+		final Thread cSock = (Thread) scope.getAgent().getAttribute(_TCP_SOCKET);
 
 		try {
 			if (sersock != null) {
 				sersock.interrupt();
-				scope.getSimulationScope().setAttribute(_TCP_SERVER + port, null);
+				scope.getSimulation().setAttribute(_TCP_SERVER + port, null);
 			}
 			if (cSock != null) {
 				cSock.interrupt();
-				scope.getAgentScope().setAttribute(_TCP_SOCKET, null);
+				scope.getAgent().setAttribute(_TCP_SOCKET, null);
 			}
 		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e, scope);

@@ -199,7 +199,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	private void renderLayout(final Graph prefuseGraph, final Layout prefuseLayout, final IScope scope,
 		final long maxtime) {
 
-		Envelope envelope = scope.getSimulationScope().getEnvelope();
+		Envelope envelope = scope.getSimulation().getEnvelope();
 
 		Rectangle bounds =
 			new Rectangle((int) FastMath.floor(envelope.getMinX()), (int) FastMath.floor(envelope.getMinY()),

@@ -63,7 +63,7 @@ public class FocusStatement extends AbstractStatement {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		if (agent != null && !agent.dead()) {
 			final IShape o = Cast.asGeometry(scope, value.value(scope));
 			GAMA.getGui().setFocusOn(o);

@@ -427,7 +427,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	protected IAgent generateEdgeAgent(final List<Map> attributes) {
-		final IAgent agent = scope.getAgentScope().getPopulationFor(edgeSpecies)
+		final IAgent agent = scope.getAgent().getPopulationFor(edgeSpecies)
 				.createAgents(scope, 1, attributes, false, true).firstValue(scope);
 		if (agent != null) {
 			generatedEdges.add(agent);

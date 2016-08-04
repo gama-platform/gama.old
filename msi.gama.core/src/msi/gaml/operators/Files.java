@@ -155,7 +155,7 @@ public class Files {
 		}
 		// Then try to read in the agent, if it has been created from a GIS/CSV
 		// file.
-		return opRead(scope, scope.getAgentScope(), s);
+		return opRead(scope, scope.getAgent(), s);
 	}
 
 	@operator(value = "get", category = IOperatorCategory.CONTAINER, concept = { IConcept.CONTAINER, IConcept.SPECIES,

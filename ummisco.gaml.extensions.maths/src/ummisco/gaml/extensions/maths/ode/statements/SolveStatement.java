@@ -160,7 +160,7 @@ public class SolveStatement extends AbstractStatement {
 
 	private boolean initSystemOfEquations(final IScope scope) {
 		if (systemOfEquations == null) {
-			systemOfEquations = scope.getAgentScope().getSpecies().getStatement(SystemOfEquationsStatement.class,
+			systemOfEquations = scope.getAgent().getSpecies().getStatement(SystemOfEquationsStatement.class,
 					equationName);
 		}
 		return systemOfEquations != null;
@@ -193,9 +193,9 @@ public class SolveStatement extends AbstractStatement {
 		if (solver == null)
 			return null;
 
-		double timeInit = timeInitExp == null ? scope.getSimulationScope().getClock().getCycle()
+		double timeInit = timeInitExp == null ? scope.getSimulation().getClock().getCycle()
 				: Cast.asFloat(scope, timeInitExp.value(scope));
-		double timeFinal = timeFinalExp == null ? scope.getSimulationScope().getClock().getCycle() + 1//scope.getSimulationScope().getClock().getStep()
+		double timeFinal = timeFinalExp == null ? scope.getSimulation().getClock().getCycle() + 1//scope.getSimulationScope().getClock().getStep()
 				: Cast.asFloat(scope, timeFinalExp.value(scope));
 //		if (cycleLength > 1.0) {
 //			timeInit /= cycleLength;
@@ -291,10 +291,10 @@ public class SolveStatement extends AbstractStatement {
 	private GamaMap<String, IList<Double>> getIntegratedValues(final IScope scope) {
 //		if (integratedValuesExp == null)
 //			return null;
-		GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) scope.getAgentScope().getAttribute("__integrated_values");
+		GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) scope.getAgent().getAttribute("__integrated_values");
 		if (result == null) {
 			result = new GamaMap<String, IList<Double>>(0, Types.STRING, Types.LIST);
-			scope.getAgentScope().setAttribute("__integrated_values", result);
+			scope.getAgent().setAttribute("__integrated_values", result);
 		}
 		return result;
 	}

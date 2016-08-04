@@ -125,7 +125,7 @@ public abstract class SqlConnection {
 		final String crs = (String) params.get("crs");
 		if (crs != null) {
 			try {
-				return scope.getSimulationScope().getProjectionFactory().forSavingWith(crs);
+				return scope.getSimulation().getProjectionFactory().forSavingWith(crs);
 			} catch (final FactoryException e) {
 
 				throw GamaRuntimeException.error("No factory found for decoding the EPSG " + crs
@@ -136,7 +136,7 @@ public abstract class SqlConnection {
 		final String srid = (String) params.get("srid");
 		if (srid != null) {
 			try {
-				return scope.getSimulationScope().getProjectionFactory().forSavingWith(Cast.asInt(scope, srid),
+				return scope.getSimulation().getProjectionFactory().forSavingWith(Cast.asInt(scope, srid),
 						longitudeFirst);
 			} catch (final FactoryException e) {
 
@@ -152,7 +152,7 @@ public abstract class SqlConnection {
 			// scope.getSimulationScope().getProjectionFactory().forSavingWith((Integer)
 			// null);
 			try {
-				return scope.getSimulationScope().getProjectionFactory()
+				return scope.getSimulation().getProjectionFactory()
 						.forSavingWith(GamaPreferences.LIB_OUTPUT_CRS.getValue());
 			} catch (final FactoryException e) {
 
@@ -340,11 +340,11 @@ public abstract class SqlConnection {
 			// }
 
 			if (columns.contains(GEOMETRYTYPE) && transformed) {
-				gis = scope.getSimulationScope().getProjectionFactory().getWorld();
+				gis = scope.getSimulation().getProjectionFactory().getWorld();
 				if (gis != null) // create envelope for environment
 				{
-					final Envelope env = scope.getSimulationScope().getEnvelope();
-					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
+					final Envelope env = scope.getSimulation().getEnvelope();
+					gis = scope.getSimulation().getProjectionFactory().fromParams(params, env);
 					result = SqlUtils.transform(scope, gis, result, false);
 				}
 			}
@@ -733,10 +733,10 @@ public abstract class SqlConnection {
 			// result = SqlUtils.transform(gis, result, false);
 			// }
 			if (columns.contains(GEOMETRYTYPE) && transformed) {
-				gis = scope.getSimulationScope().getProjectionFactory().getWorld();
+				gis = scope.getSimulation().getProjectionFactory().getWorld();
 				if (gis != null) {
-					final Envelope env = scope.getSimulationScope().getEnvelope();
-					gis = scope.getSimulationScope().getProjectionFactory().fromParams(params, env);
+					final Envelope env = scope.getSimulation().getEnvelope();
+					gis = scope.getSimulation().getProjectionFactory().fromParams(params, env);
 					result = SqlUtils.transform(scope, gis, result, false);
 				}
 			}

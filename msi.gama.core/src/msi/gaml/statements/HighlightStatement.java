@@ -66,7 +66,7 @@ public class HighlightStatement extends AbstractStatement {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		final IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgent();
 		if (agent != null && !agent.dead()) {
 			final IAgent o = Cast.asAgent(scope, value.value(scope));
 			if (color != null) {

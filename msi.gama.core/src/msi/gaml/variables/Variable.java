@@ -475,7 +475,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		return value(scope, scope.getAgentScope());
+		return value(scope, scope.getAgent());
 	}
 
 	@Override

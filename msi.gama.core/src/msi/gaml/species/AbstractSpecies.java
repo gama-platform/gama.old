@@ -86,7 +86,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IPopulation getPopulation(final IScope scope) {
-		final IAgent a = scope.getAgentScope();
+		final IAgent a = scope.getAgent();
 		IPopulation result = null;
 		if (a != null) {
 			// AD 19/09/13 Patch to allow experiments to gain access to the
@@ -103,7 +103,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		// hqnghi 16/04/14
 		IPopulation pop = getPopulation(scope);
 		if (pop == null) {
-			pop = scope.getSimulationScope().getPopulationFor(contentsType.getName());
+			pop = scope.getSimulation().getPopulationFor(contentsType.getName());
 		}
 		// AD 20/01/16 : Explicitly passes true in order to obtain a copy of the
 		// population

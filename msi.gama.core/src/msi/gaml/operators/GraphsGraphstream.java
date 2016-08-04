@@ -199,7 +199,7 @@ public class GraphsGraphstream {
 			final Boolean isSynchronized) {
 
 		// init population of edges
-		final IAgent executor = scope.getAgentScope();
+		final IAgent executor = scope.getAgent();
 		final IPopulation populationNodes = executor.getPopulationFor(nodes.get(0).getSpecies());
 		final IPopulation populationEdges = executor.getPopulationFor(edgeSpecies);
 
@@ -241,7 +241,7 @@ public class GraphsGraphstream {
 			final Boolean isSynchronized) {
 
 		// init population of edges
-		final IAgent executor = scope.getAgentScope();
+		final IAgent executor = scope.getAgent();
 		final IPopulation populationNodes = executor.getPopulationFor(nodeSpecies);
 		final IPopulation populationEdges = executor.getPopulationFor(edgeSpecies);
 
@@ -435,7 +435,7 @@ public class GraphsGraphstream {
 		final double THETA = 2 * CmnFastMath.PI / size;
 		int i = 0;
 		final IList<GamlAgent> listVertex = g.getVertices();
-		final ILocation locEnv = scope.getSimulationScope().getGeometry().getLocation();
+		final ILocation locEnv = scope.getSimulation().getGeometry().getLocation();
 		for (final GamlAgent e : listVertex) {
 			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
 					locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));
@@ -471,7 +471,7 @@ public class GraphsGraphstream {
 		final double THETA = 2 * CmnFastMath.PI / nodes.size();
 		int i = 0;
 		final IList<GamlAgent> listVertex = g.getVertices();
-		final ILocation locEnv = scope.getSimulationScope().getGeometry().getLocation();
+		final ILocation locEnv = scope.getSimulation().getGeometry().getLocation();
 		for (final GamlAgent e : listVertex) {
 			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * FastMath.cos(THETA * i),
 					locEnv.getY() + layoutRadius * FastMath.sin(THETA * i), locEnv.getZ()));

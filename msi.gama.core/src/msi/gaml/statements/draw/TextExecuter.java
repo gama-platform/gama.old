@@ -34,7 +34,7 @@ class TextExecuter extends DrawExecuter {
 		TextDrawingAttributes attributes = new TextDrawingAttributes(data.currentSize, data.currentRotation,
 			data.currentLocation, data.currentColor, data.currentFont, data.currentperspective);
 		// We push the location of the agent if none has been provided
-		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgentScope().getLocation()));
+		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgent().getLocation()));
 		return attributes;
 	}
 }

@@ -288,7 +288,7 @@ public class PopulationInspectView extends GamaViewPart
 		compo.setSize(new Point(150, 30));
 		compo.setBackground(IGamaColors.WHITE.color());
 		compo.setLayout(new GridLayout(1, false));
-		editor = new ExpressionControl(getScope(), compo, null, getScope().getAgentScope(),
+		editor = new ExpressionControl(getScope(), compo, null, getScope().getAgent(),
 				Types.CONTAINER.of(Types.AGENT), SWT.BORDER, false) {
 
 			@Override

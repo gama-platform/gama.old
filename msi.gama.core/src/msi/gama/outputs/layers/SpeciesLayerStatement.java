@@ -129,8 +129,8 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	@Override
 	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		// top level species layer is a direct micro-species of "world_species" for sure
-		if ( hostSpecies == null && scope.getSimulationScope() != null ) {
-			hostSpecies = scope.getSimulationScope().getSpecies();
+		if ( hostSpecies == null && scope.getSimulation() != null ) {
+			hostSpecies = scope.getSimulation().getSpecies();
 		}
 		// if ( hostSpecies == null ) { return false; }
 		species = Cast.asSpecies(scope, getFacet(IKeyword.SPECIES).value(scope));

@@ -39,7 +39,7 @@ public class SpeciesLayer extends AgentLayer {
 
 	@Override
 	public Set<IAgent> getAgentsForMenu(final IScope scope) {
-		final Set<IAgent> result = ImmutableSet.copyOf(scope.getSimulationScope()
+		final Set<IAgent> result = ImmutableSet.copyOf(scope.getSimulation()
 				.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).iterator());
 		return result;
 	}
@@ -53,7 +53,7 @@ public class SpeciesLayer extends AgentLayer {
 	public void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		shapes.clear();
 		final ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
-		final IMacroAgent world = scope.getSimulationScope();
+		final IMacroAgent world = scope.getSimulation();
 		if (world != null && !world.dead()) {
 			final IPopulation microPop = world.getMicroPopulation(species);
 			if (microPop != null) {

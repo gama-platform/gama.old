@@ -611,7 +611,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 
 		@Override
-		public SimulationAgent getSimulationScope() {
+		public SimulationAgent getSimulation() {
 			return ExperimentAgent.this.getSimulation();
 		}
 

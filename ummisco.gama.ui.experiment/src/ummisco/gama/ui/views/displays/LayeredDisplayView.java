@@ -208,7 +208,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		if (out != null) {
 			final IScope scope = out.getScope();
 
-			if (scope != null && scope.getSimulationScope() != null) {
+			if (scope != null && scope.getSimulation() != null) {
 				final ITopLevelAgent root = scope.getRoot();
 				final Color color = root.getColor();
 				// String name = root.getClass().getSimpleName() +

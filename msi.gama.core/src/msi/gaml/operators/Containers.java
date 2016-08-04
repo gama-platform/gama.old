@@ -194,7 +194,7 @@ public class Containers {
 					@example(value = "grid_cell grid_at {1,2}", equals = "the agent grid_cell with grid_x=1 and grid_y = 2", isExecutable = false) })
 	public static IAgent grid_at(final IScope scope, final ISpecies s, final GamaPoint val)
 			throws GamaRuntimeException {
-		final ITopology t = scope.getAgentScope().getPopulationFor(s).getTopology();
+		final ITopology t = scope.getAgent().getPopulationFor(s).getTopology();
 		final IContainer<?, IShape> m = t.getPlaces();
 		if (m instanceof IGrid) {
 			final IShape shp = ((IGrid) m).get(scope, val);
