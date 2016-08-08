@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -48,6 +49,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.internal.ide.application.DelayedEventsProcessor;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
@@ -234,7 +236,7 @@ public class WorkspaceModelsManager {
 		if ( dotFile == null || projectFileBean == null ) {
 			MessageDialog.openInformation(Display.getDefault().getActiveShell(), "No project", "The model '" +
 				modelFile.getAbsolutePath() +
-				"' does not seem to belong to an existing GAML project. It will be imported as part of the 'Unclassified models' project.");
+				"' does not seem to belong to an existing GAML project. You can import it in an existing project or in the 'Unclassified models' project.");
 			return createUnclassifiedModelsProjectAndAdd(originalPath);
 		}
 
@@ -316,13 +318,38 @@ public class WorkspaceModelsManager {
 	public static String UNCLASSIFIED_MODELS = "Unclassified Models";
 
 	private IFile createUnclassifiedModelsProjectAndAdd(final IPath location) {
-		final IProject project = createOrUpdateProject(UNCLASSIFIED_MODELS);
+		// First allow to select a parent folder
+		final ContainerSelectionDialog dialog = new ContainerSelectionDialog(Display.getDefault().getActiveShell(),
+			null, false, "Select a parent project:");
+		dialog.setTitle("Project selection");
+		dialog.showClosedProjects(false);
+
+		final int result = dialog.open();
+		IProject project;
+		IFolder modelFolder;
 		IFile iFile = null;
 		try {
-			final IFolder modelFolder = project.getFolder(new Path("models"));
-			if ( !modelFolder.exists() ) {
-				modelFolder.create(true, true, null);
+			if ( result == MessageDialog.CANCEL ) {
+				project = createOrUpdateProject(UNCLASSIFIED_MODELS);
+				modelFolder = project.getFolder(new Path("models"));
+				if ( !modelFolder.exists() ) {
+					modelFolder.create(true, true, null);
+				}
+			} else {
+				final IContainer container = (IContainer) dialog.getResult()[0];
+				if ( container instanceof IProject ) {
+					project = (IProject) container;
+					modelFolder = project.getFolder(new Path("models"));
+					if ( !modelFolder.exists() ) {
+						modelFolder.create(true, true, null);
+					}
+				} else {
+					project = container.getProject();
+					modelFolder = (IFolder) container;
+				}
+
 			}
+
 			iFile = modelFolder.getFile(location.lastSegment());
 			if ( iFile.exists() ) {
 				if ( iFile.isLinked() ) {
@@ -360,8 +387,6 @@ public class WorkspaceModelsManager {
 	 * @return
 	 */
 	private IFile createUniqueFileFrom(final IFile originalFile, final IFolder modelFolder) {
-		GAMA.getGui().debug("WorkspaceModelsManager.createUniqueFileFrom " + originalFile.getLocation() + " in " +
-			modelFolder.getFullPath());
 		IFile file = originalFile;
 		while (file.exists()) {
 			final IPath path = file.getLocation();
