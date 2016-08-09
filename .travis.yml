@@ -3,6 +3,7 @@ jdk:
   - oraclejdk8
 before_install:
 - echo -e "machine github.com\n  login $CI_USER_TOKEN" >> ~/.netrc
+- echo "MAVEN_OPTS='-Xmx2048m -XX:MaxPermSize=512m'" >> ~/.mavenrc
 notifications:
   email:
     recipients:
@@ -12,9 +13,7 @@ notifications:
 cache:
   directories:
   - "$HOME/.m2"
-script: 
-- export MAVEN_OPTS='-Xmx2048m -XX:MaxPermSize=1048m'
-- sh ./build.sh
+script: sh ./build.sh
 after_success: bash ./github-release.sh "$TRAVIS_COMMIT" 
 branches:
   only:
