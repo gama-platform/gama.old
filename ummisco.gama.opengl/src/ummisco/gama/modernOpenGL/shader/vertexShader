@@ -43,7 +43,7 @@ void main(void)
 	{
 		surfaceNormal = (transformationMatrix * vec4(attribute_Normal,0.0)).xyz;
 		
-		for (int i=0;i<4;i++) {
+		for (int i=0;i<7;i++) {
 			if (lightProperties[i][0][3] == 0) // if point light
 			{
 				toLightVector[i] = vec3(lightProperties[i][0][0],lightProperties[i][0][1],lightProperties[i][0][2]) - worldPosition.xyz;

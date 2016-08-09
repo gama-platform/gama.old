@@ -23,6 +23,7 @@ uniform   float   reflectivity;
 uniform   sampler2D textureSampler;
 uniform   float   useTexture; // 0 for no, 1 for yes
 uniform   vec3    lightColors[7];
+uniform   vec3    lightAttenuations[7];
 
 void main (void)
 {
@@ -50,6 +51,8 @@ void main (void)
 		{
 			if (lightColors[i].x > 0.001 || lightColors[i].y > 0.001 || lightColors[i].z > 0.001)
 			{
+				float distance = length(toLightVector[i]);
+				float attFactor = lightAttenuations[i].x + (lightAttenuations[i].y * distance) + (lightAttenuations[i].z * distance * distance);
 				vec3 unitLightVector = normalize(toLightVector[i]);
 				float nDot1 = dot(unitNormal,unitLightVector);
 				
@@ -60,8 +63,8 @@ void main (void)
 				specularFactor = max(specularFactor,0.0);
 				float damperFactor = pow(specularFactor,shineDamper);
 				
-				totalDiffuse = totalDiffuse + vec3(nDot1*lightColors[i].x,nDot1*lightColors[i].y,nDot1*lightColors[i].z);
-				totalSpecular = totalSpecular + damperFactor * reflectivity * lightColors[i];
+				totalDiffuse = totalDiffuse + ( vec3(nDot1*lightColors[i].x,nDot1*lightColors[i].y,nDot1*lightColors[i].z) / attFactor);
+				totalSpecular = totalSpecular + ( (damperFactor * reflectivity * lightColors[i]) / attFactor);
 			}
 		}
 		totalDiffuse = vec3(max(totalDiffuse.x,ambientLight.x),max(totalDiffuse.y,ambientLight.y),max(totalDiffuse.z,ambientLight.z));

@@ -24,6 +24,7 @@ public class ShaderProgram extends AbstractShader {
 	private int location_viewMatrix;
 	private int location_lightProperties[];
 	private int location_lightColor[];
+	private int location_lightAttenuation[];
 	private int location_shineDamper;	// for specular light
 	private int location_reflectivity;	// for specular light
 	private int location_useTexture;	// 0 for no, 1 for yes
@@ -69,10 +70,12 @@ public class ShaderProgram extends AbstractShader {
 		location_ambientLight = getUniformLocation("ambientLight");
 		
 		location_lightColor = new int[MAX_LIGHT];
+		location_lightAttenuation = new int[MAX_LIGHT];
 		location_lightProperties = new int[MAX_LIGHT];
 		for (int i = 0 ; i < MAX_LIGHT ; i++) {
 			location_lightProperties[i] = getUniformLocation("lightProperties["+i+"]");
 			location_lightColor[i] = getUniformLocation("lightColors["+i+"]");
+			location_lightAttenuation[i] = getUniformLocation("lightAttenuations["+i+"]");
 		}
 		
 	}
@@ -132,7 +135,7 @@ public class ShaderProgram extends AbstractShader {
 	}
 
 	public void loadLights(List<LightPropertiesStructure> lights) {
-		for (int i = 1 ; i < MAX_LIGHT ; i++) {
+		for (int i = 1 ; i < MAX_LIGHT ; i++) { // Beware : the loop starts with the index 1 !!! (the light 0 only set the ambient light)
 			if (i < lights.size()) {
 				LightPropertiesStructure light = lights.get(i);
 				Matrix4f lightPropertyMatrix = new Matrix4f();
@@ -152,6 +155,7 @@ public class ShaderProgram extends AbstractShader {
 				lightPropertyMatrix.m31 = light.getQuadraticAttenuation();
 				super.loadMatrix(location_lightProperties[i-1], lightPropertyMatrix);
 				super.loadVector(location_lightColor[i-1], light.getColor());
+				super.loadVector(location_lightAttenuation[i-1], new Vector3f(1.0f,light.getLinearAttenuation(),light.getQuadraticAttenuation()));
 			}
 			else {
 				Matrix4f lightPropertyMatrix = new Matrix4f();
@@ -159,6 +163,7 @@ public class ShaderProgram extends AbstractShader {
 				Vector3f lightColor = new Vector3f(0,0,0);
 				super.loadMatrix(location_lightProperties[i-1], lightPropertyMatrix);
 				super.loadVector(location_lightColor[i-1], lightColor);
+				super.loadVector(location_lightAttenuation[i-1], new Vector3f(1.0f,0.0f,0.0f));
 			}
 		}
 	}
