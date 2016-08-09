@@ -5,6 +5,6 @@ cd msi.gama.processor &&
 mvn install &&
 cd - &&
 cd msi.gama.parent &&
-mvn  clean install &&
+mvn -X clean install &&
 cd -
 
