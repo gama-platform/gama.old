@@ -13,7 +13,7 @@ cache:
   directories:
   - "$HOME/.m2"
 script: 
-- export MAVEN_OPTS='-Xmx512m -XX:MaxPermSize=128m'
+- export MAVEN_OPTS='-Xmx1024m -XX:MaxPermSize=512m'
 - sh ./build.sh
 after_success: bash ./github-release.sh "$TRAVIS_COMMIT" 
 branches:
