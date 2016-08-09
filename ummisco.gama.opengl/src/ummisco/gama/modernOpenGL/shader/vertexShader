@@ -11,6 +11,10 @@
 uniform mat4    transformationMatrix;
 uniform mat4    projectionMatrix;
 uniform mat4    viewMatrix;
+uniform mat4    lightProperties1; 	// first row : xyz position, light type (0 = POINT, 1 = DIRECTION, 2 = SPOT)
+									// second row : xyz direction,
+									// third row : rgb color
+									// fourth row : attenuation properties
 uniform vec3    lightPosition;
 uniform float   useNormals; // 0 for no, 1 for yes
 
@@ -25,6 +29,7 @@ varying vec3	toLightVector;
 varying vec3 	toCameraVector;
 varying vec2    pass_textureCoords;
 varying float   varying_useNormals;
+varying vec4    varying_light1Color;
 
 void main(void)
 {
@@ -38,7 +43,15 @@ void main(void)
 	if (useNormals > 0.5)
 	{
 		surfaceNormal = (transformationMatrix * vec4(attribute_Normal,0.0)).xyz;
-		toLightVector = lightPosition - worldPosition.xyz;
+		
+		if (lightProperties1[0][3] == 0) // if point light
+		{
+			toLightVector = vec3(lightProperties1[0][0],lightProperties1[0][1],lightProperties1[0][2]) - worldPosition.xyz;
+		}
+		else { // if directional light
+			toLightVector = vec3(-lightProperties1[1][0],-lightProperties1[1][1],-lightProperties1[1][2]);
+		}
+		varying_light1Color = vec4(lightProperties1[2][0],lightProperties1[2][1],lightProperties1[2][2],1.0);
 		toCameraVector = (inverse(viewMatrix) * vec4(0.0,0.0,0.0,1.0)).xyz - worldPosition.xyz;
 		
 		pass_textureCoords = attribute_TextureCoords;
