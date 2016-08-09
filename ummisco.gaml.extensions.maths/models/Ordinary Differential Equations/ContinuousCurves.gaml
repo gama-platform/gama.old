@@ -35,7 +35,6 @@ species my_SEIR_maths
 
 	reflex solving
 	{
-//		write length((my_SEIR_maths[0]).ttt[]);
 		solve SEIR method: rk4 step: 0.01;
 	}
 
@@ -56,7 +55,7 @@ experiment mysimulation type: gui
 				data "i_mathsc" value: (my_SEIR_maths[0]).Im[] color: # blue marker: false;
 			}
 
-			chart 'chartdiscret' type: series background: rgb('lightGray') size: { 1.0, 0.5 } position: { 0.0, 0.5 }
+			chart 'chartdiscret' type: series background: rgb('white') size: { 1.0, 0.5 } position: { 0.0, 0.5 }
 			{
 				data "s_mathsd" value: first(my_SEIR_maths).Sm color: rgb('red') marker: false;
 				data "e_mathsd" value: first(my_SEIR_maths).Em color: rgb('yellow') marker: false;

@@ -76,7 +76,7 @@ public abstract class Solver {
 				for (int i = 0, n = equationValues.size(); i < n; i++) {
 					final IAgent a = equationAgents.get(i);
 					if (integrationValues.size() < n) {
-						integrationValues.put(equationValues.get(i).toString() + a,
+						integrationValues.put(equationValues.get(i).toString(),
 								GamaListFactory.create(Double.class));
 					}
 					if (!a.dead()) {
