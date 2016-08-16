@@ -105,7 +105,7 @@
 
 		<subpart name="Expressions" file="References/GAMLReferences/Expressions">		
 			<chapter name="7.1 Literals" file="References/GAMLReferences/Literals"/> 
-			<chapter name="7.2 Units and constants" file="References/GAMLReferences/UnitsAndConstants"/>		
+			<chapter name="7.2 Units and constants" file="References/GAMLReferences/UnitsAndConstantsPDF"/>		
 			<chapter name="7.3 Pseudo-variables" file="References/GAMLReferences/PseudoVariables"/>		
 			<chapter name="7.4 Variables and attributes" file="References/GAMLReferences/VariablesAndAttributes"/>
 			<chapter name="7.5 Operators" file="References/GAMLReferences/Operators"/>

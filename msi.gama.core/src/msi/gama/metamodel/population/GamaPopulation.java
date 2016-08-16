@@ -27,7 +27,6 @@ import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
-import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
@@ -568,11 +567,16 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 					useNeighborsCache);
 		} else
 			result = new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache);
-		final Envelope3D env = result.getPlaces().getEnvironmentFrame().getEnvelope();
-		final Envelope3D world = host.getEnvelope();
-		final Envelope3D newEnvelope = new Envelope3D(0, Math.max(env.getWidth(), world.getWidth()), 0,
-				Math.max(env.getHeight(), world.getHeight()), 0, Math.max(env.getDepth(), world.getDepth()));
-		host.setGeometry(new GamaShape(newEnvelope));
+		// Reverts the modification of the world envelope (see #1953 and #1939)
+		//
+		// final Envelope3D env =
+		// result.getPlaces().getEnvironmentFrame().getEnvelope();
+		// final Envelope3D world = host.getEnvelope();
+		// final Envelope3D newEnvelope = new Envelope3D(0,
+		// Math.max(env.getWidth(), world.getWidth()), 0,
+		// Math.max(env.getHeight(), world.getHeight()), 0,
+		// Math.max(env.getDepth(), world.getDepth()));
+		// host.setGeometry(new GamaShape(newEnvelope));
 		return result;
 	}
 

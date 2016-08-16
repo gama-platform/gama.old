@@ -94,6 +94,12 @@ public class XmlToWiki {
 				Constants.XML2WIKI_FOLDER + File.separator + "UnitsAndConstants"+suffix+".md");	
 		System.out.println("Done");	
 		//
+		System.out.print("Creation of the page for Constants and units (PDF format).....");		
+		createWiki(Constants.DOCGAMA_GLOBAL_FILE,
+				Constants.XSL_XML2WIKI_FOLDER + File.separator + "docGama-ConstantsPDF-xml2md.xsl",
+				Constants.XML2WIKI_FOLDER + File.separator + "UnitsAndConstantsPDF"+suffix+".md");	
+		System.out.println("Done");	
+		//
 		System.out.println("End of the transformation");		
 	}
 

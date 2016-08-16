@@ -305,7 +305,7 @@ public class ModernDrawer {
 				(float) renderer.data.getAmbientLightColor().getRed() / 255f,
 				(float) renderer.data.getAmbientLightColor().getGreen() / 255f,
 				(float) renderer.data.getAmbientLightColor().getBlue() / 255f));
-		shaderProgram.loadDiffuseLights(renderer.data.getDiffuseLights());
+		shaderProgram.loadLights(renderer.data.getDiffuseLights());
 		boolean useNormals = entity.getMaterial().useLight;
 		if (useNormals) {
 			shaderProgram.enableNormal();

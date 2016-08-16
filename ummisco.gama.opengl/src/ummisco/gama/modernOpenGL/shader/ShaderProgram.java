@@ -8,11 +8,13 @@ import javax.vecmath.Vector3f;
 import com.jogamp.opengl.GL2;
 
 import msi.gama.outputs.LightPropertiesStructure;
-import ummisco.gama.modernOpenGL.Light;
+import msi.gama.outputs.LightPropertiesStructure.TYPE;
 import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public class ShaderProgram extends AbstractShader {
+	
+	private static int MAX_LIGHT = 7;
 	
 	private static String VERTEX_FILE = "vertexShader";		
 	private static String FRAGMENT_FILE = "fragmentShader";
@@ -20,8 +22,9 @@ public class ShaderProgram extends AbstractShader {
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
-	private int location_lightPosition;
-	private int location_lightColor;
+	private int location_lightProperties[];
+	private int location_lightColor[];
+	private int location_lightAttenuation[];
 	private int location_shineDamper;	// for specular light
 	private int location_reflectivity;	// for specular light
 	private int location_useTexture;	// 0 for no, 1 for yes
@@ -59,14 +62,22 @@ public class ShaderProgram extends AbstractShader {
 		location_transformationMatrix = getUniformLocation("transformationMatrix");
 		location_projectionMatrix = getUniformLocation("projectionMatrix");
 		location_viewMatrix = getUniformLocation("viewMatrix");
-		location_lightPosition = getUniformLocation("lightPosition");
-		location_lightColor = getUniformLocation("lightColor");
 		location_shineDamper = getUniformLocation("shineDamper");
 		location_reflectivity = getUniformLocation("reflectivity");
 		location_useTexture = getUniformLocation("useTexture");
 		location_useNormals = getUniformLocation("useNormals");
 		location_texture = getUniformLocation("textureSampler");
 		location_ambientLight = getUniformLocation("ambientLight");
+		
+		location_lightColor = new int[MAX_LIGHT];
+		location_lightAttenuation = new int[MAX_LIGHT];
+		location_lightProperties = new int[MAX_LIGHT];
+		for (int i = 0 ; i < MAX_LIGHT ; i++) {
+			location_lightProperties[i] = getUniformLocation("lightProperties["+i+"]");
+			location_lightColor[i] = getUniformLocation("lightColors["+i+"]");
+			location_lightAttenuation[i] = getUniformLocation("lightAttenuations["+i+"]");
+		}
+		
 	}
 	
 	public void loadShineVariables(float damper, float reflectivity) {
@@ -76,11 +87,6 @@ public class ShaderProgram extends AbstractShader {
 	
 	public void loadTransformationMatrix(Matrix4f matrix) {
 		super.loadMatrix(location_transformationMatrix, matrix);
-	}
-	
-	public void loadLight(Light light) {
-		super.loadVector(location_lightPosition,light.getPosition());
-		super.loadVector(location_lightColor,light.getColor());
 	}
 	
 	public void loadAmbientLight(Vector3f light) {
@@ -128,11 +134,38 @@ public class ShaderProgram extends AbstractShader {
 		return useNormal;
 	}
 
-	public void loadDiffuseLights(List<LightPropertiesStructure> diffuseLights) {
-		// TODO Auto-generated method stub
-		LightPropertiesStructure light = diffuseLights.get(1);
-		super.loadVector(location_lightPosition,light.getPosition());
-		super.loadVector(location_lightColor,light.getColor());
+	public void loadLights(List<LightPropertiesStructure> lights) {
+		for (int i = 1 ; i < MAX_LIGHT ; i++) { // Beware : the loop starts with the index 1 !!! (the light 0 only set the ambient light)
+			if (i < lights.size()) {
+				LightPropertiesStructure light = lights.get(i);
+				Matrix4f lightPropertyMatrix = new Matrix4f();
+				lightPropertyMatrix.m00 = light.getPosition().x;
+				lightPropertyMatrix.m01 = light.getPosition().y;
+				lightPropertyMatrix.m02 = light.getPosition().z;
+				int lightType = (light.getType() == TYPE.POINT) ? 0 :
+					(light.getType() == TYPE.DIRECTION) ? 1 : 2;
+				lightPropertyMatrix.m03 = lightType; // 0 for point, 1 for direction, 2 for spot
+				lightPropertyMatrix.m10 = light.getDirection().x;
+				lightPropertyMatrix.m11 = light.getDirection().y;
+				lightPropertyMatrix.m12 = light.getDirection().z;
+				lightPropertyMatrix.m20 = light.getColor().x;
+				lightPropertyMatrix.m21 = light.getColor().y;
+				lightPropertyMatrix.m22 = light.getColor().z;
+				lightPropertyMatrix.m30 = light.getLinearAttenuation();
+				lightPropertyMatrix.m31 = light.getQuadraticAttenuation();
+				super.loadMatrix(location_lightProperties[i-1], lightPropertyMatrix);
+				super.loadVector(location_lightColor[i-1], light.getColor());
+				super.loadVector(location_lightAttenuation[i-1], new Vector3f(1.0f,light.getLinearAttenuation(),light.getQuadraticAttenuation()));
+			}
+			else {
+				Matrix4f lightPropertyMatrix = new Matrix4f();
+				lightPropertyMatrix.m20 = lightPropertyMatrix.m21 = lightPropertyMatrix.m22 = 0;
+				Vector3f lightColor = new Vector3f(0,0,0);
+				super.loadMatrix(location_lightProperties[i-1], lightPropertyMatrix);
+				super.loadVector(location_lightColor[i-1], lightColor);
+				super.loadVector(location_lightAttenuation[i-1], new Vector3f(1.0f,0.0f,0.0f));
+			}
+		}
 	}
 
 	public void storeTextureID(int textureID) {
