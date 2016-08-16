@@ -2,11 +2,9 @@ package ummisco.gama.serializer.gaml;
 
 import java.io.*;
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
 import msi.gama.common.util.FileUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
@@ -31,7 +29,6 @@ public class ReverseOperators {
 	}
 	
 
-	
 	@operator(value = "serializeAgent")
 	@doc(value="", deprecated ="Still in alpha version, do not use it.")
 	public static String serializeAgent(final IScope scope, final IAgent agent) {
@@ -43,18 +40,79 @@ public class ReverseOperators {
 
 		return StreamConverter.convertObjectToStream(scope, new SavedAgent(scope, agent));		
 	}		
-	
+
+
 	@operator(value = "unSerializeSimulation")
 	@doc(value="", deprecated ="Still in alpha version, do not use it.")
-	public static int unSerializeSimulation(final IScope scope, final String simul) {
+	public static int unSerializeSimulationFromFile(final IScope scope, final String pathname) {
 		ConverterScope cScope = new ConverterScope(scope);
 		XStream xstream = StreamConverter.loadAndBuild(cScope);
 		
-		ExperimentAgent exp = (ExperimentAgent) scope.getExperiment();
-		exp.getSimulation().dispose();		
+		BufferedReader br = null;
+		String stringFile;
+		
+		String absolute_pathname = FileUtils.constructAbsoluteFilePath(scope, pathname, false);
+		
+		try {
+			br = new BufferedReader(new FileReader(absolute_pathname));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		try {
+		    StringBuilder sb = new StringBuilder();
+		    String line = null;
+			try {
+				line = br.readLine();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
+		    while (line != null) {
+		        sb.append(line);
+		        sb.append(System.lineSeparator());
+		        try {
+					line = br.readLine();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+		    }
+		    stringFile = sb.toString();
+		} finally {
+		    try {
+				br.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		SavedAgent saveAgt = (SavedAgent) xstream.fromXML(stringFile);
+		ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
+		SimulationAgent simAgent = expAgt.getSimulation();
+		
+		simAgent.updateWith(scope, saveAgt);
+
+		return 1;
+	}
+	
+//	@operator(value = "unSerializeSimulation")
+//	@doc(value="", deprecated ="Still in alpha version, do not use it.")
+	// TODO: to check ... 
+	public static int unSerializeSimulationFromXML(final IScope scope, final String simul) {
+		ConverterScope cScope = new ConverterScope(scope);
+		XStream xstream = StreamConverter.loadAndBuild(cScope);
+
+		SavedAgent saveAgt = (SavedAgent) xstream.fromXML(simul);
+		ExperimentAgent expAgt = (ExperimentAgent) scope.getExperiment();
+		SimulationAgent simAgent = expAgt.getSimulation();
+		
+		simAgent.updateWith(scope, saveAgt);		
+		
+//		exp.getSimulation().dispose();		
 		
 //		SavedAgent agt = (SavedAgent) xstream.fromXML(simul);
-		SimulationAgent simAgt = (SimulationAgent) xstream.fromXML(simul);
+//		SimulationAgent simAgt = (SimulationAgent) xstream.fromXML(simul);
 
 
 
@@ -68,7 +126,7 @@ public class ReverseOperators {
 //		simAgt = (SimulationAgent) xstream.fromXML(simul);
 
 		return 1;
-	}
+	}	
 
 	@operator(value = "saveAgent")
 	@doc(value="", deprecated ="Still in alpha version, do not use it.")
@@ -101,7 +159,6 @@ public class ReverseOperators {
 
 		return saveAgent(scope, simAgt, pathname);
 	}	
-	
 	
 
 	// TODO to remove when possible
