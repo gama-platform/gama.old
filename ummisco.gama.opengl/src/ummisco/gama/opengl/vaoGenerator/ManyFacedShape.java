@@ -1,21 +1,31 @@
 package ummisco.gama.opengl.vaoGenerator;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureIO;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 import msi.gaml.types.GamaMaterialType;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.Material;
+import ummisco.gama.modernOpenGL.font.fontMeshCreator.FontType;
+import ummisco.gama.modernOpenGL.font.fontMeshCreator.GUIText;
+import ummisco.gama.modernOpenGL.font.fontMeshCreator.TextMeshData;
+import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
+import ummisco.gama.opengl.scene.StringObject;
 import ummisco.gama.opengl.utils.Utils;
 
 /*
@@ -47,6 +57,7 @@ public class ManyFacedShape {
 	private int[] bottomFace;
 	
 	// private fields from the GeometryObject
+	private int pickingId;
 	private IShape.Type type;
 	private double depth;
 	private GamaPoint translation;
@@ -61,32 +72,33 @@ public class ManyFacedShape {
 		loadManyFacedShape(obj);
 	}
 	
-	public ManyFacedShape(GeometryObject geomObj, Texture[] textures, boolean isTriangulation) {
-		
+	public ManyFacedShape(AbstractObject object, Texture[] textures, boolean isTriangulation) {
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
 		this.coordsForBorder = new float[0];
-		this.type = geomObj.getType();
-		this.depth = geomObj.getAttributes().getDepth();
 		
-		this.color = geomObj.getAttributes().color;
-		this.borderColor = geomObj.getAttributes().getBorder();
+		this.depth = object.getAttributes().getDepth();
+		this.pickingId = object.pickingIndex;
+		
+		this.color = new GamaColor(object.getColor());
+		this.borderColor = object.getAttributes().getBorder();
 		this.textures = textures;
 		this.isTriangulation = isTriangulation;
-		this.material = geomObj.getAttributes().getMaterial();
+		this.material = object.getAttributes().getMaterial();
 		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
 		
-		coordsWithDoublons = geomObj.geometry.getCoordinates();
+		this.translation = object.getAttributes().location;
+		this.rotation = object.getAttributes().rotation;
+		this.isWireframe = object.getAttributes().wireframe;
+		this.isLightInteraction = (object.isLightInteraction() && !is1DShape() && !isWireframe);
 		
-		this.translation = geomObj.getAttributes().location;
-		this.rotation = geomObj.getAttributes().rotation;
-		this.size = getObjSize(geomObj);
-		this.isWireframe = geomObj.getAttributes().wireframe;
-		this.isLightInteraction = (geomObj.isLightInteraction() && !is1DShape() && !isWireframe);
-		cancelTransformation();
-		
-		// the last coordinate is the same as the first one, no need for this
-		this.coordinates = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
+		if (object instanceof GeometryObject) {
+			initGeomObject((GeometryObject)object, textures, isTriangulation );
+		}
+		else if (object instanceof StringObject) {
+			initStringObject((StringObject)object, textures, isTriangulation);
+			return;
+		}
 		
 		if (!ShapeCache.isLoaded(getHashCode()))
 		{
@@ -144,6 +156,57 @@ public class ManyFacedShape {
 			loadManyFacedShape( ShapeCache.loadShape(getHashCode()) );
 		}
 		applyTransformation();
+	}
+	
+	public void initStringObject(StringObject strObj, Texture[] texture, boolean isTriangulation) {
+		this.type = Type.POLYGON;
+		
+		String fontFile = "F:/Gama/GamaSource/ummisco.gama.opengl/res/font/Verdana.fnt";
+		String fontImage = "F:/Gama/GamaSource/ummisco.gama.opengl/res/font/Verdana.png";
+		String string = strObj.string;
+		GamaPoint position = strObj.getAttributes().location;
+		GamaPair<Double,GamaPoint> rotation = strObj.getAttributes().rotation;
+		FontType font = new FontType(fontFile);
+		GUIText text = new GUIText(string, 100, font, position, rotation, 100f, true);
+		TextMeshData textMeshData = font.loadText(text);
+		//Texture[] textures = strObj.getTextures(renderer.getContext(), renderer);
+		Texture fontTexture = null;
+		try {
+			fontTexture = TextureIO.newTexture(new File(fontImage), false);
+		} catch (GLException | IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		this.textures = new Texture[1];
+		this.textures[0] = fontTexture;
+		
+		coords = textMeshData.getVertexPositions();
+		uvMapping = textMeshData.getTextureCoords();
+		// build the faces
+		for (int i = 0 ; i < coords.length/(4*3) ; i++) {
+			int[] face = new int[4];
+			face[0] = i*4;
+			face[1] = i*4+1;
+			face[2] = i*4+2;
+			face[3] = i*4+3;
+			faces.add(face);
+		}
+		
+		computeNormals();
+		triangulate();
+	}
+	
+	public void initGeomObject(GeometryObject geomObj, Texture[] textures, boolean isTriangulation) {
+
+		this.type = geomObj.getType();
+		
+		coordsWithDoublons = geomObj.geometry.getCoordinates();
+		
+		this.size = getObjSize(geomObj);
+		cancelTransformation();
+		
+		// the last coordinate is the same as the first one, no need for this
+		this.coordinates = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 	}
 	
 	public String getHashCode() {
@@ -701,6 +764,14 @@ public class ManyFacedShape {
 		return coords;
 	}
 	
+	public float[] getPickingIdx() {
+		float[] result = new float[coords.length / 3];
+		for (int i = 0 ; i < result.length ; i++) {
+			result[i] = pickingId;
+		}
+		return result;
+	}
+	
 	public float[] getIdxBuffer() {
 		
 		int sizeOfBuffer = 0;
@@ -833,7 +904,9 @@ public class ManyFacedShape {
 		
 		DrawingEntity[] resultInArray = new DrawingEntity[result.size()];
 		for (int i = 0 ; i < resultInArray.length ; i++) {
-			resultInArray[i] = result.get(i);
+			DrawingEntity drawingEntity = result.get(i);
+			drawingEntity.setPickingIds(getPickingIdx());
+			resultInArray[i] = drawingEntity;
 		}
 		
 		return resultInArray;

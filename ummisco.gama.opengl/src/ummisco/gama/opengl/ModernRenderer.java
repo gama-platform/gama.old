@@ -484,7 +484,20 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	@Override
 	public Rectangle2D drawString(final String string, final TextDrawingAttributes attributes) {
-		// TODO
+		// Multiline: Issue #780
+		if (sceneBuffer.getSceneToUpdate() == null) {
+			return null;
+		}
+		if (string.contains("\n")) {
+			for (final String s : string.split("\n")) {
+				attributes.location.setY(attributes.location.getY()
+						+ attributes.font.getSize() * this.getyRatioBetweenPixelsAndModelUnits());
+				drawString(s, attributes);
+			}
+			return null;
+		}
+		attributes.location.setY(-attributes.location.getY());
+		sceneBuffer.getSceneToUpdate().addString(string, attributes);
 		return null;
 	}
 

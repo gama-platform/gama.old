@@ -10,6 +10,7 @@ public class DrawingEntity {
 	
 	public Type type;
 	
+	private float[] pickingIds;
 	private float[] vertices;
 	private float[] colors;
 	private float[] indices;
@@ -70,6 +71,14 @@ public class DrawingEntity {
 
 	public void setNormals(float[] normals) {
 		this.normals = normals;
+	}
+	
+	public float[] getPickingIds() {
+		return pickingIds;
+	}
+
+	public void setPickingIds(float[] pickingIds) {
+		this.pickingIds = pickingIds;
 	}
 	
 	public void setTexture(Texture texture) {

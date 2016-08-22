@@ -6,6 +6,7 @@ import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
+import ummisco.gama.opengl.scene.StringObject;
 
 /*
  * This class takes as input a geometry and a drawing attribute and returns a structure
@@ -22,12 +23,9 @@ public class DrawingEntityGenerator {
 	
 	public DrawingEntity[] GenerateDrawingEntities(AbstractObject object) {
 		DrawingEntity[] result = null;
-		if (object instanceof GeometryObject) {
-			GeometryObject geomObj = (GeometryObject)object;
-			Texture[] textures = object.getTextures(renderer.getContext(), renderer);
-			ManyFacedShape shape = new ManyFacedShape(geomObj,textures,renderer.data.isTriangulation());	
-			result = shape.getDrawingEntities();
-		}	
+		Texture[] textures = object.getTextures(renderer.getContext(), renderer);
+		ManyFacedShape shape = new ManyFacedShape(object,textures,renderer.data.isTriangulation());	
+		result = shape.getDrawingEntities();
 		return result;
 	}
 
