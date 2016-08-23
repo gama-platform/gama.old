@@ -24,7 +24,7 @@ public class DrawingEntityGenerator {
 	public DrawingEntity[] GenerateDrawingEntities(AbstractObject object) {
 		DrawingEntity[] result = null;
 		Texture[] textures = object.getTextures(renderer.getContext(), renderer);
-		ManyFacedShape shape = new ManyFacedShape(object,textures,renderer.data.isTriangulation());	
+		ManyFacedShape shape = new ManyFacedShape(object,textures,renderer.data.isTriangulation(), (float) renderer.getGlobalYRatioBetweenPixelsAndModelUnits());	
 		result = shape.getDrawingEntities();
 		return result;
 	}

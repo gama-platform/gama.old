@@ -73,7 +73,7 @@ public class ManyFacedShape {
 		loadManyFacedShape(obj);
 	}
 	
-	public ManyFacedShape(AbstractObject object, Texture[] textures, boolean isTriangulation) {
+	public ManyFacedShape(AbstractObject object, Texture[] textures, boolean isTriangulation, float yRatioBetweenPixelsAndModelUnits) {
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
 		this.coordsForBorder = new float[0];
@@ -97,7 +97,7 @@ public class ManyFacedShape {
 			initGeomObject((GeometryObject)object, textures, isTriangulation );
 		}
 		else if (object instanceof StringObject) {
-			initStringObject((StringObject)object, textures, isTriangulation);
+			initStringObject((StringObject)object, textures, isTriangulation, yRatioBetweenPixelsAndModelUnits);
 			return;
 		}
 		
@@ -159,20 +159,21 @@ public class ManyFacedShape {
 		applyTransformation();
 	}
 	
-	public void initStringObject(StringObject strObj, Texture[] texture, boolean isTriangulation) {
+	public void initStringObject(StringObject strObj, Texture[] texture, boolean isTriangulation, float yRatioBetweenPixelsAndModelUnits) {
 		this.isString = true;
 		this.isLightInteraction = false;
 		this.type = Type.POLYGON;
 		
+		this.translation.y = - this.translation.y; // for a	stringObject, the y is inverted (why ???)
+		
 		String fontFile = "F:/Gama/GamaSource/ummisco.gama.opengl/res/font/Verdana.fnt";
 		String fontImage = "F:/Gama/GamaSource/ummisco.gama.opengl/res/font/Verdana.png";
 		String string = strObj.string;
-		GamaPoint position = strObj.getAttributes().location;
-		GamaPair<Double,GamaPoint> rotation = strObj.getAttributes().rotation;
+		rotation = strObj.getAttributes().rotation;
 		FontType font = new FontType(fontFile);
-		GUIText text = new GUIText(string, 100, font, position, rotation, 100f, true);
+		float scale = 200f / yRatioBetweenPixelsAndModelUnits;
+		GUIText text = new GUIText(string, scale, font, -1, true);
 		TextMeshData textMeshData = font.loadText(text);
-		//Texture[] textures = strObj.getTextures(renderer.getContext(), renderer);
 		Texture fontTexture = null;
 		try {
 			fontTexture = TextureIO.newTexture(new File(fontImage), false);
@@ -184,6 +185,12 @@ public class ManyFacedShape {
 		this.textures[0] = fontTexture;
 		
 		coords = textMeshData.getVertexPositions();
+		// set the translation to the coords
+//		for (int i = 0 ; i < coords.length/3 ; i++) {
+//			coords[3*i] = (float) (coords[3*i] + position.x);
+//			coords[3*i+1] = (float) (coords[3*i+1] - position.y);
+//			coords[3*i+2] = (float) (coords[3*i+2] + position.z);
+//		}
 		uvMapping = textMeshData.getTextureCoords();
 		// build the faces
 		for (int i = 0 ; i < coords.length/(4*3) ; i++) {
@@ -197,6 +204,7 @@ public class ManyFacedShape {
 		
 		computeNormals();
 		triangulate();
+		applyTransformation();
 	}
 	
 	public void initGeomObject(GeometryObject geomObj, Texture[] textures, boolean isTriangulation) {

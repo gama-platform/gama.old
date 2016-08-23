@@ -2,9 +2,6 @@ package ummisco.gama.modernOpenGL.font.fontMeshCreator;
 
 import javax.vecmath.Vector3f;
 
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.util.GamaPair;
-
 /**
  * Represents a piece of text in the game.
  *
@@ -17,9 +14,6 @@ public class GUIText {
 	private int textMeshVao;
 	private int vertexCount;
 	private Vector3f colour = new Vector3f(0f, 0f, 0f);
-
-	private GamaPoint position;
-	private GamaPair<Double,GamaPoint> rotation;
 	private float lineMaxSize;
 	private int numberOfLines;
 
@@ -52,14 +46,12 @@ public class GUIText {
 	 * @param centered
 	 *            - whether the text should be centered or not.
 	 */
-	public GUIText(String text, float fontSize, FontType font, GamaPoint position, GamaPair<Double,GamaPoint> rotation, float maxLineLength,
+	public GUIText(String text, float fontSize, FontType font, float maxLineLength,
 			boolean centered) {
 		this.textString = text;
 		this.fontSize = fontSize;
 		this.font = font;
-		this.position = position;
-		this.rotation = rotation;
-		this.lineMaxSize = maxLineLength;
+		this.lineMaxSize = maxLineLength; // -1 for no limit
 		this.centerText = centered;
 		// load text
 	}
@@ -106,15 +98,6 @@ public class GUIText {
 	 */
 	public int getNumberOfLines() {
 		return numberOfLines;
-	}
-
-	/**
-	 * @return The position of the top-left corner of the text in screen-space.
-	 *         (0, 0) is the top left corner of the screen, (1, 1) is the bottom
-	 *         right.
-	 */
-	public GamaPoint getPosition() {
-		return position;
 	}
 
 	/**
