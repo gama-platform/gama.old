@@ -263,12 +263,12 @@ public class ModernDrawer {
 			// VERTICES POSITIONS BUFFER
 			bindBuffer(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,typeOfDrawing[2]);
 			
-			// COLORS BUFFER (If no texture is defined)
-			if (!shader.useTexture())
+			// COLORS BUFFER
+			bindBuffer(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
+			
+			// UV MAPPING (If a texture is defined)
+			if (shader.useTexture())
 			{
-				bindBuffer(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
-			}
-			else {
 				bindBuffer(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
 				gl.glActiveTexture(GL.GL_TEXTURE0);
 				gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
