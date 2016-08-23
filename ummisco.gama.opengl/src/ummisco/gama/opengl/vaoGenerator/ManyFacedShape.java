@@ -970,6 +970,9 @@ public class ManyFacedShape {
 			// the geometry is not filled. We create no more entity.
 		}
 		else {
+			if (color == null) {
+				color = new GamaColor(1.0,1.0,0,1.0); // set the default color to yellow.
+			}
 			if (textures == null || textures.length == 1 || (topFace == null && bottomFace == null))
 			{
 				// configure the drawing entity for the filled faces
@@ -1023,6 +1026,7 @@ public class ManyFacedShape {
 				botTopEntity.setVertices(botTopCoords);
 				botTopEntity.setNormals(botTopNormals);
 				botTopEntity.setIndices(botTopIndices);
+				botTopEntity.setColors(getColorArray(color,coords));
 				botTopEntity.type = DrawingEntity.Type.TEXTURED;
 				botTopEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
 				botTopEntity.setTexture(textures[0]);
@@ -1048,6 +1052,7 @@ public class ManyFacedShape {
 				otherEntity.setVertices(coords);
 				otherEntity.setNormals(normals);
 				otherEntity.setIndices(idxArray);
+				otherEntity.setColors(getColorArray(color,coords));
 				otherEntity.type = DrawingEntity.Type.TEXTURED;
 				otherEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
 				otherEntity.setTexture(textures[1]);
