@@ -11,31 +11,37 @@
  **********************************************************************************************/
 package msi.gama.util.path;
 
-import org.jgrapht.Graphs;
-import com.vividsolutions.jts.geom.*;
+import org.jgrapht.Graph;
+
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.LineString;
+import com.vividsolutions.jts.geom.Point;
+
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.runtime.IScope;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.operators.fastmaths.FastMath;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.Types;
 
 public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, IShape>> {
 
 	IList<IShape> segments;
 	IShape shape = null;
-	THashMap<IShape, IShape> realObjects; // cle = bout de geometrie
-
-	// WARNING Cant hide an attribute like this !
-	// GamaSpatialGraph graph;
-
+	THashMap<IShape, IShape> realObjects; // key = part of the geometry
 	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target,
 		final IList<IShape> _edges) {
 		super(g, start, target, _edges);
@@ -465,6 +471,34 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			vertices.add(g.getPoints().get(g.getPoints().size() - 1));
 			return vertices;
 		}
-		return GamaListFactory.createWithoutCasting(getType().getKeyType(), Graphs.getPathVertexList(this));
+		return getPathVertexList();
 	}
+	
+	 public IList<IShape> getPathVertexList()
+	    {
+	        Graph<IShape, IShape> g = getGraph();
+	        IList<IShape> list = GamaListFactory.create();
+	        IShape v = getStartVertex();
+	        list.add(v);
+	        IShape vPrev = null;
+	        for (IShape e : getEdgeList()) {
+	        	vPrev = v;
+	        	v = getOppositeVertex(g, e, v);
+	            if (!v.equals(vPrev)) list.add(v);
+	        }
+	        return list;
+	    }
+	 
+	 public static IShape getOppositeVertex(Graph<IShape, IShape> g, IShape e, IShape v)
+	    {
+		 	IShape source = g.getEdgeSource(e);
+		 	IShape target = g.getEdgeTarget(e);
+	        if (v.equals(source)) {
+	            return target;
+	        } else if (v.equals(target)) {
+	            return source;
+	        } else {
+	          return (v.euclidianDistanceTo(source) > v.euclidianDistanceTo(target))? target : source;
+	        }
+	    }
 }
