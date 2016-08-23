@@ -37,9 +37,10 @@ public class ManyFacedShape {
 	public static float SMOOTH_SHADING_ANGLE = 40f; // in degree
 	public static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0,1.0,0.0,1.0); // in degree
 	
-	private boolean isTriangulation;
-	private boolean isLightInteraction;
-	private boolean isWireframe;
+	private boolean isTriangulation = false;
+	private boolean isLightInteraction = true;
+	private boolean isWireframe = false;
+	private boolean isString = false;
 	private ArrayList<int[]> faces = new ArrayList<int[]>(); // way to construct a face from the indices of the coordinates (anti clockwise for front face)
 	private ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); // list that store all the edges erased thanks to the smooth shading (those edges must
 	// not be displayed when displaying the borders !)
@@ -159,6 +160,8 @@ public class ManyFacedShape {
 	}
 	
 	public void initStringObject(StringObject strObj, Texture[] texture, boolean isTriangulation) {
+		this.isString = true;
+		this.isLightInteraction = false;
 		this.type = Type.POLYGON;
 		
 		String fontFile = "F:/Gama/GamaSource/ummisco.gama.opengl/res/font/Verdana.fnt";
@@ -611,12 +614,11 @@ public class ManyFacedShape {
 		center[1] = coordSum[1] / coordinates.length;
 		
 		// build a serie of circles on the z axis
-		int sliceNb = 16;// coordinates.length;
+		int sliceNb = 16;
 		ArrayList<int[]> circles = new ArrayList<int[]>();
 		int idx = 0;
 		for (int i = 0 ; i < sliceNb ; i++) {
 			float zVal = (float)Math.cos(((float)i/(float)sliceNb)*Math.PI)*radius;
-//			float zVal = 2*i * (radius/(sliceNb-1)) - radius;
 			float angle = (float) Math.asin(zVal/radius); // <-- sin(angle) = zVal / radius
 			float circleRadius = (float) (radius * Math.cos(angle)); // <-- cos(angle) = circleRadius * cos(angle)
 			float[] circleCoordinates = buildCircle(new float[]{center[0],center[1],zVal},circleRadius,sliceNb);
@@ -983,6 +985,9 @@ public class ManyFacedShape {
 					filledEntity.type = DrawingEntity.Type.TEXTURED;
 					filledEntity.setTexture(textures[0]);
 					filledEntity.setUvMapping(uvMapping);
+					if (isString) {
+						filledEntity.type = DrawingEntity.Type.STRING;
+					}
 				}
 				
 				result.add(filledEntity);

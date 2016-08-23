@@ -6,7 +6,7 @@ import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 
 public class DrawingEntity {
 	
-	static public enum Type { TEXTURED, FACE, LINE, POINT }; // border == triangulate
+	static public enum Type { TEXTURED, FACE, LINE, POINT, STRING }; // border == triangulate
 	
 	public Type type;
 	

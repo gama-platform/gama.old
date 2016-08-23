@@ -66,7 +66,7 @@ public class ModernDrawer {
 			else if (entity.type.equals(DrawingEntity.Type.FACE)) {
 				addFilledEntity(entity);
 			}
-			else if (entity.type.equals(DrawingEntity.Type.TEXTURED)) {
+			else if (entity.type.equals(DrawingEntity.Type.TEXTURED) || entity.type.equals(DrawingEntity.Type.STRING)) {
 				addTexturedEntity(entity);
 			}
 			else if (entity.type.equals(DrawingEntity.Type.POINT)) {
@@ -269,7 +269,6 @@ public class ModernDrawer {
 				bindBuffer(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
 			}
 			else {
-				//shader.loadTexture(0);
 				bindBuffer(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
 				gl.glActiveTexture(GL.GL_TEXTURE0);
 				gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
@@ -325,6 +324,12 @@ public class ModernDrawer {
 			shaderProgram.loadTexture(0);
 			shaderProgram.storeTextureID(entity.getTextureID());
 		}
+		if (entity.type == DrawingEntity.Type.STRING) {
+			shaderProgram.enableString();
+		}
+		else {
+			shaderProgram.disableString();
+		}
 	}
 	
 	private Matrix4f getTransformationMatrix() {
@@ -360,13 +365,11 @@ public class ModernDrawer {
 		// VERTICES POSITIONS BUFFER
 		storeDataInAttributeList(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,listVertices,shaderNumber);
 		
-		// COLORS BUFFER (If no texture is defined)
-		if (listUvMapping.size() == 0) {
-			storeDataInAttributeList(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,listColors,shaderNumber);
-		}
+		// COLORS BUFFER
+		storeDataInAttributeList(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,listColors,shaderNumber);
 		
 		// UV MAPPING (If a texture is defined)
-		else {
+		if (listUvMapping.size() != 0) {
 			storeDataInAttributeList(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
 			gl.glActiveTexture(GL.GL_TEXTURE0);
 			gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
