@@ -45,6 +45,12 @@ public class HeadlessSimulationLoader {
 		configureHeadLessSimulation();
 		GAMA.setHeadlessGui(new HeadlessListener());
 
+		try {
+			// We initialize XText and Gaml.
+			GamlStandaloneSetup.doSetup();
+		} catch (Exception e1) {
+			throw GamaRuntimeException.create(e1, null);
+		}
 		// SEED HACK // WARNING AD : Why ?
 		GamaPreferences.CORE_SEED_DEFINED.set(true);
 		GamaPreferences.CORE_SEED.set(1.0);
