@@ -1,14 +1,10 @@
 package ummisco.gama.opengl.vaoGenerator;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureIO;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
@@ -20,12 +16,9 @@ import msi.gama.util.GamaPair;
 import msi.gaml.types.GamaMaterialType;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.Material;
-import ummisco.gama.modernOpenGL.font.fontMeshCreator.FontType;
-import ummisco.gama.modernOpenGL.font.fontMeshCreator.GUIText;
 import ummisco.gama.modernOpenGL.font.fontMeshCreator.TextMeshData;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
-import ummisco.gama.opengl.scene.StringObject;
 import ummisco.gama.opengl.utils.Utils;
 
 /*
@@ -73,33 +66,47 @@ public class ManyFacedShape {
 		loadManyFacedShape(obj);
 	}
 	
-	public ManyFacedShape(AbstractObject object, Texture[] textures, boolean isTriangulation, float yRatioBetweenPixelsAndModelUnits) {
-		this.faces = new ArrayList<int[]>();
-		this.coords = new float[0];
-		this.coordsForBorder = new float[0];
+	public ManyFacedShape(AbstractObject strObj, Texture[] textures, TextMeshData textMeshData, boolean isTriangulation) {
+		// for StringObject
+		genericInit(strObj, textures, isTriangulation);
 		
-		this.depth = object.getAttributes().getDepth();
-		this.pickingId = object.pickingIndex;
+		this.isString = true;
+		this.isLightInteraction = false;
+		this.type = Type.POLYGON;
 		
-		this.color = new GamaColor(object.getColor());
-		this.borderColor = object.getAttributes().getBorder();
-		this.textures = textures;
-		this.isTriangulation = isTriangulation;
-		this.material = object.getAttributes().getMaterial();
-		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
+		this.translation.y = - this.translation.y; // for a	stringObject, the y is inverted (why ???)
 		
-		this.translation = object.getAttributes().location;
-		this.rotation = object.getAttributes().rotation;
-		this.isWireframe = object.getAttributes().wireframe;
-		this.isLightInteraction = (object.isLightInteraction() && !is1DShape() && !isWireframe);
 		
-		if (object instanceof GeometryObject) {
-			initGeomObject((GeometryObject)object, textures, isTriangulation );
+		coords = textMeshData.getVertexPositions();
+		uvMapping = textMeshData.getTextureCoords();
+		// build the faces
+		for (int i = 0 ; i < coords.length/(4*3) ; i++) {
+			int[] face = new int[4];
+			face[0] = i*4;
+			face[1] = i*4+1;
+			face[2] = i*4+2;
+			face[3] = i*4+3;
+			faces.add(face);
 		}
-		else if (object instanceof StringObject) {
-			initStringObject((StringObject)object, textures, isTriangulation, yRatioBetweenPixelsAndModelUnits);
-			return;
-		}
+		
+		computeNormals();	
+		triangulate();
+		applyTransformation();
+	}
+	
+	public ManyFacedShape(GeometryObject geomObj, Texture[] textures, boolean isTriangulation) {
+		// for GeometryObject
+		genericInit(geomObj, textures, isTriangulation);
+
+		this.type = geomObj.getType();
+		
+		coordsWithDoublons = geomObj.geometry.getCoordinates();
+		
+		this.size = getObjSize(geomObj);
+		cancelTransformation();
+		
+		// the last coordinate is the same as the first one, no need for this
+		this.coordinates = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 		
 		if (!ShapeCache.isLoaded(getHashCode()))
 		{
@@ -159,65 +166,25 @@ public class ManyFacedShape {
 		applyTransformation();
 	}
 	
-	public void initStringObject(StringObject strObj, Texture[] texture, boolean isTriangulation, float yRatioBetweenPixelsAndModelUnits) {
-		this.isString = true;
-		this.isLightInteraction = false;
-		this.type = Type.POLYGON;
+	private void genericInit(AbstractObject object, Texture[] textures, boolean isTriangulation) {
+		this.faces = new ArrayList<int[]>();
+		this.coords = new float[0];
+		this.coordsForBorder = new float[0];
 		
-		this.translation.y = - this.translation.y; // for a	stringObject, the y is inverted (why ???)
+		this.depth = object.getAttributes().getDepth();
+		this.pickingId = object.pickingIndex;
 		
-		String fontFile = "F:/Gama/GamaSource/ummisco.gama.opengl/res/font/Verdana.fnt";
-		String fontImage = "F:/Gama/GamaSource/ummisco.gama.opengl/res/font/Verdana.png";
-		String string = strObj.string;
-		rotation = strObj.getAttributes().rotation;
-		FontType font = new FontType(fontFile);
-		float scale = 200f / yRatioBetweenPixelsAndModelUnits;
-		GUIText text = new GUIText(string, scale, font, -1, true);
-		TextMeshData textMeshData = font.loadText(text);
-		Texture fontTexture = null;
-		try {
-			fontTexture = TextureIO.newTexture(new File(fontImage), false);
-		} catch (GLException | IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		this.textures = new Texture[1];
-		this.textures[0] = fontTexture;
+		this.color = new GamaColor(object.getColor());
+		this.borderColor = object.getAttributes().getBorder();
+		this.textures = textures;
+		this.isTriangulation = isTriangulation;
+		this.material = object.getAttributes().getMaterial();
+		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
 		
-		coords = textMeshData.getVertexPositions();
-		// set the translation to the coords
-//		for (int i = 0 ; i < coords.length/3 ; i++) {
-//			coords[3*i] = (float) (coords[3*i] + position.x);
-//			coords[3*i+1] = (float) (coords[3*i+1] - position.y);
-//			coords[3*i+2] = (float) (coords[3*i+2] + position.z);
-//		}
-		uvMapping = textMeshData.getTextureCoords();
-		// build the faces
-		for (int i = 0 ; i < coords.length/(4*3) ; i++) {
-			int[] face = new int[4];
-			face[0] = i*4;
-			face[1] = i*4+1;
-			face[2] = i*4+2;
-			face[3] = i*4+3;
-			faces.add(face);
-		}
-		
-		computeNormals();
-		triangulate();
-		applyTransformation();
-	}
-	
-	public void initGeomObject(GeometryObject geomObj, Texture[] textures, boolean isTriangulation) {
-
-		this.type = geomObj.getType();
-		
-		coordsWithDoublons = geomObj.geometry.getCoordinates();
-		
-		this.size = getObjSize(geomObj);
-		cancelTransformation();
-		
-		// the last coordinate is the same as the first one, no need for this
-		this.coordinates = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
+		this.translation = object.getAttributes().location;
+		this.rotation = object.getAttributes().rotation;
+		this.isWireframe = object.getAttributes().wireframe;
+		this.isLightInteraction = (object.isLightInteraction() && !is1DShape() && !isWireframe);
 	}
 	
 	public String getHashCode() {

@@ -1,8 +1,12 @@
 package ummisco.gama.opengl.vaoGenerator;
 
+import java.awt.Font;
+
 import com.jogamp.opengl.util.texture.Texture;
 
 import ummisco.gama.modernOpenGL.DrawingEntity;
+import ummisco.gama.modernOpenGL.font.fontMeshCreator.FontTextureCache;
+import ummisco.gama.modernOpenGL.font.fontMeshCreator.TextMeshData;
 import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
@@ -16,15 +20,29 @@ import ummisco.gama.opengl.scene.StringObject;
 public class DrawingEntityGenerator {
 	
 	private Abstract3DRenderer renderer;
+	private FontTextureCache fontTextCache;
 	
 	public DrawingEntityGenerator(Abstract3DRenderer renderer) {
 		this.renderer = renderer;
+		this.fontTextCache = new FontTextureCache();
 	}
 	
 	public DrawingEntity[] GenerateDrawingEntities(AbstractObject object) {
 		DrawingEntity[] result = null;
 		Texture[] textures = object.getTextures(renderer.getContext(), renderer);
-		ManyFacedShape shape = new ManyFacedShape(object,textures,renderer.data.isTriangulation(), (float) renderer.getGlobalYRatioBetweenPixelsAndModelUnits());	
+		ManyFacedShape shape = null;
+		if (object instanceof StringObject) {
+			StringObject strObj = (StringObject)object;
+			Font font = strObj.getFont();
+			textures = new Texture[1];
+			textures[0] = fontTextCache.getFontTexture(font.getName());
+			TextMeshData textMeshData = fontTextCache.getTextMeshData(font.getName(), strObj.string, (int)renderer.getGlobalYRatioBetweenPixelsAndModelUnits());
+			shape = new ManyFacedShape(strObj,textures,textMeshData,renderer.data.isTriangulation());
+		}
+		else if (object instanceof GeometryObject) {
+			GeometryObject geomObj = (GeometryObject)object;
+			shape = new ManyFacedShape(geomObj,textures,renderer.data.isTriangulation());	
+		}
 		result = shape.getDrawingEntities();
 		return result;
 	}
