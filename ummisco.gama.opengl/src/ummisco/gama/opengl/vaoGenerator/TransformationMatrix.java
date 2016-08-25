@@ -21,18 +21,18 @@ public class TransformationMatrix {
 		
 		final double aspect = (double) width / (double) (height == 0 ? 1 : height);
 	
+		final double zNear = maxDim / 1000;
+		final double zFar = maxDim*10;
+		final double frustum_length = zFar - zNear;
+		double fW, fH;
+		if (aspect > 1.0) {
+			fH = FastMath.tan(fov / 360 * Math.PI) * zNear;
+			fW = fH * aspect;
+		} else {
+			fW = FastMath.tan(fov / 360 * Math.PI) * zNear;
+			fH = fW / aspect;
+		}
 		if (!ortho) {
-			final double zNear = maxDim / 1000;
-			final double zFar = maxDim*10;
-			final double frustum_length = zFar - zNear;
-			double fW, fH;
-			if (aspect > 1.0) {
-				fH = FastMath.tan(fov / 360 * Math.PI) * zNear;
-				fW = fH * aspect;
-			} else {
-				fW = FastMath.tan(fov / 360 * Math.PI) * zNear;
-				fH = fW / aspect;
-			}
 			
 			projectionMatrix = new Matrix4f();
 			
@@ -44,6 +44,12 @@ public class TransformationMatrix {
 			projectionMatrix.m33 = 0;
 		} else {
 			// TODO
+			// see link http://www.songho.ca/opengl/gl_projectionmatrix.html
+			projectionMatrix.m00 = (float) (1.0 / (maxDim*aspect));
+			projectionMatrix.m11 = (float) (1.0 / (maxDim));
+			projectionMatrix.m22 = (float) (-2.0 / (zFar - zNear));
+			projectionMatrix.m32 = (float) (-(zFar + zNear)/(zFar - zNear));
+			projectionMatrix.m33 = 1f;
 		}
 
 		return projectionMatrix;
