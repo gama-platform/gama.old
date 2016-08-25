@@ -41,6 +41,9 @@ void main (void)
 			{
 				float distance = 1.0 - texture(textureSampler,pass_textureCoords).a;
 				float alpha = 1.0 - smoothstep(fontWidth, fontWidth + fontEdge, distance);
+				if (alpha < 0.1) {
+					discard;
+				}
 				inputColor = vec4(varying_Color.xyz,alpha);
 			}
 		}
@@ -87,6 +90,9 @@ void main (void)
 		{
 			float distance = 1.0 - texture(textureSampler,pass_textureCoords).a;
 			float alpha = 1.0 - smoothstep(fontWidth, fontWidth + fontEdge, distance);
+			if (alpha < 0.1) {
+				discard;
+			}
 			gl_FragColor = vec4(varying_Color.xyz,alpha);
 		}
 	}
