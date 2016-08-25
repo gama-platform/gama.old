@@ -35,8 +35,9 @@ public class DrawingEntityGenerator {
 			StringObject strObj = (StringObject)object;
 			Font font = strObj.getFont();
 			textures = new Texture[1];
-			textures[0] = fontTextCache.getFontTexture(font.getName());
-			TextMeshData textMeshData = fontTextCache.getTextMeshData(font.getName(), strObj.string, (int)renderer.getGlobalYRatioBetweenPixelsAndModelUnits());
+			String style = (font.isBold()) ? (font.isItalic()) ? " bold italic" : " bold" : (font.isItalic()) ? " italic" : "";
+			textures[0] = fontTextCache.getFontTexture(font.getName() + style);
+			TextMeshData textMeshData = fontTextCache.getTextMeshData(font.getName() + style, strObj.string, (int)renderer.getGlobalYRatioBetweenPixelsAndModelUnits(), font.getSize());
 			shape = new ManyFacedShape(strObj,textures,textMeshData,renderer.data.isTriangulation());
 		}
 		else if (object instanceof GeometryObject) {

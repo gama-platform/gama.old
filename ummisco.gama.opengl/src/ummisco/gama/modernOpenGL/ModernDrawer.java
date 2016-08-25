@@ -326,6 +326,8 @@ public class ModernDrawer {
 		}
 		if (entity.type == DrawingEntity.Type.STRING) {
 			shaderProgram.enableString();
+			shaderProgram.loadFontWidth(entity.getFontWidth());
+			shaderProgram.loadFontEdge(entity.getFontEdge());
 		}
 		else {
 			shaderProgram.disableString();

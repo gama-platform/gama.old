@@ -25,6 +25,8 @@ uniform   float   useTexture; // 0 for no, 1 for yes
 uniform   float   isString; // 0 for no, 1 for yes
 uniform   vec3    lightColors[7];
 uniform   vec3    lightAttenuations[7];
+uniform   float   fontWidth;
+uniform   float   fontEdge;
 
 void main (void)
 {
@@ -37,7 +39,9 @@ void main (void)
 			inputColor = texture(textureSampler,pass_textureCoords);
 			if (isString > 0.5)
 			{
-				inputColor = vec4(varying_Color.xyz,texture(textureSampler,pass_textureCoords).a);
+				float distance = 1.0 - texture(textureSampler,pass_textureCoords).a;
+				float alpha = 1.0 - smoothstep(fontWidth, fontWidth + fontEdge, distance);
+				inputColor = vec4(varying_Color.xyz,alpha);
 			}
 		}
 	
@@ -81,7 +85,9 @@ void main (void)
 		gl_FragColor = inputColor;
 		if (isString > 0.5)
 		{
-			gl_FragColor = vec4(varying_Color.xyz,texture(textureSampler,pass_textureCoords).a);
+			float distance = 1.0 - texture(textureSampler,pass_textureCoords).a;
+			float alpha = 1.0 - smoothstep(fontWidth, fontWidth + fontEdge, distance);
+			gl_FragColor = vec4(varying_Color.xyz,alpha);
 		}
 	}
 }

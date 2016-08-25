@@ -18,7 +18,7 @@ public class MetaFile {
 	private static final int PAD_BOTTOM = 2;
 	private static final int PAD_RIGHT = 3;
 
-	private static final int DESIRED_PADDING = 3;
+	private static final int DESIRED_PADDING = 8; // this value is equal to the padding set for the texture through "hiero"
 
 	private static final String SPLITTER = " ";
 	private static final String NUMBER_SEPARATOR = ",";
@@ -45,6 +45,7 @@ public class MetaFile {
 	 */
 	protected MetaFile(File file) {
 		this.aspectRatio = 1;// (double) Display.getWidth() / (double) Display.getHeight();
+		
 		openFile(file);
 		loadPaddingData();
 		loadLineSizes();

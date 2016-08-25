@@ -10,16 +10,14 @@ import com.jogamp.opengl.util.texture.TextureIO;
 
 public class FontTextureCache {
 	
-	static public enum Font { Verdana };
-	
 	private HashMap<String,Texture> textureMap = new HashMap<String,Texture>();
 	
-	public TextMeshData getTextMeshData(String textureName, String content, int yRatioBetweenPixelsAndModelUnits) {
+	public TextMeshData getTextMeshData(String textureName, String content, int yRatioBetweenPixelsAndModelUnits, int textSize) {
 		String absolutePathToFontTextureFolder = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() 
 				+ "res" + File.separator + "font" + File.separator;
 		String fontFile = absolutePathToFontTextureFolder + textureName + ".fnt";
 		FontType font = new FontType(fontFile);
-		float scale = 200f / yRatioBetweenPixelsAndModelUnits;
+		float scale = (10f / yRatioBetweenPixelsAndModelUnits) * textSize;
 		GUIText text = new GUIText(content, scale, font, -1, true);
 		return font.loadText(text);
 	}

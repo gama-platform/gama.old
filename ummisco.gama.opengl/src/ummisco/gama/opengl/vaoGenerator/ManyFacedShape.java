@@ -19,6 +19,7 @@ import ummisco.gama.modernOpenGL.Material;
 import ummisco.gama.modernOpenGL.font.fontMeshCreator.TextMeshData;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
+import ummisco.gama.opengl.scene.StringObject;
 import ummisco.gama.opengl.utils.Utils;
 
 /*
@@ -62,15 +63,19 @@ public class ManyFacedShape {
 	private Coordinate[] coordinates;
 	private GamaMaterial material;
 	
+	// only for string entity :
+	private float fontSize;
+	
 	public ManyFacedShape(ManyFacedShape obj) {
 		loadManyFacedShape(obj);
 	}
 	
-	public ManyFacedShape(AbstractObject strObj, Texture[] textures, TextMeshData textMeshData, boolean isTriangulation) {
+	public ManyFacedShape(StringObject strObj, Texture[] textures, TextMeshData textMeshData, boolean isTriangulation) {
 		// for StringObject
 		genericInit(strObj, textures, isTriangulation);
 		
 		this.isString = true;
+		this.fontSize = strObj.getFont().getSize();
 		this.isLightInteraction = false;
 		this.type = Type.POLYGON;
 		
@@ -869,6 +874,10 @@ public class ManyFacedShape {
 			// if wireframe, returns only one result
 			result = getWireframeDrawingEntity();
 		}
+		else if (isString) {
+			// if the entity is a string, return only one result
+			result = getStringDrawingEntities();
+		}
 		else {
 			// if not triangulate and not wireframe
 			if (is1DShape()) {
@@ -926,6 +935,32 @@ public class ManyFacedShape {
 		return result;
 	}
 	
+	private ArrayList<DrawingEntity> getStringDrawingEntities() {
+		// the number of drawing entity is equal to 1
+		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
+
+		if (color == null) {
+			color = new GamaColor(1.0,1.0,0,1.0); // set the default color to yellow.
+		}
+		// configure the drawing entity for the filled faces
+		DrawingEntity filledEntity = new DrawingEntity();
+		filledEntity.setVertices(coords);
+		filledEntity.setNormals(normals);
+		filledEntity.setIndices(getIdxBuffer());
+		filledEntity.setColors(getColorArray(color,coords));
+		filledEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
+		filledEntity.type = DrawingEntity.Type.FACE;
+		filledEntity.setTexture(textures[0]);
+		filledEntity.setUvMapping(uvMapping);
+		filledEntity.type = DrawingEntity.Type.STRING;
+		filledEntity.setFontEdge((float) (0.5/Math.sqrt(fontSize))); // the font edge is function of the size of the font
+		filledEntity.setFontWidth(0.5f); // the font width is function of if the font is bold or if it is not
+		
+		result.add(filledEntity);
+		
+		return result;
+	}
+	
 	private ArrayList<DrawingEntity> getStandardDrawingEntities() {
 		// the number of drawing entity is equal to the number of textured applied + 1 if there is a border.
 		// If no texture is used, return 1 (+1 if there is a border).
@@ -963,9 +998,6 @@ public class ManyFacedShape {
 					filledEntity.type = DrawingEntity.Type.TEXTURED;
 					filledEntity.setTexture(textures[0]);
 					filledEntity.setUvMapping(uvMapping);
-					if (isString) {
-						filledEntity.type = DrawingEntity.Type.STRING;
-					}
 				}
 				
 				result.add(filledEntity);

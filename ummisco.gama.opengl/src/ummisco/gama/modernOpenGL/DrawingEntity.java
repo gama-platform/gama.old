@@ -19,6 +19,10 @@ public class DrawingEntity {
 	private Texture texture;
 	private Material material;
 	
+	// only for string :
+	private float fontWidth = -1; // init value set to -1. If the value is -1, the entity is not a string
+	private float fontEdge = -1; // init value set to -1. If the value is -1, the entity is not a string
+	
 	private ShaderProgram shader;
 	
 	public Material getMaterial() {
@@ -95,6 +99,22 @@ public class DrawingEntity {
 	
 	public ShaderProgram getShader() {
 		return shader;
+	}
+	
+	public void setFontWidth(float value) {
+		fontWidth = value;
+	}
+
+	public float getFontWidth() {
+		return fontWidth;
+	}
+	
+	public void setFontEdge(float value) {
+		fontEdge = value;
+	}
+	
+	public float getFontEdge() {
+		return fontEdge;
 	}
 	
 }
