@@ -38,8 +38,6 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="S_Global" eSuperTypes="#//Statement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="S_Entities" eSuperTypes="#//Statement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="S_Environment" eSuperTypes="#//Statement"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Species" eSuperTypes="#//Statement #//S_Declaration #//TypeDefinition"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Experiment" eSuperTypes="#//Statement #//VarDefinition"/>
   <eClassifiers xsi:type="ecore:EClass" name="S_Do" eSuperTypes="#//Statement"/>

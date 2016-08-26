@@ -52,6 +52,7 @@ import msi.gaml.types.IType;
 				@doc("Returns the agent that hosts the population of the receiver agent") }),
 		@var(name = IKeyword.LOCATION, type = IType.POINT, depends_on = IKeyword.SHAPE, doc = {
 				@doc("Returns the location of the agent") }),
+		@var(name = IKeyword.EXPERIMENT, type = IType.AGENT, doc = { @doc("Returns the current experiment agent") }),
 		@var(name = IKeyword.SHAPE, type = IType.GEOMETRY, doc = { @doc("Returns the shape of the receiver agent") }) })
 public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>, IStepable,
 		IContainer.Addressable<String, Object>, IVarAndActionSupport, IScoped {
@@ -181,6 +182,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 
 	public IModel getModel();
 
+	@getter(IKeyword.EXPERIMENT)
 	public IExperimentAgent getExperiment();
 
 	public abstract boolean isInstanceOf(String skill, boolean direct);

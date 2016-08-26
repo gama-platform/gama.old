@@ -115,16 +115,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createS_GlobalAdapter();
       }
       @Override
-      public Adapter caseS_Entities(S_Entities object)
-      {
-        return createS_EntitiesAdapter();
-      }
-      @Override
-      public Adapter caseS_Environment(S_Environment object)
-      {
-        return createS_EnvironmentAdapter();
-      }
-      @Override
       public Adapter caseS_Species(S_Species object)
       {
         return createS_SpeciesAdapter();
@@ -572,36 +562,6 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createS_GlobalAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Entities <em>SEntities</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.S_Entities
-   * @generated
-   */
-  public Adapter createS_EntitiesAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Environment <em>SEnvironment</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.S_Environment
-   * @generated
-   */
-  public Adapter createS_EnvironmentAdapter()
   {
     return null;
   }

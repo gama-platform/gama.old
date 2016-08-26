@@ -4,7 +4,6 @@
  */
 package msi.gaml.factories;
 
-import static msi.gama.common.interfaces.IKeyword.ENVIRONMENT;
 import static msi.gama.common.interfaces.IKeyword.FREQUENCY;
 import static msi.gama.common.interfaces.IKeyword.GLOBAL;
 import static msi.gama.common.interfaces.IKeyword.INIT;
@@ -115,13 +114,10 @@ public class ModelAssembler {
 						experimentNodes = new TOrderedHashMap();
 					addExperimentNode(ee, currentModel.getName(), experimentNodes, collector);
 				}
-				for (final ISyntacticElement se : currentModel.getChildren()) {
-					if (ENVIRONMENT.equals(se.getKeyword())) {
-						collector.add(new GamlCompilationError(
-								"'environment' cannot be declared anymore.Its bounds should be declared in the global section as the value of the 'shape' attribute",
-								null, se.getElement(), false, false));
-					}
-				}
+				// for (final ISyntacticElement se : currentModel.getChildren())
+				// {
+				//
+				// }
 			}
 		}
 

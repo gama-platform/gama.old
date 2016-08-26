@@ -31,26 +31,18 @@ Pragma:
  */
 
 S_Section returns Statement:
-	S_Entities | S_Global | S_Species | S_Experiment | S_Environment
+	 S_Global | S_Species | S_Experiment 
 ;
 
 S_Global :
 	key="global" (facets+=Facet)* (block=Block | ';')
 ;
 
-S_Entities:
-	key="entities" block=Block
-;
-
-S_Environment :
-	key="environment" (facets+=Facet)* (block=Block | ';')
-;
-
 S_Species :
 	(key=_SpeciesKey (firstFacet='name:')? name=ID (facets+=Facet)* (block=Block | ';'));
 
 S_Experiment :
-	key="experiment" (firstFacet="name:")? name=(Valid_ID | STRING) (facets+=Facet)* (block=Block | ';');
+	key=_ExperimentKey (firstFacet="name:")? name=(Valid_ID | STRING) (facets+=Facet)* (block=Block | ';');
 
 /**
  * Statements
@@ -176,6 +168,10 @@ _SolveKey:
 
 _SpeciesKey:
 	"species" | "grid";
+	
+_ExperimentKey:
+	"experiment"
+;
 
 _1Expr_Facets_BlockOrEnd_Key:
 	_LayerKey | "ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "inspect" | "browse" |
@@ -436,7 +432,7 @@ EquationFakeDefinition:
 	'**equation*' name=Valid_ID;
 
 Valid_ID:
-	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID;
+	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID | _ExperimentKey;
 
 	/**
  * Terminals

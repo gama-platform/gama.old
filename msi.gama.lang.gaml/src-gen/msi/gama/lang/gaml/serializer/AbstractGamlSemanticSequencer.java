@@ -40,8 +40,6 @@ import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_DirectAssignment;
 import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Do;
-import msi.gama.lang.gaml.gaml.S_Entities;
-import msi.gama.lang.gaml.gaml.S_Environment;
 import msi.gama.lang.gaml.gaml.S_Equations;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_Global;
@@ -380,12 +378,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				return; 
 			case GamlPackage.SDO:
 				sequence_S_Do(context, (S_Do) semanticObject); 
-				return; 
-			case GamlPackage.SENTITIES:
-				sequence_S_Entities(context, (S_Entities) semanticObject); 
-				return; 
-			case GamlPackage.SENVIRONMENT:
-				sequence_S_Environment(context, (S_Environment) semanticObject); 
 				return; 
 			case GamlPackage.SEQUATIONS:
 				sequence_S_Equations(context, (S_Equations) semanticObject); 
@@ -1426,41 +1418,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
-	 *     S_Section returns S_Entities
-	 *     S_Entities returns S_Entities
-	 *
-	 * Constraint:
-	 *     (key='entities' block=Block)
-	 */
-	protected void sequence_S_Entities(ISerializationContext context, S_Entities semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.STATEMENT__KEY) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.STATEMENT__KEY));
-			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.STATEMENT__BLOCK) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.STATEMENT__BLOCK));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getS_EntitiesAccess().getKeyEntitiesKeyword_0_0(), semanticObject.getKey());
-		feeder.accept(grammarAccess.getS_EntitiesAccess().getBlockBlockParserRuleCall_1_0(), semanticObject.getBlock());
-		feeder.finish();
-	}
-	
-	
-	/**
-	 * Contexts:
-	 *     S_Section returns S_Environment
-	 *     S_Environment returns S_Environment
-	 *
-	 * Constraint:
-	 *     (key='environment' facets+=Facet* block=Block?)
-	 */
-	protected void sequence_S_Environment(ISerializationContext context, S_Environment semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     S_Equation returns S_Assignment
 	 *
 	 * Constraint:
@@ -1494,7 +1451,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     VarDefinition returns S_Experiment
 	 *
 	 * Constraint:
-	 *     (key='experiment' firstFacet='name:'? (name=Valid_ID | name=STRING) facets+=Facet* block=Block?)
+	 *     (key=_ExperimentKey firstFacet='name:'? (name=Valid_ID | name=STRING) facets+=Facet* block=Block?)
 	 */
 	protected void sequence_S_Experiment(ISerializationContext context, S_Experiment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

@@ -72,8 +72,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.PRAGMA: return createPragma();
       case GamlPackage.STATEMENT: return createStatement();
       case GamlPackage.SGLOBAL: return createS_Global();
-      case GamlPackage.SENTITIES: return createS_Entities();
-      case GamlPackage.SENVIRONMENT: return createS_Environment();
       case GamlPackage.SSPECIES: return createS_Species();
       case GamlPackage.SEXPERIMENT: return createS_Experiment();
       case GamlPackage.SDO: return createS_Do();
@@ -227,28 +225,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     S_GlobalImpl s_Global = new S_GlobalImpl();
     return s_Global;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public S_Entities createS_Entities()
-  {
-    S_EntitiesImpl s_Entities = new S_EntitiesImpl();
-    return s_Entities;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public S_Environment createS_Environment()
-  {
-    S_EnvironmentImpl s_Environment = new S_EnvironmentImpl();
-    return s_Environment;
   }
 
   /**

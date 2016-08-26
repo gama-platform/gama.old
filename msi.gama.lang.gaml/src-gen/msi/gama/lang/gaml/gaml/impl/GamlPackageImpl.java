@@ -44,8 +44,6 @@ import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_DirectAssignment;
 import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Do;
-import msi.gama.lang.gaml.gaml.S_Entities;
-import msi.gama.lang.gaml.gaml.S_Environment;
 import msi.gama.lang.gaml.gaml.S_Equations;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_Global;
@@ -147,20 +145,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass s_GlobalEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass s_EntitiesEClass = null;
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  private EClass s_EnvironmentEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -877,26 +861,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EClass getS_Global()
   {
     return s_GlobalEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getS_Entities()
-  {
-    return s_EntitiesEClass;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EClass getS_Environment()
-  {
-    return s_EnvironmentEClass;
   }
 
   /**
@@ -1949,10 +1913,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     s_GlobalEClass = createEClass(SGLOBAL);
 
-    s_EntitiesEClass = createEClass(SENTITIES);
-
-    s_EnvironmentEClass = createEClass(SENVIRONMENT);
-
     s_SpeciesEClass = createEClass(SSPECIES);
 
     s_ExperimentEClass = createEClass(SEXPERIMENT);
@@ -2150,8 +2110,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     blockEClass.getESuperTypes().add(this.getEntry());
     importEClass.getESuperTypes().add(this.getVarDefinition());
     s_GlobalEClass.getESuperTypes().add(this.getStatement());
-    s_EntitiesEClass.getESuperTypes().add(this.getStatement());
-    s_EnvironmentEClass.getESuperTypes().add(this.getStatement());
     s_SpeciesEClass.getESuperTypes().add(this.getStatement());
     s_SpeciesEClass.getESuperTypes().add(this.getS_Declaration());
     s_SpeciesEClass.getESuperTypes().add(this.getTypeDefinition());
@@ -2248,10 +2206,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEReference(getStatement_Block(), this.getBlock(), null, "block", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(s_GlobalEClass, S_Global.class, "S_Global", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(s_EntitiesEClass, S_Entities.class, "S_Entities", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-    initEClass(s_EnvironmentEClass, S_Environment.class, "S_Environment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(s_SpeciesEClass, S_Species.class, "S_Species", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

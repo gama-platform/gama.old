@@ -95,24 +95,6 @@ public interface GamlFactory extends EFactory
   S_Global createS_Global();
 
   /**
-   * Returns a new object of class '<em>SEntities</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>SEntities</em>'.
-   * @generated
-   */
-  S_Entities createS_Entities();
-
-  /**
-   * Returns a new object of class '<em>SEnvironment</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>SEnvironment</em>'.
-   * @generated
-   */
-  S_Environment createS_Environment();
-
-  /**
    * Returns a new object of class '<em>SSpecies</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

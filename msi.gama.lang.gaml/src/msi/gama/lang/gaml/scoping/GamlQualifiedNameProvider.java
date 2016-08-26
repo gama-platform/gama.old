@@ -60,8 +60,6 @@ import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_DirectAssignment;
 import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Do;
-import msi.gama.lang.gaml.gaml.S_Entities;
-import msi.gama.lang.gaml.gaml.S_Environment;
 import msi.gama.lang.gaml.gaml.S_Equations;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_Global;
@@ -218,16 +216,16 @@ public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractIm
 			public String caseS_Global(final S_Global object) {
 				return NULL;
 			}
-
-			@Override
-			public String caseS_Entities(final S_Entities object) {
-				return NULL;
-			}
-
-			@Override
-			public String caseS_Environment(final S_Environment object) {
-				return NULL;
-			}
+			//
+			// @Override
+			// public String caseS_Entities(final S_Entities object) {
+			// return NULL;
+			// }
+			//
+			// @Override
+			// public String caseS_Environment(final S_Environment object) {
+			// return NULL;
+			// }
 
 			@Override
 			public String caseS_Do(final S_Do object) {

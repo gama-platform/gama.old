@@ -136,22 +136,6 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.SENTITIES:
-      {
-        S_Entities s_Entities = (S_Entities)theEObject;
-        T result = caseS_Entities(s_Entities);
-        if (result == null) result = caseStatement(s_Entities);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case GamlPackage.SENVIRONMENT:
-      {
-        S_Environment s_Environment = (S_Environment)theEObject;
-        T result = caseS_Environment(s_Environment);
-        if (result == null) result = caseStatement(s_Environment);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
       case GamlPackage.SSPECIES:
       {
         S_Species s_Species = (S_Species)theEObject;
@@ -819,38 +803,6 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseS_Global(S_Global object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>SEntities</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>SEntities</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseS_Entities(S_Entities object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>SEnvironment</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>SEnvironment</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseS_Environment(S_Environment object)
   {
     return null;
   }

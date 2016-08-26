@@ -35,8 +35,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/block"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Global"/>
-    <genClasses ecoreClass="Gaml.ecore#//S_Entities"/>
-    <genClasses ecoreClass="Gaml.ecore#//S_Environment"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Species"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Experiment"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Do"/>
@@ -161,6 +159,8 @@
     <genClasses ecoreClass="Gaml.ecore#//StringLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//BooleanLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//ReservedLiteral"/>
+    <genClasses ecoreClass="Gaml.ecore#//S_Entities"/>
+    <genClasses ecoreClass="Gaml.ecore#//S_Environment"/>
     <genClasses ecoreClass="Gaml.ecore#//ActionEditor">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//ActionEditor/action"/>
     </genClasses>
