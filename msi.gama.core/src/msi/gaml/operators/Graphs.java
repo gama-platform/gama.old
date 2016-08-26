@@ -938,7 +938,6 @@ public class Graphs {
 	see = { "add_edge", "graph" })
 	public static IGraph addNode(final IGraph g, final IShape node) {
 		g.addVertex(node);
-		g.incVersion();
 		return g;
 	}
 
@@ -951,8 +950,7 @@ public class Graphs {
 	isExecutable = false) )
 	public static IGraph removeNodeFrom(final IShape node, final IGraph g) {
 		g.removeVertex(node);
-		g.incVersion();
-
+		
 		return g;
 	}
 

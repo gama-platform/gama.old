@@ -265,6 +265,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Object addEdge(final Object e) {
+		incVersion();
+
 		if (e instanceof GamaPair) {
 			final GamaPair p = (GamaPair) e;
 			return addEdge(p.first(), p.last());
@@ -687,6 +689,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (edge == null) {
 			return false;
 		}
+		incVersion();
 		edge.removeFromVerticesAs(e);
 		edgeMap.remove(e);
 		if (generatedEdges.contains(e)) {
@@ -700,6 +703,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public Object removeEdge(final Object v1, final Object v2) {
 		final Object edge = getEdge(v1, v2);
 		if (removeEdge(edge)) {
+			incVersion();
 			return edge;
 		}
 		return null;
@@ -711,6 +715,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (!containsVertex(v)) {
 			return false;
 		}
+		incVersion();
 		final Set edges = edgesOf(v);
 		for (final Object e : edges) {
 			removeEdge(e);
@@ -726,6 +731,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (!containsEdge(e)) {
 			return;
 		}
+		incVersion();
 		getEdge(e).setWeight(weight);
 	}
 
@@ -734,11 +740,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		if (!containsVertex(v)) {
 			return;
 		}
+		incVersion();
 		getVertex(v).setWeight(weight);
 	}
 
 	@Override
 	public Set vertexSet() {
+		incVersion();
 		return vertexMap.keySet();
 	}
 
