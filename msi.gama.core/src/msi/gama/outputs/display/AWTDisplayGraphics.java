@@ -290,17 +290,18 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 				attributes.border = attributes.color;
 		}
 		final Geometry geom = geometry.getInnerGeometry();
+		final boolean isLine = geom instanceof Lineal || geom instanceof Puntal;
 		final Shape s = sw.toShape(geom);
 		try {
 			final Rectangle2D r = s.getBounds2D();
 			currentRenderer.setColor(attributes.color);
-			if (geom instanceof Lineal || geom instanceof Puntal ? false : !attributes.empty) {
+			if (!isLine && !attributes.empty) {
 				currentRenderer.fill(s);
+			}
+			if (isLine || attributes.border != null || attributes.empty) {
 				if (attributes.border != null) {
 					currentRenderer.setColor(attributes.border);
 				}
-			}
-			if (attributes.border != null) {
 				currentRenderer.draw(s);
 			}
 			return r;
