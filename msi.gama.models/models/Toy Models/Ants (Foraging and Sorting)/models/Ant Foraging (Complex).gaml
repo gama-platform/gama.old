@@ -205,7 +205,7 @@ experiment Complete type: gui {
 			image '../images/soil.jpg' position: { 0.05, 0.05 } size: { 0.9, 0.9 };
 			agents "agents" transparency: 0.7 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest)) ;
 			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
-			overlay "Texts" transparency: 0.3 background: rgb (99, 85, 66,255)  position: {10°px, 10°px} size: {250°px, 150°px} border: rgb (99, 85, 66,255) rounded: true{
+			overlay  transparency: 0.3 background: rgb (99, 85, 66,255)  position: {10°px, 10°px} size: {250°px, 150°px} border: rgb (99, 85, 66,255) rounded: true{
 				draw ant_shape_full at: {60°px, 70°px} size: {140°px, 100°px} rotate: -60;
 				draw ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') at: {40°px,70°px} font:font("Arial", 18, #bold) color: #white;
 				draw ('Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%') at: {40°px, 100°px} font:font("Arial", 18 , #bold) color: #white;
