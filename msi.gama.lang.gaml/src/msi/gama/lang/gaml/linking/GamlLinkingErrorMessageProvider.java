@@ -1,6 +1,7 @@
 package msi.gama.lang.gaml.linking;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.CrossReference;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.diagnostics.DiagnosticMessage;
@@ -8,18 +9,58 @@ import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.linking.impl.IllegalNodeException;
 import org.eclipse.xtext.linking.impl.LinkingDiagnosticMessageProvider;
 
+import msi.gama.lang.gaml.gaml.ActionRef;
+import msi.gama.lang.gaml.gaml.EquationRef;
+import msi.gama.lang.gaml.gaml.SkillRef;
+import msi.gama.lang.gaml.gaml.TypeRef;
+import msi.gama.lang.gaml.gaml.VariableRef;
+import msi.gama.lang.gaml.gaml.util.GamlSwitch;
+
 public class GamlLinkingErrorMessageProvider extends LinkingDiagnosticMessageProvider {
 
 	@Override
 	public DiagnosticMessage getUnresolvedProxyMessage(final ILinkingDiagnosticContext context) {
 		final EClass referenceType = context.getReference().getEReferenceType();
+		final EObject referee = context.getContext();
+		final String referenceName = new GamlSwitch<String>() {
+
+			@Override
+			public String caseVariableRef(final VariableRef v) {
+				return "variable or species";
+			}
+
+			@Override
+			public String caseTypeRef(final TypeRef v) {
+				return "type";
+			}
+
+			@Override
+			public String caseActionRef(final ActionRef v) {
+				return "primitive or action";
+			}
+
+			@Override
+			public String caseEquationRef(final EquationRef v) {
+				return "equation";
+			}
+
+			@Override
+			public String caseSkillRef(final SkillRef v) {
+				return "skill";
+			}
+
+			public String defaultCase() {
+				return "element";
+			}
+		}.doSwitch(referee);
 		String linkText = "";
 		try {
 			linkText = context.getLinkText();
 		} catch (final IllegalNodeException e) {
 			linkText = e.getNode().getText();
 		}
-		final String msg = "Couldn't resolve reference to " + referenceType.getName() + " '" + linkText + "'.";
+		final String msg = "The " + referenceName + " '" + linkText
+				+ "' cannot be resolved (either it is not defined or not accessible)";
 		return new DiagnosticMessage(msg, Severity.ERROR, Diagnostic.LINKING_DIAGNOSTIC);
 	}
 
