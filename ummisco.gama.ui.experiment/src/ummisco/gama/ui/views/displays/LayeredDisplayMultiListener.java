@@ -162,11 +162,12 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 		if ((e.stateMask & SWT.MODIFIER_MASK) != 0)
 			return;
 		// System.out.println("Mouse moving on " + view.getPartName());
-		setMousePosition(e.x, e.y);
+
 		if (mouseIsDown) {
 			view.getDisplaySurface().draggedTo(e.x, e.y);
 			view.getDisplaySurface().dispatchMouseEvent(SWT.DragDetect);
 		} else {
+			setMousePosition(e.x, e.y);
 			view.getDisplaySurface().dispatchMouseEvent(SWT.MouseMove);
 		}
 
@@ -230,6 +231,8 @@ public class LayeredDisplayMultiListener implements MenuDetectListener, MouseLis
 	public void dragDetected(final DragDetectEvent e) {
 		if (!ok())
 			return;
+		// System.out.println("Mouse drag detected on " + view.getPartName());
+		// view.getDisplaySurface().draggedTo(e.x, e.y);
 		view.getDisplaySurface().dispatchMouseEvent(SWT.DragDetect);
 	}
 
