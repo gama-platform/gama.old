@@ -101,14 +101,14 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		 */
 		@Override
 		public void validate(final IDescription description) {
-			final IExpressionDescription times = description.getFacets().get(TIMES);
-			final IExpressionDescription over = description.getFacets().get(OVER);
-			final IExpressionDescription from = description.getFacets().get(FROM);
-			final IExpressionDescription to = description.getFacets().get(TO);
-			final IExpressionDescription step = description.getFacets().get(STEP);
-			final IExpressionDescription cond = description.getFacets().get(WHILE);
-			IExpressionDescription name = description.getFacets().get(NAME);
-			if (name != null && name.isConstant() && name.toString().startsWith(INTERNAL)) {
+			final IExpressionDescription times = description.getFacet(TIMES);
+			final IExpressionDescription over = description.getFacet(OVER);
+			final IExpressionDescription from = description.getFacet(FROM);
+			final IExpressionDescription to = description.getFacet(TO);
+			final IExpressionDescription step = description.getFacet(STEP);
+			final IExpressionDescription cond = description.getFacet(WHILE);
+			IExpressionDescription name = description.getFacet(NAME);
+			if (name != null && name.isConst() && name.toString().startsWith(INTERNAL)) {
 				name = null;
 			}
 
@@ -195,8 +195,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
 			if (key.equals(NAME)) {
-				final Facets f = s.getFacets();
-				if (f.containsKey(TIMES) || f.containsKey(WHILE)) {
+				if (s.hasFacet(TIMES) || s.hasFacet(WHILE)) {
 					return null;
 				}
 			}
@@ -214,7 +213,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		final boolean isWhile = getFacet(IKeyword.WHILE) != null;
 		final boolean isList = getFacet(IKeyword.OVER) != null;
 		final boolean isBounded = getFacet(IKeyword.FROM) != null && getFacet(IKeyword.TO) != null;
-		varName = getLiteral(IKeyword.NAME);
+		varName = desc.getName();
 		executer = isWhile ? new While() : isList ? new Over() : isBounded ? new Bounded() : new Times();
 	}
 

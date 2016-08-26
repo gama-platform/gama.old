@@ -20,7 +20,6 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
 import msi.gaml.factories.ChildrenProvider;
-import msi.gaml.statements.Facets;
 import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 
 // SIS equation is defined by 
@@ -33,7 +32,7 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 public class ClassicalSISEquations {
 	private final IDescription parentDesc;
 
-	public ClassicalSISEquations(IDescription p) {
+	public ClassicalSISEquations(final IDescription p) {
 		parentDesc = p;
 	}
 
@@ -41,43 +40,34 @@ public class ClassicalSISEquations {
 		return parentDesc;
 	}
 
-	public List<SingleEquationStatement> SIS(IExpression with_vars,
-			IExpression with_params) {
+	public List<SingleEquationStatement> SIS(final IExpression with_vars, final IExpression with_params) {
 		if (with_vars == null || with_params == null) {
 			return null;
 		}
-		ArrayList<SingleEquationStatement> cmd = new ArrayList<SingleEquationStatement>();
-		IExpression[] v = ((ListExpression) with_vars).getElements();
-		IExpression[] p = ((ListExpression) with_params).getElements();
+		final ArrayList<SingleEquationStatement> cmd = new ArrayList<SingleEquationStatement>();
+		final IExpression[] v = ((ListExpression) with_vars).getElements();
+		final IExpression[] p = ((ListExpression) with_params).getElements();
 
-		StatementDescription stm = new StatementDescription("=",
-				getDescription(), new ChildrenProvider(null), false, false,
-				null, new Facets("keyword", "="));
+		final StatementDescription stm = new StatementDescription("=", getDescription(), ChildrenProvider.NONE, false,
+				null, null);
 
-		SingleEquationStatement eq1 = new SingleEquationStatement(stm);
+		final SingleEquationStatement eq1 = new SingleEquationStatement(stm);
 		eq1.setFunction(GAML.getExpressionFactory()
-				.createExpr(
-						"diff(" + v[0].literalValue() + ","
-								+ v[2].literalValue() + ")", getDescription()));
+				.createExpr("diff(" + v[0].literalValue() + "," + v[2].literalValue() + ")", getDescription()));
 		eq1.setExpression(GAML.getExpressionFactory().createExpr(
-				"(- " + p[1].literalValue() + " * " + v[0].literalValue()
-						+ " * " + v[1].literalValue() + " / "
-						+ p[0].literalValue() + ") + (" + p[2].literalValue()
-						+ " * " + v[1].literalValue() + ")", getDescription()));
+				"(- " + p[1].literalValue() + " * " + v[0].literalValue() + " * " + v[1].literalValue() + " / "
+						+ p[0].literalValue() + ") + (" + p[2].literalValue() + " * " + v[1].literalValue() + ")",
+				getDescription()));
 		eq1.establishVar();
 		cmd.add(eq1);
 
-		SingleEquationStatement eq2 = new SingleEquationStatement(stm);
+		final SingleEquationStatement eq2 = new SingleEquationStatement(stm);
 		eq2.setFunction(GAML.getExpressionFactory()
-				.createExpr(
-						"diff(" + v[1].literalValue() + ","
-								+ v[2].literalValue() + ")", getDescription()));
+				.createExpr("diff(" + v[1].literalValue() + "," + v[2].literalValue() + ")", getDescription()));
 		eq2.setExpression(GAML.getExpressionFactory().createExpr(
-				"( " + p[1].literalValue() + " * " + v[0].literalValue()
-						+ " * " + v[1].literalValue() + " / "
-						+ p[0].literalValue() + ") + ( - "
-						+ p[2].literalValue() + " * " + v[1].literalValue()
-						+ ")", getDescription()));
+				"( " + p[1].literalValue() + " * " + v[0].literalValue() + " * " + v[1].literalValue() + " / "
+						+ p[0].literalValue() + ") + ( - " + p[2].literalValue() + " * " + v[1].literalValue() + ")",
+				getDescription()));
 		eq2.establishVar();
 		cmd.add(eq2);
 

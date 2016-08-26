@@ -4,8 +4,12 @@
  */
 package ummisco.gama.ui.navigator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.swt.graphics.Image;
+
 import msi.gama.runtime.GAMA;
 import msi.gaml.descriptions.SpeciesDescription;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -34,7 +38,7 @@ public class WrappedSpecies extends WrappedGamlObject {
 
 	@Override
 	public boolean hasChildren() {
-		return !getObject().getMicroSpecies().isEmpty();
+		return !getObject().hasMicroSpecies();
 	}
 
 	@Override
@@ -44,9 +48,9 @@ public class WrappedSpecies extends WrappedGamlObject {
 
 	@Override
 	public Object[] getNavigatorChildren() {
-		List result = new ArrayList();
-		Collection<SpeciesDescription> sd = getObject().getMicroSpecies().values();
-		for ( SpeciesDescription s : sd ) {
+		final List result = new ArrayList();
+		final Collection<SpeciesDescription> sd = getObject().getMicroSpecies().values();
+		for (final SpeciesDescription s : sd) {
 			result.add(new WrappedSpecies(this, s));
 		}
 		return result.toArray();
@@ -55,12 +59,15 @@ public class WrappedSpecies extends WrappedGamlObject {
 	// @Override
 	// public boolean isParentOf(final Object element) {
 	// if ( !(element instanceof WrappedSpecies) ) { return false; }
-	// return getObject().getMicroSpecies(((WrappedSpecies) element).getObject().getName()) != null;
+	// return getObject().getMicroSpecies(((WrappedSpecies)
+	// element).getObject().getName()) != null;
 	// }
 
 	@Override
 	public Image getImage() {
-		if ( getObject().isGrid() ) { return GamaIcons.create("gaml/_grid").image(); }
+		if (getObject().isGrid()) {
+			return GamaIcons.create("gaml/_grid").image();
+		}
 		return GamaIcons.create("gaml/_species").image();
 	}
 

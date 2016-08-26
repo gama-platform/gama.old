@@ -81,7 +81,6 @@ public class GamlEditorCallback extends ValidatingEditorCallback {
 				if (state == null) {
 					return;
 				}
-				((GamlResource) state).setEdited(true);
 				((GamlResource) state).setListener((GamlEditor) editor);
 			}
 		});
@@ -89,21 +88,21 @@ public class GamlEditorCallback extends ValidatingEditorCallback {
 		super.afterCreatePartControl(editor);
 	}
 
-	@Override
-	public void beforeDispose(final XtextEditor editor) {
-
-		if (editor == null || editor.getDocument() == null) {
-			return;
-		}
-		editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
-
-			@Override
-			public void process(final XtextResource state) throws Exception {
-				((GamlResource) state).setEdited(false);
-			}
-		});
-		super.beforeDispose(editor);
-	}
+	// @Override
+	// public void beforeDispose(final XtextEditor editor) {
+	//
+	// if (editor == null || editor.getDocument() == null) {
+	// return;
+	// }
+	// editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+	//
+	// @Override
+	// public void process(final XtextResource state) throws Exception {
+	// ((GamlResource) state).setEdited(false);
+	// }
+	// });
+	// super.beforeDispose(editor);
+	// }
 
 	public static final int DELAY = 500;
 

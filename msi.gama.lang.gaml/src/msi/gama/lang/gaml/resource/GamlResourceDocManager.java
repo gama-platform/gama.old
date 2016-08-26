@@ -11,22 +11,31 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import java.nio.charset.Charset;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.zip.DeflaterOutputStream;
+import java.util.zip.InflaterInputStream;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.resource.XtextResource;
+
+import com.google.inject.Provider;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IDescription.DescriptionVisitor;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.factories.DescriptionFactory.IDocManager;
 
 /**
@@ -38,18 +47,25 @@ import msi.gaml.factories.DescriptionFactory.IDocManager;
  */
 public class GamlResourceDocManager implements IDocManager {
 
-	private static final ConcurrentLinkedQueue<Runnable> CleanupTasks = new ConcurrentLinkedQueue();
+	private static final ConcurrentLinkedQueue<ModelDescription> CleanupTasks = new ConcurrentLinkedQueue();
 	private static final ConcurrentLinkedQueue<DocumentationTask> DocumentationQueue = new ConcurrentLinkedQueue();
-	private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
-	public static void addCleanupTask(final Runnable r) {
-		CleanupTasks.add(r);
+	final DescriptionVisitor documeningVisitor = new DescriptionVisitor() {
+
+		@Override
+		public void visit(final IDescription desc) {
+			document(desc);
+
+		}
+	};
+
+	public static void addCleanupTask(final ModelDescription model) {
+		CleanupTasks.add(model);
 	}
 
 	public static final Job DocumentationJob = new Job("Documentation") {
 		{
 			setUser(false);
-			// setSystem(true);
 		}
 
 		@Override
@@ -59,9 +75,9 @@ public class GamlResourceDocManager implements IDocManager {
 				task.process();
 				task = DocumentationQueue.poll();
 			}
-			Runnable r = CleanupTasks.poll();
+			ModelDescription r = CleanupTasks.poll();
 			while (r != null) {
-				r.run();
+				r.dispose();
 				r = CleanupTasks.poll();
 			}
 			return Status.OK_STATUS;
@@ -70,14 +86,12 @@ public class GamlResourceDocManager implements IDocManager {
 
 	private static class DocumentationTask {
 		EObject object;
-		boolean replace;
 		IGamlDescription description;
 
-		public DocumentationTask(final EObject object, final IGamlDescription description, final boolean replace) {
+		public DocumentationTask(final EObject object, final IGamlDescription description) {
 			super();
 			this.object = object;
 			this.description = description;
-			this.replace = replace;
 		}
 
 		public void process() {
@@ -86,63 +100,81 @@ public class GamlResourceDocManager implements IDocManager {
 				return;
 			if (object == null)
 				return;
-			final URI key = getKey(object);
+			final Resource key = object.eResource();
 			if (key == null) {
 				return;
 			}
-			if (CACHE2.contains(key)) {
-				DocumentationNode node = null;
+
+			DocumentationNode node = null;
+			try {
+				node = new DocumentationNode(description);
+			} catch (final Exception e) {
+			}
+			if (node != null) {
 				try {
-					node = new DocumentationNode(description);
-				} catch (final Exception e) {
+					getDocumentationCache(key).put(object, node);
+				} catch (final RuntimeException e) {
 				}
-				if (node != null)
-					CACHE2.get(key).put(EcoreUtil2.getURIFragment(object), node);
 			}
 
 		}
 
 	}
 
-	public static byte[] encode(final String string) {
-		if (string == null) {
-			return null;
-		}
-		return string.getBytes(UTF8_CHARSET);
-	}
+	// static int MAX_SIZE = 10000;
 
-	public static String decode(final byte[] bytes) {
-		if (bytes == null) {
-			return null;
-		}
-		return new String(bytes, UTF8_CHARSET);
-	}
-
-	static int MAX_SIZE = 10000;
-
-	private static THashMap<URI, THashMap<String, IGamlDescription>> CACHE2 = new THashMap();
+	private static THashMap<Resource, THashMap<EObject, IGamlDescription>> CACHE2 = new THashMap();
 
 	private static volatile IDocManager instance;
 
+	static enum StringCompressor {
+		;
+		public static byte[] compress(final String text) {
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try {
+				final OutputStream out = new DeflaterOutputStream(baos);
+				out.write(text.getBytes("ISO-8859-1"));
+				out.close();
+			} catch (final IOException e) {
+				throw new AssertionError(e);
+			}
+			return baos.toByteArray();
+		}
+
+		public static String decompress(final byte[] bytes) {
+			final InputStream in = new InflaterInputStream(new ByteArrayInputStream(bytes));
+			final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			try {
+				final byte[] buffer = new byte[8192];
+				int len;
+				while ((len = in.read(buffer)) > 0)
+					baos.write(buffer, 0, len);
+				return new String(baos.toByteArray(), "ISO-8859-1");
+			} catch (final IOException e) {
+				throw new AssertionError(e);
+			}
+		}
+	}
+
 	public static class DocumentationNode implements IGamlDescription {
 
-		final String doc;
-		final String title;
-		final String plugin;
+		final byte[] title;
+		final byte[] doc;
+		// final byte[] plugin;
 
-		DocumentationNode(final IGamlDescription desc) {
-			plugin = desc.getDefiningPlugin();
-			title = desc.getTitle();
+		DocumentationNode(final IGamlDescription desc) throws IOException {
+			final String plugin = desc.getDefiningPlugin();
+			final String title = desc.getTitle();
 			String documentation = desc.getDocumentation();
 			if (plugin != null) {
 				documentation += "\n<p/><i> [defined in " + plugin + "] </i>";
 			}
-			doc = documentation;
-
+			doc = StringCompressor.compress(documentation);
+			this.title = StringCompressor.compress(title);
 		}
 
 		/**
-		 * Method collectPlugins()
+		 * Method collectMetaInformation()
 		 * 
 		 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 		 */
@@ -152,12 +184,12 @@ public class GamlResourceDocManager implements IDocManager {
 
 		@Override
 		public String getDocumentation() {
-			return doc;
+			return StringCompressor.decompress(doc);
 		}
 
 		@Override
 		public String getTitle() {
-			return title;
+			return StringCompressor.decompress(title);
 		}
 
 		@Override
@@ -167,7 +199,7 @@ public class GamlResourceDocManager implements IDocManager {
 
 		@Override
 		public String getDefiningPlugin() {
-			return plugin;
+			return "";
 		}
 
 		@Override
@@ -205,8 +237,26 @@ public class GamlResourceDocManager implements IDocManager {
 
 	@Override
 	public void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace) {
-		DocumentationQueue.add(new DocumentationTask(object, description, replace));
-		DocumentationJob.schedule();
+		if (!shouldDocument(object))
+			return;
+		// System.out.println("Documenting " + object + " " + " resource: " +
+		// object.eResource() + " " + description);
+		DocumentationQueue.add(new DocumentationTask(object, description));
+		DocumentationJob.schedule(50);
+	}
+
+	private static THashMap<EObject, IGamlDescription> getDocumentationCache(final Resource key) {
+		if (key instanceof XtextResource)
+			return ((XtextResource) key).getCache().get("Documentation", key,
+					new Provider<THashMap<EObject, IGamlDescription>>() {
+
+						@Override
+						public THashMap<EObject, IGamlDescription> get() {
+							return new THashMap();
+						}
+					});
+		else
+			return CACHE2.get(key);
 	}
 
 	// To be called once the validation has been done
@@ -219,13 +269,14 @@ public class GamlResourceDocManager implements IDocManager {
 		if (e == null) {
 			return;
 		}
-		if (!CACHE2.containsKey(e.eResource().getURI())) {
+		final Resource r = e.eResource();
+
+		if (r instanceof GamlResource && !((GamlResource) e.eResource()).isEdited())
 			return;
-		}
+
 		setGamlDocumentation(e, desc, true);
-		for (final IDescription d : desc.getChildren()) {
-			document(d);
-		}
+		desc.visitOwnChildren(documeningVisitor);
+
 	}
 
 	@Override
@@ -233,7 +284,11 @@ public class GamlResourceDocManager implements IDocManager {
 		if (o == null) {
 			return null;
 		}
-		return new DocumentationNode(o);
+		try {
+			return new DocumentationNode(o);
+		} catch (final IOException e) {
+			return null;
+		}
 	}
 
 	@Override
@@ -241,34 +296,25 @@ public class GamlResourceDocManager implements IDocManager {
 		if (object == null) {
 			return null;
 		}
-		final URI key = getKey(object);
-		if (key == null) {
-			return null;
-		}
-		if (!CACHE2.containsKey(key)) {
-			return null;
-		}
-		return CACHE2.get(key).get(EcoreUtil2.getURIFragment(object));
+		return getDocumentationCache(object.eResource()).get(object);
 	}
 
-	private static URI getKey(final EObject object) {
-		if (object == null) {
-			return null;
-		}
+	private static boolean shouldDocument(final EObject object) {
+		if (object == null)
+			return false;
 		final Resource r = object.eResource();
-		if (r == null) {
-			return null;
+		if (r == null)
+			return false;
+		if (r instanceof GamlResource) {
+			if (!((GamlResource) r).isEdited())
+				return false;
 		}
-		return r.getURI();
+		return true;
 	}
 
 	@Override
-	public void document(final Resource gamlResource, final boolean accept) {
-		if (accept) {
-			CACHE2.putIfAbsent(gamlResource.getURI(), new THashMap(MAX_SIZE, 0.95f));
-		} else {
-			CACHE2.remove(gamlResource.getURI());
-		}
+	public void document(final Resource r, final boolean accept) {
+		CACHE2.putIfAbsent(r, new THashMap());
 	}
 
 }

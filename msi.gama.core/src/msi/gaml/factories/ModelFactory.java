@@ -11,14 +11,12 @@
  **********************************************************************************************/
 package msi.gaml.factories;
 
-import static msi.gama.common.interfaces.IKeyword.KEYWORD;
-import static msi.gama.common.interfaces.IKeyword.MODEL;
-import static msi.gama.common.interfaces.IKeyword.NAME;
-
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Supplier;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -46,13 +44,8 @@ import msi.gaml.statements.Facets;
 @factory(handles = { ISymbolKind.MODEL })
 public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
-	public static interface IModelBuilderProvider {
-
-		IModelBuilder get();
-	}
-
-	ModelAssembler assembler = new ModelAssembler();
-	static IModelBuilderProvider delegate;
+	final ModelAssembler assembler = new ModelAssembler();
+	static Supplier<IModelBuilder> delegate;
 
 	public ModelFactory(final List<Integer> handles) {
 		super(handles);
@@ -66,21 +59,20 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	public ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
 			final SpeciesDescription parent) {
-		final Facets f = new Facets(NAME, name, KEYWORD, MODEL);
-		ModelDescription.ROOT = new ModelDescription(name, clazz, macro, parent, f);
+		ModelDescription.ROOT = new ModelDescription(name, clazz, macro, parent);
 		return ModelDescription.ROOT;
 	}
 
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
 			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto,
-			final String plugin) {
+			final Set<String> dependencies) {
 		// This method is actually never called.
 		return null;
 	}
 
 	// Callback method from XText
-	public static void registerModelBuilderProvider(final IModelBuilderProvider instance) {
+	public static void registerModelBuilderProvider(final Supplier<IModelBuilder> instance) {
 		delegate = instance;
 	}
 
@@ -165,6 +157,11 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	@Override
 	public GAMLFile.GamlInfo getInfo(final URI uri, final long stamp) {
 		return delegate == null ? null : delegate.get().getInfo(uri, stamp);
+	}
+
+	@Override
+	public ModelDescription createModelDescriptionFromFile(final String filepath) {
+		return delegate == null ? null : delegate.get().createModelDescriptionFromFile(filepath);
 	}
 
 }

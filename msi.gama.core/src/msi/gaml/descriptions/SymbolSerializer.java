@@ -7,12 +7,13 @@ package msi.gaml.descriptions;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlProperties;
+import msi.gaml.descriptions.IDescription.DescriptionVisitor;
+import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Strings;
 
@@ -26,7 +27,25 @@ import msi.gaml.operators.Strings;
 
 public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
+	final static SymbolSerializer instance = new SymbolSerializer();
+
+	public static SymbolSerializer getInstance() {
+		return instance;
+	}
+
+	protected SymbolSerializer() {
+	}
+
 	public static class VarSerializer extends SymbolSerializer<VariableDescription> {
+
+		final static VarSerializer instance = new VarSerializer();
+
+		public static VarSerializer getInstance() {
+			return instance;
+		}
+
+		protected VarSerializer() {
+		}
 
 		@Override
 		protected void collectMetaInformationInSymbol(final VariableDescription desc, final GamlProperties plugins) {
@@ -37,8 +56,8 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		@Override
 		protected void serializeKeyword(final VariableDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
-			String k = desc.getFacets().getLabel(IKeyword.KEYWORD);
-			if (!k.equals(PARAMETER) && !k.equals(SIGNAL)) {
+			String k = desc.getKeyword(); // desc.getFacets().getLabel(IKeyword.KEYWORD);
+			if (!k.equals(PARAMETER)) {
 				final String type = desc.getType().serialize(false);
 				if (!type.equals(UNKNOWN)) {
 					k = type;
@@ -53,8 +72,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 			if (key.equals(TYPE) || key.equals(OF) || key.equals(INDEX)) {
 				return null;
 			}
-			if (key.equals(CONST) && s.getFacets().containsKey(CONST)
-					&& s.getFacets().get(key).serialize(includingBuiltIn).equals(FALSE)) {
+			if (key.equals(CONST) && s.hasFacet(CONST) && s.getFacet(key).serialize(includingBuiltIn).equals(FALSE)) {
 				return null;
 			}
 			return super.serializeFacetValue(s, key, includingBuiltIn);
@@ -73,11 +91,21 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	public static class SpeciesSerializer extends SymbolSerializer<SpeciesDescription> {
 
+		final static SpeciesSerializer instance = new SpeciesSerializer();
+
+		public static SpeciesSerializer getInstance() {
+			return instance;
+		}
+
+		private SpeciesSerializer() {
+
+		}
+
 		@Override
 		protected String serializeFacetValue(final SpeciesDescription s, final String key,
 				final boolean includingBuiltIn) {
 			if (key.equals(SKILLS)) {
-				final IExpressionDescription ed = s.getFacets().get(key);
+				final IExpressionDescription ed = s.getFacet(key);
 				if (ed == null) {
 					return null;
 				}
@@ -100,7 +128,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 			// if (key.equals(SKILLS)) {
 			// System.out.println();
 			// }
-			final IExpressionDescription ed = desc.getFacets().get(key);
+			final IExpressionDescription ed = desc.getFacet(key);
 			if (ed == null) {
 				return;
 			}
@@ -139,6 +167,15 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	public static class ModelSerializer extends SpeciesSerializer {
 
+		final static ModelSerializer instance = new ModelSerializer();
+
+		public static ModelSerializer getInstance() {
+			return instance;
+		}
+
+		private ModelSerializer() {
+		}
+
 		@Override
 		protected void serializeKeyword(final SpeciesDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
@@ -151,7 +188,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		protected void serializeChildren(final SpeciesDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			sb.append(' ').append('{').append(Strings.LN);
-			Collection<? extends IDescription> children = desc.getVariables().values();
+			Collection<? extends IDescription> children = desc.getAttributes();
 			sb.append(Strings.LN);
 			sb.append("// Global attributes of ").append(desc.getName()).append(Strings.LN);
 			for (final IDescription s : children) {
@@ -176,11 +213,12 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 				serializeChild(s, sb, includingBuiltIn);
 			}
 			sb.append('}').append(Strings.LN);
-
-			children = desc.getMicroSpecies().values();
-			for (final IDescription s : children) {
-				sb.append(Strings.LN);
-				serializeChild(s, sb, includingBuiltIn);
+			if (desc.hasMicroSpecies()) {
+				children = desc.getMicroSpecies().values();
+				for (final IDescription s : children) {
+					sb.append(Strings.LN);
+					serializeChild(s, sb, includingBuiltIn);
+				}
 			}
 
 			children = ((ModelDescription) desc).getExperiments();
@@ -206,6 +244,15 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	}
 
 	public static class StatementSerializer extends SymbolSerializer<StatementDescription> {
+
+		final static StatementSerializer instance = new StatementSerializer();
+
+		public static StatementSerializer getInstance() {
+			return instance;
+		}
+
+		protected StatementSerializer() {
+		}
 
 		@Override
 		protected void collectMetaInformationInFacets(final StatementDescription desc, final GamlProperties plugins) {
@@ -249,7 +296,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	}
 
 	public static final Set<String> uselessFacets = new HashSet(
-			Arrays.asList(DEPENDS_ON, KEYWORD, INTERNAL_FUNCTION, WITH));
+			Arrays.asList(/* DEPENDS_ON, KEYWORD, */INTERNAL_FUNCTION, WITH));
 
 	/**
 	 * Method serialize()
@@ -276,16 +323,23 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	}
 
 	protected void serializeChildren(final C desc, final StringBuilder sb, final boolean includingBuiltIn) {
-		final List<IDescription> children = desc.getChildren();
-		if (children.isEmpty()) {
-			sb.append(";");
+
+		final StringBuilder childBuilder = new StringBuilder();
+		desc.visitChildren(new DescriptionVisitor<IDescription>() {
+
+			@Override
+			public void visit(final IDescription desc) {
+				serializeChild(desc, childBuilder, includingBuiltIn);
+			}
+		});
+		if (childBuilder.length() == 0) {
+			sb.append(';');
 			return;
+		} else {
+			sb.append(' ').append('{').append(Strings.LN);
+			sb.append(childBuilder);
+			sb.append('}').append(Strings.LN);
 		}
-		sb.append(' ').append('{').append(Strings.LN);
-		for (final IDescription s : children) {
-			serializeChild(s, sb, includingBuiltIn);
-		}
-		sb.append('}').append(Strings.LN);
 
 	}
 
@@ -298,19 +352,26 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	protected void serializeFacets(final C s, final StringBuilder sb, final boolean includingBuiltIn) {
 		final String omit = DescriptionFactory.getOmissibleFacetForSymbol(s.getKeyword());
-		String expr = serializeFacetValue(s, omit, includingBuiltIn);
+		final String expr = serializeFacetValue(s, omit, includingBuiltIn);
 		if (expr != null) {
 			sb.append(expr).append(" ");
 		}
-		for (final String key : s.getFacets().keySet()) {
-			if (key.equals(omit)) {
-				continue;
+		s.visitFacets(new FacetVisitor() {
+
+			@Override
+			public boolean visit(final String key, final IExpressionDescription b) {
+
+				if (key.equals(omit)) {
+					return true;
+				}
+				final String expr = serializeFacetValue(s, key, includingBuiltIn);
+				if (expr != null) {
+					sb.append(serializeFacetKey(s, key, includingBuiltIn)).append(expr).append(" ");
+				}
+
+				return true;
 			}
-			expr = serializeFacetValue(s, key, includingBuiltIn);
-			if (expr != null) {
-				sb.append(serializeFacetKey(s, key, includingBuiltIn)).append(expr).append(" ");
-			}
-		}
+		});
 	}
 
 	protected String serializeFacetKey(final C s, final String key, final boolean includingBuiltIn) {
@@ -328,7 +389,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		if (uselessFacets.contains(key)) {
 			return null;
 		}
-		final IExpressionDescription ed = s.getFacets().get(key);
+		final IExpressionDescription ed = s.getFacet(key);
 		if (ed == null) {
 			return null;
 		}
@@ -340,14 +401,13 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		// exprString = StringUtils.toJavaString(exprString);
 		// }
 		// }
-		if (key.equals(VIRTUAL) && ed.isConstant() && ed.equalsString(FALSE)) {
-			return null;
-		}
+		// if (key.equals(VIRTUAL) && ed.isConst() && ed.equalsString(FALSE)) {
+		// return null;
+		// }
 		if (exprString.startsWith(INTERNAL)) {
 			return null;
 		}
 		if (ed instanceof LabelExpressionDescription) {
-
 			// boolean isLabel = s.getMeta().isLabel(key);
 			final boolean isId = s.getMeta().isId(key);
 			if (!isId) {
@@ -367,7 +427,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	protected void collectMetaInformationInSymbol(final C desc, final GamlProperties plugins) {
 		plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
-		plugins.put(GamlProperties.STATEMENTS, desc.keyword);
+		plugins.put(GamlProperties.STATEMENTS, desc.getKeyword());
 	}
 
 	/**
@@ -375,10 +435,14 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	 * @param plugins
 	 */
 	protected void collectMetaInformationInFacets(final C desc, final GamlProperties plugins) {
-		final String[] strings = desc.getFacets().keySet().toArray(new String[0]);
-		for (final String key : strings) {
-			collectMetaInformationInFacetValue(desc, key, plugins);
-		}
+		desc.visitFacets(new FacetVisitor() {
+
+			@Override
+			public boolean visit(final String key, final IExpressionDescription exp) {
+				collectMetaInformationInFacetValue(desc, key, plugins);
+				return true;
+			}
+		});
 	}
 
 	/**
@@ -387,7 +451,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	 * @param plugins
 	 */
 	protected void collectMetaInformationInFacetValue(final C desc, final String key, final GamlProperties plugins) {
-		final IExpressionDescription ed = desc.getFacets().get(key);
+		final IExpressionDescription ed = desc.getFacet(key);
 		if (ed == null) {
 			return;
 		}
@@ -399,10 +463,15 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 	 * @param plugins
 	 */
 	protected void collectMetaInformationInChildren(final C desc, final GamlProperties plugins) {
-		final List<IDescription> children = desc.getChildren();
-		for (final IDescription s : children) {
-			s.collectMetaInformation(plugins);
-		}
+		desc.visitChildren(new DescriptionVisitor<IDescription>() {
+
+			@Override
+			public void visit(final IDescription s) {
+				s.collectMetaInformation(plugins);
+
+			}
+		});
+
 	}
 
 }

@@ -45,4 +45,6 @@ public interface ISymbol extends INamed, IGamlable {
 
 	public abstract String getTrace(IScope abstractScope);
 
+	public abstract String getKeyword();
+
 }

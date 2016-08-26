@@ -52,7 +52,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 			refresh = IExpressionFactory.TRUE_EXPR;
 		}
 
-		name = getLiteral(IKeyword.NAME);
+		name = desc.getName();
 		originalName = name;
 		if (name != null) {
 			name = name.replace(':', '_').replace('/', '_').replace('\\', '_');

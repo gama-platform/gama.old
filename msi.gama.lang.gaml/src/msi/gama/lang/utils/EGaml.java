@@ -44,7 +44,6 @@ import msi.gama.lang.gaml.gaml.Point;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_Display;
 import msi.gama.lang.gaml.gaml.S_Equations;
-import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.SkillRef;
 import msi.gama.lang.gaml.gaml.Statement;
@@ -61,6 +60,7 @@ import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.gaml.impl.S_EquationsImpl;
 import msi.gama.lang.gaml.gaml.impl.S_IfImpl;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
+import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.SyntacticFactory;
 
@@ -77,9 +77,6 @@ public class EGaml {
 	public static String getNameOf(final Statement s) {
 		if (s instanceof GamlDefinition) {
 			return ((GamlDefinition) s).getName();
-		}
-		if (s instanceof S_Experiment) {
-			return ((S_Experiment) s).getName();
 		}
 		if (s instanceof S_Display) {
 			return ((S_Display) s).getName();
@@ -126,32 +123,43 @@ public class EGaml {
 		return map;
 	}
 
-	public static boolean hasChildren(final EObject obj) {
-		if (obj == null) {
+	private static GamlSwitch<Boolean> childrenSwitch = new GamlSwitch() {
+
+		@Override
+		public Boolean caseModel(final Model object) {
+			return ((ModelImpl) object).eIsSet(GamlPackage.MODEL__BLOCK);
+		}
+
+		@Override
+		public Boolean caseBlock(final Block object) {
+			return ((BlockImpl) object).eIsSet(GamlPackage.BLOCK__STATEMENTS);
+		}
+
+		@Override
+		public Boolean caseStatement(final Statement object) {
+			return ((StatementImpl) object).eIsSet(GamlPackage.STATEMENT__BLOCK)
+					&& ((StatementImpl) object).getBlock().getFunction() == null;
+		}
+
+		@Override
+		public Boolean caseS_Equations(final S_Equations object) {
+			return ((S_EquationsImpl) object).eIsSet(GamlPackage.SEQUATIONS__EQUATIONS);
+		}
+
+		@Override
+		public Boolean caseS_If(final S_If object) {
+			return caseStatement(object) || ((S_IfImpl) object).eIsSet(GamlPackage.SIF__ELSE);
+		}
+
+		@Override
+		public Boolean defaultCase(final EObject object) {
 			return false;
 		}
-		if (obj instanceof S_Definition) {
-			return true;
-		}
-		if (obj instanceof S_Equations) {
-			return ((S_EquationsImpl) obj).eIsSet(GamlPackage.SEQUATIONS__EQUATIONS);
-		}
-		if (obj instanceof Block) {
-			return ((BlockImpl) obj).eIsSet(GamlPackage.BLOCK__STATEMENTS);
-		}
-		if (obj instanceof Model) {
-			return ((ModelImpl) obj).eIsSet(GamlPackage.MODEL__BLOCK);
-		}
-		if (obj instanceof Statement) {
-			final boolean hasBlock = ((StatementImpl) obj).eIsSet(GamlPackage.STATEMENT__BLOCK);
-			if (hasBlock) {
-				return true;
-			}
-			if (obj instanceof S_If) {
-				return ((S_IfImpl) obj).eIsSet(GamlPackage.SIF__ELSE);
-			}
-		}
-		return false;
+
+	};
+
+	public static boolean hasChildren(final EObject obj) {
+		return childrenSwitch.doSwitch(obj);
 	}
 
 	public static List<? extends Statement> getStatementsOf(final Block block) {

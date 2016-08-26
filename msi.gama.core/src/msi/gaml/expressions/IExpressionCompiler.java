@@ -21,10 +21,8 @@ import org.eclipse.emf.ecore.EObject;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.model.IModel;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.types.Signature;
@@ -53,18 +51,6 @@ public interface IExpressionCompiler<T> {
 	Map<String, IExpressionDescription> parseArguments(StatementDescription action, EObject eObject,
 			IDescription context, boolean compileArgValues);
 
-	// hqnghi 11/Oct/13 two method for compiling models directly from files
-	public abstract ModelDescription createModelDescriptionFromFile(String filepath);
-
-	public abstract IModel createModelFromFile(String filepath);
-
-	// end-hqnghi
-
-	/*
-	 * Remove context-dependant information from the parser
-	 */
-	public abstract void reset();
-
 	/**
 	 * @param context
 	 * @param facet
@@ -73,5 +59,7 @@ public interface IExpressionCompiler<T> {
 	public abstract EObject getFacetExpression(IDescription context, EObject facet);
 
 	public List<IDescription> compileBlock(final String string, final IDescription actionContext);
+
+	public abstract void dispose();
 
 }

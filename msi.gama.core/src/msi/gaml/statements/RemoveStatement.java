@@ -103,11 +103,10 @@ public class RemoveStatement extends AbstractContainerStatement {
 
 		@Override
 		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {
-			final Facets f = cd.getFacets();
-			final IExpression item = f.getExpr(ITEM);
-			final IExpression list = f.getExpr(TO);
-			final IExpression allFacet = f.getExpr(ALL);
-			final IExpression at = f.getExpr(AT);
+			final IExpression item = cd.getFacetExpr(ITEM);
+			final IExpression list = cd.getFacetExpr(TO);
+			final IExpression allFacet = cd.getFacetExpr(ALL);
+			final IExpression at = cd.getFacetExpr(AT);
 			final boolean isAll = allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue());
 			sb.append(list.serialize(includingBuiltIn));
 			if (at != null) {

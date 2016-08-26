@@ -239,7 +239,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final double heightEnv = environmentFrame.getEnvelope().getHeight();
 		double xmin = environmentFrame.getEnvelope().getMinX();
 		double ymin = environmentFrame.getEnvelope().getMinY();
-		//final GamaShape gbg = new GamaShape(environmentFrame.getInnerGeometry().buffer(0.1, 2));
+		// final GamaShape gbg = new
+		// GamaShape(environmentFrame.getInnerGeometry().buffer(0.1, 2));
 		cellWidth = widthEnv / (numCols * 0.75 + 0.25);
 		cellHeight = heightEnv / (numRows + 0.5);
 		xmin += cellWidth / 2.0;
@@ -252,34 +253,34 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				i = c + numCols * l;
 				final GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight,
 						new GamaPoint(xmin + c * cellWidth * 0.75, ymin + l * cellHeight));
-				//if (gbg.covers(poly)) {
-					if (firstCell == -1) {
-						firstCell = i;
-					}
-					matrix[i] = poly;
-					hexAgentToLoc.put(poly, new GamaPoint(c, l));
-					actualNumberOfCells++;
-					lastCell = CmnFastMath.max(lastCell, i);
-				//}
+				// if (gbg.covers(poly)) {
+				if (firstCell == -1) {
+					firstCell = i;
+				}
+				matrix[i] = poly;
+				hexAgentToLoc.put(poly, new GamaPoint(c, l));
+				actualNumberOfCells++;
+				lastCell = CmnFastMath.max(lastCell, i);
+				// }
 			}
 		}
-		
+
 		for (int l = 0; l < numRows; l++) {
 			for (int c = 1; c < numCols; c = c + 2) {
 				i = c + numCols * l;
-				
+
 				final GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight,
 						new GamaPoint(xmin + c * cellWidth * 0.75, ymin + (l + 0.5) * cellHeight));
-				
-			//	if (gbg.covers(poly)) {
-					if (firstCell == -1) {
-						firstCell = i;
-					}
-					matrix[i] = poly;
-					hexAgentToLoc.put(poly, new GamaPoint(c, l));
-					actualNumberOfCells++;
-					lastCell = CmnFastMath.max(lastCell, i);
-				//}
+
+				// if (gbg.covers(poly)) {
+				if (firstCell == -1) {
+					firstCell = i;
+				}
+				matrix[i] = poly;
+				hexAgentToLoc.put(poly, new GamaPoint(c, l));
+				actualNumberOfCells++;
+				lastCell = CmnFastMath.max(lastCell, i);
+				// }
 			}
 		}
 	}
@@ -322,9 +323,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				lastCell = i;
 			}
 		}
-		if (!useIndividualShapes) {
-			scope.getSimulation().addSubAgents(actualNumberOfCells);
-		}
+		// AD Commented this out
+		// if (!useIndividualShapes) {
+		// scope.getSimulation().addSubAgents(actualNumberOfCells);
+		// }
 	}
 
 	@Override
@@ -457,16 +459,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return null;
 		}
 		return matrix[p];
-	}
-
-	void diffuse_deprecated(final IScope scope) throws GamaRuntimeException {
-		// this was once used for "Signal" statement (deprecated since GAMA
-		// 1.8). It will have to be removed soon.
-		// AD Fixes a NPE when relaunching a simulation
-		if (diffuser_deprecated == null) {
-			return;
-		}
-		getDiffuser_deprecated(scope).diffuse_deprecated(scope);
 	}
 
 	void diffuse(final IScope scope) throws GamaRuntimeException {
@@ -729,7 +721,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	static IAgent testPlace(final IScope scope, final IShape source, final IAgentFilter filter, final IShape toTest) {
-		if (filter.accept(scope, source, toTest)) return toTest.getAgent();
+		if (filter.accept(scope, source, toTest))
+			return toTest.getAgent();
 		final List<IAgent> agents = new ArrayList<>(scope.getTopology().getAgentsIn(scope, toTest, filter, false));
 		agents.remove(source);
 		if (agents.isEmpty()) {
@@ -889,25 +882,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return g.getAgent();
 	}
 
-	private GridDiffuser_deprecated getDiffuser_deprecated(final IScope scope) {
-		// this was once used for "Signal" statement (deprecated since GAMA
-		// 1.8). It will have to be removed soon.
-		if (diffuser_deprecated != null) {
-			return diffuser_deprecated;
-		}
-		diffuser_deprecated = new GridDiffuser_deprecated(this);
-		scope.getSimulation().postEndAction(new IExecutable() {
-
-			@Override
-			public Object executeOn(final IScope s) throws GamaRuntimeException {
-				diffuse_deprecated(s);
-				return null;
-			}
-
-		});
-		return diffuser_deprecated;
-	}
-
 	private GridDiffuser getDiffuser(final IScope scope) {
 		if (diffuser != null) {
 			return diffuser;
@@ -925,16 +899,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		});
 		return diffuser;
-	}
-
-	@Override
-	public void diffuseVariable_deprecated(final IScope scope, final String name, final double value, final short type,
-			final double prop, final double variation, final ILocation location, final double range,
-			final Object candidates) {
-		// this was once used for "Signal" statement (deprecated since GAMA
-		// 1.8). It will have to be removed soon.
-		getDiffuser_deprecated(scope).diffuseVariable(scope, name, value, type, prop, variation, location, range,
-				candidates);
 	}
 
 	@Override

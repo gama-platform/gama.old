@@ -108,6 +108,11 @@ public class ContinuousTopology extends AbstractTopology {
 	}
 
 	@Override
+	public boolean isContinuous() {
+		return true;
+	}
+
+	@Override
 	public Double distanceBetween(final IScope scope, final IShape g1, final IShape g2) {
 		if (g1 == g2) {
 			return 0d;

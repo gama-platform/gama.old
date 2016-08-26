@@ -49,20 +49,19 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	@Override
+	public String getKeyword() {
+		if (description == null) {
+			return /* getLiteral(IKeyword.KEYWORD); */ null;
+		}
+		return description.getKeyword();
+	}
+
+	@Override
 	public final IExpression getFacet(final String... keys) {
 		if (description == null) {
 			return null;
 		}
-		IExpression result = null;
-		for (final String key : keys) {
-			if (description.getFacets().containsKey(key)) {
-				result = description.getFacets().getExpr(key);
-				break;
-			}
-		}
-		// if ( result == null ) { throw GamaRuntimeException.error("Facet " +
-		// key + " could not be compiled."); }
-		return result;
+		return description.getFacetExpr(keys);
 	}
 
 	// public IExpression getFacet(final String key, final IExpression ifAbsent)
@@ -94,12 +93,12 @@ public abstract class Symbol implements ISymbol {
 		if (description == null) {
 			return;
 		}
-		description.getFacets().put(key, expr);
+		description.setFacet(key, expr);
 	}
 
 	@Override
 	public boolean hasFacet(final String s) {
-		return getFacet(s) != null;
+		return description == null ? false : description.hasFacet(s);
 	}
 
 	@Override

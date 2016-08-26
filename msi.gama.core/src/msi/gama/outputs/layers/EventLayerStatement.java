@@ -29,7 +29,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 
 /**
@@ -74,8 +73,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 		@Override
 		public void validate(final IDescription description) {
-			final IExpression exp = description.getFacets().getExpr(ACTION);
-			final String actionName = exp.literalValue();
+			final String actionName = description.getLitteral(ACTION);
 			StatementDescription sd = description.getModelDescription().getAction(actionName);
 			if (sd == null) {
 				// we look into the experiment
@@ -99,8 +97,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 
 	public EventLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);
-		final IExpression exp = description.getFacets().getExpr(IKeyword.ACTION);
-		final String actionName = exp.literalValue();
+		final String actionName = description.getLitteral(IKeyword.ACTION);
 		final StatementDescription sd = description.getSpeciesContext().getAction(actionName);
 		executesInSimulation = sd == null;
 	}

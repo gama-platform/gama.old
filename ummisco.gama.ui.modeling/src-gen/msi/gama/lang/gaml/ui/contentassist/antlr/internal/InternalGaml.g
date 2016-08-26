@@ -3984,14 +3984,6 @@ rule___VarOrConstKey__Alternatives
 { after(grammarAccess.get_VarOrConstKeyAccess().getArgKeyword_3()); }
 )
 
-    |(
-{ before(grammarAccess.get_VarOrConstKeyAccess().getSignalKeyword_4()); }
-
-	'signal' 
-
-{ after(grammarAccess.get_VarOrConstKeyAccess().getSignalKeyword_4()); }
-)
-
 ;
 finally {
 	restoreStackSize(stackSize);

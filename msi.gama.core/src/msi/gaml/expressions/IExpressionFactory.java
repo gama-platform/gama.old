@@ -18,13 +18,12 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
-import msi.gaml.operators.IUnits;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 27 d�c. 2010
@@ -34,10 +33,9 @@ import msi.gaml.types.Types;
  */
 public interface IExpressionFactory {
 
-	public static final ConstantExpression TRUE_EXPR = new ConstantExpression(true, Types.BOOL);
-	public static final ConstantExpression FALSE_EXPR = new ConstantExpression(false, Types.BOOL);
-	public static final ConstantExpression NIL_EXPR = new ConstantExpression(null, Types.NO_TYPE);
-	public final static Map<String, UnitConstantExpression> UNITS_EXPR = IUnits.UNITS_EXPR;
+	public static final ConstantExpression TRUE_EXPR = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;
+	public static final ConstantExpression FALSE_EXPR = ConstantExpressionDescription.FALSE_EXPR_DESCRIPTION;
+	public static final ConstantExpression NIL_EXPR = ConstantExpressionDescription.NULL_EXPR_DESCRIPTION;
 
 	// public void registerParserProvider(IExpressionCompilerProvider parser);
 
@@ -52,7 +50,7 @@ public interface IExpressionFactory {
 
 	public abstract IExpression createExpr(final String s, IDescription context);
 
-	public abstract ConstantExpression getUnitExpr(final String unit);
+	public abstract UnitConstantExpression getUnitExpr(final String unit);
 
 	Map<String, IExpressionDescription> createArgumentMap(StatementDescription action, IExpressionDescription args,
 			IDescription context);
@@ -82,7 +80,7 @@ public interface IExpressionFactory {
 	 */
 	IExpression createTypeExpression(IType type);
 
-	public abstract boolean isInitialized();
+	// public abstract boolean isInitialized();
 
 	/**
 	 * @param symbolDescription

@@ -385,13 +385,13 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {
-		final IVariable var = getPopulation().getVar(this, n);
+		final IVariable var = getPopulation().getVar(n);
 		if (var != null) {
 			return var.value(scope, this);
 		}
 		final IMacroAgent host = this.getHost();
 		if (host != null) {
-			final IVariable varOfHost = host.getPopulation().getVar(host, n);
+			final IVariable varOfHost = host.getPopulation().getVar(n);
 			if (varOfHost != null) {
 				return varOfHost.value(scope, host);
 			}
@@ -401,13 +401,13 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void setDirectVarValue(final IScope scope, final String s, final Object v) throws GamaRuntimeException {
-		final IVariable var = getPopulation().getVar(this, s);
+		final IVariable var = getPopulation().getVar(s);
 		if (var != null) {
 			var.setVal(scope, this, v);
 		} else {
 			final IAgent host = this.getHost();
 			if (host != null) {
-				final IVariable varOfHost = host.getPopulation().getVar(host, s);
+				final IVariable varOfHost = host.getPopulation().getVar(s);
 				if (varOfHost != null) {
 					varOfHost.setVal(scope, host, v);
 				}
@@ -530,9 +530,10 @@ public abstract class AbstractAgent implements IAgent {
 
 	@action(name = "die", doc = @doc("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		final IMacroAgent currentMacro = this.getHost();
-		if (currentMacro != null)
-			currentMacro.removeAgent();
+		// AD: Commented this.
+		// final IMacroAgent currentMacro = this.getHost();
+		// if (currentMacro != null)
+		// currentMacro.removeAgent();
 		scope.interruptAgent();
 		dispose();
 		return null;

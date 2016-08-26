@@ -57,10 +57,10 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		}
 	}
 
-	@Override
-	public OperatorProto getPrototype() {
-		return prototype;
-	}
+	// @Override
+	// public OperatorProto getPrototype() {
+	// return prototype;
+	// }
 
 	protected void computeType() {
 		type = computeType(prototype.typeProvider, type, GamaType.TYPE);
@@ -246,7 +246,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
 		prototype.collectMetaInformation(meta);
-		meta.put(GamlProperties.OPERATORS, name);
+		meta.put(GamlProperties.OPERATORS, prototype.getName());
 		if (exprs != null)
 			for (final IExpression e : exprs) {
 				if (e != null) {

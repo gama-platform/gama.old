@@ -12,8 +12,11 @@
 
 package msi.gaml.types;
 
-import java.util.*;
-import java.util.regex.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TypeNode<T> {
 
@@ -48,7 +51,7 @@ public class TypeNode<T> {
 	}
 
 	public void addChildren(final Collection<T> children) {
-		for ( T child : children ) {
+		for (final T child : children) {
 			addChild(child);
 		}
 	}
@@ -59,7 +62,7 @@ public class TypeNode<T> {
 	}
 
 	public TypeNode<T> addChild(final T child) {
-		TypeNode<T> result = new TypeNode(child);
+		final TypeNode<T> result = new TypeNode(child);
 		addChild(result);
 		return result;
 	}
@@ -92,13 +95,23 @@ public class TypeNode<T> {
 
 	@Override
 	public boolean equals(final Object obj) {
-		if ( this == obj ) { return true; }
-		if ( obj == null ) { return false; }
-		if ( getClass() != obj.getClass() ) { return false; }
-		TypeNode<?> other = (TypeNode<?>) obj;
-		if ( data == null ) {
-			if ( other.data != null ) { return false; }
-		} else if ( !data.equals(other.data) ) { return false; }
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		final TypeNode<?> other = (TypeNode<?>) obj;
+		if (data == null) {
+			if (other.data != null) {
+				return false;
+			}
+		} else if (!data.equals(other.data)) {
+			return false;
+		}
 		return true;
 	}
 
@@ -118,13 +131,14 @@ public class TypeNode<T> {
 	public String toStringVerbose() {
 		String stringRepresentation = getData().toString() + ":[";
 
-		for ( TypeNode<T> node : getChildren() ) {
+		for (final TypeNode<T> node : getChildren()) {
 			stringRepresentation += node.getData().toString() + ", ";
 		}
 
-		// Pattern.DOTALL causes ^ and $ to match. Otherwise it won't. It's retarded.
-		Pattern pattern = Pattern.compile(", $", Pattern.DOTALL);
-		Matcher matcher = pattern.matcher(stringRepresentation);
+		// Pattern.DOTALL causes ^ and $ to match. Otherwise it won't. It's
+		// retarded.
+		final Pattern pattern = Pattern.compile(", $", Pattern.DOTALL);
+		final Matcher matcher = pattern.matcher(stringRepresentation);
 
 		stringRepresentation = matcher.replaceFirst("");
 		stringRepresentation += "]";
@@ -134,9 +148,17 @@ public class TypeNode<T> {
 
 	public void dispose() {
 		parent = null;
-		for ( TypeNode<T> node : children ) {
+		for (final TypeNode<T> node : children) {
 			node.dispose();
 		}
 		children.clear();
+	}
+
+	public TypeNode<T> copy() {
+		final TypeNode<T> result = new TypeNode(getData());
+		for (final TypeNode<T> node : children) {
+			result.addChild(node.copy());
+		}
+		return result;
 	}
 }

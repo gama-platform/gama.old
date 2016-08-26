@@ -59,7 +59,7 @@ Workflow {
 				antlrParam = "10000"
 				options = {
 					backtrack = false
-					memoize = true
+					memoize = false
 					classSplitting = true
 					fieldsPerClass = "200" 
 					methodsPerClass = "200"
@@ -68,7 +68,7 @@ Workflow {
 
 			// java-based API for validation
 			fragment = validation.JavaValidatorFragment auto-inject {
-				composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"// composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+				//composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"// composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
 			}
 
 			// scoping and exporting API

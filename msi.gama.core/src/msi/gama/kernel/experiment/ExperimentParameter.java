@@ -73,7 +73,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
 	private Object value = UNDEFINED;
-	int order;
+	// int order;
 	static int INDEX = 0;
 	Number minValue, maxValue, stepValue;
 	private List amongValue;
@@ -87,25 +87,24 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	public ExperimentParameter(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
 		final VariableDescription desc = (VariableDescription) sd;
-		setName(desc.getFacets().getLabel(IKeyword.VAR));
+		setName(desc.getLitteral(IKeyword.VAR));
 		type = desc.getType();
-		title = getLiteral(IKeyword.NAME);
+		title = sd.getName();
 		unitLabel = getLiteral(IKeyword.UNIT);
 		final ModelDescription wd = desc.getModelDescription();
-		final IDescription targetedGlobalVar = wd.getVariable(varName);
+		final IDescription targetedGlobalVar = wd.getAttribute(varName);
 		if (type.equals(Types.NO_TYPE)) {
 			type = targetedGlobalVar.getType();
 		}
-		setCategory(desc.getFacets().getLabel(IKeyword.CATEGORY));
+		setCategory(desc.getLitteral(IKeyword.CATEGORY));
 		min = getFacet(IKeyword.MIN);
 		max = getFacet(IKeyword.MAX);
 		step = getFacet(IKeyword.STEP);
 		among = getFacet(IKeyword.AMONG);
 		onChange = getFacet(IKeyword.ON_CHANGE);
 		slider = getFacet("slider");
-		init = this.hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT)
-				: targetedGlobalVar.getFacets().getExpr(IKeyword.INIT);
-		order = desc.getDefinitionOrder();
+		init = hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacetExpr(IKeyword.INIT);
+		// order = desc.getDefinitionOrder();
 		isEditable = true;
 	}
 
@@ -124,7 +123,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		this.slider = null;
 		this.title = title;
 		this.canBeNull = canBeNull;
-		this.order = p.getDefinitionOrder();
+		// this.order = p.getDefinitionOrder();
 		this.amongValue = among;
 		if (among != null) {
 			this.among = new ConstantExpression(among);
@@ -343,10 +342,10 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		category = cat;
 	}
 
-	@Override
-	public Integer getDefinitionOrder() {
-		return order;
-	}
+	// @Override
+	// public Integer getDefinitionOrder() {
+	// return order;
+	// }
 
 	@Override
 	public Object value(final IScope scope) {

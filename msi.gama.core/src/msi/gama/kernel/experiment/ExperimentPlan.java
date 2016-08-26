@@ -96,7 +96,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		 */
 		@Override
 		public void validate(final IDescription desc) {
-			final String type = desc.getFacets().getLabel(IKeyword.TYPE);
+			final String type = desc.getLitteral(IKeyword.TYPE);
 			if (type.equals(IKeyword.MEMORIZE)) {
 				desc.warning("The memorize experiment is still in development. It should not be used.",
 						IGamlIssue.DEPRECATED);
@@ -104,7 +104,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 			if (!type.equals(IKeyword.BATCH)) {
 				return;
 			}
-			if (!desc.getFacets().containsKey(IKeyword.UNTIL)) {
+			if (!desc.hasFacet(IKeyword.UNTIL)) {
 				desc.warning(
 						"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the simulations",
 						IGamlIssue.MISSING_FACET);
@@ -150,7 +150,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	public ExperimentPlan(final IDescription description) {
 		super(description);
 		setName(description.getName());
-		experimentType = description.getFacets().getLabel(IKeyword.TYPE);
+		experimentType = description.getLitteral(IKeyword.TYPE);
 		// final String type = description.getFacets().getLabel(IKeyword.TYPE);
 		if (experimentType.equals(IKeyword.BATCH)) {
 			exploration = new ExhaustiveSearch(null);

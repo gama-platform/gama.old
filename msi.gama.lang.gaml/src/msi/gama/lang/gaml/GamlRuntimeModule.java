@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml;
 
+import java.util.function.Supplier;
+
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
@@ -25,7 +27,6 @@ import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
-import org.eclipse.xtext.scoping.impl.ImportUriGlobalScopeProvider;
 import org.eclipse.xtext.service.DispatchingProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 
@@ -42,19 +43,16 @@ import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionManager;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionStrategy;
 import msi.gama.lang.gaml.resource.GamlResourceDocManager;
-import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.AllImportUriGlobalScopeProvider;
 import msi.gama.lang.gaml.scoping.GamlQualifiedNameProvider;
 import msi.gama.lang.gaml.validation.GamlDiagnostician;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.lang.utils.GamlEncodingProvider;
 import msi.gama.lang.utils.GamlExpressionCompiler;
-import msi.gama.lang.utils.GamlExpressionCompilerProvider;
 import msi.gaml.compilation.IModelBuilder;
 import msi.gaml.expressions.GamlExpressionFactory;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.factories.ModelFactory;
-import msi.gaml.factories.ModelFactory.IModelBuilderProvider;
 
 /**
  * Use this class to register components to be used at runtime / without the
@@ -67,8 +65,14 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	public static void staticInitialize() {
 		if (!initialized) {
 			// System.out.println(">> Registering GAML expression compiler.");
-			GamlExpressionFactory.registerParserProvider(new GamlExpressionCompilerProvider());
-			ModelFactory.registerModelBuilderProvider(new IModelBuilderProvider() {
+			GamlExpressionFactory.registerParserProvider(new Supplier<IExpressionCompiler>() {
+
+				@Override
+				public IExpressionCompiler get() {
+					return new GamlExpressionCompiler();
+				}
+			});
+			ModelFactory.registerModelBuilderProvider(new Supplier<IModelBuilder>() {
 
 				@Override
 				public IModelBuilder get() {
@@ -88,7 +92,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
-		binder.bind(ImportUriGlobalScopeProvider.class).to(AllImportUriGlobalScopeProvider.class);
+		// binder.bind(ImportUriGlobalScopeProvider.class).to(AllImportUriGlobalScopeProvider.class);
 		binder.bind(IGenerator.class).to(GamlGenerator.class);
 		binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
 		// binder.bind(IResourceDescription.class).to(GamlResourceDescription.class);

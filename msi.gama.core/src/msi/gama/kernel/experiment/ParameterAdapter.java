@@ -90,10 +90,10 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 		return unitLabel;
 	}
 
-	@Override
-	public Integer getDefinitionOrder() {
-		return 0;
-	}
+	// @Override
+	// public Integer getDefinitionOrder() {
+	// return 0;
+	// }
 
 	@Override
 	public void setValue(final IScope scope, final Object value) {

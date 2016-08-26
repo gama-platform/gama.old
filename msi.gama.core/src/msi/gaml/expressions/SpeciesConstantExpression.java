@@ -15,7 +15,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.types.IType;
 
 public class SpeciesConstantExpression extends ConstantExpression {
@@ -26,21 +27,26 @@ public class SpeciesConstantExpression extends ConstantExpression {
 
 	@Override
 	public Object value(final IScope scope) {
-		IAgent a = scope.getAgent();
-		if ( a != null ) {
-			// hqnghi if main description contains micro-description then species comes from micro-model
-			ModelDescription micro = this.getType().getContentType().getSpecies().getModelDescription();
-			ModelDescription main = (ModelDescription) scope.getModel().getDescription();
-			Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
-			if ( !fromMicroModel ) {
-				IPopulation pop = scope.getAgent().getPopulationFor((String) value);
-				if ( pop != null ) { return pop.getSpecies(); }
+		final IAgent a = scope.getAgent();
+		if (a != null) {
+			// hqnghi if main description contains micro-description then
+			// species comes from micro-model
+			final ModelDescription micro = this.getType().getContentType().getSpecies().getModelDescription();
+			final ModelDescription main = (ModelDescription) scope.getModel().getDescription();
+			final Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
+			if (!fromMicroModel) {
+				final IPopulation pop = scope.getAgent().getPopulationFor((String) value);
+				if (pop != null) {
+					return pop.getSpecies();
+				}
 				return scope.getSimulation().getModel().getSpecies((String) value);
 			} else {
-				IPopulation pop = scope.getRoot().getExternMicroPopulationFor((String) micro.getAlias()+"."+value);
-				if ( pop != null ) { return pop.getSpecies(); }
+				final IPopulation pop = scope.getRoot().getExternMicroPopulationFor(micro.getAlias() + "." + value);
+				if (pop != null) {
+					return pop.getSpecies();
+				}
 				return scope.getSimulation().getModel().getSpecies((String) value,
-					this.getType().getContentType().getSpecies());
+						this.getType().getContentType().getSpecies());
 			}
 			// end-hqnghi
 		}
@@ -65,15 +71,16 @@ public class SpeciesConstantExpression extends ConstantExpression {
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		SpeciesDescription sd = getType().getContentType().getSpecies();
-		if ( sd != null ) {
+		final SpeciesDescription sd = getType().getContentType().getSpecies();
+		if (sd != null) {
 			meta.put(GamlProperties.PLUGINS, sd.getDefiningPlugin());
-			if ( sd.isBuiltIn() ) {
-				meta.put(GamlProperties.SPECIES, name);
+			if (sd.isBuiltIn()) {
+				meta.put(GamlProperties.SPECIES, (String) value);
 			}
 		}
 	}

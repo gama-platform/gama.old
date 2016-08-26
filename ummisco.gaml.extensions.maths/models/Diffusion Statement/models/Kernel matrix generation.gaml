@@ -32,8 +32,6 @@ global {
 	// init the emiter cell as the one in the center of the world.
 	init {
 		selected_cells <- location as buffer_cells;
-		// no need to have a faster display. Let's cool down your computer a bit ;)
-		minimum_cycle_duration <- 200#ms;
 	}
 	
 	reflex update {
@@ -107,6 +105,11 @@ experiment my_experiment type:gui {
 	parameter "min_value" var:min_value;
 	parameter "radius" var:radius;
 	parameter "cycle_length" var:cycle_length;
+	
+	init {
+		// no need to have a faster display. Let's cool down your computer a bit ;)
+		minimum_cycle_duration <- 200#ms;
+	}
 	output {
 		display my_display {
 			species cells aspect:base;

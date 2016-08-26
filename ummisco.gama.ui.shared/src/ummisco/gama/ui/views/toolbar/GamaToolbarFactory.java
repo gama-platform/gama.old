@@ -74,7 +74,6 @@ public class GamaToolbarFactory {
 		if (c instanceof GamaComposite) {
 			return (GamaComposite) c;
 		}
-		// Control t = c;
 		return findGamaComposite(c.getParent());
 	}
 

@@ -78,7 +78,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 		 */
 		@Override
 		public void validate(final IDescription description) {
-			final String action = description.getFacets().getLabel(ACTION);
+			final String action = description.getLitteral(ACTION);
 
 			final IDescription enclosing = description.getEnclosingDescription();
 			if (action != null && enclosing.getAction(action) == null) {

@@ -284,16 +284,16 @@ public class GamlEditor extends XtextEditor
 
 	@Override
 	public void dispose() {
-		if (getDocument() != null) {
-			getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
-
-				@Override
-				public void process(final XtextResource state) throws Exception {
-					((GamlResource) state).removeListener();
-				}
-
-			});
-		}
+		// if (getDocument() != null) {
+		// getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+		//
+		// @Override
+		// public void process(final XtextResource state) throws Exception {
+		// ((GamlResource) state).removeListener();
+		// }
+		//
+		// });
+		// }
 
 		decorator = null;
 

@@ -14,7 +14,8 @@ package msi.gaml.expressions;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaType;
+import msi.gaml.types.IType;
 
 /**
  * ConstantValueExpr.
@@ -29,7 +30,7 @@ public class ConstantExpression extends AbstractExpression {
 	public ConstantExpression(final Object val, final IType t, final String name) {
 		value = val;
 		type = t;
-		setName(name == null ? val == null ? "nil" : val.toString() : name);
+		setName(name);
 	}
 
 	public ConstantExpression(final Object val, final IType t) {
@@ -53,11 +54,6 @@ public class ConstantExpression extends AbstractExpression {
 	@Override
 	public String toString() {
 		return value == null ? "nil" : value.toString();
-	}
-
-	@Override
-	public String getName() {
-		return toString();
 	}
 
 	@Override
@@ -85,6 +81,7 @@ public class ConstantExpression extends AbstractExpression {
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override

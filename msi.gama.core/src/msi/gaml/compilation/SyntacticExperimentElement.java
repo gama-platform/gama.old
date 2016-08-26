@@ -11,8 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import msi.gaml.statements.Facets;
 import org.eclipse.emf.ecore.EObject;
+
+import msi.gaml.statements.Facets;
 
 /**
  * Class GlobalSyntacticElement.
@@ -21,7 +22,7 @@ import org.eclipse.emf.ecore.EObject;
  * @since 9 sept. 2013
  * 
  */
-public class SyntacticExperimentElement extends SyntacticComposedElement {
+public class SyntacticExperimentElement extends SyntacticStructuralElement {
 
 	/**
 	 * @param keyword
@@ -34,11 +35,6 @@ public class SyntacticExperimentElement extends SyntacticComposedElement {
 
 	@Override
 	public boolean isSpecies() {
-		return false;
-	}
-
-	@Override
-	public boolean isGlobal() {
 		return false;
 	}
 

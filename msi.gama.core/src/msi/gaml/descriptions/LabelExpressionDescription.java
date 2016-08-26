@@ -11,15 +11,18 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.*;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
-import gnu.trove.map.hash.THashMap;
+
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
-import msi.gaml.expressions.*;
-import msi.gaml.types.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * The class LabelExpressionDescription.
@@ -28,54 +31,11 @@ import msi.gaml.types.*;
  * @since 31 mars 2012
  *
  */
-public class LabelExpressionDescription extends BasicExpressionDescription {
-
-	static Map<String, StringConstantExpression> cache = new THashMap();
+public class LabelExpressionDescription extends BasicExpressionDescription implements IExpression {
 
 	@Override
 	public IType getDenotedType(final IDescription context) {
 		return context.getTypeNamed(value);
-	}
-
-	static class StringConstantExpression extends AbstractExpression {
-
-		StringConstantExpression(final String constant) {
-			setName(constant);
-			type = Types.STRING;
-		}
-
-		@Override
-		public Object value(final IScope scope) {
-			return getName();
-		}
-
-		@Override
-		public boolean isConst() {
-			return true;
-		}
-
-		@Override
-		public String serialize(final boolean includingBuiltIn) {
-			return StringUtils.toGamlString(getName());
-		}
-
-		@Override
-		public String getDocumentation() {
-			return "Constant string: " + getName();
-		}
-
-		@Override
-		public String getTitle() {
-			return "constant string '" + getName() + "'";
-		}
-
-		/**
-		 * Method collectPlugins()
-		 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
-		 */
-		@Override
-		public void collectMetaInformation(final GamlProperties meta) {}
-
 	}
 
 	final String value;
@@ -109,8 +69,8 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 	@Override
 	public IExpression getExpression() {
-		if ( expression == null ) {
-			expression = new StringConstantExpression(value);
+		if (expression == null) {
+			expression = this;
 		}
 		return expression;
 	}
@@ -126,37 +86,28 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	}
 
 	@Override
-	public boolean isConstant() {
-		return true;
-	}
-
-	@Override
 	public void setTarget(final EObject newTarget) {
 		super.setTarget(newTarget);
-		// if ( getExpression() != null ) {
-		// DescriptionFactory.setGamlDocumentation(newTarget, getExpression());
-		// }
-
 	}
 
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
-		Set<String> result = new THashSet();
-		StringBuilder b = new StringBuilder();
-		for ( char c : value.toCharArray() ) {
+		final Set<String> result = new THashSet();
+		final StringBuilder b = new StringBuilder();
+		for (final char c : value.toCharArray()) {
 			switch (c) {
-				case '[':
-				case ' ':
-					break;
-				case ']':
-				case ',': {
-					result.add(b.toString());
-					b.setLength(0);
-					break;
-				}
-				default:
-					b.append(c);
+			case '[':
+			case ' ':
+				break;
+			case ']':
+			case ',': {
+				result.add(b.toString());
+				b.setLength(0);
+				break;
+			}
+			default:
+				b.append(c);
 			}
 		}
 		return result;
@@ -164,6 +115,64 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 	public static IExpressionDescription create(final String s) {
 		return new LabelExpressionDescription(s);
+	}
+
+	@Override
+	public String getDocumentation() {
+		return "Constant string: " + getName();
+	}
+
+	@Override
+	public String getTitle() {
+		return "constant string '" + getName() + "'";
+	}
+
+	@Override
+	public String getDefiningPlugin() {
+		return null;
+	}
+
+	@Override
+	public String getName() {
+		return value;
+	}
+
+	@Override
+	public void setName(final String newName) {
+	}
+
+	@Override
+	public IType getType() {
+		return Types.STRING;
+	}
+
+	@Override
+	public Object value(final IScope scope) throws GamaRuntimeException {
+		return value;
+	}
+
+	@Override
+	public boolean isConst() {
+		return true;
+	}
+
+	@Override
+	public String literalValue() {
+		return value;
+	}
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return this;
+	}
+
+	@Override
+	public boolean shouldBeParenthesized() {
+		return false;
+	}
+
+	@Override
+	public void collectMetaInformation(final GamlProperties meta) {
 	}
 
 }

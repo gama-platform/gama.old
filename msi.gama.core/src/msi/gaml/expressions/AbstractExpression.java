@@ -24,16 +24,16 @@ import msi.gaml.types.Types;
 public abstract class AbstractExpression implements IExpression {
 
 	protected IType type = null;
-	protected String name = null;
+	// protected String name = null;
 
 	@Override
 	public String getName() {
-		return name;
+		return toString();
 	}
 
 	@Override
 	public void setName(final String s) {
-		name = s;
+		// name = s;
 	}
 
 	@Override

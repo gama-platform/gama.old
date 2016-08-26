@@ -13,7 +13,6 @@ package msi.gaml.statements;
 
 import java.util.List;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -31,9 +30,11 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 
 	public AbstractStatement(final IDescription desc) {
 		super(desc);
-		final String k = getLiteral(IKeyword.KEYWORD);
-		final String n = getLiteral(IKeyword.NAME);
-		setName(k == null ? "" : k + " " + n == null ? "" : n);
+		if (desc != null) {
+			final String k = getKeyword();
+			final String n = desc.getName();
+			setName(k == null ? "" : k + " " + n == null ? "" : n);
+		}
 	}
 
 	@Override
@@ -57,7 +58,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 
 	@Override
 	public String toString() {
-		return name + description.getFacets();
+		return description.serialize(true);
 	}
 
 	@Override

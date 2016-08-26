@@ -12,6 +12,7 @@
 package msi.gaml.compilation;
 
 import org.eclipse.emf.ecore.EObject;
+
 import msi.gaml.statements.Facets;
 
 /**
@@ -24,16 +25,8 @@ import msi.gaml.statements.Facets;
  */
 public class SyntacticSingleElement extends AbstractSyntacticElement {
 
-	final EObject element;
-
 	SyntacticSingleElement(final String keyword, final Facets facets, final EObject statement) {
-		super(keyword, facets);
-		this.element = statement;
-	}
-
-	@Override
-	public EObject getElement() {
-		return element;
+		super(keyword, facets, statement);
 	}
 
 }

@@ -11,6 +11,27 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.scoping;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.naming.QualifiedName;
+import org.eclipse.xtext.resource.EObjectDescription;
+import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.resource.ISelectable;
+
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.inject.Singleton;
+
 /**
  * This class contains custom scoping description.
  * 
@@ -18,18 +39,89 @@ package msi.gama.lang.gaml.scoping;
  * how and when to use it
  *
  */
+@Singleton
 public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLocalScopeProvider {
 
-	// @Override
-	// public IScope getScope(final EObject context, final EReference reference)
-	// {
-	// final long begin = System.nanoTime();
-	// final IScope scope = delegateGetScope(context, reference);
-	// System.out.println("scoped in " + (System.nanoTime() - begin) / 1000000d
-	// + " ms");
-	// System.out.println("****************************************************");
-	// return scope;
-	//
-	// }
+	private class MultimapBasedSelectable implements ISelectable {
+		List<IEObjectDescription> descriptions;
+		private final Multimap<QualifiedName, IEObjectDescription> nameToObjects;
 
+		public MultimapBasedSelectable(final List<IEObjectDescription> descriptions) {
+			this.descriptions = descriptions;
+			this.nameToObjects = LinkedHashMultimap.create();
+			for (final IEObjectDescription description : descriptions) {
+				nameToObjects.put(description.getName(), description);
+			}
+
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return descriptions.isEmpty();
+		}
+
+		@Override
+		public Iterable<IEObjectDescription> getExportedObjectsByType(final EClass type) {
+			if (descriptions.isEmpty())
+				return Collections.emptyList();
+			return Iterables.filter(descriptions, new Predicate<IEObjectDescription>() {
+				@Override
+				public boolean apply(final IEObjectDescription input) {
+					return EcoreUtil2.isAssignableFrom(type, input.getEClass());
+				}
+			});
+		}
+
+		@Override
+		public Iterable<IEObjectDescription> getExportedObjectsByObject(final EObject object) {
+			if (descriptions.isEmpty())
+				return Collections.emptyList();
+			final URI uri = EcoreUtil2.getPlatformResourceOrNormalizedURI(object);
+			return Iterables.filter(descriptions, new Predicate<IEObjectDescription>() {
+				@Override
+				public boolean apply(final IEObjectDescription input) {
+					if (input.getEObjectOrProxy() == object)
+						return true;
+					if (uri.equals(input.getEObjectURI())) {
+						return true;
+					}
+					return false;
+				}
+			});
+		}
+
+		@Override
+		public Iterable<IEObjectDescription> getExportedObjects(final EClass type, final QualifiedName name,
+				final boolean ignoreCase) {
+			if (nameToObjects.containsKey(name)) {
+				for (final IEObjectDescription desc : nameToObjects.get(name)) {
+					if (EcoreUtil2.isAssignableFrom(type, desc.getEClass())) {
+						return Collections.singleton(desc);
+					}
+				}
+			}
+			return Collections.emptyList();
+		}
+
+		@Override
+		public Iterable<IEObjectDescription> getExportedObjects() {
+			return descriptions;
+		}
+
+	}
+
+	@Override
+	protected ISelectable getAllDescriptions(final Resource resource) {
+		final List<IEObjectDescription> descriptions = new ArrayList();
+		final Iterator<EObject> iterator = resource.getAllContents();
+		while (iterator.hasNext()) {
+			final EObject from = iterator.next();
+			final QualifiedName qualifiedName = getNameProvider().apply(from);
+			if (qualifiedName != null) {
+				descriptions.add(new EObjectDescription(qualifiedName, from, null));
+			}
+		}
+		return new MultimapBasedSelectable(descriptions);
+
+	}
 }

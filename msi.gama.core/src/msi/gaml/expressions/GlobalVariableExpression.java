@@ -16,20 +16,23 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
 public class GlobalVariableExpression extends VariableExpression implements IVarExpression.Agent {
 
 	public static IExpression create(final String n, final IType type, final boolean notModifiable,
-		final IDescription world) {
-		VariableDescription v = ((SpeciesDescription) world).getVariable(n);
-		IExpression exp = v.getFacets().getExpr(IKeyword.INIT);
-		if ( exp != null ) {
-			boolean isConst = notModifiable && exp.isConst();
-			if ( isConst ) {
-				IExpression e = GAML.getExpressionFactory().createConst(exp.value(null), type, n);
-				// System.out.println(" ==== Simplification of global " + n + " into " + e.toGaml());
+			final IDescription world) {
+		final VariableDescription v = ((SpeciesDescription) world).getAttribute(n);
+		final IExpression exp = v.getFacetExpr(IKeyword.INIT);
+		if (exp != null) {
+			final boolean isConst = notModifiable && exp.isConst();
+			if (isConst) {
+				final IExpression e = GAML.getExpressionFactory().createConst(exp.value(null), type, n);
+				// System.out.println(" ==== Simplification of global " + n + "
+				// into " + e.toGaml());
 				return e;
 			}
 		}
@@ -37,35 +40,39 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	}
 
 	protected GlobalVariableExpression(final String n, final IType type, final boolean notModifiable,
-		final IDescription world) {
+			final IDescription world) {
 		super(n, type, notModifiable, world);
 	}
-	
+
+	@Override
 	public IExpression getOwner() {
-		return new WorldExpression("world", this.getDefinitionDescription().getModelDescription().getType(),
+		return new WorldExpression(this.getDefinitionDescription().getModelDescription().getType(),
 				this.getDefinitionDescription().getModelDescription());
 	}
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-//		return scope.getGlobalVarValue(getName());
-		final IAgent sc=scope.getAgent();
+		// return scope.getGlobalVarValue(getName());
+		final IAgent sc = scope.getAgent();
 		return sc.getScope().getRoot().getScope().getGlobalVarValue(getName());
 	}
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
-		if ( isNotModifiable ) { return; }
-		final IAgent sc=scope.getAgent();
+		if (isNotModifiable) {
+			return;
+		}
+		final IAgent sc = scope.getAgent();
 		sc.getScope().getRoot().getScope().setGlobalVarValue(getName(), v);
 	}
 
 	@Override
 	public String getTitle() {
-		IDescription desc = getDefinitionDescription();
-		boolean isParameter = desc == null ? false : desc.getSpeciesContext().getVariable(getName()).isParameter();
-		return "global " + (isParameter ? "parameter" : isNotModifiable ? "constant" : "attribute") + " " + getName() +
-			" of type " + getType().getTitle();
+		final IDescription desc = getDefinitionDescription();
+		final boolean isParameter = desc == null ? false
+				: desc.getSpeciesContext().getAttribute(getName()).isParameter();
+		return "global " + (isParameter ? "parameter" : isNotModifiable ? "constant" : "attribute") + " " + getName()
+				+ " of type " + getType().getTitle();
 	}
 
 	/**
@@ -73,7 +80,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	 */
 	@Override
 	public String getDocumentation() {
-		IDescription desc = getDefinitionDescription();
+		final IDescription desc = getDefinitionDescription();
 		return "Of type: " + type.getTitle() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
 	}
 

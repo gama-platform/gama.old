@@ -12,6 +12,7 @@
 package msi.gaml.factories;
 
 import java.util.List;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -21,7 +22,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.PrimitiveDescription;
 import msi.gaml.descriptions.StatementDescription;
-import msi.gaml.descriptions.StatementDescription.StatementWithChildrenDescription;
+import msi.gaml.descriptions.StatementWithChildrenDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
 
@@ -42,19 +43,15 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	@Override
 	protected StatementDescription buildDescription(final String keyword, final Facets facets, final EObject element,
 			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto,
-			final String plugin) {
+			final Set<String> dependencies) {
 		if (keyword.equals(PRIMITIVE)) {
-			//
-			return new PrimitiveDescription(keyword, enclosing, children, proto.hasScope(), proto.hasArgs(), element,
-					facets, null);
-			//
+			return new PrimitiveDescription(enclosing, element, children, facets, null);
 		}
 		if (DescriptionFactory.getProto(keyword, enclosing).hasSequence() && children.hasChildren()) {
 			return new StatementWithChildrenDescription(keyword, enclosing, children, proto.hasScope(), proto.hasArgs(),
 					element, facets);
 		}
-		return new StatementDescription(keyword, enclosing, children, proto.hasScope(), proto.hasArgs(), element,
-				facets);
+		return new StatementDescription(keyword, enclosing, children, proto.hasArgs(), element, facets);
 	}
 
 }

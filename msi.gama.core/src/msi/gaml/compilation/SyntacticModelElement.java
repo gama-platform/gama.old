@@ -12,10 +12,14 @@
 package msi.gaml.compilation;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.collect.Iterables;
 
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gaml.statements.Facets;
@@ -27,7 +31,7 @@ import msi.gaml.statements.Facets;
  * @since 12 avr. 2014
  * 
  */
-public class SyntacticModelElement extends SyntacticComposedElement {
+public class SyntacticModelElement extends SyntacticTopLevelElement {
 
 	final Set<URI> absoluteAlternatePaths;
 	boolean urisFixed = false;
@@ -46,6 +50,13 @@ public class SyntacticModelElement extends SyntacticComposedElement {
 		}
 	}
 
+	@Override
+	public Iterable<ISyntacticElement> getExperiments() {
+		if (children == null)
+			return Collections.EMPTY_LIST;
+		return Iterables.filter(children, EXPERIMENT_FILTER);
+	}
+
 	public Set<URI> getAbsoluteAlternatePaths() {
 		return absoluteAlternatePaths;
 	}
@@ -60,6 +71,17 @@ public class SyntacticModelElement extends SyntacticComposedElement {
 			absoluteAlternatePaths.addAll(uris);
 		}
 		urisFixed = true;
+	}
+
+	@Override
+	public boolean isSpecies() {
+		return false;
+	}
+
+	public void printStats() {
+		final Map<String, Integer> stats = new HashMap();
+		computeStats(stats);
+		// System.out.println("Stats for " + getName() + " : " + stats);
 	}
 
 }

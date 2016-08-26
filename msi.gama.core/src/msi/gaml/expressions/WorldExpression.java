@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
@@ -19,14 +20,14 @@ import msi.gaml.types.IType;
 
 public class WorldExpression extends VariableExpression {
 
-	protected WorldExpression(final String n, final IType type, final IDescription global) {
-		super(n, type, true, global);
+	protected WorldExpression(final IType type, final IDescription global) {
+		super(IKeyword.WORLD_AGENT_NAME, type, true, global);
 	}
 
 	@Override
 	public Object value(final IScope scope) {
-//		return scope.getSimulationScope();
-		IAgent sc=scope.getAgent();
+		// return scope.getSimulationScope();
+		final IAgent sc = scope.getAgent();
 		return sc.getScope().getRoot().getScope().getSimulation();
 	}
 
@@ -39,13 +40,16 @@ public class WorldExpression extends VariableExpression {
 	}
 
 	@Override
-	public void setVal(final IScope scope, final Object v, final boolean create) {}
+	public void setVal(final IScope scope, final Object v, final boolean create) {
+	}
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final GamlProperties meta) {}
+	public void collectMetaInformation(final GamlProperties meta) {
+	}
 
 }

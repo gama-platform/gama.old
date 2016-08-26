@@ -70,8 +70,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public AbstractSpecies(final IDescription description) {
 		super(description);
 		setName(description.getName());
-		isGrid = description.getFacets().equals(IKeyword.KEYWORD, IKeyword.GRID);
-		isGraph = AbstractGraphNodeAgent.class.isAssignableFrom(((TypeDescription) description).getJavaBase());
+		isGrid = getKeyword().equals(IKeyword.GRID);
+		isGraph = AbstractGraphNodeAgent.class.isAssignableFrom(((SpeciesDescription) description).getJavaBase());
 	}
 
 	@Override
@@ -294,7 +294,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public Collection<String> getVarNames() {
-		return getDescription().getVarNames();
+		return getDescription().getAttributeNames();
 	}
 
 	@Override
@@ -433,7 +433,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 				if (valueOfFacetName == null) {
 					return (T) s;
 				}
-				final String t = s.getFacet(IKeyword.NAME).literalValue();
+				final String t = s.getDescription().getName();
 				if (t != null) {
 					final boolean named = t.equals(valueOfFacetName);
 					if (named) {

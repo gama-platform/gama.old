@@ -56,6 +56,7 @@ import msi.gama.util.GamaColor;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SymbolDescription;
@@ -133,7 +134,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				final GamlProperties plugins) {
 			super.collectMetaInformationInFacetValue(desc, key, plugins);
 			if (key.equals(TYPE)) {
-				final IExpressionDescription exp = desc.getFacets().get(TYPE);
+				final IExpressionDescription exp = desc.getFacet(TYPE);
 				if (exp.getExpression() != null) {
 					final String type = exp.getExpression().literalValue();
 					final DisplayDescription dd = GAMA.getGui().getDisplayDescriptionFor(type);
@@ -156,13 +157,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		@Override
 		public void validate(final IDescription d) {
 
-			final IExpressionDescription auto = d.getFacets().get(AUTOSAVE);
+			final IExpressionDescription auto = d.getFacet(AUTOSAVE);
 			if (auto != null && auto.getExpression().isConst() && auto.getExpression().literalValue().equals(TRUE)) {
 				d.info("With autosave enabled, GAMA must remain the frontmost window and the display must not be covered or obscured by other windows",
 						IGamlIssue.GENERAL, auto.getTarget(), AUTOSAVE);
 			}
 			// Are we in OpenGL world ?
-			final IExpressionDescription type = d.getFacets().get(TYPE);
+			final IExpressionDescription type = d.getFacet(TYPE);
 			if (type != null) {
 				// Addresses and fixes Issue 833.
 				final String s = type.getExpression().literalValue();
@@ -178,20 +179,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			final Boolean isOpenGLWanted = type == null ? isOpenGLDefault
 					: type.getExpression().literalValue().equals(LayeredDisplayData.OPENGL);
 
-			if (isOpenGLWanted) {
-
-				// Do we display a grid ?
-
-				// Boolean gridDisplayed = false;
-				for (final IDescription desc : d.getChildren()) {
-					if (desc.getKeyword().equals(GRID_POPULATION)) {
-						// gridDisplayed = true;
-						break;
-					}
-				}
-			}
-
-			final IExpressionDescription camera = d.getFacets().getDescr(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR,
+			final IExpressionDescription camera = d.getFacet(CAMERA_POS, CAMERA_LOOK_POS, CAMERA_UP_VECTOR,
 					CAMERA_LENS);
 			if (!isOpenGLWanted && camera != null) {
 				d.warning(
@@ -200,13 +188,18 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 
 			// AD: addressing the deprecation of the "trace:" facet
-			final IExpressionDescription trace = d.getFacets().get(TRACE);
+			final IExpressionDescription trace = d.getFacet(TRACE);
 			if (trace != null) {
-				for (final IDescription layer : d.getChildren()) {
-					if (!layer.getFacets().containsKey(TRACE)) {
-						layer.getFacets().put(TRACE, trace);
+				d.visitChildren(new DescriptionVisitor<IDescription>() {
+
+					@Override
+					public void visit(final IDescription layer) {
+						if (!layer.hasFacet(TRACE)) {
+							layer.setFacet(TRACE, trace);
+						}
 					}
-				}
+				});
+
 			}
 		}
 
@@ -675,7 +668,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public LayeredDisplayData getData() {
 		return data;
 	}
-	
+
 	public boolean useShader() {
 		return useShader;
 	}

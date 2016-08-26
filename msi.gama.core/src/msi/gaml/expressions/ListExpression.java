@@ -53,9 +53,8 @@ public class ListExpression extends AbstractExpression {
 		this.elements = elements.toArray(new IExpression[0]);
 		final int n = this.elements.length;
 		values = new Object[n];
-		setName(elements.toString());
 		type = Types.LIST.of(GamaType.findCommonType(this.elements, GamaType.TYPE));
-		isConst();
+		// isConst();
 	}
 
 	public IExpression[] getElements() {

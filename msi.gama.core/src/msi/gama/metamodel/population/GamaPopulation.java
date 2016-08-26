@@ -150,8 +150,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		this.species = species;
 		architecture = species.getArchitecture();
 		final TypeDescription ecd = (TypeDescription) species.getDescription();
-		orderedVarNames = ecd.getVarNames().toArray(new String[0]);
-		final List<String> updatableVarNames = ecd.getUpdatableVarNames();
+		orderedVarNames = ecd.getAttributeNames().toArray(new String[0]);
+		final List<String> updatableVarNames = ecd.getUpdatableAttributeNames();
 		final int updatableVarsSize = updatableVarNames.size();
 		updatableVars = new IVariable[updatableVarsSize];
 		for (int i = 0; i < updatableVarsSize; i++) {
@@ -185,7 +185,6 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		for (final IVariable v : updatableVars) {
 			scope.setCurrentSymbol(v);
 			v.setVal(scope, a, v.getUpdatedValue(scope));
-			// updatableVars[j].updateFor(scope, a);
 		}
 	}
 
@@ -468,7 +467,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public IVariable getVar(final IAgent a, final String s) {
+	public IVariable getVar(final String s) {
 		return species.getVar(s);
 	}
 

@@ -58,8 +58,8 @@ import msi.gaml.types.Types;
 						IKeyword.USER_PANEL })
 public class UserInputStatement extends AbstractPlaceHolderStatement implements IParameter {
 
-	int order;
-	static int index;
+	// int order;
+	// static int index;
 	boolean isValued;
 	Object initialValue, currentValue;
 	IExpression min, max, among, init, slider;
@@ -67,7 +67,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	public UserInputStatement(final IDescription desc) {
 		super(desc);
-		order = index++;
+		// order = index++;
 		init = getFacet(IKeyword.INIT);
 		min = getFacet(IKeyword.MIN);
 		max = getFacet(IKeyword.MAX);
@@ -91,10 +91,10 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		return null;
 	}
 
-	@Override
-	public Integer getDefinitionOrder() {
-		return order;
-	}
+	// @Override
+	// public Integer getDefinitionOrder() {
+	// return order;
+	// }
 
 	@Override
 	public void setValue(final IScope scope, final Object value) {

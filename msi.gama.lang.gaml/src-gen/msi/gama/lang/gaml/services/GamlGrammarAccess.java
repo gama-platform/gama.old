@@ -1944,13 +1944,12 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cConstKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		private final Keyword cLetKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
 		private final Keyword cArgKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
-		private final Keyword cSignalKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
 		
 		//_VarOrConstKey:
-		//	"var" | "const" | "let" | "arg" | "signal";
+		//	"var" | "const" | "let" | "arg";
 		@Override public ParserRule getRule() { return rule; }
 
-		//"var" | "const" | "let" | "arg" | "signal"
+		//"var" | "const" | "let" | "arg"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//"var"
@@ -1964,9 +1963,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"arg"
 		public Keyword getArgKeyword_3() { return cArgKeyword_3; }
-
-		//"signal"
-		public Keyword getSignalKeyword_4() { return cSignalKeyword_4; }
 	}
 
 	public class _ReflexKeyElements extends AbstractParserRuleElementFinder {
@@ -5406,7 +5402,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//_VarOrConstKey:
-	//	"var" | "const" | "let" | "arg" | "signal";
+	//	"var" | "const" | "let" | "arg";
 	public _VarOrConstKeyElements get_VarOrConstKeyAccess() {
 		return p_VarOrConstKey;
 	}

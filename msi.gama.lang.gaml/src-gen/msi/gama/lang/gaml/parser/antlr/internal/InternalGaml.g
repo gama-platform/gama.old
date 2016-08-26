@@ -5,7 +5,6 @@ grammar InternalGaml;
 
 options {
 	superClass=AbstractInternalAntlrParser;
-	 memoize=true;
 	
 }
 
@@ -3588,13 +3587,6 @@ rule_VarOrConstKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRule
     {
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.get_VarOrConstKeyAccess().getArgKeyword_3()); 
-    }
-
-    |
-	kw='signal' 
-    {
-        $current.merge(kw);
-        newLeafNode(kw, grammarAccess.get_VarOrConstKeyAccess().getSignalKeyword_4()); 
     }
 )
     ;

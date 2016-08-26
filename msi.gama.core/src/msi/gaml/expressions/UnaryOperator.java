@@ -62,7 +62,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	public UnaryOperator(final OperatorProto proto, final IDescription context, final IExpression... child) {
-		setName(proto.getName());
+		// setName(proto.getName());
 		this.child = child[0];
 		this.prototype = proto;
 		type = proto.returnType;
@@ -113,7 +113,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
-		sb.append("operator <b>").append(getName()).append("</b> (");
+		sb.append("operator ").append(getName()).append(" (");
 		sb.append(child == null ? prototype.signature : child.getType().getTitle());
 		sb.append(") returns ").append(getType().getTitle());
 		return sb.toString();
@@ -188,14 +188,19 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
+	public String getName() {
+		return prototype.getName();
+	}
+
+	@Override
 	public IExpression arg(final int i) {
 		return i == 0 ? child : null;
 	}
 
-	@Override
-	public OperatorProto getPrototype() {
-		return prototype;
-	}
+	// @Override
+	// public OperatorProto getPrototype() {
+	// return prototype;
+	// }
 
 	/**
 	 * Method collectPlugins()

@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -18,8 +19,8 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import gnu.trove.set.hash.THashSet;
-import gnu.trove.set.hash.TLinkedHashSet;
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.GAML;
@@ -41,36 +42,27 @@ import msi.gaml.types.Types;
  */
 public class VariableDescription extends SymbolDescription {
 
-	private Set<VariableDescription> dependencies;
-	// Represents the variable that are not declared in the species but that the
-	// variable depends
-	// on.
-	private Set<String> extraDependencies;
+	private THashMap<String, VariableDescription> dependencies;
 	private String plugin;
-	private int definitionOrder = -1;
-	// private IExpression varExpr = null;
-	private IType type = null;
-	private final boolean _isGlobal, /* _isFunction, */_isNotModifiable, _isParameter;
-	private boolean _isUpdatable;
+
+	private final boolean _isGlobal, _isNotModifiable;
 	// for variables automatically added to species for containing micro-agents
-	private boolean _isSyntheticSpeciesContainer;
+	private boolean _isSyntheticSpeciesContainer, dependenciesComputed;
 	private GamaHelper get, init, set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
-			final EObject source, final Facets facets) {
+			final EObject source, final Facets facets, final Set<String> dependencies) {
 		super(keyword, superDesc, cp, source, facets);
 		if (!facets.containsKey(TYPE) && !isExperimentParameter()) {
 			facets.putAsLabel(TYPE, keyword);
 		}
 		_isGlobal = superDesc instanceof ModelDescription;
-		_isParameter = isExperimentParameter() || facets.containsKey(PARAMETER);
-		_isNotModifiable = facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE) && !_isParameter;
-		_isUpdatable = !_isNotModifiable && (facets.containsKey(VALUE) || facets.containsKey(UPDATE));
-
+		_isNotModifiable = facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE) && !isParameter();
+		addDependenciesNames(dependencies);
 	}
 
 	public boolean isExperimentParameter() {
-		return facets.equals(KEYWORD, PARAMETER);
+		return PARAMETER.equals(keyword);
 	}
 
 	public void setSyntheticSpeciesContainer() {
@@ -83,35 +75,37 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if ( /* isDisposed || */isBuiltIn()) {
+		if (isBuiltIn()) {
 			return;
 		}
 		if (dependencies != null) {
 			dependencies.clear();
+			dependencies = null;
 		}
-		// varExpr = null;
 		super.dispose();
-		// isDisposed = true;
 	}
 
 	public void copyFrom(final VariableDescription v2) {
 		// Special cases for functions
-		final boolean isFunction = this.getFacets().containsKey(FUNCTION);
+		final boolean isFunction = hasFacet(FUNCTION);
 		// We dont replace existing facets
-		for (final Map.Entry<String, IExpressionDescription> entry : v2.facets.entrySet()) {
-			if (entry == null) {
-				continue;
-			}
-			final String facetName = entry.getKey();
-			if (isFunction) {
-				if (facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE)) {
-					continue;
+
+		v2.visitFacets(new FacetVisitor() {
+
+			@Override
+			public boolean visit(final String facetName, final IExpressionDescription exp) {
+				if (isFunction) {
+					if (facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE)) {
+						return true;
+					}
 				}
+				if (!hasFacet(facetName)) {
+					setFacet(facetName, exp);
+				}
+				return true;
 			}
-			if (!facets.containsKey(facetName)) {
-				facets.put(facetName, entry.getValue());
-			}
-		}
+		});
+
 		if (get == null) {
 			get = v2.get;
 		}
@@ -125,23 +119,33 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public VariableDescription copy(final IDescription into) {
-		final VariableDescription vd = new VariableDescription(getKeyword(), into, null, element, facets.cleanCopy());
+		final VariableDescription vd = new VariableDescription(getKeyword(), into, ChildrenProvider.NONE, element,
+				getFacetsCopy(), dependencies == null ? null : dependencies.keySet());
 		vd.addHelpers(get, init, set);
-		vd.originName = originName;
+		vd.originName = getOriginName();
 		return vd;
 	}
 
 	@Override
 	protected SymbolSerializer createSerializer() {
-		return new VarSerializer();
+		return VarSerializer.getInstance();
 	}
 
-	@Override
-	public IType getType() {
-		if (type == null) {
-			type = super.getType();
-		}
-		return type;
+	/**
+	 * A variable is said to be contextual if its type or contents type depends
+	 * on the species context. For example, 'simulation' in experiments. If so,
+	 * it has to be copied in subspecies
+	 * 
+	 * @return
+	 */
+	public boolean isContextualType() {
+		String type = getLitteral(TYPE);
+		int provider = GamaIntegerType.staticCast(null, type, null, false);
+		if (provider < 0)
+			return true;
+		type = getLitteral(OF);
+		provider = GamaIntegerType.staticCast(null, type, null, false);
+		return provider < 0;
 	}
 
 	/**
@@ -181,7 +185,7 @@ public class VariableDescription extends SymbolDescription {
 				if (getEnclosingDescription() == null) {
 					return null;
 				}
-				final IExpression mirrors = getEnclosingDescription().getFacets().getExpr(MIRRORS);
+				final IExpression mirrors = getEnclosingDescription().getFacetExpr(MIRRORS);
 				if (mirrors != null) {
 					// We try to change the type of the 'target' variable if the
 					// expression contains only agents from the
@@ -202,53 +206,61 @@ public class VariableDescription extends SymbolDescription {
 		return result;
 	}
 
-	public Set<VariableDescription> usedVariablesIn(final Map<String, VariableDescription> vars) {
-		if (dependencies == null) {
-			dependencies = new TLinkedHashSet();
-			extraDependencies = new TLinkedHashSet();
-			final IExpressionDescription depends = facets.get(DEPENDS_ON);
-			if (depends != null) {
-				for (final String s : depends.getStrings(getSpeciesContext(), false)) {
-					final VariableDescription v = vars.get(s);
-					if (v != null) {
-						dependencies.add(v);
-					} else {
-						extraDependencies.add(s);
-					}
-				}
-				dependencies.remove(this);
-				extraDependencies.remove(getName());
+	public void usedVariablesIn(final Map<String, VariableDescription> vars) {
+
+		if (!dependenciesComputed) {
+			dependenciesComputed = true;
+			if (dependencies == null)
+				return;
+			for (final Map.Entry<String, VariableDescription> entry : dependencies.entrySet()) {
+				entry.setValue(vars.get(entry.getKey()));
 			}
+			dependencies.remove(getName());
 		}
-		return dependencies;
 	}
 
 	public void expandDependencies(final List<VariableDescription> without) {
-		final Set<VariableDescription> accumulator = new THashSet();
-		for (final VariableDescription dep : dependencies) {
+		if (dependencies == null)
+			return;
+		final Map<String, VariableDescription> accumulator = new THashMap();
+		for (final VariableDescription dep : dependencies.values()) {
+			if (dep == null)
+				continue;
 			if (!without.contains(dep)) {
 				without.add(this);
 				dep.expandDependencies(without);
-				accumulator.addAll(dep.getDependencies());
+				for (final VariableDescription vd : dep.getDependencies()) {
+					if (vd != null)
+						accumulator.put(vd.getName(), vd);
+				}
 			}
 		}
-		dependencies.addAll(accumulator);
+		dependencies.putAll(accumulator);
 	}
 
-	public Set<VariableDescription> getDependencies() {
-		return dependencies;
+	public Collection<VariableDescription> getDependencies() {
+		if (dependencies == null)
+			return Collections.EMPTY_LIST;
+		// May contain null values
+		return dependencies.values();
 	}
 
-	public Set<String> getExtraDependencies() {
-		return extraDependencies;
+	public void getExtraDependencies(final Set<String> into) {
+		if (dependencies == null)
+			return;
+		dependencies.forEachEntry(new TObjectObjectProcedure<String, VariableDescription>() {
+
+			@Override
+			public boolean execute(final String a, final VariableDescription b) {
+				if (b == null)
+					into.add(a);
+				return true;
+			}
+		});
 	}
 
 	public boolean isUpdatable() {
-		return _isUpdatable;
-	}
-
-	public void setUpdatable(final boolean b) {
-		_isUpdatable = b;
+		return !_isNotModifiable && (hasFacet(VALUE) || hasFacet(UPDATE));
 	}
 
 	public boolean isNotModifiable() {
@@ -256,10 +268,10 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public boolean isParameter() {
-		return _isParameter;
+		return isExperimentParameter() || hasFacet(PARAMETER);
 	}
 
-	// If hasField is true, should not try to build a GlobalVarExpr
+	// If asField is true, should not try to build a GlobalVarExpr
 	public IExpression getVarExpr(final boolean asField) {
 		final boolean asGlobal = _isGlobal && !asField;
 
@@ -268,21 +280,13 @@ public class VariableDescription extends SymbolDescription {
 		return varExpr;
 	}
 
-	public void setDefinitionOrder(final int i) {
-		definitionOrder = i;
-	}
-
-	public int getDefinitionOrder() {
-		return definitionOrder;
-	}
-
 	@Override
 	public String toString() {
 		return getName() + " (description)";
 	}
 
 	public String getParameterName() {
-		final String pName = facets.getLabel(PARAMETER);
+		final String pName = getLitteral(PARAMETER);
 		if (pName == null || pName.equals(TRUE)) {
 			return getName();
 		}
@@ -329,11 +333,16 @@ public class VariableDescription extends SymbolDescription {
 	public boolean isGlobal() {
 		return _isGlobal;
 	}
-
-	@Override
-	public List<IDescription> getChildren() {
-		return Collections.EMPTY_LIST;
-	}
+	//
+	// @Override
+	// public List<IDescription> getChildren() {
+	// return Collections.EMPTY_LIST;
+	// }
+	//
+	// @Override
+	// public List<IDescription> getOwnChildren() {
+	// return Collections.EMPTY_LIST;
+	// }
 
 	@Override
 	public String getDefiningPlugin() {
@@ -347,6 +356,35 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public void setDefiningPlugin(final String plugin) {
 		this.plugin = plugin;
+	}
+
+	public void addDependenciesNames(final Set<String> dependencies) {
+		final IExpressionDescription exp = getFacet("depends_on");
+		if (exp != null) {
+			addDependenciesNoCheck(exp.getStrings(this, false));
+			removeFacets("depends_on");
+		}
+		addDependenciesNoCheck(dependencies);
+	}
+
+	private void addDependenciesNoCheck(final Set<String> deps) {
+		if (deps == null || deps.isEmpty())
+			return;
+		if (dependencies == null)
+			dependencies = new THashMap();
+		for (final String s : deps) {
+			dependencies.put(s, null);
+		}
+	}
+
+	@Override
+	public void visitChildren(final DescriptionVisitor visitor) {
+
+	}
+
+	@Override
+	public void visitOwnChildren(final DescriptionVisitor visitor) {
+
 	}
 
 }

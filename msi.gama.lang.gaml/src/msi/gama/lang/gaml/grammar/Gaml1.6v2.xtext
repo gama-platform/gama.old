@@ -188,7 +188,7 @@ _DoKey:
 	"do";
 
 _VarOrConstKey:
-	"var" | "const" | "let" | "arg" | "signal" ;
+	"var" | "const" | "let" | "arg" ;
 
 _ReflexKey:
 	"init" | "reflex" | "aspect";

@@ -18,9 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.TObjectObjectProcedure;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
@@ -40,8 +44,11 @@ public class Types {
 
 	public final static IType NO_TYPE = new GamaNoType();
 
-	public static IType INT, FLOAT, BOOL, COLOR, STRING, POINT, GEOMETRY, TOPOLOGY, AGENT, PATH, FONT, SKILL, DATE, MATERIAL;
+	public static IType INT, FLOAT, BOOL, COLOR, STRING, POINT, GEOMETRY, TOPOLOGY, AGENT, PATH, FONT, SKILL, DATE,
+			MATERIAL;
 	public static IContainerType LIST, MATRIX, MAP, GRAPH, FILE, PAIR, CONTAINER, SPECIES;
+
+	static final THashMap<Class, String> CLASSES_TYPES_CORRESPONDANCE = new THashMap(10, 0.95f);
 
 	public static void cache(final int id, final IType instance) {
 		switch (id) {
@@ -169,7 +176,33 @@ public class Types {
 	}
 
 	public static <T> IType<T> get(final Class<T> type) {
-		return builtInTypes.get(type);
+		final IType<T> t = internalGet(type);
+		return t == null ? Types.NO_TYPE : t;
+	}
+
+	private static <T> IType<T> internalGet(final Class<T> type) {
+		final IType<T>[] t = new IType[] { builtInTypes.get(Types.CLASSES_TYPES_CORRESPONDANCE.get(type)) };
+		boolean newEntry = false;
+		if (t[0] == null) {
+			if (!type.isInterface()) {
+				newEntry = !Types.CLASSES_TYPES_CORRESPONDANCE
+						.forEachEntry(new TObjectObjectProcedure<Class, String>() {
+
+							@Override
+							public boolean execute(final Class support, final String id) {
+								if (support != Object.class && support.isAssignableFrom(type)) {
+									t[0] = builtInTypes.get(id);
+									return false;
+								}
+								return true;
+							}
+						});
+
+			}
+		}
+		if (newEntry)
+			Types.CLASSES_TYPES_CORRESPONDANCE.put(type, t[0].toString());
+		return t[0];
 	}
 
 	public static Collection<String> getTypeNames() {
@@ -207,13 +240,15 @@ public class Types {
 		for (int i = 0; i < 10; i++) {
 			depths[i] = new ArrayList();
 		}
-		final Set<IType> list = new LinkedHashSet(builtInTypes.getAllTypes());
+		final Set<IType> list = new LinkedHashSet(builtInTypes.getTypes());
 		for (final IType t : list) {
-			// System.out.println("Type: " + t);
+			// System.out.println("Type computing depth: " + t);
 
 			int depth = 0;
 			for (final IType other : list) {
-				if (other.isAssignableFrom(t) && other != t) {
+				// System.out.println("\tComparing with: " + other);
+				if (other != t && other.isAssignableFrom(t)) {
+
 					depth++;
 				}
 			}
@@ -235,13 +270,42 @@ public class Types {
 		parent.addChild(new TypeNode(t));
 	}
 
-	public static Collection<TypeDescription> getBuiltInSpecies() {
-		Collection<TypeDescription> result;
-		final ModelDescription root = ModelDescription.ROOT;
+	private static List<SpeciesDescription> builtInSpecies;
+	private static TypeTree<SpeciesDescription> builtInSpeciesTree;
 
-		final TypesManager tm = root.getTypesManager();
-		result = tm.getAllSpecies();
-		return result;
+	public static TypeTree<SpeciesDescription> getBuiltInSpeciesTree() {
+		if (builtInSpeciesTree != null)
+			return builtInSpeciesTree;
+		final ModelDescription root = ModelDescription.ROOT;
+		builtInSpeciesTree = new TypeTree(root.getSpeciesDescription(IKeyword.AGENT));
+		final List<SpeciesDescription> speciesLeft = new ArrayList(getBuiltInSpecies());
+		while (!speciesLeft.isEmpty()) {
+			final List<SpeciesDescription> speciesToConsider = new ArrayList(speciesLeft);
+			for (final SpeciesDescription sd : speciesToConsider) {
+				if (builtInSpeciesTree.exists(sd))
+					speciesLeft.remove(sd);
+				else {
+					final TypeNode node = builtInSpeciesTree.find(sd.getParent());
+					if (node != null) {
+						node.addChild(sd);
+						speciesLeft.remove(sd);
+					}
+				}
+			}
+		}
+		return builtInSpeciesTree;
+	}
+
+	public static Collection<? extends TypeDescription> getBuiltInSpecies() {
+		if (builtInSpecies != null)
+			return builtInSpecies;
+		final ModelDescription root = ModelDescription.ROOT;
+		builtInSpecies = new ArrayList();
+		root.getAllSpecies(builtInSpecies);
+		// builtInSpecies.add((SpeciesDescription)
+		// root.getEnclosingDescription());
+		return builtInSpecies;
+
 	}
 
 	/**
@@ -275,4 +339,5 @@ public class Types {
 		}
 		return false;
 	}
+
 }

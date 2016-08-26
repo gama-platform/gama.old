@@ -11,10 +11,12 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
 
+import gnu.trove.procedure.TObjectObjectProcedure;
+import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlable;
@@ -22,7 +24,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ITyped;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
 /**
@@ -32,6 +33,45 @@ import msi.gaml.types.IType;
  *
  */
 public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable, IGamlable {
+
+	public static abstract class DescriptionVisitor<T extends IDescription> implements TObjectProcedure<T> {
+
+		@Override
+		public boolean execute(final T desc) {
+			visit(desc);
+			return true;
+		}
+
+		public abstract void visit(T desc);
+
+	}
+
+	public static final DescriptionVisitor VALIDATING_VISITOR = new DescriptionVisitor<IDescription>() {
+
+		@Override
+		public void visit(final IDescription desc) {
+			desc.validate();
+
+		}
+	};
+
+	public static abstract class FacetVisitor implements TObjectObjectProcedure<String, IExpressionDescription> {
+
+		@Override
+		public final boolean execute(final String name, final IExpressionDescription exp) {
+			return visit(name, exp);
+		}
+
+		/**
+		 * Returns whether or not the visit should continue after this facet
+		 * 
+		 * @param name
+		 * @param exp
+		 * @return
+		 */
+		public abstract boolean visit(String name, IExpressionDescription exp);
+
+	}
 
 	public void error(final String message);
 
@@ -51,8 +91,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public abstract ModelDescription getModelDescription();
 
-	public abstract ExperimentDescription getExperimentContext();
-
 	public abstract SpeciesDescription getSpeciesContext();
 
 	public abstract void setEnclosingDescription(final IDescription desc);
@@ -60,8 +98,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public abstract EObject getUnderlyingElement(Object facet);
 
 	public abstract SymbolProto getMeta();
-
-	public abstract Facets getFacets();
 
 	public abstract IDescription getEnclosingDescription();
 
@@ -83,11 +119,9 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 */
 	public abstract IExpression getVarExpr(final String name, boolean asField);
 
-	public abstract IExpression addTemp(IDescription declaration, final String name, final IType type);
+	// public abstract List<IDescription> getChildren();
 
-	public abstract List<IDescription> getChildren();
-
-	public abstract void addChildren(List<IDescription> children);
+	public abstract void addChildren(Collection<IDescription> children);
 
 	public abstract IDescription addChild(IDescription child);
 
@@ -127,8 +161,42 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public boolean isDocumenting();
 
-	public boolean hasVar(String name);
+	public boolean hasAttribute(String name);
 
 	public boolean manipulatesVar(final String name);
+
+	// public List<IDescription> getOwnChildren();
+
+	public String getLitteral(String name);
+
+	public IExpression getFacetExpr(final String... strings);
+
+	public boolean hasFacet(String until);
+
+	public IExpressionDescription getFacet(String string);
+
+	public IExpressionDescription getFacet(String... strings);
+
+	public void setFacet(String string, IExpressionDescription exp);
+
+	public void setFacet(String item, IExpression exp);
+
+	public void removeFacets(String... strings);
+
+	/**
+	 * Returns whether or not the visit has been completed
+	 * 
+	 * @param visitor
+	 * @return
+	 */
+	public boolean visitFacets(FacetVisitor visitor);
+
+	public void visitChildren(DescriptionVisitor visitor);
+
+	public void visitOwnChildren(DescriptionVisitor visitor);
+
+	public IType getTypeDenotedByFacet(String s);
+
+	void computeStats(FacetVisitor proc, int[] facetNumber, int[] descWithNoFacets, int[] descNumber);
 
 }

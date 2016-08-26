@@ -143,11 +143,10 @@ public class AddStatement extends AbstractContainerStatement {
 
 		@Override
 		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {
-			final Facets f = cd.getFacets();
-			final IExpression item = f.getExpr(ITEM);
-			final IExpression list = f.getExpr(TO);
-			final IExpression allFacet = f.getExpr(ALL);
-			final IExpression at = f.getExpr(AT);
+			final IExpression item = cd.getFacetExpr(ITEM);
+			final IExpression list = cd.getFacetExpr(TO);
+			final IExpression allFacet = cd.getFacetExpr(ALL);
+			final IExpression at = cd.getFacetExpr(AT);
 			final boolean isAll = allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue());
 			sb.append(list.serialize(false));
 			if (at != null) {
@@ -162,16 +161,16 @@ public class AddStatement extends AbstractContainerStatement {
 
 		@Override
 		public void validateIndexAndContentTypes(final String keyword, final IDescription cd, final boolean all) {
-			final IExpression item = cd.getFacets().getExpr(ITEM);
-			final IExpression list = cd.getFacets().getExpr(TO);
-			final IExpression allFacet = cd.getFacets().getExpr(ALL);
+			final IExpression item = cd.getFacetExpr(ITEM);
+			final IExpression list = cd.getFacetExpr(TO);
+			final IExpression allFacet = cd.getFacetExpr(ALL);
 			if (allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue())) {
 				if (!item.getType().isContainer()) {
 					cd.warning(
 							"The use of 'all' will have no effect here, as " + item.serialize(false)
 									+ " is not a container. Only this value will be added to " + list.serialize(false),
 							IGamlIssue.WRONG_CONTEXT, ALL);
-					cd.getFacets().remove(ALL);
+					cd.removeFacets(ALL);
 				}
 			}
 			if (list.getType().id() == IType.MAP && item.getType().id() == IType.PAIR) {

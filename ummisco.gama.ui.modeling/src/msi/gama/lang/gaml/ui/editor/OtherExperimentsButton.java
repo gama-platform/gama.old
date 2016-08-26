@@ -165,13 +165,11 @@ public class OtherExperimentsButton {
 					final GamlResource xr = (GamlResource) rs.getResource(uri, true);
 					if (xr.getErrors().isEmpty()) {
 						final ISyntacticElement el = xr.getSyntacticContents();
-						for (final ISyntacticElement ch : el.getChildren()) {
-							if (ch.isExperiment()) {
-								if (!map.containsKey(uri)) {
-									map.put(uri, new ArrayList());
-								}
-								map.get(uri).add(ch.getName());
+						for (final ISyntacticElement ch : el.getExperiments()) {
+							if (!map.containsKey(uri)) {
+								map.put(uri, new ArrayList());
 							}
+							map.get(uri).add(ch.getName());
 						}
 					}
 				}

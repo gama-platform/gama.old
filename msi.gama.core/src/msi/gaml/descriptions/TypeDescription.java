@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -24,11 +25,10 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.ISkill;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.ChildrenProvider;
@@ -45,20 +45,21 @@ import msi.gaml.types.IType;
  */
 public abstract class TypeDescription extends SymbolDescription {
 
-	protected Map<String, StatementDescription> actions;
-	protected Map<String, VariableDescription> variables;
-	protected Class javaBase;
+	// AD 08/16 : actions and attributes are now inherited dynamically and built
+	// lazily
+	protected THashMap<String, StatementDescription> actions;
+	protected TOrderedHashMap<String, VariableDescription> attributes;
+
 	protected TypeDescription parent;
-	private static int varCount = 0;
 	private final String plugin;
 
 	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
-			final IDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets,
+			final TypeDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets,
 			final String plugin) {
 		super(keyword, macroDesc, cp, source, facets);
 		// parent can be null
-		setJavaBase(clazz);
-		setParent((TypeDescription) parent);
+		if (parent != null)
+			setParent(parent);
 		this.plugin = plugin;
 	}
 
@@ -67,52 +68,51 @@ public abstract class TypeDescription extends SymbolDescription {
 		return plugin;
 	}
 
-	public void copyJavaAdditions() {
-		final Class clazz = getJavaBase();
-		if (clazz == null) {
-			error("This species cannot be compiled as its Java base is unknown. ", IGamlIssue.UNKNOWN_SUBSPECIES);
-			return;
-		}
-		final Set<IDescription> children = AbstractGamlAdditions.getAllChildrenOf(getJavaBase(), getSkillClasses());
-		for (final IDescription v : children) {
-			if (v instanceof VariableDescription) {
-				addBuiltInVariable((VariableDescription) v);
-			} else {
-				addChild(v.copy(this));
-			}
-		}
-	}
-
 	/**
 	 * ==================================== MANAGEMENT OF VARIABLES
 	 */
 
-	public Map<String, VariableDescription> getVariables() {
-		if (variables == null) {
-			variables = new TOrderedHashMap<String, VariableDescription>();
+	public Collection<VariableDescription> getAttributes() {
+		final Collection<String> names = getAttributeNames();
+		final Collection<VariableDescription> result = new ArrayList();
+		for (final String name : names) {
+			result.add(getAttribute(name));
 		}
-		return variables;
+		return result;
 	}
 
-	public Collection<String> getVarNames() {
-		if (variables != null) {
-			return variables.keySet();
-		}
-		return GamaListFactory.create();
+	public Collection<String> getAttributeNames() {
+		final Collection<String> allNames = new LinkedHashSet();
+		if (parent != null && parent != this)
+			allNames.addAll(getParent().getAttributeNames());
+		if (attributes != null)
+			for (final String s : attributes.keySet()) {
+				if (allNames.contains(s))
+					allNames.remove(s);
+				allNames.add(s);
+			}
+		return allNames;
 	}
 
-	public VariableDescription getVariable(final String name) {
-		return variables == null ? null : variables.get(name);
+	public VariableDescription getAttribute(final String name) {
+		VariableDescription attribute = null;
+		if (attributes != null)
+			attribute = attributes.get(name);
+		if (attribute == null && parent != null && parent != this) {
+			attribute = getParent().getAttribute(name);
+		}
+		return attribute;
 	}
 
 	@Override
-	public boolean hasVar(final String a) {
-		return variables != null && variables.containsKey(a);
+	public boolean hasAttribute(final String a) {
+		return attributes != null && attributes.containsKey(a)
+				|| parent != null && parent != this && getParent().hasAttribute(a);
 	}
 
 	@Override
 	public IExpression getVarExpr(final String n, final boolean asField) {
-		final VariableDescription vd = getVariable(n);
+		final VariableDescription vd = getAttribute(n);
 		if (vd == null) {
 			final IDescription desc = getAction(n);
 			if (desc != null) {
@@ -123,12 +123,15 @@ public abstract class TypeDescription extends SymbolDescription {
 		return vd.getVarExpr(asField);
 	}
 
-	protected void addVariableNoCheck(final VariableDescription vd) {
-		vd.setDefinitionOrder(varCount++);
-		getVariables().put(vd.getName(), vd);
+	protected void addAttributeNoCheck(final VariableDescription vd) {
+		// vd.setDefinitionOrder(varCount++);
+		if (attributes == null)
+			attributes = new TOrderedHashMap();
+		attributes.put(vd.getName(), vd);
 	}
 
-	public boolean assertVarsAreCompatible(final VariableDescription existingVar, final VariableDescription newVar) {
+	public boolean assertAttributesAreCompatible(final VariableDescription existingVar,
+			final VariableDescription newVar) {
 		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) {
 			return true;
 		}
@@ -177,7 +180,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	}
 
-	public void markVariableRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
+	public void markAttributeRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
 		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) {
 			return;
 		}
@@ -213,90 +216,81 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 	}
 
-	protected void inheritVariablesFrom(final TypeDescription p) {
-		if (p.variables != null) {
-			for (final VariableDescription v : p.getVariables().values()) {
-				addInheritedVariable(v);
+	protected void inheritAttributesFrom(final TypeDescription p) {
+		for (final VariableDescription v : p.getAttributes()) {
+			addInheritedAttribute(v);
+		}
+	}
+	//
+	// public void addBuiltInAttribute(final VariableDescription vd) {
+	// // We just add a copy of the variable
+	// addAttributeNoCheck(vd.copy(this));
+	// }
+
+	public void addOwnAttribute(final VariableDescription vd) {
+		final String newVarName = vd.getName();
+		final VariableDescription existing = getAttribute(newVarName);
+
+		if (existing != null) {
+			// A previous definition has been found
+			// We assert whether their types are compatible or not
+			if (assertAttributesAreCompatible(existing, vd)) {
+				markAttributeRedefinition(existing, vd);
+				vd.copyFrom(existing);
+			} else {
+				return;
 			}
 		}
+
+		addAttributeNoCheck(vd);
 	}
 
-	public void addBuiltInVariable(final VariableDescription vd) {
-		// We just add a copy of the variable
-		addVariableNoCheck(vd.copy(this));
-	}
-
-	public void addOwnVariable(final VariableDescription vd) {
-		final String newVarName = vd.getName();
-		// If no previous definition is found, just add the variable
-		if (!hasVar(newVarName)) {
-			addVariableNoCheck(vd);
-			return;
-		}
-		// A previous definition has been found
-		final VariableDescription existing = getVariable(newVarName);
-		// We assert whether their types are compatible or not
-		if (assertVarsAreCompatible(existing, vd)) {
-			markVariableRedefinition(existing, vd);
-			vd.copyFrom(existing);
-			addVariableNoCheck(vd);
-		}
-	}
-
-	public void addInheritedVariable(final VariableDescription vd) {
+	public void addInheritedAttribute(final VariableDescription vd) {
 		// We dont inherit from previously added variables, as a child and its
-		// parent should
-		// share the same javaBase
+		// parent should share the same javaBase
 
 		final String inheritedVarName = vd.getName();
 
 		// If no previous definition is found, just add the variable
-		if (!hasVar(inheritedVarName)) {
-			addVariableNoCheck(vd.copy(this));
-			return;
-		}
+		// if (!hasAttribute(inheritedVarName)) {
+		// addAttributeNoCheck(vd.copy(this));
+		// return;
+		// }
 		// A redefinition has been found
-		final VariableDescription existing = getVariable(inheritedVarName);
-		if (assertVarsAreCompatible(vd, existing)) {
-			if (!existing.isBuiltIn()) {
-				markVariableRedefinition(vd, existing);
+		if (attributes != null) {
+			final VariableDescription existing = attributes.get(inheritedVarName);
+			if (existing != null && assertAttributesAreCompatible(vd, existing)) {
+				if (!existing.isBuiltIn()) {
+					markAttributeRedefinition(vd, existing);
+				}
+				existing.copyFrom(vd);
 			}
-			existing.copyFrom(vd);
 		}
 	}
 
-	public List<String> getUpdatableVarNames() {
-		if (variables == null) {
-			return Collections.EMPTY_LIST;
-		}
-		final List<String> result = new ArrayList();
-		for (final Map.Entry<String, VariableDescription> entry : variables.entrySet()) {
-			if (entry.getValue().isUpdatable()) {
-				result.add(entry.getKey());
+	public List<String> getUpdatableAttributeNames() {
+		final List<String> result = new ArrayList(
+				parent == null || parent == this ? Collections.EMPTY_LIST : parent.getUpdatableAttributeNames());
+		if (attributes != null)
+			for (final Map.Entry<String, VariableDescription> entry : attributes.entrySet()) {
+				if (entry.getValue().isUpdatable() && !result.contains(entry.getKey())) {
+					result.add(entry.getKey());
+				}
 			}
-		}
 		return result;
 	}
 
-	protected void sortVars() {
-		if (variables == null) {
+	protected void sortAttributes() {
+		if (attributes == null || attributes.isEmpty())
 			return;
-		}
-		// scope.getGui().debug("***** Sorting variables of " +
-		// getNameFacetValue());
-
 		final List<VariableDescription> result = new ArrayList();
-		final Collection<VariableDescription> vars = getVariables().values();
+		final Collection<VariableDescription> vars = attributes.values();
 
 		for (final VariableDescription var : vars) {
-			if (var != null) {
-				var.usedVariablesIn(getVariables());
-			}
+			var.usedVariablesIn(attributes);
 		}
 		for (final VariableDescription var : vars) {
-			if (var != null) {
-				var.expandDependencies(new ArrayList());
-			}
+			var.expandDependencies(new ArrayList());
 		}
 		for (final VariableDescription toBePlaced : vars) {
 			boolean found = false;
@@ -315,20 +309,22 @@ public abstract class TypeDescription extends SymbolDescription {
 				result.add(toBePlaced);
 			}
 		}
-		variables.clear();
+		attributes.clear();
 		for (int i = 0; i < result.size(); i++) {
 			final VariableDescription v = result.get(i);
 			final String s = v.getName();
-			variables.put(s, v);
+			attributes.put(s, v);
 		}
 
 	}
 
 	public void resortVarName(final VariableDescription var) {
-		var.usedVariablesIn(getVariables());
+		if (attributes == null)
+			return;
+		var.usedVariablesIn(attributes);
 		var.expandDependencies(new ArrayList());
-		variables.remove(var.getName());
-		final List<VariableDescription> vl = new ArrayList(variables.values());
+		attributes.remove(var.getName());
+		final List<VariableDescription> vl = new ArrayList(attributes.values());
 		final ListIterator<VariableDescription> li = vl.listIterator(vl.size());
 		boolean added = false;
 		while (li.hasPrevious() && !added) {
@@ -343,9 +339,9 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (!added) {
 			vl.add(0, var);
 		}
-		variables.clear();
+		attributes.clear();
 		for (final VariableDescription vd : vl) {
-			variables.put(vd.getName(), vd);
+			attributes.put(vd.getName(), vd);
 		}
 	}
 
@@ -358,7 +354,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	protected void duplicateInfo(final IDescription one, final IDescription two) {
-		final String name = one.getFacets().getLabel(NAME);
+		final String name = one.getName();
 		final String key = one.getKeyword();
 		final String error = key + " " + name + " is declared twice. This definition supersedes the previous in "
 				+ two.getOriginName();
@@ -366,68 +362,50 @@ public abstract class TypeDescription extends SymbolDescription {
 		// two.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
 	}
 
-	protected void addAction(final TypeDescription from, final StatementDescription newAction) {
+	protected void addAction(final StatementDescription newAction) {
 		final String actionName = newAction.getName();
-
-		final StatementDescription existing = getAction(actionName);
-		if (existing != null) {
-			if (!(newAction.isBuiltIn() && existing.isBuiltIn())) {
-
-				TypeDescription.assertActionsAreCompatible(newAction, existing, existing.getOriginName());
-				if (!existing.isAbstract()) {
-					if (existing.isBuiltIn()) {
-						newAction.info("Action '" + actionName + "' replaces a primitive of the same name defined in "
-								+ existing.getOriginName() + ". If it was not your intention, consider renaming it.",
-								IGamlIssue.GENERAL);
-					} else if (from == this) {
-						duplicateInfo(newAction, existing);
-					} else {
-						existing.info("Action '" + actionName + "' supersedes the one defined in  "
-								+ newAction.getOriginName(), IGamlIssue.REDEFINES);
-						return;
-					}
-				} else if (newAction.isAbstract() && from != this) {
-					this.error("Abstract action '" + actionName + "', inherited from " + from.getName()
-							+ ", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
-					return;
-				}
+		if (actions != null) {
+			final StatementDescription existing = actions.get(actionName);
+			if (existing != null) {
+				duplicateInfo(newAction, existing);
 			}
-		} else if (newAction.isAbstract() && from != this) {
-			this.error(
-					"Abstract action '" + actionName + "', inherited from " + from.getName() + ", should be redefined.",
-					IGamlIssue.MISSING_ACTION, NAME);
-			return;
-
-		}
-		if (actions == null) {
-			actions = new TOrderedHashMap<String, StatementDescription>();
+		} else {
+			actions = new THashMap();
 		}
 		actions.put(actionName, newAction);
 	}
 
 	@Override
 	public StatementDescription getAction(final String aName) {
-		return actions == null ? null : actions.get(aName);
+		StatementDescription ownAction = null;
+		if (actions != null)
+			ownAction = actions.get(aName);
+		if (ownAction == null && parent != null && parent != this)
+			ownAction = getParent().getAction(aName);
+		return ownAction;
 	}
 
 	public Collection<String> getActionNames() {
-		return actions == null ? Collections.EMPTY_LIST : actions.keySet();
+		final Collection<String> allNames = new LinkedHashSet(
+				actions == null ? Collections.EMPTY_LIST : actions.keySet());
+		if (parent != null && parent != this)
+			allNames.addAll(getParent().getActionNames());
+		return allNames;
 	}
 
 	public Collection<StatementDescription> getActions() {
-		return actions == null ? Collections.EMPTY_LIST : actions.values();
+		final Collection<StatementDescription> allActions = new ArrayList();
+		final Collection<String> actionNames = getActionNames();
+		for (final String name : actionNames) {
+			allActions.add(getAction(name));
+		}
+		return allActions;
 	}
 
 	@Override
 	public boolean hasAction(final String a) {
-		return actions != null && actions.containsKey(a);
-	}
-
-	public abstract Class getJavaBase();
-
-	protected void setJavaBase(final Class javaBase) {
-		this.javaBase = javaBase;
-		// System.out.println("" + this + " javaBase: " + javaBase);
+		return actions != null && actions.containsKey(a)
+				|| parent != null && parent != this && getParent().hasAction(a);
 	}
 
 	public boolean isAbstract() {
@@ -440,10 +418,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	@Override
-	public IType getType() {
-		// WARNING: this leads to numerous computations. Could we cache the type
-		// somehow ?
-		// WARNING: Before, we should count how many invocations are made
+	protected IType computeType() {
 		return getTypeNamed(getName());
 	}
 
@@ -469,12 +444,10 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (isBuiltIn()) {
 			return;
 		}
-		if (actions != null) {
+		if (actions != null)
 			actions.clear();
-		}
-		if (variables != null) {
-			variables.clear();
-		}
+		if (attributes != null)
+			attributes.clear();
 		super.dispose();
 	}
 
@@ -482,17 +455,51 @@ public abstract class TypeDescription extends SymbolDescription {
 		// Takes care of invalid species (see Issue 711)
 		if (parent != null && parent != this && !parent.isBuiltIn()) {
 			inheritActionsFrom(parent);
-			inheritVariablesFrom(parent);
+			inheritAttributesFrom(parent);
 		}
 	}
 
 	protected void inheritActionsFrom(final TypeDescription p) {
-		// We only copy the actions that are not redefined in this species
-		if (p.actions != null) {
-			for (final StatementDescription action : p.actions.values()) {
-				addAction(p, action);
+		if (p == null || p == this)
+			return;
+		final Collection<StatementDescription> inherited = p.getActions();
+		for (final StatementDescription newAction : inherited) {
+			final String actionName = newAction.getName();
+			final StatementDescription existing = actions == null ? null : actions.get(actionName);
+			if (existing != null) {
+				if (!(newAction.isBuiltIn() && existing.isBuiltIn())) {
+
+					TypeDescription.assertActionsAreCompatible(newAction, existing, existing.getOriginName());
+					if (!existing.isAbstract()) {
+						if (existing.isBuiltIn()) {
+							newAction.info(
+									"Action '" + actionName + "' replaces a primitive of the same name defined in "
+											+ existing.getOriginName()
+											+ ". If it was not your intention, consider renaming it.",
+									IGamlIssue.GENERAL);
+						} else {
+							existing.info("Action '" + actionName + "' supersedes the one defined in  "
+									+ newAction.getOriginName(), IGamlIssue.REDEFINES);
+							return;
+						}
+					} else if (newAction.isAbstract()) {
+						this.error(
+								"Abstract action '" + actionName + "', inherited from "
+										+ newAction.getEnclosingDescription().getName() + ", should be redefined.",
+								IGamlIssue.MISSING_ACTION, NAME);
+						return;
+					}
+				}
+			} else if (newAction.isAbstract()) {
+				this.error(
+						"Abstract action '" + actionName + "', inherited from "
+								+ newAction.getEnclosingDescription().getName() + ", should be redefined.",
+						IGamlIssue.MISSING_ACTION, NAME);
+				return;
+
 			}
 		}
+
 	}
 
 	public static void assertActionsAreCompatible(final StatementDescription myAction,
@@ -512,17 +519,42 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 
 	}
+	//
+	// @Override
+	// public List<IDescription> getOwnChildren() {
+	// final List<IDescription> result = new ArrayList();
+	// if (attributes != null)
+	// result.addAll(attributes.values());
+	// if (actions != null)
+	// result.addAll(actions.values());
+	// return result;
+	// }
+
+	// @Override
+	// public List<IDescription> getChildren() {
+	// final List<IDescription> result = new ArrayList();
+	// result.addAll(getAttributes());
+	// result.addAll(getActions());
+	// return result;
+	// }
 
 	@Override
-	public List<IDescription> getChildren() {
-		final List<IDescription> result = new ArrayList();
-		if (variables != null) {
-			result.addAll(variables.values());
+	public void visitChildren(final DescriptionVisitor visitor) {
+		for (final IDescription d : getAttributes()) {
+			visitor.visit(d);
 		}
+		for (final IDescription d : getActions()) {
+			visitor.visit(d);
+		}
+	}
+
+	@Override
+	public void visitOwnChildren(final DescriptionVisitor visitor) {
+		if (attributes != null)
+			attributes.forEachValue(visitor);
 		if (actions != null) {
-			result.addAll(actions.values());
+			actions.forEachValue(visitor);
 		}
-		return result;
 	}
 
 }

@@ -331,6 +331,11 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	@Override
+	public boolean isContinuous() {
+		return true;
+	}
+
+	@Override
 	public ISpatialIndex getSpatialIndex() {
 		return index;
 	}

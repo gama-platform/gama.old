@@ -12,6 +12,7 @@
 package msi.gama.lang.gaml.parsing;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,12 +37,15 @@ public class GamlSyntacticParser extends GamlParser {
 	public static class GamlParseResult extends ParseResult {
 
 		final SyntacticModelElement element;
-		final Set<Diagnostic> errors = new HashSet();
+		Set<Diagnostic> errors;
 
 		public GamlParseResult(final IParseResult result) {
 			super(result.getRootASTElement(), result.getRootNode(), result.hasSyntaxErrors());
 			if (!result.hasSyntaxErrors()) {
+				errors = new HashSet();
 				element = GamlCompatibilityConverter.buildSyntacticContents(getRootASTElement(), errors);
+				if (errors.isEmpty())
+					errors = null;
 			} else {
 				element = null;
 			}
@@ -52,6 +56,8 @@ public class GamlSyntacticParser extends GamlParser {
 		}
 
 		public Collection<? extends Diagnostic> getWarnings() {
+			if (errors == null)
+				return Collections.EMPTY_LIST;
 			return errors;
 		}
 
@@ -88,6 +94,11 @@ public class GamlSyntacticParser extends GamlParser {
 			}
 			element.setAbsoluteAlternatePaths(newSet);
 		}
+
+		public boolean hasWarnings() {
+			return errors != null;
+		}
+
 	}
 
 	@Override
@@ -99,7 +110,7 @@ public class GamlSyntacticParser extends GamlParser {
 
 	@Override
 	protected IParseResult doReparse(final IParseResult previousParseResult, final ReplaceRegion replaceRegion) {
-		final long begin = System.nanoTime();
+		// final long begin = System.nanoTime();
 		final IParseResult result = super.doReparse(previousParseResult, replaceRegion);
 		final GamlParseResult r = new GamlParseResult(result);
 		// System.out.println(" reparsed in " + (System.nanoTime() - begin) /

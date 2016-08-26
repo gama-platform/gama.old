@@ -11,11 +11,16 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.emf.ecore.EObject;
+
 import gnu.trove.procedure.TObjectObjectProcedure;
-import java.util.Arrays;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.StringUtils;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
 
 /**
@@ -27,33 +32,39 @@ import msi.gaml.statements.Facets;
  */
 public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
-	protected String[] keys = new String[0];
-	protected IExpressionDescription[] values = new IExpressionDescription[0];
+	private Facets facets;
+	private String keyword;
+	final EObject element;
 
-	AbstractSyntacticElement(final String keyword, final Facets facets) {
-		if ( facets != null ) {
-			int n = facets.size();
-			keys = new String[n];
-			values = new IExpressionDescription[n];
-			final int[] i = new int[] { 0 };
-			facets.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
-
-				@Override
-				public boolean execute(final String facet, final IExpressionDescription expr) {
-					keys[i[0]] = facet;
-					values[i[0]++] = expr;
-					return true;
-				}
-
-			});
-
-		}
-		setKeyword(keyword);
+	AbstractSyntacticElement(final String keyword, final Facets facets, final EObject element) {
+		this.keyword = keyword;
+		this.facets = facets;
+		this.element = element;
 	}
 
 	@Override
-	public ISyntacticElement[] getChildren() {
-		return EMPTY_ARRAY;
+	public EObject getElement() {
+		return element;
+	}
+
+	@Override
+	public Iterable<ISyntacticElement> getChildren() {
+		return Collections.EMPTY_LIST;
+	}
+
+	@Override
+	public Iterable<ISyntacticElement> getSpecies() {
+		return Collections.EMPTY_LIST;
+	}
+
+	@Override
+	public Iterable<ISyntacticElement> getExperiments() {
+		return Collections.EMPTY_LIST;
+	}
+
+	@Override
+	public Iterable<ISyntacticElement> getGrids() {
+		return Collections.EMPTY_LIST;
 	}
 
 	@Override
@@ -63,69 +74,74 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 
 	@Override
 	public void setKeyword(final String name) {
-		setFacet(IKeyword.KEYWORD, LabelExpressionDescription.create(name));
+		keyword = name;
 	}
 
 	@Override
 	public String getKeyword() {
-		return StringUtils.toJavaString(getExpressionAt(IKeyword.KEYWORD).toString());
+		return keyword;
+	}
+
+	@Override
+	public void setDependencies(final Set<String> strings) {
+	}
+
+	@Override
+	public Set<String> getDependencies() {
+		return Collections.EMPTY_SET;
+	}
+
+	@Override
+	public final boolean hasFacets() {
+		return facets != null;
 	}
 
 	@Override
 	public final boolean hasFacet(final String name) {
-		return lookupFacet(name) != -1;
+		return facets != null && facets.contains(name);
 	}
 
 	@Override
 	public final IExpressionDescription getExpressionAt(final String name) {
-		int pos = lookupFacet(name);
-		if ( pos == -1 ) { return null; }
-		return values[pos];
+		return facets == null ? null : facets.get(name);
 	}
 
 	@Override
 	public final Facets copyFacets(final SymbolProto sp) {
-		Facets ff = new Facets();
-		for ( int i = 0; i < keys.length; i++ ) {
-			String name = keys[i];
-			IExpressionDescription expr = values[i];
-			if ( expr != null ) {
-				expr = expr.cleanCopy();
-				ff.put(keys[i], sp != null && sp.isLabel(name) ? expr.compileAsLabel() : expr);
-			}
+		if (facets != null) {
+			final Facets ff = new Facets();
+			facets.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
+
+				@Override
+				public boolean execute(final String a, final IExpressionDescription b) {
+					if (b != null)
+						ff.put(a, sp != null && sp.isLabel(a) ? b.cleanCopy().compileAsLabel() : b.cleanCopy());
+					return true;
+				}
+			});
+			return ff;
 		}
-		return ff;
+		return null;
 	}
 
 	@Override
 	public void setFacet(final String string, final IExpressionDescription expr) {
-		int pos = lookupFacet(string);
-		if ( pos == -1 ) {
-			addFacet(string, expr);
-		} else {
-			values[pos] = expr;
-		}
-
+		if (expr == null)
+			return;
+		if (facets == null)
+			facets = new Facets();
+		facets.put(string, expr);
 	}
 
 	@Override
 	public String getName() {
-		IExpressionDescription expr = getExpressionAt(IKeyword.NAME);
+		// Default behavior. Redefined in subclasses
+		final IExpressionDescription expr = getExpressionAt(IKeyword.NAME);
 		return expr == null ? null : expr.toString();
 	}
 
 	@Override
-	public boolean isSynthetic() {
-		return true;
-	}
-
-	@Override
 	public boolean isSpecies() {
-		return false;
-	}
-
-	@Override
-	public boolean isGlobal() {
 		return false;
 	}
 
@@ -135,47 +151,21 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	}
 
 	@Override
-	public void dump() {
-		StringBuilder sb = new StringBuilder(256);
-		dump(sb);
-		System.out.println(sb.toString());
-	}
-
-	private void dump(final StringBuilder sb) {
-		sb.append(getKeyword()).append(" ");
-		for ( int i = 0; i < keys.length; i++ ) {
-			sb.append(keys[i]).append(": ").append(values[i]).append(" ");
-		}
-		sb.append("\n");
-		if ( getChildren().length != 0 ) {
-			sb.append('[');
-		}
-		for ( ISyntacticElement elt : getChildren() ) {
-			((AbstractSyntacticElement) elt).dump(sb);
-		}
-		if ( getChildren().length != 0 ) {
-			sb.append(']');
-		}
-	}
-
-	private int lookupFacet(final String key) {
-		for ( int i = 0; i < keys.length; i++ ) {
-			if ( keys[i].equals(key) ) { return i; }
-		}
-		return -1;
-	}
-
-	private void addFacet(final String key, final IExpressionDescription desc) {
-		if ( key == null ) { return; }
-		if ( keys == null ) {
-			keys = new String[1];
-			values = new IExpressionDescription[1];
+	public void computeStats(final Map<String, Integer> stats) {
+		final String s = getClass().getSimpleName();
+		if (!stats.containsKey(s)) {
+			stats.put(s, 1);
 		} else {
-			keys = Arrays.copyOf(keys, keys.length + 1);
-			values = Arrays.copyOf(values, values.length + 1);
+			stats.put(s, stats.get(s) + 1);
 		}
-		keys[keys.length - 1] = key;
-		values[values.length - 1] = desc;
+		for (final ISyntacticElement e : this.getChildren())
+			e.computeStats(stats);
+		for (final ISyntacticElement e : this.getSpecies())
+			e.computeStats(stats);
+		for (final ISyntacticElement e : this.getExperiments())
+			e.computeStats(stats);
+		for (final ISyntacticElement e : this.getGrids())
+			e.computeStats(stats);
 	}
 
 }

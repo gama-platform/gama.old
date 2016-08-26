@@ -18,7 +18,6 @@ import static msi.gama.common.interfaces.IKeyword.ARG;
 import static msi.gama.common.interfaces.IKeyword.AT;
 import static msi.gama.common.interfaces.IKeyword.BATCH;
 import static msi.gama.common.interfaces.IKeyword.DEFAULT;
-import static msi.gama.common.interfaces.IKeyword.DEPENDS_ON;
 import static msi.gama.common.interfaces.IKeyword.DISPLAY;
 import static msi.gama.common.interfaces.IKeyword.ELSE;
 import static msi.gama.common.interfaces.IKeyword.EQUATION;
@@ -102,7 +101,7 @@ import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.utils.EGaml;
-import msi.gama.lang.utils.EcoreBasedExpressionDescription;
+import msi.gama.lang.utils.ExpressionDescriptionBuilder;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.SyntacticFactory;
@@ -111,7 +110,6 @@ import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.LabelExpressionDescription;
 import msi.gaml.descriptions.OperatorExpressionDescription;
-import msi.gaml.descriptions.StringListExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
@@ -149,23 +147,25 @@ public class GamlCompatibilityConverter {
 
 		final SyntacticModelElement model = (SyntacticModelElement) SyntacticFactory.create(MODEL, m,
 				EGaml.hasChildren(m), imps);
-		model.setFacet(IKeyword.PRAGMA, ConstantExpressionDescription.create(prgm));
+		if (prgm != null)
+			model.setFacet(IKeyword.PRAGMA, ConstantExpressionDescription.create(prgm));
 		model.setFacet(NAME, convertToLabel(null, m.getName()));
 		convStatements(model, EGaml.getStatementsOf(m), errors);
+		model.printStats();
 		return model;
 	}
 
 	private static Object[] collectImports(final ModelImpl m) {
-		Object[] imps = null;
 		if (m.eIsSet(GamlPackage.MODEL__IMPORTS)) {
 			final List<Import> imports = m.getImports();
-			imps = new Object[imports.size()];
+			final Object[] imps = new Object[imports.size()];
 			for (int i = 0; i < imps.length; i++) {
 				final URI uri = URI.createURI(imports.get(i).getImportURI(), false);
 				imps[i] = uri;
 			}
+			return imps;
 		}
-		return imps;
+		return null;
 	}
 
 	private static List<String> collectPragmas(final ModelImpl m) {
@@ -212,6 +212,7 @@ public class GamlCompatibilityConverter {
 			final Set<Diagnostic> errors) {
 		// We catch its keyword
 		String keyword = EGaml.getKeyOf(stm);
+
 		if (keyword == null) {
 			throw new NullPointerException(
 					"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
@@ -221,7 +222,11 @@ public class GamlCompatibilityConverter {
 			keyword = convertKeyword(keyword, upper.getKeyword());
 		}
 
-		final ISyntacticElement elt = SyntacticFactory.create(keyword, stm, EGaml.hasChildren(stm));
+		final boolean isVar = stm instanceof S_Definition && !DescriptionFactory.isStatementProto(keyword)
+				&& !doesNotDefineAttributes(upper.getKeyword()) && !EGaml.hasChildren(stm);
+
+		final ISyntacticElement elt = isVar ? SyntacticFactory.createVar(keyword, ((S_Definition) stm).getName(), stm)
+				: SyntacticFactory.create(keyword, stm, EGaml.hasChildren(stm));
 
 		if (stm instanceof S_Assignment) {
 			keyword = convertAssignment((S_Assignment) stm, keyword, elt, stm.getExpr(), errors);
@@ -315,7 +320,9 @@ public class GamlCompatibilityConverter {
 			convStatements(elt, EGaml.getEquationsOf((S_Equations) stm), errors);
 		}
 		// We add the dependencies (only for variable declarations)
-		assignDependencies(stm, keyword, elt, errors);
+		if (isVar) {
+			elt.setDependencies(varDependenciesOf(stm));
+		}
 		// We convert the block of statements (if any)
 		convertBlock(stm, elt, errors);
 
@@ -350,18 +357,6 @@ public class GamlCompatibilityConverter {
 					errors);
 		}
 		e.setFacet(key, expr);
-	}
-
-	private static void assignDependencies(final Statement stm, final String keyword, final ISyntacticElement elt,
-			final Set<Diagnostic> errors) {
-
-		if (!DescriptionFactory.isStatementProto(keyword)) {
-			final Set<String> s = varDependenciesOf(stm);
-			if (s != null && !s.isEmpty()) {
-				elt.setFacet(DEPENDS_ON, new StringListExpressionDescription(s));
-			}
-
-		}
 	}
 
 	private static void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
@@ -529,7 +524,7 @@ public class GamlCompatibilityConverter {
 		if (expr == null) {
 			return null;
 		}
-		final IExpressionDescription result = EcoreBasedExpressionDescription.create(expr, errors);
+		final IExpressionDescription result = ExpressionDescriptionBuilder.create(expr, errors);
 		return result;
 	}
 
@@ -537,7 +532,7 @@ public class GamlCompatibilityConverter {
 		if (expr == null) {
 			return null;
 		}
-		final IExpressionDescription result = EcoreBasedExpressionDescription.create(expr, errors);
+		final IExpressionDescription result = ExpressionDescriptionBuilder.create(expr, errors);
 		return result;
 	}
 
@@ -578,9 +573,14 @@ public class GamlCompatibilityConverter {
 	final static void convStatements(final ISyntacticElement elt, final List<? extends Statement> ss,
 			final Set<Diagnostic> errors) {
 		for (final Statement stm : ss) {
-			final ISyntacticElement child = convStatement(elt, stm, errors);
-			if (child != null) {
-				elt.addChild(child);
+			if (IKeyword.GLOBAL.equals(EGaml.getKeyOf(stm))) {
+				convStatements(elt, EGaml.getStatementsOf(stm.getBlock()), errors);
+				convertFacets(stm, IKeyword.GLOBAL, elt, errors);
+			} else {
+				final ISyntacticElement child = convStatement(elt, stm, errors);
+				if (child != null) {
+					elt.addChild(child);
+				}
 			}
 		}
 	}

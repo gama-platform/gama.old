@@ -109,7 +109,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 		@Override
 		public void validate(final IDescription description) {
-			final String type = description.getFacets().getLabel(TYPE);
+			final String type = description.getLitteral(TYPE);
 			if (type == null)
 				return;
 			if (!CLASSICAL_NAMES.contains(type)) {
@@ -126,7 +126,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 	public SystemOfEquationsStatement(final IDescription desc) {
 		super(desc);
-		setName(getLiteral(IKeyword.NAME));
+		setName(desc.getName());
 		simultan = getFacet(IKeyword.SIMULTANEOUSLY);
 
 	}

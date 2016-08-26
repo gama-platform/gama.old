@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import msi.gaml.descriptions.OperatorProto;
-
 /**
  * Written by drogoul Modified on 22 ao�t 2010
  * 
@@ -23,6 +21,6 @@ public interface IOperator extends IExpression {
 
 	public abstract IExpression arg(int i);
 
-	public abstract OperatorProto getPrototype();
+	// public abstract OperatorProto getPrototype();
 
 }

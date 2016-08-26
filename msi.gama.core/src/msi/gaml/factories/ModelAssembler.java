@@ -4,37 +4,31 @@
  */
 package msi.gaml.factories;
 
-import static msi.gama.common.interfaces.IKeyword.BOUNDS;
-import static msi.gama.common.interfaces.IKeyword.DEPENDS_ON;
 import static msi.gama.common.interfaces.IKeyword.ENVIRONMENT;
-import static msi.gama.common.interfaces.IKeyword.EXPERIMENT;
 import static msi.gama.common.interfaces.IKeyword.FREQUENCY;
-import static msi.gama.common.interfaces.IKeyword.GEOMETRY;
 import static msi.gama.common.interfaces.IKeyword.GLOBAL;
-import static msi.gama.common.interfaces.IKeyword.GRID;
-import static msi.gama.common.interfaces.IKeyword.HEIGHT;
 import static msi.gama.common.interfaces.IKeyword.INIT;
 import static msi.gama.common.interfaces.IKeyword.NAME;
-import static msi.gama.common.interfaces.IKeyword.POINT;
 import static msi.gama.common.interfaces.IKeyword.SCHEDULES;
 import static msi.gama.common.interfaces.IKeyword.SHAPE;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
-import static msi.gama.common.interfaces.IKeyword.TORUS;
-import static msi.gama.common.interfaces.IKeyword.WIDTH;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.TObjectObjectProcedure;
+import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.GAML;
@@ -42,13 +36,11 @@ import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.SyntacticFactory;
-import msi.gaml.descriptions.ConstantExpressionDescription;
+import msi.gaml.compilation.SyntacticModelElement;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.descriptions.OperatorExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.TypeDescription;
@@ -77,12 +69,12 @@ public class ModelAssembler {
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 			final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
 			final Map<String, ModelDescription> mm, final Collection<URI> absoluteAlternatePaths) {
-		final Map<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
-		final Map<String, Map<String, ISyntacticElement>> experimentNodes = new TOrderedHashMap();
+		final TOrderedHashMap<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
+		TOrderedHashMap<String, TOrderedHashMap<String, ISyntacticElement>> experimentNodes = null;
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 		final ISyntacticElement source = models.get(0);
-		final Facets globalFacets = new Facets();
-		final List<ISyntacticElement> otherNodes = new ArrayList();
+		Facets globalFacets = null;
+		// System.out.println("Assembling " + modelPath);
 		if (source.hasFacet(IKeyword.PRAGMA)) {
 			final Facets facets = source.copyFacets(null);
 			final List<String> pragmas = (List<String>) facets.get(IKeyword.PRAGMA).getExpression().value(null);
@@ -98,56 +90,42 @@ public class ModelAssembler {
 		final Map<String, SpeciesDescription> tempSpeciesCache = new THashMap();
 
 		for (int n = models.size(), i = n - 1; i >= 0; i--) {
-			final ISyntacticElement currentModel = models.get(i);
+			final SyntacticModelElement currentModel = (SyntacticModelElement) models.get(i);
 			if (currentModel != null) {
+				if (currentModel.hasFacets()) {
+					if (globalFacets == null)
+						globalFacets = new Facets(currentModel.copyFacets(null));
+					else
+						globalFacets.putAll(currentModel.copyFacets(null));
+				}
 				for (final ISyntacticElement se : currentModel.getChildren()) {
-					if (se.isGlobal()) {
-						// We build the facets resulting from the different
-						// arguments
-						globalFacets.putAll(se.copyFacets(null));
-						for (final ISyntacticElement ge : se.getChildren()) {
-							if (ge.isSpecies()) {
-								addSpeciesNode(ge, speciesNodes, collector);
-							} else if (ge.isExperiment()) {
-								addExperimentNode(ge, currentModel.getName(), experimentNodes, collector);
-							} else {
-								globalNodes.addChild(ge);
-							}
-						}
+					globalNodes.addChild(se);
+				}
+				for (final ISyntacticElement se : currentModel.getSpecies()) {
+					addSpeciesNode(se, speciesNodes, collector);
+				}
+				// We input the species so that grids are always the last ones
+				// (see DiffusionStatement)
 
-					} else if (se.isSpecies()) {
-						addSpeciesNode(se, speciesNodes, collector);
-					} else if (se.isExperiment()) {
-						addExperimentNode(se, currentModel.getName(), experimentNodes, collector);
-					} else {
-						if (!ENVIRONMENT.equals(se.getKeyword())) {
-							collector.add(new GamlCompilationError(
-									"This " + se.getKeyword()
-											+ " should be declared either in a species or in the global section",
-									null, se.getElement(), true, false));
-						}
-						otherNodes.add(se);
+				for (final ISyntacticElement se : currentModel.getGrids()) {
+					addSpeciesNode(se, speciesNodes, collector);
+				}
+				for (final ISyntacticElement ee : currentModel.getExperiments()) {
+					if (experimentNodes == null)
+						experimentNodes = new TOrderedHashMap();
+					addExperimentNode(ee, currentModel.getName(), experimentNodes, collector);
+				}
+				for (final ISyntacticElement se : currentModel.getChildren()) {
+					if (ENVIRONMENT.equals(se.getKeyword())) {
+						collector.add(new GamlCompilationError(
+								"'environment' cannot be declared anymore.Its bounds should be declared in the global section as the value of the 'shape' attribute",
+								null, se.getElement(), false, false));
 					}
 				}
 			}
 		}
 
 		final String modelName = buildModelName(source.getName());
-		final Set<String> allModelNames = new LinkedHashSet();
-		allModelNames.add(modelName);
-		for (final ISyntacticElement element : models) {
-			allModelNames.add(buildModelName(element.getName()));
-		}
-		globalFacets.putAsLabel(NAME, modelName);
-
-		// We first sort the species so that grids are always the last ones (see
-		// SignalVariable)
-		for (final ISyntacticElement speciesNode : new ArrayList<ISyntacticElement>(speciesNodes.values())) {
-			if (speciesNode.getKeyword().equals(GRID)) {
-				speciesNodes.remove(speciesNode.getName());
-				speciesNodes.put(speciesNode.getName(), speciesNode);
-			}
-		}
 
 		// We build a list of working paths from which the composite model will
 		// be able to look for resources. These working paths come from the
@@ -164,122 +142,164 @@ public class ModelAssembler {
 			}
 		}
 		Collections.reverse(absoluteAlternatePathAsStrings);
-		final ModelDescription model = new ModelDescription(modelName, null, projectPath,
-				modelPath, /* lastGlobalNode.getElement() */
+		final ModelDescription model = new ModelDescription(modelName, null, projectPath, modelPath,
 				source.getElement(), null, ModelDescription.ROOT, globalFacets, collector,
 				absoluteAlternatePathAsStrings);
 
-		// model.setGlobal(true);
-		model.addSpeciesType(model);
+		// model.addSpeciesType(model);
+
+		Collection<String> allModelNames = null;
+		for (final ISyntacticElement element : models) {
+			final String s = buildModelName(element.getName());
+			if (!s.equals(modelName)) {
+				if (allModelNames == null)
+					allModelNames = new ArrayList();
+				allModelNames.add(s);
+			}
+		}
 		model.setImportedModelNames(allModelNames);
 		model.isDocumenting(document);
 
 		// hqnghi add micro-models
-		// if ( mm != null ) {
-		model.setMicroModels(mm);
-		model.addChildren(new ArrayList(mm.values()));
-		// }
+		if (mm != null) {
+			model.setMicroModels(mm);
+			model.addChildren(new ArrayList(mm.values()));
+		}
 		// end-hqnghi
 		// recursively add user-defined species to world and down on to the
 		// hierarchy
-		for (final ISyntacticElement speciesNode : speciesNodes.values()) {
-			addMicroSpecies(model, speciesNode, tempSpeciesCache);
-		}
-		for (final String s : experimentNodes.keySet()) {
-			for (final ISyntacticElement experimentNode : experimentNodes.get(s).values()) {
-				addExperiment(s, model, experimentNode, tempSpeciesCache);
+		speciesNodes.forEachValue(new TObjectProcedure<ISyntacticElement>() {
+
+			@Override
+			public boolean execute(final ISyntacticElement speciesNode) {
+				addMicroSpecies(model, speciesNode, tempSpeciesCache);
+				return true;
 			}
-		}
+
+		});
+		if (experimentNodes != null)
+			experimentNodes
+					.forEachEntry(new TObjectObjectProcedure<String, TOrderedHashMap<String, ISyntacticElement>>() {
+
+						@Override
+						public boolean execute(final String s, final TOrderedHashMap<String, ISyntacticElement> b) {
+							b.forEachValue(new TObjectProcedure<ISyntacticElement>() {
+
+								@Override
+								public boolean execute(final ISyntacticElement experimentNode) {
+									addExperiment(s, model, experimentNode, tempSpeciesCache);
+									return true;
+								}
+							});
+							return true;
+						}
+					});
 
 		// Parent the species and the experiments of the model (all are now
 		// known).
-		for (final ISyntacticElement speciesNode : speciesNodes.values()) {
-			parentSpecies(model, speciesNode, model, tempSpeciesCache);
-		}
-		for (final String s : experimentNodes.keySet()) {
-			for (final ISyntacticElement experimentNode : experimentNodes.get(s).values()) {
-				parentExperiment(model, experimentNode, model, tempSpeciesCache);
+		speciesNodes.forEachValue(new TObjectProcedure<ISyntacticElement>() {
+
+			@Override
+			public boolean execute(final ISyntacticElement speciesNode) {
+				parentSpecies(model, speciesNode, model, tempSpeciesCache);
+				return true;
 			}
-		}
+		});
+
+		if (experimentNodes != null)
+			experimentNodes
+					.forEachEntry(new TObjectObjectProcedure<String, TOrderedHashMap<String, ISyntacticElement>>() {
+
+						@Override
+						public boolean execute(final String s, final TOrderedHashMap<String, ISyntacticElement> b) {
+							b.forEachValue(new TObjectProcedure<ISyntacticElement>() {
+
+								@Override
+								public boolean execute(final ISyntacticElement experimentNode) {
+									parentExperiment(model, experimentNode);
+									return true;
+								}
+							});
+							return true;
+						}
+					});
+
 		// Initialize the hierarchy of types
 		model.buildTypes();
 		// hqnghi build micro-models as types
-		for (final Entry<String, ModelDescription> entry : mm.entrySet()) {
-			model.getTypesManager().alias(entry.getValue().getName(), entry.getKey());
-		}
+		if (mm != null)
+			for (final Entry<String, ModelDescription> entry : mm.entrySet()) {
+				model.getTypesManager().alias(entry.getValue().getName(), entry.getKey());
+			}
 		// end-hqnghi
 
 		// Make species and experiments recursively create their attributes,
 		// actions....
 		complementSpecies(model, globalNodes);
-		for (final ISyntacticElement speciesNode : speciesNodes.values()) {
-			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
-		}
-		for (final String s : experimentNodes.keySet()) {
-			for (final ISyntacticElement experimentNode : experimentNodes.get(s).values()) {
-				complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
+
+		speciesNodes.forEachValue(new TObjectProcedure<ISyntacticElement>() {
+
+			@Override
+			public boolean execute(final ISyntacticElement speciesNode) {
+				complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
+				return true;
 			}
-		}
+		});
+
+		if (experimentNodes != null)
+			experimentNodes
+					.forEachEntry(new TObjectObjectProcedure<String, TOrderedHashMap<String, ISyntacticElement>>() {
+
+						@Override
+						public boolean execute(final String s, final TOrderedHashMap<String, ISyntacticElement> b) {
+							b.forEachValue(new TObjectProcedure<ISyntacticElement>() {
+
+								@Override
+								public boolean execute(final ISyntacticElement experimentNode) {
+									complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
+									return true;
+								}
+							});
+							return true;
+						}
+					});
 
 		// Complement recursively the different species (incl. the world). The
 		// recursion is hierarchical
-		final TypeTree<SpeciesDescription> hierarchy = model.getTypesManager().getSpeciesHierarchy();
-		// scope.getGui().debug("Hierarchy: " + hierarchy.toStringWithDepth());
-		final List<TypeNode<SpeciesDescription>> list = hierarchy.build(TypeTree.Order.PRE_ORDER);
 
 		model.inheritFromParent();
 		// scope.getGui().debug("ModelFactory.assemble building inheritance for
 		// " + list);
-		for (final TypeNode<SpeciesDescription> node : list) {
-
-			final SpeciesDescription sd = node.getData();
-			if (!sd.isBuiltIn()) {
-				// scope.getGui().debug("Copying Java additions and parent
-				// additions to " + sd.getName());
-				sd.inheritFromParent();
-				if (sd.isExperiment()) {
-					sd.finalizeDescription();
-				}
+		for (final SpeciesDescription sd : getSpeciesInHierarchicalOrder(model)) {
+			sd.inheritFromParent();
+			if (sd.isExperiment()) {
+				sd.finalizeDescription();
 			}
 		}
 
 		// Issue #1708 (put before the finalization)
-		if (model.getFacets().contains(SCHEDULES) || model.getFacets().contains(FREQUENCY)) {
+		if (model.hasFacet(SCHEDULES) || model.hasFacet(FREQUENCY)) {
 			createSchedulerSpecies(model);
 		}
 
 		model.finalizeDescription();
 
 		// We now can safely put the model inside "experiment"
-		model.setEnclosingDescription(ModelDescription.ROOT.getSpeciesDescription(EXPERIMENT));
+		// FIXME : Is it necessary ??
+		// model.setEnclosingDescription(ModelDescription.ROOT.getSpeciesDescription(EXPERIMENT));
 
 		// Parse the other definitions (output, environment, ...)
-		boolean environmentDefined = false;
-		for (final ISyntacticElement e : otherNodes) {
-			// COMPATIBILITY to remove the environment and put its definition in
-			// the world
-			if (ENVIRONMENT.equals(e.getKeyword())) {
-				environmentDefined = translateEnvironment(model, e);
-			} else {
-				//
-				final IDescription dd = DescriptionFactory.create(e, model, null);
-				if (dd != null) {
-					model.addChild(dd);
-				}
-			}
-		}
-		if (!environmentDefined) {
-			VariableDescription vd = model.getVariable(SHAPE);
-			if (!vd.getFacets().containsKey(INIT)) {
-				final Facets f = new Facets(NAME, SHAPE);
-				// TODO Catch the right EObject (instead of null)
-				f.put(INIT, GAML.getExpressionFactory().createOperator("envelope", model, null,
-						new ConstantExpression(100)));
-				final ISyntacticElement shape = SyntacticFactory.create(IKeyword.GEOMETRY, f, false);
-				vd = (VariableDescription) DescriptionFactory.create(shape, model, null);
-				model.addChild(vd);
-				model.resortVarName(vd);
-			}
+
+		VariableDescription vd = model.getAttribute(SHAPE);
+		if (!vd.hasFacet(INIT)) {
+			final Facets f = new Facets(NAME, SHAPE);
+			// TODO Catch the right EObject (instead of null)
+			f.put(INIT,
+					GAML.getExpressionFactory().createOperator("envelope", model, null, new ConstantExpression(100)));
+			final ISyntacticElement shape = SyntacticFactory.create(IKeyword.GEOMETRY, f, false);
+			vd = (VariableDescription) DescriptionFactory.create(shape, model, null);
+			model.addChild(vd);
+			model.resortVarName(vd);
 		}
 
 		if (document) {
@@ -289,23 +309,62 @@ public class ModelAssembler {
 
 	}
 
+	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
+		final TypeTree<SpeciesDescription> hierarchy = Types.getBuiltInSpeciesTree().copy();
+		final List<SpeciesDescription> speciesLeft = new ArrayList();
+		model.getAllSpecies(speciesLeft);
+		final List<SpeciesDescription> speciesToRemove = new ArrayList();
+
+		while (!speciesLeft.isEmpty()) {
+			for (final SpeciesDescription sd : speciesLeft) {
+				if (sd instanceof ModelDescription) {
+					speciesToRemove.add(sd);
+				} else {
+					final SpeciesDescription parent = sd.getParent();
+					if (sd == parent || parent == null) {
+						// Takes care of invalid species
+						return Collections.EMPTY_LIST;
+					} else {
+						final TypeNode<SpeciesDescription> superNode = hierarchy.find(parent);
+						if (superNode != null) {
+							superNode.addChild(sd);
+							speciesToRemove.add(sd);
+						}
+					}
+				}
+			}
+			speciesLeft.removeAll(speciesToRemove);
+			speciesToRemove.clear();
+		}
+		return Iterables.filter(hierarchy.getAllElements(TypeTree.Order.PRE_ORDER),
+				new Predicate<SpeciesDescription>() {
+
+					@Override
+					public boolean apply(final SpeciesDescription input) {
+						if (input.isBuiltIn() || input instanceof ModelDescription)
+							return false;
+						return true;
+					}
+				});
+	}
+
 	private void createSchedulerSpecies(final ModelDescription model) {
 		final SpeciesDescription sd = (SpeciesDescription) DescriptionFactory.create(SPECIES, model, NAME,
 				"_internal_global_scheduler");
 		sd.finalizeDescription();
-		if (model.getFacets().contains(SCHEDULES)) {
+		if (model.hasFacet(SCHEDULES)) {
 			model.warning(
 					"'schedules' is deprecated in global. Define a dedicated species instead and add the facet to it",
 					IGamlIssue.DEPRECATED, NAME);
-			sd.getFacets().put(SCHEDULES, model.getFacets().get(SCHEDULES));
-			model.getFacets().remove(SCHEDULES);
+			sd.setFacet(SCHEDULES, model.getFacet(SCHEDULES));
+			model.removeFacets(SCHEDULES);
 		}
-		if (model.getFacets().contains(FREQUENCY)) {
+		if (model.hasFacet(FREQUENCY)) {
 			model.warning(
 					"'frequency' is deprecated in global. Define a dedicated species instead and add the facet to it",
 					IGamlIssue.DEPRECATED, NAME);
-			sd.getFacets().put(FREQUENCY, model.getFacets().get(FREQUENCY));
-			model.getFacets().remove(FREQUENCY);
+			sd.setFacet(FREQUENCY, model.getFacet(FREQUENCY));
+			model.removeFacets(FREQUENCY);
 		}
 		model.addChild(sd);
 	}
@@ -322,7 +381,8 @@ public class ModelAssembler {
 	}
 
 	void addExperimentNode(final ISyntacticElement element, final String modelName,
-			final Map<String, Map<String, ISyntacticElement>> experimentNodes, final ErrorCollector collector) {
+			final Map<String, TOrderedHashMap<String, ISyntacticElement>> experimentNodes,
+			final ErrorCollector collector) {
 		// First we verify that this experiment has not been declared previously
 		final String experimentName = element.getName();
 		for (final String otherModel : experimentNodes.keySet()) {
@@ -355,18 +415,11 @@ public class ModelAssembler {
 		final SpeciesDescription mDesc = (SpeciesDescription) DescriptionFactory.create(micro, macro,
 				ChildrenProvider.NONE);
 		cache.put(mDesc.getName(), mDesc);
-		for (final ISyntacticElement speciesNode : micro.getChildren()) {
-			if (speciesNode.isSpecies() || speciesNode.isExperiment()) {
-				// forces the micro-species to be created
-				macro.getMicroSpecies();
-				break;
-			}
-		}
 		// Add it to its macro-species
 		macro.addChild(mDesc);
 		// Recursively create each micro-species of the newly added
 		// micro-species
-		for (final ISyntacticElement speciesNode : micro.getChildren()) {
+		for (final ISyntacticElement speciesNode : micro.getSpecies()) {
 			if (speciesNode.isSpecies() || speciesNode.isExperiment()) {
 				addMicroSpecies(mDesc, speciesNode, cache);
 			}
@@ -382,7 +435,7 @@ public class ModelAssembler {
 			collector.add(new GamlCompilationError("Species " + name + " is declared twice",
 					IGamlIssue.DUPLICATE_DEFINITION, speciesNodes.get(name).getElement(), false, false));
 		}
-		speciesNodes.put(element.getName(), element);
+		speciesNodes.put(name, element);
 	}
 
 	/**
@@ -399,21 +452,14 @@ public class ModelAssembler {
 			return;
 		}
 		species.copyJavaAdditions();
-		// scope.getGui().debug("++++++ Building variables & behaviors of " +
-		// species.getName());
-		final List<ISyntacticElement> subspecies = new ArrayList();
 		for (final ISyntacticElement child : node.getChildren()) {
-			if (!child.isExperiment() && !child.isSpecies()) {
-				final IDescription childDesc = DescriptionFactory.create(child, species, null);
-				if (childDesc != null) {
-					species.addChild(childDesc);
-				}
-			} else {
-				subspecies.add(child);
+			final IDescription childDesc = DescriptionFactory.create(child, species, null);
+			if (childDesc != null) {
+				species.addChild(childDesc);
 			}
 		}
 		// recursively complement micro-species
-		for (final ISyntacticElement e : subspecies) {
+		for (final ISyntacticElement e : node.getSpecies()) {
 			final SpeciesDescription sd = species.getMicroSpecies(e.getName());
 			if (sd != null) {
 				complementSpecies(sd, e);
@@ -422,36 +468,30 @@ public class ModelAssembler {
 
 	}
 
-	void parentExperiment(final ModelDescription macro, final ISyntacticElement micro, final ModelDescription model,
-			final Map<String, SpeciesDescription> cache) {
+	void parentExperiment(final ModelDescription model, final ISyntacticElement micro) {
 		// Gather the previously created species
-		final SpeciesDescription mDesc = macro.getExperiment(micro.getName());
+		final SpeciesDescription mDesc = model.getExperiment(micro.getName());
 		if (mDesc == null) {
 			return;
 		}
-		final String p = mDesc.getFacets().getLabel(IKeyword.PARENT);
+		final String p = mDesc.getLitteral(IKeyword.PARENT);
 		// If no parent is defined, we assume it is "experiment"
 		// No cache needed for experiments ??
 		SpeciesDescription parent = model.getExperiment(p);
 		if (parent == null) {
-			parent = (SpeciesDescription) ModelDescription.ROOT.getTypesManager().getSpecies(IKeyword.EXPERIMENT);
+			parent = Types.get(IKeyword.EXPERIMENT).getSpecies();
 		}
 		mDesc.setParent(parent);
-		// for ( SyntacticElement speciesNode : micro.getSpeciesChildren() ) {
-		// parentSpecies(mDesc, speciesNode, model);
-		// }
 	}
 
 	void parentSpecies(final SpeciesDescription macro, final ISyntacticElement micro, final ModelDescription model,
 			final Map<String, SpeciesDescription> cache) {
 		// Gather the previously created species
 		final SpeciesDescription mDesc = cache.get(micro.getName());
-		// final SpeciesDescription mDesc =
-		// macro.getMicroSpecies(micro.getName());
 		if (mDesc == null || mDesc.isExperiment()) {
 			return;
 		}
-		String p = mDesc.getFacets().getLabel(IKeyword.PARENT);
+		String p = mDesc.getLitteral(IKeyword.PARENT);
 		// If no parent is defined, we assume it is "agent"
 		if (p == null) {
 			p = IKeyword.AGENT;
@@ -459,14 +499,11 @@ public class ModelAssembler {
 		SpeciesDescription parent = lookupSpecies(p, cache);
 		// DEBUG
 		if (parent == null) {
-			System.out.println("No parent for species " + micro.getName());
 			parent = model.getSpeciesDescription(p);
 		}
 		mDesc.setParent(parent);
-		for (final ISyntacticElement speciesNode : micro.getChildren()) {
-			if (speciesNode.isSpecies() || speciesNode.isExperiment()) {
-				parentSpecies(mDesc, speciesNode, model, cache);
-			}
+		for (final ISyntacticElement speciesNode : micro.getSpecies()) {
+			parentSpecies(mDesc, speciesNode, model, cache);
 		}
 	}
 
@@ -480,8 +517,7 @@ public class ModelAssembler {
 	SpeciesDescription lookupSpecies(final String name, final Map<String, SpeciesDescription> cache) {
 		SpeciesDescription result = cache.get(name);
 		if (result == null) {
-			final Collection<TypeDescription> builtIn = Types.getBuiltInSpecies();
-			for (final TypeDescription td : builtIn) {
+			for (final TypeDescription td : Types.getBuiltInSpecies()) {
 				if (td.getName().equals(name)) {
 					result = (SpeciesDescription) td;
 					break;
@@ -489,36 +525,6 @@ public class ModelAssembler {
 			}
 		}
 		return result;
-	}
-
-	boolean translateEnvironment(final SpeciesDescription world, final ISyntacticElement e) {
-		final boolean environmentDefined = true;
-		final ISyntacticElement shape = SyntacticFactory.create(GEOMETRY, new Facets(NAME, SHAPE), false);
-		IExpressionDescription bounds = e.getExpressionAt(BOUNDS);
-		if (bounds == null) {
-			final IExpressionDescription width = e.getExpressionAt(WIDTH);
-			final IExpressionDescription height = e.getExpressionAt(HEIGHT);
-			if (width != null && height != null) {
-				bounds = new OperatorExpressionDescription(POINT, width, height);
-			} else {
-				bounds = ConstantExpressionDescription.create(100);
-			}
-		}
-		bounds = new OperatorExpressionDescription("envelope", bounds);
-		shape.setFacet(INIT, bounds);
-		final IExpressionDescription depends = e.getExpressionAt(DEPENDS_ON);
-		if (depends != null) {
-			shape.setFacet(DEPENDS_ON, depends);
-		}
-		final VariableDescription vd = (VariableDescription) DescriptionFactory.create(shape, world, null);
-		world.addChild(vd);
-		world.resortVarName(vd);
-		final IExpressionDescription ed = e.getExpressionAt(TORUS);
-		// TODO Is the call to compilation correct at that point ?
-		if (ed != null) {
-			world.getFacets().put(TORUS, ed.compile(world));
-		}
-		return environmentDefined;
 	}
 
 	protected String buildModelName(final String source) {

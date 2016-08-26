@@ -74,6 +74,8 @@ public interface ITopology extends IValue {
 
 	public abstract boolean isTorus();
 
+	public abstract boolean isContinuous();
+
 	/**
 	 * @throws GamaRuntimeException
 	 *             Distance between two geometries in this topology.

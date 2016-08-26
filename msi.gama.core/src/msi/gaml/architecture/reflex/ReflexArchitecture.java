@@ -11,10 +11,12 @@
  **********************************************************************************************/
 package msi.gaml.architecture.reflex;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -37,7 +39,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
 		clearBehaviors();
-		for ( final ISymbol c : children ) {
+		for (final ISymbol c : children) {
 			addBehavior((IStatement) c);
 		}
 	}
@@ -50,7 +52,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	}
 
 	public void addBehavior(final IStatement c) {
-		if ( IKeyword.INIT.equals(c.getFacet(IKeyword.KEYWORD).literalValue()) ) {
+		if (IKeyword.INIT.equals(c.getKeyword())) {
 			_inits.add(0, c);
 			_inits_number++;
 			return;
@@ -66,11 +68,13 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	}
 
 	protected final Object executeReflexes(final IScope scope) throws GamaRuntimeException {
-		if ( _reflexesNumber == 0 ) { return null; }
+		if (_reflexesNumber == 0) {
+			return null;
+		}
 		Object result = null;
-		for ( int i = 0; i < _reflexesNumber; i++ ) {
+		for (int i = 0; i < _reflexesNumber; i++) {
 			final IStatement r = _reflexes.get(i);
-			if ( !scope.interrupted() ) {
+			if (!scope.interrupted()) {
 				result = r.executeOn(scope);
 			}
 		}
@@ -79,8 +83,10 @@ public class ReflexArchitecture extends AbstractArchitecture {
 
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
-		for ( int i = 0; i < _inits_number; i++ ) {
-			if ( scope.interrupted() ) { return false; }
+		for (int i = 0; i < _inits_number; i++) {
+			if (scope.interrupted()) {
+				return false;
+			}
 			_inits.get(i).executeOn(scope);
 		}
 		return true;

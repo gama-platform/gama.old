@@ -140,12 +140,13 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final DisplayDescription dd = new DisplayDescription(d, string, GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		IGui.DISPLAYS.put(string, dd);
 	}
-	
+
 	public void _experiment(final String string, final Class class1, final IExperimentAgentCreator d) {
 		CONSTANTS.add(string);
-		final ExperimentAgentDescription ed = new ExperimentAgentDescription(d, string, GamaBundleLoader.CURRENT_PLUGIN_NAME);
+		final ExperimentAgentDescription ed = new ExperimentAgentDescription(d, string,
+				GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		ExperimentManager.EXPERIMENTS.put(string, ed);
-	}	
+	}
 
 	public void _species(final String name, final Class clazz, final IAgentConstructor helper, final String... skills) {
 		final SpeciesProto proto = new SpeciesProto(name, clazz, helper, skills);
@@ -160,12 +161,12 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		// "model")
 		final SpeciesProto ap = tempSpecies.remove(AGENT);
 		// "agent" has no super-species yet
-		final SpeciesDescription agent = buildSpecies(ap, null, null, false);
+		final SpeciesDescription agent = buildSpecies(ap, null, null, false, false);
 		((GamaGenericAgentType) Types.builtInTypes.get(IKeyword.AGENT)).setSpecies(agent);
 
 		// We then build "model", sub-species of "agent"
 		final SpeciesProto wp = tempSpecies.remove(MODEL);
-		final ModelDescription model = (ModelDescription) buildSpecies(wp, null, agent, true);
+		final ModelDescription model = (ModelDescription) buildSpecies(wp, null, agent, true, false);
 
 		// We close the first loop by putting agent "inside" model
 		agent.setEnclosingDescription(model);
@@ -174,22 +175,25 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		// We create "experiment" as the root of all experiments, sub-species of
 		// "agent"
 		final SpeciesProto ep = tempSpecies.remove(EXPERIMENT);
-		final SpeciesDescription experiment = buildSpecies(ep, null, agent, false);
-		model.addSpeciesType(experiment);
+		final SpeciesDescription experiment = buildSpecies(ep, null, agent, false, true);
+		experiment.finalizeDescription();
+		// Types.builtInTypes.addSpeciesType(experiment);
 
 		// We now can attach "model" as a micro-species of "experiment"
-		model.setEnclosingDescription(experiment);
+		// model.setEnclosingDescription(experiment);
+		model.addChild(experiment);
 
 		// We then create all other built-in species and attach them to "model"
 		for (final SpeciesProto proto : tempSpecies.values()) {
-			model.addChild(buildSpecies(proto, model, agent, false));
+			model.addChild(buildSpecies(proto, model, agent, false, false));
 		}
+		tempSpecies.clear();
 		model.buildTypes();
 		model.finalizeDescription();
 	}
 
 	public static SpeciesDescription buildSpecies(final SpeciesProto proto, final SpeciesDescription macro,
-			final SpeciesDescription parent, final boolean isGlobal) {
+			final SpeciesDescription parent, final boolean isGlobal, final boolean isExperiment) {
 		final Class clazz = proto.clazz;
 		final String name = proto.name;
 		final IAgentConstructor helper = proto.helper;
@@ -202,11 +206,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 		SpeciesDescription desc;
 		if (!isGlobal) {
-			desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
-					plugin);
+			if (isExperiment)
+				desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
+						allSkills, plugin);
+			else
+				desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
+						plugin);
 		} else {
 			desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
-			Types.builtInTypes.addSpeciesType(desc);
 		}
 
 		// desc.setGlobal(isGlobal);
@@ -214,14 +221,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		if (additions == null) {
 			additions = new ArrayList();
 		}
-		for (final Object c : JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, ADDITIONS.keySet())) {
+		for (final Object c : JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET,
+				ADDITIONS.keySet())) {
 			final List<IDescription> add = getAdditions((Class) c);
 			if (add != null) {
 				additions.addAll(add);
 			}
 		}
 		for (final IDescription d : additions) {
-			// d.resetOriginName();
 			d.setOriginName("built-in species " + name);
 		}
 		desc.copyJavaAdditions();
@@ -267,12 +274,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	protected void _skill(final String name, final Class clazz, final String... species) {
 		final ISkill skill = Skill.Factory.create(name, clazz, GamaBundleLoader.CURRENT_PLUGIN_NAME);
-		// ISkill skill = helper.newInstance();
 		if (skill instanceof AbstractArchitecture) {
 			ARCHITECTURES.add(name);
 		}
-		// skill.setName(name);
-		// skill.setDuplicator(helper);
 		SKILL_INSTANCES.put(clazz, skill);
 		for (final String spec : species) {
 			SPECIES_SKILLS.put(spec, name);
@@ -298,7 +302,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			final SymbolSerializer serializer, final int sKind, final boolean remote, final boolean args,
 			final boolean scope, final boolean sequence, final boolean unique, final boolean name_unique,
 			final String[] parentSymbols, final int[] parentKinds, final FacetProto[] fmd, final String omissible,
-			/* final String[][] combinations, */final ISymbolConstructor sc, final String... names) {
+			final ISymbolConstructor sc, final String... names) {
 
 		final Set<String> contextKeywords = new THashSet();
 		final TIntHashSet contextKinds = new TIntHashSet();
@@ -332,31 +336,18 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			keywords.remove(EXPERIMENT);
 		}
 
-		//
-
-		// if ( validator != null ) {
-		// scope.getGui().debug("## Individual validator found for " +
-		// c.getSimpleName());
-		// }
-
-		final SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, facets, omissible,
-				/* combinations, */contextKeywords, contextKinds, remote, unique, name_unique, sc, validator,
-				serializer, names == null || names.length == 0 ? "variable declaration" : names[0],
+		final SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, facets, omissible, contextKeywords,
+				contextKinds, remote, unique, name_unique, sc, validator, serializer,
+				names == null || names.length == 0 ? "variable declaration" : names[0],
 				GamaBundleLoader.CURRENT_PLUGIN_NAME);
-		// if ( names == null || names.length == 0 ) {
-		// md.setName("variable declaration");
-		// } else {
-		// md.setName(names[0]);
-		// }
 		DescriptionFactory.addProto(md, keywords);
 	}
 
 	public void _iterator(final String[] keywords, final Method method, final Class[] classes,
 			final int[] expectedContentTypes, final Class ret, final boolean c, final int t, final int content,
-			final int index, final GamaHelper helper/* , final int doc */) {
+			final int index, final GamaHelper helper) {
 		IExpressionCompiler.ITERATORS.addAll(Arrays.asList(keywords));
-		_operator(keywords, method, classes, expectedContentTypes, ret, c, t, content, index,
-				helper/* , doc */);
+		_operator(keywords, method, classes, expectedContentTypes, ret, c, t, content, index, helper);
 	}
 
 	public void _operator(final String[] keywords, final AccessibleObject method, final Class[] classes,
@@ -437,24 +428,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 		FIELDS.get(clazz).add(getter);
 	}
-
-	// public static List<IDescription> getFieldDescriptions(final Class clazz)
-	// {
-	// List<Class> classes = JavaUtils.collectImplementationClasses(clazz,
-	// Collections.EMPTY_SET, ADDITIONS.keySet());
-	// Map<String, IDescription> fieldsMap = new LinkedHashMap();
-	// for ( Class c : classes ) {
-	// List<IDescription> descriptions = getAdditions(c);
-	// if ( descriptions == null ) {
-	// continue;
-	// }
-	// for ( IDescription desc : descriptions ) {
-	// fieldsMap.put(desc.getName(), desc);
-	// }
-	// }
-	// List<IDescription> descs = new GamaList(fieldsMap.values());
-	// return descs;
-	// }
 
 	protected IDescription desc(final String keyword, final IDescription superDesc, final ChildrenProvider children,
 			final String... facets) {
@@ -577,7 +550,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	public static Collection<IDescription> getAllVars() {
 		final Set<IDescription> result = new HashSet();
 		for (final TypeDescription s : Types.getBuiltInSpecies()) {
-			result.addAll(s.getVariables().values());
+			result.addAll(s.getAttributes());
 			for (final String a : s.getActionNames()) {
 				final StatementDescription action = s.getAction(a);
 				result.addAll(action.getArgs());
@@ -674,6 +647,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 					result.put(sd.getName(), sd);
 			}
 		}
+		Types.getBuiltInSpeciesTree();
 		for (final Class c : SKILL_CLASSES.values()) {
 			final List<IDescription> descs = ADDITIONS.get(c);
 			if (descs != null) {

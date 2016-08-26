@@ -11,15 +11,22 @@
  **********************************************************************************************/
 package msi.gama.metamodel.population;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+
 import com.google.common.base.Predicate;
+
 import msi.gama.common.interfaces.IStepable;
-import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.variables.IVariable;
@@ -52,6 +59,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 		/**
 		 * Method apply()
+		 * 
 		 * @see com.google.common.base.Predicate#apply(java.lang.Object)
 		 */
 		@Override
@@ -69,25 +77,26 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	 * Create agents as members of this population.
 	 *
 	 * @param scope
-	 * @param number The number of agent to create.
-	 * @param initialValues The initial values of agents' variables.
-	 * @param isRestored Indicates that the agents are newly created or they are restored (on a
-	 *            capture or release).
-	 *            If agents are restored on a capture or release then don't run their "init" reflex
-	 *            again.
+	 * @param number
+	 *            The number of agent to create.
+	 * @param initialValues
+	 *            The initial values of agents' variables.
+	 * @param isRestored
+	 *            Indicates that the agents are newly created or they are
+	 *            restored (on a capture or release). If agents are restored on
+	 *            a capture or release then don't run their "init" reflex again.
 	 *
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
 	public abstract IList<? extends IAgent> createAgents(IScope scope, int number, List<? extends Map> initialValues,
-		boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException;
+			boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException;
 
 	public abstract IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries)
-		throws GamaRuntimeException;
-	
+			throws GamaRuntimeException;
+
 	public abstract IAgent createAgentAt(final IScope s, int index, Map<String, Object> initialValues,
-		boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException;
-	
+			boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException;
 
 	// public abstract Iterator<IAgent> getAgentsList();
 
@@ -106,7 +115,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	// public abstract boolean manages(ISpecies s, boolean direct);
 
-	public abstract IVariable getVar(final IAgent a, final String s);
+	public abstract IVariable getVar(final String s);
 
 	boolean hasUpdatableVariables();
 
@@ -128,7 +137,8 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	/**
 	 * @throws GamaRuntimeException
-	 *             When the "shape" of host changes, this method is invoked to update the topology.
+	 *             When the "shape" of host changes, this method is invoked to
+	 *             update the topology.
 	 */
 	// public abstract void hostChangesShape();
 

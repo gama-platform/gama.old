@@ -391,7 +391,7 @@ public class RandomUtils {
 		return generatorName;
 	}
 
-	public static void drawRandomValues(final double min, final double max, final double step) {
+	public static void testDrawRandomValues(final double min, final double max, final double step) {
 		System.out.println("Drawing 100 double between " + min + " and " + max + " step " + step);
 		final RandomUtils r = new RandomUtils(100.0, "mersenne");
 		for (int i = 0; i < 100; i++) {
@@ -402,10 +402,10 @@ public class RandomUtils {
 			System.out.print(val - low < high - val ? low : high);
 			System.out.print(" | ");
 		}
-		// System.out.println();
+		System.out.println();
 	}
 
-	public static void drawRandomValues(final int min, final int max, final int step) {
+	public static void testDrawRandomValues(final int min, final int max, final int step) {
 		System.out.println("Drawing 100 int between " + min + " and " + max + " step " + step);
 		final RandomUtils r = new RandomUtils(100.0, "mersenne");
 		final int nbSteps = (max - min) / step;
@@ -414,7 +414,7 @@ public class RandomUtils {
 			System.out.print(val);
 			System.out.print(" | ");
 		}
-		// System.out.println();
+		System.out.println();
 	}
 
 	public static void main(final String[] args) {

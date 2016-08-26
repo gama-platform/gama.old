@@ -63,8 +63,6 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.continuous.AmorphousTopology;
-import msi.gama.metamodel.topology.continuous.ContinuousTopology;
 import msi.gama.metamodel.topology.filter.Different;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.filter.In;
@@ -2532,19 +2530,25 @@ public abstract class Spatial {
 						"overlapping" })
 		public static IList<? extends IShape> at_distance(final IScope scope,
 				final IContainer<?, ? extends IShape> list, final Double distance) {
-			if (GamaPreferences.AT_DISTANCE_OPTIMIZATION.getValue() && !scope.getTopology().isTorus()
-					&& (scope.getTopology() instanceof AmorphousTopology
-							|| scope.getTopology() instanceof ContinuousTopology)
-					&& scope.getAgent().isPoint()
-					&& (list.length(scope) + 0.0) / scope.getSimulation().getNbAgents() < 0.1) {
-				final IList<IAgent> results = GamaListFactory.create();
-				final IAgent ag = scope.getAgent();
-				for (final IShape sp : list.iterable(scope)) {
-					if (ag.euclidianDistanceTo(sp) <= distance)
-						results.add((IAgent) sp);
+			if (GamaPreferences.AT_DISTANCE_OPTIMIZATION.getValue()) {
+				if (scope.getAgent().isPoint()) {
+					final ITopology topo = scope.getTopology();
+					if (topo.isContinuous() && !topo.isTorus()) {
+						if ((double) list.length(scope) / (double) scope.getSimulation().getMembersSize(scope) < 0.1) {
+							final IList<IAgent> results = GamaListFactory.create();
+							final IAgent ag = scope.getAgent();
+							for (final IShape sp : list.iterable(scope)) {
+								if (ag.euclidianDistanceTo(sp) <= distance)
+									results.add((IAgent) sp);
+							}
+							return results;
+						}
+					}
+
 				}
-				return results;
+
 			}
+
 			final IType contentType = list.getType().getContentType();
 			if (contentType.isAgentType()) {
 				return _neighbors(scope, In.list(scope, list), scope.getAgent(), distance);

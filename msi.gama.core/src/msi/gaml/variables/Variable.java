@@ -43,7 +43,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.expressions.ListExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.Facets;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaListType;
 import msi.gaml.types.IType;
@@ -126,22 +125,21 @@ public class Variable extends Symbol implements IVariable {
 				}
 			}
 			// The name is ok. Now verifying the logic of facets
-			final Facets ff = cd.getFacets();
 			// Verifying that 'function' is not used in conjunction with other
 			// "value" facets
-			if (ff.containsKey(FUNCTION) && (ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)
-					|| ff.contains(ON_CHANGE))) {
+			if (cd.hasFacet(FUNCTION)
+					&& (cd.hasFacet(INIT) || cd.hasFacet(UPDATE) || cd.hasFacet(VALUE) || cd.hasFacet(ON_CHANGE))) {
 				cd.error("A function cannot have an 'init', 'on_change' or 'update' facet", IGamlIssue.REMOVE_VALUE,
 						FUNCTION);
 				return;
 			}
 			// Verifying that a constant has not 'update' or 'function' facet
 			// and is not a parameter
-			if (ff.equals(CONST, TRUE)) {
-				if (ff.containsKey(VALUE) || ff.containsKey(UPDATE)) {
+			if (TRUE.equals(cd.getLitteral(CONST))) {
+				if (cd.hasFacet(VALUE) || cd.hasFacet(UPDATE)) {
 					cd.warning("A constant attribute cannot have an update value (use init or <- instead)",
 							IGamlIssue.REMOVE_CONST, UPDATE);
-				} else if (ff.containsKey(FUNCTION)) {
+				} else if (cd.hasFacet(FUNCTION)) {
 					cd.error("A function cannot be constant (use init or <- instead)", IGamlIssue.REMOVE_CONST,
 							FUNCTION);
 					return;
@@ -149,7 +147,7 @@ public class Variable extends Symbol implements IVariable {
 					cd.error("Parameter '" + cd.getParameterName() + "'  cannot be declared as constant ",
 							IGamlIssue.REMOVE_CONST);
 					return;
-				} else if (ff.containsKey(ON_CHANGE)) {
+				} else if (cd.hasFacet(ON_CHANGE)) {
 					cd.warning("A constant attribute cannot declare an on_change facet", IGamlIssue.REMOVE_CONST,
 							ON_CHANGE);
 				}
@@ -157,18 +155,18 @@ public class Variable extends Symbol implements IVariable {
 			if (cd.isParameter()) {
 				assertCanBeParameter(cd);
 			} else {
-				assertValueFacetsTypes(cd, ff, cd.getType());
+				assertValueFacetsTypes(cd, cd.getType());
 			}
-			assertAssignmentFacetsTypes(cd, ff);
-			assertAmongValues(cd, ff);
+			assertAssignmentFacetsTypes(cd);
+			assertAmongValues(cd);
 		}
 
-		public void assertAmongValues(final VariableDescription vd, final Facets facets) {
+		public void assertAmongValues(final VariableDescription vd) {
 			// if (vd.isParameter() && vd.getSpeciesContext().isExperiment()
 			// && ((ExperimentDescription) vd.getSpeciesContext()).isBatch())
 			// return;
-			final IExpression amongExpression = facets.getExpr(AMONG);
-			final IExpression initExpression = facets.getExpr(INIT);
+			final IExpression amongExpression = vd.getFacetExpr(AMONG);
+			final IExpression initExpression = vd.getFacetExpr(INIT);
 			if (amongExpression == null || initExpression == null)
 				return;
 			if (!(amongExpression instanceof ListExpression) || !initExpression.isConst())
@@ -185,18 +183,19 @@ public class Variable extends Symbol implements IVariable {
 
 		}
 
-		public void assertAssignmentFacetsTypes(final VariableDescription vd, final Facets facets) {
+		public void assertAssignmentFacetsTypes(final VariableDescription vd) {
 			for (final String s : assignmentFacets) {
 				Assert.typesAreCompatibleForAssignment(vd, vd.getName(),
 						vd.getType(), /* vd.getContentType(), */
-						facets.get(s));
+						vd.getFacet(s));
 			}
 		}
 
-		public void assertValueFacetsTypes(final VariableDescription vd, final Facets facets, final IType vType) {
+		public void assertValueFacetsTypes(final VariableDescription vd, final IType vType) {
+
 			final IType type = null;
 			final String firstValueFacet = null;
-			final IExpression amongExpression = facets.getExpr(AMONG);
+			final IExpression amongExpression = vd.getFacetExpr(AMONG);
 			if (amongExpression != null && !vType.isAssignableFrom(amongExpression.getType().getContentType())) {
 				vd.error("Variable " + vd.getName() + " of type " + vType + " cannot be chosen among "
 						+ amongExpression.serialize(false), IGamlIssue.NOT_AMONG, AMONG);
@@ -205,10 +204,10 @@ public class Variable extends Symbol implements IVariable {
 		}
 
 		public void assertCanBeParameter(final VariableDescription cd) {
-			final Facets facets = cd.getFacets();
-			if (facets.equals(KEYWORD, PARAMETER)) {
-				final String varName = facets.getLabel(VAR);
-				final VariableDescription targetedVar = cd.getModelDescription().getVariable(varName);
+			if (PARAMETER.equals(
+					cd.getKeyword()) /* facets.equals(KEYWORD, PARAMETER) */) {
+				final String varName = cd.getLitteral(VAR);
+				final VariableDescription targetedVar = cd.getModelDescription().getAttribute(varName);
 				if (targetedVar == null) {
 					final String p = "Parameter '" + cd.getParameterName() + "' ";
 					cd.error(p + "cannot refer to the non-global variable " + varName, IGamlIssue.UNKNOWN_VAR,
@@ -221,22 +220,22 @@ public class Variable extends Symbol implements IVariable {
 							IKeyword.TYPE);
 					return;
 				}
-				assertValueFacetsTypes(cd, facets, targetedVar.getType());
+				assertValueFacetsTypes(cd, targetedVar.getType());
 			}
-			assertValueFacetsTypes(cd, facets, cd.getType());
-			final IExpression min = facets.getExpr(MIN);
+			assertValueFacetsTypes(cd, cd.getType());
+			final IExpression min = cd.getFacetExpr(MIN);
 			if (min != null && !min.isConst()) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
 				cd.error(p + " min value must be constant", IGamlIssue.NOT_CONST, MIN);
 				return;
 			}
-			final IExpression max = facets.getExpr(MAX);
+			final IExpression max = cd.getFacetExpr(MAX);
 			if (max != null && !max.isConst()) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
 				cd.error(p + " max value must be constant", IGamlIssue.NOT_CONST, MAX);
 				return;
 			}
-			final IExpression init = facets.getExpr(INIT);
+			final IExpression init = cd.getFacetExpr(INIT);
 
 			if (init == null) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
@@ -253,7 +252,7 @@ public class Variable extends Symbol implements IVariable {
 			// IGamlIssue.NOT_CONST, INIT);
 			// return;
 			// }
-			if (facets.containsKey(UPDATE) || facets.containsKey(VALUE) || facets.containsKey(FUNCTION)) {
+			if (cd.hasFacet(UPDATE) || cd.hasFacet(VALUE) || cd.hasFacet(FUNCTION)) {
 				final String p = "Parameter '" + cd.getParameterName() + "' ";
 				cd.error(p + "cannot have an 'update', 'value' or 'function' facet", IGamlIssue.REMOVE_VALUE);
 			}
@@ -264,7 +263,7 @@ public class Variable extends Symbol implements IVariable {
 	protected IExpression updateExpression, initExpression, amongExpression, functionExpression, onChangeExpression;
 	protected IType type/* , contentType */;
 	protected boolean isNotModifiable /* , doUpdate */;
-	private final int definitionOrder;
+	// private final int definitionOrder;
 	public GamaHelper getter, initer, setter;
 	private IExecutable on_changer;
 	protected String /* gName, sName, iName, */ pName, cName;
@@ -274,7 +273,7 @@ public class Variable extends Symbol implements IVariable {
 		super(sd);
 		final VariableDescription desc = (VariableDescription) sd;
 		// doUpdate = true;
-		setName(getFacet(IKeyword.NAME).literalValue());
+		setName(sd.getName());
 		pName = desc.getParameterName();
 		cName = getLiteral(IKeyword.CATEGORY, null);
 		updateExpression = getFacet(IKeyword.VALUE, IKeyword.UPDATE);
@@ -285,7 +284,7 @@ public class Variable extends Symbol implements IVariable {
 		isNotModifiable = desc.isNotModifiable();
 		type = desc.getType();
 		// contentType = desc.getContentType();
-		definitionOrder = desc.getDefinitionOrder();
+		// definitionOrder = desc.getDefinitionOrder();
 		buildHelpers(desc);
 	}
 
@@ -408,10 +407,10 @@ public class Variable extends Symbol implements IVariable {
 		return cName;
 	}
 
-	@Override
-	public Integer getDefinitionOrder() {
-		return definitionOrder;
-	}
+	// @Override
+	// public Integer getDefinitionOrder() {
+	// return definitionOrder;
+	// }
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
@@ -434,9 +433,9 @@ public class Variable extends Symbol implements IVariable {
 		if (isNotModifiable) {
 			return;
 		}
-		final Object oldValue = value(scope, agent);
+		final Object oldValue = onChangeExpression == null ? null : value(scope, agent);
 		_setVal(agent, scope, v);
-		if (!Objects.equal(oldValue, v) && onChangeExpression != null) {
+		if (onChangeExpression != null && !Objects.equal(oldValue, v)) {
 			if (on_changer == null) {
 				on_changer = agent.getSpecies().getAction(Cast.asString(scope, onChangeExpression.value(scope)));
 			}

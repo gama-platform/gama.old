@@ -36,7 +36,7 @@ public interface IParameter {
 
 	public void setUnitLabel(String label);
 
-	public abstract Integer getDefinitionOrder();
+	// public abstract Integer getDefinitionOrder();
 
 	public abstract void setValue(IScope scope, Object value);
 

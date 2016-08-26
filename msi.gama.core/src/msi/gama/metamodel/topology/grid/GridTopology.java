@@ -11,20 +11,31 @@
  **********************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.*;
-import msi.gama.metamodel.topology.filter.*;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.AbstractTopology;
+import msi.gama.metamodel.topology.ISpatialIndex;
+import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.metamodel.topology.filter.DifferentList;
+import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.path.GamaSpatialPath;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.Types;
 
 public class GridTopology extends AbstractTopology {
 
@@ -34,7 +45,8 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public void updateAgent(final Envelope previous, final IAgent agent) {}
+	public void updateAgent(final Envelope previous, final IAgent agent) {
+	}
 
 	@Override
 	public void initialize(final IScope scope, final IPopulation pop) throws GamaRuntimeException {
@@ -48,16 +60,21 @@ public class GridTopology extends AbstractTopology {
 		return true;
 	}
 
+	@Override
+	public boolean isContinuous() {
+		return false;
+	}
+
 	public GridTopology(final IScope scope, final IShape environment, final int rows, final int columns,
-		final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean useIndividualShapes,
-		final boolean useNeighborsCache) throws GamaRuntimeException {
+			final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean useIndividualShapes,
+			final boolean useNeighborsCache) throws GamaRuntimeException {
 		super(scope, environment, null);
-		if ( isHexagon ) {
+		if (isHexagon) {
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, isHexagon,
-				useIndividualShapes, useNeighborsCache);
+					useIndividualShapes, useNeighborsCache);
 		} else {
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, useIndividualShapes,
-				useNeighborsCache);
+					useNeighborsCache);
 		}
 		// FIXME Not sure it needs to be set
 		// root.setTorus(isTorus);
@@ -65,8 +82,8 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	public GridTopology(final IScope scope, final IShape environment, final GamaGridFile file, final boolean isTorus,
-		final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache)
-		throws GamaRuntimeException {
+			final boolean usesVN, final boolean useIndividualShapes, final boolean useNeighborsCache)
+			throws GamaRuntimeException {
 		super(scope, environment, null);
 		places = new GamaSpatialMatrix(scope, file, isTorus, usesVN, useIndividualShapes, useNeighborsCache);
 		// FIXME Not sure it needs to be set
@@ -81,8 +98,10 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	// @Override
-	// public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
-	// // We first grab the cell at the location closest to the centroid of the source
+	// public IAgent getAgentClosestTo(final IScope scope, final ILocation
+	// source, final IAgentFilter filter) {
+	// // We first grab the cell at the location closest to the centroid of the
+	// source
 	// final IAgent place = getPlaces().getAgentAt(source);
 	// // If the filter accepts it, we return it
 	// if ( filter.accept(scope, source, place) ) { return place; }
@@ -114,7 +133,7 @@ public class GridTopology extends AbstractTopology {
 	protected ITopology _copy(final IScope scope) throws GamaRuntimeException {
 		final IGrid grid = (IGrid) places;
 		return new GridTopology(scope, environment, grid.getRows(scope), grid.getCols(scope), grid.isTorus(),
-			grid.getNeighborhood().isVN(), grid.isHexagon(), grid.usesIndiviualShapes(), grid.usesNeighborsCache());
+				grid.getNeighborhood().isVN(), grid.isHexagon(), grid.usesIndiviualShapes(), grid.usesNeighborsCache());
 	}
 
 	@Override
@@ -124,28 +143,29 @@ public class GridTopology extends AbstractTopology {
 
 	/**
 	 * @throws GamaRuntimeException
-	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry,
+	 *      msi.gama.interfaces.IGeometry)
 	 */
 
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target,
-		final IList<IAgent> on) throws GamaRuntimeException {
+			final IList<IAgent> on) throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, on);
 	}
 
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target,
-		final IList<IAgent> on) throws GamaRuntimeException {
+			final IList<IAgent> on) throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, on);
 	}
 
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, null);
 	}
 
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this, null);
 	}
 
@@ -167,24 +187,30 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry, java.lang.Double)
+	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry,
+	 *      msi.gama.interfaces.IGeometry, java.lang.Double)
 	 */
 	@Override
 	public Double distanceBetween(final IScope scope, final IShape source, final IShape target) {
-		if ( !isValidGeometry(scope, source) || !isValidGeometry(scope, target) ) { return Double.MAX_VALUE; }
+		if (!isValidGeometry(scope, source) || !isValidGeometry(scope, target)) {
+			return Double.MAX_VALUE;
+		}
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
 
 	@Override
 	public Double distanceBetween(final IScope scope, final ILocation source, final ILocation target) {
-		if ( !isValidLocation(scope, source) || !isValidLocation(scope, target) ) { return Double.MAX_VALUE; }
+		if (!isValidLocation(scope, source) || !isValidLocation(scope, target)) {
+			return Double.MAX_VALUE;
+		}
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#directionInDegreesTo(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#directionInDegreesTo(msi.gama.interfaces.IGeometry,
+	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public Integer directionInDegreesTo(final IScope scope, final IShape source, final IShape target) {
@@ -194,21 +220,25 @@ public class GridTopology extends AbstractTopology {
 
 	@Override
 	public Collection<IAgent> getNeighborsOf(final IScope scope, final IShape source, final Double distance,
-		final IAgentFilter filter) throws GamaRuntimeException {
+			final IAgentFilter filter) throws GamaRuntimeException {
 		// We compute the neighboring cells of the "source" shape
 
-		Set<IAgent> placesConcerned =
-			getPlaces().getNeighborsOf(scope, source, distance, getPlaces().getCellSpecies());
-		// If we only accept cells from this topology, no need to look for other agents
-		if ( filter.getSpecies() == getPlaces().getCellSpecies() ) { return placesConcerned; }
-		// Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the
+		final Set<IAgent> placesConcerned = getPlaces().getNeighborsOf(scope, source, distance,
+				getPlaces().getCellSpecies());
+		// If we only accept cells from this topology, no need to look for other
+		// agents
+		if (filter.getSpecies() == getPlaces().getCellSpecies()) {
+			return placesConcerned;
+		}
+		// Otherwise, we return all the agents that intersect the geometry
+		// formed by the shapes of the cells (incl. the
 		// cells themselves) and that are accepted by the filter
-		boolean normalFilter = filter.getSpecies() != null || !(filter instanceof Different);
-		IAgentFilter fDL = normalFilter ? filter
-			: new DifferentList(getPlaces().getCellSpecies().listValue(scope, Types.NO_TYPE, false));
-		Set<IAgent> agents = (Set<IAgent>) getAgentsIn(scope, GamaGeometryType.geometriesToGeometry(scope,
-			GamaListFactory.createWithoutCasting(Types.AGENT, placesConcerned)), fDL, false);
-		if ( !normalFilter ) {
+		final boolean normalFilter = filter.getSpecies() != null || !(filter instanceof Different);
+		final IAgentFilter fDL = normalFilter ? filter
+				: new DifferentList(getPlaces().getCellSpecies().listValue(scope, Types.NO_TYPE, false));
+		final Set<IAgent> agents = (Set<IAgent>) getAgentsIn(scope, GamaGeometryType.geometriesToGeometry(scope,
+				GamaListFactory.createWithoutCasting(Types.AGENT, placesConcerned)), fDL, false);
+		if (!normalFilter) {
 			agents.addAll(placesConcerned);
 		}
 		return agents;
@@ -216,15 +246,21 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	// @Override
-	// public Iterator<IAgent> getNeighborsOf(final ILocation source, final Double distance, final IAgentFilter filter)
+	// public Iterator<IAgent> getNeighborsOf(final ILocation source, final
+	// Double distance, final IAgentFilter filter)
 	// throws GamaRuntimeException {
 	// // We compute the neighboring cells of the "source" location
-	// Iterator<IAgent> placesConcerned = getPlaces().getNeighborsOf(scope, source, distance, filter);
-	// // If we only accept cells from this topology, no need to look for other agents
-	// if ( filter.filterSpecies(getPlaces().getCellSpecies()) ) { return placesConcerned; }
-	// // Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the
+	// Iterator<IAgent> placesConcerned = getPlaces().getNeighborsOf(scope,
+	// source, distance, filter);
+	// // If we only accept cells from this topology, no need to look for other
+	// agents
+	// if ( filter.filterSpecies(getPlaces().getCellSpecies()) ) { return
+	// placesConcerned; }
+	// // Otherwise, we return all the agents that intersect the geometry formed
+	// by the shapes of the cells (incl. the
 	// // cells themselves) and that are accepted by the filter
-	// return getAgentsIn(GamaGeometryType.geometriesToGeometry(scope, new GamaList(placesConcerned)), filter, false);
+	// return getAgentsIn(GamaGeometryType.geometriesToGeometry(scope, new
+	// GamaList(placesConcerned)), filter, false);
 	// }
 
 	@Override
@@ -236,14 +272,14 @@ public class GridTopology extends AbstractTopology {
 
 	@Override
 	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final IShape source, final IShape target,
-		final int k) {
+			final int k) {
 		// TODO for the moment, returns only 1 shortest path.... need to fix it!
 		return super.KpathsBetween(scope, source, target, k);
 	}
 
 	@Override
 	public List<GamaSpatialPath> KpathsBetween(final IScope scope, final ILocation source, final ILocation target,
-		final int k) {
+			final int k) {
 		// TODO for the moment, returns only 1 shortest path.... need to fix it!
 		return super.KpathsBetween(scope, source, target, k);
 	}

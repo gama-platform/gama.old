@@ -95,10 +95,9 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		@Override
 		protected void serializeArg(final StatementDescription desc, final StatementDescription arg,
 				final StringBuilder sb, final boolean includingBuiltIn) {
-			final Facets f = arg.getFacets();
-			final String name = f.getLabel(NAME);
-			final IExpressionDescription type = f.get(TYPE);
-			final IExpressionDescription def = f.get(DEFAULT);
+			final String name = arg.getLitteral(NAME);
+			final IExpressionDescription type = arg.getFacet(TYPE);
+			final IExpressionDescription def = arg.getFacet(DEFAULT);
 
 			sb.append(type == null ? "unknown" : type.serialize(includingBuiltIn)).append(" ").append(name);
 			if (def != null) {
@@ -147,7 +146,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 				return;
 			}
 			for (final StatementDescription ret : returns) {
-				final IExpression ie = ret.getFacets().getExpr(VALUE);
+				final IExpression ie = ret.getFacetExpr(VALUE);
 				if (ie == null) {
 					continue;
 				}

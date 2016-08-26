@@ -57,11 +57,11 @@ public abstract class ParameterWrapper implements IParameter {
 	public void setUnitLabel(final String label) {
 		wrapped.setUnitLabel(label);
 	}
-
-	@Override
-	public Integer getDefinitionOrder() {
-		return wrapped.getDefinitionOrder();
-	}
+	//
+	// @Override
+	// public Integer getDefinitionOrder() {
+	// return wrapped.getDefinitionOrder();
+	// }
 
 	@Override
 	public void setValue(final IScope scope, final Object value) {

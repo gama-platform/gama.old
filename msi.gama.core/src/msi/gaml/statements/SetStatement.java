@@ -62,9 +62,8 @@ public class SetStatement extends AbstractStatement {
 
 		@Override
 		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
-			final Facets f = desc.getFacets();
-			sb.append(f.get(NAME).serialize(includingBuiltIn)).append(" <- ")
-					.append(f.get(VALUE).serialize(includingBuiltIn)).append(";");
+			sb.append(desc.getName()).append(" <- ").append(desc.getFacet(VALUE).serialize(includingBuiltIn))
+					.append(";");
 		}
 
 	}
@@ -78,23 +77,20 @@ public class SetStatement extends AbstractStatement {
 		 */
 		@Override
 		public void validate(final IDescription cd) {
-			final IExpressionDescription receiver = cd.getFacets().get(NAME);
+			final IExpressionDescription receiver = cd.getFacet(NAME);
 			// String name = cd.getName();
 			final IExpression expr = receiver.getExpression();
 			if (!(expr instanceof IVarExpression)) {
-				cd.error("The expression " + cd.getFacets().getLabel(NAME) + " is not a reference to a variable ",
-						NAME);
+				cd.error("The expression " + cd.getLitteral(NAME) + " is not a reference to a variable ", NAME);
 				return;
 			}
-			final IExpressionDescription assigned = cd.getFacets().get(VALUE);
+			final IExpressionDescription assigned = cd.getFacet(VALUE);
 			if (assigned != null) {
-				Assert.typesAreCompatibleForAssignment(cd, Cast.toGaml(expr),
-						expr.getType(), /* expr.getContentType(), */
-						assigned);
+				Assert.typesAreCompatibleForAssignment(cd, Cast.toGaml(expr), expr.getType(), assigned);
 			}
 
 			// AD 19/1/13: test of the constants
-			if (((IVarExpression) expr).isNotModifiable()) {
+			if (((IVarExpression) expr).getVar().isNotModifiable()) {
 				cd.error("The variable " + expr.serialize(false)
 						+ " is a constant or a function and cannot be assigned a value.", IKeyword.NAME);
 			}

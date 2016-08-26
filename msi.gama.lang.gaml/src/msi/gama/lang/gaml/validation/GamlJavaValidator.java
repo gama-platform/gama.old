@@ -28,15 +28,11 @@ import msi.gaml.descriptions.ErrorCollector;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
-	// volatile boolean isValidating;
+	// @Inject
+	// private ImportUriResolver resolver;
 
 	@Check()
 	public void validate(final Model model) {
-		// if (isValidating)
-		// return;
-
-		// try {
-		// isValidating = true;
 		final GamlResource newResource = (GamlResource) model.eResource();
 		if (newResource.isValidating()) {
 			return;
@@ -47,25 +43,17 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 				manageCompilationIssue(error);
 			}
 		}
-		// } finally {
-		// isValidating = false;
-		// }
-	}
-
-	private GamlResource getCurrentResource() {
-		final EObject object = this.getCurrentObject();
-		if (object == null) {
-			return null;
-		}
-		return (GamlResource) object.eResource();
-
 	}
 
 	private boolean sameResource(final EObject object) {
 		if (object == null) {
 			return false;
 		}
-		return object.eResource() == getCurrentResource();
+		final EObject current = this.getCurrentObject();
+		if (current == null) {
+			return false;
+		}
+		return object.eResource() == current.eResource();
 	}
 
 	private void manageCompilationIssue(final GamlCompilationError e) {
@@ -78,27 +66,6 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 
 		if (!sameResource(object)) {
-			// if ( e.isError() ) {
-			// URI uri = object.eResource().getURI();
-			// final EObject imp = getCurrentResource().findImport(uri);
-			// EObject warningContainer;
-			// String msg;
-			// EAttribute feature;
-			// if ( imp != null ) {
-			// warningContainer = imp;
-			// msg = "Error detected in imported file " + ": " + e.toString();
-			// feature = GamlPackage.Literals.IMPORT__IMPORT_URI;
-			//
-			// } else {
-			// warningContainer = getCurrentObject();
-			// msg = "Errors detected in indirectly imported file " + uri + ": "
-			// + e.toString();
-			// feature = GamlPackage.Literals.GAML_DEFINITION__NAME;
-			// }
-			// acceptWarning(msg, warningContainer, feature,
-			// ValidationMessageAcceptor.INSIGNIFICANT_INDEX,
-			// IGamlIssue.IMPORT_ERROR, uri.toString());
-			// }
 			return;
 		}
 		EStructuralFeature feature = null;
@@ -119,9 +86,6 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			} else if (e.isWarning()) {
 				acceptWarning(e.toString(), object, feature, index, e.getCode(), e.getData());
 			} else {
-				// System.out.println("One compilation error accepted: " +
-				// e.toString() + " thread: "
-				// + Thread.currentThread().getName());
 				acceptError(e.toString(), object, feature, index, e.getCode(), e.getData());
 			}
 		}

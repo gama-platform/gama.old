@@ -238,8 +238,11 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			final ActionRef ref = getActionFrom((Function) o);
 			if (ref != null) {
 				final ActionDefinition def = ref.getRef();
-				if (def != null)
-					return getFirstLine(def);
+				if (def != null) {
+					final String temp = getFirstLine(def);
+					if (!temp.isEmpty())
+						return temp;
+				}
 			}
 		}
 

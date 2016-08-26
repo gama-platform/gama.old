@@ -54,7 +54,7 @@ global {
 
 		if (first(DB_Accessor) isConnected [] = false) {
 			write "No connection.";
-			ask (AgentDB) {
+			ask (DB_Accessor) {
 				do close;
 			}
 

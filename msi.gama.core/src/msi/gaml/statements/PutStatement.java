@@ -84,11 +84,10 @@ public class PutStatement extends AddStatement {
 
 		@Override
 		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {
-			final Facets f = cd.getFacets();
-			final IExpression item = f.getExpr(ITEM);
-			final IExpression list = f.getExpr(TO);
+			final IExpression item = cd.getFacetExpr(ITEM);
+			final IExpression list = cd.getFacetExpr(TO);
 			// IExpression allFacet = f.getExpr(ALL);
-			final IExpression at = f.getExpr(AT);
+			final IExpression at = cd.getFacetExpr(AT);
 			sb.append(list.serialize(includingBuiltIn));
 			sb.append('[');
 			if (at != null) {
@@ -104,9 +103,8 @@ public class PutStatement extends AddStatement {
 
 		@Override
 		public void validate(final IDescription cd) {
-			final Facets f = cd.getFacets();
-			final IExpression index = f.getExpr(AT, KEY);
-			final IExpression whole = f.getExpr(ALL);
+			final IExpression index = cd.getFacetExpr(AT, KEY);
+			final IExpression whole = cd.getFacetExpr(ALL);
 			if (whole != null && whole.getType().id() != IType.BOOL) {
 				cd.error("Put cannot be used to add several values", IGamlIssue.MISSING_FACET, ALL);
 				return;

@@ -15,8 +15,11 @@ package msi.gaml.types;
  * Copyright 2010 Vivin Suresh Paliath
  * Distributed under the BSD License
  */
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
-import java.util.*;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.operators.Strings;
 
@@ -49,7 +52,7 @@ public class TypeTree<T> {
 	}
 
 	public TypeNode<T> setRoot(final T root) {
-		TypeNode<T> result = new TypeNode(root);
+		final TypeNode<T> result = new TypeNode(root);
 		setRoot(result);
 		return result;
 	}
@@ -57,8 +60,9 @@ public class TypeTree<T> {
 	public int getNumberOfNodes() {
 		int numberOfNodes = 0;
 
-		if ( root != null ) {
-			numberOfNodes = auxiliaryGetNumberOfNodes(root) + 1; // 1 for the root!
+		if (root != null) {
+			numberOfNodes = auxiliaryGetNumberOfNodes(root) + 1; // 1 for the
+																	// root!
 		}
 
 		return numberOfNodes;
@@ -67,7 +71,7 @@ public class TypeTree<T> {
 	private int auxiliaryGetNumberOfNodes(final TypeNode<T> node) {
 		int numberOfNodes = node.getNumberOfChildren();
 
-		for ( TypeNode<T> child : node.getChildren() ) {
+		for (final TypeNode<T> child : node.getChildren()) {
 			numberOfNodes += auxiliaryGetNumberOfNodes(child);
 		}
 
@@ -81,7 +85,7 @@ public class TypeTree<T> {
 	public TypeNode<T> find(final T dataToFind) {
 		TypeNode<T> returnNode = null;
 
-		if ( root != null ) {
+		if (root != null) {
 			returnNode = auxiliaryFind(root, dataToFind);
 		}
 
@@ -92,11 +96,11 @@ public class TypeTree<T> {
 		TypeNode<T> returnNode = null;
 		int i = 0;
 
-		if ( currentNode.getData().equals(dataToFind) ) {
+		if (currentNode.getData().equals(dataToFind)) {
 			returnNode = currentNode;
 		}
 
-		else if ( currentNode.hasChildren() ) {
+		else if (currentNode.hasChildren()) {
 			i = 0;
 			while (returnNode == null && i < currentNode.getNumberOfChildren()) {
 				returnNode = auxiliaryFind(currentNode.getChildAt(i), dataToFind);
@@ -114,7 +118,7 @@ public class TypeTree<T> {
 	public List<TypeNode<T>> build(final Order traversalOrder) {
 		List<TypeNode<T>> returnList = null;
 
-		if ( root != null ) {
+		if (root != null) {
 			returnList = build(root, traversalOrder);
 		}
 
@@ -122,28 +126,57 @@ public class TypeTree<T> {
 	}
 
 	public List<TypeNode<T>> build(final TypeNode<T> node, final Order traversalOrder) {
-		List<TypeNode<T>> traversalResult = new ArrayList<TypeNode<T>>();
+		final List<TypeNode<T>> traversalResult = new ArrayList<TypeNode<T>>();
 
-		if ( traversalOrder == Order.PRE_ORDER ) {
+		if (traversalOrder == Order.PRE_ORDER) {
 			buildPreOrder(node, traversalResult);
 		}
 
-		else if ( traversalOrder == Order.POST_ORDER ) {
+		else if (traversalOrder == Order.POST_ORDER) {
 			buildPostOrder(node, traversalResult);
 		}
 
 		return traversalResult;
 	}
 
-	public List<T> getAllElements(final T data, final Order traversalOrder) {
-		List<T> traversalResult = new ArrayList<T>();
-		TypeNode<T> node = find(data);
-		if ( node == null ) { return Collections.EMPTY_LIST; }
-		if ( traversalOrder == Order.PRE_ORDER ) {
+	public List<T> getAllElements(final TypeNode<T> node, final Order traversalOrder) {
+
+		if (node == null) {
+			return Collections.EMPTY_LIST;
+		}
+		final List<T> traversalResult = new ArrayList<T>();
+		if (traversalOrder == Order.PRE_ORDER) {
 			getAllPreOrder(node, traversalResult);
 		}
 
-		else if ( traversalOrder == Order.POST_ORDER ) {
+		else if (traversalOrder == Order.POST_ORDER) {
+			getAllPostOrder(node, traversalResult);
+		}
+
+		return traversalResult;
+	}
+
+	public TypeTree<T> copy() {
+		final TypeTree<T> result = new TypeTree();
+		result.setRoot(getRoot().copy());
+		return result;
+	}
+
+	public List<T> getAllElements(final Order order) {
+		return getAllElements(root, order);
+	}
+
+	public List<T> getAllElements(final T data, final Order traversalOrder) {
+		final List<T> traversalResult = new ArrayList<T>();
+		final TypeNode<T> node = find(data);
+		if (node == null) {
+			return Collections.EMPTY_LIST;
+		}
+		if (traversalOrder == Order.PRE_ORDER) {
+			getAllPreOrder(node, traversalResult);
+		}
+
+		else if (traversalOrder == Order.POST_ORDER) {
 			getAllPostOrder(node, traversalResult);
 		}
 
@@ -154,7 +187,7 @@ public class TypeTree<T> {
 	private void buildPreOrder(final TypeNode<T> node, final List<TypeNode<T>> traversalResult) {
 		traversalResult.add(node);
 
-		for ( TypeNode<T> child : node.getChildren() ) {
+		for (final TypeNode<T> child : node.getChildren()) {
 			buildPreOrder(child, traversalResult);
 		}
 	}
@@ -162,13 +195,13 @@ public class TypeTree<T> {
 	private void getAllPreOrder(final TypeNode<T> node, final List<T> traversalResult) {
 		traversalResult.add(node.getData());
 
-		for ( TypeNode<T> child : node.getChildren() ) {
+		for (final TypeNode<T> child : node.getChildren()) {
 			getAllPreOrder(child, traversalResult);
 		}
 	}
 
 	private void getAllPostOrder(final TypeNode<T> node, final List<T> traversalResult) {
-		for ( TypeNode<T> child : node.getChildren() ) {
+		for (final TypeNode<T> child : node.getChildren()) {
 			getAllPostOrder(child, traversalResult);
 		}
 
@@ -176,7 +209,7 @@ public class TypeTree<T> {
 	}
 
 	private void buildPostOrder(final TypeNode<T> node, final List<TypeNode<T>> traversalResult) {
-		for ( TypeNode<T> child : node.getChildren() ) {
+		for (final TypeNode<T> child : node.getChildren()) {
 			buildPostOrder(child, traversalResult);
 		}
 
@@ -186,7 +219,7 @@ public class TypeTree<T> {
 	public Map<TypeNode<T>, Integer> buildWithDepth(final Order traversalOrder) {
 		Map<TypeNode<T>, Integer> returnMap = null;
 
-		if ( root != null ) {
+		if (root != null) {
 			returnMap = buildWithDepth(root, traversalOrder);
 		}
 
@@ -194,13 +227,13 @@ public class TypeTree<T> {
 	}
 
 	public Map<TypeNode<T>, Integer> buildWithDepth(final TypeNode<T> node, final Order traversalOrder) {
-		Map<TypeNode<T>, Integer> traversalResult = new TOrderedHashMap<TypeNode<T>, Integer>();
+		final Map<TypeNode<T>, Integer> traversalResult = new TOrderedHashMap<TypeNode<T>, Integer>();
 
-		if ( traversalOrder == Order.PRE_ORDER ) {
+		if (traversalOrder == Order.PRE_ORDER) {
 			buildPreOrderWithDepth(node, traversalResult, 0);
 		}
 
-		else if ( traversalOrder == Order.POST_ORDER ) {
+		else if (traversalOrder == Order.POST_ORDER) {
 			buildPostOrderWithDepth(node, traversalResult, 0);
 		}
 
@@ -208,17 +241,17 @@ public class TypeTree<T> {
 	}
 
 	private void buildPreOrderWithDepth(final TypeNode<T> node, final Map<TypeNode<T>, Integer> traversalResult,
-		final int depth) {
+			final int depth) {
 		traversalResult.put(node, depth);
 
-		for ( TypeNode<T> child : node.getChildren() ) {
+		for (final TypeNode<T> child : node.getChildren()) {
 			buildPreOrderWithDepth(child, traversalResult, depth + 1);
 		}
 	}
 
 	private void buildPostOrderWithDepth(final TypeNode<T> node, final Map<TypeNode<T>, Integer> traversalResult,
-		final int depth) {
-		for ( TypeNode<T> child : node.getChildren() ) {
+			final int depth) {
+		for (final TypeNode<T> child : node.getChildren()) {
 			buildPostOrderWithDepth(child, traversalResult, depth + 1);
 		}
 
@@ -233,7 +266,7 @@ public class TypeTree<T> {
 
 		String stringRepresentation = "";
 
-		if ( root != null ) {
+		if (root != null) {
 			stringRepresentation = build(Order.PRE_ORDER).toString();
 
 		}
@@ -246,11 +279,11 @@ public class TypeTree<T> {
 		 * We're going to assume a pre-order traversal by default
 		 */
 
-		if ( root != null ) {
-			Map<TypeNode<T>, Integer> map = buildWithDepth(Order.PRE_ORDER);
-			StringBuilder sb = new StringBuilder();
-			for ( TypeNode<T> t : map.keySet() ) {
-				for ( int i = 0; i < map.get(t); i++ ) {
+		if (root != null) {
+			final Map<TypeNode<T>, Integer> map = buildWithDepth(Order.PRE_ORDER);
+			final StringBuilder sb = new StringBuilder();
+			for (final TypeNode<T> t : map.keySet()) {
+				for (int i = 0; i < map.get(t); i++) {
 					sb.append(Strings.TAB);
 				}
 				sb.append(t.getData().toString());
@@ -262,9 +295,10 @@ public class TypeTree<T> {
 	}
 
 	public void dispose() {
-		if ( root != null ) {
+		if (root != null) {
 			root.dispose();
 			root = null;
 		}
 	}
+
 }

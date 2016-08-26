@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.linking.impl.DefaultLinkingService;
 import org.eclipse.xtext.linking.impl.IllegalNodeException;
-import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.scoping.IScope;
@@ -54,9 +53,6 @@ public class GamlLinkingService extends DefaultLinkingService {
 
 	@Inject
 	private XtextResourceSet resourceSet;
-
-	@Inject
-	IQualifiedNameConverter qualifiedNameConverter;
 
 	public GamlLinkingService() {
 		super();
@@ -89,6 +85,7 @@ public class GamlLinkingService extends DefaultLinkingService {
 	@Override
 	protected IScope getScope(final EObject context, final EReference reference) {
 		try {
+			// AD: Necessary to save memory (cache)
 			registerImportedNamesAdapter(context);
 			return getScopeProvider().getScope(context, reference);
 		} finally {

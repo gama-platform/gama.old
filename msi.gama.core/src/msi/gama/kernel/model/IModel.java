@@ -38,7 +38,7 @@ public interface IModel extends ISpecies {
 
 	public abstract String getProjectPath();
 
-	public abstract boolean isTorus();
+	// public abstract boolean isTorus();
 
 	public abstract Map<String, ISpecies> getAllSpecies();
 

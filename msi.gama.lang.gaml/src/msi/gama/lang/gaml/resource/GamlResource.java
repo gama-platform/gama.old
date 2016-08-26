@@ -31,14 +31,16 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
-import org.eclipse.xtext.util.CancelIndicator;
+import org.eclipse.xtext.util.OnChangeEvictingCache;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Provider;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.kernel.model.IModel;
@@ -46,6 +48,7 @@ import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.impl.ImportImpl;
+import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.parsing.GamlCompatibilityConverter;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
@@ -79,6 +82,9 @@ public class GamlResource extends LazyLinkingResource {
 	// in case of a synthetic resource
 	private GamlResource linkToRealModelResource;
 
+	// @Inject
+	// private ImportUriResolver resolver;
+
 	public ErrorCollector getErrorCollector() {
 		if (collector == null) {
 			collector = new ErrorCollector(this);
@@ -91,10 +97,8 @@ public class GamlResource extends LazyLinkingResource {
 		return "UTF-8";
 	}
 
-	public void resetErrorCollector(final ResourceSet resourceSet) {
+	public void resetErrorCollector() {
 		requires.clear();
-		// resourceSet.getLoadOptions().remove(this);
-		// imports.remove(resourceSet);
 		if (collector == null) {
 			getErrorCollector();
 		} else {
@@ -111,7 +115,7 @@ public class GamlResource extends LazyLinkingResource {
 	protected void addSyntaxErrors() {
 		super.addSyntaxErrors();
 		final GamlParseResult r = getParseResult();
-		if (r != null) {
+		if (r != null && r.hasWarnings()) {
 			getWarnings().addAll(r.getWarnings());
 		}
 	}
@@ -151,6 +155,8 @@ public class GamlResource extends LazyLinkingResource {
 
 	public ISyntacticElement getSyntacticContents() {
 		final GamlParseResult parseResult = getParseResult();
+		final TreeIterator<EObject> allContents = getAllContents();
+
 		if (parseResult == null) { // Should not happen, but in case...
 			final Set<org.eclipse.xtext.diagnostics.Diagnostic> errors = new LinkedHashSet();
 			final ISyntacticElement result = GamlCompatibilityConverter.buildSyntacticContents(getContents().get(0),
@@ -190,13 +196,11 @@ public class GamlResource extends LazyLinkingResource {
 			fullPath = file.getProject().getLocation();
 			projectPath = fullPath == null ? "" : fullPath.toOSString();
 		}
-		// GamlResourceDocManager.clearCache();
-		// We document only when the resource is marked as 'edited'
 		// hqnghi build micro-model
 		// hqnghi 11/May/15: Micro-model manipulate their own imported resources
 		// of micro-model , they are not supposed to be merged with co-model
 		// (main-model)
-		final Map<String, ModelDescription> mm = new TOrderedHashMap<String, ModelDescription>();
+		Map<String, ModelDescription> compiledMicroModels = null;
 		String aliasName = null;
 		while (!microModels.isEmpty()) {
 			aliasName = (String) microModels.values().toArray()[0];
@@ -206,12 +210,15 @@ public class GamlResource extends LazyLinkingResource {
 					getErrorCollector(), isEdited, Collections.<String, ModelDescription> emptyMap(),
 					((SyntacticModelElement) res.get(0)).getAbsoluteAlternatePaths());
 			mic.setAlias(aliasName);
-			mm.put(aliasName, mic);
+			if (compiledMicroModels == null)
+				compiledMicroModels = new TOrderedHashMap<String, ModelDescription>();
+			compiledMicroModels.put(aliasName, mic);
 		}
 		// end-hqnghi
-
+		// System.out.println("Building description for model " +
+		// this.getPath().lastSegment());
 		return GAML.getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(),
-				isEdited, mm, allAbsolutePaths);
+				isEdited, compiledMicroModels, allAbsolutePaths);
 	}
 
 	private List<ISyntacticElement> getListMicroSyntacticElement(final Map<ISyntacticElement, String> microModels,
@@ -225,35 +232,40 @@ public class GamlResource extends LazyLinkingResource {
 		return res;
 	}
 
-	public LinkedHashMap<URI, String> computeAllImportedURIs(final ResourceSet set) {
-		// TODO A Revoir pour éviter trop de créations de listes/map, etc.
-
-		final LinkedHashMap<URI, String> result = new LinkedHashMap();
-		// Map<Resource, Boolean> = if true, resources are used to compose the
-		// model; if false, they are used as sub-models
-		final LinkedHashMap<GamlResource, String> newResources = new LinkedHashMap();
-		// The current resource is considered as imported "normally"
-		newResources.put(this, null);
-		while (!newResources.isEmpty()) {
-			final Map<GamlResource, String> resourcesToConsider = new LinkedHashMap(newResources);
-			newResources.clear();
-			for (final GamlResource gr : resourcesToConsider.keySet()) {
-				if (!result.containsKey(gr.getURI())) {
-					result.put(gr.getURI(), resourcesToConsider.get(gr));
-					final TOrderedHashMap<GamlResource, Import> imports = gr.loadImports(set);
-					for (final Map.Entry<GamlResource, Import> entry : imports.entrySet()) {
-						final ImportImpl impl = (ImportImpl) entry.getValue();
-						if (impl != null && impl.eIsSet(GamlPackage.IMPORT__NAME)) {
-							newResources.put(entry.getKey(), impl.getName());
-						} else {
-							// "normal" Import (no "as")
-							newResources.put(entry.getKey(), resourcesToConsider.get(gr));
-						}
-					}
+	private void computeAllImportedURIs(final LinkedHashMap<URI, String> result, final String alias,
+			final ResourceSet set) {
+		if (!result.containsKey(getURI())) {
+			result.put(getURI(), alias);
+			final TOrderedHashMap<GamlResource, Import> imports = loadImports(set);
+			for (final Map.Entry<GamlResource, Import> entry : imports.entrySet()) {
+				final ImportImpl impl = (ImportImpl) entry.getValue();
+				if (impl != null && impl.eIsSet(GamlPackage.IMPORT__NAME)) {
+					// System.out.println("Import de " + entry.getKey() + " as "
+					// + impl.getName());
+					entry.getKey().computeAllImportedURIs(result, impl.getName(), set);
+				} else {
+					// System.out.println("Import de " + entry.getKey());
+					entry.getKey().computeAllImportedURIs(result, alias, set);
 				}
 			}
 		}
-		return result;
+	}
+
+	@Override
+	public OnChangeEvictingCache getCache() {
+		return (OnChangeEvictingCache) super.getCache();
+	}
+
+	public LinkedHashMap<URI, String> computeAllImportedURIs(final ResourceSet set) {
+		return getCache().get("ImportedURIs", this, new Provider<LinkedHashMap<URI, String>>() {
+
+			@Override
+			public LinkedHashMap<URI, String> get() {
+				final LinkedHashMap<URI, String> result = new LinkedHashMap();
+				computeAllImportedURIs(result, null, set);
+				return result;
+			}
+		});
 
 	}
 
@@ -280,7 +292,6 @@ public class GamlResource extends LazyLinkingResource {
 				if (EcoreUtil2.isValidUri(this, iu)) {
 					final GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
 					if (ir != null) {
-
 						localImports.put(ir, imp);
 					}
 				}
@@ -303,27 +314,45 @@ public class GamlResource extends LazyLinkingResource {
 		return totalResources;
 	}
 
-	// public EObject findImport(final URI uri) {
-	// Model m = (Model) getContents().get(0);
-	// for ( final Import imp : m.getImports() ) {
-	// final URI iu = URI.createURI(imp.getImportURI(),
-	// false).resolve(getURI());
-	// if ( uri.equals(iu) ) { return imp; }
-	// }
-	// return null;
-	// }
-
 	private void invalidateBecauseOfImportedProblem(final String msg, final GamlResource resource) {
 		getErrorCollector()
 				.add(new GamlCompilationError(msg, IGamlIssue.GENERAL, resource.getContents().get(0), false, false));
 		updateWith(null);
 	}
 
+	private boolean validateURIs() {
+		final EObject object = getContents().get(0);
+		if (object instanceof ModelImpl) {
+			final ModelImpl model = (ModelImpl) object;
+			if (model.eIsSet(GamlPackage.MODEL__IMPORTS)) {
+				for (final Import imp : model.getImports()) {
+					if (!checkImportUriIsValid(imp))
+						return false;
+				}
+			}
+		}
+		return true;
+	}
+
+	private boolean checkImportUriIsValid(final Import object) {
+		final String importURI = object.getImportURI();
+		if (importURI != null && !EcoreUtil2.isValidUri(object, URI.createURI(importURI))) {
+			getErrorCollector().add(new GamlCompilationError("Imported model could not be found.", IGamlIssue.GENERAL,
+					object, false, false));
+			return false;
+		}
+		return true;
+	}
+
 	private ModelDescription buildCompleteDescription(final ResourceSet set) {
-		resetErrorCollector(resourceSet);
+		resetErrorCollector();
+		if (!validateURIs()) {
+			updateWith(null);
+		}
+		;
 		// We make sure the resource is loaded in the ResourceSet passed
 		// TODO Does it validate it ?
-		set.getResource(getURI(), true);
+		// set.getResource(getURI(), true);
 		ModelDescription model = null;
 
 		if (!hasValidatedPlugins) {
@@ -406,14 +435,16 @@ public class GamlResource extends LazyLinkingResource {
 	 *
 	 */
 	public void validate(final ResourceSet set) {
-		// if ( isValidating ) { return; }
+		// if (isValidating) {
+		// return;
+		// }
 
 		try {
 			setValidating(true);
 			// We first build the model description
-			final long begin = System.nanoTime();
-			final long mem = Runtime.getRuntime().freeMemory();
-			final long mb = 1024;
+			// final long begin = System.nanoTime();
+			// final long mem = Runtime.getRuntime().freeMemory();
+			// final long mb = 1024;
 
 			final ModelDescription model = buildCompleteDescription(set);
 
@@ -426,16 +457,10 @@ public class GamlResource extends LazyLinkingResource {
 			// marked as 'edited'
 			model.validate(isEdited);
 			updateWith(model);
+
 			model.collectMetaInformation(requires);
 			if (isEdited) {
-				GamlResourceDocManager.addCleanupTask(new Runnable() {
-
-					@Override
-					public void run() {
-						model.dispose();
-
-					}
-				});
+				GamlResourceDocManager.addCleanupTask(model);
 			} else {
 				model.dispose();
 			}
@@ -552,7 +577,9 @@ public class GamlResource extends LazyLinkingResource {
 
 	public void setEdited(final boolean b) {
 		isEdited = b;
-		GamlResourceDocManager.getInstance().document(this, b);
+		if (!b)
+			getCache().clear(this);
+		// GamlResourceDocManager.getInstance().document(this, b);
 	}
 
 	public boolean isEdited() {
@@ -562,28 +589,6 @@ public class GamlResource extends LazyLinkingResource {
 	public GamlProperties getRequires() {
 		requires.remove(null);
 		return requires;
-	}
-
-	// @Override
-	// public void update(final int offset, final int replacedTextLength, final
-	// String newText) {
-	// // final long begin = System.nanoTime();
-	// super.update(offset, replacedTextLength, newText);
-	// // System.out.println("'" + getURI().lastSegment() + "'" + " updated in
-	// // " + (System.nanoTime() - begin) / 1000000d
-	// // + " ms in Thread [" + Thread.currentThread().getName() + "]");
-	// //
-	// System.out.println("****************************************************");
-	// }
-
-	@Override
-	public void resolveLazyCrossReferences(final CancelIndicator mon) {
-		// final long begin = System.nanoTime();
-		super.resolveLazyCrossReferences(mon);
-		// System.out.println("'" + getURI().lastSegment() + "'" + " resolved in
-		// " + (System.nanoTime() - begin) / 1000000d
-		// + " ms in Thread [" + Thread.currentThread().getName() + "]");
-		// System.out.println("****************************************************");
 	}
 
 }

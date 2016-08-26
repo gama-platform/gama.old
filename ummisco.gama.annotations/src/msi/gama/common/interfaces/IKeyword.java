@@ -99,7 +99,7 @@ public interface IKeyword {
 	public static final String DEFAULT = "default";
 	// public static final String DEFAULT_EXP = "default";
 	// public static final String DEM = "dem";
-	public static final String DEPENDS_ON = "depends_on";
+	// public static final String DEPENDS_ON = "depends_on";
 	public static final String DEPTH = "depth";
 	public static final String DESTINATION = "destination";
 	public static final String DIFFUSION = "diffusion";
@@ -231,7 +231,7 @@ public interface IKeyword {
 	public static final String KEEP_SEED = "keep_seed";
 	public static final String KEEP_SIMULATIONS = "keep_simulations";
 	public static final String KEY = "key";
-	public static final String KEYWORD = "keyword";
+	// public static final String KEYWORD = "keyword";
 	public static final String KILL = "kill";
 	public static final String OVERLAY = "overlay";
 	public static final String LAYOUT = "layout";
@@ -371,7 +371,6 @@ public interface IKeyword {
 	public static final String SET = "set";
 	public static final String SHAPE = "shape";
 	public static final String SHOWFPS = "show_fps";
-	public static final String SIGNAL = "signal";
 	public static final String SIMULATION = "simulation";
 	public static final String SIMULATIONS = "simulations";
 	public static final String SIZE = "size";

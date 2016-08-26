@@ -38,8 +38,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true, internal = true, concept = {})
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true),
-		@facet(name = IKeyword.VERSION, type = IType.ID, optional = true),
+@facets(value = { @facet(name = IKeyword.VERSION, type = IType.ID, optional = true),
 		@facet(name = IKeyword.AUTHOR, type = IType.ID, optional = true),
 		@facet(name = IKeyword.PRAGMA, type = IType.LIST, of = IType.STRING, optional = true, internal = true),
 		@facet(name = IKeyword.TORUS, type = IType.BOOL, optional = true),
@@ -83,10 +82,10 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	// }
 	// }
 
-	@Override
-	public boolean isTorus() {
-		return ((ModelDescription) description).isTorus();
-	}
+	// @Override
+	// public boolean isTorus() {
+	// return ((ModelDescription) description).isTorus();
+	// }
 
 	@Override
 	public String getWorkingPath() {

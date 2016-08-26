@@ -4,13 +4,25 @@
  */
 package msi.gama.lang.gaml.ui.editor;
 
-import java.util.*;
-import org.eclipse.swt.events.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
+
 import msi.gama.common.interfaces.INamed;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.SymbolProto;
+import msi.gaml.descriptions.TypeDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.Types;
 
 /**
@@ -24,42 +36,42 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 
 	@Override
 	protected void fillMenu() {
-		List<TypeDescription> list = new ArrayList(ModelDescription.ROOT.getTypesManager().getAllSpecies());
-		List<String> speciesList = new ArrayList();
+		final List<TypeDescription> list = new ArrayList(ModelDescription.ROOT.getMicroSpecies().values());
+		final List<String> speciesList = new ArrayList();
 		Collections.sort(list, INamed.COMPARATOR);
 		Menu m = sub("Built-in species");
-		for ( TypeDescription species : list ) {
+		for (final TypeDescription species : list) {
 			speciesList.add(species.getName());
 			fillSpeciesSubmenu(sub(m, species.getName()), species);
 		}
-		List<String> skills = new ArrayList(AbstractGamlAdditions.getSkills());
+		final List<String> skills = new ArrayList(AbstractGamlAdditions.getSkills());
 		Collections.sort(skills, IGNORE_CASE);
 		m = sub("Skills");
-		for ( String skill : skills ) {
+		for (final String skill : skills) {
 			fillSkillSubmenu(sub(m, skill), skill, false);
 		}
-		List<String> controls = new ArrayList(AbstractGamlAdditions.getControls());
+		final List<String> controls = new ArrayList(AbstractGamlAdditions.getControls());
 		Collections.sort(controls, IGNORE_CASE);
 		m = sub("Control architectures");
-		for ( String skill : controls ) {
+		for (final String skill : controls) {
 			fillSkillSubmenu(sub(m, skill), skill, true);
 		}
-		List<String> types = new ArrayList(Types.getTypeNames());
+		final List<String> types = new ArrayList(Types.getTypeNames());
 		types.removeAll(speciesList);
 		Collections.sort(types, IGNORE_CASE);
 		m = sub("Types");
-		List<String> fileTypes = new ArrayList();
-		for ( String type : types ) {
-			if ( type.contains("_file") ) {
+		final List<String> fileTypes = new ArrayList();
+		for (final String type : types) {
+			if (type.contains("_file")) {
 				fileTypes.add(type);
 			}
 		}
 		types.removeAll(fileTypes);
-		for ( String type : types ) {
+		for (final String type : types) {
 			fillTypeSubmenu(sub(m, type), type);
 		}
 		m = sub("File types");
-		for ( String type : fileTypes ) {
+		for (final String type : fileTypes) {
 			fillTypeSubmenu(sub(m, type), type);
 		}
 	}
@@ -77,12 +89,12 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 			}
 
 		});
-		Map<String, OperatorProto> getters = Types.get(type).getFieldGetters();
-		List<String> names = new ArrayList(getters.keySet());
-		if ( !names.isEmpty() ) {
+		final Map<String, OperatorProto> getters = Types.get(type).getFieldGetters();
+		final List<String> names = new ArrayList(getters.keySet());
+		if (!names.isEmpty()) {
 			Collections.sort(names);
 			title(submenu, "Attributes");
-			for ( String getter : names ) {
+			for (final String getter : names) {
 				fillProtoSubMenu(sub(submenu, getter), getters.get(getter));
 			}
 		}
@@ -101,7 +113,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				if ( !isControl ) {
+				if (!isControl) {
 					applyTemplate(GamlTemplateFactory.speciesWithSkill(skill));
 				} else {
 					applyTemplate(GamlTemplateFactory.speciesWithControl(skill));
@@ -109,28 +121,28 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 			}
 
 		});
-		List<IDescription> vars = new ArrayList(AbstractGamlAdditions.getVariablesForSkill(skill));
+		final List<IDescription> vars = new ArrayList(AbstractGamlAdditions.getVariablesForSkill(skill));
 		Collections.sort(vars, INamed.COMPARATOR);
-		if ( !vars.isEmpty() ) {
+		if (!vars.isEmpty()) {
 			title(submenu, "Attributes");
-			for ( IDescription variable : vars ) {
+			for (final IDescription variable : vars) {
 				fillIDescriptionSubMenu(sub(submenu, variable.getName() + " (" + variable.getType() + ")"), variable);
 			}
 		}
-		List<IDescription> actions = new ArrayList(AbstractGamlAdditions.getActionsForSkill(skill));
+		final List<IDescription> actions = new ArrayList(AbstractGamlAdditions.getActionsForSkill(skill));
 		Collections.sort(actions, INamed.COMPARATOR);
-		if ( !actions.isEmpty() ) {
+		if (!actions.isEmpty()) {
 			title(submenu, "Primitives");
-			for ( IDescription action : actions ) {
+			for (final IDescription action : actions) {
 				fillIDescriptionSubMenu(sub(submenu, action.getName()), action);
 			}
 		}
-		if ( isControl ) {
-			List<SymbolProto> controls = new ArrayList(AbstractGamlAdditions.getStatementsForSkill(skill));
+		if (isControl) {
+			final List<SymbolProto> controls = new ArrayList(AbstractGamlAdditions.getStatementsForSkill(skill));
 			Collections.sort(controls, INamed.COMPARATOR);
-			if ( !controls.isEmpty() ) {
+			if (!controls.isEmpty()) {
 				title(submenu, "Control statements");
-				for ( SymbolProto control : controls ) {
+				for (final SymbolProto control : controls) {
 					fillProtoSubMenu(sub(submenu, control.getName()), control);
 				}
 			}
@@ -157,7 +169,8 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 				getEditor().insertText(attribute.getName());
 			}
 
-		});;
+		});
+		;
 
 	}
 
@@ -178,24 +191,24 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 			}
 
 		});
-		List<String> vars = new ArrayList(species.getVarNames());
+		final List<String> vars = new ArrayList(species.getAttributeNames());
 		Collections.sort(vars, IGNORE_CASE);
-		if ( !vars.isEmpty() ) {
+		if (!vars.isEmpty()) {
 			title(submenu, "Attributes");
-			for ( String v : vars ) {
-				final VariableDescription variable = species.getVariable(v);
-				if ( !variable.isSyntheticSpeciesContainer() && variable.getOriginName().endsWith(species.getName()) ) {
+			for (final String v : vars) {
+				final VariableDescription variable = species.getAttribute(v);
+				if (!variable.isSyntheticSpeciesContainer() && variable.getOriginName().endsWith(species.getName())) {
 					fillIDescriptionSubMenu(sub(submenu, v + " (" + variable.getType() + ")"), variable);
 				}
 			}
 		}
-		List<String> actions = new ArrayList(species.getActionNames());
+		final List<String> actions = new ArrayList(species.getActionNames());
 		Collections.sort(actions, IGNORE_CASE);
-		if ( !actions.isEmpty() ) {
+		if (!actions.isEmpty()) {
 			title(submenu, "Primitives");
-			for ( String v : actions ) {
+			for (final String v : actions) {
 				final StatementDescription prim = species.getAction(v);
-				if ( prim.getOriginName().endsWith(species.getName()) ) {
+				if (prim.getOriginName().endsWith(species.getName())) {
 					fillIDescriptionSubMenu(sub(submenu, v), prim);
 				}
 			}
@@ -203,7 +216,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 	}
 
 	private void fillIDescriptionSubMenu(final Menu submenu, final IDescription v) {
-		boolean isVar = v instanceof VariableDescription;
+		final boolean isVar = v instanceof VariableDescription;
 		action(submenu, "Insert name", new SelectionAdapter() {
 
 			@Override
@@ -212,7 +225,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 			}
 
 		});
-		if ( isVar ) {
+		if (isVar) {
 			action(submenu, "Insert redefinition", new SelectionAdapter() {
 
 				@Override
@@ -234,6 +247,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 	}
 
 	@Override
-	protected void openView() {}
+	protected void openView() {
+	}
 
 }

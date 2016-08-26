@@ -17,7 +17,6 @@ import java.util.Set;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlable;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -26,9 +25,10 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 
 	public final String name;
 	public String deprecated = null;
-	public final int[] types;
-	public final int contentType;
-	public final int keyType;
+	public final IType[] types;
+	public final int[] typesDescribers;
+	public final IType contentType;
+	public final IType keyType;
 	public final boolean optional;
 	public final boolean internal;
 	private final boolean isLabel;
@@ -37,16 +37,20 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 	public final Set<String> values;
 	public String doc = "No documentation yet";
 	// private SymbolProto owner;
-	static FacetProto KEYWORD = KEYWORD();
-	static FacetProto DEPENDS_ON = DEPENDS_ON();
-	static FacetProto NAME = NAME();
+	// static FacetProto KEYWORD = KEYWORD();
+	// static FacetProto DEPENDS_ON = DEPENDS_ON();
+	// static FacetProto NAME = NAME();
 
 	public FacetProto(final String name, final int[] types, final int ct, final int kt, final String[] values,
 			final boolean optional, final boolean internal, final String doc) {
 		this.name = name;
-		this.types = types;
-		this.contentType = ct;
-		this.keyType = kt;
+		this.typesDescribers = types;
+		this.types = new IType[types.length];
+		for (int i = 0; i < types.length; i++) {
+			this.types[i] = Types.get(types[i]);
+		}
+		this.contentType = Types.get(ct);
+		this.keyType = Types.get(kt);
 		this.optional = optional;
 		this.internal = internal;
 		isLabel = SymbolProto.ids.contains(types[0]);
@@ -84,20 +88,23 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 	// owner = symbol;
 	// }
 
-	static FacetProto DEPENDS_ON() {
-		return new FacetProto(IKeyword.DEPENDS_ON, new int[] { IType.LIST }, IType.STRING, IType.INT, new String[0],
-				true, true, "the dependencies of expressions (internal)");
-	}
+	// static FacetProto DEPENDS_ON() {
+	// return new FacetProto(IKeyword.DEPENDS_ON, new int[] { IType.LIST },
+	// IType.STRING, IType.INT, new String[0],
+	// true, true, "the dependencies of expressions (internal)");
+	// }
 
-	static FacetProto KEYWORD() {
-		return new FacetProto(IKeyword.KEYWORD, new int[] { IType.ID }, IType.NONE, IType.NONE, new String[0], true,
-				true, "the declared keyword (internal)");
-	}
-
-	static FacetProto NAME() {
-		return new FacetProto(IKeyword.NAME, new int[] { IType.LABEL }, IType.NONE, IType.NONE, new String[0], true,
-				true, "the declared name (internal)");
-	}
+	// static FacetProto KEYWORD() {
+	// return new FacetProto(IKeyword.KEYWORD, new int[] { IType.ID },
+	// IType.NONE, IType.NONE, new String[0], true,
+	// true, "the declared keyword (internal)");
+	// }
+	//
+	// static FacetProto NAME() {
+	// return new FacetProto(IKeyword.NAME, new int[] { IType.LABEL },
+	// IType.NONE, IType.NONE, new String[0], true,
+	// true, "the declared name (internal)");
+	// }
 
 	/**
 	 * Method getTitle()
@@ -114,7 +121,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 		final StringBuilder s = new StringBuilder(30);
 		s.append(types.length < 2 ? " " : " any type in [");
 		for (int i = 0; i < types.length; i++) {
-			switch (types[i]) {
+			switch (typesDescribers[i]) {
 			case IType.ID:
 				s.append("an identifier");
 				break;
@@ -136,7 +143,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 			default:
 				// TODO AD 2/16 Document the types with the new possibility to
 				// include of and index
-				s.append(Types.get(types[i]).toString());
+				s.append(types[i].toString());
 			}
 			if (i != types.length - 1) {
 				s.append(", ");

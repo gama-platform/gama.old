@@ -25,23 +25,20 @@ import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamaHelper;
-import msi.gaml.descriptions.StatementDescription.StatementWithChildrenDescription;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 
-public class PrimitiveDescription extends StatementWithChildrenDescription {
+public class PrimitiveDescription extends StatementDescription {
 
 	private GamaHelper helper;
 	private AccessibleObject method;
 	private String plugin;
 
-	// TODO Voir si on ne peut pas simplifier un peu l'instatiation et la copie
-
-	public PrimitiveDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
-			final boolean hasScope, final boolean hasArgs, final EObject source, final Facets facets,
-			final String plugin) {
-		super(keyword, superDesc, cp, hasScope, hasArgs, source, facets);
+	public PrimitiveDescription(final IDescription superDesc, final EObject source, final ChildrenProvider children,
+			final Facets facets, final String plugin) {
+		super(IKeyword.PRIMITIVE, superDesc, children, true, source, facets);
+		// System.out.println("facets of primitive " + facets);
 		this.plugin = plugin;
 	}
 
@@ -82,9 +79,8 @@ public class PrimitiveDescription extends StatementWithChildrenDescription {
 							final StringBuilder sb = new StringBuilder(100);
 							sb.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b> of type ")
 									.append(desc.getType());
-							if (desc.getFacets().containsKey(IKeyword.DEFAULT)) {
-								sb.append(" <i>(default: ")
-										.append(desc.getFacets().getExpr(IKeyword.DEFAULT).serialize(false))
+							if (desc.hasFacet(IKeyword.DEFAULT)) {
+								sb.append(" <i>(default: ").append(desc.getFacetExpr(IKeyword.DEFAULT).serialize(false))
 										.append(")</i>");
 							}
 							sb.append("</li>").append(Strings.LN);
@@ -127,12 +123,20 @@ public class PrimitiveDescription extends StatementWithChildrenDescription {
 
 	@Override
 	public PrimitiveDescription copy(final IDescription into) {
-		final PrimitiveDescription desc = new PrimitiveDescription(getKeyword(), into, ChildrenProvider.NONE, false,
-				args != null, element, facets.cleanCopy(), plugin);
-		if (args != null) {
-			desc.args.putAll(args);
-		}
-		desc.originName = originName;
+		final PrimitiveDescription desc = new PrimitiveDescription(into, element,
+				args != null ? new ChildrenProvider(args.values()) : ChildrenProvider.NONE, getFacetsCopy(), plugin);
+		// if (args != null) {
+		// args.forEachValue(new TObjectProcedure<StatementDescription>() {
+		//
+		// @Override
+		// public boolean execute(final StatementDescription b) {
+		// desc.addChild(b.copy(desc));
+		// return true;
+		// }
+		//
+		// });
+		// }
+		desc.originName = getOriginName();
 		desc.setHelper(helper, method);
 		return desc;
 	}

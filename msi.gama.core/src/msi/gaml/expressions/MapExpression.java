@@ -71,7 +71,7 @@ public class MapExpression extends AbstractExpression {
 		final IType keyType = GamaType.findCommonType(keys, GamaType.TYPE);
 		final IType contentsType = GamaType.findCommonType(vals, GamaType.TYPE);
 		// values = GamaMapFactory.create(keyType, contentsType, keys.length);
-		setName(pairs.toString());
+		// setName(pairs.toString());
 		type = Types.MAP.of(keyType, contentsType);
 	}
 
@@ -87,7 +87,7 @@ public class MapExpression extends AbstractExpression {
 		final IType keyType = GamaType.findCommonType(keys, GamaType.TYPE);
 		final IType contentsType = GamaType.findCommonType(vals, GamaType.TYPE);
 		// values = GamaMapFactory.create(keyType, contentsType, keys.length);
-		setName(pairs.toString());
+		// setName(pairs.toString());
 		type = Types.MAP.of(keyType, contentsType);
 	}
 

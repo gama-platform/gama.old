@@ -11,9 +11,17 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import msi.gaml.descriptions.*;
-import msi.gaml.statements.Facets;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.base.Predicate;
+
+import msi.gama.common.interfaces.IKeyword;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.SymbolProto;
+import msi.gaml.statements.Facets;
 
 /**
  * Class ISyntacticElement.
@@ -24,11 +32,39 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface ISyntacticElement {
 
-	final static ISyntacticElement[] EMPTY_ARRAY = new ISyntacticElement[0];
+	public static final Predicate<ISyntacticElement> SPECIES_FILTER = new Predicate<ISyntacticElement>() {
+
+		@Override
+		public boolean apply(final ISyntacticElement input) {
+			return input.isSpecies() && !IKeyword.GRID.equals(input.getKeyword());
+		}
+	};
+
+	public static final Predicate<ISyntacticElement> GRID_FILTER = new Predicate<ISyntacticElement>() {
+
+		@Override
+		public boolean apply(final ISyntacticElement input) {
+			return IKeyword.GRID.equals(input.getKeyword());
+		}
+	};
+
+	public static final Predicate<ISyntacticElement> EXPERIMENT_FILTER = new Predicate<ISyntacticElement>() {
+
+		@Override
+		public boolean apply(final ISyntacticElement input) {
+			return input.isExperiment();
+		}
+	};
+
+	public static final Predicate<ISyntacticElement> OTHER_FILTER = new Predicate<ISyntacticElement>() {
+
+		@Override
+		public boolean apply(final ISyntacticElement input) {
+			return !input.isExperiment() && !input.isSpecies();
+		}
+	};
 
 	public abstract void setKeyword(final String name);
-
-	public abstract void dump();
 
 	public abstract String getKeyword();
 
@@ -36,13 +72,25 @@ public interface ISyntacticElement {
 
 	public abstract IExpressionDescription getExpressionAt(final String name);
 
-	// Copy the facets found in the element. The prototype of the symbol is passed so that additional operations can be
-	// made on the facets (transforming labels, etc.). This prototype can be null.
+	// Copy the facets found in the element. The prototype of the symbol is
+	// passed so that additional operations can be
+	// made on the facets (transforming labels, etc.). This prototype can be
+	// null.
 	public abstract Facets copyFacets(SymbolProto sp);
 
 	public abstract void setFacet(final String string, final IExpressionDescription expr);
 
-	public abstract ISyntacticElement[] getChildren();
+	public abstract void setDependencies(final Set<String> strings);
+
+	public Set<String> getDependencies();
+
+	public abstract Iterable<ISyntacticElement> getChildren();
+
+	public abstract Iterable<ISyntacticElement> getExperiments();
+
+	public abstract Iterable<ISyntacticElement> getSpecies();
+
+	public abstract Iterable<ISyntacticElement> getGrids();
 
 	public abstract String getName();
 
@@ -50,12 +98,12 @@ public interface ISyntacticElement {
 
 	public abstract void addChild(final ISyntacticElement e);
 
-	public abstract boolean isSynthetic();
-
 	public abstract boolean isSpecies();
 
-	public abstract boolean isGlobal();
-
 	public abstract boolean isExperiment();
+
+	public abstract boolean hasFacets();
+
+	public abstract void computeStats(Map<String, Integer> stats);
 
 }

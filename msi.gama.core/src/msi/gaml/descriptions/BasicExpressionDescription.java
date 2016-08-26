@@ -11,13 +11,18 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
+
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.util.GAML;
-import msi.gaml.expressions.*;
-import msi.gaml.types.*;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.TypeExpression;
+import msi.gaml.types.GamaStringType;
+import msi.gaml.types.IType;
 
 public class BasicExpressionDescription implements IExpressionDescription {
 
@@ -48,16 +53,22 @@ public class BasicExpressionDescription implements IExpressionDescription {
 
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		if ( expression != null ) {
+		if (expression != null) {
 			expression.collectMetaInformation(meta);
 		}
 	}
 
 	@Override
 	public boolean equals(final Object c) {
-		if ( c == null ) { return false; }
-		if ( c == this ) { return true; }
-		if ( c instanceof IExpressionDescription ) { return ((IExpressionDescription) c).equalsString(toString()); }
+		if (c == null) {
+			return false;
+		}
+		if (c == this) {
+			return true;
+		}
+		if (c instanceof IExpressionDescription) {
+			return ((IExpressionDescription) c).equalsString(toString());
+		}
 		return false;
 	}
 
@@ -79,7 +90,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 
 	@Override
 	public IExpression compile(final IDescription context) {
-		if ( expression == null ) {
+		if (expression == null) {
 			expression = GAML.getExpressionFactory().createExpr(this, context);
 		}
 		return expression;
@@ -90,7 +101,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	 */
 	@Override
 	public IExpressionDescription compileAsLabel() {
-		IExpressionDescription newEd = LabelExpressionDescription.create(StringUtils.toJavaString(toString()));
+		final IExpressionDescription newEd = LabelExpressionDescription.create(StringUtils.toJavaString(toString()));
 		newEd.setTarget(getTarget());
 		return newEd;
 	}
@@ -121,13 +132,13 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	 */
 	@Override
 	public void setTarget(final EObject newTarget) {
-		if ( target == null ) {
+		if (target == null) {
 			target = newTarget;
 		}
 	}
 
 	@Override
-	public boolean isConstant() {
+	public boolean isConst() {
 		return false;
 	}
 
@@ -138,7 +149,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 
 	@Override
 	public IExpressionDescription cleanCopy() {
-		IExpressionDescription result = new BasicExpressionDescription(expression);
+		final IExpressionDescription result = new BasicExpressionDescription(expression);
 		result.setTarget(target);
 		return result;
 	}
@@ -146,8 +157,11 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	@Override
 	public IType getDenotedType(final IDescription context) {
 		compile(context);
-		if ( expression instanceof TypeExpression ) { return expression.getType(); }
-		if (expression.isConst()) return context.getTypeNamed(GamaStringType.staticCast(null, expression.value(null), true));
+		if (expression instanceof TypeExpression) {
+			return expression.getType();
+		}
+		if (expression.isConst())
+			return context.getTypeNamed(GamaStringType.staticCast(null, expression.value(null), true));
 		return context.getTypeNamed(expression.literalValue());
 	}
 

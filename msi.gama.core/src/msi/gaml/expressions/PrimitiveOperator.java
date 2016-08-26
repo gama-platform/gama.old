@@ -42,7 +42,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	public PrimitiveOperator(final OperatorProto proto, final IDescription callerContext,
 			final StatementDescription action, final IExpression call, final Arguments args) {
 		super(proto, call);
-		name = action.getName();
+		// name = action.getName();
 		type = action.getType();
 		this.action = action;
 		parameters = args == null ? new Arguments() : args;
@@ -51,7 +51,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 
 	@Override
 	public String getName() {
-		return name;
+		return action.getName();
 	}
 
 	@Override

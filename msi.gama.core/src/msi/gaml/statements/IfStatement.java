@@ -12,6 +12,7 @@
 package msi.gaml.statements;
 
 import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -21,11 +22,14 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IDescription.DescriptionVisitor;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Strings;
@@ -37,35 +41,35 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul 14 nov. 07
  */
-@symbol(name = IKeyword.IF, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = { IConcept.CONDITION })
+@symbol(name = IKeyword.IF, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = {
+		IConcept.CONDITION })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.CONDITION,
-	type = IType.BOOL,
-	optional = false,
-	doc = @doc("A boolean expression: the condition that is evaluated.")) }, omissible = IKeyword.CONDITION)
-@doc(value = "Allows the agent to execute a sequence of statements if and only if the condition evaluates to true.",
-	usages = {
+@facets(value = {
+		@facet(name = IKeyword.CONDITION, type = IType.BOOL, optional = false, doc = @doc("A boolean expression: the condition that is evaluated.")) }, omissible = IKeyword.CONDITION)
+@doc(value = "Allows the agent to execute a sequence of statements if and only if the condition evaluates to true.", usages = {
 		@usage(value = "The generic syntax is:", examples = { @example(value = "if bool_expr {", isExecutable = false),
-			@example(value = "    [statements]", isExecutable = false), @example(value = "}", isExecutable = false) }),
-		@usage(value = "Optionally, the statements to execute when the condition evaluates to false can be defined in a following statement else. The syntax then becomes:",
-			examples = { @example(value = "if bool_expr {", isExecutable = false),
 				@example(value = "    [statements]", isExecutable = false),
-				@example(value = "}", isExecutable = false), @example(value = "else {", isExecutable = false),
-				@example(value = "    [statements]", isExecutable = false),
-				@example(value = "}", isExecutable = false), @example(value = "string valTrue <- \"\";"),
-				@example(value = "if true {"), @example(value = "	valTrue <- \"true\";"), @example(value = "}"),
-				@example(value = "else {"), @example(value = "	valTrue <- \"false\";"), @example(value = "}"),
+				@example(value = "}", isExecutable = false) }),
+		@usage(value = "Optionally, the statements to execute when the condition evaluates to false can be defined in a following statement else. The syntax then becomes:", examples = {
+				@example(value = "if bool_expr {", isExecutable = false),
+				@example(value = "    [statements]", isExecutable = false), @example(value = "}", isExecutable = false),
+				@example(value = "else {", isExecutable = false),
+				@example(value = "    [statements]", isExecutable = false), @example(value = "}", isExecutable = false),
+				@example(value = "string valTrue <- \"\";"), @example(value = "if true {"),
+				@example(value = "	valTrue <- \"true\";"), @example(value = "}"), @example(value = "else {"),
+				@example(value = "	valTrue <- \"false\";"), @example(value = "}"),
 				@example(var = "valTrue", equals = "\"true\""), @example(value = "string valFalse <- \"\";"),
 				@example(value = "if false {"), @example(value = "	valFalse <- \"true\";"), @example(value = "}"),
 				@example(value = "else {"), @example(value = "	valFalse <- \"false\";"), @example(value = "}"),
 				@example(var = "valFalse", equals = "\"false\"") }),
 		@usage(value = "ifs and elses can be imbricated as needed. For instance:", examples = {
-			@example(value = "if bool_expr {", isExecutable = false),
-			@example(value = "    [statements]", isExecutable = false), @example(value = "}", isExecutable = false),
-			@example(value = "else if bool_expr2 {", isExecutable = false),
-			@example(value = "    [statements]", isExecutable = false), @example(value = "}", isExecutable = false),
-			@example(value = "else {", isExecutable = false),
-			@example(value = "    [statements]", isExecutable = false), @example(value = "}", isExecutable = false) }) })
+				@example(value = "if bool_expr {", isExecutable = false),
+				@example(value = "    [statements]", isExecutable = false), @example(value = "}", isExecutable = false),
+				@example(value = "else if bool_expr2 {", isExecutable = false),
+				@example(value = "    [statements]", isExecutable = false), @example(value = "}", isExecutable = false),
+				@example(value = "else {", isExecutable = false),
+				@example(value = "    [statements]", isExecutable = false),
+				@example(value = "}", isExecutable = false) }) })
 @serializer(IfSerializer.class)
 public class IfStatement extends AbstractStatementSequence {
 
@@ -73,19 +77,24 @@ public class IfStatement extends AbstractStatementSequence {
 
 		@Override
 		protected void serializeChildren(final StatementDescription desc, final StringBuilder sb,
-			final boolean includingBuiltIn) {
+				final boolean includingBuiltIn) {
 			sb.append(' ').append('{').append(Strings.LN);
-			String elseString = null;
-			for ( IDescription s : desc.getChildren() ) {
-				if ( s.getKeyword().equals(IKeyword.ELSE) ) {
-					elseString = s.serialize(false) + Strings.LN;
-				} else {
-					serializeChild(s, sb, includingBuiltIn);
+			final String[] elseString = new String[] { null };
+			desc.visitChildren(new DescriptionVisitor<IDescription>() {
+
+				@Override
+				public void visit(final IDescription s) {
+					if (s.getKeyword().equals(IKeyword.ELSE)) {
+						elseString[0] = s.serialize(false) + Strings.LN;
+					} else {
+						serializeChild(s, sb, includingBuiltIn);
+					}
 				}
-			}
+			});
+
 			sb.append('}');
-			if ( elseString != null ) {
-				sb.append(elseString);
+			if (elseString[0] != null) {
+				sb.append(elseString[0]);
 			} else {
 				sb.append(Strings.LN);
 			}
@@ -100,12 +109,13 @@ public class IfStatement extends AbstractStatementSequence {
 	/**
 	 * The Constructor.
 	 * 
-	 * @param sim the sim
+	 * @param sim
+	 *            the sim
 	 */
 	public IfStatement(final IDescription desc) {
 		super(desc);
 		cond = getFacet(IKeyword.CONDITION);
-		if ( cond != null ) {
+		if (cond != null) {
 			setName("if " + cond.serialize(false));
 		}
 
@@ -113,8 +123,8 @@ public class IfStatement extends AbstractStatementSequence {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		for ( final ISymbol c : commands ) {
-			if ( c instanceof ElseStatement ) {
+		for (final ISymbol c : commands) {
+			if (c instanceof ElseStatement) {
 				alt = (IStatement) c;
 			}
 		}

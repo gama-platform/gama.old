@@ -5,15 +5,31 @@
 package msi.gama.lang.gaml.ui.editor;
 
 import java.util.regex.Pattern;
-import org.eclipse.jface.text.*;
+
+import org.eclipse.jface.text.IFindReplaceTarget;
+import org.eclipse.jface.text.IFindReplaceTargetExtension;
+import org.eclipse.jface.text.IFindReplaceTargetExtension3;
+import org.eclipse.jface.text.ITextOperationTarget;
+import org.eclipse.jface.text.ITextSelection;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.source.ISourceViewer;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolItem;
 
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
@@ -45,7 +61,7 @@ public class EditToolbarFindControls {
 
 		composite = new Composite(toolbar, SWT.NONE);
 		composite.setBackground(IGamaColors.WHITE.color());
-		GridLayout layout = new GridLayout(1, false);
+		final GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
 		layout.marginHeight = 0;
 		layout.verticalSpacing = 0;
@@ -63,7 +79,7 @@ public class EditToolbarFindControls {
 		// find.setFont(SwtGui.getLabelfont());
 		find.setBackground(IGamaColors.BLUE.color());
 		find.setForeground(IGamaColors.WHITE.color());
-		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.heightHint = 16;
 		find.setLayoutData(data);
 		find.setText(EMPTY);
@@ -71,14 +87,14 @@ public class EditToolbarFindControls {
 
 			@Override
 			public void focusLost(final FocusEvent e) {
-				if ( find.getText().isEmpty() ) {
+				if (find.getText().isEmpty()) {
 					find.setText(EMPTY);
 				}
 			}
 
 			@Override
 			public void focusGained(final FocusEvent e) {
-				if ( find.getText().equals(EMPTY) ) {
+				if (find.getText().equals(EMPTY)) {
 					find.setText("");
 				}
 				adjustEnablement(false, null);
@@ -121,7 +137,8 @@ public class EditToolbarFindControls {
 		//
 		// @Override
 		// public void keyPressed(final KeyEvent e) {
-		// if ( (e.stateMask & SWT.CTRL) != 0 || (e.stateMask & SWT.COMMAND) != 0 ) {
+		// if ( (e.stateMask & SWT.CTRL) != 0 || (e.stateMask & SWT.COMMAND) !=
+		// 0 ) {
 		// switch (e.character) {
 		// case 'c':
 		// find.copy();
@@ -154,7 +171,8 @@ public class EditToolbarFindControls {
 		//
 		// @Override
 		// public void mouseEnter(final MouseEvent e) {
-		// ca = editor.getSite().getService(IContextService.class).activateContext("SearchText");
+		// ca =
+		// editor.getSite().getService(IContextService.class).activateContext("SearchText");
 		// System.out.println("SearchText context activated");
 		//
 		// }
@@ -172,19 +190,22 @@ public class EditToolbarFindControls {
 		//
 		// @Override
 		// public void focusGained(final FocusEvent e) {
-		// ca = editor.getSite().getService(IContextService.class).activateContext("SearchText");
+		// ca =
+		// editor.getSite().getService(IContextService.class).activateContext("SearchText");
 		// System.out.println("SearchText context activated via focus");
 		//
 		// }
 		// });
 		this.adjustEnablement(false, null);
-		// IFocusService focusService = editor.getSite().getService(IFocusService.class);
-		// focusService.addFocusTracker(find, "msi.gama.editor.search"); //$NON-NLS-1$
+		// IFocusService focusService =
+		// editor.getSite().getService(IFocusService.class);
+		// focusService.addFocusTracker(find, "msi.gama.editor.search");
+		// //$NON-NLS-1$
 
 	}
 
 	private void toggleWholeWordMode() {
-		if ( wholeWord.isEnabled() ) {
+		if (wholeWord.isEnabled()) {
 			find(true, true);
 		}
 	}
@@ -196,18 +217,20 @@ public class EditToolbarFindControls {
 		@Override
 		public void modifyText(final ModifyEvent e) {
 			boolean wrap = true;
-			String text = find.getText();
-			if ( lastText.startsWith(text) ) {
+			final String text = find.getText();
+			if (lastText.startsWith(text)) {
 				wrap = false;
 			}
 			lastText = text;
-			if ( EMPTY.equals(text) || "".equals(text) ) {
+			if (EMPTY.equals(text) || "".equals(text)) {
 				adjustEnablement(false, null);
-				ISelectionProvider selectionProvider = editor.getSelectionProvider();
-				ISelection selection = selectionProvider.getSelection();
-				if ( selection instanceof TextSelection ) {
-					ITextSelection textSelection = (ITextSelection) selection;
-					selectionProvider.setSelection(new TextSelection(textSelection.getOffset(), 0));
+				final ISelectionProvider selectionProvider = editor.getSelectionProvider();
+				if (selectionProvider != null) {
+					final ISelection selection = selectionProvider.getSelection();
+					if (selection instanceof TextSelection) {
+						final ITextSelection textSelection = (ITextSelection) selection;
+						selectionProvider.setSelection(new TextSelection(textSelection.getOffset(), 0));
+					}
 				}
 			} else {
 				find(true, true, wrap);
@@ -216,11 +239,11 @@ public class EditToolbarFindControls {
 	};
 
 	private void adjustEnablement(final boolean found, final Color color) {
-		String text = find.getText();
+		final String text = find.getText();
 		previous.setEnabled(found);
 		next.setEnabled(found);
 		wholeWord.setEnabled(found && isWord(text));
-		if ( color == null ) {
+		if (color == null) {
 			composite.setBackground(IGamaColors.WHITE.color());
 		} else {
 			composite.setBackground(color);
@@ -249,31 +272,30 @@ public class EditToolbarFindControls {
 
 	private void find(final boolean forward, final boolean incremental, final boolean wrap, final boolean wrapping) {
 
-		IFindReplaceTarget findReplaceTarget = (IFindReplaceTarget) editor.getAdapter(IFindReplaceTarget.class);
-		if ( findReplaceTarget != null ) {
+		final IFindReplaceTarget findReplaceTarget = (IFindReplaceTarget) editor.getAdapter(IFindReplaceTarget.class);
+		if (findReplaceTarget != null) {
 			boolean foundOne = false;
 			try {
-				String findText = find.getText();
-				Pattern pattern = null;
-				if ( findReplaceTarget instanceof IFindReplaceTargetExtension ) {
-					IFindReplaceTargetExtension findReplaceTargetExtension =
-						(IFindReplaceTargetExtension) findReplaceTarget;
+				final String findText = find.getText();
+				final Pattern pattern = null;
+				if (findReplaceTarget instanceof IFindReplaceTargetExtension) {
+					final IFindReplaceTargetExtension findReplaceTargetExtension = (IFindReplaceTargetExtension) findReplaceTarget;
 					findReplaceTargetExtension.beginSession();
 				}
-				ISourceViewer sourceViewer = getSourceViewer();
-				StyledText textWidget = sourceViewer.getTextWidget();
+				final ISourceViewer sourceViewer = getSourceViewer();
+				final StyledText textWidget = sourceViewer.getTextWidget();
 				int offset = textWidget.getCaretOffset();
 				Point selection = textWidget.getSelection();
-				if ( wrapping ) {
-					if ( forward ) {
+				if (wrapping) {
+					if (forward) {
 						offset = 0;
 					} else {
 						offset = sourceViewer.getDocument().getLength() - 1;
 					}
 				} else {
-					if ( forward ) {
-						if ( incremental ) {
-							if ( incrementalOffset == -1 ) {
+					if (forward) {
+						if (incremental) {
+							if (incrementalOffset == -1) {
 								incrementalOffset = offset;
 							} else {
 								offset = incrementalOffset;
@@ -283,36 +305,37 @@ public class EditToolbarFindControls {
 						}
 					} else {
 						incrementalOffset = selection.x;
-						if ( selection.x != offset ) {
+						if (selection.x != offset) {
 							offset = selection.x;
 						}
 					}
 				}
 				int newOffset = -1;
-				if ( findReplaceTarget instanceof IFindReplaceTargetExtension3 ) {
+				if (findReplaceTarget instanceof IFindReplaceTargetExtension3) {
 					newOffset = ((IFindReplaceTargetExtension3) findReplaceTarget).findAndSelect(offset, findText,
-						forward, caseSensitive.getSelection(), wholeWord.getEnabled() && wholeWord.getSelection(), false
+							forward, caseSensitive.getSelection(), wholeWord.getEnabled() && wholeWord.getSelection(),
+							false
 					/* regularExpression.getSelection() */);
 				} else {
 					newOffset = findReplaceTarget.findAndSelect(offset, findText, forward, caseSensitive.getSelection(),
-						wholeWord.getEnabled() && wholeWord.getSelection());
+							wholeWord.getEnabled() && wholeWord.getSelection());
 				}
 
-				if ( newOffset != -1 ) {
+				if (newOffset != -1) {
 					foundOne = true;
 					adjustEnablement(true, IGamaColors.OK.inactive());
 					selection = textWidget.getSelection();
-					if ( !forward ) {
+					if (!forward) {
 						incrementalOffset = selection.x;
 					}
 				} else {
-					if ( wrap ) {
-						if ( !wrapping ) {
+					if (wrap) {
+						if (!wrapping) {
 							find(forward, incremental, wrap, true);
 							return;
 						}
 					}
-					if ( !EMPTY.equals(findText) && !"".equals(findText) ) {
+					if (!EMPTY.equals(findText) && !"".equals(findText)) {
 						adjustEnablement(false, IGamaColors.ERROR.inactive());
 						// parent.layout();
 						// parent.update();
@@ -320,9 +343,8 @@ public class EditToolbarFindControls {
 				}
 			} finally {
 
-				if ( findReplaceTarget instanceof IFindReplaceTargetExtension ) {
-					IFindReplaceTargetExtension findReplaceTargetExtension =
-						(IFindReplaceTargetExtension) findReplaceTarget;
+				if (findReplaceTarget instanceof IFindReplaceTargetExtension) {
+					final IFindReplaceTargetExtension findReplaceTargetExtension = (IFindReplaceTargetExtension) findReplaceTarget;
 					findReplaceTargetExtension.endSession();
 				}
 			}
@@ -337,10 +359,14 @@ public class EditToolbarFindControls {
 	 * @return <code>true</code> if the given string is a word
 	 */
 	private boolean isWord(final String str) {
-		if ( str == null || str.length() == 0 ) { return false; }
+		if (str == null || str.length() == 0) {
+			return false;
+		}
 
-		for ( int i = 0; i < str.length(); i++ ) {
-			if ( !Character.isJavaIdentifierPart(str.charAt(i)) ) { return false; }
+		for (int i = 0; i < str.length(); i++) {
+			if (!Character.isJavaIdentifierPart(str.charAt(i))) {
+				return false;
+			}
 		}
 		return true;
 	}

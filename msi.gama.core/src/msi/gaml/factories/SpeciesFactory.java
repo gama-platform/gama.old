@@ -12,11 +12,18 @@
 package msi.gaml.factories;
 
 import static msi.gama.precompiler.ISymbolKind.SPECIES;
-import java.util.*;
+
+import java.util.List;
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
+
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gaml.compilation.IAgentConstructor;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.SymbolProto;
+import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.statements.Facets;
 
 /**
@@ -34,13 +41,14 @@ public class SpeciesFactory extends SymbolFactory {
 
 	@Override
 	protected TypeDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-		final ChildrenProvider children, final IDescription sd, final SymbolProto proto, final String plugin) {
-		return new SpeciesDescription(keyword, sd, children, element, facets, plugin);
+			final ChildrenProvider children, final IDescription sd, final SymbolProto proto,
+			final Set<String> dependencies) {
+		return new SpeciesDescription(keyword, (SpeciesDescription) sd, children, element, facets);
 	}
 
 	public SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,
-		final IDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
-		final Set<String> skills, final Facets userSkills, final String plugin) {
+			final SpeciesDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
+			final Set<String> skills, final Facets userSkills, final String plugin) {
 		DescriptionFactory.addSpeciesNameAsType(name);
 		return new SpeciesDescription(name, clazz, superDesc, parent, helper, skills, userSkills, plugin);
 	}

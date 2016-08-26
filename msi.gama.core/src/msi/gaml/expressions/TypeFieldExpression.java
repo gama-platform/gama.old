@@ -11,14 +11,16 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.OperatorProto;
 
 public class TypeFieldExpression extends UnaryOperator {
 
-	public TypeFieldExpression(final OperatorProto proto, final IDescription context, final IExpression ... exprs) {
+	public TypeFieldExpression(final OperatorProto proto, final IDescription context, final IExpression... exprs) {
 		super(proto, context, exprs);
 	}
 
@@ -29,30 +31,32 @@ public class TypeFieldExpression extends UnaryOperator {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		StringBuilder sb = new StringBuilder();
+		final StringBuilder sb = new StringBuilder();
 		parenthesize(sb, child);
-		sb.append(".").append(name);
+		sb.append(".").append(getName());
 		return sb.toString();
 	}
 
 	@Override
 	public String toString() {
-		if ( child == null ) { return prototype.signature.toString() + "." + name; }
-		return child.serialize(false) + "." + name;
+		if (child == null) {
+			return prototype.signature.toString() + "." + getName();
+		}
+		return child.serialize(false) + "." + getName();
 	}
 
 	@Override
 	public String getDocumentation() {
-		StringBuilder sb = new StringBuilder(200);
-		if ( child != null ) {
+		final StringBuilder sb = new StringBuilder(200);
+		if (child != null) {
 			sb.append("Defined on objects of type " + child.getType().getTitle());
 		}
-		vars annot = prototype.getSupport().getAnnotation(vars.class);
-		if ( annot != null ) {
-			var[] allVars = annot.value();
-			for ( var v : allVars ) {
-				if ( v.name().equals(getName()) ) {
-					if ( v.doc().length > 0 ) {
+		final vars annot = prototype.getSupport().getAnnotation(vars.class);
+		if (annot != null) {
+			final var[] allVars = annot.value();
+			for (final var v : allVars) {
+				if (v.name().equals(getName())) {
+					if (v.doc().length > 0) {
 						sb.append("<br/>");
 						sb.append(v.doc()[0].value());
 					}
@@ -69,7 +73,7 @@ public class TypeFieldExpression extends UnaryOperator {
 
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		meta.put(GamlProperties.ATTRIBUTES, name);
+		meta.put(GamlProperties.ATTRIBUTES, getName());
 	}
 
 }

@@ -16,7 +16,7 @@ import msi.gama.runtime.IScope;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.skills.*;
+import msi.gaml.skills.Skill;
 import msi.gaml.species.ISpecies;
 
 public abstract class AbstractArchitecture extends Skill implements IArchitecture {
@@ -27,12 +27,17 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 
 	@Override
 	public IArchitecture duplicate() {
-		ISkill duplicate = Skill.Factory.create(getName(), getClass(), getDefiningPlugin());
+		final ISkill duplicate = Skill.Factory.create(getName(), getClass(), getDefiningPlugin());
 		return (IArchitecture) duplicate;
 	}
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
+		return getName();
+	}
+
+	@Override
+	public String getKeyword() {
 		return getName();
 	}
 
@@ -47,7 +52,7 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 	}
 
 	@Override
-	public IExpression getFacet(final String ... key) {
+	public IExpression getFacet(final String... key) {
 		return null;
 	}
 
@@ -57,9 +62,11 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 	}
 
 	@Override
-	public void verifyBehaviors(final ISpecies context) {}
+	public void verifyBehaviors(final ISpecies context) {
+	}
 
 	@Override
-	public void dispose() {}
+	public void dispose() {
+	}
 
 }

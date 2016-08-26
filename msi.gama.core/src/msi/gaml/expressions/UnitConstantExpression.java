@@ -6,10 +6,18 @@ package msi.gaml.expressions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+
+import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.precompiler.GamlProperties;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.LabelExpressionDescription;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Class UnitConstantExpression.
@@ -18,8 +26,11 @@ import msi.gaml.types.IType;
  * @since 22 avr. 2014
  *
  */
-public class UnitConstantExpression extends ConstantExpression {
+public class UnitConstantExpression extends ConstantExpression implements IExpressionDescription {
 
+	String name;
+
+	// Already cached in IExpressionFactory.UNIT_EXPRS
 	public static UnitConstantExpression create(final Object val, final IType t, final String unit, final String doc,
 			final String[] names) {
 
@@ -95,6 +106,54 @@ public class UnitConstantExpression extends ConstantExpression {
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
 		meta.put(GamlProperties.CONSTANTS, name);
+	}
+
+	@Override
+	public void setExpression(final IExpression expr) {
+	}
+
+	@Override
+	public IExpression compile(final IDescription context) {
+		return this;
+	}
+
+	@Override
+	public IExpression getExpression() {
+		return this;
+	}
+
+	@Override
+	public IExpressionDescription compileAsLabel() {
+		return LabelExpressionDescription.create(name);
+	}
+
+	@Override
+	public boolean equalsString(final String o) {
+		return name.equals(o);
+	}
+
+	@Override
+	public EObject getTarget() {
+		return null;
+	}
+
+	@Override
+	public void setTarget(final EObject target) {
+	}
+
+	@Override
+	public Set<String> getStrings(final IDescription context, final boolean skills) {
+		return Collections.EMPTY_SET;
+	}
+
+	@Override
+	public IExpressionDescription cleanCopy() {
+		return this;
+	}
+
+	@Override
+	public IType getDenotedType(final IDescription context) {
+		return Types.NO_TYPE;
 	}
 
 }

@@ -20,10 +20,11 @@ import msi.gaml.types.IType;
 public class AgentVariableExpression extends VariableExpression implements IVarExpression.Agent {
 
 	protected AgentVariableExpression(final String n, final IType type, final boolean notModifiable,
-		final IDescription def) {
+			final IDescription def) {
 		super(n, type, notModifiable, def);
 	}
-	
+
+	@Override
 	public IExpression getOwner() {
 		return new SelfExpression(this.getDefinitionDescription().getSpeciesContext().getType());
 	}
@@ -35,23 +36,23 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
-		if ( isNotModifiable ) { return; }
 		scope.setAgentVarValue(scope.getAgent(), getName(), v);
 	}
 
 	@Override
 	public String getDocumentation() {
-		IDescription desc = getDefinitionDescription();
+		final IDescription desc = getDefinitionDescription();
 		return "Type " + type.getTitle() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
 	}
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		if ( getDefinitionDescription().isBuiltIn() ) {
+		if (getDefinitionDescription().isBuiltIn()) {
 			meta.put(GamlProperties.ATTRIBUTES, getName());
 		}
 	}

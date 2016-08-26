@@ -131,7 +131,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		@Override
 		public void validate(final IDescription description) {
 			final StatementDescription desc = (StatementDescription) description;
-			final IExpression data = desc.getFacets().getExpr(DATA);
+			final IExpression data = desc.getFacetExpr(DATA);
 			if (data == null) {
 				return;
 			}
@@ -145,7 +145,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				desc.error("No attributes can be saved for geometries", IGamlIssue.UNKNOWN_VAR, WITH);
 			} else {
 				for (final StatementDescription arg : args) {
-					if (!species.hasVar(arg.getName())) {
+					if (!species.hasAttribute(arg.getName())) {
 						desc.error("Attribute " + arg.getName() + " is not defined for the agents of "
 								+ data.serialize(false), IGamlIssue.UNKNOWN_VAR, WITH);
 					}
@@ -160,8 +160,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	public SaveStatement(final IDescription desc) {
 		super(desc);
-		crsCode = desc.getFacets().getExpr("crs");
-		item = desc.getFacets().getExpr(IKeyword.DATA);
+		crsCode = desc.getFacetExpr("crs");
+		item = desc.getFacetExpr(IKeyword.DATA);
 		file = getFacet(IKeyword.TO);
 		rewriteExpr = getFacet(IKeyword.REWRITE);
 		header = getFacet(IKeyword.HEADER);
@@ -287,11 +287,13 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			header += "ncols         " + nbCols + Strings.LN;
 			header += "nrows         " + nbRows + Strings.LN;
 			final boolean nullProjection = scope.getSimulation().getProjectionFactory().getWorld() == null;
-			header += "xllcorner     " + (nullProjection ? "0"
-					: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX())
+			header += "xllcorner     "
+					+ (nullProjection ? "0"
+							: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinX())
 					+ Strings.LN;
-			header += "yllcorner     " + (nullProjection ? "0"
-					: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY())
+			header += "yllcorner     "
+					+ (nullProjection ? "0"
+							: scope.getSimulation().getProjectionFactory().getWorld().getProjectedEnvelope().getMinY())
 					+ Strings.LN;
 			final double dx = scope.getSimulation().getEnvelope().getWidth() / nbCols;
 			final double dy = scope.getSimulation().getEnvelope().getHeight() / nbRows;
@@ -421,7 +423,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					final String var = attributes.get(e);
 					String name = e.replaceAll("\"", "");
 					name = name.replaceAll("'", "");
-					final String type = type(species.getVariable(var));
+					final String type = type(species.getAttribute(var));
 					if ("String".equals(type))
 						attString.add(name);
 					specs.append(',').append(name).append(':').append(type);
@@ -457,7 +459,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 				if (isAgent) {
 					final Collection<String> attributeNames = values.getType().getContentType().getSpecies()
-							.getVarNames();
+							.getAttributeNames();
 					attributeNames.remove(IKeyword.NAME);
 					attributeNames.remove(IKeyword.LOCATION);
 					attributeNames.remove(IKeyword.PEERS);
@@ -535,7 +537,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			attributeNames.add(IKeyword.AGENTS);
 			attributeNames.add(IKeyword.MEMBERS);
 			attributeNames.add(IKeyword.SHAPE);
-			for (final String var : species.getVariables().keySet()) {
+			for (final String var : species.getAttributeNames()) {
 				if (!attributeNames.contains(var))
 					values.put(var, var);
 			}

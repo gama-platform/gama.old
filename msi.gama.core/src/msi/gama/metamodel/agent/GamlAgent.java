@@ -42,6 +42,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	// initialization (saves some bytes in each agent)
 	protected GamaMap<String, IPopulation> externMicroPopulations;
 
+	// FIXME Necessary to have this in all agents ? It seems that only
+	// simulations are concerned, and they can get this information directly
+	// from the meta-population returned by "agents".
 	protected int nbSubAgents = 0;
 
 	// end-hqnghi
@@ -278,6 +281,19 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		// Directly changing "members" not supported
 	}
 
+	/*
+	 * Returns the number of agents for which this agent is the direct host
+	 */
+	public int getMembersSize(final IScope scope) {
+		int result = 0;
+		for (final Object pop : getAttributes().values()) {
+			if (pop instanceof IPopulation) {
+				result += ((IPopulation) pop).length(scope);
+			}
+		}
+		return result;
+	}
+
 	@Override
 	public void setAgents(final IList<IAgent> agents) {
 		// "agents" is read-only attribute
@@ -377,19 +393,19 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		return externMicroPopulations;
 	}
 
-	@Override
-	public int getNbAgents() {
-		return nbSubAgents;
-	}
-
-	@Override
-	public void addSubAgents(final int nb) {
-		nbSubAgents += nb;
-	}
-
-	@Override
-	public void removeAgent() {
-		nbSubAgents--;
-	}
+	// @Override
+	// public int getNbAgents() {
+	// return nbSubAgents;
+	// }
+	//
+	// @Override
+	// public void addSubAgents(final int nb) {
+	// nbSubAgents += nb;
+	// }
+	//
+	// @Override
+	// public void removeAgent() {
+	// nbSubAgents--;
+	// }
 
 }

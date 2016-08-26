@@ -12,7 +12,9 @@
 package msi.gaml.descriptions;
 
 import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
+
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.expressions.IExpression;
@@ -43,7 +45,7 @@ public interface IExpressionDescription extends IGamlable {
 
 	public void setTarget(EObject target);
 
-	public boolean isConstant();
+	public boolean isConst();
 
 	public Set<String> getStrings(IDescription context, boolean skills);
 

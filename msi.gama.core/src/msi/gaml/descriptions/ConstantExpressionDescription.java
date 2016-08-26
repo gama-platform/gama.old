@@ -11,65 +11,156 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import msi.gama.util.GAML;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.types.*;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
 
-public class ConstantExpressionDescription extends BasicExpressionDescription {
+import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import msi.gaml.expressions.ConstantExpression;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.types.GamaType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+
+public class ConstantExpressionDescription extends ConstantExpression implements IExpressionDescription {
+
+	final static Cache<Object, IExpressionDescription> CACHE = CacheBuilder.newBuilder()
+			/*
+			 * .removalListener(new RemovalListener<Object,
+			 * IExpressionDescription>() {
+			 * 
+			 * @Override public void onRemoval(final RemovalNotification<Object,
+			 * IExpressionDescription> notification) { System.out.println(
+			 * "Removed from cache : " + notification.getKey() + " because " +
+			 * notification.getCause().toString()); } })
+			 */.maximumSize(1000).build();
+	public final static ConstantExpressionDescription NULL_EXPR_DESCRIPTION = new ConstantExpressionDescription(null);
+	public final static ConstantExpressionDescription TRUE_EXPR_DESCRIPTION = new ConstantExpressionDescription(true);
+	public final static ConstantExpressionDescription FALSE_EXPR_DESCRIPTION = new ConstantExpressionDescription(false);
+
+	public static IExpressionDescription create(final Object object) {
+		if (object == null)
+			return NULL_EXPR_DESCRIPTION;
+		try {
+			return CACHE.get(object, new Callable<IExpressionDescription>() {
+
+				@Override
+				public IExpressionDescription call() {
+					return new ConstantExpressionDescription(object);
+				}
+			});
+		} catch (final ExecutionException e) {
+			return null;
+		}
+	}
+
+	public static IExpressionDescription create(final Integer i) {
+		try {
+			return CACHE.get(i, new Callable<IExpressionDescription>() {
+
+				@Override
+				public IExpressionDescription call() {
+					return new ConstantExpressionDescription(i, Types.INT);
+				}
+			});
+		} catch (final ExecutionException e) {
+			return null;
+		}
+
+	}
+
+	public static IExpressionDescription create(final Double d) {
+		try {
+			return CACHE.get(d, new Callable<IExpressionDescription>() {
+
+				@Override
+				public IExpressionDescription call() {
+					return new ConstantExpressionDescription(d, Types.FLOAT);
+				}
+			});
+		} catch (final ExecutionException e) {
+			return null;
+		}
+
+	}
+
+	public static IExpressionDescription create(final Boolean b) {
+		return b ? TRUE_EXPR_DESCRIPTION : FALSE_EXPR_DESCRIPTION;
+	}
 
 	private ConstantExpressionDescription(final Object object) {
 		this(object, GamaType.of(object));
 	}
 
-	private ConstantExpressionDescription(final Object object, final IType type) {
-		this(GAML.getExpressionFactory().createConst(object, type));
-	}
-
-	private ConstantExpressionDescription(final IExpression expr) {
-		super(expr);
+	private ConstantExpressionDescription(final Object object, final IType t) {
+		super(object, t);
 	}
 
 	@Override
-	public boolean isConstant() {
+	public boolean isConst() {
 		return true;
 	}
 
 	@Override
+	public void dispose() {
+	}
+
+	@Override
 	public IExpression compile(final IDescription context) {
-		return expression;
+		return this;
 	}
 
 	@Override
 	public void setExpression(final IExpression expr) {
-		// scope.getGui().debug("Trying to set a new expression " + expr + " to description " + expression);
 	}
 
 	@Override
 	public IExpressionDescription cleanCopy() {
-		IExpressionDescription copy = new ConstantExpressionDescription(expression);
-		copy.setTarget(target);
-		return copy;
-	}
-
-	public static IExpressionDescription create(final Object object) {
-		return new ConstantExpressionDescription(object);
-	}
-
-	public static IExpressionDescription create(final Integer i) {
-		return new ConstantExpressionDescription(i, Types.INT);
-	}
-
-	public static IExpressionDescription create(final Double d) {
-		return new ConstantExpressionDescription(d, Types.FLOAT);
-	}
-
-	public static IExpressionDescription create(final Boolean b) {
-		return new ConstantExpressionDescription(b, Types.BOOL);
+		return this;
 	}
 
 	@Override
 	public IType getDenotedType(final IDescription context) {
-		return context.getTypeNamed(expression.literalValue());
+		return context.getTypeNamed(literalValue());
+	}
+
+	@Override
+	public IExpression getExpression() {
+		return this;
+	}
+
+	@Override
+	public IExpressionDescription compileAsLabel() {
+		return LabelExpressionDescription.create(literalValue());
+	}
+
+	@Override
+	public boolean equalsString(final String o) {
+		return literalValue().equals(o);
+	}
+
+	@Override
+	public EObject getTarget() {
+		return null;
+	}
+
+	@Override
+	public void setTarget(final EObject target) {
+	}
+
+	@Override
+	public Set<String> getStrings(final IDescription context, final boolean skills) {
+		return Collections.EMPTY_SET;
+	}
+
+	@Override
+	public IType getType() {
+		return type;
 	}
 
 }

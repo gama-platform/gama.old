@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.statements;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -39,9 +38,6 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.ListExpression;
-import msi.gaml.expressions.SpeciesConstantExpression;
-import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
@@ -92,20 +88,19 @@ public class SolveStatement extends AbstractStatement {
 
 		@Override
 		public void validate(final IDescription desc) {
-			final IExpression clen = desc.getFacets().getExpr(IKeyword.CYCLE_LENGTH);
-			if(clen != null){
+			final IExpression clen = desc.getFacetExpr(IKeyword.CYCLE_LENGTH);
+			if (clen != null) {
 				desc.warning("The cycle_length is deprecated, please use the unit multiplying in equation",
 						IGamlIssue.GENERAL);
 			}
-			final IExpression method = desc.getFacets().getExpr(IKeyword.METHOD);
+			final IExpression method = desc.getFacetExpr(IKeyword.METHOD);
 			if (method != null) {
 				final String methodName = method.literalValue();
 
 				if (methodName != null) {
 					if (Adaptive_Stepsize_Integrators.contains(methodName)) {
-						if (!desc.getFacets().containsKey("min_step") || !desc.getFacets().containsKey("max_step")
-								|| !desc.getFacets().containsKey("scalAbsoluteTolerance")
-								|| !desc.getFacets().containsKey("scalRelativeTolerance")) {
+						if (!desc.hasFacet("min_step") || !desc.hasFacet("max_step")
+								|| !desc.hasFacet("scalAbsoluteTolerance") || !desc.hasFacet("scalRelativeTolerance")) {
 							desc.error(
 									"For Adaptive Stepsize Integrators, the facets min_step, max_step, scalAbsoluteTolerance and scalRelativeTolerance have to be defined. Example: min_step:0.01 max_step:0.1 scalAbsoluteTolerance:0.0001 scalRelativeTolerance:0.0001",
 									IGamlIssue.GENERAL);
@@ -133,8 +128,9 @@ public class SolveStatement extends AbstractStatement {
 
 	final String equationName, solverName;
 	SystemOfEquationsStatement systemOfEquations;
-	final IExpression stepExp, cycleExp, nStepsExp, minStepExp, maxStepExp, absTolerExp, relTolerExp,
-			timeInitExp, timeFinalExp;//,discretExp,integrationTimesExp, integratedValuesExp;
+	final IExpression stepExp, cycleExp, nStepsExp, minStepExp, maxStepExp, absTolerExp, relTolerExp, timeInitExp,
+			timeFinalExp;// ,discretExp,integrationTimesExp,
+							// integratedValuesExp;
 
 	public SolveStatement(final IDescription desc) {
 		super(desc);
@@ -153,9 +149,9 @@ public class SolveStatement extends AbstractStatement {
 		relTolerExp = getFacet("scalRelativeTolerance");
 		timeInitExp = getFacet("time_initial");
 		timeFinalExp = getFacet("time_final");
-//		discretExp = sn == null ? new ConstantExpression(0) : sn;
-//		integrationTimesExp = getFacet("integrated_times");
-//		integratedValuesExp = getFacet("integrated_values");
+		// discretExp = sn == null ? new ConstantExpression(0) : sn;
+		// integrationTimesExp = getFacet("integrated_times");
+		// integratedValuesExp = getFacet("integrated_values");
 	}
 
 	private boolean initSystemOfEquations(final IScope scope) {
@@ -166,78 +162,86 @@ public class SolveStatement extends AbstractStatement {
 		return systemOfEquations != null;
 	}
 
-	@operator(value = { "internal_integrated_value" }, content_type = IType.FLOAT, category = { IOperatorCategory.CONTAINER }, concept = { IConcept.EQUATION })
+	@operator(value = { "internal_integrated_value" }, content_type = IType.FLOAT, category = {
+			IOperatorCategory.CONTAINER }, concept = { IConcept.EQUATION })
 	@doc("For internal use only. Corresponds to the implementation, for agents, of the access to containers with [index]")
-	public static IList internal_integrated_value(final IScope scope,final IExpression agent, final IExpression var)
-		throws GamaRuntimeException {
+	public static IList internal_integrated_value(final IScope scope, final IExpression agent, final IExpression var)
+			throws GamaRuntimeException {
 		// if agent not null
-		IAgent a = Cast.asAgent(scope, agent.value(scope));
+		final IAgent a = Cast.asAgent(scope, agent.value(scope));
 		// if a not null
-		GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) a.getAttribute("__integrated_values");
-		if(result!=null){			
+		final GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) a
+				.getAttribute("__integrated_values");
+		if (result != null) {
 			return result.get(var.getName());
 		}
 		return GamaListFactory.create();
 	}
-	
+
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if (!initSystemOfEquations(scope))
 			return null;
 
-//		final double cycleLength = Cast.asFloat(scope, cycleExp.value(scope));
-		double step = Cast.asFloat(scope, stepExp.value(scope));
-//		step = cycleLength > 1.0 ? step / cycleLength : step;
+		// final double cycleLength = Cast.asFloat(scope,
+		// cycleExp.value(scope));
+		final double step = Cast.asFloat(scope, stepExp.value(scope));
+		// step = cycleLength > 1.0 ? step / cycleLength : step;
 
 		final Solver solver = createSolver(scope, step);
 		if (solver == null)
 			return null;
 
-		double timeInit = timeInitExp == null ? scope.getSimulation().getClock().getCycle()
+		final double timeInit = timeInitExp == null ? scope.getSimulation().getClock().getCycle()
 				: Cast.asFloat(scope, timeInitExp.value(scope));
-		double timeFinal = timeFinalExp == null ? scope.getSimulation().getClock().getCycle() + 1//scope.getSimulationScope().getClock().getStep()
+		final double timeFinal = timeFinalExp == null ? scope.getSimulation().getClock().getCycle() + 1// scope.getSimulationScope().getClock().getStep()
 				: Cast.asFloat(scope, timeFinalExp.value(scope));
-//		if (cycleLength > 1.0) {
-//			timeInit /= cycleLength;
-//			timeFinal /= cycleLength;
-//		}
+		// if (cycleLength > 1.0) {
+		// timeInit /= cycleLength;
+		// timeFinal /= cycleLength;
+		// }
 
 		solver.solve(scope, systemOfEquations, timeInit, timeFinal, getIntegratedValues(scope));
 
-//		if (integrationTimesExp != null) {
-//			final List<Double> integrationTimes = getIntegrationTimes(scope);
-//			if (integrationTimes != null)
-//				((VariableExpression) getFacet("integrated_times")).setVal(scope, integrationTimes, false);
-//		}
+		// if (integrationTimesExp != null) {
+		// final List<Double> integrationTimes = getIntegrationTimes(scope);
+		// if (integrationTimes != null)
+		// ((VariableExpression) getFacet("integrated_times")).setVal(scope,
+		// integrationTimes, false);
+		// }
 
-//		if (integratedValuesExp != null) {
-//			final GamaMap<String, IList<Double>> integratedValues = getIntegratedValues(scope);
-//			if (integratedValues != null) {
-//				final ListExpression fv = (ListExpression) getFacet("integrated_values");
-//				IExpression[] L = fv.getElements();
-//				for (int i = 0; i < L.length; i++) {
-//					((VariableExpression) L[i]).setVal(scope, integratedValues.get(i), false);
-//				}
-//			}
-//		}
+		// if (integratedValuesExp != null) {
+		// final GamaMap<String, IList<Double>> integratedValues =
+		// getIntegratedValues(scope);
+		// if (integratedValues != null) {
+		// final ListExpression fv = (ListExpression)
+		// getFacet("integrated_values");
+		// IExpression[] L = fv.getElements();
+		// for (int i = 0; i < L.length; i++) {
+		// ((VariableExpression) L[i]).setVal(scope, integratedValues.get(i),
+		// false);
+		// }
+		// }
+		// }
 
 		return null;
 	}
 
 	private Solver createSolver(final IScope scope, final double step) {
-//		final int discret = Math.max(0, Cast.asInt(scope, discretExp.value(scope)));
+		// final int discret = Math.max(0, Cast.asInt(scope,
+		// discretExp.value(scope)));
 		final GamaMap<String, IList<Double>> integratedValues = getIntegratedValues(scope);
-//		final List<Double> integrationTimes = getIntegrationTimes(scope);
+		// final List<Double> integrationTimes = getIntegrationTimes(scope);
 		int nSteps = 2;
 		double minStep = 0.1, maxStep = 0.1, scalAbsoluteTolerance = 0.1, scalRelativeTolerance = 0.1;
 
 		if (Adaptive_Stepsize_Integrators.contains(solverName)) {
 			minStep = Cast.asFloat(scope, minStepExp.value(scope));
 			maxStep = Cast.asFloat(scope, maxStepExp.value(scope));
-//			if (cycleLength > 1.0) {
-//				minStep /= cycleLength;
-//				maxStep /= cycleLength;
-//			}
+			// if (cycleLength > 1.0) {
+			// minStep /= cycleLength;
+			// maxStep /= cycleLength;
+			// }
 			scalAbsoluteTolerance = Cast.asFloat(scope, absTolerExp.value(scope));
 			scalRelativeTolerance = Cast.asFloat(scope, relTolerExp.value(scope));
 			if (nStepsExp != null) {
@@ -246,52 +250,58 @@ public class SolveStatement extends AbstractStatement {
 		}
 
 		switch (solverName) {
-			case "Euler":
-				return new EulerSolver(step, integratedValues);
+		case "Euler":
+			return new EulerSolver(step, integratedValues);
 
-			case "ThreeEighthes":
-				return new ThreeEighthesSolver(step, integratedValues);
+		case "ThreeEighthes":
+			return new ThreeEighthesSolver(step, integratedValues);
 
-			case "Midpoint":
-				return new MidpointSolver(step, integratedValues);
+		case "Midpoint":
+			return new MidpointSolver(step, integratedValues);
 
-			case "Gill":
-				return new GillSolver(step, integratedValues);
+		case "Gill":
+			return new GillSolver(step, integratedValues);
 
-			case "Luther":
-				return new LutherSolver(step, integratedValues);
+		case "Luther":
+			return new LutherSolver(step, integratedValues);
 
-			case "rk4":
-				return new Rk4Solver(step, integratedValues);
+		case "rk4":
+			return new Rk4Solver(step, integratedValues);
 
-			case "dp853":
-				return new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance, integratedValues);
+		case "dp853":
+			return new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+					integratedValues);
 
-			case "DormandPrince54":
-				return new DormandPrince54Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance, integratedValues);
+		case "DormandPrince54":
+			return new DormandPrince54Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+					integratedValues);
 
-			case "GraggBulirschStoer":
-				return new GraggBulirschStoerSolver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance, integratedValues);
+		case "GraggBulirschStoer":
+			return new GraggBulirschStoerSolver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+					integratedValues);
 
-			case "HighamHall54":
-				return new HighamHall54Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance, integratedValues);
+		case "HighamHall54":
+			return new HighamHall54Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+					integratedValues);
 
-			case "AdamsBashforth":
-				return new AdamsBashforthSolver(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance, integratedValues);
+		case "AdamsBashforth":
+			return new AdamsBashforthSolver(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+					integratedValues);
 
-			case "AdamsMoulton":
-				return new AdamsMoultonSolver(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
-						 integratedValues);
+		case "AdamsMoulton":
+			return new AdamsMoultonSolver(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
+					integratedValues);
 
-			default:
-				return new Rk4Solver(step, integratedValues);
+		default:
+			return new Rk4Solver(step, integratedValues);
 		}
 	}
 
 	private GamaMap<String, IList<Double>> getIntegratedValues(final IScope scope) {
-//		if (integratedValuesExp == null)
-//			return null;
-		GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) scope.getAgent().getAttribute("__integrated_values");
+		// if (integratedValuesExp == null)
+		// return null;
+		GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) scope.getAgent()
+				.getAttribute("__integrated_values");
 		if (result == null) {
 			result = new GamaMap<String, IList<Double>>(0, Types.STRING, Types.LIST);
 			scope.getAgent().setAttribute("__integrated_values", result);
@@ -299,15 +309,16 @@ public class SolveStatement extends AbstractStatement {
 		return result;
 	}
 
-//	private List<Double> getIntegrationTimes(final IScope scope) {
-////		if (integrationTimesExp == null)
-////			return null;
-//		List<Double> result = (List<Double>) scope.getAgentScope().getAttribute("__integrated_times");
-//		if (result == null) {
-//			result = new ArrayList<>();
-//			scope.getAgentScope().setAttribute("__integrated_times", result);
-//		}
-//		return result;
-//	}
+	// private List<Double> getIntegrationTimes(final IScope scope) {
+	//// if (integrationTimesExp == null)
+	//// return null;
+	// List<Double> result = (List<Double>)
+	// scope.getAgentScope().getAttribute("__integrated_times");
+	// if (result == null) {
+	// result = new ArrayList<>();
+	// scope.getAgentScope().setAttribute("__integrated_times", result);
+	// }
+	// return result;
+	// }
 
 }

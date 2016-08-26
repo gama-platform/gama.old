@@ -26,7 +26,7 @@ experiment overlay type: gui
         display map 
         {
         	//define a new overlay layer positioned at the coordinate 5,5, with a constant size of 180 pixels per 100 pixels.
-            overlay "Overlay" position: { 5, 5 } size: { 180 #px, 100 #px } background: # black transparency: 0.5 border: #black rounded: true
+            overlay position: { 5, 5 } size: { 180 #px, 100 #px } background: # black transparency: 0.5 border: #black rounded: true
             {
             	//for each possible type, we draw a square with the corresponding color and we write the name of the type
                 float y <- 30#px;

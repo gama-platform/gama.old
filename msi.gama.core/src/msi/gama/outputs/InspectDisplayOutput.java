@@ -174,7 +174,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		}
 		type = getLiteral(IKeyword.TYPE);
 		if (type == null) {
-			if (getLiteral(IKeyword.KEYWORD).equals(IKeyword.BROWSE)) {
+			if (getKeyword().equals(IKeyword.BROWSE)) {
 				type = IKeyword.TABLE;
 			} else {
 				type = IKeyword.AGENT;

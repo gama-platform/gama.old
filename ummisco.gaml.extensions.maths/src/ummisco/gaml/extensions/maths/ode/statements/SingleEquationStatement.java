@@ -99,8 +99,8 @@ public class SingleEquationStatement extends AbstractStatement {
 
 		@Override
 		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
-			sb.append(desc.getFacets().get(LEFT).serialize(includingBuiltIn)).append(" = ")
-					.append(desc.getFacets().get(RIGHT).serialize(includingBuiltIn)).append(";");
+			sb.append(desc.getFacet(EQUATION_LEFT).serialize(includingBuiltIn)).append(" = ")
+					.append(desc.getFacet(EQUATION_RIGHT).serialize(includingBuiltIn)).append(";");
 		}
 	}
 
@@ -114,9 +114,9 @@ public class SingleEquationStatement extends AbstractStatement {
 		@Override
 		public void validate(final IDescription d) {
 
-			final IExpressionDescription fDesc = d.getFacets().get(EQUATION_LEFT);
+			final IExpressionDescription fDesc = d.getFacet(EQUATION_LEFT);
 			final IExpression func = fDesc.getExpression();
-			final IExpressionDescription eDesc = d.getFacets().get(EQUATION_RIGHT);
+			final IExpressionDescription eDesc = d.getFacet(EQUATION_RIGHT);
 			final IExpression expr = eDesc.getExpression();
 			final boolean isFunction = func instanceof IOperator && orderNames.containsKey(func.getName());
 			if (!isFunction) {

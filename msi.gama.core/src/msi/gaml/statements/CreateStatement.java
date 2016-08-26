@@ -139,7 +139,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		 */
 		@Override
 		public void validate(final StatementDescription cd) {
-			final IExpressionDescription desc = cd.getFacets().get(IKeyword.SPECIES);
+			final IExpressionDescription desc = cd.getFacet(IKeyword.SPECIES);
 			if (desc != null) {
 				final IExpression exp = desc.getExpression();
 				if (exp != null) {
@@ -190,7 +190,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 					cd.error("No instance of " + macro.getName() + " available for creating instances of "
 							+ species.getName());
 				}
-				final IExpression exp = cd.getFacets().getExpr(FROM);
+				final IExpression exp = cd.getFacetExpr(FROM);
 				if (exp != null) {
 					final IType type = exp.getType();
 					boolean found = false;
@@ -226,8 +226,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			}
 			sb.append("with: [");
 			for (final StatementDescription arg : args) {
-				final String name = arg.getFacets().getLabel(NAME);
-				final IExpressionDescription def = arg.getFacets().get(VALUE);
+				final String name = arg.getName();
+				final IExpressionDescription def = arg.getFacet(VALUE);
 				sb.append(name).append("::").append(def.serialize(false));
 				sb.append(", ");
 			}
@@ -356,9 +356,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// As we are in the create statement, the agents are not restored
 		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false,
 				shouldBeScheduled);
-		final IMacroAgent currentMacro = population.getHost();
-		if (currentMacro != null)
-			currentMacro.addSubAgents(list.size());
+		// AD Commented this out
+		// final IMacroAgent currentMacro = population.getHost();
+		// if (currentMacro != null)
+		// currentMacro.addSubAgents(list.size());
 
 		// hqnghi in case of creating experiment of micro-models, we must
 		// implicitely initialize it and its simulation output

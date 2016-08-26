@@ -11,8 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -21,12 +20,13 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.util.TOrderedHashMap;
+import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 
 public class ExperimentDescription extends SpeciesDescription {
 
-	private Map<String, VariableDescription> parameters;
+	private TOrderedHashMap<String, VariableDescription> parameters;
 	private StatementDescription output;
 	private StatementDescription permanent;
 
@@ -34,11 +34,16 @@ public class ExperimentDescription extends SpeciesDescription {
 
 	// We assume experiments are firstly created *within* a model, in which case
 	// we can gather the enclosing argument
-	// and keep it for when the relationship will be reversed (i.e. when the
-	// model will be *inside* the experiment)
-	public ExperimentDescription(final String keyword, final IDescription enclosing, final ChildrenProvider cp,
+
+	public ExperimentDescription(final String keyword, final SpeciesDescription enclosing, final ChildrenProvider cp,
 			final EObject source, final Facets facets) {
-		super(keyword, null, enclosing, null, cp, source, facets, null);
+		super(keyword, null, enclosing, null, cp, source, facets);
+	}
+
+	public ExperimentDescription(final String name, final Class clazz, final SpeciesDescription superDesc,
+			final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills2, final Facets ff,
+			final String plugin) {
+		super(name, clazz, superDesc, parent, helper, skills2, ff, plugin);
 	}
 
 	private void addParameterNoCheck(final VariableDescription var) {
@@ -62,52 +67,47 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	public void inheritParametersFrom(final ExperimentDescription p) {
-
 		if (p.parameters != null) {
 			for (final VariableDescription v : p.parameters.values()) {
 				addInheritedParameter(v);
 			}
 		}
-
 	}
 
 	public void addInheritedParameter(final VariableDescription vd) {
-		// We dont inherit from previously added variables, as a child and its
-		// parent should
-		// share the same javaBase
 
 		final String inheritedVarName = vd.getName();
 
-		// If no previous definition is found, just add the variable
+		// If no previous definition is found, just add the parameter
 		if (!hasParameter(inheritedVarName)) {
 			addParameterNoCheck(vd.copy(this));
 			return;
 		}
 		// A redefinition has been found
 		final VariableDescription existing = getParameter(inheritedVarName);
-		if (assertVarsAreCompatible(vd, existing)) {
+		if (assertAttributesAreCompatible(vd, existing)) {
 			if (!existing.isBuiltIn()) {
-				markVariableRedefinition(vd, existing);
+				markAttributeRedefinition(vd, existing);
 			}
 			existing.copyFrom(vd);
 		}
 	}
 
 	@Override
-	public void addInheritedVariable(final VariableDescription var) {
+	public void addInheritedAttribute(final VariableDescription var) {
 		if (var.getKeyword().equals(PARAMETER)) {
-			if (parameters == null || !parameters.containsKey(var.getName())) {
+			if (!hasParameter(var.getName())) {
 				addParameterNoCheck(var);
 			}
 		} else {
-			super.addInheritedVariable(var);
+			super.addInheritedAttribute(var);
 		}
 	}
 
 	@Override
-	public void addOwnVariable(final VariableDescription var) {
+	public void addOwnAttribute(final VariableDescription var) {
 		if (!var.getKeyword().equals(PARAMETER)) {
-			super.addOwnVariable(var);
+			super.addOwnAttribute(var);
 		} else {
 			addParameterNoCheck(var);
 		}
@@ -118,50 +118,49 @@ public class ExperimentDescription extends SpeciesDescription {
 		return "experiment " + getName();
 	}
 
+	public String getExperimentTitleFacet() {
+		return getLitteral(TITLE);
+	}
+
 	@Override
 	public boolean isExperiment() {
 		return true;
 	}
 
 	@Override
-	public List<IDescription> getChildren() {
-		final List<IDescription> result = super.getChildren();
+	public void visitOwnChildren(final DescriptionVisitor visitor) {
+		super.visitOwnChildren(visitor);
 		if (parameters != null) {
-			result.addAll(parameters.values());
+			parameters.forEachValue(visitor);
 		}
 		if (output != null)
-			result.add(output);
+			visitor.visit(output);
 		if (permanent != null)
-			result.add(permanent);
-		return result;
+			visitor.visit(permanent);
 	}
 
 	@Override
-	public Map<String, VariableDescription> getVariables() {
-		if (variables == null) {
-			variables = new TOrderedHashMap<>();
-			// Trick to have these two variables always at the beginning.
-			variables.put(ExperimentAgent.PROJECT_PATH, null);
-			variables.put(ExperimentAgent.MODEL_PATH, null);
+	public void visitChildren(final DescriptionVisitor visitor) {
+		super.visitChildren(visitor);
+		if (parameters != null) {
+			parameters.forEachValue(visitor);
 		}
-		return variables;
+		if (output != null)
+			visitor.visit(output);
+		if (permanent != null)
+			visitor.visit(permanent);
 	}
 
 	/**
 	 * @return
 	 */
 	public Boolean isBatch() {
-		return IKeyword.BATCH.equals(getFacets().getLabel(IKeyword.TYPE));
+		return IKeyword.BATCH.equals(getLitteral(IKeyword.TYPE));
 	}
 
 	@Override
 	public Class<? extends ExperimentAgent> getJavaBase() {
 		return isBatch() ? BatchAgent.class : ExperimentAgent.class;
-	}
-
-	@Override
-	public ExperimentDescription getExperimentContext() {
-		return this;
 	}
 
 	@Override
@@ -191,26 +190,38 @@ public class ExperimentDescription extends SpeciesDescription {
 		}
 	}
 
-	private IDescription getSimilar(final List<IDescription> descs, final IDescription desc) {
-		for (final IDescription d : descs) {
-			if (d != null && d.getKeyword().equals(desc.getKeyword()) && d.getName().equals(desc.getName())) {
-				return d;
+	private IDescription getSimilarChild(final IDescription container, final IDescription desc) {
+		final IDescription[] found = new IDescription[1];
+		container.visitChildren(new DescriptionVisitor<IDescription>() {
+
+			@Override
+			public void visit(final IDescription d) {
+				if (found[0] != null)
+					return;
+				if (d != null && d.getKeyword().equals(desc.getKeyword()) && d.getName().equals(desc.getName())) {
+					found[0] = d;
+				}
 			}
-		}
-		return null;
+		});
+		return found[0];
 	}
 
 	private void mergeOutputs(final StatementDescription inherited, final StatementDescription defined) {
-		final List<IDescription> definedOutputs = defined.getChildren();
-		for (final IDescription in : inherited.getChildren()) {
-			final IDescription redefined = getSimilar(definedOutputs, in);
-			if (redefined == null) {
-				defined.addChild(in.copy(defined));
-			} else {
-				redefined.info("This definition of " + redefined.getName() + " supersedes the one in "
-						+ in.getSpeciesContext().getName(), IGamlIssue.REDEFINES, NAME);
+
+		inherited.visitChildren(new DescriptionVisitor<IDescription>() {
+
+			@Override
+			public void visit(final IDescription in) {
+				final IDescription redefined = getSimilarChild(defined, in);
+				if (redefined == null) {
+					defined.addChild(in.copy(defined));
+				} else {
+					redefined.info("This definition of " + redefined.getName() + " supersedes the one in "
+							+ in.getSpeciesContext().getName(), IGamlIssue.REDEFINES, NAME);
+				}
 			}
-		}
+		});
+
 	}
 
 	@Override
@@ -221,6 +232,25 @@ public class ExperimentDescription extends SpeciesDescription {
 			permanent = r;
 		} else
 			super.addBehavior(r);
+	}
+
+	@Override
+	protected boolean parentIsVisible() {
+		if (!getParent().isExperiment())
+			return false;
+		if (parent.isBuiltIn())
+			return true;
+		final ModelDescription host = (ModelDescription) getMacroSpecies();
+		if (host != null) {
+			if (host.getExperiment(parent.getName()) != null) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public void visitMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
 	}
 
 }

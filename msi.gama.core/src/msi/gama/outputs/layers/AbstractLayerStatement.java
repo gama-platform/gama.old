@@ -24,7 +24,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -41,7 +40,7 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	LayeredDisplayOutput output;
 	private Integer order = 0;
 	protected boolean layerToCreate = true;
-	
+
 	public boolean isToCreate() {
 		return layerToCreate;
 	}
@@ -51,10 +50,11 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 		setBox(new LayerBox(getFacet(IKeyword.TRANSPARENCY), getFacet(IKeyword.POSITION), getFacet(IKeyword.SIZE),
 				getFacet(IKeyword.REFRESH), getFacet(IKeyword.TRACE), getFacet(IKeyword.FADING),
 				getFacet(IKeyword.SELECTABLE)));
-		final IExpression title = getFacet(IKeyword.NAME);
-		if (title != null && title.isConst()) {
-			setName(title.literalValue());
-		}
+		setName(desc.getName());
+		// final IExpression title = getFacet(IKeyword.NAME);
+		// if (title != null && title.isConst()) {
+		// setName(title.literalValue());
+		// }
 	}
 
 	@Override

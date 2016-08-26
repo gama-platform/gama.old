@@ -68,38 +68,17 @@ public abstract class AbstractScope implements IScope {
 	private boolean reportErrors = true;
 
 	public AbstractScope(final ITopLevelAgent root) {
-		// this.root = root;
-		final int number = ScopeNumber++;
-		if (root != null) {
-			agentsStack.push(root);
-			// IMacroAgent a = root;
-			// while (!(a instanceof SimulationAgent) && a != null) {
-			// a = root.getHost();
-			// }
-			// simulation = (SimulationAgent) a;
-			name = "Scope of " + root + " #" + number;
-		} else {
-			// simulation = null;
-			name = "Scope without root #" + number;
-		}
-		statementContextsStack.push(new Record(null));
+		this(root, null);
 	}
 
 	public AbstractScope(final ITopLevelAgent root, final String otherName) {
-		// this.root = root;
-		final int number = ScopeNumber++;
+		String name = "Scope #" + ++ScopeNumber;
 		if (root != null) {
 			agentsStack.push(root);
-			// IMacroAgent a = root;
-			// while (!(a instanceof SimulationAgent) && a != null) {
-			// a = root.getHost();
-			// }
-			// simulation = (SimulationAgent) a;
-			name = "Scope of " + root + " (" + otherName + ") #" + number;
-		} else {
-			// simulation = null;
-			name = "Scope without root (" + otherName + ") #" + number;
+			name += " of " + root;
 		}
+		name += otherName == null || otherName.isEmpty() ? "" : "(" + otherName + ")";
+		this.name = name;
 		statementContextsStack.push(new Record(null));
 	}
 
@@ -258,7 +237,8 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void pop(final IAgent agent) {
 		if (agentsStack.size() == 0) {
-			return;
+			throw GamaRuntimeException.warning("Agents stack is empty", this);
+			// return;
 		}
 		agentsStack.pop();
 		_agent_halted = false;

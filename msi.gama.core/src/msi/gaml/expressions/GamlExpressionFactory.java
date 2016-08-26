@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -37,6 +38,7 @@ import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.operators.IUnits;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
@@ -51,35 +53,22 @@ import msi.gaml.types.Types;
 
 public class GamlExpressionFactory implements IExpressionFactory {
 
-	static IExpressionCompilerProvider parserProvider;
-	ThreadLocal<IExpressionCompiler> parser;
+	static ThreadLocal<IExpressionCompiler> parser;
 
-	public GamlExpressionFactory() {
-		parser = new ThreadLocal();
-	}
-
-	public static void registerParserProvider(final IExpressionCompilerProvider f) {
-		parserProvider = f;
+	public static void registerParserProvider(final Supplier<IExpressionCompiler> f) {
+		parser = ThreadLocal.withInitial(f);
 	}
 
 	@Override
 	public IExpressionCompiler getParser() {
-		if (parser.get() == null) {
-			parser.set(parserProvider.newParser());
-		}
 		return parser.get();
 	}
 
 	@Override
-	public boolean isInitialized() {
-		return parser.get() != null;
-	}
-
-	@Override
 	public void resetParser() {
-		if (isInitialized()) {
-			getParser().reset();
-		}
+		parser.get().dispose();
+		parser.remove();
+		// getParser().reset();
 	}
 
 	/**
@@ -129,8 +118,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public ConstantExpression getUnitExpr(final String unit) {
-		return UNITS_EXPR.get(unit);
+	public UnitConstantExpression getUnitExpr(final String unit) {
+		return IUnits.UNITS_EXPR.get(unit);
 	}
 
 	@Override
@@ -172,7 +161,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		case IVarExpression.EACH:
 			return new EachExpression(type);
 		case IVarExpression.WORLD:
-			return new WorldExpression(name, type, definitionDescription.getModelDescription());
+			return new WorldExpression(type, definitionDescription.getModelDescription());
 		case IVarExpression.SELF:
 			return new SelfExpression(type);
 		default:
@@ -232,42 +221,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 					}
 				}).min(filtered);
 
-				// final List<Signature> temp_types = new ArrayList(10);
-				// temp_types.clear();
-				// We collect all the signatures that are compatible
-				// ops.forEachEntry(new TObjectObjectProcedure<Signature,
-				// OperatorProto>() {
-				//
-				// @Override
-				// public boolean execute(final Signature a, final OperatorProto
-				// b) {
-				// if (originalSignature.isCompatibleWith(a)) {
-				// temp_types.add(a);
-				// }
-				// return true;
-				// }
-				// });
-				// No signature has been found, we throw an exception
-				// if (temp_types.size() == 0) {
-				// if (Iterables.isEmpty(filtered)) {
-				// context.error(
-				// "No operator found for applying '" + op + "' to " + signature
-				// + " (operators available for "
-				// + Arrays.toString(ops.keySet().toArray()) + ")",
-				// IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
-				// return null;
-				// }
-				// signature = temp_types.get(0);
-				// We find the one with the minimum distance to the arguments
-				// int dist = signature.distanceTo(originalSignature);
-				// for (int i = 1, n = temp_types.size(); i < n; i++) {
-				// final int d =
-				// temp_types.get(i).distanceTo(originalSignature);
-				// if (d < dist) {
-				// signature = temp_types.get(i);
-				// dist = d;
-				// }
-				// }
 				// We coerce the types if necessary, by wrapping the original
 				// expressions in a
 				// casting expression
@@ -287,8 +240,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 						}
 						args[i] = createOperator(IKeyword.AS, context, currentEObject, args[i],
 								createTypeExpression(t));
-						// args[i] = createOperator(t.toString(), context,
-						// currentEObject, args[i]);
 					}
 				}
 			}

@@ -115,10 +115,10 @@ public class DrawStatement extends AbstractStatementSequence {
 		 */
 		@Override
 		public void validate(final IDescription description) {
-			final IExpressionDescription geom = description.getFacets().get(GEOMETRY);
+			final IExpressionDescription geom = description.getFacet(GEOMETRY);
 			if (geom != null) {
 				for (final String s : Arrays.asList(TEXT, SHAPE, IMAGE)) {
-					final IExpressionDescription other = description.getFacets().getDescr(s);
+					final IExpressionDescription other = description.getFacet(s);
 					if (other != null) {
 						description.warning("'" + s + "' has no effect here", IGamlIssue.CONFLICTING_FACETS, s);
 					}
@@ -208,13 +208,13 @@ public class DrawStatement extends AbstractStatementSequence {
 			return null;
 		}
 		try {
-			final DrawingData data = new DrawingData(size, depth, rotate, at, empty, border, color, font, texture, material,
-					perspective);
+			final DrawingData data = new DrawingData(size, depth, rotate, at, empty, border, color, font, texture,
+					material, perspective);
 			data.computeAttributes(scope);
 			return executer.executeOn(scope, g, data);
 		} catch (final GamaRuntimeException e) {
 			throw e;
-		} catch (final Exception e) {
+		} catch (final Throwable e) {
 			java.lang.System.err.println("Error when drawing in a display : " + e.getMessage());
 			e.printStackTrace();
 		}

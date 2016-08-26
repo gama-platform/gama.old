@@ -98,19 +98,19 @@ public class GamlSpecies extends AbstractSpecies {
 		@Override
 		public void validate(final IDescription desc) {
 
-			final IExpression width = desc.getFacets().getExpr(WIDTH);
-			final IExpression height = desc.getFacets().getExpr(HEIGHT);
+			final IExpression width = desc.getFacetExpr(WIDTH);
+			final IExpression height = desc.getFacetExpr(HEIGHT);
 
 			final SpeciesDescription sd = (SpeciesDescription) desc;
-			final IExpression cellWidth = desc.getFacets().getExpr(CELL_WIDTH);
-			final IExpression cellHeight = desc.getFacets().getExpr(CELL_HEIGHT);
+			final IExpression cellWidth = desc.getFacetExpr(CELL_WIDTH);
+			final IExpression cellHeight = desc.getFacetExpr(CELL_HEIGHT);
 			if (cellWidth != null && cellHeight == null || cellWidth == null && cellHeight != null) {
 				sd.error("'cell_width' and 'cell_height' must be defined together", IGamlIssue.CONFLICTING_FACETS,
 						cellWidth == null ? CELL_HEIGHT : CELL_WIDTH);
 				return;
 			}
-			final IExpression neighbours = desc.getFacets().getExpr(IKeyword.NEIGHBOURS);
-			final IExpression neighbors = desc.getFacets().getExpr(IKeyword.NEIGHBORS);
+			final IExpression neighbours = desc.getFacetExpr(IKeyword.NEIGHBOURS);
+			final IExpression neighbors = desc.getFacetExpr(IKeyword.NEIGHBORS);
 
 			if (neighbours != null && neighbors != null) {
 				sd.error("'neighbours' and 'neighbors' cannot be defined at the same time",
@@ -137,7 +137,7 @@ public class GamlSpecies extends AbstractSpecies {
 				}
 			}
 
-			final IExpression file = desc.getFacets().getExpr(FILE);
+			final IExpression file = desc.getFacetExpr(FILE);
 
 			if (file != null && (height != null || width != null || cellWidth != null || cellHeight != null)) {
 				sd.error(
@@ -146,10 +146,10 @@ public class GamlSpecies extends AbstractSpecies {
 			}
 
 			// Issue 1138
-			final IExpression freq = desc.getFacets().getExpr(FREQUENCY);
+			final IExpression freq = desc.getFacetExpr(FREQUENCY);
 			if (freq != null && freq.isConst() && Integer.valueOf(0).equals(freq.value(null))) {
-				for (final VariableDescription vd : sd.getVariables().values()) {
-					if (vd.getFacets().getDescr(UPDATE, VALUE) != null) {
+				for (final VariableDescription vd : sd.getAttributes()) {
+					if (vd.getFacet(UPDATE, VALUE) != null) {
 						vd.warning(vd.getName() + " will never be updated because " + desc.getName()
 								+ " has a scheduling frequency of 0", IGamlIssue.WRONG_CONTEXT);
 					}
@@ -163,7 +163,7 @@ public class GamlSpecies extends AbstractSpecies {
 
 			// If torus is declared on a species other than "global", emit a
 			// warning
-			final IExpression torus = desc.getFacets().getExpr(TORUS);
+			final IExpression torus = desc.getFacetExpr(TORUS);
 			if (torus != null) {
 				if (desc.getKeyword().equals(IKeyword.SPECIES) || desc.getKeyword().equals(IKeyword.GRID)) {
 					desc.warning("The 'torus' facet can only be specified for the model topology (i.e. in 'global')",

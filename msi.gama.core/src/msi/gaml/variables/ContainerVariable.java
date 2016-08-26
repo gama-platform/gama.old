@@ -25,7 +25,6 @@ import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.variables.ContainerVariable.ContainerVarValidator;
 
@@ -67,12 +66,11 @@ public class ContainerVariable extends Variable {
 		 */
 		@Override
 		public void validate(final IDescription vd) {
-			final Facets ff = vd.getFacets();
 			// Replaces the size: and fill_with: facets with an operator
 			// depending on the type of the container
-			if (ff.containsKey(SIZE)) {
-				final IExpression size = ff.getExpr(SIZE);
-				IExpression fill = ff.getExpr(FILL_WITH);
+			if (vd.hasFacet(SIZE)) {
+				final IExpression size = vd.getFacetExpr(SIZE);
+				IExpression fill = vd.getFacetExpr(FILL_WITH);
 				if (fill == null) {
 					fill = IExpressionFactory.NIL_EXPR;
 				}
@@ -84,7 +82,7 @@ public class ContainerVariable extends Variable {
 						return;
 					}
 					IExpression init = GAML.getExpressionFactory().createOperator("list_with", vd, null, size, fill);
-					ff.put(INIT, init);
+					vd.setFacet(INIT, init);
 					break;
 				case IType.MATRIX:
 					if (size.getType().id() != IType.POINT) {
@@ -93,13 +91,13 @@ public class ContainerVariable extends Variable {
 					}
 
 					init = GAML.getExpressionFactory().createOperator("matrix_with", vd, null, size, fill);
-					ff.put(INIT, init);
+					vd.setFacet(INIT, init);
 					break;
 				default:
 					vd.error("Facet 'size:' can only be used for lists and matrices", IGamlIssue.UNKNOWN_FACET, SIZE);
 					return;
 				}
-			} else if (ff.containsKey(FILL_WITH)) {
+			} else if (vd.hasFacet(FILL_WITH)) {
 				vd.error("Facet 'size:' missing. A container cannot be filled if no size is provided",
 						IGamlIssue.MISSING_FACET, FILL_WITH);
 				return;

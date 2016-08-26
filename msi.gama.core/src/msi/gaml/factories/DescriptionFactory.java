@@ -15,7 +15,9 @@ import static msi.gama.common.interfaces.IKeyword.AGENT;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -30,7 +32,6 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.GAML;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.SyntacticFactory;
@@ -82,8 +83,8 @@ public class DescriptionFactory {
 	}
 
 	static TIntObjectHashMap<SymbolFactory> FACTORIES = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
-	static TOrderedHashMap<String, SymbolProto> STATEMENT_KEYWORDS_PROTOS = new TOrderedHashMap();
-	static TOrderedHashMap<String, SymbolProto> VAR_KEYWORDS_PROTOS = new TOrderedHashMap();
+	static Map<String, SymbolProto> STATEMENT_KEYWORDS_PROTOS = new HashMap();
+	static Map<String, SymbolProto> VAR_KEYWORDS_PROTOS = new HashMap();
 	static TIntObjectHashMap<SymbolProto> KINDS_PROTOS = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
 
 	public static void addFactory(final SymbolFactory factory) {
@@ -243,7 +244,7 @@ public class DescriptionFactory {
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
 			final ChildrenProvider children) {
-		return create(getFactory(keyword), keyword, superDesc, children, new Facets());
+		return create(getFactory(keyword), keyword, superDesc, children, null);
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
@@ -273,10 +274,17 @@ public class DescriptionFactory {
 	}
 
 	public static SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,
-			final IDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
+			final SpeciesDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
 			final Set<String> skills, final String plugin) {
 		return ((SpeciesFactory) getFactory(ISymbolKind.SPECIES)).createBuiltInSpeciesDescription(name, clazz,
-				superDesc, parent, helper, skills, new Facets(), plugin);
+				superDesc, parent, helper, skills, null, plugin);
+	}
+
+	public static SpeciesDescription createBuiltInExperimentDescription(final String name, final Class clazz,
+			final SpeciesDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
+			final Set<String> skills, final String plugin) {
+		return ((ExperimentFactory) getFactory(ISymbolKind.EXPERIMENT)).createBuiltInSpeciesDescription(name, clazz,
+				superDesc, parent, helper, skills, null, plugin);
 	}
 
 	public static ModelDescription createRootModelDescription(final String name, final Class clazz,
@@ -304,12 +312,26 @@ public class DescriptionFactory {
 					children_list.add(desc);
 				}
 			}
+			for (final ISyntacticElement e : source.getSpecies()) {
+				final IDescription desc = create(e, superDesc, null);
+				if (desc != null) {
+					children_list.add(desc);
+				}
+			}
+
+			// Grids are not parsed for the moment.
+			for (final ISyntacticElement e : source.getExperiments()) {
+				final IDescription desc = create(e, superDesc, null);
+				if (desc != null) {
+					children_list.add(desc);
+				}
+			}
 			children = new ChildrenProvider(children_list);
 		}
 		final Facets facets = source.copyFacets(md);
 		final EObject element = source.getElement();
 		final IDescription desc = md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md,
-				null);
+				source.getDependencies());
 		return desc;
 
 	}

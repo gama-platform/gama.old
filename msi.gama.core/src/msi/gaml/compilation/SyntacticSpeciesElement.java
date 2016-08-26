@@ -11,8 +11,13 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import msi.gaml.statements.Facets;
+import java.util.Collections;
+
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.collect.Iterables;
+
+import msi.gaml.statements.Facets;
 
 /**
  * Class GlobalSyntacticElement.
@@ -21,7 +26,7 @@ import org.eclipse.emf.ecore.EObject;
  * @since 9 sept. 2013
  * 
  */
-public class SyntacticSpeciesElement extends SyntacticComposedElement {
+public class SyntacticSpeciesElement extends SyntacticStructuralElement {
 
 	/**
 	 * @param keyword
@@ -33,18 +38,15 @@ public class SyntacticSpeciesElement extends SyntacticComposedElement {
 	}
 
 	@Override
+	public Iterable<ISyntacticElement> getSpecies() {
+		if (children == null)
+			return Collections.EMPTY_LIST;
+		return Iterables.filter(children, SPECIES_FILTER);
+	}
+
+	@Override
 	public boolean isSpecies() {
 		return true;
-	}
-
-	@Override
-	public boolean isGlobal() {
-		return false;
-	}
-
-	@Override
-	public boolean isExperiment() {
-		return false;
 	}
 
 }

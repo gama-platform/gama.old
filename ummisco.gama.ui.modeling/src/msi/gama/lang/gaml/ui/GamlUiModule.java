@@ -16,10 +16,14 @@ import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+import org.eclipse.xtext.builder.resourceloader.IResourceLoader;
+import org.eclipse.xtext.builder.resourceloader.ResourceLoaderProviders;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.parser.IEncodingProvider;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
+import org.eclipse.xtext.resource.clustering.DynamicResourceClusteringPolicy;
+import org.eclipse.xtext.resource.clustering.IResourceClusteringPolicy;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
 import org.eclipse.xtext.service.DispatchingProvider;
 import org.eclipse.xtext.service.SingletonBinding;
@@ -27,6 +31,7 @@ import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.IImageHelper.IImageDescriptorHelper;
 import org.eclipse.xtext.ui.editor.IXtextEditorCallback;
 import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.XtextSourceViewer;
 import org.eclipse.xtext.ui.editor.XtextSourceViewerConfiguration;
 import org.eclipse.xtext.ui.editor.actions.IActionContributor;
 import org.eclipse.xtext.ui.editor.autoedit.AbstractEditStrategyProvider;
@@ -49,12 +54,13 @@ import com.google.inject.name.Names;
 import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.ui.contentassist.GamlTemplateProposalProvider;
 import msi.gama.lang.gaml.ui.editor.GamaAutoEditStrategyProvider;
+import msi.gama.lang.gaml.ui.editor.GamaSourceViewerFactory;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
+import msi.gama.lang.gaml.ui.editor.GamlEditor.GamaSourceViewerConfiguration;
 import msi.gama.lang.gaml.ui.editor.GamlEditorCallback;
 import msi.gama.lang.gaml.ui.editor.GamlEditorTickUpdater;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.lang.gaml.ui.editor.GamlMarkOccurrenceActionContributor;
-import msi.gama.lang.gaml.ui.editor.GamlEditor.GamaSourceViewerConfiguration;
 import msi.gama.lang.gaml.ui.folding.GamaFoldingActionContributor;
 import msi.gama.lang.gaml.ui.folding.GamaFoldingRegionProvider;
 import msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration;
@@ -84,8 +90,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(String.class).annotatedWith(
 				com.google.inject.name.Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
 				.toInstance(".");
-		// NavigatorContentProvider.setGamlContentProvider(new
-		// XTextContentProviderProvider());
+		binder.bind(IResourceLoader.class).toProvider(ResourceLoaderProviders.getParallelLoader());
 	}
 
 	// @SingletonBinding(eager = true)
@@ -99,6 +104,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Ui.class).to(GamlEncodingProvider.class);
 	}
 
+	public Class<? extends IResourceClusteringPolicy> bindIResourceClusteringPolicy() {
+		return DynamicResourceClusteringPolicy.class;
+	}
+
 	// public Class<? extends IEncodingProvider> bindIEncodingProvider() {
 	// return GamlEncodingProvider.class;
 	// }
@@ -106,6 +115,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	@Override
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindParserBasedContentAssistContextFactory$StatefulFactory() {
 		return msi.gama.lang.gaml.ui.contentassist.ContentAssistContextFactory.class;
+	}
+
+	public Class<? extends XtextSourceViewer.Factory> bindSourceViewerFactory() {
+		return GamaSourceViewerFactory.class;
 	}
 
 	@Override

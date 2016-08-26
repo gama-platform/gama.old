@@ -62,6 +62,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 
 	@Override
 	public void stop() {
+		// System.out.println("Handler stopped");
 		running = false;
 	}
 
@@ -119,6 +120,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 
 	@Override
 	public void start() {
+		System.out.println("Handler launched");
 		running = true;
 		schedule();
 
