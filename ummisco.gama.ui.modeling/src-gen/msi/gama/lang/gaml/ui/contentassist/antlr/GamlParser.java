@@ -40,7 +40,6 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getEntryAccess().getAlternatives(), "rule__Entry__Alternatives");
 					put(grammarAccess.getS_SectionAccess().getAlternatives(), "rule__S_Section__Alternatives");
 					put(grammarAccess.getS_GlobalAccess().getAlternatives_2(), "rule__S_Global__Alternatives_2");
-					put(grammarAccess.getS_EnvironmentAccess().getAlternatives_2(), "rule__S_Environment__Alternatives_2");
 					put(grammarAccess.getS_SpeciesAccess().getAlternatives_4(), "rule__S_Species__Alternatives_4");
 					put(grammarAccess.getS_ExperimentAccess().getNameAlternatives_2_0(), "rule__S_Experiment__NameAlternatives_2_0");
 					put(grammarAccess.getS_ExperimentAccess().getAlternatives_4(), "rule__S_Experiment__Alternatives_4");
@@ -116,8 +115,6 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getImportAccess().getGroup_2(), "rule__Import__Group_2__0");
 					put(grammarAccess.getPragmaAccess().getGroup(), "rule__Pragma__Group__0");
 					put(grammarAccess.getS_GlobalAccess().getGroup(), "rule__S_Global__Group__0");
-					put(grammarAccess.getS_EntitiesAccess().getGroup(), "rule__S_Entities__Group__0");
-					put(grammarAccess.getS_EnvironmentAccess().getGroup(), "rule__S_Environment__Group__0");
 					put(grammarAccess.getS_SpeciesAccess().getGroup(), "rule__S_Species__Group__0");
 					put(grammarAccess.getS_ExperimentAccess().getGroup(), "rule__S_Experiment__Group__0");
 					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getGroup(), "rule__S_1Expr_Facets_BlockOrEnd__Group__0");
@@ -258,11 +255,6 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getS_GlobalAccess().getKeyAssignment_0(), "rule__S_Global__KeyAssignment_0");
 					put(grammarAccess.getS_GlobalAccess().getFacetsAssignment_1(), "rule__S_Global__FacetsAssignment_1");
 					put(grammarAccess.getS_GlobalAccess().getBlockAssignment_2_0(), "rule__S_Global__BlockAssignment_2_0");
-					put(grammarAccess.getS_EntitiesAccess().getKeyAssignment_0(), "rule__S_Entities__KeyAssignment_0");
-					put(grammarAccess.getS_EntitiesAccess().getBlockAssignment_1(), "rule__S_Entities__BlockAssignment_1");
-					put(grammarAccess.getS_EnvironmentAccess().getKeyAssignment_0(), "rule__S_Environment__KeyAssignment_0");
-					put(grammarAccess.getS_EnvironmentAccess().getFacetsAssignment_1(), "rule__S_Environment__FacetsAssignment_1");
-					put(grammarAccess.getS_EnvironmentAccess().getBlockAssignment_2_0(), "rule__S_Environment__BlockAssignment_2_0");
 					put(grammarAccess.getS_SpeciesAccess().getKeyAssignment_0(), "rule__S_Species__KeyAssignment_0");
 					put(grammarAccess.getS_SpeciesAccess().getFirstFacetAssignment_1(), "rule__S_Species__FirstFacetAssignment_1");
 					put(grammarAccess.getS_SpeciesAccess().getNameAssignment_2(), "rule__S_Species__NameAssignment_2");

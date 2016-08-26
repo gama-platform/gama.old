@@ -16,6 +16,7 @@ import java.util.function.Supplier;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
+import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
@@ -34,6 +35,7 @@ import com.google.inject.Binder;
 
 import msi.gama.lang.gaml.generator.GamlGenerator;
 import msi.gama.lang.gaml.generator.GamlOutputConfigurationProvider;
+import msi.gama.lang.gaml.linking.GamlLinkingErrorMessageProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingService;
 import msi.gama.lang.gaml.linking.GamlNameConverter;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser;
@@ -127,6 +129,10 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	@Override
 	public Class<? extends ILinkingService> bindILinkingService() {
 		return GamlLinkingService.class;
+	}
+
+	public Class<? extends ILinkingDiagnosticMessageProvider.Extended> bindILinkingDiagnosticMessageProvider() {
+		return GamlLinkingErrorMessageProvider.class;
 	}
 
 	@Override
