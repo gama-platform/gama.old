@@ -746,6 +746,10 @@ public class Containers {
 			throws GamaRuntimeException {
 		final IList result = GamaListFactory.create(scope, c.getType().getContentType());
 		if (number <= 0) {
+			if (number < 0)
+				GAMA.reportAndThrowIfNeeded(scope,
+						GamaRuntimeException.warning("'among' expects a positive number (not " + number + ")", scope),
+						false);
 			return result;
 		}
 		final IList l = nullCheck(scope, c).listValue(scope, c.getType().getContentType(), false);
