@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import javax.vecmath.Vector3f;
+
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -13,6 +15,7 @@ import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
+import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaMaterialType;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.Material;
@@ -65,6 +68,7 @@ public class ManyFacedShape {
 	
 	// only for string entity :
 	private float fontSize;
+	private boolean isBillboarding = false;
 	
 	public ManyFacedShape(ManyFacedShape obj) {
 		loadManyFacedShape(obj);
@@ -76,11 +80,11 @@ public class ManyFacedShape {
 		
 		this.isString = true;
 		this.fontSize = strObj.getFont().getSize();
+		this.isBillboarding = !((TextDrawingAttributes)strObj.getAttributes()).perspective;
 		this.isLightInteraction = false;
 		this.type = Type.POLYGON;
 		
 		this.translation.y = - this.translation.y; // for a	stringObject, the y is inverted (why ???)
-		
 		
 		coords = textMeshData.getVertexPositions();
 		uvMapping = textMeshData.getTextureCoords();
@@ -96,7 +100,7 @@ public class ManyFacedShape {
 		
 		computeNormals();	
 		triangulate();
-		applyTransformation();
+		if (!this.isBillboarding) applyTransformation(); // FIXME : need refactoring
 	}
 	
 	public ManyFacedShape(GeometryObject geomObj, Texture[] textures, boolean isTriangulation) {
@@ -954,7 +958,11 @@ public class ManyFacedShape {
 		filledEntity.setUvMapping(uvMapping);
 		filledEntity.type = DrawingEntity.Type.STRING;
 		filledEntity.setFontEdge((float) (0.5/Math.sqrt(fontSize))); // the font edge is function of the size of the font
-		filledEntity.setFontWidth(0.5f); // the font width is function of if the font is bold or if it is not
+		filledEntity.setFontWidth(0.5f); // this value looks nice...
+		if (isBillboarding) {
+			filledEntity.enableBillboarding();
+			filledEntity.setTranslation(new Vector3f((float)translation.x,(float)translation.y,(float)translation.z));
+		}
 		
 		result.add(filledEntity);
 		

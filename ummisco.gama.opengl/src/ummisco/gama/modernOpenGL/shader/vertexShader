@@ -17,6 +17,8 @@ uniform mat4    lightProperties[7]; 	// first row : xyz position, light type (0 
 									// fourth row : attenuation properties
 uniform vec3    lightPosition;
 uniform float   useNormals; // 0 for no, 1 for yes
+uniform float   isBillboarding; // 0 for no, 1 for yes
+uniform mat4    modelViewMatrix;
 
 attribute vec3  attribute_Position;
 attribute vec4  attribute_Color;
@@ -34,8 +36,21 @@ void main(void)
 {
 	vec4 worldPosition = transformationMatrix * vec4(attribute_Position,1.0);
 	
-	varying_Color = attribute_Color;
-	gl_Position = projectionMatrix * viewMatrix * worldPosition;
+	if (isBillboarding > 0.5) 
+	{
+		mat4 modelViewMatrixCopy = modelViewMatrix;
+		modelViewMatrixCopy[3][1] = modelViewMatrix[3][1];
+		gl_Position = projectionMatrix * modelViewMatrixCopy * vec4(attribute_Position.xy, 0.0, 1.0);
+	}
+	else 
+	{
+		varying_Color = attribute_Color;
+		mat4 modelView = viewMatrix * transformationMatrix;
+		
+		mat4 modelViewProjection = projectionMatrix * modelView;
+		
+		gl_Position = projectionMatrix * modelView * vec4(attribute_Position,1.0);
+	}
 	
 	varying_useNormals = useNormals;
 	pass_textureCoords = attribute_TextureCoords;

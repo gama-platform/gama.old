@@ -1,5 +1,7 @@
 package ummisco.gama.modernOpenGL;
 
+import javax.vecmath.Vector3f;
+
 import com.jogamp.opengl.util.texture.Texture;
 
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
@@ -22,6 +24,8 @@ public class DrawingEntity {
 	// only for string :
 	private float fontWidth = -1; // init value set to -1. If the value is -1, the entity is not a string
 	private float fontEdge = -1; // init value set to -1. If the value is -1, the entity is not a string
+	private boolean isBillboarding = false;
+	private Vector3f translation = new Vector3f();
 	
 	private ShaderProgram shader;
 	
@@ -115,6 +119,23 @@ public class DrawingEntity {
 	
 	public float getFontEdge() {
 		return fontEdge;
+	}
+	
+	public void enableBillboarding() {
+		isBillboarding = true;
+	}
+	public void disableBillboarding() {
+		isBillboarding = false;
+	}
+	public boolean isBillboarding() {
+		return isBillboarding;
+	}
+	
+	public void setTranslation(Vector3f translation) {
+		this.translation = translation;
+	}
+	public Vector3f getTranslation() {
+		return this.translation;
 	}
 	
 }

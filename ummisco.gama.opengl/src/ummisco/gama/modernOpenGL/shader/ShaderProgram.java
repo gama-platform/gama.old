@@ -9,6 +9,7 @@ import com.jogamp.opengl.GL2;
 
 import msi.gama.outputs.LightPropertiesStructure;
 import msi.gama.outputs.LightPropertiesStructure.TYPE;
+import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
@@ -34,9 +35,15 @@ public class ShaderProgram extends AbstractShader {
 	private int location_isString;
 	private int location_fontWidth; // only for string entities
 	private int location_fontEdge; // only for string entities
+	private int location_isBillboarding; // only for string entities
+	private int location_modelViewMatrix; // only for string entities
+	
+	public DrawingEntity entity; // FIXME : need refactoring, need to be deleted
 	
 	private boolean useNormal = false;
 	private boolean useTexture = false;
+	
+	public boolean isBillboarding = false;
 	
 	private int textureIDStored = -1;
 	
@@ -74,6 +81,8 @@ public class ShaderProgram extends AbstractShader {
 		location_isString = getUniformLocation("isString");
 		location_fontWidth = getUniformLocation("fontWidth");
 		location_fontEdge = getUniformLocation("fontEdge");
+		location_isBillboarding = getUniformLocation("isBillboarding");
+		location_modelViewMatrix = getUniformLocation("modelViewMatrix");
 		
 		location_lightColor = new int[MAX_LIGHT];
 		location_lightAttenuation = new int[MAX_LIGHT];
@@ -106,6 +115,11 @@ public class ShaderProgram extends AbstractShader {
 	public void loadViewMatrix(ICamera camera) {
 		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(camera);
 		super.loadMatrix(location_viewMatrix, viewMatrix);
+	}
+	
+	// FIXME
+	public void loadModelViewMatrix(Matrix4f matrix) {
+		super.loadMatrix(location_modelViewMatrix, matrix);
 	}
 	
 	public void loadTexture(int textureId) {
@@ -196,5 +210,15 @@ public class ShaderProgram extends AbstractShader {
 
 	public void loadFontEdge(float fontEdge) {
 		super.loadFloat(location_fontEdge, fontEdge);
+	}
+	
+	public void enableBillboarding() { // the object is then facing the camera (equivalent to perspective:false for the draw statement)
+		super.loadFloat(location_isBillboarding, 1f);
+		isBillboarding = true;
+	}
+	
+	public void disableBillboarding() { // normal mode (equivalent to perspective:true for the draw statement)
+		super.loadFloat(location_isBillboarding, 0f);
+		isBillboarding = false;
 	}
 }

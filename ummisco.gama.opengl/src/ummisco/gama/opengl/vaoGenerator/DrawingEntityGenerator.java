@@ -4,6 +4,7 @@ import java.awt.Font;
 
 import com.jogamp.opengl.util.texture.Texture;
 
+import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.font.fontMeshCreator.FontTextureCache;
 import ummisco.gama.modernOpenGL.font.fontMeshCreator.TextMeshData;
@@ -35,6 +36,7 @@ public class DrawingEntityGenerator {
 			StringObject strObj = (StringObject)object;
 			Font font = strObj.getFont();
 			textures = new Texture[1];
+//			((TextDrawingAttributes)strObj.getAttributes()).perspective;
 			String style = (font.isBold()) ? (font.isItalic()) ? " bold italic" : " bold" : (font.isItalic()) ? " italic" : "";
 			textures[0] = fontTextCache.getFontTexture(font.getName() + style);
 			TextMeshData textMeshData = fontTextCache.getTextMeshData(font.getName() + style, strObj.string, (int)renderer.getGlobalYRatioBetweenPixelsAndModelUnits(), font.getSize());

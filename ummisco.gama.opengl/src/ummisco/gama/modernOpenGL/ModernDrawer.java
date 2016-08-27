@@ -15,6 +15,7 @@ import com.jogamp.opengl.GL2;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.LayerObject;
+import ummisco.gama.opengl.vaoGenerator.GeomMathUtils;
 import ummisco.gama.opengl.vaoGenerator.ModernLayerStructure;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
@@ -224,6 +225,7 @@ public class ModernDrawer {
 					shaderLoaded.add(shaderProgram);
 					shaderProgram.start();
 					
+					shaderProgram.entity = listOfEntities.get(0); // FIXME : need refactoring
 					updateTransformationMatrix(shaderProgram);
 					prepareShader(listOfEntities.get(0), shaderProgram);
 					
@@ -297,6 +299,35 @@ public class ModernDrawer {
 		shaderProgram.loadTransformationMatrix(getTransformationMatrix());
 		shaderProgram.loadViewMatrix(renderer.camera);
 		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
+		
+		if (shaderProgram.isBillboarding)
+		{
+			Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
+			Matrix4f modelMatrix = new Matrix4f();
+			modelMatrix.setIdentity();
+			// set the translation
+			Vector3f entityTranslation = shaderProgram.entity.getTranslation();
+			modelMatrix.m30 = entityTranslation.x;
+			modelMatrix.m31 = entityTranslation.y;
+			modelMatrix.m32 = entityTranslation.z;
+			// reset the rotation
+			modelMatrix.m00 = viewMatrix.m00;
+			modelMatrix.m01 = viewMatrix.m10;
+			modelMatrix.m02 = viewMatrix.m20;
+			modelMatrix.m10 = viewMatrix.m01;
+			modelMatrix.m11 = viewMatrix.m11;
+			modelMatrix.m12 = viewMatrix.m21;
+			modelMatrix.m20 = viewMatrix.m02;
+			modelMatrix.m21 = viewMatrix.m12;
+			modelMatrix.m22 = viewMatrix.m22;
+			// compute modelViewMatrix
+			Matrix4f modelViewMatrix = modelMatrix;
+			modelViewMatrix.mul(viewMatrix);
+			// inverse y axis
+			modelViewMatrix.m11 = -1;
+			
+			shaderProgram.loadModelViewMatrix(modelViewMatrix);
+		}
 	}
 	
 	private void prepareShader(DrawingEntity entity, ShaderProgram shaderProgram) {
@@ -305,6 +336,7 @@ public class ModernDrawer {
 				(float) renderer.data.getAmbientLightColor().getGreen() / 255f,
 				(float) renderer.data.getAmbientLightColor().getBlue() / 255f));
 		shaderProgram.loadLights(renderer.data.getDiffuseLights());
+		shaderProgram.disableBillboarding();
 		boolean useNormals = entity.getMaterial().useLight;
 		if (useNormals) {
 			shaderProgram.enableNormal();
@@ -328,6 +360,9 @@ public class ModernDrawer {
 			shaderProgram.enableString();
 			shaderProgram.loadFontWidth(entity.getFontWidth());
 			shaderProgram.loadFontEdge(entity.getFontEdge());
+			if (entity.isBillboarding()) {
+				shaderProgram.enableBillboarding();
+			}
 		}
 		else {
 			shaderProgram.disableString();
