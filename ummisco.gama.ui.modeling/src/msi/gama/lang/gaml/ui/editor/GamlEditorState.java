@@ -15,8 +15,8 @@ import org.eclipse.emf.common.util.URI;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
-import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.IGamaColors;
 
 class GamlEditorState {
 
@@ -71,11 +71,11 @@ class GamlEditorState {
 	}
 
 	public GamaUIColor getColor() {
-		if (hasInternalErrors) {
-			return IGamaColors.ERROR;
-		}
 		if (hasImportedErrors) {
 			return IGamaColors.IMPORTED;
+		}
+		if (hasInternalErrors) {
+			return IGamaColors.ERROR;
 		}
 		if (!hasExperiments) {
 			return IGamaColors.WARNING;
@@ -83,19 +83,27 @@ class GamlEditorState {
 		return IGamaColors.OK;
 	}
 
+	public final static String NO_EXP_DEFINED = "No experiments defined";
+	public final static String ERRORS_DETECTED = "Error(s) detected";
+	public final static String IN_IMPORTED_FILES = "Error(s) in imported files";
+	public final static String IMPOSSIBLE_TO_RUN = "Impossible to run any experiment";
+
 	public String getStatus() {
 		String msg = null;
 		if (hasInternalErrors) {
-			msg = "Error(s) were detected";
+			msg = ERRORS_DETECTED;
+			if (hasImportedErrors) {
+				msg = IN_IMPORTED_FILES;
+			}
 		} else if (hasImportedErrors) {
-			msg = "This model is functional, but error(s) were detected when importing files";
+			msg = IN_IMPORTED_FILES;
 		} else if (!hasExperiments) {
-			return "This model is functional, but no experiments have been defined";
+			return NO_EXP_DEFINED;
 		} else {
 			return null;
 		}
 		if (hasExperiments) {
-			msg += ". Impossible to run any experiment";
+			msg += ". " + IMPOSSIBLE_TO_RUN;
 		}
 		return msg;
 	}

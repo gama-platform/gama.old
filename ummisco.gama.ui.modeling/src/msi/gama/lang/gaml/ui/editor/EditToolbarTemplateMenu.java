@@ -90,6 +90,8 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
+					System.out.println("PATH: " + getPath());
+					System.out.println("NAME: " + getName());
 					applyTemplate(store.getTemplateData(getPath()).getTemplate());
 				}
 

@@ -40,6 +40,7 @@ import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.util.OnChangeEvictingCache;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.inject.Provider;
 
 import msi.gama.common.interfaces.IGamlIssue;
@@ -176,11 +177,13 @@ public class GamlResource extends LazyLinkingResource {
 		for (final Map.Entry<GamlResource, String> entry : resources.entrySet()) {
 			entry.getKey().getParseResult().computeAbsoluteAlternatePathsUsing(entry.getKey());
 			final SyntacticModelElement m = (SyntacticModelElement) entry.getKey().getSyntacticContents();
-			allAbsolutePaths.addAll(m.getAbsoluteAlternatePaths());
-			if (entry.getValue() == null) {
-				models.add(m);
-			} else {
-				microModels.put(m, entry.getValue());
+			if (m != null) {
+				allAbsolutePaths.addAll(m.getAbsoluteAlternatePaths());
+				if (entry.getValue() == null) {
+					models.add(m);
+				} else {
+					microModels.put(m, entry.getValue());
+				}
 			}
 		}
 		GAML.getExpressionFactory().resetParser();
@@ -217,6 +220,8 @@ public class GamlResource extends LazyLinkingResource {
 		// end-hqnghi
 		// System.out.println("Building description for model " +
 		// this.getPath().lastSegment());
+		if (models.isEmpty())
+			return null;
 		return GAML.getModelFactory().createModelDescription(projectPath, modelPath, models, getErrorCollector(),
 				isEdited, compiledMicroModels, allAbsolutePaths);
 	}
@@ -344,17 +349,7 @@ public class GamlResource extends LazyLinkingResource {
 		return true;
 	}
 
-	private ModelDescription buildCompleteDescription(final ResourceSet set) {
-		resetErrorCollector();
-		if (!validateURIs()) {
-			updateWith(null);
-		}
-		;
-		// We make sure the resource is loaded in the ResourceSet passed
-		// TODO Does it validate it ?
-		// set.getResource(getURI(), true);
-		ModelDescription model = null;
-
+	private boolean validatePlugins() {
 		if (!hasValidatedPlugins) {
 			// If plugins, required for building this model, are missing in the
 			// current version of GAMA
@@ -396,22 +391,50 @@ public class GamlResource extends LazyLinkingResource {
 					if (!GamaBundleLoader.contains(plugin)) {
 						invalidateBecauseOfImportedProblem("The plugin " + plugin + " is required to run this model",
 								this);
-						return null;
+						return false;
 					}
 				}
 			}
 			hasValidatedPlugins = true;
 		}
+		return true;
+	}
+
+	private ModelDescription buildCompleteDescription(final ResourceSet set) {
+		resetErrorCollector();
+		if (!validateURIs()) {
+			updateWith(null);
+		}
+
+		// AD Trick: if the resource does not contain any experiment, there is
+		// no need to validate it entirely. It will likely be imported in a
+		// model that will validate it. Unless it is edited.
+		// TODO A similar trick could be used if the model is imported or not in
+		// another one. If it is imported, then it means it will be validated at
+		// one point in the validation of its container or if it is edited
+
+		if (getSyntacticContents() != null && Iterables.size(getSyntacticContents().getExperiments()) == 0 && !isEdited)
+			return null;
+
+		// We make sure the resource is loaded in the ResourceSet passed
+		// TODO Does it validate it ?
+		// set.getResource(getURI(), true);
+		ModelDescription model = null;
 
 		// If one of the resources has already errors, no need to validate
 		// We first build the list of resources (including this);
 		final Map<GamlResource, String> imports = loadAllResources(set);
+		boolean previousErrors = false;
 		for (final GamlResource r : imports.keySet()) {
 			if (!r.getErrors().isEmpty()) {
-				invalidateBecauseOfImportedProblem("Syntax errors detected ", r);
-				return null;
+				if (r != this) {
+					previousErrors = true;
+					invalidateBecauseOfImportedProblem("Syntax errors detected ", r);
+				}
 			}
 		}
+		if (previousErrors)
+			return null;
 
 		model = buildModelDescription(imports);
 
@@ -419,7 +442,7 @@ public class GamlResource extends LazyLinkingResource {
 		// semantic validation
 		if (model == null) {
 			invalidateBecauseOfImportedProblem(
-					"Impossible to validate model " + getURI().lastSegment() + " (check the logs)", this);
+					"Impossible to validate model " + URI.decode(getURI().lastSegment()) + " (check the logs)", this);
 		}
 		return model;
 	}
@@ -481,7 +504,7 @@ public class GamlResource extends LazyLinkingResource {
 		} catch (final Exception e) {
 			e.printStackTrace();
 			invalidateBecauseOfImportedProblem("An exception has occured during the validation of "
-					+ getURI().lastSegment() + ": " + e.getMessage(), this);
+					+ URI.decode(getURI().lastSegment()) + ": " + e.getMessage(), this);
 			// return false;
 		} finally {
 			setValidating(false);
@@ -501,8 +524,9 @@ public class GamlResource extends LazyLinkingResource {
 
 		// Syntactic errors detected, we cannot build the resource
 		if (!getErrors().isEmpty()) {
-			getErrorCollector().add(new GamlCompilationError("Syntactic errors detected in " + getURI().lastSegment(),
-					IGamlIssue.GENERAL, getContents().get(0), false, false));
+			getErrorCollector()
+					.add(new GamlCompilationError("Syntax errors detected in " + URI.decode(getURI().lastSegment()),
+							IGamlIssue.GENERAL, getContents().get(0), false, false));
 			return null;
 		}
 
@@ -512,7 +536,8 @@ public class GamlResource extends LazyLinkingResource {
 		if (collector.hasErrors()) {
 			errors.addAll(collector.getInternalErrors());
 			errors.addAll(collector.getImportedErrors());
-			model.dispose();
+			if (model != null)
+				model.dispose();
 			return null;
 		}
 

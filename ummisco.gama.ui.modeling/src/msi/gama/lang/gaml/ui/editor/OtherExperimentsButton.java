@@ -158,19 +158,19 @@ public class OtherExperimentsButton {
 				final IProject proj = myFile.getProject();
 				// AD Addresses Issue 796 by passing null to the "without"
 				// parameter
-				final List<URI> resources = getAllGamaFilesInProject(proj,
-						/* resource.getURI() */null);
+				final List<URI> resources = getAllGamaFilesInProject(proj, null);
 				final ResourceSet rs = editor.resourceSetProvider.get(proj);
 				for (final URI uri : resources) {
 					final GamlResource xr = (GamlResource) rs.getResource(uri, true);
 					if (xr.getErrors().isEmpty()) {
 						final ISyntacticElement el = xr.getSyntacticContents();
-						for (final ISyntacticElement ch : el.getExperiments()) {
-							if (!map.containsKey(uri)) {
-								map.put(uri, new ArrayList());
+						if (el != null)
+							for (final ISyntacticElement ch : el.getExperiments()) {
+								if (!map.containsKey(uri)) {
+									map.put(uri, new ArrayList());
+								}
+								map.get(uri).add(ch.getName());
 							}
-							map.get(uri).add(ch.getName());
-						}
 					}
 				}
 

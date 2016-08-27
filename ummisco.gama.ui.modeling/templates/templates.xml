@@ -30,18 +30,76 @@ ${cursor}
 >grid ${name} width:${grid_w} height:${grid_h} {
 ${cursor}
 }</template>
-<template 	id="Experiment"
-			name="experiment"
+<template 	id="Experiment.Gui"
+			name="gui_experiment"
 			context="msi.gama.lang.gaml.Gaml.Model"
-			description="define an experiment"
+			description="Define a new experiment with a graphical user interface"
 			autoinsert="true"
 			deleted="false"
 			enabled="true"
->experiment ${name} type: ${exp_type} {
+>experiment ${name} type: gui {
+
 	${cursor}
+	// Define parameters here if necessary
+	// parameter "My parameter" category: "My parameters" var: one_global_attribute;
+	
+	// Define attributes, actions, a init section and behaviors if necessary
+	// init { }
+	
+	
 	output {
+	// Define inspectors, browsers and displays here
+	
+	// inspect one_or_several_agents;
+	//
+	// display "My display" { 
+	//		species one_species;
+	//		species another_species;
+	// 		grid a_grid;
+	// 		...
+	// }
 
 	}
+}</template>
+<template 	id="Experiment.Batch"
+			name="batch_experiment_with_display"
+			context="msi.gama.lang.gaml.Gaml.Model"
+			description="Define a batch experiment with a permanent user interface"
+			autoinsert="true"
+			deleted="false"
+			enabled="true"
+>experiment ${name} type: batch repeat: ${an_int} keep_seed: ${a_bool} until: ${a_condition} {	
+	${cursor}
+	// Define parameters to explore here if necessary
+	// parameter "My parameter" category: "My parameters" var: one_global_attribute;
+	// Define a method of exploration
+	// method exhaustive minimize: one_expression;
+	// Define attributes, actions, a init section and behaviors if necessary
+	// init { }
+	
+	
+	permanent {
+	// Define inspectors, browsers and displays here
+	// These will remain open during all the simulations runs
+
+	}
+}</template>
+<template 	id="Experiment.Batch"
+			name="batch_experiment"
+			context="msi.gama.lang.gaml.Gaml.Model"
+			description="Define a batch experiment with no user interface"
+			autoinsert="true"
+			deleted="false"
+			enabled="true"
+>experiment ${name} type: batch repeat: ${an_int} keep_seed: ${a_bool} until: ${a_condition} {	
+	${cursor}
+	// Define parameters to explore here if necessary
+	// parameter "My parameter" category: "My parameters" var: one_global_attribute;
+	// Define a method of exploration
+	// method exhaustive minimize: one_expression;
+	// Define attributes, actions, a init section and behaviors if necessary
+	// init { }
+
 }</template>
 <template 	id="Definition.Attribute"
 			name="var"

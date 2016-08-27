@@ -52,6 +52,20 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 		hasSyntaxErrors = syntax;
 	}
 
+	// If the status of the error changes (for instance, it is discovered it
+	// belongs to another resource
+	public void refresh(final GamlCompilationError e) {
+		remove(e);
+		add(e);
+	}
+
+	public void remove(final GamlCompilationError e) {
+		importedErrors.remove(e);
+		internalErrors.remove(e);
+		warnings.remove(e);
+		infos.remove(e);
+	}
+
 	public void add(final GamlCompilationError error) {
 		if (error.isWarning()) {
 			if (!GamaPreferences.WARNINGS_ENABLED.getValue() || noWarning) {
@@ -131,7 +145,8 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 		final Map<String, URI> result = new TOrderedHashMap();
 		for (final GamlCompilationError error : importedErrors) {
 			final EObject object = error.getStatement();
-			final String resource = object == null ? "imported files" : object.eResource().getURI().lastSegment();
+			final String resource = object == null ? "imported files"
+					: URI.decode(object.eResource().getURI().lastSegment());
 			result.put(error.toString() + " (" + resource + ")", object == null ? null : object.eResource().getURI());
 		}
 		return result;

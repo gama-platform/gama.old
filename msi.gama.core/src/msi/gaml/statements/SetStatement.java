@@ -122,7 +122,9 @@ public class SetStatement extends AbstractStatement {
 	}
 
 	public String getVarName() {
-		return varExpr.literalValue();
+		if (varExpr != null)
+			return varExpr.literalValue();
+		return null;
 	}
 
 }

@@ -1,0 +1,76 @@
+/**
+ * Created by drogoul, 27 août 2016
+ * 
+ */
+package msi.gama.lang.gaml.ui.editor;
+
+import java.util.Map;
+
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.widgets.Control;
+
+import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.menus.GamaMenu;
+
+/**
+ * The class CreateExperimentSelectionListener.
+ *
+ * @author drogoul
+ * @since 27 août 2016
+ *
+ */
+public class OpenImportedErrorSelectionListener implements SelectionListener {
+
+	GamlEditor editor;
+	GamlEditorState state;
+
+	/**
+	 * 
+	 */
+	public OpenImportedErrorSelectionListener(final GamlEditor editor, final GamlEditorState state,
+			final Control toolbar) {
+		this.editor = editor;
+		this.state = state;
+	}
+
+	/**
+	 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+	 */
+	@Override
+	public void widgetSelected(final SelectionEvent e) {
+		final Map<String, URI> msgs = state.getImportedErrors();
+		if (!msgs.isEmpty()) {
+			final GamaMenu menu = new GamaMenu() {
+
+				@Override
+				protected void fillMenu() {
+
+					for (final String s : msgs.keySet()) {
+						action(s, new SelectionAdapter() {
+
+							@Override
+							public void widgetSelected(final SelectionEvent e1) {
+								GAMA.getGui().editModel(msgs.get(s));
+							}
+
+						}, null);
+					}
+
+				}
+			};
+			menu.open((Control) e.widget, e, 32);
+		}
+	}
+
+	/**
+	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
+	 */
+	@Override
+	public void widgetDefaultSelected(final SelectionEvent e) {
+		widgetSelected(e);
+	}
+
+}

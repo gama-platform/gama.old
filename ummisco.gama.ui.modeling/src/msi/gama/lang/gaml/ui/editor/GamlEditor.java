@@ -19,8 +19,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -93,9 +91,6 @@ import com.google.common.collect.ObjectArrays;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-import msi.gama.common.interfaces.IGui;
-import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
 import msi.gama.lang.gaml.ui.editbox.BoxProviderRegistry;
@@ -106,20 +101,15 @@ import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialog;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.IDescription;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
-import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -154,7 +144,6 @@ public class GamlEditor extends XtextEditor
 	EditToolbar editToolbar;
 	boolean decorationEnabled = AutoStartup.EDITBOX_ENABLED.getValue();
 	boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
-	// OtherExperimentsButton other;
 
 	@Inject
 	IResourceSetProvider resourceSetProvider;
@@ -213,8 +202,6 @@ public class GamlEditor extends XtextEditor
 	@Override
 	protected void rulerContextMenuAboutToShow(final IMenuManager menu) {
 		super.rulerContextMenuAboutToShow(menu);
-		// remove the projection menu introduced by super call
-		// unfortunately we cannot call super.super.rulerC...
 		menu.remove("projection");
 
 		final IMenuManager foldingMenu = new MenuManager(XtextUIMessages.Editor_FoldingMenu_name, "projection"); //$NON-NLS-1$
@@ -284,25 +271,13 @@ public class GamlEditor extends XtextEditor
 
 	@Override
 	public void dispose() {
-		// if (getDocument() != null) {
-		// getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
-		//
-		// @Override
-		// public void process(final XtextResource state) throws Exception {
-		// ((GamlResource) state).removeListener();
-		// }
-		//
-		// });
-		// }
-
 		decorator = null;
-
 		super.dispose();
 	}
 
 	public GamlTemplateStore getTemplateStore() {
 
-		return (GamlTemplateStore) /* templatePrefs.getTemplateStore(); */templateStore;
+		return (GamlTemplateStore) templateStore;
 	}
 
 	public GamlEditTemplateDialogFactory getTemplateFactory() {
@@ -315,7 +290,7 @@ public class GamlEditor extends XtextEditor
 
 	private void buildRightToolbar() {
 		toolbar.wipe(SWT.RIGHT, true);
-		/* OtherExperimentsButton other = */new OtherExperimentsButton(this, toolbar);
+		new OtherExperimentsButton(this, toolbar);
 		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
 		toggle.addSelectionListener(new SelectionAdapter() {
 
@@ -403,61 +378,7 @@ public class GamlEditor extends XtextEditor
 		this.markInNavigationHistory();
 	}
 
-	private void gotoEditor(final GamaRuntimeException exception) {
-		final EObject o = exception.getEditorContext();
-		if (o != null) {
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					GAMA.getGui().editModel(o);
-				}
-			});
-		}
-
-	}
-
-	private final SelectionListener listener = new SelectionAdapter() {
-
-		@Override
-		public void widgetSelected(final SelectionEvent evt) {
-			final IGui gui = GAMA.getRegularGui();
-			// We refuse to run if there is no XtextGui available.
-			GamlEditor.this.performSave(true, null);
-			if (AutoStartup.EDITOR_SAVE.getValue()) {
-				WorkbenchHelper.getPage().saveAllEditors(AutoStartup.EDITOR_SAVE_ASK.getValue());
-			}
-			String name = ((FlatButton) evt.widget).getText();
-			final int i = state.abbreviations.indexOf(name);
-			if (i == -1) {
-				return;
-			}
-			name = state.experiments.get(i);
-			IModel model = null;
-			try {
-				model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
-
-					@Override
-					public IModel exec(final XtextResource state) throws Exception {
-						// List<GamlCompilationError> errors = new ArrayList();
-						return /* GamlModelBuilder.getInstance() */GAML.getModelFactory().compile(state);
-					}
-
-				});
-			} catch (final GamaRuntimeException e) {
-				gotoEditor(e);
-				GAMA.getGui().error("Experiment " + name + " cannot be instantiated because of the following error: "
-						+ e.getMessage());
-			}
-			if (model == null) {
-				return;
-			}
-			GAMA.getGui().runModel(model, name);
-		}
-
-	};
-
-	private void enableButton(final int index, final String text) {
+	private void enableButton(final int index, final String text, final SelectionListener listener) {
 		if (text == null) {
 			return;
 		}
@@ -492,70 +413,45 @@ public class GamlEditor extends XtextEditor
 					if (toolbar == null || toolbar.isDisposed()) {
 						return;
 					}
+					toolbar.wipe(SWT.LEFT, true);
 
 					final GamaUIColor c = state.getColor();
 					final String msg = state.getStatus();
+
+					SelectionListener listener = null;
+					String imageName = null;
+
+					if (msg == GamlEditorState.NO_EXP_DEFINED) {
+						listener = new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT));
+						imageName = "small.dropdown";
+					} else if (newState.hasImportedErrors) {
+						listener = new OpenImportedErrorSelectionListener(GamlEditor.this, newState,
+								toolbar.getToolbar(SWT.LEFT));
+						imageName = "small.dropdown";
+					} else if (msg != null) {
+						listener = new RevalidateModelSelectionListener(GamlEditor.this);
+						imageName = "marker.error2";
+					} else {
+						listener = new OpenExperimentSelectionListener(GamlEditor.this, newState);
+					}
+
 					if (msg != null) {
-						toolbar.wipe(SWT.LEFT, true);
-						final ToolItem t = toolbar.button(c, msg, new SelectionListener() {
+						final ToolItem t = toolbar.button(c, msg, GamaIcons.create(imageName).image(), listener,
+								SWT.LEFT);
 
-							@Override
-							public void widgetSelected(final SelectionEvent e) {
-								final Map<String, URI> msgs = newState.getImportedErrors();
-								if (!msgs.isEmpty()) {
-									final GamaMenu menu = new GamaMenu() {
-
-										@Override
-										protected void fillMenu() {
-
-											for (final String s : msgs.keySet()) {
-												action(s, new SelectionAdapter() {
-
-													@Override
-													public void widgetSelected(final SelectionEvent e1) {
-														GAMA.getGui().editModel(msgs.get(s));
-													}
-
-												}, null);
-											}
-
-										}
-									};
-									menu.open(toolbar.getToolbar(SWT.LEFT), e);
-								} else {
-									getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
-
-										@Override
-										public void process(final XtextResource state) throws Exception {
-											final GamlResource gr = (GamlResource) state;
-											GAML.getModelFactory().compile(state);
-										}
-									});
-								}
-
-							}
-
-							@Override
-							public void widgetDefaultSelected(final SelectionEvent e) {
-								widgetSelected(e);
-							}
-						}, SWT.LEFT);
-						// For Issue #1697
-						if (!state.getImportedErrors().isEmpty())
-							((FlatButton) t.getControl()).setImage(GamaIcons.create("small.dropdown").image());
-						// without the 2 following lines, the display of the
+						// without the following line, the display of the
 						// text "msg" is not updated
 						// correctly (at least for Windows OS)
 						toolbar.sep(4, SWT.LEFT);
-						toolbar.refresh(true);
 					} else {
-						toolbar.wipe(SWT.LEFT, true);
 						int i = 0;
 						for (final String e : state.abbreviations) {
-							enableButton(i++, e);
+							enableButton(i++, e, listener);
 						}
-						toolbar.refresh(true);
+
 					}
+
+					toolbar.refresh(true);
 
 				}
 			});
@@ -753,6 +649,14 @@ public class GamlEditor extends XtextEditor
 	/**
 	 * @see msi.gama.lang.gaml.ui.editor.IGamlEditor#applyTemplate(org.eclipse.jface.text.templates.Template)
 	 */
+
+	public void applyTemplateAtTheEnd(final Template t) {
+		selectAndReveal(this.getStyledText().getCharCount() + 1, 0);
+		insertText("\n");
+		applyTemplate(t);
+		selectAndReveal(this.getStyledText().getCharCount() + 1, 0);
+	}
+
 	public void applyTemplate(final Template t) {
 		// TODO Create a specific context type (with GAML specific variables ??)
 		final XtextTemplateContextType ct = new XtextTemplateContextType();

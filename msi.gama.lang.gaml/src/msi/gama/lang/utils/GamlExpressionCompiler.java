@@ -134,7 +134,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IExpressionDescription currentExpressionDescription;
 	private IDescription currentContext;
 	private ITypesManager currentTypesManager;
-	private static XtextResourceSet resourceSet = new XtextResourceSet();
+	private final XtextResourceSet resourceSet = new XtextResourceSet();
 	private final GamlResource resource = (GamlResource) resourceSet
 			.createResource(URI.createURI(SYNTHETIC_RESOURCES_PREFIX + resourceCount++ + ".gaml", false));
 	private static volatile int resourceCount = 0;
@@ -149,6 +149,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	static {
 		IExpressionCompiler.OPERATORS.put(MY, new THashMap());
+	}
+
+	public GamlExpressionCompiler() {
 		resourceSet.setClasspathURIContext(EcoreBasedExpressionDescription.class);
 	}
 

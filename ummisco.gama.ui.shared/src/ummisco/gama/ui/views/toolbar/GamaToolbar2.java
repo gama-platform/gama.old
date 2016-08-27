@@ -169,6 +169,13 @@ public class GamaToolbar2 extends Composite {
 		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
 	}
 
+	public ToolItem button(final GamaUIColor color, final String text, final Image image,
+			final SelectionListener listener, final int side) {
+		final FlatButton button = FlatButton.button(side == SWT.LEFT ? left : right, color, text, image);
+		button.addSelectionListener(listener);
+		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);
+	}
+
 	public ToolItem label(final GamaUIColor color, final String text, final Image image, final int side) {
 		final FlatButton button = FlatButton.label(side == SWT.LEFT ? left : right, color, text, image);
 		return control(button, button.computeSize(SWT.DEFAULT, button.getHeight(), false).x + 4, side);

@@ -40,7 +40,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		final ErrorCollector errors = new GamlModelBuilder().validate(newResource);
 		if (!errors.hasInternalSyntaxErrors()) {
 			for (final GamlCompilationError error : errors) {
-				manageCompilationIssue(error);
+				manageCompilationIssue(error, errors);
 			}
 		}
 	}
@@ -56,13 +56,14 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		return object.eResource() == current.eResource();
 	}
 
-	private void manageCompilationIssue(final GamlCompilationError e) {
+	private void manageCompilationIssue(final GamlCompilationError e, final ErrorCollector collector) {
 		final EObject object = e.getStatement();
 		if (object == null) {
 			System.err.println("*** Internal compilation problem : " + e.toString());
 			return;
 		} else if (object.eResource() == null) {
-			throw new RuntimeException("Error detected in a syntethic object. Please debug to understand the cause");
+			throw new RuntimeException(
+					"Error detected in a synthetic object. Please post an issue at: https://github.com/gama-platform/gama/issues");
 		}
 
 		if (!sameResource(object)) {

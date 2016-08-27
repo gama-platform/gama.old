@@ -143,6 +143,10 @@ public abstract class GamaMenu {
 	}
 
 	public void open(final Control c, final SelectionEvent trigger) {
+		open(c, trigger, 0);
+	}
+
+	public void open(final Control c, final SelectionEvent trigger, final int verticalOffset) {
 
 		if (mainMenu == null) {
 			mainMenu = new Menu(c.getShell(), SWT.POP_UP);
@@ -150,7 +154,7 @@ public abstract class GamaMenu {
 		}
 
 		final Point point = c.toDisplay(new Point(trigger.x, trigger.y));
-		mainMenu.setLocation(point.x, point.y);
+		mainMenu.setLocation(point.x, point.y + verticalOffset);
 		mainMenu.setVisible(true);
 	}
 

@@ -11,22 +11,25 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * The Class GamlCompilationError. Represents the errors produced by the validation/compilation of IDescription's.
+ * The Class GamlCompilationError. Represents the errors produced by the
+ * validation/compilation of IDescription's.
  */
 public class GamlCompilationError {
 
 	protected boolean isWarning = false;
 	protected boolean isInfo = false;
+	protected URI otherResourceURI;
 	protected final String message;
 	protected String code;
 	protected String[] data;
 	protected EObject source;
 
 	public GamlCompilationError(final String string, final String code, final EObject object, final boolean warning,
-		final boolean info, final String ... data) {
+			final boolean info, final String... data) {
 
 		message = string;
 		isWarning = warning;
@@ -67,10 +70,22 @@ public class GamlCompilationError {
 
 	@Override
 	public boolean equals(final Object other) {
-		if ( this == other ) { return true; }
-		if ( !(other instanceof GamlCompilationError) ) { return false; }
-		GamlCompilationError error = (GamlCompilationError) other;
+		if (this == other) {
+			return true;
+		}
+		if (!(other instanceof GamlCompilationError)) {
+			return false;
+		}
+		final GamlCompilationError error = (GamlCompilationError) other;
 		return message.equals(error.message) && source == error.source;
+	}
+
+	public void setOtherResourceURI(final URI other) {
+		otherResourceURI = other;
+	}
+
+	public URI getOtherResourceURI() {
+		return otherResourceURI;
 	}
 
 	@Override
