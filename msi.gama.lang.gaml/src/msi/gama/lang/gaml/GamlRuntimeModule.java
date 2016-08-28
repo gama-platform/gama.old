@@ -13,7 +13,6 @@ package msi.gama.lang.gaml;
 
 import java.util.function.Supplier;
 
-import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
@@ -46,7 +45,6 @@ import msi.gama.lang.gaml.resource.GamlResourceDescriptionManager;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionStrategy;
 import msi.gama.lang.gaml.resource.GamlResourceDocManager;
 import msi.gama.lang.gaml.scoping.GamlQualifiedNameProvider;
-import msi.gama.lang.gaml.validation.GamlDiagnostician;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.lang.utils.GamlEncodingProvider;
 import msi.gama.lang.utils.GamlExpressionCompiler;
@@ -150,11 +148,11 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return GamlSyntacticParser.class;
 	}
 
-	@Override
-	@SingletonBinding
-	public Class<? extends Diagnostician> bindDiagnostician() {
-		return GamlDiagnostician.class;
-	}
+	// @Override
+	// @SingletonBinding
+	// public Class<? extends Diagnostician> bindDiagnostician() {
+	// return GamlDiagnostician.class;
+	// }
 
 	// public Class<? extends IResourceValidator> bindIResourceValidator() {
 	// return GamlResourceValidator.class;

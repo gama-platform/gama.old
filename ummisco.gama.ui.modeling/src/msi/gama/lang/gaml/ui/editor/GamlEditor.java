@@ -346,6 +346,10 @@ public class GamlEditor extends XtextEditor
 		editor.setLayoutData(data);
 		editor.setLayout(new FillLayout());
 		super.createPartControl(editor);
+		final ISourceViewer viewer = getSourceViewer();
+		if (viewer instanceof GamaSourceViewer) {
+			((GamaSourceViewer) viewer).setResourceListener(this);
+		}
 		toolbarParent.layout();
 		installGestures();
 
@@ -469,9 +473,13 @@ public class GamlEditor extends XtextEditor
 
 	@Override
 	public void validationEnded(final Collection<? extends IDescription> newExperiments, final ErrorCollector status) {
-		final GamlEditorState newState = new GamlEditorState(status, newExperiments);
-		updateToolbar(newState, false);
-		state = newState;
+		if (newExperiments == null && state != null)
+			updateToolbar(state, true);
+		else {
+			final GamlEditorState newState = new GamlEditorState(status, newExperiments);
+			updateToolbar(newState, false);
+			state = newState;
+		}
 	}
 
 	public static class GamaSourceViewerConfiguration extends XtextSourceViewerConfiguration {

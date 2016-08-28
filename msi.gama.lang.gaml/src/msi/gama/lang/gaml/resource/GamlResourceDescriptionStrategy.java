@@ -11,8 +11,10 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.resource.IReferenceDescription;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.util.IAcceptor;
 
@@ -52,4 +54,24 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 		}
 		return o instanceof Block || o instanceof Model;
 	}
+
+	@Override
+	public boolean createReferenceDescriptions(final EObject from, final URI exportedContainerURI,
+			final IAcceptor<IReferenceDescription> acceptor) {
+		// TODO Auto-generated method stub
+		return super.createReferenceDescriptions(from, exportedContainerURI, acceptor);
+	}
+
+	@Override
+	protected boolean isResolvedAndExternal(final EObject from, final EObject to) {
+		if (to == null)
+			return false;
+		if (to.eResource() == null)
+			return false;
+		if (to.eResource().getURI().lastSegment().endsWith("xmi"))
+			return false;
+		return super.isResolvedAndExternal(from, to);
+
+	}
+
 }

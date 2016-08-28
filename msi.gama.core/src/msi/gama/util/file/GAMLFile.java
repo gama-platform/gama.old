@@ -38,8 +38,6 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-// import scala.actors.threadpool.Arrays;
-
 /**
  * Written by drogoul Modified on 13 nov. 2011
  *
@@ -54,14 +52,17 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	public static class GamlInfo extends GamaFileMetaData {
 
 		public static String BATCH_PREFIX = "***";
+		public static String ERRORS = "errors detected";
 
 		public final Collection<String> experiments;
 		public final Collection<String> imports;
 		public final Collection<String> uses;
+		public final boolean invalid;
 
 		public GamlInfo(final long stamp, final Collection<String> imports, final Collection<String> uses,
 				final Collection<String> exps) {
 			super(stamp);
+			invalid = stamp == Long.MAX_VALUE;
 			this.imports = imports;
 			this.uses = uses;
 			this.experiments = exps;
@@ -73,6 +74,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 			imports = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[1], SUB_DELIMITER));
 			uses = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[2], SUB_DELIMITER));
 			experiments = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[3], SUB_DELIMITER));
+			invalid = values[4].equals("TRUE");
 		}
 
 		/**
@@ -82,6 +84,8 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		 */
 		@Override
 		public String getSuffix() {
+			if (invalid)
+				return ERRORS;
 			final int expCount = experiments.size();
 			if (expCount > 0) {
 				return "" + (expCount == 1 ? "1 experiment" : expCount + " experiments");
@@ -97,6 +101,7 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 			sb.append(join(imports, SUB_DELIMITER)).append(DELIMITER);
 			sb.append(join(uses, SUB_DELIMITER)).append(DELIMITER);
 			sb.append(join(experiments, SUB_DELIMITER)).append(DELIMITER);
+			sb.append(invalid ? "TRUE" : "FALSE").append(DELIMITER);
 			return sb.toString();
 
 		}

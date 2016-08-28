@@ -17,8 +17,8 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
@@ -110,10 +110,10 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	public final Facets copyFacets(final SymbolProto sp) {
 		if (facets != null) {
 			final Facets ff = new Facets();
-			facets.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
+			visitFacets(new FacetVisitor() {
 
 				@Override
-				public boolean execute(final String a, final IExpressionDescription b) {
+				public boolean visit(final String a, final IExpressionDescription b) {
 					if (b != null)
 						ff.put(a, sp != null && sp.isLabel(a) ? b.cleanCopy().compileAsLabel() : b.cleanCopy());
 					return true;
@@ -166,6 +166,18 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 			e.computeStats(stats);
 		for (final ISyntacticElement e : this.getGrids())
 			e.computeStats(stats);
+	}
+
+	@Override
+	public void visitFacets(final FacetVisitor visitor) {
+		if (facets == null)
+			return;
+		facets.forEachEntry(visitor);
+	}
+
+	@Override
+	public void visitThisAndAllChildrenRecursively(final SyntacticVisitor visitor) {
+		visitor.visit(this);
 	}
 
 }

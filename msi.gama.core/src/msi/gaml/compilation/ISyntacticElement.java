@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.base.Predicate;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
@@ -31,6 +32,10 @@ import msi.gaml.statements.Facets;
  * 
  */
 public interface ISyntacticElement {
+
+	public static interface SyntacticVisitor {
+		void visit(ISyntacticElement element);
+	}
 
 	public static final Predicate<ISyntacticElement> SPECIES_FILTER = new Predicate<ISyntacticElement>() {
 
@@ -92,6 +97,8 @@ public interface ISyntacticElement {
 
 	public abstract Iterable<ISyntacticElement> getGrids();
 
+	public abstract void visitFacets(FacetVisitor visitor);
+
 	public abstract String getName();
 
 	public abstract EObject getElement();
@@ -105,5 +112,7 @@ public interface ISyntacticElement {
 	public abstract boolean hasFacets();
 
 	public abstract void computeStats(Map<String, Integer> stats);
+
+	public abstract void visitThisAndAllChildrenRecursively(SyntacticVisitor visitor);
 
 }

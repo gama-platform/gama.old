@@ -71,6 +71,8 @@ public class DescriptionFactory {
 	// Internal interface instantiated by XText
 	public interface IDocManager {
 
+		public static final String KEY = "Doc";
+
 		public void document(IDescription description);
 
 		public IGamlDescription getGamlDocumentation(EObject o);

@@ -11,33 +11,43 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.validation;
 
+import java.util.Map;
+import java.util.Set;
+
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.util.Arrays;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.ValidationMessageAcceptor;
 
+import gnu.trove.map.hash.THashMap;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
-import msi.gama.lang.gaml.resource.GamlModelBuilder;
 import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.utils.EGaml;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ErrorCollector;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
-	// @Inject
-	// private ImportUriResolver resolver;
+	public final static Map<URI, Set<String>> GLOBAL_URI_IMPORTS_CACHE_HACK = new THashMap();
 
 	@Check()
 	public void validate(final Model model) {
 		final GamlResource newResource = (GamlResource) model.eResource();
+		if (newResource == null)
+			return;
 		if (newResource.isValidating()) {
 			return;
 		}
-		final ErrorCollector errors = new GamlModelBuilder().validate(newResource);
+		GLOBAL_URI_IMPORTS_CACHE_HACK.put(newResource.getURI(), EGaml.getImportsAsStrings(model));
+		final ErrorCollector errors = validate(newResource);
 		if (!errors.hasInternalSyntaxErrors()) {
 			for (final GamlCompilationError error : errors) {
 				manageCompilationIssue(error, errors);
@@ -45,15 +55,21 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 	}
 
+	public ErrorCollector validate(final Resource resource) {
+		final GamlResource r = (GamlResource) resource;
+		r.validate(resource.getResourceSet());
+		return r.getErrorCollector();
+	}
+
 	private boolean sameResource(final EObject object) {
-		if (object == null) {
+		if (object == null || object.eResource() == null) {
 			return false;
 		}
 		final EObject current = this.getCurrentObject();
-		if (current == null) {
+		if (current == null || current.eResource() == null) {
 			return false;
 		}
-		return object.eResource() == current.eResource();
+		return object.eResource().getURI().equals(current.eResource().getURI());
 	}
 
 	private void manageCompilationIssue(final GamlCompilationError e, final ErrorCollector collector) {
@@ -67,6 +83,15 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 
 		if (!sameResource(object)) {
+			final URI u = object.eResource().getURI();
+			final String uri = URI.decode(u.toFileString());
+			final String s = URI.decode(u.lastSegment());
+			final Model m = (Model) getCurrentObject();
+			final EObject eObject = findImportWith(m, s);
+			final EAttribute feature = eObject instanceof Model ? GamlPackage.Literals.GAML_DEFINITION__NAME
+					: GamlPackage.Literals.IMPORT__IMPORT_URI;
+			acceptError(e.toString() + "(in " + s + ")", eObject, feature,
+					ValidationMessageAcceptor.INSIGNIFICANT_INDEX, e.getCode(), e.getData());
 			return;
 		}
 		EStructuralFeature feature = null;
@@ -90,6 +115,14 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 				acceptError(e.toString(), object, feature, index, e.getCode(), e.getData());
 			}
 		}
+	}
+
+	private EObject findImportWith(final Model m, final String s) {
+		for (final Import i : m.getImports()) {
+			if (i.getImportURI().endsWith(s))
+				return i;
+		}
+		return m;
 	}
 
 }

@@ -52,4 +52,14 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 		children.add(e);
 	}
 
+	@Override
+	public void visitThisAndAllChildrenRecursively(final SyntacticVisitor visitor) {
+		visitor.visit(this);
+		if (children != null) {
+			for (final ISyntacticElement child : children) {
+				child.visitThisAndAllChildrenRecursively(visitor);
+			}
+		}
+	}
+
 }

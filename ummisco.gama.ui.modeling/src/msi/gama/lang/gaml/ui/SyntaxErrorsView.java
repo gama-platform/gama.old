@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -21,6 +22,7 @@ import org.eclipse.ui.views.markers.MarkerSupportView;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import ummisco.gama.ui.commands.RefreshHandler;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
@@ -109,16 +111,6 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
-		// // { FILTER, WARNINGS, INFOS, SEP, CLEAN, BUILD, AUTO };
-		// tb.button("build.sort2", "", "Configure filters", new
-		// SelectionAdapter() {
-		//
-		// @Override
-		// public void widgetSelected(final SelectionEvent e) {
-		// openFilterDialog();
-		// }
-		//
-		// }, SWT.RIGHT);
 
 		warningAction = tb.check("build.warnings2", "", "Toggle display of warning markers", new SelectionAdapter() {
 
@@ -147,7 +139,17 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 			public void widgetSelected(final SelectionEvent e) {
 				final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				try {
-					workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, null);
+					workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor() {
+
+						@Override
+						public void done() {
+							super.done();
+							RefreshHandler.run(workspace.getRoot());
+
+						}
+
+					});
+
 				} catch (final CoreException ex) {
 					ex.printStackTrace();
 				}
@@ -155,46 +157,6 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 			}
 
 		}, SWT.RIGHT);
-
-		// tb.button("build.project2", "", "Validate the current project", new
-		// SelectionAdapter() {
-		//
-		// @Override
-		// public void widgetSelected(final SelectionEvent e) {
-		// try {
-		// ICommandService service =
-		// getSite().getService(ICommandService.class);
-		// Command c = service.getCommand("msi.gama.lang.gaml.Gaml.validate");
-		// if ( c.isEnabled() ) {
-		// IHandlerService handlerService =
-		// getSite().getService(IHandlerService.class);
-		// handlerService.executeCommand("msi.gama.lang.gaml.Gaml.validate",
-		// null);
-		// }
-		// } catch (Exception e1) {
-		// e1.printStackTrace();
-		// }
-		// }
-		//
-		// }, SWT.RIGHT);
-
-		// tb.check("build.auto2", "", "Automatically validate models", new
-		// SelectionAdapter() {
-		//
-		// @Override
-		// public void widgetSelected(final SelectionEvent e) {
-		//
-		// IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		// IWorkspaceDescription description = workspace.getDescription();
-		// description.setAutoBuilding(((ToolItem) e.widget).getSelection());
-		// try {
-		// workspace.setDescription(description);
-		// } catch (CoreException ex) {
-		// // ErrorDialog.openError(Swt.getShell(), null, null, e.getStatus());
-		// }
-		//
-		// }
-		// }, SWT.RIGHT).setSelection(true);
 
 	}
 
@@ -204,7 +166,4 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 		final ExecutionEvent ev = new ExecutionEvent(null, new HashMap(), this, ec);
 		new ConfigureContentsDialogHandler().execute(ev);
 	}
-	//
-	// @Override
-	// public void setToogle(final Action toggle) {}
 }

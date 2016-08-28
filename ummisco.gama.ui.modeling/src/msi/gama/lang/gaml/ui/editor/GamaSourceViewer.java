@@ -8,7 +8,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextSourceViewer;
@@ -16,6 +15,7 @@ import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
 
 /**
  * The class GamaSourceViewer.
@@ -25,6 +25,8 @@ import msi.gama.lang.gaml.resource.GamlResource;
  *
  */
 public class GamaSourceViewer extends XtextSourceViewer {
+
+	private IGamlBuilderListener2 listener;
 
 	/**
 	 * @param parent
@@ -46,32 +48,27 @@ public class GamaSourceViewer extends XtextSourceViewer {
 			public void process(final XtextResource state) throws Exception {
 				if (state != null) {
 					((GamlResource) state).removeListener();
-					((GamlResource) state).setEdited(false);
 				}
 			}
 		});
 		super.handleDispose();
 	}
 
-	@Override
-	public void setDocument(final IDocument document, final IAnnotationModel annotationModel,
-			final int modelRangeOffset, final int modelRangeLength) {
-		super.setDocument(document, annotationModel, modelRangeOffset, modelRangeLength);
-		if (document instanceof IXtextDocument)
-			((IXtextDocument) document).readOnly(new IUnitOfWork.Void<XtextResource>() {
 
-				@Override
-				public void process(final XtextResource state) throws Exception {
-					if (state != null)
-						((GamlResource) state).setEdited(true);
-				}
-			});
 
-	}
+	/**
+	 * @param gamlEditor
+	 */
+	public void setResourceListener(final IGamlBuilderListener2 listener) {
+		this.listener = listener;
+		((IXtextDocument) getDocument()).readOnly(new IUnitOfWork.Void<XtextResource>() {
 
-	@Override
-	protected StyledText createTextWidget(final Composite parent, final int styles) {
-		return super.createTextWidget(parent, styles);
+			@Override
+			public void process(final XtextResource state) throws Exception {
+				if (state != null)
+					((GamlResource) state).setListener(listener);
+			}
+		});
 	}
 
 }

@@ -502,12 +502,6 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		final IResourceDescriptions descriptions = getResourceDescriptions(resource, urisAsList);
 
 		scope = SelectableBasedScope.createScope(scope, descriptions, filter, type, false);
-		// IScope scope = getGlobalScope(type);
-		// for (final URI uri : urisAsList) {
-		// scope = SelectableBasedScope.createScope(scope,
-		// descriptions.getResourceDescription(uri), filter, type,
-		// ignoreCase);
-		// }
 		return scope;
 	}
 

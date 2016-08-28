@@ -245,18 +245,17 @@ public class GamlResourceDocManager implements IDocManager {
 		DocumentationJob.schedule(50);
 	}
 
-	private static THashMap<EObject, IGamlDescription> getDocumentationCache(final Resource key) {
-		if (key instanceof XtextResource)
-			return ((XtextResource) key).getCache().get("Documentation", key,
-					new Provider<THashMap<EObject, IGamlDescription>>() {
+	private static THashMap<EObject, IGamlDescription> getDocumentationCache(final Resource resource) {
+		if (resource instanceof XtextResource)
+			return ((XtextResource) resource).getCache().get(KEY, resource, new Provider<THashMap<EObject, IGamlDescription>>() {
 
-						@Override
-						public THashMap<EObject, IGamlDescription> get() {
-							return new THashMap();
-						}
-					});
+				@Override
+				public THashMap<EObject, IGamlDescription> get() {
+					return new THashMap();
+				}
+			});
 		else
-			return CACHE2.get(key);
+			return CACHE2.get(resource);
 	}
 
 	// To be called once the validation has been done

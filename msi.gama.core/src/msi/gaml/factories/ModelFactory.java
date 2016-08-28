@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.factories;
 
-import java.io.InputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -76,25 +75,6 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 		delegate = instance;
 	}
 
-	/**
-	 * Method validate()
-	 * 
-	 * @see msi.gaml.compilation.IModelBuilder#validate(org.eclipse.emf.ecore.resource.Resource)
-	 */
-	@Override
-	public ErrorCollector validate(final Resource resource) {
-		return delegate == null ? new ErrorCollector() : delegate.get().validate(resource);
-	}
-
-	/**
-	 * Method validate()
-	 * 
-	 * @see msi.gaml.compilation.IModelBuilder#validate(org.eclipse.emf.common.util.URI)
-	 */
-	@Override
-	public ErrorCollector validate(final URI uri) {
-		return delegate == null ? new ErrorCollector() : delegate.get().validate(uri);
-	}
 
 	/**
 	 * Method compile()
@@ -106,15 +86,6 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 		return delegate == null ? null : delegate.get().compile(resource);
 	}
 
-	/**
-	 * Method compile()
-	 * 
-	 * @see msi.gaml.compilation.IModelBuilder#compile(org.eclipse.emf.common.util.URI)
-	 */
-	@Override
-	public IModel compile(final URI uri) {
-		return delegate == null ? null : delegate.get().compile(uri);
-	}
 
 	/**
 	 * Method compile()
@@ -127,27 +98,6 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 		return delegate == null ? null : delegate.get().compile(resource, errors);
 	}
 
-	/**
-	 * Method compile()
-	 * 
-	 * @see msi.gaml.compilation.IModelBuilder#compile(org.eclipse.emf.common.util.URI,
-	 *      java.util.List)
-	 */
-	@Override
-	public IModel compile(final URI uri, final List<GamlCompilationError> errors) {
-		return delegate == null ? null : delegate.get().compile(uri, errors);
-	}
-
-	/**
-	 * Method compile()
-	 * 
-	 * @see msi.gaml.compilation.IModelBuilder#compile(java.io.InputStream,
-	 *      java.util.List)
-	 */
-	@Override
-	public IModel compile(final InputStream contents, final List<GamlCompilationError> errors) {
-		return delegate == null ? null : delegate.get().compile(contents, errors);
-	}
 
 	@Override
 	public ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {

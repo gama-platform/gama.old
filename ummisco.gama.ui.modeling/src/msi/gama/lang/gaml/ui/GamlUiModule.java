@@ -91,12 +91,23 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 				com.google.inject.name.Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
 				.toInstance(".");
 		binder.bind(IResourceLoader.class).toProvider(ResourceLoaderProviders.getParallelLoader());
+		// binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
+		// binder.bind(IncrementalProjectBuilder.class).to(GamlBuilder.class);
 	}
 
 	// @SingletonBinding(eager = true)
 	// public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator>
 	// bindGamlJavaValidator() {
 	// return GamlJavaValidator.class;
+	// }
+
+	// public Class<? extends IMarkerUpdater> bindIMarkerUpdater() {
+	// return GamlMarkerUpdater.class;
+	// }
+
+	// public Class<? extends IncrementalProjectBuilder>
+	// configureIncrementalProjectBuilder() {
+	// return GamlBuilder.class;
 	// }
 
 	@Override
@@ -107,6 +118,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	public Class<? extends IResourceClusteringPolicy> bindIResourceClusteringPolicy() {
 		return DynamicResourceClusteringPolicy.class;
 	}
+
+	// public Class<? extends IResourceValidator> bindIResourceValidator() {
+	// return GamlResourceValidator.class;
+	// }
 
 	// public Class<? extends IEncodingProvider> bindIEncodingProvider() {
 	// return GamlEncodingProvider.class;

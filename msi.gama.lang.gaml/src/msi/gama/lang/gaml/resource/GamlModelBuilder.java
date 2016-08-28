@@ -12,7 +12,6 @@
 package msi.gama.lang.gaml.resource;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -23,6 +22,7 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
 import gnu.trove.set.hash.TLinkedHashSet;
@@ -39,7 +39,6 @@ import msi.gama.util.file.GAMLFile;
 import msi.gaml.compilation.GamaBundleLoader;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.IModelBuilder;
-import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ModelDescription;
 
 /**
@@ -52,38 +51,11 @@ import msi.gaml.descriptions.ModelDescription;
 public class GamlModelBuilder implements IModelBuilder {
 
 	final XtextResourceSet buildResourceSet = new XtextResourceSet();
-	GamlResource fakeResource;
-	static URI fakeURI = URI.createURI("temp_builder.gaml", false);
 
 	public GamlModelBuilder() {
 		buildResourceSet.setClasspathURIContext(GamlModelBuilder.class);
 	};
 
-	/**
-	 * Validates the GAML model inside the resource and returns an
-	 * ErrorCollector (which can later be probed for internal errors, imported
-	 * errors, warnings or infos)
-	 * 
-	 * @param resource
-	 *            must not be null
-	 * @return an instance of ErrorCollector (never null)
-	 */
-	@Override
-	public ErrorCollector validate(final Resource resource) {
-		final GamlResource r = (GamlResource) resource;
-		r.validate(resource.getResourceSet());
-		return r.getErrorCollector();
-	}
-
-	@Override
-	public ErrorCollector validate(final URI resource) {
-		try {
-			final GamlResource r = (GamlResource) buildResourceSet.createResource(resource);
-			return validate(r);
-		} finally {
-			buildResourceSet.getResources().clear();
-		}
-	}
 
 	/**
 	 * Builds an IModel from the resource.
@@ -96,12 +68,7 @@ public class GamlModelBuilder implements IModelBuilder {
 	 */
 	@Override
 	public IModel compile(final Resource resource) {
-		return compile(resource.getURI());
-	}
-
-	@Override
-	public IModel compile(final URI uri) {
-		return compile(uri, new ArrayList());
+		return compile(resource, new ArrayList());
 	}
 
 	/**
@@ -119,48 +86,10 @@ public class GamlModelBuilder implements IModelBuilder {
 	 */
 	@Override
 	public IModel compile(final Resource resource, final List<GamlCompilationError> errors) {
-		return compile(resource.getURI(), errors);
+		return ((GamlResource) resource).build(resource.getResourceSet(), errors);
 	}
 
-	@Override
-	public IModel compile(final URI uri, final List<GamlCompilationError> errors) {
-		try {
-			final GamlResource r = (GamlResource) buildResourceSet.createResource(uri);
-			return r.build(r.getResourceSet(), errors);
-		} finally {
-			buildResourceSet.getResources().clear();
-		}
-	}
 
-	/**
-	 * Creates a model from an InputStream (which can represent the contents of
-	 * a file or a string. Be aware that all the context will be lost when using
-	 * this method, i.e. paths relative to the model being compiled will be
-	 * resolved against the a fake URI
-	 * 
-	 * @see msi.gama.common.interfaces.IModelBuilder#compile(java.io.InputStream,
-	 *      java.util.List)
-	 */
-
-	@Override
-	public IModel compile(final InputStream contents, final List<GamlCompilationError> errors) {
-		try {
-			getFreshResource().load(contents, null);
-			return compile(fakeResource, errors);
-		} catch (final Exception e1) {
-			e1.printStackTrace();
-			return null;
-		}
-	}
-
-	private synchronized GamlResource getFreshResource() {
-		if (fakeResource == null) {
-			fakeResource = (GamlResource) buildResourceSet.createResource(fakeURI);
-		} else {
-			fakeResource.unload();
-		}
-		return fakeResource;
-	}
 
 	@Override
 	public ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {
@@ -177,12 +106,15 @@ public class GamlModelBuilder implements IModelBuilder {
 		/* Synchronized */final XtextResourceSet infoResourceSet = new /* Synchronized */XtextResourceSet();
 		try {
 
-			final GamlResource r = (GamlResource) infoResourceSet.createResource(uri);
-			r.load(Collections.EMPTY_MAP);
-			final TreeIterator<EObject> tree = r.getAllContents();
 			final Set<String> imports = new TLinkedHashSet();
 			final Set<String> uses = new TLinkedHashSet();
 			final Set<String> exps = new TLinkedHashSet();
+
+			final GamlResource r = (GamlResource) infoResourceSet.createResource(uri);
+			r.load(Collections.EMPTY_MAP);
+
+			final TreeIterator<EObject> tree = EcoreUtil2.getAllContents(r, false);
+
 			while (tree.hasNext()) {
 				final EObject e = tree.next();
 				if (e instanceof StringLiteral) {
@@ -223,16 +155,11 @@ public class GamlModelBuilder implements IModelBuilder {
 	@Override
 	public ModelDescription createModelDescriptionFromFile(final String fileName) {
 
-		// final GamlResource resource = (GamlResource)
-		// getContext().getModelDescription().getUnderlyingElement(null)
-		// .eResource();
 
 		final URI iu = URI.createURI(fileName, false);
 		ModelDescription lastModel = null;
-		// final ResourceSet rs = new ResourceSetImpl();
 		final GamlResource r = (GamlResource) buildResourceSet.getResource(iu, true);
 		try {
-			// final GamlJavaValidator validator = new GamlJavaValidator();
 			final List<GamlCompilationError> errors = new ArrayList();
 			lastModel = buildModelDescription(r.getURI(), errors);
 			if (!r.getErrors().isEmpty()) {

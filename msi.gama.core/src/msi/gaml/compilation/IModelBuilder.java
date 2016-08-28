@@ -4,7 +4,6 @@
  */
 package msi.gaml.compilation;
 
-import java.io.InputStream;
 import java.util.List;
 
 import org.eclipse.emf.common.util.URI;
@@ -12,7 +11,6 @@ import org.eclipse.emf.ecore.resource.Resource;
 
 import msi.gama.kernel.model.IModel;
 import msi.gama.util.file.GAMLFile;
-import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ModelDescription;
 
 /**
@@ -33,9 +31,6 @@ public interface IModelBuilder {
 	 *            must not be null
 	 * @return an instance of ErrorCollector (never null)
 	 */
-	public abstract ErrorCollector validate(Resource resource);
-
-	public abstract ErrorCollector validate(URI uri);
 
 	/**
 	 * Builds an IModel from the resource or its URI
@@ -48,7 +43,6 @@ public interface IModelBuilder {
 	 */
 	public abstract IModel compile(Resource resource);
 
-	IModel compile(URI uri);
 
 	/**
 	 * Builds an IModel from a resource, an URI or an InputStream, listing all
@@ -64,10 +58,6 @@ public interface IModelBuilder {
 	 *         errors.
 	 */
 	public abstract IModel compile(Resource resource, List<GamlCompilationError> errors);
-
-	IModel compile(URI uri, List<GamlCompilationError> errors);
-
-	IModel compile(InputStream contents, List<GamlCompilationError> errors);
 
 	ModelDescription buildModelDescription(URI uri, List<GamlCompilationError> errors);
 

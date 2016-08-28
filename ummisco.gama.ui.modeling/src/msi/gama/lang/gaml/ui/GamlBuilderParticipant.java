@@ -4,16 +4,24 @@
  */
 package msi.gama.lang.gaml.ui;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
+import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2.IFileCallback;
 import org.eclipse.xtext.builder.ParallelBuilderParticipant;
+import org.eclipse.xtext.generator.IFileSystemAccess;
+import org.eclipse.xtext.generator.IFileSystemAccess2;
 import org.eclipse.xtext.generator.OutputConfiguration;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
+
+import msi.gama.runtime.GAMA;
 
 /**
  * The class GamlBuilderParticipant.
@@ -23,6 +31,19 @@ import org.eclipse.xtext.resource.IResourceDescription.Delta;
  *
  */
 public class GamlBuilderParticipant extends ParallelBuilderParticipant {
+
+
+
+	@Override
+	protected void doBuild(final List<Delta> deltas, final Map<String, OutputConfiguration> outputConfigurations,
+			final Map<OutputConfiguration, Iterable<IMarker>> generatorMarkers, final IBuildContext context,
+			final EclipseResourceFileSystemAccess2 access, final IProgressMonitor progressMonitor)
+			throws CoreException {
+		super.doBuild(deltas, outputConfigurations, generatorMarkers, context, access, progressMonitor);
+		GAMA.getGui().updateDecorator("msi.gama.application.decorator");
+
+	}
+
 
 	@Override
 	protected void cleanDerivedResources(final Delta delta, final Set<IFile> derivedResources,
