@@ -15,7 +15,6 @@ import com.jogamp.opengl.GL2;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.LayerObject;
-import ummisco.gama.opengl.vaoGenerator.GeomMathUtils;
 import ummisco.gama.opengl.vaoGenerator.ModernLayerStructure;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
@@ -61,26 +60,14 @@ public class ModernDrawer {
 	
 	public void addDrawingEntities(DrawingEntity[] entities) {
 		for (DrawingEntity entity : entities) {
-			if (entity.type.equals(DrawingEntity.Type.LINE)) {
-				addLineEntity(entity);
-			}
-			else if (entity.type.equals(DrawingEntity.Type.FACE)) {
-				addFilledEntity(entity);
-			}
-			else if (entity.type.equals(DrawingEntity.Type.TEXTURED) || entity.type.equals(DrawingEntity.Type.STRING)) {
-				addTexturedEntity(entity);
-			}
-			else if (entity.type.equals(DrawingEntity.Type.POINT)) {
-				addPointEntity(entity);
-			}
+			addDrawingEntities(entity,entity.type);
 		}
 	}
 	
-	public void addLineEntity(DrawingEntity newEntity) {
-		// all the line entities are using the same shader. We have to put them all together
-		ArrayList<ArrayList<DrawingEntity>> lineEntities = mapEntities.get(DrawingEntity.Type.LINE.toString());
+	private void addDrawingEntities(DrawingEntity newEntity, DrawingEntity.Type type) {
+		ArrayList<ArrayList<DrawingEntity>> entities = mapEntities.get(type.toString());
 		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
-		if (lineEntities == null) {
+		if (entities == null) {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 			// we create a new shader and we set it to the entity
 			newEntity.setShader(new ShaderProgram(gl));
@@ -89,54 +76,12 @@ public class ModernDrawer {
 			listToAdd.add(entityList);
 		}
 		else {
-			listToAdd = lineEntities;
-			// we link the new entity to the shader used for the other entities of the list.
-			newEntity.setShader(listToAdd.get(0).get(0).getShader());
-			listToAdd.get(0).add(newEntity);
-		}
-		mapEntities.put(DrawingEntity.Type.LINE.toString(), listToAdd);
-	}
-	
-	public void addPointEntity(DrawingEntity newEntity) {
-		// all the point entities are using the same shader. We have to put them all together
-		ArrayList<ArrayList<DrawingEntity>> pointEntities = mapEntities.get(DrawingEntity.Type.POINT.toString());
-		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
-		if (pointEntities == null) {
-			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
-			// we create a new shader and we set it to the entity
-			newEntity.setShader(new ShaderProgram(gl));
-			numberOfShaderInTheCurrentLayer++;
-			entityList.add(newEntity);
-			listToAdd.add(entityList);
-		}
-		else {
-			listToAdd = pointEntities;
-			// we link the new entity to the shader used for the other entities of the list.
-			newEntity.setShader(listToAdd.get(0).get(0).getShader());
-			listToAdd.get(0).add(newEntity);
-		}
-		mapEntities.put(DrawingEntity.Type.POINT.toString(), listToAdd);
-	}
-	
-	public void addFilledEntity(DrawingEntity newEntity) {
-		ArrayList<ArrayList<DrawingEntity>> filledEntities = mapEntities.get(DrawingEntity.Type.FACE.toString());
-		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
-		if (filledEntities == null) {
-			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
-			// we create a new shader and we set it to the entity
-			newEntity.setShader(new ShaderProgram(gl));
-			numberOfShaderInTheCurrentLayer++;
-			entityList.add(newEntity);
-			listToAdd.add(entityList);
-		}
-		else {
-			listToAdd = filledEntities;
-			// add to the entities with the same material
+			listToAdd = entities;
 			boolean entityAdded = false;
-			for (int i = 0 ; i < filledEntities.size() ; i++) {
-				DrawingEntity entity = filledEntities.get(i).get(0);
-				if (entity.getMaterial().equalsTo(newEntity.getMaterial())) {
-					// same material --> we add newEntity to the list which use the same shader, and we link the shader used for the other entities of the list to this entity
+			for (int i = 0 ; i < entities.size() ; i++) {
+				DrawingEntity entity = entities.get(i).get(0);
+				if (addEntityToList(entity,newEntity,type)) {
+					// if the entity can be mixed to the list of entities, we add newEntity to the list which use the same shader, and we link the shader used for the other entities of the list to this entity
 					newEntity.setShader(listToAdd.get(i).get(0).getShader());
 					listToAdd.get(i).add(newEntity);
 					// we change the value of the flag
@@ -144,7 +89,7 @@ public class ModernDrawer {
 				}
 			}
 			if (!entityAdded) {
-				// the material of newEntity has not been added yet. Create a new entity
+				// the entity to add cannot be mixed with other entities. We create a new entity list to the map.
 				ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 				// we create a new shader and we set it to the entity
 				newEntity.setShader(new ShaderProgram(gl));
@@ -153,45 +98,24 @@ public class ModernDrawer {
 				listToAdd.add(entityList);
 			}
 		}
-		mapEntities.put(DrawingEntity.Type.FACE.toString(), listToAdd);
+		mapEntities.put(type.toString(), listToAdd);
 	}
 	
-	public void addTexturedEntity(DrawingEntity newEntity) {
-		ArrayList<ArrayList<DrawingEntity>> texturedEntities = mapEntities.get(DrawingEntity.Type.TEXTURED.toString());
-		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
-		if (texturedEntities == null) {
-			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
-			newEntity.setShader(new ShaderProgram(gl));
-			numberOfShaderInTheCurrentLayer++;
-			entityList.add(newEntity);
-			listToAdd.add(entityList);
+	private boolean addEntityToList(DrawingEntity entity, DrawingEntity newEntity, DrawingEntity.Type type) {
+		if (type.equals(DrawingEntity.Type.LINE)) {
+			return true;
 		}
-		else {
-			listToAdd = texturedEntities;
-			// add to the entities with the same material
-			boolean entityAdded = false;
-			for (int i = 0 ; i < texturedEntities.size() ; i++) {
-				DrawingEntity entity = texturedEntities.get(i).get(0);
-				if (entity.getMaterial().equalsTo(newEntity.getMaterial()) 
-						&& entity.getTextureID() == newEntity.getTextureID()) {
-					// same material, same texture --> we add newEntity to the list which use the same shader, and we link the shader used for the other entities of the list to this entity
-					newEntity.setShader(listToAdd.get(i).get(0).getShader());
-					listToAdd.get(i).add(newEntity);
-					// we change the value of the flag
-					entityAdded = true;
-				}
-			}
-			if (!entityAdded) {
-				// the material of newEntity has not been added yet. Create a new entity
-				ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
-				// we create a new shader and we set it to the entity
-				newEntity.setShader(new ShaderProgram(gl));
-				numberOfShaderInTheCurrentLayer++;
-				entityList.add(newEntity);
-				listToAdd.add(entityList);
-			}
+		else if (type.equals(DrawingEntity.Type.FACE)) {
+			return entity.getMaterial().equalsTo(newEntity.getMaterial());
 		}
-		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), listToAdd);
+		else if (type.equals(DrawingEntity.Type.TEXTURED) || type.equals(DrawingEntity.Type.STRING)) {
+			return (entity.getMaterial().equalsTo(newEntity.getMaterial()) 
+					&& entity.getTextureID() == newEntity.getTextureID());
+		}
+		else if (type.equals(DrawingEntity.Type.POINT)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public void clearVBO() {
