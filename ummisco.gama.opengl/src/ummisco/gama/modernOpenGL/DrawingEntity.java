@@ -4,11 +4,12 @@ import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.util.texture.Texture;
 
+import ummisco.gama.modernOpenGL.shader.AbstractShader;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 
 public class DrawingEntity {
 	
-	static public enum Type { TEXTURED, FACE, LINE, POINT, STRING }; // border == triangulate
+	static public enum Type { TEXTURED, FACE, LINE, POINT, STRING, BILLBOARDING }; // border == triangulate
 	
 	public Type type;
 	
@@ -27,7 +28,7 @@ public class DrawingEntity {
 	private boolean isBillboarding = false;
 	private Vector3f translation = new Vector3f();
 	
-	private ShaderProgram shader;
+	private AbstractShader shader;
 	
 	public Material getMaterial() {
 		return material;
@@ -97,11 +98,11 @@ public class DrawingEntity {
 		return texture.getTextureObject();
 	}
 	
-	public void setShader(ShaderProgram shader) {
+	public void setShader(AbstractShader shader) {
 		this.shader = shader;
 	}
 	
-	public ShaderProgram getShader() {
+	public AbstractShader getShader() {
 		return shader;
 	}
 	

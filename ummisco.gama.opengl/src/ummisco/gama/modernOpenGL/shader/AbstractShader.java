@@ -12,6 +12,7 @@ import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
+import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.vaoGenerator.GeomMathUtils;
 
 public abstract class AbstractShader {
@@ -21,6 +22,11 @@ public abstract class AbstractShader {
 	private int programID;
 	private int vertexShaderID;
 	private int fragmentShaderID;
+	
+	public static final int POSITION_ATTRIBUTE_IDX = 0;
+	public static final int COLOR_ATTRIBUTE_IDX = 1;
+	public static final int NORMAL_ATTRIBUTE_IDX = 2;
+	public static final int UVMAPPING_ATTRIBUTE_IDX = 3;
 	
 	private static FloatBuffer matrixBuffer = FloatBuffer.allocate(16);
 	
@@ -162,4 +168,12 @@ public abstract class AbstractShader {
 	  byte[] encoded = Files.readAllBytes(Paths.get(path));
 	  return new String(encoded, encoding);
 	}
+	
+	abstract public void loadTransformationMatrix(Matrix4f matrix);
+	abstract public void loadViewMatrix(ICamera camera);
+	abstract public void loadProjectionMatrix(Matrix4f matrix);
+	abstract public boolean useNormal();
+	abstract public boolean useTexture();
+	abstract public int getTextureID();
+	abstract public Vector3f getTranslation();
 }

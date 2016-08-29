@@ -12,7 +12,10 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
+import ummisco.gama.modernOpenGL.shader.AbstractShader;
+import ummisco.gama.modernOpenGL.shader.BillboardingTextShaderProgram;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
+import ummisco.gama.modernOpenGL.shader.TextShaderProgram;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.LayerObject;
 import ummisco.gama.opengl.vaoGenerator.ModernLayerStructure;
@@ -28,8 +31,8 @@ public class ModernDrawer {
 	public boolean isDrawing = true;
 	
 	ArrayList<Integer> listOfVAOUsed = new ArrayList<Integer>();
-	ArrayList<ShaderProgram> shaderLoaded = new ArrayList<ShaderProgram>();
-	HashMap<ShaderProgram,int[]> typeOfDrawingMap = new HashMap<ShaderProgram,int[]>();
+	ArrayList<AbstractShader> shaderLoaded = new ArrayList<AbstractShader>();
+	HashMap<AbstractShader,int[]> typeOfDrawingMap = new HashMap<AbstractShader,int[]>();
 	
 	HashMap<LayerObject,ModernLayerStructure> layerStructureMap = new HashMap<LayerObject,ModernLayerStructure>();
 	
@@ -53,6 +56,8 @@ public class ModernDrawer {
 		mapEntities.put(DrawingEntity.Type.LINE.toString(), null);
 		mapEntities.put(DrawingEntity.Type.FACE.toString(), null);
 		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), null);
+		mapEntities.put(DrawingEntity.Type.BILLBOARDING.toString(), null);
+		mapEntities.put(DrawingEntity.Type.POINT.toString(), null);
 		currentLayer = layer;
 		numberOfShaderInTheCurrentLayer=0;
 		currentShaderNumber = 0;
@@ -70,7 +75,7 @@ public class ModernDrawer {
 		if (entities == null) {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 			// we create a new shader and we set it to the entity
-			newEntity.setShader(new ShaderProgram(gl));
+			setShaderToEntity(newEntity,type);
 			numberOfShaderInTheCurrentLayer++;
 			entityList.add(newEntity);
 			listToAdd.add(entityList);
@@ -92,13 +97,25 @@ public class ModernDrawer {
 				// the entity to add cannot be mixed with other entities. We create a new entity list to the map.
 				ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 				// we create a new shader and we set it to the entity
-				newEntity.setShader(new ShaderProgram(gl));
+				setShaderToEntity(newEntity,type);
 				numberOfShaderInTheCurrentLayer++;
 				entityList.add(newEntity);
 				listToAdd.add(entityList);
 			}
 		}
 		mapEntities.put(type.toString(), listToAdd);
+	}
+	
+	private void setShaderToEntity(DrawingEntity newEntity, DrawingEntity.Type type) {
+		if (type.equals(DrawingEntity.Type.BILLBOARDING)) {
+			newEntity.setShader(new BillboardingTextShaderProgram(gl));
+		}
+		else if (type.equals(DrawingEntity.Type.STRING)) {
+			newEntity.setShader(new TextShaderProgram(gl));
+		}
+		else {
+			newEntity.setShader(new ShaderProgram(gl));
+		}
 	}
 	
 	private boolean addEntityToList(DrawingEntity entity, DrawingEntity newEntity, DrawingEntity.Type type) {
@@ -145,11 +162,13 @@ public class ModernDrawer {
 				
 				for (ArrayList<DrawingEntity> listOfEntities : listOfListOfEntities) {
 					// all those entities are using the same shader
-					ShaderProgram shaderProgram = listOfEntities.get(0).getShader();
+					AbstractShader shaderProgram = listOfEntities.get(0).getShader();
 					shaderLoaded.add(shaderProgram);
 					shaderProgram.start();
 					
-					shaderProgram.entity = listOfEntities.get(0); // FIXME : need refactoring
+					if (shaderProgram instanceof BillboardingTextShaderProgram) {
+						((BillboardingTextShaderProgram)shaderProgram).setTranslation(listOfEntities.get(0).getTranslation()); // FIXME : need refactoring
+					}
 					updateTransformationMatrix(shaderProgram);
 					prepareShader(listOfEntities.get(0), shaderProgram);
 					
@@ -163,7 +182,7 @@ public class ModernDrawer {
 		}
 		
 		layerStructure = layerStructureMap.get(currentLayer);
-		layerStructure.shaderList = (ArrayList<ShaderProgram>) shaderLoaded.clone();
+		layerStructure.shaderList = (ArrayList<AbstractShader>) shaderLoaded.clone();
 		layerStructureMap.put(currentLayer, layerStructure);
 		
 		shaderLoaded.clear();
@@ -176,8 +195,8 @@ public class ModernDrawer {
 		if (layerStructureMap.get(currentLayer) == null) {
 			return; // if nothing is to draw for this layer, do nothing.
 		}
-		ArrayList<ShaderProgram> shaderList = layerStructureMap.get(currentLayer).shaderList;
-		for (ShaderProgram shader : shaderList) {
+		ArrayList<AbstractShader> shaderList = layerStructureMap.get(currentLayer).shaderList;
+		for (AbstractShader shader : shaderList) {
 			// set the current layer drawn
 			
 			shader.start();
@@ -187,22 +206,22 @@ public class ModernDrawer {
 			
 			///////////////////////////////////////:
 			// VERTICES POSITIONS BUFFER
-			bindBuffer(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,typeOfDrawing[2]);
+			bindBuffer(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,typeOfDrawing[2]);
 			
 			// COLORS BUFFER
-			bindBuffer(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
+			bindBuffer(AbstractShader.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
 			
 			// UV MAPPING (If a texture is defined)
 			if (shader.useTexture())
 			{
-				bindBuffer(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
+				bindBuffer(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
 				gl.glActiveTexture(GL.GL_TEXTURE0);
 				gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
 			}
 			
 			// NORMAL BUFFER
 			if (shader.useNormal())
-				bindBuffer(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,typeOfDrawing[2]);
+				bindBuffer(AbstractShader.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,typeOfDrawing[2]);
 			
 			// INDEX BUFFER
 			// Select the VBO, GPU memory data, to use for colors
@@ -219,38 +238,56 @@ public class ModernDrawer {
 		gl.glDrawElements(typeOfDrawing[0], typeOfDrawing[1], GL2.GL_UNSIGNED_INT, 0);
 	}
 	
-	private void updateTransformationMatrix(ShaderProgram shaderProgram) {
-		shaderProgram.loadTransformationMatrix(getTransformationMatrix());
-		shaderProgram.loadViewMatrix(renderer.camera);
+	private void updateTransformationMatrix(AbstractShader shaderProgram) {
+		if (shaderProgram instanceof BillboardingTextShaderProgram) {
+			updateTransformationMatrix((BillboardingTextShaderProgram)shaderProgram);
+		}
+		else {
+			shaderProgram.loadTransformationMatrix(getTransformationMatrix());
+			shaderProgram.loadViewMatrix(renderer.camera);
+			shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
+		}
+	}
+	
+	private void updateTransformationMatrix(BillboardingTextShaderProgram shaderProgram) {
 		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
 		
-		if (shaderProgram.isBillboarding)
-		{
-			Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
-			Matrix4f modelMatrix = new Matrix4f();
-			modelMatrix.setIdentity();
-			// set the translation
-			Vector3f entityTranslation = shaderProgram.entity.getTranslation();
-			modelMatrix.m30 = entityTranslation.x;
-			modelMatrix.m31 = entityTranslation.y;
-			modelMatrix.m32 = entityTranslation.z;
-			// reset the rotation
-			modelMatrix.m00 = viewMatrix.m00;
-			modelMatrix.m01 = viewMatrix.m10;
-			modelMatrix.m02 = viewMatrix.m20;
-			modelMatrix.m10 = viewMatrix.m01;
-			modelMatrix.m11 = viewMatrix.m11;
-			modelMatrix.m12 = viewMatrix.m21;
-			modelMatrix.m20 = viewMatrix.m02;
-			modelMatrix.m21 = viewMatrix.m12;
-			modelMatrix.m22 = viewMatrix.m22;
-			// compute modelViewMatrix
-			Matrix4f modelViewMatrix = modelMatrix;
-			modelViewMatrix.mul(viewMatrix);
-			// inverse y axis
-			modelViewMatrix.m11 = -1;
-			
-			shaderProgram.loadModelViewMatrix(modelViewMatrix);
+		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
+		Matrix4f modelMatrix = new Matrix4f();
+		modelMatrix.setIdentity();
+		// set the translation
+		Vector3f entityTranslation = shaderProgram.getTranslation();
+		modelMatrix.m30 = entityTranslation.x;
+		modelMatrix.m31 = entityTranslation.y;
+		modelMatrix.m32 = entityTranslation.z;
+		// reset the rotation
+		modelMatrix.m00 = viewMatrix.m00;
+		modelMatrix.m01 = viewMatrix.m10;
+		modelMatrix.m02 = viewMatrix.m20;
+		modelMatrix.m10 = viewMatrix.m01;
+		modelMatrix.m11 = viewMatrix.m11;
+		modelMatrix.m12 = viewMatrix.m21;
+		modelMatrix.m20 = viewMatrix.m02;
+		modelMatrix.m21 = viewMatrix.m12;
+		modelMatrix.m22 = viewMatrix.m22;
+		// compute modelViewMatrix
+		Matrix4f modelViewMatrix = modelMatrix;
+		modelViewMatrix.mul(viewMatrix);
+		// inverse y axis
+		modelViewMatrix.m11 = -1;
+		
+		shaderProgram.loadModelViewMatrix(modelViewMatrix);
+	}
+	
+	private void prepareShader(DrawingEntity entity, AbstractShader shaderProgram) {
+		if (shaderProgram instanceof ShaderProgram) {
+			prepareShader(entity, (ShaderProgram)shaderProgram);
+		}
+		else if (shaderProgram instanceof BillboardingTextShaderProgram) {
+			prepareShader(entity, (BillboardingTextShaderProgram)shaderProgram);
+		}
+		else if (shaderProgram instanceof TextShaderProgram) {
+			prepareShader(entity, (TextShaderProgram)shaderProgram);
 		}
 	}
 	
@@ -260,7 +297,6 @@ public class ModernDrawer {
 				(float) renderer.data.getAmbientLightColor().getGreen() / 255f,
 				(float) renderer.data.getAmbientLightColor().getBlue() / 255f));
 		shaderProgram.loadLights(renderer.data.getDiffuseLights());
-		shaderProgram.disableBillboarding();
 		boolean useNormals = entity.getMaterial().useLight;
 		if (useNormals) {
 			shaderProgram.enableNormal();
@@ -284,13 +320,25 @@ public class ModernDrawer {
 			shaderProgram.enableString();
 			shaderProgram.loadFontWidth(entity.getFontWidth());
 			shaderProgram.loadFontEdge(entity.getFontEdge());
-			if (entity.isBillboarding()) {
-				shaderProgram.enableBillboarding();
-			}
 		}
 		else {
 			shaderProgram.disableString();
 		}
+	}
+	
+	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		
+		shaderProgram.loadTexture(0);
+		shaderProgram.storeTextureID(entity.getTextureID());
+		shaderProgram.loadFontWidth(entity.getFontWidth());
+		shaderProgram.loadFontEdge(entity.getFontEdge());
+	}
+	
+	private void prepareShader(DrawingEntity entity, BillboardingTextShaderProgram shaderProgram) {
+		// TODO
+		shaderProgram.loadTexture(0);
+		shaderProgram.storeTextureID(entity.getTextureID());
+		shaderProgram.loadFontWidth(entity.getFontWidth());
+		shaderProgram.loadFontEdge(entity.getFontEdge());
 	}
 	
 	private Matrix4f getTransformationMatrix() {
@@ -306,7 +354,7 @@ public class ModernDrawer {
 		return TransformationMatrix.createTransformationMatrix(layerTranslation, quat, scale, env_width, env_height);
 	}
 	
-	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber, ShaderProgram shader) {
+	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber, AbstractShader shader) {
 		
 		ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		ArrayList<float[]> listColors = new ArrayList<float[]>();
@@ -322,23 +370,22 @@ public class ModernDrawer {
 				listUvMapping.add(entity.getUvMapping());
 		}
 
-
 		// VERTICES POSITIONS BUFFER
-		storeDataInAttributeList(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,listVertices,shaderNumber);
+		storeDataInAttributeList(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,listVertices,shaderNumber);
 		
 		// COLORS BUFFER
-		storeDataInAttributeList(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,listColors,shaderNumber);
+		storeDataInAttributeList(AbstractShader.COLOR_ATTRIBUTE_IDX,COLOR_IDX,listColors,shaderNumber);
 		
 		// UV MAPPING (If a texture is defined)
 		if (listUvMapping.size() != 0) {
-			storeDataInAttributeList(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
+			storeDataInAttributeList(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
 			gl.glActiveTexture(GL.GL_TEXTURE0);
 			gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
 		}
 		
 		// NORMAL BUFFER
 		if (shader.useNormal())
-			storeDataInAttributeList(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,listNormals,shaderNumber);
+			storeDataInAttributeList(AbstractShader.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,listNormals,shaderNumber);
 		
 		// INDEX BUFFER
 		int sizeIdxBuffer = 0;
@@ -414,10 +461,10 @@ public class ModernDrawer {
 		int coordinateSize = 0;
 		switch (shaderAttributeNumber) {
 		// recognize the type of VAO to determine the size of the coordinates
-			case ShaderProgram.COLOR_ATTRIBUTE_IDX : coordinateSize = 4; break; // r, g, b, a
-			case ShaderProgram.POSITION_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
-			case ShaderProgram.NORMAL_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
-			case ShaderProgram.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
+			case AbstractShader.COLOR_ATTRIBUTE_IDX : coordinateSize = 4; break; // r, g, b, a
+			case AbstractShader.POSITION_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
+			case AbstractShader.NORMAL_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
+			case AbstractShader.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
 		}
 		// Select the VBO, GPU memory data, to use for data
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[shaderNumber*5+bufferAttributeNumber]);

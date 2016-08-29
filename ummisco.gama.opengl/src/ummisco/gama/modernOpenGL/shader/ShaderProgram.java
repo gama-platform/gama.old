@@ -35,7 +35,6 @@ public class ShaderProgram extends AbstractShader {
 	private int location_isString;
 	private int location_fontWidth; // only for string entities
 	private int location_fontEdge; // only for string entities
-	private int location_isBillboarding; // only for string entities
 	private int location_modelViewMatrix; // only for string entities
 	
 	public DrawingEntity entity; // FIXME : need refactoring, need to be deleted
@@ -46,11 +45,6 @@ public class ShaderProgram extends AbstractShader {
 	public boolean isBillboarding = false;
 	
 	private int textureIDStored = -1;
-	
-	public static final int POSITION_ATTRIBUTE_IDX = 0;
-	public static final int COLOR_ATTRIBUTE_IDX = 1;
-	public static final int NORMAL_ATTRIBUTE_IDX = 2;
-	public static final int UVMAPPING_ATTRIBUTE_IDX = 3;
 	
 	public ShaderProgram(GL2 gl) {
 		super(gl,VERTEX_FILE,FRAGMENT_FILE);
@@ -81,7 +75,6 @@ public class ShaderProgram extends AbstractShader {
 		location_isString = getUniformLocation("isString");
 		location_fontWidth = getUniformLocation("fontWidth");
 		location_fontEdge = getUniformLocation("fontEdge");
-		location_isBillboarding = getUniformLocation("isBillboarding");
 		location_modelViewMatrix = getUniformLocation("modelViewMatrix");
 		
 		location_lightColor = new int[MAX_LIGHT];
@@ -211,14 +204,9 @@ public class ShaderProgram extends AbstractShader {
 	public void loadFontEdge(float fontEdge) {
 		super.loadFloat(location_fontEdge, fontEdge);
 	}
-	
-	public void enableBillboarding() { // the object is then facing the camera (equivalent to perspective:false for the draw statement)
-		super.loadFloat(location_isBillboarding, 1f);
-		isBillboarding = true;
-	}
-	
-	public void disableBillboarding() { // normal mode (equivalent to perspective:true for the draw statement)
-		super.loadFloat(location_isBillboarding, 0f);
-		isBillboarding = false;
+
+	@Override
+	public Vector3f getTranslation() {
+		return new Vector3f(0,0,0);
 	}
 }

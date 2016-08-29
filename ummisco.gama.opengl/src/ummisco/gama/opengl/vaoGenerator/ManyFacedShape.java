@@ -32,7 +32,7 @@ import ummisco.gama.opengl.utils.Utils;
 public class ManyFacedShape {
 	
 	public static float SMOOTH_SHADING_ANGLE = 40f; // in degree
-	public static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0,1.0,0.0,1.0); // in degree
+	public static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
 	
 	private boolean isTriangulation = false;
 	private boolean isLightInteraction = true;
@@ -960,6 +960,7 @@ public class ManyFacedShape {
 		filledEntity.setFontEdge((float) (0.5/Math.sqrt(fontSize))); // the font edge is function of the size of the font
 		filledEntity.setFontWidth(0.5f); // this value looks nice...
 		if (isBillboarding) {
+			filledEntity.type = DrawingEntity.Type.BILLBOARDING;
 			filledEntity.enableBillboarding();
 			filledEntity.setTranslation(new Vector3f((float)translation.x,(float)translation.y,(float)translation.z));
 		}
