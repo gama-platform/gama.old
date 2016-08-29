@@ -27,14 +27,16 @@ import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.ui.editor.IURIEditorOpener;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.Singleton;
 
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.GamlModelBuilder;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.internal.GamlActivator;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.IModelBuilder;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -45,7 +47,15 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 19 juin 2016
  *
  */
+@Singleton
 public class ModelRunner extends AbstractServiceFactory implements IModelRunner {
+
+	@Inject
+	IModelBuilder builder;
+
+	@Inject
+	public ModelRunner() {
+	}
 
 	private void editModelInternal(final Object eObject) {
 		if (eObject instanceof URI) {
@@ -106,8 +116,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 			final ResourceSet rs = new /* Synchronized */XtextResourceSet();
 			final GamlResource resource = (GamlResource) rs.getResource(uri, true);
 			final List<GamlCompilationError> errors = new ArrayList();
-			final IModel model = new GamlModelBuilder()
-					./* GamlModelBuilder.getInstance(). */compile(resource, errors);
+			final IModel model = builder.compile(resource, errors);
 			if (model == null) {
 				GAMA.getGui().error("File " + file.getFullPath().toString() + " cannot be built because of "
 						+ errors.size() + " compilation errors");

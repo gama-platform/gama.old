@@ -166,7 +166,7 @@ public class AutoStartup implements IStartup {
 	public void earlyStartup() {
 
 		GamlRuntimeModule.staticInitialize();
-		GlobalIndexInitializer.getInstance().run();
+		WorkspaceIndexer.INSTANCE.buildIndex();
 	}
 
 }

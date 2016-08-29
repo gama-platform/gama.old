@@ -51,6 +51,7 @@ import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
+import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.ui.contentassist.GamlTemplateProposalProvider;
 import msi.gama.lang.gaml.ui.editor.GamaAutoEditStrategyProvider;
@@ -74,6 +75,7 @@ import msi.gama.lang.gaml.ui.outline.GamlOutlinePage;
 import msi.gama.lang.gaml.ui.outline.GamlSortOutlineContribution;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.utils.GamlEncodingProvider;
+import ummisco.gama.ui.interfaces.IModelRunner;
 
 /**
  * Use this class to register components to be used within the IDE.
@@ -92,6 +94,9 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 				.toInstance(".");
 		binder.bind(IResourceLoader.class).toProvider(ResourceLoaderProviders.getParallelLoader());
 		binder.bind(IResourceClusteringPolicy.class).to(DynamicResourceClusteringPolicy.class);
+		binder.bind(IModelIndexer.class).toInstance(WorkspaceIndexer.INSTANCE);
+		binder.bind(IModelRunner.class).to(ModelRunner.class);
+		binder.bind(SyntaxErrorsView.class);
 		// binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
 		// binder.bind(IncrementalProjectBuilder.class).to(GamlBuilder.class);
 

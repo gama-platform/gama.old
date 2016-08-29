@@ -32,10 +32,10 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.GamlModelBuilder;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.runtime.GAMA;
+import msi.gaml.compilation.IModelBuilder;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.controls.FlatButton;
@@ -55,8 +55,10 @@ public class OtherExperimentsButton {
 	GamlEditor editor;
 	GamaToolbar2 parent;
 	ToolItem menu;
+	IModelBuilder builder;
 
-	public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar2 toolbar) {
+	public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar2 toolbar, final IModelBuilder builder) {
+		this.builder = builder;
 		this.editor = editor;
 		this.parent = toolbar;
 		if (AutoStartup.EDITOR_SHOW_OTHER.getValue()) {
@@ -105,8 +107,7 @@ public class OtherExperimentsButton {
 					public IModel exec(final XtextResource state) throws Exception {
 						final ResourceSet rs = state.getResourceSet();
 						final GamlResource resource = (GamlResource) rs.getResource(uri, true);
-						return new GamlModelBuilder()
-								/* GamlModelBuilder.getInstance() */.compile(resource);
+						return builder.compile(resource);
 					}
 
 				});

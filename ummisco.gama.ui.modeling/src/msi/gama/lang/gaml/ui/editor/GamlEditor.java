@@ -91,6 +91,7 @@ import com.google.common.collect.ObjectArrays;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
+import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
 import msi.gama.lang.gaml.ui.editbox.BoxProviderRegistry;
@@ -101,6 +102,7 @@ import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialog;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
+import msi.gaml.compilation.IModelBuilder;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.IDescription;
 import ummisco.gama.ui.controls.FlatButton;
@@ -151,6 +153,12 @@ public class GamlEditor extends XtextEditor
 
 	@Inject
 	Injector injector;
+
+	@Inject
+	IModelIndexer indexer;
+
+	@Inject
+	IModelBuilder builder;
 
 	@Inject
 	private GamlEditTemplateDialogFactory templateDialogFactory;
@@ -291,7 +299,8 @@ public class GamlEditor extends XtextEditor
 
 	private void buildRightToolbar() {
 		toolbar.wipe(SWT.RIGHT, true);
-		new OtherExperimentsButton(this, toolbar);
+		new OtherExperimentsButton(this, toolbar, builder);
+		new ImportedInButton(this, toolbar, indexer);
 		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
 		toggle.addSelectionListener(new SelectionAdapter() {
 
