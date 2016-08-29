@@ -129,7 +129,7 @@ public class GamaBundleLoader {
 		Types.init();
 		performStaticInitializations();
 		//
-		System.out.println(">> GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
+		System.out.println(">GAMA total load time " + (System.currentTimeMillis() - start) + " ms.");
 	}
 
 	private static void performStaticInitializations() {
@@ -139,8 +139,7 @@ public class GamaBundleLoader {
 			public void run() {
 				final long start = System.currentTimeMillis();
 				Dates.initializeAllFormats();
-				System.out
-						.println(">> GAMA JodaTime initialization in " + (System.currentTimeMillis() - start) + " ms.");
+				System.out.println(">GAMA JodaTime initialization in " + (System.currentTimeMillis() - start) + " ms.");
 			}
 		}).start();
 
@@ -205,7 +204,7 @@ public class GamaBundleLoader {
 			return;
 		}
 		System.out
-				.println(">> GAMA plugin loaded in " + (System.currentTimeMillis() - start) + "ms: " + Strings.TAB + s);
+				.println(">GAMA plugin loaded in " + (System.currentTimeMillis() - start) + " ms: " + Strings.TAB + s);
 
 	}
 
@@ -224,7 +223,6 @@ public class GamaBundleLoader {
 	 * @return
 	 */
 	public static boolean contains(final String name) {
-
 		return name.equals(CORE_PLUGIN) || GAMA_PLUGINS.contains(name);
 	}
 

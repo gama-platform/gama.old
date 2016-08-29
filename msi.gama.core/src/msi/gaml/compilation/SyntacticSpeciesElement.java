@@ -11,11 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import java.util.Collections;
-
 import org.eclipse.emf.ecore.EObject;
-
-import com.google.common.collect.Iterables;
 
 import msi.gaml.statements.Facets;
 
@@ -38,10 +34,8 @@ public class SyntacticSpeciesElement extends SyntacticStructuralElement {
 	}
 
 	@Override
-	public Iterable<ISyntacticElement> getSpecies() {
-		if (children == null)
-			return Collections.EMPTY_LIST;
-		return Iterables.filter(children, SPECIES_FILTER);
+	public void visitSpecies(final SyntacticVisitor visitor) {
+		visitAllChildren(visitor, SPECIES_FILTER);
 	}
 
 	@Override

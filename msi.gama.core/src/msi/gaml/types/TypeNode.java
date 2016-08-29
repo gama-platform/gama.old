@@ -13,7 +13,6 @@
 package msi.gaml.types;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,11 +21,12 @@ public class TypeNode<T> {
 
 	private T data;
 	private final List<TypeNode<T>> children;
-	private TypeNode<T> parent;
+	private final List<TypeNode<T>> parents;
 
 	public TypeNode() {
 		super();
 		children = new ArrayList<TypeNode<T>>();
+		parents = new ArrayList<TypeNode<T>>();
 	}
 
 	public TypeNode(final T data) {
@@ -35,7 +35,7 @@ public class TypeNode<T> {
 	}
 
 	public TypeNode<T> getParent() {
-		return this.parent;
+		return this.parents.isEmpty() ? null : this.parents.get(0);
 	}
 
 	public List<TypeNode<T>> getChildren() {
@@ -50,15 +50,28 @@ public class TypeNode<T> {
 		return getNumberOfChildren() > 0;
 	}
 
-	public void addChildren(final Collection<T> children) {
-		for (final T child : children) {
-			addChild(child);
-		}
+	// public void addChildren(final Collection<T> children) {
+	// for (final T child : children) {
+	// addChild(child);
+	// }
+	// }
+
+	public void addChildWithUniqueParent(final TypeNode<T> child) {
+		child.parents.clear();
+		child.parents.add(this);
+		children.add(child);
 	}
 
 	public void addChild(final TypeNode<T> child) {
-		child.parent = this;
+		if (!child.parents.contains(this))
+			child.parents.add(this);
 		children.add(child);
+	}
+
+	public TypeNode<T> addChildWithUniqueParent(final T child) {
+		final TypeNode<T> result = new TypeNode(child);
+		addChildWithUniqueParent(result);
+		return result;
 	}
 
 	public TypeNode<T> addChild(final T child) {
@@ -67,10 +80,11 @@ public class TypeNode<T> {
 		return result;
 	}
 
-	public void addChildAt(final int index, final TypeNode<T> child) throws IndexOutOfBoundsException {
-		child.parent = this;
-		children.add(index, child);
-	}
+	// public void addChildAt(final int index, final TypeNode<T> child) throws
+	// IndexOutOfBoundsException {
+	// child.parent = this;
+	// children.add(index, child);
+	// }
 
 	public void removeChildAt(final int index) throws IndexOutOfBoundsException {
 		children.remove(index);
@@ -147,7 +161,7 @@ public class TypeNode<T> {
 	}
 
 	public void dispose() {
-		parent = null;
+		parents.clear();
 		for (final TypeNode<T> node : children) {
 			node.dispose();
 		}

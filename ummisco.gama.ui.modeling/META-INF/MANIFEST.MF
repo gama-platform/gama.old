@@ -21,7 +21,10 @@ Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
  ummisco.gama.ui.shared,
  ummisco.gama.ui.navigator,
  org.eclipse.core.resources,
- msi.gama.application
+ msi.gama.application,
+ org.eclipse.emf.common,
+ org.eclipse.emf.ecore,
+ msi.gama.ext
 Import-Package: gnu.trove.map.hash,
  org.apache.commons.lang;version="2.6.0",
  org.apache.log4j,

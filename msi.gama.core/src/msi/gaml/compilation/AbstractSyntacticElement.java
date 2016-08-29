@@ -48,26 +48,6 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	}
 
 	@Override
-	public Iterable<ISyntacticElement> getChildren() {
-		return Collections.EMPTY_LIST;
-	}
-
-	@Override
-	public Iterable<ISyntacticElement> getSpecies() {
-		return Collections.EMPTY_LIST;
-	}
-
-	@Override
-	public Iterable<ISyntacticElement> getExperiments() {
-		return Collections.EMPTY_LIST;
-	}
-
-	@Override
-	public Iterable<ISyntacticElement> getGrids() {
-		return Collections.EMPTY_LIST;
-	}
-
-	@Override
 	public void addChild(final ISyntacticElement e) {
 		throw new RuntimeException("No children allowed");
 	}
@@ -158,14 +138,15 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 		} else {
 			stats.put(s, stats.get(s) + 1);
 		}
-		for (final ISyntacticElement e : this.getChildren())
-			e.computeStats(stats);
-		for (final ISyntacticElement e : this.getSpecies())
-			e.computeStats(stats);
-		for (final ISyntacticElement e : this.getExperiments())
-			e.computeStats(stats);
-		for (final ISyntacticElement e : this.getGrids())
-			e.computeStats(stats);
+		visitAllChildren(new SyntacticVisitor() {
+
+			@Override
+			public void visit(final ISyntacticElement element) {
+				element.computeStats(stats);
+
+			}
+		});
+
 	}
 
 	@Override
@@ -178,6 +159,30 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	@Override
 	public void visitThisAndAllChildrenRecursively(final SyntacticVisitor visitor) {
 		visitor.visit(this);
+	}
+
+	@Override
+	public void visitChildren(final SyntacticVisitor visitor) {
+	}
+
+	@Override
+	public void visitSpecies(final SyntacticVisitor visitor) {
+	}
+
+	@Override
+	public void visitExperiments(final SyntacticVisitor visitor) {
+	}
+
+	@Override
+	public void visitGrids(final SyntacticVisitor visitor) {
+	}
+
+	protected void visitAllChildren(final SyntacticVisitor visitor) {
+	}
+
+	@Override
+	public boolean hasExperiments() {
+		return false;
 	}
 
 }

@@ -130,6 +130,7 @@ public class GamlEditor extends XtextEditor
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, false);
 		store.setDefault(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
 		store.setValue(SpellingService.PREFERENCE_SPELLING_ENABLED, false);
+
 	}
 
 	public GamlEditor() {

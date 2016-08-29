@@ -18,17 +18,16 @@ import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 import ummisco.gama.serializer.gaml.ReverseOperators;
 
 @experiment(IKeyword.MEMORIZE)
-public class ExperimentBackwardAgent extends ExperimentAgent{
+public class ExperimentBackwardAgent extends ExperimentAgent {
 
 	TypeTree<String> historyTree;
 	TypeNode<String> currentNode;
-	
-	public ExperimentBackwardAgent(IPopulation s) throws GamaRuntimeException {
-		super(s);	
+
+	public ExperimentBackwardAgent(final IPopulation s) throws GamaRuntimeException {
+		super(s);
 		historyTree = new TypeTree<String>();
 	}
-	
-	
+
 	/**
 	 * Redefinition of the callback method
 	 * 
@@ -38,58 +37,56 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 	public Object _init_(final IScope scope) {
 		super._init_(scope);
 		// Save simulation state in the history
-		String state = ReverseOperators.serializeAgent( scope, this.getSimulation()) ;
-		
-		historyTree.setRoot(state);
-		currentNode = historyTree.getRoot();		
-		
-		return this;
-	}	
+		final String state = ReverseOperators.serializeAgent(scope, this.getSimulation());
 
+		historyTree.setRoot(state);
+		currentNode = historyTree.getRoot();
+
+		return this;
+	}
 
 	@Override
 	public boolean step(final IScope scope) {
 		// Do a normal step
-		boolean result = super.step(scope);
-		
-		// Save simulation state in the history
-		String state = ReverseOperators.serializeAgent( scope, this.getSimulation()) ;
+		final boolean result = super.step(scope);
 
-		currentNode = currentNode.addChild(state);
-		
+		// Save simulation state in the history
+		final String state = ReverseOperators.serializeAgent(scope, this.getSimulation());
+
+		currentNode = currentNode.addChildWithUniqueParent(state);
+
 		return result;
 	}
-	
 
+	@Override
 	public boolean backward(final IScope scope) {
 		// TODO : to change
-//		clock.beginCycle();
-		boolean result = true;
-		
+		// clock.beginCycle();
+		final boolean result = true;
+
 		try {
-			int currentCycle = getSimulation().getCycle(scope);
-			// TODO what is this executer  ???? 
+			final int currentCycle = getSimulation().getCycle(scope);
+			// TODO what is this executer ????
 			// executer.executeBeginActions();
-					
-			if(canStepBack()) {
+
+			if (canStepBack()) {
 				currentNode = currentNode.getParent();
-				String previousState = currentNode.getData();
-							
-				if(previousState != null ){			
-					ConverterScope cScope = new ConverterScope(scope);
-					XStream xstream = StreamConverter.loadAndBuild(cScope);
-		
-					// get the previous state 
-					SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
-		
+				final String previousState = currentNode.getData();
+
+				if (previousState != null) {
+					final ConverterScope cScope = new ConverterScope(scope);
+					final XStream xstream = StreamConverter.loadAndBuild(cScope);
+
+					// get the previous state
+					final SavedAgent agt = (SavedAgent) xstream.fromXML(previousState);
+
 					// Update of the simulation
-					SimulationAgent currentSimAgt = getSimulation();
+					final SimulationAgent currentSimAgt = getSimulation();
 					currentSimAgt.updateWith(scope, agt);
-					
-					
+
 					// executer.executeEndActions();
 					// executer.executeOneShotActions();
-					
+
 					final IOutputManager outputs = getSimulation().getOutputManager();
 					if (outputs != null) {
 						outputs.step(scope);
@@ -98,19 +95,21 @@ public class ExperimentBackwardAgent extends ExperimentAgent{
 			}
 		} finally {
 			// TODO a remettre
-	//		clock.step(this.scope);
-	//		final int nbThreads = this.getSimulationPopulation().getNumberOfActiveThreads();
+			// clock.step(this.scope);
+			// final int nbThreads =
+			// this.getSimulationPopulation().getNumberOfActiveThreads();
 
-	//		if (!getSpecies().isBatch() && getSimulation() != null) {
-	//			scope.getGui().informStatus(
-	//					getSimulation().getClock().getInfo() + (nbThreads > 1 ? " (" + nbThreads + " threads)" : ""));
-	//		}
+			// if (!getSpecies().isBatch() && getSimulation() != null) {
+			// scope.getGui().informStatus(
+			// getSimulation().getClock().getInfo() + (nbThreads > 1 ? " (" +
+			// nbThreads + " threads)" : ""));
+			// }
 		}
-		return result;	
+		return result;
 	}
-	
+
 	@Override
 	public boolean canStepBack() {
-		return (currentNode != null ) && (currentNode.getParent() != null);
+		return currentNode != null && currentNode.getParent() != null;
 	}
 }

@@ -34,6 +34,7 @@ import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.SyntacticFactory;
 import msi.gaml.compilation.SyntacticModelElement;
 import msi.gaml.descriptions.ErrorCollector;
@@ -69,7 +70,7 @@ public class ModelAssembler {
 			final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
 			final Map<String, ModelDescription> mm, final Collection<URI> absoluteAlternatePaths) {
 		final TOrderedHashMap<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
-		TOrderedHashMap<String, TOrderedHashMap<String, ISyntacticElement>> experimentNodes = null;
+		final TOrderedHashMap<String, TOrderedHashMap<String, ISyntacticElement>>[] experimentNodes = new TOrderedHashMap[1];
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 		final ISyntacticElement source = models.get(0);
 		Facets globalFacets = null;
@@ -97,27 +98,39 @@ public class ModelAssembler {
 					else
 						globalFacets.putAll(currentModel.copyFacets(null));
 				}
-				for (final ISyntacticElement se : currentModel.getChildren()) {
-					globalNodes.addChild(se);
-				}
-				for (final ISyntacticElement se : currentModel.getSpecies()) {
-					addSpeciesNode(se, speciesNodes, collector);
-				}
+				currentModel.visitChildren(new SyntacticVisitor() {
+
+					@Override
+					public void visit(final ISyntacticElement element) {
+						globalNodes.addChild(element);
+
+					}
+				});
+				SyntacticVisitor visitor = new SyntacticVisitor() {
+
+					@Override
+					public void visit(final ISyntacticElement element) {
+						addSpeciesNode(element, speciesNodes, collector);
+
+					}
+				};
+				currentModel.visitSpecies(visitor);
+
 				// We input the species so that grids are always the last ones
 				// (see DiffusionStatement)
+				currentModel.visitGrids(visitor);
+				visitor = new SyntacticVisitor() {
 
-				for (final ISyntacticElement se : currentModel.getGrids()) {
-					addSpeciesNode(se, speciesNodes, collector);
-				}
-				for (final ISyntacticElement ee : currentModel.getExperiments()) {
-					if (experimentNodes == null)
-						experimentNodes = new TOrderedHashMap();
-					addExperimentNode(ee, currentModel.getName(), experimentNodes, collector);
-				}
-				// for (final ISyntacticElement se : currentModel.getChildren())
-				// {
-				//
-				// }
+					@Override
+					public void visit(final ISyntacticElement element) {
+						if (experimentNodes[0] == null)
+							experimentNodes[0] = new TOrderedHashMap();
+						addExperimentNode(element, currentModel.getName(), experimentNodes[0], collector);
+
+					}
+				};
+				currentModel.visitExperiments(visitor);
+
 			}
 		}
 
@@ -173,8 +186,8 @@ public class ModelAssembler {
 			}
 
 		});
-		if (experimentNodes != null)
-			experimentNodes
+		if (experimentNodes[0] != null)
+			experimentNodes[0]
 					.forEachEntry(new TObjectObjectProcedure<String, TOrderedHashMap<String, ISyntacticElement>>() {
 
 						@Override
@@ -202,8 +215,8 @@ public class ModelAssembler {
 			}
 		});
 
-		if (experimentNodes != null)
-			experimentNodes
+		if (experimentNodes[0] != null)
+			experimentNodes[0]
 					.forEachEntry(new TObjectObjectProcedure<String, TOrderedHashMap<String, ISyntacticElement>>() {
 
 						@Override
@@ -242,8 +255,8 @@ public class ModelAssembler {
 			}
 		});
 
-		if (experimentNodes != null)
-			experimentNodes
+		if (experimentNodes[0] != null)
+			experimentNodes[0]
 					.forEachEntry(new TObjectObjectProcedure<String, TOrderedHashMap<String, ISyntacticElement>>() {
 
 						@Override
@@ -323,7 +336,7 @@ public class ModelAssembler {
 					} else {
 						final TypeNode<SpeciesDescription> superNode = hierarchy.find(parent);
 						if (superNode != null) {
-							superNode.addChild(sd);
+							superNode.addChildWithUniqueParent(sd);
 							speciesToRemove.add(sd);
 						}
 					}
@@ -415,11 +428,15 @@ public class ModelAssembler {
 		macro.addChild(mDesc);
 		// Recursively create each micro-species of the newly added
 		// micro-species
-		for (final ISyntacticElement speciesNode : micro.getSpecies()) {
-			if (speciesNode.isSpecies() || speciesNode.isExperiment()) {
-				addMicroSpecies(mDesc, speciesNode, cache);
+		final SyntacticVisitor visitor = new SyntacticVisitor() {
+
+			@Override
+			public void visit(final ISyntacticElement element) {
+				addMicroSpecies(mDesc, element, cache);
 			}
-		}
+		};
+		micro.visitSpecies(visitor);
+		micro.visitExperiments(visitor);
 	}
 
 	void addSpeciesNode(final ISyntacticElement element, final Map<String, ISyntacticElement> speciesNodes,
@@ -448,19 +465,27 @@ public class ModelAssembler {
 			return;
 		}
 		species.copyJavaAdditions();
-		for (final ISyntacticElement child : node.getChildren()) {
-			final IDescription childDesc = DescriptionFactory.create(child, species, null);
-			if (childDesc != null) {
-				species.addChild(childDesc);
+		node.visitChildren(new SyntacticVisitor() {
+
+			@Override
+			public void visit(final ISyntacticElement element) {
+				final IDescription childDesc = DescriptionFactory.create(element, species, null);
+				if (childDesc != null) {
+					species.addChild(childDesc);
+				}
 			}
-		}
+		});
 		// recursively complement micro-species
-		for (final ISyntacticElement e : node.getSpecies()) {
-			final SpeciesDescription sd = species.getMicroSpecies(e.getName());
-			if (sd != null) {
-				complementSpecies(sd, e);
+		node.visitSpecies(new SyntacticVisitor() {
+
+			@Override
+			public void visit(final ISyntacticElement element) {
+				final SpeciesDescription sd = species.getMicroSpecies(element.getName());
+				if (sd != null) {
+					complementSpecies(sd, element);
+				}
 			}
-		}
+		});
 
 	}
 
@@ -498,9 +523,15 @@ public class ModelAssembler {
 			parent = model.getSpeciesDescription(p);
 		}
 		mDesc.setParent(parent);
-		for (final ISyntacticElement speciesNode : micro.getSpecies()) {
-			parentSpecies(mDesc, speciesNode, model, cache);
-		}
+		micro.visitSpecies(new SyntacticVisitor() {
+
+			@Override
+			public void visit(final ISyntacticElement element) {
+				parentSpecies(mDesc, element, model, cache);
+
+			}
+		});
+
 	}
 
 	/**

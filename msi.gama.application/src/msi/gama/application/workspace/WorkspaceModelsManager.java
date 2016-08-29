@@ -631,8 +631,8 @@ public class WorkspaceModelsManager {
 
 			final long time = modelsRep.lastModified();
 			gamaStamp = ".built_in_models_" + time;
-			System.out.println(">> GAMA version " + WorkspaceModelsManager.BUILTIN_VERSION + " loading...");
-			System.out.println(">> GAMA models library version: " + gamaStamp);
+			System.out.println(">GAMA version " + WorkspaceModelsManager.BUILTIN_VERSION + " loading...");
+			System.out.println(">GAMA models library version: " + gamaStamp);
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}

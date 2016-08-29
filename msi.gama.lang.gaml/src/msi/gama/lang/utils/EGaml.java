@@ -12,10 +12,8 @@
 package msi.gama.lang.utils;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
@@ -40,7 +38,6 @@ import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlFactory;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.If;
-import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Parameter;
 import msi.gama.lang.gaml.gaml.Point;
@@ -413,16 +410,6 @@ public class EGaml {
 		}
 		return null;
 
-	}
-
-	public static Set<String> getImportsAsStrings(final Model m) {
-		Set<String> result = Collections.EMPTY_SET;
-		if (((ModelImpl) m).eIsSet(GamlPackage.MODEL__IMPORTS)) {
-			result = new HashSet();
-			for (final Import e : m.getImports())
-				result.add(e.getImportURI());
-		}
-		return result;
 	}
 
 }

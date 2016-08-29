@@ -13,6 +13,7 @@ package msi.gama.lang.gaml.resource;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -39,10 +40,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
+import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.util.OnChangeEvictingCache;
 
 import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Iterables;
 import com.google.inject.Provider;
 
 import msi.gama.common.interfaces.IGamlIssue;
@@ -126,11 +127,14 @@ public class GamlResource extends LazyLinkingResource {
 
 	@Override
 	public GamlParseResult getParseResult() {
-		final GamlParseResult r = (GamlParseResult) super.getParseResult();
-		if (r == null) {
-			return null;
-		}
-		return r;
+		return (GamlParseResult) super.getParseResult();
+
+	}
+
+	@Override
+	protected void updateInternalState(final IParseResult oldParseResult, final IParseResult newParseResult) {
+		super.updateInternalState(oldParseResult, newParseResult);
+
 	}
 
 	public void updateWith(final ModelDescription model, final boolean newState) {
@@ -169,13 +173,6 @@ public class GamlResource extends LazyLinkingResource {
 			return result;
 		}
 		return parseResult.getSyntacticContents();
-	}
-
-	public Iterable<ISyntacticElement> getSyntacticExperiments() {
-		final ISyntacticElement element = getSyntacticContents();
-		if (element == null)
-			return Collections.EMPTY_LIST;
-		return element.getExperiments();
 	}
 
 	private ModelDescription buildModelDescription(final Map<GamlResource, String> resources) {
@@ -270,6 +267,11 @@ public class GamlResource extends LazyLinkingResource {
 	@Override
 	public OnChangeEvictingCache getCache() {
 		return (OnChangeEvictingCache) super.getCache();
+	}
+
+	@Override
+	public void doLoad(final InputStream inputStream, final Map<?, ?> options) throws IOException {
+		super.doLoad(inputStream, options);
 	}
 
 	public LinkedHashMap<URI, String> computeAllImportedURIs(final ResourceSet set) {
@@ -420,22 +422,6 @@ public class GamlResource extends LazyLinkingResource {
 			updateWith(null, true);
 		}
 
-		// AD Trick: if the resource does not contain any experiment, there is
-		// no need to validate it entirely. It will likely be imported in a
-		// model that will validate it. Unless it is edited.
-		// TODO A similar trick could be used if the model is imported or not in
-		// another one. If it is imported, then it means it will be validated at
-		// one point in the validation of its container or if it is edited
-
-		if (getSyntacticContents() != null && Iterables.size(getSyntacticContents().getExperiments()) == 0
-				&& !isEdited())
-			return null;
-
-		// We make sure the resource is loaded in the ResourceSet passed
-		// TODO Does it validate it ?
-		// set.getResource(getURI(), true);
-		ModelDescription model = null;
-
 		// If one of the resources has already errors, no need to validate
 		// We first build the list of resources (including this);
 		final Map<GamlResource, String> imports = loadAllResources(set);
@@ -456,6 +442,21 @@ public class GamlResource extends LazyLinkingResource {
 			invalidateBecauseOfImportedProblem(problems);
 			return null;
 		}
+
+		// AD Trick: if the resource does not contain any experiment, there is
+		// no need to validate it entirely. It will likely be imported in a
+		// model that will validate it. Unless it is edited.
+		// TODO A similar trick could be used if the model is imported or not in
+		// another one. If it is imported, then it means it will be validated at
+		// one point in the validation of its container or if it is edited
+
+		if (getSyntacticContents() != null && !getSyntacticContents().hasExperiments() && !isEdited())
+			return null;
+
+		// We make sure the resource is loaded in the ResourceSet passed
+		// TODO Does it validate it ?
+		// set.getResource(getURI(), true);
+		ModelDescription model = null;
 
 		model = buildModelDescription(imports);
 

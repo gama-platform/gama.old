@@ -34,6 +34,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.SyntacticFactory;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
@@ -308,26 +309,20 @@ public class DescriptionFactory {
 		ChildrenProvider children = cp;
 		if (children == null) {
 			final List<IDescription> children_list = new ArrayList();
-			for (final ISyntacticElement e : source.getChildren()) {
-				final IDescription desc = create(e, superDesc, null);
-				if (desc != null) {
-					children_list.add(desc);
-				}
-			}
-			for (final ISyntacticElement e : source.getSpecies()) {
-				final IDescription desc = create(e, superDesc, null);
-				if (desc != null) {
-					children_list.add(desc);
-				}
-			}
+			final SyntacticVisitor visitor = new SyntacticVisitor() {
 
-			// Grids are not parsed for the moment.
-			for (final ISyntacticElement e : source.getExperiments()) {
-				final IDescription desc = create(e, superDesc, null);
-				if (desc != null) {
-					children_list.add(desc);
+				@Override
+				public void visit(final ISyntacticElement element) {
+					final IDescription desc = create(element, superDesc, null);
+					if (desc != null) {
+						children_list.add(desc);
+					}
+
 				}
-			}
+			};
+			source.visitChildren(visitor);
+			source.visitSpecies(visitor);
+			source.visitExperiments(visitor);
 			children = new ChildrenProvider(children_list);
 		}
 		final Facets facets = source.copyFacets(md);

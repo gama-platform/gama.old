@@ -267,7 +267,7 @@ public class Types {
 				parent = current;
 			}
 		}
-		parent.addChild(new TypeNode(t));
+		parent.addChildWithUniqueParent(new TypeNode(t));
 	}
 
 	private static List<SpeciesDescription> builtInSpecies;
@@ -287,7 +287,7 @@ public class Types {
 				else {
 					final TypeNode node = builtInSpeciesTree.find(sd.getParent());
 					if (node != null) {
-						node.addChild(sd);
+						node.addChildWithUniqueParent(sd);
 						speciesLeft.remove(sd);
 					}
 				}

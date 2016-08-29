@@ -11,13 +11,11 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Arrays;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.collect.Iterables;
+import com.google.common.base.Predicate;
 
 import msi.gaml.statements.Facets;
 
@@ -29,17 +27,11 @@ import msi.gaml.statements.Facets;
  * 
  */
 public class SyntacticComposedElement extends AbstractSyntacticElement {
-	List<ISyntacticElement> children;
+
+	ISyntacticElement[] children;
 
 	SyntacticComposedElement(final String keyword, final Facets facets, final EObject statement) {
 		super(keyword, facets, statement);
-	}
-
-	@Override
-	public Iterable<ISyntacticElement> getChildren() {
-		if (children == null)
-			return Collections.EMPTY_LIST;
-		return Iterables.filter(children, OTHER_FILTER);
 	}
 
 	@Override
@@ -48,8 +40,11 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 			return;
 		}
 		if (children == null)
-			children = new ArrayList();
-		children.add(e);
+			children = new ISyntacticElement[] { e };
+		else {
+			children = Arrays.copyOf(children, children.length + 1);
+			children[children.length - 1] = e;
+		}
 	}
 
 	@Override
@@ -58,6 +53,29 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 		if (children != null) {
 			for (final ISyntacticElement child : children) {
 				child.visitThisAndAllChildrenRecursively(visitor);
+			}
+		}
+	}
+
+	@Override
+	protected void visitAllChildren(final SyntacticVisitor visitor) {
+		if (children != null) {
+			for (final ISyntacticElement e : children) {
+				visitor.visit(e);
+			}
+		}
+	}
+
+	@Override
+	public void visitChildren(final SyntacticVisitor visitor) {
+		visitAllChildren(visitor, OTHER_FILTER);
+	}
+
+	protected void visitAllChildren(final SyntacticVisitor visitor, final Predicate<ISyntacticElement> filter) {
+		if (children != null) {
+			for (final ISyntacticElement e : children) {
+				if (filter.apply(e))
+					visitor.visit(e);
 			}
 		}
 	}

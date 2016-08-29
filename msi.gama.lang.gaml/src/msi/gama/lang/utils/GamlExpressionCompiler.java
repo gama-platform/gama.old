@@ -93,6 +93,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.SyntacticFactory;
 import msi.gaml.compilation.SyntacticModelElement;
 import msi.gaml.descriptions.ExperimentDescription;
@@ -1224,10 +1225,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		if (resource.getErrors().isEmpty()) {
 			final SyntacticModelElement elt = resource.getParseResult().getSyntacticContents();
-			for (final ISyntacticElement e : elt.getChildren()) {
-				final IDescription desc = DescriptionFactory.create(e, actionContext, null);
-				result.add(desc);
-			}
+			elt.visitChildren(new SyntacticVisitor() {
+
+				@Override
+				public void visit(final ISyntacticElement e) {
+					final IDescription desc = DescriptionFactory.create(e, actionContext, null);
+					result.add(desc);
+				}
+			});
 
 		} else {
 			final Resource.Diagnostic d = resource.getErrors().get(0);

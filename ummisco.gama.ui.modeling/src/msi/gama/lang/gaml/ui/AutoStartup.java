@@ -15,9 +15,9 @@ import msi.gama.common.GamaPreferences.Entry;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.lang.gaml.GamlRuntimeModule;
 import msi.gama.lang.gaml.ui.editor.EditToolbar;
+import msi.gama.lang.gaml.ui.editor.EditToolbar.IToolbarVisitor;
 import msi.gama.lang.gaml.ui.editor.EditToolbarOperatorsMenu;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
-import msi.gama.lang.gaml.ui.editor.EditToolbar.IToolbarVisitor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -166,6 +166,7 @@ public class AutoStartup implements IStartup {
 	public void earlyStartup() {
 
 		GamlRuntimeModule.staticInitialize();
+		GlobalIndexInitializer.getInstance().run();
 	}
 
 }

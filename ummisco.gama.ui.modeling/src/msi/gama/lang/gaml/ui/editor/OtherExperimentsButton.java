@@ -37,6 +37,7 @@ import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
@@ -165,12 +166,18 @@ public class OtherExperimentsButton {
 					if (xr.getErrors().isEmpty()) {
 						final ISyntacticElement el = xr.getSyntacticContents();
 						if (el != null)
-							for (final ISyntacticElement ch : el.getExperiments()) {
-								if (!map.containsKey(uri)) {
-									map.put(uri, new ArrayList());
+							el.visitExperiments(new SyntacticVisitor() {
+
+								@Override
+								public void visit(final ISyntacticElement element) {
+
+									if (!map.containsKey(uri)) {
+										map.put(uri, new ArrayList());
+									}
+									map.get(uri).add(element.getName());
+
 								}
-								map.get(uri).add(ch.getName());
-							}
+							});
 					}
 				}
 

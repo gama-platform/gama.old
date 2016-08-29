@@ -1,10 +1,6 @@
 package msi.gaml.compilation;
 
-import java.util.Collections;
-
 import org.eclipse.emf.ecore.EObject;
-
-import com.google.common.collect.Iterables;
 
 import msi.gaml.statements.Facets;
 
@@ -15,10 +11,8 @@ public class SyntacticTopLevelElement extends SyntacticSpeciesElement {
 	}
 
 	@Override
-	public Iterable<ISyntacticElement> getGrids() {
-		if (children == null)
-			return Collections.EMPTY_LIST;
-		return Iterables.filter(children, GRID_FILTER);
+	public void visitGrids(final SyntacticVisitor visitor) {
+		visitAllChildren(visitor, GRID_FILTER);
 	}
 
 }

@@ -19,8 +19,6 @@ import java.util.Set;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.collect.Iterables;
-
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gaml.statements.Facets;
 
@@ -50,13 +48,6 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 		}
 	}
 
-	@Override
-	public Iterable<ISyntacticElement> getExperiments() {
-		if (children == null)
-			return Collections.EMPTY_LIST;
-		return Iterables.filter(children, EXPERIMENT_FILTER);
-	}
-
 	public Set<URI> getAbsoluteAlternatePaths() {
 		return absoluteAlternatePaths;
 	}
@@ -84,4 +75,18 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 		// System.out.println("Stats for " + getName() + " : " + stats);
 	}
 
+	@Override
+	public void visitExperiments(final SyntacticVisitor visitor) {
+		visitAllChildren(visitor, EXPERIMENT_FILTER);
+	}
+
+	@Override
+	public boolean hasExperiments() {
+		if (this.children != null)
+			for (final ISyntacticElement e : this.children) {
+				if (EXPERIMENT_FILTER.apply(e))
+					return true;
+			}
+		return false;
+	}
 }

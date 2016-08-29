@@ -89,14 +89,6 @@ public interface ISyntacticElement {
 
 	public Set<String> getDependencies();
 
-	public abstract Iterable<ISyntacticElement> getChildren();
-
-	public abstract Iterable<ISyntacticElement> getExperiments();
-
-	public abstract Iterable<ISyntacticElement> getSpecies();
-
-	public abstract Iterable<ISyntacticElement> getGrids();
-
 	public abstract void visitFacets(FacetVisitor visitor);
 
 	public abstract String getName();
@@ -114,5 +106,15 @@ public interface ISyntacticElement {
 	public abstract void computeStats(Map<String, Integer> stats);
 
 	public abstract void visitThisAndAllChildrenRecursively(SyntacticVisitor visitor);
+
+	public void visitChildren(final SyntacticVisitor visitor);
+
+	public void visitSpecies(final SyntacticVisitor visitor);
+
+	public void visitExperiments(final SyntacticVisitor visitor);
+
+	public void visitGrids(final SyntacticVisitor visitor);
+
+	public boolean hasExperiments();
 
 }

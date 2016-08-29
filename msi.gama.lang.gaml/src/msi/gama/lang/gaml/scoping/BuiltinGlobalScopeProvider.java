@@ -474,7 +474,11 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 				e.printStackTrace();
 			}
 		}
+		final long start = System.currentTimeMillis();
+		System.out.print(">GAMA building GAML artefacts");
 		createDescriptions();
+		System.out.println(" in " + (System.currentTimeMillis() - start) + " ms");
+
 	}
 
 	public LinkedHashMap<URI, String> getAllImportedURIs(final Resource resource, final ResourceSet set) {

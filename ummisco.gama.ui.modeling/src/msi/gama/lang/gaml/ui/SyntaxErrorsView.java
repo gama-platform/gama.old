@@ -139,6 +139,7 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 			public void widgetSelected(final SelectionEvent e) {
 				final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				try {
+					GlobalIndexInitializer.getInstance().run();
 					workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor() {
 
 						@Override
