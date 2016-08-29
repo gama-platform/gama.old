@@ -4,12 +4,17 @@
  */
 package ummisco.gama.ui.navigator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -37,6 +42,7 @@ public class WrappedFolder extends VirtualContent {
 
 	/**
 	 * Method hasChildren()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#hasChildren()
 	 */
 	@Override
@@ -51,26 +57,30 @@ public class WrappedFolder extends VirtualContent {
 
 	/**
 	 * Method getNavigatorChildren()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getNavigatorChildren()
 	 */
 	@Override
 	public Object[] getNavigatorChildren() {
-		if ( fileNames.isEmpty() ) { return EMPTY; }
-		List<WrappedFile> files = new ArrayList();
-		IFile file = (IFile) getParent();
-		IPath filePath = file.getLocation();
-		IPath projectPath = file.getProject().getLocation();
-		for ( String s : fileNames ) {
+		if (fileNames.isEmpty()) {
+			return EMPTY;
+		}
+		final List<WrappedFile> files = new ArrayList();
+		final IFile file = (IFile) getParent();
+		final IPath filePath = file.getLocation();
+		final IPath projectPath = file.getProject().getLocation();
+		for (final String s : fileNames) {
 			IPath resPath = new Path(s);
-			if ( !resPath.isAbsolute() ) {
-				URI fileURI = URI.createFileURI(filePath.toString());
-				URI resURI = URI.createURI(resPath.toString()).resolve(fileURI);
+			if (!resPath.isAbsolute()) {
+				final URI fileURI = URI.createFileURI(filePath.toString());
+				final URI resURI = URI.createURI(resPath.toString()).resolve(fileURI);
 				resPath = new Path(resURI.toFileString()).makeRelativeTo(projectPath);
+			} else {
+				resPath = resPath.makeRelativeTo(projectPath);
 			}
-			IFile newFile = file.getProject().getFile(resPath);
-			if ( newFile.exists() ) {
-				// files.add(newFile);
-				WrappedFile proxy = new WrappedFile(this, newFile);
+			final IFile newFile = file.getProject().getFile(resPath);
+			if (newFile.exists()) {
+				final WrappedFile proxy = new WrappedFile(this, newFile);
 				files.add(proxy);
 			}
 		}
@@ -79,6 +89,7 @@ public class WrappedFolder extends VirtualContent {
 
 	/**
 	 * Method getImage()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getImage()
 	 */
 	@Override
@@ -88,6 +99,7 @@ public class WrappedFolder extends VirtualContent {
 
 	/**
 	 * Method getColor()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getColor()
 	 */
 	@Override
@@ -95,15 +107,4 @@ public class WrappedFolder extends VirtualContent {
 		return IGamaColors.BLACK.color();
 	}
 
-	/**
-	 * Method isParentOf()
-	 * @see msi.gama.gui.navigator.VirtualContent#isParentOf(java.lang.Object)
-	 */
-	// @Override
-	// public boolean isParentOf(final Object element) {
-	// if ( !(element instanceof WrappedFile) ) { return false; }
-	// String path = ((WrappedFile) element).getFile().getLocation()
-	// .makeRelativeTo(((IFile) getParent()).getLocation()).toString();
-	// return fileNames.contains(path);
-	// }
 }

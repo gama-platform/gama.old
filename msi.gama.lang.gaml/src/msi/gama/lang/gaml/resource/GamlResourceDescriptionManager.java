@@ -13,6 +13,7 @@ package msi.gama.lang.gaml.resource;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -23,12 +24,10 @@ import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
 import org.eclipse.xtext.resource.IResourceDescriptions;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
-import org.eclipse.xtext.util.Pair;
-import org.jgrapht.traverse.BreadthFirstIterator;
 
 import com.google.inject.Inject;
 
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import msi.gama.lang.gaml.indexer.IModelIndexer;
 
 /**
  * The class GamlResourceDescriptionManager.
@@ -43,6 +42,9 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 	@Inject
 	private DescriptionUtils descriptionUtils;
 
+	@Inject
+	IModelIndexer indexer;
+
 	@Override
 	protected IResourceDescription internalGetResourceDescription(final Resource resource,
 			final IDefaultResourceDescriptionStrategy strategy) {
@@ -53,20 +55,14 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 	public boolean isAffected(final Collection<Delta> deltas, final IResourceDescription candidate,
 			final IResourceDescriptions context) {
 		final boolean result = false;
-		// if (candidate.getURI().lastSegment().contains("Google")) {
-		// System.out.println("FOUND GOOGLE");
-		// }
-		final URI newUri = URI.createURI(URI.decode(candidate.getURI().toString()));
+		final URI newUri = candidate.getURI();
 
-		if (GamlJavaValidator.IMPORTS_GRAPH.containsVertex(newUri)) {
+		if (indexer.indexes(newUri)) {
 			final Set<URI> deltaUris = new HashSet();
 			for (final Delta d : deltas) {
-				final URI uri = URI.createURI(URI.decode(d.getUri().toString()));
-				deltaUris.add(uri);
+				deltaUris.add(indexer.properlyEncodedURI(d.getUri()));
 			}
-			final BreadthFirstIterator<URI, Pair<URI, URI>> it = new BreadthFirstIterator(
-					GamlJavaValidator.IMPORTS_GRAPH, newUri);
-			it.next();
+			final Iterator<URI> it = indexer.allImportsOf(newUri);
 			while (it.hasNext()) {
 				final URI next = it.next();
 				if (deltaUris.contains(next)) {
@@ -76,24 +72,6 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 				}
 			}
 		}
-		// final Set<URI> imports = new
-		// BreadthFirstIterator(GamlJavaValidator.IMPORTS_GRAPH, newUri);
-		// if (!imports.isEmpty()) {
-		// for (final Delta d : deltas) {
-		// final URI uri = URI.createURI(URI.decode(d.getUri().toString()));
-		// if (imports.contains(uri)) {
-		// // if (d.getUri().lastSegment().contains("Segreg")
-		// // && candidate.getURI().lastSegment().contains("Segreg")) {
-		// // System.out.println("d");
-		// // }
-		// //
-		// // System.out
-		// // .println(d.getUri().lastSegment() + " is imported by " +
-		// // candidate.getURI().lastSegment());
-		// return true;
-		// }
-		// }
-		// }
 		return super.isAffected(deltas, candidate, context);
 	}
 

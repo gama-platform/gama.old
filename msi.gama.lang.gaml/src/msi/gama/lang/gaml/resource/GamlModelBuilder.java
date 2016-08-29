@@ -25,14 +25,17 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.Facet;
-import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
+import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.utils.EGaml;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GAMLFile;
@@ -48,14 +51,23 @@ import msi.gaml.descriptions.ModelDescription;
  * @since 8 avr. 2014
  *
  */
+@Singleton
 public class GamlModelBuilder implements IModelBuilder {
 
-	final XtextResourceSet buildResourceSet = new XtextResourceSet();
+	public static GamlModelBuilder INSTANCE = new GamlModelBuilder();
 
+	@Inject
+	IModelIndexer indexer;
+
+	@Inject
+	XtextResourceSet buildResourceSet;
+
+	@Inject
+	XtextResourceSet infoResourceSet;
+
+	@Inject
 	public GamlModelBuilder() {
-		buildResourceSet.setClasspathURIContext(GamlModelBuilder.class);
 	};
-
 
 	/**
 	 * Builds an IModel from the resource.
@@ -89,8 +101,6 @@ public class GamlModelBuilder implements IModelBuilder {
 		return ((GamlResource) resource).build(resource.getResourceSet(), errors);
 	}
 
-
-
 	@Override
 	public ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {
 		try {
@@ -103,10 +113,14 @@ public class GamlModelBuilder implements IModelBuilder {
 
 	@Override
 	public GAMLFile.GamlInfo getInfo(final URI uri, final long stamp) {
-		/* Synchronized */final XtextResourceSet infoResourceSet = new /* Synchronized */XtextResourceSet();
 		try {
-
+			final URI properURI = indexer.properlyEncodedURI(uri);
 			final Set<String> imports = new TLinkedHashSet();
+			final Set<URI> uris = indexer.directImportsOf(properURI);
+			for (final URI u : uris) {
+				imports.add(u.deresolve(properURI).toString());
+			}
+
 			final Set<String> uses = new TLinkedHashSet();
 			final Set<String> exps = new TLinkedHashSet();
 
@@ -137,9 +151,6 @@ public class GamlModelBuilder implements IModelBuilder {
 						}
 					}
 					exps.add(s);
-				} else if (e instanceof Import) {
-					imports.add(((Import) e).getImportURI());
-					tree.prune();
 				}
 			}
 
@@ -154,7 +165,6 @@ public class GamlModelBuilder implements IModelBuilder {
 
 	@Override
 	public ModelDescription createModelDescriptionFromFile(final String fileName) {
-
 
 		final URI iu = URI.createURI(fileName, false);
 		ModelDescription lastModel = null;

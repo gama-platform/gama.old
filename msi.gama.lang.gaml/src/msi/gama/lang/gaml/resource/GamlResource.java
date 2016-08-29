@@ -44,6 +44,7 @@ import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.util.OnChangeEvictingCache;
 
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 import msi.gama.common.interfaces.IGamlIssue;
@@ -53,6 +54,7 @@ import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.impl.ImportImpl;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
+import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.parsing.GamlCompatibilityConverter;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
@@ -87,8 +89,8 @@ public class GamlResource extends LazyLinkingResource {
 	// in case of a synthetic resource
 	private GamlResource linkToRealModelResource;
 
-	// @Inject
-	// private ImportUriResolver resolver;
+	@Inject
+	IModelIndexer indexer;
 
 	public ErrorCollector getErrorCollector() {
 		if (collector == null) {
@@ -443,19 +445,16 @@ public class GamlResource extends LazyLinkingResource {
 			return null;
 		}
 
-		// AD Trick: if the resource does not contain any experiment, there is
-		// no need to validate it entirely. It will likely be imported in a
-		// model that will validate it. Unless it is edited.
-		// TODO A similar trick could be used if the model is imported or not in
-		// another one. If it is imported, then it means it will be validated at
-		// one point in the validation of its container or if it is edited
+		// AD 08/16: if the model is imported and not edited, we do nothing. If
+		// it is imported, then it means it will be validated at one point
+		// together with its importer. Otherwise, we do not care about its
+		// validation. Saves a lot of memory and validation speed.
 
-		if (getSyntacticContents() != null && !getSyntacticContents().hasExperiments() && !isEdited())
+		final boolean imported = !indexer.directImportersOf(getURI()).isEmpty();
+		final boolean edited = isEdited();
+		if (imported && !edited)
 			return null;
 
-		// We make sure the resource is loaded in the ResourceSet passed
-		// TODO Does it validate it ?
-		// set.getResource(getURI(), true);
 		ModelDescription model = null;
 
 		model = buildModelDescription(imports);

@@ -34,6 +34,8 @@ import com.google.inject.Binder;
 
 import msi.gama.lang.gaml.generator.GamlGenerator;
 import msi.gama.lang.gaml.generator.GamlOutputConfigurationProvider;
+import msi.gama.lang.gaml.indexer.IModelIndexer;
+import msi.gama.lang.gaml.indexer.MinimalIndexer;
 import msi.gama.lang.gaml.linking.GamlLinkingErrorMessageProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingService;
 import msi.gama.lang.gaml.linking.GamlNameConverter;
@@ -76,7 +78,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 				@Override
 				public IModelBuilder get() {
-					return new GamlModelBuilder();
+					return GamlModelBuilder.INSTANCE;
 				}
 			});
 			DescriptionFactory.registerDocManager(GamlResourceDocManager.getInstance());
@@ -92,11 +94,10 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
-		// binder.bind(ImportUriGlobalScopeProvider.class).to(AllImportUriGlobalScopeProvider.class);
+		binder.bind(IModelIndexer.class).to(MinimalIndexer.class);
+		binder.bind(IModelBuilder.class).toInstance(GamlModelBuilder.INSTANCE);
 		binder.bind(IGenerator.class).to(GamlGenerator.class);
 		binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
-		// binder.bind(IResourceDescription.class).to(GamlResourceDescription.class);
-		// binder.bind(DescriptionUtils.class).to(GamlDescriptionUtils.class);
 	}
 
 	@Override
@@ -148,39 +149,10 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return GamlSyntacticParser.class;
 	}
 
-	// @Override
-	// @SingletonBinding
-	// public Class<? extends Diagnostician> bindDiagnostician() {
-	// return GamlDiagnostician.class;
-	// }
-
-	// public Class<? extends IResourceValidator> bindIResourceValidator() {
-	// return GamlResourceValidator.class;
-	// }
-
 	@Override
 	public void configureRuntimeEncodingProvider(final Binder binder) {
 		binder.bind(IEncodingProvider.class).annotatedWith(DispatchingProvider.Runtime.class)
 				.to(GamlEncodingProvider.class);
 	}
 
-	// public Class<? extends IEncodingProvider> bindIEncodingProvider() {
-	// return GamlEncodingProvider.class;
-	// }
-
-	// @Override
-	// public
-	// com.google.inject.Provider<org.eclipse.xtext.resource.containers.IAllContainersState>
-	// provideIAllContainersState()
-	// {return org.eclipse.xtext.ui.shared.Access.getWorkspaceProjectsState();}
-
-	// @Override
-	// public Class<? extends IResourceSetProvider> bindIResourceSetProvider()
-	// { return SimpleResourceSetProvider.class; }
-
-	// @Override
-	// public Class<? extends IResourceForEditorInputFactory>
-	// bindIResourceForEditorInputFactory() {
-	// return ResourceForIEditorInputFactory.class;
-	// }
 }

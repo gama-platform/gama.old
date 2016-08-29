@@ -20,6 +20,7 @@ import msi.gaml.descriptions.ModelDescription;
  * @since 15 avr. 2014
  * 
  */
+
 public interface IModelBuilder {
 
 	/**
@@ -42,7 +43,6 @@ public interface IModelBuilder {
 	 *         case, or use the alternate form).
 	 */
 	public abstract IModel compile(Resource resource);
-
 
 	/**
 	 * Builds an IModel from a resource, an URI or an InputStream, listing all

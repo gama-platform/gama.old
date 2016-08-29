@@ -17,45 +17,25 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.util.Arrays;
-import org.eclipse.xtext.util.Pair;
-import org.eclipse.xtext.util.Tuples;
 import org.eclipse.xtext.validation.Check;
 import org.eclipse.xtext.validation.ValidationMessageAcceptor;
-import org.jgrapht.EdgeFactory;
-import org.jgrapht.graph.SimpleDirectedGraph;
+
+import com.google.inject.Inject;
 
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
+import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ErrorCollector;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
-	static IGlobalIndexInitializer INDEX_INITIALIZER;
-	public final static SimpleDirectedGraph<URI, Pair<URI, URI>> IMPORTS_GRAPH = new SimpleDirectedGraph(
-			new EdgeFactory<URI, Object>() {
-
-				@Override
-				public Pair<URI, URI> createEdge(final URI sourceVertex, final URI targetVertex) {
-					return Tuples.create(sourceVertex, targetVertex);
-				}
-			});
-
-	public static interface IGlobalIndexInitializer {
-		void updateImports(GamlResource r);
-	}
-
-	public static void setIndexInitializer(final IGlobalIndexInitializer globalIndexInitializer) {
-		INDEX_INITIALIZER = globalIndexInitializer;
-	}
-
-	public static IGlobalIndexInitializer getIndexInitializer() {
-		return INDEX_INITIALIZER;
-	}
+	@Inject
+	IModelIndexer indexer;
 
 	@Check()
 	public void validate(final Model model) {
@@ -67,8 +47,8 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 
 		final ErrorCollector errors = validate(newResource);
-		if (INDEX_INITIALIZER != null) {
-			INDEX_INITIALIZER.updateImports(newResource);
+		if (indexer != null) {
+			indexer.updateImports(newResource);
 		}
 		if (!errors.hasInternalSyntaxErrors()) {
 			for (final GamlCompilationError error : errors) {
