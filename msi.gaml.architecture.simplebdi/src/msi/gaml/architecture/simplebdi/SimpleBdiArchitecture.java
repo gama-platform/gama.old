@@ -49,6 +49,7 @@ import msi.gaml.types.Types;
 		@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 		@var(name = SimpleBdiArchitecture.UNCERTAINTY_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
 		@var(name = SimpleBdiArchitecture.PLAN_BASE, type = IType.LIST, of = BDIPlanType.id, init = "[]"),
+		@var(name = SimpleBdiArchitecture.SOCIALLINK_BASE, type = IType.LIST, of = SocialLinkType.id, init = "[]"),
 		@var(name = SimpleBdiArchitecture.CURRENT_PLAN, type = IType.NONE) })
 @skill(name = SimpleBdiArchitecture.SIMPLE_BDI, concept = { IConcept.BDI, IConcept.ARCHITECTURE })
 
@@ -74,6 +75,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final Integer LAST_THOUGHTS_SIZE = 5;
 
 	public static final String EMOTION = "emotion";
+	public static final String SOCIALLINK = "social_link";
 	public static final String PREDICATE = "predicate";
 	public static final String PREDICATE_NAME = "name";
 	public static final String PREDICATE_VALUE = "value";
@@ -88,6 +90,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String DESIRE_BASE = "desire_base";
 	public static final String INTENTION_BASE = "intention_base";
 	public static final String EMOTION_BASE = "emotion_base";
+	public static final String SOCIALLINK_BASE = ("social_link_base");
 	public static final String EVERY_VALUE = "every_possible_value";
 	public static final String PLAN_BASE = "plan_base";
 	public static final String CURRENT_PLAN = "current_plan";
@@ -673,6 +676,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				: (GamaList<Emotion>) agent.getAttribute(basename));
 	}
 
+	public static GamaList<SocialLink> getSocialBase(final IScope scope, final String basename) {
+		final IAgent agent = scope.getAgent();
+		return (GamaList<SocialLink>) (scope.hasArg(basename) ? scope.getListArg(basename)
+				: (GamaList<SocialLink>) agent.getAttribute(basename));
+	}
+	
 	public static boolean removeFromBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
 		final GamaList<Predicate> factBase = getBase(scope, factBaseName);
 		return factBase.remove(predicateItem);
@@ -690,6 +699,10 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static boolean addToBase(final IScope scope, final Emotion emotionItem, final String factBaseName) {
 		return addToBase(scope, emotionItem, getEmotionBase(scope, factBaseName));
 	}
+	
+	public static boolean addToBase(final IScope scope, final SocialLink socialItem, final String factBaseName) {
+		return addToBase(scope, socialItem, getSocialBase(scope, factBaseName));
+	}
 
 	public static boolean addToBase(final IScope scope, final Predicate predicateItem,
 			final GamaList<Predicate> factBase) {
@@ -703,6 +716,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static boolean addToBase(final IScope scope, final Emotion predicateItem, final GamaList<Emotion> factBase) {
 		factBase.remove(predicateItem);
 		return factBase.add(predicateItem);
+	}
+	
+	public static boolean addToBase(final IScope scope, final SocialLink socialItem, final GamaList<SocialLink> factBase) {
+		factBase.remove(socialItem);
+		return factBase.add(socialItem);
 	}
 
 	public static Boolean addBelief(final IScope scope, final Predicate predicateDirect) {
@@ -1642,7 +1660,66 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	// Peut-être mettre après un replace Uncertainty
+	
+	@action(name = "add_social_link", args = {
+			@arg(name = SOCIALLINK, type = SocialLinkType.id, optional = true, doc = @doc("social link to add to the base")) }, doc = @doc(value = "add the social link to the social link base.", returns = "true if it is added in the base.", examples = {
+					@example("") }))
+	public Boolean primAddSocialLink(final IScope scope) throws GamaRuntimeException {
+		final SocialLink social = (SocialLink) (scope.hasArg(SOCIALLINK) ? scope.getArg(SOCIALLINK, SocialLinkType.id) : null);
+		return addSocialLink(scope, social);
+	}
 
+	public static boolean addSocialLink(final IScope scope, final SocialLink social) {
+		if(social.getAppreciation()>=-1.0 && social.getAppreciation()<=1.0){
+			if(social.getDominance()>=-1.0 && social.getDominance()<=1.0){
+				if(social.getSolidarity()>=0.0 && social.getSolidarity()<=1.0){
+					if(social.getFamiliarity()>=0.0 && social.getFamiliarity()<=1.0){
+						if(getSocialLink(scope,social)==null){
+							return addToBase(scope, social, SOCIALLINK_BASE);
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	@action(name = "get_social_link", args = {
+			@arg(name = SOCIALLINK, type = SocialLinkType.id, optional = false, doc = @doc("social link to check")) }, doc = @doc(value = "get the social linke (if several, returns the first one).", returns = "the social link if it is in the base.", examples = {
+					@example("get_social_link(new_social_link(agentA))") }))
+	public SocialLink getSocialLink(final IScope scope) throws GamaRuntimeException {
+		final SocialLink socialDirect = (SocialLink) (scope.hasArg(SOCIALLINK) ? scope.getArg(SOCIALLINK, SocialLinkType.id) : null);
+		if (socialDirect != null) {
+			return getSocialLink(scope,socialDirect);
+		}
+		return null;
+	}
+	
+	public static SocialLink getSocialLink(final IScope scope, final SocialLink social) {
+		for (final SocialLink socialLink : getSocialBase(scope, SOCIALLINK_BASE)) {
+			if (socialLink.equals(social)) {
+				return socialLink;
+			}
+		}
+		return null;
+	}
+	
+	public static Boolean hasSocialLink(final IScope scope, final SocialLink socialDirect) {
+		return getSocialBase(scope, SOCIALLINK_BASE).contains(socialDirect);
+	}
+	
+	@action(name = "has_social_link", args = {
+			@arg(name = SOCIALLINK, type = SocialLinkType.id, optional = true, doc = @doc("social link to check")) }, doc = @doc(value = "check if the social link base.", returns = "true if it is in the base.", examples = {
+					@example("") }))
+	public Boolean primTestSocial(final IScope scope) throws GamaRuntimeException {
+		final SocialLink socialDirect = (SocialLink) (scope.hasArg(SOCIALLINK)
+				? scope.getArg(SOCIALLINK, SocialLinkType.id) : null);
+		if (socialDirect != null) {
+			return hasSocialLink(scope, socialDirect);
+		}
+		return false;
+	}
+	
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		super.init(scope);

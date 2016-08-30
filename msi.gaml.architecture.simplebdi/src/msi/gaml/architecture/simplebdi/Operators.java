@@ -1,6 +1,8 @@
 package msi.gaml.architecture.simplebdi;
 
 import java.util.*;
+
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.*;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -280,5 +282,98 @@ public class Operators {
 	public static Predicate getAbout(final Emotion emotion){
 		return emotion.about;
 	}
+	
+	@operator(value = "new_social_link", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "a new social link",
+		examples = @example(value = "new_social_link(agentA,0.0,-0.1,0.2,0.1)", test = false))
+	public static SocialLink newSocialLink(final IAgent agent) throws GamaRuntimeException {
+		return new SocialLink(agent,0.0,0.0,0.0,0.0);
+	}
+	
+	@operator(value = "new_social_link", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "a new social link",
+		examples = @example(value = "new_social_link(agentA,0.0,-0.1,0.2,0.1)", test = false))
+	public static SocialLink newSocialLink(final IAgent agent, final Double appreciation, final Double dominance, final Double solidarity, final Double familiarity) throws GamaRuntimeException {
+		return new SocialLink(agent,appreciation,dominance,solidarity,familiarity);
+	}
 
+	@operator(value = "set_appreciation", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "change the appreciation value of the given social link",
+		examples = @example(value = "social_link set_appreciation 0.4", test = false))
+	public static SocialLink setAppreciation(final SocialLink social, final Double appreciation) throws GamaRuntimeException {
+		if(appreciation>=-1.0 && appreciation<=1.0){
+			social.setAppreciation(appreciation);
+		}
+		return social;
+	}
+	
+	@operator(value = "set_dominance", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "change the dominance value of the given social link",
+		examples = @example(value = "social_link set_dominance 0.4", test = false))
+	public static SocialLink setDominance(final SocialLink social, final Double dominance) throws GamaRuntimeException {
+		if(dominance>=-1.0 && dominance<1.0){
+			social.setDominance(dominance);
+		}
+		return social;
+	}
+	
+	@operator(value = "set_solidarity", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "change the solidarity value of the given social link",
+		examples = @example(value = "social_link set_solidarity 0.4", test = false))
+	public static SocialLink setSolidarity(final SocialLink social, final Double solidarity) throws GamaRuntimeException {
+		if(solidarity>=0.0 && solidarity<=1.0){
+			social.setSolidarity(solidarity);
+		}
+		return social;
+	}
+	
+	@operator(value = "set_familiarity", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "change the familiarity value of the given social link",
+		examples = @example(value = "social_link set_familiarity 0.4", test = false))
+	public static SocialLink setFamiliarity(final SocialLink social, final Double familiarity) throws GamaRuntimeException {
+		if(familiarity>=0.0 && familiarity<=1.0){
+			social.setFamiliarity(familiarity);
+		}
+		return social;
+	}
+	
+	@operator(value = "get_appreciation", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "get the appreciation value of the given social link",
+		examples = @example(value = "get_appreciation(social_link1)", test = false))
+	public static Double getAppreciation(final SocialLink social){
+		return social.getAppreciation();
+	}
+	
+	@operator(value = "get_dominance", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "get the dominance value of the given social link",
+		examples = @example(value = "get_dominance(social_link1)", test = false))
+	public static Double getDominance(final SocialLink social){
+		return social.getDominance();
+	}
+	
+	@operator(value = "get_solidarity", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "get the solidarity value of the given social link",
+		examples = @example(value = "get_solidarity(social_link1)", test = false))
+	public static Double getSolidarity(final SocialLink social){
+		return social.getSolidarity();
+	}
+	
+	@operator(value = "get_familiarity", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "get the familiarity value of the given social link",
+		examples = @example(value = "get_familiarity(social_link1)", test = false))
+	public static Double getFamiliarity(final SocialLink social){
+		return social.getFamiliarity();
+	}
+	
+	//Faire en sorte que l'on puisse utiliser les opérateurs seulement avec le nom de l'agent ?
 }
