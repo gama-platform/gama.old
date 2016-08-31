@@ -746,6 +746,14 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if (getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE).contains(predicateDirect)) {
 				removeFromBase(scope, predicateDirect, UNCERTAINTY_BASE);
 			}
+			for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
+				if(predTest.equalsButNotTruth(predicateDirect)){
+					predTemp = predTest;
+				}
+			}
+			if (predTemp != null) {
+				removeFromBase(scope, predTemp, UNCERTAINTY_BASE);
+			}
 			for (final Object statement : getBase(scope, SimpleBdiArchitecture.INTENTION_BASE)) {
 				final List<Predicate> statementSubintention = ((Predicate) statement).getSubintentions();
 				if (statementSubintention != null) {
@@ -1350,6 +1358,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
 			if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(predTest)) {
 				final Emotion joy = new Emotion("joy", predTest);
+				IAgent agentTest = predTest.getAgentCause();
+				if(agentTest!=null){joy.setAgentCause(agentTest);}
 				addEmotion(scope, joy);
 			}
 		}
@@ -1358,6 +1368,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	private static void createJoyFromPredicate(final IScope scope, final Predicate predTest) {
 		if (getBase(scope, SimpleBdiArchitecture.DESIRE_BASE).contains(predTest)) {
 			final Emotion joy = new Emotion("joy", predTest);
+			IAgent agentTest = predTest.getAgentCause();
+			if(agentTest!=null){joy.setAgentCause(agentTest);}
 			addEmotion(scope, joy);
 		}
 	}
@@ -1370,6 +1382,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			for (final Predicate desireTest : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
 				if (predTest.equalsButNotTruth(desireTest)) {
 					final Emotion sadness = new Emotion("sadness", predTest);
+					IAgent agentTest = predTest.getAgentCause();
+					if(agentTest!=null){sadness.setAgentCause(agentTest);}
 					addEmotion(scope, sadness);
 				}
 			}
@@ -1381,6 +1395,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			for (final Predicate desireTest : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
 				if (predTest.equalsButNotTruth(desireTest)) {
 					final Emotion fear = new Emotion("fear", predTest);
+					IAgent agentTest = predTest.getAgentCause();
+					if(agentTest!=null){fear.setAgentCause(agentTest);}
 					addEmotion(scope, fear);
 				}
 			}
@@ -1391,6 +1407,8 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
 			if (getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE).contains(predTest)) {
 				final Emotion hope = new Emotion("hope", predTest);
+				IAgent agentTest = predTest.getAgentCause();
+				if(agentTest!=null){hope.setAgentCause(agentTest);}
 				addEmotion(scope, hope);
 			}
 		}
@@ -1405,14 +1423,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						&& getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(emo.getAbout())) {
 					Emotion satisfaction = null;
 					Emotion joy = null;
+					IAgent agentTest = emo.getAgentCause();
 					if (emo.getNoIntensity()) {
 						satisfaction = new Emotion("satisfaction", emo.getAbout());
+						if(agentTest!=null){satisfaction.setAgentCause(agentTest);}
 						joy = new Emotion("joy", emo.getAbout());
+						if(agentTest!=null){joy.setAgentCause(agentTest);}
 					} else {
 						// On décide de transmettre l'intensité de l'émotion
 						// précédente.
 						satisfaction = new Emotion("satisfaction", emo.getIntensity(), emo.getAbout());
+						if(agentTest!=null){satisfaction.setAgentCause(agentTest);}
 						joy = new Emotion("joy", emo.getIntensity(), emo.getAbout());
+						if(agentTest!=null){joy.setAgentCause(agentTest);}
 					}
 					addEmotion(scope, satisfaction);
 					addEmotion(scope, joy);
@@ -1431,14 +1454,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						&& getBase(scope, SimpleBdiArchitecture.BELIEF_BASE).contains(emo.getAbout())) {
 					Emotion fearConfirmed = null;
 					Emotion sadness = null;
+					IAgent agentTest = emo.getAgentCause();
 					if (emo.getNoIntensity()) {
 						fearConfirmed = new Emotion("fear_confirmed", emo.getAbout());
+						if(agentTest!=null){fearConfirmed.setAgentCause(agentTest);}
 						sadness = new Emotion("sadness", emo.getAbout());
+						if(agentTest!=null){sadness.setAgentCause(agentTest);}
 					} else {
 						// On décide de transmettre l'intensité de l'émotion
 						// précédente.
 						fearConfirmed = new Emotion("fearConfirmed", emo.getIntensity(), emo.getAbout());
+						if(agentTest!=null){fearConfirmed.setAgentCause(agentTest);}
 						sadness = new Emotion("sadness", emo.getIntensity(), emo.getAbout());
+						if(agentTest!=null){sadness.setAgentCause(agentTest);}
 					}
 					addEmotion(scope, fearConfirmed);
 					addEmotion(scope, sadness);
@@ -1458,14 +1486,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						if (emo.getAbout().equalsButNotTruth(beliefTest)) {
 							Emotion relief = null;
 							Emotion joy = null;
+							IAgent agentTest = emo.getAgentCause();
 							if (emo.getNoIntensity()) {
 								relief = new Emotion("relief", beliefTest);
+								if(agentTest!=null){relief.setAgentCause(agentTest);}
 								joy = new Emotion("joy", beliefTest);
+								if(agentTest!=null){joy.setAgentCause(agentTest);}
 							} else {
 								// On décide de transmettre l'intensité de
 								// l'émotion précédente.
 								relief = new Emotion("relief", emo.getIntensity(), emo.getAbout());
+								if(agentTest!=null){relief.setAgentCause(agentTest);}
 								joy = new Emotion("joy", emo.getIntensity(), emo.getAbout());
+								if(agentTest!=null){joy.setAgentCause(agentTest);}
 							}
 							addEmotion(scope, relief);
 							addEmotion(scope, joy);
@@ -1487,14 +1520,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						if (emo.getAbout().equalsButNotTruth(beliefTest)) {
 							Emotion disappointment = null;
 							Emotion sadness = null;
+							IAgent agentTest = emo.getAgentCause();
 							if (emo.getNoIntensity()) {
 								disappointment = new Emotion("disappointment", beliefTest);
+								if(agentTest!=null){disappointment.setAgentCause(agentTest);}
 								sadness = new Emotion("sadness", beliefTest);
+								if(agentTest!=null){sadness.setAgentCause(agentTest);}
 							} else {
 								// On décide de transmettre l'intensité de
 								// l'émotion précédente.
 								disappointment = new Emotion("disappointment", emo.getIntensity(), emo.getAbout());
+								if(agentTest!=null){disappointment.setAgentCause(agentTest);}
 								sadness = new Emotion("sadness", emo.getIntensity(), emo.getAbout());
+								if(agentTest!=null){sadness.setAgentCause(agentTest);}
 							}
 							addEmotion(scope, disappointment);
 							addEmotion(scope, sadness);
