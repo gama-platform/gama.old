@@ -415,12 +415,12 @@ public class Predicate implements IValue {
 //			if(lifetime!=other.lifetime){return false;}
 //		}
 		if ( (everyPossibleValues && noAgentCause) || (other.everyPossibleValues && other.noAgentCause) ) { return true; }
-		if ( values == null ) {
+		/*if ( values == null ) {
 			if ( other.values != null ) { return false; }
-		} else if ( !values.equals(other.values) ) { return false; }
-		if(agentCause==null){
+		} else*/ if (values!=null && other.values!=null && !values.equals(other.values) ) { return false; }
+		/*if(agentCause==null){
 			if(other.agentCause!=null){return false;}
-		}else if(!agentCause.equals(other.agentCause)){return false;}		
+		}else */if(agentCause!=null && other.agentCause!=null && !agentCause.equals(other.agentCause)){return false;}		
 		
 		return true;
 	}
@@ -442,13 +442,13 @@ public class Predicate implements IValue {
 //			if(lifetime!=other.lifetime){return false;}
 //		}
 		if ( (everyPossibleValues && noAgentCause) || (other.everyPossibleValues && other.noAgentCause) ) { return true; }
-		if ( values == null ) {
-			if ( other.values != null ) { return false; }
-		} else if ( !values.equals(other.values) ) { return false; }
-		if(agentCause==null){
-			if(other.agentCause!=null){return false;}
-		}else if(!agentCause.equals(other.agentCause)){return false;}		
-		
+		/*if ( values == null ) {
+		if ( other.values != null ) { return false; }
+	} else*/ if (values!=null && other.values!=null && !values.equals(other.values) ) { return false; }
+	/*if(agentCause==null){
+		if(other.agentCause!=null){return false;}
+	}else */if(agentCause!=null && other.agentCause!=null && !agentCause.equals(other.agentCause)){return false;}		
+	
 		return true;
 	}
 	
@@ -472,13 +472,13 @@ public class Predicate implements IValue {
 //			if(lifetime!=other.lifetime){return false;}
 //		}
 		if ( (everyPossibleValues && noAgentCause) || (other.everyPossibleValues && other.noAgentCause) ) { return true; }
-		if ( values == null ) {
-			if ( other.values != null ) { return false; }
-		} else if ( !values.equals(other.values) ) { return false; }
-		if(agentCause==null){
-			if(other.agentCause!=null){return false;}
-		}else if(!agentCause.equals(other.agentCause)){return false;}		
-		
+		/*if ( values == null ) {
+		if ( other.values != null ) { return false; }
+	} else*/ if (values!=null && other.values!=null && !values.equals(other.values) ) { return false; }
+	/*if(agentCause==null){
+		if(other.agentCause!=null){return false;}
+	}else */if(agentCause!=null && other.agentCause!=null && !agentCause.equals(other.agentCause)){return false;}		
+	
 		return true;
 	}
 	
@@ -500,13 +500,13 @@ public class Predicate implements IValue {
 		}else if(!superIntention.partialEquality(other.superIntention)){return false;}	
 		if(is_true!=other.is_true){
 			if ( (everyPossibleValues && noAgentCause) || (other.everyPossibleValues && other.noAgentCause) ) { return true; }
-			if ( values == null ) {
-				if ( other.values != null ) { return false; }
-			} else if ( !values.equals(other.values) ) { return false; }
-			if(agentCause==null){
-				if(other.agentCause!=null){return false;}
-			}else if(!agentCause.equals(other.agentCause)){return false;}		
-			
+			/*if ( values == null ) {
+			if ( other.values != null ) { return false; }
+		} else*/ if (values!=null && other.values!=null && !values.equals(other.values) ) { return false; }
+		/*if(agentCause==null){
+			if(other.agentCause!=null){return false;}
+		}else */if(agentCause!=null && other.agentCause!=null && !agentCause.equals(other.agentCause)){return false;}		
+		
 			return true;
 		}else{
 			return false;

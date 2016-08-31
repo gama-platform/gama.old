@@ -230,12 +230,12 @@ public class Emotion implements IValue {
 		if((noAbout && noAgentCause )|| (other.noAbout && other.noAgentCause)){
 			return true;
 		}
-		if(about==null){
+		/*if(about==null){
 			if(other.about!=null){return false;}			
-		}else if(!about.equals(other.about)){return false;}
-		if(agentCause==null){
+		}else */if(about!=null && other.about!=null && !about.equals(other.about)){return false;}
+		/*if(agentCause==null){
 			if(other.agentCause!=null){return false;}
-		}else if(!agentCause.equals(other.agentCause)){return false;}
+		}else */if(agentCause!=null && other.agentCause!= null && !agentCause.equals(other.agentCause)){return false;}
 		return true;
 	}
 	
