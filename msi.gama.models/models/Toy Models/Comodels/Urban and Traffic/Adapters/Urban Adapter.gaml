@@ -1,13 +1,13 @@
 /**
-* Name: urban_coupling
+* Name: urban_adapter
 * Author: HUYNH Quang Nghi
 * Description: It is NOT supposed to launch. This is the coupling of Urban model. It is used in the "Urban and Traffic" as an interface. 
 * Tags: comodel
 */
-model urban_coupling
+model urban_adapter
 
 import "../../../../Toy Models/Urban Growth/models/raster model.gaml"
-experiment "Coupling Experiment" type: gui 
+experiment "Adapter" type: gui 
 {
 	action transform{
 		ask plot{

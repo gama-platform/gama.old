@@ -11,8 +11,8 @@
 */
 model Comodel_SIR_Switch
 
-import "Legacy_models/SIR_EBM_coupling.gaml" as SIR_1
-import "Legacy_models/SIR_ABM_coupling.gaml" as SIR_2
+import "Legacy_models/EBM Adapter.gaml" as SIR_1
+import "Legacy_models/ABM Adapter.gaml" as SIR_2
 
 
 global
@@ -23,10 +23,10 @@ global
 	int threshold_to_Maths <- 20;
 	init
 	{
-		create SIR_1.SIR_EBM_coupling_exp;
-		create SIR_2.SIR_ABM_coupling_exp;
+		create SIR_1."Adapter";
+		create SIR_2."Adapter";
 		create Switch;
-	}
+	} 
 
 }
 
@@ -41,8 +41,8 @@ species Switch
 		if (S > threshold_to_Maths and I > threshold_to_Maths)
 		{
 				unknown call;
-				call <- first(SIR_1.SIR_EBM_coupling_exp).set_num_S_I_R(S, I, R);
-				ask first(SIR_1.SIR_EBM_coupling_exp).simulation
+				call <- first(SIR_1."Adapter").set_num_S_I_R(S, I, R);
+				ask first(SIR_1."Adapter").simulation
 				{
 					loop times: 1
 					{
@@ -51,17 +51,17 @@ species Switch
 
 				}
 
-				S <- first(SIR_1.SIR_EBM_coupling_exp).get_num_S();
-				I <- first(SIR_1.SIR_EBM_coupling_exp).get_num_I();
-				R <- first(SIR_1.SIR_EBM_coupling_exp).get_num_R();
+				S <- first(SIR_1."Adapter").get_num_S();
+				I <- first(SIR_1."Adapter").get_num_I();
+				R <- first(SIR_1."Adapter").get_num_R();
 		}
 		
 		//if the size of S population or  I population are smaller  than a threshold, use the ABM
 		if (I < threshold_to_IBM or S < threshold_to_IBM)
 		{
 				unknown call;
-				call <- first(SIR_2.SIR_ABM_coupling_exp).set_num_S_I_R(S, I, R);
-				ask first(SIR_2.SIR_ABM_coupling_exp).simulation
+				call <- first(SIR_2."Adapter").set_num_S_I_R(S, I, R);
+				ask first(SIR_2."Adapter").simulation
 				{
 					loop times: 10
 					{
@@ -70,9 +70,9 @@ species Switch
 
 				}
 
-				S <- first(SIR_2.SIR_ABM_coupling_exp).get_num_S();
-				I <- first(SIR_2.SIR_ABM_coupling_exp).get_num_I();
-				R <- first(SIR_2.SIR_ABM_coupling_exp).get_num_R();
+				S <- first(SIR_2."Adapter").get_num_S();
+				I <- first(SIR_2."Adapter").get_num_I();
+				R <- first(SIR_2."Adapter").get_num_R();
 		}
 
 	}

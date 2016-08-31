@@ -1,13 +1,13 @@
 /**
-* Name: evacuation_coupling
+* Name: evacuation_adapter
 * Author: HUYNH Quang Nghi
 * Description: It is NOT supposed to launch. This is the coupling of Evacuation model. It is used in the "Flood and Evacuation" as an interface. 
 * Tags: comodel
 */
-model evacuation_coupling
+model evacuation_adapter
 
 import "../../../../Toy Models/Evacuation/models/Continuous Move.gaml"
-experiment "Coupling Experiment" type: gui
+experiment "Adapter" type: gui
 {
 	point centroid <- { 0, 180 };
 	list<building> get_building

@@ -6,8 +6,8 @@
  */
 model flood_evacuation_comodeling
  
-import "The Couplings/Flood Coupling.gaml" as Flooding 
-import "The Couplings/Evacuation Coupling.gaml" as Evacuation
+import "Adapters/Flood Adapter.gaml" as Flooding 
+import "Adapters/Evacuation Adapter.gaml" as Evacuation
 
 
 global
@@ -19,10 +19,10 @@ global
 	init
 	{
 		//create experiment from micro-model myFlood with corresponding parameters
-		create Flooding."Coupling Experiment";
+		create Flooding."Adapter";
 	
 		//create the Evacuation micro-model's experiment
-		create Evacuation."Coupling Experiment" 
+		create Evacuation."Adapter" 
 		{
 			//transform the environment and the agents to new location (near the river)
 			do transform_environment;
@@ -33,23 +33,23 @@ global
 	reflex doing_cosimulation
 	{
 		//do a step of Flooding
-		ask Flooding."Coupling Experiment" collect each.simulation
+		ask Flooding."Adapter" collect each.simulation
 		{
 			do _step_;
 		}
 
 		//people evacate 
-		ask Evacuation."Coupling Experiment" collect each.simulation
+		ask Evacuation."Adapter" collect each.simulation
 		{
 			//depending on the real plan of evacuation, we can test the speed of the evacuation with the speed of flooding by doing more or less simulation step 
 				do _step_;
 		}
 
 		//loop over the population
-		loop thePeople over: first(Evacuation."Coupling Experiment").get_people()
+		loop thePeople over: first(Evacuation."Adapter").get_people()
 		{
 			//get the cell at people's location
-			cell theWater <- cell(first(Flooding."Coupling Experiment").get_cell_at(thePeople));
+			cell theWater <- cell(first(Flooding."Adapter").get_cell_at(thePeople));
 			//if the water levele is high than 8 meters and people is overlapped, tell him that he must dead
 			if (theWater.grid_value > 8.0 and theWater overlaps thePeople)
 			{
@@ -73,14 +73,14 @@ experiment simple type: gui
 	{
 		display "Comodel Display"
 		{
-			agents "building" value: first(Evacuation."Coupling Experiment").get_building();
-			agents "people" value: first(Evacuation."Coupling Experiment").get_people();
+			agents "building" value: first(Evacuation."Adapter").get_building();
+			agents "people" value: first(Evacuation."Adapter").get_people();
 			graphics "exit" {
-				draw "EXIT" at: first(Evacuation."Coupling Experiment").simulation.target_point-110;
-				draw sphere(100) at: first(Evacuation."Coupling Experiment").simulation.target_point color: #green;	
+				draw "EXIT" at: first(Evacuation."Adapter").simulation.target_point-110;
+				draw sphere(100) at: first(Evacuation."Adapter").simulation.target_point color: #green;	
 			}
-			agents "cell" value: first(Flooding."Coupling Experiment").get_cell();
-			agents "dyke" value: first(Flooding."Coupling Experiment").get_dyke();
+			agents "cell" value: first(Flooding."Adapter").get_cell();
+			agents "dyke" value: first(Flooding."Adapter").get_dyke();
 			graphics 'CasualtyView'
 			{
 				draw ('Casualty: ' + casualty) at: { 0, 4000 } font: font("Arial", 18, # bold) color: # red;

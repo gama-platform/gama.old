@@ -8,8 +8,8 @@
  */
 model urbanization_and_traffic_comodeling
 
-import "The Couplings/Traffic Coupling.gaml" as Traffic
-import "The Couplings/Urban Coupling.gaml" as Urbanization
+import "Adapters/Traffic Adapter.gaml" as Traffic
+import "Adapters/Urban Adapter.gaml" as Urbanization
 
 
 global
@@ -18,13 +18,13 @@ global
 	geometry shape <- envelope(shape_file("../../../Toy Models/Traffic/includes/roads.shp"));
 	float step<-#day;
 	float road_develop_speed <- 1.1;
-	//	geometry shape <- envelope(grid_file("../../../Toy Models/Urban Growth/includes/cantho_1999_v6.asc"));
+
 	init
 	{
-	//create Traffic micro-model's experiment
-		create Traffic."Coupling Experiment";
+		//create Traffic micro-model's experiment
+		create Traffic."Adapter";
 		//create Urban micro-model;s experiment
-		create Urbanization."Coupling Experiment"
+		create Urbanization."Adapter"
 		{
 			do transform;
 		}
@@ -34,17 +34,17 @@ global
 	reflex simulate_micro_models
 	{
 		//ask simulation of micro-model step one
-		ask Traffic."Coupling Experiment" collect each.simulation
+		ask Traffic."Adapter" collect each.simulation
 		{
 			do _step_;
 		}
 
 		// tell the urban to evolve and interract with the traffic every 365 step = 1 year
 		if(cycle mod 365 = 0 ){			
-			loop r over: Traffic."Coupling Experiment"[0].simulation.road
+			loop r over: Traffic."Adapter"[0].simulation.road
 			{
 				// compute the cell overlaps the road, which means the size of population
-				list l <- Urbanization."Coupling Experiment"[0].simulation.plot where (each.grid_value = 1.0 and each overlaps r);
+				list l <- Urbanization."Adapter"[0].simulation.plot where (each.grid_value = 1.0 and each overlaps r);
 				if (length(l) > 0)
 				{
 					// adding the population to the variable of the road. It will be recompute the speed in the next step
@@ -59,7 +59,7 @@ global
 			}
 			
 			// tell the urban to grow up 
-			ask Urbanization."Coupling Experiment" collect each.simulation
+			ask Urbanization."Adapter" collect each.simulation
 			{
 				do _step_;
 			}
@@ -78,16 +78,16 @@ experiment main type: gui
 		{
 			graphics "Plotgrid"
 			{
-				loop p over: Urbanization."Coupling Experiment"[0].simulation.plot
+				loop p over: Urbanization."Adapter"[0].simulation.plot
 				{
 					draw square(20) color: p.color at: p.location;
 				}
 
 			}
 
-			agents "building" value: first(Traffic."Coupling Experiment").get_building();
-			agents "people" value: first(Traffic."Coupling Experiment").get_people();
-			agents "road" value: first(Traffic."Coupling Experiment").get_road();
+			agents "building" 	value: Traffic."Adapter"[0].get_building();
+			agents "people" 	value: Traffic."Adapter"[0].get_people();
+			agents "road" 		value: Traffic."Adapter"[0].get_road();
 		}
 
 	}

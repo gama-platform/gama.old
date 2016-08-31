@@ -1,7 +1,7 @@
 model SIR_ABM_coupling
 
 import "SIR_ABM.gaml"
-experiment SIR_ABM_coupling_exp type: gui parent: SIR_ABM_exp
+experiment "Adapter" type: gui parent: SIR_ABM_exp
 {
 	int get_num_S
 	{
