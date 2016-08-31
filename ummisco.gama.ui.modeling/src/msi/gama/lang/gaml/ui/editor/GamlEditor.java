@@ -53,6 +53,7 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -285,7 +286,6 @@ public class GamlEditor extends XtextEditor
 	}
 
 	public GamlTemplateStore getTemplateStore() {
-
 		return (GamlTemplateStore) templateStore;
 	}
 
@@ -298,8 +298,12 @@ public class GamlEditor extends XtextEditor
 	}
 
 	private void buildRightToolbar() {
+		toolbar.wipe(SWT.LEFT, true);
+		final ToolItem t = toolbar.button(IGamaColors.NEUTRAL, "Waiting...", GamaIcons.create("status.clock").image(),
+				null, SWT.LEFT);
+		toolbar.sep(4, SWT.LEFT);
 		toolbar.wipe(SWT.RIGHT, true);
-		new OtherExperimentsButton(this, toolbar, builder);
+		new OtherExperimentsButton(this, toolbar, builder, resourceSetProvider);
 		new ImportedInButton(this, toolbar, indexer);
 		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
 		toggle.addSelectionListener(new SelectionAdapter() {
@@ -337,7 +341,6 @@ public class GamlEditor extends XtextEditor
 	@Override
 	public void createPartControl(final Composite compo) {
 		toolbarParent = GamaToolbarFactory.createToolbars(this, compo);
-
 		buildRightToolbar();
 
 		final GridLayout layout = new GridLayout(1, false);
@@ -358,7 +361,7 @@ public class GamlEditor extends XtextEditor
 		super.createPartControl(editor);
 		final ISourceViewer viewer = getSourceViewer();
 		if (viewer instanceof GamaSourceViewer) {
-			((GamaSourceViewer) viewer).setResourceListener(this);
+			((GamaSourceViewer) viewer).setResourceListener(this, indexer);
 		}
 		toolbarParent.layout();
 		installGestures();
@@ -753,12 +756,8 @@ public class GamlEditor extends XtextEditor
 		}
 	}
 
-	// @Override
-	// public void setFocus() {
-	// getStyledText().setFocus();
-	// }
-	// //
-	// @Override
-	// public void setToogle(final Action toggle) {}
-
+	@Override
+	public void removeVerifyListener(final VerifyListener listener) {
+		super.removeVerifyListener(listener);
+	}
 }

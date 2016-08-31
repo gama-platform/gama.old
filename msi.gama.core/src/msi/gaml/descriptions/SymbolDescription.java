@@ -23,6 +23,7 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.GamaPreferences;
+import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -387,10 +388,10 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public abstract void visitChildren(DescriptionVisitor visitor);
+	public abstract boolean visitChildren(DescriptionVisitor visitor);
 
 	@Override
-	public abstract void visitOwnChildren(DescriptionVisitor visitor);
+	public abstract boolean visitOwnChildren(DescriptionVisitor visitor);
 
 	@Override
 	public IDescription getEnclosingDescription() {
@@ -586,7 +587,7 @@ public abstract class SymbolDescription implements IDescription {
 				sd.visitChildren(new DescriptionVisitor<IDescription>() {
 
 					@Override
-					public void visit(final IDescription child) {
+					public boolean visit(final IDescription child) {
 
 						if (child.getKeyword().equals(getKeyword()) && child != SymbolDescription.this) {
 							final String error = getKeyword() + " is defined twice. Only one definition is allowed in "
@@ -595,7 +596,9 @@ public abstract class SymbolDescription implements IDescription {
 									getKeyword());
 							error(error, IGamlIssue.DUPLICATE_KEYWORD, getUnderlyingElement(null), getKeyword());
 							hasError[0] = true;
+							return false;
 						}
+						return true;
 
 					}
 
@@ -756,11 +759,12 @@ public abstract class SymbolDescription implements IDescription {
 		visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override
-			public void visit(final IDescription desc) {
+			public boolean visit(final IDescription desc) {
 				final ISymbol s = desc.compile();
 				if (s != null) {
 					lce.add(s);
 				}
+				return true;
 			}
 
 		});
@@ -777,10 +781,12 @@ public abstract class SymbolDescription implements IDescription {
 		visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override
-			public void visit(final IDescription desc) {
+			public boolean visit(final IDescription desc) {
 				if (desc.getKeyword().equals(keyword))
 					result.add(desc);
+				return true;
 			}
+
 		});
 
 		return result;
@@ -792,12 +798,12 @@ public abstract class SymbolDescription implements IDescription {
 		visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override
-			public void visit(final IDescription desc) {
-				if (result[0] != null)
-					return;
+			public boolean visit(final IDescription desc) {
 				if (desc.getKeyword().equals(keyword)) {
 					result[0] = desc;
+					return false;
 				}
+				return true;
 			}
 		});
 		return result[0];
@@ -817,11 +823,31 @@ public abstract class SymbolDescription implements IDescription {
 		visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override
-			public void visit(final IDescription desc) {
+			public boolean visit(final IDescription desc) {
 				desc.computeStats(proc, facetNumber, descWithNoFacets, descNumber);
+				return true;
 			}
 		});
 
+	}
+
+	public IGamlDescription getDescriptionWithElement(final EObject e) {
+		final IGamlDescription result[] = new IGamlDescription[1];
+		final DescriptionVisitor visitor = new DescriptionVisitor() {
+
+			@Override
+			public boolean visit(final IDescription desc) {
+				if (desc.getUnderlyingElement(null) == e) {
+					result[0] = desc;
+					return false;
+				}
+
+				desc.visitChildren(this);
+				return true;
+			}
+		};
+		visitor.visit(this);
+		return result[0];
 	}
 
 }

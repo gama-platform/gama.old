@@ -4,8 +4,6 @@
  */
 package msi.gama.lang.gaml.ui.editor;
 
-import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IOverviewRuler;
 import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.swt.widgets.Composite;
@@ -14,7 +12,7 @@ import org.eclipse.xtext.ui.editor.XtextSourceViewer;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
-import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
 
 /**
@@ -26,7 +24,9 @@ import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
  */
 public class GamaSourceViewer extends XtextSourceViewer {
 
-	private IGamlBuilderListener2 listener;
+	IModelIndexer indexer;
+
+	private IGamlBuilderListener2 resourceListener;
 
 	/**
 	 * @param parent
@@ -42,31 +42,22 @@ public class GamaSourceViewer extends XtextSourceViewer {
 
 	@Override
 	protected void handleDispose() {
-		((IXtextDocument) getDocument()).readOnly(new IUnitOfWork.Void<XtextResource>() {
-
-			@Override
-			public void process(final XtextResource state) throws Exception {
-				if (state != null) {
-					((GamlResource) state).removeListener();
-				}
-			}
-		});
+		if (indexer != null)
+			indexer.removeResourceListener(resourceListener);
 		super.handleDispose();
 	}
-
-
 
 	/**
 	 * @param gamlEditor
 	 */
-	public void setResourceListener(final IGamlBuilderListener2 listener) {
-		this.listener = listener;
+	public void setResourceListener(final IGamlBuilderListener2 listener, final IModelIndexer indexer) {
+		this.resourceListener = listener;
+		this.indexer = indexer;
 		((IXtextDocument) getDocument()).readOnly(new IUnitOfWork.Void<XtextResource>() {
 
 			@Override
 			public void process(final XtextResource state) throws Exception {
-				if (state != null)
-					((GamlResource) state).setListener(listener);
+				indexer.addResourceListener(state.getURI(), listener);
 			}
 		});
 	}

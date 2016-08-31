@@ -12,10 +12,10 @@
 // (c) Vincent Simonet, 2011
 package msi.gama.lang.gaml.scoping;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,9 @@ import org.eclipse.xtext.scoping.impl.ImportUriGlobalScopeProvider;
 import org.eclipse.xtext.scoping.impl.SelectableBasedScope;
 
 import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import gnu.trove.map.hash.THashMap;
@@ -45,6 +47,7 @@ import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.EGaml;
 import msi.gama.runtime.GAMA;
@@ -85,6 +88,9 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 	private static EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
 
 	static XtextResourceSet rs = new XtextResourceSet();
+
+	@Inject
+	IModelIndexer indexer;
 
 	public static class ImmutableMap implements Map<String, String> {
 
@@ -268,7 +274,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		if (r == null) {
 			r = rs.createResource(URI.createURI(uri, false));
 		}
-		DescriptionFactory.documentResource(r);
+		// DescriptionFactory.documentResource(r);
 		return r;
 	}
 
@@ -481,15 +487,18 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
 	}
 
-	public LinkedHashMap<URI, String> getAllImportedURIs(final Resource resource, final ResourceSet set) {
-		return ((GamlResource) resource).computeAllImportedURIs(set);
+	public Map<URI, String> getAllImportedURIs(final Resource resource, final ResourceSet set) {
+		return indexer.allLabeledImportsOf((GamlResource) resource);
+		// return ((GamlResource) resource).computeAllImportedURIs(set);
 	}
 
 	@Override
 	protected LinkedHashSet<URI> getImportedUris(final Resource resource) {
 		final LinkedHashSet<URI> result = new LinkedHashSet(
-				getAllImportedURIs(resource, resource.getResourceSet()).keySet());
-		result.remove(resource.getURI());
+				Arrays.asList(Iterators.toArray(indexer.allImportsOf(resource.getURI()), URI.class)));
+		// final LinkedHashSet<URI> result = new LinkedHashSet(
+		// getAllImportedURIs(resource, resource.getResourceSet()).keySet());
+		// result.remove(indexer.properlyEncodedURI(resource.getURI()));
 		return result;
 	}
 

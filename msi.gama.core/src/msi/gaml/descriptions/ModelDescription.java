@@ -356,17 +356,21 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public void visitChildren(final DescriptionVisitor visitor) {
-		super.visitChildren(visitor);
-		if (experiments != null)
-			experiments.forEachValue(visitor);
+	public boolean visitChildren(final DescriptionVisitor visitor) {
+		boolean result = super.visitChildren(visitor);
+		if (result && experiments != null)
+			result &= experiments.forEachValue(visitor);
+		return result;
 	}
 
 	@Override
-	public void visitOwnChildren(final DescriptionVisitor visitor) {
-		super.visitOwnChildren(visitor);
+	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+		boolean result = super.visitOwnChildren(visitor);
+		if (!result)
+			return false;
 		if (experiments != null)
-			experiments.forEachValue(visitor);
+			result &= experiments.forEachValue(visitor);
+		return result;
 	}
 
 	@Override
@@ -445,9 +449,10 @@ public class ModelDescription extends SpeciesDescription {
 		visitMicroSpecies(new DescriptionVisitor<SpeciesDescription>() {
 
 			@Override
-			public void visit(final SpeciesDescription desc) {
+			public boolean visit(final SpeciesDescription desc) {
 				visitor.visit(desc);
 				desc.visitMicroSpecies(this);
+				return true;
 			}
 		});
 		if (experiments != null) {
@@ -463,8 +468,9 @@ public class ModelDescription extends SpeciesDescription {
 		final DescriptionVisitor visitor = new DescriptionVisitor<SpeciesDescription>() {
 
 			@Override
-			public void visit(final SpeciesDescription desc) {
+			public boolean visit(final SpeciesDescription desc) {
 				accumulator.add(desc);
+				return true;
 			}
 		};
 		visitAllSpecies(visitor);

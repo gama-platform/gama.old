@@ -29,16 +29,7 @@ import msi.gaml.types.Types;
 
 public class ConstantExpressionDescription extends ConstantExpression implements IExpressionDescription {
 
-	final static Cache<Object, IExpressionDescription> CACHE = CacheBuilder.newBuilder()
-			/*
-			 * .removalListener(new RemovalListener<Object,
-			 * IExpressionDescription>() {
-			 * 
-			 * @Override public void onRemoval(final RemovalNotification<Object,
-			 * IExpressionDescription> notification) { System.out.println(
-			 * "Removed from cache : " + notification.getKey() + " because " +
-			 * notification.getCause().toString()); } })
-			 */.maximumSize(1000).build();
+	final static Cache<Object, IExpressionDescription> CACHE = CacheBuilder.newBuilder().maximumSize(1000).build();
 	public final static ConstantExpressionDescription NULL_EXPR_DESCRIPTION = new ConstantExpressionDescription(null);
 	public final static ConstantExpressionDescription TRUE_EXPR_DESCRIPTION = new ConstantExpressionDescription(true);
 	public final static ConstantExpressionDescription FALSE_EXPR_DESCRIPTION = new ConstantExpressionDescription(false);

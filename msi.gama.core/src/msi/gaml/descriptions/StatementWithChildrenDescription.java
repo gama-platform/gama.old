@@ -37,21 +37,25 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	// }
 
 	@Override
-	public void visitChildren(final DescriptionVisitor visitor) {
+	public boolean visitChildren(final DescriptionVisitor visitor) {
 		if (children == null)
-			return;
+			return true;
 		for (final IDescription d : children) {
-			visitor.visit(d);
+			if (!visitor.visit(d))
+				return false;
 		}
+		return true;
 	}
 
 	@Override
-	public void visitOwnChildren(final DescriptionVisitor visitor) {
+	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
 		if (children == null)
-			return;
+			return true;
 		for (final IDescription d : children) {
-			visitor.visit(d);
+			if (!visitor.visit(d))
+				return false;
 		}
+		return true;
 	}
 
 	@Override
@@ -156,9 +160,9 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override
-			public void visit(final IDescription desc) {
+			public boolean visit(final IDescription desc) {
 				children.add(desc.copy(into));
-
+				return true;
 			}
 		});
 

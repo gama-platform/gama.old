@@ -52,8 +52,9 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 	}
 
 	@Override
-	public void visit(final SpeciesDescription species) {
+	public boolean visit(final SpeciesDescription species) {
 		addSpeciesType(species);
+		return true;
 	}
 
 	/*
@@ -117,34 +118,17 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 		model.visitAllSpecies(new DescriptionVisitor<SpeciesDescription>() {
 
 			@Override
-			public void visit(final SpeciesDescription entry) {
-
+			public boolean visit(final SpeciesDescription entry) {
 				final IType type = get(entry.getName());
 				if (!type.isParented() && !type.getName().equals(IKeyword.AGENT)) {
 					final TypeDescription parent = entry.getParent();
 					// Takes care of invalid species (see Issue 711)
 					type.setParent(parent == null || parent == entry ? get(IKeyword.AGENT) : get(parent.getName()));
 				}
+				return true;
 			}
 		});
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gaml.types.ITypesManager#getSpecies(java.lang.String)
-	 */
-	// @Override
-	// public TypeDescription getSpecies(final String name) {
-	// if (name == null) {
-	// return null;
-	// }
-	// TypeDescription td = modelSpecies.get(name);
-	// if (td == null) {
-	// td = parent == null ? null : parent.getSpecies(name);
-	// }
-	// return td;
-	// }
 
 	/*
 	 * (non-Javadoc)

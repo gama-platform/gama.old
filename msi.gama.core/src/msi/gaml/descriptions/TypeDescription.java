@@ -539,22 +539,33 @@ public abstract class TypeDescription extends SymbolDescription {
 	// }
 
 	@Override
-	public void visitChildren(final DescriptionVisitor visitor) {
+	public boolean visitChildren(final DescriptionVisitor visitor) {
+		boolean result = true;
 		for (final IDescription d : getAttributes()) {
-			visitor.visit(d);
+			result &= visitor.visit(d);
+			if (!result)
+				return false;
 		}
 		for (final IDescription d : getActions()) {
-			visitor.visit(d);
+			result &= visitor.visit(d);
+			if (!result)
+				return false;
 		}
+		return true;
 	}
 
 	@Override
-	public void visitOwnChildren(final DescriptionVisitor visitor) {
-		if (attributes != null)
-			attributes.forEachValue(visitor);
-		if (actions != null) {
-			actions.forEachValue(visitor);
+	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+		boolean result = true;
+		if (attributes != null) {
+			result &= attributes.forEachValue(visitor);
 		}
+		if (!result)
+			return false;
+		if (actions != null) {
+			result &= actions.forEachValue(visitor);
+		}
+		return result;
 	}
 
 }

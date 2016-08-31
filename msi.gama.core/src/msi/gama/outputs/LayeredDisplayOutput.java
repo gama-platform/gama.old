@@ -193,10 +193,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				d.visitChildren(new DescriptionVisitor<IDescription>() {
 
 					@Override
-					public void visit(final IDescription layer) {
+					public boolean visit(final IDescription layer) {
 						if (!layer.hasFacet(TRACE)) {
 							layer.setFacet(TRACE, trace);
 						}
+						return true;
 					}
 				});
 

@@ -328,8 +328,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		desc.visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override
-			public void visit(final IDescription desc) {
+			public boolean visit(final IDescription desc) {
 				serializeChild(desc, childBuilder, includingBuiltIn);
+				return true;
 			}
 		});
 		if (childBuilder.length() == 0) {
@@ -466,9 +467,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		desc.visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override
-			public void visit(final IDescription s) {
+			public boolean visit(final IDescription s) {
 				s.collectMetaInformation(plugins);
-
+				return true;
 			}
 		});
 

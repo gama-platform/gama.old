@@ -32,10 +32,11 @@ import org.eclipse.xtext.service.SingletonBinding;
 
 import com.google.inject.Binder;
 
+import msi.gama.lang.gaml.documentation.GamlResourceDocManager;
 import msi.gama.lang.gaml.generator.GamlGenerator;
 import msi.gama.lang.gaml.generator.GamlOutputConfigurationProvider;
+import msi.gama.lang.gaml.indexer.BaseIndexer;
 import msi.gama.lang.gaml.indexer.IModelIndexer;
-import msi.gama.lang.gaml.indexer.MinimalIndexer;
 import msi.gama.lang.gaml.linking.GamlLinkingErrorMessageProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingService;
 import msi.gama.lang.gaml.linking.GamlNameConverter;
@@ -45,7 +46,6 @@ import msi.gama.lang.gaml.resource.GamlModelBuilder;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionManager;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionStrategy;
-import msi.gama.lang.gaml.resource.GamlResourceDocManager;
 import msi.gama.lang.gaml.scoping.GamlQualifiedNameProvider;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.lang.utils.GamlEncodingProvider;
@@ -54,6 +54,7 @@ import msi.gaml.compilation.IModelBuilder;
 import msi.gaml.expressions.GamlExpressionFactory;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.factories.DescriptionFactory.IDocManager;
 import msi.gaml.factories.ModelFactory;
 
 /**
@@ -81,7 +82,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 					return GamlModelBuilder.INSTANCE;
 				}
 			});
-			DescriptionFactory.registerDocManager(GamlResourceDocManager.getInstance());
+			DescriptionFactory.registerDocManager(GamlResourceDocManager.INSTANCE);
 			initialized = true;
 		}
 
@@ -94,10 +95,11 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
-		binder.bind(IModelIndexer.class).to(MinimalIndexer.class);
+		binder.bind(IModelIndexer.class).to(BaseIndexer.class);
 		binder.bind(IModelBuilder.class).toInstance(GamlModelBuilder.INSTANCE);
 		binder.bind(IGenerator.class).to(GamlGenerator.class);
 		binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
+		binder.bind(IDocManager.class).toInstance(GamlResourceDocManager.INSTANCE);
 	}
 
 	@Override

@@ -128,27 +128,41 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public void visitOwnChildren(final DescriptionVisitor visitor) {
-		super.visitOwnChildren(visitor);
+	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+		boolean result = super.visitOwnChildren(visitor);
+		if (!result)
+			return false;
 		if (parameters != null) {
-			parameters.forEachValue(visitor);
+			result &= parameters.forEachValue(visitor);
 		}
+		if (!result)
+			return false;
 		if (output != null)
-			visitor.visit(output);
+			result &= visitor.visit(output);
+		if (!result)
+			return false;
 		if (permanent != null)
-			visitor.visit(permanent);
+			result &= visitor.visit(permanent);
+		return result;
 	}
 
 	@Override
-	public void visitChildren(final DescriptionVisitor visitor) {
-		super.visitChildren(visitor);
+	public boolean visitChildren(final DescriptionVisitor visitor) {
+		boolean result = super.visitChildren(visitor);
+		if (!result)
+			return false;
 		if (parameters != null) {
-			parameters.forEachValue(visitor);
+			result &= parameters.forEachValue(visitor);
 		}
+		if (!result)
+			return false;
 		if (output != null)
-			visitor.visit(output);
+			result &= visitor.visit(output);
+		if (!result)
+			return false;
 		if (permanent != null)
-			visitor.visit(permanent);
+			result &= visitor.visit(permanent);
+		return result;
 	}
 
 	/**
@@ -195,12 +209,12 @@ public class ExperimentDescription extends SpeciesDescription {
 		container.visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override
-			public void visit(final IDescription d) {
-				if (found[0] != null)
-					return;
+			public boolean visit(final IDescription d) {
 				if (d != null && d.getKeyword().equals(desc.getKeyword()) && d.getName().equals(desc.getName())) {
 					found[0] = d;
+					return false;
 				}
+				return true;
 			}
 		});
 		return found[0];
@@ -211,7 +225,7 @@ public class ExperimentDescription extends SpeciesDescription {
 		inherited.visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override
-			public void visit(final IDescription in) {
+			public boolean visit(final IDescription in) {
 				final IDescription redefined = getSimilarChild(defined, in);
 				if (redefined == null) {
 					defined.addChild(in.copy(defined));
@@ -219,6 +233,7 @@ public class ExperimentDescription extends SpeciesDescription {
 					redefined.info("This definition of " + redefined.getName() + " supersedes the one in "
 							+ in.getSpeciesContext().getName(), IGamlIssue.REDEFINES, NAME);
 				}
+				return true;
 			}
 		});
 

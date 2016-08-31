@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
@@ -98,16 +99,26 @@ public class GamlModelBuilder implements IModelBuilder {
 	 */
 	@Override
 	public IModel compile(final Resource resource, final List<GamlCompilationError> errors) {
-		return ((GamlResource) resource).build(resource.getResourceSet(), errors);
+		return ((GamlResource) resource).build(errors);
 	}
 
 	@Override
 	public ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {
 		try {
 			final GamlResource r = (GamlResource) buildResourceSet.createResource(uri);
-			return r.buildDescription(r.getResourceSet(), errors);
+			return r.buildDescription(errors);
 		} finally {
-			buildResourceSet.getResources().clear();
+			clearResourceSet(buildResourceSet);
+		}
+	}
+
+	protected void clearResourceSet(final ResourceSet resourceSet) {
+		final boolean wasDeliver = resourceSet.eDeliver();
+		try {
+			resourceSet.eSetDeliver(false);
+			resourceSet.getResources().clear();
+		} finally {
+			resourceSet.eSetDeliver(wasDeliver);
 		}
 	}
 
@@ -159,7 +170,7 @@ public class GamlModelBuilder implements IModelBuilder {
 			e1.printStackTrace();
 			return null;
 		} finally {
-			infoResourceSet.getResources().clear();
+			clearResourceSet(infoResourceSet);
 		}
 	}
 

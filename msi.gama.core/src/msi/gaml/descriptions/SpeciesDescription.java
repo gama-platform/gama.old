@@ -649,13 +649,13 @@ public class SpeciesDescription extends TypeDescription {
 		visitMicroSpecies(new DescriptionVisitor<SpeciesDescription>() {
 
 			@Override
-			public void visit(final SpeciesDescription desc) {
-				if (result[0])
-					return;
-				if (desc == parent)
+			public boolean visit(final SpeciesDescription desc) {
+				if (desc == parent) {
 					result[0] = true;
-				else
+					return false;
+				} else
 					desc.visitMicroSpecies(this);
+				return true;
 			}
 		});
 		return result[0];
@@ -708,7 +708,7 @@ public class SpeciesDescription extends TypeDescription {
 		final DescriptionVisitor<SpeciesDescription> visitor = new DescriptionVisitor<SpeciesDescription>() {
 
 			@Override
-			public void visit(final SpeciesDescription microSpec) {
+			public boolean visit(final SpeciesDescription microSpec) {
 				microSpec.finalizeDescription();
 				if (!microSpec.isExperiment() && !isBuiltIn) {
 					final VariableDescription var = (VariableDescription) DescriptionFactory.create(CONTAINER,
@@ -755,7 +755,7 @@ public class SpeciesDescription extends TypeDescription {
 					var.addHelpers(get, init, set);
 					addChild(var);
 				}
-
+				return true;
 			}
 		};
 
@@ -882,29 +882,45 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	public void visitOwnChildren(final DescriptionVisitor visitor) {
-		super.visitOwnChildren(visitor);
+	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+		boolean result = super.visitOwnChildren(visitor);
+		if (!result)
+			return false;
 		if (microSpecies != null) {
-			microSpecies.forEachValue(visitor);
+			result &= microSpecies.forEachValue(visitor);
 		}
+		if (!result)
+			return false;
 		if (behaviors != null)
-			behaviors.forEachValue(visitor);
+			result &= behaviors.forEachValue(visitor);
+		if (!result)
+			return false;
 		if (aspects != null)
-			aspects.forEachValue(visitor);
+			result &= aspects.forEachValue(visitor);
+		return result;
 	}
 
 	@Override
-	public void visitChildren(final DescriptionVisitor visitor) {
-		super.visitChildren(visitor);
+	public boolean visitChildren(final DescriptionVisitor visitor) {
+		boolean result = super.visitChildren(visitor);
+		if (!result)
+			return false;
 		if (hasMicroSpecies()) {
-			microSpecies.forEachValue(visitor);
+			result &= microSpecies.forEachValue(visitor);
 		}
+		if (!result)
+			return false;
 		for (final IDescription d : getBehaviors()) {
-			visitor.visit(d);
+			result &= visitor.visit(d);
+			if (!result)
+				return false;
 		}
 		for (final IDescription d : getAspects()) {
-			visitor.visit(d);
+			result &= visitor.visit(d);
+			if (!result)
+				return false;
 		}
+		return result;
 	}
 
 	/**

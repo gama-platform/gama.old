@@ -39,6 +39,12 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 	@Check()
 	public void validate(final Model model) {
+		while (!indexer.isReady()) {
+			try {
+				Thread.sleep(100);
+			} catch (final InterruptedException e) {
+			}
+		}
 		final GamlResource newResource = (GamlResource) model.eResource();
 		if (newResource == null)
 			return;
@@ -47,9 +53,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 
 		final ErrorCollector errors = validate(newResource);
-		if (indexer != null) {
-			indexer.updateImports(newResource);
-		}
+
 		if (!errors.hasInternalSyntaxErrors()) {
 			for (final GamlCompilationError error : errors) {
 				manageCompilationIssue(error, errors);
@@ -59,7 +63,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 	public ErrorCollector validate(final Resource resource) {
 		final GamlResource r = (GamlResource) resource;
-		r.validate(resource.getResourceSet());
+		r.validate();
 		return r.getErrorCollector();
 	}
 
@@ -92,7 +96,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			final EObject eObject = findImportWith(m, s);
 			final EAttribute feature = eObject instanceof Model ? GamlPackage.Literals.GAML_DEFINITION__NAME
 					: GamlPackage.Literals.IMPORT__IMPORT_URI;
-			acceptError(e.toString() + "(in " + s + ")", eObject, feature,
+			acceptError(e.toString() + " (in " + s + ")", eObject, feature,
 					ValidationMessageAcceptor.INSIGNIFICANT_INDEX, e.getCode(), e.getData());
 			return;
 		}

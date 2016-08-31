@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.xtext.resource.XtextResource;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import msi.gama.kernel.model.IModel;
@@ -56,8 +57,10 @@ public class OtherExperimentsButton {
 	GamaToolbar2 parent;
 	ToolItem menu;
 	IModelBuilder builder;
+	IResourceSetProvider provider;
 
-	public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar2 toolbar, final IModelBuilder builder) {
+	public OtherExperimentsButton(final GamlEditor editor, final GamaToolbar2 toolbar, final IModelBuilder builder,
+			final IResourceSetProvider provider) {
 		this.builder = builder;
 		this.editor = editor;
 		this.parent = toolbar;
@@ -132,7 +135,7 @@ public class OtherExperimentsButton {
 		}
 		for (final URI uri : map.keySet()) {
 			final MenuItem modelItem = new MenuItem(parentMenu, SWT.CASCADE);
-			modelItem.setText("Model " + URI.decode(uri.lastSegment()));
+			modelItem.setText(URI.decode(uri.lastSegment()));
 			modelItem.setImage(IGamaIcons.FILE_ICON.image());
 			final Menu expMenu = new Menu(modelItem);
 			modelItem.setMenu(expMenu);

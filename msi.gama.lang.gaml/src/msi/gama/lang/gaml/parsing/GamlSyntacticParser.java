@@ -11,15 +11,11 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.parsing;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 
 import org.antlr.runtime.CharStream;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.nodemodel.impl.NodeModelBuilder;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.parser.ParseResult;
@@ -36,30 +32,30 @@ public class GamlSyntacticParser extends GamlParser {
 	// and the syntactic elements needed by GAML
 	public static class GamlParseResult extends ParseResult {
 
-		final SyntacticModelElement element;
-		Set<Diagnostic> errors;
+		SyntacticModelElement element;
+		// Set<Diagnostic> errors ;
 
 		public GamlParseResult(final IParseResult result) {
 			super(result.getRootASTElement(), result.getRootNode(), result.hasSyntaxErrors());
-			if (!result.hasSyntaxErrors()) {
-				errors = new HashSet();
-				element = GamlCompatibilityConverter.buildSyntacticContents(getRootASTElement(), errors);
-				if (errors.isEmpty())
-					errors = null;
-			} else {
-				element = null;
-			}
 		}
 
 		public SyntacticModelElement getSyntacticContents() {
+			if (element != null)
+				return element;
+			if (!hasSyntaxErrors()) {
+				// errors = new HashSet();
+				element = GamlCompatibilityConverter.buildSyntacticContents(getRootASTElement(), null);
+				// if (errors.isEmpty())
+				// errors = null;
+			}
 			return element;
 		}
 
-		public Collection<? extends Diagnostic> getWarnings() {
-			if (errors == null)
-				return Collections.EMPTY_LIST;
-			return errors;
-		}
+		// public Collection<? extends Diagnostic> getWarnings() {
+		// if (errors == null)
+		// return Collections.EMPTY_LIST;
+		// return errors;
+		// }
 
 		/**
 		 * @param uri
@@ -95,9 +91,9 @@ public class GamlSyntacticParser extends GamlParser {
 			element.setAbsoluteAlternatePaths(newSet);
 		}
 
-		public boolean hasWarnings() {
-			return errors != null;
-		}
+		// public boolean hasWarnings() {
+		// return errors != null;
+		// }
 
 	}
 

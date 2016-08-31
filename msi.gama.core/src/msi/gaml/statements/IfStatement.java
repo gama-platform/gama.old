@@ -83,12 +83,13 @@ public class IfStatement extends AbstractStatementSequence {
 			desc.visitChildren(new DescriptionVisitor<IDescription>() {
 
 				@Override
-				public void visit(final IDescription s) {
+				public boolean visit(final IDescription s) {
 					if (s.getKeyword().equals(IKeyword.ELSE)) {
 						elseString[0] = s.serialize(false) + Strings.LN;
 					} else {
 						serializeChild(s, sb, includingBuiltIn);
 					}
+					return true;
 				}
 			});
 

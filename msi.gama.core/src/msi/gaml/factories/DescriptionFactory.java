@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 
 import com.google.common.collect.Iterables;
 
@@ -65,9 +64,9 @@ public class DescriptionFactory {
 		return docManager.getGamlDocumentation(o);
 	}
 
-	public static void documentResource(final Resource builtInResource) {
-		docManager.document(builtInResource, true);
-	}
+	// public static void documentResource(final Resource builtInResource) {
+	// docManager.document(builtInResource, true);
+	// }
 
 	// Internal interface instantiated by XText
 	public interface IDocManager {
@@ -82,7 +81,7 @@ public class DescriptionFactory {
 
 		public void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace);
 
-		public void document(Resource gamlResource, boolean accept);
+		// public void document(Resource gamlResource, boolean accept);
 	}
 
 	static TIntObjectHashMap<SymbolFactory> FACTORIES = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);

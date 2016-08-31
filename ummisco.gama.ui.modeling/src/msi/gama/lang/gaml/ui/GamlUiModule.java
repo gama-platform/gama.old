@@ -41,6 +41,7 @@ import org.eclipse.xtext.ui.editor.folding.IFoldingRegionProvider;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.model.IResourceForEditorInputFactory;
 import org.eclipse.xtext.ui.editor.model.ResourceForIEditorInputFactory;
+import org.eclipse.xtext.ui.editor.model.XtextDocumentProvider;
 import org.eclipse.xtext.ui.editor.outline.actions.IOutlineContribution;
 import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
@@ -56,6 +57,7 @@ import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.ui.contentassist.GamlTemplateProposalProvider;
 import msi.gama.lang.gaml.ui.editor.GamaAutoEditStrategyProvider;
 import msi.gama.lang.gaml.ui.editor.GamaSourceViewerFactory;
+import msi.gama.lang.gaml.ui.editor.GamlDocumentProvider;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.lang.gaml.ui.editor.GamlEditor.GamaSourceViewerConfiguration;
 import msi.gama.lang.gaml.ui.editor.GamlEditorCallback;
@@ -96,7 +98,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IResourceClusteringPolicy.class).to(DynamicResourceClusteringPolicy.class);
 		binder.bind(IModelIndexer.class).toInstance(WorkspaceIndexer.INSTANCE);
 		binder.bind(IModelRunner.class).to(ModelRunner.class);
-		binder.bind(SyntaxErrorsView.class);
+		binder.bind(XtextDocumentProvider.class).to(GamlDocumentProvider.class);
 		// binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
 		// binder.bind(IncrementalProjectBuilder.class).to(GamlBuilder.class);
 

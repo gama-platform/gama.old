@@ -136,8 +136,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IDescription currentContext;
 	private ITypesManager currentTypesManager;
 	private final XtextResourceSet resourceSet = new XtextResourceSet();
-	private final GamlResource resource = (GamlResource) resourceSet
-			.createResource(URI.createURI(SYNTHETIC_RESOURCES_PREFIX + resourceCount++ + ".gaml", false));
+	private final GamlResourceProxy resource = new GamlResourceProxy(
+			(GamlResource) resourceSet
+					.createResource(URI.createURI(SYNTHETIC_RESOURCES_PREFIX + resourceCount++ + ".gaml", false)),
+			true);
 	private static volatile int resourceCount = 0;
 	private final static Map<String, IExpression> cache = new THashMap();
 
@@ -1168,14 +1170,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	private GamlResource getFreshResource() {
-		if (resource.isLoaded()) {
-			resource.unload();
+		if (resource.getRealResource().isLoaded()) {
+			resource.getRealResource().unload();
 		}
 		if (getContext() != null && !getContext().isBuiltIn()) {
 			final GamlResource real = (GamlResource) getContext().getUnderlyingElement(null).eResource();
-			resource.setRealResource(real);
+			resource.setRealResource(real, false);
 		}
-		return resource;
+		return resource.getRealResource();
 	}
 
 	private EObject getEObjectOf(final String string) throws GamaRuntimeException {
@@ -1194,17 +1196,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			final EObject e = resource.getContents().get(0);
 			if (e instanceof StringEvaluator) {
 				result = ((StringEvaluator) e).getExpr();
-				// System.out.println(" -> Additional compilation of " + string
-				// + " as " + result);
 			}
 		} else {
 			final Resource.Diagnostic d = resource.getErrors().get(0);
 			throw GamaRuntimeException.error(d.getMessage());
 		}
 
-		// if ( result instanceof TerminalExpression ) {
-
-		// }
 		return result;
 	}
 
@@ -1290,9 +1287,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		this.currentTypesManager = null;
 		this.currentExpressionDescription = null;
 		this.iteratorContexts.clear();
-		this.resource.setRealResource(null);
 		try {
-			this.resource.delete(null);
+			resource.dispose();
 		} catch (final IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

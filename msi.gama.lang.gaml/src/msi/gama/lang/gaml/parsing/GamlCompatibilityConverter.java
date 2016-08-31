@@ -129,9 +129,6 @@ public class GamlCompatibilityConverter {
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
 			ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
-	// private static final Set<String> EXTS =
-	// GamaFileType.extensionsToFullType.keySet();
-
 	public static SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
 		if (root instanceof Block) {
 			final SyntacticModelElement elt = (SyntacticModelElement) SyntacticFactory.create("model", root, true);
@@ -197,7 +194,8 @@ public class GamlCompatibilityConverter {
 			return;
 		}
 		final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "", message, object, null, 0, null);
-		errors.add(d);
+		if (errors != null)
+			errors.add(d);
 	}
 
 	private static void addInfo(final String message, final EObject object, final Set<Diagnostic> errors) {
@@ -205,7 +203,8 @@ public class GamlCompatibilityConverter {
 			return;
 		}
 		final Diagnostic d = new EObjectDiagnosticImpl(Severity.INFO, "", message, object, null, 0, null);
-		errors.add(d);
+		if (errors != null)
+			errors.add(d);
 	}
 
 	private static final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm,
@@ -301,7 +300,8 @@ public class GamlCompatibilityConverter {
 			// We do it also for experiments, and change their name
 			final IExpressionDescription type = elt.getExpressionAt(TYPE);
 			if (type == null) {
-				addInfo("Facet 'type' is missing, set by default to 'gui'", stm, errors);
+				// addInfo("Facet 'type' is missing, set by default to 'gui'",
+				// stm, errors);
 				elt.setFacet(TYPE, ConstantExpressionDescription.create(GUI_));
 			}
 			// We modify the names of experiments so as not to confuse them with
@@ -349,13 +349,11 @@ public class GamlCompatibilityConverter {
 
 	private static void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
 			final Set<Diagnostic> errors) {
-		if (e.hasFacet(key)) {
-			// if ( key.equals(TYPE) ) {
-			// scope.getGui().debug("GamlCompatibilityConverter.addFacet:");
-			// }
-			addWarning("Double definition of facet " + key + ". Only the last one will be considered", e.getElement(),
-					errors);
-		}
+		// if (e.hasFacet(key)) {
+		// addWarning("Double definition of facet " + key + ". Only the last one
+		// will be considered", e.getElement(),
+		// errors);
+		// }
 		e.setFacet(key, expr);
 	}
 

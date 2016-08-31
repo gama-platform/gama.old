@@ -373,13 +373,12 @@ public class StatementDescription extends SymbolDescription {
 		visitChildren(new DescriptionVisitor() {
 
 			@Override
-			public void visit(final IDescription desc) {
-				if (!(desc instanceof StatementDescription))
-					return;
+			public boolean visit(final IDescription desc) {
 				if (desc.getKeyword().equals(keyword)) {
 					returns.add((StatementDescription) desc);
 				}
 				((StatementDescription) desc).visitChildren(this);
+				return true;
 			}
 		});
 
@@ -686,13 +685,13 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public void visitChildren(final DescriptionVisitor visitor) {
-
+	public boolean visitChildren(final DescriptionVisitor visitor) {
+		return true;
 	}
 
 	@Override
-	public void visitOwnChildren(final DescriptionVisitor visitor) {
-
+	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+		return true;
 	}
 
 }

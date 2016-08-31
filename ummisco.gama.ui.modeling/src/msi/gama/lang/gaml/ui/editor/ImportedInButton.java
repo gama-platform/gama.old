@@ -96,7 +96,7 @@ public class ImportedInButton {
 		}
 		for (final URI uri : importers) {
 			final MenuItem modelItem = new MenuItem(parentMenu, SWT.CASCADE);
-			modelItem.setText("Model " + URI.decode(uri.lastSegment()));
+			modelItem.setText(URI.decode(uri.lastSegment()));
 			modelItem.setImage(IGamaIcons.FILE_ICON.image());
 			modelItem.setData("uri", uri);
 			modelItem.addSelectionListener(adapter);
@@ -110,18 +110,9 @@ public class ImportedInButton {
 
 			@Override
 			public void process(final XtextResource resource) throws Exception {
-				// System.out.println("Base URI " +
-				// resource.getURI().toString());
 				final String platformString = resource.getURI().toPlatformString(true);
 				final URI uri = URI.createPlatformResourceURI(platformString, false);
-				// System.out.println("Platform URI " + uri.toString());
-				// for (final URI u :
-				// GamlJavaValidator.IMPORTS_GRAPH.vertexSet()) {
-				// if (u.toString().contains("Common")) {
-				// System.out.println("Present in graph " + u.toString());
-				// }
-				// }
-				if (indexer.indexes(uri))
+				if (indexer.isImported(uri))
 					map.addAll(indexer.directImportersOf(uri));
 			}
 		});

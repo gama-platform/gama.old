@@ -38,19 +38,20 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 		@Override
 		public boolean execute(final T desc) {
-			visit(desc);
-			return true;
+			return visit(desc);
 		}
 
-		public abstract void visit(T desc);
+		public abstract boolean visit(T desc);
 
 	}
 
 	public static final DescriptionVisitor VALIDATING_VISITOR = new DescriptionVisitor<IDescription>() {
 
 		@Override
-		public void visit(final IDescription desc) {
-			desc.validate();
+		public boolean visit(final IDescription desc) {
+			if (desc.validate() == null) // TODO Verify this.
+				return false;
+			return true;
 
 		}
 	};
@@ -191,9 +192,9 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 */
 	public boolean visitFacets(FacetVisitor visitor);
 
-	public void visitChildren(DescriptionVisitor visitor);
+	public boolean visitChildren(DescriptionVisitor visitor);
 
-	public void visitOwnChildren(DescriptionVisitor visitor);
+	public boolean visitOwnChildren(DescriptionVisitor visitor);
 
 	public IType getTypeDenotedByFacet(String s);
 

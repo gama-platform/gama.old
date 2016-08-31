@@ -37,7 +37,8 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		} catch (final NumberFormatException e) {
 			final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "",
 					"Impossible to parse this int value, automatically set to 0", object, null, 0, null);
-			currentErrors.add(d);
+			if (currentErrors != null)
+				currentErrors.add(d);
 			ed = ConstantExpressionDescription.create(0);
 		}
 		DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
@@ -52,7 +53,8 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		} catch (final NumberFormatException e) {
 			final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "",
 					"Impossible to parse this float value, automatically set to 0.0", object, null, 0, null);
-			currentErrors.add(d);
+			if (currentErrors != null)
+				currentErrors.add(d);
 			ed = ConstantExpressionDescription.create(0d);
 		}
 		DescriptionFactory.setGamlDocumentation(object, ed.getExpression());

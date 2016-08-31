@@ -378,13 +378,13 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	@Override
-	public void visitChildren(final DescriptionVisitor visitor) {
-
+	public boolean visitChildren(final DescriptionVisitor visitor) {
+		return true;
 	}
 
 	@Override
-	public void visitOwnChildren(final DescriptionVisitor visitor) {
-
+	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
+		return true;
 	}
 
 }
