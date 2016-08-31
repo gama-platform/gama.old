@@ -46,6 +46,9 @@ import msi.gaml.types.IType;
 				IType.CONTAINER }, optional = true, doc = @doc("the variable of the perceived agent you want to add to your beliefs")),
 		@facet(name = FocusStatement.EXPRESSION, type = IType.NONE, optional = true, doc = @doc("an expression that will be the value kept in the belief")),
 		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to focus only with a certain condition")),
+		@facet(name = FocusStatement.LIFETIME, type = IType.INT, optional = true, doc = @doc("the lifetime value of the created belief")),
+		@facet(name = FocusStatement.TRUTH, type = IType.BOOL, optional = true, doc = @doc("the truth value of the created belief")),
+		@facet(name = FocusStatement.AGENTCAUSE, type = IType.AGENT, optional = true, doc = @doc("the agentCause value of the created belief (can be nil")),
 		@facet(name = FocusStatement.PRIORITY, type = { IType.FLOAT,
 				IType.INT }, optional = true, doc = @doc("The priority of the created predicate")) }, omissible = IKeyword.NAME)
 @doc(value = "enables to directly add a belief from the variable of a perceived specie.", examples = {
@@ -56,12 +59,18 @@ public class FocusStatement extends AbstractStatement {
 	public static final String PRIORITY = "priority";
 	public static final String EXPRESSION = "expression";
 	public static final String VAR = "var";
+	public static final String LIFETIME = "lifetime";
+	public static final String TRUTH = "truth";
+	public static final String AGENTCAUSE = "agent_cause";
 
 	final IExpression name;
 	final IExpression variable;
 	final IExpression expression;
 	final IExpression when;
 	final IExpression priority;
+	final IExpression lifetime;
+	final IExpression truth;
+	final IExpression agentCause;
 
 	public FocusStatement(final IDescription desc) {
 		super(desc);
@@ -70,6 +79,9 @@ public class FocusStatement extends AbstractStatement {
 		expression = getFacet(FocusStatement.EXPRESSION);
 		when = getFacet(IKeyword.WHEN);
 		priority = getFacet(FocusStatement.PRIORITY);
+		lifetime = getFacet(FocusStatement.LIFETIME);
+		truth = getFacet(FocusStatement.TRUTH);
+		agentCause = getFacet(FocusStatement.AGENTCAUSE);
 	}
 
 	@Override
@@ -131,6 +143,17 @@ public class FocusStatement extends AbstractStatement {
 					tempPred = new Predicate(namePred, tempValues);
 					if (priority != null) {
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
+					}
+					if (lifetime != null){
+						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+					}
+					if (truth != null){
+						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
+					}
+					if (agentCause != null){
+						tempPred.setAgentCause((IAgent)agentCause.value(scopeMySelf));
+					}else{
+						tempPred.setAgentCause(scope.getAgent());
 					}
 					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
 						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
