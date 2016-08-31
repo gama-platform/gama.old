@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IValue;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -28,7 +29,8 @@ import msi.gaml.types.Types;
 @vars({ @var(name = "name", type = IType.STRING), @var(name = "is_true", type = IType.BOOL),
 	@var(name = "values", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
 	@var(name = "date", type = IType.FLOAT), @var(name = "subintentions", type = IType.LIST),
-	@var(name = "on_hold_until", type = IType.NONE), @var(name = "super_intention", type = IType.NONE) })
+	@var(name = "on_hold_until", type = IType.NONE), @var(name = "super_intention", type = IType.NONE),
+	@var(name = "agentCause", type = IType.AGENT)})
 public class Predicate implements IValue {
 
 	String name;
@@ -39,10 +41,12 @@ public class Predicate implements IValue {
 	List<Predicate> onHoldUntil;
 	List<Predicate> subintentions;
 	Predicate superIntention;
+	IAgent agentCause;
 	boolean everyPossibleValues = false;
 	boolean is_true=true;
 	int lifetime = -1;
 	boolean isUpdated = false;
+	private boolean noAgentCause=true;
 	
 	@getter("name")
 	public String getName() {
@@ -77,6 +81,11 @@ public class Predicate implements IValue {
 	@getter("superIntention")
 	public Predicate getSuperIntention(){
 		return superIntention;
+	}
+	
+	@getter("agentCause")
+	public IAgent getAgentCause(){
+		return agentCause;
 	}
 	
 	public List<Predicate> getOnHoldUntil() {
@@ -124,16 +133,23 @@ public class Predicate implements IValue {
 		this.lifetime = lifetime;
 	}
 	
+	public void setAgentCause(final IAgent ag){
+		this.agentCause=ag;
+		this.noAgentCause=false;
+	}
+	
 	public Predicate() {
 		super();
 		this.name = "";
 		everyPossibleValues = true;
+		this.agentCause=null;
 	}
 
 	public Predicate(final String name) {
 		super();
 		this.name = name;
 		everyPossibleValues = true;
+		this.agentCause=null;
 	}
 
 	public Predicate(final String name, boolean ist) {
@@ -141,6 +157,7 @@ public class Predicate implements IValue {
 		this.name = name;
 		everyPossibleValues = true;
 		is_true=ist;
+		this.agentCause=null;
 	}
 	
 	public Predicate(final String name, double priority){
@@ -148,6 +165,7 @@ public class Predicate implements IValue {
 		this.name = name;
 		everyPossibleValues = true;
 		this.priority = priority;
+		this.agentCause=null;
 	}
 	
 	public Predicate(final String name, int lifetime){
@@ -155,21 +173,32 @@ public class Predicate implements IValue {
 		this.name = name;
 		everyPossibleValues = true;
 		this.lifetime = lifetime;
+		this.agentCause = null;
 	}
 	
 	public Predicate(final String name, final Map<String, Object> values) {
 		super();
 		this.name = name;
 		this.values = values;
-		everyPossibleValues = values == null;;
+		everyPossibleValues = values == null;
+		this.agentCause=null;
 	}
 
+	public Predicate(final String name, final IAgent ag){
+		super();
+		this.name = name;
+		this.agentCause = ag;
+		this.noAgentCause= ag==null;
+		everyPossibleValues = true;
+	}
+	
 	public Predicate(final String name, final Map<String, Object> values, final Boolean truth) {
 		super();
 		this.name = name;
 		this.values = values;
 		this.is_true=truth;
-		everyPossibleValues = values == null;;
+		everyPossibleValues = values == null;
+		this.agentCause=null;
 	}
 
 	public Predicate(final String name, final Map<String, Object> values, final int lifetime) {
@@ -177,7 +206,8 @@ public class Predicate implements IValue {
 		this.name = name;
 		this.values = values;
 		this.lifetime=lifetime;
-		everyPossibleValues = values == null;;
+		everyPossibleValues = values == null;
+		this.agentCause=null;
 	}
 	
 	public Predicate(final String name, final double priority, final Map<String, Object> values) {
@@ -186,8 +216,133 @@ public class Predicate implements IValue {
 		this.values = values;
 		this.priority = priority;
 		everyPossibleValues = values == null;
+		this.agentCause=null;
+	}
+	
+	public Predicate(final String name, final Map<String, Object> values, final IAgent ag) {
+		super();
+		this.name = name;
+		this.values = values;
+		everyPossibleValues = values == null;
+		this.agentCause=ag;
+		this.noAgentCause= ag==null;
+	}
+	
+	public Predicate(final String name, final double priority, final Map<String, Object> values, final int lifetime) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.priority = priority;
+		this.lifetime=lifetime;
+		everyPossibleValues = values == null;
+		this.agentCause=null;
 	}
 
+	public Predicate(final String name, final double priority, final Map<String, Object> values, final Boolean truth) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.priority = priority;
+		this.is_true=truth;
+		everyPossibleValues = values == null;
+		this.agentCause=null;
+	}
+	
+	public Predicate(final String name, final double priority, final Map<String, Object> values, final IAgent ag) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.priority = priority;
+		everyPossibleValues = values == null;
+		this.agentCause=ag;
+		this.noAgentCause= ag==null;
+	}
+	
+	public Predicate(final String name, final Map<String, Object> values, final int lifetime, final Boolean truth) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.lifetime=lifetime;
+		this.is_true=truth;
+		everyPossibleValues = values == null;
+	}
+	
+	public Predicate(final String name, final Map<String, Object> values, final Boolean truth, final IAgent ag) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.is_true=truth;
+		everyPossibleValues = values == null;
+		this.agentCause=ag;
+		this.noAgentCause= ag==null;
+	}
+	
+	public Predicate(final String name, final Map<String, Object> values, final int lifetime, final IAgent ag) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.lifetime=lifetime;
+		everyPossibleValues = values == null;
+		this.agentCause=ag;
+		this.noAgentCause= ag==null;
+	}
+	
+	public Predicate(final String name, final double priority, final Map<String, Object> values, final int lifetime, final Boolean truth) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.priority = priority;
+		this.lifetime=lifetime;
+		this.is_true=truth;
+		everyPossibleValues = values == null;
+		this.agentCause=null;
+	}
+	
+	public Predicate(final String name, final double priority, final Map<String, Object> values, final int lifetime, final IAgent ag) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.priority = priority;
+		this.lifetime=lifetime;
+		everyPossibleValues = values == null;
+		this.agentCause=ag;
+		this.noAgentCause= ag==null;
+	}
+	
+	public Predicate(final String name, final double priority, final Map<String, Object> values, final Boolean truth, final IAgent ag) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.priority = priority;
+		this.is_true=truth;
+		everyPossibleValues = values == null;
+		this.agentCause=ag;
+		this.noAgentCause= ag==null;
+	}
+	
+	public Predicate(final String name, final Map<String, Object> values, final int lifetime, final Boolean truth, final IAgent ag) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.lifetime=lifetime;
+		this.is_true=truth;
+		everyPossibleValues = values == null;
+		this.agentCause=ag;
+		this.noAgentCause= ag==null;
+	}
+	
+	public Predicate(final String name, final double priority, final Map<String, Object> values, final int lifetime, final Boolean truth, final IAgent ag) {
+		super();
+		this.name = name;
+		this.values = values;
+		this.priority = priority;
+		this.lifetime=lifetime;
+		this.is_true=truth;
+		everyPossibleValues = values == null;
+		this.agentCause=ag;
+		this.noAgentCause= ag==null;
+	}
+	
 	public void setName(final String name) {
 		this.name = name;
 
@@ -200,8 +355,8 @@ public class Predicate implements IValue {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "predicate(" + name + (values == null ? "" : "," + values) +
-			")";
+		return "predicate(" + name + (values == null ? "" : "," + values) 
+				+ (agentCause==null ? "" : "," + agentCause)+ ")";
 	}
 
 	@Override
@@ -248,6 +403,7 @@ public class Predicate implements IValue {
 		if ( name == null ) {
 			if ( other.name != null ) { return false; }
 		} else if ( !name.equals(other.name) ) { return false; }
+		
 		if(subintentions == null){
 			if (other.subintentions!=null && !other.subintentions.isEmpty()){return false;}
 		} else if(!subintentions.equals(other.subintentions)) {return false;}
@@ -255,11 +411,16 @@ public class Predicate implements IValue {
 			if(other.superIntention != null){return false;}
 		}else if(!superIntention.partialEquality(other.superIntention)){return false;}	
 		if(is_true!=other.is_true){return false;}
-		if(lifetime!=other.lifetime){return false;}
-		if ( everyPossibleValues || other.everyPossibleValues ) { return true; }
+//		if(lifetime!=-1 || other.lifetime!=1){
+//			if(lifetime!=other.lifetime){return false;}
+//		}
+		if ( (everyPossibleValues && noAgentCause) || (other.everyPossibleValues && other.noAgentCause) ) { return true; }
 		if ( values == null ) {
 			if ( other.values != null ) { return false; }
 		} else if ( !values.equals(other.values) ) { return false; }
+		if(agentCause==null){
+			if(other.agentCause!=null){return false;}
+		}else if(!agentCause.equals(other.agentCause)){return false;}		
 		
 		return true;
 	}
@@ -277,11 +438,16 @@ public class Predicate implements IValue {
 			if(other.superIntention != null){return false;}
 		}else if(!superIntention.equals(other.superIntention)){return false;}
 		if(is_true!=other.is_true){return false;}
-		if(lifetime!=other.lifetime){return false;}
-		if ( everyPossibleValues || other.everyPossibleValues ) { return true; }
+//		if(lifetime!=-1 || other.lifetime!=1){
+//			if(lifetime!=other.lifetime){return false;}
+//		}
+		if ( (everyPossibleValues && noAgentCause) || (other.everyPossibleValues && other.noAgentCause) ) { return true; }
 		if ( values == null ) {
 			if ( other.values != null ) { return false; }
 		} else if ( !values.equals(other.values) ) { return false; }
+		if(agentCause==null){
+			if(other.agentCause!=null){return false;}
+		}else if(!agentCause.equals(other.agentCause)){return false;}		
 		
 		return true;
 	}
@@ -302,13 +468,16 @@ public class Predicate implements IValue {
 			if(!superIntention.equals(other.superIntention)){return false;}
 		}
 		if(is_true!=other.is_true){return false;}
-		if(lifetime!=-1){
-			if(lifetime!=other.lifetime){return false;}
-		}
-		if ( everyPossibleValues || other.everyPossibleValues ) { return true; }
+//		if(lifetime!=-1 || other.lifetime!=1){
+//			if(lifetime!=other.lifetime){return false;}
+//		}
+		if ( (everyPossibleValues && noAgentCause) || (other.everyPossibleValues && other.noAgentCause) ) { return true; }
 		if ( values == null ) {
 			if ( other.values != null ) { return false; }
 		} else if ( !values.equals(other.values) ) { return false; }
+		if(agentCause==null){
+			if(other.agentCause!=null){return false;}
+		}else if(!agentCause.equals(other.agentCause)){return false;}		
 		
 		return true;
 	}
@@ -330,10 +499,13 @@ public class Predicate implements IValue {
 			if(other.superIntention != null){return false;}
 		}else if(!superIntention.partialEquality(other.superIntention)){return false;}	
 		if(is_true!=other.is_true){
-			if ( everyPossibleValues || other.everyPossibleValues ) { return true; }
+			if ( (everyPossibleValues && noAgentCause) || (other.everyPossibleValues && other.noAgentCause) ) { return true; }
 			if ( values == null ) {
 				if ( other.values != null ) { return false; }
 			} else if ( !values.equals(other.values) ) { return false; }
+			if(agentCause==null){
+				if(other.agentCause!=null){return false;}
+			}else if(!agentCause.equals(other.agentCause)){return false;}		
 			
 			return true;
 		}else{

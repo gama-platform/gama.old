@@ -3,6 +3,7 @@ package msi.gaml.architecture.simplebdi;
 import java.util.LinkedHashMap;
 
 import msi.gama.common.interfaces.IValue;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -12,13 +13,16 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 @vars({@var(name = "name", type = IType.STRING),@var(name = "intensity", type = IType.FLOAT),
-	@var(name = "about", type = IType.NONE),@var(name = "decay", type = IType.FLOAT)})
+	@var(name = "about", type = IType.NONE),@var(name = "decay", type = IType.FLOAT),
+	@var(name="agentCause", type=IType.AGENT)})
 public class Emotion implements IValue {
 
 	String name;
 	Double intensity=-1.0;
 	Predicate about;
 	Double decay = 0.0;
+	IAgent agentCause;
+	private boolean noAgentCause = true;
 	private boolean noIntensity = true; 
 	private boolean noAbout = true;
 	
@@ -40,6 +44,11 @@ public class Emotion implements IValue {
 	@getter("decay")
 	public Double getDecay(){
 		return decay;
+	}
+	
+	@getter("agentCause")
+	public IAgent getAgentCause(){
+		return agentCause;
 	}
 	
 	public boolean getNoIntensity(){
@@ -64,33 +73,50 @@ public class Emotion implements IValue {
 		this.decay = de;
 	}
 	
+	public void setAgentCause(IAgent ag){
+		this.agentCause = ag;
+		this.noAgentCause = false;
+	}
+	
 	public Emotion(){
 		this.name="";
 		this.about = null;
+		this.agentCause = null;
 	}
 	
 	public Emotion(String name){
 		this.name=name;
 		this.about=null;
+		this.agentCause = null;
 	}
 	
 	public Emotion(String name, Double intensity2){
 		this.name=name;
 		this.intensity=intensity2;
 		this.about=null;
+		this.agentCause=null;
 		this.noIntensity = false;
 	}
 	
 	public Emotion(String name,Predicate ab){
 		this.name=name;
 		this.about=ab;
+		this.agentCause=null;
 		this.noAbout = false;
+	}
+	
+	public Emotion(String name,IAgent ag){
+		this.name=name;
+		this.about=null;
+		this.agentCause=ag;
+		this.noAgentCause= ag==null;
 	}
 	
 	public Emotion(String name, Double intens, Double de){
 		this.name=name;
 		this.intensity=intens;
 		this.about=null;
+		this.agentCause=null;
 		this.decay=de;
 		this.noIntensity = false;
 		this.noAbout = false;
@@ -100,17 +126,67 @@ public class Emotion implements IValue {
 		this.name=name;
 		this.intensity=intens;
 		this.about=ab;
+		this.agentCause=null;
 		this.noIntensity = false;
 		this.noAbout = false;
+	}
+	
+	public Emotion(String name, Predicate ab, IAgent ag){
+		this.name=name;
+		this.about=ab;
+		this.agentCause=ag;
+		this.noAbout = false;
+		this.noAgentCause= ag==null;
+	}
+	
+	public Emotion(String name, Double intens, IAgent ag){
+		this.name=name;
+		this.intensity=intens;
+		this.about=null;
+		this.agentCause=ag;
+		this.noIntensity = false;
+		this.noAgentCause= ag==null;
 	}
 	
 	public Emotion(String name, Double intens, Predicate ab, Double de){
 		this.name=name;
 		this.intensity=intens;
 		this.about=ab;
+		this.agentCause=null;
 		this.decay=de;
 		this.noIntensity = false;
 		this.noAbout = false;
+	}
+	
+	public Emotion(String name, Double intens, Double de, IAgent ag){
+		this.name=name;
+		this.intensity=intens;
+		this.about=null;
+		this.agentCause=ag;
+		this.decay=de;
+		this.noIntensity = false;
+		this.noAgentCause= ag==null;
+	}
+	
+	public Emotion(String name, Double intens, Predicate ab, IAgent ag){
+		this.name=name;
+		this.intensity=intens;
+		this.about=ab;
+		this.agentCause=ag;
+		this.noIntensity = false;
+		this.noAgentCause= ag==null;
+		this.noAbout=false;
+	}
+	
+	public Emotion(String name, Double intens, Predicate ab, Double de, IAgent ag){
+		this.name=name;
+		this.intensity=intens;
+		this.about=ab;
+		this.agentCause=ag;
+		this.decay=de;
+		this.noIntensity = false;
+		this.noAbout = false;
+		this.noAgentCause= ag==null;
 	}
 	
 	public void decayIntensity(){
@@ -125,10 +201,10 @@ public class Emotion implements IValue {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		if(intensity>0){
-			return "emotion(" + name +","+ intensity +","+ about +","+ decay+")";
+			return "emotion(" + name +","+ intensity +","+ about +","+ decay+","+ agentCause+")";
 		}
 		else{
-			return "emotion(" + name +","+ about +","+ decay+")";
+			return "emotion(" + name +","+ about +","+ decay+","+ agentCause +")";
 		}
 	}
 	
@@ -151,12 +227,15 @@ public class Emotion implements IValue {
 		if(name==null){
 			if(other.name!=null){return false;}
 		}else if(!name.equals(other.name)){return false;}
-		if(noAbout || other.noAbout){
+		if((noAbout && noAgentCause )|| (other.noAbout && other.noAgentCause)){
 			return true;
 		}
 		if(about==null){
 			if(other.about!=null){return false;}			
 		}else if(!about.equals(other.about)){return false;}
+		if(agentCause==null){
+			if(other.agentCause!=null){return false;}
+		}else if(!agentCause.equals(other.agentCause)){return false;}
 		return true;
 	}
 	
