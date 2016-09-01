@@ -15,9 +15,9 @@ public class SimpleScene {
 
 	final List<SimpleLayer> layers;
 	final List<LightPropertiesStructure> lights;
-	final Color backgroundColor;
+	final int[] backgroundColor;
 
-	public SimpleScene(final List<SimpleLayer> simpleLayers, final List<LightPropertiesStructure> lights, final Color backgroundColor) {
+	public SimpleScene(final List<SimpleLayer> simpleLayers, final List<LightPropertiesStructure> lights, final int[] backgroundColor) {
 		this.layers = simpleLayers;
 		this.lights = lights;
 		this.backgroundColor = backgroundColor;
@@ -31,7 +31,7 @@ public class SimpleScene {
 		return lights;
 	}
 	
-	public Color getBackgroundColor() {
+	public int[] getBackgroundColor() {
 		return backgroundColor;
 	}
 

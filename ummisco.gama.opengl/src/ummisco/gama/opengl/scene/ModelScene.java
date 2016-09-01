@@ -253,7 +253,11 @@ public class ModelScene {
 		for (final LayerObject layer : this.layers.values()) {
 			simpleLayers.add(layer.toSimpleLayer());
 		}
-		return new SimpleScene(simpleLayers,this.renderer.data.getDiffuseLights(),renderer.data.getBackgroundColor());
+		int[] rgbBackgroundColor = new int[3];
+		rgbBackgroundColor[0] = renderer.data.getBackgroundColor().getRed();
+		rgbBackgroundColor[1] = renderer.data.getBackgroundColor().getGreen();
+		rgbBackgroundColor[2] = renderer.data.getBackgroundColor().getBlue();
+		return new SimpleScene(simpleLayers,this.renderer.data.getDiffuseLights(),rgbBackgroundColor);
 	}
 
 	public boolean rendered() {
