@@ -466,12 +466,20 @@ public class Operators {
 		return emotion.about;
 	}
 	
+//	@operator(value = "new_social_link", can_be_const = true, category = { "BDI" },
+//			concept = { IConcept.BDI })
+//	@doc(value = "a new social link",
+//		examples = @example(value = "new_social_link()", test = false))
+//	public static SocialLink newSocialLink() throws GamaRuntimeException {
+//		return new SocialLink();
+//	}
+	
 	@operator(value = "new_social_link", can_be_const = true, category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc(value = "a new social link",
-		examples = @example(value = "new_social_link(agentA,0.0,-0.1,0.2,0.1)", test = false))
+		examples = @example(value = "new_social_link(agentA)", test = false))
 	public static SocialLink newSocialLink(final IAgent agent) throws GamaRuntimeException {
-		return new SocialLink(agent,0.0,0.0,0.0,0.0);
+		return new SocialLink(agent);
 	}
 	
 	@operator(value = "new_social_link", can_be_const = true, category = { "BDI" },
@@ -482,6 +490,15 @@ public class Operators {
 		return new SocialLink(agent,appreciation,dominance,solidarity,familiarity);
 	}
 
+	@operator(value = "set_agent", can_be_const = true, category = { "BDI" },
+			concept = { IConcept.BDI })
+	@doc(value = "change the agent value of the given social link",
+			examples = @example(value = "social_link set_agent agentA", test = false))
+	public static SocialLink setAgent(final SocialLink social, final IAgent agent){
+		social.setAgent(agent);
+		return social;
+	}
+	
 	@operator(value = "set_appreciation", can_be_const = true, category = { "BDI" },
 			concept = { IConcept.BDI })
 	@doc(value = "change the appreciation value of the given social link",
@@ -524,6 +541,14 @@ public class Operators {
 			social.setFamiliarity(familiarity);
 		}
 		return social;
+	}
+	
+	@operator(value = "get_agent", can_be_const = true, category = { "BDI" },
+			concept = {IConcept.BDI})
+	@doc(value = "get the agent value of the given social link",
+			examples = @example(value = "get_agent(social_link1)", test = false))
+	public static IAgent getAgent(final SocialLink social){
+		return social.getAgent();
 	}
 	
 	@operator(value = "get_appreciation", can_be_const = true, category = { "BDI" },

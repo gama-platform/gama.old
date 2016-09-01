@@ -6,6 +6,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -91,6 +92,7 @@ public class EmotionalContagion extends AbstractStatement {
 					if(emotionCreated != null){
 						if (charismaValue * receptivityValue >= thresholdValue) {
 							final Emotion tempEmo = (Emotion) emotionCreated.value(scope);
+							tempEmo.setAgentCause(scope.getAgent());
 							SimpleBdiArchitecture.addEmotion(scopeMySelf, tempEmo);
 						}
 					}else{
@@ -102,14 +104,16 @@ public class EmotionalContagion extends AbstractStatement {
 										tempEmo.getIntensity() * charismaValue * receptivityValue, tempEmo.getAbout(),
 										tempEmo.getDecay());
 							} else {
-								temp = tempEmo;
+								temp = (Emotion) tempEmo.copy(scope);
 							}
+							temp.setAgentCause(scope.getAgent());
 							SimpleBdiArchitecture.addEmotion(scopeMySelf, temp);
 						}
 					}
 				}
 			}
 		}
+		GamaList<Emotion> test = SimpleBdiArchitecture.getEmotionBase(scopeMySelf, SimpleBdiArchitecture.EMOTION_BASE);
 		return null;
 	}
 

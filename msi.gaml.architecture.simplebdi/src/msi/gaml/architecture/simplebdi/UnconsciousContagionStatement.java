@@ -90,8 +90,9 @@ public class UnconsciousContagionStatement extends AbstractStatement {
 									tempEmo.getIntensity() * charismaValue * receptivityValue, tempEmo.getAbout(),
 									tempEmo.getDecay());
 						} else {
-							temp = tempEmo;
+							temp = (Emotion) tempEmo.copy(scope);
 						}
+						temp.setAgentCause(scope.getAgent());
 						SimpleBdiArchitecture.addEmotion(scopeMySelf, temp);
 					}
 				}

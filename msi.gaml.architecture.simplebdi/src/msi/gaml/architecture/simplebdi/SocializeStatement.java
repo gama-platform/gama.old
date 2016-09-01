@@ -25,12 +25,12 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the identifier of the socialize statement")),
-		@facet(name = SocializeStatement.APPRECIATION, type = IType.FLOAT, optional = true, doc = @doc("")),
-		@facet(name = SocializeStatement.DOMINANCE, type = IType.FLOAT, optional = true, doc = @doc("")),
-		@facet(name = SocializeStatement.SOLIDARITY, type = IType.FLOAT, optional = true, doc = @doc("")),
-		@facet(name = SocializeStatement.FAMILIARITY, type = IType.FLOAT, optional = true, doc = @doc("")),
-		@facet(name = SocializeStatement.AGENT, type = IType.AGENT, optional = true, doc = @doc("")),
-		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc(""))
+		@facet(name = SocializeStatement.APPRECIATION, type = IType.FLOAT, optional = true, doc = @doc("the appreciation value of the created social link")),
+		@facet(name = SocializeStatement.DOMINANCE, type = IType.FLOAT, optional = true, doc = @doc("the dominance value of the created social link")),
+		@facet(name = SocializeStatement.SOLIDARITY, type = IType.FLOAT, optional = true, doc = @doc("the solidarity value of the created social link")),
+		@facet(name = SocializeStatement.FAMILIARITY, type = IType.FLOAT, optional = true, doc = @doc("the familiarity value of the created social link")),
+		@facet(name = SocializeStatement.AGENT, type = IType.AGENT, optional = true, doc = @doc("the agent value of the created social link")),
+		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("A boolean value to socialize only with a certain condition"))
 }, omissible = IKeyword.NAME)
 @doc(value = "enables to directly add a social link from a perceived agent.", examples = {
 		@example("socialize;") })

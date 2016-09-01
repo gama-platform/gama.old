@@ -18,10 +18,14 @@ import msi.gaml.types.Types;
 public class SocialLink implements IValue {
 
 	IAgent agent;
-	Double appreciation=0.0;
+	Double appreciation = 0.0;
 	Double dominance = 0.0;
 	Double solidarity = 0.0;
 	Double familiarity = 0.0;
+	private Boolean noAppreciation = true;
+	private Boolean noDominance = true;
+	private Boolean noSolidarity = true;
+	private Boolean noFamiliarity = true;
 	
 	@getter("agent")
 	public IAgent getAgent(){
@@ -48,24 +52,48 @@ public class SocialLink implements IValue {
 		return familiarity;
 	}
 	
+	public Boolean getNoAppreciation(){
+		return noAppreciation;
+	}
+	
+	public Boolean getNoDominance(){
+		return noDominance;
+	}
+	
+	public Boolean getNoSolidarity(){
+		return noSolidarity;
+	}
+	
+	public Boolean getNoFamiliarity(){
+		return noFamiliarity;
+	}
+	
 	public void setAgent(IAgent ag){
 		this.agent = ag;
 	}
 	
 	public void setAppreciation(Double appre){
 		this.appreciation = appre;
+		this.noAppreciation = false;
 	}
 	
 	public void setDominance(Double domi){
 		this.dominance = domi;
+		this.noDominance = false;
 	}
 	
 	public void setSolidarity(Double solid){
 		this.solidarity = solid;
+		this.noSolidarity = false;
 	}
 	
 	public void setFamiliarity(Double fami){
 		this.familiarity = fami;
+		this.noFamiliarity = false;
+	}
+	
+	public SocialLink(){
+		this.agent=null;
 	}
 	
 	public SocialLink(IAgent ag){
@@ -75,9 +103,13 @@ public class SocialLink implements IValue {
 	public SocialLink(IAgent ag, Double appre, Double domi, Double solid, Double fami){
 		this.agent=ag;
 		this.appreciation=appre;
+		this.noAppreciation = false;
 		this.dominance=domi;
+		this.noDominance = false;
 		this.solidarity=solid;
+		this.noDominance = false;
 		this.familiarity=fami;
+		this.noFamiliarity = false;
 	}
 	
 	@Override
@@ -111,7 +143,32 @@ public class SocialLink implements IValue {
 		if ( obj == null ) { return false; }
 		if ( getClass() != obj.getClass() ) { return false; }
 		SocialLink other = (SocialLink)obj;
-		if(!agent.equals(other.getAgent())){return false;}
+		if(this.agent!=null && other.getAgent()!=null){
+			if(!agent.equals(other.getAgent())){return false;}
+		}
+		if(!noAppreciation && !other.getNoAppreciation()){
+			if(!appreciation.equals(other.getAppreciation())){return false;}
+		}
+		if(!noDominance && !other.getNoDominance()){
+			if(!dominance.equals(other.getDominance())){return false;}
+		}
+		if(!noSolidarity && !other.getNoSolidarity()){
+			if(!solidarity.equals(other.getSolidarity())){return false;}
+		}
+		if(!noFamiliarity && !other.getNoFamiliarity()){
+			if(!familiarity.equals(other.getFamiliarity())){return false;}
+		}
+		return true;
+	}
+	
+	public boolean equalsInAgent(final Object obj){
+		if ( this == obj ) { return true; }
+		if ( obj == null ) { return false; }
+		if ( getClass() != obj.getClass() ) { return false; }
+		SocialLink other = (SocialLink)obj;
+		if(agent!=null || other.getAgent()!=null){
+			if(!agent.equals(other.getAgent())){return false;}
+		}
 		return true;
 	}
 

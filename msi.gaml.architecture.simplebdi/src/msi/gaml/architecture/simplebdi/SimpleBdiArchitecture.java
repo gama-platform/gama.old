@@ -23,6 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -40,6 +41,7 @@ import msi.gaml.types.Types;
 		@var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT_INTENTIONS, type = IType.FLOAT, init = "1.0", doc = @doc("intention persistence")),
 		@var(name = SimpleBdiArchitecture.PROBABILISTIC_CHOICE, type = IType.BOOL, init = "false"),
 		@var(name = SimpleBdiArchitecture.USE_EMOTIONS_ARCHITECTURE, type = IType.BOOL, init = "false"),
+		@var(name = SimpleBdiArchitecture.USE_SOCIAL_ARCHITECTURE, type = IType.BOOL, init ="false"),
 		@var(name = SimpleBdiArchitecture.CHARISMA, type = IType.FLOAT, init = "1.0"),
 		@var(name = SimpleBdiArchitecture.RECEPTIVITY, type = IType.FLOAT, init = "1.0"),
 		@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, of = PredicateType.id, init = "[]"),
@@ -62,6 +64,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	public static final String PERSISTENCE_COEFFICIENT_PLANS = "plan_persistence";
 	public static final String PERSISTENCE_COEFFICIENT_INTENTIONS = "intention_persistence";
 	public static final String USE_EMOTIONS_ARCHITECTURE = "use_emotions_architecture";
+	public static final String USE_SOCIAL_ARCHITECTURE ="use_social_architecture";
 	public static final String CHARISMA = "charisma";
 	public static final String RECEPTIVITY = "receptivity";
 
@@ -169,6 +172,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			}
 		}
 		computeEmotions(scope);
+		updateSocialLinks(scope);
 		return executePlans(scope);
 	}
 
@@ -1568,7 +1572,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			final Emotion oldEmo = getEmotion(scope, emo);
 			if (!oldEmo.getNoIntensity()) {
 				newEmo = new Emotion(emo.getName(), emo.getIntensity() + oldEmo.getIntensity(), emo.getAbout(),
-						Math.min(emo.getDecay(), oldEmo.getDecay()));
+						Math.min(emo.getDecay(), oldEmo.getDecay()),emo.getAgentCause());
 			}
 		}
 		return addToBase(scope, newEmo, EMOTION_BASE);
@@ -1738,6 +1742,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			if (socialLink.equals(social)) {
 				return socialLink;
 			}
+			if (socialLink.equalsInAgent(social)) {
+				return socialLink;
+			}
 		}
 		return null;
 	}
@@ -1756,6 +1763,166 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			return hasSocialLink(scope, socialDirect);
 		}
 		return false;
+	}
+	
+	protected void updateSocialLinks(final IScope scope) {
+		// Etape 0, demander à l'utilisateur s'il veut ou non utiliser cette
+		// architecture
+		// Etape 1, mettre à jour les relations sociales par rapport aux états mentaux de l'agent
+		final IAgent agent = getCurrentAgent(scope);
+		final Boolean use_social_architecture = scope.hasArg(USE_SOCIAL_ARCHITECTURE)
+				? scope.getBoolArg(USE_SOCIAL_ARCHITECTURE) : (Boolean) agent.getAttribute(USE_SOCIAL_ARCHITECTURE);
+		if (use_social_architecture) {
+			for(SocialLink tempLink : getSocialBase(scope,SOCIALLINK_BASE)){
+				updateSocialLink(scope,tempLink);
+			}
+		}
+	}
+	
+	private void updateSocialLink(IScope scope, SocialLink social){
+		updateAppreciation(scope,social);
+		updateDominance(scope,social);
+		updateSolidarity(scope,social);
+		updateFamiliarity(scope,social);
+	}
+	
+	private void updateAppreciation(IScope scope, SocialLink social){
+		IAgent agentCause = social.getAgent();
+		Double tempPositif = 0.0;
+		Double tempNegatif = 0.0;
+		Double appreciationModif = social.getAppreciation();
+		for(Emotion emo : getEmotionBase(scope,EMOTION_BASE)){
+			if(emo.getAgentCause()!=null && emo.getAgentCause().equals(agentCause)){
+				if (emo.getName().equals("joy") || emo.getName().equals("hope")){
+					tempPositif = tempPositif + 1.0;
+				}
+				if (emo.getName().equals("sadness") || emo.getName().equals("fear")){
+					tempNegatif = tempNegatif + 1.0;
+				}
+			}
+		}
+		appreciationModif = appreciationModif +0.1*tempPositif-0.1*tempNegatif;
+		if(appreciationModif>1.0){
+			appreciationModif = 1.0;
+		}
+		if(appreciationModif<-1.0){
+			appreciationModif = -1.0;
+		}
+		social.setAppreciation(appreciationModif);
+	}
+	
+	private void updateDominance(IScope scope, SocialLink social){
+		IAgent agentCause = social.getAgent();
+		IScope scopeAgentCause = null;
+		if (agentCause != null) {
+			scopeAgentCause = agentCause.getScope().copy("in SimpleBdiArchitecture");
+			scopeAgentCause.push(agentCause);
+		}
+		IAgent currentAgent = scope.getAgent();
+		Double tempPositif = 0.0;
+		Double tempNegatif = 0.0;
+		Double dominanceModif = social.getDominance();
+		for(Emotion emo : getEmotionBase(scope,EMOTION_BASE)){
+			if(emo.getAgentCause()!=null && emo.getAgentCause().equals(agentCause)){
+				if (emo.getName().equals("sadness") || emo.getName().equals("fear")){
+					tempNegatif = tempNegatif + 1.0;
+				}
+			}
+		}
+		for(Emotion emo : getEmotionBase(scopeAgentCause,EMOTION_BASE)){
+			if(emo.getAgentCause() != null && emo.getAgentCause().equals(currentAgent)){
+				if (emo.getName().equals("sadness") || emo.getName().equals("fear")){
+					tempPositif = tempPositif + 1.0;
+				}
+			}
+		}
+		dominanceModif = dominanceModif +0.1*tempPositif-0.1*tempNegatif;
+		if(dominanceModif>1.0){
+			dominanceModif = 1.0;
+		}
+		if(dominanceModif<-1.0){
+			dominanceModif = -1.0;
+		}
+		social.setDominance(dominanceModif);
+		GAMA.releaseScope(scopeAgentCause);
+	}
+	
+	private void updateSolidarity(IScope scope, SocialLink social){
+		IAgent agentCause = social.getAgent();
+		IScope scopeAgentCause = null;
+		if (agentCause != null) {
+			scopeAgentCause = agentCause.getScope().copy("in SimpleBdiArchitecture");
+			scopeAgentCause.push(agentCause);
+		}
+		IAgent currentAgent = scope.getAgent();
+		Double tempPositif = 0.0;
+		Double tempNegatif = 0.0;
+		Double solidarityModif = social.getSolidarity();
+		for(Emotion emo : getEmotionBase(scope,EMOTION_BASE)){
+			if(emo.getAgentCause()!=null && emo.getAgentCause().equals(agentCause)){
+				if (emo.getName().equals("sadness") || emo.getName().equals("fear")){
+					tempNegatif = tempNegatif + 1.0;
+				}
+			}
+		}
+		for (final Predicate predTest1 : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+			for (final Predicate predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.BELIEF_BASE)) {
+				if(predTest1.equals(predTest2)){
+					tempPositif = tempPositif + 1.0;
+				}			
+				if (predTest1.equalsButNotTruth(predTest2)) {
+					tempNegatif = tempNegatif + 1.0;
+				}
+			}
+		}
+		for (final Predicate predTest1 : getBase(scope, SimpleBdiArchitecture.DESIRE_BASE)) {
+			for (final Predicate predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.DESIRE_BASE)) {
+				if(predTest1.equals(predTest2)){
+					tempPositif = tempPositif + 1.0;
+				}			
+				if (predTest1.equalsButNotTruth(predTest2)) {
+					tempNegatif = tempNegatif + 1.0;
+				}
+			}
+		}
+		for (final Predicate predTest1 : getBase(scope, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
+			for (final Predicate predTest2 : getBase(scopeAgentCause, SimpleBdiArchitecture.UNCERTAINTY_BASE)) {
+				if(predTest1.equals(predTest2)){
+					tempPositif = tempPositif + 1.0;
+				}			
+				if (predTest1.equalsButNotTruth(predTest2)) {
+					tempNegatif = tempNegatif + 1.0;
+				}
+			}
+		}
+		
+		solidarityModif = solidarityModif +0.1*tempPositif-0.1*tempNegatif;
+		if(solidarityModif>1.0){
+			solidarityModif = 1.0;
+		}
+		if(solidarityModif<0.0){
+			solidarityModif = 0.0;
+		}
+		social.setSolidarity(solidarityModif);
+		GAMA.releaseScope(scopeAgentCause);
+	}
+	
+	private void updateFamiliarity(IScope scope, SocialLink social){
+		IAgent agentCause = social.getAgent();
+		Double tempPositif = 0.0;
+		Double tempNegatif = 0.0;
+		Double familiarityModif = social.getFamiliarity();
+		familiarityModif = familiarityModif*(1+social.getAppreciation());
+		if(familiarityModif>1.0){
+			familiarityModif = 1.0;
+		}
+		if(familiarityModif<0.0){
+			familiarityModif = 0.0;
+		}
+		if(social.getFamiliarity()==0.0){
+			familiarityModif = 0.1;
+		}
+		social.setFamiliarity(familiarityModif);
 	}
 	
 	@Override
