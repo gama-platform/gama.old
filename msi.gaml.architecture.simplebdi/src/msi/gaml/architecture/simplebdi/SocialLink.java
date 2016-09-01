@@ -48,7 +48,7 @@ public class SocialLink implements IValue {
 		return familiarity;
 	}
 	
-	public void setAbout(IAgent ag){
+	public void setAgent(IAgent ag){
 		this.agent = ag;
 	}
 	
