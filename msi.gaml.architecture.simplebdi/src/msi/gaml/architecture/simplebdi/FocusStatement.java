@@ -122,6 +122,17 @@ public class FocusStatement extends AbstractStatement {
 					if (priority != null) {
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
 					}
+					if (lifetime != null){
+						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+					}
+					if (truth != null){
+						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
+					}
+					if (agentCause != null){
+						tempPred.setAgentCause((IAgent)agentCause.value(scopeMySelf));
+					}else{
+						tempPred.setAgentCause(scope.getAgent());
+					}
 					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
 						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
 					}
@@ -174,10 +185,21 @@ public class FocusStatement extends AbstractStatement {
 					tempPred = new Predicate(namePred, tempValues);
 					if (priority != null) {
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
+					}				
+					if (lifetime != null){
+						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
 					}
-					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
-						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+					if (truth != null){
+						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
 					}
+					if (agentCause != null){
+						tempPred.setAgentCause((IAgent)agentCause.value(scopeMySelf));
+					}else{
+						tempPred.setAgentCause(scope.getAgent());
+					}
+						if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
+							SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+						}
 				}
 			}
 			GAMA.releaseScope(scopeMySelf);
