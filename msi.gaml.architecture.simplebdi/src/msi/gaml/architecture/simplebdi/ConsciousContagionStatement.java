@@ -88,6 +88,7 @@ public class ConsciousContagionStatement extends AbstractStatement {
 					}
 					if (charismaValue * receptivityValue >= thresholdValue) {
 						final Emotion tempEmo = (Emotion) emotionCreated.value(scope);
+						tempEmo.setAgentCause(scope.getAgent());
 						SimpleBdiArchitecture.addEmotion(scopeMySelf, tempEmo);
 					}
 				}

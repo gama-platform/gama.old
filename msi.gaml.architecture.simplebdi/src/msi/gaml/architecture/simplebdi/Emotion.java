@@ -215,7 +215,7 @@ public class Emotion implements IValue {
 
 	@Override
 	public IValue copy(final IScope scope) throws GamaRuntimeException {
-		return new Emotion(name,intensity,about,decay);
+		return new Emotion(name,intensity,about,decay,agentCause);
 	}
 
 	@Override
