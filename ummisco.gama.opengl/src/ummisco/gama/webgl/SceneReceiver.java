@@ -4,6 +4,8 @@ import java.io.DataOutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import org.eclipse.core.runtime.Platform;
+
 import com.google.gson.Gson;
 
 /**
@@ -27,11 +29,17 @@ public class SceneReceiver {
 
 	private SceneReceiver() {
 		try {
-			tcpClient = new Socket("localhost", 6000);
-			os = new DataOutputStream(tcpClient.getOutputStream());
-			pw = new PrintWriter(os,false);
-			Thread parameterReceiver = new Thread (ParameterReceiver.getInstance());
-            parameterReceiver.start();
+			//System.out.println(Platform.getApplicationArgs());
+			for(String arg : Platform.getApplicationArgs()) {
+				System.out.println("argument : " + arg);
+			}
+			if (canReceive) {
+				tcpClient = new Socket("localhost", 6000);
+				os = new DataOutputStream(tcpClient.getOutputStream());
+				pw = new PrintWriter(os,false);
+				Thread parameterReceiver = new Thread (ParameterReceiver.getInstance());
+				parameterReceiver.start();
+			}
 		} catch (Exception e) {
 			e.getMessage();
 		}
