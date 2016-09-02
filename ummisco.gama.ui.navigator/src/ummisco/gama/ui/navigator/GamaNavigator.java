@@ -53,6 +53,7 @@ import org.eclipse.ui.navigator.CommonNavigatorManager;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.IDescriptionProvider;
 
+import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -126,6 +127,37 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public CommonViewer createCommonViewer(final Composite parent) {
+		final CommonViewer commonViewer = super.createCommonViewer(parent);
+		final IResourceChangeListener resourceChangeListener = new IResourceChangeListener() {
+
+			@Override
+			public void resourceChanged(final IResourceChangeEvent event) {
+				if (!PlatformUI.isWorkbenchRunning()) {
+					return;
+				}
+				Display.getDefault().asyncExec(new Runnable() {
+
+					@Override
+					public void run() {
+						if (getCommonViewer() != null && getCommonViewer().getControl() != null
+								&& !getCommonViewer().getControl().isDisposed()) {
+							GAMA.getGui().updateDecorator("msi.gama.application.decorator");
+							getCommonViewer().refresh();
+
+						}
+					}
+				});
+			}
+		};
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceChangeListener,
+				IResourceChangeEvent.POST_BUILD);
+
+		return commonViewer;
+
 	}
 
 	@Override
