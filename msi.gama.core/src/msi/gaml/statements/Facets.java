@@ -98,10 +98,8 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(size() * 20);
 		for (final Map.Entry<String, IExpressionDescription> e : entrySet()) {
-			if (e != null && e
-					.getKey() != null /*
-										 * && !e.getKey().equals(IKeyword.KEYWORD)
-										 */) {
+			if (e != null
+					&& e.getKey() != null) {
 				final IExpressionDescription ed = e.getValue();
 				final String exprString = ed == null ? "N/A" : ed.serialize(includingBuiltIn);
 				sb.append(e.getKey()).append(": ").append(exprString).append(" ");
@@ -175,6 +173,7 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	public Facets cleanCopy() {
 		final Facets result = new Facets(this);
 		result.transformValues(cleanCopy);
+		result.compact();
 		return result;
 	}
 
