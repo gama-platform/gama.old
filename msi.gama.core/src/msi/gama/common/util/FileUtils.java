@@ -52,6 +52,12 @@ public class FileUtils {
 		return false;
 	}
 
+	private static String withTrailingSep(final String path) {
+		if (path.endsWith(File.pathSeparator))
+			return path;
+		return path + File.pathSeparator;
+	}
+
 	/**
 	 * Removes a root.
 	 *
@@ -93,7 +99,7 @@ public class FileUtils {
 		final List<String> referenceDirectories = a.getWorkingPaths();
 		try {
 			for (final String ref : referenceDirectories) {
-				baseDirectories.add(URLDecoder.decode(ref, "UTF-8"));
+				baseDirectories.add(withTrailingSep(URLDecoder.decode(ref, "UTF-8")));
 			}
 			filePath = URLDecoder.decode(fp, "UTF-8");
 		} catch (final UnsupportedEncodingException e1) {
@@ -113,7 +119,7 @@ public class FileUtils {
 				}
 			}
 			for (final String baseDirectory : baseDirectories) {
-				file = new File(baseDirectory + File.separator + removeRoot(filePath));
+				file = new File(baseDirectory + removeRoot(filePath));
 				if (file.exists()) {
 					try {
 						return file.getCanonicalPath();
