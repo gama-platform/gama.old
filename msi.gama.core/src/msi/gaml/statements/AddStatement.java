@@ -164,6 +164,8 @@ public class AddStatement extends AbstractContainerStatement {
 			final IExpression item = cd.getFacetExpr(ITEM);
 			final IExpression list = cd.getFacetExpr(TO);
 			final IExpression allFacet = cd.getFacetExpr(ALL);
+			if (item == null)
+				return;
 			if (allFacet != null && allFacet.isConst() && "true".equals(allFacet.literalValue())) {
 				if (!item.getType().isContainer()) {
 					cd.warning(
