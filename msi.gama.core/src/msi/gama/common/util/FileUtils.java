@@ -53,9 +53,9 @@ public class FileUtils {
 	}
 
 	private static String withTrailingSep(final String path) {
-		if (path.endsWith(File.pathSeparator))
+		if (path.endsWith("/"))
 			return path;
-		return path + File.pathSeparator;
+		return path + "/";
 	}
 
 	/**
