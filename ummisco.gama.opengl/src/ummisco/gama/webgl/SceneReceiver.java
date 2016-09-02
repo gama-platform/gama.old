@@ -31,7 +31,7 @@ public class SceneReceiver {
 		try {
 			//System.out.println(Platform.getApplicationArgs());
 			for(String arg : Platform.getApplicationArgs()) {
-				System.out.println("argument : " + arg);
+				System.out.println("argument : " +  arg);
 			}
 			if (canReceive) {
 				tcpClient = new Socket("localhost", 6000);
