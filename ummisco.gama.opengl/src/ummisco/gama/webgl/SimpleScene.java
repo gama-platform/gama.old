@@ -1,6 +1,5 @@
 package ummisco.gama.webgl;
 
-import java.awt.Color;
 import java.util.List;
 
 import msi.gama.outputs.LightPropertiesStructure;
@@ -13,14 +12,18 @@ import msi.gama.outputs.LightPropertiesStructure;
  */
 public class SimpleScene {
 
+	final double envWidth;
+	final double envHeight;
 	final List<SimpleLayer> layers;
 	final List<LightPropertiesStructure> lights;
 	final int[] backgroundColor;
 
-	public SimpleScene(final List<SimpleLayer> simpleLayers, final List<LightPropertiesStructure> lights, final int[] backgroundColor) {
+	public SimpleScene(final List<SimpleLayer> simpleLayers, final List<LightPropertiesStructure> lights, final int[] backgroundColor, final double envWidth, final double envHeight) {
 		this.layers = simpleLayers;
 		this.lights = lights;
 		this.backgroundColor = backgroundColor;
+		this.envHeight = envHeight;
+		this.envWidth = envWidth;
 	}
 
 	public List<SimpleLayer> getLayers() {
