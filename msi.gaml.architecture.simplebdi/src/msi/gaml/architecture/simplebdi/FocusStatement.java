@@ -200,6 +200,31 @@ public class FocusStatement extends AbstractStatement {
 						if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
 							SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
 						}
+				} else {
+					String namePred = null;
+					if (name != null) {
+						namePred = (String) name.value(scope);
+					}
+					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,
+							null);
+					tempPred = new Predicate(namePred, tempValues);
+					if (priority != null) {
+						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
+					}				
+					if (lifetime != null){
+						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
+					}
+					if (truth != null){
+						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
+					}
+					if (agentCause != null){
+						tempPred.setAgentCause((IAgent)agentCause.value(scopeMySelf));
+					}else{
+						tempPred.setAgentCause(scope.getAgent());
+					}
+						if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
+							SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+						}
 				}
 			}
 			GAMA.releaseScope(scopeMySelf);
