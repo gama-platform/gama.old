@@ -74,6 +74,13 @@ public abstract class AbstractObject {
 		}
 		return result;
 	}
+	
+	public int getNumberOfTexture() {
+		if (textures == null) {
+			return 0;
+		}
+		return textures.length;
+	}
 
 	public Texture getTexture(final GL gl, final Abstract3DRenderer renderer, final int order) {
 		if (textures == null) {
