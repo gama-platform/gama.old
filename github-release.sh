@@ -67,6 +67,7 @@ LK="https://api.github.com/repos/gama-platform/gama/releases/tags/$RELEASE"
   RESULT=` curl -s -X GET \
   -H "X-Parse-Application-Id: sensitive" \
   -H "X-Parse-REST-API-Key: sensitive" \
+  -H "Authorization: token $HQN_TOKEN"   \
   -H "Content-Type: application/json" \
   -d '{"name":"value"}' \
     "$LK"`
@@ -80,6 +81,7 @@ echo $RELEASEID
   RESULT=` curl -s -X GET \
   -H "X-Parse-Application-Id: sensitive" \
   -H "X-Parse-REST-API-Key: sensitive" \
+  -H "Authorization: token $HQN_TOKEN"   \
   -H "Content-Type: application/json" \
   -d '{"name":"value"}' \
     "$LK"`
