@@ -24,7 +24,8 @@ public class DrawingEntityGenerator {
 		DrawingEntity[] result = null;
 		if (object instanceof GeometryObject) {
 			GeometryObject geomObj = (GeometryObject)object;
-			Texture[] textures = object.getTextures(renderer.getContext(), renderer);
+			// FIXME : temp hack to make the webGL working (HAS TO BE CHANGED !!!!)
+			Texture[] textures = new Texture[1];// object.getTextures(renderer.getContext(), renderer);
 			ManyFacedShape shape = new ManyFacedShape(geomObj,textures,renderer.data.isTriangulation());	
 			result = shape.getDrawingEntities();
 		}	
