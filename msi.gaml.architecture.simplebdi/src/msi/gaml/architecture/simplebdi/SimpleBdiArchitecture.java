@@ -1712,7 +1712,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	public static boolean addSocialLink(final IScope scope, final SocialLink social) {
-		if(social.getAppreciation()>=-1.0 && social.getAppreciation()<=1.0){
+		if(social.getLiking()>=-1.0 && social.getLiking()<=1.0){
 			if(social.getDominance()>=-1.0 && social.getDominance()<=1.0){
 				if(social.getSolidarity()>=0.0 && social.getSolidarity()<=1.0){
 					if(social.getFamiliarity()>=0.0 && social.getFamiliarity()<=1.0){
@@ -1790,7 +1790,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		IAgent agentCause = social.getAgent();
 		Double tempPositif = 0.0;
 		Double tempNegatif = 0.0;
-		Double appreciationModif = social.getAppreciation();
+		Double appreciationModif = social.getLiking();
 		for(Emotion emo : getEmotionBase(scope,EMOTION_BASE)){
 			if(emo.getAgentCause()!=null && emo.getAgentCause().equals(agentCause)){
 				if (emo.getName().equals("joy") || emo.getName().equals("hope")){
@@ -1808,7 +1808,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if(appreciationModif<-1.0){
 			appreciationModif = -1.0;
 		}
-		social.setAppreciation(appreciationModif);
+		social.setLiking(appreciationModif);
 	}
 	
 	private void updateDominance(IScope scope, SocialLink social){
@@ -1912,7 +1912,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		Double tempPositif = 0.0;
 		Double tempNegatif = 0.0;
 		Double familiarityModif = social.getFamiliarity();
-		familiarityModif = familiarityModif*(1+social.getAppreciation());
+		familiarityModif = familiarityModif*(1+social.getLiking());
 		if(familiarityModif>1.0){
 			familiarityModif = 1.0;
 		}

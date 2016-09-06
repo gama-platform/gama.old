@@ -499,13 +499,13 @@ public class Operators {
 		return social;
 	}
 	
-	@operator(value = "set_appreciation", can_be_const = true, category = { "BDI" },
+	@operator(value = "set_liking", can_be_const = true, category = { "BDI" },
 			concept = { IConcept.BDI })
-	@doc(value = "change the appreciation value of the given social link",
-		examples = @example(value = "social_link set_appreciation 0.4", test = false))
-	public static SocialLink setAppreciation(final SocialLink social, final Double appreciation) throws GamaRuntimeException {
+	@doc(value = "change the liking value of the given social link",
+		examples = @example(value = "social_link set_liking 0.4", test = false))
+	public static SocialLink setLiking(final SocialLink social, final Double appreciation) throws GamaRuntimeException {
 		if(appreciation>=-1.0 && appreciation<=1.0){
-			social.setAppreciation(appreciation);
+			social.setLiking(appreciation);
 		}
 		return social;
 	}
@@ -551,12 +551,12 @@ public class Operators {
 		return social.getAgent();
 	}
 	
-	@operator(value = "get_appreciation", can_be_const = true, category = { "BDI" },
+	@operator(value = "get_liking", can_be_const = true, category = { "BDI" },
 			concept = { IConcept.BDI })
-	@doc(value = "get the appreciation value of the given social link",
-		examples = @example(value = "get_appreciation(social_link1)", test = false))
-	public static Double getAppreciation(final SocialLink social){
-		return social.getAppreciation();
+	@doc(value = "get the liking value of the given social link",
+		examples = @example(value = "get_liking(social_link1)", test = false))
+	public static Double getLikink(final SocialLink social){
+		return social.getLiking();
 	}
 	
 	@operator(value = "get_dominance", can_be_const = true, category = { "BDI" },

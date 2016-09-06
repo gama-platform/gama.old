@@ -25,7 +25,7 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
 		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("the identifier of the socialize statement")),
-		@facet(name = SocializeStatement.APPRECIATION, type = IType.FLOAT, optional = true, doc = @doc("the appreciation value of the created social link")),
+		@facet(name = SocializeStatement.LIKING, type = IType.FLOAT, optional = true, doc = @doc("the appreciation value of the created social link")),
 		@facet(name = SocializeStatement.DOMINANCE, type = IType.FLOAT, optional = true, doc = @doc("the dominance value of the created social link")),
 		@facet(name = SocializeStatement.SOLIDARITY, type = IType.FLOAT, optional = true, doc = @doc("the solidarity value of the created social link")),
 		@facet(name = SocializeStatement.FAMILIARITY, type = IType.FLOAT, optional = true, doc = @doc("the familiarity value of the created social link")),
@@ -37,7 +37,7 @@ import msi.gaml.types.IType;
 
 public class SocializeStatement extends AbstractStatement{
 	public static final String SOCIALIZE = "socialize";
-	public static final String APPRECIATION = "appreciation";
+	public static final String LIKING = "liking";
 	public static final String DOMINANCE = "dominance";
 	public static final String SOLIDARITY = "solidarity";
 	public static final String FAMILIARITY = "familiarity";
@@ -54,7 +54,7 @@ public class SocializeStatement extends AbstractStatement{
 	public SocializeStatement(IDescription desc) {
 		super(desc);
 		name = getFacet(IKeyword.NAME);
-		appreciation = getFacet(SocializeStatement.APPRECIATION);
+		appreciation = getFacet(SocializeStatement.LIKING);
 		dominance = getFacet(SocializeStatement.DOMINANCE);
 		when = getFacet(IKeyword.WHEN);
 		solidarity = getFacet(SocializeStatement.SOLIDARITY);
@@ -74,7 +74,7 @@ public class SocializeStatement extends AbstractStatement{
 			}
 			final SocialLink tempSocial = new SocialLink(scope.getAgent());
 			if (appreciation != null) {
-				tempSocial.setAppreciation(Cast.asFloat(scopeMySelf, appreciation.value(scopeMySelf)));;
+				tempSocial.setLiking(Cast.asFloat(scopeMySelf, appreciation.value(scopeMySelf)));;
 			}
 			if (dominance != null){
 				tempSocial.setDominance(Cast.asFloat(scopeMySelf, dominance.value(scopeMySelf)));

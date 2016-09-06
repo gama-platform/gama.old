@@ -12,17 +12,17 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 @vars({/*@var(name = "name", type = IType.STRING),*/@var(name = "agent", type = IType.AGENT),
-	@var(name = "appreciation", type = IType.FLOAT),@var(name = "dominance", type = IType.FLOAT),
+	@var(name = "liking", type = IType.FLOAT),@var(name = "dominance", type = IType.FLOAT),
 	@var(name="solidarity", type = IType.FLOAT), @var(name="familiarity", type = IType.FLOAT)})
 
 public class SocialLink implements IValue {
 
 	IAgent agent;
-	Double appreciation = 0.0;
+	Double liking = 0.0;
 	Double dominance = 0.0;
 	Double solidarity = 0.0;
 	Double familiarity = 0.0;
-	private Boolean noAppreciation = true;
+	private Boolean noLiking = true;
 	private Boolean noDominance = true;
 	private Boolean noSolidarity = true;
 	private Boolean noFamiliarity = true;
@@ -33,8 +33,8 @@ public class SocialLink implements IValue {
 	}
 	
 	@getter("appreciation")
-	public Double getAppreciation(){
-		return appreciation;
+	public Double getLiking(){
+		return liking;
 	}
 	
 	@getter("dominance")
@@ -52,8 +52,8 @@ public class SocialLink implements IValue {
 		return familiarity;
 	}
 	
-	public Boolean getNoAppreciation(){
-		return noAppreciation;
+	public Boolean getNoLiking(){
+		return noLiking;
 	}
 	
 	public Boolean getNoDominance(){
@@ -72,9 +72,9 @@ public class SocialLink implements IValue {
 		this.agent = ag;
 	}
 	
-	public void setAppreciation(Double appre){
-		this.appreciation = appre;
-		this.noAppreciation = false;
+	public void setLiking(Double appre){
+		this.liking = appre;
+		this.noLiking = false;
 	}
 	
 	public void setDominance(Double domi){
@@ -102,8 +102,8 @@ public class SocialLink implements IValue {
 	
 	public SocialLink(IAgent ag, Double appre, Double domi, Double solid, Double fami){
 		this.agent=ag;
-		this.appreciation=appre;
-		this.noAppreciation = false;
+		this.liking=appre;
+		this.noLiking = false;
 		this.dominance=domi;
 		this.noDominance = false;
 		this.solidarity=solid;
@@ -119,7 +119,7 @@ public class SocialLink implements IValue {
 	
 	@Override
 	public String serialize(boolean includingBuiltIn) {
-		return "(" + agent +","+ appreciation +","+ dominance +","+ solidarity +","+ familiarity +")";
+		return "(" + agent +","+ liking +","+ dominance +","+ solidarity +","+ familiarity +")";
 	}
 
 	@Override
@@ -129,12 +129,12 @@ public class SocialLink implements IValue {
 
 	@Override
 	public String stringValue(IScope scope) throws GamaRuntimeException {
-		return "(" + agent +","+ appreciation +","+ dominance +","+ solidarity +","+ familiarity +")";
+		return "(" + agent +","+ liking +","+ dominance +","+ solidarity +","+ familiarity +")";
 	}
 
 	@Override
 	public IValue copy(IScope scope) throws GamaRuntimeException {
-		return new SocialLink(agent,appreciation,dominance,solidarity,familiarity);
+		return new SocialLink(agent,liking,dominance,solidarity,familiarity);
 	}
 	
 	@Override
@@ -146,8 +146,8 @@ public class SocialLink implements IValue {
 		if(this.agent!=null && other.getAgent()!=null){
 			if(!agent.equals(other.getAgent())){return false;}
 		}
-		if(!noAppreciation && !other.getNoAppreciation()){
-			if(!appreciation.equals(other.getAppreciation())){return false;}
+		if(!noLiking && !other.getNoLiking()){
+			if(!liking.equals(other.getLiking())){return false;}
 		}
 		if(!noDominance && !other.getNoDominance()){
 			if(!dominance.equals(other.getDominance())){return false;}
