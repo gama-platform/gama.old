@@ -257,7 +257,7 @@ public class ModelScene {
 		rgbBackgroundColor[0] = renderer.data.getBackgroundColor().getRed();
 		rgbBackgroundColor[1] = renderer.data.getBackgroundColor().getGreen();
 		rgbBackgroundColor[2] = renderer.data.getBackgroundColor().getBlue();
-		return new SimpleScene(simpleLayers,this.renderer.data.getDiffuseLights(),rgbBackgroundColor,this.renderer.data.getEnvWidth(),this.renderer.data.getEnvHeight());
+		return new SimpleScene(simpleLayers,this.renderer.data.getDiffuseLights(),rgbBackgroundColor,this.renderer.data.getEnvWidth(),this.renderer.data.getEnvHeight(),this.renderer.hashCode());
 	}
 
 	public boolean rendered() {
