@@ -1,0 +1,35 @@
+#if __VERSION__ >= 130
+	#define attribute in
+	#define varying out
+#endif
+		
+#ifdef GL_ES
+	precision mediump float;
+	precision mediump int;
+#endif
+		
+uniform mat4    transformationMatrix;
+uniform mat4    projectionMatrix;
+uniform mat4    viewMatrix;
+
+attribute vec3  attribute_Position;
+attribute vec4  attribute_Color;
+attribute vec3  attribute_Normal;
+attribute vec3  attribute_TextureCoords;
+
+varying vec4    varying_Color;
+varying vec2    pass_textureCoords;
+
+void main(void)
+{
+	vec4 worldPosition = transformationMatrix * vec4(attribute_Position,1.0);
+
+	varying_Color = attribute_Color;
+	mat4 modelView = viewMatrix * transformationMatrix;
+		
+	mat4 modelViewProjection = projectionMatrix * modelView;
+		
+	gl_Position = projectionMatrix * modelView * vec4(attribute_Position,1.0);
+
+	pass_textureCoords = attribute_TextureCoords;
+}

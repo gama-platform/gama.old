@@ -17,6 +17,7 @@ uniform mat4    lightProperties[7]; 	// first row : xyz position, light type (0 
 									// fourth row : attenuation properties
 uniform vec3    lightPosition;
 uniform float   useNormals; // 0 for no, 1 for yes
+uniform mat4    modelViewMatrix;
 
 attribute vec3  attribute_Position;
 attribute vec4  attribute_Color;
@@ -35,9 +36,14 @@ void main(void)
 	vec4 worldPosition = transformationMatrix * vec4(attribute_Position,1.0);
 	
 	varying_Color = attribute_Color;
-	gl_Position = projectionMatrix * viewMatrix * worldPosition;
+	mat4 modelView = viewMatrix * transformationMatrix;
+		
+	mat4 modelViewProjection = projectionMatrix * modelView;
+		
+	gl_Position = projectionMatrix * modelView * vec4(attribute_Position,1.0);
 	
 	varying_useNormals = useNormals;
+	pass_textureCoords = attribute_TextureCoords;
 	
 	if (useNormals > 0.5)
 	{
@@ -54,7 +60,5 @@ void main(void)
 		}
 		
 		toCameraVector = (inverse(viewMatrix) * vec4(0.0,0.0,0.0,1.0)).xyz - worldPosition.xyz;
-		
-		pass_textureCoords = attribute_TextureCoords;
 	}
 }

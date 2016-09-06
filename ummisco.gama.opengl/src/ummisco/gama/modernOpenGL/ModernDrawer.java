@@ -12,7 +12,10 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 
+import ummisco.gama.modernOpenGL.shader.AbstractShader;
+import ummisco.gama.modernOpenGL.shader.BillboardingTextShaderProgram;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
+import ummisco.gama.modernOpenGL.shader.TextShaderProgram;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.LayerObject;
 import ummisco.gama.opengl.vaoGenerator.ModernLayerStructure;
@@ -28,8 +31,8 @@ public class ModernDrawer {
 	public boolean isDrawing = true;
 	
 	ArrayList<Integer> listOfVAOUsed = new ArrayList<Integer>();
-	ArrayList<ShaderProgram> shaderLoaded = new ArrayList<ShaderProgram>();
-	HashMap<ShaderProgram,int[]> typeOfDrawingMap = new HashMap<ShaderProgram,int[]>();
+	ArrayList<AbstractShader> shaderLoaded = new ArrayList<AbstractShader>();
+	HashMap<AbstractShader,int[]> typeOfDrawingMap = new HashMap<AbstractShader,int[]>();
 	
 	HashMap<LayerObject,ModernLayerStructure> layerStructureMap = new HashMap<LayerObject,ModernLayerStructure>();
 	
@@ -53,6 +56,8 @@ public class ModernDrawer {
 		mapEntities.put(DrawingEntity.Type.LINE.toString(), null);
 		mapEntities.put(DrawingEntity.Type.FACE.toString(), null);
 		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), null);
+		mapEntities.put(DrawingEntity.Type.BILLBOARDING.toString(), null);
+		mapEntities.put(DrawingEntity.Type.POINT.toString(), null);
 		currentLayer = layer;
 		numberOfShaderInTheCurrentLayer=0;
 		currentShaderNumber = 0;
@@ -60,82 +65,28 @@ public class ModernDrawer {
 	
 	public void addDrawingEntities(DrawingEntity[] entities) {
 		for (DrawingEntity entity : entities) {
-			if (entity.type.equals(DrawingEntity.Type.LINE)) {
-				addLineEntity(entity);
-			}
-			else if (entity.type.equals(DrawingEntity.Type.FACE)) {
-				addFilledEntity(entity);
-			}
-			else if (entity.type.equals(DrawingEntity.Type.TEXTURED)) {
-				addTexturedEntity(entity);
-			}
-			else if (entity.type.equals(DrawingEntity.Type.POINT)) {
-				addPointEntity(entity);
-			}
+			addDrawingEntities(entity,entity.type);
 		}
 	}
 	
-	public void addLineEntity(DrawingEntity newEntity) {
-		// all the line entities are using the same shader. We have to put them all together
-		ArrayList<ArrayList<DrawingEntity>> lineEntities = mapEntities.get(DrawingEntity.Type.LINE.toString());
+	private void addDrawingEntities(DrawingEntity newEntity, DrawingEntity.Type type) {
+		ArrayList<ArrayList<DrawingEntity>> entities = mapEntities.get(type.toString());
 		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
-		if (lineEntities == null) {
+		if (entities == null) {
 			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 			// we create a new shader and we set it to the entity
-			newEntity.setShader(new ShaderProgram(gl));
+			setShaderToEntity(newEntity,type);
 			numberOfShaderInTheCurrentLayer++;
 			entityList.add(newEntity);
 			listToAdd.add(entityList);
 		}
 		else {
-			listToAdd = lineEntities;
-			// we link the new entity to the shader used for the other entities of the list.
-			newEntity.setShader(listToAdd.get(0).get(0).getShader());
-			listToAdd.get(0).add(newEntity);
-		}
-		mapEntities.put(DrawingEntity.Type.LINE.toString(), listToAdd);
-	}
-	
-	public void addPointEntity(DrawingEntity newEntity) {
-		// all the point entities are using the same shader. We have to put them all together
-		ArrayList<ArrayList<DrawingEntity>> pointEntities = mapEntities.get(DrawingEntity.Type.POINT.toString());
-		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
-		if (pointEntities == null) {
-			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
-			// we create a new shader and we set it to the entity
-			newEntity.setShader(new ShaderProgram(gl));
-			numberOfShaderInTheCurrentLayer++;
-			entityList.add(newEntity);
-			listToAdd.add(entityList);
-		}
-		else {
-			listToAdd = pointEntities;
-			// we link the new entity to the shader used for the other entities of the list.
-			newEntity.setShader(listToAdd.get(0).get(0).getShader());
-			listToAdd.get(0).add(newEntity);
-		}
-		mapEntities.put(DrawingEntity.Type.POINT.toString(), listToAdd);
-	}
-	
-	public void addFilledEntity(DrawingEntity newEntity) {
-		ArrayList<ArrayList<DrawingEntity>> filledEntities = mapEntities.get(DrawingEntity.Type.FACE.toString());
-		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
-		if (filledEntities == null) {
-			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
-			// we create a new shader and we set it to the entity
-			newEntity.setShader(new ShaderProgram(gl));
-			numberOfShaderInTheCurrentLayer++;
-			entityList.add(newEntity);
-			listToAdd.add(entityList);
-		}
-		else {
-			listToAdd = filledEntities;
-			// add to the entities with the same material
+			listToAdd = entities;
 			boolean entityAdded = false;
-			for (int i = 0 ; i < filledEntities.size() ; i++) {
-				DrawingEntity entity = filledEntities.get(i).get(0);
-				if (entity.getMaterial().equalsTo(newEntity.getMaterial())) {
-					// same material --> we add newEntity to the list which use the same shader, and we link the shader used for the other entities of the list to this entity
+			for (int i = 0 ; i < entities.size() ; i++) {
+				DrawingEntity entity = entities.get(i).get(0);
+				if (addEntityToList(entity,newEntity,type)) {
+					// if the entity can be mixed to the list of entities, we add newEntity to the list which use the same shader, and we link the shader used for the other entities of the list to this entity
 					newEntity.setShader(listToAdd.get(i).get(0).getShader());
 					listToAdd.get(i).add(newEntity);
 					// we change the value of the flag
@@ -143,54 +94,45 @@ public class ModernDrawer {
 				}
 			}
 			if (!entityAdded) {
-				// the material of newEntity has not been added yet. Create a new entity
+				// the entity to add cannot be mixed with other entities. We create a new entity list to the map.
 				ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
 				// we create a new shader and we set it to the entity
-				newEntity.setShader(new ShaderProgram(gl));
+				setShaderToEntity(newEntity,type);
 				numberOfShaderInTheCurrentLayer++;
 				entityList.add(newEntity);
 				listToAdd.add(entityList);
 			}
 		}
-		mapEntities.put(DrawingEntity.Type.FACE.toString(), listToAdd);
+		mapEntities.put(type.toString(), listToAdd);
 	}
 	
-	public void addTexturedEntity(DrawingEntity newEntity) {
-		ArrayList<ArrayList<DrawingEntity>> texturedEntities = mapEntities.get(DrawingEntity.Type.TEXTURED.toString());
-		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
-		if (texturedEntities == null) {
-			ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
-			newEntity.setShader(new ShaderProgram(gl));
-			numberOfShaderInTheCurrentLayer++;
-			entityList.add(newEntity);
-			listToAdd.add(entityList);
+	private void setShaderToEntity(DrawingEntity newEntity, DrawingEntity.Type type) {
+		if (type.equals(DrawingEntity.Type.BILLBOARDING)) {
+			newEntity.setShader(new BillboardingTextShaderProgram(gl));
+		}
+		else if (type.equals(DrawingEntity.Type.STRING)) {
+			newEntity.setShader(new TextShaderProgram(gl));
 		}
 		else {
-			listToAdd = texturedEntities;
-			// add to the entities with the same material
-			boolean entityAdded = false;
-			for (int i = 0 ; i < texturedEntities.size() ; i++) {
-				DrawingEntity entity = texturedEntities.get(i).get(0);
-				if (entity.getMaterial().equalsTo(newEntity.getMaterial()) 
-						&& entity.getTextureID() == newEntity.getTextureID()) {
-					// same material, same texture --> we add newEntity to the list which use the same shader, and we link the shader used for the other entities of the list to this entity
-					newEntity.setShader(listToAdd.get(i).get(0).getShader());
-					listToAdd.get(i).add(newEntity);
-					// we change the value of the flag
-					entityAdded = true;
-				}
-			}
-			if (!entityAdded) {
-				// the material of newEntity has not been added yet. Create a new entity
-				ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
-				// we create a new shader and we set it to the entity
-				newEntity.setShader(new ShaderProgram(gl));
-				numberOfShaderInTheCurrentLayer++;
-				entityList.add(newEntity);
-				listToAdd.add(entityList);
-			}
+			newEntity.setShader(new ShaderProgram(gl));
 		}
-		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), listToAdd);
+	}
+	
+	private boolean addEntityToList(DrawingEntity entity, DrawingEntity newEntity, DrawingEntity.Type type) {
+		if (type.equals(DrawingEntity.Type.LINE)) {
+			return true;
+		}
+		else if (type.equals(DrawingEntity.Type.FACE)) {
+			return entity.getMaterial().equalsTo(newEntity.getMaterial());
+		}
+		else if (type.equals(DrawingEntity.Type.TEXTURED) || type.equals(DrawingEntity.Type.STRING)) {
+			return (entity.getMaterial().equalsTo(newEntity.getMaterial()) 
+					&& entity.getTextureID() == newEntity.getTextureID());
+		}
+		else if (type.equals(DrawingEntity.Type.POINT)) {
+			return true;
+		}
+		return false;
 	}
 	
 	public void clearVBO() {
@@ -220,10 +162,13 @@ public class ModernDrawer {
 				
 				for (ArrayList<DrawingEntity> listOfEntities : listOfListOfEntities) {
 					// all those entities are using the same shader
-					ShaderProgram shaderProgram = listOfEntities.get(0).getShader();
+					AbstractShader shaderProgram = listOfEntities.get(0).getShader();
 					shaderLoaded.add(shaderProgram);
 					shaderProgram.start();
 					
+					if (shaderProgram instanceof BillboardingTextShaderProgram) {
+						((BillboardingTextShaderProgram)shaderProgram).setTranslation(listOfEntities.get(0).getTranslation()); // FIXME : need refactoring
+					}
 					updateTransformationMatrix(shaderProgram);
 					prepareShader(listOfEntities.get(0), shaderProgram);
 					
@@ -237,7 +182,7 @@ public class ModernDrawer {
 		}
 		
 		layerStructure = layerStructureMap.get(currentLayer);
-		layerStructure.shaderList = (ArrayList<ShaderProgram>) shaderLoaded.clone();
+		layerStructure.shaderList = (ArrayList<AbstractShader>) shaderLoaded.clone();
 		layerStructureMap.put(currentLayer, layerStructure);
 		
 		shaderLoaded.clear();
@@ -250,8 +195,8 @@ public class ModernDrawer {
 		if (layerStructureMap.get(currentLayer) == null) {
 			return; // if nothing is to draw for this layer, do nothing.
 		}
-		ArrayList<ShaderProgram> shaderList = layerStructureMap.get(currentLayer).shaderList;
-		for (ShaderProgram shader : shaderList) {
+		ArrayList<AbstractShader> shaderList = layerStructureMap.get(currentLayer).shaderList;
+		for (AbstractShader shader : shaderList) {
 			// set the current layer drawn
 			
 			shader.start();
@@ -261,23 +206,22 @@ public class ModernDrawer {
 			
 			///////////////////////////////////////:
 			// VERTICES POSITIONS BUFFER
-			bindBuffer(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,typeOfDrawing[2]);
+			bindBuffer(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,typeOfDrawing[2]);
 			
-			// COLORS BUFFER (If no texture is defined)
-			if (!shader.useTexture())
+			// COLORS BUFFER
+			bindBuffer(AbstractShader.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
+			
+			// UV MAPPING (If a texture is defined)
+			if (shader.useTexture())
 			{
-				bindBuffer(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
-			}
-			else {
-				//shader.loadTexture(0);
-				bindBuffer(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
+				bindBuffer(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
 				gl.glActiveTexture(GL.GL_TEXTURE0);
 				gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
 			}
 			
 			// NORMAL BUFFER
 			if (shader.useNormal())
-				bindBuffer(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,typeOfDrawing[2]);
+				bindBuffer(AbstractShader.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,typeOfDrawing[2]);
 			
 			// INDEX BUFFER
 			// Select the VBO, GPU memory data, to use for colors
@@ -294,10 +238,57 @@ public class ModernDrawer {
 		gl.glDrawElements(typeOfDrawing[0], typeOfDrawing[1], GL2.GL_UNSIGNED_INT, 0);
 	}
 	
-	private void updateTransformationMatrix(ShaderProgram shaderProgram) {
-		shaderProgram.loadTransformationMatrix(getTransformationMatrix());
-		shaderProgram.loadViewMatrix(renderer.camera);
+	private void updateTransformationMatrix(AbstractShader shaderProgram) {
+		if (shaderProgram instanceof BillboardingTextShaderProgram) {
+			updateTransformationMatrix((BillboardingTextShaderProgram)shaderProgram);
+		}
+		else {
+			shaderProgram.loadTransformationMatrix(getTransformationMatrix());
+			shaderProgram.loadViewMatrix(renderer.camera);
+			shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
+		}
+	}
+	
+	private void updateTransformationMatrix(BillboardingTextShaderProgram shaderProgram) {
 		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
+		
+		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
+		Matrix4f modelMatrix = new Matrix4f();
+		modelMatrix.setIdentity();
+		// set the translation
+		Vector3f entityTranslation = shaderProgram.getTranslation();
+		modelMatrix.m30 = entityTranslation.x;
+		modelMatrix.m31 = entityTranslation.y;
+		modelMatrix.m32 = entityTranslation.z;
+		// reset the rotation
+		modelMatrix.m00 = viewMatrix.m00;
+		modelMatrix.m01 = viewMatrix.m10;
+		modelMatrix.m02 = viewMatrix.m20;
+		modelMatrix.m10 = viewMatrix.m01;
+		modelMatrix.m11 = viewMatrix.m11;
+		modelMatrix.m12 = viewMatrix.m21;
+		modelMatrix.m20 = viewMatrix.m02;
+		modelMatrix.m21 = viewMatrix.m12;
+		modelMatrix.m22 = viewMatrix.m22;
+		// compute modelViewMatrix
+		Matrix4f modelViewMatrix = modelMatrix;
+		modelViewMatrix.mul(viewMatrix);
+		// inverse y axis
+		modelViewMatrix.m11 = -1;
+		
+		shaderProgram.loadModelViewMatrix(modelViewMatrix);
+	}
+	
+	private void prepareShader(DrawingEntity entity, AbstractShader shaderProgram) {
+		if (shaderProgram instanceof ShaderProgram) {
+			prepareShader(entity, (ShaderProgram)shaderProgram);
+		}
+		else if (shaderProgram instanceof BillboardingTextShaderProgram) {
+			prepareShader(entity, (BillboardingTextShaderProgram)shaderProgram);
+		}
+		else if (shaderProgram instanceof TextShaderProgram) {
+			prepareShader(entity, (TextShaderProgram)shaderProgram);
+		}
 	}
 	
 	private void prepareShader(DrawingEntity entity, ShaderProgram shaderProgram) {
@@ -325,6 +316,29 @@ public class ModernDrawer {
 			shaderProgram.loadTexture(0);
 			shaderProgram.storeTextureID(entity.getTextureID());
 		}
+		if (entity.type == DrawingEntity.Type.STRING) {
+			shaderProgram.enableString();
+			shaderProgram.loadFontWidth(entity.getFontWidth());
+			shaderProgram.loadFontEdge(entity.getFontEdge());
+		}
+		else {
+			shaderProgram.disableString();
+		}
+	}
+	
+	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		
+		shaderProgram.loadTexture(0);
+		shaderProgram.storeTextureID(entity.getTextureID());
+		shaderProgram.loadFontWidth(entity.getFontWidth());
+		shaderProgram.loadFontEdge(entity.getFontEdge());
+	}
+	
+	private void prepareShader(DrawingEntity entity, BillboardingTextShaderProgram shaderProgram) {
+		// TODO
+		shaderProgram.loadTexture(0);
+		shaderProgram.storeTextureID(entity.getTextureID());
+		shaderProgram.loadFontWidth(entity.getFontWidth());
+		shaderProgram.loadFontEdge(entity.getFontEdge());
 	}
 	
 	private Matrix4f getTransformationMatrix() {
@@ -340,7 +354,7 @@ public class ModernDrawer {
 		return TransformationMatrix.createTransformationMatrix(layerTranslation, quat, scale, env_width, env_height);
 	}
 	
-	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber, ShaderProgram shader) {
+	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber, AbstractShader shader) {
 		
 		ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		ArrayList<float[]> listColors = new ArrayList<float[]>();
@@ -356,25 +370,22 @@ public class ModernDrawer {
 				listUvMapping.add(entity.getUvMapping());
 		}
 
-
 		// VERTICES POSITIONS BUFFER
-		storeDataInAttributeList(ShaderProgram.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,listVertices,shaderNumber);
+		storeDataInAttributeList(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,listVertices,shaderNumber);
 		
-		// COLORS BUFFER (If no texture is defined)
-		if (listUvMapping.size() == 0) {
-			storeDataInAttributeList(ShaderProgram.COLOR_ATTRIBUTE_IDX,COLOR_IDX,listColors,shaderNumber);
-		}
+		// COLORS BUFFER
+		storeDataInAttributeList(AbstractShader.COLOR_ATTRIBUTE_IDX,COLOR_IDX,listColors,shaderNumber);
 		
 		// UV MAPPING (If a texture is defined)
-		else {
-			storeDataInAttributeList(ShaderProgram.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
+		if (listUvMapping.size() != 0) {
+			storeDataInAttributeList(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
 			gl.glActiveTexture(GL.GL_TEXTURE0);
 			gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
 		}
 		
 		// NORMAL BUFFER
 		if (shader.useNormal())
-			storeDataInAttributeList(ShaderProgram.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,listNormals,shaderNumber);
+			storeDataInAttributeList(AbstractShader.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,listNormals,shaderNumber);
 		
 		// INDEX BUFFER
 		int sizeIdxBuffer = 0;
@@ -450,10 +461,10 @@ public class ModernDrawer {
 		int coordinateSize = 0;
 		switch (shaderAttributeNumber) {
 		// recognize the type of VAO to determine the size of the coordinates
-			case ShaderProgram.COLOR_ATTRIBUTE_IDX : coordinateSize = 4; break; // r, g, b, a
-			case ShaderProgram.POSITION_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
-			case ShaderProgram.NORMAL_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
-			case ShaderProgram.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
+			case AbstractShader.COLOR_ATTRIBUTE_IDX : coordinateSize = 4; break; // r, g, b, a
+			case AbstractShader.POSITION_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
+			case AbstractShader.NORMAL_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
+			case AbstractShader.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
 		}
 		// Select the VBO, GPU memory data, to use for data
 		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[shaderNumber*5+bufferAttributeNumber]);

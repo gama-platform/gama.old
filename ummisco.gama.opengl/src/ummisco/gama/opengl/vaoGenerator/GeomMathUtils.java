@@ -3,11 +3,22 @@ package ummisco.gama.opengl.vaoGenerator;
 import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
 
+import javax.vecmath.Matrix3d;
+import javax.vecmath.Matrix3f;
 import javax.vecmath.Matrix4d;
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.DecompositionSolver;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.RealVector;
+
 import com.vividsolutions.jts.geom.Coordinate;
+
+//import Jama.Matrix;
 
 public class GeomMathUtils {
 	
@@ -473,6 +484,333 @@ public class GeomMathUtils {
         result.m33 = matrix.m33;
         return result;
     }
+	
+	public static Matrix4f getHomographyf(double[][] srcPoints, double[][] dstPoints) {
+		// see : http://math.stackexchange.com/questions/296794/finding-the-transform-matrix-from-4-projected-points-with-javascript
+		
+		double sx1 = srcPoints[0][0];
+		double sy1 = srcPoints[0][1];
+		double sx2 = srcPoints[1][0];
+		double sy2 = srcPoints[1][1];
+		double sx3 = srcPoints[2][0];
+		double sy3 = srcPoints[2][1];
+		double sx4 = srcPoints[3][0];
+		double sy4 = srcPoints[3][1];
+		
+		double dx1 = dstPoints[0][0];
+		double dy1 = dstPoints[0][1];
+		double dx2 = dstPoints[1][0];
+		double dy2 = dstPoints[1][1];
+		double dx3 = dstPoints[2][0];
+		double dy3 = dstPoints[2][1];
+		double dx4 = dstPoints[3][0];
+		double dy4 = dstPoints[3][1];
+		
+		// 1) resolve the following equation for src and dst :
+		//      | x1  x2  x3 |   | lamda |   | x4 |
+		//      | y1  y2  y3 | . |  mu   | = | y4 |
+		//      | 1   1   1  |   |  to   |   | 1  |
+		
+		// for src :
+		
+		double src_to = ( (sx4 - sx1)*(sy2 - sy1) - (sy4 - sy1)*(sx2 - sx1) ) /
+				( (sx3 - sx1)*(sy2 - sy1) - (sy3 - sy1)*(sx2 - sx1) );
+//		double src_to = ( (sy4 - sy1)*(sx2 - sx1) - (sx4 - sx1)*(sy2 - sy1) ) /
+//				( (sx2 - sx1)*(sy3 - sy1)+(sx3 - sx1)*(sy2 - sy1) );
+		double src_mu = (sx4 - sx1 - src_to*(sx3 - sx1)) / (sx2 - sx1);
+		double src_lamda = 1 - src_mu - src_to;		
+		
+		// for dst :
+		
+		double dst_to = ( (dx4 - dx1)*(dy2 - dy1) - (dy4 - dy1)*(dx2 - dx1) ) /
+				( (dx3 - dx1)*(dy2 - dy1) - (dy3 - dy1)*(dx2 - dx1) );
+//		double dst_to = ( (dy4 - dy1)*(dx2 - dx1) - (dx4 - dx1)*(dy2 - dy1) ) /
+//				( (dx2 - dx1)*(dy3 - dy1)+(dx3 - dx1)*(dy2 - dy1) );
+		double dst_mu = (dx4 - dx1 - dst_to*(dx3 - dx1)) / (dx2 - dx1);
+		double dst_lamda = 1 - dst_mu - dst_to;
+		
+		// 2) scale the columns by the coefficients just computed :
+		//  | lamda*x1  mu*x2  to*x3  |
+		//  | lamda*y1  mu*y2  to*y3  |
+		//  | lamda     mu     to     |
+		
+		Matrix3f A = new Matrix3f();
+		A.m00 = (float) (src_lamda * sx1);
+		A.m01 = (float) (src_mu * sx2);
+		A.m02 = (float) (src_to * sx3);
+		A.m10 = (float) (src_lamda * sy1);
+		A.m11 = (float) (src_mu * sy2);
+		A.m12 = (float) (src_to * sy3);
+		A.m20 = (float) src_lamda;
+		A.m21 = (float) src_mu;
+		A.m22 = (float) src_to;
+		
+		Matrix3f B = new Matrix3f();
+		B.m00 = (float) (dst_lamda * dx1);
+		B.m01 = (float) (dst_mu * dx2);
+		B.m02 = (float) (dst_to * dx3);
+		B.m10 = (float) (dst_lamda * dy1);
+		B.m11 = (float) (dst_mu * dy2);
+		B.m12 = (float) (dst_to * dy3);
+		B.m20 = (float) dst_lamda;
+		B.m21 = (float) dst_mu;
+		B.m22 = (float) dst_to;
+		
+		// 3) compute Ainvert
+		
+		Matrix3f Ainv = (Matrix3f) A.clone();
+		Ainv.invert();
+		
+		// 4) compute C = B . Ainvert
+		
+		Matrix3f C = (Matrix3f) B.clone();
+		C.mul(Ainv);
+		
+		// 5) compute the final matrix
+		
+		Matrix4f Result = new Matrix4f();
+		Result.m00 = C.m00;
+		Result.m01 = C.m01;
+		Result.m02 = C.m02;
+		Result.m03 = 0;
+		Result.m10 = C.m10;
+		Result.m11 = C.m11;
+		Result.m12 = C.m12;
+		Result.m13 = 0;
+		Result.m20 = C.m20;
+		Result.m21 = C.m21;
+		Result.m22 = C.m22;
+		Result.m23 = 0;
+		Result.m30 = 0;
+		Result.m31 = 0;
+		Result.m32 = 0;
+		Result.m33 = 0;
+		
+		return Result;
+	}
+	
+	public static Matrix4d getHomography(double[][] srcPoints, double[][] dstPoints) {
+		// see : http://math.stackexchange.com/questions/296794/finding-the-transform-matrix-from-4-projected-points-with-javascript
+		
+		double sx1 = srcPoints[0][0];
+		double sy1 = srcPoints[0][1];
+		double sx2 = srcPoints[1][0];
+		double sy2 = srcPoints[1][1];
+		double sx3 = srcPoints[2][0];
+		double sy3 = srcPoints[2][1];
+		double sx4 = srcPoints[3][0];
+		double sy4 = srcPoints[3][1];
+		
+		double dx1 = dstPoints[0][0];
+		double dy1 = dstPoints[0][1];
+		double dx2 = dstPoints[1][0];
+		double dy2 = dstPoints[1][1];
+		double dx3 = dstPoints[2][0];
+		double dy3 = dstPoints[2][1];
+		double dx4 = dstPoints[3][0];
+		double dy4 = dstPoints[3][1];
+		
+		// 1) resolve the following equation for src and dst :
+		//      | x1  x2  x3 |   | lamda |   | x4 |
+		//      | y1  y2  y3 | . |  mu   | = | y4 |
+		//      | 1   1   1  |   |  to   |   | 1  |
+		
+		// for src :
+		
+		double src_to = ( (sx4 - sx1)*(sy2 - sy1) - (sy4 - sy1)*(sx2 - sx1) ) /
+				( (sx3 - sx1)*(sy2 - sy1) - (sy3 - sy1)*(sx2 - sx1) );
+//		double src_to = ( (sy4 - sy1)*(sx2 - sx1) - (sx4 - sx1)*(sy2 - sy1) ) /
+//				( (sx2 - sx1)*(sy3 - sy1)+(sx3 - sx1)*(sy2 - sy1) );
+		double src_mu = (sx4 - sx1 - src_to*(sx3 - sx1)) / (sx2 - sx1);
+		double src_lamda = 1 - src_mu - src_to;		
+		
+		// for dst :
+		
+		double dst_to = ( (dx4 - dx1)*(dy2 - dy1) - (dy4 - dy1)*(dx2 - dx1) ) /
+				( (dx3 - dx1)*(dy2 - dy1) - (dy3 - dy1)*(dx2 - dx1) );
+//		double dst_to = ( (dy4 - dy1)*(dx2 - dx1) - (dx4 - dx1)*(dy2 - dy1) ) /
+//				( (dx2 - dx1)*(dy3 - dy1)+(dx3 - dx1)*(dy2 - dy1) );
+		double dst_mu = (dx4 - dx1 - dst_to*(dx3 - dx1)) / (dx2 - dx1);
+		double dst_lamda = 1 - dst_mu - dst_to;
+		
+		// 2) scale the columns by the coefficients just computed :
+		//  | lamda*x1  mu*x2  to*x3  |
+		//  | lamda*y1  mu*y2  to*y3  |
+		//  | lamda     mu     to     |
+		
+		Matrix3d A = new Matrix3d();
+		A.m00 = src_lamda * sx1;
+		A.m01 = src_mu * sx2;
+		A.m02 = src_to * sx3;
+		A.m10 = src_lamda * sy1;
+		A.m11 = src_mu * sy2;
+		A.m12 = src_to * sy3;
+		A.m20 = src_lamda;
+		A.m21 = src_mu;
+		A.m22 = src_to;
+		
+		Matrix3d B = new Matrix3d();
+		B.m00 = dst_lamda * dx1;
+		B.m01 = dst_mu * dx2;
+		B.m02 = dst_to * dx3;
+		B.m10 = dst_lamda * dy1;
+		B.m11 = dst_mu * dy2;
+		B.m12 = dst_to * dy3;
+		B.m20 = dst_lamda;
+		B.m21 = dst_mu;
+		B.m22 = dst_to;
+		
+		// 3) compute Ainvert
+		
+		Matrix3d Ainv = (Matrix3d) A.clone();
+		Ainv.invert();
+		
+		// 4) compute C = B . Ainvert
+		
+		Matrix3d C = (Matrix3d) B.clone();
+		C.mul(Ainv);
+		
+		// 5) compute the final matrix
+		
+		Matrix4d Result = new Matrix4d();
+		Result.m00 = C.m00;
+		Result.m01 = C.m01;
+		Result.m02 = 0;
+		Result.m03 = C.m02;
+		Result.m10 = C.m10;
+		Result.m11 = C.m11;
+		Result.m12 = 0;
+		Result.m13 = C.m12;
+		Result.m20 = 0;
+		Result.m21 = 0;
+		Result.m22 = 1;
+		Result.m23 = 0;
+		Result.m30 = C.m20;
+		Result.m31 = C.m21;
+		Result.m32 = 0;
+		Result.m33 = C.m22;
+		
+		return Result;
+	}
+	
+//	public static Matrix4d getHomography2(double[][] srcPoints, double[][] dstPoints) {
+//		// see : http://math.stackexchange.com/questions/494238/how-to-compute-homography-matrix-h-from-corresponding-points-2d-2d-planar-homog
+//		
+//		double sx1 = srcPoints[0][0];
+//		double sy1 = srcPoints[0][1];
+//		double sx2 = srcPoints[1][0];
+//		double sy2 = srcPoints[1][1];
+//		double sx3 = srcPoints[2][0];
+//		double sy3 = srcPoints[2][1];
+//		double sx4 = srcPoints[3][0];
+//		double sy4 = srcPoints[3][1];
+//		
+//		double dx1 = dstPoints[0][0];
+//		double dy1 = dstPoints[0][1];
+//		double dx2 = dstPoints[1][0];
+//		double dy2 = dstPoints[1][1];
+//		double dx3 = dstPoints[2][0];
+//		double dy3 = dstPoints[2][1];
+//		double dx4 = dstPoints[3][0];
+//		double dy4 = dstPoints[3][1];
+//		
+//		//Creating  Arrays Representing Equations
+//        double[][] lhsArray = {
+//        		{-sx1, -sy1, -1, 0, 0, 0, sx1*dx1, sy1*dx1}, 
+//        		{0, 0, 0, -dx1, -dy1, -1, sx1*dy1, sy1*dy1},
+//        		{-sx2, -sy2, -1, 0, 0, 0, sx2*dx2, sy2*dx2}, 
+//        		{0, 0, 0, -dx2, -dy2, -1, sx2*dy2, sy2*dy2},
+//        		{-sx3, -sy3, -1, 0, 0, 0, sx3*dx3, sy3*dx3}, 
+//        		{0, 0, 0, -dx3, -dy3, -1, sx3*dy3, sy3*dy3},
+//        		{-sx4, -sy4, -1, 0, 0, 0, sx4*dx4, sy4*dx4}, 
+//        		{0, 0, 0, -dx4, -dy4, -1, sx4*dy4, sy4*dy4}};
+//        double[] rhsArray = {dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4};
+//        //Creating Matrix Objects with arrays
+//        Matrix lhs = new Matrix(lhsArray);
+//        Matrix rhs = new Matrix(rhsArray, 8);
+//        //Calculate Solved Matrix
+//        Matrix ans = lhs.solve(rhs);
+//        
+//        Matrix4d Result = new Matrix4d();
+//		Result.m00 = ans.get(0, 0);
+//		Result.m01 = ans.get(1, 0);
+//		Result.m02 = 0;
+//		Result.m03 = ans.get(2, 0);
+//		Result.m10 = ans.get(3, 0);
+//		Result.m11 = ans.get(4, 0);
+//		Result.m12 = 0;
+//		Result.m13 = ans.get(5, 0);
+//		Result.m20 = 0;
+//		Result.m21 = 0;
+//		Result.m22 = 1;
+//		Result.m23 = 0;
+//		Result.m30 = ans.get(6, 0);
+//		Result.m31 = ans.get(7, 0);
+//		Result.m32 = 0;
+//		Result.m33 = 1;
+//		
+//		return Result;
+//	}
+	
+	public static Matrix4d getHomography3(double[][] srcPoints, double[][] dstPoints) {
+		
+		// see : http://math.stackexchange.com/questions/494238/how-to-compute-homography-matrix-h-from-corresponding-points-2d-2d-planar-homog
+		
+		double sx1 = srcPoints[0][0];
+		double sy1 = srcPoints[0][1];
+		double sx2 = srcPoints[1][0];
+		double sy2 = srcPoints[1][1];
+		double sx3 = srcPoints[2][0];
+		double sy3 = srcPoints[2][1];
+		double sx4 = srcPoints[3][0];
+		double sy4 = srcPoints[3][1];
+		
+		double dx1 = dstPoints[0][0];
+		double dy1 = dstPoints[0][1];
+		double dx2 = dstPoints[1][0];
+		double dy2 = dstPoints[1][1];
+		double dx3 = dstPoints[2][0];
+		double dy3 = dstPoints[2][1];
+		double dx4 = dstPoints[3][0];
+		double dy4 = dstPoints[3][1];
+				
+		RealMatrix coefficients =
+			    new Array2DRowRealMatrix(new double[][] {
+	        		{-sx1, -sy1, -1, 0, 0, 0, sx1*dx1, sy1*dx1}, 
+	        		{0, 0, 0, -dx1, -dy1, -1, sx1*dy1, sy1*dy1},
+	        		{-sx2, -sy2, -1, 0, 0, 0, sx2*dx2, sy2*dx2}, 
+	        		{0, 0, 0, -dx2, -dy2, -1, sx2*dy2, sy2*dy2},
+	        		{-sx3, -sy3, -1, 0, 0, 0, sx3*dx3, sy3*dx3}, 
+	        		{0, 0, 0, -dx3, -dy3, -1, sx3*dy3, sy3*dy3},
+	        		{-sx4, -sy4, -1, 0, 0, 0, sx4*dx4, sy4*dx4}, 
+	        		{0, 0, 0, -dx4, -dy4, -1, sx4*dy4, sy4*dy4}},
+			                       false);
+		DecompositionSolver solver = new LUDecomposition(coefficients).getSolver();
+			
+		RealVector constants = new ArrayRealVector(new double[] { dx1, dy1, dx2, dy2, dx3, dy3, dx4, dy4 }, false);
+		RealVector solution = solver.solve(constants);
+		
+		Matrix4d Result = new Matrix4d();
+		Result.m00 = solution.getEntry(0);
+		Result.m01 = solution.getEntry(1);
+		Result.m02 = 0;
+		Result.m03 = solution.getEntry(2);
+		Result.m10 = solution.getEntry(3);
+		Result.m11 = solution.getEntry(4);
+		Result.m12 = 0;
+		Result.m13 = solution.getEntry(5);
+		Result.m20 = 0;
+		Result.m21 = 0;
+		Result.m22 = 1;
+		Result.m23 = 0;
+		Result.m30 = solution.getEntry(6);
+		Result.m31 = solution.getEntry(7);
+		Result.m32 = 0;
+		Result.m33 = 1;
+		
+		return Result;
+		
+	}
 
 
 }

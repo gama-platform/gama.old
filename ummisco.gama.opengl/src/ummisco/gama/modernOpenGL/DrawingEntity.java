@@ -1,13 +1,15 @@
 package ummisco.gama.modernOpenGL;
 
+import ummisco.gama.modernOpenGL.shader.AbstractShader;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 
 public class DrawingEntity {
 	
-	static public enum Type { TEXTURED, FACE, LINE, POINT }; // border == triangulate
+	static public enum Type { TEXTURED, FACE, LINE, POINT, STRING, BILLBOARDING }; // border == triangulate
 	
 	public Type type;
 	
+	private float[] pickingIds;
 	private float[] vertices;
 	private float[] colors;
 	private float[] indices;
@@ -17,7 +19,13 @@ public class DrawingEntity {
 	private String texturePath;
 	private Material material;
 	
-	private ShaderProgram shader;
+	// only for string :
+	private float fontWidth = -1; // init value set to -1. If the value is -1, the entity is not a string
+	private float fontEdge = -1; // init value set to -1. If the value is -1, the entity is not a string
+	private boolean isBillboarding = false;
+	private Vector3f translation = new Vector3f();
+	
+	private AbstractShader shader;
 	
 	public Material getMaterial() {
 		return material;
@@ -91,8 +99,41 @@ public class DrawingEntity {
 		this.shader = shader;
 	}
 	
-	public ShaderProgram getShader() {
+	public AbstractShader getShader() {
 		return shader;
+	}
+	
+	public void setFontWidth(float value) {
+		fontWidth = value;
+	}
+
+	public float getFontWidth() {
+		return fontWidth;
+	}
+	
+	public void setFontEdge(float value) {
+		fontEdge = value;
+	}
+	
+	public float getFontEdge() {
+		return fontEdge;
+	}
+	
+	public void enableBillboarding() {
+		isBillboarding = true;
+	}
+	public void disableBillboarding() {
+		isBillboarding = false;
+	}
+	public boolean isBillboarding() {
+		return isBillboarding;
+	}
+	
+	public void setTranslation(Vector3f translation) {
+		this.translation = translation;
+	}
+	public Vector3f getTranslation() {
+		return this.translation;
 	}
 	
 }
