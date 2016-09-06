@@ -21,16 +21,25 @@ public class DrawingEntityGenerator {
 	}
 	
 	public DrawingEntity[] GenerateDrawingEntities(AbstractObject object) {
+		return GenerateDrawingEntities(object, true);
+	}
+	
+	public DrawingEntity[] GenerateDrawingEntities(AbstractObject object, boolean computeTextureIds) {
+		// if this function is called to create a simpleScene, we don't compute the texture IDs (the only thing that interest us in this case is the texture Path)
 		DrawingEntity[] result = null;
 		if (object instanceof GeometryObject) {
 			GeometryObject geomObj = (GeometryObject)object;
-			// FIXME : temp hack to make the webGL working (HAS TO BE CHANGED !!!!)
-			Texture[] textures = null;
-			if (object.getNumberOfTexture() > 0) {
-				textures = new Texture[1];// object.getTextures(renderer.getContext(), renderer);
+			
+			String[] texturePaths = object.getTexturePaths(); // returns null if no texture for this entity
+			int[] textureIDs = (texturePaths == null) ? null : new int[texturePaths.length];
+			if (computeTextureIds && (texturePaths != null)) {
+				Texture[] textures = object.getTextures(renderer.getContext(), renderer);
+				for (int i = 0 ; i < textures.length ; i++) {
+					textureIDs[i] = textures[i].getTextureObject();
+				}
 			}
 			
-			ManyFacedShape shape = new ManyFacedShape(geomObj,textures,renderer.data.isTriangulation());	
+			ManyFacedShape shape = new ManyFacedShape(geomObj,textureIDs,texturePaths,renderer.data.isTriangulation());	
 			result = shape.getDrawingEntities();
 		}	
 		return result;

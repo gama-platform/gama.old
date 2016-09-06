@@ -37,7 +37,8 @@ public class ManyFacedShape {
 	private Coordinate[] coordsWithDoublons;
 	private float[] uvMapping;
 	private float[] normals;
-	private Texture[] textures = null; // null for "no texture"
+	private int[] textureIDs = null; // null for "no texture"
+	private String[] texturePaths = null; // null for "no texture"
 	private float[] coordsForBorder;
 	private float[] idxForBorder;
 	
@@ -61,7 +62,7 @@ public class ManyFacedShape {
 		loadManyFacedShape(obj);
 	}
 	
-	public ManyFacedShape(GeometryObject geomObj, Texture[] textures, boolean isTriangulation) {
+	public ManyFacedShape(GeometryObject geomObj, int[] textureIDs, String[] texturePaths, boolean isTriangulation) {
 		
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
@@ -71,7 +72,8 @@ public class ManyFacedShape {
 		
 		this.color = geomObj.getAttributes().color;
 		this.borderColor = geomObj.getAttributes().getBorder();
-		this.textures = textures;
+		this.textureIDs = textureIDs;
+		this.texturePaths = texturePaths;
 		this.isTriangulation = isTriangulation;
 		this.material = geomObj.getAttributes().getMaterial();
 		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
@@ -891,11 +893,11 @@ public class ManyFacedShape {
 				result.add(borderEntity);
 		}
 		
-		if (textures == null && color == null) {
+		if (texturePaths == null && color == null) {
 			// the geometry is not filled. We create no more entity.
 		}
 		else {
-			if (textures == null || textures.length == 1 || (topFace == null && bottomFace == null))
+			if (texturePaths == null || texturePaths.length == 1 || (topFace == null && bottomFace == null))
 			{
 				// configure the drawing entity for the filled faces
 				DrawingEntity filledEntity = new DrawingEntity();
@@ -905,10 +907,11 @@ public class ManyFacedShape {
 				filledEntity.setColors(getColorArray(color,coords));
 				filledEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
 				filledEntity.type = DrawingEntity.Type.FACE;
-				if (textures != null)
+				if (texturePaths != null)
 				{
 					filledEntity.type = DrawingEntity.Type.TEXTURED;
-					filledEntity.setTexture(textures[0]);
+					filledEntity.setTexturePath(texturePaths[0]);
+					filledEntity.setTextureID(textureIDs[0]);
 					filledEntity.setUvMapping(uvMapping);
 				}
 				
@@ -947,7 +950,8 @@ public class ManyFacedShape {
 				botTopEntity.setIndices(botTopIndices);
 				botTopEntity.type = DrawingEntity.Type.TEXTURED;
 				botTopEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
-				botTopEntity.setTexture(textures[0]);
+				botTopEntity.setTexturePath(texturePaths[0]);
+				botTopEntity.setTextureID(textureIDs[0]);
 				botTopEntity.setUvMapping(botTopUVMapping);
 				
 				// build the rest of the faces
@@ -972,7 +976,8 @@ public class ManyFacedShape {
 				otherEntity.setIndices(idxArray);
 				otherEntity.type = DrawingEntity.Type.TEXTURED;
 				otherEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
-				otherEntity.setTexture(textures[1]);
+				otherEntity.setTexturePath(texturePaths[1]);
+				otherEntity.setTextureID(textureIDs[1]);
 				otherEntity.setUvMapping(uvMapping);
 				
 				result.add(botTopEntity);

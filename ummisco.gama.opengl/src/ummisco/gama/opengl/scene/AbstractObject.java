@@ -14,7 +14,6 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
-import java.util.HashMap;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -105,6 +104,21 @@ public abstract class AbstractObject {
 				textures[order] = computeTexture(gl, renderer, order);
 			}
 			result[order] = textures[order].getTextureObject();
+		}
+		return result;
+	}
+	
+	public String[] getTexturePaths() {
+		if (attributes.getTextures() == null) {
+			return null;
+		}
+		int numberOfTextures = attributes.getTextures().size();
+		String[] result = new String[numberOfTextures];
+		for (int i = 0 ; i < numberOfTextures ; i++) {
+			Object obj = attributes.getTextures().get(i);
+			if (obj instanceof GamaImageFile) {
+				result[i] = ((GamaImageFile) obj).getPath();
+			}
 		}
 		return result;
 	}

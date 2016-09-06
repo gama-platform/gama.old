@@ -1,7 +1,5 @@
 package ummisco.gama.modernOpenGL;
 
-import com.jogamp.opengl.util.texture.Texture;
-
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 
 public class DrawingEntity {
@@ -15,7 +13,8 @@ public class DrawingEntity {
 	private float[] indices;
 	private float[] normals;
 	private float[] uvMapping;
-	private Texture texture;
+	private int textureID;
+	private String texturePath;
 	private Material material;
 	
 	private ShaderProgram shader;
@@ -72,12 +71,20 @@ public class DrawingEntity {
 		this.normals = normals;
 	}
 	
-	public void setTexture(Texture texture) {
-		this.texture = texture;
+	public void setTextureID(int textureID) {
+		this.textureID = textureID;
 	}
 	
 	public int getTextureID() {
-		return texture.getTextureObject();
+		return textureID;
+	}
+	
+	public void setTexturePath(String texturePath) {
+		this.texturePath = texturePath;
+	}
+	
+	public String getTexturePath() {
+		return texturePath;
 	}
 	
 	public void setShader(ShaderProgram shader) {

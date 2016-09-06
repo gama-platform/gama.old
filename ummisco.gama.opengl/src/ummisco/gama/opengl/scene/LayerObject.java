@@ -359,7 +359,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if (!constantRedrawnLayer) {
 			for (final List<AbstractObject> list : objects) {
 				for (final AbstractObject object : list) {
-					final DrawingEntity[] drawingEntities = renderer.getDrawingEntityGenerator().GenerateDrawingEntities(object);
+					final DrawingEntity[] drawingEntities = renderer.getDrawingEntityGenerator().GenerateDrawingEntities(object,false);
 					if (drawingEntities != null) {
 						for (DrawingEntity drawingEntity : drawingEntities) {
 							drawingEntityList.add(drawingEntity);
