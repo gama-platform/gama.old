@@ -6,7 +6,6 @@ import java.util.HashMap;
 
 import javax.vecmath.Vector3f;
 
-import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
@@ -75,10 +74,12 @@ public class ManyFacedShape {
 		loadManyFacedShape(obj);
 	}
 	
-	public ManyFacedShape(StringObject strObj, Texture[] textures, TextMeshData textMeshData, boolean isTriangulation) {
+	public ManyFacedShape(StringObject strObj, int[] textureIds, String[] texturePaths, TextMeshData textMeshData, boolean isTriangulation) {
 		// for StringObject
-		genericInit(strObj, textures, isTriangulation);
+		genericInit(strObj, isTriangulation);
 		
+		this.textureIDs = textureIds;
+		this.texturePaths = texturePaths;
 		this.isString = true;
 		this.fontSize = strObj.getFont().getSize();
 		this.isBillboarding = !((TextDrawingAttributes)strObj.getAttributes()).perspective;
@@ -104,10 +105,12 @@ public class ManyFacedShape {
 		if (!this.isBillboarding) applyTransformation(); // FIXME : need refactoring
 	}
 	
-	public ManyFacedShape(GeometryObject geomObj, Texture[] textures, boolean isTriangulation) {
+	public ManyFacedShape(GeometryObject geomObj, int[] textureIds, String[] texturePaths, boolean isTriangulation) {
 		// for GeometryObject
-		genericInit(geomObj, textures, isTriangulation);
+		genericInit(geomObj, isTriangulation);
 
+		this.textureIDs = textureIds;
+		this.texturePaths = texturePaths;
 		this.type = geomObj.getType();
 		
 		coordsWithDoublons = geomObj.geometry.getCoordinates();
@@ -176,7 +179,7 @@ public class ManyFacedShape {
 		applyTransformation();
 	}
 	
-	private void genericInit(AbstractObject object, Texture[] textures, boolean isTriangulation) {
+	private void genericInit(AbstractObject object, boolean isTriangulation) {
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
 		this.coordsForBorder = new float[0];
@@ -186,7 +189,6 @@ public class ManyFacedShape {
 		
 		this.color = new GamaColor(object.getColor());
 		this.borderColor = object.getAttributes().getBorder();
-		this.textures = textures;
 		this.isTriangulation = isTriangulation;
 		this.material = object.getAttributes().getMaterial();
 		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
@@ -955,7 +957,8 @@ public class ManyFacedShape {
 		filledEntity.setColors(getColorArray(color,coords));
 		filledEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
 		filledEntity.type = DrawingEntity.Type.FACE;
-		filledEntity.setTexture(textures[0]);
+		filledEntity.setTextureID(textureIDs[0]);
+		filledEntity.setTexturePath(texturePaths[0]);
 		filledEntity.setUvMapping(uvMapping);
 		filledEntity.type = DrawingEntity.Type.STRING;
 		filledEntity.setFontEdge((float) (0.5/Math.sqrt(fontSize))); // the font edge is function of the size of the font
@@ -993,7 +996,7 @@ public class ManyFacedShape {
 			if (color == null) {
 				color = new GamaColor(1.0,1.0,0,1.0); // set the default color to yellow.
 			}
-			if (textures == null || textures.length == 1 || (topFace == null && bottomFace == null))
+			if (texturePaths == null || texturePaths.length == 1 || (topFace == null && bottomFace == null))
 			{
 				// configure the drawing entity for the filled faces
 				DrawingEntity filledEntity = new DrawingEntity();

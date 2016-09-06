@@ -1,7 +1,10 @@
 package ummisco.gama.modernOpenGL;
 
+import javax.vecmath.Vector3f;
+
 import ummisco.gama.modernOpenGL.shader.AbstractShader;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
+import ummisco.gama.modernOpenGL.Material;
 
 public class DrawingEntity {
 	
@@ -95,7 +98,7 @@ public class DrawingEntity {
 		return texturePath;
 	}
 	
-	public void setShader(ShaderProgram shader) {
+	public void setShader(AbstractShader shader) {
 		this.shader = shader;
 	}
 	
@@ -134,6 +137,14 @@ public class DrawingEntity {
 	}
 	public Vector3f getTranslation() {
 		return this.translation;
+	}
+
+	public float[] getPickingIds() {
+		return pickingIds;
+	}
+
+	public void setPickingIds(float[] pickingIds) {
+		this.pickingIds = pickingIds;
 	}
 	
 }

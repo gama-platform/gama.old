@@ -4,7 +4,6 @@ import java.awt.Font;
 
 import com.jogamp.opengl.util.texture.Texture;
 
-import msi.gaml.statements.draw.TextDrawingAttributes;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.font.fontMeshCreator.FontTextureCache;
 import ummisco.gama.modernOpenGL.font.fontMeshCreator.TextMeshData;
@@ -35,17 +34,19 @@ public class DrawingEntityGenerator {
 	public DrawingEntity[] GenerateDrawingEntities(AbstractObject object, boolean computeTextureIds) {
 		// if this function is called to create a simpleScene, we don't compute the texture IDs (the only thing that interest us in this case is the texture Path)
 		DrawingEntity[] result = null;
-		Texture[] textures = object.getTextures(renderer.getContext(), renderer);
 		ManyFacedShape shape = null;
 		if (object instanceof StringObject) {
 			StringObject strObj = (StringObject)object;
 			Font font = strObj.getFont();
-			textures = new Texture[1];
-//			((TextDrawingAttributes)strObj.getAttributes()).perspective;
+			Texture[] textures = new Texture[1];
 			String style = (font.isBold()) ? (font.isItalic()) ? " bold italic" : " bold" : (font.isItalic()) ? " italic" : "";
 			textures[0] = fontTextCache.getFontTexture(font.getName() + style);
 			TextMeshData textMeshData = fontTextCache.getTextMeshData(font.getName() + style, strObj.string, (int)renderer.getGlobalYRatioBetweenPixelsAndModelUnits(), font.getSize());
-			shape = new ManyFacedShape(strObj,textures,textMeshData,renderer.data.isTriangulation());
+			String[] texturePaths = new String[1];
+			texturePaths[0] = font.getName() + style;
+			int[] textureIds = new int[1];
+			textureIds[0] = textures[0].getTextureObject();
+			shape = new ManyFacedShape(strObj,textureIds,texturePaths,textMeshData,renderer.data.isTriangulation());
 		}
 		else if (object instanceof GeometryObject) {
 			GeometryObject geomObj = (GeometryObject)object;
@@ -59,9 +60,9 @@ public class DrawingEntityGenerator {
 				}
 			}
 			
-			ManyFacedShape shape = new ManyFacedShape(geomObj,textureIDs,texturePaths,renderer.data.isTriangulation());	
-			result = shape.getDrawingEntities();
-		}	
+			shape = new ManyFacedShape(geomObj,textureIDs,texturePaths,renderer.data.isTriangulation());	
+		}
+		result = shape.getDrawingEntities();
 		return result;
 	}
 
