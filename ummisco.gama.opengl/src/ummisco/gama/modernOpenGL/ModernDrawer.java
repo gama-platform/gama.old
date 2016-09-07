@@ -237,46 +237,33 @@ public class ModernDrawer {
 	}
 	
 	private void updateTransformationMatrix(AbstractShader shaderProgram) {
+		shaderProgram.loadViewMatrix(renderer.camera);
+		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
+		shaderProgram.loadTransformationMatrix(getTransformationMatrix());
 		if (shaderProgram instanceof BillboardingTextShaderProgram) {
-			updateTransformationMatrix((BillboardingTextShaderProgram)shaderProgram);
-		}
-		else {
-			shaderProgram.loadTransformationMatrix(getTransformationMatrix());
-			shaderProgram.loadViewMatrix(renderer.camera);
-			shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
+			updateModelMatrix((BillboardingTextShaderProgram)shaderProgram);
 		}
 	}
 	
-	private void updateTransformationMatrix(BillboardingTextShaderProgram shaderProgram) {
-        shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
-
-        Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
+	private void updateModelMatrix(BillboardingTextShaderProgram shaderProgram) {
+		// for this special case, the modelMatrix have to be given
         Matrix4f modelMatrix = new Matrix4f();
         modelMatrix.setIdentity();
+        
+        // get the scale (depending on the zoom level)
+        Matrix4f scaleMatrix = new Matrix4f();
+        scaleMatrix.setIdentity();
+        scaleMatrix.set(renderer.getZoomLevel().floatValue());
+        scaleMatrix.m33 = renderer.getZoomLevel().floatValue(); // this one I don't understand, but works fine with it...
+        modelMatrix.mul(scaleMatrix);
 
-        Matrix4f layerTransformationMatrix = getTransformationMatrix();
         // set the translation
         Vector3f entityTranslation = shaderProgram.getTranslation();
-        modelMatrix.m30 = entityTranslation.x;
-        modelMatrix.m31 = entityTranslation.y;
-        modelMatrix.m32 = entityTranslation.z;
-
-        // mix the modelMatrix with the layer transformation
-        modelMatrix.mul(layerTransformationMatrix);
-
-        // reset the rotation
-        modelMatrix.m00 = viewMatrix.m00;
-        modelMatrix.m01 = viewMatrix.m10;
-        modelMatrix.m02 = viewMatrix.m20;
-        modelMatrix.m10 = viewMatrix.m01;
-        modelMatrix.m11 = viewMatrix.m11;
-        modelMatrix.m12 = viewMatrix.m21;
-        modelMatrix.m20 = viewMatrix.m02;
-        modelMatrix.m21 = viewMatrix.m12;
-        modelMatrix.m22 = viewMatrix.m22;
-
+        modelMatrix.m30 = entityTranslation.x * renderer.getZoomLevel().floatValue();
+        modelMatrix.m31 = entityTranslation.y * renderer.getZoomLevel().floatValue();
+        modelMatrix.m32 = entityTranslation.z * renderer.getZoomLevel().floatValue();
+        
         shaderProgram.loadModelMatrix(modelMatrix);
-        shaderProgram.loadViewMatrix(renderer.camera);
 	}
 	
 	private void prepareShader(DrawingEntity entity, AbstractShader shaderProgram) {

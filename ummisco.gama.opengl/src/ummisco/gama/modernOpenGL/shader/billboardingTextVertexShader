@@ -22,9 +22,26 @@ varying vec2    pass_textureCoords;
 varying vec4    varying_Color;
 
 void main(void)
-{
-	mat4 MVMatrix = viewMatrix * modelMatrix;
+{    
+    // we apply the layer transformation
+    mat4 modelMatrixWithLayerTransfo = transformationMatrix * modelMatrix;
+    
+    // we reset the rotation
+    modelMatrixWithLayerTransfo[0][0] = viewMatrix[0][0];
+    modelMatrixWithLayerTransfo[0][1] = viewMatrix[1][0];
+    modelMatrixWithLayerTransfo[0][2] = viewMatrix[2][0];
+    modelMatrixWithLayerTransfo[1][0] = viewMatrix[0][1];
+    modelMatrixWithLayerTransfo[1][1] = viewMatrix[1][1];
+    modelMatrixWithLayerTransfo[1][2] = viewMatrix[2][1];
+    modelMatrixWithLayerTransfo[2][0] = viewMatrix[0][2];
+    modelMatrixWithLayerTransfo[2][1] = viewMatrix[1][2];
+    modelMatrixWithLayerTransfo[2][2] = viewMatrix[2][2];
+	
+	// we compute the model view matrix
+	mat4 MVMatrix = viewMatrix * modelMatrixWithLayerTransfo;
+	// we invert the y axis
 	MVMatrix[1][1] = -1;
+	
 	gl_Position = projectionMatrix * MVMatrix * vec4(attribute_Position.xy, 0.0, 1.0);
 	
 	pass_textureCoords = attribute_TextureCoords;

@@ -39,7 +39,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 			list.add(new GeometryObject(GamaGeometryType.buildLine(p), COLORS[i], LINESTRING, this));
 			
 			// build labels
-			GamaFont font = new GamaFont("Helvetica",0,18); // 0 for plain, 18 for default text size.
+			GamaFont font = new GamaFont("Helvetica",0,30); // 0 for plain, 18 for default text size.
 			TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(1,1,1),null,p.times(1.2).yNegated(),COLORS[i],font,false);
 			StringObject strObj = new StringObject(LABELS[i], textDrawingAttr, this);
 			list.add(strObj);
