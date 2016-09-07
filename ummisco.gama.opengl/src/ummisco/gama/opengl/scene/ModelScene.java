@@ -150,10 +150,11 @@ public class ModelScene {
 
 	public void draw(final GL2 gl) {
 		// System.out.println("Beginning rendering Model front scene #" + id);
-		//((LightsLayerObject) layers.get(LIGHTS_KEY)).updateLights();
-		
-		// if the rotation helper layer exists, put it at the end of the map (otherwise, transparency issues)
-		LayerObject rotLayer = layers.get(ROTATION_HELPER_KEY);
+		// ((LightsLayerObject) layers.get(LIGHTS_KEY)).updateLights();
+
+		// if the rotation helper layer exists, put it at the end of the map
+		// (otherwise, transparency issues)
+		final LayerObject rotLayer = layers.get(ROTATION_HELPER_KEY);
 		if (rotLayer != null) {
 			layers.remove(ROTATION_HELPER_KEY);
 			layers.put(ROTATION_HELPER_KEY, rotLayer);
@@ -253,11 +254,12 @@ public class ModelScene {
 		for (final LayerObject layer : this.layers.values()) {
 			simpleLayers.add(layer.toSimpleLayer());
 		}
-		int[] rgbBackgroundColor = new int[3];
+		final int[] rgbBackgroundColor = new int[3];
 		rgbBackgroundColor[0] = renderer.data.getBackgroundColor().getRed();
 		rgbBackgroundColor[1] = renderer.data.getBackgroundColor().getGreen();
 		rgbBackgroundColor[2] = renderer.data.getBackgroundColor().getBlue();
-		return new SimpleScene(simpleLayers,this.renderer.data.getDiffuseLights(),rgbBackgroundColor,this.renderer.data.getEnvWidth(),this.renderer.data.getEnvHeight(),this.renderer.hashCode());
+		return new SimpleScene(simpleLayers, this.renderer.data.getDiffuseLights(), rgbBackgroundColor,
+				this.renderer.data.getEnvWidth(), this.renderer.data.getEnvHeight(), this.renderer.hashCode());
 	}
 
 	public boolean rendered() {
