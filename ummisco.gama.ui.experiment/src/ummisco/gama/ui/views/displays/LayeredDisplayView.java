@@ -673,11 +673,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				@Override
 				public void run() {
 					final IDisplaySurface s = getDisplaySurface();
-					if (s != null && !s.isDisposed() && !disposed) {
-						s.updateDisplay(false);
-					}
+					// if (s != null && !s.isDisposed() && !disposed) {
+					// s.updateDisplay(false);
+					// }
 					while (!disposed) {
-						acquireLock();
+
 						if (s != null && s.isRealized() && !s.isDisposed() && !disposed) {
 							if (s.getData().isAutosave()) {
 								doSnapshot();
@@ -689,7 +689,9 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 								output.setSynchronized(oldSync);
 								// end fix
 							}
+							acquireLock();
 						}
+
 					}
 				}
 			});
