@@ -88,12 +88,12 @@ public class ShaderProgram extends AbstractShader {
 		super.loadFloat(location_reflectivity, reflectivity);
 	}
 	
-	public void loadTransformationMatrix(Matrix4f matrix) {
-		super.loadMatrix(location_transformationMatrix, matrix);
-	}
-	
 	public void loadAmbientLight(Vector3f light) {
 		super.loadVector(location_ambientLight,light);
+	}
+	
+	public void loadTransformationMatrix(Matrix4f matrix) {
+		super.loadMatrix(location_transformationMatrix, matrix);
 	}
 	
 	public void loadProjectionMatrix(Matrix4f matrix) {
@@ -103,11 +103,6 @@ public class ShaderProgram extends AbstractShader {
 	public void loadViewMatrix(ICamera camera) {
 		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(camera);
 		super.loadMatrix(location_viewMatrix, viewMatrix);
-	}
-	
-	// FIXME
-	public void loadModelViewMatrix(Matrix4f matrix) {
-		super.loadMatrix(location_modelViewMatrix, matrix);
 	}
 	
 	public void loadTexture(int textureId) {

@@ -21,6 +21,7 @@ import ummisco.gama.modernOpenGL.Material;
 import ummisco.gama.modernOpenGL.font.fontMeshCreator.TextMeshData;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
+import ummisco.gama.opengl.scene.ImageObject;
 import ummisco.gama.opengl.scene.StringObject;
 import ummisco.gama.opengl.utils.Utils;
 
@@ -28,10 +29,11 @@ import ummisco.gama.opengl.utils.Utils;
  * This class is the intermediary class for the transformation from a GeometryObject to a (or some) DrawingElement(s).
  */
 
-public class ManyFacedShape {
+class ManyFacedShape {
 	
-	public static float SMOOTH_SHADING_ANGLE = 40f; // in degree
-	public static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
+	private static float SMOOTH_SHADING_ANGLE = 40f; // in degree
+	private static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
+	private static GamaColor DEFAULT_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
 	
 	private boolean isTriangulation = false;
 	private boolean isLightInteraction = true;
@@ -70,7 +72,7 @@ public class ManyFacedShape {
 	private float fontSize;
 	private boolean isBillboarding = false;
 	
-	public ManyFacedShape(ManyFacedShape obj) {
+	private ManyFacedShape(ManyFacedShape obj) {
 		loadManyFacedShape(obj);
 	}
 	
@@ -81,7 +83,7 @@ public class ManyFacedShape {
 		this.textureIDs = textureIds;
 		this.texturePaths = texturePaths;
 		this.isString = true;
-		this.fontSize = strObj.getFont().getSize();
+		this.fontSize = (strObj.getFont() != null) ? strObj.getFont().getSize() : 18; // FIXME : need refactoring (already computed in DrawingEntityGenerator)
 		this.isBillboarding = !((TextDrawingAttributes)strObj.getAttributes()).perspective;
 		this.isLightInteraction = false;
 		this.type = Type.POLYGON;
@@ -103,6 +105,60 @@ public class ManyFacedShape {
 		computeNormals();	
 		triangulate();
 		if (!this.isBillboarding) applyTransformation(); // FIXME : need refactoring
+	}
+	
+	public ManyFacedShape(ImageObject imObj, int[] textureIds, String[] texturePaths, boolean isTriangulation) {
+		// for StringObject
+		genericInit(imObj, isTriangulation);
+		
+		this.textureIDs = textureIds;
+		this.texturePaths = texturePaths;
+		this.isLightInteraction = false;
+		this.type = Type.POLYGON;
+		
+		float width = (float) imObj.getDimensions().x;
+		float height = (float) imObj.getDimensions().y;
+		float x = 0, y = 0, z = 0;
+		if (imObj.getLocation() != null) {
+			x = (float) imObj.getLocation().x;
+			y = (float) imObj.getLocation().y;
+			z = (float) imObj.getLocation().z;
+		}
+		coords = new float[4*3];
+		coords[0] = x;
+		coords[1] = -(y + height);
+		coords[2] = z;
+		coords[3] = x + width;
+		coords[4] = -(y + height);
+		coords[5] = z;
+		coords[6] = x + width;
+		coords[7] = -y;
+		coords[8] = z;
+		coords[9] = x;
+		coords[10] = -y;
+		coords[11] = z;
+		uvMapping = new float[4*2];
+		uvMapping[0] = 0;
+		uvMapping[1] = 0;
+		uvMapping[2] = 1;
+		uvMapping[3] = 0;
+		uvMapping[4] = 1;
+		uvMapping[5] = 1;
+		uvMapping[6] = 0;
+		uvMapping[7] = 1;
+		// build the faces
+		for (int i = 0 ; i < coords.length/(4*3) ; i++) {
+			int[] face = new int[4];
+			face[0] = i*4;
+			face[1] = i*4+1;
+			face[2] = i*4+2;
+			face[3] = i*4+3;
+			faces.add(face);
+		}
+		
+		computeNormals();	
+		triangulate();
+		applyTransformation();
 	}
 	
 	public ManyFacedShape(GeometryObject geomObj, int[] textureIds, String[] texturePaths, boolean isTriangulation) {
@@ -187,7 +243,10 @@ public class ManyFacedShape {
 		this.depth = object.getAttributes().getDepth();
 		this.pickingId = object.pickingIndex;
 		
-		this.color = new GamaColor(object.getColor());
+		if (object.getColor() != null)
+			this.color = new GamaColor(object.getColor());
+		else
+			this.color = null;
 		this.borderColor = object.getAttributes().getBorder();
 		this.isTriangulation = isTriangulation;
 		this.material = object.getAttributes().getMaterial();
@@ -806,7 +865,7 @@ public class ManyFacedShape {
 		return normals;
 	}
 	
-	public float[] getColorArray(GamaColor gamaColor, float[] coordsArray) {
+	private float[] getColorArray(GamaColor gamaColor, float[] coordsArray) {
 		int verticesNb = coordsArray.length / 3;
 		float[] result = null;
 		float[] color = new float[]{ (float)(gamaColor.red()) /255f,
@@ -994,7 +1053,7 @@ public class ManyFacedShape {
 		}
 		else {
 			if (color == null) {
-				color = new GamaColor(1.0,1.0,0,1.0); // set the default color to yellow.
+				color = DEFAULT_COLOR; // set the default color to yellow.
 			}
 			if (texturePaths == null || texturePaths.length == 1 || (topFace == null && bottomFace == null))
 			{
@@ -1251,7 +1310,7 @@ public class ManyFacedShape {
 		mapOfOriginalIdx = mapCopy;
 	}
 	
-	int[] getMutualVertexIdx(int idxFace1, int idxFace2) {
+	private int[] getMutualVertexIdx(int idxFace1, int idxFace2) {
 		int[] face1 = faces.get(idxFace1);
 		int[] face2 = faces.get(idxFace2);
 		int cpt = 0;

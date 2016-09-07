@@ -10,7 +10,8 @@
 		
 uniform mat4    transformationMatrix;
 uniform mat4    projectionMatrix;
-uniform mat4    modelViewMatrix;
+uniform mat4    modelMatrix;
+uniform mat4    viewMatrix;
 
 attribute vec3  attribute_Position;
 attribute vec4  attribute_Color;
@@ -22,7 +23,9 @@ varying vec4    varying_Color;
 
 void main(void)
 {
-	gl_Position = projectionMatrix * modelViewMatrix * vec4(attribute_Position.xy, 0.0, 1.0);
+	mat4 MVMatrix = viewMatrix * modelMatrix;
+	MVMatrix[1][1] = -1;
+	gl_Position = projectionMatrix * MVMatrix * vec4(attribute_Position.xy, 0.0, 1.0);
 	
 	pass_textureCoords = attribute_TextureCoords;
 	varying_Color = attribute_Color;

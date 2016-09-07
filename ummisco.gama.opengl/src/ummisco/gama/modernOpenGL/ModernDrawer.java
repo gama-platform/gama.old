@@ -248,33 +248,35 @@ public class ModernDrawer {
 	}
 	
 	private void updateTransformationMatrix(BillboardingTextShaderProgram shaderProgram) {
-		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
-		
-		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
-		Matrix4f modelMatrix = new Matrix4f();
-		modelMatrix.setIdentity();
-		// set the translation
-		Vector3f entityTranslation = shaderProgram.getTranslation();
-		modelMatrix.m30 = entityTranslation.x;
-		modelMatrix.m31 = entityTranslation.y;
-		modelMatrix.m32 = entityTranslation.z;
-		// reset the rotation
-		modelMatrix.m00 = viewMatrix.m00;
-		modelMatrix.m01 = viewMatrix.m10;
-		modelMatrix.m02 = viewMatrix.m20;
-		modelMatrix.m10 = viewMatrix.m01;
-		modelMatrix.m11 = viewMatrix.m11;
-		modelMatrix.m12 = viewMatrix.m21;
-		modelMatrix.m20 = viewMatrix.m02;
-		modelMatrix.m21 = viewMatrix.m12;
-		modelMatrix.m22 = viewMatrix.m22;
-		// compute modelViewMatrix
-		Matrix4f modelViewMatrix = modelMatrix;
-		modelViewMatrix.mul(viewMatrix);
-		// inverse y axis
-		modelViewMatrix.m11 = -1;
-		
-		shaderProgram.loadModelViewMatrix(modelViewMatrix);
+        shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
+
+        Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
+        Matrix4f modelMatrix = new Matrix4f();
+        modelMatrix.setIdentity();
+
+        Matrix4f layerTransformationMatrix = getTransformationMatrix();
+        // set the translation
+        Vector3f entityTranslation = shaderProgram.getTranslation();
+        modelMatrix.m30 = entityTranslation.x;
+        modelMatrix.m31 = entityTranslation.y;
+        modelMatrix.m32 = entityTranslation.z;
+
+        // mix the modelMatrix with the layer transformation
+        modelMatrix.mul(layerTransformationMatrix);
+
+        // reset the rotation
+        modelMatrix.m00 = viewMatrix.m00;
+        modelMatrix.m01 = viewMatrix.m10;
+        modelMatrix.m02 = viewMatrix.m20;
+        modelMatrix.m10 = viewMatrix.m01;
+        modelMatrix.m11 = viewMatrix.m11;
+        modelMatrix.m12 = viewMatrix.m21;
+        modelMatrix.m20 = viewMatrix.m02;
+        modelMatrix.m21 = viewMatrix.m12;
+        modelMatrix.m22 = viewMatrix.m22;
+
+        shaderProgram.loadModelMatrix(modelMatrix);
+        shaderProgram.loadViewMatrix(viewMatrix);
 	}
 	
 	private void prepareShader(DrawingEntity entity, AbstractShader shaderProgram) {
