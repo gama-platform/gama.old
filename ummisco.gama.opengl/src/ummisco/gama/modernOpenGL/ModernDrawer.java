@@ -23,27 +23,25 @@ import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public class ModernDrawer {
 
-	LayerObject currentLayer;
-	HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities;
-	final ModernRenderer renderer;
-	GL2 gl;
+	private LayerObject currentLayer;
+	private HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities;
+	private final ModernRenderer renderer;
+	private GL2 gl;
 	
-	public boolean isDrawing = true;
+	private ArrayList<Integer> listOfVAOUsed = new ArrayList<Integer>();
+	private ArrayList<AbstractShader> shaderLoaded = new ArrayList<AbstractShader>();
+	private HashMap<AbstractShader,int[]> typeOfDrawingMap = new HashMap<AbstractShader,int[]>();
 	
-	ArrayList<Integer> listOfVAOUsed = new ArrayList<Integer>();
-	ArrayList<AbstractShader> shaderLoaded = new ArrayList<AbstractShader>();
-	HashMap<AbstractShader,int[]> typeOfDrawingMap = new HashMap<AbstractShader,int[]>();
+	private HashMap<LayerObject,ModernLayerStructure> layerStructureMap = new HashMap<LayerObject,ModernLayerStructure>();
 	
-	HashMap<LayerObject,ModernLayerStructure> layerStructureMap = new HashMap<LayerObject,ModernLayerStructure>();
+	private int numberOfShaderInTheCurrentLayer = 0;
+	private int currentShaderNumber = 0;
 	
-	int numberOfShaderInTheCurrentLayer = 0;
-	int currentShaderNumber = 0;
-	
-	static final int COLOR_IDX = 0;
-	static final int VERTICES_IDX = 1;
-	static final int IDX_BUFF_IDX = 2;
-	static final int NORMAL_IDX = 3;
-	static final int UVMAPPING_IDX = 4;
+	private static final int COLOR_IDX = 0;
+	private static final int VERTICES_IDX = 1;
+	private static final int IDX_BUFF_IDX = 2;
+	private static final int NORMAL_IDX = 3;
+	private static final int UVMAPPING_IDX = 4;
 	
 	public ModernDrawer(ModernRenderer renderer, GL2 gl) {
 		this.renderer = renderer;

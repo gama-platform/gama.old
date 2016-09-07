@@ -30,7 +30,7 @@ public abstract class AbstractShader {
 	
 	private static FloatBuffer matrixBuffer = FloatBuffer.allocate(16);
 	
-	public AbstractShader(GL2 gl, String vertexFile, String fragmentFile) {
+	AbstractShader(GL2 gl, String vertexFile, String fragmentFile) {
 		this.gl = gl;
 		
 		String absolutePathToShaderFolder = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() 
@@ -58,7 +58,7 @@ public abstract class AbstractShader {
 		getAllUniformLocations();
 	}
 	
-	public int loadShader(String file, int type) {
+	private int loadShader(String file, int type) {
 		
 		String shaderString = null;
 		
@@ -151,15 +151,7 @@ public abstract class AbstractShader {
 		gl.glUniform3f(location, vector.x, vector.y, vector.z);
 	}
 	
-	protected void loadBoolean (int location, boolean value) {
-		float toLoad = 0;
-		if (value) {
-			toLoad = 1;
-		}
-		gl.glUniform1f(location, toLoad);
-	}
-	
-	static String readFile(String path, Charset encoding) 
+	private static String readFile(String path, Charset encoding) 
 			  throws IOException 
 	{
 		if (path.startsWith("/")) {

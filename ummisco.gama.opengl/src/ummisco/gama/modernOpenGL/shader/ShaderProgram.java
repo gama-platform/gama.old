@@ -9,7 +9,6 @@ import com.jogamp.opengl.GL2;
 
 import msi.gama.outputs.LightPropertiesStructure;
 import msi.gama.outputs.LightPropertiesStructure.TYPE;
-import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
@@ -37,12 +36,8 @@ public class ShaderProgram extends AbstractShader {
 	private int location_fontEdge; // only for string entities
 	private int location_modelViewMatrix; // only for string entities
 	
-	public DrawingEntity entity; // FIXME : need refactoring, need to be deleted
-	
 	private boolean useNormal = false;
 	private boolean useTexture = false;
-	
-	public boolean isBillboarding = false;
 	
 	private int textureIDStored = -1;
 	

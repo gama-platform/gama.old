@@ -570,10 +570,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 			return null;
 		}
 		if (attributes.size == null) {
-			final double proportion = 1.0;
-			// final double proportion = (double) img.getWidth() / (double)
-			// img.getHeight();
-			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight() / proportion);
+			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
 		}
 		sceneBuffer.getSceneToUpdate().addImage(img, attributes);
 
