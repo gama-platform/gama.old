@@ -13,9 +13,6 @@ public class TextShaderProgram extends AbstractShader {
 	private static String VERTEX_FILE = "textVertexShader";		
 	private static String FRAGMENT_FILE = "textFragmentShader";
 	
-	private int location_transformationMatrix;
-	private int location_projectionMatrix;
-	private int location_viewMatrix;
 	private int location_texture;
 	private int location_fontWidth; // only for string entities
 	private int location_fontEdge; // only for string entities
@@ -35,25 +32,10 @@ public class TextShaderProgram extends AbstractShader {
 	
 	@Override
 	protected void getAllUniformLocations() {
-		location_transformationMatrix = getUniformLocation("transformationMatrix");
-		location_projectionMatrix = getUniformLocation("projectionMatrix");
-		location_viewMatrix = getUniformLocation("viewMatrix");
+		super.getAllUniformLocations();
 		location_texture = getUniformLocation("textureSampler");
 		location_fontWidth = getUniformLocation("fontWidth");
 		location_fontEdge = getUniformLocation("fontEdge");		
-	}
-	
-	public void loadTransformationMatrix(Matrix4f matrix) {
-		super.loadMatrix(location_transformationMatrix, matrix);
-	}
-	
-	public void loadProjectionMatrix(Matrix4f matrix) {
-		super.loadMatrix(location_projectionMatrix, matrix);
-	}
-	
-	public void loadViewMatrix(ICamera camera) {
-		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(camera);
-		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 	
 	public void loadTexture(int textureId) {

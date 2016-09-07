@@ -17,7 +17,6 @@ uniform mat4    lightProperties[7]; 	// first row : xyz position, light type (0 
 									// fourth row : attenuation properties
 uniform vec3    lightPosition;
 uniform float   useNormals; // 0 for no, 1 for yes
-uniform mat4    modelViewMatrix;
 
 attribute vec3  attribute_Position;
 attribute vec4  attribute_Color;

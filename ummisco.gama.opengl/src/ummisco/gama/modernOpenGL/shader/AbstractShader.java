@@ -14,6 +14,7 @@ import com.jogamp.opengl.GL2;
 
 import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.vaoGenerator.GeomMathUtils;
+import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public abstract class AbstractShader {
 	
@@ -22,6 +23,10 @@ public abstract class AbstractShader {
 	private int programID;
 	private int vertexShaderID;
 	private int fragmentShaderID;
+	
+	private int location_transformationMatrix;
+	private int location_projectionMatrix;
+	private int location_viewMatrix;
 	
 	public static final int POSITION_ATTRIBUTE_IDX = 0;
 	public static final int COLOR_ATTRIBUTE_IDX = 1;
@@ -131,7 +136,11 @@ public abstract class AbstractShader {
 		gl.glBindAttribLocation(programID, attribute, variableName);
 	}
 	
-	protected abstract void getAllUniformLocations();
+	protected void getAllUniformLocations() {
+		location_transformationMatrix = getUniformLocation("transformationMatrix");
+		location_projectionMatrix = getUniformLocation("projectionMatrix");
+		location_viewMatrix = getUniformLocation("viewMatrix");
+	}
 	
 	protected void loadMatrix(int location, Matrix4f matrix) {
 		matrixBuffer = GeomMathUtils.getFloatBuffer(matrix);
@@ -161,9 +170,19 @@ public abstract class AbstractShader {
 	  return new String(encoded, encoding);
 	}
 	
-	abstract public void loadTransformationMatrix(Matrix4f matrix);
-	abstract public void loadViewMatrix(ICamera camera);
-	abstract public void loadProjectionMatrix(Matrix4f matrix);
+	public void loadTransformationMatrix(Matrix4f matrix) {
+		loadMatrix(location_transformationMatrix, matrix);
+	}
+	
+	public void loadProjectionMatrix(Matrix4f matrix) {
+		loadMatrix(location_projectionMatrix, matrix);
+	}
+	
+	public void loadViewMatrix(ICamera camera) {
+		 Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(camera);
+		loadMatrix(location_viewMatrix, viewMatrix);
+	}
+	
 	abstract public boolean useNormal();
 	abstract public boolean useTexture();
 	abstract public int getTextureID();

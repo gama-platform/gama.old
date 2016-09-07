@@ -9,8 +9,6 @@ import com.jogamp.opengl.GL2;
 
 import msi.gama.outputs.LightPropertiesStructure;
 import msi.gama.outputs.LightPropertiesStructure.TYPE;
-import ummisco.gama.opengl.camera.ICamera;
-import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public class ShaderProgram extends AbstractShader {
 	
@@ -19,9 +17,6 @@ public class ShaderProgram extends AbstractShader {
 	private static String VERTEX_FILE = "vertexShader";		
 	private static String FRAGMENT_FILE = "fragmentShader";
 	
-	private int location_transformationMatrix;
-	private int location_projectionMatrix;
-	private int location_viewMatrix;
 	private int location_lightProperties[];
 	private int location_lightColor[];
 	private int location_lightAttenuation[];
@@ -34,7 +29,6 @@ public class ShaderProgram extends AbstractShader {
 	private int location_isString;
 	private int location_fontWidth; // only for string entities
 	private int location_fontEdge; // only for string entities
-	private int location_modelViewMatrix; // only for string entities
 	
 	private boolean useNormal = false;
 	private boolean useTexture = false;
@@ -58,9 +52,7 @@ public class ShaderProgram extends AbstractShader {
 	
 	@Override
 	protected void getAllUniformLocations() {
-		location_transformationMatrix = getUniformLocation("transformationMatrix");
-		location_projectionMatrix = getUniformLocation("projectionMatrix");
-		location_viewMatrix = getUniformLocation("viewMatrix");
+		super.getAllUniformLocations();
 		location_shineDamper = getUniformLocation("shineDamper");
 		location_reflectivity = getUniformLocation("reflectivity");
 		location_useTexture = getUniformLocation("useTexture");
@@ -70,7 +62,6 @@ public class ShaderProgram extends AbstractShader {
 		location_isString = getUniformLocation("isString");
 		location_fontWidth = getUniformLocation("fontWidth");
 		location_fontEdge = getUniformLocation("fontEdge");
-		location_modelViewMatrix = getUniformLocation("modelViewMatrix");
 		
 		location_lightColor = new int[MAX_LIGHT];
 		location_lightAttenuation = new int[MAX_LIGHT];
@@ -90,19 +81,6 @@ public class ShaderProgram extends AbstractShader {
 	
 	public void loadAmbientLight(Vector3f light) {
 		super.loadVector(location_ambientLight,light);
-	}
-	
-	public void loadTransformationMatrix(Matrix4f matrix) {
-		super.loadMatrix(location_transformationMatrix, matrix);
-	}
-	
-	public void loadProjectionMatrix(Matrix4f matrix) {
-		super.loadMatrix(location_projectionMatrix, matrix);
-	}
-	
-	public void loadViewMatrix(ICamera camera) {
-		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(camera);
-		super.loadMatrix(location_viewMatrix, viewMatrix);
 	}
 	
 	public void loadTexture(int textureId) {

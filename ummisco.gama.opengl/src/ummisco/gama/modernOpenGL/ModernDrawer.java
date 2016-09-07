@@ -276,7 +276,7 @@ public class ModernDrawer {
         modelMatrix.m22 = viewMatrix.m22;
 
         shaderProgram.loadModelMatrix(modelMatrix);
-        shaderProgram.loadViewMatrix(viewMatrix);
+        shaderProgram.loadViewMatrix(renderer.camera);
 	}
 	
 	private void prepareShader(DrawingEntity entity, AbstractShader shaderProgram) {
