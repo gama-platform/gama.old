@@ -1854,7 +1854,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			scopeAgentCause = agentCause.getScope().copy("in SimpleBdiArchitecture");
 			scopeAgentCause.push(agentCause);
 		}
-		IAgent currentAgent = scope.getAgent();
 		Double tempPositif = 0.0;
 		Double tempNegatif = 0.0;
 		Double solidarityModif = social.getSolidarity();
@@ -1908,9 +1907,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 	
 	private void updateFamiliarity(IScope scope, SocialLink social){
-		IAgent agentCause = social.getAgent();
-		Double tempPositif = 0.0;
-		Double tempNegatif = 0.0;
 		Double familiarityModif = social.getFamiliarity();
 		familiarityModif = familiarityModif*(1+social.getLiking());
 		if(familiarityModif>1.0){
