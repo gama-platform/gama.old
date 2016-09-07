@@ -445,14 +445,34 @@ public class ModernRenderer extends Abstract3DRenderer {
 	 */
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
-		// TODO
-		return null;
+		if (sceneBuffer.getSceneToUpdate() == null) {
+			return null;
+		}
+		if (attributes.size == null) {
+			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
+		}
+		sceneBuffer.getSceneToUpdate().addImage(img, attributes);
+
+		if (attributes.border != null) {
+			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.border);
+		}
+		return rect;
 	}
 
 	@Override
 	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
-		// TODO
-		return null;
+		if (sceneBuffer.getSceneToUpdate() == null) {
+			return null;
+		}
+		if (attributes.size == null) {
+			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
+		}
+
+		if (file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath())) {
+			envelopes.put(file.getPath(), file.computeEnvelope(surface.getScope()));
+		}
+		sceneBuffer.getSceneToUpdate().addFile(file, attributes);
+		return rect;
 	}
 
 	@Override

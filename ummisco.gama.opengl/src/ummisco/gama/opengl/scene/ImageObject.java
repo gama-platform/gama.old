@@ -53,6 +53,15 @@ public class ImageObject extends AbstractObject {
 		}
 		return texture;
 	}
+	
+	public String getImagePath() {
+		if (image == null) {
+			return file.getPath();
+		}
+		else {
+			return null;
+		}
+	}
 
 	@Override
 	public boolean isTextured() {

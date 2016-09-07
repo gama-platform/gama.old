@@ -73,6 +73,10 @@ void main (void)
 	}
 	else
 	{
+		if (useTexture > 0.5)
+		{
+			inputColor = texture(textureSampler,pass_textureCoords);
+		}
 		gl_FragColor = inputColor;
 	}
 }

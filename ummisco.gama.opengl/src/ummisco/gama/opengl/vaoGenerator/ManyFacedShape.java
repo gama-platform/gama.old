@@ -118,24 +118,19 @@ class ManyFacedShape {
 		
 		float width = (float) imObj.getDimensions().x;
 		float height = (float) imObj.getDimensions().y;
-		float x = 0, y = 0, z = 0;
-		if (imObj.getLocation() != null) {
-			x = (float) imObj.getLocation().x;
-			y = (float) imObj.getLocation().y;
-			z = (float) imObj.getLocation().z;
-		}
+		float x = 0, y = 0, z = 0; // the translation will be computed later on
 		coords = new float[4*3];
 		coords[0] = x;
-		coords[1] = -(y + height);
+		coords[1] = (y + height);
 		coords[2] = z;
 		coords[3] = x + width;
-		coords[4] = -(y + height);
+		coords[4] = (y + height);
 		coords[5] = z;
 		coords[6] = x + width;
-		coords[7] = -y;
+		coords[7] = y;
 		coords[8] = z;
 		coords[9] = x;
-		coords[10] = -y;
+		coords[10] = y;
 		coords[11] = z;
 		uvMapping = new float[4*2];
 		uvMapping[0] = 0;
