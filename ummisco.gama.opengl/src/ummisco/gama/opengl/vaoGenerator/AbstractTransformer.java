@@ -10,227 +10,58 @@ import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
-import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaMaterialType;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.Material;
-import ummisco.gama.modernOpenGL.font.fontMeshCreator.TextMeshData;
 import ummisco.gama.opengl.scene.AbstractObject;
-import ummisco.gama.opengl.scene.GeometryObject;
-import ummisco.gama.opengl.scene.ImageObject;
-import ummisco.gama.opengl.scene.StringObject;
 import ummisco.gama.opengl.utils.Utils;
 
 /*
  * This class is the intermediary class for the transformation from a GeometryObject to a (or some) DrawingElement(s).
  */
 
-class ManyFacedShape {
+abstract class AbstractTransformer {
 	
 	private static float SMOOTH_SHADING_ANGLE = 40f; // in degree
 	private static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
 	private static GamaColor DEFAULT_COLOR = new GamaColor(1.0,1.0,0.0,1.0);
 	
-	private boolean isTriangulation = false;
-	private boolean isLightInteraction = true;
-	private boolean isWireframe = false;
-	private boolean isString = false;
-	private ArrayList<int[]> faces = new ArrayList<int[]>(); // way to construct a face from the indices of the coordinates (anti clockwise for front face)
-	private ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); // list that store all the edges erased thanks to the smooth shading (those edges must
+	protected boolean isTriangulation = false;
+	protected boolean isLightInteraction = true;
+	protected boolean isWireframe = false;
+	protected ArrayList<int[]> faces = new ArrayList<int[]>(); // way to construct a face from the indices of the coordinates (anti clockwise for front face)
+	protected ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); // list that store all the edges erased thanks to the smooth shading (those edges must
 	// not be displayed when displaying the borders !)
-	private float[] coords;
-	private Coordinate[] coordsWithDoublons;
-	private float[] uvMapping;
-	private float[] normals;
-	private int[] textureIDs = null; // null for "no texture"
-	private String[] texturePaths = null; // null for "no texture"
-	private float[] coordsForBorder;
-	private float[] idxForBorder;
+	protected float[] coords;
+	protected Coordinate[] coordsWithDoublons;
+	protected float[] uvMapping;
+	protected float[] normals;
+	protected int[] textureIDs = null; // null for "no texture"
+	protected String[] texturePaths = null; // null for "no texture"
+	protected float[] coordsForBorder;
+	protected float[] idxForBorder;
 	
-	private HashMap<Integer,Integer> mapOfOriginalIdx = new HashMap<Integer,Integer>(); 
+	protected HashMap<Integer,Integer> mapOfOriginalIdx = new HashMap<Integer,Integer>(); 
 	
-	private int[] topFace;
-	private int[] bottomFace;
+	protected int[] topFace;
+	protected int[] bottomFace;
 	
 	// private fields from the GeometryObject
-	private int pickingId;
-	private IShape.Type type;
-	private double depth;
-	private GamaPoint translation;
-	private GamaPair<Double,GamaPoint> rotation;
-	private GamaPoint size;
-	private GamaColor color;
-	private GamaColor borderColor;
-	private Coordinate[] coordinates;
-	private GamaMaterial material;
+	protected int pickingId;
+	protected IShape.Type type;
+	protected double depth;
+	protected GamaPoint translation;
+	protected GamaPair<Double,GamaPoint> rotation;
+	protected GamaPoint size;
+	protected GamaColor color;
+	protected GamaColor borderColor;
+	protected Coordinate[] coordinates;
+	protected GamaMaterial material;
 	
-	// only for string entity :
-	private float fontSize;
-	private boolean isBillboarding = false;
-	
-	private ManyFacedShape(ManyFacedShape obj) {
-		loadManyFacedShape(obj);
-	}
-	
-	public ManyFacedShape(StringObject strObj, int[] textureIds, String[] texturePaths, TextMeshData textMeshData, boolean isTriangulation) {
-		// for StringObject
-		genericInit(strObj, isTriangulation);
-		
-		this.textureIDs = textureIds;
-		this.texturePaths = texturePaths;
-		this.isString = true;
-		this.fontSize = (strObj.getFont() != null) ? strObj.getFont().getSize() : 18; // FIXME : need refactoring (already computed in DrawingEntityGenerator)
-		this.isBillboarding = !((TextDrawingAttributes)strObj.getAttributes()).perspective;
-		this.isLightInteraction = false;
-		this.type = Type.POLYGON;
-		
-		this.translation.y = - this.translation.y; // for a	stringObject, the y is inverted (why ???)
-		
-		coords = textMeshData.getVertexPositions();
-		uvMapping = textMeshData.getTextureCoords();
-		// build the faces
-		for (int i = 0 ; i < coords.length/(4*3) ; i++) {
-			int[] face = new int[4];
-			face[0] = i*4;
-			face[1] = i*4+1;
-			face[2] = i*4+2;
-			face[3] = i*4+3;
-			faces.add(face);
-		}
-		
-		computeNormals();	
-		triangulate();
-		if (!this.isBillboarding) applyTransformation(); // FIXME : need refactoring
-	}
-	
-	public ManyFacedShape(ImageObject imObj, int[] textureIds, String[] texturePaths, boolean isTriangulation) {
-		// for StringObject
-		genericInit(imObj, isTriangulation);
-		
-		this.textureIDs = textureIds;
-		this.texturePaths = texturePaths;
-		this.isLightInteraction = false;
-		this.type = Type.POLYGON;
-		
-		float width = (float) imObj.getDimensions().x;
-		float height = (float) imObj.getDimensions().y;
-		float x = 0, y = 0, z = 0; // the translation will be computed later on
-		coords = new float[4*3];
-		coords[0] = x;
-		coords[1] = (y + height);
-		coords[2] = z;
-		coords[3] = x + width;
-		coords[4] = (y + height);
-		coords[5] = z;
-		coords[6] = x + width;
-		coords[7] = y;
-		coords[8] = z;
-		coords[9] = x;
-		coords[10] = y;
-		coords[11] = z;
-		uvMapping = new float[4*2];
-		uvMapping[0] = 0;
-		uvMapping[1] = 0;
-		uvMapping[2] = 1;
-		uvMapping[3] = 0;
-		uvMapping[4] = 1;
-		uvMapping[5] = 1;
-		uvMapping[6] = 0;
-		uvMapping[7] = 1;
-		// build the faces
-		for (int i = 0 ; i < coords.length/(4*3) ; i++) {
-			int[] face = new int[4];
-			face[0] = i*4;
-			face[1] = i*4+1;
-			face[2] = i*4+2;
-			face[3] = i*4+3;
-			faces.add(face);
-		}
-		
-		computeNormals();	
-		triangulate();
-		applyTransformation();
-	}
-	
-	public ManyFacedShape(GeometryObject geomObj, int[] textureIds, String[] texturePaths, boolean isTriangulation) {
-		// for GeometryObject
-		genericInit(geomObj, isTriangulation);
-
-		this.textureIDs = textureIds;
-		this.texturePaths = texturePaths;
-		this.type = geomObj.getType();
-		
-		coordsWithDoublons = geomObj.geometry.getCoordinates();
-		
-		this.size = getObjSize(geomObj);
-		cancelTransformation();
-		
-		// the last coordinate is the same as the first one, no need for this
-		this.coordinates = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
-		
-		if (!ShapeCache.isLoaded(getHashCode()))
-		{
-		
-			if (is1DShape())
-			{
-				// special case for 1D shape : no repetition of vertex
-				coordinates = coordsWithDoublons;
-				build1DShape();
-			}
-			else if (isPolyplan()) 
-			{
-				// special case for plan/polyplan : no repetition of vertex
-				coordinates = coordsWithDoublons;
-				buildPolyplan();
-			}
-			else if (isPyramid())
-			{
-				buildBottomFace();
-				buildPyramidSummit();
-				buildLateralFaces();
-			}
-			else if (isSphere()) 
-			{
-				buildSphere();
-			}
-			else
-			{
-				// case of standard geometry : a standard geometry is a geometry which can be build with
-				// a bottom face and a top face, linked with some lateral faces. In case the standard 
-				// geometry is a 2D shape, we only build the top face.
-				if (depth > 0) {
-					// 3D shape
-					buildBottomFace();
-					buildTopFace();
-					buildLateralFaces();
-				}
-				else {
-					// 2D shape
-					buildTopFace();
-				}
-			}
-			
-			initBorders();
-			applySmoothShading();
-			computeNormals();
-			computeUVMapping();
-			triangulate();
-			correctBorders();
-			
-			ShapeCache.preloadShape(getHashCode(), new ManyFacedShape(this));
-			
-		}
-		else {
-			loadManyFacedShape( ShapeCache.loadShape(getHashCode()) );
-		}
-		applyTransformation();
-	}
-	
-	private void genericInit(AbstractObject object, boolean isTriangulation) {
+	protected void genericInit(AbstractObject object, boolean isTriangulation) {
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
 		this.coordsForBorder = new float[0];
@@ -250,7 +81,6 @@ class ManyFacedShape {
 		this.translation = object.getAttributes().location;
 		this.rotation = object.getAttributes().rotation;
 		this.isWireframe = object.getAttributes().wireframe;
-		this.isLightInteraction = (object.isLightInteraction() && !is1DShape() && !isWireframe);
 	}
 	
 	public String getHashCode() {
@@ -276,42 +106,14 @@ class ManyFacedShape {
 		return result;
 	}
 	
-	private GamaPoint getObjSize(GeometryObject geomObj) {
-		float minX = Float.MAX_VALUE;
-		float maxX = -Float.MAX_VALUE;
-		float minY = Float.MAX_VALUE;
-		float maxY = -Float.MAX_VALUE;
-		Coordinate[] coordinates = geomObj.geometry.getCoordinates();
-		for (int i = 0 ; i < coordinates.length ; i++) {
-			if (coordinates[i].x < minX) minX = (float) coordinates[i].x;
-			if (coordinates[i].x > maxX) maxX = (float) coordinates[i].x;
-			if (coordinates[i].y < minY) minY = (float) coordinates[i].y;
-			if (coordinates[i].y > maxY) maxY = (float) coordinates[i].y;
-		}
-		float XSize = ((maxX - minX) / 2 == 0) ? 1 : (maxX - minX) / 2;
-		float YSize = ((maxY - minY) / 2 == 0) ? 1 : (maxY - minY) / 2;
-		float ZSize = (this.depth==0) ? 1 : (float)this.depth;
-		
-		GamaPoint attrSize = (geomObj.getAttributes().size == null) ? new GamaPoint(1,1,1) : geomObj.getAttributes().size;
-		
-		if (isSphere()) {
-			float realSize = Math.max(YSize, XSize);
-			XSize = YSize = ZSize = realSize;
-		}
-		
-		return new GamaPoint( (attrSize.getX()*XSize),
-				(attrSize.getY()*YSize),
-				(attrSize.getZ()*ZSize));
-	}
-	
-	private void cancelTransformation() {
+	protected void cancelTransformation() {
 		// This function will cancel the transformation of size and position. The purpose of it is to optimize and create a "basic" shape which will be stored to the ShapeCache.
 		this.depth = this.depth * 1/size.z;
 		coordsWithDoublons = GeomMathUtils.setTranslationToCoordArray(coordsWithDoublons, -translation.x, -translation.y, -translation.z);
 		coordsWithDoublons = GeomMathUtils.setScalingToCoordArray(coordsWithDoublons, 1/size.x, 1/size.y, 1/size.z);
 	}
 	
-	private void loadManyFacedShape(ManyFacedShape shape) {
+	protected void loadManyFacedShape(AbstractTransformer shape) {
 		faces = shape.faces;
 		coords = shape.coords;
 		uvMapping = shape.uvMapping;
@@ -323,46 +125,12 @@ class ManyFacedShape {
 		bottomFace = shape.bottomFace;
 	}
 	
-	private boolean isPyramid() {
-		// a pyramid geometry is either a 3D cone or a pyramid (made with a base, a summit and
-		// generated lateral faces)
-		if ( (type == IShape.Type.CONE && depth > 0)
-				|| type == IShape.Type.PYRAMID) {
-			return true;
-		}
-		return false;
-	}
-	
-	private boolean isSphere() {
-		return (type == IShape.Type.SPHERE);
-	}
-	
-	private boolean is1DShape() {
-		// a 1D shape is a line, polyline or point. It cannot have a border, and it does not have faces
-		if ( type == IShape.Type.POINT
-				|| type == IShape.Type.LINEARRING
-				|| type == IShape.Type.LINESTRING) {
-			return true;
-		}
-		return false;
-	}
-	
-	private boolean isPolyplan() {
-		// a plan / polyplan are a bit particular : they are build out of a line, and the depth attribute gives the height of the plan.
-		if ( type == IShape.Type.PLAN
-				|| type == IShape.Type.POLYPLAN) {
-			return true;
-		}
-		return false;
-	}
-	
 	private int getOriginalIdx(int idx) {
 		// this function is used to get the original idx (from the idx buffer) before the smooth shading
 		return mapOfOriginalIdx.get(idx);
 	}
 	
-	private void initBorders() {
-		if (is1DShape()) return; // not apply for 1DShape
+	protected void initBorders() {
 		idxForBorder = getIdxBufferForLines();
 		coordsForBorder = coords;
 		// init the mapOfOriginalIdx
@@ -371,9 +139,8 @@ class ManyFacedShape {
 		}
 	}
 	
-	private void correctBorders() {
+	protected void correctBorders() {
 		// delete all the edges that are present in the list edgeToSmooth
-		if (is1DShape()) return; // not apply for 1DShape
 		for (int idx = 0 ; idx < idxForBorder.length ;) {
 			boolean edgeIsToDelete = false;
 			for (int[] edgeToSmooth : edgesToSmooth) {
@@ -396,8 +163,7 @@ class ManyFacedShape {
 		}
 	}
 	
-	private void computeUVMapping() {
-		if (is1DShape()) return; // not apply for 1DShape
+	protected void computeUVMapping() {
 		int sizeArray = 0;
 		for (int i = 0 ; i < faces.size() ; i++) {
 			sizeArray += faces.get(i).length;
@@ -459,274 +225,7 @@ class ManyFacedShape {
 		}
 	}
 	
-	private void build1DShape() {
-		// we build the shape as if it was only a border
-		coordsForBorder = new float[coordinates.length*3];
-		idxForBorder = new float[(coordinates.length-1)*2];
-		// fill the coordinates array
-		for (int i = 0 ; i < coordinates.length ; i++) {
-			coordsForBorder[3*i] = (float) coordinates[i].x;
-			coordsForBorder[3*i+1] = (float) coordinates[i].y;
-			coordsForBorder[3*i+2] = (float) coordinates[i].z;
-		}
-		// fill the index buffer
-		for (int i = 0 ; i < coordinates.length-1 ; i++) {
-			idxForBorder[2*i] = i;
-			idxForBorder[2*i+1] = i+1;
-		}
-		// case when the shape is just a point :
-		if (idxForBorder.length == 0) {
-			idxForBorder = new float[]{0};
-		}
-	}
-	
-	private void buildBottomFace() {
-		float[] result = new float[coordinates.length*3];
-		int[] newFace = new int[coordinates.length];
-		int idx = 0;
-		for (int i = coordinates.length-1 ; i >= 0 ; i--) { // need to be clockwise
-			result[3*i] = (float) coordinates[i].x;
-			result[3*i+1] = (float) coordinates[i].y;
-			result[3*i+2] = (float) coordinates[i].z;
-			newFace[idx] = this.coords.length + i;
-			idx++;
-		}
-		
-		this.faces.add(newFace);
-		bottomFace = newFace;
-		this.coords = Utils.concatFloatArrays(this.coords,result);
-	}
-	
-	private void buildTopFace() {
-		float[] result = new float[coordinates.length*3];
-		int[] newFace = new int[coordinates.length];
-		int idx = 0;
-		for (int i = 0 ; i < coordinates.length ; i++) { // need to be anti-clockwise
-			result[3*i] = (float) coordinates[i].x;
-			result[3*i+1] = (float) coordinates[i].y;
-			result[3*i+2] = (float) coordinates[i].z + (float) depth;
-			newFace[idx] = this.coords.length/3 + i;
-			idx++;
-		}
-		
-		this.faces.add(newFace);
-		topFace = newFace;
-		this.coords = Utils.concatFloatArrays(this.coords,result);
-	}
-	
-	private void buildPyramidSummit() {
-		float[] center = new float[2];
-		float[] coordSum = new float[2];
-		// 1) compute the center of the base
-		// sum the coordinates
-		for (int i = 0 ; i < coordinates.length ; i++) {
-			coordSum[0] += (float) coordinates[i].x;
-			coordSum[1] += (float) coordinates[i].y;
-		}
-		// divide by the number of vertices to get the center
-		center[0] = coordSum[0] / coordinates.length;
-		center[1] = coordSum[1] / coordinates.length;
-		
-		// 2) determine the coordinate of the summit
-		float[] summitCoordinates = new float[] {
-				center[0],
-				center[1],
-				(float) depth
-		};
-		
-		// 3) add this summit to the "coords", set the topFace.
-		int[] vtxIdxForSummit = new int[]{coordinates.length};
-		topFace = vtxIdxForSummit;
-		this.coords = Utils.concatFloatArrays(this.coords,summitCoordinates);
-	}
-	
-	private void buildLateralFaces() {
-		ArrayList<int[]> facesToAdd = buildLateralFaces(topFace,bottomFace);
-		for (int[] face : facesToAdd) {
-			faces.add(face);
-		}
-	}
-	
-	private ArrayList<int[]> buildLateralFaces(int[] topFace, int[] botFace) {
-		ArrayList<int[]> result = new ArrayList<int[]>();
-		if (topFace.length == 1) {
-			// case of pyramid : the topFace is just the summit
-			for (int i = 0 ; i < botFace.length ; i++) {
-				int[] newFace = new int[3];
-				newFace[0] = topFace[0];
-				newFace[1] = botFace[botFace.length-i-1];
-				if (i < botFace.length - 1)
-					newFace[2] = botFace[botFace.length-i-2];
-				else
-					newFace[2] = botFace[botFace.length-1];
-				result.add(newFace);
-			}
-		}
-		else {
-			for (int i = 0 ; i < topFace.length ; i++) {
-				int[] newFace = new int[4];
-				newFace[2] = topFace[i];
-				newFace[3] = botFace[botFace.length-i-1];
-				if (i < topFace.length - 1)
-					newFace[0] = botFace[botFace.length-i-2];
-				else
-					newFace[0] = botFace[botFace.length-1];
-				if (i < topFace.length - 1)
-					newFace[1] = topFace[i+1];
-				else
-					newFace[1] = topFace[0];
-				result.add(newFace);
-			}
-		}
-		return result;
-	}
-	
-	private ArrayList<int[]> buildSphereFaces(int[] topFace, int[] botFace) {
-		ArrayList<int[]> result = new ArrayList<int[]>();
-		if (topFace.length == 1 || botFace.length == 1) {
-			// case of the top and the bottom of the sphere
-			if (topFace.length == 1)
-			{
-				for (int i = 0 ; i < botFace.length ; i++) {
-					int[] newFace = new int[3];
-					newFace[0] = topFace[0];
-					newFace[1] = botFace[i];
-					if (i < botFace.length - 1)
-						newFace[2] = botFace[i+1];
-					else
-						newFace[2] = botFace[0];
-					result.add(newFace);
-				}
-			}
-			else if (botFace.length == 1)
-			{
-				for (int i = 0 ; i < topFace.length ; i++) {
-					int[] newFace = new int[3];
-					newFace[2] = botFace[0];
-					newFace[1] = topFace[i];
-					if (i < topFace.length - 1)
-						newFace[0] = topFace[i+1];
-					else
-						newFace[0] = topFace[0];
-					result.add(newFace);
-				}
-			}
-		}
-		else {
-			for (int i = 0 ; i < topFace.length ; i++) {
-				int[] newFace = new int[4];
-				newFace[2] = topFace[i];
-				newFace[3] = botFace[i];
-				if (i < topFace.length - 1)
-					newFace[0] = botFace[i+1];
-				else
-					newFace[0] = botFace[0];
-				if (i < topFace.length - 1)
-					newFace[1] = topFace[i+1];
-				else
-					newFace[1] = topFace[0];
-				result.add(newFace);
-			}
-		}
-		return result;
-	}
-	
-	private void buildSphere() {
-		
-		// find the radius of the sphere
-		float minX = Float.MAX_VALUE;
-		float maxX = Float.MIN_VALUE;
-		for (int i = 0 ; i < coordinates.length ; i++) {
-			if (coordinates[i].x < minX) minX = (float) coordinates[i].x;
-			if (coordinates[i].x > maxX) maxX = (float) coordinates[i].x;
-		}
-		float radius = (maxX - minX) / 2;
-		
-		// find the position of the center
-		float[] center = new float[2];
-		float[] coordSum = new float[2];
-		// sum the coordinates
-		for (int i = 0 ; i < coordinates.length ; i++) {
-			coordSum[0] += (float) coordinates[i].x;
-			coordSum[1] += (float) coordinates[i].y;
-		}
-		// divide by the number of vertices to get the center
-		center[0] = coordSum[0] / coordinates.length;
-		center[1] = coordSum[1] / coordinates.length;
-		
-		// build a serie of circles on the z axis
-		int sliceNb = 16;
-		ArrayList<int[]> circles = new ArrayList<int[]>();
-		int idx = 0;
-		for (int i = 0 ; i < sliceNb ; i++) {
-			float zVal = (float)Math.cos(((float)i/(float)sliceNb)*Math.PI)*radius;
-			float angle = (float) Math.asin(zVal/radius); // <-- sin(angle) = zVal / radius
-			float circleRadius = (float) (radius * Math.cos(angle)); // <-- cos(angle) = circleRadius * cos(angle)
-			float[] circleCoordinates = buildCircle(new float[]{center[0],center[1],zVal},circleRadius,sliceNb);
-			// special case : the top and the bottom of the sphere
-			if (i == 0 || i == sliceNb-1) {
-				circleCoordinates = new float[]{center[0],center[1],zVal};
-			}
-			// we add those coordinates to the array "coords"
-			coords = Utils.concatFloatArrays(coords, circleCoordinates);
-			// build the index array for this circle
-			int[] vertexIdxArray = new int[circleCoordinates.length/3];
-			for (int j = 0 ; j < circleCoordinates.length/3 ; j++) {
-				vertexIdxArray[j] = idx;
-				idx++;
-			}
-			circles.add(vertexIdxArray);
-		}
-		
-		// join all those circles
-		for (int i = 0 ; i < circles.size()-1 ; i++) {
-			ArrayList<int[]> faces = buildSphereFaces(circles.get(i+1), circles.get(i));
-			// add the faces create to the attribute "faces".
-			for (int[] face : faces) {
-				this.faces.add(face);
-			}
-		}
-	}
-	
-	private float[] buildCircle(float[] center, float radius, int nbVertex) {
-		// this is a utility method to build a sphere. It returns a list of coordinates
-		float[] result = new float[nbVertex*3];
-		float angle = (float) Math.toRadians(360 / nbVertex);
-		// we build points starting with the vertex at 3 o'clock
-		for (int i = 0 ; i < nbVertex ; i++) {
-			float xTranslate = (float) (radius * Math.cos(i*angle));
-			float yTranslate = (float) (radius * Math.sin(i*angle));
-			result[3*i] = center[0] + xTranslate; // x composant
-			result[3*i+1] = center[1] + yTranslate; // y composant
-			result[3*i+2] = center[2]; // z composant
-		}
-		return result;
-	}
-	
-	private void buildPolyplan() {
-		// build the coordinates
-		coords = new float[(coordinates.length*3)*2]; // 3 components, twice because one line at z=0 and one line at z=depth
-		for (int i = 0 ; i < coordinates.length ; i++) {
-			coords[3*i] = (float) coordinates[i].x;
-			coords[3*i+1] = (float) coordinates[i].y;
-			coords[3*i+2] = (float) coordinates[i].z;
-			coords[(coordinates.length*3)+(3*i)] = (float) coordinates[i].x;
-			coords[(coordinates.length*3)+(3*i+1)] = (float) coordinates[i].y;
-			coords[(coordinates.length*3)+(3*i+2)] = (float) (coordinates[i].z + depth);
-		}
-		// build the faces
-		for (int i = 0 ; i < coordinates.length-1 ; i++) {
-			int[] face = new int[4];
-			face[0] = i;
-			face[1] = i+1;
-			face[2] = coordinates.length+i+1;
-			face[3] = coordinates.length+i;
-			faces.add(face);
-		}
-	}
-	
-	private void applySmoothShading() {
-		if (is1DShape() || isWireframe) return; // not apply for 1DShape, and nor for wireframe shape
+	protected void applySmoothShading() {
 		for (int faceIdx = 0 ; faceIdx < faces.size() ; faceIdx++) {
 			int[] idxConnexeFaces = getConnexeFaces(faceIdx);
 			for (int idxConnexeFace = 0 ; idxConnexeFace < idxConnexeFaces.length ; idxConnexeFace++) {
@@ -763,8 +262,7 @@ class ManyFacedShape {
 		}
 	}
 	
-	private void triangulate() {
-		if (is1DShape() || isWireframe) return; // not apply for 1DShape, and nor for wireframe shape
+	protected void triangulate() {
 		for (int i = 0 ; i < faces.size() ; i++) {
 			int[] faceTriangulated = triangulateFace(faces.get(i));
 			faces.remove(i);
@@ -783,7 +281,7 @@ class ManyFacedShape {
 		return result;
 	}
 	
-	private void applyTransformation() {
+	protected void applyTransformation() {
 		// apply transform to the coords if needed, and also to the coordsForBorders
 		coords = applyTransformation(coords);
 		coordsForBorder = applyTransformation(coordsForBorder);
@@ -860,7 +358,7 @@ class ManyFacedShape {
 		return normals;
 	}
 	
-	private float[] getColorArray(GamaColor gamaColor, float[] coordsArray) {
+	protected float[] getColorArray(GamaColor gamaColor, float[] coordsArray) {
 		int verticesNb = coordsArray.length / 3;
 		float[] result = null;
 		float[] color = new float[]{ (float)(gamaColor.red()) /255f,
@@ -877,8 +375,7 @@ class ManyFacedShape {
 		return result;
 	}
 	
-	private void computeNormals() {
-		if (isWireframe || is1DShape()) return; // not apply for wireframe shapes, and nor for 1D shapes
+	protected void computeNormals() {
 		float[] result = new float[coords.length];
 		
 		for (int vIdx = 0 ; vIdx < coords.length/3 ; vIdx++) {
@@ -923,43 +420,21 @@ class ManyFacedShape {
 		normals = result;
 	}
 	
+	public abstract ArrayList<DrawingEntity> getDrawingEntityList();
+	
 	public DrawingEntity[] getDrawingEntities() {
-		// returns the DrawingEntities corresponding to this shape (can be 2 DrawingEntities
-		// in case it has been asked to draw the border)
-		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
-		if (isTriangulation) {
-			// if triangulate, returns only one result
-			result = getTriangulationDrawingEntity();
-		}
-		else if (isWireframe) {
-			// if wireframe, returns only one result
-			result = getWireframeDrawingEntity();
-		}
-		else if (isString) {
-			// if the entity is a string, return only one result
-			result = getStringDrawingEntities();
-		}
-		else {
-			// if not triangulate and not wireframe
-			if (is1DShape()) {
-				result = get1DDrawingEntity();
-			}
-			else {
-				result = getStandardDrawingEntities();
-			}
-		}
-		
-		DrawingEntity[] resultInArray = new DrawingEntity[result.size()];
-		for (int i = 0 ; i < resultInArray.length ; i++) {
-			DrawingEntity drawingEntity = result.get(i);
+		ArrayList<DrawingEntity> drawingEntityList = getDrawingEntityList();
+		DrawingEntity[] result = new DrawingEntity[drawingEntityList.size()];
+		for (int i = 0 ; i < result.length ; i++) {
+			DrawingEntity drawingEntity = drawingEntityList.get(i);
 			drawingEntity.setPickingIds(getPickingIdx());
-			resultInArray[i] = drawingEntity;
+			result[i] = drawingEntity;
 		}
 		
-		return resultInArray;
+		return result;
 	}
 	
-	private ArrayList<DrawingEntity> getTriangulationDrawingEntity() {
+	protected ArrayList<DrawingEntity> getTriangulationDrawingEntity() {
 		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
 		
 		// configure the drawing entity for the border
@@ -971,7 +446,7 @@ class ManyFacedShape {
 		return result;
 	}
 	
-	private ArrayList<DrawingEntity> getWireframeDrawingEntity() {
+	protected ArrayList<DrawingEntity> getWireframeDrawingEntity() {
 		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
 		
 		// configure the drawing entity for the border
@@ -983,7 +458,7 @@ class ManyFacedShape {
 		return result;
 	}
 	
-	private ArrayList<DrawingEntity> get1DDrawingEntity() {
+	protected ArrayList<DrawingEntity> get1DDrawingEntity() {
 		// particular case if the geometry is a point or a line : we only draw the "borders" with the color "color" (and not the "bordercolor" !!)
 		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
 		
@@ -996,39 +471,7 @@ class ManyFacedShape {
 		return result;
 	}
 	
-	private ArrayList<DrawingEntity> getStringDrawingEntities() {
-		// the number of drawing entity is equal to 1
-		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
-
-		if (color == null) {
-			color = new GamaColor(1.0,1.0,0,1.0); // set the default color to yellow.
-		}
-		// configure the drawing entity for the filled faces
-		DrawingEntity filledEntity = new DrawingEntity();
-		filledEntity.setVertices(coords);
-		filledEntity.setNormals(normals);
-		filledEntity.setIndices(getIdxBuffer());
-		filledEntity.setColors(getColorArray(color,coords));
-		filledEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
-		filledEntity.type = DrawingEntity.Type.FACE;
-		filledEntity.setTextureID(textureIDs[0]);
-		filledEntity.setTexturePath(texturePaths[0]);
-		filledEntity.setUvMapping(uvMapping);
-		filledEntity.type = DrawingEntity.Type.STRING;
-		filledEntity.setFontEdge((float) (0.5/Math.sqrt(fontSize))); // the font edge is function of the size of the font
-		filledEntity.setFontWidth(0.5f); // this value looks nice...
-		if (isBillboarding) {
-			filledEntity.type = DrawingEntity.Type.BILLBOARDING;
-			filledEntity.enableBillboarding();
-			filledEntity.setTranslation(new Vector3f((float)translation.x,(float)translation.y,(float)translation.z));
-		}
-		
-		result.add(filledEntity);
-		
-		return result;
-	}
-	
-	private ArrayList<DrawingEntity> getStandardDrawingEntities() {
+	protected ArrayList<DrawingEntity> getStandardDrawingEntities() {
 		// the number of drawing entity is equal to the number of textured applied + 1 if there is a border.
 		// If no texture is used, return 1 (+1 if there is a border).
 		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
@@ -1143,7 +586,7 @@ class ManyFacedShape {
 		return result;
 	}
 	
-	private DrawingEntity createBorderEntity(float[] coordsArray, float[] idxArray, float[] colorArray) {
+	protected DrawingEntity createBorderEntity(float[] coordsArray, float[] idxArray, float[] colorArray) {
 		// utility method to build border entities, triangulated entities, wireframe entities and polyline geometries.
 		DrawingEntity borderEntity = new DrawingEntity();
 		borderEntity.setVertices(coordsArray);

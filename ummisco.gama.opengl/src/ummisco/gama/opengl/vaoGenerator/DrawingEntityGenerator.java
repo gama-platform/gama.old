@@ -59,7 +59,7 @@ public class DrawingEntityGenerator {
 	public DrawingEntity[] GenerateDrawingEntities(AbstractObject object, boolean computeTextureIds) {
 		// if this function is called to create a simpleScene, we don't compute the texture IDs (the only thing that interest us in this case is the texture Path)
 		DrawingEntity[] result = null;
-		ManyFacedShape shape = null;
+		AbstractTransformer transformer = null;
 		if (object instanceof StringObject) {
 			StringObject strObj = (StringObject)object;
 			Texture[] textures = new Texture[1];
@@ -72,7 +72,7 @@ public class DrawingEntityGenerator {
 			texturePaths[0] = fontName + style;
 			int[] textureIds = new int[1];
 			textureIds[0] = textures[0].getTextureObject();
-			shape = new ManyFacedShape(strObj,textureIds,texturePaths,textMeshData,renderer.data.isTriangulation());
+			transformer = new StringObjectTransformer(strObj,textureIds,texturePaths,textMeshData,renderer.data.isTriangulation());
 		}
 		else if (object instanceof GeometryObject) {
 			GeometryObject geomObj = (GeometryObject)object;
@@ -85,7 +85,7 @@ public class DrawingEntityGenerator {
 					textureIDs[i] = textures[i].getTextureObject();
 				}
 			}
-			shape = new ManyFacedShape(geomObj,textureIDs,texturePaths,renderer.data.isTriangulation());	
+			transformer = new GeometryObjectTransformer(geomObj,textureIDs,texturePaths,renderer.data.isTriangulation());	
 		}
 		else if (object instanceof ImageObject) {
 			ImageObject imObj = (ImageObject)object;
@@ -103,9 +103,9 @@ public class DrawingEntityGenerator {
 					textureIDs[i] = textures[i].getTextureObject();
 				}
 			}
-			shape = new ManyFacedShape(imObj,textureIDs,texturePaths,renderer.data.isTriangulation());	
+			transformer = new ImageObjectTransformer(imObj,textureIDs,texturePaths,renderer.data.isTriangulation());	
 		}
-		result = shape.getDrawingEntities();
+		result = transformer.getDrawingEntities();
 		return result;
 	}
 
