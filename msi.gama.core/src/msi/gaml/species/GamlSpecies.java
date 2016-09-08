@@ -250,4 +250,9 @@ public class GamlSpecies extends AbstractSpecies {
 		return (IContainerType) getDescription().getSpeciesExpr().getType();
 	}
 
+	
+	public boolean belongsToAMicroModel() {
+		return getDescription().belongsToAMicroModel();
+	}
+
 }

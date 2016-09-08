@@ -87,6 +87,10 @@ public class ModelDescription extends SpeciesDescription {
 	public String getAlias() {
 		return alias;
 	}
+	
+	public boolean isMicroModel() {
+		return alias != null && !alias.isEmpty();
+	}
 
 	@Override
 	public boolean isModel() {

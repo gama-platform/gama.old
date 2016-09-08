@@ -962,5 +962,9 @@ public class SpeciesDescription extends TypeDescription {
 			meta.put(GamlProperties.SPECIES, getName());
 		}
 	}
+	
+	public boolean belongsToAMicroModel() {
+		return getModelDescription().isMicroModel();
+	}
 
 }

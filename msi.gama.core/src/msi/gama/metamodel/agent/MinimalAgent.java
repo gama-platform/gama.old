@@ -20,6 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
+import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.GamaGeometryType;
@@ -61,7 +62,7 @@ public class MinimalAgent extends AbstractAgent {
 		// possessed by the agent, no need to
 		// change anything.
 		if (newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead()
-				|| this.getSpecies().isGrid()) {
+				|| (this.getSpecies().isGrid() && ((GamlSpecies)this.getSpecies()).belongsToAMicroModel() )) {
 			return;
 		}
 
