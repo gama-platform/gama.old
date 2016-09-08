@@ -18,11 +18,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
 
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Predicate;
+import com.google.common.base.Supplier;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Ordering;
 
@@ -56,7 +56,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	static ThreadLocal<IExpressionCompiler> parser;
 
 	public static void registerParserProvider(final Supplier<IExpressionCompiler> f) {
-		parser = ThreadLocal.withInitial(f);
+		parser = new ThreadLocal() {
+			@Override
+			protected IExpressionCompiler initialValue() {
+				return f.get();
+			}
+		};
 	}
 
 	@Override

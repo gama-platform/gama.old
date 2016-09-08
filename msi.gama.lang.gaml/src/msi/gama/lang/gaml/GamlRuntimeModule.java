@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml;
 
-import java.util.function.Supplier;
-
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
 import org.eclipse.xtext.linking.ILinkingService;
@@ -30,6 +28,7 @@ import org.eclipse.xtext.service.DispatchingProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.validation.IResourceValidator;
 
+import com.google.common.base.Supplier;
 import com.google.inject.Binder;
 
 import msi.gama.lang.gaml.documentation.GamlResourceDocManager;

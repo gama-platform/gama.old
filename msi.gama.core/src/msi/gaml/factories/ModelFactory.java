@@ -14,11 +14,12 @@ package msi.gaml.factories;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Supplier;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+
+import com.google.common.base.Supplier;
 
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
