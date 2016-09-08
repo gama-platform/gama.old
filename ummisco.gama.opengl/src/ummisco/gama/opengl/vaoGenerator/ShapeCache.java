@@ -5,12 +5,12 @@ import java.util.LinkedList;
 
 public class ShapeCache {
 	
-	public static int MAX_SIZE = 20;
+	private static int MAX_SIZE = 20;
 	
-	private static HashMap<String,ManyFacedShape> mapPreloadedShapes = new HashMap<String,ManyFacedShape>();
+	private static HashMap<String,AbstractTransformer> mapPreloadedShapes = new HashMap<String,AbstractTransformer>();
 	private static LinkedList<String> fifo = new LinkedList<String>();
 	
-	public static synchronized ManyFacedShape loadShape(String shapeName) {
+	public static synchronized AbstractTransformer loadShape(String shapeName) {
 		// put the shape in first place of the fifo
 		fifo.remove(shapeName);
 		fifo.addFirst(shapeName);
@@ -21,7 +21,7 @@ public class ShapeCache {
 		return mapPreloadedShapes.keySet().contains(shapeName);
 	}
 	
-	public static synchronized void preloadShape(String shapeName, ManyFacedShape entity) {
+	public static synchronized void preloadShape(String shapeName, AbstractTransformer entity) {
 		// if the cache is full, remove the shape used the less recently
 		if (fifo.size() > MAX_SIZE) {
 			String idx = fifo.removeLast();

@@ -174,9 +174,8 @@ public class LightStatement extends AbstractLayerStatement {
 			if (expr.getType().equals(Types.COLOR)) {
 				getLayeredDisplayData().setDiffuseLightColor(lightId, Cast.asColor(scope, expr.value(scope)));
 			} else {
-				final int meanValue = Cast.asInt(scope, expr.value(scope));
-				getLayeredDisplayData().setDiffuseLightColor(lightId,
-						new GamaColor(meanValue, meanValue, meanValue, 255));
+				GamaColor color = Cast.asColor(scope, expr.value(scope));
+				getLayeredDisplayData().setDiffuseLightColor(lightId,color);
 			}
 		}
 		if (getFacetValue(scope, IKeyword.LINEAR_ATTENUATION) != null) {

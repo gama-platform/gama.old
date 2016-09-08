@@ -140,7 +140,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		// lighting.
 		GLUtilLight.enableSmooth(gl);
 		GLUtilLight.enableDepthTest(gl);
-		GLUtilLight.InitializeLighting(gl, data);
+		GLUtilLight.InitializeLighting(gl, data, false);
 
 		// Perspective correction
 		gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);

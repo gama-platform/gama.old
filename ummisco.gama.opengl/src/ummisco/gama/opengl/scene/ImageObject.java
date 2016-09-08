@@ -62,6 +62,10 @@ public class ImageObject extends AbstractObject {
 			return null;
 		}
 	}
+	
+	public BufferedImage getBufferedImage() {
+		return image;
+	}
 
 	@Override
 	public boolean isTextured() {
