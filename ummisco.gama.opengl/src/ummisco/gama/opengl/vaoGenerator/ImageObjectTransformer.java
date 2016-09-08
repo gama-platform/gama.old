@@ -47,13 +47,13 @@ class ImageObjectTransformer extends AbstractTransformer {
 		coords[11] = z;
 		uvMapping = new float[4*2];
 		uvMapping[0] = 0;
-		uvMapping[1] = 0;
+		uvMapping[1] = 1;
 		uvMapping[2] = 1;
-		uvMapping[3] = 0;
+		uvMapping[3] = 1;
 		uvMapping[4] = 1;
-		uvMapping[5] = 1;
+		uvMapping[5] = 0;
 		uvMapping[6] = 0;
-		uvMapping[7] = 1;
+		uvMapping[7] = 0;
 		// build the faces
 		for (int i = 0 ; i < coords.length/(4*3) ; i++) {
 			int[] face = new int[4];
@@ -64,7 +64,14 @@ class ImageObjectTransformer extends AbstractTransformer {
 			faces.add(face);
 		}
 		
-		computeNormals();	
+//		if (bufferedImageValue != null) {
+//			// inverse y value for buffered image
+//			for (int i = 0 ; i < coords.length/3 ; i++) {
+//				coords[i*3+1] = -coords[i*3+1];
+//			}
+//		}
+		
+		initBorders();
 		triangulate();
 		applyTransformation();
 	}
