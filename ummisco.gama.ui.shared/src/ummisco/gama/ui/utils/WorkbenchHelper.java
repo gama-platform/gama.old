@@ -117,7 +117,8 @@ public class WorkbenchHelper {
 
 			@Override
 			public void run() {
-				WorkbenchHelper.getShell().setText(title);
+				if (WorkbenchHelper.getShell() != null)
+					WorkbenchHelper.getShell().setText(title);
 			}
 		});
 
@@ -150,7 +151,6 @@ public class WorkbenchHelper {
 		activePage.hideView(gamaViewPart);
 
 	}
-
 
 	public static <T> T getService(final Class<T> class1) {
 
