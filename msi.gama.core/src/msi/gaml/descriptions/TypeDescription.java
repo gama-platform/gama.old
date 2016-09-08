@@ -313,11 +313,9 @@ public abstract class TypeDescription extends SymbolDescription {
 		while (iterator.hasNext()) {
 
 			final VariableDescription vd = iterator.next();
-			// System.out.println("Readding " + vd.getName() + " to " +
-			// getName());
 			attributes.put(vd.getName(), vd);
 		}
-		// attributes.compact();
+		attributes.compact();
 	}
 
 	public void setParent(final TypeDescription parent) {

@@ -63,6 +63,11 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public void setSyntheticSpeciesContainer() {
+		if (dependencies == null) {
+			dependencies = new ArrayList();
+		}
+		if (!dependencies.contains(SHAPE))
+			dependencies.add(SHAPE);
 		_isSyntheticSpeciesContainer = true;
 	}
 
@@ -389,7 +394,7 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	public void discardDependencies() {
-		// dependencies = null;
+		dependencies = null;
 	}
 
 	@Override
