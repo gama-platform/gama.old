@@ -64,7 +64,6 @@ public class ModernRenderer extends Abstract3DRenderer {
 	
 	private Matrix4f projectionMatrix;
 
-	int[] vboHandles;
 	private ModernDrawer drawer;
 	
 	private final PickingState pickingState = new PickingState();
@@ -72,8 +71,6 @@ public class ModernRenderer extends Abstract3DRenderer {
 	private Envelope3D ROIEnvelope = null;
 	private volatile boolean inited;
 	
-
-	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 	// Use to inverse y composant

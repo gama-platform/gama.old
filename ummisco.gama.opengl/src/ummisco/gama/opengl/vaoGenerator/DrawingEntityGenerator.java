@@ -1,6 +1,7 @@
 package ummisco.gama.opengl.vaoGenerator;
 
 import java.awt.Font;
+import java.awt.image.BufferedImage;
 
 import com.jogamp.opengl.util.texture.Texture;
 
@@ -91,19 +92,43 @@ public class DrawingEntityGenerator {
 			ImageObject imObj = (ImageObject)object;
 			
 			String[] texturePaths = null;
+			int[][][] bufferedImageValue = null;
 			String texturePath = imObj.getImagePath(); // returns null if no texture for this entity
 			if (texturePath != null) {
 				texturePaths = new String[1];
 				texturePaths[0] = texturePath;
 			}
-			int[] textureIDs = (texturePath == null) ? null : new int[1];
-			if (computeTextureIds && (texturePath != null)) {
+			else {
+				// the image contains no path : it is just a buffered image
+				BufferedImage buffImg = imObj.getBufferedImage();
+				if (buffImg != null) {
+					int widthNb = buffImg.getWidth();
+					int heightNb = buffImg.getHeight();
+					bufferedImageValue = new int[widthNb][heightNb][4];
+					for (int i = 0 ; i < widthNb ; i++)
+					{
+						for (int j = 0 ; j < heightNb ; j++)
+						{
+							int clr = buffImg.getRGB(i,j);
+							int  red   = (clr & 0x00ff0000) >> 16;
+							int  green = (clr & 0x0000ff00) >> 8;
+							int  blue  =  clr & 0x000000ff;
+							bufferedImageValue[i][j][0] = red;
+							bufferedImageValue[i][j][1] = green;
+							bufferedImageValue[i][j][2] = blue;
+							bufferedImageValue[i][j][3] = 255;
+						}
+					}
+				}
+			}
+			int[] textureIDs = (texturePath == null && imObj.getBufferedImage() == null) ? null : new int[1];
+			if (computeTextureIds && ((texturePath != null) || (imObj.getBufferedImage() != null))) {
 				Texture[] textures = object.getTextures(renderer.getContext(), renderer);
 				for (int i = 0 ; i < textures.length ; i++) {
 					textureIDs[i] = textures[i].getTextureObject();
 				}
 			}
-			transformer = new ImageObjectTransformer(imObj,textureIDs,texturePaths,renderer.data.isTriangulation());	
+			transformer = new ImageObjectTransformer(imObj,textureIDs,texturePaths,bufferedImageValue,renderer.data.isTriangulation());	
 		}
 		result = transformer.getDrawingEntities();
 		return result;

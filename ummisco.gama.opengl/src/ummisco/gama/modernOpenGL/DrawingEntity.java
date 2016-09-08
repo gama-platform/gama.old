@@ -3,7 +3,6 @@ package ummisco.gama.modernOpenGL;
 import javax.vecmath.Vector3f;
 
 import ummisco.gama.modernOpenGL.shader.AbstractShader;
-import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.modernOpenGL.Material;
 
 public class DrawingEntity {
@@ -20,8 +19,9 @@ public class DrawingEntity {
 	private float[] uvMapping;
 	private int textureID;
 	private String texturePath;
+	private int[][][] bufferedImageTextureValue; // only for grid or special textures with no path attached
 	private Material material;
-	
+
 	// only for string :
 	private float fontWidth = -1; // init value set to -1. If the value is -1, the entity is not a string
 	private float fontEdge = -1; // init value set to -1. If the value is -1, the entity is not a string
@@ -125,9 +125,11 @@ public class DrawingEntity {
 	public void enableBillboarding() {
 		isBillboarding = true;
 	}
+	
 	public void disableBillboarding() {
 		isBillboarding = false;
 	}
+	
 	public boolean isBillboarding() {
 		return isBillboarding;
 	}
@@ -145,6 +147,14 @@ public class DrawingEntity {
 
 	public void setPickingIds(float[] pickingIds) {
 		this.pickingIds = pickingIds;
+	}
+	
+	public int[][][] getBufferedImageTextureValue() {
+		return bufferedImageTextureValue;
+	}
+
+	public void setBufferedImageTextureValue(int[][][] bufferedImageTextureValue) {
+		this.bufferedImageTextureValue = bufferedImageTextureValue;
 	}
 	
 }

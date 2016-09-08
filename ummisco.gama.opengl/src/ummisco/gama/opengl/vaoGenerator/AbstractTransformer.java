@@ -41,6 +41,7 @@ abstract class AbstractTransformer {
 	protected float[] normals;
 	protected int[] textureIDs = null; // null for "no texture"
 	protected String[] texturePaths = null; // null for "no texture"
+	protected int[][][] bufferedImageValue = null;
 	protected float[] coordsForBorder;
 	protected float[] idxForBorder;
 	
@@ -486,14 +487,14 @@ abstract class AbstractTransformer {
 				result.add(borderEntity);
 		}
 		
-		if (texturePaths == null && color == null) {
+		if (uvMapping == null && color == null) {
 			// the geometry is not filled. We create no more entity.
 		}
 		else {
 			if (color == null) {
 				color = DEFAULT_COLOR; // set the default color to yellow.
 			}
-			if (texturePaths == null || texturePaths.length == 1 || (topFace == null && bottomFace == null))
+			if (uvMapping == null || texturePaths == null || texturePaths.length == 1 || (topFace == null && bottomFace == null))
 			{
 				// configure the drawing entity for the filled faces
 				DrawingEntity filledEntity = new DrawingEntity();
@@ -503,10 +504,11 @@ abstract class AbstractTransformer {
 				filledEntity.setColors(getColorArray(color,coords));
 				filledEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
 				filledEntity.type = DrawingEntity.Type.FACE;
-				if (texturePaths != null)
+				if (uvMapping != null)
 				{
 					filledEntity.type = DrawingEntity.Type.TEXTURED;
-					filledEntity.setTexturePath(texturePaths[0]);
+					if (texturePaths != null) filledEntity.setTexturePath(texturePaths[0]);
+					else if (bufferedImageValue != null) filledEntity.setBufferedImageTextureValue(bufferedImageValue);
 					filledEntity.setTextureID(textureIDs[0]);
 					filledEntity.setUvMapping(uvMapping);
 				}

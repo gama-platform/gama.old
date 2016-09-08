@@ -19,10 +19,11 @@ class ImageObjectTransformer extends AbstractTransformer {
 		loadManyFacedShape(obj);
 	}
 	
-	public ImageObjectTransformer(ImageObject imObj, int[] textureIds, String[] texturePaths, boolean isTriangulation) {
+	public ImageObjectTransformer(ImageObject imObj, int[] textureIds, String[] texturePaths, int[][][] bufferedImageValue, boolean isTriangulation) {
 		// for StringObject
 		genericInit(imObj, isTriangulation);
 		
+		this.bufferedImageValue = bufferedImageValue;
 		this.textureIDs = textureIds;
 		this.texturePaths = texturePaths;
 		this.isLightInteraction = false;
