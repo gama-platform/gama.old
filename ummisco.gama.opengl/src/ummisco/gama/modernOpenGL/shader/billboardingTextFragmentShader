@@ -17,6 +17,7 @@ uniform   sampler2D textureSampler;
 uniform   float   useTexture; // 0 for no, 1 for yes
 uniform   float   fontWidth;
 uniform   float   fontEdge;
+uniform   float   layerAlpha;
 
 void main (void)
 {	
@@ -25,5 +26,5 @@ void main (void)
 	if (alpha < 0.01) {
 		discard;
 	}
-	gl_FragColor = vec4(varying_Color.xyz,alpha);
+	gl_FragColor = vec4(varying_Color.xyz,alpha*layerAlpha);
 }

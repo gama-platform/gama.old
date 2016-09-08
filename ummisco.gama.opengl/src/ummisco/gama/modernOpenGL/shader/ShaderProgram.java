@@ -26,7 +26,6 @@ public class ShaderProgram extends AbstractShader {
 	private int location_useNormals;	// 0 for no, 1 for yes
 	private int location_texture;
 	private int location_ambientLight;
-	private int location_layerAlpha;
 	
 	private boolean useNormal = false;
 	private boolean useTexture = false;
@@ -57,7 +56,6 @@ public class ShaderProgram extends AbstractShader {
 		location_useNormals = getUniformLocation("useNormals");
 		location_texture = getUniformLocation("textureSampler");
 		location_ambientLight = getUniformLocation("ambientLight");
-		location_layerAlpha = getUniformLocation("layerAlpha");
 		
 		location_lightColor = new int[MAX_LIGHT];
 		location_lightAttenuation = new int[MAX_LIGHT];
@@ -156,9 +154,5 @@ public class ShaderProgram extends AbstractShader {
 	@Override
 	public Vector3f getTranslation() {
 		return new Vector3f(0,0,0);
-	}
-	
-	public void setLayerAlpha(float layerAlpha) {
-		super.loadFloat(location_layerAlpha, layerAlpha);
 	}
 }

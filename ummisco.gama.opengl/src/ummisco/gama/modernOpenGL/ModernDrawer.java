@@ -276,6 +276,7 @@ public class ModernDrawer {
 		else if (shaderProgram instanceof TextShaderProgram) {
 			prepareShader(entity, (TextShaderProgram)shaderProgram);
 		}
+		shaderProgram.setLayerAlpha(currentLayer.getAlpha().floatValue());
 	}
 	
 	private void prepareShader(DrawingEntity entity, ShaderProgram shaderProgram) {
@@ -303,7 +304,6 @@ public class ModernDrawer {
 			shaderProgram.loadTexture(0);
 			shaderProgram.storeTextureID(entity.getTextureID());
 		}
-		shaderProgram.setLayerAlpha(currentLayer.getAlpha().floatValue());
 	}
 	
 	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		
