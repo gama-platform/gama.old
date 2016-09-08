@@ -71,7 +71,7 @@ abstract class AbstractTransformer {
 		this.pickingId = object.pickingIndex;
 		
 		if (object.getColor() != null)
-			this.color = new GamaColor(object.getColor());
+			this.color = new GamaColor(object.getColor(),(object.getColor().getAlpha()/255.0)*object.getAlpha());
 		else
 			this.color = null;
 		this.borderColor = object.getAttributes().getBorder();

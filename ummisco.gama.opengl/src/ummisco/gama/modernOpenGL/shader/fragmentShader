@@ -80,6 +80,6 @@ void main (void)
 		{
 			inputColor = texture(textureSampler,pass_textureCoords);
 		}
-		gl_FragColor = vec4(inputColor.xyz,inputColor.w*layerAlpha);
+		gl_FragColor = vec4(inputColor.xyz,inputColor.w*layerAlpha*varying_Color.w);
 	}
 }
