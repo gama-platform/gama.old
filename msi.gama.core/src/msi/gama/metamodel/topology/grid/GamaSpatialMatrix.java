@@ -59,6 +59,7 @@ import msi.gama.util.matrix.GamaMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.PathFactory;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
@@ -1153,16 +1154,18 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	 */
 	public class GridPopulation extends GamaPopulation {
 
-		boolean usesRegularAgents;
+		// boolean usesRegularAgents;
 
 		/**
 		 * @param host
 		 * @param species
 		 */
-		public GridPopulation(final ITopology t, final IMacroAgent host, final ISpecies species,
-				final boolean useRegularAgents) {
+		public GridPopulation(final ITopology t, final IMacroAgent host,
+				final ISpecies species/*
+										 * , final boolean useRegularAgents
+										 */) {
 			super(host, species);
-			usesRegularAgents = useRegularAgents;
+			// usesRegularAgents = useRegularAgents;
 			topology = t;
 		}
 
@@ -1185,11 +1188,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		public IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries) {
 			for (int i = 0; i < actualNumberOfCells; i++) {
 				final IShape s = matrix[i];
+				final Class javaBase = ((SpeciesDescription) species.getDescription()).getJavaBase();
+
+				final boolean usesRegularAgents = javaBase == GamlGridAgent.class;
 				if (s != null) {
 					final IAgent g = usesRegularAgents ? new GamlGridAgent(i) : new MinimalGridAgent(i);
 					matrix[i] = g;
-
-					// g.scheduleAndExecute(null);
 				}
 			}
 
@@ -1209,9 +1213,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					a.schedule(scope);
 				}
 			}
-			// WARNING FOR THE MOMENT NO EVENT IS FIRED
-			// fireAgentsAdded(list);
-			// WARNING DOES NOT RESPECT THE CONTRACT (RETURNS NULL)
 			return null;
 
 		}

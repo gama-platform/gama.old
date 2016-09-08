@@ -76,28 +76,12 @@ public abstract class AbstractAgent implements IAgent {
 
 	private volatile int index;
 	protected volatile boolean dead = false;
-	// private volatile boolean lockAcquired = false;
-	// AD now in the geometry (see Issue #1558)
-	// private GamaMap<Object, Object> attributes;
 
 	@Override
 	public abstract IPopulation getPopulation();
 
 	@Override
 	public abstract IShape getGeometry();
-
-	/**
-	 * AD 02/16: The geometry is now never null
-	 * 
-	 * @return the geometry of the agent if it not null, otherwise throws a
-	 *         runtime exeception.
-	 * @note If checking for a null value in geometry imposes too much overhead
-	 *       in cases where the geometry is sure not to be nil, this method can
-	 *       be safely overriden with a direct call to getGeometry()
-	 */
-	// protected IShape checkedGeometry() {
-	// return getGeometry();
-	// }
 
 	@Override
 	public IAgent getAgent() {
@@ -233,32 +217,25 @@ public abstract class AbstractAgent implements IAgent {
 	@Override
 	public GamaMap<Object, Object> getAttributes() {
 		return (GamaMap) getGeometry().getAttributes();
-		// return attributes;
 	}
 
 	@Override
 	public GamaMap getOrCreateAttributes() {
 		return getGeometry().getOrCreateAttributes();
-		// if ( attributes == null ) {
-		// attributes = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE, 2);
-		// }
-		// return attributes;
 	}
 
 	@Override
 	public boolean hasAttribute(final Object key) {
 		return getGeometry().hasAttribute(key);
-		// return attributes == null ? false : attributes.containsKey(key);
 	}
 
 	@Override
-	public/* synchronized */Object getAttribute(final Object key) {
+	public Object getAttribute(final Object key) {
 		return getGeometry().getAttribute(key);
-		// return attributes == null ? null : attributes.get(key);
 	}
 
 	@Override
-	public/* synchronized */void setAttribute(final Object name, final Object val) {
+	public void setAttribute(final Object name, final Object val) {
 		getOrCreateAttributes().put(name, val);
 	}
 
@@ -344,10 +321,8 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public void schedule(final IScope scope) {
-		// public void scheduleAndExecute(final RemoteSequence sequence) {
 		if (!dead()) {
 			scope.init(this);
-			// getScheduler().insertAgentToInit(getScope(), this, sequence);
 		}
 	}
 
@@ -462,10 +437,8 @@ public abstract class AbstractAgent implements IAgent {
 	 */
 	@Override
 	public IPopulation getPopulationFor(final ISpecies microSpecies) {
-		// return getPopulationFor(microSpecies.getName());
 
 		IPopulation pop = getPopulationFor(microSpecies.getName());
-		// If pop is null, try to get the extern population of micro-model
 		if (pop == null) {
 			final ModelDescription micro = microSpecies.getDescription().getModelDescription();
 			final ModelDescription main = (ModelDescription) this.getModel().getDescription();
@@ -530,10 +503,6 @@ public abstract class AbstractAgent implements IAgent {
 
 	@action(name = "die", doc = @doc("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		// AD: Commented this.
-		// final IMacroAgent currentMacro = this.getHost();
-		// if (currentMacro != null)
-		// currentMacro.removeAgent();
 		scope.interruptAgent();
 		dispose();
 		return null;
@@ -561,7 +530,6 @@ public abstract class AbstractAgent implements IAgent {
 			return scope.getAgentVarValue(this, index);
 		} else {
 			return getAttribute(index);
-			// return attributes.get(scope, index);
 		}
 	}
 

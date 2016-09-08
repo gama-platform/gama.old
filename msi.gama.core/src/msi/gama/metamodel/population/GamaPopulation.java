@@ -70,15 +70,16 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	public static GamaPopulation createPopulation(final IScope scope, final IMacroAgent host, final ISpecies species) {
 		if (species.isGrid()) {
-			final IExpression exp = species.getFacet("use_regular_agents");
-			final boolean useRegularAgents = exp == null || Cast.asBool(scope, exp.value(scope));
+			// final IExpression exp = species.getFacet("use_regular_agents");
+			// final boolean useRegularAgents = exp == null ||
+			// Cast.asBool(scope, exp.value(scope));
 			// if ( useRegularAgents ) { return new GamaPopulation(host,
 			// species); }
 			// In case of grids, we build the topology first if we use the
 			// minimal agents
 			final ITopology t = buildGridTopology(scope, species, host);
 			final GamaSpatialMatrix m = (GamaSpatialMatrix) t.getPlaces();
-			return m.new GridPopulation(t, host, species, useRegularAgents);
+			return m.new GridPopulation(t, host, species/* , useRegularAgents */);
 		}
 		return new GamaPopulation(host, species);
 	}
