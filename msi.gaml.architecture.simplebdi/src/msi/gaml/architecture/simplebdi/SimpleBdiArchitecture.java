@@ -696,6 +696,11 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return factBase.remove(emotionItem);
 	}
 
+	public static boolean removeFromBase(final IScope scope, final SocialLink socialItem, final String factBaseName) {
+		final GamaList<SocialLink> factBase = getSocialBase(scope, factBaseName);
+		return factBase.remove(socialItem);
+	}
+	
 	public static boolean addToBase(final IScope scope, final Predicate predicateItem, final String factBaseName) {
 		return addToBase(scope, predicateItem, getBase(scope, factBaseName));
 	}
@@ -1765,6 +1770,16 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 	
+	private List<SocialLink> listSocialAgentDead(final IScope scope) {
+		final List<SocialLink> tempPred = new ArrayList<SocialLink>();
+		for (final SocialLink pred : getSocialBase(scope, SimpleBdiArchitecture.SOCIALLINK_BASE)) {
+			if (pred.getAgent().dead()) {
+				tempPred.add(pred);
+			}
+		}
+		return tempPred;
+	}
+	
 	protected void updateSocialLinks(final IScope scope) {
 		// Etape 0, demander à l'utilisateur s'il veut ou non utiliser cette
 		// architecture
@@ -1773,6 +1788,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		final Boolean use_social_architecture = scope.hasArg(USE_SOCIAL_ARCHITECTURE)
 				? scope.getBoolArg(USE_SOCIAL_ARCHITECTURE) : (Boolean) agent.getAttribute(USE_SOCIAL_ARCHITECTURE);
 		if (use_social_architecture) {
+			for(SocialLink tempLink : listSocialAgentDead(scope)){
+				removeFromBase(scope, tempLink, SimpleBdiArchitecture.SOCIALLINK_BASE);
+			}
 			for(SocialLink tempLink : getSocialBase(scope,SOCIALLINK_BASE)){
 				updateSocialLink(scope,tempLink);
 			}
