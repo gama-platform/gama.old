@@ -13,7 +13,7 @@ import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
 import msi.gama.lang.gaml.indexer.IModelIndexer;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 
 /**
  * The class GamaSourceViewer.
@@ -26,7 +26,7 @@ public class GamaSourceViewer extends XtextSourceViewer {
 
 	IModelIndexer indexer;
 
-	private IGamlBuilderListener2 resourceListener;
+	private IGamlBuilderListener resourceListener;
 
 	/**
 	 * @param parent
@@ -50,7 +50,7 @@ public class GamaSourceViewer extends XtextSourceViewer {
 	/**
 	 * @param gamlEditor
 	 */
-	public void setResourceListener(final IGamlBuilderListener2 listener, final IModelIndexer indexer) {
+	public void setResourceListener(final IGamlBuilderListener listener, final IModelIndexer indexer) {
 		this.resourceListener = listener;
 		this.indexer = indexer;
 		((IXtextDocument) getDocument()).readOnly(new IUnitOfWork.Void<XtextResource>() {

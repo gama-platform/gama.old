@@ -11,16 +11,13 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.GAML;
@@ -42,16 +39,16 @@ import msi.gaml.types.Types;
  */
 public class VariableDescription extends SymbolDescription {
 
-	private THashMap<String, VariableDescription> dependencies;
+	private List<String> dependencies;
 	private String plugin;
 
 	private final boolean _isGlobal, _isNotModifiable;
 	// for variables automatically added to species for containing micro-agents
-	private boolean _isSyntheticSpeciesContainer, dependenciesComputed;
+	private boolean _isSyntheticSpeciesContainer;
 	private GamaHelper get, init, set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
-			final EObject source, final Facets facets, final Set<String> dependencies) {
+			final EObject source, final Facets facets, final Collection<String> dependencies) {
 		super(keyword, superDesc, cp, source, facets);
 		if (!facets.containsKey(TYPE) && !isExperimentParameter()) {
 			facets.putAsLabel(TYPE, keyword);
@@ -120,7 +117,7 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public VariableDescription copy(final IDescription into) {
 		final VariableDescription vd = new VariableDescription(getKeyword(), into, ChildrenProvider.NONE, element,
-				getFacetsCopy(), dependencies == null ? null : dependencies.keySet());
+				getFacetsCopy(), dependencies);
 		vd.addHelpers(get, init, set);
 		vd.originName = getOriginName();
 		return vd;
@@ -206,58 +203,67 @@ public class VariableDescription extends SymbolDescription {
 		return result;
 	}
 
-	public void usedVariablesIn(final Map<String, VariableDescription> vars) {
+	// public void usedVariablesIn(final Map<String, VariableDescription> vars)
+	// {
+	//
+	// if (!dependenciesComputed) {
+	// dependenciesComputed = true;
+	// if (dependencies == null)
+	// return;
+	// for (final Map.Entry<String, VariableDescription> entry :
+	// dependencies.entrySet()) {
+	// entry.setValue(vars.get(entry.getKey()));
+	// }
+	// dependencies.remove(getName());
+	// }
+	// }
 
-		if (!dependenciesComputed) {
-			dependenciesComputed = true;
-			if (dependencies == null)
-				return;
-			for (final Map.Entry<String, VariableDescription> entry : dependencies.entrySet()) {
-				entry.setValue(vars.get(entry.getKey()));
-			}
-			dependencies.remove(getName());
-		}
-	}
+	// public void expandDependencies(final List<VariableDescription> without) {
+	// if (dependencies == null)
+	// return;
+	// final Map<String, VariableDescription> accumulator = new THashMap();
+	// for (final VariableDescription dep : dependencies.values()) {
+	// if (dep == null)
+	// continue;
+	// if (!without.contains(dep)) {
+	// without.add(this);
+	// dep.expandDependencies(without);
+	// for (final VariableDescription vd : dep.getDependencies()) {
+	// if (vd != null)
+	// accumulator.put(vd.getName(), vd);
+	// }
+	// }
+	// }
+	// dependencies.putAll(accumulator);
+	// }
 
-	public void expandDependencies(final List<VariableDescription> without) {
-		if (dependencies == null)
-			return;
-		final Map<String, VariableDescription> accumulator = new THashMap();
-		for (final VariableDescription dep : dependencies.values()) {
-			if (dep == null)
-				continue;
-			if (!without.contains(dep)) {
-				without.add(this);
-				dep.expandDependencies(without);
-				for (final VariableDescription vd : dep.getDependencies()) {
-					if (vd != null)
-						accumulator.put(vd.getName(), vd);
-				}
-			}
-		}
-		dependencies.putAll(accumulator);
-	}
-
-	public Collection<VariableDescription> getDependencies() {
+	public Collection<String> getDependenciesNames() {
 		if (dependencies == null)
 			return Collections.EMPTY_LIST;
-		// May contain null values
-		return dependencies.values();
+		return dependencies;
 	}
 
-	public void getExtraDependencies(final Set<String> into) {
-		if (dependencies == null)
-			return;
-		dependencies.forEachEntry(new TObjectObjectProcedure<String, VariableDescription>() {
+	// public Collection<VariableDescription> getDependencies() {
+	// if (dependencies == null)
+	// return Collections.EMPTY_LIST;
+	// // May contain null values
+	// return dependencies.values();
+	// }
 
-			@Override
-			public boolean execute(final String a, final VariableDescription b) {
-				if (b == null)
-					into.add(a);
-				return true;
-			}
-		});
-	}
+	// public void addExtraDependenciesTo(final Set<String> into) {
+	// if (dependencies == null)
+	// return;
+	// into.addAll(dependencies);
+	// dependencies.forEach(new TObjectProcedure<String() {
+	//
+	// @Override
+	// public boolean execute(final String a) {
+	// if (b == null)
+	// into.add(a);
+	// return true;
+	// }
+	// });
+	// }
 
 	public boolean isUpdatable() {
 		return !_isNotModifiable && (hasFacet(VALUE) || hasFacet(UPDATE));
@@ -358,7 +364,7 @@ public class VariableDescription extends SymbolDescription {
 		this.plugin = plugin;
 	}
 
-	public void addDependenciesNames(final Set<String> dependencies) {
+	public void addDependenciesNames(final Collection<String> dependencies) {
 		final IExpressionDescription exp = getFacet("depends_on");
 		if (exp != null) {
 			addDependenciesNoCheck(exp.getStrings(this, false));
@@ -367,14 +373,23 @@ public class VariableDescription extends SymbolDescription {
 		addDependenciesNoCheck(dependencies);
 	}
 
-	private void addDependenciesNoCheck(final Set<String> deps) {
+	private void addDependenciesNoCheck(final Collection<String> deps) {
 		if (deps == null || deps.isEmpty())
 			return;
 		if (dependencies == null)
-			dependencies = new THashMap();
+			dependencies = new ArrayList();
+
 		for (final String s : deps) {
-			dependencies.put(s, null);
+			if (!s.equals(getName()))
+				dependencies.add(s);
 		}
+		// for (final String s : deps) {
+		// dependencies.put(s, null);
+		// }
+	}
+
+	public void discardDependencies() {
+		// dependencies = null;
 	}
 
 	@Override

@@ -1,17 +1,16 @@
 package msi.gama.lang.gaml.indexer;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.jgrapht.DirectedGraph;
@@ -19,30 +18,39 @@ import org.jgrapht.Graphs;
 import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
+import com.google.common.base.Objects;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.collect.Iterators;
 import com.google.inject.Provider;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
+import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ModelDescription;
 
-public abstract class BaseIndexer implements IModelIndexer {
+public class BaseIndexer implements IModelIndexer {
 
-	protected final static Map<URI, IGamlBuilderListener2> resourceListeners = new HashMap();
+	protected final Map<URI, ErrorCollector> resourceErrors = new HashMap();
+	protected DirectedGraph<URI, Edge> index = new SimpleDirectedGraph(Edge.class);
+
+	private final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache = CacheBuilder.newBuilder()
+			.build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
+
+				@Override
+				public THashMap load(final URI key) throws Exception {
+					return new THashMap();
+				}
+			});
 
 	protected final static TOrderedHashMap EMPTY_MAP = new TOrderedHashMap();
 
@@ -51,10 +59,13 @@ public abstract class BaseIndexer implements IModelIndexer {
 		if (((ModelImpl) m).eIsSet(GamlPackage.MODEL__IMPORTS)) {
 			result = new TOrderedHashMap();
 			for (final Import e : m.getImports()) {
-				URI uri = URI.createURI(e.getImportURI(), true);
-				uri = properlyEncodedURI(uri.resolve(baseURI));
-				final String label = e.getName();
-				result.put(uri, label);
+				final String u = e.getImportURI();
+				if (u != null) {
+					URI uri = URI.createURI(u, true);
+					uri = properlyEncodedURI(uri.resolve(baseURI));
+					final String label = e.getName();
+					result.put(uri, label);
+				}
 			}
 		}
 		return result;
@@ -71,103 +82,53 @@ public abstract class BaseIndexer implements IModelIndexer {
 		});
 	}
 
-	protected boolean validatePlugins(final GamlResource res) {
-		return true;
-	}
-
 	@Override
 	public boolean isEdited(final URI uri) {
-		return resourceListeners.containsKey(properlyEncodedURI(uri));
+		return false;
 	}
 
 	@Override
 	public void updateState(final URI uri, final ModelDescription model, final boolean newState,
 			final ErrorCollector status) {
-		final URI newURI = properlyEncodedURI(uri);
-		final IGamlBuilderListener2 listener = resourceListeners.get(newURI);
-		if (listener == null)
-			return;
-		final Collection exps = model == null ? newState ? Collections.EMPTY_SET : null : model.getExperiments();
-		listener.validationEnded(exps, status);
 	}
 
 	@Override
-	public void addResourceListener(final URI uri, final IGamlBuilderListener2 listener) {
-		final URI newURI = properlyEncodedURI(uri);
-		resourceListeners.put(newURI, listener);
+	public void addResourceListener(final URI uri, final IGamlBuilderListener listener) {
 	}
 
 	@Override
-	public void removeResourceListener(final IGamlBuilderListener2 listener) {
-		URI toRemove = null;
-		for (final Map.Entry<URI, IGamlBuilderListener2> entry : resourceListeners.entrySet()) {
-			if (entry.getValue() == listener) {
-				toRemove = entry.getKey();
-			}
-		}
-		if (toRemove != null) {
-			resourceListeners.remove(toRemove);
-			removeDocumentation(toRemove);
-		}
-
+	public void removeResourceListener(final IGamlBuilderListener listener) {
 	}
 
-	private class NullEdge {
-		String getLabel() {
-			return null;
-		}
-	}
+	private class Edge {
+		String label;
+		final URI target;
 
-	private class Edge extends NullEdge {
-		final String label;
-
-		Edge(final String l) {
+		Edge(final String l, final URI target) {
 			this.label = l;
+			this.target = target;
 		}
 
-		@Override
+		URI getTarget() {
+			return target;
+		}
+
 		String getLabel() {
 			return label;
 		}
+
+		public void setLabel(final String b) {
+			label = b;
+		}
 	}
-
-	protected final DirectedGraph<URI, NullEdge> index = new SimpleDirectedGraph(NullEdge.class);
-	protected volatile boolean hasFinishedIndexing;
-	private final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache = CacheBuilder.newBuilder()
-			.build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
-
-				@Override
-				public THashMap load(final URI key) throws Exception {
-					return new THashMap();
-				}
-			});
-
-	private final Set<Runnable> afterIndexationRunnables = new HashSet();
 
 	private void addImport(final URI from, final URI to, final String label) {
 		index.addVertex(to);
 		index.addVertex(from);
-		index.addEdge(from, to, label == null ? new NullEdge() : new Edge(label));
+		index.addEdge(from, to, new Edge(label, to));
 	}
 
-	@Override
-	public void buildIndex() {
-		// Must be redefined & called by redefinitions
-		for (final Runnable r : afterIndexationRunnables) {
-			r.run();
-		}
-		afterIndexationRunnables.clear();
-	}
-
-	@Override
-	public void runAfterIndexation(final Runnable runnable) {
-		if (isReady())
-			runnable.run();
-		else
-			afterIndexationRunnables.add(runnable);
-	}
-
-	protected void clearResourceSet(final ResourceSet resourceSet) {
+	public static void clearResourceSet(final ResourceSet resourceSet) {
 		final boolean wasDeliver = resourceSet.eDeliver();
 		try {
 			resourceSet.eSetDeliver(false);
@@ -177,31 +138,58 @@ public abstract class BaseIndexer implements IModelIndexer {
 		}
 	}
 
-	/**
-	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#updateImports(msi.gama.lang.gaml.resource.GamlResource)
-	 */
 	@Override
-	public boolean updateImports(final GamlResource r) {
+	public EObject updateImports(final GamlResource r) {
 		final URI baseURI = properlyEncodedURI(r.getURI());
-		if (indexes(baseURI)) {
-			final List<NullEdge> edges = new ArrayList(index.outgoingEdgesOf(baseURI));
-			index.removeAllEdges(edges);
-		}
-
+		final Set<Edge> nativeEdges = index.containsVertex(baseURI) ? index.outgoingEdgesOf(baseURI) : null;
+		final Set<Edge> edges = nativeEdges == null || nativeEdges.isEmpty() ? Collections.EMPTY_SET
+				: new HashSet(nativeEdges);
+		final EObject contents = r.getContents().get(0);
+		if (contents == null || !(contents instanceof Model))
+			return null;
 		final TOrderedHashMap<URI, String> added = getImportsAsAbsoluteURIS(baseURI, (Model) r.getContents().get(0));
-		// System.out.println("Updating imports of " + baseURI.lastSegment() + "
-		// with " + added);
-		return added.forEachEntry(new TObjectObjectProcedure<URI, String>() {
+		final EObject[] faulty = new EObject[1];
+		if (added.forEachEntry(new TObjectObjectProcedure<URI, String>() {
 
 			@Override
 			public boolean execute(final URI uri, final String b) {
-				if (!baseURI.equals(uri) && EcoreUtil2.isValidUri(r, uri)) {
-					addImport(baseURI, uri, b);
+				if (baseURI.equals(uri))
 					return true;
+				final Iterator<Edge> iterator = edges.iterator();
+				boolean found = false;
+				while (iterator.hasNext()) {
+					final Edge edge = iterator.next();
+					if (edge.getTarget().equals(uri)) {
+						found = true;
+						if (!Objects.equal(edge.getLabel(), b)) {
+							edge.setLabel(b);
+						}
+						iterator.remove();
+						break;
+					}
 				}
-				r.getErrorCollector().add(new GamlCompilationError("Imported model could not be found.",
-						IGamlIssue.GENERAL, findImport((Model) r.getContents().get(0), uri), false, false));
-				return false;
+				if (!found)
+					if (EcoreUtil2.isValidUri(r, uri)) {
+						final boolean alreadyThere = index.containsVertex(uri);
+						addImport(baseURI, uri, b);
+						if (shouldExpandDependencies() && !alreadyThere) {
+							// This call should trigger the recursive call to
+							// updateImports()
+							final Resource imported = r.getResourceSet().getResource(uri, true);
+							// r.getResourceSet().getResources().remove(imported);
+							// updateImports((GamlResource)
+							// r.getResourceSet().getResource(uri, true));
+						}
+					} else {
+						faulty[0] = findImport((Model) r.getContents().get(0), uri);
+						// r.getErrorCollector().add(new
+						// GamlCompilationError("Imported model could not be
+						// found.",
+						// IGamlIssue.GENERAL, findImport((Model)
+						// r.getContents().get(0), uri), false, false));
+						return false;
+					}
+				return true;
 			}
 
 			private EObject findImport(final Model model, final URI uri) {
@@ -213,8 +201,69 @@ public abstract class BaseIndexer implements IModelIndexer {
 				}
 				return null;
 			}
-		});
+		})) {
+			index.removeAllEdges(edges);
+			return null;
+		}
+		return faulty[0];
 
+	}
+
+	protected boolean shouldExpandDependencies() {
+		return true;
+	}
+
+	class ResourceLoader implements TObjectObjectProcedure<URI, String> {
+
+		final ResourceSet resourceSet;
+		TOrderedHashMap<GamlResource, String> loaded;
+
+		ResourceLoader(final ResourceSet resourceSet2) {
+			this.resourceSet = resourceSet2;
+		}
+
+		@Override
+		public boolean execute(final URI uri, final String label) {
+			final GamlResource ir = (GamlResource) resourceSet.getResource(uri, true);
+			if (ir != null) {
+				if (loaded == null)
+					loaded = new TOrderedHashMap();
+				loaded.put(ir, label);
+			}
+			return true;
+
+		}
+
+	}
+
+	@Override
+	public TOrderedHashMap<GamlResource, String> validateImportsOf(final GamlResource resource) {
+
+		TOrderedHashMap<GamlResource, String> imports = null;
+		final TOrderedHashMap<URI, String> uris = allLabeledImportsOf(resource);
+		uris.remove(properlyEncodedURI(resource.getURI()));
+		if (!uris.isEmpty()) {
+			final ResourceLoader loadResources = new ResourceLoader(resource.getResourceSet());
+			uris.forEachEntry(loadResources);
+			imports = loadResources.loaded;
+			// If one of the resources has already errors, no need to validate
+			final boolean importsOK = imports == null || imports.forEachKey(new TObjectProcedure<GamlResource>() {
+
+				@Override
+				public boolean execute(final GamlResource imported) {
+					if (imported.hasErrors()) {
+						resource.invalidate(imported, "Syntax errors detected");
+						return false;
+					}
+					return true;
+				}
+
+			});
+			if (!importsOK) {
+				return null;
+			}
+		}
+		return imports == null ? EMPTY_MAP : imports;
 	}
 
 	/**
@@ -223,7 +272,7 @@ public abstract class BaseIndexer implements IModelIndexer {
 	@Override
 	public Set<URI> directImportersOf(final URI uri) {
 		final URI newURI = properlyEncodedURI(uri);
-		if (indexes(newURI))
+		if (index.containsVertex(newURI))
 			return new HashSet(Graphs.predecessorListOf(index, newURI));
 		return Collections.EMPTY_SET;
 	}
@@ -231,7 +280,7 @@ public abstract class BaseIndexer implements IModelIndexer {
 	@Override
 	public boolean isImported(final URI uri) {
 		final URI newURI = properlyEncodedURI(uri);
-		if (!indexes(newURI))
+		if (!index.containsVertex(newURI))
 			return false;
 		return index.inDegreeOf(newURI) > 0;
 	}
@@ -242,22 +291,9 @@ public abstract class BaseIndexer implements IModelIndexer {
 	@Override
 	public Set<URI> directImportsOf(final URI uri) {
 		final URI newURI = properlyEncodedURI(uri);
-		if (indexes(newURI))
+		if (index.containsVertex(newURI))
 			return new HashSet(Graphs.successorListOf(index, newURI));
 		return Collections.EMPTY_SET;
-	}
-
-	public TOrderedHashMap<URI, String> labeledImportsOf(final URI uri) {
-		final URI newURI = properlyEncodedURI(uri);
-		if (indexes(newURI)) {
-			final TOrderedHashMap<URI, String> map = new TOrderedHashMap();
-			final Collection<NullEdge> edges = index.outgoingEdgesOf(newURI);
-			for (final NullEdge e : edges) {
-				map.put(index.getEdgeTarget(e), e.getLabel());
-			}
-			return map;
-		}
-		return EMPTY_MAP;
 	}
 
 	@Override
@@ -272,8 +308,8 @@ public abstract class BaseIndexer implements IModelIndexer {
 		if (!result.containsKey(uri)) {
 			result.put(uri, currentLabel);
 			if (indexes(uri)) {
-				final Collection<NullEdge> edges = index.outgoingEdgesOf(uri);
-				for (final NullEdge e : edges) {
+				final Collection<Edge> edges = index.outgoingEdgesOf(uri);
+				for (final Edge e : edges) {
 					allLabeledImports(index.getEdgeTarget(e), e.getLabel() == null ? currentLabel : e.getLabel(),
 							result);
 				}
@@ -295,10 +331,10 @@ public abstract class BaseIndexer implements IModelIndexer {
 	/**
 	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#allImporterssOf(org.eclipse.emf.common.util.URI)
 	 */
-	@Override
-	public Iterator<URI> allImportersOf(final URI uri) {
-		return Iterators.emptyIterator();
-	}
+	// @Override
+	// public Iterator<URI> allImportersOf(final URI uri) {
+	// return Iterators.emptyIterator();
+	// }
 
 	/**
 	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#indexes(org.eclipse.emf.common.util.URI)
@@ -311,14 +347,13 @@ public abstract class BaseIndexer implements IModelIndexer {
 	@Override
 	public URI properlyEncodedURI(final URI uri) {
 		final URI result = URI.createURI(uri.toString(), true);
-		// System.out.println("Converting " + uri.toString() + " to " +
-		// result.toString());
 		return result;
 	}
 
 	@Override
 	public boolean isReady() {
-		return hasFinishedIndexing;
+		return true;
+		// return hasFinishedIndexing;
 	}
 
 	@Override
@@ -329,7 +364,42 @@ public abstract class BaseIndexer implements IModelIndexer {
 	@Override
 	public void removeDocumentation(final URI toRemove) {
 		documentationCache.invalidate(properlyEncodedURI(toRemove));
+	}
 
+	@Override
+	public ErrorCollector getErrorCollector(final GamlResource r) {
+		final URI newURI = properlyEncodedURI(r.getURI());
+		if (!resourceErrors.containsKey(newURI))
+			resourceErrors.put(newURI, new ErrorCollector(newURI, r.hasErrors()));
+
+		final ErrorCollector result = resourceErrors.get(newURI);
+		result.hasInternalSyntaxErrors(r.hasErrors());
+		return result;
+	}
+
+	@Override
+	public boolean equals(final URI uri1, final URI uri2) {
+		if (uri1 == null)
+			return uri2 == null;
+		if (uri2 == null)
+			return false;
+		return properlyEncodedURI(uri1).equals(properlyEncodedURI(uri2));
+	}
+
+	// @Override
+	// public void waitToBeReady() {
+	// while (!isReady()) {
+	// try {
+	// Thread.sleep(100);
+	// } catch (final InterruptedException e) {
+	// }
+	// }
+	//
+	// }
+
+	@Override
+	public void eraseIndex() {
+		index = new SimpleDirectedGraph(Edge.class);
 	}
 
 }

@@ -16,6 +16,8 @@ import static msi.gama.common.interfaces.IKeyword.GRID;
 import static msi.gama.common.interfaces.IKeyword.MODEL;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 
+import java.io.File;
+
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gaml.statements.Facets;
@@ -44,7 +46,7 @@ public class SyntacticFactory {
 	public static ISyntacticElement create(final String keyword, final Facets facets, final EObject statement,
 			final boolean withChildren, final Object... data) {
 		if (keyword.equals(MODEL)) {
-			return new SyntacticModelElement(keyword, facets, statement, data);
+			return new SyntacticModelElement(keyword, facets, statement, (File) data[0], data);
 		} else if (keyword.equals(SPECIES) || keyword.equals(GRID)) {
 			return new SyntacticSpeciesElement(keyword, facets, statement);
 		} else if (keyword.equals(EXPERIMENT)) {

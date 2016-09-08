@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
@@ -17,8 +16,6 @@ import org.eclipse.xtext.builder.EclipseResourceFileSystemAccess2;
 import org.eclipse.xtext.builder.ParallelBuilderParticipant;
 import org.eclipse.xtext.generator.OutputConfiguration;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
-
-import msi.gama.runtime.GAMA;
 
 /**
  * The class GamlBuilderParticipant.
@@ -35,7 +32,7 @@ public class GamlBuilderParticipant extends ParallelBuilderParticipant {
 			final EclipseResourceFileSystemAccess2 access, final IProgressMonitor progressMonitor)
 			throws CoreException {
 		super.doBuild(deltas, outputConfigurations, generatorMarkers, context, access, progressMonitor);
-		GAMA.getGui().updateDecorator("msi.gama.application.decorator");
+		// GAMA.getGui().updateDecorator("msi.gama.application.decorator");
 
 	}
 
@@ -60,17 +57,6 @@ public class GamlBuilderParticipant extends ParallelBuilderParticipant {
 			// System.out.println("Catching harmless exception in the cleansing
 			// of derived resources");
 		}
-	}
-
-	@Override
-	protected void cleanOutput(final IBuildContext ctx, final OutputConfiguration config,
-			final EclipseResourceFileSystemAccess2 access, final IProgressMonitor monitor) throws CoreException {
-		super.cleanOutput(ctx, config, access, monitor);
-	}
-
-	@Override
-	protected boolean canClean(final IContainer container, final OutputConfiguration config) {
-		return super.canClean(container, config);
 	}
 
 }

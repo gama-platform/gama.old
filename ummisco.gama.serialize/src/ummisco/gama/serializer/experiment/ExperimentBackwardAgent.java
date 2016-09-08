@@ -53,7 +53,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 		// Save simulation state in the history
 		final String state = ReverseOperators.serializeAgent(scope, this.getSimulation());
 
-		currentNode = currentNode.addChildWithUniqueParent(state);
+		currentNode = currentNode.addChild(state);
 
 		return result;
 	}

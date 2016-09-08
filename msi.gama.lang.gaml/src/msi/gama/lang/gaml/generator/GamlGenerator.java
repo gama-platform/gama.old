@@ -14,7 +14,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.IGenerator;
 
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.precompiler.GamlProperties;
+import msi.gama.lang.gaml.resource.GamlResourceFileHelper;
 
 /**
  * Class GamlGenerator.
@@ -39,10 +39,13 @@ public class GamlGenerator implements IGenerator {
 	 */
 	@Override
 	public void doGenerate(final Resource input, final IFileSystemAccess fsa) {
-		final GamlResource resource = (GamlResource) input;
-		final String fileName = getFilenameFor(resource);
-		final String contents = getContentsFor(resource);
-		fsa.generateFile(fileName, GamlOutputConfigurationProvider.META, contents);
+		// TODO: Deactivated for the moment [DEACTIVATION OF
+		// META_INFORMATION]
+		// final GamlResource resource = (GamlResource) input;
+		// final String fileName = getFilenameFor(resource);
+		// final String contents = getContentsFor(resource);
+		// fsa.generateFile(fileName, GamlOutputConfigurationProvider.META,
+		// contents);
 	}
 
 	/**
@@ -50,10 +53,10 @@ public class GamlGenerator implements IGenerator {
 	 * @return
 	 */
 	private String getContentsFor(final GamlResource input) {
-		final GamlProperties requires = input.getRequires();
+		// final GamlProperties requires = input.getRequires();
 		final StringWriter sw = new StringWriter();
 
-		requires.store(sw);
+		// requires.store(sw);
 
 		return sw.toString();
 	}
@@ -63,7 +66,7 @@ public class GamlGenerator implements IGenerator {
 	 * @return
 	 */
 	private String getFilenameFor(final GamlResource input) {
-		IPath path = input.getPath();
+		IPath path = GamlResourceFileHelper.getPathOf(input);
 		final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		path = file.getProjectRelativePath();
 		final String s = path.toString();

@@ -6,10 +6,8 @@ package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.FREQUENCY;
 import static msi.gama.common.interfaces.IKeyword.GLOBAL;
-import static msi.gama.common.interfaces.IKeyword.INIT;
 import static msi.gama.common.interfaces.IKeyword.NAME;
 import static msi.gama.common.interfaces.IKeyword.SCHEDULES;
-import static msi.gama.common.interfaces.IKeyword.SHAPE;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 
 import java.util.ArrayList;
@@ -19,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Predicate;
@@ -30,7 +27,6 @@ import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISyntacticElement;
@@ -44,8 +40,6 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.TypeDescription;
-import msi.gaml.descriptions.VariableDescription;
-import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.TypeNode;
 import msi.gaml.types.TypeTree;
@@ -68,13 +62,12 @@ public class ModelAssembler {
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 			final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
-			final Map<String, ModelDescription> mm, final Collection<URI> absoluteAlternatePaths) {
+			final Map<String, ModelDescription> mm) {
 		final TOrderedHashMap<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
 		final TOrderedHashMap<String, TOrderedHashMap<String, ISyntacticElement>>[] experimentNodes = new TOrderedHashMap[1];
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 		final ISyntacticElement source = models.get(0);
 		Facets globalFacets = null;
-		// System.out.println("Assembling " + modelPath);
 		if (source.hasFacet(IKeyword.PRAGMA)) {
 			final Facets facets = source.copyFacets(null);
 			final List<String> pragmas = (List<String>) facets.get(IKeyword.PRAGMA).getExpression().value(null);
@@ -139,23 +132,21 @@ public class ModelAssembler {
 		// We build a list of working paths from which the composite model will
 		// be able to look for resources. These working paths come from the
 		// imported models
-		List<String> absoluteAlternatePathAsStrings = new ArrayList();
+		List<String> absoluteAlternatePathAsStrings = null;
 
-		if (!absoluteAlternatePaths.isEmpty()) {
+		if (!models.isEmpty()) {
 			absoluteAlternatePathAsStrings = new ArrayList();
-			for (final URI uri : absoluteAlternatePaths) {
-				String path = uri.path();
-				if (!path.endsWith("/"))
-					path = path + "/";
-				absoluteAlternatePathAsStrings.add(path);
+			for (final ISyntacticElement m : models) {
+				final String path = ((SyntacticModelElement) m).getPath();
+				if (!absoluteAlternatePathAsStrings.contains(path))
+					absoluteAlternatePathAsStrings.add(path);
 			}
+			Collections.reverse(absoluteAlternatePathAsStrings);
 		}
-		Collections.reverse(absoluteAlternatePathAsStrings);
+
 		final ModelDescription model = new ModelDescription(modelName, null, projectPath, modelPath,
 				source.getElement(), null, ModelDescription.ROOT, globalFacets, collector,
 				absoluteAlternatePathAsStrings);
-
-		// model.addSpeciesType(model);
 
 		Collection<String> allModelNames = null;
 		for (final ISyntacticElement element : models) {
@@ -277,8 +268,6 @@ public class ModelAssembler {
 		// recursion is hierarchical
 
 		model.inheritFromParent();
-		// scope.getGui().debug("ModelFactory.assemble building inheritance for
-		// " + list);
 		for (final SpeciesDescription sd : getSpeciesInHierarchicalOrder(model)) {
 			sd.inheritFromParent();
 			if (sd.isExperiment()) {
@@ -293,24 +282,6 @@ public class ModelAssembler {
 
 		model.finalizeDescription();
 
-		// We now can safely put the model inside "experiment"
-		// FIXME : Is it necessary ??
-		// model.setEnclosingDescription(ModelDescription.ROOT.getSpeciesDescription(EXPERIMENT));
-
-		// Parse the other definitions (output, environment, ...)
-
-		VariableDescription vd = model.getAttribute(SHAPE);
-		if (!vd.hasFacet(INIT)) {
-			final Facets f = new Facets(NAME, SHAPE);
-			// TODO Catch the right EObject (instead of null)
-			f.put(INIT,
-					GAML.getExpressionFactory().createOperator("envelope", model, null, new ConstantExpression(100)));
-			final ISyntacticElement shape = SyntacticFactory.create(IKeyword.GEOMETRY, f, false);
-			vd = (VariableDescription) DescriptionFactory.create(shape, model, null);
-			model.addChild(vd);
-			model.resortVarName(vd);
-		}
-
 		if (document) {
 			DescriptionFactory.document(model);
 		}
@@ -318,6 +289,7 @@ public class ModelAssembler {
 
 	}
 
+	// TODO Refaire ça avec un graphe ??
 	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
 		final TypeTree<SpeciesDescription> hierarchy = Types.getBuiltInSpeciesTree().copy();
 		final List<SpeciesDescription> speciesLeft = new ArrayList();
@@ -336,7 +308,7 @@ public class ModelAssembler {
 					} else {
 						final TypeNode<SpeciesDescription> superNode = hierarchy.find(parent);
 						if (superNode != null) {
-							superNode.addChildWithUniqueParent(sd);
+							superNode.addChild(sd);
 							speciesToRemove.add(sd);
 						}
 					}

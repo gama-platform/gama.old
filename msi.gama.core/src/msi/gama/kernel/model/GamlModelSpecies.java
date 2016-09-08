@@ -68,7 +68,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	@Override
 	public List<String> getImportedPaths() {
-		return getDescription().getImports();
+		return getDescription().getAlternatePaths();
 	}
 
 	// @Override

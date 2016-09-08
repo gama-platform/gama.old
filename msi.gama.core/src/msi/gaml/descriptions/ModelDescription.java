@@ -26,10 +26,16 @@ import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
+import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.SyntacticFactory;
 import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;
+import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.factories.ChildrenProvider;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
@@ -51,7 +57,7 @@ public class ModelDescription extends SpeciesDescription {
 	final TypesManager types;
 	private String modelFilePath;
 	private final String modelProjectPath;
-	private final List<String> imports;
+	private final List<String> alternatePaths;
 	private final ErrorCollector collect;
 	protected volatile boolean document;
 	// hqnghi new attribute manipulate micro-models
@@ -64,8 +70,8 @@ public class ModelDescription extends SpeciesDescription {
 		microModels = mm;
 	}
 
-	public List<String> getImports() {
-		return imports;
+	public List<String> getAlternatePaths() {
+		return alternatePaths == null ? Collections.EMPTY_LIST : alternatePaths;
 	}
 
 	public ModelDescription getMicroModel(final String name) {
@@ -104,7 +110,7 @@ public class ModelDescription extends SpeciesDescription {
 		modelFilePath = modelPath;
 		modelProjectPath = projectPath;
 		collect = collector;
-		this.imports = imports;
+		this.alternatePaths = imports;
 	}
 
 	@Override
@@ -375,6 +381,16 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public void finalizeDescription() {
+		VariableDescription vd = getAttribute(SHAPE);
+
+		if (!isBuiltIn() && !vd.hasFacet(INIT)) {
+			final Facets f = new Facets(NAME, SHAPE);
+			f.put(INIT,
+					GAML.getExpressionFactory().createOperator("envelope", this, null, new ConstantExpression(100)));
+			final ISyntacticElement shape = SyntacticFactory.create(IKeyword.GEOMETRY, f, false);
+			vd = (VariableDescription) DescriptionFactory.create(shape, this, null);
+			addChild(vd);
+		}
 		super.finalizeDescription();
 		if (actions != null)
 			for (final StatementDescription action : actions.values()) {

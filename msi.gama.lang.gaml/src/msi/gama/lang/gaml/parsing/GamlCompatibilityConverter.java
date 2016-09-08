@@ -59,6 +59,7 @@ import static msi.gama.common.interfaces.IKeyword.WHEN;
 import static msi.gama.common.interfaces.IKeyword.WITH;
 import static msi.gama.common.interfaces.IKeyword.ZERO;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -100,6 +101,7 @@ import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
+import msi.gama.lang.gaml.resource.GamlResourceFileHelper;
 import msi.gama.lang.utils.EGaml;
 import msi.gama.lang.utils.ExpressionDescriptionBuilder;
 import msi.gama.precompiler.ISymbolKind;
@@ -140,15 +142,17 @@ public class GamlCompatibilityConverter {
 		}
 		final ModelImpl m = (ModelImpl) root;
 		final List<String> prgm = collectPragmas(m);
-		final Object[] imps = collectImports(m);
+		// final Object[] imps = collectImports(m);<>
 
+		final File path = GamlResourceFileHelper.getAbsoluteContainerFolderPathOf(root.eResource()).toFile();
 		final SyntacticModelElement model = (SyntacticModelElement) SyntacticFactory.create(MODEL, m,
-				EGaml.hasChildren(m), imps);
+				EGaml.hasChildren(m), path/* , imps */);
 		if (prgm != null)
 			model.setFacet(IKeyword.PRAGMA, ConstantExpressionDescription.create(prgm));
 		model.setFacet(NAME, convertToLabel(null, m.getName()));
 		convStatements(model, EGaml.getStatementsOf(m), errors);
-		model.printStats();
+		// model.printStats();
+		model.compactModel();
 		return model;
 	}
 
@@ -600,23 +604,27 @@ public class GamlCompatibilityConverter {
 	}
 
 	private static final Set<String> varDependenciesOf(final Statement s) {
-		final Set<String> list = new HashSet();
+		Set<String> list = null;
 		for (final Facet facet : EGaml.getFacetsOf(s)) {
 			final Expression expr = facet.getExpr();
 			if (expr != null) {
 				if (expr instanceof VariableRef) {
+					if (list == null)
+						list = new HashSet();
 					list.add(EGaml.getKeyOf(expr));
 				} else {
 					for (final TreeIterator<EObject> tree = expr.eAllContents(); tree.hasNext();) {
 						final EObject obj = tree.next();
 						if (obj instanceof VariableRef) {
+							if (list == null)
+								list = new HashSet();
 							list.add(EGaml.getKeyOf(obj));
 						}
 					}
 				}
 			}
 		}
-		if (list.isEmpty()) {
+		if (list == null || list.isEmpty()) {
 			return null;
 		}
 		return list;

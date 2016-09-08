@@ -90,16 +90,16 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 					final GAMLFile.GamlInfo info = (GAMLFile.GamlInfo) metaData;
 
 					final List l = new ArrayList();
-					for (final String s : info.experiments) {
+					for (final String s : info.getExperiments()) {
 						l.add(new WrappedExperiment((IFile) p, s));
 					}
-					if (!info.imports.isEmpty()) {
-						l.add(new WrappedFolder((IFile) p, info.imports, "Imports"));
+					if (!info.getImports().isEmpty()) {
+						l.add(new WrappedFolder((IFile) p, info.getImports(), "Imports"));
 					}
-					if (!info.uses.isEmpty()) {
-						l.add(new WrappedFolder((IFile) p, info.uses, "Uses"));
+					if (!info.getUses().isEmpty()) {
+						l.add(new WrappedFolder((IFile) p, info.getUses(), "Uses"));
 					}
-					addPluginsTo((IFile) p, l);
+					// addPluginsTo((IFile) p, l);
 					return l.toArray();
 				}
 				return VirtualContent.EMPTY;

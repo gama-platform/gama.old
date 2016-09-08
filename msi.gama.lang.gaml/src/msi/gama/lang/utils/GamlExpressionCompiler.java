@@ -1192,7 +1192,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return null;
 		}
 
-		if (resource.getErrors().isEmpty()) {
+		if (!resource.hasErrors()) {
 			final EObject e = resource.getContents().get(0);
 			if (e instanceof StringEvaluator) {
 				result = ((StringEvaluator) e).getExpr();
@@ -1220,8 +1220,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return null;
 		}
 
-		if (resource.getErrors().isEmpty()) {
-			final SyntacticModelElement elt = resource.getParseResult().getSyntacticContents();
+		if (!resource.hasErrors()) {
+			final SyntacticModelElement elt = (SyntacticModelElement) resource.getSyntacticContents();
 			elt.visitChildren(new SyntacticVisitor() {
 
 				@Override

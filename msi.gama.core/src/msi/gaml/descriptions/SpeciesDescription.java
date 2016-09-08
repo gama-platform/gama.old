@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -254,7 +253,7 @@ public class SpeciesDescription extends TypeDescription {
 		for (final IDescription v : children) {
 			if (v instanceof VariableDescription) {
 				boolean toAdd = false;
-				if (this.isBuiltIn() || ((VariableDescription) v).isContextualType()) {
+				if (this.isBuiltIn() && !hasAttribute(v.getName()) || ((VariableDescription) v).isContextualType()) {
 					toAdd = true;
 				} else {
 					if (parent != null && parent != this) {
@@ -716,14 +715,20 @@ public class SpeciesDescription extends TypeDescription {
 					var.setSyntheticSpeciesContainer();
 					var.setFacet(OF, GAML.getExpressionFactory()
 							.createTypeExpression(getModelDescription().getTypeNamed(microSpec.getName())));
-					final Set<String> dependencies = new HashSet();
-					if (attributes != null)
-						for (final VariableDescription v : microSpec.attributes.values()) {
-							v.getExtraDependencies(dependencies);
-						}
-					dependencies.add(SHAPE);
-					dependencies.add(LOCATION);
-					var.addDependenciesNames(dependencies);
+					// final Set<String> dependencies = new HashSet();
+					// microSpec.visitOwnAttributes(new
+					// DescriptionVisitor<VariableDescription>() {
+					//
+					// @Override
+					// public boolean visit(final VariableDescription v) {
+					// v.addExtraDependenciesTo(dependencies);
+					// return true;
+					// }
+					// });
+					//
+					// dependencies.add(SHAPE);
+					// dependencies.add(LOCATION);
+					// var.addDependenciesNames(dependencies);
 					final GamaHelper get = new GamaHelper() {
 
 						@Override
@@ -759,9 +764,24 @@ public class SpeciesDescription extends TypeDescription {
 			}
 		};
 
+		sortAttributes();
+
 		// recursively finalize the sorted micro-species
 		visitMicroSpecies(visitor);
-		sortAttributes();
+		compact();
+	}
+
+	void compact() {
+		if (attributes != null)
+			attributes.compact();
+		if (actions != null)
+			actions.compact();
+		if (aspects != null)
+			aspects.compact();
+		if (behaviors != null)
+			behaviors.compact();
+		if (microSpecies != null)
+			microSpecies.compact();
 	}
 
 	/**

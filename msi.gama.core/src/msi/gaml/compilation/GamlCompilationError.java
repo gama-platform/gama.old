@@ -22,11 +22,11 @@ public class GamlCompilationError {
 
 	protected boolean isWarning = false;
 	protected boolean isInfo = false;
-	protected URI otherResourceURI;
 	protected final String message;
 	protected String code;
 	protected String[] data;
 	protected EObject source;
+	protected final URI uri;
 
 	public GamlCompilationError(final String string, final String code, final EObject object, final boolean warning,
 			final boolean info, final String... data) {
@@ -37,10 +37,27 @@ public class GamlCompilationError {
 		this.code = code;
 		this.data = data;
 		source = object;
+		uri = object.eResource().getURI();
+	}
+
+	public GamlCompilationError(final String string, final String code, final URI uri, final boolean warning,
+			final boolean info, final String... data) {
+
+		message = string;
+		isWarning = warning;
+		isInfo = info;
+		this.code = code;
+		this.data = data;
+		source = null;
+		this.uri = uri;
 	}
 
 	public String[] getData() {
 		return data;
+	}
+
+	public URI getURI() {
+		return uri;
 	}
 
 	public String getCode() {
@@ -78,14 +95,6 @@ public class GamlCompilationError {
 		}
 		final GamlCompilationError error = (GamlCompilationError) other;
 		return message.equals(error.message) && source == error.source;
-	}
-
-	public void setOtherResourceURI(final URI other) {
-		otherResourceURI = other;
-	}
-
-	public URI getOtherResourceURI() {
-		return otherResourceURI;
 	}
 
 	@Override

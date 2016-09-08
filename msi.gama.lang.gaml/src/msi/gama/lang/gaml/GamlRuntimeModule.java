@@ -13,7 +13,6 @@ package msi.gama.lang.gaml;
 
 import java.util.function.Supplier;
 
-import org.eclipse.xtext.generator.IGenerator;
 import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
 import org.eclipse.xtext.linking.ILinkingService;
@@ -29,11 +28,11 @@ import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
 import org.eclipse.xtext.service.DispatchingProvider;
 import org.eclipse.xtext.service.SingletonBinding;
+import org.eclipse.xtext.validation.IResourceValidator;
 
 import com.google.inject.Binder;
 
 import msi.gama.lang.gaml.documentation.GamlResourceDocManager;
-import msi.gama.lang.gaml.generator.GamlGenerator;
 import msi.gama.lang.gaml.generator.GamlOutputConfigurationProvider;
 import msi.gama.lang.gaml.indexer.BaseIndexer;
 import msi.gama.lang.gaml.indexer.IModelIndexer;
@@ -46,8 +45,10 @@ import msi.gama.lang.gaml.resource.GamlModelBuilder;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionManager;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionStrategy;
+import msi.gama.lang.gaml.resource.GamlResourceInfoProvider;
 import msi.gama.lang.gaml.scoping.GamlQualifiedNameProvider;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import msi.gama.lang.gaml.validation.ErrorToDiagnoticTranslator;
+import msi.gama.lang.gaml.validation.GamlResourceValidator;
 import msi.gama.lang.utils.GamlEncodingProvider;
 import msi.gama.lang.utils.GamlExpressionCompiler;
 import msi.gaml.compilation.IModelBuilder;
@@ -97,20 +98,18 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
 		binder.bind(IModelIndexer.class).to(BaseIndexer.class);
 		binder.bind(IModelBuilder.class).toInstance(GamlModelBuilder.INSTANCE);
-		binder.bind(IGenerator.class).to(GamlGenerator.class);
+		// binder.bind(IGenerator.class).to(GamlGenerator.class);
 		binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
 		binder.bind(IDocManager.class).toInstance(GamlResourceDocManager.INSTANCE);
+		binder.bind(IResourceValidator.class).to(GamlResourceValidator.class);
+		binder.bind(ErrorToDiagnoticTranslator.class);
+		binder.bind(GamlResourceInfoProvider.class);
+
 	}
 
 	@Override
 	public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
 		return GamlQualifiedNameProvider.class;
-	}
-
-	@Override
-	@SingletonBinding(eager = true)
-	public Class<? extends GamlJavaValidator> bindGamlJavaValidator() {
-		return GamlJavaValidator.class;
 	}
 
 	public Class<? extends IExpressionCompiler> bindIGamlExpressionCompiler() {

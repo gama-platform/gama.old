@@ -16,6 +16,7 @@ import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveA
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -54,9 +55,9 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		public static String BATCH_PREFIX = "***";
 		public static String ERRORS = "errors detected";
 
-		public final Collection<String> experiments;
-		public final Collection<String> imports;
-		public final Collection<String> uses;
+		private final Collection<String> experiments;
+		private final Collection<String> imports;
+		private final Collection<String> uses;
 		public final boolean invalid;
 
 		public GamlInfo(final long stamp, final Collection<String> imports, final Collection<String> uses,
@@ -66,6 +67,18 @@ public class GAMLFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 			this.imports = imports;
 			this.uses = uses;
 			this.experiments = exps;
+		}
+
+		public Collection<String> getImports() {
+			return imports == null ? Collections.EMPTY_LIST : imports;
+		}
+
+		public Collection<String> getUses() {
+			return uses == null ? Collections.EMPTY_LIST : uses;
+		}
+
+		public Collection<String> getExperiments() {
+			return experiments == null ? Collections.EMPTY_LIST : experiments;
 		}
 
 		public GamlInfo(final String propertyString) {

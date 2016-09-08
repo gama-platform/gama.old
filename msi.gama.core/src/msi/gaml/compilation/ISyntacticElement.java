@@ -115,6 +115,6 @@ public interface ISyntacticElement {
 
 	public void visitGrids(final SyntacticVisitor visitor);
 
-	public boolean hasExperiments();
+	public abstract void compact();
 
 }

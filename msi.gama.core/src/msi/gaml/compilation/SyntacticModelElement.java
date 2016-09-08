@@ -11,15 +11,10 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.io.File;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gaml.statements.Facets;
 
 /**
@@ -31,37 +26,13 @@ import msi.gaml.statements.Facets;
  */
 public class SyntacticModelElement extends SyntacticTopLevelElement {
 
-	final Set<URI> absoluteAlternatePaths;
-	boolean urisFixed = false;
+	final private String path;
 
-	public SyntacticModelElement(final String keyword, final Facets facets, final EObject statement,
+	public SyntacticModelElement(final String keyword, final Facets facets, final EObject statement, final File path,
 			final Object... imports) {
 		super(keyword, facets, statement);
-		if (imports == null || imports.length == 0) {
-			this.absoluteAlternatePaths = Collections.EMPTY_SET;
-		} else {
-			this.absoluteAlternatePaths = new TLinkedHashSet();
-			for (final Object o : imports) {
-				if (o instanceof URI)
-					this.absoluteAlternatePaths.add((URI) o);
-			}
-		}
-	}
-
-	public Set<URI> getAbsoluteAlternatePaths() {
-		return absoluteAlternatePaths;
-	}
-
-	public boolean areURIFixed() {
-		return urisFixed;
-	}
-
-	public void setAbsoluteAlternatePaths(final Set<URI> uris) {
-		if (uris != absoluteAlternatePaths) {
-			absoluteAlternatePaths.clear();
-			absoluteAlternatePaths.addAll(uris);
-		}
-		urisFixed = true;
+		final String p = path.getAbsolutePath();
+		this.path = p.endsWith(File.pathSeparator) ? p : p + "/";
 	}
 
 	@Override
@@ -69,24 +40,30 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 		return false;
 	}
 
-	public void printStats() {
-		final Map<String, Integer> stats = new HashMap();
-		computeStats(stats);
-		// System.out.println("Stats for " + getName() + " : " + stats);
-	}
+	// public void printStats() {
+	// final Map<String, Integer> stats = new HashMap();
+	// computeStats(stats);
+	// // System.out.println("Stats for " + getName() + " : " + stats);
+	// }
 
 	@Override
 	public void visitExperiments(final SyntacticVisitor visitor) {
 		visitAllChildren(visitor, EXPERIMENT_FILTER);
 	}
 
-	@Override
-	public boolean hasExperiments() {
-		if (this.children != null)
-			for (final ISyntacticElement e : this.children) {
-				if (EXPERIMENT_FILTER.apply(e))
-					return true;
-			}
-		return false;
+	static SyntacticVisitor compacter = new SyntacticVisitor() {
+
+		@Override
+		public void visit(final ISyntacticElement element) {
+			element.compact();
+		}
+	};
+
+	public void compactModel() {
+		this.visitThisAndAllChildrenRecursively(compacter);
+	}
+
+	public String getPath() {
+		return path;
 	}
 }

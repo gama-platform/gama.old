@@ -32,6 +32,7 @@ import com.google.inject.Injector;
 import com.google.inject.Singleton;
 
 import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.resource.GamlModelBuilder;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.internal.GamlActivator;
 import msi.gama.runtime.GAMA;
@@ -55,6 +56,13 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 
 	@Inject
 	public ModelRunner() {
+	}
+
+	public IModelBuilder getBuilder() {
+		// if not built with dependency injection
+		if (builder == null)
+			builder = GamlModelBuilder.INSTANCE;
+		return builder;
 	}
 
 	private void editModelInternal(final Object eObject) {
@@ -116,7 +124,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 			final ResourceSet rs = new /* Synchronized */XtextResourceSet();
 			final GamlResource resource = (GamlResource) rs.getResource(uri, true);
 			final List<GamlCompilationError> errors = new ArrayList();
-			final IModel model = builder.compile(resource, errors);
+			final IModel model = getBuilder().compile(resource, errors);
 			if (model == null) {
 				GAMA.getGui().error("File " + file.getFullPath().toString() + " cannot be built because of "
 						+ errors.size() + " compilation errors");

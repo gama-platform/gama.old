@@ -3,6 +3,7 @@ package msi.gama.lang.gaml.documentation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlDescription;
 
 class DocumentationTask {
@@ -36,7 +37,9 @@ class DocumentationTask {
 		}
 		if (node != null) {
 			try {
-				documenter.getDocumentationCache(key).put(object, node);
+				final THashMap map = documenter.getDocumentationCache(key);
+				if (map != null)
+					map.put(object, node);
 			} catch (final RuntimeException e) {
 			}
 		}

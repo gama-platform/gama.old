@@ -138,6 +138,8 @@ public class GamlResourceDocManager implements IDocManager {
 	}
 
 	THashMap<EObject, IGamlDescription> getDocumentationCache(final Resource resource) {
+		if (resource == null)
+			return null;
 		return indexer.getDocumentationCache(resource.getURI());
 
 		// if (resource instanceof XtextResource)
@@ -191,7 +193,10 @@ public class GamlResourceDocManager implements IDocManager {
 		if (object == null) {
 			return null;
 		}
-		return getDocumentationCache(object.eResource()).get(object);
+		final THashMap<EObject, IGamlDescription> map = getDocumentationCache(object.eResource());
+		if (map == null)
+			return null;
+		return map.get(object);
 	}
 
 	private static boolean shouldDocument(final EObject object) {

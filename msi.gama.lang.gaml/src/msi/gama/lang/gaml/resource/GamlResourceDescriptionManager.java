@@ -39,11 +39,9 @@ import msi.gama.lang.gaml.indexer.IModelIndexer;
 public class GamlResourceDescriptionManager extends DefaultResourceDescriptionManager
 		implements IResourceDescription.Manager.AllChangeAware {
 
-	@Inject
-	private DescriptionUtils descriptionUtils;
+	@Inject private DescriptionUtils descriptionUtils;
 
-	@Inject
-	IModelIndexer indexer;
+	@Inject IModelIndexer indexer;
 
 	@Override
 	protected IResourceDescription internalGetResourceDescription(final Resource resource,
@@ -56,7 +54,6 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 			final IResourceDescriptions context) {
 		final boolean result = false;
 		final URI newUri = candidate.getURI();
-
 		if (indexer.indexes(newUri)) {
 			final Set<URI> deltaUris = new HashSet();
 			for (final Delta d : deltas) {
@@ -66,8 +63,6 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 			while (it.hasNext()) {
 				final URI next = it.next();
 				if (deltaUris.contains(next)) {
-					// System.out.println(newUri.lastSegment() + " is affected
-					// because it imports " + next.lastSegment());
 					return true;
 				}
 			}

@@ -51,6 +51,5 @@ public class GamlStandaloneSetupGenerated implements ISetup {
 		org.eclipse.xtext.resource.IResourceServiceProvider.Registry.INSTANCE.getExtensionToFactoryMap().put("gaml", serviceProvider);
 		
 
-
 	}
 }

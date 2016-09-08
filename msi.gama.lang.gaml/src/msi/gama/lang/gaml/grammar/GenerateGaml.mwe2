@@ -41,9 +41,9 @@ Workflow {
 			fragment = ecore.EMFGeneratorFragment auto-inject {}
 
 			// Serializer 2.0
-			fragment = serializer.SerializerFragment auto-inject {
-				generateXtendStub = false
-			}
+		fragment = serializer.SerializerFragment auto-inject {
+			generateXtendStub = false
+		}
 
 			// the serialization component (1.0)
 			// fragment = parseTreeConstructor.ParseTreeConstructorFragment {}
@@ -58,6 +58,9 @@ Workflow {
 				antlrParam = "-Xconversiontimeout"
 				antlrParam = "10000"
 				options = {
+					backtrackLexer = false
+					optimizeCodeQuality = true
+					skipUnusedRules = true
 					backtrack = false
 					memoize = false
 					classSplitting = true
@@ -67,9 +70,9 @@ Workflow {
 			}
 
 			// java-based API for validation
-			fragment = validation.JavaValidatorFragment auto-inject {
+			//fragment = validation.JavaValidatorFragment auto-inject {
 				//composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"// composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
-			}
+			//}
 
 			// scoping and exporting API
 			fragment = scoping.ImportURIScopingFragment auto-inject {}
@@ -78,15 +81,15 @@ Workflow {
 			// scoping and exporting API
 			//fragment = scoping.ImportNamespacesScopingFragment {}
 			//fragment = exporting.QualifiedNamesFragment {}
-			fragment = builder.BuilderIntegrationFragment auto-inject {}
+			//fragment = builder.BuilderIntegrationFragment auto-inject {}
 
 			// generator API
-			fragment = generator.GeneratorFragment auto-inject {
-				generateMwe = false
-				generateJavaMain = true
-				generateStub = false
-				generateXtendMain = false
-			}
+//		fragment = generator.GeneratorFragment auto-inject {
+//			generateMwe = false
+//			generateJavaMain = true
+//			generateStub = false
+//			generateXtendMain = false
+//		}
 
 			// formatter API
 			fragment = formatting.FormatterFragment auto-inject {}

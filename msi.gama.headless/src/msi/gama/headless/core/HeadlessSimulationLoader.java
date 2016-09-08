@@ -75,7 +75,7 @@ public class HeadlessSimulationLoader {
 		final XtextResourceSet set = new XtextResourceSet();
 		try {
 			final List<GamlCompilationError> errors = new ArrayList();
-			final Resource r = set.createResource(URI.createFileURI(fileName));
+			final Resource r = set.getResource(URI.createFileURI(fileName), true);
 			final IModel model = GAML.getModelFactory().compile(r, errors);
 			if (model == null) {
 				{

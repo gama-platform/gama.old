@@ -15,7 +15,6 @@ import org.eclipse.xtext.ui.editor.validation.AnnotationIssueProcessor;
 import org.eclipse.xtext.ui.editor.validation.IValidationIssueProcessor;
 import org.eclipse.xtext.ui.editor.validation.ValidationJob;
 import org.eclipse.xtext.util.concurrent.IReadAccess;
-import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
@@ -33,14 +32,11 @@ import msi.gama.lang.gaml.indexer.IModelIndexer;
  */
 public class GamlDocumentProvider extends XtextDocumentProvider {
 
-	@Inject
-	IModelIndexer indexer;
+	@Inject IModelIndexer indexer;
 
-	@Inject
-	private IssueResolutionProvider issueResolutionProvider;
+	@Inject private IssueResolutionProvider issueResolutionProvider;
 
-	@Inject
-	private IResourceValidator resourceValidator;
+	@Inject private IResourceValidator resourceValidator;
 
 	private XtextDocument doc;
 
@@ -55,31 +51,24 @@ public class GamlDocumentProvider extends XtextDocumentProvider {
 
 		@Override
 		public final List<Issue> createIssues(final IProgressMonitor monitor) {
-			boolean hasWaited = false;
-			while (!indexer.isReady())
-				try {
-					if (!hasWaited) {
-						doc.readOnly(new IUnitOfWork.Void<XtextResource>() {
+			// if (!indexer.isReady()) {
+			// doc.readOnly(new IUnitOfWork.Void<XtextResource>() {
+			//
+			// @Override
+			// public void process(final XtextResource state) throws Exception {
+			// state.setValidationDisabled(true);
+			// }
+			// });
+			// indexer.waitToBeReady();
+			// doc.readOnly(new IUnitOfWork.Void<XtextResource>() {
+			//
+			// @Override
+			// public void process(final XtextResource state) throws Exception {
+			// state.setValidationDisabled(false);
+			// }
+			// });
+			// }
 
-							@Override
-							public void process(final XtextResource state) throws Exception {
-								state.setValidationDisabled(true);
-							}
-						});
-					}
-					Thread.sleep(100);
-					hasWaited = true;
-				} catch (final InterruptedException e) {
-					e.printStackTrace();
-				}
-			if (hasWaited)
-				doc.readOnly(new IUnitOfWork.Void<XtextResource>() {
-
-					@Override
-					public void process(final XtextResource state) throws Exception {
-						state.setValidationDisabled(false);
-					}
-				});
 			return super.createIssues(monitor);
 		}
 

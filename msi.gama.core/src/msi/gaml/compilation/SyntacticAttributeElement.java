@@ -17,6 +17,11 @@ public class SyntacticAttributeElement extends SyntacticSingleElement {
 	}
 
 	@Override
+	public String toString() {
+		return "Attribute " + name;
+	}
+
+	@Override
 	public String getName() {
 		return name;
 	}

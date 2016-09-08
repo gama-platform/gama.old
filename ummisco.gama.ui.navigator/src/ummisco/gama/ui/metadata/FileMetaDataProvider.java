@@ -405,8 +405,8 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	 * @param file
 	 */
 	static GamlInfo createGamlFileMetaData(final IFile file) {
-		return DescriptionFactory.getModelFactory().getInfo(URI.createFileURI(file.getLocation().toOSString()),
-				file.getModificationStamp());
+		return DescriptionFactory.getModelFactory().getInfo(
+				URI.createPlatformResourceURI(file.getFullPath().toOSString(), true), file.getModificationStamp());
 	}
 
 	static GamaCSVFile.CSVInfo createCSVFileMetaData(final IFile file) {

@@ -81,6 +81,8 @@ public class DescriptionFactory {
 
 		public void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace);
 
+		public void addCleanupTask(ModelDescription model);
+
 		// public void document(Resource gamlResource, boolean accept);
 	}
 

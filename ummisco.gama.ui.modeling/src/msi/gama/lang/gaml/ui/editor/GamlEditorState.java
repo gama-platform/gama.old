@@ -72,7 +72,7 @@ class GamlEditorState {
 
 	public GamaUIColor getColor() {
 		if (hasImportedErrors) {
-			return IGamaColors.IMPORTED;
+			return IGamaColors.ERROR;
 		}
 		if (hasInternalErrors) {
 			return IGamaColors.ERROR;

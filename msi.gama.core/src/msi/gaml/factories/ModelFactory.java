@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.factories;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,8 +51,8 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 
 	public ModelDescription createModelDescription(final String projectPath, final String modelPath,
 			final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
-			final Map<String, ModelDescription> mm, final Collection<URI> absoluteAlternatePaths) {
-		return assembler.assemble(projectPath, modelPath, models, collector, document, mm, absoluteAlternatePaths);
+			final Map<String, ModelDescription> mm) {
+		return assembler.assemble(projectPath, modelPath, models, collector, document, mm);
 	}
 
 	public ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
@@ -75,7 +74,6 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 		delegate = instance;
 	}
 
-
 	/**
 	 * Method compile()
 	 * 
@@ -85,7 +83,6 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	public IModel compile(final Resource resource) {
 		return delegate == null ? null : delegate.get().compile(resource);
 	}
-
 
 	/**
 	 * Method compile()
@@ -97,7 +94,6 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	public IModel compile(final Resource resource, final List<GamlCompilationError> errors) {
 		return delegate == null ? null : delegate.get().compile(resource, errors);
 	}
-
 
 	@Override
 	public ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {

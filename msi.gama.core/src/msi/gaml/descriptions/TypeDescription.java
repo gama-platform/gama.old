@@ -17,15 +17,19 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.TObjectObjectProcedure;
+import gnu.trove.procedure.TObjectProcedure;
+import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.util.TOrderedHashMap;
@@ -49,7 +53,6 @@ public abstract class TypeDescription extends SymbolDescription {
 	// lazily
 	protected THashMap<String, StatementDescription> actions;
 	protected TOrderedHashMap<String, VariableDescription> attributes;
-
 	protected TypeDescription parent;
 	private final String plugin;
 
@@ -76,30 +79,34 @@ public abstract class TypeDescription extends SymbolDescription {
 		final Collection<String> names = getAttributeNames();
 		final Collection<VariableDescription> result = new ArrayList();
 		for (final String name : names) {
-			result.add(getAttribute(name));
+			final VariableDescription vd = getAttribute(name);
+			result.add(vd);
 		}
 		return result;
 	}
 
 	public Collection<String> getAttributeNames() {
-		final Collection<String> allNames = new LinkedHashSet();
-		if (parent != null && parent != this)
-			allNames.addAll(getParent().getAttributeNames());
-		if (attributes != null)
-			for (final String s : attributes.keySet()) {
-				if (allNames.contains(s))
-					allNames.remove(s);
-				allNames.add(s);
-			}
-		return allNames;
+		final Collection<String> accumulator = parent != null && parent != this ? parent.getAttributeNames()
+				: new TLinkedHashSet<String>();
+		if (attributes != null) {
+			attributes.forEachKey(new TObjectProcedure<String>() {
+
+				@Override
+				public boolean execute(final String s) {
+					if (accumulator.contains(s))
+						accumulator.remove(s);
+					accumulator.add(s);
+					return true;
+				}
+			});
+		}
+		return accumulator;
 	}
 
 	public VariableDescription getAttribute(final String name) {
-		VariableDescription attribute = null;
-		if (attributes != null)
-			attribute = attributes.get(name);
+		final VariableDescription attribute = attributes == null ? null : attributes.get(name);
 		if (attribute == null && parent != null && parent != this) {
-			attribute = getParent().getAttribute(name);
+			return getParent().getAttribute(name);
 		}
 		return attribute;
 	}
@@ -124,7 +131,6 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	protected void addAttributeNoCheck(final VariableDescription vd) {
-		// vd.setDefinitionOrder(varCount++);
 		if (attributes == null)
 			attributes = new TOrderedHashMap();
 		attributes.put(vd.getName(), vd);
@@ -221,11 +227,6 @@ public abstract class TypeDescription extends SymbolDescription {
 			addInheritedAttribute(v);
 		}
 	}
-	//
-	// public void addBuiltInAttribute(final VariableDescription vd) {
-	// // We just add a copy of the variable
-	// addAttributeNoCheck(vd.copy(this));
-	// }
 
 	public void addOwnAttribute(final VariableDescription vd) {
 		final String newVarName = vd.getName();
@@ -251,12 +252,6 @@ public abstract class TypeDescription extends SymbolDescription {
 
 		final String inheritedVarName = vd.getName();
 
-		// If no previous definition is found, just add the variable
-		// if (!hasAttribute(inheritedVarName)) {
-		// addAttributeNoCheck(vd.copy(this));
-		// return;
-		// }
-		// A redefinition has been found
 		if (attributes != null) {
 			final VariableDescription existing = attributes.get(inheritedVarName);
 			if (existing != null && assertAttributesAreCompatible(vd, existing)) {
@@ -271,78 +266,58 @@ public abstract class TypeDescription extends SymbolDescription {
 	public List<String> getUpdatableAttributeNames() {
 		final List<String> result = new ArrayList(
 				parent == null || parent == this ? Collections.EMPTY_LIST : parent.getUpdatableAttributeNames());
-		if (attributes != null)
-			for (final Map.Entry<String, VariableDescription> entry : attributes.entrySet()) {
-				if (entry.getValue().isUpdatable() && !result.contains(entry.getKey())) {
-					result.add(entry.getKey());
+		visitOwnAttributes(new DescriptionVisitor<VariableDescription>() {
+
+			@Override
+			public boolean visit(final VariableDescription desc) {
+				if (desc.isUpdatable()) {
+					final String s = desc.getName();
+					if (!result.contains(s))
+						result.add(s);
 				}
+				return true;
 			}
+		});
 		return result;
 	}
 
 	protected void sortAttributes() {
-		if (attributes == null || attributes.isEmpty())
+		if (attributes == null || attributes.size() <= 1)
 			return;
-		final List<VariableDescription> result = new ArrayList();
-		final Collection<VariableDescription> vars = attributes.values();
 
-		for (final VariableDescription var : vars) {
-			var.usedVariablesIn(attributes);
-		}
-		for (final VariableDescription var : vars) {
-			var.expandDependencies(new ArrayList());
-		}
-		for (final VariableDescription toBePlaced : vars) {
-			boolean found = false;
-			int i = 0;
-			while (!found && i < result.size()) {
-				final VariableDescription alreadyInPlace = result.get(i);
-				if (alreadyInPlace.getDependencies().contains(toBePlaced)) {
-					found = true;
-				} else {
-					i += 1;
+		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
+		attributes.forEachEntry(new TObjectObjectProcedure<String, VariableDescription>() {
+
+			@Override
+			public boolean execute(final String name, final VariableDescription var) {
+				dependencies.addVertex(var);
+				for (final String depName : var.getDependenciesNames()) {
+					if (depName.equals(name))
+						return true;
+					final VariableDescription newVar = attributes.get(depName);
+					if (newVar == null)
+						return true;
+					dependencies.addVertex(newVar);
+					dependencies.addEdge(newVar, var);
 				}
-			}
-			if (found) {
-				result.add(i, toBePlaced);
-			} else {
-				result.add(toBePlaced);
-			}
-		}
-		attributes.clear();
-		for (int i = 0; i < result.size(); i++) {
-			final VariableDescription v = result.get(i);
-			final String s = v.getName();
-			attributes.put(s, v);
-		}
+				var.discardDependencies();
 
-	}
-
-	public void resortVarName(final VariableDescription var) {
-		if (attributes == null)
-			return;
-		var.usedVariablesIn(attributes);
-		var.expandDependencies(new ArrayList());
-		attributes.remove(var.getName());
-		final List<VariableDescription> vl = new ArrayList(attributes.values());
-		final ListIterator<VariableDescription> li = vl.listIterator(vl.size());
-		boolean added = false;
-		while (li.hasPrevious() && !added) {
-			final VariableDescription vd = li.previous();
-			if (var.getDependencies().contains(vd)) {
-				li.next();
-				li.add(var);
-				added = true;
+				return true;
 			}
-			;
-		}
-		if (!added) {
-			vl.add(0, var);
-		}
+		});
+
 		attributes.clear();
-		for (final VariableDescription vd : vl) {
+
+		final TopologicalOrderIterator<VariableDescription, Object> iterator = new TopologicalOrderIterator<>(
+				dependencies);
+		while (iterator.hasNext()) {
+
+			final VariableDescription vd = iterator.next();
+			// System.out.println("Readding " + vd.getName() + " to " +
+			// getName());
 			attributes.put(vd.getName(), vd);
 		}
+		// attributes.compact();
 	}
 
 	public void setParent(final TypeDescription parent) {
@@ -446,8 +421,9 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 		if (actions != null)
 			actions.clear();
-		if (attributes != null)
+		if (attributes != null) {
 			attributes.clear();
+		}
 		super.dispose();
 	}
 
@@ -519,36 +495,15 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 
 	}
-	//
-	// @Override
-	// public List<IDescription> getOwnChildren() {
-	// final List<IDescription> result = new ArrayList();
-	// if (attributes != null)
-	// result.addAll(attributes.values());
-	// if (actions != null)
-	// result.addAll(actions.values());
-	// return result;
-	// }
-
-	// @Override
-	// public List<IDescription> getChildren() {
-	// final List<IDescription> result = new ArrayList();
-	// result.addAll(getAttributes());
-	// result.addAll(getActions());
-	// return result;
-	// }
 
 	@Override
 	public boolean visitChildren(final DescriptionVisitor visitor) {
-		boolean result = true;
 		for (final IDescription d : getAttributes()) {
-			result &= visitor.visit(d);
-			if (!result)
+			if (!visitor.visit(d))
 				return false;
 		}
 		for (final IDescription d : getActions()) {
-			result &= visitor.visit(d);
-			if (!result)
+			if (!visitor.visit(d))
 				return false;
 		}
 		return true;
@@ -557,15 +512,26 @@ public abstract class TypeDescription extends SymbolDescription {
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
 		boolean result = true;
-		if (attributes != null) {
-			result &= attributes.forEachValue(visitor);
-		}
+		result &= visitOwnAttributes(visitor);
 		if (!result)
 			return false;
 		if (actions != null) {
 			result &= actions.forEachValue(visitor);
 		}
 		return result;
+	}
+
+	public boolean visitAllAttributes(final DescriptionVisitor visitor) {
+		if (parent != null && parent != this)
+			if (!parent.visitAllAttributes(visitor))
+				return false;
+		return visitOwnAttributes(visitor);
+	}
+
+	public boolean visitOwnAttributes(final DescriptionVisitor visitor) {
+		if (attributes == null)
+			return true;
+		return attributes.forEachValue(visitor);
 	}
 
 }

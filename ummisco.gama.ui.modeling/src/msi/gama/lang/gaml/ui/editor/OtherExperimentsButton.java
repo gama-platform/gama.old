@@ -167,7 +167,7 @@ public class OtherExperimentsButton {
 				final ResourceSet rs = editor.resourceSetProvider.get(proj);
 				for (final URI uri : resources) {
 					final GamlResource xr = (GamlResource) rs.getResource(uri, true);
-					if (xr.getErrors().isEmpty()) {
+					if (!xr.hasErrors()) {
 						final ISyntacticElement el = xr.getSyntacticContents();
 						if (el != null)
 							el.visitExperiments(new SyntacticVisitor() {

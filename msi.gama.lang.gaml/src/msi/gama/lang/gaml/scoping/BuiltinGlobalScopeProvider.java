@@ -89,8 +89,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
 	static XtextResourceSet rs = new XtextResourceSet();
 
-	@Inject
-	IModelIndexer indexer;
+	@Inject IModelIndexer indexer;
 
 	public static class ImmutableMap implements Map<String, String> {
 
@@ -489,16 +488,12 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
 	public Map<URI, String> getAllImportedURIs(final Resource resource, final ResourceSet set) {
 		return indexer.allLabeledImportsOf((GamlResource) resource);
-		// return ((GamlResource) resource).computeAllImportedURIs(set);
 	}
 
 	@Override
 	protected LinkedHashSet<URI> getImportedUris(final Resource resource) {
 		final LinkedHashSet<URI> result = new LinkedHashSet(
 				Arrays.asList(Iterators.toArray(indexer.allImportsOf(resource.getURI()), URI.class)));
-		// final LinkedHashSet<URI> result = new LinkedHashSet(
-		// getAllImportedURIs(resource, resource.getResourceSet()).keySet());
-		// result.remove(indexer.properlyEncodedURI(resource.getURI()));
 		return result;
 	}
 

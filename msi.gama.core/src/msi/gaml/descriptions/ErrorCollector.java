@@ -14,15 +14,15 @@ package msi.gaml.descriptions;
 import static com.google.common.collect.Iterables.concat;
 import static com.google.common.collect.Iterables.limit;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.GamaPreferences;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
@@ -33,10 +33,10 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 	public static final ErrorCollector BuiltIn = new ErrorCollector();
 	boolean hasSyntaxErrors;
 	final URI resourceURI;
-	final TLinkedHashSet<GamlCompilationError> importedErrors = new TLinkedHashSet();
-	final TLinkedHashSet<GamlCompilationError> internalErrors = new TLinkedHashSet();
-	final TLinkedHashSet<GamlCompilationError> warnings = new TLinkedHashSet();
-	final TLinkedHashSet<GamlCompilationError> infos = new TLinkedHashSet();
+	ArrayList<GamlCompilationError> importedErrors;
+	ArrayList<GamlCompilationError> internalErrors;
+	ArrayList<GamlCompilationError> warnings;
+	ArrayList<GamlCompilationError> infos;
 	private boolean noWarning, noInfo;
 
 	public ErrorCollector() {
@@ -48,22 +48,12 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 	}
 
 	public ErrorCollector(final Resource resource, final boolean syntax) {
-		this.resourceURI = resource == null ? URI.createURI("builtin://gaml", false) : resource.getURI();
+		this(resource == null ? URI.createURI("builtin://gaml", false) : resource.getURI(), syntax);
+	}
+
+	public ErrorCollector(final URI uri, final boolean syntax) {
+		this.resourceURI = uri;
 		hasSyntaxErrors = syntax;
-	}
-
-	// If the status of the error changes (for instance, it is discovered it
-	// belongs to another resource
-	public void refresh(final GamlCompilationError e) {
-		remove(e);
-		add(e);
-	}
-
-	public void remove(final GamlCompilationError e) {
-		importedErrors.remove(e);
-		internalErrors.remove(e);
-		warnings.remove(e);
-		infos.remove(e);
 	}
 
 	public void add(final GamlCompilationError error) {
@@ -76,16 +66,24 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 				return;
 			}
 		}
-		final EObject object = error.getStatement();
-		final boolean sameResource = object == null || object.eResource().getURI().equals(resourceURI);
+		final URI uri = error.getURI();
+		final boolean sameResource = uri.equals(resourceURI);
 		if (sameResource && error.isInfo()) {
+			if (infos == null)
+				infos = new ArrayList();
 			infos.add(error);
 		} else if (sameResource && error.isWarning()) {
+			if (warnings == null)
+				warnings = new ArrayList();
 			warnings.add(error);
 		} else if (error.isError()) {
 			if (sameResource) {
+				if (internalErrors == null)
+					internalErrors = new ArrayList();
 				internalErrors.add(error);
 			} else {
+				if (importedErrors == null)
+					importedErrors = new ArrayList();
 				importedErrors.add(error);
 			}
 		}
@@ -95,39 +93,43 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 		return hasSyntaxErrors;
 	}
 
+	public void hasInternalSyntaxErrors(final boolean errors) {
+		hasSyntaxErrors = errors;
+	}
+
 	public boolean hasErrors() {
 		return hasSyntaxErrors || hasInternalErrors() || hasImportedErrors();
 	}
 
 	public boolean hasInternalErrors() {
-		return internalErrors.size() > 0;
+		return internalErrors != null && internalErrors.size() > 0;
 	}
 
 	public boolean hasImportedErrors() {
-		return importedErrors.size() > 0;
+		return importedErrors != null && importedErrors.size() > 0;
 	}
 
 	public Collection<GamlCompilationError> getInternalErrors() {
-		return internalErrors;
+		return internalErrors == null ? Collections.EMPTY_LIST : internalErrors;
 	}
 
 	public Collection<GamlCompilationError> getImportedErrors() {
-		return importedErrors;
+		return importedErrors == null ? Collections.EMPTY_LIST : importedErrors;
 	}
 
 	public Collection<GamlCompilationError> getWarnings() {
-		return warnings;
+		return warnings == null ? Collections.EMPTY_LIST : warnings;
 	}
 
 	public Collection<GamlCompilationError> getInfos() {
-		return infos;
+		return infos == null ? Collections.EMPTY_LIST : infos;
 	}
 
 	public void clear() {
-		importedErrors.clear();
-		internalErrors.clear();
-		warnings.clear();
-		infos.clear();
+		importedErrors = null;
+		internalErrors = null;
+		warnings = null;
+		infos = null;
 		hasSyntaxErrors = false;
 	}
 
@@ -143,12 +145,12 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 
 	public Map<String, URI> getImportedErrorsAsStrings() {
 		final Map<String, URI> result = new TOrderedHashMap();
-		for (final GamlCompilationError error : importedErrors) {
-			final EObject object = error.getStatement();
-			final String resource = object == null ? "imported files"
-					: URI.decode(object.eResource().getURI().lastSegment());
-			result.put(error.toString() + " (" + resource + ")", object == null ? null : object.eResource().getURI());
-		}
+		if (importedErrors != null)
+			for (final GamlCompilationError error : importedErrors) {
+				final URI uri = error.getURI();
+				final String resource = URI.decode(uri.lastSegment());
+				result.put(error.toString() + " (" + resource + ")", uri);
+			}
 		return result;
 	}
 

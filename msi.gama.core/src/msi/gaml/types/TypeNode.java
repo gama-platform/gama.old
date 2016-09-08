@@ -13,6 +13,7 @@
 package msi.gaml.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -20,25 +21,20 @@ import java.util.regex.Pattern;
 public class TypeNode<T> {
 
 	private T data;
-	private final List<TypeNode<T>> children;
-	private final List<TypeNode<T>> parents;
-
-	public TypeNode() {
-		super();
-		children = new ArrayList<TypeNode<T>>();
-		parents = new ArrayList<TypeNode<T>>();
-	}
+	private List<TypeNode<T>> children;
+	private TypeNode<T> parent;
 
 	public TypeNode(final T data) {
-		this();
 		setData(data);
 	}
 
 	public TypeNode<T> getParent() {
-		return this.parents.isEmpty() ? null : this.parents.get(0);
+		return parent;
 	}
 
 	public List<TypeNode<T>> getChildren() {
+		if (children == null)
+			return Collections.EMPTY_LIST;
 		return this.children;
 	}
 
@@ -50,28 +46,11 @@ public class TypeNode<T> {
 		return getNumberOfChildren() > 0;
 	}
 
-	// public void addChildren(final Collection<T> children) {
-	// for (final T child : children) {
-	// addChild(child);
-	// }
-	// }
-
-	public void addChildWithUniqueParent(final TypeNode<T> child) {
-		child.parents.clear();
-		child.parents.add(this);
-		children.add(child);
-	}
-
 	public void addChild(final TypeNode<T> child) {
-		if (!child.parents.contains(this))
-			child.parents.add(this);
+		child.parent = this;
+		if (children == null)
+			children = new ArrayList();
 		children.add(child);
-	}
-
-	public TypeNode<T> addChildWithUniqueParent(final T child) {
-		final TypeNode<T> result = new TypeNode(child);
-		addChildWithUniqueParent(result);
-		return result;
 	}
 
 	public TypeNode<T> addChild(final T child) {
@@ -87,10 +66,14 @@ public class TypeNode<T> {
 	// }
 
 	public void removeChildAt(final int index) throws IndexOutOfBoundsException {
+		if (children == null)
+			return;
 		children.remove(index);
 	}
 
 	public TypeNode<T> getChildAt(final int index) throws IndexOutOfBoundsException {
+		if (children == null)
+			return null;
 		return children.get(index);
 	}
 
@@ -161,18 +144,21 @@ public class TypeNode<T> {
 	}
 
 	public void dispose() {
-		parents.clear();
-		for (final TypeNode<T> node : children) {
-			node.dispose();
+		parent = null;
+		if (children != null) {
+			for (final TypeNode<T> node : children) {
+				node.dispose();
+			}
+			children.clear();
 		}
-		children.clear();
 	}
 
 	public TypeNode<T> copy() {
 		final TypeNode<T> result = new TypeNode(getData());
-		for (final TypeNode<T> node : children) {
-			result.addChild(node.copy());
-		}
+		if (children != null)
+			for (final TypeNode<T> node : children) {
+				result.addChild(node.copy());
+			}
 		return result;
 	}
 }

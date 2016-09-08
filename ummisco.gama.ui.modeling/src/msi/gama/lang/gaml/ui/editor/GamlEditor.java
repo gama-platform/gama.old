@@ -16,7 +16,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IAction;
@@ -102,7 +101,7 @@ import msi.gama.lang.gaml.ui.editbox.IBoxProvider;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialog;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener.IGamlBuilderListener2;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gaml.compilation.IModelBuilder;
 import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.IDescription;
@@ -126,7 +125,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  */
 @SuppressWarnings("all")
 public class GamlEditor extends XtextEditor
-		implements IGamlBuilderListener2, IBoxEnabledEditor, IToolbarDecoratedView, ITooltipDisplayer {
+		implements IGamlBuilderListener, IBoxEnabledEditor, IToolbarDecoratedView, ITooltipDisplayer {
 
 	static {
 		final IPreferenceStore store = EditorsUI.getPreferenceStore();
@@ -149,23 +148,17 @@ public class GamlEditor extends XtextEditor
 	boolean decorationEnabled = AutoStartup.EDITBOX_ENABLED.getValue();
 	boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
 
-	@Inject
-	IResourceSetProvider resourceSetProvider;
+	@Inject IResourceSetProvider resourceSetProvider;
 
-	@Inject
-	Injector injector;
+	@Inject Injector injector;
 
-	@Inject
-	IModelIndexer indexer;
+	@Inject IModelIndexer indexer;
 
-	@Inject
-	IModelBuilder builder;
+	@Inject IModelBuilder builder;
 
-	@Inject
-	private GamlEditTemplateDialogFactory templateDialogFactory;
+	@Inject private GamlEditTemplateDialogFactory templateDialogFactory;
 
-	@Inject
-	private TemplateStore templateStore;
+	@Inject private TemplateStore templateStore;
 
 	@Override
 	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
@@ -304,6 +297,7 @@ public class GamlEditor extends XtextEditor
 		toolbar.sep(4, SWT.LEFT);
 		toolbar.wipe(SWT.RIGHT, true);
 		new OtherExperimentsButton(this, toolbar, builder, resourceSetProvider);
+		toolbar.sep(4, SWT.LEFT);
 		new ImportedInButton(this, toolbar, indexer);
 		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
 		toggle.addSelectionListener(new SelectionAdapter() {
@@ -473,14 +467,6 @@ public class GamlEditor extends XtextEditor
 				}
 			});
 		}
-
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IGamlBuilder.Listener#validationEnded(boolean)
-	 */
-	@Override
-	public void validationEnded(final Set<String> newExperiments, final ErrorCollector status) {
 
 	}
 

@@ -157,6 +157,17 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	}
 
 	@Override
+	public void compact() {
+		if (facets == null)
+			return;
+		if (facets.isEmpty()) {
+			facets = null;
+			return;
+		}
+		facets.compact();
+	}
+
+	@Override
 	public void visitThisAndAllChildrenRecursively(final SyntacticVisitor visitor) {
 		visitor.visit(this);
 	}
@@ -178,11 +189,6 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	}
 
 	protected void visitAllChildren(final SyntacticVisitor visitor) {
-	}
-
-	@Override
-	public boolean hasExperiments() {
-		return false;
 	}
 
 }
