@@ -16,6 +16,7 @@ varying   vec2    pass_textureCoords;
 uniform   sampler2D textureSampler;
 uniform   float   fontWidth;
 uniform   float   fontEdge;
+uniform   float   layerAlpha;
 
 void main (void)
 {
@@ -27,5 +28,5 @@ void main (void)
 	if (alpha < 0.1) {
 		discard;
 	}
-	gl_FragColor = vec4(varying_Color.xyz,alpha);
+	gl_FragColor = vec4(varying_Color.xyz,alpha*layerAlpha);
 }

@@ -106,9 +106,16 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 		if (!sceneIsInitialized || constantRedrawnLayer) {
 			renderer.getDrawer().prepareMapForLayer(this);
+			double alpha = 0d;
+			final int size = objects.size();
+			final double delta = size == 0 ? 0 : 1d / size;
 			for (final List<AbstractObject> list : objects) {
+				alpha = alpha + delta;
 				for (final AbstractObject object : list) {
+					final double originalAlpha = object.getAlpha();
+					object.setAlpha(originalAlpha * alpha);
 					final DrawingEntity[] drawingEntity = renderer.getDrawingEntityGenerator().GenerateDrawingEntities(object);
+					object.setAlpha(originalAlpha);
 					if (drawingEntity != null)
 						renderer.getDrawer().addDrawingEntities(drawingEntity);
 				}
@@ -234,6 +241,10 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public GamaPoint getScale() {
 		return scale == null ? NULL_SCALE : scale;
+	}
+	
+	public Double getAlpha() {
+		return alpha;
 	}
 
 	public void setScale(final GamaPoint scale) {

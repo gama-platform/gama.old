@@ -27,6 +27,7 @@ public abstract class AbstractShader {
 	private int location_transformationMatrix;
 	private int location_projectionMatrix;
 	private int location_viewMatrix;
+	private int location_layerAlpha;
 	
 	public static final int POSITION_ATTRIBUTE_IDX = 0;
 	public static final int COLOR_ATTRIBUTE_IDX = 1;
@@ -140,6 +141,7 @@ public abstract class AbstractShader {
 		location_transformationMatrix = getUniformLocation("transformationMatrix");
 		location_projectionMatrix = getUniformLocation("projectionMatrix");
 		location_viewMatrix = getUniformLocation("viewMatrix");
+		location_layerAlpha = getUniformLocation("layerAlpha");
 	}
 	
 	protected void loadMatrix(int location, Matrix4f matrix) {
@@ -181,6 +183,10 @@ public abstract class AbstractShader {
 	public void loadViewMatrix(ICamera camera) {
 		 Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(camera);
 		loadMatrix(location_viewMatrix, viewMatrix);
+	}
+	
+	public void setLayerAlpha(float layerAlpha) {
+		loadFloat(location_layerAlpha, layerAlpha);
 	}
 	
 	abstract public boolean useNormal();

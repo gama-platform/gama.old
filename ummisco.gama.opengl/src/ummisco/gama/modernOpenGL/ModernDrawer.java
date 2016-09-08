@@ -276,6 +276,7 @@ public class ModernDrawer {
 		else if (shaderProgram instanceof TextShaderProgram) {
 			prepareShader(entity, (TextShaderProgram)shaderProgram);
 		}
+		shaderProgram.setLayerAlpha(currentLayer.getAlpha().floatValue());
 	}
 	
 	private void prepareShader(DrawingEntity entity, ShaderProgram shaderProgram) {
@@ -302,14 +303,6 @@ public class ModernDrawer {
 			shaderProgram.enableTexture();
 			shaderProgram.loadTexture(0);
 			shaderProgram.storeTextureID(entity.getTextureID());
-		}
-		if (entity.type == DrawingEntity.Type.STRING) {
-			shaderProgram.enableString();
-			shaderProgram.loadFontWidth(entity.getFontWidth());
-			shaderProgram.loadFontEdge(entity.getFontEdge());
-		}
-		else {
-			shaderProgram.disableString();
 		}
 	}
 	

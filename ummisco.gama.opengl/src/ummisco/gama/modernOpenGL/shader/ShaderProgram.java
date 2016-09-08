@@ -26,9 +26,6 @@ public class ShaderProgram extends AbstractShader {
 	private int location_useNormals;	// 0 for no, 1 for yes
 	private int location_texture;
 	private int location_ambientLight;
-	private int location_isString;
-	private int location_fontWidth; // only for string entities
-	private int location_fontEdge; // only for string entities
 	
 	private boolean useNormal = false;
 	private boolean useTexture = false;
@@ -59,9 +56,6 @@ public class ShaderProgram extends AbstractShader {
 		location_useNormals = getUniformLocation("useNormals");
 		location_texture = getUniformLocation("textureSampler");
 		location_ambientLight = getUniformLocation("ambientLight");
-		location_isString = getUniformLocation("isString");
-		location_fontWidth = getUniformLocation("fontWidth");
-		location_fontEdge = getUniformLocation("fontEdge");
 		
 		location_lightColor = new int[MAX_LIGHT];
 		location_lightAttenuation = new int[MAX_LIGHT];
@@ -105,14 +99,6 @@ public class ShaderProgram extends AbstractShader {
 	public void enableNormal() {
 		useNormal = true;
 		super.loadFloat(location_useNormals, 1f);
-	}
-	
-	public void disableString() {
-		super.loadFloat(location_isString, 0f);
-	}
-	
-	public void enableString() {
-		super.loadFloat(location_isString, 1f);
 	}
 	
 	public boolean useTexture() {
@@ -163,14 +149,6 @@ public class ShaderProgram extends AbstractShader {
 	
 	public int getTextureID() {
 		return textureIDStored;
-	}
-
-	public void loadFontWidth(float fontWidth) {
-		super.loadFloat(location_fontWidth, fontWidth);
-	}
-
-	public void loadFontEdge(float fontEdge) {
-		super.loadFloat(location_fontEdge, fontEdge);
 	}
 
 	@Override

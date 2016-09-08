@@ -71,7 +71,7 @@ abstract class AbstractTransformer {
 		this.pickingId = object.pickingIndex;
 		
 		if (object.getColor() != null)
-			this.color = new GamaColor(object.getColor());
+			this.color = new GamaColor(object.getColor(),(object.getColor().getAlpha()/255.0)*object.getAlpha());
 		else
 			this.color = null;
 		this.borderColor = object.getAttributes().getBorder();
@@ -80,6 +80,7 @@ abstract class AbstractTransformer {
 		if (this.material == null) this.material = GamaMaterialType.DEFAULT_MATERIAL;
 		
 		this.translation = object.getAttributes().location;
+		if (translation == null) translation = new GamaPoint(0,0,0); // ex : charts
 		this.rotation = object.getAttributes().rotation;
 		this.isWireframe = object.getAttributes().wireframe;
 	}
@@ -244,7 +245,7 @@ abstract class AbstractTransformer {
 		int[] idxArray = getMutualVertexIdx(face1Idx, face2Idx);
 		if (idxArray.length == 2) {
 			// remove the excedent uvMapping
-			if (uvMapping != null)
+			if (textureIDs != null)
 			{
 				float[] begin = Arrays.copyOfRange(uvMapping, 0, idxArray[0]);
 				float[] end = Arrays.copyOfRange(uvMapping, idxArray[0]+2, uvMapping.length);
@@ -286,7 +287,7 @@ abstract class AbstractTransformer {
 		// apply transform to the coords if needed, and also to the coordsForBorders
 		coords = applyTransformation(coords);
 		coordsForBorder = applyTransformation(coordsForBorder);
-		if (rotation != null) {
+		if (rotation != null && normals != null) {
 			normals = GeomMathUtils.setRotationToVertex(normals, (float) Math.toRadians(rotation.key.floatValue()), (float) rotation.value.x, (float) rotation.value.y, (float) rotation.value.z);
 		}
 	}
@@ -487,14 +488,14 @@ abstract class AbstractTransformer {
 				result.add(borderEntity);
 		}
 		
-		if (uvMapping == null && color == null) {
+		if (textureIDs == null && color == null) {
 			// the geometry is not filled. We create no more entity.
 		}
 		else {
 			if (color == null) {
 				color = DEFAULT_COLOR; // set the default color to yellow.
 			}
-			if (uvMapping == null || texturePaths == null || texturePaths.length == 1 || (topFace == null && bottomFace == null))
+			if (textureIDs == null || textureIDs.length == 1 || (topFace == null && bottomFace == null))
 			{
 				// configure the drawing entity for the filled faces
 				DrawingEntity filledEntity = new DrawingEntity();
@@ -504,7 +505,7 @@ abstract class AbstractTransformer {
 				filledEntity.setColors(getColorArray(color,coords));
 				filledEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
 				filledEntity.type = DrawingEntity.Type.FACE;
-				if (uvMapping != null)
+				if (textureIDs != null)
 				{
 					filledEntity.type = DrawingEntity.Type.TEXTURED;
 					if (texturePaths != null) filledEntity.setTexturePath(texturePaths[0]);
