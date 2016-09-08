@@ -89,7 +89,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	}
 
 	public GamaShape(final Envelope3D env) {
-		this(env.toGeometry());
+		this(env == null ? null : env.toGeometry());
 	}
 
 	public GamaShape(final IShape geom) {
@@ -272,9 +272,6 @@ public class GamaShape implements IShape /* , IContainer */ {
 				setAttribute(IShape.DEPTH_ATTRIBUTE, (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling);
 			}
 		}
-	}
-
-	public GamaShape() {
 	}
 
 	@Override
@@ -559,7 +556,6 @@ public class GamaShape implements IShape /* , IContainer */ {
 	public void setInnerGeometry(final Geometry geom) {
 		if (geom == null) {
 			geometry = null;
-			// setEnvelope(null);
 			return;
 		}
 		if (geom.isEmpty()) {
