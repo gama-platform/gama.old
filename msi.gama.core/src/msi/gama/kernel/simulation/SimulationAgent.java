@@ -319,7 +319,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public ILocation getLocation() {
-		if (geometry == null) {
+		if (geometry == null || geometry.getInnerGeometry() == null) {
 			return new GamaPoint(0, 0);
 		}
 		return super.getLocation();
