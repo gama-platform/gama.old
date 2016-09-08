@@ -24,6 +24,7 @@ uniform   sampler2D textureSampler;
 uniform   float   useTexture; // 0 for no, 1 for yes
 uniform   vec3    lightColors[7];
 uniform   vec3    lightAttenuations[7];
+uniform   float   layerAlpha;
 
 void main (void)
 {
@@ -70,7 +71,8 @@ void main (void)
 		}
 		totalDiffuse = vec3(max(totalDiffuse.x,ambientLight.x),max(totalDiffuse.y,ambientLight.y),max(totalDiffuse.z,ambientLight.z));
 		
-		gl_FragColor = vec4(totalDiffuse,1.0) * inputColor + vec4(totalSpecular,inputColor.a);
+		vec4 finalColor = vec4(totalDiffuse,1.0) * inputColor + vec4(totalSpecular,0.0);
+		gl_FragColor = vec4(finalColor.xyz,finalColor.w*layerAlpha);
 	}
 	else
 	{
@@ -78,6 +80,6 @@ void main (void)
 		{
 			inputColor = texture(textureSampler,pass_textureCoords);
 		}
-		gl_FragColor = inputColor;
+		gl_FragColor = vec4(inputColor.xyz,inputColor.w*layerAlpha);
 	}
 }

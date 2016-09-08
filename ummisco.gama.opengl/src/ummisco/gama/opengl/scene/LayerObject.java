@@ -235,6 +235,10 @@ public class LayerObject implements Iterable<GeometryObject> {
 	public GamaPoint getScale() {
 		return scale == null ? NULL_SCALE : scale;
 	}
+	
+	public Double getAlpha() {
+		return alpha;
+	}
 
 	public void setScale(final GamaPoint scale) {
 		this.scale = scale;

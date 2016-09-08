@@ -303,14 +303,7 @@ public class ModernDrawer {
 			shaderProgram.loadTexture(0);
 			shaderProgram.storeTextureID(entity.getTextureID());
 		}
-		if (entity.type == DrawingEntity.Type.STRING) {
-			shaderProgram.enableString();
-			shaderProgram.loadFontWidth(entity.getFontWidth());
-			shaderProgram.loadFontEdge(entity.getFontEdge());
-		}
-		else {
-			shaderProgram.disableString();
-		}
+		shaderProgram.setLayerAlpha(currentLayer.getAlpha().floatValue());
 	}
 	
 	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		

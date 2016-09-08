@@ -85,7 +85,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 				initBorders();
 				if (!isWireframe) applySmoothShading();
 				if (!isWireframe) computeNormals();
-				if (textureIDs != null) computeUVMapping();
+				computeUVMapping();
 				if (!isWireframe) triangulate();
 				correctBorders();
 			}
