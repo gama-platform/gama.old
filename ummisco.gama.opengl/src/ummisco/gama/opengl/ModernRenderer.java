@@ -126,7 +126,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		updateCameraPosition();
 		updatePerspective();
 		
-		GLUtilLight.InitializeLighting(gl, data);
+		GLUtilLight.InitializeLighting(gl, data, true);
 		
 		// We mark the renderer as inited
 		inited = true;

@@ -63,7 +63,8 @@ void main (void)
 				specularFactor = max(specularFactor,0.0);
 				float damperFactor = pow(specularFactor,shineDamper);
 				
-				totalDiffuse = totalDiffuse + ( vec3(nDot1*lightColors[i].x,nDot1*lightColors[i].y,nDot1*lightColors[i].z) / attFactor);
+				// add 0.3 because it seems better (brighter)
+				totalDiffuse = totalDiffuse + ( vec3(nDot1*(lightColors[i].x+0.3),nDot1*(lightColors[i].y+0.3),nDot1*(lightColors[i].z+0.3)) / attFactor);
 				totalSpecular = totalSpecular + ( (damperFactor * reflectivity * lightColors[i]) / attFactor);
 			}
 		}

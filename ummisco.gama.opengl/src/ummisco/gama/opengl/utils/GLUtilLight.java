@@ -61,7 +61,7 @@ public class GLUtilLight {
 		glu.gluDeleteQuadric(earth);
 	}
 
-	public static void InitializeLighting(final GL2 gl, LayeredDisplayData data) {
+	public static void InitializeLighting(final GL2 gl, LayeredDisplayData data, boolean modernRenderer) {
 
 		// ambient
 		Color ambientLightValue = data.getAmbientLightColor();
@@ -86,8 +86,13 @@ public class GLUtilLight {
 			// directional light
 			data.setLightType(1, "direction");
 			data.setLightDirection(1, new GamaPoint(0.5,0.5,-1,0) );
-			// white color
-			data.setDiffuseLightColor(1, new GamaColor(127,127,127,255));
+			// white color (the default value depends on the type of renderer used)
+			if (modernRenderer) {
+				data.setDiffuseLightColor(1, new GamaColor(255,255,255,255));
+			}
+			else {
+				data.setDiffuseLightColor(1, new GamaColor(127,127,127,255));
+			}
 		}
 
 		// set material properties which will be assigned by glColor
