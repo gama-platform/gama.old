@@ -83,12 +83,12 @@ class GeometryObjectTransformer extends AbstractTransformer {
 			
 			if (!is1DShape()) {
 				initBorders();
-				applySmoothShading();
-				computeNormals();
+				if (!isWireframe) applySmoothShading();
+				if (!isWireframe) computeNormals();
 				computeUVMapping();
+				if (!isWireframe) triangulate();
+				correctBorders();
 			}
-			triangulate();
-			if (!is1DShape()) correctBorders();
 			
 			ShapeCache.preloadShape(getHashCode(), new GeometryObjectTransformer(this));
 			

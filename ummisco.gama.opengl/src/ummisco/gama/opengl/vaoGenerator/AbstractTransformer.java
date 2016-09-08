@@ -593,7 +593,7 @@ abstract class AbstractTransformer {
 		borderEntity.setIndices(idxArray);
 		borderEntity.setColors(colorArray);
 		borderEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),false));
-		if (idxForBorder.length > 1)
+		if (coordsArray.length > 3)
 			borderEntity.type = DrawingEntity.Type.LINE;
 		else
 			borderEntity.type = DrawingEntity.Type.POINT;
