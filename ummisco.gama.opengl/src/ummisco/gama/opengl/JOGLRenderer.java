@@ -692,8 +692,11 @@ public class JOGLRenderer extends Abstract3DRenderer {
 					getYOffsetInPixels() / (getHeight() / data.getEnvHeight()), currentZLayer);
 			currentScale = new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), z_scale);
 		} else {
-			currentOffset = new GamaPoint(getXOffsetInPixels(), getYOffsetInPixels());
-			currentScale = new GamaPoint(1, 1, 1);
+			currentOffset = new GamaPoint(getXOffsetInPixels() / (getWidth() / data.getEnvWidth()),
+					getYOffsetInPixels() / (getHeight() / data.getEnvHeight()), 1);
+
+			currentScale = new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), 1);
+
 		}
 		final ModelScene scene = sceneBuffer.getSceneToUpdate();
 		if (scene != null) {
