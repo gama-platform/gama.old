@@ -71,22 +71,24 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 		public void setPicking(final boolean isPicking) {
 			this.isPicking = isPicking;
+			System.out.println("Picking is " + isPicking);
 			if (!isPicking) {
 				pickedIndex = NONE;
-				isMenuOn = false;
+				setMenuOn(false);
 			}
 		}
 
 		public void setMenuOn(final boolean isMenuOn) {
+			System.out.println("Menu on is " + isMenuOn);
 			this.isMenuOn = isMenuOn;
 		}
 
 		public void setPickedIndex(final int pickedIndex) {
 			this.pickedIndex = pickedIndex;
-			// System.out.println("Picked object = " + pickedIndex);
+			System.out.println("Picked object = " + pickedIndex);
 			if (pickedIndex == WORLD && !isMenuOn) {
 				// Selection occured, but no object have been selected
-				isMenuOn = true;
+				setMenuOn(true);
 				getSurface().selectAgent(null);
 			}
 		}
@@ -110,8 +112,8 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	}
 
 	public static int Y_FLAG = -1;
-	
-	protected GL2 gl;
+
+	// protected GL2 gl;
 	protected DrawingEntityGenerator drawingEntityGenerator;
 
 	protected boolean useShader = false;
@@ -235,11 +237,11 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public final double getEnvHeight() {
 		return data.getEnvHeight();
 	}
-	
-	public GL2 getContext() {
-		return gl;
-	}
-	
+
+	// public GL2 getContext() {
+	// return gl;
+	// }
+
 	public DrawingEntityGenerator getDrawingEntityGenerator() {
 		return drawingEntityGenerator;
 	}
@@ -433,15 +435,15 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public ObjectDrawer getDrawerFor(final Class<? extends AbstractObject> class1) {
 		return null;
 	}
-	
+
 	public double getZRotation() {
 		return currentZRotation;
 	}
-	
+
 	public boolean isDrawRotationHelper() {
 		return drawRotationHelper;
 	}
-	
+
 	public GamaPoint getRotationHelperPosition() {
 		return rotationHelperPosition;
 	}

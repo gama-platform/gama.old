@@ -41,8 +41,6 @@ import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
@@ -186,7 +184,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (currentScene == null) {
 			return;
 		}
-		gl = drawable.getContext().getGL().getGL2();
+		final GL2 gl = drawable.getContext().getGL().getGL2();
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
 
@@ -293,10 +291,10 @@ public class JOGLRenderer extends Abstract3DRenderer {
 				// final double fovY = 45.0d;
 				final double fovY = this.data.getCameralens();
 				if (aspect > 1.0) {
-					fH = FastMath.tan(fovY / 360 * Math.PI) * zNear;
+					fH = Math.tan(fovY / 360 * Math.PI) * zNear;
 					fW = fH * aspect;
 				} else {
-					fW = FastMath.tan(fovY / 360 * Math.PI) * zNear;
+					fW = Math.tan(fovY / 360 * Math.PI) * zNear;
 					fH = fW / aspect;
 				}
 				gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 10);
@@ -423,12 +421,12 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (howManyObjects > 0) {
 			// simple searching algorithm
 			selectedIndex = selectBuffer.get(3);
-			int mindistance = CmnFastMath.abs(selectBuffer.get(1));
+			int mindistance = Math.abs(selectBuffer.get(1));
 			for (int i = 0; i < howManyObjects; i++) {
 
-				if (mindistance < CmnFastMath.abs(selectBuffer.get(1 + i * 4))) {
+				if (mindistance < Math.abs(selectBuffer.get(1 + i * 4))) {
 
-					mindistance = CmnFastMath.abs(selectBuffer.get(1 + i * 4));
+					mindistance = Math.abs(selectBuffer.get(1 + i * 4));
 					selectedIndex = selectBuffer.get(3 + i * 4);
 
 				}

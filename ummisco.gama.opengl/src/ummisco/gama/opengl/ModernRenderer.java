@@ -49,8 +49,8 @@ import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.modernOpenGL.ModernDrawer;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.utils.GLUtilLight;
-import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 import ummisco.gama.opengl.vaoGenerator.DrawingEntityGenerator;
+import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -61,16 +61,16 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  *
  */
 public class ModernRenderer extends Abstract3DRenderer {
-	
+
 	private Matrix4f projectionMatrix;
 
 	private ModernDrawer drawer;
-	
+
 	private final PickingState pickingState = new PickingState();
 	public boolean colorPicking = false;
 	private Envelope3D ROIEnvelope = null;
 	private volatile boolean inited;
-	
+
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 	// Use to inverse y composant
@@ -80,12 +80,14 @@ public class ModernRenderer extends Abstract3DRenderer {
 		useShader = true;
 	}
 
+	@Override
 	public void defineROI(final Point start, final Point end) {
 		final GamaPoint startInWorld = getRealWorldPointFromWindowPoint(start);
 		final GamaPoint endInWorld = getRealWorldPointFromWindowPoint(end);
 		ROIEnvelope = new Envelope3D(new Envelope(startInWorld.x, endInWorld.x, startInWorld.y, endInWorld.y));
 	}
 
+	@Override
 	public void cancelROI() {
 		if (camera.isROISticky())
 			return;
@@ -94,7 +96,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
-		
+
 		WorkbenchHelper.run(new Runnable() {
 
 			@Override
@@ -103,11 +105,11 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 			}
 		});
-		
+
 		drawingEntityGenerator = new DrawingEntityGenerator(this);
-		
+		final GL2 gl = drawable.getContext().getGL().getGL2();
+
 		glu = new GLU();
-		gl = drawable.getContext().getGL().getGL2();
 		final Color background = data.getBackgroundColor();
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
 				1.0f);
@@ -115,16 +117,16 @@ public class ModernRenderer extends Abstract3DRenderer {
 		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
 
 		initializeCanvasListeners();
-		
+
 		// TODO
 
-		drawer = new ModernDrawer(this,gl);
+		drawer = new ModernDrawer(this, gl);
 
 		updateCameraPosition();
 		updatePerspective();
-		
+
 		GLUtilLight.InitializeLighting(gl, data, true);
-		
+
 		// We mark the renderer as inited
 		inited = true;
 	}
@@ -141,12 +143,12 @@ public class ModernRenderer extends Abstract3DRenderer {
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
-		
+
 		final Color background = data.getBackgroundColor();
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
 				1.0f);
-		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT   );
-		
+		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
+
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL.GL_DEPTH_TEST); // enables depth testing
 		gl.glDepthFunc(GL.GL_LEQUAL); // the type of depth test to do
@@ -190,23 +192,23 @@ public class ModernRenderer extends Abstract3DRenderer {
 		}
 		updatePerspective();
 	}
-	
+
 	public final void updatePerspective() {
 		final int height = getDrawable().getSurfaceHeight();
 		final int width = getDrawable().getSurfaceWidth();
 		final double maxDim = getMaxEnvDim();
 		final double fov = data.getCameralens();
 
-		projectionMatrix = TransformationMatrix.createProjectionMatrix(data.isOrtho(),height,width,maxDim,fov);
-		
-//		shaderProgram.start();
-//		shaderProgram.loadProjectionMatrix(projectionMatrix);
-//		shaderProgram.loadViewMatrix(camera);
-//		shaderProgram.stop();
+		projectionMatrix = TransformationMatrix.createProjectionMatrix(data.isOrtho(), height, width, maxDim, fov);
+
+		// shaderProgram.start();
+		// shaderProgram.loadProjectionMatrix(projectionMatrix);
+		// shaderProgram.loadViewMatrix(camera);
+		// shaderProgram.stop();
 
 		camera.animate();
 	}
-	
+
 	public Matrix4f getProjectionMatrix() {
 		return projectionMatrix;
 	}
@@ -227,7 +229,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		// we draw the scene on screen
 		currentScene.draw(gl);
 	}
-	
+
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -367,15 +369,17 @@ public class ModernRenderer extends Abstract3DRenderer {
 			currentZRotation++;
 		}
 	}
-	
+
 	public ModernDrawer getDrawer() {
 		return drawer;
 	}
 
+	@Override
 	public Envelope3D getROIEnvelope() {
 		return ROIEnvelope;
 	}
 
+	@Override
 	public PickingState getPickingState() {
 		return pickingState;
 	}
@@ -383,6 +387,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 	// This method is normally called either when the graphics is created or
 	// when the output is changed
 	// @Override
+	@Override
 	public void initScene() {
 		if (sceneBuffer != null) {
 			final ModelScene scene = sceneBuffer.getSceneToRender();
@@ -414,6 +419,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	}
 
+	@Override
 	public void startDrawRotationHelper(final GamaPoint pos) {
 		rotationHelperPosition = pos;
 		drawRotationHelper = true;
@@ -425,6 +431,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 			currentScene.startDrawRotationHelper(pos, size);
 	}
 
+	@Override
 	public void stopDrawRotationHelper() {
 		rotationHelperPosition = null;
 		drawRotationHelper = false;
@@ -583,6 +590,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		getSurface().invalidateVisibleRegions();
 	}
 
+	@Override
 	public GamaPoint getRealWorldPointFromWindowPoint(final Point windowPoint) {
 		// TODO
 		return null;
@@ -608,6 +616,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		// TODO
 	}
 
+	@Override
 	public boolean mouseInROI(final Point mousePosition) {
 		// TODO
 		return false;
@@ -619,25 +628,25 @@ public class ModernRenderer extends Abstract3DRenderer {
 	}
 
 	@Override
-	public void drawROI(GL2 gl) {
+	public void drawROI(final GL2 gl) {
 		// TODO
-		
+
 	}
 
 	@Override
-	public void drawRotationHelper(GL2 gl) {
+	public void drawRotationHelper(final GL2 gl) {
 		// TODO
-		
+
 	}
 
 	@Override
-	public Integer getGeometryListFor(GL2 gl, GamaGeometryFile file) {
+	public Integer getGeometryListFor(final GL2 gl, final GamaGeometryFile file) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TextRenderer getTextRendererFor(Font font) {
+	public TextRenderer getTextRendererFor(final Font font) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -36,7 +36,7 @@ public abstract class AbstractObject {
 	public final int pickingIndex = index++;
 	private boolean picked = false;
 	protected final Texture[] textures;
-	
+
 	private boolean lightInteraction = true;
 
 	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer, final Texture[] textures) {
@@ -58,22 +58,22 @@ public abstract class AbstractObject {
 	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer) {
 		this(attributes, layer, attributes.getTextures() != null ? new Texture[attributes.getTextures().size()] : null);
 	}
-	
+
 	public DrawingAttributes getAttributes() {
 		return attributes;
 	}
-	
+
 	public Texture[] getTextures(final GL gl, final Abstract3DRenderer renderer) {
 		if (textures == null) {
 			return null;
 		}
-		Texture[] result = new Texture[textures.length];
-		for (int i = 0 ; i < textures.length ; i++) {
+		final Texture[] result = new Texture[textures.length];
+		for (int i = 0; i < textures.length; i++) {
 			result[i] = getTexture(gl, renderer, i);
 		}
 		return result;
 	}
-	
+
 	public int getNumberOfTexture() {
 		if (textures == null) {
 			return 0;
@@ -93,13 +93,13 @@ public abstract class AbstractObject {
 		}
 		return textures[order];
 	}
-	
+
 	public int[] getTextureIDs(final GL gl, final Abstract3DRenderer renderer) {
 		if (textures == null) {
 			return null;
 		}
-		int[] result = new int[textures.length];
-		for (int order = 0 ; order < textures.length ; order++) {
+		final int[] result = new int[textures.length];
+		for (int order = 0; order < textures.length; order++) {
 			if (textures[order] == null) {
 				textures[order] = computeTexture(gl, renderer, order);
 			}
@@ -107,15 +107,15 @@ public abstract class AbstractObject {
 		}
 		return result;
 	}
-	
+
 	public String[] getTexturePaths() {
 		if (attributes.getTextures() == null) {
 			return null;
 		}
-		int numberOfTextures = attributes.getTextures().size();
-		String[] result = new String[numberOfTextures];
-		for (int i = 0 ; i < numberOfTextures ; i++) {
-			Object obj = attributes.getTextures().get(i);
+		final int numberOfTextures = attributes.getTextures().size();
+		final String[] result = new String[numberOfTextures];
+		for (int i = 0; i < numberOfTextures; i++) {
+			final Object obj = attributes.getTextures().get(i);
 			if (obj instanceof GamaImageFile) {
 				result[i] = ((GamaImageFile) obj).getPath();
 			}
@@ -149,7 +149,7 @@ public abstract class AbstractObject {
 		drawer.draw(gl, this);
 		if (picked && !renderer.getPickingState().isMenuOn()) {
 			renderer.getPickingState().setMenuOn(true);
-			// System.out.println("Object " + pickingIndex + " showing menu");
+			System.out.println("Object " + pickingIndex + " showing menu");
 			renderer.getSurface().selectAgent(attributes);
 		}
 	}
@@ -210,15 +210,15 @@ public abstract class AbstractObject {
 		// AD Change to a negative rotation to fix Issue #1514
 		return -attributes.rotation.key;
 	}
-	
+
 	public void enableLightInteraction() {
 		lightInteraction = true;
 	}
-	
+
 	public void disableLightInteraction() {
 		lightInteraction = false;
 	}
-	
+
 	public boolean isLightInteraction() {
 		return lightInteraction;
 	}

@@ -114,7 +114,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 				for (final AbstractObject object : list) {
 					final double originalAlpha = object.getAlpha();
 					object.setAlpha(originalAlpha * alpha);
-					final DrawingEntity[] drawingEntity = renderer.getDrawingEntityGenerator().GenerateDrawingEntities(object);
+					final DrawingEntity[] drawingEntity = renderer.getDrawingEntityGenerator()
+							.GenerateDrawingEntities(object, gl);
 					object.setAlpha(originalAlpha);
 					if (drawingEntity != null)
 						renderer.getDrawer().addDrawingEntities(drawingEntity);
@@ -242,7 +243,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	public GamaPoint getScale() {
 		return scale == null ? NULL_SCALE : scale;
 	}
-	
+
 	public Double getAlpha() {
 		return alpha;
 	}
@@ -364,15 +365,17 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public SimpleLayer toSimpleLayer() {
-		
+
 		final List<DrawingEntity> drawingEntityList = new ArrayList<DrawingEntity>();
 		// we don't send the "constantRedrawnLayer" (like the rotation helper)
 		if (!constantRedrawnLayer) {
 			for (final List<AbstractObject> list : objects) {
 				for (final AbstractObject object : list) {
-					final DrawingEntity[] drawingEntities = renderer.getDrawingEntityGenerator().GenerateDrawingEntities(object,false);
+					final DrawingEntity[] drawingEntities = renderer.getDrawingEntityGenerator()
+							.GenerateDrawingEntities(object, false, null);
+					// explicitly passes null for the OpenGL context
 					if (drawingEntities != null) {
-						for (DrawingEntity drawingEntity : drawingEntities) {
+						for (final DrawingEntity drawingEntity : drawingEntities) {
 							drawingEntityList.add(drawingEntity);
 						}
 					}
