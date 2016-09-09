@@ -143,6 +143,9 @@ public class ModernRenderer extends Abstract3DRenderer {
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
 		
+		if (renderToTexture)
+			drawer.prepareFrameBufferObject();
+		
 		final Color background = data.getBackgroundColor();
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
 				1.0f);
@@ -159,6 +162,9 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 		this.rotateModel(gl);
 		drawScene(gl);
+		if (renderToTexture) {
+			drawer.renderToTexture();
+		}
 
 		if (ROIEnvelope != null) {
 			drawROI(gl);

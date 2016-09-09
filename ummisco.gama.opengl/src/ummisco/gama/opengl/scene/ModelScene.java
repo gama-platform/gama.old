@@ -173,12 +173,6 @@ public class ModelScene {
 				}
 			}
 		}
-		if (renderer instanceof ModernRenderer) {
-			ModernRenderer modernRenderer = (ModernRenderer)renderer;
-			if (modernRenderer.renderToTexture) {
-				modernRenderer.getDrawer().renderToTexture();
-			}
-		}
 		rendered = true;
 	}
 

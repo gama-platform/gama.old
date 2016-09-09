@@ -123,7 +123,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 			renderer.getDrawer().redraw();
 			sceneIsInitialized = true;
 		} else {
-//			renderer.getDrawer().refresh(this);
+			renderer.getDrawer().refresh(this);
 //			renderer.getDrawer().redraw();
 		}
 

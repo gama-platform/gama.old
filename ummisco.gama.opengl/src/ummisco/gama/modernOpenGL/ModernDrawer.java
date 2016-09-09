@@ -149,12 +149,17 @@ public class ModernDrawer {
 		layerStructureMap.clear();
 	}
 	
-	public void redraw() {
-		
+	public void prepareFrameBufferObject() {
 		if (renderer.renderToTexture) {
-			fbo = new FrameBufferObject(gl);
-			fbo.bindReflectionFrameBuffer();
+			//if (fbo == null) {
+				fbo = new FrameBufferObject(gl);
+			//}
+			//fbo.cleanUp();
+			fbo.bindFrameBuffer();
 		}
+	}
+	
+	public void redraw() {
 		
 		if (numberOfShaderInTheCurrentLayer == 0) {
 			return; // if nothing is to draw for this layer, do nothing.
@@ -181,10 +186,8 @@ public class ModernDrawer {
 					updateTransformationMatrix(shaderProgram);
 					prepareShader(listOfEntities.get(0), shaderProgram);
 					
-					if (!(shaderProgram instanceof SimpleShaderProgram)) {
-						loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram);
-						drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
-					}
+					loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram);
+					drawVBO(typeOfDrawingMap.get(shaderProgram));
 					
 					shaderProgram.stop();
 					currentShaderNumber++;
@@ -211,14 +214,19 @@ public class ModernDrawer {
 
 		SimpleShaderProgram shaderProgram = new SimpleShaderProgram(gl);
 		shaderProgram.start();
-		shaderLoaded.add(shaderProgram);
 		
 		prepareShader(null, shaderProgram);
 		
-		createScreenSurface(1000,shaderProgram);
-		drawVBO(typeOfDrawingMap.get(shaderProgram),1000);
+		createScreenSurface(currentShaderNumber,shaderProgram);
+		int[] drawingDefinition = new int[3];
+		// draw triangles
+		drawingDefinition[0] = GL2.GL_TRIANGLES;
+		drawingDefinition[1] = 6; // idx buffer is equal to 6 : it is a quad
+		drawingDefinition[2] = currentShaderNumber;
+		drawVBO(drawingDefinition);
 		
 		shaderProgram.stop();
+		isRenderingToTexture = false;
 	}
 	
 	public void createScreenSurface(int shaderNumber, SimpleShaderProgram shaderProgram) {
@@ -251,13 +259,6 @@ public class ModernDrawer {
 		int numBytes = intIdxBuffer.length * 4;
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
 		//ibIdxBuff.rewind();
-
-		int[] newElement = new int[3];
-		// draw triangles
-		newElement[0] = GL2.GL_TRIANGLES;
-		newElement[1] = intIdxBuffer.length;
-		newElement[2] = shaderNumber;
-		typeOfDrawingMap.put(shaderProgram,newElement);
 	}
 	
 	public void refresh(LayerObject layer) {
@@ -298,13 +299,13 @@ public class ModernDrawer {
 			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[typeOfDrawing[2]*5+IDX_BUFF_IDX]);
 			//////////////////////////////////
 			
-			drawVBO(typeOfDrawing,typeOfDrawing[2]);
+			drawVBO(typeOfDrawing);
 			
 			shader.stop();
 		}
 	}
 	
-	private void drawVBO(int[] typeOfDrawing, int shaderNumber) {
+	private void drawVBO(int[] typeOfDrawing) {
 		gl.glDrawElements(typeOfDrawing[0], typeOfDrawing[1], GL2.GL_UNSIGNED_INT, 0);
 	}
 	

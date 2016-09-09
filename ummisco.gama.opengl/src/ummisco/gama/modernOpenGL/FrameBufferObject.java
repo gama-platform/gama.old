@@ -2,18 +2,12 @@ package ummisco.gama.modernOpenGL;
  
 import java.nio.ByteBuffer;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
-
-import ummisco.gama.modernOpenGL.shader.AbstractShader;
  
 public class FrameBufferObject {
  
     protected static final int REFLECTION_WIDTH = 1280;//320;
     private static final int REFLECTION_HEIGHT = 720;//180;
-     
-    protected static final int REFRACTION_WIDTH = 1280;
-    private static final int REFRACTION_HEIGHT = 720;
     
     private int frameBufferID;
     private int depthBufferID;
@@ -33,12 +27,12 @@ public class FrameBufferObject {
     }
  
     public void cleanUp() {//call when closing the game
-        gl.glDeleteFramebuffers(frameBufferID,frameBufferArray,0);
+        //gl.glDeleteFramebuffers(frameBufferID,frameBufferArray,0);
         gl.glDeleteTextures(textureID,textureArray,0);
-        gl.glDeleteRenderbuffers(depthBufferID,depthBufferArray,0);
+        //gl.glDeleteRenderbuffers(depthBufferID,depthBufferArray,0);
     }
  
-    public void bindReflectionFrameBuffer() {//call before rendering to this FBO
+    public void bindFrameBuffer() {//call before rendering to this FBO
         bindFrameBuffer(frameBufferID,REFLECTION_WIDTH,REFLECTION_HEIGHT);
     }
      
