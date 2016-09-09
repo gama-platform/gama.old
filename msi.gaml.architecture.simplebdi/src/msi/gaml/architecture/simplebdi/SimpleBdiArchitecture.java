@@ -338,9 +338,9 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			final GamaList<Predicate> desireBase = (GamaList<Predicate>) scope.getSimulation().getRandomGenerator()
 					.shuffle(getBase(scope, DESIRE_BASE));
 			final GamaList<Predicate> intentionBase = getBase(scope, INTENTION_BASE);
-			double maxpriority = Double.NEGATIVE_INFINITY;
+			double maxpriority = Double.MIN_VALUE;
 			if (desireBase.size() > 0 && intentionBase != null) {
-				Predicate newIntention = desireBase.anyValue(scope);
+				Predicate newIntention = null;//desireBase.anyValue(scope);
 				for (final Predicate desire : desireBase) {
 
 					if (desire.priority > maxpriority) {
@@ -350,21 +350,23 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 						}
 					}
 				}
-				if (newIntention.getSubintentions() == null) {
-					if (!intentionBase.contains(newIntention)) {
-						intentionBase.addValue(scope, newIntention);
-						return true;
-					}
-				} else {
-					for (int i = 0; i < newIntention.getSubintentions().size(); i++) {
-						if (!desireBase.contains(newIntention.getSubintentions().get(i))) {
-							desireBase.addValue(scope, newIntention.getSubintentions().get(i));
+				if(newIntention!=null){
+					if (newIntention.getSubintentions() == null) {
+						if (!intentionBase.contains(newIntention)) {
+							intentionBase.addValue(scope, newIntention);
+							return true;
 						}
-					}
-					newIntention.setOnHoldUntil(newIntention.getSubintentions());
-					if (!intentionBase.contains(newIntention)) {
-						intentionBase.addValue(scope, newIntention);
-						return true;
+					} else {
+						for (int i = 0; i < newIntention.getSubintentions().size(); i++) {
+							if (!desireBase.contains(newIntention.getSubintentions().get(i))) {
+								desireBase.addValue(scope, newIntention.getSubintentions().get(i));
+							}
+						}
+						newIntention.setOnHoldUntil(newIntention.getSubintentions());
+						if (!intentionBase.contains(newIntention)) {
+							intentionBase.addValue(scope, newIntention);
+							return true;
+						}
 					}
 				}
 			}
