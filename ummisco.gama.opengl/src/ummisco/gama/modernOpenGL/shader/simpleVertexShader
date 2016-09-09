@@ -16,10 +16,13 @@ attribute vec3  attribute_TextureCoords;
 varying vec4    varying_Color;
 varying vec2    pass_textureCoords;
 
+uniform int   display_width;
+uniform int   display_height;
+
 void main(void)
 {
 	varying_Color = attribute_Color;
 	pass_textureCoords = attribute_TextureCoords;
 	//gl_Position = vec4(attribute_Position.x-1.5,attribute_Position.y-1.5,attribute_Position.z,1);
-	gl_Position = vec4(attribute_Position.x-0.5,attribute_Position.y-0.5,attribute_Position.z,1);
+	gl_Position = vec4(attribute_Position.x,attribute_Position.y,0,1);
 }

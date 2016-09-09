@@ -144,7 +144,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		currentScene.preload(gl);
 		
 		if (renderToTexture)
-			drawer.prepareFrameBufferObject();
+			drawer.prepareFrameBufferObject(this.getDisplayWidth(),this.getDisplayHeight());
 		
 		final Color background = data.getBackgroundColor();
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,

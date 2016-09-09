@@ -5,9 +5,9 @@ import java.nio.ByteBuffer;
 import com.jogamp.opengl.GL2;
  
 public class FrameBufferObject {
- 
-    protected static final int REFLECTION_WIDTH = 1280;//320;
-    private static final int REFLECTION_HEIGHT = 720;//180;
+	
+	private int width;
+	private int height;
     
     private int frameBufferID;
     private int depthBufferID;
@@ -21,24 +21,26 @@ public class FrameBufferObject {
     
     private GL2 gl;
  
-    public FrameBufferObject(GL2 gl) {//call when loading the game
+    public FrameBufferObject(GL2 gl, int width, int height) {//call when loading the game
     	this.gl = gl;
+    	this.width = width;
+    	this.height = height;
         initialiseFrameBuffer();
     }
  
     public void cleanUp() {//call when closing the game
-        //gl.glDeleteFramebuffers(frameBufferID,frameBufferArray,0);
+        gl.glDeleteFramebuffers(frameBufferID,frameBufferArray,0);
         gl.glDeleteTextures(textureID,textureArray,0);
-        //gl.glDeleteRenderbuffers(depthBufferID,depthBufferArray,0);
+        gl.glDeleteRenderbuffers(depthBufferID,depthBufferArray,0);
     }
  
     public void bindFrameBuffer() {//call before rendering to this FBO
-        bindFrameBuffer(frameBufferID,REFLECTION_WIDTH,REFLECTION_HEIGHT);
+        bindFrameBuffer(frameBufferID,width,height);
     }
      
     public void unbindCurrentFrameBuffer() {//call to switch to default frame buffer
         gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, 0);
-        gl.glViewport(0, 0, 1000, 800);
+        gl.glViewport(0, 0, width, height);
     }
  
     public int getFBOTexture() {//get the resulting texture
@@ -51,8 +53,8 @@ public class FrameBufferObject {
  
     private void initialiseFrameBuffer() {
         createFrameBuffer();
-        createTextureAttachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
-        createDepthBufferAttachment(REFLECTION_WIDTH,REFLECTION_HEIGHT);
+        createTextureAttachment(width,height);
+        createDepthBufferAttachment(width,height);
         unbindCurrentFrameBuffer();
     }
      

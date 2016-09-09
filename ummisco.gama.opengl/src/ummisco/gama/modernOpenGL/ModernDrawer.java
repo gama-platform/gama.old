@@ -149,11 +149,11 @@ public class ModernDrawer {
 		layerStructureMap.clear();
 	}
 	
-	public void prepareFrameBufferObject() {
+	public void prepareFrameBufferObject(int width, int height) {
 		if (renderer.renderToTexture) {
-			//if (fbo == null) {
-				fbo = new FrameBufferObject(gl);
-			//}
+			if (fbo == null) {
+				fbo = new FrameBufferObject(gl, width, height);
+			}
 			//fbo.cleanUp();
 			fbo.bindFrameBuffer();
 		}
@@ -233,10 +233,11 @@ public class ModernDrawer {
 		ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		ArrayList<float[]> listUvMapping = new ArrayList<float[]>();
 
-		listVertices.add(new float[]{0f,0f,0f,
-				0f,1f,0f,
+		float ratio = (float)renderer.getyRatioBetweenPixelsAndModelUnits();
+		listVertices.add(new float[]{-1f,-1f,0f,
+				-1f,1f,0f,
 				1f,1f,0f,
-				1f,0f,0f});
+				1f,-1f,0f});
 		listUvMapping.add(new float[]{0f,1f,
 				0f,0f,
 				1f,0f,
@@ -385,6 +386,8 @@ public class ModernDrawer {
 	private void prepareShader(DrawingEntity entity, SimpleShaderProgram shaderProgram) {		
 		shaderProgram.loadTexture(0);
 		shaderProgram.storeTextureID(fbo.getFBOTexture());
+		shaderProgram.loadWidth(renderer.getDisplayWidth());
+		shaderProgram.loadHeight(renderer.getDisplayHeight());
 	}
 	
 	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		

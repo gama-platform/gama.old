@@ -1,14 +1,8 @@
 package ummisco.gama.modernOpenGL.shader;
 
-import java.util.List;
-
-import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
-
-import msi.gama.outputs.LightPropertiesStructure;
-import msi.gama.outputs.LightPropertiesStructure.TYPE;
 
 public class SimpleShaderProgram extends AbstractShader {
 	
@@ -16,6 +10,8 @@ public class SimpleShaderProgram extends AbstractShader {
 	private static String FRAGMENT_FILE = "simpleFragmentShader";
 	
 	private int location_texture;
+	private int location_width;
+	private int location_height;
 	
 	private boolean useNormal = false;
 	private boolean useTexture = true;
@@ -40,11 +36,21 @@ public class SimpleShaderProgram extends AbstractShader {
 	@Override
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
-		location_texture = getUniformLocation("textureSampler");		
+		location_texture = getUniformLocation("textureSampler");
+		location_width = getUniformLocation("display_width");
+		location_height = getUniformLocation("display_height");
 	}
 	
 	public void loadTexture(int textureId) {
 		super.loadInt(location_texture,textureId);
+	}
+	
+	public void loadWidth(int value) {
+		super.loadInt(location_width, value);
+	}
+	
+	public void loadHeight(int value) {
+		super.loadInt(location_height, value);
 	}
 	
 	public boolean useTexture() {
