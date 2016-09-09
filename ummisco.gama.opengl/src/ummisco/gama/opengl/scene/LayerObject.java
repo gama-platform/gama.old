@@ -84,7 +84,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		return new CopyOnWriteArrayList();
 	}
 
-	private boolean isPickable() {
+	protected boolean isPickable() {
 		return layer == null ? false : layer.isSelectable();
 	}
 
@@ -169,10 +169,10 @@ public class LayerObject implements Iterable<GeometryObject> {
 						if (isFading) {
 							final double originalAlpha = object.getAlpha();
 							object.setAlpha(originalAlpha * alpha);
-							object.draw(gl, drawer, picking);
+							object.draw(gl, drawer, false);
 							object.setAlpha(originalAlpha);
 						} else {
-							object.draw(gl, drawer, picking);
+							object.draw(gl, drawer, false);
 						}
 					}
 				}
@@ -193,7 +193,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 		}
 	}
 
-	private void drawPicking(final GL2 gl) {
+	protected void drawPicking(final GL2 gl) {
 		gl.glPushMatrix();
 		gl.glInitNames();
 		gl.glPushName(0);

@@ -143,15 +143,21 @@ public abstract class AbstractObject {
 
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean isPicking) {
 		final Abstract3DRenderer renderer = drawer.renderer;
-		picked = renderer.getPickingState().isPicked(pickingIndex);
-		if (isPicking)
+
+		if (isPicking && layer.isPickable())
 			gl.glLoadName(pickingIndex);
 		drawer.draw(gl, this);
-		if (picked && !renderer.getPickingState().isMenuOn()) {
-			renderer.getPickingState().setMenuOn(true);
-			System.out.println("Object " + pickingIndex + " showing menu");
-			renderer.getSurface().selectAgent(attributes);
-		}
+		picked = isPicked(renderer);
+		if (picked)
+			if (!renderer.getPickingState().isMenuOn()) {
+				renderer.getPickingState().setMenuOn(true);
+//				System.out.println("Object " + pickingIndex + " showing menu");
+				renderer.getSurface().selectAgent(attributes);
+			}
+	}
+
+	public boolean isPicked(final Abstract3DRenderer renderer) {
+		return renderer.getPickingState().isPicked(pickingIndex) && layer.isPickable();
 	}
 
 	public Color getColor() {

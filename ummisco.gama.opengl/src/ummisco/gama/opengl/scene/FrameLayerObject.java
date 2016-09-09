@@ -20,8 +20,10 @@ public class FrameLayerObject extends StaticLayerObject.World {
 		final double w = renderer.data.getEnvWidth();
 		final double h = renderer.data.getEnvHeight();
 		final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));
-		ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g,null,new GamaColor(150, 150, 150, 255)); // null for the color, grey for the border color
-		GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
+		final ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, null,
+				new GamaColor(150, 150, 150, 255)); // null for the color, grey
+													// for the border color
+		final GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
 		list.add(geomObj);
 	}
 }

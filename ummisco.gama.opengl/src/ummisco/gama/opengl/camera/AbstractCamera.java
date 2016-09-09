@@ -24,16 +24,12 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
 public abstract class AbstractCamera implements ICamera {
 
 	private Abstract3DRenderer renderer;
-
-	// picking
-	// private boolean isPickedPressed = false;
 
 	// Mouse
 	private Point mousePosition;
@@ -108,22 +104,22 @@ public abstract class AbstractCamera implements ICamera {
 										// turned to false.
 				if (flipped)
 					upPosition(
-							-(-FastMath.cos(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
-									* FastMath.cos(upVectorAngle * Maths.toRad)
-									- FastMath.sin(theta * Maths.toRad) * FastMath.sin(upVectorAngle * Maths.toRad)),
-							-(-FastMath.sin(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
-									* FastMath.cos(upVectorAngle * Maths.toRad + FastMath.cos(theta * Maths.toRad)
-											* FastMath.sin(upVectorAngle * Maths.toRad))),
-							-(FastMath.sin(phi * Maths.toRad) * FastMath.cos(upVectorAngle * Maths.toRad)));
+							-(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)
+									* Math.cos(upVectorAngle * Maths.toRad)
+									- Math.sin(theta * Maths.toRad) * Math.sin(upVectorAngle * Maths.toRad)),
+							-(-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)
+									* Math.cos(upVectorAngle * Maths.toRad
+											+ Math.cos(theta * Maths.toRad) * Math.sin(upVectorAngle * Maths.toRad))),
+							-(Math.sin(phi * Maths.toRad) * Math.cos(upVectorAngle * Maths.toRad)));
 				else
 					upPosition(
-							-FastMath.cos(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
-									* FastMath.cos(upVectorAngle * Maths.toRad)
-									- FastMath.sin(theta * Maths.toRad) * FastMath.sin(upVectorAngle * Maths.toRad),
-							-FastMath.sin(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
-									* FastMath.cos(upVectorAngle * Maths.toRad + FastMath.cos(theta * Maths.toRad)
-											* FastMath.sin(upVectorAngle * Maths.toRad)),
-							FastMath.sin(phi * Maths.toRad) * FastMath.cos(upVectorAngle * Maths.toRad));
+							-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)
+									* Math.cos(upVectorAngle * Maths.toRad)
+									- Math.sin(theta * Maths.toRad) * Math.sin(upVectorAngle * Maths.toRad),
+							-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)
+									* Math.cos(upVectorAngle * Maths.toRad
+											+ Math.cos(theta * Maths.toRad) * Math.sin(upVectorAngle * Maths.toRad)),
+							Math.sin(phi * Maths.toRad) * Math.cos(upVectorAngle * Maths.toRad));
 				drawRotationHelper();
 			}
 			updateSphericalCoordinatesFromLocations();
@@ -270,7 +266,6 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public final void mouseDoubleClick(final org.eclipse.swt.events.MouseEvent e) {
 		// Already taken in charge by the ZoomListener in the view
-		// getRenderer().displaySurface.zoomFit();
 	}
 
 	/**
@@ -294,23 +289,19 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	protected void internalMouseDown(final MouseEvent e) {
-		// System.out.println("Detecting mouse down in camera");
+//		System.out.println("Detecting mouse down in camera");
 		if (firsttimeMouseDown) {
 			firstMousePressedPosition = new Point(e.x, e.y);
 			firsttimeMouseDown = false;
 		}
 		lastMousePressedPosition = new Point(e.x, e.y);
 		// Activate Picking when press and right click
-		// if (e.button == 3) {
-		// if (renderer.mouseInROI(lastMousePressedPosition)) {
-		// renderer.getSurface().selectionIn(renderer.getROIEnvelope());
-		// }
-		// else {
-		// renderer.getPickingState().setPicking(true);
-		// }
-
-		// } else
-		if (e.button == 2) { // mouse wheel
+		if (e.button == 3) {
+			if (renderer.mouseInROI(lastMousePressedPosition)) {
+				renderer.getSurface().selectionIn(renderer.getROIEnvelope());
+			} else
+				renderer.getPickingState().setPicking(true);
+		} else if (e.button == 2) { // mouse wheel
 			resetPivot();
 		} else {
 			if (GamaKeyBindings.shift(e) && isViewInXYPlan()) {

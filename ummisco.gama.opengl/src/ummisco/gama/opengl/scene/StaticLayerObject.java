@@ -27,12 +27,19 @@ public class StaticLayerObject extends LayerObject {
 
 		@Override
 		public void draw(final GL2 gl) {
+			if (renderer.getPickingState().isPicking())
+				return;
 			gl.glDisable(GL2.GL_LIGHTING);
 			if (currentList.isEmpty()) {
 				fillWithObjects(currentList);
 			}
 			gl.glEnable(GL2.GL_LIGHTING);
 			super.draw(gl);
+		}
+
+		@Override
+		protected boolean isPickable() {
+			return false;
 		}
 
 		abstract void fillWithObjects(List<AbstractObject> currentList);

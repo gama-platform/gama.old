@@ -580,8 +580,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag, cleanup);
 	}
 
-	// org.eclipse.swt.widgets.Menu menu;
-
 	/**
 	 * Method selectSeveralAgents()
 	 * 
@@ -666,11 +664,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		if (animator != null && animator.isStarted()) {
 			animator.stop();
 		}
-		// if (this.menu != null && !menu.isDisposed()) {
-		// menu.dispose();
-		// this.menu = null;
-		// }
-
 		this.menuManager = null;
 		this.listeners.clear();
 
@@ -731,7 +724,6 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void setSize(final int x, final int y) {
-		// size = new Point(x, y);
 	}
 
 	/**
@@ -845,11 +837,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	@Override
 	public void selectAgentsAroundMouse() {
-		final Point position = renderer.camera.getLastMousePressedPosition();
-		if (renderer.mouseInROI(position)) {
-			renderer.getSurface().selectionIn(renderer.getROIEnvelope());
-		} else
-			renderer.getPickingState().setPicking(true);
+		// Nothing to do (taken in charge by the camera)
 	}
 
 	@Override

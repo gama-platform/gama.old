@@ -434,7 +434,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 			}
 			// end of searching
 		} else {
-			selectedIndex = PickingState.WORLD;// return -2 of there was no hits
+			selectedIndex = PickingState.WORLD;// return -1 as there was no hits
 		}
 
 		pickingState.setPickedIndex(selectedIndex);
