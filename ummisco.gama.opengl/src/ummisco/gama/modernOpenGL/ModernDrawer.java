@@ -15,6 +15,7 @@ import com.jogamp.opengl.GL2;
 import ummisco.gama.modernOpenGL.shader.AbstractShader;
 import ummisco.gama.modernOpenGL.shader.BillboardingTextShaderProgram;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
+import ummisco.gama.modernOpenGL.shader.SimpleShaderProgram;
 import ummisco.gama.modernOpenGL.shader.TextShaderProgram;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.LayerObject;
@@ -22,6 +23,8 @@ import ummisco.gama.opengl.vaoGenerator.ModernLayerStructure;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public class ModernDrawer {
+	
+	private FrameBufferObject fbo;
 
 	private LayerObject currentLayer;
 	private HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities;
@@ -111,6 +114,9 @@ public class ModernDrawer {
 		else if (type.equals(DrawingEntity.Type.STRING)) {
 			newEntity.setShader(new TextShaderProgram(gl));
 		}
+		else if (type.equals(DrawingEntity.Type.TEXTURED)) {
+			newEntity.setShader(new SimpleShaderProgram(gl));
+		}
 		else {
 			newEntity.setShader(new ShaderProgram(gl));
 		}
@@ -145,7 +151,7 @@ public class ModernDrawer {
 	
 	public void redraw() {
 		
-		FrameBufferObject fbo = new FrameBufferObject(gl);
+		fbo = new FrameBufferObject(gl);
 		fbo.bindReflectionFrameBuffer();
 		
 		if (numberOfShaderInTheCurrentLayer == 0) {
@@ -175,8 +181,8 @@ public class ModernDrawer {
 					updateTransformationMatrix(shaderProgram);
 					prepareShader(listOfEntities.get(0), shaderProgram);
 					
-					if (!shaderProgram.useTexture()) {
-						loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram,fbo);
+					if (!(shaderProgram instanceof SimpleShaderProgram)) {
+						loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram);
 						drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
 					}
 					
@@ -204,8 +210,8 @@ public class ModernDrawer {
 					updateTransformationMatrix(shaderProgram);
 					prepareShader(listOfEntities.get(0), shaderProgram);
 					
-					if (shaderProgram.useTexture()) {
-						loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram,fbo);
+					if (shaderProgram instanceof SimpleShaderProgram) {
+						loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram);
 						drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
 					}
 					
@@ -312,6 +318,9 @@ public class ModernDrawer {
 		else if (shaderProgram instanceof TextShaderProgram) {
 			prepareShader(entity, (TextShaderProgram)shaderProgram);
 		}
+		else if (shaderProgram instanceof SimpleShaderProgram) {
+			prepareShader(entity, (SimpleShaderProgram)shaderProgram);
+		}
 		shaderProgram.setLayerAlpha(currentLayer.getAlpha().floatValue());
 	}
 	
@@ -342,6 +351,11 @@ public class ModernDrawer {
 		}
 	}
 	
+	private void prepareShader(DrawingEntity entity, SimpleShaderProgram shaderProgram) {		
+		shaderProgram.loadTexture(0);
+		shaderProgram.storeTextureID(fbo.getReflectionTexture());
+	}
+	
 	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		
 		shaderProgram.loadTexture(0);
 		shaderProgram.storeTextureID(entity.getTextureID());
@@ -370,7 +384,7 @@ public class ModernDrawer {
 		return TransformationMatrix.createTransformationMatrix(layerTranslation, quat, scale, env_width, env_height);
 	}
 	
-	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber, AbstractShader shader, FrameBufferObject fbo) {
+	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber, AbstractShader shader) {
 		
 		ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		ArrayList<float[]> listColors = new ArrayList<float[]>();
