@@ -145,6 +145,9 @@ public class ModernDrawer {
 	
 	public void redraw() {
 		
+		FrameBufferObject fbo = new FrameBufferObject(gl);
+		fbo.bindReflectionFrameBuffer();
+		
 		if (numberOfShaderInTheCurrentLayer == 0) {
 			return; // if nothing is to draw for this layer, do nothing.
 		}
@@ -153,6 +156,8 @@ public class ModernDrawer {
 		ModernLayerStructure layerStructure = new ModernLayerStructure();
 		layerStructure.vboHandles = vboHandles;
 		layerStructureMap.put(currentLayer, layerStructure);
+		
+		int originalShaderNumber = currentShaderNumber;
 		
 		for (String key : mapEntities.keySet()) {
 			ArrayList<ArrayList<DrawingEntity>> listOfListOfEntities = mapEntities.get(key);
@@ -170,8 +175,39 @@ public class ModernDrawer {
 					updateTransformationMatrix(shaderProgram);
 					prepareShader(listOfEntities.get(0), shaderProgram);
 					
-					loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram);
-					drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
+					if (!shaderProgram.useTexture()) {
+						loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram,fbo);
+						drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
+					}
+					
+					shaderProgram.stop();
+					currentShaderNumber++;
+				}
+			}
+		}
+		
+		fbo.unbindCurrentFrameBuffer();
+		currentShaderNumber = originalShaderNumber;
+		
+		for (String key : mapEntities.keySet()) {
+			ArrayList<ArrayList<DrawingEntity>> listOfListOfEntities = mapEntities.get(key);
+			if (listOfListOfEntities != null) {
+				
+				for (ArrayList<DrawingEntity> listOfEntities : listOfListOfEntities) {
+					// all those entities are using the same shader
+					AbstractShader shaderProgram = listOfEntities.get(0).getShader();
+					shaderProgram.start();
+					
+					if (shaderProgram instanceof BillboardingTextShaderProgram) {
+						((BillboardingTextShaderProgram)shaderProgram).setTranslation(listOfEntities.get(0).getTranslation()); // FIXME : need refactoring
+					}
+					updateTransformationMatrix(shaderProgram);
+					prepareShader(listOfEntities.get(0), shaderProgram);
+					
+					if (shaderProgram.useTexture()) {
+						loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram,fbo);
+						drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
+					}
 					
 					shaderProgram.stop();
 					currentShaderNumber++;
@@ -334,7 +370,7 @@ public class ModernDrawer {
 		return TransformationMatrix.createTransformationMatrix(layerTranslation, quat, scale, env_width, env_height);
 	}
 	
-	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber, AbstractShader shader) {
+	private void loadVBO(ArrayList<DrawingEntity> listEntities, String drawingType, int shaderNumber, AbstractShader shader, FrameBufferObject fbo) {
 		
 		ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		ArrayList<float[]> listColors = new ArrayList<float[]>();
@@ -360,7 +396,7 @@ public class ModernDrawer {
 		if (listUvMapping.size() != 0) {
 			storeDataInAttributeList(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
 			gl.glActiveTexture(GL.GL_TEXTURE0);
-			gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
+			gl.glBindTexture(GL.GL_TEXTURE_2D, fbo.getReflectionTexture());//shader.getTextureID());
 		}
 		
 		// NORMAL BUFFER
