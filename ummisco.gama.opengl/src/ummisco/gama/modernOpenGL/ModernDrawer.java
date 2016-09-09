@@ -24,7 +24,10 @@ import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public class ModernDrawer {
 	
+	private boolean isRenderingToTexture = false;
+	
 	private FrameBufferObject fbo;
+	private int[] fboHandles;
 
 	private LayerObject currentLayer;
 	private HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities;
@@ -114,9 +117,6 @@ public class ModernDrawer {
 		else if (type.equals(DrawingEntity.Type.STRING)) {
 			newEntity.setShader(new TextShaderProgram(gl));
 		}
-		else if (type.equals(DrawingEntity.Type.TEXTURED)) {
-			newEntity.setShader(new SimpleShaderProgram(gl));
-		}
 		else {
 			newEntity.setShader(new ShaderProgram(gl));
 		}
@@ -151,8 +151,10 @@ public class ModernDrawer {
 	
 	public void redraw() {
 		
-		fbo = new FrameBufferObject(gl);
-		fbo.bindReflectionFrameBuffer();
+		if (renderer.renderToTexture) {
+			fbo = new FrameBufferObject(gl);
+			fbo.bindReflectionFrameBuffer();
+		}
 		
 		if (numberOfShaderInTheCurrentLayer == 0) {
 			return; // if nothing is to draw for this layer, do nothing.
@@ -162,8 +164,6 @@ public class ModernDrawer {
 		ModernLayerStructure layerStructure = new ModernLayerStructure();
 		layerStructure.vboHandles = vboHandles;
 		layerStructureMap.put(currentLayer, layerStructure);
-		
-		int originalShaderNumber = currentShaderNumber;
 		
 		for (String key : mapEntities.keySet()) {
 			ArrayList<ArrayList<DrawingEntity>> listOfListOfEntities = mapEntities.get(key);
@@ -192,35 +192,6 @@ public class ModernDrawer {
 			}
 		}
 		
-		fbo.unbindCurrentFrameBuffer();
-		currentShaderNumber = originalShaderNumber;
-		
-		for (String key : mapEntities.keySet()) {
-			ArrayList<ArrayList<DrawingEntity>> listOfListOfEntities = mapEntities.get(key);
-			if (listOfListOfEntities != null) {
-				
-				for (ArrayList<DrawingEntity> listOfEntities : listOfListOfEntities) {
-					// all those entities are using the same shader
-					AbstractShader shaderProgram = listOfEntities.get(0).getShader();
-					shaderProgram.start();
-					
-					if (shaderProgram instanceof BillboardingTextShaderProgram) {
-						((BillboardingTextShaderProgram)shaderProgram).setTranslation(listOfEntities.get(0).getTranslation()); // FIXME : need refactoring
-					}
-					updateTransformationMatrix(shaderProgram);
-					prepareShader(listOfEntities.get(0), shaderProgram);
-					
-					if (shaderProgram instanceof SimpleShaderProgram) {
-						loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram);
-						drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
-					}
-					
-					shaderProgram.stop();
-					currentShaderNumber++;
-				}
-			}
-		}
-		
 		layerStructure = layerStructureMap.get(currentLayer);
 		layerStructure.shaderList = (ArrayList<AbstractShader>) shaderLoaded.clone();
 		layerStructureMap.put(currentLayer, layerStructure);
@@ -228,6 +199,65 @@ public class ModernDrawer {
 		shaderLoaded.clear();
 		mapEntities.clear();
 		
+	}
+	
+	public void renderToTexture() {
+		isRenderingToTexture = true;
+		
+		fboHandles = new int[5];
+		this.gl.glGenBuffers(5, fboHandles, 0);
+		
+		fbo.unbindCurrentFrameBuffer();
+
+		SimpleShaderProgram shaderProgram = new SimpleShaderProgram(gl);
+		shaderProgram.start();
+		shaderLoaded.add(shaderProgram);
+		
+		prepareShader(null, shaderProgram);
+		
+		createScreenSurface(1000,shaderProgram);
+		drawVBO(typeOfDrawingMap.get(shaderProgram),1000);
+		
+		shaderProgram.stop();
+	}
+	
+	public void createScreenSurface(int shaderNumber, SimpleShaderProgram shaderProgram) {
+		ArrayList<float[]> listVertices = new ArrayList<float[]>();
+		ArrayList<float[]> listUvMapping = new ArrayList<float[]>();
+
+		listVertices.add(new float[]{0f,0f,0f,
+				0f,1f,0f,
+				1f,1f,0f,
+				1f,0f,0f});
+		listUvMapping.add(new float[]{0f,1f,
+				0f,0f,
+				1f,0f,
+				1f,1f});
+
+
+		// VERTICES POSITIONS BUFFER
+		storeDataInAttributeList(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,listVertices,shaderNumber);
+		
+		// UV MAPPING (If a texture is defined)
+		storeDataInAttributeList(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
+		gl.glActiveTexture(GL.GL_TEXTURE0);
+		gl.glBindTexture(GL.GL_TEXTURE_2D, fbo.getFBOTexture());
+		
+		// INDEX BUFFER
+		int[] intIdxBuffer = new int[]{0,1,2,0,2,3};
+		IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuffer);
+		// Select the VBO, GPU memory data, to use for colors
+		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, fboHandles[IDX_BUFF_IDX]);
+		int numBytes = intIdxBuffer.length * 4;
+		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
+		//ibIdxBuff.rewind();
+
+		int[] newElement = new int[3];
+		// draw triangles
+		newElement[0] = GL2.GL_TRIANGLES;
+		newElement[1] = intIdxBuffer.length;
+		newElement[2] = shaderNumber;
+		typeOfDrawingMap.put(shaderProgram,newElement);
 	}
 	
 	public void refresh(LayerObject layer) {
@@ -353,7 +383,7 @@ public class ModernDrawer {
 	
 	private void prepareShader(DrawingEntity entity, SimpleShaderProgram shaderProgram) {		
 		shaderProgram.loadTexture(0);
-		shaderProgram.storeTextureID(fbo.getReflectionTexture());
+		shaderProgram.storeTextureID(fbo.getFBOTexture());
 	}
 	
 	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		
@@ -410,7 +440,7 @@ public class ModernDrawer {
 		if (listUvMapping.size() != 0) {
 			storeDataInAttributeList(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
 			gl.glActiveTexture(GL.GL_TEXTURE0);
-			gl.glBindTexture(GL.GL_TEXTURE_2D, fbo.getReflectionTexture());//shader.getTextureID());
+			gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
 		}
 		
 		// NORMAL BUFFER
@@ -497,7 +527,8 @@ public class ModernDrawer {
 			case AbstractShader.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
 		}
 		// Select the VBO, GPU memory data, to use for data
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[shaderNumber*5+bufferAttributeNumber]);
+		if (!isRenderingToTexture) gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[shaderNumber*5+bufferAttributeNumber]);
+		else gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, fboHandles[bufferAttributeNumber]);
 		
 		// Associate Vertex attribute with the last bound VBO
 		gl.glVertexAttribPointer(shaderAttributeNumber, coordinateSize,

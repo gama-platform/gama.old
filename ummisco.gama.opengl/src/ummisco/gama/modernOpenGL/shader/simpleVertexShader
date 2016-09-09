@@ -21,5 +21,5 @@ void main(void)
 	varying_Color = attribute_Color;
 	pass_textureCoords = attribute_TextureCoords;
 	//gl_Position = vec4(attribute_Position.x-1.5,attribute_Position.y-1.5,attribute_Position.z,1);
-	gl_Position = vec4(attribute_Position.x/100-0.5,attribute_Position.y/100-0.5,attribute_Position.z,1);
+	gl_Position = vec4(attribute_Position.x-0.5,attribute_Position.y-0.5,attribute_Position.z,1);
 }

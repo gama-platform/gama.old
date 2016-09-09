@@ -65,6 +65,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 	private Matrix4f projectionMatrix;
 
 	private ModernDrawer drawer;
+	public boolean renderToTexture = true;
 	
 	private final PickingState pickingState = new PickingState();
 	public boolean colorPicking = false;
