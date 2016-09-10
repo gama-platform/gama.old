@@ -87,7 +87,7 @@ public class ModelDescription extends SpeciesDescription {
 	public String getAlias() {
 		return alias;
 	}
-	
+
 	public boolean isMicroModel() {
 		return alias != null && !alias.isEmpty();
 	}
@@ -200,12 +200,10 @@ public class ModelDescription extends SpeciesDescription {
 		if (isBuiltIn()) {
 			return;
 		}
-		if (experiments != null) {
-			experiments.clear();
-			experiments = null;
-		}
-		types.dispose();
 		super.dispose();
+		experiments = null;
+		types.dispose();
+
 	}
 
 	/**

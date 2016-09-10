@@ -52,9 +52,9 @@ public class StatementDescription extends SymbolDescription {
 
 	private static int COMMAND_INDEX = 0;
 
-	private IDescription previousDescription;
+	protected IDescription previousDescription;
 	/* If the statement makes reference to another species */
-	private SpeciesDescription denotedSpecies;
+	protected SpeciesDescription denotedSpecies;
 	private boolean denotedSpeciesComputed;
 	private final boolean isAbstract;
 
@@ -83,13 +83,11 @@ public class StatementDescription extends SymbolDescription {
 		if (isBuiltIn()) {
 			return;
 		}
-
-		if (args != null) {
-			args.clear();
-		}
+		super.dispose();
+		args = null;
 		previousDescription = null;
 		denotedSpecies = null;
-		super.dispose();
+
 	}
 
 	@Override

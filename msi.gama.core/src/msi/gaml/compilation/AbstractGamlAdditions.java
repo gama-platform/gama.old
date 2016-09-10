@@ -89,7 +89,8 @@ import msi.gaml.types.Types;
 public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public final static List<String> ARCHITECTURES = new ArrayList();
-	private final static Map<Set<Class>, Set<IDescription>> ALL_ADDITIONS = new THashMap();
+	// private final static Map<Set<Class>, Set<IDescription>> ALL_ADDITIONS =
+	// new THashMap();
 	private final static Map<String, Class> SKILL_CLASSES = new THashMap();
 	private final static GamlProperties SPECIES_SKILLS = new GamlProperties();
 	private final static Map<Class, ISkill> SKILL_INSTANCES = new THashMap();
@@ -503,27 +504,27 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static Set<IDescription> getAllChildrenOf(final Class base, final Set<Class<? extends ISkill>> skills) {
-		final Set<Class> key = new HashSet();
-		if (base != null) {
-			key.add(base);
-		}
-		key.addAll(skills);
-		Set<IDescription> children = ALL_ADDITIONS.get(key);
-		if (children == null) {
-			children = new LinkedHashSet();
-			final List<Class> classes = JavaUtils.collectImplementationClasses(base, skills, ADDITIONS.keySet());
-			// scope.getGui().debug("#### Adding implementation classes " +
-			// classes);
-			for (final Class c1 : classes) {
-				final List<IDescription> toAdd = getAdditions(c1);
-				// scope.getGui().debug(" #### " + c1.getSimpleName() + ": " +
-				// toAdd);
-				if (toAdd != null && !toAdd.isEmpty()) {
-					children.addAll(toAdd);
-				}
+		// final Set<Class> key = new HashSet();
+		// if (base != null) {
+		// key.add(base);
+		// }
+		// key.addAll(skills);
+		// Set<IDescription> children = ALL_ADDITIONS.get(key);
+		// if (children == null) {
+		final Set<IDescription> children = new LinkedHashSet();
+		final List<Class> classes = JavaUtils.collectImplementationClasses(base, skills, ADDITIONS.keySet());
+		// scope.getGui().debug("#### Adding implementation classes " +
+		// classes);
+		for (final Class c1 : classes) {
+			final List<IDescription> toAdd = getAdditions(c1);
+			// scope.getGui().debug(" #### " + c1.getSimpleName() + ": " +
+			// toAdd);
+			if (toAdd != null && !toAdd.isEmpty()) {
+				children.addAll(toAdd);
 			}
-			ALL_ADDITIONS.put(key, children);
 		}
+		// ALL_ADDITIONS.put(key, children);
+		// }
 		return children;
 	}
 

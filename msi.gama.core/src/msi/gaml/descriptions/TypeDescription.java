@@ -414,15 +414,14 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
+
+		super.dispose();
 		if (isBuiltIn()) {
 			return;
 		}
-		if (actions != null)
-			actions.clear();
-		if (attributes != null) {
-			attributes.clear();
-		}
-		super.dispose();
+		actions = null;
+		attributes = null;
+		parent = null;
 	}
 
 	protected void inheritFromParent() {

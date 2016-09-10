@@ -56,6 +56,16 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		}
 	};
 
+	public static final DescriptionVisitor DISPOSING_VISITOR = new DescriptionVisitor<IDescription>() {
+
+		@Override
+		public boolean visit(final IDescription desc) {
+			desc.dispose();
+			return true;
+
+		}
+	};
+
 	public static abstract class FacetVisitor implements TObjectObjectProcedure<String, IExpressionDescription> {
 
 		@Override

@@ -2,11 +2,11 @@ package msi.gaml.descriptions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.expressions.IExpression;
@@ -17,7 +17,7 @@ import msi.gaml.types.IType;
 
 public class StatementWithChildrenDescription extends StatementDescription {
 
-	protected Map<String, IVarExpression> temps;
+	protected THashMap<String, IVarExpression> temps;
 	protected final boolean canHaveTemps;
 	protected List<IDescription> children;
 
@@ -27,14 +27,6 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		super(keyword, superDesc, cp, hasArgs, source, facets);
 		canHaveTemps = hasScope;
 	}
-
-	// @Override
-	// public List<IDescription> getChildren() {
-	// if (children == null) {
-	// children = new ArrayList();
-	// }
-	// return children;
-	// }
 
 	@Override
 	public boolean visitChildren(final DescriptionVisitor visitor) {
@@ -60,15 +52,18 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	@Override
 	public void dispose() {
-		if (children != null) {
-			for (final IDescription c : children) {
-				c.dispose();
-			}
-			children.clear();
-		}
-		if (temps != null) {
-			temps.clear();
-		}
+		super.dispose();
+		children = null;
+		if (temps != null)
+			temps.forEachValue(new TObjectProcedure<IVarExpression>() {
+
+				@Override
+				public boolean execute(final IVarExpression object) {
+					object.dispose();
+					return true;
+				}
+			});
+		temps = null;
 	}
 
 	@Override

@@ -321,6 +321,7 @@ public abstract class SymbolDescription implements IDescription {
 		if (isBuiltIn()) {
 			return;
 		}
+		visitOwnChildren(DISPOSING_VISITOR);
 		if (hasFacets())
 			facets.dispose();
 		enclosing = null;

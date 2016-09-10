@@ -38,7 +38,6 @@ public class PrimitiveDescription extends StatementDescription {
 	public PrimitiveDescription(final IDescription superDesc, final EObject source, final ChildrenProvider children,
 			final Facets facets, final String plugin) {
 		super(IKeyword.PRIMITIVE, superDesc, children, true, source, facets);
-		// System.out.println("facets of primitive " + facets);
 		this.plugin = plugin;
 	}
 
@@ -54,15 +53,12 @@ public class PrimitiveDescription extends StatementDescription {
 			return "";
 		}
 		final StringBuilder sb = new StringBuilder(200);
-		String s = d.value(); /* AbstractGamlDocumentation.getMain(getDoc()); */
+		String s = d.value();
 		if (s != null && !s.isEmpty()) {
 			sb.append(s);
 			sb.append("<br/>");
 		}
-		s = d.deprecated(); /*
-							 * AbstractGamlDocumentation.getDeprecated(getDoc())
-							 * ;
-							 */
+		s = d.deprecated();
 		if (s != null && !s.isEmpty()) {
 			sb.append("<b>Deprecated</b>: ");
 			sb.append("<i>");
@@ -125,17 +121,6 @@ public class PrimitiveDescription extends StatementDescription {
 	public PrimitiveDescription copy(final IDescription into) {
 		final PrimitiveDescription desc = new PrimitiveDescription(into, element,
 				args != null ? new ChildrenProvider(args.values()) : ChildrenProvider.NONE, getFacetsCopy(), plugin);
-		// if (args != null) {
-		// args.forEachValue(new TObjectProcedure<StatementDescription>() {
-		//
-		// @Override
-		// public boolean execute(final StatementDescription b) {
-		// desc.addChild(b.copy(desc));
-		// return true;
-		// }
-		//
-		// });
-		// }
 		desc.originName = getOriginName();
 		desc.setHelper(helper, method);
 		return desc;
@@ -153,9 +138,13 @@ public class PrimitiveDescription extends StatementDescription {
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
 		meta.put(GamlProperties.PLUGINS, plugin);
-		if (isBuiltIn()) {
-			meta.put(GamlProperties.ACTIONS, getName());
-		}
+		meta.put(GamlProperties.ACTIONS, getName());
 	}
 
+	@Override
+	public void dispose() {
+		previousDescription = null;
+		enclosing = null;
+		denotedSpecies = null;
+	}
 }

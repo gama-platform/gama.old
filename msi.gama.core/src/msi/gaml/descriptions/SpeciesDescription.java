@@ -105,28 +105,16 @@ public class SpeciesDescription extends TypeDescription {
 		if (isBuiltIn()) {
 			return;
 		}
-		if (behaviors != null) {
-			behaviors.clear();
-			behaviors = null;
-		}
-		if (aspects != null) {
-			aspects.clear();
-			aspects = null;
-		}
-		if (skills != null) {
-			skills.clear();
-			skills = null;
-		}
+		super.dispose();
+		behaviors = null;
+		aspects = null;
+		skills = null;
 		if (control != null) {
 			control.dispose();
 			control = null;
 		}
+		microSpecies = null;
 
-		if (microSpecies != null) {
-			microSpecies.clear();
-			microSpecies = null;
-		}
-		super.dispose();
 	}
 
 	protected void setSkills(final IExpressionDescription userDefinedSkills, final Set<String> builtInSkills) {
@@ -962,7 +950,7 @@ public class SpeciesDescription extends TypeDescription {
 			meta.put(GamlProperties.SPECIES, getName());
 		}
 	}
-	
+
 	public boolean belongsToAMicroModel() {
 		return getModelDescription().isMicroModel();
 	}
