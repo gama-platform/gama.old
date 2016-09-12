@@ -133,19 +133,20 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					}
 
 				}, SWT.RIGHT);
-		tb.button("menu.reload4", "Reload experiment", "Reload experiment with the current parameters",
-				new SelectionListener() {
-
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						GAMA.reloadFrontmostExperiment();
-					}
-
-					@Override
-					public void widgetDefaultSelected(final SelectionEvent e) {
-						widgetSelected(e);
-					}
-				}, SWT.RIGHT);
+		// tb.button("menu.reload4", "Reload experiment", "Reload experiment
+		// with the current parameters",
+		// new SelectionListener() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent e) {
+		// GAMA.reloadFrontmostExperiment();
+		// }
+		//
+		// @Override
+		// public void widgetDefaultSelected(final SelectionEvent e) {
+		// widgetSelected(e);
+		// }
+		// }, SWT.RIGHT);
 		tb.button("menu.add2", "Add simulation",
 				"Add a new simulation (with the current parameters) to this experiment", new SelectionListener() {
 

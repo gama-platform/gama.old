@@ -507,6 +507,24 @@
                </visibleWhen>
             </control>
             <command
+                  commandId="msi.gama.application.commands.ReloadSimulation"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.reload4.png"
+                  label="Reload Experiment"
+                  mnemonic="M1+M2+R"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isInSimulationPerspective">
+                     </reference>
+                     <reference
+                           definitionId="isSimulationExisting">
+                     </reference>
+                  </and>
+               </visibleWhen>
+            </command>
+            <command
                   commandId="msi.gama.application.commands.Cancel"
                   icon="platform:/plugin/ummisco.gama.ui.shared/icons/toolbar.stop2.png"
                   label="Close Experiment"
