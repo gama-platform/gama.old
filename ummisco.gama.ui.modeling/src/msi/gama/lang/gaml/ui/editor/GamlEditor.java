@@ -103,8 +103,8 @@ import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gaml.compilation.IModelBuilder;
-import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.ValidationContext;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors;
@@ -355,7 +355,7 @@ public class GamlEditor extends XtextEditor
 		super.createPartControl(editor);
 		final ISourceViewer viewer = getSourceViewer();
 		if (viewer instanceof GamaSourceViewer) {
-			((GamaSourceViewer) viewer).setResourceListener(this, indexer);
+			((GamaSourceViewer) viewer).setResourceListener(this);
 		}
 		toolbarParent.layout();
 		installGestures();
@@ -471,7 +471,8 @@ public class GamlEditor extends XtextEditor
 	}
 
 	@Override
-	public void validationEnded(final Collection<? extends IDescription> newExperiments, final ValidationContext status) {
+	public void validationEnded(final Collection<? extends IDescription> newExperiments,
+			final ValidationContext status) {
 		if (newExperiments == null && state != null)
 			updateToolbar(state, true);
 		else {

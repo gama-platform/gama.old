@@ -112,8 +112,7 @@ public class ImportedInButton {
 			public void process(final XtextResource resource) throws Exception {
 				final String platformString = resource.getURI().toPlatformString(true);
 				final URI uri = URI.createPlatformResourceURI(platformString, false);
-				if (indexer.isImported(uri))
-					map.addAll(indexer.directImportersOf(uri));
+				map.addAll(indexer.directImportersOf(uri));
 			}
 		});
 		return map;

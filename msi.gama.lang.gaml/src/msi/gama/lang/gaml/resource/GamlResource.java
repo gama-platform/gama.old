@@ -72,7 +72,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public ValidationContext getErrorCollector() {
-		return indexer.getValidationContext(this);
+		return GamlResourcesHelper.getValidationContext(this);
 	}
 
 	public boolean hasSemanticErrors() {
@@ -85,7 +85,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public void resetErrorCollector() {
-		indexer.discardValidationContext(this);
+		GamlResourcesHelper.discardValidationContext(this);
 	}
 
 	@Override
@@ -94,7 +94,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public void updateWith(final ModelDescription model, final boolean newState) {
-		indexer.updateState(getURI(), model, newState, getErrorCollector());
+		GamlResourcesHelper.updateState(getURI(), model, newState, getErrorCollector());
 	}
 
 	public ISyntacticElement getSyntacticContents() {
@@ -181,8 +181,8 @@ public class GamlResource extends LazyLinkingResource {
 		if (hasErrors())
 			return null;
 
-		if (!shouldValidate())
-			return null;
+		// if (!shouldValidate())
+		// return null;
 
 		if (imports == null || hasSemanticErrors())
 			return null;
@@ -238,7 +238,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public boolean isEdited() {
-		return indexer.isEdited(getURI());
+		return GamlResourcesHelper.isEdited(getURI());
 	}
 
 	// public GamlProperties getRequires() {
@@ -295,9 +295,9 @@ public class GamlResource extends LazyLinkingResource {
 		return !getErrors().isEmpty() || getParseResult().hasSyntaxErrors();
 	}
 
-	public boolean shouldValidate() {
-		return indexer.needsToBuild(getURI());
-	}
+	// public boolean shouldValidate() {
+	// return indexer.needsToBuild(getURI());
+	// }
 
 	public IDocManager getDocumentationManager() {
 		return documenter;

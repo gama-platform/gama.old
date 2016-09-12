@@ -97,7 +97,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
-		binder.bind(IModelIndexer.class).to(BaseIndexer.class);
+		binder.bind(IModelIndexer.class).toInstance(BaseIndexer.INSTANCE);
 		binder.bind(IModelBuilder.class).toInstance(GamlModelBuilder.INSTANCE);
 		// binder.bind(IGenerator.class).to(GamlGenerator.class);
 		binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);

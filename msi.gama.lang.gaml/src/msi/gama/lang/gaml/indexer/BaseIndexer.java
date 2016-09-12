@@ -18,41 +18,25 @@ import org.jgrapht.graph.SimpleDirectedGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 
 import com.google.common.base.Objects;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.google.common.collect.Iterators;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
-import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.descriptions.ValidationContext;
 
 @Singleton
 public class BaseIndexer implements IModelIndexer {
 
-	protected final Map<URI, ValidationContext> resourceErrors = new THashMap(2);
+	public static final BaseIndexer INSTANCE = new BaseIndexer();
+
 	protected DirectedGraph<URI, Edge> index = new SimpleDirectedGraph(Edge.class);
-
-	private final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache = CacheBuilder.newBuilder()
-			.build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
-
-				@Override
-				public THashMap load(final URI key) throws Exception {
-					return new THashMap();
-				}
-			});
 
 	protected final static TOrderedHashMap EMPTY_MAP = new TOrderedHashMap();
 
@@ -82,24 +66,6 @@ public class BaseIndexer implements IModelIndexer {
 				return allLabeledImportsOf(r.getURI());
 			}
 		});
-	}
-
-	@Override
-	public boolean isEdited(final URI uri) {
-		return false;
-	}
-
-	@Override
-	public void updateState(final URI uri, final ModelDescription model, final boolean newState,
-			final ValidationContext status) {
-	}
-
-	@Override
-	public void addResourceListener(final URI uri, final IGamlBuilderListener listener) {
-	}
-
-	@Override
-	public void removeResourceListener(final IGamlBuilderListener listener) {
 	}
 
 	private class Edge {
@@ -275,14 +241,6 @@ public class BaseIndexer implements IModelIndexer {
 		return Collections.EMPTY_SET;
 	}
 
-	@Override
-	public boolean isImported(final URI uri) {
-		final URI newURI = properlyEncodedURI(uri);
-		if (!index.containsVertex(newURI))
-			return false;
-		return index.inDegreeOf(newURI) > 0;
-	}
-
 	/**
 	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#directImportsOf(org.eclipse.emf.common.util.URI)
 	 */
@@ -294,8 +252,7 @@ public class BaseIndexer implements IModelIndexer {
 		return Collections.EMPTY_SET;
 	}
 
-	@Override
-	public TOrderedHashMap<URI, String> allLabeledImportsOf(final URI uri) {
+	private TOrderedHashMap<URI, String> allLabeledImportsOf(final URI uri) {
 		final URI newURI = properlyEncodedURI(uri);
 		final TOrderedHashMap<URI, String> result = new TOrderedHashMap();
 		allLabeledImports(newURI, null, result);
@@ -339,32 +296,6 @@ public class BaseIndexer implements IModelIndexer {
 	}
 
 	@Override
-	public THashMap<EObject, IGamlDescription> getDocumentationCache(final URI uri) {
-		return documentationCache.getUnchecked(properlyEncodedURI(uri));
-	}
-
-	@Override
-	public void removeDocumentation(final URI toRemove) {
-		documentationCache.invalidate(properlyEncodedURI(toRemove));
-	}
-
-	@Override
-	public ValidationContext getValidationContext(final GamlResource r) {
-		final URI newURI = properlyEncodedURI(r.getURI());
-		if (!resourceErrors.containsKey(newURI))
-			resourceErrors.put(newURI, new ValidationContext(newURI, r.hasErrors(), r.getDocumentationManager()));
-
-		final ValidationContext result = resourceErrors.get(newURI);
-		result.hasInternalSyntaxErrors(r.hasErrors());
-		return result;
-	}
-
-	@Override
-	public void discardValidationContext(final GamlResource gamlResource) {
-		resourceErrors.remove(properlyEncodedURI(gamlResource.getURI()));
-	}
-
-	@Override
 	public boolean equals(final URI uri1, final URI uri2) {
 		if (uri1 == null)
 			return uri2 == null;
@@ -376,40 +307,6 @@ public class BaseIndexer implements IModelIndexer {
 	@Override
 	public void eraseIndex() {
 		index = new SimpleDirectedGraph(Edge.class);
-	}
-	// THIS PART OF CODE HAS BEEN ABANDONED FOR THE MOMENT
-	// Set<URI> resourcesToBuild = new THashSet();
-
-	// @Override
-	// public void addResourcesToBuild(final URI uri) {
-	// // THIS PART OF CODE HAS BEEN ABANDONED FOR THE MOMENT
-	// // resourcesToBuild.add(properlyEncodedURI(uri));
-	// }
-	//
-	// @Override
-	// public void removeResourcesToBuild(final URI uri) {
-	// // THIS PART OF CODE HAS BEEN ABANDONED FOR THE MOMENT
-	// // resourcesToBuild.remove(properlyEncodedURI(uri));
-	// }
-
-	@Override
-	public boolean needsToBuild(final URI uri) {
-		// THIS PART OF CODE HAS BEEN ABANDONED FOR THE MOMENT
-		// if (resourcesToBuild.contains(properlyEncodedURI(uri)))
-		// return true;
-		// AD 08/16: if the model is imported and not edited, we do nothing. If
-		// it is imported, then it means it will be validated at one point
-		// together with its importer. Otherwise, we do not care about its
-		// validation. Saves a lot of memory and validation speed, but error
-		// markers someimes do not appear in the navigator
-		// final boolean edited = isEdited(uri);
-		// if (edited)
-		// return true;
-		// final boolean imported = isImported(uri);
-		// if (imported)
-		// return false;
-		return true;
-
 	}
 
 }

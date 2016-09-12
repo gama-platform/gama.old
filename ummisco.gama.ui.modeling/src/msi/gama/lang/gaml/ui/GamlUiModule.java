@@ -54,7 +54,6 @@ import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
-import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.ui.contentassist.GamlTemplateProposalProvider;
 import msi.gama.lang.gaml.ui.decorators.GamlMarkerUpdater;
@@ -99,19 +98,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 		binder.bind(IResourceLoader.class).toProvider(ResourceLoaderProviders.getParallelLoader());
 		binder.bind(IResourceClusteringPolicy.class).to(DynamicResourceClusteringPolicy.class);
-		binder.bind(IModelIndexer.class).toInstance(WorkspaceIndexer.INSTANCE);
 		binder.bind(IModelRunner.class).to(ModelRunner.class);
 		binder.bind(XtextDocumentProvider.class).to(GamlDocumentProvider.class);
 		binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
 		binder.bind(BuildScheduler.class).to(GamaBuildScheduler.class);
-		// binder.bind(IResourceLoader.class)
-		// .annotatedWith(Names.named(ClusteringBuilderState.RESOURCELOADER_GLOBAL_INDEX))
-		// .toProvider(ResourceLoaderProviders.getParallelLoader());
-		//
-		// binder.bind(IResourceLoader.class)
-		// .annotatedWith(Names.named(ClusteringBuilderState.RESOURCELOADER_CROSS_LINKING))
-		// .toProvider(ResourceLoaderProviders.getParallelLoader());
-		// binder.bind(IBuilderState.class).to(GamlBuilderState.class).asEagerSingleton();
 	}
 
 	@Override

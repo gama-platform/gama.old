@@ -8,13 +8,8 @@ import org.eclipse.emf.ecore.EObject;
 
 import com.google.inject.ImplementedBy;
 
-import gnu.trove.map.hash.THashMap;
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.descriptions.ValidationContext;
 
 /**
  * the indexer is used to maintain information about the relationships between
@@ -75,41 +70,8 @@ public interface IModelIndexer {
 
 	TOrderedHashMap<URI, String> allLabeledImportsOf(GamlResource resource);
 
-	boolean isImported(URI uri);
-
 	public TOrderedHashMap<GamlResource, String> validateImportsOf(final GamlResource r);
 
-	/**
-	 * Whether the document at the current URI is edited or not
-	 * 
-	 * @param uri
-	 * @return
-	 */
-	boolean isEdited(URI uri);
-
-	public void updateState(final URI uri, final ModelDescription model, final boolean newState,
-			final ValidationContext status);
-
-	public THashMap<EObject, IGamlDescription> getDocumentationCache(final URI uri);
-
-	void removeDocumentation(URI toRemove);
-
-	TOrderedHashMap<URI, String> allLabeledImportsOf(URI uri);
-
-	ValidationContext getValidationContext(GamlResource gamlResource);
-
-	void discardValidationContext(GamlResource gamlResource);
-
 	boolean equals(URI uri, URI uri2);
-
-	void addResourceListener(URI uri, IGamlBuilderListener listener);
-
-	void removeResourceListener(IGamlBuilderListener listener);
-
-	// void addResourcesToBuild(URI uri);
-
-	// void removeResourcesToBuild(URI uri);
-
-	boolean needsToBuild(URI uri);
 
 }

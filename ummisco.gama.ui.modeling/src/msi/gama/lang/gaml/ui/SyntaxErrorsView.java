@@ -22,6 +22,7 @@ import org.eclipse.ui.views.markers.MarkerSupportView;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
+import msi.gama.lang.gaml.indexer.BaseIndexer;
 import ummisco.gama.ui.commands.RefreshHandler;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -139,7 +140,7 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 			public void widgetSelected(final SelectionEvent e) {
 				final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				try {
-					WorkspaceIndexer.INSTANCE.eraseIndex();
+					BaseIndexer.INSTANCE.eraseIndex();
 					workspace.build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor() {
 
 						@Override

@@ -27,13 +27,11 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
-import com.google.inject.Inject;
-
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.resource.GamlResourcesHelper;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.ModelDescription;
@@ -50,7 +48,6 @@ public class GamlResourceDocManager implements IDocManager {
 	// public final static GamlResourceDocManager INSTANCE = new
 	// GamlResourceDocManager();
 
-	@Inject private IModelIndexer indexer;
 	private final ConcurrentLinkedQueue<ModelDescription> cleanupTasks = new ConcurrentLinkedQueue();
 	private final ConcurrentLinkedQueue<DocumentationTask> documentationQueue = new ConcurrentLinkedQueue();
 	private final Job documentationJob = new Job("Documentation") {
@@ -133,7 +130,7 @@ public class GamlResourceDocManager implements IDocManager {
 	THashMap<EObject, IGamlDescription> getDocumentationCache(final Resource resource) {
 		if (resource == null)
 			return null;
-		return indexer.getDocumentationCache(resource.getURI());
+		return GamlResourcesHelper.getDocumentationCache(resource.getURI());
 	}
 
 	// To be called once the validation has been done
