@@ -15,6 +15,7 @@ import com.jogamp.opengl.GL2;
 import ummisco.gama.modernOpenGL.shader.AbstractShader;
 import ummisco.gama.modernOpenGL.shader.BillboardingTextShaderProgram;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
+import ummisco.gama.modernOpenGL.shader.SimpleShaderProgram;
 import ummisco.gama.modernOpenGL.shader.TextShaderProgram;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.LayerObject;
@@ -22,6 +23,11 @@ import ummisco.gama.opengl.vaoGenerator.ModernLayerStructure;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public class ModernDrawer {
+	
+	private boolean isRenderingToTexture = false;
+	
+	private FrameBufferObject fbo;
+	private int[] fboHandles;
 
 	private LayerObject currentLayer;
 	private HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities;
@@ -143,6 +149,16 @@ public class ModernDrawer {
 		layerStructureMap.clear();
 	}
 	
+	public void prepareFrameBufferObject(int width, int height) {
+		if (renderer.renderToTexture) {
+			if (fbo == null) {
+				fbo = new FrameBufferObject(gl, width, height);
+			}
+			//fbo.cleanUp();
+			fbo.bindFrameBuffer();
+		}
+	}
+	
 	public void redraw() {
 		
 		if (numberOfShaderInTheCurrentLayer == 0) {
@@ -171,7 +187,7 @@ public class ModernDrawer {
 					prepareShader(listOfEntities.get(0), shaderProgram);
 					
 					loadVBO(listOfEntities,key,currentShaderNumber,shaderProgram);
-					drawVBO(typeOfDrawingMap.get(shaderProgram),currentShaderNumber);
+					drawVBO(typeOfDrawingMap.get(shaderProgram));
 					
 					shaderProgram.stop();
 					currentShaderNumber++;
@@ -186,6 +202,92 @@ public class ModernDrawer {
 		shaderLoaded.clear();
 		mapEntities.clear();
 		
+	}
+	
+	public void renderToTexture() {
+		isRenderingToTexture = true;
+		
+		fboHandles = new int[5];
+		this.gl.glGenBuffers(5, fboHandles, 0);
+		
+		fbo.unbindCurrentFrameBuffer();
+
+		SimpleShaderProgram shaderProgram = new SimpleShaderProgram(gl);
+		shaderProgram.start();
+		
+		prepareShader(null, shaderProgram);
+		
+		createScreenSurface(currentShaderNumber,shaderProgram);
+		int[] drawingDefinition = new int[3];
+		// draw triangles
+		drawingDefinition[0] = GL2.GL_TRIANGLES;
+		drawingDefinition[1] = 6; // idx buffer is equal to 6 : it is a quad
+		drawingDefinition[2] = currentShaderNumber;
+		drawVBO(drawingDefinition);
+		
+		shaderProgram.stop();
+		isRenderingToTexture = false;
+	}
+	
+	public void createScreenSurface(int shaderNumber, SimpleShaderProgram shaderProgram) {
+		ArrayList<float[]> listVertices = new ArrayList<float[]>();
+		ArrayList<float[]> listUvMapping = new ArrayList<float[]>();
+		
+		// Keystoning computation
+		// Coordinates of the screen (change this for keystoning effect)
+		float[] p0 = new float[]{-1f, -1f};
+		float[] p1 = new float[]{-1f, 1f};
+		float[] p2 = new float[]{1f, 1f};
+		float[] p3 = new float[]{1f, -1f};
+		
+		float ax = (p2[0] - p0[0])/2f;
+		float ay = (p2[1] - p0[1])/2f;
+		float bx = (p3[0] - p1[0])/2f;
+		float by = (p3[1] - p1[1])/2f;
+		
+		float cross = ax * by - ay * bx;
+
+		if (cross != 0) {
+		  float cy = (p0[1] - p1[1])/2f;
+		  float cx = (p0[0] - p1[0])/2f;
+
+		  float s = (ax * cy - ay * cx) / cross;
+
+		  float t = (bx * cy - by * cx) / cross;
+
+		  float q0 = 1 / (1 - t);
+		  float q1 = 1 / (1 - s);
+		  float q2 = 1 / t;
+		  float q3 = 1 / s;
+					
+		  // I can now pass (u * q, v * q, q) to OpenGL
+		  listVertices.add(new float[]{p0[0],p0[1],1f,
+				p1[0],p1[1],0f,
+				p2[0],p2[1],0f,
+				p3[0],p3[1],1f});
+		  listUvMapping.add(new float[]{0f,1f*q0,0f,q0,
+				0f,0f,0f,q1,
+				1f*q2,0f,0f,q2,
+				1f*q3,1f*q3,0f,q3});
+		}
+
+
+		// VERTICES POSITIONS BUFFER
+		storeDataInAttributeList(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,listVertices,shaderNumber);
+		
+		// UV MAPPING (If a texture is defined)
+		storeDataInAttributeList(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
+		gl.glActiveTexture(GL.GL_TEXTURE0);
+		gl.glBindTexture(GL.GL_TEXTURE_2D, fbo.getFBOTexture());
+		
+		// INDEX BUFFER
+		int[] intIdxBuffer = new int[]{0,1,2,0,2,3};
+		IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuffer);
+		// Select the VBO, GPU memory data, to use for colors
+		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, fboHandles[IDX_BUFF_IDX]);
+		int numBytes = intIdxBuffer.length * 4;
+		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
+		//ibIdxBuff.rewind();
 	}
 	
 	public void refresh(LayerObject layer) {
@@ -226,13 +328,13 @@ public class ModernDrawer {
 			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[typeOfDrawing[2]*5+IDX_BUFF_IDX]);
 			//////////////////////////////////
 			
-			drawVBO(typeOfDrawing,typeOfDrawing[2]);
+			drawVBO(typeOfDrawing);
 			
 			shader.stop();
 		}
 	}
 	
-	private void drawVBO(int[] typeOfDrawing, int shaderNumber) {
+	private void drawVBO(int[] typeOfDrawing) {
 		gl.glDrawElements(typeOfDrawing[0], typeOfDrawing[1], GL2.GL_UNSIGNED_INT, 0);
 	}
 	
@@ -276,6 +378,9 @@ public class ModernDrawer {
 		else if (shaderProgram instanceof TextShaderProgram) {
 			prepareShader(entity, (TextShaderProgram)shaderProgram);
 		}
+		else if (shaderProgram instanceof SimpleShaderProgram) {
+			prepareShader(entity, (SimpleShaderProgram)shaderProgram);
+		}
 		shaderProgram.setLayerAlpha(currentLayer.getAlpha().floatValue());
 	}
 	
@@ -304,6 +409,11 @@ public class ModernDrawer {
 			shaderProgram.loadTexture(0);
 			shaderProgram.storeTextureID(entity.getTextureID());
 		}
+	}
+	
+	private void prepareShader(DrawingEntity entity, SimpleShaderProgram shaderProgram) {
+		shaderProgram.loadTexture(0);
+		shaderProgram.storeTextureID(fbo.getFBOTexture());
 	}
 	
 	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		
@@ -444,10 +554,11 @@ public class ModernDrawer {
 			case AbstractShader.COLOR_ATTRIBUTE_IDX : coordinateSize = 4; break; // r, g, b, a
 			case AbstractShader.POSITION_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
 			case AbstractShader.NORMAL_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
-			case AbstractShader.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
+			case AbstractShader.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = (isRenderingToTexture) ? 4 : 2; break; // s, t, r, q for textureRendering, u, v otherwise
 		}
 		// Select the VBO, GPU memory data, to use for data
-		gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[shaderNumber*5+bufferAttributeNumber]);
+		if (!isRenderingToTexture) gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[shaderNumber*5+bufferAttributeNumber]);
+		else gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, fboHandles[bufferAttributeNumber]);
 		
 		// Associate Vertex attribute with the last bound VBO
 		gl.glVertexAttribPointer(shaderAttributeNumber, coordinateSize,

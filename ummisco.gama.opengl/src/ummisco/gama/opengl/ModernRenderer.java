@@ -65,7 +65,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 	private Matrix4f projectionMatrix;
 
 	private ModernDrawer drawer;
-
+	public boolean renderToTexture = true;
+	
 	private final PickingState pickingState = new PickingState();
 	public boolean colorPicking = false;
 	private Envelope3D ROIEnvelope = null;
@@ -110,7 +111,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 
 		glu = new GLU();
-		final Color background = data.getBackgroundColor();
+		final Color background = Color.black;
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
 				1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
@@ -144,6 +145,9 @@ public class ModernRenderer extends Abstract3DRenderer {
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
 
+		if (renderToTexture)
+			drawer.prepareFrameBufferObject(this.getDisplayWidth(),this.getDisplayHeight());
+		
 		final Color background = data.getBackgroundColor();
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
 				1.0f);
@@ -160,6 +164,9 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 		this.rotateModel(gl);
 		drawScene(gl);
+		if (renderToTexture) {			
+			drawer.renderToTexture();
+		}
 
 		if (ROIEnvelope != null) {
 			drawROI(gl);

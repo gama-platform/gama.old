@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import javax.vecmath.Vector3f;
-
 import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
@@ -33,7 +31,7 @@ abstract class AbstractTransformer {
 	protected boolean isLightInteraction = true;
 	protected boolean isWireframe = false;
 	protected ArrayList<int[]> faces = new ArrayList<int[]>(); // way to construct a face from the indices of the coordinates (anti clockwise for front face)
-	protected ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); // list that store all the edges erased thanks to the smooth shading (those edges must
+	private ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); // list that store all the edges erased thanks to the smooth shading (those edges must
 	// not be displayed when displaying the borders !)
 	protected float[] coords;
 	protected Coordinate[] coordsWithDoublons;
@@ -45,7 +43,7 @@ abstract class AbstractTransformer {
 	protected float[] coordsForBorder;
 	protected float[] idxForBorder;
 	
-	protected HashMap<Integer,Integer> mapOfOriginalIdx = new HashMap<Integer,Integer>(); 
+	private HashMap<Integer,Integer> mapOfOriginalIdx = new HashMap<Integer,Integer>(); 
 	
 	protected int[] topFace;
 	protected int[] bottomFace;

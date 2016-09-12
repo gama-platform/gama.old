@@ -33,6 +33,7 @@ import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import ummisco.gama.opengl.Abstract3DRenderer;
+import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.TextureCache;
 import ummisco.gama.webgl.SceneReceiver;
 import ummisco.gama.webgl.SimpleLayer;

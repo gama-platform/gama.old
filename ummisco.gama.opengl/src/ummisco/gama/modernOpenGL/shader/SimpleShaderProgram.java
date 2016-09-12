@@ -4,38 +4,49 @@ import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
-public class TextShaderProgram extends AbstractShader {
+public class SimpleShaderProgram extends AbstractShader {
 	
-	private static String VERTEX_FILE = "textVertexShader";		
-	private static String FRAGMENT_FILE = "textFragmentShader";
+	private static String VERTEX_FILE = "simpleVertexShader";		
+	private static String FRAGMENT_FILE = "simpleFragmentShader";
 	
 	private int location_texture;
-	private int location_fontWidth; // only for string entities
-	private int location_fontEdge; // only for string entities
+	
+	private boolean useNormal = false;
+	private boolean useTexture = true;
 	
 	private int textureIDStored = -1;
 	
-	public TextShaderProgram(GL2 gl) {
+	public SimpleShaderProgram(GL2 gl) {
 		super(gl,VERTEX_FILE,FRAGMENT_FILE);
+	}
+	
+	public SimpleShaderProgram(SimpleShaderProgram shader) {
+		super(shader.gl,VERTEX_FILE,FRAGMENT_FILE);
 	}
 	
 	@Override
 	protected void bindAttributes() {
 		super.bindAttribute(POSITION_ATTRIBUTE_IDX, "attribute_Position");
 		super.bindAttribute(COLOR_ATTRIBUTE_IDX, "attribute_Color");
-		super.bindAttribute(UVMAPPING_ATTRIBUTE_IDX, "attribute_TextureCoords");
+		super.bindAttribute(UVMAPPING_ATTRIBUTE_IDX, "attribute_TextureCoords3D");
 	}
 	
 	@Override
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
 		location_texture = getUniformLocation("textureSampler");
-		location_fontWidth = getUniformLocation("fontWidth");
-		location_fontEdge = getUniformLocation("fontEdge");		
 	}
 	
 	public void loadTexture(int textureId) {
 		super.loadInt(location_texture,textureId);
+	}
+	
+	public boolean useTexture() {
+		return useTexture;
+	}
+	
+	public boolean useNormal() {
+		return useNormal;
 	}
 
 	public void storeTextureID(int textureID) {
@@ -46,26 +57,8 @@ public class TextShaderProgram extends AbstractShader {
 		return textureIDStored;
 	}
 
-	public void loadFontWidth(float fontWidth) {
-		super.loadFloat(location_fontWidth, fontWidth);
-	}
-
-	public void loadFontEdge(float fontEdge) {
-		super.loadFloat(location_fontEdge, fontEdge);
-	}
-
 	@Override
 	public Vector3f getTranslation() {
 		return new Vector3f(0,0,0);
-	}
-
-	@Override
-	public boolean useNormal() {
-		return false;
-	}
-
-	@Override
-	public boolean useTexture() {
-		return true;
 	}
 }

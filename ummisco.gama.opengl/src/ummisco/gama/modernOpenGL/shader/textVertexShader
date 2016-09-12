@@ -22,8 +22,6 @@ varying vec2    pass_textureCoords;
 
 void main(void)
 {
-	vec4 worldPosition = transformationMatrix * vec4(attribute_Position,1.0);
-
 	varying_Color = attribute_Color;
 	mat4 modelView = viewMatrix * transformationMatrix;
 		

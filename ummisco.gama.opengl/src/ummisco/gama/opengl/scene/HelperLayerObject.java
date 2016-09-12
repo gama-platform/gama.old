@@ -27,7 +27,7 @@ public class HelperLayerObject extends LayerObject {
 		super.draw(gl);
 	}
 	
-	public void updateObjectList() {
+	private void updateObjectList() {
 		objects.clear();
 		if (renderer.getRotationHelperPosition() != null)
 		{
