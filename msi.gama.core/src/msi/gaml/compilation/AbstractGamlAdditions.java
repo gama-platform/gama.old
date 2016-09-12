@@ -11,9 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import static msi.gama.common.interfaces.IKeyword.AGENT;
 import static msi.gama.common.interfaces.IKeyword.EXPERIMENT;
-import static msi.gama.common.interfaces.IKeyword.MODEL;
 import static msi.gama.common.interfaces.IKeyword.OF;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 import static msi.gama.common.interfaces.IKeyword._DOT;
@@ -25,12 +23,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.base.Function;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Multimap;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
@@ -40,22 +42,18 @@ import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IExperimentAgentCreator;
 import msi.gama.common.interfaces.IExperimentAgentCreator.ExperimentAgentDescription;
 import msi.gama.common.interfaces.IGui;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
-import msi.gama.common.util.ExperimentManager;
 import msi.gama.common.util.JavaUtils;
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.IGamaFile;
-import msi.gaml.architecture.IArchitecture;
-import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.PrimitiveDescription;
+import msi.gaml.descriptions.SkillDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolProto;
@@ -69,9 +67,7 @@ import msi.gaml.extensions.genstar.IGamaPopulationsLinkerConstructor;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.factories.SymbolFactory;
-import msi.gaml.skills.Skill;
 import msi.gaml.types.GamaFileType;
-import msi.gaml.types.GamaGenericAgentType;
 import msi.gaml.types.IType;
 import msi.gaml.types.ParametricFileType;
 import msi.gaml.types.Signature;
@@ -88,14 +84,17 @@ import msi.gaml.types.Types;
  */
 public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
-	public final static List<String> ARCHITECTURES = new ArrayList();
-	// private final static Map<Set<Class>, Set<IDescription>> ALL_ADDITIONS =
-	// new THashMap();
-	private final static Map<String, Class> SKILL_CLASSES = new THashMap();
-	private final static GamlProperties SPECIES_SKILLS = new GamlProperties();
-	private final static Map<Class, ISkill> SKILL_INSTANCES = new THashMap();
-	private final static Map<Class, List<IDescription>> ADDITIONS = new THashMap();
-	private final static Map<Class, List<OperatorProto>> FIELDS = new THashMap();
+	public static final Set<String> CONSTANTS = new HashSet();
+	final static Multimap<Class, IDescription> ADDITIONS = HashMultimap.create();
+	private static Function<Class, Collection<IDescription>> INTO_DESCRIPTIONS = new Function<Class, Collection<IDescription>>() {
+
+		@Override
+		public Collection<IDescription> apply(final Class input) {
+			return ADDITIONS.get(input);
+		}
+	};
+	private final static Multimap<Class, OperatorProto> FIELDS = HashMultimap.create();
+	public final static Multimap<Integer, String> VARTYPE2KEYWORDS = HashMultimap.create();
 	public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS = new THashMap<String, IGamaPopulationsLinker>();
 
 	protected static String[] S(final String... strings) {
@@ -134,8 +133,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return Types.get(c);
 	}
 
-	public final static Map<Integer, Set<String>> VARTYPE2KEYWORDS = new TOrderedHashMap();
-
 	public void _display(final String string, final Class class1, final IDisplayCreator d) {
 		CONSTANTS.add(string);
 		final DisplayDescription dd = new DisplayDescription(d, string, GamaBundleLoader.CURRENT_PLUGIN_NAME);
@@ -146,116 +143,13 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		CONSTANTS.add(string);
 		final ExperimentAgentDescription ed = new ExperimentAgentDescription(d, string,
 				GamaBundleLoader.CURRENT_PLUGIN_NAME);
-		ExperimentManager.EXPERIMENTS.put(string, ed);
+		GamaMetaModel.INSTANCE.addExperimentAgentCreator(string, ed);
 	}
 
 	public void _species(final String name, final Class clazz, final IAgentConstructor helper, final String... skills) {
-		final SpeciesProto proto = new SpeciesProto(name, clazz, helper, skills);
+		GamaMetaModel.INSTANCE.addSpecies(name, clazz, helper, skills);
 		DescriptionFactory.addSpeciesNameAsType(name);
-		tempSpecies.put(name, proto);
-
 	}
-
-	public static void buildMetaModel() {
-
-		// We first build "agent" as the root of all other species (incl.
-		// "model")
-		final SpeciesProto ap = tempSpecies.remove(AGENT);
-		// "agent" has no super-species yet
-		final SpeciesDescription agent = buildSpecies(ap, null, null, false, false);
-		((GamaGenericAgentType) Types.builtInTypes.get(IKeyword.AGENT)).setSpecies(agent);
-
-		// We then build "model", sub-species of "agent"
-		final SpeciesProto wp = tempSpecies.remove(MODEL);
-		final ModelDescription model = (ModelDescription) buildSpecies(wp, null, agent, true, false);
-
-		// We close the first loop by putting agent "inside" model
-		agent.setEnclosingDescription(model);
-		model.addChild(agent);
-
-		// We create "experiment" as the root of all experiments, sub-species of
-		// "agent"
-		final SpeciesProto ep = tempSpecies.remove(EXPERIMENT);
-		final SpeciesDescription experiment = buildSpecies(ep, null, agent, false, true);
-		experiment.finalizeDescription();
-		// Types.builtInTypes.addSpeciesType(experiment);
-
-		// We now can attach "model" as a micro-species of "experiment"
-		// model.setEnclosingDescription(experiment);
-		model.addChild(experiment);
-
-		// We then create all other built-in species and attach them to "model"
-		for (final SpeciesProto proto : tempSpecies.values()) {
-			model.addChild(buildSpecies(proto, model, agent, false, false));
-		}
-		tempSpecies.clear();
-		model.buildTypes();
-		model.finalizeDescription();
-	}
-
-	public static SpeciesDescription buildSpecies(final SpeciesProto proto, final SpeciesDescription macro,
-			final SpeciesDescription parent, final boolean isGlobal, final boolean isExperiment) {
-		final Class clazz = proto.clazz;
-		final String name = proto.name;
-		final IAgentConstructor helper = proto.helper;
-		final String[] skills = proto.skills;
-		final String plugin = proto.plugin;
-		final Set<String> allSkills = new HashSet(Arrays.asList(skills));
-		final Set<String> builtInSkills = SPECIES_SKILLS.get(name);
-		if (builtInSkills != null) {
-			allSkills.addAll(builtInSkills);
-		}
-		SpeciesDescription desc;
-		if (!isGlobal) {
-			if (isExperiment)
-				desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
-						allSkills, plugin);
-			else
-				desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
-						plugin);
-		} else {
-			desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
-		}
-
-		// desc.setGlobal(isGlobal);
-		List<IDescription> additions = getAdditions(clazz);
-		if (additions == null) {
-			additions = new ArrayList();
-		}
-		for (final Object c : JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET,
-				ADDITIONS.keySet())) {
-			final List<IDescription> add = getAdditions((Class) c);
-			if (add != null) {
-				additions.addAll(add);
-			}
-		}
-		for (final IDescription d : additions) {
-			d.setOriginName("built-in species " + name);
-		}
-		desc.copyJavaAdditions();
-		desc.inheritFromParent();
-		return desc;
-	}
-
-	private static class SpeciesProto {
-
-		final String name;
-		final String plugin;
-		final Class clazz;
-		final IAgentConstructor helper;
-		final String[] skills;
-
-		public SpeciesProto(final String name, final Class clazz, final IAgentConstructor helper,
-				final String[] skills) {
-			plugin = GamaBundleLoader.CURRENT_PLUGIN_NAME;
-			this.name = name;
-			this.clazz = clazz;
-			this.helper = helper;
-			this.skills = skills;
-		}
-	}
-
-	final static Map<String, SpeciesProto> tempSpecies = new TOrderedHashMap();
 
 	protected void _type(final String keyword, final IType typeInstance, final int id, final int varKind,
 			final Class... wraps) {
@@ -267,28 +161,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		helper.setSkillClass(clazz);
 		GamaFileType.addFileTypeDefinition(string, Types.get(innerType), Types.get(keyType), Types.get(contentType),
 				clazz, helper, s);
-		if (!VARTYPE2KEYWORDS.containsKey(ISymbolKind.Variable.CONTAINER)) {
-			VARTYPE2KEYWORDS.put(ISymbolKind.Variable.CONTAINER, new HashSet());
-		}
-		VARTYPE2KEYWORDS.get(ISymbolKind.Variable.CONTAINER).add(string + "_file");
+		VARTYPE2KEYWORDS.put(ISymbolKind.Variable.CONTAINER, string + "_file");
 	}
 
 	protected void _skill(final String name, final Class clazz, final String... species) {
-		final ISkill skill = Skill.Factory.create(name, clazz, GamaBundleLoader.CURRENT_PLUGIN_NAME);
-		if (skill instanceof AbstractArchitecture) {
-			ARCHITECTURES.add(name);
-		}
-		SKILL_INSTANCES.put(clazz, skill);
-		for (final String spec : species) {
-			SPECIES_SKILLS.put(spec, name);
-		}
-		SKILL_CLASSES.put(name, clazz);
-		final List<IDescription> additions = getAdditions(clazz);
-		if (additions != null) {
-			for (final IDescription desc : additions) {
-				desc.setOriginName("skill " + name);
-				desc.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
-			}
+		final SkillDescription sd = GamaSkillRegistry.INSTANCE.register(name, clazz,
+				GamaBundleLoader.CURRENT_PLUGIN_NAME, species);
+		for (final IDescription d : ADDITIONS.get(clazz)) {
+			sd.addChild(d);
 		}
 	}
 
@@ -327,10 +207,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final List<String> keywords = names == null ? new ArrayList() : new ArrayList(Arrays.asList(names));
 		// if the symbol is a variable
 		if (ISymbolKind.Variable.KINDS.contains(sKind)) {
-			final Set<String> additonal = AbstractGamlAdditions.VARTYPE2KEYWORDS.get(sKind);
-			if (additonal != null) {
-				keywords.addAll(additonal);
-			}
+			keywords.addAll(VARTYPE2KEYWORDS.get(sKind));
 			// Special trick and workaround for compiling species and
 			// experiments rather than variables
 			keywords.remove(SPECIES);
@@ -410,10 +287,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	private void add(final Class clazz, final IDescription desc) {
-		if (!ADDITIONS.containsKey(clazz)) {
-			ADDITIONS.put(clazz, new ArrayList());
-		}
-		ADDITIONS.get(clazz).add(desc);
+		ADDITIONS.put(clazz, desc);
 	}
 
 	protected void _var(final Class clazz, final IDescription desc, final GamaHelper get, final GamaHelper init,
@@ -424,10 +298,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	protected void _field(final Class clazz, final OperatorProto getter) {
-		if (!FIELDS.containsKey(clazz)) {
-			FIELDS.put(clazz, new ArrayList());
-		}
-		FIELDS.get(clazz).add(getter);
+		FIELDS.put(clazz, getter);
 	}
 
 	protected IDescription desc(final String keyword, final IDescription superDesc, final ChildrenProvider children,
@@ -455,13 +326,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		final IType type = Types.builtInTypes.initType(keyword, typeInstance, id, varKind, wraps);
 		type.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		Types.cache(id, typeInstance);
-		if (!VARTYPE2KEYWORDS.containsKey(varKind)) {
-			VARTYPE2KEYWORDS.put(varKind, new HashSet());
-		}
-		VARTYPE2KEYWORDS.get(varKind).add(keyword);
+		VARTYPE2KEYWORDS.put(varKind, keyword);
 	}
 
-	public static List<IDescription> getAdditions(final Class clazz) {
+	public static Collection<IDescription> getAdditions(final Class clazz) {
 		return ADDITIONS.get(clazz);
 	}
 
@@ -470,135 +338,61 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 				FIELDS.keySet());
 		final Map<String, OperatorProto> fieldsMap = new TOrderedHashMap();
 		for (final Class c : classes) {
-			final List<OperatorProto> fields = FIELDS.get(c);
-			if (fields == null) {
-				continue;
-			}
-			for (final OperatorProto desc : fields) {
+			for (final OperatorProto desc : FIELDS.get(c)) {
 				fieldsMap.put(desc.getName(), desc);
 			}
 		}
 		return fieldsMap;
 	}
 
-	public static ISkill getSkillInstanceFor(final String skillName) {
-		return getSkillInstanceFor(getSkillClassFor(skillName));
-	}
-
-	public static Class<? extends ISkill> getSkillClassFor(final String skillName) {
-		return SKILL_CLASSES.get(skillName);
-	}
-
-	public static String getSkillNameFor(final Class skillClass) {
-		for (final Map.Entry<String, Class> entry : SKILL_CLASSES.entrySet()) {
-			if (skillClass == entry.getValue()) {
-				return entry.getKey();
-			}
-		}
-		return null;
-	}
-
-	public static ISkill getSkillInstanceFor(final Class skillClass) {
-		final ISkill skill = SKILL_INSTANCES.get(skillClass);
-		return skill == null ? null : skill.duplicate();
-	}
-
-	public static Set<IDescription> getAllChildrenOf(final Class base, final Set<Class<? extends ISkill>> skills) {
-		// final Set<Class> key = new HashSet();
-		// if (base != null) {
-		// key.add(base);
-		// }
-		// key.addAll(skills);
-		// Set<IDescription> children = ALL_ADDITIONS.get(key);
-		// if (children == null) {
-		final Set<IDescription> children = new LinkedHashSet();
+	public static Iterable<IDescription> getAllChildrenOf(final Class base, final Set<Class<? extends ISkill>> skills) {
 		final List<Class> classes = JavaUtils.collectImplementationClasses(base, skills, ADDITIONS.keySet());
-		// scope.getGui().debug("#### Adding implementation classes " +
-		// classes);
-		for (final Class c1 : classes) {
-			final List<IDescription> toAdd = getAdditions(c1);
-			// scope.getGui().debug(" #### " + c1.getSimpleName() + ": " +
-			// toAdd);
-			if (toAdd != null && !toAdd.isEmpty()) {
-				children.addAll(toAdd);
-			}
-		}
-		// ALL_ADDITIONS.put(key, children);
-		// }
-		return children;
-	}
-
-	public static Map<String, Class> getSkillClasses() {
-		return SKILL_CLASSES;
-	}
-
-	public static Set<String> getSpeciesSkills(final String speciesName) {
-		final Set<String> skills = SPECIES_SKILLS.get(speciesName);
-		if (skills == null) {
-			return Collections.EMPTY_SET;
-		}
-		return skills;
+		return Iterables.concat(Iterables.transform(classes, INTO_DESCRIPTIONS));
 	}
 
 	public static Collection<OperatorProto> getAllFields() {
-		final Set<OperatorProto> result = new HashSet();
-		for (final List<OperatorProto> list : FIELDS.values()) {
-			result.addAll(list);
-		}
-		return result;
+		return FIELDS.values();
 	}
 
 	public static Collection<IDescription> getAllVars() {
-		final Set<IDescription> result = new HashSet();
-		for (final TypeDescription s : Types.getBuiltInSpecies()) {
-			result.addAll(s.getAttributes());
-			for (final String a : s.getActionNames()) {
-				final StatementDescription action = s.getAction(a);
-				result.addAll(action.getArgs());
-			}
-		}
-		for (final Class c : SKILL_CLASSES.values()) {
-			final List<IDescription> descs = ADDITIONS.get(c);
-			if (descs != null) {
-				for (final IDescription desc : descs) {
-					if (desc instanceof VariableDescription) {
-						result.add(desc);
-					} else if (desc instanceof StatementDescription) {
-						result.addAll(((StatementDescription) desc).getArgs());
-					}
-				}
-			}
-		}
-		return result;
-	}
+		final THashSet<IDescription> result = new THashSet();
 
-	public static Collection<IDescription> getVariablesForSkill(final String s) {
-		final Set<IDescription> result = new LinkedHashSet();
-		final List<IDescription> descs = ADDITIONS.get(SKILL_CLASSES.get(s));
-		if (descs != null) {
+		final DescriptionVisitor varVisitor = new DescriptionVisitor<VariableDescription>() {
 
-			for (final IDescription desc : descs) {
-				if (desc instanceof VariableDescription) {
-					result.add(desc);
-				}
+			@Override
+			public boolean visit(final VariableDescription desc) {
+				result.add(desc);
+				return true;
 			}
 
-		}
-		return result;
-	}
+		};
 
-	public static Collection<IDescription> getActionsForSkill(final String s) {
-		final Set<IDescription> result = new LinkedHashSet();
-		final List<IDescription> descs = ADDITIONS.get(SKILL_CLASSES.get(s));
-		if (descs != null) {
+		final DescriptionVisitor actionVisitor = new DescriptionVisitor<StatementDescription>() {
 
-			for (final IDescription desc : descs) {
-				if (desc instanceof PrimitiveDescription) {
-					result.add(desc);
-				}
+			@Override
+			public boolean visit(final StatementDescription desc) {
+				result.addAll(desc.getArgs());
+				return true;
 			}
 
+		};
+
+		for (final TypeDescription desc : Types.getBuiltInSpecies()) {
+			desc.visitOwnAttributes(varVisitor);
+			desc.visitOwnActions(actionVisitor);
+
 		}
+		GamaSkillRegistry.INSTANCE.visitSkills(new DescriptionVisitor<SkillDescription>() {
+
+			@Override
+			public boolean visit(final SkillDescription desc) {
+				desc.visitOwnAttributes(varVisitor);
+				desc.visitOwnActions(actionVisitor);
+				return true;
+			}
+
+		});
+
 		return result;
 	}
 
@@ -621,49 +415,33 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return result;
 	}
 
-	public static Collection<String> getAllSkills() {
-		return SKILL_CLASSES.keySet();
-	}
-
-	public static Collection<String> getSkills() {
-		final Set<String> result = new LinkedHashSet();
-		for (final String s : getAllSkills()) {
-			final Class c = SKILL_CLASSES.get(s);
-			if (!IArchitecture.class.isAssignableFrom(c)) {
-				result.add(s);
-			}
-		}
-		return result;
-	}
-
-	public static Collection<String> getControls() {
-		return ARCHITECTURES;
-	}
-
 	public static Collection<IDescription> getAllActions() {
-		final Map<String, IDescription> result = new HashMap();
-		for (final TypeDescription s : Types.getBuiltInSpecies()) {
-			for (final StatementDescription sd : s.getActions()) {
-				if (!result.containsKey(sd.getName()))
-					result.put(sd.getName(), sd);
-			}
-		}
-		Types.getBuiltInSpeciesTree();
-		for (final Class c : SKILL_CLASSES.values()) {
-			final List<IDescription> descs = ADDITIONS.get(c);
-			if (descs != null) {
-				for (final IDescription desc : descs) {
-					if (!(desc instanceof VariableDescription) && !result.containsKey(desc.getName())) {
-						result.put(desc.getName(), desc);
-					}
-				}
-			}
-		}
+		final THashMap<String, IDescription> result = new THashMap();
 
+		final DescriptionVisitor visitor = new DescriptionVisitor<StatementDescription>() {
+
+			@Override
+			public boolean visit(final StatementDescription desc) {
+				result.putIfAbsent(desc.getName(), desc);
+				return true;
+			}
+
+		};
+
+		for (final TypeDescription s : Types.getBuiltInSpecies()) {
+			s.visitOwnActions(visitor);
+		}
+		GamaSkillRegistry.INSTANCE.visitSkills(new DescriptionVisitor<SkillDescription>() {
+
+			@Override
+			public boolean visit(final SkillDescription desc) {
+				desc.visitOwnActions(visitor);
+				return true;
+			}
+
+		});
 		return result.values();
 	}
-
-	public static final Set<String> CONSTANTS = new HashSet();
 
 	public static void _constants(final String[]... strings) {
 		for (final String[] s : strings) {

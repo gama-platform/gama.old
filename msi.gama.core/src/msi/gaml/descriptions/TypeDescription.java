@@ -131,6 +131,9 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	protected void addAttributeNoCheck(final VariableDescription vd) {
+		// if (isBuiltIn()) {
+		// vd.setOriginName("built-in species " + getName());
+		// }
 		if (attributes == null)
 			attributes = new TOrderedHashMap();
 		attributes.put(vd.getName(), vd);
@@ -336,6 +339,9 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	protected void addAction(final StatementDescription newAction) {
+		// if (isBuiltIn()) {
+		// newAction.setOriginName("built-in species " + getName());
+		// }
 		final String actionName = newAction.getName();
 		if (actions != null) {
 			final StatementDescription existing = actions.get(actionName);
@@ -508,14 +514,9 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		boolean result = true;
-		result &= visitOwnAttributes(visitor);
-		if (!result)
+		if (!visitOwnAttributes(visitor))
 			return false;
-		if (actions != null) {
-			result &= actions.forEachValue(visitor);
-		}
-		return result;
+		return visitOwnActions(visitor);
 	}
 
 	public boolean visitAllAttributes(final DescriptionVisitor visitor) {
@@ -529,6 +530,12 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (attributes == null)
 			return true;
 		return attributes.forEachValue(visitor);
+	}
+
+	public boolean visitOwnActions(final DescriptionVisitor visitor) {
+		if (actions == null)
+			return true;
+		return actions.forEachValue(visitor);
 	}
 
 }

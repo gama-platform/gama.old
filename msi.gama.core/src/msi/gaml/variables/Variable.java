@@ -37,12 +37,11 @@ import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.expressions.ListExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.species.AbstractSpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaListType;
 import msi.gaml.types.IType;
@@ -118,7 +117,7 @@ public class Variable extends Symbol implements IVariable {
 					return;
 				}
 				// Verifying that the name is not reserved
-				if (IExpressionCompiler.RESERVED.contains(name)) {
+				if (RESERVED.contains(name)) {
 					cd.error(name + " is a reserved keyword. It cannot be used as an attribute name",
 							IGamlIssue.IS_RESERVED, NAME, name);
 					return;
@@ -285,19 +284,17 @@ public class Variable extends Symbol implements IVariable {
 		type = desc.getType();
 		// contentType = desc.getContentType();
 		// definitionOrder = desc.getDefinitionOrder();
-		buildHelpers(desc);
 	}
 
-	private void buildHelpers(final VariableDescription var) {
-		final SpeciesDescription species = var.getSpeciesContext();
-		getter = var.getGetter();
+	private void buildHelpers(final AbstractSpecies species) {
+		getter = getDescription().getGetter();
 		if (getter != null) {
-			gSkill = species.getSkillFor(getter.getSkillClass());
+			gSkill = species.getSkillInstanceFor(getter.getSkillClass());
 		}
-		initer = var.getIniter();
-		setter = var.getSetter();
+		initer = getDescription().getIniter();
+		setter = getDescription().getSetter();
 		if (setter != null) {
-			sSkill = species.getSkillFor(setter.getSkillClass());
+			sSkill = species.getSkillInstanceFor(setter.getSkillClass());
 		}
 
 	}
@@ -590,6 +587,12 @@ public class Variable extends Symbol implements IVariable {
 		// defined.
 
 		return false;
+	}
+
+	@Override
+	public void setEnclosing(final ISymbol enclosing) {
+		if (enclosing instanceof AbstractSpecies)
+			buildHelpers((AbstractSpecies) enclosing);
 	}
 
 }

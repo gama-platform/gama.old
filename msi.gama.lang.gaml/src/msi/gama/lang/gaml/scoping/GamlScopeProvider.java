@@ -30,7 +30,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.inject.Singleton;
 
 /**
  * This class contains custom scoping description.
@@ -39,7 +38,7 @@ import com.google.inject.Singleton;
  * how and when to use it
  *
  */
-@Singleton
+// @Singleton
 public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLocalScopeProvider {
 
 	private class MultimapBasedSelectable implements ISelectable {

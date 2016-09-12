@@ -28,16 +28,15 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 
 import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.factories.DescriptionFactory.IDocManager;
 
 /**
  * Class GamlResourceDocManager.
@@ -46,13 +45,12 @@ import msi.gaml.factories.DescriptionFactory.IDocManager;
  * @since 13 avr. 2014
  *
  */
-@Singleton
 public class GamlResourceDocManager implements IDocManager {
 
-	public final static GamlResourceDocManager INSTANCE = new GamlResourceDocManager();
+	// public final static GamlResourceDocManager INSTANCE = new
+	// GamlResourceDocManager();
 
-	@Inject
-	private IModelIndexer indexer;
+	@Inject private IModelIndexer indexer;
 	private final ConcurrentLinkedQueue<ModelDescription> cleanupTasks = new ConcurrentLinkedQueue();
 	private final ConcurrentLinkedQueue<DocumentationTask> documentationQueue = new ConcurrentLinkedQueue();
 	private final Job documentationJob = new Job("Documentation") {
@@ -86,6 +84,7 @@ public class GamlResourceDocManager implements IDocManager {
 		}
 	};
 
+	@Override
 	public void addCleanupTask(final ModelDescription model) {
 		cleanupTasks.add(model);
 	}
@@ -119,20 +118,14 @@ public class GamlResourceDocManager implements IDocManager {
 		}
 	}
 
-	private GamlResourceDocManager() {
+	public GamlResourceDocManager() {
 		documentationJob.setPriority(Job.SHORT);
-	}
-
-	public static IDocManager getInstance() {
-		return INSTANCE;
 	}
 
 	@Override
 	public void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace) {
 		if (!shouldDocument(object))
 			return;
-		// System.out.println("Documenting " + object + " " + " resource: " +
-		// object.eResource() + " " + description);
 		documentationQueue.add(new DocumentationTask(object, description, this));
 		documentationJob.schedule(50);
 	}
@@ -141,18 +134,6 @@ public class GamlResourceDocManager implements IDocManager {
 		if (resource == null)
 			return null;
 		return indexer.getDocumentationCache(resource.getURI());
-
-		// if (resource instanceof XtextResource)
-		// return ((XtextResource) resource).getCache().get(KEY, resource,
-		// new Provider<THashMap<EObject, IGamlDescription>>() {
-		//
-		// @Override
-		// public THashMap<EObject, IGamlDescription> get() {
-		// return new THashMap();
-		// }
-		// });
-		// else
-		// return CACHE2.get(resource);
 	}
 
 	// To be called once the validation has been done
@@ -165,12 +146,6 @@ public class GamlResourceDocManager implements IDocManager {
 		if (e == null) {
 			return;
 		}
-		// final Resource r = e.eResource();
-		//
-		// if (r instanceof GamlResource && !((GamlResource)
-		// e.eResource()).isEdited())
-		// return;
-
 		setGamlDocumentation(e, desc, true);
 		desc.visitOwnChildren(documentingVisitor);
 
@@ -211,10 +186,5 @@ public class GamlResourceDocManager implements IDocManager {
 		}
 		return true;
 	}
-
-	// @Override
-	// public void document(final Resource r, final boolean accept) {
-	// // CACHE2.putIfAbsent(r, new THashMap());
-	// }
 
 }

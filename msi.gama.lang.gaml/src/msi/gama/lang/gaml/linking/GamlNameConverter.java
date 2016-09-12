@@ -14,6 +14,9 @@ package msi.gama.lang.gaml.linking;
 import org.eclipse.xtext.naming.IQualifiedNameConverter.DefaultImpl;
 import org.eclipse.xtext.naming.QualifiedName;
 
+import com.google.inject.Singleton;
+
+@Singleton
 public class GamlNameConverter extends DefaultImpl {
 
 	@Override

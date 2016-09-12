@@ -28,6 +28,7 @@ import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
 import com.google.inject.Inject;
 
 import msi.gama.lang.gaml.indexer.IModelIndexer;
+import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
 
 /**
  * The class GamlResourceDescriptionManager.
@@ -43,10 +44,12 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 
 	@Inject IModelIndexer indexer;
 
+	@Inject BuiltinGlobalScopeProvider provider;
+
 	@Override
 	protected IResourceDescription internalGetResourceDescription(final Resource resource,
 			final IDefaultResourceDescriptionStrategy strategy) {
-		return new GamlResourceDescription(resource, strategy, getCache());
+		return new GamlResourceDescription(resource, strategy, getCache(), provider);
 	}
 
 	@Override
@@ -54,17 +57,19 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 			final IResourceDescriptions context) {
 		final boolean result = false;
 		final URI newUri = candidate.getURI();
-		if (indexer.indexes(newUri)) {
-			final Set<URI> deltaUris = new HashSet();
-			for (final Delta d : deltas) {
-				deltaUris.add(indexer.properlyEncodedURI(d.getUri()));
-			}
-			final Iterator<URI> it = indexer.allImportsOf(newUri);
-			while (it.hasNext()) {
-				final URI next = it.next();
-				if (deltaUris.contains(next)) {
-					return true;
-				}
+		// if (indexer.needsToBuild(newUri)) {
+		// return true;
+		// }
+
+		final Set<URI> deltaUris = new HashSet();
+		for (final Delta d : deltas) {
+			deltaUris.add(indexer.properlyEncodedURI(d.getUri()));
+		}
+		final Iterator<URI> it = indexer.allImportsOf(newUri);
+		while (it.hasNext()) {
+			final URI next = it.next();
+			if (deltaUris.contains(next)) {
+				return true;
 			}
 		}
 		return super.isAffected(deltas, candidate, context);

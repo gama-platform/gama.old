@@ -30,11 +30,15 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.Dates;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
+import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
 
 /**
@@ -108,7 +112,7 @@ public class GamaBundleLoader {
 			MODEL_PLUGINS.put(e.getContributor().getName(), e.getAttribute("name"));
 		}
 		// CRUCIAL INITIALIZATIONS
-		AbstractGamlAdditions.buildMetaModel();
+		GamaMetaModel.INSTANCE.build();
 		Types.init();
 
 		// We gather all the content types extensions defined in GAMA plugins
@@ -140,6 +144,16 @@ public class GamaBundleLoader {
 				final long start = System.currentTimeMillis();
 				Dates.initializeAllFormats();
 				System.out.println(">GAMA JodaTime initialization in " + (System.currentTimeMillis() - start) + " ms.");
+				IExpressionCompiler.OPERATORS.forEachValue(new TObjectProcedure<THashMap<Signature, OperatorProto>>() {
+
+					@Override
+					public boolean execute(final THashMap<Signature, OperatorProto> object) {
+						object.compact();
+						return true;
+					}
+
+				});
+				IExpressionCompiler.OPERATORS.compact();
 			}
 		}).start();
 

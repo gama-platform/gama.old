@@ -14,13 +14,13 @@ package msi.gaml.expressions;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GamaSkillRegistry;
 import msi.gaml.types.IType;
 
 public class SkillConstantExpression extends ConstantExpression {
 
 	public SkillConstantExpression(final String val, final IType<ISkill> t) {
-		super(AbstractGamlAdditions.getSkillInstanceFor(val), t);
+		super(GamaSkillRegistry.INSTANCE.getSkillInstanceFor(val), t);
 	}
 
 	/**
@@ -43,10 +43,10 @@ public class SkillConstantExpression extends ConstantExpression {
 
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		ISkill skill = (ISkill) value;
+		final ISkill skill = (ISkill) value;
 		meta.put(GamlProperties.PLUGINS, skill.getDefiningPlugin());
 		meta.put(skill instanceof IArchitecture ? GamlProperties.ARCHITECTURES : GamlProperties.SKILLS,
-			skill.getName());
+				skill.getName());
 	}
 
 }

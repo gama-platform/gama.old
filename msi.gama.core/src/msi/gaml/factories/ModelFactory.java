@@ -28,7 +28,7 @@ import msi.gama.util.file.GAMLFile;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.IModelBuilder;
 import msi.gaml.compilation.ISyntacticElement;
-import msi.gaml.descriptions.ErrorCollector;
+import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -51,7 +51,7 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 	}
 
 	public ModelDescription createModelDescription(final String projectPath, final String modelPath,
-			final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
+			final List<ISyntacticElement> models, final ValidationContext collector, final boolean document,
 			final Map<String, ModelDescription> mm) {
 		return assembler.assemble(projectPath, modelPath, models, collector, document, mm);
 	}

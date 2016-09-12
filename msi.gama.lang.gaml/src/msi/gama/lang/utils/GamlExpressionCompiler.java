@@ -91,7 +91,7 @@ import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GamaSkillRegistry;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.SyntacticFactory;
@@ -142,6 +142,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			true);
 	private static volatile int resourceCount = 0;
 	private final static Map<String, IExpression> cache = new THashMap();
+	private final ExpressionDescriptionBuilder builder = EGaml.getInstance(ExpressionDescriptionBuilder.class);
 
 	/*
 	 * The context (IDescription) in which the parser operates. If none is
@@ -210,8 +211,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		}
 
 		final IExpression expr = doSwitch(s);
-		if (expr != null && getContext() != null && getContext().isDocumenting()) {
-			DescriptionFactory.setGamlDocumentation(s, expr);
+		if (expr != null && getContext() != null) {
+			getContext().document(s, expr);
 		}
 		return expr;
 	}
@@ -473,7 +474,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	private boolean isSkillName(final String s) {
-		return AbstractGamlAdditions.getSkillClasses().containsKey(s);
+		return GamaSkillRegistry.INSTANCE.hasSkill(s);
 	}
 
 	private boolean isTypeName(final String s) {
@@ -545,8 +546,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				return null;
 			}
 			final TypeFieldExpression expr = (TypeFieldExpression) proto.create(getContext(), fieldExpr, owner);
-			if (getContext() != null && getContext().isDocumenting())
-				DescriptionFactory.setGamlDocumentation(fieldExpr, expr);
+			if (getContext() != null)
+				getContext().document(fieldExpr, expr);
 			return expr;
 		}
 		// We are now dealing with an agent. In that case, it can be either an
@@ -566,7 +567,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				getContext().error("Unknown variable: '" + var + "' in " + species.getName(), IGamlIssue.UNKNOWN_VAR,
 						leftExpr, var, species.getName());
 			}
-			DescriptionFactory.setGamlDocumentation(fieldExpr, expr);
+			getContext().document(fieldExpr, expr);
 			return getFactory().createOperator(_DOT, getContext(), fieldExpr, owner, expr);
 		} else if (fieldExpr instanceof Function) {
 			final String name = EGaml.getKeyOf(fieldExpr);
@@ -575,7 +576,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				final ExpressionList list = ((Function) fieldExpr).getArgs();
 				final IExpression call = action(name, owner,
 						list == null ? ((Function) fieldExpr).getParameters() : list, action);
-				DescriptionFactory.setGamlDocumentation(fieldExpr, call); // ??
+				getContext().document(fieldExpr, call); // ??
 				return call;
 			}
 		}
@@ -645,17 +646,17 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			final Set<Diagnostic> errors = new LinkedHashSet();
 			if (exp instanceof ArgumentPair || exp instanceof Parameter) {
 				arg = EGaml.getKeyOf(exp);
-				ed = ExpressionDescriptionBuilder.create(exp.getRight(), errors);
+				ed = builder.create(exp.getRight(), errors);
 			} else if (exp instanceof Pair) {
 				arg = EGaml.getKeyOf(exp.getLeft());
-				ed = ExpressionDescriptionBuilder.create(exp.getRight(), errors);
+				ed = builder.create(exp.getRight(), errors);
 			} else if (completeArgs) {
 				if (args != null && action != null && index == args.size()) {
 					command.error("Wrong number of arguments. Action " + action.getName() + " expects " + args);
 					return argMap;
 				}
 				arg = args == null ? String.valueOf(index++) : args.get(index++);
-				ed = ExpressionDescriptionBuilder.create(exp, errors);
+				ed = builder.create(exp, errors);
 
 			}
 			if (ed != null && compileArgValue) {

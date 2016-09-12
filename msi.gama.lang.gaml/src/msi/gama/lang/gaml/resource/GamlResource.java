@@ -36,18 +36,19 @@ import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 import com.google.inject.Inject;
 
 import gnu.trove.procedure.TObjectObjectProcedure;
+import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.indexer.IModelIndexer;
+import msi.gama.lang.gaml.parsing.GamlCompatibilityConverter;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
 import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.SyntacticModelElement;
-import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.factories.DescriptionFactory.IDocManager;
+import msi.gaml.descriptions.ValidationContext;
 
 /*
  *
@@ -59,17 +60,19 @@ import msi.gaml.factories.DescriptionFactory.IDocManager;
  */
 public class GamlResource extends LazyLinkingResource {
 
-	private volatile boolean isValidating;
+	// private volatile boolean isValidating;
 
 	@Inject IModelIndexer indexer;
 
 	@Inject IDocManager documenter;
 
+	@Inject GamlCompatibilityConverter converter;
+
 	public GamlResource() {
 	}
 
-	public ErrorCollector getErrorCollector() {
-		return indexer.getErrorCollector(this);
+	public ValidationContext getErrorCollector() {
+		return indexer.getValidationContext(this);
 	}
 
 	public boolean hasSemanticErrors() {
@@ -82,7 +85,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public void resetErrorCollector() {
-		getErrorCollector().clear();
+		indexer.discardValidationContext(this);
 	}
 
 	@Override
@@ -96,7 +99,7 @@ public class GamlResource extends LazyLinkingResource {
 
 	public ISyntacticElement getSyntacticContents() {
 		final GamlParseResult parseResult = (GamlParseResult) getParseResult();
-		return parseResult.getSyntacticContents();
+		return parseResult.getSyntacticContents(converter);
 	}
 
 	private class ModelsGatherer implements TObjectObjectProcedure<GamlResource, String> {
@@ -171,19 +174,16 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	ModelDescription buildCompleteDescription() {
-		resetErrorCollector();
+		// try {
+		// resetErrorCollector();
 		final TOrderedHashMap<GamlResource, String> imports = indexer.validateImportsOf(this);
+
 		if (hasErrors())
 			return null;
 
-		// AD 08/16: if the model is imported and not edited, we do nothing. If
-		// it is imported, then it means it will be validated at one point
-		// together with its importer. Otherwise, we do not care about its
-		// validation. Saves a lot of memory and validation speed.
-		final boolean imported = indexer.isImported(getURI());
-		final boolean edited = indexer.isEdited(getURI());
-		if (imported && !edited)
+		if (!shouldValidate())
 			return null;
+
 		if (imports == null || hasSemanticErrors())
 			return null;
 
@@ -194,7 +194,11 @@ public class GamlResource extends LazyLinkingResource {
 		if (model == null) {
 			invalidate(this, "Impossible to validate " + URI.decode(getURI().lastSegment()) + " (check the logs)");
 		}
+
 		return model;
+		// } finally {
+		// indexer.removeResourcesToBuild(getURI());
+		// }
 	}
 
 	/**
@@ -219,24 +223,19 @@ public class GamlResource extends LazyLinkingResource {
 		// We then validate it and get rid of the description. The
 		// documentation is produced only if the resource is
 		// marked as 'edited'
-		model.validate(isEdited());
-		updateWith(model, true);
-
-		if (isEdited()) {
-			documenter.addCleanupTask(model);
-		} else {
-			model.dispose();
+		final boolean edited = isEdited();
+		try {
+			model.validate(edited);
+			updateWith(model, true);
+		} finally {
+			if (edited) {
+				documenter.addCleanupTask(model);
+			} else {
+				model.dispose();
+			}
 		}
 
 	}
-
-	// public boolean isValidating() {
-	// return isValidating;
-	// }
-	//
-	// private void setValidating(final boolean v) {
-	// isValidating = v;
-	// }
 
 	public boolean isEdited() {
 		return indexer.isEdited(getURI());
@@ -294,6 +293,14 @@ public class GamlResource extends LazyLinkingResource {
 
 	public boolean hasErrors() {
 		return !getErrors().isEmpty() || getParseResult().hasSyntaxErrors();
+	}
+
+	public boolean shouldValidate() {
+		return indexer.needsToBuild(getURI());
+	}
+
+	public IDocManager getDocumentationManager() {
+		return documenter;
 	}
 
 }

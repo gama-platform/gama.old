@@ -7,6 +7,9 @@ import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
+import com.google.inject.Inject;
+
+import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
@@ -18,7 +21,6 @@ import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 
 public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescription> {
@@ -28,6 +30,8 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 	void setErrors(final Set<Diagnostic> errors) {
 		currentErrors = errors;
 	}
+
+	@Inject IDocManager documenter;
 
 	@Override
 	public IExpressionDescription caseIntLiteral(final IntLiteral object) {
@@ -41,7 +45,7 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 				currentErrors.add(d);
 			ed = ConstantExpressionDescription.create(0);
 		}
-		DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
+		documenter.setGamlDocumentation(object, ed.getExpression(), true);
 		return ed;
 	}
 
@@ -57,7 +61,7 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 				currentErrors.add(d);
 			ed = ConstantExpressionDescription.create(0d);
 		}
-		DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
+		documenter.setGamlDocumentation(object, ed.getExpression(), true);
 		return ed;
 	}
 
@@ -68,14 +72,14 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		// AD: Change 14/11/14
 		// IExpressionDescription ed =
 		// LabelExpressionDescription.create(object.getOp());
-		DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
+		documenter.setGamlDocumentation(object, ed.getExpression(), true);
 		return ed;
 	}
 
 	@Override
 	public IExpressionDescription caseBooleanLiteral(final BooleanLiteral object) {
 		final IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp().equals(IKeyword.TRUE));
-		DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
+		documenter.setGamlDocumentation(object, ed.getExpression(), true);
 		return ed;
 	}
 
@@ -85,7 +89,6 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 	public IExpressionDescription caseUnitName(final UnitName object) {
 		final String s = EGaml.getKeyOf(object);
 		if (IUnits.UNITS_EXPR.containsKey(s)) {
-			// System.out.println("Saved " + ++count + " instance of units");
 			return IUnits.UNITS_EXPR.get(s);
 		}
 		return null;
@@ -110,17 +113,15 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		return ed;
 	}
 
-	public static IExpressionDescription create(final EObject expr, final Set<Diagnostic> errors) {
+	public IExpressionDescription create(final EObject expr, final Set<Diagnostic> errors) {
 		try {
-			BUILDER.setErrors(errors);
-			final IExpressionDescription result = BUILDER.doSwitch(expr);
+			setErrors(errors);
+			final IExpressionDescription result = doSwitch(expr);
 			result.setTarget(expr);
 			return result;
 		} finally {
-			BUILDER.setErrors(null);
+			setErrors(null);
 		}
 	}
-
-	public static final ExpressionDescriptionBuilder BUILDER = new ExpressionDescriptionBuilder();
 
 }

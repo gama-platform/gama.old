@@ -40,10 +40,13 @@ public class GamlResourceDescription extends DefaultResourceDescription {
 	 * @param strategy
 	 * @param cache
 	 */
+	final BuiltinGlobalScopeProvider provider;
+
 	@Inject
 	public GamlResourceDescription(final Resource resource, final IDefaultResourceDescriptionStrategy strategy,
-			final IResourceScopeCache cache) {
+			final IResourceScopeCache cache, final BuiltinGlobalScopeProvider provider) {
 		super(resource, strategy, cache);
+		this.provider = provider;
 
 	}
 
@@ -54,7 +57,7 @@ public class GamlResourceDescription extends DefaultResourceDescription {
 
 			@Override
 			public boolean apply(final QualifiedName input) {
-				return !BuiltinGlobalScopeProvider.contains(input);
+				return !provider.contains(input);
 			}
 		});
 	}

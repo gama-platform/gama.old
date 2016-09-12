@@ -29,6 +29,10 @@ public class GamlResourceValidator implements IResourceValidator, IAcceptor<Issu
 
 	@Override
 	public List<Issue> validate(final Resource resource, final CheckMode mode, final CancelIndicator indicator) {
+		// if (Arrays.asList("M1.gaml", "M2.gaml", "M3.gaml",
+		// "M4.gaml").contains(resource.getURI().lastSegment())) {
+		// System.out.println("FOUND " + resource.getURI().lastSegment());
+		// }
 		if (result != null)
 			result.clear();
 
@@ -57,6 +61,23 @@ public class GamlResourceValidator implements IResourceValidator, IAcceptor<Issu
 			converter.convertValidatorDiagnostic(d, this);
 		}
 
+		// THIS PART OF CODE HAS BEEN ABANDONED FOR THE MOMENT
+		// final Collection<GamlCompilationError> failedImports =
+		// r.getErrorCollector().getImportedErrors();
+		// if (!failedImports.isEmpty()) {
+		// final Set<URI> uris = new THashSet();
+		// for (final GamlCompilationError e : failedImports) {
+		// uris.add(e.getURI());
+		// uris.addAll(indexer.directImportersOf(e.getURI()));
+		// for (final URI uri : uris) {
+		// if (indexer.equals(uri, r.getURI()))
+		// continue;
+		// indexer.addResourcesToBuild(uri);
+		//
+		// }
+		// }
+		// }
+		indexer.discardValidationContext(r);
 		return result == null ? Collections.EMPTY_LIST : result;
 	}
 

@@ -44,15 +44,12 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 			return "";
 		}
 		final StringBuilder sb = new StringBuilder(200);
-		String s = d.value(); /* AbstractGamlDocumentation.getMain(getDoc()); */
+		String s = d.value();
 		if (s != null && !s.isEmpty()) {
 			sb.append(s);
 			sb.append("<br/>");
 		}
-		s = d.deprecated(); /*
-							 * AbstractGamlDocumentation.getDeprecated(getDoc())
-							 * ;
-							 */
+		s = d.deprecated();
 		if (s != null && !s.isEmpty()) {
 			sb.append("<b>Deprecated</b>: ");
 			sb.append("<i>");
@@ -138,7 +135,7 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 		return support;
 	}
 
-	protected void setSupport(final AnnotatedElement support) {
+	public void setSupport(final AnnotatedElement support) {
 		this.support = support;
 	}
 

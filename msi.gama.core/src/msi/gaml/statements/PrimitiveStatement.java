@@ -26,8 +26,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IDescriptionValidator.NullValidator;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.PrimitiveDescription;
+import msi.gaml.species.AbstractSpecies;
 import msi.gaml.types.IType;
 
 /**
@@ -54,21 +56,9 @@ public class PrimitiveStatement extends ActionStatement {
 	private ISkill skill = null;
 	private final GamaHelper helper;
 
-	/**
-	 * The Constructor.
-	 *
-	 * @param actionDesc
-	 *            the action desc
-	 * @param sim
-	 *            the sim
-	 */
-
 	public PrimitiveStatement(final IDescription desc) {
 		super(desc);
 		helper = getDescription().getHelper();
-		skill = desc.getSpeciesContext().getSkillFor(helper.getSkillClass());
-		// skill =
-		// AbstractGamlAdditions.getSkillInstanceFor(helper.getSkillClass());
 	}
 
 	@Override
@@ -88,6 +78,12 @@ public class PrimitiveStatement extends ActionStatement {
 	@Override
 	public void setRuntimeArgs(final Arguments args) {
 		actualArgs.set(args);
+	}
+
+	@Override
+	public void setEnclosing(final ISymbol enclosing) {
+		if (enclosing instanceof AbstractSpecies)
+			skill = ((AbstractSpecies) enclosing).getSkillInstanceFor(helper.getSkillClass());
 	}
 
 }

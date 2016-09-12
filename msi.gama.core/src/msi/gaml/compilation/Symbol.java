@@ -51,7 +51,7 @@ public abstract class Symbol implements ISymbol {
 	@Override
 	public String getKeyword() {
 		if (description == null) {
-			return /* getLiteral(IKeyword.KEYWORD); */ null;
+			return null;
 		}
 		return description.getKeyword();
 	}
@@ -63,12 +63,6 @@ public abstract class Symbol implements ISymbol {
 		}
 		return description.getFacetExpr(keys);
 	}
-
-	// public IExpression getFacet(final String key, final IExpression ifAbsent)
-	// {
-	// return description == null ? ifAbsent :
-	// description.getFacets().getExpr(key, ifAbsent);
-	// }
 
 	public Object getFacetValue(final IScope scope, final String key) throws GamaRuntimeException {
 		return getFacetValue(scope, key, null);
@@ -122,6 +116,11 @@ public abstract class Symbol implements ISymbol {
 	@Override
 	public String getTrace(final IScope scope) {
 		return new SymbolTracer().trace(scope, this);
+	}
+
+	@Override
+	public void setEnclosing(final ISymbol enclosing) {
+		// Nothing to do by default
 	}
 
 }

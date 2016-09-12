@@ -18,6 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GamaSkillRegistry;
 import msi.gaml.descriptions.AbstractProto;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.StatementDescription;
@@ -166,8 +167,8 @@ public class GamlTemplateFactory {
 	public static Template speciesWithSkill(final String skill) {
 		final StringBuilder comment = new StringBuilder(200);
 		comment.append(beginComment);
-		dump(inheritedAttributes, AbstractGamlAdditions.getVariablesForSkill(skill), comment);
-		dump(inheritedActions, AbstractGamlAdditions.getActionsForSkill(skill), comment);
+		dump(inheritedAttributes, GamaSkillRegistry.INSTANCE.getVariablesForSkill(skill), comment);
+		dump(inheritedActions, GamaSkillRegistry.INSTANCE.getActionsForSkill(skill), comment);
 		comment.append(endComment);
 		return new Template("A species with the skill " + skill,
 				"Defines a species that implements the skill named " + skill, getContextId(),
@@ -184,8 +185,8 @@ public class GamlTemplateFactory {
 		// AbstractGamlAdditions.getStatementsForSkill(skill);
 		final StringBuilder comment = new StringBuilder(200);
 		comment.append(beginComment);
-		dump(inheritedAttributes, AbstractGamlAdditions.getVariablesForSkill(skill), comment);
-		dump(inheritedActions, AbstractGamlAdditions.getActionsForSkill(skill), comment);
+		dump(inheritedAttributes, GamaSkillRegistry.INSTANCE.getVariablesForSkill(skill), comment);
+		dump(inheritedActions, GamaSkillRegistry.INSTANCE.getActionsForSkill(skill), comment);
 		dump(availableBehaviors, AbstractGamlAdditions.getStatementsForSkill(skill), comment);
 		comment.append(endComment);
 		return new Template("A species with the control " + skill,

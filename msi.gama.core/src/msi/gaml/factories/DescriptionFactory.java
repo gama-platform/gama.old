@@ -26,7 +26,6 @@ import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import gnu.trove.procedure.TIntProcedure;
-import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.ISymbolKind;
@@ -50,42 +49,6 @@ import msi.gaml.types.IType;
  */
 public class DescriptionFactory {
 
-	private static IDocManager docManager;
-
-	public static void registerDocManager(final IDocManager dm) {
-		docManager = dm;
-	}
-
-	public static IGamlDescription getGamlDocumentation(final IGamlDescription o) {
-		return docManager.getGamlDocumentation(o);
-	}
-
-	public static IGamlDescription getGamlDocumentation(final EObject o) {
-		return docManager.getGamlDocumentation(o);
-	}
-
-	// public static void documentResource(final Resource builtInResource) {
-	// docManager.document(builtInResource, true);
-	// }
-
-	// Internal interface instantiated by XText
-	public interface IDocManager {
-
-		public static final String KEY = "Doc";
-
-		public void document(IDescription description);
-
-		public IGamlDescription getGamlDocumentation(EObject o);
-
-		public IGamlDescription getGamlDocumentation(IGamlDescription o);
-
-		public void setGamlDocumentation(final EObject object, final IGamlDescription description, boolean replace);
-
-		public void addCleanupTask(ModelDescription model);
-
-		// public void document(Resource gamlResource, boolean accept);
-	}
-
 	static TIntObjectHashMap<SymbolFactory> FACTORIES = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
 	static Map<String, SymbolProto> STATEMENT_KEYWORDS_PROTOS = new HashMap();
 	static Map<String, SymbolProto> VAR_KEYWORDS_PROTOS = new HashMap();
@@ -101,19 +64,6 @@ public class DescriptionFactory {
 			}
 		});
 
-	}
-
-	// To be called once the validation has been done
-	public static void document(final IDescription desc) {
-		docManager.document(desc);
-	}
-
-	public static void setGamlDocumentation(final EObject object, final IGamlDescription description) {
-		docManager.setGamlDocumentation(object, description, true);
-	}
-
-	public static void setGamlDocumentationOfBuiltIn(final EObject object, final IGamlDescription description) {
-		docManager.setGamlDocumentation(object, description, false);
 	}
 
 	public final static SymbolProto getProto(final String keyword, final IDescription superDesc) {
@@ -222,20 +172,12 @@ public class DescriptionFactory {
 
 	public static void addSpeciesNameAsType(final String name) {
 		if (!name.equals(AGENT) && !name.equals(IKeyword.EXPERIMENT)) {
-			// System.err.println(" =====================================");
-			// System.err.println(" Registering " + name + " as a species type
-			// in the global registry");
-			// if ( VAR_KEYWORDS_PROTOS.containsKey(name) ) {
-			// System.err.println(" Another value has already been registered");
-			// }
-			// System.err.println(" =====================================");
 			VAR_KEYWORDS_PROTOS.putIfAbsent(name, VAR_KEYWORDS_PROTOS.get(AGENT));
 		}
 	}
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
 			final IDescription superDesc, final ChildrenProvider children, final Facets facets) {
-		// TODO Verify this
 		final IDescription result = create(SyntacticFactory.create(keyword, facets, children.hasChildren()), superDesc,
 				children);
 		return result;

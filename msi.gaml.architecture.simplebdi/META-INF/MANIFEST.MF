@@ -4,7 +4,8 @@ Eclipse-BundleShape: dir
 Bundle-Name: Simple bdi architecture
 Bundle-SymbolicName: msi.gaml.architecture.simplebdi;singleton:=true
 Bundle-Version: 1.7.0.qualifier
-Require-Bundle: msi.gama.core;bundle-version="1.4.0"
+Require-Bundle: msi.gama.core;bundle-version="1.4.0",
+ msi.gama.ext;bundle-version="1.7.0"
 Export-Package: msi.gaml.architecture.simplebdi
 Bundle-ClassPath: .
 Bundle-ActivationPolicy: lazy

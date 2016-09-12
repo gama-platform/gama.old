@@ -144,7 +144,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public abstract StatementDescription getAction(String name);
 
-	public abstract ErrorCollector getErrorCollector();
+	public abstract ValidationContext getErrorCollector();
 
 	public abstract IDescription copy(IDescription into);
 
@@ -170,13 +170,9 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public void resetOriginName();
 
-	public boolean isDocumenting();
-
 	public boolean hasAttribute(String name);
 
 	public boolean manipulatesVar(final String name);
-
-	// public List<IDescription> getOwnChildren();
 
 	public String getLitteral(String name);
 
@@ -209,5 +205,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public IType getTypeDenotedByFacet(String s);
 
 	void computeStats(FacetVisitor proc, int[] facetNumber, int[] descWithNoFacets, int[] descNumber);
+
+	public void document(EObject s, IGamlDescription desc);
 
 }

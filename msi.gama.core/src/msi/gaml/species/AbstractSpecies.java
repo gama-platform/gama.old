@@ -19,6 +19,7 @@ import java.util.Map;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ISkill;
 import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -37,6 +38,7 @@ import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SkillDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.statements.ActionStatement;
@@ -66,12 +68,14 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	private final List<IStatement> behaviors = new ArrayList();
 	protected ISpecies macroSpecies, parentSpecies;
 	private boolean isInitOverriden, isStepOverriden;
+	final IArchitecture control;
 
 	public AbstractSpecies(final IDescription description) {
 		super(description);
 		setName(description.getName());
 		isGrid = getKeyword().equals(IKeyword.GRID);
 		isGraph = AbstractGraphNodeAgent.class.isAssignableFrom(((SpeciesDescription) description).getJavaBase());
+		control = (IArchitecture) getDescription().getControl().createInstance();
 	}
 
 	@Override
@@ -138,11 +142,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public boolean isGraph() {
 		return isGraph;
 	}
-
-	// @Override
-	// public String toGaml() {
-	// return name;
-	// }
 
 	@Override
 	public String toString() {
@@ -279,7 +278,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IArchitecture getArchitecture() {
-		return getDescription().getControl();
+		return control;
 	}
 
 	@Override
@@ -343,14 +342,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public Collection<IStatement> getBehaviors() {
-		return behaviors;
-	}
-
-	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
 		// First we verify the control architecture
-		final IArchitecture control = getArchitecture();
 		if (control == null) {
 			throw GamaRuntimeException.error("The control of species " + description.getName() + " cannot be computed");
 		}
@@ -361,7 +354,9 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 				oneMicroSpecies.setMacroSpecies(this);
 				microSpecies.put(oneMicroSpecies.getName(), oneMicroSpecies);
 			} else if (s instanceof IVariable) {
+				s.setEnclosing(this);
 				variables.put(s.getName(), (IVariable) s);
+
 			} else if (s instanceof AspectStatement) {
 				aspects.put(s.getName(), (AspectStatement) s);
 			} else if (s instanceof ActionStatement) {
@@ -373,6 +368,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 						isStepOverriden = true;
 					}
 				}
+				s.setEnclosing(this);
 				actions.put(s.getName(), (ActionStatement) s);
 			} else if (s instanceof UserCommandStatement) {
 				userCommands.put(s.getName(), (UserCommandStatement) s);
@@ -514,28 +510,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		return getPopulation(scope).anyValue(scope);
 	}
 
-	//
-	// @Override
-	// public boolean checkBounds(final Integer index, final boolean forAdding)
-	// {
-	// return false;
-	// }
-
-	// @Override
-	// public void add(final IScope scope, final Integer index, final Object
-	// value, final Object param, final boolean
-	// all,
-	// final boolean add) throws GamaRuntimeException {
-	// // NOT ALLOWED
-	// }
-	//
-	// @Override
-	// public void remove(final IScope scope, final Object index, final Object
-	// value, final boolean all)
-	// throws GamaRuntimeException {
-	// // NOT ALLOWED
-	// }
-
 	@Override
 	public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
@@ -563,87 +537,24 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		return Collections.singleton(getPopulation(scope));
 	}
 
-	/**
-	 * Method add()
-	 * 
-	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
-	 */
-	// @Override
-	// public void add(final IScope scope, final IAgent value) {}
+	public ISkill getSkillInstanceFor(final Class skillClass) {
+		if (skillClass == null)
+			return null;
+		if (skillClass.isAssignableFrom(control.getClass())) {
+			return control;
+		}
+		return getSkillInstanceFor(getDescription(), skillClass);
+	}
 
-	/**
-	 * Method add()
-	 * 
-	 * @see msi.gama.util.IContainer#add(msi.gama.runtime.IScope,
-	 *      java.lang.Object, java.lang.Object)
-	 */
-	// @Override
-	// public void add(final IScope scope, final Integer index, final IAgent
-	// value) {}
-
-	/**
-	 * Method put()
-	 * 
-	 * @see msi.gama.util.IContainer#put(msi.gama.runtime.IScope,
-	 *      java.lang.Object, java.lang.Object)
-	 */
-	// @Override
-	// public void put(final IScope scope, final Integer index, final IAgent
-	// value) {}
-
-	/**
-	 * Method addAll()
-	 * 
-	 * @see msi.gama.util.IContainer#addAll(msi.gama.runtime.IScope,
-	 *      msi.gama.util.IContainer)
-	 */
-	// @Override
-	// public void addAll(final IScope scope, final IContainer values) {}
-
-	/**
-	 * Method setAll()
-	 * 
-	 * @see msi.gama.util.IContainer#setAll(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
-	 */
-	// @Override
-	// public void setAll(final IScope scope, final IAgent value) {}
-
-	/**
-	 * Method remove()
-	 * 
-	 * @see msi.gama.util.IContainer#remove(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
-	 */
-	// @Override
-	// public void remove(final IScope scope, final Object value) {}
-
-	/**
-	 * Method removeAt()
-	 * 
-	 * @see msi.gama.util.IContainer#removeAt(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
-	 */
-	// @Override
-	// public void removeAt(final IScope scope, final Integer index) {}
-
-	/**
-	 * Method removeAll()
-	 * 
-	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope,
-	 *      msi.gama.util.IContainer)
-	 */
-	// @Override
-	// public void removeAll(final IScope scope, final IContainer values) {}
-
-	/**
-	 * Method removeAll()
-	 * 
-	 * @see msi.gama.util.IContainer#removeAll(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
-	 */
-	// @Override
-	// public void removeAll(final IScope scope, final Object value) {}
+	private ISkill getSkillInstanceFor(final SpeciesDescription sd, final Class skillClass) {
+		for (final SkillDescription sk : getDescription().getSkills()) {
+			if (skillClass.isAssignableFrom(sk.getJavaBase())) {
+				return sk.getInstance();
+			}
+		}
+		if (sd.getParent() != null && sd.getParent() != sd)
+			return getSkillInstanceFor(sd.getParent(), skillClass);
+		return null;
+	}
 
 }

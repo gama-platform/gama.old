@@ -33,13 +33,13 @@ import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.SyntacticFactory;
 import msi.gaml.compilation.SyntacticModelElement;
-import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.TypeDescription;
+import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.TypeNode;
 import msi.gaml.types.TypeTree;
@@ -61,7 +61,7 @@ public class ModelAssembler {
 	}
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,
-			final List<ISyntacticElement> models, final ErrorCollector collector, final boolean document,
+			final List<ISyntacticElement> models, final ValidationContext collector, final boolean document,
 			final Map<String, ModelDescription> mm) {
 		final TOrderedHashMap<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
 		final TOrderedHashMap<String, TOrderedHashMap<String, ISyntacticElement>>[] experimentNodes = new TOrderedHashMap[1];
@@ -283,7 +283,7 @@ public class ModelAssembler {
 		model.finalizeDescription();
 
 		if (document) {
-			DescriptionFactory.document(model);
+			collector.document(model);
 		}
 		return model;
 
@@ -363,7 +363,7 @@ public class ModelAssembler {
 
 	void addExperimentNode(final ISyntacticElement element, final String modelName,
 			final Map<String, TOrderedHashMap<String, ISyntacticElement>> experimentNodes,
-			final ErrorCollector collector) {
+			final ValidationContext collector) {
 		// First we verify that this experiment has not been declared previously
 		final String experimentName = element.getName();
 		for (final String otherModel : experimentNodes.keySet()) {
@@ -412,7 +412,7 @@ public class ModelAssembler {
 	}
 
 	void addSpeciesNode(final ISyntacticElement element, final Map<String, ISyntacticElement> speciesNodes,
-			final ErrorCollector collector) {
+			final ValidationContext collector) {
 		final String name = element.getName();
 		if (speciesNodes.containsKey(name)) {
 			collector.add(new GamlCompilationError("Species " + name + " is declared twice",

@@ -73,7 +73,10 @@ import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
+import com.google.inject.Inject;
+
 import msi.gama.common.GamaPreferences;
+import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.Access;
 import msi.gama.lang.gaml.gaml.ActionArguments;
@@ -128,10 +131,14 @@ import msi.gaml.statements.Facets;
  */
 public class GamlCompatibilityConverter {
 
+	@Inject IDocManager documenter;
+
+	@Inject ExpressionDescriptionBuilder builder;
+
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
 			ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
-	public static SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
+	public SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
 		if (root instanceof Block) {
 			final SyntacticModelElement elt = (SyntacticModelElement) SyntacticFactory.create("model", root, true);
 			convertBlock(elt, (Block) root, errors);
@@ -156,7 +163,7 @@ public class GamlCompatibilityConverter {
 		return model;
 	}
 
-	private static Object[] collectImports(final ModelImpl m) {
+	private Object[] collectImports(final ModelImpl m) {
 		if (m.eIsSet(GamlPackage.MODEL__IMPORTS)) {
 			final List<Import> imports = m.getImports();
 			final Object[] imps = new Object[imports.size()];
@@ -169,7 +176,7 @@ public class GamlCompatibilityConverter {
 		return null;
 	}
 
-	private static List<String> collectPragmas(final ModelImpl m) {
+	private List<String> collectPragmas(final ModelImpl m) {
 		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) {
 			return null;
 		}
@@ -184,7 +191,7 @@ public class GamlCompatibilityConverter {
 		return result;
 	}
 
-	private static boolean doesNotDefineAttributes(final String keyword) {
+	private boolean doesNotDefineAttributes(final String keyword) {
 		final SymbolProto p = DescriptionFactory.getProto(keyword, null);
 		if (p == null) {
 			return true;
@@ -193,7 +200,7 @@ public class GamlCompatibilityConverter {
 		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
 	}
 
-	private static void addWarning(final String message, final EObject object, final Set<Diagnostic> errors) {
+	private void addWarning(final String message, final EObject object, final Set<Diagnostic> errors) {
 		if (!GamaPreferences.WARNINGS_ENABLED.getValue()) {
 			return;
 		}
@@ -202,7 +209,7 @@ public class GamlCompatibilityConverter {
 			errors.add(d);
 	}
 
-	private static void addInfo(final String message, final EObject object, final Set<Diagnostic> errors) {
+	private void addInfo(final String message, final EObject object, final Set<Diagnostic> errors) {
 		if (!GamaPreferences.INFO_ENABLED.getValue()) {
 			return;
 		}
@@ -211,7 +218,7 @@ public class GamlCompatibilityConverter {
 			errors.add(d);
 	}
 
-	private static final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm,
+	private final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm,
 			final Set<Diagnostic> errors) {
 		// We catch its keyword
 		String keyword = EGaml.getKeyOf(stm);
@@ -333,12 +340,12 @@ public class GamlCompatibilityConverter {
 		return elt;
 	}
 
-	private static void convertBlock(final Statement stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
+	private void convertBlock(final Statement stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		final Block block = stm.getBlock();
 		convertBlock(elt, block, errors);
 	}
 
-	public static void convertBlock(final ISyntacticElement elt, final Block block, final Set<Diagnostic> errors) {
+	public void convertBlock(final ISyntacticElement elt, final Block block, final Set<Diagnostic> errors) {
 		if (block != null) {
 			final Expression function = block.getFunction();
 			if (function != null) {
@@ -351,7 +358,7 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
+	private void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
 			final Set<Diagnostic> errors) {
 		// if (e.hasFacet(key)) {
 		// addWarning("Double definition of facet " + key + ". Only the last one
@@ -361,7 +368,7 @@ public class GamlCompatibilityConverter {
 		e.setFacet(key, expr);
 	}
 
-	private static void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
+	private void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		final EObject elseBlock = stm.getElse();
 		if (elseBlock != null) {
 			final ISyntacticElement elseElt = SyntacticFactory.create(ELSE, elseBlock, EGaml.hasChildren(elseBlock));
@@ -374,8 +381,7 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static void convertArgs(final ActionArguments args, final ISyntacticElement elt,
-			final Set<Diagnostic> errors) {
+	private void convertArgs(final ActionArguments args, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		if (args != null) {
 			for (final ArgumentDefinition def : EGaml.getArgsOf(args)) {
 				final ISyntacticElement arg = SyntacticFactory.create(ARG, def, false);
@@ -391,8 +397,8 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static String convertAssignment(final S_Assignment stm, final String originalKeyword,
-			final ISyntacticElement elt, final Expression expr, final Set<Diagnostic> errors) {
+	private String convertAssignment(final S_Assignment stm, final String originalKeyword, final ISyntacticElement elt,
+			final Expression expr, final Set<Diagnostic> errors) {
 		final IExpressionDescription value = convExpr(stm.getValue(), errors);
 		String keyword = originalKeyword;
 		if (keyword.endsWith("<-") || keyword.equals(SET)) {
@@ -470,7 +476,7 @@ public class GamlCompatibilityConverter {
 		return keyword;
 	}
 
-	private static void convertFacets(final Statement stm, final String keyword, final ISyntacticElement elt,
+	private void convertFacets(final Statement stm, final String keyword, final ISyntacticElement elt,
 			final Set<Diagnostic> errors) {
 		final SymbolProto p = DescriptionFactory.getProto(keyword, null);
 		for (final Facet f : EGaml.getFacetsOf(stm)) {
@@ -506,7 +512,7 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static String convertKeyword(final String k, final String upper) {
+	private String convertKeyword(final String k, final String upper) {
 		String keyword = k;
 		if ((upper.equals(BATCH) || upper.equals(EXPERIMENT)) && keyword.equals(SAVE)) {
 			keyword = SAVE_BATCH;
@@ -522,25 +528,25 @@ public class GamlCompatibilityConverter {
 		return keyword;
 	}
 
-	private static final IExpressionDescription convExpr(final EObject expr, final Set<Diagnostic> errors) {
+	private final IExpressionDescription convExpr(final EObject expr, final Set<Diagnostic> errors) {
 		if (expr == null) {
 			return null;
 		}
-		final IExpressionDescription result = ExpressionDescriptionBuilder.create(expr, errors);
+		final IExpressionDescription result = builder.create(expr, errors);
 		return result;
 	}
 
-	private static final IExpressionDescription convExpr(final ISyntacticElement expr, final Set<Diagnostic> errors) {
+	private final IExpressionDescription convExpr(final ISyntacticElement expr, final Set<Diagnostic> errors) {
 		if (expr == null) {
 			return null;
 		}
-		final IExpressionDescription result = ExpressionDescriptionBuilder.create(expr, errors);
+		final IExpressionDescription result = builder.create(expr, errors);
 		return result;
 	}
 
 	private static int SYNTHETIC_ACTION = 0;
 
-	private static final IExpressionDescription convExpr(final Facet facet, final boolean label,
+	private final IExpressionDescription convExpr(final Facet facet, final boolean label,
 			final Set<Diagnostic> errors) {
 		if (facet != null) {
 			final Expression expr = facet.getExpr();
@@ -563,16 +569,16 @@ public class GamlCompatibilityConverter {
 		return null;
 	}
 
-	final static IExpressionDescription convertToLabel(final EObject target, final String string) {
+	final IExpressionDescription convertToLabel(final EObject target, final String string) {
 		final IExpressionDescription ed = LabelExpressionDescription.create(string);
 		ed.setTarget(target);
 		if (target != null) {
-			DescriptionFactory.setGamlDocumentation(target, ed.getExpression());
+			documenter.setGamlDocumentation(target, ed.getExpression(), true);
 		}
 		return ed;
 	}
 
-	final static void convStatements(final ISyntacticElement elt, final List<? extends Statement> ss,
+	final void convStatements(final ISyntacticElement elt, final List<? extends Statement> ss,
 			final Set<Diagnostic> errors) {
 		for (final Statement stm : ss) {
 			if (IKeyword.GLOBAL.equals(EGaml.getKeyOf(stm))) {
@@ -587,7 +593,7 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static final IExpressionDescription findExpr(final Statement stm, final Set<Diagnostic> errors) {
+	private final IExpressionDescription findExpr(final Statement stm, final Set<Diagnostic> errors) {
 		if (stm == null) {
 			return null;
 		}
@@ -603,7 +609,7 @@ public class GamlCompatibilityConverter {
 		return null;
 	}
 
-	private static final Set<String> varDependenciesOf(final Statement s) {
+	private final Set<String> varDependenciesOf(final Statement s) {
 		Set<String> list = null;
 		for (final Facet facet : EGaml.getFacetsOf(s)) {
 			final Expression expr = facet.getExpr();

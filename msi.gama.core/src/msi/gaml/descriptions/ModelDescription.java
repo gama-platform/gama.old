@@ -58,7 +58,7 @@ public class ModelDescription extends SpeciesDescription {
 	private String modelFilePath;
 	private final String modelProjectPath;
 	private final List<String> alternatePaths;
-	private final ErrorCollector collect;
+	private final ValidationContext collect;
 	protected volatile boolean document;
 	// hqnghi new attribute manipulate micro-models
 	private Map<String, ModelDescription> microModels;
@@ -101,12 +101,12 @@ public class ModelDescription extends SpeciesDescription {
 
 	public ModelDescription(final String name, final Class clazz, final SpeciesDescription macro,
 			final SpeciesDescription parent) {
-		this(name, clazz, "", "", null, macro, parent, null, ErrorCollector.BuiltIn, Collections.EMPTY_LIST);
+		this(name, clazz, "", "", null, macro, parent, null, ValidationContext.NULL, Collections.EMPTY_LIST);
 	}
 
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
-			final ErrorCollector collector, final List<String> imports) {
+			final ValidationContext collector, final List<String> imports) {
 		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets);
 		setName(name);
 		types = parent instanceof ModelDescription ? new TypesManager(((ModelDescription) parent).types)
@@ -128,7 +128,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public boolean isDocumenting() {
+	protected boolean isDocumenting() {
 		return document;
 	}
 
@@ -346,7 +346,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public ErrorCollector getErrorCollector() {
+	public ValidationContext getErrorCollector() {
 		return collect;
 	}
 

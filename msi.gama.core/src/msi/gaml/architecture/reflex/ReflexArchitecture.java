@@ -92,4 +92,9 @@ public class ReflexArchitecture extends AbstractArchitecture {
 		return true;
 	}
 
+	@Override
+	public void setEnclosing(final ISymbol enclosing) {
+		// Nothing to do by default
+	}
+
 }

@@ -11,10 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.architecture.reflex;
 
-import msi.gama.common.interfaces.ISkill;
 import msi.gama.runtime.IScope;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.skills.Skill;
 import msi.gaml.species.ISpecies;
@@ -23,12 +21,6 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 
 	public AbstractArchitecture() {
 		super();
-	}
-
-	@Override
-	public IArchitecture duplicate() {
-		final ISkill duplicate = Skill.Factory.create(getName(), getClass(), getDefiningPlugin());
-		return (IArchitecture) duplicate;
 	}
 
 	@Override
@@ -44,11 +36,6 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 	@Override
 	public String getTrace(final IScope scope) {
 		return "";
-	}
-
-	@Override
-	public IDescription getDescription() {
-		return null;
 	}
 
 	@Override

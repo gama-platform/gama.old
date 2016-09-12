@@ -26,10 +26,10 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.weighted_tasks.WeightedTaskStatement.TaskValidator;
 import msi.gaml.compilation.IDescriptionValidator.ValidNameValidator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SkillDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -74,8 +74,8 @@ public class WeightedTaskStatement extends AbstractStatementSequence {
 			}
 			// Verify that the task is inside a species with task-based control
 			final SpeciesDescription species = description.getSpeciesContext();
-			final IArchitecture control = species.getControl();
-			if (!(control instanceof WeightedTasksArchitecture)) {
+			final SkillDescription control = species.getControl();
+			if (!WeightedTasksArchitecture.class.isAssignableFrom(control.getJavaBase())) {
 				description.error("A " + description.getKeyword()
 						+ " can only be defined in a task-controlled species  (one of" + AllowedArchitectures + ")",
 						IGamlIssue.WRONG_CONTEXT);

@@ -32,11 +32,11 @@ public class GamlSyntacticParser extends GamlParser {
 			super(result.getRootASTElement(), result.getRootNode(), result.hasSyntaxErrors());
 		}
 
-		public SyntacticModelElement getSyntacticContents() {
+		public SyntacticModelElement getSyntacticContents(final GamlCompatibilityConverter converter) {
 			if (element != null)
 				return element;
 			if (!hasSyntaxErrors()) {
-				element = GamlCompatibilityConverter.buildSyntacticContents(getRootASTElement(), null);
+				element = converter.buildSyntacticContents(getRootASTElement(), null);
 			}
 			return element;
 		}

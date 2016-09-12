@@ -31,11 +31,11 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.finite_state_machine.FsmStateStatement.StateValidator;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SkillDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
@@ -94,14 +94,13 @@ public class FsmStateStatement extends AbstractStatementSequence {
 			// Verify that the state is inside a species with fsm control
 			final SpeciesDescription species = description.getSpeciesContext();
 			final String keyword = description.getKeyword();
-			final IArchitecture control = species.getControl();
-			// String control = species.getControlName();
-			if (!(control instanceof FsmArchitecture)) {
+			final SkillDescription control = species.getControl();
+			if (!FsmArchitecture.class.isAssignableFrom(control.getJavaBase())) {
 				if (keyword.equals(STATE)) {
 					description.error("A state can only be defined in an fsm-controlled or user-controlled species",
 							IGamlIssue.WRONG_CONTEXT);
 					return;
-				} else if (control.getClass() == FsmArchitecture.class) {
+				} else if (control.getJavaBase() == FsmArchitecture.class) {
 					description.error("A " + description.getKeyword()
 							+ " can only be defined in a user-controlled species (one of" + AllowedArchitectures + ")",
 							IGamlIssue.WRONG_CONTEXT);

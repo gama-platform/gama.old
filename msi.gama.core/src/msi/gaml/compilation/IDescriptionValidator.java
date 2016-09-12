@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
+import com.google.common.collect.ImmutableSet;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.IContainer;
@@ -18,7 +20,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -33,6 +34,9 @@ import msi.gaml.types.Types;
  * 
  */
 public interface IDescriptionValidator<T extends IDescription> extends IKeyword {
+
+	public static final ImmutableSet<String> RESERVED = ImmutableSet
+			.copyOf(new String[] { IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE, IKeyword.NULL, IKeyword.MYSELF });
 
 	/**
 	 * Called at the end of the validation process. The enclosing description,
@@ -125,11 +129,11 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 			if (name == null) {
 				cd.error("The attribute 'name' is missing", IGamlIssue.MISSING_NAME);
 				return false;
-			} else if (IExpressionCompiler.RESERVED.contains(name)) {
+			} else if (RESERVED.contains(name)) {
 				final String type = "It cannot be used as a "
 						+ (cd instanceof VariableDescription ? "variable" : cd.getKeyword()) + " name.";
-				cd.error(name + " is a reserved keyword. " + type + " Reserved keywords are: "
-						+ IExpressionCompiler.RESERVED, IGamlIssue.IS_RESERVED, NAME, name);
+				cd.error(name + " is a reserved keyword. " + type + " Reserved keywords are: " + RESERVED,
+						IGamlIssue.IS_RESERVED, NAME, name);
 				return false;
 			} else {
 				final IType t = cd.getModelDescription().getTypesManager().get(name);

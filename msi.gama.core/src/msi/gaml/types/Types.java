@@ -183,7 +183,7 @@ public class Types {
 	private static <T> IType<T> internalGet(final Class<T> type) {
 		final IType<T>[] t = new IType[] { builtInTypes.get(Types.CLASSES_TYPES_CORRESPONDANCE.get(type)) };
 		boolean newEntry = false;
-		if (t[0] == null) {
+		if (t[0] == Types.NO_TYPE) {
 			if (!type.isInterface()) {
 				newEntry = !Types.CLASSES_TYPES_CORRESPONDANCE
 						.forEachEntry(new TObjectObjectProcedure<Class, String>() {

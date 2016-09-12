@@ -11,11 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -39,10 +37,10 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GamaHelper;
+import msi.gaml.compilation.GamaSkillRegistry;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.SymbolSerializer.SpeciesSerializer;
 import msi.gaml.expressions.DenotedActionExpression;
@@ -62,8 +60,8 @@ public class SpeciesDescription extends TypeDescription {
 	// AD 08/16: Aspects are now inherited dynamically
 	private TOrderedHashMap<String, StatementDescription> aspects;
 	private TOrderedHashMap<String, SpeciesDescription> microSpecies;
-	protected Map<Class<? extends ISkill>, ISkill> skills;
-	protected IArchitecture control;
+	protected TLinkedHashSet<SkillDescription> skills;
+	protected SkillDescription control;
 	private IAgentConstructor agentConstructor;
 	private SpeciesConstantExpression speciesExpr;
 	protected Class javaBase;
@@ -95,6 +93,14 @@ public class SpeciesDescription extends TypeDescription {
 		setAgentConstructor(helper);
 	}
 
+	protected void addSkill(final SkillDescription sk) {
+		if (sk == null)
+			return;
+		if (skills == null)
+			skills = new TLinkedHashSet();
+		skills.add(sk);
+	}
+
 	@Override
 	public SymbolSerializer createSerializer() {
 		return SpeciesSerializer.getInstance();
@@ -118,28 +124,24 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	protected void setSkills(final IExpressionDescription userDefinedSkills, final Set<String> builtInSkills) {
-		final Set<ISkill> skillInstances = new TLinkedHashSet();
 		/* We try to add the control architecture if any is defined */
-		final IExpressionDescription c = getFacet(CONTROL);
-		if (c != null) {
-			c.compile(this);
-			final Object temp = c.getExpression().value(null);
-			if (!(temp instanceof AbstractArchitecture)) {
+		final String controlName = getLitteral(CONTROL);
+		if (controlName != null) {
+			final SkillDescription sd = GamaSkillRegistry.INSTANCE.get(controlName);
+			if (sd == null || !sd.isControl()) {
 				warning("This control  does not belong to the list of known agent controls ("
-						+ AbstractGamlAdditions.ARCHITECTURES + ")", IGamlIssue.WRONG_CONTEXT, CONTROL);
+						+ GamaSkillRegistry.INSTANCE.getArchitectureNames() + ")", IGamlIssue.WRONG_CONTEXT, CONTROL);
 			} else {
-				control = (IArchitecture) temp;
+				control = sd;
 				// We add it explicitly so as to add the variables and actions
 				// defined in the control. No need to add it in the other cases
-				skillInstances.add(control);
+				addSkill(control);
 			}
 		}
 
 		/* We add the keyword as a possible skill (used for 'grid' species) */
-		final ISkill skill = AbstractGamlAdditions.getSkillInstanceFor(getKeyword());
-		if (skill != null) {
-			skillInstances.add(skill);
-		}
+		final SkillDescription skill = GamaSkillRegistry.INSTANCE.get(getKeyword());
+		addSkill(skill);
 		/*
 		 * We add the user defined skills (i.e. as in 'species a skills: [s1,
 		 * s2...]')
@@ -150,7 +152,7 @@ public class SpeciesDescription extends TypeDescription {
 				final ListExpression list = (ListExpression) expr;
 				for (final IExpression exp : list.getElements()) {
 					if (exp instanceof SkillConstantExpression) {
-						skillInstances.add((ISkill) exp.value(null));
+						addSkill(((ISkill) exp.value(null)).getDescription());
 					}
 				}
 			}
@@ -161,19 +163,7 @@ public class SpeciesDescription extends TypeDescription {
 		 * attach_to="a")
 		 */
 		for (final String s : builtInSkills) {
-			final ISkill sk = AbstractGamlAdditions.getSkillInstanceFor(s);
-			if (sk != null) {
-				skillInstances.add(sk);
-			}
-		}
-
-		/* We then create the list of classes from this list of names */
-		for (final ISkill skillInstance : skillInstances) {
-			if (skillInstance == null) {
-				continue;
-			}
-			final Class<? extends ISkill> skillClass = skillInstance.getClass();
-			addSkill(skillClass, skillInstance);
+			addSkill(GamaSkillRegistry.INSTANCE.get(s));
 		}
 
 	}
@@ -190,25 +180,6 @@ public class SpeciesDescription extends TypeDescription {
 			}
 		}
 		return controlName;
-	}
-
-	public ISkill getSkillFor(final Class clazz) {
-		ISkill skill = null;
-		if (skills != null) {
-			skill = skills.get(clazz);
-			if (skill == null && clazz != null) {
-				for (final Map.Entry<Class<? extends ISkill>, ISkill> entry : skills.entrySet()) {
-					if (clazz.isAssignableFrom(entry.getKey())) {
-						return entry.getValue();
-					}
-				}
-			}
-		}
-		// We go and try to find the skill in the parent
-		if (skill == null && parent != null && parent != this) {
-			return getParent().getSkillFor(clazz);
-		}
-		return skill;
 	}
 
 	public String getParentName() {
@@ -232,13 +203,15 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public void copyJavaAdditions() {
+		final String originName = "built-in species " + getName();
 		final Class clazz = getJavaBase();
 		if (clazz == null) {
 			error("This species cannot be compiled as its Java base is unknown. ", IGamlIssue.UNKNOWN_SUBSPECIES);
 			return;
 		}
-		final Set<IDescription> children = AbstractGamlAdditions.getAllChildrenOf(getJavaBase(), getSkillClasses());
-		for (final IDescription v : children) {
+		for (final IDescription v : AbstractGamlAdditions.getAllChildrenOf(getJavaBase(), getSkillClasses())) {
+			if (isBuiltIn())
+				v.setOriginName(originName);
 			if (v instanceof VariableDescription) {
 				boolean toAdd = false;
 				if (this.isBuiltIn() && !hasAttribute(v.getName()) || ((VariableDescription) v).isContextualType()) {
@@ -394,7 +367,7 @@ public class SpeciesDescription extends TypeDescription {
 		return allAspects;
 	}
 
-	public IArchitecture getControl() {
+	public SkillDescription getControl() {
 		return control;
 	}
 
@@ -441,18 +414,25 @@ public class SpeciesDescription extends TypeDescription {
 	protected void setAgentConstructor(final IAgentConstructor agentConstructor) {
 		this.agentConstructor = agentConstructor;
 	}
-
-	public void addSkill(final Class<? extends ISkill> c, final ISkill instance) {
-		if (c != null && !c.isInterface() && !Modifier.isAbstract(c.getModifiers())) {
-			if (skills == null)
-				skills = new HashMap();
-			skills.put(c, instance);
-		}
-	}
+	//
+	// public void addSkill(final Class<? extends ISkill> c, final ISkill
+	// instance) {
+	// if (c != null && !c.isInterface() &&
+	// !Modifier.isAbstract(c.getModifiers())) {
+	// if (skills == null)
+	// skills = new TLinkedHashSet();
+	// skills.add(instance);
+	// }
+	// }
 
 	@Override
 	public Set<Class<? extends ISkill>> getSkillClasses() {
-		return skills == null ? Collections.EMPTY_SET : skills.keySet();
+		if (skills == null)
+			return Collections.EMPTY_SET;
+		final TLinkedHashSet<Class<? extends ISkill>> result = new TLinkedHashSet<>();
+		for (final SkillDescription sd : skills)
+			result.add(sd.getJavaBase());
+		return result;
 	}
 
 	public SpeciesDescription getMacroSpecies() {
@@ -546,10 +526,9 @@ public class SpeciesDescription extends TypeDescription {
 		if (skills == null)
 			return Collections.EMPTY_SET;
 		final Set<String> names = new TLinkedHashSet();
-
-		for (final ISkill skill : skills.values()) {
+		for (final SkillDescription skill : skills) {
 			if (skill != null) {
-				names.add(AbstractGamlAdditions.getSkillNameFor(skill.getClass()));
+				names.add(skill.getName());
 			}
 		}
 		// Takes care of invalid species (see Issue 711)
@@ -778,18 +757,19 @@ public class SpeciesDescription extends TypeDescription {
 	private void finalizeControl() {
 		if (control == null && parent != this && parent instanceof SpeciesDescription) {
 			control = ((SpeciesDescription) parent).getControl();
-			if (control != null) {
-				control = (IArchitecture) control.duplicate();
-			}
 		}
 		if (control == null) {
-			control = (IArchitecture) AbstractGamlAdditions.getSkillInstanceFor(REFLEX);
+			control = GamaSkillRegistry.INSTANCE.get(REFLEX);
 			return;
 		}
-		Class<? extends ISkill> clazz = control.getClass();
+		Class<? extends ISkill> clazz = control.getJavaBase();
 		while (clazz != AbstractArchitecture.class) {
-			addSkill(clazz, control);
+			final SkillDescription sk = GamaSkillRegistry.INSTANCE.get(clazz);
+			if (sk != null) {
+				addSkill(sk);
+			}
 			clazz = (Class<? extends ISkill>) clazz.getSuperclass();
+
 		}
 
 	}
@@ -836,7 +816,11 @@ public class SpeciesDescription extends TypeDescription {
 	public Boolean implementsSkill(final String skill) {
 		if (skills == null)
 			return false;
-		return skills.containsKey(AbstractGamlAdditions.getSkillClassFor(skill));
+		for (final SkillDescription sk : skills) {
+			if (sk.getName().equals(skill))
+				return true;
+		}
+		return false;
 	}
 
 	public Class<? extends IAgent> getJavaBase() {
@@ -953,6 +937,10 @@ public class SpeciesDescription extends TypeDescription {
 
 	public boolean belongsToAMicroModel() {
 		return getModelDescription().isMicroModel();
+	}
+
+	public Collection<SkillDescription> getSkills() {
+		return skills == null ? Collections.EMPTY_LIST : skills;
 	}
 
 }

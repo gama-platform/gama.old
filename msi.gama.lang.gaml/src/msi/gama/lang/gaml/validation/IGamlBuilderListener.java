@@ -13,7 +13,7 @@ package msi.gama.lang.gaml.validation;
 
 import java.util.Collection;
 
-import msi.gaml.descriptions.ErrorCollector;
+import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -25,5 +25,5 @@ import msi.gaml.descriptions.IDescription;
  */
 public interface IGamlBuilderListener {
 
-	void validationEnded(final Collection<? extends IDescription> experiments, final ErrorCollector status);
+	void validationEnded(final Collection<? extends IDescription> experiments, final ValidationContext status);
 }

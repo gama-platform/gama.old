@@ -142,8 +142,6 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 
 	public abstract List<String> getAspectNames();
 
-	public abstract Collection<IStatement> getBehaviors();
-
 	public abstract IArchitecture getArchitecture();
 
 	public abstract String getArchitectureName();

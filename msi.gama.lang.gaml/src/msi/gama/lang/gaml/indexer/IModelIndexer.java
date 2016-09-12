@@ -13,8 +13,8 @@ import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.ValidationContext;
 
 /**
  * the indexer is used to maintain information about the relationships between
@@ -63,15 +63,6 @@ public interface IModelIndexer {
 	Iterator<URI> allImportsOf(URI uri);
 
 	/**
-	 * Whether or not this URI is being indexed
-	 * 
-	 * @param uri
-	 * @return
-	 */
-
-	boolean indexes(URI uri);
-
-	/**
 	 * Returns a properly encoded URI
 	 * 
 	 * @param uri
@@ -86,8 +77,6 @@ public interface IModelIndexer {
 
 	boolean isImported(URI uri);
 
-	boolean isReady();
-
 	public TOrderedHashMap<GamlResource, String> validateImportsOf(final GamlResource r);
 
 	/**
@@ -99,7 +88,7 @@ public interface IModelIndexer {
 	boolean isEdited(URI uri);
 
 	public void updateState(final URI uri, final ModelDescription model, final boolean newState,
-			final ErrorCollector status);
+			final ValidationContext status);
 
 	public THashMap<EObject, IGamlDescription> getDocumentationCache(final URI uri);
 
@@ -107,14 +96,20 @@ public interface IModelIndexer {
 
 	TOrderedHashMap<URI, String> allLabeledImportsOf(URI uri);
 
-	ErrorCollector getErrorCollector(GamlResource gamlResource);
+	ValidationContext getValidationContext(GamlResource gamlResource);
+
+	void discardValidationContext(GamlResource gamlResource);
 
 	boolean equals(URI uri, URI uri2);
-
-	// void waitToBeReady();
 
 	void addResourceListener(URI uri, IGamlBuilderListener listener);
 
 	void removeResourceListener(IGamlBuilderListener listener);
+
+	// void addResourcesToBuild(URI uri);
+
+	// void removeResourcesToBuild(URI uri);
+
+	boolean needsToBuild(URI uri);
 
 }

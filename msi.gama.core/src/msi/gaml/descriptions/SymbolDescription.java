@@ -176,8 +176,7 @@ public abstract class SymbolDescription implements IDescription {
 		getSerializer().collectMetaInformation(this, meta);
 	}
 
-	@Override
-	public boolean isDocumenting() {
+	protected boolean isDocumenting() {
 		final ModelDescription md = getModelDescription();
 		if (md == null)
 			return false;
@@ -239,12 +238,23 @@ public abstract class SymbolDescription implements IDescription {
 		if (e == null || e.eResource().getURI().path().contains(IExpressionCompiler.SYNTHETIC_RESOURCES_PREFIX)) {
 			throw warning ? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s);
 		}
-		final ErrorCollector c = getErrorCollector();
+		final ValidationContext c = getErrorCollector();
 		if (c == null) {
 			System.out.println((warning ? "Warning" : "Error") + ": " + s);
 			return;
 		}
 		c.add(new GamlCompilationError(s, code, e, warning, info, data));
+	}
+
+	@Override
+	public void document(final EObject e, final IGamlDescription desc) {
+		if (!isDocumenting())
+			return;
+		final ValidationContext c = getErrorCollector();
+		if (c == null) {
+			return;
+		}
+		c.setGamlDocumentation(e, desc, true);
 	}
 
 	@Override
@@ -528,7 +538,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public ErrorCollector getErrorCollector() {
+	public ValidationContext getErrorCollector() {
 		final ModelDescription model = getModelDescription();
 		if (model == null) {
 			return null;

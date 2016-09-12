@@ -18,25 +18,30 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GamaSkillRegistry;
 
 /**
- * The type used for representing species objects (since they can be manipulated in a model)
+ * The type used for representing species objects (since they can be manipulated
+ * in a model)
  *
  * Written by drogoul Modified on 1 ao�t 2010
  *
  * @todo Description
  *
  */
-@type(name = IKeyword.SKILL, id = IType.SKILL, wraps = { ISkill.class }, kind = ISymbolKind.Variable.REGULAR,
-concept = { IConcept.TYPE, IConcept.SKILL })
+@type(name = IKeyword.SKILL, id = IType.SKILL, wraps = {
+		ISkill.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.SKILL })
 public class GamaSkillType extends GamaType<ISkill> {
 
 	@Override
 	public ISkill cast(final IScope scope, final Object obj, final Object param, final boolean copy)
-		throws GamaRuntimeException {
-		if ( obj instanceof ISkill ) { return (ISkill) obj; }
-		if ( obj instanceof String ) { return AbstractGamlAdditions.getSkillInstanceFor((String) obj); }
+			throws GamaRuntimeException {
+		if (obj instanceof ISkill) {
+			return (ISkill) obj;
+		}
+		if (obj instanceof String) {
+			return GamaSkillRegistry.INSTANCE.getSkillInstanceFor((String) obj);
+		}
 		return null;
 	}
 

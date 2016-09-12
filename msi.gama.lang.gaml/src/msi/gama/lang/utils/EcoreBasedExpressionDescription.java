@@ -22,7 +22,7 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.VariableRef;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GamaSkillRegistry;
 import msi.gaml.descriptions.BasicExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -63,7 +63,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 				context.warning(
 						type + "s should be provided as a list of identifiers, for instance [" + skillName + "]",
 						IGamlIssue.AS_ARRAY, target, skillName);
-				if (skills && !AbstractGamlAdditions.getSkillClasses().containsKey(skillName)) {
+				if (skills && !GamaSkillRegistry.INSTANCE.hasSkill(skillName)) {
 					context.error("Unknown " + type + " " + skillName, IGamlIssue.UNKNOWN_SKILL, target);
 				}
 				return new HashSet(Arrays.asList(skillName));
@@ -83,7 +83,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 			final String type = skills ? "skill" : "attribute";
 
 			final String name = EGaml.getKeyOf(expr);
-			if (skills && !AbstractGamlAdditions.getSkillClasses().containsKey(name)) {
+			if (skills && !GamaSkillRegistry.INSTANCE.hasSkill(name)) {
 				context.error("Unknown " + type + " " + name, IGamlIssue.UNKNOWN_SKILL, expr);
 			} else {
 				result.add(name);

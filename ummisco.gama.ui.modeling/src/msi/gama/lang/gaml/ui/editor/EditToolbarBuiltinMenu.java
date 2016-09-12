@@ -16,6 +16,7 @@ import org.eclipse.swt.widgets.Menu;
 import msi.gama.common.interfaces.INamed;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GamaSkillRegistry;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
@@ -44,13 +45,13 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 			speciesList.add(species.getName());
 			fillSpeciesSubmenu(sub(m, species.getName()), species);
 		}
-		final List<String> skills = new ArrayList(AbstractGamlAdditions.getSkills());
+		final List<String> skills = new ArrayList(GamaSkillRegistry.INSTANCE.getSkillNames());
 		Collections.sort(skills, IGNORE_CASE);
 		m = sub("Skills");
 		for (final String skill : skills) {
 			fillSkillSubmenu(sub(m, skill), skill, false);
 		}
-		final List<String> controls = new ArrayList(AbstractGamlAdditions.getControls());
+		final List<String> controls = new ArrayList(GamaSkillRegistry.INSTANCE.getArchitectureNames());
 		Collections.sort(controls, IGNORE_CASE);
 		m = sub("Control architectures");
 		for (final String skill : controls) {
@@ -121,7 +122,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 			}
 
 		});
-		final List<IDescription> vars = new ArrayList(AbstractGamlAdditions.getVariablesForSkill(skill));
+		final List<IDescription> vars = new ArrayList(GamaSkillRegistry.INSTANCE.getVariablesForSkill(skill));
 		Collections.sort(vars, INamed.COMPARATOR);
 		if (!vars.isEmpty()) {
 			title(submenu, "Attributes");
@@ -129,7 +130,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 				fillIDescriptionSubMenu(sub(submenu, variable.getName() + " (" + variable.getType() + ")"), variable);
 			}
 		}
-		final List<IDescription> actions = new ArrayList(AbstractGamlAdditions.getActionsForSkill(skill));
+		final List<IDescription> actions = new ArrayList(GamaSkillRegistry.INSTANCE.getActionsForSkill(skill));
 		Collections.sort(actions, INamed.COMPARATOR);
 		if (!actions.isEmpty()) {
 			title(submenu, "Primitives");

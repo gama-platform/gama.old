@@ -21,16 +21,18 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.common.GamaPreferences;
+import msi.gama.common.interfaces.IDocManager;
+import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
 
-public class ErrorCollector implements Iterable<GamlCompilationError> {
+public class ValidationContext implements Iterable<GamlCompilationError>, IDocManager {
 
 	final static int MAX_SIZE = 1000;
-	public static final ErrorCollector BuiltIn = new ErrorCollector();
+	public static final ValidationContext NULL = new ValidationContext(null, false, IDocManager.NULL);
 	boolean hasSyntaxErrors;
 	final URI resourceURI;
 	ArrayList<GamlCompilationError> importedErrors;
@@ -38,22 +40,27 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 	ArrayList<GamlCompilationError> warnings;
 	ArrayList<GamlCompilationError> infos;
 	private boolean noWarning, noInfo;
+	private final IDocManager docDelegate;
 
-	public ErrorCollector() {
-		this(null);
-	}
+	// public ValidationContext() {
+	// this(null, null);
+	// }
+	//
+	// public ValidationContext(final Resource resource, final IDocManager
+	// delegate) {
+	// this(resource, false, delegate);
+	// }
+	//
+	// public ValidationContext(final Resource resource, final boolean syntax,
+	// final IDocManager delegate) {
+	// this(resource == null ? URI.createURI("builtin://gaml", false) :
+	// resource.getURI(), syntax, delegate);
+	// }
 
-	public ErrorCollector(final Resource resource) {
-		this(resource, false);
-	}
-
-	public ErrorCollector(final Resource resource, final boolean syntax) {
-		this(resource == null ? URI.createURI("builtin://gaml", false) : resource.getURI(), syntax);
-	}
-
-	public ErrorCollector(final URI uri, final boolean syntax) {
+	public ValidationContext(final URI uri, final boolean syntax, final IDocManager delegate) {
 		this.resourceURI = uri;
 		hasSyntaxErrors = syntax;
+		docDelegate = delegate == null ? IDocManager.NULL : delegate;
 	}
 
 	public void add(final GamlCompilationError error) {
@@ -144,7 +151,7 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 	}
 
 	public Map<String, URI> getImportedErrorsAsStrings() {
-		final Map<String, URI> result = new TOrderedHashMap();
+		final Map<String, URI> result = new TOrderedHashMap(importedErrors.size());
 		if (importedErrors != null)
 			for (final GamlCompilationError error : importedErrors) {
 				final URI uri = error.getURI();
@@ -167,6 +174,31 @@ public class ErrorCollector implements Iterable<GamlCompilationError> {
 		noInfo = false;
 		noWarning = false;
 
+	}
+
+	@Override
+	public void document(final IDescription description) {
+		docDelegate.document(description);
+	}
+
+	@Override
+	public IGamlDescription getGamlDocumentation(final EObject o) {
+		return docDelegate.getGamlDocumentation(o);
+	}
+
+	@Override
+	public IGamlDescription getGamlDocumentation(final IGamlDescription o) {
+		return docDelegate.getGamlDocumentation(o);
+	}
+
+	@Override
+	public void setGamlDocumentation(final EObject object, final IGamlDescription description, final boolean replace) {
+		docDelegate.setGamlDocumentation(object, description, replace);
+	}
+
+	@Override
+	public void addCleanupTask(final ModelDescription model) {
+		docDelegate.addCleanupTask(model);
 	}
 
 }

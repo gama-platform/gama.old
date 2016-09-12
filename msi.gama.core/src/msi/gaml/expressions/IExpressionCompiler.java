@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.OperatorProto;
@@ -36,11 +34,6 @@ import msi.gaml.types.Signature;
 public interface IExpressionCompiler<T> {
 
 	public static final String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
-
-	public static final List<String> RESERVED = Arrays.asList(IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE,
-			IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER, IKeyword.THEIR, IKeyword.ITS);
-	public static final List<String> IGNORED = Arrays.asList(IKeyword.THE, IKeyword.THEIR, IKeyword.HIS, IKeyword.ITS,
-			IKeyword.HER);
 	public static final THashMap<String, THashMap<Signature, OperatorProto>> OPERATORS = new THashMap();
 	public static final Set<String> ITERATORS = new THashSet();
 

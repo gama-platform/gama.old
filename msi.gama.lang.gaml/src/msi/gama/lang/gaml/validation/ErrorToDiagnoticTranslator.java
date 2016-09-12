@@ -23,7 +23,7 @@ import msi.gama.lang.gaml.gaml.impl.StatementImpl;
 import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.descriptions.ErrorCollector;
+import msi.gaml.descriptions.ValidationContext;
 
 @Singleton
 public class ErrorToDiagnoticTranslator {
@@ -34,7 +34,7 @@ public class ErrorToDiagnoticTranslator {
 	public ErrorToDiagnoticTranslator() {
 	}
 
-	public Diagnostic translate(final ErrorCollector errors, final GamlResource r, final CheckMode mode) {
+	public Diagnostic translate(final ValidationContext errors, final GamlResource r, final CheckMode mode) {
 		final BasicDiagnostic chain = new BasicDiagnostic();
 		for (final GamlCompilationError e : errors) {
 			final Diagnostic d = translate(e, r, mode);

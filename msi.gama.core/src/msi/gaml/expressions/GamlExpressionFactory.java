@@ -200,36 +200,36 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			final THashMap<Signature, OperatorProto> ops = OPERATORS.get(op);
 			// We create the signature corresponding to the arguments
 			// 19/02/14 Only the simplified signature is used now
-			Signature signature = new Signature(args).simplified();
-			final Signature originalSignature = signature;
+			Signature userSignature = new Signature(args).simplified();
+			final Signature originalUserSignature = userSignature;
 			// If the signature is not present in the registry
-			if (!ops.containsKey(signature)) {
+			if (!ops.containsKey(userSignature)) {
 				final Iterable<Signature> filtered = Iterables.filter(ops.keySet(), new Predicate<Signature>() {
 
 					@Override
-					public boolean apply(final Signature input) {
-						return originalSignature.isCompatibleWith(input);
+					public boolean apply(final Signature operatorSignature) {
+						return originalUserSignature.matchesDesiredSignature(operatorSignature);
 					}
 				});
 				if (Iterables.isEmpty(filtered)) {
 					context.error(
-							"No operator found for applying '" + op + "' to " + signature + " (operators available for "
-									+ Arrays.toString(ops.keySet().toArray()) + ")",
+							"No operator found for applying '" + op + "' to " + userSignature
+									+ " (operators available for " + Arrays.toString(ops.keySet().toArray()) + ")",
 							IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
 					return null;
 				}
-				signature = Ordering.from(new Comparator<Signature>() {
+				userSignature = Ordering.from(new Comparator<Signature>() {
 
 					@Override
 					public int compare(final Signature o1, final Signature o2) {
-						return o1.distanceTo(originalSignature) - o2.distanceTo(originalSignature);
+						return o1.distanceTo(originalUserSignature) - o2.distanceTo(originalUserSignature);
 					}
 				}).min(filtered);
 
 				// We coerce the types if necessary, by wrapping the original
 				// expressions in a
 				// casting expression
-				final IType[] coercingTypes = signature.coerce(originalSignature, context);
+				final IType[] coercingTypes = userSignature.coerce(originalUserSignature, context);
 				for (int i = 0; i < coercingTypes.length; i++) {
 					final IType t = coercingTypes[i];
 					if (t != null) {
@@ -248,7 +248,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 					}
 				}
 			}
-			final OperatorProto proto = ops.get(signature);
+			final OperatorProto proto = ops.get(userSignature);
 			// We finally make an instance of the operator and init it with the
 			// arguments
 			final IExpression copy = proto.create(context, currentEObject, args);

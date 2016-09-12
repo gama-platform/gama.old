@@ -22,10 +22,10 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.simplebdi.SimpleBdiPlanStatement.SimpleBdiPlanValidator;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.SkillDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -57,8 +57,8 @@ public class SimpleBdiPlanStatement extends AbstractStatementSequence {
 		public void validate(final IDescription description) {
 			// Verify that the state is inside a species with fsm control
 			final SpeciesDescription species = description.getSpeciesContext();
-			final IArchitecture control = species.getControl();
-			if (!(control instanceof SimpleBdiArchitecture)) {
+			final SkillDescription control = species.getControl();
+			if (!SimpleBdiArchitecture.class.isAssignableFrom(control.getJavaBase())) {
 				description.error("A plan can only be defined in a simple_bdi architecture species",
 						IGamlIssue.WRONG_CONTEXT);
 				return;

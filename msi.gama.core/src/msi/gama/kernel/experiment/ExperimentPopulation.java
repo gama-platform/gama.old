@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import msi.gama.common.util.ExperimentManager;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.GamaPopulation;
@@ -27,6 +26,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.compilation.GamaMetaModel;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
@@ -42,24 +42,19 @@ public class ExperimentPopulation extends GamaPopulation {
 			final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)
 			throws GamaRuntimeException {
 		for (int i = 0; i < number; i++) {
-			// boolean isBatch = ((ExperimentPlan) getSpecies()).isBatch();
-			final ExperimentAgent exp = ExperimentManager
+			final ExperimentAgent exp = GamaMetaModel.INSTANCE
 					.createExperimentAgent(((ExperimentPlan) getSpecies()).getExperimentType(), this);
-			// final ExperimentAgent exp = isBatch ? new BatchAgent(this) : new
-			// ExperimentAgent(this);
 			exp.setIndex(currentAgentIndex++);
-			/* agents. */add(exp);
+			add(exp);
 			createVariables(scope, exp, initialValues.isEmpty() ? Collections.EMPTY_MAP : initialValues.get(i));
 		}
-		return /* agents */this;
+		return this;
 	}
 
 	public void createVariables(final IScope scope, final IAgent a, final Map<String, Object> inits)
 			throws GamaRuntimeException {
-		// IAgent a = get(0);
 		final Set<String> names = inits.keySet();
 		try {
-			// a.acquireLock();
 			for (final String s : orderedVarNames) {
 				final IVariable var = species.getVar(s);
 				var.initializeWith(scope, a, inits.get(s));
@@ -69,7 +64,6 @@ public class ExperimentPopulation extends GamaPopulation {
 				a.getScope().setAgentVarValue(a, s, inits.get(s));
 			}
 		} finally {
-			// a.releaseLock();
 		}
 
 	}

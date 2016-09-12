@@ -2,7 +2,6 @@ package msi.gama.lang.gaml.indexer;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,7 +21,9 @@ import com.google.common.base.Objects;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import com.google.common.collect.Iterators;
 import com.google.inject.Provider;
+import com.google.inject.Singleton;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
@@ -35,12 +36,13 @@ import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.ValidationContext;
 
+@Singleton
 public class BaseIndexer implements IModelIndexer {
 
-	protected final Map<URI, ErrorCollector> resourceErrors = new HashMap();
+	protected final Map<URI, ValidationContext> resourceErrors = new THashMap(2);
 	protected DirectedGraph<URI, Edge> index = new SimpleDirectedGraph(Edge.class);
 
 	private final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache = CacheBuilder.newBuilder()
@@ -89,7 +91,7 @@ public class BaseIndexer implements IModelIndexer {
 
 	@Override
 	public void updateState(final URI uri, final ModelDescription model, final boolean newState,
-			final ErrorCollector status) {
+			final ValidationContext status) {
 	}
 
 	@Override
@@ -139,7 +141,11 @@ public class BaseIndexer implements IModelIndexer {
 	}
 
 	@Override
-	public EObject updateImports(final GamlResource r) {
+	/**
+	 * Synchronized method to avoid concurrent errors in the graph in case of a
+	 * parallel resource loader
+	 */
+	public synchronized EObject updateImports(final GamlResource r) {
 		final URI baseURI = properlyEncodedURI(r.getURI());
 		final Set<Edge> nativeEdges = index.containsVertex(baseURI) ? index.outgoingEdgesOf(baseURI) : null;
 		final Set<Edge> edges = nativeEdges == null || nativeEdges.isEmpty() ? Collections.EMPTY_SET
@@ -176,17 +182,9 @@ public class BaseIndexer implements IModelIndexer {
 							// This call should trigger the recursive call to
 							// updateImports()
 							final Resource imported = r.getResourceSet().getResource(uri, true);
-							// r.getResourceSet().getResources().remove(imported);
-							// updateImports((GamlResource)
-							// r.getResourceSet().getResource(uri, true));
 						}
 					} else {
 						faulty[0] = findImport((Model) r.getContents().get(0), uri);
-						// r.getErrorCollector().add(new
-						// GamlCompilationError("Imported model could not be
-						// found.",
-						// IGamlIssue.GENERAL, findImport((Model)
-						// r.getContents().get(0), uri), false, false));
 						return false;
 					}
 				return true;
@@ -227,7 +225,7 @@ public class BaseIndexer implements IModelIndexer {
 			final GamlResource ir = (GamlResource) resourceSet.getResource(uri, true);
 			if (ir != null) {
 				if (loaded == null)
-					loaded = new TOrderedHashMap();
+					loaded = new TOrderedHashMap(1);
 				loaded.put(ir, label);
 			}
 			return true;
@@ -252,7 +250,7 @@ public class BaseIndexer implements IModelIndexer {
 				@Override
 				public boolean execute(final GamlResource imported) {
 					if (imported.hasErrors()) {
-						resource.invalidate(imported, "Syntax errors detected");
+						resource.invalidate(imported, "Errors detected");
 						return false;
 					}
 					return true;
@@ -323,23 +321,13 @@ public class BaseIndexer implements IModelIndexer {
 	 */
 	@Override
 	public Iterator<URI> allImportsOf(final URI uri) {
+		if (!indexes(uri))
+			return Iterators.emptyIterator();
 		final Iterator<URI> result = new BreadthFirstIterator(index, properlyEncodedURI(uri));
 		result.next(); // to eliminate the uri
 		return result;
 	}
 
-	/**
-	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#allImporterssOf(org.eclipse.emf.common.util.URI)
-	 */
-	// @Override
-	// public Iterator<URI> allImportersOf(final URI uri) {
-	// return Iterators.emptyIterator();
-	// }
-
-	/**
-	 * @see msi.gama.lang.gaml.indexer.IModelIndexer#indexes(org.eclipse.emf.common.util.URI)
-	 */
-	@Override
 	public boolean indexes(final URI uri) {
 		return index.containsVertex(properlyEncodedURI(uri));
 	}
@@ -348,12 +336,6 @@ public class BaseIndexer implements IModelIndexer {
 	public URI properlyEncodedURI(final URI uri) {
 		final URI result = URI.createURI(uri.toString(), true);
 		return result;
-	}
-
-	@Override
-	public boolean isReady() {
-		return true;
-		// return hasFinishedIndexing;
 	}
 
 	@Override
@@ -367,14 +349,19 @@ public class BaseIndexer implements IModelIndexer {
 	}
 
 	@Override
-	public ErrorCollector getErrorCollector(final GamlResource r) {
+	public ValidationContext getValidationContext(final GamlResource r) {
 		final URI newURI = properlyEncodedURI(r.getURI());
 		if (!resourceErrors.containsKey(newURI))
-			resourceErrors.put(newURI, new ErrorCollector(newURI, r.hasErrors()));
+			resourceErrors.put(newURI, new ValidationContext(newURI, r.hasErrors(), r.getDocumentationManager()));
 
-		final ErrorCollector result = resourceErrors.get(newURI);
+		final ValidationContext result = resourceErrors.get(newURI);
 		result.hasInternalSyntaxErrors(r.hasErrors());
 		return result;
+	}
+
+	@Override
+	public void discardValidationContext(final GamlResource gamlResource) {
+		resourceErrors.remove(properlyEncodedURI(gamlResource.getURI()));
 	}
 
 	@Override
@@ -386,20 +373,43 @@ public class BaseIndexer implements IModelIndexer {
 		return properlyEncodedURI(uri1).equals(properlyEncodedURI(uri2));
 	}
 
-	// @Override
-	// public void waitToBeReady() {
-	// while (!isReady()) {
-	// try {
-	// Thread.sleep(100);
-	// } catch (final InterruptedException e) {
-	// }
-	// }
-	//
-	// }
-
 	@Override
 	public void eraseIndex() {
 		index = new SimpleDirectedGraph(Edge.class);
+	}
+	// THIS PART OF CODE HAS BEEN ABANDONED FOR THE MOMENT
+	// Set<URI> resourcesToBuild = new THashSet();
+
+	// @Override
+	// public void addResourcesToBuild(final URI uri) {
+	// // THIS PART OF CODE HAS BEEN ABANDONED FOR THE MOMENT
+	// // resourcesToBuild.add(properlyEncodedURI(uri));
+	// }
+	//
+	// @Override
+	// public void removeResourcesToBuild(final URI uri) {
+	// // THIS PART OF CODE HAS BEEN ABANDONED FOR THE MOMENT
+	// // resourcesToBuild.remove(properlyEncodedURI(uri));
+	// }
+
+	@Override
+	public boolean needsToBuild(final URI uri) {
+		// THIS PART OF CODE HAS BEEN ABANDONED FOR THE MOMENT
+		// if (resourcesToBuild.contains(properlyEncodedURI(uri)))
+		// return true;
+		// AD 08/16: if the model is imported and not edited, we do nothing. If
+		// it is imported, then it means it will be validated at one point
+		// together with its importer. Otherwise, we do not care about its
+		// validation. Saves a lot of memory and validation speed, but error
+		// markers someimes do not appear in the navigator
+		// final boolean edited = isEdited(uri);
+		// if (edited)
+		// return true;
+		// final boolean imported = isImported(uri);
+		// if (imported)
+		// return false;
+		return true;
+
 	}
 
 }

@@ -48,7 +48,7 @@ public class ExperimentDescription extends SpeciesDescription {
 
 	private void addParameterNoCheck(final VariableDescription var) {
 		if (parameters == null) {
-			parameters = new TOrderedHashMap();
+			parameters = new TOrderedHashMap(5);
 		}
 
 		parameters.put(var.getName(), var);

@@ -47,4 +47,6 @@ public interface ISymbol extends INamed, IGamlable {
 
 	public abstract String getKeyword();
 
+	public abstract void setEnclosing(ISymbol enclosing);
+
 }

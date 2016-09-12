@@ -15,7 +15,6 @@ package msi.gama.lang.gaml.scoping;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -44,7 +43,9 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
+import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.lang.gaml.documentation.GamlResourceDocManager;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.indexer.IModelIndexer;
@@ -53,11 +54,11 @@ import msi.gama.lang.utils.EGaml;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaPair;
 import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.GamaSkillRegistry;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
-import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
@@ -80,16 +81,19 @@ import msi.gaml.types.Types;
 @Singleton
 public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
+	// public static BuiltinGlobalScopeProvider INSTANCE;
 	static final THashMap EMPTY_MAP = new THashMap();
-	static THashMap<EClass, TerminalMapBasedScope> GLOBAL_SCOPES = new THashMap();
+	private static THashMap<EClass, TerminalMapBasedScope> GLOBAL_SCOPES = new THashMap();
 	private static THashSet<QualifiedName> allNames;
 	private static THashMap<EClass, Resource> resources;
-	private static THashMap<EClass, Map<QualifiedName, IEObjectDescription>> descriptions = null;
+	private static THashMap<EClass, THashMap<QualifiedName, IEObjectDescription>> descriptions = null;
 	private static EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
 
 	static XtextResourceSet rs = new XtextResourceSet();
 
 	@Inject IModelIndexer indexer;
+
+	static IDocManager documenter = new GamlResourceDocManager();
 
 	public static class ImmutableMap implements Map<String, String> {
 
@@ -268,6 +272,23 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
 	}
 
+	static {
+		// AD 15/01/16: added to make sure that the XText builder can wait
+		// until, at least, the main artefacts of GAMA have been built.
+		while (ModelDescription.ROOT == null) {
+			try {
+				Thread.sleep(100);
+			} catch (final InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		final long start = System.currentTimeMillis();
+		System.out.print(">GAMA building GAML artefacts");
+		createDescriptions();
+		System.out.println(" in " + (System.currentTimeMillis() - start) + " ms");
+
+	}
+
 	static Resource createResource(final String uri) {
 		Resource r = rs.getResource(URI.createURI(uri, false), false);
 		if (r == null) {
@@ -292,16 +313,16 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		resources.put(eAction, createResource("actions.xmi"));
 		resources.put(eEquation, createResource("equations.xmi"));
 		descriptions = new THashMap();
-		descriptions.put(eVar, new HashMap());
-		descriptions.put(eType, new HashMap());
-		descriptions.put(eSkill, new HashMap());
-		descriptions.put(eUnit, new HashMap());
-		descriptions.put(eAction, new HashMap());
-		descriptions.put(eEquation, new HashMap());
+		descriptions.put(eVar, new THashMap());
+		descriptions.put(eType, new THashMap());
+		descriptions.put(eSkill, new THashMap());
+		descriptions.put(eUnit, new THashMap());
+		descriptions.put(eAction, new THashMap());
+		descriptions.put(eEquation, new THashMap());
 		allNames = new THashSet();
 	}
 
-	public static boolean contains(final QualifiedName name) {
+	public boolean contains(final QualifiedName name) {
 		return allNames.contains(name);
 	}
 
@@ -320,7 +341,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		stub.setName(t);
 		Map<String, String> doc;
 		resources.get(eClass).getContents().add(stub);
-		final IGamlDescription d = GAMA.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
+		final IGamlDescription d = GAMA.isInHeadLessMode() ? null : documenter.getGamlDocumentation(o);
 
 		if (d != null) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "operator");
@@ -339,7 +360,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		final IGamlDescription d = GAMA.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
+		final IGamlDescription d = GAMA.isInHeadLessMode() ? null : documenter.getGamlDocumentation(o);
 		Map<String, String> doc;
 		if (d != null) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", keyword);
@@ -357,8 +378,8 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		final IGamlDescription d = GAMA.isInHeadLessMode() ? null : DescriptionFactory.getGamlDocumentation(o);
-		DescriptionFactory.setGamlDocumentationOfBuiltIn(stub, o);
+		final IGamlDescription d = GAMA.isInHeadLessMode() ? null : documenter.getGamlDocumentation(o);
+		documenter.setGamlDocumentation(stub, o, false);
 		Map<String, String> doc;
 		if (d != null) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "action");
@@ -398,20 +419,21 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 	/**
 	 * Get the object descriptions for the built-in types.
 	 */
-	public static Map<QualifiedName, IEObjectDescription> getEObjectDescriptions(final EClass eClass) {
+	public THashMap<QualifiedName, IEObjectDescription> getEObjectDescriptions(final EClass eClass) {
 		createDescriptions();
 		return descriptions.get(eClass);
 	}
 
-	public static TerminalMapBasedScope getGlobalScope(final EClass eClass) {
+	public TerminalMapBasedScope getGlobalScope(final EClass eClass) {
 		if (GLOBAL_SCOPES.contains(eClass))
 			return GLOBAL_SCOPES.get(eClass);
-		Map<QualifiedName, IEObjectDescription> descriptions = getEObjectDescriptions(eClass);
+		THashMap<QualifiedName, IEObjectDescription> descriptions = getEObjectDescriptions(eClass);
 		if (descriptions == null) {
 			descriptions = EMPTY_MAP;
 		}
 		final TerminalMapBasedScope result = new TerminalMapBasedScope(descriptions);
 		GLOBAL_SCOPES.put(eClass, result);
+		GLOBAL_SCOPES.compact();
 		return result;
 	}
 
@@ -436,7 +458,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 			for (final IDescription t : AbstractGamlAdditions.getAllVars()) {
 				addVar(eVar, t.getName(), t, "variable");
 			}
-			for (final String t : AbstractGamlAdditions.getAllSkills()) {
+			for (final String t : GamaSkillRegistry.INSTANCE.getAllSkillNames()) {
 				add(eSkill, t);
 				add(eVar, t);
 			}
@@ -444,7 +466,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 				addAction(eAction, t.getName(), t);
 
 				final GamlDefinition def = add(eVar, t.getName());
-				DescriptionFactory.setGamlDocumentation(def, t);
+				documenter.setGamlDocumentation(def, t, true);
 			}
 			final OperatorProto[] p = new OperatorProto[1];
 			IExpressionCompiler.OPERATORS
@@ -465,25 +487,16 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 							return true;
 						}
 					});
+			descriptions.forEachValue(new TObjectProcedure<THashMap<QualifiedName, IEObjectDescription>>() {
 
+				@Override
+				public boolean execute(final THashMap<QualifiedName, IEObjectDescription> object) {
+					object.compact();
+					return true;
+				}
+			});
+			descriptions.compact();
 		}
-	}
-
-	static {
-		// AD 15/01/16: added to make sure that the XText builder can wait
-		// until, at least, the main artefacts of GAMA have been built.
-		while (ModelDescription.ROOT == null) {
-			try {
-				Thread.sleep(100);
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		final long start = System.currentTimeMillis();
-		System.out.print(">GAMA building GAML artefacts");
-		createDescriptions();
-		System.out.println(" in " + (System.currentTimeMillis() - start) + " ms");
-
 	}
 
 	public Map<URI, String> getAllImportedURIs(final Resource resource, final ResourceSet set) {
@@ -512,5 +525,11 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		scope = SelectableBasedScope.createScope(scope, descriptions, filter, type, false);
 		return scope;
 	}
+
+	// public static BuiltinGlobalScopeProvider getInstance() {
+	// if (INSTANCE == null)
+	// INSTANCE = new BuiltinGlobalScopeProvider();
+	// return INSTANCE;
+	// }
 
 }
