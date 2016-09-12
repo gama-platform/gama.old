@@ -232,16 +232,44 @@ public class ModernDrawer {
 	public void createScreenSurface(int shaderNumber, SimpleShaderProgram shaderProgram) {
 		ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		ArrayList<float[]> listUvMapping = new ArrayList<float[]>();
+		
+		// Keystoning computation
+		// Coordinates of the screen (change this for keystoning effect)
+		float[] p0 = new float[]{-1f, -1f};
+		float[] p1 = new float[]{-1f, 1f};
+		float[] p2 = new float[]{1f, 1f};
+		float[] p3 = new float[]{1f, -1f};
+		
+		float ax = (p2[0] - p0[0])/2f;
+		float ay = (p2[1] - p0[1])/2f;
+		float bx = (p3[0] - p1[0])/2f;
+		float by = (p3[1] - p1[1])/2f;
+		
+		float cross = ax * by - ay * bx;
 
-		float ratio = (float)renderer.getyRatioBetweenPixelsAndModelUnits();
-		listVertices.add(new float[]{-1f,-1f,0f,
-				-1f,1f,0f,
-				1f,1f,0f,
-				1f,-1f,0f});
-		listUvMapping.add(new float[]{0f,1f,
-				0f,0f,
-				1f,0f,
-				1f,1f});
+		if (cross != 0) {
+		  float cy = (p0[1] - p1[1])/2f;
+		  float cx = (p0[0] - p1[0])/2f;
+
+		  float s = (ax * cy - ay * cx) / cross;
+
+		  float t = (bx * cy - by * cx) / cross;
+
+		  float q0 = 1 / (1 - t);
+		  float q1 = 1 / (1 - s);
+		  float q2 = 1 / t;
+		  float q3 = 1 / s;
+					
+		  // I can now pass (u * q, v * q, q) to OpenGL
+		  listVertices.add(new float[]{p0[0],p0[1],1f,
+				p1[0],p1[1],0f,
+				p2[0],p2[1],0f,
+				p3[0],p3[1],1f});
+		  listUvMapping.add(new float[]{0f,1f*q0,0f,q0,
+				0f,0f,0f,q1,
+				1f*q2,0f,0f,q2,
+				1f*q3,1f*q3,0f,q3});
+		}
 
 
 		// VERTICES POSITIONS BUFFER
@@ -383,11 +411,9 @@ public class ModernDrawer {
 		}
 	}
 	
-	private void prepareShader(DrawingEntity entity, SimpleShaderProgram shaderProgram) {		
+	private void prepareShader(DrawingEntity entity, SimpleShaderProgram shaderProgram) {
 		shaderProgram.loadTexture(0);
 		shaderProgram.storeTextureID(fbo.getFBOTexture());
-		shaderProgram.loadWidth(renderer.getDisplayWidth());
-		shaderProgram.loadHeight(renderer.getDisplayHeight());
 	}
 	
 	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		
@@ -528,7 +554,7 @@ public class ModernDrawer {
 			case AbstractShader.COLOR_ATTRIBUTE_IDX : coordinateSize = 4; break; // r, g, b, a
 			case AbstractShader.POSITION_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
 			case AbstractShader.NORMAL_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
-			case AbstractShader.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = 2; break; // u, v
+			case AbstractShader.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = (isRenderingToTexture) ? 4 : 2; break; // s, t, r, q for textureRendering, u, v otherwise
 		}
 		// Select the VBO, GPU memory data, to use for data
 		if (!isRenderingToTexture) gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[shaderNumber*5+bufferAttributeNumber]);

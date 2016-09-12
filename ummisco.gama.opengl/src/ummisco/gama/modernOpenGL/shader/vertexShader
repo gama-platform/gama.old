@@ -37,8 +37,6 @@ void main(void)
 	varying_Color = attribute_Color;
 	mat4 modelView = viewMatrix * transformationMatrix;
 		
-	mat4 modelViewProjection = projectionMatrix * modelView;
-		
 	gl_Position = projectionMatrix * modelView * vec4(attribute_Position,1.0);
 	
 	varying_useNormals = useNormals;

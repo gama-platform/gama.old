@@ -104,7 +104,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 			return;
 		final ModernRenderer renderer = (ModernRenderer) this.renderer;
 
-		if (!sceneIsInitialized /*|| constantRedrawnLayer*/) {
+		if (!sceneIsInitialized || constantRedrawnLayer) {
 			renderer.getDrawer().prepareMapForLayer(this);
 			double alpha = 0d;
 			final int size = objects.size();
@@ -124,7 +124,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 			sceneIsInitialized = true;
 		} else {
 			renderer.getDrawer().refresh(this);
-//			renderer.getDrawer().redraw();
 		}
 
 	}

@@ -10,8 +10,6 @@ public class SimpleShaderProgram extends AbstractShader {
 	private static String FRAGMENT_FILE = "simpleFragmentShader";
 	
 	private int location_texture;
-	private int location_width;
-	private int location_height;
 	
 	private boolean useNormal = false;
 	private boolean useTexture = true;
@@ -30,27 +28,17 @@ public class SimpleShaderProgram extends AbstractShader {
 	protected void bindAttributes() {
 		super.bindAttribute(POSITION_ATTRIBUTE_IDX, "attribute_Position");
 		super.bindAttribute(COLOR_ATTRIBUTE_IDX, "attribute_Color");
-		super.bindAttribute(UVMAPPING_ATTRIBUTE_IDX, "attribute_TextureCoords");
+		super.bindAttribute(UVMAPPING_ATTRIBUTE_IDX, "attribute_TextureCoords3D");
 	}
 	
 	@Override
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
 		location_texture = getUniformLocation("textureSampler");
-		location_width = getUniformLocation("display_width");
-		location_height = getUniformLocation("display_height");
 	}
 	
 	public void loadTexture(int textureId) {
 		super.loadInt(location_texture,textureId);
-	}
-	
-	public void loadWidth(int value) {
-		super.loadInt(location_width, value);
-	}
-	
-	public void loadHeight(int value) {
-		super.loadInt(location_height, value);
 	}
 	
 	public boolean useTexture() {

@@ -11,12 +11,11 @@
 #endif
 		
 varying   vec4    varying_Color;
-varying   vec2    pass_textureCoords;
+varying   vec4    pass_textureCoords;
 
 uniform   sampler2D textureSampler;
 
 void main (void)
 {
-	vec4 inputColor = texture(textureSampler,vec2(pass_textureCoords.x,-pass_textureCoords.y));
-	gl_FragColor = inputColor;
+	gl_FragColor = texture(textureSampler,vec2(pass_textureCoords.x/pass_textureCoords.w,-pass_textureCoords.y/pass_textureCoords.w));
 }
