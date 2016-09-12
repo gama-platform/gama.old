@@ -50,6 +50,7 @@ import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
+import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
@@ -565,9 +566,11 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void selectAgent(final DrawingAttributes attributes) {
 		IAgent ag = null;
+		boolean withHighlight = true;
 		if (attributes != null)
 			if (attributes.getSpeciesName() != null) {
 				// The picked image is a grid or an image of a grid
+				withHighlight = false;
 				final GamaPoint pickedPoint = renderer
 						.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
 				ag = scope.getRoot().getPopulationFor(attributes.getSpeciesName()).getAgent(scope,
@@ -577,7 +580,12 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 				if (id != null)
 					ag = id.getAgent(scope);
 			}
-		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag, cleanup);
+		if (withHighlight)
+			menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag,
+					cleanup, AgentsMenu.HIGHLIGHT_ACTION);
+		else
+			menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, ag,
+					cleanup);
 	}
 
 	/**

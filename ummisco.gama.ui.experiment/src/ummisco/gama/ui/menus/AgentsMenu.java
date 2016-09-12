@@ -64,7 +64,7 @@ public class AgentsMenu extends ContributionItem {
 		result.setImage(image);
 		final Menu agentMenu = new Menu(result);
 		result.setMenu(agentMenu);
-		createMenuForAgent(agentMenu, agent, false, actions);
+		createMenuForAgent(agentMenu, agent, agent instanceof ITopLevelAgent, actions);
 		return result;
 	}
 
@@ -104,9 +104,9 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	private static MenuItem cascadingPopulationMenuItem(final Menu parent, final IAgent agent,
-			final IPopulation population, final Image image) {
+			final IPopulation population, final Image image, final MenuAction... actions) {
 		if (population instanceof SimulationPopulation) {
-			fillPopulationSubMenu(parent, population);
+			fillPopulationSubMenu(parent, population, actions);
 			return null;
 		}
 		final MenuItem result = new MenuItem(parent, SWT.CASCADE);
@@ -118,7 +118,7 @@ public class AgentsMenu extends ContributionItem {
 		result.setImage(image);
 		final Menu agentsMenu = new Menu(result);
 		result.setMenu(agentsMenu);
-		fillPopulationSubMenu(agentsMenu, population);
+		fillPopulationSubMenu(agentsMenu, population, actions);
 		return result;
 	}
 
@@ -153,7 +153,7 @@ public class AgentsMenu extends ContributionItem {
 		}
 	};
 
-	private static SelectionAdapter highlighter = new SelectionAdapter() {
+	public static SelectionAdapter highlighter = new SelectionAdapter() {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -258,10 +258,10 @@ public class AgentsMenu extends ContributionItem {
 		actionAgentMenuItem(menu, agent, inspector, IGamaIcons.MENU_INSPECT.image(),
 				"Inspect" + (topLevel ? " experiment" : ""));
 		if (!topLevel) {
-			actionAgentMenuItem(menu, agent, highlighter, IGamaIcons.MENU_HIGHLIGHT.image(), "Highlight");
+
 			actionAgentMenuItem(menu, agent, new Focuser(), IGamaIcons.MENU_FOCUS.image(), "Focus on all displays");
 		}
-		if (actions != null) {
+		if (actions != null && !topLevel) {
 			for (final MenuAction ma : actions) {
 				actionAgentMenuItem(menu, agent, ma.listener, ma.image, ma.text);
 			}
@@ -287,7 +287,7 @@ public class AgentsMenu extends ContributionItem {
 				}
 				for (final IPopulation pop : macro.getMicroPopulations()) {
 					if (!pop.isEmpty()) {
-						cascadingPopulationMenuItem(menu, agent, pop, IGamaIcons.MENU_POPULATION.image());
+						cascadingPopulationMenuItem(menu, agent, pop, IGamaIcons.MENU_POPULATION.image(), actions);
 					}
 				}
 			}
@@ -356,8 +356,11 @@ public class AgentsMenu extends ContributionItem {
 		}
 	}
 
+	public static MenuAction HIGHLIGHT_ACTION = new MenuAction(highlighter, IGamaIcons.MENU_HIGHLIGHT.image(),
+			"Highlight");
+
 	@Override
 	public void fill(final Menu parent, final int index) {
-		createMenuForAgent(parent, GAMA.getExperiment().getAgent(), true);
+		createMenuForAgent(parent, GAMA.getExperiment().getAgent(), true, HIGHLIGHT_ACTION);
 	}
 }

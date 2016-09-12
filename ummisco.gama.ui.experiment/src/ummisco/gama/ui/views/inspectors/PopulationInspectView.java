@@ -288,8 +288,8 @@ public class PopulationInspectView extends GamaViewPart
 		compo.setSize(new Point(150, 30));
 		compo.setBackground(IGamaColors.WHITE.color());
 		compo.setLayout(new GridLayout(1, false));
-		editor = new ExpressionControl(getScope(), compo, null, getScope().getAgent(),
-				Types.CONTAINER.of(Types.AGENT), SWT.BORDER, false) {
+		editor = new ExpressionControl(getScope(), compo, null, getScope().getAgent(), Types.CONTAINER.of(Types.AGENT),
+				SWT.BORDER, false) {
 
 			@Override
 			public void modifyValue() {
@@ -461,7 +461,8 @@ public class PopulationInspectView extends GamaViewPart
 				if (agent != null) {
 					manager.removeAll();
 					manager.update(true);
-					AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, false);
+					AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, false,
+							AgentsMenu.HIGHLIGHT_ACTION);
 				}
 			}
 		});

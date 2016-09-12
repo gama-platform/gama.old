@@ -125,15 +125,16 @@ public class DisplaySurfaceMenu {
 		buildMenu(true, mousex, mousey, all, null);
 	}
 
-	public void buildMenu(final int mousex, final int mousey, final IAgent agent, final Runnable cleanup) {
+	public void buildMenu(final int mousex, final int mousey, final IAgent agent, final Runnable cleanup,
+			final MenuAction... actions) {
 		// cleanup is an optional runnable to do whatever is necessary after the
 		// menu has disappeared
-		buildMenu(false, mousex, mousey, agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent),
-				cleanup);
+		buildMenu(false, mousex, mousey, agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent), cleanup,
+				actions);
 	}
 
 	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final Collection<IAgent> agents,
-			final Runnable cleanup) {
+			final Runnable cleanup, final MenuAction... actions) {
 		WorkbenchHelper.asyncRun(new Runnable() {
 
 			@Override
@@ -141,7 +142,7 @@ public class DisplaySurfaceMenu {
 				if (menu != null && !menu.isDisposed()) {
 					menu.dispose();
 				}
-				menu = fill(new Menu(swtControl), -1, true, byLayer, agents);
+				menu = fill(new Menu(swtControl), -1, true, byLayer, agents, actions);
 				menu.setLocation(swtControl.toDisplay(mousex, mousey));
 				menu.setVisible(true);
 				// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :
@@ -152,12 +153,14 @@ public class DisplaySurfaceMenu {
 
 						@Override
 						public void menuShown(final MenuEvent e) {
-//							System.out.println("Selection menu has been shown");
+							// System.out.println("Selection menu has been
+							// shown");
 						}
 
 						@Override
 						public void menuHidden(final MenuEvent e) {
-//							System.out.println("Selection menu has been hiden");
+							// System.out.println("Selection menu has been
+							// hiden");
 							cleanup.run();
 							menu.removeMenuListener(this);
 						}
@@ -201,9 +204,9 @@ public class DisplaySurfaceMenu {
 	}
 
 	private Menu fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer,
-			final Collection<IAgent> filteredList) {
+			final Collection<IAgent> filteredList, final MenuAction... actions) {
 		if (withWorld) {
-			AgentsMenu.cascadingAgentMenuItem(menu, surface.getScope().getSimulation(), "World");
+			AgentsMenu.cascadingAgentMenuItem(menu, surface.getScope().getSimulation(), "World", actions);
 			if (filteredList != null && !filteredList.isEmpty()) {
 				GamaMenu.separate(menu);
 			} else {
@@ -224,7 +227,12 @@ public class DisplaySurfaceMenu {
 			}
 			final FocusOnSelection adapter = new FocusOnSelection(surface);
 			final MenuAction focus = new MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on this display");
-			AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus);
+			final MenuAction[] actions2 = new MenuAction[actions.length + 1];
+			for (int i = 0; i < actions.length; i++) {
+				actions2[i + 1] = actions[i];
+			}
+			actions2[0] = focus;
+			AgentsMenu.fillPopulationSubMenu(menu, filteredList, actions2);
 		} else {
 
 			for (final ILayer layer : surface.getManager().getItems()) {
@@ -238,7 +246,11 @@ public class DisplaySurfaceMenu {
 					final FocusOnSelection adapter = new FocusOnSelection(surface);
 					final MenuAction focus = new MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(),
 							"Focus on this display");
-					final MenuAction[] actions = { focus };
+					final MenuAction[] actions2;
+					if (layer instanceof GridLayer)
+						actions2 = new MenuAction[] { focus };
+					else
+						actions2 = new MenuAction[] { focus, AgentsMenu.HIGHLIGHT_ACTION };
 
 					if (filteredList != null) {
 						pop.retainAll(filteredList);
@@ -251,7 +263,7 @@ public class DisplaySurfaceMenu {
 					layerMenu.setImage(layer_images.get(layer.getClass()));
 					final Menu submenu = new Menu(layerMenu);
 					layerMenu.setMenu(submenu);
-					AgentsMenu.fillPopulationSubMenu(submenu, pop, actions);
+					AgentsMenu.fillPopulationSubMenu(submenu, pop, actions2);
 				}
 			}
 		}

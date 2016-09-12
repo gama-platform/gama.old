@@ -71,8 +71,9 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 		public void setPicking(final boolean isPicking) {
 			this.isPicking = isPicking;
-//			System.out.println(
-//					"Picking is " + isPicking + " with menu on: " + isMenuOn + " and picked index " + pickedIndex);
+			// System.out.println(
+			// "Picking is " + isPicking + " with menu on: " + isMenuOn + " and
+			// picked index " + pickedIndex);
 			if (!isPicking) {
 				setPickedIndex(NONE);
 				setMenuOn(false);
@@ -80,13 +81,13 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		}
 
 		public void setMenuOn(final boolean isMenuOn) {
-//			System.out.println("Menu on is " + isMenuOn);
+			// System.out.println("Menu on is " + isMenuOn);
 			this.isMenuOn = isMenuOn;
 		}
 
 		public void setPickedIndex(final int pickedIndex) {
 			this.pickedIndex = pickedIndex;
-//			System.out.println("Picked object = " + pickedIndex);
+			// System.out.println("Picked object = " + pickedIndex);
 			if (pickedIndex == WORLD && !isMenuOn) {
 				// Selection occured, but no object have been selected
 				setMenuOn(true);

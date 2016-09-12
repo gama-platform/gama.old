@@ -51,7 +51,7 @@ public interface IDisplaySurface extends DisplayDataListener, IScoped {
 
 		void setPaused(boolean flag);
 
-		void selectAgent(DrawingAttributes attributes);
+		void selectAgent(final DrawingAttributes attributes);
 
 		void selectionIn(Envelope3D env);
 

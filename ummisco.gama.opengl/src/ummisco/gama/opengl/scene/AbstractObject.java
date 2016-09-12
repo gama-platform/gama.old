@@ -151,7 +151,8 @@ public abstract class AbstractObject {
 		if (picked)
 			if (!renderer.getPickingState().isMenuOn()) {
 				renderer.getPickingState().setMenuOn(true);
-//				System.out.println("Object " + pickingIndex + " showing menu");
+				// System.out.println("Object " + pickingIndex + " showing
+				// menu");
 				renderer.getSurface().selectAgent(attributes);
 			}
 	}
