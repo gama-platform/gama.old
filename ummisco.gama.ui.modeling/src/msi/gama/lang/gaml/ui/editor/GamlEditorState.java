@@ -12,7 +12,7 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 
-import msi.gaml.descriptions.ErrorCollector;
+import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -29,7 +29,7 @@ class GamlEditorState {
 	final List<Boolean> types;
 	final Map<String, URI> importedErrors;
 
-	public GamlEditorState(final ErrorCollector status, final Collection<? extends IDescription> descriptions) {
+	public GamlEditorState(final ValidationContext status, final Collection<? extends IDescription> descriptions) {
 
 		if (status != null) {
 			hasImportedErrors = status.hasImportedErrors();

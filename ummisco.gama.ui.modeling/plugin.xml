@@ -674,5 +674,11 @@
                 serviceClass="ummisco.gama.ui.interfaces.IModelRunner"></service>
        </serviceFactory>
     </extension>
+    <extension
+          point="org.eclipse.xtext.ui.shared.overridingGuiceModule">
+       <module
+             class="msi.gama.lang.gaml.ui.OverridingModule">
+       </module>
+    </extension>
 
 </plugin>

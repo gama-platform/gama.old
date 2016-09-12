@@ -1,9 +1,5 @@
 package msi.gama.lang.gaml.ui;
 
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.FontData;
@@ -170,12 +166,13 @@ public class AutoStartup implements IStartup {
 	public void earlyStartup() {
 
 		GamlRuntimeModule.staticInitialize();
-		try {
-			// WorkspaceIndexer.INSTANCE.buildIndex();
-			ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, new NullProgressMonitor());
-		} catch (final CoreException e) {
-			e.printStackTrace();
-		}
+		// try {
+		// WorkspaceIndexer.INSTANCE.buildIndex();
+		// ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD,
+		// new NullProgressMonitor());
+		// } catch (final CoreException e) {
+		// e.printStackTrace();
+		// }
 	}
 
 }

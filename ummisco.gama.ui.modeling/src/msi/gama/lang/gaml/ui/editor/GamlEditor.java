@@ -103,7 +103,7 @@ import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gaml.compilation.IModelBuilder;
-import msi.gaml.descriptions.ErrorCollector;
+import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.descriptions.IDescription;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
@@ -471,7 +471,7 @@ public class GamlEditor extends XtextEditor
 	}
 
 	@Override
-	public void validationEnded(final Collection<? extends IDescription> newExperiments, final ErrorCollector status) {
+	public void validationEnded(final Collection<? extends IDescription> newExperiments, final ValidationContext status) {
 		if (newExperiments == null && state != null)
 			updateToolbar(state, true);
 		else {

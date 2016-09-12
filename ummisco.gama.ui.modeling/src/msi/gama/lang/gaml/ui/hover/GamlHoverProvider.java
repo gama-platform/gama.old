@@ -39,6 +39,7 @@ import org.eclipse.xtext.util.Tuples;
 
 import com.google.inject.Inject;
 
+import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.gaml.ActionDefinition;
 import msi.gama.lang.gaml.gaml.ActionRef;
@@ -66,11 +67,9 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	public static class GamlDispatchingEObjectTextHover extends DispatchingEObjectTextHover {
 
-		@Inject
-		private EObjectAtOffsetHelper eObjectAtOffsetHelper;
+		@Inject private EObjectAtOffsetHelper eObjectAtOffsetHelper;
 
-		@Inject
-		private ILocationInFileProvider locationInFileProvider;
+		@Inject private ILocationInFileProvider locationInFileProvider;
 
 		EObject correct = null;
 
@@ -193,6 +192,8 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	private IInformationControlCreator creator;
 
+	@Inject IDocManager documenter;
+
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (creator == null) {
@@ -252,7 +253,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		// return getFirstLine(((VariableRef) o).getRef());
 		// }
 
-		final IGamlDescription description = DescriptionFactory.getGamlDocumentation(o);
+		final IGamlDescription description = documenter.getGamlDocumentation(o);
 		if (description == null) {
 			if (o instanceof Facet) {
 				return "<b>" + getFirstLineOf((Facet) o) + "</b>";

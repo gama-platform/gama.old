@@ -19,8 +19,8 @@ import com.google.inject.Singleton;
 import msi.gama.lang.gaml.indexer.BaseIndexer;
 import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
-import msi.gaml.descriptions.ErrorCollector;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.ValidationContext;
 
 /**
  * The class GlobalIndexInitializer.
@@ -66,7 +66,7 @@ public class WorkspaceIndexer extends BaseIndexer implements IModelIndexer, IRes
 
 	@Override
 	public void updateState(final URI uri, final ModelDescription model, final boolean newState,
-			final ErrorCollector status) {
+			final ValidationContext status) {
 		final URI newURI = properlyEncodedURI(uri);
 		final IGamlBuilderListener listener = resourceListeners.get(newURI);
 		if (listener == null)
@@ -101,66 +101,60 @@ public class WorkspaceIndexer extends BaseIndexer implements IModelIndexer, IRes
 	// return false;
 	// }
 
-	// @Override
-	// public void buildIndex() {
-	// if (DONT_FORCE_COMPLETE_INDEXING) {
-	// hasFinishedIndexing = true;
-	// return;
-	// }
-	// final long start = System.currentTimeMillis();
-	// if (!index.vertexSet().isEmpty()) {
-	// final Set<URI> vertices = new HashSet(index.vertexSet());
-	// index.removeAllVertices(vertices);
-	// }
-	// resourceErrors.clear();
-	// final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-	// final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-	// final IProject[] projects = root.getProjects();
-	// final int nb = projects.length;
-	// hasFinishedIndexing = false;
-	// final boolean wasDeliver = indexingResourceSet.eDeliver();
-	// final Job job = new Job("Indexing models") {
-	//
-	// @Override
-	// protected IStatus run(final IProgressMonitor monitor) {
-	// try {
-	//
-	// indexingResourceSet.eSetDeliver(false);
-	// workspace.run(new IWorkspaceRunnable() {
-	//
-	// @Override
-	// public void run(final IProgressMonitor monitor) throws CoreException
-	// {
-	//
-	// monitor.beginTask("Indexing models: ", nb);
-	// for (final IProject p : projects) {
-	// if (p.isAccessible()) {
-	// monitor.subTask(p.getName());
-	// buildIndex(p);
-	// }
-	// monitor.worked(1);
-	// }
-	//
-	// monitor.done();
-	//
-	// }
-	// }, root, IWorkspace.AVOID_UPDATE, monitor);
-	// } catch (final CoreException e) {
-	// e.printStackTrace();
-	// } finally {
-	// hasFinishedIndexing = true;
-	// indexingResourceSet.eSetDeliver(wasDeliver);
-	// System.out.print(">GAMA indexing workspace in " +
-	// (System.currentTimeMillis() - start) + "ms.");
-	// }
-	// return Status.OK_STATUS;
-	// }
-	// };
-	//
-	// job.setPriority(Job.BUILD);
-	// job.setUser(false);
-	// job.schedule();
-	// }
+	public void buildIndex() {
+		//
+		// final long start = System.currentTimeMillis();
+		// if (!index.vertexSet().isEmpty()) {
+		// final Set<URI> vertices = new HashSet(index.vertexSet());
+		// index.removeAllVertices(vertices);
+		// }
+		// resourceErrors.clear();
+		// final IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		// final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		// final IProject[] projects = root.getProjects();
+		// final int nb = projects.length;
+		// final boolean wasDeliver = indexingResourceSet.eDeliver();
+		// final Job job = new Job("Indexing models") {
+		//
+		// @Override
+		// protected IStatus run(final IProgressMonitor monitor) {
+		// try {
+		//
+		// indexingResourceSet.eSetDeliver(false);
+		// workspace.run(new IWorkspaceRunnable() {
+		//
+		// @Override
+		// public void run(final IProgressMonitor monitor) throws CoreException
+		// {
+		//
+		// monitor.beginTask("Indexing models: ", nb);
+		// for (final IProject p : projects) {
+		// if (p.isAccessible()) {
+		// monitor.subTask(p.getName());
+		// buildIndex(p);
+		// }
+		// monitor.worked(1);
+		// }
+		//
+		// monitor.done();
+		//
+		// }
+		// }, root, IWorkspace.AVOID_UPDATE, monitor);
+		// } catch (final CoreException e) {
+		// e.printStackTrace();
+		// } finally {
+		// indexingResourceSet.eSetDeliver(wasDeliver);
+		// System.out.print(">GAMA indexing workspace in " +
+		// (System.currentTimeMillis() - start) + "ms.");
+		// }
+		// return Status.OK_STATUS;
+		// }
+		// };
+		//
+		// job.setPriority(Job.BUILD);
+		// job.setUser(false);
+		// job.schedule();
+	}
 
 	// IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
 	//
@@ -173,7 +167,7 @@ public class WorkspaceIndexer extends BaseIndexer implements IModelIndexer, IRes
 	// URI.createPlatformResourceURI(proxy.requestFullPath().toString(), true);
 	// final Resource r = indexingResourceSet.getResource(uri, true);
 	// updateImports((GamlResource) r);
-	// r.unload();
+	// // r.unload();
 	// }
 	// return type != IResource.FILE;
 	// }
@@ -229,5 +223,13 @@ public class WorkspaceIndexer extends BaseIndexer implements IModelIndexer, IRes
 		// for (final IContainer p : projects)
 		// buildIndex(p);
 	}
+
+	// @Inject IBuilderState state;
+
+	// @Override
+	// public void addResourcesToBuild(final URI uri) {
+	// super.addResourcesToBuild(uri);
+	// ((GamlBuilderState) state).queueNewUri(uri);
+	// }
 
 }

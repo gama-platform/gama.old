@@ -96,6 +96,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(String.class).annotatedWith(
 				com.google.inject.name.Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
 				.toInstance(".");
+
 		binder.bind(IResourceLoader.class).toProvider(ResourceLoaderProviders.getParallelLoader());
 		binder.bind(IResourceClusteringPolicy.class).to(DynamicResourceClusteringPolicy.class);
 		binder.bind(IModelIndexer.class).toInstance(WorkspaceIndexer.INSTANCE);
@@ -103,6 +104,14 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(XtextDocumentProvider.class).to(GamlDocumentProvider.class);
 		binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
 		binder.bind(BuildScheduler.class).to(GamaBuildScheduler.class);
+		// binder.bind(IResourceLoader.class)
+		// .annotatedWith(Names.named(ClusteringBuilderState.RESOURCELOADER_GLOBAL_INDEX))
+		// .toProvider(ResourceLoaderProviders.getParallelLoader());
+		//
+		// binder.bind(IResourceLoader.class)
+		// .annotatedWith(Names.named(ClusteringBuilderState.RESOURCELOADER_CROSS_LINKING))
+		// .toProvider(ResourceLoaderProviders.getParallelLoader());
+		// binder.bind(IBuilderState.class).to(GamlBuilderState.class).asEagerSingleton();
 	}
 
 	@Override
