@@ -15,24 +15,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 
-import com.google.common.base.Supplier;
-
-import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.util.file.GAMLFile;
-import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.compilation.IModelBuilder;
 import msi.gaml.compilation.ISyntacticElement;
-import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.SymbolProto;
+import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.statements.Facets;
 
 /**
@@ -41,10 +33,9 @@ import msi.gaml.statements.Facets;
  * @todo Description
  */
 @factory(handles = { ISymbolKind.MODEL })
-public class ModelFactory extends SymbolFactory implements IModelBuilder {
+public class ModelFactory extends SymbolFactory {
 
 	final ModelAssembler assembler = new ModelAssembler();
-	static Supplier<IModelBuilder> delegate;
 
 	public ModelFactory(final List<Integer> handles) {
 		super(handles);
@@ -68,47 +59,6 @@ public class ModelFactory extends SymbolFactory implements IModelBuilder {
 			final Set<String> dependencies) {
 		// This method is actually never called.
 		return null;
-	}
-
-	// Callback method from XText
-	public static void registerModelBuilderProvider(final Supplier<IModelBuilder> instance) {
-		delegate = instance;
-	}
-
-	/**
-	 * Method compile()
-	 * 
-	 * @see msi.gaml.compilation.IModelBuilder#compile(org.eclipse.emf.ecore.resource.Resource)
-	 */
-	@Override
-	public IModel compile(final Resource resource) {
-		return delegate == null ? null : delegate.get().compile(resource);
-	}
-
-	/**
-	 * Method compile()
-	 * 
-	 * @see msi.gaml.compilation.IModelBuilder#compile(org.eclipse.emf.ecore.resource.Resource,
-	 *      java.util.List)
-	 */
-	@Override
-	public IModel compile(final Resource resource, final List<GamlCompilationError> errors) {
-		return delegate == null ? null : delegate.get().compile(resource, errors);
-	}
-
-	@Override
-	public ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {
-		return delegate == null ? null : delegate.get().buildModelDescription(uri, errors);
-	}
-
-	@Override
-	public GAMLFile.GamlInfo getInfo(final URI uri, final long stamp) {
-		return delegate == null ? null : delegate.get().getInfo(uri, stamp);
-	}
-
-	@Override
-	public ModelDescription createModelDescriptionFromFile(final String filepath) {
-		return delegate == null ? null : delegate.get().createModelDescriptionFromFile(filepath);
 	}
 
 }

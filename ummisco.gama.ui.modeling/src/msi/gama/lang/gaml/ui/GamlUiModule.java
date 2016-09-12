@@ -17,7 +17,6 @@ import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 import org.eclipse.xtext.builder.builderState.IMarkerUpdater;
-import org.eclipse.xtext.builder.impl.BuildScheduler;
 import org.eclipse.xtext.builder.resourceloader.IResourceLoader;
 import org.eclipse.xtext.builder.resourceloader.ResourceLoaderProviders;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
@@ -55,18 +54,20 @@ import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
 import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
+import msi.gama.lang.gaml.resource.GamlEncodingProvider;
 import msi.gama.lang.gaml.ui.contentassist.GamlTemplateProposalProvider;
+import msi.gama.lang.gaml.ui.decorators.GamlImageHelper;
 import msi.gama.lang.gaml.ui.decorators.GamlMarkerUpdater;
 import msi.gama.lang.gaml.ui.editor.GamaAutoEditStrategyProvider;
 import msi.gama.lang.gaml.ui.editor.GamaSourceViewerFactory;
 import msi.gama.lang.gaml.ui.editor.GamlDocumentProvider;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.lang.gaml.ui.editor.GamlEditor.GamaSourceViewerConfiguration;
+import msi.gama.lang.gaml.ui.editor.folding.GamaFoldingActionContributor;
+import msi.gama.lang.gaml.ui.editor.folding.GamaFoldingRegionProvider;
 import msi.gama.lang.gaml.ui.editor.GamlEditorTickUpdater;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.lang.gaml.ui.editor.GamlMarkOccurrenceActionContributor;
-import msi.gama.lang.gaml.ui.folding.GamaFoldingActionContributor;
-import msi.gama.lang.gaml.ui.folding.GamaFoldingRegionProvider;
 import msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration;
 import msi.gama.lang.gaml.ui.highlight.GamlReconciler;
 import msi.gama.lang.gaml.ui.highlight.GamlSemanticHighlightingCalculator;
@@ -77,7 +78,7 @@ import msi.gama.lang.gaml.ui.outline.GamlLinkWithEditorOutlineContribution;
 import msi.gama.lang.gaml.ui.outline.GamlOutlinePage;
 import msi.gama.lang.gaml.ui.outline.GamlSortOutlineContribution;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
-import msi.gama.lang.utils.GamlEncodingProvider;
+import msi.gama.lang.gaml.ui.utils.ModelRunner;
 import ummisco.gama.ui.interfaces.IModelRunner;
 
 /**
@@ -101,7 +102,6 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IModelRunner.class).to(ModelRunner.class);
 		binder.bind(XtextDocumentProvider.class).to(GamlDocumentProvider.class);
 		binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
-		binder.bind(BuildScheduler.class).to(GamaBuildScheduler.class);
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.runtime.GAMA;
-import msi.gama.util.file.GAMLFile;
+import msi.gama.util.file.GamlFileInfo;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 
@@ -31,9 +31,9 @@ public class WrappedExperiment extends WrappedGamlObject {
 	 * @param object
 	 */
 	public WrappedExperiment(final IFile root, final String name) {
-		super(root, prefix + name.replace(GAMLFile.GamlInfo.BATCH_PREFIX, ""));
-		isBatch = name.contains(GAMLFile.GamlInfo.BATCH_PREFIX);
-		internalName = name.replace(GAMLFile.GamlInfo.BATCH_PREFIX, "");
+		super(root, prefix + name.replace(GamlFileInfo.BATCH_PREFIX, ""));
+		isBatch = name.contains(GamlFileInfo.BATCH_PREFIX);
+		internalName = name.replace(GamlFileInfo.BATCH_PREFIX, "");
 	}
 
 	@Override

@@ -36,7 +36,6 @@ import org.eclipse.xtext.scoping.impl.SelectableBasedScope;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
-import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import gnu.trove.map.hash.THashMap;
@@ -45,12 +44,12 @@ import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.lang.gaml.documentation.GamlResourceDocManager;
+import msi.gama.lang.gaml.EGaml;
+import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.indexer.IModelIndexer;
+import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.utils.EGaml;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaPair;
 import msi.gaml.compilation.AbstractGamlAdditions;
@@ -91,9 +90,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
 	static XtextResourceSet rs = new XtextResourceSet();
 
-	@Inject IModelIndexer indexer;
-
-	static IDocManager documenter = new GamlResourceDocManager();
+	static IDocManager documenter = new GamlResourceDocumenter();
 
 	public static class ImmutableMap implements Map<String, String> {
 
@@ -500,13 +497,13 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 	}
 
 	public Map<URI, String> getAllImportedURIs(final Resource resource, final ResourceSet set) {
-		return indexer.allLabeledImportsOf((GamlResource) resource);
+		return GamlResourceIndexer.allLabeledImportsOf((GamlResource) resource);
 	}
 
 	@Override
 	protected LinkedHashSet<URI> getImportedUris(final Resource resource) {
 		final LinkedHashSet<URI> result = new LinkedHashSet(
-				Arrays.asList(Iterators.toArray(indexer.allImportsOf(resource.getURI()), URI.class)));
+				Arrays.asList(Iterators.toArray(GamlResourceIndexer.allImportsOf(resource.getURI()), URI.class)));
 		return result;
 	}
 

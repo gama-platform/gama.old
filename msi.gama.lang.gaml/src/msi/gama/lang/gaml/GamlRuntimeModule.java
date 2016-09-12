@@ -17,7 +17,6 @@ import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.parser.IEncodingProvider;
-import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.IResourceDescription;
@@ -30,31 +29,26 @@ import com.google.common.base.Supplier;
 import com.google.inject.Binder;
 
 import msi.gama.common.interfaces.IDocManager;
-import msi.gama.lang.gaml.documentation.GamlResourceDocManager;
+import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
+import msi.gama.lang.gaml.expression.ExpressionDescriptionBuilder;
+import msi.gama.lang.gaml.expression.GamlExpressionCompiler;
 import msi.gama.lang.gaml.generator.GamlOutputConfigurationProvider;
-import msi.gama.lang.gaml.indexer.BaseIndexer;
-import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.linking.GamlLinkingErrorMessageProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingService;
-import msi.gama.lang.gaml.linking.GamlNameConverter;
-import msi.gama.lang.gaml.parsing.GamlCompatibilityConverter;
-import msi.gama.lang.gaml.parsing.GamlSyntacticParser;
+import msi.gama.lang.gaml.naming.GamlNameConverter;
+import msi.gama.lang.gaml.naming.GamlQualifiedNameProvider;
+import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
-import msi.gama.lang.gaml.resource.GamlModelBuilder;
+import msi.gama.lang.gaml.resource.GamlEncodingProvider;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionManager;
 import msi.gama.lang.gaml.resource.GamlResourceDescriptionStrategy;
 import msi.gama.lang.gaml.resource.GamlResourceInfoProvider;
-import msi.gama.lang.gaml.scoping.GamlQualifiedNameProvider;
 import msi.gama.lang.gaml.validation.ErrorToDiagnoticTranslator;
 import msi.gama.lang.gaml.validation.GamlResourceValidator;
-import msi.gama.lang.utils.ExpressionDescriptionBuilder;
-import msi.gama.lang.utils.GamlEncodingProvider;
-import msi.gama.lang.utils.GamlExpressionCompiler;
-import msi.gaml.compilation.IModelBuilder;
+import msi.gama.util.GAML;
 import msi.gaml.expressions.GamlExpressionFactory;
 import msi.gaml.expressions.IExpressionCompiler;
-import msi.gaml.factories.ModelFactory;
 
 /**
  * Use this class to register components to be used at runtime / without the
@@ -66,7 +60,6 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	public static void staticInitialize() {
 		if (!initialized) {
-			System.out.println(">GAMA initializing GAML expression compiler and model builder");
 			GamlExpressionFactory.registerParserProvider(new Supplier<IExpressionCompiler>() {
 
 				@Override
@@ -74,14 +67,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 					return new GamlExpressionCompiler();
 				}
 			});
-			ModelFactory.registerModelBuilderProvider(new Supplier<IModelBuilder>() {
-
-				@Override
-				public IModelBuilder get() {
-					return GamlModelBuilder.INSTANCE;
-				}
-			});
-			// DescriptionFactory.registerDocManager(GamlResourceDocManager.INSTANCE);
+			GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
 			initialized = true;
 		}
 
@@ -92,19 +78,14 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		super.configure(binder);
 		staticInitialize();
 		binder.bind(ExpressionDescriptionBuilder.class);
-		binder.bind(IDocManager.class).to(GamlResourceDocManager.class);
-		binder.bind(GamlCompatibilityConverter.class);
+		binder.bind(IDocManager.class).to(GamlResourceDocumenter.class);
+		binder.bind(GamlSyntacticConverter.class);
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
-		binder.bind(IModelIndexer.class).toInstance(BaseIndexer.INSTANCE);
-		binder.bind(IModelBuilder.class).toInstance(GamlModelBuilder.INSTANCE);
-		// binder.bind(IGenerator.class).to(GamlGenerator.class);
 		binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
-		// binder.bind(BuiltinGlobalScopeProvider.class).toInstance(BuiltinGlobalScopeProvider.getInstance());
 		binder.bind(IResourceValidator.class).to(GamlResourceValidator.class);
 		binder.bind(ErrorToDiagnoticTranslator.class);
-		binder.bind(GamlResourceInfoProvider.class);
 
 	}
 
@@ -141,10 +122,10 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return GamlResource.class;
 	}
 
-	@Override
-	public Class<? extends IParser> bindIParser() {
-		return GamlSyntacticParser.class;
-	}
+	// @Override
+	// public Class<? extends IParser> bindIParser() {
+	// return GamlSyntacticParser.class;
+	// }
 
 	@Override
 	public void configureRuntimeEncodingProvider(final Binder binder) {

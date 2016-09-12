@@ -11,10 +11,14 @@
  **********************************************************************************************/
 package msi.gama.util;
 
+import org.eclipse.emf.common.util.URI;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.GamlFileInfo;
+import msi.gama.util.file.IGamlResourceInfoProvider;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.GamlExpressionFactory;
@@ -34,6 +38,7 @@ public class GAML {
 
 	public static IExpressionFactory expressionFactory = null;
 	public static ModelFactory modelFactory = null;
+	private static IGamlResourceInfoProvider infoProvider = null;
 
 	public static <T> T nullCheck(final IScope scope, final T object) {
 		return nullCheck(scope, object, "Error: nil value detected");
@@ -126,6 +131,14 @@ public class GAML {
 		}
 		final IScope scope = a.getScope();
 		return (ExperimentDescription) scope.getExperimentContext();
+	}
+
+	public static void registerInfoProvider(final IGamlResourceInfoProvider info) {
+		infoProvider = info;
+	}
+
+	public static GamlFileInfo getInfo(final URI uri, final long stamp) {
+		return infoProvider.getInfo(uri, stamp);
 	}
 
 }

@@ -3,7 +3,7 @@ package msi.gama.lang.gaml.documentation;
 import java.io.IOException;
 
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.lang.gaml.documentation.GamlResourceDocManager.StringCompressor;
+import msi.gama.lang.gaml.documentation.GamlResourceDocumenter.StringCompressor;
 import msi.gama.precompiler.GamlProperties;
 
 public class DocumentationNode implements IGamlDescription {

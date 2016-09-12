@@ -13,7 +13,7 @@
 package msi.gama.lang.gaml.ui.quickfix;
 
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.lang.gaml.ui.FileOpener;
+import msi.gama.lang.gaml.ui.utils.FileOpener;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.text.BadLocationException;

@@ -45,6 +45,7 @@ import org.eclipse.xtext.util.CancelIndicator;
 import com.google.inject.Inject;
 
 import msi.gama.common.util.StringUtils;
+import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
 import msi.gama.lang.gaml.gaml.ArgumentPair;
 import msi.gama.lang.gaml.gaml.Facet;
@@ -55,7 +56,6 @@ import msi.gama.lang.gaml.gaml.S_Assignment;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
-import msi.gama.lang.utils.EGaml;
 
 /**
  *

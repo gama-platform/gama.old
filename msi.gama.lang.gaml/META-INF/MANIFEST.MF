@@ -30,9 +30,7 @@ Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.resource,
  msi.gama.lang.gaml.scoping,
  msi.gama.lang.gaml.services,
- msi.gama.lang.gaml.trials,
  msi.gama.lang.gaml.validation,
- msi.gama.lang.utils,
  msi.gama.lang.gaml.serializer
 Import-Package: org.apache.log4j;version="1.2.15"
 Bundle-ActivationPolicy: lazy

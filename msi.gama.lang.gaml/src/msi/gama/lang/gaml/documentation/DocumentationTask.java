@@ -9,10 +9,10 @@ import msi.gama.common.interfaces.IGamlDescription;
 class DocumentationTask {
 	final EObject object;
 	final IGamlDescription description;
-	final GamlResourceDocManager documenter;
+	final GamlResourceDocumenter documenter;
 
 	public DocumentationTask(final EObject object, final IGamlDescription description,
-			final GamlResourceDocManager documenter) {
+			final GamlResourceDocumenter documenter) {
 		super();
 		this.object = object;
 		this.description = description;

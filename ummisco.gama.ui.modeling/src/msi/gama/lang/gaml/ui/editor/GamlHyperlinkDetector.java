@@ -12,7 +12,7 @@
 package msi.gama.lang.gaml.ui.editor;
 
 import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.ui.FileOpener;
+import msi.gama.lang.gaml.ui.utils.FileOpener;
 
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;

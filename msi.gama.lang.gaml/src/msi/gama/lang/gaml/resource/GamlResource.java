@@ -11,26 +11,17 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.EClassImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.parser.IParseResult;
-import org.eclipse.xtext.resource.impl.ListBasedDiagnosticConsumer;
-import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 import com.google.inject.Inject;
@@ -39,9 +30,8 @@ import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.indexer.IModelIndexer;
-import msi.gama.lang.gaml.parsing.GamlCompatibilityConverter;
-import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
+import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
+import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
@@ -60,23 +50,16 @@ import msi.gaml.descriptions.ValidationContext;
  */
 public class GamlResource extends LazyLinkingResource {
 
-	// private volatile boolean isValidating;
-
-	@Inject IModelIndexer indexer;
-
 	@Inject IDocManager documenter;
+	@Inject GamlSyntacticConverter converter;
+	SyntacticModelElement element;
 
-	@Inject GamlCompatibilityConverter converter;
-
-	public GamlResource() {
-	}
-
-	public ValidationContext getErrorCollector() {
-		return GamlResourcesHelper.getValidationContext(this);
+	public ValidationContext getValidationContext() {
+		return GamlResourceServices.getValidationContext(this);
 	}
 
 	public boolean hasSemanticErrors() {
-		return getErrorCollector().hasErrors();
+		return getValidationContext().hasErrors();
 	}
 
 	@Override
@@ -84,22 +67,19 @@ public class GamlResource extends LazyLinkingResource {
 		return "UTF-8";
 	}
 
-	public void resetErrorCollector() {
-		GamlResourcesHelper.discardValidationContext(this);
-	}
-
 	@Override
 	public String toString() {
-		return "GAML resource" + "[" + getURI() + "]";
+		return "GamlResource[" + getURI().lastSegment() + "]";
 	}
 
 	public void updateWith(final ModelDescription model, final boolean newState) {
-		GamlResourcesHelper.updateState(getURI(), model, newState, getErrorCollector());
+		GamlResourceServices.updateState(getURI(), model, newState, GamlResourceServices.getValidationContext(this));
 	}
 
 	public ISyntacticElement getSyntacticContents() {
-		final GamlParseResult parseResult = (GamlParseResult) getParseResult();
-		return parseResult.getSyntacticContents(converter);
+		if (element == null)
+			element = converter.buildSyntacticContents(getParseResult().getRootASTElement(), null);
+		return element;
 	}
 
 	private class ModelsGatherer implements TObjectObjectProcedure<GamlResource, String> {
@@ -132,23 +112,26 @@ public class GamlResource extends LazyLinkingResource {
 		final ModelsGatherer gatherModels = new ModelsGatherer();
 		resources.forEachEntry(gatherModels);
 		GAML.getExpressionFactory().resetParser();
-		final String modelPath = GamlResourceFileHelper.getModelPathOf(this);
-		final String projectPath = GamlResourceFileHelper.getProjectPathOf(this);
+		final String modelPath = GamlResourceServices.getModelPathOf(this);
+		final String projectPath = GamlResourceServices.getProjectPathOf(this);
+		final boolean isEdited = GamlResourceServices.isEdited(this);
+		final ValidationContext context = GamlResourceServices.getValidationContext(this);
 		Map<String, ModelDescription> compiledMicroModels = null;
 		String aliasName = null;
+
 		while (gatherModels.microModels != null && !gatherModels.microModels.isEmpty()) {
 			aliasName = (String) gatherModels.microModels.values().toArray()[0];
 			final List<ISyntacticElement> res = getListMicroSyntacticElement(gatherModels.microModels, aliasName);
 			gatherModels.microModels.keySet().removeAll(res);
 			final ModelDescription mic = GAML.getModelFactory().createModelDescription(projectPath, modelPath, res,
-					getErrorCollector(), isEdited(), Collections.<String, ModelDescription> emptyMap());
+					context, isEdited, Collections.<String, ModelDescription> emptyMap());
 			mic.setAlias(aliasName);
 			if (compiledMicroModels == null)
 				compiledMicroModels = new TOrderedHashMap<String, ModelDescription>();
 			compiledMicroModels.put(aliasName, mic);
 		}
-		return GAML.getModelFactory().createModelDescription(projectPath, modelPath, gatherModels.models,
-				getErrorCollector(), isEdited(), compiledMicroModels);
+		return GAML.getModelFactory().createModelDescription(projectPath, modelPath, gatherModels.models, context,
+				isEdited, compiledMicroModels);
 	}
 
 	private List<ISyntacticElement> getListMicroSyntacticElement(final Map<ISyntacticElement, String> microModels,
@@ -164,49 +147,34 @@ public class GamlResource extends LazyLinkingResource {
 
 	public void invalidate(final GamlResource r, final String s) {
 		GamlCompilationError error = null;
-		if (indexer.equals(r.getURI(), getURI())) {
+		if (GamlResourceIndexer.equals(r.getURI(), getURI())) {
 			error = new GamlCompilationError(s, IGamlIssue.GENERAL, r.getContents().get(0), false, false);
 		} else {
 			error = new GamlCompilationError(s, IGamlIssue.GENERAL, r.getURI(), false, false);
 		}
-		getErrorCollector().add(error);
+		getValidationContext().add(error);
 		updateWith(null, true);
 	}
 
-	ModelDescription buildCompleteDescription() {
-		// try {
-		// resetErrorCollector();
-		final TOrderedHashMap<GamlResource, String> imports = indexer.validateImportsOf(this);
-
-		if (hasErrors())
+	public ModelDescription buildCompleteDescription() {
+		final TOrderedHashMap<GamlResource, String> imports = GamlResourceIndexer.validateImportsOf(this);
+		if (hasErrors() || imports == null || hasSemanticErrors())
 			return null;
-
-		// if (!shouldValidate())
-		// return null;
-
-		if (imports == null || hasSemanticErrors())
-			return null;
-
 		final ModelDescription model = buildModelDescription(imports);
-
 		// If, for whatever reason, the description is null, we stop the
 		// semantic validation
 		if (model == null) {
 			invalidate(this, "Impossible to validate " + URI.decode(getURI().lastSegment()) + " (check the logs)");
 		}
-
 		return model;
-		// } finally {
-		// indexer.removeResourcesToBuild(getURI());
-		// }
 	}
 
 	/**
 	 * Validates the resource by compiling its contents into a ModelDescription
 	 * and discarding this ModelDescription afterwards
 	 * 
-	 * @note The errors will be available as part of the ErrorCollector, which
-	 *       can later be retrieved from the resource, and which contains
+	 * @note The errors will be available as part of the ValidationContext,
+	 *       which can later be retrieved from the resource, and which contains
 	 *       semantic errors (as opposed to the ones obtained via
 	 *       resource.getErrors(), which are syntactic errors), This collector
 	 *       can be probed for compilation errors via its hasErrors(),
@@ -223,7 +191,7 @@ public class GamlResource extends LazyLinkingResource {
 		// We then validate it and get rid of the description. The
 		// documentation is produced only if the resource is
 		// marked as 'edited'
-		final boolean edited = isEdited();
+		final boolean edited = GamlResourceServices.isEdited(this.getURI());
 		try {
 			model.validate(edited);
 			updateWith(model, true);
@@ -237,67 +205,39 @@ public class GamlResource extends LazyLinkingResource {
 
 	}
 
-	public boolean isEdited() {
-		return GamlResourcesHelper.isEdited(getURI());
-	}
-
-	// public GamlProperties getRequires() {
-	// requires.remove(null);
-	// return requires;
-	// }
-
 	@Override
-	public void resolveLazyCrossReferences(final CancelIndicator mon) {
-		final TreeIterator<Object> iterator = EcoreUtil.getAllContents(this, true);
-		while (iterator.hasNext()) {
-			final InternalEObject source = (InternalEObject) iterator.next();
-			final EStructuralFeature[] eStructuralFeatures = ((EClassImpl.FeatureSubsetSupplier) source.eClass()
-					.getEAllStructuralFeatures()).crossReferences();
-			if (eStructuralFeatures != null) {
-				for (final EStructuralFeature crossRef : eStructuralFeatures) {
-					resolveLazyCrossReference(source, crossRef);
-				}
-			}
-		}
+	protected void updateInternalState(final IParseResult oldParseResult, final IParseResult newParseResult) {
+		super.updateInternalState(oldParseResult, newParseResult);
+		element = null;
 	}
 
 	@Override
-	protected void doLoad(final InputStream inputStream, final Map<?, ?> options) throws IOException {
-		setEncodingFromOptions(options);
-		final IParseResult result = getParser().parse(createReader(inputStream));
-		updateInternalState(getParseResult(), result);
+	protected void clearInternalState() {
+		super.clearInternalState();
+		element = null;
+	}
 
-		if (options != null && Boolean.TRUE.equals(options.get(OPTION_RESOLVE_ALL)))
-			EcoreUtil.resolveAll(this);
+	@Override
+	protected void doUnload() {
+		super.doUnload();
+		element = null;
 	}
 
 	@Override
 	protected void doLinking() {
-
-		if (getParseResult() == null || getParseResult().getRootASTElement() == null)
-			return;
 		// If the imports are not correctly updated, we cannot proceed
-		final EObject faulty = indexer.updateImports(this);
+		final EObject faulty = GamlResourceIndexer.updateImports(this);
 		if (faulty != null) {
 			getErrors().add(new EObjectDiagnosticImpl(Severity.ERROR, IGamlIssue.IMPORT_ERROR,
 					"Impossible to locate import", faulty, GamlPackage.Literals.IMPORT__IMPORT_URI, -1, null));
 			return;
 		}
-		final ListBasedDiagnosticConsumer consumer = new ListBasedDiagnosticConsumer();
-		getLinker().linkModel(getParseResult().getRootASTElement(), consumer);
-		if (!isValidationDisabled()) {
-			getErrors().addAll(consumer.getResult(Severity.ERROR));
-			getWarnings().addAll(consumer.getResult(Severity.WARNING));
-		}
+		super.doLinking();
 	}
 
 	public boolean hasErrors() {
 		return !getErrors().isEmpty() || getParseResult().hasSyntaxErrors();
 	}
-
-	// public boolean shouldValidate() {
-	// return indexer.needsToBuild(getURI());
-	// }
 
 	public IDocManager getDocumentationManager() {
 		return documenter;

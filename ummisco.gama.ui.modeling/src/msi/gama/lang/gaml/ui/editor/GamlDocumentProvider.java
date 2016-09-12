@@ -21,8 +21,6 @@ import org.eclipse.xtext.validation.Issue;
 
 import com.google.inject.Inject;
 
-import msi.gama.lang.gaml.indexer.IModelIndexer;
-
 /**
  * The class GamlDocumentProvider.
  *
@@ -31,8 +29,6 @@ import msi.gama.lang.gaml.indexer.IModelIndexer;
  *
  */
 public class GamlDocumentProvider extends XtextDocumentProvider {
-
-	@Inject IModelIndexer indexer;
 
 	@Inject private IssueResolutionProvider issueResolutionProvider;
 

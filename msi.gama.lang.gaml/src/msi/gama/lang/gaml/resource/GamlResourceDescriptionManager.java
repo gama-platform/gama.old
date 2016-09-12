@@ -27,7 +27,7 @@ import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
 
 import com.google.inject.Inject;
 
-import msi.gama.lang.gaml.indexer.IModelIndexer;
+import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
 
 /**
@@ -42,8 +42,6 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 
 	@Inject private DescriptionUtils descriptionUtils;
 
-	@Inject IModelIndexer indexer;
-
 	@Inject BuiltinGlobalScopeProvider provider;
 
 	@Override
@@ -57,15 +55,11 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 			final IResourceDescriptions context) {
 		final boolean result = false;
 		final URI newUri = candidate.getURI();
-		// if (indexer.needsToBuild(newUri)) {
-		// return true;
-		// }
-
 		final Set<URI> deltaUris = new HashSet();
 		for (final Delta d : deltas) {
-			deltaUris.add(indexer.properlyEncodedURI(d.getUri()));
+			deltaUris.add(GamlResourceServices.properlyEncodedURI(d.getUri()));
 		}
-		final Iterator<URI> it = indexer.allImportsOf(newUri);
+		final Iterator<URI> it = GamlResourceIndexer.allImportsOf(newUri);
 		while (it.hasNext()) {
 			final URI next = it.next();
 			if (deltaUris.contains(next)) {

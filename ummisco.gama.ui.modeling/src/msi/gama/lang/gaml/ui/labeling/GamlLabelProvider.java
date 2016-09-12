@@ -24,6 +24,7 @@ import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import com.google.inject.Inject;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Import;
@@ -36,7 +37,6 @@ import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider;
-import msi.gama.lang.utils.EGaml;
 
 /**
  * Provides labels for a EObjects.

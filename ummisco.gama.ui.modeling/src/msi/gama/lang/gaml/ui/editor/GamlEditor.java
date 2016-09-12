@@ -91,22 +91,30 @@ import com.google.common.collect.ObjectArrays;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
-import msi.gama.lang.gaml.indexer.IModelIndexer;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.decorators.GamlAnnotationImageProvider;
+import msi.gama.lang.gaml.ui.editbox.BoxDecoratorPartListener;
 import msi.gama.lang.gaml.ui.editbox.BoxProviderRegistry;
 import msi.gama.lang.gaml.ui.editbox.IBoxDecorator;
 import msi.gama.lang.gaml.ui.editbox.IBoxEnabledEditor;
 import msi.gama.lang.gaml.ui.editbox.IBoxProvider;
+import msi.gama.lang.gaml.ui.editor.toolbar.CreateExperimentSelectionListener;
+import msi.gama.lang.gaml.ui.editor.toolbar.EditToolbar;
+import msi.gama.lang.gaml.ui.editor.toolbar.GamlQuickOutlinePopup;
+import msi.gama.lang.gaml.ui.editor.toolbar.ImportedInButton;
+import msi.gama.lang.gaml.ui.editor.toolbar.OpenExperimentSelectionListener;
+import msi.gama.lang.gaml.ui.editor.toolbar.OpenImportedErrorSelectionListener;
+import msi.gama.lang.gaml.ui.editor.toolbar.OtherExperimentsButton;
+import msi.gama.lang.gaml.ui.editor.toolbar.RevalidateModelSelectionListener;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialog;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateStore;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
-import msi.gaml.compilation.IModelBuilder;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ValidationContext;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
+import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -148,14 +156,9 @@ public class GamlEditor extends XtextEditor
 	boolean decorationEnabled = AutoStartup.EDITBOX_ENABLED.getValue();
 	boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
 
-	@Inject IResourceSetProvider resourceSetProvider;
-
+	@Inject public IResourceSetProvider resourceSetProvider;
 	@Inject Injector injector;
-
-	@Inject IModelIndexer indexer;
-
-	@Inject IModelBuilder builder;
-
+	@Inject IModelRunner runner;
 	@Inject private GamlEditTemplateDialogFactory templateDialogFactory;
 
 	@Inject private TemplateStore templateStore;
@@ -296,9 +299,9 @@ public class GamlEditor extends XtextEditor
 				null, SWT.LEFT);
 		toolbar.sep(4, SWT.LEFT);
 		toolbar.wipe(SWT.RIGHT, true);
-		new OtherExperimentsButton(this, toolbar, builder, resourceSetProvider);
+		new OtherExperimentsButton(this, toolbar, runner, resourceSetProvider);
 		toolbar.sep(4, SWT.LEFT);
-		new ImportedInButton(this, toolbar, indexer);
+		new ImportedInButton(this, toolbar);
 		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
 		toggle.addSelectionListener(new SelectionAdapter() {
 
@@ -443,7 +446,7 @@ public class GamlEditor extends XtextEditor
 						listener = new RevalidateModelSelectionListener(GamlEditor.this);
 						imageName = "marker.error2";
 					} else {
-						listener = new OpenExperimentSelectionListener(GamlEditor.this, newState);
+						listener = new OpenExperimentSelectionListener(GamlEditor.this, newState, runner);
 					}
 
 					if (msg != null) {

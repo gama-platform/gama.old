@@ -12,7 +12,7 @@ import org.eclipse.xtext.ui.editor.XtextSourceViewer;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 
-import msi.gama.lang.gaml.resource.GamlResourcesHelper;
+import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 
 /**
@@ -40,7 +40,7 @@ public class GamaSourceViewer extends XtextSourceViewer {
 
 	@Override
 	protected void handleDispose() {
-		GamlResourcesHelper.removeResourceListener(resourceListener);
+		GamlResourceServices.removeResourceListener(resourceListener);
 		super.handleDispose();
 	}
 
@@ -53,7 +53,7 @@ public class GamaSourceViewer extends XtextSourceViewer {
 
 			@Override
 			public void process(final XtextResource state) throws Exception {
-				GamlResourcesHelper.addResourceListener(state.getURI(), listener);
+				GamlResourceServices.addResourceListener(state.getURI(), listener);
 			}
 		});
 	}

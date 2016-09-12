@@ -25,9 +25,6 @@ import org.eclipse.xtext.validation.CheckMode;
 
 import com.google.inject.Inject;
 
-import msi.gama.lang.gaml.indexer.IModelIndexer;
-import msi.gama.lang.gaml.resource.GamlResourceInfoProvider;
-
 /**
  * The class GamlMarkerUpdater.
  *
@@ -36,10 +33,6 @@ import msi.gama.lang.gaml.resource.GamlResourceInfoProvider;
  *
  */
 public class GamlMarkerUpdater extends MarkerUpdaterImpl {
-
-	@Inject IModelIndexer indexer;
-
-	@Inject GamlResourceInfoProvider info;
 
 	@Inject IStorage2UriMapper mapper;
 

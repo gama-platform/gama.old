@@ -4,7 +4,6 @@
  */
 package msi.gama.lang.gaml.ui;
 
-import org.eclipse.xtext.builder.builderState.IBuilderState;
 import org.eclipse.xtext.builder.clustering.ClusteringBuilderState;
 import org.eclipse.xtext.builder.resourceloader.IResourceLoader;
 import org.eclipse.xtext.builder.resourceloader.ResourceLoaderProviders;
@@ -32,7 +31,6 @@ public class OverridingModule extends AbstractGenericModule {
 		binder.bind(IResourceLoader.class)
 				.annotatedWith(Names.named(ClusteringBuilderState.RESOURCELOADER_CROSS_LINKING))
 				.toProvider(ResourceLoaderProviders.getParallelLoader(8, 16));
-		binder.bind(IBuilderState.class).to(GamlBuilderState.class).asEagerSingleton();
 	}
 
 }

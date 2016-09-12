@@ -1,0 +1,72 @@
+/*********************************************************************************************
+ *
+ *
+ * 'GamlResourceBuilder.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
+ *
+ *
+ **********************************************************************************************/
+package msi.gama.lang.gaml.validation;
+
+import java.util.List;
+
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
+
+import com.google.common.collect.Iterables;
+
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.kernel.model.IModel;
+import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.descriptions.ModelDescription;
+
+/**
+ * Class GamlResourceBuilder.
+ *
+ * @author drogoul
+ * @since 8 avr. 2014
+ *
+ */
+public class GamlModelBuilder {
+
+	private static final SynchronizedXtextResourceSet buildResourceSet = new SynchronizedXtextResourceSet();
+
+	public static IModel compile(final URI uri, final List<GamlCompilationError> errors) {
+		// We build the description and fill the errors list
+		final ModelDescription model = buildModelDescription(uri, errors);
+		// And compile it before returning it, unless it is null.
+		return model == null ? null : (IModel) model.compile();
+	}
+
+	private static ModelDescription buildModelDescription(final URI uri, final List<GamlCompilationError> errors) {
+		try {
+			final GamlResource r = (GamlResource) buildResourceSet.getResource(uri, true);
+			// Syntactic errors detected, we cannot build the resource
+			if (r.hasErrors()) {
+				if (errors != null)
+					errors.add(new GamlCompilationError("Syntax errors ", IGamlIssue.GENERAL, r.getContents().get(0),
+							false, false));
+				return null;
+			} else {
+				// We build the description
+				final ModelDescription model = r.buildCompleteDescription();
+				if (errors != null)
+					Iterables.addAll(errors, r.getValidationContext());
+				return model;
+			}
+		} finally {
+			final boolean wasDeliver = buildResourceSet.eDeliver();
+			try {
+				buildResourceSet.eSetDeliver(false);
+				buildResourceSet.getResources().clear();
+			} finally {
+				buildResourceSet.eSetDeliver(wasDeliver);
+			}
+		}
+	}
+
+}

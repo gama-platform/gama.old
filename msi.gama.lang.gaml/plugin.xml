@@ -10,4 +10,7 @@
        genModel = "model/generated/Gaml.genmodel" /> 
 	
   </extension>
+  <extension
+        point="gaml.extension">
+  </extension>
 </plugin>

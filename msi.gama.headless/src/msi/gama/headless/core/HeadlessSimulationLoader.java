@@ -18,16 +18,14 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.XtextResourceSet;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
+import msi.gama.lang.gaml.validation.GamlModelBuilder;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.HeadlessListener;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 
 public class HeadlessSimulationLoader {
@@ -72,11 +70,9 @@ public class HeadlessSimulationLoader {
 			throw new IOException("Model file does not exist: " + fileName);
 
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(fileName + " Model is loading...");
-		final XtextResourceSet set = new XtextResourceSet();
 		try {
 			final List<GamlCompilationError> errors = new ArrayList();
-			final Resource r = set.getResource(URI.createFileURI(fileName), true);
-			final IModel model = GAML.getModelFactory().compile(r, errors);
+			final IModel model = GamlModelBuilder.compile(URI.createFileURI(fileName), errors);
 			if (model == null) {
 				{
 					String errorData = "\n";
@@ -91,8 +87,6 @@ public class HeadlessSimulationLoader {
 
 		} catch (final Exception e1) {
 			throw new RuntimeException(e1);
-		} finally {
-			set.getResources().clear();
 		}
 
 	}

@@ -54,12 +54,6 @@ import msi.gaml.types.Types;
  */
 public class ModelAssembler {
 
-	/**
-	 *
-	 */
-	public ModelAssembler() {
-	}
-
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 			final List<ISyntacticElement> models, final ValidationContext collector, final boolean document,
 			final Map<String, ModelDescription> mm) {

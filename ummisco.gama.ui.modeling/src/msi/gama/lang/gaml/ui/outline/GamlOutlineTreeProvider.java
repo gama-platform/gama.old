@@ -19,6 +19,7 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
 import com.google.inject.Inject;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.S_Action;
@@ -28,7 +29,6 @@ import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.S_Species;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
-import msi.gama.lang.utils.EGaml;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;

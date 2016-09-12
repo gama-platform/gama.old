@@ -14,7 +14,7 @@ import org.eclipse.xtext.generator.IFileSystemAccess;
 import org.eclipse.xtext.generator.IGenerator;
 
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.resource.GamlResourceFileHelper;
+import msi.gama.lang.gaml.resource.GamlResourceServices;
 
 /**
  * Class GamlGenerator.
@@ -66,7 +66,7 @@ public class GamlGenerator implements IGenerator {
 	 * @return
 	 */
 	private String getFilenameFor(final GamlResource input) {
-		IPath path = GamlResourceFileHelper.getPathOf(input);
+		IPath path = GamlResourceServices.getPathOf(input);
 		final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		path = file.getProjectRelativePath();
 		final String s = path.toString();

@@ -30,7 +30,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.swt.graphics.ImageData;
 
 import msi.gama.runtime.GAMA;
-import msi.gama.util.file.GAMLFile.GamlInfo;
+import msi.gama.util.GAML;
 import msi.gama.util.file.GamaCSVFile;
 import msi.gama.util.file.GamaCSVFile.CSVInfo;
 import msi.gama.util.file.GamaFileMetaData;
@@ -39,9 +39,9 @@ import msi.gama.util.file.GamaOsmFile;
 import msi.gama.util.file.GamaOsmFile.OSMInfo;
 import msi.gama.util.file.GamaShapeFile;
 import msi.gama.util.file.GamaShapeFile.ShapeInfo;
+import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IFileMetaDataProvider;
 import msi.gama.util.file.IGamaFileMetaData;
-import msi.gaml.factories.DescriptionFactory;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -188,7 +188,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		{
 			put(CSV_CT_ID, CSVInfo.class);
 			put(IMAGE_CT_ID, ImageInfo.class);
-			put(GAML_CT_ID, GamlInfo.class);
+			put(GAML_CT_ID, GamlFileInfo.class);
 			put(SHAPEFILE_CT_ID, ShapeInfo.class);
 			put(OSM_CT_ID, OSMInfo.class);
 			put(SHAPEFILE_SUPPORT_CT_ID, GenericFileInfo.class);
@@ -404,9 +404,9 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	/**
 	 * @param file
 	 */
-	static GamlInfo createGamlFileMetaData(final IFile file) {
-		return DescriptionFactory.getModelFactory().getInfo(
-				URI.createPlatformResourceURI(file.getFullPath().toOSString(), true), file.getModificationStamp());
+	static GamlFileInfo createGamlFileMetaData(final IFile file) {
+		return GAML.getInfo(URI.createPlatformResourceURI(file.getFullPath().toOSString(), true),
+				file.getModificationStamp());
 	}
 
 	static GamaCSVFile.CSVInfo createCSVFileMetaData(final IFile file) {
@@ -482,8 +482,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	@Override
 	public boolean isGAML(final IFile p) {
-		return p != null && "gaml".equals(p
-				.getFileExtension())/* GAML_CT_ID.equals(getContentTypeId(p)) */;
+		return p != null && "gaml".equals(p.getFileExtension());
 	}
 
 	public static String getContentTypeId(final IFile p) {

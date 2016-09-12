@@ -11,34 +11,31 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
-import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
-import msi.gama.lang.gaml.indexer.IModelIndexer;
-import msi.gama.lang.utils.EGaml;
-import msi.gama.util.file.GAMLFile;
+import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
+import msi.gama.util.file.GamlFileInfo;
+import msi.gama.util.file.IGamlResourceInfoProvider;
 import msi.gaml.compilation.GamaBundleLoader;
 
-public class GamlResourceInfoProvider {
+@Singleton
+public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 
-	@Inject IModelIndexer indexer;
+	public static GamlResourceInfoProvider INSTANCE = new GamlResourceInfoProvider();
 
-	@Inject XtextResourceSet resourceSet;
+	private final XtextResourceSet resourceSet = new XtextResourceSet();
 
-	@Inject
-	public GamlResourceInfoProvider() {
-	}
-
-	public GAMLFile.GamlInfo getInfo(final Resource r, final long stamp) {
+	public GamlFileInfo getInfo(final Resource r, final long stamp) {
 
 		Set<String> imports = null;
-		final Set<URI> uris = indexer.directImportsOf(r.getURI());
-		// System.out.println("Direct imports of " + r.getURI() + " : " + uris);
+		final Set<URI> uris = GamlResourceIndexer.directImportsOf(r.getURI());
 		for (final URI u : uris) {
 			if (imports == null)
 				imports = new TLinkedHashSet();
@@ -70,7 +67,7 @@ public class GamlResourceInfoProvider {
 				if (typeFacet != null) {
 					final String type = EGaml.getKeyOf(typeFacet.getExpr());
 					if (IKeyword.BATCH.equals(type)) {
-						s = GAMLFile.GamlInfo.BATCH_PREFIX + s;
+						s = GamlFileInfo.BATCH_PREFIX + s;
 					}
 				}
 				if (exps == null)
@@ -79,11 +76,12 @@ public class GamlResourceInfoProvider {
 			}
 		}
 
-		return new GAMLFile.GamlInfo(stamp, imports, uses, exps);
+		return new GamlFileInfo(stamp, imports, uses, exps);
 
 	}
 
-	public GAMLFile.GamlInfo getInfo(final URI uri, final long stamp) {
+	@Override
+	public GamlFileInfo getInfo(final URI uri, final long stamp) {
 		try {
 
 			final GamlResource r = (GamlResource) resourceSet.getResource(uri, true);

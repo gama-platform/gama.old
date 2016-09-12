@@ -12,20 +12,20 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
 
-import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.ValidationContext;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 
-class GamlEditorState {
+public class GamlEditorState {
 
 	boolean hasInternalErrors;
 	boolean hasImportedErrors;
 	boolean hasExperiments;
 	boolean hasNullStatus;
-	final List<String> experiments;
-	final List<String> abbreviations;
+	public final List<String> experiments;
+	public final List<String> abbreviations;
 	final List<Boolean> types;
 	final Map<String, URI> importedErrors;
 

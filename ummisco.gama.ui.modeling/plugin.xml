@@ -353,7 +353,7 @@
        <view
              allowMultiple="false"
              category="msi.gama.gui.category.gama"
-             class="msi.gama.lang.gaml.ui.SyntaxErrorsView"
+             class="ummisco.gama.ui.views.SyntaxErrorsView"
              icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.problems2.png"
              id="msi.gama.application.problems"
              name="Validation"
@@ -517,7 +517,7 @@
                 id="msi.gama.lang.gaml.ui.markerFieldConfiguration1"
                 name="Problems"
                 scope="ON_ANY"
-                values="msi.gama.lang.gaml.ui.GamlProblems">
+                values="ummisco.gama.ui.views.GamlProblems">
           </markerFieldConfiguration>
           <markerFieldReference
                 id="msi.gama.lang.gaml.ui.description.field"
@@ -600,7 +600,7 @@
              label="label"
              visible="true">
           <action
-                class="msi.gama.lang.gaml.ui.DelegateForAllElements"
+                class="msi.gama.lang.gaml.ui.editor.DelegateForAllElements"
                 id="msi.gama.application.action1"
                 label="All Elements…"
                 menubarPath="org.eclipse.search.menu/extraSearchGroup"
@@ -669,7 +669,7 @@
     <extension
           point="org.eclipse.ui.services">
        <serviceFactory
-             factoryClass="msi.gama.lang.gaml.ui.ModelRunner">
+             factoryClass="msi.gama.lang.gaml.ui.utils.ModelRunner">
           <service
                 serviceClass="ummisco.gama.ui.interfaces.IModelRunner"></service>
        </serviceFactory>

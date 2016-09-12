@@ -29,9 +29,9 @@ import org.eclipse.xtext.scoping.IScope;
 
 import com.google.inject.Inject;
 
+import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.utils.EGaml;
 
 /**
  * The class GamlLinkingService.
