@@ -547,7 +547,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	private ISkill getSkillInstanceFor(final SpeciesDescription sd, final Class skillClass) {
-		for (final SkillDescription sk : getDescription().getSkills()) {
+		for (final SkillDescription sk : sd.getSkills()) {
 			if (skillClass.isAssignableFrom(sk.getJavaBase())) {
 				return sk.getInstance();
 			}
