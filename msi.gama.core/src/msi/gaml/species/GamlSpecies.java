@@ -176,6 +176,7 @@ public class GamlSpecies extends AbstractSpecies {
 						+ ", as the derived casting operator (" + name
 						+ "(...)) would conflict with an existing unary operator");
 			}
+
 		}
 	}
 
@@ -250,7 +251,6 @@ public class GamlSpecies extends AbstractSpecies {
 		return (IContainerType) getDescription().getSpeciesExpr().getType();
 	}
 
-	
 	public boolean belongsToAMicroModel() {
 		return getDescription().belongsToAMicroModel();
 	}

@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -31,7 +30,6 @@ import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.interfaces.ISkill;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
@@ -323,10 +321,6 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public void setParent(final TypeDescription parent) {
 		this.parent = parent;
-	}
-
-	public Set<Class<? extends ISkill>> getSkillClasses() {
-		return Collections.EMPTY_SET;
 	}
 
 	protected void duplicateInfo(final IDescription one, final IDescription two) {

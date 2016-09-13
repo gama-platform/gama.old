@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -24,21 +25,26 @@ import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.parser.IParseResult;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
+import com.google.common.base.Function;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.LinkedHashMultimap;
+import com.google.common.collect.ListMultimap;
+import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
 
-import gnu.trove.procedure.TObjectObjectProcedure;
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.util.GAML;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.SyntacticModelElement;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
+import msi.gaml.factories.ModelFactory;
 
 /*
  *
@@ -82,56 +88,48 @@ public class GamlResource extends LazyLinkingResource {
 		return element;
 	}
 
-	private class ModelsGatherer implements TObjectObjectProcedure<GamlResource, String> {
-
-		Map<ISyntacticElement, String> microModels = null;
-		final List<ISyntacticElement> models = new ArrayList();
-
-		ModelsGatherer() {
-			models.add(getSyntacticContents());
-		}
+	private final static Function<GamlResource, ISyntacticElement> TO_SYNTACTIC_CONTENTS = new Function<GamlResource, ISyntacticElement>() {
 
 		@Override
-		public boolean execute(final GamlResource resource, final String alias) {
-
-			final SyntacticModelElement m = (SyntacticModelElement) resource.getSyntacticContents();
-			if (m != null) {
-				if (alias == null) {
-					models.add(m);
-				} else {
-					if (microModels == null)
-						microModels = new TOrderedHashMap();
-					microModels.put(m, alias);
-				}
-			}
-			return true;
+		public ISyntacticElement apply(final GamlResource input) {
+			return input.getSyntacticContents();
 		}
-	}
+	};
 
-	private ModelDescription buildModelDescription(final TOrderedHashMap<GamlResource, String> resources) {
-		final ModelsGatherer gatherModels = new ModelsGatherer();
-		resources.forEachEntry(gatherModels);
+	private ModelDescription buildModelDescription(final LinkedHashMultimap<String, GamlResource> resources) {
+		// Initializations
 		GAML.getExpressionFactory().resetParser();
+		final ModelFactory f = GAML.getModelFactory();
 		final String modelPath = GamlResourceServices.getModelPathOf(this);
 		final String projectPath = GamlResourceServices.getProjectPathOf(this);
 		final boolean isEdited = GamlResourceServices.isEdited(this);
 		final ValidationContext context = GamlResourceServices.getValidationContext(this);
-		Map<String, ModelDescription> compiledMicroModels = null;
-		String aliasName = null;
-
-		while (gatherModels.microModels != null && !gatherModels.microModels.isEmpty()) {
-			aliasName = (String) gatherModels.microModels.values().toArray()[0];
-			final List<ISyntacticElement> res = getListMicroSyntacticElement(gatherModels.microModels, aliasName);
-			gatherModels.microModels.keySet().removeAll(res);
-			final ModelDescription mic = GAML.getModelFactory().createModelDescription(projectPath, modelPath, res,
-					context, isEdited, Collections.<String, ModelDescription> emptyMap());
+		// If the resources imported are null, no need to go through their
+		// validation
+		if (resources == null) {
+			final List<ISyntacticElement> self = Collections.singletonList(getSyntacticContents());
+			return f.createModelDescription(projectPath, modelPath, self, context, isEdited, null);
+		}
+		// If there are no micro-models
+		final Set<String> keySet = resources.keySet();
+		if (keySet.size() == 1 && keySet.contains(null)) {
+			final List<ISyntacticElement> selfAndImports = new ArrayList();
+			selfAndImports.add(getSyntacticContents());
+			selfAndImports.addAll(Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS).get(null));
+			return f.createModelDescription(projectPath, modelPath, selfAndImports, context, isEdited, null);
+		}
+		final ListMultimap<String, ISyntacticElement> models = ArrayListMultimap.create();
+		models.put(null, getSyntacticContents());
+		models.putAll(Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS));
+		final List<ISyntacticElement> ownImports = models.removeAll(null);
+		final Map<String, ModelDescription> compiledMicroModels = new THashMap<String, ModelDescription>();
+		for (final String aliasName : models.keySet()) {
+			final ModelDescription mic = GAML.getModelFactory().createModelDescription(projectPath, modelPath,
+					models.get(aliasName), context, isEdited, null);
 			mic.setAlias(aliasName);
-			if (compiledMicroModels == null)
-				compiledMicroModels = new TOrderedHashMap<String, ModelDescription>();
 			compiledMicroModels.put(aliasName, mic);
 		}
-		return GAML.getModelFactory().createModelDescription(projectPath, modelPath, gatherModels.models, context,
-				isEdited, compiledMicroModels);
+		return f.createModelDescription(projectPath, modelPath, ownImports, context, isEdited, compiledMicroModels);
 	}
 
 	private List<ISyntacticElement> getListMicroSyntacticElement(final Map<ISyntacticElement, String> microModels,
@@ -157,8 +155,8 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public ModelDescription buildCompleteDescription() {
-		final TOrderedHashMap<GamlResource, String> imports = GamlResourceIndexer.validateImportsOf(this);
-		if (hasErrors() || imports == null || hasSemanticErrors())
+		final LinkedHashMultimap<String, GamlResource> imports = GamlResourceIndexer.validateImportsOf(this);
+		if (hasErrors() || hasSemanticErrors())
 			return null;
 		final ModelDescription model = buildModelDescription(imports);
 		// If, for whatever reason, the description is null, we stop the

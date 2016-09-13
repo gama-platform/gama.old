@@ -15,10 +15,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.GamaPreferences;
@@ -66,6 +70,22 @@ public class SpeciesDescription extends TypeDescription {
 	private SpeciesConstantExpression speciesExpr;
 	protected Class javaBase;
 	protected boolean canUseMinimalAgents = true;
+	static final Function<SkillDescription, Class<? extends ISkill>> SKILLS_TO_CLASSES = new Function<SkillDescription, Class<? extends ISkill>>() {
+
+		@Override
+		public Class<? extends ISkill> apply(final SkillDescription input) {
+			return input.getJavaBase();
+		}
+
+	};
+	static final Function<SkillDescription, String> SKILLS_TO_NAMES = new Function<SkillDescription, String>() {
+
+		@Override
+		public String apply(final SkillDescription input) {
+			return input.getName();
+		}
+
+	};
 
 	public SpeciesDescription(final String keyword, final SpeciesDescription macroDesc, final ChildrenProvider cp,
 			final EObject source, final Facets facets) {
@@ -135,7 +155,7 @@ public class SpeciesDescription extends TypeDescription {
 				control = sd;
 				// We add it explicitly so as to add the variables and actions
 				// defined in the control. No need to add it in the other cases
-				addSkill(control);
+				// addSkill(control);
 			}
 		}
 
@@ -209,7 +229,8 @@ public class SpeciesDescription extends TypeDescription {
 			error("This species cannot be compiled as its Java base is unknown. ", IGamlIssue.UNKNOWN_SUBSPECIES);
 			return;
 		}
-		for (final IDescription v : AbstractGamlAdditions.getAllChildrenOf(getJavaBase(), getSkillClasses())) {
+		for (final IDescription v : AbstractGamlAdditions.getAllChildrenOf(getJavaBase(),
+				Iterables.transform(getSkills(), SKILLS_TO_CLASSES))) {
 			if (isBuiltIn())
 				v.setOriginName(originName);
 			if (v instanceof VariableDescription) {
@@ -414,26 +435,6 @@ public class SpeciesDescription extends TypeDescription {
 	protected void setAgentConstructor(final IAgentConstructor agentConstructor) {
 		this.agentConstructor = agentConstructor;
 	}
-	//
-	// public void addSkill(final Class<? extends ISkill> c, final ISkill
-	// instance) {
-	// if (c != null && !c.isInterface() &&
-	// !Modifier.isAbstract(c.getModifiers())) {
-	// if (skills == null)
-	// skills = new TLinkedHashSet();
-	// skills.add(instance);
-	// }
-	// }
-
-	@Override
-	public Set<Class<? extends ISkill>> getSkillClasses() {
-		if (skills == null)
-			return Collections.EMPTY_SET;
-		final TLinkedHashSet<Class<? extends ISkill>> result = new TLinkedHashSet<>();
-		for (final SkillDescription sd : skills)
-			result.add(sd.getJavaBase());
-		return result;
-	}
 
 	public SpeciesDescription getMacroSpecies() {
 		final IDescription d = getEnclosingDescription();
@@ -522,20 +523,10 @@ public class SpeciesDescription extends TypeDescription {
 		return sb.toString();
 	}
 
-	public Set<String> getSkillsNames() {
-		if (skills == null)
-			return Collections.EMPTY_SET;
-		final Set<String> names = new TLinkedHashSet();
-		for (final SkillDescription skill : skills) {
-			if (skill != null) {
-				names.add(skill.getName());
-			}
-		}
-		// Takes care of invalid species (see Issue 711)
-		if (parent != null && parent != this) {
-			names.addAll(getParent().getSkillsNames());
-		}
-		return names;
+	public Iterable<String> getSkillsNames() {
+		return Iterables.concat(Iterables.transform(skills == null ? Collections.EMPTY_LIST : skills, SKILLS_TO_NAMES),
+				parent != null && parent != this ? getParent().getSkillsNames() : Collections.EMPTY_LIST);
+
 	}
 
 	/**
@@ -677,6 +668,12 @@ public class SpeciesDescription extends TypeDescription {
 			public boolean visit(final SpeciesDescription microSpec) {
 				microSpec.finalizeDescription();
 				if (!microSpec.isExperiment() && !isBuiltIn) {
+					final String n = microSpec.getName();
+					if (hasAttribute(n) && !getAttribute(n).isSyntheticSpeciesContainer()) {
+						microSpec.error(microSpec.getName() + " is the name of an existing attribute in "
+								+ SpeciesDescription.this, IGamlIssue.DUPLICATE_NAME, NAME);
+						return false;
+					}
 					final VariableDescription var = (VariableDescription) DescriptionFactory.create(CONTAINER,
 							SpeciesDescription.this, NAME, microSpec.getName());
 					var.setSyntheticSpeciesContainer();
@@ -762,7 +759,7 @@ public class SpeciesDescription extends TypeDescription {
 			control = GamaSkillRegistry.INSTANCE.get(REFLEX);
 			return;
 		}
-		Class<? extends ISkill> clazz = control.getJavaBase();
+		Class<? extends ISkill> clazz = control.getJavaBase().getSuperclass();
 		while (clazz != AbstractArchitecture.class) {
 			final SkillDescription sk = GamaSkillRegistry.INSTANCE.get(clazz);
 			if (sk != null) {
@@ -939,8 +936,12 @@ public class SpeciesDescription extends TypeDescription {
 		return getModelDescription().isMicroModel();
 	}
 
-	public Collection<SkillDescription> getSkills() {
-		return skills == null ? Collections.EMPTY_LIST : skills;
+	public Iterable<SkillDescription> getSkills() {
+		final List<SkillDescription> base = control == null ? Collections.EMPTY_LIST
+				: Collections.singletonList(control);
+		if (skills == null)
+			return base;
+		return Iterables.concat(skills, base);
 	}
 
 }

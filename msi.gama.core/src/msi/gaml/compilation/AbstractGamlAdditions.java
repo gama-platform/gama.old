@@ -345,7 +345,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return fieldsMap;
 	}
 
-	public static Iterable<IDescription> getAllChildrenOf(final Class base, final Set<Class<? extends ISkill>> skills) {
+	public static Iterable<IDescription> getAllChildrenOf(final Class base,
+			final Iterable<Class<? extends ISkill>> skills) {
 		final List<Class> classes = JavaUtils.collectImplementationClasses(base, skills, ADDITIONS.keySet());
 		return Iterables.concat(Iterables.transform(classes, INTO_DESCRIPTIONS));
 	}

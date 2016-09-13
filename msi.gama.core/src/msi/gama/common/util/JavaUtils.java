@@ -11,8 +11,18 @@
  **********************************************************************************************/
 package msi.gama.common.util;
 
-import java.util.*;
-import com.google.common.collect.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.UnmodifiableIterator;
+
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.ISkill;
@@ -30,10 +40,12 @@ public class JavaUtils {
 	private static Map<Class, Set<Class>> allSuperclasses = new THashMap();
 
 	private static void addAllInterfaces(final Class clazz, final Set allInterfaces, final Set<Class> in) {
-		if ( clazz == null ) { return; }
+		if (clazz == null) {
+			return;
+		}
 		final Class[] interfaces = clazz.getInterfaces();
-		for ( final Class c : interfaces ) {
-			if ( in.contains(c) ) {
+		for (final Class c : interfaces) {
+			if (in.contains(c)) {
 				allInterfaces.add(c);
 			}
 		}
@@ -42,15 +54,17 @@ public class JavaUtils {
 	}
 
 	private static void addAllInterfaces(final Class[] clazzes, final Set allInterfaces, final Set<Class> in) {
-		if ( clazzes != null ) {
-			for ( int i = 0; i < clazzes.length; i++ ) {
+		if (clazzes != null) {
+			for (int i = 0; i < clazzes.length; i++) {
 				addAllInterfaces(clazzes[i], allInterfaces, in);
 			}
 		}
 	}
 
 	public static final Set<Class> allInterfacesOf(final Class c, final Set<Class> in) {
-		if ( allInterfaces.containsKey(c) ) { return allInterfaces.get(c); }
+		if (allInterfaces.containsKey(c)) {
+			return allInterfaces.get(c);
+		}
 		final Set<Class> result = new THashSet<Class>();
 		addAllInterfaces(c, result, in);
 		allInterfaces.put(c, result);
@@ -58,12 +72,16 @@ public class JavaUtils {
 	}
 
 	public static final Set<Class> allSuperclassesOf(final Class c, final Set<Class> in) {
-		if ( allSuperclasses.containsKey(c) ) { return allSuperclasses.get(c); }
+		if (allSuperclasses.containsKey(c)) {
+			return allSuperclasses.get(c);
+		}
 		final THashSet<Class> result = new THashSet();
-		if ( c == null ) { return result; }
+		if (c == null) {
+			return result;
+		}
 		Class c2 = c.getSuperclass();
 		while (c2 != null) {
-			if ( in.contains(c2) ) {
+			if (in.contains(c2)) {
 				result.add(c2);
 			}
 			c2 = c2.getSuperclass();
@@ -74,16 +92,18 @@ public class JavaUtils {
 	}
 
 	public static List<Class> collectImplementationClasses(final Class baseClass,
-		final Set<Class<? extends ISkill>> skillClasses, final Set<Class> in) {
+			final Iterable<Class<? extends ISkill>> skillClasses, final Set<Class> in) {
 		final Set<Class> classes = new THashSet();
-		if ( baseClass != null ) {
+		if (baseClass != null) {
 			classes.add(baseClass);
 		}
-		classes.addAll(skillClasses);
+		Iterables.addAll(classes, skillClasses);
 		final Set<Class> key = new THashSet(classes);
-		if ( IMPLEMENTATION_CLASSES.containsKey(key) ) { return IMPLEMENTATION_CLASSES.get(key); }
+		if (IMPLEMENTATION_CLASSES.containsKey(key)) {
+			return IMPLEMENTATION_CLASSES.get(key);
+		}
 		classes.addAll(allInterfacesOf(baseClass, in));
-		for ( final Class classi : new ArrayList<Class>(classes) ) {
+		for (final Class classi : new ArrayList<Class>(classes)) {
 			classes.addAll(allSuperclassesOf(classi, in));
 		}
 		final ArrayList<Class> classes2 = new ArrayList(classes);
@@ -91,11 +111,21 @@ public class JavaUtils {
 
 			@Override
 			public int compare(final Class o1, final Class o2) {
-				if ( o1 == o2 ) { return 0; }
-				if ( o1.isAssignableFrom(o2) ) { return -1; }
-				if ( o2.isAssignableFrom(o1) ) { return 1; }
-				if ( o1.isInterface() && !o2.isInterface() ) { return -1; }
-				if ( o2.isInterface() && !o1.isInterface() ) { return 1; }
+				if (o1 == o2) {
+					return 0;
+				}
+				if (o1.isAssignableFrom(o2)) {
+					return -1;
+				}
+				if (o2.isAssignableFrom(o1)) {
+					return 1;
+				}
+				if (o1.isInterface() && !o2.isInterface()) {
+					return -1;
+				}
+				if (o2.isInterface() && !o1.isInterface()) {
+					return 1;
+				}
 				return 1;
 			}
 		});
@@ -105,7 +135,9 @@ public class JavaUtils {
 	}
 
 	public static <F> Iterator<F> iterator(final Object[] array) {
-		if ( array != null ) { return (Iterator<F>) Iterators.forArray(array); }
+		if (array != null) {
+			return (Iterator<F>) Iterators.forArray(array);
+		}
 		return new UnmodifiableIterator<F>() {
 
 			@Override

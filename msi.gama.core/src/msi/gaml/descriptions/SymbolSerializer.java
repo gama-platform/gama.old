@@ -119,15 +119,11 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		protected void collectMetaInformationInSymbol(final SpeciesDescription desc, final GamlProperties plugins) {
 			plugins.put(GamlProperties.PLUGINS, desc.getDefiningPlugin());
 			plugins.put(GamlProperties.SKILLS, desc.getSkillsNames());
-			// plugins.put(GamlProperties.STATEMENTS, desc.keyword);
 		}
 
 		@Override
 		protected void collectMetaInformationInFacetValue(final SpeciesDescription desc, final String key,
 				final GamlProperties plugins) {
-			// if (key.equals(SKILLS)) {
-			// System.out.println();
-			// }
 			final IExpressionDescription ed = desc.getFacet(key);
 			if (ed == null) {
 				return;

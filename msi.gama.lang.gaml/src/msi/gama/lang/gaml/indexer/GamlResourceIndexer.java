@@ -19,11 +19,11 @@ import org.jgrapht.traverse.BreadthFirstIterator;
 
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.LinkedHashMultimap;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import gnu.trove.procedure.TObjectObjectProcedure;
-import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
@@ -170,56 +170,28 @@ public class GamlResourceIndexer {
 
 	}
 
-	private static class ResourceLoader implements TObjectObjectProcedure<URI, String> {
-
-		final ResourceSet resourceSet;
-		TOrderedHashMap<GamlResource, String> loaded;
-
-		ResourceLoader(final ResourceSet resourceSet2) {
-			this.resourceSet = resourceSet2;
-		}
-
-		@Override
-		public boolean execute(final URI uri, final String label) {
-			final GamlResource ir = (GamlResource) resourceSet.getResource(uri, true);
-			if (ir != null) {
-				if (loaded == null)
-					loaded = new TOrderedHashMap(1);
-				loaded.put(ir, label);
-			}
-			return true;
-
-		}
-
-	}
-
-	public static TOrderedHashMap<GamlResource, String> validateImportsOf(final GamlResource resource) {
-
-		TOrderedHashMap<GamlResource, String> imports = null;
+	public static LinkedHashMultimap<String, GamlResource> validateImportsOf(final GamlResource resource) {
 		final TOrderedHashMap<URI, String> uris = allLabeledImportsOf(resource);
 		uris.remove(GamlResourceServices.properlyEncodedURI(resource.getURI()));
 		if (!uris.isEmpty()) {
-			final ResourceLoader loadResources = new ResourceLoader(resource.getResourceSet());
-			uris.forEachEntry(loadResources);
-			imports = loadResources.loaded;
-			// If one of the resources has already errors, no need to validate
-			final boolean importsOK = imports == null || imports.forEachKey(new TObjectProcedure<GamlResource>() {
+			final LinkedHashMultimap<String, GamlResource> imports = LinkedHashMultimap.create();
+			if (uris.forEachEntry(new TObjectObjectProcedure<URI, String>() {
 
 				@Override
-				public boolean execute(final GamlResource imported) {
-					if (imported.hasErrors()) {
-						resource.invalidate(imported, "Errors detected");
+				public boolean execute(final URI a, final String b) {
+					final GamlResource r = (GamlResource) resource.getResourceSet().getResource(a, true);
+					if (r.hasErrors()) {
+						resource.invalidate(r, "Errors detected");
 						return false;
 					}
+					imports.put(b, r);
 					return true;
 				}
+			}))
+				return imports;
 
-			});
-			if (!importsOK) {
-				return null;
-			}
 		}
-		return imports == null ? EMPTY_MAP : imports;
+		return null;
 	}
 
 	/**

@@ -93,11 +93,11 @@ public class GamlProperties {
 		}
 	}
 
-	public void put(final String key, final Set<String> values) {
-		if (!map.containsKey(key)) {
-			map.put(key, new LinkedHashSet(values));
-		} else {
-			map.get(key).addAll(values);
+	public void put(final String key, final Iterable<String> values) {
+		if (!map.containsKey(key))
+			map.put(key, new LinkedHashSet());
+		for (final String s : values) {
+			map.get(key).add(s);
 		}
 	}
 
