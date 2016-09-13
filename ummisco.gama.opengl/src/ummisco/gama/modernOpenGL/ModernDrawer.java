@@ -152,9 +152,8 @@ public class ModernDrawer {
 	public void prepareFrameBufferObject(int width, int height) {
 		if (renderer.renderToTexture) {
 			if (fbo == null) {
-				fbo = new FrameBufferObject(gl, width, height);
+				fbo = new FrameBufferObject(gl, width, height, 1);
 			}
-			//fbo.cleanUp();
 			fbo.bindFrameBuffer();
 		}
 	}
@@ -239,11 +238,11 @@ public class ModernDrawer {
 		float[] p1 = new float[]{-1,1};
 		float[] p2 = new float[]{1,1};
 		float[] p3 = new float[]{1,-1};
-		if (renderer.data.getKeystoningParameters() != null) {
-			p0 = new float[]{(float) renderer.data.getKeystoningParameters().get(0).getX(),(float) renderer.data.getKeystoningParameters().get(0).getY()};
-			p1 = new float[]{(float) renderer.data.getKeystoningParameters().get(1).getX(),(float) renderer.data.getKeystoningParameters().get(1).getY()};
-			p2 = new float[]{(float) renderer.data.getKeystoningParameters().get(3).getX(),(float) renderer.data.getKeystoningParameters().get(3).getY()};
-			p3 = new float[]{(float) renderer.data.getKeystoningParameters().get(2).getX(),(float) renderer.data.getKeystoningParameters().get(2).getY()};
+		if (renderer.data.getKeystoneParameters() != null) {
+			p0 = new float[]{(float) renderer.data.getKeystoneParameters().get(0).getX(),(float) renderer.data.getKeystoneParameters().get(0).getY()};
+			p1 = new float[]{(float) renderer.data.getKeystoneParameters().get(1).getX(),(float) renderer.data.getKeystoneParameters().get(1).getY()};
+			p2 = new float[]{(float) renderer.data.getKeystoneParameters().get(3).getX(),(float) renderer.data.getKeystoneParameters().get(3).getY()};
+			p3 = new float[]{(float) renderer.data.getKeystoneParameters().get(2).getX(),(float) renderer.data.getKeystoneParameters().get(2).getY()};
 		}
 		
 		float ax = (p2[0] - p0[0])/2f;
