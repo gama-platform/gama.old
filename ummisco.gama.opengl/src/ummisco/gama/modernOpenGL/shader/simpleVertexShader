@@ -10,7 +10,6 @@
 
 attribute vec3  attribute_Position;
 attribute vec4  attribute_Color;
-attribute vec3  attribute_Normal;
 attribute vec4  attribute_TextureCoords3D;
 
 varying vec4    varying_Color;

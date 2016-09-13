@@ -211,13 +211,13 @@ public class ModernDrawer {
 		this.gl.glGenBuffers(5, fboHandles, 0);
 		
 		fbo.unbindCurrentFrameBuffer();
-
+		
+		// create the quad onto the texture will be applied
 		SimpleShaderProgram shaderProgram = new SimpleShaderProgram(gl);
 		shaderProgram.start();
-		
 		prepareShader(null, shaderProgram);
-		
 		createScreenSurface(currentShaderNumber,shaderProgram);
+		
 		int[] drawingDefinition = new int[3];
 		// draw triangles
 		drawingDefinition[0] = GL2.GL_TRIANGLES;
@@ -233,12 +233,18 @@ public class ModernDrawer {
 		ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		ArrayList<float[]> listUvMapping = new ArrayList<float[]>();
 		
-		// Keystoning computation
-		// Coordinates of the screen (change this for keystoning effect)
-		float[] p0 = new float[]{-1f, -1f};
-		float[] p1 = new float[]{-1f, 1f};
-		float[] p2 = new float[]{1f, 1f};
-		float[] p3 = new float[]{1f, -1f};
+		// Keystoning computation (cf http://www.bitlush.com/posts/arbitrary-quadrilaterals-in-opengl-es-2-0)
+		// Coordinates of the screen (change this for keystoning effect)	
+		float[] p0 = new float[]{-1,-1};
+		float[] p1 = new float[]{-1,1};
+		float[] p2 = new float[]{1,1};
+		float[] p3 = new float[]{1,-1};
+		if (renderer.data.getKeystoningParameters() != null) {
+			p0 = new float[]{(float) renderer.data.getKeystoningParameters().get(0).getX(),(float) renderer.data.getKeystoningParameters().get(0).getY()};
+			p1 = new float[]{(float) renderer.data.getKeystoningParameters().get(1).getX(),(float) renderer.data.getKeystoningParameters().get(1).getY()};
+			p2 = new float[]{(float) renderer.data.getKeystoningParameters().get(3).getX(),(float) renderer.data.getKeystoningParameters().get(3).getY()};
+			p3 = new float[]{(float) renderer.data.getKeystoningParameters().get(2).getX(),(float) renderer.data.getKeystoningParameters().get(2).getY()};
+		}
 		
 		float ax = (p2[0] - p0[0])/2f;
 		float ay = (p2[1] - p0[1])/2f;
@@ -287,7 +293,7 @@ public class ModernDrawer {
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, fboHandles[IDX_BUFF_IDX]);
 		int numBytes = intIdxBuffer.length * 4;
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
-		//ibIdxBuff.rewind();
+		ibIdxBuff.rewind();
 	}
 	
 	public void refresh(LayerObject layer) {
@@ -424,7 +430,6 @@ public class ModernDrawer {
 	}
 	
 	private void prepareShader(DrawingEntity entity, BillboardingTextShaderProgram shaderProgram) {
-		// TODO
 		shaderProgram.loadTexture(0);
 		shaderProgram.storeTextureID(entity.getTextureID());
 		shaderProgram.loadFontWidth(entity.getFontWidth());
@@ -501,7 +506,7 @@ public class ModernDrawer {
 		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[shaderNumber*5+IDX_BUFF_IDX]);
 		int numBytes = intIdxBuffer.length * 4;
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
-		//ibIdxBuff.rewind();
+		ibIdxBuff.rewind();
 
 		int[] newElement = new int[3];
 		if (drawingType.equals(DrawingEntity.Type.POINT.toString())) {
@@ -537,7 +542,7 @@ public class ModernDrawer {
 			FloatBuffer fbData = Buffers.newDirectFloatBuffer(data/*totalData,positionInBuffer*/);
 			gl.glBufferSubData(GL2.GL_ARRAY_BUFFER, offset, data.length*4, fbData);
 			offset += data.length*4;
-			//fbData.rewind(); // It is OK to release CPU after transfer to GPU
+			fbData.rewind(); // It is OK to release CPU after transfer to GPU
 		}
 		
 		gl.glEnableVertexAttribArray(shaderAttributeNumber);

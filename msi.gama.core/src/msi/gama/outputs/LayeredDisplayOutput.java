@@ -104,6 +104,7 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.CAMERA_LENS, internal = true, type = IType.INT, optional = true, doc = @doc("Allows to define the lens of the camera")),
 		@facet(name = IKeyword.CAMERA_INTERACTION, type = IType.BOOL, optional = true, doc = @doc("If false, the user will not be able to modify the position and the orientation of the camera, and neither using the ROI. Default is true.")),
 		@facet(name = "use_shader", type = IType.BOOL, optional = true, doc = @doc("Under construction...")),
+		@facet(name = "keystoning_parameters", type = IType.CONTAINER, optional = true, doc = @doc("Set the position of the 4 corners of your screen ([topLeft,topRight,botLeft,botRight]), in (x,y) coordinate ( the (-1,-1) position is the top right corner, while the (1,1) position is the bottom right corner). The default value is : [{-1,-1},{1,-1},{-1,1},{1,1}]. Note that this statement can only work with the \"use_shader\" facet set to true.")),
 		@facet(name = IKeyword.POLYGONMODE, internal = true, type = IType.BOOL, optional = true, doc = @doc("")),
 		@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL,
 				IType.POINT }, optional = true, doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
@@ -310,6 +311,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression use_shader = getFacet("use_shader");
 		if (use_shader != null) {
 			this.useShader = Cast.asBool(getScope(), use_shader.value(getScope()));
+		}
+		
+		final IExpression keystoning_parameters = getFacet("keystoning_parameters");
+		if (keystoning_parameters != null) {
+			List<ILocation> val = Cast.asList(getScope(), keystoning_parameters.value(getScope()));
+			if (val.size() == 4) {
+				data.setKeystoningParameters(val);
+			}
 		}
 
 		final IExpression lightOn = getFacet(IKeyword.IS_LIGHT_ON);
@@ -531,6 +540,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 		}
 		// computeTrace(getScope());
+		
+		final IExpression keystoning_parameters = getFacet("keystoning_parameters");
+		if (keystoning_parameters != null) {
+			List<ILocation> val = Cast.asList(getScope(), keystoning_parameters.value(getScope()));
+			if (val.size() == 4) {
+				data.setKeystoningParameters(val);
+			}
+		}
 
 		if (overlayInfo != null) {
 			getScope().step(overlayInfo);
@@ -671,6 +688,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	public boolean useShader() {
+		if (data.getKeystoningParameters() != null) {
+			return true;
+		}
 		return useShader;
 	}
 
