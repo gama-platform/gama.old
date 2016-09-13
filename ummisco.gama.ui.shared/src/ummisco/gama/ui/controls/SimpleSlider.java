@@ -267,7 +267,7 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		if (!notify) {
 			return;
 		}
-		if (Math.abs(previousPosition - 1d) > 0.000001 && Math.abs(perc - previousPosition) > 0.000001) {
+		if (Math.abs(perc - previousPosition) > 0.000001) {
 			synchronized (positionChangedListeners) {
 				final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
 				while (iter.hasNext()) {
@@ -414,17 +414,8 @@ public class SimpleSlider extends Composite implements IPopupProvider {
 		final double value = getCurrentPosition();
 		final String text = toolTipInterperter == null ? String.valueOf(value)
 				: toolTipInterperter.getToolTipText(value);
-		// GamaUIColor color = popupColor;
 		return PopupText.with(popupColor, text);
 	}
-
-	/**
-	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupBackground()
-	 */
-	// @Override
-	// public GamaUIColor getPopupBackground() {
-	// return popupColor;
-	// }
 
 	@Override
 	public Point getAbsoluteOrigin() {
