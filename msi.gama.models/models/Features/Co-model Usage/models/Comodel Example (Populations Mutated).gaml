@@ -6,7 +6,7 @@
 */ 
 model comodeling_example_populations_mutating
 
-import "Prey Predator Coupling.gaml" as Organism
+import "Prey Predator Adapter.gaml" as Organism
 
 
 global

@@ -6,8 +6,8 @@
 */
 model complex_comodeling_example
 
-import "Flies Coupling.gaml" as Flies
-import "Mosquitos Coupling.gaml" as Mosquitos
+import "Flies Adapter.gaml" as Flies
+import "Mosquitos Adapter.gaml" as Mosquitos
 
 global
 {
@@ -31,7 +31,7 @@ global
 	}
 }
 
-experiment ComodelingExampleComplex type: gui{
+experiment Complex type: gui{
 	output{
 		display "Comodel Display" {
 			//to display the agents of micro-models, we use the agent layer with the values come from the coupling.
