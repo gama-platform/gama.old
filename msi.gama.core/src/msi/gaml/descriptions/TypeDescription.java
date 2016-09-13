@@ -297,7 +297,7 @@ public abstract class TypeDescription extends SymbolDescription {
 						return true;
 					final VariableDescription newVar = attributes.get(depName);
 					if (newVar == null)
-						return true;
+						continue;
 					dependencies.addVertex(newVar);
 					dependencies.addEdge(newVar, var);
 				}

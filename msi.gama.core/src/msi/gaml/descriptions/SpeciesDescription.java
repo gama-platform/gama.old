@@ -728,10 +728,9 @@ public class SpeciesDescription extends TypeDescription {
 			}
 		};
 
-		sortAttributes();
-
 		// recursively finalize the sorted micro-species
 		visitMicroSpecies(visitor);
+		sortAttributes();
 		compact();
 	}
 
