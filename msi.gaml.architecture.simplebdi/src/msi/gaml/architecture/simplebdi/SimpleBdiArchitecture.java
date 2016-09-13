@@ -1821,7 +1821,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 				}
 			}
 		}
-		appreciationModif = appreciationModif +0.1*tempPositif-0.1*tempNegatif;
+		appreciationModif = appreciationModif*(1+social.getSolidarity()) +0.1*tempPositif-0.1*tempNegatif;
 		if(appreciationModif>1.0){
 			appreciationModif = 1.0;
 		}
