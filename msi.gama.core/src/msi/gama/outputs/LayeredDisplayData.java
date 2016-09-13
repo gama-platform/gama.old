@@ -70,7 +70,7 @@ public class LayeredDisplayData {
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 	private Double zoomLevel = null;
 	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
-	private List<ILocation> keystone_param = null;
+	private List<ILocation> keystone = null;
 
 	/**
 	 * OpenGL
@@ -656,12 +656,12 @@ public class LayeredDisplayData {
 		isFullScreen = fs;
 	}
 	
-	public void setKeystoneParameters(List<ILocation> value) {
-		this.keystone_param = value;
+	public void setKeystone(List<ILocation> value) {
+		this.keystone = value;
 	}
 	
-	public List<ILocation> getKeystoneParameters() {
-		return this.keystone_param;
+	public List<ILocation> getKeystone() {
+		return this.keystone;
 	}
 
 }

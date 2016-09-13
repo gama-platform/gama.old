@@ -23,9 +23,14 @@ public class FrameBufferObject {
  
     public FrameBufferObject(GL2 gl, int width, int height) {//call when loading the game
     	this.gl = gl;
+    	setDisplayDimensions(width,height);
+        initialiseFrameBuffer();
+    }
+    
+    public void setDisplayDimensions(int width, int height) {
     	this.width = width;
     	this.height = height;
-        initialiseFrameBuffer();
+    	initialiseFrameBuffer();
     }
  
     public void cleanUp() {//call when closing the game
@@ -66,7 +71,7 @@ public class FrameBufferObject {
  
     private int createFrameBuffer() {
     	frameBufferArray = new int[1];
-    	frameBufferID = 1;
+    	this.frameBufferID = 1;
     	gl.glGenFramebuffers(frameBufferID,frameBufferArray,0);
         //generate name for frame buffer
         gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, frameBufferID);
