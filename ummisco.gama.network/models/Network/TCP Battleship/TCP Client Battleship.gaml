@@ -45,31 +45,31 @@ global {
 		}
 	}
 	//Action launched when the key to go up is pressed, and add it to the message that will be sent to the server to compute locution
-	action doUp(point mLUseless, list<agent> sAUseless)
+	action doUp//(point mLUseless, list<agent> sAUseless)
 	{
 		theUser.myMessage<-theUser.myMessage+":up";
 	}
 	
 	//Action launched when the key to go left is pressed, and add it to the message that will be sent to the server to compute locution
-	action doLeft(point mLUseless, list<agent> sAUseless)
+	action doLeft//(point mLUseless, list<agent> sAUseless)
 	{
 		theUser.myMessage<-theUser.myMessage+":left";
 	}
 	
 	//Action launched when the key to go right is pressed, and add it to the message that will be sent to the server to compute locution
-	action doRight(point mLUseless, list<agent> sAUseless)
+	action doRight//(point mLUseless, list<agent> sAUseless)
 	{
 		theUser.myMessage<-theUser.myMessage+":right";
 	}
 	
 	//Action launched when the key to fire to the left is pressed, and add it to the message that will be sent to the server to compute locution
-	action doBulletLeft(point mLUseless, list<agent> sAUseless)
+	action doBulletLeft//(point mLUseless, list<agent> sAUseless)
 	{
 		theUser.myMessage<-theUser.myMessage+":bulletleft";
 	}
 	
 	//Action launched when the key to fire to the right is pressed, and add it to the message that will be sent to the server to compute locution
-	action doBulletRight(point mLUseless, list<agent> sAUseless)
+	action doBulletRight//(point mLUseless, list<agent> sAUseless)
 	{
 		theUser.myMessage<-theUser.myMessage+":bulletright";
 	}

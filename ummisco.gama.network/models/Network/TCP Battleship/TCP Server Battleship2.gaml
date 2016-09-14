@@ -98,7 +98,7 @@ species NetworkingServer skills:[network]
 			{
 
 				//We split the message by : to get a list of values for each message
-				list<string> infoInMess<-aMess split_with ":";
+				list<string> infoInMess<-string(aMess) split_with ":";
 				
 				//If there are more than 0 value and it's different from the previous message, we can process it
 				if(length(infoInMess)>0)and(infoInMess!=prevInfoInMess)

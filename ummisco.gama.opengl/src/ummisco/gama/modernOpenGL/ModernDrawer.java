@@ -17,6 +17,8 @@ import ummisco.gama.modernOpenGL.shader.BillboardingTextShaderProgram;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.modernOpenGL.shader.SimpleShaderProgram;
 import ummisco.gama.modernOpenGL.shader.TextShaderProgram;
+import ummisco.gama.modernOpenGL.shader.postprocessing.HorizontalBlurShader;
+import ummisco.gama.modernOpenGL.shader.postprocessing.VerticalBlurShader;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.LayerObject;
 import ummisco.gama.opengl.vaoGenerator.ModernLayerStructure;
@@ -25,9 +27,13 @@ import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 public class ModernDrawer {
 	
 	private boolean isRenderingToTexture = false;
+	private boolean textureWith4Coordinates = false;
 	
-	private FrameBufferObject fbo;
+	private FrameBufferObject fbo_scene;
+	private FrameBufferObject fbo_keystone_scene;
+	private FrameBufferObject fbo_keystone_scene_hb;
 	private int[] fboHandles;
+	private int[] fboHandles2;
 
 	private LayerObject currentLayer;
 	private HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities;
@@ -149,13 +155,16 @@ public class ModernDrawer {
 		layerStructureMap.clear();
 	}
 	
-	public void prepareFrameBufferObject(int width, int height) {
+	public void prepareFrameBufferObject() {
+		gl.glClearColor(0, 0, 0, 1.0f);
+		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		if (renderer.renderToTexture) {
-			if (fbo == null) {
-				fbo = new FrameBufferObject(gl, width, height);
+			if (fbo_scene == null) {
+				fbo_scene = new FrameBufferObject(gl, renderer.getDisplayWidth(), renderer.getDisplayHeight(), 1);
 			}
-			fbo.setDisplayDimensions((int)(width/renderer.getZoomLevel()), (int)(height/renderer.getZoomLevel()));
-			fbo.bindFrameBuffer();
+			fbo_scene.setDisplayDimensions((int)(renderer.getDisplayWidth()/renderer.getZoomLevel()), (int)(renderer.getDisplayHeight()/renderer.getZoomLevel()));
+			// redirect the rendering to the fbo_scene (will be rendered later, as a texture)
+			fbo_scene.bindFrameBuffer();
 		}
 	}
 	
@@ -207,29 +216,104 @@ public class ModernDrawer {
 	public void renderToTexture() {
 		isRenderingToTexture = true;
 		
+		int[] drawingDefinition = new int[3];
+		drawingDefinition[0] = GL2.GL_TRIANGLES;
+		drawingDefinition[1] = 6; // idx buffer is equal to 6 : post processing is rendered onto a quad.
+		
+//		// create the keystone fbo
+//		if (fbo_keystone_scene == null) {
+//			fbo_keystone_scene = new FrameBufferObject(gl, renderer.getDisplayWidth(), renderer.getDisplayHeight(), 2);
+//		}
+//		fbo_keystone_scene.setDisplayDimensions((int)(renderer.getDisplayWidth()/renderer.getZoomLevel()), (int)(renderer.getDisplayHeight()/renderer.getZoomLevel()));
+//		
+//		// create the horizontal blur keystone fbo
+//		if (fbo_keystone_scene_hb == null) {
+//			fbo_keystone_scene_hb = new FrameBufferObject(gl, renderer.getDisplayWidth(), renderer.getDisplayHeight(), 3);
+//		}
+//		fbo_keystone_scene_hb.setDisplayDimensions((int)(renderer.getDisplayWidth()/renderer.getZoomLevel()), (int)(renderer.getDisplayHeight()/renderer.getZoomLevel()));
+		
+		/////////////////////////////////
+		// Keystoning post-processing
 		fboHandles = new int[5];
 		this.gl.glGenBuffers(5, fboHandles, 0);
-		
-		fbo.unbindCurrentFrameBuffer();
+		fbo_scene.unbindCurrentFrameBuffer();
+//		fbo_keystone_scene.bindFrameBuffer();
 		
 		// create the quad onto the texture will be applied
 		SimpleShaderProgram shaderProgram = new SimpleShaderProgram(gl);
 		shaderProgram.start();
 		prepareShader(null, shaderProgram);
-		createScreenSurface(currentShaderNumber,shaderProgram);
-		
-		int[] drawingDefinition = new int[3];
-		// draw triangles
-		drawingDefinition[0] = GL2.GL_TRIANGLES;
-		drawingDefinition[1] = 6; // idx buffer is equal to 6 : it is a quad
-		drawingDefinition[2] = currentShaderNumber;
+		textureWith4Coordinates = true;
+		createScreenSurface(currentShaderNumber,fbo_scene.getFBOTexture());
+		textureWith4Coordinates = false;
 		drawVBO(drawingDefinition);
 		
 		shaderProgram.stop();
+		
+//		/////////////////////////////////
+//		// Antialiasing post-processing
+//		this.gl.glGenBuffers(5, fboHandles, 0);
+//		fbo_keystone_scene.unbindCurrentFrameBuffer();
+//		fbo_keystone_scene_hb.unbindCurrentFrameBuffer();
+//		
+//		// create the quad onto the texture will be applied
+//		HorizontalBlurShader shaderProgram2 = new HorizontalBlurShader(gl);
+//		shaderProgram2.start();
+//		prepareShader(null, shaderProgram2);
+//		createPostprocessingSurface(currentShaderNumber,fbo_keystone_scene.getFBOTexture());
+//
+//		drawVBO(drawingDefinition);
+//		
+//		shaderProgram2.stop();
+//		
+//		this.gl.glGenBuffers(5, fboHandles, 0);
+//		fbo_keystone_scene_hb.unbindCurrentFrameBuffer();
+//		
+//		// create the quad onto the texture will be applied
+//		VerticalBlurShader shaderProgram3 = new VerticalBlurShader(gl);
+//		shaderProgram2.start();
+//		prepareShader(null, shaderProgram3);
+//		createPostprocessingSurface(currentShaderNumber,fbo_keystone_scene_hb.getFBOTexture());
+//
+//		drawVBO(drawingDefinition);
+//		
+//		shaderProgram3.stop();
+		
 		isRenderingToTexture = false;
 	}
 	
-	public void createScreenSurface(int shaderNumber, SimpleShaderProgram shaderProgram) {
+	public void createPostprocessingSurface(int shaderNumber, int textureID) {
+		ArrayList<float[]> listVertices = new ArrayList<float[]>();
+		ArrayList<float[]> listUvMapping = new ArrayList<float[]>();
+		
+		listVertices.add(new float[]{-1,-1,0,
+				-1,1,0,
+				1,1,0,
+				1,-1,0});
+		listUvMapping.add(new float[]{0,0,
+				0,1,
+				1,1,
+				1,0});
+
+		// VERTICES POSITIONS BUFFER
+		storeDataInAttributeList(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,listVertices,shaderNumber);
+		
+		// UV MAPPING (If a texture is defined)
+		storeDataInAttributeList(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
+		gl.glActiveTexture(GL.GL_TEXTURE0);
+		gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
+		
+		// INDEX BUFFER
+		int[] intIdxBuffer = new int[]{0,1,2,0,2,3};
+		IntBuffer ibIdxBuff = Buffers.newDirectIntBuffer(intIdxBuffer);
+		// Select the VBO, GPU memory data, to use for colors
+		gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, fboHandles[IDX_BUFF_IDX]);
+		int numBytes = intIdxBuffer.length * 4;
+		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
+		ibIdxBuff.rewind();
+	}
+	
+	public void createScreenSurface(int shaderNumber, int textureID) {
 		ArrayList<float[]> listVertices = new ArrayList<float[]>();
 		ArrayList<float[]> listUvMapping = new ArrayList<float[]>();
 		
@@ -284,7 +368,7 @@ public class ModernDrawer {
 		// UV MAPPING (If a texture is defined)
 		storeDataInAttributeList(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,listUvMapping,shaderNumber);
 		gl.glActiveTexture(GL.GL_TEXTURE0);
-		gl.glBindTexture(GL.GL_TEXTURE_2D, fbo.getFBOTexture());
+		gl.glBindTexture(GL.GL_TEXTURE_2D, textureID);
 		
 		// INDEX BUFFER
 		int[] intIdxBuffer = new int[]{0,1,2,0,2,3};
@@ -387,6 +471,12 @@ public class ModernDrawer {
 		else if (shaderProgram instanceof SimpleShaderProgram) {
 			prepareShader(entity, (SimpleShaderProgram)shaderProgram);
 		}
+		else if (shaderProgram instanceof HorizontalBlurShader) {
+			prepareShader(entity, (HorizontalBlurShader)shaderProgram);
+		}
+		else if (shaderProgram instanceof VerticalBlurShader) {
+			prepareShader(entity, (VerticalBlurShader)shaderProgram);
+		}
 		shaderProgram.setLayerAlpha(currentLayer.getAlpha().floatValue());
 	}
 	
@@ -419,7 +509,7 @@ public class ModernDrawer {
 	
 	private void prepareShader(DrawingEntity entity, SimpleShaderProgram shaderProgram) {
 		shaderProgram.loadTexture(0);
-		shaderProgram.storeTextureID(fbo.getFBOTexture());
+		shaderProgram.storeTextureID(fbo_scene.getFBOTexture());
 	}
 	
 	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		
@@ -434,6 +524,18 @@ public class ModernDrawer {
 		shaderProgram.storeTextureID(entity.getTextureID());
 		shaderProgram.loadFontWidth(entity.getFontWidth());
 		shaderProgram.loadFontEdge(entity.getFontEdge());
+	}
+	
+	private void prepareShader(DrawingEntity entity, HorizontalBlurShader shaderProgram) {
+		shaderProgram.loadTexture(0);
+		shaderProgram.loadTargetWidth(renderer.getDisplayWidth());
+		shaderProgram.storeTextureID(fbo_keystone_scene.getFBOTexture());
+	}
+	
+	private void prepareShader(DrawingEntity entity, VerticalBlurShader shaderProgram) {
+		shaderProgram.loadTexture(0);
+		shaderProgram.loadTargetWidth(renderer.getDisplayHeight());
+		shaderProgram.storeTextureID(fbo_keystone_scene_hb.getFBOTexture());
 	}
 	
 	private Matrix4f getTransformationMatrix() {
@@ -559,7 +661,7 @@ public class ModernDrawer {
 			case AbstractShader.COLOR_ATTRIBUTE_IDX : coordinateSize = 4; break; // r, g, b, a
 			case AbstractShader.POSITION_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
 			case AbstractShader.NORMAL_ATTRIBUTE_IDX : coordinateSize = 3; break; // x, y, z
-			case AbstractShader.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = (isRenderingToTexture) ? 4 : 2; break; // s, t, r, q for textureRendering, u, v otherwise
+			case AbstractShader.UVMAPPING_ATTRIBUTE_IDX : coordinateSize = (textureWith4Coordinates) ? 4 : 2; break; // s, t, r, q for textureRendering, u, v otherwise
 		}
 		// Select the VBO, GPU memory data, to use for data
 		if (!isRenderingToTexture) gl.glBindBuffer(GL2.GL_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[shaderNumber*5+bufferAttributeNumber]);
