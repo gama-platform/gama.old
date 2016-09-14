@@ -33,16 +33,16 @@ global
 		int i <- -1;
 		create Preydator.Adapter number: grid_size_Preydator*grid_size_Preydator
 		{
-			seed<-rnd(1111);
+			seed<-float(rnd(1111));
 			i<-i+1;
 			centroid <- myself.offset_Preydator[i];
 			do transform_environment;
 		}
 		
-		int i <- -1;
+		 i <- -1;
 		create Sugar.Adapter number: grid_size_Sugar*grid_size_Sugar  with:[shape::envelope(100)]
 		{
-			seed<-rnd(1111);
+			seed<-float(rnd(1111));
 			i<-i+1;
 			centroid <- myself.offset_Sugar[i]; 
 			do transform_environment;

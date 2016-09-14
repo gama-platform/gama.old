@@ -46,7 +46,7 @@ global
 				{
 					ask theBoid
 					{
-						location<- location translated_by ((theBoid.location-theBuilding.location));
+						location<- location + ((theBoid.location-theBuilding.location));
 					}
 				}
 			}

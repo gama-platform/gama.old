@@ -21,7 +21,7 @@ experiment Adapter type: gui
 			ask t
 			{
 				shape <- shape translated_by myself.centroid;
-				location <- location translated_by myself.centroid;
+				location <- location + myself.centroid;
 			}
 
 		}
