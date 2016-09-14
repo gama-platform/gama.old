@@ -15,9 +15,11 @@ import com.jogamp.opengl.GL2;
 import ummisco.gama.modernOpenGL.shader.AbstractShader;
 import ummisco.gama.modernOpenGL.shader.BillboardingTextShaderProgram;
 import ummisco.gama.modernOpenGL.shader.ShaderProgram;
-import ummisco.gama.modernOpenGL.shader.SimpleShaderProgram;
 import ummisco.gama.modernOpenGL.shader.TextShaderProgram;
+import ummisco.gama.modernOpenGL.shader.postprocessing.AbstractPostprocessingShader;
 import ummisco.gama.modernOpenGL.shader.postprocessing.HorizontalBlurShader;
+import ummisco.gama.modernOpenGL.shader.postprocessing.InverseColorShader;
+import ummisco.gama.modernOpenGL.shader.postprocessing.KeystoneShaderProgram;
 import ummisco.gama.modernOpenGL.shader.postprocessing.VerticalBlurShader;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.scene.LayerObject;
@@ -30,10 +32,8 @@ public class ModernDrawer {
 	private boolean textureWith4Coordinates = false;
 	
 	private FrameBufferObject fbo_scene;
-	private FrameBufferObject fbo_keystone_scene;
-	private FrameBufferObject fbo_keystone_scene_hb;
+	private FrameBufferObject current_fbo;
 	private int[] fboHandles;
-	private int[] fboHandles2;
 
 	private LayerObject currentLayer;
 	private HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities;
@@ -162,7 +162,7 @@ public class ModernDrawer {
 			if (fbo_scene == null) {
 				fbo_scene = new FrameBufferObject(gl, renderer.getDisplayWidth(), renderer.getDisplayHeight(), 1);
 			}
-			fbo_scene.setDisplayDimensions((int)(renderer.getDisplayWidth()/renderer.getZoomLevel()), (int)(renderer.getDisplayHeight()/renderer.getZoomLevel()));
+			fbo_scene.setDisplayDimensions((int)(2*renderer.getDisplayWidth()/renderer.getZoomLevel()), (int)(2*renderer.getDisplayHeight()/renderer.getZoomLevel()));
 			// redirect the rendering to the fbo_scene (will be rendered later, as a texture)
 			fbo_scene.bindFrameBuffer();
 		}
@@ -213,71 +213,63 @@ public class ModernDrawer {
 		
 	}
 	
-	public void renderToTexture() {
-		isRenderingToTexture = true;
+	private FrameBufferObject applyPostprocessing(FrameBufferObject inputFbo, AbstractShader shader, int effectNumber, boolean lastEffect) {
+		fboHandles = new int[5];
+		this.gl.glGenBuffers(5, fboHandles, 0);
 		
+		// create the output fbo
+		FrameBufferObject outputFbo = null;
+		if (!lastEffect) {
+			outputFbo = new FrameBufferObject(gl, (int)(2*renderer.getDisplayWidth()/renderer.getZoomLevel()), (int)(2*renderer.getDisplayHeight()/renderer.getZoomLevel()), effectNumber);
+		}
+		current_fbo = outputFbo;
+		
+		// unbind the last fbo
+		inputFbo.unbindCurrentFrameBuffer();
+		if (!lastEffect) outputFbo.bindFrameBuffer();
+		
+		// prepare shader
+		shader.start();
+		prepareShader(null,shader);
+		
+		// build the surface
+		if (shader instanceof KeystoneShaderProgram) {
+			// special case of the keystoning effect
+			textureWith4Coordinates = true;
+			createScreenSurface(currentShaderNumber,inputFbo.getFBOTexture());
+			textureWith4Coordinates = false;
+		}
+		else {
+			createPostprocessingSurface(currentShaderNumber,inputFbo.getFBOTexture());
+		}
+		currentShaderNumber++;
+		
+		// draw
 		int[] drawingDefinition = new int[3];
 		drawingDefinition[0] = GL2.GL_TRIANGLES;
 		drawingDefinition[1] = 6; // idx buffer is equal to 6 : post processing is rendered onto a quad.
-		
-//		// create the keystone fbo
-//		if (fbo_keystone_scene == null) {
-//			fbo_keystone_scene = new FrameBufferObject(gl, renderer.getDisplayWidth(), renderer.getDisplayHeight(), 2);
-//		}
-//		fbo_keystone_scene.setDisplayDimensions((int)(renderer.getDisplayWidth()/renderer.getZoomLevel()), (int)(renderer.getDisplayHeight()/renderer.getZoomLevel()));
-//		
-//		// create the horizontal blur keystone fbo
-//		if (fbo_keystone_scene_hb == null) {
-//			fbo_keystone_scene_hb = new FrameBufferObject(gl, renderer.getDisplayWidth(), renderer.getDisplayHeight(), 3);
-//		}
-//		fbo_keystone_scene_hb.setDisplayDimensions((int)(renderer.getDisplayWidth()/renderer.getZoomLevel()), (int)(renderer.getDisplayHeight()/renderer.getZoomLevel()));
-		
-		/////////////////////////////////
-		// Keystoning post-processing
-		fboHandles = new int[5];
-		this.gl.glGenBuffers(5, fboHandles, 0);
-		fbo_scene.unbindCurrentFrameBuffer();
-//		fbo_keystone_scene.bindFrameBuffer();
-		
-		// create the quad onto the texture will be applied
-		SimpleShaderProgram shaderProgram = new SimpleShaderProgram(gl);
-		shaderProgram.start();
-		prepareShader(null, shaderProgram);
-		textureWith4Coordinates = true;
-		createScreenSurface(currentShaderNumber,fbo_scene.getFBOTexture());
-		textureWith4Coordinates = false;
 		drawVBO(drawingDefinition);
 		
-		shaderProgram.stop();
+		shader.stop();
 		
-//		/////////////////////////////////
-//		// Antialiasing post-processing
-//		this.gl.glGenBuffers(5, fboHandles, 0);
-//		fbo_keystone_scene.unbindCurrentFrameBuffer();
-//		fbo_keystone_scene_hb.unbindCurrentFrameBuffer();
-//		
-//		// create the quad onto the texture will be applied
-//		HorizontalBlurShader shaderProgram2 = new HorizontalBlurShader(gl);
-//		shaderProgram2.start();
-//		prepareShader(null, shaderProgram2);
-//		createPostprocessingSurface(currentShaderNumber,fbo_keystone_scene.getFBOTexture());
-//
-//		drawVBO(drawingDefinition);
-//		
-//		shaderProgram2.stop();
-//		
-//		this.gl.glGenBuffers(5, fboHandles, 0);
-//		fbo_keystone_scene_hb.unbindCurrentFrameBuffer();
-//		
-//		// create the quad onto the texture will be applied
-//		VerticalBlurShader shaderProgram3 = new VerticalBlurShader(gl);
-//		shaderProgram2.start();
-//		prepareShader(null, shaderProgram3);
-//		createPostprocessingSurface(currentShaderNumber,fbo_keystone_scene_hb.getFBOTexture());
-//
-//		drawVBO(drawingDefinition);
-//		
-//		shaderProgram3.stop();
+		return outputFbo;
+	}
+	
+	public void renderToTexture() {
+		isRenderingToTexture = true;
+		fboHandles = new int[5];
+		
+		boolean applyBlur = (renderer.data.getKeystone() != null) ? true : false; // we apply blur if there is a keystoning deformation.
+		
+		if (applyBlur) {
+			FrameBufferObject fbo_with_horiz_blur = applyPostprocessing(fbo_scene,new HorizontalBlurShader(gl),1,false);
+			//applyPostprocessing(fbo_with_horiz_blur,new SimpleShaderProgram(gl),0,true);
+			FrameBufferObject fbo_with_vert_blur = applyPostprocessing(fbo_with_horiz_blur,new VerticalBlurShader(gl),2,false);
+			applyPostprocessing(fbo_with_vert_blur,new KeystoneShaderProgram(gl),0,true);
+		}
+		else {
+			applyPostprocessing(fbo_scene,new KeystoneShaderProgram(gl),0,true);
+		}
 		
 		isRenderingToTexture = false;
 	}
@@ -468,14 +460,8 @@ public class ModernDrawer {
 		else if (shaderProgram instanceof TextShaderProgram) {
 			prepareShader(entity, (TextShaderProgram)shaderProgram);
 		}
-		else if (shaderProgram instanceof SimpleShaderProgram) {
-			prepareShader(entity, (SimpleShaderProgram)shaderProgram);
-		}
-		else if (shaderProgram instanceof HorizontalBlurShader) {
-			prepareShader(entity, (HorizontalBlurShader)shaderProgram);
-		}
-		else if (shaderProgram instanceof VerticalBlurShader) {
-			prepareShader(entity, (VerticalBlurShader)shaderProgram);
+		else if (shaderProgram instanceof AbstractPostprocessingShader) {
+			prepareShader(entity, (AbstractPostprocessingShader)shaderProgram);
 		}
 		shaderProgram.setLayerAlpha(currentLayer.getAlpha().floatValue());
 	}
@@ -507,11 +493,6 @@ public class ModernDrawer {
 		}
 	}
 	
-	private void prepareShader(DrawingEntity entity, SimpleShaderProgram shaderProgram) {
-		shaderProgram.loadTexture(0);
-		shaderProgram.storeTextureID(fbo_scene.getFBOTexture());
-	}
-	
 	private void prepareShader(DrawingEntity entity, TextShaderProgram shaderProgram) {		
 		shaderProgram.loadTexture(0);
 		shaderProgram.storeTextureID(entity.getTextureID());
@@ -526,16 +507,16 @@ public class ModernDrawer {
 		shaderProgram.loadFontEdge(entity.getFontEdge());
 	}
 	
-	private void prepareShader(DrawingEntity entity, HorizontalBlurShader shaderProgram) {
+	private void prepareShader(DrawingEntity entity, AbstractPostprocessingShader shaderProgram) {
 		shaderProgram.loadTexture(0);
-		shaderProgram.loadTargetWidth(renderer.getDisplayWidth());
-		shaderProgram.storeTextureID(fbo_keystone_scene.getFBOTexture());
-	}
-	
-	private void prepareShader(DrawingEntity entity, VerticalBlurShader shaderProgram) {
-		shaderProgram.loadTexture(0);
-		shaderProgram.loadTargetWidth(renderer.getDisplayHeight());
-		shaderProgram.storeTextureID(fbo_keystone_scene_hb.getFBOTexture());
+		shaderProgram.storeTextureID(fbo_scene.getFBOTexture());
+		if (shaderProgram instanceof VerticalBlurShader) {
+			((VerticalBlurShader)shaderProgram).loadTargetHeight((int)(renderer.getDisplayHeight()/renderer.getZoomLevel()));
+		}
+		else if (shaderProgram instanceof HorizontalBlurShader)
+		{
+			((HorizontalBlurShader)shaderProgram).loadTargetWidth((int)(renderer.getDisplayWidth()/renderer.getZoomLevel()));
+		}
 	}
 	
 	private Matrix4f getTransformationMatrix() {

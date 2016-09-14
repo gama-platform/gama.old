@@ -4,8 +4,8 @@ import com.jogamp.opengl.GL2;
 
 public class HorizontalBlurShader extends AbstractPostprocessingShader {
 
-	private static String VERTEX_FILE = "horizontalBlurVertex.txt";
-	private static String FRAGMENT_FILE = "blurFragment.txt";
+	private static String VERTEX_FILE = "horizontalBlurVertexShader";
+	private static String FRAGMENT_FILE = "blurFragmentShader";
 	
 	private int location_targetWidth;
 	

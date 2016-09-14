@@ -4,8 +4,8 @@ import com.jogamp.opengl.GL2;
 
 public class VerticalBlurShader extends AbstractPostprocessingShader{
 
-	private static String VERTEX_FILE = "verticalBlurVertex.txt";
-	private static String FRAGMENT_FILE = "blurFragment.txt";
+	private static String VERTEX_FILE = "verticalBlurVertexShader";
+	private static String FRAGMENT_FILE = "blurFragmentShader";
 	
 	private int location_targetHeight;
 	
@@ -23,7 +23,7 @@ public class VerticalBlurShader extends AbstractPostprocessingShader{
 		location_targetHeight = getUniformLocation("targetHeight");
 	}
 	
-	public void loadTargetWidth(float width){
-		super.loadFloat(location_targetHeight, width);
+	public void loadTargetHeight(float height){
+		super.loadFloat(location_targetHeight, height);
 	}
 }

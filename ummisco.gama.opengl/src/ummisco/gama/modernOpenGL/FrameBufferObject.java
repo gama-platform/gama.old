@@ -85,7 +85,7 @@ public class FrameBufferObject {
  
     private int createTextureAttachment(int width, int height) {
     	
-		textureArray = new int[1];
+		textureArray = new int[textureID];
         gl.glGenTextures(textureID,textureArray,0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, textureID);
         gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, GL2.GL_RGB, width, height,

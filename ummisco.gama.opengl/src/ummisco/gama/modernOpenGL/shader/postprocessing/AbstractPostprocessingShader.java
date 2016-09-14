@@ -28,12 +28,6 @@ public abstract class AbstractPostprocessingShader extends AbstractShader {
 		super.bindAttribute(POSITION_ATTRIBUTE_IDX, "attribute_Position");
 		super.bindAttribute(UVMAPPING_ATTRIBUTE_IDX, "attribute_TextureCoords");
 	}
-
-	@Override
-	protected void getAllUniformLocations() {
-		super.getAllUniformLocations();
-		location_texture = getUniformLocation("textureSampler");
-	}
 	
 	public void loadTexture(int textureId) {
 		super.loadInt(location_texture,textureId);
