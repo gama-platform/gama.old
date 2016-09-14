@@ -96,7 +96,10 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		try {
 			resourceSet.eSetDeliver(false);
 			resourceSet.getResources().clear();
-		} finally {
+		} catch (final Exception e) {
+		}
+
+		finally {
 			resourceSet.eSetDeliver(wasDeliver);
 		}
 	}
