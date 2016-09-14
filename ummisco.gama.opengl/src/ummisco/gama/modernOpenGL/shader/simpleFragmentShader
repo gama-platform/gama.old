@@ -10,7 +10,6 @@
 	precision mediump int;
 #endif
 		
-varying   vec4    varying_Color;
 varying   vec4    pass_textureCoords;
 
 uniform   sampler2D textureSampler;

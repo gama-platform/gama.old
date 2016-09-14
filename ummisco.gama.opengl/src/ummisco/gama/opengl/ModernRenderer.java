@@ -144,12 +144,9 @@ public class ModernRenderer extends Abstract3DRenderer {
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
-		
-		gl.glClearColor(0, 0, 0, 1.0f);
-		gl.glClear(GL2.GL_STENCIL_BUFFER_BIT | GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 
 		if (renderToTexture)
-			drawer.prepareFrameBufferObject(this.getDisplayWidth(),this.getDisplayHeight());
+			drawer.prepareFrameBufferObject();
 		
 		final Color background = data.getBackgroundColor();
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,

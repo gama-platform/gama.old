@@ -9,15 +9,12 @@
 #endif
 
 attribute vec3  attribute_Position;
-attribute vec4  attribute_Color;
 attribute vec4  attribute_TextureCoords3D;
 
-varying vec4    varying_Color;
 varying vec4    pass_textureCoords;
 
 void main(void)
 {
-	varying_Color = attribute_Color;
 	pass_textureCoords = attribute_TextureCoords3D;
 	gl_Position = vec4(attribute_Position.xy,0,1);
 }

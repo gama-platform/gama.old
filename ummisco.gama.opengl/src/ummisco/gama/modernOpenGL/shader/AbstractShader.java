@@ -1,5 +1,6 @@
 package ummisco.gama.modernOpenGL.shader;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.nio.charset.Charset;
@@ -36,12 +37,14 @@ public abstract class AbstractShader {
 	
 	private static FloatBuffer matrixBuffer = FloatBuffer.allocate(16);
 	
-	AbstractShader(GL2 gl, String vertexFile, String fragmentFile) {
+	protected AbstractShader(GL2 gl, String vertexFile, String fragmentFile) {
 		this.gl = gl;
 		
+		String ressourcePath = (this.getClass().getResource(".."+File.separator+"shader") == null) ? this.getClass().getResource(".."+File.separator+".."+File.separator+"shader").getPath()
+				: this.getClass().getResource(".."+File.separator+"shader").getPath();
 		String absolutePathToShaderFolder = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() 
 				+ "src"
-				+ this.getClass().getResource("../shader").getPath();
+				+ ressourcePath;
 		vertexFile = absolutePathToShaderFolder + vertexFile;
 		fragmentFile = absolutePathToShaderFolder + fragmentFile;
 
@@ -189,8 +192,11 @@ public abstract class AbstractShader {
 		loadFloat(location_layerAlpha, layerAlpha);
 	}
 	
+	public Vector3f getTranslation() {
+		return new Vector3f(0,0,0);
+	}
+	
 	abstract public boolean useNormal();
 	abstract public boolean useTexture();
 	abstract public int getTextureID();
-	abstract public Vector3f getTranslation();
 }

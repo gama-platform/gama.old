@@ -21,9 +21,12 @@ public class FrameBufferObject {
     
     private GL2 gl;
  
-    public FrameBufferObject(GL2 gl, int width, int height) {//call when loading the game
+    public FrameBufferObject(GL2 gl, int width, int height, int id) {//call when loading the game
     	this.gl = gl;
+    	this.frameBufferID = id;
+    	this.textureID = id;
     	setDisplayDimensions(width,height);
+    	cleanUp();
         initialiseFrameBuffer();
     }
     
@@ -71,7 +74,6 @@ public class FrameBufferObject {
  
     private int createFrameBuffer() {
     	frameBufferArray = new int[1];
-    	this.frameBufferID = 1;
     	gl.glGenFramebuffers(frameBufferID,frameBufferArray,0);
         //generate name for frame buffer
         gl.glBindFramebuffer(GL2.GL_FRAMEBUFFER, frameBufferID);
@@ -84,7 +86,6 @@ public class FrameBufferObject {
     private int createTextureAttachment(int width, int height) {
     	
 		textureArray = new int[1];
-		textureID = 1;
         gl.glGenTextures(textureID,textureArray,0);
         gl.glBindTexture(GL2.GL_TEXTURE_2D, textureID);
         gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, GL2.GL_RGB, width, height,

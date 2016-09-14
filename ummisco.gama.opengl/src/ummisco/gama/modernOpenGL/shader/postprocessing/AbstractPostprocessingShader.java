@@ -1,13 +1,16 @@
-package ummisco.gama.modernOpenGL.shader;
+package ummisco.gama.modernOpenGL.shader.postprocessing;
+
+import java.io.File;
 
 import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
-public class SimpleShaderProgram extends AbstractShader {
+import ummisco.gama.modernOpenGL.shader.AbstractShader;
+
+public abstract class AbstractPostprocessingShader extends AbstractShader {
 	
-	private static String VERTEX_FILE = "simpleVertexShader";		
-	private static String FRAGMENT_FILE = "simpleFragmentShader";
+	protected final static String containingFolder = "postprocessing";
 	
 	private int location_texture;
 	
@@ -16,20 +19,16 @@ public class SimpleShaderProgram extends AbstractShader {
 	
 	private int textureIDStored = -1;
 	
-	public SimpleShaderProgram(GL2 gl) {
-		super(gl,VERTEX_FILE,FRAGMENT_FILE);
-	}
-	
-	public SimpleShaderProgram(SimpleShaderProgram shader) {
-		super(shader.gl,VERTEX_FILE,FRAGMENT_FILE);
+	protected AbstractPostprocessingShader(GL2 gl, String vertexFile, String fragmentFile) {
+		super(gl, containingFolder+File.separator+vertexFile, containingFolder+File.separator+fragmentFile);
 	}
 	
 	@Override
 	protected void bindAttributes() {
 		super.bindAttribute(POSITION_ATTRIBUTE_IDX, "attribute_Position");
-		super.bindAttribute(UVMAPPING_ATTRIBUTE_IDX, "attribute_TextureCoords3D");
+		super.bindAttribute(UVMAPPING_ATTRIBUTE_IDX, "attribute_TextureCoords");
 	}
-	
+
 	@Override
 	protected void getAllUniformLocations() {
 		super.getAllUniformLocations();
@@ -60,4 +59,5 @@ public class SimpleShaderProgram extends AbstractShader {
 	public Vector3f getTranslation() {
 		return new Vector3f(0,0,0);
 	}
+	
 }
