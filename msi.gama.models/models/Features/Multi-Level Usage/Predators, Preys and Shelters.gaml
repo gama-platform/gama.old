@@ -55,7 +55,7 @@ species prey skills: [moving] control: fsm {
 	rgb color <- prey_color;
 	
 	//List of all predators inside the perception of the prey
-	list nearby_predators update: (agents_overlapping (shape + prey_perception)) of_species predator depends_on: shape;
+	list nearby_predators update: (agents_overlapping (shape + prey_perception)) of_species predator ;
 	int invisible_time min: 1 <- int(time);
 
 	shelter nearest_shelter;		
