@@ -265,7 +265,8 @@ public class ModelAssembler {
 		for (final SpeciesDescription sd : getSpeciesInHierarchicalOrder(model)) {
 			sd.inheritFromParent();
 			if (sd.isExperiment()) {
-				sd.finalizeDescription();
+				if (!sd.finalizeDescription())
+					return null;
 			}
 		}
 
@@ -274,7 +275,8 @@ public class ModelAssembler {
 			createSchedulerSpecies(model);
 		}
 
-		model.finalizeDescription();
+		if (!model.finalizeDescription())
+			return null;
 
 		if (document) {
 			collector.document(model);

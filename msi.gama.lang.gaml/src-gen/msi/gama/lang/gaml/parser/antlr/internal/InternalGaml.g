@@ -99,14 +99,57 @@ ruleEntry returns [EObject current=null]
 
     |
     { 
-        newCompositeNode(grammarAccess.getEntryAccess().getBlockParserRuleCall_2()); 
+        newCompositeNode(grammarAccess.getEntryAccess().getStandaloneBlockParserRuleCall_2()); 
     }
-    this_Block_2=ruleBlock
+    this_StandaloneBlock_2=ruleStandaloneBlock
     { 
-        $current = $this_Block_2.current; 
+        $current = $this_StandaloneBlock_2.current; 
         afterParserOrEnumRuleCall();
     }
 )
+;
+
+
+
+
+
+// Entry rule entryRuleStandaloneBlock
+entryRuleStandaloneBlock returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getStandaloneBlockRule()); }
+	 iv_ruleStandaloneBlock=ruleStandaloneBlock 
+	 { $current=$iv_ruleStandaloneBlock.current; } 
+	 EOF 
+;
+
+// Rule StandaloneBlock
+ruleStandaloneBlock returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(	otherlv_0='__synthetic__' 
+    {
+    	newLeafNode(otherlv_0, grammarAccess.getStandaloneBlockAccess().get__synthetic__Keyword_0());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getStandaloneBlockAccess().getBlockBlockParserRuleCall_1_0()); 
+	    }
+		lv_block_1_0=ruleBlock		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getStandaloneBlockRule());
+	        }
+       		set(
+       			$current, 
+       			"block",
+        		lv_block_1_0, 
+        		"msi.gama.lang.gaml.Gaml.Block");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))
 ;
 
 

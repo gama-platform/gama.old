@@ -30,7 +30,6 @@ import static msi.gaml.expressions.IExpressionFactory.FALSE_EXPR;
 import static msi.gaml.expressions.IExpressionFactory.TRUE_EXPR;
 
 import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -43,12 +42,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.diagnostics.Diagnostic;
-import org.eclipse.xtext.resource.XtextResourceSet;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -90,7 +86,7 @@ import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.resource.GamlResourceProxy;
+import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.GamaSkillRegistry;
@@ -137,13 +133,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IExpressionDescription currentExpressionDescription;
 	private IDescription currentContext;
 	private ITypesManager currentTypesManager;
-	private final XtextResourceSet resourceSet = new XtextResourceSet();
-	private final GamlResourceProxy resource = new GamlResourceProxy(
-			(GamlResource) resourceSet
-					.createResource(URI.createURI(SYNTHETIC_RESOURCES_PREFIX + resourceCount++ + ".gaml", false)),
-			true);
 	private static volatile int resourceCount = 0;
-	private final static Map<String, IExpression> cache = new THashMap();
+	private final static Map<String, IExpression> constantSyntheticExpressions = new THashMap();
 	private final ExpressionDescriptionBuilder builder = EGaml.getInstance(ExpressionDescriptionBuilder.class);
 
 	/*
@@ -155,10 +146,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	static {
 		IExpressionCompiler.OPERATORS.put(MY, new THashMap());
-	}
-
-	public GamlExpressionCompiler() {
-		resourceSet.setClasspathURIContext(EcoreBasedExpressionDescription.class);
 	}
 
 	@Override
@@ -191,13 +178,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IDescription previous = setContext(parsingContext);
 		try {
 
-			IExpression result = cache.get(expression);
+			IExpression result = constantSyntheticExpressions.get(expression);
 			if (result != null) {
 				return result;
 			}
 			final EObject o = getEObjectOf(expression);
 			result = compile(o);
-			cache.put(expression, result);
+			if (result != null && result.isConst())
+				constantSyntheticExpressions.put(expression, result);
 			return result;
 		} finally {
 			setContext(previous);
@@ -1172,73 +1160,68 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	}
 
-	private GamlResource getFreshResource() {
-		if (resource.getRealResource().isLoaded()) {
-			resource.getRealResource().unload();
-		}
-		if (getContext() != null && !getContext().isBuiltIn()) {
-			final GamlResource real = (GamlResource) getContext().getUnderlyingElement(null).eResource();
-			resource.setRealResource(real, false);
-		}
-		return resource.getRealResource();
-	}
-
 	private EObject getEObjectOf(final String string) throws GamaRuntimeException {
 		EObject result = null;
 		final String s = "dummy <- " + string;
-		final GamlResource resource = getFreshResource();
-		final InputStream is = new ByteArrayInputStream(s.getBytes());
+		final GamlResource resource = GamlResourceServices.getTemporaryResource(getContext());
 		try {
-			resource.load(is, null);
-		} catch (final Exception e1) {
-			e1.printStackTrace();
-			return null;
-		}
-
-		if (!resource.hasErrors()) {
-			final EObject e = resource.getContents().get(0);
-			if (e instanceof StringEvaluator) {
-				result = ((StringEvaluator) e).getExpr();
+			final InputStream is = new ByteArrayInputStream(s.getBytes());
+			try {
+				resource.loadSynthetic(is);
+			} catch (final Exception e1) {
+				e1.printStackTrace();
+				return null;
 			}
-		} else {
-			final Resource.Diagnostic d = resource.getErrors().get(0);
-			throw GamaRuntimeException.error(d.getMessage());
-		}
 
-		return result;
+			if (!resource.hasErrors()) {
+				final EObject e = resource.getContents().get(0);
+				if (e instanceof StringEvaluator) {
+					result = ((StringEvaluator) e).getExpr();
+				}
+			} else {
+				final Resource.Diagnostic d = resource.getErrors().get(0);
+				throw GamaRuntimeException.error(d.getMessage());
+			}
+
+			return result;
+		} finally {
+			GamlResourceServices.discardTemporaryResource(resource);
+		}
 	}
 
 	@Override
 	public List<IDescription> compileBlock(final String string, final IDescription actionContext)
 			throws GamaRuntimeException {
 		final List<IDescription> result = new ArrayList();
-		final String s = "{" + string + "}";
-		final GamlResource resource = getFreshResource();
-		final InputStream is = new ByteArrayInputStream(s.getBytes());
+		final String s = "__synthetic__ {" + string + "}";
+		final GamlResource resource = GamlResourceServices.getTemporaryResource(getContext());
 		try {
-			resource.load(is, null);
-			EcoreUtil.resolveAll(resource);
-		} catch (final Exception e1) {
-			e1.printStackTrace();
-			return null;
+			final InputStream is = new ByteArrayInputStream(s.getBytes());
+			try {
+				resource.loadSynthetic(is);
+			} catch (final Exception e1) {
+				e1.printStackTrace();
+				return null;
+			}
+			if (!resource.hasErrors()) {
+				final SyntacticModelElement elt = (SyntacticModelElement) resource.getSyntacticContents();
+				elt.visitChildren(new SyntacticVisitor() {
+
+					@Override
+					public void visit(final ISyntacticElement e) {
+						final IDescription desc = DescriptionFactory.create(e, actionContext, null);
+						result.add(desc);
+					}
+				});
+
+			} else {
+				final Resource.Diagnostic d = resource.getErrors().get(0);
+				throw GamaRuntimeException.error(d.getMessage());
+			}
+			return result;
+		} finally {
+			GamlResourceServices.discardTemporaryResource(resource);
 		}
-
-		if (!resource.hasErrors()) {
-			final SyntacticModelElement elt = (SyntacticModelElement) resource.getSyntacticContents();
-			elt.visitChildren(new SyntacticVisitor() {
-
-				@Override
-				public void visit(final ISyntacticElement e) {
-					final IDescription desc = DescriptionFactory.create(e, actionContext, null);
-					result.add(desc);
-				}
-			});
-
-		} else {
-			final Resource.Diagnostic d = resource.getErrors().get(0);
-			throw GamaRuntimeException.error(d.getMessage());
-		}
-		return result;
 	}
 
 	/**
@@ -1290,11 +1273,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		this.currentTypesManager = null;
 		this.currentExpressionDescription = null;
 		this.iteratorContexts.clear();
-		try {
-			resource.dispose();
-		} catch (final IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
 	}
 }

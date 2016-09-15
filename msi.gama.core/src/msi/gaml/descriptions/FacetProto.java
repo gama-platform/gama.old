@@ -33,6 +33,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 	public final boolean internal;
 	private final boolean isLabel;
 	private final boolean isId;
+	final boolean isNewTemp;
 	public final boolean isType;
 	public final Set<String> values;
 	public String doc = "No documentation yet";
@@ -45,6 +46,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 			final boolean optional, final boolean internal, final String doc) {
 		this.name = name;
 		this.typesDescribers = types;
+		isNewTemp = typesDescribers[0] == IType.NEW_TEMP_ID;
 		this.types = new IType[types.length];
 		for (int i = 0; i < types.length; i++) {
 			this.types[i] = Types.get(types[i]);

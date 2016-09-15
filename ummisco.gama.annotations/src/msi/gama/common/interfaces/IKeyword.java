@@ -498,4 +498,5 @@ public interface IKeyword {
 	public static final String SYNTHETIC_POPULATIONS = "synthetic_populations";
 	public static final String GENSTAR_POPULATION = "genstar_population";
 	public static final String GENSTAR_ENTITY = "genstar_entity";
+	public static final String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
 }

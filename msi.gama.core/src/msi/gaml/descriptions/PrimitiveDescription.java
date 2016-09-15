@@ -112,6 +112,11 @@ public class PrimitiveDescription extends StatementDescription {
 		return helper;
 	}
 
+	@Override
+	public PrimitiveDescription validate() {
+		return this;
+	}
+
 	public void setHelper(final GamaHelper helper, final AccessibleObject method) {
 		this.helper = helper;
 		this.method = method;

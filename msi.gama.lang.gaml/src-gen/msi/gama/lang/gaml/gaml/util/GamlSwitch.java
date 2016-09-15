@@ -79,6 +79,14 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GamlPackage.STANDALONE_BLOCK:
+      {
+        StandaloneBlock standaloneBlock = (StandaloneBlock)theEObject;
+        T result = caseStandaloneBlock(standaloneBlock);
+        if (result == null) result = caseEntry(standaloneBlock);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GamlPackage.STRING_EVALUATOR:
       {
         StringEvaluator stringEvaluator = (StringEvaluator)theEObject;
@@ -101,7 +109,6 @@ public class GamlSwitch<T> extends Switch<T>
       {
         Block block = (Block)theEObject;
         T result = caseBlock(block);
-        if (result == null) result = caseEntry(block);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -691,6 +698,22 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseEntry(Entry object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Standalone Block</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Standalone Block</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseStandaloneBlock(StandaloneBlock object)
   {
     return null;
   }

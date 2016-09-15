@@ -32,6 +32,15 @@ public interface GamlFactory extends EFactory
   Entry createEntry();
 
   /**
+   * Returns a new object of class '<em>Standalone Block</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Standalone Block</em>'.
+   * @generated
+   */
+  StandaloneBlock createStandaloneBlock();
+
+  /**
    * Returns a new object of class '<em>String Evaluator</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

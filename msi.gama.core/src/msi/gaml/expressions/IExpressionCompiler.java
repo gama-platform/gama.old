@@ -33,7 +33,6 @@ import msi.gaml.types.Signature;
  */
 public interface IExpressionCompiler<T> {
 
-	public static final String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
 	public static final THashMap<String, THashMap<Signature, OperatorProto>> OPERATORS = new THashMap();
 	public static final Set<String> ITERATORS = new THashSet();
 

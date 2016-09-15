@@ -116,7 +116,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			} else {
 				final ILeafNode node = NodeModelUtils.findLeafNodeAtOffset(resource.getParseResult().getRootNode(),
 						offset);
-				if (node.getGrammarElement() instanceof Keyword) {
+				if (node != null && node.getGrammarElement() instanceof Keyword) {
 					final IRegion region2 = new Region(node.getOffset(), node.getLength());
 					return Tuples.create(node.getGrammarElement(), region2);
 				}

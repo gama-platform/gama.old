@@ -54,6 +54,7 @@ import msi.gama.lang.gaml.gaml.S_Species;
 import msi.gama.lang.gaml.gaml.S_Var;
 import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 import msi.gama.lang.gaml.gaml.SkillRef;
+import msi.gama.lang.gaml.gaml.StandaloneBlock;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringEvaluator;
 import msi.gama.lang.gaml.gaml.StringLiteral;
@@ -117,8 +118,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				sequence_Binary(context, (Binary) semanticObject); 
 				return; 
 			case GamlPackage.BLOCK:
-				if (rule == grammarAccess.getEntryRule()
-						|| rule == grammarAccess.getBlockRule()) {
+				if (rule == grammarAccess.getBlockRule()) {
 					sequence_Block(context, (Block) semanticObject); 
 					return; 
 				}
@@ -420,6 +420,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				return; 
 			case GamlPackage.SKILL_REF:
 				sequence_SkillRef(context, (SkillRef) semanticObject); 
+				return; 
+			case GamlPackage.STANDALONE_BLOCK:
+				sequence_StandaloneBlock(context, (StandaloneBlock) semanticObject); 
 				return; 
 			case GamlPackage.STATEMENT:
 				sequence_S_1Expr_Facets_BlockOrEnd(context, (Statement) semanticObject); 
@@ -780,7 +783,6 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Contexts:
-	 *     Entry returns Block
 	 *     Block returns Block
 	 *
 	 * Constraint:
@@ -1649,6 +1651,25 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 		}
 		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
 		feeder.accept(grammarAccess.getSkillRefAccess().getRefSkillFakeDefinitionIDTerminalRuleCall_1_0_1(), semanticObject.getRef());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Entry returns StandaloneBlock
+	 *     StandaloneBlock returns StandaloneBlock
+	 *
+	 * Constraint:
+	 *     block=Block
+	 */
+	protected void sequence_StandaloneBlock(ISerializationContext context, StandaloneBlock semanticObject) {
+		if (errorAcceptor != null) {
+			if (transientValues.isValueTransient(semanticObject, GamlPackage.Literals.STANDALONE_BLOCK__BLOCK) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.STANDALONE_BLOCK__BLOCK));
+		}
+		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
+		feeder.accept(grammarAccess.getStandaloneBlockAccess().getBlockBlockParserRuleCall_1_0(), semanticObject.getBlock());
 		feeder.finish();
 	}
 	

@@ -36,6 +36,7 @@ public interface IExpressionFactory {
 	public static final ConstantExpression TRUE_EXPR = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;
 	public static final ConstantExpression FALSE_EXPR = ConstantExpressionDescription.FALSE_EXPR_DESCRIPTION;
 	public static final ConstantExpression NIL_EXPR = ConstantExpressionDescription.NULL_EXPR_DESCRIPTION;
+	public static final String TEMPORARY_ACTION_NAME = "__synthetic__action__";
 
 	// public void registerParserProvider(IExpressionCompilerProvider parser);
 

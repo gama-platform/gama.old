@@ -30,7 +30,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
@@ -228,14 +227,15 @@ public abstract class SymbolDescription implements IDescription {
 			}
 		}
 		if (!warning && !info) {
-			final String resource = e == null ? "(no file)" : e.eResource().getURI().lastSegment();
+			final String resource = e == null || e.eResource() == null ? "(no file)"
+					: e.eResource().getURI().lastSegment();
 			// System.err.println("COMPILATION ERROR in " + this.toString() + ":
 			// " + s + "; source: " + resource);
 		}
 		// throws a runtime exception if there is no way to signal the error in
 		// the source
 		// (i.e. we are probably in a runtime scenario)
-		if (e == null || e.eResource().getURI().path().contains(IExpressionCompiler.SYNTHETIC_RESOURCES_PREFIX)) {
+		if (e == null || e.eResource() == null || e.eResource().getURI().path().contains(SYNTHETIC_RESOURCES_PREFIX)) {
 			throw warning ? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s);
 		}
 		final ValidationContext c = getErrorCollector();
@@ -590,7 +590,8 @@ public abstract class SymbolDescription implements IDescription {
 			// We first verify that the description is at the right place
 			if (!canBeDefinedIn(sd)) {
 				error(getKeyword() + " cannot be defined in " + sd.getKeyword(), IGamlIssue.WRONG_CONTEXT);
-				return this;
+				// return this;
+				return null;
 			}
 			// If it is supposed to be unique, we verify this
 			if (proto.isUniqueInContext()) {
@@ -616,18 +617,21 @@ public abstract class SymbolDescription implements IDescription {
 				});
 
 				if (hasError[0])
-					return this;
+					// return this;
+					return null;
 
 			}
 		}
 		// We then validate its facets
-		validateFacets(true);
+		if (!validateFacets(true))
+			return null;
 
 		if (proto.hasSequence() && !PRIMITIVE.equals(getKeyword())) {
 			if (proto.isRemoteContext()) {
 				copyTempsAbove();
 			}
-			validateChildren();
+			if (!validateChildren())
+				return null;
 		}
 
 		if (proto.getDeprecated() != null) {
@@ -682,10 +686,10 @@ public abstract class SymbolDescription implements IDescription {
 					}
 				} else {
 					IExpression exp;
-					if (fp.typesDescribers[0] == IType.NEW_TEMP_ID) {
+					if (fp.isNewTemp) {
 						exp = createVarWithTypes(facet);
 						expr.setExpression(exp);
-					} else if (!fp.isLabel() && !facet.equals(WITH)) {
+					} else if (!fp.isLabel() /* && !facet.equals(WITH) */) {
 						exp = expr.compile(SymbolDescription.this);
 					} else {
 						exp = expr.getExpression();
@@ -722,6 +726,8 @@ public abstract class SymbolDescription implements IDescription {
 									+ actualType, IGamlIssue.SHOULD_CAST, facet, fp.types[0].toString());
 						}
 					}
+					// else if (exp == null) // VERIFY this
+					// return false;
 				}
 				return true;
 			}
@@ -735,8 +741,8 @@ public abstract class SymbolDescription implements IDescription {
 		return null;
 	}
 
-	protected void validateChildren() {
-		visitOwnChildren(VALIDATING_VISITOR);
+	protected boolean validateChildren() {
+		return visitOwnChildren(VALIDATING_VISITOR);
 	}
 
 	@Override

@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,9 +22,12 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.parser.IParseResult;
+import org.eclipse.xtext.util.OnChangeEvictingCache;
+import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 import com.google.common.base.Function;
@@ -92,6 +97,7 @@ public class GamlResource extends LazyLinkingResource {
 
 		@Override
 		public ISyntacticElement apply(final GamlResource input) {
+			input.getResourceSet().getResource(input.getURI(), true);
 			return input.getSyntacticContents();
 		}
 	};
@@ -219,6 +225,28 @@ public class GamlResource extends LazyLinkingResource {
 	protected void doUnload() {
 		super.doUnload();
 		element = null;
+	}
+
+	/**
+	 * In the case of synthetic resources, pass the URI they depend on
+	 * 
+	 * @throws IOException
+	 */
+	public void loadSynthetic(final InputStream is) throws IOException {
+		getCache().execWithoutCacheClear(this, new IUnitOfWork.Void<GamlResource>() {
+
+			@Override
+			public void process(final GamlResource state) throws Exception {
+				state.load(is, null);
+				EcoreUtil.resolveAll(GamlResource.this);
+			}
+		});
+
+	}
+
+	@Override
+	public OnChangeEvictingCache getCache() {
+		return (OnChangeEvictingCache) super.getCache();
 	}
 
 	@Override

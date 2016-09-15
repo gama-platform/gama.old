@@ -108,6 +108,7 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getActionDefinitionAccess().getAlternatives(), "rule__ActionDefinition__Alternatives");
 					put(grammarAccess.getValid_IDAccess().getAlternatives(), "rule__Valid_ID__Alternatives");
 					put(grammarAccess.getTerminalExpressionAccess().getAlternatives(), "rule__TerminalExpression__Alternatives");
+					put(grammarAccess.getStandaloneBlockAccess().getGroup(), "rule__StandaloneBlock__Group__0");
 					put(grammarAccess.getStringEvaluatorAccess().getGroup(), "rule__StringEvaluator__Group__0");
 					put(grammarAccess.getModelAccess().getGroup(), "rule__Model__Group__0");
 					put(grammarAccess.getModelBlockAccess().getGroup(), "rule__ModelBlock__Group__0");
@@ -242,6 +243,7 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getTerminalExpressionAccess().getGroup_3(), "rule__TerminalExpression__Group_3__0");
 					put(grammarAccess.getTerminalExpressionAccess().getGroup_4(), "rule__TerminalExpression__Group_4__0");
 					put(grammarAccess.getTerminalExpressionAccess().getGroup_5(), "rule__TerminalExpression__Group_5__0");
+					put(grammarAccess.getStandaloneBlockAccess().getBlockAssignment_1(), "rule__StandaloneBlock__BlockAssignment_1");
 					put(grammarAccess.getStringEvaluatorAccess().getTotoAssignment_0(), "rule__StringEvaluator__TotoAssignment_0");
 					put(grammarAccess.getStringEvaluatorAccess().getExprAssignment_2(), "rule__StringEvaluator__ExprAssignment_2");
 					put(grammarAccess.getModelAccess().getPragmasAssignment_0(), "rule__Model__PragmasAssignment_0");

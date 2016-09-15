@@ -373,16 +373,16 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		boolean result = super.visitOwnChildren(visitor);
-		if (!result)
+		if (!super.visitOwnChildren(visitor))
 			return false;
 		if (experiments != null)
-			result &= experiments.forEachValue(visitor);
-		return result;
+			if (!experiments.forEachValue(visitor))
+				return false;
+		return true;
 	}
 
 	@Override
-	public void finalizeDescription() {
+	public boolean finalizeDescription() {
 		VariableDescription vd = getAttribute(SHAPE);
 
 		if (!isBuiltIn() && !vd.hasFacet(INIT)) {
@@ -393,15 +393,18 @@ public class ModelDescription extends SpeciesDescription {
 			vd = (VariableDescription) DescriptionFactory.create(shape, this, null);
 			addChild(vd);
 		}
-		super.finalizeDescription();
+		if (!super.finalizeDescription())
+			return false;
 		if (actions != null)
 			for (final StatementDescription action : actions.values()) {
 				if (action.isAbstract() && !action.getUnderlyingElement(null).eResource()
 						.equals(getUnderlyingElement(null).eResource())) {
 					this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName()
 							+ ", should be redefined.", IGamlIssue.MISSING_ACTION);
+					return false;
 				}
 			}
+		return true;
 	}
 
 	@Override
@@ -464,15 +467,15 @@ public class ModelDescription extends SpeciesDescription {
 
 	public void visitAllSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
 		visitor.visit(this);
-		visitMicroSpecies(new DescriptionVisitor<SpeciesDescription>() {
+		if (!visitMicroSpecies(new DescriptionVisitor<SpeciesDescription>() {
 
 			@Override
 			public boolean visit(final SpeciesDescription desc) {
 				visitor.visit(desc);
-				desc.visitMicroSpecies(this);
-				return true;
+				return desc.visitMicroSpecies(this);
 			}
-		});
+		}))
+			return;
 		if (experiments != null) {
 			experiments.forEachValue(visitor);
 		}

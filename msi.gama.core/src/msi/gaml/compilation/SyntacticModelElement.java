@@ -31,8 +31,12 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 	public SyntacticModelElement(final String keyword, final Facets facets, final EObject statement, final File path,
 			final Object... imports) {
 		super(keyword, facets, statement);
-		final String p = path.getAbsolutePath();
-		this.path = p.endsWith(File.pathSeparator) ? p : p + "/";
+		if (path != null) {
+			final String p = path.getAbsolutePath();
+			this.path = p.endsWith(File.pathSeparator) ? p : p + "/";
+		} else
+			// Case of ill resources (compilation of blocks)
+			this.path = null;
 	}
 
 	@Override

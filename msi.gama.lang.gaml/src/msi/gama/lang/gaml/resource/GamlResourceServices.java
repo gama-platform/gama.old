@@ -1,5 +1,6 @@
 package msi.gama.lang.gaml.resource;
 
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,6 +13,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -19,7 +22,12 @@ import com.google.common.cache.LoadingCache;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.lang.gaml.EGaml;
+import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
+import msi.gama.util.TOrderedHashMap;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 
@@ -37,6 +45,15 @@ public class GamlResourceServices {
 					return new THashMap();
 				}
 			});
+	//
+	// private static final XtextResourceSet poolSet = new XtextResourceSet() {
+	// {
+	// setClasspathURIContext(GamlResourceServices.class);
+	// }
+	//
+	// };
+
+	private static int resourceCount = 0;
 
 	public static THashMap<EObject, IGamlDescription> getDocumentationCache(final Resource r) {
 		return documentationCache.getUnchecked(properlyEncodedURI(r.getURI()));
@@ -154,6 +171,40 @@ public class GamlResourceServices {
 			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 			final IPath fullPath = file.getProject().getLocation();
 			return fullPath == null ? "" : fullPath.toOSString();
+		}
+	}
+
+	private static final ResourceSet poolSet = EGaml.getInstance(XtextResourceSet.class);
+
+	public static GamlResource getTemporaryResource(final IDescription existing) {
+		ResourceSet rs = null;
+		Resource r = null;
+		if (existing != null) {
+			final EObject e = existing.getUnderlyingElement(null);
+			if (e != null) {
+				r = e.eResource();
+				if (r != null)
+					rs = r.getResourceSet();
+			}
+		}
+		if (rs == null)
+			rs = poolSet;
+		final URI uri = URI.createURI(IKeyword.SYNTHETIC_RESOURCES_PREFIX + resourceCount++ + ".gaml", false);
+		// TODO Modifier le cache de la resource ici ?
+		final GamlResource result = (GamlResource) rs.createResource(uri);
+		final TOrderedHashMap<URI, String> imports = new TOrderedHashMap();
+		imports.put(uri, null);
+		if (r != null)
+			imports.put(r.getURI(), null);
+		result.getCache().getOrCreate(result).set(GamlResourceIndexer.IMPORTED_URIS, imports);
+		return result;
+	}
+
+	public static void discardTemporaryResource(final GamlResource temp) {
+		try {
+			temp.delete(null);
+		} catch (final IOException e) {
+			e.printStackTrace();
 		}
 	}
 

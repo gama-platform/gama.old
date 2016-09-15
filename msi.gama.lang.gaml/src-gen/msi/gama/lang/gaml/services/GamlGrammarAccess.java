@@ -22,13 +22,13 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final RuleCall cModelParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cStringEvaluatorParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		private final RuleCall cBlockParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
+		private final RuleCall cStandaloneBlockParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
 		//Entry:
-		//	Model | StringEvaluator | Block;
+		//	Model | StringEvaluator | StandaloneBlock;
 		@Override public ParserRule getRule() { return rule; }
 
-		//Model | StringEvaluator | Block
+		//Model | StringEvaluator | StandaloneBlock
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//Model
@@ -37,8 +37,32 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//StringEvaluator
 		public RuleCall getStringEvaluatorParserRuleCall_1() { return cStringEvaluatorParserRuleCall_1; }
 
+		//StandaloneBlock
+		public RuleCall getStandaloneBlockParserRuleCall_2() { return cStandaloneBlockParserRuleCall_2; }
+	}
+
+	public class StandaloneBlockElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "msi.gama.lang.gaml.Gaml.StandaloneBlock");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Keyword c__synthetic__Keyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Assignment cBlockAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cBlockBlockParserRuleCall_1_0 = (RuleCall)cBlockAssignment_1.eContents().get(0);
+		
+		//StandaloneBlock:
+		//	'__synthetic__' block=Block;
+		@Override public ParserRule getRule() { return rule; }
+
+		//'__synthetic__' block=Block
+		public Group getGroup() { return cGroup; }
+
+		//'__synthetic__'
+		public Keyword get__synthetic__Keyword_0() { return c__synthetic__Keyword_0; }
+
+		//block=Block
+		public Assignment getBlockAssignment_1() { return cBlockAssignment_1; }
+
 		//Block
-		public RuleCall getBlockParserRuleCall_2() { return cBlockParserRuleCall_2; }
+		public RuleCall getBlockBlockParserRuleCall_1_0() { return cBlockBlockParserRuleCall_1_0; }
 	}
 
 	public class StringEvaluatorElements extends AbstractParserRuleElementFinder {
@@ -4639,6 +4663,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	
 	
 	private final EntryElements pEntry;
+	private final StandaloneBlockElements pStandaloneBlock;
 	private final StringEvaluatorElements pStringEvaluator;
 	private final ModelElements pModel;
 	private final ModelBlockElements pModelBlock;
@@ -4758,6 +4783,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	public GamlGrammarAccess(GrammarProvider grammarProvider) {
 		this.grammar = internalFindGrammar(grammarProvider);
 		this.pEntry = new EntryElements();
+		this.pStandaloneBlock = new StandaloneBlockElements();
 		this.pStringEvaluator = new StringEvaluatorElements();
 		this.pModel = new ModelElements();
 		this.pModelBlock = new ModelBlockElements();
@@ -4896,13 +4922,23 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	
 	//Entry:
-	//	Model | StringEvaluator | Block;
+	//	Model | StringEvaluator | StandaloneBlock;
 	public EntryElements getEntryAccess() {
 		return pEntry;
 	}
 	
 	public ParserRule getEntryRule() {
 		return getEntryAccess().getRule();
+	}
+
+	//StandaloneBlock:
+	//	'__synthetic__' block=Block;
+	public StandaloneBlockElements getStandaloneBlockAccess() {
+		return pStandaloneBlock;
+	}
+	
+	public ParserRule getStandaloneBlockRule() {
+		return getStandaloneBlockAccess().getRule();
 	}
 
 	//StringEvaluator:

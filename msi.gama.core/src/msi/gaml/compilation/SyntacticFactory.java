@@ -46,7 +46,10 @@ public class SyntacticFactory {
 	public static ISyntacticElement create(final String keyword, final Facets facets, final EObject statement,
 			final boolean withChildren, final Object... data) {
 		if (keyword.equals(MODEL)) {
-			return new SyntacticModelElement(keyword, facets, statement, (File) data[0], data);
+			if (data.length > 0)
+				return new SyntacticModelElement(keyword, facets, statement, (File) data[0], data);
+			else
+				return new SyntacticModelElement(keyword, facets, statement, null);
 		} else if (keyword.equals(SPECIES) || keyword.equals(GRID)) {
 			return new SyntacticSpeciesElement(keyword, facets, statement);
 		} else if (keyword.equals(EXPERIMENT)) {

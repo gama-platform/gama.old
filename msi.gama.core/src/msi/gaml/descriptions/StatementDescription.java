@@ -149,6 +149,7 @@ public class StatementDescription extends SymbolDescription {
 			final String name = arg.getKey();
 			putArg(name, createArg(name, arg.getValue()));
 		}
+		removeFacets(WITH);
 	}
 
 	private StatementDescription getAction() {
@@ -422,29 +423,34 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public void validateChildren() {
+	public boolean validateChildren() {
 		if (hasArgs()) {
-			validateArgs();
+			if (validateArgs() == null)
+				return false;
 		}
 
 		IDescription previousEnclosingDescription = null;
-		if (getMeta().isRemoteContext()) {
-			if (denotedSpecies != null) {
-				final SpeciesDescription s = getSpeciesContext();
-				if (s != null) {
-					final IType t = s.getType();
-					addTemp(this, MYSELF, t);
-					previousEnclosingDescription = getEnclosingDescription();
-					setEnclosingDescription(denotedSpecies);
+		try {
+			if (getMeta().isRemoteContext()) {
+				if (denotedSpecies != null) {
+					final SpeciesDescription s = getSpeciesContext();
+					if (s != null) {
+						final IType t = s.getType();
+						addTemp(this, MYSELF, t);
+						previousEnclosingDescription = getEnclosingDescription();
+						setEnclosingDescription(denotedSpecies);
 
-					// FIXME ===> Model Description is lost if we are dealing
-					// with a built-in species !
+						// FIXME ===> Model Description is lost if we are
+						// dealing
+						// with a built-in species !
+					}
 				}
 			}
-		}
-		super.validateChildren();
-		if (previousEnclosingDescription != null) {
-			setEnclosingDescription(previousEnclosingDescription);
+			return super.validateChildren();
+		} finally {
+			if (previousEnclosingDescription != null) {
+				setEnclosingDescription(previousEnclosingDescription);
+			}
 		}
 	}
 

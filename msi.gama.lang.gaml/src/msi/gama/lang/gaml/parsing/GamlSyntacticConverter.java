@@ -102,6 +102,7 @@ import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Reflex;
 import msi.gama.lang.gaml.gaml.S_Solve;
+import msi.gama.lang.gaml.gaml.StandaloneBlock;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.VariableRef;
@@ -139,9 +140,9 @@ public class GamlSyntacticConverter {
 			ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
 	public SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
-		if (root instanceof Block) {
+		if (root instanceof StandaloneBlock) {
 			final SyntacticModelElement elt = (SyntacticModelElement) SyntacticFactory.create("model", root, true);
-			convertBlock(elt, (Block) root, errors);
+			convertBlock(elt, ((StandaloneBlock) root).getBlock(), errors);
 			return elt;
 		}
 		if (!(root instanceof Model)) {

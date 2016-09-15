@@ -58,6 +58,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.IType;
 import msi.gaml.types.Signature;
@@ -437,6 +438,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 	public static void createDescriptions() {
 		if (descriptions == null) {
 			initResources();
+			add(eAction, IExpressionFactory.TEMPORARY_ACTION_NAME);
 			for (final String t : Types.getTypeNames()) {
 				addType(eType, t, Types.get(t));
 				add(eVar, t);

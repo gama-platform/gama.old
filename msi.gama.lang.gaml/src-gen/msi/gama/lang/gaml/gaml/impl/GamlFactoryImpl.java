@@ -65,6 +65,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
     switch (eClass.getClassifierID())
     {
       case GamlPackage.ENTRY: return createEntry();
+      case GamlPackage.STANDALONE_BLOCK: return createStandaloneBlock();
       case GamlPackage.STRING_EVALUATOR: return createStringEvaluator();
       case GamlPackage.MODEL: return createModel();
       case GamlPackage.BLOCK: return createBlock();
@@ -148,6 +149,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     EntryImpl entry = new EntryImpl();
     return entry;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public StandaloneBlock createStandaloneBlock()
+  {
+    StandaloneBlockImpl standaloneBlock = new StandaloneBlockImpl();
+    return standaloneBlock;
   }
 
   /**
