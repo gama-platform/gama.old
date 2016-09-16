@@ -28,8 +28,6 @@ import org.eclipse.xtext.validation.IResourceValidator;
 import com.google.common.base.Supplier;
 import com.google.inject.Binder;
 
-import msi.gama.common.interfaces.IDocManager;
-import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
 import msi.gama.lang.gaml.expression.ExpressionDescriptionBuilder;
 import msi.gama.lang.gaml.expression.GamlExpressionCompiler;
 import msi.gama.lang.gaml.generator.GamlOutputConfigurationProvider;
@@ -78,7 +76,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		super.configure(binder);
 		staticInitialize();
 		binder.bind(ExpressionDescriptionBuilder.class);
-		binder.bind(IDocManager.class).to(GamlResourceDocumenter.class);
+		// binder.bind(IDocManager.class).to(GamlResourceDocumenter.class);
 		binder.bind(GamlSyntacticConverter.class);
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);

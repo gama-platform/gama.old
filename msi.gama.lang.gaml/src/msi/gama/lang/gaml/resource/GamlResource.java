@@ -38,7 +38,6 @@ import com.google.common.collect.Multimaps;
 import com.google.inject.Inject;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
@@ -61,7 +60,6 @@ import msi.gaml.factories.ModelFactory;
  */
 public class GamlResource extends LazyLinkingResource {
 
-	@Inject IDocManager documenter;
 	@Inject GamlSyntacticConverter converter;
 	SyntacticModelElement element;
 
@@ -201,7 +199,7 @@ public class GamlResource extends LazyLinkingResource {
 			updateWith(model, true);
 		} finally {
 			if (edited) {
-				documenter.addCleanupTask(model);
+				GamlResourceServices.getResourceDocumenter().addCleanupTask(model);
 			} else {
 				model.dispose();
 			}
@@ -263,10 +261,6 @@ public class GamlResource extends LazyLinkingResource {
 
 	public boolean hasErrors() {
 		return !getErrors().isEmpty() || getParseResult().hasSyntaxErrors();
-	}
-
-	public IDocManager getDocumentationManager() {
-		return documenter;
 	}
 
 }

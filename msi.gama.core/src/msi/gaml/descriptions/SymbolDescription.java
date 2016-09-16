@@ -575,7 +575,6 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public IDescription validate() {
 		if (validated) {
-			// System.out.println("Tries to revalidate " + this);
 			return this;
 		}
 		validated = true;
@@ -595,19 +594,16 @@ public abstract class SymbolDescription implements IDescription {
 			}
 			// If it is supposed to be unique, we verify this
 			if (proto.isUniqueInContext()) {
-				final boolean[] hasError = new boolean[1];
-				sd.visitChildren(new DescriptionVisitor<IDescription>() {
+				final boolean hasError = !sd.visitChildren(new DescriptionVisitor<IDescription>() {
 
 					@Override
 					public boolean visit(final IDescription child) {
-
 						if (child.getKeyword().equals(getKeyword()) && child != SymbolDescription.this) {
 							final String error = getKeyword() + " is defined twice. Only one definition is allowed in "
 									+ sd.getKeyword();
 							child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(null),
 									getKeyword());
 							error(error, IGamlIssue.DUPLICATE_KEYWORD, getUnderlyingElement(null), getKeyword());
-							hasError[0] = true;
 							return false;
 						}
 						return true;
@@ -616,7 +612,7 @@ public abstract class SymbolDescription implements IDescription {
 
 				});
 
-				if (hasError[0])
+				if (hasError)
 					// return this;
 					return null;
 

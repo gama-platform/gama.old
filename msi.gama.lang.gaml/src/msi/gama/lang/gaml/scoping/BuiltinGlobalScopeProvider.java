@@ -42,14 +42,13 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
-import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.EGaml;
-import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaPair;
 import msi.gaml.compilation.AbstractGamlAdditions;
@@ -90,8 +89,6 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 	private static EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
 
 	static XtextResourceSet rs = new XtextResourceSet();
-
-	static IDocManager documenter = new GamlResourceDocumenter();
 
 	public static class ImmutableMap implements Map<String, String> {
 
@@ -339,7 +336,8 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		stub.setName(t);
 		Map<String, String> doc;
 		resources.get(eClass).getContents().add(stub);
-		final IGamlDescription d = GAMA.isInHeadLessMode() ? null : documenter.getGamlDocumentation(o);
+		final IGamlDescription d = GAMA.isInHeadLessMode() ? null
+				: GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 
 		if (d != null) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "operator");
@@ -358,7 +356,8 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		final IGamlDescription d = GAMA.isInHeadLessMode() ? null : documenter.getGamlDocumentation(o);
+		final IGamlDescription d = GAMA.isInHeadLessMode() ? null
+				: GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 		Map<String, String> doc;
 		if (d != null) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", keyword);
@@ -376,8 +375,9 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		// TODO Add the fields definition here
 		stub.setName(t);
 		resources.get(eClass).getContents().add(stub);
-		final IGamlDescription d = GAMA.isInHeadLessMode() ? null : documenter.getGamlDocumentation(o);
-		documenter.setGamlDocumentation(stub, o, false);
+		final IGamlDescription d = GAMA.isInHeadLessMode() ? null
+				: GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
+		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(stub, o, false);
 		Map<String, String> doc;
 		if (d != null) {
 			doc = new ImmutableMap("doc", d.getDocumentation(), "title", d.getTitle(), "type", "action");
@@ -465,7 +465,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 				addAction(eAction, t.getName(), t);
 
 				final GamlDefinition def = add(eVar, t.getName());
-				documenter.setGamlDocumentation(def, t, true);
+				GamlResourceServices.getResourceDocumenter().setGamlDocumentation(def, t, true);
 			}
 			final OperatorProto[] p = new OperatorProto[1];
 			IExpressionCompiler.OPERATORS

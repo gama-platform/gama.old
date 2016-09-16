@@ -21,9 +21,10 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.lang.gaml.EGaml;
+import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.util.TOrderedHashMap;
@@ -32,6 +33,8 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 
 public class GamlResourceServices {
+
+	private static IDocManager documenter = new GamlResourceDocumenter();
 
 	private static final Map<URI, IGamlBuilderListener> resourceListeners = new THashMap();
 
@@ -45,13 +48,6 @@ public class GamlResourceServices {
 					return new THashMap();
 				}
 			});
-	//
-	// private static final XtextResourceSet poolSet = new XtextResourceSet() {
-	// {
-	// setClasspathURIContext(GamlResourceServices.class);
-	// }
-	//
-	// };
 
 	private static int resourceCount = 0;
 
@@ -104,7 +100,7 @@ public class GamlResourceServices {
 	public static ValidationContext getValidationContext(final GamlResource r) {
 		final URI newURI = properlyEncodedURI(r.getURI());
 		if (!resourceErrors.containsKey(newURI))
-			resourceErrors.put(newURI, new ValidationContext(newURI, r.hasErrors(), r.getDocumentationManager()));
+			resourceErrors.put(newURI, new ValidationContext(newURI, r.hasErrors(), getResourceDocumenter()));
 		final ValidationContext result = resourceErrors.get(newURI);
 		result.hasInternalSyntaxErrors(r.hasErrors());
 		return result;
@@ -174,7 +170,12 @@ public class GamlResourceServices {
 		}
 	}
 
-	private static final ResourceSet poolSet = EGaml.getInstance(XtextResourceSet.class);
+	private static final XtextResourceSet poolSet = new XtextResourceSet() {
+		{
+			setClasspathURIContext(GamlResourceServices.class);
+		}
+
+	};
 
 	public static GamlResource getTemporaryResource(final IDescription existing) {
 		ResourceSet rs = null;
@@ -206,6 +207,10 @@ public class GamlResourceServices {
 		} catch (final IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static IDocManager getResourceDocumenter() {
+		return documenter;
 	}
 
 }

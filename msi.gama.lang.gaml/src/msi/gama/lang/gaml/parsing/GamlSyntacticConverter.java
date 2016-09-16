@@ -76,7 +76,6 @@ import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 import com.google.inject.Inject;
 
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.expression.ExpressionDescriptionBuilder;
@@ -131,8 +130,6 @@ import msi.gaml.statements.Facets;
  *
  */
 public class GamlSyntacticConverter {
-
-	@Inject IDocManager documenter;
 
 	@Inject ExpressionDescriptionBuilder builder;
 
@@ -574,7 +571,7 @@ public class GamlSyntacticConverter {
 		final IExpressionDescription ed = LabelExpressionDescription.create(string);
 		ed.setTarget(target);
 		if (target != null) {
-			documenter.setGamlDocumentation(target, ed.getExpression(), true);
+			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(target, ed.getExpression(), true);
 		}
 		return ed;
 	}

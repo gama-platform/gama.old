@@ -393,12 +393,12 @@ public class EGaml {
 	}
 
 	private static IResourceServiceProvider serviceProvider;
-	private static Injector dependencyInjector;
+	// private static Injector dependencyInjector;
 
 	public static <T> T getInstance(final Class<T> c) {
 		if (serviceProvider == null) {
-			if (dependencyInjector != null)
-				return dependencyInjector.getInstance(c);
+			// if (dependencyInjector != null)
+			// return dependencyInjector.getInstance(c);
 			try {
 				serviceProvider = IResourceServiceProvider.Registry.INSTANCE
 						.getResourceServiceProvider(URI.createPlatformResourceURI("dummy/dummy.gaml", false));
@@ -422,7 +422,7 @@ public class EGaml {
 	}
 
 	public static void initializeInjector(final Injector injector2) {
-		dependencyInjector = injector2;
+		// dependencyInjector = injector2;
 	}
 
 }

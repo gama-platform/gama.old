@@ -42,21 +42,6 @@ public class ValidationContext implements Iterable<GamlCompilationError>, IDocMa
 	private boolean noWarning, noInfo;
 	private final IDocManager docDelegate;
 
-	// public ValidationContext() {
-	// this(null, null);
-	// }
-	//
-	// public ValidationContext(final Resource resource, final IDocManager
-	// delegate) {
-	// this(resource, false, delegate);
-	// }
-	//
-	// public ValidationContext(final Resource resource, final boolean syntax,
-	// final IDocManager delegate) {
-	// this(resource == null ? URI.createURI("builtin://gaml", false) :
-	// resource.getURI(), syntax, delegate);
-	// }
-
 	public ValidationContext(final URI uri, final boolean syntax, final IDocManager delegate) {
 		this.resourceURI = uri;
 		hasSyntaxErrors = syntax;
