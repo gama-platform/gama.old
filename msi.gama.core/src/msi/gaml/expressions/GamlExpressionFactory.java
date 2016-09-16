@@ -22,7 +22,6 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
@@ -53,9 +52,13 @@ import msi.gaml.types.Types;
 
 public class GamlExpressionFactory implements IExpressionFactory {
 
+	public static interface ParserProvider {
+		IExpressionCompiler get();
+	}
+
 	static ThreadLocal<IExpressionCompiler> parser;
 
-	public static void registerParserProvider(final Supplier<IExpressionCompiler> f) {
+	public static void registerParserProvider(final ParserProvider f) {
 		parser = new ThreadLocal() {
 			@Override
 			protected IExpressionCompiler initialValue() {

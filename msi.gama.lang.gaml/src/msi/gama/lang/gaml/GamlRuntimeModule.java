@@ -25,7 +25,6 @@ import org.eclipse.xtext.service.DispatchingProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.validation.IResourceValidator;
 
-import com.google.common.base.Supplier;
 import com.google.inject.Binder;
 
 import msi.gama.lang.gaml.expression.ExpressionDescriptionBuilder;
@@ -46,6 +45,7 @@ import msi.gama.lang.gaml.validation.ErrorToDiagnoticTranslator;
 import msi.gama.lang.gaml.validation.GamlResourceValidator;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.GamlExpressionFactory;
+import msi.gaml.expressions.GamlExpressionFactory.ParserProvider;
 import msi.gaml.expressions.IExpressionCompiler;
 
 /**
@@ -58,7 +58,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	public static void staticInitialize() {
 		if (!initialized) {
-			GamlExpressionFactory.registerParserProvider(new Supplier<IExpressionCompiler>() {
+			GamlExpressionFactory.registerParserProvider(new ParserProvider() {
 
 				@Override
 				public IExpressionCompiler get() {
