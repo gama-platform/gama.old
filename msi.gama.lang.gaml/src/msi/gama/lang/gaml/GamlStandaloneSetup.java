@@ -12,14 +12,16 @@
 
 package msi.gama.lang.gaml;
 
+import com.google.inject.Injector;
+
 /**
- * Initialization support for running Xtext languages 
- * without equinox extension registry
+ * Initialization support for running Xtext languages without equinox extension
+ * registry
  */
-public class GamlStandaloneSetup extends GamlStandaloneSetupGenerated{
+public class GamlStandaloneSetup extends GamlStandaloneSetupGenerated {
 
 	public static void doSetup() {
-		new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
+		final Injector injector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
+		EGaml.initializeInjector(injector);
 	}
 }
-

@@ -46,7 +46,8 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 				currentErrors.add(d);
 			ed = ConstantExpressionDescription.create(0);
 		}
-		documenter.setGamlDocumentation(object, ed.getExpression(), true);
+		if (documenter != null)
+			documenter.setGamlDocumentation(object, ed.getExpression(), true);
 		return ed;
 	}
 
@@ -62,7 +63,8 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 				currentErrors.add(d);
 			ed = ConstantExpressionDescription.create(0d);
 		}
-		documenter.setGamlDocumentation(object, ed.getExpression(), true);
+		if (documenter != null)
+			documenter.setGamlDocumentation(object, ed.getExpression(), true);
 		return ed;
 	}
 
@@ -73,14 +75,16 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		// AD: Change 14/11/14
 		// IExpressionDescription ed =
 		// LabelExpressionDescription.create(object.getOp());
-		documenter.setGamlDocumentation(object, ed.getExpression(), true);
+		if (documenter != null)
+			documenter.setGamlDocumentation(object, ed.getExpression(), true);
 		return ed;
 	}
 
 	@Override
 	public IExpressionDescription caseBooleanLiteral(final BooleanLiteral object) {
 		final IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp().equals(IKeyword.TRUE));
-		documenter.setGamlDocumentation(object, ed.getExpression(), true);
+		if (documenter != null)
+			documenter.setGamlDocumentation(object, ed.getExpression(), true);
 		return ed;
 	}
 

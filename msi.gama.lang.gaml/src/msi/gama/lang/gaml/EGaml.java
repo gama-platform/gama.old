@@ -22,6 +22,8 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
 
+import com.google.inject.Injector;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.ActionRef;
@@ -390,14 +392,21 @@ public class EGaml {
 		// serializer.append("]");
 	}
 
-	private static IResourceServiceProvider injector;
+	private static IResourceServiceProvider serviceProvider;
+	private static Injector dependencyInjector;
 
 	public static <T> T getInstance(final Class<T> c) {
-		if (injector == null) {
-			injector = IResourceServiceProvider.Registry.INSTANCE
-					.getResourceServiceProvider(URI.createPlatformResourceURI("dummy/dummy.gaml", false));
+		if (serviceProvider == null) {
+			if (dependencyInjector != null)
+				return dependencyInjector.getInstance(c);
+			try {
+				serviceProvider = IResourceServiceProvider.Registry.INSTANCE
+						.getResourceServiceProvider(URI.createPlatformResourceURI("dummy/dummy.gaml", false));
+			} catch (final Exception e) {
+				System.out.println("Exception in initializing injector: " + e.getMessage());
+			}
 		}
-		return injector.get(c);
+		return serviceProvider.get(c);
 	}
 
 	public static Statement getStatement(final EObject o) {
@@ -410,6 +419,10 @@ public class EGaml {
 		}
 		return null;
 
+	}
+
+	public static void initializeInjector(final Injector injector2) {
+		dependencyInjector = injector2;
 	}
 
 }
