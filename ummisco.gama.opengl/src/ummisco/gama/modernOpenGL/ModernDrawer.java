@@ -213,6 +213,50 @@ public class ModernDrawer {
 		
 	}
 	
+	public void refresh(LayerObject layer) {
+		currentLayer = layer;
+		if (layerStructureMap.get(currentLayer) == null) {
+			return; // if nothing is to draw for this layer, do nothing.
+		}
+		ArrayList<AbstractShader> shaderList = layerStructureMap.get(currentLayer).shaderList;
+		for (AbstractShader shader : shaderList) {
+			// set the current layer drawn
+			
+			shader.start();
+			
+			updateTransformationMatrix(shader);
+			int[] typeOfDrawing = typeOfDrawingMap.get(shader);
+			
+			///////////////////////////////////////:
+			// VERTICES POSITIONS BUFFER
+			bindBuffer(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,typeOfDrawing[2]);
+			
+			// COLORS BUFFER
+			bindBuffer(AbstractShader.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
+			
+			// UV MAPPING (If a texture is defined)
+			if (shader.useTexture())
+			{
+				bindBuffer(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
+				gl.glActiveTexture(GL.GL_TEXTURE0);
+				gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
+			}
+			
+			// NORMAL BUFFER
+			if (shader.useNormal())
+				bindBuffer(AbstractShader.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,typeOfDrawing[2]);
+			
+			// INDEX BUFFER
+			// Select the VBO, GPU memory data, to use for colors
+			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[typeOfDrawing[2]*5+IDX_BUFF_IDX]);
+			//////////////////////////////////
+			
+			drawVBO(typeOfDrawing);
+			
+			shader.stop();
+		}
+	}
+	
 	private FrameBufferObject applyPostprocessing(FrameBufferObject inputFbo, AbstractShader shader, int effectNumber, boolean lastEffect) {
 		fboHandles = new int[5];
 		this.gl.glGenBuffers(5, fboHandles, 0);
@@ -370,50 +414,6 @@ public class ModernDrawer {
 		int numBytes = intIdxBuffer.length * 4;
 		gl.glBufferData(GL2.GL_ELEMENT_ARRAY_BUFFER, numBytes, ibIdxBuff, GL2.GL_STATIC_DRAW);
 		ibIdxBuff.rewind();
-	}
-	
-	public void refresh(LayerObject layer) {
-		currentLayer = layer;
-		if (layerStructureMap.get(currentLayer) == null) {
-			return; // if nothing is to draw for this layer, do nothing.
-		}
-		ArrayList<AbstractShader> shaderList = layerStructureMap.get(currentLayer).shaderList;
-		for (AbstractShader shader : shaderList) {
-			// set the current layer drawn
-			
-			shader.start();
-			
-			updateTransformationMatrix(shader);
-			int[] typeOfDrawing = typeOfDrawingMap.get(shader);
-			
-			///////////////////////////////////////:
-			// VERTICES POSITIONS BUFFER
-			bindBuffer(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,typeOfDrawing[2]);
-			
-			// COLORS BUFFER
-			bindBuffer(AbstractShader.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
-			
-			// UV MAPPING (If a texture is defined)
-			if (shader.useTexture())
-			{
-				bindBuffer(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
-				gl.glActiveTexture(GL.GL_TEXTURE0);
-				gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
-			}
-			
-			// NORMAL BUFFER
-			if (shader.useNormal())
-				bindBuffer(AbstractShader.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,typeOfDrawing[2]);
-			
-			// INDEX BUFFER
-			// Select the VBO, GPU memory data, to use for colors
-			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[typeOfDrawing[2]*5+IDX_BUFF_IDX]);
-			//////////////////////////////////
-			
-			drawVBO(typeOfDrawing);
-			
-			shader.stop();
-		}
 	}
 	
 	private void drawVBO(int[] typeOfDrawing) {
