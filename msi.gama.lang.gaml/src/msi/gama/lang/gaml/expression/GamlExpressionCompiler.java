@@ -133,9 +133,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IExpressionDescription currentExpressionDescription;
 	private IDescription currentContext;
 	private ITypesManager currentTypesManager;
-	private static volatile int resourceCount = 0;
 	private final static Map<String, IExpression> constantSyntheticExpressions = new THashMap();
-	private final ExpressionDescriptionBuilder builder = EGaml.getInstance(ExpressionDescriptionBuilder.class);
+	private static final ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
 	/*
 	 * The context (IDescription) in which the parser operates. If none is

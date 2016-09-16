@@ -15,12 +15,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.resource.IResourceServiceProvider;
 
 import com.google.inject.Injector;
 
@@ -392,22 +390,24 @@ public class EGaml {
 		// serializer.append("]");
 	}
 
-	private static IResourceServiceProvider serviceProvider;
-	// private static Injector dependencyInjector;
-
-	public static <T> T getInstance(final Class<T> c) {
-		if (serviceProvider == null) {
-			// if (dependencyInjector != null)
-			// return dependencyInjector.getInstance(c);
-			try {
-				serviceProvider = IResourceServiceProvider.Registry.INSTANCE
-						.getResourceServiceProvider(URI.createPlatformResourceURI("dummy/dummy.gaml", false));
-			} catch (final Exception e) {
-				System.out.println("Exception in initializing injector: " + e.getMessage());
-			}
-		}
-		return serviceProvider.get(c);
-	}
+	// private static IResourceServiceProvider serviceProvider;
+	// // private static Injector dependencyInjector;
+	//
+	// public static <T> T getInstance(final Class<T> c) {
+	// if (serviceProvider == null) {
+	// // if (dependencyInjector != null)
+	// // return dependencyInjector.getInstance(c);
+	// try {
+	// serviceProvider = IResourceServiceProvider.Registry.INSTANCE
+	// .getResourceServiceProvider(URI.createPlatformResourceURI("dummy/dummy.gaml",
+	// false));
+	// } catch (final Exception e) {
+	// System.out.println("Exception in initializing injector: " +
+	// e.getMessage());
+	// }
+	// }
+	// return serviceProvider.get(c);
+	// }
 
 	public static Statement getStatement(final EObject o) {
 		if (o instanceof Statement) {
