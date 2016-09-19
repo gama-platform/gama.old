@@ -1,7 +1,6 @@
 #if __VERSION__ >= 130
 	#define varying in
 	out vec4 mgl_FragColor;
-	#define texture2D texture
 	#define gl_FragColor mgl_FragColor
 #endif
 		
@@ -23,7 +22,7 @@ void main (void)
 	vec4 inputColor = varying_Color;
 	
 	gl_FragColor = inputColor;
-	float distance = 1.0 - texture(textureSampler,pass_textureCoords).a;
+	float distance = 1.0 - texture2D(textureSampler,pass_textureCoords).a;
 	float alpha = 1.0 - smoothstep(fontWidth, fontWidth + fontEdge, distance);
 	if (alpha < 0.1) {
 		discard;
