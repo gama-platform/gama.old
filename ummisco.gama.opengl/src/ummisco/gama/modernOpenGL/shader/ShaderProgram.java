@@ -26,6 +26,7 @@ public class ShaderProgram extends AbstractShader {
 	private int location_useNormals;	// 0 for no, 1 for yes
 	private int location_texture;
 	private int location_ambientLight;
+	private int location_invViewMatrix; // #issue 1989 : the inverse function does not work in GLSL for MacOS
 	
 	private boolean useNormal = false;
 	private boolean useTexture = false;
@@ -56,6 +57,7 @@ public class ShaderProgram extends AbstractShader {
 		location_useNormals = getUniformLocation("useNormals");
 		location_texture = getUniformLocation("textureSampler");
 		location_ambientLight = getUniformLocation("ambientLight");
+		location_invViewMatrix = getUniformLocation("invViewMatrix");
 		
 		location_lightColor = new int[MAX_LIGHT];
 		location_lightAttenuation = new int[MAX_LIGHT];
@@ -149,6 +151,10 @@ public class ShaderProgram extends AbstractShader {
 	
 	public int getTextureID() {
 		return textureIDStored;
+	}
+	
+	public void loadInvViewMatrix(Matrix4f invViewMatrix) {
+		loadMatrix(location_invViewMatrix, invViewMatrix);
 	}
 
 	@Override

@@ -8,9 +8,7 @@ import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
-import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.vaoGenerator.GeomMathUtils;
-import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public abstract class AbstractShader {
 	
@@ -158,8 +156,7 @@ public abstract class AbstractShader {
 		loadMatrix(location_projectionMatrix, matrix);
 	}
 	
-	public void loadViewMatrix(ICamera camera) {
-		 Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(camera);
+	public void loadViewMatrix(Matrix4f viewMatrix) {
 		loadMatrix(location_viewMatrix, viewMatrix);
 	}
 	
