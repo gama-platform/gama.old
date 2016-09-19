@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
+import org.eclipse.xtext.resource.SynchronizedXtextResourceSet;
 import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.inject.Singleton;
@@ -24,13 +25,14 @@ import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
 import msi.gaml.compilation.GamaBundleLoader;
+import msi.gaml.compilation.ISyntacticElement;
 
 @Singleton
 public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 
 	public static GamlResourceInfoProvider INSTANCE = new GamlResourceInfoProvider();
 
-	private final XtextResourceSet resourceSet = new XtextResourceSet();
+	private final XtextResourceSet resourceSet = new SynchronizedXtextResourceSet();
 
 	public GamlFileInfo getInfo(final Resource r, final long stamp) {
 
@@ -45,7 +47,7 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 		Set<String> uses = null;
 		Set<String> exps = null;
 
-		final TreeIterator<EObject> tree = EcoreUtil2.getAllContents(r, false);
+		final TreeIterator<EObject> tree = EcoreUtil2.getAllContents(r, true);
 
 		while (tree.hasNext()) {
 			final EObject e = tree.next();
@@ -62,6 +64,9 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				}
 			} else if (e instanceof S_Experiment) {
 				String s = ((S_Experiment) e).getName();
+				if (s == null) {
+					System.out.println("EXPERIMENT NULL");
+				}
 				final Map<String, Facet> f = EGaml.getFacetsMapOf((Statement) e);
 				final Facet typeFacet = f.get(IKeyword.TYPE);
 				if (typeFacet != null) {
@@ -86,6 +91,16 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 
 			final GamlResource r = (GamlResource) resourceSet.getResource(uri, true);
 			return getInfo(r, stamp);
+		} finally {
+			clearResourceSet(resourceSet);
+		}
+	}
+
+	@Override
+	public ISyntacticElement getContents(final URI uri) {
+		try {
+			final GamlResource r = (GamlResource) resourceSet.getResource(uri, true);
+			return GamlResourceServices.buildSyntacticContents(r);
 		} finally {
 			clearResourceSet(resourceSet);
 		}

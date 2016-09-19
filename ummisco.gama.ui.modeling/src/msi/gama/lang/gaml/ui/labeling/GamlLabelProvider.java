@@ -20,9 +20,12 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
+import org.eclipse.xtext.ui.label.ILabelProviderImageDescriptorExtension;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.Expression;
@@ -37,6 +40,7 @@ import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider;
+import msi.gaml.compilation.ISyntacticElement;
 
 /**
  * Provides labels for a EObjects.
@@ -44,10 +48,12 @@ import msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider;
  * see
  * http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
-public class GamlLabelProvider extends DefaultEObjectLabelProvider {
+@Singleton
 
-	@Inject
-	private IQualifiedNameProvider nameProvider;
+public class GamlLabelProvider extends DefaultEObjectLabelProvider
+		implements ILabelProviderImageDescriptorExtension, IGamlLabelProvider {
+
+	@Inject private IQualifiedNameProvider nameProvider;
 
 	@Inject
 	public GamlLabelProvider(final AdapterFactoryLabelProvider delegate) {
@@ -74,7 +80,6 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(final EObject ele) {
-
 		String text;
 		String key = EGaml.getKeyOf(ele);
 		if (key == null) {
@@ -156,7 +161,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 			}
 
 		}
-		return (name == null ? "" : name)
+		return "attribute " + (name == null ? "" : name)
 				+ (type == null ? "" : " (" + type + ") " + (key == null ? "" : "(" + key + ") "));
 
 	}
@@ -173,7 +178,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 	}
 
 	String text(final Model obj) {
-		return obj.getName();
+		return "model " + obj.getName();
 	}
 
 	protected String parameterText(final Statement p) {
@@ -207,7 +212,8 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 				name = e.getOp();
 			}
 		}
-		return "\"" + name + "\"" + (var == null ? "" : " (" + var + ")" + (type == null ? "" : " (" + type + ")"));
+		return "parameter " + "\"" + name + "\""
+				+ (var == null ? "" : " (" + var + ")" + (type == null ? "" : " (" + type + ")"));
 	}
 
 	String image(final Import ele) {
@@ -271,6 +277,22 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 
 	public String typeImage(final String string) {
 		return "_" + string + ".png";
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IGamlLabelProvider#getText(msi.gaml.compilation.ISyntacticElement)
+	 */
+	@Override
+	public String getText(final ISyntacticElement element) {
+		return this.getText(element.getElement());
+	}
+
+	/**
+	 * @see msi.gama.common.interfaces.IGamlLabelProvider#getImage(msi.gaml.compilation.ISyntacticElement)
+	 */
+	@Override
+	public Object getImage(final ISyntacticElement element) {
+		return this.getImage(element.getElement());
 	}
 
 }

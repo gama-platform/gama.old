@@ -253,12 +253,12 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		@Override
 		protected void collectMetaInformationInFacets(final StatementDescription desc, final GamlProperties plugins) {
 			super.collectMetaInformationInFacets(desc, plugins);
-			if (desc.args == null || desc.args.isEmpty()) {
-				return;
-			}
-			for (final StatementDescription arg : desc.args.values()) {
-				collectMetaInformation(arg, plugins);
-			}
+			// if (desc.formalArgs == null || desc.formalArgs.isEmpty()) {
+			// return;
+			// }
+			// for (final StatementDescription arg : desc.formalArgs.values()) {
+			// collectMetaInformation(arg, plugins);
+			// }
 		}
 
 		@Override
@@ -271,11 +271,9 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 		protected void serializeArgs(final StatementDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
-			if (desc.args == null || desc.args.isEmpty()) {
-				return;
-			}
+
 			sb.append("(");
-			for (final StatementDescription arg : desc.args.values()) {
+			for (final IDescription arg : desc.getFormalArgs()) {
 				serializeArg(desc, arg, sb, includingBuiltIn);
 				sb.append(", ");
 			}
@@ -283,8 +281,8 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 			sb.append(")");
 		}
 
-		protected void serializeArg(final StatementDescription desc, final StatementDescription arg,
-				final StringBuilder sb, final boolean includingBuiltIn) {
+		protected void serializeArg(final IDescription desc, final IDescription arg, final StringBuilder sb,
+				final boolean includingBuiltIn) {
 			// normally never called as it is redefined for action, do and
 			// create
 		}

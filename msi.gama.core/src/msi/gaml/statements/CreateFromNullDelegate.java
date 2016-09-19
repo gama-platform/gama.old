@@ -4,11 +4,15 @@
  */
 package msi.gaml.statements;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Class CreateFromDatabaseDelegate.
@@ -31,19 +35,24 @@ public class CreateFromNullDelegate implements ICreateDelegate {
 	}
 
 	/**
-	 * Method createFrom() reads initial values decribed by the modeler (facet with)
+	 * Method createFrom() reads initial values decribed by the modeler (facet
+	 * with)
 	 *
 	 * @author Alexis Drogoul
 	 * @since 04-09-2012
-	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope, java.util.List, int, java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope,
+	 *      java.util.List, int, java.lang.Object)
 	 */
 	@Override
 	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object input,
-		final Arguments init, final CreateStatement statement) {
-		if ( init == null ) { return true; }
+			final Arguments init, final CreateStatement statement) {
+		GamaMap nullMap = null;
+		if (init == null) {
+			nullMap = GamaMapFactory.create();
+		}
 		final int num = max == null ? 1 : max;
-		for ( int i = 0; i < num; i++ ) {
-			final Map map = GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
+		for (int i = 0; i < num; i++) {
+			final Map map = init == null ? nullMap : GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
 			statement.fillWithUserInit(scope, map);
 			inits.add(map);
 		}
@@ -52,6 +61,7 @@ public class CreateFromNullDelegate implements ICreateDelegate {
 
 	/**
 	 * Method fromFacetType()
+	 * 
 	 * @see msi.gama.common.interfaces.ICreateDelegate#fromFacetType()
 	 */
 	@Override

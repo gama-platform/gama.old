@@ -26,20 +26,27 @@ import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
+import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.util.TOrderedHashMap;
+import msi.gaml.compilation.SyntacticModelElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 
 public class GamlResourceServices {
 
+	private static int resourceCount = 0;
 	private static IDocManager documenter = new GamlResourceDocumenter();
-
+	private static GamlSyntacticConverter converter = new GamlSyntacticConverter();
 	private static final Map<URI, IGamlBuilderListener> resourceListeners = new THashMap();
-
 	private static final Map<URI, ValidationContext> resourceErrors = new THashMap();
+	private static final XtextResourceSet poolSet = new XtextResourceSet() {
+		{
+			setClasspathURIContext(GamlResourceServices.class);
+		}
 
+	};
 	private static final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache = CacheBuilder
 			.newBuilder().build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
 
@@ -48,8 +55,6 @@ public class GamlResourceServices {
 					return new THashMap();
 				}
 			});
-
-	private static int resourceCount = 0;
 
 	public static THashMap<EObject, IGamlDescription> getDocumentationCache(final Resource r) {
 		return documentationCache.getUnchecked(properlyEncodedURI(r.getURI()));
@@ -170,13 +175,6 @@ public class GamlResourceServices {
 		}
 	}
 
-	private static final XtextResourceSet poolSet = new XtextResourceSet() {
-		{
-			setClasspathURIContext(GamlResourceServices.class);
-		}
-
-	};
-
 	public static GamlResource getTemporaryResource(final IDescription existing) {
 		ResourceSet rs = null;
 		Resource r = null;
@@ -211,6 +209,10 @@ public class GamlResourceServices {
 
 	public static IDocManager getResourceDocumenter() {
 		return documenter;
+	}
+
+	public static SyntacticModelElement buildSyntacticContents(final GamlResource r) {
+		return converter.buildSyntacticContents(r.getParseResult().getRootASTElement(), null);
 	}
 
 }

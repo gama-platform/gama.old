@@ -73,8 +73,6 @@ import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
-import com.google.inject.Inject;
-
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
@@ -131,7 +129,7 @@ import msi.gaml.statements.Facets;
  */
 public class GamlSyntacticConverter {
 
-	@Inject ExpressionDescriptionBuilder builder;
+	final static ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
 			ISymbolKind.OUTPUT, ISymbolKind.MODEL);

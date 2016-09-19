@@ -33,8 +33,8 @@ public class SkillDescription extends TypeDescription {
 	public IDescription addChild(final IDescription child) {
 		child.setOriginName("skill " + name);
 		child.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
-		if (child instanceof StatementDescription) {
-			addAction((StatementDescription) child);
+		if (child instanceof ActionDescription) {
+			addAction((ActionDescription) child);
 		} else {
 			addOwnAttribute((VariableDescription) child);
 		}

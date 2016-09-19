@@ -275,7 +275,7 @@ public class SpeciesDescription extends TypeDescription {
 			final StatementDescription statement = (StatementDescription) desc;
 			final String kw = desc.getKeyword();
 			if (PRIMITIVE.equals(kw) || ACTION.equals(kw)) {
-				addAction(statement);
+				addAction((ActionDescription) statement);
 			} else if (ASPECT.equals(kw)) {
 				addAspect(statement);
 			} else {

@@ -17,13 +17,15 @@ import org.eclipse.xtext.validation.Issue;
 
 import com.google.inject.Inject;
 
+import msi.gama.lang.gaml.GamlRuntimeModule;
+import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 
 public class GamlResourceValidator implements IResourceValidator {
 
 	@Inject IDiagnosticConverter converter;
-	@Inject ErrorToDiagnoticTranslator errorTranslator;
+	private static ErrorToDiagnoticTranslator errorTranslator = new ErrorToDiagnoticTranslator();
 
 	private class LazyAcceptor implements IAcceptor<Issue> {
 		List<Issue> result;
@@ -46,7 +48,13 @@ public class GamlResourceValidator implements IResourceValidator {
 			converter.convertResourceDiagnostic(resource.getErrors().get(i), Severity.ERROR, acceptor);
 		// We then ask the resource to validate itself
 		final GamlResource r = (GamlResource) resource;
-		r.validate();
+		// Enables faster compilation (but less accurate error reporting in
+		// navigator)
+		if (GamlRuntimeModule.ENABLE_FAST_COMPIL.getValue()) {
+			if (GamlResourceServices.isEdited(r) || !GamlResourceIndexer.isImported(r))
+				r.validate();
+		} else
+			r.validate();
 		// And collect the semantic errors from its error collector
 		for (final Diagnostic d : errorTranslator.translate(r.getValidationContext(), r, mode).getChildren())
 			converter.convertValidatorDiagnostic(d, acceptor);

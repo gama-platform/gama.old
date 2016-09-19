@@ -19,11 +19,13 @@ import msi.gama.metamodel.agent.IAgent;
 public class Arguments extends Facets {
 
 	/*
-	 * The caller represents the agent in the context of which the arguments need to be evaluated.
+	 * The caller represents the agent in the context of which the arguments
+	 * need to be evaluated.
 	 */
 	IAgent caller;
 
-	public Arguments() {}
+	public Arguments() {
+	}
 
 	public Arguments(final IAgent caller) {
 		this.caller = caller;
@@ -31,13 +33,16 @@ public class Arguments extends Facets {
 
 	public Arguments(final Arguments args) {
 		super(args);
-		this.caller = args.caller;
+		if (args != null)
+			this.caller = args.caller;
+	}
 
-		// for ( final Map.Entry<String, IExpressionDescription> entry : args.entrySet() ) {
-		// if ( entry != null ) {
-		// put(entry.getKey(), entry.getValue());
-		// }
-		// }
+	@Override
+	public Arguments cleanCopy() {
+		final Arguments result = new Arguments(this);
+		result.transformValues(cleanCopy);
+		result.compact();
+		return result;
 	}
 
 	public void setCaller(final IAgent caller) {

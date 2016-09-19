@@ -372,7 +372,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 			@Override
 			public boolean visit(final StatementDescription desc) {
-				result.addAll(desc.getArgs());
+				Iterables.addAll(result, desc.getFormalArgs());
 				return true;
 			}
 

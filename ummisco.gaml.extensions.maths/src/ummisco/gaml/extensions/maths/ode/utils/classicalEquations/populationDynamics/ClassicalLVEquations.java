@@ -55,7 +55,7 @@ public class ClassicalLVEquations {
 		final IExpression[] p = ((ListExpression) with_params).getElements();
 
 		final StatementDescription stm = new StatementDescription("=", getDescription(), new ChildrenProvider(null),
-				false, null, null);
+				false, null, null, null);
 
 		final SingleEquationStatement eq1 = new SingleEquationStatement(stm);
 		eq1.setFunction(GAML.getExpressionFactory()

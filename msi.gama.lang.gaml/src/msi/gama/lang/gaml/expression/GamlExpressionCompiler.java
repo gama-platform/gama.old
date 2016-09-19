@@ -94,6 +94,7 @@ import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.SyntacticFactory;
 import msi.gaml.compilation.SyntacticModelElement;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -131,7 +132,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private final Deque<IVarExpression> iteratorContexts = new LinkedList();
 	// To disable reentrant parsing (Issue 782)
 	private IExpressionDescription currentExpressionDescription;
-	private IDescription currentContext;
 	private ITypesManager currentTypesManager;
 	private final static Map<String, IExpression> constantSyntheticExpressions = new THashMap();
 	private static final ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
@@ -142,6 +142,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 * simulation.getModel().getDescription()) if it is available. Otherwise,
 	 * only simple expressions (that contain constants) can be parsed.
 	 */
+	private IDescription currentContext;
 
 	static {
 		IExpressionCompiler.OPERATORS.put(MY, new THashMap());
@@ -378,7 +379,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		final TypeDescription sd = left.getType().getSpecies();
 		if (sd != null) {
-			final StatementDescription action = sd.getAction(op);
+			final ActionDescription action = sd.getAction(op);
 			if (action != null) {
 				final IExpression result = action(op, left, e2, action);
 				if (result != null) {
@@ -431,7 +432,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	private IExpression action(final String name, final IExpression callee, final EObject args,
-			final StatementDescription action) {
+			final ActionDescription action) {
 		final Arguments arguments = parseArguments(action, args, getContext(), true);
 		return getFactory().createAction(name, getContext(), action, callee, arguments);
 	}
@@ -560,7 +561,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return getFactory().createOperator(_DOT, getContext(), fieldExpr, owner, expr);
 		} else if (fieldExpr instanceof Function) {
 			final String name = EGaml.getKeyOf(fieldExpr);
-			final StatementDescription action = species.getAction(name);
+			final ActionDescription action = species.getAction(name);
 			if (action != null) {
 				final ExpressionList list = ((Function) fieldExpr).getArgs();
 				final IExpression call = action(name, owner,
@@ -607,10 +608,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	 *      msi.gaml.descriptions.IDescription)
 	 */
 	@Override
-	public Arguments parseArguments(final StatementDescription action, final EObject o, final IDescription command,
+	public Arguments parseArguments(final ActionDescription action, final EObject o, final IDescription command,
 			final boolean compileArgValue) {
 		if (o == null) {
-			return new Arguments();
+			return null;
 		}
 		boolean completeArgs = false;
 		List<Expression> parameters = null;
@@ -945,7 +946,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		final SpeciesDescription sd = getContext().getSpeciesContext();
 		if (sd != null) {
-			final StatementDescription action = sd.getAction(op);
+			final ActionDescription action = sd.getAction(op);
 			if (action != null) {
 				EObject params = object.getParameters();
 				if (params == null) {
@@ -1128,7 +1129,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			// that the variable used belongs to the species denoted by the
 			// current statement
 			if (getContext() instanceof StatementDescription) {
-				final SpeciesDescription denotedSpecies = ((StatementDescription) getContext()).computeSpecies();
+				final SpeciesDescription denotedSpecies = getContext().getType().getDenotedSpecies();
+				// final SpeciesDescription denotedSpecies =
+				// getContext().getModelDescription()
+				// .getSpeciesReferencedBy((StatementDescription) getContext());
 				if (denotedSpecies != null) {
 					if (denotedSpecies.hasAttribute(varName)) {
 						return denotedSpecies.getVarExpr(varName, false);

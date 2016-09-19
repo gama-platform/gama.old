@@ -54,7 +54,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	// AD 08/16 : actions and attributes are now inherited dynamically and built
 	// lazily
-	protected THashMap<String, StatementDescription> actions;
+	protected THashMap<String, ActionDescription> actions;
 	protected TOrderedHashMap<String, VariableDescription> attributes;
 	protected TypeDescription parent;
 	private final String plugin;
@@ -367,7 +367,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		// two.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
 	}
 
-	protected void addAction(final StatementDescription newAction) {
+	protected void addAction(final ActionDescription newAction) {
 		// if (isBuiltIn()) {
 		// newAction.setOriginName("built-in species " + getName());
 		// }
@@ -384,8 +384,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	@Override
-	public StatementDescription getAction(final String aName) {
-		StatementDescription ownAction = null;
+	public ActionDescription getAction(final String aName) {
+		ActionDescription ownAction = null;
 		if (actions != null)
 			ownAction = actions.get(aName);
 		if (ownAction == null && parent != null && parent != this)
@@ -401,8 +401,8 @@ public abstract class TypeDescription extends SymbolDescription {
 		return allNames;
 	}
 
-	public Collection<StatementDescription> getActions() {
-		final Collection<StatementDescription> allActions = new ArrayList();
+	public Collection<ActionDescription> getActions() {
+		final Collection<ActionDescription> allActions = new ArrayList();
 		final Collection<String> actionNames = getActionNames();
 		for (final String name : actionNames) {
 			allActions.add(getAction(name));
@@ -431,7 +431,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public boolean isArgOf(final String op, final String arg) {
-		final StatementDescription action = getAction(op);
+		final ActionDescription action = getAction(op);
 		if (action != null) {
 			return action.containsArg(arg);
 		}
@@ -470,10 +470,10 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected void inheritActionsFrom(final TypeDescription p) {
 		if (p == null || p == this)
 			return;
-		final Collection<StatementDescription> inherited = p.getActions();
-		for (final StatementDescription inheritedAction : inherited) {
+		final Collection<ActionDescription> inherited = p.getActions();
+		for (final ActionDescription inheritedAction : inherited) {
 			final String actionName = inheritedAction.getName();
-			final StatementDescription userDeclared = actions == null ? null : actions.get(actionName);
+			final ActionDescription userDeclared = actions == null ? null : actions.get(actionName);
 			if (userDeclared != null) {
 				if (!(inheritedAction.isBuiltIn() && userDeclared.isBuiltIn())) {
 					TypeDescription.assertActionsAreCompatible(userDeclared, inheritedAction,
@@ -507,8 +507,8 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	}
 
-	public static void assertActionsAreCompatible(final StatementDescription myAction,
-			final StatementDescription parentAction, final String parentName) {
+	public static void assertActionsAreCompatible(final ActionDescription myAction,
+			final ActionDescription parentAction, final String parentName) {
 		final String actionName = parentAction.getName();
 		final IType myType = myAction.getType();
 		final IType parentType = parentAction.getType();

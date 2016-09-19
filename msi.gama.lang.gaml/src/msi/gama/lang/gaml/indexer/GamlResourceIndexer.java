@@ -264,4 +264,8 @@ public class GamlResourceIndexer {
 		index = new SimpleDirectedGraph(Edge.class);
 	}
 
+	public static boolean isImported(final GamlResource r) {
+		return !directImportersOf(r.getURI()).isEmpty();
+	}
+
 }

@@ -403,9 +403,14 @@
                class="ummisco.gama.ui.navigator.NavigatorSorter"
                id="msi.gama.navigator.sorter">
             <parentExpression>
+            <or>
+               <instanceof
+                     value="ummisco.gama.ui.navigator.WrappedSyntacticContent">
+               </instanceof>
                <instanceof
                      value="org.eclipse.core.resources.IFile">
                </instanceof>
+           </or>
             </parentExpression>
          </commonSorter>
          <commonSorter

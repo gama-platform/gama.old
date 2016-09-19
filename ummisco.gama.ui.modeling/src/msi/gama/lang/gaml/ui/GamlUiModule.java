@@ -53,6 +53,7 @@ import com.google.inject.Binder;
 import com.google.inject.Provider;
 import com.google.inject.name.Names;
 
+import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.resource.GamlEncodingProvider;
 import msi.gama.lang.gaml.ui.contentassist.GamlTemplateProposalProvider;
@@ -63,17 +64,18 @@ import msi.gama.lang.gaml.ui.editor.GamaSourceViewerFactory;
 import msi.gama.lang.gaml.ui.editor.GamlDocumentProvider;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.lang.gaml.ui.editor.GamlEditor.GamaSourceViewerConfiguration;
-import msi.gama.lang.gaml.ui.editor.folding.GamaFoldingActionContributor;
-import msi.gama.lang.gaml.ui.editor.folding.GamaFoldingRegionProvider;
 import msi.gama.lang.gaml.ui.editor.GamlEditorTickUpdater;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.lang.gaml.ui.editor.GamlMarkOccurrenceActionContributor;
+import msi.gama.lang.gaml.ui.editor.folding.GamaFoldingActionContributor;
+import msi.gama.lang.gaml.ui.editor.folding.GamaFoldingRegionProvider;
 import msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration;
 import msi.gama.lang.gaml.ui.highlight.GamlReconciler;
 import msi.gama.lang.gaml.ui.highlight.GamlSemanticHighlightingCalculator;
 import msi.gama.lang.gaml.ui.hover.GamlDocumentationProvider;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
+import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
 import msi.gama.lang.gaml.ui.outline.GamlLinkWithEditorOutlineContribution;
 import msi.gama.lang.gaml.ui.outline.GamlOutlinePage;
 import msi.gama.lang.gaml.ui.outline.GamlSortOutlineContribution;
@@ -92,6 +94,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	@Override
 	public void configure(final Binder binder) {
+
 		super.configure(binder);
 		binder.bind(String.class).annotatedWith(
 				com.google.inject.name.Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
@@ -102,6 +105,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IModelRunner.class).to(ModelRunner.class);
 		binder.bind(XtextDocumentProvider.class).to(GamlDocumentProvider.class);
 		binder.bind(IMarkerUpdater.class).to(GamlMarkerUpdater.class);
+		binder.bind(IGamlLabelProvider.class).to(GamlLabelProvider.class).asEagerSingleton();
 	}
 
 	@Override
@@ -116,6 +120,12 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	public Class<? extends XtextSourceViewer.Factory> bindSourceViewerFactory() {
 		return GamaSourceViewerFactory.class;
+	}
+
+	@Override
+	@SingletonBinding(eager = true)
+	public Class<? extends org.eclipse.jface.viewers.ILabelProvider> bindILabelProvider() {
+		return msi.gama.lang.gaml.ui.labeling.GamlLabelProvider.class;
 	}
 
 	@Override

@@ -12,17 +12,17 @@
 package msi.gaml.expressions;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.OperatorProto;
-import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.statements.Arguments;
 import msi.gaml.types.Signature;
 
 /**
@@ -40,8 +40,7 @@ public interface IExpressionCompiler<T> {
 
 	public IExpression compile(final String expression, final IDescription parsingContext);
 
-	Map<String, IExpressionDescription> parseArguments(StatementDescription action, EObject eObject,
-			IDescription context, boolean compileArgValues);
+	Arguments parseArguments(ActionDescription action, EObject eObject, IDescription context, boolean compileArgValues);
 
 	/**
 	 * @param context

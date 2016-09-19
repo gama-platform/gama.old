@@ -29,4 +29,9 @@ public class SyntacticSingleElement extends AbstractSyntacticElement {
 		super(keyword, facets, statement);
 	}
 
+	@Override
+	public boolean hasChildren() {
+		return false;
+	}
+
 }

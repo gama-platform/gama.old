@@ -117,4 +117,8 @@ public interface ISyntacticElement {
 
 	public abstract void compact();
 
+	public abstract boolean hasChildren();
+
+	public abstract void visitAllChildren(SyntacticVisitor syntacticVisitor);
+
 }

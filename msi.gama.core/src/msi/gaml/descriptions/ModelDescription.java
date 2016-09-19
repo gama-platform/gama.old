@@ -54,6 +54,12 @@ public class ModelDescription extends SpeciesDescription {
 	public static final String MODEL_SUFFIX = "_model";
 	public static volatile ModelDescription ROOT;
 	private TOrderedHashMap<String, ExperimentDescription> experiments;
+	/**
+	 * If statements refer to a species, it will be stored here (rather than in
+	 * the statement).
+	 */
+	// private final THashMap<StatementDescription, SpeciesDescription>
+	// statementSpeciesReferences = new THashMap();
 	final TypesManager types;
 	private String modelFilePath;
 	private final String modelProjectPath;
@@ -202,9 +208,27 @@ public class ModelDescription extends SpeciesDescription {
 		}
 		super.dispose();
 		experiments = null;
+		// statementSpeciesReferences.clear();
 		types.dispose();
 
 	}
+
+	// public void addSpeciesReferencedBy(final StatementDescription sd, final
+	// SpeciesDescription species) {
+	// System.out.println(sd.toString() + " references " + species + " ; type "
+	// + sd.getType());
+	// statementSpeciesReferences.put(sd, species);
+	// }
+	//
+	// public boolean isSpeciesReferenceComputed(final StatementDescription sd)
+	// {
+	// return statementSpeciesReferences.containsKey(sd);
+	// }
+	//
+	// public SpeciesDescription getSpeciesReferencedBy(final
+	// StatementDescription sd) {
+	// return statementSpeciesReferences.get(sd);
+	// }
 
 	/**
 	 * Gets the model file name.

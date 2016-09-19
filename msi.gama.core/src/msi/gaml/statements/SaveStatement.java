@@ -73,6 +73,7 @@ import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
@@ -137,19 +138,26 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			final IType t = data.getType().getContentType();
 			final SpeciesDescription species = t.getSpecies();
-			final Collection<StatementDescription> args = desc.getArgs();
+			final Facets args = desc.getPassedArgs();
 			if (args == null || args.isEmpty()) {
 				return;
 			}
 			if (species == null) {
 				desc.error("No attributes can be saved for geometries", IGamlIssue.UNKNOWN_VAR, WITH);
 			} else {
-				for (final StatementDescription arg : args) {
-					if (!species.hasAttribute(arg.getName())) {
-						desc.error("Attribute " + arg.getName() + " is not defined for the agents of "
-								+ data.serialize(false), IGamlIssue.UNKNOWN_VAR, WITH);
+				args.forEachEntry(new FacetVisitor() {
+
+					@Override
+					public boolean visit(final String name, final IExpressionDescription exp) {
+						if (!species.hasAttribute(name)) {
+							desc.error(
+									"Attribute " + name + " is not defined for the agents of " + data.serialize(false),
+									IGamlIssue.UNKNOWN_VAR, WITH);
+							return false;
+						}
+						return true;
 					}
-				}
+				});
 			}
 		}
 

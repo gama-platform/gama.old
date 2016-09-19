@@ -5,6 +5,9 @@
 package ummisco.gama.ui.navigator;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -15,6 +18,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.part.FileEditorInput;
 
 import ummisco.gama.ui.resources.GamaColors;
@@ -43,7 +47,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 
 	@Override
 	public boolean canBeDecorated() {
-		return true;
+		return file.getName().contains(".gaml");
 	}
 
 	/**
@@ -78,8 +82,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 	 */
 	@Override
 	public Image getImage() {
-		// should be handled by the label provider
-		return null;
+		return WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider().getImage(getFile());
 	}
 
 	/**
@@ -119,9 +122,6 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 		return true;
 	}
 
-	/**
-	 * @return
-	 */
 	public IFile getFile() {
 		return file;
 	}
@@ -133,7 +133,17 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 	 */
 	@Override
 	public Object getAdapter(final Class adapter) {
-		return adapter == IFile.class ? file : null;
+		return adapter == IResource.class || adapter == IFile.class ? file : null;
+	}
+
+	@Override
+	public int findMaxProblemSeverity() {
+		final IFile file = getFile();
+		try {
+			return file.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+		} catch (final CoreException e) {
+		}
+		return -1;
 	}
 
 }

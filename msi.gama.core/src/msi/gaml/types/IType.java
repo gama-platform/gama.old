@@ -197,4 +197,6 @@ public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 	public boolean isDrawable();
 
 	public IType getWrappedType();
+
+	SpeciesDescription getDenotedSpecies();
 }

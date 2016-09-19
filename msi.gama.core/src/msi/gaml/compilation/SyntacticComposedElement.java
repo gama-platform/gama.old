@@ -58,15 +58,6 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 	}
 
 	@Override
-	protected void visitAllChildren(final SyntacticVisitor visitor) {
-		if (children != null) {
-			for (final ISyntacticElement e : children) {
-				visitor.visit(e);
-			}
-		}
-	}
-
-	@Override
 	public void visitChildren(final SyntacticVisitor visitor) {
 		visitAllChildren(visitor, OTHER_FILTER);
 	}
@@ -78,6 +69,11 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 					visitor.visit(e);
 			}
 		}
+	}
+
+	@Override
+	public boolean hasChildren() {
+		return children != null;
 	}
 
 }

@@ -188,7 +188,12 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	public void visitGrids(final SyntacticVisitor visitor) {
 	}
 
-	protected void visitAllChildren(final SyntacticVisitor visitor) {
+	@Override
+	public void visitAllChildren(final SyntacticVisitor visitor) {
+		visitGrids(visitor);
+		visitSpecies(visitor);
+		visitChildren(visitor);
+		// visitExperiments(visitor);
 	}
 
 }

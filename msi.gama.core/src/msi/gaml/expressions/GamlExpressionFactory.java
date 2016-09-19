@@ -15,9 +15,7 @@ import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -29,11 +27,11 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
@@ -148,10 +146,10 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public Map<String, IExpressionDescription> createArgumentMap(final StatementDescription action,
-			final IExpressionDescription args, final IDescription context) {
+	public Arguments createArgumentMap(final ActionDescription action, final IExpressionDescription args,
+			final IDescription context) {
 		if (args == null) {
-			return Collections.EMPTY_MAP;
+			return null;
 		}
 		return getParser().parseArguments(action, args.getTarget(), context, false);
 	}
@@ -286,8 +284,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IExpression createAction(final String op, final IDescription callerContext,
-			final StatementDescription action, final IExpression call, final Arguments arguments) {
+	public IExpression createAction(final String op, final IDescription callerContext, final ActionDescription action,
+			final IExpression call, final Arguments arguments) {
 		// Arguments args = createArgs(arguments);
 		if (action.verifyArgs(callerContext, arguments)) {
 			return new PrimitiveOperator(null, callerContext, action, call, arguments);

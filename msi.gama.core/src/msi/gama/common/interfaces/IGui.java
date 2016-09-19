@@ -152,4 +152,6 @@ public interface IGui {
 
 	void setMouseLocationInModel(ILocation modelCoordinates);
 
+	IGamlLabelProvider getGamlLabelProvider();
+
 }

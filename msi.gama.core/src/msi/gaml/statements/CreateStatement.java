@@ -12,7 +12,6 @@
 package msi.gaml.statements;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -46,6 +45,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -150,7 +150,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 					}
 				}
 			}
-			final SpeciesDescription species = cd.computeSpecies();
+			final SpeciesDescription species = cd.getType().getDenotedSpecies();
+			// final SpeciesDescription species =
+			// cd.getModelDescription().getSpeciesReferencedBy(cd);
 			if (species != null) {
 				if (species.isAbstract()) {
 					cd.error("Species " + species.getName() + " is abstract and cannot be instantiated",
@@ -220,17 +222,20 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		@Override
 		protected void serializeArgs(final StatementDescription desc, final StringBuilder sb,
 				final boolean ncludingBuiltIn) {
-			final Collection<StatementDescription> args = desc.getArgs();
+			final Facets args = desc.getPassedArgs();
 			if (args == null || args.isEmpty()) {
 				return;
 			}
 			sb.append("with: [");
-			for (final StatementDescription arg : args) {
-				final String name = arg.getName();
-				final IExpressionDescription def = arg.getFacet(VALUE);
-				sb.append(name).append("::").append(def.serialize(false));
-				sb.append(", ");
-			}
+			args.forEachEntry(new FacetVisitor() {
+
+				@Override
+				public boolean visit(final String name, final IExpressionDescription exp) {
+					sb.append(name).append("::").append(exp.serialize(false));
+					sb.append(", ");
+					return true;
+				}
+			});
 			sb.setLength(sb.length() - 2);
 			sb.append("]");
 		}

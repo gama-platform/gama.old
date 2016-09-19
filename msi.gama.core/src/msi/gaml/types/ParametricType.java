@@ -205,7 +205,18 @@ public class ParametricType implements IContainerType {
 	 */
 	@Override
 	public SpeciesDescription getSpecies() {
-		return type.getSpecies();
+		final SpeciesDescription result = type.getSpecies();
+		// if (result != null)
+		return result;
+		// return contentsType.getSpecies();
+	}
+
+	@Override
+	public SpeciesDescription getDenotedSpecies() {
+		final SpeciesDescription result = type.getSpecies();
+		if (result != null)
+			return result;
+		return contentsType.getSpecies();
 	}
 
 	/**

@@ -27,11 +27,13 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GAML;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamaFileMetaData;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
@@ -83,21 +85,30 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 			return ((VirtualContent) p).getNavigatorChildren();
 		}
 		if (p instanceof IFile) {
+
 			final String ctid = FileMetaDataProvider.getContentTypeId((IFile) p);
 			if (ctid.equals(FileMetaDataProvider.GAML_CT_ID)) {
+
 				final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, true);
 				if (metaData instanceof GamlFileInfo) {
 					final GamlFileInfo info = (GamlFileInfo) metaData;
-
 					final List l = new ArrayList();
+
+					l.add(new WrappedSyntacticContent(p, GAML
+							.getContents(URI.createPlatformResourceURI(((IFile) p).getFullPath().toOSString(), true))));
+
 					for (final String s : info.getExperiments()) {
 						l.add(new WrappedExperiment((IFile) p, s));
 					}
 					if (!info.getImports().isEmpty()) {
-						l.add(new WrappedFolder((IFile) p, info.getImports(), "Imports"));
+						final WrappedFolder wf = new WrappedFolder((IFile) p, info.getImports(), "Imports");
+						if (wf.getNavigatorChildren().length > 0)
+							l.add(wf);
 					}
 					if (!info.getUses().isEmpty()) {
-						l.add(new WrappedFolder((IFile) p, info.getUses(), "Uses"));
+						final WrappedFolder wf = new WrappedFolder((IFile) p, info.getUses(), "Uses");
+						if (wf.getNavigatorChildren().length > 0)
+							l.add(wf);
 					}
 					// addPluginsTo((IFile) p, l);
 					return l.toArray();

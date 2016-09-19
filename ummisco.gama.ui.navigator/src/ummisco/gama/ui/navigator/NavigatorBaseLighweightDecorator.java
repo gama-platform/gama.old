@@ -33,24 +33,15 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 			if (suffix != null && !suffix.isEmpty()) {
 				decoration.addSuffix(" (" + suffix + ")");
 			}
-			// Object thumbnail = data.getThumbnail();
-			// if ( thumbnail != null && thumbnail instanceof ImageDescriptor )
-			// {
-			// replaceImage(decoration, (ImageDescriptor) thumbnail);
-			// }
 		}
 	}
 
 	@Override
 	public void addListener(final ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -60,25 +51,6 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 
 	@Override
 	public void removeListener(final ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
-	// private void replaceImage(final IDecoration decoration, final
-	// ImageDescriptor thumbnail) {
-	// IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
-	// boolean doHack =
-	// mgr.getBaseLabelProvider("org.eclipse.ui.ContentTypeDecorator") != null
-	// &&
-	// mgr.getEnabled("org.eclipse.ui.ContentTypeDecorator");
-	// if ( !doHack && DecorationContext.DEFAULT_CONTEXT instanceof
-	// DecorationContext ) {
-	// ((DecorationContext)
-	// DecorationContext.DEFAULT_CONTEXT).putProperty(IDecoration.ENABLE_REPLACE,
-	// Boolean.TRUE);
-	// decoration.addOverlay(thumbnail, IDecoration.REPLACE);
-	// } else {
-	// decoration.addOverlay(thumbnail, IDecoration.TOP_LEFT);
-	// }
-	// }
 }

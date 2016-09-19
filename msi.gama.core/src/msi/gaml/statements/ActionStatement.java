@@ -93,8 +93,8 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		}
 
 		@Override
-		protected void serializeArg(final StatementDescription desc, final StatementDescription arg,
-				final StringBuilder sb, final boolean includingBuiltIn) {
+		protected void serializeArg(final IDescription desc, final IDescription arg, final StringBuilder sb,
+				final boolean includingBuiltIn) {
 			final String name = arg.getLitteral(NAME);
 			final IExpressionDescription type = arg.getFacet(TYPE);
 			final IExpressionDescription def = arg.getFacet(DEFAULT);
