@@ -14,6 +14,7 @@ package msi.gama.lang.gaml.ui.labeling;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.swt.graphics.Image;
@@ -119,8 +120,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider
 		// } else {
 		// text = key + " " + qn.toString();
 		// }
-
-		return text;
+		return StringUtils.capitalize(text);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider
 			}
 
 		}
-		return "attribute " + (name == null ? "" : name)
+		return "Attribute " + (name == null ? "" : name)
 				+ (type == null ? "" : " (" + type + ") " + (key == null ? "" : "(" + key + ") "));
 
 	}
@@ -172,13 +172,12 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider
 	 */
 	private String actionText(final Statement ele) {
 		final String type = EGaml.getKeyOf(ele);
-		final String key = IKeyword.ACTION;
 		final String name = EGaml.getNameOf(ele);
-		return key + " " + name + " " + (type.equals(IKeyword.ACTION) ? "" : " (" + type + ")");
+		return "Action " + name + " " + (type.equals(IKeyword.ACTION) ? "" : " (" + type + ")");
 	}
 
 	String text(final Model obj) {
-		return "model " + obj.getName();
+		return "Model " + obj.getName();
 	}
 
 	protected String parameterText(final Statement p) {
@@ -212,7 +211,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider
 				name = e.getOp();
 			}
 		}
-		return "parameter " + "\"" + name + "\""
+		return "Parameter " + "\"" + name + "\""
 				+ (var == null ? "" : " (" + var + ")" + (type == null ? "" : " (" + type + ")"));
 	}
 
