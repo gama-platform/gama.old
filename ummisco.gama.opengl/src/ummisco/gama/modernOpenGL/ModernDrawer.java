@@ -18,7 +18,6 @@ import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.modernOpenGL.shader.TextShaderProgram;
 import ummisco.gama.modernOpenGL.shader.postprocessing.AbstractPostprocessingShader;
 import ummisco.gama.modernOpenGL.shader.postprocessing.HorizontalBlurShader;
-import ummisco.gama.modernOpenGL.shader.postprocessing.InverseColorShader;
 import ummisco.gama.modernOpenGL.shader.postprocessing.KeystoneShaderProgram;
 import ummisco.gama.modernOpenGL.shader.postprocessing.VerticalBlurShader;
 import ummisco.gama.opengl.ModernRenderer;
@@ -421,11 +420,17 @@ public class ModernDrawer {
 	}
 	
 	private void updateTransformationMatrix(AbstractShader shaderProgram) {
-		shaderProgram.loadViewMatrix(renderer.camera);
+		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
+		shaderProgram.loadViewMatrix(viewMatrix);
 		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
 		shaderProgram.loadTransformationMatrix(getTransformationMatrix());
 		if (shaderProgram instanceof BillboardingTextShaderProgram) {
 			updateModelMatrix((BillboardingTextShaderProgram)shaderProgram);
+		}
+		else if (shaderProgram instanceof ShaderProgram) {
+			Matrix4f invViewMatrix = (Matrix4f) viewMatrix.clone();
+			invViewMatrix.invert();
+			((ShaderProgram)shaderProgram).loadInvViewMatrix(invViewMatrix);
 		}
 	}
 	
