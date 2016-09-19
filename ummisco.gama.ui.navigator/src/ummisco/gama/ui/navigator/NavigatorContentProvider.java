@@ -36,6 +36,8 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GAML;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamaFileMetaData;
+import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 
 public class NavigatorContentProvider extends WorkbenchContentProvider {
@@ -94,12 +96,22 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 					final GamlFileInfo info = (GamlFileInfo) metaData;
 					final List l = new ArrayList();
 
-					l.add(new WrappedSyntacticContent(p, GAML
-							.getContents(URI.createPlatformResourceURI(((IFile) p).getFullPath().toOSString(), true))));
+					final ISyntacticElement element = GAML
+							.getContents(URI.createPlatformResourceURI(((IFile) p).getFullPath().toOSString(), true));
 
-					for (final String s : info.getExperiments()) {
-						l.add(new WrappedExperiment((IFile) p, s));
-					}
+					l.add(new WrappedSyntacticContent(p, element));
+					element.visitExperiments(new SyntacticVisitor() {
+
+						@Override
+						public void visit(final ISyntacticElement element) {
+							l.add(new WrappedSyntacticContent(p, element));
+
+						}
+					});
+
+					// for (final String s : info.getExperiments()) {
+					// l.add(new WrappedExperiment((IFile) p, s));
+					// }
 					if (!info.getImports().isEmpty()) {
 						final WrappedFolder wf = new WrappedFolder((IFile) p, info.getImports(), "Imports");
 						if (wf.getNavigatorChildren().length > 0)

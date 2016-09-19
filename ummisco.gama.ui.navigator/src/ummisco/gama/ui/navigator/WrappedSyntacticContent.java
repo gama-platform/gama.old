@@ -59,7 +59,10 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 
 	@Override
 	public boolean handleDoubleClick() {
-		GAMA.getGui().editModel(element.getElement());
+		if (element.isExperiment()) {
+			GAMA.getGui().runModel(getParent(), element.getName());
+		} else
+			GAMA.getGui().editModel(element.getElement());
 		return true;
 	}
 

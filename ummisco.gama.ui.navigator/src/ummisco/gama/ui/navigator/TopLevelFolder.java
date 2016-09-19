@@ -169,6 +169,18 @@ public abstract class TopLevelFolder extends VirtualContent {
 		return IGamaColors.GRAY_LABEL.color();
 	}
 
+	public String getSuffix() {
+		int modelCount = 0;
+		for (final Object o : getNavigatorChildren()) {
+			modelCount += NavigatorBaseLighweightDecorator.countModels((IProject) o);
+		}
+
+		if (modelCount > 0) {
+			return String.valueOf(modelCount);
+		}
+		return " ";
+	}
+
 	/**
 	 * Method canBeDecorated()
 	 * 

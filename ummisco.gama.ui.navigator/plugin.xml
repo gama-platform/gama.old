@@ -50,6 +50,12 @@
                <objectClass
                      name="org.eclipse.core.resources.IProject">
                </objectClass>
+               <objectClass
+                     name="org.eclipse.core.resources.IFolder">
+               </objectClass>
+               <objectClass
+                     name="ummisco.gama.ui.navigator.TopLevelFolder">
+               </objectClass>
             </or>
          </enablement>
       </decorator>

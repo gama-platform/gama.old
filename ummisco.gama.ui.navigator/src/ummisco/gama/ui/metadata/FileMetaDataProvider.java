@@ -169,7 +169,10 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 		@Override
 		public String getSuffix() {
-			return comment;
+			if (comment == null || comment.isEmpty())
+				return "";
+			final String[] ss = comment.split("\\.");
+			return ss[ss.length - 1] + " plugin";
 		}
 
 		@Override
