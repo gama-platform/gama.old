@@ -29,7 +29,7 @@ import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.compilation.SyntacticModelElement;
+import msi.gaml.compilation.ast.SyntacticModelElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
@@ -179,11 +179,14 @@ public class GamlResourceServices {
 		ResourceSet rs = null;
 		Resource r = null;
 		if (existing != null) {
-			final EObject e = existing.getUnderlyingElement(null);
-			if (e != null) {
-				r = e.eResource();
-				if (r != null)
-					rs = r.getResourceSet();
+			final ModelDescription desc = existing.getModelDescription();
+			if (desc != null) {
+				final EObject e = desc.getUnderlyingElement(null);
+				if (e != null) {
+					r = e.eResource();
+					if (r != null)
+						rs = r.getResourceSet();
+				}
 			}
 		}
 		if (rs == null)

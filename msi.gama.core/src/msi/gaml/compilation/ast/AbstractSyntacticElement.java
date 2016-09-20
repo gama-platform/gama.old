@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gaml.compilation;
+package msi.gaml.compilation.ast;
 
 import java.util.Collections;
 import java.util.Map;

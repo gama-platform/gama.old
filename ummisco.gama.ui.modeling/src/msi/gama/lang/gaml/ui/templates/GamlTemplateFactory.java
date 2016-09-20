@@ -18,7 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.compilation.GamaSkillRegistry;
+import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.AbstractProto;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;

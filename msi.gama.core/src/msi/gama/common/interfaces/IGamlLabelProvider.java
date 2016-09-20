@@ -1,6 +1,6 @@
 package msi.gama.common.interfaces;
 
-import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
 
 public interface IGamlLabelProvider {
 

@@ -35,8 +35,8 @@ import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
-import msi.gaml.compilation.ISyntacticElement;
-import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
+import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -185,26 +185,26 @@ public class OtherExperimentsButton {
 	private static void recursiveFindGamaFiles(final ArrayList<URI> allGamaFiles, final IPath path,
 			final IWorkspaceRoot myWorkspaceRoot, final URI without) {
 		final IContainer container = myWorkspaceRoot.getContainerForLocation(path);
-
-		try {
-			final IResource[] iResources = container.members();
-			if (iResources != null)
-				for (final IResource iR : iResources) {
-					// for gama files
-					if ("gaml".equalsIgnoreCase(iR.getFileExtension())) {
-						final URI uri = URI.createPlatformResourceURI(iR.getFullPath().toString(), true);
-						if (!uri.equals(without)) {
-							allGamaFiles.add(uri);
+		if (container != null)
+			try {
+				final IResource[] iResources = container.members();
+				if (iResources != null)
+					for (final IResource iR : iResources) {
+						// for gama files
+						if ("gaml".equalsIgnoreCase(iR.getFileExtension())) {
+							final URI uri = URI.createPlatformResourceURI(iR.getFullPath().toString(), true);
+							if (!uri.equals(without)) {
+								allGamaFiles.add(uri);
+							}
+						}
+						if (iR.getType() == IResource.FOLDER) {
+							final IPath tempPath = iR.getLocation();
+							recursiveFindGamaFiles(allGamaFiles, tempPath, myWorkspaceRoot, without);
 						}
 					}
-					if (iR.getType() == IResource.FOLDER) {
-						final IPath tempPath = iR.getLocation();
-						recursiveFindGamaFiles(allGamaFiles, tempPath, myWorkspaceRoot, without);
-					}
-				}
-		} catch (final CoreException e) {
-			e.printStackTrace();
-		}
+			} catch (final CoreException e) {
+				e.printStackTrace();
+			}
 	}
 
 	/**

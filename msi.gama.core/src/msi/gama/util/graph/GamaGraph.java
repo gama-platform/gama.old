@@ -227,29 +227,31 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	protected void buildByEdge(final IScope scope, final IContainer edges) {
-		for (final Object p : edges.iterable(scope)) {
-			addEdge(p);
-			final Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
-			if (p2 instanceof IShape) {
-				final _Edge ed = getEdge(p2);
-				if (ed != null) {
-					ed.setWeight(((IShape) p2).getPerimeter());
+		if (edges != null)
+			for (final Object p : edges.iterable(scope)) {
+				addEdge(p);
+				final Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
+				if (p2 instanceof IShape) {
+					final _Edge ed = getEdge(p2);
+					if (ed != null) {
+						ed.setWeight(((IShape) p2).getPerimeter());
+					}
 				}
 			}
-		}
 	}
 
 	protected void buildByEdge(final IScope scope, final IContainer vertices, final Double tolerance) {
-		for (final Object p : vertices.iterable(scope)) {
-			addEdge(p);
-			final Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
-			if (p2 instanceof IShape) {
-				final _Edge ed = getEdge(p2);
-				if (ed != null) {
-					ed.setWeight(((IShape) p2).getPerimeter());
+		if (vertices != null)
+			for (final Object p : vertices.iterable(scope)) {
+				addEdge(p);
+				final Object p2 = p instanceof GraphObjectToAdd ? ((GraphObjectToAdd) p).getObject() : p;
+				if (p2 instanceof IShape) {
+					final _Edge ed = getEdge(p2);
+					if (ed != null) {
+						ed.setWeight(((IShape) p2).getPerimeter());
+					}
 				}
 			}
-		}
 	}
 
 	protected void buildByEdge(final IScope scope, final IContainer edges, final IContainer vertices) {
@@ -780,7 +782,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IList<E> computeBestRouteBetween(final IScope scope, final V source, final V target) {
-		if (source.equals(target)) return GamaListFactory.create(getType().getContentType());
+		if (source.equals(target))
+			return GamaListFactory.create(getType().getContentType());
 		switch (optimizerType) {
 		case 1:
 			if (optimizer == null) {
@@ -884,8 +887,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		spl.add(GamaListFactory.createWithoutCasting(getType().getContentType(), edges));
 		shortestPathComputed.put(new VertexPair<V>(source, target), spl);
 		final List<E> edges2 = GamaListFactory.create(scope, getType().getContentType(), edges);
-		for (int i = 0; i < edges.size();i++) {
-			E edge = edges2.remove(0);
+		for (int i = 0; i < edges.size(); i++) {
+			final E edge = edges2.remove(0);
 			if (edges2.isEmpty()) {
 				break;
 			}

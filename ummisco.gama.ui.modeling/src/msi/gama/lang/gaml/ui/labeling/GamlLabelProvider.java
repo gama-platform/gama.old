@@ -41,7 +41,7 @@ import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.ui.outline.GamlOutlineTreeProvider;
-import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
 
 /**
  * Provides labels for a EObjects.
@@ -279,7 +279,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider
 	}
 
 	/**
-	 * @see msi.gama.common.interfaces.IGamlLabelProvider#getText(msi.gaml.compilation.ISyntacticElement)
+	 * @see msi.gama.common.interfaces.IGamlLabelProvider#getText(msi.gaml.compilation.ast.ISyntacticElement)
 	 */
 	@Override
 	public String getText(final ISyntacticElement element) {
@@ -287,7 +287,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider
 	}
 
 	/**
-	 * @see msi.gama.common.interfaces.IGamlLabelProvider#getImage(msi.gaml.compilation.ISyntacticElement)
+	 * @see msi.gama.common.interfaces.IGamlLabelProvider#getImage(msi.gaml.compilation.ast.ISyntacticElement)
 	 */
 	@Override
 	public Object getImage(final ISyntacticElement element) {

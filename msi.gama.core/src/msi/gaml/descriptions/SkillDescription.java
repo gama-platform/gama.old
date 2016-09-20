@@ -7,7 +7,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.compilation.GamaBundleLoader;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.skills.Skill;
 

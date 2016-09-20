@@ -8,9 +8,9 @@ import org.eclipse.swt.graphics.Image;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.ISyntacticElement;
-import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
-import msi.gaml.compilation.SyntacticModelElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.compilation.ast.SyntacticModelElement;
+import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.resources.IGamaColors;
 
 public class WrappedSyntacticContent extends VirtualContent implements Comparable<WrappedSyntacticContent> {

@@ -277,15 +277,15 @@ public class Types {
 		if (builtInSpeciesTree != null)
 			return builtInSpeciesTree;
 		final ModelDescription root = ModelDescription.ROOT;
-		builtInSpeciesTree = new TypeTree(root.getSpeciesDescription(IKeyword.AGENT));
+		final TypeTree<SpeciesDescription> result = new TypeTree(root.getSpeciesDescription(IKeyword.AGENT));
 		final List<SpeciesDescription> speciesLeft = new ArrayList(getBuiltInSpecies());
 		while (!speciesLeft.isEmpty()) {
 			final List<SpeciesDescription> speciesToConsider = new ArrayList(speciesLeft);
 			for (final SpeciesDescription sd : speciesToConsider) {
-				if (builtInSpeciesTree.exists(sd))
+				if (result.exists(sd))
 					speciesLeft.remove(sd);
 				else {
-					final TypeNode node = builtInSpeciesTree.find(sd.getParent());
+					final TypeNode node = result.find(sd.getParent());
 					if (node != null) {
 						node.addChild(sd);
 						speciesLeft.remove(sd);
@@ -293,6 +293,7 @@ public class Types {
 				}
 			}
 		}
+		builtInSpeciesTree = result;
 		return builtInSpeciesTree;
 	}
 
@@ -300,10 +301,9 @@ public class Types {
 		if (builtInSpecies != null)
 			return builtInSpecies;
 		final ModelDescription root = ModelDescription.ROOT;
-		builtInSpecies = new ArrayList();
-		root.getAllSpecies(builtInSpecies);
-		// builtInSpecies.add((SpeciesDescription)
-		// root.getEnclosingDescription());
+		final List<SpeciesDescription> result = new ArrayList();
+		root.getAllSpecies(result);
+		builtInSpecies = result;
 		return builtInSpecies;
 
 	}

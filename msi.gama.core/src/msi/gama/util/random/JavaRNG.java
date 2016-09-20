@@ -96,7 +96,7 @@ public class JavaRNG extends GamaRNG {
 		for (int i = 0; i < 0 + 8; i++) {
 			final byte b = seed[i];
 			value <<= 8;
-			value += b;
+			value += b & 0xff;
 		}
 		return value;
 	}

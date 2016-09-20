@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gaml.compilation;
+package msi.gaml.compilation.kernel;
 
 import java.io.IOException;
 import java.net.URL;

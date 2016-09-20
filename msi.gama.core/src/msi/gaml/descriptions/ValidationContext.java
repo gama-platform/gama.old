@@ -136,7 +136,7 @@ public class ValidationContext implements Iterable<GamlCompilationError>, IDocMa
 	}
 
 	public Map<String, URI> getImportedErrorsAsStrings() {
-		final Map<String, URI> result = new TOrderedHashMap(importedErrors.size());
+		final Map<String, URI> result = new TOrderedHashMap(importedErrors == null ? 0 : importedErrors.size());
 		if (importedErrors != null)
 			for (final GamlCompilationError error : importedErrors) {
 				final URI uri = error.getURI();

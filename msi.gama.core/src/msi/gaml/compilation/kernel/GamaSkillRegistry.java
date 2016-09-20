@@ -1,4 +1,4 @@
-package msi.gaml.compilation;
+package msi.gaml.compilation.kernel;
 
 import java.util.Collection;
 import java.util.Collections;

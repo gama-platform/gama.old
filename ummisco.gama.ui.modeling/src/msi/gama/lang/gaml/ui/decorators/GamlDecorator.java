@@ -48,6 +48,16 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 
+		// if (element instanceof WrappedSyntacticContent) {
+		// boolean = ((WrappedSyntacticContent) element).find;
+		// if (markers.length > 0) {
+		// System.out.println("Markers found");
+		// final Map<String, Object> m = markers[0].getAttributes();
+		// if (m != null) {
+		// System.out.println("m");
+		// }
+		// }
+		// }
 		if (element instanceof VirtualContent) {
 			final VirtualContent element1 = (VirtualContent) element;
 			if (element1.canBeDecorated()) {
@@ -67,6 +77,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 			return;
 		}
 		try {
+
 			decoration.addOverlay(
 					DESCRIPTORS.get(resource.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)),
 					IDecoration.BOTTOM_LEFT);

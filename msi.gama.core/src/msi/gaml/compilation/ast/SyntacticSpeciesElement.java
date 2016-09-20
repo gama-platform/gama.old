@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gaml.compilation;
+package msi.gaml.compilation.ast;
 
 import org.eclipse.emf.ecore.EObject;
 

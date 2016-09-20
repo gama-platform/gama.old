@@ -17,7 +17,7 @@ import msi.gama.lang.gaml.gaml.Unary;
 import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
-import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.operators.IUnits;

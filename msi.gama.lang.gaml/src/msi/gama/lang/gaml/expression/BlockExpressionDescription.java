@@ -1,7 +1,7 @@
 package msi.gama.lang.gaml.expression;
 
 import msi.gama.util.GAML;
-import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;

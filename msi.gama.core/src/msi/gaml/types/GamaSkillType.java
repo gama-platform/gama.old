@@ -18,7 +18,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.GamaSkillRegistry;
+import msi.gaml.compilation.kernel.GamaSkillRegistry;
 
 /**
  * The type used for representing species objects (since they can be manipulated

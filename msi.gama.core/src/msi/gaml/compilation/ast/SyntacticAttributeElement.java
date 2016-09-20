@@ -1,4 +1,4 @@
-package msi.gaml.compilation;
+package msi.gaml.compilation.ast;
 
 import java.util.Set;
 

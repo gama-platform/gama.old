@@ -16,7 +16,7 @@ import org.eclipse.swt.widgets.Menu;
 import msi.gama.common.interfaces.INamed;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.compilation.GamaSkillRegistry;
+import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;

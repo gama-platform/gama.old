@@ -21,6 +21,7 @@ import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
 

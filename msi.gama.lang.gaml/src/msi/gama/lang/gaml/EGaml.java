@@ -62,7 +62,7 @@ import msi.gama.lang.gaml.gaml.impl.S_IfImpl;
 import msi.gama.lang.gaml.gaml.impl.StatementImpl;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.compilation.SyntacticFactory;
+import msi.gaml.compilation.ast.SyntacticFactory;
 
 /**
  * The class EGaml. A bunch of utilities to work with the various GAML

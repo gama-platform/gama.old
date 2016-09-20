@@ -27,7 +27,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 
-import msi.gaml.compilation.GamaBundleLoader;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -53,7 +53,7 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 				public boolean visit(final IResourceProxy proxy) throws CoreException {
 					if (isGamlFile[0])
 						return false;
-					isGamlFile[0] = proxy.getType() == IResource.FILE && proxy.getName().contains(".gaml");
+					isGamlFile[0] = proxy.getType() == IResource.FILE && proxy.getName().endsWith(".gaml");
 					return !isGamlFile[0];
 				}
 			}, IResource.NONE);

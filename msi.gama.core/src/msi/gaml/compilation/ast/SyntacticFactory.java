@@ -9,7 +9,7 @@
  * 
  * 
  **********************************************************************************************/
-package msi.gaml.compilation;
+package msi.gaml.compilation.ast;
 
 import static msi.gama.common.interfaces.IKeyword.EXPERIMENT;
 import static msi.gama.common.interfaces.IKeyword.GRID;

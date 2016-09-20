@@ -31,39 +31,40 @@ public class MainGenerateWiki {
 
 	/**
 	 * @param args
-	 * @throws IOException 
-	 * @throws JDOMException 
-	 * @throws TransformerException 
-	 * @throws SAXException 
-	 * @throws ParserConfigurationException 
-	 * @throws SVNException 
+	 * @throws IOException
+	 * @throws JDOMException
+	 * @throws TransformerException
+	 * @throws SAXException
+	 * @throws ParserConfigurationException
+	 * @throws SVNException
 	 */
-	public static void main(String[] args) 
-			throws IOException, JDOMException, ParserConfigurationException, SAXException, 
-					TransformerException, SVNException {
-		
+	public static void main(final String[] args) throws IOException, JDOMException, ParserConfigurationException,
+			SAXException, TransformerException, SVNException {
+
 		// build the file keywords.xml
 		GenerateCategoryXML.GenerateKeywordsXML();
-		
+
 		// generate the wiki documentation
 		System.out.println("GENERATION OF THE WIKI DOCUMENTATION FROM JAVA CODE");
 		System.out.println("Please notice that the docGAMA.xml files should have been previously generated..");
 		System.out.print("Preparation of the folders................");
 		PrepareEnv.prepareDocumentation(Constants.ONLINE);
 		System.out.println("DONE");
-		
-		System.out.print("Merge all the docGAMA.xml files................");		
+
+		System.out.print("Merge all the docGAMA.xml files................");
 		UnifyDoc.unify();
 		System.out.println("DONE");
-		
-		System.out.print("Transform the docGAMA.xml file into Wiki Files (md) and create/update them in the gama.wiki folder................");		
+
+		System.out.print(
+				"Transform the docGAMA.xml file into Wiki Files (md) and create/update them in the gama.wiki folder................");
 		XmlToWiki.createAllWikis();
 		XmlToWiki.createExtentionsWiki();
-		System.out.println("DONE");		
-		
-		// check the concept used, print a report and write it in the file "website generation"
+		System.out.println("DONE");
+
+		// check the concept used, print a report and write it in the file
+		// "website generation"
 		try {
-			CheckConcepts.CheckConcepts();
+			CheckConcepts.DoCheckConcepts();
 		} catch (IllegalArgumentException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

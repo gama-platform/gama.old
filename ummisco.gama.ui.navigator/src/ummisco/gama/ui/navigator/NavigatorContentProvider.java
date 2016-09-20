@@ -36,8 +36,8 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GAML;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamaFileMetaData;
-import msi.gaml.compilation.ISyntacticElement;
-import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
+import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 
 public class NavigatorContentProvider extends WorkbenchContentProvider {

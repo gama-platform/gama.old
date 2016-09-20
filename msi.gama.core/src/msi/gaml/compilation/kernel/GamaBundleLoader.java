@@ -9,7 +9,7 @@
  *
  *
  **********************************************************************************************/
-package msi.gaml.compilation;
+package msi.gaml.compilation.kernel;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -33,6 +33,7 @@ import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gaml.compilation.IGamlAdditions;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.Dates;

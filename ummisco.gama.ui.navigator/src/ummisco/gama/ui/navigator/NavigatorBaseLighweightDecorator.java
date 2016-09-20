@@ -60,7 +60,7 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 
 				@Override
 				public boolean visit(final IResourceProxy proxy) throws CoreException {
-					if (proxy.getType() == IResource.FILE && proxy.getName().contains(".gaml"))
+					if (proxy.getType() == IResource.FILE && proxy.getName().endsWith(".gaml"))
 						modelCount[0]++;
 					return true;
 				}

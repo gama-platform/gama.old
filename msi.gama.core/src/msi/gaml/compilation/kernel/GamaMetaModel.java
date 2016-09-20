@@ -1,4 +1,4 @@
-package msi.gaml.compilation;
+package msi.gaml.compilation.kernel;
 
 import static msi.gama.common.interfaces.IKeyword.AGENT;
 import static msi.gama.common.interfaces.IKeyword.EXPERIMENT;
@@ -18,6 +18,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.util.TOrderedHashMap;
+import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.factories.DescriptionFactory;

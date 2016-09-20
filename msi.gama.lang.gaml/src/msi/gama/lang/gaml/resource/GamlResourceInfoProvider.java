@@ -24,8 +24,8 @@ import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
-import msi.gaml.compilation.GamaBundleLoader;
-import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 
 @Singleton
 public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {

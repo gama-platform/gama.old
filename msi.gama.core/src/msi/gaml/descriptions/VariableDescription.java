@@ -54,7 +54,8 @@ public class VariableDescription extends SymbolDescription {
 			facets.putAsLabel(TYPE, keyword);
 		}
 		_isGlobal = superDesc instanceof ModelDescription;
-		_isNotModifiable = facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE) && !isParameter();
+		_isNotModifiable = facets != null && facets.containsKey(FUNCTION)
+				|| facets.equals(CONST, TRUE) && !isParameter();
 		addDependenciesNames(dependencies);
 	}
 

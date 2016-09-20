@@ -2,7 +2,7 @@ package msi.gama.util.file;
 
 import org.eclipse.emf.common.util.URI;
 
-import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
 
 public interface IGamlResourceInfoProvider {
 
