@@ -40,7 +40,7 @@ public class AxesLayerObject extends StaticLayerObject.World {
 			
 			// build labels
 			GamaFont font = new GamaFont("Helvetica",0,30); // 0 for plain, 18 for default text size.
-			TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(1,1,1),null,p.times(0.0).yNegated(),COLORS[i],font,false);
+			TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(1,1,1),null,p.times(1.2).yNegated(),COLORS[i],font,false);
 			StringObject strObj = new StringObject(LABELS[i], textDrawingAttr, this);
 			list.add(strObj);
 			
