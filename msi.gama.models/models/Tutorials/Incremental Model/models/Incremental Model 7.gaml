@@ -117,7 +117,7 @@ species building {
 			capture entering_people as: people_in_building ;
  		}
 	}
-	equation SIR{ 
+	equation SI{ 
 		diff(S,t) = (- beta * S * I / T) ;
 		diff(I,t) = (  beta * S * I / T) ;
 	}
@@ -129,7 +129,7 @@ species building {
     	I <- T-S;
     	float I0 <- I;
     	if (I > 0 and S > 0) {
-    		solve SIR method: "rk4" step: h;
+    		solve SI method: "rk4" step: h;
     		I_to1 <- I_to1 + (I - I0);
     		int I_int <- min([int(S),int(I_to1)]);
 	    	I_to1 <- I_to1 - I_int;
