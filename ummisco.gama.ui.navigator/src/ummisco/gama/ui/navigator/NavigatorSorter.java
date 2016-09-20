@@ -6,6 +6,7 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerSorter;
 
 import msi.gama.common.interfaces.IKeyword;
+import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedExperimentContent;
 
 public class NavigatorSorter extends ViewerSorter {
 
@@ -34,7 +35,7 @@ public class NavigatorSorter extends ViewerSorter {
 	public int category(final Object e2) {
 		if (e2 instanceof WrappedFolder)
 			return -1;
-		if (e2 instanceof WrappedExperiment)
+		if (e2 instanceof WrappedExperimentContent)
 			return 100;
 		if (e2 instanceof WrappedSyntacticContent) {
 			final WrappedSyntacticContent w = (WrappedSyntacticContent) e2;

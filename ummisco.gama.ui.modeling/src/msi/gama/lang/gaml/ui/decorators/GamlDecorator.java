@@ -51,8 +51,9 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 		if (element instanceof WrappedSyntacticContent) {
 			final WrappedSyntacticContent element1 = (WrappedSyntacticContent) element;
-			if (element1.canBeDecorated())
-				decoration.addOverlay(DESCRIPTORS.get(element1.findMaxProblemSeverity()), IDecoration.BOTTOM_LEFT);
+			final int severity = element1.decorationSeverity();
+			if (severity != -1)
+				decoration.addOverlay(DESCRIPTORS.get(severity), IDecoration.BOTTOM_LEFT);
 			return;
 		}
 		if (element instanceof VirtualContent) {

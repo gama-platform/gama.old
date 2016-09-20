@@ -11,29 +11,130 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
+import gnu.trove.map.hash.TObjectIntHashMap;
+import gnu.trove.procedure.TObjectIntProcedure;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
-import msi.gaml.compilation.ast.SyntacticModelElement;
 import ummisco.gama.ui.resources.IGamaColors;
 
 public class WrappedSyntacticContent extends VirtualContent implements Comparable<WrappedSyntacticContent> {
 
-	final ISyntacticElement element;
-	final String uriFragment;
+	public static class WrappedModelContent extends WrappedSyntacticContent {
 
-	public WrappedSyntacticContent(final Object root, final ISyntacticElement e) {
-		super(root, e instanceof SyntacticModelElement ? "Contents" : GAMA.getGui().getGamlLabelProvider().getText(e));
+		TObjectIntHashMap<String> uriProblems;
+
+		public WrappedModelContent(final IFile file, final ISyntacticElement e) {
+			super(file, e, "Contents");
+			try {
+				final IMarker[] markers = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+				for (final IMarker marker : markers) {
+					final String s = marker.getAttribute("URI_KEY", null);
+					final int severity = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+					if (uriProblems == null)
+						uriProblems = new TObjectIntHashMap<String>();
+					uriProblems.put(s, severity);
+				}
+			} catch (final CoreException ce) {
+			}
+		}
+
+		@Override
+		public int getURIProblem(final String fragment) {
+			final IFile file = (IFile) getParent();
+			if (uriProblems == null)
+				return -1;
+			final int[] severity = new int[] { -1 };
+			uriProblems.forEachEntry(new TObjectIntProcedure<String>() {
+
+				@Override
+				public boolean execute(final String s, final int arg1) {
+					if (s.startsWith(fragment)) {
+						severity[0] = arg1;
+						return false;
+					}
+					return true;
+				}
+
+			});
+			return severity[0];
+
+		}
+
+		@Override
+		public boolean hasChildren() {
+			return true;
+		}
+
+	}
+
+	public static class WrappedExperimentContent extends WrappedSyntacticContent {
+
+		TObjectIntHashMap<String> uriProblems;
+
+		public WrappedExperimentContent(final IFile file, final ISyntacticElement e) {
+			super(file, e, GAMA.getGui().getGamlLabelProvider().getText(e));
+			try {
+				final IMarker[] markers = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+				for (final IMarker marker : markers) {
+					final String s = marker.getAttribute("URI_KEY", null);
+					final int severity = marker.getAttribute(IMarker.SEVERITY, IMarker.SEVERITY_INFO);
+					if (uriProblems == null)
+						uriProblems = new TObjectIntHashMap<String>();
+					uriProblems.put(s, severity);
+				}
+			} catch (final CoreException ce) {
+			}
+		}
+
+		@Override
+		public int getURIProblem(final String fragment) {
+			final IFile file = (IFile) getParent();
+			if (uriProblems == null)
+				return -1;
+			final int[] severity = new int[] { -1 };
+			uriProblems.forEachEntry(new TObjectIntProcedure<String>() {
+
+				@Override
+				public boolean execute(final String s, final int arg1) {
+					if (s.startsWith(fragment)) {
+						severity[0] = arg1;
+						return false;
+					}
+					return true;
+				}
+
+			});
+			return severity[0];
+
+		}
+
+		@Override
+		public boolean hasChildren() {
+			return true;
+		}
+
+	}
+
+	final ISyntacticElement element;
+	final String uri;
+
+	WrappedSyntacticContent(final WrappedSyntacticContent parent, final ISyntacticElement e) {
+		this(parent, e, GAMA.getGui().getGamlLabelProvider().getText(e));
+	}
+
+	public WrappedSyntacticContent(final Object root, final ISyntacticElement e, final String name) {
+		super(root, GAMA.getGui().getGamlLabelProvider().getText(e));
 		element = e;
-		uriFragment = element == null ? null : EcoreUtil.getURI(element.getElement()).toString();
+		uri = element == null ? null : EcoreUtil.getURI(element.getElement()).toString();
 	}
 
 	@Override
 	public boolean hasChildren() {
 		if (!element.hasChildren())
 			return false;
-		if (element.isSpecies() || element.isExperiment() || element instanceof SyntacticModelElement)
+		if (element.isSpecies() || element.isExperiment())
 			return true;
 		return false;
 	}
@@ -91,31 +192,15 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 
 	@Override
 	public boolean canBeDecorated() {
-		return isURIAProblem(uriFragment);
+		return decorationSeverity() > 0;
 	}
 
-	public boolean isURIAProblem(final String fragment) {
-		if (getParent() instanceof WrappedSyntacticContent)
-			return ((WrappedSyntacticContent) getParent()).isURIAProblem(fragment);
-		else {
-			final IFile file = (IFile) getParent();
-			try {
-				final IMarker[] markers = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
-				if (markers.length == 0)
-					return false;
-				for (final IMarker marker : markers) {
-					final String s = marker.getAttribute("URI_KEY", null);
-					if (s == null)
-						return false;
-					if (s.startsWith(fragment))
-						return true;
-					return false;
-				}
-			} catch (final CoreException e) {
-				return false;
-			}
-		}
-		return false;
+	public int decorationSeverity() {
+		return getURIProblem(uri);
+	}
+
+	public int getURIProblem(final String fragment) {
+		return ((WrappedSyntacticContent) getParent()).getURIProblem(fragment);
 	}
 
 	@Override
