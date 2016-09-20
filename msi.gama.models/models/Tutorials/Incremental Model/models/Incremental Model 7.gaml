@@ -97,8 +97,6 @@ species building {
 	}
 	
 	species people_in_building parent: people schedules: [] {
-		aspect circle{}
-		aspect sphere3D{}
 	}
 	
 	reflex let_people_leave  {
@@ -150,7 +148,7 @@ experiment main_experiment type:gui{
 		monitor "Current hour" value: current_hour;
 		monitor "Infected people rate" value: infected_rate;
 		display map_3D type: opengl {
-			light 1 color:(is_night ? 50 : 255) update:true;
+			light 1 color:(is_night ? 50 : 255);
 			image "../includes/soil.jpg";
 			species road aspect:geom;
 			species people aspect:sphere3D;			
