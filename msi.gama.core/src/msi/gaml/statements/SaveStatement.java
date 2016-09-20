@@ -490,7 +490,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 									+ ag.getLocation().getX() + ";" + ag.getLocation().getY() + ";"
 									+ ag.getLocation().getZ());
 							for (final String v : attributeNames) {
-								fw.write(";" + Cast.toGaml(ag.getDirectVarValue(scope, v)).replace(';', ','));
+								String val = Cast.toGaml(ag.getDirectVarValue(scope, v)).replace(';', ',');
+								if ((val.startsWith("'") && val.endsWith("'"))|| (val.startsWith("\"")) &&  val.endsWith("\"")) val = val.substring(1, val.length()-1);
+								fw.write(";" +  val);
 							}
 							fw.write(Strings.LN);
 						}
@@ -498,9 +500,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					}
 				} else {
 					for (int i = 0; i < values.size() - 1; i++) {
-						fw.write(Cast.toGaml(values.get(i)).replace(',', ';') + ",");
+						String val = Cast.toGaml(values.get(i)).replace(';', ',');
+						if ((val.startsWith("'") && val.endsWith("'"))|| (val.startsWith("\"")) &&  val.endsWith("\"")) val = val.substring(1, val.length()-1);
+						fw.write(val + ",");
+						//fw.write(Cast.toGaml(values.get(i)).replace(',', ';') + ",");
 					}
-					fw.write(Cast.toGaml(values.lastValue(scope)).replace(',', ';') + Strings.LN);
+					String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
+					if ((val.startsWith("'") && val.endsWith("'"))|| (val.startsWith("\"")) &&  val.endsWith("\"")) val = val.substring(1, val.length()-1);
+					fw.write(val + Strings.LN);
+					//fw.write(Cast.toGaml(values.lastValue(scope)).replace(',', ';') + Strings.LN);
 				}
 
 			}
