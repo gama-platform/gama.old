@@ -3,23 +3,30 @@ package ummisco.gama.ui.navigator;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import msi.gaml.compilation.ast.SyntacticModelElement;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
+import msi.gaml.compilation.ast.SyntacticModelElement;
 import ummisco.gama.ui.resources.IGamaColors;
 
 public class WrappedSyntacticContent extends VirtualContent implements Comparable<WrappedSyntacticContent> {
 
 	final ISyntacticElement element;
+	final String uriFragment;
 
 	public WrappedSyntacticContent(final Object root, final ISyntacticElement e) {
 		super(root, e instanceof SyntacticModelElement ? "Contents" : GAMA.getGui().getGamlLabelProvider().getText(e));
 		element = e;
+		uriFragment = element == null ? null : EcoreUtil.getURI(element.getElement()).toString();
 	}
 
 	@Override
@@ -80,6 +87,40 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 		} else
 			return getName().compareTo(o.getName());
 
+	}
+
+	@Override
+	public boolean canBeDecorated() {
+		return isURIAProblem(uriFragment);
+	}
+
+	public boolean isURIAProblem(final String fragment) {
+		if (getParent() instanceof WrappedSyntacticContent)
+			return ((WrappedSyntacticContent) getParent()).isURIAProblem(fragment);
+		else {
+			final IFile file = (IFile) getParent();
+			try {
+				final IMarker[] markers = file.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_ZERO);
+				if (markers.length == 0)
+					return false;
+				for (final IMarker marker : markers) {
+					final String s = marker.getAttribute("URI_KEY", null);
+					if (s == null)
+						return false;
+					if (s.startsWith(fragment))
+						return true;
+					return false;
+				}
+			} catch (final CoreException e) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int findMaxProblemSeverity() {
+		return IMarker.SEVERITY_ERROR;
 	}
 
 }

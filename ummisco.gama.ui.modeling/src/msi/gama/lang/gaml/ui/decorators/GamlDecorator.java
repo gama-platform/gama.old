@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import ummisco.gama.ui.navigator.NavigatorLabelProvider;
 import ummisco.gama.ui.navigator.VirtualContent;
+import ummisco.gama.ui.navigator.WrappedSyntacticContent;
 import ummisco.gama.ui.resources.GamaIcons;
 
 /**
@@ -48,16 +49,12 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
 
-		// if (element instanceof WrappedSyntacticContent) {
-		// boolean = ((WrappedSyntacticContent) element).find;
-		// if (markers.length > 0) {
-		// System.out.println("Markers found");
-		// final Map<String, Object> m = markers[0].getAttributes();
-		// if (m != null) {
-		// System.out.println("m");
-		// }
-		// }
-		// }
+		if (element instanceof WrappedSyntacticContent) {
+			final WrappedSyntacticContent element1 = (WrappedSyntacticContent) element;
+			if (element1.canBeDecorated())
+				decoration.addOverlay(DESCRIPTORS.get(element1.findMaxProblemSeverity()), IDecoration.BOTTOM_LEFT);
+			return;
+		}
 		if (element instanceof VirtualContent) {
 			final VirtualContent element1 = (VirtualContent) element;
 			if (element1.canBeDecorated()) {
