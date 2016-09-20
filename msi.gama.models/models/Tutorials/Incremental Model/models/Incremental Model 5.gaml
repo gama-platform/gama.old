@@ -82,7 +82,7 @@ species road {
 	}
 }
 
-species building skills:[moving] {
+species building {
 	float height <- 10#m + rnd(10) #m;
 	aspect geom {
 		draw shape color: #gray depth: height;
