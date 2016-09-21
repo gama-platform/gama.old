@@ -10,11 +10,11 @@ import "../../../../Toy Models/Flood Simulation/models/Hydrological Model.gaml"
 experiment "Adapter" type: gui
 {
 	point newSize <- { 0.07, 0.07 };
-	cell get_cell_at (geometry p)
+	cell get_cell_at (point p)
 	{
 		ask simulation
 		{
-			return cell closest_to p;
+			return cell at p;
 		}
 
 	}
