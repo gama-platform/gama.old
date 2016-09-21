@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 import gnu.trove.set.hash.TLinkedHashSet;
@@ -70,22 +69,6 @@ public class SpeciesDescription extends TypeDescription {
 	private SpeciesConstantExpression speciesExpr;
 	protected Class javaBase;
 	protected boolean canUseMinimalAgents = true;
-	static final Function<SkillDescription, Class<? extends ISkill>> SKILLS_TO_CLASSES = new Function<SkillDescription, Class<? extends ISkill>>() {
-
-		@Override
-		public Class<? extends ISkill> apply(final SkillDescription input) {
-			return input.getJavaBase();
-		}
-
-	};
-	static final Function<SkillDescription, String> SKILLS_TO_NAMES = new Function<SkillDescription, String>() {
-
-		@Override
-		public String apply(final SkillDescription input) {
-			return input.getName();
-		}
-
-	};
 
 	public SpeciesDescription(final String keyword, final SpeciesDescription macroDesc, final ChildrenProvider cp,
 			final EObject source, final Facets facets) {
@@ -229,7 +212,7 @@ public class SpeciesDescription extends TypeDescription {
 			return;
 		}
 		for (final IDescription v : AbstractGamlAdditions.getAllChildrenOf(getJavaBase(),
-				Iterables.transform(getSkills(), SKILLS_TO_CLASSES))) {
+				Iterables.transform(getSkills(), TO_CLASS))) {
 			if (isBuiltIn())
 				v.setOriginName("built-in species " + getName());
 			if (v instanceof VariableDescription) {
@@ -525,7 +508,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public Iterable<String> getSkillsNames() {
-		return Iterables.concat(Iterables.transform(skills == null ? Collections.EMPTY_LIST : skills, SKILLS_TO_NAMES),
+		return Iterables.concat(Iterables.transform(skills == null ? Collections.EMPTY_LIST : skills, TO_NAME),
 				parent != null && parent != this ? getParent().getSkillsNames() : Collections.EMPTY_LIST);
 
 	}
@@ -829,6 +812,7 @@ public class SpeciesDescription extends TypeDescription {
 		return false;
 	}
 
+	@Override
 	public Class<? extends IAgent> getJavaBase() {
 		if (javaBase == null) {
 			if (parent != null && parent != this && !getParent().getName().equals(AGENT)) {

@@ -21,6 +21,7 @@ import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.ITyped;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
@@ -40,6 +41,15 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		public String apply(final IDescription input) {
 			return input.getName();
 		}
+	};
+
+	static final Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = new Function<TypeDescription, Class<? extends ISkill>>() {
+
+		@Override
+		public Class<? extends ISkill> apply(final TypeDescription input) {
+			return input.getJavaBase();
+		}
+
 	};
 
 	public static abstract class DescriptionVisitor<T extends IDescription> implements TObjectProcedure<T> {

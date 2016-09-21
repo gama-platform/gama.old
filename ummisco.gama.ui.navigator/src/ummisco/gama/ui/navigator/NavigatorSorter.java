@@ -9,6 +9,9 @@ import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedExperimentConten
 
 public class NavigatorSorter extends ViewerSorter {
 
+	public NavigatorSorter() {
+	}
+
 	public NavigatorSorter(final Collator collator) {
 		super(collator);
 	}

@@ -74,6 +74,8 @@ public abstract class TypeDescription extends SymbolDescription {
 		return plugin;
 	}
 
+	public abstract Class getJavaBase();
+
 	/**
 	 * ==================================== MANAGEMENT OF VARIABLES
 	 */
