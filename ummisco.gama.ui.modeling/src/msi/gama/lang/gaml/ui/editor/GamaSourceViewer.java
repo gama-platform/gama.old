@@ -53,6 +53,7 @@ public class GamaSourceViewer extends XtextSourceViewer {
 
 			@Override
 			public void process(final XtextResource state) throws Exception {
+				if(state!=null)
 				GamlResourceServices.addResourceListener(state.getURI(), listener);
 			}
 		});
