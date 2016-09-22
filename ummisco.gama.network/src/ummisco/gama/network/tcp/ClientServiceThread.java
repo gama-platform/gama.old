@@ -93,8 +93,11 @@ public class ClientServiceThread extends Thread {
 				// msgs = (GamaList<String>) myAgent.getAttribute("messages" +
 				// myClientSocket.toString());
 				// }
+				clientCommand = clientCommand.replaceAll( "@n@","\n");
+				clientCommand = clientCommand.replaceAll( "@b@@r@","\b\r");
+				ConnectorMessage msg = NetworkMessage.unPackMessage(myClientSocket.toString(),clientCommand);
 
-				NetworkMessage msg=new NetworkMessage(myClientSocket.toString(), clientCommand);
+//				NetworkMessage msg=new NetworkMessage(myClientSocket.toString(), clientCommand);
 				msgs.addValue(myAgent.getScope(), msg);
 				
 //				final GamaMailbox mailbox = (GamaMailbox) myAgent.getAttribute("messaging_skill_mailbox");

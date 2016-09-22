@@ -20,7 +20,7 @@ global {
 	//The wind vector, representing as a vector of two values : the direction (in degree) and its intensity
 	point wind;
 	//The pseudo of the user, used to identify the client by the server
-	string pseudo<-"myPseudo";
+	string pseudo<-"myPseudo2";
 	
 	init
 	{
@@ -319,11 +319,11 @@ experiment launchClient type: gui {
 			event["q"] action: doBulletLeft;
 			event["e"] action: doBulletRight;
 			*/
-			event["w"] action: doUp;
-			event["a"] action: doLeft;
-			event["d"] action: doRight;
-			event["q"] action: doBulletLeft;
-			event["e"] action: doBulletRight;
+			event["8"] action: doUp;
+			event["4"] action: doLeft;
+			event["6"] action: doRight;
+			event["7"] action: doBulletLeft;
+			event["9"] action: doBulletRight;
 		}
 	}
 }

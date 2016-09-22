@@ -282,10 +282,10 @@ species ship skills:[moving]
 	string killer;
 	
 	//Action to process a message to update the ship
-	action doAction(string message)
+	action doAction(string msg)
 	{
 		//If the message is up, will move the boat according to its direction and the wind vector
-		if(message="up")
+		if(msg="up")
 		{
 			//Computation of the wind factor on the speed of the ship
 			float diff_wind<-abs(heading-wind.x);
@@ -303,7 +303,7 @@ species ship skills:[moving]
 			do move speed: (speed*2)*factor heading: heading bounds: free_space;
 		}
 		//If the message is right, will set the direction a little bit on the right and move the boat according to its direction and the wind vector
-		if(message="right")
+		if(msg="right")
 		{
 			self.heading<-self.heading+rotation_max;
 			//Computation of the wind factor on the speed of the ship
@@ -322,7 +322,7 @@ species ship skills:[moving]
 			do move speed: speed*factor heading: heading bounds: free_space;
 		}
 		//If the message is left, will set the direction a little bit on the left and move the boat according to its direction and the wind vector
-		if(message="left")
+		if(msg="left")
 		{
 			self.heading<-self.heading-rotation_max;
 			//Computation of the wind factor on the speed of the ship
@@ -343,7 +343,7 @@ species ship skills:[moving]
 		}
 		
 		//if the message is bulletleft, will make the ship shoot a bullet on the left part of the ship
-		if(message="bulletleft")
+		if(msg="bulletleft")
 		{
 			//Will allow the shoot only if the step between the cycle and the last shooting cycle is equals to 1.5
 			if(cycle-last_cycle_shooting>15)
@@ -369,7 +369,7 @@ species ship skills:[moving]
 			}
 		}
 		//if the message is bulletleft, will make the ship shoot a bullet on the left part of the ship
-		if(message="bulletright")
+		if(msg="bulletright")
 		{
 			if(cycle-last_cycle_shooting>15)
 			{

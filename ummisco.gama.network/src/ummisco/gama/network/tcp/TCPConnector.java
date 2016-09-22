@@ -89,7 +89,7 @@ public class TCPConnector extends Connector {
 		}
 	}
 	
-	public void sendToClient(final IAgent agent, final String cli, final Object data) throws GamaRuntimeException {
+	public void sendToClient(final IAgent agent, final String cli, final String data) throws GamaRuntimeException {
 		try {
 			ClientServiceThread c = ((ClientServiceThread) agent.getAttribute(_TCP_CLIENT + cli));
 			Socket sock = null;
@@ -108,7 +108,7 @@ public class TCPConnector extends Connector {
 		}
 	}
 
-	public void sendToServer(final IAgent agent, Object data) throws GamaRuntimeException {
+	public void sendToServer(final IAgent agent, String data) throws GamaRuntimeException {
 		OutputStream ostream = null;
 		ClientServiceThread c = ((ClientServiceThread) agent.getAttribute(_TCP_SOCKET));
 		Socket sock = null;
@@ -129,14 +129,14 @@ public class TCPConnector extends Connector {
 
 	}
 
-	@Override
-	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
-		if (is_server) {
-			sendToClient(sender, receiver, content.getContents(myScope));
-		} else {
-			sendToServer(sender, content.getContents(myScope));
-		}
-	}
+//	@Override
+//	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
+//		if (is_server) {
+//			sendToClient(sender, receiver, content.getContents(myScope));
+//		} else {
+//			sendToServer(sender, content.getContents(myScope));
+//		}
+//	}
 
 	@Override
 	public List<ConnectorMessage> fetchMessageBox(IAgent agent) {
@@ -199,8 +199,13 @@ public class TCPConnector extends Connector {
 
 	@Override
 	protected void sendMessage(IAgent sender, String receiver, String content) throws GamaNetworkException {
-
-		// content = content.replaceAll("(\r|\n)", "");
+		content = content.replaceAll("\b\r", "@b@@r@");
+		content = content.replaceAll("\n", "@n@");
+		if (is_server) {
+			sendToClient(sender, receiver, content);
+		} else {
+			sendToServer(sender, content);
+		}
 		// if(is_server){
 		// primSendToClient(sender, receiver, content);
 		// }else{
