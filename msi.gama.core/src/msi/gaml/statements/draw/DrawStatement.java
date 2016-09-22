@@ -68,7 +68,7 @@ import msi.gaml.types.Types;
 		@facet(name = AT, type = IType.POINT, optional = true, doc = @doc("location where the shape/text/icon is drawn")),
 		@facet(name = SIZE, type = { IType.FLOAT,
 				IType.POINT }, optional = true, doc = @doc("size of the object to draw, expressed as a bounding box (width, height, depth). If expressed as a float, represents the size in the three directions. ")),
-		@facet(name = COLOR, type = IType.COLOR, optional = true, doc = @doc("the color to use to display the object. In case of images, will try to colorize it")),
+		@facet(name = COLOR, type = { IType.COLOR, IType.CONTAINER}, optional = true, doc = @doc("the color to use to display the object. In case of images, will try to colorize it. You can also pass a list of colors : in that case, each color will be matched to its corresponding vertex.")),
 		@facet(name = ROTATE, type = { IType.FLOAT, IType.INT,
 				IType.PAIR }, index = IType.FLOAT, of = IType.POINT, optional = true, doc = @doc("orientation of the shape/text/icon; can be either an int/float (angle) or a pair float::point (angle::rotation axis). The rotation axis, when expressed as an angle, is by defaut {0,0,1}")),
 		@facet(name = FONT, type = { IType.FONT,

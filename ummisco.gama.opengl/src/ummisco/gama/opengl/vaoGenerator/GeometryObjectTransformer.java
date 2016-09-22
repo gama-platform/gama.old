@@ -25,6 +25,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 		// for GeometryObject
 		genericInit(geomObj, isTriangulation);
 		
+		this.colors = (ArrayList)(geomObj.getAttributes().getColors());
 		this.isLightInteraction = (geomObj.isLightInteraction() && !is1DShape() && !isWireframe);
 
 		this.textureIDs = textureIds;
