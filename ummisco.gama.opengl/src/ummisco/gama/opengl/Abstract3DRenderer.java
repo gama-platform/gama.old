@@ -48,6 +48,7 @@ import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.SceneBuffer;
 import ummisco.gama.opengl.vaoGenerator.DrawingEntityGenerator;
+import ummisco.gama.opengl.vaoGenerator.ShapeCache;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -146,6 +147,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		super(d);
 		camera = new CameraArcBall(this);
 		sceneBuffer = new SceneBuffer(this);
+		ShapeCache.freedShapeCache();
 	}
 
 	public GLAutoDrawable createDrawable(final Composite parent) {

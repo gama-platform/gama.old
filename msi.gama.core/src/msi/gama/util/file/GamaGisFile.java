@@ -33,6 +33,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	protected IProjection gis;
 	protected Integer initialCRSCode = null;
 	protected String initialCRSCodeStr = null;
+	protected boolean with3D = false;
 
 	// Faire les tests sur ALREADY_PROJECTED ET LE PASSER AUSSI A GIS UTILS ???
 
@@ -76,6 +77,12 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		gis = pf.fromCRS(crs, env);
 	}
 
+	public GamaGisFile(final IScope scope, final String pathName, final Integer code, final boolean withZ) {
+		super(scope, pathName);
+		initialCRSCode = code;
+		with3D = withZ;
+	}
+	
 	public GamaGisFile(final IScope scope, final String pathName, final Integer code) {
 		super(scope, pathName);
 		initialCRSCode = code;
@@ -84,6 +91,12 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	public GamaGisFile(final IScope scope, final String pathName, final String code) {
 		super(scope, pathName);
 		initialCRSCodeStr = code;
+	}
+	
+	public GamaGisFile(final IScope scope, final String pathName, final String code, final boolean withZ) {
+		super(scope, pathName);
+		initialCRSCodeStr = code;
+		with3D = withZ;
 	}
 
 	/**
