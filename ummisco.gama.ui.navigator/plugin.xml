@@ -299,6 +299,11 @@
             id="msi.gama.application.commands.OpenFile"
             name="Open File">
       </command>
+      <command
+            defaultHandler="ummisco.gama.ui.commands.PasteIntoModelsHandler"
+            id="ummisco.gama.ui.navigator.paste"
+            name="Paste in Users Models">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.viewer">
@@ -573,5 +578,29 @@ properties="cbready"
 type="java.lang.Object">
 </propertyTester>
 </extension>
+    <extension
+         point="org.eclipse.ui.handlers">
+      <handler
+            class="ummisco.gama.ui.commands.PasteIntoModelsHandler"
+            commandId="org.eclipse.ui.edit.paste">
+         <activeWhen>
+            <and>
+            <iterate
+                  ifEmpty="true"
+                  operator="and">
+               <instanceof
+                     value="ummisco.gama.ui.navigator.UserProjectsFolder">
+               </instanceof>
+               </iterate>
+               <with variable="activePartId">
+        			<equals value="msi.gama.gui.view.GamaNavigator"/>
+    			</with>
+               <test
+                     property="ummisco.gama.cbready">
+               </test>
+            </and>
+         </activeWhen>
+      </handler>
+   </extension>
 
 </plugin>

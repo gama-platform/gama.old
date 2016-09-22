@@ -47,6 +47,7 @@ public class PasteIntoModelsHandler extends AbstractHandler {
 						op.setVirtualFolders(false);
 						op.copyFiles(new String[] { name }, container);
 					}
+					RefreshHandler.run(container);
 				} catch (final CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -58,6 +59,7 @@ public class PasteIntoModelsHandler extends AbstractHandler {
 							WorkbenchHelper.getShell());
 					op.setVirtualFolders(false);
 					op.copyFiles(new String[] { name }, container);
+					RefreshHandler.run(container);
 				} catch (final CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

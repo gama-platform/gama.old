@@ -335,7 +335,8 @@ public class WorkspaceModelsManager {
 				modelFolder.create(true, true, null);
 			}
 		} else {
-			final IContainer container = (IContainer) dialog.getResult()[0];
+			final IContainer container =
+				(IContainer) ResourcesPlugin.getWorkspace().getRoot().findMember((IPath) dialog.getResult()[0]);
 			if ( container instanceof IProject ) {
 				project = (IProject) container;
 				modelFolder = project.getFolder(new Path("models"));
