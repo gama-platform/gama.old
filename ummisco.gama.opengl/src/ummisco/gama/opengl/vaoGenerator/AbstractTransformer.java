@@ -30,31 +30,11 @@ abstract class AbstractTransformer {
 	protected boolean isTriangulation = false;
 	protected boolean isLightInteraction = true;
 	protected boolean isWireframe = false;
-	protected ArrayList<int[]> faces = new ArrayList<int[]>(); // way to
-																// construct a
-																// face from the
-																// indices of
-																// the
-																// coordinates
-																// (anti
-																// clockwise for
-																// front face)
-	private final ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); // list
-																			// that
-																			// store
-																			// all
-																			// the
-																			// edges
-																			// erased
-																			// thanks
-																			// to
-																			// the
-																			// smooth
-																			// shading
-																			// (those
-																			// edges
-																			// must
-	// not be displayed when displaying the borders !)
+	protected ArrayList<int[]> faces = new ArrayList<int[]>(); 
+	// (way to construct a face from the indices of the coordinates (anti clockwise for front face) )
+	private final ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); 
+	// (list that store all the edges erased thanks to the smooth shading (those edges must
+	// not be displayed when displaying the borders !) )
 	protected float[] coords;
 	protected Coordinate[] coordsWithDoublons;
 	protected float[] uvMapping;
@@ -109,19 +89,20 @@ abstract class AbstractTransformer {
 
 	public String getHashCode() {
 		// returns the hashcode used in the shape cache.
-		String result;
+		String result = null;
 		if (type.toString().equals("SPHERE") || type.toString().equals("PYRAMID") || type.toString().equals("CONE")
-				|| type.toString().equals("CUBE") || type.toString().equals("CYLINDER")) {
-			result = type.toString() + (isWireframe ? "_wireframe" : "");
-		} else {
-			String coordsInString = "";
-			for (final Coordinate c : coordsWithDoublons) {
-				coordsInString += c.x;
-				coordsInString += c.y;
-				coordsInString += c.z;
-			}
-			result = type.toString() + coordsInString;
-		}
+				|| type.toString().equals("CUBE") || type.toString().equals("CYLINDER") || type.toString().equals("RECTANGLE")) {
+			result = type.toString() + (isWireframe ? "_wireframe" : "") + depth;
+		} 
+//		else {
+//			String coordsInString = "";
+//			for (final Coordinate c : coordsWithDoublons) {
+//				coordsInString += c.x;
+//				coordsInString += c.y;
+//				coordsInString += c.z;
+//			}
+//			result = type.toString() + coordsInString;
+//		}
 		return result;
 	}
 

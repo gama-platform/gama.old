@@ -17,7 +17,16 @@ public class ShapeCache {
 		return mapPreloadedShapes.get(shapeName);
 	}
 	
+	public static synchronized void freedShapeCache() {
+		while (fifo.size()>0) {
+			fifo.remove();
+		}
+	}
+	
 	public static synchronized boolean isLoaded(String shapeName) {
+		if (shapeName == null) {
+			return false;
+		}
 		return mapPreloadedShapes.keySet().contains(shapeName);
 	}
 	
@@ -27,7 +36,7 @@ public class ShapeCache {
 			String idx = fifo.removeLast();
 			mapPreloadedShapes.remove(idx);
 		}
-		if (!shapeName.startsWith("POINT"))
+		if (shapeName != null)
 		{
 			// the "point" type is a bit particular to handle, plus there is no need to
 			// keep such a simple geometry in the cache.
