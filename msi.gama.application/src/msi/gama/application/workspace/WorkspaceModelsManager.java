@@ -317,39 +317,45 @@ public class WorkspaceModelsManager {
 
 	public static String UNCLASSIFIED_MODELS = "Unclassified Models";
 
-	private IFile createUnclassifiedModelsProjectAndAdd(final IPath location) {
+	public IFolder createUnclassifiedModelsProject(final IPath location) throws CoreException {
 		// First allow to select a parent folder
 		final ContainerSelectionDialog dialog = new ContainerSelectionDialog(Display.getDefault().getActiveShell(),
-			null, false, "Select a parent project:");
+			null, false, "Select a parent project or cancel to create a new project:");
 		dialog.setTitle("Project selection");
 		dialog.showClosedProjects(false);
 
 		final int result = dialog.open();
 		IProject project;
 		IFolder modelFolder;
-		IFile iFile = null;
-		try {
-			if ( result == MessageDialog.CANCEL ) {
-				project = createOrUpdateProject(UNCLASSIFIED_MODELS);
+
+		if ( result == MessageDialog.CANCEL ) {
+			project = createOrUpdateProject(UNCLASSIFIED_MODELS);
+			modelFolder = project.getFolder(new Path("models"));
+			if ( !modelFolder.exists() ) {
+				modelFolder.create(true, true, null);
+			}
+		} else {
+			final IContainer container = (IContainer) dialog.getResult()[0];
+			if ( container instanceof IProject ) {
+				project = (IProject) container;
 				modelFolder = project.getFolder(new Path("models"));
 				if ( !modelFolder.exists() ) {
 					modelFolder.create(true, true, null);
 				}
 			} else {
-				final IContainer container = (IContainer) dialog.getResult()[0];
-				if ( container instanceof IProject ) {
-					project = (IProject) container;
-					modelFolder = project.getFolder(new Path("models"));
-					if ( !modelFolder.exists() ) {
-						modelFolder.create(true, true, null);
-					}
-				} else {
-					project = container.getProject();
-					modelFolder = (IFolder) container;
-				}
-
+				project = container.getProject();
+				modelFolder = (IFolder) container;
 			}
 
+		}
+
+		return modelFolder;
+	}
+
+	private IFile createUnclassifiedModelsProjectAndAdd(final IPath location) {
+		IFile iFile = null;
+		try {
+			final IFolder modelFolder = createUnclassifiedModelsProject(location);
 			iFile = modelFolder.getFile(location.lastSegment());
 			if ( iFile.exists() ) {
 				if ( iFile.isLinked() ) {
@@ -520,7 +526,7 @@ public class WorkspaceModelsManager {
 
 	}
 
-	static private IProject createOrUpdateProject(final String name) {
+	static public IProject createOrUpdateProject(final String name) {
 		final IWorkspace ws = ResourcesPlugin.getWorkspace();
 		final IProject[] projectHandle = new IProject[] { null };
 		final WorkspaceModifyOperation op = new WorkspaceModifyOperation() {
@@ -637,6 +643,18 @@ public class WorkspaceModelsManager {
 			e.printStackTrace();
 		}
 		return gamaStamp;
+	}
+
+	public boolean isGamaProject(final File f) throws CoreException {
+		for ( final String s : f.list() ) {
+			if ( s.equals(".project") ) {
+				IPath p = new Path(f.getAbsolutePath());
+				p = p.append(".project");
+				final IProjectDescription pd = ResourcesPlugin.getWorkspace().loadProjectDescription(p);
+				if ( pd.hasNature(this.GAMA_NATURE) ) { return true; }
+			}
+		}
+		return false;
 	}
 
 }

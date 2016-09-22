@@ -50,7 +50,7 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 
 				@Override
 				public boolean execute(final String s, final int arg1) {
-					if (s.startsWith(fragment)) {
+					if (s != null && s.startsWith(fragment)) {
 						severity[0] = arg1;
 						return false;
 					}

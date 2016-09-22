@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target name="GAMA target platform" sequenceNumber="24">
+<?pde version="3.8"?><target name="GAMA target platform" sequenceNumber="25">
 <locations>
 <location path="${eclipse_home}" type="Profile"/>
-<location includeAllPlatforms="true" includeConfigurePhase="true" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
 <unit id="org.eclipse.rcp.feature.group" version="4.5.2.v20160212-1500"/>
 <unit id="org.eclipse.rcp.source.feature.group" version="4.5.2.v20160212-1500"/>
 <repository location="http://download.eclipse.org/eclipse/updates/4.5"/>
 </location>
+<location includeAllPlatforms="true" includeConfigurePhase="false" includeMode="slicer" includeSource="true" type="InstallableUnit">
+<unit id="org.eclipse.core.expressions" version="3.5.0.v20150421-2214"/>
+</location>
 </locations>
 </target>
- 

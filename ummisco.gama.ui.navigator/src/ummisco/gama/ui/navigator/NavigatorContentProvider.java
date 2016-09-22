@@ -216,4 +216,5 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 		super.inputChanged(viewer, null, ResourcesPlugin.getWorkspace());
 	}
+
 }

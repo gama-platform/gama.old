@@ -11,16 +11,19 @@
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.PlatformObject;
 
 public class NavigatorRoot extends PlatformObject {
 
 	@Override
 	public Object getAdapter(final Class adapter) {
-		if ( adapter == IResource.class || adapter == IContainer.class ) { return ResourcesPlugin.getWorkspace()
-			.getRoot(); }
-		return null;
+		if (adapter == IResource.class || adapter == IContainer.class) {
+			return ResourcesPlugin.getWorkspace().getRoot();
+		}
+		return super.getAdapter(adapter);
 	}
 
 }

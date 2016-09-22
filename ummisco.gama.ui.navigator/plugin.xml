@@ -163,16 +163,16 @@
                style="push">
             <visibleWhen
                   checkEnabled="true">
-               <and>
-                  <iterate>
-                     <adapt
-                           type="org.eclipse.core.resources.IProject">
-                     </adapt>
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="false"
+                        operator="and">
+                     <instanceof
+                           value="org.eclipse.core.resources.IProject">
+                     </instanceof>
                   </iterate>
-                  <count
-                        value="+">
-                  </count>
-               </and>
+               </with>
             </visibleWhen>
          </command>
          <separator
@@ -315,9 +315,6 @@
                   pattern="org.eclipse.ui.navigator.resources.UndoRedoActionProvider">
             </actionExtension>
             <actionExtension
-                  pattern="org.eclipse.ui.navigator.resources.PropertiesActionProvider">
-            </actionExtension>
-            <actionExtension
                   pattern="org.eclipse.ui.navigator.resources.RefactorActions">
             </actionExtension>
             <actionExtension
@@ -333,6 +330,9 @@
             </actionExtension>
             <actionExtension
                   pattern="org.eclipse.ui.navigator.resources.WorkingSetActionProvider">
+            </actionExtension>
+            <actionExtension
+                  pattern="org.eclipse.ui.navigator.resources.PropertiesActionProvider">
             </actionExtension>
          </excludes>
       </viewerActionBinding>
@@ -361,6 +361,9 @@
             class="org.eclipse.ui.navigator.resources.ResourceDragAdapterAssistant"
             viewerId="msi.gama.gui.view.GamaNavigator">
       </dragAssistant>
+      <viewer
+            viewerId="msi.gama.gui.view.GamaNavigator">
+      </viewer>
    </extension>
    <extension
          point="org.eclipse.ui.navigator.navigatorContent">
@@ -431,13 +434,29 @@
                class="ummisco.gama.ui.navigator.NavigatorDropAssistant"
                id="msi.gama.application.dropAssistant1">
             <possibleDropTargets>
-               <or>
-                  <instanceof
-                        value="ummisco.gama.ui.navigator.VirtualContent">
-                  </instanceof>
-               </or>
+               <instanceof
+                     value="java.lang.Object">
+               </instanceof>
             </possibleDropTargets>
          </dropAssistant>
+         <actionProvider
+               class="ummisco.gama.ui.navigator.NavigatorActionprovider">
+            <enablement>
+               <and>
+                  <or>
+                     <instanceof
+                           value="ummisco.gama.ui.navigator.NavigatorRoot">
+                     </instanceof>
+                     <instanceof
+                           value="ummisco.gama.ui.navigator.UserProjectsFolder">
+                     </instanceof>
+                  </or>
+                  <test
+                        property="ummisco.gama.cbready">
+                  </test>
+               </and>
+            </enablement>
+         </actionProvider>
       </navigatorContent>
       <commonFilter
             activeByDefault="true"
@@ -544,5 +563,15 @@
                serviceClass="msi.gama.util.file.IFileMetaDataProvider"></service>
       </serviceFactory>
    </extension>
+   <extension
+point="org.eclipse.core.expressions.propertyTesters">
+<propertyTester
+class="ummisco.gama.ui.navigator.ClipboardTester"
+id="ummisco.gama.clipboard.tester"
+namespace="ummisco.gama"
+properties="cbready"
+type="java.lang.Object">
+</propertyTester>
+</extension>
 
 </plugin>

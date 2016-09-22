@@ -127,6 +127,8 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		} catch (final CoreException e) {
 			e.printStackTrace();
 		}
+		getViewSite().getActionBars().setGlobalActionHandler(ActionFactory.PASTE.getId(), PasteAction.INSTANCE);
+		getViewSite().getActionBars().updateActionBars();
 	}
 
 	@Override
