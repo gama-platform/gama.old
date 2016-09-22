@@ -5,6 +5,7 @@
 package msi.gaml.statements.draw;
 
 import java.awt.Color;
+import java.util.List;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -70,6 +71,7 @@ public class DrawingData {
 	Boolean currentEmpty;
 	GamaColor currentBorder = null;
 	GamaColor currentColor;
+	IList<GamaColor> currentColors;
 	GamaFont currentFont;
 	IList currentTextures = null;
 	GamaMaterial currentMaterial = null;
@@ -77,8 +79,8 @@ public class DrawingData {
 
 	public DrawingData(final IExpression sizeExp, final IExpression depthExp, final IExpression rotationExp,
 			final IExpression locationExp, final IExpression emptyExp, final IExpression borderExp,
-			final IExpression colorExp, final IExpression fontExp, final IExpression textureExp, final IExpression materialExp,
-			final IExpression perspectiveExp) {
+			final IExpression colorExp, final IExpression fontExp, final IExpression textureExp, 
+			final IExpression materialExp, final IExpression perspectiveExp) {
 		this.sizeExp = sizeExp;
 		this.depthExp = depthExp;
 		this.rotationExp = rotationExp;
@@ -248,7 +250,11 @@ public class DrawingData {
 		// if (constantColor != null) {
 		// currentColor = constantColor;
 		// } else {
-		if (colorExp != null) {
+		if (colorExp != null && Cast.asColor(scope, colorExp.value(scope)) != null) {
+			IList<GamaColor> val = Cast.asList(scope, colorExp.value(scope));
+			if (val.get(0) instanceof GamaColor) {
+				currentColors = val;
+			}
 			currentColor = Cast.asColor(scope, colorExp.value(scope));
 		} else {
 			currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());

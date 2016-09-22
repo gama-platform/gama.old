@@ -59,6 +59,8 @@ public abstract class DrawingAttributes {
 	public abstract AgentIdentifier getAgentIdentifier();
 
 	public abstract GamaColor getBorder();
+	
+	public List<GamaColor> getColors() {return null;}
 
 	public abstract double getDepth();
 	

@@ -44,6 +44,7 @@ abstract class AbstractTransformer {
 	protected int[][][] bufferedImageValue = null;
 	protected float[] coordsForBorder;
 	protected float[] idxForBorder;
+	protected ArrayList<Integer> listVertexInsideGeom = new ArrayList<Integer>();
 
 	private HashMap<Integer, Integer> mapOfOriginalIdx = new HashMap<Integer, Integer>();
 
@@ -58,6 +59,7 @@ abstract class AbstractTransformer {
 	protected GamaPair<Double, GamaPoint> rotation;
 	protected GamaPoint size;
 	protected GamaColor color;
+	protected ArrayList<GamaColor> colors;
 	protected GamaColor borderColor;
 	protected Coordinate[] coordinates;
 	protected GamaMaterial material;
@@ -266,13 +268,136 @@ abstract class AbstractTransformer {
 			edgesToSmooth.add(edge);
 		}
 	}
-
+	
 	protected void triangulate() {
 		for (int i = 0; i < faces.size(); i++) {
-			final int[] faceTriangulated = triangulateFace(faces.get(i));
+			final int[] faceTriangulated = ear_cutting_triangulatation(faces.get(i));
 			faces.remove(i);
 			faces.add(i, faceTriangulated);
 		}
+	}
+	
+	private boolean is_principal_vertex(int vertex_i, int[] line, int[] tempPolygon) {
+		// returns true if the vertex "vertex_i" from the list "tempPolygon" is a principal vertex, ..
+		// .. which means that the diagonal ["vertex_i-1" "vertex_i+1"] intersects the boundary of the polygon ..
+		// .. tempPolygon only at "vertex_i-1" and "vertex_i+1".
+		float[] firstLine = new float[]{
+				coords[line[0]*3], // x value for first point
+				coords[line[0]*3+1], // y value for first point
+				coords[line[1]*3], // x value for second point
+				coords[line[1]*3+1], // y value for second point
+		};
+		for (int i = 0 ; i < tempPolygon.length ; i++) {
+			// eliminate all the 3 vertices that compose the supposing ear (already handeled by the firstLine)
+			if (tempPolygon[i] != line[0] && tempPolygon[i] != vertex_i && tempPolygon[i] != line[1]) {
+				// we build the second line as a diagonal between tempPolygon[i-1] and tempPolygon[i+1]
+				int v_i_minus_1 = (i == 0) ? tempPolygon[tempPolygon.length-1] : tempPolygon[i-1];
+				int v_i_plus_1 = (i == tempPolygon.length-1) ? tempPolygon[0] : tempPolygon[i+1];
+				if (v_i_minus_1 != line[1] && v_i_plus_1 != line[0]) {
+					float[] secondLine = new float[]{
+						coords[v_i_minus_1*3], // x value for first point
+						coords[v_i_minus_1*3+1], // y value for first point
+						coords[v_i_plus_1*3], // x value for second point
+						coords[v_i_plus_1*3+1], // y value for second point
+					};
+					if (intersects_segment(firstLine,secondLine)) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+	
+	private boolean intersects_segment(float[] coords_first_seg, float[] coords_second_seg) {
+		float p0_x = coords_first_seg[0];
+		float p0_y = coords_first_seg[1];
+		float p1_x = coords_first_seg[2];
+		float p1_y = coords_first_seg[3]; 
+		float p2_x = coords_second_seg[0];
+		float p2_y = coords_second_seg[1];
+		float p3_x = coords_second_seg[2];
+		float p3_y = coords_second_seg[3];
+	    float s1_x, s1_y, s2_x, s2_y;
+	    s1_x = p1_x - p0_x;     s1_y = p1_y - p0_y;
+	    s2_x = p3_x - p2_x;     s2_y = p3_y - p2_y;
+
+	    float s, t;
+	    s = (-s1_y * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y);
+	    t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y);
+
+	    if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
+	    {
+	        // Collision detected
+	        return true;
+	    }
+
+	    return false; // No collision
+	}
+	
+	private boolean is_ear(int[] ear, boolean isClockwise) {
+		// returns true if the triangle (ear[0],ear[1],ear[2]) is an ear of the polygon tempPolygon, ..
+		// .. which means that the segment [ear[0],ear[2]] is inside the polygon tempPolygon.
+		float[] earCoords = new float[]{coords[ear[0]*3],coords[ear[0]*3+1],coords[ear[0]*3+2],
+				coords[ear[1]*3],coords[ear[1]*3+1],coords[ear[1]*3+2],
+				coords[ear[2]*3],coords[ear[2]*3+1],coords[ear[2]*3+2],};
+		return !isClockwise(earCoords);// == isClockwise;
+	}
+	
+	public static boolean isClockwise(final float[] vertices) {
+		double sum = 0.0;
+		for (int i = 0; i < vertices.length/3; i++) {
+			final float[] v1 = new float[]{vertices[i*3],vertices[i*3+1],vertices[i*3+2]};
+			final float[] v2 = new float[]{vertices[i*3],vertices[i*3+1],vertices[i*3+2]};
+			sum += (v2[0] - v1[0]) * (v2[1] + v1[1]);
+		}
+		return sum > 0.0;
+	}
+	
+	protected int[] ear_cutting_triangulatation(final int[] face) {
+		float[] polygonCoords = new float[face.length*3];
+		for (int i = 0 ; i < face.length ; i++) {
+			polygonCoords[3*i] = coords[face[i]*3];
+			polygonCoords[3*i+1] = coords[face[i]*3+1];
+			polygonCoords[3*i+2] = coords[face[i]*3+2];
+		}
+		boolean isClockwise = isClockwise(polygonCoords);
+		final int[] result = new int[(face.length - 2) * 3];
+		int[] tempPolygon = face;
+		int position_in_result = 0;
+		while (tempPolygon.length > 3) {
+			// the polygon has at least 2 ears.
+			for (int i = 0; i < tempPolygon.length ; i++) {
+				int vertex_i = tempPolygon[i];
+				int vertex_i_minus_1 = (i == 0) ? tempPolygon[tempPolygon.length-1] : tempPolygon[i-1];
+				int vertex_i_plus_1 = (i == tempPolygon.length-1) ? tempPolygon[0] : tempPolygon[i+1];
+				if (is_principal_vertex(vertex_i,new int[]{vertex_i_minus_1,vertex_i_plus_1},tempPolygon)) {
+					if (is_ear(new int[]{vertex_i_minus_1,vertex_i,vertex_i_plus_1}	,isClockwise)) {
+						// add the ear to the triangulate list,
+						result[position_in_result*3] = vertex_i_minus_1;
+						result[position_in_result*3+1] = vertex_i;
+						result[position_in_result*3+2] = vertex_i_plus_1;
+						// .. and remove the ear from the polygon.
+						int[] newPolygon = new int[tempPolygon.length-1];
+						int pointer = 0;
+						for (int j = 0 ; j < tempPolygon.length ; j++) {
+							if (j != i) {
+								newPolygon[pointer] = tempPolygon[j];
+								pointer++;
+							}
+						}
+						tempPolygon = newPolygon;
+						position_in_result++;
+						break;
+					}
+				}
+			}
+		}
+		// add the last polygon (it is automatically a ear)
+		result[result.length-3] = tempPolygon[0];
+		result[result.length-2] = tempPolygon[1];
+		result[result.length-1] = tempPolygon[2];
+		return result;
 	}
 
 	private int[] triangulateFace(final int[] face) {
@@ -370,15 +495,33 @@ abstract class AbstractTransformer {
 	protected float[] getColorArray(final GamaColor gamaColor, final float[] coordsArray) {
 		final int verticesNb = coordsArray.length / 3;
 		float[] result = null;
-		final float[] color = new float[] { (float) gamaColor.red() / 255f, (float) gamaColor.green() / 255f,
-				(float) gamaColor.blue() / 255f, (float) gamaColor.alpha() / 255f };
 		result = new float[verticesNb * 4];
-		for (int i = 0; i < verticesNb; i++) {
-			result[4 * i] = color[0];
-			result[4 * i + 1] = color[1];
-			result[4 * i + 2] = color[2];
-			result[4 * i + 3] = color[3];
+		if (colors != null) {
+			// the case where a list of color has been passed for the geometry object
+			for (int i = 0; i < verticesNb; i++) {
+				float[] color = new float[] { (float) colors.get(0).red() / 255f, (float) colors.get(0).green() / 255f,
+						(float) colors.get(0).blue() / 255f, (float) colors.get(0).alpha() / 255f };
+				if (i < colors.size()) {
+					color = new float[] { (float) colors.get(i).red() / 255f, (float) colors.get(i).green() / 255f,
+							(float) colors.get(i).blue() / 255f, (float) colors.get(i).alpha() / 255f };
+				}
+				result[4 * i] = color[0];
+				result[4 * i + 1] = color[1];
+				result[4 * i + 2] = color[2];
+				result[4 * i + 3] = color[3];
+			}
 		}
+		else {
+			final float[] color = new float[] { (float) gamaColor.red() / 255f, (float) gamaColor.green() / 255f,
+				(float) gamaColor.blue() / 255f, (float) gamaColor.alpha() / 255f };
+			for (int i = 0; i < verticesNb; i++) {
+				result[4 * i] = color[0];
+				result[4 * i + 1] = color[1];
+				result[4 * i + 2] = color[2];
+				result[4 * i + 3] = color[3];
+			}
+		}
+		
 		return result;
 	}
 

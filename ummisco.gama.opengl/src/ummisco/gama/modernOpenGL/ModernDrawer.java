@@ -31,7 +31,6 @@ public class ModernDrawer {
 	private boolean textureWith4Coordinates = false;
 	
 	private FrameBufferObject fbo_scene;
-	private FrameBufferObject current_fbo;
 	private int[] fboHandles;
 
 	private LayerObject currentLayer;
@@ -265,7 +264,6 @@ public class ModernDrawer {
 		if (!lastEffect) {
 			outputFbo = new FrameBufferObject(gl, (int)(2*renderer.getDisplayWidth()/renderer.getZoomLevel()), (int)(2*renderer.getDisplayHeight()/renderer.getZoomLevel()), effectNumber);
 		}
-		current_fbo = outputFbo;
 		
 		// unbind the last fbo
 		inputFbo.unbindCurrentFrameBuffer();
@@ -358,10 +356,6 @@ public class ModernDrawer {
 		float[] p1 = new float[]{-1,1};  // top-left
 		float[] p2 = new float[]{1,1};   // top-right
 		float[] p3 = new float[]{1,-1};  // bottom-right
-		// -1 1
-		// -1 -1
-		// 1 -1
-		// 1 1
 		if (renderer.data.getKeystone() != null) {
 			// when the user is choosing his own values, the order has to be : top-left, top-right, bot-left, bot-right, with y axis inversed.
 			p0 = new float[]{(float) renderer.data.getKeystone().get(2).getX(),-(float) renderer.data.getKeystone().get(2).getY()};
