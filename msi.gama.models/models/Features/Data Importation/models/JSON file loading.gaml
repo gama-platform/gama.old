@@ -1,7 +1,7 @@
 /**
 * Name: JSON File Loading
 * Author:  Arnaud Grignard
-* Description: INstancaite a grid from a JSON FIle. 
+* Description: Initialize a grid from a JSON FIle. 
 * Tags:  load_file, grid, json
 */
 
@@ -23,9 +23,8 @@ global {
 grid cityMatrix width:16  height:16{
 	rgb color <- #black;
 	int type;
-
-   aspect base{	
-    	draw shape color:rgb(type*30) border:#black ;
+   	aspect base{	
+    		draw shape color:rgb(type*30) border:#black ;
     }
 }
 
