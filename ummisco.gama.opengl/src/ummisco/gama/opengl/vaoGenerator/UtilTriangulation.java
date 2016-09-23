@@ -1,5 +1,13 @@
 package ummisco.gama.opengl.vaoGenerator;
 
+import java.util.ArrayList;
+
+import ummisco.gama.opengl.utils.Utils;
+
+/*
+ * This class is using the ear cutting algorithm to compute the triangulation.
+ */
+
 public class UtilTriangulation {
 
 	private float[] coords;
@@ -15,7 +23,7 @@ public class UtilTriangulation {
 			polygonCoords[3*i+1] = coords[face[i]*3+1];
 			polygonCoords[3*i+2] = coords[face[i]*3+2];
 		}
-		boolean isClockwise = isClockwise(polygonCoords);
+		boolean isClockwise = Utils.isClockwise(polygonCoords);
 		final int[] result = new int[(face.length - 2) * 3];
 		int[] tempPolygon = face;
 		int position_in_result = 0;
@@ -145,17 +153,7 @@ public class UtilTriangulation {
 				coords[ear[1]*3],coords[ear[1]*3+1],coords[ear[1]*3+2],
 				coords[ear[2]*3],coords[ear[2]*3+1],coords[ear[2]*3+2],};
 		
-		return isClockwise(earCoords) == generalPolygonIsClockwise;
-	}
-	
-	private boolean isClockwise(final float[] vertices) {
-		double sum = 0.0;
-		for (int i = 0; i < vertices.length/3; i++) {
-			final float[] v1 = new float[]{vertices[i*3],vertices[i*3+1],vertices[i*3+2]};
-			final float[] v2 = new float[]{vertices[((i + 1) % (vertices.length/3))*3],vertices[((i + 1) % (vertices.length/3))*3+1],vertices[((i + 1) % (vertices.length/3))*3+2]};
-			sum += (v2[0] - v1[0]) * (v2[1] + v1[1]);
-		}
-		return sum > 0.0;
+		return (Utils.isClockwise(earCoords) == generalPolygonIsClockwise);
 	}
 	
 }

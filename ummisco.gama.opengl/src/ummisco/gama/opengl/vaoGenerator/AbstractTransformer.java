@@ -44,7 +44,6 @@ abstract class AbstractTransformer {
 	protected int[][][] bufferedImageValue = null;
 	protected float[] coordsForBorder;
 	protected float[] idxForBorder;
-	protected ArrayList<Integer> listVertexInsideGeom = new ArrayList<Integer>();
 
 	private HashMap<Integer, Integer> mapOfOriginalIdx = new HashMap<Integer, Integer>();
 
@@ -391,9 +390,34 @@ abstract class AbstractTransformer {
 		
 		return result;
 	}
+	
+	private int getFaceNumber(int vIdx) {
+		for (int i = 0 ; i < faces.size() ; i++) {
+			for (int j : faces.get(0)) {
+				if (j == vIdx) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
 
 	protected void computeNormals() {
 		final float[] result = new float[coords.length];
+		
+		boolean faceIsClockwise[] = new boolean[faces.size()];
+		for (int i = 0 ; i < faces.size() ; i++) {
+			float[] coordsOfFace = new float[faces.get(i).length * 3];
+			for (int j = 0 ; j < faces.get(i).length ; j++) {
+				coordsOfFace[j*3] = coords[faces.get(i)[j]*3];
+				coordsOfFace[j*3+1] = coords[faces.get(i)[j]*3+1];
+				coordsOfFace[j*3+2] = coords[faces.get(i)[j]*3+2];
+			}
+			faceIsClockwise[i] = Utils.isClockwise(coordsOfFace);
+		}
+		if (type.equals("SPHERE")) {
+			faceIsClockwise = new boolean[0];
+		}
 
 		for (int vIdx = 0; vIdx < coords.length / 3; vIdx++) {
 
@@ -413,7 +437,22 @@ abstract class AbstractTransformer {
 						vtxCoordBefore[2] - vtxCoord[2] };
 				final float[] vec2 = new float[] { vtxCoordAfter[0] - vtxCoord[0], vtxCoordAfter[1] - vtxCoord[1],
 						vtxCoordAfter[2] - vtxCoord[2] };
-				final float[] vectProduct = GeomMathUtils.CrossProduct(vec1, vec2);
+				// compute the vectorial product between the two edges. The vectorial product is done on the other side
+				// .. if the vertex is inside the geometry.
+				float[] vectProduct;
+				float[] coordArray = Utils.concatFloatArrays(vtxCoordBefore,vtxCoord);
+				coordArray = Utils.concatFloatArrays(coordArray,vtxCoordAfter);
+				int faceNumber = getFaceNumber(vIdx);
+				boolean vIsInsideTheGeometry = false;
+				if (faceNumber != -1) {
+					vIsInsideTheGeometry = faceIsClockwise[faceNumber] != (Utils.isClockwise(coordArray));
+				}
+				if (vIsInsideTheGeometry) {
+					vectProduct = GeomMathUtils.CrossProduct(vec2, vec1);
+				}
+				else {
+					vectProduct = GeomMathUtils.CrossProduct(vec1, vec2);
+				}
 				sum = vectProduct[0] * vectProduct[0] + vectProduct[1] * vectProduct[1]
 						+ vectProduct[2] * vectProduct[2];
 				xVal += vectProduct[0] / Math.sqrt(sum);
