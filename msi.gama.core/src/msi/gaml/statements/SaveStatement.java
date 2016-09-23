@@ -183,11 +183,19 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (file == null && Types.FILE.isAssignableFrom(item.getType())) {
 			final IGamaFile file = (IGamaFile) item.value(scope);
 			if (file != null) {
+				// Should probably pass a map of attributes, like crs, etc.
+				// specific to each file; also rewrite true/false
 				file.save(scope);
 			}
 			return file;
 		}
 
+		// These statements will need to be completely rethought because of the
+		// possibility to now use the GamaFile infrastructure for this.
+		// For instance, TYPE is not needed anymore (the name of the file / its
+		// inner type will be enough), like in save json_file("ddd.json",
+		// my_map); which we can probably allow to be written save my_map to:
+		// json_file("ddd.json"); see #1362
 		final String typeExp = getLiteral(IKeyword.TYPE);
 
 		String path = "";
