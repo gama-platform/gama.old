@@ -13,6 +13,7 @@ import org.json.simple.parser.ParseException;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -28,6 +29,7 @@ import msi.gaml.types.Types;
 
 @file(name = "json", extensions = { "json" }, buffer_type = IType.MAP, buffer_index = IType.STRING, concept = {
 		IConcept.FILE })
+@doc("Reads a JSON file into a map<string, unknown>. Either a direct map of the object denoted in the JSON file, or a map with only one key ('contents') containing the list in the JSON file. All data structures (JSON object and JSON array) are properly converted into GAMA structures recursively. ")
 public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, String, Object> {
 
 	public GamaJsonFile(final IScope scope, final String pathName) throws GamaRuntimeException {
