@@ -40,7 +40,6 @@ import ummisco.gama.network.common.CompositeGamaMessage;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.mqqt.MQTTConnector;
-import ummisco.gama.network.mqqt.MQTTConnectorSk;
 import ummisco.gama.network.tcp.TCPConnector;
 import ummisco.gama.network.udp.UDPConnector;
 import ummisco.gama.serializer.factory.StreamConverter;

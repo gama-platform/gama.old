@@ -5,7 +5,9 @@ Bundle-Name: Network
 Bundle-SymbolicName: ummisco.gama.network;singleton:=true
 Bundle-Version: 1.7.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Export-Package: ummisco.gama.mqtt.common;uses:="org.eclipse.paho.client.mqttv3",
+Export-Package: org.eclipse.paho.client.mqttv3,
+ org.eclipse.paho.client.mqttv3.persist,
+ ummisco.gama.mqtt.common;uses:="org.eclipse.paho.client.mqttv3",
  ummisco.gama.network.common;
   uses:="msi.gama.extensions.messaging,
    msi.gama.metamodel.agent,
