@@ -66,28 +66,39 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, Stri
 			setBuffer(map);
 		} catch (IOException | ParseException e) {
 			throw GamaRuntimeException.create(e, scope);
+		} finally {
+			parser.reset();
 		}
 	}
 
+	// AD : To remove at one point, as it should be handled by the casting
+	// mechanism
 	private Object convertToGamaStructures(final IScope scope, final Object o) {
+		Object result;
 		if (o instanceof JSONArray) {
 			final JSONArray array = (JSONArray) o;
 			final IList list = GamaListFactory.create(Types.NO_TYPE, array.size());
 			for (final Object object : array) {
 				list.add(convertToGamaStructures(scope, object));
 			}
-			return list;
+			result = list;
 		} else if (o instanceof JSONObject) {
 			final JSONObject json = (JSONObject) o;
 			final GamaMap map = GamaMapFactory.create();
 			for (final Map.Entry entry : (Set<Map.Entry>) json.entrySet()) {
 				map.put(Cast.asString(scope, entry.getKey()), convertToGamaStructures(scope, entry.getValue()));
 			}
-			return map;
+			result = map;
 		} else // we assume we have strings, bool, ints or floats
 		{
-			return o;
+			if (o instanceof Long)
+				result = Integer.valueOf(((Long) o).intValue());
+			else if (o instanceof Float)
+				result = Double.valueOf(((Float) o).doubleValue());
+			else
+				result = o;
 		}
+		return result;
 	}
 
 	@Override
