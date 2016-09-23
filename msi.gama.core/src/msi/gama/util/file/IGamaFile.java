@@ -99,6 +99,6 @@ public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V>
 
 	public Envelope computeEnvelope(final IScope scope);
 
-	public abstract void save(IScope scope);
+	public abstract void save(IScope scope, boolean overwrite);
 
 }

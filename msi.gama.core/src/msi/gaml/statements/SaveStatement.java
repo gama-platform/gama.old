@@ -96,7 +96,7 @@ import msi.gaml.types.Types;
 				"geotiff",
 				"image" }, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
 		@facet(name = IKeyword.DATA, type = IType.NONE, optional = true, doc = @doc("any expression, that will be saved in the file")),
-		@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it")),
+		@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it. Default is true")),
 		@facet(name = IKeyword.HEADER, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist")),
 		@facet(name = IKeyword.TO, type = IType.STRING, optional = true, doc = @doc("an expression that evaluates to an string, the path to the file")),
 		@facet(name = "crs", type = IType.NONE, optional = true, doc = @doc("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
@@ -176,6 +176,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		header = getFacet(IKeyword.HEADER);
 	}
 
+	private boolean shouldOverwrite(final IScope scope) {
+		if (rewriteExpr == null)
+			return true;
+		return Cast.asBool(scope, rewriteExpr.value(scope));
+	}
+
 	// TODO rewrite this with the GamaFile framework
 
 	@Override
@@ -185,7 +191,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if (file != null) {
 				// Should probably pass a map of attributes, like crs, etc.
 				// specific to each file; also rewrite true/false
-				file.save(scope);
+				file.save(scope, shouldOverwrite(scope));
 			}
 			return file;
 		}
@@ -224,15 +230,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		} else if (type.equals("text") || type.equals("csv")) {
 			final File fileTxt = new File(path);
 			boolean exists = fileTxt.exists();
-			if (rewriteExpr != null) {
-				final boolean rewrite = Cast.asBool(scope, rewriteExpr.value(scope));
-				if (rewrite) {
-					if (fileTxt.exists()) {
-						fileTxt.delete();
-						exists = false;
-					}
+			final boolean rewrite = shouldOverwrite(scope);
+			if (rewrite) {
+				if (exists) {
+					fileTxt.delete();
+					exists = false;
 				}
 			}
+
 			try {
 				createParents(fileTxt);
 				fileTxt.createNewFile();

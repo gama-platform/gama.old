@@ -410,7 +410,10 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public void save(final IScope scope) {
+	public void save(final IScope scope, final boolean overwrite) {
+		if (overwrite && getFile().exists()) {
+			getFile().delete();
+		}
 		if (!writable)
 			throw GamaRuntimeException.error("File " + getFile().getName() + " is not writable", scope);
 		flushBuffer(scope);
