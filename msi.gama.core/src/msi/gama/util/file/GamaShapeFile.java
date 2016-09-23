@@ -282,7 +282,7 @@ public class GamaShapeFile extends GamaGisFile {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 		// TODO Regarder ce qu'il y a dans la commande "save" pour sauvegarder
 		// les fichiers.
 		// Merger progressivement save et le syst�me de fichiers afin de ne plus

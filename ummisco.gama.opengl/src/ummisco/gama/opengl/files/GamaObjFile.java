@@ -322,10 +322,10 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	/**
 	 * Method flushBuffer()
 	 * 
-	 * @see msi.gama.util.file.GamaFile#flushBuffer()
+	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope)
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 	}
 
 	public void drawToOpenGL(final GL2 gl, final JOGLRenderer renderer) {

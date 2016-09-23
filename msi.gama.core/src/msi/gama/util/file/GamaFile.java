@@ -45,11 +45,15 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	private C buffer;
 
 	public GamaFile(final IScope scope, final String pathName) throws GamaRuntimeException {
+		this(scope, pathName, true);
+	}
+
+	public GamaFile(final IScope scope, final String pathName, final boolean mustExist) throws GamaRuntimeException {
 		if (pathName == null) {
 			throw GamaRuntimeException.error("Attempt to create a null file", scope);
 		}
 		if (scope != null) {
-			path = FileUtils.constructAbsoluteFilePath(scope, pathName, true);
+			path = FileUtils.constructAbsoluteFilePath(scope, pathName, mustExist);
 			checkValidity(scope);
 			// AD 27/04/13 Let the flags of the file remain the same. Can be
 			// turned off and on using the "read" and
@@ -61,13 +65,13 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	public GamaFile(final IScope scope, final String pathName, final C container) {
-		this(scope, pathName);
+		this(scope, pathName, false);
 		setWritable(true);
 		setContents(container);
 	}
 
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
-		if (getFile().isDirectory()) {
+		if (getFile().exists() && getFile().isDirectory()) {
 			throw GamaRuntimeException
 					.error(getFile().getAbsolutePath() + " is a folder. Files can not overwrite folders", scope);
 		}
@@ -87,7 +91,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	protected abstract void fillBuffer(IScope scope) throws GamaRuntimeException;
 
-	protected abstract void flushBuffer() throws GamaRuntimeException;
+	protected abstract void flushBuffer(IScope scope) throws GamaRuntimeException;
 
 	@Override
 	public final void setContents(final C cont) throws GamaRuntimeException {
@@ -243,7 +247,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	@Override
 	public V getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		getContents(scope);
-		return (V) getBuffer().getFromIndicesList(scope, indices);
+		return getBuffer().getFromIndicesList(scope, indices);
 	}
 
 	@Override
@@ -271,7 +275,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	@Override
 	public C getContents(final IScope scope) throws GamaRuntimeException {
 		// if ( getFile() == null ) { return null; }
-		if (!getFile().exists()) {
+		if (buffer == null && !getFile().exists()) {
 			throw GamaRuntimeException.error("File " + getFile().getAbsolutePath() + " does not exist", scope);
 		}
 		fillBuffer(scope);
@@ -403,6 +407,13 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	public IList<String> getAttributes(final IScope scope) {
 		// TODO what to return ?
 		return GamaListFactory.create();
+	}
+
+	@Override
+	public void save(final IScope scope) {
+		if (!writable)
+			throw GamaRuntimeException.error("File " + getFile().getName() + " is not writable", scope);
+		flushBuffer(scope);
 	}
 
 }

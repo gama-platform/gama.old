@@ -322,7 +322,7 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 		// TODO at least, save as ASCII grid (plain text)
 
 	}

@@ -390,10 +390,10 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 	/**
 	 * Method flushBuffer()
 	 * 
-	 * @see msi.gama.util.file.GamaFile#flushBuffer()
+	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope)
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 	}
 
 	/**

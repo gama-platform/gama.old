@@ -1,14 +1,15 @@
 package msi.gama.util.file;
 
+import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.json.simple.JSONValue;
 
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -54,22 +55,27 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, Stri
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if (getBuffer() != null)
 			return;
-		final JSONParser parser = new JSONParser();
+		FileReader reader = null;
 		try {
 			final GamaMap<String, Object> map;
-			final Object o = convertToGamaStructures(scope, parser.parse(new FileReader(getFile())));
-			if (o instanceof JSONObject) {
-				map = (GamaMap<String, Object>) convertToGamaStructures(scope, o);
-			} else if (o instanceof JSONArray) {
+			reader = new FileReader(getFile());
+			final Object o = convertToGamaStructures(scope, JSONValue.parse(reader));
+			if (o instanceof GamaMap) {
+				map = (GamaMap<String, Object>) o;
+			} else {
 				map = GamaMapFactory.create();
-				map.put(IKeyword.CONTENTS, convertToGamaStructures(scope, o));
-			} else
-				map = Cast.asMap(scope, o, true); // we dont know what it is
+				map.put(IKeyword.CONTENTS, o);
+			}
 			setBuffer(map);
-		} catch (IOException | ParseException e) {
+		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			parser.reset();
+			if (reader != null)
+				try {
+					reader.close();
+				} catch (final IOException e) {
+					throw GamaRuntimeException.create(e, scope);
+				}
 		}
 	}
 
@@ -104,9 +110,25 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, Stri
 	}
 
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-
+	protected void flushBuffer(final IScope scope) throws GamaRuntimeException {
+		final GamaMap<String, Object> map = getBuffer();
+		FileWriter writer = null;
+		try {
+			final File file = getFile();
+			if (!file.exists() && file.createNewFile()) {
+				writer = new FileWriter(getFile());
+				JSONValue.writeJSONString(map, writer);
+			}
+		} catch (final IOException e) {
+			throw GamaRuntimeException.create(e, scope);
+		} finally {
+			if (writer != null)
+				try {
+					writer.close();
+				} catch (final IOException e) {
+					throw GamaRuntimeException.create(e, scope);
+				}
+		}
 	}
 
 }

@@ -90,6 +90,6 @@ public class GamaSVGFile extends GamaGeometryFile {
 	}
 
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {}
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {}
 
 }

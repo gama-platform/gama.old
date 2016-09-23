@@ -101,10 +101,10 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	/**
 	 * Method flushBuffer()
-	 * @see msi.gama.util.file.GamaFile#flushBuffer()
+	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope)
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 		// Not yet done for GIS files
 	}
 

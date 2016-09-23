@@ -69,6 +69,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
 import msi.gaml.compilation.IDescriptionValidator;
@@ -97,7 +98,7 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.DATA, type = IType.NONE, optional = true, doc = @doc("any expression, that will be saved in the file")),
 		@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it")),
 		@facet(name = IKeyword.HEADER, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist")),
-		@facet(name = IKeyword.TO, type = IType.STRING, optional = false, doc = @doc("an expression that evaluates to an string, the path to the file")),
+		@facet(name = IKeyword.TO, type = IType.STRING, optional = true, doc = @doc("an expression that evaluates to an string, the path to the file")),
 		@facet(name = "crs", type = IType.NONE, optional = true, doc = @doc("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
 		@facet(name = IKeyword.WITH, type = {
 				IType.MAP }, optional = true, doc = @doc("Not yet used")) }, omissible = IKeyword.DATA)
@@ -179,6 +180,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		if (file == null && Types.FILE.isAssignableFrom(item.getType())) {
+			final IGamaFile file = (IGamaFile) item.value(scope);
+			if (file != null) {
+				file.save(scope);
+			}
+			return file;
+		}
+
 		final String typeExp = getLiteral(IKeyword.TYPE);
 
 		String path = "";
@@ -491,8 +500,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 									+ ag.getLocation().getZ());
 							for (final String v : attributeNames) {
 								String val = Cast.toGaml(ag.getDirectVarValue(scope, v)).replace(';', ',');
-								if ((val.startsWith("'") && val.endsWith("'"))|| (val.startsWith("\"")) &&  val.endsWith("\"")) val = val.substring(1, val.length()-1);
-								fw.write(";" +  val);
+								if (val.startsWith("'") && val.endsWith("'")
+										|| val.startsWith("\"") && val.endsWith("\""))
+									val = val.substring(1, val.length() - 1);
+								fw.write(";" + val);
 							}
 							fw.write(Strings.LN);
 						}
@@ -501,14 +512,18 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				} else {
 					for (int i = 0; i < values.size() - 1; i++) {
 						String val = Cast.toGaml(values.get(i)).replace(';', ',');
-						if ((val.startsWith("'") && val.endsWith("'"))|| (val.startsWith("\"")) &&  val.endsWith("\"")) val = val.substring(1, val.length()-1);
+						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+							val = val.substring(1, val.length() - 1);
 						fw.write(val + ",");
-						//fw.write(Cast.toGaml(values.get(i)).replace(',', ';') + ",");
+						// fw.write(Cast.toGaml(values.get(i)).replace(',', ';')
+						// + ",");
 					}
 					String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
-					if ((val.startsWith("'") && val.endsWith("'"))|| (val.startsWith("\"")) &&  val.endsWith("\"")) val = val.substring(1, val.length()-1);
+					if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+						val = val.substring(1, val.length() - 1);
 					fw.write(val + Strings.LN);
-					//fw.write(Cast.toGaml(values.lastValue(scope)).replace(',', ';') + Strings.LN);
+					// fw.write(Cast.toGaml(values.lastValue(scope)).replace(',',
+					// ';') + Strings.LN);
 				}
 
 			}

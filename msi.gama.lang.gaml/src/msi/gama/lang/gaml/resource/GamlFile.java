@@ -128,7 +128,7 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 	}
 
 	@Override

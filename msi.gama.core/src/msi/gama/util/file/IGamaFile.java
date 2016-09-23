@@ -12,17 +12,22 @@
 package msi.gama.util.file;
 
 import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.IAddressableContainer;
+import msi.gama.util.IList;
+import msi.gama.util.IModifiableContainer;
 import msi.gaml.types.IType;
 
 /**
- * Written by drogoul
- * Modified on 14 nov. 2011
+ * Written by drogoul Modified on 14 nov. 2011
  *
  * @todo Description
  *
@@ -30,31 +35,24 @@ import msi.gaml.types.IType;
  * @param <V>
  */
 @vars({ @var(name = IKeyword.NAME, type = IType.STRING, doc = { @doc("Returns the name of the receiver file") }),
-	@var(name = IKeyword.EXTENSION, type = IType.STRING, doc = { @doc("Returns the extension of the receiver file") }),
-	@var(name = IKeyword.PATH, type = IType.STRING, doc = { @doc("Returns the absolute path of the receiver file") }),
-	@var(name = IKeyword.EXISTS,
-	type = IType.BOOL,
-	doc = { @doc("Returns whether the receiver file exists or not in the filesystem") }),
-	@var(name = IKeyword.ISFOLDER,
-	type = IType.BOOL,
-	doc = { @doc("Returns whether the receiver file is a folder or not") }),
-	@var(name = IKeyword.READABLE,
-	type = IType.BOOL,
-	doc = { @doc("Returns true if the contents of the receiver file can be read") }),
-	@var(name = IKeyword.WRITABLE,
-	type = IType.BOOL,
-	doc = { @doc("Returns true if the contents of the receiver file can be written") }),
-	@var(name = IKeyword.ATTRIBUTES,
-	type = IType.LIST,
-	of = IType.STRING,
-	doc = {
-		@doc("Retrieves the list of 'attributes' present in the receiver files that support this concept (and an empty list for the others). For instance, in a CSV file, the attributes represent the headers of the columns (if any); in a shape file, the attributes provided to the objects, etc.") }),
-	@var(name = IKeyword.CONTENTS,
-	type = ITypeProvider.WRAPPED,
-	of = ITypeProvider.FIRST_CONTENT_TYPE,
-	index = ITypeProvider.FIRST_KEY_TYPE,
-	doc = { @doc("Returns the contents of the receiver file in the form of a container") }) })
-public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V> extends IModifiableContainer<K, V, K, ValueToAdd>, IAddressableContainer<K, V, K, V> {
+		@var(name = IKeyword.EXTENSION, type = IType.STRING, doc = {
+				@doc("Returns the extension of the receiver file") }),
+		@var(name = IKeyword.PATH, type = IType.STRING, doc = {
+				@doc("Returns the absolute path of the receiver file") }),
+		@var(name = IKeyword.EXISTS, type = IType.BOOL, doc = {
+				@doc("Returns whether the receiver file exists or not in the filesystem") }),
+		@var(name = IKeyword.ISFOLDER, type = IType.BOOL, doc = {
+				@doc("Returns whether the receiver file is a folder or not") }),
+		@var(name = IKeyword.READABLE, type = IType.BOOL, doc = {
+				@doc("Returns true if the contents of the receiver file can be read") }),
+		@var(name = IKeyword.WRITABLE, type = IType.BOOL, doc = {
+				@doc("Returns true if the contents of the receiver file can be written") }),
+		@var(name = IKeyword.ATTRIBUTES, type = IType.LIST, of = IType.STRING, doc = {
+				@doc("Retrieves the list of 'attributes' present in the receiver files that support this concept (and an empty list for the others). For instance, in a CSV file, the attributes represent the headers of the columns (if any); in a shape file, the attributes provided to the objects, etc.") }),
+		@var(name = IKeyword.CONTENTS, type = ITypeProvider.WRAPPED, of = ITypeProvider.FIRST_CONTENT_TYPE, index = ITypeProvider.FIRST_KEY_TYPE, doc = {
+				@doc("Returns the contents of the receiver file in the form of a container") }) })
+public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V>
+		extends IModifiableContainer<K, V, K, ValueToAdd>, IAddressableContainer<K, V, K, V> {
 
 	public abstract void setWritable(final boolean w);
 
@@ -80,8 +78,11 @@ public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V> ext
 
 	@getter(IKeyword.ATTRIBUTES)
 	/**
-	 * Retrieves the list of "attributes" present in files that support this concept (and an empty list for the others). For instance, in a CSV file, attributes represent the headers of the columns
-	 * (if any); in a shape file, the attributes provided to the objects, etc.
+	 * Retrieves the list of "attributes" present in files that support this
+	 * concept (and an empty list for the others). For instance, in a CSV file,
+	 * attributes represent the headers of the columns (if any); in a shape
+	 * file, the attributes provided to the objects, etc.
+	 * 
 	 * @param scope
 	 * @return a list of string or an empty list (never null)
 	 */
@@ -97,5 +98,7 @@ public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V> ext
 	public abstract Boolean isWritable();
 
 	public Envelope computeEnvelope(final IScope scope);
+
+	public abstract void save(IScope scope);
 
 }

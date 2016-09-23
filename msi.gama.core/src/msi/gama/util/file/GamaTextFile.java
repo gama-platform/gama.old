@@ -89,7 +89,7 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 		// TODO A faire.
 
 	}
