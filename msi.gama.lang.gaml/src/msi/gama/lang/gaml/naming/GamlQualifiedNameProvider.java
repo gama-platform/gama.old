@@ -101,8 +101,7 @@ public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractIm
 
 	private final static String NULL = "";
 
-	@Inject
-	private IResourceScopeCache cache;
+	@Inject private IResourceScopeCache cache;
 
 	@Override
 	public QualifiedName getFullyQualifiedName(final EObject obj) {
@@ -488,7 +487,7 @@ public class GamlQualifiedNameProvider extends IQualifiedNameProvider.AbstractIm
 			}
 
 		}.doSwitch(input);
-		if (string == null || string == NULL)
+		if (string == null || string.equals(NULL))
 			return null;
 		return QualifiedName.create(string);
 	}

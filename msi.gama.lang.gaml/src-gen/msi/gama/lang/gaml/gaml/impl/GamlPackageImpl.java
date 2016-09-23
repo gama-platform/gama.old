@@ -58,6 +58,7 @@ import msi.gama.lang.gaml.gaml.S_Species;
 import msi.gama.lang.gaml.gaml.S_Var;
 import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
 import msi.gama.lang.gaml.gaml.SkillRef;
+import msi.gama.lang.gaml.gaml.StandaloneBlock;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringEvaluator;
 import msi.gama.lang.gaml.gaml.StringLiteral;
@@ -96,6 +97,13 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass entryEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass standaloneBlockEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -651,6 +659,26 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
   public EClass getEntry()
   {
     return entryEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EClass getStandaloneBlock()
+  {
+    return standaloneBlockEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getStandaloneBlock_Block()
+  {
+    return (EReference)standaloneBlockEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -1885,6 +1913,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     // Create classes and their features
     entryEClass = createEClass(ENTRY);
 
+    standaloneBlockEClass = createEClass(STANDALONE_BLOCK);
+    createEReference(standaloneBlockEClass, STANDALONE_BLOCK__BLOCK);
+
     stringEvaluatorEClass = createEClass(STRING_EVALUATOR);
     createEAttribute(stringEvaluatorEClass, STRING_EVALUATOR__TOTO);
     createEReference(stringEvaluatorEClass, STRING_EVALUATOR__EXPR);
@@ -2104,10 +2135,10 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
+    standaloneBlockEClass.getESuperTypes().add(this.getEntry());
     stringEvaluatorEClass.getESuperTypes().add(this.getEntry());
     modelEClass.getESuperTypes().add(this.getEntry());
     modelEClass.getESuperTypes().add(this.getVarDefinition());
-    blockEClass.getESuperTypes().add(this.getEntry());
     importEClass.getESuperTypes().add(this.getVarDefinition());
     s_GlobalEClass.getESuperTypes().add(this.getStatement());
     s_SpeciesEClass.getESuperTypes().add(this.getStatement());
@@ -2178,6 +2209,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     // Initialize classes and features; add operations and parameters
     initEClass(entryEClass, Entry.class, "Entry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+    initEClass(standaloneBlockEClass, StandaloneBlock.class, "StandaloneBlock", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getStandaloneBlock_Block(), this.getBlock(), null, "block", null, 0, 1, StandaloneBlock.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(stringEvaluatorEClass, StringEvaluator.class, "StringEvaluator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStringEvaluator_Toto(), ecorePackage.getEString(), "toto", null, 0, 1, StringEvaluator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

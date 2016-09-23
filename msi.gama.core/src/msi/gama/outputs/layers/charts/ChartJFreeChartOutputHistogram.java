@@ -437,7 +437,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			((NumberAxis) pp.getRangeAxis()).setTickUnit(new NumberTickUnit(ytickunit));
 		}
 
-		if (ylabel != null && ylabel != "") {
+		if (ylabel != null && !ylabel.isEmpty()) {
 			pp.getRangeAxis().setLabel(ylabel);
 		}
 		if (this.series_label_position.equals("yaxis")) {
@@ -445,7 +445,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 			chart.getLegend().setVisible(false);
 		}
 
-		if (xlabel != null && xlabel != "") {
+		if (xlabel != null && !xlabel.isEmpty()) {
 			pp.getDomainAxis().setLabel(xlabel);
 		}
 

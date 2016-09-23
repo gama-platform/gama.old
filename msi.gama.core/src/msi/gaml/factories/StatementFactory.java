@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.PrimitiveDescription;
 import msi.gaml.descriptions.StatementDescription;
@@ -44,14 +45,16 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	protected StatementDescription buildDescription(final String keyword, final Facets facets, final EObject element,
 			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto,
 			final Set<String> dependencies) {
-		if (keyword.equals(PRIMITIVE)) {
+		if (proto.isPrimitive()) {
 			return new PrimitiveDescription(enclosing, element, children, facets, null);
 		}
+		if (keyword.equals(ACTION))
+			return new ActionDescription(keyword, enclosing, children, element, facets);
 		if (DescriptionFactory.getProto(keyword, enclosing).hasSequence() && children.hasChildren()) {
 			return new StatementWithChildrenDescription(keyword, enclosing, children, proto.hasScope(), proto.hasArgs(),
-					element, facets);
+					element, facets, null);
 		}
-		return new StatementDescription(keyword, enclosing, children, proto.hasArgs(), element, facets);
+		return new StatementDescription(keyword, enclosing, children, proto.hasArgs(), element, facets, null);
 	}
 
 }

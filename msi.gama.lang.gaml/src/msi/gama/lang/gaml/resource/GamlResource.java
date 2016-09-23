@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,9 +22,12 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 import org.eclipse.xtext.parser.IParseResult;
+import org.eclipse.xtext.util.OnChangeEvictingCache;
+import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 import com.google.common.base.Function;
@@ -30,18 +35,15 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
-import com.google.inject.Inject;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
-import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.compilation.ISyntacticElement;
-import msi.gaml.compilation.SyntacticModelElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.compilation.ast.SyntacticModelElement;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.factories.ModelFactory;
@@ -56,8 +58,6 @@ import msi.gaml.factories.ModelFactory;
  */
 public class GamlResource extends LazyLinkingResource {
 
-	@Inject IDocManager documenter;
-	@Inject GamlSyntacticConverter converter;
 	SyntacticModelElement element;
 
 	public ValidationContext getValidationContext() {
@@ -84,7 +84,7 @@ public class GamlResource extends LazyLinkingResource {
 
 	public ISyntacticElement getSyntacticContents() {
 		if (element == null)
-			element = converter.buildSyntacticContents(getParseResult().getRootASTElement(), null);
+			element = GamlResourceServices.buildSyntacticContents(this);
 		return element;
 	}
 
@@ -92,6 +92,7 @@ public class GamlResource extends LazyLinkingResource {
 
 		@Override
 		public ISyntacticElement apply(final GamlResource input) {
+			input.getResourceSet().getResource(input.getURI(), true);
 			return input.getSyntacticContents();
 		}
 	};
@@ -195,7 +196,7 @@ public class GamlResource extends LazyLinkingResource {
 			updateWith(model, true);
 		} finally {
 			if (edited) {
-				documenter.addCleanupTask(model);
+				GamlResourceServices.getResourceDocumenter().addCleanupTask(model);
 			} else {
 				model.dispose();
 			}
@@ -221,6 +222,28 @@ public class GamlResource extends LazyLinkingResource {
 		element = null;
 	}
 
+	/**
+	 * In the case of synthetic resources, pass the URI they depend on
+	 * 
+	 * @throws IOException
+	 */
+	public void loadSynthetic(final InputStream is) throws IOException {
+		getCache().execWithoutCacheClear(this, new IUnitOfWork.Void<GamlResource>() {
+
+			@Override
+			public void process(final GamlResource state) throws Exception {
+				state.load(is, null);
+				EcoreUtil.resolveAll(GamlResource.this);
+			}
+		});
+
+	}
+
+	@Override
+	public OnChangeEvictingCache getCache() {
+		return (OnChangeEvictingCache) super.getCache();
+	}
+
 	@Override
 	protected void doLinking() {
 		// If the imports are not correctly updated, we cannot proceed
@@ -235,10 +258,6 @@ public class GamlResource extends LazyLinkingResource {
 
 	public boolean hasErrors() {
 		return !getErrors().isEmpty() || getParseResult().hasSyntaxErrors();
-	}
-
-	public IDocManager getDocumentationManager() {
-		return documenter;
 	}
 
 }

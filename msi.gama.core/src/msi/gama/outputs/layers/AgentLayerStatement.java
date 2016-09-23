@@ -101,7 +101,9 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 			IExpressionDescription ed = description.getFacet(SPECIES);
 			SpeciesDescription target = null;
 			if (ed != null) {
-				target = description.computeSpecies();
+				target = description.getType().getDenotedSpecies();
+				// target =
+				// description.getModelDescription().getSpeciesReferencedBy(description);
 				if (target == null) {
 					description.error(ed.toString() + " is not the description of a species", IGamlIssue.WRONG_TYPE,
 							ed.getTarget());

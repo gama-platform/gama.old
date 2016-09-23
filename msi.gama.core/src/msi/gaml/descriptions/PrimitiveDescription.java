@@ -29,7 +29,7 @@ import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 
-public class PrimitiveDescription extends StatementDescription {
+public class PrimitiveDescription extends ActionDescription {
 
 	private GamaHelper helper;
 	private AccessibleObject method;
@@ -37,7 +37,7 @@ public class PrimitiveDescription extends StatementDescription {
 
 	public PrimitiveDescription(final IDescription superDesc, final EObject source, final ChildrenProvider children,
 			final Facets facets, final String plugin) {
-		super(IKeyword.PRIMITIVE, superDesc, children, true, source, facets);
+		super(IKeyword.PRIMITIVE, superDesc, children, source, facets);
 		this.plugin = plugin;
 	}
 
@@ -68,7 +68,7 @@ public class PrimitiveDescription extends StatementDescription {
 
 		if (getArgNames().size() > 0) {
 			final List<String> args = ImmutableList
-					.copyOf(Iterables.transform(getArgs(), new Function<IDescription, String>() {
+					.copyOf(Iterables.transform(getFormalArgs(), new Function<IDescription, String>() {
 
 						@Override
 						public String apply(final IDescription desc) {
@@ -112,6 +112,11 @@ public class PrimitiveDescription extends StatementDescription {
 		return helper;
 	}
 
+	@Override
+	public PrimitiveDescription validate() {
+		return this;
+	}
+
 	public void setHelper(final GamaHelper helper, final AccessibleObject method) {
 		this.helper = helper;
 		this.method = method;
@@ -120,7 +125,7 @@ public class PrimitiveDescription extends StatementDescription {
 	@Override
 	public PrimitiveDescription copy(final IDescription into) {
 		final PrimitiveDescription desc = new PrimitiveDescription(into, element,
-				args != null ? new ChildrenProvider(args.values()) : ChildrenProvider.NONE, getFacetsCopy(), plugin);
+				children != null ? new ChildrenProvider(children) : ChildrenProvider.NONE, getFacetsCopy(), plugin);
 		desc.originName = getOriginName();
 		desc.setHelper(helper, method);
 		return desc;
@@ -145,6 +150,5 @@ public class PrimitiveDescription extends StatementDescription {
 	public void dispose() {
 		previousDescription = null;
 		enclosing = null;
-		denotedSpecies = null;
 	}
 }

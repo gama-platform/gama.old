@@ -29,10 +29,10 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
-import msi.gaml.compilation.ISyntacticElement;
-import msi.gaml.compilation.ISyntacticElement.SyntacticVisitor;
-import msi.gaml.compilation.SyntacticFactory;
-import msi.gaml.compilation.SyntacticModelElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.compilation.ast.SyntacticFactory;
+import msi.gaml.compilation.ast.SyntacticModelElement;
+import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
@@ -265,7 +265,8 @@ public class ModelAssembler {
 		for (final SpeciesDescription sd : getSpeciesInHierarchicalOrder(model)) {
 			sd.inheritFromParent();
 			if (sd.isExperiment()) {
-				sd.finalizeDescription();
+				if (!sd.finalizeDescription())
+					return null;
 			}
 		}
 
@@ -274,7 +275,8 @@ public class ModelAssembler {
 			createSchedulerSpecies(model);
 		}
 
-		model.finalizeDescription();
+		if (!model.finalizeDescription())
+			return null;
 
 		if (document) {
 			collector.document(model);

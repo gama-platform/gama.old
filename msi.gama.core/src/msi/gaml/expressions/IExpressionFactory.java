@@ -12,16 +12,15 @@
 package msi.gaml.expressions;
 
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.statements.Arguments;
 import msi.gaml.types.IType;
 
@@ -36,6 +35,7 @@ public interface IExpressionFactory {
 	public static final ConstantExpression TRUE_EXPR = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;
 	public static final ConstantExpression FALSE_EXPR = ConstantExpressionDescription.FALSE_EXPR_DESCRIPTION;
 	public static final ConstantExpression NIL_EXPR = ConstantExpressionDescription.NULL_EXPR_DESCRIPTION;
+	public static final String TEMPORARY_ACTION_NAME = "__synthetic__action__";
 
 	// public void registerParserProvider(IExpressionCompilerProvider parser);
 
@@ -52,8 +52,7 @@ public interface IExpressionFactory {
 
 	public abstract UnitConstantExpression getUnitExpr(final String unit);
 
-	Map<String, IExpressionDescription> createArgumentMap(StatementDescription action, IExpressionDescription args,
-			IDescription context);
+	Arguments createArgumentMap(ActionDescription action, IExpressionDescription args, IDescription context);
 
 	public IExpressionCompiler getParser();
 
@@ -112,7 +111,7 @@ public interface IExpressionFactory {
 	 * @param arguments
 	 * @return
 	 */
-	IExpression createAction(String op, IDescription callerContext, StatementDescription action, IExpression call,
+	IExpression createAction(String op, IDescription callerContext, ActionDescription action, IExpression call,
 			Arguments arguments);
 
 	public abstract IExpression createTemporaryActionForAgent(IAgent agent, String expression);

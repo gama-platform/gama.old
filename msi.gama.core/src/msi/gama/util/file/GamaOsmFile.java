@@ -542,7 +542,7 @@ public class GamaOsmFile extends GamaGisFile {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 		// TODO not sure that is is really interesting to save geographic as OSM
 		// file...
 	}

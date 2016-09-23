@@ -80,6 +80,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createEntryAdapter();
       }
       @Override
+      public Adapter caseStandaloneBlock(StandaloneBlock object)
+      {
+        return createStandaloneBlockAdapter();
+      }
+      @Override
       public Adapter caseStringEvaluator(StringEvaluator object)
       {
         return createStringEvaluatorAdapter();
@@ -457,6 +462,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createEntryAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.StandaloneBlock <em>Standalone Block</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.StandaloneBlock
+   * @generated
+   */
+  public Adapter createStandaloneBlockAdapter()
   {
     return null;
   }

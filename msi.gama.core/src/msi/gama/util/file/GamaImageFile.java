@@ -197,7 +197,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 		// TODO Create a rendered image from the Matrix.
 		// Use ImageIO to write it.
 	}

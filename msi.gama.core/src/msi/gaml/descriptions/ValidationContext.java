@@ -42,21 +42,6 @@ public class ValidationContext implements Iterable<GamlCompilationError>, IDocMa
 	private boolean noWarning, noInfo;
 	private final IDocManager docDelegate;
 
-	// public ValidationContext() {
-	// this(null, null);
-	// }
-	//
-	// public ValidationContext(final Resource resource, final IDocManager
-	// delegate) {
-	// this(resource, false, delegate);
-	// }
-	//
-	// public ValidationContext(final Resource resource, final boolean syntax,
-	// final IDocManager delegate) {
-	// this(resource == null ? URI.createURI("builtin://gaml", false) :
-	// resource.getURI(), syntax, delegate);
-	// }
-
 	public ValidationContext(final URI uri, final boolean syntax, final IDocManager delegate) {
 		this.resourceURI = uri;
 		hasSyntaxErrors = syntax;
@@ -151,7 +136,7 @@ public class ValidationContext implements Iterable<GamlCompilationError>, IDocMa
 	}
 
 	public Map<String, URI> getImportedErrorsAsStrings() {
-		final Map<String, URI> result = new TOrderedHashMap(importedErrors.size());
+		final Map<String, URI> result = new TOrderedHashMap(importedErrors == null ? 0 : importedErrors.size());
 		if (importedErrors != null)
 			for (final GamlCompilationError error : importedErrors) {
 				final URI uri = error.getURI();

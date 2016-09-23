@@ -1,0 +1,27 @@
+#if __VERSION__ >= 130
+	#define attribute in
+	#define varying out
+#endif
+		
+#ifdef GL_ES
+	precision mediump float;
+	precision mediump int;
+#endif
+
+attribute vec3  attribute_Position;
+attribute vec2  attribute_TextureCoords;
+
+varying vec2 blurTextureCoords[3];
+
+uniform float targetWidth;
+
+void main(void){
+
+	gl_Position = vec4(attribute_Position.xy, 0.0, 1.0);
+	vec2 centerTexCoords = attribute_Position.xy * 0.5 + 0.5;
+	float pixelSize = 1.0 / (targetWidth*2.0);
+	
+	for (int i=-1; i<=1; i++){
+		blurTextureCoords[i+1] = centerTexCoords + vec2(pixelSize * float(i), 0.0);
+	}
+}

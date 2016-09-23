@@ -18,12 +18,17 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.jgrapht.DirectedGraph;
+import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
@@ -49,7 +54,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	// AD 08/16 : actions and attributes are now inherited dynamically and built
 	// lazily
-	protected THashMap<String, StatementDescription> actions;
+	protected THashMap<String, ActionDescription> actions;
 	protected TOrderedHashMap<String, VariableDescription> attributes;
 	protected TypeDescription parent;
 	private final String plugin;
@@ -68,6 +73,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	public String getDefiningPlugin() {
 		return plugin;
 	}
+
+	public abstract Class getJavaBase();
 
 	/**
 	 * ==================================== MANAGEMENT OF VARIABLES
@@ -129,9 +136,6 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	protected void addAttributeNoCheck(final VariableDescription vd) {
-		// if (isBuiltIn()) {
-		// vd.setOriginName("built-in species " + getName());
-		// }
 		if (attributes == null)
 			attributes = new TOrderedHashMap();
 		attributes.put(vd.getName(), vd);
@@ -282,15 +286,21 @@ public abstract class TypeDescription extends SymbolDescription {
 		return result;
 	}
 
-	protected void sortAttributes() {
+	/**
+	 * Returns true if the computation of dependencies is ok.
+	 * 
+	 * @return
+	 */
+	protected boolean sortAttributes() {
 		if (attributes == null || attributes.size() <= 1)
-			return;
+			return true;
 
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		attributes.forEachEntry(new TObjectObjectProcedure<String, VariableDescription>() {
 
 			@Override
 			public boolean execute(final String name, final VariableDescription var) {
+
 				dependencies.addVertex(var);
 				for (final String depName : var.getDependenciesNames()) {
 					if (depName.equals(name))
@@ -306,7 +316,7 @@ public abstract class TypeDescription extends SymbolDescription {
 				return true;
 			}
 		});
-
+		final int oldAttributesSize = attributes.size();
 		attributes.clear();
 
 		final TopologicalOrderIterator<VariableDescription, Object> iterator = new TopologicalOrderIterator<>(
@@ -316,7 +326,34 @@ public abstract class TypeDescription extends SymbolDescription {
 			final VariableDescription vd = iterator.next();
 			attributes.put(vd.getName(), vd);
 		}
-		attributes.compact();
+		// If we miss some attributes (happens when cycles are present)
+		if (oldAttributesSize != attributes.size()) {
+			final CycleDetector cycleDetector = new CycleDetector<VariableDescription, Object>(dependencies);
+			if (cycleDetector.detectCycles()) {
+				final Set<VariableDescription> inCycles = cycleDetector.findCycles();
+				final Collection<String> names = Collections2.transform(inCycles,
+						new Function<VariableDescription, String>() {
+
+							@Override
+							public String apply(final VariableDescription input) {
+								return input.getName();
+							}
+						});
+				for (final VariableDescription vd : inCycles) {
+					if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn())
+						continue;
+					final Collection<String> strings = new HashSet(names);
+					strings.remove(vd.getName());
+					vd.error("Cycle detected between " + vd.getName() + " and " + strings
+							+ ". These attributes or sub-species depend on each other for the computation of their value. Consider moving one of the initializations to the 'init' section of the "
+							+ getKeyword());
+				}
+				return false;
+			}
+		}
+
+		// attributes.compact();
+		return true;
 	}
 
 	public void setParent(final TypeDescription parent) {
@@ -332,7 +369,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		// two.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
 	}
 
-	protected void addAction(final StatementDescription newAction) {
+	protected void addAction(final ActionDescription newAction) {
 		// if (isBuiltIn()) {
 		// newAction.setOriginName("built-in species " + getName());
 		// }
@@ -349,8 +386,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	@Override
-	public StatementDescription getAction(final String aName) {
-		StatementDescription ownAction = null;
+	public ActionDescription getAction(final String aName) {
+		ActionDescription ownAction = null;
 		if (actions != null)
 			ownAction = actions.get(aName);
 		if (ownAction == null && parent != null && parent != this)
@@ -366,8 +403,8 @@ public abstract class TypeDescription extends SymbolDescription {
 		return allNames;
 	}
 
-	public Collection<StatementDescription> getActions() {
-		final Collection<StatementDescription> allActions = new ArrayList();
+	public Collection<ActionDescription> getActions() {
+		final Collection<ActionDescription> allActions = new ArrayList();
 		final Collection<String> actionNames = getActionNames();
 		for (final String name : actionNames) {
 			allActions.add(getAction(name));
@@ -396,7 +433,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public boolean isArgOf(final String op, final String arg) {
-		final StatementDescription action = getAction(op);
+		final ActionDescription action = getAction(op);
 		if (action != null) {
 			return action.containsArg(arg);
 		}
@@ -426,7 +463,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	protected void inheritFromParent() {
 		// Takes care of invalid species (see Issue 711)
-		if (parent != null && parent != this && !parent.isBuiltIn()) {
+		if (parent != null && parent != this) {
 			inheritActionsFrom(parent);
 			inheritAttributesFrom(parent);
 		}
@@ -435,38 +472,35 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected void inheritActionsFrom(final TypeDescription p) {
 		if (p == null || p == this)
 			return;
-		final Collection<StatementDescription> inherited = p.getActions();
-		for (final StatementDescription newAction : inherited) {
-			final String actionName = newAction.getName();
-			final StatementDescription existing = actions == null ? null : actions.get(actionName);
-			if (existing != null) {
-				if (!(newAction.isBuiltIn() && existing.isBuiltIn())) {
-
-					TypeDescription.assertActionsAreCompatible(newAction, existing, existing.getOriginName());
-					if (!existing.isAbstract()) {
-						if (existing.isBuiltIn()) {
-							newAction.info(
+		final Collection<ActionDescription> inherited = p.getActions();
+		for (final ActionDescription inheritedAction : inherited) {
+			final String actionName = inheritedAction.getName();
+			final ActionDescription userDeclared = actions == null ? null : actions.get(actionName);
+			if (userDeclared != null) {
+				if (!(inheritedAction.isBuiltIn() && userDeclared.isBuiltIn())) {
+					TypeDescription.assertActionsAreCompatible(userDeclared, inheritedAction,
+							inheritedAction.getOriginName());
+					if (inheritedAction.isBuiltIn()) {
+						if (actionName.equals("die")) {
+							userDeclared.warning(
+									"Redefining the built-in primitive 'die' is not advised as it can lead to potential troubles in the disposal of simulations. If it was not your intention, consider renaming this action.",
+									IGamlIssue.GENERAL);
+						} else
+							userDeclared.info(
 									"Action '" + actionName + "' replaces a primitive of the same name defined in "
-											+ existing.getOriginName()
+											+ userDeclared.getOriginName()
 											+ ". If it was not your intention, consider renaming it.",
 									IGamlIssue.GENERAL);
-						} else {
-							existing.info("Action '" + actionName + "' supersedes the one defined in  "
-									+ newAction.getOriginName(), IGamlIssue.REDEFINES);
-							return;
-						}
-					} else if (newAction.isAbstract()) {
-						this.error(
-								"Abstract action '" + actionName + "', inherited from "
-										+ newAction.getEnclosingDescription().getName() + ", should be redefined.",
-								IGamlIssue.MISSING_ACTION, NAME);
+					} else {
+						userDeclared.info("Action '" + actionName + "' supersedes the one defined in  "
+								+ inheritedAction.getOriginName(), IGamlIssue.REDEFINES);
 						return;
 					}
 				}
-			} else if (newAction.isAbstract()) {
+			} else if (inheritedAction.isAbstract()) {
 				this.error(
 						"Abstract action '" + actionName + "', inherited from "
-								+ newAction.getEnclosingDescription().getName() + ", should be redefined.",
+								+ inheritedAction.getEnclosingDescription().getName() + ", should be redefined.",
 						IGamlIssue.MISSING_ACTION, NAME);
 				return;
 
@@ -475,8 +509,8 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	}
 
-	public static void assertActionsAreCompatible(final StatementDescription myAction,
-			final StatementDescription parentAction, final String parentName) {
+	public static void assertActionsAreCompatible(final ActionDescription myAction,
+			final ActionDescription parentAction, final String parentName) {
 		final String actionName = parentAction.getName();
 		final IType myType = myAction.getType();
 		final IType parentType = parentAction.getType();

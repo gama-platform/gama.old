@@ -23,7 +23,7 @@ import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.VariableRef;
-import msi.gaml.compilation.GamaSkillRegistry;
+import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.BasicExpressionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;

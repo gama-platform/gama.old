@@ -30,8 +30,8 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.compilation.ISyntacticElement;
-import msi.gaml.compilation.SyntacticFactory;
+import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;
 import msi.gaml.expressions.ConstantExpression;
 import msi.gaml.factories.ChildrenProvider;
@@ -54,6 +54,12 @@ public class ModelDescription extends SpeciesDescription {
 	public static final String MODEL_SUFFIX = "_model";
 	public static volatile ModelDescription ROOT;
 	private TOrderedHashMap<String, ExperimentDescription> experiments;
+	/**
+	 * If statements refer to a species, it will be stored here (rather than in
+	 * the statement).
+	 */
+	// private final THashMap<StatementDescription, SpeciesDescription>
+	// statementSpeciesReferences = new THashMap();
 	final TypesManager types;
 	private String modelFilePath;
 	private final String modelProjectPath;
@@ -202,9 +208,27 @@ public class ModelDescription extends SpeciesDescription {
 		}
 		super.dispose();
 		experiments = null;
+		// statementSpeciesReferences.clear();
 		types.dispose();
 
 	}
+
+	// public void addSpeciesReferencedBy(final StatementDescription sd, final
+	// SpeciesDescription species) {
+	// System.out.println(sd.toString() + " references " + species + " ; type "
+	// + sd.getType());
+	// statementSpeciesReferences.put(sd, species);
+	// }
+	//
+	// public boolean isSpeciesReferenceComputed(final StatementDescription sd)
+	// {
+	// return statementSpeciesReferences.containsKey(sd);
+	// }
+	//
+	// public SpeciesDescription getSpeciesReferencedBy(final
+	// StatementDescription sd) {
+	// return statementSpeciesReferences.get(sd);
+	// }
 
 	/**
 	 * Gets the model file name.
@@ -373,16 +397,16 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		boolean result = super.visitOwnChildren(visitor);
-		if (!result)
+		if (!super.visitOwnChildren(visitor))
 			return false;
 		if (experiments != null)
-			result &= experiments.forEachValue(visitor);
-		return result;
+			if (!experiments.forEachValue(visitor))
+				return false;
+		return true;
 	}
 
 	@Override
-	public void finalizeDescription() {
+	public boolean finalizeDescription() {
 		VariableDescription vd = getAttribute(SHAPE);
 
 		if (!isBuiltIn() && !vd.hasFacet(INIT)) {
@@ -393,15 +417,18 @@ public class ModelDescription extends SpeciesDescription {
 			vd = (VariableDescription) DescriptionFactory.create(shape, this, null);
 			addChild(vd);
 		}
-		super.finalizeDescription();
+		if (!super.finalizeDescription())
+			return false;
 		if (actions != null)
 			for (final StatementDescription action : actions.values()) {
 				if (action.isAbstract() && !action.getUnderlyingElement(null).eResource()
 						.equals(getUnderlyingElement(null).eResource())) {
 					this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName()
 							+ ", should be redefined.", IGamlIssue.MISSING_ACTION);
+					return false;
 				}
 			}
+		return true;
 	}
 
 	@Override
@@ -464,15 +491,15 @@ public class ModelDescription extends SpeciesDescription {
 
 	public void visitAllSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
 		visitor.visit(this);
-		visitMicroSpecies(new DescriptionVisitor<SpeciesDescription>() {
+		if (!visitMicroSpecies(new DescriptionVisitor<SpeciesDescription>() {
 
 			@Override
 			public boolean visit(final SpeciesDescription desc) {
 				visitor.visit(desc);
-				desc.visitMicroSpecies(this);
-				return true;
+				return desc.visitMicroSpecies(this);
 			}
-		});
+		}))
+			return;
 		if (experiments != null) {
 			experiments.forEachValue(visitor);
 		}

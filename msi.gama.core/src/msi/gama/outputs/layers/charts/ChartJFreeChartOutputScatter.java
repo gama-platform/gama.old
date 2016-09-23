@@ -569,10 +569,10 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 		}
 		if (getType() == ChartOutput.SCATTER_CHART) {
 		}
-		if (xlabel != null && xlabel != "") {
+		if (xlabel != null && !xlabel.isEmpty()) {
 			pp.getDomainAxis().setLabel(xlabel);
 		}
-		if (ylabel != null && ylabel != "") {
+		if (ylabel != null && !ylabel.isEmpty()) {
 			pp.getRangeAxis().setLabel(ylabel);
 		}
 

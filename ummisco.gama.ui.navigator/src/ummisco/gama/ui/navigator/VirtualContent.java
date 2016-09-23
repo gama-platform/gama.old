@@ -11,7 +11,10 @@
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
 
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+
 import ummisco.gama.ui.resources.GamaFonts;
 
 public abstract class VirtualContent {
@@ -30,11 +33,15 @@ public abstract class VirtualContent {
 	}
 
 	/**
-	 * Should both perform something and answer whether or not it has performed it, so that the navigator knows whether it should handle double-clicks itself
+	 * Should both perform something and answer whether or not it has performed
+	 * it, so that the navigator knows whether it should handle double-clicks
+	 * itself
+	 * 
 	 * @return
 	 */
 	public boolean handleDoubleClick() {
-		// Nothing to do by default (default behavior is performed by the navigator, like revealing children, for instance)
+		// Nothing to do by default (default behavior is performed by the
+		// navigator, like revealing children, for instance)
 		return false;
 	}
 
@@ -58,6 +65,8 @@ public abstract class VirtualContent {
 		return GamaFonts.getNavigFolderFont(); // by default
 	}
 
-	// public abstract boolean isParentOf(Object element);
+	public int findMaxProblemSeverity() {
+		return -1;
+	}
 
 }

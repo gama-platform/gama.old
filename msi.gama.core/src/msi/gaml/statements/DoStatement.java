@@ -48,8 +48,8 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@symbol(name = { IKeyword.DO,
-		IKeyword.REPEAT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true, with_scope = false, concept = {
+@symbol(name = {
+		IKeyword.DO }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true, with_scope = false, concept = {
 				IConcept.ACTION }, with_args = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @facets(value = {
@@ -92,8 +92,8 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	public static class DoSerializer extends StatementSerializer {
 
 		@Override
-		protected void serializeArg(final StatementDescription desc, final StatementDescription arg,
-				final StringBuilder sb, final boolean includingBuiltIn) {
+		protected void serializeArg(final IDescription desc, final IDescription arg, final StringBuilder sb,
+				final boolean includingBuiltIn) {
 			final String name = arg.getName();
 			final IExpressionDescription value = arg.getFacet(VALUE);
 			if (Strings.isGamaNumber(name)) {

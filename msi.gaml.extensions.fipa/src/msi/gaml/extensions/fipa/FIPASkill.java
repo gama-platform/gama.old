@@ -302,6 +302,7 @@ public class FIPASkill extends MessagingSkill {
 	public Object primAgree(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if (originals == null || originals.size() == 0) {
+			return null;
 		}
 
 		return replyMessage(scope, originals, AGREE, getContentArg(scope));

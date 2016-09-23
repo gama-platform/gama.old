@@ -3,7 +3,7 @@ package msi.gama.common;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
-import msi.gaml.compilation.GamaBundleLoader;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 
 public class Activator implements BundleActivator {
 

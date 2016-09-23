@@ -38,6 +38,8 @@ import msi.gaml.types.Types;
  */
 public class Facets extends THashMap<String, IExpressionDescription> implements IGamlable {
 
+	public static final Facets NULL = new Facets();
+
 	public Facets(final String... strings) {
 		if (strings != null) {
 			setUp(strings.length / 2);
@@ -52,7 +54,7 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 	}
 
 	public Facets(final Facets facets) {
-		super(facets);
+		super(facets == null ? NULL : facets);
 	}
 
 	/*
@@ -94,12 +96,20 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 		return null;
 	}
 
+	public String getFirstExistingAmong(final String... keys) {
+		for (final String s : keys) {
+			if (containsKey(s)) {
+				return s;
+			}
+		}
+		return null;
+	}
+
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder(size() * 20);
 		for (final Map.Entry<String, IExpressionDescription> e : entrySet()) {
-			if (e != null
-					&& e.getKey() != null) {
+			if (e != null && e.getKey() != null) {
 				final IExpressionDescription ed = e.getValue();
 				final String exprString = ed == null ? "N/A" : ed.serialize(includingBuiltIn);
 				sb.append(e.getKey()).append(": ").append(exprString).append(" ");

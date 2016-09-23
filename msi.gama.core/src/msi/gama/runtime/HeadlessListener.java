@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStatusDisplayer;
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -419,6 +420,12 @@ public class HeadlessListener implements IGui {
 	public void setMouseLocationInModel(final ILocation modelCoordinates) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public IGamlLabelProvider getGamlLabelProvider() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

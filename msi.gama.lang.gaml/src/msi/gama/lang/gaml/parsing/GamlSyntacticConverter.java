@@ -73,10 +73,7 @@ import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.diagnostics.Severity;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
-import com.google.inject.Inject;
-
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.expression.ExpressionDescriptionBuilder;
@@ -102,15 +99,16 @@ import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Reflex;
 import msi.gama.lang.gaml.gaml.S_Solve;
+import msi.gama.lang.gaml.gaml.StandaloneBlock;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.impl.ModelImpl;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gaml.compilation.ISyntacticElement;
-import msi.gaml.compilation.SyntacticFactory;
-import msi.gaml.compilation.SyntacticModelElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.compilation.ast.SyntacticFactory;
+import msi.gaml.compilation.ast.SyntacticModelElement;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.LabelExpressionDescription;
@@ -131,17 +129,15 @@ import msi.gaml.statements.Facets;
  */
 public class GamlSyntacticConverter {
 
-	@Inject IDocManager documenter;
-
-	@Inject ExpressionDescriptionBuilder builder;
+	final static ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
 			ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
 	public SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
-		if (root instanceof Block) {
+		if (root instanceof StandaloneBlock) {
 			final SyntacticModelElement elt = (SyntacticModelElement) SyntacticFactory.create("model", root, true);
-			convertBlock(elt, (Block) root, errors);
+			convertBlock(elt, ((StandaloneBlock) root).getBlock(), errors);
 			return elt;
 		}
 		if (!(root instanceof Model)) {
@@ -573,7 +569,7 @@ public class GamlSyntacticConverter {
 		final IExpressionDescription ed = LabelExpressionDescription.create(string);
 		ed.setTarget(target);
 		if (target != null) {
-			documenter.setGamlDocumentation(target, ed.getExpression(), true);
+			GamlResourceServices.getResourceDocumenter().setGamlDocumentation(target, ed.getExpression(), true);
 		}
 		return ed;
 	}

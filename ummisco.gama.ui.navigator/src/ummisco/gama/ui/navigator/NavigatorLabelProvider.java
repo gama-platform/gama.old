@@ -11,11 +11,11 @@
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
 
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -26,10 +26,8 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
-import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.GamaBundleLoader;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -37,11 +35,6 @@ import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 public class NavigatorLabelProvider extends CellLabelProvider implements ILabelProvider, IColorProvider, IFontProvider {
-
-	// TODO BUILD A LIST FROM THE FILES LOADED IN GAMAFILE
-	// private static final Set<String> HANDLED = new
-	// HashSet(Arrays.asList("shp", "gaml", "jpg", "jpeg", "png", "bmp",
-	// "html", "htm", "gif", "csv", "ico", "asc", "pgm", "svg"));
 
 	@Override
 	public String getText(final Object element) {
@@ -52,43 +45,39 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 	}
 
 	public static boolean isResource(final IResource r) {
-		if (r instanceof IFile) {
-			return !GAMA.getGui().getMetaDataProvider().isGAML((IFile) r);
-		}
-		if (r instanceof IContainer) {
-			try {
-				for (final IResource m : ((IContainer) r).members()) {
-					if (!isResource(m)) {
+		final boolean[] isGamlFile = new boolean[1];
+		try {
+			r.accept(new IResourceProxyVisitor() {
+
+				@Override
+				public boolean visit(final IResourceProxy proxy) throws CoreException {
+					if (isGamlFile[0])
 						return false;
-					}
+					isGamlFile[0] = proxy.getType() == IResource.FILE && proxy.getName().endsWith(".gaml");
+					return !isGamlFile[0];
 				}
-			} catch (final CoreException e) {
-			}
-			return true;
+			}, IResource.NONE);
+		} catch (final CoreException e1) {
+			e1.printStackTrace();
 		}
-		return false;
+		return !isGamlFile[0];
 	}
 
 	@Override
 	public Image getImage(final Object element) {
-		if (element instanceof WrappedFile) {
-			return WorkbenchLabelProvider.getDecoratingWorkbenchLabelProvider()
-					.getImage(((WrappedFile) element).getFile());
-		}
 		if (element instanceof VirtualContent) {
 			return ((VirtualContent) element).getImage();
 		}
-		if (element instanceof IProject) {
-			return IGamaIcons.FOLDER_PROJECT.image();
-		}
-		if (element instanceof IFolder) {
+		if (!(element instanceof IResource))
+			return null;
+		switch (((IResource) element).getType()) {
+		case IResource.FOLDER:
 			if (isResource((IFolder) element)) {
 				return IGamaIcons.FOLDER_RESOURCES.image();
 			} else {
 				return IGamaIcons.FOLDER_MODEL.image();
 			}
-		}
-		if (element instanceof IFile) {
+		case IResource.FILE:
 			final IFile f = (IFile) element;
 			final String s = f.getFileExtension();
 			if (isHandled(s)) {
@@ -100,8 +89,11 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 			} else {
 				return GamaIcons.create("file.text2").image();
 			}
+		case IResource.PROJECT:
+			return IGamaIcons.FOLDER_PROJECT.image();
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -139,14 +131,18 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 		if (element instanceof VirtualContent) {
 			return ((VirtualContent) element).getFont();
 		}
-		if (element instanceof IProject) {
-			return GamaFonts.getNavigHeaderFont();
-		}
-		if (element instanceof IFolder && isResource((IFolder) element)) {
-			return GamaFonts.getResourceFont();
-		}
-		if (element instanceof IFile) {
-			return GamaFonts.getNavigFileFont();
+		if (element instanceof IResource) {
+			switch (((IResource) element).getType()) {
+			case IResource.FOLDER:
+				if (isResource((IFolder) element))
+					return GamaFonts.getResourceFont();
+				else
+					return GamaFonts.getNavigFolderFont();
+			case IResource.PROJECT:
+				return GamaFonts.getNavigHeaderFont();
+			case IResource.FILE:
+				return GamaFonts.getNavigFileFont();
+			}
 		}
 		return GamaFonts.getNavigFolderFont();
 	}

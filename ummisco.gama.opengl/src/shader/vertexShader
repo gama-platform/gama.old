@@ -1,0 +1,61 @@
+#if __VERSION__ >= 130
+	#define attribute in
+	#define varying out
+#endif
+		
+#ifdef GL_ES
+	precision mediump float;
+	precision mediump int;
+#endif
+		
+uniform mat4    transformationMatrix;
+uniform mat4    projectionMatrix;
+uniform mat4    viewMatrix;
+uniform mat4    invViewMatrix;
+uniform mat4    lightProperties[7]; 	// first row : xyz position, light type (0 = POINT, 1 = DIRECTION, 2 = SPOT)
+									// second row : xyz direction,
+									// third row : rgb color
+									// fourth row : attenuation properties
+uniform vec3    lightPosition;
+uniform float   useNormals; // 0 for no, 1 for yes
+
+attribute vec3  attribute_Position;
+attribute vec4  attribute_Color;
+attribute vec3  attribute_Normal;
+attribute vec2  attribute_TextureCoords;
+
+varying vec4    varying_Color;
+varying vec3	surfaceNormal;
+varying vec3	toLightVector[7];
+varying vec3 	toCameraVector;
+varying vec2    pass_textureCoords;
+varying float   varying_useNormals;
+
+void main(void)
+{
+	vec4 worldPosition = transformationMatrix * vec4(attribute_Position,1.0);
+	
+	varying_Color = attribute_Color;
+	mat4 modelView = viewMatrix * transformationMatrix;
+		
+	gl_Position = projectionMatrix * modelView * vec4(attribute_Position,1.0);
+	
+	varying_useNormals = useNormals;
+	pass_textureCoords = attribute_TextureCoords;
+	
+	if (useNormals > 0.5)
+	{
+		surfaceNormal = (transformationMatrix * vec4(attribute_Normal,0.0)).xyz;
+		
+		for (int i=0;i<7;i++) {
+			if (lightProperties[i][0][3] < 0.5) // if point light, equal to 0
+			{
+				toLightVector[i] = vec3(lightProperties[i][0][0],lightProperties[i][0][1],lightProperties[i][0][2]) - worldPosition.xyz;
+			}
+			else { // if directional light
+				toLightVector[i] = vec3(-lightProperties[i][1][0],-lightProperties[i][1][1],-lightProperties[i][1][2]);
+			}
+		}
+		toCameraVector = (invViewMatrix * vec4(0.0,0.0,0.0,1.0)).xyz - worldPosition.xyz;
+	}
+}

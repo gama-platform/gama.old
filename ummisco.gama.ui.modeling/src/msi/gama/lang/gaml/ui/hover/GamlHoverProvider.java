@@ -39,7 +39,6 @@ import org.eclipse.xtext.util.Tuples;
 
 import com.google.inject.Inject;
 
-import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.ActionDefinition;
@@ -49,6 +48,7 @@ import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
+import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
@@ -116,7 +116,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			} else {
 				final ILeafNode node = NodeModelUtils.findLeafNodeAtOffset(resource.getParseResult().getRootNode(),
 						offset);
-				if (node.getGrammarElement() instanceof Keyword) {
+				if (node != null && node.getGrammarElement() instanceof Keyword) {
 					final IRegion region2 = new Region(node.getOffset(), node.getLength());
 					return Tuples.create(node.getGrammarElement(), region2);
 				}
@@ -192,8 +192,6 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	private IInformationControlCreator creator;
 
-	@Inject IDocManager documenter;
-
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (creator == null) {
@@ -253,7 +251,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		// return getFirstLine(((VariableRef) o).getRef());
 		// }
 
-		final IGamlDescription description = documenter.getGamlDocumentation(o);
+		final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 		if (description == null) {
 			if (o instanceof Facet) {
 				return "<b>" + getFirstLineOf((Facet) o) + "</b>";

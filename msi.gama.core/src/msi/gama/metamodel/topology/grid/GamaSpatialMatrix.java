@@ -114,7 +114,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public void dispose() {
-		neighborhood.clear();
+		if (neighborhood != null)
+			neighborhood.clear();
 		neighborhood = null;
 		gridValue = null;
 		_clear();
@@ -1190,7 +1191,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				final IShape s = matrix[i];
 				final Class javaBase = ((SpeciesDescription) species.getDescription()).getJavaBase();
 
-				final boolean usesRegularAgents = javaBase == GamlGridAgent.class;
+				final boolean usesRegularAgents = GamlAgent.class.isAssignableFrom(javaBase);
 				if (s != null) {
 					final IAgent g = usesRegularAgents ? new GamlGridAgent(i) : new MinimalGridAgent(i);
 					matrix[i] = g;

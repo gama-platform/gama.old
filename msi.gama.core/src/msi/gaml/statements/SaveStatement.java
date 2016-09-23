@@ -69,10 +69,12 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
@@ -94,9 +96,9 @@ import msi.gaml.types.Types;
 				"geotiff",
 				"image" }, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
 		@facet(name = IKeyword.DATA, type = IType.NONE, optional = true, doc = @doc("any expression, that will be saved in the file")),
-		@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it")),
+		@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it. Default is true")),
 		@facet(name = IKeyword.HEADER, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist")),
-		@facet(name = IKeyword.TO, type = IType.STRING, optional = false, doc = @doc("an expression that evaluates to an string, the path to the file")),
+		@facet(name = IKeyword.TO, type = IType.STRING, optional = true, doc = @doc("an expression that evaluates to an string, the path to the file")),
 		@facet(name = "crs", type = IType.NONE, optional = true, doc = @doc("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
 		@facet(name = IKeyword.WITH, type = {
 				IType.MAP }, optional = true, doc = @doc("Not yet used")) }, omissible = IKeyword.DATA)
@@ -137,19 +139,26 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			final IType t = data.getType().getContentType();
 			final SpeciesDescription species = t.getSpecies();
-			final Collection<StatementDescription> args = desc.getArgs();
+			final Facets args = desc.getPassedArgs();
 			if (args == null || args.isEmpty()) {
 				return;
 			}
 			if (species == null) {
 				desc.error("No attributes can be saved for geometries", IGamlIssue.UNKNOWN_VAR, WITH);
 			} else {
-				for (final StatementDescription arg : args) {
-					if (!species.hasAttribute(arg.getName())) {
-						desc.error("Attribute " + arg.getName() + " is not defined for the agents of "
-								+ data.serialize(false), IGamlIssue.UNKNOWN_VAR, WITH);
+				args.forEachEntry(new FacetVisitor() {
+
+					@Override
+					public boolean visit(final String name, final IExpressionDescription exp) {
+						if (!species.hasAttribute(name)) {
+							desc.error(
+									"Attribute " + name + " is not defined for the agents of " + data.serialize(false),
+									IGamlIssue.UNKNOWN_VAR, WITH);
+							return false;
+						}
+						return true;
 					}
-				}
+				});
 			}
 		}
 
@@ -167,10 +176,32 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		header = getFacet(IKeyword.HEADER);
 	}
 
+	private boolean shouldOverwrite(final IScope scope) {
+		if (rewriteExpr == null)
+			return true;
+		return Cast.asBool(scope, rewriteExpr.value(scope));
+	}
+
 	// TODO rewrite this with the GamaFile framework
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		if (file == null && Types.FILE.isAssignableFrom(item.getType())) {
+			final IGamaFile file = (IGamaFile) item.value(scope);
+			if (file != null) {
+				// Should probably pass a map of attributes, like crs, etc.
+				// specific to each file; also rewrite true/false
+				file.save(scope, shouldOverwrite(scope));
+			}
+			return file;
+		}
+
+		// These statements will need to be completely rethought because of the
+		// possibility to now use the GamaFile infrastructure for this.
+		// For instance, TYPE is not needed anymore (the name of the file / its
+		// inner type will be enough), like in save json_file("ddd.json",
+		// my_map); which we can probably allow to be written save my_map to:
+		// json_file("ddd.json"); see #1362
 		final String typeExp = getLiteral(IKeyword.TYPE);
 
 		String path = "";
@@ -199,15 +230,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		} else if (type.equals("text") || type.equals("csv")) {
 			final File fileTxt = new File(path);
 			boolean exists = fileTxt.exists();
-			if (rewriteExpr != null) {
-				final boolean rewrite = Cast.asBool(scope, rewriteExpr.value(scope));
-				if (rewrite) {
-					if (fileTxt.exists()) {
-						fileTxt.delete();
-						exists = false;
-					}
+			final boolean rewrite = shouldOverwrite(scope);
+			if (rewrite) {
+				if (exists) {
+					fileTxt.delete();
+					exists = false;
 				}
 			}
+
 			try {
 				createParents(fileTxt);
 				fileTxt.createNewFile();
@@ -482,7 +512,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 									+ ag.getLocation().getX() + ";" + ag.getLocation().getY() + ";"
 									+ ag.getLocation().getZ());
 							for (final String v : attributeNames) {
-								fw.write(";" + Cast.toGaml(ag.getDirectVarValue(scope, v)).replace(';', ','));
+								String val = Cast.toGaml(ag.getDirectVarValue(scope, v)).replace(';', ',');
+								if (val.startsWith("'") && val.endsWith("'")
+										|| val.startsWith("\"") && val.endsWith("\""))
+									val = val.substring(1, val.length() - 1);
+								fw.write(";" + val);
 							}
 							fw.write(Strings.LN);
 						}
@@ -490,9 +524,19 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					}
 				} else {
 					for (int i = 0; i < values.size() - 1; i++) {
-						fw.write(Cast.toGaml(values.get(i)).replace(',', ';') + ",");
+						String val = Cast.toGaml(values.get(i)).replace(';', ',');
+						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+							val = val.substring(1, val.length() - 1);
+						fw.write(val + ",");
+						// fw.write(Cast.toGaml(values.get(i)).replace(',', ';')
+						// + ",");
 					}
-					fw.write(Cast.toGaml(values.lastValue(scope)).replace(',', ';') + Strings.LN);
+					String val = Cast.toGaml(values.lastValue(scope)).replace(';', ',');
+					if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+						val = val.substring(1, val.length() - 1);
+					fw.write(val + Strings.LN);
+					// fw.write(Cast.toGaml(values.lastValue(scope)).replace(',',
+					// ';') + Strings.LN);
 				}
 
 			}

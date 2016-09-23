@@ -319,10 +319,10 @@ experiment launchClient type: gui {
 			event["q"] action: doBulletLeft;
 			event["e"] action: doBulletRight;
 			*/
-			event["z"] action: doUp;
-			event["q"] action: doLeft;
+			event["w"] action: doUp;
+			event["a"] action: doLeft;
 			event["d"] action: doRight;
-			event["a"] action: doBulletLeft;
+			event["q"] action: doBulletLeft;
 			event["e"] action: doBulletRight;
 		}
 	}

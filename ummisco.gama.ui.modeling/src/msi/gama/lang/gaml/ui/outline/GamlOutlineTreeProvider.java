@@ -14,7 +14,7 @@ package msi.gama.lang.gaml.ui.outline;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.ui.editor.outline.IOutlineNode;
 import org.eclipse.xtext.ui.editor.outline.impl.AbstractOutlineNode;
-import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
+import org.eclipse.xtext.ui.editor.outline.impl.BackgroundOutlineTreeProvider;
 
 import com.google.inject.Inject;
 
@@ -28,6 +28,7 @@ import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.S_Species;
 import msi.gama.lang.gaml.gaml.Statement;
+import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.descriptions.SymbolProto;
@@ -37,59 +38,49 @@ import msi.gaml.factories.DescriptionFactory;
  * customization of the default outline structure
  *
  */
-public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
+public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 
-	// @Inject
-	// private IImageHelper imageHelper;
+	@Inject private GamlLabelProvider provider;
 
-	@Inject
-	private GamlLabelProvider provider;
-
-	// private int speciesCount = 0;
-	// private int experimentCount = 0;
+	final static Object FOUND = new Object();
 
 	@Override
-	protected void _createChildren(final IOutlineNode parentNode, final EObject stm) {
+	public void createChildren(final IOutlineNode parentNode, final EObject stm) {
+		if (stm != null && parentNode.hasChildren())
+			new GamlSwitch() {
 
-	}
+				@Override
+				public Object caseModel(final Model stm) {
 
-	protected void _createChildren(final IOutlineNode parentNode, final Model stm) {
-		// speciesCount = 0;
-		// experimentCount = 0;
-		Block block = stm.getBlock();
-		if (block != null) {
-			for (final Statement s : EGaml.getStatementsOf(block)) {
-				if (s instanceof S_Global /*
-											 * || s instanceof S_Environment ||
-											 * s instanceof S_Entities
-											 */ ) {
-					block = s.getBlock();
+					Block block = stm.getBlock();
 					if (block != null) {
-						ownCreateChildren(parentNode, s);
+						for (final Statement s : EGaml.getStatementsOf(block)) {
+							if (s instanceof S_Global) {
+								block = s.getBlock();
+								if (block != null) {
+									ownCreateChildren(parentNode, s);
+								}
+							} else {
+								createNode(parentNode, s);
+							}
+						}
 					}
-				} else {
-					createNode(parentNode, s);
+					return FOUND;
 				}
-			}
-		}
-	}
 
-	// protected void _createChildren(final IOutlineNode parentNode, final
-	// S_Global stm) {
-	// Block block = stm.getBlock();
-	// if ( block != null ) {
-	// for ( Statement substm : EGaml.getStatementsOf(block) ) {
-	// createNode(parentNode, substm);
-	// }
-	// }
-	// }
+				@Override
+				public Object caseS_Experiment(final S_Experiment stm) {
+					ownCreateChildren(parentNode, stm);
+					return FOUND;
+				}
 
-	protected void _createChildren(final IOutlineNode parentNode, final S_Experiment stm) {
-		ownCreateChildren(parentNode, stm);
-	}
+				@Override
+				public Object caseS_Species(final S_Species stm) {
+					ownCreateChildren(parentNode, stm);
+					return FOUND;
+				}
 
-	protected void _createChildren(final IOutlineNode parentNode, final S_Species stm) {
-		ownCreateChildren(parentNode, stm);
+			}.doSwitch(stm);
 	}
 
 	protected void ownCreateChildren(final IOutlineNode parentNode, final Statement stm) {
@@ -146,9 +137,6 @@ public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		if (s.getBlock() != null && s.getBlock().getFunction() == null) {
 			return false;
 		}
-		// if ( s instanceof S_Definition ) {
-		// if ( ((S_Definition) s).getArgs() != null ) { return false; }
-		// }
 		final SymbolProto p = DescriptionFactory.getStatementProto(key);
 		if (p != null && p.getKind() == ISymbolKind.BATCH_METHOD) {
 			return false;
@@ -174,40 +162,23 @@ public class GamlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		return false;
 	}
 
-	// protected void _createNode(final IOutlineNode parentNode, final Parameter
-	// stm) {
-	//
-	// }
-
-	protected void _createNode(final IOutlineNode parentNode, final S_Global stm) {
-		//
-	}
-	//
-	// protected void _createNode(final IOutlineNode parentNode, final
-	// S_Entities stm) {
-	// //
-	// }
-	//
-	// protected void _createNode(final IOutlineNode parentNode, final
-	// S_Environment stm) {
-	// //
-	// }
-
-	protected boolean _isLeaf(final S_Experiment s) {
-		// use eIsSet !
-		return s.getBlock() == null || s.getBlock().getStatements().isEmpty();
-	}
-
-	protected boolean _isLeaf(final S_Species s) {
-		return s.getBlock() == null || s.getBlock().getStatements().isEmpty();
-	}
-
-	protected boolean _isLeaf(final Model s) {
-		return s.getBlock() == null;
+	@Override
+	protected Object getText(final Object modelElement) {
+		if (modelElement instanceof S_Global) {
+			return null;
+		}
+		return super.getText(modelElement);
 	}
 
 	@Override
-	protected boolean _isLeaf(final EObject s) {
+	protected boolean isLeaf(final EObject s) {
+		if (s instanceof S_Experiment) {
+			return ((S_Experiment) s).getBlock() == null || ((S_Experiment) s).getBlock().getStatements().isEmpty();
+		} else if (s instanceof S_Species) {
+			return ((S_Species) s).getBlock() == null || ((S_Species) s).getBlock().getStatements().isEmpty();
+		} else if (s instanceof Model) {
+			return ((Model) s).getBlock() == null;
+		}
 		return true;
 	}
 }

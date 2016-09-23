@@ -20,6 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
+import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
@@ -30,6 +31,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.AbstractContainerStatement.ContainerValidator;
 import msi.gaml.statements.RemoveStatement.RemoveSerializer;
 import msi.gaml.types.IType;
 
@@ -97,6 +99,7 @@ import msi.gaml.types.IType;
 				@example(value = "}", isExecutable = false) }),
 		@usage(value = "This statement can not be used on *matrix*.") }, see = { "add", "put" })
 @serializer(RemoveSerializer.class)
+@validator(ContainerValidator.class)
 public class RemoveStatement extends AbstractContainerStatement {
 
 	public static class RemoveSerializer extends SymbolSerializer {

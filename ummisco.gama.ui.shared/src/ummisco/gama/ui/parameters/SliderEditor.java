@@ -111,7 +111,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor {
 		};
 
 		if (stepValue != null) {
-			final Double realStep = stepValue.doubleValue() / maxValue.doubleValue() - minValue.doubleValue();
+			final Double realStep = stepValue.doubleValue() / (maxValue.doubleValue() - minValue.doubleValue());
 			slider.setStep(realStep);
 		}
 

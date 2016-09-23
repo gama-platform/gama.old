@@ -18,6 +18,7 @@ global
 	geometry shape <- envelope(shape_file("../../../Toy Models/Traffic/includes/roads.shp"));
 	float step<-#day;
 	float road_develop_speed <- 1.1;
+	int threshold_number_people<-300;
 
 	init
 	{
@@ -49,13 +50,19 @@ global
 				{
 					// adding the population to the variable of the road. It will be recompute the speed in the next step
 					r.nb_people <- r.nb_people + length(l);
-					if (r.nb_people > 300)
+					if (r.nb_people > threshold_number_people)
 					{
-						r.shape <- r.shape * road_develop_speed;
+						//we build a random road with hoping to solve the traffic jam
+						do build_a_new_road;
 					}
 	
 				}
 	
+			}
+			
+			ask Traffic."Adapter"[0].simulation
+			{
+				road_network <- as_edge_graph(road);
 			}
 			
 			// tell the urban to grow up 
@@ -67,7 +74,67 @@ global
 		
 
 	}
+	
+	action build_a_new_road
+	{
+		road r1 <- any(Traffic."Adapter"[0].simulation.road);
+		road r2 <- any(Traffic."Adapter"[0].simulation.road);
+		point p1 <- any_point_in(r1.shape);
+		point p2 <- any_point_in(r2.shape);
+		geometry newroad <- line([p1, p2]);
+		list<geometry> nr <- [];
+		list<point> i1 <- [p1, p2];
+		list rrr <- (Traffic."Adapter"[0].simulation.road) sort_by (each distance_to p1);
+		loop i from: 0 to: length(rrr) - 1
+		{
+			if (newroad intersects rrr[i])
+			{
+				point t <- newroad intersection rrr[i];
+				if (t != nil)
+				{
+					i1 <+ t;
+					list s <- rrr[i].shape split_at t;
+					if (length(s) > 1)
+					{
+						rrr[i].shape <- s[0];
+						ask Traffic."Adapter"[0].simulation
+						{
+							create road from: s[1];
+						}
 
+					}
+
+				}
+
+			}
+
+		}
+
+		i1 <- i1 sort_by (each distance_to p1);
+		loop i from: 0 to: length(i1) - 2
+		{
+			nr <+ line([i1[i], i1[i + 1]]);
+			ask Traffic."Adapter"[0].simulation
+			{
+				road_network << edge(i1[i], i1[i + 1]);
+			}
+
+		}
+
+		loop ee over: nr
+		{
+			ask Traffic."Adapter"[0].simulation
+			{
+				create road from: ee
+				{
+					shape <- ee; //scaled_by 0.7;
+				}
+
+			}
+
+		}
+
+	}
 }
 
 experiment main type: gui

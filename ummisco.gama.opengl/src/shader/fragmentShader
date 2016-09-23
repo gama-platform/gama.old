@@ -1,0 +1,84 @@
+#if __VERSION__ >= 130
+	#define varying in
+	out vec4 mgl_FragColor;
+	#define gl_FragColor mgl_FragColor
+#endif
+		
+#ifdef GL_ES
+	precision mediump float;
+	precision mediump int;
+#endif
+		
+varying   vec4    varying_Color;
+varying   vec3    surfaceNormal;
+varying   vec3    toLightVector[7];
+varying   vec3 	  toCameraVector;
+varying   vec2    pass_textureCoords;
+varying   float   varying_useNormals;
+
+uniform   vec3    ambientLight;
+uniform   float   shineDamper;
+uniform   float   reflectivity;
+uniform   sampler2D textureSampler;
+uniform   float   useTexture; // 0 for no, 1 for yes
+uniform   vec3    lightColors[7];
+uniform   vec3    lightAttenuations[7];
+uniform   float   layerAlpha;
+
+void main (void)
+{
+	vec4 inputColor = varying_Color;
+	
+	if (varying_useNormals > 0.5)
+	{
+		if (useTexture > 0.5)
+		{
+			inputColor = texture2D(textureSampler,pass_textureCoords);
+		}
+	
+		vec3 unitNormal = normalize(surfaceNormal);
+		if (!gl_FrontFacing)
+		{
+			unitNormal = -normalize(surfaceNormal);
+		}
+		
+		vec3 unitVectorToCamera = normalize(toCameraVector);
+		
+		vec3 totalDiffuse = vec3(0.0);
+		vec3 totalSpecular = vec3(0.0);
+			
+		for (int i=0;i<7;i++)
+		{
+			if (lightColors[i].x > 0.001 || lightColors[i].y > 0.001 || lightColors[i].z > 0.001)
+			{
+				float distance = length(toLightVector[i]);
+				float attFactor = lightAttenuations[i].x + (lightAttenuations[i].y * distance) + (lightAttenuations[i].z * distance * distance);
+				vec3 unitLightVector = normalize(toLightVector[i]);
+				float nDot1 = dot(unitNormal,unitLightVector);
+				
+				vec3 lightDirection = -unitLightVector;
+				vec3 reflectedLightDirection = reflect(lightDirection,unitNormal);
+				
+				float specularFactor = dot(reflectedLightDirection, unitVectorToCamera);
+				specularFactor = max(specularFactor,0.0);
+				float damperFactor = pow(specularFactor,shineDamper);
+				
+				// add 0.3 because it seems better (brighter)
+				totalDiffuse = totalDiffuse + ( vec3(nDot1*(lightColors[i].x+0.3),nDot1*(lightColors[i].y+0.3),nDot1*(lightColors[i].z+0.3)) / attFactor);
+				totalSpecular = totalSpecular + ( (damperFactor * reflectivity * lightColors[i]) / attFactor);
+			}
+		}
+		totalDiffuse = vec3(max(totalDiffuse.x,ambientLight.x),max(totalDiffuse.y,ambientLight.y),max(totalDiffuse.z,ambientLight.z));
+		
+		vec4 finalColor = vec4(totalDiffuse,1.0) * inputColor + vec4(totalSpecular,0.0);
+		gl_FragColor = vec4(finalColor.xyz,finalColor.w*layerAlpha);
+	}
+	else
+	{
+		if (useTexture > 0.5)
+		{
+			inputColor = texture2D(textureSampler,pass_textureCoords);
+		}
+		gl_FragColor = vec4(inputColor.xyz,inputColor.w*layerAlpha*varying_Color.w);
+	}
+}

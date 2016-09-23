@@ -84,7 +84,7 @@ public class EventLayerStatement extends AbstractLayerStatement {
 				description.error("Action '" + actionName + "' is not defined in neither 'global' nor 'experiment'",
 						IGamlIssue.UNKNOWN_ACTION, ACTION);
 				return;
-			} else if (sd.getArgs().size() > 0) {
+			} else if (sd.getPassedArgs().size() > 0) {
 				description.error(
 						"Action '" + actionName
 								+ "' cannot have arguments. Use '#user_location' inside to obtain the location of the mouse, and compute the selected agents in the action using GAML spatial operators",

@@ -91,20 +91,20 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		case IUnits.horizontal:
 		case IUnits.vertical:
 			horizontalOrVertical(displayStack, holders, layout == IUnits.horizontal);
+			break;
 		case IUnits.none:
-			//none(displayStack, holders);
+			// none(displayStack, holders);
 
 		}
 
 	}
-	
 
 	static void stack(final MPartStack displayStack, final List<MPlaceholder> holders) {
 		for (int i = 0; i < holders.size(); i++) {
 			associate(displayStack, holders.get(i), false);
 		}
 	}
-	
+
 	static void none(final MPartStack displayStack, final List<MPlaceholder> holders) {
 		for (int i = 0; i < holders.size(); i++) {
 			associate(displayStack, holders.get(i), true);
@@ -169,8 +169,9 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		}
 	}
 
-	static void associate(final MElementContainer container, final MPlaceholder holder, boolean removeFirst) {
-		if (removeFirst) container.getChildren().remove(holder);
+	static void associate(final MElementContainer container, final MPlaceholder holder, final boolean removeFirst) {
+		if (removeFirst)
+			container.getChildren().remove(holder);
 		container.getChildren().add(holder);
 		partService.activate((MPart) holder.getRef());
 	}

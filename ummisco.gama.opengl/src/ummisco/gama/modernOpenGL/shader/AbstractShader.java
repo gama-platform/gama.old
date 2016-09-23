@@ -1,21 +1,14 @@
 package ummisco.gama.modernOpenGL.shader;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.InputStream;
 import java.nio.FloatBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 import javax.vecmath.Matrix4f;
 import javax.vecmath.Vector3f;
 
 import com.jogamp.opengl.GL2;
 
-import ummisco.gama.opengl.camera.ICamera;
 import ummisco.gama.opengl.vaoGenerator.GeomMathUtils;
-import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
 public abstract class AbstractShader {
 	
@@ -40,16 +33,11 @@ public abstract class AbstractShader {
 	protected AbstractShader(GL2 gl, String vertexFile, String fragmentFile) {
 		this.gl = gl;
 		
-		String ressourcePath = (this.getClass().getResource(".."+File.separator+"shader") == null) ? this.getClass().getResource(".."+File.separator+".."+File.separator+"shader").getPath()
-				: this.getClass().getResource(".."+File.separator+"shader").getPath();
-		String absolutePathToShaderFolder = this.getClass().getProtectionDomain().getCodeSource().getLocation().getPath() 
-				+ "src"
-				+ ressourcePath;
-		vertexFile = absolutePathToShaderFolder + vertexFile;
-		fragmentFile = absolutePathToShaderFolder + fragmentFile;
+		InputStream vertexInputStream = this.getClass().getClassLoader().getResourceAsStream("/shader/"+vertexFile);
+		InputStream fragmentInputStream = this.getClass().getClassLoader().getResourceAsStream("/shader/"+fragmentFile);
 
-		vertexShaderID = loadShader(vertexFile,GL2.GL_VERTEX_SHADER);
-		fragmentShaderID = loadShader(fragmentFile,GL2.GL_FRAGMENT_SHADER);
+		vertexShaderID = loadShader(vertexInputStream,GL2.GL_VERTEX_SHADER);
+		fragmentShaderID = loadShader(fragmentInputStream,GL2.GL_FRAGMENT_SHADER);
 		
 		//Each shaderProgram must have
 		//one vertex shader and one fragment shader.
@@ -67,16 +55,11 @@ public abstract class AbstractShader {
 		getAllUniformLocations();
 	}
 	
-	private int loadShader(String file, int type) {
-		
+	private int loadShader(InputStream is, int type) {
 		String shaderString = null;
 		
-		try {
-			shaderString = readFile(file,StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
+		shaderString = s.hasNext() ? s.next() : "";
 		
 		int shaderID = gl.glCreateShader(type);
 		
@@ -165,16 +148,6 @@ public abstract class AbstractShader {
 		gl.glUniform3f(location, vector.x, vector.y, vector.z);
 	}
 	
-	private static String readFile(String path, Charset encoding) 
-			  throws IOException 
-	{
-		if (path.startsWith("/")) {
-			path = path.substring(1);
-		}
-	  byte[] encoded = Files.readAllBytes(Paths.get(path));
-	  return new String(encoded, encoding);
-	}
-	
 	public void loadTransformationMatrix(Matrix4f matrix) {
 		loadMatrix(location_transformationMatrix, matrix);
 	}
@@ -183,8 +156,7 @@ public abstract class AbstractShader {
 		loadMatrix(location_projectionMatrix, matrix);
 	}
 	
-	public void loadViewMatrix(ICamera camera) {
-		 Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(camera);
+	public void loadViewMatrix(Matrix4f viewMatrix) {
 		loadMatrix(location_viewMatrix, viewMatrix);
 	}
 	

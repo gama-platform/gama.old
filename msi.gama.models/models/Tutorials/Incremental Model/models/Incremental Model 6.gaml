@@ -92,8 +92,6 @@ species building {
 	}
 	
 	species people_in_building parent: people schedules: [] {
-		aspect circle{}
-		aspect sphere3D{}
 	}
 	
 	reflex let_people_leave  {

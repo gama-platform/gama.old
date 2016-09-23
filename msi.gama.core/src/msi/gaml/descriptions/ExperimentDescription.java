@@ -129,21 +129,19 @@ public class ExperimentDescription extends SpeciesDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		boolean result = super.visitOwnChildren(visitor);
-		if (!result)
+		if (!super.visitOwnChildren(visitor))
 			return false;
 		if (parameters != null) {
-			result &= parameters.forEachValue(visitor);
+			if (!parameters.forEachValue(visitor))
+				return false;
 		}
-		if (!result)
-			return false;
 		if (output != null)
-			result &= visitor.visit(output);
-		if (!result)
-			return false;
+			if (!visitor.visit(output))
+				return false;
 		if (permanent != null)
-			result &= visitor.visit(permanent);
-		return result;
+			if (!visitor.visit(permanent))
+				return false;
+		return true;
 	}
 
 	@Override
@@ -265,7 +263,8 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public void visitMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
+	public boolean visitMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
+		return true;
 	}
 
 }

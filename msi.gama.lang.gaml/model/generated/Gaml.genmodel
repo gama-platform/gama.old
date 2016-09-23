@@ -8,6 +8,11 @@
   <genPackages prefix="Gaml" basePackage="msi.gama.lang.gaml" disposableProviderFactory="true"
       ecorePackage="Gaml.ecore#/">
     <genClasses ecoreClass="Gaml.ecore#//Entry"/>
+    <genClasses ecoreClass="Gaml.ecore#//StandaloneBlock">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//StandaloneBlock/block"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//StandaloneBlock/context"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//StandaloneBlock/importURI"/>
+    </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//StringEvaluator">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//StringEvaluator/toto"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//StringEvaluator/expr"/>

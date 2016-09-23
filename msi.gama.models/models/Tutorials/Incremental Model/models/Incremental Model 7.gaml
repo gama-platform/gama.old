@@ -97,8 +97,6 @@ species building {
 	}
 	
 	species people_in_building parent: people schedules: [] {
-		aspect circle{}
-		aspect sphere3D{}
 	}
 	
 	reflex let_people_leave  {
@@ -119,7 +117,7 @@ species building {
 			capture entering_people as: people_in_building ;
  		}
 	}
-	equation SIR{ 
+	equation SI{ 
 		diff(S,t) = (- beta * S * I / T) ;
 		diff(I,t) = (  beta * S * I / T) ;
 	}
@@ -131,7 +129,7 @@ species building {
     	I <- T-S;
     	float I0 <- I;
     	if (I > 0 and S > 0) {
-    		solve SIR method: "rk4" step: h;
+    		solve SI method: "rk4" step: h;
     		I_to1 <- I_to1 + (I - I0);
     		int I_int <- min([int(S),int(I_to1)]);
 	    	I_to1 <- I_to1 - I_int;
@@ -150,7 +148,7 @@ experiment main_experiment type:gui{
 		monitor "Current hour" value: current_hour;
 		monitor "Infected people rate" value: infected_rate;
 		display map_3D type: opengl {
-			light 1 color:(is_night ? 50 : 255) update:true;
+			light 1 color:(is_night ? 50 : 255);
 			image "../includes/soil.jpg";
 			species road aspect:geom;
 			species people aspect:sphere3D;			

@@ -25,19 +25,15 @@ import org.eclipse.xtext.service.DispatchingProvider;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.validation.IResourceValidator;
 
-import com.google.common.base.Supplier;
 import com.google.inject.Binder;
 
-import msi.gama.common.interfaces.IDocManager;
-import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
-import msi.gama.lang.gaml.expression.ExpressionDescriptionBuilder;
+import msi.gama.common.GamaPreferences;
 import msi.gama.lang.gaml.expression.GamlExpressionCompiler;
 import msi.gama.lang.gaml.generator.GamlOutputConfigurationProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingErrorMessageProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingService;
 import msi.gama.lang.gaml.naming.GamlNameConverter;
 import msi.gama.lang.gaml.naming.GamlQualifiedNameProvider;
-import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.lang.gaml.parsing.GamlSyntaxErrorMessageProvider;
 import msi.gama.lang.gaml.resource.GamlEncodingProvider;
 import msi.gama.lang.gaml.resource.GamlResource;
@@ -48,7 +44,9 @@ import msi.gama.lang.gaml.validation.ErrorToDiagnoticTranslator;
 import msi.gama.lang.gaml.validation.GamlResourceValidator;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.GamlExpressionFactory;
+import msi.gaml.expressions.GamlExpressionFactory.ParserProvider;
 import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.types.IType;
 
 /**
  * Use this class to register components to be used at runtime / without the
@@ -58,9 +56,13 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	private static boolean initialized;
 
+	public static GamaPreferences.Entry<Boolean> ENABLE_FAST_COMPIL = GamaPreferences.create("fast_compilation",
+			"Enable faster compilation (but less accurate error reporting in nagivator)", false, IType.BOOL)
+			.in(GamaPreferences.EXPERIMENTAL).group("Compilation");
+
 	public static void staticInitialize() {
 		if (!initialized) {
-			GamlExpressionFactory.registerParserProvider(new Supplier<IExpressionCompiler>() {
+			GamlExpressionFactory.registerParserProvider(new ParserProvider() {
 
 				@Override
 				public IExpressionCompiler get() {
@@ -69,6 +71,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 			});
 			GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
 			initialized = true;
+
 		}
 
 	}
@@ -77,9 +80,9 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	public void configure(final Binder binder) {
 		super.configure(binder);
 		staticInitialize();
-		binder.bind(ExpressionDescriptionBuilder.class);
-		binder.bind(IDocManager.class).to(GamlResourceDocumenter.class);
-		binder.bind(GamlSyntacticConverter.class);
+		// binder.bind(ExpressionDescriptionBuilder.class);
+		// binder.bind(IDocManager.class).to(GamlResourceDocumenter.class);
+		// binder.bind(GamlSyntacticConverter.class);
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);

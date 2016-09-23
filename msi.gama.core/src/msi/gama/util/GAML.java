@@ -19,6 +19,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
+import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.GamlExpressionFactory;
@@ -139,6 +140,10 @@ public class GAML {
 
 	public static GamlFileInfo getInfo(final URI uri, final long stamp) {
 		return infoProvider.getInfo(uri, stamp);
+	}
+
+	public static ISyntacticElement getContents(final URI uri) {
+		return infoProvider.getContents(uri);
 	}
 
 }

@@ -7,7 +7,7 @@ package ummisco.gama.ui.navigator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 
-import msi.gaml.compilation.GamaBundleLoader;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;

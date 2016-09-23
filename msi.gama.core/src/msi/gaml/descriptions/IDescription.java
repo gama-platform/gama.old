@@ -11,9 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.Collection;
-
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.base.Function;
 
 import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
@@ -21,6 +21,7 @@ import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IGamlable;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.ITyped;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
@@ -33,6 +34,23 @@ import msi.gaml.types.IType;
  *
  */
 public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable, IGamlable {
+
+	public static final Function<? super IDescription, ? extends String> TO_NAME = new Function<IDescription, String>() {
+
+		@Override
+		public String apply(final IDescription input) {
+			return input.getName();
+		}
+	};
+
+	static final Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = new Function<TypeDescription, Class<? extends ISkill>>() {
+
+		@Override
+		public Class<? extends ISkill> apply(final TypeDescription input) {
+			return input.getJavaBase();
+		}
+
+	};
 
 	public static abstract class DescriptionVisitor<T extends IDescription> implements TObjectProcedure<T> {
 
@@ -132,7 +150,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	// public abstract List<IDescription> getChildren();
 
-	public abstract void addChildren(Collection<IDescription> children);
+	public abstract void addChildren(Iterable<IDescription> children);
 
 	public abstract IDescription addChild(IDescription child);
 
@@ -142,7 +160,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public abstract SpeciesDescription getSpeciesDescription(String actualSpecies);
 
-	public abstract StatementDescription getAction(String name);
+	public abstract ActionDescription getAction(String name);
 
 	public abstract ValidationContext getErrorCollector();
 
@@ -201,8 +219,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public boolean visitChildren(DescriptionVisitor visitor);
 
 	public boolean visitOwnChildren(DescriptionVisitor visitor);
-
-	public IType getTypeDenotedByFacet(String s);
 
 	void computeStats(FacetVisitor proc, int[] facetNumber, int[] descWithNoFacets, int[] descNumber);
 

@@ -426,7 +426,7 @@ public class GamaSqlConnection extends GamaGisFile {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 
 	}
 

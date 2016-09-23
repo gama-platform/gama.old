@@ -243,7 +243,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 		// TODO A faire.
 
 	}

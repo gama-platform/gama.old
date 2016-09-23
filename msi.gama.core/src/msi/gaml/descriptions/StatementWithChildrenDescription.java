@@ -12,6 +12,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.factories.ChildrenProvider;
+import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
@@ -23,8 +24,8 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
 			final ChildrenProvider cp, final boolean hasScope, final boolean hasArgs, final EObject source,
-			final Facets facets) {
-		super(keyword, superDesc, cp, hasArgs, source, facets);
+			final Facets facets, final Arguments alreadyComputedArgs) {
+		super(keyword, superDesc, cp, hasArgs, source, facets, alreadyComputedArgs);
 		canHaveTemps = hasScope;
 	}
 
@@ -150,7 +151,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	}
 
 	@Override
-	public StatementDescription copy(final IDescription into) {
+	public StatementWithChildrenDescription copy(final IDescription into) {
 		final List<IDescription> children = new ArrayList();
 		visitChildren(new DescriptionVisitor<IDescription>() {
 
@@ -161,13 +162,9 @@ public class StatementWithChildrenDescription extends StatementDescription {
 			}
 		});
 
-		if (args != null) {
-			for (final IDescription child : args.values()) {
-				children.add(child.copy(into));
-			}
-		}
-		final StatementDescription desc = new StatementWithChildrenDescription(getKeyword(), into,
-				new ChildrenProvider(children), temps != null, args != null, element, getFacetsCopy());
+		final StatementWithChildrenDescription desc = new StatementWithChildrenDescription(getKeyword(), into,
+				new ChildrenProvider(children), temps != null, false, element, getFacetsCopy(),
+				passedArgs == null ? null : passedArgs.cleanCopy());
 		desc.originName = getOriginName();
 		return desc;
 	}

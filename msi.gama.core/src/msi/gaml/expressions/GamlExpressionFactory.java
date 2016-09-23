@@ -14,27 +14,24 @@ package msi.gaml.expressions;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Predicate;
-import com.google.common.base.Supplier;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
-import com.google.common.collect.Ordering;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
@@ -53,9 +50,13 @@ import msi.gaml.types.Types;
 
 public class GamlExpressionFactory implements IExpressionFactory {
 
+	public static interface ParserProvider {
+		IExpressionCompiler get();
+	}
+
 	static ThreadLocal<IExpressionCompiler> parser;
 
-	public static void registerParserProvider(final Supplier<IExpressionCompiler> f) {
+	public static void registerParserProvider(final ParserProvider f) {
 		parser = new ThreadLocal() {
 			@Override
 			protected IExpressionCompiler initialValue() {
@@ -145,10 +146,10 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public Map<String, IExpressionDescription> createArgumentMap(final StatementDescription action,
-			final IExpressionDescription args, final IDescription context) {
+	public Arguments createArgumentMap(final ActionDescription action, final IExpressionDescription args,
+			final IDescription context) {
 		if (args == null) {
-			return Collections.EMPTY_MAP;
+			return null;
 		}
 		return getParser().parseArguments(action, args.getTarget(), context, false);
 	}
@@ -204,27 +205,43 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			final Signature originalUserSignature = userSignature;
 			// If the signature is not present in the registry
 			if (!ops.containsKey(userSignature)) {
-				final Iterable<Signature> filtered = Iterables.filter(ops.keySet(), new Predicate<Signature>() {
+				final Collection<Signature> filtered = Collections2.filter(ops.keySet(), new Predicate<Signature>() {
 
 					@Override
 					public boolean apply(final Signature operatorSignature) {
 						return originalUserSignature.matchesDesiredSignature(operatorSignature);
 					}
 				});
-				if (Iterables.isEmpty(filtered)) {
+				final int size = filtered.size();
+				if (size == 0) {
 					context.error(
 							"No operator found for applying '" + op + "' to " + userSignature
 									+ " (operators available for " + Arrays.toString(ops.keySet().toArray()) + ")",
 							IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
 					return null;
-				}
-				userSignature = Ordering.from(new Comparator<Signature>() {
-
-					@Override
-					public int compare(final Signature o1, final Signature o2) {
-						return o1.distanceTo(originalUserSignature) - o2.distanceTo(originalUserSignature);
+				} else if (size == 1) {
+					userSignature = Iterables.get(filtered, 0);
+				} else {
+					int distance = Integer.MAX_VALUE;
+					for (final Signature s : filtered) {
+						final int dist = s.distanceTo(originalUserSignature);
+						if (dist == 0) {
+							userSignature = s;
+							break;
+						} else if (dist < distance) {
+							distance = dist;
+							userSignature = s;
+						}
 					}
-				}).min(filtered);
+				}
+				// userSignature = Ordering.from(new Comparator<Signature>() {
+				//
+				// @Override
+				// public int compare(final Signature o1, final Signature o2) {
+				// return o1.distanceTo(originalUserSignature) -
+				// o2.distanceTo(originalUserSignature);
+				// }
+				// }).min(filtered);
 
 				// We coerce the types if necessary, by wrapping the original
 				// expressions in a
@@ -243,6 +260,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 											+ "' will be  truncated to int.",
 									IGamlIssue.UNMATCHED_OPERANDS, currentEObject);
 						}
+						// System.out.println("Coercing arg " + args[i] + " to "
+						// + t + " in " + op);
 						args[i] = createOperator(IKeyword.AS, context, currentEObject, args[i],
 								createTypeExpression(t));
 					}
@@ -265,8 +284,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IExpression createAction(final String op, final IDescription callerContext,
-			final StatementDescription action, final IExpression call, final Arguments arguments) {
+	public IExpression createAction(final String op, final IDescription callerContext, final ActionDescription action,
+			final IExpression call, final Arguments arguments) {
 		// Arguments args = createArgs(arguments);
 		if (action.verifyArgs(callerContext, arguments)) {
 			return new PrimitiveOperator(null, callerContext, action, call, arguments);
@@ -299,7 +318,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public IExpression createTemporaryActionForAgent(final IAgent agent, final String action) {
 		final IDescription context = agent.getSpecies().getDescription();
 		final IDescription desc = DescriptionFactory.create(IKeyword.ACTION, context, ChildrenProvider.FUTURE,
-				IKeyword.TYPE, IKeyword.STRING, IKeyword.NAME, "temporary_action");
+				IKeyword.TYPE, IKeyword.STRING, IKeyword.NAME, TEMPORARY_ACTION_NAME);
 		final List<IDescription> children = getParser().compileBlock(action, context);
 		for (final IDescription child : children) {
 			desc.addChild(child);
@@ -308,7 +327,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		context.addChild(desc);
 		final ActionStatement a = (ActionStatement) desc.compile();
 		agent.getSpecies().addTemporaryAction(a);
-		return getParser().compile("temporary_action()", context);
+		return getParser().compile(TEMPORARY_ACTION_NAME + "()", context);
 	}
 
 }

@@ -15,6 +15,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -48,6 +49,8 @@ public class RefreshHandler extends AbstractHandler {
 					return;
 				}
 				((GamaNavigator) view).safeRefresh(resource == null ? null : resource.getParent());
+				if (resource != null)
+					((GamaNavigator) view).selectReveal(new StructuredSelection(resource));
 			}
 		});
 	}

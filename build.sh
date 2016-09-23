@@ -1,8 +1,8 @@
 cd ummisco.gama.annotations &&
-mvn install &&
+mvn clean install &&
 cd - &&
 cd msi.gama.processor &&
-mvn install &&
+mvn clean install &&
 cd - &&
 cd msi.gama.parent &&
 mvn clean install &&

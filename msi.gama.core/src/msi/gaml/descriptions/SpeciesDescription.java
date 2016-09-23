@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 
 import gnu.trove.set.hash.TLinkedHashSet;
@@ -44,8 +43,8 @@ import msi.gama.util.TOrderedHashMap;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GamaHelper;
-import msi.gaml.compilation.GamaSkillRegistry;
 import msi.gaml.compilation.IAgentConstructor;
+import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.SymbolSerializer.SpeciesSerializer;
 import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
@@ -70,22 +69,6 @@ public class SpeciesDescription extends TypeDescription {
 	private SpeciesConstantExpression speciesExpr;
 	protected Class javaBase;
 	protected boolean canUseMinimalAgents = true;
-	static final Function<SkillDescription, Class<? extends ISkill>> SKILLS_TO_CLASSES = new Function<SkillDescription, Class<? extends ISkill>>() {
-
-		@Override
-		public Class<? extends ISkill> apply(final SkillDescription input) {
-			return input.getJavaBase();
-		}
-
-	};
-	static final Function<SkillDescription, String> SKILLS_TO_NAMES = new Function<SkillDescription, String>() {
-
-		@Override
-		public String apply(final SkillDescription input) {
-			return input.getName();
-		}
-
-	};
 
 	public SpeciesDescription(final String keyword, final SpeciesDescription macroDesc, final ChildrenProvider cp,
 			final EObject source, final Facets facets) {
@@ -223,16 +206,15 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public void copyJavaAdditions() {
-		final String originName = "built-in species " + getName();
 		final Class clazz = getJavaBase();
 		if (clazz == null) {
 			error("This species cannot be compiled as its Java base is unknown. ", IGamlIssue.UNKNOWN_SUBSPECIES);
 			return;
 		}
 		for (final IDescription v : AbstractGamlAdditions.getAllChildrenOf(getJavaBase(),
-				Iterables.transform(getSkills(), SKILLS_TO_CLASSES))) {
+				Iterables.transform(getSkills(), TO_CLASS))) {
 			if (isBuiltIn())
-				v.setOriginName(originName);
+				v.setOriginName("built-in species " + getName());
 			if (v instanceof VariableDescription) {
 				boolean toAdd = false;
 				if (this.isBuiltIn() && !hasAttribute(v.getName()) || ((VariableDescription) v).isContextualType()) {
@@ -276,7 +258,7 @@ public class SpeciesDescription extends TypeDescription {
 			final StatementDescription statement = (StatementDescription) desc;
 			final String kw = desc.getKeyword();
 			if (PRIMITIVE.equals(kw) || ACTION.equals(kw)) {
-				addAction(statement);
+				addAction((ActionDescription) statement);
 			} else if (ASPECT.equals(kw)) {
 				addAspect(statement);
 			} else {
@@ -471,9 +453,11 @@ public class SpeciesDescription extends TypeDescription {
 						+ ") is not a subclass of its parent species " + parent.getName() + " base class ("
 						+ parent.getJavaBase().getSimpleName() + ")", IGamlIssue.GENERAL);
 			}
-			inheritMicroSpecies(parent);
-			super.inheritFromParent();
+			if (!parent.isBuiltIn())
+				inheritMicroSpecies(parent);
+
 		}
+		super.inheritFromParent();
 
 	}
 
@@ -524,7 +508,7 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public Iterable<String> getSkillsNames() {
-		return Iterables.concat(Iterables.transform(skills == null ? Collections.EMPTY_LIST : skills, SKILLS_TO_NAMES),
+		return Iterables.concat(Iterables.transform(skills == null ? Collections.EMPTY_LIST : skills, TO_NAME),
 				parent != null && parent != this ? getParent().getSkillsNames() : Collections.EMPTY_LIST);
 
 	}
@@ -540,10 +524,10 @@ public class SpeciesDescription extends TypeDescription {
 		return speciesExpr;
 	}
 
-	public void visitMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
+	public boolean visitMicroSpecies(final DescriptionVisitor<SpeciesDescription> visitor) {
 		if (!hasMicroSpecies())
-			return;
-		getMicroSpecies().forEachValue(visitor);
+			return true;
+		return getMicroSpecies().forEachValue(visitor);
 	}
 
 	@Override
@@ -652,7 +636,7 @@ public class SpeciesDescription extends TypeDescription {
 	 *
 	 * @throws GamlException
 	 */
-	public void finalizeDescription() {
+	public boolean finalizeDescription() {
 		if (isMirror()) {
 			addChild(DescriptionFactory.create(AGENT, this, NAME, TARGET, TYPE,
 					String.valueOf(ITypeProvider.MIRROR_TYPE)));
@@ -666,7 +650,8 @@ public class SpeciesDescription extends TypeDescription {
 
 			@Override
 			public boolean visit(final SpeciesDescription microSpec) {
-				microSpec.finalizeDescription();
+				if (!microSpec.finalizeDescription())
+					return false;
 				if (!microSpec.isExperiment() && !isBuiltIn) {
 					final String n = microSpec.getName();
 					if (hasAttribute(n) && !getAttribute(n).isSyntheticSpeciesContainer()) {
@@ -675,8 +660,13 @@ public class SpeciesDescription extends TypeDescription {
 						return false;
 					}
 					final VariableDescription var = (VariableDescription) DescriptionFactory.create(CONTAINER,
-							SpeciesDescription.this, NAME, microSpec.getName());
-					var.setSyntheticSpeciesContainer();
+							SpeciesDescription.this, NAME, n);
+
+					// Special case for the situations where the shape is
+					// defined with a reference to a sub-species
+					final VariableDescription shape = getAttribute(SHAPE);
+					final boolean cyclingDependency = shape != null && shape.getDependenciesNames().contains(n);
+					var.setSyntheticSpeciesContainer(!cyclingDependency);
 					var.setFacet(OF, GAML.getExpressionFactory()
 							.createTypeExpression(getModelDescription().getTypeNamed(microSpec.getName())));
 					// final Set<String> dependencies = new HashSet();
@@ -729,9 +719,13 @@ public class SpeciesDescription extends TypeDescription {
 		};
 
 		// recursively finalize the sorted micro-species
-		visitMicroSpecies(visitor);
-		sortAttributes();
+		if (!visitMicroSpecies(visitor))
+			return false;
+		if (!sortAttributes())
+			return false;
 		compact();
+
+		return true;
 	}
 
 	void compact() {
@@ -771,19 +765,18 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	protected void validateChildren() {
+	protected boolean validateChildren() {
 		// We try to issue information about the state of the species: at first,
 		// abstract.
 
 		for (final StatementDescription a : getActions()) {
 			if (a.isAbstract()) {
 				this.info("Action '" + a.getName() + "' is defined or inherited as virtual. In consequence, "
-						+ getName() + " is considered as abstract and cannot be instantiated.",
-						IGamlIssue.MISSING_ACTION);
+						+ getName() + " will be considered as abstract.", IGamlIssue.MISSING_ACTION);
 			}
 		}
 
-		super.validateChildren();
+		return super.validateChildren();
 	}
 
 	public boolean isExperiment() {
@@ -819,6 +812,7 @@ public class SpeciesDescription extends TypeDescription {
 		return false;
 	}
 
+	@Override
 	public Class<? extends IAgent> getJavaBase() {
 		if (javaBase == null) {
 			if (parent != null && parent != this && !getParent().getName().equals(AGENT)) {
@@ -871,21 +865,20 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		boolean result = super.visitOwnChildren(visitor);
-		if (!result)
+		if (!super.visitOwnChildren(visitor))
 			return false;
 		if (microSpecies != null) {
-			result &= microSpecies.forEachValue(visitor);
+			if (!microSpecies.forEachValue(visitor))
+				return false;
 		}
-		if (!result)
-			return false;
 		if (behaviors != null)
-			result &= behaviors.forEachValue(visitor);
-		if (!result)
-			return false;
+			if (!behaviors.forEachValue(visitor))
+				return false;
+
 		if (aspects != null)
-			result &= aspects.forEachValue(visitor);
-		return result;
+			if (!aspects.forEachValue(visitor))
+				return false;
+		return true;
 	}
 
 	@Override

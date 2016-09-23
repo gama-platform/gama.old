@@ -75,7 +75,7 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 	}
 
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 		// TODO A faire
 	}
 

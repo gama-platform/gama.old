@@ -1,5 +1,6 @@
 package msi.gama.lang.gaml.resource;
 
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.Collections;
@@ -12,23 +13,40 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.xtext.resource.XtextResourceSet;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.lang.gaml.documentation.GamlResourceDocumenter;
+import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
+import msi.gama.lang.gaml.parsing.GamlSyntacticConverter;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
+import msi.gama.util.TOrderedHashMap;
+import msi.gaml.compilation.ast.SyntacticModelElement;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 
 public class GamlResourceServices {
 
+	private static int resourceCount = 0;
+	private static IDocManager documenter = new GamlResourceDocumenter();
+	private static GamlSyntacticConverter converter = new GamlSyntacticConverter();
 	private static final Map<URI, IGamlBuilderListener> resourceListeners = new THashMap();
-
 	private static final Map<URI, ValidationContext> resourceErrors = new THashMap();
+	private static final XtextResourceSet poolSet = new XtextResourceSet() {
+		{
+			setClasspathURIContext(GamlResourceServices.class);
+		}
 
+	};
 	private static final LoadingCache<URI, THashMap<EObject, IGamlDescription>> documentationCache = CacheBuilder
 			.newBuilder().build(new CacheLoader<URI, THashMap<EObject, IGamlDescription>>() {
 
@@ -87,7 +105,7 @@ public class GamlResourceServices {
 	public static ValidationContext getValidationContext(final GamlResource r) {
 		final URI newURI = properlyEncodedURI(r.getURI());
 		if (!resourceErrors.containsKey(newURI))
-			resourceErrors.put(newURI, new ValidationContext(newURI, r.hasErrors(), r.getDocumentationManager()));
+			resourceErrors.put(newURI, new ValidationContext(newURI, r.hasErrors(), getResourceDocumenter()));
 		final ValidationContext result = resourceErrors.get(newURI);
 		result.hasInternalSyntaxErrors(r.hasErrors());
 		return result;
@@ -155,6 +173,49 @@ public class GamlResourceServices {
 			final IPath fullPath = file.getProject().getLocation();
 			return fullPath == null ? "" : fullPath.toOSString();
 		}
+	}
+
+	public static GamlResource getTemporaryResource(final IDescription existing) {
+		ResourceSet rs = null;
+		Resource r = null;
+		if (existing != null) {
+			final ModelDescription desc = existing.getModelDescription();
+			if (desc != null) {
+				final EObject e = desc.getUnderlyingElement(null);
+				if (e != null) {
+					r = e.eResource();
+					if (r != null)
+						rs = r.getResourceSet();
+				}
+			}
+		}
+		if (rs == null)
+			rs = poolSet;
+		final URI uri = URI.createURI(IKeyword.SYNTHETIC_RESOURCES_PREFIX + resourceCount++ + ".gaml", false);
+		// TODO Modifier le cache de la resource ici ?
+		final GamlResource result = (GamlResource) rs.createResource(uri);
+		final TOrderedHashMap<URI, String> imports = new TOrderedHashMap();
+		imports.put(uri, null);
+		if (r != null)
+			imports.put(r.getURI(), null);
+		result.getCache().getOrCreate(result).set(GamlResourceIndexer.IMPORTED_URIS, imports);
+		return result;
+	}
+
+	public static void discardTemporaryResource(final GamlResource temp) {
+		try {
+			temp.delete(null);
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static IDocManager getResourceDocumenter() {
+		return documenter;
+	}
+
+	public static SyntacticModelElement buildSyntacticContents(final GamlResource r) {
+		return converter.buildSyntacticContents(r.getParseResult().getRootASTElement(), null);
 	}
 
 }

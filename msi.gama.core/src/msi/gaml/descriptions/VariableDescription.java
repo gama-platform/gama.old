@@ -50,11 +50,12 @@ public class VariableDescription extends SymbolDescription {
 	public VariableDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 			final EObject source, final Facets facets, final Collection<String> dependencies) {
 		super(keyword, superDesc, cp, source, facets);
-		if (!facets.containsKey(TYPE) && !isExperimentParameter()) {
+		if (facets != null && !facets.containsKey(TYPE) && !isExperimentParameter()) {
 			facets.putAsLabel(TYPE, keyword);
 		}
 		_isGlobal = superDesc instanceof ModelDescription;
-		_isNotModifiable = facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE) && !isParameter();
+		_isNotModifiable = facets != null && facets.containsKey(FUNCTION)
+				|| facets.equals(CONST, TRUE) && !isParameter();
 		addDependenciesNames(dependencies);
 	}
 
@@ -62,12 +63,14 @@ public class VariableDescription extends SymbolDescription {
 		return PARAMETER.equals(keyword);
 	}
 
-	public void setSyntheticSpeciesContainer() {
-		if (dependencies == null) {
-			dependencies = new ArrayList();
+	public void setSyntheticSpeciesContainer(final boolean withShapeDependency) {
+		if (withShapeDependency) {
+			if (dependencies == null) {
+				dependencies = new ArrayList();
+			}
+			if (!dependencies.contains(SHAPE))
+				dependencies.add(SHAPE);
 		}
-		if (!dependencies.contains(SHAPE))
-			dependencies.add(SHAPE);
 		_isSyntheticSpeciesContainer = true;
 	}
 
@@ -81,7 +84,6 @@ public class VariableDescription extends SymbolDescription {
 			return;
 		}
 		if (dependencies != null) {
-			dependencies.clear();
 			dependencies = null;
 		}
 		super.dispose();
@@ -385,6 +387,9 @@ public class VariableDescription extends SymbolDescription {
 			dependencies = new ArrayList();
 
 		for (final String s : deps) {
+			if (getName().equals(SHAPE) && s.equals(LOCATION))
+				continue;
+
 			if (!s.equals(getName()))
 				dependencies.add(s);
 		}

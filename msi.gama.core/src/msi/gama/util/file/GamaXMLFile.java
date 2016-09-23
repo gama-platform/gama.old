@@ -84,9 +84,9 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, Strin
 
 	/**
 	 * Method flushBuffer()
-	 * @see msi.gama.util.file.GamaFile#flushBuffer()
+	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope)
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {}
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {}
 
 }

@@ -191,7 +191,7 @@ public class GamaPreferences {
 		}
 
 		@Override
-		protected void flushBuffer() throws GamaRuntimeException {
+		protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 		}
 
 	}

@@ -50,7 +50,7 @@ public class ClassicalSIRSEquations {
 		final IExpression[] p = ((ListExpression) with_params).getElements();
 
 		final StatementDescription stm = new StatementDescription("=", getDescription(), ChildrenProvider.NONE, false,
-				null, null);
+				null, null, null);
 
 		final SingleEquationStatement eq1 = new SingleEquationStatement(stm);
 		eq1.setFunction(GAML.getExpressionFactory()

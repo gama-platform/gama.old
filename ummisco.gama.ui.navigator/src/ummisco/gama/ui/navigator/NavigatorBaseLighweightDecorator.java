@@ -4,6 +4,11 @@
  */
 package ummisco.gama.ui.navigator;
 
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceProxy;
+import org.eclipse.core.resources.IResourceProxyVisitor;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
@@ -23,34 +28,54 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 
 	@Override
 	public void decorate(final Object element, final IDecoration decoration) {
+		String suffix = "";
 		if (PreferencesHelper.NAVIGATOR_METADATA.getValue()) {
 			final IGamaFileMetaData data = GAMA.getGui().getMetaDataProvider().getMetaData(element, false, false);
-			if (data == null) {
-				decoration.addSuffix(" ");
-				return;
+			if (data != null) {
+				suffix = data.getSuffix();
 			}
-			final String suffix = data.getSuffix();
-			if (suffix != null && !suffix.isEmpty()) {
-				decoration.addSuffix(" (" + suffix + ")");
-			}
-			// Object thumbnail = data.getThumbnail();
-			// if ( thumbnail != null && thumbnail instanceof ImageDescriptor )
-			// {
-			// replaceImage(decoration, (ImageDescriptor) thumbnail);
-			// }
 		}
+
+		if (element instanceof IContainer) {
+			final int modelCount = countModels((IResource) element);
+			if (modelCount > 0) {
+				if (suffix != null && !suffix.isEmpty())
+					suffix += ", ";
+				suffix += modelCount + (modelCount == 1 ? " model" : " models");
+			}
+		} else if (element instanceof TopLevelFolder) {
+			suffix = ((TopLevelFolder) element).getSuffix();
+		}
+
+		//
+		if (suffix != null && !suffix.isEmpty()) {
+			decoration.addSuffix(" (" + suffix + ")");
+		}
+	}
+
+	public static int countModels(final IResource element) {
+		final int modelCount[] = new int[1];
+		try {
+			element.accept(new IResourceProxyVisitor() {
+
+				@Override
+				public boolean visit(final IResourceProxy proxy) throws CoreException {
+					if (proxy.getType() == IResource.FILE && proxy.getName().endsWith(".gaml"))
+						modelCount[0]++;
+					return true;
+				}
+			}, IResource.NONE);
+		} catch (final CoreException e) {
+		}
+		return modelCount[0];
 	}
 
 	@Override
 	public void addListener(final ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public void dispose() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -60,25 +85,6 @@ public class NavigatorBaseLighweightDecorator implements ILightweightLabelDecora
 
 	@Override
 	public void removeListener(final ILabelProviderListener listener) {
-		// TODO Auto-generated method stub
-
 	}
 
-	// private void replaceImage(final IDecoration decoration, final
-	// ImageDescriptor thumbnail) {
-	// IDecoratorManager mgr = PlatformUI.getWorkbench().getDecoratorManager();
-	// boolean doHack =
-	// mgr.getBaseLabelProvider("org.eclipse.ui.ContentTypeDecorator") != null
-	// &&
-	// mgr.getEnabled("org.eclipse.ui.ContentTypeDecorator");
-	// if ( !doHack && DecorationContext.DEFAULT_CONTEXT instanceof
-	// DecorationContext ) {
-	// ((DecorationContext)
-	// DecorationContext.DEFAULT_CONTEXT).putProperty(IDecoration.ENABLE_REPLACE,
-	// Boolean.TRUE);
-	// decoration.addOverlay(thumbnail, IDecoration.REPLACE);
-	// } else {
-	// decoration.addOverlay(thumbnail, IDecoration.TOP_LEFT);
-	// }
-	// }
 }

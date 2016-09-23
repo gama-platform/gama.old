@@ -10,7 +10,7 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
 
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMapFactory;
-import msi.gaml.compilation.GamaClassLoader;
+import msi.gaml.compilation.kernel.GamaClassLoader;
 import msi.gaml.types.IType;
 import ummisco.gama.serializer.gamaType.converters.ConverterScope;
 

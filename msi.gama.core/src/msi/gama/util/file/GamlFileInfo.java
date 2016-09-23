@@ -6,6 +6,7 @@ import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveA
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 public class GamlFileInfo extends GamaFileMetaData {
 
@@ -41,9 +42,14 @@ public class GamlFileInfo extends GamaFileMetaData {
 	public GamlFileInfo(final String propertyString) {
 		super(propertyString);
 		final String[] values = split(propertyString);
-		imports = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[1], SUB_DELIMITER));
-		uses = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[2], SUB_DELIMITER));
-		experiments = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[3], SUB_DELIMITER));
+		final List<String> imports = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[1], SUB_DELIMITER));
+		this.imports = imports == null || imports.isEmpty() || imports.contains(null) ? null : imports;
+		final List<String> uses = Arrays.asList(splitByWholeSeparatorPreserveAllTokens(values[2], SUB_DELIMITER));
+		this.uses = uses == null || uses.isEmpty() || uses.contains(null) ? null : uses;
+		final List<String> experiments = Arrays
+				.asList(splitByWholeSeparatorPreserveAllTokens(values[3], SUB_DELIMITER));
+		this.experiments = experiments == null || experiments.isEmpty() || experiments.contains(null) ? null
+				: experiments;
 		invalid = values[4].equals("TRUE");
 	}
 
@@ -56,7 +62,7 @@ public class GamlFileInfo extends GamaFileMetaData {
 	public String getSuffix() {
 		if (invalid)
 			return ERRORS;
-		final int expCount = experiments.size();
+		final int expCount = experiments == null ? 0 : experiments.size();
 		if (expCount > 0) {
 			return "" + (expCount == 1 ? "1 experiment" : expCount + " experiments");
 		}
@@ -68,9 +74,9 @@ public class GamlFileInfo extends GamaFileMetaData {
 	public String toPropertyString() {
 		final StringBuilder sb = new StringBuilder();
 		sb.append(super.toPropertyString()).append(DELIMITER);
-		sb.append(join(imports, SUB_DELIMITER)).append(DELIMITER);
-		sb.append(join(uses, SUB_DELIMITER)).append(DELIMITER);
-		sb.append(join(experiments, SUB_DELIMITER)).append(DELIMITER);
+		sb.append(imports == null ? "" : join(imports, SUB_DELIMITER)).append(DELIMITER);
+		sb.append(uses == null ? "" : join(uses, SUB_DELIMITER)).append(DELIMITER);
+		sb.append(experiments == null ? "" : join(experiments, SUB_DELIMITER)).append(DELIMITER);
 		sb.append(invalid ? "TRUE" : "FALSE").append(DELIMITER);
 		return sb.toString();
 

@@ -18,7 +18,6 @@ import ummisco.gama.modernOpenGL.shader.ShaderProgram;
 import ummisco.gama.modernOpenGL.shader.TextShaderProgram;
 import ummisco.gama.modernOpenGL.shader.postprocessing.AbstractPostprocessingShader;
 import ummisco.gama.modernOpenGL.shader.postprocessing.HorizontalBlurShader;
-import ummisco.gama.modernOpenGL.shader.postprocessing.InverseColorShader;
 import ummisco.gama.modernOpenGL.shader.postprocessing.KeystoneShaderProgram;
 import ummisco.gama.modernOpenGL.shader.postprocessing.VerticalBlurShader;
 import ummisco.gama.opengl.ModernRenderer;
@@ -32,7 +31,6 @@ public class ModernDrawer {
 	private boolean textureWith4Coordinates = false;
 	
 	private FrameBufferObject fbo_scene;
-	private FrameBufferObject current_fbo;
 	private int[] fboHandles;
 
 	private LayerObject currentLayer;
@@ -213,6 +211,50 @@ public class ModernDrawer {
 		
 	}
 	
+	public void refresh(LayerObject layer) {
+		currentLayer = layer;
+		if (layerStructureMap.get(currentLayer) == null) {
+			return; // if nothing is to draw for this layer, do nothing.
+		}
+		ArrayList<AbstractShader> shaderList = layerStructureMap.get(currentLayer).shaderList;
+		for (AbstractShader shader : shaderList) {
+			// set the current layer drawn
+			
+			shader.start();
+			
+			updateTransformationMatrix(shader);
+			int[] typeOfDrawing = typeOfDrawingMap.get(shader);
+			
+			///////////////////////////////////////:
+			// VERTICES POSITIONS BUFFER
+			bindBuffer(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,typeOfDrawing[2]);
+			
+			// COLORS BUFFER
+			bindBuffer(AbstractShader.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
+			
+			// UV MAPPING (If a texture is defined)
+			if (shader.useTexture())
+			{
+				bindBuffer(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
+				gl.glActiveTexture(GL.GL_TEXTURE0);
+				gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
+			}
+			
+			// NORMAL BUFFER
+			if (shader.useNormal())
+				bindBuffer(AbstractShader.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,typeOfDrawing[2]);
+			
+			// INDEX BUFFER
+			// Select the VBO, GPU memory data, to use for colors
+			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[typeOfDrawing[2]*5+IDX_BUFF_IDX]);
+			//////////////////////////////////
+			
+			drawVBO(typeOfDrawing);
+			
+			shader.stop();
+		}
+	}
+	
 	private FrameBufferObject applyPostprocessing(FrameBufferObject inputFbo, AbstractShader shader, int effectNumber, boolean lastEffect) {
 		fboHandles = new int[5];
 		this.gl.glGenBuffers(5, fboHandles, 0);
@@ -222,7 +264,6 @@ public class ModernDrawer {
 		if (!lastEffect) {
 			outputFbo = new FrameBufferObject(gl, (int)(2*renderer.getDisplayWidth()/renderer.getZoomLevel()), (int)(2*renderer.getDisplayHeight()/renderer.getZoomLevel()), effectNumber);
 		}
-		current_fbo = outputFbo;
 		
 		// unbind the last fbo
 		inputFbo.unbindCurrentFrameBuffer();
@@ -311,15 +352,16 @@ public class ModernDrawer {
 		
 		// Keystoning computation (cf http://www.bitlush.com/posts/arbitrary-quadrilaterals-in-opengl-es-2-0)
 		// Coordinates of the screen (change this for keystoning effect)	
-		float[] p0 = new float[]{-1,-1};
-		float[] p1 = new float[]{-1,1};
-		float[] p2 = new float[]{1,1};
-		float[] p3 = new float[]{1,-1};
+		float[] p0 = new float[]{-1,-1}; // bottom-left
+		float[] p1 = new float[]{-1,1};  // top-left
+		float[] p2 = new float[]{1,1};   // top-right
+		float[] p3 = new float[]{1,-1};  // bottom-right
 		if (renderer.data.getKeystone() != null) {
-			p0 = new float[]{(float) renderer.data.getKeystone().get(0).getX(),(float) renderer.data.getKeystone().get(0).getY()};
-			p1 = new float[]{(float) renderer.data.getKeystone().get(1).getX(),(float) renderer.data.getKeystone().get(1).getY()};
-			p2 = new float[]{(float) renderer.data.getKeystone().get(3).getX(),(float) renderer.data.getKeystone().get(3).getY()};
-			p3 = new float[]{(float) renderer.data.getKeystone().get(2).getX(),(float) renderer.data.getKeystone().get(2).getY()};
+			// when the user is choosing his own values, the order has to be : top-left, top-right, bot-left, bot-right, with y axis inversed.
+			p0 = new float[]{(float) renderer.data.getKeystone().get(2).getX(),-(float) renderer.data.getKeystone().get(2).getY()};
+			p1 = new float[]{(float) renderer.data.getKeystone().get(0).getX(),-(float) renderer.data.getKeystone().get(0).getY()};
+			p2 = new float[]{(float) renderer.data.getKeystone().get(1).getX(),-(float) renderer.data.getKeystone().get(1).getY()};
+			p3 = new float[]{(float) renderer.data.getKeystone().get(3).getX(),-(float) renderer.data.getKeystone().get(3).getY()};
 		}
 		
 		float ax = (p2[0] - p0[0])/2f;
@@ -372,60 +414,22 @@ public class ModernDrawer {
 		ibIdxBuff.rewind();
 	}
 	
-	public void refresh(LayerObject layer) {
-		currentLayer = layer;
-		if (layerStructureMap.get(currentLayer) == null) {
-			return; // if nothing is to draw for this layer, do nothing.
-		}
-		ArrayList<AbstractShader> shaderList = layerStructureMap.get(currentLayer).shaderList;
-		for (AbstractShader shader : shaderList) {
-			// set the current layer drawn
-			
-			shader.start();
-			
-			updateTransformationMatrix(shader);
-			int[] typeOfDrawing = typeOfDrawingMap.get(shader);
-			
-			///////////////////////////////////////:
-			// VERTICES POSITIONS BUFFER
-			bindBuffer(AbstractShader.POSITION_ATTRIBUTE_IDX,VERTICES_IDX,typeOfDrawing[2]);
-			
-			// COLORS BUFFER
-			bindBuffer(AbstractShader.COLOR_ATTRIBUTE_IDX,COLOR_IDX,typeOfDrawing[2]);
-			
-			// UV MAPPING (If a texture is defined)
-			if (shader.useTexture())
-			{
-				bindBuffer(AbstractShader.UVMAPPING_ATTRIBUTE_IDX,UVMAPPING_IDX,typeOfDrawing[2]);
-				gl.glActiveTexture(GL.GL_TEXTURE0);
-				gl.glBindTexture(GL.GL_TEXTURE_2D, shader.getTextureID());
-			}
-			
-			// NORMAL BUFFER
-			if (shader.useNormal())
-				bindBuffer(AbstractShader.NORMAL_ATTRIBUTE_IDX,NORMAL_IDX,typeOfDrawing[2]);
-			
-			// INDEX BUFFER
-			// Select the VBO, GPU memory data, to use for colors
-			gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, layerStructureMap.get(currentLayer).vboHandles[typeOfDrawing[2]*5+IDX_BUFF_IDX]);
-			//////////////////////////////////
-			
-			drawVBO(typeOfDrawing);
-			
-			shader.stop();
-		}
-	}
-	
 	private void drawVBO(int[] typeOfDrawing) {
 		gl.glDrawElements(typeOfDrawing[0], typeOfDrawing[1], GL2.GL_UNSIGNED_INT, 0);
 	}
 	
 	private void updateTransformationMatrix(AbstractShader shaderProgram) {
-		shaderProgram.loadViewMatrix(renderer.camera);
+		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
+		shaderProgram.loadViewMatrix(viewMatrix);
 		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());
 		shaderProgram.loadTransformationMatrix(getTransformationMatrix());
 		if (shaderProgram instanceof BillboardingTextShaderProgram) {
 			updateModelMatrix((BillboardingTextShaderProgram)shaderProgram);
+		}
+		else if (shaderProgram instanceof ShaderProgram) {
+			Matrix4f invViewMatrix = (Matrix4f) viewMatrix.clone();
+			invViewMatrix.invert();
+			((ShaderProgram)shaderProgram).loadInvViewMatrix(invViewMatrix);
 		}
 	}
 	

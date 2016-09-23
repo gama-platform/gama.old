@@ -39,6 +39,7 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGamaView.Error;
 import msi.gama.common.interfaces.IGamaView.Parameters;
 import msi.gama.common.interfaces.IGamaView.User;
+import msi.gama.common.interfaces.IGamlLabelProvider;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IRuntimeExceptionHandler;
 import msi.gama.common.interfaces.IStatusDisplayer;
@@ -506,6 +507,11 @@ public class SwtGui implements IGui {
 	@Override
 	public IFileMetaDataProvider getMetaDataProvider() {
 		return WorkbenchHelper.getService(IFileMetaDataProvider.class);
+	}
+
+	@Override
+	public IGamlLabelProvider getGamlLabelProvider() {
+		return WorkbenchHelper.getService(IGamlLabelProvider.class);
 	}
 
 	@Override

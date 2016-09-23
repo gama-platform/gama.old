@@ -1,0 +1,24 @@
+#if __VERSION__ >= 130
+	#define varying in
+	out vec4 mgl_FragColor;
+	#define gl_FragColor mgl_FragColor
+#endif
+		
+#ifdef GL_ES
+	precision mediump float;
+	precision mediump int;
+#endif
+
+varying vec2 blurTextureCoords[3];
+
+uniform sampler2D textureSampler;
+
+void main(void){
+	// gaussian kernel calculator : http://dev.theomader.com/gaussian-kernel-calculator/
+	vec4 out_colour = vec4(0.0);
+	out_colour += texture2D(textureSampler, blurTextureCoords[0]) * 0.27901;
+	out_colour += texture2D(textureSampler, blurTextureCoords[1]) * 0.44198;
+	out_colour += texture2D(textureSampler, blurTextureCoords[2]) * 0.27901;
+	gl_FragColor = out_colour;
+	
+}

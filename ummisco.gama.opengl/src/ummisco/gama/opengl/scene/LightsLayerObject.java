@@ -7,10 +7,7 @@ import com.jogamp.opengl.GL2;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LightPropertiesStructure;
-import msi.gama.util.GamaPair;
-import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
-import msi.gaml.types.Types;
 import ummisco.gama.opengl.Abstract3DRenderer;
 
 public class LightsLayerObject extends LayerObject {

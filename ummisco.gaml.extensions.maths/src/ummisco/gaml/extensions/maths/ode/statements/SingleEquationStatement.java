@@ -132,7 +132,7 @@ public class SingleEquationStatement extends AbstractStatement {
 				return;
 			}
 
-			if (!expr.getType().isTranslatableInto(Types.FLOAT)) {
+			if (expr == null || !expr.getType().isTranslatableInto(Types.FLOAT)) {
 				d.error("The right-hand member of an equation is expected to be of type float", IGamlIssue.WRONG_TYPE,
 						eDesc.getTarget());
 			}

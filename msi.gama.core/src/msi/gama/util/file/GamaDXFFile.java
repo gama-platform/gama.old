@@ -300,7 +300,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	}
 
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {}
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {}
 
 
 	@Override

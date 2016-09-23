@@ -7,7 +7,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.compilation.GamaBundleLoader;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.skills.Skill;
 
@@ -33,8 +33,8 @@ public class SkillDescription extends TypeDescription {
 	public IDescription addChild(final IDescription child) {
 		child.setOriginName("skill " + name);
 		child.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
-		if (child instanceof StatementDescription) {
-			addAction((StatementDescription) child);
+		if (child instanceof ActionDescription) {
+			addAction((ActionDescription) child);
 		} else {
 			addOwnAttribute((VariableDescription) child);
 		}

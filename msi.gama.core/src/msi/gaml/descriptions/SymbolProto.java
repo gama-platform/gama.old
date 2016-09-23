@@ -52,6 +52,7 @@ public class SymbolProto extends AbstractProto {
 	private final Map<String, FacetProto> possibleFacets;
 	private final Set<String> mandatoryFacets = new THashSet<String>();
 	private final String omissibleFacet;
+	private final boolean isPrimitive;
 
 	static final TIntHashSet ids = new TIntHashSet(
 			new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID });
@@ -69,17 +70,13 @@ public class SymbolProto extends AbstractProto {
 		constructor = constr;
 		this.isRemoteContext = isRemoteContext;
 		this.hasSequence = hasSequence;
+		this.isPrimitive = IKeyword.PRIMITIVE.equals(name);
 		this.hasArgs = hasArgs;
 		this.omissibleFacet = omissible;
 		this.isUniqueInContext = isUniqueInContext;
 		this.kind = kind;
 		this.hasScope = !doesNotHaveScope;
 		this.possibleFacets = possibleFacets;
-		// this.possibleFacets.put(IKeyword.KEYWORD, FacetProto.KEYWORD);
-		// this.possibleFacets.put(IKeyword.DEPENDS_ON, FacetProto.DEPENDS_ON);
-		// if (!possibleFacets.containsKey(IKeyword.NAME)) {
-		// this.possibleFacets.put(IKeyword.NAME, FacetProto.NAME);
-		// }
 		for (final FacetProto f : possibleFacets.values()) {
 			if (!f.optional) {
 				mandatoryFacets.add(f.name);
@@ -126,8 +123,12 @@ public class SymbolProto extends AbstractProto {
 		return hasSequence;
 	}
 
+	public boolean isPrimitive() {
+		return isPrimitive;
+	}
+
 	public boolean hasArgs() {
-		return isHasArgs();
+		return hasArgs;
 	}
 
 	public boolean hasScope() {
@@ -219,10 +220,6 @@ public class SymbolProto extends AbstractProto {
 
 	public boolean isUniqueInContext() {
 		return isUniqueInContext;
-	}
-
-	public boolean isHasArgs() {
-		return hasArgs;
 	}
 
 	/**

@@ -39,6 +39,8 @@ public class GamlResourceIndexer {
 
 	protected final static TOrderedHashMap EMPTY_MAP = new TOrderedHashMap();
 
+	public static final Object IMPORTED_URIS = "ImportedURIs";
+
 	protected static TOrderedHashMap<URI, String> getImportsAsAbsoluteURIS(final URI baseURI, final Model m) {
 		TOrderedHashMap<URI, String> result = EMPTY_MAP;
 		if (((ModelImpl) m).eIsSet(GamlPackage.MODEL__IMPORTS)) {
@@ -57,7 +59,7 @@ public class GamlResourceIndexer {
 	}
 
 	public static TOrderedHashMap<URI, String> allLabeledImportsOf(final GamlResource r) {
-		return r.getCache().get("ImportedURIs", r, new Provider<TOrderedHashMap<URI, String>>() {
+		return r.getCache().get(IMPORTED_URIS, r, new Provider<TOrderedHashMap<URI, String>>() {
 
 			@Override
 			public TOrderedHashMap<URI, String> get() {
@@ -260,6 +262,10 @@ public class GamlResourceIndexer {
 
 	public static void eraseIndex() {
 		index = new SimpleDirectedGraph(Edge.class);
+	}
+
+	public static boolean isImported(final GamlResource r) {
+		return !directImportersOf(r.getURI()).isEmpty();
 	}
 
 }

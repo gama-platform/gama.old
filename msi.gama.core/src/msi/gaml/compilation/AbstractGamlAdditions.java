@@ -48,6 +48,9 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.IGamaFile;
+import msi.gaml.compilation.kernel.GamaBundleLoader;
+import msi.gaml.compilation.kernel.GamaMetaModel;
+import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
@@ -372,7 +375,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 			@Override
 			public boolean visit(final StatementDescription desc) {
-				result.addAll(desc.getArgs());
+				Iterables.addAll(result, desc.getFormalArgs());
 				return true;
 			}
 

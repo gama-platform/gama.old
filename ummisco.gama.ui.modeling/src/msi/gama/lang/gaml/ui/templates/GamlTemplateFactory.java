@@ -18,8 +18,9 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.compilation.GamaSkillRegistry;
+import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.AbstractProto;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.TypeDescription;
@@ -208,10 +209,10 @@ public class GamlTemplateFactory {
 
 	public static Template callToAction(final StatementDescription sd) {
 		final String name = sd.getName();
-		final Collection<StatementDescription> args = sd.getArgs();
+		final Iterable<IDescription> args = sd.getFormalArgs();
 		final StringBuilder sb = new StringBuilder(100);
 		sb.append("(");
-		for (final StatementDescription arg : args) {
+		for (final IDescription arg : args) {
 			sb.append(arg.getName()).append(": ").append("${the_").append(arg.getName()).append("}, ");
 		}
 		final int length = sb.length();

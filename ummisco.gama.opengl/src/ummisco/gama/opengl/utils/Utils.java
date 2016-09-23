@@ -27,5 +27,15 @@ public class Utils {
 		}
 		return result;
 	}
+	
+	public static boolean isClockwise(final float[] vertices) {
+		double sum = 0.0;
+		for (int i = 0; i < vertices.length/3; i++) {
+			final float[] v1 = new float[]{vertices[i*3],vertices[i*3+1],vertices[i*3+2]};
+			final float[] v2 = new float[]{vertices[((i + 1) % (vertices.length/3))*3],vertices[((i + 1) % (vertices.length/3))*3+1],vertices[((i + 1) % (vertices.length/3))*3+2]};
+			sum += (v2[0] - v1[0]) * (v2[1] + v1[1]);
+		}
+		return sum > 0.0;
+	}
 
 }

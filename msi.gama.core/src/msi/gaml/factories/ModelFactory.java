@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gaml.compilation.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;

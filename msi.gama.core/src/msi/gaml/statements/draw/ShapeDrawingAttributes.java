@@ -22,9 +22,10 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	public final List textures;
 	public GamaMaterial material;
 	public IShape.Type type;
+	public List<GamaColor> colors;
 
 	public ShapeDrawingAttributes(final ILocation size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
-			final ILocation location, final Boolean empty, final GamaColor color, final GamaColor border,
+			final ILocation location, final Boolean empty, final GamaColor color, final List<GamaColor> colors, final GamaColor border,
 			final List textures, final GamaMaterial material, final IAgent agent, final IShape.Type type) {
 		super(size, rotation, location, color, border, agent);
 		this.depth = depth == null ? 0.0 : depth.doubleValue();
@@ -33,6 +34,7 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 		this.textures = textures == null ? null : new ArrayList(textures);
 		this.material = material == null ? null : material;
 		this.type = type;
+		this.colors = colors;
 	}
 
 	public ShapeDrawingAttributes(final GamaPoint location) {
@@ -45,7 +47,7 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 
 	public ShapeDrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border,
 			final IShape.Type type) {
-		this(null, null, null, location, color == null, color, border, null, null, null, type);
+		this(null, null, null, location, color == null, color, null, border, null, null, null, type);
 	}
 
 	/**
@@ -54,7 +56,7 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	 * @param borderColor
 	 */
 	public ShapeDrawingAttributes(final IShape shape, final GamaColor color, final GamaColor border) {
-		this(null, null, null, shape.getLocation(), color == null, color, border, null, null, shape.getAgent(),
+		this(null, null, null, shape.getLocation(), color == null, color, null, border, null, null, shape.getAgent(),
 				shape.getGeometricalType());
 	}
 
@@ -98,6 +100,11 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	@Override
 	public double getDepth() {
 		return depth;
+	}
+	
+	@Override
+	public List<GamaColor> getColors() {
+		return colors;
 	}
 	
 	/**

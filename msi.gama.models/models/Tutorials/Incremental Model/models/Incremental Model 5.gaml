@@ -82,7 +82,7 @@ species road {
 	}
 }
 
-species building skills:[moving] {
+species building {
 	float height <- 10#m + rnd(10) #m;
 	aspect geom {
 		draw shape color: #gray depth: height;
@@ -97,7 +97,7 @@ experiment main_experiment type:gui{
 		monitor "Current hour" value: current_hour;
 		monitor "Infected people rate" value: infected_rate;
 		display map_3D type: opengl {
-			light 1 color:(is_night ? 50 : 255) update:true;
+			light 1 color:(is_night ? 50 : 255);
 			image "../includes/soil.jpg";
 			species road aspect:geom;
 			species people aspect:sphere3D;			

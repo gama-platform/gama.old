@@ -11,7 +11,11 @@
  **********************************************************************************************/
 package ummisco.gama.ui.commands;
 
-import org.eclipse.core.commands.*;
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -20,35 +24,21 @@ public class CopyProjectToWorkspaceHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
+		final IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		try {
 			handlerService.executeCommand("org.eclipse.ui.edit.copy", null);
 			handlerService.executeCommand("org.eclipse.ui.edit.paste", null);
-			// handlerService.executeCommand("org.eclipse.team.svn.ui.command.DisconnectCommand", null);
+			// handlerService.executeCommand("org.eclipse.team.svn.ui.command.DisconnectCommand",
+			// null);
 			// deleteMetaSvn(path);
-		} catch (NotDefinedException e) {
+		} catch (final NotDefinedException e) {
 			e.printStackTrace();
-		} catch (NotEnabledException e) {
+		} catch (final NotEnabledException e) {
 			e.printStackTrace();
-		} catch (NotHandledException e) {
+		} catch (final NotHandledException e) {
 			e.printStackTrace();
 		}
-		// RefreshHandler.run();
 		return null;
 	}
-	//
-	// private void deleteMetaSvn(File path) {
-	// File[] files = path.listFiles();
-	// for(int i=0; i<files.length; i++) {
-	// String name = files[i].getName();
-	// if(files[i].isDirectory() && !name.equals(".svn")) {
-	// deleteMetaSvn(files[i]);
-	// }
-	// else {
-	// if(name.equals(".svn"))
-	// files[i].delete();
-	// }
-	// }
-	// }
 
 }

@@ -27,14 +27,20 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GAML;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamaFileMetaData;
+import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
+import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedExperimentContent;
+import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedModelContent;
 
 public class NavigatorContentProvider extends WorkbenchContentProvider {
 
@@ -83,21 +89,40 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 			return ((VirtualContent) p).getNavigatorChildren();
 		}
 		if (p instanceof IFile) {
+
 			final String ctid = FileMetaDataProvider.getContentTypeId((IFile) p);
 			if (ctid.equals(FileMetaDataProvider.GAML_CT_ID)) {
+
 				final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, true);
 				if (metaData instanceof GamlFileInfo) {
 					final GamlFileInfo info = (GamlFileInfo) metaData;
-
 					final List l = new ArrayList();
-					for (final String s : info.getExperiments()) {
-						l.add(new WrappedExperiment((IFile) p, s));
-					}
+
+					final ISyntacticElement element = GAML
+							.getContents(URI.createPlatformResourceURI(((IFile) p).getFullPath().toOSString(), true));
+
+					l.add(new WrappedModelContent((IFile) p, element));
+					element.visitExperiments(new SyntacticVisitor() {
+
+						@Override
+						public void visit(final ISyntacticElement element) {
+							l.add(new WrappedExperimentContent((IFile) p, element));
+
+						}
+					});
+
+					// for (final String s : info.getExperiments()) {
+					// l.add(new WrappedExperiment((IFile) p, s));
+					// }
 					if (!info.getImports().isEmpty()) {
-						l.add(new WrappedFolder((IFile) p, info.getImports(), "Imports"));
+						final WrappedFolder wf = new WrappedFolder((IFile) p, info.getImports(), "Imports");
+						if (wf.getNavigatorChildren().length > 0)
+							l.add(wf);
 					}
 					if (!info.getUses().isEmpty()) {
-						l.add(new WrappedFolder((IFile) p, info.getUses(), "Uses"));
+						final WrappedFolder wf = new WrappedFolder((IFile) p, info.getUses(), "Uses");
+						if (wf.getNavigatorChildren().length > 0)
+							l.add(wf);
 					}
 					// addPluginsTo((IFile) p, l);
 					return l.toArray();
@@ -191,4 +216,5 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 	public void inputChanged(final Viewer viewer, final Object oldInput, final Object newInput) {
 		super.inputChanged(viewer, null, ResourcesPlugin.getWorkspace());
 	}
+
 }

@@ -49,9 +49,11 @@ public class GamlLinkingErrorMessageProvider extends LinkingDiagnosticMessagePro
 				return "skill";
 			}
 
-			public String defaultCase() {
+			@Override
+			public String defaultCase(final EObject object) {
 				return "element";
 			}
+
 		}.doSwitch(referee);
 		String linkText = "";
 		try {

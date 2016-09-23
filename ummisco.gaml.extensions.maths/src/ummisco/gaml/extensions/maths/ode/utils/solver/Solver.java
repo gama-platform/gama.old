@@ -14,12 +14,15 @@ package ummisco.gaml.extensions.maths.ode.utils.solver;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.math3.exception.NotANumberException;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.sampling.StepHandler;
 import org.apache.commons.math3.ode.sampling.StepInterpolator;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
@@ -83,6 +86,9 @@ public abstract class Solver {
 						final boolean pushed = scope.push(a);
 						try {
 							y[i] = Cast.asFloat(scope, equationValues.get(i).value(scope));
+							if(Double.isInfinite(y[i])){
+								GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(new NotANumberException(),scope), true);					
+							}
 						} catch (final Exception ex1) {
 							scope.getGui().debug(ex1.getMessage());
 						} finally {

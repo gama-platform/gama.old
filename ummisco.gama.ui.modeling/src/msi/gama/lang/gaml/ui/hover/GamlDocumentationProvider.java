@@ -18,7 +18,6 @@ import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvide
 
 import com.google.inject.Inject;
 
-import msi.gama.common.interfaces.IDocManager;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.ActionRef;
@@ -29,6 +28,7 @@ import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TypeRef;
 import msi.gama.lang.gaml.gaml.VariableRef;
+import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
@@ -40,8 +40,6 @@ import msi.gaml.operators.Strings;
 public class GamlDocumentationProvider extends MultiLineCommentDocumentationProvider {
 
 	@Inject protected GamlHyperlinkDetector detector;
-
-	@Inject IDocManager documenter;
 
 	@Override
 	public String getDocumentation(final EObject o) {
@@ -92,7 +90,7 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 		// else if (o instanceof VariableRef) {
 		// return getDocumentation(((VariableRef) o).getRef());
 		// }
-		final IGamlDescription description = documenter.getGamlDocumentation(o);
+		final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 
 		// TODO Add a swtich for constants
 

@@ -226,6 +226,11 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
+	public SpeciesDescription getDenotedSpecies() {
+		return getSpecies();
+	}
+
+	@Override
 	public boolean isParented() {
 		return parented;
 	}

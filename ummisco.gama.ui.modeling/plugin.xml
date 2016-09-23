@@ -673,6 +673,12 @@
           <service
                 serviceClass="ummisco.gama.ui.interfaces.IModelRunner"></service>
        </serviceFactory>
+       <serviceFactory
+             factoryClass="msi.gama.lang.gaml.ui.outline.LabelProviderFactory">
+          <service
+                serviceClass="msi.gama.common.interfaces.IGamlLabelProvider">
+          </service>
+       </serviceFactory>
     </extension>
     <extension
           point="org.eclipse.xtext.ui.shared.overridingGuiceModule">

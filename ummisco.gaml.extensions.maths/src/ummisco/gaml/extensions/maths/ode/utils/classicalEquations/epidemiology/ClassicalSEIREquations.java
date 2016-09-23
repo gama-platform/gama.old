@@ -51,7 +51,7 @@ public class ClassicalSEIREquations {
 		final IExpression[] p = ((ListExpression) with_params).getElements();
 
 		final StatementDescription stm = new StatementDescription("=", getDescription(), new ChildrenProvider(null),
-				false, null, null);
+				false, null, null, null);
 
 		// diff(S,t) = mu * N - beta * S * I / N - mu * S ;
 		// diff(E,t) = beta * S * I / N - mu * E - sigma * E ;

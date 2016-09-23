@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -37,6 +38,9 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -221,6 +225,7 @@ public class GamaShapeFile extends GamaGisFile {
 	public GamaShapeFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
+	
 
 	public GamaShapeFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
@@ -229,6 +234,19 @@ public class GamaShapeFile extends GamaGisFile {
 	public GamaShapeFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
+	
+	public GamaShapeFile(final IScope scope, final String pathName, final boolean with3D) throws GamaRuntimeException {
+		super(scope, pathName, (Integer) null, with3D);
+	}
+
+	public GamaShapeFile(final IScope scope, final String pathName, final Integer code, final boolean with3D) throws GamaRuntimeException {
+		super(scope, pathName, code,with3D);
+	}
+
+	public GamaShapeFile(final IScope scope, final String pathName, final String code, final boolean with3D) throws GamaRuntimeException {
+		super(scope, pathName, code,with3D);
+	}
+
 
 	/**
 	 * @see msi.gama.util.GamaFile#fillBuffer()
@@ -264,7 +282,7 @@ public class GamaShapeFile extends GamaGisFile {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer() throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
 		// TODO Regarder ce qu'il y a dans la commande "save" pour sauvegarder
 		// les fichiers.
 		// Merger progressivement save et le syst�me de fichiers afin de ne plus
@@ -308,6 +326,26 @@ public class GamaShapeFile extends GamaGisFile {
 				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
 					g = gis.transform(g);
+					if (!with3D) {
+						g.apply(new CoordinateSequenceFilter() {
+
+							@Override
+							public void filter(final CoordinateSequence seq, final int i) {
+								if (i <= seq.size() - 1) {
+									seq.getCoordinate(i).z = 0.0;
+								}
+							}
+							@Override
+							public boolean isDone() {
+								return false;
+							}
+
+							@Override
+							public boolean isGeometryChanged() {
+								return true;
+							}
+						});
+					}
 					list.add(new GamaGisGeometry(g, feature));
 				} else {
 					// See Issue 725
@@ -364,6 +402,26 @@ public class GamaShapeFile extends GamaGisFile {
 					scope.getGui().getStatus().setSubStatusCompletion(i++ / size);
 					final SimpleFeature feature = it.next();
 					Geometry g = (Geometry) feature.getDefaultGeometry();
+					if (!with3D) {
+						g.apply(new CoordinateSequenceFilter() {
+
+							@Override
+							public void filter(final CoordinateSequence seq, final int i) {
+								if (i <= seq.size() - 1) {
+									seq.getCoordinate(i).z = 0.0;
+								}
+							}
+							@Override
+							public boolean isDone() {
+								return false;
+							}
+
+							@Override
+							public boolean isGeometryChanged() {
+								return true;
+							}
+						});
+					}
 					if (g != null && !g.isEmpty() /* Fix for Issue 725 */ ) {
 						// Fix for Issue 677
 						g = gis.transform(g);

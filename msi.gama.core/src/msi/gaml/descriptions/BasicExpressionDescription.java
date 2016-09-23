@@ -23,6 +23,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.TypeExpression;
 import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
+import msi.gaml.types.ITypesManager;
 
 public class BasicExpressionDescription implements IExpressionDescription {
 
@@ -162,7 +163,13 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		}
 		if (expression.isConst())
 			return context.getTypeNamed(GamaStringType.staticCast(null, expression.value(null), true));
-		return context.getTypeNamed(expression.literalValue());
+
+		final String s = expression.literalValue();
+		final ITypesManager tm = context.getModelDescription().getTypesManager();
+		if (tm.containsType(s))
+			return tm.get(s);
+	
+		return expression.getType();
 	}
 
 }
