@@ -12,7 +12,9 @@
 package msi.gama.util.file;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -23,6 +25,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
@@ -51,8 +54,7 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 		getContents(scope);
 		final StringBuilder sb = new StringBuilder(getBuffer().length(scope) * 200);
 		for (final String s : getBuffer().iterable(scope)) {
-			sb.append(s).append("\n"); // TODO Factorize the different calls to
-										// "new line" ...
+			sb.append(s).append(Strings.LN);
 		}
 		sb.setLength(sb.length() - 1);
 		return sb.toString();
@@ -68,16 +70,13 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 		if (getBuffer() != null) {
 			return;
 		}
-		try {
-			final BufferedReader in = new BufferedReader(new FileReader(getFile()));
+		try (BufferedReader in = new BufferedReader(new FileReader(getFile()))) {
 			final IList<String> allLines = GamaListFactory.create(Types.STRING);
-			String str;
-			str = in.readLine();
+			String str = in.readLine();
 			while (str != null) {
 				allLines.add(str);
 				str = in.readLine();
 			}
-			in.close();
 			setBuffer(allLines);
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
@@ -90,8 +89,17 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
-		// TODO A faire.
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
+		if (getBuffer() != null && !getBuffer().isEmpty()) {
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(getFile()))) {
+				for (final String s : getBuffer()) {
+					writer.append(s).append(Strings.LN);
+				}
+				writer.flush();
+			} catch (final IOException e) {
+				throw GamaRuntimeException.create(e, scope);
+			}
+		}
 
 	}
 

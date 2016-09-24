@@ -212,6 +212,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	 */
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
+		if (getBuffer() == null || getBuffer().isEmpty(scope))
+			return;
 		try {
 			ImageIO.write(imageFromMatrix(scope), getExtension(), getFile());
 		} catch (final IOException e) {
