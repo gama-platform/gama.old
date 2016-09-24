@@ -23,6 +23,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.StringTokenizer;
 
+import javax.imageio.ImageIO;
+
 import org.opengis.referencing.FactoryException;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -152,6 +154,16 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			return true;
 		}
 
+		/*
+		 * (non-Javadoc)
+		 *
+		 * @see msi.gama.util.GamaFile#flushBuffer()
+		 */
+		@Override
+		protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
+
+		}
+
 	}
 
 	private BufferedImage image;
@@ -163,6 +175,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	public GamaImageFile(final IScope scope, final String pathName, final IMatrix<Integer> image) {
 		super(scope, pathName, image);
+		ImageUtils.getInstance().clearCache(path);
 	}
 
 	@Override
@@ -198,9 +211,12 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
-		// TODO Create a rendered image from the Matrix.
-		// Use ImageIO to write it.
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
+		try {
+			ImageIO.write(imageFromMatrix(scope), getExtension(), getFile());
+		} catch (final IOException e) {
+			throw GamaRuntimeException.create(e, scope);
+		}
 	}
 
 	@Override
@@ -268,6 +284,19 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			}
 		}
 		return matrix;
+	}
+
+	private BufferedImage imageFromMatrix(final IScope scope) {
+		final int xSize = getBuffer().getCols(scope);
+		final int ySize = getBuffer().getRows(scope);
+		final BufferedImage resultingImage = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
+		for (int i = 0; i < xSize; i++) {
+			for (int j = 0; j < ySize; j++) {
+				resultingImage.setRGB(i, j, getBuffer().get(scope, i, j));
+			}
+		}
+		return resultingImage;
+
 	}
 
 	private IMatrix matrixValueFromPgm(final IScope scope, final GamaPoint preferredSize) throws GamaRuntimeException {
@@ -426,11 +455,6 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		super.invalidateContents();
 		image = null;
 	}
-
-	// @Override
-	// public String getKeyword() {
-	// return Files.IMAGE;
-	// }
 
 	public void setImage(final IScope scope, final BufferedImage image2) {
 		// AD QUESTION : Shouldnt we also erase the buffer in that case ?

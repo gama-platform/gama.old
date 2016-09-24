@@ -336,4 +336,9 @@ public class ImageUtils {
 		}
 		return resize(snapshot, width, height, RenderingHints.VALUE_INTERPOLATION_BILINEAR, false);
 	}
+
+	public void clearCache(final String pathName) {
+		cache.remove(pathName);
+
+	}
 }
