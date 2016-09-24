@@ -45,6 +45,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Spatial;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -322,7 +323,7 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
 		// TODO at least, save as ASCII grid (plain text)
 
 	}

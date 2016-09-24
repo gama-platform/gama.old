@@ -25,6 +25,7 @@ import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.ITyped;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
 /**
@@ -223,5 +224,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	void computeStats(FacetVisitor proc, int[] facetNumber, int[] descWithNoFacets, int[] descNumber);
 
 	public void document(EObject s, IGamlDescription desc);
+
+	public Facets getFacets();
 
 }

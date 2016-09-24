@@ -20,6 +20,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.Gama3DGeometryFile;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -294,9 +295,9 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 	/**
 	 * Method flushBuffer()
-	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope)
+	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
 	 */
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {}
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {}
 
 }

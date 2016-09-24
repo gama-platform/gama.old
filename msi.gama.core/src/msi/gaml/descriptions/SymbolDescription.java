@@ -876,4 +876,14 @@ public abstract class SymbolDescription implements IDescription {
 		return result[0];
 	}
 
+	/**
+	 * Convenience method to access facets from other structures. However, this
+	 * method should be (when possible) replaced by the usage of the visitor
+	 * pattern through visitFacets()
+	 */
+	@Override
+	public Facets getFacets() {
+		return facets == null ? Facets.NULL : facets;
+	}
+
 }

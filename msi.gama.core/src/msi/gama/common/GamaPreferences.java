@@ -46,6 +46,7 @@ import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.IGamaFile;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaBoolType;
 import msi.gaml.types.GamaFloatType;
 import msi.gaml.types.GamaFontType;
@@ -191,7 +192,7 @@ public class GamaPreferences {
 		}
 
 		@Override
-		protected void flushBuffer(IScope scope) throws GamaRuntimeException {
+		protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
 		}
 
 	}

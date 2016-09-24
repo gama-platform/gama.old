@@ -18,6 +18,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 
 /**
@@ -84,9 +85,9 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, Strin
 
 	/**
 	 * Method flushBuffer()
-	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope)
+	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
 	 */
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {}
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {}
 
 }

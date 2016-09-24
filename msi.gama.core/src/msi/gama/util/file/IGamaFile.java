@@ -24,6 +24,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IModifiableContainer;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
 /**
@@ -99,6 +100,6 @@ public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V>
 
 	public Envelope computeEnvelope(final IScope scope);
 
-	public abstract void save(IScope scope, boolean overwrite);
+	public abstract void save(IScope scope, Facets parameters);
 
 }

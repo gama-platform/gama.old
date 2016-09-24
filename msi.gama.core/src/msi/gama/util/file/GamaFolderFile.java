@@ -16,6 +16,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Files;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 
 public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, String> {
@@ -68,7 +69,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
 		// Nothing to do
 
 	}

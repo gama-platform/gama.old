@@ -19,6 +19,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 
 @file(name = "URL", extensions = { "url" }, buffer_type = IType.LIST, buffer_content = IType.STRING, concept = { IConcept.TEXT, IConcept.FILE })
@@ -121,7 +122,7 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
 		// TODO A faire.
 
 	}

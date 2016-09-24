@@ -44,6 +44,7 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Spatial.Projections;
 import msi.gaml.operators.Strings;
 import msi.gaml.operators.fastmaths.FastMath;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
@@ -197,7 +198,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
 		// TODO Create a rendered image from the Matrix.
 		// Use ImageIO to write it.
 	}

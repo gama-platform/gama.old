@@ -189,9 +189,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (file == null && Types.FILE.isAssignableFrom(item.getType())) {
 			final IGamaFile file = (IGamaFile) item.value(scope);
 			if (file != null) {
-				// Should probably pass a map of attributes, like crs, etc.
-				// specific to each file; also rewrite true/false
-				file.save(scope, shouldOverwrite(scope));
+				// Passes directly the facets of the statement, like crs, etc.
+				file.save(scope, description.getFacets());
 			}
 			return file;
 		}

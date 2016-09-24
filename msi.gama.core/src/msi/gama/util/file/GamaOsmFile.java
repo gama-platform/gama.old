@@ -71,6 +71,7 @@ import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.operators.Strings;
 import msi.gaml.operators.fastmaths.FastMath;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -542,7 +543,7 @@ public class GamaOsmFile extends GamaGisFile {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
 		// TODO not sure that is is really interesting to save geographic as OSM
 		// file...
 	}

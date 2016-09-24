@@ -36,6 +36,7 @@ import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -390,10 +391,10 @@ public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Ob
 	/**
 	 * Method flushBuffer()
 	 * 
-	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope)
+	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
 	 */
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
 	}
 
 	/**

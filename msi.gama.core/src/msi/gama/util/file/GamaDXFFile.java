@@ -23,6 +23,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.*;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 
 /**
@@ -300,7 +301,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	}
 
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {}
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {}
 
 
 	@Override

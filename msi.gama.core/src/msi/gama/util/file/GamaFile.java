@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
@@ -31,6 +32,9 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IModifiableContainer;
 import msi.gama.util.matrix.IMatrix;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Cast;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
 /**
@@ -171,7 +175,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	protected abstract void fillBuffer(IScope scope) throws GamaRuntimeException;
 
-	protected abstract void flushBuffer(IScope scope) throws GamaRuntimeException;
+	protected abstract void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException;
 
 	@Override
 	public final void setContents(final C cont) throws GamaRuntimeException {
@@ -489,14 +493,24 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		return GamaListFactory.create();
 	}
 
+	/**
+	 * This method is being called from the save statement (see
+	 * SaveStatement.java). The scope and all the facets declared in the save
+	 * statement are passed as parameters, which allows the programmer to
+	 * retrieve them (for instance, to get the crs for shape files, or the
+	 * attributes to save from a list of agents, etc.).
+	 */
+
 	@Override
-	public void save(final IScope scope, final boolean overwrite) {
+	public final void save(final IScope scope, final Facets saveFacets) {
+		final IExpression exp = saveFacets.getExpr(IKeyword.REWRITE);
+		final boolean overwrite = exp == null || Cast.asBool(scope, exp.value(scope));
 		if (overwrite && getFile().exists()) {
 			getFile().delete();
 		}
 		if (!writable)
 			throw GamaRuntimeException.error("File " + getFile().getName() + " is not writable", scope);
-		flushBuffer(scope);
+		flushBuffer(scope, saveFacets);
 
 	}
 

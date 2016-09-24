@@ -21,6 +21,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import rcaller.*;
 import com.vividsolutions.jts.geom.Envelope;
@@ -243,7 +244,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
 		// TODO A faire.
 
 	}

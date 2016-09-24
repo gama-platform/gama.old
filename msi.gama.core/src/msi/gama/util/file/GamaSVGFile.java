@@ -23,6 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import msi.gama.precompiler.IConcept;
 
@@ -90,6 +91,6 @@ public class GamaSVGFile extends GamaGeometryFile {
 	}
 
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {}
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {}
 
 }

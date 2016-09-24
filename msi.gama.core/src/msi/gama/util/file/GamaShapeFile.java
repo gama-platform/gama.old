@@ -56,6 +56,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Strings;
 import msi.gaml.operators.fastmaths.FastMath;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -282,7 +283,7 @@ public class GamaShapeFile extends GamaGisFile {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
 		// TODO Regarder ce qu'il y a dans la commande "save" pour sauvegarder
 		// les fichiers.
 		// Merger progressivement save et le syst�me de fichiers afin de ne plus

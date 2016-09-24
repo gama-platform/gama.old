@@ -25,6 +25,7 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -111,7 +112,7 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, Stri
 	}
 
 	@Override
-	protected void flushBuffer(final IScope scope) throws GamaRuntimeException {
+	protected void flushBuffer(final IScope scope, Facets facets) throws GamaRuntimeException {
 		final GamaMap<String, Object> map = getBuffer();
 		FileWriter writer = null;
 		try {

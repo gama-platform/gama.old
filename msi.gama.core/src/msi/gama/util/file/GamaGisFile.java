@@ -15,6 +15,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Envelope;
@@ -101,10 +102,10 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	/**
 	 * Method flushBuffer()
-	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope)
+	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
 	 */
 	@Override
-	protected void flushBuffer(IScope scope) throws GamaRuntimeException {
+	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
 		// Not yet done for GIS files
 	}
 
