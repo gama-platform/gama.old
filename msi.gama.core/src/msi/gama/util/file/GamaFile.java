@@ -498,7 +498,9 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	 * SaveStatement.java). The scope and all the facets declared in the save
 	 * statement are passed as parameters, which allows the programmer to
 	 * retrieve them (for instance, to get the crs for shape files, or the
-	 * attributes to save from a list of agents, etc.).
+	 * attributes to save from a list of agents, etc.). This method cannot be
+	 * redefined. Instead, programmers should redefine flushBuffer(), which
+	 * takes the same arguments
 	 */
 
 	@Override

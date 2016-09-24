@@ -11,27 +11,39 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import java.io.*;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Properties;
+
 import com.vividsolutions.jts.geom.Envelope;
+
+import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IList;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.*;
-import msi.gama.precompiler.IConcept;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
-@file(name = "property",
-	extensions = { "properties" },
-	buffer_type = IType.MAP,
-	buffer_content = IType.STRING,
-	buffer_index = IType.STRING,
-	concept = { IConcept.FILE })
+@file(name = "property", extensions = {
+		"properties" }, buffer_type = IType.MAP, buffer_content = IType.STRING, buffer_index = IType.STRING, concept = {
+				IConcept.FILE })
 public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, String, String> {
 
 	public GamaPropertyFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
+	}
+
+	public GamaPropertyFile(final IScope scope, final String pathName, final GamaMap<String, String> buffer)
+			throws GamaRuntimeException {
+		super(scope, pathName, buffer);
 	}
 
 	/*
@@ -41,24 +53,12 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		Properties p = new Properties();
-		GamaMap m = GamaMapFactory.create(Types.STRING, Types.STRING);
-		FileReader f = null;
-		try {
-			f = new FileReader(getFile());
+		final Properties p = new Properties();
+		final GamaMap m = GamaMapFactory.create(Types.STRING, Types.STRING);
+		try (FileReader f = new FileReader(getFile())) {
 			p.load(f);
-		} catch (FileNotFoundException e) {
+		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
-		} catch (IOException e) {
-			throw GamaRuntimeException.create(e, scope);
-		} finally {
-			if ( f != null ) {
-				try {
-					f.close();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		m.putAll(p);
 		setBuffer(m);
@@ -76,8 +76,22 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 	}
 
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
-		// TODO A faire
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
+		final Properties p = new Properties();
+		if (getBuffer() != null && !getBuffer().isEmpty())
+			getBuffer().forEachEntry(new TObjectObjectProcedure<String, String>() {
+
+				@Override
+				public boolean execute(final String a, final String b) {
+					p.setProperty(a, b);
+					return true;
+				}
+			});
+		try (FileWriter fw = new FileWriter(getFile())) {
+			p.store(fw, null);
+		} catch (final IOException e) {
+		}
+
 	}
 
 	@Override
