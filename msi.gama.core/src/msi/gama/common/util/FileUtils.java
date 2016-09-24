@@ -99,6 +99,7 @@ public class FileUtils {
 		final List<String> referenceDirectories = a.getWorkingPaths();
 		try {
 			for (final String ref : referenceDirectories) {
+				// TODO AD: do it once when creating the baseDirectories
 				baseDirectories.add(withTrailingSep(URLDecoder.decode(ref, "UTF-8")));
 			}
 			filePath = URLDecoder.decode(fp, "UTF-8");
@@ -197,6 +198,24 @@ public class FileUtils {
 			return false;
 		}
 
+	}
+
+	public static String constructAbsoluteTempFilePath(final IScope scope, final String suffix) {
+		try {
+			final File temp = File.createTempFile("tmp", suffix);
+			temp.deleteOnExit();
+			return temp.getAbsolutePath();
+		} catch (final Exception e) {
+			// Not allowed to create temp files in system
+			final String newPath = constructAbsoluteFilePath(scope, "tmp/" + suffix, false);
+			final File file = new File(newPath);
+			try {
+				file.createNewFile();
+			} catch (final IOException e1) {
+			}
+			file.deleteOnExit();
+			return file.getAbsolutePath();
+		}
 	}
 
 }

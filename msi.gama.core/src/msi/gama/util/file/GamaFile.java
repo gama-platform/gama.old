@@ -12,6 +12,13 @@
 package msi.gama.util.file;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import msi.gama.common.util.FileUtils;
 import msi.gama.metamodel.shape.ILocation;
@@ -40,6 +47,8 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	protected final String path;
 
+	protected URL url;
+
 	protected boolean writable = false;
 
 	private C buffer;
@@ -48,10 +57,20 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		this(scope, pathName, true);
 	}
 
-	public GamaFile(final IScope scope, final String pathName, final boolean mustExist) throws GamaRuntimeException {
+	public GamaFile(final IScope scope, final String pn, final boolean mustExist) throws GamaRuntimeException {
+		String pathName = pn;
 		if (pathName == null) {
 			throw GamaRuntimeException.error("Attempt to create a null file", scope);
+		} else if (pathName.startsWith("http")) {
+			pathName = fetchFromURL(scope, pathName);
+			if (pathName == null) {
+				// We do not attempt to create the file. It will probably be
+				// taken in charge later directly from the URL
+				path = "";
+				return;
+			}
 		}
+
 		if (scope != null) {
 			path = FileUtils.constructAbsoluteFilePath(scope, pathName, mustExist);
 			checkValidity(scope);
@@ -62,6 +81,67 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		} else {
 			path = pathName;
 		}
+	}
+
+	/**
+	 * Whether or not passing an URL will automatically make GAMA cache its
+	 * contents in a temp file. Should be redefined by GamaFiles that can
+	 * retrieve from URL directly (like, e.g., GeoTools'datastore-backed files).
+	 * If false, the url will be initialized, but the path will be set to the
+	 * empty string and no attempt will be made to download data later. In that
+	 * case, it is the responsibility of subclasses to use the url -- and NOT
+	 * the path -- to download the contents of the file later (for example in
+	 * fillBuffer()). The default is true.
+	 * 
+	 * @return true or false depending on whether the contents should be cached
+	 *         in a temp file
+	 */
+	protected boolean automaticallyFetchFromURL() {
+		return true;
+	}
+
+	// Might be necessary to redefine it in order to fetch additional resources
+	protected String fetchFromURL(final IScope scope, final String urlPath) {
+		String pathName = "";
+		try {
+			url = new URL(urlPath);
+		} catch (final MalformedURLException e1) {
+			throw GamaRuntimeException.error("Malformed URL " + urlPath, scope);
+		}
+		if (!automaticallyFetchFromURL()) {
+			return null;
+		}
+		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf('/'));
+		try {
+			scope.getGui().getStatus().beginSubStatus(status);
+
+			final URLConnection connection = url.openConnection();
+			final long size = connection.getContentLengthLong();
+			final boolean sizeKnown = size > 0;
+			if (url != null) {
+				final String suffix = url.getPath().replaceAll("/", "_");
+				pathName = FileUtils.constructAbsoluteTempFilePath(scope, suffix);
+				try (final InputStream r = url.openStream(); OutputStream fw = new FileOutputStream(pathName)) {
+					long doneSoFar = 0;
+					final byte[] b = new byte[2048];
+					int length;
+					while ((length = r.read(b)) != -1) {
+						if (sizeKnown) {
+							doneSoFar += 2048;
+							scope.getGui().getStatus()
+									.setSubStatusCompletion((double) size / (double) (size - doneSoFar));
+						}
+						fw.write(b, 0, length);
+					}
+				}
+			}
+		} catch (final IOException e) {
+			throw GamaRuntimeException.create(e, scope);
+		} finally {
+			scope.getGui().getStatus().endSubStatus(status);
+		}
+		return pathName;
+
 	}
 
 	public GamaFile(final IScope scope, final String pathName, final C container) {
@@ -417,6 +497,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		if (!writable)
 			throw GamaRuntimeException.error("File " + getFile().getName() + " is not writable", scope);
 		flushBuffer(scope);
+
 	}
 
 }

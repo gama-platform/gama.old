@@ -17,6 +17,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -115,7 +116,10 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, Stri
 		FileWriter writer = null;
 		try {
 			final File file = getFile();
-			if (!file.exists() && file.createNewFile()) {
+			if (file.exists()) {
+				GAMA.reportAndThrowIfNeeded(scope,
+						GamaRuntimeException.warning(file.getName() + " already exists", scope), false);
+			} else if (!file.exists() && file.createNewFile()) {
 				writer = new FileWriter(getFile());
 				JSONValue.writeJSONString(map, writer);
 			}

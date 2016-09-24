@@ -70,6 +70,8 @@ public class WrappedFolder extends VirtualContent {
 		final IPath filePath = file.getLocation();
 		final IPath projectPath = file.getProject().getLocation();
 		for (final String s : fileNames) {
+			if (s.startsWith("http"))
+				continue;
 			IPath resPath = new Path(s);
 			if (!resPath.isAbsolute()) {
 				final URI fileURI = URI.createFileURI(filePath.toString());
