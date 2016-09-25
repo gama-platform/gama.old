@@ -321,8 +321,12 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	@Override
 	public String getPath(final IScope scope) {
 		if (path == null) {
-			setPath(FileUtils.constructAbsoluteFilePath(scope, originalPath, getBuffer() == null));
-			checkValidity(scope);
+			if (scope == null || scope.getExperiment() == null)
+				path = originalPath;
+			else {
+				setPath(FileUtils.constructAbsoluteFilePath(scope, originalPath, getBuffer() == null));
+				checkValidity(scope);
+			}
 		}
 		return path;
 	}
