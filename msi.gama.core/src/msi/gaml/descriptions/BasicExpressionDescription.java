@@ -24,6 +24,7 @@ import msi.gaml.expressions.TypeExpression;
 import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
+import msi.gaml.types.Types;
 
 public class BasicExpressionDescription implements IExpressionDescription {
 
@@ -158,6 +159,8 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	@Override
 	public IType getDenotedType(final IDescription context) {
 		compile(context);
+		if (expression == null)
+			return Types.NO_TYPE;
 		if (expression instanceof TypeExpression) {
 			return expression.getType();
 		}
@@ -168,7 +171,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		final ITypesManager tm = context.getModelDescription().getTypesManager();
 		if (tm.containsType(s))
 			return tm.get(s);
-	
+
 		return expression.getType();
 	}
 
