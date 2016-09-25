@@ -403,7 +403,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return getModel().getProjectPath() + "/";
 	}
 
-	@action(name = "update_displays", doc = {
+	@action(name = "update_outputs", doc = {
 			@doc("Forces all outputs to refresh, optionally recomputing their values") }, args = {
 					@arg(name = "recompute", type = IType.BOOL, doc = {
 							@doc("Whether or not to force the outputs to make a computation step") }) })
