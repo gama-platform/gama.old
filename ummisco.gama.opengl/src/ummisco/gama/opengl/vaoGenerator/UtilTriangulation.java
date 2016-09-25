@@ -1,7 +1,5 @@
 package ummisco.gama.opengl.vaoGenerator;
 
-import java.util.ArrayList;
-
 import ummisco.gama.opengl.utils.Utils;
 
 /*
@@ -24,7 +22,7 @@ public class UtilTriangulation {
 			polygonCoords[3*i+2] = coords[face[i]*3+2];
 		}
 		boolean isClockwise = Utils.isClockwise(polygonCoords);
-		final int[] result = new int[(face.length - 2) * 3];
+		int[] result = new int[(face.length - 2) * 3];
 		int[] tempPolygon = face;
 		int position_in_result = 0;
 		while (tempPolygon.length > 3){
@@ -53,6 +51,9 @@ public class UtilTriangulation {
 						break;
 					}
 				}
+				if (i == tempPolygon.length-1)
+					// the polygon is corrupted : it will not be built.
+					return null;
 			}
 		}
 		// add the last polygon (it is automatically a ear)

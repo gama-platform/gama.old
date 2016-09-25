@@ -27,6 +27,8 @@ abstract class AbstractTransformer {
 	private static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0, 1.0, 0.0, 1.0);
 	private static GamaColor DEFAULT_COLOR = new GamaColor(1.0, 1.0, 0.0, 1.0);
 
+	protected boolean geometryCorrupted = false;
+	
 	protected boolean isTriangulation = false;
 	protected boolean isLightInteraction = true;
 	protected boolean isWireframe = false;
@@ -273,6 +275,10 @@ abstract class AbstractTransformer {
 		for (int i = 0; i < faces.size(); i++) {
 			final int[] faceTriangulated = triangulate.ear_cutting_triangulatation(faces.get(i));
 			faces.remove(i);
+			if (faceTriangulated == null) {
+				geometryCorrupted = true;
+				break;
+			}
 			faces.add(i, faceTriangulated);
 		}
 	}

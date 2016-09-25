@@ -440,6 +440,9 @@ class GeometryObjectTransformer extends AbstractTransformer {
 	}
 	
 	public ArrayList<DrawingEntity> getDrawingEntityList() {
+		if (geometryCorrupted) {
+			return new ArrayList<DrawingEntity>();
+		}
 		// returns the DrawingEntities corresponding to this shape (can be 2 DrawingEntities
 		// in case it has been asked to draw the border)
 		ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
