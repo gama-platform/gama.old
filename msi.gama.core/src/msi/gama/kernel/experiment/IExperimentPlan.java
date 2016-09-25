@@ -95,6 +95,8 @@ public interface IExperimentPlan extends ISpecies {
 
 	public abstract boolean hasParametersOrUserCommands();
 
+	public abstract void recomputeAndRefreshAllOutputs();
+
 	// public abstract void setController(ExperimentController controller);
 
 }

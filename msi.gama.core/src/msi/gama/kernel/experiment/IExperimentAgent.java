@@ -25,28 +25,16 @@ public interface IExperimentAgent extends ITopLevelAgent {
 
 	public List<String> getWorkingPaths();
 
-	/**
-	 * @return
-	 */
 	public abstract Boolean getWarningsAsErrors();
 
-	/**
-	 * @return
-	 */
 	public abstract Double getMinimumDuration();
 
-	/**
-	 * @param d
-	 */
 	public abstract void setMinimumDuration(Double d);
 
 	void closeSimulations();
 
 	public abstract void closeSimulation(SimulationAgent simulationAgent);
 
-	/**
-	 * @return
-	 */
 	public abstract SimulationPopulation getSimulationPopulation();
 
 	public boolean isMemorize();

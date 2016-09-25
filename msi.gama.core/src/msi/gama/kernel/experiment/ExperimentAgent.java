@@ -35,6 +35,8 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IOutputManager;
+import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.experiment;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -395,21 +397,24 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		final URL url = Platform.getInstanceLocation().getURL();
 		return url.getPath();
 	}
-	//
-	// @setter(value = WORKSPACE_PATH)
-	// public void setWorkspacePath() {
-	//
-	// }
 
 	@getter(PROJECT_PATH)
 	public String getProjectPath() {
 		return getModel().getProjectPath() + "/";
 	}
 
-	// @setter(value = PROJECT_PATH)
-	// public void setProjectPath() {
-	//
-	// }
+	@action(name = "update_displays", doc = {
+			@doc("Forces all outputs to refresh, optionally recomputing their values") }, args = {
+					@arg(name = "recompute", type = IType.BOOL, doc = {
+							@doc("Whether or not to force the outputs to make a computation step") }) })
+	public Object updateDisplays(final IScope scope) {
+		final Boolean force = scope.getBoolArg("recompute");
+		if (force)
+			getSpecies().recomputeAndRefreshAllOutputs();
+		else
+			getSpecies().refreshAllOutputs();
+		return this;
+	}
 
 	@Override
 	@getter(value = GAMA._WARNINGS, initializer = true)
@@ -495,13 +500,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@setter(IKeyword.SIMULATION)
 	public void setSimulation(final IAgent sim) {
-		// if (sim instanceof SimulationAgent) {
-		// if (simulation != null && simulation.getScope().interrupted()) {
-		// simulation.dispose();
-		// }
-		// simulation = (SimulationAgent) sim;
-		// simulation.setOutputs(getSpecies().getOriginalSimulationOutputs());
-		// }
 	}
 
 	@Override

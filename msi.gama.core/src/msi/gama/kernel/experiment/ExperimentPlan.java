@@ -631,6 +631,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	/**
+	 * Same as the previous one, but forces the outputs to do one step of
+	 * computation (if some values have changed)
+	 */
+	public void recomputeAndRefreshAllOutputs() {
+		for (final IOutputManager manager : getAllSimulationOutputs()) {
+			manager.step(getExperimentScope());
+		}
+	}
+
+	/**
 	 * Method getOriginalSimulationOutputs()
 	 * 
 	 * @see msi.gama.kernel.experiment.IExperimentPlan#getOriginalSimulationOutputs()
