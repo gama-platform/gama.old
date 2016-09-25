@@ -36,7 +36,6 @@ import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gama.util.file.Gama3DGeometryFile;
 import msi.gama.util.file.GamaImageFile;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -318,15 +317,6 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			System.out.println("Could not open file: " + refm);
 			materials = null;
 		}
-	}
-
-	/**
-	 * Method flushBuffer()
-	 * 
-	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
-	 */
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 	}
 
 	public void drawToOpenGL(final GL2 gl, final JOGLRenderer renderer) {

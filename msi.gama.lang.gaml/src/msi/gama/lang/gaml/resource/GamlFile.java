@@ -31,7 +31,6 @@ import msi.gama.util.file.GamaFile;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -121,15 +120,6 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		}
 		setBuffer(GamaListFactory.<IModel> create(Types.SPECIES));
 		((IList) getBuffer()).add(mymodel.getSpecies());
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gama.util.GamaFile#flushBuffer()
-	 */
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 	}
 
 	@Override

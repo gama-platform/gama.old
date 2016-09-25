@@ -30,7 +30,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Strings;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -124,22 +123,6 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 
 		setBuffer(getURLContent(scope, this.URL));
 		// scope.getGui().informConsole(""+getURLContent(this.URL));
-
-	}
-
-	// private static String computeVariable(final String string) {
-	// String[] tokens = string.split("<-");
-	// return tokens[0];
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gama.util.GamaFile#flushBuffer()
-	 */
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-		// TODO A faire.
 
 	}
 

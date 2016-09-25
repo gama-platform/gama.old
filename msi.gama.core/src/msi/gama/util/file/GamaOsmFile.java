@@ -71,7 +71,6 @@ import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.operators.Strings;
 import msi.gaml.operators.fastmaths.FastMath;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -535,17 +534,6 @@ public class GamaOsmFile extends GamaGisFile {
 			return geom;
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gama.util.GamaFile#flushBuffer()
-	 */
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-		// TODO not sure that is is really interesting to save geographic as OSM
-		// file...
 	}
 
 	private void registerHighway(final Way way, final TLongHashSet usedNodes, final TLongHashSet intersectionNodes) {

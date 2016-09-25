@@ -161,7 +161,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		 */
 		@Override
 		protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-
+			throw GamaRuntimeException
+					.error("Saving is not yet impletemented for files of type " + this.getExtension(scope), scope);
 		}
 
 	}

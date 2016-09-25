@@ -20,7 +20,6 @@ import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 
 /**
@@ -108,16 +107,6 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		super(scope, pathName);
 		initialCRSCodeStr = code;
 		with3D = withZ;
-	}
-
-	/**
-	 * Method flushBuffer()
-	 * 
-	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
-	 */
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-		// Not yet done for GIS files
 	}
 
 	public IProjection getGis(final IScope scope) {

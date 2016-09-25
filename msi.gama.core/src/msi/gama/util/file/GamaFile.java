@@ -149,9 +149,15 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		getFile(scope).setWritable(w);
 	}
 
-	protected abstract void fillBuffer(IScope scope) throws GamaRuntimeException;
+	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
+		throw GamaRuntimeException
+				.error("Loading is not yet impletemented for files of type " + this.getExtension(scope), scope);
+	}
 
-	protected abstract void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException;
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
+		throw GamaRuntimeException
+				.error("Saving is not yet impletemented for files of type " + this.getExtension(scope), scope);
+	}
 
 	@Override
 	public final void setContents(final C cont) throws GamaRuntimeException {

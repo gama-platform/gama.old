@@ -25,12 +25,10 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.file.Gama3DGeometryFile;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -301,15 +299,6 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 		int intValue = Float.floatToIntBits(value);
 		intValue = swap(intValue);
 		return Float.intBitsToFloat(intValue);
-	}
-
-	/**
-	 * Method flushBuffer()
-	 * 
-	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
-	 */
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 	}
 
 }

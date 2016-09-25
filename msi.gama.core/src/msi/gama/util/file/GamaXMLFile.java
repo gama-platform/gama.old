@@ -25,7 +25,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -95,15 +94,6 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, Strin
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
-	}
-
-	/**
-	 * Method flushBuffer()
-	 * 
-	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
-	 */
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 	}
 
 }

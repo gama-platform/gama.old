@@ -44,7 +44,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Containers;
 import msi.gaml.operators.Spatial;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -348,10 +347,6 @@ public class GamaDXFFile extends GamaGeometryFile {
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 	}
 
 	@Override

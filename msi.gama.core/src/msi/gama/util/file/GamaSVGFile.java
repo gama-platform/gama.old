@@ -34,7 +34,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -98,11 +97,6 @@ public class GamaSVGFile extends GamaGeometryFile {
 			throw GamaRuntimeException.create(e, scope);
 			// e.printStackTrace();
 		}
-	}
-
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-
 	}
 
 }

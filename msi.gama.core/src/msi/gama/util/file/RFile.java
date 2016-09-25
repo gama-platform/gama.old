@@ -31,7 +31,6 @@ import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -252,17 +251,6 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 	private static String computeVariable(final String string) {
 		final String[] tokens = string.split("<-");
 		return tokens[0];
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.util.GamaFile#flushBuffer()
-	 */
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-		// TODO A faire.
-
 	}
 
 	@Override

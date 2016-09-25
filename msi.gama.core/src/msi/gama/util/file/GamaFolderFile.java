@@ -81,7 +81,6 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		// Nothing to do
-
 	}
 
 	@Override

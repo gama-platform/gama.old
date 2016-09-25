@@ -35,7 +35,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaGisFile;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -419,16 +418,6 @@ public class GamaSqlConnection extends GamaGisFile {
 
 	public void read(final IScope scope) {
 		fillBuffer(scope);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gama.util.GamaFile#flushBuffer()
-	 */
-	@Override
-	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-
 	}
 
 	@Override
