@@ -240,7 +240,7 @@ public class LayerSideControls {
 						@Override
 						public void valueModified(final IGamaFile newValue) throws GamaRuntimeException {
 							((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(),
-									newValue.getName());
+									newValue.getName(GAMA.getRuntimeScope()));
 							updateIfPaused(layer, container);
 						}
 

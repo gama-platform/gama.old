@@ -175,7 +175,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	public GamaImageFile(final IScope scope, final String pathName, final IMatrix<Integer> image) {
 		super(scope, pathName, image);
-		ImageUtils.getInstance().clearCache(path);
+		ImageUtils.getInstance().clearCache(getPath(scope));
 	}
 
 	@Override
@@ -197,7 +197,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		// Temporary workaround for pgm files, which can be read by ImageIO but
 		// produce wrong results. See Issue 880.
 		// TODO change this behavior
-		setBuffer(isPgmFile() || getExtension().equals("pgm") ? matrixValueFromPgm(scope, null)
+		setBuffer(isPgmFile() || getExtension(scope).equals("pgm") ? matrixValueFromPgm(scope, null)
 				: matrixValueFromImage(scope, null));
 	}
 
@@ -215,7 +215,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		if (getBuffer() == null || getBuffer().isEmpty(scope))
 			return;
 		try {
-			ImageIO.write(imageFromMatrix(scope), getExtension(), getFile());
+			ImageIO.write(imageFromMatrix(scope), getExtension(scope), getFile(scope));
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
@@ -234,10 +234,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	private void loadImage(final IScope scope) {
 		if (image == null) {
 			try {
-				image = ImageUtils.getInstance().getImageFromFile(scope, path);
+				image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope));
 				if (image == null) {
 					throw GamaRuntimeException.error(
-							"This image format (." + getExtension()
+							"This image format (." + getExtension(scope)
 									+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
 							scope);
 				}
@@ -305,7 +305,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		// TODO PreferredSize is not respected here
 		BufferedReader in = null;
 		try {
-			in = new BufferedReader(new FileReader(getFile()));
+			in = new BufferedReader(new FileReader(getFile(scope)));
 			StringTokenizer tok;
 			String str = in.readLine();
 			if (!str.equals("P2")) {
@@ -350,10 +350,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		}
 	}
 
-	public String getGeoDataFile() {
-		final String extension = getExtension();
+	public String getGeoDataFile(final IScope scope) {
+		final String extension = getExtension(scope);
 		String val = null;
-		String geodataFile = getPath().replaceAll(extension, "");
+		String geodataFile = getPath(scope).replaceAll(extension, "");
 		if (extension.equals("jpg")) {
 			geodataFile = geodataFile + "jgw";
 		} else if (extension.equals("png")) {
@@ -373,14 +373,14 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		final String geodataFile = getGeoDataFile();
+		final String geodataFile = getGeoDataFile(scope);
 		double cellSizeX = 1;
 		double cellSizeY = 1;
 		double xllcorner = 0;
 		double yllcorner = 0;
 		boolean xNeg = false;
 		boolean yNeg = false;
-		final String extension = getExtension();
+		final String extension = getExtension(scope);
 		if (geodataFile != null && !geodataFile.equals("")) {
 			try {
 				final InputStream ips = new FileInputStream(geodataFile);
@@ -405,7 +405,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 				throw GamaRuntimeException.create(e, scope);
 			}
 		} else if (extension.equals("tiff") || extension.equals("tif")) {
-			final GamaGridFile file = new GamaGridFile(null, this.getPath());
+			final GamaGridFile file = new GamaGridFile(null, this.getPath(scope));
 
 			final Envelope e = file.computeEnvelopeWithoutBuffer(scope);
 			if (e != null) {

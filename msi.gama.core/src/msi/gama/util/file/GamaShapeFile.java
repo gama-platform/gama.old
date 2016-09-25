@@ -21,7 +21,6 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 import org.geotools.data.FeatureReader;
 import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStore;
@@ -38,7 +37,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
 import com.vividsolutions.jts.geom.Envelope;
@@ -226,7 +224,6 @@ public class GamaShapeFile extends GamaGisFile {
 	public GamaShapeFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null);
 	}
-	
 
 	public GamaShapeFile(final IScope scope, final String pathName, final Integer code) throws GamaRuntimeException {
 		super(scope, pathName, code);
@@ -235,19 +232,20 @@ public class GamaShapeFile extends GamaGisFile {
 	public GamaShapeFile(final IScope scope, final String pathName, final String code) throws GamaRuntimeException {
 		super(scope, pathName, code);
 	}
-	
+
 	public GamaShapeFile(final IScope scope, final String pathName, final boolean with3D) throws GamaRuntimeException {
 		super(scope, pathName, (Integer) null, with3D);
 	}
 
-	public GamaShapeFile(final IScope scope, final String pathName, final Integer code, final boolean with3D) throws GamaRuntimeException {
-		super(scope, pathName, code,with3D);
+	public GamaShapeFile(final IScope scope, final String pathName, final Integer code, final boolean with3D)
+			throws GamaRuntimeException {
+		super(scope, pathName, code, with3D);
 	}
 
-	public GamaShapeFile(final IScope scope, final String pathName, final String code, final boolean with3D) throws GamaRuntimeException {
-		super(scope, pathName, code,with3D);
+	public GamaShapeFile(final IScope scope, final String pathName, final String code, final boolean with3D)
+			throws GamaRuntimeException {
+		super(scope, pathName, code, with3D);
 	}
-
 
 	/**
 	 * @see msi.gama.util.GamaFile#fillBuffer()
@@ -266,10 +264,10 @@ public class GamaShapeFile extends GamaGisFile {
 		ShapeInfo s;
 		final IFileMetaDataProvider p = scope.getGui().getMetaDataProvider();
 		if (p != null) {
-			s = (ShapeInfo) p.getMetaData(getFile(), false, true);
+			s = (ShapeInfo) p.getMetaData(getFile(scope), false, true);
 		} else {
 			try {
-				s = new ShapeInfo(getFile().toURI().toURL(), 0);
+				s = new ShapeInfo(getFile(scope).toURI().toURL(), 0);
 			} catch (final MalformedURLException e) {
 				return GamaListFactory.create();
 			}
@@ -283,7 +281,7 @@ public class GamaShapeFile extends GamaGisFile {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		// TODO Regarder ce qu'il y a dans la commande "save" pour sauvegarder
 		// les fichiers.
 		// Merger progressivement save et le syst�me de fichiers afin de ne plus
@@ -292,10 +290,10 @@ public class GamaShapeFile extends GamaGisFile {
 	}
 
 	@Override
-	protected CoordinateReferenceSystem getOwnCRS() {
+	protected CoordinateReferenceSystem getOwnCRS(final IScope scope) {
 		ShapefileDataStore store = null;
 		try {
-			store = new ShapefileDataStore(getFile().toURI().toURL());
+			store = new ShapefileDataStore(getFile(scope).toURI().toURL());
 			return store.getFeatureSource().getInfo().getCRS();
 		} catch (final IOException e) {
 			return null;
@@ -307,10 +305,10 @@ public class GamaShapeFile extends GamaGisFile {
 	}
 
 	protected void readShapes(final IScope scope) {
-		scope.getGui().getStatus().beginSubStatus("Reading file" + getName());
+		scope.getGui().getStatus().beginSubStatus("Reading file" + getName(scope));
 		ShapefileDataStore store = null;
 		FeatureReader reader = null;
-		final File file = getFile();
+		final File file = getFile(scope);
 		final IList list = getBuffer();
 		int size = 0;
 		try {
@@ -336,6 +334,7 @@ public class GamaShapeFile extends GamaGisFile {
 									seq.getCoordinate(i).z = 0.0;
 								}
 							}
+
 							@Override
 							public boolean isDone() {
 								return false;
@@ -372,21 +371,21 @@ public class GamaShapeFile extends GamaGisFile {
 			if (store != null) {
 				store.dispose();
 			}
-			scope.getGui().getStatus().endSubStatus("Reading file " + getName());
+			scope.getGui().getStatus().endSubStatus("Reading file " + getName(scope));
 		}
 		if (size > list.size()) {
-			GAMA.reportError(scope, GamaRuntimeException.warning("Problem with file " + getFile() + ": only "
+			GAMA.reportError(scope, GamaRuntimeException.warning("Problem with file " + getFile(scope) + ": only "
 					+ list.size() + " of the " + size + " geometries could be added", scope), false);
 		}
 	}
 
 	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
-		final File file = getFile();
+		final File file = getFile(scope);
 		ShapefileDataStore store = null;
 		FeatureIterator<SimpleFeature> it = null;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> features = null;
 		try {
-			scope.getGui().getStatus().beginSubStatus((returnIt ? "Reading file" : "Measuring file ") + getName());
+			scope.getGui().getStatus().beginSubStatus((returnIt ? "Reading file" : "Measuring file ") + getName(scope));
 			store = new ShapefileDataStore(file.toURI().toURL());
 			features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
 			final Envelope env = store.getFeatureSource().getBounds();
@@ -412,6 +411,7 @@ public class GamaShapeFile extends GamaGisFile {
 									seq.getCoordinate(i).z = 0.0;
 								}
 							}
+
 							@Override
 							public boolean isDone() {
 								return false;
@@ -448,7 +448,7 @@ public class GamaShapeFile extends GamaGisFile {
 			if (store != null) {
 				store.dispose();
 			}
-			scope.getGui().getStatus().endSubStatus("Opening file " + getName());
+			scope.getGui().getStatus().endSubStatus("Opening file " + getName(scope));
 		}
 	}
 
@@ -457,7 +457,7 @@ public class GamaShapeFile extends GamaGisFile {
 		if (gis == null) {
 			ShapefileDataStore store = null;
 			try {
-				store = new ShapefileDataStore(getFile().toURI().toURL());
+				store = new ShapefileDataStore(getFile(scope).toURI().toURL());
 				final Envelope env = store.getFeatureSource().getBounds();
 				computeProjection(scope, env);
 			} catch (final IOException e) {

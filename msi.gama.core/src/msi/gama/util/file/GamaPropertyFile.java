@@ -55,7 +55,7 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		final Properties p = new Properties();
 		final GamaMap m = GamaMapFactory.create(Types.STRING, Types.STRING);
-		try (FileReader f = new FileReader(getFile())) {
+		try (FileReader f = new FileReader(getFile(scope))) {
 			p.load(f);
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
@@ -87,7 +87,7 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 					return true;
 				}
 			});
-		try (FileWriter fw = new FileWriter(getFile())) {
+		try (FileWriter fw = new FileWriter(getFile(scope))) {
 			p.store(fw, null);
 		} catch (final IOException e) {
 		}

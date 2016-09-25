@@ -55,7 +55,7 @@ import msi.gaml.types.IType;
 public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V>
 		extends IModifiableContainer<K, V, K, ValueToAdd>, IAddressableContainer<K, V, K, V> {
 
-	public abstract void setWritable(final boolean w);
+	public abstract void setWritable(IScope scope, final boolean w);
 
 	public abstract void setContents(final C cont) throws GamaRuntimeException;
 
@@ -63,16 +63,16 @@ public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V>
 	public abstract IGamaFile copy(IScope scope);
 
 	@getter(value = IKeyword.EXISTS, initializer = true)
-	public abstract Boolean exists();
+	public abstract Boolean exists(IScope scope);
 
 	@getter(value = IKeyword.EXTENSION, initializer = true)
-	public abstract String getExtension();
+	public abstract String getExtension(IScope scope);
 
 	@getter(value = IKeyword.NAME, initializer = true)
-	public abstract String getName();
+	public abstract String getName(IScope scope);
 
 	@getter(value = IKeyword.PATH, initializer = true)
-	public abstract String getPath();
+	public abstract String getPath(IScope scope);
 
 	@getter(IKeyword.CONTENTS)
 	public abstract C getContents(IScope scope) throws GamaRuntimeException;
@@ -90,13 +90,13 @@ public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V>
 	public abstract IList<String> getAttributes(IScope scope);
 
 	@getter(value = IKeyword.ISFOLDER, initializer = true)
-	public abstract Boolean isFolder();
+	public abstract Boolean isFolder(IScope scope);
 
 	@getter(value = IKeyword.READABLE, initializer = true)
-	public abstract Boolean isReadable();
+	public abstract Boolean isReadable(IScope scope);
 
 	@getter(value = IKeyword.WRITABLE, initializer = true)
-	public abstract Boolean isWritable();
+	public abstract Boolean isWritable(IScope scope);
 
 	public Envelope computeEnvelope(final IScope scope);
 

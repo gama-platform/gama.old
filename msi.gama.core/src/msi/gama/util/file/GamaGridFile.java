@@ -44,7 +44,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
-import msi.gaml.operators.Spatial;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
@@ -67,7 +66,7 @@ public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader createReader(final IScope scope, final boolean fillBuffer) {
 		if (reader == null) {
-			final File gridFile = getFile();
+			final File gridFile = getFile(scope);
 			gridFile.setReadable(true);
 			FileInputStream fis = null;
 			try {
@@ -78,11 +77,10 @@ public class GamaGridFile extends GamaGisFile {
 			try {
 				reader = new GamaGridReader(scope, fis, fillBuffer);
 			} catch (final GamaRuntimeException e) {
-				if (isTiff()) {
+				if (isTiff(scope)) {
 					final GamaRuntimeException ex = GamaRuntimeException.error(
-							"The format of " + getFile().getName() + " is not correct. Error: " + e.getMessage(),
-							scope);
-					ex.addContext("for file " + getFile().getPath());
+							"The format of " + getName(scope) + " is not correct. Error: " + e.getMessage(), scope);
+					ex.addContext("for file " + getPath(scope));
 					throw ex;
 
 				}
@@ -90,7 +88,7 @@ public class GamaGridFile extends GamaGisFile {
 				// file (see Issue 412)
 				GAMA.reportError(scope,
 						GamaRuntimeException.warning(
-								"The format of " + getFile().getName() + " is incorrect. Attempting to read it anyway.",
+								"The format of " + getName(scope) + " is incorrect. Attempting to read it anyway.",
 								scope),
 						false);
 				final StringBuilder text = new StringBuilder();
@@ -98,7 +96,7 @@ public class GamaGridFile extends GamaGisFile {
 				Scanner scanner = null;
 
 				try {
-					scanner = new Scanner(getFile());
+					scanner = new Scanner(getFile(scope));
 					final int cpt = 0;
 					while (scanner.hasNextLine()) {
 						final String line = scanner.nextLine();
@@ -116,9 +114,8 @@ public class GamaGridFile extends GamaGisFile {
 					}
 				} catch (final FileNotFoundException e2) {
 					final GamaRuntimeException ex = GamaRuntimeException.error(
-							"The format of " + getFile().getName() + " is not correct. Error: " + e2.getMessage(),
-							scope);
-					ex.addContext("for file " + getFile().getPath());
+							"The format of " + getName(scope) + " is not correct. Error: " + e2.getMessage(), scope);
+					ex.addContext("for file " + getPath(scope));
 					throw ex;
 				} finally {
 					if (scanner != null) {
@@ -145,16 +142,16 @@ public class GamaGridFile extends GamaGisFile {
 			AbstractGridCoverage2DReader store = null;
 			try {
 				if (fillBuffer) {
-					scope.getGui().getStatus().beginSubStatus("Reading file " + getName());
+					scope.getGui().getStatus().beginSubStatus("Reading file " + getName(scope));
 				}
 				// Necessary to compute it here, because it needs to be passed
 				// to the Hints
 				final CoordinateReferenceSystem crs = getExistingCRS(scope);
-				if (isTiff()) {
+				if (isTiff(scope)) {
 					if (crs == null) {
-						store = new GeoTiffReader(getFile(), new Hints(Hints.USE_JAI_IMAGEREAD, true));
+						store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true));
 					} else {
-						store = new GeoTiffReader(getFile(), new Hints(Hints.USE_JAI_IMAGEREAD, true,
+						store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true,
 								Hints.DEFAULT_COORDINATE_REFERENCE_SYSTEM, crs));
 					}
 				} else {
@@ -177,7 +174,7 @@ public class GamaGridFile extends GamaGisFile {
 				final IList<IShape> shapes = GamaListFactory.create(Types.GEOMETRY);
 				final double originX = envP.getMinX();
 				final double originY = envP.getMinY();
-				final double maxY =envP.getMaxY();
+				final double maxY = envP.getMaxY();
 				final double maxX = envP.getMaxX();
 				shapes.add(new GamaPoint(originX, originY));
 				shapes.add(new GamaPoint(maxX, originY));
@@ -204,7 +201,7 @@ public class GamaGridFile extends GamaGisFile {
 				final double maxYP = genv.getMaximum(1);
 				final double cmxP = cellWidthP / 2;
 				final double cmyP = cellHeightP / 2;
-			
+
 				for (int i = 0, n = numRows * numCols; i < n; i++) {
 					scope.getGui().getStatus().setSubStatusCompletion(i / (double) n);
 					final int yy = i / numCols;
@@ -212,8 +209,8 @@ public class GamaGridFile extends GamaGisFile {
 					p.x = originX + xx * cellWidth + cmx;
 					p.y = maxY - (yy * cellHeight + cmy);
 					GamaShape rect = (GamaShape) GamaGeometryType.buildRectangle(cellWidth, cellHeight, p);
-					final Object vals = coverage
-							.evaluate(new DirectPosition2D(originXP + xx * cellWidthP + cmxP, maxYP - (yy * cellHeightP + cmyP)));
+					final Object vals = coverage.evaluate(
+							new DirectPosition2D(originXP + xx * cellWidthP + cmxP, maxYP - (yy * cellHeightP + cmyP)));
 					if (i == 0) {
 						doubleValues = vals instanceof double[];
 						intValues = vals instanceof int[];
@@ -273,14 +270,15 @@ public class GamaGridFile extends GamaGisFile {
 				}
 			} catch (final Exception e) {
 				final GamaRuntimeException ex = GamaRuntimeException.error(
-						"The format of " + getFile().getName() + " is not correct. Error: " + e.getMessage(), scope);
-				ex.addContext("for file " + getFile().getPath());
+						"The format of " + getFile(scope).getName() + " is not correct. Error: " + e.getMessage(),
+						scope);
+				ex.addContext("for file " + getFile(scope).getPath());
 				throw ex;
 			} finally {
 				if (store != null) {
 					store.dispose();
 				}
-				scope.getGui().getStatus().endSubStatus("Opening file " + getName());
+				scope.getGui().getStatus().endSubStatus("Opening file " + getName(scope));
 			}
 		}
 
@@ -323,7 +321,7 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		// TODO at least, save as ASCII grid (plain text)
 
 	}
@@ -336,18 +334,8 @@ public class GamaGridFile extends GamaGisFile {
 		return createReader(scope, true).numCols;
 	}
 
-	@Override
-	public String getExtension() {
-		final String path = getFile().getPath().toLowerCase();
-		final int mid = path.lastIndexOf(".");
-		if (mid == -1) {
-			return "";
-		}
-		return path.substring(mid + 1, path.length());
-	}
-
-	public boolean isTiff() {
-		return getExtension().equals("tif");
+	public boolean isTiff(final IScope scope) {
+		return getExtension(scope).equals("tif");
 	}
 
 	@Override
@@ -356,8 +344,8 @@ public class GamaGridFile extends GamaGisFile {
 	}
 
 	@Override
-	protected CoordinateReferenceSystem getOwnCRS() {
-		final File source = getFile();
+	protected CoordinateReferenceSystem getOwnCRS(final IScope scope) {
+		final File source = getFile(scope);
 		// check to see if there is a projection file
 		// getting name for the prj file
 		final String sourceAsString;
@@ -412,15 +400,15 @@ public class GamaGridFile extends GamaGisFile {
 					}
 				}
 			}
-		} else if (isTiff()) {
+		} else if (isTiff(scope)) {
 			try {
-				GeoTiffReader store = new GeoTiffReader(getFile(), new Hints(Hints.USE_JAI_IMAGEREAD, true));
+				final GeoTiffReader store = new GeoTiffReader(getFile(scope), new Hints(Hints.USE_JAI_IMAGEREAD, true));
 				return store.getCoordinateReferenceSystem();
-			} catch (DataSourceException e) {
+			} catch (final DataSourceException e) {
 				e.printStackTrace();
 			}
 		}
-		
+
 		return null;
 	}
 

@@ -11,14 +11,17 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.projection.*;
+import msi.gama.metamodel.topology.projection.IProjection;
+import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaGeometryType;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Class GamaGisFile.
@@ -40,27 +43,32 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	/**
 	 * Returns the CRS defined with this file (in a ".prj" file or elsewhere)
+	 * 
 	 * @return
 	 */
 	protected CoordinateReferenceSystem getExistingCRS(final IScope scope) {
-		if ( initialCRSCode != null ) {
+		if (initialCRSCode != null) {
 			try {
 				return scope.getSimulation().getProjectionFactory().getCRS(initialCRSCode);
-			} catch (GamaRuntimeException e) {
-				throw GamaRuntimeException.error("The code " + initialCRSCode +
-					" does not correspond to a known EPSG code. GAMA is unable to load " + getPath(), scope);
+			} catch (final GamaRuntimeException e) {
+				throw GamaRuntimeException.error(
+						"The code " + initialCRSCode
+								+ " does not correspond to a known EPSG code. GAMA is unable to load " + getPath(scope),
+						scope);
 			}
 		}
-		if ( initialCRSCodeStr != null ) {
+		if (initialCRSCodeStr != null) {
 			try {
 				return scope.getSimulation().getProjectionFactory().getCRS(initialCRSCodeStr);
-			} catch (GamaRuntimeException e) {
-				throw GamaRuntimeException.error("The code " + initialCRSCodeStr +
-					" does not correspond to a known CRS code. GAMA is unable to load " + getPath(), scope);
+			} catch (final GamaRuntimeException e) {
+				throw GamaRuntimeException.error(
+						"The code " + initialCRSCodeStr
+								+ " does not correspond to a known CRS code. GAMA is unable to load " + getPath(scope),
+						scope);
 			}
 		}
-		CoordinateReferenceSystem crs = getOwnCRS();
-		if ( crs == null && scope != null ) {
+		CoordinateReferenceSystem crs = getOwnCRS(scope);
+		if (crs == null && scope != null) {
 			crs = scope.getSimulation().getProjectionFactory().getDefaultInitialCRS();
 		}
 		return crs;
@@ -69,12 +77,14 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	/**
 	 * @return
 	 */
-	protected abstract CoordinateReferenceSystem getOwnCRS();
+	protected abstract CoordinateReferenceSystem getOwnCRS(IScope scope);
 
 	protected void computeProjection(final IScope scope, final Envelope env) {
-		if ( scope == null ) { return; }
-		CoordinateReferenceSystem crs = getExistingCRS(scope);
-		ProjectionFactory pf = scope.getSimulation().getProjectionFactory();
+		if (scope == null) {
+			return;
+		}
+		final CoordinateReferenceSystem crs = getExistingCRS(scope);
+		final ProjectionFactory pf = scope.getSimulation().getProjectionFactory();
 		gis = pf.fromCRS(crs, env);
 	}
 
@@ -83,7 +93,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		initialCRSCode = code;
 		with3D = withZ;
 	}
-	
+
 	public GamaGisFile(final IScope scope, final String pathName, final Integer code) {
 		super(scope, pathName);
 		initialCRSCode = code;
@@ -93,7 +103,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		super(scope, pathName);
 		initialCRSCodeStr = code;
 	}
-	
+
 	public GamaGisFile(final IScope scope, final String pathName, final String code, final boolean withZ) {
 		super(scope, pathName);
 		initialCRSCodeStr = code;
@@ -102,15 +112,16 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	/**
 	 * Method flushBuffer()
+	 * 
 	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		// Not yet done for GIS files
 	}
 
 	public IProjection getGis(final IScope scope) {
-		if ( gis == null ) {
+		if (gis == null) {
 			fillBuffer(scope);
 		}
 		return gis;

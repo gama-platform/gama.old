@@ -69,7 +69,7 @@ public class SqlUtils {
 		// create connection
 		if (dbtype.equalsIgnoreCase(SqlConnection.SQLITE)) {
 			final String DBRelativeLocation = FileUtils.constructAbsoluteFilePath(scope, database, true);
-			final String EXTRelativeLocation = GamaPreferences.LIB_SPATIALITE.value(scope).getPath();
+			final String EXTRelativeLocation = GamaPreferences.LIB_SPATIALITE.value(scope).getPath(scope);
 			if (EXTRelativeLocation != null && !EXTRelativeLocation.equalsIgnoreCase("")) {
 				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation, EXTRelativeLocation, transform);
 

@@ -70,7 +70,7 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 		if (getBuffer() != null) {
 			return;
 		}
-		try (BufferedReader in = new BufferedReader(new FileReader(getFile()))) {
+		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			final IList<String> allLines = GamaListFactory.create(Types.STRING);
 			String str = in.readLine();
 			while (str != null) {
@@ -91,7 +91,7 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		if (getBuffer() != null && !getBuffer().isEmpty()) {
-			try (BufferedWriter writer = new BufferedWriter(new FileWriter(getFile()))) {
+			try (BufferedWriter writer = new BufferedWriter(new FileWriter(getFile(scope)))) {
 				for (final String s : getBuffer()) {
 					writer.append(s).append(Strings.LN);
 				}

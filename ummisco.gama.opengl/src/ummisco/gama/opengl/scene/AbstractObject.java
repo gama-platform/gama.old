@@ -21,6 +21,7 @@ import com.jogamp.opengl.util.texture.Texture;
 
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.Abstract3DRenderer;
@@ -108,7 +109,7 @@ public abstract class AbstractObject {
 		return result;
 	}
 
-	public String[] getTexturePaths() {
+	public String[] getTexturePaths(final IScope scope) {
 		if (attributes.getTextures() == null) {
 			return null;
 		}
@@ -117,7 +118,7 @@ public abstract class AbstractObject {
 		for (int i = 0; i < numberOfTextures; i++) {
 			final Object obj = attributes.getTextures().get(i);
 			if (obj instanceof GamaImageFile) {
-				result[i] = ((GamaImageFile) obj).getPath();
+				result[i] = ((GamaImageFile) obj).getPath(scope);
 			}
 		}
 		return result;

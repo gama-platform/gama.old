@@ -11,18 +11,29 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.files;
 
-import java.io.*;
-import java.util.*;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.vividsolutions.jts.geom.Geometry;
+
 import msi.gama.common.util.GeometryUtils;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 import msi.gama.util.file.Gama3DGeometryFile;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Geometry;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * 
@@ -81,20 +92,20 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	public void fillBuffer(final IScope scope) {
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		try {
-			FileInputStream fileInputStream = new FileInputStream(getFile());
+			final FileInputStream fileInputStream = new FileInputStream(getFile(scope));
 			dataInputStream = new DataInputStream(fileInputStream);
 			readChunkHeader(currentChunk);
-			if ( currentChunk.id != PRIMARY ) {
-				System.err.println("Unable to load PRIMARY chunk from file " + getPath());
+			if (currentChunk.id != PRIMARY) {
+				System.err.println("Unable to load PRIMARY chunk from file " + getPath(scope));
 			}
 			processNextChunk(currentChunk);
 			dataInputStream.close();
 			fileInputStream.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Error:  File IO error in: Closing File");
 		}
-		for ( Obj obj : objects ) {
-			Geometry g = GeometryUtils.FACTORY.buildGeometry(obj.faces);
+		for (final Obj obj : objects) {
+			final Geometry g = GeometryUtils.FACTORY.buildGeometry(obj.faces);
 			((GamaList) getBuffer()).add(new GamaShape(g));
 		}
 
@@ -108,42 +119,42 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 	// Verified
 	void processNextChunk(final Chunk previousChunk) {
-		int version = 0;
+		final int version = 0;
 		byte buffer[] = null;
 		currentChunk = new Chunk();
 		try {
 			while (previousChunk.bytesRead < previousChunk.length) {
 				readChunkHeader(currentChunk);
 				switch (currentChunk.id) {
-					case VERSION:
-						currentChunk.bytesRead += 4;
-						break;
+				case VERSION:
+					currentChunk.bytesRead += 4;
+					break;
 
-					case EDITOR:
-						Chunk tempChunk = new Chunk();
-						readChunkHeader(tempChunk);
-						buffer = new byte[tempChunk.length - tempChunk.bytesRead];
-						tempChunk.bytesRead += dataInputStream.read(buffer, 0, tempChunk.length - tempChunk.bytesRead);
-						currentChunk.bytesRead += tempChunk.bytesRead;
-						processNextChunk(currentChunk);
-						break;
+				case EDITOR:
+					final Chunk tempChunk = new Chunk();
+					readChunkHeader(tempChunk);
+					buffer = new byte[tempChunk.length - tempChunk.bytesRead];
+					tempChunk.bytesRead += dataInputStream.read(buffer, 0, tempChunk.length - tempChunk.bytesRead);
+					currentChunk.bytesRead += tempChunk.bytesRead;
+					processNextChunk(currentChunk);
+					break;
 
-					case OBJECT:
-						Obj obj = new Obj();
-						obj.strName = getString(currentChunk);
-						objects.add(obj);
-						processNextObjectChunk(obj, currentChunk);
-						break;
+				case OBJECT:
+					final Obj obj = new Obj();
+					obj.strName = getString(currentChunk);
+					objects.add(obj);
+					processNextObjectChunk(obj, currentChunk);
+					break;
 
-					default:
-						buffer = new byte[currentChunk.length - currentChunk.bytesRead];
-						currentChunk.bytesRead +=
-							dataInputStream.read(buffer, 0, currentChunk.length - currentChunk.bytesRead);
-						break;
+				default:
+					buffer = new byte[currentChunk.length - currentChunk.bytesRead];
+					currentChunk.bytesRead += dataInputStream.read(buffer, 0,
+							currentChunk.length - currentChunk.bytesRead);
+					break;
 				}
 				previousChunk.bytesRead += currentChunk.bytesRead;
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Error:  File IO error in: Process Next Chunk");
 			return;
 		}
@@ -161,7 +172,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 			chunk.length = swap(dataInputStream.readInt());
 			chunk.bytesRead += 4;
 
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Error:  File IO error in: Read Chunk Header");
 			return;
 		}
@@ -178,27 +189,27 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 				readChunkHeader(currentChunk);
 
 				switch (currentChunk.id) {
-					case OBJECT_MESH:
-						processNextObjectChunk(object, currentChunk);
-						break;
+				case OBJECT_MESH:
+					processNextObjectChunk(object, currentChunk);
+					break;
 
-					case OBJECT_VERTICES:
-						readVertices(object, currentChunk);
-						break;
+				case OBJECT_VERTICES:
+					readVertices(object, currentChunk);
+					break;
 
-					case OBJECT_FACES:
-						readFaceList(object, currentChunk);
-						break;
+				case OBJECT_FACES:
+					readFaceList(object, currentChunk);
+					break;
 
-					default:
-						buffer = new byte[currentChunk.length - currentChunk.bytesRead];
-						currentChunk.bytesRead +=
-							dataInputStream.read(buffer, 0, currentChunk.length - currentChunk.bytesRead);
-						break;
+				default:
+					buffer = new byte[currentChunk.length - currentChunk.bytesRead];
+					currentChunk.bytesRead += dataInputStream.read(buffer, 0,
+							currentChunk.length - currentChunk.bytesRead);
+					break;
 				}
 				previousChunk.bytesRead += currentChunk.bytesRead;
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Error:  File IO error in: Process Next Object Chunk");
 			return;
 		}
@@ -208,18 +219,17 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	// Verified
 	private void readVertices(final Obj object, final Chunk previousChunk) {
 		try {
-			int numOfVerts = swap(dataInputStream.readShort());
+			final int numOfVerts = swap(dataInputStream.readShort());
 			previousChunk.bytesRead += 2;
 
 			object.verts = new GamaPoint[numOfVerts];
-			for ( int i = 0; i < numOfVerts; i++ ) {
-				object.verts[i] =
-					new GamaPoint(swap(dataInputStream.readFloat()), swap(dataInputStream.readFloat()),
+			for (int i = 0; i < numOfVerts; i++) {
+				object.verts[i] = new GamaPoint(swap(dataInputStream.readFloat()), swap(dataInputStream.readFloat()),
 						swap(dataInputStream.readFloat()));
 
 				previousChunk.bytesRead += 12;
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Error: File IO error in: Read Vertices");
 			return;
 		}
@@ -228,16 +238,16 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	// Verified
 	private void readFaceList(final Obj object, final Chunk previousChunk) {
 		try {
-			int numOfFaces = swap(dataInputStream.readShort());
+			final int numOfFaces = swap(dataInputStream.readShort());
 			previousChunk.bytesRead += 2;
 
 			object.faces = new ArrayList(numOfFaces);
-			for ( int i = 0; i < numOfFaces; i++ ) {
-				List<IShape> points = new ArrayList();
+			for (int i = 0; i < numOfFaces; i++) {
+				final List<IShape> points = new ArrayList();
 				points.add(object.verts[swap(dataInputStream.readShort())]);
 				points.add(object.verts[swap(dataInputStream.readShort())]);
 				points.add(object.verts[swap(dataInputStream.readShort())]);
-				IShape face = GamaGeometryType.buildPolygon(points);
+				final IShape face = GamaGeometryType.buildPolygon(points);
 				object.faces.add(face.getInnerGeometry());
 
 				// Read in the extra face info
@@ -246,7 +256,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 				// Account for how much data was read in (4 * 2bytes)
 				previousChunk.bytesRead += 8;
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Error: File IO error in: Read Face List");
 			return;
 		}
@@ -254,18 +264,18 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 	private String getString(final Chunk chunk) {
 		int index = 0, bytesRead = 0;
-		boolean read = true;
-		byte buffer[] = new byte[256];
+		final boolean read = true;
+		final byte buffer[] = new byte[256];
 
 		try {
 			while (read) {
 				bytesRead += dataInputStream.read(buffer, index, 1);
-				if ( buffer[index] == 0x00 ) {
+				if (buffer[index] == 0x00) {
 					break;
 				}
 				index++;
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			System.err.println("Error: File IO error in: Get String");
 			return "";
 		}
@@ -274,16 +284,16 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 	}
 
 	private static short swap(final short value) {
-		int b1 = value & 0xff;
-		int b2 = value >> 8 & 0xff;
+		final int b1 = value & 0xff;
+		final int b2 = value >> 8 & 0xff;
 		return (short) (b1 << 8 | b2 << 0);
 	}
 
 	private static int swap(final int value) {
-		int b1 = value >> 0 & 0xff;
-		int b2 = value >> 8 & 0xff;
-		int b3 = value >> 16 & 0xff;
-		int b4 = value >> 24 & 0xff;
+		final int b1 = value >> 0 & 0xff;
+		final int b2 = value >> 8 & 0xff;
+		final int b3 = value >> 16 & 0xff;
+		final int b4 = value >> 24 & 0xff;
 		return b1 << 24 | b2 << 16 | b3 << 8 | b4 << 0;
 	}
 
@@ -295,9 +305,11 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 	/**
 	 * Method flushBuffer()
+	 * 
 	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {}
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
+	}
 
 }

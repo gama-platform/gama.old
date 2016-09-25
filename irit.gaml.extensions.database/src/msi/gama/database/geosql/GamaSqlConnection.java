@@ -427,12 +427,12 @@ public class GamaSqlConnection extends GamaGisFile {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 
 	}
 
 	@Override
-	protected CoordinateReferenceSystem getOwnCRS() {
+	protected CoordinateReferenceSystem getOwnCRS(final IScope scope) {
 		return null;
 	}
 

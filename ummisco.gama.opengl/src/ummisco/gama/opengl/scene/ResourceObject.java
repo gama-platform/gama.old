@@ -41,7 +41,7 @@ public class ResourceObject extends AbstractObject {
 		// locally
 
 		gl.glPushMatrix();
-		final Envelope env = JOGLRenderer.getEnvelopeFor(file.getPath());
+		final Envelope env = JOGLRenderer.getEnvelopeFor(file.getPath(renderer.getSurface().getScope()));
 		// If a location is provided we use it otherwise we use that of the
 		// agent if it exists
 		if (attributes.location != null) {

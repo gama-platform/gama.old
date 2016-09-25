@@ -34,6 +34,7 @@ import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.util.ImageUtils;
+import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaImageFile;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.scene.PGMTextureProvider;
@@ -79,23 +80,23 @@ public class TextureCache {
 
 	// Assumes the texture has been created. But it may be processed at the time
 	// of the call, so we wait for its availability.
-	public Texture get(final GL gl, final GamaImageFile image) {
+	public Texture get(final IScope scope, final GL gl, final GamaImageFile image) {
 		if (image == null) {
 			return null;
 		}
-		Texture texture = textures.get(image.getPath());
+		Texture texture = textures.get(image.getPath(scope));
 		if (texture == null) {
 			if (!GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()) {
 				if (!gl.getContext().isCurrent()) {
 					gl.getContext().makeCurrent();
 				}
-				texture = buildTexture(gl, image);
+				texture = buildTexture(scope, gl, image);
 				if (texture != null) {
-					textures.put(image.getPath(), texture);
+					textures.put(image.getPath(scope), texture);
 				}
 			} else {
 				while (texture == null) {
-					texture = textures.get(image.getPath());
+					texture = textures.get(image.getPath(scope));
 					try {
 						Thread.sleep(10);
 					} catch (final InterruptedException e) {
@@ -108,14 +109,14 @@ public class TextureCache {
 		return texture;
 	}
 
-	public void initializeStaticTexture(final GamaImageFile image) {
+	public void initializeStaticTexture(final IScope scope, final GamaImageFile image) {
 		if (!GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()) {
 			return;
 		}
-		if (contains(image)) {
+		if (contains(scope, image)) {
 			return;
 		}
-		final BuildingTask task = new BuildingTask(null, image);
+		final BuildingTask task = new BuildingTask(scope, null, image);
 		BUILDER.tasks.offer(task);
 	}
 
@@ -123,13 +124,13 @@ public class TextureCache {
 	 * @param image
 	 * @return
 	 */
-	boolean contains(final GamaImageFile image) {
-		return textures.containsKey(image.getPath());
+	boolean contains(final IScope scope, final GamaImageFile image) {
+		return textures.containsKey(image.getPath(scope));
 	}
 
-	public static Texture buildTexture(final GL gl, final GamaImageFile image) {
+	public static Texture buildTexture(final IScope scope, final GL gl, final GamaImageFile image) {
 		try {
-			final Texture texture = TextureIO.newTexture(image.getFile(), false);
+			final Texture texture = TextureIO.newTexture(image.getFile(scope), false);
 			return texture;
 		} catch (final GLException | IOException e) {
 			e.printStackTrace();
@@ -268,22 +269,24 @@ public class TextureCache {
 	protected class BuildingTask implements GLTask {
 
 		protected final GamaImageFile image;
+		protected final IScope scope;
 
-		BuildingTask(final ModelScene scene, final GamaImageFile image) {
+		BuildingTask(final IScope scope, final ModelScene scene, final GamaImageFile image) {
 			this.image = image;
+			this.scope = scope;
 		}
 
 		@Override
 		public void runIn(final GL gl) {
 
-			if (contains(image)) {
+			if (contains(scope, image)) {
 				return;
 			}
-			final Texture texture = buildTexture(gl, image);
+			final Texture texture = buildTexture(scope, gl, image);
 			// System.out.println("Building texture : " + image);
 			// We use the original image to keep track of the texture
 			if (texture != null) {
-				textures.put(image.getPath(), texture);
+				textures.put(image.getPath(scope), texture);
 			}
 			gl.glFinish();
 

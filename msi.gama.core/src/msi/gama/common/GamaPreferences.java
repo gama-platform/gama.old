@@ -169,13 +169,15 @@ public class GamaPreferences {
 			if (getBuffer() != null) {
 				return;
 			}
-			if (FileUtils.isBinaryFile(scope, getFile())) {
-				GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException
-						.warning("Problem identifying the contents of " + getFile().getAbsolutePath(), scope), false);
+			if (FileUtils.isBinaryFile(scope, getFile(scope))) {
+				GAMA.reportAndThrowIfNeeded(scope,
+						GamaRuntimeException.warning(
+								"Problem identifying the contents of " + getFile(scope).getAbsolutePath(), scope),
+						false);
 				setBuffer(GamaListFactory.create());
 			}
 			try {
-				final BufferedReader in = new BufferedReader(new FileReader(getFile()));
+				final BufferedReader in = new BufferedReader(new FileReader(getFile(scope)));
 				final IList<String> allLines = GamaListFactory.create(Types.STRING);
 				String str;
 				str = in.readLine();
@@ -192,7 +194,7 @@ public class GamaPreferences {
 		}
 
 		@Override
-		protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
+		protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		}
 
 	}
@@ -794,7 +796,7 @@ public class GamaPreferences {
 			if (storeKeys.contains(key)) {
 				gp.setValue(scope, new GenericFile(store.get(key, "")));
 			} else {
-				store.put(key, value == null ? "" : ((IGamaFile) value).getPath());
+				store.put(key, value == null ? "" : ((IGamaFile) value).getPath(scope));
 			}
 			break;
 		case IType.COLOR:
@@ -848,7 +850,7 @@ public class GamaPreferences {
 			store.put(key, (String) value);
 			break;
 		case IType.FILE:
-			store.put(key, ((GamaFile) value).getPath());
+			store.put(key, ((GamaFile) value).getPath(null));
 			break;
 		case IType.COLOR:
 			// Stores the preference as an int but create a color

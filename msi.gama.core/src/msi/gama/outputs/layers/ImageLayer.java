@@ -49,7 +49,7 @@ public class ImageLayer extends AbstractLayer {
 			grid = null;
 		} else {
 			file = new GamaImageFile(scope, imageFileName);
-			env = file.getGeoDataFile() == null ? null : file.computeEnvelope(scope);
+			env = file.getGeoDataFile(scope) == null ? null : file.computeEnvelope(scope);
 			if (!file.isGeoreferenced()) {
 				env = null;
 			}

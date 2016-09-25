@@ -3104,8 +3104,8 @@ public abstract class Spatial {
 		public static IShape dem(final IScope scope, final GamaFile demFile, final GamaFile textureFile,
 				final Double z_factor) {
 			if (!(demFile instanceof GamaImageFile) || !(textureFile instanceof GamaImageFile)) {
-				throw GamaRuntimeException.error("The 'dem' operator requires image files. Either " + demFile.getPath()
-						+ " or " + textureFile.getPath() + " is not an image", scope);
+				throw GamaRuntimeException.error("The 'dem' operator requires image files. Either "
+						+ demFile.getPath(scope) + " or " + textureFile.getPath(scope) + " is not an image", scope);
 			}
 			final IGraphics graphics = scope.getGraphics();
 			if (graphics == null || graphics.cannotDraw())
@@ -3163,7 +3163,7 @@ public abstract class Spatial {
 			int rows, cols, x, y;
 
 			try {
-				texture = ImageUtils.getInstance().getImageFromFile(scope, textureFileName.getPath());
+				texture = ImageUtils.getInstance().getImageFromFile(scope, textureFileName.getPath(scope));
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}

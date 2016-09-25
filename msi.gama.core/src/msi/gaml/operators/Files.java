@@ -127,7 +127,7 @@ public class Files {
 			throw GamaRuntimeException.error("Attempt to change the mode of a non-existent file", scope);
 		}
 		final boolean b = writable == null ? false : writable;
-		s.setWritable(b);
+		s.setWritable(scope, b);
 		return s;
 	}
 

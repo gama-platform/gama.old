@@ -11,18 +11,32 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+
 import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.*;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
-@file(name = "URL", extensions = { "url" }, buffer_type = IType.LIST, buffer_content = IType.STRING, concept = { IConcept.TEXT, IConcept.FILE })
+@file(name = "URL", extensions = { "url" }, buffer_type = IType.LIST, buffer_content = IType.STRING, concept = {
+		IConcept.TEXT, IConcept.FILE })
 public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	private final String URL;
@@ -40,9 +54,9 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 	@Override
 	public String _stringValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
-		StringBuilder sb = new StringBuilder(getBuffer().length(scope) * 200);
-		for ( String s : getBuffer().iterable(scope) ) {
-			sb.append(s).append("\n"); // TODO Factorize the different calls to "new line" ...
+		final StringBuilder sb = new StringBuilder(getBuffer().length(scope) * 200);
+		for (final String s : getBuffer().iterable(scope)) {
+			sb.append(s).append(Strings.LN);
 		}
 		sb.setLength(sb.length() - 1);
 		return sb.toString();
@@ -54,31 +68,31 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 		return GamaListFactory.create();
 	}
 
-	public IList<String> getURLContent(final String u_str) {
+	public IList<String> getURLContent(final IScope scope, final String u_str) {
 		URL url;
 
 		final IList<String> allLines = GamaListFactory.create(Types.STRING);
 		try {
 			// get URL content
 			url = new URL(u_str);
-			URLConnection conn = url.openConnection();
+			final URLConnection conn = url.openConnection();
 
 			// open the stream and put it into BufferedReader
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			final BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 
 			String inputLine;
 
 			// save to this filename
 			// String fileName = "/users/mkyong/test.html";
-			File file = new File(this.getPath());
+			final File file = new File(this.getPath(scope));
 
 			// if (!file.exists()) {
 			// file.createNewFile();
 			// }
 
 			// use FileWriter to write file
-			FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			BufferedWriter bw = new BufferedWriter(fw);
+			final FileWriter fw = new FileWriter(file.getAbsoluteFile());
+			final BufferedWriter bw = new BufferedWriter(fw);
 
 			while ((inputLine = br.readLine()) != null) {
 				bw.write(inputLine + "\n");
@@ -89,9 +103,9 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 			bw.close();
 			br.close();
 
-		} catch (MalformedURLException e) {
+		} catch (final MalformedURLException e) {
 			e.printStackTrace();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		return allLines;
@@ -104,9 +118,11 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( getBuffer() != null ) { return; }
+		if (getBuffer() != null) {
+			return;
+		}
 
-		setBuffer(getURLContent(this.URL));
+		setBuffer(getURLContent(scope, this.URL));
 		// scope.getGui().informConsole(""+getURLContent(this.URL));
 
 	}
@@ -122,7 +138,7 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		// TODO A faire.
 
 	}
@@ -134,6 +150,7 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 
 	/**
 	 * Method getType()
+	 * 
 	 * @see msi.gama.util.IContainer#getType()
 	 */
 	@Override

@@ -110,7 +110,7 @@ public class GamaOsmFile extends GamaGisFile {
 
 				env2 = featureSource.getBounds();
 				number = osmfile.nbObjects;
-				crs = osmfile.getOwnCRS();
+				crs = osmfile.getOwnCRS(null);
 			} catch (final Exception e) {
 				System.out.println("Error in reading metadata of " + url);
 
@@ -323,7 +323,7 @@ public class GamaOsmFile extends GamaGisFile {
 			public void initialize(final Map<String, Object> arg0) {
 			}
 		};
-		readFile(sinkImplementation, getFile());
+		readFile(scope, sinkImplementation, getFile(scope));
 		if (returnIt) {
 			setBuffer(buildGeometries(nodes, ways, intersectionNodes, nodesPt));
 		}
@@ -543,7 +543,7 @@ public class GamaOsmFile extends GamaGisFile {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		// TODO not sure that is is really interesting to save geographic as OSM
 		// file...
 	}
@@ -568,14 +568,14 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 	}
 
-	private void readFile(final Sink sinkImplementation, final File osmFile) {
+	private void readFile(final IScope scope, final Sink sinkImplementation, final File osmFile) {
 		boolean pbf = false;
 		CompressionMethod compression = CompressionMethod.None;
-		if (getName().endsWith(".pbf")) {
+		if (getName(scope).endsWith(".pbf")) {
 			pbf = true;
-		} else if (getName().endsWith(".gz")) {
+		} else if (getName(scope).endsWith(".gz")) {
 			compression = CompressionMethod.GZip;
-		} else if (getName().endsWith(".bz2")) {
+		} else if (getName(scope).endsWith(".bz2")) {
 			compression = CompressionMethod.BZip2;
 		}
 
@@ -623,7 +623,7 @@ public class GamaOsmFile extends GamaGisFile {
 	 * @see msi.gama.util.file.GamaGisFile#getExistingCRS()
 	 */
 	@Override
-	protected CoordinateReferenceSystem getOwnCRS() {
+	protected CoordinateReferenceSystem getOwnCRS(final IScope scope) {
 		// Is it always true ?
 		return DefaultGeographicCRS.WGS84;
 	}

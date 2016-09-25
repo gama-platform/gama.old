@@ -6,6 +6,7 @@ import java.awt.image.BufferedImage;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 
+import msi.gama.runtime.IScope;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.font.fontMeshCreator.FontTextureCache;
 import ummisco.gama.modernOpenGL.font.fontMeshCreator.TextMeshData;
@@ -30,8 +31,8 @@ public class DrawingEntityGenerator {
 		this.fontTextCache = new FontTextureCache();
 	}
 
-	public DrawingEntity[] GenerateDrawingEntities(final AbstractObject object, final GL2 gl) {
-		return GenerateDrawingEntities(object, true, gl);
+	public DrawingEntity[] GenerateDrawingEntities(final IScope scope, final AbstractObject object, final GL2 gl) {
+		return GenerateDrawingEntities(scope, object, true, gl);
 	}
 
 	private String getFontName(final StringObject strObj) {
@@ -58,8 +59,8 @@ public class DrawingEntityGenerator {
 			return 18;
 	}
 
-	public DrawingEntity[] GenerateDrawingEntities(final AbstractObject object, final boolean computeTextureIds,
-			final GL2 gl) {
+	public DrawingEntity[] GenerateDrawingEntities(final IScope scope, final AbstractObject object,
+			final boolean computeTextureIds, final GL2 gl) {
 		// if this function is called to create a simpleScene, we don't compute
 		// the texture IDs (the only thing that interest us in this case is the
 		// texture Path)
@@ -83,13 +84,14 @@ public class DrawingEntityGenerator {
 		} else if (object instanceof GeometryObject) {
 			final GeometryObject geomObj = (GeometryObject) object;
 
-			final String[] texturePaths = geomObj.getTexturePaths(); // returns
-																		// null
-																		// if no
-																		// texture
-																		// for
-																		// this
-																		// entity
+			final String[] texturePaths = geomObj.getTexturePaths(scope); // returns
+																			// null
+																			// if
+																			// no
+																			// texture
+																			// for
+																			// this
+																			// entity
 			final int[] textureIDs = texturePaths == null ? null : new int[texturePaths.length];
 			if (computeTextureIds && texturePaths != null) {
 				final Texture[] textures = geomObj.getTextures(gl, renderer);
@@ -104,10 +106,12 @@ public class DrawingEntityGenerator {
 
 			String[] texturePaths = null;
 			int[][][] bufferedImageValue = null;
-			final String texturePath = imObj.getImagePath(); // returns null if
-																// no texture
-																// for this
-																// entity
+			final String texturePath = imObj.getImagePath(scope); // returns
+																	// null if
+																	// no
+																	// texture
+																	// for this
+																	// entity
 			if (texturePath != null) {
 				texturePaths = new String[1];
 				texturePaths[0] = texturePath;

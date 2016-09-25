@@ -795,7 +795,7 @@ public class Stats {
 		final RCaller caller = new RCaller();
 		final RCode code = new RCode();
 
-		final String RPath = GamaPreferences.LIB_R.value(scope).getPath();
+		final String RPath = GamaPreferences.LIB_R.value(scope).getPath(scope);
 		caller.setRscriptExecutable(RPath);
 		// caller.setRscriptExecutable("\"" + RPath + "\"");
 		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
@@ -847,7 +847,7 @@ public class Stats {
 		final RCaller caller = new RCaller();
 		final RCode code = new RCode();
 
-		final String RPath = GamaPreferences.LIB_R.value(scope).getPath();
+		final String RPath = GamaPreferences.LIB_R.value(scope).getPath(scope);
 		caller.setRscriptExecutable(RPath);
 		// caller.setRscriptExecutable("\"" + RPath + "\"");
 		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {

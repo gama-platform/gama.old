@@ -48,42 +48,24 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		implements IGamaFile<C, ValueToAdd, K, V> {
 
 	private File file;
-
-	protected final String path;
-
+	private String path;
+	protected final String originalPath;
 	protected URL url;
-
 	protected boolean writable = false;
-
 	private C buffer;
 
-	public GamaFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		this(scope, pathName, true);
-	}
-
-	public GamaFile(final IScope scope, final String pn, final boolean mustExist) throws GamaRuntimeException {
-		String pathName = pn;
-		if (pathName == null) {
+	public GamaFile(final IScope scope, final String pn) throws GamaRuntimeException {
+		originalPath = pn;
+		if (originalPath == null) {
 			throw GamaRuntimeException.error("Attempt to create a null file", scope);
-		} else if (pathName.startsWith("http")) {
-			pathName = fetchFromURL(scope, pathName);
-			if (pathName == null) {
+		} else if (originalPath.startsWith("http")) {
+			setPath(fetchFromURL(scope, originalPath));
+			if (getPath(scope) == null) {
 				// We do not attempt to create the file. It will probably be
 				// taken in charge later directly from the URL
-				path = "";
+				setPath("");
 				return;
 			}
-		}
-
-		if (scope != null) {
-			path = FileUtils.constructAbsoluteFilePath(scope, pathName, mustExist);
-			checkValidity(scope);
-			// AD 27/04/13 Let the flags of the file remain the same. Can be
-			// turned off and on using the "read" and
-			// "write" operators, so no need to decide for a default here
-			// setWritable(false);
-		} else {
-			path = pathName;
 		}
 	}
 
@@ -149,28 +131,22 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	public GamaFile(final IScope scope, final String pathName, final C container) {
-		this(scope, pathName, false);
-		setWritable(true);
+		this(scope, pathName);
+		setWritable(scope, true);
 		setContents(container);
 	}
 
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
-		if (getFile().exists() && getFile().isDirectory()) {
+		if (getFile(scope).exists() && getFile(scope).isDirectory()) {
 			throw GamaRuntimeException
-					.error(getFile().getAbsolutePath() + " is a folder. Files can not overwrite folders", scope);
+					.error(getFile(scope).getAbsolutePath() + " is a folder. Files can not overwrite folders", scope);
 		}
-		// For the moment, the verification is disabled, so as to allow
-		// "forcing" the loading of a file in a different
-		// way (for instance, a .asc file into a text file).
-		// if ( !GamaFileType.verifyExtension(this, getPath()) ) { throw
-		// GamaRuntimeException.warning("The extension " +
-		// this.getExtension() + " is not recognized for this type of file"); }
 	}
 
 	@Override
-	public void setWritable(final boolean w) {
+	public void setWritable(final IScope scope, final boolean w) {
 		writable = w;
-		getFile().setWritable(w);
+		getFile(scope).setWritable(w);
 	}
 
 	protected abstract void fillBuffer(IScope scope) throws GamaRuntimeException;
@@ -185,24 +161,8 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	protected String _stringValue(final IScope scope) throws GamaRuntimeException {
-		getContents(scope);
-		return getBuffer().stringValue(scope);
+		return getPath(scope);
 	}
-
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gama.interfaces.IGamaContainer#add(java.lang.Object,
-	 * java.lang.Object, java.lang.Object)
-	 */
-	// @Override
-	// public void add(final IScope scope, final K index, final Object value,
-	// final Object param, final boolean all,
-	// final boolean add) throws GamaRuntimeException {
-	// getContents(scope);
-	// buffer.add(scope, index, value, param, all, add);
-	// flushBuffer();
-	// }
 
 	// 09/01/14:Trying to keep the interface simple.
 	// Three methods for add and put operations:
@@ -306,8 +266,8 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public Boolean exists() {
-		return getFile().exists();
+	public Boolean exists(final IScope scope) {
+		return getFile(scope).exists();
 	}
 
 	/*
@@ -336,8 +296,8 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	// @getter( IKeyword.EXTENSION)
-	public String getExtension() {
-		final String path = getFile().getPath().toLowerCase();
+	public String getExtension(final IScope scope) {
+		final String path = getPath(scope).toLowerCase();
 		final int mid = path.lastIndexOf(".");
 		if (mid == -1) {
 			return "";
@@ -346,21 +306,23 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public String getName() {
-		return getFile().getName();
+	public String getName(final IScope scope) {
+		return getFile(scope).getName();
 	}
 
 	@Override
-	// @getter( IKeyword.PATH)
-	public String getPath() {
-		return getFile().getPath();
+	public String getPath(final IScope scope) {
+		if (path == null) {
+			setPath(FileUtils.constructAbsoluteFilePath(scope, originalPath, getBuffer() == null));
+			checkValidity(scope);
+		}
+		return path;
 	}
 
 	@Override
 	public C getContents(final IScope scope) throws GamaRuntimeException {
-		// if ( getFile() == null ) { return null; }
-		if (buffer == null && !getFile().exists()) {
-			throw GamaRuntimeException.error("File " + getFile().getAbsolutePath() + " does not exist", scope);
+		if (buffer == null && !exists(scope)) {
+			throw GamaRuntimeException.error("File " + getFile(scope).getAbsolutePath() + " does not exist", scope);
 		}
 		fillBuffer(scope);
 		return getBuffer();
@@ -373,18 +335,18 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public Boolean isFolder() {
-		return getFile().isDirectory();
+	public Boolean isFolder(final IScope scope) {
+		return getFile(scope).isDirectory();
 	}
 
 	@Override
-	public Boolean isReadable() {
-		return getFile().canRead();
+	public Boolean isReadable(final IScope scope) {
+		return getFile(scope).canRead();
 	}
 
 	@Override
-	public Boolean isWritable() {
-		return getFile().canWrite();
+	public Boolean isWritable(final IScope scope) {
+		return getFile(scope).canWrite();
 	}
 
 	@Override
@@ -436,15 +398,6 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		return getBuffer().matrixValue(scope, contentsType, preferredSize, copy);
 	}
 
-	//
-	// @Override
-	// public void remove(final IScope scope, final Object index, final Object
-	// value, final boolean all) {
-	// getContents(scope);
-	// buffer.remove(scope, index, value, all);
-	// flushBuffer();
-	// }
-
 	@Override
 	public IContainer reverse(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
@@ -459,7 +412,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "file('" + /* StringUtils.toGamlString(getPath()) */getPath() + "')";
+		return "file('" + /* StringUtils.toGamlString(getPath()) */getPath(null) + "')";
 	}
 
 	@Override
@@ -468,9 +421,9 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		return getBuffer().anyValue(scope);
 	}
 
-	public File getFile() {
+	public File getFile(final IScope scope) {
 		if (file == null) {
-			file = new File(path);
+			file = new File(getPath(scope));
 		}
 		return file;
 	}
@@ -507,13 +460,17 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	public final void save(final IScope scope, final Facets saveFacets) {
 		final IExpression exp = saveFacets.getExpr(IKeyword.REWRITE);
 		final boolean overwrite = exp == null || Cast.asBool(scope, exp.value(scope));
-		if (overwrite && getFile().exists()) {
-			getFile().delete();
+		if (overwrite && getFile(scope).exists()) {
+			getFile(scope).delete();
 		}
 		if (!writable)
-			throw GamaRuntimeException.error("File " + getFile().getName() + " is not writable", scope);
+			throw GamaRuntimeException.error("File " + getName(scope) + " is not writable", scope);
 		flushBuffer(scope, saveFacets);
 
+	}
+
+	protected void setPath(final String path) {
+		this.path = path;
 	}
 
 }

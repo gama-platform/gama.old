@@ -584,8 +584,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 			return null;
 		}
 
-		if (file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath())) {
-			envelopes.put(file.getPath(), file.computeEnvelope(surface.getScope()));
+		if (file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath(getSurface().getScope()))) {
+			envelopes.put(file.getPath(getSurface().getScope()), file.computeEnvelope(surface.getScope()));
 		}
 		sceneBuffer.getSceneToUpdate().addFile(file, attributes);
 		return rect;

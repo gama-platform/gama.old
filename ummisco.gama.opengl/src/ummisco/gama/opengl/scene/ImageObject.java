@@ -18,6 +18,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.Abstract3DRenderer;
@@ -53,16 +54,15 @@ public class ImageObject extends AbstractObject {
 		}
 		return texture;
 	}
-	
-	public String getImagePath() {
+
+	public String getImagePath(final IScope scope) {
 		if (image == null) {
-			return file.getPath();
-		}
-		else {
+			return file.getPath(scope);
+		} else {
 			return null;
 		}
 	}
-	
+
 	public BufferedImage getBufferedImage() {
 		return image;
 	}

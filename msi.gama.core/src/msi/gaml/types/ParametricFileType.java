@@ -76,7 +76,7 @@ public class ParametricFileType extends ParametricType {
 			if (support.isInstance(obj))
 				return (IGamaFile) obj;
 			else {
-				return cast(scope, ((IGamaFile) obj).getPath(), param, keyType, contentType, copy);
+				return cast(scope, ((IGamaFile) obj).getPath(scope), param, keyType, contentType, copy);
 			}
 		}
 		if (obj instanceof String) {
@@ -144,7 +144,7 @@ public class ParametricFileType extends ParametricType {
 	public IGamaFile createFile(final IScope scope, final String path, final IModifiableContainer contents) {
 		final IGamaFile file = builder.run(scope, path);
 		if (contents != null) {
-			file.setWritable(true);
+			file.setWritable(scope, true);
 			file.setContents(contents);
 		}
 		return file;

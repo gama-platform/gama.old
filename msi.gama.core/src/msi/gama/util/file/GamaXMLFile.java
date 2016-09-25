@@ -11,19 +11,29 @@
  **********************************************************************************************/
 package msi.gama.util.file;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 import com.vividsolutions.jts.geom.Envelope;
+
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IList;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.*;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
- * Class GamaXMLFile.
- * TODO: Everything ! What kind of buffer should be returned from here ? The current implementation does not make any sense at all.
+ * Class GamaXMLFile. TODO: Everything ! What kind of buffer should be returned
+ * from here ? The current implementation does not make any sense at all.
+ * 
  * @author drogoul
  * @since 9 janv. 2014
  *
@@ -53,6 +63,7 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, Strin
 
 	/**
 	 * Method computeEnvelope()
+	 * 
 	 * @see msi.gama.util.file.IGamaFile#computeEnvelope(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -62,13 +73,16 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, Strin
 
 	/**
 	 * Method fillBuffer()
+	 * 
 	 * @see msi.gama.util.file.GamaFile#fillBuffer(msi.gama.runtime.IScope)
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( getBuffer() != null ) { return; }
+		if (getBuffer() != null) {
+			return;
+		}
 		try {
-			final BufferedReader in = new BufferedReader(new FileReader(getFile()));
+			final BufferedReader in = new BufferedReader(new FileReader(getFile(scope)));
 			final GamaMap<String, String> allLines = GamaMapFactory.create(Types.STRING, Types.STRING);
 			String str;
 			str = in.readLine();
@@ -85,9 +99,11 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, Strin
 
 	/**
 	 * Method flushBuffer()
+	 * 
 	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {}
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
+	}
 
 }

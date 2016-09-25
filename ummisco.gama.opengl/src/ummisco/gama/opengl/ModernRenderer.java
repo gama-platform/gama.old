@@ -66,7 +66,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	private ModernDrawer drawer;
 	public boolean renderToTexture = true;
-	
+
 	private final PickingState pickingState = new PickingState();
 	public boolean colorPicking = false;
 	private Envelope3D ROIEnvelope = null;
@@ -147,7 +147,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 		if (renderToTexture)
 			drawer.prepareFrameBufferObject();
-		
+
 		final Color background = data.getBackgroundColor();
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
 				1.0f);
@@ -480,8 +480,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
 		}
 
-		if (file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath())) {
-			envelopes.put(file.getPath(), file.computeEnvelope(surface.getScope()));
+		if (file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath(surface.getScope()))) {
+			envelopes.put(file.getPath(surface.getScope()), file.computeEnvelope(surface.getScope()));
 		}
 		sceneBuffer.getSceneToUpdate().addFile(file, attributes);
 		return rect;

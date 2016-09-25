@@ -117,7 +117,8 @@ class ShapeExecuter extends DrawExecuter {
 	ShapeDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final IShape shape) {
 		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(data.currentSize, data.currentDepth,
 				data.currentRotation, data.currentLocation, data.currentEmpty, data.currentColor, data.currentColors,
-				data.currentBorder, data.currentTextures, data.currentMaterial, scope.getAgent(), shape.getGeometricalType());
+				data.currentBorder, data.currentTextures, data.currentMaterial, scope.getAgent(),
+				shape.getGeometricalType());
 		// We push the depth of the geometry if none have been specified already
 		attributes.setDepthIfAbsent((Double) shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
 		// We push the (perhaps new) location of the shape to the attributes.
@@ -141,7 +142,7 @@ class ShapeExecuter extends DrawExecuter {
 		for (final String s : textureNames) {
 			GamaImageFile image;
 			image = new GamaImageFile(scope, s);
-			if (!image.exists()) {
+			if (!image.exists(scope)) {
 				throw new GamaRuntimeFileException(scope, "Texture file not found: " + s);
 			} else {
 				attributes.textures.add(image);

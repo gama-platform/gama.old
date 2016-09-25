@@ -61,7 +61,7 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		super(scope, pathName);
 		experimentName = "";
 		aliasName = "";
-		mymodel = GamlModelBuilder.compile(URI.createURI(path, false), null);
+		mymodel = GamlModelBuilder.compile(URI.createURI(getPath(scope), false), null);
 	}
 
 	@Override
@@ -74,7 +74,7 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 		super(scope, pathName);
 		experimentName = expName;
 		aliasName = cName;
-		mymodel = GamlModelBuilder.compile(URI.createURI(path, false), null);
+		mymodel = GamlModelBuilder.compile(URI.createURI(getPath(scope), false), null);
 		((ModelDescription) mymodel.getDescription()).setAlias(aliasName);
 	}
 
@@ -129,7 +129,7 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 	 * @see msi.gama.util.GamaFile#flushBuffer()
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 	}
 
 	@Override

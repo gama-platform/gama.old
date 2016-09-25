@@ -135,7 +135,7 @@ public class DeprecatedOperators {
 	@Deprecated
 	public static IGamaFile as_csv(final IScope scope, final IGamaFile file, final String s)
 			throws GamaRuntimeException {
-		return new GamaCSVFile(scope, file.getPath(), s);
+		return new GamaCSVFile(scope, file.getPath(scope), s);
 	}
 
 	// @operator(value = "gamlfile", can_be_const = true, index_type =
@@ -251,7 +251,7 @@ public class DeprecatedOperators {
 					"file", "writable" })
 	@Deprecated
 	public static IGamaFile opRead(final IScope scope, final IGamaFile s) {
-		s.setWritable(false);
+		s.setWritable(scope, false);
 		return s;
 	}
 
@@ -261,7 +261,7 @@ public class DeprecatedOperators {
 					"file", "writable" })
 	@Deprecated
 	public static IGamaFile opWrite(final IScope scope, final IGamaFile s) {
-		s.setWritable(true);
+		s.setWritable(scope, true);
 		return s;
 	}
 
@@ -541,7 +541,7 @@ public class DeprecatedOperators {
 		// if (index > 0 && index < attributes.size())
 		// return g.getAttribute(attributes.get(index));
 		return null;
-	
+
 	}
 
 	// @Deprecated

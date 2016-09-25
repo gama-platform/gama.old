@@ -115,7 +115,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 					final double originalAlpha = object.getAlpha();
 					object.setAlpha(originalAlpha * alpha);
 					final DrawingEntity[] drawingEntity = renderer.getDrawingEntityGenerator()
-							.GenerateDrawingEntities(object, gl);
+							.GenerateDrawingEntities(renderer.getSurface().getScope(), object, gl);
 					object.setAlpha(originalAlpha);
 					if (drawingEntity != null)
 						renderer.getDrawer().addDrawingEntities(drawingEntity);
@@ -372,7 +372,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 			for (final List<AbstractObject> list : objects) {
 				for (final AbstractObject object : list) {
 					final DrawingEntity[] drawingEntities = renderer.getDrawingEntityGenerator()
-							.GenerateDrawingEntities(object, false, null);
+							.GenerateDrawingEntities(renderer.getSurface().getScope(), object, false, null);
 					// explicitly passes null for the OpenGL context
 					if (drawingEntities != null) {
 						for (final DrawingEntity drawingEntity : drawingEntities) {

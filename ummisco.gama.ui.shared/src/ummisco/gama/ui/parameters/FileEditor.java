@@ -46,7 +46,7 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 	}
 
 	FileEditor(final IScope scope, final Composite parent, final String title, final String value,
-		final EditorListener<IGamaFile> whenModified) {
+			final EditorListener<IGamaFile> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
@@ -66,10 +66,10 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 	public void widgetSelected(final SelectionEvent e) {
 		final FileDialog dialog = new FileDialog(Display.getCurrent().getActiveShell(), SWT.NULL);
 		IGamaFile file = currentValue;
-		dialog.setFileName(file.getPath());
+		dialog.setFileName(file.getPath(getScope()));
 		dialog.setText("Choose a file for parameter '" + param.getTitle() + "'");
 		final String path = dialog.open();
-		if ( path != null ) {
+		if (path != null) {
 			file = Files.from(getScope(), path);
 			modifyAndDisplayValue(file);
 		}
@@ -78,12 +78,12 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		if ( currentValue == null ) {
+		if (currentValue == null) {
 			textBox.setText("No file");
 		} else {
 			final IGamaFile file = currentValue;
-			textBox.setToolTipText(file.getPath());
-			textBox.setText(file.getPath());
+			textBox.setToolTipText(file.getPath(getScope()));
+			textBox.setText(file.getPath(getScope()));
 		}
 		internalModification = false;
 	}

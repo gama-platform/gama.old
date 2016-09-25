@@ -114,14 +114,14 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	}
 
-	private void loadObject() {
+	private void loadObject(final IScope scope) {
 		if (loaded) {
 			return;
 		}
 		int facecounter = 0;
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new FileReader(getFile()));
+			br = new BufferedReader(new FileReader(getFile(scope)));
 			boolean firstpass = true;
 			String newline;
 			while ((newline = br.readLine()) != null) {
@@ -281,7 +281,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		loadObject();
+		loadObject(scope);
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		final IList<IShape> vertices = GamaListFactory.create(Types.POINT);
 		for (final float[] coords : vertexSets) {
@@ -326,11 +326,11 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	 * @see msi.gama.util.file.GamaFile#flushBuffer(IScope, Facets)
 	 */
 	@Override
-	protected void flushBuffer(IScope scope, Facets facets) throws GamaRuntimeException {
+	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 	}
 
 	public void drawToOpenGL(final GL2 gl, final JOGLRenderer renderer) {
-		loadObject();
+		loadObject(renderer.getSurface().getScope());
 		int nextmat = -1;
 		int matcount = 0;
 		final int totalmats = matTimings.size();

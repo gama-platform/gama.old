@@ -87,15 +87,17 @@ public class ImageUtils {
 	public BufferedImage getImageFromFile(final File file) throws IOException {
 		BufferedImage image = get(file.getAbsolutePath());
 		if (image == null) {
-			final String ext = file.getName().substring(file.getName().lastIndexOf("."));
-			if (tiffExt.contains(ext)) {
-				final FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath());
-				final TIFFDecodeParam decodeParam = new TIFFDecodeParam();
-				decodeParam.setDecodePaletteAsShorts(true);
-				final ParameterBlock params = new ParameterBlock();
-				params.add(stream);
-				final RenderedOp image1 = JAI.create("tiff", params);
-				image = image1.getAsBufferedImage();
+			if (file.getName().contains(".")) {
+				final String ext = file.getName().substring(file.getName().lastIndexOf("."));
+				if (tiffExt.contains(ext)) {
+					final FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath());
+					final TIFFDecodeParam decodeParam = new TIFFDecodeParam();
+					decodeParam.setDecodePaletteAsShorts(true);
+					final ParameterBlock params = new ParameterBlock();
+					params.add(stream);
+					final RenderedOp image1 = JAI.create("tiff", params);
+					image = image1.getAsBufferedImage();
+				}
 			}
 		}
 		if (image == null) {

@@ -12,15 +12,20 @@
 package msi.gama.util.file;
 
 import com.vividsolutions.jts.geom.Envelope;
-import msi.gama.metamodel.shape.*;
+
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gaml.types.*;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IList;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.Types;
 
 /**
- * Class GamaGeometryFile. An abstract class that supports loading and saving geometries in specific subclasses.
- * The buffer is a GamaList of points (GamaPoint) from which the GamaGeometry can be constructed (using
+ * Class GamaGeometryFile. An abstract class that supports loading and saving
+ * geometries in specific subclasses. The buffer is a GamaList of points
+ * (GamaPoint) from which the GamaGeometry can be constructed (using
  * geometry(file("..."));)
  *
  * @author drogoul
@@ -42,6 +47,7 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 
 	/**
 	 * Method computeEnvelope()
+	 * 
 	 * @see msi.gama.util.file.IGamaFile#computeEnvelope(msi.gama.runtime.IScope)
 	 */
 	@Override
@@ -51,7 +57,7 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 
 	public IShape getGeometry(final IScope scope) {
 		fillBuffer(scope);
-		if ( geometry == null ) {
+		if (geometry == null) {
 			geometry = buildGeometry(scope);
 		}
 		return geometry;

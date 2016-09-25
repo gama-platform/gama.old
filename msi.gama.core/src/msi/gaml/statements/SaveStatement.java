@@ -69,6 +69,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
+import msi.gama.util.IModifiableContainer;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
@@ -85,6 +86,7 @@ import msi.gaml.operators.Comparison;
 import msi.gaml.operators.Strings;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.SaveStatement.SaveValidator;
+import msi.gaml.types.GamaFileType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -186,6 +188,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		// First case: we have a file as item;
 		if (file == null && Types.FILE.isAssignableFrom(item.getType())) {
 			final IGamaFile file = (IGamaFile) item.value(scope);
 			if (file != null) {
@@ -194,6 +197,19 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			return file;
 		}
+		final String typeExp = getLiteral(IKeyword.TYPE);
+		// Second case: a filename is indicated but not the type. In that case,
+		// we try to build a new GamaFile from it and save it
+		if (file != null && typeExp == null) {
+			final String name = Cast.asString(scope, file.value(scope));
+			final Object contents = item.value(scope);
+			if (contents instanceof IModifiableContainer) {
+				final IGamaFile f = GamaFileType.createFile(scope, name, (IModifiableContainer) contents);
+				f.save(scope, description.getFacets());
+				return f;
+			}
+
+		}
 
 		// These statements will need to be completely rethought because of the
 		// possibility to now use the GamaFile infrastructure for this.
@@ -201,7 +217,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		// inner type will be enough), like in save json_file("ddd.json",
 		// my_map); which we can probably allow to be written save my_map to:
 		// json_file("ddd.json"); see #1362
-		final String typeExp = getLiteral(IKeyword.TYPE);
 
 		String path = "";
 		if (file == null) {

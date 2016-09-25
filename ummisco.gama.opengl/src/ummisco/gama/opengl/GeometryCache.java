@@ -38,11 +38,11 @@ public class GeometryCache {
 	}
 
 	public Integer get(final GL2 gl, final JOGLRenderer renderer, final GamaGeometryFile file) {
-		Integer index = cache.get(file.getPath());
+		Integer index = cache.get(file.getPath(renderer.getSurface().getScope()));
 		if (index == null) {
 			try {
 				index = buildList(gl, renderer, file);
-				cache.put(file.getPath(), index);
+				cache.put(file.getPath(renderer.getSurface().getScope()), index);
 			} catch (final FileNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -52,7 +52,7 @@ public class GeometryCache {
 
 	private Integer buildList(final GL2 gl, final JOGLRenderer renderer, final GamaGeometryFile file)
 			throws FileNotFoundException {
-		final String extension = file.getExtension();
+		final String extension = file.getExtension(renderer.getSurface().getScope());
 		// We generate the list first
 		final Integer index = gl.glGenLists(1);
 		gl.glNewList(index, GL2.GL_COMPILE);

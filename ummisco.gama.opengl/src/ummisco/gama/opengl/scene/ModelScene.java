@@ -33,7 +33,6 @@ import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import ummisco.gama.opengl.Abstract3DRenderer;
-import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.opengl.TextureCache;
 import ummisco.gama.webgl.SceneReceiver;
 import ummisco.gama.webgl.SimpleLayer;
@@ -135,7 +134,7 @@ public class ModelScene {
 		if (file == null) {
 			return null;
 		}
-		final Texture texture = renderer.getSharedTextureCache().get(gl, file);
+		final Texture texture = renderer.getSharedTextureCache().get(renderer.getSurface().getScope(), gl, file);
 		return antiAliasTexture(gl, texture);
 	}
 
@@ -160,7 +159,7 @@ public class ModelScene {
 			layers.remove(ROTATION_HELPER_KEY);
 			layers.put(ROTATION_HELPER_KEY, rotLayer);
 		}
-		
+
 		final LayerObject[] array = layers.values().toArray(new LayerObject[0]);
 		for (final LayerObject layer : array) {
 			if (layer != null && !layer.isInvalid()) {
@@ -194,7 +193,8 @@ public class ModelScene {
 			return;
 		}
 		if (file instanceof GamaImageFile) {
-			renderer.getSharedTextureCache().initializeStaticTexture((GamaImageFile) file);
+			renderer.getSharedTextureCache().initializeStaticTexture(renderer.getSurface().getScope(),
+					(GamaImageFile) file);
 			currentLayer.addImage((GamaImageFile) file, attributes);
 		} else if (file instanceof GamaGeometryFile) {
 			currentLayer.addFile((GamaGeometryFile) file, attributes);
@@ -215,7 +215,8 @@ public class ModelScene {
 		if (attributes.textures != null && !attributes.textures.isEmpty()) {
 			for (final Object img : attributes.textures) {
 				if (img instanceof GamaImageFile) {
-					renderer.getSharedTextureCache().initializeStaticTexture((GamaImageFile) img);
+					renderer.getSharedTextureCache().initializeStaticTexture(renderer.getSurface().getScope(),
+							(GamaImageFile) img);
 				}
 			}
 		}
@@ -229,7 +230,8 @@ public class ModelScene {
 		if (attributes.textures != null && !attributes.textures.isEmpty()) {
 			for (final Object img : attributes.textures) {
 				if (img instanceof GamaImageFile) {
-					renderer.getSharedTextureCache().initializeStaticTexture((GamaImageFile) img);
+					renderer.getSharedTextureCache().initializeStaticTexture(renderer.getSurface().getScope(),
+							(GamaImageFile) img);
 				}
 			}
 		}
