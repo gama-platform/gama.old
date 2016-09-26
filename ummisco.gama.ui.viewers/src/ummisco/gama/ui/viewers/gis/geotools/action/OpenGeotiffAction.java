@@ -33,8 +33,9 @@ import org.geotools.styling.SLD;
 import org.geotools.styling.Style;
 import org.geotools.styling.StyleFactoryImpl;
 
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.control.JFileImageChooser;
-import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
 
 /**
  * Action to open geotiff files.
@@ -47,32 +48,34 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
  */
 public class OpenGeotiffAction extends MapAction implements ISelectionChangedListener {
 
-    public OpenGeotiffAction() {
-        super("Open Image", "Load an image file into the viewer.", ImageCache.getInstance().getImage(ImageCache.OPEN));
-    }
+	public OpenGeotiffAction() {
+		super("Open Image", "Load an image file into the viewer.", GamaIcons.create(IGamaIcons.OPEN).image());
+	}
 
-    public void run() {
-        Display display = Display.getCurrent();
-        Shell shell = new Shell(display);
-        File openFile = JFileImageChooser.showOpenFile(shell);
+	@Override
+	public void run() {
+		final Display display = Display.getCurrent();
+		final Shell shell = new Shell(display);
+		final File openFile = JFileImageChooser.showOpenFile(shell);
 
-        if (openFile != null && openFile.exists()) {
-            AbstractGridFormat format = GridFormatFinder.findFormat(openFile);
-            AbstractGridCoverage2DReader tiffReader = format.getReader(openFile);
-            StyleFactoryImpl sf = new StyleFactoryImpl();
-            RasterSymbolizer symbolizer = sf.getDefaultRasterSymbolizer();
-            Style defaultStyle = SLD.wrapSymbolizers(symbolizer);
+		if (openFile != null && openFile.exists()) {
+			final AbstractGridFormat format = GridFormatFinder.findFormat(openFile);
+			final AbstractGridCoverage2DReader tiffReader = format.getReader(openFile);
+			final StyleFactoryImpl sf = new StyleFactoryImpl();
+			final RasterSymbolizer symbolizer = sf.getDefaultRasterSymbolizer();
+			final Style defaultStyle = SLD.wrapSymbolizers(symbolizer);
 
-            MapContent mapContent = mapPane.getMapContent();
-            Layer layer = new GridReaderLayer(tiffReader, defaultStyle);
-            layer.setTitle(openFile.getName());
-            mapContent.addLayer(layer);
-            mapPane.redraw();
-        }
-    }
+			final MapContent mapContent = mapPane.getMapContent();
+			final Layer layer = new GridReaderLayer(tiffReader, defaultStyle);
+			layer.setTitle(openFile.getName());
+			mapContent.addLayer(layer);
+			mapPane.redraw();
+		}
+	}
 
-    public void selectionChanged( SelectionChangedEvent arg0 ) {
+	@Override
+	public void selectionChanged(final SelectionChangedEvent arg0) {
 
-    }
+	}
 
 }

@@ -33,12 +33,14 @@ import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.map.event.MapBoundsEvent;
 import org.geotools.map.event.MapBoundsListener;
 
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.SwtMapPane;
 import ummisco.gama.ui.viewers.gis.geotools.tool.InfoTool;
-import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
 
 /**
- * Action that activates the Info tool for the current {@link SwtMapPane map pane}.
+ * Action that activates the Info tool for the current {@link SwtMapPane map
+ * pane}.
  * 
  * @author Andrea Antonello (www.hydrologis.com)
  *
@@ -48,107 +50,114 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
  */
 public class DrawShapeAction extends MapAction implements MapBoundsListener {
 
-    public DrawShapeAction() {
-        super("Drawshape@D", InfoTool.TOOL_TIP, ImageCache.getInstance().getImage(ImageCache.IMAGE_INFO));
+	public DrawShapeAction() {
+		super("Drawshape@D", InfoTool.TOOL_TIP, GamaIcons.create(IGamaIcons.IMAGE_INFO).image());
 
-    }
+	}
 
-    private static boolean odd = true;
-    private static boolean first = true;
-    /**
-     * Called when the associated control is activated. Leads to the
-     * map pane's cursor tool being set to a PanTool object
-     * 
-     * @param ev the event (not used)
-     */
-    public void run() {
-        if (first) {
-            getMapPane().getMapContent().addMapBoundsListener(this);
-            first = false;
-        }
+	private static boolean odd = true;
+	private static boolean first = true;
 
-        Rectangle visibleRect = getMapPane().getVisibleRect();
-        ReferencedEnvelope displayArea = getMapPane().getDisplayArea();
-        drawShapes(visibleRect, displayArea, false);
+	/**
+	 * Called when the associated control is activated. Leads to the map pane's
+	 * cursor tool being set to a PanTool object
+	 * 
+	 * @param ev
+	 *            the event (not used)
+	 */
+	@Override
+	public void run() {
+		if (first) {
+			getMapPane().getMapContent().addMapBoundsListener(this);
+			first = false;
+		}
 
-        /*
-         * to switch of drawing, simply do
-         */
-        // getMapPane().setOverlay(null, null, false);
-        // getMapPane().redraw();
-    }
+		final Rectangle visibleRect = getMapPane().getVisibleRect();
+		final ReferencedEnvelope displayArea = getMapPane().getDisplayArea();
+		drawShapes(visibleRect, displayArea, false);
 
-    /**
-     * Draws shapes on the map.
-     * 
-     * @param visibleRect the rectangle in teh screen space.
-     * @param areaOfInterest the area of interest in world coordinates.
-     */
-    private void drawShapes( Rectangle visibleRect, ReferencedEnvelope areaOfInterest, boolean boundsChanged ) {
-        Display display = Display.getDefault();
+		/*
+		 * to switch of drawing, simply do
+		 */
+		// getMapPane().setOverlay(null, null, false);
+		// getMapPane().redraw();
+	}
 
-        /*
-         * create an image with transparent color (this can be done better?)
-         */
-        Color white = display.getSystemColor(SWT.COLOR_WHITE);
-        PaletteData palette = new PaletteData(new RGB[]{white.getRGB()});
-        final ImageData sourceData = new ImageData(visibleRect.width, visibleRect.height, 1, palette);
-        sourceData.transparentPixel = 0;
+	/**
+	 * Draws shapes on the map.
+	 * 
+	 * @param visibleRect
+	 *            the rectangle in teh screen space.
+	 * @param areaOfInterest
+	 *            the area of interest in world coordinates.
+	 */
+	private void drawShapes(final Rectangle visibleRect, final ReferencedEnvelope areaOfInterest,
+			final boolean boundsChanged) {
+		final Display display = Display.getDefault();
 
-        // create the image to draw on
-        Image img = new Image(display, sourceData);
-        GC gc = new GC(img);
-        gc.setAntialias(SWT.ON);
+		/*
+		 * create an image with transparent color (this can be done better?)
+		 */
+		final Color white = display.getSystemColor(SWT.COLOR_WHITE);
+		final PaletteData palette = new PaletteData(new RGB[] { white.getRGB() });
+		final ImageData sourceData = new ImageData(visibleRect.width, visibleRect.height, 1, palette);
+		sourceData.transparentPixel = 0;
 
-        // example lat/long coordinates to draw
-        double[] worldCoords;
-        if (odd) {
-            worldCoords = new double[]{10.0, 40.0, 11.2, 43.3, 11.3, 45.2, 11.4, 46.5};
-        } else {
-            worldCoords = new double[]{11.0, 41.0, 12.2, 44.3, 11.3, 45.2, 11.4, 46.5};
-        }
-        odd = !odd;
+		// create the image to draw on
+		final Image img = new Image(display, sourceData);
+		final GC gc = new GC(img);
+		gc.setAntialias(SWT.ON);
 
-        // get the world to screen transform
-        double[] screenCoords = new double[8];
-        AffineTransform worldToScreenTransform = getMapPane().getWorldToScreenTransform();
-        // do the transform
-        worldToScreenTransform.transform(worldCoords, 0, screenCoords, 0, worldCoords.length / 2);
+		// example lat/long coordinates to draw
+		double[] worldCoords;
+		if (odd) {
+			worldCoords = new double[] { 10.0, 40.0, 11.2, 43.3, 11.3, 45.2, 11.4, 46.5 };
+		} else {
+			worldCoords = new double[] { 11.0, 41.0, 12.2, 44.3, 11.3, 45.2, 11.4, 46.5 };
+		}
+		odd = !odd;
 
-        // draw lines
-        gc.setForeground(display.getSystemColor(SWT.COLOR_MAGENTA));
-        gc.setLineWidth(2);
-        gc.drawLine((int) screenCoords[0], (int) screenCoords[1], (int) screenCoords[2], (int) screenCoords[3]);
-        gc.drawLine((int) screenCoords[2], (int) screenCoords[3], (int) screenCoords[4], (int) screenCoords[5]);
+		// get the world to screen transform
+		final double[] screenCoords = new double[8];
+		final AffineTransform worldToScreenTransform = getMapPane().getWorldToScreenTransform();
+		// do the transform
+		worldToScreenTransform.transform(worldCoords, 0, screenCoords, 0, worldCoords.length / 2);
 
-        // draw dots
-        int size = 10;
-        gc.setBackground(display.getSystemColor(SWT.COLOR_RED));
-        gc.fillOval((int) screenCoords[0] - size / 2, (int) screenCoords[1] - size / 2, size, size);
-        gc.fillOval((int) screenCoords[2] - size / 2, (int) screenCoords[3] - size / 2, size, size);
-        gc.fillOval((int) screenCoords[4] - size / 2, (int) screenCoords[5] - size / 2, size, size);
-        gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-        gc.drawOval((int) screenCoords[0] - size / 2, (int) screenCoords[1] - size / 2, size, size);
-        gc.drawOval((int) screenCoords[2] - size / 2, (int) screenCoords[3] - size / 2, size, size);
-        gc.drawOval((int) screenCoords[4] - size / 2, (int) screenCoords[5] - size / 2, size, size);
+		// draw lines
+		gc.setForeground(display.getSystemColor(SWT.COLOR_MAGENTA));
+		gc.setLineWidth(2);
+		gc.drawLine((int) screenCoords[0], (int) screenCoords[1], (int) screenCoords[2], (int) screenCoords[3]);
+		gc.drawLine((int) screenCoords[2], (int) screenCoords[3], (int) screenCoords[4], (int) screenCoords[5]);
 
-        gc.setAntialias(SWT.OFF);
-        gc.dispose();
+		// draw dots
+		final int size = 10;
+		gc.setBackground(display.getSystemColor(SWT.COLOR_RED));
+		gc.fillOval((int) screenCoords[0] - size / 2, (int) screenCoords[1] - size / 2, size, size);
+		gc.fillOval((int) screenCoords[2] - size / 2, (int) screenCoords[3] - size / 2, size, size);
+		gc.fillOval((int) screenCoords[4] - size / 2, (int) screenCoords[5] - size / 2, size, size);
+		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
+		gc.drawOval((int) screenCoords[0] - size / 2, (int) screenCoords[1] - size / 2, size, size);
+		gc.drawOval((int) screenCoords[2] - size / 2, (int) screenCoords[3] - size / 2, size, size);
+		gc.drawOval((int) screenCoords[4] - size / 2, (int) screenCoords[5] - size / 2, size, size);
 
-        // overlay the image
-        getMapPane().setOverlay(img, areaOfInterest, false, boundsChanged);
-    }
+		gc.setAntialias(SWT.OFF);
+		gc.dispose();
 
-    public void selectionChanged( IAction action, ISelection selection ) {
-    }
+		// overlay the image
+		getMapPane().setOverlay(img, areaOfInterest, false, boundsChanged);
+	}
 
-    public void mapBoundsChanged( MapBoundsEvent event ) {
-        /*
-         * every time the bounds change (zoom, etc...), the drawing 
-         * has to occurr again on the new bounds
-         */
-        ReferencedEnvelope newAreaOfInterest = event.getNewAreaOfInterest();
-        Rectangle visibleRect = getMapPane().getVisibleRect();
-        drawShapes(visibleRect, newAreaOfInterest, true);
-    }
+	public void selectionChanged(final IAction action, final ISelection selection) {
+	}
+
+	@Override
+	public void mapBoundsChanged(final MapBoundsEvent event) {
+		/*
+		 * every time the bounds change (zoom, etc...), the drawing has to
+		 * occurr again on the new bounds
+		 */
+		final ReferencedEnvelope newAreaOfInterest = event.getNewAreaOfInterest();
+		final Rectangle visibleRect = getMapPane().getVisibleRect();
+		drawShapes(visibleRect, newAreaOfInterest, true);
+	}
 }

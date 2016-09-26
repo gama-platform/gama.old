@@ -214,5 +214,21 @@ public interface IGamaIcons {
 	public static final GamaIcon BROWSER_HOME = GamaIcons.create("browser.home2");
 	public static final GamaIcon BROWSER_STOP = GamaIcons.create("browser.stop2");
 	public static final GamaIcon BROWSER_ICON = GamaIcons.create("browser.icon2");
+	String CHECKED = "viewers/checked";
+	String UNCHECKED = "viewers/unchecked";
+	String STYLE = "viewers/style";
+	String GRID = "viewers/grid";
+	String FEATURE = "viewers/feature";
+	String UP = "viewers/up";
+	String DOWN = "viewers/down";
+	String OPEN = "viewers/open";
+	String ALPHA = "viewers/alpha";
+	String REMOVE_LAYER = "viewers/remove_layer";
+	String IMAGE_INFO = "viewers/info_mode";
+	String IMAGE_INFO_ICON = "viewers/info_source";
+	String IMAGE_PAN = "viewers/pan_mode";
+	String IMAGE_ZOOMIN = "viewers/zoom_in_co";
+	String IMAGE_ZOOMOUT = "viewers/zoom_out_co";
+	String IMAGE_FULLEXTENT = "viewers/zoom_extent_co";
 
 }

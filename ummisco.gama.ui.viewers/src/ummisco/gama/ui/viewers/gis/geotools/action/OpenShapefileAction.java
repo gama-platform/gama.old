@@ -31,8 +31,9 @@ import org.geotools.map.FeatureLayer;
 import org.geotools.map.MapContent;
 import org.geotools.styling.Style;
 
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.control.JFileDataStoreChooser;
-import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
 import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
 
 /**
@@ -46,32 +47,34 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.Utils;
  */
 public class OpenShapefileAction extends MapAction implements ISelectionChangedListener {
 
-    public OpenShapefileAction() {
-        super("Open Shapefile", "Load a shapefile into the viewer.", ImageCache.getInstance().getImage(ImageCache.OPEN));
-    }
+	public OpenShapefileAction() {
+		super("Open Shapefile", "Load a shapefile into the viewer.", GamaIcons.create(IGamaIcons.OPEN).image());
+	}
 
-    public void run() {
-        Display display = Display.getCurrent();
-        Shell shell = new Shell(display);
-        File openFile = JFileDataStoreChooser.showOpenFile(new String[]{"*.shp"}, shell); //$NON-NLS-1$
+	@Override
+	public void run() {
+		final Display display = Display.getCurrent();
+		final Shell shell = new Shell(display);
+		final File openFile = JFileDataStoreChooser.showOpenFile(new String[] { "*.shp" }, shell); //$NON-NLS-1$
 
-        try {
-            if (openFile != null && openFile.exists()) {
-                MapContent mapContent = mapPane.getMapContent();
-                FileDataStore store = FileDataStoreFinder.getDataStore(openFile);
-                SimpleFeatureSource featureSource = store.getFeatureSource();
-                Style style = Utils.createStyle(openFile, featureSource);
-                FeatureLayer featureLayer = new FeatureLayer(featureSource, style);
-                mapContent.addLayer(featureLayer);
-                mapPane.redraw();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
+		try {
+			if (openFile != null && openFile.exists()) {
+				final MapContent mapContent = mapPane.getMapContent();
+				final FileDataStore store = FileDataStoreFinder.getDataStore(openFile);
+				final SimpleFeatureSource featureSource = store.getFeatureSource();
+				final Style style = Utils.createStyle(openFile, featureSource);
+				final FeatureLayer featureLayer = new FeatureLayer(featureSource, style);
+				mapContent.addLayer(featureLayer);
+				mapPane.redraw();
+			}
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-    public void selectionChanged( SelectionChangedEvent arg0 ) {
+	@Override
+	public void selectionChanged(final SelectionChangedEvent arg0) {
 
-    }
+	}
 
 }

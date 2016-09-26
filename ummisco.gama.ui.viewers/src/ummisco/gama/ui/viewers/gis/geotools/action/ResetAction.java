@@ -17,8 +17,9 @@
 
 package ummisco.gama.ui.viewers.gis.geotools.action;
 
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.SwtMapPane;
-import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
 
 /**
  * Action that triggers view reset for the current {@link SwtMapPane map pane}.
@@ -37,7 +38,7 @@ public class ResetAction extends MapAction {
 	public static final String TOOL_TIP = "Display full extent of all layers";
 
 	public ResetAction() {
-		super(TOOL_NAME + "@A", TOOL_TIP, ImageCache.getInstance().getImage(ImageCache.IMAGE_FULLEXTENT));
+		super(TOOL_NAME + "@A", TOOL_TIP, GamaIcons.create(IGamaIcons.IMAGE_FULLEXTENT).image());
 	}
 
 	@Override

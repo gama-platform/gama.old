@@ -17,12 +17,14 @@
 
 package ummisco.gama.ui.viewers.gis.geotools.action;
 
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.SwtMapPane;
 import ummisco.gama.ui.viewers.gis.geotools.tool.ZoomInTool;
-import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
 
 /**
- * Action that activates the Zoom in tool for the current {@link SwtMapPane map pane}.
+ * Action that activates the Zoom in tool for the current {@link SwtMapPane map
+ * pane}.
  * 
  * @author Andrea Antonello (www.hydrologis.com)
  *
@@ -32,12 +34,13 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
  */
 public class ZoomInAction extends MapAction {
 
-    public ZoomInAction() {
-        super(ZoomInTool.TOOL_NAME + "@Z", ZoomInTool.TOOL_TIP, ImageCache.getInstance().getImage(ImageCache.IMAGE_ZOOMIN));
-    }
+	public ZoomInAction() {
+		super(ZoomInTool.TOOL_NAME + "@Z", ZoomInTool.TOOL_TIP, GamaIcons.create(IGamaIcons.IMAGE_ZOOMIN).image());
+	}
 
-    public void run() {
-        getMapPane().setCursorTool(new ZoomInTool());
-    }
+	@Override
+	public void run() {
+		getMapPane().setCursorTool(new ZoomInTool());
+	}
 
 }

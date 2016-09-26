@@ -17,12 +17,14 @@
 
 package ummisco.gama.ui.viewers.gis.geotools.action;
 
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.SwtMapPane;
 import ummisco.gama.ui.viewers.gis.geotools.tool.PanTool;
-import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
 
 /**
- * Action that activates the Pan tool for the current {@link SwtMapPane map pane}.
+ * Action that activates the Pan tool for the current {@link SwtMapPane map
+ * pane}.
  * 
  * @author Andrea Antonello (www.hydrologis.com)
  *
@@ -32,12 +34,13 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
  */
 public class PanAction extends MapAction {
 
-    public PanAction() {
-        super(PanTool.TOOL_NAME + "@P", PanTool.TOOL_TIP, ImageCache.getInstance().getImage(ImageCache.IMAGE_PAN));
-    }
+	public PanAction() {
+		super(PanTool.TOOL_NAME + "@P", PanTool.TOOL_TIP, GamaIcons.create(IGamaIcons.IMAGE_PAN).image());
+	}
 
-    public void run() {
-        getMapPane().setCursorTool(new PanTool());
-    }
+	@Override
+	public void run() {
+		getMapPane().setCursorTool(new PanTool());
+	}
 
 }

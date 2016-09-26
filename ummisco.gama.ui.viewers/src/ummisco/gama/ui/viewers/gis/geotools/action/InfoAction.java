@@ -16,12 +16,14 @@
  */
 package ummisco.gama.ui.viewers.gis.geotools.action;
 
+import ummisco.gama.ui.resources.GamaIcons;
+import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.viewers.gis.geotools.SwtMapPane;
 import ummisco.gama.ui.viewers.gis.geotools.tool.InfoTool;
-import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
 
 /**
- * Action that activates the Info tool for the current {@link SwtMapPane map pane}.
+ * Action that activates the Info tool for the current {@link SwtMapPane map
+ * pane}.
  * 
  * @author Andrea Antonello (www.hydrologis.com)
  *
@@ -31,18 +33,20 @@ import ummisco.gama.ui.viewers.gis.geotools.utils.ImageCache;
  */
 public class InfoAction extends MapAction {
 
-    public InfoAction() {
-        super(InfoTool.TOOL_NAME + "@I", InfoTool.TOOL_TIP, ImageCache.getInstance().getImage(ImageCache.IMAGE_INFO));
-    }
+	public InfoAction() {
+		super(InfoTool.TOOL_NAME + "@I", InfoTool.TOOL_TIP, GamaIcons.create(IGamaIcons.IMAGE_INFO).image());
+	}
 
-    /**
-     * Called when the associated control is activated. Leads to the
-     * map pane's cursor tool being set to a PanTool object
-     * 
-     * @param ev the event (not used)
-     */
-    public void run() {
-        getMapPane().setCursorTool(new InfoTool());
-    }
+	/**
+	 * Called when the associated control is activated. Leads to the map pane's
+	 * cursor tool being set to a PanTool object
+	 * 
+	 * @param ev
+	 *            the event (not used)
+	 */
+	@Override
+	public void run() {
+		getMapPane().setCursorTool(new InfoTool());
+	}
 
 }
