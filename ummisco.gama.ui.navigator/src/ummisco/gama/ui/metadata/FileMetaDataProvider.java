@@ -285,9 +285,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			}
 			final IGamaFileMetaData[] data = new IGamaFileMetaData[] { readMetadata(file, infoClass, includeOutdated) };
 			if (data[0] == null) {
-				if (element.toString().contains("lebanon"))
-					System.out.println(
-							"Getting metadata of " + element + " in Thread " + Thread.currentThread().getName());
 				processing.add(element);
 				final IFile theFile = file;
 				final Runnable create = new Runnable() {
@@ -332,9 +329,6 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 							}
 							GAMA.getGui().updateDecorator("msi.gama.application.decorator");
 						} finally {
-							if (element.toString().contains("lebanon"))
-								System.out.println("Finished processing " + element + " in Thread "
-										+ Thread.currentThread().getName());
 							processing.remove(element);
 						}
 
