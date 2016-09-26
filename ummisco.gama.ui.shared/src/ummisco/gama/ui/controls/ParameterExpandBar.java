@@ -35,6 +35,7 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Widget;
 
 import msi.gama.common.interfaces.ItemList;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -522,7 +523,8 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	void showItem(final ParameterExpandItem item) {
 		final Composite control = item.control;
 		if (control != null && !control.isDisposed()) {
-			item.setImage(item.expanded ? IGamaIcons.SMALL_COLLAPSE.image() : IGamaIcons.SMALL_EXPAND.image());
+			item.setImage(item.expanded ? GamaIcons.create(IGamaIcons.SMALL_COLLAPSE).image()
+					: GamaIcons.create(IGamaIcons.SMALL_EXPAND).image());
 			control.setVisible(item.expanded);
 		}
 		item.redraw();

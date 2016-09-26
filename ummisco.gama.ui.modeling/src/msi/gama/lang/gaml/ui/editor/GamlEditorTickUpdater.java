@@ -11,15 +11,16 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.source.IAnnotationModel;
+import org.eclipse.jface.viewers.DecorationOverlayIcon;
+import org.eclipse.jface.viewers.IDecoration;
+import org.eclipse.xtext.diagnostics.Severity;
+import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.XtextEditorErrorTickUpdater;
 
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
-
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.source.IAnnotationModel;
-import org.eclipse.jface.viewers.*;
-import org.eclipse.xtext.diagnostics.Severity;
-import org.eclipse.xtext.ui.editor.*;
 
 /**
  * The class GamlEditorTickUpdater.
@@ -41,25 +42,26 @@ public class GamlEditorTickUpdater extends XtextEditorErrorTickUpdater {
 		// // do nothing, emitted when a marker cannot be found
 		// }
 		ImageDescriptor descriptor = null;
-		if ( severity == null || severity == Severity.INFO ) {
-			descriptor = IGamaIcons.OVERLAY_OK.descriptor();
-		} else if ( severity == Severity.ERROR ) {
+		if (severity == null || severity == Severity.INFO) {
+			descriptor = GamaIcons.create(IGamaIcons.OVERLAY_OK).descriptor();
+		} else if (severity == Severity.ERROR) {
 			descriptor = GamaIcons.create("overlay.error2").descriptor();
-		} else if ( severity == Severity.WARNING ) {
+		} else if (severity == Severity.WARNING) {
 			descriptor = GamaIcons.create("overlay.warning2").descriptor();
 		} else {
 			super.updateEditorImage(editor);
 			return;
 		}
-		DecorationOverlayIcon decorationOverlayIcon =
-			new DecorationOverlayIcon(editor.getDefaultImage(), descriptor, IDecoration.BOTTOM_LEFT);
+		final DecorationOverlayIcon decorationOverlayIcon = new DecorationOverlayIcon(editor.getDefaultImage(),
+				descriptor, IDecoration.BOTTOM_LEFT);
 		scheduleUpdateEditor(decorationOverlayIcon);
 
 	}
 
 	@Override
 	public void modelChanged(final IAnnotationModel model) {
-		// TODO A place where we can hook something ? (for instance the feedback to another editor, etc..
+		// TODO A place where we can hook something ? (for instance the feedback
+		// to another editor, etc..
 		super.modelChanged(model);
 	}
 

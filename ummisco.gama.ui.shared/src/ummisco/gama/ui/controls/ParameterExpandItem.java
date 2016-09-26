@@ -115,10 +115,11 @@ public class ParameterExpandItem extends Item {
 		if (parent.hasClosableToggle) {
 			endX -= 2 * TEXT_INSET + imageWidth;
 			closePosition = endX;
-			gc.drawImage(IGamaIcons.SMALL_CLOSE.image(), endX, imageY);
+			gc.drawImage(GamaIcons.create(IGamaIcons.SMALL_CLOSE).image(), endX, imageY);
 		}
 		if (parent.hasPausableToggle) {
-			final Image image = isPaused ? IGamaIcons.SMALL_RESUME.image() : IGamaIcons.SMALL_PAUSE.image();
+			final Image image = isPaused ? GamaIcons.create(IGamaIcons.SMALL_RESUME).image()
+					: GamaIcons.create(IGamaIcons.SMALL_PAUSE).image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			pausePosition = endX;
 			gc.drawImage(image, endX, imageY);

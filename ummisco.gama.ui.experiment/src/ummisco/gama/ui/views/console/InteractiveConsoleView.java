@@ -34,6 +34,7 @@ import msi.gama.util.GamaColor;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.ViewsHelper;
@@ -251,7 +252,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button(IGamaIcons.ACTION_CLEAR.getCode(), "Clear", "Clear the console", new SelectionAdapter() {
+		tb.button(IGamaIcons.ACTION_CLEAR, "Clear", "Clear the console", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent arg0) {
@@ -302,8 +303,8 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 				@Override
 				public void run() {
-					toolbar.status(IGamaIcons.MENU_AGENT.image(), "Listening agent: " + Cast.toGaml(agent),
-							IGamaColors.NEUTRAL, SWT.LEFT);
+					toolbar.status(GamaIcons.create(IGamaIcons.MENU_AGENT).image(),
+							"Listening agent: " + Cast.toGaml(agent), IGamaColors.NEUTRAL, SWT.LEFT);
 
 				}
 			});

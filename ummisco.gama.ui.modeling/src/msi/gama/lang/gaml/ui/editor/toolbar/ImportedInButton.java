@@ -23,6 +23,7 @@ import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.controls.FlatButton;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -96,7 +97,7 @@ public class ImportedInButton {
 		for (final URI uri : importers) {
 			final MenuItem modelItem = new MenuItem(parentMenu, SWT.CASCADE);
 			modelItem.setText(URI.decode(uri.lastSegment()));
-			modelItem.setImage(IGamaIcons.FILE_ICON.image());
+			modelItem.setImage(GamaIcons.create(IGamaIcons.FILE_ICON).image());
 			modelItem.setData("uri", uri);
 			modelItem.addSelectionListener(adapter);
 		}

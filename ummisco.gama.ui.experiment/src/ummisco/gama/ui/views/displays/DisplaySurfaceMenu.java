@@ -45,6 +45,7 @@ import msi.gama.outputs.layers.charts.ChartLayer;
 import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.menus.GamaMenu;
 import ummisco.gama.ui.menus.MenuAction;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -54,13 +55,13 @@ public class DisplaySurfaceMenu {
 	public static Map<Class, Image> layer_images = new LinkedHashMap();
 
 	static {
-		layer_images.put(GridLayer.class, IGamaIcons.LAYER_GRID.image());
-		layer_images.put(AgentLayer.class, IGamaIcons.LAYER_AGENTS.image());
-		layer_images.put(ImageLayer.class, IGamaIcons.LAYER_IMAGE.image());
-		layer_images.put(TextLayer.class, IGamaIcons.LAYER_TEXT.image());
-		layer_images.put(SpeciesLayer.class, IGamaIcons.LAYER_SPECIES.image());
-		layer_images.put(ChartLayer.class, IGamaIcons.LAYER_CHART.image());
-		layer_images.put(GraphicLayer.class, IGamaIcons.LAYER_GRAPHICS.image());
+		layer_images.put(GridLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRID).image());
+		layer_images.put(AgentLayer.class, GamaIcons.create(IGamaIcons.LAYER_AGENTS).image());
+		layer_images.put(ImageLayer.class, GamaIcons.create(IGamaIcons.LAYER_IMAGE).image());
+		layer_images.put(TextLayer.class, GamaIcons.create(IGamaIcons.LAYER_TEXT).image());
+		layer_images.put(SpeciesLayer.class, GamaIcons.create(IGamaIcons.LAYER_SPECIES).image());
+		layer_images.put(ChartLayer.class, GamaIcons.create(IGamaIcons.LAYER_CHART).image());
+		layer_images.put(GraphicLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRAPHICS).image());
 	}
 
 	private static class FocusOnSelection extends SelectionAdapter {
@@ -226,7 +227,8 @@ public class DisplaySurfaceMenu {
 				return menu;
 			}
 			final FocusOnSelection adapter = new FocusOnSelection(surface);
-			final MenuAction focus = new MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on this display");
+			final MenuAction focus = new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
+					"Focus on this display");
 			final MenuAction[] actions2 = new MenuAction[actions.length + 1];
 			for (int i = 0; i < actions.length; i++) {
 				actions2[i + 1] = actions[i];
@@ -244,7 +246,7 @@ public class DisplaySurfaceMenu {
 					}
 					final String layerName = layer.getType() + ": " + layer.getName();
 					final FocusOnSelection adapter = new FocusOnSelection(surface);
-					final MenuAction focus = new MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(),
+					final MenuAction focus = new MenuAction(adapter, GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
 							"Focus on this display");
 					final MenuAction[] actions2;
 					if (layer instanceof GridLayer)

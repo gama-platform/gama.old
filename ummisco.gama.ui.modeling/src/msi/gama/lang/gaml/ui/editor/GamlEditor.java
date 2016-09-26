@@ -397,7 +397,8 @@ public class GamlEditor extends XtextEditor
 			return;
 		}
 		final boolean isBatch = state.types.get(index);
-		final Image image = isBatch ? IGamaIcons.BUTTON_BATCH.image() : IGamaIcons.BUTTON_GUI.image();
+		final Image image = isBatch ? GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
+				: GamaIcons.create(IGamaIcons.BUTTON_GUI).image();
 		final ToolItem t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
 		final String type = isBatch ? "batch" : "regular";
 		t.getControl().setToolTipText("Executes the " + type + " experiment " + text);

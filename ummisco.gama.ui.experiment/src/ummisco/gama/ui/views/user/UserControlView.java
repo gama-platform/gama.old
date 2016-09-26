@@ -91,8 +91,8 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 		}
 		inspectItem.setEnabled(true);
 		continueItem.setEnabled(true);
-		setPartName("[" + scope.getAgent().getName() + " in " + scope.getSimulation().getName() + "] "
-				+ panel.getName());
+		setPartName(
+				"[" + scope.getAgent().getName() + " in " + scope.getSimulation().getName() + "] " + panel.getName());
 		parent.setLayout(new FillLayout());
 		parent.setBackground(IGamaColors.WHITE.color());
 		toolbar.status((Image) null,
@@ -190,7 +190,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 
-		inspectItem = tb.button(IGamaIcons.PANEL_INSPECT.getCode(), "Inspect", "Inspect", new SelectionAdapter() {
+		inspectItem = tb.button(IGamaIcons.PANEL_INSPECT, "Inspect", "Inspect", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -199,7 +199,7 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 
 		}, SWT.RIGHT);
 		inspectItem.setEnabled(false);
-		continueItem = tb.button(IGamaIcons.PANEL_CONTINUE.getCode(), "Continue", "Continue", new SelectionListener() {
+		continueItem = tb.button(IGamaIcons.PANEL_CONTINUE, "Continue", "Continue", new SelectionListener() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {

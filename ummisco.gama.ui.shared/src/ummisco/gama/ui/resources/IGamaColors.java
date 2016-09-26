@@ -5,6 +5,7 @@
 package ummisco.gama.ui.resources;
 
 import org.eclipse.swt.SWT;
+
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 
 /**
@@ -27,9 +28,8 @@ public interface IGamaColors {
 	public static GamaUIColor GRAY_LABEL = GamaColors.get(0x88, 0x88, 0x88).validate();
 	public static GamaUIColor VERY_LIGHT_GRAY = GamaColors.get(245, 245, 245).validate();
 	public static GamaUIColor WHITE = new GamaUIColor(GamaColors.system(SWT.COLOR_WHITE),
-		GamaColors.system(SWT.COLOR_WHITE)).validate();
+			GamaColors.system(SWT.COLOR_WHITE)).validate();
 	public static GamaUIColor BLACK = new GamaUIColor(GamaColors.system(SWT.COLOR_BLACK)).validate();
 	public static GamaUIColor PARAMETERS_BACKGROUND = GamaColors.get(255, 255, 255).validate();
-	//public static GamaUIColor PARAMETERS_EDITORS_BACKGROUND = GamaColors.get(240, 240, 240).validate();
 
 }

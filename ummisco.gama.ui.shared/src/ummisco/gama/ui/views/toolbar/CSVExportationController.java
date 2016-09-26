@@ -8,6 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
@@ -32,13 +33,14 @@ public class CSVExportationController {
 	 * @param tb
 	 */
 	public void install(final GamaToolbar2 tb) {
-		tb.button(IGamaIcons.DISPLAY_TOOLBAR_CSVEXPORT.getCode(), "CSV Export", "CSV Export", new SelectionAdapter() {
+		tb.button(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_CSVEXPORT).getCode(), "CSV Export", "CSV Export",
+				new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				view.saveAsCSV();
-			}
-		}, SWT.RIGHT);
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						view.saveAsCSV();
+					}
+				}, SWT.RIGHT);
 
 	}
 

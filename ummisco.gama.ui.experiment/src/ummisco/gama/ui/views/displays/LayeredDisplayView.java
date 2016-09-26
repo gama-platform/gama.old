@@ -580,8 +580,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		overlayItem.setSelection(GamaPreferences.CORE_OVERLAY.getValue());
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.LEFT);
 
-		tb.menu(IGamaIcons.MENU_POPULATION.getCode(), "Browse displayed agents by layers",
-				"Browse through all displayed agents", new SelectionAdapter() {
+		tb.menu(IGamaIcons.MENU_POPULATION, "Browse displayed agents by layers", "Browse through all displayed agents",
+				new SelectionAdapter() {
 
 					Menu menu;
 
@@ -603,15 +603,14 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				}, SWT.LEFT);
 
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT.getCode(), "Take a snapshot", "Take a snapshot",
-				new SelectionAdapter() {
+		tb.button(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT, "Take a snapshot", "Take a snapshot", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						doSnapshot();
-					}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				doSnapshot();
+			}
 
-				}, SWT.RIGHT);
+		}, SWT.RIGHT);
 	}
 
 	@Override

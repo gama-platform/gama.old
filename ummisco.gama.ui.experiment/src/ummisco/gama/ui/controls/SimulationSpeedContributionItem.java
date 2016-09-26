@@ -23,6 +23,7 @@ import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
 import ummisco.gama.ui.interfaces.ISpeedDisplayer;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 
@@ -93,7 +94,8 @@ public class SimulationSpeedContributionItem extends WorkbenchWindowControlContr
 		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = widthSize;
 		data.minimumWidth = widthSize;
-		slider = new SimpleSlider(composite, sliderColor.color(), sliderColor.color(), IGamaIcons.TOOLBAR_KNOB.image());
+		slider = new SimpleSlider(composite, sliderColor.color(), sliderColor.color(),
+				GamaIcons.create(IGamaIcons.TOOLBAR_KNOB).image());
 		slider.setTooltipInterperter(this);
 		slider.setLayoutData(data);
 		slider.setSize(widthSize, heightSize);

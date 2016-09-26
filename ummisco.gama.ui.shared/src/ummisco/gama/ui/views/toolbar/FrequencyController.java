@@ -61,8 +61,8 @@ public class FrequencyController {
 	}
 
 	protected ToolItem createSynchronizeItem(final GamaToolbar2 tb) {
-		final ToolItem ti = tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC.getCode(), "Synchronize with simulation",
-				"Synchronize", new SelectionAdapter() {
+		final ToolItem ti = tb.check(IGamaIcons.DISPLAY_TOOLBAR_SYNC, "Synchronize with simulation", "Synchronize",
+				new SelectionAdapter() {
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
@@ -80,26 +80,25 @@ public class FrequencyController {
 	 */
 	private void createPauseItem(final GamaToolbar2 tb) {
 
-		tb.check(IGamaIcons.DISPLAY_TOOLBAR_PAUSE.getCode(), "Pause", "Pause or resume the current view",
-				new SelectionAdapter() {
+		tb.check(IGamaIcons.DISPLAY_TOOLBAR_PAUSE, "Pause", "Pause or resume the current view", new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
 
-						final IOutput output = view.getOutput();
-						if (output != null) {
-							if (output.isPaused()) {
-								resume((ToolItem) e.widget, output);
-							} else {
-								pause((ToolItem) e.widget, output);
-							}
-						} else {
-							toggle();
-						}
-
+				final IOutput output = view.getOutput();
+				if (output != null) {
+					if (output.isPaused()) {
+						resume((ToolItem) e.widget, output);
+					} else {
+						pause((ToolItem) e.widget, output);
 					}
+				} else {
+					toggle();
+				}
 
-				}, SWT.RIGHT);
+			}
+
+		}, SWT.RIGHT);
 
 	}
 

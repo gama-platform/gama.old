@@ -13,6 +13,7 @@ package ummisco.gama.ui.views.inspectors;
 
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -43,7 +44,6 @@ import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
-import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable;
 
 /**
  * @author Alexis Drogoul
@@ -81,10 +81,11 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	public boolean addItem(final MonitorOutput output) {
-		if ( output != null ) {
+		if (output != null) {
 			createItem(parent, output, output.getValue() == null,
-				output.getColor() == null ? null : GamaColors.get(output.getColor()));
-			// getViewer().setSize(getViewer().computeSize(SWT.DEFAULT, SWT.DEFAULT, true));
+					output.getColor() == null ? null : GamaColors.get(output.getColor()));
+			// getViewer().setSize(getViewer().computeSize(SWT.DEFAULT,
+			// SWT.DEFAULT, true));
 			return true;
 		}
 		return false;
@@ -96,41 +97,44 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		final Composite compo = new Composite(getViewer(), SWT.NONE);
 		compo.setBackground(IGamaColors.WHITE.color());
 		final GridLayout layout = new GridLayout(2, false);
-		// GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		// GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true,
+		// false);
 		// firstColData.widthHint = 60;
-		// GridData secondColData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		// GridData secondColData = new GridData(SWT.FILL, SWT.FILL, true,
+		// false);
 		// secondColData.widthHint = 200;
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		final Text titleEditor = (Text) EditorFactory
-			.create(output.getScope(), compo, "Title:", output.getName(), true, new EditorListener<String>() {
+				.create(output.getScope(), compo, "Title:", output.getName(), true, new EditorListener<String>() {
 
-				@Override
-				public void valueModified(final String newValue) throws GamaRuntimeException {
-					output.setName(newValue);
-					update(output);
-				}
+					@Override
+					public void valueModified(final String newValue) throws GamaRuntimeException {
+						output.setName(newValue);
+						update(output);
+					}
 
-			}).getEditor();
+				}).getEditor();
 
-		final IExpression expr =
-			GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulation(), true);
+		final IExpression expr = GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulation(),
+				true);
 
 		final Text c = (Text) EditorFactory.createExpression(output.getScope(), compo, "Expression:",
-			output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, new EditorListener<IExpression>() {
+				output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, new EditorListener<IExpression>() {
 
-				@Override
-				public void valueModified(final IExpression newValue) throws GamaRuntimeException {
-					output.setNewExpression(newValue);
-					update(output);
-				}
+					@Override
+					public void valueModified(final IExpression newValue) throws GamaRuntimeException {
+						output.setNewExpression(newValue);
+						update(output);
+					}
 
-			}, Types.NO_TYPE).getEditor();
+				}, Types.NO_TYPE).getEditor();
 
 		c.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public void widgetSelected(final SelectionEvent e) {}
+			public void widgetSelected(final SelectionEvent e) {
+			}
 
 			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
@@ -159,7 +163,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	@Override
 	public void resumeItem(final MonitorOutput o) {
-		if ( o.isPaused() ) {
+		if (o.isPaused()) {
 			o.setPaused(false);
 		}
 		update(o);
@@ -179,8 +183,8 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		final StringBuilder sb = new StringBuilder(100);
 		sb.setLength(0);
 		sb.append(o.getName()).append(ItemList.SEPARATION_CODE)
-			.append(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString());
-		if ( o.isPaused() ) {
+				.append(v == null ? "nil" : v instanceof IValue ? ((IValue) v).serialize(true) : v.toString());
+		if (o.isPaused()) {
 			sb.append(" (paused)");
 		}
 		return sb.toString();
@@ -239,13 +243,14 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	}
 
 	@Override
-	public void updateItemValues() {}
+	public void updateItemValues() {
+	}
 
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button(IGamaIcons.MENU_ADD_MONITOR.getCode(), "Add new monitor", "Add new monitor", new SelectionAdapter() {
+		tb.button(IGamaIcons.MENU_ADD_MONITOR, "Add new monitor", "Add new monitor", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -262,21 +267,27 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 
 	/**
 	 * Method pauseChanged()
+	 * 
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#pauseChanged()
 	 */
 	@Override
-	public void pauseChanged() {}
+	public void pauseChanged() {
+	}
 
 	/**
 	 * Method synchronizeChanged()
+	 * 
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
 	 */
 	@Override
-	public void synchronizeChanged() {}
+	public void synchronizeChanged() {
+	}
 
 	/**
 	 * Method handleMenu()
-	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
+	 * 
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object,
+	 *      int, int)
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final MonitorOutput data, final int x, final int y) {

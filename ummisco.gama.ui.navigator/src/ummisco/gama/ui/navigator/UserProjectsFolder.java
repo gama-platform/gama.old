@@ -33,8 +33,8 @@ public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 	@Override
 	public Image getImage() {
 		if (PlatformHelper.isGtk())
-			return IGamaIcons.FOLDER_USER_16.image();
-		return IGamaIcons.FOLDER_USER.image(); // FOLDER_USER
+			return GamaIcons.create(IGamaIcons.FOLDER_USER_16).image();
+		return GamaIcons.create(IGamaIcons.FOLDER_USER).image(); // FOLDER_USER
 	}
 
 	@Override

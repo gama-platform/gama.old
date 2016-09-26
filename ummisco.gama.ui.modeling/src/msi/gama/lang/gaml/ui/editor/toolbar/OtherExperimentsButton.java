@@ -39,6 +39,7 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.IModelRunner;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -120,7 +121,7 @@ public class OtherExperimentsButton {
 		for (final URI uri : map.keySet()) {
 			final MenuItem modelItem = new MenuItem(parentMenu, SWT.CASCADE);
 			modelItem.setText(URI.decode(uri.lastSegment()));
-			modelItem.setImage(IGamaIcons.FILE_ICON.image());
+			modelItem.setImage(GamaIcons.create(IGamaIcons.FILE_ICON).image());
 			final Menu expMenu = new Menu(modelItem);
 			modelItem.setMenu(expMenu);
 			final List<String> expNames = map.get(uri);
@@ -129,7 +130,7 @@ public class OtherExperimentsButton {
 				expItem.setText(name);
 				expItem.setData("uri", uri);
 				expItem.setData("exp", name);
-				expItem.setImage(IGamaIcons.BUTTON_GUI.image());
+				expItem.setImage(GamaIcons.create(IGamaIcons.BUTTON_GUI).image());
 				expItem.addSelectionListener(adapter);
 			}
 		}

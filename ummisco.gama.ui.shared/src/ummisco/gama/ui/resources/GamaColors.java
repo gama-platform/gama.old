@@ -37,15 +37,8 @@ public class GamaColors {
 			active = c;
 		}
 
-		// Returns a normal or lighter version of the color depending on the
-		// user's choice (see GamaIcons.CORE_ICONS_BRIGHTNESS). Used only for
-		// the basic palette
 		public GamaUIColor validate() {
-			// if (GamaIcons.CORE_ICONS_BRIGHTNESS.getValue()) {
 			return this;
-			// } else {
-			// return GamaColors.get(lighter().getRGB());
-			// }
 		}
 
 		@Override

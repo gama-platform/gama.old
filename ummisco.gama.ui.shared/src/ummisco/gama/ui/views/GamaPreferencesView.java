@@ -86,17 +86,17 @@ public class GamaPreferencesView {
 		preferenceNames.put("org.eclipse.ui.preferencePages.GeneralTextEditor", "Editor");
 		preferenceNames.put("org.eclipse.ui.preferencePages.Workspace", "Workspace");
 		prefs_images.put(GamaPreferences.UI, GamaIcons.create("prefs.ui2").image());
-		prefs_images.put(GamaPreferences.EDITOR, IGamaIcons.PREFS_EDITOR.image());
+		prefs_images.put(GamaPreferences.EDITOR, GamaIcons.create(IGamaIcons.PREFS_EDITOR).image());
 		prefs_images.put(GamaPreferences.EXPERIMENTAL, GamaIcons.create("prefs.experimental2").image());
 		prefs_images.put(GamaPreferences.EXPERIMENTS, GamaIcons.create("prefs.simulations2").image());
-		prefs_images.put(GamaPreferences.SIMULATIONS, IGamaIcons.PREFS_GENERAL.image());
-		prefs_images.put(GamaPreferences.DISPLAY, IGamaIcons.PREFS_DISPLAY.image());
+		prefs_images.put(GamaPreferences.SIMULATIONS, GamaIcons.create(IGamaIcons.PREFS_GENERAL).image());
+		prefs_images.put(GamaPreferences.DISPLAY, GamaIcons.create(IGamaIcons.PREFS_DISPLAY).image());
 		// prefs_images.put(GamaPreferences.CODE,
 		// IGamaIcons.PREFS_CODE.image());
 
 		// prefs_images.put(GamaPreferences.WORKSPACE,
 		// IGamaIcons.PREFS_WORKSPACE.image());
-		prefs_images.put(GamaPreferences.LIBRARIES, IGamaIcons.PREFS_LIBS.image());
+		prefs_images.put(GamaPreferences.LIBRARIES, GamaIcons.create(IGamaIcons.PREFS_LIBS).image());
 
 	}
 
@@ -326,7 +326,7 @@ public class GamaPreferencesView {
 
 		final Button buttonRevert = new Button(group1, SWT.PUSH | SWT.FLAT);
 		buttonRevert.setText("Revert to defaults");
-		buttonRevert.setImage(IGamaIcons.ACTION_REVERT.image());
+		buttonRevert.setImage(GamaIcons.create(IGamaIcons.ACTION_REVERT).image());
 		buttonRevert.setToolTipText("Restore default values for all preferences");
 
 		final Button buttonAdvanced = new Button(group1, SWT.PUSH | SWT.FLAT);

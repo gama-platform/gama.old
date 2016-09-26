@@ -51,6 +51,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.ui.menus.AgentsMenu;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
@@ -603,8 +604,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		final Map<String, Runnable> actions = new LinkedHashMap();
 		final Map<String, Image> images = new HashMap();
 		images.put(renderer.camera.isROISticky() ? "Hide region" : "Keep region visible",
-				IGamaIcons.MENU_FOLLOW.image());
-		images.put("Focus on region", IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT.image());
+				GamaIcons.create(IGamaIcons.MENU_FOLLOW).image());
+		images.put("Focus on region", GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image());
 		actions.put(renderer.camera.isROISticky() ? "Hide region" : "Keep region visible", new Runnable() {
 
 			@Override

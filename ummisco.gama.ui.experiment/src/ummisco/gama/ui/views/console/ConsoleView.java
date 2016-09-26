@@ -36,6 +36,7 @@ import msi.gama.util.GamaColor;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -220,13 +221,14 @@ public class ConsoleView extends GamaViewPart
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
 		tb.sep(GamaToolbarFactory.TOOLBAR_SEP, SWT.RIGHT);
-		tb.button(IGamaIcons.ACTION_CLEAR.getCode(), "Clear", "Clear the console", new SelectionAdapter() {
+		tb.button(GamaIcons.create(IGamaIcons.ACTION_CLEAR).getCode(), "Clear", "Clear the console",
+				new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(final SelectionEvent arg0) {
-				reset();
-			}
-		}, SWT.RIGHT);
+					@Override
+					public void widgetSelected(final SelectionEvent arg0) {
+						reset();
+					}
+				}, SWT.RIGHT);
 
 	}
 

@@ -165,6 +165,7 @@ public abstract class AbstractEditor<T>
 		this(scope, a, variable, null);
 	}
 
+	@Override
 	public IScope getScope() {
 		if (scope != null)
 			return scope;
@@ -441,7 +442,7 @@ public abstract class AbstractEditor<T>
 				item = createPlusItem(t);
 				break;
 			case MINUS:
-				item = createItem(t, "Decrement the parameter", IGamaIcons.SMALL_MINUS.image());
+				item = createItem(t, "Decrement the parameter", GamaIcons.create(IGamaIcons.SMALL_MINUS).image());
 				break;
 			case EDIT:
 				item = createItem(t, "Edit the parameter", GamaIcons.create("small.edit").image());
@@ -470,7 +471,7 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected ToolItem createPlusItem(final ToolBar t) {
-		final ToolItem item = createItem(t, "Increment the parameter", IGamaIcons.SMALL_PLUS.image());
+		final ToolItem item = createItem(t, "Increment the parameter", GamaIcons.create(IGamaIcons.SMALL_PLUS).image());
 		return item;
 	}
 

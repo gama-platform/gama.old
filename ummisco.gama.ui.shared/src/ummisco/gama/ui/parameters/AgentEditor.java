@@ -26,6 +26,7 @@ import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IAgentMenuFactory;
 import ummisco.gama.ui.menus.MenuAction;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -83,15 +84,15 @@ public class AgentEditor extends ExpressionBasedEditor {
 				}
 			}
 
-		}, IGamaIcons.MENU_AGENT.image(), "Choose");
+		}, GamaIcons.create(IGamaIcons.MENU_AGENT).image(), "Choose");
 
 		final Menu dropMenu = new Menu(items[CHANGE].getParent().getShell());
 		final IAgent a = (IAgent) (currentValue instanceof IAgent ? currentValue : null);
 		if (a != null) {
 			final IAgentMenuFactory factory = WorkbenchHelper.getService(IAgentMenuFactory.class);
 			if (factory != null)
-				factory.fillPopulationSubMenu(dropMenu, a.getScope().getSimulation().getMicroPopulation(species),
-						null, action);
+				factory.fillPopulationSubMenu(dropMenu, a.getScope().getSimulation().getMicroPopulation(species), null,
+						action);
 		}
 		final Rectangle rect = items[CHANGE].getBounds();
 		final Point pt = items[CHANGE].getParent().toDisplay(new Point(rect.x, rect.y));

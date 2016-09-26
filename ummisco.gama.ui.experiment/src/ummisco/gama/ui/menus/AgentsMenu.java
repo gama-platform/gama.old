@@ -59,7 +59,7 @@ public class AgentsMenu extends ContributionItem {
 			final SimulationAgent sim = (SimulationAgent) agent;
 			image = GamaIcons.createTempRoundColorIcon(GamaColors.get(sim.getColor()));
 		} else {
-			image = IGamaIcons.MENU_AGENT.image();
+			image = GamaIcons.create(IGamaIcons.MENU_AGENT).image();
 		}
 		result.setImage(image);
 		final Menu agentMenu = new Menu(result);
@@ -126,7 +126,7 @@ public class AgentsMenu extends ContributionItem {
 			final String prefix) {
 		final MenuItem result = new MenuItem(parent, SWT.PUSH);
 		result.setText(prefix + " " + command.getName());
-		result.setImage(IGamaIcons.MENU_RUN_ACTION.image());
+		result.setImage(GamaIcons.create(IGamaIcons.MENU_RUN_ACTION).image());
 		result.addSelectionListener(runner);
 		result.setData("agent", agent);
 		result.setData("command", command);
@@ -255,11 +255,12 @@ public class AgentsMenu extends ContributionItem {
 			return;
 		}
 		GamaMenu.separate(menu, "Actions");
-		actionAgentMenuItem(menu, agent, inspector, IGamaIcons.MENU_INSPECT.image(),
+		actionAgentMenuItem(menu, agent, inspector, GamaIcons.create(IGamaIcons.MENU_INSPECT).image(),
 				"Inspect" + (topLevel ? " experiment" : ""));
 		if (!topLevel) {
 
-			actionAgentMenuItem(menu, agent, new Focuser(), IGamaIcons.MENU_FOCUS.image(), "Focus on all displays");
+			actionAgentMenuItem(menu, agent, new Focuser(), GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
+					"Focus on all displays");
 		}
 		if (actions != null && !topLevel) {
 			for (final MenuAction ma : actions) {
@@ -276,7 +277,7 @@ public class AgentsMenu extends ContributionItem {
 
 		if (!topLevel) {
 			GamaMenu.separate(menu);
-			actionAgentMenuItem(menu, agent, killer, IGamaIcons.MENU_KILL.image(), "Kill");
+			actionAgentMenuItem(menu, agent, killer, GamaIcons.create(IGamaIcons.MENU_KILL).image(), "Kill");
 		}
 		if (agent instanceof IMacroAgent) {
 			final IMacroAgent macro = (IMacroAgent) agent;
@@ -287,7 +288,8 @@ public class AgentsMenu extends ContributionItem {
 				}
 				for (final IPopulation pop : macro.getMicroPopulations()) {
 					if (!pop.isEmpty()) {
-						cascadingPopulationMenuItem(menu, agent, pop, IGamaIcons.MENU_POPULATION.image(), actions);
+						cascadingPopulationMenuItem(menu, agent, pop,
+								GamaIcons.create(IGamaIcons.MENU_POPULATION).image(), actions);
 					}
 				}
 			}
@@ -309,7 +311,7 @@ public class AgentsMenu extends ContributionItem {
 		}
 
 		if (size > 1)
-			browsePopulationMenuItem(menu, species, IGamaIcons.MENU_BROWSE.image());
+			browsePopulationMenuItem(menu, species, GamaIcons.create(IGamaIcons.MENU_BROWSE).image());
 
 		if (size > 1 && !isSimulations) {
 			GamaMenu.separate(menu);
@@ -331,7 +333,7 @@ public class AgentsMenu extends ContributionItem {
 				final Menu rangeMenu = new Menu(rangeItem);
 				rangeItem.setMenu(rangeMenu);
 				rangeItem.setText("" + begin + " to " + (end - 1));
-				rangeItem.setImage(IGamaIcons.MENU_POPULATION.image());
+				rangeItem.setImage(GamaIcons.create(IGamaIcons.MENU_POPULATION).image());
 				rangeMenu.addListener(SWT.Show, new Listener() {
 
 					@Override
@@ -356,8 +358,8 @@ public class AgentsMenu extends ContributionItem {
 		}
 	}
 
-	public static MenuAction HIGHLIGHT_ACTION = new MenuAction(highlighter, IGamaIcons.MENU_HIGHLIGHT.image(),
-			"Highlight");
+	public static MenuAction HIGHLIGHT_ACTION = new MenuAction(highlighter,
+			GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(), "Highlight");
 
 	@Override
 	public void fill(final Menu parent, final int index) {

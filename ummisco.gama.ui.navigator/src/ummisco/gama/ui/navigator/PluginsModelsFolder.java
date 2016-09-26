@@ -30,8 +30,8 @@ public class PluginsModelsFolder extends TopLevelFolder {
 	@Override
 	public Image getImage() {
 		if (PlatformHelper.isGtk())
-			return IGamaIcons.FOLDER_PLUGIN_16.image();
-		return IGamaIcons.FOLDER_PLUGIN.image(); // FOLDER_PLUGIN
+			return GamaIcons.create(IGamaIcons.FOLDER_PLUGIN_16).image();
+		return GamaIcons.create(IGamaIcons.FOLDER_PLUGIN).image(); // FOLDER_PLUGIN
 	}
 
 	@Override

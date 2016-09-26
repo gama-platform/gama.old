@@ -100,14 +100,14 @@ public class ZoomController {
 			}
 
 		});
-		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMIN.getCode(), "Zoom in", "Zoom in", new SelectionAdapter() {
+		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMIN, "Zoom in", "Zoom in", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				view.zoomIn();
 			}
 		}, SWT.RIGHT);
-		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT.getCode(), "Zoom fit", "Zoom to fit view", new SelectionAdapter() {
+		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT, "Zoom fit", "Zoom to fit view", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -116,7 +116,7 @@ public class ZoomController {
 
 		}, SWT.RIGHT);
 
-		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT.getCode(), "Zoom out", "Zoom out", new SelectionAdapter() {
+		tb.button(IGamaIcons.DISPLAY_TOOLBAR_ZOOMOUT, "Zoom out", "Zoom out", new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {

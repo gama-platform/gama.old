@@ -37,6 +37,7 @@ import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -121,7 +122,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		super.createToolItems(tb);
-		tb.button(IGamaIcons.ACTION_REVERT.getCode(), "Revert parameter values",
+		tb.button(GamaIcons.create(IGamaIcons.ACTION_REVERT).getCode(), "Revert parameter values",
 				"Revert parameters to their initial values", new SelectionAdapter() {
 
 					@Override

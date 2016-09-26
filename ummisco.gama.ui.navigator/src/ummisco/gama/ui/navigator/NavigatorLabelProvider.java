@@ -73,9 +73,9 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 		switch (((IResource) element).getType()) {
 		case IResource.FOLDER:
 			if (isResource((IFolder) element)) {
-				return IGamaIcons.FOLDER_RESOURCES.image();
+				return GamaIcons.create(IGamaIcons.FOLDER_RESOURCES).image();
 			} else {
-				return IGamaIcons.FOLDER_MODEL.image();
+				return GamaIcons.create(IGamaIcons.FOLDER_MODEL).image();
 			}
 		case IResource.FILE:
 			final IFile f = (IFile) element;
@@ -90,7 +90,7 @@ public class NavigatorLabelProvider extends CellLabelProvider implements ILabelP
 				return GamaIcons.create("file.text2").image();
 			}
 		case IResource.PROJECT:
-			return IGamaIcons.FOLDER_PROJECT.image();
+			return GamaIcons.create(IGamaIcons.FOLDER_PROJECT).image();
 		default:
 			return null;
 		}

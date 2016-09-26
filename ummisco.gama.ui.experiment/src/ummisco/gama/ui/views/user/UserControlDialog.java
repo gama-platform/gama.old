@@ -45,6 +45,7 @@ import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -126,7 +127,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		createButton(parent, IDialogConstants.OK_ID, "Continue", true);
 		detailsButton = createButton(parent, IDialogConstants.DETAILS_ID,
 				"Inspect " + scope.getAgent().getName() + "...", false);
-		detailsButton.setImage(IGamaIcons.MENU_INSPECT.image());
+		detailsButton.setImage(GamaIcons.create(IGamaIcons.MENU_INSPECT).image());
 
 	}
 

@@ -30,8 +30,8 @@ public class ModelsLibraryFolder extends TopLevelFolder {
 	@Override
 	public Image getImage() {
 		if (PlatformHelper.isGtk())
-			return IGamaIcons.FOLDER_BUILTIN_16.image();
-		return IGamaIcons.FOLDER_BUILTIN.image(); // FOLDER_BUILTIN
+			return GamaIcons.create(IGamaIcons.FOLDER_BUILTIN_16).image();
+		return GamaIcons.create(IGamaIcons.FOLDER_BUILTIN).image(); // FOLDER_BUILTIN
 	}
 
 	@Override

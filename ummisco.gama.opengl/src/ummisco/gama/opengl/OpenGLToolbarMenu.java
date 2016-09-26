@@ -21,6 +21,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 
@@ -40,7 +41,7 @@ public class OpenGLToolbarMenu {
 		new MenuItem(menu, SWT.SEPARATOR);
 
 		final MenuItem camera = new MenuItem(menu, SWT.PUSH);
-		camera.setImage(IGamaIcons.DISPLAY_TOOLBAR_CAMERA.image());
+		camera.setImage(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_CAMERA).image());
 		final boolean arcBall = view.getDisplaySurface().getData().isArcBallCamera();
 		camera.setText(arcBall ? "Use FreeFly camera" : "Use ArcBall camera");
 		camera.addSelectionListener(new SelectionAdapter() {
@@ -64,7 +65,7 @@ public class OpenGLToolbarMenu {
 		final boolean rotated = view.getDisplaySurface().getData().isRotationOn();
 		rotation.setSelection(rotated);
 		rotation.setText("Rotate scene");
-		rotation.setImage(IGamaIcons.DISPLAY_TOOLBAR_ROTATE.image());
+		rotation.setImage(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ROTATE).image());
 		rotation.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -81,7 +82,7 @@ public class OpenGLToolbarMenu {
 			}
 		});
 		final MenuItem split = new MenuItem(menu, SWT.CHECK);
-		split.setImage(IGamaIcons.DISPLAY_TOOLBAR_SPLIT.image());
+		split.setImage(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_SPLIT).image());
 		final boolean splitted = view.getDisplaySurface().getData().isLayerSplitted();
 		split.setSelection(splitted);
 		split.setText("Split layers");
@@ -104,7 +105,7 @@ public class OpenGLToolbarMenu {
 		final boolean triangulated = view.getDisplaySurface().getData().isTriangulation();
 		triangle.setText("Triangulate scene");
 		triangle.setSelection(triangulated);
-		triangle.setImage(IGamaIcons.DISPLAY_TOOLBAR_TRIANGULATE.image());
+		triangle.setImage(GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_TRIANGULATE).image());
 		triangle.addSelectionListener(new SelectionAdapter() {
 
 			@Override
