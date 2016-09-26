@@ -16,7 +16,7 @@ uniform mat4    viewMatrix;
 attribute vec3  attribute_Position;
 attribute vec4  attribute_Color;
 attribute vec3  attribute_Normal;
-attribute vec3  attribute_TextureCoords;
+attribute vec2  attribute_TextureCoords;
 
 varying vec2    pass_textureCoords;
 varying vec4    varying_Color;
@@ -40,7 +40,7 @@ void main(void)
 	// we compute the model view matrix
 	mat4 MVMatrix = viewMatrix * modelMatrixWithLayerTransfo;
 	// we invert the y axis
-	MVMatrix[1][1] = -1;
+	MVMatrix[1][1] = -1.0;
 	
 	gl_Position = projectionMatrix * MVMatrix * vec4(attribute_Position.xy, 0.0, 1.0);
 	
