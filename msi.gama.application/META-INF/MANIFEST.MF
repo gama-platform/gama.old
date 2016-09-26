@@ -27,4 +27,4 @@ Export-Package: msi.gama.application;uses:="org.eclipse.ui,org.eclipse.equinox.a
  msi.gama.application.workbench,
  msi.gama.application.workspace
 Bundle-ClassPath: .
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8

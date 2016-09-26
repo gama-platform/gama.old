@@ -20,8 +20,8 @@
       <version>0.25.0</version>
       <extensions>true</extensions>
       <configuration>
-          <source>1.7</source>
-          <target>1.7</target>
+           <source>1.8</source>
+          <target>1.8</target>
           <compilerArgument>-proc:none</compilerArgument>
       </configuration>
 <!-- FIX the JDT core due to bug in tycho https://www.eclipse.org/forums/index.php/t/1068443/ -->

@@ -390,25 +390,6 @@ public class EGaml {
 		// serializer.append("]");
 	}
 
-	// private static IResourceServiceProvider serviceProvider;
-	// // private static Injector dependencyInjector;
-	//
-	// public static <T> T getInstance(final Class<T> c) {
-	// if (serviceProvider == null) {
-	// // if (dependencyInjector != null)
-	// // return dependencyInjector.getInstance(c);
-	// try {
-	// serviceProvider = IResourceServiceProvider.Registry.INSTANCE
-	// .getResourceServiceProvider(URI.createPlatformResourceURI("dummy/dummy.gaml",
-	// false));
-	// } catch (final Exception e) {
-	// System.out.println("Exception in initializing injector: " +
-	// e.getMessage());
-	// }
-	// }
-	// return serviceProvider.get(c);
-	// }
-
 	public static Statement getStatement(final EObject o) {
 		if (o instanceof Statement) {
 			return (Statement) o;

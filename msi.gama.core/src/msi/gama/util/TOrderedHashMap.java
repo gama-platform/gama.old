@@ -29,7 +29,7 @@ import msi.gama.runtime.IScope;
 public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	protected static final int EMPTY = -1;
-	protected static final int DEFAULT_SIZE = 2;
+	protected static final int DEFAULT_SIZE = 10;
 	protected static final float DEFAULT_LOAD = 0.9f;
 
 	protected transient int[] _indicesByInsertOrder = new int[capacity()];

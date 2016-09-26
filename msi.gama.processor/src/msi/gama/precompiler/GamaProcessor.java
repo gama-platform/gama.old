@@ -38,7 +38,6 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -87,7 +86,6 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 
-@SupportedSourceVersion(SourceVersion.RELEASE_7)
 public class GamaProcessor extends AbstractProcessor {
 
 	private GamlProperties gp;
@@ -133,6 +131,11 @@ public class GamaProcessor extends AbstractProcessor {
 	@Override
 	public Set<String> getSupportedAnnotationTypes() {
 		return ANNOTATIONS;
+	}
+
+	@Override
+	public SourceVersion getSupportedSourceVersion() {
+		return SourceVersion.latest();
 	}
 
 	@Override
@@ -640,13 +643,7 @@ public class GamaProcessor extends AbstractProcessor {
 			final Class<? extends Annotation> annotationClass) {
 		final Set<? extends Element> elements = env.getElementsAnnotatedWith(annotationClass);
 		final List<? extends Element> result = new ArrayList(elements);
-		Collections.sort(result, new Comparator<Element>() {
-
-			@Override
-			public int compare(final Element o1, final Element o2) {
-				return o1.toString().compareTo(o2.toString());
-			}
-		});
+		Collections.sort(result, (o1, o2) -> o1.toString().compareTo(o2.toString()));
 		return result;
 	}
 
