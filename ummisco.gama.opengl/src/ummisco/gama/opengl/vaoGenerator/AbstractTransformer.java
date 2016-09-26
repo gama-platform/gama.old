@@ -24,6 +24,7 @@ import ummisco.gama.opengl.utils.Utils;
 abstract class AbstractTransformer {
 
 	private static float SMOOTH_SHADING_ANGLE = 40f; // in degree
+	protected static int BUILT_IN_SHAPE_RESOLUTION = 32; // for sphere / cone / cylinder
 	private static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0, 1.0, 0.0, 1.0);
 	private static GamaColor DEFAULT_COLOR = new GamaColor(1.0, 1.0, 0.0, 1.0);
 
@@ -251,16 +252,6 @@ abstract class AbstractTransformer {
 	private void saveEdgeToSmooth(final int face1Idx, final int face2Idx) {
 		final int[] idxArray = getMutualVertexIdx(face1Idx, face2Idx);
 		if (idxArray.length == 2) {
-			// remove the excedent uvMapping
-			if (textureIDs != null) {
-				float[] begin = Arrays.copyOfRange(uvMapping, 0, idxArray[0]);
-				float[] end = Arrays.copyOfRange(uvMapping, idxArray[0] + 2, uvMapping.length);
-				uvMapping = Utils.concatFloatArrays(begin, end);
-				begin = Arrays.copyOfRange(uvMapping, 0, idxArray[1]);
-				end = Arrays.copyOfRange(uvMapping, idxArray[1] + 2, uvMapping.length);
-				uvMapping = Utils.concatFloatArrays(begin, end);
-			}
-
 			getOriginalIdx(idxArray[0]);
 			getOriginalIdx(idxArray[1]);
 			final int idxV1 = getOriginalIdx(idxArray[0]);

@@ -36,7 +36,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 		
 		this.size = getObjSize(geomObj);
 		cancelTransformation();
-		
+			
 		// the last coordinate is the same as the first one, no need for this
 		this.coordinates = Arrays.copyOf(coordsWithDoublons, coordsWithDoublons.length-1);
 		
@@ -98,6 +98,69 @@ class GeometryObjectTransformer extends AbstractTransformer {
 			loadManyFacedShape( ShapeCache.loadShape(getHashCode()) );
 		}
 		applyTransformation();
+	}
+	
+	protected void correctBorders() {
+		super.correctBorders();
+		if (type == IShape.Type.CONE) {
+			ArrayList<Float> listIdx = new ArrayList<Float>();
+			for (float idx : idxForBorder) {
+				if ( (idx / (float)BUILT_IN_SHAPE_RESOLUTION)-1 > 0.1) {
+					listIdx.add(idx);
+				}
+			}
+			idxForBorder = new float[listIdx.size()];
+			int i=0;
+			for (Float f : listIdx) {
+				idxForBorder[i++] = f;
+			}
+		}
+	}
+	
+	protected void computeUVMapping() {
+		super.computeUVMapping();
+		if (type == IShape.Type.CONE || type == IShape.Type.CYLINDER || type == IShape.Type.SPHERE) {
+			// special case for cone, cylinder and sphere
+			int resolution = BUILT_IN_SHAPE_RESOLUTION; // 32 vertex of resolution for those shapes 
+			if (type == IShape.Type.CYLINDER) {
+				for (int i = 2*resolution ; i < 4*resolution ; i++) {
+					if (i < 3*resolution) {
+						// bottom uv mapping
+						uvMapping[i*2+1] = 0;
+					}
+					else {
+						// top uv mapping
+						uvMapping[i*2+1] = 1;
+					}
+					float uCoords = (float)(i % (resolution/2)) / ((float)(resolution/2-1));
+					if ((i-2*resolution) / (resolution/2) == 0 || (i-2*resolution) / (resolution/2) == 2) {
+						// we pass the half of the cylinder : we draw the texture backward
+						uCoords = 1-uCoords;
+					}
+					uvMapping[i*2] = uCoords;
+				}
+			}
+			else if (type == IShape.Type.CONE) { // 0 --> 32 : vertices for the base of the cone. 33 : vertex for the summit. 32 --> 64 : vertices for lateral faces
+				for (int i = 0 ; i < resolution ; i++) {
+					float uCoords = (float)(i % (resolution/2)) / ((float)(resolution/2-1));
+					if (i / (resolution/2) == 0) {
+						// we pass the half of the cone : we draw the texture backward
+						uCoords = 1-uCoords;
+					}
+					uvMapping[(i+resolution+1)*2] = uCoords;
+					uvMapping[(i+resolution+1)*2+1] = 0;
+				}
+				uvMapping[resolution*2] = 0.5f;
+				uvMapping[resolution*2+1] = 1;
+			}
+			else if (type == IShape.Type.SPHERE) {
+				resolution = BUILT_IN_SHAPE_RESOLUTION/2;
+				for (int i = 0 ; i < (resolution-1)*(resolution-1) ; i++) {
+					uvMapping[i*2] = (float)(i % resolution ) / (float)(resolution -1);
+					uvMapping[i*2+1] = (float)(i / resolution) / (float)(resolution -1);
+				}
+			}
+		}
 	}
 	
 	protected GamaPoint getObjSize(GeometryObject geomObj) {
@@ -369,7 +432,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 		center[1] = coordSum[1] / coordinates.length;
 		
 		// build a serie of circles on the z axis
-		int sliceNb = 16;
+		int sliceNb = BUILT_IN_SHAPE_RESOLUTION/2;
 		ArrayList<int[]> circles = new ArrayList<int[]>();
 		int idx = 0;
 		for (int i = 0 ; i < sliceNb ; i++) {
