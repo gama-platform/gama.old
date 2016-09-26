@@ -17,6 +17,7 @@ import static org.apache.commons.lang.StringUtils.splitByWholeSeparatorPreserveA
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,7 +25,11 @@ import java.util.Hashtable;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.GZIPInputStream;
 
+import javax.xml.parsers.SAXParser;
+
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.geotools.data.DataUtilities;
 import org.geotools.data.collection.ListFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -47,8 +52,8 @@ import org.openstreetmap.osmosis.core.domain.v0_6.Way;
 import org.openstreetmap.osmosis.core.domain.v0_6.WayNode;
 import org.openstreetmap.osmosis.core.task.v0_6.RunnableSource;
 import org.openstreetmap.osmosis.core.task.v0_6.Sink;
-import org.openstreetmap.osmosis.xml.common.CompressionMethod;
-import org.openstreetmap.osmosis.xml.v0_6.XmlReader;
+import org.openstreetmap.osmosis.xml.common.SaxParserFactory;
+import org.openstreetmap.osmosis.xml.v0_6.impl.OsmHandler;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -61,6 +66,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -82,8 +88,8 @@ public class GamaOsmFile extends GamaGisFile {
 
 	public static class OSMInfo extends GamaFileMetaData {
 
-		final int itemNumber;
-		final CoordinateReferenceSystem crs;
+		int itemNumber;
+		CoordinateReferenceSystem crs;
 		final double width;
 		final double height;
 		final Map<String, String> attributes = new LinkedHashMap();
@@ -97,7 +103,7 @@ public class GamaOsmFile extends GamaGisFile {
 			try {
 				final File f = new File(url.toURI());
 				final GamaOsmFile osmfile = new GamaOsmFile(null, f.getAbsolutePath());
-				attributes.putAll(osmfile.getAttributes());
+				attributes.putAll(osmfile.getOSMAttributes(GAMA.getRuntimeScope()));
 
 				final SimpleFeatureType TYPE = DataUtilities.createType("geometries", "geom:LineString");
 				final ArrayList<SimpleFeature> list = new ArrayList<SimpleFeature>();
@@ -254,6 +260,14 @@ public class GamaOsmFile extends GamaGisFile {
 			final Integer code) {
 		super(scope, pathName, code);
 		this.filteringOptions = filteringOption;
+	}
+
+	@Override
+	protected String fetchFromURL(final IScope scope, final String urlPath) {
+		String pathName = super.fetchFromURL(scope, urlPath);
+		if (pathName.endsWith(".osm.xml"))
+			pathName = pathName.replace(".xml", "");
+		return pathName;
 	}
 
 	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
@@ -556,44 +570,46 @@ public class GamaOsmFile extends GamaGisFile {
 		}
 	}
 
-	private void readFile(final IScope scope, final Sink sinkImplementation, final File osmFile) {
-		boolean pbf = false;
-		CompressionMethod compression = CompressionMethod.None;
-		if (getName(scope).endsWith(".pbf")) {
-			pbf = true;
-		} else if (getName(scope).endsWith(".gz")) {
-			compression = CompressionMethod.GZip;
-		} else if (getName(scope).endsWith(".bz2")) {
-			compression = CompressionMethod.BZip2;
-		}
-
-		RunnableSource reader;
-
-		// reader = new XmlReader(osmFile, false, compression);
-
-		if (pbf) {
+	private void readFile(final IScope scope, final Sink sink, final File osmFile) {
+		final String ext = getExtension(scope);
+		RunnableSource reader = null;
+		switch (ext) {
+		case "pbf":
 			try (FileInputStream stream = new FileInputStream(osmFile)) {
 				reader = new OsmosisReader(stream);
+				reader.setSink(sink);
+				reader.run();
 			} catch (final IOException e) {
-				System.out.println("Ignored exception in GamaOSMFile readFile: " + e.getMessage());
-				return;
+				throw GamaRuntimeException.create(e, scope);
 			}
-		} else {
-			reader = new XmlReader(osmFile, false, compression);
+			break;
+		default:
+			readXML(scope, sink);
 		}
 
-		reader.setSink(sinkImplementation);
+	}
 
-		final Thread readerThread = new Thread(reader);
-		readerThread.start();
-
-		while (readerThread.isAlive()) {
-			try {
-				readerThread.join();
-			} catch (final InterruptedException e) {
-				e.printStackTrace();
+	private void readXML(final IScope scope, final Sink sink) throws GamaRuntimeException {
+		try {
+			InputStream inputStream = new FileInputStream(getFile(scope));
+			final String ext = getExtension(scope);
+			switch (ext) {
+			case "gz":
+				inputStream = new GZIPInputStream(inputStream);
+				break;
+			case "bz2":
+				inputStream = new BZip2CompressorInputStream(inputStream);
+				break;
 			}
+			try (InputStream stream = inputStream) {
+				final SAXParser parser = SaxParserFactory.createParser();
+				parser.parse(stream, new OsmHandler(sink, false));
+			}
+		} catch (final Exception e) {
+			throw GamaRuntimeException.error("Unable to parse xml file " + getName(scope) + ": " + e.getMessage(),
+					scope);
 		}
+
 	}
 
 	@Override
@@ -616,10 +632,10 @@ public class GamaOsmFile extends GamaGisFile {
 		return DefaultGeographicCRS.WGS84;
 	}
 
-	public Map<String, String> getAttributes() {
+	public Map<String, String> getOSMAttributes(final IScope scope) {
 		if (attributes == null) {
 			attributes = new HashMap<String, String>();
-			getFeatureIterator(null, true);
+			getFeatureIterator(scope, true);
 		}
 		return attributes;
 	}

@@ -38,6 +38,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamaOsmFile;
 import msi.gaml.operators.fastmaths.CmnFastMath;
@@ -84,7 +85,7 @@ public class OSMFileViewer extends GISFileViewer {
 		try {
 			pathStr = f.getAbsolutePath();
 			osmfile = new GamaOsmFile(null, pathStr);
-			attributes = osmfile.getAttributes();
+			attributes = osmfile.getOSMAttributes(GAMA.getRuntimeScope());
 			final SimpleFeatureType TYPE = DataUtilities.createType("geometries", "geom:LineString");
 
 			final ArrayList<SimpleFeature> list = new ArrayList<SimpleFeature>();
