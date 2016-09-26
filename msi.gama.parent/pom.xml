@@ -94,7 +94,7 @@
 				<enabled>true</enabled>
 			</snapshots>
 		</repository>
-		
+
 	</repositories>
 
 	<modules>
@@ -159,8 +159,8 @@
 
 
 		<module>../msi.gama.p2updatesite</module>
-		
-		
+
+
 		<module>../ummisco.gama.product</module>
 
 	</modules>
@@ -236,15 +236,23 @@
 
 
 		<plugins>
-
+					<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-maven-plugin</artifactId>
 				<version>${tycho.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-					 <source>1.8</source>
-					<target>1.8</target> 
+					<source>1.8</source>
+					<target>1.8</target>
 					<!--<compilerArgument>-proc:none</compilerArgument> -->
 					<annotationProcessors>
 						<annotationProcessor>msi.gama.precompiler.GamaProcessor</annotationProcessor>
@@ -269,13 +277,8 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho.version}</version>
 				<configuration>
-					<!-- <target>
-						<artifact>
-							<groupId>msi.gama</groupId>
-							<artifactId>gama.target.platform</artifactId>
-							<version>1.7.0-SNAPSHOT</version>
-						</artifact>
-					</target> -->
+					<!-- <target> <artifact> <groupId>msi.gama</groupId> <artifactId>gama.target.platform</artifactId> 
+						<version>1.7.0-SNAPSHOT</version> </artifact> </target> -->
 
 					<dependency-resolution>
 						<optionalDependencies>ignore</optionalDependencies>
@@ -480,7 +483,8 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
-				<!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+				<!--This plugin's configuration is used to store Eclipse m2e settings 
+					only. It has no influence on the Maven build itself. -->
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>
