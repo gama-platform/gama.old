@@ -294,7 +294,7 @@ abstract class AbstractTransformer {
 		}
 		// apply scaling (if facet "size" for draw is used)
 		if (size != null) {
-			// apply the rotation
+			// apply the scaling
 			coords = GeomMathUtils.setScalingToVertex(coords, (float) size.x, (float) size.y, (float) size.z);
 		}
 		coords = GeomMathUtils.setTranslationToVertex(coords, (float) translation.x, (float) translation.y,

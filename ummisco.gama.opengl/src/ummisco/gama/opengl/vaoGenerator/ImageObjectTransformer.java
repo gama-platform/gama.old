@@ -2,6 +2,7 @@ package ummisco.gama.opengl.vaoGenerator;
 
 import java.util.ArrayList;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape.Type;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.opengl.scene.ImageObject;
@@ -29,22 +30,33 @@ class ImageObjectTransformer extends AbstractTransformer {
 		this.isLightInteraction = false;
 		this.type = Type.POLYGON;
 		
+		// compute the size
 		float width = (float) imObj.getDimensions().x;
 		float height = (float) imObj.getDimensions().y;
-		float x = 0, y = 0, z = 0; // the translation will be computed later on
+		if (this.size == null)
+			this.size = new GamaPoint(width,height,1);
+		else
+			this.size = new GamaPoint(width*size.x,height*size.y,size.z);
+		// compute the translation
+		if (this.translation == null) {
+			this.translation = new GamaPoint(width/2,height/2,0);
+		}
+		else
+			this.translation = new GamaPoint(translation.x+width/2,translation.y+height/2,translation.z);
+		// create a generic square
 		coords = new float[4*3];
-		coords[0] = x;
-		coords[1] = (y + height);
-		coords[2] = z;
-		coords[3] = x + width;
-		coords[4] = (y + height);
-		coords[5] = z;
-		coords[6] = x + width;
-		coords[7] = y;
-		coords[8] = z;
-		coords[9] = x;
-		coords[10] = y;
-		coords[11] = z;
+		coords[0] = -0.5f;
+		coords[1] = 0.5f;
+		coords[2] = -0.5f;
+		coords[3] = 0.5f;
+		coords[4] = 0.5f;
+		coords[5] = 0;
+		coords[6] = 0.5f;
+		coords[7] = -0.5f;
+		coords[8] = 0;
+		coords[9] = -0.5f;
+		coords[10] = -0.5f;
+		coords[11] = 0;
 		uvMapping = new float[4*2];
 		uvMapping[0] = 0;
 		uvMapping[1] = 1;
@@ -63,13 +75,6 @@ class ImageObjectTransformer extends AbstractTransformer {
 			face[3] = i*4+3;
 			faces.add(face);
 		}
-		
-//		if (bufferedImageValue != null) {
-//			// inverse y value for buffered image
-//			for (int i = 0 ; i < coords.length/3 ; i++) {
-//				coords[i*3+1] = -coords[i*3+1];
-//			}
-//		}
 		
 		initBorders();
 		triangulate();
