@@ -172,7 +172,7 @@
 		<tycho.version>0.25.0</tycho.version>
 		<project.version>1.7.0-SNAPSHOT</project.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<geotools.version>13.4</geotools.version>
+		<geotools.version>14.5</geotools.version>
 		<math3.version>3.1.1</math3.version>
 		<guava.version>15.0</guava.version>
 		<imageio.version>1.1.11</imageio.version>
