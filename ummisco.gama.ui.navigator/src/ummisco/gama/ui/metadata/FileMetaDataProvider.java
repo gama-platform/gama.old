@@ -8,8 +8,11 @@ import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -52,6 +55,8 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  *
  */
 public class FileMetaDataProvider implements IFileMetaDataProvider {
+
+	private static volatile Set processing = Collections.synchronizedSet(new HashSet());
 
 	/**
 	 * Adapt the specific object to the specified class, supporting the
@@ -243,84 +248,112 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 	@Override
 	public IGamaFileMetaData getMetaData(final Object element, final boolean includeOutdated,
 			final boolean immediately) {
-		if (element instanceof IProject) {
-			return getMetaData((IProject) element, includeOutdated);
-		}
-		IFile file = adaptTo(element, IFile.class, IFile.class);
+		if (processing.contains(element)) {
 
-		if (file == null) {
-			if (element instanceof java.io.File) {
-				final IPath p = Path.fromOSString(((java.io.File) element).getAbsolutePath());
-				file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(p);
+			while (processing.contains(element)) {
+				try {
+					Thread.currentThread().sleep(100);
+				} catch (final InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
-			if (file == null || !file.exists()) {
+			return getMetaData(element, includeOutdated, immediately);
+
+		}
+
+		try {
+			if (element instanceof IProject) {
+				return getMetaData((IProject) element, includeOutdated);
+			}
+			IFile file = adaptTo(element, IFile.class, IFile.class);
+
+			if (file == null) {
+				if (element instanceof java.io.File) {
+					final IPath p = Path.fromOSString(((java.io.File) element).getAbsolutePath());
+					file = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(p);
+				}
+				if (file == null || !file.exists()) {
+					return null;
+				}
+			} else if (!file.isAccessible()) {
 				return null;
 			}
-		} else if (!file.isAccessible()) {
-			return null;
-		}
-		final String ct = getContentTypeId(file);
-		final Class infoClass = CLASSES.get(ct);
-		if (infoClass == null) {
-			return null;
-		}
-		final IGamaFileMetaData[] data = new IGamaFileMetaData[] { readMetadata(file, infoClass, includeOutdated) };
-		if (data[0] == null) {
+			final String ct = getContentTypeId(file);
+			final Class infoClass = CLASSES.get(ct);
+			if (infoClass == null) {
+				return null;
+			}
+			final IGamaFileMetaData[] data = new IGamaFileMetaData[] { readMetadata(file, infoClass, includeOutdated) };
+			if (data[0] == null) {
+				if (element.toString().contains("lebanon"))
+					System.out.println(
+							"Getting metadata of " + element + " in Thread " + Thread.currentThread().getName());
+				processing.add(element);
+				final IFile theFile = file;
+				final Runnable create = new Runnable() {
 
-			final IFile theFile = file;
-			final Runnable create = new Runnable() {
+					@Override
+					public void run() {
+						try {
+							switch (ct) {
+							case SHAPEFILE_CT_ID:
+								data[0] = createShapeFileMetaData(theFile);
+								break;
+							case OSM_CT_ID:
+								data[0] = createOSMMetaData(theFile);
+								break;
+							case IMAGE_CT_ID:
+								data[0] = createImageFileMetaData(theFile);
+								break;
+							case CSV_CT_ID:
+								data[0] = createCSVFileMetaData(theFile);
+								break;
+							case GAML_CT_ID:
+								data[0] = createGamlFileMetaData(theFile);
+								break;
+							case SHAPEFILE_SUPPORT_CT_ID:
+								data[0] = createShapeFileSupportMetaData(theFile);
+								break;
+							}
+							// Last chance: we generate a generic info
+							if (data[0] == null) {
+								data[0] = createGenericFileMetaData(theFile);
+							}
 
-				@Override
-				public void run() {
-					switch (ct) {
-					case SHAPEFILE_CT_ID:
-						data[0] = createShapeFileMetaData(theFile);
-						break;
-					case OSM_CT_ID:
-						data[0] = createOSMMetaData(theFile);
-						break;
-					case IMAGE_CT_ID:
-						data[0] = createImageFileMetaData(theFile);
-						break;
-					case CSV_CT_ID:
-						data[0] = createCSVFileMetaData(theFile);
-						break;
-					case GAML_CT_ID:
-						data[0] = createGamlFileMetaData(theFile);
-						break;
-					case SHAPEFILE_SUPPORT_CT_ID:
-						data[0] = createShapeFileSupportMetaData(theFile);
-						break;
+							// System.out
+							// .println("Storing the metadata just created (or
+							// recreated) while reading it for " + theFile);
+							storeMetadata(theFile, data[0], false);
+							try {
+
+								theFile.refreshLocal(IResource.DEPTH_ZERO, null);
+							} catch (final CoreException e) {
+								e.printStackTrace();
+							}
+							GAMA.getGui().updateDecorator("msi.gama.application.decorator");
+						} finally {
+							if (element.toString().contains("lebanon"))
+								System.out.println("Finished processing " + element + " in Thread "
+										+ Thread.currentThread().getName());
+							processing.remove(element);
+						}
+
 					}
-					// Last chance: we generate a generic info
-					if (data[0] == null) {
-						data[0] = createGenericFileMetaData(theFile);
-					}
 
-					// System.out
-					// .println("Storing the metadata just created (or
-					// recreated) while reading it for " + theFile);
-					storeMetadata(theFile, data[0], false);
-					try {
+				};
 
-						theFile.refreshLocal(IResource.DEPTH_ZERO, null);
-					} catch (final CoreException e) {
-						e.printStackTrace();
-					}
-					GAMA.getGui().updateDecorator("msi.gama.application.decorator");
+				if (immediately) {
+					create.run();
 
+				} else {
+					executor.submit(create);
 				}
 
-			};
-
-			if (immediately) {
-				create.run();
-			} else {
-				executor.submit(create);
 			}
+			return data[0];
+		} finally {
 
 		}
-		return data[0];
 	}
 
 	private static <T extends IGamaFileMetaData> T readMetadata(final IResource file, final Class<T> clazz,
