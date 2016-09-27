@@ -201,7 +201,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		updatePerspective();
 	}
 
-	public final void updatePerspective() {
+	private final void updatePerspective() {
 		final int height = getDrawable().getSurfaceHeight();
 		final int width = getDrawable().getSurfaceWidth();
 		final double maxDim = getMaxEnvDim();
@@ -240,65 +240,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
-	/**
-	 * First pass prepare select buffer for select mode by clearing it, prepare
-	 * openGL to select mode and tell it where should draw object by using
-	 * gluPickMatrix() method
-	 * 
-	 * @return if returned value is true that mean the picking is enabled
-	 */
 	public void beginPicking(final GL2 gl) {
-
-		final GLU glu = getGlu();
-
-		// 1. Selecting buffer
-		selectBuffer.clear(); // prepare buffer for new objects
-		gl.glSelectBuffer(selectBuffer.capacity(), selectBuffer);// add buffer
-																	// to openGL
-
-		// Pass below is very similar to refresh method in GLrenderer
-		// 2. Take the viewport attributes,
-		final int viewport[] = new int[4];
-		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-
-		// final int width = viewport[2]; // get width and
-		// final int height = viewport[3]; // height from viewport
-
-		// 3. Prepare openGL for rendering in select mode
-		gl.glRenderMode(GL2.GL_SELECT);
-
-		/*
-		 * The application must redefine the viewing volume so that it renders
-		 * only a small area around the place where the mouse was clicked. In
-		 * order to do that it is necessary to set the matrix mode to
-		 * GL_PROJECTION. Afterwards, the application should push the current
-		 * matrix to save the normal rendering mode settings. Next initialize
-		 * the matrix
-		 */
-
-		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-		gl.glPushMatrix();
-		gl.glLoadIdentity();
-
-		/*
-		 * Define the viewing volume so that rendering is done only in a small
-		 * area around the cursor. gluPickMatrix method restrict the area where
-		 * openGL will drawing objects
-		 *
-		 * OpenGL has a different origin for its window coordinates than the
-		 * operation system. The second parameter provides for the conversion
-		 * between the two systems, i.e. it transforms the origin from the upper
-		 * left corner, into the bottom left corner
-		 */
-		glu.gluPickMatrix(camera.getMousePosition().x, viewport[3] - camera.getMousePosition().y, 4, 4, viewport, 0);
-
-		// FIXME Why do we have to call updatePerspective() here ?
-		updatePerspective();
-		// Comment GL_MODELVIEW to debug3D picking (redraw the model when
-		// clicking)
-		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-		// 4. After this pass you must draw Objects
-
+		// TODO
 	}
 
 	// //////////////////////////////////////////////////////////////////////////////////////
@@ -309,43 +252,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 	 * @return name of selected object
 	 */
 	public void endPicking(final GL2 gl) {
-
-		// this.setPickedPressed(false);// no further iterations
-		int selectedIndex = PickingState.NONE;
-
-		// 5. When you back to Render mode gl.glRenderMode() methods return
-		// number of hits
-		final int howManyObjects = gl.glRenderMode(GL2.GL_RENDER);
-
-		// 6. Restore to normal settings
-		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-		gl.glPopMatrix();
-		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
-
-		// 7. Search the select buffer to find the nearest object
-
-		// code below derive which objects is nearest from monitor
-		//
-		if (howManyObjects > 0) {
-			// simple searching algorithm
-			selectedIndex = selectBuffer.get(3);
-			int mindistance = CmnFastMath.abs(selectBuffer.get(1));
-			for (int i = 0; i < howManyObjects; i++) {
-
-				if (mindistance < CmnFastMath.abs(selectBuffer.get(1 + i * 4))) {
-
-					mindistance = CmnFastMath.abs(selectBuffer.get(1 + i * 4));
-					selectedIndex = selectBuffer.get(3 + i * 4);
-
-				}
-
-			}
-			// end of searching
-		} else {
-			selectedIndex = PickingState.WORLD;// return -2 of there was no hits
-		}
-
-		pickingState.setPickedIndex(selectedIndex);
+		// TODO
 	}
 
 	@Override

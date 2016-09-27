@@ -59,13 +59,13 @@ class ImageObjectTransformer extends AbstractTransformer {
 		coords[11] = 0;
 		uvMapping = new float[4*2];
 		uvMapping[0] = 0;
-		uvMapping[1] = 1;
+		uvMapping[1] = 0;
 		uvMapping[2] = 1;
-		uvMapping[3] = 1;
+		uvMapping[3] = 0;
 		uvMapping[4] = 1;
-		uvMapping[5] = 0;
+		uvMapping[5] = 1;
 		uvMapping[6] = 0;
-		uvMapping[7] = 0;
+		uvMapping[7] = 1;
 		// build the faces
 		for (int i = 0 ; i < coords.length/(4*3) ; i++) {
 			int[] face = new int[4];
