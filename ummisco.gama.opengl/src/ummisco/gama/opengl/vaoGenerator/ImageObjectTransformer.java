@@ -47,7 +47,7 @@ class ImageObjectTransformer extends AbstractTransformer {
 		coords = new float[4*3];
 		coords[0] = -0.5f;
 		coords[1] = 0.5f;
-		coords[2] = -0.5f;
+		coords[2] = 0;
 		coords[3] = 0.5f;
 		coords[4] = 0.5f;
 		coords[5] = 0;
