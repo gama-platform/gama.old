@@ -44,7 +44,7 @@ class ImageObjectTransformer extends AbstractTransformer {
 		else
 			this.translation = new GamaPoint(translation.x+width/2,translation.y+height/2,translation.z);
 		// create a generic square
-		coords = new float[4*3];
+		coords = new float[4*3];		
 		coords[0] = -0.5f;
 		coords[1] = 0.5f;
 		coords[2] = 0;
@@ -58,14 +58,26 @@ class ImageObjectTransformer extends AbstractTransformer {
 		coords[10] = -0.5f;
 		coords[11] = 0;
 		uvMapping = new float[4*2];
-		uvMapping[0] = 0;
-		uvMapping[1] = 0;
-		uvMapping[2] = 1;
-		uvMapping[3] = 0;
-		uvMapping[4] = 1;
-		uvMapping[5] = 1;
-		uvMapping[6] = 0;
-		uvMapping[7] = 1;
+		if (bufferedImageValue == null) {
+			uvMapping[0] = 0;
+			uvMapping[1] = 0;
+			uvMapping[2] = 1;
+			uvMapping[3] = 0;
+			uvMapping[4] = 1;
+			uvMapping[5] = 1;
+			uvMapping[6] = 0;
+			uvMapping[7] = 1;
+		}
+		else {
+			uvMapping[0] = 0;
+			uvMapping[1] = 1;
+			uvMapping[2] = 1;
+			uvMapping[3] = 1;
+			uvMapping[4] = 1;
+			uvMapping[5] = 0;
+			uvMapping[6] = 0;
+			uvMapping[7] = 0;
+		}
 		// build the faces
 		for (int i = 0 ; i < coords.length/(4*3) ; i++) {
 			int[] face = new int[4];
