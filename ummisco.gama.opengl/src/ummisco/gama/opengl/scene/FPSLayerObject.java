@@ -15,6 +15,7 @@ public class FPSLayerObject extends LayerObject {
 	public FPSLayerObject(final Abstract3DRenderer renderer) {
 		super(renderer, null);
 		constantRedrawnLayer = true;
+		isOverlay = true;
 		startTime = System.currentTimeMillis();
 	}
 	

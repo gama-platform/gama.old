@@ -57,6 +57,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 													// (basically, it is the
 													// case for the helper
 													// layer)
+	protected boolean isOverlay = false;
 
 	GamaPoint offset = NULL_OFFSET;
 	GamaPoint scale = null;
@@ -103,6 +104,13 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if (!(renderer instanceof ModernRenderer))
 			return;
 		final ModernRenderer renderer = (ModernRenderer) this.renderer;
+		
+		if (isOverlay()) {
+			gl.glDisable(GL2.GL_DEPTH_TEST);
+		}
+		else {
+			gl.glEnable(GL2.GL_DEPTH_TEST);
+		}
 
 		if (!sceneIsInitialized || constantRedrawnLayer) {
 			renderer.getDrawer().prepareMapForLayer(this);
@@ -362,6 +370,10 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public void unlock() {
 		locked = false;
+	}
+	
+	public boolean isOverlay() {
+		return isOverlay;
 	}
 
 	public SimpleLayer toSimpleLayer() {
