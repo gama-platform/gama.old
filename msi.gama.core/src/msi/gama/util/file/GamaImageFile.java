@@ -309,7 +309,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			in = new BufferedReader(new FileReader(getFile(scope)));
 			StringTokenizer tok;
 			String str = in.readLine();
-			if (!str.equals("P2")) {
+			if (str != null && !str.equals("P2")) {
 				throw new UnsupportedEncodingException("File is not in PGM ascii format");
 			}
 			str = in.readLine();
@@ -387,18 +387,30 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 				final InputStream ips = new FileInputStream(geodataFile);
 				final InputStreamReader ipsr = new InputStreamReader(ips);
 				final BufferedReader in = new BufferedReader(ipsr);
-				final String[] cellSizeXStr = in.readLine().split(" ");
-				cellSizeX = Double.valueOf(cellSizeXStr[cellSizeXStr.length - 1]);
+				String line = in.readLine();
+				if (line != null) {
+					final String[] cellSizeXStr = line.split(" ");
+					cellSizeX = Double.valueOf(cellSizeXStr[cellSizeXStr.length - 1]);
+				}
 				xNeg = cellSizeX < 0;
-				in.readLine();
-				in.readLine();
-				final String[] cellSizeYStr = in.readLine().split(" ");
-				cellSizeY = Double.valueOf(cellSizeYStr[cellSizeYStr.length - 1]);
+				line = in.readLine();
+				line = in.readLine();
+				line = in.readLine();
+				if (line != null) {
+					final String[] cellSizeYStr = line.split(" ");
+					cellSizeY = Double.valueOf(cellSizeYStr[cellSizeYStr.length - 1]);
+				}
 				yNeg = cellSizeY < 0;
-				final String[] xllcornerStr = in.readLine().split(" ");
-				xllcorner = Double.valueOf(xllcornerStr[xllcornerStr.length - 1]);
-				final String[] yllcornerStr = in.readLine().split(" ");
-				yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
+				line = in.readLine();
+				if (line != null) {
+					final String[] xllcornerStr = line.split(" ");
+					xllcorner = Double.valueOf(xllcornerStr[xllcornerStr.length - 1]);
+				}
+				line = in.readLine();
+				if (line != null) {
+					final String[] yllcornerStr = line.split(" ");
+					yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
+				}
 				isGeoreferenced = true;
 
 				in.close();
