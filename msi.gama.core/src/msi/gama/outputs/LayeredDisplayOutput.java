@@ -493,6 +493,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (surface == null) {
 			return;
 		}
+		
+		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
+		if (auto != null) {
+			if (auto.getType().equals(Types.POINT)) {
+				data.setAutosave(true);
+				data.setImageDimension(Cast.asPoint(getScope(), auto.value(getScope())));
+			} else {
+				data.setAutosave(Cast.asBool(getScope(), auto.value(getScope())));
+			}
+		}
 		// /////////////// dynamic Lighting ///////////////////
 
 		if (!constantBackground) {
