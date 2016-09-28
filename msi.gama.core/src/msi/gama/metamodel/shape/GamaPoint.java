@@ -220,7 +220,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		if (o instanceof GamaPoint) {
 			return equals3D((GamaPoint) o);
 		}
-		return false;
+		return super.equals(o);
 	}
 
 	/**

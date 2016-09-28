@@ -63,7 +63,7 @@ public class ParametricFileType extends ParametricType {
 		if (c instanceof ParametricFileType) {
 			return ((ParametricFileType) c).id() == id();
 		}
-		return false;
+		return super.equals(c);
 	}
 
 	@Override
