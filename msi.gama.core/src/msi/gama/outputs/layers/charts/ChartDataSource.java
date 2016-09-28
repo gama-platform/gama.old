@@ -46,7 +46,7 @@ public class ChartDataSource {
 	String uniqueMarkerName;
 	String style = IKeyword.DEFAULT;
 
-	Object lastvalue;
+	// Object lastvalue;
 	LinkedHashMap<String, ChartDataSeries> mySeries = new LinkedHashMap<String, ChartDataSeries>();
 	ChartDataSet myDataset;
 	boolean isCumulative = false;
@@ -243,7 +243,7 @@ public class ChartDataSource {
 		if (value != null) {
 			o = value.value(scope);
 		} else {
-			o = lastvalue;
+			o = null;
 		}
 		if (o instanceof GamaList) {
 			return Cast.asList(scope, o);
