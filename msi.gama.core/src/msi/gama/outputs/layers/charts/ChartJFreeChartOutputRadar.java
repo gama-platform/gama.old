@@ -209,16 +209,16 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		super.initChart_post_data_init(scope);
 		final SpiderWebPlot pp = (SpiderWebPlot) chart.getPlot();
 
-		final String sty = getStyle();
+		// final String sty = getStyle();
 		// this.useSubAxis=false;
-		switch (sty) {
-		default: {
-			if (this.series_label_position.equals("default")) {
-				this.series_label_position = "legend";
-			}
-			break;
+		// switch (sty) {
+		// default: {
+		if (this.series_label_position.equals("default")) {
+			this.series_label_position = "legend";
 		}
-		}
+		// break;
+		// }
+		// }
 		if (this.series_label_position.equals("xaxis")) {
 			// this.useSubAxis=true;
 		}
