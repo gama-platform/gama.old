@@ -108,7 +108,7 @@ public class PreferencesHelper {
 
 				@Override
 				public void afterValueChange(final Boolean pref) {
-					GamaColorMenu.reverse = pref ? -1 : 1;
+					GamaColorMenu.setReverse(pref ? -1 : 1);
 					GamaColorMenu.instance.reset();
 				}
 			});

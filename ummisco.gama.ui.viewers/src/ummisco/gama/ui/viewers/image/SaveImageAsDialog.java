@@ -1,33 +1,40 @@
 package ummisco.gama.ui.viewers.image;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * Save As dialog that also includes a drop-down for the image type.
  */
-class SaveImageAsDialog extends SaveAsDialog {
+class SaveImageAsDialog extends SaveAsDialog2 {
 
 	// These 3 arrays need to stay in sync
 	private static int[] IMAGE_TYPES = { SWT.IMAGE_PNG, SWT.IMAGE_GIF, SWT.IMAGE_JPEG, SWT.IMAGE_BMP, SWT.IMAGE_ICO,
-		SWT.IMAGE_TIFF };
+			SWT.IMAGE_TIFF };
 
-	private static String[] IMAGE_LABELS =
-		{ "PNG (Portable Network Graphics)", "GIF (Graphics Interchange Format)",
+	private static String[] IMAGE_LABELS = { "PNG (Portable Network Graphics)", "GIF (Graphics Interchange Format)",
 			"JPEG (Joint Photographic Experts Group)", "BMP (Bitmap)", "ICO (Icon File)",
 			"TIFF (Tagged Image File Format)" };
 
 	private static String[] IMAGE_EXTS = { "png", //$NON-NLS-1$
-		"gif", //$NON-NLS-1$
-		"jpg", //$NON-NLS-1$
-		"bmp", //$NON-NLS-1$
-		"ico", //$NON-NLS-1$
-		"tiff" //$NON-NLS-1$
+			"gif", //$NON-NLS-1$
+			"jpg", //$NON-NLS-1$
+			"bmp", //$NON-NLS-1$
+			"ico", //$NON-NLS-1$
+			"tiff" //$NON-NLS-1$
 	};
 
 	/**
@@ -48,13 +55,13 @@ class SaveImageAsDialog extends SaveAsDialog {
 
 	@Override
 	protected Control createDialogArea(final Composite parent) {
-		Composite parentComposite = (Composite) super.createDialogArea(parent);
+		final Composite parentComposite = (Composite) super.createDialogArea(parent);
 
 		// create a composite with standard margins and spacing to put
 		// out image specific stuff
-		Group composite = new Group(parentComposite, SWT.NONE);
+		final Group composite = new Group(parentComposite, SWT.NONE);
 		composite.setText("Image Information");
-		GridLayout layout = new GridLayout();
+		final GridLayout layout = new GridLayout();
 		// TODO: this isn't leaving any margin around the edge of the Group
 		// in the dialog
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
@@ -66,7 +73,7 @@ class SaveImageAsDialog extends SaveAsDialog {
 		composite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		composite.setFont(parentComposite.getFont());
 
-		Label l = new Label(composite, SWT.RIGHT);
+		final Label l = new Label(composite, SWT.RIGHT);
 		l.setText("Type:");
 		GridData gd = new GridData();
 		l.setLayoutData(gd);
@@ -78,10 +85,10 @@ class SaveImageAsDialog extends SaveAsDialog {
 
 		// initialize the imageType drop-down
 		// TODO: filter by what's actually going to work when saving
-		for ( int i = 0; i < IMAGE_LABELS.length; i++ ) {
+		for (int i = 0; i < IMAGE_LABELS.length; i++) {
 			imageTypeCombo.add(IMAGE_LABELS[i]);
 		}
-		if ( initialImageTypeIndex >= 0 && initialImageTypeIndex < IMAGE_TYPES.length ) {
+		if (initialImageTypeIndex >= 0 && initialImageTypeIndex < IMAGE_TYPES.length) {
 			imageTypeCombo.select(initialImageTypeIndex);
 			selectedImageTypeIndex = initialImageTypeIndex;
 		} else {
@@ -93,7 +100,7 @@ class SaveImageAsDialog extends SaveAsDialog {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				int index = imageTypeCombo.getSelectionIndex();
+				final int index = imageTypeCombo.getSelectionIndex();
 				IPath path = Path.fromPortableString(getFileName());
 				path = path.removeFileExtension().addFileExtension(IMAGE_EXTS[index]);
 				setFileName(path.toPortableString());
@@ -112,7 +119,8 @@ class SaveImageAsDialog extends SaveAsDialog {
 	}
 
 	/**
-	 * Set the initial filename and image type. This must be called before {@code}create(){@code}.
+	 * Set the initial filename and image type. This must be called before
+	 * {@code}create(){@code}.
 	 * 
 	 * @param basename
 	 *            the file basename, no extension.
@@ -120,8 +128,8 @@ class SaveImageAsDialog extends SaveAsDialog {
 	 *            the SWT.IMAGE_ type.
 	 */
 	public void setOriginalName(String basename, final int type) {
-		for ( int i = 0; i < IMAGE_TYPES.length; i++ ) {
-			if ( type == IMAGE_TYPES[i] ) {
+		for (int i = 0; i < IMAGE_TYPES.length; i++) {
+			if (type == IMAGE_TYPES[i]) {
 				initialImageTypeIndex = i;
 				basename += "." + IMAGE_EXTS[i]; //$NON-NLS-1$
 				break;
@@ -131,7 +139,8 @@ class SaveImageAsDialog extends SaveAsDialog {
 	}
 
 	/**
-	 * Set the initial file and path and image type. This must be called before {@code}create(){@code}.
+	 * Set the initial file and path and image type. This must be called before
+	 * {@code}create(){@code}.
 	 * 
 	 * @param origfile
 	 *            the original file.
@@ -139,11 +148,11 @@ class SaveImageAsDialog extends SaveAsDialog {
 	 *            the SWT.IMAGE_ type.
 	 */
 	public void setOriginalFile(IFile origfile, final int type) {
-		for ( int i = 0; i < IMAGE_TYPES.length; i++ ) {
-			if ( type == IMAGE_TYPES[i] ) {
+		for (int i = 0; i < IMAGE_TYPES.length; i++) {
+			if (type == IMAGE_TYPES[i]) {
 				initialImageTypeIndex = i;
-				String newname =
-					origfile.getFullPath().removeFileExtension().addFileExtension(IMAGE_EXTS[i]).lastSegment();
+				final String newname = origfile.getFullPath().removeFileExtension().addFileExtension(IMAGE_EXTS[i])
+						.lastSegment();
 				origfile = origfile.getParent().getFile(Path.fromPortableString(newname));
 				break;
 			}
@@ -155,7 +164,7 @@ class SaveImageAsDialog extends SaveAsDialog {
 	 * Get the selected image type.
 	 */
 	public int getSaveAsImageType() {
-		if ( selectedImageTypeIndex >= 0 && selectedImageTypeIndex < IMAGE_TYPES.length ) {
+		if (selectedImageTypeIndex >= 0 && selectedImageTypeIndex < IMAGE_TYPES.length) {
 			return IMAGE_TYPES[selectedImageTypeIndex];
 		} else {
 			return IMAGE_TYPES[0];
@@ -166,7 +175,7 @@ class SaveImageAsDialog extends SaveAsDialog {
 	 * Get the selected image type.
 	 */
 	public String getSaveAsImageExt() {
-		if ( selectedImageTypeIndex >= 0 && selectedImageTypeIndex < IMAGE_TYPES.length ) {
+		if (selectedImageTypeIndex >= 0 && selectedImageTypeIndex < IMAGE_TYPES.length) {
 			return IMAGE_EXTS[selectedImageTypeIndex];
 		} else {
 			return IMAGE_EXTS[0];

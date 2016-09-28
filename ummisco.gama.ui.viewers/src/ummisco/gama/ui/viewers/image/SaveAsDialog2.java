@@ -9,7 +9,7 @@ import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 /**
  * Subclass for the normal SaveAsDialog, to expose access to some of the UI.
  */
-public class SaveAsDialog extends org.eclipse.ui.dialogs.SaveAsDialog {
+public class SaveAsDialog2 extends org.eclipse.ui.dialogs.SaveAsDialog {
 	private static Field resourceGroupField = null;
 
 	/**
@@ -18,7 +18,7 @@ public class SaveAsDialog extends org.eclipse.ui.dialogs.SaveAsDialog {
 	 * @param parentShell
 	 *            the parent shell
 	 */
-	public SaveAsDialog(final Shell parentShell) {
+	public SaveAsDialog2(final Shell parentShell) {
 		super(parentShell);
 		setShellStyle(getShellStyle() | SWT.SHEET);
 	}
@@ -29,7 +29,7 @@ public class SaveAsDialog extends org.eclipse.ui.dialogs.SaveAsDialog {
 	 * field and class not being public or protected, or otherwise supporting
 	 * methods to manipulate the UI programatically.
 	 */
-	protected static synchronized ResourceAndContainerGroup getResourceGroup(final SaveAsDialog d) {
+	protected static synchronized ResourceAndContainerGroup getResourceGroup(final SaveAsDialog2 d) {
 		boolean origAccessible = false;
 		try {
 			// cache it to avoid unneccessary reflection look ups

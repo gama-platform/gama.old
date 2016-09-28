@@ -51,14 +51,9 @@ public class GamaColorMenu extends GamaMenu {
 		void run(int r, int g, int b);
 	}
 
-	IColorRunnable defaultRunnable = new IColorRunnable() {
+	private IColorRunnable currentRunnable;
 
-		@Override
-		public void run(final int r, final int g, final int b) {
-			currentRunnable.run(r, g, b);
-		}
-
-	};
+	IColorRunnable defaultRunnable = (r, g, b) -> currentRunnable.run(r, g, b);
 
 	SelectionListener defaultListener = new SelectionAdapter() {
 
@@ -78,41 +73,19 @@ public class GamaColorMenu extends GamaMenu {
 	}
 
 	private SelectionListener currentListener;
-	private IColorRunnable currentRunnable;
 
-	public static Integer reverse = null;
+	private static Integer reverse = null;
 
-	public static Comparator byRGB = new Comparator<String>() {
+	public static Comparator byRGB = (arg0, arg1) -> getReverse()
+			* GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
 
-		@Override
-		public int compare(final String arg0, final String arg1) {
-			return reverse * GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
-		}
-	};
+	public static Comparator byBrightness = (arg0, arg1) -> getReverse()
+			* GamaColor.colors.get(arg0).compareBrightnessTo(GamaColor.colors.get(arg1));
 
-	public static Comparator byBrightness = new Comparator<String>() {
+	public static Comparator byName = (arg0, arg1) -> getReverse() * arg0.toString().compareTo(arg1.toString());
 
-		@Override
-		public int compare(final String arg0, final String arg1) {
-			return reverse * GamaColor.colors.get(arg0).compareBrightnessTo(GamaColor.colors.get(arg1));
-		}
-	};
-
-	public static Comparator byName = new Comparator<String>() {
-
-		@Override
-		public int compare(final String arg0, final String arg1) {
-			return reverse * arg0.compareTo(arg1);
-		}
-	};
-
-	public static Comparator byLuminescence = new Comparator<String>() {
-
-		@Override
-		public int compare(final String arg0, final String arg1) {
-			return reverse * GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
-		}
-	};
+	public static Comparator byLuminescence = (arg0, arg1) -> getReverse()
+			* GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
 	public static Comparator colorComp = null;
 
 	public static SelectionListener chooseSort = new SelectionAdapter() {
@@ -144,7 +117,7 @@ public class GamaColorMenu extends GamaMenu {
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
 			final GamaMenuItem item = (GamaMenuItem) e.widget;
-			reverse = -1 * reverse;
+			setReverse(-1 * getReverse());
 			item.getTopLevelMenu().reset();
 		}
 
@@ -178,8 +151,8 @@ public class GamaColorMenu extends GamaMenu {
 				colorComp = byLuminescence;
 			}
 		}
-		if (reverse == null) {
-			reverse = PreferencesHelper.COLOR_MENU_REVERSE.getValue() ? -1 : 1;
+		if (getReverse() == null) {
+			setReverse(PreferencesHelper.COLOR_MENU_REVERSE.getValue() ? -1 : 1);
 		}
 		if (breakdown == null) {
 			breakdown = PreferencesHelper.COLOR_MENU_GROUP.getValue();
@@ -195,7 +168,7 @@ public class GamaColorMenu extends GamaMenu {
 		final Menu optionMenu = sub("Options");
 		final Menu sortMenu = sub(optionMenu, "Sort by...");
 		check(optionMenu, "Breakdown", breakdown, chooseBreak);
-		check(optionMenu, "Reverse order", reverse == -1, chooseReverse);
+		check(optionMenu, "Reverse order", getReverse() == -1, chooseReverse);
 		check(sortMenu, SORT_NAMES[0], colorComp == byRGB, chooseSort).setData(byRGB);
 		check(sortMenu, SORT_NAMES[1], colorComp == byName, chooseSort).setData(byName);
 		check(sortMenu, SORT_NAMES[2], colorComp == byBrightness, chooseSort).setData(byBrightness);
@@ -238,6 +211,14 @@ public class GamaColorMenu extends GamaMenu {
 		super.reset();
 		currentListener = null;
 		currentRunnable = null;
+	}
+
+	public static Integer getReverse() {
+		return reverse;
+	}
+
+	public static void setReverse(final Integer r) {
+		reverse = r;
 	}
 
 }

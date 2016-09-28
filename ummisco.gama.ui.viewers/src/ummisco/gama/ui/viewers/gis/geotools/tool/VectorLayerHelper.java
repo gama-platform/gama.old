@@ -40,12 +40,12 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 /**
- * Helper class used by {@code InfoTool} to query {@code MapLayers}
- * with vector feature data.
+ * Helper class used by {@code InfoTool} to query {@code MapLayers} with vector
+ * feature data.
  * <p>
- * Implementation note: this class keeps only a weak reference to
- * the {@code MapLayer} it is working with to avoid memory leaks if
- * the layer is deleted.
+ * Implementation note: this class keeps only a weak reference to the
+ * {@code MapLayer} it is working with to avoid memory leaks if the layer is
+ * deleted.
  *
  * @see InfoTool
  * @see GridLayerHelper
@@ -58,131 +58,144 @@ import com.vividsolutions.jts.geom.GeometryFactory;
  */
 public class VectorLayerHelper extends InfoToolHelper<SimpleFeatureCollection> {
 
-    private static final GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
-    private static final FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2(null);
-    private final WeakReference<Layer> layerRef;
-    private final String attrName;
-    private final boolean isPolygonGeometry;
+	private static final GeometryFactory geometryFactory = JTSFactoryFinder.getGeometryFactory(null);
+	private static final FilterFactory2 filterFactory = CommonFactoryFinder.getFilterFactory2(null);
+	private final WeakReference<Layer> layerRef;
+	private final String attrName;
+	private final boolean isPolygonGeometry;
 
-    /**
-     * Create a new helper to work with a {@code MapLayer} that has vector feature data.
-     *
-     * @param layer the map layer
-     *
-     * @param geomAttributeName the name of the geometry attribute for {@code Features}
-     *
-     * @param geomClass the geometry class
-     */
-    @SuppressWarnings("unchecked")
-    public VectorLayerHelper( MapContent context, Layer layer ) {
-        super(context, layer.getFeatureSource().getSchema().getCoordinateReferenceSystem());
+	/**
+	 * Create a new helper to work with a {@code MapLayer} that has vector
+	 * feature data.
+	 *
+	 * @param layer
+	 *            the map layer
+	 *
+	 * @param geomAttributeName
+	 *            the name of the geometry attribute for {@code Features}
+	 *
+	 * @param geomClass
+	 *            the geometry class
+	 */
+	@SuppressWarnings("unchecked")
+	public VectorLayerHelper(final MapContent context, final Layer layer) {
+		super(context, layer.getFeatureSource().getSchema().getCoordinateReferenceSystem());
 
-        this.layerRef = new WeakReference<Layer>(layer);
+		this.layerRef = new WeakReference<Layer>(layer);
 
-        final GeometryDescriptor geomDesc = layer.getFeatureSource().getSchema().getGeometryDescriptor();
-        this.attrName = geomDesc.getLocalName();
+		final GeometryDescriptor geomDesc = layer.getFeatureSource().getSchema().getGeometryDescriptor();
+		this.attrName = geomDesc.getLocalName();
 
-        final Class< ? extends Geometry> geomClass = (Class< ? extends Geometry>) geomDesc.getType().getBinding();
-        final Geometries type = Geometries.getForBinding(geomClass);
-        this.isPolygonGeometry = (type == Geometries.POLYGON || type == Geometries.MULTIPOLYGON);
-    }
+		final Class<? extends Geometry> geomClass = (Class<? extends Geometry>) geomDesc.getType().getBinding();
+		final Geometries type = Geometries.getForBinding(geomClass);
+		this.isPolygonGeometry = type == Geometries.POLYGON || type == Geometries.MULTIPOLYGON;
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    public boolean isValid() {
-        return getMapContent() != null && layerRef != null && layerRef.get() != null;
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isValid() {
+		return getMapContent() != null && layerRef != null && layerRef.get() != null;
+	}
 
-    /**
-     * Get the {@code MapLayer} that this helper is working with.
-     *
-     * @return the {@code MapLayer} or null if the original layer is no longer valid
-     *
-     * @see #isValid()
-     */
-    public Layer getMapLayer() {
-        return layerRef != null ? layerRef.get() : null;
-    }
+	/**
+	 * Get the {@code MapLayer} that this helper is working with.
+	 *
+	 * @return the {@code MapLayer} or null if the original layer is no longer
+	 *         valid
+	 *
+	 * @see #isValid()
+	 */
+	public Layer getMapLayer() {
+		return layerRef != null ? layerRef.get() : null;
+	}
 
-    /*
-     * Get feature data at the given position.
-     *
-     * @param pos the location to query
-     *
-     *
-     */
-    /**
-     * {@inheritDoc}
-     *
-     * @param params a {@code Double} value for the search radius to use with
-     *        point or line features
-     *
-     * @return the features that lie within the search radius of {@code pos}; if
-     *         this helper is not valid an empty collection will be returned
-     *
-     * @throws IOException if the feature source for the layer cannot be accessed
-     */
-    public SimpleFeatureCollection getInfo( DirectPosition2D pos, Object... params ) throws IOException {
+	/*
+	 * Get feature data at the given position.
+	 *
+	 * @param pos the location to query
+	 *
+	 *
+	 */
+	/**
+	 * {@inheritDoc}
+	 *
+	 * @param params
+	 *            a {@code Double} value for the search radius to use with point
+	 *            or line features
+	 *
+	 * @return the features that lie within the search radius of {@code pos}; if
+	 *         this helper is not valid an empty collection will be returned
+	 *
+	 * @throws IOException
+	 *             if the feature source for the layer cannot be accessed
+	 */
+	@Override
+	public SimpleFeatureCollection getInfo(final DirectPosition2D pos, final Object... params) throws IOException {
 
-        SimpleFeatureCollection collection = null;
-        Layer layer = layerRef.get();
+		SimpleFeatureCollection collection = null;
+		final Layer layer = layerRef.get();
 
-        if (layer != null) {
-            Filter filter = null;
-            if (isPolygonGeometry) {
-                /*
-                 * Polygon features - use an intersects filter
-                 */
-                Geometry posGeom = createSearchPos(pos);
-                filter = filterFactory.intersects(filterFactory.property(attrName), filterFactory.literal(posGeom));
+		if (layer != null) {
+			Filter filter = null;
+			if (isPolygonGeometry) {
+				/*
+				 * Polygon features - use an intersects filter
+				 */
+				final Geometry posGeom = createSearchPos(pos);
+				filter = filterFactory.intersects(filterFactory.property(attrName), filterFactory.literal(posGeom));
 
-            } else {
-                /*
-                 * Line or point features - use a bounding box filter
-                 */
-                double radius = ((Number) params[0]).doubleValue();
-                ReferencedEnvelope env = createSearchEnv(pos, radius);
-                filter = filterFactory.bbox(filterFactory.property(attrName), env);
-            }
+			} else {
+				/*
+				 * Line or point features - use a bounding box filter
+				 */
+				final double radius = ((Number) params[0]).doubleValue();
+				final ReferencedEnvelope env = createSearchEnv(pos, radius);
+				filter = filterFactory.bbox(filterFactory.property(attrName), env);
+			}
 
-            Query query = new Query(null, filter);
-            query.setCoordinateSystemReproject(getMapContent().getCoordinateReferenceSystem());
-            collection = (SimpleFeatureCollection) layer.getFeatureSource().getFeatures(query);
-        }
+			final Query query = new Query(null, filter);
+			query.setCoordinateSystemReproject(getMapContent().getCoordinateReferenceSystem());
+			collection = (SimpleFeatureCollection) layer.getFeatureSource().getFeatures(query);
+		}
 
-        return collection;
-    }
+		return collection;
+	}
 
-    private Geometry createSearchPos( DirectPosition2D pos ) {
-        Geometry point = geometryFactory.createPoint(new Coordinate(pos.x, pos.y));
-        if (isTransformRequired()) {
-            MathTransform transform = getTransform();
-            if (transform != null) {
-                try {
-                    point = JTS.transform(point, transform);
-                } catch (Exception ex) {
-                    throw new IllegalStateException(ex);
-                }
-            }
-        }
+	private Geometry createSearchPos(final DirectPosition2D pos) {
+		Geometry point = geometryFactory.createPoint(new Coordinate(pos.x, pos.y));
+		if (isTransformRequired()) {
+			final MathTransform transform = getTransform();
+			if (transform != null) {
+				try {
+					point = JTS.transform(point, transform);
+				} catch (final Exception ex) {
+					throw new IllegalStateException(ex);
+				}
+			}
+		}
 
-        return point;
-    }
+		return point;
+	}
 
-    private ReferencedEnvelope createSearchEnv( DirectPosition2D pos, double radius ) {
-        final CoordinateReferenceSystem contextCRS = getMapContent().getCoordinateReferenceSystem();
-        ReferencedEnvelope env = new ReferencedEnvelope(pos.x - radius, pos.x + radius, pos.y - radius, pos.y + radius,
-                contextCRS);
-        if (isTransformRequired()) {
-            CoordinateReferenceSystem layerCRS = layerRef.get().getFeatureSource().getSchema().getCoordinateReferenceSystem();
-            try {
-                env = env.transform(layerCRS, true);
-            } catch (Exception ex) {
-                throw new IllegalStateException(ex);
-            }
-        }
+	private ReferencedEnvelope createSearchEnv(final DirectPosition2D pos, final double radius) {
+		final CoordinateReferenceSystem contextCRS = getMapContent().getCoordinateReferenceSystem();
+		ReferencedEnvelope env = new ReferencedEnvelope(pos.x - radius, pos.x + radius, pos.y - radius, pos.y + radius,
+				contextCRS);
+		if (isTransformRequired()) {
+			final Layer layer = layerRef.get();
+			if (layer != null) {
+				final CoordinateReferenceSystem layerCRS = layer.getFeatureSource().getSchema()
+						.getCoordinateReferenceSystem();
+				try {
+					env = env.transform(layerCRS, true);
+				} catch (final Exception ex) {
+					throw new IllegalStateException(ex);
+				}
+			}
+		}
 
-        return env;
-    }
+		return env;
+	}
 }

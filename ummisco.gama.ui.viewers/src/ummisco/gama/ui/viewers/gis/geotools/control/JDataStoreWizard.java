@@ -41,7 +41,7 @@ import org.geotools.data.FileDataStoreFinder;
  */
 public class JDataStoreWizard extends Wizard {
 
-	private Map<String, Object> connectionParameters;
+	private final Map<String, Object> connectionParameters;
 	private final DataStoreFactorySpi format;
 	private JDataChoosePage dataChoosePage;
 	private JDataStorePage dataStorePage;
@@ -56,7 +56,7 @@ public class JDataStoreWizard extends Wizard {
 
 	public JDataStoreWizard(final DataStoreFactorySpi format, final Map<String, Object> params) {
 		setWindowTitle(format == null ? "Connect" : format == null ? "" : format.getDisplayName());
-		connectionParameters = params == null ? connectionParameters = new HashMap<String, Object>() : params;
+		connectionParameters = params == null ? new HashMap<String, Object>() : params;
 		if (format == null) {
 			dataChoosePage = new JDataChoosePage();
 		}
