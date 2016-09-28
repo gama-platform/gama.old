@@ -12,7 +12,9 @@
 
 package msi.gama.metamodel.shape;
 
-import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.CoordinateSequence;
+import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
+
 import msi.gaml.operators.fastmaths.FastMath;
 
 /**
@@ -38,20 +40,20 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 	}
 
 	public final static AffineTransform3D createRotationOx(final double theta) {
-		double cot = FastMath.cos(theta);
-		double sit = FastMath.sin(theta);
+		final double cot = FastMath.cos(theta);
+		final double sit = FastMath.sin(theta);
 		return new AffineTransform3D(1, 0, 0, 0, 0, cot, -sit, 0, 0, sit, cot, 0);
 	}
 
 	public final static AffineTransform3D createRotationOy(final double theta) {
-		double cot = FastMath.cos(theta);
-		double sit = FastMath.sin(theta);
+		final double cot = FastMath.cos(theta);
+		final double sit = FastMath.sin(theta);
 		return new AffineTransform3D(cot, 0, sit, 0, 0, 1, 0, 0, -sit, 0, cot, 0);
 	}
 
 	public final static AffineTransform3D createRotationOz(final double theta) {
-		double cot = FastMath.cos(theta);
-		double sit = FastMath.sin(theta);
+		final double cot = FastMath.cos(theta);
+		final double sit = FastMath.sin(theta);
 		return new AffineTransform3D(cot, -sit, 0, 0, sit, cot, 0, 0, 0, 0, 1, 0);
 	}
 
@@ -61,24 +63,26 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 		// [ sin(theta) cos(theta) y-x*sin-y*cos ]
 		// [ 0 0 1 ]
 
-		double cot = FastMath.cos(theta);
-		double sit = FastMath.sin(theta);
+		final double cot = FastMath.cos(theta);
+		final double sit = FastMath.sin(theta);
 		return new AffineTransform3D(cot, -sit, 0, x - x * cot + y * sit, sit, cot, 0, y - x * sit - y * cot, 0, 0, 1,
-			0);
+				0);
 	}
 
 	public final static AffineTransform3D createRotationVector(final double theta, final double xI, final double yI,
-		final double zI) {
-		double cot = FastMath.cos(theta);
-		double sit = FastMath.sin(theta);
-		double sum = FastMath.sqrt(xI * xI + yI * yI + zI * zI);
-		if ( sum == 0 ) { return null; }
-		double x = xI / sum;
-		double y = yI / sum;
-		double z = zI / sum;
+			final double zI) {
+		final double cot = FastMath.cos(theta);
+		final double sit = FastMath.sin(theta);
+		final double sum = FastMath.sqrt(xI * xI + yI * yI + zI * zI);
+		if (sum == 0) {
+			return null;
+		}
+		final double x = xI / sum;
+		final double y = yI / sum;
+		final double z = zI / sum;
 		return new AffineTransform3D(cot + x * x * (1 - cot), x * y * (1 - cot) - z * sit, x * z * (1 - cot) + y * sit,
-			0.0, y * x * (1 - cot) + z * sit, cot + y * y * (1 - cot), y * z * (1 - cot) - x * sit, 0.0,
-			z * x * (1 - cot) - y * sit, z * y * (1 - cot) + x * sit, cot + z * z * (1 - cot), 0.0);
+				0.0, y * x * (1 - cot) + z * sit, cot + y * y * (1 - cot), y * z * (1 - cot) - x * sit, 0.0,
+				z * x * (1 - cot) - y * sit, z * y * (1 - cot) + x * sit, cot + z * z * (1 - cot), 0.0);
 	}
 
 	public final static AffineTransform3D createScaling(final double s) {
@@ -102,7 +106,7 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 	}
 
 	public AffineTransform3D(final double[] coefs) {
-		if ( coefs.length == 9 ) {
+		if (coefs.length == 9) {
 			m00 = coefs[0];
 			m01 = coefs[1];
 			m02 = coefs[2];
@@ -112,7 +116,7 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 			m20 = coefs[6];
 			m21 = coefs[7];
 			m22 = coefs[8];
-		} else if ( coefs.length == 12 ) {
+		} else if (coefs.length == 12) {
 			m00 = coefs[0];
 			m01 = coefs[1];
 			m02 = coefs[2];
@@ -129,8 +133,8 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 	}
 
 	public AffineTransform3D(final double xx, final double yx, final double zx, final double tx, final double xy,
-		final double yy, final double zy, final double ty, final double xz, final double yz, final double zz,
-		final double tz) {
+			final double yy, final double zy, final double ty, final double xz, final double yz, final double zz,
+			final double tz) {
 		m00 = xx;
 		m01 = yx;
 		m02 = zx;
@@ -149,18 +153,42 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 	// accessors
 
 	public boolean isIdentity() {
-		if ( m00 != 1 ) { return false; }
-		if ( m11 != 1 ) { return false; }
-		if ( m22 != 0 ) { return false; }
-		if ( m01 != 0 ) { return false; }
-		if ( m02 != 0 ) { return false; }
-		if ( m03 != 0 ) { return false; }
-		if ( m10 != 0 ) { return false; }
-		if ( m12 != 0 ) { return false; }
-		if ( m13 != 0 ) { return false; }
-		if ( m20 != 0 ) { return false; }
-		if ( m21 != 0 ) { return false; }
-		if ( m23 != 0 ) { return false; }
+		if (m00 != 1) {
+			return false;
+		}
+		if (m11 != 1) {
+			return false;
+		}
+		if (m22 != 0) {
+			return false;
+		}
+		if (m01 != 0) {
+			return false;
+		}
+		if (m02 != 0) {
+			return false;
+		}
+		if (m03 != 0) {
+			return false;
+		}
+		if (m10 != 0) {
+			return false;
+		}
+		if (m12 != 0) {
+			return false;
+		}
+		if (m13 != 0) {
+			return false;
+		}
+		if (m20 != 0) {
+			return false;
+		}
+		if (m21 != 0) {
+			return false;
+		}
+		if (m23 != 0) {
+			return false;
+		}
 		return true;
 	}
 
@@ -177,14 +205,14 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 	 * Computes the inverse affine transform.
 	 */
 	public AffineTransform3D inverse() {
-		double det = this.determinant();
+		final double det = this.determinant();
 		return new AffineTransform3D((m11 * m22 - m21 * m12) / det, (m21 * m01 - m01 * m22) / det,
-			(m01 * m12 - m11 * m02) / det,
-			(m01 * (m22 * m13 - m12 * m23) + m02 * (m11 * m23 - m21 * m13) - m03 * (m11 * m22 - m21 * m12)) / det,
-			(m20 * m12 - m10 * m22) / det, (m00 * m22 - m20 * m02) / det, (m10 * m02 - m00 * m12) / det,
-			(m00 * (m12 * m23 - m22 * m13) - m02 * (m10 * m23 - m20 * m13) + m03 * (m10 * m22 - m20 * m12)) / det,
-			(m10 * m21 - m20 * m11) / det, (m20 * m01 - m00 * m21) / det, (m00 * m11 - m10 * m01) / det,
-			(m00 * (m21 * m13 - m11 * m23) + m01 * (m10 * m23 - m20 * m13) - m03 * (m10 * m21 - m20 * m11)) / det);
+				(m01 * m12 - m11 * m02) / det,
+				(m01 * (m22 * m13 - m12 * m23) + m02 * (m11 * m23 - m21 * m13) - m03 * (m11 * m22 - m21 * m12)) / det,
+				(m20 * m12 - m10 * m22) / det, (m00 * m22 - m20 * m02) / det, (m10 * m02 - m00 * m12) / det,
+				(m00 * (m12 * m23 - m22 * m13) - m02 * (m10 * m23 - m20 * m13) + m03 * (m10 * m22 - m20 * m12)) / det,
+				(m10 * m21 - m20 * m11) / det, (m20 * m01 - m00 * m21) / det, (m00 * m11 - m10 * m01) / det,
+				(m00 * (m21 * m13 - m11 * m23) + m01 * (m10 * m23 - m20 * m13) - m03 * (m10 * m21 - m20 * m11)) / det);
 	}
 
 	// ===================================================================
@@ -269,38 +297,71 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 	 */
 	@Override
 	public boolean equals(final Object obj) {
-		if ( !(obj instanceof AffineTransform3D) ) { return false; }
-		AffineTransform3D t = (AffineTransform3D) obj;
-		double accuracy = 1e-14;
-		if ( FastMath.abs(t.m00 - m00) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m01 - m01) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m02 - m02) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m03 - m03) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m10 - m10) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m11 - m11) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m12 - m12) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m13 - m13) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m20 - m20) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m21 - m21) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m22 - m22) > accuracy ) { return false; }
-		if ( FastMath.abs(t.m23 - m23) > accuracy ) { return false; }
+		if (!(obj instanceof AffineTransform3D)) {
+			return false;
+		}
+		final AffineTransform3D t = (AffineTransform3D) obj;
+		final double accuracy = 1e-14;
+		if (FastMath.abs(t.m00 - m00) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m01 - m01) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m02 - m02) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m03 - m03) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m10 - m10) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m11 - m11) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m12 - m12) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m13 - m13) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m20 - m20) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m21 - m21) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m22 - m22) > accuracy) {
+			return false;
+		}
+		if (FastMath.abs(t.m23 - m23) > accuracy) {
+			return false;
+		}
 		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return (int) (m00 + m01 + m02 + m03 + 10 * (m10 + m11 + m12 + m13) + 100 * (m20 + m21 + m22 + m23));
 	}
 
 	/**
 	 * Transforms the i'th coordinate in the input sequence
 	 *
-	 * @param seq a <code>CoordinateSequence</code>
-	 * @param i the index of the coordinate to transform
+	 * @param seq
+	 *            a <code>CoordinateSequence</code>
+	 * @param i
+	 *            the index of the coordinate to transform
 	 */
 	@Override
 	public void filter(final CoordinateSequence seq, final int i) {
-		double x = seq.getOrdinate(i, 0);
-		double y = seq.getOrdinate(i, 1);
-		double z = seq.getOrdinate(i, 2);
-		double xp = m00 * x + m01 * y + m02 * z + m03;
-		double yp = m10 * x + m11 * y + m12 * z + m13;
-		double zp = m20 * x + m21 * y + m22 * z + m23;
+		final double x = seq.getOrdinate(i, 0);
+		final double y = seq.getOrdinate(i, 1);
+		final double z = seq.getOrdinate(i, 2);
+		final double xp = m00 * x + m01 * y + m02 * z + m03;
+		final double yp = m10 * x + m11 * y + m12 * z + m13;
+		final double zp = m20 * x + m21 * y + m22 * z + m23;
 		seq.setOrdinate(i, 0, xp);
 		seq.setOrdinate(i, 1, yp);
 		seq.setOrdinate(i, 2, zp);
@@ -312,8 +373,8 @@ public class AffineTransform3D implements CoordinateSequenceFilter {
 	}
 
 	/**
-	 * Reports that this filter should continue to be executed until
-	 * all coordinates have been transformed.
+	 * Reports that this filter should continue to be executed until all
+	 * coordinates have been transformed.
 	 *
 	 * @return false
 	 */
