@@ -100,7 +100,7 @@ public abstract class Solver {
 					}
 
 				}
-				if (integrationValues.get(eq.variable_time.getName()) == null) {
+				if (integrationValues.get(scope.getAgent()+eq.variable_time.getName()) == null) {
 					integrationValues.put(scope.getAgent()+eq.variable_time.getName(), GamaListFactory.create(Double.class));
 				}
 
