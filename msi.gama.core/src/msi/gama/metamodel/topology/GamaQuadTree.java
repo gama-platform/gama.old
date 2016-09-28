@@ -152,7 +152,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		// ** Addresses part of Issue 722 -- Need to keep the objects ordered
 		// (by insertion order) **
 		private final Set<IAgent> objects = new TLinkedHashSet(maxCapacity + 5);
-		private volatile int size = 0;
+		private int size = 0;
 		private volatile boolean isLeaf = true;
 		private QuadNode ne;
 		private QuadNode nw;
