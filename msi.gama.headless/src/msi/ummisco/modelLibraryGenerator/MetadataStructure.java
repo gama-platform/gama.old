@@ -73,11 +73,11 @@ public class MetadataStructure {
 				}
 			}
 		}
-		if (m_name != "")
+		if (m_name != null && !m_name.isEmpty())
 			result += "# " + m_name + "\n\n\n";
-		if (m_author != "")
+		if (m_author != null && !m_author.isEmpty())
 			result += "_Author : " + m_author + "_\n\n";
-		if (m_description != "")
+		if (m_description != null && !m_description.isEmpty())
 			result += m_description + "\n\n";
 		return result;
 	}
