@@ -15,7 +15,7 @@ uniform mat4    viewMatrix;
 attribute vec3  attribute_Position;
 attribute vec4  attribute_Color;
 attribute vec3  attribute_Normal;
-attribute vec3  attribute_TextureCoords;
+attribute vec2  attribute_TextureCoords;
 
 varying vec4    varying_Color;
 varying vec2    pass_textureCoords;
