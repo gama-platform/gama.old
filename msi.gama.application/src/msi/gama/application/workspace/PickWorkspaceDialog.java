@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -36,8 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -66,7 +63,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 	// static Preferences preferences = Preferences.userRoot().node("gama");
 	/* Various dialog messages */
-	private static final String strMsg = "Your workspace is where settings and files of your Gama models will be stored.";
+	private static final String strMsg =
+		"Your workspace is where settings and files of your Gama models will be stored.";
 	private static final String strInfo = "Please select a directory that will be the workspace root";
 	private static final String strError = "You must set a directory";
 
@@ -104,9 +102,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 	public static Preferences getNode() {
 		try {
-			if (Preferences.userRoot().nodeExists("gama")) {
-				return Preferences.userRoot().node("gama");
-			}
+			if ( Preferences.userRoot().nodeExists("gama") ) { return Preferences.userRoot().node("gama"); }
 		} catch (final BackingStoreException e1) {
 			e1.printStackTrace();
 		}
@@ -151,7 +147,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			// 40 } };
 			inner.setLayout(l);
 			inner.setLayoutData(
-					new GridData(GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_END | GridData.GRAB_HORIZONTAL));
+				new GridData(GridData.FILL_VERTICAL | GridData.VERTICAL_ALIGN_END | GridData.GRAB_HORIZONTAL));
 
 			/* Label on the left */
 			final CLabel label = new CLabel(inner, SWT.NONE);
@@ -162,7 +158,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			workspacePathCombo = new Combo(inner, SWT.BORDER);
 			workspacePathCombo.setLayoutData(new GridData());
 			String wsRoot = getNode().get(keyWorkspaceRootDir, "");
-			if (wsRoot == null || wsRoot.length() == 0) {
+			if ( wsRoot == null || wsRoot.length() == 0 ) {
 				wsRoot = getWorkspacePathSuggestion();
 			}
 			workspacePathCombo.setText(wsRoot);
@@ -175,13 +171,13 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 			final String lastUsed = getNode().get(keyLastUsedWorkspaces, "");
 			lastUsedWorkspaces = new ArrayList<String>();
-			if (lastUsed != null) {
+			if ( lastUsed != null ) {
 				final String[] all = lastUsed.split(splitChar);
-				for (final String str : all) {
+				for ( final String str : all ) {
 					lastUsedWorkspaces.add(str);
 				}
 			}
-			for (final String last : lastUsedWorkspaces) {
+			for ( final String last : lastUsedWorkspaces ) {
 				workspacePathCombo.add(last);
 			}
 
@@ -189,23 +185,19 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			final Button browse = new Button(inner, SWT.PUSH);
 			browse.setText("Browse...");
 			browse.setLayoutData(new GridData());
-			browse.addListener(SWT.Selection, new Listener() {
-
-				@Override
-				public void handleEvent(final Event event) {
-					final DirectoryDialog dd = new DirectoryDialog(getParentShell());
-					dd.setText("Select Workspace Root");
-					dd.setMessage(strInfo);
-					dd.setFilterPath(workspacePathCombo.getText());
-					final String pick = dd.open();
-					if (pick == null) {
-						if (workspacePathCombo.getText().length() == 0) {
-							setMessage(strError, IMessageProvider.ERROR);
-						}
-					} else {
-						setMessage(strMsg);
-						workspacePathCombo.setText(pick);
+			browse.addListener(SWT.Selection, event -> {
+				final DirectoryDialog dd = new DirectoryDialog(getParentShell());
+				dd.setText("Select Workspace Root");
+				dd.setMessage(strInfo);
+				dd.setFilterPath(workspacePathCombo.getText());
+				final String pick = dd.open();
+				if ( pick == null ) {
+					if ( workspacePathCombo.getText().length() == 0 ) {
+						setMessage(strError, IMessageProvider.ERROR);
 					}
+				} else {
+					setMessage(strMsg);
+					workspacePathCombo.setText(pick);
 				}
 			});
 			return inner;
@@ -229,7 +221,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		final StringBuffer buf = new StringBuffer();
 
 		String uHome = System.getProperty("user.home");
-		if (uHome == null) {
+		if ( uHome == null ) {
 			uHome = "c:";
 		}
 
@@ -243,13 +235,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		/* Clone workspace needs a lot of checks */
 		final Button clone = createButton(parent, IDialogConstants.IGNORE_ID, "Clone existing workspace", false);
-		clone.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event arg0) {
-				cloneCurrentWorkspace();
-			}
-		});
+		clone.addListener(SWT.Selection, arg0 -> cloneCurrentWorkspace());
 		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
@@ -264,12 +250,10 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	/* Helper for above */
 	private void getAllSubdirectoriesOf(final File target, final List<File> buffer) {
 		final File[] files = target.listFiles();
-		if (files == null || files.length == 0) {
-			return;
-		}
+		if ( files == null || files.length == 0 ) { return; }
 
-		for (final File f : files) {
-			if (f.isDirectory()) {
+		for ( final File f : files ) {
+			if ( f.isDirectory() ) {
 				buffer.add(f);
 				getAllSubdirectoriesOf(f, buffer);
 			}
@@ -292,33 +276,33 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 */
 	public static void copyFiles(final File src, final File dest) throws IOException {
 		/* Check to ensure that the source is valid... */
-		if (!src.exists()) {
+		if ( !src.exists() ) {
 			throw new IOException("Can not find source: " + src.getAbsolutePath());
-		} else if (!src.canRead()) { // check to ensure we have rights to the
+		} else if ( !src.canRead() ) { // check to ensure we have rights to the
 										// source...
 			throw new IOException("Cannot read: " + src.getAbsolutePath() + ". Check file permissions.");
 		}
 		/* Is this a directory copy? */
 		final List<String> noCopy = Arrays.asList("org.eclipse.core.runtime", "org.eclipse.e4.workbench",
-				"org.eclipse.emf.common.ui", "org.eclipse.ui.workbench", "org.eclipse.xtext.builder");
-		if (src.isDirectory()) {
-			if (noCopy.contains(src.getName()))
+			"org.eclipse.emf.common.ui", "org.eclipse.ui.workbench", "org.eclipse.xtext.builder");
+		if ( src.isDirectory() ) {
+			if ( noCopy.contains(src.getName()) )
 				return;
 			/* Does the destination already exist? */
-			if (!dest.exists()) {
+			if ( !dest.exists() ) {
 				/* If not we need to make it exist if possible */
-				if (!dest.mkdirs()) {
-					throw new IOException("Could not create direcotry: " + dest.getAbsolutePath());
-				}
+				if ( !dest
+					.mkdirs() ) { throw new IOException("Could not create direcotry: " + dest.getAbsolutePath()); }
 			}
 			/* Get a listing of files... */
 			final String list[] = src.list();
 			/* Copy all the files in the list. */
-			for (int i = 0; i < list.length; i++) {
-				final File dest1 = new File(dest, list[i]);
-				final File src1 = new File(src, list[i]);
-				copyFiles(src1, dest1);
-			}
+			if ( list != null )
+				for ( int i = 0; i < list.length; i++ ) {
+					final File dest1 = new File(dest, list[i]);
+					final File src1 = new File(src, list[i]);
+					copyFiles(src1, dest1);
+				}
 		} else {
 			/* This was not a directory, so lets just copy the file */
 			final byte[] buffer = new byte[4096];
@@ -331,8 +315,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 					fout.write(buffer, 0, bytesRead);
 				}
 			} catch (final IOException e) {
-				final IOException wrapper = new IOException(
-						"Unable to copy file: " + src.getAbsolutePath() + "to" + dest.getAbsolutePath());
+				final IOException wrapper =
+					new IOException("Unable to copy file: " + src.getAbsolutePath() + "to" + dest.getAbsolutePath());
 				wrapper.initCause(e);
 				wrapper.setStackTrace(e.getStackTrace());
 				throw wrapper;
@@ -343,9 +327,9 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 	protected void cloneCurrentWorkspace() {
 		final String currentLocation = getNode().get(keyWorkspaceRootDir, "");
-		if (currentLocation.isEmpty()) {
+		if ( currentLocation.isEmpty() ) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-					"No current workspace exists. Can only clone from an existing workspace");
+				"No current workspace exists. Can only clone from an existing workspace");
 			return;
 		}
 		cloneWorkspace(currentLocation);
@@ -357,18 +341,18 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		final File workspaceDirectory = new File(locationToClone);
 		final File targetDirectory = new File(newLocation);
-		if (workspaceDirectory.exists()
-				&& targetDirectory.getAbsolutePath().equals(workspaceDirectory.getAbsolutePath())) {
+		if ( workspaceDirectory.exists() &&
+			targetDirectory.getAbsolutePath().equals(workspaceDirectory.getAbsolutePath()) ) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-					"Please enter a different location for the new workspace. A workspace cannot be cloned into itself.");
+				"Please enter a different location for the new workspace. A workspace cannot be cloned into itself.");
 			return;
 		}
 		// recursive check, if new directory is a subdirectory of
 		// our workspace, that's a big no-no or we'll
 		// create directories forever
-		if (isTargetSubdirOfDir(workspaceDirectory, targetDirectory)) {
+		if ( isTargetSubdirOfDir(workspaceDirectory, targetDirectory) ) {
 			MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-					"The path entered is a subdirectory of the current workspace. A workspace cannot be cloned in one of its sub-directories");
+				"The path entered is a subdirectory of the current workspace. A workspace cannot be cloned in one of its sub-directories");
 			return;
 		}
 		// If the checks are ok, we set "cloning" to true and do as if ok was
@@ -385,13 +369,13 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	protected void okPressed() {
 		final String str = workspacePathCombo.getText();
 		// scope.getGui().debug("Directory to create " + str);
-		if (str.length() == 0) {
+		if ( str.length() == 0 ) {
 			setMessage(strError, IMessageProvider.ERROR);
 			return;
 		}
 
 		final String ret = WorkspacePreferences.checkWorkspaceDirectory(str, true, true, cloning);
-		if (ret != null) {
+		if ( ret != null ) {
 			setMessage(ret, IMessageProvider.ERROR);
 			return;
 		}
@@ -399,14 +383,14 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		/* Save it so we can show it in combo later */
 		lastUsedWorkspaces.remove(str);
 
-		if (!lastUsedWorkspaces.contains(str)) {
+		if ( !lastUsedWorkspaces.contains(str) ) {
 			lastUsedWorkspaces.add(0, str);
 		}
 
 		/* Deal with the max history */
-		if (lastUsedWorkspaces.size() > maxHistory) {
+		if ( lastUsedWorkspaces.size() > maxHistory ) {
 			final List<String> remove = new ArrayList<String>();
-			for (int i = maxHistory; i < lastUsedWorkspaces.size(); i++) {
+			for ( int i = maxHistory; i < lastUsedWorkspaces.size(); i++ ) {
 				remove.add(lastUsedWorkspaces.get(i));
 			}
 
@@ -415,9 +399,9 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		/* Create a string concatenation of all our last used workspaces */
 		final StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < lastUsedWorkspaces.size(); i++) {
+		for ( int i = 0; i < lastUsedWorkspaces.size(); i++ ) {
 			buf.append(lastUsedWorkspaces.get(i));
-			if (i != lastUsedWorkspaces.size() - 1) {
+			if ( i != lastUsedWorkspaces.size() - 1 ) {
 				buf.append(splitChar);
 			}
 		}
@@ -433,7 +417,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		/* Now create it */
 		final boolean ok = checkAndCreateWorkspaceRoot(str);
-		if (!ok) {
+		if ( !ok ) {
 			// scope.getGui().debug("Problem creating " + str);
 			setMessage("No workspace could be created at location " + str + ", please check the error log");
 			return;
@@ -444,27 +428,27 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		/* And on our preferences as well */
 		// scope.getGui().debug("Writing " + str + " in the preferences");
-		if (cloning) {
+		if ( cloning ) {
 			final String previousLocation = getNode().get(keyWorkspaceRootDir, "");
 			File workspaceDirectory = new File(previousLocation);
-			if (!workspaceDirectory.exists() || previousLocation.equals(str)) {
+			if ( !workspaceDirectory.exists() || previousLocation.equals(str) ) {
 				final DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.OPEN);
 				dialog.setText("Choose an existing workspace");
 				final String result = dialog.open();
-				if (result != null) {
+				if ( result != null ) {
 					workspaceDirectory = new File(result);
 				} else {
 					workspaceDirectory = null;
 				}
 			}
-			if (workspaceDirectory != null) {
+			if ( workspaceDirectory != null ) {
 				final File targetDirectory = new File(str);
 				try {
 					copyFiles(workspaceDirectory, targetDirectory);
 					WorkspacePreferences.setApplyPrefs(true);
 				} catch (final Exception err) {
 					MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
-							"There was an error cloning the workspace: " + err.getMessage());
+						"There was an error cloning the workspace: " + err.getMessage());
 					return;
 				}
 
@@ -492,17 +476,15 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	public static boolean checkAndCreateWorkspaceRoot(final String wsRoot) {
 		try {
 			final File fRoot = new File(wsRoot);
-			if (!fRoot.exists()) {
+			if ( !fRoot.exists() ) {
 				// scope.getGui().debug("Folder " + wsRoot + " does not exist");
 				return false;
 			}
 
 			File dotFile = new File(wsRoot + File.separator + WorkspacePreferences.WS_IDENTIFIER);
-			if (!dotFile.exists()) {
+			if ( !dotFile.exists() ) {
 				final boolean created = dotFile.createNewFile();
-				if (!created) {
-					return false;
-				}
+				if ( !created ) { return false; }
 				dotFile = new File(wsRoot + File.separator + WorkspacePreferences.MODEL_IDENTIFIER);
 				dotFile.createNewFile();
 			}
