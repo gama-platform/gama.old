@@ -107,8 +107,21 @@ public class TransformationMatrix {
 		matrix.setIdentity();
 		
 		// rotation
-//		matrix = GeomMathUtils.rotateMatrixAroundLocal(quat, -env_width / 2, env_height / 2, 0, matrix); // FIXME : does not work...
+		Matrix4f tempTranslate = new Matrix4f();
+		tempTranslate.setIdentity();
+		tempTranslate.m30 = -env_width / 2;
+		tempTranslate.m31 = -env_height / 2;
+		Matrix4f tempInvTranslate = new Matrix4f();
+		tempInvTranslate.setIdentity();
+		tempInvTranslate.m30 = env_width / 2;
+		tempInvTranslate.m31 = env_height / 2;
+		Matrix4f rotMat = new Matrix4f();
+		rotMat.rotZ(quat[3]);
 		
+		matrix = tempTranslate;
+		matrix.mul(rotMat);
+		matrix.mul(tempInvTranslate);
+				
 		// translation
 		matrix = GeomMathUtils.translateMatrix(positions.x, positions.y, positions.z, matrix);
 		
