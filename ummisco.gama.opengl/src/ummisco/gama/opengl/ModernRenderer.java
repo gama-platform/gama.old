@@ -260,6 +260,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 		// TODO
 		sceneBuffer.garbageCollect((GL2) drawable.getGL());
 		sceneBuffer.dispose();
+		
+		drawer.cleanUp();
 
 		textureCache.dispose(drawable.getGL());
 		geometryCache.dispose(drawable.getGL().getGL2());

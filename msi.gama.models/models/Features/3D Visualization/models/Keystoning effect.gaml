@@ -43,8 +43,8 @@ experiment keystone type: gui
 		display grid use_shader:true keystone:[{tl_x,tl_y},{tr_x,tr_y},{bl_x,bl_y},{br_x,br_y}] type:opengl background:#darkblue {
 			grid my_grid;
 			graphics "text" {
-				draw "Run the model, then change the position" font:font("Helvetica", 50, #plain) color:#red at:{50,45};
-				draw "of the corners of the screen changing the parameters value" font:font("Helvetica", 50, #plain) color:#red at:{50,55};
+				draw "Run the model, then change the position" font:font("Helvetica", 30, #plain) color:#red at:{3,45};
+				draw "of the corners of the screen changing the parameters value" font:font("Helvetica", 30, #plain) color:#red at:{-15,55};
 			}
 		}
 	}

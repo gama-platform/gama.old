@@ -54,9 +54,9 @@ public class DrawingEntityGenerator {
 	private int getFontSize(final StringObject strObj) {
 		final Font font = strObj.getFont();
 		if (font != null) {
-			return font.getSize();
+			return 2*font.getSize();
 		} else
-			return 18;
+			return 2*18;
 	}
 
 	public DrawingEntity[] GenerateDrawingEntities(final IScope scope, final AbstractObject object,
@@ -74,7 +74,7 @@ public class DrawingEntityGenerator {
 			final int fontSize = getFontSize(strObj);
 			textures[0] = fontTextCache.getFontTexture(fontName + style);
 			final TextMeshData textMeshData = fontTextCache.getTextMeshData(fontName + style, strObj.string,
-					(int) renderer.getGlobalYRatioBetweenPixelsAndModelUnits(), fontSize);
+					renderer.getGlobalYRatioBetweenPixelsAndModelUnits()/renderer.getZoomLevel(), fontSize);
 			final String[] texturePaths = new String[1];
 			texturePaths[0] = fontName + style;
 			final int[] textureIds = new int[1];

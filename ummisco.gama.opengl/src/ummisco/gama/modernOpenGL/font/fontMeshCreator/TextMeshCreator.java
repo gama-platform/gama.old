@@ -62,9 +62,10 @@ public class TextMeshCreator {
 		List<Float> vertices = new ArrayList<Float>();
 		List<Float> textureCoords = new ArrayList<Float>();
 		for (Line line : lines) {
-			if (text.isCentered()) {
-				curserX = (line.getMaxLength() - line.getLineLength()) / 2;
-			}
+//			if (text.isCentered()) {
+//				curserX = (line.getMaxLength() - line.getLineLength()) / 2;
+			curserY = 3*LINE_HEIGHT * text.getFontSize()/4; // weird value, but seems to have an aspect close to the old renderer.
+//			}
 			for (Word word : line.getWords()) {
 				for (Character letter : word.getCharacters()) {
 					addVerticesForCharacter(curserX, curserY, letter, text.getFontSize(), vertices);
@@ -86,10 +87,10 @@ public class TextMeshCreator {
 		double y = curserY + (character.getyOffset() * fontSize);
 		double maxX = x + (character.getSizeX() * fontSize);
 		double maxY = y + (character.getSizeY() * fontSize);
-		double properX = (2 * x) - 1;
-		double properY = -(2 * y) + 1;
-		double properMaxX = (2 * maxX) - 1;
-		double properMaxY = -(2 * maxY) + 1;
+		double properX = (2 * x);
+		double properY = -(2 * y);
+		double properMaxX = (2 * maxX);
+		double properMaxY = -(2 * maxY);
 		addVertices(vertices, properX, properY, properMaxX, properMaxY);
 	}
 

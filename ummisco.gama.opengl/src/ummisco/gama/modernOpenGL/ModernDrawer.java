@@ -40,6 +40,7 @@ public class ModernDrawer {
 	
 	private ArrayList<Integer> listOfVAOUsed = new ArrayList<Integer>();
 	private ArrayList<AbstractShader> shaderLoaded = new ArrayList<AbstractShader>();
+	private ArrayList<AbstractPostprocessingShader> postProcessingShaderLoaded = new ArrayList<AbstractPostprocessingShader>();
 	private HashMap<AbstractShader,int[]> typeOfDrawingMap = new HashMap<AbstractShader,int[]>();
 	
 	private HashMap<LayerObject,ModernLayerStructure> layerStructureMap = new HashMap<LayerObject,ModernLayerStructure>();
@@ -143,12 +144,19 @@ public class ModernDrawer {
 		return false;
 	}
 	
-	public void clearVBO() {
+	public void cleanUp() {
 		for (Integer vao : listOfVAOUsed) {
 			gl.glDisableVertexAttribArray(vao);
 		}
 		listOfVAOUsed.clear();
+		for (AbstractShader shader : shaderLoaded) {
+			shader.cleanUp();
+		}
+		for (AbstractShader shader : postProcessingShaderLoaded) {
+			shader.cleanUp();
+		}
 		shaderLoaded.clear();
+		postProcessingShaderLoaded.clear();
 		typeOfDrawingMap.clear();
 		layerStructureMap.clear();
 	}
@@ -255,9 +263,10 @@ public class ModernDrawer {
 		}
 	}
 	
-	private FrameBufferObject applyPostprocessing(FrameBufferObject inputFbo, AbstractShader shader, int effectNumber, boolean lastEffect) {
+	private FrameBufferObject applyPostprocessing(FrameBufferObject inputFbo, AbstractPostprocessingShader shader, int effectNumber, boolean lastEffect) {
 		fboHandles = new int[5];
 		this.gl.glGenBuffers(5, fboHandles, 0);
+		postProcessingShaderLoaded.add(shader);
 		
 		// create the output fbo
 		FrameBufferObject outputFbo = null;

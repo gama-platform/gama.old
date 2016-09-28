@@ -31,7 +31,7 @@ class StringObjectTransformer extends AbstractTransformer {
 		
 		this.textureIDs = textureIds;
 		this.texturePaths = texturePaths;
-		this.fontSize = (strObj.getFont() != null) ? strObj.getFont().getSize() : 18; // FIXME : need refactoring (already computed in DrawingEntityGenerator)
+		this.fontSize = (strObj.getFont() != null) ? 2*strObj.getFont().getSize() : 2*18; // FIXME : need refactoring (already computed in DrawingEntityGenerator)
 		this.isBillboarding = !((TextDrawingAttributes)strObj.getAttributes()).perspective;
 		this.isLightInteraction = false;
 		this.type = Type.POLYGON;
@@ -73,13 +73,12 @@ class StringObjectTransformer extends AbstractTransformer {
 		filledEntity.setIndices(getIdxBuffer());
 		filledEntity.setColors(getColorArray(color,coords));
 		filledEntity.setMaterial(new Material(this.material.getDamper(),this.material.getReflectivity(),isLightInteraction));
-		filledEntity.type = DrawingEntity.Type.FACE;
 		filledEntity.setTextureID(textureIDs[0]);
 		filledEntity.setTexturePath(texturePaths[0]);
 		filledEntity.setUvMapping(uvMapping);
 		filledEntity.type = DrawingEntity.Type.STRING;
 		filledEntity.setFontEdge((float) (0.5/Math.sqrt(fontSize))); // the font edge is function of the size of the font
-		filledEntity.setFontWidth(0.5f); // this value looks nice...
+		filledEntity.setFontWidth(0.48f); // this value looks nice to fit with the "old" renderer.
 		if (isBillboarding) {
 			filledEntity.type = DrawingEntity.Type.BILLBOARDING;
 			filledEntity.enableBillboarding();
