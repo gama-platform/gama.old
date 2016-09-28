@@ -13,6 +13,7 @@ package ummisco.gama.ui.parameters;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -25,7 +26,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.GamaColors;
@@ -46,7 +46,7 @@ public class EditorsDialog extends Dialog {
 	private final IScope scope;
 
 	public EditorsDialog(final IScope scope, final Shell parentShell, final Map<String, Object> values,
-		final Map<String, IType> types, final String title) {
+			final Map<String, IType> types, final String title) {
 		super(parentShell);
 		this.scope = scope;
 		this.title = title;
@@ -69,6 +69,7 @@ public class EditorsDialog extends Dialog {
 
 	/**
 	 * Method createContents()
+	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#createContents(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -95,18 +96,14 @@ public class EditorsDialog extends Dialog {
 		data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		data.heightHint = 20;
 		sep.setLayoutData(data);
-		for ( final Map.Entry<String, Object> entry : values.entrySet() ) {
-			final InputParameter param =
-				new InputParameter(entry.getKey(), entry.getValue(), types.get(entry.getKey()));
-			final EditorListener listener = new EditorListener() {
-
-				@Override
-				public void valueModified(final Object newValue) throws GamaRuntimeException {
-					param.setValue(scope, newValue);
-					values.put(entry.getKey(), newValue);
-				}
+		for (final Map.Entry<String, Object> entry : values.entrySet()) {
+			final InputParameter param = new InputParameter(entry.getKey(), entry.getValue(),
+					types.get(entry.getKey()));
+			final EditorListener listener = newValue -> {
+				param.setValue(scope, newValue);
+				values.put(entry.getKey(), newValue);
 			};
-			EditorFactory.create(scope, composite, param, listener, false);
+			EditorFactory.create(scope, composite, param, listener, false, false);
 		}
 		// composite.setSize(composite.computeSize(300, SWT.DEFAULT));
 		composite.layout();

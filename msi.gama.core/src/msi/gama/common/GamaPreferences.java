@@ -146,8 +146,22 @@ public class GamaPreferences {
 
 	public static class GenericFile extends GamaFile {
 
+		private boolean shouldExist;
+
 		public GenericFile(final String pathName) throws GamaRuntimeException {
 			super(null, pathName);
+		}
+
+		public GenericFile(final String pathName, final boolean shouldExist) {
+			this(pathName);
+			this.shouldExist = shouldExist;
+		}
+
+		@Override
+		public boolean shouldExist() {
+			if (shouldExist)
+				return super.shouldExist();
+			return false;
 		}
 
 		public GenericFile(final IScope scope, final String pathName) throws GamaRuntimeException {
@@ -620,12 +634,12 @@ public class GamaPreferences {
 	 */
 	public static final Entry<? extends IGamaFile> LIB_SPATIALITE = create("core.lib_spatialite",
 			"Path to the Spatialite (see http://www.gaia-gis.it/gaia-sins/) library",
-			new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group("Paths");
+			new GenericFile("Enter path", false), IType.FILE).in(LIBRARIES).group("Paths");
 	/**
 	 * R
 	 */
 	public static final Entry<? extends IGamaFile> LIB_R = create("core.lib_r",
-			"Path to the RScript (see http://www.r-project.org) library", new GenericFile(getDefaultRPath()),
+			"Path to the RScript (see http://www.r-project.org) library", new GenericFile(getDefaultRPath(), false),
 			IType.FILE).in(LIBRARIES).group("Paths");
 	/**
 	 * GeoTools
@@ -794,7 +808,7 @@ public class GamaPreferences {
 			break;
 		case IType.FILE:
 			if (storeKeys.contains(key)) {
-				gp.setValue(scope, new GenericFile(store.get(key, "")));
+				gp.setValue(scope, new GenericFile(store.get(key, ""), false));
 			} else {
 				store.put(key, value == null ? "" : ((IGamaFile) value).getPath(scope));
 			}

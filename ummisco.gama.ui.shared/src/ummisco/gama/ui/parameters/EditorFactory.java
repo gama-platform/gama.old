@@ -118,18 +118,19 @@ public class EditorFactory {
 	}
 
 	public static AbstractEditor create(final IScope scope, final Composite parent, final IParameter var) {
-		return create(scope, parent, var, false);
+		return create(scope, parent, var, false, false);
 	}
 
 	public static AbstractEditor create(final IScope scope, final Composite parent, final IParameter var,
-			final boolean isSubParameter) {
-		return create(scope, parent, var, null, isSubParameter);
+			final boolean isSubParameter, final boolean dontUseScope) {
+		return create(scope, parent, var, null, isSubParameter, dontUseScope);
 	}
 
 	public static AbstractEditor create(final IScope scope, final Composite parent, final IParameter var,
-			final EditorListener l, final boolean isSubParameter) {
+			final EditorListener l, final boolean isSubParameter, final boolean dontUseScope) {
 		final AbstractEditor ed = instance.create(scope, (IAgent) null, var, l);
 		ed.isSubParameter(isSubParameter);
+		ed.dontUseScope(dontUseScope);
 		ed.createComposite(parent);
 		return ed;
 	}

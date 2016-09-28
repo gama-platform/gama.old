@@ -292,7 +292,7 @@ public class GamaPreferencesView {
 			});
 			final boolean isSubParameter = activations.containsKey(e.getKey());
 
-			final AbstractEditor ed = EditorFactory.create(null, compo, e, isSubParameter);
+			final AbstractEditor ed = EditorFactory.create(null, compo, e, isSubParameter, true);
 			// ed.acceptPopup(false);
 			editors.put(e.getKey(), ed);
 		}
@@ -437,14 +437,10 @@ public class GamaPreferencesView {
 				// pn.disposeResources();
 				// pn.createPage();
 				// }
-				WorkbenchHelper.asyncRun(new Runnable() {
-
-					@Override
-					public void run() {
-						final PreferenceDialog pd = WorkbenchPreferenceDialog.createDialogOn(parentShell, null);
-						pd.open();
-						shell.setVisible(true);
-					}
+				WorkbenchHelper.asyncRun(() -> {
+					final PreferenceDialog pd = WorkbenchPreferenceDialog.createDialogOn(parentShell, null);
+					pd.open();
+					shell.setVisible(true);
 				});
 
 			}

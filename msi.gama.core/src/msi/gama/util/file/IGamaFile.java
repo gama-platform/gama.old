@@ -62,6 +62,12 @@ public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V>
 	@Override
 	public abstract IGamaFile copy(IScope scope);
 
+	public default boolean shouldExist() {
+		return getBuffer() == null;
+	}
+
+	public C getBuffer();
+
 	@getter(value = IKeyword.EXISTS, initializer = true)
 	public abstract Boolean exists(IScope scope);
 

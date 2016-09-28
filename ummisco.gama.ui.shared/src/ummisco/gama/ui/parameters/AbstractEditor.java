@@ -18,8 +18,6 @@ import java.util.Set;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseEvent;
@@ -152,6 +150,7 @@ public abstract class AbstractEditor<T>
 		}
 
 	};
+	private boolean dontUseScope;
 
 	public AbstractEditor(final IScope scope, final IParameter variable) {
 		this(scope, null, variable, null);
@@ -167,6 +166,8 @@ public abstract class AbstractEditor<T>
 
 	@Override
 	public IScope getScope() {
+		if (dontUseScope)
+			return null;
 		if (scope != null)
 			return scope;
 		if (agent != null)
@@ -343,13 +344,9 @@ public abstract class AbstractEditor<T>
 		// });
 		for (final Control c : controlsThatShowHideToolbars) {
 			c.addMouseTrackListener(hideShowToolbarListener);
-			c.addDisposeListener(new DisposeListener() {
-
-				@Override
-				public void widgetDisposed(final DisposeEvent e) {
-					c.removeMouseTrackListener(hideShowToolbarListener);
-					controlsThatShowHideToolbars.remove(c);
-				}
+			c.addDisposeListener(e -> {
+				c.removeMouseTrackListener(hideShowToolbarListener);
+				controlsThatShowHideToolbars.remove(c);
 			});
 		}
 		if (GAMA.getExperiment() == null || !GAMA.getExperiment().isBatch())
@@ -498,23 +495,18 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected void setParameterValue(final T val) {
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					if (listener == null) {
-						valueModified(val);
-					} else {
-						listener.valueModified(val);
-					}
-				} catch (final GamaRuntimeException e) {
-					e.printStackTrace();
-					e.addContext("Value of " + name + " cannot be modified");
-					GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.create(e, GAMA.getRuntimeScope()),
-							false);
-					return;
+		WorkbenchHelper.run(() -> {
+			try {
+				if (listener == null) {
+					valueModified(val);
+				} else {
+					listener.valueModified(val);
 				}
+			} catch (final GamaRuntimeException e) {
+				e.printStackTrace();
+				e.addContext("Value of " + name + " cannot be modified");
+				GAMA.reportError(GAMA.getRuntimeScope(), GamaRuntimeException.create(e, GAMA.getRuntimeScope()), false);
+				return;
 			}
 		});
 	}
@@ -635,13 +627,9 @@ public abstract class AbstractEditor<T>
 	}
 
 	private void displayParameterValueAndCheckButtons() {
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				displayParameterValue();
-				checkButtons();
-			}
+		WorkbenchHelper.run(() -> {
+			displayParameterValue();
+			checkButtons();
 		});
 
 	}
@@ -722,6 +710,11 @@ public abstract class AbstractEditor<T>
 	@Override
 	public T getCurrentValue() {
 		return currentValue;
+	}
+
+	public void dontUseScope(final boolean dontUseScope) {
+		this.dontUseScope = dontUseScope;
+
 	}
 
 }

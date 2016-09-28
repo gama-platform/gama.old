@@ -34,14 +34,12 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.dialogs.AbstractDetailsDialog;
 import ummisco.gama.ui.experiment.parameters.AgentAttributesEditorsList;
-import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
@@ -168,15 +166,10 @@ public class UserControlDialog extends AbstractDetailsDialog {
 				for (final UserInputStatement i : inputs) {
 
 					scope.addVarWithValue(i.getTempVarName(), i.value(scope));
-					EditorFactory.create(scope, composite, i, new EditorListener() {
-
-						@Override
-						public void valueModified(final Object newValue) throws GamaRuntimeException {
-							i.setValue(scope, newValue);
-							c.executeOn(scope);
-						}
-
-					}, false);
+					EditorFactory.create(scope, composite, i, newValue -> {
+						i.setValue(scope, newValue);
+						c.executeOn(scope);
+					}, false, false);
 				}
 
 				final Label sep = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);

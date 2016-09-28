@@ -299,7 +299,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	@Override
 	public V getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		getContents(scope);
-		return (V) getBuffer().getFromIndicesList(scope, indices);
+		return getBuffer().getFromIndicesList(scope, indices);
 	}
 
 	@Override
@@ -324,7 +324,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 			if (scope == null || scope.getExperiment() == null)
 				path = originalPath;
 			else {
-				setPath(FileUtils.constructAbsoluteFilePath(scope, originalPath, getBuffer() == null));
+				setPath(FileUtils.constructAbsoluteFilePath(scope, originalPath, shouldExist()));
 				checkValidity(scope);
 			}
 		}
@@ -440,7 +440,8 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		return file;
 	}
 
-	protected C getBuffer() {
+	@Override
+	public C getBuffer() {
 		return buffer;
 	}
 

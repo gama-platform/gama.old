@@ -33,13 +33,11 @@ import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.controls.FlatButton;
-import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
@@ -136,14 +134,10 @@ public class UserControlView extends GamaViewPart implements IGamaView.User {
 				});
 				for (final UserInputStatement i : inputs) {
 					scope.addVarWithValue(i.getTempVarName(), i.value(scope));
-					EditorFactory.create(scope, commandComposite, i, new EditorListener() {
-
-						@Override
-						public void valueModified(final Object newValue) throws GamaRuntimeException {
-							i.setValue(scope, newValue);
-							i.executeOn(scope);
-						}
-					}, false);
+					EditorFactory.create(scope, commandComposite, i, newValue -> {
+						i.setValue(scope, newValue);
+						i.executeOn(scope);
+					}, false, false);
 				}
 
 			}
