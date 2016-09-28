@@ -14,9 +14,11 @@ package ummisco.gaml.extensions.maths.ode.statements;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.math3.exception.DimensionMismatchException;
@@ -118,8 +120,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		}
 	}
 
-	public final Map<String, SingleEquationStatement> equations = new TOrderedHashMap<>();
-	public final Map<String, IExpression> variables_diff = new TOrderedHashMap<>();
+	public final Map<Integer, SingleEquationStatement> equations = new HashMap<Integer, SingleEquationStatement>();
+	public final Map<Integer, IExpression> variables_diff = new HashMap<Integer, IExpression>();
 	public IExpression variable_time = null;
 	private IScope currentScope;
 	IExpression simultan = null;
@@ -176,11 +178,11 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		for (final ISymbol s : cmd) {
 			if (s instanceof SingleEquationStatement) {
 				((SingleEquationStatement) s).establishVar();
-				equations.put(((SingleEquationStatement) s).toString(), (SingleEquationStatement) s);
 				for (int i = 0; i < ((SingleEquationStatement) s).getVars().size(); i++) {
 					final IExpression v = ((SingleEquationStatement) s).getVar(i);
 					if (((SingleEquationStatement) s).getOrder() > 0) {
-						variables_diff.put(((SingleEquationStatement) s).toString(), v);
+						equations.put(equations.size(), (SingleEquationStatement) s);
+						variables_diff.put(variables_diff.size(), v);
 					}
 				}
 				variable_time = ((SingleEquationStatement) s).getVarTime();
@@ -192,11 +194,11 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	public void assignValue(final IScope scope, final double time, final double[] y) {
-		final List<SingleEquationStatement> equationValues = new ArrayList<SingleEquationStatement>(equations.values());
-		final List<IExpression> variableValues = new ArrayList<IExpression>(variables_diff.values());
-		for (int i = 0, n = equationValues.size(); i < n; i++) {
+//		final List<SingleEquationStatement> equationValues = new ArrayList<SingleEquationStatement>(equations.values());
+//		final List<IExpression> variableValues = new ArrayList<IExpression>(variables_diff.values());
+		for (int i = 0, n = equations.size(); i < n; i++) {
 
-			final SingleEquationStatement s = equationValues.get(i);
+			final SingleEquationStatement s = equations.get(i);
 			if (s.getOrder() == 0) {
 				continue;
 			}
@@ -209,8 +211,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 					if (s.getVarTime() instanceof IVarExpression) {
 						((IVarExpression) s.getVarTime()).setVal(scope, time, false);
 					}
-					if (variableValues.get(i) instanceof IVarExpression) {
-						((IVarExpression) variableValues.get(i)).setVal(scope, y[i], false);
+					if (variables_diff.get(i) instanceof IVarExpression) {
+						((IVarExpression) variables_diff.get(i)).setVal(scope, y[i], false);
 					}
 				} catch (final Throwable ex1) {
 					GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(ex1, scope), true);
@@ -223,8 +225,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 		}
 
-		for (int i = 0, n = equationValues.size(); i < n; i++) {
-			final SingleEquationStatement s = equationValues.get(i);
+		for (int i = 0, n = equations.size(); i < n; i++) {
+			final SingleEquationStatement s = equations.get(i);
 			if (s.getOrder() == 0) {
 				final IExpression tmp = ((UnaryOperator) s.getFunction()).arg(0);
 				final Object v = s.getExpression().value(currentScope);
@@ -262,12 +264,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		 * SingleEquation values
 		 */
 
-		final List<SingleEquationStatement> equationValues = new ArrayList<SingleEquationStatement>(equations.values());
-		final IList<IAgent> equaAgents = getEquationAgents(currentScope);
+//		final List<SingleEquationStatement> equationValues = new ArrayList<SingleEquationStatement>(equations.values());
+		final Map<Integer,IAgent> equaAgents = getEquationAgents(currentScope);
 		for (int i = 0, n = getDimension(); i < n; i++) {
 			try {
 				final Object[] result = new Object[1];
-				currentScope.execute(equationValues.get(i), equaAgents.get(i), null, result);
+				currentScope.execute(equations.get(i), equaAgents.get(i), null, result);
 				ydot[i] = Cast.asFloat(currentScope, result[0]);
 			} catch (final Throwable e2) {
 				GAMA.reportAndThrowIfNeeded(currentScope, GamaRuntimeException.create(e2, currentScope), true);
@@ -307,10 +309,10 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		return result;
 	}
 
-	public IList<IAgent> getEquationAgents(final IScope scope) {
-		IList<IAgent> result = (IList<IAgent>) scope.getAgent().getAttribute("__equationAgents");
+	public Map<Integer,IAgent> getEquationAgents(final IScope scope) {
+		Map<Integer,IAgent> result = (Map<Integer, IAgent>) scope.getAgent().getAttribute("__equationAgents");
 		if (result == null) {
-			result = GamaListFactory.create();
+			result = new HashMap();
 			scope.getAgent().setAttribute("__equationAgents", result);
 		}
 		return result;
@@ -338,7 +340,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private void addInternalAgents(final IScope scope) {
-		getEquationAgents(scope).addAll(Collections.nCopies(equations.size(), scope.getAgent()));
+		for(int i = 0 ; i < equations.size(); i++){			
+			getEquationAgents(scope).put(i, scope.getAgent());
+		}
 	}
 
 	private void addExternalAgents(final IScope scope) {
@@ -365,21 +369,18 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		final SystemOfEquationsStatement ses = remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class,
 				getName());
 		if (ses != null) {
-			for (int i = 0; i < ses.equations.size(); i++) {
-				getEquationAgents(currentScope).add(remoteAgent);
+			for (int i = 0, n=ses.equations.size(); i < n; i++) {
+				getEquationAgents(currentScope).put(getEquationAgents(currentScope).size(),remoteAgent);
 			}
-			if (equations.keySet().containsAll(ses.equations.keySet())) {
-				return;
-			}
-			for (final Map.Entry<String, SingleEquationStatement> s : ses.equations.entrySet()) {
+			for (final Entry<Integer, SingleEquationStatement> s : ses.equations.entrySet()) {
 				final String name = remoteAgent.getName() + s.getKey();
 				final SingleEquationStatement eq = s.getValue();
-				equations.put(name, eq);
+				equations.put(equations.size(), eq);
 			}
-			for (final Map.Entry<String, IExpression> s : ses.variables_diff.entrySet()) {
+			for (final Entry<Integer, IExpression> s : ses.variables_diff.entrySet()) {
 				final String name = remoteAgent.getName() + s.getKey();
 				final IExpression v = s.getValue();
-				variables_diff.put(name, v);
+				variables_diff.put(variables_diff.size(), v);
 			}
 		}
 
@@ -389,9 +390,10 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		final SystemOfEquationsStatement ses = remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class,
 				getName());
 		if (ses != null) {
-			for (final String s : ses.equations.keySet()) {
-				equations.remove(remoteAgent.getName() + s);
-				variables_diff.remove(remoteAgent.getName() + s);
+			int n=equations.size();
+			for (final Integer s : ses.equations.keySet()) {
+				equations.remove(n-s-1);
+				variables_diff.remove(n-s-1);
 			}
 		}
 	}

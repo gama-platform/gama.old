@@ -62,7 +62,7 @@ public class ClassicalSIRSEquations {
 								+ v[0].literalValue() + " * " + v[1].literalValue() + " / " + p[0].literalValue()
 								+ ") + " + "(- " + p[4].literalValue() + " * " + v[0].literalValue() + " )",
 						getDescription()));
-		eq1.establishVar();
+//		eq1.establishVar();
 		cmd.add(eq1);
 
 		final SingleEquationStatement eq2 = new SingleEquationStatement(stm);
@@ -73,7 +73,7 @@ public class ClassicalSIRSEquations {
 						+ " / " + p[0].literalValue() + ") + " + "( - " + p[2].literalValue() + " * "
 						+ v[1].literalValue() + ") + " + "( - " + p[4].literalValue() + " * " + v[1].literalValue()
 						+ ")", getDescription()));
-		eq2.establishVar();
+//		eq2.establishVar();
 		cmd.add(eq2);
 
 		final SingleEquationStatement eq3 = new SingleEquationStatement(stm);
@@ -83,7 +83,7 @@ public class ClassicalSIRSEquations {
 				.createExpr("(" + p[2].literalValue() + " * " + v[1].literalValue() + ") + " + "(- "
 						+ p[3].literalValue() + " * " + v[2].literalValue() + ") + " + "(- " + p[4].literalValue()
 						+ " * " + v[2].literalValue() + ")", getDescription()));
-		eq3.establishVar();
+//		eq3.establishVar();
 		cmd.add(eq3);
 		return cmd;
 	}

@@ -13,6 +13,7 @@ package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.math3.exception.NotANumberException;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
@@ -37,10 +38,10 @@ public abstract class Solver {
 	final double step;
 
 	Solver(final double step, final FirstOrderIntegrator integrator,
-			final GamaMap<String, IList<Double>> integratedValues) {
+			final GamaMap<String, IList<Double>> integrated_val) {
 		this.step = step;
 		this.integrator = integrator;
-		if (integratedValues != null)
+		if (integrated_val != null)
 			integrator.addStepHandler(new StepHandler() {
 
 				@Override
@@ -52,7 +53,7 @@ public abstract class Solver {
 					final double time = interpolator.getCurrentTime();
 					final double[] y = interpolator.getInterpolatedState();
 					count++;
-					storeValues(time, y, integratedValues);
+					storeValues(time, y, integrated_val);
 				}
 			});
 	}
@@ -66,7 +67,7 @@ public abstract class Solver {
 
 			@Override
 			public void run() {
-				final IList<IAgent> equationAgents = eq.getEquationAgents(scope);
+				final Map<Integer, IAgent> equationAgents = eq.getEquationAgents(scope);
 				/*
 				 * prepare initial value of variables 1. loop through variables
 				 * expression 2. if its equaAgents != null, it mean variable of
@@ -75,17 +76,17 @@ public abstract class Solver {
 				 */
 
 				final double[] y = new double[eq.variables_diff.size()];
-				final List<IExpression> equationValues = new ArrayList(eq.variables_diff.values());
-				for (int i = 0, n = equationValues.size(); i < n; i++) {
+//				final ArrayList<IExpression> equationValues = new ArrayList<IExpression>(eq.variables_diff.values());
+				int i=0,n = eq.variables_diff.size();
+				for (i = 0; i < n; i++) {
 					final IAgent a = equationAgents.get(i);
-					if (integrationValues.size() < n) {
-						integrationValues.put(equationValues.get(i).toString(),
-								GamaListFactory.create(Double.class));
+					if (integrationValues.values().size() < n) {
+						integrationValues.put(a+eq.variables_diff.get(i).toString(),GamaListFactory.create(Double.class));
 					}
 					if (!a.dead()) {
 						final boolean pushed = scope.push(a);
 						try {
-							y[i] = Cast.asFloat(scope, equationValues.get(i).value(scope));
+							y[i] = Cast.asFloat(scope, eq.variables_diff.get(i).value(scope));
 							if(Double.isInfinite(y[i])){
 								GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(new NotANumberException(),scope), true);					
 							}
@@ -100,7 +101,7 @@ public abstract class Solver {
 
 				}
 				if (integrationValues.get(eq.variable_time.getName()) == null) {
-					integrationValues.put(eq.variable_time.getName(), GamaListFactory.create(Double.class));
+					integrationValues.put(scope.getAgent()+eq.variable_time.getName(), GamaListFactory.create(Double.class));
 				}
 
 				if (scope.getClock().getCycle() == 0) {
@@ -124,9 +125,9 @@ public abstract class Solver {
 			final GamaMap<String, IList<Double>> integrationValues) {
 		if (integrationValues != null) {
 			for (int i = 0; i < y.length; i++) {
-				integrationValues.getValues().get(i).add(y[i]);
+				integrationValues.valueAt(i).add(y[i]);
 			}
-			integrationValues.getValues().get(y.length).add(time);
+			integrationValues.valueAt(y.length).add(time);
 		}
 
 	}

@@ -63,7 +63,7 @@ public class ClassicalLVEquations {
 		eq1.setExpression(
 				GAML.getExpressionFactory().createExpr(v[0].literalValue() + " * " + " ( " + p[0].literalValue() + " - "
 						+ p[1].literalValue() + " * " + v[1].literalValue() + ")", getDescription()));
-		eq1.establishVar();
+//		eq1.establishVar();
 		cmd.add(eq1);
 
 		final SingleEquationStatement eq2 = new SingleEquationStatement(stm);
@@ -72,7 +72,7 @@ public class ClassicalLVEquations {
 		eq2.setExpression(
 				GAML.getExpressionFactory().createExpr("- " + v[1].literalValue() + " * " + " ( " + p[2].literalValue()
 						+ " - " + p[3].literalValue() + " * " + v[0].literalValue() + ")", getDescription()));
-		eq2.establishVar();
+//		eq2.establishVar();
 		cmd.add(eq2);
 
 		return cmd;

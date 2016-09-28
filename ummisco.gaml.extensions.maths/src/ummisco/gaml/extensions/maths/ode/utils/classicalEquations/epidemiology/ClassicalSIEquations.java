@@ -57,7 +57,7 @@ public class ClassicalSIEquations {
 		eq1.setExpression(
 				GAML.getExpressionFactory().createExpr("(- " + p[1].literalValue() + " * " + v[0].literalValue() + " * "
 						+ v[1].literalValue() + " / " + p[0].literalValue() + ")", getDescription()));
-		eq1.establishVar();
+//		eq1.establishVar();
 		cmd.add(eq1);
 
 		final SingleEquationStatement eq2 = new SingleEquationStatement(stm);
@@ -66,7 +66,7 @@ public class ClassicalSIEquations {
 		eq2.setExpression(
 				GAML.getExpressionFactory().createExpr("( " + p[1].literalValue() + " * " + v[0].literalValue() + " * "
 						+ v[1].literalValue() + " / " + p[0].literalValue() + ")", getDescription()));
-		eq2.establishVar();
+//		eq2.establishVar();
 		cmd.add(eq2);
 
 		return cmd;
