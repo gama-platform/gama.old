@@ -129,40 +129,36 @@ public class WorkspaceModelsManager {
 		if ( file != null ) {
 			final String fp = filePath;
 			final String en = expName;
-			final Runnable run = new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						// System.out.println(Thread.currentThread().getName() + ": Rebuilding the model " + fp);
-						// Force the project to rebuild itself in order to load the various XText plugins.
-						file.touch(null);
-						file.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
-					} catch (final CoreException e) {
-						System.out.println(
-							Thread.currentThread().getName() + ": File " + file.getFullPath() + " cannot be built");
-						return;
-					}
-					while (GAMA.getRegularGui() == null) {
-						try {
-							Thread.sleep(100);
-							// System.out.println(Thread.currentThread().getName() +
-							// ": waiting for the modeling and simulation environments to be available");
-						} catch (final InterruptedException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-					}
-					if ( en == null ) {
-						// System.out
-						// .println(Thread.currentThread().getName() + ": Opening the model " + fp + " in the editor");
-						GAMA.getGui().editModel(file);
-					} else {
-						// System.out.println(Thread.currentThread().getName() + ": Trying to run experiment " + en);
-						GAMA.getGui().runModel(file, en);
-					}
-
+			final Runnable run = () -> {
+				try {
+					// System.out.println(Thread.currentThread().getName() + ": Rebuilding the model " + fp);
+					// Force the project to rebuild itself in order to load the various XText plugins.
+					file.touch(null);
+					file.getProject().build(IncrementalProjectBuilder.FULL_BUILD, null);
+				} catch (final CoreException e1) {
+					System.out.println(
+						Thread.currentThread().getName() + ": File " + file.getFullPath() + " cannot be built");
+					return;
 				}
+				while (GAMA.getRegularGui() == null) {
+					try {
+						Thread.sleep(100);
+						// System.out.println(Thread.currentThread().getName() +
+						// ": waiting for the modeling and simulation environments to be available");
+					} catch (final InterruptedException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					}
+				}
+				if ( en == null ) {
+					// System.out
+					// .println(Thread.currentThread().getName() + ": Opening the model " + fp + " in the editor");
+					GAMA.getGui().editModel(file);
+				} else {
+					// System.out.println(Thread.currentThread().getName() + ": Trying to run experiment " + en);
+					GAMA.getGui().runModel(file, en);
+				}
+
 			};
 			new Thread(run, "Automatic opening of " + filePath).start();
 
@@ -224,12 +220,13 @@ public class WorkspaceModelsManager {
 			if ( projectFileBean != null ) {
 				/* parcours des fils pour trouver le dot file et creer le lien vers le projet */
 				final File[] children = projectFileBean.listFiles();
-				for ( int i = 0; i < children.length; i++ ) {
-					if ( children[i].getName().equals(".project") ) {
-						dotFile = children[i];
-						break;
+				if ( children != null )
+					for ( int i = 0; i < children.length; i++ ) {
+						if ( children[i].getName().equals(".project") ) {
+							dotFile = children[i];
+							break;
+						}
 					}
-				}
 			}
 		}
 
@@ -461,23 +458,18 @@ public class WorkspaceModelsManager {
 
 	}
 
-	private static final FilenameFilter isDotFile = new FilenameFilter() {
-
-		@Override
-		public boolean accept(final File dir, final String name) {
-			return name.equals(".project");
-		}
-
-	};
+	private static final FilenameFilter isDotFile = (dir, name) -> name.equals(".project");
 
 	private static void findProjects(final File folder, final Map<File, IPath> found) {
 		if ( folder == null ) { return; }
 		final File[] dotFile = folder.listFiles(isDotFile);
 		if ( dotFile == null ) { return; } // not a directory
 		if ( dotFile.length == 0 ) { // no .project file
-			for ( final File f : folder.listFiles() ) {
-				findProjects(f, found);
-			}
+			final File[] files = folder.listFiles();
+			if ( files != null )
+				for ( final File f : folder.listFiles() ) {
+					findProjects(f, found);
+				}
 			return;
 		}
 		found.put(folder, new Path(dotFile[0].getAbsolutePath()));
