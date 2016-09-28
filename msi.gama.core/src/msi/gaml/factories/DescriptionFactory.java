@@ -32,8 +32,8 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
+import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -55,13 +55,9 @@ public class DescriptionFactory {
 	static TIntObjectHashMap<SymbolProto> KINDS_PROTOS = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
 
 	public static void addFactory(final SymbolFactory factory) {
-		factory.getHandles().forEach(new TIntProcedure() {
-
-			@Override
-			public boolean execute(final int i) {
-				FACTORIES.put(i, factory);
-				return true;
-			}
+		factory.getHandles().forEach((TIntProcedure) i -> {
+			FACTORIES.put(i, factory);
+			return true;
 		});
 
 	}
@@ -235,7 +231,7 @@ public class DescriptionFactory {
 
 	public static ModelDescription createRootModelDescription(final String name, final Class clazz,
 			final SpeciesDescription macro, final SpeciesDescription parent) {
-		return ((ModelFactory) getFactory(ISymbolKind.MODEL)).createRootModel(name, clazz, macro, parent);
+		return ModelFactory.createRootModel(name, clazz, macro, parent);
 	}
 
 	public static final IDescription create(final ISyntacticElement source, final IDescription superDesc,
@@ -252,16 +248,12 @@ public class DescriptionFactory {
 		ChildrenProvider children = cp;
 		if (children == null) {
 			final List<IDescription> children_list = new ArrayList();
-			final SyntacticVisitor visitor = new SyntacticVisitor() {
-
-				@Override
-				public void visit(final ISyntacticElement element) {
-					final IDescription desc = create(element, superDesc, null);
-					if (desc != null) {
-						children_list.add(desc);
-					}
-
+			final SyntacticVisitor visitor = element -> {
+				final IDescription desc = create(element, superDesc, null);
+				if (desc != null) {
+					children_list.add(desc);
 				}
+
 			};
 			source.visitChildren(visitor);
 			source.visitSpecies(visitor);

@@ -47,7 +47,7 @@ public class ModelFactory extends SymbolFactory {
 		return assembler.assemble(projectPath, modelPath, models, collector, document, mm);
 	}
 
-	public ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
+	public static ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
 			final SpeciesDescription parent) {
 		ModelDescription.ROOT = new ModelDescription(name, clazz, macro, parent);
 		return ModelDescription.ROOT;
