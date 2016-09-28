@@ -30,6 +30,7 @@ abstract class AbstractTransformer {
 
 	protected boolean geometryCorrupted = false;
 	
+	protected boolean isOverlay = false;
 	protected boolean isTriangulation = false;
 	protected boolean isLightInteraction = true;
 	protected boolean isWireframe = false;
@@ -67,6 +68,7 @@ abstract class AbstractTransformer {
 	protected GamaMaterial material;
 
 	protected void genericInit(final AbstractObject object, final boolean isTriangulation) {
+		this.isOverlay = object.isOverlay();
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
 		this.coordsForBorder = new float[0];
@@ -478,6 +480,7 @@ abstract class AbstractTransformer {
 		for (int i = 0; i < result.length; i++) {
 			final DrawingEntity drawingEntity = drawingEntityList.get(i);
 			drawingEntity.setPickingIds(getPickingIdx());
+			drawingEntity.enableOverlay(isOverlay);
 			result[i] = drawingEntity;
 		}
 

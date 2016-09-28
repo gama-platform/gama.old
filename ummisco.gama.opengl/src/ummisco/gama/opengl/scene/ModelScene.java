@@ -56,6 +56,7 @@ public class ModelScene {
 	public static final String FRAME_KEY = "__frame__0";
 	public static final String ROTATION_HELPER_KEY = "__rotation__0";
 	public static final String LIGHTS_KEY = "__lights__0";
+	public static final String FPS_KEY = "z__fps__0";
 	protected final Map<String, LayerObject> layers = new LinkedHashMap<String, LayerObject>();
 	protected LayerObject currentLayer;
 	protected final Abstract3DRenderer renderer;
@@ -82,6 +83,8 @@ public class ModelScene {
 		if (renderer.useShader()) {
 			layers.put(ROTATION_HELPER_KEY, new HelperLayerObject(renderer));
 			layers.put(LIGHTS_KEY, new LightsLayerObject(renderer));
+			if (renderer.data.isShowfps())
+				layers.put(FPS_KEY, new FPSLayerObject(renderer));
 		}
 	}
 
@@ -160,7 +163,15 @@ public class ModelScene {
 			layers.put(ROTATION_HELPER_KEY, rotLayer);
 		}
 
-		final LayerObject[] array = layers.values().toArray(new LayerObject[0]);
+		ArrayList<LayerObject> list = new ArrayList(layers.values());
+		// reorder the list, to put the overlay at the end
+		for (int i = list.size()-1 ; i >= 0 ; i-- ) {
+			if (list.get(i).isOverlay()) {
+				list.add(list.get(i));
+				list.remove(i);
+			}
+		}
+		final LayerObject[] array = list.toArray(new LayerObject[0]);
 		for (final LayerObject layer : array) {
 			if (layer != null && !layer.isInvalid()) {
 				try {

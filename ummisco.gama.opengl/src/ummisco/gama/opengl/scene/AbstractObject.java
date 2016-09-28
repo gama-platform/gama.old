@@ -37,6 +37,16 @@ public abstract class AbstractObject {
 	public final int pickingIndex = index++;
 	private boolean picked = false;
 	protected final Texture[] textures;
+	
+	protected boolean overlay = false;
+	
+	public void enableOverlay(boolean value) {
+		overlay = value;
+	}
+	
+	public boolean isOverlay() {
+		return overlay;
+	}
 
 	private boolean lightInteraction = true;
 

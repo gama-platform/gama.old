@@ -73,8 +73,10 @@ public class DrawingEntityGenerator {
 			final String style = getStyle(strObj);
 			final int fontSize = getFontSize(strObj);
 			textures[0] = fontTextCache.getFontTexture(fontName + style);
+			float ratio = (float) ((object.isOverlay())? 1 : renderer.getGlobalYRatioBetweenPixelsAndModelUnits()/renderer.getZoomLevel());
+			ratio /= object.getAttributes().size.x;
 			final TextMeshData textMeshData = fontTextCache.getTextMeshData(fontName + style, strObj.string,
-					renderer.getGlobalYRatioBetweenPixelsAndModelUnits()/renderer.getZoomLevel(), fontSize);
+					ratio, fontSize);
 			final String[] texturePaths = new String[1];
 			texturePaths[0] = fontName + style;
 			final int[] textureIds = new int[1];
