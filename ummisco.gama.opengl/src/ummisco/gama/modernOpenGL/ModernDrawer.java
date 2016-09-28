@@ -128,6 +128,9 @@ public class ModernDrawer {
 	}
 	
 	private boolean addEntityToList(DrawingEntity entity, DrawingEntity newEntity, DrawingEntity.Type type) {
+		if (entity.isOverlay() != newEntity.isOverlay()) {
+			return false;
+		}
 		if (type.equals(DrawingEntity.Type.LINE)) {
 			return true;
 		}
@@ -198,6 +201,7 @@ public class ModernDrawer {
 					if (shaderProgram instanceof BillboardingTextShaderProgram) {
 						((BillboardingTextShaderProgram)shaderProgram).setTranslation(listOfEntities.get(0).getTranslation()); // FIXME : need refactoring
 					}
+					shaderProgram.enableOverlay(listOfEntities.get(0).isOverlay());
 					updateTransformationMatrix(shaderProgram);
 					prepareShader(listOfEntities.get(0), shaderProgram);
 					
@@ -428,6 +432,10 @@ public class ModernDrawer {
 	}
 	
 	private void updateTransformationMatrix(AbstractShader shaderProgram) {
+		if (shaderProgram.isOverlay()) {
+			float ratioForOverlay = (float) (renderer.getyRatioBetweenPixelsAndModelUnits());
+			shaderProgram.setRatioForOverlay(ratioForOverlay);
+		}
 		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
 		shaderProgram.loadViewMatrix(viewMatrix);
 		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());

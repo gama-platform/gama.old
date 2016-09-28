@@ -26,6 +26,7 @@ public class DrawingEntity {
 	private float fontWidth = -1; // init value set to -1. If the value is -1, the entity is not a string
 	private float fontEdge = -1; // init value set to -1. If the value is -1, the entity is not a string
 	private boolean isBillboarding = false;
+	private boolean isOverlay = false;
 	private Vector3f translation = new Vector3f();
 	
 	private AbstractShader shader;
@@ -132,6 +133,14 @@ public class DrawingEntity {
 	
 	public boolean isBillboarding() {
 		return isBillboarding;
+	}
+	
+	public boolean isOverlay() {
+		return isOverlay;
+	}
+	
+	public void enableOverlay(boolean value) {
+		isOverlay = value;
 	}
 	
 	public void setTranslation(Vector3f translation) {

@@ -14,6 +14,9 @@ public abstract class AbstractShader {
 	
 	protected GL2 gl;
 	
+	protected boolean isOverlay=false;
+	private float ratioForOverlay;
+	
 	private int programID;
 	private int vertexShaderID;
 	private int fragmentShaderID;
@@ -149,14 +152,27 @@ public abstract class AbstractShader {
 	}
 	
 	public void loadTransformationMatrix(Matrix4f matrix) {
+		if (isOverlay) {
+			matrix.setIdentity();
+		}
 		loadMatrix(location_transformationMatrix, matrix);
 	}
 	
 	public void loadProjectionMatrix(Matrix4f matrix) {
+		if (isOverlay) {
+			matrix.setIdentity();
+			matrix.m30 = -1f;
+			matrix.m31 = 1f;
+			//matrix.setScale(1f);
+			matrix.m11 = -matrix.m11;
+		}
 		loadMatrix(location_projectionMatrix, matrix);
 	}
 	
 	public void loadViewMatrix(Matrix4f viewMatrix) {
+		if (isOverlay) {
+			viewMatrix.setIdentity();
+		}
 		loadMatrix(location_viewMatrix, viewMatrix);
 	}
 	
@@ -166,6 +182,18 @@ public abstract class AbstractShader {
 	
 	public Vector3f getTranslation() {
 		return new Vector3f(0,0,0);
+	}
+	
+	public void setRatioForOverlay(float value) {
+		ratioForOverlay = value;
+	}
+	
+	public void enableOverlay(boolean value) {
+		isOverlay = value;
+	}
+	
+	public boolean isOverlay() {
+		return isOverlay;
 	}
 	
 	abstract public boolean useNormal();
