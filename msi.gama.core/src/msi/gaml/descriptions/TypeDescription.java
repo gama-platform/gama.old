@@ -27,12 +27,9 @@ import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectObjectProcedure;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.util.TOrderedHashMap;
@@ -94,15 +91,11 @@ public abstract class TypeDescription extends SymbolDescription {
 		final Collection<String> accumulator = parent != null && parent != this ? parent.getAttributeNames()
 				: new TLinkedHashSet<String>();
 		if (attributes != null) {
-			attributes.forEachKey(new TObjectProcedure<String>() {
-
-				@Override
-				public boolean execute(final String s) {
-					if (accumulator.contains(s))
-						accumulator.remove(s);
-					accumulator.add(s);
-					return true;
-				}
+			attributes.forEachKey(s -> {
+				if (accumulator.contains(s))
+					accumulator.remove(s);
+				accumulator.add(s);
+				return true;
 			});
 		}
 		return accumulator;
@@ -286,6 +279,61 @@ public abstract class TypeDescription extends SymbolDescription {
 		return result;
 	}
 
+	// protected boolean sortAttributes() {
+	// if (attributes == null || attributes.size() <= 1)
+	// return true;
+	// final HashMultimap<VariableDescription, VariableDescription> dependencies
+	// = HashMultimap.create();
+	// attributes.forEachEntry((name, var) -> {
+	// dependencies.put(null, var);
+	// for (final String depName : var.getDependenciesNames()) {
+	// final VariableDescription newVar = attributes.get(depName);
+	// if (newVar != null && !depName.equals(name))
+	// dependencies.put(var, newVar);
+	//
+	// }
+	// var.discardDependencies();
+	// return true;
+	// });
+	// attributes.clear();
+	// final Set<VariableDescription> expanded = new
+	// HashSet<VariableDescription>();
+	// for (final VariableDescription node : dependencies.keySet())
+	// explore(node, dependencies, expanded);
+	// return true;
+	// }
+	//
+	// private void explore(final VariableDescription node, final
+	// HashMultimap<VariableDescription, VariableDescription> g,
+	// final Set<VariableDescription> expanded) {
+	// if (node != null && attributes.containsKey(node.getName())) {
+	// /*
+	// * There are two cases to consider. First, if this node has already
+	// * been expanded, then it's already been assigned a position in the
+	// * final topological sort and we don't need to explore it again.
+	// * However, if it hasn't been expanded, it means that we've just
+	// * found a node that is currently being explored, and therefore is
+	// * part of a cycle. In that case, we should report an error.
+	// */
+	// if (expanded.contains(node))
+	// return;
+	// throw new IllegalArgumentException("Graph contains a cycle.");
+	// }
+	//
+	// /* Mark that we've been here */
+	// if (node != null) {
+	// attributes.put(node.getName(), node);
+	// }
+	// /* Recursively explore all of the node's predecessors. */
+	// for (final VariableDescription predecessor : g.get(node)) {
+	// if (predecessor != null)
+	// explore(predecessor, g, expanded);
+	// }
+	// if (node != null) {
+	// expanded.add(node);
+	// }
+	// }
+
 	/**
 	 * Returns true if the computation of dependencies is ok.
 	 * 
@@ -296,25 +344,21 @@ public abstract class TypeDescription extends SymbolDescription {
 			return true;
 
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
-		attributes.forEachEntry(new TObjectObjectProcedure<String, VariableDescription>() {
+		attributes.forEachEntry((name, var) -> {
 
-			@Override
-			public boolean execute(final String name, final VariableDescription var) {
-
-				dependencies.addVertex(var);
-				for (final String depName : var.getDependenciesNames()) {
-					if (depName.equals(name))
-						return true;
-					final VariableDescription newVar = attributes.get(depName);
-					if (newVar == null)
-						continue;
-					dependencies.addVertex(newVar);
-					dependencies.addEdge(newVar, var);
-				}
-				var.discardDependencies();
-
-				return true;
+			dependencies.addVertex(var);
+			for (final String depName : var.getDependenciesNames()) {
+				if (depName.equals(name))
+					return true;
+				final VariableDescription newVar = attributes.get(depName);
+				if (newVar == null)
+					continue;
+				dependencies.addVertex(newVar);
+				dependencies.addEdge(newVar, var);
 			}
+			var.discardDependencies();
+
+			return true;
 		});
 		final int oldAttributesSize = attributes.size();
 		attributes.clear();
@@ -331,14 +375,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			final CycleDetector cycleDetector = new CycleDetector<VariableDescription, Object>(dependencies);
 			if (cycleDetector.detectCycles()) {
 				final Set<VariableDescription> inCycles = cycleDetector.findCycles();
-				final Collection<String> names = Collections2.transform(inCycles,
-						new Function<VariableDescription, String>() {
-
-							@Override
-							public String apply(final VariableDescription input) {
-								return input.getName();
-							}
-						});
+				final Collection<String> names = Collections2.transform(inCycles, input -> input.getName());
 				for (final VariableDescription vd : inCycles) {
 					if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn())
 						continue;
