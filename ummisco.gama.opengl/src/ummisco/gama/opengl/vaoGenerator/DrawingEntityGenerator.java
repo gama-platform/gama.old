@@ -146,7 +146,8 @@ public class DrawingEntityGenerator {
 			transformer = new ImageObjectTransformer(imObj, textureIDs, texturePaths, bufferedImageValue,
 					renderer.data.isTriangulation());
 		}
-		result = transformer.getDrawingEntities();
+		if (transformer != null)
+			result = transformer.getDrawingEntities();
 		return result;
 	}
 
