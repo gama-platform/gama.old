@@ -126,7 +126,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	protected ModelScene currentScene;
 	protected GLCanvas canvas;
 	public ICamera camera;
-	public double currentZRotation = 0;
+	protected double currentZRotation = 0;
 	int[] viewport = new int[4];
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
