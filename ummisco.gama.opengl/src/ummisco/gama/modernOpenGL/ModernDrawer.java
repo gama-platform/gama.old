@@ -35,6 +35,8 @@ public class ModernDrawer {
 
 	private LayerObject currentLayer;
 	private HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities;
+	private ArrayList<String> entityTypeOrder; // to display the objects in the right order 
+	// (ex : in graphic layer, if we draw a circle and then a text, we want the text to be above the circle).
 	private final ModernRenderer renderer;
 	private GL2 gl;
 	
@@ -67,6 +69,7 @@ public class ModernDrawer {
 		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), null);
 		mapEntities.put(DrawingEntity.Type.BILLBOARDING.toString(), null);
 		mapEntities.put(DrawingEntity.Type.POINT.toString(), null);
+		entityTypeOrder = new ArrayList<String>();
 		currentLayer = layer;
 		numberOfShaderInTheCurrentLayer=0;
 		currentShaderNumber = 0;
@@ -79,6 +82,7 @@ public class ModernDrawer {
 	}
 	
 	private void addDrawingEntities(DrawingEntity newEntity, DrawingEntity.Type type) {
+		if (!entityTypeOrder.contains(type.toString())) entityTypeOrder.add(type.toString());
 		ArrayList<ArrayList<DrawingEntity>> entities = mapEntities.get(type.toString());
 		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
 		if (entities == null) {
@@ -188,7 +192,7 @@ public class ModernDrawer {
 		layerStructure.vboHandles = vboHandles;
 		layerStructureMap.put(currentLayer, layerStructure);
 		
-		for (String key : mapEntities.keySet()) {
+		for (String key : entityTypeOrder) {
 			ArrayList<ArrayList<DrawingEntity>> listOfListOfEntities = mapEntities.get(key);
 			if (listOfListOfEntities != null) {
 				
@@ -432,10 +436,6 @@ public class ModernDrawer {
 	}
 	
 	private void updateTransformationMatrix(AbstractShader shaderProgram) {
-		if (shaderProgram.isOverlay()) {
-			float ratioForOverlay = (float) (renderer.getyRatioBetweenPixelsAndModelUnits());
-			shaderProgram.setRatioForOverlay(ratioForOverlay);
-		}
 		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
 		shaderProgram.loadViewMatrix(viewMatrix);
 		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());

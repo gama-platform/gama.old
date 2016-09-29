@@ -15,7 +15,6 @@ public abstract class AbstractShader {
 	protected GL2 gl;
 	
 	protected boolean isOverlay=false;
-	private float ratioForOverlay;
 	
 	private int programID;
 	private int vertexShaderID;
@@ -161,9 +160,9 @@ public abstract class AbstractShader {
 	public void loadProjectionMatrix(Matrix4f matrix) {
 		if (isOverlay) {
 			matrix.setIdentity();
+			matrix.setScale(2f);
 			matrix.m30 = -1f;
 			matrix.m31 = 1f;
-			//matrix.setScale(1f);
 			matrix.m11 = -matrix.m11;
 		}
 		loadMatrix(location_projectionMatrix, matrix);
@@ -182,10 +181,6 @@ public abstract class AbstractShader {
 	
 	public Vector3f getTranslation() {
 		return new Vector3f(0,0,0);
-	}
-	
-	public void setRatioForOverlay(float value) {
-		ratioForOverlay = value;
 	}
 	
 	public void enableOverlay(boolean value) {
