@@ -545,6 +545,11 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (currentScene != null)
 			currentScene.stopDrawRotationHelper();
 	}
+	
+	@Override
+	public void startDrawKeystoneHelper() {} // TODO (or not)
+	@Override
+	public void stopDrawKeystoneHelper() {} // TODO (or not)
 
 	@Override
 	public void drawRotationHelper(final GL2 gl) {

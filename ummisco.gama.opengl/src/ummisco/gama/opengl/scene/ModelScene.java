@@ -55,6 +55,7 @@ public class ModelScene {
 	public static final String AXES_KEY = "__axes__0";
 	public static final String FRAME_KEY = "__frame__0";
 	public static final String ROTATION_HELPER_KEY = "__rotation__0";
+	public static final String KEYSTONE_HELPER_KEY = "__keystone__0";
 	public static final String LIGHTS_KEY = "__lights__0";
 	public static final String FPS_KEY = "z__fps__0";
 	protected final Map<String, LayerObject> layers = new LinkedHashMap<String, LayerObject>();
@@ -81,7 +82,8 @@ public class ModelScene {
 			layers.put(AXES_KEY, new AxesLayerObject(renderer));
 		}
 		if (renderer.useShader()) {
-			layers.put(ROTATION_HELPER_KEY, new HelperLayerObject(renderer));
+			layers.put(ROTATION_HELPER_KEY, new RotationHelperLayerObject(renderer));
+			layers.put(KEYSTONE_HELPER_KEY, new KeystoneHelperLayerObject(renderer));
 			layers.put(LIGHTS_KEY, new LightsLayerObject(renderer));
 			if (renderer.data.isShowfps())
 				layers.put(FPS_KEY, new FPSLayerObject(renderer));

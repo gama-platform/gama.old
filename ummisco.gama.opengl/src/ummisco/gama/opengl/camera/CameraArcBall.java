@@ -37,7 +37,7 @@ public class CameraArcBall extends AbstractCamera {
 		reset();
 	}
 
-	protected void updateCartesianCoordinatesFromAngles() {
+	private void updateCartesianCoordinatesFromAngles() {
 		theta = theta % 360;
 		phi = phi % 360;
 
@@ -68,7 +68,7 @@ public class CameraArcBall extends AbstractCamera {
 		phi = Maths.toDeg * FastMath.acos(z / radius);
 	}
 
-	public void translateCameraFromScreenPlan(final double x_translation_in_screen,
+	private void translateCameraFromScreenPlan(final double x_translation_in_screen,
 			final double y_translation_in_screen) {
 
 		final double theta_vect_x = -FastMath.sin(theta * Maths.toRad);
@@ -220,7 +220,6 @@ public class CameraArcBall extends AbstractCamera {
 		super.animate();
 		if (cameraInteraction) {
 			// And we animate it if the keyboard is invoked
-			final double translation = 2 * (FastMath.abs(position.z) + 1) / getRenderer().getHeight();
 			if (isForward()) {
 				if (ctrlPressed) {
 					if (flipped) {
@@ -367,6 +366,15 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
+		
+		if (keystoneMode) {
+			if (getRenderer().getCornerSelected() != -1) {
+				float[] newCoordForKeystone = {(float)e.x/(float)getRenderer().getDisplayWidth(),
+						(float)e.y/(float)getRenderer().getDisplayHeight()};
+				getRenderer().setKeystoneCoordinates(getRenderer().getCornerSelected(),newCoordForKeystone);
+			}
+			return;
+		}
 
 		super.internalMouseMove(e);
 		if ((e.stateMask & SWT.BUTTON_MASK) == 0) {

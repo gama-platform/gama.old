@@ -131,8 +131,17 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
 	protected GLU glu;
+	// relative to rotation helper
 	protected boolean drawRotationHelper = false;
 	protected GamaPoint rotationHelperPosition = null;
+	// relative to keystone
+	protected boolean drawKeystoneHelper = false;
+	public boolean drawKeystoneHelper() {return drawKeystoneHelper;}
+	protected float[][] keystoneCoordinates;
+	public float[][] getKeystoneCoordinates() {return keystoneCoordinates;}
+	public void setKeystoneCoordinates(int cornerId,float[] coordinates) {keystoneCoordinates[cornerId] = coordinates;};
+	protected int cornerSelected = -1;
+	public int getCornerSelected() {return cornerSelected;}
 
 	protected final GeometryCache geometryCache = new GeometryCache();
 	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
@@ -290,8 +299,10 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public abstract Envelope3D getROIEnvelope();
 
 	public abstract void startDrawRotationHelper(final GamaPoint pos);
-
 	public abstract void stopDrawRotationHelper();
+	
+	public abstract void startDrawKeystoneHelper();
+	public abstract void stopDrawKeystoneHelper();
 
 	public abstract void drawRotationHelper(final GL2 gl);
 
@@ -449,6 +460,28 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public GamaPoint getRotationHelperPosition() {
 		return rotationHelperPosition;
+	}
+	
+	public void setUpKeystoneCoordinates() {
+		keystoneCoordinates = new float[4][2];
+		float[] coords1 = new float[]{0,1}; // bottom-left
+		float[] coords2 = new float[]{0,0};  // top-left
+		float[] coords3 = new float[]{1,0};   // top-right
+		float[] coords4 = new float[]{1,1};  // bottom-right
+		if (data.getKeystone() != null) {
+			coords1 = new float[]{(float) data.getKeystone().get(2).getX(),(float) (data.getKeystone().get(2).getY())};
+			coords2 = new float[]{(float) data.getKeystone().get(0).getX(),(float) (data.getKeystone().get(0).getY())};
+			coords3 = new float[]{(float) data.getKeystone().get(1).getX(),(float) (data.getKeystone().get(1).getY())};
+			coords4 = new float[]{(float) data.getKeystone().get(3).getX(),(float) (data.getKeystone().get(3).getY())};
+		}
+		setKeystoneCoordinates(0, coords1);
+		setKeystoneCoordinates(1, coords2);
+		setKeystoneCoordinates(2, coords3);
+		setKeystoneCoordinates(3, coords4);
+	}
+	
+	public void cornerSelected(int cornerId) {
+		cornerSelected = cornerId;
 	}
 
 }

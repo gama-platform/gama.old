@@ -107,6 +107,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 			}
 		});
 
+		setUpKeystoneCoordinates();
 		drawingEntityGenerator = new DrawingEntityGenerator(this);
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 
@@ -354,6 +355,17 @@ public class ModernRenderer extends Abstract3DRenderer {
 		drawRotationHelper = false;
 		if (currentScene != null)
 			currentScene.stopDrawRotationHelper();
+	}
+	
+	@Override
+	public void startDrawKeystoneHelper() {
+		drawKeystoneHelper = true;
+		cornerSelected = -1;
+	}
+	
+	@Override
+	public void stopDrawKeystoneHelper() {
+		drawKeystoneHelper = false;
 	}
 
 	/**

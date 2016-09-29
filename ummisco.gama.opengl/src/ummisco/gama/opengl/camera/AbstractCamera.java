@@ -61,6 +61,8 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected boolean ctrlPressed = false;
 	protected boolean shiftPressed = false;
+	
+	protected boolean keystoneMode = false;
 
 	public AbstractCamera(final Abstract3DRenderer renderer) {
 		setRenderer(renderer);
@@ -224,7 +226,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	}
 
-	protected void internalMouseMove(final MouseEvent e) {
+	protected void internalMouseMove(final MouseEvent e) {		
 		getMousePosition().x = e.x;
 		getMousePosition().y = e.y;
 		setCtrlPressed(GamaKeyBindings.ctrl(e));
@@ -287,11 +289,65 @@ public abstract class AbstractCamera implements ICamera {
 		});
 
 	}
+	
+	private float[] centerScreen(float[][] cornerCoords) {
+		float p0_x = cornerCoords[0][0];
+		float p0_y = cornerCoords[0][1];
+		float p1_x = cornerCoords[2][0];
+		float p1_y = cornerCoords[2][1]; 
+		float p2_x = cornerCoords[1][0];
+		float p2_y = cornerCoords[1][1];
+		float p3_x = cornerCoords[3][0];
+		float p3_y = cornerCoords[3][1];
+	    float s1_x, s1_y, s2_x, s2_y;
+	    s1_x = p1_x - p0_x;     s1_y = p1_y - p0_y;
+	    s2_x = p3_x - p2_x;     s2_y = p3_y - p2_y;
+
+	    float t;
+	    //s = (-s1_ky * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y);
+	    t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y);
+
+	    float[] result = new float[2];
+	    result[0] = p0_x + (t * s1_x);
+	    result[1] = p0_y + (t * s1_y);
+	    return result;
+	}
+	
+	private int clickOnKeystone(final MouseEvent e) {
+		// return the number of the corner clicked. Return -1 if no click on keystone. Return 10 if click on the center.
+		int xPixCoord = e.x;
+		int yPixCoord = e.y;
+		float xCoordNormalized = (float)xPixCoord / (float)getRenderer().getDisplayWidth();
+		float yCoordNormalized = (float)yPixCoord / (float)getRenderer().getDisplayHeight();
+		for (int cornerId = 0 ; cornerId < getRenderer().getKeystoneCoordinates().length ; cornerId++) {
+			if ( (Math.abs(xCoordNormalized - getRenderer().getKeystoneCoordinates()[cornerId][0]) < 0.03)
+					&& (Math.abs(yCoordNormalized - getRenderer().getKeystoneCoordinates()[cornerId][1]) < 0.03) ) {
+				return cornerId;
+			}
+		}
+		// check if the click has been in the center of the screen (in the intersection between the diagonals)
+		float[] centerPosition = centerScreen(getRenderer().getKeystoneCoordinates());
+		if ((Math.abs(xCoordNormalized - centerPosition[0]) < 0.03)
+					&& (Math.abs(yCoordNormalized - centerPosition[1]) < 0.03) )
+				return 10;
+		
+		return -1;
+	}
 
 	protected void internalMouseDown(final MouseEvent e) {
-//		System.out.println("Detecting mouse down in camera");
 		if (firsttimeMouseDown) {
 			firstMousePressedPosition = new Point(e.x, e.y);
+			if (keystoneMode) {
+				int cornerSelected = clickOnKeystone(e);
+				if (cornerSelected != -1 && cornerSelected != 10) {
+					getRenderer().cornerSelected(cornerSelected);
+				}
+				if (cornerSelected == 10) {
+					// cancel the keystone transformations
+					getRenderer().setUpKeystoneCoordinates();
+					keystoneMode = false;
+				}
+			}
 			firsttimeMouseDown = false;
 		}
 		lastMousePressedPosition = new Point(e.x, e.y);
@@ -495,6 +551,9 @@ public abstract class AbstractCamera implements ICamera {
 					case '2':
 						quickDownTurn();
 						break;
+					case 'k':
+						activateKeystoneMode(true);
+						break;
 					default:
 						return true;
 					}
@@ -518,6 +577,20 @@ public abstract class AbstractCamera implements ICamera {
 
 	protected void quickDownTurn() {
 	}
+	
+	protected void activateKeystoneMode(boolean value) {
+		if (renderer.useShader()) {
+			if (keystoneMode != value) {
+				keystoneMode = value;
+				if (keystoneMode) {
+					getRenderer().startDrawKeystoneHelper();
+				}
+				else {
+					getRenderer().stopDrawKeystoneHelper();
+				}
+			}
+		}
+	}
 
 	/**
 	 * Method keyReleased()
@@ -532,6 +605,11 @@ public abstract class AbstractCamera implements ICamera {
 			@Override
 			public boolean run(final GLAutoDrawable drawable) {
 				if (cameraInteraction) {
+					switch (e.character) {
+					case 'k':
+						activateKeystoneMode(false);
+						break;
+					}
 					switch (e.keyCode) {
 					case SWT.ARROW_LEFT: // player turns left (scene rotates
 											// right)
