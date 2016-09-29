@@ -62,7 +62,6 @@ import ummisco.gama.opengl.scene.StringDrawer;
 import ummisco.gama.opengl.scene.StringObject;
 import ummisco.gama.opengl.utils.FPSDrawer;
 import ummisco.gama.opengl.utils.GLUtilLight;
-import ummisco.gama.opengl.vaoGenerator.DrawingEntityGenerator;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -110,25 +109,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 			}
 		});
-
-		// here, the drawingEntityGenerator is used only when there is a webgl
-		// display
-		drawingEntityGenerator = new DrawingEntityGenerator(this);
-
-		// see
-		// https://jogamp.org/deployment/v2.1.1/javadoc/jogl/javadoc/javax/media/opengl/glu/gl2/GLUgl2.html
-		// GLU objects are NOT thread safe...
-		glu = new GLU();
-		final GL2 gl = drawable.getContext().getGL().getGL2();
-		final Color background = data.getBackgroundColor();
-		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
-				1.0f);
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
-		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
-
-		initializeCanvasListeners();
-
-		updateCameraPosition();
+		
+		commonInit(drawable);
 
 		// Putting the swap interval to 0 (instead of 1) seems to cure some of
 		// the problems of resizing of views.
@@ -158,7 +140,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glAlphaFunc(GL2.GL_GREATER, 0.01f);
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString
-		updatePerspective(gl);
 		// We mark the renderer as inited
 		inited = true;
 
@@ -184,7 +165,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (currentScene == null) {
 			return;
 		}
-		final GL2 gl = drawable.getContext().getGL().getGL2();
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
 
@@ -204,7 +184,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		// TODO Is this line necessary ? The changes are made in init and
 		// reshape
 		updateCameraPosition();
-		updatePerspective(gl);
+		updatePerspective();
 		if (data.isLightOn()) {
 			gl.glEnable(GLLightingFunc.GL_LIGHTING);
 		} else {
@@ -275,10 +255,11 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glLoadIdentity();
 		// Only if zoomFit... camera.resetCamera(data.getEnvWidth(),
 		// data.getEnvHeight(), data.isOutput3D());
-		updatePerspective(gl);
+		updatePerspective();
 	}
 
-	public final void updatePerspective(final GL2 gl) {
+	@Override
+	protected final void updatePerspective() {
 		final int height = getDrawable().getSurfaceHeight();
 		final double aspect = (double) getDrawable().getSurfaceWidth() / (double) (height == 0 ? 1 : height);
 
@@ -385,7 +366,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		glu.gluPickMatrix(camera.getMousePosition().x, viewport[3] - camera.getMousePosition().y, 4, 4, viewport, 0);
 
 		// FIXME Why do we have to call updatePerspective() here ?
-		updatePerspective(gl);
+		updatePerspective();
 		// Comment GL_MODELVIEW to debug3D picking (redraw the model when
 		// clicking)
 		gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);

@@ -26,8 +26,6 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
-import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -40,7 +38,6 @@ import msi.gama.outputs.layers.OverlayLayer;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
@@ -49,7 +46,6 @@ import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.modernOpenGL.ModernDrawer;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.utils.GLUtilLight;
-import ummisco.gama.opengl.vaoGenerator.DrawingEntityGenerator;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
@@ -106,26 +102,12 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 			}
 		});
+		
+		commonInit(drawable);
 
 		setUpKeystoneCoordinates();
-		drawingEntityGenerator = new DrawingEntityGenerator(this);
-		final GL2 gl = drawable.getContext().getGL().getGL2();
-
-		glu = new GLU();
-		final Color background = Color.black;
-		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
-				1.0f);
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
-		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
-
-		initializeCanvasListeners();
-
-		// TODO
 
 		drawer = new ModernDrawer(this, gl);
-
-		updateCameraPosition();
-		updatePerspective();
 
 		GLUtilLight.InitializeLighting(gl, data, true);
 
@@ -202,7 +184,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 		updatePerspective();
 	}
 
-	private final void updatePerspective() {
+	@Override
+	protected final void updatePerspective() {
 		final int height = getDrawable().getSurfaceHeight();
 		final int width = getDrawable().getSurfaceWidth();
 		final double maxDim = getMaxEnvDim();

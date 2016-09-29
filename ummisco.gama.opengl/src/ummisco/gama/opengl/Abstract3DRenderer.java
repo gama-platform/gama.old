@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -131,6 +132,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
 	protected GLU glu;
+	protected GL2 gl;
 	// relative to rotation helper
 	protected boolean drawRotationHelper = false;
 	protected GamaPoint rotationHelperPosition = null;
@@ -180,6 +182,24 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		final FillLayout gl = new FillLayout();
 		canvas.setLayout(gl);
 		return canvas;
+	}
+	
+	protected void commonInit(final GLAutoDrawable drawable) {		
+		// the drawingEntityGenerator is used only when there is a webgl display and/or a modernRenderer.
+		drawingEntityGenerator = new DrawingEntityGenerator(this);
+		
+		glu = new GLU();
+		currentZRotation = data.getZRotation();
+		gl = drawable.getContext().getGL().getGL2();
+		final Color background = data.getBackgroundColor();
+		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
+				1.0f);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
+		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
+		
+		initializeCanvasListeners();
+		updateCameraPosition();
+		updatePerspective();
 	}
 
 	public abstract void initScene();
@@ -293,6 +313,8 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public final void updateCameraPosition() {
 		camera.update();
 	}
+	
+	protected abstract void updatePerspective();
 
 	public abstract void drawROI(final GL2 gl);
 

@@ -71,6 +71,7 @@ public class LayeredDisplayData {
 	private Double zoomLevel = null;
 	private final LightPropertiesStructure lights[] = new LightPropertiesStructure[8];
 	private List<ILocation> keystone = null;
+	private double zRotation;
 
 	/**
 	 * OpenGL
@@ -662,6 +663,14 @@ public class LayeredDisplayData {
 	
 	public List<ILocation> getKeystone() {
 		return this.keystone;
+	}
+
+	public double getZRotation() {
+		return zRotation;
+	}
+
+	public void setZRotation(double val) {
+		zRotation = val;
 	}
 
 }

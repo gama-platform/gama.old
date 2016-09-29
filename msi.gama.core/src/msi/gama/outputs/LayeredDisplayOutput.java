@@ -104,7 +104,8 @@ import msi.gaml.types.Types;
 		@facet(name = IKeyword.CAMERA_LENS, internal = true, type = IType.INT, optional = true, doc = @doc("Allows to define the lens of the camera")),
 		@facet(name = IKeyword.CAMERA_INTERACTION, type = IType.BOOL, optional = true, doc = @doc("If false, the user will not be able to modify the position and the orientation of the camera, and neither using the ROI. Default is true.")),
 		@facet(name = "use_shader", type = IType.BOOL, optional = true, doc = @doc("Under construction...")),
-		@facet(name = "keystone", type = IType.CONTAINER, optional = true, doc = @doc("Set the position of the 4 corners of your screen ([topLeft,topRight,botLeft,botRight]), in (x,y) coordinate ( the (0,0) position is the top left corner, while the (1,1) position is the bottom right corner). The default value is : [{0,0},{1,0},{0,1},{1,1}]. Note that this statement can only work with the \"use_shader\" facet set to true.")),
+		@facet(name = IKeyword.KEYSTONE, type = IType.CONTAINER, optional = true, doc = @doc("Set the position of the 4 corners of your screen ([topLeft,topRight,botLeft,botRight]), in (x,y) coordinate ( the (0,0) position is the top left corner, while the (1,1) position is the bottom right corner). The default value is : [{0,0},{1,0},{0,1},{1,1}]. Note that this statement can only work with the \"use_shader\" facet set to true.")),
+		@facet(name = IKeyword.ROTATE, type = IType.FLOAT, optional = true, doc = @doc("Set the angle for the rotation around the Z axis")),
 		@facet(name = IKeyword.POLYGONMODE, internal = true, type = IType.BOOL, optional = true, doc = @doc("")),
 		@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL,
 				IType.POINT }, optional = true, doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
@@ -313,12 +314,18 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			this.useShader = Cast.asBool(getScope(), use_shader.value(getScope()));
 		}
 		
-		final IExpression keystone_exp = getFacet("keystone");
+		final IExpression keystone_exp = getFacet(IKeyword.KEYSTONE);
 		if (keystone_exp != null) {
 			List<ILocation> val = Cast.asList(getScope(), keystone_exp.value(getScope()));
 			if (val.size() == 4) {
 				data.setKeystone(val);
 			}
+		}
+		
+		final IExpression rotate_exp = getFacet(IKeyword.ROTATE);
+		if (rotate_exp != null) {
+			double val = Cast.asFloat(getScope(), rotate_exp.value(getScope()));
+			data.setZRotation(val);
 		}
 
 		final IExpression lightOn = getFacet(IKeyword.IS_LIGHT_ON);

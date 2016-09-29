@@ -231,6 +231,7 @@ public interface IKeyword {
 	public static final String KEEP_SEED = "keep_seed";
 	public static final String KEEP_SIMULATIONS = "keep_simulations";
 	public static final String KEY = "key";
+	public static final String KEYSTONE = "keystone";
 	// public static final String KEYWORD = "keyword";
 	public static final String KILL = "kill";
 	public static final String OVERLAY = "overlay";
