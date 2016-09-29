@@ -369,8 +369,8 @@ public class CameraArcBall extends AbstractCamera {
 		
 		if (keystoneMode) {
 			if (getRenderer().getCornerSelected() != -1) {
-				float[] newCoordForKeystone = {(float)e.x/(float)getRenderer().getDisplayWidth(),
-						(float)e.y/(float)getRenderer().getDisplayHeight()};
+				float[] newCoordForKeystone = {(float)e.x/(float)getRenderer().getDisplayWidth()*getRenderer().getZoomLevel().floatValue(),
+						(float)e.y/(float)getRenderer().getDisplayHeight()*getRenderer().getZoomLevel().floatValue()};
 				getRenderer().setKeystoneCoordinates(getRenderer().getCornerSelected(),newCoordForKeystone);
 			}
 			return;

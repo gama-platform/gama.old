@@ -304,7 +304,6 @@ public abstract class AbstractCamera implements ICamera {
 	    s2_x = p3_x - p2_x;     s2_y = p3_y - p2_y;
 
 	    float t;
-	    //s = (-s1_ky * (p0_x - p2_x) + s1_x * (p0_y - p2_y)) / (-s2_x * s1_y + s1_x * s2_y);
 	    t = ( s2_x * (p0_y - p2_y) - s2_y * (p0_x - p2_x)) / (-s2_x * s1_y + s1_x * s2_y);
 
 	    float[] result = new float[2];
@@ -317,8 +316,8 @@ public abstract class AbstractCamera implements ICamera {
 		// return the number of the corner clicked. Return -1 if no click on keystone. Return 10 if click on the center.
 		int xPixCoord = e.x;
 		int yPixCoord = e.y;
-		float xCoordNormalized = (float)xPixCoord / (float)getRenderer().getDisplayWidth();
-		float yCoordNormalized = (float)yPixCoord / (float)getRenderer().getDisplayHeight();
+		float xCoordNormalized = (float)xPixCoord / (float)getRenderer().getDisplayWidth()*getRenderer().getZoomLevel().floatValue();
+		float yCoordNormalized = (float)yPixCoord / (float)getRenderer().getDisplayHeight()*getRenderer().getZoomLevel().floatValue();
 		for (int cornerId = 0 ; cornerId < getRenderer().getKeystoneCoordinates().length ; cornerId++) {
 			if ( (Math.abs(xCoordNormalized - getRenderer().getKeystoneCoordinates()[cornerId][0]) < 0.03)
 					&& (Math.abs(yCoordNormalized - getRenderer().getKeystoneCoordinates()[cornerId][1]) < 0.03) ) {
