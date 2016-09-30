@@ -45,48 +45,73 @@ public class KeystoneHelperLayerObject extends LayerObject {
 			keystonePositions[0] = new float[]{0,1};
 			keystonePositions[3] = new float[]{1,1};
 			for (int cornerId = 0 ; cornerId < keystonePositions.length ; cornerId++) {
-				GamaColor outsideCircleColor = (cornerId == renderer.getCornerSelected()) ? new GamaColor(100, 0, 0, 255) : new GamaColor(0, 100, 0, 255);
-				GamaColor insideCircleColor = (cornerId == renderer.getCornerSelected()) ? new GamaColor(255, 50, 50, 255) : new GamaColor(50, 255, 50, 255);
-				IShape g = GamaGeometryType.buildCircle(0.05f, new GamaPoint(keystonePositions[cornerId][0],keystonePositions[cornerId][1]));
-				ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, outsideCircleColor,
-						null); 	// dark green for the color, null for the border color
-				final GeometryObject outsideCircle = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
-				outsideCircle.enableOverlay(true);
+				final GamaColor outsideCircleColor = (cornerId == renderer.getCornerSelected()) ? new GamaColor(100, 0, 0, 255) : new GamaColor(0, 100, 0, 255);
+				final GamaColor insideCircleColor = (cornerId == renderer.getCornerSelected()) ? new GamaColor(255, 50, 50, 255) : new GamaColor(50, 255, 50, 255);
+				final GamaPoint circleLocation = new GamaPoint(keystonePositions[cornerId][0],keystonePositions[cornerId][1]);				
+				// build the circle and the border of the circle
+				final GeometryObject outsideCircle = createCircleObject(0.05,circleLocation,outsideCircleColor);
 				newElem.add(outsideCircle);
-				g = GamaGeometryType.buildCircle(0.03f, new GamaPoint(keystonePositions[cornerId][0],keystonePositions[cornerId][1]));
-				drawingAttr = new ShapeDrawingAttributes(g, insideCircleColor,
-						null); 	// green for the color, null for the border color
-				final GeometryObject insideCircle = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
-				insideCircle.enableOverlay(true);
+				final GeometryObject insideCircle = createCircleObject(0.03,circleLocation,insideCircleColor);
 				newElem.add(insideCircle);
+				
+				// build background for label
+				final GamaPoint backgroundLocation = new GamaPoint( ((keystonePositions[cornerId][0]*2-1)*0.82+1)/2f,((keystonePositions[cornerId][1]*2-1)*0.82+1)/2f-0.01 );
+				final GeometryObject bckgndObj = createRectangleObject(0.2,0.05,backgroundLocation,new GamaColor(255,255,255,255));	
+				newElem.add(bckgndObj);
+				// build label
+				final String content = "("+floor4Digit(renderer.getKeystoneCoordinates()[cornerId][0])+
+						","+floor4Digit(renderer.getKeystoneCoordinates()[cornerId][1])+")";
+				final GamaPoint testLocation = new GamaPoint( ((keystonePositions[cornerId][0]*2-1)*0.82+1)/2f-0.08,-((keystonePositions[cornerId][1]*2-1)*0.82+1)/2f );
+				StringObject strObj = createStringObject(content,0.0015,testLocation,new GamaColor(0,0,0,1));
+				newElem.add(strObj);
 			}
 			// add the "back to default" button
-			double w = 0.24;
-			double h = 0.14;
-			IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(0.5, 0.5));
-			ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, new GamaColor(0, 100, 0, 255),
-					null); 	// white for the color, null
-						 	// for the border color
-			GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
-			geomObj.enableOverlay(true);
-			newElem.add(geomObj);
-			w = 0.2;
-			h = 0.1;
-			g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(0.5, 0.5));
-			drawingAttr = new ShapeDrawingAttributes(g, new GamaColor(50, 255, 50, 255),
-					null); 	// white for the color, null
-						 	// for the border color
-			geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
-			geomObj.enableOverlay(true);
-			newElem.add(geomObj);
+			
+			// build text border
+			final GeometryObject borderObj = createRectangleObject(0.24,0.14,new GamaPoint(0.5, 0.5),new GamaColor(0, 100, 0, 255));
+			newElem.add(borderObj);
+			// build text background
+			final GeometryObject bckgrdObj = createRectangleObject(0.2,0.1,new GamaPoint(0.5, 0.5),new GamaColor(50, 255, 50, 255));
+			newElem.add(bckgrdObj);
+			
 			// build label
-			GamaFont font = new GamaFont("Helvetica",0,18); // 0 for plain, 18 for text size.
-			TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(0.003,0.003,0.003),null,new GamaPoint(0.42,-0.52,0),new GamaColor(0,0,0,1),font,true);
-			StringObject strObj = new StringObject("Default", textDrawingAttr, this);
-			strObj.enableOverlay(true);
+			final GamaPoint location = new GamaPoint(0.42,-0.52,0);
+			final StringObject strObj = createStringObject("Default",0.003,location,new GamaColor(0,0,0,1));
 			newElem.add(strObj);
 		}
 		
 		objects.add(newElem);
+	}
+	
+	private StringObject createStringObject(String content, double size, GamaPoint location, GamaColor color) {
+		final GamaFont font = new GamaFont("Helvetica",0,18); // 0 for plain, 18 for text size.
+		final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(size,size,size),null,location,color,font,true);
+		final StringObject strObj = new StringObject(content, textDrawingAttr, this);
+		strObj.enableOverlay(true);
+		return strObj;
+	}
+	
+	private GeometryObject createCircleObject(double size, GamaPoint location, GamaColor color) {
+		final IShape g = GamaGeometryType.buildCircle(size, location);
+		final ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, color, null);
+		final GeometryObject circleGeom = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
+		circleGeom.enableOverlay(true);
+		return circleGeom;
+	}
+	
+	private GeometryObject createRectangleObject(double wSize, double hSize, GamaPoint location, GamaColor color) {
+		final IShape g = GamaGeometryType.buildRectangle(wSize, hSize, location);
+		final ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, color,	null);
+					 	// for the border color
+		final GeometryObject rectGeom = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
+		rectGeom.enableOverlay(true);
+		return rectGeom;
+	}
+	
+	private float floor4Digit(float number) {
+		number *= 1000;
+		number = Math.round(number);
+		number /= 1000;
+		return number;
 	}
 }
