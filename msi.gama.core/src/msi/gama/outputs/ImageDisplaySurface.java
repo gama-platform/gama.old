@@ -25,6 +25,7 @@ import javax.imageio.ImageIO;
 
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.ILayer;
@@ -72,7 +73,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void outputReloaded() {
 		this.scope = output.getScope().copy("in ImageDisplaySurface");
-		scope.disableErrorReporting();
+		if (!GamaPreferences.ERRORS_IN_DISPLAYS.getValue())
+			scope.disableErrorReporting();
 		if (manager == null) {
 			manager = new LayerManager(this, output);
 		} else {

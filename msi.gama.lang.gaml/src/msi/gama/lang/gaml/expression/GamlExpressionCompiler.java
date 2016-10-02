@@ -89,10 +89,8 @@ import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
-import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.SyntacticModelElement;
-import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.ExperimentDescription;
@@ -624,10 +622,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			completeArgs = true;
 		} else {
 			command.error("Arguments must be written [a1::v1, a2::v2], (a1:v1, a2:v2) or (v1, v2)");
-			return new Arguments();
+			return null;
 		}
 		final Arguments argMap = new Arguments();
-		final List<String> args = action == null ? null : action.getArgNames();
 
 		int index = 0;
 		for (final Expression exp : parameters) {
@@ -641,6 +638,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				arg = EGaml.getKeyOf(exp.getLeft());
 				ed = builder.create(exp.getRight(), errors);
 			} else if (completeArgs) {
+				final List<String> args = action == null ? null : action.getArgNames();
 				if (args != null && action != null && index == args.size()) {
 					command.error("Wrong number of arguments. Action " + action.getName() + " expects " + args);
 					return argMap;
@@ -1208,13 +1206,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			}
 			if (!resource.hasErrors()) {
 				final SyntacticModelElement elt = (SyntacticModelElement) resource.getSyntacticContents();
-				elt.visitChildren(new SyntacticVisitor() {
-
-					@Override
-					public void visit(final ISyntacticElement e) {
-						final IDescription desc = DescriptionFactory.create(e, actionContext, null);
-						result.add(desc);
-					}
+				elt.visitChildren(e -> {
+					final IDescription desc = DescriptionFactory.create(e, actionContext, null);
+					result.add(desc);
 				});
 
 			} else {
