@@ -224,7 +224,8 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		// We first copy the scope
 		setDisplayScope(output.getScope().copy("in Java2DDisplaySurface"));
 		// We disable error reporting
-		getScope().disableErrorReporting();
+		if (!GamaPreferences.ERRORS_IN_DISPLAYS.getValue())
+			getScope().disableErrorReporting();
 
 		layerManager.outputChanged();
 
@@ -271,14 +272,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 			}
 		}
 		try {
-			EventQueue.invokeAndWait(new Runnable() {
-
-				@Override
-				public void run() {
-					resizeImage(width, height, false);
-					paintComponent(g);
-					resizeImage(previousWidth, previousHeight, false);
-				}
+			EventQueue.invokeAndWait(() -> {
+				resizeImage(width, height, false);
+				paintComponent(g);
+				resizeImage(previousWidth, previousHeight, false);
 			});
 		} catch (InvocationTargetException | InterruptedException e) {
 			e.printStackTrace();
@@ -580,14 +577,10 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void runAndUpdate(final Runnable r) {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				r.run();
-				if (output.isPaused() || getScope().isPaused()) {
-					updateDisplay(true);
-				}
+		new Thread(() -> {
+			r.run();
+			if (output.isPaused() || getScope().isPaused()) {
+				updateDisplay(true);
 			}
 		}).start();
 	}
@@ -693,13 +686,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		if (layers.isEmpty()) {
 			return;
 		}
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				menuManager.buildMenu(mousex, mousey, xc, yc, layers);
-			}
-		});
+		WorkbenchHelper.run(() -> menuManager.buildMenu(mousex, mousey, xc, yc, layers));
 	}
 
 	@Override
