@@ -952,9 +952,14 @@ public abstract class Spatial {
 					geom = GeometryPrecisionReducer.reducePointwise(geom1, pm)
 							.intersection(GeometryPrecisionReducer.reducePointwise(geom2, pm));
 				} catch (final Exception e1) {
-					// AD 12/04/13 : Addition of a third method in case of
-					// exception
-					geom = geom1.buffer(0.01, 0, BufferOp.CAP_BUTT).union(geom2.buffer(0.01, 0, BufferOp.CAP_BUTT));
+					try {
+						geom = Spatial.Transformations.translated_by(scope, g1.copy(scope), new GamaPoint(0.001,0)).getInnerGeometry().union(geom2);
+						
+					} catch (final Exception e2) {
+						// AD 12/04/13 : Addition of a third method in case of
+						// exception
+						geom = geom1.buffer(0.01, 5, BufferParameters.CAP_SQUARE).union(geom2.buffer(0.01, 5, BufferParameters.CAP_SQUARE));
+					}
 				}
 
 			}

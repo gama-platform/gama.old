@@ -10,9 +10,9 @@ import msi.gama.util.GamaColor;
 import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.Abstract3DRenderer;
 
-public class HelperLayerObject extends LayerObject {
+public class RotationHelperLayerObject extends LayerObject {
 
-	public HelperLayerObject(final Abstract3DRenderer renderer) {
+	public RotationHelperLayerObject(final Abstract3DRenderer renderer) {
 		super(renderer, null);
 		constantRedrawnLayer = true;
 	}

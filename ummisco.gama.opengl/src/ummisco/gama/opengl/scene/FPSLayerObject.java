@@ -5,9 +5,12 @@ import java.util.ArrayList;
 import com.jogamp.opengl.GL2;
 
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
+import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.Abstract3DRenderer;
 
 public class FPSLayerObject extends LayerObject {
@@ -52,12 +55,22 @@ public class FPSLayerObject extends LayerObject {
 	private void updateObjectList() {
 		objects.clear();
 		computeFrameRate();
-		// create the rotation helper as "GeometryObject" in the list "objects".
-		// the rotation helper is a sphere centered in renderer.getRotationHelperPosition() and a size of "50.0 * (distance / 500)".
+		
 		ArrayList<AbstractObject> newElem = new ArrayList<AbstractObject>();
-		// build labels
+		
+		// build text background
+		final double w = 0.15;
+		final double h = 0.04;
+		final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));
+		final ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, new GamaColor(255, 255, 255, 255),
+				null); 	// white for the color, null
+					 	// for the border color
+		final GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
+		geomObj.enableOverlay(true);
+		newElem.add(geomObj);
+		// build label
 		GamaFont font = new GamaFont("Helvetica",0,18); // 0 for plain, 18 for text size.
-		TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(0.003,0.003,0.003),null,new GamaPoint(0.01,-0.07,0),new GamaColor(0,0,0,1),font,true);
+		TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(0.0015,0.0015,0.0015),null,new GamaPoint(0.005,-0.03,0),new GamaColor(0,0,0,1),font,true);
 		StringObject strObj = new StringObject("fps : " + fps, textDrawingAttr, this);
 		strObj.enableOverlay(true);
 		newElem.add(strObj);

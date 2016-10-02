@@ -1772,6 +1772,21 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 	
+	public static Boolean removeSocialLink(final IScope scope, final SocialLink socialDirect) {
+		return getSocialBase(scope, SOCIALLINK_BASE).remove(socialDirect);
+	}
+
+	@action(name = "remove_social_link", args = {
+			@arg(name = SOCIALLINK, type = SocialLinkType.id, optional = true, doc = @doc("social link to remove")) }, doc = @doc(value = "removes the social link from the social relation base.", returns = "true if it is in the base.", examples = {
+					@example("") }))
+	public Boolean primRemoveSocialLink(final IScope scope) throws GamaRuntimeException {
+		final SocialLink socialDirect = (SocialLink) (scope.hasArg(SOCIALLINK) ? scope.getArg(SOCIALLINK, SocialLinkType.id) : null);
+		if (socialDirect != null) {
+			return removeSocialLink(scope, socialDirect);
+		}
+		return false;
+	}
+	
 	private List<SocialLink> listSocialAgentDead(final IScope scope) {
 		final List<SocialLink> tempPred = new ArrayList<SocialLink>();
 		for (final SocialLink pred : getSocialBase(scope, SimpleBdiArchitecture.SOCIALLINK_BASE)) {

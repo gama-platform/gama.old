@@ -35,6 +35,8 @@ public class ModernDrawer {
 
 	private LayerObject currentLayer;
 	private HashMap<String,ArrayList<ArrayList<DrawingEntity>>> mapEntities;
+	private ArrayList<String> entityTypeOrder; // to display the objects in the right order 
+	// (ex : in graphic layer, if we draw a circle and then a text, we want the text to be above the circle).
 	private final ModernRenderer renderer;
 	private GL2 gl;
 	
@@ -67,6 +69,7 @@ public class ModernDrawer {
 		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), null);
 		mapEntities.put(DrawingEntity.Type.BILLBOARDING.toString(), null);
 		mapEntities.put(DrawingEntity.Type.POINT.toString(), null);
+		entityTypeOrder = new ArrayList<String>();
 		currentLayer = layer;
 		numberOfShaderInTheCurrentLayer=0;
 		currentShaderNumber = 0;
@@ -79,6 +82,7 @@ public class ModernDrawer {
 	}
 	
 	private void addDrawingEntities(DrawingEntity newEntity, DrawingEntity.Type type) {
+		if (!entityTypeOrder.contains(type.toString())) entityTypeOrder.add(type.toString());
 		ArrayList<ArrayList<DrawingEntity>> entities = mapEntities.get(type.toString());
 		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
 		if (entities == null) {
@@ -188,7 +192,7 @@ public class ModernDrawer {
 		layerStructure.vboHandles = vboHandles;
 		layerStructureMap.put(currentLayer, layerStructure);
 		
-		for (String key : mapEntities.keySet()) {
+		for (String key : entityTypeOrder) {
 			ArrayList<ArrayList<DrawingEntity>> listOfListOfEntities = mapEntities.get(key);
 			if (listOfListOfEntities != null) {
 				
@@ -365,17 +369,11 @@ public class ModernDrawer {
 		
 		// Keystoning computation (cf http://www.bitlush.com/posts/arbitrary-quadrilaterals-in-opengl-es-2-0)
 		// Coordinates of the screen (change this for keystoning effect)	
-		float[] p0 = new float[]{-1,-1}; // bottom-left
-		float[] p1 = new float[]{-1,1};  // top-left
-		float[] p2 = new float[]{1,1};   // top-right
-		float[] p3 = new float[]{1,-1};  // bottom-right
-		if (renderer.data.getKeystone() != null) {
-			// when the user is choosing his own values, the order has to be : top-left, top-right, bot-left, bot-right, with y axis inversed.
-			p0 = new float[]{(float) renderer.data.getKeystone().get(2).getX(),-(float) renderer.data.getKeystone().get(2).getY()};
-			p1 = new float[]{(float) renderer.data.getKeystone().get(0).getX(),-(float) renderer.data.getKeystone().get(0).getY()};
-			p2 = new float[]{(float) renderer.data.getKeystone().get(1).getX(),-(float) renderer.data.getKeystone().get(1).getY()};
-			p3 = new float[]{(float) renderer.data.getKeystone().get(3).getX(),-(float) renderer.data.getKeystone().get(3).getY()};
-		}
+		// transform the coordinates [0,1] --> [-1,+1]
+		float[] p0 = new float[] {renderer.getKeystoneCoordinates()[0][0]*2f-1f,-(renderer.getKeystoneCoordinates()[0][1]*2f-1f)}; // bottom-left
+		float[] p1 = new float[] {renderer.getKeystoneCoordinates()[1][0]*2f-1f,-(renderer.getKeystoneCoordinates()[1][1]*2f-1f)};  // top-left
+		float[] p2 = new float[] {renderer.getKeystoneCoordinates()[2][0]*2f-1f,-(renderer.getKeystoneCoordinates()[2][1]*2f-1f)};   // top-right
+		float[] p3 = new float[] {renderer.getKeystoneCoordinates()[3][0]*2f-1f,-(renderer.getKeystoneCoordinates()[3][1]*2f-1f)};  // bottom-right
 		
 		float ax = (p2[0] - p0[0])/2f;
 		float ay = (p2[1] - p0[1])/2f;
@@ -432,10 +430,6 @@ public class ModernDrawer {
 	}
 	
 	private void updateTransformationMatrix(AbstractShader shaderProgram) {
-		if (shaderProgram.isOverlay()) {
-			float ratioForOverlay = (float) (renderer.getyRatioBetweenPixelsAndModelUnits());
-			shaderProgram.setRatioForOverlay(ratioForOverlay);
-		}
 		Matrix4f viewMatrix = TransformationMatrix.createViewMatrix(renderer.camera);
 		shaderProgram.loadViewMatrix(viewMatrix);
 		shaderProgram.loadProjectionMatrix(renderer.getProjectionMatrix());

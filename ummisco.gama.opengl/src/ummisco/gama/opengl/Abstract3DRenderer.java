@@ -23,6 +23,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 
 import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -125,14 +126,24 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	protected ModelScene currentScene;
 	protected GLCanvas canvas;
 	public ICamera camera;
-	public double currentZRotation = 0;
+	protected double currentZRotation = 0;
 	int[] viewport = new int[4];
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
 	protected GLU glu;
+	protected GL2 gl;
+	// relative to rotation helper
 	protected boolean drawRotationHelper = false;
 	protected GamaPoint rotationHelperPosition = null;
+	// relative to keystone
+	protected boolean drawKeystoneHelper = false;
+	public boolean drawKeystoneHelper() {return drawKeystoneHelper;}
+	protected float[][] keystoneCoordinates;
+	public float[][] getKeystoneCoordinates() {return keystoneCoordinates;}
+	public void setKeystoneCoordinates(int cornerId,float[] coordinates) {keystoneCoordinates[cornerId] = coordinates;};
+	protected int cornerSelected = -1;
+	public int getCornerSelected() {return cornerSelected;}
 
 	protected final GeometryCache geometryCache = new GeometryCache();
 	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
@@ -171,6 +182,24 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		final FillLayout gl = new FillLayout();
 		canvas.setLayout(gl);
 		return canvas;
+	}
+	
+	protected void commonInit(final GLAutoDrawable drawable) {		
+		// the drawingEntityGenerator is used only when there is a webgl display and/or a modernRenderer.
+		drawingEntityGenerator = new DrawingEntityGenerator(this);
+		
+		glu = new GLU();
+		currentZRotation = data.getZRotation();
+		gl = drawable.getContext().getGL().getGL2();
+		final Color background = data.getBackgroundColor();
+		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
+				1.0f);
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
+		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
+		
+		initializeCanvasListeners();
+		updateCameraPosition();
+		updatePerspective();
 	}
 
 	public abstract void initScene();
@@ -284,14 +313,18 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public final void updateCameraPosition() {
 		camera.update();
 	}
+	
+	protected abstract void updatePerspective();
 
 	public abstract void drawROI(final GL2 gl);
 
 	public abstract Envelope3D getROIEnvelope();
 
 	public abstract void startDrawRotationHelper(final GamaPoint pos);
-
 	public abstract void stopDrawRotationHelper();
+	
+	public abstract void startDrawKeystoneHelper();
+	public abstract void stopDrawKeystoneHelper();
 
 	public abstract void drawRotationHelper(final GL2 gl);
 
@@ -449,6 +482,28 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public GamaPoint getRotationHelperPosition() {
 		return rotationHelperPosition;
+	}
+	
+	public void setUpKeystoneCoordinates() {
+		keystoneCoordinates = new float[4][2];
+		float[] coords1 = new float[]{0,1}; // bottom-left
+		float[] coords2 = new float[]{0,0};  // top-left
+		float[] coords3 = new float[]{1,0};   // top-right
+		float[] coords4 = new float[]{1,1};  // bottom-right
+		if (data.getKeystone() != null) {
+			coords1 = new float[]{(float) data.getKeystone().get(2).getX(),(float) (data.getKeystone().get(2).getY())};
+			coords2 = new float[]{(float) data.getKeystone().get(0).getX(),(float) (data.getKeystone().get(0).getY())};
+			coords3 = new float[]{(float) data.getKeystone().get(1).getX(),(float) (data.getKeystone().get(1).getY())};
+			coords4 = new float[]{(float) data.getKeystone().get(3).getX(),(float) (data.getKeystone().get(3).getY())};
+		}
+		setKeystoneCoordinates(0, coords1);
+		setKeystoneCoordinates(1, coords2);
+		setKeystoneCoordinates(2, coords3);
+		setKeystoneCoordinates(3, coords4);
+	}
+	
+	public void cornerSelected(int cornerId) {
+		cornerSelected = cornerId;
 	}
 
 }

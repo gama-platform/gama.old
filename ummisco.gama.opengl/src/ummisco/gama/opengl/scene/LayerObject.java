@@ -124,6 +124,11 @@ public class LayerObject implements Iterable<GeometryObject> {
 					object.setAlpha(originalAlpha * alpha);
 					final DrawingEntity[] drawingEntity = renderer.getDrawingEntityGenerator()
 							.GenerateDrawingEntities(renderer.getSurface().getScope(), object, gl);
+					if (overlay) {
+						for (DrawingEntity de : drawingEntity) {
+							de.enableOverlay(true);
+						}
+					}
 					object.setAlpha(originalAlpha);
 					if (drawingEntity != null)
 						renderer.getDrawer().addDrawingEntities(drawingEntity);
