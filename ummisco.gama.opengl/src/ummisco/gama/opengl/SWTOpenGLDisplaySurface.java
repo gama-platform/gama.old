@@ -27,6 +27,7 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ILayer;
@@ -67,7 +68,7 @@ import ummisco.gama.ui.views.displays.DisplaySurfaceMenu;
 public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 
 	final GLAnimatorControl animator;
-	final Abstract3DRenderer renderer;
+	Abstract3DRenderer renderer;
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
 	Set<IEventLayerListener> listeners = new HashSet();
@@ -314,7 +315,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	@Override
 	public void outputReloaded() {
 		setDisplayScope(output.getScope().copy("in OpenGLDisplaySurface"));
-		getScope().disableErrorReporting();
+		if (!GamaPreferences.ERRORS_IN_DISPLAYS.getValue())
+			getScope().disableErrorReporting();
 		renderer.initScene();
 		layerManager.outputChanged();
 
@@ -459,19 +461,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	 */
 	@Override
 	public void followAgent(final IAgent a) {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				WorkbenchHelper.asyncRun(new Runnable() {
-
-					@Override
-					public void run() {
-						renderer.camera.zoomFocus(a);
-					}
-				});
-			}
-		}).start();
+		new Thread(() -> WorkbenchHelper.asyncRun(() -> renderer.camera.zoomFocus(a))).start();
 
 	}
 
@@ -542,22 +532,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 	}
 
-	final Runnable cleanup = new Runnable() {
-
-		@Override
-		public void run() {
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					renderer.getPickingState().setPicking(false);
-
-				}
-			});
-
-		}
-
-	};
+	final Runnable cleanup = () -> WorkbenchHelper.asyncRun(() -> renderer.getPickingState().setPicking(false));
 
 	/**
 	 * Method selectAgents()
@@ -606,50 +581,29 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		images.put(renderer.camera.isROISticky() ? "Hide region" : "Keep region visible",
 				GamaIcons.create(IGamaIcons.MENU_FOLLOW).image());
 		images.put("Focus on region", GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image());
-		actions.put(renderer.camera.isROISticky() ? "Hide region" : "Keep region visible", new Runnable() {
+		actions.put(renderer.camera.isROISticky() ? "Hide region" : "Keep region visible",
+				() -> renderer.camera.toggleStickyROI());
+		actions.put("Focus on region", () -> renderer.camera.zoomRoi(env));
+		WorkbenchHelper.run(() -> {
+			final Menu menu = menuManager.buildROIMenu(renderer.camera.getMousePosition().x,
+					renderer.camera.getMousePosition().y, agents, actions, images);
+			menu.addMenuListener(new MenuListener() {
 
-			@Override
-			public void run() {
-				renderer.camera.toggleStickyROI();
-			}
-		});
-		actions.put("Focus on region", new Runnable() {
+				@Override
+				public void menuHidden(final MenuEvent e) {
+					animator.resume();
+					// Will be run after the selection
+					WorkbenchHelper.asyncRun(() -> renderer.cancelROI());
 
-			@Override
-			public void run() {
-				renderer.camera.zoomRoi(env);
-			}
-		});
-		WorkbenchHelper.run(new Runnable() {
+				}
 
-			@Override
-			public void run() {
-				final Menu menu = menuManager.buildROIMenu(renderer.camera.getMousePosition().x,
-						renderer.camera.getMousePosition().y, agents, actions, images);
-				menu.addMenuListener(new MenuListener() {
+				@Override
+				public void menuShown(final MenuEvent e) {
+					animator.pause();
+				}
+			});
 
-					@Override
-					public void menuHidden(final MenuEvent e) {
-						animator.resume();
-						// Will be run after the selection
-						WorkbenchHelper.asyncRun(new Runnable() {
-
-							@Override
-							public void run() {
-								renderer.cancelROI();
-							}
-						});
-
-					}
-
-					@Override
-					public void menuShown(final MenuEvent e) {
-						animator.pause();
-					}
-				});
-
-				menu.setVisible(true);
-			}
+			menu.setVisible(true);
 		});
 
 	}
@@ -675,7 +629,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		}
 		this.menuManager = null;
 		this.listeners.clear();
-
+		this.renderer = null;
 		GAMA.releaseScope(getScope());
 		setDisplayScope(null);
 	}
