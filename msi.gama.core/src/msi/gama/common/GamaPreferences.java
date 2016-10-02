@@ -731,6 +731,8 @@ public class GamaPreferences {
 		return "";
 	}
 
+	public static final Entry<Boolean> ERRORS_IN_DISPLAYS = create("core.display.errors",
+			"Show errors in displays and outputs", false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Boolean> DISPLAY_ONLY_VISIBLE = create("core.display_visible",
 			"Only process for display the agents that are visible", false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Boolean> DISPLAY_SHARED_CONTEXT = create("core.shared_context2",
