@@ -946,19 +946,22 @@ public abstract class Spatial {
 			try {
 				geom = geom1.union(geom2);
 			} catch (final Exception e) {
-				e.printStackTrace();
 				try {
 					final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
 					geom = GeometryPrecisionReducer.reducePointwise(geom1, pm)
 							.intersection(GeometryPrecisionReducer.reducePointwise(geom2, pm));
 				} catch (final Exception e1) {
 					try {
-						geom = Spatial.Transformations.translated_by(scope, g1.copy(scope), new GamaPoint(0.001,0)).getInnerGeometry().union(geom2);
+						geom = Spatial.Transformations.translated_by(scope, g2.copy(scope), new GamaPoint(0.01,0)).getInnerGeometry().union(geom1);
 						
 					} catch (final Exception e2) {
 						// AD 12/04/13 : Addition of a third method in case of
 						// exception
-						geom = geom1.buffer(0.01, 5, BufferParameters.CAP_SQUARE).union(geom2.buffer(0.01, 5, BufferParameters.CAP_SQUARE));
+						try {
+							geom = geom1.buffer(0.01, 0, BufferParameters.CAP_SQUARE).union(geom2.buffer(0.01, 0, BufferParameters.CAP_SQUARE));
+						} catch (final Exception e3) {
+							geom = Spatial.Transformations.rotated_by(scope, g2.copy(scope), 0.1).getInnerGeometry().union(geom1);
+						}
 					}
 				}
 
