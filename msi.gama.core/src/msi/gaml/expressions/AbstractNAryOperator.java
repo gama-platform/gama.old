@@ -24,10 +24,13 @@ import static msi.gama.precompiler.ITypeProvider.SECOND_TYPE;
 import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 
 import java.util.Arrays;
+import java.util.Set;
 
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -253,6 +256,16 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 					e.collectMetaInformation(meta);
 				}
 			}
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+		if (exprs != null) {
+			for (final IExpression e : exprs) {
+				if (e != null)
+					e.collectUsedVarsOf(species, result);
+			}
+		}
 	}
 
 	/**

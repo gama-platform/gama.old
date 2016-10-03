@@ -12,7 +12,6 @@
 package msi.gaml.factories;
 
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -43,16 +42,15 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected StatementDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto,
-			final Set<String> dependencies) {
+			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
 		if (proto.isPrimitive()) {
 			return new PrimitiveDescription(enclosing, element, children, facets, null);
 		}
 		if (keyword.equals(ACTION))
 			return new ActionDescription(keyword, enclosing, children, element, facets);
 		if (DescriptionFactory.getProto(keyword, enclosing).hasSequence() && children.hasChildren()) {
-			return new StatementWithChildrenDescription(keyword, enclosing, children, proto.hasScope(), proto.hasArgs(),
-					element, facets, null);
+			return new StatementWithChildrenDescription(keyword, enclosing, children, proto.hasArgs(), element, facets,
+					null);
 		}
 		return new StatementDescription(keyword, enclosing, children, proto.hasArgs(), element, facets, null);
 	}

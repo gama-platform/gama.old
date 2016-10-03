@@ -11,28 +11,28 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
+
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.Types;
 
 public class DenotedActionExpression extends VariableExpression {
 
-	IDescription description;
-
 	public DenotedActionExpression(final IDescription action) {
-		super(action.getName(), Types.NO_TYPE, true, null);
-		this.description = action;
+		super(action.getName(), Types.NO_TYPE, true, action);
 	}
 
 	@Override
 	public Object value(final IScope scope) {
-		return description;
+		return getDefinitionDescription();
 	}
 
 	@Override
 	public String getTitle() {
-		return description.getTitle();
+		return getDefinitionDescription().getTitle();
 	}
 
 	/**
@@ -44,15 +44,21 @@ public class DenotedActionExpression extends VariableExpression {
 	}
 
 	@Override
-	public void setVal(final IScope scope, final Object v, final boolean create) {}
+	public void setVal(final IScope scope, final Object v, final boolean create) {
+	}
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
-		description.collectMetaInformation(meta);
+		getDefinitionDescription().collectMetaInformation(meta);
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
 	}
 
 }

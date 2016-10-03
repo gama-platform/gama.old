@@ -19,6 +19,8 @@ import static msi.gama.precompiler.ITypeProvider.FIRST_TYPE;
 import static msi.gama.precompiler.ITypeProvider.NONE;
 import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 
+import java.util.Set;
+
 import msi.gama.common.GamaPreferences;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
@@ -26,6 +28,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -65,9 +68,11 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		// setName(proto.getName());
 		this.child = child[0];
 		this.prototype = proto;
-		type = proto.returnType;
-		computeType();
-		proto.verifyExpectedTypes(context, child[0].getType().getContentType());
+		if (proto != null) {
+			type = proto.returnType;
+			computeType();
+			proto.verifyExpectedTypes(context, child[0].getType().getContentType());
+		}
 	}
 
 	@Override
@@ -197,20 +202,15 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		return i == 0 ? child : null;
 	}
 
-	// @Override
-	// public OperatorProto getPrototype() {
-	// return prototype;
-	// }
-
-	/**
-	 * Method collectPlugins()
-	 * 
-	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
-	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
 		prototype.collectMetaInformation(meta);
 		child.collectMetaInformation(meta);
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+		child.collectUsedVarsOf(species, result);
 	}
 
 }

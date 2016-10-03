@@ -13,7 +13,6 @@ package msi.gaml.factories;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -55,8 +54,7 @@ public class ModelFactory extends SymbolFactory {
 
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto,
-			final Set<String> dependencies) {
+			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
 		// This method is actually never called.
 		return null;
 	}

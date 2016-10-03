@@ -11,17 +11,21 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
-public class WorldExpression extends VariableExpression {
+public class WorldExpression extends AbstractExpression implements IVarExpression {
 
 	protected WorldExpression(final IType type, final IDescription global) {
-		super(IKeyword.WORLD_AGENT_NAME, type, true, global);
+		this.type = type;
+		// super(IKeyword.WORLD_AGENT_NAME, type, true, global);
 	}
 
 	@Override
@@ -36,7 +40,7 @@ public class WorldExpression extends VariableExpression {
 	 */
 	@Override
 	public String getDocumentation() {
-		return "Global constant <b>world</>, represents the current simulation";
+		return "Global constant <b>world</b>, represents the current simulation";
 	}
 
 	@Override
@@ -50,6 +54,41 @@ public class WorldExpression extends VariableExpression {
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	}
+
+	@Override
+	public boolean isConst() {
+		return false;
+	}
+
+	@Override
+	public String getTitle() {
+		return "variable world";
+	}
+
+	@Override
+	public String serialize(final boolean includingBuiltIn) {
+		return IKeyword.WORLD_AGENT_NAME;
+	}
+
+	@Override
+	public boolean isNotModifiable() {
+		return true;
+	}
+
+	@Override
+	public IExpression getOwner() {
+		return null;
+	}
+
+	@Override
+	public VariableExpression getVar() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

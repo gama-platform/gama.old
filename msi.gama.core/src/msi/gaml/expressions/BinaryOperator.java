@@ -32,8 +32,6 @@ public class BinaryOperator extends NAryOperator {
 		if (u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue()) {
 			final IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(),
 					u.serialize(false));
-			// System.out.println(" ==== Simplification of " + u.toGaml() + "
-			// into " + e.toGaml());
 			return e;
 		}
 		return u;
@@ -102,8 +100,11 @@ public class BinaryOperator extends NAryOperator {
 
 	public static class BinaryVarOperator extends BinaryOperator implements IVarExpression.Agent {
 
+		IDescription definitionDescription;
+
 		public BinaryVarOperator(final OperatorProto proto, final IDescription context, final IExpression... args) {
 			super(proto, context, args);
+			definitionDescription = context;
 		}
 
 		@Override
@@ -126,6 +127,11 @@ public class BinaryOperator extends NAryOperator {
 		}
 
 		@Override
+		public IDescription getDefinitionDescription() {
+			return definitionDescription;
+		}
+
+		@Override
 		public boolean isNotModifiable() {
 			return ((IVarExpression) exprs[1]).isNotModifiable();
 		}
@@ -137,11 +143,8 @@ public class BinaryOperator extends NAryOperator {
 			sb.append('.');
 			sb.append(exprs[1].serialize(includingBuiltIn));
 			return sb.toString();
-			// return exprs[0].serialize(includingBuiltIn) + "." +
-			// exprs[1].serialize(includingBuiltIn);
 		}
 
-		//
 		@Override
 		public BinaryVarOperator copy() {
 			return new BinaryVarOperator(prototype, null, exprs);

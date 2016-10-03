@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -22,7 +21,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 
 	public ActionDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 			final EObject source, final Facets facets) {
-		super(keyword, superDesc, cp, true, true, source, facets, null);
+		super(keyword, superDesc, cp, true, source, facets, null);
 	}
 
 	@Override
@@ -105,13 +104,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 							arg.getValue().getTarget(), new String[] { arg.getKey() });
 					return false;
 				} else if (arg.getValue() != null && arg.getValue().getExpression() != null) {
-					final IDescription formalArg = Iterables.find(formalArgs, new Predicate<IDescription>() {
-
-						@Override
-						public boolean apply(final IDescription input) {
-							return input.getName().equals(name);
-						}
-					});
+					final IDescription formalArg = Iterables.find(formalArgs, input -> input.getName().equals(name));
 					final IType formalType = formalArg.getType();
 					final IType callerType = arg.getValue().getExpression().getType();
 					if (Types.intFloatCase(formalType, callerType)) {
@@ -133,13 +126,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 	}
 
 	public boolean containsArg(final String s) {
-		final IDescription formalArg = Iterables.find(getFormalArgs(), new Predicate<IDescription>() {
-
-			@Override
-			public boolean apply(final IDescription input) {
-				return input.getName().equals(s);
-			}
-		});
+		final IDescription formalArg = Iterables.find(getFormalArgs(), input -> input.getName().equals(s));
 		return formalArg != null;
 	}
 

@@ -47,8 +47,7 @@ public class ExperimentFactory extends SpeciesFactory {
 
 	@Override
 	protected ExperimentDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-			final ChildrenProvider children, final IDescription sd, final SymbolProto proto,
-			final Set<String> dependencies) {
+			final ChildrenProvider children, final IDescription sd, final SymbolProto proto) {
 		return new ExperimentDescription(keyword, (SpeciesDescription) sd, children, element, facets);
 	}
 

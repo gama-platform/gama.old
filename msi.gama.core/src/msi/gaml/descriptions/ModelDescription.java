@@ -22,7 +22,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -356,14 +355,10 @@ public class ModelDescription extends SpeciesDescription {
 	public Set<String> getExperimentTitles() {
 		final Set<String> strings = new TLinkedHashSet();
 		if (experiments != null) {
-			experiments.forEachEntry(new TObjectObjectProcedure<String, ExperimentDescription>() {
-
-				@Override
-				public boolean execute(final String a, final ExperimentDescription b) {
-					if (b.getOriginName().equals(getName()))
-						strings.add(b.getExperimentTitleFacet());
-					return true;
-				}
+			experiments.forEachEntry((a, b) -> {
+				if (b.getOriginName().equals(getName()))
+					strings.add(b.getExperimentTitleFacet());
+				return true;
 			});
 		}
 		return strings;

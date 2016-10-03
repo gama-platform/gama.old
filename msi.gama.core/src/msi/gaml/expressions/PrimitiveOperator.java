@@ -12,16 +12,17 @@
 package msi.gaml.expressions;
 
 import java.util.Map;
+import java.util.Set;
 
-import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
-import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Arguments;
@@ -34,18 +35,17 @@ import msi.gaml.types.IType;
  * @author drogoul 4 sept. 07
  */
 
-public class PrimitiveOperator extends AbstractNAryOperator {
+public class PrimitiveOperator implements IExpression {
 
 	final Arguments parameters;
+	final IExpression target;
 	final StatementDescription action;
 
-	public PrimitiveOperator(final OperatorProto proto, final IDescription callerContext,
-			final StatementDescription action, final IExpression call, final Arguments args) {
-		super(proto, call);
-		// name = action.getName();
-		type = action.getType();
+	public PrimitiveOperator(final IDescription callerContext, final StatementDescription action,
+			final IExpression target, final Arguments args) {
+		this.target = target;
 		this.action = action;
-		parameters = args == null ? new Arguments() : args;
+		parameters = args;
 
 	}
 
@@ -59,7 +59,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 		if (scope == null) {
 			return null;
 		}
-		final IAgent target = numArg() == 0 ? scope.getAgent() : Cast.asAgent(scope, arg(0).value(scope));
+		final IAgent target = this.target == null ? scope.getAgent() : Cast.asAgent(scope, this.target.value(scope));
 		if (target == null) {
 			return null;
 		}
@@ -84,17 +84,6 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	}
 
 	@Override
-	public PrimitiveOperator copy() {
-		// See what impact it has got.
-		return this;
-	}
-
-	@Override
-	protected IType computeType(final int t, final IType def, final int kind) {
-		return def;
-	}
-
-	@Override
 	public boolean isConst() {
 		return false;
 	}
@@ -102,7 +91,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	@Override
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
-		sb.append("action ").append(getName()).append(" defined in species ").append(arg(0).getType().getSpeciesName())
+		sb.append("action ").append(getName()).append(" defined in species ").append(target.getType().getSpeciesName())
 				.append(" returns ").append(getType().getTitle());
 		return sb.toString();
 
@@ -121,8 +110,11 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		final StringBuilder sb = new StringBuilder();
-		parenthesize(sb, exprs[0]);
-		sb.append(".").append(literalValue()).append("(");
+		if (target != null) {
+			AbstractExpression.parenthesize(sb, target);
+			sb.append(".");
+		}
+		sb.append(literalValue()).append("(");
 		argsToGaml(sb, includingBuiltIn);
 		sb.append(")");
 		return sb.toString();
@@ -159,13 +151,56 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 		if (action.isBuiltIn()) {
 			meta.put(GamlProperties.ACTIONS, action.getName());
 		}
-		parameters.forEachValue(new TObjectProcedure<IExpressionDescription>() {
-
-			@Override
-			public boolean execute(final IExpressionDescription exp) {
+		if (parameters != null)
+			parameters.forEachValue(exp -> {
 				exp.collectMetaInformation(meta);
 				return true;
-			}
-		});
+			});
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+		if (parameters != null)
+			parameters.forEachEntry(new FacetVisitor() {
+
+				@Override
+				public boolean visit(final String name, final IExpressionDescription exp) {
+					final IExpression expression = exp.getExpression();
+					if (expression != null)
+						expression.collectUsedVarsOf(species, result);
+					return true;
+
+				}
+			});
+	}
+
+	@Override
+	public void setName(final String newName) {
+	}
+
+	@Override
+	public IType getType() {
+		return action.getType();
+	}
+
+	@Override
+	public void dispose() {
+		if (parameters != null)
+			parameters.clear();
+	}
+
+	@Override
+	public String literalValue() {
+		return action.getName();
+	}
+
+	@Override
+	public IExpression resolveAgainst(final IScope scope) {
+		return this;
+	}
+
+	@Override
+	public boolean shouldBeParenthesized() {
+		return true;
 	}
 }

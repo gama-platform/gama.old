@@ -11,9 +11,13 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
 public class SelfExpression extends VariableExpression {
@@ -38,13 +42,20 @@ public class SelfExpression extends VariableExpression {
 	}
 
 	@Override
-	public void setVal(final IScope scope, final Object v, final boolean create) {}
+	public void setVal(final IScope scope, final Object v, final boolean create) {
+	}
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final GamlProperties meta) {}
+	public void collectMetaInformation(final GamlProperties meta) {
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	}
 
 }

@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -82,6 +84,12 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	public String getDocumentation() {
 		final IDescription desc = getDefinitionDescription();
 		return "Of type: " + type.getTitle() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+		if (species.equals(this.getDefinitionDescription().getSpeciesContext()))
+			result.add(getDefinitionDescription().getSpeciesContext().getAttribute(getName()));
 	}
 
 }

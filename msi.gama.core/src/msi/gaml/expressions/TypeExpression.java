@@ -11,9 +11,13 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
+
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
 /**
@@ -62,6 +66,7 @@ public class TypeExpression extends AbstractExpression {
 
 	/**
 	 * Method getDocumentation()
+	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#getDocumentation()
 	 */
 	@Override
@@ -81,11 +86,16 @@ public class TypeExpression extends AbstractExpression {
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {
 		type.collectMetaInformation(meta);
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
 	}
 
 }

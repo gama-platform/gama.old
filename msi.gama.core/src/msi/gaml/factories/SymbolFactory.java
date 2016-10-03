@@ -12,7 +12,6 @@
 package msi.gaml.factories;
 
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -41,6 +40,6 @@ public abstract class SymbolFactory {
 	}
 
 	protected abstract IDescription buildDescription(String keyword, Facets facets, EObject element,
-			ChildrenProvider children, IDescription enclosing, SymbolProto proto, Set<String> dependencies);
+			ChildrenProvider children, IDescription enclosing, SymbolProto proto);
 
 }

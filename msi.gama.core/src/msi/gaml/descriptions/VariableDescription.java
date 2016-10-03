@@ -11,13 +11,15 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.Sets;
+
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.GAML;
@@ -39,7 +41,7 @@ import msi.gaml.types.Types;
  */
 public class VariableDescription extends SymbolDescription {
 
-	private List<String> dependencies;
+	private static Map<String, Set<String>> dependencies = new THashMap();
 	private String plugin;
 
 	private final boolean _isGlobal, _isNotModifiable;
@@ -48,7 +50,7 @@ public class VariableDescription extends SymbolDescription {
 	private GamaHelper get, init, set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
-			final EObject source, final Facets facets, final Collection<String> dependencies) {
+			final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, source, facets);
 		if (facets != null && !facets.containsKey(TYPE) && !isExperimentParameter()) {
 			facets.putAsLabel(TYPE, keyword);
@@ -56,21 +58,20 @@ public class VariableDescription extends SymbolDescription {
 		_isGlobal = superDesc instanceof ModelDescription;
 		_isNotModifiable = facets != null && (facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE))
 				&& !isParameter();
-		addDependenciesNames(dependencies);
+		if (isBuiltIn() && hasFacet("depends_on")) {
+			final IExpressionDescription desc = getFacet("depends_on");
+			final Set<String> strings = desc.getStrings(this, false);
+			dependencies.put(getName(), strings);
+			removeFacets("depends_on");
+		}
+
 	}
 
 	public boolean isExperimentParameter() {
 		return PARAMETER.equals(keyword);
 	}
 
-	public void setSyntheticSpeciesContainer(final boolean withShapeDependency) {
-		if (withShapeDependency) {
-			if (dependencies == null) {
-				dependencies = new ArrayList();
-			}
-			if (!dependencies.contains(SHAPE))
-				dependencies.add(SHAPE);
-		}
+	public void setSyntheticSpeciesContainer() {
 		_isSyntheticSpeciesContainer = true;
 	}
 
@@ -82,9 +83,6 @@ public class VariableDescription extends SymbolDescription {
 	public void dispose() {
 		if (isBuiltIn()) {
 			return;
-		}
-		if (dependencies != null) {
-			dependencies = null;
 		}
 		super.dispose();
 	}
@@ -124,7 +122,7 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public VariableDescription copy(final IDescription into) {
 		final VariableDescription vd = new VariableDescription(getKeyword(), into, ChildrenProvider.NONE, element,
-				getFacetsCopy(), dependencies);
+				getFacetsCopy());
 		vd.addHelpers(get, init, set);
 		vd.originName = getOriginName();
 		return vd;
@@ -210,67 +208,35 @@ public class VariableDescription extends SymbolDescription {
 		return result;
 	}
 
-	// public void usedVariablesIn(final Map<String, VariableDescription> vars)
-	// {
-	//
-	// if (!dependenciesComputed) {
-	// dependenciesComputed = true;
-	// if (dependencies == null)
-	// return;
-	// for (final Map.Entry<String, VariableDescription> entry :
-	// dependencies.entrySet()) {
-	// entry.setValue(vars.get(entry.getKey()));
-	// }
-	// dependencies.remove(getName());
-	// }
-	// }
+	private static Set<String> INIT_DEPENDENCIES_FACETS = Sets.newHashSet(INIT, MIN, MAX, FUNCTION, STEP, SIZE);
+	private static Set<String> UPDATE_DEPENDENCIES_FACETS = Sets.newHashSet(UPDATE, VALUE, MIN, MAX, FUNCTION);
 
-	// public void expandDependencies(final List<VariableDescription> without) {
-	// if (dependencies == null)
-	// return;
-	// final Map<String, VariableDescription> accumulator = new THashMap();
-	// for (final VariableDescription dep : dependencies.values()) {
-	// if (dep == null)
-	// continue;
-	// if (!without.contains(dep)) {
-	// without.add(this);
-	// dep.expandDependencies(without);
-	// for (final VariableDescription vd : dep.getDependencies()) {
-	// if (vd != null)
-	// accumulator.put(vd.getName(), vd);
-	// }
-	// }
-	// }
-	// dependencies.putAll(accumulator);
-	// }
+	public Set<VariableDescription> getDependencies(final boolean forInit) {
 
-	public Collection<String> getDependenciesNames() {
-		if (dependencies == null)
-			return Collections.EMPTY_LIST;
-		return dependencies;
+		final Set<VariableDescription> result = new HashSet();
+		final Set<String> deps = dependencies.get(getName());
+		if (deps != null) {
+			for (final String s : deps) {
+				final VariableDescription vd = getSpeciesContext().getAttribute(s);
+				if (vd != null)
+					result.add(vd);
+			}
+		}
+
+		this.visitFacets(forInit ? INIT_DEPENDENCIES_FACETS : UPDATE_DEPENDENCIES_FACETS, new FacetVisitor() {
+
+			@Override
+			public boolean visit(final String name, final IExpressionDescription exp) {
+				final IExpression expression = exp.getExpression();
+				if (expression != null)
+					expression.collectUsedVarsOf(getSpeciesContext(), result);
+				return true;
+			}
+		});
+		result.remove(this);
+		result.remove(null);
+		return result;
 	}
-
-	// public Collection<VariableDescription> getDependencies() {
-	// if (dependencies == null)
-	// return Collections.EMPTY_LIST;
-	// // May contain null values
-	// return dependencies.values();
-	// }
-
-	// public void addExtraDependenciesTo(final Set<String> into) {
-	// if (dependencies == null)
-	// return;
-	// into.addAll(dependencies);
-	// dependencies.forEach(new TObjectProcedure<String() {
-	//
-	// @Override
-	// public boolean execute(final String a) {
-	// if (b == null)
-	// into.add(a);
-	// return true;
-	// }
-	// });
-	// }
 
 	public boolean isUpdatable() {
 		return !_isNotModifiable && (hasFacet(VALUE) || hasFacet(UPDATE));
@@ -346,16 +312,6 @@ public class VariableDescription extends SymbolDescription {
 	public boolean isGlobal() {
 		return _isGlobal;
 	}
-	//
-	// @Override
-	// public List<IDescription> getChildren() {
-	// return Collections.EMPTY_LIST;
-	// }
-	//
-	// @Override
-	// public List<IDescription> getOwnChildren() {
-	// return Collections.EMPTY_LIST;
-	// }
 
 	@Override
 	public String getDefiningPlugin() {
@@ -369,37 +325,6 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public void setDefiningPlugin(final String plugin) {
 		this.plugin = plugin;
-	}
-
-	public void addDependenciesNames(final Collection<String> dependencies) {
-		final IExpressionDescription exp = getFacet("depends_on");
-		if (exp != null) {
-			addDependenciesNoCheck(exp.getStrings(this, false));
-			removeFacets("depends_on");
-		}
-		addDependenciesNoCheck(dependencies);
-	}
-
-	private void addDependenciesNoCheck(final Collection<String> deps) {
-		if (deps == null || deps.isEmpty())
-			return;
-		if (dependencies == null)
-			dependencies = new ArrayList();
-
-		for (final String s : deps) {
-			if (getName().equals(SHAPE) && s.equals(LOCATION))
-				continue;
-
-			if (!s.equals(getName()))
-				dependencies.add(s);
-		}
-		// for (final String s : deps) {
-		// dependencies.put(s, null);
-		// }
-	}
-
-	public void discardDependencies() {
-		dependencies = null;
 	}
 
 	@Override

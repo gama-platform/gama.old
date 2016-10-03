@@ -11,11 +11,14 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
+
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
 public class TempVariableExpression extends VariableExpression {
@@ -31,8 +34,8 @@ public class TempVariableExpression extends VariableExpression {
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
-		Object val = type.cast(scope, v, null, false);
-		if ( create ) {
+		final Object val = type.cast(scope, v, null, false);
+		if (create) {
 			scope.addVarWithValue(getName(), val);
 		} else {
 			scope.setVarValue(getName(), val);
@@ -49,9 +52,9 @@ public class TempVariableExpression extends VariableExpression {
 	 */
 	@Override
 	public String getDocumentation() {
-		IDescription desc = getDefinitionDescription();
-		return "temporary variable " + getName() + " of type " + getType().getTitle() +
-			(desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
+		final IDescription desc = getDefinitionDescription();
+		return "temporary variable " + getName() + " of type " + getType().getTitle()
+				+ (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
 	}
 
 	@Override
@@ -61,8 +64,14 @@ public class TempVariableExpression extends VariableExpression {
 
 	/**
 	 * Method collectPlugins()
+	 * 
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final GamlProperties meta) {}
+	public void collectMetaInformation(final GamlProperties meta) {
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	}
 }

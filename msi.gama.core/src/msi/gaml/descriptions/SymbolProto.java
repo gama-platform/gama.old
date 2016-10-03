@@ -84,13 +84,9 @@ public class SymbolProto extends AbstractProto {
 		}
 		this.contextKeywords = contextKeywords;
 		Arrays.fill(this.contextKinds, false);
-		contextKinds.forEach(new TIntProcedure() {
-
-			@Override
-			public boolean execute(final int i) {
-				SymbolProto.this.contextKinds[i] = true;
-				return true;
-			}
+		contextKinds.forEach((TIntProcedure) i -> {
+			SymbolProto.this.contextKinds[i] = true;
+			return true;
 		});
 
 	}
@@ -235,8 +231,11 @@ public class SymbolProto extends AbstractProto {
 	 * @return
 	 */
 	public Set<String> getMissingMandatoryFacets(final Facets facets) {
-		if (facets == null)
-			return null;
+		if (facets == null) {
+			if (mandatoryFacets.isEmpty())
+				return null;
+			return mandatoryFacets;
+		}
 		Set<String> missing = null;
 		for (final String s : mandatoryFacets) {
 			if (!facets.containsKey(s)) {

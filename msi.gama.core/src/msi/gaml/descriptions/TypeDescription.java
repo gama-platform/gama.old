@@ -27,7 +27,10 @@ import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
+import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TLinkedHashSet;
@@ -261,22 +264,11 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 	}
 
-	public List<String> getUpdatableAttributeNames() {
-		final List<String> result = new ArrayList(
-				parent == null || parent == this ? Collections.EMPTY_LIST : parent.getUpdatableAttributeNames());
-		visitOwnAttributes(new DescriptionVisitor<VariableDescription>() {
+	Predicate<VariableDescription> IS_UPDATABLE = input -> input.isUpdatable();
+	Predicate<String> VAR_IS_UPDATABLE = input -> getAttribute(input).isUpdatable();
 
-			@Override
-			public boolean visit(final VariableDescription desc) {
-				if (desc.isUpdatable()) {
-					final String s = desc.getName();
-					if (!result.contains(s))
-						result.add(s);
-				}
-				return true;
-			}
-		});
-		return result;
+	public List<String> getUpdatableAttributeNames() {
+		return Lists.newArrayList(Iterables.filter(getOrderedAttributeNames(false), VAR_IS_UPDATABLE));
 	}
 
 	// protected boolean sortAttributes() {
@@ -334,62 +326,102 @@ public abstract class TypeDescription extends SymbolDescription {
 	// }
 	// }
 
-	/**
-	 * Returns true if the computation of dependencies is ok.
-	 * 
-	 * @return
-	 */
-	protected boolean sortAttributes() {
-		if (attributes == null || attributes.size() <= 1)
-			return true;
+	public Collection<String> getOrderedAttributeNames(final boolean forInit) {
+		final Collection<String> accumulator = parent != null && parent != this
+				? parent.getOrderedAttributeNames(forInit) : new TLinkedHashSet<String>();
+		if (attributes == null)
+			return accumulator;
+		if (attributes.size() <= 1) {
+			accumulator.addAll(attributes.keySet());
+			return accumulator;
+		}
 
+		final VariableDescription shape = attributes.get(SHAPE);
+		final Set<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
+				: shape.getDependencies(forInit);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
+		if (shape != null) {
+			dependencies.addVertex(shape);
+		}
 		attributes.forEachEntry((name, var) -> {
 
 			dependencies.addVertex(var);
-			for (final String depName : var.getDependenciesNames()) {
-				if (depName.equals(name))
-					return true;
-				final VariableDescription newVar = attributes.get(depName);
-				if (newVar == null)
-					continue;
-				dependencies.addVertex(newVar);
-				dependencies.addEdge(newVar, var);
+			if (shape != null && var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
+				dependencies.addEdge(shape, var);
 			}
-			var.discardDependencies();
 
+			for (final VariableDescription newVar : var.getDependencies(forInit)) {
+				if (attributes.containsValue(newVar)) {
+					dependencies.addVertex(newVar);
+					dependencies.addEdge(newVar, var);
+				}
+			}
 			return true;
 		});
-		final int oldAttributesSize = attributes.size();
-		attributes.clear();
 
 		final TopologicalOrderIterator<VariableDescription, Object> iterator = new TopologicalOrderIterator<>(
 				dependencies);
 		while (iterator.hasNext()) {
 
 			final VariableDescription vd = iterator.next();
-			attributes.put(vd.getName(), vd);
-		}
-		// If we miss some attributes (happens when cycles are present)
-		if (oldAttributesSize != attributes.size()) {
-			final CycleDetector cycleDetector = new CycleDetector<VariableDescription, Object>(dependencies);
-			if (cycleDetector.detectCycles()) {
-				final Set<VariableDescription> inCycles = cycleDetector.findCycles();
-				final Collection<String> names = Collections2.transform(inCycles, input -> input.getName());
-				for (final VariableDescription vd : inCycles) {
-					if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn())
-						continue;
-					final Collection<String> strings = new HashSet(names);
-					strings.remove(vd.getName());
-					vd.error("Cycle detected between " + vd.getName() + " and " + strings
-							+ ". These attributes or sub-species depend on each other for the computation of their value. Consider moving one of the initializations to the 'init' section of the "
-							+ getKeyword());
-				}
-				return false;
-			}
+			final String name = vd.getName();
+			if (accumulator.contains(name))
+				accumulator.remove(name);
+			accumulator.add(name);
 		}
 
-		// attributes.compact();
+		return accumulator;
+
+	}
+
+	/**
+	 * 
+	 * 
+	 * @return
+	 */
+	protected boolean verifyAttributeCycles() {
+		if (attributes == null || attributes.size() <= 1)
+			return true;
+
+		final VariableDescription shape = attributes.get(SHAPE);
+		final Set<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
+				: shape.getDependencies(true);
+		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
+		if (shape != null) {
+			dependencies.addVertex(shape);
+		}
+		attributes.forEachEntry((name, var) -> {
+
+			dependencies.addVertex(var);
+			if (shape != null && var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
+				dependencies.addEdge(shape, var);
+			}
+
+			for (final VariableDescription newVar : var.getDependencies(true)) {
+				if (attributes.containsValue(newVar)) {
+					dependencies.addVertex(newVar);
+					dependencies.addEdge(newVar, var);
+				}
+			}
+			return true;
+		});
+
+		final CycleDetector cycleDetector = new CycleDetector<VariableDescription, Object>(dependencies);
+		if (cycleDetector.detectCycles()) {
+			final Set<VariableDescription> inCycles = cycleDetector.findCycles();
+			final Collection<String> names = Collections2.transform(inCycles, input -> input.getName());
+			for (final VariableDescription vd : inCycles) {
+				if (vd.isSyntheticSpeciesContainer() || vd.isBuiltIn())
+					continue;
+				final Collection<String> strings = new HashSet(names);
+				strings.remove(vd.getName());
+				vd.error("Cycle detected between " + vd.getName() + " and " + strings
+						+ ". These attributes or sub-species depend on each other for the computation of their value. Consider moving one of the initializations to the 'init' section of the "
+						+ getKeyword());
+			}
+			return false;
+		}
+
 		return true;
 	}
 
@@ -601,6 +633,14 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (actions == null)
 			return true;
 		return actions.forEachValue(visitor);
+	}
+
+	@Override
+	public IDescription validate() {
+		final IDescription result = super.validate();
+		if (result != null && !verifyAttributeCycles())
+			return null;
+		return result;
 	}
 
 }

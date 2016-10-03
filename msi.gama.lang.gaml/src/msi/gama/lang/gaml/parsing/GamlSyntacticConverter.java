@@ -62,11 +62,9 @@ import static msi.gama.common.interfaces.IKeyword.ZERO;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.Diagnostic;
@@ -327,9 +325,9 @@ public class GamlSyntacticConverter {
 			convStatements(elt, EGaml.getEquationsOf((S_Equations) stm), errors);
 		}
 		// We add the dependencies (only for variable declarations)
-		if (isVar) {
-			elt.setDependencies(varDependenciesOf(stm));
-		}
+		// if (isVar) {
+		// elt.setDependencies(varDependenciesOf(stm));
+		// }
 		// We convert the block of statements (if any)
 		convertBlock(stm, elt, errors);
 
@@ -605,31 +603,32 @@ public class GamlSyntacticConverter {
 		return null;
 	}
 
-	private final Set<String> varDependenciesOf(final Statement s) {
-		Set<String> list = null;
-		for (final Facet facet : EGaml.getFacetsOf(s)) {
-			final Expression expr = facet.getExpr();
-			if (expr != null) {
-				if (expr instanceof VariableRef) {
-					if (list == null)
-						list = new HashSet();
-					list.add(EGaml.getKeyOf(expr));
-				} else {
-					for (final TreeIterator<EObject> tree = expr.eAllContents(); tree.hasNext();) {
-						final EObject obj = tree.next();
-						if (obj instanceof VariableRef) {
-							if (list == null)
-								list = new HashSet();
-							list.add(EGaml.getKeyOf(obj));
-						}
-					}
-				}
-			}
-		}
-		if (list == null || list.isEmpty()) {
-			return null;
-		}
-		return list;
-	}
+	// private final Set<String> varDependenciesOf(final Statement s) {
+	// Set<String> list = null;
+	// for (final Facet facet : EGaml.getFacetsOf(s)) {
+	// final Expression expr = facet.getExpr();
+	// if (expr != null) {
+	// if (expr instanceof VariableRef) {
+	// if (list == null)
+	// list = new HashSet();
+	// list.add(EGaml.getKeyOf(expr));
+	// } else {
+	// for (final TreeIterator<EObject> tree = expr.eAllContents();
+	// tree.hasNext();) {
+	// final EObject obj = tree.next();
+	// if (obj instanceof VariableRef) {
+	// if (list == null)
+	// list = new HashSet();
+	// list.add(EGaml.getKeyOf(obj));
+	// }
+	// }
+	// }
+	// }
+	// }
+	// if (list == null || list.isEmpty()) {
+	// return null;
+	// }
+	// return list;
+	// }
 
 }

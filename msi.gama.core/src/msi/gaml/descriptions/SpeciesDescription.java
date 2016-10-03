@@ -662,27 +662,9 @@ public class SpeciesDescription extends TypeDescription {
 					final VariableDescription var = (VariableDescription) DescriptionFactory.create(CONTAINER,
 							SpeciesDescription.this, NAME, n);
 
-					// Special case for the situations where the shape is
-					// defined with a reference to a sub-species
-					final VariableDescription shape = getAttribute(SHAPE);
-					final boolean cyclingDependency = shape != null && shape.getDependenciesNames().contains(n);
-					var.setSyntheticSpeciesContainer(!cyclingDependency);
+					var.setSyntheticSpeciesContainer();
 					var.setFacet(OF, GAML.getExpressionFactory()
 							.createTypeExpression(getModelDescription().getTypeNamed(microSpec.getName())));
-					// final Set<String> dependencies = new HashSet();
-					// microSpec.visitOwnAttributes(new
-					// DescriptionVisitor<VariableDescription>() {
-					//
-					// @Override
-					// public boolean visit(final VariableDescription v) {
-					// v.addExtraDependenciesTo(dependencies);
-					// return true;
-					// }
-					// });
-					//
-					// dependencies.add(SHAPE);
-					// dependencies.add(LOCATION);
-					// var.addDependenciesNames(dependencies);
 					final GamaHelper get = new GamaHelper() {
 
 						@Override
@@ -721,8 +703,8 @@ public class SpeciesDescription extends TypeDescription {
 		// recursively finalize the sorted micro-species
 		if (!visitMicroSpecies(visitor))
 			return false;
-		if (!sortAttributes())
-			return false;
+		// Calling sortAttributes later (in compilation)
+
 		compact();
 
 		return true;

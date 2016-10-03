@@ -172,13 +172,7 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 		return f == null ? o == null : f.equalsString(o);
 	}
 
-	static TObjectFunction<IExpressionDescription, IExpressionDescription> cleanCopy = new TObjectFunction<IExpressionDescription, IExpressionDescription>() {
-
-		@Override
-		public IExpressionDescription execute(final IExpressionDescription value) {
-			return value.cleanCopy();
-		}
-	};
+	static TObjectFunction<IExpressionDescription, IExpressionDescription> cleanCopy = value -> value.cleanCopy();
 
 	public Facets cleanCopy() {
 		final Facets result = new Facets(this);
@@ -187,13 +181,9 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 		return result;
 	}
 
-	static TObjectProcedure<IExpressionDescription> dispose = new TObjectProcedure<IExpressionDescription>() {
-
-		@Override
-		public boolean execute(final IExpressionDescription object) {
-			object.dispose();
-			return true;
-		}
+	static TObjectProcedure<IExpressionDescription> dispose = object -> {
+		object.dispose();
+		return true;
 	};
 
 	public void dispose() {

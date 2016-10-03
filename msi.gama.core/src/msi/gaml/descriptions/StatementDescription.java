@@ -50,14 +50,9 @@ public class StatementDescription extends SymbolDescription {
 	public StatementDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 			final boolean hasArgs, final EObject source, final Facets facets, final Arguments alreadyComputedArgs) {
 		super(keyword, superDesc, cp, source, facets);
-		isAbstract = computeAbstract();
-		passedArgs = alreadyComputedArgs != null ? alreadyComputedArgs : hasArgs ? createArgs() : null;
-	}
-
-	private boolean computeAbstract() {
-		final boolean result = TRUE.equals(getLitteral(VIRTUAL));
+		isAbstract = TRUE.equals(getLitteral(VIRTUAL));
 		removeFacets(VIRTUAL);
-		return result;
+		passedArgs = alreadyComputedArgs != null ? alreadyComputedArgs : hasArgs ? createArgs() : null;
 	}
 
 	@Override

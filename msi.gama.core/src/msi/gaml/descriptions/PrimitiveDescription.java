@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
@@ -67,23 +66,18 @@ public class PrimitiveDescription extends ActionDescription {
 		}
 
 		if (getArgNames().size() > 0) {
-			final List<String> args = ImmutableList
-					.copyOf(Iterables.transform(getFormalArgs(), new Function<IDescription, String>() {
+			final List<String> args = ImmutableList.copyOf(Iterables.transform(getFormalArgs(), desc -> {
+				final StringBuilder sb1 = new StringBuilder(100);
+				sb1.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b> of type ")
+						.append(desc.getType());
+				if (desc.hasFacet(IKeyword.DEFAULT)) {
+					sb1.append(" <i>(default: ").append(desc.getFacetExpr(IKeyword.DEFAULT).serialize(false))
+							.append(")</i>");
+				}
+				sb1.append("</li>").append(Strings.LN);
 
-						@Override
-						public String apply(final IDescription desc) {
-							final StringBuilder sb = new StringBuilder(100);
-							sb.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b> of type ")
-									.append(desc.getType());
-							if (desc.hasFacet(IKeyword.DEFAULT)) {
-								sb.append(" <i>(default: ").append(desc.getFacetExpr(IKeyword.DEFAULT).serialize(false))
-										.append(")</i>");
-							}
-							sb.append("</li>").append(Strings.LN);
-
-							return sb.toString();
-						}
-					}));
+				return sb1.toString();
+			}));
 			sb.append("Arguments accepted : ").append("<br/><ul>").append(Strings.LN);
 			for (final String a : args) {
 				sb.append(a);

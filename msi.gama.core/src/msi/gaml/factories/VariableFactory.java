@@ -17,7 +17,6 @@ import static msi.gama.common.interfaces.IKeyword.VAR;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -45,8 +44,7 @@ public class VariableFactory extends SymbolFactory {
 
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto,
-			final Set<String> dependencies) {
+			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
 		if (keyword.equals(PARAMETER)) {
 
 			final Map<String, FacetProto> possibleFacets = proto.getPossibleFacets();
@@ -65,7 +63,7 @@ public class VariableFactory extends SymbolFactory {
 
 			}
 		}
-		return new VariableDescription(keyword, enclosing, children, element, facets, dependencies);
+		return new VariableDescription(keyword, enclosing, children, element, facets);
 	}
 
 }

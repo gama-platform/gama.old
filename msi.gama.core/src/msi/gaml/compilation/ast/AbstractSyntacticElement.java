@@ -11,9 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.compilation.ast;
 
-import java.util.Collections;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -60,15 +58,6 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 	@Override
 	public String getKeyword() {
 		return keyword;
-	}
-
-	@Override
-	public void setDependencies(final Set<String> strings) {
-	}
-
-	@Override
-	public Set<String> getDependencies() {
-		return Collections.EMPTY_SET;
 	}
 
 	@Override
@@ -120,6 +109,14 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 		return expr == null ? null : expr.toString();
 	}
 
+	protected void removeFacet(final String name) {
+		if (facets == null)
+			return;
+		facets.remove(name);
+		if (facets.isEmpty())
+			facets = null;
+	}
+
 	@Override
 	public boolean isSpecies() {
 		return false;
@@ -138,14 +135,7 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 		} else {
 			stats.put(s, stats.get(s) + 1);
 		}
-		visitAllChildren(new SyntacticVisitor() {
-
-			@Override
-			public void visit(final ISyntacticElement element) {
-				element.computeStats(stats);
-
-			}
-		});
+		visitAllChildren(element -> element.computeStats(stats));
 
 	}
 

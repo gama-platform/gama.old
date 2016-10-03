@@ -29,6 +29,11 @@ import msi.gaml.types.IType;
  */
 public interface IExpressionDescription extends IGamlable {
 
+	public static interface IExpressionVisitor {
+
+		boolean visit(IExpression exp);
+	}
+
 	public abstract void setExpression(final IExpression expr);
 
 	public abstract IExpression compile(final IDescription context);

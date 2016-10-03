@@ -11,10 +11,13 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import java.util.Set;
+
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
 public class AgentVariableExpression extends VariableExpression implements IVarExpression.Agent {
@@ -55,6 +58,12 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 		if (getDefinitionDescription().isBuiltIn()) {
 			meta.put(GamlProperties.ATTRIBUTES, getName());
 		}
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+		if (species.equals(this.getDefinitionDescription().getSpeciesContext()))
+			result.add(getDefinitionDescription().getSpeciesContext().getAttribute(getName()));
 	}
 
 }

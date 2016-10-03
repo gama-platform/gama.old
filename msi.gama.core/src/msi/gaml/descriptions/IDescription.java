@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.Set;
+
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Function;
@@ -36,22 +38,9 @@ import msi.gaml.types.IType;
  */
 public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable, IGamlable {
 
-	public static final Function<? super IDescription, ? extends String> TO_NAME = new Function<IDescription, String>() {
+	public static final Function<? super IDescription, ? extends String> TO_NAME = input -> input.getName();
 
-		@Override
-		public String apply(final IDescription input) {
-			return input.getName();
-		}
-	};
-
-	static final Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = new Function<TypeDescription, Class<? extends ISkill>>() {
-
-		@Override
-		public Class<? extends ISkill> apply(final TypeDescription input) {
-			return input.getJavaBase();
-		}
-
-	};
+	static final Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = input -> input.getJavaBase();
 
 	public static abstract class DescriptionVisitor<T extends IDescription> implements TObjectProcedure<T> {
 
@@ -215,7 +204,11 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	 * @param visitor
 	 * @return
 	 */
-	public boolean visitFacets(FacetVisitor visitor);
+	public default boolean visitFacets(final FacetVisitor visitor) {
+		return visitFacets(null, visitor);
+	}
+
+	public boolean visitFacets(Set<String> facets, FacetVisitor visitor);
 
 	public boolean visitChildren(DescriptionVisitor visitor);
 

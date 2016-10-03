@@ -25,6 +25,7 @@ public class SkillDescription extends TypeDescription {
 
 	}
 
+	@Override
 	public Class getJavaBase() {
 		return javaBase;
 	}

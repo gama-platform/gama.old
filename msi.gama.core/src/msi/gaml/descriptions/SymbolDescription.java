@@ -146,13 +146,24 @@ public abstract class SymbolDescription implements IDescription {
 		for (final String s : strings) {
 			facets.remove(s);
 		}
+		if (facets.isEmpty())
+			facets = null;
 	}
 
 	@Override
-	public boolean visitFacets(final FacetVisitor visitor) {
+	public boolean visitFacets(final Set<String> names, final FacetVisitor visitor) {
 		if (!hasFacets())
 			return true;
-		return facets.forEachEntry(visitor);
+		if (names == null)
+			return facets.forEachEntry(visitor);
+		for (final String s : names) {
+			final IExpressionDescription exp = facets.get(s);
+			if (exp != null) {
+				if (!visitor.visit(s, exp))
+					return false;
+			}
+		}
+		return true;
 	}
 
 	public IType getTypeDenotedByFacet(final String... s) {
@@ -347,6 +358,7 @@ public abstract class SymbolDescription implements IDescription {
 		visitOwnChildren(DISPOSING_VISITOR);
 		if (hasFacets())
 			facets.dispose();
+		facets = null;
 		enclosing = null;
 		type = null;
 	}
@@ -594,7 +606,7 @@ public abstract class SymbolDescription implements IDescription {
 		validated = true;
 		if (isBuiltIn()) {
 			// We simply make sure that the facets are correctly compiled
-			validateFacets(false);
+			validateFacets();
 			return this;
 		}
 		final IDescription sd = getEnclosingDescription();
@@ -633,7 +645,7 @@ public abstract class SymbolDescription implements IDescription {
 			}
 		}
 		// We then validate its facets
-		if (!validateFacets(true))
+		if (!validateFacets())
 			return null;
 
 		if (proto.hasSequence() && !proto.isPrimitive()) {
@@ -660,7 +672,7 @@ public abstract class SymbolDescription implements IDescription {
 		return getMeta().canBeDefinedIn(sd);
 	}
 
-	private final boolean validateFacets(final boolean document) {
+	private final boolean validateFacets() {
 		// Special case for "do", which can accept (at parsing time) any facet
 		final boolean isDo = DO.equals(getKeyword());
 		final boolean isBuiltIn = isBuiltIn();

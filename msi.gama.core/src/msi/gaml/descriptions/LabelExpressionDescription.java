@@ -175,4 +175,8 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	public void collectMetaInformation(final GamlProperties meta) {
 	}
 
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	}
+
 }

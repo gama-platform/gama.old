@@ -72,79 +72,74 @@ public class AspectStatement extends AbstractStatementSequence {
 	};
 
 	public static GamaColor borderColor = GamaColor.getInt(Color.black.getRGB());
-	public static IExecutable DEFAULT_ASPECT = new IExecutable() {
-
-		@Override
-		public Rectangle2D executeOn(final IScope scope) throws GamaRuntimeException {
-			final IAgent agent = scope.getAgent();
-			if (agent != null && !agent.dead()) {
-				final IGraphics g = scope.getGraphics();
-				if (g == null || g.cannotDraw()) {
-					return null;
+	public static IExecutable DEFAULT_ASPECT = scope -> {
+		final IAgent agent = scope.getAgent();
+		if (agent != null && !agent.dead()) {
+			final IGraphics g = scope.getGraphics();
+			if (g == null || g.cannotDraw()) {
+				return null;
+			}
+			try {
+				// agent.acquireLock();
+				// if ( agent.dead() ) { return null; }
+				if (agent == scope.getGui().getHighlightedAgent()) {
+					g.beginHighlight();
 				}
-				try {
-					// agent.acquireLock();
-					// if ( agent.dead() ) { return null; }
-					if (agent == scope.getGui().getHighlightedAgent()) {
-						g.beginHighlight();
-					}
-					final boolean hasColor = agent.getSpecies().hasVar(IKeyword.COLOR);
-					GamaColor color;
-					if (hasColor) {
-						final Object value = agent.getDirectVarValue(scope, IKeyword.COLOR);
-						color = Cast.asColor(scope, value);
-					} else {
-						color = GamaColor.getInt(GamaPreferences.CORE_COLOR.getValue().getRGB());
-					}
-					final String defaultShape = GamaPreferences.CORE_SHAPE.getValue();
-					final int index = SHAPES.get(defaultShape);
-					IShape ag;
+				final boolean hasColor = agent.getSpecies().hasVar(IKeyword.COLOR);
+				GamaColor color;
+				if (hasColor) {
+					final Object value = agent.getDirectVarValue(scope, IKeyword.COLOR);
+					color = Cast.asColor(scope, value);
+				} else {
+					color = GamaColor.getInt(GamaPreferences.CORE_COLOR.getValue().getRGB());
+				}
+				final String defaultShape = GamaPreferences.CORE_SHAPE.getValue();
+				final int index = SHAPES.get(defaultShape);
+				IShape ag;
 
-					if (index != Constants.DEFAULT_INT_NO_ENTRY_VALUE) {
-						final Double defaultSize = GamaPreferences.CORE_SIZE.getValue();
-						final ILocation point = agent.getLocation();
+				if (index != Constants.DEFAULT_INT_NO_ENTRY_VALUE) {
+					final Double defaultSize = GamaPreferences.CORE_SIZE.getValue();
+					final ILocation point = agent.getLocation();
 
-						switch (SHAPES.get(defaultShape)) {
-						case 1:
-							ag = GamaGeometryType.buildCircle(defaultSize, point);
-							break;
-						case 2:
-							ag = GamaGeometryType.buildSquare(defaultSize, point);
-							break;
-						case 3:
-							ag = GamaGeometryType.buildTriangle(defaultSize, point);
-							break;
-						case 4:
-							ag = GamaGeometryType.buildSphere(defaultSize, point);
-							break;
-						case 5:
-							ag = GamaGeometryType.buildCube(defaultSize, point);
-							break;
-						case 6:
-							ag = GamaGeometryType.createPoint(point);
-							break;
-						default:
-							ag = agent.getGeometry();
-						}
-					} else {
+					switch (SHAPES.get(defaultShape)) {
+					case 1:
+						ag = GamaGeometryType.buildCircle(defaultSize, point);
+						break;
+					case 2:
+						ag = GamaGeometryType.buildSquare(defaultSize, point);
+						break;
+					case 3:
+						ag = GamaGeometryType.buildTriangle(defaultSize, point);
+						break;
+					case 4:
+						ag = GamaGeometryType.buildSphere(defaultSize, point);
+						break;
+					case 5:
+						ag = GamaGeometryType.buildCube(defaultSize, point);
+						break;
+					case 6:
+						ag = GamaGeometryType.createPoint(point);
+						break;
+					default:
 						ag = agent.getGeometry();
 					}
-
-					final IShape ag2 = ag.copy(scope);
-					final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, color, borderColor);
-					final Rectangle2D r = g.drawShape(ag2, attributes);
-					return r;
-				} catch (final GamaRuntimeException e) {
-					// cf. Issue 1052: exceptions are not thrown, just displayed
-					e.printStackTrace();
-				} finally {
-					g.endHighlight();
-					// agent.releaseLock();
+				} else {
+					ag = agent.getGeometry();
 				}
-			}
-			return null;
-		}
 
+				final IShape ag2 = ag.copy(scope);
+				final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, color, borderColor);
+				final Rectangle2D r = g.drawShape(ag2, attributes);
+				return r;
+			} catch (final GamaRuntimeException e) {
+				// cf. Issue 1052: exceptions are not thrown, just displayed
+				e.printStackTrace();
+			} finally {
+				g.endHighlight();
+				// agent.releaseLock();
+			}
+		}
+		return null;
 	};
 
 	public AspectStatement(final IDescription desc) {

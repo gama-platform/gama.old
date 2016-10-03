@@ -12,7 +12,6 @@
 package msi.gaml.compilation.ast;
 
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -37,37 +36,15 @@ public interface ISyntacticElement {
 		void visit(ISyntacticElement element);
 	}
 
-	public static final Predicate<ISyntacticElement> SPECIES_FILTER = new Predicate<ISyntacticElement>() {
+	public static final Predicate<ISyntacticElement> SPECIES_FILTER = input -> input.isSpecies()
+			&& !IKeyword.GRID.equals(input.getKeyword());
 
-		@Override
-		public boolean apply(final ISyntacticElement input) {
-			return input.isSpecies() && !IKeyword.GRID.equals(input.getKeyword());
-		}
-	};
+	public static final Predicate<ISyntacticElement> GRID_FILTER = input -> IKeyword.GRID.equals(input.getKeyword());
 
-	public static final Predicate<ISyntacticElement> GRID_FILTER = new Predicate<ISyntacticElement>() {
+	public static final Predicate<ISyntacticElement> EXPERIMENT_FILTER = input -> input.isExperiment();
 
-		@Override
-		public boolean apply(final ISyntacticElement input) {
-			return IKeyword.GRID.equals(input.getKeyword());
-		}
-	};
-
-	public static final Predicate<ISyntacticElement> EXPERIMENT_FILTER = new Predicate<ISyntacticElement>() {
-
-		@Override
-		public boolean apply(final ISyntacticElement input) {
-			return input.isExperiment();
-		}
-	};
-
-	public static final Predicate<ISyntacticElement> OTHER_FILTER = new Predicate<ISyntacticElement>() {
-
-		@Override
-		public boolean apply(final ISyntacticElement input) {
-			return !input.isExperiment() && !input.isSpecies();
-		}
-	};
+	public static final Predicate<ISyntacticElement> OTHER_FILTER = input -> !input.isExperiment()
+			&& !input.isSpecies();
 
 	public abstract void setKeyword(final String name);
 
@@ -85,9 +62,9 @@ public interface ISyntacticElement {
 
 	public abstract void setFacet(final String string, final IExpressionDescription expr);
 
-	public abstract void setDependencies(final Set<String> strings);
+	// public abstract void setDependencies(final Set<String> strings);
 
-	public Set<String> getDependencies();
+	// public Set<String> getDependencies();
 
 	public abstract void visitFacets(FacetVisitor visitor);
 

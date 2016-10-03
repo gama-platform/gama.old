@@ -13,12 +13,15 @@ package msi.gaml.expressions;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.Types;
 
@@ -45,14 +48,14 @@ public class ListExpression extends AbstractExpression {
 	}
 
 	final IExpression[] elements;
-	private final Object[] values;
+	// private final Object[] values;
 	// private boolean isConst;
 	private boolean computed;
 
 	ListExpression(final List<? extends IExpression> elements) {
 		this.elements = elements.toArray(new IExpression[0]);
 		final int n = this.elements.length;
-		values = new Object[n];
+		// values = new Object[n];
 		type = Types.LIST.of(GamaType.findCommonType(this.elements, GamaType.TYPE));
 		// isConst();
 	}
@@ -92,6 +95,7 @@ public class ListExpression extends AbstractExpression {
 		// if ( isConst && computed ) { return
 		// GamaListFactory.createWithoutCasting(getType().getContentType(),
 		// values); }
+		final Object[] values = new Object[elements.length];
 		for (int i = 0; i < elements.length; i++) {
 			if (elements[i] == null) {
 				computed = false;
@@ -158,6 +162,16 @@ public class ListExpression extends AbstractExpression {
 				e.collectMetaInformation(meta);
 			}
 		}
+	}
+
+	@Override
+	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+		for (final IExpression e : elements) {
+			if (e != null) {
+				e.collectUsedVarsOf(species, result);
+			}
+		}
+
 	}
 
 }

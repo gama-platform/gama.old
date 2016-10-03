@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
@@ -205,13 +204,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			final Signature originalUserSignature = userSignature;
 			// If the signature is not present in the registry
 			if (!ops.containsKey(userSignature)) {
-				final Collection<Signature> filtered = Collections2.filter(ops.keySet(), new Predicate<Signature>() {
-
-					@Override
-					public boolean apply(final Signature operatorSignature) {
-						return originalUserSignature.matchesDesiredSignature(operatorSignature);
-					}
-				});
+				final Collection<Signature> filtered = Collections2.filter(ops.keySet(),
+						operatorSignature -> originalUserSignature.matchesDesiredSignature(operatorSignature));
 				final int size = filtered.size();
 				if (size == 0) {
 					context.error(
@@ -286,9 +280,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createAction(final String op, final IDescription callerContext, final ActionDescription action,
 			final IExpression call, final Arguments arguments) {
-		// Arguments args = createArgs(arguments);
 		if (action.verifyArgs(callerContext, arguments)) {
-			return new PrimitiveOperator(null, callerContext, action, call, arguments);
+			return new PrimitiveOperator(callerContext, action, call, arguments);
 		}
 		return null;
 	}

@@ -24,7 +24,6 @@ import msi.gaml.types.Types;
 public abstract class AbstractExpression implements IExpression {
 
 	protected IType type = null;
-	// protected String name = null;
 
 	@Override
 	public String getName() {
@@ -33,7 +32,6 @@ public abstract class AbstractExpression implements IExpression {
 
 	@Override
 	public void setName(final String s) {
-		// name = s;
 	}
 
 	@Override
@@ -55,7 +53,7 @@ public abstract class AbstractExpression implements IExpression {
 		return this;
 	}
 
-	protected final void parenthesize(final StringBuilder sb, final IExpression... exp) {
+	protected final static void parenthesize(final StringBuilder sb, final IExpression... exp) {
 		if (exp.length == 1 && !exp[0].shouldBeParenthesized()) {
 			sb.append(exp[0].serialize(false));
 		} else {
@@ -63,7 +61,7 @@ public abstract class AbstractExpression implements IExpression {
 		}
 	}
 
-	protected final String surround(final StringBuilder sb, final char first, final char last,
+	protected final static String surround(final StringBuilder sb, final char first, final char last,
 			final IExpression... exp) {
 		sb.append(first);
 		for (int i = 0; i < exp.length; i++) {

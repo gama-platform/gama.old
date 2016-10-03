@@ -262,8 +262,7 @@ public class DescriptionFactory {
 		}
 		final Facets facets = source.copyFacets(md);
 		final EObject element = source.getElement();
-		final IDescription desc = md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md,
-				source.getDependencies());
+		final IDescription desc = md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md);
 		return desc;
 
 	}

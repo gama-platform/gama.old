@@ -151,7 +151,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		this.species = species;
 		architecture = species.getArchitecture();
 		final TypeDescription ecd = (TypeDescription) species.getDescription();
-		orderedVarNames = ecd.getAttributeNames().toArray(new String[0]);
+		orderedVarNames = ecd.getOrderedAttributeNames(true).toArray(new String[0]);
 		final List<String> updatableVarNames = ecd.getUpdatableAttributeNames();
 		final int updatableVarsSize = updatableVarNames.size();
 		updatableVars = new IVariable[updatableVarsSize];

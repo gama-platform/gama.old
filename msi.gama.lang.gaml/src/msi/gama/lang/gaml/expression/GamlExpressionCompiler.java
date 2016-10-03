@@ -109,7 +109,6 @@ import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.expressions.TypeFieldExpression;
-import msi.gaml.expressions.VariableExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.statements.Arguments;
@@ -863,11 +862,12 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 		final IExpression indices = getFactory().createList(result);
 
-		VariableExpression varDiff = null;
+		IVarExpression varDiff = null;
 		if (container instanceof IVarExpression.Agent && ((IVarExpression.Agent) container).getOwner() != null) {
 			varDiff = ((IVarExpression.Agent) container).getVar();
 
-			final SpeciesDescription species = varDiff.getDefinitionDescription().getSpeciesContext();
+			final SpeciesDescription species = ((IVarExpression.Agent) varDiff).getDefinitionDescription()
+					.getSpeciesContext();
 			if (species != null) {
 				final Iterable<IDescription> equations = species.getChildrenWithKeyword(IKeyword.EQUATION);
 				for (final IDescription equation : equations) {

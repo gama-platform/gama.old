@@ -12,6 +12,7 @@
 package msi.gaml.expressions;
 
 import msi.gama.runtime.IScope;
+import msi.gaml.descriptions.IDescription;
 
 /**
  * VariableExpression.
@@ -20,7 +21,10 @@ import msi.gama.runtime.IScope;
  */
 public interface IVarExpression extends IExpression {
 
-	public interface Agent extends IVarExpression {}
+	public interface Agent extends IVarExpression {
+
+		IDescription getDefinitionDescription();
+	}
 
 	public static final int GLOBAL = 0;
 	public static final int AGENT = 1;
@@ -32,9 +36,9 @@ public interface IVarExpression extends IExpression {
 	public abstract void setVal(IScope scope, Object v, boolean create);
 
 	public abstract boolean isNotModifiable();
-	
+
 	public abstract IExpression getOwner();
-	
+
 	public VariableExpression getVar();
 
 }

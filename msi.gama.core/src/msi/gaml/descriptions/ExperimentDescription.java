@@ -30,11 +30,6 @@ public class ExperimentDescription extends SpeciesDescription {
 	private StatementDescription output;
 	private StatementDescription permanent;
 
-	// final ModelDescription model;
-
-	// We assume experiments are firstly created *within* a model, in which case
-	// we can gather the enclosing argument
-
 	public ExperimentDescription(final String keyword, final SpeciesDescription enclosing, final ChildrenProvider cp,
 			final EObject source, final Facets facets) {
 		super(keyword, null, enclosing, null, cp, source, facets);
