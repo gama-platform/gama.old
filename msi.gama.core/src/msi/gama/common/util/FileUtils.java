@@ -134,7 +134,7 @@ public class FileUtils {
 		} else {
 			for (final String baseDirectory : baseDirectories) {
 				file = new File(baseDirectory + filePath);
-				if (file.exists() || !mustExist) {
+				if (file.exists()) {
 					try {
 						// We have to try if the test is necessary.
 
@@ -152,6 +152,14 @@ public class FileUtils {
 
 				ex.addContext(file.getAbsolutePath());
 			}
+			// We havent found the file, but it may not exist. In that case, the
+			// first directory is used as a reference.
+			if (!mustExist)
+				try {
+					return new File(baseDirectories.get(0) + filePath).getCanonicalPath();
+				} catch (final IOException e) {
+					throw ex;
+				}
 		}
 
 		throw ex;
