@@ -27,7 +27,7 @@ global
  
  	//Parameters of the corridors
 	rgb corridor_color <- rgb ('blue');
-	int corridor_width <- 160 depends_on: [environment_width];
+	int corridor_width <- 160 ;
 	int corridor_height <- (int(environment_height * 0.05));
 
 	point corridor_location_0 <- {environment_width / 2, environment_height / 4};

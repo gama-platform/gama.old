@@ -212,7 +212,7 @@ global {
 		
 		ball nearest_free_ball update: ( ball where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
 		group nearest_smaller_group update: ( ( (group as list) - self ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
-		base target update: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
+		base target update: (self get_nearer_target [])  ;
 		 
 		//Function to return the closest ball or small group of balls that the agent could capture
 		base get_nearer_target {
