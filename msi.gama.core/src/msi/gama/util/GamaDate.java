@@ -38,6 +38,12 @@ import msi.gaml.types.Types;
 	@var(name = "day_of_week",
 		type = IType.INT,
 		doc = { @doc("Returns the day of the week") }),
+	@var(name = "leap",
+		type = IType.BOOL,
+		doc = { @doc("Returns true if the year is leap") }),
+	@var(name = "days_in_month",
+		type = IType.INT,
+		doc = { @doc("Returns the number of days of the month") }),
 	@var(name = "week_of_year",
 		type = IType.INT,
 		doc = { @doc("Returns the week of the year") }),
@@ -186,10 +192,19 @@ public class GamaDate extends MutableDateTime implements IValue {
 	public int getDayWeek() {
 		return getDayOfWeek();
 	}
+	@getter("leap")
+	public boolean getIsLeap() {
+		return super.year().isLeap();
+	}
 	
 	@getter("week_of_year")
 	public int getWeekYear() {
 		return super.getWeekOfWeekyear();
+	}
+
+	@getter("days_in_month")
+	public int getDaysMonth() {
+		return super.dayOfMonth().getMaximumValue();
 	}
 
 }
