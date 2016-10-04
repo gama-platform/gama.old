@@ -71,9 +71,6 @@ public class ModelDescription extends SpeciesDescription {
 	boolean isStartingDateDefined = false;
 	private Collection<String> importedModelNames;
 
-	public void setMicroModels(final Map<String, ModelDescription> mm) {
-		microModels = mm;
-	}
 
 	public Collection<String> getAlternatePaths() {
 		return alternatePaths == null ? Collections.EMPTY_LIST : alternatePaths;
@@ -276,10 +273,15 @@ public class ModelDescription extends SpeciesDescription {
 	public IDescription addChild(final IDescription child) {
 		if (child == null)
 			return null;
+		if (child instanceof ModelDescription) {
+			((ModelDescription) child).getTypesManager().setParent(getTypesManager());
+			if (microModels == null)
+				microModels = new TOrderedHashMap();
+			microModels.put(((ModelDescription) child).getAlias(), (ModelDescription) child);
+		} // no else as models are also species, which should be added after.
 		if (!child.isBuiltIn() && child.getName().equals(SimulationAgent.STARTING_DATE)) {
 			isStartingDateDefined = true;
-		}
-		if (child instanceof ExperimentDescription) {
+		} else if (child instanceof ExperimentDescription) {
 			final String s = child.getName();
 			if (experiments == null) {
 				experiments = new TOrderedHashMap();

@@ -132,7 +132,7 @@ public class ModelAssembler {
 
 		// hqnghi add micro-models
 		if (mm != null) {
-			model.setMicroModels(mm);
+			// model.setMicroModels(mm);
 			model.addChildren(new ArrayList(mm.values()));
 		}
 		// end-hqnghi
