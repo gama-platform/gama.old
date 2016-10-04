@@ -9,13 +9,7 @@ public interface ITypesManager {
 
 	IType initType(String keyword, IType typeInstance, int id, int varKind, Class... wraps);
 
-	// TypeDescription getSpecies(String name);
-
 	boolean containsType(String s);
-
-	// List<String> getTypeNames();
-
-	// Collection<TypeDescription> getAllSpecies();
 
 	IType get(String type);
 
@@ -24,5 +18,7 @@ public interface ITypesManager {
 	IType addSpeciesType(SpeciesDescription species);
 
 	void init(ModelDescription model);
+
+	void setParent(ITypesManager typesManager);
 
 }

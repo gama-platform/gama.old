@@ -26,12 +26,17 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 
 	public static int CURRENT_INDEX = IType.SPECIES_TYPES;
 
-	private final TypesManager parent;
+	private TypesManager parent;
 
 	private final THashMap<String, IType> types = new THashMap(10, 0.95f);
 
 	public TypesManager(final TypesManager parent) {
-		this.parent = parent;
+		setParent(parent);
+	}
+
+	@Override
+	public void setParent(final ITypesManager parent) {
+		this.parent = (TypesManager) parent;
 	}
 
 	/*
