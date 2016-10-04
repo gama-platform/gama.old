@@ -31,6 +31,11 @@ public class SkillDescription extends TypeDescription {
 	}
 
 	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
 	public IDescription addChild(final IDescription child) {
 		child.setOriginName("skill " + name);
 		child.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
