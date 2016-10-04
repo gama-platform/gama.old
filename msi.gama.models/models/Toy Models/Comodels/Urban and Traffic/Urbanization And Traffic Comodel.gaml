@@ -89,7 +89,7 @@ global
 		{
 			if (newroad intersects rrr[i])
 			{
-				point t <- newroad intersection rrr[i];
+				point t <- (newroad intersection rrr[i]).location;
 				if (t != nil)
 				{
 					i1 <+ t;
@@ -99,7 +99,7 @@ global
 						rrr[i].shape <- s[0];
 						ask Traffic."Adapter"[0].simulation
 						{
-							create road from: s[1];
+							create road from: list(s[1]);
 						}
 
 					}
@@ -125,7 +125,7 @@ global
 		{
 			ask Traffic."Adapter"[0].simulation
 			{
-				create road from: ee
+				create road from: list(ee)
 				{
 					shape <- ee; //scaled_by 0.7;
 				}
