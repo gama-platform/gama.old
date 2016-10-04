@@ -30,13 +30,13 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	protected static final int EMPTY = -1;
 	protected static final int DEFAULT_SIZE = 10;
-	protected static final float DEFAULT_LOAD = 0.9f;
+	protected static final float DEFAULT_LOAD = 0.75f;
 
-	protected transient int[] _indicesByInsertOrder = new int[capacity()];
+	protected transient volatile int[] _indicesByInsertOrder = new int[capacity()];
 	{
 		Arrays.fill(_indicesByInsertOrder, EMPTY);
 	}
-	protected transient int _lastInsertOrderIndex = -1;
+	protected transient volatile int _lastInsertOrderIndex = -1;
 
 	public TOrderedHashMap() {
 		super(DEFAULT_SIZE, DEFAULT_LOAD);
@@ -325,7 +325,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	 * the array's elements when we near capacity.
 	 */
 	private void appendToInsertionOrder(final int index, final int effectiveCapacity) {
-		if (_lastInsertOrderIndex == effectiveCapacity) {
+		if (_lastInsertOrderIndex == effectiveCapacity - 1) {
 			compactInsertionOrderIndices();
 		}
 		_lastInsertOrderIndex++;
