@@ -54,7 +54,7 @@ public abstract class SymbolDescription implements IDescription {
 	protected String originName;
 	protected String name;
 	protected final String keyword;
-	protected boolean validated;
+	// protected boolean validated;
 	private IType type;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
@@ -595,10 +595,11 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public IDescription validate() {
-		if (validated) {
-			return this;
-		}
-		validated = true;
+		// if (validated && "ball_in_group".equals(getName())) {
+		// System.out.println("Trying to revalidate " + this);
+		// return this;
+		// }
+		// validated = true;
 		if (isBuiltIn()) {
 			// We simply make sure that the facets are correctly compiled
 			validateFacets();
@@ -615,7 +616,7 @@ public abstract class SymbolDescription implements IDescription {
 			}
 			// If it is supposed to be unique, we verify this
 			if (proto.isUniqueInContext()) {
-				final boolean hasError = !sd.visitChildren(new DescriptionVisitor<IDescription>() {
+				final boolean hasError = !sd.visitOwnChildren(new DescriptionVisitor<IDescription>() {
 
 					@Override
 					public boolean visit(final IDescription child) {
@@ -643,13 +644,11 @@ public abstract class SymbolDescription implements IDescription {
 		if (!validateFacets())
 			return null;
 
-		if (proto.hasSequence() && !proto.isPrimitive()) {
-			// if (proto.isRemoteContext()) {
-			// copyTempsAbove();
-			// }
-			if (!validateChildren())
-				return null;
-		}
+		// if (proto.isRemoteContext()) {
+		// copyTempsAbove();
+		// }
+		if (!validateChildren())
+			return null;
 
 		if (proto.getDeprecated() != null) {
 			warning("'" + getKeyword() + "' is deprecated. " + proto.getDeprecated(), IGamlIssue.DEPRECATED);
@@ -862,25 +861,6 @@ public abstract class SymbolDescription implements IDescription {
 			}
 		});
 
-	}
-
-	public IGamlDescription getDescriptionWithElement(final EObject e) {
-		final IGamlDescription result[] = new IGamlDescription[1];
-		final DescriptionVisitor visitor = new DescriptionVisitor() {
-
-			@Override
-			public boolean visit(final IDescription desc) {
-				if (desc.getUnderlyingElement(null) == e) {
-					result[0] = desc;
-					return false;
-				}
-
-				desc.visitChildren(this);
-				return true;
-			}
-		};
-		visitor.visit(this);
-		return result[0];
 	}
 
 	/**
