@@ -56,7 +56,6 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected THashMap<String, ActionDescription> actions;
 	protected TOrderedHashMap<String, VariableDescription> attributes;
 	protected TypeDescription parent;
-	private final String plugin;
 
 	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
 			final TypeDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets,
@@ -65,12 +64,18 @@ public abstract class TypeDescription extends SymbolDescription {
 		// parent can be null
 		if (parent != null)
 			setParent(parent);
-		this.plugin = plugin;
+		if (plugin != null && isBuiltIn())
+			this.originName = plugin;
+		// System.out.println("Origin name " + getOriginName() + " and plugin "
+		// + plugin + " of " + this);
+
 	}
 
 	@Override
 	public String getDefiningPlugin() {
-		return plugin;
+		if (isBuiltIn())
+			return originName;
+		return null;
 	}
 
 	public abstract Class getJavaBase();
