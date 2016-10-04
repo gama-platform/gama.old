@@ -20,7 +20,6 @@ import org.jgrapht.traverse.BreadthFirstIterator;
 import com.google.common.base.Objects;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.LinkedHashMultimap;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import gnu.trove.procedure.TObjectObjectProcedure;
@@ -59,13 +58,7 @@ public class GamlResourceIndexer {
 	}
 
 	public static TOrderedHashMap<URI, String> allLabeledImportsOf(final GamlResource r) {
-		return r.getCache().get(IMPORTED_URIS, r, new Provider<TOrderedHashMap<URI, String>>() {
-
-			@Override
-			public TOrderedHashMap<URI, String> get() {
-				return allLabeledImportsOf(r.getURI());
-			}
-		});
+		return r.getCache().get(IMPORTED_URIS, r, () -> allLabeledImportsOf(r.getURI()));
 	}
 
 	private static class Edge {
@@ -115,6 +108,8 @@ public class GamlResourceIndexer {
 		final Set<Edge> nativeEdges = index.containsVertex(baseURI) ? index.outgoingEdgesOf(baseURI) : null;
 		final Set<Edge> edges = nativeEdges == null || nativeEdges.isEmpty() ? Collections.EMPTY_SET
 				: new HashSet(nativeEdges);
+		if (r.getContents().isEmpty())
+			return null;
 		final EObject contents = r.getContents().get(0);
 		if (contents == null || !(contents instanceof Model))
 			return null;
@@ -177,18 +172,14 @@ public class GamlResourceIndexer {
 		uris.remove(GamlResourceServices.properlyEncodedURI(resource.getURI()));
 		if (!uris.isEmpty()) {
 			final LinkedHashMultimap<String, GamlResource> imports = LinkedHashMultimap.create();
-			if (uris.forEachEntry(new TObjectObjectProcedure<URI, String>() {
-
-				@Override
-				public boolean execute(final URI a, final String b) {
-					final GamlResource r = (GamlResource) resource.getResourceSet().getResource(a, true);
-					if (r.hasErrors()) {
-						resource.invalidate(r, "Errors detected");
-						return false;
-					}
-					imports.put(b, r);
-					return true;
+			if (uris.forEachEntry((a, b) -> {
+				final GamlResource r = (GamlResource) resource.getResourceSet().getResource(a, true);
+				if (r.hasErrors()) {
+					resource.invalidate(r, "Errors detected");
+					return false;
 				}
+				imports.put(b, r);
+				return true;
 			}))
 				return imports;
 
