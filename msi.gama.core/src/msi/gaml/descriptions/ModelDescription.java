@@ -62,7 +62,7 @@ public class ModelDescription extends SpeciesDescription {
 	final TypesManager types;
 	private String modelFilePath;
 	private final String modelProjectPath;
-	private final List<String> alternatePaths;
+	private final Set<String> alternatePaths;
 	private final ValidationContext collect;
 	protected volatile boolean document;
 	// hqnghi new attribute manipulate micro-models
@@ -75,7 +75,7 @@ public class ModelDescription extends SpeciesDescription {
 		microModels = mm;
 	}
 
-	public List<String> getAlternatePaths() {
+	public Collection<String> getAlternatePaths() {
 		return alternatePaths == null ? Collections.EMPTY_LIST : alternatePaths;
 	}
 
@@ -106,12 +106,12 @@ public class ModelDescription extends SpeciesDescription {
 
 	public ModelDescription(final String name, final Class clazz, final SpeciesDescription macro,
 			final SpeciesDescription parent) {
-		this(name, clazz, "", "", null, macro, parent, null, ValidationContext.NULL, Collections.EMPTY_LIST);
+		this(name, clazz, "", "", null, macro, parent, null, ValidationContext.NULL, Collections.EMPTY_SET);
 	}
 
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
-			final ValidationContext collector, final List<String> imports) {
+			final ValidationContext collector, final Set<String> imports) {
 		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets);
 		setName(name);
 		types = parent instanceof ModelDescription ? new TypesManager(((ModelDescription) parent).types)
@@ -415,7 +415,7 @@ public class ModelDescription extends SpeciesDescription {
 		if (!super.finalizeDescription())
 			return false;
 		if (actions != null)
-			for (final StatementDescription action : actions.values()) {
+			for (final ActionDescription action : actions.values()) {
 				if (action.isAbstract() && !action.getUnderlyingElement(null).eResource()
 						.equals(getUnderlyingElement(null).eResource())) {
 					this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName()

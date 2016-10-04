@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -19,7 +18,6 @@ import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.GAML;
-import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IOperator;
@@ -44,14 +42,10 @@ public class StatementDescription extends SymbolDescription {
 	// Corresponds to the "with" facet
 	protected final Arguments passedArgs;
 	private static int COMMAND_INDEX = 0;
-	protected IDescription previousDescription;
-	private final boolean isAbstract;
 
 	public StatementDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 			final boolean hasArgs, final EObject source, final Facets facets, final Arguments alreadyComputedArgs) {
 		super(keyword, superDesc, cp, source, facets);
-		isAbstract = TRUE.equals(getLitteral(VIRTUAL));
-		removeFacets(VIRTUAL);
 		passedArgs = alreadyComputedArgs != null ? alreadyComputedArgs : hasArgs ? createArgs() : null;
 	}
 
@@ -66,7 +60,7 @@ public class StatementDescription extends SymbolDescription {
 			return;
 		}
 		super.dispose();
-		previousDescription = null;
+
 		if (passedArgs != null)
 			passedArgs.dispose();
 	}
@@ -204,13 +198,6 @@ public class StatementDescription extends SymbolDescription {
 		return kw + " " + getName() + " " + in;
 	}
 
-	/**
-	 * @return
-	 */
-	public boolean isAbstract() {
-		return isAbstract;
-	}
-
 	public void collectChildren(final String keyword, final Set<StatementDescription> returns) {
 
 		visitChildren(new DescriptionVisitor() {
@@ -228,94 +215,12 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public void setEnclosingDescription(final IDescription desc) {
-		previousDescription = getEnclosingDescription();
-		super.setEnclosingDescription(desc);
-	}
+	public IDescription validate() {
 
-	@Override
-	public ModelDescription getModelDescription() {
-		ModelDescription result = super.getModelDescription();
-		if (result == null && previousDescription != null) {
-			result = previousDescription.getModelDescription();
-		}
-		return result;
-	}
-
-	@Override
-	public IDescription getDescriptionDeclaringVar(final String name) {
-		IDescription result = super.getDescriptionDeclaringVar(name);
-		if (result == null && previousDescription != null) {
-			result = previousDescription.getDescriptionDeclaringVar(name);
-		}
-		return result;
-	}
-
-	@Override
-	public IDescription getDescriptionDeclaringAction(final String name) {
-		IDescription result = super.getDescriptionDeclaringAction(name);
-		if (result == null && previousDescription != null) {
-			result = previousDescription.getDescriptionDeclaringAction(name);
-		}
-		return result;
-	}
-
-	@Override
-	public boolean validateChildren() {
-
+		final IDescription result = super.validate();
 		if (passedArgs != null)
 			validatePassedArgs();
-
-		IDescription previousEnclosingDescription = null;
-		try {
-			if (getMeta().isRemoteContext()) {
-				final SpeciesDescription denotedSpecies = getType().getDenotedSpecies();
-				if (denotedSpecies != null) {
-					final SpeciesDescription s = getSpeciesContext();
-					if (s != null) {
-						final IType t = s.getType();
-						addTemp(this, MYSELF, t);
-						previousEnclosingDescription = getEnclosingDescription();
-						setEnclosingDescription(denotedSpecies);
-
-						// FIXME ===> Model Description is lost if we are
-						// dealing
-						// with a built-in species !
-					}
-				}
-			}
-			return super.validateChildren();
-		} finally {
-			if (previousEnclosingDescription != null) {
-				setEnclosingDescription(previousEnclosingDescription);
-			}
-		}
-	}
-
-	@Override
-	public List<? extends ISymbol> compileChildren() {
-		final ModelDescription md = getModelDescription();
-		if (getMeta().isRemoteContext()) {
-			final SpeciesDescription sd = getType().getDenotedSpecies();
-			if (sd != null) {
-				final IType t = getSpeciesContext().getType();
-				addTemp(this, MYSELF, t);
-				setEnclosingDescription(sd);
-			}
-		}
-		return super.compileChildren();
-	}
-
-	/**
-	 * Cannot add temporary variables to statements without children
-	 * 
-	 * @param declaration
-	 * @param name
-	 * @param type
-	 * @return
-	 */
-	public IExpression addTemp(final IDescription declaration, final String name, final IType type) {
-		return null;
+		return result;
 	}
 
 	public Arguments validatePassedArgs() {
@@ -384,13 +289,6 @@ public class StatementDescription extends SymbolDescription {
 
 	}
 
-	/**
-	 * @return
-	 */
-	public boolean isBreakable() {
-		return getMeta().isBreakable();
-	}
-
 	@Override
 	protected IExpression createVarWithTypes(final String tag) {
 
@@ -441,18 +339,12 @@ public class StatementDescription extends SymbolDescription {
 
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type) {
 		final String varName = getLitteral(facetName);
-
-		if (getKeyword().equals(LOOP) && facetName.equals(NAME)) {
-			// Case of loops: the variable is inside the loop (not outside)
-			return (IVarExpression) addTemp(this, varName, type);
-		}
-
 		final IDescription sup = getEnclosingDescription();
-		if (!(sup instanceof StatementDescription)) {
-			error("Impossible to return " + getLitteral(facetName), IGamlIssue.GENERAL);
+		if (!(sup instanceof StatementWithChildrenDescription)) {
+			error("Impossible to return " + varName, IGamlIssue.GENERAL);
 			return null;
 		}
-		return (IVarExpression) ((StatementDescription) sup).addTemp(this, varName, type);
+		return (IVarExpression) ((StatementWithChildrenDescription) sup).addTemp(this, varName, type);
 	}
 
 	@Override

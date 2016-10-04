@@ -53,6 +53,24 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	}
 
+	public static abstract class FacetVisitor implements TObjectObjectProcedure<String, IExpressionDescription> {
+
+		@Override
+		public final boolean execute(final String name, final IExpressionDescription exp) {
+			return visit(name, exp);
+		}
+
+		/**
+		 * Returns whether or not the visit should continue after this facet
+		 * 
+		 * @param name
+		 * @param exp
+		 * @return
+		 */
+		public abstract boolean visit(String name, IExpressionDescription exp);
+
+	}
+
 	public static final DescriptionVisitor VALIDATING_VISITOR = new DescriptionVisitor<IDescription>() {
 
 		@Override
@@ -73,24 +91,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 		}
 	};
-
-	public static abstract class FacetVisitor implements TObjectObjectProcedure<String, IExpressionDescription> {
-
-		@Override
-		public final boolean execute(final String name, final IExpressionDescription exp) {
-			return visit(name, exp);
-		}
-
-		/**
-		 * Returns whether or not the visit should continue after this facet
-		 * 
-		 * @param name
-		 * @param exp
-		 * @return
-		 */
-		public abstract boolean visit(String name, IExpressionDescription exp);
-
-	}
 
 	public void error(final String message);
 
@@ -145,8 +145,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public abstract IDescription addChild(IDescription child);
 
 	public abstract IType getTypeNamed(String s);
-
-	public abstract void copyTempsAbove();
 
 	public abstract SpeciesDescription getSpeciesDescription(String actualSpecies);
 

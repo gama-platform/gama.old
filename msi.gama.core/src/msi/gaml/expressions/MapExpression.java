@@ -11,9 +11,10 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.common.collect.Iterables;
 
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
@@ -35,7 +36,7 @@ import msi.gaml.types.Types;
  */
 public class MapExpression extends AbstractExpression {
 
-	public static IExpression create(final List<? extends IExpression> elements) {
+	public static IExpression create(final Iterable<? extends IExpression> elements) {
 		final MapExpression u = new MapExpression(elements);
 		// if ( u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue()
 		// ) {
@@ -54,11 +55,12 @@ public class MapExpression extends AbstractExpression {
 	// private final GamaMap values;
 	// private boolean isConst, computed;
 
-	MapExpression(final List<? extends IExpression> pairs) {
-		keys = new IExpression[pairs.size()];
-		vals = new IExpression[pairs.size()];
-		for (int i = 0, n = pairs.size(); i < n; i++) {
-			final IExpression e = pairs.get(i);
+	MapExpression(final Iterable<? extends IExpression> pairs) {
+		final int size = Iterables.size(pairs);
+		keys = new IExpression[size];
+		vals = new IExpression[size];
+		int i = 0;
+		for (final IExpression e : pairs) {
 			if (e instanceof BinaryOperator) {
 				final BinaryOperator pair = (BinaryOperator) e;
 				keys[i] = pair.exprs[0];
@@ -70,6 +72,7 @@ public class MapExpression extends AbstractExpression {
 				keys[i] = GAML.getExpressionFactory().createConst(left, e.getType().getKeyType());
 				vals[i] = GAML.getExpressionFactory().createConst(right, e.getType().getContentType());
 			}
+			i++;
 		}
 		final IType keyType = GamaType.findCommonType(keys, GamaType.TYPE);
 		final IType contentsType = GamaType.findCommonType(vals, GamaType.TYPE);

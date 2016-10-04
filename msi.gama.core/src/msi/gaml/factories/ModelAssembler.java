@@ -16,23 +16,23 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectObjectProcedure;
-import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ast.ISyntacticElement;
+import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.SyntacticModelElement;
-import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
@@ -55,8 +55,9 @@ import msi.gaml.types.Types;
 public class ModelAssembler {
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,
-			final List<ISyntacticElement> models, final ValidationContext collector, final boolean document,
+			final Iterable<ISyntacticElement> allModels, final ValidationContext collector, final boolean document,
 			final Map<String, ModelDescription> mm) {
+		final ImmutableList<ISyntacticElement> models = ImmutableList.copyOf(allModels);
 		final TOrderedHashMap<String, ISyntacticElement> speciesNodes = new TOrderedHashMap();
 		final TOrderedHashMap<String, TOrderedHashMap<String, ISyntacticElement>>[] experimentNodes = new TOrderedHashMap[1];
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
@@ -76,8 +77,8 @@ public class ModelAssembler {
 		}
 		final Map<String, SpeciesDescription> tempSpeciesCache = new THashMap();
 
-		for (int n = models.size(), i = n - 1; i >= 0; i--) {
-			final SyntacticModelElement currentModel = (SyntacticModelElement) models.get(i);
+		for (final ISyntacticElement cm : models.reverse()) {
+			final SyntacticModelElement currentModel = (SyntacticModelElement) cm;
 			if (currentModel != null) {
 				if (currentModel.hasFacets()) {
 					if (globalFacets == null)
@@ -85,36 +86,18 @@ public class ModelAssembler {
 					else
 						globalFacets.putAll(currentModel.copyFacets(null));
 				}
-				currentModel.visitChildren(new SyntacticVisitor() {
-
-					@Override
-					public void visit(final ISyntacticElement element) {
-						globalNodes.addChild(element);
-
-					}
-				});
-				SyntacticVisitor visitor = new SyntacticVisitor() {
-
-					@Override
-					public void visit(final ISyntacticElement element) {
-						addSpeciesNode(element, speciesNodes, collector);
-
-					}
-				};
+				currentModel.visitChildren(element -> globalNodes.addChild(element));
+				SyntacticVisitor visitor = element -> addSpeciesNode(element, speciesNodes, collector);
 				currentModel.visitSpecies(visitor);
 
 				// We input the species so that grids are always the last ones
 				// (see DiffusionStatement)
 				currentModel.visitGrids(visitor);
-				visitor = new SyntacticVisitor() {
+				visitor = element -> {
+					if (experimentNodes[0] == null)
+						experimentNodes[0] = new TOrderedHashMap();
+					addExperimentNode(element, currentModel.getName(), experimentNodes[0], collector);
 
-					@Override
-					public void visit(final ISyntacticElement element) {
-						if (experimentNodes[0] == null)
-							experimentNodes[0] = new TOrderedHashMap();
-						addExperimentNode(element, currentModel.getName(), experimentNodes[0], collector);
-
-					}
 				};
 				currentModel.visitExperiments(visitor);
 
@@ -126,17 +109,10 @@ public class ModelAssembler {
 		// We build a list of working paths from which the composite model will
 		// be able to look for resources. These working paths come from the
 		// imported models
-		List<String> absoluteAlternatePathAsStrings = null;
 
-		if (!models.isEmpty()) {
-			absoluteAlternatePathAsStrings = new ArrayList();
-			for (final ISyntacticElement m : models) {
-				final String path = ((SyntacticModelElement) m).getPath();
-				if (!absoluteAlternatePathAsStrings.contains(path))
-					absoluteAlternatePathAsStrings.add(path);
-			}
-			Collections.reverse(absoluteAlternatePathAsStrings);
-		}
+		final Set<String> absoluteAlternatePathAsStrings = models.isEmpty() ? null
+				: ImmutableSet.copyOf(
+						Iterables.transform(models.reverse(), each -> ((SyntacticModelElement) each).getPath()));
 
 		final ModelDescription model = new ModelDescription(modelName, null, projectPath, modelPath,
 				source.getElement(), null, ModelDescription.ROOT, globalFacets, collector,
@@ -162,61 +138,34 @@ public class ModelAssembler {
 		// end-hqnghi
 		// recursively add user-defined species to world and down on to the
 		// hierarchy
-		speciesNodes.forEachValue(new TObjectProcedure<ISyntacticElement>() {
-
-			@Override
-			public boolean execute(final ISyntacticElement speciesNode) {
-				addMicroSpecies(model, speciesNode, tempSpeciesCache);
-				return true;
-			}
-
+		speciesNodes.forEachValue(speciesNode -> {
+			addMicroSpecies(model, speciesNode, tempSpeciesCache);
+			return true;
 		});
 		if (experimentNodes[0] != null)
-			experimentNodes[0]
-					.forEachEntry(new TObjectObjectProcedure<String, TOrderedHashMap<String, ISyntacticElement>>() {
-
-						@Override
-						public boolean execute(final String s, final TOrderedHashMap<String, ISyntacticElement> b) {
-							b.forEachValue(new TObjectProcedure<ISyntacticElement>() {
-
-								@Override
-								public boolean execute(final ISyntacticElement experimentNode) {
-									addExperiment(s, model, experimentNode, tempSpeciesCache);
-									return true;
-								}
-							});
-							return true;
-						}
-					});
+			experimentNodes[0].forEachEntry((s, b) -> {
+				b.forEachValue(experimentNode -> {
+					addExperiment(s, model, experimentNode, tempSpeciesCache);
+					return true;
+				});
+				return true;
+			});
 
 		// Parent the species and the experiments of the model (all are now
 		// known).
-		speciesNodes.forEachValue(new TObjectProcedure<ISyntacticElement>() {
-
-			@Override
-			public boolean execute(final ISyntacticElement speciesNode) {
-				parentSpecies(model, speciesNode, model, tempSpeciesCache);
-				return true;
-			}
+		speciesNodes.forEachValue(speciesNode -> {
+			parentSpecies(model, speciesNode, model, tempSpeciesCache);
+			return true;
 		});
 
 		if (experimentNodes[0] != null)
-			experimentNodes[0]
-					.forEachEntry(new TObjectObjectProcedure<String, TOrderedHashMap<String, ISyntacticElement>>() {
-
-						@Override
-						public boolean execute(final String s, final TOrderedHashMap<String, ISyntacticElement> b) {
-							b.forEachValue(new TObjectProcedure<ISyntacticElement>() {
-
-								@Override
-								public boolean execute(final ISyntacticElement experimentNode) {
-									parentExperiment(model, experimentNode);
-									return true;
-								}
-							});
-							return true;
-						}
-					});
+			experimentNodes[0].forEachEntry((s, b) -> {
+				b.forEachValue(experimentNode -> {
+					parentExperiment(model, experimentNode);
+					return true;
+				});
+				return true;
+			});
 
 		// Initialize the hierarchy of types
 		model.buildTypes();
@@ -231,32 +180,19 @@ public class ModelAssembler {
 		// actions....
 		complementSpecies(model, globalNodes);
 
-		speciesNodes.forEachValue(new TObjectProcedure<ISyntacticElement>() {
-
-			@Override
-			public boolean execute(final ISyntacticElement speciesNode) {
-				complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
-				return true;
-			}
+		speciesNodes.forEachValue(speciesNode -> {
+			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
+			return true;
 		});
 
 		if (experimentNodes[0] != null)
-			experimentNodes[0]
-					.forEachEntry(new TObjectObjectProcedure<String, TOrderedHashMap<String, ISyntacticElement>>() {
-
-						@Override
-						public boolean execute(final String s, final TOrderedHashMap<String, ISyntacticElement> b) {
-							b.forEachValue(new TObjectProcedure<ISyntacticElement>() {
-
-								@Override
-								public boolean execute(final ISyntacticElement experimentNode) {
-									complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
-									return true;
-								}
-							});
-							return true;
-						}
-					});
+			experimentNodes[0].forEachEntry((s, b) -> {
+				b.forEachValue(experimentNode -> {
+					complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
+					return true;
+				});
+				return true;
+			});
 
 		// Complement recursively the different species (incl. the world). The
 		// recursion is hierarchical
@@ -313,16 +249,11 @@ public class ModelAssembler {
 			speciesLeft.removeAll(speciesToRemove);
 			speciesToRemove.clear();
 		}
-		return Iterables.filter(hierarchy.getAllElements(TypeTree.Order.PRE_ORDER),
-				new Predicate<SpeciesDescription>() {
-
-					@Override
-					public boolean apply(final SpeciesDescription input) {
-						if (input.isBuiltIn() || input instanceof ModelDescription)
-							return false;
-						return true;
-					}
-				});
+		return Iterables.filter(hierarchy.getAllElements(TypeTree.Order.PRE_ORDER), input -> {
+			if (input.isBuiltIn() || input instanceof ModelDescription)
+				return false;
+			return true;
+		});
 	}
 
 	private void createSchedulerSpecies(final ModelDescription model) {
@@ -396,13 +327,7 @@ public class ModelAssembler {
 		macro.addChild(mDesc);
 		// Recursively create each micro-species of the newly added
 		// micro-species
-		final SyntacticVisitor visitor = new SyntacticVisitor() {
-
-			@Override
-			public void visit(final ISyntacticElement element) {
-				addMicroSpecies(mDesc, element, cache);
-			}
-		};
+		final SyntacticVisitor visitor = element -> addMicroSpecies(mDesc, element, cache);
 		micro.visitSpecies(visitor);
 		micro.visitExperiments(visitor);
 	}
@@ -433,25 +358,17 @@ public class ModelAssembler {
 			return;
 		}
 		species.copyJavaAdditions();
-		node.visitChildren(new SyntacticVisitor() {
-
-			@Override
-			public void visit(final ISyntacticElement element) {
-				final IDescription childDesc = DescriptionFactory.create(element, species, null);
-				if (childDesc != null) {
-					species.addChild(childDesc);
-				}
+		node.visitChildren(element -> {
+			final IDescription childDesc = DescriptionFactory.create(element, species, null);
+			if (childDesc != null) {
+				species.addChild(childDesc);
 			}
 		});
 		// recursively complement micro-species
-		node.visitSpecies(new SyntacticVisitor() {
-
-			@Override
-			public void visit(final ISyntacticElement element) {
-				final SpeciesDescription sd = species.getMicroSpecies(element.getName());
-				if (sd != null) {
-					complementSpecies(sd, element);
-				}
+		node.visitSpecies(element -> {
+			final SpeciesDescription sd = species.getMicroSpecies(element.getName());
+			if (sd != null) {
+				complementSpecies(sd, element);
 			}
 		});
 
@@ -491,14 +408,7 @@ public class ModelAssembler {
 			parent = model.getSpeciesDescription(p);
 		}
 		mDesc.setParent(parent);
-		micro.visitSpecies(new SyntacticVisitor() {
-
-			@Override
-			public void visit(final ISyntacticElement element) {
-				parentSpecies(mDesc, element, model, cache);
-
-			}
-		});
+		micro.visitSpecies(element -> parentSpecies(mDesc, element, model, cache));
 
 	}
 

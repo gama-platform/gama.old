@@ -18,8 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
+
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.ModelDescription;
@@ -185,18 +186,13 @@ public class Types {
 		boolean newEntry = false;
 		if (t[0] == Types.NO_TYPE) {
 			if (!type.isInterface()) {
-				newEntry = !Types.CLASSES_TYPES_CORRESPONDANCE
-						.forEachEntry(new TObjectObjectProcedure<Class, String>() {
-
-							@Override
-							public boolean execute(final Class support, final String id) {
-								if (support != Object.class && support.isAssignableFrom(type)) {
-									t[0] = builtInTypes.get(id);
-									return false;
-								}
-								return true;
-							}
-						});
+				newEntry = !Types.CLASSES_TYPES_CORRESPONDANCE.forEachEntry((support, id) -> {
+					if (support != Object.class && support.isAssignableFrom(type)) {
+						t[0] = builtInTypes.get(id);
+						return false;
+					}
+					return true;
+				});
 
 			}
 		}
@@ -205,8 +201,8 @@ public class Types {
 		return t[0];
 	}
 
-	public static Collection<String> getTypeNames() {
-		return builtInTypes.getTypeNames();
+	public static Iterable<String> getTypeNames() {
+		return Iterables.transform(builtInTypes.getTypes(), each -> each.getName());
 	}
 
 	public static void init() {

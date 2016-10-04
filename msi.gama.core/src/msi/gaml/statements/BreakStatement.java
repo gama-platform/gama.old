@@ -11,17 +11,22 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.serializer;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.StatementWithChildrenDescription;
+import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.statements.BreakStatement.BreakSerializer;
 import msi.gaml.statements.BreakStatement.BreakValidator;
 
@@ -42,8 +47,8 @@ public class BreakStatement extends AbstractStatement {
 	public static class BreakSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
-		protected void
-			serialize(final StatementDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
+		protected void serialize(final StatementDescription desc, final StringBuilder sb,
+				final boolean includingBuiltIn) {
 			sb.append(BREAK).append(";");
 		}
 	}
@@ -52,17 +57,20 @@ public class BreakStatement extends AbstractStatement {
 
 		/**
 		 * Method validate()
+		 * 
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
 		public void validate(final IDescription description) {
 			IDescription superDesc = description.getEnclosingDescription();
-			while (superDesc != null && superDesc instanceof StatementDescription) {
-				if ( ((StatementDescription) superDesc).isBreakable() ) { return; }
+			while (superDesc != null && superDesc instanceof StatementWithChildrenDescription) {
+				if (((StatementWithChildrenDescription) superDesc).isBreakable()) {
+					return;
+				}
 				superDesc = superDesc.getEnclosingDescription();
 			}
 			description.error("'break' must be used in the context of a loop, a switch or an ask statement",
-				IGamlIssue.WRONG_CONTEXT);
+					IGamlIssue.WRONG_CONTEXT);
 		}
 	}
 

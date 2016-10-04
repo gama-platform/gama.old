@@ -464,11 +464,6 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public void copyTempsAbove() {
-		// Nothing to do
-	}
-
-	@Override
 	public IType getTypeNamed(final String s) {
 		final ModelDescription m = getModelDescription();
 		if (m == null) {
@@ -649,9 +644,9 @@ public abstract class SymbolDescription implements IDescription {
 			return null;
 
 		if (proto.hasSequence() && !proto.isPrimitive()) {
-			if (proto.isRemoteContext()) {
-				copyTempsAbove();
-			}
+			// if (proto.isRemoteContext()) {
+			// copyTempsAbove();
+			// }
 			if (!validateChildren())
 				return null;
 		}
@@ -778,9 +773,9 @@ public abstract class SymbolDescription implements IDescription {
 			((IStatement.WithArgs) cs).setFormalArgs(((StatementDescription) this).createCompiledArgs());
 		}
 		if (proto.hasSequence() && !proto.isPrimitive()) {
-			if (proto.isRemoteContext()) {
-				copyTempsAbove();
-			}
+			// if (proto.isRemoteContext()) {
+			// copyTempsAbove();
+			// }
 			cs.setChildren(compileChildren());
 		}
 		return cs;

@@ -175,12 +175,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IExpression createList(final List<? extends IExpression> elements) {
+	public IExpression createList(final Iterable<? extends IExpression> elements) {
 		return ListExpression.create(elements);
 	}
 
 	@Override
-	public IExpression createMap(final List<? extends IExpression> elements) {
+	public IExpression createMap(final Iterable<? extends IExpression> elements) {
 		return MapExpression.create(elements);
 	}
 

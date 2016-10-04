@@ -1,7 +1,5 @@
 package msi.gaml.types;
 
-import java.util.List;
-
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 
@@ -15,7 +13,7 @@ public interface ITypesManager {
 
 	boolean containsType(String s);
 
-	List<String> getTypeNames();
+	// List<String> getTypeNames();
 
 	// Collection<TypeDescription> getAllSpecies();
 

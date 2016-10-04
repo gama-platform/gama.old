@@ -13,6 +13,8 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Menu;
 
+import com.google.common.collect.Lists;
+
 import msi.gama.common.interfaces.INamed;
 import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.compilation.AbstractGamlAdditions;
@@ -57,7 +59,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 		for (final String skill : controls) {
 			fillSkillSubmenu(sub(m, skill), skill, true);
 		}
-		final List<String> types = new ArrayList(Types.getTypeNames());
+		final List<String> types = Lists.newArrayList(Types.getTypeNames());
 		types.removeAll(speciesList);
 		Collections.sort(types, IGNORE_CASE);
 		m = sub("Types");
@@ -122,7 +124,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 			}
 
 		});
-		final List<IDescription> vars = new ArrayList(GamaSkillRegistry.INSTANCE.getVariablesForSkill(skill));
+		final List<IDescription> vars = Lists.newArrayList(GamaSkillRegistry.INSTANCE.getVariablesForSkill(skill));
 		Collections.sort(vars, INamed.COMPARATOR);
 		if (!vars.isEmpty()) {
 			title(submenu, "Attributes");
@@ -130,7 +132,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 				fillIDescriptionSubMenu(sub(submenu, variable.getName() + " (" + variable.getType() + ")"), variable);
 			}
 		}
-		final List<IDescription> actions = new ArrayList(GamaSkillRegistry.INSTANCE.getActionsForSkill(skill));
+		final List<IDescription> actions = Lists.newArrayList(GamaSkillRegistry.INSTANCE.getActionsForSkill(skill));
 		Collections.sort(actions, INamed.COMPARATOR);
 		if (!actions.isEmpty()) {
 			title(submenu, "Primitives");

@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -361,13 +360,8 @@ public class SpeciesDescription extends TypeDescription {
 
 	}
 
-	public Collection<StatementDescription> getAspects() {
-		final Collection<StatementDescription> allAspects = new ArrayList();
-		final Collection<String> aspectNames = getAspectNames();
-		for (final String name : aspectNames) {
-			allAspects.add(getAspect(name));
-		}
-		return allAspects;
+	public Iterable<StatementDescription> getAspects() {
+		return Iterables.transform(getAspectNames(), input -> getAspect(input));
 	}
 
 	public SkillDescription getControl() {
@@ -751,7 +745,7 @@ public class SpeciesDescription extends TypeDescription {
 		// We try to issue information about the state of the species: at first,
 		// abstract.
 
-		for (final StatementDescription a : getActions()) {
+		for (final ActionDescription a : getActions()) {
 			if (a.isAbstract()) {
 				this.info("Action '" + a.getName() + "' is defined or inherited as virtual. In consequence, "
 						+ getName() + " will be considered as abstract.", IGamlIssue.MISSING_ACTION);
@@ -889,13 +883,8 @@ public class SpeciesDescription extends TypeDescription {
 	/**
 	 * @return
 	 */
-	public Collection<StatementDescription> getBehaviors() {
-		final Collection<String> names = getBehaviorNames();
-		final Collection<StatementDescription> result = new ArrayList();
-		for (final String name : names) {
-			result.add(getBehavior(name));
-		}
-		return result;
+	public Iterable<StatementDescription> getBehaviors() {
+		return Iterables.transform(getBehaviorNames(), input -> getBehavior(input));
 	}
 
 	@Override

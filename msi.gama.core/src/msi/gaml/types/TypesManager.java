@@ -11,9 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -23,7 +21,6 @@ import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
-import msi.gaml.operators.Strings;
 
 public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescription> implements ITypesManager {
 
@@ -152,45 +149,21 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 	 * 
 	 * @see msi.gaml.types.ITypesManager#getTypeNames()
 	 */
-	@Override
-	public List<String> getTypeNames() {
-		final List<String> result = parent == null ? new ArrayList() : parent.getTypeNames();
-		for (final String s : types.keySet()) {
-			if (!Strings.isGamaNumber(s)) {
-				result.add(s);
-			}
-		}
-		return result;
-	}
+	// @Override
+	// public List<String> getTypeNames() {
+	// final List<String> result = parent == null ? new ArrayList() :
+	// parent.getTypeNames();
+	// for (final String s : types.keySet()) {
+	// if (!Strings.isGamaNumber(s)) {
+	// result.add(s);
+	// }
+	// }
+	// return result;
+	// }
 
 	Collection<IType> getTypes() {
 		return types.values();
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gaml.types.ITypesManager#getAllSpecies()
-	 */
-	// @Override
-	// public Collection<TypeDescription> getAllSpecies() {
-	// final Set<TypeDescription> species = new LinkedHashSet(
-	// parent == null ? Collections.EMPTY_SET : parent.getAllSpecies());
-	// species.addAll(modelSpecies.values());
-	// return species;
-	//
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gaml.types.ITypesManager#get(int)
-	 */
-	// @Override
-	// public IType get(final int type) {
-	// final IType t = idToIType.get(type);
-	// return t == null ? parent != null ? parent.get(type) : Types.NO_TYPE : t;
-	// }
 
 	/*
 	 * (non-Javadoc)

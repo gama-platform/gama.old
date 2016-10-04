@@ -142,7 +142,6 @@ public class PrimitiveDescription extends ActionDescription {
 
 	@Override
 	public void dispose() {
-		previousDescription = null;
 		enclosing = null;
 	}
 }

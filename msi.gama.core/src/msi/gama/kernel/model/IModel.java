@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.kernel.model;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import msi.gama.kernel.experiment.IExperimentPlan;
@@ -32,16 +32,14 @@ public interface IModel extends ISpecies {
 
 	public abstract IExperimentPlan getExperiment(final String s);
 
-	String getWorkingPath();
+	public abstract String getWorkingPath();
 
 	public abstract String getFilePath();
 
 	public abstract String getProjectPath();
 
-	// public abstract boolean isTorus();
-
 	public abstract Map<String, ISpecies> getAllSpecies();
 
-	public abstract List<String> getImportedPaths();
+	public abstract Collection<String> getImportedPaths();
 
 }

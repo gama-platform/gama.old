@@ -4,14 +4,15 @@
  */
 package msi.gama.lang.gaml.ui.templates;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
+
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.INamed;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -153,9 +154,9 @@ public class GamlTemplateFactory {
 		return sb.toString();
 	}
 
-	private static void dump(final String title, final Collection<? extends INamed> descs, final StringBuilder sb) {
-		if (!descs.isEmpty()) {
-			final List<INamed> named = new ArrayList(descs);
+	private static void dump(final String title, final Iterable<? extends INamed> descs, final StringBuilder sb) {
+		if (!Iterables.isEmpty(descs)) {
+			final List<INamed> named = Lists.newArrayList(descs);
 			Collections.sort(named, INamed.COMPARATOR);
 			sb.append(title);
 			for (final INamed sd : named) {

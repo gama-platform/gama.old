@@ -13,6 +13,7 @@ package msi.gama.kernel.model;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
@@ -67,25 +68,9 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	}
 
 	@Override
-	public List<String> getImportedPaths() {
+	public Collection<String> getImportedPaths() {
 		return getDescription().getAlternatePaths();
 	}
-
-	// @Override
-	// public String getRelativeFilePath(final IScope scope, final String
-	// filePath, final boolean shouldExist) {
-	// try {
-	// return FileUtils.constructAbsoluteFilePath(scope, filePath, shouldExist);
-	// } catch (final GamaRuntimeException e) {
-	// GAMA.reportAndThrowIfNeeded(scope, e, false);
-	// return filePath;
-	// }
-	// }
-
-	// @Override
-	// public boolean isTorus() {
-	// return ((ModelDescription) description).isTorus();
-	// }
 
 	@Override
 	public String getWorkingPath() {

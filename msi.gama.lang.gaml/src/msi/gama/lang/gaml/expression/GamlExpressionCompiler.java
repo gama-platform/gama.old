@@ -35,7 +35,7 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Deque;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -45,6 +45,8 @@ import java.util.Set;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.diagnostics.Diagnostic;
+
+import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -629,7 +631,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		for (final Expression exp : parameters) {
 			String arg = null;
 			IExpressionDescription ed = null;
-			final Set<Diagnostic> errors = new LinkedHashSet();
+			final Set<Diagnostic> errors = new HashSet();
 			if (exp instanceof ArgumentPair || exp instanceof Parameter) {
 				arg = EGaml.getKeyOf(exp);
 				ed = builder.create(exp.getRight(), errors);
@@ -886,19 +888,16 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public IExpression caseArray(final Array object) {
 		final List<? extends Expression> list = EGaml.getExprsOf(object.getExprs());
-		final List<IExpression> result = new ArrayList();
-		boolean allPairs = true;
-		for (int i = 0, n = list.size(); i < n; i++) {
-			final Expression eExpr = list.get(i);
-			allPairs = allPairs && eExpr instanceof Pair;
-			final IExpression e = compile(eExpr);
-			if (e != null)
-				result.add(e);
-		}
-		if (allPairs && !list.isEmpty()) {
-			return getFactory().createMap(result);
-		}
-		return getFactory().createList(result);
+		boolean allPairs = !list.isEmpty();
+		if (allPairs)
+			for (final Expression e : list) {
+				if (!(e instanceof Pair)) {
+					allPairs = false;
+					break;
+				}
+			}
+		final Iterable<IExpression> result = Iterables.transform(list, input -> compile(input));
+		return allPairs ? getFactory().createMap(result) : getFactory().createList(result);
 	}
 
 	@Override
@@ -916,11 +915,9 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression caseParameters(final Parameters object) {
-		final List<IExpression> list = new ArrayList();
-		for (final Expression p : EGaml.getExprsOf(object.getParams())) {
-			list.add(binary("::", getFactory().createConst(EGaml.getKeyOf(p.getLeft()), Types.STRING), p.getRight()));
-		}
-		return getFactory().createMap(list);
+		final Iterable it = Iterables.transform(EGaml.getExprsOf(object.getParams()), input -> binary("::",
+				getFactory().createConst(EGaml.getKeyOf(input.getLeft()), Types.STRING), input.getRight()));
+		return getFactory().createMap(it);
 	}
 
 	@Override

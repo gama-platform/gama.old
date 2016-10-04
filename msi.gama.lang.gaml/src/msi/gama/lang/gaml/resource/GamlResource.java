@@ -32,6 +32,7 @@ import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 import com.google.common.base.Function;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimaps;
@@ -88,13 +89,9 @@ public class GamlResource extends LazyLinkingResource {
 		return element;
 	}
 
-	private final static Function<GamlResource, ISyntacticElement> TO_SYNTACTIC_CONTENTS = new Function<GamlResource, ISyntacticElement>() {
-
-		@Override
-		public ISyntacticElement apply(final GamlResource input) {
-			input.getResourceSet().getResource(input.getURI(), true);
-			return input.getSyntacticContents();
-		}
+	private final static Function<GamlResource, ISyntacticElement> TO_SYNTACTIC_CONTENTS = input -> {
+		input.getResourceSet().getResource(input.getURI(), true);
+		return input.getSyntacticContents();
 	};
 
 	private ModelDescription buildModelDescription(final LinkedHashMultimap<String, GamlResource> resources) {
@@ -114,9 +111,9 @@ public class GamlResource extends LazyLinkingResource {
 		// If there are no micro-models
 		final Set<String> keySet = resources.keySet();
 		if (keySet.size() == 1 && keySet.contains(null)) {
-			final List<ISyntacticElement> selfAndImports = new ArrayList();
-			selfAndImports.add(getSyntacticContents());
-			selfAndImports.addAll(Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS).get(null));
+			final Iterable<ISyntacticElement> selfAndImports = Iterables.concat(
+					Collections.singleton(getSyntacticContents()),
+					Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS).get(null));
 			return f.createModelDescription(projectPath, modelPath, selfAndImports, context, isEdited, null);
 		}
 		final ListMultimap<String, ISyntacticElement> models = ArrayListMultimap.create();

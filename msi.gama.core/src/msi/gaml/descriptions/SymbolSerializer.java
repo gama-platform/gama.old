@@ -5,7 +5,6 @@
 package msi.gaml.descriptions;
 
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -184,7 +183,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 		protected void serializeChildren(final SpeciesDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			sb.append(' ').append('{').append(Strings.LN);
-			Collection<? extends IDescription> children = desc.getAttributes();
+			Iterable<? extends IDescription> children = desc.getAttributes();
 			sb.append(Strings.LN);
 			sb.append("// Global attributes of ").append(desc.getName()).append(Strings.LN);
 			for (final IDescription s : children) {

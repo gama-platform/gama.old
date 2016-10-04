@@ -31,10 +31,8 @@ import msi.gaml.statements.IStatement;
 @skill(name = IKeyword.REFLEX, concept = { IConcept.BEHAVIOR, IConcept.ARCHITECTURE })
 public class ReflexArchitecture extends AbstractArchitecture {
 
-	private final List<IStatement> _inits = new ArrayList();
-	private final List<IStatement> _reflexes = new ArrayList();
-	private int _reflexesNumber = 0;
-	private int _inits_number = 0;
+	private List<IStatement> _inits;
+	private List<IStatement> _reflexes;
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
@@ -45,20 +43,24 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	}
 
 	protected void clearBehaviors() {
-		_inits.clear();
-		_reflexes.clear();
-		_reflexesNumber = 0;
-		_inits_number = 0;
+		if (_inits != null)
+			_inits.clear();
+		_inits = null;
+		if (_reflexes != null)
+			_reflexes.clear();
+		_reflexes = null;
 	}
 
 	public void addBehavior(final IStatement c) {
 		if (IKeyword.INIT.equals(c.getKeyword())) {
+			if (_inits == null)
+				_inits = new ArrayList();
 			_inits.add(0, c);
-			_inits_number++;
 			return;
 		}
+		if (_reflexes == null)
+			_reflexes = new ArrayList();
 		_reflexes.add(c);
-		_reflexesNumber++;
 
 	}
 
@@ -68,12 +70,10 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	}
 
 	protected final Object executeReflexes(final IScope scope) throws GamaRuntimeException {
-		if (_reflexesNumber == 0) {
+		if (_reflexes == null)
 			return null;
-		}
 		Object result = null;
-		for (int i = 0; i < _reflexesNumber; i++) {
-			final IStatement r = _reflexes.get(i);
+		for (final IStatement r : _reflexes) {
 			if (!scope.interrupted()) {
 				result = r.executeOn(scope);
 			}
@@ -83,11 +83,13 @@ public class ReflexArchitecture extends AbstractArchitecture {
 
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
-		for (int i = 0; i < _inits_number; i++) {
+		if (_inits == null)
+			return true;
+		for (final IStatement init : _inits) {
 			if (scope.interrupted()) {
 				return false;
 			}
-			_inits.get(i).executeOn(scope);
+			init.executeOn(scope);
 		}
 		return true;
 	}

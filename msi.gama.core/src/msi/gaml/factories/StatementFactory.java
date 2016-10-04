@@ -22,6 +22,7 @@ import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.PrimitiveDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.StatementRemoteWithChildrenDescription;
 import msi.gaml.descriptions.StatementWithChildrenDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.statements.Facets;
@@ -48,7 +49,10 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		}
 		if (keyword.equals(ACTION))
 			return new ActionDescription(keyword, enclosing, children, element, facets);
-		if (DescriptionFactory.getProto(keyword, enclosing).hasSequence() && children.hasChildren()) {
+		if (proto.hasSequence() && children.hasChildren()) {
+			if (proto.isRemoteContext())
+				return new StatementRemoteWithChildrenDescription(keyword, enclosing, children, proto.hasArgs(),
+						element, facets, null);
 			return new StatementWithChildrenDescription(keyword, enclosing, children, proto.hasArgs(), element, facets,
 					null);
 		}

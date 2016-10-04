@@ -12,8 +12,9 @@
 package msi.gaml.expressions;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
+
+import com.google.common.collect.Iterables;
 
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
@@ -32,7 +33,7 @@ import msi.gaml.types.Types;
  */
 public class ListExpression extends AbstractExpression {
 
-	public static IExpression create(final List<? extends IExpression> elements) {
+	public static IExpression create(final Iterable<? extends IExpression> elements) {
 		final ListExpression u = new ListExpression(elements);
 
 		// if (u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue())
@@ -52,8 +53,8 @@ public class ListExpression extends AbstractExpression {
 	// private boolean isConst;
 	private boolean computed;
 
-	ListExpression(final List<? extends IExpression> elements) {
-		this.elements = elements.toArray(new IExpression[0]);
+	ListExpression(final Iterable<? extends IExpression> elements) {
+		this.elements = Iterables.toArray(elements, IExpression.class);
 		final int n = this.elements.length;
 		// values = new Object[n];
 		type = Types.LIST.of(GamaType.findCommonType(this.elements, GamaType.TYPE));

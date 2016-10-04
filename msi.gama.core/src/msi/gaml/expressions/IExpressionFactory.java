@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.List;
-
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.metamodel.agent.IAgent;
@@ -58,9 +56,9 @@ public interface IExpressionFactory {
 
 	IExpression createVar(String name, IType type, boolean isConst, int scope, IDescription definitionDescription);
 
-	public IExpression createList(final List<? extends IExpression> elements);
+	public IExpression createList(final Iterable<? extends IExpression> elements);
 
-	public IExpression createMap(final List<? extends IExpression> elements);
+	public IExpression createMap(final Iterable<? extends IExpression> elements);
 
 	/**
 	 * @param op

@@ -41,7 +41,7 @@ public class ModelFactory extends SymbolFactory {
 	}
 
 	public ModelDescription createModelDescription(final String projectPath, final String modelPath,
-			final List<ISyntacticElement> models, final ValidationContext collector, final boolean document,
+			final Iterable<ISyntacticElement> models, final ValidationContext collector, final boolean document,
 			final Map<String, ModelDescription> mm) {
 		return assembler.assemble(projectPath, modelPath, models, collector, document, mm);
 	}

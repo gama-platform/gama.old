@@ -24,7 +24,6 @@ public class StatementWithChildrenDescription extends StatementDescription {
 			final ChildrenProvider cp, final boolean hasArgs, final EObject source, final Facets facets,
 			final Arguments alreadyComputedArgs) {
 		super(keyword, superDesc, cp, hasArgs, source, facets, alreadyComputedArgs);
-		// canHaveTemps = hasScope;
 	}
 
 	@Override
@@ -52,6 +51,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public void dispose() {
 		super.dispose();
+
 		children = null;
 		if (temps != null)
 			temps.forEachValue(object -> {
@@ -78,7 +78,6 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		return getMeta().hasScope() /* canHaveTemps */ && temps != null;
 	}
 
-	@Override
 	public IExpression addTemp(final IDescription declaration, final String name, final IType type) {
 		// TODO Should separate validation from execution, here.
 
@@ -86,11 +85,11 @@ public class StatementWithChildrenDescription extends StatementDescription {
 			if (getEnclosingDescription() == null) {
 				return null;
 			}
-			if (!(getEnclosingDescription() instanceof StatementDescription)) {
+			if (!(getEnclosingDescription() instanceof StatementWithChildrenDescription)) {
 				return null;
 			}
 
-			return ((StatementDescription) getEnclosingDescription()).addTemp(declaration, name, type);
+			return ((StatementWithChildrenDescription) getEnclosingDescription()).addTemp(declaration, name, type);
 		}
 		final String kw = getKeyword();
 		final String facet = kw == IKeyword.LET || kw == IKeyword.LOOP ? IKeyword.NAME : IKeyword.RETURNS;
@@ -116,22 +115,22 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		temps.put(name, (IVarExpression) result);
 		return result;
 	}
-
-	@Override
-	public void copyTempsAbove() {
-		if (!getMeta().hasScope() /* canHaveTemps */)
-			return;
-		IDescription d = getEnclosingDescription();
-		while (d != null && d instanceof StatementWithChildrenDescription) {
-			if (((StatementWithChildrenDescription) d).hasTemps()) {
-				if (temps == null)
-					temps = new THashMap(((StatementWithChildrenDescription) d).temps);
-				else
-					temps.putAll(((StatementWithChildrenDescription) d).temps);
-			}
-			d = d.getEnclosingDescription();
-		}
-	}
+	//
+	// @Override
+	// public void copyTempsAbove() {
+	// if (!getMeta().hasScope() /* canHaveTemps */)
+	// return;
+	// IDescription d = getEnclosingDescription();
+	// while (d != null && d instanceof StatementWithChildrenDescription) {
+	// if (((StatementWithChildrenDescription) d).hasTemps()) {
+	// if (temps == null)
+	// temps = new THashMap(((StatementWithChildrenDescription) d).temps);
+	// else
+	// temps.putAll(((StatementWithChildrenDescription) d).temps);
+	// }
+	// d = d.getEnclosingDescription();
+	// }
+	// }
 
 	@Override
 	public IDescription addChild(final IDescription child) {
@@ -161,6 +160,22 @@ public class StatementWithChildrenDescription extends StatementDescription {
 				passedArgs == null ? null : passedArgs.cleanCopy());
 		desc.originName = getOriginName();
 		return desc;
+	}
+
+	/**
+	 * @return
+	 */
+	public boolean isBreakable() {
+		return getMeta().isBreakable();
+	}
+
+	@Override
+	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type) {
+		if (getKeyword().equals(LOOP) && facetName.equals(NAME)) {
+			// Case of loops: the variable is inside the loop (not outside)
+			return (IVarExpression) addTemp(this, getLitteral(facetName), type);
+		}
+		return super.addNewTempIfNecessary(facetName, type);
 	}
 
 }

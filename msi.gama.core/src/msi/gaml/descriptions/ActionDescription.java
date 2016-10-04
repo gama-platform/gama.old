@@ -1,6 +1,5 @@
 package msi.gaml.descriptions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -19,9 +18,13 @@ import msi.gaml.types.Types;
 
 public class ActionDescription extends StatementWithChildrenDescription {
 
+	protected final boolean isAbstract;
+
 	public ActionDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 			final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, true, source, facets, null);
+		isAbstract = TRUE.equals(getLitteral(VIRTUAL));
+		removeFacets(VIRTUAL);
 	}
 
 	@Override
@@ -30,6 +33,10 @@ public class ActionDescription extends StatementWithChildrenDescription {
 				children != null ? new ChildrenProvider(children) : ChildrenProvider.NONE, element, getFacetsCopy());
 		desc.originName = getOriginName();
 		return desc;
+	}
+
+	public boolean isAbstract() {
+		return isAbstract;
 	}
 
 	/**
@@ -63,7 +70,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 		}
 
 		// We compute the list of mandatory args
-		final List<String> mandatoryArgs = new ArrayList();
+		// final List<String> mandatoryArgs = new ArrayList();
 
 		if (formalArgs != null) {
 			for (final IDescription c : formalArgs) {
@@ -75,7 +82,14 @@ public class ActionDescription extends StatementWithChildrenDescription {
 					continue;
 				}
 				if (c.hasFacet(OPTIONAL) && c.getFacet(OPTIONAL).equalsString(FALSE) || !c.hasFacet(OPTIONAL)) {
-					mandatoryArgs.add(n);
+					if (!names.containsKey(n)) {
+						caller.error(
+								"Missing argument " + n + " in call to " + getName() + ". Arguments passed are : "
+										+ names,
+								IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new String[] { n });
+						return false;
+					}
+
 				}
 			}
 		}
@@ -85,14 +99,16 @@ public class ActionDescription extends StatementWithChildrenDescription {
 		// AD: Change in the policy regarding primitives; if it is not stated,
 		// the arguments are now considered as
 		// optional.
-		for (final String arg : mandatoryArgs) {
-			if (!names.containsKey(arg)) {
-				caller.error(
-						"Missing argument " + arg + " in call to " + getName() + ". Arguments passed are : " + names,
-						IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new String[] { arg });
-				return false;
-			}
-		}
+		// for (final String arg : mandatoryArgs) {
+		// if (!names.containsKey(arg)) {
+		// caller.error(
+		// "Missing argument " + arg + " in call to " + getName() + ". Arguments
+		// passed are : " + names,
+		// IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new
+		// String[] { arg });
+		// return false;
+		// }
+		// }
 		// }
 		for (final Map.Entry<String, IExpressionDescription> arg : names.entrySet()) {
 			// A null value indicates a previous compilation error in the

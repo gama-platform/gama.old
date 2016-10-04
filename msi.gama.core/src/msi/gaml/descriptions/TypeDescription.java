@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -80,14 +79,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	 * ==================================== MANAGEMENT OF VARIABLES
 	 */
 
-	public Collection<VariableDescription> getAttributes() {
-		final Collection<String> names = getAttributeNames();
-		final Collection<VariableDescription> result = new ArrayList();
-		for (final String name : names) {
-			final VariableDescription vd = getAttribute(name);
-			result.add(vd);
-		}
-		return result;
+	public Iterable<VariableDescription> getAttributes() {
+		return Iterables.transform(getAttributeNames(), input -> getAttribute(input));
 	}
 
 	public Collection<String> getAttributeNames() {
@@ -472,13 +465,8 @@ public abstract class TypeDescription extends SymbolDescription {
 		return allNames;
 	}
 
-	public Collection<ActionDescription> getActions() {
-		final Collection<ActionDescription> allActions = new ArrayList();
-		final Collection<String> actionNames = getActionNames();
-		for (final String name : actionNames) {
-			allActions.add(getAction(name));
-		}
-		return allActions;
+	public Iterable<ActionDescription> getActions() {
+		return Iterables.transform(getActionNames(), input -> getAction(input));
 	}
 
 	@Override
@@ -488,7 +476,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public boolean isAbstract() {
-		for (final StatementDescription a : getActions()) {
+		for (final ActionDescription a : getActions()) {
 			if (a.isAbstract()) {
 				return true;
 			}
@@ -541,8 +529,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected void inheritActionsFrom(final TypeDescription p) {
 		if (p == null || p == this)
 			return;
-		final Collection<ActionDescription> inherited = p.getActions();
-		for (final ActionDescription inheritedAction : inherited) {
+		for (final ActionDescription inheritedAction : p.getActions()) {
 			final String actionName = inheritedAction.getName();
 			final ActionDescription userDeclared = actions == null ? null : actions.get(actionName);
 			if (userDeclared != null) {

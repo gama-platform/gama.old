@@ -88,14 +88,14 @@ public class GamaSkillRegistry {
 
 	}
 
-	public Collection<? extends IDescription> getVariablesForSkill(final String s) {
+	public Iterable<? extends IDescription> getVariablesForSkill(final String s) {
 		final SkillDescription sd = skills.get(s);
 		if (sd == null)
 			return Collections.EMPTY_LIST;
 		return sd.getAttributes();
 	}
 
-	public Collection<? extends IDescription> getActionsForSkill(final String s) {
+	public Iterable<? extends IDescription> getActionsForSkill(final String s) {
 		final SkillDescription sd = skills.get(s);
 		if (sd == null)
 			return Collections.EMPTY_LIST;
