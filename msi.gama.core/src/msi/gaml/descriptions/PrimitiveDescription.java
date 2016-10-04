@@ -46,6 +46,11 @@ public class PrimitiveDescription extends ActionDescription {
 	}
 
 	@Override
+	public boolean validateChildren() {
+		return true;
+	}
+
+	@Override
 	public String getDocumentation() {
 		final doc d = getDocAnnotation();
 		if (d == null) {
