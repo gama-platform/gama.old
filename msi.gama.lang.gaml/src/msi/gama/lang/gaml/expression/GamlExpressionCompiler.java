@@ -687,13 +687,13 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression caseSkillRef(final SkillRef object) {
-		final String s = EGaml.getKeyOf(object);
+		// final String s = EGaml.getKeyOf(object);
 		return skill(EGaml.getKeyOf(object));
 	}
 
 	@Override
 	public IExpression caseActionRef(final ActionRef object) {
-		final String s = EGaml.getKeyOf(object);
+		// final String s = EGaml.getKeyOf(object);
 		return getFactory().createConst(EGaml.getKeyOf(object), Types.STRING);
 	}
 

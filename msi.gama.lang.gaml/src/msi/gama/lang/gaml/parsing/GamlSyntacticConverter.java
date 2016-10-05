@@ -65,13 +65,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.Diagnostic;
-import org.eclipse.xtext.diagnostics.Severity;
-import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.expression.ExpressionDescriptionBuilder;
@@ -84,7 +80,6 @@ import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.Model;
 import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Pragma;
@@ -157,18 +152,18 @@ public class GamlSyntacticConverter {
 		return model;
 	}
 
-	private Object[] collectImports(final ModelImpl m) {
-		if (m.eIsSet(GamlPackage.MODEL__IMPORTS)) {
-			final List<Import> imports = m.getImports();
-			final Object[] imps = new Object[imports.size()];
-			for (int i = 0; i < imps.length; i++) {
-				final URI uri = URI.createURI(imports.get(i).getImportURI(), false);
-				imps[i] = uri;
-			}
-			return imps;
-		}
-		return null;
-	}
+	// private Object[] collectImports(final ModelImpl m) {
+	// if (m.eIsSet(GamlPackage.MODEL__IMPORTS)) {
+	// final List<Import> imports = m.getImports();
+	// final Object[] imps = new Object[imports.size()];
+	// for (int i = 0; i < imps.length; i++) {
+	// final URI uri = URI.createURI(imports.get(i).getImportURI(), false);
+	// imps[i] = uri;
+	// }
+	// return imps;
+	// }
+	// return null;
+	// }
 
 	private List<String> collectPragmas(final ModelImpl m) {
 		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) {
@@ -194,23 +189,27 @@ public class GamlSyntacticConverter {
 		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
 	}
 
-	private void addWarning(final String message, final EObject object, final Set<Diagnostic> errors) {
-		if (!GamaPreferences.WARNINGS_ENABLED.getValue()) {
-			return;
-		}
-		final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "", message, object, null, 0, null);
-		if (errors != null)
-			errors.add(d);
-	}
+	// private void addWarning(final String message, final EObject object, final
+	// Set<Diagnostic> errors) {
+	// if (!GamaPreferences.WARNINGS_ENABLED.getValue()) {
+	// return;
+	// }
+	// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "",
+	// message, object, null, 0, null);
+	// if (errors != null)
+	// errors.add(d);
+	// }
 
-	private void addInfo(final String message, final EObject object, final Set<Diagnostic> errors) {
-		if (!GamaPreferences.INFO_ENABLED.getValue()) {
-			return;
-		}
-		final Diagnostic d = new EObjectDiagnosticImpl(Severity.INFO, "", message, object, null, 0, null);
-		if (errors != null)
-			errors.add(d);
-	}
+	// private void addInfo(final String message, final EObject object, final
+	// Set<Diagnostic> errors) {
+	// if (!GamaPreferences.INFO_ENABLED.getValue()) {
+	// return;
+	// }
+	// final Diagnostic d = new EObjectDiagnosticImpl(Severity.INFO, "",
+	// message, object, null, 0, null);
+	// if (errors != null)
+	// errors.add(d);
+	// }
 
 	private final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm,
 			final Set<Diagnostic> errors) {

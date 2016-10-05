@@ -13,15 +13,14 @@ package msi.gama.util.file;
 
 import java.awt.Shape;
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.net.URI;
 
 import com.kitfox.svg.SVGCache;
 import com.kitfox.svg.SVGDiagram;
 import com.kitfox.svg.SVGUniverse;
 import com.vividsolutions.jts.awt.ShapeReader;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.util.GeometryUtils;
@@ -73,8 +72,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		try {
-			final BufferedReader in = new BufferedReader(new FileReader(getFile(scope)));
+		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			final SVGUniverse svg = SVGCache.getSVGUniverse();
 			final URI uri = svg.loadSVG(in, getPath(scope));
 			final SVGDiagram diagram = svg.getDiagram(uri);
@@ -83,7 +81,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 																						// =
 																						// ??
 			// We center and scale the shape in the same operation
-			final Envelope env = geom.getEnvelopeInternal();
+			// final Envelope env = geom.getEnvelopeInternal();
 			// GamaPoint translation = new GamaPoint(-env.getWidth() / 2,
 			// -env.getHeight() / 2);
 			final IShape gs = new GamaShape(null, geom, null, new GamaPoint(0, 0), size, true);
@@ -93,7 +91,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 			// gs = Spatial.Transformations.scaled_to(scope, gs, size);
 			// }
 			setBuffer(GamaListFactory.createWithoutCasting(Types.GEOMETRY, gs));
-		} catch (final FileNotFoundException e) {
+		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 			// e.printStackTrace();
 		}

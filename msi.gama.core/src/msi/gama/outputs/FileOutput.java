@@ -144,8 +144,8 @@ public class FileOutput extends AbstractOutput {
 
 	@Override
 	public void open() {
-		try {
-			setWriter(new PrintWriter(file));
+		try (PrintWriter writer = new PrintWriter(file)) {
+			setWriter(writer);
 		} catch (final FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -301,18 +301,15 @@ public class FileOutput extends AbstractOutput {
 			setLastValue(fitness);
 		}
 		// compute(getOwnScope(), 0l);
-		FileWriter fileWriter;
 		switch (type) {
 		case XML:
 			break;
 		case TEXT:
-			try {
-				fileWriter = new FileWriter(file, true);
+			try (FileWriter fileWriter = new FileWriter(file, true)) {
 				if (getLastValue() != null) {
 					fileWriter.write(getLastValue().toString());
 				}
 				fileWriter.flush();
-				fileWriter.close();
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
@@ -331,11 +328,9 @@ public class FileOutput extends AbstractOutput {
 				s.setLength(s.length() - 1);
 			}
 			s.append(System.getProperty("line.separator"));
-			try {
-				fileWriter = new FileWriter(file, true);
+			try (FileWriter fileWriter = new FileWriter(file, true)) {
 				fileWriter.write(s.toString());
 				fileWriter.flush();
-				fileWriter.close();
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
@@ -420,16 +415,13 @@ public class FileOutput extends AbstractOutput {
 	}
 
 	public void writeHeaderAndClose() {
-		FileWriter fileWriter;
 		switch (type) {
 		case XML:
 			break;
 		case TEXT:
-			try {
-				fileWriter = new FileWriter(file);
+			try (FileWriter fileWriter = new FileWriter(file)) {
 				fileWriter.write(getHeader());
 				fileWriter.flush();
-				fileWriter.close();
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
@@ -445,11 +437,9 @@ public class FileOutput extends AbstractOutput {
 				s.setLength(s.length() - 1);
 			}
 			s.append(System.getProperty("line.separator"));
-			try {
-				fileWriter = new FileWriter(file);
+			try (FileWriter fileWriter = new FileWriter(file)) {
 				fileWriter.write(s.toString());
 				fileWriter.flush();
-				fileWriter.close();
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}

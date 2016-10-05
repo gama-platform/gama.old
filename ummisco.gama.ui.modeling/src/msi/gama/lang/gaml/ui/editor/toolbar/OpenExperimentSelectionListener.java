@@ -8,7 +8,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 
-import msi.gama.common.interfaces.IGui;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gama.lang.gaml.ui.editor.GamlEditorState;
@@ -47,7 +46,7 @@ public class OpenExperimentSelectionListener implements SelectionListener {
 	@Override
 	public void widgetSelected(final SelectionEvent e) {
 
-		final IGui gui = GAMA.getRegularGui();
+		// final IGui gui = GAMA.getRegularGui();
 		// We refuse to run if there is no XtextGui available.
 		editor.doSave(null);
 		if (AutoStartup.EDITOR_SAVE.getValue()) {
@@ -66,13 +65,7 @@ public class OpenExperimentSelectionListener implements SelectionListener {
 	void gotoEditor(final GamaRuntimeException exception) {
 		final EObject o = exception.getEditorContext();
 		if (o != null) {
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					GAMA.getGui().editModel(o);
-				}
-			});
+			WorkbenchHelper.asyncRun(() -> GAMA.getGui().editModel(o));
 		}
 
 	}

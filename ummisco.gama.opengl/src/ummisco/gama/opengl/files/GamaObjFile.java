@@ -168,7 +168,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					// LOADS VERTEX TEXTURE COORDINATES
 					if (newline.startsWith("vt")) {
 						final float coords[] = new float[4];
-						final String coordstext[] = new String[4];
+						// final String coordstext[] = new String[4];
 						newline = newline.substring(3, newline.length());
 						final StringTokenizer st = new StringTokenizer(newline, " ");
 						for (int i = 0; st.hasMoreTokens(); i++) {
@@ -181,7 +181,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					// LOADS VERTEX NORMALS COORDINATES
 					if (newline.startsWith("vn")) {
 						final float coords[] = new float[4];
-						final String coordstext[] = new String[4];
+						// final String coordstext[] = new String[4];
 						newline = newline.substring(3, newline.length());
 						final StringTokenizer st = new StringTokenizer(newline, " ");
 						for (int i = 0; st.hasMoreTokens(); i++) {

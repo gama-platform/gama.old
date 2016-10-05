@@ -726,7 +726,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 	}
 
 	void onPaint(final Event event) {
-		final boolean hasFocus = isFocusControl();
+		// final boolean hasFocus = isFocusControl();
 		for (int i = 0; i < itemCount; i++) {
 			final ParameterExpandItem item = items[i];
 			event.gc.setAlpha(255);

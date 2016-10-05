@@ -24,10 +24,12 @@ public class Activator implements BundleActivator {
 				return null;
 			}
 			final Map<String, Object> params = (Map<String, Object>) obj;
-			final String crs = (String) params.get("crs");
-			final String srid = (String) params.get("srid");
-			final Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst")
-					: true;
+			// final String crs = (String) params.get("crs");
+			// final String srid = (String) params.get("srid");
+			// final Boolean longitudeFirst =
+			// params.containsKey("longitudeFirst") ? (Boolean)
+			// params.get("longitudeFirst")
+			// : true;
 			SqlConnection sqlConn;
 			Envelope env = null;
 			// create connection

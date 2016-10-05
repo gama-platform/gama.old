@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.utils.solver;
 
-import java.util.List;
-
 import org.apache.commons.math3.ode.nonstiff.HighamHall54Integrator;
 import org.apache.commons.math3.ode.sampling.StepHandler;
 
@@ -24,9 +22,10 @@ public class HighamHall54Solver extends Solver {
 	public StepHandler stepHandler;
 
 	public HighamHall54Solver(final double minStep, final double maxStep, final double scalAbsoluteTolerance,
-			final double scalRelativeTolerance,	final GamaMap<String, IList<Double>> integrated_val) {
+			final double scalRelativeTolerance, final GamaMap<String, IList<Double>> integrated_val) {
 		super((minStep + maxStep) / 2,
-				new HighamHall54Integrator(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance), integrated_val);
+				new HighamHall54Integrator(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance),
+				integrated_val);
 	}
 
 }

@@ -12,6 +12,7 @@
 package msi.gama.util;
 
 import java.util.List;
+
 import msi.gama.runtime.IScope;
 
 /**
@@ -21,7 +22,8 @@ import msi.gama.runtime.IScope;
  * @since 14 d�c. 2011
  * 
  */
-public interface IList<E> extends IContainer<Integer, E>, IModifiableContainer<Integer, E, Integer, E>, IAddressableContainer<Integer, E, Integer, E>, List<E> {
+public interface IList<E>
+		extends IModifiableContainer<Integer, E, Integer, E>, IAddressableContainer<Integer, E, Integer, E>, List<E> {
 
 	@Override
 	public IContainer reverse(final IScope scope);

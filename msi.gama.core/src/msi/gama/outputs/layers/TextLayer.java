@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.awt.geom.Rectangle2D;
 
 import msi.gama.common.interfaces.IDisplaySurface;
@@ -42,10 +40,11 @@ public class TextLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics g) {
-		final TextLayerStatement model = (TextLayerStatement) this.definition;
-		final String text = model.getText();
-		final Color color = model.getColor();
-		final Font f = model.getFont();
+		// final TextLayerStatement model = (TextLayerStatement)
+		// this.definition;
+		// final String text = model.getText();
+		// final Color color = model.getColor();
+		// final Font f = model.getFont();
 		// Integer s = model.getStyle();
 		// g.drawString(text, color, null, null, f, null, true);
 	}

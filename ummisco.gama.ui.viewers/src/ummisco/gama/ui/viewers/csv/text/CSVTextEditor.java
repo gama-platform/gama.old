@@ -16,8 +16,10 @@
 package ummisco.gama.ui.viewers.csv.text;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.editors.text.TextEditor;
 
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
@@ -25,19 +27,20 @@ import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
 /**
- * {@link CSVTextEditor} extends basic {@link TextEditor} adding syntax highlighting
- * for the separated elements
+ * {@link CSVTextEditor} extends basic {@link TextEditor} adding syntax
+ * highlighting for the separated elements
+ * 
  * @author J. Andres Pizarro Gascon
  */
-public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, IToolbarDecoratedView.Sizable {
+public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView.Sizable {
 
 	// GamaToolbar2 toolbar;
 	Composite ancestor;
 	Composite parent;
 
 	public CSVTextEditor(final char delimiter) {
-		CSVTextSourceViewerConfiguration csvTextConfig =
-			new CSVTextSourceViewerConfiguration(delimiter, getPreferenceStore());
+		final CSVTextSourceViewerConfiguration csvTextConfig = new CSVTextSourceViewerConfiguration(delimiter,
+				getPreferenceStore());
 		setSourceViewerConfiguration(csvTextConfig);
 	}
 
@@ -45,13 +48,13 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 	public void createPartControl(final Composite composite) {
 		ancestor = composite;
 		parent = new Composite(composite, SWT.NONE);
-		Composite compo = GamaToolbarFactory.createToolbars(this, parent);
+		final Composite compo = GamaToolbarFactory.createToolbars(this, parent);
 		super.createPartControl(compo);
 	}
 
 	public void setDelimiter(final char delimiter) {
-		CSVTextSourceViewerConfiguration csvTextConfig =
-			new CSVTextSourceViewerConfiguration(delimiter, getPreferenceStore());
+		final CSVTextSourceViewerConfiguration csvTextConfig = new CSVTextSourceViewerConfiguration(delimiter,
+				getPreferenceStore());
 		setSourceViewerConfiguration(csvTextConfig);
 		parent.dispose();
 		createPartControl(ancestor);
@@ -59,13 +62,17 @@ public class CSVTextEditor extends TextEditor implements IToolbarDecoratedView, 
 
 	@Override
 	public Control getSizableFontControl() {
-		if ( getSourceViewer() == null ) { return null; }
+		if (getSourceViewer() == null) {
+			return null;
+		}
 		return getSourceViewer().getTextWidget();
 	}
 
 	/**
 	 * Method createToolItem()
-	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.views.toolbar.GamaToolbar2)
+	 * 
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
+	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {

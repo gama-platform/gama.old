@@ -90,10 +90,10 @@ public class ChartDataSet {
 	public void setKeepOldSeries(final boolean keepOldSeries) {
 		this.keepOldSeries = keepOldSeries;
 	}
-
-	private ArrayList<String> getCategories() {
-		return Xcategories;
-	}
+	//
+	// private ArrayList<String> getCategories() {
+	// return Xcategories;
+	// }
 
 	public String getCategories(final IScope scope, final int i) {
 		if (Xcategories.size() > i) {

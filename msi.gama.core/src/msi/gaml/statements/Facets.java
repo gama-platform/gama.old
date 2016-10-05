@@ -67,7 +67,7 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 			putIfAbsent(s, e);
 			return true;
 		}
-	};
+	}
 
 	public void complementWith(final Facets newFacets) {
 		newFacets.forEachEntry(new Complement());

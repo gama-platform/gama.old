@@ -15,7 +15,6 @@ import java.util.Set;
 
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.common.interfaces.IGamlable;
 import msi.gama.common.interfaces.ITyped;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,7 +27,7 @@ import msi.gaml.descriptions.VariableDescription;
  * @todo Description
  * 
  */
-public interface IExpression extends IGamlDescription, ITyped, IDisposable, IGamlable {
+public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 
 	public abstract Object value(final IScope scope) throws GamaRuntimeException;
 

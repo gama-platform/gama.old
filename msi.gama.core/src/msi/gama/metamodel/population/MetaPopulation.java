@@ -26,7 +26,6 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -49,8 +48,7 @@ import msi.gaml.types.Types;
  * 
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class MetaPopulation
-		implements IContainer<Integer, IAgent>, IContainer.Addressable<Integer, IAgent>, IAgentFilter, IPopulationSet {
+public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, IPopulationSet {
 
 	protected final List<IPopulationSet> populationSets;
 	// We cache the value in case.

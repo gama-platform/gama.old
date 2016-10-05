@@ -1,16 +1,21 @@
 package ummisco.gama.ui.viewers.gis;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.List;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.part.EditorPart;
 import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
-import org.geotools.map.*;
+import org.geotools.map.Layer;
+import org.geotools.map.MapContent;
 import org.geotools.renderer.lite.StreamingRenderer;
 import org.geotools.styling.Style;
 import org.opengis.feature.simple.SimpleFeature;
@@ -25,7 +30,8 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
-public abstract class GISFileViewer extends EditorPart implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.CSVExportable {
+public abstract class GISFileViewer extends EditorPart
+		implements IToolbarDecoratedView.Zoomable, IToolbarDecoratedView.CSVExportable {
 
 	public class DragTool extends CursorTool {
 
@@ -44,9 +50,9 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 
 		@Override
 		public void onMouseDragged(final MapMouseEvent ev) {
-			if ( panning ) {
-				Point pos = ev.getPoint();
-				if ( !pos.equals(panePos) ) {
+			if (panning) {
+				final Point pos = ev.getPoint();
+				if (!pos.equals(panePos)) {
 					pane.moveImage(pos.x - panePos.x, pos.y - panePos.y);
 					panePos = pos;
 				}
@@ -55,7 +61,7 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 
 		@Override
 		public void onMouseReleased(final MapMouseEvent ev) {
-			if ( panning ) {
+			if (panning) {
 				panning = false;
 				getMapPane().redraw();
 			}
@@ -83,10 +89,12 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 	String pathStr;
 
 	@Override
-	public void doSave(final IProgressMonitor monitor) {}
+	public void doSave(final IProgressMonitor monitor) {
+	}
 
 	@Override
-	public void doSaveAs() {}
+	public void doSaveAs() {
+	}
 
 	@Override
 	public boolean isDirty() {
@@ -100,7 +108,7 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 
 	@Override
 	public void createPartControl(final Composite composite) {
-		Composite parent = GamaToolbarFactory.createToolbars(this, composite);
+		final Composite parent = GamaToolbarFactory.createToolbars(this, composite);
 		displayInfoString();
 		pane = new SwtMapPane(parent, SWT.NO_BACKGROUND, new StreamingRenderer(), content);
 		pane.setBackground(GamaColors.system(SWT.COLOR_WHITE));
@@ -118,7 +126,7 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 	@Override
 	public void dispose() {
 		super.dispose();
-		if ( content != null ) {
+		if (content != null) {
 			content.dispose();
 			content = null;
 		}
@@ -126,14 +134,14 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 
 	@Override
 	public void zoomIn() {
-		ReferencedEnvelope env = pane.getDisplayArea();
+		final ReferencedEnvelope env = pane.getDisplayArea();
 		env.expandBy(-env.getWidth() / 10, -env.getHeight() / 10);
 		pane.setDisplayArea(env);
 	}
 
 	@Override
 	public void zoomOut() {
-		ReferencedEnvelope env = pane.getDisplayArea();
+		final ReferencedEnvelope env = pane.getDisplayArea();
 		env.expandBy(env.getWidth() / 10, env.getHeight() / 10);
 		pane.setDisplayArea(env);
 	}
@@ -154,7 +162,9 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 
 	/**
 	 * Method createToolItem()
-	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int, ummisco.gama.ui.views.toolbar.GamaToolbar2)
+	 * 
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView#createToolItem(int,
+	 *      ummisco.gama.ui.views.toolbar.GamaToolbar2)
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
@@ -163,6 +173,7 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 
 	/**
 	 * Method zoomWhenScrolling()
+	 * 
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Zoomable#zoomWhenScrolling()
 	 */
 	@Override
@@ -179,49 +190,46 @@ public abstract class GISFileViewer extends EditorPart implements IToolbarDecora
 
 	public void saveAsCSV(final List<String> attributes, final List<IShape> geoms, final String name) {
 		String path = "";
-		String[] decomp = pathStr.split("\\.");
-		for ( int i = 0; i < decomp.length - 1; i++ ) {
+		final String[] decomp = pathStr.split("\\.");
+		for (int i = 0; i < decomp.length - 1; i++) {
 			path += decomp[i] + (i < decomp.length - 1 ? "." : "");
 		}
-		if ( name != null ) {
+		if (name != null) {
 			path += name + ".";
 		} else {
 			path += ".";
 		}
 		path += "csv";
-		File fcsv = new File(path);
-		FileWriter fw;
-		try {
-			fw = new FileWriter(fcsv, false);
+		final File fcsv = new File(path);
+		try (FileWriter fw = new FileWriter(fcsv, false)) {
 			fw.write("id");
-			for ( String att : attributes ) {
+			for (final String att : attributes) {
 				fw.write(";" + att);
 			}
 			fw.write(Strings.LN);
-			if ( geoms != null ) {
+			if (geoms != null) {
 				int cpt = 0;
-				for ( IShape obj : geoms ) {
+				for (final IShape obj : geoms) {
 					fw.write(cpt + "");
 					cpt++;
-					for ( String v : attributes ) {
-						String val = obj.hasAttribute(v) ? obj.getAttribute(v).toString().replace(';', ',') : "-";
+					for (final String v : attributes) {
+						final String val = obj.hasAttribute(v) ? obj.getAttribute(v).toString().replace(';', ',') : "-";
 						fw.write(";" + val);
 					}
 					fw.write(Strings.LN);
 				}
 			} else {
-				for ( Object obj : layer.getFeatureSource().getFeatures().toArray() ) {
-					SimpleFeature feature = (SimpleFeature) obj;
+				for (final Object obj : layer.getFeatureSource().getFeatures().toArray()) {
+					final SimpleFeature feature = (SimpleFeature) obj;
 					fw.write(feature.getID());
-					for ( String v : attributes ) {
+					for (final String v : attributes) {
 						fw.write(";" + feature.getAttribute(v).toString().replace(';', ','));
 					}
 					fw.write(Strings.LN);
 				}
 			}
 
-			fw.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}

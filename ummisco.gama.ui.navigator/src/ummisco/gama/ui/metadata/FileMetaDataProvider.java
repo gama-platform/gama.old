@@ -208,7 +208,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	private FileMetaDataProvider() {
 		ResourcesPlugin.getWorkspace().getSynchronizer().add(CACHE_KEY);
-	};
+	}
 
 	@Override
 	public String getDecoratorSuffix(final Object element) {

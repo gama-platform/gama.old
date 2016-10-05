@@ -298,7 +298,7 @@ public abstract class AbstractEditor<T>
 		if (!isSubParameter) {
 			titleLabel = createLeftLabel(parent, name);
 		} else {
-			final Label l = createLeftLabel(parent, " ");
+			createLeftLabel(parent, " ");
 		}
 		try {
 			setOriginalValue(getParameterValue());

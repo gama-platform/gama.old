@@ -14,7 +14,6 @@ package msi.gaml.descriptions;
 import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -441,30 +440,30 @@ public class ModelDescription extends SpeciesDescription {
 		return this;
 	}
 
-	private Map<String, Integer> computeFacetSizeDistribution() {
-		final Map<String, Integer> result = new HashMap();
-		final int[] facetsNumber = new int[] { 0 };
-		final int[] descWith1Facets = new int[] { 0 };
-		final int[] descNumber = new int[] { 0 };
-		final FacetVisitor proc = new FacetVisitor() {
-
-			@Override
-			public boolean visit(final String a, final IExpressionDescription b) {
-				final Integer i = result.get(a);
-				if (i == null) {
-					result.put(a, 1);
-				} else
-					result.put(a, i + 1);
-				return true;
-			}
-		};
-
-		this.computeStats(proc, facetsNumber, descWith1Facets, descNumber);
-		result.put("TOTAL_FACETS", facetsNumber[0]);
-		result.put("TOTAL_DESCS", descNumber[0]);
-		result.put("DESC_WITH_1_FACETS", descWith1Facets[0]);
-		return result;
-	}
+	// private Map<String, Integer> computeFacetSizeDistribution() {
+	// final Map<String, Integer> result = new HashMap();
+	// final int[] facetsNumber = new int[] { 0 };
+	// final int[] descWith1Facets = new int[] { 0 };
+	// final int[] descNumber = new int[] { 0 };
+	// final FacetVisitor proc = new FacetVisitor() {
+	//
+	// @Override
+	// public boolean visit(final String a, final IExpressionDescription b) {
+	// final Integer i = result.get(a);
+	// if (i == null) {
+	// result.put(a, 1);
+	// } else
+	// result.put(a, i + 1);
+	// return true;
+	// }
+	// };
+	//
+	// this.computeStats(proc, facetsNumber, descWith1Facets, descNumber);
+	// result.put("TOTAL_FACETS", facetsNumber[0]);
+	// result.put("TOTAL_DESCS", descNumber[0]);
+	// result.put("DESC_WITH_1_FACETS", descWith1Facets[0]);
+	// return result;
+	// }
 
 	/**
 	 * @return

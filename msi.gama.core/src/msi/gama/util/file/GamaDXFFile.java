@@ -335,8 +335,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 			return;
 		}
 		final Parser parser = ParserBuilder.createDefaultParser();
-		try {
-			final InputStream in = new FileInputStream(getFile(scope));
+		try (InputStream in = new FileInputStream(getFile(scope))) {
 			parser.parse(in, DXFParser.DEFAULT_ENCODING);
 
 			// get the document and the layer
@@ -353,8 +352,7 @@ public class GamaDXFFile extends GamaGeometryFile {
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
 		final Parser parser = ParserBuilder.createDefaultParser();
-		try {
-			final InputStream in = new FileInputStream(getFile(scope));
+		try (InputStream in = new FileInputStream(getFile(scope))) {
 
 			// parse
 			parser.parse(in, DXFParser.DEFAULT_ENCODING);

@@ -20,40 +20,41 @@ public class LightsLayerObject extends LayerObject {
 	@Override
 	public void clear(final GL2 gl) {
 	}
-	
+
 	@Override
 	public void draw(final GL2 gl) {
 		updateObjectList();
 		super.draw(gl);
 	}
-	
+
 	public void updateObjectList() {
 		objects.clear();
-		for (LightPropertiesStructure light : renderer.data.getDiffuseLights()) {
+		for (final LightPropertiesStructure light : renderer.data.getDiffuseLights()) {
 			if (light.drawLight && light.id != 0) {
-				
-				double size = renderer.getMaxEnvDim() / 20;
-				
-				ArrayList<AbstractObject> newElem = new ArrayList<AbstractObject>();
-				GamaPoint pos = light.position;
+
+				final double size = renderer.getMaxEnvDim() / 20;
+
+				final ArrayList<AbstractObject> newElem = new ArrayList<>();
+				final GamaPoint pos = light.position;
 
 				if (light.type == LightPropertiesStructure.TYPE.POINT) {
-					IShape sphereShape = GamaGeometryType.buildSphere(size, pos);
-					GeometryObject pointLight = new GeometryObject(sphereShape,light.color,IShape.Type.SPHERE,this);
+					final IShape sphereShape = GamaGeometryType.buildSphere(size, pos);
+					final GeometryObject pointLight = new GeometryObject(sphereShape, light.color, IShape.Type.SPHERE,
+							this);
 					pointLight.disableLightInteraction();
 					newElem.add(pointLight);
-				}
-				else if (light.type == LightPropertiesStructure.TYPE.SPOT) {
+				} else if (light.type == LightPropertiesStructure.TYPE.SPOT) {
 					// TODO
 					final double baseSize = Math.sin(Math.toRadians(light.spotAngle)) * size;
-					IShape coneShape = GamaGeometryType.buildCone3D(baseSize, size, pos);
-					GeometryObject spotLight = new GeometryObject(coneShape,light.color,IShape.Type.CONE,this);
-//					spotLight.getAttributes().rotation = new GamaPair(Cast.asFloat(null, 0), Cast.asPoint(null, light.direction),
-//							Types.FLOAT, Types.POINT);
+					final IShape coneShape = GamaGeometryType.buildCone3D(baseSize, size, pos);
+					final GeometryObject spotLight = new GeometryObject(coneShape, light.color, IShape.Type.CONE, this);
+					// spotLight.getAttributes().rotation = new
+					// GamaPair(Cast.asFloat(null, 0), Cast.asPoint(null,
+					// light.direction),
+					// Types.FLOAT, Types.POINT);
 					spotLight.disableLightInteraction();
 					newElem.add(spotLight);
-				}
-				else {
+				} else {
 					// TODO
 				}
 				objects.add(newElem);

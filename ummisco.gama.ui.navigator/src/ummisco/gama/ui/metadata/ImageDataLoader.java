@@ -42,8 +42,7 @@ public class ImageDataLoader {
 	public static ImageData getImageData(final InputStream stream) {
 		ImageData imageData = null;
 		stream.mark(2000);
-		final Scanner scanner = new Scanner(stream);
-		try {
+		try (Scanner scanner = new Scanner(stream)) {
 			if (scanner.hasNext("p2") || scanner.hasNext("P2")) {
 				stream.reset();
 				return readPGM(stream);
@@ -209,21 +208,21 @@ public class ImageDataLoader {
 
 			// process the top 6 or 5 header lines
 			// ncols
-			String s = infile.next();
+			infile.next();
 			cols = infile.nextInt();
 			// nrows
-			s = infile.next();
+			infile.next();
 			rows = infile.nextInt();
-			s = infile.nextLine();
+			infile.nextLine();
 			// xllcorner
-			s = infile.nextLine();
+			infile.nextLine();
 			// yllcorner
-			s = infile.nextLine();
+			infile.nextLine();
 			// cellsize
-			s = infile.nextLine();
+			infile.nextLine();
 			// NODATA_value
 			if (infile.hasNext("NODATA_value")) {
-				s = infile.next();
+				infile.next();
 				nodata = infile.nextDouble();
 			}
 			int maxValue = 0;

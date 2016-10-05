@@ -12,7 +12,6 @@
 package msi.gama.outputs.layers;
 
 import java.awt.Color;
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import msi.gama.common.GamaPreferences;
@@ -57,7 +56,7 @@ public class GisLayer extends AbstractLayer {
 				if (geom != null) {
 					final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(geom, color,
 							new GamaColor(Color.black));
-					final Rectangle2D r = g.drawShape(geom, attributes);
+					g.drawShape(geom, attributes);
 				}
 			}
 		}

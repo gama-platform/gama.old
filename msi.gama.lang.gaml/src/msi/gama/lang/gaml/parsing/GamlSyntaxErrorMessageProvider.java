@@ -18,7 +18,6 @@ import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.SyntaxErrorMessage;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
-import org.eclipse.xtext.parser.antlr.ISyntaxErrorMessageProvider;
 import org.eclipse.xtext.parser.antlr.SyntaxErrorMessageProvider;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -31,7 +30,7 @@ import msi.gama.lang.gaml.EGaml;
  * @since 15 sept. 2013
  * 
  */
-public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider implements ISyntaxErrorMessageProvider {
+public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider {
 
 	static final boolean DEBUG = false;
 
@@ -58,7 +57,7 @@ public class GamlSyntaxErrorMessageProvider extends SyntaxErrorMessageProvider i
 			if (DEBUG)
 				System.out.println("Node text: " + NodeModelUtils.getTokenText(node));
 		}
-		final String[] tokens = context.getTokenNames();
+		// final String[] tokens = context.getTokenNames();
 		if (ex == null) {
 			if (msg.startsWith("mismatched ch")) {
 				final String ch = msg.substring(msg.length() - 3, msg.length());

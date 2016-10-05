@@ -10,7 +10,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import com.jogamp.opengl.GL2;
 
 import ummisco.gama.opengl.Abstract3DRenderer;
-import ummisco.gama.opengl.JOGLRenderer;
 
 /**
  * Class SceneBuffer. Manages the interactions between the updating and the

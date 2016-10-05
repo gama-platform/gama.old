@@ -83,7 +83,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 				for (final IParameterEditor<?> gp : entry.getValue().values()) {
 					gp.updateValue();
 				}
-				;
+
 			}
 		}
 	}

@@ -23,12 +23,11 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 
-import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.AbstractEditor;
 
-public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> implements ITooltipDisplayer {
+public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> {
 
 	final Set<Label> labels = new LinkedHashSet<Label>();
 

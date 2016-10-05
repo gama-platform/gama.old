@@ -4,8 +4,6 @@
  */
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
-import java.util.regex.Pattern;
-
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IFindReplaceTargetExtension3;
@@ -275,10 +273,10 @@ public class EditToolbarFindControls {
 
 		final IFindReplaceTarget findReplaceTarget = (IFindReplaceTarget) editor.getAdapter(IFindReplaceTarget.class);
 		if (findReplaceTarget != null) {
-			boolean foundOne = false;
+			// boolean foundOne = false;
 			try {
 				final String findText = find.getText();
-				final Pattern pattern = null;
+				// final Pattern pattern = null;
 				if (findReplaceTarget instanceof IFindReplaceTargetExtension) {
 					final IFindReplaceTargetExtension findReplaceTargetExtension = (IFindReplaceTargetExtension) findReplaceTarget;
 					findReplaceTargetExtension.beginSession();
@@ -323,7 +321,7 @@ public class EditToolbarFindControls {
 				}
 
 				if (newOffset != -1) {
-					foundOne = true;
+					// foundOne = true;
 					adjustEnablement(true, IGamaColors.OK.inactive());
 					selection = textWidget.getSelection();
 					if (!forward) {

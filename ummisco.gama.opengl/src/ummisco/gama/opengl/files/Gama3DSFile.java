@@ -117,7 +117,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 
 	// Verified
 	void processNextChunk(final Chunk previousChunk) {
-		final int version = 0;
+		// final int version = 0;
 		byte buffer[] = null;
 		currentChunk = new Chunk();
 		try {

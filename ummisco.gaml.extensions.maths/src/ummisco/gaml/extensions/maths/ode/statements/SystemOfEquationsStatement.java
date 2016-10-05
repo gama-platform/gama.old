@@ -374,12 +374,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 				getEquationAgents(currentScope).put(getEquationAgents(currentScope).size(), remoteAgent);
 			}
 			for (final Entry<Integer, SingleEquationStatement> s : ses.equations.entrySet()) {
-				final String name = remoteAgent.getName() + s.getKey();
+				// final String name = remoteAgent.getName() + s.getKey();
 				final SingleEquationStatement eq = s.getValue();
 				equations.put(equations.size(), eq);
 			}
 			for (final Entry<Integer, IExpression> s : ses.variables_diff.entrySet()) {
-				final String name = remoteAgent.getName() + s.getKey();
+				// final String name = remoteAgent.getName() + s.getKey();
 				final IExpression v = s.getValue();
 				variables_diff.put(variables_diff.size(), v);
 			}

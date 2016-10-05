@@ -252,8 +252,9 @@ public abstract class SymbolDescription implements IDescription {
 			}
 		}
 		if (!warning && !info) {
-			final String resource = e == null || e.eResource() == null ? "(no file)"
-					: e.eResource().getURI().lastSegment();
+			// final String resource = e == null || e.eResource() == null ? "(no
+			// file)"
+			// : e.eResource().getURI().lastSegment();
 			// System.err.println("COMPILATION ERROR in " + this.toString() + ":
 			// " + s + "; source: " + resource);
 		}

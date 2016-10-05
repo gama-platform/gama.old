@@ -16,12 +16,11 @@ import java.util.Set;
 
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.common.interfaces.IGamlable;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGamlable {
+public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 
 	public final String name;
 	public String deprecated = null;

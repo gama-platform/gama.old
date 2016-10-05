@@ -1125,7 +1125,7 @@ public class GeometryUtils {
 			return geom;
 		}
 		final Polygon p = (Polygon) geom;
-		final double sum = 0.0;
+		// final double sum = 0.0;
 		final Coordinate[] coords = p.getExteriorRing().getCoordinates();
 		final Coordinate[] coordsN = new Coordinate[coords.length];
 		for (int i = 0; i < coords.length; i++) {

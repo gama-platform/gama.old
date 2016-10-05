@@ -173,7 +173,7 @@ public class SwtGui implements IGui {
 			// trying to retrieve data from the source. If there
 			// is no connection, this line will fail
 			urlConnect.setConnectTimeout(2000);
-			final Object objData = urlConnect.getContent();
+			urlConnect.getContent();
 		} catch (final UnknownHostException e) {
 			e.printStackTrace();
 			return false;

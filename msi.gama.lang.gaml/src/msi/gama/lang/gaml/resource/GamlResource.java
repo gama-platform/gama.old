@@ -13,11 +13,9 @@ package msi.gama.lang.gaml.resource;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
@@ -130,16 +128,18 @@ public class GamlResource extends LazyLinkingResource {
 		return f.createModelDescription(projectPath, modelPath, ownImports, context, isEdited, compiledMicroModels);
 	}
 
-	private List<ISyntacticElement> getListMicroSyntacticElement(final Map<ISyntacticElement, String> microModels,
-			final String aliasName) {
-		final List<ISyntacticElement> res = new ArrayList<ISyntacticElement>();
-		for (final Entry<ISyntacticElement, String> entry : microModels.entrySet()) {
-			if (entry.getValue().equals(aliasName)) {
-				res.add(entry.getKey());
-			}
-		}
-		return res;
-	}
+	// private List<ISyntacticElement> getListMicroSyntacticElement(final
+	// Map<ISyntacticElement, String> microModels,
+	// final String aliasName) {
+	// final List<ISyntacticElement> res = new ArrayList<ISyntacticElement>();
+	// for (final Entry<ISyntacticElement, String> entry :
+	// microModels.entrySet()) {
+	// if (entry.getValue().equals(aliasName)) {
+	// res.add(entry.getKey());
+	// }
+	// }
+	// return res;
+	// }
 
 	public void invalidate(final GamlResource r, final String s) {
 		GamlCompilationError error = null;

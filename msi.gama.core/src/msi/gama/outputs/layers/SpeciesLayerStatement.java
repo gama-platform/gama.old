@@ -269,7 +269,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	 */
 	public List<AbstractLayerStatement> getSubLayers() {
 		if (subLayers == null) {
-			subLayers = new ArrayList<AbstractLayerStatement>();
+			subLayers = new ArrayList<>();
 			subLayers.addAll(gridLayers);
 			subLayers.addAll(microSpeciesLayers);
 		}

@@ -40,7 +40,7 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 
 		@Override
 		public int getURIProblem(final String fragment) {
-			final IFile file = (IFile) getParent();
+			// final IFile file = (IFile) getParent();
 			if (uriProblems == null)
 				return -1;
 			final int[] severity = new int[] { -1 };
@@ -83,7 +83,7 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 
 		@Override
 		public int getURIProblem(final String fragment) {
-			final IFile file = (IFile) getParent();
+			// final IFile file = (IFile) getParent();
 			if (uriProblems == null)
 				return -1;
 			final int[] severity = new int[] { -1 };

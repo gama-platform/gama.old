@@ -735,10 +735,11 @@ public class CsvReader {
 			return temp;
 		}
 
-		private void log() {
-			System.out.println("CSV stats: #rows " + rows + " #cols " + cols + " type " + type + " parsed in "
-					+ (System.currentTimeMillis() - startTime) + " ms");
-		}
+		// private void log() {
+		// System.out.println("CSV stats: #rows " + rows + " #cols " + cols + "
+		// type " + type + " parsed in "
+		// + (System.currentTimeMillis() - startTime) + " ms");
+		// }
 	}
 
 	public static Stats getStats(final String initial, final String CSVsep) {

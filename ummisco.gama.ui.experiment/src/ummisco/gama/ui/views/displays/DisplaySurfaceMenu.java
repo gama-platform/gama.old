@@ -88,11 +88,11 @@ public class DisplaySurfaceMenu {
 
 	private final IDisplaySurface surface;
 	private final Control swtControl;
-	private final LayeredDisplayView view;
+	// private final LayeredDisplayView view;
 
 	public DisplaySurfaceMenu(final IDisplaySurface s, final Control c, final LayeredDisplayView view) {
 		surface = s;
-		this.view = view;
+		// this.view = view;
 		swtControl = c;
 		if (s != null)
 			s.setMenuManager(this);

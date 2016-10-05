@@ -62,7 +62,7 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 			return action;
 		}
 
-	};
+	}
 
 	public AbstractGraphNodeAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);

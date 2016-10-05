@@ -450,9 +450,9 @@ public abstract class SwingControl extends Composite {
 			return rootPane;
 		}
 
-		public void dispose() {
-			this.removeAll();
-		}
+		// public void dispose() {
+		// this.removeAll();
+		// }
 	}
 
 	/**

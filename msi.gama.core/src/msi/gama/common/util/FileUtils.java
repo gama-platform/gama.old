@@ -16,7 +16,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.List;
 
 import com.google.common.collect.Iterables;
 
@@ -97,7 +96,7 @@ public class FileUtils {
 		String filePath = null;
 		Iterable<String> baseDirectories = null;
 		final IExperimentAgent a = scope.getExperiment();
-		final List<String> referenceDirectories = a.getWorkingPaths();
+		// final List<String> referenceDirectories = a.getWorkingPaths();
 
 		try {
 			baseDirectories = Iterables.transform(a.getWorkingPaths(), each -> {

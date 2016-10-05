@@ -292,7 +292,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	private V doPut(final V value, int index) {
 		V previous = null;
-		final Object oldKey;
+		// final Object oldKey;
 		boolean isNewMapping = true;
 		if (index < 0) {
 			index = -index - 1;
@@ -401,7 +401,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		}
 	}
 
-	private abstract class MapBackedView<E> extends AbstractSet<E> implements Set<E>, Iterable<E> {
+	private abstract class MapBackedView<E> extends AbstractSet<E> {
 
 		@Override
 		public abstract Iterator<E> iterator();

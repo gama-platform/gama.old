@@ -126,7 +126,7 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 
 	protected void resetRenderer(final IScope scope, final String serieid) {
 		final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
-		final int myrow = IdPosition.get(serieid);
+		// final int myrow = IdPosition.get(serieid);
 		if (myserie.getMycolor() != null) {
 			((PiePlot) this.getJFChart().getPlot()).setSectionPaint(serieid, myserie.getMycolor());
 		}
@@ -147,10 +147,12 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 
 	@Override
 	protected void createNewSerie(final IScope scope, final String serieid) {
-		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
+		// final ChartDataSeries dataserie = chartdataset.getDataSeries(scope,
+		// serieid);
 		final PiePlot plot = (PiePlot) this.chart.getPlot();
 
-		final DefaultPieDataset firstdataset = (DefaultPieDataset) plot.getDataset();
+		// final DefaultPieDataset firstdataset = (DefaultPieDataset)
+		// plot.getDataset();
 
 		nbseries++;
 		IdPosition.put(serieid, nbseries - 1);

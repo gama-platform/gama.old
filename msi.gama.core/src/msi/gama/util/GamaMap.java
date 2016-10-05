@@ -170,8 +170,8 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	 */
 	@Override
 	public void addValue(final IScope scope, final V v) {
-		final K key;
-		final V val;
+		// final K key;
+		// final V val;
 		if (v instanceof GamaPair) {
 			setValueAtIndex(scope, (K) ((GamaPair) v).key, (V) ((GamaPair) v).value);
 		} else {
@@ -251,7 +251,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	@Override
 	public void removeValue(final IScope scope, final Object value) {
 		// Dont know what to do... Removing the first pair with value = value ?
-		final Object[] keys = _set;
+		// final Object[] keys = _set;
 		final V[] values = _values;
 		final int[] inserts = _indicesByInsertOrder;
 		for (int i = 0; i <= _lastInsertOrderIndex; i++) {

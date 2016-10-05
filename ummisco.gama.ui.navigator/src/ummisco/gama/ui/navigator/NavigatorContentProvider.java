@@ -11,12 +11,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.navigator;
 
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -25,13 +21,10 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 
-import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GAML;
 import msi.gama.util.file.GamlFileInfo;
@@ -146,30 +139,30 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 	 * @param p
 	 * @param l
 	 */
-	private void addPluginsTo(final IFile f, final List l) {
-		final IProject p = f.getProject();
-		IPath path = f.getProjectRelativePath();
-		final String s = ".metadata/" + path.toPortableString() + ".meta";
-		path = Path.fromPortableString(s);
-		final IResource r = p.findMember(path);
-		if (r == null || !(r instanceof IFile)) {
-			return;
-		}
-		final IFile m = (IFile) r;
-		try {
-			final InputStream is = m.getContents();
-			final BufferedReader in = new BufferedReader(new InputStreamReader(is));
-			final GamlProperties props = new GamlProperties(in);
-			final Set<String> contents = props.get(GamlProperties.PLUGINS);
-
-			if (contents == null || contents.isEmpty()) {
-				return;
-			}
-			l.add(new WrappedPlugins(f, contents, "Requires"));
-		} catch (final CoreException e) {
-			e.printStackTrace();
-		}
-	}
+	// private void addPluginsTo(final IFile f, final List l) {
+	// final IProject p = f.getProject();
+	// IPath path = f.getProjectRelativePath();
+	// final String s = ".metadata/" + path.toPortableString() + ".meta";
+	// path = Path.fromPortableString(s);
+	// final IResource r = p.findMember(path);
+	// if (r == null || !(r instanceof IFile)) {
+	// return;
+	// }
+	// final IFile m = (IFile) r;
+	// try {
+	// final InputStream is = m.getContents();
+	// final BufferedReader in = new BufferedReader(new InputStreamReader(is));
+	// final GamlProperties props = new GamlProperties(in);
+	// final Set<String> contents = props.get(GamlProperties.PLUGINS);
+	//
+	// if (contents == null || contents.isEmpty()) {
+	// return;
+	// }
+	// l.add(new WrappedPlugins(f, contents, "Requires"));
+	// } catch (final CoreException e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	@Override
 	public boolean hasChildren(final Object element) {

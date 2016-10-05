@@ -12,28 +12,51 @@
 
 package ummisco.gama.ui.views.displays;
 
-import java.awt.*;
-import java.awt.geom.*;
+import java.awt.BasicStroke;
+import java.awt.Paint;
+import java.awt.Stroke;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.graphics.Transform;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
+import org.eclipse.swt.widgets.ColorDialog;
+import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.FontDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Text;
 import org.jfree.chart.JFreeChart;
-import org.jfree.chart.axis.*;
+import org.jfree.chart.axis.Axis;
+import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.editor.ChartEditor;
-import org.jfree.chart.plot.*;
-import org.jfree.chart.title.*;
+import org.jfree.chart.plot.CategoryPlot;
+import org.jfree.chart.plot.Plot;
+import org.jfree.chart.plot.PlotOrientation;
+import org.jfree.chart.plot.XYPlot;
+import org.jfree.chart.title.TextTitle;
+import org.jfree.chart.title.Title;
+
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.utils.GraphicsHelper;
 
@@ -58,14 +81,17 @@ public class SWTChartEditor implements ChartEditor {
 	private final SWTOtherEditor otherEditor;
 
 	/** The resourceBundle for the localization. */
-	// protected static ResourceBundle localizationResources = ResourceBundleWrapper
+	// protected static ResourceBundle localizationResources =
+	// ResourceBundleWrapper
 	// .getBundle("org.jfree.chart.editor.LocalizationBundle");
 
 	/**
 	 * Creates a new editor.
 	 *
-	 * @param display the display.
-	 * @param chart2edit the chart to edit.
+	 * @param display
+	 *            the display.
+	 * @param chart2edit
+	 *            the chart to edit.
 	 */
 	public SWTChartEditor(final Display display, final JFreeChart chart2edit, final Point position) {
 		this.shell = new Shell(display, SWT.APPLICATION_MODAL | SWT.NO_TRIM);
@@ -75,32 +101,32 @@ public class SWTChartEditor implements ChartEditor {
 		this.chart = chart2edit;
 		this.shell.setText("Chart properties");
 		this.shell.setLocation(position);
-		GridLayout layout = new GridLayout(2, false);
+		final GridLayout layout = new GridLayout(2, false);
 		layout.marginLeft = layout.marginTop = layout.marginRight = layout.marginBottom = 5;
 		this.shell.setLayout(layout);
-		Composite main = new Composite(this.shell, SWT.NONE);
+		final Composite main = new Composite(this.shell, SWT.NONE);
 		main.setLayout(new FillLayout());
 		main.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
 
-		TabFolder tab = new TabFolder(main, SWT.BORDER);
+		final TabFolder tab = new TabFolder(main, SWT.BORDER);
 		// build first tab
-		TabItem item1 = new TabItem(tab, SWT.NONE);
+		final TabItem item1 = new TabItem(tab, SWT.NONE);
 		item1.setText(" " + "Title" + " ");
 		this.titleEditor = new SWTTitleEditor(tab, SWT.NONE, this.chart.getTitle());
 		item1.setControl(this.titleEditor);
 		// build second tab
-		TabItem item2 = new TabItem(tab, SWT.NONE);
+		final TabItem item2 = new TabItem(tab, SWT.NONE);
 		item2.setText(" " + "Plot" + " ");
 		this.plotEditor = new SWTPlotEditor(tab, SWT.NONE, this.chart.getPlot());
 		item2.setControl(this.plotEditor);
 		// build the third tab
-		TabItem item3 = new TabItem(tab, SWT.NONE);
+		final TabItem item3 = new TabItem(tab, SWT.NONE);
 		item3.setText(" " + "Other" + " ");
 		this.otherEditor = new SWTOtherEditor(tab, SWT.NONE, this.chart);
 		item3.setControl(this.otherEditor);
 
 		// ok and cancel buttons
-		Button cancel = new Button(this.shell, SWT.PUSH);
+		final Button cancel = new Button(this.shell, SWT.PUSH);
 		cancel.setText(" Cancel ");
 		cancel.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
 		cancel.pack();
@@ -111,7 +137,7 @@ public class SWTChartEditor implements ChartEditor {
 				SWTChartEditor.this.shell.dispose();
 			}
 		});
-		Button ok = new Button(this.shell, SWT.PUSH | SWT.OK);
+		final Button ok = new Button(this.shell, SWT.PUSH | SWT.OK);
 		ok.setText(" Ok ");
 		ok.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false));
 		ok.pack();
@@ -133,7 +159,7 @@ public class SWTChartEditor implements ChartEditor {
 		this.shell.open();
 		this.shell.layout();
 		while (!this.shell.isDisposed()) {
-			if ( !this.shell.getDisplay().readAndDispatch() ) {
+			if (!this.shell.getDisplay().readAndDispatch()) {
 				this.shell.getDisplay().sleep();
 			}
 		}
@@ -142,7 +168,8 @@ public class SWTChartEditor implements ChartEditor {
 	/**
 	 * Updates the chart properties.
 	 *
-	 * @param chart the chart.
+	 * @param chart
+	 *            the chart.
 	 */
 	@Override
 	public void updateChart(final JFreeChart chart) {
@@ -174,11 +201,14 @@ public class SWTChartEditor implements ChartEditor {
 		/** The paint (color) used to draw the title. */
 		private Color titleColor;
 
-		/** The button to use to select a new paint (color) to draw the title. */
+		/**
+		 * The button to use to select a new paint (color) to draw the title.
+		 */
 		private final Button selectColorButton;
 
 		/** The resourceBundle for the localization. */
-		// protected static ResourceBundle localizationResources = ResourceBundleWrapper
+		// protected static ResourceBundle localizationResources =
+		// ResourceBundleWrapper
 		// .getBundle("org.jfree.chart.editor.LocalizationBundle");
 
 		/** Font object used to handle a change of font. */
@@ -188,29 +218,32 @@ public class SWTChartEditor implements ChartEditor {
 		 * Standard constructor: builds a panel for displaying/editing the
 		 * properties of the specified title.
 		 *
-		 * @param parent the parent.
-		 * @param style the style.
-		 * @param title the title, which should be changed.
+		 * @param parent
+		 *            the parent.
+		 * @param style
+		 *            the style.
+		 * @param title
+		 *            the title, which should be changed.
 		 *
 		 */
 		SWTTitleEditor(final Composite parent, final int style, final Title title) {
 			super(parent, style);
-			FillLayout layout = new FillLayout();
+			final FillLayout layout = new FillLayout();
 			layout.marginHeight = layout.marginWidth = 4;
 			setLayout(layout);
 
-			TextTitle t = title != null ? (TextTitle) title : new TextTitle("Title");
+			final TextTitle t = title != null ? (TextTitle) title : new TextTitle("Title");
 			this.showTitle = title != null;
 			this.titleFont = GraphicsHelper.toSwtFontData(getDisplay(), t.getFont(), true);
 			this.titleColor = GraphicsHelper.toSwtColor(getDisplay(), t.getPaint());
 
-			Group general = new Group(this, SWT.NONE);
+			final Group general = new Group(this, SWT.NONE);
 			general.setLayout(new GridLayout(3, false));
 			general.setText("General");
 			// row 1
-			Label label = new Label(general, SWT.NONE);
+			final Label label = new Label(general, SWT.NONE);
 			label.setText("Show Title");
-			GridData gridData = new GridData();
+			final GridData gridData = new GridData();
 			gridData.horizontalSpan = 2;
 			label.setLayoutData(gridData);
 			this.showTitleCheckBox = new Button(general, SWT.CHECK);
@@ -241,12 +274,12 @@ public class SWTChartEditor implements ChartEditor {
 				@Override
 				public void widgetSelected(final SelectionEvent event) {
 					// Create the font-change dialog
-					FontDialog dlg = new FontDialog(getShell());
+					final FontDialog dlg = new FontDialog(getShell());
 					dlg.setText("Font_Selection");
 					dlg.setFontList(new FontData[] { SWTTitleEditor.this.titleFont });
-					if ( dlg.open() != null ) {
+					if (dlg.open() != null) {
 						// Dispose of any fonts we have created
-						if ( SWTTitleEditor.this.font != null ) {
+						if (SWTTitleEditor.this.font != null) {
 							SWTTitleEditor.this.font.dispose();
 						}
 						// Create the new font and set it into the title
@@ -263,7 +296,7 @@ public class SWTChartEditor implements ChartEditor {
 			// Use a SwtPaintCanvas to show the color, note that we must set the
 			// heightHint.
 			final SWTPaintCanvas colorCanvas = new SWTPaintCanvas(general, SWT.NONE, this.titleColor);
-			GridData canvasGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+			final GridData canvasGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			canvasGridData.heightHint = 20;
 			colorCanvas.setLayoutData(canvasGridData);
 			this.selectColorButton = new Button(general, SWT.PUSH);
@@ -273,11 +306,11 @@ public class SWTChartEditor implements ChartEditor {
 				@Override
 				public void widgetSelected(final SelectionEvent event) {
 					// Create the color-change dialog
-					ColorDialog dlg = new ColorDialog(getShell());
+					final ColorDialog dlg = new ColorDialog(getShell());
 					dlg.setText("Title_Color");
 					dlg.setRGB(SWTTitleEditor.this.titleColor.getRGB());
-					RGB rgb = dlg.open();
-					if ( rgb != null ) {
+					final RGB rgb = dlg.open();
+					if (rgb != null) {
 						// create the new color and set it to the
 						// SwtPaintCanvas
 						SWTTitleEditor.this.titleColor = new Color(getDisplay(), rgb);
@@ -318,12 +351,13 @@ public class SWTChartEditor implements ChartEditor {
 		 * Sets the properties of the specified title to match the properties
 		 * defined on this panel.
 		 *
-		 * @param chart the chart whose title is to be modified.
+		 * @param chart
+		 *            the chart whose title is to be modified.
 		 */
 		public void setTitleProperties(final JFreeChart chart) {
-			if ( this.showTitle ) {
+			if (this.showTitle) {
 				TextTitle title = chart.getTitle();
-				if ( title == null ) {
+				if (title == null) {
 					title = new TextTitle();
 					chart.setTitle(title);
 				}
@@ -339,68 +373,74 @@ public class SWTChartEditor implements ChartEditor {
 	class SWTPlotEditor extends Composite {
 
 		/**
-		 * A panel used to display/edit the properties of the domain axis (if any).
+		 * A panel used to display/edit the properties of the domain axis (if
+		 * any).
 		 */
 		private final SWTAxisEditor domainAxisPropertyPanel;
 
 		/**
-		 * A panel used to display/edit the properties of the range axis (if any).
+		 * A panel used to display/edit the properties of the range axis (if
+		 * any).
 		 */
 		private final SWTAxisEditor rangeAxisPropertyPanel;
 
 		private final SWTPlotAppearanceEditor plotAppearance;
 
 		/** The resourceBundle for the localization. */
-		// protected static ResourceBundle localizationResources = ResourceBundleWrapper
+		// protected static ResourceBundle localizationResources =
+		// ResourceBundleWrapper
 		// .getBundle("org.jfree.chart.editor.LocalizationBundle");
 
 		/**
 		 * Creates a new editor for the specified plot.
 		 *
-		 * @param parent the parent.
-		 * @param style the style.
-		 * @param plot the plot.
+		 * @param parent
+		 *            the parent.
+		 * @param style
+		 *            the style.
+		 * @param plot
+		 *            the plot.
 		 */
 		public SWTPlotEditor(final Composite parent, final int style, final Plot plot) {
 			super(parent, style);
-			FillLayout layout = new FillLayout();
+			final FillLayout layout = new FillLayout();
 			layout.marginHeight = layout.marginWidth = 4;
 			setLayout(layout);
 
-			Group plotType = new Group(this, SWT.NONE);
-			FillLayout plotTypeLayout = new FillLayout();
+			final Group plotType = new Group(this, SWT.NONE);
+			final FillLayout plotTypeLayout = new FillLayout();
 			plotTypeLayout.marginHeight = plotTypeLayout.marginWidth = 4;
 			plotType.setLayout(plotTypeLayout);
 			plotType.setText(plot.getPlotType() + ":");
 
-			TabFolder tabs = new TabFolder(plotType, SWT.NONE);
+			final TabFolder tabs = new TabFolder(plotType, SWT.NONE);
 
 			// deal with domain axis
-			TabItem item1 = new TabItem(tabs, SWT.NONE);
+			final TabItem item1 = new TabItem(tabs, SWT.NONE);
 			item1.setText("Domain Axis");
 			Axis domainAxis = null;
-			if ( plot instanceof CategoryPlot ) {
+			if (plot instanceof CategoryPlot) {
 				domainAxis = ((CategoryPlot) plot).getDomainAxis();
-			} else if ( plot instanceof XYPlot ) {
+			} else if (plot instanceof XYPlot) {
 				domainAxis = ((XYPlot) plot).getDomainAxis();
 			}
 			this.domainAxisPropertyPanel = SWTAxisEditor.getInstance(tabs, SWT.NONE, domainAxis);
 			item1.setControl(this.domainAxisPropertyPanel);
 
 			// deal with range axis
-			TabItem item2 = new TabItem(tabs, SWT.NONE);
+			final TabItem item2 = new TabItem(tabs, SWT.NONE);
 			item2.setText("Range Axis");
 			Axis rangeAxis = null;
-			if ( plot instanceof CategoryPlot ) {
+			if (plot instanceof CategoryPlot) {
 				rangeAxis = ((CategoryPlot) plot).getRangeAxis();
-			} else if ( plot instanceof XYPlot ) {
+			} else if (plot instanceof XYPlot) {
 				rangeAxis = ((XYPlot) plot).getRangeAxis();
 			}
 			this.rangeAxisPropertyPanel = SWTAxisEditor.getInstance(tabs, SWT.NONE, rangeAxis);
 			item2.setControl(this.rangeAxisPropertyPanel);
 
 			// deal with plot appearance
-			TabItem item3 = new TabItem(tabs, SWT.NONE);
+			final TabItem item3 = new TabItem(tabs, SWT.NONE);
 			item3.setText("Appearance");
 			this.plotAppearance = new SWTPlotAppearanceEditor(tabs, SWT.NONE, plot);
 			item3.setControl(this.plotAppearance);
@@ -434,10 +474,11 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * Updates the plot properties to match the properties
-		 * defined on the panel.
+		 * Updates the plot properties to match the properties defined on the
+		 * panel.
 		 *
-		 * @param plot The plot.
+		 * @param plot
+		 *            The plot.
 		 */
 		public void updatePlotProperties(final Plot plot) {
 			// set the plot properties...
@@ -446,38 +487,38 @@ public class SWTChartEditor implements ChartEditor {
 			plot.setOutlineStroke(getOutlineStroke());
 
 			// set the axis properties
-			if ( this.domainAxisPropertyPanel != null ) {
+			if (this.domainAxisPropertyPanel != null) {
 				Axis domainAxis = null;
-				if ( plot instanceof CategoryPlot ) {
-					CategoryPlot p = (CategoryPlot) plot;
+				if (plot instanceof CategoryPlot) {
+					final CategoryPlot p = (CategoryPlot) plot;
 					domainAxis = p.getDomainAxis();
-				} else if ( plot instanceof XYPlot ) {
-					XYPlot p = (XYPlot) plot;
+				} else if (plot instanceof XYPlot) {
+					final XYPlot p = (XYPlot) plot;
 					domainAxis = p.getDomainAxis();
 				}
-				if ( domainAxis != null ) {
+				if (domainAxis != null) {
 					this.domainAxisPropertyPanel.setAxisProperties(domainAxis);
 				}
 			}
-			if ( this.rangeAxisPropertyPanel != null ) {
+			if (this.rangeAxisPropertyPanel != null) {
 				Axis rangeAxis = null;
-				if ( plot instanceof CategoryPlot ) {
-					CategoryPlot p = (CategoryPlot) plot;
+				if (plot instanceof CategoryPlot) {
+					final CategoryPlot p = (CategoryPlot) plot;
 					rangeAxis = p.getRangeAxis();
-				} else if ( plot instanceof XYPlot ) {
-					XYPlot p = (XYPlot) plot;
+				} else if (plot instanceof XYPlot) {
+					final XYPlot p = (XYPlot) plot;
 					rangeAxis = p.getRangeAxis();
 				}
-				if ( rangeAxis != null ) {
+				if (rangeAxis != null) {
 					this.rangeAxisPropertyPanel.setAxisProperties(rangeAxis);
 				}
 			}
-			if ( this.plotAppearance.getPlotOrientation() != null ) {
-				if ( plot instanceof CategoryPlot ) {
-					CategoryPlot p = (CategoryPlot) plot;
+			if (this.plotAppearance.getPlotOrientation() != null) {
+				if (plot instanceof CategoryPlot) {
+					final CategoryPlot p = (CategoryPlot) plot;
 					p.setOrientation(this.plotAppearance.getPlotOrientation());
-				} else if ( plot instanceof XYPlot ) {
-					XYPlot p = (XYPlot) plot;
+				} else if (plot instanceof XYPlot) {
+					final XYPlot p = (XYPlot) plot;
 					p.setOrientation(this.plotAppearance.getPlotOrientation());
 				}
 			}
@@ -487,8 +528,8 @@ public class SWTChartEditor implements ChartEditor {
 	class SWTOtherEditor extends Composite {
 
 		/**
-		 * A checkbox indicating whether or not
-		 * the chart is drawn with anti-aliasing.
+		 * A checkbox indicating whether or not the chart is drawn with
+		 * anti-aliasing.
 		 */
 		private final Button antialias;
 
@@ -496,23 +537,27 @@ public class SWTChartEditor implements ChartEditor {
 		private final SWTPaintCanvas backgroundPaintCanvas;
 
 		/** The resourceBundle for the localization. */
-		// protected static ResourceBundle localizationResources = ResourceBundleWrapper
+		// protected static ResourceBundle localizationResources =
+		// ResourceBundleWrapper
 		// .getBundle("org.jfree.chart.editor.LocalizationBundle");
 
 		/**
 		 * Creates a new instance.
 		 *
-		 * @param parent the parent.
-		 * @param style the style.
-		 * @param chart the chart.
+		 * @param parent
+		 *            the parent.
+		 * @param style
+		 *            the style.
+		 * @param chart
+		 *            the chart.
 		 */
 		public SWTOtherEditor(final Composite parent, final int style, final JFreeChart chart) {
 			super(parent, style);
-			FillLayout layout = new FillLayout();
+			final FillLayout layout = new FillLayout();
 			layout.marginHeight = layout.marginWidth = 4;
 			setLayout(layout);
 
-			Group general = new Group(this, SWT.NONE);
+			final Group general = new Group(this, SWT.NONE);
 			general.setLayout(new GridLayout(3, false));
 			general.setText("General");
 
@@ -524,23 +569,23 @@ public class SWTChartEditor implements ChartEditor {
 
 			// row 2: background paint for the chart
 			new Label(general, SWT.NONE).setText("Background paint");
-			this.backgroundPaintCanvas =
-				new SWTPaintCanvas(general, SWT.NONE, GraphicsHelper.toSwtColor(getDisplay(), chart.getBackgroundPaint()));
-			GridData bgGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+			this.backgroundPaintCanvas = new SWTPaintCanvas(general, SWT.NONE,
+					GraphicsHelper.toSwtColor(getDisplay(), chart.getBackgroundPaint()));
+			final GridData bgGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			bgGridData.heightHint = 20;
 			this.backgroundPaintCanvas.setLayoutData(bgGridData);
-			Button selectBgPaint = new Button(general, SWT.PUSH);
+			final Button selectBgPaint = new Button(general, SWT.PUSH);
 			selectBgPaint.setText("Select...");
 			selectBgPaint.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 			selectBgPaint.addSelectionListener(new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent event) {
-					ColorDialog dlg = new ColorDialog(getShell());
+					final ColorDialog dlg = new ColorDialog(getShell());
 					dlg.setText("Background_paint");
 					dlg.setRGB(SWTOtherEditor.this.backgroundPaintCanvas.getColor().getRGB());
-					RGB rgb = dlg.open();
-					if ( rgb != null ) {
+					final RGB rgb = dlg.open();
+					if (rgb != null) {
 						SWTOtherEditor.this.backgroundPaintCanvas.setColor(new Color(getDisplay(), rgb));
 					}
 				}
@@ -550,7 +595,8 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Updates the chart.
 		 *
-		 * @param chart the chart.
+		 * @param chart
+		 *            the chart.
 		 */
 		public void updateChartProperties(final JFreeChart chart) {
 			chart.setAntiAlias(this.antialias.getSelection());
@@ -580,13 +626,14 @@ public class SWTChartEditor implements ChartEditor {
 		private final Text labelFontField;
 
 		/**
-		 * A field containing a description of the font
-		 * for displaying tick labels on the axis.
+		 * A field containing a description of the font for displaying tick
+		 * labels on the axis.
 		 */
 		private final Text tickLabelFontField;
 
 		/** The resourceBundle for the localization. */
-		// protected static ResourceBundle localizationResources = ResourceBundleWrapper
+		// protected static ResourceBundle localizationResources =
+		// ResourceBundleWrapper
 		// .getBundle("org.jfree.chart.editor.LocalizationBundle");
 
 		/** Font object used to handle a change of font. */
@@ -602,13 +649,16 @@ public class SWTChartEditor implements ChartEditor {
 		private final TabFolder otherTabs;
 
 		/**
-		 * Standard constructor: builds a composite for displaying/editing
-		 * the properties of the specified axis.
+		 * Standard constructor: builds a composite for displaying/editing the
+		 * properties of the specified axis.
 		 *
-		 * @param parent The parent composite.
-		 * @param style The SWT style of the SwtAxisEditor.
-		 * @param axis the axis whose properties are to be displayed/edited
-		 *            in the composite.
+		 * @param parent
+		 *            The parent composite.
+		 * @param style
+		 *            The SWT style of the SwtAxisEditor.
+		 * @param axis
+		 *            the axis whose properties are to be displayed/edited in
+		 *            the composite.
 		 */
 		public SWTAxisEditor(final Composite parent, final int style, final Axis axis) {
 			super(parent, style);
@@ -617,16 +667,16 @@ public class SWTChartEditor implements ChartEditor {
 			this.tickLabelFont = GraphicsHelper.toSwtFontData(getDisplay(), axis.getTickLabelFont(), true);
 			this.tickLabelPaintColor = GraphicsHelper.toSwtColor(getDisplay(), axis.getTickLabelPaint());
 
-			FillLayout layout = new FillLayout(SWT.VERTICAL);
+			final FillLayout layout = new FillLayout(SWT.VERTICAL);
 			layout.marginHeight = layout.marginWidth = 4;
 			setLayout(layout);
-			Group general = new Group(this, SWT.NONE);
+			final Group general = new Group(this, SWT.NONE);
 			general.setLayout(new GridLayout(3, false));
 			general.setText("General");
 			// row 1
 			new Label(general, SWT.NONE).setText("Label");
 			this.label = new Text(general, SWT.BORDER);
-			if ( axis.getLabel() != null ) {
+			if (axis.getLabel() != null) {
 				this.label.setText(axis.getLabel());
 			}
 			this.label.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
@@ -636,19 +686,19 @@ public class SWTChartEditor implements ChartEditor {
 			this.labelFontField = new Text(general, SWT.BORDER);
 			this.labelFontField.setText(this.labelFont.toString());
 			this.labelFontField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-			Button selectFontButton = new Button(general, SWT.PUSH);
+			final Button selectFontButton = new Button(general, SWT.PUSH);
 			selectFontButton.setText("Select...");
 			selectFontButton.addSelectionListener(new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent event) {
 					// Create the color-change dialog
-					FontDialog dlg = new FontDialog(getShell());
+					final FontDialog dlg = new FontDialog(getShell());
 					dlg.setText("Font Selection");
 					dlg.setFontList(new FontData[] { SWTAxisEditor.this.labelFont });
-					if ( dlg.open() != null ) {
+					if (dlg.open() != null) {
 						// Dispose of any fonts we have created
-						if ( SWTAxisEditor.this.font != null ) {
+						if (SWTAxisEditor.this.font != null) {
 							SWTAxisEditor.this.font.dispose();
 						}
 						// Create the new font and set it into the title
@@ -664,21 +714,21 @@ public class SWTChartEditor implements ChartEditor {
 			new Label(general, SWT.NONE).setText("Paint");
 			// Use a colored text field to show the color
 			final SWTPaintCanvas colorCanvas = new SWTPaintCanvas(general, SWT.NONE, this.labelPaintColor);
-			GridData canvasGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+			final GridData canvasGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			canvasGridData.heightHint = 20;
 			colorCanvas.setLayoutData(canvasGridData);
-			Button selectColorButton = new Button(general, SWT.PUSH);
+			final Button selectColorButton = new Button(general, SWT.PUSH);
 			selectColorButton.setText("Select...");
 			selectColorButton.addSelectionListener(new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent event) {
 					// Create the color-change dialog
-					ColorDialog dlg = new ColorDialog(getShell());
+					final ColorDialog dlg = new ColorDialog(getShell());
 					dlg.setText("Title_Color");
 					dlg.setRGB(SWTAxisEditor.this.labelPaintColor.getRGB());
-					RGB rgb = dlg.open();
-					if ( rgb != null ) {
+					final RGB rgb = dlg.open();
+					if (rgb != null) {
 						// create the new color and set it to the
 						// SwtPaintCanvas
 						SWTAxisEditor.this.labelPaintColor = new Color(getDisplay(), rgb);
@@ -686,16 +736,16 @@ public class SWTChartEditor implements ChartEditor {
 					}
 				}
 			});
-			Group other = new Group(this, SWT.NONE);
-			FillLayout tabLayout = new FillLayout();
+			final Group other = new Group(this, SWT.NONE);
+			final FillLayout tabLayout = new FillLayout();
 			tabLayout.marginHeight = tabLayout.marginWidth = 4;
 			other.setLayout(tabLayout);
 			other.setText("Other");
 
 			this.otherTabs = new TabFolder(other, SWT.NONE);
-			TabItem item1 = new TabItem(this.otherTabs, SWT.NONE);
+			final TabItem item1 = new TabItem(this.otherTabs, SWT.NONE);
 			item1.setText(" " + "Ticks" + " ");
-			Composite ticks = new Composite(this.otherTabs, SWT.NONE);
+			final Composite ticks = new Composite(this.otherTabs, SWT.NONE);
 			ticks.setLayout(new GridLayout(3, false));
 			this.showTickLabelsCheckBox = new Button(ticks, SWT.CHECK);
 			this.showTickLabelsCheckBox.setText("Show tick labels");
@@ -707,19 +757,19 @@ public class SWTChartEditor implements ChartEditor {
 			// tickLabelFontField.setFont(SwtUtils.toSwtFontData(getDisplay(),
 			// axis.getTickLabelFont()));
 			this.tickLabelFontField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-			Button selectTickLabelFontButton = new Button(ticks, SWT.PUSH);
+			final Button selectTickLabelFontButton = new Button(ticks, SWT.PUSH);
 			selectTickLabelFontButton.setText("Select...");
 			selectTickLabelFontButton.addSelectionListener(new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent event) {
 					// Create the font-change dialog
-					FontDialog dlg = new FontDialog(getShell());
+					final FontDialog dlg = new FontDialog(getShell());
 					dlg.setText("Font Selection");
 					dlg.setFontList(new FontData[] { SWTAxisEditor.this.tickLabelFont });
-					if ( dlg.open() != null ) {
+					if (dlg.open() != null) {
 						// Dispose of any fonts we have created
-						if ( SWTAxisEditor.this.font != null ) {
+						if (SWTAxisEditor.this.font != null) {
 							SWTAxisEditor.this.font.dispose();
 						}
 						// Create the new font and set it into the title
@@ -727,7 +777,7 @@ public class SWTChartEditor implements ChartEditor {
 						SWTAxisEditor.this.font = new Font(getShell().getDisplay(), dlg.getFontList());
 						// tickLabelFontField.setFont(font);
 						SWTAxisEditor.this.tickLabelFontField
-							.setText(SWTAxisEditor.this.font.getFontData()[0].toString());
+								.setText(SWTAxisEditor.this.font.getFontData()[0].toString());
 						SWTAxisEditor.this.tickLabelFont = SWTAxisEditor.this.font.getFontData()[0];
 					}
 				}
@@ -740,20 +790,24 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * A static method that returns a panel that is appropriate
-		 * for the axis type.
+		 * A static method that returns a panel that is appropriate for the axis
+		 * type.
 		 *
-		 * @param parent the parent.
-		 * @param style the style.
-		 * @param axis the axis whose properties are to be displayed/edited
-		 *            in the composite.
-		 * @return A composite or <code>null</code< if axis is <code>null</code>.
+		 * @param parent
+		 *            the parent.
+		 * @param style
+		 *            the style.
+		 * @param axis
+		 *            the axis whose properties are to be displayed/edited in
+		 *            the composite.
+		 * @return A composite or <code>null</code< if axis is <code>null</code>
+		 *         .
 		 */
 		public static SWTAxisEditor getInstance(final Composite parent, final int style, final Axis axis) {
 
-			if ( axis != null ) {
+			if (axis != null) {
 				// return the appropriate axis editor
-				if ( axis instanceof NumberAxis ) {
+				if (axis instanceof NumberAxis) {
 					return new SWTNumberAxisEditor(parent, style, (NumberAxis) axis);
 				} else {
 					return new SWTAxisEditor(parent, style, axis);
@@ -818,10 +872,11 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * Sets the properties of the specified axis to match
-		 * the properties defined on this panel.
+		 * Sets the properties of the specified axis to match the properties
+		 * defined on this panel.
 		 *
-		 * @param axis the axis.
+		 * @param axis
+		 *            the axis.
 		 */
 		public void setAxisProperties(final Axis axis) {
 			axis.setLabel(getLabel());
@@ -841,9 +896,12 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Creates a new instance.
 		 *
-		 * @param parent the parent.
-		 * @param style the style.
-		 * @param color the color.
+		 * @param parent
+		 *            the parent.
+		 * @param style
+		 *            the style.
+		 * @param color
+		 *            the color.
 		 */
 		public SWTPaintCanvas(final Composite parent, final int style, final Color color) {
 			this(parent, style);
@@ -853,31 +911,30 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Creates a new instance.
 		 *
-		 * @param parent the parent.
-		 * @param style the style.
+		 * @param parent
+		 *            the parent.
+		 * @param style
+		 *            the style.
 		 */
 		public SWTPaintCanvas(final Composite parent, final int style) {
 			super(parent, style);
-			addPaintListener(new PaintListener() {
-
-				@Override
-				public void paintControl(final PaintEvent e) {
-					e.gc.setForeground(e.gc.getDevice().getSystemColor(SWT.COLOR_BLACK));
-					e.gc.setBackground(SWTPaintCanvas.this.myColor);
-					e.gc.fillRectangle(getClientArea());
-					e.gc.drawRectangle(getClientArea().x, getClientArea().y, getClientArea().width - 1,
+			addPaintListener(e -> {
+				e.gc.setForeground(e.gc.getDevice().getSystemColor(SWT.COLOR_BLACK));
+				e.gc.setBackground(SWTPaintCanvas.this.myColor);
+				e.gc.fillRectangle(getClientArea());
+				e.gc.drawRectangle(getClientArea().x, getClientArea().y, getClientArea().width - 1,
 						getClientArea().height - 1);
-				}
 			});
 		}
 
 		/**
 		 * Sets the color.
 		 *
-		 * @param color the color.
+		 * @param color
+		 *            the color.
 		 */
 		public void setColor(final Color color) {
-			if ( this.myColor != null ) {
+			if (this.myColor != null) {
 				this.myColor.dispose();
 			}
 			// this.myColor = new Color(getDisplay(), color.getRGB());
@@ -896,7 +953,8 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Overridden to do nothing.
 		 *
-		 * @param c the color.
+		 * @param c
+		 *            the color.
 		 */
 		@Override
 		public void setBackground(final Color c) {
@@ -906,7 +964,8 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Overridden to do nothing.
 		 *
-		 * @param c the color.
+		 * @param c
+		 *            the color.
 		 */
 		@Override
 		public void setForeground(final Color c) {
@@ -946,17 +1005,18 @@ public class SWTChartEditor implements ChartEditor {
 		private final static int ORIENTATION_HORIZONTAL = 1;
 
 		/** The resourceBundle for the localization. */
-		// protected static ResourceBundle localizationResources = ResourceBundleWrapper
+		// protected static ResourceBundle localizationResources =
+		// ResourceBundleWrapper
 		// .getBundle("org.jfree.chart.editor.LocalizationBundle");
 
 		SWTPlotAppearanceEditor(final Composite parent, final int style, final Plot plot) {
 			super(parent, style);
-			FillLayout layout = new FillLayout();
+			final FillLayout layout = new FillLayout();
 			layout.marginHeight = layout.marginWidth = 4;
 			setLayout(layout);
 
-			Group general = new Group(this, SWT.NONE);
-			GridLayout groupLayout = new GridLayout(3, false);
+			final Group general = new Group(this, SWT.NONE);
+			final GridLayout groupLayout = new GridLayout(3, false);
 			groupLayout.marginHeight = groupLayout.marginWidth = 4;
 			general.setLayout(groupLayout);
 			general.setText("General");
@@ -965,7 +1025,7 @@ public class SWTChartEditor implements ChartEditor {
 			new Label(general, SWT.NONE).setText("Outline stroke");
 			this.strokeCanvas = new SWTStrokeCanvas(general, SWT.NONE);
 			this.strokeCanvas.setStroke(plot.getOutlineStroke());
-			GridData strokeGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+			final GridData strokeGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			strokeGridData.heightHint = 20;
 			this.strokeCanvas.setLayoutData(strokeGridData);
 			this.selectStroke = new Spinner(general, SWT.BORDER);
@@ -976,8 +1036,8 @@ public class SWTChartEditor implements ChartEditor {
 
 				@Override
 				public void widgetSelected(final SelectionEvent event) {
-					int w = SWTPlotAppearanceEditor.this.selectStroke.getSelection();
-					if ( w > 0 ) {
+					final int w = SWTPlotAppearanceEditor.this.selectStroke.getSelection();
+					if (w > 0) {
 						SWTPlotAppearanceEditor.this.strokeCanvas.setStroke(new BasicStroke(w));
 						SWTPlotAppearanceEditor.this.strokeCanvas.redraw();
 					}
@@ -985,59 +1045,59 @@ public class SWTChartEditor implements ChartEditor {
 			});
 			// row 2: outline color
 			new Label(general, SWT.NONE).setText("Outline Paint");
-			this.outlinePaintCanvas =
-				new SWTPaintCanvas(general, SWT.NONE, GraphicsHelper.toSwtColor(getDisplay(), plot.getOutlinePaint()));
-			GridData outlineGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+			this.outlinePaintCanvas = new SWTPaintCanvas(general, SWT.NONE,
+					GraphicsHelper.toSwtColor(getDisplay(), plot.getOutlinePaint()));
+			final GridData outlineGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			outlineGridData.heightHint = 20;
 			this.outlinePaintCanvas.setLayoutData(outlineGridData);
-			Button selectOutlineColor = new Button(general, SWT.PUSH);
+			final Button selectOutlineColor = new Button(general, SWT.PUSH);
 			selectOutlineColor.setText("Select...");
 			selectOutlineColor.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 			selectOutlineColor.addSelectionListener(new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent event) {
-					ColorDialog dlg = new ColorDialog(getShell());
+					final ColorDialog dlg = new ColorDialog(getShell());
 					dlg.setText("Outline Paint");
 					dlg.setRGB(SWTPlotAppearanceEditor.this.outlinePaintCanvas.getColor().getRGB());
-					RGB rgb = dlg.open();
-					if ( rgb != null ) {
+					final RGB rgb = dlg.open();
+					if (rgb != null) {
 						SWTPlotAppearanceEditor.this.outlinePaintCanvas.setColor(new Color(getDisplay(), rgb));
 					}
 				}
 			});
 			// row 3: background paint
 			new Label(general, SWT.NONE).setText("Background paint");
-			this.backgroundPaintCanvas =
-				new SWTPaintCanvas(general, SWT.NONE, GraphicsHelper.toSwtColor(getDisplay(), plot.getBackgroundPaint()));
-			GridData bgGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+			this.backgroundPaintCanvas = new SWTPaintCanvas(general, SWT.NONE,
+					GraphicsHelper.toSwtColor(getDisplay(), plot.getBackgroundPaint()));
+			final GridData bgGridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 			bgGridData.heightHint = 20;
 			this.backgroundPaintCanvas.setLayoutData(bgGridData);
-			Button selectBgPaint = new Button(general, SWT.PUSH);
+			final Button selectBgPaint = new Button(general, SWT.PUSH);
 			selectBgPaint.setText("Select...");
 			selectBgPaint.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, false, false));
 			selectBgPaint.addSelectionListener(new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent event) {
-					ColorDialog dlg = new ColorDialog(getShell());
+					final ColorDialog dlg = new ColorDialog(getShell());
 					dlg.setText("Background paint");
 					dlg.setRGB(SWTPlotAppearanceEditor.this.backgroundPaintCanvas.getColor().getRGB());
-					RGB rgb = dlg.open();
-					if ( rgb != null ) {
+					final RGB rgb = dlg.open();
+					if (rgb != null) {
 						SWTPlotAppearanceEditor.this.backgroundPaintCanvas.setColor(new Color(getDisplay(), rgb));
 					}
 				}
 			});
 			// row 4: orientation
-			if ( plot instanceof CategoryPlot ) {
+			if (plot instanceof CategoryPlot) {
 				this.plotOrientation = ((CategoryPlot) plot).getOrientation();
-			} else if ( plot instanceof XYPlot ) {
+			} else if (plot instanceof XYPlot) {
 				this.plotOrientation = ((XYPlot) plot).getOrientation();
 			}
-			if ( this.plotOrientation != null ) {
-				boolean isVertical = this.plotOrientation.equals(PlotOrientation.VERTICAL);
-				int index = isVertical ? ORIENTATION_VERTICAL : ORIENTATION_HORIZONTAL;
+			if (this.plotOrientation != null) {
+				final boolean isVertical = this.plotOrientation.equals(PlotOrientation.VERTICAL);
+				final int index = isVertical ? ORIENTATION_VERTICAL : ORIENTATION_HORIZONTAL;
 				new Label(general, SWT.NONE).setText("Orientation");
 				this.orientation = new Combo(general, SWT.DROP_DOWN);
 				this.orientation.setItems(orientationNames);
@@ -1048,11 +1108,11 @@ public class SWTChartEditor implements ChartEditor {
 					@Override
 					public void widgetSelected(final SelectionEvent event) {
 						switch (SWTPlotAppearanceEditor.this.orientation.getSelectionIndex()) {
-							case ORIENTATION_HORIZONTAL:
-								SWTPlotAppearanceEditor.this.plotOrientation = PlotOrientation.HORIZONTAL;
-								break;
-							default:
-								SWTPlotAppearanceEditor.this.plotOrientation = PlotOrientation.VERTICAL;
+						case ORIENTATION_HORIZONTAL:
+							SWTPlotAppearanceEditor.this.plotOrientation = PlotOrientation.HORIZONTAL;
+							break;
+						default:
+							SWTPlotAppearanceEditor.this.plotOrientation = PlotOrientation.VERTICAL;
 						}
 					}
 				});
@@ -1125,9 +1185,12 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Creates a new editor.
 		 *
-		 * @param parent the parent.
-		 * @param style the style.
-		 * @param axis the axis.
+		 * @param parent
+		 *            the parent.
+		 * @param style
+		 *            the style.
+		 * @param axis
+		 *            the axis.
 		 */
 		public SWTNumberAxisEditor(final Composite parent, final int style, final NumberAxis axis) {
 			super(parent, style, axis);
@@ -1135,9 +1198,9 @@ public class SWTChartEditor implements ChartEditor {
 			this.minimumValue = axis.getLowerBound();
 			this.maximumValue = axis.getUpperBound();
 
-			TabItem item2 = new TabItem(getOtherTabs(), SWT.NONE);
+			final TabItem item2 = new TabItem(getOtherTabs(), SWT.NONE);
 			item2.setText(" " + "Range" + " ");
-			Composite range = new Composite(getOtherTabs(), SWT.NONE);
+			final Composite range = new Composite(getOtherTabs(), SWT.NONE);
 			range.setLayout(new GridLayout(2, true));
 			item2.setControl(range);
 
@@ -1175,7 +1238,7 @@ public class SWTChartEditor implements ChartEditor {
 		 */
 		public void toggleAutoRange() {
 			this.autoRange = this.autoRangeCheckBox.getSelection();
-			if ( this.autoRange ) {
+			if (this.autoRange) {
 				this.minimumRangeValue.setText(Double.toString(this.minimumValue));
 				this.minimumRangeValue.setEnabled(false);
 				this.maximumRangeValue.setText(Double.toString(this.maximumValue));
@@ -1187,40 +1250,42 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * Revalidate the range minimum:
-		 * it should be less than the current maximum.
+		 * Revalidate the range minimum: it should be less than the current
+		 * maximum.
 		 *
-		 * @param candidate the minimum value
+		 * @param candidate
+		 *            the minimum value
 		 *
 		 * @return A boolean.
 		 */
 		public boolean validateMinimum(final String candidate) {
 			boolean valid = true;
 			try {
-				if ( Double.parseDouble(candidate) >= this.maximumValue ) {
+				if (Double.parseDouble(candidate) >= this.maximumValue) {
 					valid = false;
 				}
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				valid = false;
 			}
 			return valid;
 		}
 
 		/**
-		 * Revalidate the range maximum:
-		 * it should be greater than the current minimum
+		 * Revalidate the range maximum: it should be greater than the current
+		 * minimum
 		 *
-		 * @param candidate the maximum value
+		 * @param candidate
+		 *            the maximum value
 		 *
 		 * @return A boolean.
 		 */
 		public boolean validateMaximum(final String candidate) {
 			boolean valid = true;
 			try {
-				if ( Double.parseDouble(candidate) <= this.minimumValue ) {
+				if (Double.parseDouble(candidate) <= this.minimumValue) {
 					valid = false;
 				}
-			} catch (NumberFormatException e) {
+			} catch (final NumberFormatException e) {
 				valid = false;
 			}
 			return valid;
@@ -1245,16 +1310,16 @@ public class SWTChartEditor implements ChartEditor {
 		 */
 		@Override
 		public void focusLost(final FocusEvent e) {
-			if ( e.getSource() == this.minimumRangeValue ) {
+			if (e.getSource() == this.minimumRangeValue) {
 				// verify min value
-				if ( !validateMinimum(this.minimumRangeValue.getText()) ) {
+				if (!validateMinimum(this.minimumRangeValue.getText())) {
 					this.minimumRangeValue.setText(String.valueOf(this.minimumValue));
 				} else {
 					this.minimumValue = Double.parseDouble(this.minimumRangeValue.getText());
 				}
-			} else if ( e.getSource() == this.maximumRangeValue ) {
+			} else if (e.getSource() == this.maximumRangeValue) {
 				// verify max value
-				if ( !validateMaximum(this.maximumRangeValue.getText()) ) {
+				if (!validateMaximum(this.maximumRangeValue.getText())) {
 					this.maximumRangeValue.setText(String.valueOf(this.maximumValue));
 				} else {
 					this.maximumValue = Double.parseDouble(this.maximumRangeValue.getText());
@@ -1263,17 +1328,18 @@ public class SWTChartEditor implements ChartEditor {
 		}
 
 		/**
-		 * Sets the properties of the specified axis to match
-		 * the properties defined on this panel.
+		 * Sets the properties of the specified axis to match the properties
+		 * defined on this panel.
 		 *
-		 * @param axis the axis.
+		 * @param axis
+		 *            the axis.
 		 */
 		@Override
 		public void setAxisProperties(final Axis axis) {
 			super.setAxisProperties(axis);
-			NumberAxis numberAxis = (NumberAxis) axis;
+			final NumberAxis numberAxis = (NumberAxis) axis;
 			numberAxis.setAutoRange(this.autoRange);
-			if ( !this.autoRange ) {
+			if (!this.autoRange) {
 				numberAxis.setRange(this.minimumValue, this.maximumValue);
 			}
 		}
@@ -1284,9 +1350,12 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Creates a new instance.
 		 *
-		 * @param parent the parent.
-		 * @param style the style.
-		 * @param image the image.
+		 * @param parent
+		 *            the parent.
+		 * @param style
+		 *            the style.
+		 * @param image
+		 *            the image.
 		 */
 		public SWTStrokeCanvas(final Composite parent, final int style, final Image image) {
 			this(parent, style);
@@ -1295,30 +1364,28 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Creates a new instance.
 		 *
-		 * @param parent the parent.
-		 * @param style the style.
+		 * @param parent
+		 *            the parent.
+		 * @param style
+		 *            the style.
 		 */
 		public SWTStrokeCanvas(final Composite parent, final int style) {
 			super(parent, style);
-			addPaintListener(new PaintListener() {
-
-				@Override
-				public void paintControl(final PaintEvent e) {
-					BasicStroke stroke = getStroke();
-					if ( stroke != null ) {
-						int x, y;
-						Rectangle rect = getClientArea();
-						x = (rect.width - 100) / 2;
-						y = (rect.height - 16) / 2;
-						Transform swtTransform = new Transform(e.gc.getDevice());
-						e.gc.getTransform(swtTransform);
-						swtTransform.translate(x, y);
-						e.gc.setTransform(swtTransform);
-						swtTransform.dispose();
-						e.gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
-						e.gc.setLineWidth((int) stroke.getLineWidth());
-						e.gc.drawLine(10, 8, 90, 8);
-					}
+			addPaintListener(e -> {
+				final BasicStroke stroke = getStroke();
+				if (stroke != null) {
+					int x, y;
+					final Rectangle rect = getClientArea();
+					x = (rect.width - 100) / 2;
+					y = (rect.height - 16) / 2;
+					final Transform swtTransform = new Transform(e.gc.getDevice());
+					e.gc.getTransform(swtTransform);
+					swtTransform.translate(x, y);
+					e.gc.setTransform(swtTransform);
+					swtTransform.dispose();
+					e.gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
+					e.gc.setLineWidth((int) stroke.getLineWidth());
+					e.gc.drawLine(10, 8, 90, 8);
 				}
 			});
 		}
@@ -1326,10 +1393,11 @@ public class SWTChartEditor implements ChartEditor {
 		/**
 		 * Sets the stroke.
 		 *
-		 * @param stroke the stroke.
+		 * @param stroke
+		 *            the stroke.
 		 */
 		public void setStroke(final Stroke stroke) {
-			if ( stroke instanceof BasicStroke ) {
+			if (stroke instanceof BasicStroke) {
 				setData(stroke);
 			} else {
 				throw new RuntimeException("Can only handle 'Basic Stroke' at present.");

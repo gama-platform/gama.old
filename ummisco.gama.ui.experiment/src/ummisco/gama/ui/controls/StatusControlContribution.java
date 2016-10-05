@@ -129,7 +129,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		final IExperimentPlan exp = GAMA.getExperiment();
 		if (exp == null)
 			return null;
-		final ITopLevelAgent agent;
+		// final ITopLevelAgent agent;
 		if (agentIndex == 0) {
 			return exp.getAgent();
 		}

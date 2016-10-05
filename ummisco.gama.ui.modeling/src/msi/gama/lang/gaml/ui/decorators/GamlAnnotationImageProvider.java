@@ -6,7 +6,6 @@ import java.util.Map;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.texteditor.AnnotationPreference;
 import org.eclipse.ui.texteditor.MarkerAnnotation;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.model.XtextMarkerAnnotationImageProvider;
@@ -55,7 +54,7 @@ public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvi
 	@Override
 	public Image getManagedImage(final Annotation annotation) {
 
-		final AnnotationPreference pref;
+		// final AnnotationPreference pref;
 		GamaIcon result = null;
 		if (annotation.isMarkedDeleted()) {
 			result = deleted.get(annotation.getType());

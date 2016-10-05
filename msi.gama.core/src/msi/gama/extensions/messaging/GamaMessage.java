@@ -53,16 +53,17 @@ public class GamaMessage implements IValue {
 	private boolean unread;
 
 	private Object sender;
-	
+
 	private Object receivers;
 
 	protected Object contents;
 
 	protected int emissionTimeStamp;
 
-	private int receptionTimeStamp;
+	// private int receptionTimeStamp;
 
-	public GamaMessage(final IScope scope, final Object sender, final Object receivers, final Object content) throws GamaRuntimeException {
+	public GamaMessage(final IScope scope, final Object sender, final Object receivers, final Object content)
+			throws GamaRuntimeException {
 		emissionTimeStamp = scope.getClock().getCycle();
 		unread = true;
 		setSender(sender);
@@ -112,14 +113,13 @@ public class GamaMessage implements IValue {
 		this.receivers = receivers;
 	}
 
-	
 	/**
 	 * Gets the contents of the message.
 	 *
 	 * @return the contents
 	 */
 	@getter(GamaMessage.CONTENTS)
-	public Object getContents(IScope scope) {
+	public Object getContents(final IScope scope) {
 		setUnread(false);
 		return contents;
 	}
@@ -171,7 +171,6 @@ public class GamaMessage implements IValue {
 		return emissionTimeStamp;
 	}
 
-	
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
 		return StringUtils.toGaml(contents, includingBuiltIn);
@@ -198,7 +197,7 @@ public class GamaMessage implements IValue {
 	}
 
 	public void hasBeenReceived(final IScope scope) {
-		receptionTimeStamp = scope.getClock().getCycle();
+		// receptionTimeStamp = scope.getClock().getCycle();
 
 	}
 

@@ -55,7 +55,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 		return new ExperimentOutputManager(DescriptionFactory.create(IKeyword.PERMANENT, (String[]) null));
 	}
 
-	private IScope scope;
+	// private IScope scope;
 	private int layout = GamaPreferences.LAYOUTS.indexOf(GamaPreferences.CORE_DISPLAY_LAYOUT.getValue());
 
 	public ExperimentOutputManager(final IDescription desc) {
@@ -64,7 +64,7 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
-		this.scope = scope;
+		// this.scope = scope;
 		final IExpression exp = getFacet(IKeyword.LAYOUT);
 		if (exp != null) {
 			layout = Cast.asInt(scope, exp.value(scope));

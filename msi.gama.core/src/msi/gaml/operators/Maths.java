@@ -307,7 +307,7 @@ public class Maths {
 			throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs", scope);
 			// return Double.MAX_VALUE; // A compromise...
 		}
-		return FastMath.log10(x);
+		return Double.valueOf(FastMath.log10(x.doubleValue()));
 	}
 
 	@operator(value = "log", can_be_const = true, category = { IOperatorCategory.ARITHMETIC }, concept = {})

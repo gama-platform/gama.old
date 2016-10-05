@@ -67,7 +67,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  *
  */
 public class MultiPageCSVEditor extends MultiPageEditorPart
-		implements IResourceChangeListener, IToolbarDecoratedView, IToolbarDecoratedView.Sizable {
+		implements IResourceChangeListener, IToolbarDecoratedView.Sizable {
 
 	private boolean isPageModified;
 
@@ -86,13 +86,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	final CSVTableFilter tableFilter;
 	CSVModel model;
 
-	private final ICsvFileModelListener csvFileListener = new ICsvFileModelListener() {
-
-		@Override
-		public void entryChanged(final CSVRow row, final int rowIndex) {
-			tableModified();
-		}
-	};
+	private final ICsvFileModelListener csvFileListener = (row, rowIndex) -> tableModified();
 
 	/**
 	 * Creates a multi-page editor example.
@@ -201,13 +195,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 		tableViewer.setContentProvider(new CSVContentProvider());
 		// make the selection available
 		getSite().setSelectionProvider(tableViewer);
-		tableViewer.getTable().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				updateTableFromTextEditor();
-			}
-		});
+		tableViewer.getTable().getDisplay().asyncExec(() -> updateTableFromTextEditor());
 	}
 
 	/**
@@ -467,17 +455,13 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 	@Override
 	public void resourceChanged(final IResourceChangeEvent event) {
 		if (event.getType() == IResourceChangeEvent.PRE_CLOSE || event.getType() == IResourceChangeEvent.PRE_DELETE) {
-			Display.getDefault().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					final IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
-					for (final IWorkbenchPage page : pages) {
-						if (((FileEditorInput) editor.getEditorInput()).getFile().getProject()
-								.equals(event.getResource())) {
-							final IEditorPart editorPart = page.findEditor(editor.getEditorInput());
-							page.closeEditor(editorPart, true);
-						}
+			Display.getDefault().asyncExec(() -> {
+				final IWorkbenchPage[] pages = getSite().getWorkbenchWindow().getPages();
+				for (final IWorkbenchPage page : pages) {
+					if (((FileEditorInput) editor.getEditorInput()).getFile().getProject()
+							.equals(event.getResource())) {
+						final IEditorPart editorPart = page.findEditor(editor.getEditorInput());
+						page.closeEditor(editorPart, true);
 					}
 				}
 			});
@@ -487,14 +471,7 @@ public class MultiPageCSVEditor extends MultiPageEditorPart
 			if (delta != null) {
 				// file deleted -- close the editor
 				if (delta.getKind() == IResourceDelta.REMOVED) {
-					final Runnable r = new Runnable() {
-
-						@Override
-						public void run() {
-							// this needs to be run in the SWT thread
-							getSite().getPage().closeEditor(MultiPageCSVEditor.this, false);
-						}
-					};
+					final Runnable r = () -> getSite().getPage().closeEditor(MultiPageCSVEditor.this, false);
 					getSite().getShell().getDisplay().asyncExec(r);
 				}
 				// file changed -- reload

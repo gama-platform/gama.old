@@ -98,17 +98,19 @@ public class GamaGridFile extends GamaGisFile {
 					final int cpt = 0;
 					while (scanner.hasNextLine()) {
 						final String line = scanner.nextLine();
-						if (cpt < 10) {
-							if (line.contains("dx")) {
-								text.append(line.replace("dx", "cellsize") + NL);
-							} else if (line.contains("dy")) {
-								continue;
-							} else {
-								text.append(line + NL);
-							}
+
+						if (line.contains("dx")) {
+							text.append(line.replace("dx", "cellsize") + NL);
+						} else if (line.contains("dy")) {
+							continue;
 						} else {
 							text.append(line + NL);
 						}
+
+						// if (cpt < 10) {}
+						// else {
+						// text.append(line + NL);
+						// }
 					}
 				} catch (final FileNotFoundException e2) {
 					final GamaRuntimeException ex = GamaRuntimeException.error(
@@ -349,13 +351,10 @@ public class GamaGridFile extends GamaGisFile {
 
 		// does it exist?
 		final File prjFile = new File(prjFileName.toString());
-		FileInputStream fip = null;
 		if (prjFile.exists()) {
 			// it exists then we have to read it
 			PrjFileReader projReader = null;
-			try {
-				fip = new FileInputStream(prjFile);
-				final FileChannel channel = fip.getChannel();
+			try (FileInputStream fip = new FileInputStream(prjFile); final FileChannel channel = fip.getChannel();) {
 				projReader = new PrjFileReader(channel);
 				return projReader.getCoordinateReferenceSystem();
 			} catch (final FileNotFoundException e) {
@@ -378,13 +377,6 @@ public class GamaGridFile extends GamaGisFile {
 						// warn about the error but proceed, it is not fatal
 						// we have at least the default crs to use
 						return null;
-					}
-					if (fip != null) {
-						try {
-							fip.close();
-						} catch (final IOException e) {
-							e.printStackTrace();
-						}
 					}
 				}
 			}

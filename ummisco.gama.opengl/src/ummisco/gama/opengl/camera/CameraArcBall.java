@@ -366,12 +366,15 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
-		
+
 		if (keystoneMode) {
 			if (getRenderer().getCornerSelected() != -1) {
-				float[] newCoordForKeystone = {(float)e.x/(float)getRenderer().getDisplayWidth()*getRenderer().getZoomLevel().floatValue(),
-						(float)e.y/(float)getRenderer().getDisplayHeight()*getRenderer().getZoomLevel().floatValue()};
-				getRenderer().setKeystoneCoordinates(getRenderer().getCornerSelected(),newCoordForKeystone);
+				final float[] newCoordForKeystone = {
+						(float) e.x / (float) getRenderer().getDisplayWidth()
+								* getRenderer().getZoomLevel().floatValue(),
+						(float) e.y / (float) getRenderer().getDisplayHeight()
+								* getRenderer().getZoomLevel().floatValue() };
+				getRenderer().setKeystoneCoordinates(getRenderer().getCornerSelected(), newCoordForKeystone);
 			}
 			return;
 		}
@@ -515,7 +518,7 @@ public class CameraArcBall extends AbstractCamera {
 		// where y and z are the normalized components of the vector from the
 		// camera
 		// position to the target position.
-		final double x = target.x - position.x;
+		// final double x = target.x - position.x;
 		double y = target.y - position.y;
 		double z = target.z - position.z;
 		final double sum = 0 + Math.abs(y) + Math.abs(z);

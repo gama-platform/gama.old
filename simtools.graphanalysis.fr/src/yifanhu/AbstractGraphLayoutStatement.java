@@ -85,19 +85,15 @@ public abstract class AbstractGraphLayoutStatement extends AbstractStatement {
 			// "<= ? "+ ig.getVertices().size());
 			if (the_graph.getNode(node_index_diff + i).getNodeData().x() < 0) {
 				the_graph.getNode(node_index_diff + i).getNodeData().setX((float) 0.0);
-				;
 			}
 			if (the_graph.getNode(node_index_diff + i).getNodeData().y() < 0) {
 				the_graph.getNode(node_index_diff + i).getNodeData().setY((float) 0.0);
-				;
 			}
 			if (the_graph.getNode(node_index_diff + i).getNodeData().x() > max_x) {
 				the_graph.getNode(node_index_diff + i).getNodeData().setX((float) max_x);
-				;
 			}
 			if (the_graph.getNode(node_index_diff + i).getNodeData().y() > max_y) {
 				the_graph.getNode(node_index_diff + i).getNodeData().setY((float) max_y);
-				;
 			}
 		}
 		for (int i = 1; i <= ig.getVertices().size(); i++) {
@@ -117,19 +113,15 @@ public abstract class AbstractGraphLayoutStatement extends AbstractStatement {
 			// "<= ? "+ ig.getVertices().size());
 			if (the_graph.getNode(node_index_diff + i).getNodeData().x() < min_x) {
 				the_graph.getNode(node_index_diff + i).getNodeData().setX((float) min_x);
-				;
 			}
 			if (the_graph.getNode(node_index_diff + i).getNodeData().y() < min_y) {
 				the_graph.getNode(node_index_diff + i).getNodeData().setY((float) min_y);
-				;
 			}
 			if (the_graph.getNode(node_index_diff + i).getNodeData().x() > max_x) {
 				the_graph.getNode(node_index_diff + i).getNodeData().setX((float) max_x);
-				;
 			}
 			if (the_graph.getNode(node_index_diff + i).getNodeData().y() > max_y) {
 				the_graph.getNode(node_index_diff + i).getNodeData().setY((float) max_y);
-				;
 			}
 		}
 		for (int i = 1; i <= ig.getVertices().size(); i++) {

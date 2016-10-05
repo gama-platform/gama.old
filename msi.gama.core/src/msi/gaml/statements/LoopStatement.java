@@ -106,7 +106,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			final IExpressionDescription over = description.getFacet(OVER);
 			final IExpressionDescription from = description.getFacet(FROM);
 			final IExpressionDescription to = description.getFacet(TO);
-			final IExpressionDescription step = description.getFacet(STEP);
+			// final IExpressionDescription step = description.getFacet(STEP);
 			final IExpressionDescription cond = description.getFacet(WHILE);
 			IExpressionDescription name = description.getFacet(NAME);
 			if (name != null && name.isConst() && name.toString().startsWith(INTERNAL)) {

@@ -1092,7 +1092,7 @@ public class Graphs {
 			throw GamaRuntimeException.error("In the load_shortest_paths operator, the graph should not be null!",
 					scope);
 		}
-		final int n = graph.vertexSet().size();
+		// final int n = graph.vertexSet().size();
 		graph.loadShortestPaths(scope, matrix);
 		return graph;
 		// throw GamaRuntimeException.error("not implemented: loading from gama

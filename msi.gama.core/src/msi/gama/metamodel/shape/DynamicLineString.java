@@ -14,7 +14,6 @@ import com.vividsolutions.jts.geom.GeometryComponentFilter;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.GeometryFilter;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Lineal;
 import com.vividsolutions.jts.geom.Point;
 
 import msi.gama.common.util.GeometryUtils;
@@ -25,7 +24,7 @@ import msi.gama.common.util.GeometryUtils;
  * @author drogoul
  *
  */
-public class DynamicLineString extends LineString implements Lineal {
+public class DynamicLineString extends LineString {
 
 	// static {
 	// try {

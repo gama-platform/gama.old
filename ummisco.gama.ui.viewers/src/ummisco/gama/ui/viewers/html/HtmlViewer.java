@@ -38,7 +38,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 
 	Browser browser;
-	private GamaToolbar2 toolbar;
+	// private GamaToolbar2 toolbar;
 	ToolItem back, forward, home;
 
 	public HtmlViewer() {
@@ -142,7 +142,7 @@ public class HtmlViewer extends EditorPart implements IToolbarDecoratedView {
 	 */
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
-		this.toolbar = tb;
+		// this.toolbar = tb;
 
 		back = tb.button("browser/back", "Back", "Go to previous page in history", new SelectionAdapter() {
 

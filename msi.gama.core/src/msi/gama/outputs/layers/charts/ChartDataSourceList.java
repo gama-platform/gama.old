@@ -52,7 +52,7 @@ public class ChartDataSourceList extends ChartDataSource {
 	public void updatevalues(final IScope scope, final int chartCycle) {
 		super.updatevalues(scope, chartCycle);
 		Object o = null;
-		final Object oname = this.getNameExp();
+		// final Object oname = this.getNameExp();
 		final HashMap<String, Object> barvalues = new HashMap<String, Object>();
 		if (this.isUseYErrValues())
 			barvalues.put(ChartDataStatement.YERR_VALUES, this.getValueyerr().value(scope));
@@ -69,11 +69,11 @@ public class ChartDataSourceList extends ChartDataSource {
 
 		updateserielist(scope, chartCycle);
 
-		int type_val = this.DATA_TYPE_NULL;
+		// int type_val = this.DATA_TYPE_NULL;
 		if (getValue() != null) {
 			o = getValue().value(scope);
 		}
-		type_val = get_data_type(scope, o);
+		// type_val = get_data_type(scope, o);
 
 		if (o == null) {
 			// lastvalue??

@@ -102,7 +102,7 @@ public class ChartDataStatement extends AbstractStatement {
 
 		final ChartDataSourceUnique data = new ChartDataSourceUnique();
 
-		final IExpression string1 = getFacet(IKeyword.TYPE);
+		// final IExpression string1 = getFacet(IKeyword.TYPE);
 
 		data.setDataset(scope, graphdataset);
 

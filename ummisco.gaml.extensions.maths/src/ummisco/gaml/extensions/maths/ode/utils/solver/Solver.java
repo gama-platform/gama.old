@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.utils.solver;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.math3.exception.NotANumberException;
@@ -27,7 +25,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
@@ -63,60 +60,61 @@ public abstract class Solver {
 	public void solve(final IScope scope, final SystemOfEquationsStatement eq, final double initialTime,
 			final double finalTime, final GamaMap<String, IList<Double>> integrationValues) {
 
-		eq.executeInScope(scope, new Runnable() {
+		eq.executeInScope(scope, () -> {
+			final Map<Integer, IAgent> equationAgents = eq.getEquationAgents(scope);
+			/*
+			 * prepare initial value of variables 1. loop through variables
+			 * expression 2. if its equaAgents != null, it mean variable of
+			 * external equation, set current scope to this agent scope 3. get
+			 * value 4. return to previous scope
+			 */
 
-			@Override
-			public void run() {
-				final Map<Integer, IAgent> equationAgents = eq.getEquationAgents(scope);
-				/*
-				 * prepare initial value of variables 1. loop through variables
-				 * expression 2. if its equaAgents != null, it mean variable of
-				 * external equation, set current scope to this agent scope 3.
-				 * get value 4. return to previous scope
-				 */
-
-				final double[] y = new double[eq.variables_diff.size()];
-//				final ArrayList<IExpression> equationValues = new ArrayList<IExpression>(eq.variables_diff.values());
-				int i=0,n = eq.variables_diff.size();
-				for (i = 0; i < n; i++) {
-					final IAgent a = equationAgents.get(i);
-					if (integrationValues.values().size() < n) {
-						integrationValues.put(a+eq.variables_diff.get(i).toString(),GamaListFactory.create(Double.class));
-					}
-					if (!a.dead()) {
-						final boolean pushed = scope.push(a);
-						try {
-							y[i] = Cast.asFloat(scope, eq.variables_diff.get(i).value(scope));
-							if(Double.isInfinite(y[i])){
-								GAMA.reportAndThrowIfNeeded(scope, GamaRuntimeException.create(new NotANumberException(),scope), true);					
-							}
-						} catch (final Exception ex1) {
-							scope.getGui().debug(ex1.getMessage());
-						} finally {
-							if (pushed) {
-								scope.pop(a);
-							}
+			final double[] y = new double[eq.variables_diff.size()];
+			// final ArrayList<IExpression> equationValues = new
+			// ArrayList<IExpression>(eq.variables_diff.values());
+			int i = 0;
+			final int n = eq.variables_diff.size();
+			for (i = 0; i < n; i++) {
+				final IAgent a = equationAgents.get(i);
+				if (integrationValues.values().size() < n) {
+					integrationValues.put(a + eq.variables_diff.get(i).toString(),
+							GamaListFactory.create(Double.class));
+				}
+				if (!a.dead()) {
+					final boolean pushed = scope.push(a);
+					try {
+						y[i] = Cast.asFloat(scope, eq.variables_diff.get(i).value(scope));
+						if (Double.isInfinite(y[i])) {
+							GAMA.reportAndThrowIfNeeded(scope,
+									GamaRuntimeException.create(new NotANumberException(), scope), true);
+						}
+					} catch (final Exception ex1) {
+						scope.getGui().debug(ex1.getMessage());
+					} finally {
+						if (pushed) {
+							scope.pop(a);
 						}
 					}
-
-				}
-				if (integrationValues.get(scope.getAgent()+eq.variable_time.getName()) == null) {
-					integrationValues.put(scope.getAgent()+eq.variable_time.getName(), GamaListFactory.create(Double.class));
 				}
 
-				if (scope.getClock().getCycle() == 0) {
-					storeValues(initialTime, y, integrationValues);
-				}
-				if (y.length > 0) {
-					try {
-						integrator.integrate(eq, initialTime, y, finalTime, y);
-					} catch (final Exception ex) {
-						System.out.println(ex);
-					}
-				}
-				eq.assignValue(scope, finalTime * step, y);
-				storeValues(finalTime, y, integrationValues);
 			}
+			if (integrationValues.get(scope.getAgent() + eq.variable_time.getName()) == null) {
+				integrationValues.put(scope.getAgent() + eq.variable_time.getName(),
+						GamaListFactory.create(Double.class));
+			}
+
+			if (scope.getClock().getCycle() == 0) {
+				storeValues(initialTime, y, integrationValues);
+			}
+			if (y.length > 0) {
+				try {
+					integrator.integrate(eq, initialTime, y, finalTime, y);
+				} catch (final Exception ex) {
+					System.out.println(ex);
+				}
+			}
+			eq.assignValue(scope, finalTime * step, y);
+			storeValues(finalTime, y, integrationValues);
 		});
 
 	}

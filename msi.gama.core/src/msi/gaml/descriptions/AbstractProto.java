@@ -11,8 +11,6 @@ import java.util.Collections;
 import java.util.List;
 
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.common.interfaces.IGamlable;
-import msi.gama.common.interfaces.INamed;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.GamlProperties;
@@ -24,7 +22,7 @@ import msi.gama.precompiler.GamlProperties;
  * @since 17 déc. 2014
  *
  */
-public abstract class AbstractProto implements IGamlDescription, INamed, IGamlable {
+public abstract class AbstractProto implements IGamlDescription {
 
 	protected String name;
 	protected String plugin;

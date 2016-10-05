@@ -115,7 +115,8 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
 	@Override
 	protected void createNewSerie(final IScope scope, final String serieid) {
-		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
+		// final ChartDataSeries dataserie = chartdataset.getDataSeries(scope,
+		// serieid);
 		// final XYIntervalSeries serie = new
 		// XYIntervalSeries(dataserie.getSerieLegend(scope), false, true);
 		final SpiderWebPlot plot = (SpiderWebPlot) this.chart.getPlot();
@@ -156,7 +157,7 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 	protected void resetSerie(final IScope scope, final String serieid) {
 		// TODO Auto-generated method stub
 
-		final SpiderWebPlot plot = (SpiderWebPlot) this.chart.getPlot();
+		chart.getPlot();
 		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
 		// DefaultCategoryDataset serie=((DefaultCategoryDataset)
 		// jfreedataset.get(IdPosition.get(dataserie.getSerieId(scope))));
@@ -192,14 +193,14 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 
 	private void resetDomainAxis(final IScope scope) {
 		// TODO Auto-generated method stub
-		final SpiderWebPlot pp = (SpiderWebPlot) chart.getPlot();
+		chart.getPlot();
 
 	}
 
 	@Override
 	public void initChart(final IScope scope, final String chartname) {
 		super.initChart(scope, chartname);
-		final SpiderWebPlot pp = (SpiderWebPlot) chart.getPlot();
+		chart.getPlot();
 
 	}
 

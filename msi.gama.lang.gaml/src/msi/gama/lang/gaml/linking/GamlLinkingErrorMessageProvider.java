@@ -1,6 +1,5 @@
 package msi.gama.lang.gaml.linking;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.CrossReference;
 import org.eclipse.xtext.diagnostics.Diagnostic;
@@ -20,7 +19,8 @@ public class GamlLinkingErrorMessageProvider extends LinkingDiagnosticMessagePro
 
 	@Override
 	public DiagnosticMessage getUnresolvedProxyMessage(final ILinkingDiagnosticContext context) {
-		final EClass referenceType = context.getReference().getEReferenceType();
+		// final EClass referenceType =
+		// context.getReference().getEReferenceType();
 		final EObject referee = context.getContext();
 		final String referenceName = new GamlSwitch<String>() {
 

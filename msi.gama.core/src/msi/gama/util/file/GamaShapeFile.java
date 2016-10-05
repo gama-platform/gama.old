@@ -198,7 +198,7 @@ public class GamaShapeFile extends GamaGisFile {
 			// certain projections.
 			String system = crs == null ? "Unknown projection" : crs.toWKT();
 			try {
-				final CoordinateReferenceSystem trial = CRS.parseWKT(system);
+				CRS.parseWKT(system);
 			} catch (final Exception e) {
 				// The toWKT()/parseWKT() pair has a problem
 				String srs = CRS.toSRS(crs);

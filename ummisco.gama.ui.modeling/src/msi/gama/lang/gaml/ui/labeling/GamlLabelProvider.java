@@ -21,7 +21,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.naming.IQualifiedNameProvider;
 import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
-import org.eclipse.xtext.ui.label.ILabelProviderImageDescriptorExtension;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -51,8 +50,7 @@ import msi.gaml.compilation.ast.ISyntacticElement;
  */
 @Singleton
 
-public class GamlLabelProvider extends DefaultEObjectLabelProvider
-		implements ILabelProviderImageDescriptorExtension, IGamlLabelProvider {
+public class GamlLabelProvider extends DefaultEObjectLabelProvider implements IGamlLabelProvider {
 
 	@Inject private IQualifiedNameProvider nameProvider;
 

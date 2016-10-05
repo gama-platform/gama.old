@@ -193,8 +193,8 @@ public class Variable extends Symbol implements IVariable {
 
 		public void assertValueFacetsTypes(final VariableDescription vd, final IType vType) {
 
-			final IType type = null;
-			final String firstValueFacet = null;
+			// final IType type = null;
+			// final String firstValueFacet = null;
 			final IExpression amongExpression = vd.getFacetExpr(AMONG);
 			if (amongExpression != null && !vType.isAssignableFrom(amongExpression.getType().getContentType())) {
 				vd.error("Variable " + vd.getName() + " of type " + vType + " cannot be chosen among "

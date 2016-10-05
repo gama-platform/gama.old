@@ -151,7 +151,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public void setKeystoneCoordinates(final int cornerId, final float[] coordinates) {
 		keystoneCoordinates[cornerId] = coordinates;
-	};
+	}
 
 	protected int cornerSelected = -1;
 

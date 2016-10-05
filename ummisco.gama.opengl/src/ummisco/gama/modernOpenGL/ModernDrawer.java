@@ -43,12 +43,12 @@ public class ModernDrawer {
 	private final ModernRenderer renderer;
 	private final GL2 gl;
 
-	private final ArrayList<Integer> listOfVAOUsed = new ArrayList<Integer>();
-	private final ArrayList<AbstractShader> shaderLoaded = new ArrayList<AbstractShader>();
-	private final ArrayList<AbstractPostprocessingShader> postProcessingShaderLoaded = new ArrayList<AbstractPostprocessingShader>();
-	private final HashMap<AbstractShader, int[]> typeOfDrawingMap = new HashMap<AbstractShader, int[]>();
+	private final ArrayList<Integer> listOfVAOUsed = new ArrayList<>();
+	private final ArrayList<AbstractShader> shaderLoaded = new ArrayList<>();
+	private final ArrayList<AbstractPostprocessingShader> postProcessingShaderLoaded = new ArrayList<>();
+	private final HashMap<AbstractShader, int[]> typeOfDrawingMap = new HashMap<>();
 
-	private final HashMap<LayerObject, ModernLayerStructure> layerStructureMap = new HashMap<LayerObject, ModernLayerStructure>();
+	private final HashMap<LayerObject, ModernLayerStructure> layerStructureMap = new HashMap<>();
 
 	private int numberOfShaderInTheCurrentLayer = 0;
 	private int currentShaderNumber = 0;
@@ -66,13 +66,13 @@ public class ModernDrawer {
 
 	public void prepareMapForLayer(final LayerObject layer) {
 		// init map
-		mapEntities = new HashMap<String, ArrayList<ArrayList<DrawingEntity>>>();
+		mapEntities = new HashMap<>();
 		mapEntities.put(DrawingEntity.Type.LINE.toString(), null);
 		mapEntities.put(DrawingEntity.Type.FACE.toString(), null);
 		mapEntities.put(DrawingEntity.Type.TEXTURED.toString(), null);
 		mapEntities.put(DrawingEntity.Type.BILLBOARDING.toString(), null);
 		mapEntities.put(DrawingEntity.Type.POINT.toString(), null);
-		entityTypeOrder = new ArrayList<String>();
+		entityTypeOrder = new ArrayList<>();
 		currentLayer = layer;
 		numberOfShaderInTheCurrentLayer = 0;
 		currentShaderNumber = 0;
@@ -88,9 +88,9 @@ public class ModernDrawer {
 		if (!entityTypeOrder.contains(type.toString()))
 			entityTypeOrder.add(type.toString());
 		final ArrayList<ArrayList<DrawingEntity>> entities = mapEntities.get(type.toString());
-		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<ArrayList<DrawingEntity>>();
+		ArrayList<ArrayList<DrawingEntity>> listToAdd = new ArrayList<>();
 		if (entities == null) {
-			final ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
+			final ArrayList<DrawingEntity> entityList = new ArrayList<>();
 			// we create a new shader and we set it to the entity
 			setShaderToEntity(newEntity, type);
 			numberOfShaderInTheCurrentLayer++;
@@ -115,7 +115,7 @@ public class ModernDrawer {
 			if (!entityAdded) {
 				// the entity to add cannot be mixed with other entities. We
 				// create a new entity list to the map.
-				final ArrayList<DrawingEntity> entityList = new ArrayList<DrawingEntity>();
+				final ArrayList<DrawingEntity> entityList = new ArrayList<>();
 				// we create a new shader and we set it to the entity
 				setShaderToEntity(newEntity, type);
 				numberOfShaderInTheCurrentLayer++;
@@ -156,7 +156,7 @@ public class ModernDrawer {
 
 	public void cleanUp() {
 		for (final Integer vao : listOfVAOUsed) {
-			gl.glDisableVertexAttribArray(vao);
+			gl.glDisableVertexAttribArray(vao.intValue());
 		}
 		listOfVAOUsed.clear();
 		for (final AbstractShader shader : shaderLoaded) {
@@ -178,8 +178,9 @@ public class ModernDrawer {
 			if (fbo_scene == null) {
 				fbo_scene = new FrameBufferObject(gl, renderer.getDisplayWidth(), renderer.getDisplayHeight(), 1);
 			}
-			fbo_scene.setDisplayDimensions((int) (2 * renderer.getDisplayWidth() / renderer.getZoomLevel()),
-					(int) (2 * renderer.getDisplayHeight() / renderer.getZoomLevel()));
+			fbo_scene.setDisplayDimensions(
+					(int) (2 * renderer.getDisplayWidth() / renderer.getZoomLevel().doubleValue()),
+					(int) (2 * renderer.getDisplayHeight() / renderer.getZoomLevel().doubleValue()));
 			// redirect the rendering to the fbo_scene (will be rendered later,
 			// as a texture)
 			fbo_scene.bindFrameBuffer();
@@ -290,8 +291,9 @@ public class ModernDrawer {
 		// create the output fbo
 		FrameBufferObject outputFbo = null;
 		if (!lastEffect) {
-			outputFbo = new FrameBufferObject(gl, (int) (2 * renderer.getDisplayWidth() / renderer.getZoomLevel()),
-					(int) (2 * renderer.getDisplayHeight() / renderer.getZoomLevel()), effectNumber);
+			outputFbo = new FrameBufferObject(gl,
+					(int) (2 * renderer.getDisplayWidth() / renderer.getZoomLevel().doubleValue()),
+					(int) (2 * renderer.getDisplayHeight() / renderer.getZoomLevel().doubleValue()), effectNumber);
 		}
 
 		// unbind the last fbo

@@ -7,7 +7,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
-import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -25,15 +24,15 @@ public class PerspectiveHelper {
 
 	public static String currentPerspectiveId = PERSPECTIVE_MODELING_ID;
 
-	private static void cleanPerspectives() {
-		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
-		for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
-			if ( desc.getId().contains(PERSPECTIVE_SIMULATION_FRAGMENT) &&
-				!desc.getId().equals(PERSPECTIVE_SIMULATION_ID) ) {
-				reg.deletePerspective(desc);
-			}
-		}
-	}
+	// private static void cleanPerspectives() {
+	// final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
+	// for ( final IPerspectiveDescriptor desc : reg.getPerspectives() ) {
+	// if ( desc.getId().contains(PERSPECTIVE_SIMULATION_FRAGMENT) &&
+	// !desc.getId().equals(PERSPECTIVE_SIMULATION_ID) ) {
+	// reg.deletePerspective(desc);
+	// }
+	// }
+	// }
 
 	public static PerspectiveRegistry getPerspectiveRegistry() {
 		return (PerspectiveRegistry) PlatformUI.getWorkbench().getPerspectiveRegistry();

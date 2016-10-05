@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.utils.solver;
 
-import java.util.List;
-
 import org.apache.commons.math3.ode.nonstiff.GillIntegrator;
 
 import msi.gama.util.GamaMap;

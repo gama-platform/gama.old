@@ -11,18 +11,19 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IStepable;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gaml.compilation.ISymbol;
 
 /**
- * The class ILayerStatement. Supports the GAML definition of layers in a display
+ * The class ILayerStatement. Supports the GAML definition of layers in a
+ * display
  *
  * @author drogoul
  * @since 14 d�c. 2011
  *
  */
-public interface ILayerStatement extends INamed, IStepable, ISymbol, Comparable<ILayerStatement> {
+public interface ILayerStatement extends IStepable, ISymbol, Comparable<ILayerStatement> {
 
 	public final static short GRID = 1;
 	public final static short AGENTS = 2;

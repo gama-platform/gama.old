@@ -575,9 +575,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return "String";
 	}
 
-	private void computeInits(final IScope scope, final Map<String, String> values) throws GamaRuntimeException {
-		computeInits(scope, values, null);
-	}
+	// private void computeInits(final IScope scope, final Map<String, String>
+	// values) throws GamaRuntimeException {
+	// computeInits(scope, values, null);
+	// }
 
 	private void computeInits(final IScope scope, final Map<String, String> values, final SpeciesDescription species)
 			throws GamaRuntimeException {

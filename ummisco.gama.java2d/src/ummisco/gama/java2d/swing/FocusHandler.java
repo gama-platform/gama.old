@@ -272,9 +272,9 @@ public class FocusHandler {
 				adjustFocusForSwtTraversal(direction);
 			}
 
-			if (verboseTraverseOut && !traverse) {
-				trace("traverse failed, from=" + focusControl);
-			}
+			// if (verboseTraverseOut && !traverse) {
+			// trace("traverse failed, from=" + focusControl);
+			// }
 		}
 	}
 

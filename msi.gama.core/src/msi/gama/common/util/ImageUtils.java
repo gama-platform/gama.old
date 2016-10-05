@@ -90,13 +90,14 @@ public class ImageUtils {
 			if (file.getName().contains(".")) {
 				final String ext = file.getName().substring(file.getName().lastIndexOf("."));
 				if (tiffExt.contains(ext)) {
-					final FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath());
-					final TIFFDecodeParam decodeParam = new TIFFDecodeParam();
-					decodeParam.setDecodePaletteAsShorts(true);
-					final ParameterBlock params = new ParameterBlock();
-					params.add(stream);
-					final RenderedOp image1 = JAI.create("tiff", params);
-					image = image1.getAsBufferedImage();
+					try (FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath())) {
+						final TIFFDecodeParam decodeParam = new TIFFDecodeParam();
+						decodeParam.setDecodePaletteAsShorts(true);
+						final ParameterBlock params = new ParameterBlock();
+						params.add(stream);
+						final RenderedOp image1 = JAI.create("tiff", params);
+						image = image1.getAsBufferedImage();
+					}
 				}
 			}
 		}

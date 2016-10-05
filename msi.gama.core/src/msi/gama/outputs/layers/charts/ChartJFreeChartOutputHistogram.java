@@ -14,7 +14,6 @@ import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.PieSectionEntity;
 import org.jfree.chart.entity.XYItemEntity;
-import org.jfree.chart.labels.CategoryItemLabelGenerator;
 import org.jfree.chart.labels.ItemLabelAnchor;
 import org.jfree.chart.labels.ItemLabelPosition;
 import org.jfree.chart.labels.StandardCategoryItemLabelGenerator;
@@ -111,7 +110,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		return new DefaultCategoryDataset();
 	}
 
-	static class LabelGenerator extends StandardCategoryItemLabelGenerator implements CategoryItemLabelGenerator {
+	static class LabelGenerator extends StandardCategoryItemLabelGenerator {
 		/**
 		 * Generates an item label.
 		 * 
@@ -234,7 +233,8 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	@Override
 	protected void createNewSerie(final IScope scope, final String serieid) {
-		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
+		// final ChartDataSeries dataserie = chartdataset.getDataSeries(scope,
+		// serieid);
 		// final XYIntervalSeries serie = new
 		// XYIntervalSeries(dataserie.getSerieLegend(scope), false, true);
 		final CategoryPlot plot = (CategoryPlot) this.chart.getPlot();
@@ -287,7 +287,8 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		final ArrayList<Double> SValues = dataserie.getSValues(scope);
 		if (CValues.size() > 0) {
 			// TODO Hack to speed up, change!!!
-			final CategoryAxis domainAxis = ((CategoryPlot) this.chart.getPlot()).getDomainAxis();
+			// final CategoryAxis domainAxis = ((CategoryPlot)
+			// this.chart.getPlot()).getDomainAxis();
 			final NumberAxis rangeAxis = (NumberAxis) ((CategoryPlot) this.chart.getPlot()).getRangeAxis();
 			rangeAxis.setAutoRange(false);
 			for (int i = 0; i < CValues.size(); i++) {
@@ -371,7 +372,7 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 	@Override
 	public void initChart(final IScope scope, final String chartname) {
 		super.initChart(scope, chartname);
-		final CategoryPlot pp = (CategoryPlot) chart.getPlot();
+		// final CategoryPlot pp = (CategoryPlot) chart.getPlot();
 
 	}
 

@@ -21,7 +21,7 @@ public class FPSLayerObject extends LayerObject {
 		isOverlay = true;
 		startTime = System.currentTimeMillis();
 	}
-	
+
 	private int frameCount;
 	private final double startTime;
 	private double currentTime;
@@ -31,13 +31,13 @@ public class FPSLayerObject extends LayerObject {
 	@Override
 	public void clear(final GL2 gl) {
 	}
-	
+
 	@Override
 	public void draw(final GL2 gl) {
 		updateObjectList();
 		super.draw(gl);
 	}
-	
+
 	public void computeFrameRate() {
 		frameCount++;
 		currentTime = System.currentTimeMillis() - startTime;
@@ -51,30 +51,33 @@ public class FPSLayerObject extends LayerObject {
 			frameCount = 0;
 		}
 	}
-	
+
 	private void updateObjectList() {
 		objects.clear();
 		computeFrameRate();
-		
-		ArrayList<AbstractObject> newElem = new ArrayList<AbstractObject>();
-		
+
+		final ArrayList<AbstractObject> newElem = new ArrayList<>();
+
 		// build text background
 		final double w = 0.15;
 		final double h = 0.04;
 		final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));
 		final ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, new GamaColor(255, 255, 255, 255),
-				null); 	// white for the color, null
-					 	// for the border color
+				null); // white for the color, null
+						// for the border color
 		final GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
 		geomObj.enableOverlay(true);
 		newElem.add(geomObj);
 		// build label
-		GamaFont font = new GamaFont("Helvetica",0,18); // 0 for plain, 18 for text size.
-		TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(0.0015,0.0015,0.0015),null,new GamaPoint(0.005,-0.03,0),new GamaColor(0,0,0,1),font,true);
-		StringObject strObj = new StringObject("fps : " + fps, textDrawingAttr, this);
+		final GamaFont font = new GamaFont("Helvetica", 0, 18); // 0 for plain,
+																// 18 for text
+																// size.
+		final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(0.0015, 0.0015, 0.0015),
+				null, new GamaPoint(0.005, -0.03, 0), new GamaColor(0, 0, 0, 1), font, true);
+		final StringObject strObj = new StringObject("fps : " + fps, textDrawingAttr, this);
 		strObj.enableOverlay(true);
 		newElem.add(strObj);
-		
+
 		objects.add(newElem);
 	}
 }

@@ -103,7 +103,7 @@ public class ConceptManager {
 
 	};
 
-	static public enum WebsitePart { DOCUMENTATION, GAML_REFERENCES, MODEL_LIBRARY };
+	static public enum WebsitePart { DOCUMENTATION, GAML_REFERENCES, MODEL_LIBRARY }
 
 	static private ArrayList<String> m_concepts;
 	static HashMap<String,Integer> m_occurrence_of_concept; // the key is the name of the concept, the value is the number of occurrences.

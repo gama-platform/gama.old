@@ -1,6 +1,5 @@
 package ummisco.gama.ui.viewers.image;
 
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
@@ -13,7 +12,7 @@ import ummisco.gama.ui.resources.GamaIcons;
  * An editor input for directly displaying ImageData in the ImageViewer.
  */
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class ImageDataEditorInput implements IEditorInput, IAdaptable {
+public class ImageDataEditorInput implements IEditorInput {
 
 	private final ImageData imageData;
 

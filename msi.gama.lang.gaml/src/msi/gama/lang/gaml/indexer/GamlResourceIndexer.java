@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.EcoreUtil2;
 import org.jgrapht.DirectedGraph;
@@ -142,7 +141,7 @@ public class GamlResourceIndexer {
 						if (!alreadyThere) {
 							// This call should trigger the recursive call to
 							// updateImports()
-							final Resource imported = r.getResourceSet().getResource(uri, true);
+							r.getResourceSet().getResource(uri, true);
 						}
 					} else {
 						faulty[0] = findImport((Model) r.getContents().get(0), uri);

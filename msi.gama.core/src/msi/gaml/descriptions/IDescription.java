@@ -21,7 +21,6 @@ import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.common.interfaces.IGamlable;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.ITyped;
@@ -37,7 +36,7 @@ import msi.gaml.types.IType;
  *
  */
 @SuppressWarnings({ "rawtypes" })
-public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable, IGamlable {
+public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable {
 
 	public static final Function<? super IDescription, ? extends String> TO_NAME = input -> input.getName();
 

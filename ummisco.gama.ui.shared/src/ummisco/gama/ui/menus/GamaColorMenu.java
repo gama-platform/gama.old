@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -130,7 +129,7 @@ public class GamaColorMenu extends GamaMenu {
 		dlg.setText("Choose a custom color");
 		dlg.setRGB(initial);
 		final RGB rgb = dlg.open();
-		final int a = StringUtils.INDEX_NOT_FOUND;
+		// final int a = StringUtils.INDEX_NOT_FOUND;
 		if (rgb != null) {
 			if (runnable != null) {
 				runnable.run(rgb.red, rgb.green, rgb.blue);

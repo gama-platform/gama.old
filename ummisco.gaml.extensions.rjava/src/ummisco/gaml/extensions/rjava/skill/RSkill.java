@@ -15,100 +15,100 @@ import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.*;
 
 import org.rosuda.JRI.REXP;
 import org.rosuda.JRI.RMainLoopCallbacks;
 import org.rosuda.JRI.Rengine;
 
-import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.skill;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.architecture.reflex.ReflexArchitecture;
-import msi.gaml.compilation.ISymbol;
 import msi.gaml.skills.Skill;
-import msi.gaml.statements.IStatement;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 @skill(name = "RSkill", concept = { IConcept.STATISTIC, IConcept.SKILL })
-public class RSkill extends Skill{
+public class RSkill extends Skill {
 
 	class TextConsole implements RMainLoopCallbacks {
-		public void rWriteConsole(Rengine re, String text, int oType) {
+		@Override
+		public void rWriteConsole(final Rengine re, final String text, final int oType) {
 			System.out.print(text);
 		}
 
-		public void rBusy(Rengine re, int which) {
+		@Override
+		public void rBusy(final Rengine re, final int which) {
 			System.out.println("rBusy(" + which + ")");
 		}
 
-		public String rReadConsole(Rengine re, String prompt, int addToHistory) {
+		@Override
+		public String rReadConsole(final Rengine re, final String prompt, final int addToHistory) {
 			System.out.print(prompt);
 			try {
-				BufferedReader br = new BufferedReader(new InputStreamReader(
-						System.in));
-				String s = br.readLine();
-				return (s == null || s.length() == 0) ? s : s + "\n";
-			} catch (Exception e) {
-				System.out.println("jriReadConsole exception: "
-						+ e.getMessage());
+				final BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+				final String s = br.readLine();
+				return s == null || s.length() == 0 ? s : s + "\n";
+			} catch (final Exception e) {
+				System.out.println("jriReadConsole exception: " + e.getMessage());
 			}
 			return null;
 		}
 
-		public void rShowMessage(Rengine re, String message) {
+		@Override
+		public void rShowMessage(final Rengine re, final String message) {
 			System.out.println("rShowMessage \"" + message + "\"");
 		}
 
-		public String rChooseFile(Rengine re, int newFile) {
-			FileDialog fd = new FileDialog(new Frame(),
-					(newFile == 0) ? "Select a file" : "Select a new file",
-					(newFile == 0) ? FileDialog.LOAD : FileDialog.SAVE);
+		@Override
+		public String rChooseFile(final Rengine re, final int newFile) {
+			final FileDialog fd = new FileDialog(new Frame(), newFile == 0 ? "Select a file" : "Select a new file",
+					newFile == 0 ? FileDialog.LOAD : FileDialog.SAVE);
 			fd.setVisible(true);
 			String res = null;
 			if (fd.getDirectory() != null)
 				res = fd.getDirectory();
 			if (fd.getFile() != null)
-				res = (res == null) ? fd.getFile() : (res + fd.getFile());
+				res = res == null ? fd.getFile() : res + fd.getFile();
 			return res;
 		}
 
-		public void rFlushConsole(Rengine re) {
+		@Override
+		public void rFlushConsole(final Rengine re) {
 		}
 
-		public void rLoadHistory(Rengine re, String filename) {
+		@Override
+		public void rLoadHistory(final Rengine re, final String filename) {
 		}
 
-		public void rSaveHistory(Rengine re, String filename) {
+		@Override
+		public void rSaveHistory(final Rengine re, final String filename) {
 		}
 
-		public long rExecJCommand(Rengine re, String commandId, long argsExpr,
-				int options) {
+		public long rExecJCommand(final Rengine re, final String commandId, final long argsExpr, final int options) {
 			System.out.println("rExecJCommand \"" + commandId + "\"");
 			return 0;
 		}
 
-		public void rProcessJEvents(Rengine re) {
+		public void rProcessJEvents(final Rengine re) {
 		}
 
 	}
 
 	private String[] args;
-	private Rengine re = new Rengine(args, false, new TextConsole());
+	private final Rengine re = new Rengine(args, false, new TextConsole());
 
-
-	@action(name = "R_eval", args = { @arg(name = "command", type = IType.STRING, optional = true, doc = @doc("R command to be evalutated")) }, doc = @doc(value = "evaluate the R command", returns = "object in R.", examples = { @example(" R_eval(\"data(iris)\")") }))
+	@action(name = "R_eval", args = {
+			@arg(name = "command", type = IType.STRING, optional = true, doc = @doc("R command to be evalutated")) }, doc = @doc(value = "evaluate the R command", returns = "object in R.", examples = {
+					@example(" R_eval(\"data(iris)\")") }))
 	public String primREval(final IScope scope) throws GamaRuntimeException {
-//		re = new Rengine(args, false, new TextConsole());
-		
+		// re = new Rengine(args, false, new TextConsole());
 
-		REXP x=re.eval((String) scope.getArg("command", IType.STRING));
-		
+		final REXP x = re.eval((String) scope.getArg("command", IType.STRING));
+
 		// TODO remove intension aussi
 		return x.toString();
 	}

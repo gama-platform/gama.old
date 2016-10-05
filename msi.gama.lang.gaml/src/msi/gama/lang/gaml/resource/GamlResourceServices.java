@@ -166,7 +166,7 @@ public class GamlResourceServices {
 
 	public static String getProjectPathOf(final Resource r) {
 		final IPath path = getPathOf(r);
-		final String modelPath, projectPath;
+		// final String modelPath, projectPath;
 		if (r.getURI().isFile()) {
 			return path.toOSString();
 		} else {

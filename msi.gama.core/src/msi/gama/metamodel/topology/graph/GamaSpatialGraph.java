@@ -30,7 +30,6 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -50,8 +49,7 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
-		implements ISpatialGraph, IPopulation.Listener, IAgentFilter {
+public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph, IPopulation.Listener {
 
 	/*
 	 * Own topology of the graph. Lazily instantiated, and invalidated at each

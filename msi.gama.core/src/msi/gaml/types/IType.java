@@ -14,7 +14,6 @@ package msi.gaml.types;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IGamlDescription;
-import msi.gama.common.interfaces.IGamlable;
 import msi.gama.common.interfaces.ITyped;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
@@ -29,7 +28,7 @@ import msi.gaml.expressions.IExpression;
  *
  */
 @SuppressWarnings({ "rawtypes" })
-public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
+public interface IType<Support> extends IGamlDescription, ITyped {
 
 	public static String[] vowels = new String[] { "a", "e", "i", "o", "u", "y" };
 

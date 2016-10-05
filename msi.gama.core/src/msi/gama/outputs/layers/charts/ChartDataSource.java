@@ -256,7 +256,7 @@ public class ChartDataSource {
 	}
 
 	public int get_data_type(final IScope scope, final Object o) {
-		final int type = this.DATA_TYPE_NULL;
+		// final int type = this.DATA_TYPE_NULL;
 		if (o == null)
 			return this.DATA_TYPE_NULL;
 		if (o instanceof GamaPoint)

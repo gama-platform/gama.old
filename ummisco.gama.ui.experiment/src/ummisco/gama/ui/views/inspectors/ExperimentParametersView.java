@@ -22,7 +22,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.interfaces.IGui;
@@ -93,7 +92,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 			GamaUIColor color = GamaColors.get(command.getColor(GAMA.getRuntimeScope()));
 			if (color == null)
 				color = IGamaColors.BLUE;
-			final ToolItem f = toolbar.button(color, command.getName(), new SelectionAdapter() {
+			toolbar.button(color, command.getName(), new SelectionAdapter() {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {

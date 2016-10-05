@@ -6,9 +6,7 @@ package ummisco.gama.ui.viewers.gis.geotools.control;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public class CRSChooserDialog extends Dialog {
@@ -54,14 +52,4 @@ public class CRSChooserDialog extends Dialog {
 		return result;
 	}
 
-	public static void main(final String[] args) {
-		final CRSChooserDialog dialog = new CRSChooserDialog(new Shell(Display.getDefault()),
-				DefaultGeographicCRS.WGS84);
-		dialog.setBlockOnOpen(true);
-		dialog.open();
-
-		final CoordinateReferenceSystem crs = dialog.getResult();
-		// System.out.println(crs);
-
-	}
 }

@@ -64,8 +64,7 @@ public class GridLayerHelper extends InfoToolHelper<List<Number>> {
 		super(content, null);
 
 		Object rasterSource = null;
-		try {
-			final FeatureIterator<?> iter = layer.getFeatureSource().getFeatures().features();
+		try (FeatureIterator<?> iter = layer.getFeatureSource().getFeatures().features()) {
 			final String gridAttrName = Utils.getGridAttributeName(layer);
 			rasterSource = iter.next().getProperty(gridAttrName).getValue();
 		} catch (final Exception ex) {

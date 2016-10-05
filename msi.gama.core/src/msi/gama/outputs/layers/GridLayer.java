@@ -59,7 +59,7 @@ public class GridLayer extends ImageLayer {
 		super(scope, layer);
 		turnGridOn = ((GridLayerStatement) layer).drawLines();
 		final GamaSpatialMatrix m = (GamaSpatialMatrix) ((GridLayerStatement) layer).getEnvironment();
-		final ILocation p = m.getDimensions();
+		// final ILocation p = m.getDimensions();
 		final Envelope env = scope.getRoot().getGeometry().getEnvelope();
 		cellSize = new GamaPoint(env.getWidth() / m.numCols, env.getHeight() / m.numRows);
 	}

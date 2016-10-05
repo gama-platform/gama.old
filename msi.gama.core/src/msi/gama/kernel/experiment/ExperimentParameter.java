@@ -193,7 +193,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		isEditable = editable;
 	}
 
-	private static Object[] JunkResults = new Object[1];
+	// private static Object[] JunkResults = new Object[1];
 
 	public void setAndVerifyValue(final IScope scope, final Object val) {
 		Object newValue = val;

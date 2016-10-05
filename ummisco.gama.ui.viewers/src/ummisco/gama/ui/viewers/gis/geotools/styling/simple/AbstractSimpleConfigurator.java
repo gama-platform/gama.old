@@ -37,8 +37,9 @@ import org.geotools.styling.StyleBuilder;
 import org.opengis.feature.simple.SimpleFeatureType;
 
 /**
- * This is here to save me some typing and ensure that the simple raster and 
+ * This is here to save me some typing and ensure that the simple raster and
  * feature configurators look similar.
+ * 
  * @author mleslie
  * @since 0.6.0
  *
@@ -47,128 +48,132 @@ import org.opengis.feature.simple.SimpleFeatureType;
  * @source $URL$
  */
 public class AbstractSimpleConfigurator extends Dialog {
-    /** <code>build</code> field */
-    protected StyleBuilder build = new StyleBuilder();
-    protected SimpleFeatureCollection featureCollection;
-    protected Style style;
+	/** <code>build</code> field */
+	protected StyleBuilder build = new StyleBuilder();
+	protected SimpleFeatureCollection featureCollection;
+	protected Style style;
 
-    /**
-     * Construct <code>AbstractSimpleConfigurator</code>.
-     */
-    public AbstractSimpleConfigurator( Shell parent, SimpleFeatureCollection featureCollection, Style style ) {
-        super(parent);
-        this.featureCollection = featureCollection;
-        this.style = style;
-    }
+	/**
+	 * Construct <code>AbstractSimpleConfigurator</code>.
+	 */
+	public AbstractSimpleConfigurator(final Shell parent, final SimpleFeatureCollection featureCollection,
+			final Style style) {
+		super(parent);
+		this.featureCollection = featureCollection;
+		this.style = style;
+	}
 
-    protected void setLayout( Composite parent ) {
-        RowLayout layout = new RowLayout();
-        layout.pack = false;
-        layout.wrap = true;
-        layout.type = SWT.HORIZONTAL;
-        layout.fill = true;
-        layout.marginLeft = 0;
-        layout.marginRight = 0;
-        layout.marginTop = 0;
-        layout.marginBottom = 0;
-        layout.spacing = 0;
-        parent.setLayout(layout);
-    }
+	protected void setLayout(final Composite parent) {
+		final RowLayout layout = new RowLayout();
+		layout.pack = false;
+		layout.wrap = true;
+		layout.type = SWT.HORIZONTAL;
+		layout.fill = true;
+		layout.marginLeft = 0;
+		layout.marginRight = 0;
+		layout.marginTop = 0;
+		layout.marginBottom = 0;
+		layout.spacing = 0;
+		parent.setLayout(layout);
+	}
 
-    /**
-     * Retrieves the style object from the style blackboard.
-     * 
-     * @return Style
-     */
-    protected Style getStyle() {
-        assert (featureCollection != null);
-        Style style = this.style;
-        if (style == null) {
-            SimpleFeatureType schema = featureCollection.getSchema();
-            if (SLDs.isLine(schema)) {
-                style = SLD.createLineStyle(Color.red, 1);
-            } else if (SLDs.isPoint(schema)) {
-                style = SLD.createPointStyle("Circle", Color.red, Color.green, 1f, 3f);
-            } else if (SLDs.isPolygon(schema)) {
-                style = SLD.createPolygonStyle(Color.red, Color.green, 1f);
-            }
-        }
-        this.style = style;
-        return style;
-    }
+	/**
+	 * Retrieves the style object from the style blackboard.
+	 * 
+	 * @return Style
+	 */
+	protected Style getStyle() {
+		assert featureCollection != null;
+		Style style = this.style;
+		if (style == null) {
+			final SimpleFeatureType schema = featureCollection.getSchema();
+			if (SLDs.isLine(schema)) {
+				style = SLD.createLineStyle(Color.red, 1);
+			} else if (SLDs.isPoint(schema)) {
+				style = SLD.createPointStyle("Circle", Color.red, Color.green, 1f, 3f);
+			} else if (SLDs.isPolygon(schema)) {
+				style = SLD.createPolygonStyle(Color.red, Color.green, 1f);
+			}
+		}
+		this.style = style;
+		return style;
+	}
 
-    /**
-     * Construct a subpart labeled with the provided tag.
-     * <p>
-     * Creates a composite with a grid layout of the specifed columns,
-     * and a label with text from label.
-     * </p>
-     * @param parent
-     * @param label
-     * @return Composite with one label 
-     */
-    public static Composite subpart( Composite parent, String label ) {
-        Composite subpart = new Composite(parent, SWT.NONE);
-        RowLayout across = new RowLayout();
-        across.type = SWT.HORIZONTAL;
-        across.wrap = true;
-        across.pack = true;
-        across.fill = true;
-        across.marginBottom = 1;
-        across.marginRight = 2;
+	/**
+	 * Construct a subpart labeled with the provided tag.
+	 * <p>
+	 * Creates a composite with a grid layout of the specifed columns, and a
+	 * label with text from label.
+	 * </p>
+	 * 
+	 * @param parent
+	 * @param label
+	 * @return Composite with one label
+	 */
+	public static Composite subpart(final Composite parent, final String label) {
+		final Composite subpart = new Composite(parent, SWT.NONE);
+		final RowLayout across = new RowLayout();
+		across.type = SWT.HORIZONTAL;
+		across.wrap = true;
+		across.pack = true;
+		across.fill = true;
+		across.marginBottom = 1;
+		across.marginRight = 2;
 
-        subpart.setLayout(across);
+		subpart.setLayout(across);
 
-        Label labell = new Label(subpart, SWT.LEFT);
-        labell.setText(label);
+		final Label labell = new Label(subpart, SWT.LEFT);
+		labell.setText(label);
 
-        RowData data = new RowData();
-        data.width = 40;
-        // check to see if width is not enough space
-        GC gc = new GC(parent.getParent());
-        gc.setFont(parent.getParent().getFont());
-        FontMetrics fontMetrics = gc.getFontMetrics();
-        gc.dispose();
-        int labelWidth = Dialog.convertWidthInCharsToPixels(fontMetrics, labell.getText().length() + 1);
-        if (labelWidth > data.width) {
-            data.width = labelWidth;
-        }
-        // TODO: adjust the methods that call this one to keep a consistent
-        // width (otherwise they're misaligned)
-        data.height = 10;
-        labell.setLayoutData(data);
+		final RowData data = new RowData();
+		data.width = 40;
+		// check to see if width is not enough space
+		final GC gc = new GC(parent.getParent());
+		gc.setFont(parent.getParent().getFont());
+		final FontMetrics fontMetrics = gc.getFontMetrics();
+		gc.dispose();
+		final int labelWidth = Dialog.convertWidthInCharsToPixels(fontMetrics, labell.getText().length() + 1);
+		if (labelWidth > data.width) {
+			data.width = labelWidth;
+		}
+		// TODO: adjust the methods that call this one to keep a consistent
+		// width (otherwise they're misaligned)
+		data.height = 10;
+		labell.setLayoutData(data);
 
-        return subpart;
-    }
-    /**
-     * Morph a text ModifyEvent into a SelectionEvent as best we can.
-     * <p>
-     * This may be a bad abuse of the event system, it appears to be in
-     * use because we are too lazy to specify a new event type for style
-     * modification.
-     * </p>
-     * <p>
-     * However this does seem to be in keeping with the purpose of SelectionEvent
-     * it already isolates out code from TypedEvents by providing a summary of what
-     * changed in which widet.
-     * </p>
-     * @param e
-     * @return A SelectionEvent based on the provided modify event
-     */
-    public static SelectionEvent selectionEvent( final ModifyEvent e ) {
-        Event event = new Event();
-        event.widget = e.widget;
-        event.data = e.data;
-        event.display = e.display;
-        event.time = e.time;
-        return new SelectionEvent(event){
-            /** <code>serialVersionUID</code> field */
-            private static final long serialVersionUID = 6544345585295778029L;
+		return subpart;
+	}
 
-            @Override
-            public Object getSource() {
-                return e.getSource();
-            }
-        };
-    };
+	/**
+	 * Morph a text ModifyEvent into a SelectionEvent as best we can.
+	 * <p>
+	 * This may be a bad abuse of the event system, it appears to be in use
+	 * because we are too lazy to specify a new event type for style
+	 * modification.
+	 * </p>
+	 * <p>
+	 * However this does seem to be in keeping with the purpose of
+	 * SelectionEvent it already isolates out code from TypedEvents by providing
+	 * a summary of what changed in which widet.
+	 * </p>
+	 * 
+	 * @param e
+	 * @return A SelectionEvent based on the provided modify event
+	 */
+	public static SelectionEvent selectionEvent(final ModifyEvent e) {
+		final Event event = new Event();
+		event.widget = e.widget;
+		event.data = e.data;
+		event.display = e.display;
+		event.time = e.time;
+		return new SelectionEvent(event) {
+			/** <code>serialVersionUID</code> field */
+			private static final long serialVersionUID = 6544345585295778029L;
+
+			@Override
+			public Object getSource() {
+				return e.getSource();
+			}
+		};
+	}
 }

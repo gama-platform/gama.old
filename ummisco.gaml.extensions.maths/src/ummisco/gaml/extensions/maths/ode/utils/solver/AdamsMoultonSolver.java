@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.maths.ode.utils.solver;
 
-import java.util.List;
-
 import org.apache.commons.math3.ode.nonstiff.AdamsMoultonIntegrator;
 import org.apache.commons.math3.ode.sampling.StepHandler;
 
@@ -24,9 +22,11 @@ public class AdamsMoultonSolver extends Solver {
 	public StepHandler stepHandler;
 
 	public AdamsMoultonSolver(final int nSteps, final double minStep, final double maxStep,
-			final double scalAbsoluteTolerance, final double scalRelativeTolerance, final GamaMap<String, IList<Double>> integrated_val) {
+			final double scalAbsoluteTolerance, final double scalRelativeTolerance,
+			final GamaMap<String, IList<Double>> integrated_val) {
 		super((minStep + maxStep) / 2,
-				new AdamsMoultonIntegrator(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance), integrated_val);
+				new AdamsMoultonIntegrator(nSteps, minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance),
+				integrated_val);
 	}
 
 }

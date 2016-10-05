@@ -18,7 +18,6 @@ import java.util.Set;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.resource.DescriptionUtils;
 import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.IResourceDescription;
 import org.eclipse.xtext.resource.IResourceDescription.Delta;
@@ -40,7 +39,7 @@ import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
 public class GamlResourceDescriptionManager extends DefaultResourceDescriptionManager
 		implements IResourceDescription.Manager.AllChangeAware {
 
-	@Inject private DescriptionUtils descriptionUtils;
+	// @Inject private DescriptionUtils descriptionUtils;
 
 	@Inject BuiltinGlobalScopeProvider provider;
 
@@ -53,7 +52,7 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 	@Override
 	public boolean isAffected(final Collection<Delta> deltas, final IResourceDescription candidate,
 			final IResourceDescriptions context) {
-		final boolean result = false;
+		// final boolean result = false;
 		final URI newUri = candidate.getURI();
 		final Set<URI> deltaUris = new HashSet<>();
 		for (final Delta d : deltas) {
