@@ -47,7 +47,7 @@ public class GamlOutlineTreeProvider extends BackgroundOutlineTreeProvider {
 	@Override
 	public void createChildren(final IOutlineNode parentNode, final EObject stm) {
 		if (stm != null && parentNode.hasChildren())
-			new GamlSwitch() {
+			new GamlSwitch<Object>() {
 
 				@Override
 				public Object caseModel(final Model stm) {

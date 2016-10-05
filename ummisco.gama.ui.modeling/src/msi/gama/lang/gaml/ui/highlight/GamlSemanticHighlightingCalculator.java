@@ -66,14 +66,13 @@ import msi.gama.lang.gaml.gaml.StringLiteral;
  */
 public class GamlSemanticHighlightingCalculator implements ISemanticHighlightingCalculator {
 
-	@Inject
-	private ITaskFinder taskFinder;
+	@Inject private ITaskFinder taskFinder;
 
-	private static Set<String> ASSIGNMENTS = new HashSet(
+	private static Set<String> ASSIGNMENTS = new HashSet<>(
 			Arrays.asList("<-", "<<", ">>", "->", "<+", ">-", "<<+", ">>-", "+<-"));
 
 	private IHighlightedPositionAcceptor acceptor;
-	Set<INode> done = new HashSet();
+	Set<INode> done = new HashSet<>();
 
 	@Override
 	public void provideHighlightingFor(final XtextResource resource, final IHighlightedPositionAcceptor arg1,

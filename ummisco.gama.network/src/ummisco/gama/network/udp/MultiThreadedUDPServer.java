@@ -1,36 +1,23 @@
 package ummisco.gama.network.udp;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaMapFactory;
 import msi.gaml.operators.Cast;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.NetworkMessage;
 import ummisco.gama.network.skills.INetworkSkill;
-import ummisco.gama.network.tcp.ClientServiceThread;
-import ummisco.gama.network.tcp.TCPConnector;
 
 public class MultiThreadedUDPServer extends Thread {
 
-	private IAgent myAgent;
+	private final IAgent myAgent;
 	public boolean OnServer = true;
-	private boolean closed = false;
+	private volatile boolean closed = false;
 	private DatagramSocket myUDPServerSocket;
 	private DatagramPacket sendPacket = null;
 
@@ -38,7 +25,7 @@ public class MultiThreadedUDPServer extends Thread {
 		return sendPacket;
 	}
 
-	public void setSendPacket(DatagramPacket sendPacket) {
+	public void setSendPacket(final DatagramPacket sendPacket) {
 		this.sendPacket = sendPacket;
 	}
 
@@ -53,7 +40,7 @@ public class MultiThreadedUDPServer extends Thread {
 	 * @param myServerSocket
 	 *            the myServerSocket to set
 	 */
-	public void setMyServerSocket(DatagramSocket u) {
+	public void setMyServerSocket(final DatagramSocket u) {
 		this.myUDPServerSocket = u;
 	}
 
@@ -71,6 +58,8 @@ public class MultiThreadedUDPServer extends Thread {
 		myUDPServerSocket = ss;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
 	public void run() {
 		// Successfully created Server Socket. Now wait for connections.
 		while (!closed) {
@@ -85,21 +74,21 @@ public class MultiThreadedUDPServer extends Thread {
 				// if(!OnServer){
 				// System.out.println("client ");
 				// }
-				byte[] receiveData = new byte[1024];
-//				byte[] sendData = new byte[1024];
+				final byte[] receiveData = new byte[1024];
+				// byte[] sendData = new byte[1024];
 				// Accept incoming connections.
-				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+				final DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				myUDPServerSocket.receive(receivePacket);
-				String sentence = new String(receivePacket.getData());
-				InetAddress IPAddress = receivePacket.getAddress();
-				int port = receivePacket.getPort();
+				final String sentence = new String(receivePacket.getData());
+				final InetAddress IPAddress = receivePacket.getAddress();
+				final int port = receivePacket.getPort();
 				myAgent.setAttribute("replyIP", IPAddress);
 				myAgent.setAttribute("replyPort", port);
 
-				GamaList<String> list_net_agents = (GamaList<String>) Cast.asList(myAgent.getScope(),
+				final GamaList<String> list_net_agents = (GamaList<String>) Cast.asList(myAgent.getScope(),
 						myAgent.getAttribute(INetworkSkill.NET_AGENT_GROUPS));
-				if (list_net_agents!=null && !list_net_agents.contains(IPAddress.toString()+"_"+port)) {
-					list_net_agents.addValue(myAgent.getScope(), IPAddress.toString()+"_"+port);
+				if (list_net_agents != null && !list_net_agents.contains(IPAddress.toString() + "_" + port)) {
+					list_net_agents.addValue(myAgent.getScope(), IPAddress.toString() + "_" + port);
 					myAgent.setAttribute(INetworkSkill.NET_AGENT_GROUPS, list_net_agents);
 				}
 				// System.out.println("RECEIVED: "+IPAddress+" "
@@ -113,18 +102,20 @@ public class MultiThreadedUDPServer extends Thread {
 					this.interrupt();
 				}
 
-				NetworkMessage msg = new NetworkMessage(myUDPServerSocket.toString(), sentence != null ? sentence : "");
+				final NetworkMessage msg = new NetworkMessage(myUDPServerSocket.toString(),
+						sentence != null ? sentence : "");
 				msgs.addValue(myAgent.getScope(), msg);
 
 				myAgent.setAttribute("messages" + myAgent, msgs);
 
-
-			} catch (SocketTimeoutException ste) {
+			} catch (final SocketTimeoutException ste) {
+				closed = true;
 				// System.out.println("closed ");
 
-			} catch (Exception ioe) {
+			} catch (final Exception ioe) {
 
 				if (myUDPServerSocket.isClosed()) {
+					closed = true;
 					this.interrupt();
 				} else {
 					ioe.printStackTrace();
@@ -134,14 +125,16 @@ public class MultiThreadedUDPServer extends Thread {
 		}
 
 		try {
-			myAgent.getScope().getSimulation().setAttribute(UDPConnector._UDP_SERVER + myUDPServerSocket.getLocalPort(), null);
-			myAgent.getScope().getSimulation().setAttribute(UDPConnector._UDP_CLIENT + myUDPServerSocket.getLocalPort(), null);
+			myAgent.getScope().getSimulation().setAttribute(UDPConnector._UDP_SERVER + myUDPServerSocket.getLocalPort(),
+					null);
+			myAgent.getScope().getSimulation().setAttribute(UDPConnector._UDP_CLIENT + myUDPServerSocket.getLocalPort(),
+					null);
 			myUDPServerSocket.close();
 			Thread.sleep(100);
 
 			Thread.currentThread().interrupt();
 
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

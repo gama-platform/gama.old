@@ -165,7 +165,7 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 	void openFilterDialog() {
 		final IEvaluationContext ec = new EvaluationContext(null, this);
 		ec.addVariable(ISources.ACTIVE_PART_NAME, this);
-		final ExecutionEvent ev = new ExecutionEvent(null, new HashMap(), this, ec);
+		final ExecutionEvent ev = new ExecutionEvent(null, new HashMap<>(), this, ec);
 		new ConfigureContentsDialogHandler().execute(ev);
 	}
 }
