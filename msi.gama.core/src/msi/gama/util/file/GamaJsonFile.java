@@ -58,10 +58,8 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, Stri
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if (getBuffer() != null)
 			return;
-		FileReader reader = null;
-		try {
+		try (FileReader reader = new FileReader(getFile(scope))) {
 			final GamaMap<String, Object> map;
-			reader = new FileReader(getFile(scope));
 			final Object o = convertToGamaStructures(scope, JSONValue.parse(reader));
 			if (o instanceof GamaMap) {
 				map = (GamaMap<String, Object>) o;
@@ -72,13 +70,6 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, Stri
 			setBuffer(map);
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
-		} finally {
-			if (reader != null)
-				try {
-					reader.close();
-				} catch (final IOException e) {
-					throw GamaRuntimeException.create(e, scope);
-				}
 		}
 	}
 
@@ -115,25 +106,18 @@ public class GamaJsonFile extends GamaFile<GamaMap<String, Object>, Object, Stri
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		final GamaMap<String, Object> map = getBuffer();
-		FileWriter writer = null;
 		try {
 			final File file = getFile(scope);
 			if (file.exists()) {
 				GAMA.reportAndThrowIfNeeded(scope,
 						GamaRuntimeException.warning(file.getName() + " already exists", scope), false);
 			} else if (!file.exists() && file.createNewFile()) {
-				writer = new FileWriter(getFile(scope));
-				JSONValue.writeJSONString(map, writer);
+				try (FileWriter writer = new FileWriter(getFile(scope))) {
+					JSONValue.writeJSONString(map, writer);
+				}
 			}
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
-		} finally {
-			if (writer != null)
-				try {
-					writer.close();
-				} catch (final IOException e) {
-					throw GamaRuntimeException.create(e, scope);
-				}
 		}
 	}
 

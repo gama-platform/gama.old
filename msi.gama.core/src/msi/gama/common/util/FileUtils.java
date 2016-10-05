@@ -177,14 +177,12 @@ public class FileUtils {
 		if (f == null || !f.exists())
 			return false;
 		byte[] data;
-		try {
-			final FileInputStream in = new FileInputStream(f);
+		try (FileInputStream in = new FileInputStream(f)) {
 			int size = in.available();
 			if (size > 1024)
 				size = 1024;
 			data = new byte[size];
 			in.read(data);
-			in.close();
 			int ascii = 0;
 			int other = 0;
 

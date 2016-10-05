@@ -30,7 +30,7 @@ import ummisco.gama.ui.parameters.AbstractEditor;
 
 public abstract class AttributesEditorsView<T> extends ExpandableItemsView<T> implements ITooltipDisplayer {
 
-	private final Set<Label> labels = new LinkedHashSet<Label>();
+	final Set<Label> labels = new LinkedHashSet<Label>();
 
 	public final static int EDITORS_SPACING = 0;
 

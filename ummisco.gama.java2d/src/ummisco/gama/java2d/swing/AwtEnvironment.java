@@ -127,7 +127,7 @@ public final class AwtEnvironment {
 
 	// ============================= Constructor =============================
 
-	private final Display display;
+	final Display display;
 	private final AwtDialogListener dialogListener;
 	// private final GlobalFocusHandler globalFocusHandler;
 

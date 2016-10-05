@@ -77,30 +77,30 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 			final URLConnection conn = url.openConnection();
 
 			// open the stream and put it into BufferedReader
-			final BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+			try (BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
 
-			String inputLine;
+				String inputLine;
 
-			// save to this filename
-			// String fileName = "/users/mkyong/test.html";
-			final File file = new File(this.getPath(scope));
+				// save to this filename
+				// String fileName = "/users/mkyong/test.html";
+				final File file = new File(this.getPath(scope));
 
-			// if (!file.exists()) {
-			// file.createNewFile();
-			// }
+				// if (!file.exists()) {
+				// file.createNewFile();
+				// }
 
-			// use FileWriter to write file
-			final FileWriter fw = new FileWriter(file.getAbsoluteFile());
-			final BufferedWriter bw = new BufferedWriter(fw);
+				// use FileWriter to write file
+				try (final FileWriter fw = new FileWriter(file.getAbsoluteFile());
+						final BufferedWriter bw = new BufferedWriter(fw)) {
 
-			while ((inputLine = br.readLine()) != null) {
-				bw.write(inputLine + "\n");
+					while ((inputLine = br.readLine()) != null) {
+						bw.write(inputLine + "\n");
 
-				allLines.add(inputLine);
+						allLines.add(inputLine);
+					}
+
+				}
 			}
-
-			bw.close();
-			br.close();
 
 		} catch (final MalformedURLException e) {
 			e.printStackTrace();

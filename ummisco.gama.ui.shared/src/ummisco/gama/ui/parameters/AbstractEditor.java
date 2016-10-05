@@ -113,11 +113,12 @@ public abstract class AbstractEditor<T>
 	boolean acceptNull = true;
 	private T originalValue = null;
 	protected T currentValue = null;
-	private List<T> possibleValues = null;
-	private final Boolean isCombo, isEditable;
+	List<T> possibleValues = null;
+	final Boolean isCombo;
+	private final Boolean isEditable;
 	protected Number minValue;
 	protected Number maxValue;
-	private Combo combo;
+	Combo combo;
 	private CLabel fixedValue;
 	protected volatile boolean internalModification;
 	private final EditorListener<T> listener;

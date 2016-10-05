@@ -293,7 +293,6 @@ public class GamaShapeFile extends GamaGisFile {
 	protected void readShapes(final IScope scope) {
 		scope.getGui().getStatus().beginSubStatus("Reading file" + getName(scope));
 		ShapefileDataStore store = null;
-		FeatureReader reader = null;
 		final File file = getFile(scope);
 		final IList list = getBuffer();
 		int size = 0;
@@ -303,57 +302,51 @@ public class GamaShapeFile extends GamaGisFile {
 			size = store.getFeatureSource().getCount(Query.ALL);
 			int index = 0;
 			computeProjection(scope, env);
-			reader = store.getFeatureReader();
+			try (FeatureReader reader = store.getFeatureReader()) {
 
-			while (reader.hasNext()) {
-				scope.getGui().getStatus().setSubStatusCompletion(index++ / size);
-				final Feature feature = reader.next();
-				Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
-				if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
-					g = gis.transform(g);
-					if (!with3D) {
-						g.apply(new CoordinateSequenceFilter() {
+				while (reader.hasNext()) {
+					scope.getGui().getStatus().setSubStatusCompletion(index++ / size);
+					final Feature feature = reader.next();
+					Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
+					if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
+						g = gis.transform(g);
+						if (!with3D) {
+							g.apply(new CoordinateSequenceFilter() {
 
-							@Override
-							public void filter(final CoordinateSequence seq, final int i) {
-								if (i <= seq.size() - 1) {
-									seq.getCoordinate(i).z = 0.0;
+								@Override
+								public void filter(final CoordinateSequence seq, final int i) {
+									if (i <= seq.size() - 1) {
+										seq.getCoordinate(i).z = 0.0;
+									}
 								}
-							}
 
-							@Override
-							public boolean isDone() {
-								return false;
-							}
+								@Override
+								public boolean isDone() {
+									return false;
+								}
 
-							@Override
-							public boolean isGeometryChanged() {
-								return true;
-							}
-						});
+								@Override
+								public boolean isGeometryChanged() {
+									return true;
+								}
+							});
+						}
+						list.add(new GamaGisGeometry(g, feature));
+					} else {
+						// See Issue 725
+						GAMA.reportError(scope,
+								GamaRuntimeException
+										.warning(
+												"GamaShapeFile.fillBuffer; geometry could not be added  as it is "
+														+ (g == null ? "nil: " : "empty: ") + feature.getIdentifier(),
+												scope),
+								false);
 					}
-					list.add(new GamaGisGeometry(g, feature));
-				} else {
-					// See Issue 725
-					GAMA.reportError(scope,
-							GamaRuntimeException
-									.warning(
-											"GamaShapeFile.fillBuffer; geometry could not be added  as it is "
-													+ (g == null ? "nil: " : "empty: ") + feature.getIdentifier(),
-											scope),
-							false);
 				}
 			}
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			if (reader != null) {
-				try {
-					reader.close();
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-			}
 			if (store != null) {
 				store.dispose();
 			}
@@ -368,7 +361,6 @@ public class GamaShapeFile extends GamaGisFile {
 	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
 		final File file = getFile(scope);
 		ShapefileDataStore store = null;
-		FeatureIterator<SimpleFeature> it = null;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> features = null;
 		try {
 			scope.getGui().getStatus().beginSubStatus((returnIt ? "Reading file" : "Measuring file ") + getName(scope));
@@ -381,45 +373,48 @@ public class GamaShapeFile extends GamaGisFile {
 			computeProjection(scope, env);
 			if (features != null && returnIt) {
 				final double size = features.size();
-				it = features.features();
-				// return returnIt ? features.features() : null;
-				int i = 0;
-				while (it.hasNext()) {
-					scope.getGui().getStatus().setSubStatusCompletion(i++ / size);
-					final SimpleFeature feature = it.next();
-					Geometry g = (Geometry) feature.getDefaultGeometry();
-					if (!with3D) {
-						g.apply(new CoordinateSequenceFilter() {
+				try (FeatureIterator<SimpleFeature> it = features.features()) {
+					// return returnIt ? features.features() : null;
+					int i = 0;
+					while (it.hasNext()) {
+						scope.getGui().getStatus().setSubStatusCompletion(i++ / size);
+						final SimpleFeature feature = it.next();
+						Geometry g = (Geometry) feature.getDefaultGeometry();
+						if (!with3D) {
+							g.apply(new CoordinateSequenceFilter() {
 
-							@Override
-							public void filter(final CoordinateSequence seq, final int i) {
-								if (i <= seq.size() - 1) {
-									seq.getCoordinate(i).z = 0.0;
+								@Override
+								public void filter(final CoordinateSequence seq, final int i) {
+									if (i <= seq.size() - 1) {
+										seq.getCoordinate(i).z = 0.0;
+									}
 								}
-							}
 
-							@Override
-							public boolean isDone() {
-								return false;
-							}
+								@Override
+								public boolean isDone() {
+									return false;
+								}
 
-							@Override
-							public boolean isGeometryChanged() {
-								return true;
-							}
-						});
-					}
-					if (g != null && !g.isEmpty() /* Fix for Issue 725 */ ) {
-						// Fix for Issue 677
-						g = gis.transform(g);
-						((IList) getBuffer()).add(new GamaGisGeometry(g, feature));
-					} else {
-						// See Issue 725
-						GAMA.reportError(scope,
-								GamaRuntimeException
-										.warning("GamaShapeFile.fillBuffer; geometry could not be added  as it is "
-												+ (g == null ? "nil :" : "empty :") + feature.getID(), scope),
-								false);
+								@Override
+								public boolean isGeometryChanged() {
+									return true;
+								}
+							});
+						}
+						if (g != null && !g.isEmpty() /* Fix for Issue 725 */ ) {
+							// Fix for Issue 677
+							g = gis.transform(g);
+							((IList) getBuffer()).add(new GamaGisGeometry(g, feature));
+						} else {
+							// See Issue 725
+							GAMA.reportError(scope,
+									GamaRuntimeException
+											.warning(
+													"GamaShapeFile.fillBuffer; geometry could not be added  as it is "
+															+ (g == null ? "nil :" : "empty :") + feature.getID(),
+													scope),
+									false);
+						}
 					}
 				}
 			} else {
@@ -428,9 +423,6 @@ public class GamaShapeFile extends GamaGisFile {
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		} finally {
-			if (it != null) {
-				it.close();
-			}
 			if (store != null) {
 				store.dispose();
 			}

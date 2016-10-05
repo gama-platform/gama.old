@@ -30,7 +30,7 @@ import msi.gaml.types.IType;
 @SuppressWarnings({ "rawtypes" })
 public class Stats2 extends Stats {
 
-	private static DoubleArrayList from(final IScope scope, final IContainer values) {
+	static DoubleArrayList from(final IScope scope, final IContainer values) {
 		final DoubleArrayList d = new DoubleArrayList(values.length(scope));
 		for (final Object o : values.iterable(scope)) {
 			if (o instanceof Number) {

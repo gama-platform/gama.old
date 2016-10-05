@@ -367,6 +367,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			return new EntryIterator();
 		}
 
+		@SuppressWarnings("synthetic-access")
 		@Override
 		public boolean removeElement(final Map.Entry<K, V> entry) {
 			Object val;
@@ -594,6 +595,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		public Iterator<V> iterator() {
 			return new THashIterator<V>() {
 
+				@SuppressWarnings("synthetic-access")
 				@Override
 				protected V objectAtIndex(final int index) {
 					return _values[index];

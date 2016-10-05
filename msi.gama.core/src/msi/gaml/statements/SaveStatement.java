@@ -323,8 +323,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		if (f.exists()) {
 			f.delete();
 		}
-		try {
-			final FileWriter fw = new FileWriter(f);
+		try (FileWriter fw = new FileWriter(f)) {
 			String header = "";
 			final GridPopulation gp = (GridPopulation) species.getPopulation(scope);
 			final int nbCols = gp.getNbCols();
@@ -357,7 +356,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 				fw.write(val + Strings.LN);
 			}
-			fw.close();
 		} catch (final IOException e) {
 			return;
 		}
@@ -485,11 +483,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	public void saveText(final String type, final File fileTxt, final boolean header, final IScope scope)
 			throws GamaRuntimeException {
-		try {
+		try (FileWriter fw = new FileWriter(fileTxt, true)) {
 			if (item == null) {
 				return;
 			}
-			final FileWriter fw = new FileWriter(fileTxt, true);
 			if (type.equals("text")) {
 				fw.write(Cast.asString(scope, item.value(scope)) + Strings.LN);
 			} else if (type.equals("csv")) {
@@ -556,7 +553,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			}
 
-			fw.close();
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Throwable e) {
@@ -646,46 +642,46 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				specs);
 		store.createSchema(type);
 		// AD: creation of a FeatureWriter on the store.
-		final FeatureWriter fw = store.getFeatureWriter(Transaction.AUTO_COMMIT);
+		try (FeatureWriter fw = store.getFeatureWriter(Transaction.AUTO_COMMIT)) {
 
-		// AD Builds once the list of agent attributes to evaluate
-		final Collection<String> attributeValues = attributes == null ? Collections.EMPTY_LIST : attributes.values();
-		final List<Object> values = new ArrayList<>();
-		for (final IShape ag : agents) {
-			values.clear();
-			final SimpleFeature ff = (SimpleFeature) fw.next();
-			// geometry is by convention (in specs) at position 0
-			values.add(gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry()));
-			if (ag instanceof IAgent) {
-				for (final String variable : attributeValues) {
-					if (stringVars.contains(variable))
-						values.add(Cast.toGaml(((IAgent) ag).getDirectVarValue(scope, variable)));
-					else
-						values.add(((IAgent) ag).getDirectVarValue(scope, variable));
+			// AD Builds once the list of agent attributes to evaluate
+			final Collection<String> attributeValues = attributes == null ? Collections.EMPTY_LIST
+					: attributes.values();
+			final List<Object> values = new ArrayList<>();
+			for (final IShape ag : agents) {
+				values.clear();
+				final SimpleFeature ff = (SimpleFeature) fw.next();
+				// geometry is by convention (in specs) at position 0
+				values.add(gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry()));
+				if (ag instanceof IAgent) {
+					for (final String variable : attributeValues) {
+						if (stringVars.contains(variable))
+							values.add(Cast.toGaml(((IAgent) ag).getDirectVarValue(scope, variable)));
+						else
+							values.add(((IAgent) ag).getDirectVarValue(scope, variable));
+					}
 				}
+				// AD Assumes that the type is ok.
+				// AD TODO replace this list of variable names by expressions
+				// (to be
+				// evaluated by agents), so that dynamic values can be passed
+				// AD WARNING Would require some sort of iterator operator that
+				// would collect the values beforehand
+				ff.setAttributes(values);
+				fw.write();
 			}
-			// AD Assumes that the type is ok.
-			// AD TODO replace this list of variable names by expressions (to be
-			// evaluated by agents), so that dynamic values can be passed
-			// AD WARNING Would require some sort of iterator operator that
-			// would collect the values beforehand
-			ff.setAttributes(values);
-			fw.write();
-		}
-		fw.close();
-		store.dispose();
-		if (gis != null) {
-			writePRJ(scope, path, gis);
+			store.dispose();
+			if (gis != null) {
+				writePRJ(scope, path, gis);
+			}
 		}
 	}
 
 	private void writePRJ(final IScope scope, final String path, final IProjection gis) {
 		final CoordinateReferenceSystem crs = gis.getInitialCRS();
 		if (crs != null) {
-			try {
-				final FileWriter fw = new FileWriter(path.replace(".shp", ".prj"));
+			try (FileWriter fw = new FileWriter(path.replace(".shp", ".prj"))) {
 				fw.write(crs.toString());
-				fw.close();
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}

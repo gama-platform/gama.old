@@ -508,7 +508,7 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 		return redraw;
 	}
 
-	private boolean contains(final Rectangle rec, final int x, final int y) {
+	boolean contains(final Rectangle rec, final int x, final int y) {
 		return x >= rec.x && y >= rec.y && x - rec.x < rec.width && y - rec.y < rec.height;
 	}
 
@@ -554,6 +554,12 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 
 	private final class BoxModifyListener implements ModifyListener {
 
+		/**
+		 * 
+		 */
+		public BoxModifyListener() {
+		}
+
 		@Override
 		public void modifyText(final ModifyEvent e) {
 			// it is more efficient to not draw boxes in PaintListner
@@ -568,6 +574,12 @@ public class BoxDecoratorImpl implements IBoxDecorator {
 	}
 
 	private final class BoxKeyListener implements KeyListener {
+
+		/**
+		 * 
+		 */
+		public BoxKeyListener() {
+		}
 
 		@Override
 		public void keyReleased(final KeyEvent e) {

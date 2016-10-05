@@ -93,10 +93,8 @@ public class GamaGridFile extends GamaGisFile {
 						false);
 				final StringBuilder text = new StringBuilder();
 				final String NL = System.getProperty("line.separator");
-				Scanner scanner = null;
 
-				try {
-					scanner = new Scanner(getFile(scope));
+				try (Scanner scanner = new Scanner(getFile(scope))) {
 					final int cpt = 0;
 					while (scanner.hasNextLine()) {
 						final String line = scanner.nextLine();
@@ -117,10 +115,6 @@ public class GamaGridFile extends GamaGisFile {
 							"The format of " + getName(scope) + " is not correct. Error: " + e2.getMessage(), scope);
 					ex.addContext("for file " + getPath(scope));
 					throw ex;
-				} finally {
-					if (scanner != null) {
-						scanner.close();
-					}
 				}
 
 				text.append(NL);

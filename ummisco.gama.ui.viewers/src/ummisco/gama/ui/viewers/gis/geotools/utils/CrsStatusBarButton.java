@@ -101,8 +101,8 @@ public class CrsStatusBarButton extends ControlContribution implements MapBounds
 		return mapPane.getMapContent().getCoordinateReferenceSystem();
 	}
 
-	private void displayCRS(final CoordinateReferenceSystem crs) {
-		if ( crs == null ) {
+	protected void displayCRS(final CoordinateReferenceSystem crs) {
+		if (crs == null) {
 			crsButton.setText("No CRS defined");
 		} else {
 			crsButton.setText(crs.getName().toString());
@@ -118,7 +118,7 @@ public class CrsStatusBarButton extends ControlContribution implements MapBounds
 			@Override
 			public void onDisplayAreaChanged(final MapPaneEvent ev) {
 				final ReferencedEnvelope env = mapPane.getDisplayArea();
-				if ( env != null ) {
+				if (env != null) {
 					displayCRS(env.getCoordinateReferenceSystem());
 				}
 			}
@@ -126,19 +126,22 @@ public class CrsStatusBarButton extends ControlContribution implements MapBounds
 			@Override
 			public void onResized(final MapPaneEvent ev) {
 				final ReferencedEnvelope env = mapPane.getDisplayArea();
-				if ( env != null ) {
+				if (env != null) {
 					displayCRS(env.getCoordinateReferenceSystem());
 				}
 			}
 
 			@Override
-			public void onRenderingStarted(final MapPaneEvent ev) {}
+			public void onRenderingStarted(final MapPaneEvent ev) {
+			}
 
 			@Override
-			public void onRenderingStopped(final MapPaneEvent ev) {}
+			public void onRenderingStopped(final MapPaneEvent ev) {
+			}
 
 			@Override
-			public void onRenderingProgress(final MapPaneEvent ev) {}
+			public void onRenderingProgress(final MapPaneEvent ev) {
+			}
 
 		};
 	}
@@ -146,7 +149,7 @@ public class CrsStatusBarButton extends ControlContribution implements MapBounds
 	@Override
 	public void mapBoundsChanged(final MapBoundsEvent event) {
 		final ReferencedEnvelope env = mapPane.getDisplayArea();
-		if ( env != null ) {
+		if (env != null) {
 			displayCRS(env.getCoordinateReferenceSystem());
 		}
 	}

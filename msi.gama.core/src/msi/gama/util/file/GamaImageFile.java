@@ -305,9 +305,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	private IMatrix matrixValueFromPgm(final IScope scope, final GamaPoint preferredSize) throws GamaRuntimeException {
 		// TODO PreferredSize is not respected here
-		BufferedReader in = null;
-		try {
-			in = new BufferedReader(new FileReader(getFile(scope)));
+		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			StringTokenizer tok;
 			String str = in.readLine();
 			if (str != null && !str.equals("P2")) {
@@ -341,15 +339,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			return matrix;
 		} catch (final Throwable ex) {
 			throw GamaRuntimeException.create(ex, scope);
-		} finally {
-			if (in != null) {
-				try {
-					in.close();
-				} catch (final IOException e) {
-					throw GamaRuntimeException.create(e, scope);
-				}
-			}
 		}
+
 	}
 
 	public String getGeoDataFile(final IScope scope) {
@@ -384,10 +375,9 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		boolean yNeg = false;
 		final String extension = getExtension(scope);
 		if (geodataFile != null && !geodataFile.equals("")) {
-			try {
-				final InputStream ips = new FileInputStream(geodataFile);
-				final InputStreamReader ipsr = new InputStreamReader(ips);
-				final BufferedReader in = new BufferedReader(ipsr);
+			try (final InputStream ips = new FileInputStream(geodataFile);
+					final InputStreamReader ipsr = new InputStreamReader(ips);
+					final BufferedReader in = new BufferedReader(ipsr);) {
 				String line = in.readLine();
 				if (line != null) {
 					final String[] cellSizeXStr = line.split(" ");
@@ -414,7 +404,6 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 				}
 				isGeoreferenced = true;
 
-				in.close();
 			} catch (final Throwable e) {
 				throw GamaRuntimeException.create(e, scope);
 			}

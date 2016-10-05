@@ -48,11 +48,11 @@ import msi.gaml.variables.IVariable;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class BatchAgent extends ExperimentAgent {
 
-	private final IExpression stopCondition;
+	final IExpression stopCondition;
 	private int runNumber;
-	private ParametersSet currentSolution;
+	ParametersSet currentSolution;
 	private Double[] seeds;
-	private final List<Double> fitnessValues = new ArrayList<>();
+	final List<Double> fitnessValues = new ArrayList<>();
 
 	// public BatchAgent(final Object...args) throws GamaRuntimeException {
 	// this((Ipopulation) args[0]);

@@ -1,17 +1,10 @@
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ICommandListener;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.GestureEvent;
-import org.eclipse.swt.events.GestureListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -49,7 +42,7 @@ public class EditToolbar {
 	private GridData editGridData;
 	private GamaToolbarSimple toolbar;
 	private ToolItem minus, mark, line, folding;
-	private final GamlEditor editor;
+	final GamlEditor editor;
 	private Font font;
 	private static boolean listenersRegistered = false;
 
@@ -112,20 +105,16 @@ public class EditToolbar {
 			// public void mouseDoubleClick(final MouseEvent e) {
 			// }
 			// });
-			text.addGestureListener(new GestureListener() {
+			text.addGestureListener(ge -> {
+				if (ge.detail == SWT.GESTURE_BEGIN) {
 
-				@Override
-				public void gesture(final GestureEvent ge) {
-					if (ge.detail == SWT.GESTURE_BEGIN) {
+				} else
 
-					} else
-
-					if (ge.detail == SWT.GESTURE_MAGNIFY) {
-						if (ge.magnification > 1.0) {
-							setFontAndCheckButtons(1);
-						} else if (ge.magnification < 1.0) {
-							setFontAndCheckButtons(-1);
-						}
+				if (ge.detail == SWT.GESTURE_MAGNIFY) {
+					if (ge.magnification > 1.0) {
+						setFontAndCheckButtons(1);
+					} else if (ge.magnification < 1.0) {
+						setFontAndCheckButtons(-1);
 					}
 				}
 			});
@@ -252,41 +241,17 @@ public class EditToolbar {
 		final ICommandService service = editor.getSite().getService(ICommandService.class);
 		final Command nextCommand = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
 		nextEdit.setEnabled(nextCommand.isEnabled());
-		final ICommandListener nextListener = new ICommandListener() {
-
-			@Override
-			public void commandChanged(final CommandEvent e) {
-				nextEdit.setEnabled(nextCommand.isEnabled());
-			}
-		};
+		final ICommandListener nextListener = e -> nextEdit.setEnabled(nextCommand.isEnabled());
 
 		nextCommand.addCommandListener(nextListener);
 		final Command lastCommand = service.getCommand(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
-		final ICommandListener lastListener = new ICommandListener() {
-
-			@Override
-			public void commandChanged(final CommandEvent e) {
-				lastEdit.setEnabled(lastCommand.isEnabled());
-			}
-		};
+		final ICommandListener lastListener = e -> lastEdit.setEnabled(lastCommand.isEnabled());
 		lastEdit.setEnabled(lastCommand.isEnabled());
 		lastCommand.addCommandListener(lastListener);
 		// Attaching dispose listeners to the toolItems so that they remove the
 		// command listeners properly
-		lastEdit.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(final DisposeEvent e) {
-				lastCommand.removeCommandListener(lastListener);
-			}
-		});
-		nextEdit.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(final DisposeEvent e) {
-				nextCommand.removeCommandListener(nextListener);
-			}
-		});
+		lastEdit.addDisposeListener(e -> lastCommand.removeCommandListener(lastListener));
+		nextEdit.addDisposeListener(e -> nextCommand.removeCommandListener(nextListener));
 
 		toolbar.menu("editor.outline2", null, "Show outline", new SelectionAdapter() {
 
@@ -473,36 +438,20 @@ public class EditToolbar {
 
 			@Override
 			public void afterValueChange(final Boolean newValue) {
-				visitToolbars(new IToolbarVisitor() {
-
-					@Override
-					public void visit(final EditToolbar toolbar) {
-						toolbar.getMarkItem().setSelection(newValue);
-					}
-				});
+				visitToolbars(toolbar -> toolbar.getMarkItem().setSelection(newValue));
 			}
 		};
 		pref.addChangeListener(change);
 		// Listening to "Line number"
 		final IPreferenceStore store = editor.getAdvancedPreferenceStore();
-		store.addPropertyChangeListener(new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(final PropertyChangeEvent event) {
-				final String id = event.getProperty();
-				IToolbarVisitor visitor = null;
-				if (id.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER)) {
-					visitor = new IToolbarVisitor() {
-
-						@Override
-						public void visit(final EditToolbar toolbar) {
-							toolbar.getLineItem().setSelection((Boolean) event.getNewValue());
-						}
-					};
-				}
-				if (visitor != null) {
-					visitToolbars(visitor);
-				}
+		store.addPropertyChangeListener(event -> {
+			final String id = event.getProperty();
+			IToolbarVisitor visitor = null;
+			if (id.equals(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER)) {
+				visitor = toolbar -> toolbar.getLineItem().setSelection((Boolean) event.getNewValue());
+			}
+			if (visitor != null) {
+				visitToolbars(visitor);
 			}
 		});
 	}

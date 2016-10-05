@@ -35,8 +35,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -88,7 +86,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		IToolbarDecoratedView.Pausable, IToolbarDecoratedView.Zoomable, IGamaView.Display {
 
 	protected SashForm form;
-	protected Composite surfaceComposite;
+	public Composite surfaceComposite;
 	protected Composite sidePanel;
 	protected IPerspectiveListener perspectiveListener;
 	public DisplayOverlay overlay;
@@ -178,15 +176,11 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		fullScreenShell = null;
 	}
 
-	protected Runnable displayOverlay = new Runnable() {
-
-		@Override
-		public void run() {
-			if (overlay == null) {
-				return;
-			}
-			updateOverlay();
+	protected Runnable displayOverlay = () -> {
+		if (overlay == null) {
+			return;
 		}
+		updateOverlay();
 	};
 
 	protected void updateOverlay() {
@@ -457,13 +451,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public void changed(final Changes changes, final boolean value) {
 		switch (changes) {
 		case ZOOM:
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					overlay.update();
-				}
-			});
+			WorkbenchHelper.asyncRun(() -> overlay.update());
 			break;
 		case BACKGROUND:
 			break;
@@ -667,31 +655,27 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			output.setSynchronized(false);
 		// end fix
 		if (updateThread == null) {
-			updateThread = new Thread(new Runnable() {
+			updateThread = new Thread(() -> {
+				final IDisplaySurface s = getDisplaySurface();
+				// if (s != null && !s.isDisposed() && !disposed) {
+				// s.updateDisplay(false);
+				// }
+				while (!disposed) {
 
-				@Override
-				public void run() {
-					final IDisplaySurface s = getDisplaySurface();
-					// if (s != null && !s.isDisposed() && !disposed) {
-					// s.updateDisplay(false);
-					// }
-					while (!disposed) {
-
-						if (s != null && s.isRealized() && !s.isDisposed() && !disposed) {
-							if (s.getData().isAutosave()) {
-								doSnapshot();
-							}
-							s.updateDisplay(false);
-							// Fix for issue #1693
-							if (output.isInInitPhase()) {
-								output.setInInitPhase(false);
-								output.setSynchronized(oldSync);
-								// end fix
-							}
-							acquireLock();
+					if (s != null && s.isRealized() && !s.isDisposed() && !disposed) {
+						if (s.getData().isAutosave()) {
+							doSnapshot();
 						}
-
+						s.updateDisplay(false);
+						// Fix for issue #1693
+						if (output.isInInitPhase()) {
+							output.setInInitPhase(false);
+							output.setSynchronized(oldSync);
+							// end fix
+						}
+						acquireLock();
 					}
+
 				}
 			});
 			updateThread.start();
@@ -850,22 +834,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			i.setExpanded(false);
 		}
 		content.layout();
-		viewer.addListener(SWT.Collapse, new Listener() {
-
-			@Override
-			public void handleEvent(final Event e) {
-				content.redraw();
-			}
-
-		});
-		viewer.addListener(SWT.Expand, new Listener() {
-
-			@Override
-			public void handleEvent(final Event e) {
-				content.redraw();
-			}
-
-		});
+		viewer.addListener(SWT.Collapse, e -> content.redraw());
+		viewer.addListener(SWT.Expand, e -> content.redraw());
 		parent.layout();
 		return content;
 
@@ -892,14 +862,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			return;
 		if (output == getOutput()) {
 			if (isFullScreen()) {
-				WorkbenchHelper.run(new Runnable() {
-
-					@Override
-					public void run() {
-						toggleFullScreen();
-
-					}
-				});
+				WorkbenchHelper.run(() -> toggleFullScreen());
 			}
 		}
 		output.dispose();

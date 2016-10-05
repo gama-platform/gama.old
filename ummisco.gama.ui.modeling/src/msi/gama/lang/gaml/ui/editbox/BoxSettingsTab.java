@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -35,39 +34,39 @@ public class BoxSettingsTab {
 	protected IBoxSettings settings;
 	protected IBoxDecorator decorator;
 
-	private Button enabled;
-	private Combo combo;
-	private Combo borderWidth;
-	private Button roundBox;
-	private Combo highlightWidth;
-	private Button highlightOne;
-	private ColorSelector fillSelectedColor;
-	private Button fillSelected;
-	private Combo builderCombo;
-	private ColorSelector fromColorLab;
-	private ColorSelector toColorLab;
-	private StyledText st;
-	private Button bordertDrawLine;
-	private Button highlightDrawLine;
-	private Button fillGradient;
-	private ColorSelector fillGradientColor;
-	private Button fillOnMove;
-	private Button circulateColors;
-	private Combo levels;
-	private Combo fillKey;
+	Button enabled;
+	Combo combo;
+	Combo borderWidth;
+	Button roundBox;
+	Combo highlightWidth;
+	Button highlightOne;
+	ColorSelector fillSelectedColor;
+	Button fillSelected;
+	Combo builderCombo;
+	ColorSelector fromColorLab;
+	ColorSelector toColorLab;
+	StyledText st;
+	Button bordertDrawLine;
+	Button highlightDrawLine;
+	Button fillGradient;
+	ColorSelector fillGradientColor;
+	Button fillOnMove;
+	Button circulateColors;
+	Combo levels;
+	Combo fillKey;
 	protected boolean changed;
-	private Composite composite;
-	private ColorSelector borderColorSelector;
-	private Combo borderColorType;
-	private Combo highlightColorType;
-	private ColorSelector highlightColorSelector;
-	private Button genGradientBut;
-	private Combo borderLineStyle;
-	private Combo highlightLineStyle;
-	private Button noBackground;
-	private Button eolBox;
-	private Scale scale;
-	private Spinner spinner;
+	Composite composite;
+	ColorSelector borderColorSelector;
+	Combo borderColorType;
+	Combo highlightColorType;
+	ColorSelector highlightColorSelector;
+	Button genGradientBut;
+	Combo borderLineStyle;
+	Combo highlightLineStyle;
+	Button noBackground;
+	Button eolBox;
+	Scale scale;
+	Spinner spinner;
 
 	public BoxSettingsTab() {
 	}
@@ -88,15 +87,12 @@ public class BoxSettingsTab {
 		decorator.setStyledText(st);
 		decorator.decorate(true);
 		decorator.enableUpdates(true);
-		settings.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(final PropertyChangeEvent event) {
-				changed = true;
-				if (event.getProperty().equals(IBoxSettings.PropertiesKeys.Color.name()))
-					updateFromToColors();
+		settings.addPropertyChangeListener(event -> {
+			changed = true;
+			if (event.getProperty().equals(IBoxSettings.PropertiesKeys.Color.name()))
+				updateFromToColors();
 
-				provider.getEditorsBoxSettings().copyFrom(settings);
-			}
+			provider.getEditorsBoxSettings().copyFrom(settings);
 		});
 
 		return result;
@@ -265,12 +261,7 @@ public class BoxSettingsTab {
 		borderColorType.select(0);
 
 		borderColorSelector = new ColorSelector(c);
-		borderColorSelector.addListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(final PropertyChangeEvent event) {
-				settings.setBorderRGB(borderColorSelector.getColorValue());
-			}
-		});
+		borderColorSelector.addListener(event -> settings.setBorderRGB(borderColorSelector.getColorValue()));
 
 		final Label l0 = newLabel(c, "width");
 		l0.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -335,12 +326,7 @@ public class BoxSettingsTab {
 		highlightColorType.select(0);
 
 		highlightColorSelector = new ColorSelector(c);
-		highlightColorSelector.addListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(final PropertyChangeEvent event) {
-				settings.setHighlightRGB(highlightColorSelector.getColorValue());
-			}
-		});
+		highlightColorSelector.addListener(event -> settings.setHighlightRGB(highlightColorSelector.getColorValue()));
 
 		final Label l = newLabel(c, "width");
 		l.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
@@ -421,12 +407,7 @@ public class BoxSettingsTab {
 		});
 
 		fillSelectedColor = new ColorSelector(c);
-		fillSelectedColor.addListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(final PropertyChangeEvent e) {
-				settings.setFillSelectedRGB(fillSelectedColor.getColorValue());
-			}
-		});
+		fillSelectedColor.addListener(e -> settings.setFillSelectedRGB(fillSelectedColor.getColorValue()));
 		fillSelectedColor.getButton().setLayoutData(new GridData(GridData.BEGINNING));
 
 		fillOnMove = new Button(c, SWT.CHECK);
@@ -465,13 +446,7 @@ public class BoxSettingsTab {
 		});
 
 		fillGradientColor = new ColorSelector(c);
-		fillGradientColor.addListener(new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(final PropertyChangeEvent event) {
-				settings.setFillGradientColorRGB(fillGradientColor.getColorValue());
-			}
-		});
+		fillGradientColor.addListener(event -> settings.setFillGradientColorRGB(fillGradientColor.getColorValue()));
 
 		final Label la = newLabel(c, "Alpha blending");
 		la.setToolTipText("Can slow down box drawing");
@@ -567,12 +542,8 @@ public class BoxSettingsTab {
 		newLabel(c, "to");
 		toColorLab = new ColorSelector(c);
 
-		final IPropertyChangeListener listener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(final PropertyChangeEvent event) {
-				genGradientBut.setEnabled(toColorLab.getColorValue() != null && fromColorLab.getColorValue() != null);
-			}
-		};
+		final IPropertyChangeListener listener = event -> genGradientBut
+				.setEnabled(toColorLab.getColorValue() != null && fromColorLab.getColorValue() != null);
 		fromColorLab.addListener(listener);
 		toColorLab.addListener(listener);
 
@@ -712,7 +683,7 @@ public class BoxSettingsTab {
 			settings.dispose();
 	}
 
-	private RGB[] rgbGradient(final Color[] c) {
+	RGB[] rgbGradient(final Color[] c) {
 		final int n = c.length - 1;
 		final RGB c1 = fromColorLab.getColorValue();
 		final RGB c2 = toColorLab.getColorValue();

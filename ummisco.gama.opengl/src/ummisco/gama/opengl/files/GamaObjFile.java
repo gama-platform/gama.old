@@ -119,9 +119,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			return;
 		}
 		int facecounter = 0;
-		BufferedReader br = null;
-		try {
-			br = new BufferedReader(new FileReader(getFile(scope)));
+		try (BufferedReader br = new BufferedReader(new FileReader(getFile(scope)))) {
 			boolean firstpass = true;
 			String newline;
 			while ((newline = br.readLine()) != null) {
@@ -259,14 +257,6 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			System.out.println("Failed to read file: " /* + br.toString() */);
 		} catch (final NumberFormatException e) {
 			System.out.println("Malformed OBJ file: "/* + br.toString() */ + "\r \r" + e.getMessage());
-		} finally {
-			if (br != null) {
-				try {
-					br.close();
-				} catch (final IOException e) {
-					e.printStackTrace();
-				}
-			}
 		}
 		centerit();
 		// numPolys = faces.size();
