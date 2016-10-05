@@ -127,29 +127,28 @@ public class AStar<V, E> {
 				isPathFound = true;
 				result = buildPath(current);
 				return;
-			} else {
-				openMap.remove(current.node);
-				closedMap.put(current.node, current);
-				final _Vertex<V, E> node = graph.getVertex(current.node);
-				final Set<E> edges = new HashSet<E>(node.getOutEdges());
-				if (!graph.isDirected()) {
-					edges.addAll(node.getInEdges());
+			}
+			openMap.remove(current.node);
+			closedMap.put(current.node, current);
+			final _Vertex<V, E> node = graph.getVertex(current.node);
+			final Set<E> edges = new HashSet<E>(node.getOutEdges());
+			if (!graph.isDirected()) {
+				edges.addAll(node.getInEdges());
 
-				}
-				for (final E edge : edges) {
-					final _Edge<V, E> eg = graph.getEdge(edge);
-					final V next = (V) (eg.getTarget().equals(current.node) ? eg.getSource() : eg.getTarget());
-					if (closedMap.containsKey(next))
-						continue;
+			}
+			for (final E edge : edges) {
+				final _Edge<V, E> eg = graph.getEdge(edge);
+				final V next = (V) (eg.getTarget().equals(current.node) ? eg.getSource() : eg.getTarget());
+				if (closedMap.containsKey(next))
+					continue;
 
-					final double h = heuristic(next, targetNode);
-					final double g = current.g + eg.getWeight();
-					final ASNode openNode = openMap.get(next);
-					if (openNode == null)
-						openMap.put(next, new ASNode(next, edge, current, g, h));
-					else if (g >= openNode.rank) {
-						continue;
-					}
+				final double h = heuristic(next, targetNode);
+				final double g = current.g + eg.getWeight();
+				final ASNode openNode = openMap.get(next);
+				if (openNode == null)
+					openMap.put(next, new ASNode(next, edge, current, g, h));
+				else if (g >= openNode.rank) {
+					continue;
 				}
 			}
 		}

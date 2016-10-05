@@ -99,22 +99,20 @@ public class ChartDataSet {
 		if (Xcategories.size() > i) {
 			return Xcategories.get(i);
 
-		} else {
-			for (int c = Xcategories.size(); c <= i; c++) {
-				this.Xcategories.add("c" + c);
-			}
-			return Xcategories.get(i);
 		}
+		for (int c = Xcategories.size(); c <= i; c++) {
+			this.Xcategories.add("c" + c);
+		}
+		return Xcategories.get(i);
 	}
 
 	public String getLastCategories(final IScope scope) {
 		if (Xcategories.size() > 0) {
 			return Xcategories.get(Xcategories.size() - 1);
 
-		} else {
-			this.Xcategories.add("c" + 0);
-			return Xcategories.get(Xcategories.size() - 1);
 		}
+		this.Xcategories.add("c" + 0);
+		return Xcategories.get(Xcategories.size() - 1);
 	}
 
 	public void setCategories(final ArrayList<String> categories) {
@@ -537,26 +535,23 @@ public class ChartDataSet {
 		// TODO Auto-generated method stub
 		if (series.keySet().contains(id)) {
 			return series.get(id);
-		} else {
-			if (deletedseries.keySet().contains(id)) {
-				final ChartDataSeries myserie = deletedseries.get(id);
-				deletedseries.remove(id);
-				this.serieRemovalDate.put(id, -1);
-				myserie.setMysource(source);
-				myserie.setDataset(this);
-				myserie.setName(id);
-				addNewSerie(id, myserie, getDate(scope));
-				return myserie;
-			} else {
-				final ChartDataSeries myserie = new ChartDataSeries();
-				myserie.setMysource(source);
-				myserie.setDataset(this);
-				myserie.setName(id);
-				addNewSerie(id, myserie, getDate(scope));
-				return myserie;
-			}
-
 		}
+		if (deletedseries.keySet().contains(id)) {
+			final ChartDataSeries myserie = deletedseries.get(id);
+			deletedseries.remove(id);
+			this.serieRemovalDate.put(id, -1);
+			myserie.setMysource(source);
+			myserie.setDataset(this);
+			myserie.setName(id);
+			addNewSerie(id, myserie, getDate(scope));
+			return myserie;
+		}
+		final ChartDataSeries myserie = new ChartDataSeries();
+		myserie.setMysource(source);
+		myserie.setDataset(this);
+		myserie.setName(id);
+		addNewSerie(id, myserie, getDate(scope));
+		return myserie;
 
 	}
 

@@ -95,6 +95,7 @@ public class BatchAgent extends ExperimentAgent {
 		return this;
 	}
 
+	@SuppressWarnings("null")
 	@Override
 	public void reset() {
 		// We first save the results of the various simulations

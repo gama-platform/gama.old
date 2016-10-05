@@ -115,7 +115,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider
 				}
 
 			}
-			text += " " + (name == null ? "" : name) + (key == null ? "" : " (" + key + ")");
+			text += " " + (name == null ? "" : name);
 		}
 		// } else {
 		// text = key + " " + qn.toString();

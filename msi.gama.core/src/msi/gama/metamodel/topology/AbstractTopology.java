@@ -322,10 +322,8 @@ public abstract class AbstractTopology implements ITopology {
 				return null;
 			}
 			return point;
-		} else {
-			throw GamaRuntimeException.error("The environement must be a 3D environment (e.g shape <- cube(100).",
-					null);
 		}
+		throw GamaRuntimeException.error("The environement must be a 3D environment (e.g shape <- cube(100).", null);
 
 	}
 

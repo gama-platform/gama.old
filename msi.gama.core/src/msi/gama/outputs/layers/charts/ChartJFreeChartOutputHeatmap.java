@@ -379,10 +379,8 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 				final int ind = chartdataset.XSeriesValues.indexOf(number);
 				if (ind >= 0) {
 					return new StringBuffer("" + chartdataset.Xcategories.get(ind));
-				} else {
-					return new StringBuffer("");
-
 				}
+				return new StringBuffer("");
 
 			}
 
@@ -412,10 +410,8 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 				final int ind = chartdataset.YSeriesValues.indexOf(number);
 				if (ind >= 0) {
 					return new StringBuffer("" + chartdataset.Ycategories.get(ind));
-				} else {
-					return new StringBuffer("");
-
 				}
+				return new StringBuffer("");
 
 			}
 

@@ -83,13 +83,13 @@ public class AssertStatement extends AbstractStatement {
 							+ " is not equals to " + equals.value(scope), scope);
 				}
 				return null;
-			} else {
-				if (equals.value(scope) != null) {
-					throw GamaRuntimeException.error("Assert equals ERROR : " + value.serialize(false)
-							+ " is not equals to " + equals.value(scope), scope);
-				}
-				return null;
 			}
+			if (equals.value(scope) != null) {
+				throw GamaRuntimeException.error(
+						"Assert equals ERROR : " + value.serialize(false) + " is not equals to " + equals.value(scope),
+						scope);
+			}
+			return null;
 		}
 
 		if (isnot != null) {

@@ -564,12 +564,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 
 			return path;
 
-		} else {
-			setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
-			setCurrentTarget(agent, null);
-			setFinalTarget(agent, null);
-			setCurrentPath(agent, null);
 		}
+		setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
+		setCurrentTarget(agent, null);
+		setFinalTarget(agent, null);
+		setCurrentPath(agent, null);
 		return null;
 	}
 
@@ -618,12 +617,11 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			RoadSkill.register(nwRoad, agent, 0);
 			return path;
 
-		} else {
-			setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
-			setCurrentTarget(agent, null);
-			setFinalTarget(agent, null);
-			setCurrentPath(agent, null);
 		}
+		setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
+		setCurrentTarget(agent, null);
+		setFinalTarget(agent, null);
+		setCurrentPath(agent, null);
 		return null;
 	}
 
@@ -977,9 +975,8 @@ public class AdvancedDrivingSkill extends MovingSkill {
 					}
 				}
 				return distance;
-			} else {
-				return distance;
 			}
+			return distance;
 		}
 		// t341+= java.lang.System.currentTimeMillis() - t;
 		// t = java.lang.System.currentTimeMillis();
@@ -1376,17 +1373,16 @@ public class AdvancedDrivingSkill extends MovingSkill {
 				distance = 0;
 				// t35 += java.lang.System.currentTimeMillis() - t;
 				break;
-			} else {
-				currentLocation = pt;
-				distance = distance - dist;
-				realDistance += dist;
-				// t35 += java.lang.System.currentTimeMillis() - t;
-				if (j == endIndexSegment) {
-					break;
-				}
-				indexSegment++;
-				// setSegmentIndex(agent, indexSegment - 1);
 			}
+			currentLocation = pt;
+			distance = distance - dist;
+			realDistance += dist;
+			// t35 += java.lang.System.currentTimeMillis() - t;
+			if (j == endIndexSegment) {
+				break;
+			}
+			indexSegment++;
+			// setSegmentIndex(agent, indexSegment - 1);
 		}
 		// t36 += java.lang.System.currentTimeMillis() - t;
 		// t = java.lang.System.currentTimeMillis();

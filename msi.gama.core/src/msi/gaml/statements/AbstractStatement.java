@@ -33,7 +33,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 		if (desc != null) {
 			final String k = getKeyword();
 			final String n = desc.getName();
-			setName(k == null ? "" : k + " " + n == null ? "" : n);
+			setName(k == null ? "" : k + " " + (n == null ? "" : n));
 		}
 	}
 

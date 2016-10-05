@@ -885,9 +885,8 @@ public abstract class AbstractScope implements IScope {
 		}
 		if (experiment.getSpecies().isHeadless()) {
 			return GAMA.getHeadlessGui();
-		} else {
-			return GAMA.getRegularGui();
 		}
+		return GAMA.getRegularGui();
 	}
 
 	@Override

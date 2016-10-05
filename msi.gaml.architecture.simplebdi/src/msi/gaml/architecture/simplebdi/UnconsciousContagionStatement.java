@@ -30,8 +30,8 @@ import msi.gaml.types.IType;
 		@facet(name = UnconsciousContagionStatement.THRESHOLD, type = IType.FLOAT, optional = true, doc = @doc("The threshold value to make the contagion")),
 		@facet(name = UnconsciousContagionStatement.RECEPTIVITY, type = IType.FLOAT, optional = true, doc = @doc("The receptivity value of the current agent (between 0 and 1)")) }, omissible = IKeyword.NAME)
 @doc(value = "enables to directly copy an emotion presents in the perceived specie.", examples = {
-		@example("unconscious_contagion emotion:fearConfirmed; "), 
-		@example("unconscious_contagion emotion:fearConfirmed charisma: 0.5 receptivity: 0.5;")})
+		@example("unconscious_contagion emotion:fearConfirmed; "),
+		@example("unconscious_contagion emotion:fearConfirmed charisma: 0.5 receptivity: 0.5;") })
 
 public class UnconsciousContagionStatement extends AbstractStatement {
 
@@ -75,10 +75,14 @@ public class UnconsciousContagionStatement extends AbstractStatement {
 				if (SimpleBdiArchitecture.hasEmotion(scope, (Emotion) emotion.value(scope))) {
 					if (charisma != null) {
 						charismaValue = (Double) charisma.value(scope);
-					}else{charismaValue = (Double) scope.getAgent().getAttribute(CHARISMA);}
+					} else {
+						charismaValue = (Double) scope.getAgent().getAttribute(CHARISMA);
+					}
 					if (receptivity != null) {
 						receptivityValue = (Double) receptivity.value(scopeMySelf);
-					}else{receptivityValue = (Double) mySelfAgent.getAttribute(RECEPTIVITY);}
+					} else {
+						receptivityValue = (Double) mySelfAgent.getAttribute(RECEPTIVITY);
+					}
 					if (threshold != null) {
 						thresholdValue = (Double) threshold.value(scopeMySelf);
 					}

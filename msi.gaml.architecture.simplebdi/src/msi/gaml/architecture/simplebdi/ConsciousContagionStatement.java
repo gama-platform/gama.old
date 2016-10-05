@@ -32,7 +32,7 @@ import msi.gaml.types.IType;
 		@facet(name = ConsciousContagionStatement.RECEPTIVITY, type = IType.FLOAT, optional = true, doc = @doc("The receptivity value of the current agent (between 0 and 1)")) }, omissible = IKeyword.NAME)
 @doc(value = "enables to directly add an emotion of a perceived specie if the perceived agent ges a patricular emotion.", examples = {
 		@example("conscious_contagion emotion_detected:fear emotion_created:fearConfirmed;"),
-		@example("conscious_contagion emotion_detected:fear emotion_created:fearConfirmed charisma: 0.5 receptivity: 0.5;")})
+		@example("conscious_contagion emotion_detected:fear emotion_created:fearConfirmed charisma: 0.5 receptivity: 0.5;") })
 
 public class ConsciousContagionStatement extends AbstractStatement {
 
@@ -73,16 +73,21 @@ public class ConsciousContagionStatement extends AbstractStatement {
 		if (mySelfAgent != null) {
 			scopeMySelf = mySelfAgent.getScope().copy("of ConsciousContagionStatement");
 			scopeMySelf.push(mySelfAgent);
-		}
+		} else
+			return null;
 		if (when == null || Cast.asBool(scopeMySelf, when.value(scopeMySelf))) {
 			if (emotionDetected != null && emotionCreated != null) {
 				if (SimpleBdiArchitecture.hasEmotion(scope, (Emotion) emotionDetected.value(scope))) {
 					if (charisma != null) {
 						charismaValue = (Double) charisma.value(scope);
-					}else{charismaValue = (Double) scope.getAgent().getAttribute(CHARISMA);}
+					} else {
+						charismaValue = (Double) scope.getAgent().getAttribute(CHARISMA);
+					}
 					if (receptivity != null) {
 						receptivityValue = (Double) receptivity.value(scopeMySelf);
-					}else{receptivityValue = (Double) mySelfAgent.getAttribute(RECEPTIVITY);}
+					} else {
+						receptivityValue = (Double) mySelfAgent.getAttribute(RECEPTIVITY);
+					}
 					if (threshold != null) {
 						thresholdValue = (Double) threshold.value(scopeMySelf);
 					}

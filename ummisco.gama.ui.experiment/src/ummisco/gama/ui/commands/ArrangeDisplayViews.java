@@ -153,9 +153,8 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	static MElementContainer createContainer(final MElementContainer root) {
 		if (keepTabs && !(root instanceof MPartStack)) {
 			return createStack(root);
-		} else {
-			return root;
 		}
+		return root;
 	}
 
 	static void associate(final MElementContainer container, final MPlaceholder holder, final boolean removeFirst) {

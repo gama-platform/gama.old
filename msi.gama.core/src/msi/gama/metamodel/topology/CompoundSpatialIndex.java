@@ -142,9 +142,8 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		final int id = findSpatialIndexes(f);
 		if (id != -1) {
 			return firstAtDistance(scope, source, f, all[id]);
-		} else {
-			return firstAtDistance(scope, source, f);
 		}
+		return firstAtDistance(scope, source, f);
 	}
 
 	@Override

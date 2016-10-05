@@ -179,20 +179,17 @@ public class MtlLoader {
 						String texture = newline.replace("map_Ka ", "");
 						while (texture.startsWith(" "))
 							texture = texture.replaceFirst(" ", "");
-						if (texture != null)
-							matset.map_Ka = texture;
+						matset.map_Ka = texture;
 					} else if (newline.contains("map_Kd")) {
 						String texture = newline.replace("map_Kd ", "");
 						while (texture.startsWith(" "))
 							texture = texture.replaceFirst(" ", "");
-						if (texture != null)
-							matset.map_Kd = texture;
+						matset.map_Kd = texture;
 					} else if (newline.contains("map_d")) {
 						String texture = newline.replace("map_d ", "");
 						while (texture.startsWith(" "))
 							texture = texture.replaceFirst(" ", "");
-						if (texture != null)
-							matset.map_d = texture;
+						matset.map_d = texture;
 					}
 				}
 			}

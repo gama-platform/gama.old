@@ -85,13 +85,11 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		case BOTH:
 			if (exprs == null)
 				return def;
-			else
-				return GamaType.findCommonType(exprs, kind);
+			return GamaType.findCommonType(exprs, kind);
 		case FIRST_TYPE:
 			if (exprs == null)
 				return def;
-			else
-				return exprs[0].getType();
+			return exprs[0].getType();
 		case FIRST_CONTENT_TYPE_OR_TYPE:
 			final IType leftType = exprs[0].getType();
 			final IType t2 = leftType.getContentType();
@@ -102,39 +100,32 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		case SECOND_TYPE:
 			if (exprs == null)
 				return def;
-			else
-				return exprs[1].getType();
+			return exprs[1].getType();
 		case FIRST_CONTENT_TYPE:
 			if (exprs == null)
 				return def;
-			else
-				return exprs[0].getType().getContentType();
+			return exprs[0].getType().getContentType();
 		case FIRST_KEY_TYPE:
 			if (exprs == null)
 				return def;
-			else
-				return exprs[0].getType().getKeyType();
+			return exprs[0].getType().getKeyType();
 		case SECOND_CONTENT_TYPE:
 			if (exprs == null)
 				return def;
-			else
-				return exprs[1].getType().getContentType();
+			return exprs[1].getType().getContentType();
 		case SECOND_CONTENT_TYPE_OR_TYPE:
 			if (exprs == null)
 				return def;
-			else {
-				final IType rightType = exprs[1].getType();
-				final IType t3 = rightType.getContentType();
-				if (t3 == Types.NO_TYPE) {
-					return rightType;
-				}
-				return t3;
+			final IType rightType = exprs[1].getType();
+			final IType t3 = rightType.getContentType();
+			if (t3 == Types.NO_TYPE) {
+				return rightType;
 			}
+			return t3;
 		case SECOND_KEY_TYPE:
 			if (exprs == null)
 				return def;
-			else
-				return exprs[1].getType().getKeyType();
+			return exprs[1].getType().getKeyType();
 		default:
 			return t >= 0 ? Types.get(t) : def;
 		}

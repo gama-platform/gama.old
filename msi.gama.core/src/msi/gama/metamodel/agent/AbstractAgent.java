@@ -529,9 +529,8 @@ public abstract class AbstractAgent implements IAgent {
 	public Object get(final IScope scope, final String index) throws GamaRuntimeException {
 		if (getPopulation().hasVar(index)) {
 			return scope.getAgentVarValue(this, index);
-		} else {
-			return getAttribute(index);
 		}
+		return getAttribute(index);
 	}
 
 	/**

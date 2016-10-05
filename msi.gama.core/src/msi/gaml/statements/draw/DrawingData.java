@@ -252,9 +252,7 @@ public class DrawingData {
 		// } else {
 		if (colorExp != null && Cast.asColor(scope, colorExp.value(scope)) != null) {
 			final IList<GamaColor> val = Cast.asList(scope, colorExp.value(scope));
-			if (val.get(0) instanceof GamaColor) {
-				currentColors = val;
-			}
+			currentColors = val;
 			currentColor = Cast.asColor(scope, colorExp.value(scope));
 		} else {
 			currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());

@@ -144,7 +144,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 				macroOfMacro = macroOfMacro.getHost();
 			}
 
-			if (microSpecies != null) {
+			if (microSpecies != null && macroOfMacro != null) {
 				releasedMicroAgents = macroOfMacro.captureMicroAgents(scope, microSpecies, microAgents);
 			}
 

@@ -410,6 +410,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	// }
 	// }
 
+	@SuppressWarnings("null")
 	public void createAndUpdateVariablesFor(final IScope scope, final List<? extends IAgent> agents,
 			final List<? extends Map> initialValues, final boolean update) throws GamaRuntimeException {
 		if (agents == null || agents.isEmpty()) {

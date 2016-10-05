@@ -82,18 +82,16 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 			if (isUseSize()) {
 				transform.setToScale(myoutput.getScale(myid, col), myoutput.getScale(myid, col));
 				return transform.createTransformedShape(super.getItemShape(row, col));
-			} else {
-				return super.getItemShape(row, col);
 			}
+			return super.getItemShape(row, col);
 		}
 	}
 
 	double getScale(final String serie, final int col) {
 		if (MarkerScale.containsKey(serie)) {
 			return MarkerScale.get(serie).get(col);
-		} else {
-			return 1;
 		}
+		return 1;
 	}
 
 	HashMap<String, ArrayList<Double>> MarkerScale = new HashMap<String, ArrayList<Double>>();
@@ -504,10 +502,8 @@ public class ChartJFreeChartOutputScatter extends ChartJFreeChartOutput {
 				final int ind = chartdataset.XSeriesValues.indexOf(number);
 				if (ind >= 0) {
 					return new StringBuffer("" + chartdataset.Xcategories.get(ind));
-				} else {
-					return new StringBuffer("");
-
 				}
+				return new StringBuffer("");
 
 			}
 

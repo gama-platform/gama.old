@@ -550,8 +550,7 @@ public class BoxSettingsImpl implements IBoxSettings {
 		final int x = n % (len + len - 2);
 		if (x < len)
 			return x;
-		else
-			return len - (x - len + 2);
+		return len - (x - len + 2);
 	}
 
 	@Override

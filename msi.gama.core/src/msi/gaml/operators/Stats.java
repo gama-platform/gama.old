@@ -467,6 +467,7 @@ public class Stats {
 		return minNum == null ? minPoint : minNum;
 	}
 
+	@SuppressWarnings("null")
 	@operator(value = { "mul",
 			"product" }, can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
 					IType.INT, IType.FLOAT, IType.POINT }, category = { IOperatorCategory.STATISTICAL,

@@ -94,7 +94,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		final GamaPoint pt0 = firstLine == null ? null : new GamaPoint(firstLine.getCoordinates()[0]);
 		final GamaPoint pt1 = firstLine == null ? null
 				: new GamaPoint(firstLine.getCoordinates()[firstLine.getNumPoints() - 1]);
-		if (firstLine != null && _edges != null) {
+		if (firstLine != null && _edges != null && pt0 != null && pt1 != null) {
 			if (_edges.size() > 1) {
 				final IShape secondLine = _edges.get(1).getGeometry();
 				pt = pt0.euclidianDistanceTo(secondLine) > pt1.euclidianDistanceTo(secondLine) ? pt0 : pt1;
@@ -483,7 +483,8 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				g = (IShape) ed;
 				vertices.add(g.getPoints().get(0));
 			}
-			vertices.add(g.getPoints().get(g.getPoints().size() - 1));
+			if (g != null)
+				vertices.add(g.getPoints().get(g.getPoints().size() - 1));
 			return vertices;
 		}
 		return getPathVertexList();

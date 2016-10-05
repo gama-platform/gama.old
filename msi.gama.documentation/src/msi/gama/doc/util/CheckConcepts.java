@@ -118,9 +118,8 @@ public class CheckConcepts {
 			if (line.contains("__________________________________")) {
 				result += line + "\n";
 				break;
-			} else {
-				result += line + "\n";
 			}
+			result += line + "\n";
 		}
 		br.close();
 		result += "\n\n";

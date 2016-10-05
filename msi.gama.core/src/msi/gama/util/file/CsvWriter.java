@@ -601,8 +601,7 @@ public class CsvWriter {
 			sb.append(original.substring(start));
 
 			return sb.toString();
-		} else {
-			return original;
 		}
+		return original;
 	}
 }

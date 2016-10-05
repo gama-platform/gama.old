@@ -390,13 +390,11 @@ public final class FastMath extends CmnFastMath {
 				final double z = s + s * (p / q);
 				final double result = ASIN_PIO2_HI - (z + z - ASIN_PIO2_LO);
 				return negateResult ? -result : result;
-			} else { // value >= 1.0, or value is NaN
-				if (value == 1.0) {
-					return negateResult ? -Math.PI / 2 : Math.PI / 2;
-				} else {
-					return Double.NaN;
-				}
 			}
+			if (value == 1.0) {
+				return negateResult ? -Math.PI / 2 : Math.PI / 2;
+			}
+			return Double.NaN;
 		}
 	}
 
@@ -483,13 +481,11 @@ public final class FastMath extends CmnFastMath {
 				final double s2 = x4 * (ATAN_AT1 + x4 * (ATAN_AT3 + x4 * (ATAN_AT5 + x4 * (ATAN_AT7 + x4 * ATAN_AT9))));
 				final double result = ATAN_HI3 - (x * (s1 + s2) - ATAN_LO3 - x);
 				return negateResult ? -result : result;
-			} else { // value >= 2^66, or value is NaN
-				if (value != value) {
-					return Double.NaN;
-				} else {
-					return negateResult ? -Math.PI / 2 : Math.PI / 2;
-				}
 			}
+			if (value != value) {
+				return Double.NaN;
+			}
+			return negateResult ? -Math.PI / 2 : Math.PI / 2;
 		}
 	}
 
@@ -520,9 +516,8 @@ public final class FastMath extends CmnFastMath {
 			}
 			if (x == Double.POSITIVE_INFINITY) {
 				return atan2_pinf_yyy(y);
-			} else {
-				return atan(y / x);
 			}
+			return atan(y / x);
 		} else if (x < 0.0) {
 			if (y == 0.0) {
 				return signFromBit(y) * Math.PI;
@@ -658,16 +653,13 @@ public final class FastMath extends CmnFastMath {
 				final double endAngRad = normalizeMinusPiPi(startAngRad + angSpanRad);
 				if (startAngRad <= endAngRad) {
 					return angRad >= startAngRad && angRad <= endAngRad;
-				} else {
-					return angRad >= startAngRad || angRad <= endAngRad;
 				}
-			} else { // angSpanRad > 2*Math.PI, or is NaN
-				return angSpanRad == angSpanRad;
+				return angRad >= startAngRad || angRad <= endAngRad;
 			}
-		} else {
-			// general case
-			return normalizeZeroTwoPi(angRad - startAngRad) <= angSpanRad;
+			return angSpanRad == angSpanRad;
 		}
+		// general case
+		return normalizeZeroTwoPi(angRad - startAngRad) <= angSpanRad;
 	}
 
 	/*

@@ -108,12 +108,10 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 					description.error(ed.toString() + " is not the description of a species", IGamlIssue.WRONG_TYPE,
 							ed.getTarget());
 					return;
-				} else {
-					if (description.getKeyword().equals(GRID_POPULATION) && !target.isGrid()) {
-						description.error(target + " is not a grid", IGamlIssue.WRONG_TYPE, ed.getTarget());
-						return;
-					}
-
+				}
+				if (description.getKeyword().equals(GRID_POPULATION) && !target.isGrid()) {
+					description.error(target + " is not a grid", IGamlIssue.WRONG_TYPE, ed.getTarget());
+					return;
 				}
 			}
 			ed = description.getFacet(ASPECT);

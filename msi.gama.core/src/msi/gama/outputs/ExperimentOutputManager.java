@@ -75,8 +75,8 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 				GAMA.startFrontmostExperiment();
 			}
 			return true;
-		} else
-			return false;
+		}
+		return false;
 	}
 
 	protected int getLayout() {

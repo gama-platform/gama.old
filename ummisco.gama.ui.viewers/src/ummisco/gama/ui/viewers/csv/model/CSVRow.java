@@ -224,9 +224,7 @@ public class CSVRow {
 
 		if (this == anObject)
 			return true;
-
-		else
-			return false;
+		return false;
 	}
 
 }

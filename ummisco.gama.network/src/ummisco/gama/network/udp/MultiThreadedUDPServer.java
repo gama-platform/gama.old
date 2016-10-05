@@ -102,8 +102,7 @@ public class MultiThreadedUDPServer extends Thread {
 					this.interrupt();
 				}
 
-				final NetworkMessage msg = new NetworkMessage(myUDPServerSocket.toString(),
-						sentence != null ? sentence : "");
+				final NetworkMessage msg = new NetworkMessage(myUDPServerSocket.toString(), sentence);
 				msgs.addValue(myAgent.getScope(), msg);
 
 				myAgent.setAttribute("messages" + myAgent, msgs);

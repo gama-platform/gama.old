@@ -1025,6 +1025,7 @@ public class GeometryUtils {
 					distMin = dist;
 				}
 			}
+			@SuppressWarnings("null")
 			final Coordinate[] coords = ((LineString) geom2).getCoordinates();
 			final Point pt1 = FACTORY.createPoint(new GamaPoint(pt.getLocation()));
 			final int nb = coords.length;

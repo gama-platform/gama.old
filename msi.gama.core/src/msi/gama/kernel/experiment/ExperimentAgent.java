@@ -673,9 +673,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		public IGui getGui() {
 			if (getSpecies().isHeadless()) {
 				return GAMA.getHeadlessGui();
-			} else {
-				return GAMA.getRegularGui();
 			}
+			return GAMA.getRegularGui();
 		}
 
 	}

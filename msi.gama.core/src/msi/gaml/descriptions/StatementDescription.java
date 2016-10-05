@@ -276,11 +276,12 @@ public class StatementDescription extends SymbolDescription {
 						if (expr != null) {
 							initType = expr.getType();
 						}
+						if (varType != Types.NO_TYPE && !initType.isTranslatableInto(varType)) {
+							warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST,
+									exp.getTarget(), varType.toString());
+						}
 					}
-					if (varType != Types.NO_TYPE && !initType.isTranslatableInto(varType)) {
-						warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST,
-								exp.getTarget(), varType.toString());
-					}
+
 				}
 
 				return true;

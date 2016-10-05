@@ -179,7 +179,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public void setTopology(final IScope scope, final IShape shape) {
 		// A topology has already been computed. We update it and updates all
 		// the agents present in the spatial index
-		if (topology instanceof RootTopology) {
+		if (topology != null) {
 			topology.updateEnvironment(shape);
 		} else {
 			final IExpression expr = getSpecies().getFacet(IKeyword.TORUS);

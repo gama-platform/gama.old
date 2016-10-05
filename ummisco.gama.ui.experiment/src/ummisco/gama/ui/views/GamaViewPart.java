@@ -108,20 +108,19 @@ public abstract class GamaViewPart extends ViewPart
 
 		if (experiment != null) {
 			// hqnghi in case of multi-controller
-			if (out == null) {
-				for (final IExperimentController fec : GAMA.getControllers()) {
-					final List<IOutputManager> mm = fec.getExperiment().getAllSimulationOutputs();
-					for (final IOutputManager manager : mm) {
-						if (manager != null) {
-							out = (IDisplayOutput) manager.getOutput(id);
-						}
 
+			for (final IExperimentController fec : GAMA.getControllers()) {
+				final List<IOutputManager> mm = fec.getExperiment().getAllSimulationOutputs();
+				for (final IOutputManager manager : mm) {
+					if (manager != null) {
+						out = (IDisplayOutput) manager.getOutput(id);
 					}
-					if (out == null) {
-						final IOutputManager manager = fec.getExperiment().getExperimentOutputs();
-						if (manager != null) {
-							out = (IDisplayOutput) manager.getOutput(id);
-						}
+
+				}
+				if (out == null) {
+					final IOutputManager manager = fec.getExperiment().getExperimentOutputs();
+					if (manager != null) {
+						out = (IDisplayOutput) manager.getOutput(id);
 					}
 				}
 			}

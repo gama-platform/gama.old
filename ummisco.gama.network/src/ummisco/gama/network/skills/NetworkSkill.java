@@ -103,10 +103,8 @@ public class NetworkSkill extends MessagingSkill {
 				if (password != null)
 					connector.configure(IConnector.PASSWORD, password);
 			}
-			if (connector != null) {
-				myConnectors.put(serverURL, connector);
+			myConnectors.put(serverURL, connector);
 
-			}
 		}
 
 		if (agt.getAttribute(INetworkSkill.NET_AGENT_NAME) == null)

@@ -160,11 +160,10 @@ public class ChartJFreeChartOutput extends ChartOutput {
 	AbstractRenderer getOrCreateRenderer(final IScope scope, final String serieid) {
 		if (RendererSet.containsKey(serieid)) {
 			return RendererSet.get(serieid);
-		} else {
-			final AbstractRenderer newrenderer = createRenderer(scope, serieid);
-			RendererSet.put(serieid, newrenderer);
-			return newrenderer;
 		}
+		final AbstractRenderer newrenderer = createRenderer(scope, serieid);
+		RendererSet.put(serieid, newrenderer);
+		return newrenderer;
 
 	}
 

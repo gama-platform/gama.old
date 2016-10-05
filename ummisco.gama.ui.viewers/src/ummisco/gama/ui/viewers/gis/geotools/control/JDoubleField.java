@@ -36,42 +36,46 @@ import org.geotools.data.Parameter;
  */
 public class JDoubleField extends ParamField {
 
-    private Text text;
+	private Text text;
 
-    public JDoubleField( Composite parent, Parameter< ? > parameter ) {
-        super(parent, parameter);
-    }
+	public JDoubleField(final Composite parent, final Parameter<?> parameter) {
+		super(parent, parameter);
+	}
 
-    public Control doLayout() {
-        text = new Text(parent, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
-        text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-        return text;
-    }
+	@Override
+	public Control doLayout() {
+		text = new Text(parent, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
+		text.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+		return text;
+	}
 
-    public Object getValue() {
-        String val = text.getText();
-        if (val == null || val.equals("")) {
-            return new Double(0);
-        }
-        try {
-            return new Double(val);
-        } catch (NumberFormatException e) {
-            return new Double(0);
-        }
-    }
+	@Override
+	public Object getValue() {
+		final String val = text.getText();
+		if (val == null || val.equals("")) {
+			return new Double(0);
+		}
+		try {
+			return new Double(val);
+		} catch (final NumberFormatException e) {
+			return new Double(0);
+		}
+	}
 
-    public void setValue( Object value ) {
-        text.setText(((Double) value).toString());
-    }
+	@Override
+	public void setValue(final Object value) {
+		text.setText(((Double) value).toString());
+	}
 
-    public boolean validate() {
-        String val = text.getText();
-        try {
-            Double d = Double.parseDouble(val);
-            return d != null;
-        } catch (NumberFormatException e) {
-            return false;
-        }
-    }
+	@Override
+	public boolean validate() {
+		final String val = text.getText();
+		try {
+			final Double d = Double.parseDouble(val);
+			return true;
+		} catch (final NumberFormatException e) {
+			return false;
+		}
+	}
 
 }

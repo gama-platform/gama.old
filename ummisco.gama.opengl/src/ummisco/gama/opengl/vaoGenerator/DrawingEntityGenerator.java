@@ -39,24 +39,24 @@ public class DrawingEntityGenerator {
 		final Font font = strObj.getFont();
 		if (font != null) {
 			return font.getName();
-		} else
-			return "Helvetica";
+		}
+		return "Helvetica";
 	}
 
 	private String getStyle(final StringObject strObj) {
 		final Font font = strObj.getFont();
 		if (font != null) {
 			return font.isBold() ? font.isItalic() ? " bold italic" : " bold" : font.isItalic() ? " italic" : "";
-		} else
-			return "";
+		}
+		return "";
 	}
 
 	private int getFontSize(final StringObject strObj) {
 		final Font font = strObj.getFont();
 		if (font != null) {
-			return 2*font.getSize();
-		} else
-			return 2*18;
+			return 2 * font.getSize();
+		}
+		return 2 * 18;
 	}
 
 	public DrawingEntity[] GenerateDrawingEntities(final IScope scope, final AbstractObject object,
@@ -73,10 +73,11 @@ public class DrawingEntityGenerator {
 			final String style = getStyle(strObj);
 			final int fontSize = getFontSize(strObj);
 			textures[0] = fontTextCache.getFontTexture(fontName + style);
-			float ratio = (float) ((object.isOverlay())? 1 : renderer.getGlobalYRatioBetweenPixelsAndModelUnits()/renderer.getZoomLevel());
-			ratio = (float) ((object.getAttributes().size != null) ? ratio/object.getAttributes().size.x : ratio);
-			final TextMeshData textMeshData = fontTextCache.getTextMeshData(fontName + style, strObj.string,
-					ratio, fontSize);
+			float ratio = (float) (object.isOverlay() ? 1
+					: renderer.getGlobalYRatioBetweenPixelsAndModelUnits() / renderer.getZoomLevel());
+			ratio = (float) (object.getAttributes().size != null ? ratio / object.getAttributes().size.x : ratio);
+			final TextMeshData textMeshData = fontTextCache.getTextMeshData(fontName + style, strObj.string, ratio,
+					fontSize);
 			final String[] texturePaths = new String[1];
 			texturePaths[0] = fontName + style;
 			final int[] textureIds = new int[1];
@@ -95,7 +96,7 @@ public class DrawingEntityGenerator {
 																			// this
 																			// entity
 			final int[] textureIDs = texturePaths == null ? null : new int[texturePaths.length];
-			if (computeTextureIds && texturePaths != null) {
+			if (textureIDs != null && computeTextureIds && texturePaths != null) {
 				final Texture[] textures = geomObj.getTextures(gl, renderer);
 				for (int i = 0; i < textures.length; i++) {
 					textureIDs[i] = textures[i].getTextureObject();
@@ -139,7 +140,7 @@ public class DrawingEntityGenerator {
 				}
 			}
 			final int[] textureIDs = texturePath == null && imObj.getBufferedImage() == null ? null : new int[1];
-			if (computeTextureIds && (texturePath != null || imObj.getBufferedImage() != null)) {
+			if (textureIDs != null && computeTextureIds && (texturePath != null || imObj.getBufferedImage() != null)) {
 				final Texture[] textures = object.getTextures(gl, renderer);
 				for (int i = 0; i < textures.length; i++) {
 					textureIDs[i] = textures[i].getTextureObject();

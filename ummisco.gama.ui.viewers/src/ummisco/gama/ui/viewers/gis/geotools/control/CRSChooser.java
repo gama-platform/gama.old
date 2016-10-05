@@ -29,25 +29,17 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
@@ -138,14 +130,9 @@ public class CRSChooser {
 		if (selectedCRS != null)
 			wktText.setText(selectedCRS.toWKT());
 		wktText.setLayoutData(gridData);
-		wktText.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(final ModifyEvent e) {
-				if (!keywordsText.isEnabled())
-					keywordsText.setEnabled(true);
-			}
-
+		wktText.addModifyListener(e -> {
+			if (!keywordsText.isEnabled())
+				keywordsText.setEnabled(true);
 		});
 
 		searchText.setFocus();
@@ -165,87 +152,66 @@ public class CRSChooser {
 		gridData = new GridData(SWT.FILL, SWT.FILL, false, false);
 		searchText = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.CANCEL);
 		searchText.setLayoutData(gridData);
-		searchText.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(final ModifyEvent e) {
-				fillCodesList();
+		searchText.addModifyListener(e -> fillCodesList());
+		searchText.addListener(SWT.KeyUp, event -> {
+			if (event.keyCode == SWT.ARROW_DOWN) {
+				codesList.getControl().setFocus();
 			}
-		});
-		searchText.addListener(SWT.KeyUp, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				if (event.keyCode == SWT.ARROW_DOWN) {
-					codesList.getControl().setFocus();
-				}
-			}
-
 		});
 		gridData = new GridData(400, 300);
 		codesList = new ListViewer(composite);
 		codesList.setContentProvider(new ArrayContentProvider());
 		codesList.setLabelProvider(new LabelProvider());
-		codesList.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(final SelectionChangedEvent event) {
-				selectedCRS = null;
-				final String crsCode = (String) ((IStructuredSelection) codesList.getSelection()).getFirstElement();
-				if (crsCode == null)
-					return;
-				matcher.reset(crsCode);
-				if (matcher.matches()) {
-					selectedCRS = createCRS(matcher.group(1));
-					if (selectedCRS != null && wktText != null) {
-						wktText.setEditable(true);
-						String wkt = null;
+		codesList.addSelectionChangedListener(event -> {
+			selectedCRS = null;
+			final String crsCode = (String) ((IStructuredSelection) codesList.getSelection()).getFirstElement();
+			if (crsCode == null)
+				return;
+			matcher.reset(crsCode);
+			if (matcher.matches()) {
+				selectedCRS = createCRS(matcher.group(1));
+				if (selectedCRS != null && wktText != null) {
+					wktText.setEditable(true);
+					String wkt = null;
+					try {
+						wkt = selectedCRS.toWKT();
+					} catch (final Exception e1) {
+						/*
+						 * if unable to generate WKT, just return the string and
+						 * make the text area non editable.
+						 */
+						wkt = selectedCRS.toString();
+						wktText.setEditable(false);
+					}
+					wktText.setText(wkt);
+					final Preferences node = findNode(matcher.group(1));
+					if (node != null) {
+						final Preferences kn = node.node(ALIASES_ID);
 						try {
-							wkt = selectedCRS.toWKT();
-						} catch (final Exception e) {
-							/*
-							 * if unable to generate WKT, just return the string
-							 * and make the text area non editable.
-							 */
-							wkt = selectedCRS.toString();
-							wktText.setEditable(false);
-						}
-						wktText.setText(wkt);
-						final Preferences node = findNode(matcher.group(1));
-						if (node != null) {
-							final Preferences kn = node.node(ALIASES_ID);
-							try {
-								final String[] keywords = kn.keys();
-								if (keywords.length > 0) {
-									final StringBuffer buffer = new StringBuffer();
-									for (final String string : keywords) {
-										buffer.append(", "); //$NON-NLS-1$
-										buffer.append(string);
-									}
-									buffer.delete(0, 2);
-									keywordsText.setText(buffer.toString());
+							final String[] keywords = kn.keys();
+							if (keywords.length > 0) {
+								final StringBuffer buffer = new StringBuffer();
+								for (final String string : keywords) {
+									buffer.append(", "); //$NON-NLS-1$
+									buffer.append(string);
 								}
-							} catch (final BackingStoreException e) {
-								ExceptionMonitor.show(wktText.getShell(), e);
+								buffer.delete(0, 2);
+								keywordsText.setText(buffer.toString());
 							}
-						} else {
-							keywordsText.setText(""); //$NON-NLS-1$
+						} catch (final BackingStoreException e2) {
+							ExceptionMonitor.show(wktText.getShell(), e2);
 						}
+					} else {
+						keywordsText.setText(""); //$NON-NLS-1$
 					}
 				}
-
 			}
 
 		});
 
-		codesList.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(final DoubleClickEvent event) {
-				parentPage.handleOk();
-				parentPage.handleClose();
-
-			}
+		codesList.addDoubleClickListener(event -> {
+			parentPage.handleOk();
+			parentPage.handleClose();
 
 		});
 
@@ -345,8 +311,7 @@ public class CRSChooser {
 		final String name = crsCodeMap.get(identifier.getCode());
 		if (name == null)
 			return false;
-		else
-			return name.equals(item);
+		return name.equals(item);
 	}
 
 	private boolean sameEPSG(final CoordinateReferenceSystem crs, final Identifier identifier, final String item) {
@@ -447,7 +412,7 @@ public class CRSChooser {
 		descriptions = filterCustomCRSs(descriptions, searchParms);
 		final java.util.List<String> list = new ArrayList<String>(descriptions);
 		codesList.setInput(list);
-		if (list != null && !list.isEmpty()) {
+		if (!list.isEmpty()) {
 			codesList.setSelection(new StructuredSelection(list.get(0)));
 		} else {
 			codesList.setSelection(new StructuredSelection());

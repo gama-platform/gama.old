@@ -1276,7 +1276,7 @@ public abstract class Spatial {
 			IShape gR = new GamaShape(geom);
 			for (final IShape g : geoms) {
 
-				if (g != null && gR != null && geom.intersects(g)) {
+				if (g != null && geom.intersects(g)) {
 					gR = Spatial.Operators.minus(scope, gR, g);
 					if (gR == null)
 						return null;

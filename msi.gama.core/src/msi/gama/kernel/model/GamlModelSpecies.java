@@ -170,21 +170,18 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		}
 		// hqnghi 11/Oct/13
 		// get experiementSpecies in any model
-		ISpecies sp = null;
+		ISpecies sp = getExperiment(speciesName);
 		if (sp == null) {
-			sp = getExperiment(speciesName);
-			if (sp == null) {
-				for (final ISpecies mm : getAllSpecies().values()) {
-					if (mm instanceof GamlModelSpecies && specDes.getOriginName().equals(mm.getName())) {
-						sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
-						if (sp != null) {
-							return sp;
-						}
+			for (final ISpecies mm : getAllSpecies().values()) {
+				if (mm instanceof GamlModelSpecies && specDes.getOriginName().equals(mm.getName())) {
+					sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
+					if (sp != null) {
+						return sp;
 					}
 				}
 			}
-			sp = getAllSpecies().get(speciesName);
 		}
+		sp = getAllSpecies().get(speciesName);
 		return sp;
 	}
 

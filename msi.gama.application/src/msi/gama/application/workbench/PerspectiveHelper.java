@@ -87,7 +87,7 @@ public class PerspectiveHelper {
 			return true;
 
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		if ( activePage == null && perspectiveId != null )
+		if ( activePage == null )
 			try {
 				activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().openPage(perspectiveId, null);
 			} catch (final WorkbenchException e1) {

@@ -225,7 +225,7 @@ public class MovingSkill extends Skill {
 		if (onV instanceof IList) {
 			final IList ags = (IList) onV;
 
-			if (ags != null && !ags.isEmpty() && ags.get(0) instanceof IAgent) {
+			if (!ags.isEmpty() && ags.get(0) instanceof IAgent) {
 				on.addAll(ags);
 				onV = ((IAgent) ags.get(0)).getSpecies();
 			}
@@ -435,7 +435,7 @@ public class MovingSkill extends Skill {
 		}
 
 		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
-		if (returnPath != null && returnPath) {
+		if (returnPath) {
 			final IPath pathFollowed = moveToNextLocAlongPath(scope, agent, path, maxDist, weigths);
 			if (pathFollowed == null) {
 				return PathFactory.newInstance(topo, source, source, GamaListFactory.<IShape> create(Types.GEOMETRY),

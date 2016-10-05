@@ -80,9 +80,8 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	public double getxRatioBetweenPixelsAndModelUnits() {
 		if (currentLayer == null) {
 			return getDisplayWidth() / data.getEnvWidth();
-		} else {
-			return currentLayer.getSizeInPixels().x / data.getEnvWidth();
 		}
+		return currentLayer.getSizeInPixels().x / data.getEnvWidth();
 	}
 
 	@Override

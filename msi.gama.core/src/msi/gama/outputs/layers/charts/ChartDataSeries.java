@@ -227,9 +227,8 @@ public class ChartDataSeries {
 				return null;
 			return ol.get(listvalue);
 
-		} else {
-			return o;
 		}
+		return o;
 
 	}
 

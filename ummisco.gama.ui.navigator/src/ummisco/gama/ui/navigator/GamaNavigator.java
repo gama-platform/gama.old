@@ -72,27 +72,23 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	protected CommonNavigatorManager createCommonManager() {
 		final CommonNavigatorManager manager = new CommonNavigatorManager(this, memento);
-		commonDescriptionProvider = new IDescriptionProvider() {
-
-			@Override
-			public String getDescription(final Object anElement) {
-				if (anElement instanceof IStructuredSelection) {
-					final IStructuredSelection selection = (IStructuredSelection) anElement;
-					if (selection.isEmpty()) {
-						return "";
-					}
-					String message = null;
-					if (selection.size() > 1) {
-						message = "Multiple elements";
-					} else if (selection.getFirstElement() instanceof VirtualContent) {
-						message = ((VirtualContent) selection.getFirstElement()).getName();
-					} else if (selection.getFirstElement() instanceof IResource) {
-						message = ((IResource) selection.getFirstElement()).getName();
-					}
-					return message;
+		commonDescriptionProvider = anElement -> {
+			if (anElement instanceof IStructuredSelection) {
+				final IStructuredSelection selection = (IStructuredSelection) anElement;
+				if (selection.isEmpty()) {
+					return "";
 				}
-				return "";
+				String message = null;
+				if (selection.size() > 1) {
+					message = "Multiple elements";
+				} else if (selection.getFirstElement() instanceof VirtualContent) {
+					message = ((VirtualContent) selection.getFirstElement()).getName();
+				} else if (selection.getFirstElement() instanceof IResource) {
+					message = ((IResource) selection.getFirstElement()).getName();
+				}
+				return message;
 			}
+			return "";
 		};
 		getCommonViewer().addPostSelectionChangedListener(this);
 
@@ -134,26 +130,18 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	@Override
 	public CommonViewer createCommonViewer(final Composite parent) {
 		final CommonViewer commonViewer = super.createCommonViewer(parent);
-		final IResourceChangeListener resourceChangeListener = new IResourceChangeListener() {
-
-			@Override
-			public void resourceChanged(final IResourceChangeEvent event) {
-				if (!PlatformUI.isWorkbenchRunning()) {
-					return;
-				}
-				Display.getDefault().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						if (getCommonViewer() != null && getCommonViewer().getControl() != null
-								&& !getCommonViewer().getControl().isDisposed()) {
-							GAMA.getGui().updateDecorator("msi.gama.application.decorator");
-							getCommonViewer().refresh();
-
-						}
-					}
-				});
+		final IResourceChangeListener resourceChangeListener = event -> {
+			if (!PlatformUI.isWorkbenchRunning()) {
+				return;
 			}
+			Display.getDefault().asyncExec(() -> {
+				if (getCommonViewer() != null && getCommonViewer().getControl() != null
+						&& !getCommonViewer().getControl().isDisposed()) {
+					GAMA.getGui().updateDecorator("msi.gama.application.decorator");
+					getCommonViewer().refresh();
+
+				}
+			});
 		};
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceChangeListener,
 				IResourceChangeEvent.POST_BUILD);
@@ -166,37 +154,28 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 	protected void initListeners(final TreeViewer viewer) {
 		super.initListeners(viewer);
 
-		listener = new IResourceChangeListener() {
+		listener = event -> {
+			if (event.getType() == IResourceChangeEvent.PRE_BUILD || event.getType() == IResourceChangeEvent.PRE_CLOSE
+					|| event.getType() == IResourceChangeEvent.PRE_DELETE) {
+				return;
+			}
 
-			@Override
-			public void resourceChanged(final IResourceChangeEvent event) {
-				if (event.getType() == IResourceChangeEvent.PRE_BUILD
-						|| event.getType() == IResourceChangeEvent.PRE_CLOSE
-						|| event.getType() == IResourceChangeEvent.PRE_DELETE) {
+			Display.getDefault().asyncExec(() -> {
+				if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) {
 					return;
 				}
 
-				Display.getDefault().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						if (viewer == null || viewer.getControl() == null || viewer.getControl().isDisposed()) {
-							return;
-						}
-
-						final IResourceDelta d = event == null ? null : event.getDelta();
-						if (d != null) {
-							final IResourceDelta[] addedChildren = d.getAffectedChildren(IResourceDelta.ADDED);
-							if (addedChildren.length > 0 && viewer != null) {
-								safeRefresh(d.getResource().getParent());
-							}
-
-						} else {
-							safeRefresh(null);
-						}
+				final IResourceDelta d = event.getDelta();
+				if (d != null) {
+					final IResourceDelta[] addedChildren = d.getAffectedChildren(IResourceDelta.ADDED);
+					if (addedChildren.length > 0) {
+						safeRefresh(d.getResource().getParent());
 					}
-				});
-			}
+
+				} else {
+					safeRefresh(null);
+				}
+			});
 		};
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.POST_CHANGE);
 
@@ -389,29 +368,25 @@ public class GamaNavigator extends CommonNavigator implements IToolbarDecoratedV
 		if (display.isDisposed()) {
 			return;
 		}
-		display.syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				if (localViewer.getControl().isDisposed()) {
-					return;
-				}
-				final Object[] expanded = localViewer.getExpandedElements();
-				SafeRunner.run(new NavigatorSafeRunnable() {
-
-					@Override
-					public void run() throws Exception {
-						localViewer.getControl().setRedraw(false);
-						if (resource == null) {
-							localViewer.refresh();
-						} else {
-							localViewer.refresh(resource);
-						}
-					}
-				});
-				localViewer.getControl().setRedraw(true);
-				getCommonViewer().setExpandedElements(expanded);
+		display.syncExec(() -> {
+			if (localViewer.getControl().isDisposed()) {
+				return;
 			}
+			final Object[] expanded = localViewer.getExpandedElements();
+			SafeRunner.run(new NavigatorSafeRunnable() {
+
+				@Override
+				public void run() throws Exception {
+					localViewer.getControl().setRedraw(false);
+					if (resource == null) {
+						localViewer.refresh();
+					} else {
+						localViewer.refresh(resource);
+					}
+				}
+			});
+			localViewer.getControl().setRedraw(true);
+			getCommonViewer().setExpandedElements(expanded);
 		});
 
 	}

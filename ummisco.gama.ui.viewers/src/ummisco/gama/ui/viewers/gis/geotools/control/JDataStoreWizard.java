@@ -55,7 +55,7 @@ public class JDataStoreWizard extends Wizard {
 	}
 
 	public JDataStoreWizard(final DataStoreFactorySpi format, final Map<String, Object> params) {
-		setWindowTitle(format == null ? "Connect" : format == null ? "" : format.getDisplayName());
+		setWindowTitle(format == null ? "Connect" : format.getDisplayName());
 		connectionParameters = params == null ? new HashMap<String, Object>() : params;
 		if (format == null) {
 			dataChoosePage = new JDataChoosePage();

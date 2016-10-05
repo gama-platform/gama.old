@@ -280,6 +280,7 @@ public class ModernDrawer {
 		}
 	}
 
+	@SuppressWarnings("null")
 	private FrameBufferObject applyPostprocessing(final FrameBufferObject inputFbo,
 			final AbstractPostprocessingShader shader, final int effectNumber, final boolean lastEffect) {
 		fboHandles = new int[5];
