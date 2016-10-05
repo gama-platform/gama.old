@@ -11,20 +11,31 @@
  **********************************************************************************************/
 package msi.gama.metamodel.topology.filter;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import msi.gama.metamodel.population.IPopulationSet;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.ISpatialGraph;
 import msi.gama.runtime.IScope;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
+@SuppressWarnings({ "rawtypes" })
 public abstract class In implements IAgentFilter {
 
 	public static IAgentFilter list(final IScope scope, final IContainer<?, ? extends IShape> targets) {
-		if ( targets.isEmpty(scope) ) { return null; }
-		if ( targets instanceof IPopulationSet ) { return (IPopulationSet) targets; }
+		if (targets.isEmpty(scope)) {
+			return null;
+		}
+		if (targets instanceof IPopulationSet) {
+			return (IPopulationSet) targets;
+		}
 		return new InList(targets.listValue(scope, Types.NO_TYPE, false));
 	}
 
@@ -79,8 +90,10 @@ public abstract class In implements IAgentFilter {
 	// }
 	//
 	// @Override
-	// public boolean accept(final IScope scope, final IShape source, final IShape a) {
-	// return a.getGeometry() != source.getGeometry() && byEdges ? graph.containsEdge(a) : graph.containsVertex(a);
+	// public boolean accept(final IScope scope, final IShape source, final
+	// IShape a) {
+	// return a.getGeometry() != source.getGeometry() && byEdges ?
+	// graph.containsEdge(a) : graph.containsVertex(a);
 	//
 	// }
 	//
@@ -95,7 +108,8 @@ public abstract class In implements IAgentFilter {
 	// }
 	//
 	// @Override
-	// public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
+	// public void filter(final IScope scope, final IShape source, final
+	// Collection<? extends IShape> results) {
 	// Set<IShape> agents = byEdges ? graph.edgeSet() : graph.vertexSet();
 	// results.retainAll(agents);
 	// }

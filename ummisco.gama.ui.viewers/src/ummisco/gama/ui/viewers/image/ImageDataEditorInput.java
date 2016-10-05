@@ -1,15 +1,18 @@
 package ummisco.gama.ui.viewers.image;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IPersistableElement;
 
 import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * An editor input for directly displaying ImageData in the ImageViewer.
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ImageDataEditorInput implements IEditorInput, IAdaptable {
 
 	private final ImageData imageData;
@@ -33,7 +36,7 @@ public class ImageDataEditorInput implements IEditorInput, IAdaptable {
 	 *            the editor display icon (optional).
 	 */
 	public ImageDataEditorInput(final ImageData imageData, final String name, final String toolTipText,
-		final ImageDescriptor icon) {
+			final ImageDescriptor icon) {
 		this.imageData = imageData;
 		this.name = name;
 		this.toolTipText = toolTipText;
@@ -54,8 +57,10 @@ public class ImageDataEditorInput implements IEditorInput, IAdaptable {
 	}
 
 	@Override
-	public Object getAdapter(@SuppressWarnings("rawtypes") final Class adapter) {
-		if ( adapter == ImageData.class ) { return imageData; }
+	public Object getAdapter(final Class adapter) {
+		if (adapter == ImageData.class) {
+			return imageData;
+		}
 
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}

@@ -76,6 +76,7 @@ import msi.gaml.types.Types;
  * Last Modified: 01-Aug-2014
  */
 @skill(name = "SQLSKILL", concept = { IConcept.DATABASE, IConcept.SKILL })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SQLSkill extends Skill {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for

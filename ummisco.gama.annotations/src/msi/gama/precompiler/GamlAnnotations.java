@@ -45,7 +45,7 @@ public final class GamlAnnotations {
 		 */
 		String value();
 	}
-	
+
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.TYPE)
 	@Inherited
@@ -58,7 +58,7 @@ public final class GamlAnnotations {
 		 * @return
 		 */
 		String value();
-	}	
+	}
 
 	/**
 	 * Allows to declare a custom validator for Symbols. This validator, if
@@ -74,6 +74,7 @@ public final class GamlAnnotations {
 	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.TYPE)
 	@Inherited
+	@SuppressWarnings({ "rawtypes" })
 	public static @interface validator {
 
 		Class value();
@@ -93,6 +94,7 @@ public final class GamlAnnotations {
 	@Retention(RetentionPolicy.SOURCE)
 	@Target(ElementType.TYPE)
 	@Inherited
+	@SuppressWarnings({ "rawtypes" })
 	public static @interface serializer {
 
 		Class value();
@@ -275,6 +277,7 @@ public final class GamlAnnotations {
 		 *         compatibility, in operators, with compatible Java classes
 		 *         (for instance, List and GamaList).
 		 */
+		@SuppressWarnings("rawtypes")
 		Class[] wraps();
 
 		/**

@@ -147,7 +147,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	@Override
 	public boolean init(final IScope scope) {
-		final List<IOutput> list = new ArrayList(outputs.values());
+		final List<IOutput> list = new ArrayList<>(outputs.values());
 
 		for (final IOutput output : list) {
 

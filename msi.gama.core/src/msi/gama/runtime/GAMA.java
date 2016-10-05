@@ -346,7 +346,7 @@ public class GAMA {
 
 	public static interface InScope<T> {
 
-		public abstract static class Void implements InScope {
+		public abstract static class Void implements InScope<Object> {
 
 			@Override
 			public Object run(final IScope scope) {

@@ -13,32 +13,32 @@ package ummisco.gaml.extensions.sound;
 
 import java.util.List;
 
-import ummisco.gaml.extensions.sound.PauseSoundStatement.PauseSoundValidator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.IConcept;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
-import msi.gaml.types.IType;
+import ummisco.gaml.extensions.sound.PauseSoundStatement.PauseSoundValidator;
 
-@symbol(name = IKeyword.PAUSE_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
-concept = { IConcept.SOUND })
+@symbol(name = IKeyword.PAUSE_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = {
+		IConcept.SOUND })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(PauseSoundValidator.class)
 public class PauseSoundStatement extends AbstractStatementSequence {
 
-	public static class PauseSoundValidator implements IDescriptionValidator {
+	public static class PauseSoundValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()
+		 * 
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
@@ -49,7 +49,7 @@ public class PauseSoundStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;
 
-	public PauseSoundStatement(IDescription desc) {
+	public PauseSoundStatement(final IDescription desc) {
 		super(desc);
 	}
 
@@ -62,18 +62,17 @@ public class PauseSoundStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		
-		IAgent currentAgent = scope.getAgent();
-		
-		GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
+
+		final IAgent currentAgent = scope.getAgent();
+
+		final GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
 		soundPlayer.pause();
 
 		if (sequence != null) {
-			Object[] result = new Object[1];
+			final Object[] result = new Object[1];
 			scope.execute(sequence, currentAgent, null, result);
 		}
-		
-		
+
 		return null;
 	}
 }

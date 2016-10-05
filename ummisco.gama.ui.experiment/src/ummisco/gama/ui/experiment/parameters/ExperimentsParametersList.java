@@ -56,7 +56,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 	@Override
 	public boolean addItem(final String cat) {
 		if (!categories.containsKey(cat)) {
-			categories.put(cat, new HashMap<String, IParameterEditor>());
+			categories.put(cat, new HashMap<String, IParameterEditor<?>>());
 			return true;
 		}
 		return false;
@@ -64,7 +64,7 @@ public class ExperimentsParametersList extends EditorsList<String> {
 
 	@Override
 	public void updateItemValues() {
-		for (final Map.Entry<String, Map<String, IParameterEditor>> entry : categories.entrySet()) {
+		for (final Map.Entry<String, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
 			for (final IParameterEditor gp : entry.getValue().values()) {
 				gp.updateValue();
 			}

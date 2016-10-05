@@ -92,6 +92,7 @@ import msi.gaml.types.Types;
 				@example(var = "val10", equals = "'Default'", isTestOnly = true) }) }, see = { IKeyword.MATCH,
 						IKeyword.DEFAULT, IKeyword.IF })
 @validator(SwitchValidator.class)
+@SuppressWarnings({ "rawtypes" })
 public class SwitchStatement extends AbstractStatementSequence implements Breakable {
 
 	public static class SwitchValidator implements IDescriptionValidator {
@@ -163,7 +164,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		final List<MatchStatement> cases = new ArrayList();
+		final List<MatchStatement> cases = new ArrayList<>();
 		for (final ISymbol c : commands) {
 			if (c instanceof MatchStatement) {
 				if (((MatchStatement) c).getKeyword().equals(IKeyword.DEFAULT)) {

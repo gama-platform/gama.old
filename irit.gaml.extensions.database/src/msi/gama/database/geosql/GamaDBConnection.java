@@ -84,6 +84,7 @@ public class GamaDBConnection {
 		this.passwd = (String) params.get("passwd");
 	}
 
+	@SuppressWarnings("unchecked")
 	public GamaDBConnection(final IScope scope) {
 		final Map<String, Object> params = (Map<String, Object>) scope.getArg("params", IType.MAP);
 		this.dbtype = (String) params.get("dbtype");
@@ -152,8 +153,8 @@ public class GamaDBConnection {
 
 			SimpleFeatureSource source = null;
 			SimpleFeatureCollection sfeatures = null; // Query data
-			final Map<String, String> attributes = new LinkedHashMap(); // Meta
-																		// data
+			final Map<String, String> attributes = new LinkedHashMap<>(); // Meta
+																			// data
 			ReferencedEnvelope env = new ReferencedEnvelope();
 			CoordinateReferenceSystem crs = null;
 			int number = 0;

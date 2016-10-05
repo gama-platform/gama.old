@@ -19,6 +19,7 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.types.IType;
 
+@SuppressWarnings({ "rawtypes" })
 public class SpeciesConstantExpression extends ConstantExpression {
 
 	public SpeciesConstantExpression(final String string, final IType t) {

@@ -42,6 +42,7 @@ import msi.gaml.types.IType;
  * Add load extension library for SQLITE case.
  * Last Modified: 18-July-2013
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SqlUtils {
 
 	private static boolean DEBUG = false;

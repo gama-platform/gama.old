@@ -13,6 +13,7 @@ package msi.gama.util.graph;
 
 import msi.gama.runtime.IScope;
 
+@SuppressWarnings({ "rawtypes" })
 public final class GraphEvent {
 
 	/**
@@ -38,9 +39,9 @@ public final class GraphEvent {
 		GRAPH_CLEARED,
 
 		/**
-		 * The properties of a graph changed (for instance, attributes).
-		 * Will not be thrown for a edge or node changed, as another
-		 * event will already be thrown.
+		 * The properties of a graph changed (for instance, attributes). Will
+		 * not be thrown for a edge or node changed, as another event will
+		 * already be thrown.
 		 */
 		GRAPH_CHANGED,
 
@@ -77,7 +78,7 @@ public final class GraphEvent {
 	}
 
 	public GraphEvent(final IScope scope, final IGraph graph, final Object sender, final Object edge,
-		final Object vertex, final GraphEventType eventType) {
+			final Object vertex, final GraphEventType eventType) {
 		super();
 		this.graph = graph;
 		this.sender = sender;
@@ -90,7 +91,7 @@ public final class GraphEvent {
 	@Override
 	public String toString() {
 		return new StringBuffer().append("graph event ").append(eventType).append(", edge=").append(edge)
-			.append(", vertex=").append(vertex).append(", sender=").append(sender).toString();
+				.append(", vertex=").append(vertex).append(", sender=").append(sender).toString();
 	}
 
 }

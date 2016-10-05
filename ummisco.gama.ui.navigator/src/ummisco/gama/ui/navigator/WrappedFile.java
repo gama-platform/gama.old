@@ -131,6 +131,7 @@ public class WrappedFile extends VirtualContent implements IAdaptable {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(final Class adapter) {
 		return adapter == IResource.class || adapter == IFile.class ? file : null;

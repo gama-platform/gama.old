@@ -26,9 +26,9 @@ import msi.gaml.operators.Strings;
 
 public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
-	final static SymbolSerializer instance = new SymbolSerializer();
+	final static SymbolSerializer<?> instance = new SymbolSerializer<>();
 
-	public static SymbolSerializer getInstance() {
+	public static SymbolSerializer<?> getInstance() {
 		return instance;
 	}
 
@@ -288,7 +288,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 
 	}
 
-	public static final Set<String> uselessFacets = new HashSet(
+	public static final Set<String> uselessFacets = new HashSet<>(
 			Arrays.asList(/* DEPENDS_ON, KEYWORD, */INTERNAL_FUNCTION, WITH));
 
 	/**

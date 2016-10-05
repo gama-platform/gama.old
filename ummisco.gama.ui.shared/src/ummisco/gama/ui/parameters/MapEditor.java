@@ -12,6 +12,7 @@
 package ummisco.gama.ui.parameters;
 
 import java.util.Map;
+
 import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.kernel.experiment.IParameter;
@@ -21,7 +22,7 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
 
-public class MapEditor extends ExpressionBasedEditor<Map> {
+public class MapEditor extends ExpressionBasedEditor<Map<?, ?>> {
 
 	MapEditor(final IScope scope, final IParameter param) {
 		super(scope, param);
@@ -31,17 +32,18 @@ public class MapEditor extends ExpressionBasedEditor<Map> {
 		this(scope, agent, param, null);
 	}
 
-	MapEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	MapEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<Map<?, ?>> l) {
 		super(scope, agent, param, l);
 	}
 
-	MapEditor(final IScope scope, final Composite parent, final String title, final Map value,
-		final EditorListener<Map> whenModified) {
+	MapEditor(final IScope scope, final Composite parent, final String title, final Map<?, ?> value,
+			final EditorListener<Map<?, ?>> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IType getExpectedType() {
 		return Types.MAP;

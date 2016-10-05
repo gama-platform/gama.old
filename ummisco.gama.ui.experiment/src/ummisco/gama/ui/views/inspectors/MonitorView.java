@@ -15,8 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -30,13 +28,11 @@ import msi.gama.common.interfaces.ItemList;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.MonitorOutput;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.types.Types;
-import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.IGamaColors;
@@ -48,14 +44,14 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 /**
  * @author Alexis Drogoul
  */
-
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class MonitorView extends ExpandableItemsView<MonitorOutput> implements IToolbarDecoratedView.Pausable {
 
 	private static int count = 0;
 
 	public static final String ID = IGui.MONITOR_VIEW_ID;
 
-	// private final ArrayList<MonitorOutput> outputs = new ArrayList();
+	// private final ArrayList<MonitorOutput> outputs = new ArrayList<>();
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
@@ -106,28 +102,18 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		final Text titleEditor = (Text) EditorFactory
-				.create(output.getScope(), compo, "Title:", output.getName(), true, new EditorListener<String>() {
-
-					@Override
-					public void valueModified(final String newValue) throws GamaRuntimeException {
-						output.setName(newValue);
-						update(output);
-					}
-
+				.create(output.getScope(), compo, "Title:", output.getName(), true, newValue -> {
+					output.setName(newValue);
+					update(output);
 				}).getEditor();
 
 		final IExpression expr = GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulation(),
 				true);
 
 		final Text c = (Text) EditorFactory.createExpression(output.getScope(), compo, "Expression:",
-				output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, new EditorListener<IExpression>() {
-
-					@Override
-					public void valueModified(final IExpression newValue) throws GamaRuntimeException {
-						output.setNewExpression(newValue);
-						update(output);
-					}
-
+				output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, newValue -> {
+					output.setNewExpression(newValue);
+					update(output);
 				}, Types.NO_TYPE).getEditor();
 
 		c.addSelectionListener(new SelectionListener() {
@@ -142,13 +128,9 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 			}
 
 		});
-		titleEditor.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(final ModifyEvent evt) {
-				output.setName(titleEditor.getText());
-				update(output);
-			}
+		titleEditor.addModifyListener(evt -> {
+			output.setName(titleEditor.getText());
+			update(output);
 		});
 		// outputs.add(output);
 		// update(output);
@@ -196,6 +178,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		return o.getColor();
 	}
 
+	@SuppressWarnings("unused")
 	public static void createNewMonitor(final IScope scope) {
 		// TODO ADD the possibility to do it in several simulations
 		new MonitorOutput(scope, "monitor" + count++, "");

@@ -44,13 +44,7 @@ public class Envelope3D extends Envelope {
 			return new Envelope3D();
 		}
 		final Envelope3D env = new Envelope3D();
-		g.apply(new CoordinateFilter() {
-
-			@Override
-			public void filter(final Coordinate coord) {
-				env.expandToInclude(coord);
-			}
-		});
+		g.apply((CoordinateFilter) coord -> env.expandToInclude(coord));
 		return env;
 	}
 
@@ -618,7 +612,7 @@ public class Envelope3D extends Envelope {
 	 *
 	 */
 	public List<Envelope> extrusion(final Envelope env) {
-		final List<Envelope> list = new ArrayList();
+		final List<Envelope> list = new ArrayList<>();
 		final double x1 = getMinX();
 		final double x2 = getMaxX();
 		final double y1 = getMinY();

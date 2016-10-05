@@ -51,10 +51,9 @@ import msi.gaml.types.Types;
 public class GamaColor extends Color implements IValue,
 		Comparable<Color>/* implements IContainer<Integer, Integer> */ {
 
-	@constant(value = "the set of CSS colors", category = IConstantCategory.COLOR_CSS, concept = {}, doc = @doc("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}"))
-	public final static Object[] array = ColorCSS.array;
+	@constant(value = "the set of CSS colors", category = IConstantCategory.COLOR_CSS, concept = {}, doc = @doc("In addition to the previous units, GAML provides a direct access to the 147 named colors defined in CSS (see [http://www.cssportal.com/css3-color-names/]). E.g, {{{rgb my_color <- °teal;}}}")) public final static Object[] array = ColorCSS.array;
 
-	public final static Map<String, GamaColor> colors = new THashMap();
+	public final static Map<String, GamaColor> colors = new THashMap<>();
 	public final static TIntObjectMap<GamaColor> int_colors = TCollections
 			.synchronizedMap(new TIntObjectHashMap<GamaColor>());
 
@@ -73,16 +72,16 @@ public class GamaColor extends Color implements IValue,
 			colors.put((String) array[i], color);
 			int_colors.put(color.getRGB(), color);
 		}
-		//A.G add the GAMA Color corresponding to the GAMA1.7 Logo
-		final GamaColor orange = new NamedGamaColor("gamaorange", new int[]{244,165,40,1});
+		// A.G add the GAMA Color corresponding to the GAMA1.7 Logo
+		final GamaColor orange = new NamedGamaColor("gamaorange", new int[] { 244, 165, 40, 1 });
 		colors.put("gamaorange", orange);
 		int_colors.put(orange.getRGB(), orange);
-		
-		final GamaColor red = new NamedGamaColor("gamared", new int[]{217,72,33,1});
+
+		final GamaColor red = new NamedGamaColor("gamared", new int[] { 217, 72, 33, 1 });
 		colors.put("gamared", red);
 		int_colors.put(red.getRGB(), red);
-		
-		final GamaColor blue = new NamedGamaColor("gamablue", new int[]{22,94,147,1});
+
+		final GamaColor blue = new NamedGamaColor("gamablue", new int[] { 22, 94, 147, 1 });
 		colors.put("gamablue", blue);
 		int_colors.put(blue.getRGB(), blue);
 	}

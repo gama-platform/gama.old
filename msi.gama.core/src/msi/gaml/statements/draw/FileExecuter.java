@@ -20,6 +20,7 @@ import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
+@SuppressWarnings({ "rawtypes" })
 class FileExecuter extends DrawExecuter {
 
 	private final GamaFile constImg;

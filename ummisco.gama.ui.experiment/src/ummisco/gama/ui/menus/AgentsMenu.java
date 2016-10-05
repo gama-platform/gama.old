@@ -21,8 +21,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 
@@ -40,7 +38,6 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.statements.Arguments;
-import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.resources.GamaColors;
@@ -227,17 +224,12 @@ public class AgentsMenu extends ContributionItem {
 
 			if (c != null && a != null && !a.dead()) {
 				final IScope runningScope = a.getScope();
-				runningScope.getSimulation().executeAction(new IExecutable() {
-
-					@Override
-					public Object executeOn(final IScope scope) {
-						final Object[] result = new Object[1];
-						final Arguments args = new Arguments();
-						scope.execute(c, a, args, result);
-						GAMA.getExperiment().refreshAllOutputs();
-						return result[0];
-					}
-
+				runningScope.getSimulation().executeAction(scope -> {
+					final Object[] result = new Object[1];
+					final Arguments args = new Arguments();
+					scope.execute(c, a, args, result);
+					GAMA.getExperiment().refreshAllOutputs();
+					return result[0];
 				});
 
 			}
@@ -304,7 +296,7 @@ public class AgentsMenu extends ContributionItem {
 		if (subMenuSize < 2) {
 			subMenuSize = 2;
 		}
-		final List<IAgent> agents = new ArrayList(species);
+		final List<IAgent> agents = new ArrayList<>(species);
 		final int size = agents.size();
 		if (size > 1 && !isSimulations) {
 			GamaMenu.separate(menu, "Actions");
@@ -334,22 +326,18 @@ public class AgentsMenu extends ContributionItem {
 				rangeItem.setMenu(rangeMenu);
 				rangeItem.setText("" + begin + " to " + (end - 1));
 				rangeItem.setImage(GamaIcons.create(IGamaIcons.MENU_POPULATION).image());
-				rangeMenu.addListener(SWT.Show, new Listener() {
-
-					@Override
-					public void handleEvent(final Event e) {
-						if (!menu.isVisible()) {
-							return;
-						}
-						final MenuItem[] items = rangeMenu.getItems();
-						for (final MenuItem item : items) {
-							item.dispose();
-						}
-						for (int j = begin; j < end; j++) {
-							final IAgent ag = agents.get(j);
-							if (ag != null && !ag.dead()) {
-								cascadingAgentMenuItem(rangeMenu, ag, ag.getName(), actions);
-							}
+				rangeMenu.addListener(SWT.Show, e -> {
+					if (!menu.isVisible()) {
+						return;
+					}
+					final MenuItem[] items = rangeMenu.getItems();
+					for (final MenuItem item : items) {
+						item.dispose();
+					}
+					for (int j = begin; j < end; j++) {
+						final IAgent ag = agents.get(j);
+						if (ag != null && !ag.dead()) {
+							cascadingAgentMenuItem(rangeMenu, ag, ag.getName(), actions);
 						}
 					}
 				});

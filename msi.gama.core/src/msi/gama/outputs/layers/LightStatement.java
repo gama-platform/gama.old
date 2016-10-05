@@ -53,7 +53,7 @@ import msi.gaml.types.Types;
 						IKeyword.DISPLAY })
 public class LightStatement extends AbstractLayerStatement {
 
-	public static class LightStatementValidator implements IDescriptionValidator {
+	public static class LightStatementValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()
@@ -175,8 +175,8 @@ public class LightStatement extends AbstractLayerStatement {
 				getLayeredDisplayData().setDiffuseLightColor(lightId, Cast.asColor(scope, expr.value(scope)));
 			} else {
 				final int meanValue = Cast.asInt(scope, expr.value(scope));
-				GamaColor color = new GamaColor(meanValue, meanValue, meanValue, 255);
-				getLayeredDisplayData().setDiffuseLightColor(lightId,color);
+				final GamaColor color = new GamaColor(meanValue, meanValue, meanValue, 255);
+				getLayeredDisplayData().setDiffuseLightColor(lightId, color);
 			}
 		}
 		if (getFacetValue(scope, IKeyword.LINEAR_ATTENUATION) != null) {

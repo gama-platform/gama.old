@@ -21,7 +21,7 @@ import msi.gama.common.interfaces.IGui;
 import msi.gaml.operators.IUnits;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public class ArrangeDisplayViews extends AbstractHandler {
 
 	public static EPartService partService;
@@ -103,7 +103,7 @@ public class ArrangeDisplayViews extends AbstractHandler {
 	static void grid(final MPartStack displayStack, final List<MPlaceholder> holders) {
 		final MElementContainer currentSash = displayStack.getParent();
 		final int size = holders.size();
-		final List<MElementContainer> containers = new ArrayList();
+		final List<MElementContainer> containers = new ArrayList<>();
 		createContainers(currentSash, containers, size, true);
 		for (int i = 0; i < holders.size(); i++) {
 			associate(containers.get(i), holders.get(i), false);

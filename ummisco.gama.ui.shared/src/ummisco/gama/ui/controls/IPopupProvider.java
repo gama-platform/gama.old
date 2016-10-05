@@ -40,7 +40,7 @@ public interface IPopupProvider {
 			contents.add(new Pair(color, text));
 		}
 
-		final List<Pair> contents = new ArrayList();
+		final List<Pair> contents = new ArrayList<>();
 
 		public class Pair {
 			GamaUIColor color;

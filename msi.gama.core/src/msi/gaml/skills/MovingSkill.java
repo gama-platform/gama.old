@@ -681,7 +681,7 @@ public class MovingSkill extends Skill {
 			return null;
 		}
 		final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
-		final THashMap agents = new THashMap();
+		final THashMap agents = new THashMap<>();
 
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);

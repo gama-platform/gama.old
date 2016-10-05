@@ -134,7 +134,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 
 	private IExpression agentsExpr;
 	// final HashSet<IAgent> agents;
-	HashSet<IAgent> agentsForLayer = new HashSet();
+	HashSet<IAgent> agentsForLayer = new HashSet<>();
 	protected String constantAspectName = null;
 	protected IExpression aspectExpr;
 	private IExecutable aspect = null;
@@ -169,7 +169,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	public boolean _step(final IScope scope) {
 		if (scope.getClock().getCycle() == 0 || agentsHaveChanged()) {
 			// synchronized (agentsForLayer) {
-			agentsForLayer = new HashSet(computeAgents(scope));
+			agentsForLayer = new HashSet<>(computeAgents(scope));
 			// }
 		}
 		return true;
@@ -219,7 +219,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		final List<IStatement> aspectStatements = new ArrayList();
+		final List<IStatement> aspectStatements = new ArrayList<>();
 		for (final ISymbol c : commands) {
 			if (c instanceof IStatement) {
 				aspectStatements.add((IStatement) c);

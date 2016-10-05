@@ -48,11 +48,10 @@ public class GamlLinkingService extends DefaultLinkingService {
 	/**
 	 * Keep stubs so that new ones aren't created for each linking pass.
 	 */
-	private static final Map<String, List<EObject>> stubbedRefs = new Hashtable();
+	private static final Map<String, List<EObject>> stubbedRefs = new Hashtable<>();
 	private static Resource stubsResource;
 
-	@Inject
-	private XtextResourceSet resourceSet;
+	@Inject private XtextResourceSet resourceSet;
 
 	public GamlLinkingService() {
 		super();

@@ -11,8 +11,12 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import java.util.*;
-import msi.gama.metamodel.agent.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -28,6 +32,7 @@ public interface IAgentConstructor {
 
 		/**
 		 * Method createOneAgent()
+		 * 
 		 * @see msi.gaml.compilation.IAgentConstructor#createOneAgent(msi.gama.metamodel.population.IPopulation)
 		 */
 		@Override
@@ -41,6 +46,7 @@ public interface IAgentConstructor {
 
 		/**
 		 * Method createOneAgent()
+		 * 
 		 * @see msi.gaml.compilation.IAgentConstructor#createOneAgent(msi.gama.metamodel.population.IPopulation)
 		 */
 		@Override
@@ -50,13 +56,14 @@ public interface IAgentConstructor {
 
 	}
 
-	public static Map<Class<IAgent>, IAgentConstructor> CONSTRUCTORS = new HashMap() {
+	@SuppressWarnings({ "rawtypes",
+			"unchecked" }) public static Map<Class<IAgent>, IAgentConstructor> CONSTRUCTORS = new HashMap() {
 
-		{
-			put(GamlAgent.class, new Gaml());
-			put(MinimalAgent.class, new Minimal());
-		}
-	};
+				{
+					put(GamlAgent.class, new Gaml());
+					put(MinimalAgent.class, new Minimal());
+				}
+			};
 
 	public abstract IAgent createOneAgent(IPopulation manager) throws GamaRuntimeException;
 

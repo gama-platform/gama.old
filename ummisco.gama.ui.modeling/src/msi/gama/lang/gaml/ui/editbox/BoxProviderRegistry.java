@@ -10,6 +10,7 @@ import java.util.Map;
 
 import msi.gama.lang.gaml.ui.internal.GamlActivator;
 
+@SuppressWarnings({ "rawtypes" })
 public class BoxProviderRegistry {
 
 	private static final String PROIVDERS = "proivders";

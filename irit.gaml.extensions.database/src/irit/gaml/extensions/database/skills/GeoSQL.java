@@ -3,6 +3,7 @@ package irit.gaml.extensions.database.skills;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 
 import org.apache.commons.dbcp.BasicDataSource;
 import org.geotools.data.DataStore;
@@ -22,7 +23,7 @@ public class GeoSQL {
 
 	public GeoSQL() throws IOException, SQLException {
 
-		final java.util.Map params = new java.util.HashMap();
+		final HashMap<String, String> params = new java.util.HashMap<>();
 		params.put("dbtype", "postgis");
 		params.put("host", "localhost");
 		params.put("port", "5432");
@@ -46,7 +47,7 @@ public class GeoSQL {
 		} catch (final Exception e) {
 			System.out.println("1.4Loi :" + e.toString());
 		}
-		final java.util.Map params2 = new java.util.HashMap();
+		final java.util.Map<String, String> params2 = new java.util.HashMap<>();
 		params2.put("dbtype", "sqlserver");
 		params2.put("host", "localhost");
 		params2.put("port", "1433");
@@ -82,6 +83,7 @@ public class GeoSQL {
 
 	public static void main(final String[] args)
 			throws IOException, ClassNotFoundException, InstantiationException, SQLException, IllegalAccessException {
+		@SuppressWarnings("unused")
 		final GeoSQL mySQL = new GeoSQL();
 	}
 

@@ -23,7 +23,7 @@ import msi.gaml.types.IType;
 
 public class TempVariableExpression extends VariableExpression {
 
-	protected TempVariableExpression(final String n, final IType type, final IDescription definitionDescription) {
+	protected TempVariableExpression(final String n, final IType<?> type, final IDescription definitionDescription) {
 		super(n, type, false, definitionDescription);
 	}
 

@@ -80,7 +80,7 @@ import msi.gaml.types.IType;
 @serializer(PutSerializer.class)
 public class PutStatement extends AddStatement {
 
-	public static class PutSerializer extends SymbolSerializer {
+	public static class PutSerializer extends SymbolSerializer<SymbolDescription> {
 
 		@Override
 		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {

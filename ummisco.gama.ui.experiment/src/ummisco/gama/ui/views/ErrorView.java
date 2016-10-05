@@ -153,7 +153,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	@Override
 	public List<GamaRuntimeException> getItems() {
-		final List<GamaRuntimeException> errors = new ArrayList();
+		final List<GamaRuntimeException> errors = new ArrayList<>();
 		final List<GamaRuntimeException> exceptions = getExceptionHandler().getCleanExceptions();
 		final int size = exceptions.size();
 		if (size == 0) {
@@ -162,7 +162,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 		final int end = size;
 		int begin = end - numberOfDisplayedErrors;
 		begin = begin < 0 ? 0 : begin;
-		final List<GamaRuntimeException> except = new ArrayList(exceptions);
+		final List<GamaRuntimeException> except = new ArrayList<>(exceptions);
 		errors.addAll(except.subList(begin, end));
 		if (mostRecentFirst) {
 			Collections.reverse(errors);
@@ -177,14 +177,10 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 
 	@Override
 	public void reset() {
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				ErrorView.super.reset();
-				displayItems();
-				parent.layout(true, true);
-			}
+		WorkbenchHelper.run(() -> {
+			ErrorView.super.reset();
+			displayItems();
+			parent.layout(true, true);
 		});
 
 	}
@@ -196,24 +192,14 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> impleme
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final GamaRuntimeException item, final int x, final int y) {
-		final Map<String, Runnable> result = new HashMap();
-		result.put("Copy text", new Runnable() {
-
-			@Override
-			public void run() {
-				final Clipboard clipboard = new Clipboard(parent.getDisplay());
-				final String data = item.getAllText();
-				clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
-				clipboard.dispose();
-			}
+		final Map<String, Runnable> result = new HashMap<>();
+		result.put("Copy text", () -> {
+			final Clipboard clipboard = new Clipboard(parent.getDisplay());
+			final String data = item.getAllText();
+			clipboard.setContents(new Object[] { data }, new Transfer[] { TextTransfer.getInstance() });
+			clipboard.dispose();
 		});
-		result.put("Show in editor", new Runnable() {
-
-			@Override
-			public void run() {
-				GAMA.getGui().editModel(item.getEditorContext());
-			}
-		});
+		result.put("Show in editor", () -> GAMA.getGui().editModel(item.getEditorContext()));
 		return result;
 	}
 

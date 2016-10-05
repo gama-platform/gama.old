@@ -4,13 +4,17 @@
  */
 package msi.gaml.statements;
 
-import java.util.*;
-import msi.gama.common.interfaces.*;
+import java.util.List;
+import java.util.Map;
+
+import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaGridFile;
 import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Class CreateFromDatabaseDelegate.
@@ -19,6 +23,7 @@ import msi.gaml.types.*;
  * @since 27 mai 2015
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CreateFromGridFileDelegate implements ICreateDelegate {
 
 	/**
@@ -38,14 +43,15 @@ public class CreateFromGridFileDelegate implements ICreateDelegate {
 	 *
 	 * @author Alexis Drogoul
 	 * @since 04-09-2012
-	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope, java.util.List, int, java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope,
+	 *      java.util.List, int, java.lang.Object)
 	 */
 	@Override
 	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object input,
-		final Arguments init, final CreateStatement statement) {
+			final Arguments init, final CreateStatement statement) {
 		final GamaGridFile file = (GamaGridFile) input;
 		final int num = max == null ? file.length(scope) : CmnFastMath.min(file.length(scope), max);
-		for ( int i = 0; i < num; i++ ) {
+		for (int i = 0; i < num; i++) {
 			final IShape g = file.get(scope, i);
 			final Map map = g.getOrCreateAttributes();
 			// The shape is added to the initial values
@@ -59,6 +65,7 @@ public class CreateFromGridFileDelegate implements ICreateDelegate {
 
 	/**
 	 * Method fromFacetType()
+	 * 
 	 * @see msi.gama.common.interfaces.ICreateDelegate#fromFacetType()
 	 */
 	@Override

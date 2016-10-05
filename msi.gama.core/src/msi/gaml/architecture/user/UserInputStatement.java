@@ -56,6 +56,7 @@ import msi.gaml.types.Types;
 				@example(value = "	create cells number: 10 with: [location::loc];", isExecutable = false),
 				@example(value = "}", isExecutable = false) }) }, see = { IKeyword.USER_COMMAND, IKeyword.USER_INIT,
 						IKeyword.USER_PANEL })
+@SuppressWarnings({ "rawtypes" })
 public class UserInputStatement extends AbstractPlaceHolderStatement implements IParameter {
 
 	// int order;

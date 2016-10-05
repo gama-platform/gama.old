@@ -154,7 +154,7 @@ public class TypeNode<T> {
 	}
 
 	public TypeNode<T> copy() {
-		final TypeNode<T> result = new TypeNode(getData());
+		final TypeNode<T> result = new TypeNode<>(getData());
 		if (children != null)
 			for (final TypeNode<T> node : children) {
 				result.addChild(node.copy());

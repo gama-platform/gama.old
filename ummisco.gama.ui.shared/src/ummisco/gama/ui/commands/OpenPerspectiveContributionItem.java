@@ -20,7 +20,7 @@ public class OpenPerspectiveContributionItem extends CompoundContributionItem {
 
 	@Override
 	protected IContributionItem[] getContributionItems() {
-		final List<IContributionItem> menuContributionList = new ArrayList();
+		final List<IContributionItem> menuContributionList = new ArrayList<>();
 		final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		final IContributionItem item = ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(window);
 		menuContributionList.add(item); // add the list of views in the menu

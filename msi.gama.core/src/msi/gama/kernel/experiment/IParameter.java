@@ -42,6 +42,7 @@ public interface IParameter {
 
 	public abstract Object value(IScope scope) throws GamaRuntimeException;
 
+	@SuppressWarnings("rawtypes")
 	public abstract IType getType();
 
 	public String serialize(boolean includingBuiltIn);
@@ -52,6 +53,7 @@ public interface IParameter {
 
 	public abstract Number getMaxValue(IScope scope);
 
+	@SuppressWarnings("rawtypes")
 	public abstract List getAmongValue(IScope scope);
 
 	public abstract boolean isEditable();

@@ -67,7 +67,7 @@ public class ImageUtils {
 	}
 
 	private ImageUtils() {
-		cache = new THashMap();
+		cache = new THashMap<>();
 	}
 
 	public boolean contains(final String s) {

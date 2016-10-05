@@ -60,7 +60,7 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public class Cast {
 
 	public static <T> T as(final Object value, final Class<T> clazz, final boolean copy) {

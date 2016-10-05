@@ -52,6 +52,7 @@ public class GAML {
 		return object;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static <T extends IContainer> T emptyCheck(final IScope scope, final T container) {
 		if (nullCheck(scope, container).isEmpty(scope)) {
 			throw GamaRuntimeException.error("Error: the container is empty", scope);

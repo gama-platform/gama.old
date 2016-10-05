@@ -32,8 +32,8 @@ public class AgentIdentifier {
 		IAgent currentAgent = agent;
 		final IScope scope = agent.getScope();
 		final ITopLevelAgent root = scope.getRoot();
-		final List<String> specs = new ArrayList();
-		final List<Integer> inds = new ArrayList();
+		final List<String> specs = new ArrayList<>();
+		final List<Integer> inds = new ArrayList<>();
 		while (true) {
 			specs.add(currentAgent.getSpeciesName());
 			inds.add(currentAgent.getIndex());

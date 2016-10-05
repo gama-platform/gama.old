@@ -34,7 +34,7 @@ public class LayeredDisplayData {
 		void changed(Changes property, boolean value);
 	}
 
-	final Set<DisplayDataListener> listeners = new HashSet();
+	final Set<DisplayDataListener> listeners = new HashSet<>();
 
 	public void addListener(final DisplayDataListener listener) {
 		listeners.add(listener);
@@ -114,7 +114,7 @@ public class LayeredDisplayData {
 	 *
 	 */
 
-	IPreferenceChangeListener highlightListener = new IPreferenceChangeListener<Color>() {
+	IPreferenceChangeListener<Color> highlightListener = new IPreferenceChangeListener<Color>() {
 
 		@Override
 		public boolean beforeValueChange(final Color newValue) {
@@ -656,11 +656,11 @@ public class LayeredDisplayData {
 	public void setFullScreen(final boolean fs) {
 		isFullScreen = fs;
 	}
-	
-	public void setKeystone(List<ILocation> value) {
+
+	public void setKeystone(final List<ILocation> value) {
 		this.keystone = value;
 	}
-	
+
 	public List<ILocation> getKeystone() {
 		return this.keystone;
 	}
@@ -669,7 +669,7 @@ public class LayeredDisplayData {
 		return zRotation;
 	}
 
-	public void setZRotation(double val) {
+	public void setZRotation(final double val) {
 		zRotation = val;
 	}
 

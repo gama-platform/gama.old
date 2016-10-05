@@ -89,7 +89,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		return false;
 		// Following is not ready for prime time !
 		// // If there are projects, we must be careful to distinguish user projects from built-in projects
-		// List<IProject> builtInProjects = new ArrayList();
+		// List<IProject> builtInProjects = new ArrayList<>();
 		// for ( IProject p : projects ) {
 		// try {
 		// // Assumption here : a non-accessible / linked project means a built-in model that is not accessible

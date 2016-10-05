@@ -126,7 +126,7 @@ public class GamaToolbar2 extends Composite {
 		final Label label = new Label(tb, SWT.WRAP);
 		label.setForeground(GamaColors.getTextColorForBackground(color).color());
 		String newString = "";
-		// java.util.List<String> result = new ArrayList();
+		// java.util.List<String> result = new ArrayList<>();
 		try {
 			final BufferedReader reader = new BufferedReader(new StringReader(s));
 			String line = reader.readLine();

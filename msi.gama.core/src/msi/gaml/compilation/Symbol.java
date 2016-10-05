@@ -68,6 +68,7 @@ public abstract class Symbol implements ISymbol {
 		return getFacetValue(scope, key, null);
 	}
 
+	@SuppressWarnings("unchecked")
 	public final <T> T getFacetValue(final IScope scope, final String key, final T defaultValue)
 			throws GamaRuntimeException {
 		final IExpression exp = getFacet(key);

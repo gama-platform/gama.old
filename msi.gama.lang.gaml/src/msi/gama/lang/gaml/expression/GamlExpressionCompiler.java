@@ -132,7 +132,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	// To disable reentrant parsing (Issue 782)
 	private IExpressionDescription currentExpressionDescription;
 	private ITypesManager currentTypesManager;
-	private final static Map<String, IExpression> constantSyntheticExpressions = new THashMap();
+	private final static Map<String, IExpression> constantSyntheticExpressions = new THashMap<>();
 	private static final ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
 	/*
@@ -144,7 +144,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	private IDescription currentContext;
 
 	static {
-		IExpressionCompiler.OPERATORS.put(MY, new THashMap());
+		IExpressionCompiler.OPERATORS.put(MY, new THashMap<>());
 	}
 
 	@Override
@@ -858,7 +858,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final boolean isMatrix = contType.id() == IType.MATRIX;
 		final IType keyType = contType.getKeyType();
 		final List<? extends Expression> list = EGaml.getExprsOf(object.getArgs());
-		final List<IExpression> result = new ArrayList();
+		final List<IExpression> result = new ArrayList<>();
 		final int size = list.size();
 		for (int i = 0; i < size; i++) {
 			final Expression eExpr = list.get(i);
@@ -1209,7 +1209,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	@Override
 	public List<IDescription> compileBlock(final String string, final IDescription actionContext)
 			throws GamaRuntimeException {
-		final List<IDescription> result = new ArrayList();
+		final List<IDescription> result = new ArrayList<>();
 		final String s = "__synthetic__ {" + string + "}";
 		final GamlResource resource = GamlResourceServices.getTemporaryResource(getContext());
 		try {

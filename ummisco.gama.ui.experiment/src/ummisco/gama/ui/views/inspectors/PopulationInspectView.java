@@ -218,7 +218,7 @@ public class PopulationInspectView extends GamaViewPart
 		final boolean isComplete = expr instanceof SpeciesConstantExpression;
 
 		if (!selectedColumns.containsKey(name)) {
-			selectedColumns.put(name, new ArrayList());
+			selectedColumns.put(name, new ArrayList<>());
 			final List<String> names = getOutput().getAttributes();
 			if (names != null) {
 				selectedColumns.get(name).addAll(names);
@@ -327,7 +327,7 @@ public class PopulationInspectView extends GamaViewPart
 	}
 
 	private List<String> getAttributesSelection() {
-		final ArrayList<String> result = new ArrayList();
+		final ArrayList<String> result = new ArrayList<>();
 		for (final Control c : attributesMenu.getChildren()) {
 			if (c instanceof SwitchButton) {
 				final SwitchButton b = (SwitchButton) c;
@@ -761,7 +761,7 @@ public class PopulationInspectView extends GamaViewPart
 		writer.setDelimiter(';');
 		writer.setUseTextQualifier(false);
 
-		final List<String[]> contents = new ArrayList();
+		final List<String[]> contents = new ArrayList<>();
 		final String[] headers = new String[columns.length];
 		int columnIndex = 0;
 		for (final TableColumn column : columns) {

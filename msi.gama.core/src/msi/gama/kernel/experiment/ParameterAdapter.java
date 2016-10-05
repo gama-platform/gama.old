@@ -20,6 +20,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+@SuppressWarnings({ "rawtypes" })
 public abstract class ParameterAdapter implements IParameter.Batch {
 
 	protected boolean editable;

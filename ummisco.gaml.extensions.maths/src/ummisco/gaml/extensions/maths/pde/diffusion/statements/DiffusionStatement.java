@@ -36,6 +36,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.fastmaths.CmnFastMath;
@@ -81,10 +82,10 @@ import ummisco.gaml.extensions.maths.pde.diffusion.statements.DiffusionStatement
 				@example(value = "diffuse var: phero on: cells proportion: 1/9 radius: 1;", isExecutable = false) }) })
 public class DiffusionStatement extends AbstractStatement {
 
-	public static class DiffusionValidator implements IDescriptionValidator {
+	public static class DiffusionValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
-		public void validate(final IDescription desc) {
+		public void validate(final StatementDescription desc) {
 			final String kw = desc.getKeyword();
 			if (DIFFUSION.equals(kw)) {
 				desc.warning("The keyword 'diffusion' is deprecated. Please use the keyword 'diffuse' instead",

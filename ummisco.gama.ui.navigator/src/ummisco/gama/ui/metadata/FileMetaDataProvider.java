@@ -56,7 +56,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class FileMetaDataProvider implements IFileMetaDataProvider {
 
-	private static volatile Set processing = Collections.synchronizedSet(new HashSet());
+	private static volatile Set<Object> processing = Collections.<Object> synchronizedSet(new HashSet<>());
 
 	/**
 	 * Adapt the specific object to the specified class, supporting the
@@ -279,7 +279,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				return null;
 			}
 			final String ct = getContentTypeId(file);
-			final Class infoClass = CLASSES.get(ct);
+			final Class<? extends GamaFileMetaData> infoClass = CLASSES.get(ct);
 			if (infoClass == null) {
 				return null;
 			}
@@ -347,7 +347,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 
 	private static <T extends IGamaFileMetaData> T readMetadata(final IResource file, final Class<T> clazz,
 			final boolean includeOutdated) {
-		IGamaFileMetaData result = null;
+		T result = null;
 		final long modificationStamp = file.getModificationStamp();
 		try {
 			final byte[] b = ResourcesPlugin.getWorkspace().getSynchronizer().getSyncInfo(CACHE_KEY, file);
@@ -362,7 +362,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		} catch (final Exception ignore) {
 			System.err.println("Error loading metadata for " + file.getName() + " : " + ignore.getMessage());
 		}
-		return (T) result;
+		return result;
 	}
 
 	@Override

@@ -37,17 +37,18 @@ import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ExpressionControl implements /* IPopupProvider, */SelectionListener, ModifyListener, FocusListener {
 
 	private final Text text;
-	private final ExpressionBasedEditor editor;
+	private final ExpressionBasedEditor<Object> editor;
 	private GamaUIColor background;
 	private Object currentValue;
 	protected Exception currentException;
 	final boolean evaluateExpression;
 	private final IAgent hostAgent;
 	private final IScope scope;
-	private final IType expectedType;
+	private final IType<?> expectedType;
 	MouseTrackListener tooltipListener = new MouseTrackAdapter() {
 
 		@Override
@@ -57,7 +58,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	};
 
 	public ExpressionControl(final IScope scope, final Composite comp, final ExpressionBasedEditor ed,
-			final IAgent agent, final IType expectedType, final int controlStyle, final boolean evaluate) {
+			final IAgent agent, final IType<?> expectedType, final int controlStyle, final boolean evaluate) {
 		this.scope = scope;
 		editor = ed;
 		evaluateExpression = evaluate;

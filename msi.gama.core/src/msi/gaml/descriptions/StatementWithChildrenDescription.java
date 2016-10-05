@@ -15,7 +15,7 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public class StatementWithChildrenDescription extends StatementDescription {
 
 	protected THashMap<String, IVarExpression> temps;
@@ -95,7 +95,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		final String kw = getKeyword();
 		final String facet = kw == IKeyword.LET || kw == IKeyword.LOOP ? IKeyword.NAME : IKeyword.RETURNS;
 		if (temps == null)
-			temps = new THashMap();
+			temps = new THashMap<>();
 		if (temps.containsKey(name) && !name.equals(MYSELF)) {
 			declaration.warning("This declaration of " + name + " shadows a previous declaration",
 					IGamlIssue.SHADOWS_NAME, facet);
@@ -138,7 +138,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		final IDescription d = super.addChild(child);
 		if (d != null) {
 			if (children == null)
-				children = new ArrayList();
+				children = new ArrayList<>();
 			children.add(child);
 		}
 		return d;
@@ -146,7 +146,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	@Override
 	public StatementWithChildrenDescription copy(final IDescription into) {
-		final List<IDescription> children = new ArrayList();
+		final List<IDescription> children = new ArrayList<>();
 		visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override

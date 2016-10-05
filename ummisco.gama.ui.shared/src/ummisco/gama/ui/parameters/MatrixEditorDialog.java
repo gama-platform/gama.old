@@ -14,8 +14,6 @@ package ummisco.gama.ui.parameters;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -27,13 +25,13 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -42,6 +40,7 @@ import msi.gama.util.matrix.GamaIntMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
 
+@SuppressWarnings({ "rawtypes" })
 public class MatrixEditorDialog extends Dialog {
 
 	private IMatrix data;
@@ -73,17 +72,17 @@ public class MatrixEditorDialog extends Dialog {
 		/** Creation of table columns */
 
 		int index = 0;
-		for ( int i = 0; i < data.getCols(scope); i++ ) {
+		for (int i = 0; i < data.getCols(scope); i++) {
 			final TableColumn column = new TableColumn(table, SWT.CENTER);
 			column.setWidth(90);
 		}
 		/** Creation of table rows */
-		for ( int i = 0; i < data.getRows(scope); i++ ) {
+		for (int i = 0; i < data.getRows(scope); i++) {
 			final TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(0, String.valueOf(index));
 			item.setBackground(0, gray);
 			index++;
-			for ( int j = 0; j < data.getCols(scope); j++ ) {
+			for (int j = 0; j < data.getCols(scope); j++) {
 				item.setText(j + 1, "" + data.get(scope, j, i));
 			}
 		}
@@ -92,59 +91,55 @@ public class MatrixEditorDialog extends Dialog {
 		final TableEditor editor = new TableEditor(table);
 		editor.horizontalAlignment = SWT.LEFT;
 		editor.grabHorizontal = true;
-		table.addListener(SWT.MouseDown, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				final Rectangle clientArea = table.getClientArea();
-				final Point pt = new Point(event.x, event.y);
-				int index = table.getTopIndex();
-				while (index < table.getItemCount()) {
-					boolean visible = false;
-					final TableItem item = table.getItem(index);
-					/** We don't want to have the first column editable so from i=1 */
-					for ( int i = 1; i < table.getColumnCount(); i++ ) {
-						final Rectangle rect = item.getBounds(i);
-						if ( rect.contains(pt) ) {
-							final int column = i;
-							final Text text = new Text(table, SWT.NONE);
-							final Listener textListener = new Listener() {
-
-								@Override
-								public void handleEvent(final Event e) {
-									switch (e.type) {
-										case SWT.FocusOut:
-											item.setText(column, text.getText());
-											text.dispose();
-											break;
-										case SWT.Traverse:
-											switch (e.detail) {
-												case SWT.TRAVERSE_RETURN:
-													item.setText(column, text.getText());
-													//$FALL-THROUGH$
-												case SWT.TRAVERSE_ESCAPE:
-													text.dispose();
-													e.doit = false;
-											}
-											break;
-									}
+		table.addListener(SWT.MouseDown, event -> {
+			final Rectangle clientArea = table.getClientArea();
+			final Point pt = new Point(event.x, event.y);
+			int index1 = table.getTopIndex();
+			while (index1 < table.getItemCount()) {
+				boolean visible = false;
+				final TableItem item = table.getItem(index1);
+				/**
+				 * We don't want to have the first column editable so from i=1
+				 */
+				for (int i = 1; i < table.getColumnCount(); i++) {
+					final Rectangle rect = item.getBounds(i);
+					if (rect.contains(pt)) {
+						final int column = i;
+						final Text text = new Text(table, SWT.NONE);
+						final Listener textListener = e -> {
+							switch (e.type) {
+							case SWT.FocusOut:
+								item.setText(column, text.getText());
+								text.dispose();
+								break;
+							case SWT.Traverse:
+								switch (e.detail) {
+								case SWT.TRAVERSE_RETURN:
+									item.setText(column, text.getText());
+									//$FALL-THROUGH$
+								case SWT.TRAVERSE_ESCAPE:
+									text.dispose();
+									e.doit = false;
 								}
-							};
-							text.addListener(SWT.FocusOut, textListener);
-							text.addListener(SWT.Traverse, textListener);
-							editor.setEditor(text, item, i);
-							text.setText(item.getText(i));
-							text.selectAll();
-							text.setFocus();
-							return;
-						}
-						if ( !visible && rect.intersects(clientArea) ) {
-							visible = true;
-						}
+								break;
+							}
+						};
+						text.addListener(SWT.FocusOut, textListener);
+						text.addListener(SWT.Traverse, textListener);
+						editor.setEditor(text, item, i);
+						text.setText(item.getText(i));
+						text.selectAll();
+						text.setFocus();
+						return;
 					}
-					if ( !visible ) { return; }
-					index++;
+					if (!visible && rect.intersects(clientArea)) {
+						visible = true;
+					}
 				}
+				if (!visible) {
+					return;
+				}
+				index1++;
 			}
 		});
 
@@ -163,7 +158,7 @@ public class MatrixEditorDialog extends Dialog {
 				int nextIndex;
 				final int currentIndex = table.getSelectionIndex();
 				final int lastIndex = table.getItemCount();
-				if ( table.getSelectionIndices().length == 0 ) {
+				if (table.getSelectionIndices().length == 0) {
 					/** nothing selected */
 					nextIndex = lastIndex;
 					item = new TableItem(table, SWT.CENTER);
@@ -188,40 +183,27 @@ public class MatrixEditorDialog extends Dialog {
 
 		del.setLayoutData(gridData);
 
-		table.addListener(SWT.Selection, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				if ( table.getSelectionIndices().length != 0 ) {
-					/** nothing selected */
-					del.setEnabled(true);
-					add.setText("Add a row after this position");
-				} else {
-					del.setEnabled(false);
-				}
-			}
-		});
-		del.addListener(SWT.Selection, new Listener() {
-
-			/** Remove the selection and refresh the view */
-			@Override
-			public void handleEvent(final Event event) {
-				final int nextIndex = table.getSelectionIndex();
-				table.remove(table.getSelectionIndices());
+		table.addListener(SWT.Selection, event -> {
+			if (table.getSelectionIndices().length != 0) {
+				/** nothing selected */
+				del.setEnabled(true);
+				add.setText("Add a row after this position");
+			} else {
 				del.setEnabled(false);
-				add.setText("Add a row");
-				refreshColumnIndex(nextIndex);
 			}
 		});
-		container.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(final DisposeEvent e) {
-				try {
-					data = getNewMatrix();
-				} catch (final GamaRuntimeException e1) {
-					GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
-				}
+		del.addListener(SWT.Selection, event -> {
+			final int nextIndex = table.getSelectionIndex();
+			table.remove(table.getSelectionIndices());
+			del.setEnabled(false);
+			add.setText("Add a row");
+			refreshColumnIndex(nextIndex);
+		});
+		container.addDisposeListener(e -> {
+			try {
+				data = getNewMatrix();
+			} catch (final GamaRuntimeException e1) {
+				GAMA.reportError(GAMA.getRuntimeScope(), e1, false);
 			}
 		});
 		return container;
@@ -230,7 +212,7 @@ public class MatrixEditorDialog extends Dialog {
 	/** A refresh for the index column of the dialog box */
 	public void refreshColumnIndex(final int index) {
 		final int lastIndex = table.getItemCount();
-		for ( int i = index; i < lastIndex; i++ ) {
+		for (int i = index; i < lastIndex; i++) {
 			final TableItem item = table.getItem(i);
 			item.setText(0, String.valueOf(i));
 		}
@@ -243,8 +225,8 @@ public class MatrixEditorDialog extends Dialog {
 
 		final IMatrix m = createMatrix(rows, cols);
 
-		for ( int r = 0; r < rows; r++ ) {
-			for ( int c = 1; c < cols + 1; c++ ) {
+		for (int r = 0; r < rows; r++) {
+			for (int c = 1; c < cols + 1; c++) {
 				final TableItem item = table.getItem(r);
 				m.set(scope, c - 1, r, item.getText(c));
 			}
@@ -254,9 +236,9 @@ public class MatrixEditorDialog extends Dialog {
 	}
 
 	private IMatrix createMatrix(final int rows, final int cols) {
-		if ( data instanceof GamaIntMatrix ) {
+		if (data instanceof GamaIntMatrix) {
 			return new GamaIntMatrix(cols, rows);
-		} else if ( data instanceof GamaFloatMatrix ) {
+		} else if (data instanceof GamaFloatMatrix) {
 			return new GamaFloatMatrix(cols, rows);
 		} else {
 			return new GamaObjectMatrix(cols, rows, data.getType().getContentType());

@@ -120,7 +120,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 	class TemplateTree extends Node {
 
-		final Set<Node> children = new LinkedHashSet();
+		final Set<Node> children = new LinkedHashSet<>();
 		final String name;
 
 		TemplateTree(final Node parent, final String name) {
@@ -130,7 +130,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 		void add(final TemplatePersistenceData t) {
 			final String id = t.getId();
-			final List<String> path = new ArrayList(Arrays.asList(id.split("\\.")));
+			final List<String> path = new ArrayList<>(Arrays.asList(id.split("\\.")));
 			add(t, path);
 		}
 

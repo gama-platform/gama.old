@@ -44,7 +44,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	 * @see msi.gaml.statements.draw.DrawingAttributes#getTextures()
 	 */
 	@Override
-	public List getTextures() {
+	public List<?> getTextures() {
 		return null;
 	}
 
@@ -87,7 +87,7 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	public double getDepth() {
 		return 0;
 	}
-	
+
 	/**
 	 * Method getMaterial()
 	 * 

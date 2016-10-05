@@ -24,7 +24,7 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.SwitchButton;
 import ummisco.gama.ui.interfaces.EditorListener;
 
-public class BooleanEditor extends AbstractEditor {
+public class BooleanEditor extends AbstractEditor<Boolean> {
 
 	private SwitchButton button;
 
@@ -34,7 +34,7 @@ public class BooleanEditor extends AbstractEditor {
 	}
 
 	BooleanEditor(final IScope scope, final Composite parent, final String title, final boolean value,
-		final EditorListener<Boolean> whenModified) {
+			final EditorListener<Boolean> whenModified) {
 		super(scope, new InputParameter(title, value), whenModified);
 		acceptNull = false;
 		this.createComposite(parent);
@@ -44,14 +44,14 @@ public class BooleanEditor extends AbstractEditor {
 		this(scope, agent, param, null);
 	}
 
-	BooleanEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	BooleanEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<Boolean> l) {
 		super(scope, agent, param, l);
 		acceptNull = false;
 	}
 
 	@Override
 	public void widgetSelected(final SelectionEvent se) {
-		if ( !internalModification ) {
+		if (!internalModification) {
 			modifyAndDisplayValue(button.getSelection());
 		}
 	}
@@ -66,8 +66,8 @@ public class BooleanEditor extends AbstractEditor {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		Boolean b = (Boolean) currentValue;
-		if ( b == null ) {
+		Boolean b = currentValue;
+		if (b == null) {
 			b = false;
 		}
 		// button.setText(b ? "true" : "false");
@@ -82,7 +82,7 @@ public class BooleanEditor extends AbstractEditor {
 	}
 
 	@Override
-	public IType getExpectedType() {
+	public IType<Boolean> getExpectedType() {
 		return Types.BOOL;
 	}
 

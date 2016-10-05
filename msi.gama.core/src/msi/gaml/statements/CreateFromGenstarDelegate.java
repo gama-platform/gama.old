@@ -4,12 +4,16 @@
  */
 package msi.gaml.statements;
 
-import java.util.*;
-import msi.gama.common.interfaces.*;
+import java.util.List;
+import java.util.Map;
+
+import msi.gama.common.interfaces.ICreateDelegate;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IList;
 import msi.gaml.operators.fastmaths.CmnFastMath;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Class CreateFromDatabaseDelegate.
@@ -18,6 +22,7 @@ import msi.gaml.types.*;
  * @since 27 mai 2015
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CreateFromGenstarDelegate implements ICreateDelegate {
 
 	/**
@@ -27,8 +32,8 @@ public class CreateFromGenstarDelegate implements ICreateDelegate {
 	 */
 	@Override
 	public boolean acceptSource(final Object source) {
-		return source instanceof List && ((List) source).get(0) instanceof String &&
-			((List) source).get(0).equals(IKeyword.GENSTAR_POPULATION);
+		return source instanceof List && ((List) source).get(0) instanceof String
+				&& ((List) source).get(0).equals(IKeyword.GENSTAR_POPULATION);
 	}
 
 	/**
@@ -37,17 +42,18 @@ public class CreateFromGenstarDelegate implements ICreateDelegate {
 	 *
 	 * @author Vo Duc An
 	 * @since 04-09-2012
-	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope, java.util.List, int, java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope,
+	 *      java.util.List, int, java.lang.Object)
 	 */
 	@Override
 	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object source,
-		final Arguments init, final CreateStatement statement) {
+			final Arguments init, final CreateStatement statement) {
 		final IList<Map> syntheticPopulation = (IList<Map>) source;
 		final int num = max == null ? syntheticPopulation.length(scope) - 1
-			: CmnFastMath.min(syntheticPopulation.length(scope) - 1, max);
+				: CmnFastMath.min(syntheticPopulation.length(scope) - 1, max);
 		// the first element of syntheticPopulation a string (i.e.,
 		// "genstar_population")
-		for ( int i = 1; i < num; i++ ) {
+		for (int i = 1; i < num; i++) {
 			final Map genstarInit = syntheticPopulation.get(i);
 			statement.fillWithUserInit(scope, genstarInit);
 			// mix genstar's init attributes with user's init
@@ -58,6 +64,7 @@ public class CreateFromGenstarDelegate implements ICreateDelegate {
 
 	/**
 	 * Method fromFacetType()
+	 * 
 	 * @see msi.gama.common.interfaces.ICreateDelegate#fromFacetType()
 	 */
 	@Override

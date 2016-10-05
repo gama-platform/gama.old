@@ -30,7 +30,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	private static final String DEAD_MARKER = " dead at step ";
 	private static final String AGENT_MARKER = "Agent" + ItemList.SEPARATION_CODE;
-	private static final Set<String> HIDDEN = new HashSet(
+	private static final Set<String> HIDDEN = new HashSet<>(
 			Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS));
 
 	@Override
@@ -58,7 +58,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 			if (!agent.dead()) {
 				for (final IParameter var : params) {
 					if (!HIDDEN.contains(var.getName())) {
-						final IParameterEditor gp = EditorFactory.getInstance()
+						final IParameterEditor<?> gp = EditorFactory.getInstance()
 								.create(agent.getScope().copy("for " + agent.getName()), agent, var, null);
 						categories.get(agent).put(gp.getParam().getName(), gp);
 					}
@@ -70,7 +70,7 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	@Override
 	public boolean addItem(final IAgent agent) {
 		if (!categories.containsKey(agent)) {
-			categories.put(agent, new HashMap<String, IParameterEditor>());
+			categories.put(agent, new HashMap<String, IParameterEditor<?>>());
 			return true;
 		}
 		return false;
@@ -78,9 +78,9 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
 	@Override
 	public void updateItemValues() {
-		for (final Map.Entry<IAgent, Map<String, IParameterEditor>> entry : categories.entrySet()) {
+		for (final Map.Entry<IAgent, Map<String, IParameterEditor<?>>> entry : categories.entrySet()) {
 			if (!entry.getKey().dead()) {
-				for (final IParameterEditor gp : entry.getValue().values()) {
+				for (final IParameterEditor<?> gp : entry.getValue().values()) {
 					gp.updateValue();
 				}
 				;

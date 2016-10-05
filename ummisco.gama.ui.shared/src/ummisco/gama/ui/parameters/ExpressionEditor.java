@@ -24,7 +24,7 @@ public class ExpressionEditor extends GenericEditor<IExpression> {
 	private String expressionText;
 
 	ExpressionEditor(final IScope scope, final Composite parent, final String title, final IExpression value,
-		final EditorListener<IExpression> whenModified, final IType expectedType) {
+			final EditorListener<IExpression> whenModified, final IType<?> expectedType) {
 		super(scope, parent, title, value, whenModified);
 		this.expectedType = expectedType;
 	}

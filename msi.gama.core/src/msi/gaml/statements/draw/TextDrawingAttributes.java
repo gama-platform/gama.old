@@ -14,6 +14,7 @@ import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class TextDrawingAttributes extends DrawingAttributes {
 
 	public final GamaFont font;
@@ -75,7 +76,7 @@ public class TextDrawingAttributes extends DrawingAttributes {
 	public double getDepth() {
 		return 0;
 	}
-	
+
 	/**
 	 * Method getMaterial()
 	 * 

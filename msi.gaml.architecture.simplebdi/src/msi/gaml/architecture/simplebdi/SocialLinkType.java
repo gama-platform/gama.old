@@ -7,20 +7,25 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 
-@type(name= "social_link", id=SocialLinkType.id, wraps={SocialLink.class},concept = {IConcept.TYPE, IConcept.BDI})
+@SuppressWarnings("unchecked")
+@type(name = "social_link", id = SocialLinkType.id, wraps = { SocialLink.class }, concept = { IConcept.TYPE,
+		IConcept.BDI })
 
-public class SocialLinkType extends GamaType<SocialLink>{
+public class SocialLinkType extends GamaType<SocialLink> {
 
 	public final static int id = IType.AVAILABLE_TYPES + 546657;
-	
+
 	@Override
 	public boolean canCastToConst() {
 		return true;
 	}
 
 	@Override
-	public SocialLink cast(IScope scope, Object obj, Object param, boolean copy) throws GamaRuntimeException {
-		if(obj instanceof SocialLink) {return (SocialLink) obj;}
+	public SocialLink cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+			throws GamaRuntimeException {
+		if (obj instanceof SocialLink) {
+			return (SocialLink) obj;
+		}
 		return null;
 	}
 

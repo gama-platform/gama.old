@@ -23,7 +23,7 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	protected final boolean isNotModifiable;
 	private final IDescription definitionDescription;
 
-	protected VariableExpression(final String n, final IType type, final boolean notModifiable,
+	protected VariableExpression(final String n, final IType<?> type, final boolean notModifiable,
 			final IDescription definitionDescription) {
 		name = n;
 		setType(type);
@@ -73,7 +73,7 @@ public abstract class VariableExpression extends AbstractExpression implements I
 		return definitionDescription;
 	}
 
-	protected void setType(final IType type) {
+	protected void setType(final IType<?> type) {
 		this.type = type;
 	}
 

@@ -52,7 +52,7 @@ import msi.gaml.types.IType;
 						IKeyword.USER_INPUT })
 public class UserPanelStatement extends FsmStateStatement {
 
-	List<IStatement> userCommands = new ArrayList();
+	List<IStatement> userCommands = new ArrayList<>();
 
 	public UserPanelStatement(final IDescription desc) {
 		super(desc);

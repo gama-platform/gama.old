@@ -67,6 +67,7 @@ public class PerspectiveHelper {
 		return tempDescriptor;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	static void dirtySavePerspective(final SimulationPerspectiveDescriptor sp) {
 		try {
 			final Field descField = PerspectiveRegistry.class.getDeclaredField("descriptors");
@@ -98,25 +99,21 @@ public class PerspectiveHelper {
 		final IPerspectiveDescriptor oldDescriptor = activePage.getPerspective();
 		final IPerspectiveDescriptor descriptor = findOrBuildPerspectiveWithId(perspectiveId);
 		final IWorkbenchPage page = activePage;
-		final Runnable r = new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					page.setPerspective(descriptor);
-				} catch (final NullPointerException e) {
-					// System.err.println(
-					// "NPE in WorkbenchPage.setPerspective(). See Issue #1602.
-					// Working around the bug in e4...");
-					page.setPerspective(descriptor);
-				}
-				activateAutoSave(withAutoSave);
-				if ( isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId) ) {
-					page.closePerspective(oldDescriptor, false, false);
-				}
-				currentPerspectiveId = perspectiveId;
-				// System.out.println("Perspective " + perspectiveId + " opened ");
+		final Runnable r = () -> {
+			try {
+				page.setPerspective(descriptor);
+			} catch (final NullPointerException e) {
+				// System.err.println(
+				// "NPE in WorkbenchPage.setPerspective(). See Issue #1602.
+				// Working around the bug in e4...");
+				page.setPerspective(descriptor);
 			}
+			activateAutoSave(withAutoSave);
+			if ( isSimulationPerspective(currentPerspectiveId) && isSimulationPerspective(perspectiveId) ) {
+				page.closePerspective(oldDescriptor, false, false);
+			}
+			currentPerspectiveId = perspectiveId;
+			// System.out.println("Perspective " + perspectiveId + " opened ");
 		};
 		if ( immediately ) {
 			Display.getDefault().syncExec(r);

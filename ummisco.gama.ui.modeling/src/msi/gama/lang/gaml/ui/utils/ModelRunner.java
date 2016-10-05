@@ -109,7 +109,7 @@ public class ModelRunner extends AbstractServiceFactory implements IModelRunner 
 			runModel(uri, exp);
 		} else if (object instanceof URI) {
 			final URI uri = (URI) object;
-			final List<GamlCompilationError> errors = new ArrayList();
+			final List<GamlCompilationError> errors = new ArrayList<>();
 			final IModel model = GamlModelBuilder.compile(uri, errors);
 			if (model == null) {
 				GAMA.getGui().error("File " + uri.lastSegment() + " cannot be built because of " + errors.size()

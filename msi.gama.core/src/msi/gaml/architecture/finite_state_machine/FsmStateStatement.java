@@ -175,7 +175,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 	public static final String EXIT = "exit";
 	private FsmEnterStatement enterActions = null;
 	private FsmExitStatement exitActions = null;
-	List<FsmTransitionStatement> transitions = new ArrayList();
+	List<FsmTransitionStatement> transitions = new ArrayList<>();
 	private int transitionsSize;
 	boolean isInitial;
 	boolean isFinal;
@@ -213,7 +213,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 		final Boolean enter = (Boolean) agent.getAttribute(ENTER);
 		Map<String, Object> memory = (Map) agent.getAttribute(STATE_MEMORY);
 		if (enter || memory == null) {
-			memory = new THashMap();
+			memory = new THashMap<>();
 			agent.setAttribute(STATE_MEMORY, memory);
 		} else {
 			for (final Map.Entry<String, Object> entry : memory.entrySet()) {

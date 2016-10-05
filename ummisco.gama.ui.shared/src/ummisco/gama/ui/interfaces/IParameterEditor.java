@@ -22,6 +22,7 @@ import msi.gaml.types.IType;
  * @since 18 d�c. 2011
  * 
  */
+@SuppressWarnings({ "rawtypes" })
 public interface IParameterEditor<T> extends IScoped {
 
 	public abstract IType getExpectedType();

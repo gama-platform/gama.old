@@ -18,6 +18,7 @@ import msi.gama.util.IList;
  * The Message class represents the piece of information transfered between
  * agents capable of communicating.
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class MessageData {
 
 	/** The name of sender. */

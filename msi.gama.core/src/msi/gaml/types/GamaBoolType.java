@@ -12,10 +12,13 @@
 package msi.gaml.types;
 
 import java.io.File;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.*;
-import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -26,29 +29,45 @@ import msi.gama.util.IContainer;
  * @todo Description
  *
  */
-@type(name = IKeyword.BOOL,
-id = IType.BOOL,
-wraps = { Boolean.class, boolean.class },
-kind = ISymbolKind.Variable.REGULAR,
-doc = { @doc("Represents boolean values, either true or false") },
-concept = { IConcept.TYPE, IConcept.LOGICAL, IConcept.CONDITION } )
+@SuppressWarnings("unchecked")
+@type(name = IKeyword.BOOL, id = IType.BOOL, wraps = { Boolean.class,
+		boolean.class }, kind = ISymbolKind.Variable.REGULAR, doc = {
+				@doc("Represents boolean values, either true or false") }, concept = { IConcept.TYPE, IConcept.LOGICAL,
+						IConcept.CONDITION })
 public class GamaBoolType extends GamaType<Boolean> {
 
 	@Override
 	public Boolean cast(final IScope scope, final Object obj, final Object param, final boolean copy)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		return staticCast(scope, obj, param, copy);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static Boolean staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
-		if ( obj == null ) { return false; }
-		if ( obj instanceof Boolean ) { return (Boolean) obj; }
-		if ( obj instanceof IAgent ) { return !((IAgent) obj).dead(); }
-		if ( obj instanceof IContainer ) { return !((IContainer) obj).isEmpty(scope); }
-		if ( obj instanceof File ) { return ((File) obj).exists(); }
-		if ( obj instanceof Integer ) { return !((Integer) obj == 0); }
-		if ( obj instanceof Double ) { return !((Double) obj == 0f); }
-		if ( obj instanceof String ) { return ((String) obj).equals("true"); }
+		if (obj == null) {
+			return false;
+		}
+		if (obj instanceof Boolean) {
+			return (Boolean) obj;
+		}
+		if (obj instanceof IAgent) {
+			return !((IAgent) obj).dead();
+		}
+		if (obj instanceof IContainer) {
+			return !((IContainer) obj).isEmpty(scope);
+		}
+		if (obj instanceof File) {
+			return ((File) obj).exists();
+		}
+		if (obj instanceof Integer) {
+			return !((Integer) obj == 0);
+		}
+		if (obj instanceof Double) {
+			return !((Double) obj == 0f);
+		}
+		if (obj instanceof String) {
+			return ((String) obj).equals("true");
+		}
 		return false;
 	}
 
@@ -61,6 +80,5 @@ public class GamaBoolType extends GamaType<Boolean> {
 	public boolean canCastToConst() {
 		return true;
 	}
-
 
 }

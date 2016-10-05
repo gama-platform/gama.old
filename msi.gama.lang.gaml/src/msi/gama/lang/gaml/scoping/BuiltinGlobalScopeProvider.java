@@ -79,8 +79,8 @@ import msi.gaml.types.Types;
 public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
 	// public static BuiltinGlobalScopeProvider INSTANCE;
-	static final THashMap EMPTY_MAP = new THashMap();
-	private static THashMap<EClass, TerminalMapBasedScope> GLOBAL_SCOPES = new THashMap();
+	static final THashMap EMPTY_MAP = new THashMap<>();
+	private static THashMap<EClass, TerminalMapBasedScope> GLOBAL_SCOPES = new THashMap<>();
 	private static THashSet<QualifiedName> allNames;
 	private static THashMap<EClass, Resource> resources;
 	private static THashMap<EClass, THashMap<QualifiedName, IEObjectDescription>> descriptions = null;
@@ -226,7 +226,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		 */
 		@Override
 		public Set<String> keySet() {
-			final THashSet<String> keys = new THashSet();
+			final THashSet<String> keys = new THashSet<>();
 			for (int i = 0; i < contents.length; i += 2) {
 				keys.add(contents[i]);
 			}
@@ -240,7 +240,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		 */
 		@Override
 		public Collection<String> values() {
-			final THashSet<String> values = new THashSet();
+			final THashSet<String> values = new THashSet<>();
 			for (int i = 1; i < contents.length; i += 2) {
 				values.add(contents[i]);
 			}
@@ -254,7 +254,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		 */
 		@Override
 		public Set<java.util.Map.Entry<String, String>> entrySet() {
-			final THashSet<Map.Entry<String, String>> keys = new THashSet();
+			final THashSet<Map.Entry<String, String>> keys = new THashSet<>();
 			for (int i = 0; i < contents.length; i += 2) {
 				final Map.Entry<String, String> entry = new GamaPair<>(contents[i], contents[i + 1], Types.STRING,
 						Types.STRING);
@@ -298,21 +298,21 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		eAction = GamlPackage.eINSTANCE.getActionDefinition();
 		eUnit = GamlPackage.eINSTANCE.getUnitFakeDefinition();
 		eEquation = GamlPackage.eINSTANCE.getEquationDefinition();
-		resources = new THashMap();
+		resources = new THashMap<>();
 		resources.put(eType, createResource("types.xmi"));
 		resources.put(eVar, createResource("vars.xmi"));
 		resources.put(eSkill, createResource("skills.xmi"));
 		resources.put(eUnit, createResource("units.xmi"));
 		resources.put(eAction, createResource("actions.xmi"));
 		resources.put(eEquation, createResource("equations.xmi"));
-		descriptions = new THashMap();
-		descriptions.put(eVar, new THashMap());
-		descriptions.put(eType, new THashMap());
-		descriptions.put(eSkill, new THashMap());
-		descriptions.put(eUnit, new THashMap());
-		descriptions.put(eAction, new THashMap());
-		descriptions.put(eEquation, new THashMap());
-		allNames = new THashSet();
+		descriptions = new THashMap<>();
+		descriptions.put(eVar, new THashMap<>());
+		descriptions.put(eType, new THashMap<>());
+		descriptions.put(eSkill, new THashMap<>());
+		descriptions.put(eUnit, new THashMap<>());
+		descriptions.put(eAction, new THashMap<>());
+		descriptions.put(eEquation, new THashMap<>());
+		allNames = new THashSet<>();
 	}
 
 	public boolean contains(final QualifiedName name) {

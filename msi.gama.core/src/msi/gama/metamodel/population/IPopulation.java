@@ -39,6 +39,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  *
  */
+@SuppressWarnings({ "rawtypes" })
 public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, IStepable, IPopulationSet {
 
 	public interface Listener {

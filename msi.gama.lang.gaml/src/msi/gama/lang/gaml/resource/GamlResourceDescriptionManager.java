@@ -55,7 +55,7 @@ public class GamlResourceDescriptionManager extends DefaultResourceDescriptionMa
 			final IResourceDescriptions context) {
 		final boolean result = false;
 		final URI newUri = candidate.getURI();
-		final Set<URI> deltaUris = new HashSet();
+		final Set<URI> deltaUris = new HashSet<>();
 		for (final Delta d : deltas) {
 			deltaUris.add(GamlResourceServices.properlyEncodedURI(d.getUri()));
 		}

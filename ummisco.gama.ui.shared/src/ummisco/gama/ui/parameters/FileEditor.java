@@ -29,6 +29,7 @@ import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.IGamaColors;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class FileEditor extends AbstractEditor<IGamaFile> {
 
 	private FlatButton textBox;

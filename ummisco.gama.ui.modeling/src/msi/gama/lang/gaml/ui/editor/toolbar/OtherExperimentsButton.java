@@ -36,7 +36,6 @@ import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.AutoStartup;
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -138,7 +137,7 @@ public class OtherExperimentsButton {
 	}
 
 	private Map<URI, List<String>> grabProjectModelsAndExperiments() {
-		final Map<URI, List<String>> map = new LinkedHashMap();
+		final Map<URI, List<String>> map = new LinkedHashMap<>();
 		editor.getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
 			@Override
@@ -155,17 +154,13 @@ public class OtherExperimentsButton {
 					if (!xr.hasErrors()) {
 						final ISyntacticElement el = xr.getSyntacticContents();
 						if (el != null)
-							el.visitExperiments(new SyntacticVisitor() {
+							el.visitExperiments(element -> {
 
-								@Override
-								public void visit(final ISyntacticElement element) {
-
-									if (!map.containsKey(uri)) {
-										map.put(uri, new ArrayList());
-									}
-									map.get(uri).add(element.getName());
-
+								if (!map.containsKey(uri)) {
+									map.put(uri, new ArrayList<>());
 								}
+								map.get(uri).add(element.getName());
+
 							});
 					}
 				}
@@ -176,7 +171,7 @@ public class OtherExperimentsButton {
 	}
 
 	public static ArrayList<URI> getAllGamaFilesInProject(final IProject project, final URI without) {
-		final ArrayList<URI> allGamaFiles = new ArrayList();
+		final ArrayList<URI> allGamaFiles = new ArrayList<>();
 		final IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		final IPath path = project.getLocation();
 		recursiveFindGamaFiles(allGamaFiles, path, myWorkspaceRoot, without);

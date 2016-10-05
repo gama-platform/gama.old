@@ -330,8 +330,8 @@ public class ChartDataSet {
 			}
 
 			if (xval instanceof GamaList) {
-				final IList xv2 = Cast.asList(scope, xval);
-				final IList xl2 = Cast.asList(scope, xlab);
+				final IList<?> xv2 = Cast.asList(scope, xval);
+				final IList<?> xl2 = Cast.asList(scope, xlab);
 
 				if (this.useYSource && xv2.size() > 0 && xv2.get(0) instanceof Number) {
 					YSeriesValues = new ArrayList<Double>();
@@ -429,8 +429,8 @@ public class ChartDataSet {
 			}
 
 			if (xval instanceof GamaList) {
-				final IList xv2 = Cast.asList(scope, xval);
-				final IList xl2 = Cast.asList(scope, xlab);
+				final IList<?> xv2 = Cast.asList(scope, xval);
+				final IList<?> xl2 = Cast.asList(scope, xlab);
 
 				if (this.useXSource && xv2.size() > 0 && xv2.get(0) instanceof Number) {
 					XSeriesValues = new ArrayList<Double>();

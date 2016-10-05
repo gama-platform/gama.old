@@ -39,7 +39,7 @@ import msi.gaml.types.Types;
  */
 class TemporaryScope implements IScope {
 
-	Map<String, Object> vars = new HashMap();
+	Map<String, Object> vars = new HashMap<>();
 
 	/**
 	 *
@@ -237,8 +237,8 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#getListArg(java.lang.String)
 	 */
 	@Override
-	public IList getListArg(final String string) throws GamaRuntimeException {
-		return (IList) getArg(string, IType.LIST);
+	public IList<?> getListArg(final String string) throws GamaRuntimeException {
+		return (IList<?>) getArg(string, IType.LIST);
 	}
 
 	/**

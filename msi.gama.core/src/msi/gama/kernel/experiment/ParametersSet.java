@@ -22,6 +22,7 @@ import msi.gama.util.file.GamaFile;
 /**
  * The Class ParametersSet.
  */
+@SuppressWarnings({ "rawtypes" })
 public class ParametersSet extends HashMap<String, Object> {
 
 	public ParametersSet() {

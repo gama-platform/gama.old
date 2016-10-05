@@ -37,13 +37,13 @@ public abstract class AbstractObject {
 	public final int pickingIndex = index++;
 	private boolean picked = false;
 	protected final Texture[] textures;
-	
+
 	protected boolean overlay = false;
-	
-	public void enableOverlay(boolean value) {
+
+	public void enableOverlay(final boolean value) {
 		overlay = value;
 	}
-	
+
 	public boolean isOverlay() {
 		return overlay;
 	}
@@ -152,6 +152,7 @@ public abstract class AbstractObject {
 		return textures != null && textures.length > 0;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean isPicking) {
 		final Abstract3DRenderer renderer = drawer.renderer;
 

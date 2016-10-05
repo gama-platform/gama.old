@@ -132,6 +132,7 @@ class ShapeExecuter extends DrawExecuter {
 	 * @param scope
 	 * @param attributes
 	 */
+	@SuppressWarnings("unchecked")
 	private void addTextures(final IScope scope, final ShapeDrawingAttributes attributes) {
 		if (attributes.textures == null) {
 			return;

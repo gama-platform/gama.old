@@ -86,16 +86,17 @@ import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement.Sing
 				@example(value = "   diff(S,t) = (- 0.3 * S * I / 100);", isExecutable = false),
 				@example(value = "   diff(I,t) = (0.3 * S * I / 100);", isExecutable = false),
 				@example(value = "} ", isExecutable = false) }) }, see = { EQUATION, SOLVE })
+@SuppressWarnings({ "rawtypes" })
 public class SingleEquationStatement extends AbstractStatement {
 
-	public static final Map<String, Integer> orderNames = new TOrderedHashMap();
+	public static final Map<String, Integer> orderNames = new TOrderedHashMap<>();
 	static {
 		orderNames.put(ZERO, 0);
 		orderNames.put(DIFF, 1);
 		orderNames.put(DIF2, 2);
 	}
 
-	public static class SIngleEquationSerializer extends SymbolSerializer {
+	public static class SIngleEquationSerializer extends SymbolSerializer<SymbolDescription> {
 
 		@Override
 		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
@@ -104,7 +105,7 @@ public class SingleEquationStatement extends AbstractStatement {
 		}
 	}
 
-	public static class SingleEquationValidator implements IDescriptionValidator {
+	public static class SingleEquationValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()

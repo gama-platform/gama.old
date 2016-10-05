@@ -71,6 +71,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 27 avr. 2015
  *
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class JOGLRenderer extends Abstract3DRenderer {
 
 	private final PickingState pickingState = new PickingState();
@@ -101,15 +102,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
-		WorkbenchHelper.run(new Runnable() {
+		WorkbenchHelper.run(() -> getCanvas().setVisible(visible));
 
-			@Override
-			public void run() {
-				getCanvas().setVisible(visible);
-
-			}
-		});
-		
 		commonInit(drawable);
 
 		// Putting the swap interval to 0 (instead of 1) seems to cure some of
@@ -223,14 +217,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (!visible) {
 			// We make the canvas visible only after a first display has occured
 			visible = true;
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					getCanvas().setVisible(true);
-
-				}
-			});
+			WorkbenchHelper.asyncRun(() -> getCanvas().setVisible(true));
 
 		}
 
@@ -526,11 +513,14 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (currentScene != null)
 			currentScene.stopDrawRotationHelper();
 	}
-	
+
 	@Override
-	public void startDrawKeystoneHelper() {} // TODO (or not)
+	public void startDrawKeystoneHelper() {
+	} // TODO (or not)
+
 	@Override
-	public void stopDrawKeystoneHelper() {} // TODO (or not)
+	public void stopDrawKeystoneHelper() {
+	} // TODO (or not)
 
 	@Override
 	public void drawRotationHelper(final GL2 gl) {

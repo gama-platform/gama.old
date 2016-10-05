@@ -226,7 +226,7 @@ public class AmorphousTopology implements ITopology {
 	 */
 	@Override
 	public IContainer<?, IShape> getPlaces() {
-		final IList result = GamaListFactory.create(Types.GEOMETRY);
+		final IList<IShape> result = GamaListFactory.create(Types.GEOMETRY);
 		result.add(expandableEnvironment);
 		return result;
 	}

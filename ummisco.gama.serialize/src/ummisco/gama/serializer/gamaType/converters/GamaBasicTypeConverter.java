@@ -15,50 +15,53 @@ import msi.gaml.types.IType;
 
 public class GamaBasicTypeConverter implements Converter {
 
-	private final static String TAG="GamaType";
+	private final static String TAG = "GamaType";
 	ConverterScope convertScope;
-	
-	public GamaBasicTypeConverter(ConverterScope s){
+
+	public GamaBasicTypeConverter(final ConverterScope s) {
 		convertScope = s;
 	}
 
 	@Override
-	public boolean canConvert(Class arg0) {
-		List allClassesApa = ClassUtils.getAllSuperclasses(arg0);
-		for(Object c : allClassesApa) {
-			if(c.equals(GamaType.class))
+	public boolean canConvert(final Class arg0) {
+		final List<Class<?>> allClassesApa = ClassUtils.getAllSuperclasses(arg0);
+		for (final Object c : allClassesApa) {
+			if (c.equals(GamaType.class))
 				return true;
-		}		
-	//	if((arg0.equals(GamaType.class)) || (arg0.getSuperclass().equals(GamaType.class)))
-	//	{return true;}
-		
-	//	List allInterfaceApa = ClassUtils.getAllInterfaces(arg0);
-	//	
-	//	for(Object i : allInterfaceApa) {
-	//		if(i.equals(IType.class))
-	//			return true;
-	//	}
+		}
+		// if((arg0.equals(GamaType.class)) ||
+		// (arg0.getSuperclass().equals(GamaType.class)))
+		// {return true;}
+
+		// List allInterfaceApa = ClassUtils.getAllInterfaces(arg0);
+		//
+		// for(Object i : allInterfaceApa) {
+		// if(i.equals(IType.class))
+		// return true;
+		// }
 		return false;
 	}
 
 	@Override
-	public void marshal(Object arg0, HierarchicalStreamWriter writer, MarshallingContext arg2) {
-		GamaType type = (GamaType) arg0;
+	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
+		final GamaType<?> type = (GamaType<?>) arg0;
 		System.out.println("==GamaType  " + arg0);
 		writer.startNode(TAG);
-		writer.setValue(""+type.getName());		
-//		writer.setValue(""+arg0.getClass());
-	    writer.endNode();
+		writer.setValue("" + type.getName());
+		// writer.setValue(""+arg0.getClass());
+		writer.endNode();
 	}
 
 	// TODO
 	@Override
-	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext arg1) {
+	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		reader.moveDown();
-		IType t = convertScope.getScope().getModelContext().getTypeNamed(reader.getValue());
-	//	ModelDescription modelDesc = ((ModelDescription) convertScope.getScope().getModelContext());
-	//	IType t = ((ModelDescription) convertScope.getScope().getModelContext()).getTypesManager().get(type)
-//		String val = reader.getValue();
+		final IType<?> t = convertScope.getScope().getModelContext().getTypeNamed(reader.getValue());
+		// ModelDescription modelDesc = ((ModelDescription)
+		// convertScope.getScope().getModelContext());
+		// IType t = ((ModelDescription)
+		// convertScope.getScope().getModelContext()).getTypesManager().get(type)
+		// String val = reader.getValue();
 		reader.moveUp();
 
 		return t;

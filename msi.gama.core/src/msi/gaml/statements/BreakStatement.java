@@ -53,7 +53,7 @@ public class BreakStatement extends AbstractStatement {
 		}
 	}
 
-	public static class BreakValidator implements IDescriptionValidator {
+	public static class BreakValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
 		 * Method validate()
@@ -61,7 +61,7 @@ public class BreakStatement extends AbstractStatement {
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
-		public void validate(final IDescription description) {
+		public void validate(final StatementDescription description) {
 			IDescription superDesc = description.getEnclosingDescription();
 			while (superDesc != null && superDesc instanceof StatementWithChildrenDescription) {
 				if (((StatementWithChildrenDescription) superDesc).isBreakable()) {

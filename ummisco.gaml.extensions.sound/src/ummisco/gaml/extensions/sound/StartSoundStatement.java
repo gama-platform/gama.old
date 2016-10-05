@@ -44,6 +44,7 @@ import ummisco.gaml.extensions.sound.StartSoundStatement.StartSoundValidator;
 				IKeyword.IGNORE }, optional = true, doc = @doc("Mode of ")),
 		@facet(name = IKeyword.REPEAT, type = IType.BOOL, optional = true, doc = @doc("")) })
 @validator(StartSoundValidator.class)
+@SuppressWarnings({ "rawtypes" })
 public class StartSoundStatement extends AbstractStatementSequence {
 
 	public static class StartSoundValidator implements IDescriptionValidator {

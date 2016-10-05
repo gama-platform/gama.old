@@ -33,7 +33,7 @@ public class GamlResourceValidator implements IResourceValidator {
 		@Override
 		public void accept(final Issue t) {
 			if (result == null)
-				result = new ArrayList();
+				result = new ArrayList<>();
 			result.add(t);
 		}
 	}

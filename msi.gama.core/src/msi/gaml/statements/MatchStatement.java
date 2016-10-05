@@ -20,10 +20,12 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -34,31 +36,31 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul 14 nov. 07
  */
-@symbol(name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE },
-	kind = ISymbolKind.SEQUENCE_STATEMENT, concept = { IConcept.CONDITION },
-	with_sequence = true)
+@symbol(name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN,
+		IKeyword.MATCH_ONE }, kind = ISymbolKind.SEQUENCE_STATEMENT, concept = {
+				IConcept.CONDITION }, with_sequence = true)
 @inside(symbols = IKeyword.SWITCH)
 @facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE, optional = true) }, omissible = IKeyword.VALUE)
-@doc(value = "In a switch...match structure, the value of each match block is compared to the value in the switch. If they match, the embedded statement set is executed. Three kinds of match can be used",
-	usages = {
-		@usage(value = IKeyword.MATCH + " block is executed if the switch value is equals to the value of the match:",
-			examples = { @example(value = "switch 3 {", test = false),
-				@example(value = "   match 1 {write \"Match 1\"; }", test = false),
-				@example(value = "   match 3 {write \"Match 2\"; }", test = false), @example(value = "}", test = false) }),
-		@usage(value = IKeyword.MATCH_BETWEEN +
-			" block is executed if the switch value is in the interval given in value of the " +
-			IKeyword.MATCH_BETWEEN + ":", examples = { @example(value = "switch 3 {", test = false),
-			@example(value = "   match_between [1,2] {write \"Match OK between [1,2]\"; }", test = false),
-			@example(value = "   match_between [2,5] {write \"Match OK between [2,5]\"; }", test = false),
-			@example(value = "}", test = false) }),
-		@usage(value = IKeyword.MATCH_ONE +
-			" block is executed if the switch value is equals to one of the values of the " + IKeyword.MATCH_ONE + ":",
-			examples = {
-				@example(value = "switch 3 {", test = false),
-				@example(value = "   match_one [0,1,2] {write \"Match OK with one of [0,1,2]\"; }", test = false),
-				@example(value = "   match_between [2,3,4,5] {write \"Match OK with one of [2,3,4,5]\"; }",
-					test = false), @example(value = "}", test = false) }) },
-	see = { IKeyword.SWITCH, IKeyword.DEFAULT })
+@doc(value = "In a switch...match structure, the value of each match block is compared to the value in the switch. If they match, the embedded statement set is executed. Three kinds of match can be used", usages = {
+		@usage(value = IKeyword.MATCH
+				+ " block is executed if the switch value is equals to the value of the match:", examples = {
+						@example(value = "switch 3 {", test = false),
+						@example(value = "   match 1 {write \"Match 1\"; }", test = false),
+						@example(value = "   match 3 {write \"Match 2\"; }", test = false),
+						@example(value = "}", test = false) }),
+		@usage(value = IKeyword.MATCH_BETWEEN
+				+ " block is executed if the switch value is in the interval given in value of the "
+				+ IKeyword.MATCH_BETWEEN + ":", examples = { @example(value = "switch 3 {", test = false),
+						@example(value = "   match_between [1,2] {write \"Match OK between [1,2]\"; }", test = false),
+						@example(value = "   match_between [2,5] {write \"Match OK between [2,5]\"; }", test = false),
+						@example(value = "}", test = false) }),
+		@usage(value = IKeyword.MATCH_ONE
+				+ " block is executed if the switch value is equals to one of the values of the " + IKeyword.MATCH_ONE
+				+ ":", examples = { @example(value = "switch 3 {", test = false),
+						@example(value = "   match_one [0,1,2] {write \"Match OK with one of [0,1,2]\"; }", test = false),
+						@example(value = "   match_between [2,3,4,5] {write \"Match OK with one of [2,3,4,5]\"; }", test = false),
+						@example(value = "}", test = false) }) }, see = { IKeyword.SWITCH, IKeyword.DEFAULT })
+@SuppressWarnings({ "rawtypes" })
 public class MatchStatement extends AbstractStatementSequence {
 
 	final IExpression value;
@@ -68,18 +70,20 @@ public class MatchStatement extends AbstractStatementSequence {
 	public MatchStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
-		String keyword = desc.getKeyword();
+		final String keyword = desc.getKeyword();
 		setName(keyword + " " + (value == null ? "" : value.serialize(false)));
-		executer =
-			keyword.equals(IKeyword.MATCH) ? new SimpleMatch() : keyword.equals(IKeyword.MATCH_ONE) ? new MatchOne()
-				: keyword.equals(IKeyword.MATCH_BETWEEN) ? new MatchBetween() : null;
-		if ( executer != null ) {
+		executer = keyword.equals(IKeyword.MATCH) ? new SimpleMatch()
+				: keyword.equals(IKeyword.MATCH_ONE) ? new MatchOne()
+						: keyword.equals(IKeyword.MATCH_BETWEEN) ? new MatchBetween() : null;
+		if (executer != null) {
 			executer.acceptValue();
 		}
 	}
 
 	public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
-		if ( executer == null ) { return false; }
+		if (executer == null) {
+			return false;
+		}
 		return executer.matches(scope, switchValue);
 	}
 
@@ -88,7 +92,7 @@ public class MatchStatement extends AbstractStatementSequence {
 		abstract boolean matches(IScope scope, Object switchValue) throws GamaRuntimeException;
 
 		void acceptValue() {
-			if ( value.isConst() ) {
+			if (value.isConst()) {
 				constantValue = Cast.as(value, Object.class, false);
 			}
 		}
@@ -102,7 +106,7 @@ public class MatchStatement extends AbstractStatementSequence {
 
 		@Override
 		public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
-			Object val = getValue(scope);
+			final Object val = getValue(scope);
 			return val == null ? switchValue == null : val.equals(switchValue);
 		}
 
@@ -112,17 +116,19 @@ public class MatchStatement extends AbstractStatementSequence {
 
 		@Override
 		public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
-			Object val = getValue(scope);
-			if ( val instanceof IContainer ) { return ((IContainer) val).contains(scope, switchValue); }
+			final Object val = getValue(scope);
+			if (val instanceof IContainer) {
+				return ((IContainer) val).contains(scope, switchValue);
+			}
 			return Cast.asList(scope, val).contains(switchValue);
 		}
 
 		@Override
 		public void acceptValue() {
 			super.acceptValue();
-			if ( constantValue != null ) {
-				if ( !(constantValue instanceof IContainer) ) {
-					if ( !(constantValue instanceof ILocation) ) {
+			if (constantValue != null) {
+				if (!(constantValue instanceof IContainer)) {
+					if (!(constantValue instanceof ILocation)) {
 						constantValue = Cast.as(constantValue, IList.class, false);
 					}
 				}
@@ -134,15 +140,17 @@ public class MatchStatement extends AbstractStatementSequence {
 
 		@Override
 		public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
-			if ( !(switchValue instanceof Number) ) { throw GamaRuntimeException.error(
-				"Can only match if a number is in an interval. " + switchValue + " is not a number", scope); }
+			if (!(switchValue instanceof Number)) {
+				throw GamaRuntimeException.error(
+						"Can only match if a number is in an interval. " + switchValue + " is not a number", scope);
+			}
 			Object val = value.value(scope);
-			if ( !(val instanceof ILocation) ) {
+			if (!(val instanceof ILocation)) {
 				val = Cast.asPoint(scope, val);
 			}
-			double min = ((ILocation) val).getX();
-			double max = ((ILocation) val).getY();
-			double in = ((Number) switchValue).doubleValue();
+			final double min = ((ILocation) val).getX();
+			final double max = ((ILocation) val).getY();
+			final double in = ((Number) switchValue).doubleValue();
 			return in >= min && in <= max;
 		}
 
@@ -152,8 +160,8 @@ public class MatchStatement extends AbstractStatementSequence {
 		@Override
 		public void acceptValue() {
 			super.acceptValue();
-			if ( constantValue != null ) {
-				if ( !(constantValue instanceof ILocation) ) {
+			if (constantValue != null) {
+				if (!(constantValue instanceof ILocation)) {
 					constantValue = Cast.as(constantValue, ILocation.class, false);
 				}
 			}

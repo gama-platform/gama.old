@@ -351,7 +351,7 @@ public class EditToolbar {
 		// @Override
 		// public String exec(final XtextResource state) throws Exception {
 		// if ( state.getErrors().isEmpty() ) {
-		// java.util.List<GamlCompilationError> list = new ArrayList();
+		// java.util.List<GamlCompilationError> list = new ArrayList<>();
 		// ModelDescription md =
 		// DescriptionFactory.getModelFactory().buildModelDescription(state.getURI(),
 		// list);

@@ -37,8 +37,8 @@ import msi.gama.util.GamaColor;
  */
 public class LayerManager implements ILayerManager {
 
-	private final List<ILayer> enabledLayers = new ArrayList();
-	private final List<ILayer> disabledLayers = new ArrayList();
+	private final List<ILayer> enabledLayers = new ArrayList<>();
+	private final List<ILayer> disabledLayers = new ArrayList<>();
 	private OverlayLayer overlay = null;
 	final IDisplaySurface surface;
 	private int count = 0;
@@ -87,7 +87,7 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public List<ILayer> getLayersIntersecting(final int x, final int y) {
-		final List<ILayer> result = new ArrayList();
+		final List<ILayer> result = new ArrayList<>();
 		for (final ILayer display : enabledLayers) {
 			if (display.containsScreenPoint(x, y)) {
 				result.add(display);
@@ -141,18 +141,14 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public void enableLayer(final ILayer display, final Boolean enable) {
 
-		surface.runAndUpdate(new Runnable() {
-
-			@Override
-			public void run() {
-				if (enable) {
-					enable(display);
-				} else {
-					disable(display);
-				}
-				surface.layersChanged();
-
+		surface.runAndUpdate(() -> {
+			if (enable) {
+				enable(display);
+			} else {
+				disable(display);
 			}
+			surface.layersChanged();
+
 		});
 	}
 
@@ -186,7 +182,7 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public List<ILayer> getItems() {
-		final List<ILayer> items = new ArrayList();
+		final List<ILayer> items = new ArrayList<>();
 		items.addAll(enabledLayers);
 		items.addAll(disabledLayers);
 		Collections.sort(items);

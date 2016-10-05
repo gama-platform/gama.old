@@ -59,7 +59,7 @@ public class AspectStatement extends AbstractStatementSequence {
 
 	boolean isHighlightAspect;
 
-	static final TObjectIntHashMap SHAPES = new TObjectIntHashMap() {
+	static final TObjectIntHashMap<String> SHAPES = new TObjectIntHashMap<String>() {
 
 		{
 			put("circle", 1);

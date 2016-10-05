@@ -13,7 +13,6 @@ package msi.gaml.descriptions;
 
 import java.util.Collections;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
 import org.eclipse.emf.ecore.EObject;
@@ -38,13 +37,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 		if (object == null)
 			return NULL_EXPR_DESCRIPTION;
 		try {
-			return CACHE.get(object, new Callable<IExpressionDescription>() {
-
-				@Override
-				public IExpressionDescription call() {
-					return new ConstantExpressionDescription(object);
-				}
-			});
+			return CACHE.get(object, () -> new ConstantExpressionDescription(object));
 		} catch (final ExecutionException e) {
 			return null;
 		}
@@ -52,13 +45,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 
 	public static IExpressionDescription create(final Integer i) {
 		try {
-			return CACHE.get(i, new Callable<IExpressionDescription>() {
-
-				@Override
-				public IExpressionDescription call() {
-					return new ConstantExpressionDescription(i, Types.INT);
-				}
-			});
+			return CACHE.get(i, () -> new ConstantExpressionDescription(i, Types.INT));
 		} catch (final ExecutionException e) {
 			return null;
 		}
@@ -67,13 +54,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 
 	public static IExpressionDescription create(final Double d) {
 		try {
-			return CACHE.get(d, new Callable<IExpressionDescription>() {
-
-				@Override
-				public IExpressionDescription call() {
-					return new ConstantExpressionDescription(d, Types.FLOAT);
-				}
-			});
+			return CACHE.get(d, () -> new ConstantExpressionDescription(d, Types.FLOAT));
 		} catch (final ExecutionException e) {
 			return null;
 		}
@@ -88,7 +69,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 		this(object, GamaType.of(object));
 	}
 
-	private ConstantExpressionDescription(final Object object, final IType t) {
+	private ConstantExpressionDescription(final Object object, final IType<?> t) {
 		super(object, t);
 	}
 

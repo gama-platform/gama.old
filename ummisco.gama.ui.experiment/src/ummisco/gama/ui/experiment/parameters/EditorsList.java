@@ -25,11 +25,11 @@ import ummisco.gama.ui.interfaces.IParameterEditor;
 public abstract class EditorsList<T> implements ItemList<T> {
 
 	/* Map to associate a category to each parameter */
-	protected final Map<T, Map<String, IParameterEditor>> categories = new LinkedHashMap();
+	protected final Map<T, Map<String, IParameterEditor<?>>> categories = new LinkedHashMap<>();
 
 	@Override
 	public List<T> getItems() {
-		return new ArrayList(categories.keySet());
+		return new ArrayList<>(categories.keySet());
 	}
 
 	@Override
@@ -37,13 +37,13 @@ public abstract class EditorsList<T> implements ItemList<T> {
 
 	public abstract void add(final Collection<? extends IParameter> params, final IAgent agent);
 
-	public Map<T, Map<String, IParameterEditor>> getCategories() {
+	public Map<T, Map<String, IParameterEditor<?>>> getCategories() {
 		return categories;
 	}
 
 	public void revertToDefaultValue() {
-		for (final Map<String, IParameterEditor> editors : categories.values()) {
-			for (final IParameterEditor ed : editors.values()) {
+		for (final Map<String, IParameterEditor<?>> editors : categories.values()) {
+			for (final IParameterEditor<?> ed : editors.values()) {
 				ed.revertToDefaultValue();
 			}
 		}

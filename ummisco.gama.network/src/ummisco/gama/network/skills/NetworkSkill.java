@@ -21,7 +21,6 @@ import msi.gama.extensions.messaging.GamaMailbox;
 import msi.gama.extensions.messaging.GamaMessage;
 import msi.gama.extensions.messaging.MessagingSkill;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -29,165 +28,152 @@ import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
-import msi.gaml.skills.Skill;
-import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
-import ummisco.gama.network.common.CompositeGamaMessage;
 import ummisco.gama.network.common.ConnectorMessage;
 import ummisco.gama.network.common.IConnector;
 import ummisco.gama.network.mqqt.MQTTConnector;
 import ummisco.gama.network.tcp.TCPConnector;
 import ummisco.gama.network.udp.UDPConnector;
-import ummisco.gama.serializer.factory.StreamConverter;
 
 @vars({ @var(name = INetworkSkill.NET_AGENT_NAME, type = IType.STRING, doc = @doc("Net ID of the agent")),
-@var(name = INetworkSkill.NET_AGENT_GROUPS, type = IType.LIST, doc = @doc("Net ID of the agent")),
-@var(name = INetworkSkill.NET_AGENT_SERVER, type = IType.LIST, doc = @doc("Net ID of the agent"))})
+		@var(name = INetworkSkill.NET_AGENT_GROUPS, type = IType.LIST, doc = @doc("Net ID of the agent")),
+		@var(name = INetworkSkill.NET_AGENT_SERVER, type = IType.LIST, doc = @doc("Net ID of the agent")) })
 @skill(name = INetworkSkill.NETWORK_SKILL, concept = { IConcept.NETWORK, IConcept.COMMUNICATION, IConcept.SKILL })
-public class NetworkSkill  extends MessagingSkill {
+public class NetworkSkill extends MessagingSkill {
 	final static String REGISTERED_AGENTS = "registred_agents";
-	final static String REGISTRED_SERVER= "registred_servers";
-	
-	
+	final static String REGISTRED_SERVER = "registred_servers";
+
+	@SuppressWarnings("unchecked")
 	@action(name = INetworkSkill.CONNECT_TOPIC, args = {
-		@arg(name = INetworkSkill.PROTOCOL, type = IType.STRING, doc = @doc("protocol type (udp, tcp, mqqt)")),
-		@arg(name = INetworkSkill.PORT, type = IType.INT, doc = @doc("port number")),
-		@arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = true, doc = @doc("server nameL")),
-		@arg(name = INetworkSkill.LOGIN, type = IType.STRING, optional = true, doc = @doc("server nameL")),
-		@arg(name = INetworkSkill.PASSWORD, type = IType.STRING, optional = true, doc = @doc("server nameL")),
-		@arg(name = INetworkSkill.SERVER_URL, type = IType.STRING, optional = false, doc = @doc("server URL")) }, doc = @doc(value = "", returns = "", examples = { @example("") }))
+			@arg(name = INetworkSkill.PROTOCOL, type = IType.STRING, doc = @doc("protocol type (udp, tcp, mqqt)")),
+			@arg(name = INetworkSkill.PORT, type = IType.INT, doc = @doc("port number")),
+			@arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = true, doc = @doc("server nameL")),
+			@arg(name = INetworkSkill.LOGIN, type = IType.STRING, optional = true, doc = @doc("server nameL")),
+			@arg(name = INetworkSkill.PASSWORD, type = IType.STRING, optional = true, doc = @doc("server nameL")),
+			@arg(name = INetworkSkill.SERVER_URL, type = IType.STRING, optional = false, doc = @doc("server URL")) }, doc = @doc(value = "", returns = "", examples = {
+					@example("") }))
 	public void connectToServer(final IScope scope) throws GamaRuntimeException {
-		if(!scope.getSimulation().getAttributes().keySet().contains(REGISTRED_SERVER))
+		if (!scope.getSimulation().getAttributes().keySet().contains(REGISTRED_SERVER))
 			this.startSkill(scope);
-		IAgent agt = scope.getAgent();
-		String serverURL = (String) scope.getArg(INetworkSkill.SERVER_URL, IType.STRING);
-		String login = (String) scope.getArg(INetworkSkill.LOGIN, IType.STRING);
-		String password = (String) scope.getArg(INetworkSkill.PASSWORD, IType.STRING);
-		String networkName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
-		String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
-		Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
-		
-		Map<String,IConnector> myConnectors = this.getRegisteredServers(scope);
-		IConnector connector =  myConnectors.get(serverURL);
-		if(connector == null)
-		{
-			
-			if(protocol != null && protocol.equals( INetworkSkill.UDP_SERVER)){
-				connector = new UDPConnector(scope,true);
-				connector.configure(IConnector.SERVER_URL,serverURL);
-				connector.configure(IConnector.SERVER_PORT,""+port);
-			} 
-			else if(protocol != null && protocol.equals( INetworkSkill.UDP_CLIENT)){
+		final IAgent agt = scope.getAgent();
+		final String serverURL = (String) scope.getArg(INetworkSkill.SERVER_URL, IType.STRING);
+		final String login = (String) scope.getArg(INetworkSkill.LOGIN, IType.STRING);
+		final String password = (String) scope.getArg(INetworkSkill.PASSWORD, IType.STRING);
+		final String networkName = (String) scope.getArg(INetworkSkill.WITHNAME, IType.STRING);
+		final String protocol = (String) scope.getArg(INetworkSkill.PROTOCOL, IType.STRING);
+		final Integer port = (Integer) scope.getArg(INetworkSkill.PORT, IType.INT);
+
+		final Map<String, IConnector> myConnectors = this.getRegisteredServers(scope);
+		IConnector connector = myConnectors.get(serverURL);
+		if (connector == null) {
+
+			if (protocol != null && protocol.equals(INetworkSkill.UDP_SERVER)) {
+				connector = new UDPConnector(scope, true);
+				connector.configure(IConnector.SERVER_URL, serverURL);
+				connector.configure(IConnector.SERVER_PORT, "" + port);
+			} else if (protocol != null && protocol.equals(INetworkSkill.UDP_CLIENT)) {
 				System.out.println("create udp client");
-				connector = new UDPConnector(scope,false);
-				connector.configure(IConnector.SERVER_URL,serverURL);
-				connector.configure(IConnector.SERVER_PORT,""+port);
-			}
-			else if(protocol != null && protocol.equals( INetworkSkill.TCP_SERVER)){
+				connector = new UDPConnector(scope, false);
+				connector.configure(IConnector.SERVER_URL, serverURL);
+				connector.configure(IConnector.SERVER_PORT, "" + port);
+			} else if (protocol != null && protocol.equals(INetworkSkill.TCP_SERVER)) {
 				System.out.println("create tcp serveur");
 				connector = new TCPConnector(scope, true);
-				connector.configure(IConnector.SERVER_URL,serverURL);
-				connector.configure(IConnector.SERVER_PORT,""+port);
+				connector.configure(IConnector.SERVER_URL, serverURL);
+				connector.configure(IConnector.SERVER_PORT, "" + port);
 
-			}
-			else if(protocol != null && protocol.equals( INetworkSkill.TCP_CLIENT)){
+			} else if (protocol != null && protocol.equals(INetworkSkill.TCP_CLIENT)) {
 				System.out.println("create tcp client");
 				connector = new TCPConnector(scope, false);
-				connector.configure(IConnector.SERVER_URL,serverURL);
-				connector.configure(IConnector.SERVER_PORT,""+port);
-			}
-			else //if(protocol.equals( INetworkSkill.MQTT))
+				connector.configure(IConnector.SERVER_URL, serverURL);
+				connector.configure(IConnector.SERVER_PORT, "" + port);
+			} else // if(protocol.equals( INetworkSkill.MQTT))
 			{
-				System.out.println("create mqtt serveur "+ login+ " "+ password);
+				System.out.println("create mqtt serveur " + login + " " + password);
 				connector = new MQTTConnector(scope);
-				if(serverURL != null)
-					connector.configure(IConnector.SERVER_URL,serverURL);
-				if(login != null)
-				{
-					connector.configure(IConnector.LOGIN,login);
+				if (serverURL != null)
+					connector.configure(IConnector.SERVER_URL, serverURL);
+				if (login != null) {
+					connector.configure(IConnector.LOGIN, login);
 				}
-				if(password != null)
-					connector.configure(IConnector.PASSWORD,password);
-			}			
-		    if(connector != null){
-		    	myConnectors.put(serverURL,connector);
-		    	
+				if (password != null)
+					connector.configure(IConnector.PASSWORD, password);
+			}
+			if (connector != null) {
+				myConnectors.put(serverURL, connector);
+
 			}
 		}
 
-		if(agt.getAttribute(INetworkSkill.NET_AGENT_NAME)==null)
+		if (agt.getAttribute(INetworkSkill.NET_AGENT_NAME) == null)
 			agt.setAttribute(INetworkSkill.NET_AGENT_NAME, networkName);
-		
-		List<String> serverList = (List<String>) agt.getAttribute(INetworkSkill.NET_AGENT_SERVER); 
-		if(serverList==null)
-		{
-			serverList =new ArrayList<String>();
-			agt.setAttribute(INetworkSkill.NET_AGENT_SERVER,serverList );
+
+		List<String> serverList = (List<String>) agt.getAttribute(INetworkSkill.NET_AGENT_SERVER);
+		if (serverList == null) {
+			serverList = new ArrayList<String>();
+			agt.setAttribute(INetworkSkill.NET_AGENT_SERVER, serverList);
 		}
-			
+
 		try {
 			connector.connect(agt);
 			serverList.add(serverURL);
 
-			
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-		
-		//register connected agent to global groups;
-		for(String grp:INetworkSkill.DEFAULT_GROUP)
+
+		// register connected agent to global groups;
+		for (final String grp : INetworkSkill.DEFAULT_GROUP)
 			connector.joinAGroup(agt, grp);
 	}
 
 	@action(name = INetworkSkill.FETCH_MESSAGE)
-	public GamaMessage fetchMessage(final IScope scope)
-	{
-		IAgent agent = scope.getAgent();
-		GamaMailbox box = getMailbox(agent);
-		GamaMessage msg = box.get(0);
+	public GamaMessage fetchMessage(final IScope scope) {
+		final IAgent agent = scope.getAgent();
+		final GamaMailbox box = getMailbox(agent);
+		final GamaMessage msg = box.get(0);
 		box.remove(0);
 		return msg;
 	}
-	
+
 	@action(name = INetworkSkill.HAS_MORE_MESSAGE_IN_BOX)
-	public boolean hasMoreMessage(final IScope scope)
-	{
-		IAgent agent = scope.getAgent();
-		GamaMailbox box = getMailbox(agent);
+	public boolean hasMoreMessage(final IScope scope) {
+		final IAgent agent = scope.getAgent();
+		final GamaMailbox box = getMailbox(agent);
 		return !box.isEmpty();
-	}	
-	
-/*	
-	@action(name = INetworkSkill.RESGISTER_TO_GROUP, args = {
-	@arg(name = INetworkSkill.TO, type = IType.STRING, optional = true, doc = @doc("")) }, doc = @doc(value = "", returns = "", examples = {
-	@example("") }))
-	public void registerToGroup(final IScope scope)
-	{
-		IAgent agent = scope.getAgentScope();
-		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
-		String groupName = (String)scope.getArg(INetworkSkill.TO, IType.STRING);
-		IConnector connector=getRegisteredServers(scope).get(serverName);
-		connector.joinAGroup(agent, groupName);
 	}
-	*/
-	
-	
+
+	/*
+	 * @action(name = INetworkSkill.RESGISTER_TO_GROUP, args = {
+	 * 
+	 * @arg(name = INetworkSkill.TO, type = IType.STRING, optional = true, doc
+	 * = @doc("")) }, doc = @doc(value = "", returns = "", examples = {
+	 * 
+	 * @example("") })) public void registerToGroup(final IScope scope) { IAgent
+	 * agent = scope.getAgentScope(); String serverName = (String)
+	 * agent.getAttribute(INetworkSkill.NET_AGENT_SERVER); String groupName =
+	 * (String)scope.getArg(INetworkSkill.TO, IType.STRING); IConnector
+	 * connector=getRegisteredServers(scope).get(serverName);
+	 * connector.joinAGroup(agent, groupName); }
+	 */
+
 	@action(name = INetworkSkill.LEAVE_THE_GROUP, args = {
 			@arg(name = INetworkSkill.WITHNAME, type = IType.STRING, optional = true, doc = @doc("name of the group agent want to leave")) }, doc = @doc(value = "leave a group of agent", returns = "", examples = {
-			@example("") }))
+					@example("") }))
 	public void leaveTheGroup(final IScope scope) {
-		IAgent agent = scope.getAgent();
-		String serverName = (String)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
-		String groupName = (String)scope.getArg(INetworkSkill.TO, IType.STRING);
-		IConnector connector=getRegisteredServers(scope).get(serverName);
+		final IAgent agent = scope.getAgent();
+		final String serverName = (String) agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
+		final String groupName = (String) scope.getArg(INetworkSkill.TO, IType.STRING);
+		final IConnector connector = getRegisteredServers(scope).get(serverName);
 		connector.leaveTheGroup(agent, groupName);
 	}
 
-	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override
 	protected void effectiveSend(final IScope scope, final GamaMessage message, final Object receiver) {
 		if (receiver instanceof IList) {
 			for (final Object o : ((IList) receiver).iterable(scope)) {
@@ -195,93 +181,75 @@ public class NetworkSkill  extends MessagingSkill {
 			}
 		}
 		String destName = receiver.toString();
-		if(receiver instanceof IAgent && getRegisteredAgents(scope).contains((IAgent)receiver))
-		{
-			IAgent mReceiver = (IAgent)receiver;
-			destName=(String) mReceiver.getAttribute(INetworkSkill.NET_AGENT_SERVER);
+		if (receiver instanceof IAgent && getRegisteredAgents(scope).contains(receiver)) {
+			final IAgent mReceiver = (IAgent) receiver;
+			destName = (String) mReceiver.getAttribute(INetworkSkill.NET_AGENT_SERVER);
 		}
-		
-		IAgent agent = scope.getAgent();
-		List<String> serverNames = (List<String>)  agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
-		Map<String,IConnector>  connections = getRegisteredServers(scope);
-		for(String servName:serverNames)
+
+		final IAgent agent = scope.getAgent();
+		final List<String> serverNames = (List<String>) agent.getAttribute(INetworkSkill.NET_AGENT_SERVER);
+		final Map<String, IConnector> connections = getRegisteredServers(scope);
+		for (final String servName : serverNames)
 			connections.get(servName).send(agent, destName, message);
 	}
 
-	
-	private void fetchMessagesOfAgents(IScope scope)
-	{
-		
-		
-		for(IConnector connection:getRegisteredServers(scope).values())
-		{
-			Map<IAgent,LinkedList<ConnectorMessage>> messages = connection.fetchAllMessages();
-			for(IAgent agt:messages.keySet())
-			{
+	private void fetchMessagesOfAgents(final IScope scope) {
+
+		for (final IConnector connection : getRegisteredServers(scope).values()) {
+			final Map<IAgent, LinkedList<ConnectorMessage>> messages = connection.fetchAllMessages();
+			for (final IAgent agt : messages.keySet()) {
 				final GamaMailbox mailbox = (GamaMailbox) agt.getAttribute(MAILBOX_ATTRIBUTE);
-				if(!(connection instanceof MQTTConnector)){ mailbox.clear();}
-				for(ConnectorMessage msg:messages.get(agt))
-				{
+				if (!(connection instanceof MQTTConnector)) {
+					mailbox.clear();
+				}
+				for (final ConnectorMessage msg : messages.get(agt)) {
 					mailbox.addMessage(scope, msg.getContents(scope));
 				}
 			}
 		}
 	}
-	
-	
+
 	@SuppressWarnings("unchecked")
-	private List<IAgent> getRegisteredAgents(IScope scope){
-		return (List<IAgent>)scope.getSimulation().getAttribute(REGISTERED_AGENTS);
+	private List<IAgent> getRegisteredAgents(final IScope scope) {
+		return (List<IAgent>) scope.getSimulation().getAttribute(REGISTERED_AGENTS);
 	}
-	
-	private void registeredAgent(IScope scope, IAgent agt){
+
+	private void registeredAgent(final IScope scope, final IAgent agt) {
 		getRegisteredAgents(scope).add(agt);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private Map<String,IConnector> getRegisteredServers(IScope scope)
-	{
-		return (Map<String,IConnector>)scope.getSimulation().getAttribute(REGISTRED_SERVER);
+	private Map<String, IConnector> getRegisteredServers(final IScope scope) {
+		return (Map<String, IConnector>) scope.getSimulation().getAttribute(REGISTRED_SERVER);
 	}
-	
-	private void initialize(IScope scope){
-		scope.getSimulation().setAttribute(REGISTRED_SERVER,  new HashMap<String,IConnector>());
+
+	private void initialize(final IScope scope) {
+		scope.getSimulation().setAttribute(REGISTRED_SERVER, new HashMap<String, IConnector>());
 		scope.getSimulation().setAttribute(REGISTERED_AGENTS, new ArrayList<IAgent>());
 	}
-	
-	
-	
-	private void startSkill(IScope scope)
-	{
+
+	private void startSkill(final IScope scope) {
 		initialize(scope);
 		registerSimulationEvent(scope);
 	}
-	private void registerSimulationEvent(IScope scope)
-	{
-		scope.getSimulation().postEndAction(new IExecutable() {
-			@Override
-			public Object executeOn(IScope scope) throws GamaRuntimeException {
-				fetchMessagesOfAgents(scope);
-				return null;
-			}
+
+	private void registerSimulationEvent(final IScope scope) {
+		scope.getSimulation().postEndAction(scope1 -> {
+			fetchMessagesOfAgents(scope1);
+			return null;
 		});
-	
-		scope.getSimulation().postDisposeAction(new IExecutable() {
-			@Override
-			public Object executeOn(IScope scope) throws GamaRuntimeException {
-				closeAllConnection(scope);
-				return null;
-			}
+
+		scope.getSimulation().postDisposeAction(scope1 -> {
+			closeAllConnection(scope1);
+			return null;
 		});
 	}
-	private void closeAllConnection(IScope scope)
-	{
-		for(IConnector connection:this.getRegisteredServers(scope).values())
-		{
+
+	private void closeAllConnection(final IScope scope) {
+		for (final IConnector connection : this.getRegisteredServers(scope).values()) {
 			connection.close(scope);
 		}
 		this.initialize(scope);
 	}
-	
-	
+
 }

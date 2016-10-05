@@ -11,30 +11,27 @@
  **********************************************************************************************/
 package simtools.gaml.extensions.traffic;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.IConcept;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
-@vars({
-	@var(name = "roads_in", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of input roads")),
-	@var(name = "priority_roads", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of priority roads")),
-	@var(name = "roads_out", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of output roads")),
-	@var(name = "stop",
-		type = IType.LIST,
-		of = IType.LIST,
-		doc = @doc("define for each type of stop, the list of concerned roads")),
-	@var(name = "block",
-		type = IType.MAP,
-		doc = @doc("define the list of agents blocking the node, and for each agent, the list of concerned roads")) })
+@vars({ @var(name = "roads_in", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of input roads")),
+		@var(name = "priority_roads", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of priority roads")),
+		@var(name = "roads_out", type = IType.LIST, of = IType.AGENT, doc = @doc("the list of output roads")),
+		@var(name = "stop", type = IType.LIST, of = IType.LIST, doc = @doc("define for each type of stop, the list of concerned roads")),
+		@var(name = "block", type = IType.MAP, doc = @doc("define the list of agents blocking the node, and for each agent, the list of concerned roads")) })
 @skill(name = "skill_road_node", concept = { IConcept.TRANSPORT, IConcept.SKILL })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class RoadNodeSkill extends Skill {
 
 	public final static String ROADS_IN = "roads_in";

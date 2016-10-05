@@ -157,7 +157,7 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 	 */
 	// @Override
 	// public List<String> getTypeNames() {
-	// final List<String> result = parent == null ? new ArrayList() :
+	// final List<String> result = parent == null ? new ArrayList<>() :
 	// parent.getTypeNames();
 	// for (final String s : types.keySet()) {
 	// if (!Strings.isGamaNumber(s)) {

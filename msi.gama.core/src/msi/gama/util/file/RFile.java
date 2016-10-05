@@ -40,6 +40,7 @@ import rcaller.RCode;
 @file(name = "R", extensions = {
 		"r" }, buffer_type = IType.MAP, buffer_content = IType.LIST, buffer_index = IType.STRING, concept = {
 				IConcept.FILE, IConcept.R })
+@SuppressWarnings({ "rawtypes" })
 public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList> {
 
 	private final boolean DEBUG = false; // Change DEBUG = false for release

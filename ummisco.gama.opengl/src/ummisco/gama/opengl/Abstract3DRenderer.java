@@ -138,12 +138,26 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	protected GamaPoint rotationHelperPosition = null;
 	// relative to keystone
 	protected boolean drawKeystoneHelper = false;
-	public boolean drawKeystoneHelper() {return drawKeystoneHelper;}
+
+	public boolean drawKeystoneHelper() {
+		return drawKeystoneHelper;
+	}
+
 	protected float[][] keystoneCoordinates;
-	public float[][] getKeystoneCoordinates() {return keystoneCoordinates;}
-	public void setKeystoneCoordinates(int cornerId,float[] coordinates) {keystoneCoordinates[cornerId] = coordinates;};
+
+	public float[][] getKeystoneCoordinates() {
+		return keystoneCoordinates;
+	}
+
+	public void setKeystoneCoordinates(final int cornerId, final float[] coordinates) {
+		keystoneCoordinates[cornerId] = coordinates;
+	};
+
 	protected int cornerSelected = -1;
-	public int getCornerSelected() {return cornerSelected;}
+
+	public int getCornerSelected() {
+		return cornerSelected;
+	}
 
 	protected final GeometryCache geometryCache = new GeometryCache();
 	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
@@ -161,6 +175,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		ShapeCache.freedShapeCache();
 	}
 
+	@SuppressWarnings("unused")
 	public GLAutoDrawable createDrawable(final Composite parent) {
 		final boolean useSharedContext = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue();
 		final GLProfile profile = useSharedContext ? TextureCache.getSharedContext().getGLProfile()
@@ -183,11 +198,12 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		canvas.setLayout(gl);
 		return canvas;
 	}
-	
-	protected void commonInit(final GLAutoDrawable drawable) {		
-		// the drawingEntityGenerator is used only when there is a webgl display and/or a modernRenderer.
+
+	protected void commonInit(final GLAutoDrawable drawable) {
+		// the drawingEntityGenerator is used only when there is a webgl display
+		// and/or a modernRenderer.
 		drawingEntityGenerator = new DrawingEntityGenerator(this);
-		
+
 		glu = new GLU();
 		currentZRotation = data.getZRotation();
 		gl = drawable.getContext().getGL().getGL2();
@@ -196,7 +212,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 				1.0f);
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 		isNonPowerOf2TexturesAvailable = gl.isNPOTTextureAvailable();
-		
+
 		initializeCanvasListeners();
 		updateCameraPosition();
 		updatePerspective();
@@ -228,20 +244,16 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	protected void initializeCanvasListeners() {
 
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				if (getCanvas() == null || getCanvas().isDisposed()) {
-					return;
-				}
-				getCanvas().addKeyListener(camera);
-				getCanvas().addMouseListener(camera);
-				getCanvas().addMouseMoveListener(camera);
-				getCanvas().addMouseWheelListener(camera);
-				getCanvas().addMouseTrackListener(camera);
-
+		WorkbenchHelper.asyncRun(() -> {
+			if (getCanvas() == null || getCanvas().isDisposed()) {
+				return;
 			}
+			getCanvas().addKeyListener(camera);
+			getCanvas().addMouseListener(camera);
+			getCanvas().addMouseMoveListener(camera);
+			getCanvas().addMouseWheelListener(camera);
+			getCanvas().addMouseTrackListener(camera);
+
 		});
 
 	}
@@ -280,16 +292,12 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public final void switchCamera() {
 		final ICamera oldCamera = camera;
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				getCanvas().removeKeyListener(oldCamera);
-				getCanvas().removeMouseListener(oldCamera);
-				getCanvas().removeMouseMoveListener(oldCamera);
-				getCanvas().removeMouseWheelListener(oldCamera);
-				getCanvas().removeMouseTrackListener(oldCamera);
-			}
+		WorkbenchHelper.asyncRun(() -> {
+			getCanvas().removeKeyListener(oldCamera);
+			getCanvas().removeMouseListener(oldCamera);
+			getCanvas().removeMouseMoveListener(oldCamera);
+			getCanvas().removeMouseWheelListener(oldCamera);
+			getCanvas().removeMouseTrackListener(oldCamera);
 		});
 
 		if (!data.isArcBallCamera()) {
@@ -313,7 +321,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public final void updateCameraPosition() {
 		camera.update();
 	}
-	
+
 	protected abstract void updatePerspective();
 
 	public abstract void drawROI(final GL2 gl);
@@ -321,9 +329,11 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public abstract Envelope3D getROIEnvelope();
 
 	public abstract void startDrawRotationHelper(final GamaPoint pos);
+
 	public abstract void stopDrawRotationHelper();
-	
+
 	public abstract void startDrawKeystoneHelper();
+
 	public abstract void stopDrawKeystoneHelper();
 
 	public abstract void drawRotationHelper(final GL2 gl);
@@ -468,6 +478,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		setCurrentColor(gl, value, value, value, 1);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public ObjectDrawer getDrawerFor(final Class<? extends AbstractObject> class1) {
 		return null;
 	}
@@ -483,26 +494,30 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public GamaPoint getRotationHelperPosition() {
 		return rotationHelperPosition;
 	}
-	
+
 	public void setUpKeystoneCoordinates() {
 		keystoneCoordinates = new float[4][2];
-		float[] coords1 = new float[]{0,1}; // bottom-left
-		float[] coords2 = new float[]{0,0};  // top-left
-		float[] coords3 = new float[]{1,0};   // top-right
-		float[] coords4 = new float[]{1,1};  // bottom-right
+		float[] coords1 = new float[] { 0, 1 }; // bottom-left
+		float[] coords2 = new float[] { 0, 0 }; // top-left
+		float[] coords3 = new float[] { 1, 0 }; // top-right
+		float[] coords4 = new float[] { 1, 1 }; // bottom-right
 		if (data.getKeystone() != null) {
-			coords1 = new float[]{(float) data.getKeystone().get(2).getX(),(float) (data.getKeystone().get(2).getY())};
-			coords2 = new float[]{(float) data.getKeystone().get(0).getX(),(float) (data.getKeystone().get(0).getY())};
-			coords3 = new float[]{(float) data.getKeystone().get(1).getX(),(float) (data.getKeystone().get(1).getY())};
-			coords4 = new float[]{(float) data.getKeystone().get(3).getX(),(float) (data.getKeystone().get(3).getY())};
+			coords1 = new float[] { (float) data.getKeystone().get(2).getX(),
+					(float) data.getKeystone().get(2).getY() };
+			coords2 = new float[] { (float) data.getKeystone().get(0).getX(),
+					(float) data.getKeystone().get(0).getY() };
+			coords3 = new float[] { (float) data.getKeystone().get(1).getX(),
+					(float) data.getKeystone().get(1).getY() };
+			coords4 = new float[] { (float) data.getKeystone().get(3).getX(),
+					(float) data.getKeystone().get(3).getY() };
 		}
 		setKeystoneCoordinates(0, coords1);
 		setKeystoneCoordinates(1, coords2);
 		setKeystoneCoordinates(2, coords3);
 		setKeystoneCoordinates(3, coords4);
 	}
-	
-	public void cornerSelected(int cornerId) {
+
+	public void cornerSelected(final int cornerId) {
 		cornerSelected = cornerId;
 	}
 

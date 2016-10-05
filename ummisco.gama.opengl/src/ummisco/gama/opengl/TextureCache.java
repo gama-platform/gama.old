@@ -58,7 +58,7 @@ public class TextureCache {
 		TextureIO.setTexRectEnabled(GamaPreferences.DISPLAY_POWER_OF_TWO.getValue());
 	}
 
-	final Map<String, Texture> textures = new ConcurrentHashMap(100, 0.75f, 4);
+	final Map<String, Texture> textures = new ConcurrentHashMap<>(100, 0.75f, 4);
 	private static volatile TextureAsyncBuilder BUILDER;
 
 	public static GLAutoDrawable getSharedContext() {

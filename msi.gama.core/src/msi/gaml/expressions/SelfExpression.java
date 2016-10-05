@@ -22,7 +22,7 @@ import msi.gaml.types.IType;
 
 public class SelfExpression extends VariableExpression {
 
-	protected SelfExpression(final IType type) {
+	protected SelfExpression(final IType<?> type) {
 		super(IKeyword.SELF, type, true, null);
 	}
 

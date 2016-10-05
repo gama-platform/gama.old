@@ -201,6 +201,7 @@ public class ModelScene {
 		currentLayer.addString(string, attributes);
 	}
 
+	@SuppressWarnings("rawtypes")
 	public void addFile(final GamaFile file, final FileDrawingAttributes attributes) {
 		if (cannotAdd()) {
 			return;
@@ -266,7 +267,7 @@ public class ModelScene {
 	}
 
 	private SimpleScene toSimpleScene() {
-		final List<SimpleLayer> simpleLayers = new ArrayList();
+		final List<SimpleLayer> simpleLayers = new ArrayList<>();
 		for (final LayerObject layer : this.layers.values()) {
 			simpleLayers.add(layer.toSimpleLayer());
 		}

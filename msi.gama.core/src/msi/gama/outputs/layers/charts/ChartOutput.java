@@ -77,7 +77,7 @@ public abstract class ChartOutput {
 	StringBuilder history;
 	static String chartFolder = "charts";
 
-	final Map<String, Integer> expressions_index = new HashMap();
+	final Map<String, Integer> expressions_index = new HashMap<>();
 	static String xAxisName = "'time'";
 
 	// HashMap<String,Object> chartParameters=new HashMap<String,Object>();

@@ -138,6 +138,7 @@ public class JavaWriter {
 		sb.append(ln).append("import static msi.gaml.operators.Cast.*;");
 		sb.append(ln).append("import static msi.gaml.operators.Spatial.*;");
 		sb.append(ln).append("import static msi.gama.common.interfaces.IKeyword.*;");
+		sb.append(ln).append("	@SuppressWarnings({ \"rawtypes\", \"unchecked\" })");
 		sb.append(ln).append(ln).append(classDefinition()).append(" {");
 		sb.append(ln).append(tab);
 		sb.append("public void initialize() throws SecurityException, NoSuchMethodException {");
@@ -685,7 +686,6 @@ public class JavaWriter {
 	}
 
 	protected String buildMethodCallForAction(final String clazz, final String name, final boolean stat) {
-		final int index = stat ? 0 : 1;
 		final String methodName = extractMethod(name, stat);
 		final String className = toClassObject(extractClass(name, clazz, stat));
 		String result = className + ".getMethod(" + toJavaString(methodName) + ", ";

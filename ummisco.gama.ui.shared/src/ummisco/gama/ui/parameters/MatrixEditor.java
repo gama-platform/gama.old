@@ -24,7 +24,7 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
-public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {
+public class MatrixEditor extends ExpressionBasedEditor<IMatrix<?>> {
 
 	MatrixEditor(final IScope scope, final IParameter param) {
 		super(scope, param);
@@ -34,12 +34,12 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {
 		this(scope, agent, param, null);
 	}
 
-	MatrixEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	MatrixEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<IMatrix<?>> l) {
 		super(scope, agent, param, l);
 	}
 
-	MatrixEditor(final IScope scope, final Composite parent, final String title, final IMatrix value,
-		final EditorListener<IMatrix> whenModified) {
+	MatrixEditor(final IScope scope, final Composite parent, final String title, final IMatrix<?> value,
+			final EditorListener<IMatrix<?>> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
@@ -49,7 +49,7 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {
 	public void applyEdit() {
 
 		final MatrixEditorDialog d = new MatrixEditorDialog(getScope(), WorkbenchHelper.getShell(), currentValue);
-		if ( d.open() == IDialogConstants.OK_ID ) {
+		if (d.open() == IDialogConstants.OK_ID) {
 			modifyValue(d.getMatrix());
 		}
 
@@ -58,11 +58,12 @@ public class MatrixEditor extends ExpressionBasedEditor<IMatrix> {
 	@Override
 	protected void checkButtons() {
 		final ToolItem edit = items[EDIT];
-		if ( edit != null && !edit.isDisposed() ) {
+		if (edit != null && !edit.isDisposed()) {
 			edit.setEnabled(true);
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IType getExpectedType() {
 		return Types.MATRIX;

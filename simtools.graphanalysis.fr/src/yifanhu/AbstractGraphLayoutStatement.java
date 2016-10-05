@@ -107,6 +107,7 @@ public abstract class AbstractGraphLayoutStatement extends AbstractStatement {
 		update_node_index_diff();
 	}
 
+	@SuppressWarnings("rawtypes")
 	public static void Update_locations(final IGraph ig, final double min_x, final double min_y, final double max_x,
 			final double max_y) {
 		final Set<GamlAgent> ga = ig._internalVertexMap().keySet();

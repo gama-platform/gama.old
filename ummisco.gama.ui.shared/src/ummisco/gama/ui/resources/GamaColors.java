@@ -129,7 +129,7 @@ public class GamaColors {
 		}
 	}
 
-	static HashMap<RGB, GamaUIColor> colors = new HashMap();
+	static HashMap<RGB, GamaUIColor> colors = new HashMap<>();
 
 	private static Color computeInactive(final Color c) {
 		final RGB data = c.getRGB();

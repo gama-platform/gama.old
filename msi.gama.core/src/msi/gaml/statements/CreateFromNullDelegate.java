@@ -20,7 +20,9 @@ import msi.gaml.types.Types;
  * @author drogoul
  * @since 27 mai 2015
  *
+ *
  */
+@SuppressWarnings({ "rawtypes" })
 public class CreateFromNullDelegate implements ICreateDelegate {
 
 	/**

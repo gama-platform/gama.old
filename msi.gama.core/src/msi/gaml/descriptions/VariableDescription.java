@@ -42,7 +42,7 @@ import msi.gaml.types.Types;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class VariableDescription extends SymbolDescription {
 
-	private static Map<String, Set<String>> dependencies = new THashMap();
+	private static Map<String, Set<String>> dependencies = new THashMap<>();
 	private String plugin;
 
 	private final boolean _isGlobal, _isNotModifiable;

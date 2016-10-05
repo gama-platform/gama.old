@@ -75,7 +75,7 @@ public class System {
 		if (s == null || s.isEmpty())
 			return "";
 		final StringBuilder output = new StringBuilder();
-		final List<String> commands = new ArrayList();
+		final List<String> commands = new ArrayList<>();
 		commands.add(Platform.getOS().equals(Platform.OS_WIN32) ? "cmd.exe" : "/bin/bash");
 		commands.add(Platform.getOS().equals(Platform.OS_WIN32) ? "/C" : "-c");
 		commands.add(s.trim());
@@ -166,8 +166,8 @@ public class System {
 			@example("map<string,unknown> values2 <- user_input(\"Enter numer of agents and locations\",[\"Number\" :: 100, \"Location\" :: {10, 10}]);"),
 			@example(value = "create bug number: int(values2 at \"Number\") with: [location:: (point(values2 at \"Location\"))];", isExecutable = false) })
 	public static GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
-		Map<String, Object> initialValues = new TOrderedHashMap();
-		final Map<String, IType> initialTypes = new TOrderedHashMap();
+		Map<String, Object> initialValues = new TOrderedHashMap<>();
+		final Map<String, IType<?>> initialTypes = new TOrderedHashMap<>();
 		if (expr instanceof MapExpression) {
 			final MapExpression map = (MapExpression) expr;
 			for (final Map.Entry<IExpression, IExpression> entry : map.getElements().entrySet()) {

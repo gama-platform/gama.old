@@ -26,6 +26,7 @@ import msi.gama.util.IList;
  * @author drogoul
  */
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class FIPAMessage extends GamaMessage {
 
 	/** The message. */

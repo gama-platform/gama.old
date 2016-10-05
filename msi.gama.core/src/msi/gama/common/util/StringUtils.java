@@ -34,6 +34,7 @@ import msi.gaml.types.Types;
  * @since 13 d�c. 2011
  *
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class StringUtils {
 
 	final static String strings = "'(?:[^\\\\']+|\\\\.)*'"; // Old:

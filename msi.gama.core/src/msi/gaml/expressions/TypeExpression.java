@@ -29,6 +29,7 @@ import msi.gaml.types.IType;
  */
 public class TypeExpression extends AbstractExpression {
 
+	@SuppressWarnings("rawtypes")
 	public TypeExpression(final IType type) {
 		this.type = type;
 	}

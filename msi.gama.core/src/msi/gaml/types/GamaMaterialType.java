@@ -12,8 +12,8 @@
 package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMaterial;
@@ -24,23 +24,23 @@ import msi.gama.util.GamaMaterial;
  * @todo Description
  *
  */
-@type(name = IKeyword.MATERIAL,
-id = IType.MATERIAL,
-wraps = { GamaMaterial.class },
-kind = ISymbolKind.Variable.REGULAR,
-concept = { /*TODO*/ })
+@SuppressWarnings("unchecked")
+@type(name = IKeyword.MATERIAL, id = IType.MATERIAL, wraps = {
+		GamaMaterial.class }, kind = ISymbolKind.Variable.REGULAR, concept = { /* TODO */ })
 public class GamaMaterialType extends GamaType<GamaMaterial> {
-	
-	public static GamaMaterial DEFAULT_MATERIAL = new GamaMaterial(0,0);
+
+	public static GamaMaterial DEFAULT_MATERIAL = new GamaMaterial(0, 0);
 
 	@Override
 	public GamaMaterial cast(final IScope scope, final Object obj, final Object param, final boolean copy)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		return staticCast(scope, obj, copy);
 	}
 
 	public static GamaMaterial staticCast(final IScope scope, final Object obj, final boolean copy) {
-		if ( obj instanceof GamaMaterial ) { return (GamaMaterial) obj; }
+		if (obj instanceof GamaMaterial) {
+			return (GamaMaterial) obj;
+		}
 		return null;
 	}
 

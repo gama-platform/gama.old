@@ -18,6 +18,7 @@ import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class InputParameter extends ParameterAdapter {
 
 	private Object value;

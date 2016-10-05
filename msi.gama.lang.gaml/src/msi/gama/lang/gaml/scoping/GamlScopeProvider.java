@@ -26,7 +26,6 @@ import org.eclipse.xtext.resource.EObjectDescription;
 import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.ISelectable;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.LinkedHashMultimap;
 import com.google.common.collect.Multimap;
@@ -63,12 +62,7 @@ public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLoca
 		public Iterable<IEObjectDescription> getExportedObjectsByType(final EClass type) {
 			if (descriptions.isEmpty())
 				return Collections.emptyList();
-			return Iterables.filter(descriptions, new Predicate<IEObjectDescription>() {
-				@Override
-				public boolean apply(final IEObjectDescription input) {
-					return EcoreUtil2.isAssignableFrom(type, input.getEClass());
-				}
-			});
+			return Iterables.filter(descriptions, input -> EcoreUtil2.isAssignableFrom(type, input.getEClass()));
 		}
 
 		@Override
@@ -76,16 +70,13 @@ public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLoca
 			if (descriptions.isEmpty())
 				return Collections.emptyList();
 			final URI uri = EcoreUtil2.getPlatformResourceOrNormalizedURI(object);
-			return Iterables.filter(descriptions, new Predicate<IEObjectDescription>() {
-				@Override
-				public boolean apply(final IEObjectDescription input) {
-					if (input.getEObjectOrProxy() == object)
-						return true;
-					if (uri.equals(input.getEObjectURI())) {
-						return true;
-					}
-					return false;
+			return Iterables.filter(descriptions, input -> {
+				if (input.getEObjectOrProxy() == object)
+					return true;
+				if (uri.equals(input.getEObjectURI())) {
+					return true;
 				}
+				return false;
 			});
 		}
 
@@ -111,7 +102,7 @@ public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLoca
 
 	@Override
 	protected ISelectable getAllDescriptions(final Resource resource) {
-		final List<IEObjectDescription> descriptions = new ArrayList();
+		final List<IEObjectDescription> descriptions = new ArrayList<>();
 		final Iterator<EObject> iterator = resource.getAllContents();
 		while (iterator.hasNext()) {
 			final EObject from = iterator.next();

@@ -53,13 +53,13 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Widget;
 
 import ummisco.gama.ui.utils.PlatformHelper;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class SwingControl extends Composite {
 
 	JApplet applet;
@@ -70,13 +70,7 @@ public abstract class SwingControl extends Composite {
 
 	public static final String SWT_PARENT_PROPERTY_KEY = "org.eclipse.albireo.swtParent";
 
-	private final Listener settingsListener = new Listener() {
-
-		@Override
-		public void handleEvent(final Event event) {
-			handleSettingsChange();
-		}
-	};
+	private final Listener settingsListener = event -> handleSettingsChange();
 	final /* private */ Display display;
 	private Composite layoutDeferredAncestor;
 
@@ -144,13 +138,7 @@ public abstract class SwingControl extends Composite {
 		if (layoutDeferredAncestor != null) {
 			layoutDeferredAncestor.setLayoutDeferred(true);
 			// Ensure populate() is called nevertheless.
-			ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
-
-				@Override
-				public void run() {
-					populate();
-				}
-			});
+			ThreadingHandler.getInstance().asyncExec(display, () -> populate());
 		}
 
 		// Get the width of the border, i.e. the margins of this Composite.
@@ -236,13 +224,7 @@ public abstract class SwingControl extends Composite {
 		}
 
 		// Clean up on dispose
-		addListener(SWT.Dispose, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				handleDispose();
-			}
-		});
+		addListener(SWT.Dispose, event -> handleDispose());
 
 		initCleanResizeListener();
 	}
@@ -321,86 +303,78 @@ public abstract class SwingControl extends Composite {
 
 		// Create AWT/Swing components on the AWT thread. This is
 		// especially necessary to avoid an AWT leak bug (Sun bug 6411042).
-		EventQueue.invokeLater(new Runnable() {
+		EventQueue.invokeLater(() -> {
+			// If the client is using the now-obsolete
+			// javax.swing.DefaultFocusManager
+			// class under Windows, the default focus traversal policy may
+			// be changed from
+			// LayoutFocusTraversalPolicy (set by the L&F) to
+			// LegacyGlueFocusTraversalPolicy.
+			// The latter policy causes stack overflow errors when setting
+			// focus on a JApplet
+			// in an embedded frame, so we force the policy to
+			// LayoutFocusTraversalPolicy here
+			// and later when the JApplet is created. It is especially
+			// important to do this since
+			// the Eclipse workbench code itself uses DefaultFocusManager
+			// (see
+			// org.eclipse.ui.internal.handlers.WidgetMethodHandler).
+			// TODO: can this be queried from the L&F?
+			final KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
+			if (kfm.getDefaultFocusTraversalPolicy().getClass()
+					.getName() == "javax.swing.LegacyGlueFocusTraversalPolicy") {
+				kfm.setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+			}
+			if (frame.getFocusTraversalPolicy() != null && frame.getFocusTraversalPolicy().getClass()
+					.getName() == "javax.swing.LegacyGlueFocusTraversalPolicy") {
+				frame.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
+			}
 
-			@Override
-			public void run() {
-				// If the client is using the now-obsolete
-				// javax.swing.DefaultFocusManager
-				// class under Windows, the default focus traversal policy may
-				// be changed from
-				// LayoutFocusTraversalPolicy (set by the L&F) to
-				// LegacyGlueFocusTraversalPolicy.
-				// The latter policy causes stack overflow errors when setting
-				// focus on a JApplet
-				// in an embedded frame, so we force the policy to
-				// LayoutFocusTraversalPolicy here
-				// and later when the JApplet is created. It is especially
-				// important to do this since
-				// the Eclipse workbench code itself uses DefaultFocusManager
-				// (see
-				// org.eclipse.ui.internal.handlers.WidgetMethodHandler).
-				// TODO: can this be queried from the L&F?
-				final KeyboardFocusManager kfm = KeyboardFocusManager.getCurrentKeyboardFocusManager();
-				if (kfm.getDefaultFocusTraversalPolicy().getClass()
-						.getName() == "javax.swing.LegacyGlueFocusTraversalPolicy") {
-					kfm.setDefaultFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
-				}
-				if (frame.getFocusTraversalPolicy() != null && frame.getFocusTraversalPolicy().getClass()
-						.getName() == "javax.swing.LegacyGlueFocusTraversalPolicy") {
-					frame.setFocusTraversalPolicy(new LayoutFocusTraversalPolicy());
-				}
+			rootPaneContainer = addRootPaneContainer(frame);
+			initPopupMenuSupport(rootPaneContainer.getRootPane());
 
-				rootPaneContainer = addRootPaneContainer(frame);
-				initPopupMenuSupport(rootPaneContainer.getRootPane());
+			// The color of the frame is visible during redraws. Use the
+			// same color, to reduce flickering, and set it as soon as
+			// possible
+			setComponentBackground(frame, background, true);
 
-				// The color of the frame is visible during redraws. Use the
-				// same color, to reduce flickering, and set it as soon as
-				// possible
-				setComponentBackground(frame, background, true);
+			swingComponent = createSwingComponent();
+			if (swingComponent != null) {
+				// Pass on color and font values
+				// The color of the content Pane is visible permanently.
+				setComponentForeground(rootPaneContainer.getContentPane(), foreground, true);
+				setComponentBackground(rootPaneContainer.getContentPane(), background, true);
+				setComponentFont(font, fontData, true);
 
-				swingComponent = createSwingComponent();
-				if (swingComponent != null) {
-					// Pass on color and font values
-					// The color of the content Pane is visible permanently.
-					setComponentForeground(rootPaneContainer.getContentPane(), foreground, true);
-					setComponentBackground(rootPaneContainer.getContentPane(), background, true);
-					setComponentFont(font, fontData, true);
+				rootPaneContainer.getRootPane().getContentPane().add(swingComponent);
+				swingComponent.putClientProperty(SWT_PARENT_PROPERTY_KEY, SwingControl.this);
+				// frame.setFocusable(true);
+			}
 
-					rootPaneContainer.getRootPane().getContentPane().add(swingComponent);
-					swingComponent.putClientProperty(SWT_PARENT_PROPERTY_KEY, SwingControl.this);
-					// frame.setFocusable(true);
-				}
+			// Invoke hooks, for use by the application.
+			afterComponentCreatedAWTThread();
+			try {
+				ThreadingHandler.getInstance().asyncExec(display, () -> {
 
-				// Invoke hooks, for use by the application.
-				afterComponentCreatedAWTThread();
-				try {
-					ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
-
-						@Override
-						public void run() {
-
-							// Propagate focus to Swing, if necesssary
-							if (focusHandler != null) {
-								focusHandler.activateEmbeddedFrame();
-							}
-
-							// Now that the preferred size is known, enable
-							// the layout on the layoutable ancestor.
-							if (layoutDeferredAncestor != null && !layoutDeferredAncestor.isDisposed()) {
-								layoutDeferredAncestor.layout();
-								layoutDeferredAncestor.setLayoutDeferred(false);
-							}
-							// Invoke hooks, for use by the application.
-							afterComponentCreatedSWTThread();
-						}
-					});
-				} catch (final SWTException e) {
-					if (e.code == SWT.ERROR_WIDGET_DISPOSED) {
-						return;
-					} else {
-						throw e;
+					// Propagate focus to Swing, if necesssary
+					if (focusHandler != null) {
+						focusHandler.activateEmbeddedFrame();
 					}
+
+					// Now that the preferred size is known, enable
+					// the layout on the layoutable ancestor.
+					if (layoutDeferredAncestor != null && !layoutDeferredAncestor.isDisposed()) {
+						layoutDeferredAncestor.layout();
+						layoutDeferredAncestor.setLayoutDeferred(false);
+					}
+					// Invoke hooks, for use by the application.
+					afterComponentCreatedSWTThread();
+				});
+			} catch (final SWTException e) {
+				if (e.code == SWT.ERROR_WIDGET_DISPOSED) {
+					return;
+				} else {
+					throw e;
 				}
 			}
 		});
@@ -742,34 +716,30 @@ public abstract class SwingControl extends Composite {
 			// component for the first time. Layout the composite so that those
 			// sizes can be taken into account.
 			final int onBehalfAWTTime = lastValidatedAWTTime;
-			ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
-
-				@Override
-				public void run() {
-					if (verboseSizeLayout) {
-						System.err.println("AWT->SWT thread: Laying out after size update");
-					}
-					if (!isDisposed()) {
-						try {
-							onBehalfAWTTimes.put(Thread.currentThread(), new Integer(onBehalfAWTTime));
-							// Augment the three sizes by 2*borderWidth,
-							// avoiding
-							// integer overflow.
-							final Point minSize = new Point(
-									Math.min(min.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
-									Math.min(min.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
-							final Point prefSize = new Point(
-									Math.min(pref.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
-									Math.min(pref.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
-							final Point maxSize = new Point(
-									Math.min(max.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
-									Math.min(max.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
-							// Augment the three sizes, avoiding integer
-							// overflow.
-							notePreferredSizeChanged(minSize, prefSize, maxSize);
-						} finally {
-							onBehalfAWTTimes.remove(Thread.currentThread());
-						}
+			ThreadingHandler.getInstance().asyncExec(display, () -> {
+				if (verboseSizeLayout) {
+					System.err.println("AWT->SWT thread: Laying out after size update");
+				}
+				if (!isDisposed()) {
+					try {
+						onBehalfAWTTimes.put(Thread.currentThread(), new Integer(onBehalfAWTTime));
+						// Augment the three sizes by 2*borderWidth,
+						// avoiding
+						// integer overflow.
+						final Point minSize = new Point(
+								Math.min(min.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
+								Math.min(min.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
+						final Point prefSize = new Point(
+								Math.min(pref.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
+								Math.min(pref.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
+						final Point maxSize = new Point(
+								Math.min(max.width, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth,
+								Math.min(max.height, Integer.MAX_VALUE - 2 * borderWidth) + 2 * borderWidth);
+						// Augment the three sizes, avoiding integer
+						// overflow.
+						notePreferredSizeChanged(minSize, prefSize, maxSize);
+					} finally {
+						onBehalfAWTTimes.remove(Thread.currentThread());
 					}
 				}
 			});
@@ -1222,13 +1192,7 @@ public abstract class SwingControl extends Composite {
 	public void setFont(final Font font) {
 		super.setFont(font);
 		final FontData[] fontData = font.getFontData();
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				setComponentFont(font, fontData, false);
-			}
-		});
+		EventQueue.invokeLater(() -> setComponentFont(font, fontData, false));
 	}
 
 	private void updateDefaultFont(final Font swtFont, final FontData[] swtFontData) {
@@ -1291,30 +1255,20 @@ public abstract class SwingControl extends Composite {
 	private void handleSettingsChange() {
 		final Font newFont = getDisplay().getSystemFont();
 		final FontData[] newFontData = newFont.getFontData();
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				updateDefaultFont(newFont, newFontData);
-			}
-		});
+		EventQueue.invokeLater(() -> updateDefaultFont(newFont, newFontData));
 	}
 
 	private void handleDispose() {
 		if (focusHandler != null) {
 			focusHandler.dispose();
 		}
-		EventQueue.invokeLater(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					frame.remove(applet);
-				} catch (final Exception e) {
-
-				}
+		EventQueue.invokeLater(() -> {
+			try {
+				frame.remove(applet);
+			} catch (final Exception e) {
 
 			}
+
 		});
 
 		display.removeListener(SWT.Settings, settingsListener);
@@ -1339,13 +1293,7 @@ public abstract class SwingControl extends Composite {
 		super.setBackground(background);
 
 		if (rootPaneContainer != null) {
-			EventQueue.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					setComponentBackground(rootPaneContainer.getContentPane(), background, false);
-				}
-			});
+			EventQueue.invokeLater(() -> setComponentBackground(rootPaneContainer.getContentPane(), background, false));
 		}
 	}
 
@@ -1360,13 +1308,7 @@ public abstract class SwingControl extends Composite {
 		super.setForeground(foreground);
 
 		if (rootPaneContainer != null) {
-			EventQueue.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					setComponentForeground(rootPaneContainer.getContentPane(), foreground, false);
-				}
-			});
+			EventQueue.invokeLater(() -> setComponentForeground(rootPaneContainer.getContentPane(), foreground, false));
 		}
 	}
 
@@ -1593,7 +1535,7 @@ public abstract class SwingControl extends Composite {
 	// ============================= Events and Listeners
 	// =============================
 
-	private final List sizeListeners = new ArrayList();
+	private final List sizeListeners = new ArrayList<>();
 
 	/**
 	 * Adds the listener to the collection of listeners who will be notified
@@ -1694,13 +1636,7 @@ public abstract class SwingControl extends Composite {
 		}
 
 		private void scheduleHide() {
-			EventQueue.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					AwtEnvironment.getInstance(display).hidePopups();
-				}
-			});
+			EventQueue.invokeLater(() -> AwtEnvironment.getInstance(display).hidePopups());
 		}
 	};
 

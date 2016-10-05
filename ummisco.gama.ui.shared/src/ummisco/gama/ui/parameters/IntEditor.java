@@ -30,7 +30,7 @@ public class IntEditor extends NumberEditor<Integer> {
 	}
 
 	IntEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull,
-			final EditorListener l) {
+			final EditorListener<Integer> l) {
 		super(scope, agent, param, l, canBeNull);
 	}
 
@@ -105,7 +105,7 @@ public class IntEditor extends NumberEditor<Integer> {
 	}
 
 	@Override
-	public IType getExpectedType() {
+	public IType<Integer> getExpectedType() {
 		return Types.INT;
 	}
 

@@ -12,10 +12,11 @@
 package msi.gama.headless.classLoader;
 
 /**
- * Class to associate the plug-in to its formated name.
- * Makes seeking easier.
+ * Class to associate the plug-in to its formated name. Makes seeking easier.
+ * 
  * @author VALENTIN Joachim
  */
+@SuppressWarnings({ "rawtypes" })
 public class PlugInStorage {
 
 	Object PlugInObject;
@@ -29,9 +30,9 @@ public class PlugInStorage {
 	}
 
 	/**
-	 * Defines the name to associate to the object.
-	 * When you define the name, do not give the same name for two objects,
-	 * the name is used to sort and seek a list of object.
+	 * Defines the name to associate to the object. When you define the name, do
+	 * not give the same name for two objects, the name is used to sort and seek
+	 * a list of object.
 	 */
 	public void SetName(final String name) {
 		ObjectName = name;
@@ -43,10 +44,9 @@ public class PlugInStorage {
 	}
 
 	/**
-	 * Compare the name with the param string.
-	 * Return <0 if ObjectName lexicographically < to str,
-	 * >0 if ObjectName > to str,
-	 * or =0 if ObjectName correspond to str.
+	 * Compare the name with the param string. Return <0 if ObjectName
+	 * lexicographically < to str, >0 if ObjectName > to str, or =0 if
+	 * ObjectName correspond to str.
 	 */
 	public int Compare(final String str) {
 		return ObjectName.compareTo(str);
@@ -72,13 +72,17 @@ public class PlugInStorage {
 
 	/** Returns the stored object as an instance of class. */
 	public Object GetInstance() {
-		if ( OptionInstance ) { return PlugInObject; }
+		if (OptionInstance) {
+			return PlugInObject;
+		}
 		return null;
 	}
 
 	/** Returns the stored object as an instance of class. */
 	public Class GetClass() {
-		if ( !OptionInstance ) { return (Class) PlugInObject; }
+		if (!OptionInstance) {
+			return (Class) PlugInObject;
+		}
 		return null;
 	}
 

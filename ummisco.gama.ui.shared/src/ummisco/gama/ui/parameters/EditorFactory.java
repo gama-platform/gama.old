@@ -25,6 +25,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class EditorFactory {
 
 	private static final EditorFactory instance = new EditorFactory();

@@ -35,15 +35,15 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 		acceptNull = canBeNull;
 	}
 
-	public NumberEditor(final IScope scope, final InputParameter supportParameter, final EditorListener whenModified,
-		final boolean canBeNull) {
+	public NumberEditor(final IScope scope, final InputParameter supportParameter, final EditorListener<T> whenModified,
+			final boolean canBeNull) {
 		super(scope, supportParameter, whenModified);
 		computeStepValue();
 		acceptNull = canBeNull;
 	}
 
-	public NumberEditor(final IScope scope, final IAgent a, final IParameter p, final EditorListener l,
-		final boolean canBeNull) {
+	public NumberEditor(final IScope scope, final IAgent a, final IParameter p, final EditorListener<T> l,
+			final boolean canBeNull) {
 		super(scope, a, p, l);
 		computeStepValue();
 		acceptNull = canBeNull;
@@ -63,8 +63,10 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 	protected void checkButtons() {
 		super.checkButtons();
 		final ToolItem t = items[DEFINE];
-		if ( t == null || t.isDisposed() ) { return; }
-		if ( param.isDefined() ) {
+		if (t == null || t.isDisposed()) {
+			return;
+		}
+		if (param.isDefined()) {
 			t.setToolTipText("Set the parameter to undefined");
 			t.setImage(GamaIcons.create("small.undefine").image());
 			getEditorControl().setEnabled(true);
@@ -77,7 +79,7 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 
 	@Override
 	protected void applyDefine() {
-		if ( param.isDefined() ) {
+		if (param.isDefined()) {
 			param.setDefined(false);
 			internalModification = true;
 			getEditorControl().setText(UNDEFINED_LABEL);
@@ -103,7 +105,9 @@ public abstract class NumberEditor<T extends Number> extends ExpressionBasedEdit
 
 	@Override
 	protected int[] getToolItems() {
-		if ( acceptNull ) { return new int[] { DEFINE, PLUS, MINUS, REVERT }; }
+		if (acceptNull) {
+			return new int[] { DEFINE, PLUS, MINUS, REVERT };
+		}
 		return new int[] { PLUS, MINUS, REVERT };
 	}
 }

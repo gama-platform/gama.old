@@ -62,7 +62,7 @@ public class FsmTransitionStatement extends AbstractStatementSequence {
 
 	private static final List<String> states = Arrays.asList(FsmStateStatement.STATE, IKeyword.USER_PANEL);
 
-	public static class TransitionSerializer extends SymbolSerializer {
+	public static class TransitionSerializer extends SymbolSerializer<SymbolDescription> {
 
 		static String[] MY_FACETS = new String[] { TO, WHEN };
 
@@ -80,7 +80,7 @@ public class FsmTransitionStatement extends AbstractStatementSequence {
 		}
 	}
 
-	public static class TransitionValidator implements IDescriptionValidator {
+	public static class TransitionValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()

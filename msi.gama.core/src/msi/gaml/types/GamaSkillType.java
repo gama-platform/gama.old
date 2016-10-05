@@ -29,6 +29,7 @@ import msi.gaml.compilation.kernel.GamaSkillRegistry;
  * @todo Description
  *
  */
+@SuppressWarnings("unchecked")
 @type(name = IKeyword.SKILL, id = IType.SKILL, wraps = {
 		ISkill.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.SKILL })
 public class GamaSkillType extends GamaType<ISkill> {

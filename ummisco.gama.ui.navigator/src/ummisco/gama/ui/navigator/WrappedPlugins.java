@@ -4,9 +4,14 @@
  */
 package ummisco.gama.ui.navigator;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 import org.eclipse.core.resources.IFile;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
 
 import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -34,6 +39,7 @@ public class WrappedPlugins extends VirtualContent {
 
 	/**
 	 * Method hasChildren()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#hasChildren()
 	 */
 	@Override
@@ -48,14 +54,17 @@ public class WrappedPlugins extends VirtualContent {
 
 	/**
 	 * Method getNavigatorChildren()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getNavigatorChildren()
 	 */
 	@Override
 	public Object[] getNavigatorChildren() {
-		if ( plugins.isEmpty() ) { return EMPTY; }
-		List<WrappedPlugin> files = new ArrayList();
-		for ( String s : plugins ) {
-			WrappedPlugin proxy = new WrappedPlugin(this, s);
+		if (plugins.isEmpty()) {
+			return EMPTY;
+		}
+		final List<WrappedPlugin> files = new ArrayList<>();
+		for (final String s : plugins) {
+			final WrappedPlugin proxy = new WrappedPlugin(this, s);
 			files.add(proxy);
 		}
 		return files.toArray();
@@ -63,6 +72,7 @@ public class WrappedPlugins extends VirtualContent {
 
 	/**
 	 * Method getImage()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getImage()
 	 */
 	@Override
@@ -72,6 +82,7 @@ public class WrappedPlugins extends VirtualContent {
 
 	/**
 	 * Method getColor()
+	 * 
 	 * @see ummisco.gama.ui.navigator.VirtualContent#getColor()
 	 */
 	@Override
@@ -81,6 +92,7 @@ public class WrappedPlugins extends VirtualContent {
 
 	/**
 	 * Method isParentOf()
+	 * 
 	 * @see msi.gama.gui.navigator.VirtualContent#isParentOf(java.lang.Object)
 	 */
 	// @Override

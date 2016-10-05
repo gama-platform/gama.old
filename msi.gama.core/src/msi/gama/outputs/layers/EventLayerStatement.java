@@ -69,10 +69,10 @@ import msi.gaml.types.IType;
 								IKeyword.POPULATION, })
 public class EventLayerStatement extends AbstractLayerStatement {
 
-	public static class EventLayerValidator implements IDescriptionValidator {
+	public static class EventLayerValidator implements IDescriptionValidator<StatementDescription> {
 
 		@Override
-		public void validate(final IDescription description) {
+		public void validate(final StatementDescription description) {
 			final String actionName = description.getLitteral(ACTION);
 			StatementDescription sd = description.getModelDescription().getAction(actionName);
 			if (sd == null) {

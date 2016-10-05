@@ -118,11 +118,11 @@ public class Facets extends THashMap<String, IExpressionDescription> implements 
 		return sb.toString();
 	}
 
-	public IType getTypeDenotedBy(final String key, final IDescription context) {
+	public IType<?> getTypeDenotedBy(final String key, final IDescription context) {
 		return getTypeDenotedBy(key, context, Types.NO_TYPE);
 	}
 
-	public IType getTypeDenotedBy(final String key, final IDescription context, final IType noType) {
+	public IType<?> getTypeDenotedBy(final String key, final IDescription context, final IType<?> noType) {
 		final IExpressionDescription f = get(key);
 		if (f == null) {
 			return noType;

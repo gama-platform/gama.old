@@ -21,6 +21,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
+@SuppressWarnings("unchecked")
 @type(name = GamaMessageType.MESSAGE_STR, id = IType.MESSAGE, wraps = {
 		GamaMessage.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaMessageType extends GamaType<GamaMessage> {
@@ -52,8 +53,8 @@ public class GamaMessageType extends GamaType<GamaMessage> {
 		if (val instanceof GamaMessage) {
 			return (GamaMessage) val;
 		}
-		// ??? ??? Demander au skill la classe de message à produire ! 
-		return new GamaMessage(scope, scope.getAgent(),null, val);
+		// ??? ??? Demander au skill la classe de message à produire !
+		return new GamaMessage(scope, scope.getAgent(), null, val);
 	}
 
 	@Override

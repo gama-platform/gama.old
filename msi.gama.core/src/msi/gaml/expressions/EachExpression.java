@@ -22,7 +22,7 @@ import msi.gaml.types.IType;
 
 public class EachExpression extends VariableExpression {
 
-	public EachExpression(final IType type) {
+	public EachExpression(final IType<?> type) {
 		super(IKeyword.EACH, type, true, null);
 	}
 

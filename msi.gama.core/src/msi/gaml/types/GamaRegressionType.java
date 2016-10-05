@@ -1,17 +1,15 @@
 package msi.gaml.types;
 
+import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaRegression;
 
-@type(name = "regression",
-id = IType.REGRESSION,
-wraps = {GamaRegression.class },
-kind = ISymbolKind.Variable.REGULAR,
-concept = { IConcept.TYPE })
+@SuppressWarnings("unchecked")
+@type(name = "regression", id = IType.REGRESSION, wraps = {
+		GamaRegression.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE })
 public class GamaRegressionType extends GamaType<GamaRegression> {
 
 	@Override
@@ -20,9 +18,11 @@ public class GamaRegressionType extends GamaType<GamaRegression> {
 	}
 
 	@Override
-	public GamaRegression cast(IScope scope, Object obj, Object param,
-			boolean copy) throws GamaRuntimeException {
-		if ( obj instanceof GamaRegression ) { return (GamaRegression) obj; }
+	public GamaRegression cast(final IScope scope, final Object obj, final Object param, final boolean copy)
+			throws GamaRuntimeException {
+		if (obj instanceof GamaRegression) {
+			return (GamaRegression) obj;
+		}
 		return null;
 	}
 

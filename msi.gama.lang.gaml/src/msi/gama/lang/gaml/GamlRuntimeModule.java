@@ -44,7 +44,6 @@ import msi.gama.lang.gaml.validation.ErrorToDiagnoticTranslator;
 import msi.gama.lang.gaml.validation.GamlResourceValidator;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.GamlExpressionFactory;
-import msi.gaml.expressions.GamlExpressionFactory.ParserProvider;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.IType;
 
@@ -62,13 +61,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	public static void staticInitialize() {
 		if (!initialized) {
-			GamlExpressionFactory.registerParserProvider(new ParserProvider() {
-
-				@Override
-				public IExpressionCompiler get() {
-					return new GamlExpressionCompiler();
-				}
-			});
+			GamlExpressionFactory.registerParserProvider(() -> new GamlExpressionCompiler());
 			GAML.registerInfoProvider(GamlResourceInfoProvider.INSTANCE);
 			initialized = true;
 
@@ -97,6 +90,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return GamlQualifiedNameProvider.class;
 	}
 
+	@SuppressWarnings("rawtypes")
 	public Class<? extends IExpressionCompiler> bindIGamlExpressionCompiler() {
 		return GamlExpressionCompiler.class;
 	}

@@ -85,6 +85,7 @@ public class UserProjectsFolder extends TopLevelFolder implements IAdaptable {
 	 * 
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public Object getAdapter(final Class adapter) {
 		if (adapter == getClass()) {

@@ -60,7 +60,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
-			final Map<String, Object> initialValues, final Map<String, IType> types) {
+			final Map<String, Object> initialValues, final Map<String, IType<?>> types) {
 		return null;
 	}
 
@@ -136,7 +136,7 @@ public class HeadlessListener implements IGui {
 		return true;
 	}
 
-	static Map<String, Class> displayClasses = null;
+	@SuppressWarnings("rawtypes") static Map<String, Class> displayClasses = null;
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output) {

@@ -33,7 +33,7 @@ import ummisco.gama.ui.resources.GamaIcons;
 public class GamlDecorator implements ILightweightLabelDecorator {
 
 	public static String decoratorId = "msi.gama.light.decorator";
-	private static final TIntObjectHashMap<ImageDescriptor> DESCRIPTORS = new TIntObjectHashMap() {
+	private static final TIntObjectHashMap<ImageDescriptor> DESCRIPTORS = new TIntObjectHashMap<ImageDescriptor>() {
 		{
 			put(-1, GamaIcons.create("overlay.ok2").descriptor());
 			put(IMarker.SEVERITY_INFO, GamaIcons.create("overlay.ok2").descriptor());

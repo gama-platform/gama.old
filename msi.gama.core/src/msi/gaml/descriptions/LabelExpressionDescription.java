@@ -93,7 +93,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription imple
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
-		final Set<String> result = new THashSet();
+		final Set<String> result = new THashSet<>();
 		final StringBuilder b = new StringBuilder();
 		for (final char c : value.toCharArray()) {
 			switch (c) {

@@ -28,7 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.SymbolDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.AddStatement.AddSerializer;
@@ -139,10 +139,11 @@ import msi.gaml.types.Types;
 @serializer(AddSerializer.class)
 public class AddStatement extends AbstractContainerStatement {
 
-	public static class AddSerializer extends SymbolSerializer {
+	public static class AddSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
-		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {
+		protected void serialize(final StatementDescription cd, final StringBuilder sb,
+				final boolean includingBuiltIn) {
 			final IExpression item = cd.getFacetExpr(ITEM);
 			final IExpression list = cd.getFacetExpr(TO);
 			final IExpression allFacet = cd.getFacetExpr(ALL);
@@ -157,6 +158,7 @@ public class AddStatement extends AbstractContainerStatement {
 		}
 	}
 
+	@SuppressWarnings({ "rawtypes" })
 	public static class AddValidator extends ContainerValidator {
 
 		@Override
@@ -231,7 +233,7 @@ public class AddStatement extends AbstractContainerStatement {
 			}
 		} else {
 			if (object instanceof IContainer) {
-				container.addValues(scope, (IContainer) object);
+				container.addValues(scope, (IContainer<?, ?>) object);
 			}
 		}
 	}

@@ -450,7 +450,7 @@ public class WorkspaceModelsManager {
 
 		// File modelsRep = new File(urlRep.getPath());
 		// System.out.println("chargemen" + modelsRep.getAbsolutePath());
-		final Map<File, IPath> foundProjects = new HashMap();
+		final Map<File, IPath> foundProjects = new HashMap<>();
 		findProjects(modelsRep, foundProjects);
 		importBuiltInProjects(plugin, core, workspace, foundProjects);
 

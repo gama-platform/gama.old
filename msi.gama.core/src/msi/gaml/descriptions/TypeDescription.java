@@ -448,7 +448,7 @@ public abstract class TypeDescription extends SymbolDescription {
 				duplicateInfo(newAction, existing);
 			}
 		} else {
-			actions = new THashMap();
+			actions = new THashMap<>();
 		}
 		actions.put(actionName, newAction);
 	}

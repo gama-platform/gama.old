@@ -182,9 +182,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			final String[] contextKeywords, final int[] contextKinds, final FacetProto[] fmd, final String omissible,
 			final ISymbolConstructor sc, final String... names) {
 
-		// final Set<String> contextKeywords = new THashSet();
+		// final Set<String> contextKeywords = new THashSet<>();
 		// final TIntHashSet contextKinds = new TIntHashSet();
-		final Map<String, FacetProto> facets = new THashMap();
+		final Map<String, FacetProto> facets = new THashMap<>();
 		if (fmd != null) {
 			for (final FacetProto f : fmd) {
 				facets.put(f.name, f);
@@ -201,7 +201,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		// contextKinds.add(p);
 		// }
 		// }
-		final List<String> keywords = names == null ? new ArrayList() : new ArrayList(Arrays.asList(names));
+		final List<String> keywords = names == null ? new ArrayList<>() : new ArrayList(Arrays.asList(names));
 		// if the symbol is a variable
 		if (ISymbolKind.Variable.KINDS.contains(sKind)) {
 			keywords.addAll(VARTYPE2KEYWORDS.get(sKind));
@@ -233,7 +233,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		for (final String keyword : keywords) {
 			final String kw = keyword;
 			if (!OPERATORS.containsKey(kw)) {
-				OPERATORS.put(kw, new THashMap());
+				OPERATORS.put(kw, new THashMap<>());
 			}
 			final Map<Signature, OperatorProto> map = OPERATORS.get(kw);
 			if (!map.containsKey(signature)) {
@@ -353,7 +353,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static Collection<IDescription> getAllVars() {
-		final THashSet<IDescription> result = new THashSet();
+		final THashSet<IDescription> result = new THashSet<>();
 
 		final DescriptionVisitor varVisitor = new DescriptionVisitor<VariableDescription>() {
 
@@ -414,7 +414,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static Collection<IDescription> getAllActions() {
-		final THashMap<String, IDescription> result = new THashMap();
+		final THashMap<String, IDescription> result = new THashMap<>();
 
 		final DescriptionVisitor visitor = new DescriptionVisitor<StatementDescription>() {
 

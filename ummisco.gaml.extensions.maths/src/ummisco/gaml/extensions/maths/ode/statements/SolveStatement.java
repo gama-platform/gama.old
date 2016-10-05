@@ -82,6 +82,7 @@ import ummisco.gaml.extensions.maths.ode.utils.solver.ThreeEighthesSolver;
 @doc(value = "Solves all equations which matched the given name, with all systems of agents that should solved simultaneously.", usages = {
 		@usage(value = "", examples = {
 				@example(value = "solve SIR method: \"rk4\" step:0.001;", isExecutable = false) }) })
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SolveStatement extends AbstractStatement {
 
 	public static class SolveValidator implements IDescriptionValidator<IDescription> {
@@ -173,7 +174,7 @@ public class SolveStatement extends AbstractStatement {
 		final GamaMap<String, IList<Double>> result = (GamaMap<String, IList<Double>>) a
 				.getAttribute("__integrated_values");
 		if (result != null) {
-			return result.get(a+var.getName());
+			return result.get(a + var.getName());
 		}
 		return GamaListFactory.create();
 	}

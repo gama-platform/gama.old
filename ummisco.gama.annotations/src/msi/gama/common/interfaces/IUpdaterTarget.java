@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
-public interface IUpdaterTarget<Message> {
+public interface IUpdaterTarget<Message extends IUpdaterMessage> {
 
 	public boolean isDisposed();
 

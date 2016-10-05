@@ -17,6 +17,7 @@ import com.google.inject.Inject;
 import ummisco.gama.ui.resources.GamaIcon;
 import ummisco.gama.ui.resources.GamaIcons;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamlAnnotationImageProvider extends XtextMarkerAnnotationImageProvider {
 
 	private static final Map<String, GamaIcon> fixables = new HashMap() {

@@ -22,14 +22,14 @@ public class ChildrenProvider {
 
 	private final Iterable<IDescription> children;
 	public static final ChildrenProvider NONE = new ChildrenProvider(null);
-	public static final ChildrenProvider FUTURE = new ChildrenProvider(new ArrayList()) {
+	public static final ChildrenProvider FUTURE = new ChildrenProvider(new ArrayList<IDescription>()) {
 		@Override
 		public boolean hasChildren() {
 			return true;
 		}
 	};
 
-	public ChildrenProvider(final Iterable descs) {
+	public ChildrenProvider(final Iterable<IDescription> descs) {
 		children = descs;
 	}
 

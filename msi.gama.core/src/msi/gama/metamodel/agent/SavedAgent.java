@@ -147,6 +147,7 @@ public class SavedAgent {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
+	@SuppressWarnings("rawtypes")
 	public IAgent restoreTo(final IScope scope, final IPopulation targetPopulation) throws GamaRuntimeException {
 		final List<Map> agentAttrs = new ArrayList<Map>();
 		agentAttrs.add(variables);
@@ -162,6 +163,7 @@ public class SavedAgent {
 	 * @param host
 	 * @throws GamaRuntimeException
 	 */
+	@SuppressWarnings("rawtypes")
 	public void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
 		if (innerPopulations != null) {
 			for (final String microPopName : innerPopulations.keySet()) {

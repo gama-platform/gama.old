@@ -33,6 +33,7 @@ import msi.gaml.statements.Facets;
  */
 
 @factory(handles = { SPECIES })
+@SuppressWarnings({ "rawtypes" })
 public class SpeciesFactory extends SymbolFactory {
 
 	public SpeciesFactory(final List<Integer> handles) {

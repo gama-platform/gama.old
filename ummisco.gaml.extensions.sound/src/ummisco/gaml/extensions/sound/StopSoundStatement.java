@@ -28,30 +28,29 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 import ummisco.gaml.extensions.sound.StopSoundStatement.StopSoundValidator;
 
-@symbol(name = IKeyword.STOP_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true,
-concept = { IConcept.SOUND })
+@symbol(name = IKeyword.STOP_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = {
+		IConcept.SOUND })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @validator(StopSoundValidator.class)
 public class StopSoundStatement extends AbstractStatementSequence {
-	
-	public static class StopSoundValidator implements IDescriptionValidator {
+
+	public static class StopSoundValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()
+		 * 
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
 		public void validate(final IDescription cd) {
-			
+
 			// what to validate?
 		}
 	}
-	
-	
+
 	private AbstractStatementSequence sequence = null;
 
-
-	public StopSoundStatement(IDescription desc) {
+	public StopSoundStatement(final IDescription desc) {
 		super(desc);
 	}
 
@@ -64,17 +63,16 @@ public class StopSoundStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		IAgent currentAgent = scope.getAgent();
-		
-		GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
+		final IAgent currentAgent = scope.getAgent();
+
+		final GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
 		soundPlayer.stop(false);
 
 		if (sequence != null) {
-			Object[] result = new Object[1];
+			final Object[] result = new Object[1];
 			scope.execute(sequence, currentAgent, null, result);
 		}
 
-		
 		return null;
 	}
 }

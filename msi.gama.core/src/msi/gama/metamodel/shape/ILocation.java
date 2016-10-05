@@ -26,6 +26,7 @@ import msi.gaml.types.IType;
  * @since 15 d�c. 2011
  *
  */
+@SuppressWarnings("rawtypes")
 @vars({ @var(name = IKeyword.X, type = IType.FLOAT, doc = { @doc("Returns the x ordinate of this point") }),
 		@var(name = IKeyword.Y, type = IType.FLOAT, doc = { @doc("Returns the y ordinate of this point") }),
 		@var(name = IKeyword.Z, type = IType.FLOAT, doc = { @doc("Returns the z ordinate of this point") }) })

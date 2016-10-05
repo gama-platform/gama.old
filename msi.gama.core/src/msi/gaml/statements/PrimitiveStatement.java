@@ -49,6 +49,7 @@ import msi.gaml.types.IType;
 // Necessary to avoid running the validator from ActionStatement
 @validator(NullValidator.class)
 @doc("A primitve is an action written in Java (as opposed to GAML for regular actions")
+@SuppressWarnings({ "rawtypes" })
 public class PrimitiveStatement extends ActionStatement {
 
 	// Declaring a null validator because primites dont need to be checked

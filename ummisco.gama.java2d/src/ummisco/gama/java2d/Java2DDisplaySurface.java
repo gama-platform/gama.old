@@ -112,7 +112,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	int frames;
 	private volatile boolean realized = false;
 	private volatile boolean rendered = false;
-	Set<IEventLayerListener> listeners = new HashSet();
+	Set<IEventLayerListener> listeners = new HashSet<>();
 	Point mousePosition;
 
 	public Java2DDisplaySurface(final Object... args) {
@@ -693,7 +693,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 	public Collection<IAgent> selectAgent(final int x, final int y) {
 		final int xc = x - getOriginX();
 		final int yc = y - getOriginY();
-		final List<IAgent> result = new ArrayList();
+		final List<IAgent> result = new ArrayList<>();
 		final List<ILayer> layers = getManager().getLayersIntersecting(xc, yc);
 		for (final ILayer layer : layers) {
 			final Set<IAgent> agents = layer.collectAgentsAt(xc, yc, this);

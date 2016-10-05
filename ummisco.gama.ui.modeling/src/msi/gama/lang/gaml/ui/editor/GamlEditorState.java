@@ -43,9 +43,9 @@ public class GamlEditorState {
 		final int n = descriptions.size();
 		if (n > 0) {
 			hasExperiments = true;
-			experiments = new ArrayList(n);
-			abbreviations = new ArrayList(n);
-			types = new ArrayList(n);
+			experiments = new ArrayList<>(n);
+			abbreviations = new ArrayList<>(n);
+			types = new ArrayList<>(n);
 			for (final IDescription ep : descriptions) {
 				final String name = ep.getName();
 				experiments.add(name);

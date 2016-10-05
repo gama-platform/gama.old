@@ -13,7 +13,6 @@ package ummisco.gaml.extensions.maths.ode.statements;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -41,9 +40,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaListFactory;
 import msi.gama.util.IList;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -103,6 +100,7 @@ import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDyna
 				"=", IKeyword.SOLVE })
 @validator(SystemOfEquationsValidator.class)
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SystemOfEquationsStatement extends AbstractStatementSequence implements FirstOrderDifferentialEquations {
 
 	public static class SystemOfEquationsValidator implements IDescriptionValidator<IDescription> {
@@ -194,8 +192,10 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	public void assignValue(final IScope scope, final double time, final double[] y) {
-//		final List<SingleEquationStatement> equationValues = new ArrayList<SingleEquationStatement>(equations.values());
-//		final List<IExpression> variableValues = new ArrayList<IExpression>(variables_diff.values());
+		// final List<SingleEquationStatement> equationValues = new
+		// ArrayList<SingleEquationStatement>(equations.values());
+		// final List<IExpression> variableValues = new
+		// ArrayList<IExpression>(variables_diff.values());
 		for (int i = 0, n = equations.size(); i < n; i++) {
 
 			final SingleEquationStatement s = equations.get(i);
@@ -264,8 +264,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		 * SingleEquation values
 		 */
 
-//		final List<SingleEquationStatement> equationValues = new ArrayList<SingleEquationStatement>(equations.values());
-		final Map<Integer,IAgent> equaAgents = getEquationAgents(currentScope);
+		// final List<SingleEquationStatement> equationValues = new
+		// ArrayList<SingleEquationStatement>(equations.values());
+		final Map<Integer, IAgent> equaAgents = getEquationAgents(currentScope);
 		for (int i = 0, n = getDimension(); i < n; i++) {
 			try {
 				final Object[] result = new Object[1];
@@ -309,8 +310,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		return result;
 	}
 
-	public Map<Integer,IAgent> getEquationAgents(final IScope scope) {
-		Map<Integer,IAgent> result = (Map<Integer, IAgent>) scope.getAgent().getAttribute("__equationAgents");
+	public Map<Integer, IAgent> getEquationAgents(final IScope scope) {
+		Map<Integer, IAgent> result = (Map<Integer, IAgent>) scope.getAgent().getAttribute("__equationAgents");
 		if (result == null) {
 			result = new HashMap();
 			scope.getAgent().setAttribute("__equationAgents", result);
@@ -340,7 +341,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	private void addInternalAgents(final IScope scope) {
-		for(int i = 0 ; i < equations.size(); i++){			
+		for (int i = 0; i < equations.size(); i++) {
 			getEquationAgents(scope).put(i, scope.getAgent());
 		}
 	}
@@ -369,8 +370,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		final SystemOfEquationsStatement ses = remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class,
 				getName());
 		if (ses != null) {
-			for (int i = 0, n=ses.equations.size(); i < n; i++) {
-				getEquationAgents(currentScope).put(getEquationAgents(currentScope).size(),remoteAgent);
+			for (int i = 0, n = ses.equations.size(); i < n; i++) {
+				getEquationAgents(currentScope).put(getEquationAgents(currentScope).size(), remoteAgent);
 			}
 			for (final Entry<Integer, SingleEquationStatement> s : ses.equations.entrySet()) {
 				final String name = remoteAgent.getName() + s.getKey();
@@ -390,10 +391,10 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		final SystemOfEquationsStatement ses = remoteAgent.getSpecies().getStatement(SystemOfEquationsStatement.class,
 				getName());
 		if (ses != null) {
-			int n=equations.size();
+			final int n = equations.size();
 			for (final Integer s : ses.equations.keySet()) {
-				equations.remove(n-s-1);
-				variables_diff.remove(n-s-1);
+				equations.remove(n - s - 1);
+				variables_diff.remove(n - s - 1);
 			}
 		}
 	}

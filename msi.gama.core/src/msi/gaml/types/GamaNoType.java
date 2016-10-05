@@ -25,9 +25,10 @@ import msi.gama.runtime.IScope;
  * @todo Description
  *
  */
+@SuppressWarnings("unchecked")
 @type(name = IKeyword.UNKNOWN, id = IType.NONE, wraps = {
 		Object.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE })
-public class GamaNoType extends GamaType {
+public class GamaNoType extends GamaType<Object> {
 
 	@Override
 	public Object cast(final IScope scope, final Object obj, final Object param, final boolean copy) {

@@ -33,7 +33,7 @@ import msi.gama.runtime.GAMA;
  */
 public class ContentAssistContextFactory extends PartialStatefulFactory {
 
-	Map<AbstractElement, Integer> recurse = new LinkedHashMap();
+	Map<AbstractElement, Integer> recurse = new LinkedHashMap<>();
 	boolean stop = false;
 
 	/**

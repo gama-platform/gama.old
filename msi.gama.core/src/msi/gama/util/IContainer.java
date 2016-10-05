@@ -33,7 +33,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public interface IContainer<KeyType, ValueType> extends IValue {
 
 	@Override

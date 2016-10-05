@@ -151,6 +151,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		p.setLocation(xFromModelUnitsToPixels(c.x), yFromModelUnitsToPixels(c.y));
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
 		if (attributes.textures == null) {

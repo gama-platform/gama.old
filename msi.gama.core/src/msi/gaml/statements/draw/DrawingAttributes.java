@@ -23,6 +23,7 @@ public abstract class DrawingAttributes {
 	public GamaColor color;
 	public boolean wireframe = false;
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public DrawingAttributes(final ILocation size, final GamaPair<Double, GamaPoint> rotation, final ILocation location,
 			final GamaColor color) {
 		this.size = size == null ? null : new GamaPoint(size);
@@ -52,18 +53,20 @@ public abstract class DrawingAttributes {
 		}
 	}
 
-	public abstract List getTextures();
+	public abstract List<?> getTextures();
 
 	public abstract boolean isEmpty();
 
 	public abstract AgentIdentifier getAgentIdentifier();
 
 	public abstract GamaColor getBorder();
-	
-	public List<GamaColor> getColors() {return null;}
+
+	public List<GamaColor> getColors() {
+		return null;
+	}
 
 	public abstract double getDepth();
-	
+
 	public abstract GamaMaterial getMaterial();
 
 	public String getSpeciesName() {

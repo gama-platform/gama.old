@@ -45,7 +45,7 @@ import msi.gaml.types.Types;
  * @since 7 avr. 2014
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public class OperatorProto extends AbstractProto {
 
 	public static Set<String> noMandatoryParenthesis = new THashSet<String>(Arrays.<String> asList("-", "!"));

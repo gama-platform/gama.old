@@ -52,7 +52,6 @@ import msi.gaml.types.Types;
  *
  * @author drogoul
  */
-@SuppressWarnings("unchecked")
 @symbol(name = { IKeyword.INSPECT, IKeyword.BROWSE }, kind = ISymbolKind.OUTPUT, with_sequence = false, concept = {
 		IConcept.INSPECTOR })
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = { IKeyword.OUTPUT,
@@ -70,6 +69,7 @@ import msi.gaml.types.Types;
 		+ IKeyword.BROWSE + "` is used, type: default value is table, whereas when`" + IKeyword.INSPECT
 		+ "` is used, type: default value is agent.", usages = { @usage(value = "An example of syntax is:", examples = {
 				@example(value = "inspect \"my_inspector\" value: ant attributes: [\"name\", \"location\"];", isExecutable = false) }) })
+@SuppressWarnings({ "rawtypes" })
 public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 
 	public static final short INSPECT_AGENT = 0;

@@ -19,7 +19,6 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
@@ -32,40 +31,35 @@ import ummisco.gama.ui.utils.PlatformHelper;
  *
  * @see AwtDialogListener
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SwtInputBlocker {
 
 	static private volatile SwtInputBlocker instance = null;
 	static private int blockCount = 0;
 	private Shell shell;
-	private final AwtDialogListener dialogListener;
+	private AwtDialogListener dialogListener = null;
 	private final Shell parentShell;
 	private Stack /* of Shell */ shellsWithActivateListener;
 
-	private final Listener activateListener = new Listener() {
+	private SwtInputBlocker(final Shell parent, final AwtDialogListener dialogListener) {
+		this.parentShell = parent;
+		this.dialogListener = dialogListener;
+	}
 
-		@Override
-		public void handleEvent(final Event event) {
-			// Schedule the AWT focus request so that activation is completed
-			// first. Otherwise the focus
-			// request can happen before the AWT window is deactivated.
-			ThreadingHandler.getInstance().asyncExec(shell.getDisplay(), new Runnable() {
-
-				@Override
-				public void run() {
-					// On some platforms (e.g. Linux/GTK), the 0x0 shell still
-					// appears as a dot
-					// on the screen, so make it invisible by moving it below
-					// other windows. This
-					// is unnecessary under Windows and causes a flash, so only
-					// make the call when necessary.
-					// note: would like to do this too:
-					// parentShell.moveBelow(null);, but see bug 170774
-					shell.moveBelow(null);
+	private final Listener activateListener = event -> ThreadingHandler.getInstance().asyncExec(shell.getDisplay(),
+			() -> {
+				// On some platforms (e.g. Linux/GTK), the 0x0 shell still
+				// appears as a dot
+				// on the screen, so make it invisible by moving it below
+				// other windows. This
+				// is unnecessary under Windows and causes a flash, so only
+				// make the call when necessary.
+				// note: would like to do this too:
+				// parentShell.moveBelow(null);, but see bug 170774
+				shell.moveBelow(null);
+				if (dialogListener != null)
 					dialogListener.requestFocus();
-				}
 			});
-		}
-	};
 
 	private final FocusListener focusListener = new FocusAdapter() {
 
@@ -74,11 +68,6 @@ public class SwtInputBlocker {
 			dialogListener.requestFocus();
 		}
 	};
-
-	private SwtInputBlocker(final Shell parent, final AwtDialogListener dialogListener) {
-		this.parentShell = parent;
-		this.dialogListener = dialogListener;
-	}
 
 	private void open() {
 		assert Display.getCurrent() != null; // On SWT event thread

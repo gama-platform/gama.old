@@ -24,11 +24,11 @@ import ummisco.gama.network.skills.INetworkSkill;
 public class UDPConnector extends Connector {
 
 	public static String _UDP_SERVER = "__udp_server";
-	public static String _UDP_SOCKET= "__udp_socket";
-	public static String _UDP_CLIENT= "__udp_client";
-	
+	public static String _UDP_SOCKET = "__udp_socket";
+	public static String _UDP_CLIENT = "__udp_client";
+
 	private boolean is_server = false;
-	private IScope myScope;
+	private final IScope myScope;
 
 	public UDPConnector(final IScope scope, final boolean as_server) {
 		is_server = as_server;
@@ -36,16 +36,17 @@ public class UDPConnector extends Connector {
 	}
 
 	@Override
-	public List<ConnectorMessage> fetchMessageBox(IAgent agent) {
+	public List<ConnectorMessage> fetchMessageBox(final IAgent agent) {
 		// TODO Auto-generated method stub
 		return super.fetchMessageBox(agent);
 	}
 
-	public GamaMap<String, Object> fetchMessageBox_old(IAgent agt) {
+	@SuppressWarnings("unchecked")
+	public GamaMap<String, Object> fetchMessageBox_old(final IAgent agt) {
 		GamaMap<String, Object> m = GamaMapFactory.create();
 		// if(is_server){
 		final String cli;
-		String receiveMessage = "";
+		final String receiveMessage = "";
 		// System.out.println("\n\n primGetFromClient "+"messages"+agt+"\n\n");
 
 		m = (GamaMap<String, Object>) agt.getAttribute("messages" + agt);
@@ -78,15 +79,16 @@ public class UDPConnector extends Connector {
 		return m;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Map<IAgent, LinkedList<ConnectorMessage>> fetchAllMessages() {
-		for (IAgent agt : this.receivedMessage.keySet()) {
+		for (final IAgent agt : this.receivedMessage.keySet()) {
 			// IScope scope = agt.getScope();
 			GamaList<ConnectorMessage> m = null;
 
 			m = (GamaList<ConnectorMessage>) agt.getAttribute("messages" + agt);
 			// receivedMessage.get(agt).addAll(m);
-			for (ConnectorMessage cm : m) {
+			for (final ConnectorMessage cm : m) {
 				receivedMessage.get(agt).add(cm);
 			}
 			m.clear();
@@ -108,9 +110,9 @@ public class UDPConnector extends Connector {
 				ssThread.start();
 				agent.getScope().getSimulation().setAttribute(_UDP_SERVER + port, ssThread);
 
-			} catch (BindException be) {
+			} catch (final BindException be) {
 				throw GamaRuntimeException.create(be, agent.getScope());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw GamaRuntimeException.create(e, agent.getScope());
 			}
 		}
@@ -136,9 +138,9 @@ public class UDPConnector extends Connector {
 				ssThread.start();
 				agent.setAttribute(_UDP_CLIENT + port, ssThread);
 
-			} catch (BindException be) {
+			} catch (final BindException be) {
 				throw GamaRuntimeException.create(be, agent.getScope());
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw GamaRuntimeException.create(e, agent.getScope());
 			}
 		}
@@ -152,50 +154,49 @@ public class UDPConnector extends Connector {
 			connectToServerSocket(agent);
 		}
 	}
-	
+
 	public void sendToClient(final IAgent agent, final String cli, final Object data) throws GamaRuntimeException {
-//		int port = (int) agent.getAttribute("port");
+		// int port = (int) agent.getAttribute("port");
 		final Integer port = Cast.asInt(agent.getScope(), this.getConfigurationParameter(SERVER_PORT));
 
-		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getScope().getSimulation().getAttribute(_UDP_SERVER + port);
-		InetAddress IPAddress = (InetAddress) agent.getAttribute("replyIP");
-		int replyport = Cast.asInt(agent.getScope(), agent.getAttribute("replyPort"));
+		final MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getScope().getSimulation()
+				.getAttribute(_UDP_SERVER + port);
+		final InetAddress IPAddress = (InetAddress) agent.getAttribute("replyIP");
+		final int replyport = Cast.asInt(agent.getScope(), agent.getAttribute("replyPort"));
 		if (ssThread == null || IPAddress == null) {
 			return;
 		}
-		byte[] sendData = ((String) data).getBytes();
-		DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, replyport);
+		final byte[] sendData = ((String) data).getBytes();
+		final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, replyport);
 		try {
 			ssThread.setSendPacket(sendPacket);
 			// System.out.println("SENT: "+replyport);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void sendToServer(final IAgent agent, Object data) throws GamaRuntimeException {
+	public void sendToServer(final IAgent agent, final Object data) throws GamaRuntimeException {
 		final String sport = this.getConfigurationParameter(SERVER_PORT);
-		final Integer port = Cast.asInt(agent.getScope(), sport);		
-		MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute(_UDP_CLIENT + port);
+		final Integer port = Cast.asInt(agent.getScope(), sport);
+		final MultiThreadedUDPServer ssThread = (MultiThreadedUDPServer) agent.getAttribute(_UDP_CLIENT + port);
 		if (ssThread == null) {
 			return;
 		}
 		try {
-			DatagramSocket clientSocket = ssThread.getMyServerSocket();
-			InetAddress IPAddress = InetAddress.getByName((String) agent.getAttribute(INetworkSkill.SERVER_URL));
-			byte[] sendData = ((String) data).getBytes();
-			DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
+			final DatagramSocket clientSocket = ssThread.getMyServerSocket();
+			final InetAddress IPAddress = InetAddress.getByName((String) agent.getAttribute(INetworkSkill.SERVER_URL));
+			final byte[] sendData = ((String) data).getBytes();
+			final DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, IPAddress, port);
 			sendPacket.setData(sendData);
 			clientSocket.send(sendPacket);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
 	}
-
-
 
 	@Override
 	public void send(final IAgent sender, final String receiver, final GamaMessage content) {
@@ -206,30 +207,30 @@ public class UDPConnector extends Connector {
 		}
 	}
 
-	public void sendMessage(IAgent agent, String dest, Object data) {
+	public void sendMessage(final IAgent agent, final String dest, final Object data) {
 		if (is_server) {
-	
+
 		} else {
-			
+
 		}
 	}
 
 	@Override
-	protected void subscribeToGroup(IAgent agt, String boxName) throws GamaNetworkException {
+	protected void subscribeToGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	protected void unsubscribeGroup(IAgent agt, String boxName) throws GamaNetworkException {
+	protected void unsubscribeGroup(final IAgent agt, final String boxName) throws GamaNetworkException {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	protected void releaseConnection(IScope scope) throws GamaNetworkException {
-		String server = this.getConfigurationParameter(SERVER_URL);
-		String sport = this.getConfigurationParameter(SERVER_PORT);
+	protected void releaseConnection(final IScope scope) throws GamaNetworkException {
+		final String server = this.getConfigurationParameter(SERVER_URL);
+		final String sport = this.getConfigurationParameter(SERVER_PORT);
 		final Integer port = Cast.asInt(scope, sport);
 		final Thread UDPsersock = (Thread) scope.getSimulation().getAttribute(_UDP_SERVER + port);
 		try {
@@ -243,7 +244,8 @@ public class UDPConnector extends Connector {
 	}
 
 	@Override
-	protected void sendMessage(IAgent sender, String receiver, String content) throws GamaNetworkException {
+	protected void sendMessage(final IAgent sender, final String receiver, final String content)
+			throws GamaNetworkException {
 		// TODO Auto-generated method stub
 
 	}

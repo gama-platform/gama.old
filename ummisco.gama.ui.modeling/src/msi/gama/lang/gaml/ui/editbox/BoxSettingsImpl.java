@@ -529,7 +529,7 @@ public class BoxSettingsImpl implements IBoxSettings {
 			return -1;
 		if (!circulateLevelColors && boxColors != null && boxColors.length <= level && boxColors.length > 0)
 			return boxColors.length - 1;
-		if (boxColors.length > 0 && level > -1) {
+		if (boxColors != null && boxColors.length > 0 && level > -1) {
 			return getNColor0(level);
 		}
 		return -1;

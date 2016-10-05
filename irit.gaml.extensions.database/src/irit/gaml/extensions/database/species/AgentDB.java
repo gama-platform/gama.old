@@ -74,6 +74,7 @@ import msi.gaml.types.IType;
  * Last Modified: 07-Jan-2014
  */
 @species(name = "AgentDB")
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class AgentDB extends GamlAgent {
 
 	private Connection conn = null;

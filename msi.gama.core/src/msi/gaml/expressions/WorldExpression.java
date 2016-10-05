@@ -23,7 +23,7 @@ import msi.gaml.types.IType;
 
 public class WorldExpression extends AbstractExpression implements IVarExpression {
 
-	protected WorldExpression(final IType type, final IDescription global) {
+	protected WorldExpression(final IType<?> type, final IDescription global) {
 		this.type = type;
 		// super(IKeyword.WORLD_AGENT_NAME, type, true, global);
 	}

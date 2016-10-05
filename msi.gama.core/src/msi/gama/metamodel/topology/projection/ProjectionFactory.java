@@ -34,7 +34,7 @@ public class ProjectionFactory {
 	private static final String EPSGPrefix = "EPSG:";
 	private static final String defaultTargetCRS = String.valueOf(GamaPreferences.LIB_TARGET_CRS.getInitialValue(null));
 	private static final String defaultSaveCRS = String.valueOf(GamaPreferences.LIB_OUTPUT_CRS.getInitialValue(null));
-	private static Map<String, CoordinateReferenceSystem> CRSCache = new THashMap();
+	private static Map<String, CoordinateReferenceSystem> CRSCache = new THashMap<>();
 
 	private IProjection world;
 	public CoordinateReferenceSystem targetCRS;

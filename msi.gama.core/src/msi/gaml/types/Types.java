@@ -234,7 +234,7 @@ public class Types {
 	private static List<IType>[] typesWithDepths() {
 		final List<IType>[] depths = new ArrayList[10];
 		for (int i = 0; i < 10; i++) {
-			depths[i] = new ArrayList();
+			depths[i] = new ArrayList<>();
 		}
 		final Set<IType> list = new LinkedHashSet(builtInTypes.getTypes());
 		for (final IType t : list) {
@@ -297,7 +297,7 @@ public class Types {
 		if (builtInSpecies != null)
 			return builtInSpecies;
 		final ModelDescription root = ModelDescription.ROOT;
-		final List<SpeciesDescription> result = new ArrayList();
+		final List<SpeciesDescription> result = new ArrayList<>();
 		root.getAllSpecies(result);
 		builtInSpecies = result;
 		return builtInSpecies;

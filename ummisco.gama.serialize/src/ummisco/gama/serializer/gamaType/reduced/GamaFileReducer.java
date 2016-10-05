@@ -5,6 +5,7 @@ import msi.gama.util.IList;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.types.GamaFileType;
 
+@SuppressWarnings({ "rawtypes" })
 public class GamaFileReducer {
 	private final String path;
 	private final IList attributes;

@@ -96,7 +96,7 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 				final IGamaFileMetaData metaData = GAMA.getGui().getMetaDataProvider().getMetaData(p, false, true);
 				if (metaData instanceof GamlFileInfo) {
 					final GamlFileInfo info = (GamlFileInfo) metaData;
-					final List l = new ArrayList();
+					final List l = new ArrayList<>();
 
 					final ISyntacticElement element = GAML
 							.getContents(URI.createPlatformResourceURI(((IFile) p).getFullPath().toOSString(), true));
@@ -125,7 +125,7 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 			} else if (ctid.equals(FileMetaDataProvider.SHAPEFILE_CT_ID)) {
 				try {
 					final IContainer folder = ((IFile) p).getParent();
-					final List<IResource> sub = new ArrayList();
+					final List<IResource> sub = new ArrayList<>();
 					for (final IResource r : folder.members()) {
 						if (r instanceof IFile && FileMetaDataProvider.isSupport((IFile) p, (IFile) r)) {
 							sub.add(r);

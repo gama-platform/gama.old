@@ -12,6 +12,7 @@
 package ummisco.gama.ui.parameters;
 
 import java.util.List;
+
 import org.eclipse.swt.widgets.Composite;
 
 import msi.gama.kernel.experiment.IParameter;
@@ -23,24 +24,24 @@ import ummisco.gama.ui.interfaces.EditorListener;
 
 public class StringEditor extends ExpressionBasedEditor<String> {
 
-	StringEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	StringEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<String> l) {
 		super(scope, agent, param, l);
 	}
 
 	StringEditor(final IScope scope, final Composite parent, final String title, final Object value,
-		final EditorListener<String> whenModified) {
+			final EditorListener<String> whenModified) {
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
 	StringEditor(final IScope scope, final Composite parent, final String title, final String value,
-		final List<String> among, final EditorListener<String> whenModified, final boolean asLabel) {
+			final List<String> among, final EditorListener<String> whenModified, final boolean asLabel) {
 		super(scope, new InputParameter(title, value, Types.STRING, among), whenModified);
 		this.createComposite(parent);
 	}
 
 	@Override
-	public IType getExpectedType() {
+	public IType<String> getExpectedType() {
 		return Types.STRING;
 	}
 

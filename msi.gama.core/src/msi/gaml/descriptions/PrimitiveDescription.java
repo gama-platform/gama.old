@@ -28,6 +28,7 @@ import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 
+@SuppressWarnings({ "rawtypes" })
 public class PrimitiveDescription extends ActionDescription {
 
 	private GamaHelper helper;

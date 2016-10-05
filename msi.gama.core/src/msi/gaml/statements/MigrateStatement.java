@@ -35,6 +35,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.MigrateStatement.MigrateValidator;
@@ -68,7 +69,7 @@ import msi.gaml.types.Types;
 						IKeyword.CAPTURE, IKeyword.RELEASE })
 public class MigrateStatement extends AbstractStatementSequence {
 
-	public static class MigrateValidator implements IDescriptionValidator {
+	public static class MigrateValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
 		 * Method validate()
@@ -76,7 +77,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
-		public void validate(final IDescription cd) {
+		public void validate(final StatementDescription cd) {
 			final String microSpeciesName = cd.getLitteral(TARGET);
 			if (microSpeciesName != null) {
 				final SpeciesDescription macroSpecies = cd.getSpeciesContext();

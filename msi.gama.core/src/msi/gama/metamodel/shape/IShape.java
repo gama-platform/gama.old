@@ -84,7 +84,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 	public static final WKTWriter SHAPE_WRITER = new WKTWriter();
 
 	public static final String DEPTH_ATTRIBUTE = "_shape_internal_depth";
-	public static final Map<String, Type> JTS_TYPES = new THashMap();
+	public static final Map<String, Type> JTS_TYPES = new THashMap<>();
 	// public static final String TEXTURE_ATTRIBUTE = "_shape_internal_texture";
 	public static final String TYPE_ATTRIBUTE = "_shape_internal_type";
 	// public static final String RATIO_ATTRIBUTE = "_shape_internal_ratio";

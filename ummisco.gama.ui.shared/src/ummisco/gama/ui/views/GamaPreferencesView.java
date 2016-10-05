@@ -266,7 +266,6 @@ public class GamaPreferencesView {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
 	private void buildGroupContents(final Composite compo, final List<Entry> list) {
 
 		for (final Entry e : list) {

@@ -30,8 +30,6 @@ import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
-import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.UserCommandStatement;
 import ummisco.gama.ui.experiment.parameters.EditorsList;
 import ummisco.gama.ui.experiment.parameters.ExperimentsParametersList;
@@ -70,7 +68,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 				return;
 			}
 			reset();
-			final Collection<IParameter> params = new ArrayList(exp.getParameters().values());
+			final Collection<IParameter> params = new ArrayList<>(exp.getParameters().values());
 			params.addAll(exp.getExplorableParameters().values());
 			editors = new ExperimentsParametersList(exp.getAgent().getScope(), params);
 			final String expInfo = "Model " + experiment.getModel().getDescription().getTitle() + " / "
@@ -100,15 +98,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
 
-					GAMA.getExperiment().getAgent().executeAction(new IExecutable() {
-
-						@Override
-						public Object executeOn(final IScope scope) {
-							final Object result = command.executeOn(scope);
-							GAMA.getExperiment().refreshAllOutputs();
-							return result;
-						}
-
+					GAMA.getExperiment().getAgent().executeAction(scope -> {
+						final Object result = command.executeOn(scope);
+						GAMA.getExperiment().refreshAllOutputs();
+						return result;
 					});
 				}
 
@@ -127,7 +120,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
-						final EditorsList eds = editors;
+						final EditorsList<?> eds = editors;
 						if (eds != null) {
 							eds.revertToDefaultValue();
 						}

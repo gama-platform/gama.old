@@ -96,7 +96,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private final IScope scope;
 	final ActionExecuter executer;
-	final Map<String, Object> extraParametersMap = new TOrderedHashMap();
+	final Map<String, Object> extraParametersMap = new TOrderedHashMap<>();
 	protected RandomUtils random;
 	protected Double initialMinimumDuration = null;
 	protected Double currentMinimumDuration = 0d;
@@ -230,7 +230,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 		final ParametersSet ps = getParameterValues();
 		ps.putAll(parameters);
-		final IList<Map> list = GamaListFactory.create(Types.MAP);
+		final IList<Map<?, ?>> list = GamaListFactory.create(Types.MAP);
 		list.add(ps);
 		pop.createAgents(scope, 1, list, false, scheduleIt);
 	}
@@ -309,9 +309,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public List<? extends IParameter.Batch> getDefaultParameters() {
 		if (!GamaPreferences.CORE_RND_EDITABLE.getValue()) {
-			return new ArrayList();
+			return new ArrayList<>();
 		}
-		final List<ExperimentParameter> params = new ArrayList();
+		final List<ExperimentParameter> params = new ArrayList<>();
 		final String cat = getExperimentParametersCategory();
 		ExperimentParameter p = new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG),
 				"Random number generator", cat, GamaPreferences.GENERATOR_NAMES, false);
@@ -377,7 +377,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@Override
 	public List<String> getWorkingPaths() {
-		final List<String> result = new ArrayList();
+		final List<String> result = new ArrayList<>();
 		result.add(getWorkingPath());
 		result.addAll(getModel().getImportedPaths());
 		return result;
@@ -684,7 +684,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @return
 	 */
 	public List<IOutputManager> getAllSimulationOutputs() {
-		final IList list = GamaListFactory.create();
+		final IList<IOutputManager> list = GamaListFactory.create();
 		for (final IAgent a : getSimulationPopulation()) {
 			final SimulationAgent sim = (SimulationAgent) a;
 			final IOutputManager man = sim.getOutputManager();

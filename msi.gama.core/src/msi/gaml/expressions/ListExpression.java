@@ -31,6 +31,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul 23 août 07
  */
+@SuppressWarnings({ "rawtypes" })
 public class ListExpression extends AbstractExpression {
 
 	public static IExpression create(final Iterable<? extends IExpression> elements) {

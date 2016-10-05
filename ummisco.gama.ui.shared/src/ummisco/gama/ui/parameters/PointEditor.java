@@ -50,7 +50,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 		this(scope, agent, param, null);
 	}
 
-	PointEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	PointEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<ILocation> l) {
 		super(scope, agent, param, l);
 	}
 
@@ -159,6 +159,7 @@ public class PointEditor extends AbstractEditor<ILocation> implements VerifyList
 		return pointEditor;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IType getExpectedType() {
 		return Types.POINT;

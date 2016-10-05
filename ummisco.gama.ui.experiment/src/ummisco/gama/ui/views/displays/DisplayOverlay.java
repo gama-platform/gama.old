@@ -21,8 +21,6 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Color;
@@ -77,13 +75,9 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 		@Override
 		public void run() {
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					if (!zoom.isDisposed()) {
-						zoom.setText(getView().getOverlayZoomInfo());
-					}
+			WorkbenchHelper.asyncRun(() -> {
+				if (!zoom.isDisposed()) {
+					zoom.setText(getView().getOverlayZoomInfo());
 				}
 			});
 
@@ -111,7 +105,8 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 
 	}
 
-	public DisplayOverlay(final LayeredDisplayView view, final Composite c, final IOverlayProvider provider) {
+	public DisplayOverlay(final LayeredDisplayView view, final Composite c,
+			final IOverlayProvider<OverlayInfo> provider) {
 		this.createExtraInfo = provider != null;
 		this.view = view;
 		final IPartService ps = ((IWorkbenchPart) view).getSite().getService(IPartService.class);
@@ -195,13 +190,7 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		scaleData.heightHint = 24;
 		scalebar.setLayoutData(scaleData);
 		scalebar.setBackground(IGamaColors.BLACK.color());
-		scalebar.addPaintListener(new PaintListener() {
-
-			@Override
-			public void paintControl(final PaintEvent e) {
-				paintScale(e.gc);
-			}
-		});
+		scalebar.addPaintListener(e -> paintScale(e.gc));
 		top.addMouseListener(toggleListener);
 		scalebar.addMouseListener(toggleListener);
 		top.layout();
@@ -251,20 +240,8 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		}
 	}
 
-	Runnable doHide = new Runnable() {
-
-		@Override
-		public void run() {
-			hide();
-		}
-	};
-	Runnable doDisplay = new Runnable() {
-
-		@Override
-		public void run() {
-			display();
-		}
-	};
+	Runnable doHide = () -> hide();
+	Runnable doDisplay = () -> display();
 	private final IPartListener2 pl2 = new IPartListener2() {
 
 		@Override
@@ -543,21 +520,17 @@ public class DisplayOverlay implements IUpdaterTarget<OverlayInfo> {
 		// Uses the trick from
 		// http://eclipsesource.com/blogs/2010/06/23/tip-how-to-detect-that-a-view-was-detached/
 		final boolean[] result = new boolean[] { false };
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				final IWorkbenchPartSite site = view.getSite();
-				if (site == null) {
-					return;
-				}
-				final Shell shell = site.getShell();
-				if (shell == null) {
-					return;
-				}
-				final String text = shell.getText();
-				result[0] = text == null || text.isEmpty();
+		WorkbenchHelper.run(() -> {
+			final IWorkbenchPartSite site = view.getSite();
+			if (site == null) {
+				return;
 			}
+			final Shell shell = site.getShell();
+			if (shell == null) {
+				return;
+			}
+			final String text = shell.getText();
+			result[0] = text == null || text.isEmpty();
 		});
 		return result[0];
 

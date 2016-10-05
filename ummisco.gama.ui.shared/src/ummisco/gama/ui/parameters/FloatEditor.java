@@ -34,12 +34,12 @@ public class FloatEditor extends NumberEditor<Double> {
 	}
 
 	FloatEditor(final IScope scope, final IAgent agent, final IParameter param, final boolean canBeNull,
-		final EditorListener l) {
+			final EditorListener<Double> l) {
 		super(scope, agent, param, l, canBeNull);
 	}
 
 	FloatEditor(final IScope scope, final Composite parent, final String title, final Double value, final Double min,
-		final Double max, final Double step, final boolean canBeNull, final EditorListener<Double> whenModified) {
+			final Double max, final Double step, final boolean canBeNull, final EditorListener<Double> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value, min, max), whenModified, canBeNull);
 		this.createComposite(parent);
@@ -48,7 +48,7 @@ public class FloatEditor extends NumberEditor<Double> {
 	@Override
 	protected void computeStepValue() {
 		stepValue = param.getStepValue(getScope());
-		if ( stepValue == null ) {
+		if (stepValue == null) {
 			stepValue = 0.1;
 		}
 	}
@@ -56,13 +56,15 @@ public class FloatEditor extends NumberEditor<Double> {
 	@Override
 	protected void modifyValue(final Double val) throws GamaRuntimeException {
 		Double i = Cast.as(val, Double.class, false);
-		if ( acceptNull && val == null ) {
+		if (acceptNull && val == null) {
 			i = null;
 		} else {
-			if ( minValue != null && i < minValue.doubleValue() ) { throw GamaRuntimeException
-				.error("Value " + i + " should be greater than " + minValue, getScope()); }
-			if ( maxValue != null && i > maxValue.doubleValue() ) { throw GamaRuntimeException
-				.error("Value " + i + " should be smaller than " + maxValue, getScope()); }
+			if (minValue != null && i < minValue.doubleValue()) {
+				throw GamaRuntimeException.error("Value " + i + " should be greater than " + minValue, getScope());
+			}
+			if (maxValue != null && i > maxValue.doubleValue()) {
+				throw GamaRuntimeException.error("Value " + i + " should be smaller than " + maxValue, getScope());
+			}
 		}
 		super.modifyValue(i);
 	}
@@ -77,8 +79,8 @@ public class FloatEditor extends NumberEditor<Double> {
 
 	@Override
 	protected Double normalizeValues() throws GamaRuntimeException {
-		final Double valueToConsider =
-			getOriginalValue() == null ? 0.0 : Cast.as(getOriginalValue(), Double.class, false);
+		final Double valueToConsider = getOriginalValue() == null ? 0.0
+				: Cast.as(getOriginalValue(), Double.class, false);
 		currentValue = getOriginalValue() == null ? null : valueToConsider;
 		minValue = minValue == null ? null : minValue.doubleValue();
 		maxValue = maxValue == null ? null : maxValue.doubleValue();
@@ -86,13 +88,15 @@ public class FloatEditor extends NumberEditor<Double> {
 	}
 
 	@Override
-	public IType getExpectedType() {
+	public IType<Double> getExpectedType() {
 		return Types.FLOAT;
 	}
 
 	@Override
 	protected Double applyPlus() {
-		if ( currentValue == null ) { return 0.0; }
+		if (currentValue == null) {
+			return 0.0;
+		}
 		final Double i = currentValue;
 		final Double newVal = i + stepValue.doubleValue();
 		return newVal;
@@ -100,7 +104,9 @@ public class FloatEditor extends NumberEditor<Double> {
 
 	@Override
 	protected Double applyMinus() {
-		if ( currentValue == null ) { return 0.0; }
+		if (currentValue == null) {
+			return 0.0;
+		}
 		final Double i = currentValue;
 		final Double newVal = i - stepValue.doubleValue();
 		return newVal;
@@ -110,11 +116,11 @@ public class FloatEditor extends NumberEditor<Double> {
 	protected void checkButtons() {
 		super.checkButtons();
 		final ToolItem plus = items[PLUS];
-		if ( plus != null && !plus.isDisposed() ) {
+		if (plus != null && !plus.isDisposed()) {
 			plus.setEnabled(param.isDefined() && (maxValue == null || applyPlus() < maxValue.doubleValue()));
 		}
 		final ToolItem minus = items[MINUS];
-		if ( minus != null && !minus.isDisposed() ) {
+		if (minus != null && !minus.isDisposed()) {
 			minus.setEnabled(param.isDefined() && (minValue == null || applyMinus() > minValue.doubleValue()));
 		}
 	}

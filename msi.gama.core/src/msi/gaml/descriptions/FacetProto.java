@@ -25,10 +25,10 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 
 	public final String name;
 	public String deprecated = null;
-	public final IType[] types;
+	public final IType<?>[] types;
 	public final int[] typesDescribers;
-	public final IType contentType;
-	public final IType keyType;
+	public final IType<?> contentType;
+	public final IType<?> keyType;
 	public final boolean optional;
 	public final boolean internal;
 	private final boolean isLabel;
@@ -58,7 +58,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto>, IGa
 		isLabel = SymbolProto.ids.contains(types[0]);
 		isId = isLabel && types[0] != IType.LABEL;
 		isType = types[0] == IType.TYPE_ID;
-		this.values = new THashSet(Arrays.asList(values));
+		this.values = new THashSet<>(Arrays.asList(values));
 		if (doc != null) {
 			final String[] strings = doc.split(GamlProperties.SEPARATOR, -1);
 			this.doc = strings[0];

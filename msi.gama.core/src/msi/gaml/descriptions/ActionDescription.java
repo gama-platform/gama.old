@@ -46,6 +46,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 		return Lists.newArrayList(Iterables.transform(getFormalArgs(), TO_NAME));
 	}
 
+	@SuppressWarnings("rawtypes")
 	public boolean verifyArgs(final IDescription caller, final Arguments names) {
 		final Iterable<IDescription> formalArgs = getFormalArgs();
 

@@ -36,6 +36,7 @@ public class OpenGLToolbarMenu {
 
 	private Menu menu;
 
+	@SuppressWarnings("unused")
 	public void fillMenu(final Menu menu, final SWTLayeredDisplayView view) {
 
 		new MenuItem(menu, SWT.SEPARATOR);
@@ -49,13 +50,9 @@ public class OpenGLToolbarMenu {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				view.getDisplaySurface().runAndUpdate(new Runnable() {
-
-					@Override
-					public void run() {
-						final boolean old = view.getDisplaySurface().getData().isArcBallCamera();
-						((OpenGL) view.getDisplaySurface()).getData().setArcBallCamera(!old);
-					}
+				view.getDisplaySurface().runAndUpdate(() -> {
+					final boolean old = view.getDisplaySurface().getData().isArcBallCamera();
+					((OpenGL) view.getDisplaySurface()).getData().setArcBallCamera(!old);
 				});
 			}
 		});
@@ -71,13 +68,9 @@ public class OpenGLToolbarMenu {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				view.getDisplaySurface().runAndUpdate(new Runnable() {
-
-					@Override
-					public void run() {
-						final boolean rotated = view.getDisplaySurface().getData().isRotationOn();
-						view.getDisplaySurface().getData().setRotation(!rotated);
-					}
+				view.getDisplaySurface().runAndUpdate(() -> {
+					final boolean rotated1 = view.getDisplaySurface().getData().isRotationOn();
+					view.getDisplaySurface().getData().setRotation(!rotated1);
 				});
 			}
 		});
@@ -91,13 +84,9 @@ public class OpenGLToolbarMenu {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				view.getDisplaySurface().runAndUpdate(new Runnable() {
-
-					@Override
-					public void run() {
-						final boolean splitted = view.getDisplaySurface().getData().isLayerSplitted();
-						((OpenGL) view.getDisplaySurface()).getData().setLayerSplitted(!splitted);
-					}
+				view.getDisplaySurface().runAndUpdate(() -> {
+					final boolean splitted1 = view.getDisplaySurface().getData().isLayerSplitted();
+					((OpenGL) view.getDisplaySurface()).getData().setLayerSplitted(!splitted1);
 				});
 			}
 		});
@@ -111,13 +100,9 @@ public class OpenGLToolbarMenu {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 
-				view.getDisplaySurface().runAndUpdate(new Runnable() {
-
-					@Override
-					public void run() {
-						final boolean triangulated = view.getDisplaySurface().getData().isTriangulation();
-						view.getDisplaySurface().getData().setTriangulation(!triangulated);
-					}
+				view.getDisplaySurface().runAndUpdate(() -> {
+					final boolean triangulated1 = view.getDisplaySurface().getData().isTriangulation();
+					view.getDisplaySurface().getData().setTriangulation(!triangulated1);
 				});
 			}
 		});

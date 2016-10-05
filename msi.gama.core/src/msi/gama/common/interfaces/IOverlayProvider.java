@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gama.common.interfaces;
 
+import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
+
 /**
  * Class IOverlay.
  *
@@ -18,7 +20,7 @@ package msi.gama.common.interfaces;
  * @since 9 mars 2014
  *
  */
-public interface IOverlayProvider<Message> {
+public interface IOverlayProvider<C extends OverlayInfo> {
 
-	public void setTarget(IUpdaterTarget<Message> overlay, IDisplaySurface surface);
+	public void setTarget(IUpdaterTarget<C> overlay, IDisplaySurface surface);
 }

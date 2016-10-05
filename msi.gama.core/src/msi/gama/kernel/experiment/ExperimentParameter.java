@@ -68,7 +68,7 @@ import msi.gaml.variables.Variable;
 		@usage(value = "In batch experiment, the two following syntaxes can be used to describe the possible values of a parameter:", examples = {
 				@example(value = "parameter 'Value of toto:' var: toto among: [1, 3, 7, 15, 100]; ", isExecutable = false),
 				@example(value = "parameter 'Value of titi:' var: titi min: 1 max: 100 step: 2; ", isExecutable = false) }), })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();

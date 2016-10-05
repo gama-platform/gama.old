@@ -12,6 +12,7 @@
 package ummisco.gama.ui.parameters;
 
 import java.util.Collection;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -26,6 +27,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
 import ummisco.gama.ui.interfaces.EditorListener;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class PopulationEditor extends AbstractEditor<IContainer> {
 
 	Text populationDisplayer;
@@ -43,7 +45,7 @@ public class PopulationEditor extends AbstractEditor<IContainer> {
 	}
 
 	PopulationEditor(final IScope scope, final Composite parent, final String title, final Object value,
-		final EditorListener<IContainer> whenModified) {
+			final EditorListener<IContainer> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
@@ -62,7 +64,7 @@ public class PopulationEditor extends AbstractEditor<IContainer> {
 	protected void displayParameterValue() {
 		internalModification = true;
 		final String s = currentValue instanceof IPopulation ? ((IPopulation) currentValue).getName()
-			: currentValue == null ? "nil" : currentValue.serialize(true);
+				: currentValue == null ? "nil" : currentValue.serialize(true);
 		populationDisplayer.setText(s);
 		populationDisplayer.setToolTipText(s);
 		internalModification = false;
@@ -75,7 +77,7 @@ public class PopulationEditor extends AbstractEditor<IContainer> {
 
 	@Override
 	protected void applyBrowse() {
-		if ( currentValue instanceof Collection ) {
+		if (currentValue instanceof Collection) {
 			InspectDisplayOutput.browse((Collection) currentValue);
 		}
 	}

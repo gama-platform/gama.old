@@ -115,7 +115,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	}
 
-	public static class DoValidator implements IDescriptionValidator {
+	public static class DoValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
 		 * Method validate()
@@ -123,7 +123,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
-		public void validate(final IDescription desc) {
+		public void validate(final StatementDescription desc) {
 			final String action = desc.getLitteral(ACTION);
 			final SpeciesDescription sd = desc.getSpeciesContext();
 			if (sd == null) {

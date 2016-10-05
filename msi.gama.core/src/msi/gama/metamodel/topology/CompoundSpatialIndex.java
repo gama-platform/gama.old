@@ -37,7 +37,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	final protected double[] steps;
 
 	public CompoundSpatialIndex(final Envelope bounds) {
-		indexes = new TObjectIntHashMap(10, 0.75f, -1);
+		indexes = new TObjectIntHashMap<>(10, 0.75f, -1);
 		// noEntryValue is 0 by default
 		all = new ISpatialIndex[] { new GamaQuadTree(bounds) };
 		final double biggest = FastMath.max(bounds.getWidth(), bounds.getHeight());
@@ -105,7 +105,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		if (disposed) {
 			return null;
 		}
-		final List<IAgent> shapes = new ArrayList();
+		final List<IAgent> shapes = new ArrayList<>();
 		for (int i = 0; i < steps.length; i++) {
 			for (final ISpatialIndex si : all) {
 				final IAgent first = si.firstAtDistance(scope, source, steps[i], filter);
@@ -155,7 +155,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		}
 		final int id = findSpatialIndexes(f);
 		if (id == -1) {
-			final Set<IAgent> agents = new THashSet();
+			final Set<IAgent> agents = new THashSet<>();
 			for (final ISpatialIndex si : all) {
 				agents.addAll(si.allAtDistance(scope, source, dist, f));
 			}
@@ -172,7 +172,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		}
 		final int id = findSpatialIndexes(f);
 		if (id == -1) {
-			final Set<IAgent> agents = new THashSet();
+			final Set<IAgent> agents = new THashSet<>();
 			for (final ISpatialIndex si : all) {
 				agents.addAll(si.allInEnvelope(scope, source, envelope, f, contained));
 			}

@@ -419,7 +419,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			return generateEdgeObject(v1, v2);
 		}
 		final Map<String, Object> map = new TOrderedHashMap();
-		final List initVal = new ArrayList();
+		final List initVal = new ArrayList<>();
 		map.put(IKeyword.SOURCE, v1);
 		map.put(IKeyword.TARGET, v2);
 		map.put(IKeyword.SHAPE, Creation.link(scope, (IShape) v1, (IShape) v2));

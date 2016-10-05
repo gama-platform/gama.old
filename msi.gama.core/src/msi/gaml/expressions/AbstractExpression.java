@@ -20,7 +20,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul
  */
-
+@SuppressWarnings("rawtypes")
 public abstract class AbstractExpression implements IExpression {
 
 	protected IType type = null;

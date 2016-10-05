@@ -37,6 +37,7 @@ public class ExperimentPopulation extends GamaPopulation {
 		super(null, expr);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 			final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)

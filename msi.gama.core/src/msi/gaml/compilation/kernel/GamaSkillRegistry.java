@@ -15,8 +15,8 @@ import msi.gaml.descriptions.SkillDescription;
 public class GamaSkillRegistry {
 
 	public final static GamaSkillRegistry INSTANCE = new GamaSkillRegistry();
-	private final THashMap<String, SkillDescription> skills = new THashMap();
-	private final THashMap<Class, String> classSkillNames = new THashMap();
+	private final THashMap<String, SkillDescription> skills = new THashMap<>();
+	private final THashMap<Class, String> classSkillNames = new THashMap<>();
 
 	private GamaSkillRegistry() {
 	}

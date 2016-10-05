@@ -266,10 +266,10 @@ public class ChartJFreeChartOutputRadar extends ChartJFreeChartOutput {
 		final ChartEntity entity = info.getEntityCollection().getEntity(x, y);
 		// getChart().handleClick(x, y, info);
 
-		final Comparable columnKey = ((CategoryItemEntity) entity).getColumnKey();
+		final Comparable<?> columnKey = ((CategoryItemEntity) entity).getColumnKey();
 		final String title = columnKey.toString();
 		final CategoryDataset data = ((CategoryItemEntity) entity).getDataset();
-		final Comparable rowKey = ((CategoryItemEntity) entity).getRowKey();
+		final Comparable<?> rowKey = ((CategoryItemEntity) entity).getRowKey();
 		final double xx = data.getValue(rowKey, columnKey).doubleValue();
 		final StringBuilder sb = new StringBuilder();
 		final boolean xInt = xx % 1 == 0;

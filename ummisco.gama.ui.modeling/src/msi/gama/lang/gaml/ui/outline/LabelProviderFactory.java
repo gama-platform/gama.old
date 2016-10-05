@@ -12,6 +12,7 @@ public class LabelProviderFactory extends AbstractServiceFactory {
 	public LabelProviderFactory() {
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object create(final Class serviceInterface, final IServiceLocator parentLocator,
 			final IServiceLocator locator) {

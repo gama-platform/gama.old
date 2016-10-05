@@ -54,6 +54,7 @@ import msi.gama.util.IList;
  *
  * Last Modified: 15-Jan-2014
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SqliteConnection extends SqlConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for

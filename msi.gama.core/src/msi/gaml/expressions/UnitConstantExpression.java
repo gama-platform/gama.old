@@ -31,7 +31,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	String name;
 
 	// Already cached in IExpressionFactory.UNIT_EXPRS
-	public static UnitConstantExpression create(final Object val, final IType t, final String unit, final String doc,
+	public static UnitConstantExpression create(final Object val, final IType<?> t, final String unit, final String doc,
 			final String[] names) {
 
 		switch (unit) {
@@ -67,12 +67,12 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	final String documentation;
 	final List<String> alternateNames;
 
-	public UnitConstantExpression(final Object val, final IType t, final String name, final String doc,
+	public UnitConstantExpression(final Object val, final IType<?> t, final String name, final String doc,
 			final String[] names) {
 		super(val, t);
 		this.name = name;
 		documentation = doc;
-		alternateNames = new ArrayList();
+		alternateNames = new ArrayList<>();
 		alternateNames.add(name);
 		if (names != null) {
 			alternateNames.addAll(Arrays.asList(names));

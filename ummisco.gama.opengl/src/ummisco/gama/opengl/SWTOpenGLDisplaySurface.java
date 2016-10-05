@@ -71,7 +71,7 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 	Abstract3DRenderer renderer;
 	protected double zoomIncrement = 0.1;
 	protected boolean zoomFit = true;
-	Set<IEventLayerListener> listeners = new HashSet();
+	Set<IEventLayerListener> listeners = new HashSet<>();
 	final LayeredDisplayOutput output;
 	final LayerManager layerManager;
 	protected DisplaySurfaceMenu menuManager;
@@ -576,8 +576,8 @@ public class SWTOpenGLDisplaySurface implements IDisplaySurface.OpenGL {
 		final Envelope3D envInWorld = Envelope3D.withYNegated(env);
 		final Collection<IAgent> agents = scope.getTopology().getSpatialIndex().allInEnvelope(scope,
 				envInWorld.centre(), envInWorld, new Different(), false);
-		final Map<String, Runnable> actions = new LinkedHashMap();
-		final Map<String, Image> images = new HashMap();
+		final Map<String, Runnable> actions = new LinkedHashMap<>();
+		final Map<String, Image> images = new HashMap<>();
 		images.put(renderer.camera.isROISticky() ? "Hide region" : "Keep region visible",
 				GamaIcons.create(IGamaIcons.MENU_FOLLOW).image());
 		images.put("Focus on region", GamaIcons.create(IGamaIcons.DISPLAY_TOOLBAR_ZOOMFIT).image());

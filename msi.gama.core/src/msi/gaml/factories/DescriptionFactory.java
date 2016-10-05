@@ -248,7 +248,7 @@ public class DescriptionFactory {
 		}
 		ChildrenProvider children = cp;
 		if (children == null) {
-			final List<IDescription> children_list = new ArrayList();
+			final List<IDescription> children_list = new ArrayList<>();
 			final SyntacticVisitor visitor = element -> {
 				final IDescription desc = create(element, superDesc, null);
 				if (desc != null) {

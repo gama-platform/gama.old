@@ -40,8 +40,8 @@ public class GamlResourceServices {
 	private static int resourceCount = 0;
 	private static IDocManager documenter = new GamlResourceDocumenter();
 	private static GamlSyntacticConverter converter = new GamlSyntacticConverter();
-	private static final Map<URI, IGamlBuilderListener> resourceListeners = new THashMap();
-	private static final Map<URI, ValidationContext> resourceErrors = new THashMap();
+	private static final Map<URI, IGamlBuilderListener> resourceListeners = new THashMap<>();
+	private static final Map<URI, ValidationContext> resourceErrors = new THashMap<>();
 	private static final XtextResourceSet poolSet = new XtextResourceSet() {
 		{
 			setClasspathURIContext(GamlResourceServices.class);
@@ -53,7 +53,7 @@ public class GamlResourceServices {
 
 				@Override
 				public THashMap load(final URI key) throws Exception {
-					return new THashMap();
+					return new THashMap<>();
 				}
 			});
 

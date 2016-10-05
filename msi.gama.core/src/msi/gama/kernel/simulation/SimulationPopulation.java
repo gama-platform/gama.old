@@ -42,6 +42,7 @@ import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import msi.gaml.variables.IVariable;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SimulationPopulation extends GamaPopulation {
 
 	private SimulationAgent currentSimulation;
@@ -135,14 +136,7 @@ public class SimulationPopulation extends GamaPopulation {
 				// Necessary to put it in a final variable here, so that the
 				// runnable does not point on the instance variable (see #1836)
 				final SimulationAgent simulation = currentSimulation;
-				runnables.put(currentSimulation, new Callable<Object>() {
-
-					@Override
-					public Object call() {
-						return simulation.step(simulation.getScope());
-
-					}
-				});
+				runnables.put(currentSimulation, () -> simulation.step(simulation.getScope()));
 			}
 		}
 		return this;

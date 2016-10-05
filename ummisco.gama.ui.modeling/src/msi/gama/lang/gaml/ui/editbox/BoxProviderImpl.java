@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchPart;
 
+@SuppressWarnings({ "rawtypes" })
 public class BoxProviderImpl implements IBoxProvider {
 
 	protected String id;
@@ -34,15 +33,11 @@ public class BoxProviderImpl implements IBoxProvider {
 		if (editorsSettings == null) {
 			editorsSettings = createSettings0();
 			getSettingsStore().loadDefaults(editorsSettings);
-			editorsSettings.addPropertyChangeListener(new IPropertyChangeListener() {
-
-				@Override
-				public void propertyChange(final PropertyChangeEvent event) {
-					final String p = event.getProperty();
-					if (p != null && (p.equals(IBoxSettings.PropertiesKeys.FileNames.name())
-							|| p.equals(IBoxSettings.PropertiesKeys.ALL.name()))) {
-						matchers = null;
-					}
+			editorsSettings.addPropertyChangeListener(event -> {
+				final String p = event.getProperty();
+				if (p != null && (p.equals(IBoxSettings.PropertiesKeys.FileNames.name())
+						|| p.equals(IBoxSettings.PropertiesKeys.ALL.name()))) {
+					matchers = null;
 				}
 			});
 		}

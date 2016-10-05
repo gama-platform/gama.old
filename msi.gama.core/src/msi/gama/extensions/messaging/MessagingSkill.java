@@ -65,10 +65,12 @@ public class MessagingSkill extends Skill {
 		return new GamaMailbox();
 	}
 
-	protected GamaMessage createNewMessage(final IScope scope, final Object sender,final Object receivers, final Object contents) {
+	protected GamaMessage createNewMessage(final IScope scope, final Object sender, final Object receivers,
+			final Object contents) {
 		return new GamaMessage(scope, sender, receivers, contents);
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected void effectiveSend(final IScope scope, final GamaMessage message, final Object receiver) {
 		if (receiver instanceof IAgent) {
 			final IAgent agent = (IAgent) receiver;

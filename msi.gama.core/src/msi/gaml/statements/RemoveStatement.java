@@ -28,7 +28,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.SymbolDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.AbstractContainerStatement.ContainerValidator;
@@ -102,10 +102,11 @@ import msi.gaml.types.IType;
 @validator(ContainerValidator.class)
 public class RemoveStatement extends AbstractContainerStatement {
 
-	public static class RemoveSerializer extends SymbolSerializer {
+	public static class RemoveSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
-		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {
+		protected void serialize(final StatementDescription cd, final StringBuilder sb,
+				final boolean includingBuiltIn) {
 			final IExpression item = cd.getFacetExpr(ITEM);
 			final IExpression list = cd.getFacetExpr(TO);
 			final IExpression allFacet = cd.getFacetExpr(ALL);
@@ -126,6 +127,7 @@ public class RemoveStatement extends AbstractContainerStatement {
 		setName("remove from " + list.serialize(false));
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 			final IContainer.Modifiable container) throws GamaRuntimeException {

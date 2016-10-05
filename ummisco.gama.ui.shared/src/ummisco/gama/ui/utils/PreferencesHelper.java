@@ -230,7 +230,7 @@ public class PreferencesHelper {
 			File dir = new File(loc);
 			dir = dir.getParentFile();
 			final File ini = new File(dir.getAbsolutePath() + "/Gama.ini");
-			final List<String> contents = new ArrayList();
+			final List<String> contents = new ArrayList<>();
 			if (ini.exists()) {
 				try (final FileInputStream stream = new FileInputStream(ini);
 						final BufferedReader reader = new BufferedReader(new InputStreamReader(stream));) {

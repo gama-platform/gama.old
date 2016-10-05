@@ -12,15 +12,19 @@
 package ummisco.gama.java2d.swing;
 
 import java.util.WeakHashMap;
-import org.eclipse.swt.widgets.*;
+
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
 
 /**
  * This class allows you to register SWT popup menus on AWT/Swing components.
  * <p>
  * It is customizable through the "replaceable singleton" design pattern.
+ * 
  * @see #setMenu(java.awt.Component, boolean, Menu)
  * @see SwingControl#getMenu(java.awt.Component, int, int, int, int)
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class SwtPopupRegistry {
 
 	// -------------------- Static registry of popup menus --------------------
@@ -46,15 +50,18 @@ public class SwtPopupRegistry {
 
 	/**
 	 * Returns the registered menu for a given component.
-	 * @param component An AWT/Swing component.
-	 * @param recursive Whether to look for a recursive or for a non-recursive
+	 * 
+	 * @param component
+	 *            An AWT/Swing component.
+	 * @param recursive
+	 *            Whether to look for a recursive or for a non-recursive
 	 *            specification of a popup menu.
 	 * @return A popup menu, or <code>null</code>.
 	 */
 	public Menu getMenu(final java.awt.Component component, final boolean recursive) {
 		synchronized (menuTable) {
-			MenuInfo mi = (MenuInfo) menuTable.get(component);
-			if ( mi != null && mi.recursive == recursive ) {
+			final MenuInfo mi = (MenuInfo) menuTable.get(component);
+			if (mi != null && mi.recursive == recursive) {
 				return mi.menu;
 			} else {
 				return null;
@@ -69,18 +76,22 @@ public class SwtPopupRegistry {
 	 * Note: You can only specify one popup menu on a given component. You
 	 * cannot specify a recursive and a non-recursive popup menu simultaneously
 	 * on the same component.
-	 * @param component An AWT/Swing component.
-	 * @param recursive Whether the menu also applies to subcomponents (unless
-	 *            another popup menu is specified on the subcomponent or
-	 *            a component in between in the hierarchy).
-	 * @param menu A popup menu, or <code>null</code> to clear the previously
+	 * 
+	 * @param component
+	 *            An AWT/Swing component.
+	 * @param recursive
+	 *            Whether the menu also applies to subcomponents (unless another
+	 *            popup menu is specified on the subcomponent or a component in
+	 *            between in the hierarchy).
+	 * @param menu
+	 *            A popup menu, or <code>null</code> to clear the previously
 	 *            specified popup menu.
 	 */
 	public void setMenu(final java.awt.Component component, final boolean recursive, final Menu menu) {
 		synchronized (menuTable) {
 			MenuInfo mi = (MenuInfo) menuTable.get(component);
-			if ( menu != null ) {
-				if ( mi != null ) {
+			if (menu != null) {
+				if (mi != null) {
 					mi.menu = menu;
 					mi.recursive = recursive;
 				} else {
@@ -88,7 +99,7 @@ public class SwtPopupRegistry {
 					menuTable.put(component, mi);
 				}
 			} else {
-				if ( mi != null ) {
+				if (mi != null) {
 					menuTable.remove(component);
 				}
 			}
@@ -99,34 +110,40 @@ public class SwtPopupRegistry {
 	/**
 	 * Searches for a popup menu to be used on a given component.
 	 * <p>
-	 * The default implementation walks up the component hierarchy, looking
-	 * for popup menus registered with {@link #setMenu}.
+	 * The default implementation walks up the component hierarchy, looking for
+	 * popup menus registered with {@link #setMenu}.
 	 * <p>
 	 * This method can be overridden, to achieve dynamic popup menus.
-	 * @param component The component on which a popup event was received.
-	 * @param x The x coordinate, relative to the component's top left corner,
+	 * 
+	 * @param component
+	 *            The component on which a popup event was received.
+	 * @param x
+	 *            The x coordinate, relative to the component's top left corner,
 	 *            of the mouse cursor when the event occurred.
-	 * @param y The y coordinate, relative to the component's top left corner,
+	 * @param y
+	 *            The y coordinate, relative to the component's top left corner,
 	 *            of the mouse cursor when the event occurred.
-	 * @param xAbsolute The x coordinate, relative to this control's top left
-	 *            corner, of the mouse cursor when the event occurred.
-	 * @param yAbsolute The y coordinate, relative to this control's top left
-	 *            corner, of the mouse cursor when the event occurred.
+	 * @param xAbsolute
+	 *            The x coordinate, relative to this control's top left corner,
+	 *            of the mouse cursor when the event occurred.
+	 * @param yAbsolute
+	 *            The y coordinate, relative to this control's top left corner,
+	 *            of the mouse cursor when the event occurred.
 	 */
 	protected Menu findMenu(final java.awt.Component component, final int x, final int y, final int xAbsolute,
-		final int yAbsolute) {
+			final int yAbsolute) {
 		assert Display.getCurrent() != null;
 
 		synchronized (menuTable) {
 			MenuInfo mi = (MenuInfo) menuTable.get(component);
-			if ( mi != null ) {
+			if (mi != null) {
 				// On the component itself, ignore whether recursive or not.
 				return mi.menu;
 			}
-			for ( java.awt.Component parent = component.getParent(); parent != null; parent = parent.getParent() ) {
+			for (java.awt.Component parent = component.getParent(); parent != null; parent = parent.getParent()) {
 				mi = (MenuInfo) menuTable.get(parent);
-				if ( mi != null ) {
-					if ( mi.recursive ) {
+				if (mi != null) {
+					if (mi.recursive) {
 						return mi.menu;
 					} else {
 						return null;
@@ -152,7 +169,9 @@ public class SwtPopupRegistry {
 
 	/**
 	 * Replaces the singleton of this class.
-	 * @param instance An instance of this class or of a customized subclass.
+	 * 
+	 * @param instance
+	 *            An instance of this class or of a customized subclass.
 	 */
 	public static void setInstance(final SwtPopupRegistry instance) {
 		theRegistry = instance;

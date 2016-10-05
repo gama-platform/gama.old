@@ -59,7 +59,7 @@ public class ModelDescription extends SpeciesDescription {
 	 * the statement).
 	 */
 	// private final THashMap<StatementDescription, SpeciesDescription>
-	// statementSpeciesReferences = new THashMap();
+	// statementSpeciesReferences = new THashMap<>();
 	final TypesManager types;
 	private String modelFilePath;
 	private final String modelProjectPath;
@@ -350,7 +350,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	public Set<String> getExperimentNames() {
 		if (experiments == null)
-			return new THashSet();
+			return new THashSet<>();
 		return new TLinkedHashSet(experiments.keySet());
 	}
 

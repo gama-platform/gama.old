@@ -90,9 +90,10 @@ import msi.gaml.types.IType;
 				@example(value = "} // every  agent of the list is asked to do something") }) })
 @serializer(LoopSerializer.class)
 @validator(LoopValidator.class)
+@SuppressWarnings({ "rawtypes" })
 public class LoopStatement extends AbstractStatementSequence implements Breakable {
 
-	public static class LoopValidator implements IDescriptionValidator {
+	public static class LoopValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()
@@ -189,7 +190,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 
 	}
 
-	public static class LoopSerializer extends SymbolSerializer {
+	public static class LoopSerializer extends SymbolSerializer<SymbolDescription> {
 
 		@Override
 		protected String serializeFacetValue(final SymbolDescription s, final String key,

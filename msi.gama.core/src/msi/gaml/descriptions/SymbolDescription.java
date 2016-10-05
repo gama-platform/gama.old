@@ -788,7 +788,7 @@ public abstract class SymbolDescription implements IDescription {
 	 * @see msi.gaml.descriptions.IDescription#compileChildren()
 	 */
 	protected List<? extends ISymbol> compileChildren() {
-		final List<ISymbol> lce = new ArrayList();
+		final List<ISymbol> lce = new ArrayList<>();
 		visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override
@@ -809,7 +809,7 @@ public abstract class SymbolDescription implements IDescription {
 	@Override
 	public Iterable<IDescription> getChildrenWithKeyword(final String keyword) {
 
-		final List<IDescription> result = new ArrayList();
+		final List<IDescription> result = new ArrayList<>();
 
 		visitChildren(new DescriptionVisitor<IDescription>() {
 

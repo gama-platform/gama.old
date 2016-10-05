@@ -2,30 +2,20 @@ package msi.gama.outputs.layers.charts;
 
 import java.awt.Point;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.jfree.chart.ChartFactory;
-import org.jfree.chart.axis.CategoryAxis;
-import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.CategoryItemEntity;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.PieSectionEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
-import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PiePlot;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.AbstractRenderer;
 import org.jfree.chart.renderer.DefaultPolarItemRenderer;
-import org.jfree.chart.renderer.category.AbstractCategoryItemRenderer;
-import org.jfree.chart.renderer.category.BarRenderer;
-import org.jfree.chart.renderer.category.BarRenderer3D;
-import org.jfree.chart.renderer.category.CategoryItemRenderer;
-import org.jfree.chart.renderer.category.StackedBarRenderer;
 import org.jfree.data.category.CategoryDataset;
-import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
 import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
@@ -38,97 +28,84 @@ import msi.gaml.expressions.IExpression;
 
 public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 
-	public ChartJFreeChartOutputPie(IScope scope, String name,
-			IExpression typeexp) {
+	public ChartJFreeChartOutputPie(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
 		// TODO Auto-generated constructor stubs
-		
-
 
 	}
-	
-	public void createChart(IScope scope)
-	{
+
+	@Override
+	public void createChart(final IScope scope) {
 		super.createChart(scope);
-		if ( style.equals(IKeyword.THREE_D) ) {
+		if (style.equals(IKeyword.THREE_D)) {
 			chart = ChartFactory.createPieChart3D(getName(), null, false, true, false);
-		} else if ( style.equals(IKeyword.RING) ) {
+		} else if (style.equals(IKeyword.RING)) {
 			chart = ChartFactory.createRingChart(getName(), null, false, true, false);
-		} else if ( style.equals(IKeyword.EXPLODED) ) {
+		} else if (style.equals(IKeyword.EXPLODED)) {
 			chart = ChartFactory.createPieChart(getName(), null, false, true, false);
 		} else {
 			chart = ChartFactory.createPieChart(getName(), null, false, true, false);
 		}
 	}
-	public void initdataset()
-	{
+
+	@Override
+	public void initdataset() {
 		super.initdataset();
-		if (getType()==ChartOutput.PIE_CHART)
-		{
+		if (getType() == ChartOutput.PIE_CHART) {
 			chartdataset.setCommonXSeries(true);
 			chartdataset.setByCategory(true);
 		}
 	}
-	
 
-	public void setDefaultPropertiesFromType(IScope scope, ChartDataSource source, Object o, int type_val) {
+	@Override
+	public void setDefaultPropertiesFromType(final IScope scope, final ChartDataSource source, final Object o,
+			final int type_val) {
 		// TODO Auto-generated method stub
 
-		switch (type_val)
-		{
-			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
-			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
-			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
-			case ChartDataSource.DATA_TYPE_LIST_POINT:
-			case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE:
-			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
-			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
-			default:
-			{
-				source.setCumulative(scope,false); // never cumulative by default				
-				source.setUseSize(scope,false);				
-			}
+		switch (type_val) {
+		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
+		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
+		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
+		case ChartDataSource.DATA_TYPE_LIST_POINT:
+		case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE:
+		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
+		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3:
+		default: {
+			source.setCumulative(scope, false); // never cumulative by default
+			source.setUseSize(scope, false);
 		}
-			
-		
+		}
 
-		
 	}
-	
-	
 
-	Dataset createDataset(IScope scope)
-	{
+	Dataset createDataset(final IScope scope) {
 		return new DefaultPieDataset();
 	}
 
-	public void initChart(IScope scope, String chartname)
-	{
-		super.initChart(scope,chartname);
+	@Override
+	public void initChart(final IScope scope, final String chartname) {
+		super.initChart(scope, chartname);
 
 		final PiePlot pp = (PiePlot) chart.getPlot();
 		pp.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1} ({2})"));
-		if (axesColor!=null)
-		{
+		if (axesColor != null) {
 			pp.setLabelLinkPaint(axesColor);
 		}
 		pp.setLabelFont(getTickFont());
-		if (textColor!=null)
-		{
-//			pp.setLabelPaint(textColor);				
-			//not for Pie since the label background is always yellow for now...
+		if (textColor != null) {
+			// pp.setLabelPaint(textColor);
+			// not for Pie since the label background is always yellow for
+			// now...
 		}
 
 	}
 
-	
-	protected AbstractRenderer createRenderer(IScope scope,String serieid)
-	{
+	@Override
+	protected AbstractRenderer createRenderer(final IScope scope, final String serieid) {
 
-		String style=this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
-		AbstractRenderer newr=new DefaultPolarItemRenderer();
-		switch (style)
-		{
+		final String style = this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
+		AbstractRenderer newr = new DefaultPolarItemRenderer();
+		switch (style) {
 		case IKeyword.STACK:
 		case IKeyword.THREE_D:
 		case IKeyword.WHISKER:
@@ -137,123 +114,124 @@ public class ChartJFreeChartOutputPie extends ChartJFreeChartOutput {
 		case IKeyword.STEP:
 		case IKeyword.RING:
 		case IKeyword.EXPLODED:
-		default: 
-		{
-			newr=new DefaultPolarItemRenderer(); // useless, piechart doesn't use renderers...
+		default: {
+			newr = new DefaultPolarItemRenderer(); // useless, piechart doesn't
+													// use renderers...
 			break;
-		
+
 		}
 		}
 		return newr;
 	}
 
-	protected void resetRenderer(IScope scope,String serieid)
-	{
-		ChartDataSeries myserie=this.getChartdataset().getDataSeries(scope, serieid);
-		int myrow=IdPosition.get(serieid);
-		if (myserie.getMycolor()!=null)
-		{
-			((PiePlot)this.getJFChart().getPlot()).setSectionPaint(serieid,myserie.getMycolor());
+	protected void resetRenderer(final IScope scope, final String serieid) {
+		final ChartDataSeries myserie = this.getChartdataset().getDataSeries(scope, serieid);
+		final int myrow = IdPosition.get(serieid);
+		if (myserie.getMycolor() != null) {
+			((PiePlot) this.getJFChart().getPlot()).setSectionPaint(serieid, myserie.getMycolor());
 		}
-		
-	}
-	
 
-	protected void clearDataSet(IScope scope) {
+	}
+
+	@Override
+	protected void clearDataSet(final IScope scope) {
 		// TODO Auto-generated method stub
 		super.clearDataSet(scope);
-        PiePlot plot = (PiePlot)this.chart.getPlot();
+		final PiePlot plot = (PiePlot) this.chart.getPlot();
 		jfreedataset.clear();
-		jfreedataset.add(0,new DefaultPieDataset());
-		plot.setDataset((DefaultPieDataset)jfreedataset.get(0));
+		jfreedataset.add(0, new DefaultPieDataset());
+		plot.setDataset((DefaultPieDataset) jfreedataset.get(0));
 		IdPosition.clear();
-		nbseries=0;
+		nbseries = 0;
 	}
 
-	
-	protected void createNewSerie(IScope scope, String serieid) {
-		ChartDataSeries dataserie=chartdataset.getDataSeries(scope,serieid);
-        PiePlot plot = (PiePlot)this.chart.getPlot();
-		
-        DefaultPieDataset firstdataset=(DefaultPieDataset)plot.getDataset();
-		
+	@Override
+	protected void createNewSerie(final IScope scope, final String serieid) {
+		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
+		final PiePlot plot = (PiePlot) this.chart.getPlot();
+
+		final DefaultPieDataset firstdataset = (DefaultPieDataset) plot.getDataset();
+
 		nbseries++;
-		IdPosition.put(serieid, nbseries-1);
-		if ( getStyle().equals(IKeyword.EXPLODED) ) {
-				plot.setExplodePercent(serieid, 0.20);
+		IdPosition.put(serieid, nbseries - 1);
+		if (getStyle().equals(IKeyword.EXPLODED)) {
+			plot.setExplodePercent(serieid, 0.20);
 		}
-		
-//		System.out.println("new serie"+serieid+" at "+IdPosition.get(serieid)+" jfds "+jfreedataset.size()+" datasc "+" nbse "+nbseries);
+
+		// System.out.println("new serie"+serieid+" at
+		// "+IdPosition.get(serieid)+" jfds "+jfreedataset.size()+" datasc "+"
+		// nbse "+nbseries);
 	}
 
-
-	
-	protected void resetSerie(IScope scope, String serieid) {
+	@Override
+	protected void resetSerie(final IScope scope, final String serieid) {
 		// TODO Auto-generated method stub
-		
-		ChartDataSeries dataserie=chartdataset.getDataSeries(scope,serieid);
-		DefaultPieDataset serie=((DefaultPieDataset) jfreedataset.get(0));
-		ArrayList<Double> YValues=dataserie.getYValues(scope);
-		
-		if (YValues.size()>0)
-		{
+
+		final ChartDataSeries dataserie = chartdataset.getDataSeries(scope, serieid);
+		final DefaultPieDataset serie = (DefaultPieDataset) jfreedataset.get(0);
+		final ArrayList<Double> YValues = dataserie.getYValues(scope);
+
+		if (YValues.size() > 0) {
 			// TODO Hack to speed up, change!!!
-				serie.setValue(serieid,YValues.get(YValues.size()-1)); 
+			serie.setValue(serieid, YValues.get(YValues.size() - 1));
 		}
-		this.resetRenderer(scope, serieid); 
+		this.resetRenderer(scope, serieid);
 
-				
 	}
-	protected void initRenderer(IScope scope) {
+
+	@Override
+	protected void initRenderer(final IScope scope) {
 		// TODO Auto-generated method stub
-		
-		
+
 	}
-	public String getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g, Point positionInPixels) {
-		int x = xOnScreen - positionInPixels.x;
-		int y = yOnScreen - positionInPixels.y;
-		ChartEntity entity = info.getEntityCollection().getEntity(x, y);
+
+	@Override
+	public String getModelCoordinatesInfo(final int xOnScreen, final int yOnScreen, final IDisplaySurface g,
+			final Point positionInPixels) {
+		final int x = xOnScreen - positionInPixels.x;
+		final int y = yOnScreen - positionInPixels.y;
+		final ChartEntity entity = info.getEntityCollection().getEntity(x, y);
 		// getChart().handleClick(x, y, info);
-		if ( entity instanceof XYItemEntity ) {
-			XYDataset data = ((XYItemEntity) entity).getDataset();
-			int index = ((XYItemEntity) entity).getItem();
-			int series = ((XYItemEntity) entity).getSeriesIndex();
-			double xx = data.getXValue(series, index);
-			double yy = data.getYValue(series, index);
-			XYPlot plot = (XYPlot) getJFChart().getPlot();
-			ValueAxis xAxis = plot.getDomainAxis(series);
-			ValueAxis yAxis = plot.getRangeAxis(series);
-			boolean xInt = xx % 1 == 0;
-			boolean yInt = yy % 1 == 0;
+		if (entity instanceof XYItemEntity) {
+			final XYDataset data = ((XYItemEntity) entity).getDataset();
+			final int index = ((XYItemEntity) entity).getItem();
+			final int series = ((XYItemEntity) entity).getSeriesIndex();
+			final double xx = data.getXValue(series, index);
+			final double yy = data.getYValue(series, index);
+			final XYPlot plot = (XYPlot) getJFChart().getPlot();
+			final ValueAxis xAxis = plot.getDomainAxis(series);
+			final ValueAxis yAxis = plot.getRangeAxis(series);
+			final boolean xInt = xx % 1 == 0;
+			final boolean yInt = yy % 1 == 0;
 			String xTitle = xAxis.getLabel();
-			if ( StringUtils.isBlank(xTitle) ) {
+			if (StringUtils.isBlank(xTitle)) {
 				xTitle = "X";
 			}
 			String yTitle = yAxis.getLabel();
-			if ( StringUtils.isBlank(yTitle) ) {
+			if (StringUtils.isBlank(yTitle)) {
 				yTitle = "Y";
 			}
-			StringBuilder sb = new StringBuilder();
+			final StringBuilder sb = new StringBuilder();
 			sb.append(xTitle).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
 			sb.append(" | ").append(yTitle).append(" ").append(yInt ? (int) yy : String.format("%.2f", yy));
 			return sb.toString();
-		} else if ( entity instanceof PieSectionEntity ) {
-			String title = ((PieSectionEntity) entity).getSectionKey().toString();
-			PieDataset data = ((PieSectionEntity) entity).getDataset();
-			int index = ((PieSectionEntity) entity).getSectionIndex();
-			double xx = data.getValue(index).doubleValue();
-			StringBuilder sb = new StringBuilder();
-			boolean xInt = xx % 1 == 0;
+		} else if (entity instanceof PieSectionEntity) {
+			final String title = ((PieSectionEntity) entity).getSectionKey().toString();
+			final PieDataset data = ((PieSectionEntity) entity).getDataset();
+			final int index = ((PieSectionEntity) entity).getSectionIndex();
+			final double xx = data.getValue(index).doubleValue();
+			final StringBuilder sb = new StringBuilder();
+			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
 			return sb.toString();
-		} else if ( entity instanceof CategoryItemEntity ) {
-			Comparable columnKey = ((CategoryItemEntity) entity).getColumnKey();
-			String title = columnKey.toString();
-			CategoryDataset data = ((CategoryItemEntity) entity).getDataset();
-			Comparable rowKey = ((CategoryItemEntity) entity).getRowKey();
-			double xx = data.getValue(rowKey, columnKey).doubleValue();
-			StringBuilder sb = new StringBuilder();
-			boolean xInt = xx % 1 == 0;
+		} else if (entity instanceof CategoryItemEntity) {
+			final Comparable<?> columnKey = ((CategoryItemEntity) entity).getColumnKey();
+			final String title = columnKey.toString();
+			final CategoryDataset data = ((CategoryItemEntity) entity).getDataset();
+			final Comparable<?> rowKey = ((CategoryItemEntity) entity).getRowKey();
+			final double xx = data.getValue(rowKey, columnKey).doubleValue();
+			final StringBuilder sb = new StringBuilder();
+			final boolean xInt = xx % 1 == 0;
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
 			return sb.toString();
 		}

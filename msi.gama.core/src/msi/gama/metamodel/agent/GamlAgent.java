@@ -199,6 +199,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		microPop.initializeFor(scope);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void dispose() {
 		if (dead) {
@@ -284,6 +285,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	/*
 	 * Returns the number of agents for which this agent is the direct host
 	 */
+	@Override
 	public int getMembersSize(final IScope scope) {
 		int result = 0;
 		for (final Object pop : getAttributes().values()) {

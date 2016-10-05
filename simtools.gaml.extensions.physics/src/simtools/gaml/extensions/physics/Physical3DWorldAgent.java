@@ -141,7 +141,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 		final Double mass = (Double) geom.getAttribute("mass");
 
 		final Object collBObj = geom.getAttribute("collisionBound");
-		final GamaMap collisionBound = Cast.asMap(null, collBObj, false);
+		final GamaMap<?, ?> collisionBound = Cast.asMap(null, collBObj, false);
 
 		if (collisionBound.isEmpty()) { // Default collision shape is a sphere
 										// of radius 1.0;

@@ -39,21 +39,21 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 
 	@Override
 	protected void fillMenu() {
-		final List<TypeDescription> list = new ArrayList(ModelDescription.ROOT.getMicroSpecies().values());
-		final List<String> speciesList = new ArrayList();
+		final List<TypeDescription> list = new ArrayList<>(ModelDescription.ROOT.getMicroSpecies().values());
+		final List<String> speciesList = new ArrayList<>();
 		Collections.sort(list, INamed.COMPARATOR);
 		Menu m = sub("Built-in species");
 		for (final TypeDescription species : list) {
 			speciesList.add(species.getName());
 			fillSpeciesSubmenu(sub(m, species.getName()), species);
 		}
-		final List<String> skills = new ArrayList(GamaSkillRegistry.INSTANCE.getSkillNames());
+		final List<String> skills = new ArrayList<>(GamaSkillRegistry.INSTANCE.getSkillNames());
 		Collections.sort(skills, IGNORE_CASE);
 		m = sub("Skills");
 		for (final String skill : skills) {
 			fillSkillSubmenu(sub(m, skill), skill, false);
 		}
-		final List<String> controls = new ArrayList(GamaSkillRegistry.INSTANCE.getArchitectureNames());
+		final List<String> controls = new ArrayList<>(GamaSkillRegistry.INSTANCE.getArchitectureNames());
 		Collections.sort(controls, IGNORE_CASE);
 		m = sub("Control architectures");
 		for (final String skill : controls) {
@@ -63,7 +63,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 		types.removeAll(speciesList);
 		Collections.sort(types, IGNORE_CASE);
 		m = sub("Types");
-		final List<String> fileTypes = new ArrayList();
+		final List<String> fileTypes = new ArrayList<>();
 		for (final String type : types) {
 			if (type.contains("_file")) {
 				fileTypes.add(type);
@@ -93,7 +93,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 
 		});
 		final Map<String, OperatorProto> getters = Types.get(type).getFieldGetters();
-		final List<String> names = new ArrayList(getters.keySet());
+		final List<String> names = new ArrayList<>(getters.keySet());
 		if (!names.isEmpty()) {
 			Collections.sort(names);
 			title(submenu, "Attributes");
@@ -141,7 +141,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 			}
 		}
 		if (isControl) {
-			final List<SymbolProto> controls = new ArrayList(AbstractGamlAdditions.getStatementsForSkill(skill));
+			final List<SymbolProto> controls = new ArrayList<>(AbstractGamlAdditions.getStatementsForSkill(skill));
 			Collections.sort(controls, INamed.COMPARATOR);
 			if (!controls.isEmpty()) {
 				title(submenu, "Control statements");
@@ -194,7 +194,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 			}
 
 		});
-		final List<String> vars = new ArrayList(species.getAttributeNames());
+		final List<String> vars = new ArrayList<>(species.getAttributeNames());
 		Collections.sort(vars, IGNORE_CASE);
 		if (!vars.isEmpty()) {
 			title(submenu, "Attributes");
@@ -205,7 +205,7 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 				}
 			}
 		}
-		final List<String> actions = new ArrayList(species.getActionNames());
+		final List<String> actions = new ArrayList<>(species.getActionNames());
 		Collections.sort(actions, IGNORE_CASE);
 		if (!actions.isEmpty()) {
 			title(submenu, "Primitives");

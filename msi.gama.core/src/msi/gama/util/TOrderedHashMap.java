@@ -83,6 +83,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	/**
 	 * @return a shallow clone of this collection
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public TOrderedHashMap<K, V> clone() {
 		TOrderedHashMap<K, V> m = null;

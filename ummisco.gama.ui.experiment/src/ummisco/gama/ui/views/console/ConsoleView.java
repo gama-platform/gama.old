@@ -53,7 +53,7 @@ public class ConsoleView extends GamaViewPart
 	boolean paused = false;
 	private final StringBuilder pauseBuffer = new StringBuilder(
 			GamaPreferences.CORE_CONSOLE_BUFFER.getValue() == -1 ? 0 : GamaPreferences.CORE_CONSOLE_BUFFER.getValue());
-	private final HashMap<Color, BufferedWriter> writers = new HashMap();
+	private final HashMap<Color, BufferedWriter> writers = new HashMap<>();
 
 	public void setCharacterLimit(final int limit) {
 		if (limit == -1)
@@ -151,15 +151,11 @@ public class ConsoleView extends GamaViewPart
 				pauseBuffer.append(text);
 			}
 			if (!indicated) {
-				WorkbenchHelper.run(new Runnable() {
-
-					@Override
-					public void run() {
-						if (toolbar != null) {
-							toolbar.status((Image) null, "New contents available", IGamaColors.BLUE, SWT.LEFT);
-						}
-						indicated = true;
+				WorkbenchHelper.run(() -> {
+					if (toolbar != null) {
+						toolbar.status((Image) null, "New contents available", IGamaColors.BLUE, SWT.LEFT);
 					}
+					indicated = true;
 				});
 			}
 
@@ -196,16 +192,12 @@ public class ConsoleView extends GamaViewPart
 	@Override
 	public void pauseChanged() {
 		if (paused) {
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					if (toolbar != null) {
-						toolbar.wipe(SWT.LEFT, true);
-						// setExecutorAgent(GAMA.getExperiment().getAgent());
-					}
-					indicated = false;
+			WorkbenchHelper.asyncRun(() -> {
+				if (toolbar != null) {
+					toolbar.wipe(SWT.LEFT, true);
+					// setExecutorAgent(GAMA.getExperiment().getAgent());
 				}
+				indicated = false;
 			});
 
 		}

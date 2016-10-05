@@ -402,7 +402,7 @@ public class CSVModel implements IRowChangesListener {
 	public void removeColumn(final int colIndex) {
 		final CSVInfo info = getInfo();
 		if (info.header) {
-			final ArrayList<String> cols = new ArrayList(Arrays.asList(info.headers));
+			final ArrayList<String> cols = new ArrayList<>(Arrays.asList(info.headers));
 			cols.remove(colIndex);
 			info.headers = cols.toArray(new String[cols.size()]);
 		}

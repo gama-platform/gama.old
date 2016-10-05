@@ -76,7 +76,7 @@ public class ModelAssembler {
 			}
 
 		}
-		final Map<String, SpeciesDescription> tempSpeciesCache = new THashMap();
+		final Map<String, SpeciesDescription> tempSpeciesCache = new THashMap<>();
 
 		for (final ISyntacticElement cm : models.reverse()) {
 			final SyntacticModelElement currentModel = (SyntacticModelElement) cm;
@@ -124,7 +124,7 @@ public class ModelAssembler {
 			final String s = buildModelName(element.getName());
 			if (!s.equals(modelName)) {
 				if (allModelNames == null)
-					allModelNames = new ArrayList();
+					allModelNames = new ArrayList<>();
 				allModelNames.add(s);
 			}
 		}
@@ -225,9 +225,9 @@ public class ModelAssembler {
 	// TODO Refaire ça avec un graphe ??
 	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
 		final TypeTree<SpeciesDescription> hierarchy = Types.getBuiltInSpeciesTree().copy();
-		final List<SpeciesDescription> speciesLeft = new ArrayList();
+		final List<SpeciesDescription> speciesLeft = new ArrayList<>();
 		model.getAllSpecies(speciesLeft);
-		final List<SpeciesDescription> speciesToRemove = new ArrayList();
+		final List<SpeciesDescription> speciesToRemove = new ArrayList<>();
 
 		while (!speciesLeft.isEmpty()) {
 			for (final SpeciesDescription sd : speciesLeft) {

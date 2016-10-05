@@ -52,6 +52,7 @@ import msi.gaml.types.IType;
 				@doc("Retrieves the list of 'attributes' present in the receiver files that support this concept (and an empty list for the others). For instance, in a CSV file, the attributes represent the headers of the columns (if any); in a shape file, the attributes provided to the objects, etc.") }),
 		@var(name = IKeyword.CONTENTS, type = ITypeProvider.WRAPPED, of = ITypeProvider.FIRST_CONTENT_TYPE, index = ITypeProvider.FIRST_KEY_TYPE, doc = {
 				@doc("Returns the contents of the receiver file in the form of a container") }) })
+@SuppressWarnings({ "rawtypes" })
 public interface IGamaFile<C extends IModifiableContainer, ValueToAdd, K, V>
 		extends IModifiableContainer<K, V, K, ValueToAdd>, IAddressableContainer<K, V, K, V> {
 

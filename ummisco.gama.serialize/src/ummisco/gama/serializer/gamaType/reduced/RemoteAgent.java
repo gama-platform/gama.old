@@ -12,14 +12,11 @@
 package ummisco.gama.serializer.gamaType.reduced;
 
 import java.util.Map;
-import java.util.Map.Entry;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.species.ISpecies;
 
 public class RemoteAgent {
 
@@ -29,7 +26,7 @@ public class RemoteAgent {
 	final Map<Object, Object> attributes;
 
 	public RemoteAgent() {
-		attributes = new TOrderedHashMap();
+		attributes = new TOrderedHashMap<>();
 	}
 
 	public RemoteAgent(final GamlAgent agt) {

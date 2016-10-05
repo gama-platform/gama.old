@@ -483,6 +483,7 @@ public abstract class AbstractEditor<T>
 		return i;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected T getParameterValue() throws GamaRuntimeException {
 		Object result;
 		if (agent == null) {

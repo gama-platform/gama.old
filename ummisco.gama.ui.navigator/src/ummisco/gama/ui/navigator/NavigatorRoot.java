@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.PlatformObject;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class NavigatorRoot extends PlatformObject {
 
 	@Override

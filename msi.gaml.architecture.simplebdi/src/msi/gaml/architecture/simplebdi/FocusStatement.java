@@ -84,6 +84,7 @@ public class FocusStatement extends AbstractStatement {
 		agentCause = getFacet(FocusStatement.AGENTCAUSE);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if (when == null || Cast.asBool(scope, when.value(scope))) {
@@ -107,30 +108,29 @@ public class FocusStatement extends AbstractStatement {
 						namePred = variable.getName() + "_" + scope.getAgent().getSpeciesName();
 					}
 					String nameVarTemp;
-					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,
-							null);
-					final IList variablesTemp = ((IContainer) variable.value(scope)).listValue(scope, null, true);
+					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
+					final IList<?> variablesTemp = ((IContainer) variable.value(scope)).listValue(scope, null, true);
 					for (int temp = 0; temp < variablesTemp.length(scope); temp++) {
 						final Object temp2 = variablesTemp.get(temp);
 						nameVarTemp = "test" + temp;
 						tempValues.put(nameVarTemp + "_value", Cast.asInt(scope, temp2));
 					}
 					tempPred = new Predicate(namePred,
-							(Map<String, Object>) GamaMapFactory.createWithoutCasting(
+							GamaMapFactory.createWithoutCasting(
 									((GamaMap<String, Object>) tempValues).getType().getKeyType(),
 									((GamaMap<String, Object>) tempValues).getType().getContentType(), tempValues));
 					if (priority != null) {
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
 					}
-					if (lifetime != null){
+					if (lifetime != null) {
 						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
 					}
-					if (truth != null){
+					if (truth != null) {
 						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
 					}
-					if (agentCause != null){
-						tempPred.setAgentCause((IAgent)agentCause.value(scopeMySelf));
-					}else{
+					if (agentCause != null) {
+						tempPred.setAgentCause((IAgent) agentCause.value(scopeMySelf));
+					} else {
 						tempPred.setAgentCause(scope.getAgent());
 					}
 					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
@@ -144,8 +144,7 @@ public class FocusStatement extends AbstractStatement {
 						namePred = variable.getName() + "_" + scope.getAgent().getSpeciesName();
 					}
 					final String nameVar = variable.getName();
-					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,
-							null);
+					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
 					if (expression != null) {
 						tempValues.put(nameVar + "_value", expression.value(scope));
 					} else {
@@ -155,15 +154,15 @@ public class FocusStatement extends AbstractStatement {
 					if (priority != null) {
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
 					}
-					if (lifetime != null){
+					if (lifetime != null) {
 						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
 					}
-					if (truth != null){
+					if (truth != null) {
 						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
 					}
-					if (agentCause != null){
-						tempPred.setAgentCause((IAgent)agentCause.value(scopeMySelf));
-					}else{
+					if (agentCause != null) {
+						tempPred.setAgentCause((IAgent) agentCause.value(scopeMySelf));
+					} else {
 						tempPred.setAgentCause(scope.getAgent());
 					}
 					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
@@ -179,52 +178,50 @@ public class FocusStatement extends AbstractStatement {
 						namePred = "expression" + "_" + scope.getAgent().getSpeciesName();
 					}
 					final String nameVar = "expression";
-					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,
-							null);
+					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
 					tempValues.put(nameVar + "_value", expression.value(scope));
 					tempPred = new Predicate(namePred, tempValues);
 					if (priority != null) {
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
-					}				
-					if (lifetime != null){
+					}
+					if (lifetime != null) {
 						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
 					}
-					if (truth != null){
+					if (truth != null) {
 						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
 					}
-					if (agentCause != null){
-						tempPred.setAgentCause((IAgent)agentCause.value(scopeMySelf));
-					}else{
+					if (agentCause != null) {
+						tempPred.setAgentCause((IAgent) agentCause.value(scopeMySelf));
+					} else {
 						tempPred.setAgentCause(scope.getAgent());
 					}
-						if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
-							SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
-						}
+					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
+						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+					}
 				} else {
 					String namePred = null;
 					if (name != null) {
 						namePred = (String) name.value(scope);
 					}
-					final Map<String, Object> tempValues = (Map<String, Object>) new GamaMap<String, Object>(1, null,
-							null);
+					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
 					tempPred = new Predicate(namePred, tempValues);
 					if (priority != null) {
 						tempPred.setPriority(Cast.asFloat(scopeMySelf, priority.value(scopeMySelf)));
-					}				
-					if (lifetime != null){
+					}
+					if (lifetime != null) {
 						tempPred.setLifetime(Cast.asInt(scopeMySelf, lifetime.value(scopeMySelf)));
 					}
-					if (truth != null){
+					if (truth != null) {
 						tempPred.setIs_True(Cast.asBool(scopeMySelf, truth.value(scopeMySelf)));
 					}
-					if (agentCause != null){
-						tempPred.setAgentCause((IAgent)agentCause.value(scopeMySelf));
-					}else{
+					if (agentCause != null) {
+						tempPred.setAgentCause((IAgent) agentCause.value(scopeMySelf));
+					} else {
 						tempPred.setAgentCause(scope.getAgent());
 					}
-						if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
-							SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
-						}
+					if (!SimpleBdiArchitecture.hasBelief(scopeMySelf, tempPred)) {
+						SimpleBdiArchitecture.addBelief(scopeMySelf, tempPred);
+					}
 				}
 			}
 			GAMA.releaseScope(scopeMySelf);

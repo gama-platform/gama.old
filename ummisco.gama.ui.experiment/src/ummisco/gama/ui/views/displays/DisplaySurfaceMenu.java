@@ -52,7 +52,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class DisplaySurfaceMenu {
 
-	public static Map<Class, Image> layer_images = new LinkedHashMap();
+	public static Map<Class<? extends ILayer>, Image> layer_images = new LinkedHashMap<>();
 
 	static {
 		layer_images.put(GridLayer.class, GamaIcons.create(IGamaIcons.LAYER_GRID).image());
@@ -77,13 +77,9 @@ public class DisplaySurfaceMenu {
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
 			if (a != null && !a.dead()) {
-				surface.runAndUpdate(new Runnable() {
-
-					@Override
-					public void run() {
-						if (!a.dead()) {
-							surface.focusOn(a);
-						}
+				surface.runAndUpdate(() -> {
+					if (!a.dead()) {
+						surface.focusOn(a);
 					}
 				});
 			}
@@ -113,7 +109,7 @@ public class DisplaySurfaceMenu {
 			menu.dispose();
 			menu = null;
 		}
-		final Set<IAgent> all = new LinkedHashSet();
+		final Set<IAgent> all = new LinkedHashSet<>();
 		for (final ILayer display : displays) {
 			if (display.isSelectable()) {
 				final Set<IAgent> agents = display.collectAgentsAt(x, y, surface);
@@ -136,37 +132,33 @@ public class DisplaySurfaceMenu {
 
 	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final Collection<IAgent> agents,
 			final Runnable cleanup, final MenuAction... actions) {
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				if (menu != null && !menu.isDisposed()) {
-					menu.dispose();
-				}
-				menu = fill(new Menu(swtControl), -1, true, byLayer, agents, actions);
-				menu.setLocation(swtControl.toDisplay(mousex, mousey));
-				menu.setVisible(true);
-				// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :
-				// http://www.eclipse.org/forums/index.php/t/208284/
-				retryVisible(menu, MAX_RETRIES);
-				if (cleanup != null)
-					menu.addMenuListener(new MenuListener() {
-
-						@Override
-						public void menuShown(final MenuEvent e) {
-							// System.out.println("Selection menu has been
-							// shown");
-						}
-
-						@Override
-						public void menuHidden(final MenuEvent e) {
-							// System.out.println("Selection menu has been
-							// hiden");
-							cleanup.run();
-							menu.removeMenuListener(this);
-						}
-					});
+		WorkbenchHelper.asyncRun(() -> {
+			if (menu != null && !menu.isDisposed()) {
+				menu.dispose();
 			}
+			menu = fill(new Menu(swtControl), -1, true, byLayer, agents, actions);
+			menu.setLocation(swtControl.toDisplay(mousex, mousey));
+			menu.setVisible(true);
+			// AD 3/10/13: Fix for Issue 669 on Linux GTK setup. See :
+			// http://www.eclipse.org/forums/index.php/t/208284/
+			retryVisible(menu, MAX_RETRIES);
+			if (cleanup != null)
+				menu.addMenuListener(new MenuListener() {
+
+					@Override
+					public void menuShown(final MenuEvent e) {
+						// System.out.println("Selection menu has been
+						// shown");
+					}
+
+					@Override
+					public void menuHidden(final MenuEvent e) {
+						// System.out.println("Selection menu has been
+						// hiden");
+						cleanup.run();
+						menu.removeMenuListener(this);
+					}
+				});
 		});
 	}
 
@@ -179,27 +171,23 @@ public class DisplaySurfaceMenu {
 	private void retryVisible(final Menu menu, final int retriesRemaining) {
 		if (!PlatformHelper.isGtk())
 			return;
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				if (!menu.isVisible() && retriesRemaining > 0) {
-					menu.setVisible(false);
-					{
-						final Shell shell = new Shell(WorkbenchHelper.getDisplay(),
-								SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
-						shell.setSize(10, 10); // big enough to avoid errors
-												// from the gtk layer
-						shell.setLocation(menu.getShell().getLocation());
-						shell.setText("Not visible");
-						shell.setVisible(false);
-						shell.open();
-						shell.dispose();
-					}
-					menu.getShell().forceActive();
-					menu.setVisible(true);
-					retryVisible(menu, retriesRemaining - 1);
+		WorkbenchHelper.asyncRun(() -> {
+			if (!menu.isVisible() && retriesRemaining > 0) {
+				menu.setVisible(false);
+				{
+					final Shell shell = new Shell(WorkbenchHelper.getDisplay(),
+							SWT.APPLICATION_MODAL | SWT.DIALOG_TRIM);
+					shell.setSize(10, 10); // big enough to avoid errors
+											// from the gtk layer
+					shell.setLocation(menu.getShell().getLocation());
+					shell.setText("Not visible");
+					shell.setVisible(false);
+					shell.open();
+					shell.dispose();
 				}
+				menu.getShell().forceActive();
+				menu.setVisible(true);
+				retryVisible(menu, retriesRemaining - 1);
 			}
 		});
 	}
@@ -240,7 +228,7 @@ public class DisplaySurfaceMenu {
 			for (final ILayer layer : surface.getManager().getItems()) {
 				if (layer.isSelectable()) {
 					Collection<IAgent> pop = layer.getAgentsForMenu(surface.getScope());
-					pop = new ArrayList(pop);
+					pop = new ArrayList<>(pop);
 					if (pop.isEmpty()) {
 						continue;
 					}
@@ -272,6 +260,7 @@ public class DisplaySurfaceMenu {
 		return menu;
 	}
 
+	@SuppressWarnings("unused")
 	public Menu buildROIMenu(final int x, final int y, final Collection<IAgent> agents,
 			final Map<String, Runnable> actions, final Map<String, Image> images) {
 

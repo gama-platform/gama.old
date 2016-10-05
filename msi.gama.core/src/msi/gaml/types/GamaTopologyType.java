@@ -38,10 +38,12 @@ import msi.gaml.species.ISpecies;
  * @since 26 nov. 2011
  * 
  */
+@SuppressWarnings("unchecked")
 @type(name = IKeyword.TOPOLOGY, id = IType.TOPOLOGY, wraps = {
 		ITopology.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.TOPOLOGY })
 public class GamaTopologyType extends GamaType<ITopology> {
 
+	@SuppressWarnings("rawtypes")
 	public static ITopology staticCast(final IScope scope, final Object obj, final boolean copy)
 			throws GamaRuntimeException {
 		// Many cases.
@@ -91,7 +93,7 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	 * @param obj
 	 * @return
 	 */
-	private static ITopology from(final IScope scope, final IContainer obj) throws GamaRuntimeException {
+	private static ITopology from(final IScope scope, final IContainer<?, IShape> obj) throws GamaRuntimeException {
 		if (obj instanceof GamaSpatialGraph) {
 			return ((GamaSpatialGraph) obj).getTopology(scope);
 		} else if (obj instanceof IGrid) {

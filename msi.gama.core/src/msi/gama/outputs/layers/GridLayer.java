@@ -133,7 +133,7 @@ public class GridLayer extends ImageLayer {
 
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
-		final Set<IAgent> result = new THashSet();
+		final Set<IAgent> result = new THashSet<>();
 		result.add(getPlaceAt(this.getModelCoordinatesFrom(x, y, g)));
 		return result;
 	}

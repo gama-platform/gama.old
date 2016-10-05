@@ -27,6 +27,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SkillDescription;
 import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
@@ -46,7 +47,7 @@ import msi.gaml.types.IType;
 @validator(SimpleBdiPlanValidator.class)
 public class SimpleBdiPlanStatement extends AbstractStatementSequence {
 
-	public static class SimpleBdiPlanValidator implements IDescriptionValidator {
+	public static class SimpleBdiPlanValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
 		 * Method validate()
@@ -54,7 +55,7 @@ public class SimpleBdiPlanStatement extends AbstractStatementSequence {
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
-		public void validate(final IDescription description) {
+		public void validate(final StatementDescription description) {
 			// Verify that the state is inside a species with fsm control
 			final SpeciesDescription species = description.getSpeciesContext();
 			final SkillDescription control = species.getControl();

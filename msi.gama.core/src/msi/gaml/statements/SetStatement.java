@@ -58,7 +58,7 @@ import msi.gaml.types.IType;
 @serializer(AssignmentSerializer.class)
 public class SetStatement extends AbstractStatement {
 
-	public static class AssignmentSerializer extends SymbolSerializer {
+	public static class AssignmentSerializer extends SymbolSerializer<SymbolDescription> {
 
 		@Override
 		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
@@ -68,7 +68,7 @@ public class SetStatement extends AbstractStatement {
 
 	}
 
-	public static class AssignmentValidator implements IDescriptionValidator {
+	public static class AssignmentValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()

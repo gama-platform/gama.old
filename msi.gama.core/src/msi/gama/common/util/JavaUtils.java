@@ -35,9 +35,9 @@ import msi.gama.common.interfaces.ISkill;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class JavaUtils {
 
-	public final static Map<Set<Class>, List<Class>> IMPLEMENTATION_CLASSES = new THashMap();
-	private static Map<Class, Set<Class>> allInterfaces = new THashMap();
-	private static Map<Class, Set<Class>> allSuperclasses = new THashMap();
+	public final static Map<Set<Class>, List<Class>> IMPLEMENTATION_CLASSES = new THashMap<>();
+	private static Map<Class, Set<Class>> allInterfaces = new THashMap<>();
+	private static Map<Class, Set<Class>> allSuperclasses = new THashMap<>();
 
 	private static void addAllInterfaces(final Class clazz, final Set allInterfaces, final Set<Class> in) {
 		if (clazz == null) {
@@ -75,7 +75,7 @@ public class JavaUtils {
 		if (allSuperclasses.containsKey(c)) {
 			return allSuperclasses.get(c);
 		}
-		final THashSet<Class> result = new THashSet();
+		final THashSet<Class> result = new THashSet<>();
 		if (c == null) {
 			return result;
 		}
@@ -93,7 +93,7 @@ public class JavaUtils {
 
 	public static List<Class> collectImplementationClasses(final Class baseClass,
 			final Iterable<Class<? extends ISkill>> skillClasses, final Set<Class> in) {
-		final Set<Class> classes = new THashSet();
+		final Set<Class> classes = new THashSet<>();
 		if (baseClass != null) {
 			classes.add(baseClass);
 		}

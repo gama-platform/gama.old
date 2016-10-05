@@ -36,7 +36,6 @@ import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.UserCommandStatement;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
@@ -115,7 +114,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 		// add highlight in the expand bar ?
 
 		final Composite attributes = super.createItemContentsFor(agent);
-		final AbstractEditor ed = EditorFactory.create(agent.getScope(), attributes,
+		final AbstractEditor<?> ed = EditorFactory.create(agent.getScope(), attributes,
 				new ParameterAdapter("highlight", IType.BOOL) {
 
 					@Override
@@ -171,15 +170,10 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 					}
 					// We run into the scope provided by the agent
 					final IScope runningScope = agent.getScope();
-					runningScope.getSimulation().executeAction(new IExecutable() {
-
-						@Override
-						public Object executeOn(final IScope scope) {
-							final Object[] result = new Object[1];
-							scope.execute(command, agent, null, result);
-							return result[0];
-						}
-
+					runningScope.getSimulation().executeAction(scope -> {
+						final Object[] result = new Object[1];
+						scope.execute(command, agent, null, result);
+						return result[0];
 					});
 				}
 
@@ -223,7 +217,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 		if (names == null) {
 			names = agent.getSpecies().getVarNames();
 		}
-		final List<IParameter> params = new ArrayList();
+		final List<IParameter> params = new ArrayList<>();
 		for (final IVariable v : agent.getSpecies().getVars()) {
 			if (names.contains(v.getName())) {
 				params.add(v);
@@ -256,7 +250,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 			final InspectDisplayOutput out = getOutput();
 			firstPartName = out == null ? "Inspect: " : out.getName();
 		}
-		final Set<String> names = new LinkedHashSet();
+		final Set<String> names = new LinkedHashSet<>();
 		for (final IOutput o : outputs) {
 			final InspectDisplayOutput out = (InspectDisplayOutput) o;
 			final IAgent a = out.getLastValue()[0];

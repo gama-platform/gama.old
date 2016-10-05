@@ -66,7 +66,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	private final Map<String, AspectStatement> aspects = new TOrderedHashMap<String, AspectStatement>();
 	private final Map<String, ActionStatement> actions = new TOrderedHashMap<String, ActionStatement>();
 	private final Map<String, UserCommandStatement> userCommands = new TOrderedHashMap();
-	private final List<IStatement> behaviors = new ArrayList();
+	private final List<IStatement> behaviors = new ArrayList<>();
 	protected ISpecies macroSpecies, parentSpecies;
 	private boolean isInitOverriden, isStepOverriden;
 	final IArchitecture control;

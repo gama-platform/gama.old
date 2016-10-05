@@ -455,7 +455,7 @@ public class DrivingSkill extends MovingSkill {
 		double distance = _distance;
 		final IList<IShape> segments = GamaListFactory.create(Types.GEOMETRY);
 		final GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
-		final THashMap agents = new THashMap();
+		final THashMap agents = new THashMap<>();
 		for (int i = index; i < nb; i++) {
 			final IShape line = edges.get(i);
 			final IShape lineAg = path.getRealObject(line);

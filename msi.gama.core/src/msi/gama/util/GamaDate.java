@@ -25,7 +25,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Dates;
-import msi.gaml.operators.Strings;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -34,57 +33,36 @@ import msi.gaml.types.Types;
  *
  * @author Taillandier
  */
-@vars({
-	@var(name = "day_of_week",
-		type = IType.INT,
-		doc = { @doc("Returns the day of the week") }),
-	@var(name = "leap",
-		type = IType.BOOL,
-		doc = { @doc("Returns true if the year is leap") }),
-	@var(name = "days_in_month",
-		type = IType.INT,
-		doc = { @doc("Returns the number of days of the month") }),
-	@var(name = "week_of_year",
-		type = IType.INT,
-		doc = { @doc("Returns the week of the year") }),
-	@var(name = "second",
-		type = IType.INT,
-		doc = { @doc("Returns the second") }),
-	@var(name = "minute",
-		type = IType.INT,
-		doc = { @doc("Returns the minute") }),
-	@var(name = "hour",
-		type = IType.INT,
-		doc = { @doc("Returns the hour") }),
-	@var(name = "day",
-		type = IType.INT,
-		doc = { @doc("Returns the day") }),
-	@var(name = "month",
-		type = IType.INT,
-		doc = { @doc("Returns the month") }),
-	@var(name = "year",
-		type = IType.INT,
-		doc = { @doc("Returns the year") })})
+@vars({ @var(name = "day_of_week", type = IType.INT, doc = { @doc("Returns the day of the week") }),
+		@var(name = "leap", type = IType.BOOL, doc = { @doc("Returns true if the year is leap") }),
+		@var(name = "days_in_month", type = IType.INT, doc = { @doc("Returns the number of days of the month") }),
+		@var(name = "week_of_year", type = IType.INT, doc = { @doc("Returns the week of the year") }),
+		@var(name = "second", type = IType.INT, doc = { @doc("Returns the second") }),
+		@var(name = "minute", type = IType.INT, doc = { @doc("Returns the minute") }),
+		@var(name = "hour", type = IType.INT, doc = { @doc("Returns the hour") }),
+		@var(name = "day", type = IType.INT, doc = { @doc("Returns the day") }),
+		@var(name = "month", type = IType.INT, doc = { @doc("Returns the month") }),
+		@var(name = "year", type = IType.INT, doc = { @doc("Returns the year") }) })
 public class GamaDate extends MutableDateTime implements IValue {
 
-	
 	public GamaDate() {
 		super();
 	}
-	
-	public GamaDate(MutableDateTime d) {
+
+	public GamaDate(final MutableDateTime d) {
 		super(d);
 	}
-	
-	public GamaDate(DateTime d) {
+
+	public GamaDate(final DateTime d) {
 		super(d);
 	}
-	
-	public GamaDate(String dateStr) {
+
+	public GamaDate(final String dateStr) {
 		this(Dates.getSystemDateTimeFormat().parseDateTime(dateStr));
 	}
 
-	public GamaDate(int second, int minute, int hour, int day, int month, int year) {
+	public GamaDate(final int second, final int minute, final int hour, final int day, final int month,
+			final int year) {
 		super();
 		setYear(year);
 		setMonthOfYear(month);
@@ -93,41 +71,46 @@ public class GamaDate extends MutableDateTime implements IValue {
 		setMinuteOfHour(minute);
 		setSecondOfMinute(second);
 	}
-	
-	public GamaDate(int val) {
+
+	public GamaDate(final int val) {
 		super();
 		addYears(val);
 	}
-	
-	
-	public GamaDate(IList vals) {
+
+	public GamaDate(final IList<?> vals) {
 		super();
 		if (vals.size() > 0) {
-			Integer intVal = Cast.asInt(null, vals.get(0));
+			final Integer intVal = Cast.asInt(null, vals.get(0));
 			setYear(intVal);
-		}else setYear(0);
+		} else
+			setYear(0);
 		if (vals.size() > 1) {
-			Integer intVal = Cast.asInt(null, vals.get(1));
+			final Integer intVal = Cast.asInt(null, vals.get(1));
 			setMonthOfYear(intVal);
-		}else setMonthOfYear(0);
+		} else
+			setMonthOfYear(0);
 		if (vals.size() > 2) {
-			Integer intVal = Cast.asInt(null, vals.get(2));
+			final Integer intVal = Cast.asInt(null, vals.get(2));
 			setDayOfMonth(intVal);
-		} else setDayOfMonth(0);
+		} else
+			setDayOfMonth(0);
 		if (vals.size() > 3) {
-			Integer intVal = Cast.asInt(null, vals.get(3));
+			final Integer intVal = Cast.asInt(null, vals.get(3));
 			setHourOfDay(intVal);
-		}else setHourOfDay(0);
+		} else
+			setHourOfDay(0);
 		if (vals.size() > 4) {
-			Integer intVal = Cast.asInt(null, vals.get(4));
+			final Integer intVal = Cast.asInt(null, vals.get(4));
 			setMinuteOfHour(intVal);
-		} else setMinuteOfHour(0);
+		} else
+			setMinuteOfHour(0);
 		if (vals.size() > 5) {
-			Integer intVal = Cast.asInt(null, vals.get(5));
+			final Integer intVal = Cast.asInt(null, vals.get(5));
 			setSecondOfMinute(intVal);
-		} else setSecondOfMinute(0);
+		} else
+			setSecondOfMinute(0);
 	}
-	
+
 	@Override
 	public String toString() {
 		return Dates.asDate(this).replace("T", " ").split(Pattern.quote("+"))[0];
@@ -135,7 +118,7 @@ public class GamaDate extends MutableDateTime implements IValue {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "date (" +Dates.asDate(this)+ ")";
+		return "date (" + Dates.asDate(this) + ")";
 	}
 
 	@Override
@@ -143,24 +126,21 @@ public class GamaDate extends MutableDateTime implements IValue {
 		return Dates.asDate(this);
 	}
 
-	
 	@Override
 	public IType getType() {
 		return Types.DATE;
 	}
 
-
 	@Override
-	public IValue copy(IScope scope) throws GamaRuntimeException {
+	public IValue copy(final IScope scope) throws GamaRuntimeException {
 		return new GamaDate(this);
 	}
 
-	
+	@Override
 	@getter("year")
 	public int getYear() {
 		return super.getYear();
 	}
-
 
 	@getter("month")
 	public int getMonth() {
@@ -172,7 +152,6 @@ public class GamaDate extends MutableDateTime implements IValue {
 		return getDayOfMonth();
 	}
 
-	
 	@getter("hour")
 	public int getHour() {
 		return getHourOfDay();
@@ -187,16 +166,17 @@ public class GamaDate extends MutableDateTime implements IValue {
 	public int getSecond() {
 		return getSecondOfMinute();
 	}
-	
+
 	@getter("day_of_week")
 	public int getDayWeek() {
 		return getDayOfWeek();
 	}
+
 	@getter("leap")
 	public boolean getIsLeap() {
 		return super.year().isLeap();
 	}
-	
+
 	@getter("week_of_year")
 	public int getWeekYear() {
 		return super.getWeekOfWeekyear();

@@ -121,7 +121,7 @@ public class GamaClassLoader extends ClassLoader {
 	}
 
 	private volatile static GamaClassLoader loader;
-	private final List<ClassLoader> loaders = new ArrayList();
+	private final List<ClassLoader> loaders = new ArrayList<>();
 
 	public static GamaClassLoader getInstance() {
 		if (loader == null) {

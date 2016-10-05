@@ -521,10 +521,10 @@ public class ChartJFreeChartOutputHeatmap extends ChartJFreeChartOutput {
 			sb.append(title).append(" ").append(xInt ? (int) xx : String.format("%.2f", xx));
 			return sb.toString();
 		} else if (entity instanceof CategoryItemEntity) {
-			final Comparable columnKey = ((CategoryItemEntity) entity).getColumnKey();
+			final Comparable<?> columnKey = ((CategoryItemEntity) entity).getColumnKey();
 			final String title = columnKey.toString();
 			final CategoryDataset data = ((CategoryItemEntity) entity).getDataset();
-			final Comparable rowKey = ((CategoryItemEntity) entity).getRowKey();
+			final Comparable<?> rowKey = ((CategoryItemEntity) entity).getRowKey();
 			final double xx = data.getValue(rowKey, columnKey).doubleValue();
 			final StringBuilder sb = new StringBuilder();
 			final boolean xInt = xx % 1 == 0;

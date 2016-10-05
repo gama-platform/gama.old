@@ -56,6 +56,7 @@ public interface IExpressionDescription extends IGamlable {
 
 	public abstract IExpressionDescription cleanCopy();
 
+	@SuppressWarnings("rawtypes")
 	public abstract IType getDenotedType(IDescription context);
 
 	public abstract void collectMetaInformation(GamlProperties meta);

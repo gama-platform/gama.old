@@ -4,10 +4,14 @@
  */
 package msi.gaml.statements.draw;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.util.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaPair;
 
 public class FieldDrawingAttributes extends FileDrawingAttributes {
 
@@ -17,7 +21,7 @@ public class FieldDrawingAttributes extends FileDrawingAttributes {
 
 	public double depth;
 	public boolean empty;
-	public List textures;
+	public List<?> textures;
 	public String speciesName;
 	public boolean triangulated;
 	public boolean grayScaled;
@@ -26,13 +30,13 @@ public class FieldDrawingAttributes extends FileDrawingAttributes {
 	public GamaPoint cellSize;
 
 	public FieldDrawingAttributes(final ILocation size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
-		final ILocation location, final Boolean empty, final GamaColor color, final GamaColor border,
-		final List textures, final IAgent agent) {
+			final ILocation location, final Boolean empty, final GamaColor color, final GamaColor border,
+			final List<?> textures, final IAgent agent) {
 		super(size, rotation, location, color, border, agent);
 		this.depth = depth == null ? 1.0 : depth.doubleValue();
 		this.empty = empty == null ? false : empty.booleanValue();
 		this.border = border == null && this.empty ? color : border;
-		this.textures = textures == null ? null : new ArrayList(textures);
+		this.textures = textures == null ? null : new ArrayList<>(textures);
 	}
 
 	/**
@@ -46,7 +50,7 @@ public class FieldDrawingAttributes extends FileDrawingAttributes {
 	}
 
 	@Override
-	public List getTextures() {
+	public List<?> getTextures() {
 		return textures;
 	}
 

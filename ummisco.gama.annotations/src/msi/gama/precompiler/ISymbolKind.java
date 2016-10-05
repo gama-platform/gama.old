@@ -11,7 +11,9 @@
  **********************************************************************************************/
 package msi.gama.precompiler;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Written by drogoul Modified on 1 ao�t 2010
@@ -31,7 +33,7 @@ public interface ISymbolKind {
 
 		public static final int REGULAR = 104;
 
-		public static final Set<Integer> KINDS = new HashSet(Arrays.asList(NUMBER, CONTAINER, REGULAR, SIGNAL));
+		public static final Set<Integer> KINDS = new HashSet<>(Arrays.asList(NUMBER, CONTAINER, REGULAR, SIGNAL));
 	}
 
 	public static final int SPECIES = 0;
@@ -71,6 +73,6 @@ public interface ISymbolKind {
 	public static final int __NUMBER__ = 16;
 
 	public static final String[] TEMPLATE_MENU = { "Species", "Model", "Statement", "Behavior", "Parameter", "Output",
-		"Layer", "Skill", "Batch", "Batch", "", "Statement", "Statement", "Experiment", "", "Operator" };
+			"Layer", "Skill", "Batch", "Batch", "", "Statement", "Statement", "Experiment", "", "Operator" };
 
 }

@@ -51,7 +51,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	private OutputStreamWriter resultWriter, errorWriter;
 	private BufferedReader reader;
 	private IAgent listeningAgent;
-	private final List<String> history = new ArrayList();
+	private final List<String> history = new ArrayList<>();
 	private int indexInHistory = 0;
 	private Composite controlToDisplayInFullScreen;
 	private Composite parentOfControlToDisplayFullScreen;

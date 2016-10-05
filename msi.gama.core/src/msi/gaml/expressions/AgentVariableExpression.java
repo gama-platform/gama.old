@@ -22,6 +22,7 @@ import msi.gaml.types.IType;
 
 public class AgentVariableExpression extends VariableExpression implements IVarExpression.Agent {
 
+	@SuppressWarnings("rawtypes")
 	protected AgentVariableExpression(final String n, final IType type, final boolean notModifiable,
 			final IDescription def) {
 		super(n, type, notModifiable, def);

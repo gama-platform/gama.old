@@ -123,7 +123,7 @@ public class EGaml {
 		return map;
 	}
 
-	private static GamlSwitch<Boolean> childrenSwitch = new GamlSwitch() {
+	private static GamlSwitch<Boolean> childrenSwitch = new GamlSwitch<Boolean>() {
 
 		@Override
 		public Boolean caseModel(final Model object) {

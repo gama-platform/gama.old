@@ -5,7 +5,6 @@
 package msi.gaml.statements.draw;
 
 import java.awt.Color;
-import java.util.List;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -33,6 +32,7 @@ import msi.gaml.types.Types;
  * @since 28 janv. 2016
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class DrawingData {
 
 	static final GamaPoint DEFAULT_AXIS = new GamaPoint(0, 0, 1);
@@ -79,7 +79,7 @@ public class DrawingData {
 
 	public DrawingData(final IExpression sizeExp, final IExpression depthExp, final IExpression rotationExp,
 			final IExpression locationExp, final IExpression emptyExp, final IExpression borderExp,
-			final IExpression colorExp, final IExpression fontExp, final IExpression textureExp, 
+			final IExpression colorExp, final IExpression fontExp, final IExpression textureExp,
 			final IExpression materialExp, final IExpression perspectiveExp) {
 		this.sizeExp = sizeExp;
 		this.depthExp = depthExp;
@@ -175,7 +175,7 @@ public class DrawingData {
 				constantTextures = GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(null));
 			}
 		}
-		
+
 		/* MATERIAL */
 		if (materialExp != null && materialExp.isConst()) {
 			constantMaterial = GamaMaterialType.staticCast(null, materialExp.value(null), true);
@@ -251,7 +251,7 @@ public class DrawingData {
 		// currentColor = constantColor;
 		// } else {
 		if (colorExp != null && Cast.asColor(scope, colorExp.value(scope)) != null) {
-			IList<GamaColor> val = Cast.asList(scope, colorExp.value(scope));
+			final IList<GamaColor> val = Cast.asList(scope, colorExp.value(scope));
 			if (val.get(0) instanceof GamaColor) {
 				currentColors = val;
 			}
@@ -297,7 +297,7 @@ public class DrawingData {
 				}
 			}
 		}
-		
+
 		/* MATERIAL */
 		if (constantMaterial != null) {
 			currentMaterial = constantMaterial;

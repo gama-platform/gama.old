@@ -11,19 +11,30 @@
  *******************************************************************************/
 package ummisco.gama.java2d.swing;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.lang.reflect.*;
+import java.awt.AWTEvent;
+import java.awt.Component;
+import java.awt.Dialog;
+import java.awt.EventQueue;
+import java.awt.Toolkit;
+import java.awt.Window;
+import java.awt.event.AWTEventListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.eclipse.swt.widgets.Display;
 
 import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
- * A listener that insures the proper modal behavior of Swing dialogs when running
- * within a SWT environment. When initialized, it blocks and unblocks SWT input
- * as modal Swing dialogs are shown and hidden.
+ * A listener that insures the proper modal behavior of Swing dialogs when
+ * running within a SWT environment. When initialized, it blocks and unblocks
+ * SWT input as modal Swing dialogs are shown and hidden.
  *
  * @see SwtInputBlocker
  */
@@ -31,29 +42,31 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 
 	private static boolean verboseModalityHandling = false;
 
-	protected static boolean USING_ALWAYS_ON_TOP =
-		PlatformHelper.isGtk() && PlatformHelper.JAVA_VERSION >= PlatformHelper.javaVersion(1, 5, 0);
+	protected static boolean USING_ALWAYS_ON_TOP = PlatformHelper.isGtk()
+			&& PlatformHelper.JAVA_VERSION >= PlatformHelper.javaVersion(1, 5, 0);
 	private static boolean alwaysOnTopMethodsInitialized = false;
 	private static Method setAlwaysOnTopMethod = null;
 	private static Method isAlwaysOnTopMethod = null;
 
 	// modalDialogs should be accessed only from the AWT thread, so no
 	// synchronization is needed.
-	private final List modalDialogs = new ArrayList();
+	private final List<Dialog> modalDialogs = new ArrayList<>();
 	private final Display display;
 
 	/**
-	 * Registers this object as an AWT event listener so that Swing dialogs have the
-	 * proper modal behavior in the containing SWT environment. This is called automatically
-	 * when you construct a {@link SwingControl}, and it
+	 * Registers this object as an AWT event listener so that Swing dialogs have
+	 * the proper modal behavior in the containing SWT environment. This is
+	 * called automatically when you construct a {@link SwingControl}, and it
 	 * need not be called separately in that case.
+	 * 
 	 * @param shell
 	 */
 	public AwtDialogListener(final Display display) {
 		assert display != null;
 
-		// In some cases, we use Window.setAlwaysOnTop to keep modal AWT dialogs visible
-		if ( USING_ALWAYS_ON_TOP ) {
+		// In some cases, we use Window.setAlwaysOnTop to keep modal AWT dialogs
+		// visible
+		if (USING_ALWAYS_ON_TOP) {
 			getAlwaysOnTopMethods();
 		}
 
@@ -62,14 +75,15 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 	}
 
 	protected void getAlwaysOnTopMethods() {
-		// These methods is only needed for Gtk, Reflection is used to allow compilation
+		// These methods is only needed for Gtk, Reflection is used to allow
+		// compilation
 		// against JDK 1.4
-		if ( !alwaysOnTopMethodsInitialized ) {
+		if (!alwaysOnTopMethodsInitialized) {
 			alwaysOnTopMethodsInitialized = true;
 			try {
 				setAlwaysOnTopMethod = Window.class.getMethod("setAlwaysOnTop", new Class[] { boolean.class });
 				isAlwaysOnTopMethod = Window.class.getMethod("isAlwaysOnTop", new Class[] {});
-			} catch (NoSuchMethodException e) {
+			} catch (final NoSuchMethodException e) {
 				handleAlwaysOnTopException(e);
 			}
 		}
@@ -78,13 +92,13 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 	protected void setAlwaysOnTop(final Window window, final boolean onTop) {
 		assert setAlwaysOnTopMethod != null;
 		try {
-			if ( verboseModalityHandling ) {
+			if (verboseModalityHandling) {
 				System.err.println("Calling setAlwaysOnTop(" + onTop + ") for " + window);
 			}
 			setAlwaysOnTopMethod.invoke(window, new Object[] { new Boolean(onTop) });
-		} catch (IllegalAccessException e) {
+		} catch (final IllegalAccessException e) {
 			handleAlwaysOnTopException(e);
-		} catch (InvocationTargetException e) {
+		} catch (final InvocationTargetException e) {
 			handleAlwaysOnTopException(e);
 		}
 	}
@@ -92,22 +106,22 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 	protected boolean isAlwaysOnTop(final Window window) {
 		assert isAlwaysOnTopMethod != null;
 		try {
-			if ( verboseModalityHandling ) {
+			if (verboseModalityHandling) {
 				System.err.println("Calling isAlwaysOnTop() for " + window);
 			}
-			Object result = isAlwaysOnTopMethod.invoke(window, new Object[] {});
+			final Object result = isAlwaysOnTopMethod.invoke(window, new Object[] {});
 			return ((Boolean) result).booleanValue();
-		} catch (IllegalAccessException e) {
+		} catch (final IllegalAccessException e) {
 			handleAlwaysOnTopException(e);
 			return false;
-		} catch (InvocationTargetException e) {
+		} catch (final InvocationTargetException e) {
 			handleAlwaysOnTopException(e);
 			return false;
 		}
 	}
 
 	protected void handleAlwaysOnTopException(final Exception e) {
-		if ( verboseModalityHandling ) {
+		if (verboseModalityHandling) {
 			e.printStackTrace();
 		}
 	}
@@ -118,27 +132,23 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 		assert display != null;
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		if ( verboseModalityHandling ) {
+		if (verboseModalityHandling) {
 			System.err.println("Remove dialog: " + awtDialog);
 		}
-		if ( removeListener ) {
+		if (removeListener) {
 			awtDialog.removeComponentListener(this);
-			if ( USING_ALWAYS_ON_TOP ) {
+			if (USING_ALWAYS_ON_TOP) {
 				awtDialog.removeWindowFocusListener(this);
 			}
 		}
 		// Note: there is no isModal() check here because the dialog might
-		// have been changed from modal to non-modal after it was opened. In this case
-		// the currently visible dialog would still act modal and we'd need to unblock
+		// have been changed from modal to non-modal after it was opened. In
+		// this case
+		// the currently visible dialog would still act modal and we'd need to
+		// unblock
 		// SWT here when it goes away.
-		if ( modalDialogs.remove(awtDialog) ) {
-			ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
-
-				@Override
-				public void run() {
-					SwtInputBlocker.unblock();
-				}
-			});
+		if (modalDialogs.remove(awtDialog)) {
+			ThreadingHandler.getInstance().asyncExec(display, () -> SwtInputBlocker.unblock());
 		}
 	}
 
@@ -147,7 +157,7 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 		assert modalDialogs != null;
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		if ( verboseModalityHandling ) {
+		if (verboseModalityHandling) {
 			System.err.println("Add dialog: " + awtDialog);
 		}
 
@@ -155,68 +165,74 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 		// 1) the the dialog has already triggered a block
 		// 2) the dialog is not modal, or
 		// 3) the dialog is not (yet?) visible
-		// It's not clear why/when case 3 would happen, but it has been reported and the consequences
+		// It's not clear why/when case 3 would happen, but it has been reported
+		// and the consequences
 		// are severe if the check is not in place.
-		if ( modalDialogs.contains(awtDialog) || !awtDialog.isModal() || !awtDialog.isVisible() ) { return; }
+		if (modalDialogs.contains(awtDialog) || !awtDialog.isModal() || !awtDialog.isVisible()) {
+			return;
+		}
 		modalDialogs.add(awtDialog);
 		awtDialog.addComponentListener(this);
 
 		// In some cases (e.g. GTK), we need to use the Window.setAlwaysOnTop
-		// method to force modal AWT dialogs in front of any SWT shells. Otherwise, they
-		// are easily hidden when clicking on the parent shell. It might be possible to
-		// remove this code if we could successfully move the SWT shell back in the z-order,
+		// method to force modal AWT dialogs in front of any SWT shells.
+		// Otherwise, they
+		// are easily hidden when clicking on the parent shell. It might be
+		// possible to
+		// remove this code if we could successfully move the SWT shell back in
+		// the z-order,
 		// but there is an open bug (on GTK) on Shell.moveBelow.
 		// See note in SwtInputBlocker.activateListener
-		// We use a listener to keep the always-on-top behavior enabled only while the
-		// dialog has focus. If the dialog is already always-on-top, we don't add a listener.
-		// TODO: we don't handle the case where always-on-top status is changed while the dialog
+		// We use a listener to keep the always-on-top behavior enabled only
+		// while the
+		// dialog has focus. If the dialog is already always-on-top, we don't
+		// add a listener.
+		// TODO: we don't handle the case where always-on-top status is changed
+		// while the dialog
 		// is visible.
-		if ( USING_ALWAYS_ON_TOP && !isAlwaysOnTop(awtDialog) ) {
+		if (USING_ALWAYS_ON_TOP && !isAlwaysOnTop(awtDialog)) {
 			awtDialog.addWindowFocusListener(this);
 		}
 
-		ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
-
-			@Override
-			public void run() {
-				SwtInputBlocker.block(AwtDialogListener.this);
-			}
-		});
+		ThreadingHandler.getInstance().asyncExec(display, () -> SwtInputBlocker.block(AwtDialogListener.this));
 	}
 
 	void requestFocus() {
-		// TODO: in early testing this did not always bring the dialog to the top
-		// under some Linux desktops/window managers (e.g. metacity under GNOME).
+		// TODO: in early testing this did not always bring the dialog to the
+		// top
+		// under some Linux desktops/window managers (e.g. metacity under
+		// GNOME).
 		// Re-test with recent changes
-		EventQueue.invokeLater(new Runnable() {
+		EventQueue.invokeLater(() -> {
+			assert modalDialogs != null;
 
-			@Override
-			public void run() {
-				assert modalDialogs != null;
+			final int size = modalDialogs.size();
+			if (size > 0) {
+				final Dialog awtDialog = modalDialogs.get(size - 1);
+				Component focusOwner = awtDialog.getMostRecentFocusOwner();
+				if (verboseModalityHandling) {
+					System.err.println("Bringing to front, focusOwner=" + focusOwner);
+				}
 
-				int size = modalDialogs.size();
-				if ( size > 0 ) {
-					final Dialog awtDialog = (Dialog) modalDialogs.get(size - 1);
-					Component focusOwner = awtDialog.getMostRecentFocusOwner();
-					if ( verboseModalityHandling ) {
-						System.err.println("Bringing to front, focusOwner=" + focusOwner);
-					}
-
-					if ( focusOwner == null ) {
-						focusOwner = awtDialog; // try the dialog itself in this case
-					}
-					try {
-						// In one case, a call to requestFocus() alone does not
-						// bring the AWT dialog to the top. This happens if the
-						// dialog is given a null parent frame. When opened, the dialog
-						// can be hidden by the SWT window even when it obtains focus.
-						// Calling toFront() solves the problem.
-						focusOwner.requestFocus();
-						awtDialog.toFront();
-					} catch (NullPointerException e) {
-						// Some dialogs (e.g. Windows page setup and print dialogs on JDK 1.5+) throw an NPE on
-						// requestFocus(). There's no way to check ahead of time, so just swallow the NPE here.
-					}
+				if (focusOwner == null) {
+					focusOwner = awtDialog; // try the dialog itself in this
+											// case
+				}
+				try {
+					// In one case, a call to requestFocus() alone does not
+					// bring the AWT dialog to the top. This happens if the
+					// dialog is given a null parent frame. When opened, the
+					// dialog
+					// can be hidden by the SWT window even when it obtains
+					// focus.
+					// Calling toFront() solves the problem.
+					focusOwner.requestFocus();
+					awtDialog.toFront();
+				} catch (final NullPointerException e) {
+					// Some dialogs (e.g. Windows page setup and print dialogs
+					// on JDK 1.5+) throw an NPE on
+					// requestFocus(). There's no way to check ahead of time, so
+					// just swallow the NPE here.
 				}
 			}
 		});
@@ -226,8 +242,8 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 		assert event != null;
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		Window window = event.getWindow();
-		if ( window instanceof Dialog ) {
+		final Window window = event.getWindow();
+		if (window instanceof Dialog) {
 			handleAddedDialog((Dialog) window);
 		}
 	}
@@ -237,8 +253,8 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
 		// Dispose-based close
-		Window window = event.getWindow();
-		if ( window instanceof Dialog ) {
+		final Window window = event.getWindow();
+		if (window instanceof Dialog) {
 			// Remove dialog and component listener
 			handleRemovedDialog((Dialog) window, true);
 		}
@@ -249,21 +265,14 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
 		// System-based close
-		Window window = event.getWindow();
-		if ( window instanceof Dialog ) {
+		final Window window = event.getWindow();
+		if (window instanceof Dialog) {
 			final Dialog dialog = (Dialog) window;
 			// Defer until later. Bad things happen if
 			// handleRemovedDialog() is called directly from
 			// this event handler. The Swing dialog does not close
 			// properly and its modality remains in effect.
-			EventQueue.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					// Remove dialog and component listener
-					handleRemovedDialog(dialog, true);
-				}
-			});
+			EventQueue.invokeLater(() -> handleRemovedDialog(dialog, true));
 		}
 	}
 
@@ -280,20 +289,20 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
 		switch (event.getID()) {
-			case WindowEvent.WINDOW_OPENED:
-				handleOpenedWindow((WindowEvent) event);
-				break;
+		case WindowEvent.WINDOW_OPENED:
+			handleOpenedWindow((WindowEvent) event);
+			break;
 
-			case WindowEvent.WINDOW_CLOSED:
-				handleClosedWindow((WindowEvent) event);
-				break;
+		case WindowEvent.WINDOW_CLOSED:
+			handleClosedWindow((WindowEvent) event);
+			break;
 
-			case WindowEvent.WINDOW_CLOSING:
-				handleClosingWindow((WindowEvent) event);
-				break;
+		case WindowEvent.WINDOW_CLOSING:
+			handleClosingWindow((WindowEvent) event);
+			break;
 
-			default:
-				break;
+		default:
+			break;
 		}
 	}
 
@@ -306,12 +315,13 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 		assert e != null;
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		if ( verboseModalityHandling ) {
+		if (verboseModalityHandling) {
 			System.err.println("Component hidden");
 		}
-		Object obj = e.getSource();
-		if ( obj instanceof Dialog ) {
-			// Remove dialog but keep listener in place so that we know if/when it is set visible
+		final Object obj = e.getSource();
+		if (obj instanceof Dialog) {
+			// Remove dialog but keep listener in place so that we know if/when
+			// it is set visible
 			handleRemovedDialog((Dialog) obj, false);
 		}
 	}
@@ -321,11 +331,11 @@ public class AwtDialogListener implements AWTEventListener, ComponentListener, W
 		assert e != null;
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		if ( verboseModalityHandling ) {
+		if (verboseModalityHandling) {
 			System.err.println("Component shown");
 		}
-		Object obj = e.getSource();
-		if ( obj instanceof Dialog ) {
+		final Object obj = e.getSource();
+		if (obj instanceof Dialog) {
 			handleAddedDialog((Dialog) obj);
 		}
 	}

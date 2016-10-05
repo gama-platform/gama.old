@@ -65,7 +65,7 @@ public class WrappedFolder extends VirtualContent {
 		if (fileNames.isEmpty()) {
 			return EMPTY;
 		}
-		final List<WrappedFile> files = new ArrayList();
+		final List<WrappedFile> files = new ArrayList<>();
 		final IFile file = (IFile) getParent();
 		final IPath filePath = file.getLocation();
 		final IPath projectPath = file.getProject().getLocation();

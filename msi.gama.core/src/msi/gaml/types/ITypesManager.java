@@ -3,6 +3,7 @@ package msi.gaml.types;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 
+@SuppressWarnings({ "rawtypes" })
 public interface ITypesManager {
 
 	void alias(String existingTypeName, String otherTypeName);

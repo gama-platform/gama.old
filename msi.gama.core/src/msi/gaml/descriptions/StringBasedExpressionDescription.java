@@ -28,6 +28,7 @@ import msi.gaml.types.Types;
  * @since 31 mars 2012
  *
  */
+@SuppressWarnings({ "rawtypes" })
 public class StringBasedExpressionDescription extends BasicExpressionDescription {
 
 	String string;
@@ -55,7 +56,7 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
-		final Set<String> result = new THashSet();
+		final Set<String> result = new THashSet<>();
 		final StringBuilder b = new StringBuilder();
 		for (final char c : string.toCharArray()) {
 			switch (c) {

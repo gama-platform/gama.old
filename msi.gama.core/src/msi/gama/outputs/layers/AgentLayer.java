@@ -51,7 +51,7 @@ public class AgentLayer extends AbstractLayer {
 		return super.focusOn(geometry, s);
 	}
 
-	protected final Map<IAgent, Rectangle2D> shapes = new ConcurrentHashMap();
+	protected final Map<IAgent, Rectangle2D> shapes = new ConcurrentHashMap<>();
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
@@ -125,7 +125,7 @@ public class AgentLayer extends AbstractLayer {
 
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
-		final Set<IAgent> selectedAgents = new THashSet();
+		final Set<IAgent> selectedAgents = new THashSet<>();
 		final Rectangle2D selection = new Rectangle2D.Double();
 		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2,
 				y + IDisplaySurface.SELECTION_SIZE / 2);

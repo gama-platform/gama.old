@@ -36,7 +36,7 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 		super(scope, param);
 	}
 
-	FontEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	FontEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<GamaFont> l) {
 		super(scope, agent, param, l);
 	}
 
@@ -45,7 +45,7 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 	}
 
 	FontEditor(final IScope scope, final Composite parent, final String title, final Object value,
-		final EditorListener<GamaFont> whenModified) {
+			final EditorListener<GamaFont> whenModified) {
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
@@ -61,8 +61,8 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		final GamaFont data =
-			currentValue != null ? currentValue : toGamaFont(GamaFonts.getSmallFont().getFontData()[0]);
+		final GamaFont data = currentValue != null ? currentValue
+				: toGamaFont(GamaFonts.getSmallFont().getFontData()[0]);
 		edit.setText(data.toString());
 		edit.setFont(new Font(WorkbenchHelper.getDisplay(), toFontData(data)));
 		internalModification = false;
@@ -102,7 +102,7 @@ public class FontEditor extends AbstractEditor<GamaFont> {
 		FontData data = toFontData(currentValue);
 		dialog.setFontList(new FontData[] { data });
 		data = dialog.open();
-		if ( data != null ) {
+		if (data != null) {
 			modifyAndDisplayValue(toGamaFont(data));
 		}
 

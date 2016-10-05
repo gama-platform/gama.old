@@ -24,7 +24,7 @@ import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
-public class ListEditor extends ExpressionBasedEditor<java.util.List> {
+public class ListEditor extends ExpressionBasedEditor<java.util.List<?>> {
 
 	ListEditor(final IScope scope, final IParameter param) {
 		super(scope, param);
@@ -34,23 +34,25 @@ public class ListEditor extends ExpressionBasedEditor<java.util.List> {
 		this(scope, agent, param, null);
 	}
 
-	ListEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	ListEditor(final IScope scope, final IAgent agent, final IParameter param,
+			final EditorListener<java.util.List<?>> l) {
 		super(scope, agent, param, l);
 	}
 
 	ListEditor(final IScope scope, final Composite parent, final String title, final Object value,
-		final EditorListener<java.util.List> whenModified) {
+			final EditorListener<java.util.List<?>> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void applyEdit() {
-		if ( currentValue instanceof GamaList ) {
-			final ListEditorDialog d =
-				new ListEditorDialog(WorkbenchHelper.getShell(), (GamaList) currentValue, param.getName());
-			if ( d.open() == IDialogConstants.OK_ID ) {
+		if (currentValue instanceof GamaList) {
+			final ListEditorDialog d = new ListEditorDialog(WorkbenchHelper.getShell(), (GamaList) currentValue,
+					param.getName());
+			if (d.open() == IDialogConstants.OK_ID) {
 				modifyAndDisplayValue(d.getList(ListEditor.this));
 			}
 		}
@@ -59,11 +61,12 @@ public class ListEditor extends ExpressionBasedEditor<java.util.List> {
 	@Override
 	protected void checkButtons() {
 		final ToolItem edit = items[EDIT];
-		if ( edit != null && !edit.isDisposed() ) {
+		if (edit != null && !edit.isDisposed()) {
 			edit.setEnabled(currentValue instanceof GamaList);
 		}
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public IType getExpectedType() {
 		return Types.LIST;

@@ -27,11 +27,13 @@ import msi.gaml.species.ISpecies;
  * @todo Description
  *
  */
+@SuppressWarnings("unchecked")
 public class GamaAgentType extends GamaType<IAgent> {
 
 	SpeciesDescription species;
 
-	public GamaAgentType(final SpeciesDescription species, final String name, final int speciesId, final Class base) {
+	public GamaAgentType(final SpeciesDescription species, final String name, final int speciesId,
+			final Class<?> base) {
 		this.species = species;
 		this.name = name;
 		id = speciesId;

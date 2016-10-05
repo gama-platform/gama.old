@@ -18,12 +18,14 @@ public class MetaFile {
 	private static final int PAD_BOTTOM = 2;
 	private static final int PAD_RIGHT = 3;
 
-	private static final int DESIRED_PADDING = 8; // this value is equal to the padding set for the texture through "hiero"
+	private static final int DESIRED_PADDING = 8; // this value is equal to the
+													// padding set for the
+													// texture through "hiero"
 
 	private static final String SPLITTER = " ";
 	private static final String NUMBER_SEPARATOR = ",";
 
-	private double aspectRatio;
+	private final double aspectRatio;
 
 	private double verticalPerPixelSize;
 	private double horizontalPerPixelSize;
@@ -32,10 +34,10 @@ public class MetaFile {
 	private int paddingWidth;
 	private int paddingHeight;
 
-	private Map<Integer, Character> metaData = new HashMap<Integer, Character>();
+	private final Map<Integer, Character> metaData = new HashMap<Integer, Character>();
 
 	private BufferedReader reader;
-	private Map<String, String> values = new HashMap<String, String>();
+	private final Map<String, String> values = new HashMap<String, String>();
 
 	/**
 	 * Opens a font file in preparation for reading.
@@ -43,13 +45,14 @@ public class MetaFile {
 	 * @param file
 	 *            - the font file.
 	 */
-	protected MetaFile(File file) {
-		this.aspectRatio = 1;// (double) Display.getWidth() / (double) Display.getHeight();
-		
+	protected MetaFile(final File file) {
+		this.aspectRatio = 1;// (double) Display.getWidth() / (double)
+								// Display.getHeight();
+
 		openFile(file);
 		loadPaddingData();
 		loadLineSizes();
-		int imageWidth = getValueOfVariable("scaleW");
+		final int imageWidth = getValueOfVariable("scaleW");
 		loadCharacterData(imageWidth);
 		close();
 	}
@@ -58,7 +61,7 @@ public class MetaFile {
 		return spaceWidth;
 	}
 
-	protected Character getCharacter(int ascii) {
+	protected Character getCharacter(final int ascii) {
 		return metaData.get(ascii);
 	}
 
@@ -72,25 +75,26 @@ public class MetaFile {
 		String line = null;
 		try {
 			line = reader.readLine();
-		} catch (IOException e1) {
+		} catch (final IOException e1) {
 		}
 		if (line == null) {
 			return false;
 		}
-		// treat the line for the case of "" : replace the char " " to the char "__" when between double quotes.
-		String[] lineTmp = line.split("\"");
+		// treat the line for the case of "" : replace the char " " to the char
+		// "__" when between double quotes.
+		final String[] lineTmp = line.split("\"");
 		line = lineTmp[0];
-		for (int i = 1; i < lineTmp.length ; i++) {
-			if (i % 2 == 1) {
-				// this string bloc is between double quote : we replace the space char " " by "__".
+		for (int i = 1; i < lineTmp.length; i++) {
+			if (i % 2 != 0) {
+				// this string bloc is between double quote : we replace the
+				// space char " " by "__".
 				line += "\"" + lineTmp[i].replace(" ", "__");
-			}
-			else {
+			} else {
 				line += "\"" + lineTmp[i];
 			}
 		}
-		for (String part : line.split(SPLITTER)) {
-			String[] valuePairs = part.split("=");
+		for (final String part : line.split(SPLITTER)) {
+			final String[] valuePairs = part.split("=");
 			if (valuePairs.length == 2) {
 				values.put(valuePairs[0], valuePairs[1].replace("__", " "));
 			}
@@ -106,7 +110,7 @@ public class MetaFile {
 	 *            - the name of the variable.
 	 * @return The value of the variable.
 	 */
-	private int getValueOfVariable(String variable) {
+	private int getValueOfVariable(final String variable) {
 		return Integer.parseInt(values.get(variable));
 	}
 
@@ -117,9 +121,9 @@ public class MetaFile {
 	 *            - the name of the variable.
 	 * @return The int array of values associated with the variable.
 	 */
-	private int[] getValuesOfVariable(String variable) {
-		String[] numbers = values.get(variable).split(NUMBER_SEPARATOR);
-		int[] actualValues = new int[numbers.length];
+	private int[] getValuesOfVariable(final String variable) {
+		final String[] numbers = values.get(variable).split(NUMBER_SEPARATOR);
+		final int[] actualValues = new int[numbers.length];
 		for (int i = 0; i < actualValues.length; i++) {
 			actualValues[i] = Integer.parseInt(numbers[i]);
 		}
@@ -132,7 +136,7 @@ public class MetaFile {
 	private void close() {
 		try {
 			reader.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -143,10 +147,10 @@ public class MetaFile {
 	 * @param file
 	 *            - the font file.
 	 */
-	private void openFile(File file) {
+	private void openFile(final File file) {
 		try {
 			reader = new BufferedReader(new FileReader(file));
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			System.err.println("Couldn't read font meta file!");
 		}
@@ -170,8 +174,8 @@ public class MetaFile {
 	 */
 	private void loadLineSizes() {
 		processNextLine();
-		int lineHeightPixels = getValueOfVariable("lineHeight") - paddingHeight;
-		verticalPerPixelSize = TextMeshCreator.LINE_HEIGHT / (double) lineHeightPixels;
+		final int lineHeightPixels = getValueOfVariable("lineHeight") - paddingHeight;
+		verticalPerPixelSize = TextMeshCreator.LINE_HEIGHT / lineHeightPixels;
 		horizontalPerPixelSize = verticalPerPixelSize / aspectRatio;
 	}
 
@@ -182,11 +186,11 @@ public class MetaFile {
 	 * @param imageWidth
 	 *            - the width of the texture atlas in pixels.
 	 */
-	private void loadCharacterData(int imageWidth) {
+	private void loadCharacterData(final int imageWidth) {
 		processNextLine();
 		processNextLine();
 		while (processNextLine()) {
-			Character c = loadCharacter(imageWidth);
+			final Character c = loadCharacter(imageWidth);
 			if (c != null) {
 				metaData.put(c.getId(), c);
 			}
@@ -202,23 +206,25 @@ public class MetaFile {
 	 *            - the size of the texture atlas in pixels.
 	 * @return The data about the character.
 	 */
-	private Character loadCharacter(int imageSize) {
-		int id = getValueOfVariable("id");
+	private Character loadCharacter(final int imageSize) {
+		final int id = getValueOfVariable("id");
 		if (id == TextMeshCreator.SPACE_ASCII) {
 			this.spaceWidth = (getValueOfVariable("xadvance") - paddingWidth) * horizontalPerPixelSize;
 			return null;
 		}
-		double xTex = ((double) getValueOfVariable("x") + (padding[PAD_LEFT] - DESIRED_PADDING)) / imageSize;
-		double yTex = 1.0 - ((double) getValueOfVariable("y") + (padding[PAD_TOP] - DESIRED_PADDING)) / imageSize;
-		int width = getValueOfVariable("width") - (paddingWidth - (2 * DESIRED_PADDING));
-		int height = - ( getValueOfVariable("height") - ((paddingHeight) - (2 * DESIRED_PADDING)) );
-		double quadWidth = width * horizontalPerPixelSize;
-		double quadHeight = height * verticalPerPixelSize;
-		double xTexSize = (double) width / imageSize;
-		double yTexSize = (double) height / imageSize;
-		double xOff = (getValueOfVariable("xoffset") + padding[PAD_LEFT] - DESIRED_PADDING) * horizontalPerPixelSize;
-		double yOff = - (getValueOfVariable("yoffset") + (padding[PAD_TOP] - DESIRED_PADDING)) * verticalPerPixelSize;
-		double xAdvance = (getValueOfVariable("xadvance") - paddingWidth) * horizontalPerPixelSize;
+		final double xTex = ((double) getValueOfVariable("x") + (padding[PAD_LEFT] - DESIRED_PADDING)) / imageSize;
+		final double yTex = 1.0 - ((double) getValueOfVariable("y") + (padding[PAD_TOP] - DESIRED_PADDING)) / imageSize;
+		final int width = getValueOfVariable("width") - (paddingWidth - 2 * DESIRED_PADDING);
+		final int height = -(getValueOfVariable("height") - (paddingHeight - 2 * DESIRED_PADDING));
+		final double quadWidth = width * horizontalPerPixelSize;
+		final double quadHeight = height * verticalPerPixelSize;
+		final double xTexSize = (double) width / imageSize;
+		final double yTexSize = (double) height / imageSize;
+		final double xOff = (getValueOfVariable("xoffset") + padding[PAD_LEFT] - DESIRED_PADDING)
+				* horizontalPerPixelSize;
+		final double yOff = -(getValueOfVariable("yoffset") + padding[PAD_TOP] - DESIRED_PADDING)
+				* verticalPerPixelSize;
+		final double xAdvance = (getValueOfVariable("xadvance") - paddingWidth) * horizontalPerPixelSize;
 		return new Character(id, xTex, yTex, xTexSize, yTexSize, xOff, yOff, quadWidth, quadHeight, xAdvance);
 	}
 }

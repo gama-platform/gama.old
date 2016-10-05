@@ -12,18 +12,33 @@
 package ummisco.gama.ui.parameters;
 
 import java.util.ArrayList;
-import msi.gama.common.util.StringUtils;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
+
+import msi.gama.common.util.StringUtils;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
 
 /**
- * The ListParameterDialog supply a window to help user to modify the list in the visual way.
+ * The ListParameterDialog supply a window to help user to modify the list in
+ * the visual way.
  */
+@SuppressWarnings({ "rawtypes" })
 public class ListEditorDialog extends Dialog {
 
 	private final ArrayList<String> data = new ArrayList<String>();
@@ -38,11 +53,12 @@ public class ListEditorDialog extends Dialog {
 	protected ListEditorDialog(final Shell parentShell, final GamaList list, final String listname) {
 		super(parentShell);
 		this.listname = listname;
-		for ( Object o : list ) {
+		for (final Object o : list) {
 			data.add(StringUtils.toGaml(o, false));
 		}
 		// final String tmpGamlList = list.substring(1, list.length() - 1);
-		// final StringTokenizer elementTokenizer = new StringTokenizer(tmpGamlList, ",");
+		// final StringTokenizer elementTokenizer = new
+		// StringTokenizer(tmpGamlList, ",");
 		// while (elementTokenizer.hasMoreTokens()) {
 		// final String tmp = elementTokenizer.nextToken().trim();
 		// data.add(tmp);
@@ -50,9 +66,11 @@ public class ListEditorDialog extends Dialog {
 	}
 
 	/**
-	 * Creates and returns the contents of the upper part of this dialog (above the button bar).
+	 * Creates and returns the contents of the upper part of this dialog (above
+	 * the button bar).
 	 * 
-	 * @param parent the parent composite to contain the dialog area
+	 * @param parent
+	 *            the parent composite to contain the dialog area
 	 * @return the dialog area control
 	 */
 	@Override
@@ -67,16 +85,12 @@ public class ListEditorDialog extends Dialog {
 
 		/** The Text widget containing the new element to be added. */
 		final Text newElementText = new Text(container, SWT.BORDER);
-		newElementText.addModifyListener(new ModifyListener() {
-
-			@Override
-			public void modifyText(final ModifyEvent me) {
-				if ( newElementText.getText() == null || newElementText.getText().trim().length() == 0 ) {
-					newElementButton.setEnabled(false);
-				}
-				if ( newElementText.getText().trim().length() > 0 ) {
-					newElementButton.setEnabled(true);
-				}
+		newElementText.addModifyListener(me -> {
+			if (newElementText.getText() == null || newElementText.getText().trim().length() == 0) {
+				newElementButton.setEnabled(false);
+			}
+			if (newElementText.getText().trim().length() > 0) {
+				newElementButton.setEnabled(true);
 			}
 		});
 
@@ -101,10 +115,11 @@ public class ListEditorDialog extends Dialog {
 		});
 
 		/**
-		 * The list widget containing all the elements of the corresponding GAML list.
+		 * The list widget containing all the elements of the corresponding GAML
+		 * list.
 		 */
 		list = new List(container, SWT.BORDER | SWT.SINGLE | SWT.V_SCROLL | SWT.H_SCROLL);
-		for ( final String gamlElement : data ) {
+		for (final String gamlElement : data) {
 			list.add(gamlElement);
 		}
 
@@ -117,14 +132,14 @@ public class ListEditorDialog extends Dialog {
 
 			@Override
 			public void mouseUp(final MouseEvent me) {
-				if ( list.getSelectionIndex() != -1 ) {
-					if ( list.getSelectionIndex() > 0 ) {
+				if (list.getSelectionIndex() != -1) {
+					if (list.getSelectionIndex() > 0) {
 						upButton.setEnabled(true);
 					} else {
 						upButton.setEnabled(false);
 					}
 
-					if ( list.getSelectionIndex() < data.size() - 1 ) {
+					if (list.getSelectionIndex() < data.size() - 1) {
 						downButton.setEnabled(true);
 					} else {
 						downButton.setEnabled(false);
@@ -168,7 +183,7 @@ public class ListEditorDialog extends Dialog {
 				list.remove(selectionIndex);
 				data.remove(selectionIndex);
 
-				if ( selectionIndex > 0 ) {
+				if (selectionIndex > 0) {
 					selectionIndex--;
 				}
 				list.add(currentSelectedElement, selectionIndex);
@@ -176,11 +191,11 @@ public class ListEditorDialog extends Dialog {
 
 				list.setSelection(selectionIndex);
 
-				if ( selectionIndex == 0 ) {
+				if (selectionIndex == 0) {
 					upButton.setEnabled(false);
 				}
 
-				if ( selectionIndex < data.size() - 1 ) {
+				if (selectionIndex < data.size() - 1) {
 					downButton.setEnabled(true);
 				}
 			}
@@ -205,7 +220,7 @@ public class ListEditorDialog extends Dialog {
 				list.remove(selectionIndex);
 				data.remove(selectionIndex);
 
-				if ( selectionIndex < data.size() ) {
+				if (selectionIndex < data.size()) {
 					selectionIndex++;
 				}
 
@@ -214,11 +229,11 @@ public class ListEditorDialog extends Dialog {
 
 				list.setSelection(selectionIndex);
 
-				if ( selectionIndex >= data.size() - 1 ) {
+				if (selectionIndex >= data.size() - 1) {
 					downButton.setEnabled(false);
 				}
 
-				if ( selectionIndex > 0 ) {
+				if (selectionIndex > 0) {
 					upButton.setEnabled(true);
 				}
 			}
@@ -242,23 +257,23 @@ public class ListEditorDialog extends Dialog {
 				list.remove(selectionIndex);
 				data.remove(selectionIndex);
 
-				if ( data.size() > 0 ) {
-					if ( selectionIndex >= data.size() ) {
+				if (data.size() > 0) {
+					if (selectionIndex >= data.size()) {
 						selectionIndex--;
 					}
 
-					if ( selectionIndex >= 0 && selectionIndex < data.size() ) {
+					if (selectionIndex >= 0 && selectionIndex < data.size()) {
 						list.setSelection(selectionIndex);
 						removeButton.setEnabled(true);
 					}
 
-					if ( selectionIndex >= data.size() - 1 ) {
+					if (selectionIndex >= data.size() - 1) {
 						downButton.setEnabled(false);
 					} else {
 						downButton.setEnabled(true);
 					}
 
-					if ( selectionIndex > 0 ) {
+					if (selectionIndex > 0) {
 						upButton.setEnabled(true);
 					} else {
 						upButton.setEnabled(false);
@@ -279,8 +294,8 @@ public class ListEditorDialog extends Dialog {
 		boolean isFirstElement = true;
 		final StringBuilder tmp = new StringBuilder("[");
 
-		for ( final String element : data ) {
-			if ( isFirstElement ) {
+		for (final String element : data) {
+			if (isFirstElement) {
 				isFirstElement = false;
 				tmp.append(element);
 			} else {
@@ -290,7 +305,7 @@ public class ListEditorDialog extends Dialog {
 		tmp.append("]");
 		try {
 			return (GamaList) GAML.evaluateExpression(tmp.toString(), editor.getAgent());
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			return GamaListFactory.create();
 		}
 	}

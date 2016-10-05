@@ -29,7 +29,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 
 	public ExperimentController(final IExperimentPlan experiment) {
 		this.scheduler = new ExperimentScheduler(experiment);
-		commands = new ArrayBlockingQueue(10);
+		commands = new ArrayBlockingQueue<Integer>(10);
 		this.experiment = experiment;
 	}
 
@@ -94,13 +94,7 @@ public class ExperimentController implements Runnable, IExperimentController {
 				if (commandThread == null) {
 					experiment.open();
 				} else {
-					new Thread(new Runnable() {
-
-						@Override
-						public void run() {
-							experiment.open();
-						}
-					}).start();
+					new Thread(() -> experiment.open()).start();
 					;
 				}
 			} catch (final Exception e) {

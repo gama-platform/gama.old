@@ -22,6 +22,7 @@ import msi.gaml.expressions.IExpression;
  * @since 28 janv. 2014
  *
  */
+@SuppressWarnings({ "rawtypes" })
 public interface IContainerType<T extends IContainer> extends IType<T> {
 
 	@Override
@@ -38,10 +39,10 @@ public interface IContainerType<T extends IContainer> extends IType<T> {
 
 	/**
 	 * Allows to build a parametric type
+	 * 
 	 * @param subs
 	 * @return
 	 */
-	public IContainerType of(IType ... subs);
-
+	public IContainerType of(IType... subs);
 
 }

@@ -67,7 +67,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 				if (skills && !GamaSkillRegistry.INSTANCE.hasSkill(skillName)) {
 					context.error("Unknown " + type + " " + skillName, IGamlIssue.UNKNOWN_SKILL, target);
 				}
-				return new HashSet(Arrays.asList(skillName));
+				return new HashSet<>(Arrays.asList(skillName));
 			}
 			if (target instanceof Expression) {
 				context.error("Impossible to recognize valid " + type + "s in " + EGaml.toString(target),
@@ -78,7 +78,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 			}
 			return Collections.EMPTY_SET;
 		}
-		final Set<String> result = new HashSet();
+		final Set<String> result = new HashSet<>();
 		final Array array = (Array) target;
 		for (final Expression expr : EGaml.getExprsOf(array.getExprs())) {
 			final String type = skills ? "skill" : "attribute";

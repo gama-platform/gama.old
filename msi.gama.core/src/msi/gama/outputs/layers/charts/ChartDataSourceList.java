@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gama.util.IList;
@@ -17,259 +15,207 @@ public class ChartDataSourceList extends ChartDataSource {
 	ArrayList<String> currentseries;
 	IExpression nameExp;
 
-	
-	public boolean cloneMe(IScope scope, int chartCycle,ChartDataSource source) {
+	@Override
+	public boolean cloneMe(final IScope scope, final int chartCycle, final ChartDataSource source) {
 
-		currentseries=((ChartDataSourceList)source).currentseries;
-		nameExp=((ChartDataSourceList)source).nameExp;
-		boolean res=super.cloneMe(scope, chartCycle, source);
+		currentseries = ((ChartDataSourceList) source).currentseries;
+		nameExp = ((ChartDataSourceList) source).nameExp;
+		final boolean res = super.cloneMe(scope, chartCycle, source);
 		return res;
-	}	
-	
-	public ChartDataSource getClone(IScope scope, int chartCycle) {
-		ChartDataSourceList res=new ChartDataSourceList();
+	}
+
+	@Override
+	public ChartDataSource getClone(final IScope scope, final int chartCycle) {
+		final ChartDataSourceList res = new ChartDataSourceList();
 		res.cloneMe(scope, chartCycle, this);
 		return res;
 	}
-	
+
 	public ChartDataSourceList() {
 		// TODO Auto-generated constructor stub
 		super();
 	}
 
-
-
 	public IExpression getNameExp() {
 		return nameExp;
 	}
 
-
-	public void setNameExp(final IScope scope, IExpression expval)
-	{
-		nameExp=expval;
+	public void setNameExp(final IScope scope, final IExpression expval) {
+		nameExp = expval;
 	}
-	
 
-	public void setNames(final IScope scope, IList lval)
-	{
+	public void setNames(final IScope scope, final IList<?> lval) {
 
 	}
 
-	public void updatevalues(IScope scope, int chartCycle) {
+	@Override
+	public void updatevalues(final IScope scope, final int chartCycle) {
 		super.updatevalues(scope, chartCycle);
-		Object o=null;
-		Object oname=this.getNameExp();
-		HashMap<String,Object> barvalues=new HashMap<String,Object>();
-		if (this.isUseYErrValues()) barvalues.put(ChartDataStatement.YERR_VALUES,this.getValueyerr().value(scope));
-		if (this.isUseXErrValues()) barvalues.put(ChartDataStatement.XERR_VALUES,this.getValuexerr().value(scope));
-		if (this.isUseYMinMaxValues()) barvalues.put(ChartDataStatement.XERR_VALUES,this.getValuexerr().value(scope));
-		if (this.isUseSizeExp()) barvalues.put(ChartDataStatement.MARKERSIZE,this.getSizeexp().value(scope));
-		if (this.isUseColorExp()) barvalues.put(IKeyword.COLOR,this.getColorexp().value(scope));
-		
-		//TODO check same length and list
-		
-		updateserielist(scope,chartCycle);
-		
-		int type_val=this.DATA_TYPE_NULL;
-		if ( getValue() != null ) {
+		Object o = null;
+		final Object oname = this.getNameExp();
+		final HashMap<String, Object> barvalues = new HashMap<String, Object>();
+		if (this.isUseYErrValues())
+			barvalues.put(ChartDataStatement.YERR_VALUES, this.getValueyerr().value(scope));
+		if (this.isUseXErrValues())
+			barvalues.put(ChartDataStatement.XERR_VALUES, this.getValuexerr().value(scope));
+		if (this.isUseYMinMaxValues())
+			barvalues.put(ChartDataStatement.XERR_VALUES, this.getValuexerr().value(scope));
+		if (this.isUseSizeExp())
+			barvalues.put(ChartDataStatement.MARKERSIZE, this.getSizeexp().value(scope));
+		if (this.isUseColorExp())
+			barvalues.put(IKeyword.COLOR, this.getColorexp().value(scope));
+
+		// TODO check same length and list
+
+		updateserielist(scope, chartCycle);
+
+		int type_val = this.DATA_TYPE_NULL;
+		if (getValue() != null) {
 			o = getValue().value(scope);
-		} 
-		type_val=get_data_type(scope,o);
-		
-		
-		if (o==null)
-		{
-// lastvalue??			
 		}
-		else		
-		{
+		type_val = get_data_type(scope, o);
+
+		if (o == null) {
+			// lastvalue??
+		} else {
 			// TODO Matrix case
-			if  ( o instanceof GamaList )
-			{
-				IList lval=Cast.asList(scope, o); 
-				
-				if (lval.size()>0)
-				{
-					for (int i=0; i<lval.size(); i++)
-					{
-						Object no=lval.get(i);
-						if (no!=null)
-						{
-							updateseriewithvalue(scope,mySeries.get(currentseries.get(i)),no,chartCycle,barvalues,i);
+			if (o instanceof GamaList) {
+				final IList<?> lval = Cast.asList(scope, o);
+
+				if (lval.size() > 0) {
+					for (int i = 0; i < lval.size(); i++) {
+						final Object no = lval.get(i);
+						if (no != null) {
+							updateseriewithvalue(scope, mySeries.get(currentseries.get(i)), no, chartCycle, barvalues,
+									i);
 						}
 					}
 				}
 			}
-			
 
 		}
-		
-		
+
 	}
-	
 
+	private void updateserielist(final IScope scope, final int chartCycle) {
+		final Object oname = getNameExp().value(scope);
+		final Object o = getValue().value(scope);
 
+		final ArrayList<String> oldseries = currentseries;
+		boolean somethingchanged = false;
 
-	private void updateserielist(IScope scope, int chartCycle) {
-		Object oname = getNameExp().value(scope);
-		Object o = getValue().value(scope);
+		if (oname == null) {
+			// lastvalue??
+		} else {
 
-		ArrayList<String> oldseries=currentseries;
-		boolean somethingchanged=false;
+			if (oname instanceof GamaList) {
+				final IList<?> lvaln = Cast.asList(scope, oname);
+				currentseries = new ArrayList<String>();
 
+				if (lvaln.size() > 0) {
 
-		if (oname==null)
-		{
-			// lastvalue??			
-		}
-		else		
-		{
+					// value list case
+					final IList<?> lval = Cast.asList(scope, o);
 
-			if  ( oname instanceof GamaList )
-			{
-				IList lvaln=Cast.asList(scope, oname); 
-				currentseries=new ArrayList<String>();
-
-				if (lvaln.size()>0)
-				{
-
-// value list case					
-					IList lval=Cast.asList(scope, o); 
-					
-					for (int i=0; i<Math.min(lvaln.size(),lval.size()); i++)
-					{
-						Object no=lvaln.get(i);
-						if (no!=null)
-						{
-							String myname=Cast.asString(scope, no);
+					for (int i = 0; i < Math.min(lvaln.size(), lval.size()); i++) {
+						final Object no = lvaln.get(i);
+						if (no != null) {
+							final String myname = Cast.asString(scope, no);
 							currentseries.add(i, myname);
 
-							
-							
-							if (i>=oldseries.size() || (!oldseries.get(i).equals(myname)))
-							{
-								somethingchanged=true;
-								if (oldseries.contains(myname))
-								{
-									//serie i was serie k before
-								}
-								else
-								{
-									//new serie
-									newserie(scope,myname);
+							if (i >= oldseries.size() || !oldseries.get(i).equals(myname)) {
+								somethingchanged = true;
+								if (oldseries.contains(myname)) {
+									// serie i was serie k before
+								} else {
+									// new serie
+									newserie(scope, myname);
 								}
 							}
 						}
 					}
 				}
-				if (currentseries.size()!=oldseries.size())
-				{
-					somethingchanged=true;
+				if (currentseries.size() != oldseries.size()) {
+					somethingchanged = true;
 				}
-				if (somethingchanged)
-				{
-					for (int i=0; i<oldseries.size(); i++)
-					{
-						if (!currentseries.contains(oldseries.get(i)))
-						{
-							//series i deleted
-							removeserie(scope,oldseries.get(i));
+				if (somethingchanged) {
+					for (int i = 0; i < oldseries.size(); i++) {
+						if (!currentseries.contains(oldseries.get(i))) {
+							// series i deleted
+							removeserie(scope, oldseries.get(i));
 						}
-						
+
 					}
 					ChartDataSeries s;
-					
-					for (int i=0; i<currentseries.size(); i++)
-					{
-						s=this.getDataset().getDataSeries(scope, currentseries.get(i));
+
+					for (int i = 0; i < currentseries.size(); i++) {
+						s = this.getDataset().getDataSeries(scope, currentseries.get(i));
 						this.getDataset().series.remove(currentseries.get(i));
-						this.getDataset().series.put(currentseries.get(i),s);
+						this.getDataset().series.put(currentseries.get(i), s);
 					}
 
 				}
-					
+
 			}
 		}
 	}
 
-
-
-	private void removeserie(IScope scope, String string) {
+	private void removeserie(final IScope scope, final String string) {
 		// TODO Auto-generated method stub
-		this.getDataset().removeserie(scope,string);
-		
+		this.getDataset().removeserie(scope, string);
+
 	}
 
-
-
-	private void newserie(IScope scope, String myname) {
+	private void newserie(final IScope scope, final String myname) {
 		// TODO Auto-generated method stub
-		if (this.getDataset().getDataSeriesIds(scope).contains(myname))
-		{
-	//TODO
-	//DO SOMETHING? create id and store correspondance
-	//		System.out.println("Serie "+myname+"s already exists... Will replace old one!!");
+		if (this.getDataset().getDataSeriesIds(scope).contains(myname)) {
+			// TODO
+			// DO SOMETHING? create id and store correspondance
+			// System.out.println("Serie "+myname+"s already exists... Will
+			// replace old one!!");
 		}
-		ChartDataSeries myserie=myDataset.createOrGetSerie(scope,myname,this);
-		mySeries.put(myname,myserie);
+		final ChartDataSeries myserie = myDataset.createOrGetSerie(scope, myname, this);
+		mySeries.put(myname, myserie);
 
-		
 	}
 
-	public void createInitialSeries(final IScope scope)
-	{
+	@Override
+	public void createInitialSeries(final IScope scope) {
 
-		Object on=getNameExp().value(scope);
+		final Object on = getNameExp().value(scope);
 
-		if  ( on instanceof GamaList )
-		{
-			IList lval=Cast.asList(scope, on); 
-			currentseries=new ArrayList<String>();
-			
-			if (lval.size()>0)
-			{
-				for (int i=0; i<lval.size(); i++)
-				{
-					Object no=lval.get(i);
-					if (no!=null)
-					{
-						String myname=Cast.asString(scope, no);
-						newserie(scope,myname);
+		if (on instanceof GamaList) {
+			final IList<?> lval = Cast.asList(scope, on);
+			currentseries = new ArrayList<String>();
+
+			if (lval.size() > 0) {
+				for (int i = 0; i < lval.size(); i++) {
+					final Object no = lval.get(i);
+					if (no != null) {
+						final String myname = Cast.asString(scope, no);
+						newserie(scope, myname);
 						currentseries.add(i, myname);
 					}
 				}
 			}
 		}
-		inferDatasetProperties(scope);		
+		inferDatasetProperties(scope);
 	}
-	
-	public void inferDatasetProperties(final IScope scope)
-	{
-		Object o=null;
-		int type_val=ChartDataSource.DATA_TYPE_NULL;
-		if ( this.getValue() != null ) {
-			o=this.getValue().value(scope);
-			if  ( o instanceof GamaList && Cast.asList(scope, o).size()>0)
-			{
-				Object o2=Cast.asList(scope, o).get(0);
-				type_val=get_data_type(scope,o2);
+
+	public void inferDatasetProperties(final IScope scope) {
+		Object o = null;
+		int type_val = ChartDataSource.DATA_TYPE_NULL;
+		if (this.getValue() != null) {
+			o = this.getValue().value(scope);
+			if (o instanceof GamaList && Cast.asList(scope, o).size() > 0) {
+				final Object o2 = Cast.asList(scope, o).get(0);
+				type_val = get_data_type(scope, o2);
 			}
-				
+
 		}
 
-		getDataset().getOutput().setDefaultPropertiesFromType(scope,this,o,type_val);
-		
-		
+		getDataset().getOutput().setDefaultPropertiesFromType(scope, this, o, type_val);
+
 	}
 
-
-
-
-
-
-
-
-
-
-	
 }

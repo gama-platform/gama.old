@@ -57,6 +57,7 @@ import msi.gaml.types.Types;
  * @since 18 mai 2013
  *
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	ILocation absoluteLocation;

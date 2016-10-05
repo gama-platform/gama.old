@@ -71,7 +71,7 @@ public class HeadlessSimulationLoader {
 
 		Logger.getLogger(HeadlessSimulationLoader.class.getName()).finer(fileName + " Model is loading...");
 		try {
-			final List<GamlCompilationError> errors = new ArrayList();
+			final List<GamlCompilationError> errors = new ArrayList<>();
 			final IModel model = GamlModelBuilder.compile(URI.createFileURI(fileName), errors);
 			if (model == null) {
 				{

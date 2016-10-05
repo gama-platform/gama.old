@@ -88,7 +88,7 @@ import msi.gaml.types.IType;
 @validator(SpeciesValidator.class)
 public class GamlSpecies extends AbstractSpecies {
 
-	public static class SpeciesValidator implements IDescriptionValidator {
+	public static class SpeciesValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()
@@ -246,6 +246,7 @@ public class GamlSpecies extends AbstractSpecies {
 	 * 
 	 * @see msi.gama.util.IContainer#getType()
 	 */
+	@SuppressWarnings("rawtypes")
 	@Override
 	public IContainerType getType() {
 		return (IContainerType) getDescription().getSpeciesExpr().getType();

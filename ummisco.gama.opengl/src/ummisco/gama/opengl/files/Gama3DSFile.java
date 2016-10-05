@@ -59,7 +59,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 		public List<Geometry> faces;
 	}
 
-	List<Obj> objects = new ArrayList();
+	List<Obj> objects = new ArrayList<>();
 
 	// Primary Chunk, at the beginning of each file
 	private static final int PRIMARY = 0x4D4D;
@@ -104,7 +104,7 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 		}
 		for (final Obj obj : objects) {
 			final Geometry g = GeometryUtils.FACTORY.buildGeometry(obj.faces);
-			((GamaList) getBuffer()).add(new GamaShape(g));
+			((GamaList<IShape>) getBuffer()).add(new GamaShape(g));
 		}
 
 	}
@@ -239,9 +239,9 @@ public class Gama3DSFile extends Gama3DGeometryFile {
 			final int numOfFaces = swap(dataInputStream.readShort());
 			previousChunk.bytesRead += 2;
 
-			object.faces = new ArrayList(numOfFaces);
+			object.faces = new ArrayList<>(numOfFaces);
 			for (int i = 0; i < numOfFaces; i++) {
-				final List<IShape> points = new ArrayList();
+				final List<IShape> points = new ArrayList<>();
 				points.add(object.verts[swap(dataInputStream.readShort())]);
 				points.add(object.verts[swap(dataInputStream.readShort())]);
 				points.add(object.verts[swap(dataInputStream.readShort())]);

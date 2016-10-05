@@ -212,7 +212,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public ChartLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		lastValues = new LinkedHashMap();
+		lastValues = new LinkedHashMap<>();
 		lastComputeCycle = 0l;
 	}
 
@@ -277,8 +277,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			} else if (range instanceof GamaPoint) {
 				chartoutput.setXRangeMinMax(scope, ((GamaPoint) range).getX(), ((GamaPoint) range).getY());
 			} else if (range instanceof GamaList) {
-				chartoutput.setXRangeMinMax(scope, Cast.asFloat(scope, ((GamaList) range).get(0)),
-						Cast.asFloat(scope, ((GamaList) range).get(1)));
+				chartoutput.setXRangeMinMax(scope, Cast.asFloat(scope, ((GamaList<?>) range).get(0)),
+						Cast.asFloat(scope, ((GamaList<?>) range).get(1)));
 			}
 		}
 
@@ -291,8 +291,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			} else if (range instanceof GamaPoint) {
 				chartoutput.setYRangeMinMax(scope, ((GamaPoint) range).getX(), ((GamaPoint) range).getY());
 			} else if (range instanceof GamaList) {
-				chartoutput.setYRangeMinMax(scope, Cast.asFloat(scope, ((GamaList) range).get(0)),
-						Cast.asFloat(scope, ((GamaList) range).get(1)));
+				chartoutput.setYRangeMinMax(scope, Cast.asFloat(scope, ((GamaList<?>) range).get(0)),
+						Cast.asFloat(scope, ((GamaList<?>) range).get(1)));
 			}
 		}
 

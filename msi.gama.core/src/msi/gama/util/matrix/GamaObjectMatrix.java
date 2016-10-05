@@ -34,7 +34,7 @@ import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	static public GamaObjectMatrix from(final int c, final int r, final IMatrix m) {

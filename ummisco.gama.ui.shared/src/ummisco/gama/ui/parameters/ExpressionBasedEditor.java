@@ -30,7 +30,7 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 		super(scope, variable);
 	}
 
-	public ExpressionBasedEditor(final IScope scope, final IParameter variable, final EditorListener l) {
+	public ExpressionBasedEditor(final IScope scope, final IParameter variable, final EditorListener<T> l) {
 		super(scope, variable, l);
 	}
 
@@ -39,20 +39,22 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 	}
 
 	public ExpressionBasedEditor(final IScope scope, final IAgent a, final IParameter variable,
-		final EditorListener l) {
+			final EditorListener<T> l) {
 		super(scope, a, variable, l);
 	}
 
 	@Override
 	public Text getEditorControl() {
-		if ( expression == null ) { return null; }
+		if (expression == null) {
+			return null;
+		}
 		return expression.getControl();
 	}
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
 		expression = new ExpressionControl(getScope(), compo, this, getAgent(), this.getExpectedType(), SWT.BORDER,
-			evaluateExpression());
+				evaluateExpression());
 		return expression.getControl();
 	}
 

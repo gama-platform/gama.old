@@ -12,42 +12,41 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.IGraph;
-import msi.gama.util.matrix.GamaMatrix;
 import ummisco.gama.serializer.gamaType.reduced.GamaGraphReducer;
-import ummisco.gama.serializer.gamaType.reduced.GamaMatrixReducer;
 
+@SuppressWarnings({ "rawtypes" })
 public class GamaGraphConverter implements Converter {
 
 	ConverterScope convertScope;
-	
-	public GamaGraphConverter(ConverterScope s){
+
+	public GamaGraphConverter(final ConverterScope s) {
 		convertScope = s;
 	}
-	
+
 	@Override
-	public boolean canConvert(Class arg0) {		
-		List allInterfaceApa = ClassUtils.getAllInterfaces(arg0);
-		
-		for(Object i : allInterfaceApa) {
-			if(i.equals(IGraph.class))
+	public boolean canConvert(final Class arg0) {
+		final List allInterfaceApa = ClassUtils.getAllInterfaces(arg0);
+
+		for (final Object i : allInterfaceApa) {
+			if (i.equals(IGraph.class))
 				return true;
 		}
 		return false;
 	}
 
 	@Override
-	public void marshal(Object arg0, HierarchicalStreamWriter writer, MarshallingContext arg2) {
-		GamaGraph graph = (GamaGraph) arg0;
+	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext arg2) {
+		final GamaGraph graph = (GamaGraph) arg0;
 
-		System.out.println("ConvertAnother : GamaList " + graph.getClass());			        
-		arg2.convertAnother(new GamaGraphReducer(convertScope.getScope(), graph));        		
-		System.out.println("END --- ConvertAnother : GamaList ");			        
+		System.out.println("ConvertAnother : GamaList " + graph.getClass());
+		arg2.convertAnother(new GamaGraphReducer(convertScope.getScope(), graph));
+		System.out.println("END --- ConvertAnother : GamaList ");
 
 	}
 
 	@Override
-	public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext arg1) {
-		GamaGraphReducer rmt = (GamaGraphReducer) arg1.convertAnother(null, GamaGraphReducer.class);
+	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
+		final GamaGraphReducer rmt = (GamaGraphReducer) arg1.convertAnother(null, GamaGraphReducer.class);
 		return rmt.constructObject(convertScope.getScope());
 	}
 

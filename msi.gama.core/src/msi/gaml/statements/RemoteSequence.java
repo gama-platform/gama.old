@@ -13,7 +13,7 @@ import msi.gaml.descriptions.IDescription;
 public class RemoteSequence extends AbstractStatementSequence {
 
 	// AD: adding ThreadLocal for multi-threaded simulations
-	final ThreadLocal<IAgent> myself = new ThreadLocal();
+	final ThreadLocal<IAgent> myself = new ThreadLocal<>();
 
 	public RemoteSequence(final IDescription desc) {
 		super(desc);

@@ -6,66 +6,64 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.MinimalAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.util.GamaList;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class GamaPopulationConverter implements Converter {
-		
-		ConverterScope convertScope;
-		
-		public GamaPopulationConverter(ConverterScope s){
-			convertScope = s;
-		}
-		
-		@Override
-		public boolean canConvert(final Class arg0) {
-			// TODO management of other GamaPopulation (grid)
-			
-			Class sc = arg0.getSuperclass();
-			Class<?>[] allInterface=arg0.getInterfaces();
-			for( Class<?> c:allInterface) {
-				Class scs = c.getSuperclass();
-			}
 
-			
-			
-//			if(GamlAgent.class.equals(arg0) || MinimalAgent.class.equals(arg0) || GamlAgent.class.equals(arg0.getSuperclass())){
-//				return true;
-//			}
-//			
-//			Class<?>[] allInterface=arg0.getInterfaces();
-//			for( Class<?> c:allInterface)
-//			{
-//				if(c.equals(GamlAgent.class))
-//					return true;
-//			}			
-			
-			return (arg0.equals(GamaPopulation.class));
+	ConverterScope convertScope;
+
+	public GamaPopulationConverter(final ConverterScope s) {
+		convertScope = s;
+	}
+
+	@Override
+	public boolean canConvert(final Class arg0) {
+		// TODO management of other GamaPopulation (grid)
+
+		final Class sc = arg0.getSuperclass();
+		final Class<?>[] allInterface = arg0.getInterfaces();
+		for (final Class<?> c : allInterface) {
+			final Class scs = c.getSuperclass();
 		}
 
-		@Override
-		public void marshal(Object arg0, HierarchicalStreamWriter writer, MarshallingContext context) {
-			System.out.println("ConvertAnother : GamaPopulationConverter " + arg0.getClass());		
-			GamaPopulation pop = (GamaPopulation) arg0;
+		// if(GamlAgent.class.equals(arg0) || MinimalAgent.class.equals(arg0) ||
+		// GamlAgent.class.equals(arg0.getSuperclass())){
+		// return true;
+		// }
+		//
+		// Class<?>[] allInterface=arg0.getInterfaces();
+		// for( Class<?> c:allInterface)
+		// {
+		// if(c.equals(GamlAgent.class))
+		// return true;
+		// }
 
-			writer.startNode("agentSetFromPopulation");
-			context.convertAnother((GamaList<IAgent>) pop.getAgents(convertScope.getScope()));
-			writer.endNode();		
-		
-			System.out.println("===========END ConvertAnother : GamaSavedAgentConverter");				
-		}
+		return arg0.equals(GamaPopulation.class);
+	}
 
-		@Override
-		public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
+	@Override
+	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
+		System.out.println("ConvertAnother : GamaPopulationConverter " + arg0.getClass());
+		final GamaPopulation pop = (GamaPopulation) arg0;
 
-			reader.moveDown();
-			GamaList<IAgent> listAgetFromPopulation = (GamaList<IAgent>) context.convertAnother(null, GamaList.class);
-			reader.moveUp();
-			
-			return listAgetFromPopulation;
-		}
+		writer.startNode("agentSetFromPopulation");
+		context.convertAnother(pop.getAgents(convertScope.getScope()));
+		writer.endNode();
+
+		System.out.println("===========END ConvertAnother : GamaSavedAgentConverter");
+	}
+
+	@Override
+	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext context) {
+
+		reader.moveDown();
+		final GamaList<IAgent> listAgetFromPopulation = (GamaList<IAgent>) context.convertAnother(null, GamaList.class);
+		reader.moveUp();
+
+		return listAgetFromPopulation;
+	}
 
 }

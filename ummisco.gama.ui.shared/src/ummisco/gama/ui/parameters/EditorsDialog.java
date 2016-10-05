@@ -41,17 +41,17 @@ import ummisco.gama.ui.resources.IGamaColors;
 public class EditorsDialog extends Dialog {
 
 	private final Map<String, Object> values;
-	private final Map<String, IType> types;
+	private final Map<String, IType<?>> types;
 	private final String title;
 	private final IScope scope;
 
 	public EditorsDialog(final IScope scope, final Shell parentShell, final Map<String, Object> values,
-			final Map<String, IType> types, final String title) {
+			final Map<String, IType<?>> types, final String title) {
 		super(parentShell);
 		this.scope = scope;
 		this.title = title;
 		setShellStyle(SWT.RESIZE | SWT.BORDER);
-		this.values = new LinkedHashMap(values);
+		this.values = new LinkedHashMap<>(values);
 		this.types = types;
 	}
 
@@ -99,7 +99,7 @@ public class EditorsDialog extends Dialog {
 		for (final Map.Entry<String, Object> entry : values.entrySet()) {
 			final InputParameter param = new InputParameter(entry.getKey(), entry.getValue(),
 					types.get(entry.getKey()));
-			final EditorListener listener = newValue -> {
+			final EditorListener<?> listener = newValue -> {
 				param.setValue(scope, newValue);
 				values.put(entry.getKey(), newValue);
 			};

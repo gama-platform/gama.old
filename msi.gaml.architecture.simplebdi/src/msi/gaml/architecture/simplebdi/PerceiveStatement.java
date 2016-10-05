@@ -62,6 +62,7 @@ import msi.gaml.types.IType;
 				@example(value = "If you want to make an action (such as adding a belief for example), use ask myself{ do the_action}", isExecutable = false),
 				@example(value = "}", isExecutable = false) }) })
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class PerceiveStatement extends AbstractStatementSequence {
 
 	public static final String PERCEIVE = "perceive";

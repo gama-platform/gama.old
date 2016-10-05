@@ -18,7 +18,6 @@ import java.util.Properties;
 
 import com.vividsolutions.jts.geom.Envelope;
 
-import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.precompiler.GamlAnnotations.file;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
@@ -51,6 +50,7 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 	 *
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		final Properties p = new Properties();
@@ -79,13 +79,9 @@ public class GamaPropertyFile extends GamaFile<GamaMap<String, String>, String, 
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
 		final Properties p = new Properties();
 		if (getBuffer() != null && !getBuffer().isEmpty())
-			getBuffer().forEachEntry(new TObjectObjectProcedure<String, String>() {
-
-				@Override
-				public boolean execute(final String a, final String b) {
-					p.setProperty(a, b);
-					return true;
-				}
+			getBuffer().forEachEntry((a, b) -> {
+				p.setProperty(a, b);
+				return true;
 			});
 		try (FileWriter fw = new FileWriter(getFile(scope))) {
 			p.store(fw, null);

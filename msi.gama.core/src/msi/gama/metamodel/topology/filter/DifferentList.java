@@ -10,17 +10,13 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
 
 public class DifferentList implements IAgentFilter {
 
-	
 	final Set<IShape> agents;
-	final IType contentType;
 
 	public DifferentList(final IList<? extends IShape> list) {
 		agents = new LinkedHashSet<IShape>(list);
-		contentType = list.getType().getContentType();
 	}
 
 	@Override

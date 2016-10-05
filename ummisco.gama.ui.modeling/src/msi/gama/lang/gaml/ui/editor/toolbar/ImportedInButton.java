@@ -35,6 +35,7 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
  * @since 4 déc. 2014
  *
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ImportedInButton {
 
 	final GamlEditor editor;

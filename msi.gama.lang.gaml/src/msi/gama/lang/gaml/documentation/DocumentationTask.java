@@ -37,7 +37,7 @@ class DocumentationTask {
 		}
 		if (node != null) {
 			try {
-				final THashMap map = documenter.getDocumentationCache(key);
+				final THashMap<EObject, IGamlDescription> map = documenter.getDocumentationCache(key);
 				if (map != null)
 					map.put(object, node);
 			} catch (final RuntimeException e) {

@@ -35,7 +35,7 @@ public class ExperimentDescription extends SpeciesDescription {
 		super(keyword, null, enclosing, null, cp, source, facets);
 	}
 
-	public ExperimentDescription(final String name, final Class clazz, final SpeciesDescription superDesc,
+	public ExperimentDescription(final String name, final Class<?> clazz, final SpeciesDescription superDesc,
 			final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills2, final Facets ff,
 			final String plugin) {
 		super(name, clazz, superDesc, parent, helper, skills2, ff, plugin);
@@ -43,7 +43,7 @@ public class ExperimentDescription extends SpeciesDescription {
 
 	private void addParameterNoCheck(final VariableDescription var) {
 		if (parameters == null) {
-			parameters = new TOrderedHashMap(5);
+			parameters = new TOrderedHashMap<>(5);
 		}
 
 		parameters.put(var.getName(), var);

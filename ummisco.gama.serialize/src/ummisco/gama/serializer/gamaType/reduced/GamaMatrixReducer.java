@@ -7,23 +7,23 @@ import msi.gama.util.matrix.GamaMatrix;
 import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IType;
 
+@SuppressWarnings({ "rawtypes" })
 public class GamaMatrixReducer {
-	private IType contentTypeMatrixReducer;
-	private IList valuesMatrixReducer;
-	private int nRows;
-	private int nCols;
-	
-	public GamaMatrixReducer(IScope scope, GamaMatrix m)
-	{		
+	private final IType contentTypeMatrixReducer;
+	private final IList valuesMatrixReducer;
+	private final int nRows;
+	private final int nCols;
+
+	public GamaMatrixReducer(final IScope scope, final GamaMatrix m) {
 		contentTypeMatrixReducer = m.getType().getContentType();
 		nRows = m.getRows(null);
 		nCols = m.getCols(null);
 		valuesMatrixReducer = m.listValue(scope, contentTypeMatrixReducer, true);
 	}
-	
-	public GamaMatrix constructObject(IScope scope)
-	{
-		return (GamaMatrix) GamaMatrixType.from(scope, valuesMatrixReducer, contentTypeMatrixReducer, new GamaPoint(nCols, nRows))	;
+
+	public GamaMatrix constructObject(final IScope scope) {
+		return (GamaMatrix) GamaMatrixType.from(scope, valuesMatrixReducer, contentTypeMatrixReducer,
+				new GamaPoint(nCols, nRows));
 
 	}
 }

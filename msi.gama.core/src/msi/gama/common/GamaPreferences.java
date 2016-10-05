@@ -436,7 +436,7 @@ public class GamaPreferences {
 		}
 
 		public void save() {
-			final Map<String, Object> map = new THashMap();
+			final Map<String, Object> map = new THashMap<>();
 			map.put(getName(), getValue());
 			GamaPreferences.setNewPreferences(map);
 		}
@@ -894,7 +894,7 @@ public class GamaPreferences {
 			final String group = e.group;
 			List<Entry> in_group = groups.get(group);
 			if (in_group == null) {
-				in_group = new ArrayList();
+				in_group = new ArrayList<>();
 				groups.put(group, in_group);
 			}
 			in_group.add(e);

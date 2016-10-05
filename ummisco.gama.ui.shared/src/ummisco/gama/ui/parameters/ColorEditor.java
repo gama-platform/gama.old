@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
+import java.awt.Color;
+
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -33,15 +35,9 @@ import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 
-public class ColorEditor extends AbstractEditor {
+public class ColorEditor extends AbstractEditor<Color> {
 
-	IColorRunnable runnable = new IColorRunnable() {
-
-		@Override
-		public void run(final int r, final int g, final int b) {
-			modifyAndDisplayValue(new GamaColor(r, g, b, 255));
-		}
-	};
+	IColorRunnable runnable = (r, g, b) -> modifyAndDisplayValue(new GamaColor(r, g, b, 255));
 
 	SelectionListener listener = new SelectionAdapter() {
 
@@ -69,7 +65,7 @@ public class ColorEditor extends AbstractEditor {
 		super(scope, param);
 	}
 
-	ColorEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	ColorEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<Color> l) {
 		super(scope, agent, param, l);
 	}
 
@@ -112,14 +108,14 @@ public class ColorEditor extends AbstractEditor {
 	}
 
 	@Override
-	public IType getExpectedType() {
+	public IType<Color> getExpectedType() {
 		return Types.COLOR;
 	}
 
 	@Override
 	protected void applyEdit() {
 		GamaColorMenu.getInstance();
-		final java.awt.Color color = (java.awt.Color) currentValue;
+		final java.awt.Color color = currentValue;
 		final RGB rgb = new RGB(color.getRed(), color.getGreen(), color.getBlue());
 		GamaColorMenu.openView(runnable, rgb);
 	}

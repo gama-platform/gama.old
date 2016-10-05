@@ -44,6 +44,7 @@ import prefuse.render.DefaultRendererFactory;
 import prefuse.visual.VisualItem;
 import prefuse.visual.VisualTable;
 
+@SuppressWarnings({ "rawtypes" })
 public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 	public static final String PREFUSE_GRAPH = "g";

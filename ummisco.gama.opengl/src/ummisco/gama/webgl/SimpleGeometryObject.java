@@ -16,6 +16,7 @@ import msi.gama.util.GamaPair;
  * @author drogoul
  *
  */
+@SuppressWarnings({ "rawtypes" })
 public class SimpleGeometryObject {
 
 	Geometry geometry;

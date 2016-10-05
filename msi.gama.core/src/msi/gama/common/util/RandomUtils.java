@@ -24,6 +24,7 @@ import msi.gama.util.random.JavaRNG;
 import msi.gama.util.random.MersenneTwisterRNG;
 import msi.gaml.operators.fastmaths.FastMath;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class RandomUtils {
 
 	/** The seed. */

@@ -38,6 +38,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
@@ -69,7 +70,7 @@ import msi.gaml.types.Types;
 @validator(CaptureValidator.class)
 public class CaptureStatement extends AbstractStatementSequence {
 
-	public static class CaptureValidator implements IDescriptionValidator {
+	public static class CaptureValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
 		 * Method validate()
@@ -77,7 +78,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
-		public void validate(final IDescription cd) {
+		public void validate(final StatementDescription cd) {
 			final String microSpeciesName = cd.getLitteral(AS);
 			if (microSpeciesName != null) {
 				final SpeciesDescription macroSpecies = cd.getSpeciesContext();
@@ -135,7 +136,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 		}
 
 		if (t instanceof IContainer) {
-			for (final Object o : ((IContainer) t).iterable(scope)) {
+			for (final Object o : ((IContainer<?, ?>) t).iterable(scope)) {
 				if (o instanceof IAgent) {
 					microAgents.add((IAgent) o);
 				}

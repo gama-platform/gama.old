@@ -31,13 +31,13 @@ public class ConstantExpression extends AbstractExpression {
 
 	Object value;
 
-	public ConstantExpression(final Object val, final IType t, final String name) {
+	public ConstantExpression(final Object val, final IType<?> t, final String name) {
 		value = val;
 		type = t;
 		setName(name);
 	}
 
-	public ConstantExpression(final Object val, final IType t) {
+	public ConstantExpression(final Object val, final IType<?> t) {
 		this(val, t, val == null ? "nil" : val.toString());
 	}
 

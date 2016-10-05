@@ -30,6 +30,7 @@ import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class AgentEditor extends ExpressionBasedEditor {
 
 	// Label agentDisplayer;

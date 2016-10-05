@@ -43,7 +43,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAdd> & IAddressableContainer<K, V, K, V>, ValueToAdd, K, V>
 		implements IGamaFile<C, ValueToAdd, K, V> {
 
@@ -297,8 +297,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public V getFromIndicesList(final IScope scope, @SuppressWarnings("rawtypes") final IList indices)
-			throws GamaRuntimeException {
+	public V getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		getContents(scope);
 		return getBuffer().getFromIndicesList(scope, indices);
 	}

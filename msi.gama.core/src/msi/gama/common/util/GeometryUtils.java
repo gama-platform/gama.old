@@ -90,7 +90,7 @@ public class GeometryUtils {
 		return null;
 	}
 
-	private static List<IEnvelopeComputer> envelopeComputers = new ArrayList();
+	private static List<IEnvelopeComputer> envelopeComputers = new ArrayList<>();
 
 	public static void addEnvelopeComputer(final IEnvelopeComputer ec) {
 		envelopeComputers.add(ec);

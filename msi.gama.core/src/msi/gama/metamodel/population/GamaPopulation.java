@@ -122,7 +122,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		public Object executeOn(final IScope scope) throws GamaRuntimeException {
 			final IPopulation pop = GamaPopulation.this;
 			final Set<IAgent> targets = new THashSet(Cast.asList(scope, listOfTargetAgents.value(scope)));
-			final List<IAgent> toKill = new ArrayList();
+			final List<IAgent> toKill = new ArrayList<>();
 			for (final IAgent agent : pop.iterable(scope)) {
 				final IAgent target = Cast.asAgent(scope, agent.getAttribute("target"));
 				if (targets.contains(target)) {
@@ -134,9 +134,9 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			for (final IAgent agent : toKill) {
 				agent.dispose();
 			}
-			final List<Map> attributes = new ArrayList();
+			final List<Map> attributes = new ArrayList<>();
 			for (final IAgent target : targets) {
-				final Map<String, Object> att = new THashMap();
+				final Map<String, Object> att = new THashMap<>();
 				att.put("target", target);
 				attributes.add(att);
 			}

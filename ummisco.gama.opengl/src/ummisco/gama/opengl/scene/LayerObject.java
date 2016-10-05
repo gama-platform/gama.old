@@ -44,6 +44,7 @@ import ummisco.gama.webgl.SimpleLayer;
  * @since 3 mars 2014
  *
  */
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class LayerObject implements Iterable<GeometryObject> {
 
 	final static GamaPoint NULL_OFFSET = new GamaPoint();
@@ -104,11 +105,10 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if (!(renderer instanceof ModernRenderer))
 			return;
 		final ModernRenderer renderer = (ModernRenderer) this.renderer;
-		
+
 		if (isOverlay()) {
 			gl.glDisable(GL2.GL_DEPTH_TEST);
-		}
-		else {
+		} else {
 			gl.glEnable(GL2.GL_DEPTH_TEST);
 		}
 
@@ -125,7 +125,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 					final DrawingEntity[] drawingEntity = renderer.getDrawingEntityGenerator()
 							.GenerateDrawingEntities(renderer.getSurface().getScope(), object, gl);
 					if (overlay) {
-						for (DrawingEntity de : drawingEntity) {
+						for (final DrawingEntity de : drawingEntity) {
 							de.enableOverlay(true);
 						}
 					}
@@ -376,7 +376,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	public void unlock() {
 		locked = false;
 	}
-	
+
 	public boolean isOverlay() {
 		return isOverlay;
 	}

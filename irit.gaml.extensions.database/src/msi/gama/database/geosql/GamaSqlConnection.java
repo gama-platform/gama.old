@@ -39,6 +39,7 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 // DataStore.dispose(); //close connection;
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class GamaSqlConnection extends GamaGisFile {
 
 	protected static final boolean DEBUG = false; // Change DEBUG = false for

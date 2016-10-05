@@ -22,7 +22,7 @@ import ummisco.gama.ui.interfaces.EditorListener;
 
 public class GenericEditor<T> extends ExpressionBasedEditor<T> {
 
-	IType expectedType;
+	IType<?> expectedType;
 
 	GenericEditor(final IScope scope, final IParameter param) {
 		super(scope, param);
@@ -33,13 +33,13 @@ public class GenericEditor<T> extends ExpressionBasedEditor<T> {
 		this(scope, agent, param, null);
 	}
 
-	GenericEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener l) {
+	GenericEditor(final IScope scope, final IAgent agent, final IParameter param, final EditorListener<T> l) {
 		super(scope, agent, param, l);
 		expectedType = param.getType();
 	}
 
 	GenericEditor(final IScope scope, final Composite parent, final String title, final T value,
-		final EditorListener whenModified) {
+			final EditorListener<T> whenModified) {
 		// Convenience method
 		super(scope, new InputParameter(title, value), whenModified);
 		expectedType = GamaType.of(value);
@@ -47,7 +47,7 @@ public class GenericEditor<T> extends ExpressionBasedEditor<T> {
 	}
 
 	@Override
-	public IType getExpectedType() {
+	public IType<?> getExpectedType() {
 		return expectedType;
 	}
 

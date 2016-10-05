@@ -25,7 +25,7 @@ import msi.gaml.types.IType;
 
 public class GlobalVariableExpression extends VariableExpression implements IVarExpression.Agent {
 
-	public static IExpression create(final String n, final IType type, final boolean notModifiable,
+	public static IExpression create(final String n, final IType<?> type, final boolean notModifiable,
 			final IDescription world) {
 		final VariableDescription v = ((SpeciesDescription) world).getAttribute(n);
 		final IExpression exp = v.getFacetExpr(IKeyword.INIT);
@@ -41,7 +41,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 		return new GlobalVariableExpression(n, type, notModifiable, world);
 	}
 
-	protected GlobalVariableExpression(final String n, final IType type, final boolean notModifiable,
+	protected GlobalVariableExpression(final String n, final IType<?> type, final boolean notModifiable,
 			final IDescription world) {
 		super(n, type, notModifiable, world);
 	}

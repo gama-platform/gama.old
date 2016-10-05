@@ -25,7 +25,7 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public abstract class GamaHelper<T> {
 
 	Class skillClass;

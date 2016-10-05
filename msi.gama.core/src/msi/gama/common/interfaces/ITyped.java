@@ -13,6 +13,7 @@ package msi.gama.common.interfaces;
 
 import msi.gaml.types.IType;
 
+@SuppressWarnings({ "rawtypes" })
 public interface ITyped {
 
 	public IType getType();

@@ -54,12 +54,12 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	public void addBehavior(final IStatement c) {
 		if (IKeyword.INIT.equals(c.getKeyword())) {
 			if (_inits == null)
-				_inits = new ArrayList();
+				_inits = new ArrayList<>();
 			_inits.add(0, c);
 			return;
 		}
 		if (_reflexes == null)
-			_reflexes = new ArrayList();
+			_reflexes = new ArrayList<>();
 		_reflexes.add(c);
 
 	}

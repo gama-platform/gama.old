@@ -74,7 +74,7 @@ public class ContainerVariable extends Variable {
 				if (fill == null) {
 					fill = IExpressionFactory.NIL_EXPR;
 				}
-				final IType type = vd.getType();
+				final IType<?> type = vd.getType();
 				switch (type.id()) {
 				case IType.LIST:
 					if (size.getType().id() != IType.INT) {

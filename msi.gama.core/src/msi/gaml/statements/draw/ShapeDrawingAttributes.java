@@ -15,6 +15,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 
+@SuppressWarnings({ "rawtypes", "unchecked" })
 public class ShapeDrawingAttributes extends FileDrawingAttributes {
 
 	public double depth = 0.0;
@@ -25,8 +26,9 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	public List<GamaColor> colors;
 
 	public ShapeDrawingAttributes(final ILocation size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
-			final ILocation location, final Boolean empty, final GamaColor color, final List<GamaColor> colors, final GamaColor border,
-			final List textures, final GamaMaterial material, final IAgent agent, final IShape.Type type) {
+			final ILocation location, final Boolean empty, final GamaColor color, final List<GamaColor> colors,
+			final GamaColor border, final List textures, final GamaMaterial material, final IAgent agent,
+			final IShape.Type type) {
 		super(size, rotation, location, color, border, agent);
 		this.depth = depth == null ? 0.0 : depth.doubleValue();
 		this.empty = empty == null ? false : empty.booleanValue();
@@ -101,12 +103,12 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	public double getDepth() {
 		return depth;
 	}
-	
+
 	@Override
 	public List<GamaColor> getColors() {
 		return colors;
 	}
-	
+
 	/**
 	 * Method getMaterial()
 	 * 

@@ -108,8 +108,8 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 			return null;
 		}
 		if (color.getType().id() == IType.LIST) {
-			final IList list = Cast.asList(scope, color.value(scope));
-			final List<int[]> result = new ArrayList();
+			final IList<?> list = Cast.asList(scope, color.value(scope));
+			final List<int[]> result = new ArrayList<>();
 			int i = 0;
 			for (final Object o : list) {
 				final int[] rgb = computeColor(scope, o);
@@ -156,7 +156,7 @@ public class OverlayStatement extends GraphicLayerStatement implements IOverlayP
 	}
 
 	@Override
-	public void setTarget(final IUpdaterTarget overlay, final IDisplaySurface surface) {
+	public void setTarget(final IUpdaterTarget<OverlayInfo> overlay, final IDisplaySurface surface) {
 		this.overlay = overlay;
 		_step(surface.getScope());
 	}

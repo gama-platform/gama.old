@@ -83,6 +83,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 		// Nothing to do
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
 		final IContainer<Integer, String> files = getContents(scope);

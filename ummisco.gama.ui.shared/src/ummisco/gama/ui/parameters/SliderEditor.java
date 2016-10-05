@@ -14,7 +14,6 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import ummisco.gama.ui.controls.IPositionChangeListener;
 import ummisco.gama.ui.controls.SimpleSlider;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -26,7 +25,7 @@ import ummisco.gama.ui.resources.IGamaColors;
  * @author drogoul
  *
  */
-public abstract class SliderEditor<T extends Number> extends AbstractEditor {
+public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 
 	final protected int nbInts;
 	final DecimalFormat formatter = (DecimalFormat) NumberFormat.getInstance(Locale.US);
@@ -35,7 +34,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor {
 
 	public static class Int extends SliderEditor<Integer> {
 
-		public Int(final IScope scope, final IAgent a, final IParameter variable, final EditorListener l) {
+		public Int(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<Integer> l) {
 			super(scope, a, variable, l);
 			formatter.setMaximumFractionDigits(0);
 			formatter.setMinimumFractionDigits(0);
@@ -57,7 +56,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor {
 
 		final int nbFracs;
 
-		public Float(final IScope scope, final IAgent a, final IParameter variable, final EditorListener l) {
+		public Float(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<Double> l) {
 			super(scope, a, variable, l);
 			stepValue = getStep();
 			if (stepValue == null) {
@@ -81,7 +80,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor {
 	SimpleSlider slider;
 	T stepValue;
 
-	public SliderEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener l) {
+	public SliderEditor(final IScope scope, final IAgent a, final IParameter variable, final EditorListener<T> l) {
 		super(scope, a, variable);
 		final int minChars = String.valueOf(minValue.intValue()).length();
 		final int maxChars = String.valueOf(maxValue.intValue()).length();
@@ -94,6 +93,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor {
 		return ITEMS;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected T getStep() {
 		return (T) param.getStepValue(getScope());
 	}
@@ -115,14 +115,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor {
 			slider.setStep(realStep);
 		}
 
-		slider.addPositionChangeListener(new IPositionChangeListener() {
-
-			@Override
-			public void positionChanged(final double position) {
-				modifyAndDisplayValue(computeValue(position));
-			}
-
-		});
+		slider.addPositionChangeListener(position -> modifyAndDisplayValue(computeValue(position)));
 		slider.pack(true);
 		return slider;
 	}
@@ -177,7 +170,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor {
 
 	@Override
 	protected void displayParameterValue() {
-		final T p = (T) currentValue;
+		final T p = currentValue;
 		final double position = (p.doubleValue() - minValue.doubleValue())
 				/ (maxValue.doubleValue() - minValue.doubleValue());
 		slider.updateSlider(position, false);

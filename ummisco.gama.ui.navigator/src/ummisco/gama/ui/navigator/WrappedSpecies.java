@@ -48,7 +48,7 @@ public class WrappedSpecies extends WrappedGamlObject {
 
 	@Override
 	public Object[] getNavigatorChildren() {
-		final List result = new ArrayList();
+		final List<WrappedSpecies> result = new ArrayList<>();
 		final Collection<SpeciesDescription> sd = getObject().getMicroSpecies().values();
 		for (final SpeciesDescription s : sd) {
 			result.add(new WrappedSpecies(this, s));

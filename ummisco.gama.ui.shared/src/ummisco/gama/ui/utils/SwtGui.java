@@ -257,8 +257,8 @@ public class SwtGui implements IGui {
 
 	@Override
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
-			final Map<String, Object> initialValues, final Map<String, IType> types) {
-		final Map<String, Object> result = new THashMap();
+			final Map<String, Object> initialValues, final Map<String, IType<?>> types) {
+		final Map<String, Object> result = new THashMap<>();
 		WorkbenchHelper.run(() -> {
 			final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), initialValues, types,
 					title);

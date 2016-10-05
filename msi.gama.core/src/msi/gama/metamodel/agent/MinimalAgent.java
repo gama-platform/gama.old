@@ -62,7 +62,7 @@ public class MinimalAgent extends AbstractAgent {
 		// possessed by the agent, no need to
 		// change anything.
 		if (newGeometry == geometry || newGeometry == null || newGeometry.getInnerGeometry() == null || dead()
-				|| (this.getSpecies().isGrid() && ((GamlSpecies)this.getSpecies()).belongsToAMicroModel() )) {
+				|| this.getSpecies().isGrid() && ((GamlSpecies) this.getSpecies()).belongsToAMicroModel()) {
 			return;
 		}
 
@@ -111,6 +111,7 @@ public class MinimalAgent extends AbstractAgent {
 		this.name = name;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public/* synchronized */void setLocation(final ILocation point) {
 		if (point == null || dead() || this.getSpecies().isGrid()) {

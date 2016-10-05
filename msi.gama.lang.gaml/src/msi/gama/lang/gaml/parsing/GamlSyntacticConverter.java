@@ -175,7 +175,7 @@ public class GamlSyntacticConverter {
 			return null;
 		}
 		final List<Pragma> pragmas = m.getPragmas();
-		final List<String> result = new ArrayList();
+		final List<String> result = new ArrayList<>();
 		if (pragmas.isEmpty())
 			return null;
 		for (int i = 0; i < pragmas.size(); i++) {

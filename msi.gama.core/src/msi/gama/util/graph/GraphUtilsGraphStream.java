@@ -33,7 +33,7 @@ import msi.gama.util.GamaColor;
  * @author Samuel Thiriot
  * 
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public class GraphUtilsGraphStream {
 
 	/**

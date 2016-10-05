@@ -32,8 +32,8 @@ public class PasteIntoModelsHandler extends AbstractHandler {
 						final CopyFilesAndFoldersOperation op = new CopyFilesAndFoldersOperation(
 								WorkbenchHelper.getShell());
 						op.setVirtualFolders(false);
-						final List<File> files = Arrays.asList(f.listFiles());
-						final List<String> names = new ArrayList();
+						final List<File> files = Arrays.<File> asList(f.listFiles());
+						final List<String> names = new ArrayList<>();
 						for (final File toCopy : files) {
 							if (toCopy.getName().equals(".project"))
 								continue;

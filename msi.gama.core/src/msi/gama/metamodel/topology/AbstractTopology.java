@@ -108,7 +108,7 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	public Map<Geometry, IAgent> toroidalGeoms(final IScope scope, final IContainer<?, ? extends IShape> shps) {
-		final Map<Geometry, IAgent> geoms = new TOrderedHashMap();
+		final Map<Geometry, IAgent> geoms = new TOrderedHashMap<>();
 		for (final IShape ag : shps.iterable(scope)) {
 			final IAgent agent = ag.getAgent();
 			if (agent != null) {
@@ -504,7 +504,7 @@ public abstract class AbstractTopology implements ITopology {
 		final Geometry sourceTo = returnToroidalGeom(source);
 		final PreparedGeometry pg = pgFact.create(sourceTo);
 		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(scope, f);
-		final Set<IAgent> result = new THashSet();
+		final Set<IAgent> result = new THashSet<>();
 		for (final Geometry sh : agentsMap.keySet()) {
 			final IAgent ag = agentsMap.get(sh);
 			if (ag != null && !ag.dead()) {

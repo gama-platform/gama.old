@@ -53,13 +53,13 @@ import ummisco.gama.opengl.utils.GLUtilGLContext;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaObjFile extends Gama3DGeometryFile {
 
-	private final ArrayList<float[]> vertexSets = new ArrayList();
-	private final ArrayList vertexsetsNorms = new ArrayList();
-	private final ArrayList vertexSetsTexs = new ArrayList();
-	private final ArrayList<int[]> faces = new ArrayList();
-	private final ArrayList facesTexs = new ArrayList();
-	private final ArrayList facesNorms = new ArrayList();
-	private final ArrayList matTimings = new ArrayList();
+	private final ArrayList<float[]> vertexSets = new ArrayList<>();
+	private final ArrayList vertexsetsNorms = new ArrayList<>();
+	private final ArrayList vertexSetsTexs = new ArrayList<>();
+	private final ArrayList<int[]> faces = new ArrayList<>();
+	private final ArrayList facesTexs = new ArrayList<>();
+	private final ArrayList facesNorms = new ArrayList<>();
+	private final ArrayList matTimings = new ArrayList<>();
 	private MtlLoader materials;
 	// private int objectList;
 	// private int numPolys = 0;

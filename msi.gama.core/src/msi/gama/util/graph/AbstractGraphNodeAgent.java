@@ -79,6 +79,7 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 		return false;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@getter(IKeyword.MYGRAPH)
 	public GamaGraph getGraph() {
 		return (GamaGraph) getTopology().getPlaces();

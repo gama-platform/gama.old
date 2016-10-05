@@ -115,7 +115,7 @@ public abstract class AbstractProto implements IGamlDescription, INamed, IGamlab
 		if (d != null) {
 			final usage[] tt = d.usages();
 			if (tt.length > 0) {
-				return new ArrayList(Arrays.asList(tt));
+				return new ArrayList<>(Arrays.asList(tt));
 			}
 		}
 		return Collections.EMPTY_LIST;

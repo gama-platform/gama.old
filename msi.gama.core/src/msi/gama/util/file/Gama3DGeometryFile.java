@@ -34,8 +34,8 @@ public abstract class Gama3DGeometryFile extends GamaGeometryFile {
 			throws GamaRuntimeException {
 		super(scope, pathName);
 		if (initRotation != null) {
-			this.initRotation = new GamaPair(Cast.asFloat(null, initRotation.key),
-					Cast.asPoint(null, initRotation.value), Types.FLOAT, Types.POINT);
+			this.initRotation = new GamaPair<Double, GamaPoint>(Cast.asFloat(null, initRotation.key),
+					(GamaPoint) Cast.asPoint(null, initRotation.value), Types.FLOAT, Types.POINT);
 		} else {
 			this.initRotation = null;
 		}
@@ -43,7 +43,7 @@ public abstract class Gama3DGeometryFile extends GamaGeometryFile {
 
 	@Override
 	protected IShape buildGeometry(final IScope scope) {
-		final List<Geometry> faces = new ArrayList();
+		final List<Geometry> faces = new ArrayList<>();
 		for (final IShape shape : getBuffer().iterable(scope)) {
 			faces.add(shape.getInnerGeometry());
 		}
@@ -55,7 +55,7 @@ public abstract class Gama3DGeometryFile extends GamaGeometryFile {
 		return initRotation;
 	}
 
-	public void setInitRotation(final GamaPair initRotation) {
+	public void setInitRotation(final GamaPair<Double, GamaPoint> initRotation) {
 		this.initRotation = initRotation;
 	}
 

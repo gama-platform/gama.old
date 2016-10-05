@@ -32,8 +32,8 @@ public class ExperimentScheduler implements Runnable {
 	// input
 	// public volatile boolean on_user_hold = false;
 	/* The stepables that need to be stepped */
-	private final Map<IStepable, IScope> toStep = new TOrderedHashMap();
-	private volatile Set<IStepable> toStop = new THashSet();
+	private final Map<IStepable, IScope> toStep = new TOrderedHashMap<>();
+	private volatile Set<IStepable> toStop = new THashSet<>();
 	private Thread executionThread;
 	volatile Semaphore lock = new Semaphore(1);
 	final IExperimentPlan experiment;
@@ -195,7 +195,7 @@ public class ExperimentScheduler implements Runnable {
 
 	public void removeStepable(final String s) {
 
-		final Set<IStepable> beRemoved = new THashSet();
+		final Set<IStepable> beRemoved = new THashSet<>();
 		for (final IStepable ss : toStep.keySet()) {
 			if (ss.toString().contains(s)) {
 

@@ -13,6 +13,7 @@ package msi.gama.common.interfaces;
 
 import java.util.Map;
 
+@SuppressWarnings({ "rawtypes" })
 public interface IAttributed {
 
 	/**

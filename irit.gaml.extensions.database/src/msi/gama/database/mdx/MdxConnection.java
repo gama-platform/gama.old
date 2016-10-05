@@ -56,6 +56,7 @@ import msi.gaml.operators.Strings;
  *
  * Last Modified: 02-07-2013
  */
+@SuppressWarnings({ "unchecked" })
 public abstract class MdxConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for

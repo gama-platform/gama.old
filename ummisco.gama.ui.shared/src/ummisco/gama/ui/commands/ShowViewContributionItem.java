@@ -1,13 +1,18 @@
 package ummisco.gama.ui.commands;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.ui.*;
-import org.eclipse.ui.actions.*;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.CompoundContributionItem;
+import org.eclipse.ui.actions.ContributionItemFactory;
 
 public class ShowViewContributionItem extends CompoundContributionItem {
 
-	public ShowViewContributionItem() {}
+	public ShowViewContributionItem() {
+	}
 
 	public ShowViewContributionItem(final String id) {
 		super(id);
@@ -15,9 +20,9 @@ public class ShowViewContributionItem extends CompoundContributionItem {
 
 	@Override
 	protected IContributionItem[] getContributionItems() {
-		List<IContributionItem> menuContributionList = new ArrayList();
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		IContributionItem item = ContributionItemFactory.VIEWS_SHORTLIST.create(window);
+		final List<IContributionItem> menuContributionList = new ArrayList<>();
+		final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		final IContributionItem item = ContributionItemFactory.VIEWS_SHORTLIST.create(window);
 		menuContributionList.add(item); // add the list of views in the menu
 		return menuContributionList.toArray(new IContributionItem[menuContributionList.size()]);
 	}

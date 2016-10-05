@@ -273,7 +273,7 @@ public class Conversation extends GamaList<FIPAMessage> {
 	 * @return the participants
 	 */
 	@getter(PARTICIPANTS)
-	public IList getParticipants() {
+	public IList<IAgent> getParticipants() {
 		return participants;
 	}
 

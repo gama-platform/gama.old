@@ -26,8 +26,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.swing.JPopupMenu;
 import javax.swing.UnsupportedLookAndFeelException;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -36,28 +38,28 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
 import ummisco.gama.ui.utils.PlatformHelper;
 
 /**
- * An environment to enable the proper display of AWT/Swing windows within a SWT or RCP
- * application. This class extends the base {@link org.eclipse.swt.awt.SWT_AWT Eclipse SWT/AWT integration}
- * support by
+ * An environment to enable the proper display of AWT/Swing windows within a SWT
+ * or RCP application. This class extends the base
+ * {@link org.eclipse.swt.awt.SWT_AWT Eclipse SWT/AWT integration} support by
  * <ul>
  * <li>Using the platform-specific system Look and Feel.
  * <li>more later...
  * </ul>
  * <p>
- * This class is most helpful to applications which create new AWT/Swing windows (e.g. dialogs) rather
- * than those which embed AWT/Swing components in SWT windows. For support specific to embedding
- * AWT/Swing components see {@link SwingControl}.
+ * This class is most helpful to applications which create new AWT/Swing windows
+ * (e.g. dialogs) rather than those which embed AWT/Swing components in SWT
+ * windows. For support specific to embedding AWT/Swing components see
+ * {@link SwingControl}.
  * <p>
  * There is at most one instance of this class per SWT
- * {@link org.eclipse.swt.widgets.Display Display}. In most applications
- * this means that there is exactly one instance for the entire application.
+ * {@link org.eclipse.swt.widgets.Display Display}. In most applications this
+ * means that there is exactly one instance for the entire application.
  * <p>
  * An instance of this class can be obtained with the static
  * {@link #getInstance(Display)} method.
@@ -69,7 +71,7 @@ public final class AwtEnvironment {
 	// Map from Display to AwtEnvironment.
 	// This does not need to be a WeakHashMap: Display instances don't go away
 	// silently; they are disposed, and we install a Dispose listener.
-	private static Map /* Display -> AwtEnvironment */ environmentMap = new HashMap();
+	private static Map /* Display -> AwtEnvironment */<Display, AwtEnvironment> environmentMap = new HashMap<Display, AwtEnvironment>();
 
 	/**
 	 * Returns the single instance of AwtEnvironment for the given display. On
@@ -94,43 +96,30 @@ public final class AwtEnvironment {
 		// For now assume a single display. If necessary, this implementation
 		// can be changed to create multiple environments for multiple display
 		// applications.
-		if ( display == null ) {
+		if (display == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
 		synchronized (environmentMap) {
-			AwtEnvironment instance = (AwtEnvironment) environmentMap.get(display);
-			if ( instance == null ) {
+			AwtEnvironment instance = environmentMap.get(display);
+			if (instance == null) {
 				instance = new AwtEnvironment(display);
 				environmentMap.put(display, instance);
-				ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
-
-					@Override
-					public void run() {
-						installDisposeHandler(display);
-					}
-				});
+				ThreadingHandler.getInstance().asyncExec(display, () -> installDisposeHandler(display));
 			}
 			return instance;
 		}
 	}
 
 	static private void installDisposeHandler(final Display display) {
-		if ( !display.isDisposed() ) {
-			display.addListener(SWT.Dispose, new Listener() {
-
-				@Override
-				public void handleEvent(final Event event) {
-
-					removeInstance(display);
-				}
-			});
+		if (!display.isDisposed()) {
+			display.addListener(SWT.Dispose, event -> removeInstance(display));
 		}
 	}
 
 	static private void removeInstance(final Display display) {
 		synchronized (environmentMap) {
-			final AwtEnvironment instance = (AwtEnvironment) environmentMap.remove(display);
-			if ( instance != null ) {
+			final AwtEnvironment instance = environmentMap.remove(display);
+			if (instance != null) {
 				instance.dispose();
 			}
 		}
@@ -150,44 +139,33 @@ public final class AwtEnvironment {
 
 		/*
 		 * This property removes a large amount of flicker from embedded swing
-		 * components in JDK 1.4 and 1.5. Ideally it would be set lazily,
-		 * but since its value is read once and cached by AWT, it needs
-		 * to be set before any AWT/Swing APIs are called.
-		 * This setting is no longer needed in JDK 1.6.
+		 * components in JDK 1.4 and 1.5. Ideally it would be set lazily, but
+		 * since its value is read once and cached by AWT, it needs to be set
+		 * before any AWT/Swing APIs are called. This setting is no longer
+		 * needed in JDK 1.6.
 		 */
 		// TODO: this is effective only on Windows.
 		System.setProperty("sun.awt.noerasebackground", "true"); //$NON-NLS-1$//$NON-NLS-2$
 
 		/*
-		 * It's important to wait for the L&F to be set so that any subsequent calls
-		 * to SwingControl.createFrame() will be return a frame with the proper L&F (note
-		 * that createFrame() happens on the SWT thread).
+		 * It's important to wait for the L&F to be set so that any subsequent
+		 * calls to SwingControl.createFrame() will be return a frame with the
+		 * proper L&F (note that createFrame() happens on the SWT thread).
 		 * 
-		 * The calls to syncExec and invokeAndWait are safe because
-		 * the first call AwtEnvironment.getInstance should happen
-		 * before any (potential deadlocking) activity occurs on the
-		 * AWT thread.
+		 * The calls to syncExec and invokeAndWait are safe because the first
+		 * call AwtEnvironment.getInstance should happen before any (potential
+		 * deadlocking) activity occurs on the AWT thread.
 		 */
 		final Font[] initialFont = new Font[1];
-		display.syncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				initialFont[0] = display.getSystemFont();
-			}
-		});
+		display.syncExec(() -> initialFont[0] = display.getSystemFont());
 		final Font swtFont = initialFont[0];
 		final FontData[] swtFontData = swtFont.getFontData();
 		try {
-			EventQueue.invokeAndWait(new Runnable() {
-
-				@Override
-				public void run() {
-					setLookAndFeel();
-					LookAndFeelHandler.getInstance().propagateSwtFont(swtFont, swtFontData);
-					if ( FocusHandler.verboseKFHEvents ) {
-						FocusDebugging.enableKeyboardFocusManagerLogging();
-					}
+			EventQueue.invokeAndWait(() -> {
+				setLookAndFeel();
+				LookAndFeelHandler.getInstance().propagateSwtFont(swtFont, swtFontData);
+				if (FocusHandler.verboseKFHEvents) {
+					FocusDebugging.enableKeyboardFocusManagerLogging();
 				}
 			});
 		} catch (final InterruptedException e) {
@@ -207,7 +185,7 @@ public final class AwtEnvironment {
 
 	void dispose() {
 		dialogListener.dispose();
-		if ( popupParent != null ) {
+		if (popupParent != null) {
 			popupParent.setVisible(false);
 			popupParent.dispose();
 		}
@@ -222,7 +200,7 @@ public final class AwtEnvironment {
 	static private void setLookAndFeel() {
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		if ( !isLookAndFeelInitialized ) {
+		if (!isLookAndFeelInitialized) {
 			isLookAndFeelInitialized = true;
 			try {
 				LookAndFeelHandler.getInstance().setLookAndFeel();
@@ -238,55 +216,42 @@ public final class AwtEnvironment {
 		}
 	}
 
-	// ==================== Swing Popup Management ================================
-	// (Note there are no known problems with AWT popups (java.awt.PopupMenu), so this code
+	// ==================== Swing Popup Management
+	// ================================
+	// (Note there are no known problems with AWT popups (java.awt.PopupMenu),
+	// so this code
 	// ignores them)
 
 	/*
 	 * Dismiss AWT popups when SWT menus are shown (not needed in JDK1.6)
 	 */
 
-	private static final boolean HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN =
-		PlatformHelper.isGtk() && PlatformHelper.JAVA_VERSION < PlatformHelper.javaVersion(1, 6, 0) || // GTK: pre-Java1.6
+	private static final boolean HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN = PlatformHelper.isGtk()
+			&& PlatformHelper.JAVA_VERSION < PlatformHelper.javaVersion(1, 6, 0) || // GTK:
+																					// pre-Java1.6
 			PlatformHelper.isWin32(); // Win32: all JDKs
 
 	private void initSwingPopupsDismissal() {
-		if ( HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN ) {
-			display.asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					// AD CHANGED
-					display.addFilter(SWT.Show, menuListener);
-				}
-			});
+		if (HIDE_SWING_POPUPS_ON_SWT_MENU_OPEN) {
+			display.asyncExec(() -> display.addFilter(SWT.Show, menuListener));
 		}
 	}
 
-	// This listener helps ensure that Swing popup menus are properly dismissed when
+	// This listener helps ensure that Swing popup menus are properly dismissed
+	// when
 	// a menu item off the SWT main menu bar (or tool bar) is shown.
-	private final Listener menuListener = new Listener() {
-
-		@Override
-		public void handleEvent(final Event event) {
-			EventQueue.invokeLater(new Runnable() {
-
-				@Override
-				public void run() {
-					hidePopups();
-				}
-			});
-		}
-	};
+	private final Listener menuListener = event -> EventQueue.invokeLater(() -> hidePopups());
 
 	// Returns true if any popup has been hidden
 	protected boolean hidePopups() {
 		boolean result = false;
-		final List popups = new ArrayList();
+		final List<Component> popups = new ArrayList<Component>();
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
 		final Window window = KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusedWindow();
-		if ( window == null ) { return false; }
+		if (window == null) {
+			return false;
+		}
 
 		// Look for popups inside the frame's component hierarchy.
 		// Lightweight popups will be found here.
@@ -297,9 +262,9 @@ public final class AwtEnvironment {
 		findOwnedPopups(window, popups);
 
 		// System.err.println("Hiding popups, count=" + popups.size());
-		for ( final Iterator iter = popups.iterator(); iter.hasNext(); ) {
-			final Component popup = (Component) iter.next();
-			if ( popup.isVisible() ) {
+		for (final Iterator<Component> iter = popups.iterator(); iter.hasNext();) {
+			final Component popup = iter.next();
+			if (popup.isVisible()) {
 				result = true;
 				popup.setVisible(false);
 			}
@@ -307,29 +272,29 @@ public final class AwtEnvironment {
 		return result;
 	}
 
-	protected void findOwnedPopups(final Window window, final List popups) {
+	protected void findOwnedPopups(final Window window, final List<Component> popups) {
 		assert window != null;
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
 		final Window[] ownedWindows = window.getOwnedWindows();
-		for ( int i = 0; i < ownedWindows.length; i++ ) {
+		for (int i = 0; i < ownedWindows.length; i++) {
 			findContainedPopups(ownedWindows[i], popups);
 			findOwnedPopups(ownedWindows[i], popups);
 		}
 	}
 
-	protected void findContainedPopups(final Container container, final List popups) {
+	protected void findContainedPopups(final Container container, final List<Component> popups) {
 		assert container != null;
 		assert popups != null;
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
 		final Component[] components = container.getComponents();
-		for ( int i = 0; i < components.length; i++ ) {
+		for (int i = 0; i < components.length; i++) {
 			final Component c = components[i];
 			// JPopupMenu is a container, so check for it first
-			if ( c instanceof JPopupMenu ) {
+			if (c instanceof JPopupMenu) {
 				popups.add(c);
-			} else if ( c instanceof Container ) {
+			} else if (c instanceof Container) {
 				findContainedPopups((Container) c, popups);
 			}
 		}
@@ -374,7 +339,8 @@ public final class AwtEnvironment {
 	// /*
 	// * This code snippet is based on the following thread on
 	// * news.eclipse.platform.swt:
-	// * http://dev.eclipse.org/newslists/news.eclipse.platform.swt/msg24234.html
+	// *
+	// http://dev.eclipse.org/newslists/news.eclipse.platform.swt/msg24234.html
 	// */
 	// if ( runnable == null ) {
 	// SWT.error(SWT.ERROR_NULL_ARGUMENT);
@@ -411,11 +377,11 @@ public final class AwtEnvironment {
 	/**
 	 * Creates an AWT frame suitable as a parent for AWT/Swing dialogs.
 	 * <p>
-	 * This method must be called from the SWT event thread. There must be an active
-	 * shell associated with the environment's display.
+	 * This method must be called from the SWT event thread. There must be an
+	 * active shell associated with the environment's display.
 	 * <p>
-	 * The created frame is a non-visible child of the active shell and will be disposed when that shell
-	 * is disposed.
+	 * The created frame is a non-visible child of the active shell and will be
+	 * disposed when that shell is disposed.
 	 * <p>
 	 * See {@link #createDialogParentFrame(Shell)} for more details.
 	 * 
@@ -429,11 +395,12 @@ public final class AwtEnvironment {
 	 *                if the current display has no shells
 	 */
 	public Frame createDialogParentFrame() {
-		if ( !display.equals(Display.getCurrent()) ) {
+		if (!display.equals(Display.getCurrent())) {
 			SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
 		}
 		final Shell parent = display.getActiveShell();
-		if ( parent == null ) { throw new IllegalStateException("No Active Shell"); //$NON-NLS-1$
+		if (parent == null) {
+			throw new IllegalStateException("No Active Shell"); //$NON-NLS-1$
 		}
 		return createDialogParentFrame(parent);
 	}
@@ -441,26 +408,29 @@ public final class AwtEnvironment {
 	/**
 	 * Creates an AWT frame suitable as a parent for AWT/Swing dialogs.
 	 * <p>
-	 * This method must be called from the SWT event thread. There must be an active
-	 * shell associated with the environment's display.
+	 * This method must be called from the SWT event thread. There must be an
+	 * active shell associated with the environment's display.
 	 * <p>
-	 * The created frame is a non-visible child of the given shell and will be disposed when that shell
-	 * is disposed.
+	 * The created frame is a non-visible child of the given shell and will be
+	 * disposed when that shell is disposed.
 	 * <p>
 	 * This method is useful for creating a frame to parent any AWT/Swing
 	 * dialogs created for use inside a SWT application. A modal AWT/Swing
 	 * dialogs will behave better if its parent is set to the returned frame
-	 * rather than to null or to an independently created {@link java.awt.Frame}.
+	 * rather than to null or to an independently created {@link java.awt.Frame}
+	 * .
 	 * <p>
-	 * The frame is positioned such that its child AWT dialogs are centered over the given
-	 * parent shell's position <i>when this method is called</i>. If the parent frame is
-	 * later moved, the child will no longer be properly positioned. For best results,
-	 * create a new frame with this method immediately before creating and displaying each
-	 * child AWT/Swing dialog.
+	 * The frame is positioned such that its child AWT dialogs are centered over
+	 * the given parent shell's position <i>when this method is called</i>. If
+	 * the parent frame is later moved, the child will no longer be properly
+	 * positioned. For best results, create a new frame with this method
+	 * immediately before creating and displaying each child AWT/Swing dialog.
 	 * <p>
 	 * As with any AWT window, the returned frame must be explicitly disposed.
 	 * 
-	 * @param parent - the SWT parent shell of the shell that will contain the returned frame
+	 * @param parent
+	 *            - the SWT parent shell of the shell that will contain the
+	 *            returned frame
 	 * @return a {@link java.awt.Frame} to be used for parenting dialogs
 	 * @exception SWTException
 	 *                <ul>
@@ -471,10 +441,10 @@ public final class AwtEnvironment {
 	 *                if the current display has no shells
 	 */
 	public Frame createDialogParentFrame(final Shell parent) {
-		if ( parent == null ) {
+		if (parent == null) {
 			SWT.error(SWT.ERROR_NULL_ARGUMENT);
 		}
-		if ( !display.equals(Display.getCurrent()) ) {
+		if (!display.equals(Display.getCurrent())) {
 			SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
 		}
 
@@ -486,7 +456,8 @@ public final class AwtEnvironment {
 		final Frame frame = SWT_AWT.new_Frame(composite);
 
 		// Position and size the shell and embedded composite. This ensures that
-		// any child dialogs will be shown in the proper position, relative to the
+		// any child dialogs will be shown in the proper position, relative to
+		// the
 		// parent shell.
 		shell.setLocation(parent.getLocation());
 
@@ -495,8 +466,9 @@ public final class AwtEnvironment {
 		// getLocationOnScreen() method will always return 0,0). To work around
 		// this problem, temporarily make the shell (and frame) visible. To
 		// avoid flicker, temporarily set the size to 0.
-		// (Note: the shell location must be correctly set before this will work)
-		if ( PlatformHelper.isGtk() ) {
+		// (Note: the shell location must be correctly set before this will
+		// work)
+		if (PlatformHelper.isGtk()) {
 			shell.setSize(0, 0);
 			shell.setVisible(true);
 			shell.setVisible(false);
@@ -511,14 +483,8 @@ public final class AwtEnvironment {
 
 			@Override
 			public void windowClosed(final WindowEvent e) {
-				if ( !display.isDisposed() ) {
-					ThreadingHandler.getInstance().asyncExec(display, new Runnable() {
-
-						@Override
-						public void run() {
-							shell.dispose();
-						}
-					});
+				if (!display.isDisposed()) {
+					ThreadingHandler.getInstance().asyncExec(display, () -> shell.dispose());
 				}
 			}
 		});
@@ -532,20 +498,22 @@ public final class AwtEnvironment {
 	private Shell popupParent;
 
 	/**
-	 * Returns a suitable parent shell for a SWT menu attached to a Swing control.
-	 * Use the return value from this method to create any SWT menus that
-	 * are used in calls to
-	 * {@link SwtPopupRegistry#setMenu(Component, boolean, org.eclipse.swt.widgets.Menu)}.
-	 * Otherwise, the popup menu may not display on some platforms.
+	 * Returns a suitable parent shell for a SWT menu attached to a Swing
+	 * control. Use the return value from this method to create any SWT menus
+	 * that are used in calls to
+	 * {@link SwtPopupRegistry#setMenu(Component, boolean, org.eclipse.swt.widgets.Menu)}
+	 * . Otherwise, the popup menu may not display on some platforms.
 	 * 
-	 * @param control the SwingControl that owns the AWT component which will have
-	 *            a menu attached.
+	 * @param control
+	 *            the SwingControl that owns the AWT component which will have a
+	 *            menu attached.
 	 * @return
 	 */
 	public Shell getSwtPopupParent(final SwingControl control) {
-		if ( PlatformHelper.isGtk() ) {
-			if ( true && popupParent == null ) {
-				// System.err.println("*** Creating separate popup parent shell");
+		if (PlatformHelper.isGtk()) {
+			if (true && popupParent == null) {
+				// System.err.println("*** Creating separate popup parent
+				// shell");
 				popupParent = new Shell(display, SWT.NO_TRIM | SWT.NO_FOCUS | SWT.ON_TOP);
 				popupParent.setSize(0, 0);
 			}
@@ -555,7 +523,8 @@ public final class AwtEnvironment {
 		}
 	}
 
-	// ----------------------- Focus Handling ------------------------------------------
+	// ----------------------- Focus Handling
+	// ------------------------------------------
 
 	// protected GlobalFocusHandler getGlobalFocusHandler() {
 	// return globalFocusHandler;

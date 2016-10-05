@@ -11,7 +11,7 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({ "rawtypes" })
 public class StatementRemoteWithChildrenDescription extends StatementWithChildrenDescription {
 
 	protected IDescription previousDescription;
@@ -71,7 +71,7 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 
 	@Override
 	public StatementRemoteWithChildrenDescription copy(final IDescription into) {
-		final List<IDescription> children = new ArrayList();
+		final List<IDescription> children = new ArrayList<>();
 		visitChildren(new DescriptionVisitor<IDescription>() {
 
 			@Override

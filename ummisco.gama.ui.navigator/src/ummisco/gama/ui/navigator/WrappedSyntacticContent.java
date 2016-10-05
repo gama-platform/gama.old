@@ -12,11 +12,9 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 
 import gnu.trove.map.hash.TObjectIntHashMap;
-import gnu.trove.procedure.TObjectIntProcedure;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.resources.IGamaColors;
 
 public class WrappedSyntacticContent extends VirtualContent implements Comparable<WrappedSyntacticContent> {
@@ -46,17 +44,12 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 			if (uriProblems == null)
 				return -1;
 			final int[] severity = new int[] { -1 };
-			uriProblems.forEachEntry(new TObjectIntProcedure<String>() {
-
-				@Override
-				public boolean execute(final String s, final int arg1) {
-					if (s != null && s.startsWith(fragment)) {
-						severity[0] = arg1;
-						return false;
-					}
-					return true;
+			uriProblems.forEachEntry((s, arg1) -> {
+				if (s != null && s.startsWith(fragment)) {
+					severity[0] = arg1;
+					return false;
 				}
-
+				return true;
 			});
 			return severity[0];
 
@@ -94,17 +87,12 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 			if (uriProblems == null)
 				return -1;
 			final int[] severity = new int[] { -1 };
-			uriProblems.forEachEntry(new TObjectIntProcedure<String>() {
-
-				@Override
-				public boolean execute(final String s, final int arg1) {
-					if (s.startsWith(fragment)) {
-						severity[0] = arg1;
-						return false;
-					}
-					return true;
+			uriProblems.forEachEntry((s, arg1) -> {
+				if (s.startsWith(fragment)) {
+					severity[0] = arg1;
+					return false;
 				}
-
+				return true;
 			});
 			return severity[0];
 
@@ -143,15 +131,9 @@ public class WrappedSyntacticContent extends VirtualContent implements Comparabl
 	public Object[] getNavigatorChildren() {
 		if (!hasChildren())
 			return null;
-		final List<WrappedSyntacticContent> children = new ArrayList();
-		element.visitAllChildren(new SyntacticVisitor() {
-
-			@Override
-			public void visit(final ISyntacticElement element) {
-				children.add(new WrappedSyntacticContent(WrappedSyntacticContent.this, element));
-
-			}
-		});
+		final List<WrappedSyntacticContent> children = new ArrayList<>();
+		element.visitAllChildren(
+				element -> children.add(new WrappedSyntacticContent(WrappedSyntacticContent.this, element)));
 		return children.toArray();
 	}
 

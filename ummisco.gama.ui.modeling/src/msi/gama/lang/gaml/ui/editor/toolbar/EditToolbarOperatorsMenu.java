@@ -30,6 +30,7 @@ import ummisco.gama.ui.menus.GamaMenuItem;
  * @since 5 déc. 2014
  * 
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 
 	public static Boolean byName = null;
@@ -69,7 +70,7 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 		final List<String> nn = new ArrayList(operators.keySet());
 		Collections.sort(nn, IGNORE_CASE);
 		for (final String name : nn) {
-			final List<OperatorProto> protos = new ArrayList();
+			final List<OperatorProto> protos = new ArrayList<>();
 			for (final Signature sig : operators.get(name).keySet()) {
 				final OperatorProto proto = operators.get(name).get(sig);
 				if (proto.getDeprecated() == null) {

@@ -68,7 +68,7 @@ import msi.gaml.types.IType;
 
 public class UserCommandStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
-	public static class UserCommandValidator implements IDescriptionValidator {
+	public static class UserCommandValidator implements IDescriptionValidator<IDescription> {
 
 		/*
 		 * (non-Javadoc)
@@ -110,7 +110,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 	Arguments runtimeArgs;
 	final String actionName;
 	final IExpression when;
-	List<UserInputStatement> inputs = new ArrayList();
+	List<UserInputStatement> inputs = new ArrayList<>();
 
 	public UserCommandStatement(final IDescription desc) {
 		super(desc);

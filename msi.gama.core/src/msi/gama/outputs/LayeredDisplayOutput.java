@@ -37,6 +37,7 @@ import msi.gama.outputs.LayeredDisplayOutput.InfoValidator;
 import msi.gama.outputs.layers.AbstractLayerStatement;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.outputs.layers.OverlayStatement;
+import msi.gama.outputs.layers.OverlayStatement.OverlayInfo;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -123,7 +124,7 @@ import msi.gaml.types.Types;
 				@example(value = "}", isExecutable = false) }) })
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
-	public static class DisplaySerializer extends SymbolSerializer {
+	public static class DisplaySerializer extends SymbolSerializer<SymbolDescription> {
 
 		/**
 		 * Method collectPluginsInFacetValue()
@@ -149,7 +150,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	}
 
-	public static class InfoValidator implements IDescriptionValidator {
+	public static class InfoValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()
@@ -230,7 +231,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		layers = new ArrayList<>();
 	}
 
-	public IOverlayProvider getOverlayProvider() {
+	public IOverlayProvider<OverlayInfo> getOverlayProvider() {
 		return overlayInfo;
 	}
 
@@ -313,18 +314,18 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (use_shader != null) {
 			this.useShader = Cast.asBool(getScope(), use_shader.value(getScope()));
 		}
-		
+
 		final IExpression keystone_exp = getFacet(IKeyword.KEYSTONE);
 		if (keystone_exp != null) {
-			List<ILocation> val = Cast.asList(getScope(), keystone_exp.value(getScope()));
+			final List<ILocation> val = Cast.asList(getScope(), keystone_exp.value(getScope()));
 			if (val.size() == 4) {
 				data.setKeystone(val);
 			}
 		}
-		
+
 		final IExpression rotate_exp = getFacet(IKeyword.ROTATE);
 		if (rotate_exp != null) {
-			double val = Cast.asFloat(getScope(), rotate_exp.value(getScope()));
+			final double val = Cast.asFloat(getScope(), rotate_exp.value(getScope()));
 			data.setZRotation(val);
 		}
 
@@ -500,7 +501,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if (surface == null) {
 			return;
 		}
-		
+
 		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if (auto != null) {
 			if (auto.getType().equals(Types.POINT)) {
@@ -625,7 +626,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		final List<AbstractLayerStatement> list = new ArrayList();
+		final List<AbstractLayerStatement> list = new ArrayList<>();
 		for (final ISymbol s : commands) {
 			if (s instanceof OverlayStatement && ((OverlayStatement) s).hasInfo()) {
 				overlayInfo = (OverlayStatement) s;
@@ -635,7 +636,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 		setLayers(list);
 		//
-		// final List<LightStatement> lightList = new ArrayList();
+		// final List<LightStatement> lightList = new ArrayList<>();
 		// for (final ISymbol s : commands) {
 		// if (s instanceof OverlayStatement && ((OverlayStatement)
 		// s).hasInfo()) {

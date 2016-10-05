@@ -8,7 +8,6 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IResourceProxy;
 import org.eclipse.core.resources.IResourceProxyVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -18,17 +17,14 @@ import org.eclipse.ui.handlers.HandlerUtil;
 import msi.gama.runtime.GAMA;
 import ummisco.gama.ui.navigator.TopLevelFolder;
 
+@SuppressWarnings({ "rawtypes" })
 public class ResourceRefreshHandler extends AbstractHandler {
 
-	final static IResourceProxyVisitor DISCARDING_VISITOR = new IResourceProxyVisitor() {
-
-		@Override
-		public boolean visit(final IResourceProxy proxy) throws CoreException {
-			if (proxy.getType() == IResource.FILE) {
-				discardMetaData((IFile) proxy.requestResource());
-			}
-			return true;
+	final static IResourceProxyVisitor DISCARDING_VISITOR = proxy -> {
+		if (proxy.getType() == IResource.FILE) {
+			discardMetaData((IFile) proxy.requestResource());
 		}
+		return true;
 	};
 
 	@Override
@@ -54,13 +50,8 @@ public class ResourceRefreshHandler extends AbstractHandler {
 	}
 
 	public static void discardMetaData(final IFile file) {
-		PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-
-			@Override
-			public void run() {
-				GAMA.getGui().getMetaDataProvider().storeMetadata(file, null, false);
-			}
-		});
+		PlatformUI.getWorkbench().getDisplay()
+				.asyncExec(() -> GAMA.getGui().getMetaDataProvider().storeMetadata(file, null, false));
 	}
 
 }

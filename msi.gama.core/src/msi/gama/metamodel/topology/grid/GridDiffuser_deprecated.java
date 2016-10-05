@@ -3,18 +3,24 @@
  */
 package msi.gama.metamodel.topology.grid;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+
 import gnu.trove.map.hash.THashMap;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.*;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
-import msi.gaml.operators.fastmaths.*;
+import msi.gaml.operators.fastmaths.CmnFastMath;
+import msi.gaml.operators.fastmaths.FastMath;
 
 class GridDiffuser_deprecated {
-	// this was once used for "Signal" statement (deprecated since GAMA 1.8). It will have to be removed soon.
+	// this was once used for "Signal" statement (deprecated since GAMA 1.8). It
+	// will have to be removed soon.
 
 	private final GamaSpatialMatrix matrix;
 
@@ -28,8 +34,8 @@ class GridDiffuser_deprecated {
 		final short type;
 		final IContainer<?, IAgent> candidates;
 
-		GridDiffusion_deprecated(final short type, final double proportion, final double variation,
-			final double range, final IContainer<?, IAgent> cand) {
+		GridDiffusion_deprecated(final short type, final double proportion, final double variation, final double range,
+				final IContainer<?, IAgent> cand) {
 			this.type = type;
 			this.proportion = proportion;
 			this.variation = variation;
@@ -39,11 +45,14 @@ class GridDiffuser_deprecated {
 			candidates = cand;
 		}
 
-		// TODO Take candidates into account here as well (by making an intersection ? or better a union)
+		// TODO Take candidates into account here as well (by making an
+		// intersection ? or better a union)
 		void add(final IScope scope, final IAgent p, final double value) {
-			if ( candidates != null && !candidates.contains(scope, p) ) { return; }
-			for ( int i = 0; i < places.length; i++ ) {
-				if ( places[i] == p ) {
+			if (candidates != null && !candidates.contains(scope, p)) {
+				return;
+			}
+			for (int i = 0; i < places.length; i++) {
+				if (places[i] == p) {
 					final double v = values[i];
 					values[i] = type == IGrid.GRADIENT ? FastMath.max(v, value) : v + value;
 					return;
@@ -63,25 +72,25 @@ class GridDiffuser_deprecated {
 		neighborsSize = matrix.getNeighborhood().isVN() ? 4 : 8;
 	}
 
-	protected final Map<String, GridDiffusion_deprecated> diffusions_deprecated = new THashMap();
+	protected final Map<String, GridDiffusion_deprecated> diffusions_deprecated = new THashMap<>();
 
 	// public static final short GRADIENT = 1;
 	// public static final short DIFFUSION = 0;
 
 	protected void addDiffusion(final IScope scope, final short type, final String var, final IAgent agent,
-		final double value, final double proportion, final double variation, final double range,
-		final IContainer<?, IAgent> candidates) {
-		if ( !diffusions_deprecated.containsKey(var) ) {
+			final double value, final double proportion, final double variation, final double range,
+			final IContainer<?, IAgent> candidates) {
+		if (!diffusions_deprecated.containsKey(var)) {
 			diffusions_deprecated.put(var,
-				new GridDiffusion_deprecated(type, proportion, variation, range, candidates));
+					new GridDiffusion_deprecated(type, proportion, variation, range, candidates));
 		}
 		diffusions_deprecated.get(var).add(scope, agent, value);
 	}
 
 	public void diffuse_deprecated(final IScope scope) throws GamaRuntimeException {
-		for ( final String v : diffusions_deprecated.keySet() ) {
+		for (final String v : diffusions_deprecated.keySet()) {
 			final GridDiffusion_deprecated d = diffusions_deprecated.get(v);
-			if ( d.type == IGrid.DIFFUSION ) {
+			if (d.type == IGrid.DIFFUSION) {
 				spreadDiffusion(scope, v, d);
 			} else {
 				spreadGradient(scope, v, d);
@@ -98,43 +107,52 @@ class GridDiffuser_deprecated {
 		return matrix.getPlaceIndexAt(x, y);
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public void diffuseVariable(final IScope scope, final String name, final double value, final short type,
-		final double proportion, final double variation, final ILocation location, final double range,
-		final Object candidates) {
+			final double proportion, final double variation, final ILocation location, final double range,
+			final Object candidates) {
 		final int p = getPlaceIndexAt(location);
-		if ( p == -1 ) { return; }
-		IContainer<?, IAgent> cand = candidates instanceof IPopulation ? null
-			: candidates instanceof IContainer ? (IContainer) candidates : null;
-			addDiffusion(scope, type, name, matrix.matrix[p].getAgent(), value, proportion, variation, range, cand);
+		if (p == -1) {
+			return;
+		}
+		final IContainer<?, IAgent> cand = candidates instanceof IPopulation ? null
+				: candidates instanceof IContainer ? (IContainer) candidates : null;
+		addDiffusion(scope, type, name, matrix.matrix[p].getAgent(), value, proportion, variation, range, cand);
 	}
 
 	private void spreadDiffusion(final IScope scope, final String v, final GridDiffusion_deprecated gridDiffusion)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		int[] neighbors;
 		IAgent p;
 		final double proportion = gridDiffusion.proportion;
 		final double variation = gridDiffusion.variation;
 		int range = (int) (gridDiffusion.range / matrix.cellWidth);
-		if ( range < 0 ) {
+		if (range < 0) {
 			range = 1000;
 		}
-		if ( range == 0 ) { return; }
+		if (range == 0) {
+			return;
+		}
 
 		int n;
 		double r0, rn;
 		final double prop = proportion / neighborsSize;
 		final double propInit = 1 - proportion;
-		for ( int i = 0, halt = gridDiffusion.places.length; i < halt; i++ ) {
+		for (int i = 0, halt = gridDiffusion.places.length; i < halt; i++) {
 			p = gridDiffusion.places[i].getAgent();
-			// if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, p) ) {
+			// if ( gridDiffusion.candidates != null &&
+			// !gridDiffusion.candidates.contains(scope, p) ) {
 			// continue;
 			// }
 			final int placeIndex = p.getIndex();
 			r0 = gridDiffusion.values[i];
 			final Double previous = (Double) scope.getAgentVarValue(p, v);
-			// If we cant get access to the value of the variable, it means probably that the agent is dead. Better
+			// If we cant get access to the value of the variable, it means
+			// probably that the agent is dead. Better
 			// to stop spreading !
-			if ( previous == null ) { return; }
+			if (previous == null) {
+				return;
+			}
 			scope.setAgentVarValue(p, v, previous + r0 * propInit);
 			rn = r0 * prop - variation;
 			int max_range = 1;
@@ -153,19 +171,22 @@ class GridDiffuser_deprecated {
 				matrix.neighborhood = null;
 				neighbors = matrix.getNeighborhood().getRawNeighborsIncluding(scope, placeIndex, range);
 			}
-			for ( n = 1; n <= range; n++ ) {
+			for (n = 1; n <= range; n++) {
 				final int begin = matrix.neighborhood.neighborsIndexOf(scope, placeIndex, n);
 				final int end = matrix.neighborhood.neighborsIndexOf(scope, placeIndex, n + 1);
-				for ( int k = begin; k < end; k++ ) {
+				for (int k = begin; k < end; k++) {
 					final IAgent z = matrix.matrix[neighbors[k]].getAgent();
-					if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, z) ) {
+					if (gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, z)) {
 						continue;
 					}
 					// v.addDirectFloat(z, rn);
 					final Double value = (Double) scope.getAgentVarValue(z, v);
-					// If we cant get access to the value of the variable, it means probably that the agent is dead.
+					// If we cant get access to the value of the variable, it
+					// means probably that the agent is dead.
 					// Better to stop spreading !
-					if ( value == null ) { return; }
+					if (value == null) {
+						return;
+					}
 					scope.setAgentVarValue(z, v, value + rn);
 				}
 				rn = rn * prop - variation;
@@ -174,27 +195,32 @@ class GridDiffuser_deprecated {
 	}
 
 	private void spreadGradient(final IScope scope, final String v, final GridDiffusion_deprecated gridDiffusion)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		int[] neighbors;
 		IAgent p;
 		final double proportion = gridDiffusion.proportion;
 		final double variation = gridDiffusion.variation;
 		int range = (int) (gridDiffusion.range / matrix.cellWidth);
-		if ( range < 0 ) {
+		if (range < 0) {
 			range = 1000;
 		}
-		if ( range == 0 ) { return; }
+		if (range == 0) {
+			return;
+		}
 
 		int n;
 		double r0, rn;
-		for ( int i = 0, halt = gridDiffusion.places.length; i < halt; i++ ) {
+		for (int i = 0, halt = gridDiffusion.places.length; i < halt; i++) {
 			p = gridDiffusion.places[i].getAgent();
 			final int placeIndex = p.getIndex();
 			r0 = gridDiffusion.values[i];
 			final Double previous = (Double) scope.getAgentVarValue(p, v);
-			// If we cant get access to the value of the variable, it means probably that the agent is dead. Better
+			// If we cant get access to the value of the variable, it means
+			// probably that the agent is dead. Better
 			// to stop spreading !
-			if ( previous == null || previous > r0 ) { return; }
+			if (previous == null || previous > r0) {
+				return;
+			}
 			scope.setAgentVarValue(p, v, r0);
 			rn = r0 * proportion - variation;
 			int max_range = 1;
@@ -214,25 +240,28 @@ class GridDiffuser_deprecated {
 				neighbors = matrix.getNeighborhood().getRawNeighborsIncluding(scope, placeIndex, range);
 			}
 			boolean cont = true;
-			for ( n = 1; n <= range; n++ ) {
+			for (n = 1; n <= range; n++) {
 				final int begin = matrix.neighborhood.neighborsIndexOf(scope, placeIndex, n);
 				final int end = matrix.neighborhood.neighborsIndexOf(scope, placeIndex, n + 1);
 				cont = false;
-				for ( int k = begin; k < end; k++ ) {
+				for (int k = begin; k < end; k++) {
 					final IAgent z = matrix.matrix[neighbors[k]].getAgent();
-					if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, z) ) {
+					if (gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, z)) {
 						continue;
 					}
 					final Double value = (Double) scope.getAgentVarValue(z, v);
-					// If we cant get access to the value of the variable, it means probably that the agent is dead.
+					// If we cant get access to the value of the variable, it
+					// means probably that the agent is dead.
 					// Better to stop spreading !
-					if ( value == null ) { return; }
-					if ( value < rn ) {
+					if (value == null) {
+						return;
+					}
+					if (value < rn) {
 						scope.setAgentVarValue(z, v, rn);
 						cont = true;
 					}
 				}
-				if ( !cont ) {
+				if (!cont) {
 					break;
 				}
 				rn = rn * proportion - variation;

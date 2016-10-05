@@ -123,9 +123,10 @@ import msi.gaml.types.Types;
 				@example(value = "save grid to: \"save_grid.png\" type: \"image\";") }),
 		@usage(value = "The save statement can be use in an init block, a reflex, an action or in a user command. Do not use it in experiments.") })
 @validator(SaveValidator.class)
+@SuppressWarnings({ "rawtypes" })
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
-	public static class SaveValidator implements IDescriptionValidator {
+	public static class SaveValidator implements IDescriptionValidator<StatementDescription> {
 
 		/**
 		 * Method validate()
@@ -133,13 +134,13 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
 		 */
 		@Override
-		public void validate(final IDescription description) {
-			final StatementDescription desc = (StatementDescription) description;
+		public void validate(final StatementDescription description) {
+			final StatementDescription desc = description;
 			final IExpression data = desc.getFacetExpr(DATA);
 			if (data == null) {
 				return;
 			}
-			final IType t = data.getType().getContentType();
+			final IType<?> t = data.getType().getContentType();
 			final SpeciesDescription species = t.getSpecies();
 			final Facets args = desc.getPassedArgs();
 			if (args == null || args.isEmpty()) {
@@ -649,7 +650,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		// AD Builds once the list of agent attributes to evaluate
 		final Collection<String> attributeValues = attributes == null ? Collections.EMPTY_LIST : attributes.values();
-		final List<Object> values = new ArrayList();
+		final List<Object> values = new ArrayList<>();
 		for (final IShape ag : agents) {
 			values.clear();
 			final SimpleFeature ff = (SimpleFeature) fw.next();
