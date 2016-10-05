@@ -103,7 +103,7 @@ public class ValidationContext implements Iterable<GamlCompilationError>, IDocMa
 	}
 
 	public Collection<GamlCompilationError> getImportedErrors() {
-		return importedErrors == null ? Collections.EMPTY_LIST : importedErrors;
+		return importedErrors == null ? Collections.<GamlCompilationError>emptyList() : importedErrors;
 	}
 
 	public Iterable<GamlCompilationError> getWarnings() {
@@ -131,8 +131,8 @@ public class ValidationContext implements Iterable<GamlCompilationError>, IDocMa
 	 */
 	@Override
 	public Iterator<GamlCompilationError> iterator() {
-		return limit(concat(internalErrors == null ? Collections.EMPTY_LIST : internalErrors, getImportedErrors()),
-				MAX_SIZE).iterator();
+		return limit(concat(internalErrors == null ? Collections.<GamlCompilationError> emptyList() : internalErrors,
+				getImportedErrors()), MAX_SIZE).iterator();
 	}
 
 	public Map<String, URI> getImportedErrorsAsStrings() {
