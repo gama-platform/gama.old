@@ -40,6 +40,7 @@ import msi.gaml.types.Types;
  * 
  * @author drogoul 23 august 07
  */
+@SuppressWarnings({ "rawtypes" })
 public abstract class AbstractNAryOperator extends AbstractExpression implements IOperator {
 
 	protected final IExpression[] exprs;

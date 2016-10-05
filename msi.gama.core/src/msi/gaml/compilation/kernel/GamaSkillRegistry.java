@@ -11,6 +11,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.SkillDescription;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaSkillRegistry {
 
 	public final static GamaSkillRegistry INSTANCE = new GamaSkillRegistry();

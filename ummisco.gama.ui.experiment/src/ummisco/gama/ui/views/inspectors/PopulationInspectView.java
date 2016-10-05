@@ -23,12 +23,8 @@ import java.util.Map;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILazyContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -93,6 +89,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class PopulationInspectView extends GamaViewPart
 		implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
@@ -432,38 +429,29 @@ public class PopulationInspectView extends GamaViewPart
 		table.setFont(currentFont);
 		viewer.setUseHashlookup(true);
 		viewer.setContentProvider(provider);
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(final DoubleClickEvent event) {
-				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-				final Object o = s.getFirstElement();
-				if (o instanceof IAgent) {
-					getScope().getGui().setHighlightedAgent((IAgent) o);
-					GAMA.getExperiment().refreshAllOutputs();
-					;
-				}
+		viewer.addDoubleClickListener(event -> {
+			final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+			final Object o = s.getFirstElement();
+			if (o instanceof IAgent) {
+				getScope().getGui().setHighlightedAgent((IAgent) o);
+				GAMA.getExperiment().refreshAllOutputs();
+				;
 			}
 		});
 
 		final MenuManager menuMgr = new MenuManager();
 		menuMgr.setRemoveAllWhenShown(false);
-		menuMgr.addMenuListener(new IMenuListener() {
-
-			@Override
-			public void menuAboutToShow(final IMenuManager manager) {
-				IAgent agent = null;
-				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
-				final Object o = s.getFirstElement();
-				if (o instanceof IAgent) {
-					agent = (IAgent) o;
-				}
-				if (agent != null) {
-					manager.removeAll();
-					manager.update(true);
-					AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, false,
-							AgentsMenu.HIGHLIGHT_ACTION);
-				}
+		menuMgr.addMenuListener(manager -> {
+			IAgent agent = null;
+			final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+			final Object o = s.getFirstElement();
+			if (o instanceof IAgent) {
+				agent = (IAgent) o;
+			}
+			if (agent != null) {
+				manager.removeAll();
+				manager.update(true);
+				AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, false, AgentsMenu.HIGHLIGHT_ACTION);
 			}
 		});
 		final Menu menu = menuMgr.createContextMenu(viewer.getControl());

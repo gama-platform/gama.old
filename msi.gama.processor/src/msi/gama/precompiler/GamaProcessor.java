@@ -45,7 +45,6 @@ import java.util.Set;
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
-import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
@@ -86,6 +85,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaProcessor extends AbstractProcessor {
 
 	private GamlProperties gp;
@@ -96,6 +96,7 @@ public class GamaProcessor extends AbstractProcessor {
 	private static final Charset CHARSET = Charset.forName("UTF-8");
 	private static final String ADDITIONS = "gaml.additions.GamlAdditions";
 	private static final StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
+
 	final static Set<String> ANNOTATIONS = new HashSet() {
 		{
 			for (final Class c : Arrays.asList(symbol.class, factory.class, species.class, skill.class, getter.class,

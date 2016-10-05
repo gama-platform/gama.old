@@ -15,6 +15,7 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class StatementWithChildrenDescription extends StatementDescription {
 
 	protected THashMap<String, IVarExpression> temps;

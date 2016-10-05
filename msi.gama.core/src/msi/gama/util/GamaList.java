@@ -35,7 +35,7 @@ import msi.gaml.types.Types;
  *
  * @todo Description
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	private IContainerType type;

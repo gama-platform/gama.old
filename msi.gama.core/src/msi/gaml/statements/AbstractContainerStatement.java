@@ -44,6 +44,7 @@ import msi.gaml.types.Types;
  *
  */
 @validator(ContainerValidator.class)
+@SuppressWarnings({ "rawtypes" })
 public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	public static class ContainerValidator implements IDescriptionValidator {

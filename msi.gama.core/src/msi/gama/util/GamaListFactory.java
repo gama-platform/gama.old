@@ -31,6 +31,7 @@ import msi.gaml.types.Types;
  * @since 30 janv. 2015
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaListFactory {
 
 	private static final int DEFAULT_SIZE = 10;

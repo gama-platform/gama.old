@@ -45,11 +45,11 @@ import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Spatial.Queries;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
 		implements ISpatialGraph, IPopulation.Listener, IAgentFilter {
 
@@ -262,13 +262,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape>
 	}
 
 	public void postRefreshManagementAction(final IScope scope) {
-		scope.getSimulation().postEndAction(new IExecutable() {
-
-			@Override
-			public Object executeOn(final IScope scope) throws GamaRuntimeException {
-				GamaSpatialGraph.this.refreshEdges();
-				return null;
-			}
+		scope.getSimulation().postEndAction(scope1 -> {
+			GamaSpatialGraph.this.refreshEdges();
+			return null;
 		});
 	}
 

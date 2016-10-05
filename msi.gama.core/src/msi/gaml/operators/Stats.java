@@ -60,6 +60,7 @@ import rcaller.exception.ParseException;
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Stats {
 
 	public static class Instance extends EuclideanDoublePoint {

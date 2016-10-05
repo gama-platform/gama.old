@@ -18,6 +18,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
+@SuppressWarnings({ "rawtypes" })
 public class Distribution {
 
 	public static GamaMap computeDistrib2d(final IScope scope, final IList lvaluex, final IList lvaluey,

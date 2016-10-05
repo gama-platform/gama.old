@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.base.Function;
 import com.google.common.collect.Ordering;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -67,7 +66,6 @@ import msi.gaml.operators.Spatial;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.skills.GridSkill.IGridAgent;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IContainerType;
@@ -79,6 +77,7 @@ import msi.gaml.variables.IVariable;
  * This matrix contains geometries and can serve to organize the agents of a
  * population as a grid in the environment, or as a support for grid topologies
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	/** The geometry of host. */
@@ -889,16 +888,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return diffuser;
 		}
 		diffuser = new GridDiffuser();
-		scope.getSimulation().postEndAction(new IExecutable() {
-
-			@Override
-			public Object executeOn(final IScope s) throws GamaRuntimeException {
-				if (diffuser != null) {
-					diffuse(s);
-				}
-				return null;
+		scope.getSimulation().postEndAction(s -> {
+			if (diffuser != null) {
+				diffuse(s);
 			}
-
+			return null;
 		});
 		return diffuser;
 	}
@@ -987,14 +981,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		env.expandBy(exp);
 		// final Iterator<IShape> in_square = allInEnvelope(source, ENVELOPE, f,
 		// false);
-		final Ordering<IShape> ordering = Ordering.natural().onResultOf(new Function<IShape, Double>() {
-
-			// TODO Make it a static class
-			@Override
-			public Double apply(final IShape input) {
-				return source.euclidianDistanceTo(input);
-			}
-		});
+		final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
 		final Set<IAgent> shapes = allInEnvelope(scope, source, env, f, false);
 		if (shapes.isEmpty()) {
 			return null;

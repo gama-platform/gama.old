@@ -37,11 +37,11 @@ import msi.gama.util.GAML;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.compilation.ast.ISyntacticElement;
-import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import ummisco.gama.ui.metadata.FileMetaDataProvider;
 import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedExperimentContent;
 import ummisco.gama.ui.navigator.WrappedSyntacticContent.WrappedModelContent;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class NavigatorContentProvider extends WorkbenchContentProvider {
 
 	private TopLevelFolder[] virtualFolders;
@@ -102,14 +102,7 @@ public class NavigatorContentProvider extends WorkbenchContentProvider {
 							.getContents(URI.createPlatformResourceURI(((IFile) p).getFullPath().toOSString(), true));
 
 					l.add(new WrappedModelContent((IFile) p, element));
-					element.visitExperiments(new SyntacticVisitor() {
-
-						@Override
-						public void visit(final ISyntacticElement element) {
-							l.add(new WrappedExperimentContent((IFile) p, element));
-
-						}
-					});
+					element.visitExperiments(element1 -> l.add(new WrappedExperimentContent((IFile) p, element1)));
 
 					// for (final String s : info.getExperiments()) {
 					// l.add(new WrappedExperiment((IFile) p, s));

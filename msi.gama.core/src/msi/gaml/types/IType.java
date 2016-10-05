@@ -28,6 +28,7 @@ import msi.gaml.expressions.IExpression;
  * @todo Description
  *
  */
+@SuppressWarnings({ "rawtypes" })
 public interface IType<Support> extends IGamlDescription, ITyped, IGamlable {
 
 	public static String[] vowels = new String[] { "a", "e", "i", "o", "u", "y" };

@@ -49,6 +49,7 @@ import msi.gaml.types.Types;
  */
 @file(name = "csv", extensions = { "csv", "tsv" }, buffer_type = IType.MATRIX, buffer_index = IType.POINT, concept = {
 		IConcept.CSV, IConcept.FILE })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaCSVFile extends GamaFile<IMatrix<Object>, Object, ILocation, Object> {
 
 	public static class CSVInfo extends GamaFileMetaData {

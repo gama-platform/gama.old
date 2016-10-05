@@ -108,7 +108,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			add("bz2");
 		}
 	};
-	public static final HashMap<String, String> longNames = new HashMap() {
+	public static final HashMap<String, String> longNames = new HashMap<String, String>() {
 
 		{
 			put("prj", "Projection data");
@@ -191,7 +191,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 		}
 	}
 
-	public static final Map<String, Class> CLASSES = new HashMap() {
+	public static final Map<String, Class<? extends GamaFileMetaData>> CLASSES = new HashMap<String, Class<? extends GamaFileMetaData>>() {
 
 		{
 			put(CSV_CT_ID, CSVInfo.class);
@@ -224,7 +224,7 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			return null;
 		}
 		final String ct = "project";
-		final Class infoClass = CLASSES.get(ct);
+		final Class<? extends GamaFileMetaData> infoClass = CLASSES.get(ct);
 		if (infoClass == null) {
 			return null;
 		}
@@ -287,51 +287,46 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 			if (data[0] == null) {
 				processing.add(element);
 				final IFile theFile = file;
-				final Runnable create = new Runnable() {
-
-					@Override
-					public void run() {
-						try {
-							switch (ct) {
-							case SHAPEFILE_CT_ID:
-								data[0] = createShapeFileMetaData(theFile);
-								break;
-							case OSM_CT_ID:
-								data[0] = createOSMMetaData(theFile);
-								break;
-							case IMAGE_CT_ID:
-								data[0] = createImageFileMetaData(theFile);
-								break;
-							case CSV_CT_ID:
-								data[0] = createCSVFileMetaData(theFile);
-								break;
-							case GAML_CT_ID:
-								data[0] = createGamlFileMetaData(theFile);
-								break;
-							case SHAPEFILE_SUPPORT_CT_ID:
-								data[0] = createShapeFileSupportMetaData(theFile);
-								break;
-							}
-							// Last chance: we generate a generic info
-							if (data[0] == null) {
-								data[0] = createGenericFileMetaData(theFile);
-							}
-
-							// System.out
-							// .println("Storing the metadata just created (or
-							// recreated) while reading it for " + theFile);
-							storeMetadata(theFile, data[0], false);
-							try {
-
-								theFile.refreshLocal(IResource.DEPTH_ZERO, null);
-							} catch (final CoreException e) {
-								e.printStackTrace();
-							}
-							GAMA.getGui().updateDecorator("msi.gama.application.decorator");
-						} finally {
-							processing.remove(element);
+				final Runnable create = () -> {
+					try {
+						switch (ct) {
+						case SHAPEFILE_CT_ID:
+							data[0] = createShapeFileMetaData(theFile);
+							break;
+						case OSM_CT_ID:
+							data[0] = createOSMMetaData(theFile);
+							break;
+						case IMAGE_CT_ID:
+							data[0] = createImageFileMetaData(theFile);
+							break;
+						case CSV_CT_ID:
+							data[0] = createCSVFileMetaData(theFile);
+							break;
+						case GAML_CT_ID:
+							data[0] = createGamlFileMetaData(theFile);
+							break;
+						case SHAPEFILE_SUPPORT_CT_ID:
+							data[0] = createShapeFileSupportMetaData(theFile);
+							break;
+						}
+						// Last chance: we generate a generic info
+						if (data[0] == null) {
+							data[0] = createGenericFileMetaData(theFile);
 						}
 
+						// System.out
+						// .println("Storing the metadata just created (or
+						// recreated) while reading it for " + theFile);
+						storeMetadata(theFile, data[0], false);
+						try {
+
+							theFile.refreshLocal(IResource.DEPTH_ZERO, null);
+						} catch (final CoreException e) {
+							e.printStackTrace();
+						}
+						GAMA.getGui().updateDecorator("msi.gama.application.decorator");
+					} finally {
+						processing.remove(element);
 					}
 
 				};
@@ -391,18 +386,14 @@ public class FileMetaDataProvider implements IFileMetaDataProvider {
 				data.setModificationStamp(file.getModificationStamp());
 			}
 
-			final Runnable runnable = new Runnable() {
-
-				@Override
-				public void run() {
-					try {
-						ResourcesPlugin.getWorkspace().getSynchronizer().setSyncInfo(CACHE_KEY, file,
-								data == null ? null : data.toPropertyString().getBytes("UTF-8"));
-					} catch (UnsupportedEncodingException | CoreException e) {
-						e.printStackTrace();
-					}
-					// System.out.println("Success: sync info written");
+			final Runnable runnable = () -> {
+				try {
+					ResourcesPlugin.getWorkspace().getSynchronizer().setSyncInfo(CACHE_KEY, file,
+							data == null ? null : data.toPropertyString().getBytes("UTF-8"));
+				} catch (UnsupportedEncodingException | CoreException e) {
+					e.printStackTrace();
 				}
+				// System.out.println("Success: sync info written");
 			};
 			// WorkspaceModifyOperation
 			if (!immediately) {

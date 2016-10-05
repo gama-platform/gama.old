@@ -52,6 +52,7 @@ import msi.gaml.types.Types;
  * @since 15 avr. 2014
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ModelAssembler {
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,

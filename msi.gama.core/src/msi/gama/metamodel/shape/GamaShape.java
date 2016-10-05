@@ -49,6 +49,7 @@ import msi.gaml.types.Types;
  *
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaShape implements IShape /* , IContainer */ {
 
 	static Field envelopeField = null;

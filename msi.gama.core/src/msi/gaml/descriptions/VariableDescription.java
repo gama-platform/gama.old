@@ -39,6 +39,7 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class VariableDescription extends SymbolDescription {
 
 	private static Map<String, Set<String>> dependencies = new THashMap();

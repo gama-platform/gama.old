@@ -11,6 +11,7 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class StatementRemoteWithChildrenDescription extends StatementWithChildrenDescription {
 
 	protected IDescription previousDescription;

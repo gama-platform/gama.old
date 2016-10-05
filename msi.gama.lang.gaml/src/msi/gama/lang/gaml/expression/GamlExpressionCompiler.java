@@ -125,7 +125,7 @@ import msi.gaml.types.Types;
  * into GAML IExpressions. Normally invoked by an IExpressionFactory (the
  * default being GAML.getExpressionFactory())
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements IExpressionCompiler<Expression> {
 
 	private final Deque<IVarExpression> iteratorContexts = new LinkedList();
@@ -292,7 +292,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	IType fromTypeRef(final TypeRef object) {
-		final String s = EGaml.getKeyOf(object);
 		if (object == null) {
 			return null;
 		}
@@ -309,6 +308,26 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (t == Types.NO_TYPE && !UNKNOWN.equals(primary)) {
 			getContext().error(primary + " is not a valid type name", IGamlIssue.NOT_A_TYPE, object, primary);
 			return t;
+		}
+
+		// case of model_alias<species>
+		if (t.isAgentType() && t.getSpecies().isModel()) {
+			final TypeInfo parameter = object.getParameter();
+			if (parameter == null) {
+				return t;
+			}
+			final TypeRef first = (TypeRef) parameter.getFirst();
+			if (first == null) {
+				return t;
+			} else {
+				final ITypesManager savedTypesManager = currentTypesManager;
+				try {
+					currentTypesManager = t.getSpecies().getModelDescription().getTypesManager();
+					return fromTypeRef(first);
+				} finally {
+					currentTypesManager = savedTypesManager;
+				}
+			}
 		}
 
 		if (t.isAgentType()) {

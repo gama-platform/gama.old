@@ -36,6 +36,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 5 déc. 2014
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaColorMenu extends GamaMenu {
 
 	public static final String[] SORT_NAMES = new String[] { "RGB value", "Name", "Brightness", "Luminescence" };

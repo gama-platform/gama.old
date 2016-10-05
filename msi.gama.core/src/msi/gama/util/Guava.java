@@ -4,12 +4,21 @@
  */
 package msi.gama.util;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.Iterator;
+import java.util.Queue;
 import java.util.concurrent.ExecutionException;
-import com.google.common.base.*;
-import com.google.common.cache.*;
-import com.google.common.collect.*;
+
+import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.AbstractIterator;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Ordering;
+
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -21,15 +30,14 @@ import msi.gaml.operators.Cast;
  * @since 16 avr. 2014
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Guava {
 
-	public final static Function<Object, Iterable> transformToIterables = new Function<Object, Iterable>() {
-
-		@Override
-		public Iterable apply(final Object input) {
-			if ( input instanceof Iterable ) { return (Iterable) input; }
-			return ImmutableList.of(input);
+	public final static Function<Object, Iterable> transformToIterables = input -> {
+		if (input instanceof Iterable) {
+			return (Iterable) input;
 		}
+		return ImmutableList.of(input);
 	};
 
 	public static class InContainer implements Predicate {
@@ -44,6 +52,7 @@ public class Guava {
 
 		/**
 		 * Method apply()
+		 * 
 		 * @see com.google.common.base.Predicate#apply(java.lang.Object)
 		 */
 		@Override
@@ -67,34 +76,36 @@ public class Guava {
 		}
 
 		static LoadingCache<Function, Ordering> orderingCache = CacheBuilder.newBuilder().concurrencyLevel(1)
-			.initialCapacity(10).maximumSize(10).build(new CacheLoader<Function, Ordering>() {
+				.initialCapacity(10).maximumSize(10).build(new CacheLoader<Function, Ordering>() {
 
-				@Override
-				public Ordering load(final Function key) throws Exception {
-					return Ordering.natural().onResultOf(key);
-				}
-			});
+					@Override
+					public Ordering load(final Function key) throws Exception {
+						return Ordering.natural().onResultOf(key);
+					}
+				});
 
 		static LoadingCache<IExpression, GamlFunction> functionCache = CacheBuilder.newBuilder().concurrencyLevel(1)
-			.initialCapacity(10).maximumSize(10).build(new CacheLoader<IExpression, GamlFunction>() {
+				.initialCapacity(10).maximumSize(10).build(new CacheLoader<IExpression, GamlFunction>() {
 
-				@Override
-				public GamlFunction load(final IExpression key) throws Exception {
-					return new GamlFunction(key);
-				}
-			});
+					@Override
+					public GamlFunction load(final IExpression key) throws Exception {
+						return new GamlFunction(key);
+					}
+				});
 
 		static LoadingCache<IExpression, GamlPredicate> predicateCache = CacheBuilder.newBuilder().concurrencyLevel(1)
-			.initialCapacity(10).maximumSize(10).build(new CacheLoader<IExpression, GamlPredicate>() {
+				.initialCapacity(10).maximumSize(10).build(new CacheLoader<IExpression, GamlPredicate>() {
 
-				@Override
-				public GamlPredicate load(final IExpression key) throws Exception {
-					return new GamlPredicate(key);
-				}
-			});
+					@Override
+					public GamlPredicate load(final IExpression key) throws Exception {
+						return new GamlPredicate(key);
+					}
+				});
 
 		public static <T> GamlFunction getFunction(final IScope scope, final IExpression filter) {
-			if ( !USE_CACHE ) { return new GamlFunction(scope, filter); }
+			if (!USE_CACHE) {
+				return new GamlFunction(scope, filter);
+			}
 			try {
 				final GamlFunction<T> f = functionCache.get(filter);
 				f.scope = scope;
@@ -105,7 +116,9 @@ public class Guava {
 		}
 
 		public static GamlPredicate getPredicate(final IScope scope, final IExpression filter) {
-			if ( !USE_CACHE ) { return new GamlPredicate(scope, filter); }
+			if (!USE_CACHE) {
+				return new GamlPredicate(scope, filter);
+			}
 			try {
 				final GamlPredicate f = predicateCache.get(filter);
 				f.scope = scope;
@@ -116,7 +129,9 @@ public class Guava {
 		}
 
 		public static Ordering getOrdering(final Function f) {
-			if ( !USE_CACHE ) { return Ordering.natural().onResultOf(f); }
+			if (!USE_CACHE) {
+				return Ordering.natural().onResultOf(f);
+			}
 			try {
 				return orderingCache.get(f);
 			} catch (final ExecutionException e) {
@@ -143,15 +158,12 @@ public class Guava {
 		}
 
 		public static Function<Object, Iterable> iterableFunction(final IScope scope, final IExpression filter) {
-			return new Function<Object, Iterable>() {
-
-				@Override
-				public Iterable apply(final Object input) {
-					final Object o = function(scope, filter).apply(input);
-					if ( o instanceof Iterable ) { return (Iterable) o; }
-					return ImmutableList.of(o);
+			return input -> {
+				final Object o = function(scope, filter).apply(input);
+				if (o instanceof Iterable) {
+					return (Iterable) o;
 				}
-
+				return ImmutableList.of(o);
 			};
 
 		}
@@ -178,11 +190,11 @@ public class Guava {
 
 		private final Queue<Iterator> queue = new ArrayDeque<Iterator>();
 
-		public InterleavingIterator(final Object ... objects) {
-			for ( final Object object : objects ) {
-				if ( object instanceof Iterator ) {
+		public InterleavingIterator(final Object... objects) {
+			for (final Object object : objects) {
+				if (object instanceof Iterator) {
 					queue.add((Iterator) object);
-				} else if ( object instanceof Iterable ) {
+				} else if (object instanceof Iterable) {
 					queue.add(((Iterable) object).iterator());
 				} else {
 					queue.add(Iterators.singletonIterator(object));
@@ -194,7 +206,7 @@ public class Guava {
 		protected Object computeNext() {
 			while (!queue.isEmpty()) {
 				final Iterator topIter = queue.poll();
-				if ( topIter.hasNext() ) {
+				if (topIter.hasNext()) {
 					final Object result = topIter.next();
 					queue.offer(topIter);
 					return result;
@@ -207,7 +219,8 @@ public class Guava {
 	/**
 	 *
 	 */
-	public Guava() {}
+	public Guava() {
+	}
 
 	public static <T> Function function(final IScope scope, final IExpression filter) {
 		return GamlGuavaHelper.<T> getFunction(scope, filter);

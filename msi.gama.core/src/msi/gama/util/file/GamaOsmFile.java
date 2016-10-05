@@ -84,6 +84,7 @@ import msi.gaml.types.Types;
 @file(name = "osm", extensions = { "osm", "pbf", "bz2",
 		"gz" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
 				IConcept.OSM, IConcept.FILE })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaOsmFile extends GamaGisFile {
 
 	public static class OSMInfo extends GamaFileMetaData {

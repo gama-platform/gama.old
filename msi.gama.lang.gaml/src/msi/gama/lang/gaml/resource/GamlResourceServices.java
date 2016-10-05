@@ -34,6 +34,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.ValidationContext;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamlResourceServices {
 
 	private static int resourceCount = 0;

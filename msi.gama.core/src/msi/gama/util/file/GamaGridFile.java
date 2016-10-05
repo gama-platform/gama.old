@@ -51,6 +51,7 @@ import msi.gaml.types.Types;
 @file(name = "grid", extensions = { "asc",
 		"tif" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
 				IConcept.GRID, IConcept.ASC, IConcept.TIF, IConcept.FILE })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaGridFile extends GamaGisFile {
 
 	private GamaGridReader reader;

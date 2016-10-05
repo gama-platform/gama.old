@@ -85,6 +85,7 @@ import msi.gaml.variables.IVariable;
 				IKeyword.HEADLESS_UI }, optional = false, doc = @doc("the type of the experiment (either 'gui' or 'batch'")) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.MODEL })
 @validator(BatchValidator.class)
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	public static class BatchValidator implements IDescriptionValidator {
@@ -634,6 +635,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 * Same as the previous one, but forces the outputs to do one step of
 	 * computation (if some values have changed)
 	 */
+	@Override
 	public void recomputeAndRefreshAllOutputs() {
 		for (final IOutputManager manager : getAllSimulationOutputs()) {
 			manager.step(getExperimentScope());

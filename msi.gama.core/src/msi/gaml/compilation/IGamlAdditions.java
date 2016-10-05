@@ -11,18 +11,29 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.IPath;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.skills.*;
+import msi.gaml.skills.GridSkill;
+import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
 
+@SuppressWarnings({ "rawtypes" })
 public interface IGamlAdditions {
 
 	public final static int[] AI = new int[0];

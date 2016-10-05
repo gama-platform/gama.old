@@ -43,6 +43,7 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class SymbolDescription implements IDescription {
 
 	protected static Set<String> typeProviderFacets = new HashSet(

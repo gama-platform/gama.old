@@ -71,6 +71,7 @@ import msi.gaml.species.ISpecies;
  */
 @type(name = IKeyword.GEOMETRY, id = IType.GEOMETRY, wraps = { GamaShape.class,
 		IShape.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.GEOMETRY })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaGeometryType extends GamaType<IShape> {
 
 	public static WKTReader SHAPE_READER = new WKTReader();

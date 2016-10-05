@@ -72,6 +72,7 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Graphs {
 
 	private static class IntersectionRelation implements VertexRelationship<IShape> {

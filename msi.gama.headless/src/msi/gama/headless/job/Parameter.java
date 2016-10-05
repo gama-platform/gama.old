@@ -36,7 +36,6 @@ public class Parameter {
 
 	public static Parameter loadAndBuildParameter(final IDescription paramDesc, final IModel model) {
 		final String name = paramDesc.getLitteral(IKeyword.NAME);
-		@SuppressWarnings("rawtypes")
 		final String varName = paramDesc.getLitteral(IKeyword.VAR);
 		final IExpression exp = paramDesc.getFacetExpr(IKeyword.INIT);
 		final Object val = exp.isConst() ? exp.value(null) : exp.serialize(true);

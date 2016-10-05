@@ -54,7 +54,7 @@ Statement:
 	((=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Equations))) | S_Display ;
 
 S_1Expr_Facets_BlockOrEnd returns Statement:
-	key=_1Expr_Facets_BlockOrEnd_Key (firstFacet=FirstFacetKey)? expr=Expression (facets+=Facet)* (block=Block | ";");
+	key=_1Expr_Facets_BlockOrEnd_Key (firstFacet=FirstFacetKey)? (=>expr=Expression | expr=TypeRef) (facets+=Facet)* (block=Block | ";");
 
 S_Do:
 	key=_DoKey (firstFacet="action:")? expr=AbstractRef (facets+=Facet)* (block=Block | ';');
@@ -222,7 +222,6 @@ DefinitionFacetKey:
 
 TypeFacetKey:
 	("as:" | "of:" | "parent:" | "species:"|"type:");
-//	"as:" | "of:" | "type:" | 'parent:' | 'species:';
 
 
 SpecialFacetKey:
@@ -384,10 +383,10 @@ VariableRef:
 	{VariableRef} ref=[VarDefinition|Valid_ID];
 
 TypeRef returns Expression:
-	{TypeRef} (ref=[TypeDefinition|ID] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo) ;
+	 {TypeRef} (ref=[TypeDefinition|ID] parameter=TypeInfo?) | {TypeRef} ("species" parameter=TypeInfo) ;
 
 TypeInfo:
-	('<' first=TypeRef ("," second=TypeRef)? =>'>')
+	('<' first=TypeRef ("," second=TypeRef)? =>'>') 
 ;
 SkillRef returns Expression:
 	{SkillRef} ref=[SkillFakeDefinition|ID];

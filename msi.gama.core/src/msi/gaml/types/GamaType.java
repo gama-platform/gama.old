@@ -45,7 +45,7 @@ import msi.gaml.expressions.IExpression;
  * ParametricType).
  *
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class GamaType<Support> implements IType<Support> {
 
 	protected int id;

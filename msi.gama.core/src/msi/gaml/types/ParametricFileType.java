@@ -18,6 +18,7 @@ import msi.gaml.expressions.IExpression;
  * @author drogoul
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ParametricFileType extends ParametricType {
 
 	int id;

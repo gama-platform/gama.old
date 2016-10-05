@@ -42,6 +42,7 @@ import msi.gaml.types.Types;
  * A stream based parser for parsing delimited text data from a file or a
  * stream.
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CsvReader {
 
 	private String fileName = null;

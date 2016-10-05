@@ -165,9 +165,9 @@ public class ModelScene {
 			layers.put(ROTATION_HELPER_KEY, rotLayer);
 		}
 
-		ArrayList<LayerObject> list = new ArrayList(layers.values());
+		final ArrayList<LayerObject> list = new ArrayList<>(layers.values());
 		// reorder the list, to put the overlay at the end
-		for (int i = list.size()-1 ; i >= 0 ; i-- ) {
+		for (int i = list.size() - 1; i >= 0; i--) {
 			if (list.get(i).isOverlay()) {
 				list.add(list.get(i));
 				list.remove(i);

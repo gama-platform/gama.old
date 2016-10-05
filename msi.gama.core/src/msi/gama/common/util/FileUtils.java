@@ -16,8 +16,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.collect.Iterables;
 
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.runtime.GAMA;
@@ -94,17 +95,21 @@ public class FileUtils {
 	static public String constructAbsoluteFilePath(final IScope scope, final String fp, final boolean mustExist)
 			throws GamaRuntimeException {
 		String filePath = null;
-		final List<String> baseDirectories = new ArrayList();
+		Iterable<String> baseDirectories = null;
 		final IExperimentAgent a = scope.getExperiment();
 		final List<String> referenceDirectories = a.getWorkingPaths();
+
 		try {
-			for (final String ref : referenceDirectories) {
-				// TODO AD: do it once when creating the baseDirectories
-				baseDirectories.add(withTrailingSep(URLDecoder.decode(ref, "UTF-8")));
-			}
+			baseDirectories = Iterables.transform(a.getWorkingPaths(), each -> {
+				try {
+					return withTrailingSep(URLDecoder.decode(each, "UTF-8"));
+				} catch (final UnsupportedEncodingException e1) {
+					return each;
+				}
+			});
 			filePath = URLDecoder.decode(fp, "UTF-8");
 		} catch (final UnsupportedEncodingException e1) {
-			e1.printStackTrace();
+			filePath = fp;
 		}
 		final GamaRuntimeException ex = new GamaRuntimeFileException(scope,
 				"File denoted by " + filePath + " not found.");
@@ -156,7 +161,7 @@ public class FileUtils {
 			// first directory is used as a reference.
 			if (!mustExist)
 				try {
-					return new File(baseDirectories.get(0) + filePath).getCanonicalPath();
+					return new File(Iterables.get(baseDirectories, 0) + filePath).getCanonicalPath();
 				} catch (final IOException e) {
 					throw ex;
 				}

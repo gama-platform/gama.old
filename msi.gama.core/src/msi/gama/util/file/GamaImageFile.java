@@ -55,6 +55,7 @@ import msi.gaml.types.Types;
 @file(name = "image", extensions = { "tiff", "jpg", "jpeg", "png", "gif", "pict",
 		"bmp" }, buffer_type = IType.MATRIX, buffer_content = IType.INT, buffer_index = IType.POINT, concept = {
 				IConcept.IMAGE, IConcept.FILE })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation, Integer> {
 
 	public static class ImageInfo extends GamaFileMetaData {

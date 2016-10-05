@@ -36,7 +36,6 @@ import com.google.common.collect.Multimap;
 
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
-import gnu.trove.set.hash.TIntHashSet;
 import msi.gama.common.interfaces.IDisplayCreator;
 import msi.gama.common.interfaces.IDisplayCreator.DisplayDescription;
 import msi.gama.common.interfaces.IExperimentAgentCreator;
@@ -85,17 +84,12 @@ import msi.gaml.types.Types;
  * @since 17 mai 2012
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static final Set<String> CONSTANTS = new HashSet();
 	final static Multimap<Class, IDescription> ADDITIONS = HashMultimap.create();
-	private static Function<Class, Collection<IDescription>> INTO_DESCRIPTIONS = new Function<Class, Collection<IDescription>>() {
-
-		@Override
-		public Collection<IDescription> apply(final Class input) {
-			return ADDITIONS.get(input);
-		}
-	};
+	private static Function<Class, Collection<IDescription>> INTO_DESCRIPTIONS = input -> ADDITIONS.get(input);
 	private final static Multimap<Class, OperatorProto> FIELDS = HashMultimap.create();
 	public final static Multimap<Integer, String> VARTYPE2KEYWORDS = HashMultimap.create();
 	public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS = new THashMap<String, IGamaPopulationsLinker>();
@@ -185,11 +179,11 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	protected void _symbol(final Class c, /* final int docIndex, */final IDescriptionValidator validator,
 			final SymbolSerializer serializer, final int sKind, final boolean remote, final boolean args,
 			final boolean scope, final boolean sequence, final boolean unique, final boolean name_unique,
-			final String[] parentSymbols, final int[] parentKinds, final FacetProto[] fmd, final String omissible,
+			final String[] contextKeywords, final int[] contextKinds, final FacetProto[] fmd, final String omissible,
 			final ISymbolConstructor sc, final String... names) {
 
-		final Set<String> contextKeywords = new THashSet();
-		final TIntHashSet contextKinds = new TIntHashSet();
+		// final Set<String> contextKeywords = new THashSet();
+		// final TIntHashSet contextKinds = new TIntHashSet();
 		final Map<String, FacetProto> facets = new THashMap();
 		if (fmd != null) {
 			for (final FacetProto f : fmd) {
@@ -197,16 +191,16 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			}
 		}
 
-		if (parentSymbols != null) {
-			for (final String p : parentSymbols) {
-				contextKeywords.add(p);
-			}
-		}
-		if (parentKinds != null) {
-			for (final int p : parentKinds) {
-				contextKinds.add(p);
-			}
-		}
+		// if (parentSymbols != null) {
+		// for (final String p : parentSymbols) {
+		// contextKeywords.add(p);
+		// }
+		// }
+		// if (parentKinds != null) {
+		// for (final int p : parentKinds) {
+		// contextKinds.add(p);
+		// }
+		// }
 		final List<String> keywords = names == null ? new ArrayList() : new ArrayList(Arrays.asList(names));
 		// if the symbol is a variable
 		if (ISymbolKind.Variable.KINDS.contains(sKind)) {

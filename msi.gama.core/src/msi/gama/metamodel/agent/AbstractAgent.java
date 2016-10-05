@@ -72,6 +72,7 @@ import msi.gaml.variables.IVariable;
  * @since 18 mai 2013
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class AbstractAgent implements IAgent {
 
 	private volatile int index;

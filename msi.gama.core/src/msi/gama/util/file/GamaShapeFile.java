@@ -66,6 +66,7 @@ import msi.gaml.types.Types;
 @file(name = "shape", extensions = {
 		"shp" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
 				IConcept.SHAPEFILE, IConcept.FILE })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaShapeFile extends GamaGisFile {
 
 	public static class ShapeInfo extends GamaFileMetaData {

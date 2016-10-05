@@ -1008,10 +1008,14 @@ ruleS_1Expr_Facets_BlockOrEnd returns [EObject current=null]
 	    }
 
 )
-)?(
+)?(((
+(
+ruleExpression
+)
+)=>
 (
 		{ 
-	        newCompositeNode(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprExpressionParserRuleCall_2_0()); 
+	        newCompositeNode(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprExpressionParserRuleCall_2_0_0()); 
 	    }
 		lv_expr_2_0=ruleExpression		{
 	        if ($current==null) {
@@ -1026,19 +1030,38 @@ ruleS_1Expr_Facets_BlockOrEnd returns [EObject current=null]
 	    }
 
 )
-)(
+)
+    |(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprTypeRefParserRuleCall_2_1_0()); 
+	    }
+		lv_expr_3_0=ruleTypeRef		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getS_1Expr_Facets_BlockOrEndRule());
+	        }
+       		set(
+       			$current, 
+       			"expr",
+        		lv_expr_3_0, 
+        		"msi.gama.lang.gaml.Gaml.TypeRef");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))(
 (
 		{ 
 	        newCompositeNode(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getFacetsFacetParserRuleCall_3_0()); 
 	    }
-		lv_facets_3_0=ruleFacet		{
+		lv_facets_4_0=ruleFacet		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getS_1Expr_Facets_BlockOrEndRule());
 	        }
        		add(
        			$current, 
        			"facets",
-        		lv_facets_3_0, 
+        		lv_facets_4_0, 
         		"msi.gama.lang.gaml.Gaml.Facet");
 	        afterParserOrEnumRuleCall();
 	    }
@@ -1049,23 +1072,23 @@ ruleS_1Expr_Facets_BlockOrEnd returns [EObject current=null]
 		{ 
 	        newCompositeNode(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getBlockBlockParserRuleCall_4_0_0()); 
 	    }
-		lv_block_4_0=ruleBlock		{
+		lv_block_5_0=ruleBlock		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getS_1Expr_Facets_BlockOrEndRule());
 	        }
        		set(
        			$current, 
        			"block",
-        		lv_block_4_0, 
+        		lv_block_5_0, 
         		"msi.gama.lang.gaml.Gaml.Block");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
 )
-    |	otherlv_5=';' 
+    |	otherlv_6=';' 
     {
-    	newLeafNode(otherlv_5, grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getSemicolonKeyword_4_1());
+    	newLeafNode(otherlv_6, grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getSemicolonKeyword_4_1());
     }
 ))
 ;

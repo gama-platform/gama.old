@@ -36,6 +36,7 @@ import msi.gaml.types.IType;
 		@facet(name = GraphYiFanHuLayoutStatement.NB_STEPS, type = IType.INT, optional = true, doc = @doc("The number of steps of the algorithm to perform (default 1).")),
 		@facet(name = GraphYiFanHuLayoutStatement.BOUNDED_P1, type = IType.POINT, optional = true, doc = @doc("The new nodes positions are bounded within the two bound points if both are not null. default: null")),
 		@facet(name = GraphYiFanHuLayoutStatement.BOUNDED_P2, type = IType.POINT, optional = true, doc = @doc("The new nodes positions are bounded within the two bound points if both are not null. default: null")) }, omissible = IKeyword.GRAPH)
+@SuppressWarnings({ "rawtypes" })
 public class GraphYiFanHuLayoutStatement extends AbstractGraphLayoutStatement {
 
 	public GraphYiFanHuLayoutStatement(final IDescription desc) {

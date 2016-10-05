@@ -42,6 +42,7 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
+@SuppressWarnings({ "rawtypes" })
 public class Files {
 
 	public static final String FOLDER = "folder";

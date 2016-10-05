@@ -28,6 +28,7 @@ import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
 
 @Singleton
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 
 	public static GamlResourceInfoProvider INSTANCE = new GamlResourceInfoProvider();

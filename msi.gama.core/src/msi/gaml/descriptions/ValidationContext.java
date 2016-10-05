@@ -63,11 +63,11 @@ public class ValidationContext implements Iterable<GamlCompilationError>, IDocMa
 		final boolean sameResource = uri.equals(resourceURI);
 		if (sameResource) {
 			if (internalErrors == null)
-				internalErrors = new ArrayList();
+				internalErrors = new ArrayList<GamlCompilationError>();
 			internalErrors.add(error);
 		} else if (error.isError()) {
 			if (importedErrors == null)
-				importedErrors = new ArrayList();
+				importedErrors = new ArrayList<GamlCompilationError>();
 			importedErrors.add(error);
 		}
 	}
@@ -103,7 +103,7 @@ public class ValidationContext implements Iterable<GamlCompilationError>, IDocMa
 	}
 
 	public Collection<GamlCompilationError> getImportedErrors() {
-		return importedErrors == null ? Collections.<GamlCompilationError>emptyList() : importedErrors;
+		return importedErrors == null ? Collections.EMPTY_LIST : importedErrors;
 	}
 
 	public Iterable<GamlCompilationError> getWarnings() {
@@ -136,7 +136,8 @@ public class ValidationContext implements Iterable<GamlCompilationError>, IDocMa
 	}
 
 	public Map<String, URI> getImportedErrorsAsStrings() {
-		final Map<String, URI> result = new TOrderedHashMap(importedErrors == null ? 0 : importedErrors.size());
+		final Map<String, URI> result = new TOrderedHashMap<String, URI>(
+				importedErrors == null ? 0 : importedErrors.size());
 		if (importedErrors != null)
 			for (final GamlCompilationError error : importedErrors) {
 				final URI uri = error.getURI();

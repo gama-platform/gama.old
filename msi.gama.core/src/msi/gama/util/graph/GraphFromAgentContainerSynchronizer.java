@@ -11,7 +11,11 @@
  **********************************************************************************************/
 package msi.gama.util.graph;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
@@ -20,12 +24,16 @@ import msi.gama.util.IContainer;
 /**
  * Syncs a graph with two populations of agents (one for edges, one for nodes).
  * <ul>
- * <li>When a node agent dies, the corresponding node is removed from the network.</li>
- * <li>When an edge agent dies, the corresponding edge is removed from the network.</li>
+ * <li>When a node agent dies, the corresponding node is removed from the
+ * network.</li>
+ * <li>When an edge agent dies, the corresponding edge is removed from the
+ * network.</li>
  * </ul>
  *
- * @author Benoit Gaudou, from Samuel Thiriot (GraphAndPopulationSynchronize.java)
+ * @author Benoit Gaudou, from Samuel Thiriot
+ *         (GraphAndPopulationSynchronize.java)
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GraphFromAgentContainerSynchronizer implements IPopulation.Listener {
 
 	private final IPopulation popVertices;
@@ -33,8 +41,8 @@ public class GraphFromAgentContainerSynchronizer implements IPopulation.Listener
 	private final IGraph graph;
 
 	/**
-	 * The last vertex and edge for which we sent an event.
-	 * Avoids first-order loops between events from graphs and populations
+	 * The last vertex and edge for which we sent an event. Avoids first-order
+	 * loops between events from graphs and populations
 	 */
 	private Object currentEventVertex = null;
 	private Object currentEventEdge = null;
@@ -43,39 +51,43 @@ public class GraphFromAgentContainerSynchronizer implements IPopulation.Listener
 
 	private final List<Map> initialValues = Collections.EMPTY_LIST;
 
-	public GraphFromAgentContainerSynchronizer(IScope scope, final IContainer setVertices, final IContainer setEdges,
-		final IGraph graph) {
-		this.popVertices = (setVertices == null)?null:((IAgent)setVertices.firstValue(scope)).getPopulation();
-		this.popEdges = (setEdges == null)?null:((IAgent)setEdges.firstValue(scope)).getPopulation();
+	public GraphFromAgentContainerSynchronizer(final IScope scope, final IContainer setVertices,
+			final IContainer setEdges, final IGraph graph) {
+		this.popVertices = setVertices == null ? null : ((IAgent) setVertices.firstValue(scope)).getPopulation();
+		this.popEdges = setEdges == null ? null : ((IAgent) setEdges.firstValue(scope)).getPopulation();
 		this.graph = graph;
 
 	}
 
-	IPopulation getVerticesPopulation() {return popVertices;}
-	IPopulation getEdgesPopulation() {return popEdges;}
-	
-	
+	IPopulation getVerticesPopulation() {
+		return popVertices;
+	}
+
+	IPopulation getEdgesPopulation() {
+		return popEdges;
+	}
+
 	@Override
 	public void notifyAgentRemoved(final IPopulation pop, final IAgent agent) {
 
-		if ( pop == popVertices ) {
-			if ( currentEventVertex != agent ) {
+		if (pop == popVertices) {
+			if (currentEventVertex != agent) {
 				try {
 					currentEventVertex = agent;
 					graph.removeVertex(agent);
-				} catch (RuntimeException e) {
+				} catch (final RuntimeException e) {
 					e.printStackTrace();
 				}
 			}
 			currentEventVertex = null;
 		}
 
-		if ( pop == popEdges ) {
-			if ( currentEventEdge != agent ) {
+		if (pop == popEdges) {
+			if (currentEventEdge != agent) {
 				try {
 					currentEventEdge = agent;
 					graph.removeEdge(agent);
-				} catch (RuntimeException e) {
+				} catch (final RuntimeException e) {
 					e.printStackTrace();
 				}
 			}
@@ -84,21 +96,23 @@ public class GraphFromAgentContainerSynchronizer implements IPopulation.Listener
 	}
 
 	@Override
-	public void notifyAgentAdded(final IPopulation pop, final IAgent agent) {}
+	public void notifyAgentAdded(final IPopulation pop, final IAgent agent) {
+	}
 
 	@Override
-	public void notifyAgentsAdded(final IPopulation pop, final Collection agents) {}
+	public void notifyAgentsAdded(final IPopulation pop, final Collection agents) {
+	}
 
 	@Override
 	public void notifyAgentsRemoved(final IPopulation pop, final Collection agents) {
 
-		if ( pop == popVertices ) {
-			for ( Object o : agents ) {
-				if ( currentEventVertex != o ) {
+		if (pop == popVertices) {
+			for (final Object o : agents) {
+				if (currentEventVertex != o) {
 					try {
 						currentEventVertex = o;
 						graph.removeVertex(o);
-					} catch (RuntimeException e) {
+					} catch (final RuntimeException e) {
 						e.printStackTrace();
 					}
 				}
@@ -106,13 +120,13 @@ public class GraphFromAgentContainerSynchronizer implements IPopulation.Listener
 			}
 		}
 
-		if ( pop == popEdges ) {
-			for ( Object o : agents ) {
-				if ( currentEventEdge != o ) {
+		if (pop == popEdges) {
+			for (final Object o : agents) {
+				if (currentEventEdge != o) {
 					try {
 						currentEventEdge = o;
 						graph.removeEdge(o);
-					} catch (RuntimeException e) {
+					} catch (final RuntimeException e) {
 						e.printStackTrace();
 					}
 				}
@@ -126,29 +140,31 @@ public class GraphFromAgentContainerSynchronizer implements IPopulation.Listener
 
 		try {
 			graph.removeAllVertices(graph.vertexSet());
-		} catch (RuntimeException e) {
+		} catch (final RuntimeException e) {
 			e.printStackTrace();
 		}
 
 	}
 
 	/**
-	 * Creates a synchronizer which listens for a population
-	 * of vertices and updates the graph accordingly
+	 * Creates a synchronizer which listens for a population of vertices and
+	 * updates the graph accordingly
+	 * 
 	 * @param popVertices
 	 * @param graph
 	 * @return
 	 */
-	public static GraphFromAgentContainerSynchronizer synchronize(final IScope scope, final IContainer popVertices, final IContainer popEdges,
-		final IGraph graph) {
+	public static GraphFromAgentContainerSynchronizer synchronize(final IScope scope, final IContainer popVertices,
+			final IContainer popEdges, final IGraph graph) {
 
-		GraphFromAgentContainerSynchronizer res = new GraphFromAgentContainerSynchronizer(scope, popVertices, popEdges, graph);
-		
-		if(res.getEdgesPopulation() != null){
-			(res.getEdgesPopulation()).addListener(res);			
+		final GraphFromAgentContainerSynchronizer res = new GraphFromAgentContainerSynchronizer(scope, popVertices,
+				popEdges, graph);
+
+		if (res.getEdgesPopulation() != null) {
+			res.getEdgesPopulation().addListener(res);
 		}
-		if(res.getVerticesPopulation() != null){
-			(res.getVerticesPopulation()).addListener(res);			
+		if (res.getVerticesPopulation() != null) {
+			res.getVerticesPopulation().addListener(res);
 		}
 		return res;
 	}

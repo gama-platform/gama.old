@@ -57,6 +57,7 @@ import msi.gaml.types.Types;
 @file(name = "dxf", extensions = {
 		"dxf" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
 				IConcept.DXF, IConcept.FILE })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaDXFFile extends GamaGeometryFile {
 
 	GamaPoint size;

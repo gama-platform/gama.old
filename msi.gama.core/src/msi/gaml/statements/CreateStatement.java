@@ -128,6 +128,7 @@ import msi.gaml.types.Types;
 				@example(value = "", isExecutable = false) }) })
 @validator(CreateValidator.class)
 @serializer(CreateSerializer.class)
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CreateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	public static class CreateValidator implements IDescriptionValidator<StatementDescription> {
@@ -246,8 +247,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private final IExpression from, number, species, header;
 	private final String returns;
 	private final RemoteSequence sequence;
-	private static List<ICreateDelegate> delegates = new ArrayList();
-	private static List<IType> delegateTypes = new ArrayList();
+	private static List<ICreateDelegate> delegates = new ArrayList<>();
+	private static List<IType> delegateTypes = new ArrayList<>();
 
 	/**
 	 * @param createExecutableExtension

@@ -63,6 +63,7 @@ import msi.gaml.types.Types;
  * @since 26 août 2013
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaPreferences {
 
 	// public static final String GENERAL = "General";

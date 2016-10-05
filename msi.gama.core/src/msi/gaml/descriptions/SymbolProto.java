@@ -18,7 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import gnu.trove.procedure.TIntProcedure;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
+
 import gnu.trove.set.hash.THashSet;
 import gnu.trove.set.hash.TIntHashSet;
 import msi.gama.common.interfaces.IKeyword;
@@ -38,6 +40,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class SymbolProto extends AbstractProto {
 
 	private final ISymbolConstructor constructor;
@@ -47,10 +50,10 @@ public class SymbolProto extends AbstractProto {
 
 	private final int kind;
 	private final boolean hasSequence, hasArgs, hasScope, isRemoteContext, isUniqueInContext;
-	private final Set<String> contextKeywords;
+	private final ImmutableSet<String> contextKeywords;
 	private final boolean[] contextKinds = new boolean[ISymbolKind.__NUMBER__];
 	private final Map<String, FacetProto> possibleFacets;
-	private final Set<String> mandatoryFacets = new THashSet<String>();
+	private final ImmutableSet<String> mandatoryFacets;
 	private final String omissibleFacet;
 	private final boolean isPrimitive;
 
@@ -59,10 +62,10 @@ public class SymbolProto extends AbstractProto {
 
 	public SymbolProto(final Class clazz, final boolean hasSequence, final boolean hasArgs, final int kind,
 			final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets, final String omissible,
-			/* final String[][] possibleCombinations, */final Set<String> contextKeywords,
-			final TIntHashSet contextKinds, final boolean isRemoteContext, final boolean isUniqueInContext,
-			final boolean nameUniqueInContext, final ISymbolConstructor constr, final IDescriptionValidator validator,
-			final SymbolSerializer serializer, final String name, final String plugin) {
+			final String[] contextKeywords, final int[] parentKinds, final boolean isRemoteContext,
+			final boolean isUniqueInContext, final boolean nameUniqueInContext, final ISymbolConstructor constr,
+			final IDescriptionValidator validator, final SymbolSerializer serializer, final String name,
+			final String plugin) {
 		super(name, clazz, plugin);
 		factory = DescriptionFactory.getFactory(kind);
 		this.validator = validator;
@@ -77,18 +80,18 @@ public class SymbolProto extends AbstractProto {
 		this.kind = kind;
 		this.hasScope = !doesNotHaveScope;
 		this.possibleFacets = possibleFacets;
+		final Builder<String> builder = ImmutableSet.builder();
 		for (final FacetProto f : possibleFacets.values()) {
 			if (!f.optional) {
-				mandatoryFacets.add(f.name);
+				builder.add(f.name);
 			}
 		}
-		this.contextKeywords = contextKeywords;
+		mandatoryFacets = builder.build();
+		this.contextKeywords = ImmutableSet.copyOf(contextKeywords);
 		Arrays.fill(this.contextKinds, false);
-		contextKinds.forEach((TIntProcedure) i -> {
-			SymbolProto.this.contextKinds[i] = true;
-			return true;
-		});
-
+		for (final int i : parentKinds) {
+			contextKinds[i] = true;
+		}
 	}
 
 	public SymbolFactory getFactory() {

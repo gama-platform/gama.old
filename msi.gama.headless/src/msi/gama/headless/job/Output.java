@@ -39,7 +39,6 @@ public class Output {
 
 	public static Output loadAndBuildOutput(final IDescription exp) {
 		final String name = exp.getLitteral(IKeyword.NAME);
-		@SuppressWarnings("rawtypes")
 		final Output res = new Output(name, DEFAULT_FRAME_RATE, new Integer(OUTPUT_ID).toString(), null);
 		return res;
 	}

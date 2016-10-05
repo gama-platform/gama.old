@@ -3153,6 +3153,28 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__S_1Expr_Facets_BlockOrEnd__Alternatives_2
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprAssignment_2_0()); }
+(rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2_0)
+{ after(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprAssignment_2_0()); }
+)
+
+    |(
+{ before(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprAssignment_2_1()); }
+(rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2_1)
+{ after(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprAssignment_2_1()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__S_1Expr_Facets_BlockOrEnd__Alternatives_4
     @init {
 		int stackSize = keepStackSize();
@@ -6438,9 +6460,9 @@ rule__S_1Expr_Facets_BlockOrEnd__Group__2__Impl
     }
 :
 (
-{ before(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprAssignment_2()); }
-(rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2)
-{ after(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprAssignment_2()); }
+{ before(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getAlternatives_2()); }
+(rule__S_1Expr_Facets_BlockOrEnd__Alternatives_2)
+{ after(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getAlternatives_2()); }
 )
 
 ;
@@ -16955,14 +16977,29 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2
+rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2_0
     @init {
 		int stackSize = keepStackSize();
     }
 :
 (
-{ before(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprExpressionParserRuleCall_2_0()); }
-	ruleExpression{ after(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprExpressionParserRuleCall_2_0()); }
+{ before(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprExpressionParserRuleCall_2_0_0()); }
+	ruleExpression{ after(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprExpressionParserRuleCall_2_0_0()); }
+)
+
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2_1
+    @init {
+		int stackSize = keepStackSize();
+    }
+:
+(
+{ before(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprTypeRefParserRuleCall_2_1_0()); }
+	ruleTypeRef{ after(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprTypeRefParserRuleCall_2_1_0()); }
 )
 
 ;

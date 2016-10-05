@@ -36,6 +36,7 @@ import msi.gaml.types.Types;
 /**
  * The Class UnaryOperator.
  */
+@SuppressWarnings({ "rawtypes" })
 public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	final protected IExpression child;

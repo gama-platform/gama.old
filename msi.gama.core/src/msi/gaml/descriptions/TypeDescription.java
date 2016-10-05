@@ -49,6 +49,7 @@ import msi.gaml.types.IType;
  * @since 23 fevr. 2013
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class TypeDescription extends SymbolDescription {
 
 	// AD 08/16 : actions and attributes are now inherited dynamically and built

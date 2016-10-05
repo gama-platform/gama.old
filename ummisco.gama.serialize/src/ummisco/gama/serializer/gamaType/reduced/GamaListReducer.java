@@ -5,27 +5,22 @@ import java.util.ArrayList;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaMap.GamaPairList;
-import msi.gama.util.GamaMapFactory;
-import msi.gama.util.GamaPair;
 import msi.gaml.types.IType;
 
+@SuppressWarnings({ "rawtypes" })
 public class GamaListReducer {
-	private ArrayList<Object> valuesListReducer = new ArrayList<>();
-	private IType contentTypeListReducer;
-	
-	public GamaListReducer(GamaList l)
-	{		
-		contentTypeListReducer = l .getType().getContentType();
-		
-		for(Object p : l) {
+	private final ArrayList<Object> valuesListReducer = new ArrayList<>();
+	private final IType contentTypeListReducer;
+
+	public GamaListReducer(final GamaList l) {
+		contentTypeListReducer = l.getType().getContentType();
+
+		for (final Object p : l) {
 			valuesListReducer.add(p);
 		}
 	}
-	
-	public GamaList constructObject(IScope scope)
-	{
+
+	public GamaList constructObject(final IScope scope) {
 		return (GamaList) GamaListFactory.create(scope, contentTypeListReducer, valuesListReducer);
 	}
 }

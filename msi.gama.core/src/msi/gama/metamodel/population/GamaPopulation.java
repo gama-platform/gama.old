@@ -66,6 +66,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 
 	public static GamaPopulation createPopulation(final IScope scope, final IMacroAgent host, final ISpecies species) {

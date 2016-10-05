@@ -43,7 +43,6 @@ import com.vividsolutions.jts.geom.PrecisionModel;
 import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
-import com.vividsolutions.jts.operation.buffer.BufferOp;
 import com.vividsolutions.jts.operation.buffer.BufferParameters;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
@@ -104,6 +103,7 @@ import msi.gaml.types.Types;
  * All the spatial operators available in GAML. Regrouped by types of operators.
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class Spatial {
 
 	/**
@@ -952,15 +952,18 @@ public abstract class Spatial {
 							.intersection(GeometryPrecisionReducer.reducePointwise(geom2, pm));
 				} catch (final Exception e1) {
 					try {
-						geom = Spatial.Transformations.translated_by(scope, g2.copy(scope), new GamaPoint(0.01,0)).getInnerGeometry().union(geom1);
-						
+						geom = Spatial.Transformations.translated_by(scope, g2.copy(scope), new GamaPoint(0.01, 0))
+								.getInnerGeometry().union(geom1);
+
 					} catch (final Exception e2) {
 						// AD 12/04/13 : Addition of a third method in case of
 						// exception
 						try {
-							geom = geom1.buffer(0.01, 0, BufferParameters.CAP_SQUARE).union(geom2.buffer(0.01, 0, BufferParameters.CAP_SQUARE));
+							geom = geom1.buffer(0.01, 0, BufferParameters.CAP_SQUARE)
+									.union(geom2.buffer(0.01, 0, BufferParameters.CAP_SQUARE));
 						} catch (final Exception e3) {
-							geom = Spatial.Transformations.rotated_by(scope, g2.copy(scope), 0.1).getInnerGeometry().union(geom1);
+							geom = Spatial.Transformations.rotated_by(scope, g2.copy(scope), 0.1).getInnerGeometry()
+									.union(geom1);
 						}
 					}
 				}

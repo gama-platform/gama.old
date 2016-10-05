@@ -43,6 +43,7 @@ import msi.gaml.types.Types;
 				@doc("Returns the list of values of this map (in their order of insertion)") }),
 		@var(name = GamaMap.PAIRS, type = IType.LIST, of = IType.PAIR, doc = {
 				@doc("Returns the list of pairs (key, value) that compose this map") }) })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 		implements IModifiableContainer<K, V, K, V>, IAddressableContainer<K, V, K, V> {
 

@@ -33,6 +33,7 @@ import msi.gaml.expressions.IExpression;
  * @since 19 janv. 2014
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ParametricType implements IContainerType {
 
 	private final IContainerType type;

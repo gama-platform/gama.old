@@ -50,6 +50,7 @@ import ummisco.gama.opengl.utils.GLUtilGLContext;
  *
  */
 @file(name = "obj", extensions = "obj", buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaObjFile extends Gama3DGeometryFile {
 
 	private final ArrayList<float[]> vertexSets = new ArrayList();

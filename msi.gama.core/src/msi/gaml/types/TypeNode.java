@@ -49,12 +49,12 @@ public class TypeNode<T> {
 	public void addChild(final TypeNode<T> child) {
 		child.parent = this;
 		if (children == null)
-			children = new ArrayList();
+			children = new ArrayList<>();
 		children.add(child);
 	}
 
 	public TypeNode<T> addChild(final T child) {
-		final TypeNode<T> result = new TypeNode(child);
+		final TypeNode<T> result = new TypeNode<>(child);
 		addChild(result);
 		return result;
 	}

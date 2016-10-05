@@ -19,7 +19,6 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -46,6 +45,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * The item children that may be added to instances of this class must be of
  * type <code>ExpandItem</code>.
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ParameterExpandBar extends Composite/* implements IPopupProvider */ {
 
 	/**
@@ -125,38 +125,34 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 		this.hasSelectableToggle = isSelectable;
 		this.hasVisibleToggle = isVisible;
 		this.underlyingObjects = underlyingObjects;
-		listener = new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				switch (event.type) {
-				case SWT.Dispose:
-					onDispose(event);
-					break;
-				case SWT.MenuDetect:
+		listener = event -> {
+			switch (event.type) {
+			case SWT.Dispose:
+				onDispose(event);
+				break;
+			case SWT.MenuDetect:
+				onContextualMenu(event);
+				break;
+			case SWT.MouseDown:
+				if ((event.stateMask & SWT.CTRL) != 0 || event.button == 3) {
 					onContextualMenu(event);
-					break;
-				case SWT.MouseDown:
-					if ((event.stateMask & SWT.CTRL) != 0 || event.button == 3) {
-						onContextualMenu(event);
-					} else {
-						onMouseDown(event);
-					}
-					break;
-				case SWT.MouseUp:
-					onMouseUp(event);
-					break;
-				case SWT.Paint:
-					onPaint(event);
-					break;
-				case SWT.Resize:
-					onResize();
-					break;
-				case SWT.FocusIn:
-				case SWT.FocusOut:
-					onFocus();
-					break;
+				} else {
+					onMouseDown(event);
 				}
+				break;
+			case SWT.MouseUp:
+				onMouseUp(event);
+				break;
+			case SWT.Paint:
+				onPaint(event);
+				break;
+			case SWT.Resize:
+				onResize();
+				break;
+			case SWT.FocusIn:
+			case SWT.FocusOut:
+				onFocus();
+				break;
 			}
 		};
 		addListener(SWT.Dispose, listener);
@@ -182,25 +178,13 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 				// onHover(e);
 			}
 		});
-		addMouseMoveListener(new MouseMoveListener() {
-
-			@Override
-			public void mouseMove(final MouseEvent e) {
-				onHover(e);
-			}
-		});
+		addMouseMoveListener(e -> onHover(e));
 		// addListener(SWT.KeyDown, listener);
 		addListener(SWT.FocusIn, listener);
 		addListener(SWT.FocusOut, listener);
 		final ScrollBar verticalBar = getVerticalBar();
 		if (verticalBar != null) {
-			verticalBar.addListener(SWT.Selection, new Listener() {
-
-				@Override
-				public void handleEvent(final Event event) {
-					onScroll(event);
-				}
-			});
+			verticalBar.addListener(SWT.Selection, event -> onScroll(event));
 		}
 		// By default
 		setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
@@ -616,13 +600,7 @@ public class ParameterExpandBar extends Composite/* implements IPopupProvider */
 					for (final Map.Entry<String, Runnable> entry : menuContents.entrySet()) {
 						final MenuItem menuItem = new MenuItem(menu, SWT.PUSH);
 						menuItem.setText(entry.getKey());
-						menuItem.addListener(SWT.Selection, new Listener() {
-
-							@Override
-							public void handleEvent(final Event e) {
-								entry.getValue().run();
-							}
-						});
+						menuItem.addListener(SWT.Selection, e -> entry.getValue().run());
 					}
 					menu.setLocation(p.x, p.y);
 					menu.setVisible(true);

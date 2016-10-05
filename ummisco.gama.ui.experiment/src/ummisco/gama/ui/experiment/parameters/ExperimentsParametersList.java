@@ -22,6 +22,7 @@ import msi.gama.util.GamaColor;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
 
+@SuppressWarnings({ "rawtypes" })
 public class ExperimentsParametersList extends EditorsList<String> {
 	final IScope scope;
 

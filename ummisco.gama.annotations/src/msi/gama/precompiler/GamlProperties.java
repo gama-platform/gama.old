@@ -28,6 +28,7 @@ import java.util.Set;
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamlProperties {
 
 	Map<String, LinkedHashSet<String>> map;

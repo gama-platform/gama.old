@@ -31,7 +31,7 @@ import msi.gaml.types.Types;
 // Si construit � partir d'une liste de points, cr�e la g�om�trie correspondante
 // Si construit � partir d'un graphe spatial, cr�e la g�om�trie � partir des edges pass�s.
 // Si
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, GraphPath<V, E>, IPath<V, E, G> {
 
 	V source, target;
@@ -42,7 +42,8 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	int graphVersion;
 
 	// FIXME virer le constructeur par d�faut... used for the inheritance...
-	public GamaPath() {}
+	public GamaPath() {
+	}
 
 	@Override
 	public IType getType() {
@@ -55,16 +56,16 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	}
 
 	public GamaPath(final G g, final V start, final V target, final IList<? extends E> _edges,
-		final boolean modify_edges) {
+			final boolean modify_edges) {
 		init(g, start, target, _edges, modify_edges);
 		this.graph = g;
 	}
 
 	public GamaPath(final IList<? extends V> nodes) {
 		final IList<E> _edges = GamaListFactory.create();
-		for ( int i = 0; i < nodes.size() - 1; i++ ) {
-			E edge = createEdge(nodes.get(i), nodes.get(i + 1));
-			if ( edge != null ) {
+		for (int i = 0; i < nodes.size() - 1; i++) {
+			final E edge = createEdge(nodes.get(i), nodes.get(i + 1));
+			if (edge != null) {
 				_edges.add(edge);
 			}
 		}
@@ -78,23 +79,23 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	}
 
 	public void init(final G g, final V start, final V target, final IList<? extends E> _edges,
-		final boolean modify_edges) {
+			final boolean modify_edges) {
 		this.source = start;
 		this.target = target;
 		this.edges = GamaListFactory.create();
 		graphVersion = 0;
 
-		if ( _edges != null && _edges.size() > 0 ) {
-			for ( final E edge : _edges ) {
+		if (_edges != null && _edges.size() > 0) {
+			for (final E edge : _edges) {
 				edges.add(edge);
 			}
 		}
 	}
 
 	public GamaPath(final G g, final IList<? extends V> nodes) {
-		if ( !(g instanceof GamaSpatialGraph) && nodes.isEmpty() ) {
+		if (!(g instanceof GamaSpatialGraph) && nodes.isEmpty()) {
 			throw new ClassCastException("We cannot create an empty path in a non-spatial graph");
-		} else if ( nodes.isEmpty() ) {
+		} else if (nodes.isEmpty()) {
 			source = null;
 			target = null;
 		} else {
@@ -103,7 +104,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 		}
 		edges = GamaListFactory.create();
 
-		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
+		for (int i = 0, n = nodes.size(); i < n - 1; i++) {
 			edges.add(g.getEdge(nodes.get(i), nodes.get(i + 1)));
 		}
 		graph = g;
@@ -135,7 +136,9 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	@Override
 	public double getWeight() {
 		final G graph = getGraph();
-		if ( graph == null ) { return 0.0; }
+		if (graph == null) {
+			return 0.0;
+		}
 		return graph.computeWeight(this);
 	}
 
@@ -166,7 +169,7 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	public IList<V> getVertexList() {
 		if (graph == null) {
 			return GamaListFactory.create();
-		} 
+		}
 		return GamaListFactory.<V> createWithoutCasting(getType().getKeyType(), Graphs.getPathVertexList(this));
 	}
 
@@ -177,16 +180,16 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 	}
 
 	/**
-	 * Private method intended to compute the geometry of the path (a polyline) from the list of
-	 * segments.
-	 * While the path is not invalidated, this list of segments should not be changed and the
-	 * geometry can be cached.
+	 * Private method intended to compute the geometry of the path (a polyline)
+	 * from the list of segments. While the path is not invalidated, this list
+	 * of segments should not be changed and the geometry can be cached.
 	 */
 	// FIXME BEN
 	// private void computeGeometry() {
 	// if ( super.getInnerGeometry() == null ) {
 	// try {
-	// setGeometry(GamaGeometryType.geometriesToGeometry(null, segments)); // Verify null
+	// setGeometry(GamaGeometryType.geometriesToGeometry(null, segments)); //
+	// Verify null
 	// // parameter
 	// } catch (GamaRuntimeException e) {
 	// GAMA.reportError(e);
@@ -203,50 +206,43 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	// FIXME
-		public
-		void acceptVisitor(final IAgent agent) {
+	public void acceptVisitor(final IAgent agent) {
 		agent.setAttribute("current_path", this); // ???
 	}
 
 	@Override
 	// FIXME
-		public
-		void forgetVisitor(final IAgent agent) {
+	public void forgetVisitor(final IAgent agent) {
 		agent.setAttribute("current_path", null); // ???
 	}
 
 	@Override
 	// FIXME
-		public
-		int indexOf(final IAgent a) {
+	public int indexOf(final IAgent a) {
 		return Cast.asInt(null, a.getAttribute("index_on_path")); // ???
 	}
 
 	@Override
 	// FIXME
-		public
-		int indexSegmentOf(final IAgent a) {
+	public int indexSegmentOf(final IAgent a) {
 		return Cast.asInt(null, a.getAttribute("index_on_path_segment")); // ???
 	}
 
 	@Override
 	// FIXME
-		public
-		boolean isVisitor(final IAgent a) {
+	public boolean isVisitor(final IAgent a) {
 		return a.getAttribute("current_path") == this;
 	}
 
 	@Override
 	// FIXME
-		public
-		void setIndexOf(final IAgent a, final int index) {
+	public void setIndexOf(final IAgent a, final int index) {
 		a.setAttribute("index_on_path", index);
 	}
 
 	@Override
 	// FIXME
-		public
-		void setIndexSegementOf(final IAgent a, final int indexSegement) {
+	public void setIndexSegementOf(final IAgent a, final int indexSegement) {
 		a.setAttribute("index_on_path_segment", indexSegement);
 	}
 
@@ -262,7 +258,9 @@ public class GamaPath<V, E, G extends IGraph<V, E>> implements Comparable, Graph
 
 	@Override
 	public double getDistance(final IScope scope) {
-		if ( getEdgeList() == null || getEdgeList().isEmpty() ) { return 0; }
+		if (getEdgeList() == null || getEdgeList().isEmpty()) {
+			return 0;
+		}
 		return getWeight();
 	}
 

@@ -48,7 +48,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 public abstract class GamaViewPart extends ViewPart
 		implements DisposeListener, IGamaView, IToolbarDecoratedView, ITooltipDisplayer {
 
-	protected final List<IDisplayOutput> outputs = new ArrayList();
+	protected final List<IDisplayOutput> outputs = new ArrayList<>();
 	protected Composite parent;
 	protected GamaToolbar2 toolbar;
 	private GamaUIJob updateJob;
@@ -83,13 +83,7 @@ public abstract class GamaViewPart extends ViewPart
 		protected abstract UpdatePriority jobPriority();
 
 		public void runSynchronized() {
-			WorkbenchHelper.run(new Runnable() {
-
-				@Override
-				public void run() {
-					runInUIThread(null);
-				}
-			});
+			WorkbenchHelper.run(() -> runInUIThread(null));
 		}
 
 	}
@@ -156,14 +150,7 @@ public abstract class GamaViewPart extends ViewPart
 		} else {
 			if (shouldBeClosedWhenNoExperiments()) {
 				System.err.println("Tried to reopen " + getClass().getSimpleName() + " ; automatically closed");
-				org.eclipse.swt.widgets.Display.getDefault().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-						close();
-						// GAMA.getGui().openModelingPerspective(false);
-					}
-				});
+				org.eclipse.swt.widgets.Display.getDefault().asyncExec(() -> close());
 
 			}
 		}
@@ -289,15 +276,11 @@ public abstract class GamaViewPart extends ViewPart
 	@Override
 	public void close() {
 
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					WorkbenchHelper.hideView(GamaViewPart.this);
-				} catch (final Exception e) {
-					e.printStackTrace();
-				}
+		WorkbenchHelper.asyncRun(() -> {
+			try {
+				WorkbenchHelper.hideView(GamaViewPart.this);
+			} catch (final Exception e) {
+				e.printStackTrace();
 			}
 		});
 

@@ -13,24 +13,32 @@ package msi.gaml.compilation.kernel;
 
 import java.io.IOException;
 import java.net.URL;
-import java.security.*;
-import java.util.*;
+import java.security.AccessController;
+import java.security.PrivilegedAction;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.osgi.framework.Bundle;
 
 /**
- * The class GamaClassLoader. A custom class loader that can build class loaders for the bundles
- * containing additions to GAML, and keeps a history of them in order to resolve the classes they
- * refer.
+ * The class GamaClassLoader. A custom class loader that can build class loaders
+ * for the bundles containing additions to GAML, and keeps a history of them in
+ * order to resolve the classes they refer.
  * 
  * @author drogoul
  * @since 23 janv. 2012
  * 
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaClassLoader extends ClassLoader {
 
 	public static class ListBasedLoader extends ClassLoader {
 
-		ListBasedLoader() {}
+		ListBasedLoader() {
+		}
 
 		Set<Class> classes = new LinkedHashSet();
 
@@ -40,8 +48,8 @@ public class GamaClassLoader extends ClassLoader {
 
 		@Override
 		protected synchronized Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-			Class clazz = findClass(name);
-			if ( resolve ) {
+			final Class clazz = findClass(name);
+			if (resolve) {
 				resolveClass(clazz);
 			}
 			return clazz;
@@ -49,8 +57,10 @@ public class GamaClassLoader extends ClassLoader {
 
 		@Override
 		protected Class findClass(final String name) throws ClassNotFoundException {
-			for ( Class c : classes ) {
-				if ( c.getCanonicalName().equals(name) ) { return c; }
+			for (final Class c : classes) {
+				if (c.getCanonicalName().equals(name)) {
+					return c;
+				}
 			}
 			return null;
 		}
@@ -77,9 +87,9 @@ public class GamaClassLoader extends ClassLoader {
 		protected Class findClass(final String name) throws ClassNotFoundException {
 			try {
 				return bundle.loadClass(name);
-			} catch (ClassNotFoundException cnfe) {
+			} catch (final ClassNotFoundException cnfe) {
 				throw new ClassNotFoundException(name + " not found in [" + bundle.getSymbolicName() + "]", cnfe);
-			} catch (NoClassDefFoundError ncdfe) {
+			} catch (final NoClassDefFoundError ncdfe) {
 				throw new ClassNotFoundException(name + " not defined in [" + bundle.getSymbolicName() + "]", ncdfe);
 			}
 		}
@@ -101,8 +111,8 @@ public class GamaClassLoader extends ClassLoader {
 
 		@Override
 		protected synchronized Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-			Class clazz = findClass(name);
-			if ( resolve ) {
+			final Class clazz = findClass(name);
+			if (resolve) {
 				resolveClass(clazz);
 			}
 			return clazz;
@@ -114,7 +124,7 @@ public class GamaClassLoader extends ClassLoader {
 	private final List<ClassLoader> loaders = new ArrayList();
 
 	public static GamaClassLoader getInstance() {
-		if ( loader == null ) {
+		if (loader == null) {
 			loader = new GamaClassLoader();
 		}
 		return loader;
@@ -145,29 +155,35 @@ public class GamaClassLoader extends ClassLoader {
 	@Override
 	protected Class findClass(final String name) throws ClassNotFoundException {
 
-		for ( int i = 0, n = loaders.size(); i < n; i++ ) {
+		for (int i = 0, n = loaders.size(); i < n; i++) {
 			try {
 				return loaders.get(i).loadClass(name);
-			} catch (ClassNotFoundException cnfe) {}
+			} catch (final ClassNotFoundException cnfe) {
+			}
 		}
-		Class c = customLoader.findClass(name);
-		if ( c == null ) { throw new ClassNotFoundException(name + " not found in GAMA"); }
+		final Class c = customLoader.findClass(name);
+		if (c == null) {
+			throw new ClassNotFoundException(name + " not found in GAMA");
+		}
 		return c;
 
 	}
 
 	@Override
 	protected URL findResource(final String name) {
-		for ( int i = 0, n = loaders.size(); i < n; i++ ) {
-			URL url = loaders.get(i).getResource(name);
-			if ( url != null ) { return url; }
+		for (int i = 0, n = loaders.size(); i < n; i++) {
+			final URL url = loaders.get(i).getResource(name);
+			if (url != null) {
+				return url;
+			}
 		}
 		return null;
 	}
 
 	//
 	// @Override
-	// protected Enumeration findResources(final String name) throws IOException {
+	// protected Enumeration findResources(final String name) throws IOException
+	// {
 	// for ( int i = 0, n = loaders.size(); i < n; i++ ) {
 	// try {
 	// return loaders.get(i).findResources(name);
@@ -183,21 +199,16 @@ public class GamaClassLoader extends ClassLoader {
 
 	@Override
 	protected synchronized Class loadClass(final String name, final boolean resolve) throws ClassNotFoundException {
-		Class clazz = findClass(name);
-		if ( resolve ) {
+		final Class clazz = findClass(name);
+		if (resolve) {
 			resolveClass(clazz);
 		}
 		return clazz;
 	}
 
 	private BundleClassLoader createBundleClassLoaderFor(final Bundle bundle) {
-		return (BundleClassLoader) AccessController.doPrivileged(new PrivilegedAction() {
-
-			@Override
-			public Object run() {
-				return new BundleClassLoader(bundle);
-			}
-		});
+		return (BundleClassLoader) AccessController
+				.doPrivileged((PrivilegedAction) () -> new BundleClassLoader(bundle));
 	}
 
 }

@@ -38,7 +38,7 @@ import msi.gaml.types.TypeTree.Order;
  * @todo Description
  *
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Types {
 
 	public final static TypesManager builtInTypes = new TypesManager(null);

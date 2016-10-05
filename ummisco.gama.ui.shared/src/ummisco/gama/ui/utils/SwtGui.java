@@ -150,19 +150,15 @@ public class SwtGui implements IGui {
 			return null;
 		}
 		final Object[] result = new Object[1];
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					final IWorkbenchPage page = WorkbenchHelper.getPage();
-					if (page != null) {
-						page.zoomOut();
-						result[0] = page.showView(viewId, secondaryId, code);
-					}
-				} catch (final Exception e) {
-					result[0] = e;
+		WorkbenchHelper.run(() -> {
+			try {
+				final IWorkbenchPage page = WorkbenchHelper.getPage();
+				if (page != null) {
+					page.zoomOut();
+					result[0] = page.showView(viewId, secondaryId, code);
 				}
+			} catch (final Exception e) {
+				result[0] = e;
 			}
 		});
 		return result[0];
@@ -263,27 +259,19 @@ public class SwtGui implements IGui {
 	public Map<String, Object> openUserInputDialog(final IScope scope, final String title,
 			final Map<String, Object> initialValues, final Map<String, IType> types) {
 		final Map<String, Object> result = new THashMap();
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), initialValues, types,
-						title);
-				result.putAll(dialog.open() == Window.OK ? dialog.getValues() : initialValues);
-			}
+		WorkbenchHelper.run(() -> {
+			final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), initialValues, types,
+					title);
+			result.putAll(dialog.open() == Window.OK ? dialog.getValues() : initialValues);
 		});
 		return result;
 	}
 
 	public void openUserControlDialog(final IScope scope, final UserPanelStatement panel) {
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				final IUserDialogFactory userDialogFactory = WorkbenchHelper.getService(IUserDialogFactory.class);
-				if (userDialogFactory != null) {
-					userDialogFactory.openUserDialog(scope, panel);
-				}
+		WorkbenchHelper.run(() -> {
+			final IUserDialogFactory userDialogFactory = WorkbenchHelper.getService(IUserDialogFactory.class);
+			if (userDialogFactory != null) {
+				userDialogFactory.openUserDialog(scope, panel);
 			}
 		});
 
@@ -291,21 +279,17 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				IGamaView.User part = null;
-				part = (User) showView(USER_CONTROL_VIEW_ID, null, IWorkbenchPage.VIEW_CREATE);
-				if (part != null) {
-					part.initFor(scope, panel);
-				}
-				scope.setOnUserHold(true);
-				try {
-					WorkbenchHelper.getPage().showView(USER_CONTROL_VIEW_ID);
-				} catch (final PartInitException e) {
-					e.printStackTrace();
-				}
+		WorkbenchHelper.run(() -> {
+			IGamaView.User part = null;
+			part = (User) showView(USER_CONTROL_VIEW_ID, null, IWorkbenchPage.VIEW_CREATE);
+			if (part != null) {
+				part.initFor(scope, panel);
+			}
+			scope.setOnUserHold(true);
+			try {
+				WorkbenchHelper.getPage().showView(USER_CONTROL_VIEW_ID);
+			} catch (final PartInitException e) {
+				e.printStackTrace();
 			}
 		});
 
@@ -314,17 +298,12 @@ public class SwtGui implements IGui {
 	@Override
 	public void closeDialogs() {
 
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				final IUserDialogFactory userDialogFactory = WorkbenchHelper.getService(IUserDialogFactory.class);
-				if (userDialogFactory != null) {
-					userDialogFactory.closeUserDialog();
-				}
-				WorkbenchHelper.hideView(USER_CONTROL_VIEW_ID);
-
+		WorkbenchHelper.run(() -> {
+			final IUserDialogFactory userDialogFactory = WorkbenchHelper.getService(IUserDialogFactory.class);
+			if (userDialogFactory != null) {
+				userDialogFactory.closeUserDialog();
 			}
+			WorkbenchHelper.hideView(USER_CONTROL_VIEW_ID);
 
 		});
 
@@ -351,19 +330,14 @@ public class SwtGui implements IGui {
 	@Override
 	public void updateParameterView(final IExperimentPlan exp) {
 
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				if (!exp.hasParametersOrUserCommands()) {
-					return;
-				}
-				final IGamaView.Parameters view = (Parameters) showView(PARAMETER_VIEW_ID, null,
-						IWorkbenchPage.VIEW_ACTIVATE);
-				view.addItem(exp);
-				view.updateItemValues();
-
+		WorkbenchHelper.run(() -> {
+			if (!exp.hasParametersOrUserCommands()) {
+				return;
 			}
+			final IGamaView.Parameters view = (Parameters) showView(PARAMETER_VIEW_ID, null,
+					IWorkbenchPage.VIEW_ACTIVATE);
+			view.addItem(exp);
+			view.updateItemValues();
 
 		});
 	}
@@ -371,18 +345,13 @@ public class SwtGui implements IGui {
 	@Override
 	public void showParameterView(final IExperimentPlan exp) {
 
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				if (!exp.hasParametersOrUserCommands()) {
-					return;
-				}
-				final IGamaView.Parameters view = (Parameters) showView(PARAMETER_VIEW_ID, null,
-						IWorkbenchPage.VIEW_VISIBLE);
-				view.addItem(exp);
+		WorkbenchHelper.run(() -> {
+			if (!exp.hasParametersOrUserCommands()) {
+				return;
 			}
-
+			final IGamaView.Parameters view = (Parameters) showView(PARAMETER_VIEW_ID, null,
+					IWorkbenchPage.VIEW_VISIBLE);
+			view.addItem(exp);
 		});
 	}
 
@@ -393,27 +362,23 @@ public class SwtGui implements IGui {
 	 */
 	@Override
 	public void setSelectedAgent(final IAgent a) {
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				if (WorkbenchHelper.getPage() == null) {
-					return;
-				}
-				if (a == null) {
-					return;
-				}
-				try {
-					final InspectDisplayOutput output = new InspectDisplayOutput(a);
-					output.launch(a.getScope());
-				} catch (final GamaRuntimeException g) {
-					g.addContext("In opening the agent inspector");
-					GAMA.reportError(GAMA.getRuntimeScope(), g, false);
-				}
-				final IViewReference r = WorkbenchHelper.getPage().findViewReference(IGui.AGENT_VIEW_ID, "");
-				if (r != null) {
-					WorkbenchHelper.getPage().bringToTop(r.getPart(true));
-				}
+		WorkbenchHelper.asyncRun(() -> {
+			if (WorkbenchHelper.getPage() == null) {
+				return;
+			}
+			if (a == null) {
+				return;
+			}
+			try {
+				final InspectDisplayOutput output = new InspectDisplayOutput(a);
+				output.launch(a.getScope());
+			} catch (final GamaRuntimeException g) {
+				g.addContext("In opening the agent inspector");
+				GAMA.reportError(GAMA.getRuntimeScope(), g, false);
+			}
+			final IViewReference r = WorkbenchHelper.getPage().findViewReference(IGui.AGENT_VIEW_ID, "");
+			if (r != null) {
+				WorkbenchHelper.getPage().bringToTop(r.getPart(true));
 			}
 		});
 	}
@@ -467,7 +432,7 @@ public class SwtGui implements IGui {
 	}
 
 	public static List<IDisplaySurface> allDisplaySurfaces() {
-		final List<IDisplaySurface> result = new ArrayList();
+		final List<IDisplaySurface> result = new ArrayList<>();
 		final IViewReference[] viewRefs = WorkbenchHelper.getPage().getViewReferences();
 		for (final IViewReference ref : viewRefs) {
 			final IWorkbenchPart part = ref.getPart(false);
@@ -488,13 +453,7 @@ public class SwtGui implements IGui {
 	public void updateSpeedDisplay(final Double d, final boolean notify) {
 		final ISpeedDisplayer speedStatus = WorkbenchHelper.getService(ISpeedDisplayer.class);
 		if (speedStatus != null) {
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					speedStatus.setInit(d, notify);
-				}
-			});
+			WorkbenchHelper.asyncRun(() -> speedStatus.setInit(d, notify));
 
 		}
 	}
@@ -516,25 +475,21 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void closeSimulationViews(final boolean openModelingPerspective, final boolean immediately) {
-		WorkbenchHelper.run(new Runnable() {
+		WorkbenchHelper.run(() -> {
+			final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			final IViewReference[] views = page.getViewReferences();
 
-			@Override
-			public void run() {
-				final IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				final IViewReference[] views = page.getViewReferences();
+			for (final IViewReference view : views) {
+				final IViewPart part = view.getView(false);
+				if (part instanceof IGamaView) {
+					((IGamaView) part).close();
 
-				for (final IViewReference view : views) {
-					final IViewPart part = view.getView(false);
-					if (part instanceof IGamaView) {
-						((IGamaView) part).close();
-
-					}
 				}
-				if (openModelingPerspective) {
-					PerspectiveHelper.openModelingPerspective(immediately);
-				}
-				getStatus().neutralStatus("No simulation running");
 			}
+			if (openModelingPerspective) {
+				PerspectiveHelper.openModelingPerspective(immediately);
+			}
+			getStatus().neutralStatus("No simulation running");
 		});
 
 	}
@@ -558,13 +513,7 @@ public class SwtGui implements IGui {
 				.getSourceProvider("ummisco.gama.ui.experiment.SimulationRunningState");
 		// stateProvider.updateStateTo(forcedState);
 		if (stateProvider != null) {
-			WorkbenchHelper.run(new Runnable() {
-
-				@Override
-				public void run() {
-					stateProvider.updateStateTo(forcedState);
-				}
-			});
+			WorkbenchHelper.run(() -> stateProvider.updateStateTo(forcedState));
 		}
 	}
 
@@ -578,27 +527,13 @@ public class SwtGui implements IGui {
 		final IGamaView part = (IGamaView) WorkbenchHelper.findView(out.getViewId(),
 				out.isUnique() ? null : out.getName(), true);
 		if (part != null)
-			WorkbenchHelper.run(new Runnable() {
-
-				@Override
-				public void run() {
-					part.changePartNameWithSimulation(agent);
-
-				}
-
-			});
+			WorkbenchHelper.run(() -> part.changePartNameWithSimulation(agent));
 
 	}
 
 	@Override
 	public void updateDecorator(final String id) {
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				WorkbenchHelper.getWorkbench().getDecoratorManager().update(id);
-			}
-		});
+		WorkbenchHelper.asyncRun(() -> WorkbenchHelper.getWorkbench().getDecoratorManager().update(id));
 
 	}
 

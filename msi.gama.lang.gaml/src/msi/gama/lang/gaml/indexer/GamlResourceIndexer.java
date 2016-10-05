@@ -32,6 +32,7 @@ import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.util.TOrderedHashMap;
 
 @Singleton
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamlResourceIndexer {
 
 	private static DirectedGraph<URI, Edge> index = new SimpleDirectedGraph(Edge.class);

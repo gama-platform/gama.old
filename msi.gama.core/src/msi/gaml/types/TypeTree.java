@@ -23,6 +23,7 @@ import java.util.Map;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.operators.Strings;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class TypeTree<T> {
 
 	public static enum Order {

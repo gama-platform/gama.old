@@ -54,6 +54,7 @@ import msi.gaml.types.Types;
  * @author Samuel Thiriot
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GraphsGraphstream {
 
 	/*

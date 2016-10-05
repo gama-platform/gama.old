@@ -47,6 +47,7 @@ import msi.gaml.types.TypesManager;
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ModelDescription extends SpeciesDescription {
 
 	// TODO Move elsewhere
@@ -70,7 +71,6 @@ public class ModelDescription extends SpeciesDescription {
 	private String alias = "";
 	boolean isStartingDateDefined = false;
 	private Collection<String> importedModelNames;
-
 
 	public Collection<String> getAlternatePaths() {
 		return alternatePaths == null ? Collections.EMPTY_LIST : alternatePaths;

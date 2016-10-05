@@ -39,6 +39,7 @@ import msi.gaml.operators.Strings;
  * @author Werner Randelshofer, adapted by Alexis Drogoul for GAMA
  * @version $Id: QuadTree.java 717 2010-11-21 12:30:57Z rawcoder $
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaQuadTree implements ISpatialIndex {
 
 	private final QuadNode root;

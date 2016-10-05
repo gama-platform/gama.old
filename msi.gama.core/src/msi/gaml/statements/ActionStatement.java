@@ -79,6 +79,7 @@ import msi.gaml.types.Types;
 				@example(value = "}", isExecutable = false) }) }, see = { "do" })
 @validator(ActionValidator.class)
 @serializer(ActionSerializer.class)
+@SuppressWarnings({ "rawtypes" })
 public class ActionStatement extends AbstractStatementSequenceWithArgs {
 
 	public static class ActionSerializer extends StatementSerializer {
@@ -117,7 +118,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 
 	}
 
-	public static class ActionValidator implements IDescriptionValidator {
+	public static class ActionValidator implements IDescriptionValidator<IDescription> {
 
 		/**
 		 * Method validate()
@@ -133,7 +134,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		}
 
 		private void assertReturnedValueIsOk(final StatementDescription cd) {
-			final Set<StatementDescription> returns = new TLinkedHashSet();
+			final Set<StatementDescription> returns = new TLinkedHashSet<>();
 			cd.collectChildren(RETURN, returns);
 			final IType at = cd.getType();
 			if (at == Types.NO_TYPE) {

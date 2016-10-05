@@ -36,7 +36,7 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-
+@SuppressWarnings({ "rawtypes" })
 public class StatementDescription extends SymbolDescription {
 
 	// Corresponds to the "with" facet

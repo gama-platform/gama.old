@@ -62,6 +62,7 @@ import rcaller.exception.ParseException;
  * @since 16 janv. 2014
  *
  */
+@SuppressWarnings({ "rawtypes" })
 public class DeprecatedOperators {
 
 	@operator(value = { "link" }, category = { IOperatorCategory.SPATIAL, IOperatorCategory.SHAPE }, concept = {

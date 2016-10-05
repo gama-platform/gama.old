@@ -22,6 +22,7 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescription> implements ITypesManager {
 
 	public static int CURRENT_INDEX = IType.SPECIES_TYPES;

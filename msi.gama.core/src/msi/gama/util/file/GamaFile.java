@@ -297,7 +297,8 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public V getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
+	public V getFromIndicesList(final IScope scope, @SuppressWarnings("rawtypes") final IList indices)
+			throws GamaRuntimeException {
 		getContents(scope);
 		return getBuffer().getFromIndicesList(scope, indices);
 	}

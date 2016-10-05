@@ -15,15 +15,17 @@ import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gaml.skills.Skill;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
- * Written by drogoul Modified on 14 ao�t 2010. Modified on 23 Apr. 2013.
- * A general purpose helper that can be subclassed like a Runnable.
+ * Written by drogoul Modified on 14 ao�t 2010. Modified on 23 Apr. 2013. A
+ * general purpose helper that can be subclassed like a Runnable.
  *
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class GamaHelper<T> {
 
 	Class skillClass;
@@ -38,7 +40,7 @@ public abstract class GamaHelper<T> {
 	}
 
 	public GamaHelper(final IType type, final Class clazz) {
-		if ( clazz != null && Skill.class.isAssignableFrom(clazz) ) {
+		if (clazz != null && Skill.class.isAssignableFrom(clazz)) {
 			skillClass = clazz;
 		} else {
 			skillClass = null;
@@ -58,11 +60,11 @@ public abstract class GamaHelper<T> {
 		return null;
 	};
 
-	public T run(final IScope scope, final Object ... values) {
+	public T run(final IScope scope, final Object... values) {
 		return null;
 	}
 
-	public T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill, final Object ... values) {
+	public T run(final IScope scope, final IAgent agent, final IVarAndActionSupport skill, final Object... values) {
 		return null;
 	}
 

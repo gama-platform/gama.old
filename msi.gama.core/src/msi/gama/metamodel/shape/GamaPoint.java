@@ -33,6 +33,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul 11 oct. 07
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 
 public class GamaPoint extends Coordinate implements ILocation {
 

@@ -7,14 +7,12 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.PartImpl;
-import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 
@@ -23,6 +21,7 @@ import msi.gama.common.interfaces.IGui;
 import msi.gaml.operators.IUnits;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ArrangeDisplayViews extends AbstractHandler {
 
 	public static EPartService partService;
@@ -52,32 +51,22 @@ public class ArrangeDisplayViews extends AbstractHandler {
 		// System.out.println("Executing layout " +
 		// GamaPreferences.LAYOUTS.get(layout));
 		final List<MPlaceholder> holders = modelService.findElements(application, MPlaceholder.class,
-				EModelService.IN_ACTIVE_PERSPECTIVE, new Selector() {
+				EModelService.IN_ACTIVE_PERSPECTIVE, element -> {
+					final MPlaceholder holder = (MPlaceholder) element;
+					if (!(holder.getRef() instanceof PartImpl))
+						return false;
+					final PartImpl pi = (PartImpl) holder.getRef();
+					final String s = holder.getElementId();
+					return pi.getObject() != null && s != null && !s.contains("*")
+							&& (s.contains(IGui.GL_LAYER_VIEW_ID) || s.contains(IGui.LAYER_VIEW_ID));
 
-					@Override
-					public boolean select(final MApplicationElement element) {
-						final MPlaceholder holder = (MPlaceholder) element;
-						if (!(holder.getRef() instanceof PartImpl))
-							return false;
-						final PartImpl pi = (PartImpl) holder.getRef();
-						final String s = holder.getElementId();
-						return pi.getObject() != null && s != null && !s.contains("*")
-								&& (s.contains(IGui.GL_LAYER_VIEW_ID) || s.contains(IGui.LAYER_VIEW_ID));
-
-					}
 				});
 		// System.out.println("Found " + holders.size() + " place holders to
 		// rearrange");
 		if (holders.size() == 1)
 			return;
 		final List<MPartStack> stacks = modelService.findElements(application, MPartStack.class,
-				EModelService.IN_ACTIVE_PERSPECTIVE, new Selector() {
-
-					@Override
-					public boolean select(final MApplicationElement element) {
-						return "displays".equals(element.getElementId());
-					}
-				});
+				EModelService.IN_ACTIVE_PERSPECTIVE, element -> "displays".equals(element.getElementId()));
 		final MPartStack displayStack = stacks.isEmpty() ? null : stacks.get(0);
 		if (displayStack == null)
 			return;

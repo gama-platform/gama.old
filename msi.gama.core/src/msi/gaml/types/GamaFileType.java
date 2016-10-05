@@ -37,11 +37,12 @@ import msi.gaml.expressions.IExpression;
  */
 @type(name = IKeyword.FILE, id = IType.FILE, wraps = {
 		IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER, concept = { IConcept.TYPE, IConcept.FILE })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
-	public static Map<String, ParametricFileType> extensionsToFullType = new THashMap();
-	static Map<String, ParametricFileType> aliasesToFullType = new THashMap();
-	static Map<String, Set<String>> aliasesToExtensions = new THashMap();
+	public static Map<String, ParametricFileType> extensionsToFullType = new THashMap<>();
+	static Map<String, ParametricFileType> aliasesToFullType = new THashMap<>();
+	static Map<String, Set<String>> aliasesToExtensions = new THashMap<>();
 	static int currentFileTypeIndex = 1000;
 
 	/**

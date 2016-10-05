@@ -28,7 +28,6 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -69,6 +68,7 @@ import msi.gaml.variables.Variable;
 		@usage(value = "In batch experiment, the two following syntaxes can be used to describe the possible values of a parameter:", examples = {
 				@example(value = "parameter 'Value of toto:' var: toto among: [1, 3, 7, 15, 100]; ", isExecutable = false),
 				@example(value = "parameter 'Value of titi:' var: titi min: 1 max: 100 step: 2; ", isExecutable = false) }), })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	static Object UNDEFINED = new Object();
@@ -354,14 +354,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Object value() {
-		return GAMA.run(new InScope() {
-
-			@Override
-			public Object run(final IScope scope) {
-				return getValue(scope);
-			}
-
-		});
+		return GAMA.run(scope -> getValue(scope));
 
 	}
 
@@ -409,13 +402,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return GAMA.run(new InScope<String>() {
-
-			@Override
-			public String run(final IScope scope) {
-				return StringUtils.toGaml(getValue(scope), includingBuiltIn);
-			}
-		});
+		return GAMA.run(scope -> StringUtils.toGaml(getValue(scope), includingBuiltIn));
 
 	}
 

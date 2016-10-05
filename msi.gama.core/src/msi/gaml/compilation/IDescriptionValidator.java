@@ -33,6 +33,7 @@ import msi.gaml.types.Types;
  * @since 13 sept. 2013
  * 
  */
+@SuppressWarnings({ "rawtypes" })
 public interface IDescriptionValidator<T extends IDescription> extends IKeyword {
 
 	public static final ImmutableSet<String> RESERVED = ImmutableSet

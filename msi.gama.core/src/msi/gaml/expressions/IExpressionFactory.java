@@ -28,6 +28,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
+@SuppressWarnings({ "rawtypes" })
 public interface IExpressionFactory {
 
 	public static final ConstantExpression TRUE_EXPR = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;

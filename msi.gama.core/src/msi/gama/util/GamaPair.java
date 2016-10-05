@@ -38,6 +38,7 @@ import msi.gaml.types.Types;
 		@doc("Returns the key of this pair (can be nil)") }),
 		@var(name = GamaPair.VALUE, type = ITypeProvider.FIRST_CONTENT_TYPE, doc = {
 				@doc("Returns the value of this pair (can be nil)") }) })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaPair<K, V>
 		implements IContainer<Integer, Object>, IContainer.Addressable<Integer, Object>, Map.Entry<K, V> {
 

@@ -48,6 +48,7 @@ import msi.gaml.types.Types;
  * @since 27 nov. 2011
  * 
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GraphTopology extends AbstractTopology {
 
 	/**

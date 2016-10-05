@@ -38,6 +38,7 @@ import msi.gaml.statements.IExecutable;
  * @todo Description
  *
  */
+@SuppressWarnings({ "rawtypes" })
 public interface IScope {
 
 	/**

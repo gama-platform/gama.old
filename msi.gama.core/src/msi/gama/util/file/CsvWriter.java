@@ -20,13 +20,20 @@
  */
 package msi.gama.util.file;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * A stream based writer for writing delimited text data to a file or a stream.
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class CsvWriter {
 
 	private Writer outputStream = null;
@@ -65,17 +72,21 @@ public class CsvWriter {
 	 * as the data destination.
 	 *
 	 * @param fileName
-	 * The path to the file to output the data.
+	 *            The path to the file to output the data.
 	 * @param delimiter
-	 * The character to use as the column delimiter.
+	 *            The character to use as the column delimiter.
 	 * @param charset
-	 * The {@link java.nio.charset.Charset Charset} to use while
-	 * writing the data.
+	 *            The {@link java.nio.charset.Charset Charset} to use while
+	 *            writing the data.
 	 */
 	public CsvWriter(final String fileName, final char delimiter, final Charset charset) {
-		if ( fileName == null ) { throw new IllegalArgumentException("Parameter fileName can not be null."); }
+		if (fileName == null) {
+			throw new IllegalArgumentException("Parameter fileName can not be null.");
+		}
 
-		if ( charset == null ) { throw new IllegalArgumentException("Parameter charset can not be null."); }
+		if (charset == null) {
+			throw new IllegalArgumentException("Parameter charset can not be null.");
+		}
 
 		this.fileName = fileName;
 		userSettings.Delimiter = delimiter;
@@ -88,7 +99,7 @@ public class CsvWriter {
 	 * ISO-8859-1 as the {@link java.nio.charset.Charset Charset}.
 	 *
 	 * @param fileName
-	 * The path to the file to output the data.
+	 *            The path to the file to output the data.
 	 */
 	public CsvWriter(final String fileName) {
 		this(fileName, Letters.COMMA, Charset.forName("UTF-8"));
@@ -99,12 +110,14 @@ public class CsvWriter {
 	 * to write data to.
 	 *
 	 * @param outputStream
-	 * The stream to write the column delimited data to.
+	 *            The stream to write the column delimited data to.
 	 * @param delimiter
-	 * The character to use as the column delimiter.
+	 *            The character to use as the column delimiter.
 	 */
 	public CsvWriter(final Writer outputStream, final char delimiter) {
-		if ( outputStream == null ) { throw new IllegalArgumentException("Parameter outputStream can not be null."); }
+		if (outputStream == null) {
+			throw new IllegalArgumentException("Parameter outputStream can not be null.");
+		}
 
 		this.outputStream = outputStream;
 		userSettings.Delimiter = delimiter;
@@ -116,12 +129,12 @@ public class CsvWriter {
 	 * OutputStream to write data to.
 	 *
 	 * @param outputStream
-	 * The stream to write the column delimited data to.
+	 *            The stream to write the column delimited data to.
 	 * @param delimiter
-	 * The character to use as the column delimiter.
+	 *            The character to use as the column delimiter.
 	 * @param charset
-	 * The {@link java.nio.charset.Charset Charset} to use while
-	 * writing the data.
+	 *            The {@link java.nio.charset.Charset Charset} to use while
+	 *            writing the data.
 	 */
 	public CsvWriter(final OutputStream outputStream, final char delimiter, final Charset charset) {
 		this(new OutputStreamWriter(outputStream, charset), delimiter);
@@ -140,7 +153,7 @@ public class CsvWriter {
 	 * Sets the character to use as the column delimiter.
 	 *
 	 * @param delimiter
-	 * The character to use as the column delimiter.
+	 *            The character to use as the column delimiter.
 	 */
 	public void setDelimiter(final char delimiter) {
 		userSettings.Delimiter = delimiter;
@@ -154,9 +167,9 @@ public class CsvWriter {
 	 * Sets the character to use as the record delimiter.
 	 *
 	 * @param recordDelimiter
-	 * The character to use as the record delimiter. Default is
-	 * combination of standard end of line characters for Windows,
-	 * Unix, or Mac.
+	 *            The character to use as the record delimiter. Default is
+	 *            combination of standard end of line characters for Windows,
+	 *            Unix, or Mac.
 	 */
 	public void setRecordDelimiter(final char recordDelimiter) {
 		useCustomRecordDelimiter = true;
@@ -176,7 +189,7 @@ public class CsvWriter {
 	 * Sets the character to use as a text qualifier in the data.
 	 *
 	 * @param textQualifier
-	 * The character to use as a text qualifier in the data.
+	 *            The character to use as a text qualifier in the data.
 	 */
 	public void setTextQualifier(final char textQualifier) {
 		userSettings.TextQualifier = textQualifier;
@@ -195,7 +208,7 @@ public class CsvWriter {
 	 * Sets whether text qualifiers will be used while writing data or not.
 	 *
 	 * @param useTextQualifier
-	 * Whether to use a text qualifier while writing data or not.
+	 *            Whether to use a text qualifier while writing data or not.
 	 */
 	public void setUseTextQualifier(final boolean useTextQualifier) {
 		userSettings.UseTextQualifier = useTextQualifier;
@@ -233,7 +246,7 @@ public class CsvWriter {
 	 * is false.
 	 *
 	 * @param forceQualifier
-	 * Whether to force the fields to be qualified or not.
+	 *            Whether to force the fields to be qualified or not.
 	 */
 	public void setForceQualifier(final boolean forceQualifier) {
 		userSettings.ForceQualifier = forceQualifier;
@@ -255,84 +268,88 @@ public class CsvWriter {
 	 * Writes another column of data to this record.
 	 *
 	 * @param content
-	 * The data for the new column.
+	 *            The data for the new column.
 	 * @param changeDelimiter
-	 * Whether to change the delimiter to another character if it happens to be in the string
+	 *            Whether to change the delimiter to another character if it
+	 *            happens to be in the string
 	 * @exception IOException
-	 * Thrown if an error occurs while writing data to the
-	 * destination stream.
+	 *                Thrown if an error occurs while writing data to the
+	 *                destination stream.
 	 */
 	public void write(String content, final boolean changeDelimiter) throws IOException {
 		checkClosed();
 
 		checkInit();
 
-		if ( content == null ) {
+		if (content == null) {
 			content = "";
 		}
 
-		if ( !firstColumn ) {
+		if (!firstColumn) {
 			outputStream.write(userSettings.Delimiter);
 		}
 
 		boolean textQualify = userSettings.ForceQualifier;
 
-		if ( changeDelimiter && content.length() > 0 ) {
+		if (changeDelimiter && content.length() > 0) {
 			content = content.replace(userSettings.Delimiter, REPLACEMENTS.get(userSettings.Delimiter));
 		}
 
-		if ( !textQualify && userSettings.UseTextQualifier &&
-			(content.indexOf(userSettings.TextQualifier) > -1 || content.indexOf(userSettings.Delimiter) > -1 ||
-				!useCustomRecordDelimiter && (content.indexOf(Letters.LF) > -1 || content.indexOf(Letters.CR) > -1) ||
-				useCustomRecordDelimiter && content.indexOf(userSettings.RecordDelimiter) > -1 ||
-				firstColumn && content.length() > 0 && content.charAt(0) == userSettings.Comment ||
-				// check for empty first column, which if on its own line must
-				// be qualified or the line will be skipped
-				firstColumn && content.length() == 0) ) {
+		if (!textQualify && userSettings.UseTextQualifier
+				&& (content.indexOf(userSettings.TextQualifier) > -1 || content.indexOf(userSettings.Delimiter) > -1
+						|| !useCustomRecordDelimiter
+								&& (content.indexOf(Letters.LF) > -1 || content.indexOf(Letters.CR) > -1)
+						|| useCustomRecordDelimiter && content.indexOf(userSettings.RecordDelimiter) > -1
+						|| firstColumn && content.length() > 0 && content.charAt(0) == userSettings.Comment ||
+						// check for empty first column, which if on its own
+						// line must
+						// be qualified or the line will be skipped
+						firstColumn && content.length() == 0)) {
 			textQualify = true;
 		}
 
-		if ( userSettings.UseTextQualifier && !textQualify && content.length() > 0 /* && preserveSpaces */ ) {
-			char firstLetter = content.charAt(0);
+		if (userSettings.UseTextQualifier && !textQualify
+				&& content.length() > 0 /* && preserveSpaces */ ) {
+			final char firstLetter = content.charAt(0);
 
-			if ( firstLetter == Letters.SPACE || firstLetter == Letters.TAB ) {
+			if (firstLetter == Letters.SPACE || firstLetter == Letters.TAB) {
 				textQualify = true;
 			}
 
-			if ( !textQualify && content.length() > 1 ) {
-				char lastLetter = content.charAt(content.length() - 1);
+			if (!textQualify && content.length() > 1) {
+				final char lastLetter = content.charAt(content.length() - 1);
 
-				if ( lastLetter == Letters.SPACE || lastLetter == Letters.TAB ) {
+				if (lastLetter == Letters.SPACE || lastLetter == Letters.TAB) {
 					textQualify = true;
 				}
 			}
 		}
 
-		if ( textQualify ) {
+		if (textQualify) {
 			outputStream.write(userSettings.TextQualifier);
 
-			if ( userSettings.EscapeMode == ESCAPE_MODE_BACKSLASH ) {
+			if (userSettings.EscapeMode == ESCAPE_MODE_BACKSLASH) {
 				content = replace(content, "" + Letters.BACKSLASH, "" + Letters.BACKSLASH + Letters.BACKSLASH);
 				content = replace(content, "" + userSettings.TextQualifier,
-					"" + Letters.BACKSLASH + userSettings.TextQualifier);
+						"" + Letters.BACKSLASH + userSettings.TextQualifier);
 			} else {
 				content = replace(content, "" + userSettings.TextQualifier,
-					"" + userSettings.TextQualifier + userSettings.TextQualifier);
+						"" + userSettings.TextQualifier + userSettings.TextQualifier);
 			}
-		} else if ( userSettings.EscapeMode == ESCAPE_MODE_BACKSLASH ) {
+		} else if (userSettings.EscapeMode == ESCAPE_MODE_BACKSLASH) {
 			content = replace(content, "" + Letters.BACKSLASH, "" + Letters.BACKSLASH + Letters.BACKSLASH);
 			content = replace(content, "" + userSettings.Delimiter, "" + Letters.BACKSLASH + userSettings.Delimiter);
 
-			if ( useCustomRecordDelimiter ) {
+			if (useCustomRecordDelimiter) {
 				content = replace(content, "" + userSettings.RecordDelimiter,
-					"" + Letters.BACKSLASH + userSettings.RecordDelimiter);
+						"" + Letters.BACKSLASH + userSettings.RecordDelimiter);
 			} else {
 				content = replace(content, "" + Letters.CR, "" + Letters.BACKSLASH + Letters.CR);
 				content = replace(content, "" + Letters.LF, "" + Letters.BACKSLASH + Letters.LF);
 			}
 
-			if ( firstColumn && content.length() > 0 && content.charAt(0) == userSettings.Comment ) {
-				if ( content.length() > 1 ) {
+			if (firstColumn && content.length() > 0 && content.charAt(0) == userSettings.Comment) {
+				if (content.length() > 1) {
 					content = "" + Letters.BACKSLASH + userSettings.Comment + content.substring(1);
 				} else {
 					content = "" + Letters.BACKSLASH + userSettings.Comment;
@@ -342,7 +359,7 @@ public class CsvWriter {
 
 		outputStream.write(content);
 
-		if ( textQualify ) {
+		if (textQualify) {
 			outputStream.write(userSettings.TextQualifier);
 		}
 
@@ -354,10 +371,10 @@ public class CsvWriter {
 	 * leading and trailing whitespace in this column of data.
 	 *
 	 * @param content
-	 * The data for the new column.
+	 *            The data for the new column.
 	 * @exception IOException
-	 * Thrown if an error occurs while writing data to the
-	 * destination stream.
+	 *                Thrown if an error occurs while writing data to the
+	 *                destination stream.
 	 */
 	public void write(final String content) throws IOException {
 		write(content, false);
@@ -372,7 +389,7 @@ public class CsvWriter {
 
 		outputStream.write(commentText);
 
-		if ( useCustomRecordDelimiter ) {
+		if (useCustomRecordDelimiter) {
 			outputStream.write(userSettings.RecordDelimiter);
 		} else {
 			outputStream.write(systemRecordDelimiter);
@@ -385,17 +402,19 @@ public class CsvWriter {
 	 * Writes a new record using the passed in array of values.
 	 *
 	 * @param values
-	 * Values to be written.
+	 *            Values to be written.
 	 *
-	 * @param changeDelimiter whether or not to change the delimiter with another character if it happens to be in the strings
+	 * @param changeDelimiter
+	 *            whether or not to change the delimiter with another character
+	 *            if it happens to be in the strings
 	 *
 	 * @throws IOException
-	 * Thrown if an error occurs while writing data to the
-	 * destination stream.
+	 *             Thrown if an error occurs while writing data to the
+	 *             destination stream.
 	 */
 	public void writeRecord(final String[] values, final boolean changeDelimiter) throws IOException {
-		if ( values != null && values.length > 0 ) {
-			for ( int i = 0; i < values.length; i++ ) {
+		if (values != null && values.length > 0) {
+			for (int i = 0; i < values.length; i++) {
 				write(values[i], changeDelimiter);
 			}
 
@@ -407,11 +426,11 @@ public class CsvWriter {
 	 * Writes a new record using the passed in array of values.
 	 *
 	 * @param values
-	 * Values to be written.
+	 *            Values to be written.
 	 *
 	 * @throws IOException
-	 * Thrown if an error occurs while writing data to the
-	 * destination stream.
+	 *             Thrown if an error occurs while writing data to the
+	 *             destination stream.
 	 */
 	public void writeRecord(final String[] values) throws IOException {
 		writeRecord(values, false);
@@ -421,15 +440,15 @@ public class CsvWriter {
 	 * Ends the current record by sending the record delimiter.
 	 *
 	 * @exception IOException
-	 * Thrown if an error occurs while writing data to the
-	 * destination stream.
+	 *                Thrown if an error occurs while writing data to the
+	 *                destination stream.
 	 */
 	public void endRecord() throws IOException {
 		checkClosed();
 
 		checkInit();
 
-		if ( useCustomRecordDelimiter ) {
+		if (useCustomRecordDelimiter) {
 			outputStream.write(userSettings.RecordDelimiter);
 		} else {
 			outputStream.write(systemRecordDelimiter);
@@ -442,8 +461,8 @@ public class CsvWriter {
 	 *
 	 */
 	private void checkInit() throws IOException {
-		if ( !initialized ) {
-			if ( fileName != null ) {
+		if (!initialized) {
+			if (fileName != null) {
 				outputStream = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), charset));
 			}
 
@@ -454,9 +473,10 @@ public class CsvWriter {
 	/**
 	 * Clears all buffers for the current writer and causes any buffered data to
 	 * be written to the underlying device.
+	 * 
 	 * @exception IOException
-	 * Thrown if an error occurs while writing data to the
-	 * destination stream.
+	 *                Thrown if an error occurs while writing data to the
+	 *                destination stream.
 	 */
 	public void flush() throws IOException {
 		outputStream.flush();
@@ -466,7 +486,7 @@ public class CsvWriter {
 	 * Closes and releases all related resources.
 	 */
 	public void close() {
-		if ( !closed ) {
+		if (!closed) {
 			close(true);
 
 			closed = true;
@@ -477,16 +497,16 @@ public class CsvWriter {
 	 *
 	 */
 	private void close(final boolean closing) {
-		if ( !closed ) {
-			if ( closing ) {
+		if (!closed) {
+			if (closing) {
 				charset = null;
 			}
 
 			try {
-				if ( initialized ) {
+				if (initialized) {
 					outputStream.close();
 				}
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				// just eat the exception
 			}
 
@@ -500,7 +520,9 @@ public class CsvWriter {
 	 *
 	 */
 	private void checkClosed() throws IOException {
-		if ( closed ) { throw new IOException("This instance of the CsvWriter class has already been closed."); }
+		if (closed) {
+			throw new IOException("This instance of the CsvWriter class has already been closed.");
+		}
 	}
 
 	/**
@@ -565,8 +587,8 @@ public class CsvWriter {
 		final int len = pattern.length();
 		int found = original.indexOf(pattern);
 
-		if ( found > -1 ) {
-			StringBuffer sb = new StringBuffer();
+		if (found > -1) {
+			final StringBuffer sb = new StringBuffer();
 			int start = 0;
 
 			while (found != -1) {

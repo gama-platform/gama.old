@@ -54,6 +54,7 @@ import msi.gaml.operators.Cast;
  * Add NULL VALUE
  * Last Modified: 15-Jan-2014
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class SqlConnection {
 
 	protected static final boolean DEBUG = false; // Change DEBUG = false for

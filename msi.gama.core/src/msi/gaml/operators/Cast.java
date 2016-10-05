@@ -27,7 +27,6 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -61,29 +60,20 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Cast {
 
 	public static <T> T as(final Object value, final Class<T> clazz, final boolean copy) {
-		return GAMA.run(new InScope<T>() {
-
-			@Override
-			public T run(final IScope scope) {
-				final IType<T> t = Types.get(clazz);
-				return t.cast(scope, value, null, copy);
-			}
-
+		return GAMA.run(scope -> {
+			final IType<T> t = Types.get(clazz);
+			return t.cast(scope, value, null, copy);
 		});
 	}
 
 	public static <T> T as(final IExpression value, final Class<T> clazz, final boolean copy) {
-		return GAMA.run(new InScope<T>() {
-
-			@Override
-			public T run(final IScope scope) {
-				final IType<T> t = Types.get(clazz);
-				return t.cast(scope, value.value(scope), null, copy);
-			}
-
+		return GAMA.run(scope -> {
+			final IType<T> t = Types.get(clazz);
+			return t.cast(scope, value.value(scope), null, copy);
 		});
 	}
 

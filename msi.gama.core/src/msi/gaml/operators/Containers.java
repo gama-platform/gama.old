@@ -81,6 +81,7 @@ import msi.gaml.types.Types;
  * @see also IMatrix, IContainer for other operators
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class Containers {
 
 	public static abstract class Range {
@@ -463,13 +464,8 @@ public class Containers {
 			final boolean generic) {
 
 		return GamaListFactory.create(scope, scope.getModelContext().getTypeNamed(s.getName()),
-				Iterables.filter(agents.iterable(scope), and(instanceOf(IAgent.class), new Predicate<IAgent>() {
-
-					@Override
-					public boolean apply(final IAgent be) {
-						return be.isInstanceOf(s, !generic);
-					}
-				})));
+				Iterables.filter(agents.iterable(scope),
+						and(instanceOf(IAgent.class), (Predicate<IAgent>) be -> be.isInstanceOf(s, !generic))));
 	}
 
 	@operator(value = {

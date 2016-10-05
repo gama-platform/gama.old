@@ -36,6 +36,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
+@SuppressWarnings({ "rawtypes" })
 public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable, IGamlable {
 
 	public static final Function<? super IDescription, ? extends String> TO_NAME = input -> input.getName();

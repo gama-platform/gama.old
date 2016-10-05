@@ -73,6 +73,7 @@ import msi.gaml.types.Types;
 		@var(name = "requests", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'request' performative messages.")),
 		@var(name = "requestWhens", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'request-when' performative messages.")),
 		@var(name = "subscribes", type = IType.LIST, of = IType.MESSAGE, doc = @doc("A list of 'subscribe' performative messages.")), })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class FIPASkill extends MessagingSkill {
 
 	@doc(deprecated = "Use the keyword 'fipa' instead")

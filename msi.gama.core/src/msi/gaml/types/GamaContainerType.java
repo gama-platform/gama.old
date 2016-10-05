@@ -28,6 +28,7 @@ import msi.gaml.expressions.IExpression;
  */
 @type(name = IKeyword.CONTAINER, id = IType.CONTAINER, wraps = {
 		IContainer.class }, kind = ISymbolKind.Variable.CONTAINER, concept = { IConcept.TYPE, IConcept.CONTAINER })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaContainerType<T extends IContainer> extends GamaType<T> implements IContainerType<T> {
 
 	@Override

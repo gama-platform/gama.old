@@ -42,6 +42,7 @@ import msi.gaml.descriptions.ModelDescription;
  * @since 13 avr. 2014
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamlResourceDocumenter implements IDocManager {
 
 	private final ConcurrentLinkedQueue<ModelDescription> cleanupTasks = new ConcurrentLinkedQueue();

@@ -16,6 +16,7 @@ import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
+@SuppressWarnings({ "rawtypes" })
 public class ChartDataSource {
 
 	public static final int DATA_TYPE_NULL = 0;

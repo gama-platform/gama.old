@@ -77,6 +77,7 @@ import msi.gaml.types.IType;
 				@example(value = "	exit {write 'EXIT from '+state;}", isExecutable = false),
 				@example(value = "}", isExecutable = false) }) }, see = { FsmStateStatement.ENTER,
 						FsmStateStatement.EXIT, FsmTransitionStatement.TRANSITION })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class FsmStateStatement extends AbstractStatementSequence {
 
 	static List<String> AllowedArchitectures = Arrays.asList(IKeyword.USER_CONTROLLED, IKeyword.USER_FIRST,

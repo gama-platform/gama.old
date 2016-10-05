@@ -70,7 +70,6 @@ public class ActionDescription extends StatementWithChildrenDescription {
 		}
 
 		// We compute the list of mandatory args
-		// final List<String> mandatoryArgs = new ArrayList();
 
 		if (formalArgs != null) {
 			for (final IDescription c : formalArgs) {

@@ -1323,7 +1323,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     displayStatement returns Statement
 	 *
 	 * Constraint:
-	 *     (key=_1Expr_Facets_BlockOrEnd_Key firstFacet=FirstFacetKey? expr=Expression facets+=Facet* block=Block?)
+	 *     (key=_1Expr_Facets_BlockOrEnd_Key firstFacet=FirstFacetKey? (expr=Expression | expr=TypeRef) facets+=Facet* block=Block?)
 	 */
 	protected void sequence_S_1Expr_Facets_BlockOrEnd(ISerializationContext context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

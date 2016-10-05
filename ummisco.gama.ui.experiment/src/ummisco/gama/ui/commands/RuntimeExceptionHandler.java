@@ -21,8 +21,8 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 		super("Runtime error collector");
 	}
 
-	volatile BlockingQueue<GamaRuntimeException> incomingExceptions = new LinkedBlockingQueue();
-	volatile List<GamaRuntimeException> cleanExceptions = new ArrayList();
+	volatile BlockingQueue<GamaRuntimeException> incomingExceptions = new LinkedBlockingQueue<>();
+	volatile List<GamaRuntimeException> cleanExceptions = new ArrayList<>();
 	volatile boolean running;
 
 	@Override
@@ -67,7 +67,7 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 	}
 
 	private void process() {
-		final ArrayList<GamaRuntimeException> array = new ArrayList(incomingExceptions);
+		final ArrayList<GamaRuntimeException> array = new ArrayList<>(incomingExceptions);
 		// System.out.println("Processing " + array.size() + " exceptions");
 		incomingExceptions.clear();
 
@@ -76,13 +76,13 @@ public class RuntimeExceptionHandler extends Job implements IRuntimeExceptionHan
 			GAMA.getGui().editModel(firstEx.getEditorContext());
 			firstEx.setReported();
 			if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
-				final List<GamaRuntimeException> newList = new ArrayList();
+				final List<GamaRuntimeException> newList = new ArrayList<>();
 				newList.add(firstEx);
 				updateUI(newList);
 			}
 
 		} else if (GamaPreferences.CORE_SHOW_ERRORS.getValue()) {
-			final ArrayList<GamaRuntimeException> oldExcp = new ArrayList(cleanExceptions);
+			final ArrayList<GamaRuntimeException> oldExcp = new ArrayList<>(cleanExceptions);
 			for (final GamaRuntimeException newEx : array) {
 				if (oldExcp.size() == 0) {
 					oldExcp.add(newEx);

@@ -84,6 +84,7 @@ import msi.gaml.types.Types;
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @doc("Allows to declare an attribute of a species or an experiment")
 @validator(msi.gaml.variables.Variable.VarValidator.class)
+@SuppressWarnings({ "rawtypes" })
 public class Variable extends Symbol implements IVariable {
 
 	public static class VarValidator implements IDescriptionValidator {

@@ -17,6 +17,7 @@ import msi.gaml.types.Types;
  * @since 1 févr. 2015
  * 
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaMapFactory {
 
 	private static final int DEFAULT_SIZE = 10;

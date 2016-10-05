@@ -34,6 +34,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul 23 août 07
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class MapExpression extends AbstractExpression {
 
 	public static IExpression create(final Iterable<? extends IExpression> elements) {

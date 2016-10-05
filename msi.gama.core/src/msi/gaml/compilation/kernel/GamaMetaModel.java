@@ -25,6 +25,7 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.GamaGenericAgentType;
 import msi.gaml.types.Types;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaMetaModel {
 
 	public final static GamaMetaModel INSTANCE = new GamaMetaModel();

@@ -12,27 +12,39 @@
 package msi.gama.util.matrix;
 
 import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
-import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaMapFactory;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaPointType;
+import msi.gaml.types.GamaType;
+import msi.gaml.types.IContainerType;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 18 nov. 2008
  *
- * Abstract implementation of IMatrix, superclass of all matrices in GAML. Accessed by x = cols and
- * y = rows.
+ * Abstract implementation of IMatrix, superclass of all matrices in GAML.
+ * Accessed by x = cols and y = rows.
  *
  * @todo Description
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	private final IContainerType type;
@@ -43,8 +55,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	protected IContainer<?, ILocation> buildIndexes(final IScope scope, final IContainer value) {
-		IList<ILocation> result = GamaListFactory.create(Types.POINT);
-		for ( Object o : value.iterable(scope) ) {
+		final IList<ILocation> result = GamaListFactory.create(Types.POINT);
+		for (final Object o : value.iterable(scope)) {
 			result.add(buildIndex(scope, o));
 		}
 		return result;
@@ -64,7 +76,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	public static IList getLines(final IScope scope, final IMatrix m) {
 		final IList result = GamaListFactory.create(Types.LIST.of(m.getType().getContentType()));
-		for ( int i = 0; i < m.getRows(scope); i++ ) {
+		for (int i = 0; i < m.getRows(scope); i++) {
 			result.add(getLine(scope, m, i));
 		}
 		return result;
@@ -72,7 +84,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	public static IList getColumns(final IScope scope, final IMatrix m) {
 		final IList result = GamaListFactory.create(Types.LIST.of(m.getType().getContentType()));
-		for ( int i = 0, n = m.getCols(scope); i < n; i++ ) {
+		for (int i = 0, n = m.getCols(scope); i < n; i++) {
 			result.add(getColumn(scope, m, i));
 		}
 		return result;
@@ -80,8 +92,10 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	public static IList getColumn(final IScope scope, final IMatrix m, final Integer num_col) {
 		final IList result = GamaListFactory.create(m.getType().getContentType());
-		if ( num_col >= m.getCols(scope) || num_col < 0 ) { return result; }
-		for ( int i = 0; i < m.getRows(scope); i++ ) {
+		if (num_col >= m.getCols(scope) || num_col < 0) {
+			return result;
+		}
+		for (int i = 0; i < m.getRows(scope); i++) {
 			result.add(m.get(scope, num_col, i));
 		}
 		return result;
@@ -89,8 +103,10 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	public static IList getLine(final IScope scope, final IMatrix m, final Integer num_line) {
 		final IList result = GamaListFactory.create(m.getType().getContentType());
-		if ( num_line >= m.getRows(scope) || num_line < 0 ) { return result; }
-		for ( int i = 0; i < m.getCols(scope); i++ ) {
+		if (num_line >= m.getRows(scope) || num_line < 0) {
+			return result;
+		}
+		for (int i = 0; i < m.getCols(scope); i++) {
 			result.add(m.get(scope, i, num_line));
 		}
 		return result;
@@ -103,17 +119,17 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	public static IMatrix opPlus(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
 		throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment",
-			scope);
+				scope);
 	}
 
 	public static IMatrix opMinus(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
 		throw GamaRuntimeException.error("ATTENTION : Matrix subtractions not implemented. Returns nil for the moment",
-			scope);
+				scope);
 	}
 
 	public static IMatrix opTimes(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
 		throw GamaRuntimeException
-			.error("ATTENTION : Matrix multiplications not implemented. Returns nil for the moment", scope);
+				.error("ATTENTION : Matrix multiplications not implemented. Returns nil for the moment", scope);
 	}
 
 	public int numRows;
@@ -121,10 +137,13 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public int numCols;
 
 	/**
-	 * Cols, rows instead of row cols because intended to work with xSize and ySize dimensions.
+	 * Cols, rows instead of row cols because intended to work with xSize and
+	 * ySize dimensions.
 	 *
-	 * @param cols the cols
-	 * @param rows the rows
+	 * @param cols
+	 *            the cols
+	 * @param rows
+	 *            the rows
 	 */
 
 	@Override
@@ -146,19 +165,22 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	/**
 	 * Instantiates a new gama matrix.
 	 *
-	 * @param objects the objects
-	 * @param flat whether the list is flat or not (i.e. no sublist)
-	 * @param preferredSize the preferred size
+	 * @param objects
+	 *            the objects
+	 * @param flat
+	 *            whether the list is flat or not (i.e. no sublist)
+	 * @param preferredSize
+	 *            the preferred size
 	 */
 	protected GamaMatrix(final IScope scope, final List objects, final ILocation preferredSize,
-		final IType contentsType) {
-		if ( preferredSize != null ) {
+			final IType contentsType) {
+		if (preferredSize != null) {
 			numRows = (int) preferredSize.getY();
 			numCols = (int) preferredSize.getX();
-		} else if ( objects == null || objects.isEmpty() ) {
+		} else if (objects == null || objects.isEmpty()) {
 			numRows = 1;
 			numCols = 1;
-		} else if ( GamaMatrix.isFlat(objects) ) {
+		} else if (GamaMatrix.isFlat(objects)) {
 			numRows = 1;
 			numCols = objects.size();
 		} else {
@@ -169,78 +191,85 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	/**
-	 * Take two matrices (with the same number of columns) and create a big matrix putting the second matrix under the
-	 * first matrix
+	 * Take two matrices (with the same number of columns) and create a big
+	 * matrix putting the second matrix under the first matrix
 	 *
-	 * @param two matrix to concatenate
+	 * @param two
+	 *            matrix to concatenate
 	 * @return the matrix concatenated
 	 */
 
 	@Override
-	@operator(value = IKeyword.APPEND_VERTICALLY,
-		content_type = ITypeProvider.BOTH,
-		category = { IOperatorCategory.MATRIX },
-		concept = { IConcept.MATRIX })
+	@operator(value = IKeyword.APPEND_VERTICALLY, content_type = ITypeProvider.BOTH, category = {
+			IOperatorCategory.MATRIX }, concept = { IConcept.MATRIX })
 	public IMatrix opAppendVertically(final IScope scope, final IMatrix b) {
-		if ( this instanceof GamaIntMatrix &&
-			b instanceof GamaIntMatrix ) { return ((GamaIntMatrix) this)._opAppendVertically(scope, b); }
-		if ( this instanceof GamaFloatMatrix &&
-			b instanceof GamaFloatMatrix ) { return ((GamaFloatMatrix) this)._opAppendVertically(scope, b); }
-		if ( this instanceof GamaIntMatrix &&
-			b instanceof GamaFloatMatrix ) { return new GamaFloatMatrix(((GamaIntMatrix) this).getRealMatrix())
-				._opAppendVertically(scope, b); }
-		if ( this instanceof GamaFloatMatrix && b instanceof GamaIntMatrix ) { return ((GamaFloatMatrix) this)
-			._opAppendVertically(scope, new GamaFloatMatrix(((GamaIntMatrix) b).getRealMatrix())); }
-		if ( this instanceof GamaObjectMatrix &&
-			b instanceof GamaObjectMatrix ) { return ((GamaObjectMatrix) this)._opAppendVertically(scope, b); }
+		if (this instanceof GamaIntMatrix && b instanceof GamaIntMatrix) {
+			return ((GamaIntMatrix) this)._opAppendVertically(scope, b);
+		}
+		if (this instanceof GamaFloatMatrix && b instanceof GamaFloatMatrix) {
+			return ((GamaFloatMatrix) this)._opAppendVertically(scope, b);
+		}
+		if (this instanceof GamaIntMatrix && b instanceof GamaFloatMatrix) {
+			return new GamaFloatMatrix(((GamaIntMatrix) this).getRealMatrix())._opAppendVertically(scope, b);
+		}
+		if (this instanceof GamaFloatMatrix && b instanceof GamaIntMatrix) {
+			return ((GamaFloatMatrix) this)._opAppendVertically(scope,
+					new GamaFloatMatrix(((GamaIntMatrix) b).getRealMatrix()));
+		}
+		if (this instanceof GamaObjectMatrix && b instanceof GamaObjectMatrix) {
+			return ((GamaObjectMatrix) this)._opAppendVertically(scope, b);
+		}
 		/*
-		 * Object[] ma = this.getMatrix();
-		 * Object[] mb = b.getMatrix();
-		 * Object[] mab = ArrayUtils.addAll(ma, mb);
+		 * Object[] ma = this.getMatrix(); Object[] mb = b.getMatrix(); Object[]
+		 * mab = ArrayUtils.addAll(ma, mb);
 		 *
-		 * GamaObjectMatrix fl = new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab);
+		 * GamaObjectMatrix fl = new GamaObjectMatrix(a.getCols(scope),
+		 * a.getRows(scope) + b.getRows(scope), mab);
 		 */
-		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment");
+		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not
+		// implemented. Returns nil for the moment");
 		return this;
 	}
 
 	/**
-	 * Take two matrices (with the same number of rows) and create a big matrix putting the second matrix on the right
-	 * side of the first matrix
+	 * Take two matrices (with the same number of rows) and create a big matrix
+	 * putting the second matrix on the right side of the first matrix
 	 *
-	 * @param two matrix to concatenate
+	 * @param two
+	 *            matrix to concatenate
 	 * @return the matrix concatenated
 	 */
 
 	@Override
-	@operator(value = IKeyword.APPEND_HORIZONTALLY,
-		content_type = ITypeProvider.BOTH,
-		category = { IOperatorCategory.MATRIX },
-		concept = { IConcept.MATRIX })
+	@operator(value = IKeyword.APPEND_HORIZONTALLY, content_type = ITypeProvider.BOTH, category = {
+			IOperatorCategory.MATRIX }, concept = { IConcept.MATRIX })
 	public IMatrix opAppendHorizontally(final IScope scope, final IMatrix b) {
-		if ( this instanceof GamaIntMatrix &&
-			b instanceof GamaIntMatrix ) { return ((GamaIntMatrix) this)._opAppendHorizontally(scope, b); }
-		if ( this instanceof GamaFloatMatrix &&
-			b instanceof GamaFloatMatrix ) { return ((GamaFloatMatrix) this)._opAppendHorizontally(scope, b); }
-		if ( this instanceof GamaIntMatrix &&
-			b instanceof GamaFloatMatrix ) { return new GamaFloatMatrix(((GamaIntMatrix) this).getRealMatrix())
-				._opAppendHorizontally(scope, b); }
-		if ( this instanceof GamaFloatMatrix && b instanceof GamaIntMatrix ) { return ((GamaFloatMatrix) this)
-			._opAppendHorizontally(scope, new GamaFloatMatrix(((GamaIntMatrix) b).getRealMatrix())); }
-		if ( this instanceof GamaObjectMatrix &&
-			b instanceof GamaObjectMatrix ) { return ((GamaObjectMatrix) this)._opAppendHorizontally(scope, b); }
+		if (this instanceof GamaIntMatrix && b instanceof GamaIntMatrix) {
+			return ((GamaIntMatrix) this)._opAppendHorizontally(scope, b);
+		}
+		if (this instanceof GamaFloatMatrix && b instanceof GamaFloatMatrix) {
+			return ((GamaFloatMatrix) this)._opAppendHorizontally(scope, b);
+		}
+		if (this instanceof GamaIntMatrix && b instanceof GamaFloatMatrix) {
+			return new GamaFloatMatrix(((GamaIntMatrix) this).getRealMatrix())._opAppendHorizontally(scope, b);
+		}
+		if (this instanceof GamaFloatMatrix && b instanceof GamaIntMatrix) {
+			return ((GamaFloatMatrix) this)._opAppendHorizontally(scope,
+					new GamaFloatMatrix(((GamaIntMatrix) b).getRealMatrix()));
+		}
+		if (this instanceof GamaObjectMatrix && b instanceof GamaObjectMatrix) {
+			return ((GamaObjectMatrix) this)._opAppendHorizontally(scope, b);
+		}
 		/*
-		 * IMatrix a=this;
-		 * IMatrix aprime = new GamaObjectMatrix(a.getRows(scope), a.getCols(scope));
-		 * aprime = a._reverse(scope);
-		 * // System.out.println("aprime = " + aprime);
-		 * IMatrix bprime = new GamaObjectMatrix(b.getRows(scope), b.getCols(scope));
-		 * bprime = b._reverse(scope);
-		 * // System.out.println("bprime = " + bprime);
-		 * IMatrix c = opAppendVertically(scope, (GamaObjectMatrix) aprime, (GamaObjectMatrix) bprime);
-		 * // System.out.println("c = " + c);
-		 * IMatrix cprime = ((GamaObjectMatrix) c)._reverse(scope);
-		 * // System.out.println("cprime = " + cprime);
+		 * IMatrix a=this; IMatrix aprime = new
+		 * GamaObjectMatrix(a.getRows(scope), a.getCols(scope)); aprime =
+		 * a._reverse(scope); // System.out.println("aprime = " + aprime);
+		 * IMatrix bprime = new GamaObjectMatrix(b.getRows(scope),
+		 * b.getCols(scope)); bprime = b._reverse(scope); // System.out.println(
+		 * "bprime = " + bprime); IMatrix c = opAppendVertically(scope,
+		 * (GamaObjectMatrix) aprime, (GamaObjectMatrix) bprime); //
+		 * System.out.println("c = " + c); IMatrix cprime = ((GamaObjectMatrix)
+		 * c)._reverse(scope); // System.out.println("cprime = " + cprime);
 		 */
 		return this;
 	}
@@ -249,18 +278,24 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public T get(final IScope scope, final ILocation p) {
 		final double px = p.getX();
 		final double py = p.getY();
-		if ( px > numCols - 1 || px < 0 ) { return null; }
-		if ( py > numRows - 1 || py < 0 ) { return null; }
+		if (px > numCols - 1 || px < 0) {
+			return null;
+		}
+		if (py > numRows - 1 || py < 0) {
+			return null;
+		}
 		return get(scope, (int) px, (int) py);
 	}
 
 	@Override
 	public T getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
-		if ( indices == null || indices.isEmpty() ) { return null; }
+		if (indices == null || indices.isEmpty()) {
+			return null;
+		}
 		final int size = indices.size();
-		if ( size == 1 ) {
-			Object index = indices.get(0);
-			if ( index instanceof GamaPoint ) {
+		if (size == 1) {
+			final Object index = indices.get(0);
+			if (index instanceof GamaPoint) {
 				return get(scope, (GamaPoint) index);
 			} else {
 				return this.getNthElement(Cast.asInt(scope, index));
@@ -268,8 +303,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		}
 		final int px = Cast.asInt(scope, indices.get(0));
 		final int py = Cast.asInt(scope, indices.get(1));
-		if ( px > numCols - 1 || px < 0 ) { return null; }
-		if ( py > numRows - 1 || py < 0 ) { return null; }
+		if (px > numCols - 1 || px < 0) {
+			return null;
+		}
+		if (py > numRows - 1 || py < 0) {
+			return null;
+		}
 		return get(scope, px, py);
 	}
 
@@ -290,7 +329,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	@Override
 	public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		return matrixValue(scope, contentsType, null, copy);
 	}
 
@@ -302,10 +341,10 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	@Override
 	public final String stringValue(final IScope scope) throws GamaRuntimeException {
 		final StringBuilder sb = new StringBuilder(numRows * numCols * 5);
-		for ( int line = 0; line < numRows; line++ ) {
-			for ( int col = 0; col < numCols; col++ ) {
+		for (int line = 0; line < numRows; line++) {
+			for (int col = 0; col < numCols; col++) {
 				sb.append(Cast.asString(scope, get(scope, col, line)));
-				if ( col != numCols - 1 ) {
+				if (col != numCols - 1) {
 					sb.append(';');
 				}
 			}
@@ -316,13 +355,16 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	@Override
 	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy) {
-		IType kt = GamaType.findSpecificType(keyType, type.getContentType()); // not key type !
-		IType ct = GamaType.findSpecificType(contentsType, type.getContentType());
+		final IType kt = GamaType.findSpecificType(keyType, type.getContentType()); // not
+																					// key
+																					// type
+																					// !
+		final IType ct = GamaType.findSpecificType(contentsType, type.getContentType());
 		final GamaMap result = GamaMapFactory.create(kt, ct);
-		for ( int i = 0; i < numRows; i++ ) {
+		for (int i = 0; i < numRows; i++) {
 			// in case the matrix rows < 2, put null in value
 			result.put(GamaType.toType(scope, get(scope, 0, i), kt, copy),
-				GamaType.toType(scope, get(scope, 1, i), ct, copy));
+					GamaType.toType(scope, get(scope, 1, i), ct, copy));
 		}
 		return result;
 
@@ -330,13 +372,15 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	//
 	// @Override
-	// public final Object removeAt(IScope scope, final ILocation p) throws GamaRuntimeException {
+	// public final Object removeAt(IScope scope, final ILocation p) throws
+	// GamaRuntimeException {
 	// // Normally never called as matrices are of fixed length
 	// return remove(scope, (int) p.getX(), (int) p.getY());
 	// }
 
 	// @Override
-	// public final void put(IScope scope, final ILocation p, final T value, final Object param)
+	// public final void put(IScope scope, final ILocation p, final T value,
+	// final Object param)
 	// throws GamaRuntimeException {
 	// set(scope, (int) p.getX(), (int) p.getY(), value);
 	// }
@@ -350,8 +394,10 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public abstract IMatrix copy(IScope scope, ILocation size, boolean copy);
 
 	public static boolean isFlat(final List val) {
-		for ( int i = 0; i < val.size(); i++ ) {
-			if ( val.get(i) instanceof List ) { return false; }
+		for (int i = 0; i < val.size(); i++) {
+			if (val.get(i) instanceof List) {
+				return false;
+			}
 		}
 		return true;
 	}
@@ -363,14 +409,16 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	@Override
 	public final boolean checkBounds(final IScope scope, final Object object, final boolean forAdding) {
-		if ( object instanceof ILocation ) {
-			ILocation index = (ILocation) object;
+		if (object instanceof ILocation) {
+			final ILocation index = (ILocation) object;
 			final int x = (int) index.getX();
 			final int y = (int) index.getY();
 			return x >= 0 && x < numCols && y >= 0 && y < numRows;
-		} else if ( object instanceof IContainer ) {
-			for ( Object o : ((IContainer) object).iterable(scope) ) {
-				if ( !checkBounds(scope, o, forAdding) ) { return false; }
+		} else if (object instanceof IContainer) {
+			for (final Object o : ((IContainer) object).iterable(scope)) {
+				if (!checkBounds(scope, o, forAdding)) {
+					return false;
+				}
 			}
 		}
 		return false;
@@ -446,7 +494,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// * @see msi.gama.interfaces.IGamaContainer#product()
 	// */
 	// @Override
-	// public final Object product(final IScope scope) throws GamaRuntimeException {
+	// public final Object product(final IScope scope) throws
+	// GamaRuntimeException {
 	// return _product(scope);
 	// }
 	//
@@ -484,16 +533,19 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// Three methods for add and put operations:
 	// The simple method, that simply contains the object to add
 	@Override
-	public void addValue(final IScope scope, final T value) {}
+	public void addValue(final IScope scope, final T value) {
+	}
 
-	// The same but with an index (this index represents the old notion of parameter where it is needed.
+	// The same but with an index (this index represents the old notion of
+	// parameter where it is needed.
 	@Override
-	public void addValueAtIndex(final IScope scope, final Object index, final T value) {}
+	public void addValueAtIndex(final IScope scope, final Object index, final T value) {
+	}
 
 	// set, that takes a mandatory index (also replaces the parameter)
 	@Override
 	public void setValueAtIndex(final IScope scope, final Object index, final T value) {
-		ILocation p = buildIndex(scope, index);
+		final ILocation p = buildIndex(scope, index);
 		set(scope, (int) p.getX(), (int) p.getY(), value);
 
 	}
@@ -501,28 +553,35 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// Then, methods for "all" operations
 	// Adds the values if possible, without replacing existing ones
 	@Override
-	public void addValues(final IScope scope, final IContainer values) {}
+	public void addValues(final IScope scope, final IContainer values) {
+	}
 
-	// Adds this value to all slots (if this operation is available), otherwise replaces the values with this one
+	// Adds this value to all slots (if this operation is available), otherwise
+	// replaces the values with this one
 	@Override
 	public void setAllValues(final IScope scope, final T value) {
 		_putAll(scope, value);
 	}
 
 	@Override
-	public void removeValue(final IScope scope, final Object value) {};
+	public void removeValue(final IScope scope, final Object value) {
+	};
 
 	@Override
-	public void removeIndex(final IScope scope, final Object index) {};
+	public void removeIndex(final IScope scope, final Object index) {
+	};
 
 	@Override
-	public void removeIndexes(final IScope scope, final IContainer<?, Object> indexes) {}
+	public void removeIndexes(final IScope scope, final IContainer<?, Object> indexes) {
+	}
 
 	@Override
-	public void removeValues(final IScope scope, final IContainer<?, ?> values) {};
+	public void removeValues(final IScope scope, final IContainer<?, ?> values) {
+	};
 
 	@Override
-	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {};
+	public void removeAllOccurrencesOfValue(final IScope scope, final Object value) {
+	};
 
 	/*
 	 * (non-Javadoc)
@@ -531,12 +590,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	@Override
 	public final IList listValue(final IScope scope, final IType contentsType, final boolean copy) {
-		IType originalContentsType = type.getContentType();
-		if ( !GamaType.requiresCasting(contentsType, originalContentsType) ) {
+		final IType originalContentsType = type.getContentType();
+		if (!GamaType.requiresCasting(contentsType, originalContentsType)) {
 			// no need to take "copy" into account as the list is created anyway
 			return _listValue(scope, originalContentsType, false);
 		}
-		IList result = _listValue(scope, contentsType, true);
+		final IList result = _listValue(scope, contentsType, true);
 		// for ( int i = 0, n = result.size(); i < n; i++ ) {
 		// result.set(i, contentsType.cast(scope, result.get(i), null, false));
 		// }
@@ -551,7 +610,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	@Override
 	public final IMatrix matrixValue(final IScope scope, final IType type, final ILocation size, final boolean copy)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		return _matrixValue(scope, size, type, copy);
 	}
 

@@ -16,6 +16,8 @@ import java.util.Arrays;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 
+@SuppressWarnings({ "unchecked", "rawtypes" })
+
 public class Signature {
 
 	final IType[] list;

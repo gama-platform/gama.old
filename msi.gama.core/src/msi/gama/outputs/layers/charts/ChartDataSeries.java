@@ -11,6 +11,7 @@ import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
+@SuppressWarnings({ "rawtypes" })
 public class ChartDataSeries {
 
 	ArrayList<String> cvalues = new ArrayList<String>(); // for categories

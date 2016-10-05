@@ -80,6 +80,7 @@ import msi.gaml.types.Types;
  * @since 14 dec. 2011
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GeometryUtils {
 
 	public static Coordinate toCoordinate(final ILocation l) {

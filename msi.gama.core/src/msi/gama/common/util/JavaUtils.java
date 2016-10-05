@@ -13,7 +13,6 @@ package msi.gama.common.util;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +32,7 @@ import msi.gama.common.interfaces.ISkill;
  * Provides some utilities for dealing with reflection.
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class JavaUtils {
 
 	public final static Map<Set<Class>, List<Class>> IMPLEMENTATION_CLASSES = new THashMap();
@@ -107,27 +107,23 @@ public class JavaUtils {
 			classes.addAll(allSuperclassesOf(classi, in));
 		}
 		final ArrayList<Class> classes2 = new ArrayList(classes);
-		Collections.sort(classes2, new Comparator<Class>() {
-
-			@Override
-			public int compare(final Class o1, final Class o2) {
-				if (o1 == o2) {
-					return 0;
-				}
-				if (o1.isAssignableFrom(o2)) {
-					return -1;
-				}
-				if (o2.isAssignableFrom(o1)) {
-					return 1;
-				}
-				if (o1.isInterface() && !o2.isInterface()) {
-					return -1;
-				}
-				if (o2.isInterface() && !o1.isInterface()) {
-					return 1;
-				}
+		Collections.sort(classes2, (o1, o2) -> {
+			if (o1 == o2) {
+				return 0;
+			}
+			if (o1.isAssignableFrom(o2)) {
+				return -1;
+			}
+			if (o2.isAssignableFrom(o1)) {
 				return 1;
 			}
+			if (o1.isInterface() && !o2.isInterface()) {
+				return -1;
+			}
+			if (o2.isInterface() && !o1.isInterface()) {
+				return 1;
+			}
+			return 1;
 		});
 
 		IMPLEMENTATION_CLASSES.put(key, classes2);

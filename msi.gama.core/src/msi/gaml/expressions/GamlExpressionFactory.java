@@ -46,7 +46,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamlExpressionFactory implements IExpressionFactory {
 
 	public static interface ParserProvider {

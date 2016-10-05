@@ -42,7 +42,6 @@ public class WorkspacePreferences {
 			}
 
 			@Override
-			@SuppressWarnings("rawtypes")
 			public Map getMapping(final String scope) {
 				return null;
 			}

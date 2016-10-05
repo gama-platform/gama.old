@@ -46,6 +46,7 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getStatementAccess().getAlternatives(), "rule__Statement__Alternatives");
 					put(grammarAccess.getStatementAccess().getAlternatives_0(), "rule__Statement__Alternatives_0");
 					put(grammarAccess.getStatementAccess().getAlternatives_0_1(), "rule__Statement__Alternatives_0_1");
+					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getAlternatives_2(), "rule__S_1Expr_Facets_BlockOrEnd__Alternatives_2");
 					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getAlternatives_4(), "rule__S_1Expr_Facets_BlockOrEnd__Alternatives_4");
 					put(grammarAccess.getS_DoAccess().getAlternatives_4(), "rule__S_Do__Alternatives_4");
 					put(grammarAccess.getS_IfAccess().getElseAlternatives_4_1_0(), "rule__S_If__ElseAlternatives_4_1_0");
@@ -269,7 +270,8 @@ public class GamlParser extends AbstractPartialContentAssistParser {
 					put(grammarAccess.getS_ExperimentAccess().getBlockAssignment_4_0(), "rule__S_Experiment__BlockAssignment_4_0");
 					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getKeyAssignment_0(), "rule__S_1Expr_Facets_BlockOrEnd__KeyAssignment_0");
 					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getFirstFacetAssignment_1(), "rule__S_1Expr_Facets_BlockOrEnd__FirstFacetAssignment_1");
-					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprAssignment_2(), "rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2");
+					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprAssignment_2_0(), "rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2_0");
+					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getExprAssignment_2_1(), "rule__S_1Expr_Facets_BlockOrEnd__ExprAssignment_2_1");
 					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getFacetsAssignment_3(), "rule__S_1Expr_Facets_BlockOrEnd__FacetsAssignment_3");
 					put(grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getBlockAssignment_4_0(), "rule__S_1Expr_Facets_BlockOrEnd__BlockAssignment_4_0");
 					put(grammarAccess.getS_DoAccess().getKeyAssignment_0(), "rule__S_Do__KeyAssignment_0");

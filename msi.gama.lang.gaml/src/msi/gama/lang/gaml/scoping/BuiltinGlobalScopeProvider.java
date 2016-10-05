@@ -39,8 +39,6 @@ import com.google.common.collect.Lists;
 import com.google.inject.Singleton;
 
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectObjectProcedure;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.lang.gaml.EGaml;
@@ -60,7 +58,6 @@ import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.IType;
-import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
 
 /**
@@ -78,6 +75,7 @@ import msi.gaml.types.Types;
  * @author Vincent Simonet, adapted for GAML by Alexis Drogoul, 2012
  */
 @Singleton
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
 	// public static BuiltinGlobalScopeProvider INSTANCE;
@@ -468,31 +466,18 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 				GamlResourceServices.getResourceDocumenter().setGamlDocumentation(def, t, true);
 			}
 			final OperatorProto[] p = new OperatorProto[1];
-			IExpressionCompiler.OPERATORS
-					.forEachEntry(new TObjectObjectProcedure<String, THashMap<Signature, OperatorProto>>() {
-
-						@Override
-						public boolean execute(final String a, final THashMap<Signature, OperatorProto> b) {
-							p[0] = null;
-							b.forEachValue(new TObjectProcedure<OperatorProto>() {
-
-								@Override
-								public boolean execute(final OperatorProto object) {
-									p[0] = object;
-									return false;
-								}
-							});
-							add(eAction, a, p[0]);
-							return true;
-						}
-					});
-			descriptions.forEachValue(new TObjectProcedure<THashMap<QualifiedName, IEObjectDescription>>() {
-
-				@Override
-				public boolean execute(final THashMap<QualifiedName, IEObjectDescription> object) {
-					object.compact();
-					return true;
-				}
+			IExpressionCompiler.OPERATORS.forEachEntry((a, b) -> {
+				p[0] = null;
+				b.forEachValue(object -> {
+					p[0] = object;
+					return false;
+				});
+				add(eAction, a, p[0]);
+				return true;
+			});
+			descriptions.forEachValue(object -> {
+				object.compact();
+				return true;
 			});
 			descriptions.compact();
 		}

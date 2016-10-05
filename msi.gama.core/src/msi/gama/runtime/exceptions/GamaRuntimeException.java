@@ -36,9 +36,9 @@ import msi.gaml.operators.Strings;
 public class GamaRuntimeException extends RuntimeException {
 
 	private final long cycle;
-	protected final List<String> agentsNames = new ArrayList();
+	protected final List<String> agentsNames = new ArrayList<>();
 	private boolean isWarning;
-	protected final List<String> context = new ArrayList();
+	protected final List<String> context = new ArrayList<>();
 	protected EObject editorContext;
 	protected int lineNumber;
 	protected int occurrences = 0;
@@ -247,7 +247,7 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public List<String> getContextAsList() {
-		final List<String> result = new ArrayList();
+		final List<String> result = new ArrayList<>();
 		result.addAll(context);
 		final int size = agentsNames.size();
 		if (size == 0) {

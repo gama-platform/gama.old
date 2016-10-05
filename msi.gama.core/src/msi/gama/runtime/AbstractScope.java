@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectObjectProcedure;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStepable;
@@ -32,7 +31,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Arguments;
@@ -49,7 +47,7 @@ import msi.gaml.types.Types;
  * @since 23 mai 2013
  *
  */
-
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class AbstractScope implements IScope {
 
 	private static int ScopeNumber = 0;
@@ -366,16 +364,12 @@ public abstract class AbstractScope implements IScope {
 			callerPushed = push(caller);
 		}
 		try {
-			actualArgs.forEachEntry(new TObjectObjectProcedure<String, IExpressionDescription>() {
-
-				@Override
-				public boolean execute(final String a, final IExpressionDescription b) {
-					final IExpression e = b.getExpression();
-					if (e != null) {
-						addVarWithValue(a, e.value(AbstractScope.this));
-					}
-					return true;
+			actualArgs.forEachEntry((a, b) -> {
+				final IExpression e = b.getExpression();
+				if (e != null) {
+					addVarWithValue(a, e.value(AbstractScope.this));
 				}
+				return true;
 			});
 
 		} finally {

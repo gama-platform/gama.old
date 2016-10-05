@@ -61,6 +61,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 31 août 2013
  *
  */
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaPreferencesView {
 
 	Map<String, IPreferenceNode> preferencePages = new LinkedHashMap();

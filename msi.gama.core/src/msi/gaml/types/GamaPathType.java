@@ -12,26 +12,29 @@
 package msi.gaml.types;
 
 import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.precompiler.*;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gama.util.path.*;
+import msi.gama.util.GamaListFactory;
+import msi.gama.util.IList;
+import msi.gama.util.path.GamaPath;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Cast;
 
-@type(name = IKeyword.PATH,
-id = IType.PATH,
-wraps = { IPath.class, GamaPath.class },
-kind = ISymbolKind.Variable.REGULAR,
-concept = { IConcept.TYPE })
+@type(name = IKeyword.PATH, id = IType.PATH, wraps = { IPath.class,
+		GamaPath.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaPathType extends GamaType<IPath> {
 
 	@Override
 	public IPath cast(final IScope scope, final Object obj, final Object param, final boolean copy)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		return staticCast(scope, obj, param, copy);
 	}
 
@@ -40,7 +43,8 @@ public class GamaPathType extends GamaType<IPath> {
 		return null;
 	}
 
-	// public static IPath pathBetween(final IScope scope, final ILocation source, final ILocation target,
+	// public static IPath pathBetween(final IScope scope, final ILocation
+	// source, final ILocation target,
 	// final IGraph graph) {
 	// if ( graph == null ) { return null; }
 	// Collection<IShape> nodes = graph.vertexSet();
@@ -82,7 +86,8 @@ public class GamaPathType extends GamaType<IPath> {
 	// return graph.computeShortestPathBetween(scope, s, t);
 	// }
 	//
-	// public static IPath pathBetweenPoints(final IScope scope, final ILocation source, final ILocation target,
+	// public static IPath pathBetweenPoints(final IScope scope, final ILocation
+	// source, final ILocation target,
 	// final GamaSpatialGraph graph) throws GamaRuntimeException {
 	// if ( graph == null ) { return null; }
 	// ITopology m = scope.getTopology();
@@ -119,7 +124,8 @@ public class GamaPathType extends GamaType<IPath> {
 	// IPath path = null;
 	// if ( edgeS == edgeT ) {
 	// // path = new GamaPath(m, source, target, GamaList.with(edgeS));
-	// path = PathFactory.newInstance(m, source, target, GamaListFactory.createWithoutCasting(Types.PATH, edgeS));
+	// path = PathFactory.newInstance(m, source, target,
+	// GamaListFactory.createWithoutCasting(Types.PATH, edgeS));
 	// return path;
 	// }
 	// path = graph.computeShortestPathBetween(scope, (IShape) s1, (IShape) t1);
@@ -129,15 +135,17 @@ public class GamaPathType extends GamaType<IPath> {
 	// }
 	//
 	public static IPath staticCast(final IScope scope, final Object obj, final Object param, final boolean copy) {
-		if ( obj instanceof IPath ) { return (IPath) obj; }
-		if ( obj instanceof List ) {
+		if (obj instanceof IPath) {
+			return (IPath) obj;
+		}
+		if (obj instanceof List) {
 			// List<ILocation> list = new GamaList();
-			List<IShape> list = GamaListFactory.create(Types.GEOMETRY);
+			final List<IShape> list = GamaListFactory.create(Types.GEOMETRY);
 			boolean isEdges = true;
 
-			for ( Object p : (List) obj ) {
+			for (final Object p : (List) obj) {
 				list.add(Cast.asPoint(scope, p));
-				if ( isEdges && !(p instanceof IShape && ((IShape) p).isLine()) ) {
+				if (isEdges && !(p instanceof IShape && ((IShape) p).isLine())) {
 					isEdges = false;
 				}
 			}

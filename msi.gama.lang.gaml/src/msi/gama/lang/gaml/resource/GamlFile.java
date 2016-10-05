@@ -44,6 +44,7 @@ import msi.gaml.types.Types;
 @file(name = "gaml", extensions = {
 		"gaml" }, buffer_type = IType.LIST, buffer_content = IType.SPECIES, buffer_index = IType.INT, concept = {
 				IConcept.FILE })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 
 	private final IModel mymodel;
