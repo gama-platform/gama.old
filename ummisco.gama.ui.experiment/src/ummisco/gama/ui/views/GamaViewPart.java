@@ -114,6 +114,9 @@ public abstract class GamaViewPart extends ViewPart
 				for (final IOutputManager manager : mm) {
 					if (manager != null) {
 						out = (IDisplayOutput) manager.getOutput(id);
+						if(out != null){
+							break;
+						}
 					}
 
 				}
