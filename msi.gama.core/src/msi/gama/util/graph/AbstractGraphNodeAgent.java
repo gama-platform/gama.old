@@ -13,6 +13,7 @@ package msi.gama.util.graph;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.action;
@@ -64,7 +65,7 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 
 	}
 
-	public AbstractGraphNodeAgent(final IPopulation s) throws GamaRuntimeException {
+	public AbstractGraphNodeAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
 		super(s);
 	}
 

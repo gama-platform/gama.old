@@ -29,7 +29,7 @@ import msi.gaml.types.GamaGeometryType;
 public class MinimalAgent extends AbstractAgent {
 
 	/** The population that this agent belongs to. */
-	protected final IPopulation population;
+	protected final IPopulation<? extends IAgent> population;
 	protected String name;
 	protected final IShape geometry;
 
@@ -37,17 +37,17 @@ public class MinimalAgent extends AbstractAgent {
 	 * @param s
 	 *            the population used to prototype the agent.
 	 */
-	public MinimalAgent(final IPopulation s) {
+	public MinimalAgent(final IPopulation<? extends IAgent> s) {
 		this(s, new GamaShape((Geometry) null));
 	}
 
-	protected MinimalAgent(final IPopulation population, final IShape geometry) {
+	protected MinimalAgent(final IPopulation<? extends IAgent> population, final IShape geometry) {
 		this.population = population;
 		this.geometry = geometry;
 	}
 
 	@Override
-	public IPopulation getPopulation() {
+	public IPopulation<? extends IAgent> getPopulation() {
 		return population;
 	}
 

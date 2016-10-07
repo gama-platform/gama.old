@@ -54,7 +54,7 @@ public class AgentIdentifier {
 	 */
 	public IAgent getAgent(final IScope scope) {
 		final ITopLevelAgent root = scope.getRoot();
-		IPopulation pop = root.getPopulation();
+		IPopulation<? extends IAgent> pop = root.getPopulation();
 		IAgent currentAgent = pop.getAgent(indexes[indexes.length - 1]);
 		if (species.length == 1)
 			return currentAgent;

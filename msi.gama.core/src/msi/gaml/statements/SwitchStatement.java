@@ -14,6 +14,8 @@ package msi.gaml.statements;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -163,7 +165,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		final List<MatchStatement> cases = new ArrayList<>();
 		for (final ISymbol c : commands) {
 			if (c instanceof MatchStatement) {
@@ -174,10 +176,8 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 				}
 			}
 		}
-		commands.removeAll(cases);
-		commands.remove(defaultMatch);
 		matches = cases.toArray(new MatchStatement[0]);
-		super.setChildren(commands);
+		super.setChildren(Iterables.filter(commands, each -> each != defaultMatch || !cases.contains(each)));
 	}
 
 	@Override

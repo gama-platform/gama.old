@@ -134,7 +134,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 
 	public abstract ISpecies getSpecies();
 
-	public IPopulation getPopulation();
+	public IPopulation<? extends IAgent> getPopulation();
 
 	public abstract boolean isInstanceOf(final ISpecies s, boolean direct);
 
@@ -200,7 +200,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 * @param microSpecies
 	 * @return
 	 */
-	public abstract IPopulation getPopulationFor(final ISpecies microSpecies);
+	public abstract IPopulation<? extends IAgent> getPopulationFor(final ISpecies microSpecies);
 
 	/**
 	 * @throws GamaRuntimeException
@@ -216,7 +216,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 *            the name of the species
 	 * @return
 	 */
-	public abstract IPopulation getPopulationFor(final String speciesName);
+	public abstract IPopulation<? extends IAgent> getPopulationFor(final String speciesName);
 
 	public void updateWith(final IScope s, final SavedAgent sa);
 }

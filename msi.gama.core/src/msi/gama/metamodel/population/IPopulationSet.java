@@ -12,20 +12,22 @@
 package msi.gama.metamodel.population;
 
 import java.util.Collection;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
 
 /**
- * Class IPopulationSet. An interface common to ISpecies, IPopulation and MetaPopulation
+ * Class IPopulationSet. An interface common to ISpecies, IPopulation and
+ * MetaPopulation
  * 
  * @author drogoul
  * @since 9 déc. 2013
  * 
  */
-public interface IPopulationSet extends IContainer<Integer, IAgent>, IAgentFilter {
+public interface IPopulationSet<T extends IAgent> extends IContainer<Integer, T>, IAgentFilter {
 
-	Collection<? extends IPopulation> getPopulations(IScope scope);
+	Collection<? extends IPopulation<? extends IAgent>> getPopulations(IScope scope);
 
 }

@@ -138,7 +138,7 @@ public class ParameterReceiver implements Runnable {
 						ExperimentAgent a = null;
 						if (exp != null) {
 							a = exp.getAgent();
-							System.out.println(GAMA.getExperiment().getExperimentOutputs().getOutputs());
+							// System.out.println(GAMA.getExperiment().getExperimentOutputs().getOutputs());
 							System.out.println("avant : " + GAMA.getExperiment().getParameters().get(param.id)
 									.value(a == null ? null : a.getScope()) + '\n');
 							GAMA.getExperiment().getParameters().get(param.id).setValue(a == null ? null : a.getScope(),

@@ -411,7 +411,7 @@ public class Variable extends Symbol implements IVariable {
 	// }
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) {
+	public void setChildren(final Iterable<? extends ISymbol> children) {
 	}
 
 	@Override

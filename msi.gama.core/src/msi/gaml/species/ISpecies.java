@@ -46,7 +46,8 @@ import msi.gaml.variables.IVariable;
 		@var(name = IKeyword.PARENT, type = IType.SPECIES), @var(name = IKeyword.NAME, type = IType.STRING),
 		@var(name = ISpecies.SUBSPECIES, type = IType.LIST, of = IType.SPECIES),
 		@var(name = ISpecies.POPULATION, type = IType.LIST, of = ITypeProvider.FIRST_CONTENT_TYPE) })
-public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent, Integer, IAgent>, IPopulationSet {
+public interface ISpecies
+		extends ISymbol, IAddressableContainer<Integer, IAgent, Integer, IAgent>, IPopulationSet<IAgent> {
 
 	public static final String stepActionName = "_step_";
 	public static final String initActionName = "_init_";
@@ -196,7 +197,7 @@ public interface ISpecies extends ISymbol, IAddressableContainer<Integer, IAgent
 	 */
 	@getter(POPULATION)
 	@doc("Returns the population of agents that belong to this species")
-	public abstract IPopulation getPopulation(IScope scope);
+	public abstract IPopulation<? extends IAgent> getPopulation(IScope scope);
 
 	public abstract void addTemporaryAction(ActionStatement a);
 

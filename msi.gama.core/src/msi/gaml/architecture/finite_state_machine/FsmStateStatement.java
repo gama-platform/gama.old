@@ -16,6 +16,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import com.google.common.collect.FluentIterable;
+
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -188,7 +190,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) {
+	public void setChildren(final Iterable<? extends ISymbol> children) {
 		for (final ISymbol c : children) {
 			if (c instanceof FsmEnterStatement) {
 				enterActions = (FsmEnterStatement) c;
@@ -198,11 +200,10 @@ public class FsmStateStatement extends AbstractStatementSequence {
 				transitions.add((FsmTransitionStatement) c);
 			}
 		}
-		children.remove(enterActions);
-		children.remove(exitActions);
-		children.removeAll(transitions);
+
 		transitionsSize = transitions.size();
-		super.setChildren(children);
+		super.setChildren(FluentIterable.from(children)
+				.filter(each -> (each != enterActions && each != exitActions && !transitions.contains(each))));
 	}
 
 	protected boolean beginExecution(final IScope scope) throws GamaRuntimeException {

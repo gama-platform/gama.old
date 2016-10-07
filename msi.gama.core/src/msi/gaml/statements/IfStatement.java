@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import java.util.List;
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -123,14 +123,13 @@ public class IfStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		for (final ISymbol c : commands) {
 			if (c instanceof ElseStatement) {
 				alt = (IStatement) c;
 			}
 		}
-		commands.remove(alt);
-		super.setChildren(commands);
+		super.setChildren(Iterables.filter(commands, each -> each != alt));
 	}
 
 	@Override

@@ -84,7 +84,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 	private List<String> listOfAttributes;
 	IMacroAgent rootAgent;
 
-	public static void browse(final Collection<IAgent> agents) {
+	public static void browse(final Collection<? extends IAgent> agents) {
 		IPopulation pop = null;
 		IMacroAgent root = null;
 		if (agents instanceof IPopulation) {
@@ -104,7 +104,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		}
 	}
 
-	public static void browse(final IMacroAgent root, final Collection<IAgent> agents) {
+	public static void browse(final IMacroAgent root, final Collection<? extends IAgent> agents) {
 		final IMacroAgent realRoot = findRootOf(root, agents);
 		if (realRoot == null) {
 			GamaRuntimeException.error("Impossible to find a common host agent for " + agents, root.getScope());
@@ -113,7 +113,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		new InspectDisplayOutput(realRoot, agents).launch(realRoot.getScope());
 	}
 
-	private static IMacroAgent findRootOf(final IMacroAgent root, final Collection<IAgent> agents) {
+	private static IMacroAgent findRootOf(final IMacroAgent root, final Collection<? extends IAgent> agents) {
 		if (agents instanceof IPopulation) {
 			return ((IPopulation) agents).getHost();
 		}
@@ -218,7 +218,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 		this.rootAgent = rootAgent;
 	}
 
-	private InspectDisplayOutput(final IMacroAgent agent, final Collection<IAgent> agents) {
+	private InspectDisplayOutput(final IMacroAgent agent, final Collection<? extends IAgent> agents) {
 		// Opens a table inspector on the agents of this container
 		this(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(agent), IKeyword.NAME,
 				StringUtils.toGamlString("Browse(" + count++ + ")"), IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,

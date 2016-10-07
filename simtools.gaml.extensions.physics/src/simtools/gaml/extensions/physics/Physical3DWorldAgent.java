@@ -61,7 +61,7 @@ public class Physical3DWorldAgent extends MinimalAgent {
 	private final HashMap<IAgent, RigidBody> registeredMap = new HashMap<IAgent, RigidBody>();
 	private final PhysicsWorldJBullet world;
 
-	public Physical3DWorldAgent(final IPopulation s) throws GamaRuntimeException {
+	public Physical3DWorldAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
 		super(s);
 		world = new PhysicsWorldJBullet(true);
 	}

@@ -13,8 +13,9 @@ package msi.gama.kernel.experiment;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -26,7 +27,6 @@ import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.ExperimentPlan.BatchValidator;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.FileOutput;
 import msi.gama.outputs.IOutputManager;
@@ -43,7 +43,7 @@ import msi.gama.runtime.AbstractScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaListFactory;
+import msi.gama.util.Guava;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
@@ -222,7 +222,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		final ExperimentPopulation pop = new ExperimentPopulation(this);
 		final IScope scope = getExperimentScope();
 		pop.initializeFor(scope);
-		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, true).get(0);
+		agent = pop.createAgents(scope, 1, Collections.EMPTY_LIST, false, true).get(0);
 		addDefaultParameters();
 	}
 
@@ -258,40 +258,23 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	@Override
-	public final List<IOutputManager> getAllSimulationOutputs() {
-		if (getAgent() == null) {
-			return GamaListFactory.create();
-		}
-		return getAgent().getAllSimulationOutputs();
-	}
-
-	@Override
 	public final IOutputManager getExperimentOutputs() {
 		return experimentOutputs;
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) {
+	public void setChildren(final Iterable<? extends ISymbol> children) {
 		super.setChildren(children);
-		// We first verify if we are in a batch -- or normal -- situation
-		for (final ISymbol s : children) {
-			if (s instanceof IExploration) {
-				exploration = (IExploration) s;
-				break;
-			}
-		}
-		if (exploration != null) {
-			children.remove(exploration);
-		}
 
 		BatchOutput fileOutputDescription = null;
 		for (final ISymbol s : children) {
-			if (s instanceof BatchOutput) {
+			if (s instanceof IExploration) {
+				exploration = (IExploration) s;
+			} else if (s instanceof BatchOutput) {
 				fileOutputDescription = (BatchOutput) s;
 			} else if (s instanceof SimulationOutputManager) {
 				if (originalSimulationOutputs != null) {
-					((SimulationOutputManager) originalSimulationOutputs)
-							.setChildren(new ArrayList(((AbstractOutputManager) s).getOutputs().values()));
+					((SimulationOutputManager) originalSimulationOutputs).setChildren((SimulationOutputManager) s);
 				} else {
 					originalSimulationOutputs = (SimulationOutputManager) s;
 				}
@@ -312,8 +295,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				}
 			} else if (s instanceof ExperimentOutputManager) {
 				if (experimentOutputs != null) {
-					((ExperimentOutputManager) experimentOutputs)
-							.setChildren(new ArrayList(((AbstractOutputManager) s).getOutputs().values()));
+					((ExperimentOutputManager) experimentOutputs).setChildren((ExperimentOutputManager) s);
 				} else {
 					experimentOutputs = (ExperimentOutputManager) s;
 				}
@@ -626,7 +608,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 */
 	@Override
 	public void refreshAllOutputs() {
-		for (final IOutputManager manager : getAllSimulationOutputs()) {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
 			manager.forceUpdateOutputs();
 		}
 	}
@@ -637,7 +619,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	 */
 	@Override
 	public void recomputeAndRefreshAllOutputs() {
-		for (final IOutputManager manager : getAllSimulationOutputs()) {
+		for (final IOutputManager manager : getActiveOutputManagers()) {
 			manager.step(getExperimentScope());
 		}
 	}
@@ -655,6 +637,24 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	@Override
 	public String getExperimentType() {
 		return experimentType;
+	}
+
+	/**
+	 * Returns the output managers that are currently active. If no agent is
+	 * defined, then an empty iterable is returned
+	 * 
+	 * @return
+	 */
+
+	@Override
+	public Iterable<IOutputManager> getActiveOutputManagers() {
+		if (agent == null)
+			return Collections.EMPTY_LIST;
+
+		return Iterables.filter(
+				Iterables.concat(getAgent().getAllSimulationOutputs(), Collections.singleton(experimentOutputs)),
+				Guava.NOT_NULL);
+
 	}
 
 }

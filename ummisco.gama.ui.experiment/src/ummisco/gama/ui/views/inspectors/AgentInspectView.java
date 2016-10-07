@@ -63,8 +63,6 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 			reset();
 			return;
 		}
-		// System.out.println("Adding output " + output.getName() + " to
-		// inspector");
 		if (!(output instanceof InspectDisplayOutput)) {
 			return;
 		}

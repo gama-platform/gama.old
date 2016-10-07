@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import java.util.List;
-
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -95,9 +93,6 @@ public abstract class Symbol implements ISymbol {
 	public boolean hasFacet(final String s) {
 		return description == null ? false : description.hasFacet(s);
 	}
-
-	@Override
-	public abstract void setChildren(final List<? extends ISymbol> children);
 
 	@Override
 	public void setName(final String n) {

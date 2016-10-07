@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import java.util.List;
 import java.util.Map;
 
 import msi.gama.kernel.batch.IExploration;
@@ -39,8 +38,6 @@ public interface IExperimentPlan extends ISpecies {
 	public abstract IModel getModel();
 
 	public abstract void setModel(final IModel model);
-
-	public abstract List<IOutputManager> getAllSimulationOutputs();
 
 	public abstract IOutputManager getOriginalSimulationOutputs();
 
@@ -96,6 +93,8 @@ public interface IExperimentPlan extends ISpecies {
 	public abstract boolean hasParametersOrUserCommands();
 
 	public abstract void recomputeAndRefreshAllOutputs();
+
+	public abstract Iterable<IOutputManager> getActiveOutputManagers();
 
 	// public abstract void setController(ExperimentController controller);
 

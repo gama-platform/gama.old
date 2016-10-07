@@ -39,8 +39,8 @@ public class SpeciesLayer extends AgentLayer {
 
 	@Override
 	public Set<IAgent> getAgentsForMenu(final IScope scope) {
-		final Set<IAgent> result = ImmutableSet.copyOf(scope.getSimulation()
-				.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).iterator());
+		final Set<IAgent> result = ImmutableSet.copyOf(
+				scope.getSimulation().getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).iterator());
 		return result;
 	}
 
@@ -55,7 +55,7 @@ public class SpeciesLayer extends AgentLayer {
 		final ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
 		final IMacroAgent world = scope.getSimulation();
 		if (world != null && !world.dead()) {
-			final IPopulation microPop = world.getMicroPopulation(species);
+			final IPopulation<? extends IAgent> microPop = world.getMicroPopulation(species);
 			if (microPop != null) {
 				drawPopulation(scope, g, (SpeciesLayerStatement) definition, microPop);
 			}
@@ -63,7 +63,7 @@ public class SpeciesLayer extends AgentLayer {
 	}
 
 	private void drawPopulation(final IScope scope, final IGraphics g, final SpeciesLayerStatement layer,
-			final IPopulation population) throws GamaRuntimeException {
+			final IPopulation<? extends IAgent> population) throws GamaRuntimeException {
 		IExecutable aspect = layer.getAspect();
 		// IAspect aspect = population.getAspect(layer.getAspectName());
 		if (aspect == null) {
@@ -96,7 +96,7 @@ public class SpeciesLayer extends AgentLayer {
 			if (!(a instanceof IMacroAgent)) {
 				continue;
 			}
-			IPopulation microPop;
+			IPopulation<? extends IAgent> microPop;
 			// draw grids first...
 			final List<GridLayerStatement> gridLayers = layer.getGridLayers();
 			for (final GridLayerStatement gl : gridLayers) {

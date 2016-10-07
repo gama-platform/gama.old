@@ -135,7 +135,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		}
 		if (exp.getAgent() == null)
 			return null;
-		final IPopulation pop = exp.getAgent().getSimulationPopulation();
+		final IPopulation<? extends IAgent> pop = exp.getAgent().getSimulationPopulation();
 		if (pop.isEmpty())
 			return null;
 		final IAgent[] simulations = pop.toArray();
@@ -173,7 +173,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 				(int) clock.getAverageDuration(), clock.getTotalDuration()));
 		result.add(GamaColors.get(exp.getColor()), sb.toString());
-		final IPopulation pop = exp.getSimulationPopulation();
+		final IPopulation<? extends IAgent> pop = exp.getSimulationPopulation();
 		if (pop == null) {
 			result.add(IGamaColors.NEUTRAL, "No simulations available");
 			return result;

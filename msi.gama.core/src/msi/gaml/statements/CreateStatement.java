@@ -274,7 +274,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
+	public void setChildren(final Iterable<? extends ISymbol> com) {
 		sequence.setChildren(com);
 	}
 
@@ -320,7 +320,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		}
 		// scope.addVarWithValue(IKeyword.MYSELF, executor);
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
-		final List<Map> inits = GamaListFactory.create(Types.MAP, max == null ? 10 : max);
+		final List<Map<String, Object>> inits = GamaListFactory.create(Types.MAP, max == null ? 10 : max);
 		final Object source = getSource(scope);
 		for (final ICreateDelegate delegate : delegates) {
 			if (delegate.acceptSource(source)) {
@@ -345,8 +345,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		return source;
 	}
 
-	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation population,
-			final List<Map> inits) {
+	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation<? extends IAgent> population,
+			final List<Map<String, Object>> inits) {
 		if (population == null)
 			return GamaListFactory.create();
 		// final boolean hasSequence = sequence != null && !sequence.isEmpty();

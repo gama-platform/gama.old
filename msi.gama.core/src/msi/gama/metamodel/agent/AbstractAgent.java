@@ -72,14 +72,13 @@ import msi.gaml.variables.IVariable;
  * @since 18 mai 2013
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class AbstractAgent implements IAgent {
 
 	private volatile int index;
 	protected volatile boolean dead = false;
 
 	@Override
-	public abstract IPopulation getPopulation();
+	public abstract IPopulation<? extends IAgent> getPopulation();
 
 	@Override
 	public abstract IShape getGeometry();
@@ -171,7 +170,7 @@ public abstract class AbstractAgent implements IAgent {
 			return;
 		}
 		dead = true;
-		final IPopulation p = getPopulation();
+		final IPopulation<? extends IAgent> p = getPopulation();
 		if (p != null) {
 			p.removeValue(null, this);
 		}
@@ -217,11 +216,11 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public GamaMap<Object, Object> getAttributes() {
-		return (GamaMap) getGeometry().getAttributes();
+		return (GamaMap<Object, Object>) getGeometry().getAttributes();
 	}
 
 	@Override
-	public GamaMap getOrCreateAttributes() {
+	public GamaMap<Object, Object> getOrCreateAttributes() {
 		return getGeometry().getOrCreateAttributes();
 	}
 
@@ -271,7 +270,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		final IPopulation pop = getHost().getPopulationFor(this.getSpecies());
+		final IPopulation<? extends IAgent> pop = getHost().getPopulationFor(this.getSpecies());
 		if (pop != null) {
 			final IScope scope = getScope();
 			final IList<IAgent> retVal = GamaListFactory.<IAgent> createWithoutCasting(
@@ -437,9 +436,9 @@ public abstract class AbstractAgent implements IAgent {
 	 * @see msi.gama.metamodel.agent.IAgent#getPopulationFor(msi.gaml.species.ISpecies)
 	 */
 	@Override
-	public IPopulation getPopulationFor(final ISpecies microSpecies) {
+	public IPopulation<? extends IAgent> getPopulationFor(final ISpecies microSpecies) {
 
-		IPopulation pop = getPopulationFor(microSpecies.getName());
+		IPopulation<? extends IAgent> pop = getPopulationFor(microSpecies.getName());
 		if (pop == null) {
 			final ModelDescription micro = microSpecies.getDescription().getModelDescription();
 			final ModelDescription main = (ModelDescription) this.getModel().getDescription();
@@ -456,7 +455,7 @@ public abstract class AbstractAgent implements IAgent {
 	 * @see msi.gama.metamodel.agent.IAgent#getPopulationFor(java.lang.String)
 	 */
 	@Override
-	public IPopulation getPopulationFor(final String speciesName) {
+	public IPopulation<? extends IAgent> getPopulationFor(final String speciesName) {
 		final IMacroAgent a = getHost();
 		if (a == null) {
 			return null;

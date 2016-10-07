@@ -14,6 +14,8 @@ package msi.gaml.architecture.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -59,14 +61,13 @@ public class UserPanelStatement extends FsmStateStatement {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) {
+	public void setChildren(final Iterable<? extends ISymbol> children) {
 		for (final ISymbol c : children) {
 			if (c instanceof UserCommandStatement) {
 				userCommands.add((IStatement) c);
 			}
 		}
-		children.removeAll(userCommands);
-		super.setChildren(children);
+		super.setChildren(Iterables.filter(children, each -> !userCommands.contains(each)));
 	}
 
 	public List<IStatement> getUserCommands() {

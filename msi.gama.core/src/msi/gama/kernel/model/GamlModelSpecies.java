@@ -209,7 +209,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) {
+	public void setChildren(final Iterable<? extends ISymbol> children) {
 		final List forExperiment = new ArrayList<>();
 
 		final List<IExperimentPlan> experiments = new ArrayList<>();

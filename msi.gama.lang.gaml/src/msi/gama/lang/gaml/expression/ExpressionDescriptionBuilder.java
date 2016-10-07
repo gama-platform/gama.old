@@ -4,8 +4,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.Diagnostic;
-import org.eclipse.xtext.diagnostics.Severity;
-import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
@@ -24,10 +22,10 @@ import msi.gaml.operators.IUnits;
 
 public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescription> {
 
-	private Set<Diagnostic> currentErrors;
+	// private Set<Diagnostic> currentErrors;
 
 	void setErrors(final Set<Diagnostic> errors) {
-		currentErrors = errors;
+		// currentErrors = errors;
 	}
 
 	@Override
@@ -36,10 +34,12 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		try {
 			ed = ConstantExpressionDescription.create(Integer.parseInt(object.getOp()));
 		} catch (final NumberFormatException e) {
-			final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "",
-					"Impossible to parse this int value, automatically set to 0", object, null, 0, null);
-			if (currentErrors != null)
-				currentErrors.add(d);
+			// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING,
+			// "",
+			// "Impossible to parse this int value, automatically set to 0",
+			// object, null, 0, null);
+			// if (currentErrors != null)
+			// currentErrors.add(d);
 			ed = ConstantExpressionDescription.create(0);
 		}
 		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object, ed.getExpression(), true);
@@ -52,10 +52,12 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		try {
 			ed = ConstantExpressionDescription.create(Double.parseDouble(object.getOp()));
 		} catch (final NumberFormatException e) {
-			final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "",
-					"Impossible to parse this float value, automatically set to 0.0", object, null, 0, null);
-			if (currentErrors != null)
-				currentErrors.add(d);
+			// final Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING,
+			// "",
+			// "Impossible to parse this float value, automatically set to 0.0",
+			// object, null, 0, null);
+			// if (currentErrors != null)
+			// currentErrors.add(d);
 			ed = ConstantExpressionDescription.create(0d);
 		}
 		GamlResourceServices.getResourceDocumenter().setGamlDocumentation(object, ed.getExpression(), true);
@@ -110,14 +112,15 @@ public class ExpressionDescriptionBuilder extends GamlSwitch<IExpressionDescript
 		return ed;
 	}
 
-	public IExpressionDescription create(final EObject expr, final Set<Diagnostic> errors) {
+	public IExpressionDescription create(
+			final EObject expr/* , final Set<Diagnostic> errors */) {
 		try {
-			setErrors(errors);
+			// setErrors(errors);
 			final IExpressionDescription result = doSwitch(expr);
 			result.setTarget(expr);
 			return result;
 		} finally {
-			setErrors(null);
+			// setErrors(null);
 		}
 	}
 

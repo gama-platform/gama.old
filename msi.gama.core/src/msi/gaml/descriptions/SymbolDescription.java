@@ -264,7 +264,7 @@ public abstract class SymbolDescription implements IDescription {
 		if (e == null || e.eResource() == null || e.eResource().getURI().path().contains(SYNTHETIC_RESOURCES_PREFIX)) {
 			throw warning ? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s);
 		}
-		final ValidationContext c = getErrorCollector();
+		final ValidationContext c = getValidationContext();
 		if (c == null) {
 			System.out.println((warning ? "Warning" : "Error") + ": " + s);
 			return;
@@ -276,7 +276,7 @@ public abstract class SymbolDescription implements IDescription {
 	public void document(final EObject e, final IGamlDescription desc) {
 		if (!isDocumenting())
 			return;
-		final ValidationContext c = getErrorCollector();
+		final ValidationContext c = getValidationContext();
 		if (c == null) {
 			return;
 		}
@@ -561,12 +561,12 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public ValidationContext getErrorCollector() {
+	public ValidationContext getValidationContext() {
 		final ModelDescription model = getModelDescription();
 		if (model == null) {
 			return null;
 		}
-		return model.getErrorCollector();
+		return model.getValidationContext();
 	}
 
 	@Override

@@ -22,6 +22,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.interfaces.IParameterEditor;
 import ummisco.gama.ui.parameters.EditorFactory;
@@ -56,10 +57,10 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 	public void add(final Collection<? extends IParameter> params, final IAgent agent) {
 		if (addItem(agent)) {
 			if (!agent.dead()) {
+				final IScope scope = agent.getScope().copy(" for " + agent.getName());
 				for (final IParameter var : params) {
 					if (!HIDDEN.contains(var.getName())) {
-						final IParameterEditor<?> gp = EditorFactory.getInstance()
-								.create(agent.getScope().copy("for " + agent.getName()), agent, var, null);
+						final IParameterEditor<?> gp = EditorFactory.getInstance().create(scope, agent, var, null);
 						categories.get(agent).put(gp.getParam().getName(), gp);
 					}
 				}

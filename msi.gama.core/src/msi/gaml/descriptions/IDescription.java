@@ -150,7 +150,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public abstract ActionDescription getAction(String name);
 
-	public abstract ValidationContext getErrorCollector();
+	public abstract ValidationContext getValidationContext();
 
 	public abstract IDescription copy(IDescription into);
 

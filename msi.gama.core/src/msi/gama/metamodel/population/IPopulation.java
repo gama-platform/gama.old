@@ -39,20 +39,20 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  *
  */
-@SuppressWarnings({ "rawtypes" })
-public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, IStepable, IPopulationSet {
+public interface IPopulation<T extends IAgent>
+		extends Comparable<IPopulation<T>>, IList<T>, IStepable, IPopulationSet<T> {
 
 	public interface Listener {
 
-		public void notifyAgentRemoved(IPopulation pop, IAgent agent);
+		public void notifyAgentRemoved(IPopulation<? extends IAgent> pop, IAgent agent);
 
-		public void notifyAgentAdded(IPopulation pop, IAgent agent);
+		public void notifyAgentAdded(IPopulation<? extends IAgent> pop, IAgent agent);
 
-		public void notifyAgentsAdded(IPopulation pop, Collection agents);
+		public void notifyAgentsAdded(IPopulation<? extends IAgent> pop, Collection<? extends IAgent> agents);
 
-		public void notifyAgentsRemoved(IPopulation pop, Collection agents);
+		public void notifyAgentsRemoved(IPopulation<? extends IAgent> pop, Collection<? extends IAgent> agents);
 
-		public void notifyPopulationCleared(IPopulation pop);
+		public void notifyPopulationCleared(IPopulation<? extends IAgent> pop);
 
 	}
 
@@ -70,7 +70,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	}
 
-	public abstract void createVariablesFor(IScope scope, IAgent agent) throws GamaRuntimeException;
+	public abstract void createVariablesFor(IScope scope, T agent) throws GamaRuntimeException;
 
 	public abstract boolean hasVar(final String n);
 
@@ -90,14 +90,14 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract IList<? extends IAgent> createAgents(IScope scope, int number, List<? extends Map> initialValues,
+	public abstract IList<T> createAgents(IScope scope, int number, List<? extends Map<String, Object>> initialValues,
 			boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException;
 
-	public abstract IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries)
+	public abstract IList<T> createAgents(final IScope scope, final IContainer<?, ? extends IShape> geometries)
 			throws GamaRuntimeException;
 
-	public abstract IAgent createAgentAt(final IScope s, int index, Map<String, Object> initialValues,
-			boolean isRestored, boolean toBeScheduled) throws GamaRuntimeException;
+	public abstract T createAgentAt(final IScope s, int index, Map<String, Object> initialValues, boolean isRestored,
+			boolean toBeScheduled) throws GamaRuntimeException;
 
 	// public abstract Iterator<IAgent> getAgentsList();
 
@@ -154,7 +154,7 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	 * @param obj
 	 * @return
 	 */
-	public abstract IAgent getAgent(Integer obj);
+	public abstract T getAgent(Integer obj);
 
 	public void addListener(IPopulation.Listener listener);
 
@@ -167,9 +167,9 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	 * @param coord
 	 * @return
 	 */
-	IAgent getAgent(IScope scope, ILocation coord);
+	T getAgent(IScope scope, ILocation coord);
 
 	@Override
-	IAgent[] toArray();
+	T[] toArray();
 
 }

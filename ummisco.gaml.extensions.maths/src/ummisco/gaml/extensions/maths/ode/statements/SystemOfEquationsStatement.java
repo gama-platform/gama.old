@@ -24,6 +24,8 @@ import org.apache.commons.math3.exception.DimensionMismatchException;
 import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
+import com.google.common.collect.Lists;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -137,8 +139,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	 * @see msi.gaml.statements.AbstractStatementSequence#setChildren(java.util.List)
 	 */
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
-		List<? extends ISymbol> cmd = commands;
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
+		List<? extends ISymbol> cmd = Lists.newArrayList(commands);
 		if (getFacet(IKeyword.TYPE) != null) {
 			final String type = getFacet(IKeyword.TYPE).literalValue();
 			switch (type) {

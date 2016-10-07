@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import java.util.List;
+import com.google.common.collect.FluentIterable;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -28,8 +28,8 @@ public class AbstractStatementSequence extends AbstractStatement {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
-		this.commands = commands.toArray(new IStatement[0]);
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
+		this.commands = FluentIterable.from(commands).filter(IStatement.class).toArray(IStatement.class);
 	}
 
 	public boolean isEmpty() {

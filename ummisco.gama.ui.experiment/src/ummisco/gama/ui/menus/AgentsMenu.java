@@ -74,7 +74,7 @@ public class AgentsMenu extends ContributionItem {
 		return result;
 	}
 
-	private static MenuItem browsePopulationMenuItem(final Menu parent, final Collection<IAgent> pop,
+	private static MenuItem browsePopulationMenuItem(final Menu parent, final Collection<? extends IAgent> pop,
 			final Image image) {
 		final MenuItem result = new MenuItem(parent, SWT.PUSH);
 		if (pop instanceof IPopulation) {
@@ -82,7 +82,7 @@ public class AgentsMenu extends ContributionItem {
 				result.setText("Browse simulations...");
 				GamaMenu.separate(parent);
 			} else {
-				result.setText("Browse " + ((IPopulation) pop).getName() + " population...");
+				result.setText("Browse " + ((IPopulation<? extends IAgent>) pop).getName() + " population...");
 			}
 		} else {
 			result.setText("Browse agents...");
@@ -100,7 +100,7 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	private static MenuItem cascadingPopulationMenuItem(final Menu parent, final IAgent agent,
-			final IPopulation population, final Image image, final MenuAction... actions) {
+			final IPopulation<? extends IAgent> population, final Image image, final MenuAction... actions) {
 		if (population instanceof SimulationPopulation) {
 			fillPopulationSubMenu(parent, population, actions);
 			return null;
@@ -277,7 +277,7 @@ public class AgentsMenu extends ContributionItem {
 				if (!topLevel) {
 					GamaMenu.separate(menu, "Micro-populations");
 				}
-				for (final IPopulation pop : macro.getMicroPopulations()) {
+				for (final IPopulation<? extends IAgent> pop : macro.getMicroPopulations()) {
 					if (!pop.isEmpty()) {
 						cascadingPopulationMenuItem(menu, agent, pop,
 								GamaIcons.create(IGamaIcons.MENU_POPULATION).image(), actions);
@@ -288,7 +288,7 @@ public class AgentsMenu extends ContributionItem {
 
 	}
 
-	public static void fillPopulationSubMenu(final Menu menu, final Collection<IAgent> species,
+	public static void fillPopulationSubMenu(final Menu menu, final Collection<? extends IAgent> species,
 			final MenuAction... actions) {
 		final boolean isSimulations = species instanceof SimulationPopulation;
 		int subMenuSize = GamaPreferences.CORE_MENU_SIZE.getValue();

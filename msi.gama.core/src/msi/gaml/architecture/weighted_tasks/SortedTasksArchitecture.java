@@ -14,7 +14,6 @@ package msi.gaml.architecture.weighted_tasks;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import msi.gama.precompiler.GamlAnnotations.skill;
@@ -64,7 +63,7 @@ public class SortedTasksArchitecture extends WeightedTasksArchitecture {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		super.setChildren(commands);
 		for (final WeightedTaskStatement c : tasks) {
 			weights.put(c, 0d);

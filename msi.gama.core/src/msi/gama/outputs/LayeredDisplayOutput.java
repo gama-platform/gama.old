@@ -625,7 +625,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		final List<AbstractLayerStatement> list = new ArrayList<>();
 		for (final ISymbol s : commands) {
 			if (s instanceof OverlayStatement && ((OverlayStatement) s).hasInfo()) {

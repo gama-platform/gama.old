@@ -117,7 +117,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
+	public void setChildren(final Iterable<? extends ISymbol> com) {
 		sequence = new RemoteSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);
@@ -161,7 +161,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 							+ " population is not visible or doesn't exist.", scope);
 				}
 
-				final IPopulation microPopulation = macroAgent.getPopulationFor(microSpecies);
+				final IPopulation<? extends IAgent> microPopulation = macroAgent.getPopulationFor(microSpecies);
 				if (microPopulation == null) {
 					throw GamaRuntimeException.error(this.name + " can't capture other agents as members of "
 							+ microSpeciesName + " population because the " + microSpeciesName

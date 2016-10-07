@@ -50,8 +50,8 @@ public class CreateFromCSVDelegate implements ICreateDelegate {
 	 */
 	@SuppressWarnings("rawtypes")
 	@Override
-	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object input,
-			final Arguments init, final CreateStatement statement) {
+	public boolean createFrom(final IScope scope, final List<Map<String, Object>> inits, final Integer max,
+			final Object input, final Arguments init, final CreateStatement statement) {
 		final GamaCSVFile source = (GamaCSVFile) input;
 		final IExpression header = statement.getHeader();
 		if (header != null) {

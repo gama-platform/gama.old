@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import java.util.List;
-
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -53,7 +51,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	protected abstract Object privateExecuteIn(IScope scope) throws GamaRuntimeException;
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
 	}
 
 	@Override

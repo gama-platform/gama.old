@@ -47,8 +47,8 @@ public class CreateFromGridFileDelegate implements ICreateDelegate {
 	 *      java.util.List, int, java.lang.Object)
 	 */
 	@Override
-	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object input,
-			final Arguments init, final CreateStatement statement) {
+	public boolean createFrom(final IScope scope, final List<Map<String, Object>> inits, final Integer max,
+			final Object input, final Arguments init, final CreateStatement statement) {
 		final GamaGridFile file = (GamaGridFile) input;
 		final int num = max == null ? file.length(scope) : CmnFastMath.min(file.length(scope), max);
 		for (int i = 0; i < num; i++) {

@@ -90,7 +90,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
+	public void setChildren(final Iterable<? extends ISymbol> com) {
 		sequence = new RemoteSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);

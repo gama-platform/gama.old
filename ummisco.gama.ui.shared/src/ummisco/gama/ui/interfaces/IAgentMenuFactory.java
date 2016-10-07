@@ -9,5 +9,6 @@ import ummisco.gama.ui.menus.MenuAction;
 
 public interface IAgentMenuFactory {
 
-	void fillPopulationSubMenu(final Menu menu, final Collection<IAgent> species, final MenuAction... actions);
+	void fillPopulationSubMenu(final Menu menu, final Collection<? extends IAgent> species,
+			final MenuAction... actions);
 }

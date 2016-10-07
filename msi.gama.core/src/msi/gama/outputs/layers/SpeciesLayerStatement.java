@@ -200,7 +200,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		final List<SpeciesLayerStatement> microL = new ArrayList<SpeciesLayerStatement>();
 		final List<GridLayerStatement> gridL = new ArrayList<GridLayerStatement>();
 		final List<IStatement> aspectStatements = new ArrayList<>();

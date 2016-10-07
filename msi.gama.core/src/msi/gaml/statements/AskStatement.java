@@ -15,7 +15,6 @@ import static com.google.common.collect.Iterators.emptyIterator;
 import static com.google.common.collect.Iterators.singletonIterator;
 
 import java.util.Iterator;
-import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -99,7 +98,7 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
+	public void setChildren(final Iterable<? extends ISymbol> com) {
 		sequence = new RemoteSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);

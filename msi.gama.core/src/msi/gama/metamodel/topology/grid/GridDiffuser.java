@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
 import msi.gama.runtime.IScope;
@@ -24,9 +25,9 @@ public class GridDiffuser {
 		int NbRows;
 		int NbCols;
 		boolean Is_torus;
-		IPopulation Pop;
+		IPopulation<? extends IAgent> Pop;
 
-		public PairVarGrid(final IScope scope, final String var_name, final GridPopulation pop) {
+		public PairVarGrid(final IScope scope, final String var_name, final GridPopulation<? extends IAgent> pop) {
 			Var_name = var_name;
 			Grid_name = pop.getName();
 			NbRows = ((IGrid) pop.getTopology().getPlaces()).getRows(scope);
@@ -104,7 +105,7 @@ public class GridDiffuser {
 
 	protected final Map<PairVarGrid, List<GridDiffusion>> m_diffusions = new HashMap<PairVarGrid, List<GridDiffusion>>();
 
-	public void addDiffusion(final IScope scope, final String var_diffu, final GridPopulation pop,
+	public void addDiffusion(final IScope scope, final String var_diffu, final GridPopulation<? extends IAgent> pop,
 			final boolean method_diffu, final boolean is_gradient, final double[][] mat_diffu, final double[][] mask,
 			final double min_value, final boolean avoid_mask) {
 		final GridDiffusion newGridDiff = new GridDiffusion(scope, method_diffu, is_gradient, mat_diffu, mask,
@@ -197,7 +198,7 @@ public class GridDiffuser {
 	double[] input, output;
 	int nbRows, nbCols;
 	double min_value;
-	IPopulation pop;
+	IPopulation<? extends IAgent> pop;
 
 	public GridDiffuser() {
 	}
@@ -415,7 +416,7 @@ public class GridDiffuser {
 		}
 	}
 
-	public void finishDiffusion(final IScope scope, final IPopulation pop) {
+	public void finishDiffusion(final IScope scope, final IPopulation<? extends IAgent> pop) {
 		final IVariable v = pop.getVar(var_diffu);
 		if (v == null)
 			return;

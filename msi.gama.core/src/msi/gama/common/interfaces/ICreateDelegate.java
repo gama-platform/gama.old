@@ -45,7 +45,7 @@ public interface ICreateDelegate {
 	 */
 
 	@SuppressWarnings("rawtypes")
-	boolean createFrom(IScope scope, List<Map> inits, Integer max, Object source, Arguments init,
+	boolean createFrom(IScope scope, List<Map<String, Object>> inits, Integer max, Object source, Arguments init,
 			CreateStatement statement);
 
 	/**
