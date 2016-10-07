@@ -24,14 +24,14 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class Experiment implements IExperiment {
 
-	public static final long DEFAULT_SEED_VALUE = 0;
+	public static final double DEFAULT_SEED_VALUE = 0;
 
 	protected IExperimentPlan currentExperiment;
 	protected SimulationAgent currentSimulation;
 	protected ParametersSet params;
 	protected IModel model;
 	protected String experimentName;
-	protected long seed;
+	protected double seed;
 	protected long currentStep;
 
 	protected Experiment() {
@@ -59,7 +59,7 @@ public class Experiment implements IExperiment {
 	}
 
 	@Override
-	public void setup(final String expName, final long sd) {
+	public void setup(final String expName, final double sd) {
 		this.seed = sd;
 		this.loadCurrentExperiment(expName);
 	}

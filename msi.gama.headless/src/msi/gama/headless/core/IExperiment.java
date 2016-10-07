@@ -19,7 +19,7 @@ public interface IExperiment {
 	public IExperimentPlan getExperimentPlan();
 	
 	public void setup(final String experimentName);
-	public void setup(final String experimentName, final long seed);
+	public void setup(final String experimentName, final double seed);
 	
 	public long step();
 	public boolean isInterrupted();
