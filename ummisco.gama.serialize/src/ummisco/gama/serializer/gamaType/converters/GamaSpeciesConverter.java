@@ -29,7 +29,8 @@ public class GamaSpeciesConverter implements Converter {
 	public void marshal(final Object arg0, final HierarchicalStreamWriter writer, final MarshallingContext context) {
 		System.out.println("ConvertAnother : ConvertGamaSpecies " + arg0.getClass());
 		final AbstractSpecies spec = (AbstractSpecies) arg0;
-		final GamaPopulation pop = (GamaPopulation) spec.getPopulation(convertScope.getScope());
+		final GamaPopulation<? extends IAgent> pop = (GamaPopulation<? extends IAgent>) spec
+				.getPopulation(convertScope.getScope());
 
 		writer.startNode("agentSetFromPopulation");
 		context.convertAnother(pop.getAgents(convertScope.getScope()));

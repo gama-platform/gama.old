@@ -14,6 +14,8 @@ package msi.gaml.statements;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.FluentIterable;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentPlan;
@@ -129,14 +131,13 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) {
+	public void setChildren(final Iterable<? extends ISymbol> children) {
 		for (final ISymbol c : children) {
 			if (c instanceof UserInputStatement) {
 				inputs.add((UserInputStatement) c);
 			}
 		}
-		children.removeAll(inputs);
-		super.setChildren(children);
+		super.setChildren(FluentIterable.from(children).filter(each -> !inputs.contains(each)));
 	}
 
 	@Override

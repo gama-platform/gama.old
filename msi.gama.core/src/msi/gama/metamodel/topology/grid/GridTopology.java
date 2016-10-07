@@ -49,7 +49,7 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public void initialize(final IScope scope, final IPopulation pop) throws GamaRuntimeException {
+	public void initialize(final IScope scope, final IPopulation<? extends IAgent> pop) throws GamaRuntimeException {
 		getPlaces().setCellSpecies(pop);
 		((ISpatialIndex.Compound) getSpatialIndex()).add(getPlaces(), pop.getSpecies());
 		super.initialize(scope, pop);

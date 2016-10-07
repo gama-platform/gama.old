@@ -48,8 +48,8 @@ import msi.gaml.types.Types;
 @SuppressWarnings({ "rawtypes" })
 public class GamaGraphParserListener implements IGraphParserListener {
 
-	IPopulation populationNodes = null;
-	IPopulation populationEdges = null;
+	IPopulation<? extends IAgent> populationNodes = null;
+	IPopulation<? extends IAgent> populationEdges = null;
 	GamaGraph gamaGraph = null;
 	IScope scope = null;
 	boolean isSpatial = false;

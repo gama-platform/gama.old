@@ -13,7 +13,6 @@ package msi.gama.outputs.layers.charts;
 
 import java.awt.Color;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.jfree.chart.JFreeChart;
@@ -217,7 +216,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		dataDeclaration.setChildren(commands);
 	}
 

@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package ummisco.gaml.extensions.sound;
 
-import java.util.List;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -54,7 +52,7 @@ public class PauseSoundStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
+	public void setChildren(final Iterable<? extends ISymbol> com) {
 		sequence = new AbstractStatementSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);

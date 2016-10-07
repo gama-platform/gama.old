@@ -121,7 +121,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	// }
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
 	}
 
 	protected boolean isMaximize() {

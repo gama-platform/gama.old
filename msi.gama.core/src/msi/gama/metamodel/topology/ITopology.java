@@ -54,7 +54,7 @@ public interface ITopology extends IValue {
 
 	public abstract ISpatialIndex getSpatialIndex();
 
-	public abstract void initialize(IScope scope, IPopulation pop) throws GamaRuntimeException;
+	public abstract void initialize(IScope scope, IPopulation<? extends IAgent> pop) throws GamaRuntimeException;
 
 	void updateAgent(Envelope previous, IAgent agent);
 

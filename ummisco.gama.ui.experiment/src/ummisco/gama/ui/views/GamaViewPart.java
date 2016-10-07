@@ -11,6 +11,9 @@
  **********************************************************************************************/
 package ummisco.gama.ui.views;
 
+import static com.google.common.collect.Iterables.concat;
+import static com.google.common.collect.Iterables.transform;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +30,6 @@ import org.eclipse.ui.progress.UIJob;
 
 import msi.gama.common.interfaces.IGamaView;
 import msi.gama.kernel.experiment.ExperimentAgent;
-import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -107,24 +109,11 @@ public abstract class GamaViewPart extends ViewPart
 		final IExperimentPlan experiment = GAMA.getExperiment();
 
 		if (experiment != null) {
-			// hqnghi in case of multi-controller
-
-			for (final IExperimentController fec : GAMA.getControllers()) {
-				final List<IOutputManager> mm = fec.getExperiment().getAllSimulationOutputs();
-				for (final IOutputManager manager : mm) {
-					if (manager != null) {
-						out = (IDisplayOutput) manager.getOutput(id);
-						if(out != null){
-							break;
-						}
-					}
-
-				}
-				if (out == null) {
-					final IOutputManager manager = fec.getExperiment().getExperimentOutputs();
-					if (manager != null) {
-						out = (IDisplayOutput) manager.getOutput(id);
-					}
+			for (final IOutputManager manager : concat(
+					transform(GAMA.getControllers(), each -> each.getExperiment().getActiveOutputManagers()))) {
+				out = (IDisplayOutput) manager.get(id);
+				if (out != null) {
+					break;
 				}
 			}
 
@@ -134,14 +123,15 @@ public abstract class GamaViewPart extends ViewPart
 				if (sim != null) {
 					final String[] stemp = id.split("#");
 					if (stemp.length > 1) {
-						final IPopulation externPop = sim.getExternMicroPopulationFor(stemp[1] + "." + stemp[2]);
+						final IPopulation<? extends IAgent> externPop = sim
+								.getExternMicroPopulationFor(stemp[1] + "." + stemp[2]);
 						if (externPop != null) {
 							for (final IAgent expAgent : externPop) {
 								final SimulationAgent spec = ((ExperimentAgent) expAgent).getSimulation();
 								if (spec != null) {
 									final IOutputManager manager = spec.getOutputManager();
 									if (manager != null) {
-										out = (IDisplayOutput) manager.getOutput(s_id);
+										out = (IDisplayOutput) manager.get(s_id);
 									}
 								}
 							}

@@ -91,12 +91,12 @@ public class ExperimentOutputManager extends AbstractOutputManager {
 	}
 
 	@Override
-	public void addOutput(final IOutput output) {
+	public void add(final IOutput output) {
 		if (!(output instanceof AbstractOutput)) {
 			return;
 		}
 		((AbstractOutput) output).setPermanent();
-		super.addOutput(output);
+		super.add(output);
 	}
 
 	@Override

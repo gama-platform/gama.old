@@ -73,7 +73,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	// @Override
-	final void setUserCreated(final boolean isUserCreated) {
+	@Override
+	public final void setUserCreated(final boolean isUserCreated) {
 		this.isUserCreated = isUserCreated;
 	}
 
@@ -110,7 +111,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	// @Override
-	boolean isRefreshable() {
+	@Override
+	public boolean isRefreshable() {
 		if (!isOpen())
 			return false;
 		if (isPaused())
@@ -146,7 +148,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
 
 	}
 
@@ -155,7 +157,8 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	// @Override
-	String getId() {
+	@Override
+	public String getId() {
 		if (!this.getDescription().getModelDescription().getAlias().equals("")) {
 			return getName() + "#" + this.getDescription().getModelDescription().getAlias() + "#"
 					+ getScope().getExperiment().getName();

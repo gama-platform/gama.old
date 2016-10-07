@@ -55,8 +55,8 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 	 *      java.util.List, int, java.lang.Object)
 	 */
 	@Override
-	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object source,
-			final Arguments init, final CreateStatement statement) {
+	public boolean createFrom(final IScope scope, final List<Map<String, Object>> inits, final Integer max,
+			final Object source, final Arguments init, final CreateStatement statement) {
 		final IList<GamaList<Object>> input = (IList<GamaList<Object>>) source;
 		// get Column name
 		final GamaList<Object> colNames = input.get(0);

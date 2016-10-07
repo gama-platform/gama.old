@@ -5,6 +5,7 @@
 package msi.gama.util;
 
 import java.util.ArrayDeque;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Queue;
 import java.util.concurrent.ExecutionException;
@@ -37,8 +38,10 @@ public class Guava {
 		if (input instanceof Iterable) {
 			return (Iterable) input;
 		}
-		return ImmutableList.of(input);
+		return Collections.singleton(input);
 	};
+
+	public final static Predicate<Object> NOT_NULL = each -> each != null;
 
 	public static class InContainer implements Predicate {
 

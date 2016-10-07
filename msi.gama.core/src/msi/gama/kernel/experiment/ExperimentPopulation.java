@@ -31,17 +31,16 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
 
-public class ExperimentPopulation extends GamaPopulation {
+public class ExperimentPopulation extends GamaPopulation<ExperimentAgent> {
 
 	public ExperimentPopulation(final ISpecies expr) {
 		super(null, expr);
 	}
 
-	@SuppressWarnings("rawtypes")
 	@Override
-	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-			final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)
-			throws GamaRuntimeException {
+	public IList<ExperimentAgent> createAgents(final IScope scope, final int number,
+			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
+			final boolean toBeScheduled) throws GamaRuntimeException {
 		for (int i = 0; i < number; i++) {
 			final ExperimentAgent exp = GamaMetaModel.INSTANCE
 					.createExperimentAgent(((ExperimentPlan) getSpecies()).getExperimentType(), this);
@@ -70,12 +69,12 @@ public class ExperimentPopulation extends GamaPopulation {
 	}
 
 	@Override
-	public IList<IAgent> computeAgentsToSchedule(final IScope scope) {
+	public IList<ExperimentAgent> computeAgentsToSchedule(final IScope scope) {
 		return GamaListFactory.create(scope, Types.AGENT, /* agents. */Arrays.asList(get(0)));
 	}
 
 	@Override
-	public IAgent getAgent(final IScope scope, final ILocation value) {
+	public ExperimentAgent getAgent(final IScope scope, final ILocation value) {
 		return get(null, 0);
 	}
 

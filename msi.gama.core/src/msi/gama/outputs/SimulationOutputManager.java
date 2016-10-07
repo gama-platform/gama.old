@@ -60,7 +60,7 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	}
 
 	public void updateDisplayOutputsName(final SimulationAgent agent) {
-		for (final IOutput out : getOutputs().values()) {
+		for (final IOutput out : this) {
 			if (out instanceof IDisplayOutput) {
 				final IDisplayOutput display = (IDisplayOutput) out;
 				GAMA.getGui().updateViewTitle(display, agent);

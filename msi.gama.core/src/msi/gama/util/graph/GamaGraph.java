@@ -431,7 +431,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		return new GamaPair(v1, v2, getType().getKeyType(), getType().getKeyType());
 	}
 
-	protected IAgent generateEdgeAgent(final List<Map> attributes) {
+	protected IAgent generateEdgeAgent(final List<Map<String, Object>> attributes) {
 		final IAgent agent = scope.getAgent().getPopulationFor(edgeSpecies)
 				.createAgents(scope, 1, attributes, false, true).firstValue(scope);
 		if (agent != null) {

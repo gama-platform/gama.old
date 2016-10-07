@@ -63,7 +63,7 @@ public class ModelDescription extends SpeciesDescription {
 	private String modelFilePath;
 	private final String modelProjectPath;
 	private final Set<String> alternatePaths;
-	private final ValidationContext collect;
+	private final ValidationContext validationContext;
 	protected volatile boolean document;
 	// hqnghi new attribute manipulate micro-models
 	private Map<String, ModelDescription> microModels;
@@ -100,21 +100,16 @@ public class ModelDescription extends SpeciesDescription {
 
 	// end-hqnghi
 
-	public ModelDescription(final String name, final Class clazz, final SpeciesDescription macro,
-			final SpeciesDescription parent) {
-		this(name, clazz, "", "", null, macro, parent, null, ValidationContext.NULL, Collections.EMPTY_SET);
-	}
-
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
-			final ValidationContext collector, final Set<String> imports) {
+			final ValidationContext validationContext, final Set<String> imports) {
 		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets);
 		setName(name);
 		types = parent instanceof ModelDescription ? new TypesManager(((ModelDescription) parent).types)
 				: Types.builtInTypes;
 		modelFilePath = modelPath;
 		modelProjectPath = projectPath;
-		collect = collector;
+		this.validationContext = validationContext;
 		this.alternatePaths = imports;
 	}
 
@@ -366,8 +361,8 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	@Override
-	public ValidationContext getErrorCollector() {
-		return collect;
+	public ValidationContext getValidationContext() {
+		return validationContext;
 	}
 
 	public ExperimentDescription getExperiment(final String name) {

@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import java.util.List;
-
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -118,7 +116,7 @@ public class MigrateStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> com) {
+	public void setChildren(final Iterable<? extends ISymbol> com) {
 		sequence = new AbstractStatementSequence(description);
 		sequence.setName("commands of " + getName());
 		sequence.setChildren(com);

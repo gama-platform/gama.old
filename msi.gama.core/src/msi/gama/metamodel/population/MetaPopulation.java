@@ -50,7 +50,7 @@ import msi.gaml.types.Types;
 @SuppressWarnings({ "rawtypes", "unchecked" })
 public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, IPopulationSet {
 
-	protected final List<IPopulationSet> populationSets;
+	protected final List<IPopulationSet<? extends IAgent>> populationSets;
 	// We cache the value in case.
 	protected Map<String, IPopulation> setOfPopulations;
 	protected IContainerType type = Types.LIST.of(Types.AGENT);

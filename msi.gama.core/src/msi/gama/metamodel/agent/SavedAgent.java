@@ -127,9 +127,9 @@ public class SavedAgent {
 	private void saveMicroAgents(final IScope scope, final IMacroAgent agent) throws GamaRuntimeException {
 		innerPopulations = new THashMap<String, List<SavedAgent>>();
 
-		for (final IPopulation microPop : agent.getMicroPopulations()) {
+		for (final IPopulation<? extends IAgent> microPop : agent.getMicroPopulations()) {
 			final List<SavedAgent> savedAgents = new ArrayList<SavedAgent>();
-			final Iterator<IAgent> it = microPop.iterator();
+			final Iterator<? extends IAgent> it = microPop.iterator();
 			while (it.hasNext()) {
 				savedAgents.add(new SavedAgent(scope, it.next()));
 			}
@@ -147,9 +147,9 @@ public class SavedAgent {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	@SuppressWarnings("rawtypes")
-	public IAgent restoreTo(final IScope scope, final IPopulation targetPopulation) throws GamaRuntimeException {
-		final List<Map> agentAttrs = new ArrayList<Map>();
+	public IAgent restoreTo(final IScope scope, final IPopulation<? extends IAgent> targetPopulation)
+			throws GamaRuntimeException {
+		final List<Map<String, Object>> agentAttrs = new ArrayList<>();
 		agentAttrs.add(variables);
 		final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true, true);
 		restoreMicroAgents(scope, restoredAgents.get(0));
@@ -163,15 +163,14 @@ public class SavedAgent {
 	 * @param host
 	 * @throws GamaRuntimeException
 	 */
-	@SuppressWarnings("rawtypes")
 	public void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
 		if (innerPopulations != null) {
 			for (final String microPopName : innerPopulations.keySet()) {
-				final IPopulation microPop = ((IMacroAgent) host).getMicroPopulation(microPopName);
+				final IPopulation<? extends IAgent> microPop = ((IMacroAgent) host).getMicroPopulation(microPopName);
 
 				if (microPop != null) {
 					final List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
-					final List<Map> microAttrs = new ArrayList<Map>();
+					final List<Map<String, Object>> microAttrs = new ArrayList<>();
 					for (final SavedAgent sa : savedMicros) {
 						microAttrs.add(sa.variables);
 					}

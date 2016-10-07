@@ -5,6 +5,7 @@ import com.thoughtworks.xstream.XStream;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IOutputManager;
@@ -23,7 +24,7 @@ public class ExperimentBackwardAgent extends ExperimentAgent {
 	TypeTree<String> historyTree;
 	TypeNode<String> currentNode;
 
-	public ExperimentBackwardAgent(final IPopulation s) throws GamaRuntimeException {
+	public ExperimentBackwardAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
 		super(s);
 		historyTree = new TypeTree<String>();
 	}

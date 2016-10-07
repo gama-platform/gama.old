@@ -9,7 +9,6 @@ import java.util.Map;
 
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -46,15 +45,16 @@ public class CreateFromNullDelegate implements ICreateDelegate {
 	 *      java.util.List, int, java.lang.Object)
 	 */
 	@Override
-	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object input,
-			final Arguments init, final CreateStatement statement) {
-		GamaMap nullMap = null;
+	public boolean createFrom(final IScope scope, final List<Map<String, Object>> inits, final Integer max,
+			final Object input, final Arguments init, final CreateStatement statement) {
+		Map<String, Object> nullMap = null;
 		if (init == null) {
 			nullMap = GamaMapFactory.create();
 		}
 		final int num = max == null ? 1 : max;
 		for (int i = 0; i < num; i++) {
-			final Map map = init == null ? nullMap : GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
+			final Map<String, Object> map = init == null ? nullMap
+					: GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
 			statement.fillWithUserInit(scope, map);
 			inits.add(map);
 		}

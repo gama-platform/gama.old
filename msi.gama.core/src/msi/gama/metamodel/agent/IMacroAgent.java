@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
-import java.util.Map;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -22,6 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaMap;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
@@ -78,7 +77,7 @@ public interface IMacroAgent extends IAgent {
 	 * @param microSpecies
 	 * @return
 	 */
-	public abstract IPopulation getMicroPopulation(ISpecies microSpecies);
+	public abstract IPopulation<? extends IAgent> getMicroPopulation(ISpecies microSpecies);
 
 	/**
 	 * Returns the population of the specified (direct) micro-species.
@@ -86,14 +85,14 @@ public interface IMacroAgent extends IAgent {
 	 * @param microSpeciesName
 	 * @return
 	 */
-	public abstract IPopulation getMicroPopulation(String microSpeciesName);
+	public abstract IPopulation<? extends IAgent> getMicroPopulation(String microSpeciesName);
 
 	/**
 	 * Returns a list of populations of (direct) micro-species.
 	 *
 	 * @return
 	 */
-	public abstract IPopulation[] getMicroPopulations();
+	public abstract IPopulation<? extends IAgent>[] getMicroPopulations();
 
 	/**
 	 * Verifies if this agent contains micro-agents or not.
@@ -176,11 +175,11 @@ public interface IMacroAgent extends IAgent {
 	// public abstract boolean mustScheduleMembers();
 
 	// hqnghi manipulate micro-models
-	public abstract void addExternMicroPopulation(final String expName, final IPopulation pop);
+	public abstract void addExternMicroPopulation(final String expName, final IPopulation<? extends IAgent> pop);
 
-	public abstract IPopulation getExternMicroPopulationFor(final String expName);
+	public abstract IPopulation<? extends IAgent> getExternMicroPopulationFor(final String expName);
 
-	public abstract Map<String, IPopulation> getExternMicroPopulations();
+	public abstract GamaMap<String, IPopulation<? extends IAgent>> getExternMicroPopulations();
 	// end-hqnghi
 
 }

@@ -22,24 +22,26 @@ import msi.gama.common.interfaces.IStepable;
  * @since 14 d�c. 2011
  *
  */
-public interface IOutputManager extends IStepable {
+public interface IOutputManager extends IStepable, Iterable<IOutput> {
 
-	void addOutput(IOutput output);
+	void add(IOutput output);
 
-	void removeAllOutput();
+	void put(String name, IOutput output);
 
-	void removeOutput(IOutput output);
+	void clear();
 
-	IOutput getOutput(String id);
+	void putAll(Map<String, IOutput> outputs);
 
-	public IOutput getOutputWithName(final String name);
+	void remove(IOutput output);
 
-	public IOutput getOutputWithOriginalName(final String name);
+	IOutput get(String id);
+
+	IOutput getOutputWithName(final String name);
+
+	IOutput getOutputWithOriginalName(final String name);
 
 	// hqnghi
 	Map<String, ? extends IOutput> getOutputs();
-
-	void addOutput(String oName, IOutput o);
 
 	// end-hqnghi
 	void forceUpdateOutputs();

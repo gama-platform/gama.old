@@ -97,8 +97,15 @@ public interface IOutput extends ISymbol, IStepable, IScoped {
 	 * @return the scope of the output, which should never be null when the
 	 *         output is open. It might be null otherwise
 	 */
+	@Override
 	public IScope getScope();
 
 	public String getOriginalName();
+
+	public String getId();
+
+	public boolean isRefreshable();
+
+	public void setUserCreated(boolean b);
 
 }

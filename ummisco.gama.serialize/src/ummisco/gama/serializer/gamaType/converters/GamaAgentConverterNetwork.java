@@ -70,7 +70,7 @@ public class GamaAgentConverterNetwork implements Converter {
 		reader.moveUp();
 		reader.moveDown();
 		final SavedAgent rmt = (SavedAgent) arg1.convertAnother(null, SavedAgent.class);
-		final IPopulation mpop = convertScope.getScope().getAgent().getPopulationFor(populationName);
+		final IPopulation<? extends IAgent> mpop = convertScope.getScope().getAgent().getPopulationFor(populationName);
 		rmt.restoreTo(convertScope.getScope(), mpop);
 		reader.moveUp();
 		reader.moveDown();

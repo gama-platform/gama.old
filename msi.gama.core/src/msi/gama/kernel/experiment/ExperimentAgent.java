@@ -13,10 +13,13 @@ package msi.gama.kernel.experiment;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.Platform;
+
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
@@ -51,6 +54,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.Guava;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.descriptions.IDescription;
@@ -107,7 +111,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	private Boolean scheduled = false;
 	private volatile boolean isOnUserHold = false;
 
-	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
+	public ExperimentAgent(final IPopulation<? extends IAgent> s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(GamaGeometryType.createPoint(new GamaPoint(-1, -1)));
 		scope = new ExperimentAgentScope();
@@ -202,7 +206,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public boolean init(final IScope scope) {
 		super.init(scope);
-		final IOutputManager outputs = getSpecies().getExperimentOutputs();
+		final IOutputManager outputs = getOutputManager();
 		if (outputs != null) {
 			outputs.init(scope);
 		}
@@ -224,13 +228,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	public void createSimulation(final ParametersSet parameters, final boolean scheduleIt) {
-		final IPopulation pop = getSimulationPopulation();
+		final IPopulation<? extends IAgent> pop = getSimulationPopulation();
 		if (pop == null) {
 			return;
 		}
 		final ParametersSet ps = getParameterValues();
 		ps.putAll(parameters);
-		final IList<Map<?, ?>> list = GamaListFactory.create(Types.MAP);
+		final IList<Map<String, Object>> list = GamaListFactory.create(Types.MAP);
 		list.add(ps);
 		pop.createAgents(scope, 1, list, false, scheduleIt);
 	}
@@ -481,7 +485,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@getter(IKeyword.SIMULATIONS)
-	public IList<IAgent> getSimulations() {
+	public IList<? extends IAgent> getSimulations() {
 		return getSimulationPopulation().copy(scope);
 	}
 
@@ -513,7 +517,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public IPopulation getPopulationFor(final ISpecies species) {
+	public IPopulation<? extends IAgent> getPopulationFor(final ISpecies species) {
 		if (species == getModel()) {
 			return getSimulationPopulation();
 		}
@@ -531,7 +535,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			result = super.step(this.scope);
 			executer.executeEndActions();
 			executer.executeOneShotActions();
-			final IOutputManager outputs = getSpecies().getExperimentOutputs();
+			final IOutputManager outputs = getOutputManager();
 			if (outputs != null) {
 				outputs.step(scope);
 			}
@@ -682,16 +686,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	/**
 	 * @return
 	 */
-	public List<IOutputManager> getAllSimulationOutputs() {
-		final IList<IOutputManager> list = GamaListFactory.create();
-		for (final IAgent a : getSimulationPopulation()) {
-			final SimulationAgent sim = (SimulationAgent) a;
-			final IOutputManager man = sim.getOutputManager();
-			if (man != null) {
-				list.add(man);
-			}
-		}
-		return list;
+	public Iterable<IOutputManager> getAllSimulationOutputs() {
+		return Iterables.concat(
+				Iterables.filter(Iterables.transform(getSimulationPopulation(), each -> each.getOutputManager()),
+						Guava.NOT_NULL),
+				Collections.singletonList(getOutputManager()));
 	}
 
 	/**

@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.factories;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,8 @@ public class ModelFactory extends SymbolFactory {
 	@SuppressWarnings("rawtypes")
 	public static ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
 			final SpeciesDescription parent) {
-		ModelDescription.ROOT = new ModelDescription(name, clazz, macro, parent);
+		ModelDescription.ROOT = new ModelDescription(name, clazz, "", "", null, macro, parent, null,
+				ValidationContext.NULL, Collections.EMPTY_SET);
 		return ModelDescription.ROOT;
 	}
 

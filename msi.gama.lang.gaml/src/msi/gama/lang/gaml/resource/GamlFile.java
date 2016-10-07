@@ -85,10 +85,10 @@ public class GamlFile extends GamaFile<IList<IModel>, IModel, Integer, IModel> {
 
 	public IExperimentPlan createExperiment(final String expName) {
 		final IExperimentPlan exp = mymodel.getExperiment("Experiment " + expName);
-		for (final IOutput o : exp.getOriginalSimulationOutputs().getOutputs().values()) {
+		for (final IOutput o : exp.getOriginalSimulationOutputs()) {
 			o.setName(o.getName() + "#" + aliasName);
 		}
-		for (final IOutput o : exp.getExperimentOutputs().getOutputs().values()) {
+		for (final IOutput o : exp.getExperimentOutputs()) {
 			o.setName(o.getName() + "#" + aliasName);
 		}
 

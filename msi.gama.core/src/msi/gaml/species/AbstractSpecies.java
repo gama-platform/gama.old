@@ -90,7 +90,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IPopulation getPopulation(final IScope scope) {
+	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
 		final IAgent a = scope.getAgent();
 		IPopulation result = null;
 		if (a != null) {
@@ -343,7 +343,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> children) {
+	public void setChildren(final Iterable<? extends ISymbol> children) {
 		// First we verify the control architecture
 		if (control == null) {
 			throw GamaRuntimeException.error("The control of species " + description.getName() + " cannot be computed");
@@ -534,7 +534,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public Collection<? extends IPopulation> getPopulations(final IScope scope) {
+	public Collection<? extends IPopulation<? extends IAgent>> getPopulations(final IScope scope) {
 		return Collections.singleton(getPopulation(scope));
 	}
 

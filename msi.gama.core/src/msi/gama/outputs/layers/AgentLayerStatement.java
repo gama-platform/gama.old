@@ -216,7 +216,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void setChildren(final List<? extends ISymbol> commands) {
+	public void setChildren(final Iterable<? extends ISymbol> commands) {
 		final List<IStatement> aspectStatements = new ArrayList<>();
 		for (final ISymbol c : commands) {
 			if (c instanceof IStatement) {

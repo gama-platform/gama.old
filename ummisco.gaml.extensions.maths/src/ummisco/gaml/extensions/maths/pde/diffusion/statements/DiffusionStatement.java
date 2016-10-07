@@ -199,13 +199,13 @@ public class DiffusionStatement extends AbstractStatement {
 		return input_mat_diffu;
 	}
 
-	private GridPopulation computePopulation(final IScope scope) {
-		GridPopulation pop = null;
+	private GridPopulation<? extends IAgent> computePopulation(final IScope scope) {
+		GridPopulation<? extends IAgent> pop = null;
 		final Object obj = getFacetValue(scope, IKeyword.ON);
 		if (obj instanceof ISpecies) {
 			// the diffusion is applied to the whole grid
 			if (((ISpecies) obj).isGrid()) {
-				pop = (GridPopulation) ((ISpecies) obj).getPopulation(scope);
+				pop = (GridPopulation<? extends IAgent>) ((ISpecies) obj).getPopulation(scope);
 			}
 		} else {
 			// the diffusion is applied just to a certain part of the grid.
@@ -213,14 +213,14 @@ public class DiffusionStatement extends AbstractStatement {
 			if (!ags.isEmpty()) {
 				final ISpecies sp = ags.get(0).getSpecies();
 				if (sp.isGrid()) {
-					pop = (GridPopulation) sp.getPopulation(scope);
+					pop = (GridPopulation<? extends IAgent>) sp.getPopulation(scope);
 				}
 			}
 		}
 		return pop;
 	}
 
-	private double[][] computeMask(final IScope scope, final IMatrix<?> mm, GridPopulation pop) {
+	private double[][] computeMask(final IScope scope, final IMatrix<?> mm, GridPopulation<? extends IAgent> pop) {
 		double[][] mask = null;
 
 		// if the mask is not null, translate the mask
@@ -253,7 +253,7 @@ public class DiffusionStatement extends AbstractStatement {
 			if (!ags.isEmpty()) {
 				final ISpecies sp = ags.get(0).getSpecies();
 				if (sp.isGrid()) {
-					pop = (GridPopulation) sp.getPopulation(scope);
+					pop = (GridPopulation<? extends IAgent>) sp.getPopulation(scope);
 					if (mask == null) {
 						mask = new double[pop.getNbCols()][pop.getNbRows()];
 						for (int i = 0; i < mask.length; i++) {
@@ -370,7 +370,7 @@ public class DiffusionStatement extends AbstractStatement {
 		}
 		final double minValue = Cast.asFloat(scope, getFacetValue(scope, IKeyword.MINVALUE, 0.0));
 
-		final GridPopulation pop = computePopulation(scope);
+		final GridPopulation<? extends IAgent> pop = computePopulation(scope);
 
 		final double[][] mask = computeMask(scope, raw_mask, pop);
 

@@ -154,7 +154,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	}
 
-	public SimulationAgent(final IPopulation pop) {
+	public SimulationAgent(final IPopulation<? extends IAgent> pop) {
 		this((SimulationPopulation) pop);
 	}
 
@@ -295,7 +295,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		executer.executeDisposeActions();
 		// hqnghi if simulation come from popultion extern, dispose pop first
 		// and then their outputs
-		for (final IPopulation pop : getExternMicroPopulations().values()) {
+		for (final IPopulation<? extends IAgent> pop : getExternMicroPopulations().values()) {
 			pop.dispose();
 		}
 		this.getExternMicroPopulations().clear();
@@ -346,8 +346,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
-	public IPopulation getPopulationFor(final String speciesName) throws GamaRuntimeException {
-		IPopulation pop = super.getPopulationFor(speciesName);
+	public IPopulation<? extends IAgent> getPopulationFor(final String speciesName) throws GamaRuntimeException {
+		IPopulation<? extends IAgent> pop = super.getPopulationFor(speciesName);
 		if (pop != null) {
 			return pop;
 		}
@@ -544,10 +544,8 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 				mm.put(keyName, output);
 				output.setName(newOutputName);
 			}
-			outputs.removeAllOutput();
-			for (final Entry<String, IOutput> output : mm.entrySet()) {
-				outputs.addOutput(output.getKey(), output.getValue());
-			}
+			outputs.clear();
+			outputs.putAll(mm);
 		} else {
 			outputs = (SimulationOutputManager) iOutputManager;
 		}
@@ -563,10 +561,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	 * @param inspectDisplayOutput
 	 */
 	public void addOutput(final IOutput output) {
-		if (outputs == null) {
-
-		}
-		outputs.addOutput(output);
+		outputs.add(output);
 	}
 
 	@getter(value = SimulationAgent.USAGE, initializer = false)
@@ -685,7 +680,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 		if (savedAgentInnerPop != null) {
 			for (final String savedAgentMicroPopName : savedAgentInnerPop.keySet()) {
-				final IPopulation simuMicroPop = getMicroPopulation(savedAgentMicroPopName);
+				final IPopulation<? extends IAgent> simuMicroPop = getMicroPopulation(savedAgentMicroPopName);
 
 				if (simuMicroPop != null) {
 					// Build a map name::innerPopAgentSavedAgt :

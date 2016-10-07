@@ -46,8 +46,8 @@ public class CreateFromGenstarDelegate implements ICreateDelegate {
 	 *      java.util.List, int, java.lang.Object)
 	 */
 	@Override
-	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object source,
-			final Arguments init, final CreateStatement statement) {
+	public boolean createFrom(final IScope scope, final List<Map<String, Object>> inits, final Integer max,
+			final Object source, final Arguments init, final CreateStatement statement) {
 		final IList<Map> syntheticPopulation = (IList<Map>) source;
 		final int num = max == null ? syntheticPopulation.length(scope) - 1
 				: CmnFastMath.min(syntheticPopulation.length(scope) - 1, max);

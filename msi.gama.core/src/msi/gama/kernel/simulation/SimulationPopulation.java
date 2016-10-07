@@ -43,7 +43,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.variables.IVariable;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
-public class SimulationPopulation extends GamaPopulation {
+public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 
 	private SimulationAgent currentSimulation;
 
@@ -116,9 +116,9 @@ public class SimulationPopulation extends GamaPopulation {
 	}
 
 	@Override
-	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-			final List<? extends Map> initialValues, final boolean isRestored, final boolean toBeScheduled)
-			throws GamaRuntimeException {
+	public IList<SimulationAgent> createAgents(final IScope scope, final int number,
+			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
+			final boolean toBeScheduled) throws GamaRuntimeException {
 		for (int i = 0; i < number; i++) {
 			scope.getGui().getStatus().waitStatus("Initializing simulation");
 			currentSimulation = new SimulationAgent(this);
@@ -142,8 +142,9 @@ public class SimulationPopulation extends GamaPopulation {
 		return this;
 	}
 
-	private void initSimulation(final IScope scope, final SimulationAgent sim, final List<? extends Map> initialValues,
-			final boolean isRestored, final boolean toBeScheduled) {
+	private void initSimulation(final IScope scope, final SimulationAgent sim,
+			final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
+			final boolean toBeScheduled) {
 		scope.getGui().getStatus().waitStatus("Instantiating agents");
 		if (toBeScheduled) {
 			// Necessary to put it here as the output manager is initialized
@@ -183,7 +184,7 @@ public class SimulationPopulation extends GamaPopulation {
 	}
 
 	@Override
-	public IAgent getAgent(final IScope scope, final ILocation value) {
+	public SimulationAgent getAgent(final IScope scope, final ILocation value) {
 		return get(null, 0);
 	}
 

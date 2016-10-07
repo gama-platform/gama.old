@@ -59,8 +59,8 @@ public class CreateFromGeometriesDelegate implements ICreateDelegate {
 	 *      java.util.List, int, java.lang.Object)
 	 */
 	@Override
-	public boolean createFrom(final IScope scope, final List<Map> inits, final Integer max, final Object input,
-			final Arguments init, final CreateStatement statement) {
+	public boolean createFrom(final IScope scope, final List<Map<String, Object>> inits, final Integer max,
+			final Object input, final Arguments init, final CreateStatement statement) {
 		final IAddressableContainer<Integer, GamaShape, Integer, GamaShape> container = (IAddressableContainer<Integer, GamaShape, Integer, GamaShape>) input;
 		final int num = max == null ? container.length(scope) : CmnFastMath.min(container.length(scope), max);
 		for (int i = 0; i < num; i++) {

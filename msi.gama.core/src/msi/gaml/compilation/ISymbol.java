@@ -11,8 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import java.util.List;
-
 import msi.gama.common.interfaces.INamed;
 import msi.gama.runtime.IScope;
 import msi.gaml.descriptions.IDescription;
@@ -40,7 +38,7 @@ public interface ISymbol extends INamed {
 
 	public abstract boolean hasFacet(String key);
 
-	public abstract void setChildren(List<? extends ISymbol> children);
+	public abstract void setChildren(Iterable<? extends ISymbol> children);
 
 	public abstract String getTrace(IScope abstractScope);
 

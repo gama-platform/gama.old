@@ -20,8 +20,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 
-import com.google.inject.Injector;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.ActionRef;
@@ -400,10 +398,6 @@ public class EGaml {
 		}
 		return null;
 
-	}
-
-	public static void initializeInjector(final Injector injector2) {
-		// dependencyInjector = injector2;
 	}
 
 }

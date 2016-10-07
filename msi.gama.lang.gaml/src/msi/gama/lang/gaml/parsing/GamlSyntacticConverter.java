@@ -525,7 +525,7 @@ public class GamlSyntacticConverter {
 		if (expr == null) {
 			return null;
 		}
-		final IExpressionDescription result = builder.create(expr, errors);
+		final IExpressionDescription result = builder.create(expr/* , errors */);
 		return result;
 	}
 

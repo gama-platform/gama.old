@@ -36,7 +36,7 @@ public interface IAgentConstructor {
 		 * @see msi.gaml.compilation.IAgentConstructor#createOneAgent(msi.gama.metamodel.population.IPopulation)
 		 */
 		@Override
-		public IAgent createOneAgent(final IPopulation manager) throws GamaRuntimeException {
+		public IAgent createOneAgent(final IPopulation<? extends IAgent> manager) throws GamaRuntimeException {
 			return new MinimalAgent(manager);
 		}
 
@@ -50,7 +50,7 @@ public interface IAgentConstructor {
 		 * @see msi.gaml.compilation.IAgentConstructor#createOneAgent(msi.gama.metamodel.population.IPopulation)
 		 */
 		@Override
-		public IAgent createOneAgent(final IPopulation manager) throws GamaRuntimeException {
+		public IAgent createOneAgent(final IPopulation<? extends IAgent> manager) throws GamaRuntimeException {
 			return new GamlAgent(manager);
 		}
 
@@ -65,6 +65,6 @@ public interface IAgentConstructor {
 				}
 			};
 
-	public abstract IAgent createOneAgent(IPopulation manager) throws GamaRuntimeException;
+	public abstract IAgent createOneAgent(IPopulation<? extends IAgent> manager) throws GamaRuntimeException;
 
 }

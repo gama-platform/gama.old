@@ -45,13 +45,13 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 
 	public abstract Boolean isHexagon();
 
-	public abstract void setCellSpecies(final IPopulation pop);
+	public abstract void setCellSpecies(final IPopulation<? extends IAgent> pop);
 
 	// this was once used for "Signal" statement (deprecated since GAMA 1.8). It
 	// will have to be removed soon.
 	public abstract void diffuseVariable(final IScope scope, boolean method_diffu, boolean is_gradient,
-			double[][] mat_diffu, double[][] mask, String var_diffu, IPopulation pop, double min_value,
-			boolean avoid_mask);
+			double[][] mat_diffu, double[][] mask, String var_diffu, IPopulation<? extends IAgent> pop,
+			double min_value, boolean avoid_mask);
 
 	public abstract IAgent getAgentAt(final ILocation c);
 

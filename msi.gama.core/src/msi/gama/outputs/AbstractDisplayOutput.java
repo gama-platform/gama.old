@@ -33,19 +33,12 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	protected boolean inInitPhase = true;
 	protected IGamaView view;
 
-	final Runnable opener = new Runnable() {
-
-		@Override
-		public void run() {
-			// if (view == null) {
-			view = getScope().getGui().showView(getViewId(), isUnique() ? null : getName(), 1); // IWorkbenchPage.VIEW_ACTIVATE
-			// }
-			if (view == null) {
-				return;
-			}
-			view.addOutput(AbstractDisplayOutput.this);
+	final Runnable opener = () -> {
+		view = getScope().getGui().showView(getViewId(), isUnique() ? null : getName(), 1); // IWorkbenchPage.VIEW_ACTIVATE
+		if (view == null) {
+			return;
 		}
-
+		view.addOutput(AbstractDisplayOutput.this);
 	};
 
 	@Override
@@ -57,9 +50,6 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public boolean init(final IScope scope) throws GamaRuntimeException {
 		super.init(scope);
-		// if ( view != null ) {
-		// view.outputReloaded(this);
-		// }
 		return true;
 	}
 
@@ -73,7 +63,6 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 			view.removeOutput(this);
 			view = null;
 		}
-		// scope.getGui().closeViewOf(this);
 		if (getScope() != null) {
 			GAMA.releaseScope(getScope());
 		}

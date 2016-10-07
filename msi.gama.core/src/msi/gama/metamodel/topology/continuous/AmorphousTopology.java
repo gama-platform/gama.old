@@ -94,7 +94,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#initialize(msi.gama.interfaces.IPopulation)
 	 */
 	@Override
-	public void initialize(final IScope scope, final IPopulation pop) throws GamaRuntimeException {
+	public void initialize(final IScope scope, final IPopulation<? extends IAgent> pop) throws GamaRuntimeException {
 	}
 
 	/**
