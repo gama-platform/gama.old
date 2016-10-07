@@ -14,9 +14,11 @@ package msi.gama.lang.gaml.formatting;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
 import org.eclipse.xtext.formatting.impl.FormattingConfig;
+import org.eclipse.xtext.parsetree.reconstr.ITokenStream;
 
 import msi.gama.lang.gaml.services.GamlGrammarAccess;
 import msi.gama.lang.gaml.services.GamlGrammarAccess.BlockElements;
@@ -31,6 +33,15 @@ import msi.gama.lang.gaml.services.GamlGrammarAccess.BlockElements;
  * example
  */
 public class GamlFormatter extends AbstractDeclarativeFormatter {
+
+	@Override
+	public ITokenStream createFormatterStream(final EObject context, final String indent, final ITokenStream out,
+			final boolean preserveWhitespaces) {
+		if (context == null || !context.eResource().getErrors().isEmpty())
+			// Fixes #2018
+			return out;
+		return super.createFormatterStream(context, indent, out, preserveWhitespaces);
+	}
 
 	static String[] keywords1SpaceAround = new String[] { ">", "<", "=", "<<", ">>", "<-", "->", ">=", "<=", "+", "-",
 			"/", "*" };
