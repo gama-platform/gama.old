@@ -23,7 +23,7 @@ public class RemoteAgent {
 	String name;
 	String speciesName;
 	IShape geometry;
-	final Map<Object, Object> attributes;
+	final Map<String, Object> attributes;
 
 	public RemoteAgent() {
 		attributes = new TOrderedHashMap<>();

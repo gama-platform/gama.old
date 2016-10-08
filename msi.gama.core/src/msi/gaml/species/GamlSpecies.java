@@ -15,6 +15,7 @@ import java.util.Collection;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -215,7 +216,7 @@ public class GamlSpecies extends AbstractSpecies {
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
 	 */
 	@Override
-	public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
+	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 		return this;
 	}
 
@@ -246,10 +247,9 @@ public class GamlSpecies extends AbstractSpecies {
 	 * 
 	 * @see msi.gama.util.IContainer#getType()
 	 */
-	@SuppressWarnings("rawtypes")
 	@Override
-	public IContainerType getType() {
-		return (IContainerType) getDescription().getSpeciesExpr().getType();
+	public IContainerType<?> getType() {
+		return (IContainerType<?>) getDescription().getSpeciesExpr().getType();
 	}
 
 	public boolean belongsToAMicroModel() {

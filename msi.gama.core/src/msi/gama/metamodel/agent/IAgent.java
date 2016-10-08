@@ -124,7 +124,7 @@ public interface IAgent extends /* ISkill, */ IShape, INamed, Comparable<IAgent>
 	 * 
 	 * @param map
 	 */
-	public abstract void setExtraAttributes(final Map<Object, Object> map);
+	public abstract void setExtraAttributes(final Map<String, Object> map);
 
 	public abstract int getIndex();
 

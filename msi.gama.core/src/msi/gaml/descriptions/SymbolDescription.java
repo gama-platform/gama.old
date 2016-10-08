@@ -56,7 +56,7 @@ public abstract class SymbolDescription implements IDescription {
 	protected String name;
 	protected final String keyword;
 	// protected boolean validated;
-	private IType type;
+	private IType<?> type;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
 			final EObject source, final Facets facets) {
@@ -167,13 +167,13 @@ public abstract class SymbolDescription implements IDescription {
 		return true;
 	}
 
-	public IType getTypeDenotedByFacet(final String... s) {
+	public IType<?> getTypeDenotedByFacet(final String... s) {
 		if (!hasFacets())
 			return Types.NO_TYPE;
 		return getTypeDenotedByFacet(facets.getFirstExistingAmong(s), Types.NO_TYPE);
 	}
 
-	public IType getTypeDenotedByFacet(final String s, final IType defaultType) {
+	public IType<?> getTypeDenotedByFacet(final String s, final IType defaultType) {
 		if (!hasFacets())
 			return defaultType;
 		return facets.getTypeDenotedBy(s, this, defaultType);
@@ -466,7 +466,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IType getTypeNamed(final String s) {
+	public IType<?> getTypeNamed(final String s) {
 		final ModelDescription m = getModelDescription();
 		if (m == null) {
 			return Types.get(s);
@@ -475,7 +475,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		if (type == null) {
 			type = computeType();
 		}

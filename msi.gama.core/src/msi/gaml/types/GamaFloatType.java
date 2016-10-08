@@ -72,12 +72,12 @@ public class GamaFloatType extends GamaType<Double> {
 	}
 
 	@Override
-	public boolean isTranslatableInto(final IType type) {
+	public boolean isTranslatableInto(final IType<?> type) {
 		return type.isNumber() || type == Types.NO_TYPE;
 	}
 
 	@Override
-	public IType coerce(final IType type, final IDescription context) {
+	public IType<?> coerce(final IType<?> type, final IDescription context) {
 		if (type == this) {
 			return null;
 		}
@@ -85,7 +85,7 @@ public class GamaFloatType extends GamaType<Double> {
 	}
 
 	@Override
-	public IType findCommonSupertypeWith(final IType type) {
+	public IType<? super Double> findCommonSupertypeWith(final IType<?> type) {
 		return type.isNumber() ? this : Types.NO_TYPE;
 	}
 

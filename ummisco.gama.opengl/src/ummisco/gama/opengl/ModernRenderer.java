@@ -94,15 +94,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 	@Override
 	public void init(final GLAutoDrawable drawable) {
 
-		WorkbenchHelper.run(new Runnable() {
+		WorkbenchHelper.run(() -> getCanvas().setVisible(visible));
 
-			@Override
-			public void run() {
-				getCanvas().setVisible(visible);
-
-			}
-		});
-		
 		commonInit(drawable);
 
 		setUpKeystoneCoordinates();
@@ -161,14 +154,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		if (!visible) {
 			// We make the canvas visible only after a first display has occured
 			visible = true;
-			WorkbenchHelper.run(new Runnable() {
-
-				@Override
-				public void run() {
-					getCanvas().setVisible(true);
-
-				}
-			});
+			WorkbenchHelper.run(() -> getCanvas().setVisible(true));
 
 		}
 
@@ -244,7 +230,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		// TODO
 		sceneBuffer.garbageCollect((GL2) drawable.getGL());
 		sceneBuffer.dispose();
-		
+
 		drawer.cleanUp();
 
 		textureCache.dispose(drawable.getGL());
@@ -339,13 +325,13 @@ public class ModernRenderer extends Abstract3DRenderer {
 		if (currentScene != null)
 			currentScene.stopDrawRotationHelper();
 	}
-	
+
 	@Override
 	public void startDrawKeystoneHelper() {
 		drawKeystoneHelper = true;
 		cornerSelected = -1;
 	}
-	
+
 	@Override
 	public void stopDrawKeystoneHelper() {
 		drawKeystoneHelper = false;
@@ -375,6 +361,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 		return rect;
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
 		if (sceneBuffer.getSceneToUpdate() == null) {

@@ -43,8 +43,7 @@ public interface IGraphics {
 
 	public abstract int getDisplayHeight();
 
-	@SuppressWarnings("rawtypes")
-	public abstract Rectangle2D drawFile(GamaFile file, FileDrawingAttributes attributes);
+	public abstract Rectangle2D drawFile(GamaFile<?, ?, ?, ?> file, FileDrawingAttributes attributes);
 
 	public abstract Rectangle2D drawField(final double[] values, final FieldDrawingAttributes attributes);
 

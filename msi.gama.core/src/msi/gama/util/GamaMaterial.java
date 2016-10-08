@@ -28,18 +28,18 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
-* The Class GamaMaterial.
-*
-* @author mazarsju
-*/
+ * The Class GamaMaterial.
+ *
+ * @author mazarsju
+ */
 @vars({ @var(name = IKeyword.DAMPER, type = IType.FLOAT, doc = {
 		@doc("Returns the shine damper component of the material") }),
 		@var(name = IKeyword.REFLECTIVITY, type = IType.FLOAT, doc = {
 				@doc("Returns the reflectivity of the material (between 0 and 1)") }) })
 public class GamaMaterial implements IValue {
-	
-	private double damper;
-	private double reflectivity;
+
+	private final double damper;
+	private final double reflectivity;
 
 	public final static Map<String, GamaMaterial> materials = new THashMap<String, GamaMaterial>();
 	public final static TIntObjectMap<GamaMaterial> int_materials = TCollections
@@ -48,19 +48,21 @@ public class GamaMaterial implements IValue {
 	static {
 		final GamaMaterial steel = new NamedGamaMaterial("steelMaterial", 5, 1);
 		materials.put("steelMaterial", steel);
-//		int_materials.put(steel.getMatId(), steel);
-		
+		// int_materials.put(steel.getMatId(), steel);
+
 		final GamaMaterial gum = new NamedGamaMaterial("gumMaterial", 1, 0);
 		materials.put("gumMaterial", gum);
-//		int_materials.put(gum.getMatId(), gum);
+		// int_materials.put(gum.getMatId(), gum);
 	}
-	
-//	/** The steel material. */
-//	@constant(value = "steelMaterial", category = {  }, concept = {  }, doc = { @doc("TODO") })
-//	public final static GamaMaterial steelMaterial = new GamaMaterial(5,1);
-//	/** The gum material. */
-//	@constant(value = "gumMaterial", category = {  }, concept = {  }, doc = { @doc("TODO") })
-//	public final static GamaMaterial gumMaterial = new GamaMaterial(1,0);
+
+	// /** The steel material. */
+	// @constant(value = "steelMaterial", category = { }, concept = { }, doc = {
+	// @doc("TODO") })
+	// public final static GamaMaterial steelMaterial = new GamaMaterial(5,1);
+	// /** The gum material. */
+	// @constant(value = "gumMaterial", category = { }, concept = { }, doc = {
+	// @doc("TODO") })
+	// public final static GamaMaterial gumMaterial = new GamaMaterial(1,0);
 
 	public static class NamedGamaMaterial extends GamaMaterial {
 
@@ -93,7 +95,7 @@ public class GamaMaterial implements IValue {
 		this.damper = damper2;
 		this.reflectivity = reflectivity2;
 	}
-	
+
 	public GamaMaterial(final GamaMaterial material) {
 		this.damper = material.getDamper();
 		this.reflectivity = material.getReflectivity();
@@ -126,7 +128,7 @@ public class GamaMaterial implements IValue {
 	public Double reflectivity() {
 		return reflectivity;
 	}
-	
+
 	@getter(IKeyword.DAMPER)
 	public Double damper() {
 		return damper;
@@ -143,9 +145,8 @@ public class GamaMaterial implements IValue {
 	 * @see msi.gama.common.interfaces.ITyped#getType()
 	 */
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		return Types.MATERIAL;
 	}
 
 }
-

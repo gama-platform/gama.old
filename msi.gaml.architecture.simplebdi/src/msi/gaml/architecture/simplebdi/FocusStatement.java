@@ -109,7 +109,8 @@ public class FocusStatement extends AbstractStatement {
 					}
 					String nameVarTemp;
 					final Map<String, Object> tempValues = new GamaMap<String, Object>(1, null, null);
-					final IList<?> variablesTemp = ((IContainer) variable.value(scope)).listValue(scope, null, true);
+					final IList<?> variablesTemp = ((IContainer<?, ?>) variable.value(scope)).listValue(scope, null,
+							true);
 					for (int temp = 0; temp < variablesTemp.length(scope); temp++) {
 						final Object temp2 = variablesTemp.get(temp);
 						nameVarTemp = "test" + temp;

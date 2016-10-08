@@ -33,19 +33,18 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@SuppressWarnings({ "rawtypes" })
 public interface IContainer<KeyType, ValueType> extends IValue {
 
 	@Override
-	public IContainerType getType();
+	public IContainerType<?> getType();
 
-	public abstract IList listValue(IScope scope, IType contentType, boolean copy);
+	public abstract IList<ValueType> listValue(IScope scope, IType<?> contentType, boolean copy);
 
-	public abstract IMatrix matrixValue(IScope scope, IType contentType, boolean copy);
+	public abstract IMatrix<?> matrixValue(IScope scope, IType<?> contentType, boolean copy);
 
-	public abstract IMatrix matrixValue(IScope scope, IType contentType, ILocation size, boolean copy);
+	public abstract IMatrix<?> matrixValue(IScope scope, IType<?> contentType, ILocation size, boolean copy);
 
-	public abstract GamaMap mapValue(IScope scope, IType keyType, IType contentType, boolean copy);
+	public abstract GamaMap<?, ?> mapValue(IScope scope, IType<?> keyType, IType<?> contentType, boolean copy);
 
 	public java.lang.Iterable<? extends ValueType> iterable(final IScope scope);
 
@@ -103,7 +102,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 
 		// Then, methods for "all" operations
 		// Adds the values if possible, without replacing existing ones
-		public void addValues(IScope scope, IContainer values);
+		public void addValues(IScope scope, IContainer<?, ?> values);
 
 		// Adds this value to all slots (if this operation is available),
 		// otherwise replaces the values with this one
@@ -113,7 +112,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 
 		public void removeIndex(IScope scope, Object index);
 
-		public void removeIndexes(IScope scope, IContainer<?, Object> index);
+		public void removeIndexes(IScope scope, IContainer<?, ?> index);
 
 		public void removeValues(IScope scope, IContainer<?, ?> values);
 
@@ -202,7 +201,7 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 			@usage(value = "if it is a graph, reverse returns a copy of the graph (with all edges and vertexes), with all of the edges reversed"),
 			@usage(value = "if it is a matrix, reverse returns a new matrix containing the transpose of the operand.", examples = {
 					@example(value = "reverse(matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]))", equals = "matrix([[\"c11\",\"c21\"],[\"c12\",\"c22\"],[\"c13\",\"c23\"]])") }) })
-	public IContainer reverse(IScope scope) throws GamaRuntimeException;
+	public IContainer<?, ?> reverse(IScope scope) throws GamaRuntimeException;
 
 	/**
 	 * @return one of the values stored in this container using GAMA.getRandom()

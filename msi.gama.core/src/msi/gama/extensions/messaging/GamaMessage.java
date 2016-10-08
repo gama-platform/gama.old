@@ -192,7 +192,7 @@ public class GamaMessage implements IValue {
 	 * @see msi.gama.common.interfaces.ITyped#getType()
 	 */
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		return Types.get(IType.MESSAGE);
 	}
 

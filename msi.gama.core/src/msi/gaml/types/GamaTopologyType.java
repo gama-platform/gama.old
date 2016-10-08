@@ -112,7 +112,7 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	}
 
 	@Override
-	public IType getContentType() {
+	public IType<?> getContentType() {
 		return Types.GEOMETRY;
 	}
 

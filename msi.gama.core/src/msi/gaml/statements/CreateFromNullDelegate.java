@@ -67,7 +67,7 @@ public class CreateFromNullDelegate implements ICreateDelegate {
 	 * @see msi.gama.common.interfaces.ICreateDelegate#fromFacetType()
 	 */
 	@Override
-	public IType fromFacetType() {
+	public IType<?> fromFacetType() {
 		return Types.NO_TYPE; // Only delegate allowed to do this
 	}
 

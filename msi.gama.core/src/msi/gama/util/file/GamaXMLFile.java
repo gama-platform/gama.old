@@ -50,7 +50,7 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, Strin
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType<?> getType() {
 		return Types.FILE.of(Types.INT, Types.NO_TYPE);
 	}
 

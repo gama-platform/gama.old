@@ -13,6 +13,7 @@ package msi.gama.metamodel.topology.filter;
 
 import java.util.Collection;
 
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
@@ -29,7 +30,7 @@ public interface IAgentFilter {
 		}
 
 		@Override
-		public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
+		public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 			return GamaListFactory.create();
 		}
 
@@ -45,7 +46,7 @@ public interface IAgentFilter {
 
 	public ISpecies getSpecies();
 
-	public IContainer<?, ? extends IShape> getAgents(IScope scope);
+	public IContainer<?, ? extends IAgent> getAgents(IScope scope);
 
 	boolean accept(IScope scope, IShape source, IShape a);
 

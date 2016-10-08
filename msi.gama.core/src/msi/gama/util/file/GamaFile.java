@@ -237,7 +237,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public void removeIndexes(final IScope scope, final IContainer<?, Object> indexes) {
+	public void removeIndexes(final IScope scope, final IContainer<?, ?> indexes) {
 		fillBuffer(scope);
 		getBuffer().removeIndexes(scope, indexes);
 	}
@@ -379,27 +379,27 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public IList listValue(final IScope scope, final IType contentsType, final boolean copy)
+	public IList<V> listValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		getContents(scope);
 		return getBuffer().listValue(scope, contentsType, copy);
 	}
 
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
+	public GamaMap<?, ?> mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		getContents(scope);
 		return getBuffer().mapValue(scope, keyType, contentsType, copy);
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
+	public IMatrix<?> matrixValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		return matrixValue(scope, contentsType, null, copy);
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	public IMatrix<?> matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		return _matrixValue(scope, contentsType, preferredSize, copy);
 	}
@@ -411,7 +411,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	@Override
-	public IContainer reverse(final IScope scope) throws GamaRuntimeException {
+	public IContainer<?, ?> reverse(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
 		return getBuffer().reverse(scope);
 		// No side effect

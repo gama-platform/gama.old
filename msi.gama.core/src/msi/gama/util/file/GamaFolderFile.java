@@ -50,7 +50,7 @@ public class GamaFolderFile extends GamaFile<IList<String>, String, Integer, Str
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType<?> getType() {
 		return Types.FILE.of(Types.STRING);
 	}
 

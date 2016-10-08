@@ -159,7 +159,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 						continue;
 					}
 				} else {
-					final IType rt = ie.getType();
+					final IType<?> rt = ie.getType();
 					if (!rt.isTranslatableInto(at)) {
 						ret.error("Action " + cd.getName() + " must return a result of type " + at + " (and not " + rt
 								+ ")", IGamlIssue.SHOULD_CAST, VALUE, at.toString());

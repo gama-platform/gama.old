@@ -265,8 +265,8 @@ public class StatementDescription extends SymbolDescription {
 							IGamlIssue.UNKNOWN_ARGUMENT, exp.getTarget(), (String[]) null);
 					return false;
 				} else {
-					IType initType = Types.NO_TYPE;
-					IType varType = Types.NO_TYPE;
+					IType<?> initType = Types.NO_TYPE;
+					IType<?> varType = Types.NO_TYPE;
 					final VariableDescription vd = denotedSpecies.getAttribute(name);
 					if (vd != null) {
 						varType = vd.getType();

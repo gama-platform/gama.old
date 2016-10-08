@@ -35,7 +35,7 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		return type == null ? Types.NO_TYPE : type;
 	}
 

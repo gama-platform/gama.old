@@ -178,9 +178,9 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 					// validate
 					return;
 				}
-				final IType contentType = list.getType().getContentType();
+				final IType<?> contentType = list.getType().getContentType();
 				boolean isAll = false;
-				IType valueType = Types.NO_TYPE;
+				IType<?> valueType = Types.NO_TYPE;
 				if (!keyword.equals(PUT) && all && item.getType().isTranslatableInto(Types.CONTAINER)) {
 					isAll = true;
 					valueType = item.getType().getContentType();
@@ -205,7 +205,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 					cd.warning(message, IGamlIssue.SHOULD_CAST, IKeyword.ITEM,
 							isAll ? list.getType().toString() : contentType.toString());
 				}
-				final IType keyType = list.getType().getKeyType();
+				final IType<?> keyType = list.getType().getKeyType();
 				if (index != null && keyType != Types.NO_TYPE && !keyType.isTranslatableInto(index.getType())) {
 					cd.warning(
 							"The type of the index of " + list.serialize(false) + " (" + keyType
@@ -240,7 +240,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		asAll = all != null && all.literalValue().equals(IKeyword.TRUE);
 		asAllValues = asAll && item != null && item.getType().isTranslatableInto(Types.CONTAINER);
 		asAllIndexes = asAll && index != null && index.getType().isTranslatableInto(Types.CONTAINER);
-		final IType t = list.getType();
+		final IType<?> t = list.getType();
 		isDirect = t.isContainer();
 		isGraph = t.isTranslatableInto(Types.GRAPH);
 		// containerType = (IContainerType) (isDirect ? t : attributesType);

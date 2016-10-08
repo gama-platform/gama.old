@@ -207,7 +207,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public void setExtraAttributes(final Map<Object, Object> map) {
+	public void setExtraAttributes(final Map<String, Object> map) {
 		if (map == null) {
 			return;
 		}
@@ -215,28 +215,28 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public GamaMap<Object, Object> getAttributes() {
-		return (GamaMap<Object, Object>) getGeometry().getAttributes();
+	public GamaMap<String, Object> getAttributes() {
+		return (GamaMap<String, Object>) getGeometry().getAttributes();
 	}
 
 	@Override
-	public GamaMap<Object, Object> getOrCreateAttributes() {
+	public GamaMap<String, Object> getOrCreateAttributes() {
 		return getGeometry().getOrCreateAttributes();
 	}
 
 	@Override
 	public boolean hasAttribute(final Object key) {
-		return getGeometry().hasAttribute(key);
+		return getGeometry().hasAttribute(String.valueOf(key));
 	}
 
 	@Override
 	public Object getAttribute(final Object key) {
-		return getGeometry().getAttribute(key);
+		return getGeometry().getAttribute(String.valueOf(key));
 	}
 
 	@Override
 	public void setAttribute(final Object name, final Object val) {
-		getOrCreateAttributes().put(name, val);
+		getOrCreateAttributes().put(String.valueOf(name), val);
 	}
 
 	@Override
@@ -514,7 +514,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		return getScope().getModelContext().getTypeNamed(getSpeciesName());
 	}
 

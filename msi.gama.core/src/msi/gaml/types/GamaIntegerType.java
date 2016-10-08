@@ -29,7 +29,6 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  *
  */
-@SuppressWarnings("unchecked")
 @type(name = IKeyword.INT, id = IType.INT, wraps = { Integer.class, int.class,
 		Long.class }, kind = ISymbolKind.Variable.NUMBER, concept = { IConcept.TYPE })
 public class GamaIntegerType extends GamaType<Integer> {
@@ -103,20 +102,24 @@ public class GamaIntegerType extends GamaType<Integer> {
 	}
 
 	@Override
-	public boolean isTranslatableInto(final IType type) {
+	public boolean isTranslatableInto(final IType<?> type) {
 		return type.isNumber() || type == Types.NO_TYPE;
 	}
 
 	@Override
-	public IType coerce(final IType type, final IDescription context) {
+	public IType<?> coerce(final IType<?> type, final IDescription context) {
 		if (type == this) {
 			return null;
 		}
 		return this;
 	}
 
+	/**
+	 * Generics information removed here to allow returning IType<Double>
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public IType findCommonSupertypeWith(final IType type) {
+	public IType findCommonSupertypeWith(final IType<?> type) {
 		return type == this ? this : type.id() == IType.FLOAT ? type : Types.NO_TYPE;
 	}
 

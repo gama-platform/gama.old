@@ -55,7 +55,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 	public static class Assert {
 
 		public static void typesAreCompatibleForAssignment(final IDescription context, final String receiverDescription,
-				final IType receiverType, final IExpressionDescription assigned) {
+				final IType<?> receiverType, final IExpressionDescription assigned) {
 			if (assigned == null) {
 				return;
 			}
@@ -82,7 +82,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 			// Contents Type
 			if (receiverType.isContainer() && assignedType.isContainer()) {
 				final IType receiverContentType = receiverType.getContentType();
-				IType contentType = assignedType.getContentType();
+				IType<?> contentType = assignedType.getContentType();
 				// Special cases for the empty lists and maps
 				if (contentType == Types.NO_TYPE) {
 					if (expr2.isConst() && (assignedType.id() == IType.LIST || assignedType.id() == IType.MAP)) {

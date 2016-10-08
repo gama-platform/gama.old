@@ -153,7 +153,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
-	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile> helper,
+	protected void _file(final String string, final Class clazz, final GamaHelper<IGamaFile<?, ?, ?, ?>> helper,
 			final int innerType, final int keyType, final int contentType, final String[] s) {
 		helper.setSkillClass(clazz);
 		GamaFileType.addFileTypeDefinition(string, Types.get(innerType), Types.get(keyType), Types.get(contentType),
@@ -318,9 +318,12 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		add(clazz, desc);
 	}
 
-	public static void initType(final String keyword, final IType typeInstance, final int id, final int varKind,
+	public static void initType(final String keyword, final IType<?> typeInstance, final int id, final int varKind,
 			final Class... wraps) {
-		final IType type = Types.builtInTypes.initType(keyword, typeInstance, id, varKind, wraps);
+		final IType<?> type = Types.builtInTypes.initType(keyword, typeInstance, id, varKind, wraps[0]);
+		for (final Class cc : wraps) {
+			Types.CLASSES_TYPES_CORRESPONDANCE.put(cc, type.getName());
+		}
 		type.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		Types.cache(id, typeInstance);
 		VARTYPE2KEYWORDS.put(varKind, keyword);

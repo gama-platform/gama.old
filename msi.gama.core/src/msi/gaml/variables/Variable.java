@@ -191,7 +191,7 @@ public class Variable extends Symbol implements IVariable {
 			}
 		}
 
-		public void assertValueFacetsTypes(final VariableDescription vd, final IType vType) {
+		public void assertValueFacetsTypes(final VariableDescription vd, final IType<?> vType) {
 
 			// final IType type = null;
 			// final String firstValueFacet = null;

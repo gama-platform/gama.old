@@ -27,7 +27,6 @@ import msi.gaml.expressions.IExpression;
  * @todo Description
  *
  */
-@SuppressWarnings({ "rawtypes" })
 public interface IType<Support> extends IGamlDescription, ITyped {
 
 	public static String[] vowels = new String[] { "a", "e", "i", "o", "u", "y" };
@@ -71,11 +70,11 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 
 	public Support cast(IScope scope, Object obj, Object param, boolean copy);
 
-	public Support cast(IScope scope, Object obj, Object param, IType keyType, IType contentType, boolean copy);
+	public Support cast(IScope scope, Object obj, Object param, IType<?> keyType, IType<?> contentType, boolean copy);
 
 	public int id();
 
-	public Class<Support> toClass();
+	public Class<? extends Support> toClass();
 
 	public Support getDefault();
 
@@ -91,21 +90,21 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 
 	public boolean isParametricType();
 
-	public boolean isParametricFormOf(final IType l);
+	public boolean isParametricFormOf(final IType<?> l);
 
 	public String getSpeciesName();
 
 	public SpeciesDescription getSpecies();
 
-	public boolean isAssignableFrom(IType l);
+	public boolean isAssignableFrom(IType<?> l);
 
-	public boolean isTranslatableInto(IType t);
+	public boolean isTranslatableInto(IType<?> t);
 
-	public void setParent(IType p);
+	public void setParent(IType<? super Support> p);
 
-	public IType getParent();
+	public IType<?> getParent();
 
-	IType coerce(IType expr, IDescription context);
+	IType<?> coerce(IType<?> expr, IDescription context);
 
 	/**
 	 * returns the distance between two types
@@ -113,7 +112,7 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 * @param originalChildType
 	 * @return
 	 */
-	public int distanceTo(IType originalChildType);
+	public int distanceTo(IType<?> originalChildType);
 
 	/**
 	 * @param n
@@ -127,7 +126,7 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 */
 	boolean canBeTypeOf(IScope s, Object c);
 
-	public void init(int varKind, final int id, final String name, final Class... supports);
+	public void init(int varKind, final int id, final String name, final Class<Support> clazz);
 
 	/**
 	 * Whether or not this type can be considered as having a contents. True for
@@ -152,11 +151,11 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 * @param iType
 	 * @return
 	 */
-	public IType findCommonSupertypeWith(IType iType);
+	public IType<? super Support> findCommonSupertypeWith(IType<?> iType);
 
 	public boolean isParented();
 
-	public void setSupport(Class clazz);
+	public void setSupport(Class<Support> clazz);
 
 	/**
 	 * @param context
@@ -167,11 +166,11 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 * @param exp
 	 * @return
 	 */
-	public IType typeIfCasting(final IExpression exp);
+	public IType<?> typeIfCasting(final IExpression exp);
 
-	public IType getContentType();
+	public IType<?> getContentType();
 
-	public IType getKeyType();
+	public IType<?> getKeyType();
 
 	/**
 	 * @return
@@ -196,7 +195,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	 */
 	public boolean isDrawable();
 
-	public IType getWrappedType();
+	public IType<?> getWrappedType();
 
 	SpeciesDescription getDenotedSpecies();
+
 }

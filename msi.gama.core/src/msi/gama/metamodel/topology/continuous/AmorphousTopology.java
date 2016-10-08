@@ -70,7 +70,7 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		return Types.TOPOLOGY;
 	}
 

@@ -178,10 +178,10 @@ public class AddStatement extends AbstractContainerStatement {
 				}
 			}
 			if (list.getType().id() == IType.MAP && item.getType().id() == IType.PAIR) {
-				final IType contentType = list.getType().getContentType();
-				final IType valueType = item.getType().getContentType();
-				final IType mapKeyType = list.getType().getKeyType();
-				final IType pairKeyType = item.getType().getKeyType();
+				final IType<?> contentType = list.getType().getContentType();
+				final IType<?> valueType = item.getType().getContentType();
+				final IType<?> mapKeyType = list.getType().getKeyType();
+				final IType<?> pairKeyType = item.getType().getKeyType();
 				if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)) {
 					cd.warning(
 							"The type of the contents of " + list.serialize(false) + " (" + contentType

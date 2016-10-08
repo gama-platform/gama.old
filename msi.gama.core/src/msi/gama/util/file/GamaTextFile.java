@@ -41,7 +41,7 @@ public class GamaTextFile extends GamaFile<IList<String>, String, Integer, Strin
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType<?> getType() {
 		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 

@@ -305,8 +305,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 			return result;
 		}
 		if (lastValue instanceof IContainer) {
-			return (IAgent[]) ((IContainer) lastValue).listValue(getScope(), Types.NO_TYPE, false)
-					.toArray(new IAgent[0]);
+			return ((IContainer<?, ?>) lastValue).listValue(getScope(), Types.NO_TYPE, false).toArray(new IAgent[0]);
 		}
 		return EMPTY;
 	}

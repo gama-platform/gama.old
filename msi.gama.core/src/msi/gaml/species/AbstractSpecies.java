@@ -102,7 +102,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IList listValue(final IScope scope, final IType contentsType, final boolean copy)
+	public IList<IAgent> listValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		// return getPopulation(scope).listValue(scope, contentsType);
 		// hqnghi 16/04/14
@@ -122,7 +122,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
+	public GamaMap<?, ?> mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		final IList<IAgent> agents = listValue(scope, contentsType, false);
 		// Default behavior : Returns a map containing the names of agents as
@@ -502,7 +502,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IContainer reverse(final IScope scope) throws GamaRuntimeException {
+	public IContainer<Integer, ? extends IAgent> reverse(final IScope scope) throws GamaRuntimeException {
 		return getPopulation(scope).reverse(scope);
 	}
 
@@ -512,14 +512,14 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
+	public IMatrix<? extends IAgent> matrixValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		return getPopulation(scope).matrixValue(scope, contentsType, copy);
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
-			final boolean copy) throws GamaRuntimeException {
+	public IMatrix<? extends IAgent> matrixValue(final IScope scope, final IType contentsType,
+			final ILocation preferredSize, final boolean copy) throws GamaRuntimeException {
 		return getPopulation(scope).matrixValue(scope, contentsType, preferredSize, copy);
 	}
 

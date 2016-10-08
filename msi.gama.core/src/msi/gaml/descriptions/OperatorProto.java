@@ -153,7 +153,7 @@ public class OperatorProto extends AbstractProto {
 		signature = new Signature(t);
 	}
 
-	public void verifyExpectedTypes(final IDescription context, final IType rightType) {
+	public void verifyExpectedTypes(final IDescription context, final IType<?> rightType) {
 		if (expectedContentType == null || expectedContentType.length == 0) {
 			return;
 		}
@@ -161,7 +161,7 @@ public class OperatorProto extends AbstractProto {
 			return;
 		}
 		if (expectedContentType.length == 1 && IExpressionCompiler.ITERATORS.contains(getName())) {
-			final IType expected = Types.get(expectedContentType[0]);
+			final IType<?> expected = Types.get(expectedContentType[0]);
 			if (!rightType.isTranslatableInto(expected)) {
 				context.warning("Operator " + getName() + " expects an argument of type " + expected,
 						IGamlIssue.SHOULD_CAST);

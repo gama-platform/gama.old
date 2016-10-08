@@ -16,6 +16,7 @@ import java.util.Collection;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.ModelDescription;
@@ -26,9 +27,7 @@ import msi.gaml.descriptions.TypeDescription;
 public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescription> implements ITypesManager {
 
 	public static int CURRENT_INDEX = IType.SPECIES_TYPES;
-
 	private TypesManager parent;
-
 	private final THashMap<String, IType> types = new THashMap(10, 0.95f);
 
 	public TypesManager(final TypesManager parent) {
@@ -67,44 +66,48 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 	 * TypeDescription)
 	 */
 	@Override
-	public IType addSpeciesType(final SpeciesDescription species) {
+	public IType<? extends IAgent> addSpeciesType(final SpeciesDescription species) {
 		final String name = species.getName();
 		if (!name.equals(IKeyword.AGENT)) {
 			if (get(name) != Types.NO_TYPE) {
 				species.error("Species " + name + " already declared. Species name must be unique",
 						IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(null), name);
 			}
-			return addType(new GamaAgentType(species, species.getName(), ++CURRENT_INDEX, species.getJavaBase()),
-					species.getJavaBase());
+			return addSpeciesType(new GamaAgentType(species, species.getName(), ++CURRENT_INDEX,
+					(Class<IAgent>) species.getJavaBase()), species.getJavaBase());
 		}
 		return get(IKeyword.AGENT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gaml.types.ITypesManager#initType(java.lang.String,
-	 * msi.gaml.types.IType, int, int, java.lang.Class)
-	 */
 	@Override
-	public IType initType(final String keyword, IType typeInstance, final int id, final int varKind,
-			final Class... wraps) {
+	public <Support> IType<Support> initType(final String keyword, IType<Support> typeInstance, final int id,
+			final int varKind, final Class<Support> support) {
 		if (keyword.equals(IKeyword.UNKNOWN)) {
 			typeInstance = Types.NO_TYPE;
 		}
-		typeInstance.init(varKind, id, keyword, wraps);
-		return addType(typeInstance, wraps);
+		typeInstance.init(varKind, id, keyword, support);
+		return addType(typeInstance, support);
 	}
 
-	private IType addType(final IType t, final Class... wraps) {
+	private IType<? extends IAgent> addSpeciesType(final IType<? extends IAgent> t,
+			final Class<? extends IAgent> clazz) {
 		final int i = t.id();
 		final String name = t.toString();
 		types.put(name, t);
 		// Hack to allow types to be declared with their id as string
 		types.put(String.valueOf(i), t);
-		for (final Class cc : wraps) {
-			Types.CLASSES_TYPES_CORRESPONDANCE.put(cc, name);
-		}
+		// for (final Class cc : wraps) {
+		Types.CLASSES_TYPES_CORRESPONDANCE.put(clazz, name);
+		// }
+		return t;
+	}
+
+	private IType addType(final IType t, final Class support) {
+		final int i = t.id();
+		final String name = t.toString();
+		types.put(name, t);
+		// Hack to allow types to be declared with their id as string
+		types.put(String.valueOf(i), t);
 		return t;
 	}
 
@@ -150,32 +153,10 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 		return parent.containsType(s);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gaml.types.ITypesManager#getTypeNames()
-	 */
-	// @Override
-	// public List<String> getTypeNames() {
-	// final List<String> result = parent == null ? new ArrayList<>() :
-	// parent.getTypeNames();
-	// for (final String s : types.keySet()) {
-	// if (!Strings.isGamaNumber(s)) {
-	// result.add(s);
-	// }
-	// }
-	// return result;
-	// }
-
 	Collection<IType> getTypes() {
 		return types.values();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gaml.types.ITypesManager#get(java.lang.String)
-	 */
 	@Override
 	public IType get(final String type) {
 		final IType t = types.get(type);

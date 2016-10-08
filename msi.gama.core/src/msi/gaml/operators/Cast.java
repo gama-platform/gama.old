@@ -93,7 +93,7 @@ public class Cast {
 			@example(value = "an_agent is node", equals = "true", isExecutable = false),
 			@example(value = "1 is float", equals = "false") })
 	public static Boolean isA(final IScope scope, final Object a, final IExpression b) throws GamaRuntimeException {
-		final IType type = asType(scope, b);
+		final IType<?> type = asType(scope, b);
 		if (type.isAgentType()) {
 			final ISpecies s = scope.getSimulation().getModel().getSpecies(type.getSpeciesName());
 			if (a instanceof IAgent) {

@@ -250,7 +250,7 @@ public class Emotion implements IValue {
 	}
 
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		return Types.get(EmotionType.id);
 	}
 
