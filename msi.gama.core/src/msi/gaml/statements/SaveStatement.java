@@ -671,10 +671,13 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				ff.setAttributes(values);
 				fw.write();
 			}
-			store.dispose();
+//			store.dispose();
 			if (gis != null) {
 				writePRJ(scope, path, gis);
 			}
+		}
+		finally{
+			store.dispose();
 		}
 	}
 
