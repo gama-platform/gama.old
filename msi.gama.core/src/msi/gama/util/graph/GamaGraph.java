@@ -374,7 +374,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	 *      msi.gama.util.IContainer)
 	 */
 	@Override
-	public void removeIndexes(final IScope scope, final IContainer<?, Object> index) {
+	public void removeIndexes(final IScope scope, final IContainer<?, ?> index) {
 		for (final Object pair : index.iterable(scope)) {
 			removeIndex(scope, pair);
 		}

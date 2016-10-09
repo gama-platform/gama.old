@@ -47,10 +47,10 @@ import msi.gaml.types.Types;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class GamaMatrix<T> implements IMatrix<T> {
 
-	private final IContainerType type;
+	private final IContainerType<IMatrix> type;
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType<?> getType() {
 		return type;
 	}
 
@@ -328,7 +328,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public abstract Object remove(IScope scope, final int col, final int row);
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final boolean copy)
+	public IMatrix<?> matrixValue(final IScope scope, final IType contentsType, final boolean copy)
 			throws GamaRuntimeException {
 		return matrixValue(scope, contentsType, null, copy);
 	}
@@ -354,11 +354,9 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy) {
-		final IType kt = GamaType.findSpecificType(keyType, type.getContentType()); // not
-																					// key
-																					// type
-																					// !
+	public GamaMap<?, ?> mapValue(final IScope scope, final IType keyType, final IType contentsType,
+			final boolean copy) {
+		final IType kt = GamaType.findSpecificType(keyType, type.getContentType());
 		final IType ct = GamaType.findSpecificType(contentsType, type.getContentType());
 		final GamaMap result = GamaMapFactory.create(kt, ct);
 		for (int i = 0; i < numRows; i++) {
@@ -525,7 +523,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#reverse()
 	 */
 	@Override
-	public final IContainer reverse(final IScope scope) throws GamaRuntimeException {
+	public final IMatrix<T> reverse(final IScope scope) throws GamaRuntimeException {
 		return _reverse(scope);
 	}
 
@@ -572,7 +570,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	};
 
 	@Override
-	public void removeIndexes(final IScope scope, final IContainer<?, Object> indexes) {
+	public void removeIndexes(final IScope scope, final IContainer<?, ?> indexes) {
 	}
 
 	@Override
@@ -589,7 +587,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IValue#listValue(msi.gama.interfaces.IScope)
 	 */
 	@Override
-	public final IList listValue(final IScope scope, final IType contentsType, final boolean copy) {
+	public final IList<T> listValue(final IScope scope, final IType contentsType, final boolean copy) {
 		final IType originalContentsType = type.getContentType();
 		if (!GamaType.requiresCasting(contentsType, originalContentsType)) {
 			// no need to take "copy" into account as the list is created anyway
@@ -609,7 +607,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * msi.gama.util.GamaPoint)
 	 */
 	@Override
-	public final IMatrix matrixValue(final IScope scope, final IType type, final ILocation size, final boolean copy)
+	public final IMatrix<T> matrixValue(final IScope scope, final IType type, final ILocation size, final boolean copy)
 			throws GamaRuntimeException {
 		return _matrixValue(scope, size, type, copy);
 	}
@@ -689,7 +687,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#minus(msi.gama.interfaces.IMatrix)
 	 */
 	@Override
-	public IMatrix minus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+	public IMatrix<T> minus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
 		return opMinus(scope, this, other);
 	}
 
@@ -705,9 +703,9 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// POLYMORPHISM IS NOT REALLY SUPPORTED BY THE GAML COMPILER AND IS TAKEN
 	// IN CHARGE BY JAVA THROUGH THIS TRICK.
 
-	protected abstract IList _listValue(IScope scope, IType contentsType, boolean cast);
+	protected abstract IList<T> _listValue(IScope scope, IType contentsType, boolean cast);
 
-	protected abstract IMatrix _matrixValue(IScope scope, ILocation size, IType type, boolean copy);
+	protected abstract IMatrix<T> _matrixValue(IScope scope, ILocation size, IType type, boolean copy);
 
 	protected abstract void _clear();
 
@@ -717,7 +715,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	protected abstract void _putAll(IScope scope, Object value) throws GamaRuntimeException;
 
-	protected abstract IContainer<ILocation, T> _reverse(IScope scope) throws GamaRuntimeException;
+	protected abstract IMatrix<T> _reverse(IScope scope) throws GamaRuntimeException;
 
 	protected abstract boolean _isEmpty(IScope scope);
 
@@ -801,6 +799,6 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	@Override
 	public IMatrix transpose(final IScope scope) throws GamaRuntimeException {
-		return (IMatrix) reverse(scope);
+		return reverse(scope);
 	}
 }

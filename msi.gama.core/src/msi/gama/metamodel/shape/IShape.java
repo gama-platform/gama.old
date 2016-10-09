@@ -139,7 +139,7 @@ public interface IShape extends ILocated, IValue, IAttributed {
 
 	@Override
 	@getter("attributes")
-	public GamaMap getOrCreateAttributes();
+	public GamaMap<String, Object> getOrCreateAttributes();
 
 	@getter("multiple")
 	public boolean isMultiple();

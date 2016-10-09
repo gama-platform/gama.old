@@ -42,12 +42,12 @@ public class GamaNoType extends GamaType<Object> {
 	}
 
 	@Override
-	public boolean isSuperTypeOf(final IType type) {
+	public boolean isSuperTypeOf(final IType<?> type) {
 		return true;
 	}
 
 	@Override
-	public IType findCommonSupertypeWith(final IType iType) {
+	public IType<Object> findCommonSupertypeWith(final IType<?> iType) {
 		// By default, this is the supertype common to all subtypes
 		return /* iType.getDefault() == null ? iType : */this;
 	}
@@ -58,7 +58,7 @@ public class GamaNoType extends GamaType<Object> {
 	}
 
 	@Override
-	public boolean isTranslatableInto(final IType t) {
+	public boolean isTranslatableInto(final IType<?> t) {
 		return true;
 	}
 

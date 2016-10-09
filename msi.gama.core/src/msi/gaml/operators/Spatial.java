@@ -3063,7 +3063,7 @@ public abstract class Spatial {
 				throw GamaRuntimeException.warning("Trying to modify a point outside the bounds of the geometry",
 						scope);
 			}
-			final Double[] zs = (Double[]) coords.listValue(scope, Types.FLOAT, false).toArray(new Double[0]);
+			final Double[] zs = coords.listValue(scope, Types.FLOAT, false).toArray(new Double[0]);
 			g.apply(new CoordinateSequenceFilter() {
 
 				@Override

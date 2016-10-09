@@ -19,6 +19,7 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.BatchAgent;
 import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.factories.ChildrenProvider;
@@ -36,8 +37,8 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	public ExperimentDescription(final String name, final Class<?> clazz, final SpeciesDescription superDesc,
-			final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills2, final Facets ff,
-			final String plugin) {
+			final SpeciesDescription parent, final IAgentConstructor<? extends IAgent> helper,
+			final Set<String> skills2, final Facets ff, final String plugin) {
 		super(name, clazz, superDesc, parent, helper, skills2, ff, plugin);
 	}
 

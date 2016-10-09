@@ -26,45 +26,41 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @todo Description
  *
  */
-public interface IAgentConstructor {
+@SuppressWarnings({ "unchecked", "rawtypes" })
+public interface IAgentConstructor<T extends IAgent> {
 
-	public static class Minimal implements IAgentConstructor {
+	public static class Minimal implements IAgentConstructor<MinimalAgent> {
 
 		/**
 		 * Method createOneAgent()
 		 * 
 		 * @see msi.gaml.compilation.IAgentConstructor#createOneAgent(msi.gama.metamodel.population.IPopulation)
 		 */
+
 		@Override
-		public IAgent createOneAgent(final IPopulation<? extends IAgent> manager) throws GamaRuntimeException {
+		public MinimalAgent createOneAgent(final IPopulation manager) throws GamaRuntimeException {
 			return new MinimalAgent(manager);
 		}
 
 	}
 
-	public static class Gaml implements IAgentConstructor {
+	public static class Gaml implements IAgentConstructor<GamlAgent> {
 
-		/**
-		 * Method createOneAgent()
-		 * 
-		 * @see msi.gaml.compilation.IAgentConstructor#createOneAgent(msi.gama.metamodel.population.IPopulation)
-		 */
 		@Override
-		public IAgent createOneAgent(final IPopulation<? extends IAgent> manager) throws GamaRuntimeException {
+		public GamlAgent createOneAgent(final IPopulation manager) throws GamaRuntimeException {
 			return new GamlAgent(manager);
 		}
 
 	}
 
-	@SuppressWarnings({ "rawtypes",
-			"unchecked" }) public static Map<Class<IAgent>, IAgentConstructor> CONSTRUCTORS = new HashMap() {
+	public static Map<Class<? extends IAgent>, IAgentConstructor<? extends IAgent>> CONSTRUCTORS = new HashMap<Class<? extends IAgent>, IAgentConstructor<? extends IAgent>>() {
 
-				{
-					put(GamlAgent.class, new Gaml());
-					put(MinimalAgent.class, new Minimal());
-				}
-			};
+		{
+			put(GamlAgent.class, new Gaml());
+			put(MinimalAgent.class, new Minimal());
+		}
+	};
 
-	public abstract IAgent createOneAgent(IPopulation<? extends IAgent> manager) throws GamaRuntimeException;
+	public <T extends IAgent> T createOneAgent(IPopulation<T> manager) throws GamaRuntimeException;
 
 }

@@ -34,10 +34,9 @@ import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@SuppressWarnings({ "rawtypes" })
 public class GamaObjectMatrix extends GamaMatrix<Object> {
 
-	static public GamaObjectMatrix from(final int c, final int r, final IMatrix m) {
+	static public GamaObjectMatrix from(final int c, final int r, final IMatrix<?> m) {
 		if (m instanceof GamaFloatMatrix) {
 			return new GamaObjectMatrix(c, r, ((GamaFloatMatrix) m).getMatrix());
 		}
@@ -56,11 +55,11 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	/** The matrix. */
 	private Object[] matrix;
 
-	public GamaObjectMatrix(final ILocation p, final IType contentsType) {
+	public GamaObjectMatrix(final ILocation p, final IType<?> contentsType) {
 		this((int) p.getX(), (int) p.getY(), contentsType);
 	}
 
-	public GamaObjectMatrix(final int cols, final int rows, final IType contentsType) {
+	public GamaObjectMatrix(final int cols, final int rows, final IType<?> contentsType) {
 		super(cols, rows, contentsType);
 		setMatrix(new Object[cols * rows]);
 	}
@@ -83,13 +82,13 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		}
 	}
 
-	public GamaObjectMatrix(final int cols, final int rows, final Object[] objects, final IType contentsType) {
+	public GamaObjectMatrix(final int cols, final int rows, final Object[] objects, final IType<?> contentsType) {
 		this(cols, rows, contentsType);
 		java.lang.System.arraycopy(objects, 0, getMatrix(), 0, CmnFastMath.min(objects.length, rows * cols));
 	}
 
-	public GamaObjectMatrix(final IScope scope, final IList objects, final ILocation preferredSize,
-			final IType contentsType) {
+	public GamaObjectMatrix(final IScope scope, final IList<?> objects, final ILocation preferredSize,
+			final IType<?> contentsType) {
 		super(scope, objects, preferredSize, contentsType);
 		setMatrix(new Object[numRows * numCols]);
 		final boolean requiresCasting = GamaType.requiresCasting(contentsType, objects.getType().getContentType());
@@ -105,7 +104,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		} else {
 			for (int i = 0; i < numRows; i++) {
 				for (int j = 0; j < numCols; j++) {
-					set(scope, j, i, ((List) objects.get(j)).get(i));
+					set(scope, j, i, ((List<?>) objects.get(j)).get(i));
 				}
 			}
 		}
@@ -164,13 +163,14 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	// @Override
 	// @operator(value = IKeyword.APPEND_VERTICALLY, content_type =
 	// ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
-	public IMatrix _opAppendVertically(final IScope scope, final IMatrix b) {
+	public IMatrix<?> _opAppendVertically(final IScope scope, final IMatrix<?> b) {
 		final GamaObjectMatrix a = this;
 		final Object[] ma = a.getMatrix();
 		final Object[] mb = ((GamaObjectMatrix) b).getMatrix();
 		final Object[] mab = ArrayUtils.addAll(ma, mb);
-		final IType newContentsType = GamaType.findCommonType(getType().getContentType(), b.getType().getContentType());
-		final IMatrix fl = new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab,
+		final IType<?> newContentsType = GamaType.findCommonType(getType().getContentType(),
+				b.getType().getContentType());
+		final IMatrix<?> fl = new GamaObjectMatrix(a.getCols(scope), a.getRows(scope) + b.getRows(scope), mab,
 				newContentsType);
 
 		// throw GamaRuntimeException.error("ATTENTION : Matrix additions not
@@ -190,7 +190,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	// @Override
 	// @operator(value = IKeyword.APPEND_HORYZONTALLY, content_type =
 	// ITypeProvider.FIRST_CONTENT_TYPE, category={IOperatorCategory.MATRIX})
-	public GamaObjectMatrix _opAppendHorizontally(final IScope scope, final IMatrix b) {
+	public GamaObjectMatrix _opAppendHorizontally(final IScope scope, final IMatrix<?> b) {
 		// GamaObjectMatrix a = this;
 		final GamaObjectMatrix aprime = _reverse(scope);
 		// System.out.println("aprime = " + aprime);
@@ -262,13 +262,13 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	@Override
-	protected IList _listValue(final IScope scope, final IType contentsType, final boolean cast) {
+	protected IList<Object> _listValue(final IScope scope, final IType contentsType, final boolean cast) {
 		return cast ? GamaListFactory.create(scope, contentsType, getMatrix())
 				: GamaListFactory.createWithoutCasting(contentsType, getMatrix());
 	}
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize, final IType type,
+	protected IMatrix<Object> _matrixValue(final IScope scope, final ILocation preferredSize, final IType type,
 			final boolean copy) {
 		return GamaMatrixType.from(scope, this, type, preferredSize, copy);
 	}

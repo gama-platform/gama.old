@@ -126,7 +126,7 @@ public class SingleEquationStatement extends AbstractStatement {
 				return;
 			}
 
-			final IType type = ((IOperator) func).arg(0).getType();
+			final IType<?> type = ((IOperator) func).arg(0).getType();
 			if (!type.isTranslatableInto(Types.FLOAT)) {
 				d.error("The variable of the left-hand member of an equation is expected to be of type float",
 						IGamlIssue.WRONG_TYPE, fDesc.getTarget());

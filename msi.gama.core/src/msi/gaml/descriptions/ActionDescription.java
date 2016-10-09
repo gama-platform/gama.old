@@ -121,8 +121,8 @@ public class ActionDescription extends StatementWithChildrenDescription {
 					return false;
 				} else if (arg.getValue() != null && arg.getValue().getExpression() != null) {
 					final IDescription formalArg = Iterables.find(formalArgs, input -> input.getName().equals(name));
-					final IType formalType = formalArg.getType();
-					final IType callerType = arg.getValue().getExpression().getType();
+					final IType<?> formalType = formalArg.getType();
+					final IType<?> callerType = arg.getValue().getExpression().getType();
 					if (Types.intFloatCase(formalType, callerType)) {
 						caller.warning("The argument " + name + " (of type " + callerType + ") will be casted to "
 								+ formalType, IGamlIssue.WRONG_TYPE, arg.getValue().getTarget());

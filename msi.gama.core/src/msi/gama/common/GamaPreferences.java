@@ -145,7 +145,7 @@ public class GamaPreferences {
 		public void afterValueChange(T newValue);
 	}
 
-	public static class GenericFile extends GamaFile {
+	public static class GenericFile extends GamaFile implements IGamaFile {
 
 		private boolean shouldExist;
 

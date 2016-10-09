@@ -41,7 +41,7 @@ public abstract class GamaGeometryFile extends GamaFile<IList<IShape>, IShape, I
 	}
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType<?> getType() {
 		return Types.FILE.of(Types.INT, Types.GEOMETRY);
 	}
 

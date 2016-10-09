@@ -13,7 +13,6 @@ package msi.gama.common.interfaces;
 
 import java.util.Map;
 
-@SuppressWarnings({ "rawtypes" })
 public interface IAttributed {
 
 	/**
@@ -22,7 +21,7 @@ public interface IAttributed {
 	 * @return a map containing the attributes or null if no attributes are
 	 *         defined
 	 */
-	public Map getAttributes();
+	public Map<String, Object> getAttributes();
 
 	/**
 	 * Allows to retrieve the attributes of the object as a GamaMap. If the
@@ -31,7 +30,7 @@ public interface IAttributed {
 	 * @return a map containing the attributes or an empty map if no attributes
 	 *         are defined
 	 */
-	public Map getOrCreateAttributes();
+	public Map<String, Object> getOrCreateAttributes();
 
 	/**
 	 * Allows to retrieve the value stored at key "key"

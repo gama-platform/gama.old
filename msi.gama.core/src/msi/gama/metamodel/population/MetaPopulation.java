@@ -77,7 +77,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getAgents()
 	 */
 	@Override
-	public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
+	public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
 		final List<java.lang.Iterable<? extends IAgent>> result = new ArrayList<>();
 		for (final IPopulationSet p : populationSets) {
 			result.add(p.iterable(scope));

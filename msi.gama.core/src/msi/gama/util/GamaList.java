@@ -41,7 +41,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	private IContainerType type;
 
 	@Override
-	public IContainerType getType() {
+	public IContainerType<?> getType() {
 		return type;
 	}
 
@@ -50,13 +50,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		this.type = Types.LIST.of(contentType);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see msi.gaml.attributes.interfaces.IValueProvider#listValue()
-	 */
 	@Override
-	public IList listValue(final IScope scope, final IType contentsType, final boolean copy) {
+	public IList<E> listValue(final IScope scope, final IType contentsType, final boolean copy) {
 		if (!GamaType.requiresCasting(contentsType, getType().getContentType())) {
 			if (copy) {
 				return this.cloneWithContentType(contentsType);
@@ -69,7 +64,6 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 			clone.setValueAtIndex(scope, i, get(i));
 		}
 		return clone;
-		// return new GamaList(this);
 	}
 
 	/*
@@ -78,7 +72,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 * @see msi.gaml.attributes.interfaces.IValueProvider#matrixValue()
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentType, final boolean copy) {
+	public IMatrix<E> matrixValue(final IScope scope, final IType contentType, final boolean copy) {
 		return GamaMatrixType.from(scope, this, contentType, null);
 	}
 
@@ -90,7 +84,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 * GamaPoint)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
+	public IMatrix<E> matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
 			final boolean copy) {
 		return GamaMatrixType.from(scope, this, contentsType, preferredSize);
 	}
@@ -115,7 +109,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public GamaMap mapValue(final IScope scope, final IType keyType, final IType contentsType, final boolean copy) {
+	public GamaMap<?, ?> mapValue(final IScope scope, final IType keyType, final IType contentsType,
+			final boolean copy) {
 		// 08/01/14: Change of behavior. A list now returns a map containing its
 		// contents casted to pairs.
 		// Allows to build sets with the idiom: list <- map(list).values;
@@ -281,7 +276,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public IContainer reverse(final IScope scope) {
+	public IContainer<Integer, E> reverse(final IScope scope) {
 		final IList list = copy(scope);
 		Collections.reverse(list);
 		return list;
@@ -363,8 +358,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 *      msi.gama.util.IContainer)
 	 */
 	@Override
-	public void removeIndexes(final IScope scope, final IContainer<?, Object> index) {
-		final IList<Integer> l = index.listValue(scope, Types.INT, false);
+	public void removeIndexes(final IScope scope, final IContainer<?, ?> index) {
+		final IList<Integer> l = (IList<Integer>) index.listValue(scope, Types.INT, false);
 		Collections.sort(l, Collections.reverseOrder());
 		for (final Integer i : l) {
 			remove(i.intValue());

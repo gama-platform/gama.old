@@ -122,7 +122,7 @@ public class GAMA {
 	 * @param model
 	 */
 	public static synchronized IExperimentPlan addHeadlessExperiment(final IModel model, final String expName,
-			final ParametersSet params, final Long seed) {
+			final ParametersSet params, final Double seed) {
 
 		final ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
 
@@ -137,7 +137,7 @@ public class GAMA {
 		}
 		currentExperiment.open();
 		if (seed != null) {
-			currentExperiment.getAgent().setSeed(Double.longBitsToDouble(seed));
+			currentExperiment.getAgent().setSeed(seed);
 		}
 
 		currentExperiment.getAgent().createSimulation(new ParametersSet(), true);

@@ -179,7 +179,7 @@ public class PrimitiveOperator implements IExpression {
 	}
 
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		return action.getType();
 	}
 

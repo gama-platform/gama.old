@@ -50,12 +50,12 @@ public class GamaMaterialType extends GamaType<GamaMaterial> {
 	}
 
 	@Override
-	public IType getContentType() {
+	public IType<?> getContentType() {
 		return Types.get(FLOAT);
 	}
 
 	@Override
-	public IType getKeyType() {
+	public IType<?> getKeyType() {
 		return Types.get(INT);
 	}
 

@@ -44,7 +44,6 @@ public interface ICreateDelegate {
 	 * @return
 	 */
 
-	@SuppressWarnings("rawtypes")
 	boolean createFrom(IScope scope, List<Map<String, Object>> inits, Integer max, Object source, Arguments init,
 			CreateStatement statement);
 
@@ -56,7 +55,6 @@ public interface ICreateDelegate {
 	 * @return a GAML type representing the type of the source expected by this
 	 *         ICreateDelegate
 	 */
-	@SuppressWarnings("rawtypes")
-	IType fromFacetType();
+	IType<?> fromFacetType();
 
 }

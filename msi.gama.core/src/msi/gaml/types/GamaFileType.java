@@ -55,8 +55,8 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	 * @param s
 	 *            an array of allowed extensions for files of this type
 	 */
-	public static void addFileTypeDefinition(final String alias, final IType bufferType, final IType keyType,
-			final IType contentType, final Class clazz, final GamaHelper<IGamaFile> builder,
+	public static void addFileTypeDefinition(final String alias, final IType<?> bufferType, final IType<?> keyType,
+			final IType<?> contentType, final Class clazz, final GamaHelper<IGamaFile<?, ?, ?, ?>> builder,
 			final String[] extensions) {
 		// GAMA.getGui().debug("GamaFileType registering file type " + alias + "
 		// with extensions " +
@@ -83,7 +83,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		}
 		t.setParent(Types.FILE);
 		Types.builtInTypes.initType(alias + "_file", t, IType.AVAILABLE_TYPES + ++currentFileTypeIndex,
-				ISymbolKind.Variable.CONTAINER, new Class[] { clazz });
+				ISymbolKind.Variable.CONTAINER, clazz);
 
 	}
 

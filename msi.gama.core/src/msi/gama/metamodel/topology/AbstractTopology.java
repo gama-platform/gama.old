@@ -51,7 +51,7 @@ import msi.gaml.types.Types;
 public abstract class AbstractTopology implements ITopology {
 
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		return Types.TOPOLOGY;
 	}
 

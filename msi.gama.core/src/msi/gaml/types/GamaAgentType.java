@@ -33,18 +33,19 @@ public class GamaAgentType extends GamaType<IAgent> {
 	SpeciesDescription species;
 
 	public GamaAgentType(final SpeciesDescription species, final String name, final int speciesId,
-			final Class<?> base) {
+			final Class<IAgent> base) {
 		this.species = species;
 		this.name = name;
 		id = speciesId;
-		supports = new Class[] { base };
+		support = base;
+		// supports = new Class[] { base };
 		if (species != null) {
 			setDefiningPlugin(species.getDefiningPlugin());
 		}
 	}
 
 	@Override
-	public boolean isAssignableFrom(final IType t) {
+	public boolean isAssignableFrom(final IType<?> t) {
 		final boolean assignable = super.isAssignableFrom(t);
 		if (!assignable) {
 			// Hack to circumvent issue #1999. Should be better handled by
@@ -126,7 +127,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public IType getKeyType() {
+	public IType<String> getKeyType() {
 		return Types.STRING;
 	}
 

@@ -137,7 +137,7 @@ public class URLFile extends GamaFile<IList<String>, String, Integer, String> {
 	 * @see msi.gama.util.IContainer#getType()
 	 */
 	@Override
-	public IContainerType getType() {
+	public IContainerType<?> getType() {
 		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 

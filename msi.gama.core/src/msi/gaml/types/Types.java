@@ -49,7 +49,7 @@ public class Types {
 			MATERIAL;
 	public static IContainerType LIST, MATRIX, MAP, GRAPH, FILE, PAIR, CONTAINER, SPECIES;
 
-	static final THashMap<Class, String> CLASSES_TYPES_CORRESPONDANCE = new THashMap(10, 0.95f);
+	public static final THashMap<Class, String> CLASSES_TYPES_CORRESPONDANCE = new THashMap(10, 0.95f);
 
 	public static void cache(final int id, final IType instance) {
 		switch (id) {
@@ -214,7 +214,7 @@ public class Types {
 			type.setFieldGetters(vars);
 			type.setParent(node.getParent() == null ? null : node.getParent().getData());
 		}
-		// System.out.println("Hierarchy" + hierarchy.toStringWithDepth());
+		System.out.println("Hierarchy" + hierarchy.toStringWithDepth());
 	}
 
 	private static TypeTree<IType> buildHierarchy() {

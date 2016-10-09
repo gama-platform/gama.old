@@ -127,7 +127,7 @@ public class GamaDate extends MutableDateTime implements IValue {
 	}
 
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		return Types.DATE;
 	}
 

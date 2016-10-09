@@ -465,7 +465,7 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 	 *      msi.gama.util.IContainer)
 	 */
 	@Override
-	public void removeIndexes(final IScope scope, final IContainer<?, Object> index) {
+	public void removeIndexes(final IScope scope, final IContainer<?, ?> index) {
 		for (final Object key : index.iterable(scope)) {
 			remove(key);
 		}

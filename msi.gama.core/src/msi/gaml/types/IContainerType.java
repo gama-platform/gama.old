@@ -22,20 +22,19 @@ import msi.gaml.expressions.IExpression;
  * @since 28 janv. 2014
  *
  */
-@SuppressWarnings({ "rawtypes" })
-public interface IContainerType<T extends IContainer> extends IType<T> {
+public interface IContainerType<T extends IContainer<?, ?>> extends IType<T> {
 
 	@Override
-	public IContainerType getType();
+	public IContainerType<T> getType();
 
 	@Override
-	public IContainerType typeIfCasting(final IExpression exp);
+	public IContainerType<?> typeIfCasting(final IExpression exp);
 
 	@Override
 	public T cast(IScope scope, Object obj, Object param, boolean copy);
 
 	@Override
-	public T cast(IScope scope, Object obj, Object param, IType keyType, IType contentType, boolean copy);
+	public T cast(IScope scope, Object obj, Object param, IType<?> keyType, IType<?> contentType, boolean copy);
 
 	/**
 	 * Allows to build a parametric type
@@ -43,6 +42,6 @@ public interface IContainerType<T extends IContainer> extends IType<T> {
 	 * @param subs
 	 * @return
 	 */
-	public IContainerType of(IType... subs);
+	public IContainerType<?> of(IType<?>... subs);
 
 }

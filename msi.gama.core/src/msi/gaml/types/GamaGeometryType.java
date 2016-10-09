@@ -69,8 +69,8 @@ import msi.gaml.species.ISpecies;
  * @todo Description
  *
  */
-@type(name = IKeyword.GEOMETRY, id = IType.GEOMETRY, wraps = { GamaShape.class,
-		IShape.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.GEOMETRY })
+@type(name = IKeyword.GEOMETRY, id = IType.GEOMETRY, wraps = { IShape.class,
+		GamaShape.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.GEOMETRY })
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaGeometryType extends GamaType<IShape> {
 

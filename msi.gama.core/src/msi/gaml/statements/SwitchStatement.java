@@ -123,7 +123,7 @@ public class SwitchStatement extends AbstractStatementSequence implements Breaka
 				if (value == null) {
 					continue;
 				}
-				final IType matchType = value.getType();
+				final IType<?> matchType = value.getType();
 				// AD : special case introduced for ints and floats (a warning
 				// is emitted)
 				if (Types.intFloatCase(matchType, switchType)) {

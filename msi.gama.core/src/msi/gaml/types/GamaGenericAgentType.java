@@ -14,7 +14,8 @@ package msi.gaml.types;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.type;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.IConcept;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -28,8 +29,8 @@ import msi.gaml.descriptions.SpeciesDescription;
  * @modified 08 juin 2012
  * 
  */
-@type(name = IKeyword.AGENT, id = IType.AGENT, wraps = { IAgent.class }, kind = ISymbolKind.Variable.REGULAR,
-concept = { IConcept.TYPE, IConcept.SPECIES })
+@type(name = IKeyword.AGENT, id = IType.AGENT, wraps = {
+		IAgent.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.SPECIES })
 public class GamaGenericAgentType extends GamaAgentType {
 
 	public GamaGenericAgentType() {
@@ -41,21 +42,25 @@ public class GamaGenericAgentType extends GamaAgentType {
 	}
 
 	@Override
-	public IAgent cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-		final IType contentsType, final boolean copy) throws GamaRuntimeException {
+	public IAgent cast(final IScope scope, final Object obj, final Object param, final IType<?> keyType,
+			final IType<?> contentsType, final boolean copy) throws GamaRuntimeException {
 		return cast(scope, obj, param, copy);
 	}
 
 	@Override
 	public IAgent cast(final IScope scope, final Object obj, final Object param, final boolean copy)
-		throws GamaRuntimeException {
-		if ( obj == null ) { return getDefault(); }
-		if ( obj instanceof IAgent ) { return (IAgent) obj; }
+			throws GamaRuntimeException {
+		if (obj == null) {
+			return getDefault();
+		}
+		if (obj instanceof IAgent) {
+			return (IAgent) obj;
+		}
 		return getDefault();
 	}
 
 	@Override
-	public boolean isSuperTypeOf(final IType type) {
+	public boolean isSuperTypeOf(final IType<?> type) {
 		return type != this && type instanceof GamaAgentType;
 	}
 

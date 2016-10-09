@@ -15,6 +15,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
+
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulationSet;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.ISpatialGraph;
@@ -62,8 +65,8 @@ public abstract class In implements IAgentFilter {
 		}
 
 		@Override
-		public IContainer<?, ? extends IShape> getAgents(final IScope scope) {
-			return GamaListFactory.createWithoutCasting(contentType, agents);
+		public IContainer<?, ? extends IAgent> getAgents(final IScope scope) {
+			return GamaListFactory.createWithoutCasting(Types.AGENT, Iterables.filter(agents, IAgent.class));
 		}
 
 		@Override
@@ -78,42 +81,5 @@ public abstract class In implements IAgentFilter {
 		}
 
 	}
-
-	// private static class InGraph extends In {
-	//
-	// final GamaSpatialGraph graph;
-	// final boolean byEdges;
-	//
-	// InGraph(final GamaSpatialGraph g, final boolean edges) {
-	// graph = g;
-	// byEdges = edges;
-	// }
-	//
-	// @Override
-	// public boolean accept(final IScope scope, final IShape source, final
-	// IShape a) {
-	// return a.getGeometry() != source.getGeometry() && byEdges ?
-	// graph.containsEdge(a) : graph.containsVertex(a);
-	//
-	// }
-	//
-	// @Override
-	// public IContainer<?, ? extends IShape> getAgents() {
-	// return byEdges ? graph.getEdges() : graph.getVertices();
-	// }
-	//
-	// @Override
-	// public ISpecies getSpecies() {
-	// return null; // See if we can identify the species of edges / vertices
-	// }
-	//
-	// @Override
-	// public void filter(final IScope scope, final IShape source, final
-	// Collection<? extends IShape> results) {
-	// Set<IShape> agents = byEdges ? graph.edgeSet() : graph.vertexSet();
-	// results.retainAll(agents);
-	// }
-	//
-	// }
 
 }

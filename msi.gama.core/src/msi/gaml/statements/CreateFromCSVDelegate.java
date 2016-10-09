@@ -94,7 +94,7 @@ public class CreateFromCSVDelegate implements ICreateDelegate {
 	 * @see msi.gama.common.interfaces.ICreateDelegate#fromFacetType()
 	 */
 	@Override
-	public IType fromFacetType() {
+	public IType<?> fromFacetType() {
 		return Types.FILE;
 	}
 

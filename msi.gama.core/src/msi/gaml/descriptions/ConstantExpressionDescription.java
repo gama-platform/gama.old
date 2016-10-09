@@ -131,7 +131,7 @@ public class ConstantExpressionDescription extends ConstantExpression implements
 	}
 
 	@Override
-	public IType getType() {
+	public IType<?> getType() {
 		return type;
 	}
 

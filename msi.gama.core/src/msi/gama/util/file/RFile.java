@@ -265,7 +265,7 @@ public class RFile extends GamaFile<GamaMap<String, IList>, IList, String, IList
 	 * @see msi.gama.util.IContainer#getType()
 	 */
 	@Override
-	public IContainerType getType() {
+	public IContainerType<IGamaFile> getType() {
 		return Types.FILE.of(Types.INT, Types.STRING);
 	}
 

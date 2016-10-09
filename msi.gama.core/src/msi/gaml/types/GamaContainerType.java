@@ -18,6 +18,7 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -28,8 +29,7 @@ import msi.gaml.expressions.IExpression;
  */
 @type(name = IKeyword.CONTAINER, id = IType.CONTAINER, wraps = {
 		IContainer.class }, kind = ISymbolKind.Variable.CONTAINER, concept = { IConcept.TYPE, IConcept.CONTAINER })
-@SuppressWarnings({ "unchecked", "rawtypes" })
-public class GamaContainerType<T extends IContainer> extends GamaType<T> implements IContainerType<T> {
+public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> implements IContainerType<T> {
 
 	@Override
 	public T cast(final IScope scope, final Object obj, final Object param, final boolean copy)
@@ -40,11 +40,13 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 		// Types.NO_TYPE, Types.NO_TYPE));
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public T cast(final IScope scope, final Object obj, final Object param, final IType keyType,
-			final IType contentType, final boolean copy) throws GamaRuntimeException {
+	public T cast(final IScope scope, final Object obj, final Object param, final IType<?> keyType,
+			final IType<?> contentType, final boolean copy) throws GamaRuntimeException {
 		// by default
-		return (T) (obj instanceof IContainer ? (IContainer) obj : Types.get(LIST).cast(scope, obj, null, copy));
+		return (T) (obj instanceof IContainer ? (IContainer<?, ?>) obj
+				: (IList<?>) Types.get(LIST).cast(scope, obj, null, copy));
 	}
 
 	@Override
@@ -53,7 +55,7 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 	}
 
 	@Override
-	public GamaContainerType getType() {
+	public IContainerType<T> getType() {
 		return this;
 	}
 
@@ -68,8 +70,8 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 	}
 
 	@Override
-	public IType contentsTypeIfCasting(final IExpression exp) {
-		final IType itemType = exp.getType();
+	public IType<?> contentsTypeIfCasting(final IExpression exp) {
+		final IType<?> itemType = exp.getType();
 		if (itemType.isContainer() || itemType.isAgentType()) {
 			return itemType.getContentType();
 		}
@@ -77,8 +79,8 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 	}
 
 	@Override
-	public IContainerType typeIfCasting(final IExpression exp) {
-		return (IContainerType) super.typeIfCasting(exp);
+	public IContainerType<?> typeIfCasting(final IExpression exp) {
+		return (IContainerType<?>) super.typeIfCasting(exp);
 	}
 
 	@Override
@@ -86,13 +88,14 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 		return false;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public IContainerType of(final IType... subs) {
+	public IContainerType<?> of(final IType<?>... subs) {
 		if (subs.length == 0) {
 			return this;
 		}
-		IType kt = subs.length == 1 ? getKeyType() : subs[0];
-		IType ct = subs.length == 1 ? subs[0] : subs[1];
+		IType<?> kt = subs.length == 1 ? getKeyType() : subs[0];
+		IType<?> ct = subs.length == 1 ? subs[0] : subs[1];
 		if (ct == Types.NO_TYPE) {
 			if (kt == Types.NO_TYPE) {
 				return this;
@@ -102,7 +105,7 @@ public class GamaContainerType<T extends IContainer> extends GamaType<T> impleme
 		if (kt == Types.NO_TYPE) {
 			kt = getKeyType();
 		}
-		return new ParametricType(this, kt, ct);
+		return new ParametricType((IContainerType<IContainer<?, ?>>) this, kt, ct);
 
 	}
 
