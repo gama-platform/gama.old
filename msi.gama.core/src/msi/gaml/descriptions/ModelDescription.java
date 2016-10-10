@@ -23,14 +23,8 @@ import org.eclipse.emf.ecore.EObject;
 
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.compilation.ast.ISyntacticElement;
-import msi.gaml.compilation.ast.SyntacticFactory;
-import msi.gaml.expressions.ConstantExpression;
-import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
@@ -390,16 +384,19 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public boolean finalizeDescription() {
-		VariableDescription vd = getAttribute(SHAPE);
+		final VariableDescription vd = getAttribute(SHAPE);
 
-		if (!isBuiltIn() && !vd.hasFacet(INIT)) {
-			final Facets f = new Facets(NAME, SHAPE);
-			f.put(INIT,
-					GAML.getExpressionFactory().createOperator("envelope", this, null, new ConstantExpression(100)));
-			final ISyntacticElement shape = SyntacticFactory.create(IKeyword.GEOMETRY, f, false);
-			vd = (VariableDescription) DescriptionFactory.create(shape, this, null);
-			addChild(vd);
-		}
+		// if (!isBuiltIn() && !vd.hasFacet(INIT)) {
+		// final Facets f = new Facets(NAME, SHAPE);
+		// f.put(INIT,
+		// GAML.getExpressionFactory().createOperator("envelope", this, null,
+		// new ConstantExpression(100)));
+		// final ISyntacticElement shape =
+		// SyntacticFactory.create(IKeyword.GEOMETRY, f, false);
+		// vd = (VariableDescription) DescriptionFactory.create(shape, this,
+		// null);
+		// addChild(vd);
+		// }
 		if (!super.finalizeDescription())
 			return false;
 		if (actions != null)

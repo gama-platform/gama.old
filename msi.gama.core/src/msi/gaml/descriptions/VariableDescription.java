@@ -41,6 +41,10 @@ import msi.gaml.types.Types;
 public class VariableDescription extends SymbolDescription {
 
 	private static Map<String, Set<String>> dependencies = new THashMap<>();
+	private static Set<String> INIT_DEPENDENCIES_FACETS = ImmutableSet.<String> builder()
+			.add(INIT, MIN, MAX, FUNCTION, STEP, SIZE).build();
+	private static Set<String> UPDATE_DEPENDENCIES_FACETS = ImmutableSet.<String> builder()
+			.add(UPDATE, VALUE, MIN, MAX, FUNCTION).build();
 	private String plugin;
 
 	private final boolean _isGlobal, _isNotModifiable;
@@ -207,11 +211,6 @@ public class VariableDescription extends SymbolDescription {
 		}
 		return result;
 	}
-
-	private static Set<String> INIT_DEPENDENCIES_FACETS = ImmutableSet.<String> builder()
-			.add(INIT, MIN, MAX, FUNCTION, STEP, SIZE).build();
-	private static Set<String> UPDATE_DEPENDENCIES_FACETS = ImmutableSet.<String> builder()
-			.add(UPDATE, VALUE, MIN, MAX, FUNCTION).build();
 
 	public Set<VariableDescription> getDependencies(final boolean forInit) {
 

@@ -63,6 +63,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
+import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 
 /**
@@ -342,10 +343,13 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
-	public void setGeometry(final IShape geom) {
+	public void setGeometry(final IShape g) {
 		// FIXME : AD 5/15 Revert the commit by PT:
 		// getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
 		// We systematically translate the geometry to {0,0}
+		IShape geom = g;
+		if (geom == null)
+			geom = GamaGeometryType.buildBox(100, 100, 100, new GamaPoint(50, 50, 50));
 		final Envelope3D env = geom.getEnvelope();
 		if (getProjectionFactory().getWorld() != null) {
 			((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);

@@ -241,7 +241,7 @@ public class SymbolProto extends AbstractProto {
 	 * @return
 	 */
 	public Set<String> getMissingMandatoryFacets(final Facets facets) {
-		if (facets == null) {
+		if (facets == null || facets.isEmpty()) {
 			if (mandatoryFacets == null || mandatoryFacets.isEmpty())
 				return null;
 			return mandatoryFacets;
