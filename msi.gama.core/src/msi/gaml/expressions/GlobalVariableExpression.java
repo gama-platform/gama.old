@@ -48,8 +48,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 
 	@Override
 	public IExpression getOwner() {
-		return new WorldExpression(this.getDefinitionDescription().getModelDescription().getType(),
-				this.getDefinitionDescription().getModelDescription());
+		return this.getDefinitionDescription().getModelDescription().getVarExpr(IKeyword.WORLD_AGENT_NAME, false);
 	}
 
 	@Override
