@@ -57,6 +57,8 @@ import msi.gaml.factories.ModelFactory;
  */
 public class GamlResource extends LazyLinkingResource {
 
+	private static boolean MEMOIZE_DESCRIPTION = false;
+	ModelDescription description;
 	SyntacticModelElement element;
 
 	public ValidationContext getValidationContext() {
@@ -83,7 +85,7 @@ public class GamlResource extends LazyLinkingResource {
 
 	public ISyntacticElement getSyntacticContents() {
 		if (element == null)
-			element = GamlResourceServices.buildSyntacticContents(this);
+			setElement(GamlResourceServices.buildSyntacticContents(this));
 		return element;
 	}
 
@@ -93,6 +95,7 @@ public class GamlResource extends LazyLinkingResource {
 	};
 
 	private ModelDescription buildModelDescription(final LinkedHashMultimap<String, GamlResource> resources) {
+
 		// Initializations
 		GAML.getExpressionFactory().resetParser();
 		final ModelFactory f = GAML.getModelFactory();
@@ -140,15 +143,20 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public ModelDescription buildCompleteDescription() {
+		if (MEMOIZE_DESCRIPTION && description != null)
+			return description;
 		final LinkedHashMultimap<String, GamlResource> imports = GamlResourceIndexer.validateImportsOf(this);
-		if (hasErrors() || hasSemanticErrors())
+		if (hasErrors() || hasSemanticErrors()) {
+			setDescription(null);
 			return null;
+		}
 		final ModelDescription model = buildModelDescription(imports);
 		// If, for whatever reason, the description is null, we stop the
 		// semantic validation
 		if (model == null) {
 			invalidate(this, "Impossible to validate " + URI.decode(getURI().lastSegment()) + " (check the logs)");
 		}
+		setDescription(model);
 		return model;
 	}
 
@@ -179,11 +187,12 @@ public class GamlResource extends LazyLinkingResource {
 			model.validate(edited);
 			updateWith(model, true);
 		} finally {
-			if (edited) {
-				GamlResourceServices.getResourceDocumenter().addCleanupTask(model);
-			} else {
-				model.dispose();
-			}
+			if (!MEMOIZE_DESCRIPTION)
+				if (edited) {
+					GamlResourceServices.getResourceDocumenter().addCleanupTask(model);
+				} else {
+					model.dispose();
+				}
 		}
 
 	}
@@ -191,19 +200,40 @@ public class GamlResource extends LazyLinkingResource {
 	@Override
 	protected void updateInternalState(final IParseResult oldParseResult, final IParseResult newParseResult) {
 		super.updateInternalState(oldParseResult, newParseResult);
-		element = null;
+		setElement(null);
+		setDescription(null);
 	}
 
 	@Override
 	protected void clearInternalState() {
 		super.clearInternalState();
-		element = null;
+		setElement(null);
+		setDescription(null);
 	}
 
 	@Override
 	protected void doUnload() {
 		super.doUnload();
-		element = null;
+		setElement(null);
+		setDescription(null);
+	}
+
+	private void setDescription(final ModelDescription model) {
+		if (!MEMOIZE_DESCRIPTION)
+			return;
+		if (model == description)
+			return;
+		if (description != null)
+			description.dispose();
+		description = model;
+	}
+
+	private void setElement(final SyntacticModelElement model) {
+		if (model == element)
+			return;
+		if (element != null)
+			element.dispose();
+		element = model;
 	}
 
 	/**

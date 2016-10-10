@@ -55,13 +55,7 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 		visitAllChildren(visitor, EXPERIMENT_FILTER);
 	}
 
-	static SyntacticVisitor compacter = new SyntacticVisitor() {
-
-		@Override
-		public void visit(final ISyntacticElement element) {
-			element.compact();
-		}
-	};
+	static SyntacticVisitor compacter = element -> element.compact();
 
 	public void compactModel() {
 		this.visitThisAndAllChildrenRecursively(compacter);
@@ -70,4 +64,5 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 	public String getPath() {
 		return path;
 	}
+
 }

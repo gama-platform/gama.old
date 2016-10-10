@@ -36,15 +36,16 @@ public interface ISyntacticElement {
 		void visit(ISyntacticElement element);
 	}
 
-	public static final Predicate<ISyntacticElement> SPECIES_FILTER = input -> input.isSpecies()
-			&& !IKeyword.GRID.equals(input.getKeyword());
+	public static final SyntacticVisitor DISPOSE_VISITOR = each -> each.dispose();
 
-	public static final Predicate<ISyntacticElement> GRID_FILTER = input -> IKeyword.GRID.equals(input.getKeyword());
+	public static final Predicate<ISyntacticElement> SPECIES_FILTER = each -> each.isSpecies()
+			&& !IKeyword.GRID.equals(each.getKeyword());
 
-	public static final Predicate<ISyntacticElement> EXPERIMENT_FILTER = input -> input.isExperiment();
+	public static final Predicate<ISyntacticElement> GRID_FILTER = each -> IKeyword.GRID.equals(each.getKeyword());
 
-	public static final Predicate<ISyntacticElement> OTHER_FILTER = input -> !input.isExperiment()
-			&& !input.isSpecies();
+	public static final Predicate<ISyntacticElement> EXPERIMENT_FILTER = each -> each.isExperiment();
+
+	public static final Predicate<ISyntacticElement> OTHER_FILTER = each -> !each.isExperiment() && !each.isSpecies();
 
 	public abstract void setKeyword(final String name);
 
@@ -97,5 +98,7 @@ public interface ISyntacticElement {
 	public abstract boolean hasChildren();
 
 	public abstract void visitAllChildren(SyntacticVisitor syntacticVisitor);
+
+	public abstract void dispose();
 
 }

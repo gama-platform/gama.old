@@ -76,4 +76,15 @@ public class SyntacticComposedElement extends AbstractSyntacticElement {
 		return children != null;
 	}
 
+	@Override
+	public void dispose() {
+		super.dispose();
+		if (children != null) {
+			for (final ISyntacticElement e : children) {
+				e.dispose();
+			}
+		}
+		children = null;
+	}
+
 }
