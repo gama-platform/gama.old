@@ -18,7 +18,6 @@ import com.google.common.primitives.Ints;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.Envelope3D;
@@ -411,10 +410,10 @@ public abstract class AbstractAgent implements IAgent {
 		return a.getModel();
 	}
 
-	@Override
-	public IExperimentAgent getExperiment() {
-		return getHost().getExperiment();
-	}
+	// @Override
+	// public IExperimentAgent getExperiment() {
+	// return getHost().getExperiment();
+	// }
 
 	@Override
 	public IScope getScope() {

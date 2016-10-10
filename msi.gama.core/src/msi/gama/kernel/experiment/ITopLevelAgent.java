@@ -43,4 +43,6 @@ public interface ITopLevelAgent extends IMacroAgent {
 
 	public SimulationAgent getSimulation();
 
+	public IExperimentAgent getExperiment();
+
 }

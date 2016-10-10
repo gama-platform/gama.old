@@ -20,10 +20,12 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ActionExecuter;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
@@ -46,6 +48,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.AbstractScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -79,6 +82,9 @@ import msi.gaml.types.IType;
 				+ IKeyword.CELLULAR
 				+ " is a cellular automaton based generator that should be a bit faster, but less reliable; and "
 				+ IKeyword.JAVA + " invokes the standard Java generator")),
+		@var(name = IKeyword.EXPERIMENT, type = ITypeProvider.EXPERIMENT_TYPE, doc = {
+				@doc("Returns the current experiment agent") }),
+		@var(name = IKeyword.WORLD_AGENT_NAME, type = ITypeProvider.MODEL_TYPE, doc = @doc("Represents the 'world' of the agents, i.e. the instance of the model in which they are instantiated. Equivalent to 'simulation' in experiments")),
 		@var(name = IKeyword.STEP, type = IType.FLOAT, doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles", comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
 		@var(name = SimulationAgent.TIME, type = IType.FLOAT, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
 		@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")),
@@ -172,6 +178,16 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
+	@getter(IKeyword.EXPERIMENT)
+	public IExperimentAgent getExperiment() {
+		final IMacroAgent agent = getHost();
+		if (agent instanceof IExperimentAgent)
+			return (IExperimentAgent) agent;
+		return null;
+	}
+
+	@Override
+	@getter(IKeyword.WORLD_AGENT_NAME)
 	public SimulationAgent getSimulation() {
 		return this;
 	}

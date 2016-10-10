@@ -24,7 +24,6 @@ import static msi.gama.common.interfaces.IKeyword.SELF;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 import static msi.gama.common.interfaces.IKeyword.TRUE;
 import static msi.gama.common.interfaces.IKeyword.UNKNOWN;
-import static msi.gama.common.interfaces.IKeyword.WORLD_AGENT_NAME;
 import static msi.gama.common.interfaces.IKeyword._DOT;
 import static msi.gaml.expressions.IExpressionFactory.FALSE_EXPR;
 import static msi.gaml.expressions.IExpressionFactory.TRUE_EXPR;
@@ -592,15 +591,16 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	// KEEP
-	private IExpression getWorldExpr() {
-		// if (world == null) {
-		final IType tt = getContext().getModelDescription()
-				./* getWorldSpecies(). */getType();
-		final IExpression world = getFactory().createVar(WORLD_AGENT_NAME, tt, true, IVarExpression.WORLD,
-				getContext().getModelDescription());
-		// }
-		return world;
-	}
+	// private IExpression getWorldExpr() {
+	// // if (world == null) {
+	// final IType tt = getContext().getModelDescription()
+	// ./* getWorldSpecies(). */getType();
+	// final IExpression world = getFactory().createVar(WORLD_AGENT_NAME, tt,
+	// true, IVarExpression.WORLD,
+	// getContext().getModelDescription());
+	// // }
+	// return world;
+	// }
 
 	private IDescription setContext(final IDescription context) {
 		final IDescription previous = currentContext;
@@ -1093,8 +1093,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			}
 			final IType tt = temp_sd.getType();
 			return getFactory().createVar(SELF, tt, true, IVarExpression.SELF, null);
-		case WORLD_AGENT_NAME:
-			return getWorldExpr();
+		// case WORLD_AGENT_NAME:
+		// return getWorldExpr();
 		}
 
 		if (isSpeciesName(varName)) {

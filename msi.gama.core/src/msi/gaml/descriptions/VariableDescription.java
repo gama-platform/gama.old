@@ -181,6 +181,8 @@ public class VariableDescription extends SymbolDescription {
 					return Types.get("model");
 				}
 				return md.getType();
+			case ITypeProvider.EXPERIMENT_TYPE:
+				return Types.get("experiment");
 			case ITypeProvider.MIRROR_TYPE:
 				if (getEnclosingDescription() == null) {
 					return null;
