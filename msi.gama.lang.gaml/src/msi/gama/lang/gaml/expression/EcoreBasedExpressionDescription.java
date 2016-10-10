@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.expression;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -67,7 +66,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 				if (skills && !GamaSkillRegistry.INSTANCE.hasSkill(skillName)) {
 					context.error("Unknown " + type + " " + skillName, IGamlIssue.UNKNOWN_SKILL, target);
 				}
-				return new HashSet<>(Arrays.asList(skillName));
+				return Collections.singleton(skillName);
 			}
 			if (target instanceof Expression) {
 				context.error("Impossible to recognize valid " + type + "s in " + EGaml.toString(target),

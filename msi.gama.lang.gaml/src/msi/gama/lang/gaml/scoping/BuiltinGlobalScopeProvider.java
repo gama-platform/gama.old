@@ -78,7 +78,6 @@ import msi.gaml.types.Types;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 
-	// public static BuiltinGlobalScopeProvider INSTANCE;
 	static final THashMap EMPTY_MAP = new THashMap<>();
 	private static THashMap<EClass, TerminalMapBasedScope> GLOBAL_SCOPES = new THashMap<>();
 	private static THashSet<QualifiedName> allNames;

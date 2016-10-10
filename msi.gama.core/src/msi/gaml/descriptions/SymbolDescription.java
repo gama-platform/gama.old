@@ -15,11 +15,13 @@ import static msi.gama.util.GAML.getExpressionFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlDescription;
@@ -29,7 +31,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
 import msi.gaml.statements.IStatement;
@@ -43,11 +44,10 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class SymbolDescription implements IDescription {
 
-	protected static Set<String> typeProviderFacets = new HashSet(
-			Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX, FUNCTION, UPDATE, INIT, DEFAULT));
+	protected static Set<String> typeProviderFacets = ImmutableSet
+			.copyOf(Arrays.asList(VALUE, TYPE, AS, SPECIES, OF, OVER, FROM, INDEX, FUNCTION, UPDATE, INIT, DEFAULT));
 
 	private Facets facets;
 	protected final EObject element;
@@ -55,11 +55,10 @@ public abstract class SymbolDescription implements IDescription {
 	protected String originName;
 	protected String name;
 	protected final String keyword;
-	// protected boolean validated;
 	private IType<?> type;
 
-	public SymbolDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
-			final EObject source, final Facets facets) {
+	public SymbolDescription(final String keyword, final IDescription superDesc, final EObject source,
+			final Iterable<? extends IDescription> children, final Facets facets) {
 		this.keyword = keyword;
 		this.facets = facets;
 		element = source;
@@ -67,9 +66,7 @@ public abstract class SymbolDescription implements IDescription {
 			originName = superDesc.getName();
 		}
 		setEnclosingDescription(superDesc);
-		if (getMeta().hasSequence()) {
-			addChildren(cp.getChildren());
-		}
+		addChildren(children);
 	}
 
 	protected boolean hasFacets() {
@@ -90,9 +87,9 @@ public abstract class SymbolDescription implements IDescription {
 		});
 	}
 
-	public final SymbolSerializer getSerializer() {
+	public final SymbolSerializer<? extends SymbolDescription> getSerializer() {
 		final SymbolProto p = getMeta();
-		SymbolSerializer d = p.getSerializer();
+		SymbolSerializer<? extends SymbolDescription> d = p.getSerializer();
 		if (d == null) {
 			d = createSerializer();
 			p.setSerializer(d);
@@ -173,7 +170,7 @@ public abstract class SymbolDescription implements IDescription {
 		return getTypeDenotedByFacet(facets.getFirstExistingAmong(s), Types.NO_TYPE);
 	}
 
-	public IType<?> getTypeDenotedByFacet(final String s, final IType defaultType) {
+	public IType<?> getTypeDenotedByFacet(final String s, final IType<?> defaultType) {
 		if (!hasFacets())
 			return defaultType;
 		return facets.getTypeDenotedBy(s, this, defaultType);
@@ -186,8 +183,8 @@ public abstract class SymbolDescription implements IDescription {
 	/**
 	 * @return
 	 */
-	protected SymbolSerializer createSerializer() {
-		return SymbolSerializer.getInstance();
+	protected SymbolSerializer<? extends SymbolDescription> createSerializer() {
+		return SYMBOL_SERIALIZER;
 	}
 
 	@Override
@@ -250,13 +247,6 @@ public abstract class SymbolDescription implements IDescription {
 			if (desc != null) {
 				e = desc.getUnderlyingElement(null);
 			}
-		}
-		if (!warning && !info) {
-			// final String resource = e == null || e.eResource() == null ? "(no
-			// file)"
-			// : e.eResource().getURI().lastSegment();
-			// System.err.println("COMPILATION ERROR in " + this.toString() + ":
-			// " + s + "; source: " + resource);
 		}
 		// throws a runtime exception if there is no way to signal the error in
 		// the source
@@ -379,7 +369,9 @@ public abstract class SymbolDescription implements IDescription {
 
 	// To add children from outside
 	@Override
-	public final void addChildren(final Iterable<IDescription> originalChildren) {
+	public final void addChildren(final Iterable<? extends IDescription> originalChildren) {
+		if (originalChildren == null /* || !getMeta().hasSequence() */)
+			return;
 		for (final IDescription c : originalChildren) {
 			addChild(c);
 		}
@@ -482,12 +474,12 @@ public abstract class SymbolDescription implements IDescription {
 		return type;
 	}
 
-	protected IType computeType() {
+	protected IType<?> computeType() {
 
 		// Adapter ca pour prendre ne ocmpte les ITypeProvider
-		IType tt = getTypeDenotedByFacet(TYPE, SPECIES, AS, TARGET, ON);
-		IType kt = getTypeDenotedByFacet(INDEX, tt.getKeyType());
-		IType ct = getTypeDenotedByFacet(OF, tt.getContentType());
+		IType<?> tt = getTypeDenotedByFacet(TYPE, SPECIES, AS, TARGET, ON);
+		IType<?> kt = getTypeDenotedByFacet(INDEX, tt.getKeyType());
+		IType<?> ct = getTypeDenotedByFacet(OF, tt.getContentType());
 		final boolean isContainerWithNoContentsType = tt.isContainer() && ct == Types.NO_TYPE;
 		final boolean isContainerWithNoKeyType = tt.isContainer() && kt == Types.NO_TYPE;
 		final boolean isSpeciesWithAgentType = tt.id() == IType.SPECIES && ct.id() == IType.AGENT;
@@ -495,7 +487,7 @@ public abstract class SymbolDescription implements IDescription {
 			compileTypeProviderFacets();
 			final IExpression expr = getFacetExpr(INIT, VALUE, UPDATE, FUNCTION, DEFAULT);
 			if (expr != null) {
-				final IType exprType = expr.getType();
+				final IType<?> exprType = expr.getType();
 				if (tt.isAssignableFrom(exprType)) {
 					tt = exprType;
 				} else {
@@ -692,7 +684,7 @@ public abstract class SymbolDescription implements IDescription {
 				} else if (fp.deprecated != null) {
 					warning("Facet '" + facet + "' is deprecated: " + fp.deprecated, IGamlIssue.DEPRECATED, facet);
 				}
-				if (fp.values.size() > 0) {
+				if (fp.values != null) {
 					final String val = expr.getExpression().literalValue();
 					// We have a multi-valued facet
 					if (!fp.values.contains(val)) {
@@ -714,13 +706,13 @@ public abstract class SymbolDescription implements IDescription {
 					if (exp != null && !isBuiltIn) {
 						// Some expresssions might not be compiled
 						boolean compatible = false;
-						final IType actualType = exp.getType();
+						final IType<?> actualType = exp.getType();
 						// final ITypesManager tm =
 						// getModelDescription().getTypesManager();
-						final IType contentType = fp.contentType;
-						final IType keyType = fp.keyType;
-						for (final IType type : fp.types) {
-							IType requestedType = type;
+						final IType<?> contentType = fp.contentType;
+						final IType<?> keyType = fp.keyType;
+						for (final IType<?> type : fp.types) {
+							IType<?> requestedType = type;
 							if (requestedType.isContainer()) {
 								requestedType = GamaType.from(requestedType, keyType, contentType);
 							}
@@ -732,7 +724,7 @@ public abstract class SymbolDescription implements IDescription {
 						if (!compatible) {
 							final String[] strings = new String[fp.types.length];
 							for (int i = 0; i < fp.types.length; i++) {
-								IType requestedType = fp.types[i];
+								IType<?> requestedType = fp.types[i];
 								if (requestedType.isContainer()) {
 									requestedType = GamaType.from(requestedType, keyType, contentType);
 								}
@@ -774,9 +766,6 @@ public abstract class SymbolDescription implements IDescription {
 			((IStatement.WithArgs) cs).setFormalArgs(((StatementDescription) this).createCompiledArgs());
 		}
 		if (proto.hasSequence() && !proto.isPrimitive()) {
-			// if (proto.isRemoteContext()) {
-			// copyTempsAbove();
-			// }
 			cs.setChildren(compileChildren());
 		}
 		return cs;
@@ -788,7 +777,9 @@ public abstract class SymbolDescription implements IDescription {
 	 * 
 	 * @see msi.gaml.descriptions.IDescription#compileChildren()
 	 */
-	protected List<? extends ISymbol> compileChildren() {
+	protected Iterable<? extends ISymbol> compileChildren() {
+		// return Iterables.transform(getChildren(), each -> each.compile());
+
 		final List<ISymbol> lce = new ArrayList<>();
 		visitChildren(new DescriptionVisitor<IDescription>() {
 
@@ -809,39 +800,12 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public Iterable<IDescription> getChildrenWithKeyword(final String keyword) {
-
-		final List<IDescription> result = new ArrayList<>();
-
-		visitChildren(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription desc) {
-				if (desc.getKeyword().equals(keyword))
-					result.add(desc);
-				return true;
-			}
-
-		});
-
-		return result;
+		return Iterables.filter(getOwnChildren(), each -> each.getKeyword().equals(keyword));
 	}
 
 	@Override
 	public IDescription getChildWithKeyword(final String keyword) {
-		final IDescription[] result = new IDescription[1];
-		visitChildren(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription desc) {
-				if (desc.getKeyword().equals(keyword)) {
-					result[0] = desc;
-					return false;
-				}
-				return true;
-			}
-		});
-		return result[0];
-
+		return Iterables.find(getOwnChildren(), each -> each.getKeyword().equals(keyword), null);
 	}
 
 	@Override

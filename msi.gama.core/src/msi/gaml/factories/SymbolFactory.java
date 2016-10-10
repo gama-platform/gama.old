@@ -40,6 +40,6 @@ public abstract class SymbolFactory {
 	}
 
 	protected abstract IDescription buildDescription(String keyword, Facets facets, EObject element,
-			ChildrenProvider children, IDescription enclosing, SymbolProto proto);
+			Iterable<IDescription> children, IDescription enclosing, SymbolProto proto);
 
 }

@@ -29,6 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.AddStatement.AddSerializer;
@@ -142,8 +143,7 @@ public class AddStatement extends AbstractContainerStatement {
 	public static class AddSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
-		protected void serialize(final StatementDescription cd, final StringBuilder sb,
-				final boolean includingBuiltIn) {
+		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {
 			final IExpression item = cd.getFacetExpr(ITEM);
 			final IExpression list = cd.getFacetExpr(TO);
 			final IExpression allFacet = cd.getFacetExpr(ALL);

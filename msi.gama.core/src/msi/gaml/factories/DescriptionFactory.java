@@ -127,7 +127,7 @@ public class DescriptionFactory {
 		return md.getOmissible();
 	}
 
-	public static void addProto(final SymbolProto md, final List<String> names) {
+	public static void addProto(final SymbolProto md, final Iterable<String> names) {
 		final int kind = md.getKind();
 		if (ISymbolKind.Variable.KINDS.contains(kind)) {
 			for (final String s : names) {
@@ -174,30 +174,30 @@ public class DescriptionFactory {
 	}
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
-			final IDescription superDesc, final ChildrenProvider children, final Facets facets) {
-		final IDescription result = create(SyntacticFactory.create(keyword, facets, children.hasChildren()), superDesc,
+			final IDescription superDesc, final Iterable<IDescription> children, final Facets facets) {
+		final IDescription result = create(SyntacticFactory.create(keyword, facets, children != null), superDesc,
 				children);
 		return result;
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
-			final ChildrenProvider children, final Facets facets) {
+			final Iterable<IDescription> children, final Facets facets) {
 		return create(getFactory(keyword), keyword, superDesc, children, facets);
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
-			final ChildrenProvider children) {
+			final Iterable<IDescription> children) {
 		return create(getFactory(keyword), keyword, superDesc, children, null);
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
-			final ChildrenProvider children, final String... facets) {
+			final Iterable<IDescription> children, final String... facets) {
 		return create(getFactory(keyword), keyword, superDesc, children, new Facets(facets));
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDescription,
 			final String... facets) {
-		return create(keyword, superDescription, ChildrenProvider.NONE, facets);
+		return create(keyword, superDescription, null, facets);
 	}
 
 	public synchronized static IDescription create(final String keyword, final String... facets) {
@@ -236,7 +236,7 @@ public class DescriptionFactory {
 	}
 
 	public static final IDescription create(final ISyntacticElement source, final IDescription superDesc,
-			final ChildrenProvider cp) {
+			final Iterable<IDescription> cp) {
 		if (source == null) {
 			return null;
 		}
@@ -246,20 +246,20 @@ public class DescriptionFactory {
 			superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source.getElement(), keyword);
 			return null;
 		}
-		ChildrenProvider children = cp;
+		Iterable<IDescription> children = cp;
 		if (children == null) {
-			final List<IDescription> children_list = new ArrayList<>();
+			final List<IDescription> childrenList = new ArrayList<>();
 			final SyntacticVisitor visitor = element -> {
 				final IDescription desc = create(element, superDesc, null);
 				if (desc != null) {
-					children_list.add(desc);
+					childrenList.add(desc);
 				}
 
 			};
 			source.visitChildren(visitor);
 			source.visitSpecies(visitor);
 			source.visitExperiments(visitor);
-			children = new ChildrenProvider(children_list);
+			children = childrenList;
 		}
 		final Facets facets = source.copyFacets(md);
 		final EObject element = source.getElement();

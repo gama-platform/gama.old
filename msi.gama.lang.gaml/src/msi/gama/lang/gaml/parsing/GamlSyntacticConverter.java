@@ -602,32 +602,4 @@ public class GamlSyntacticConverter {
 		return null;
 	}
 
-	// private final Set<String> varDependenciesOf(final Statement s) {
-	// Set<String> list = null;
-	// for (final Facet facet : EGaml.getFacetsOf(s)) {
-	// final Expression expr = facet.getExpr();
-	// if (expr != null) {
-	// if (expr instanceof VariableRef) {
-	// if (list == null)
-	// list = new HashSet();
-	// list.add(EGaml.getKeyOf(expr));
-	// } else {
-	// for (final TreeIterator<EObject> tree = expr.eAllContents();
-	// tree.hasNext();) {
-	// final EObject obj = tree.next();
-	// if (obj instanceof VariableRef) {
-	// if (list == null)
-	// list = new HashSet();
-	// list.add(EGaml.getKeyOf(obj));
-	// }
-	// }
-	// }
-	// }
-	// }
-	// if (list == null || list.isEmpty()) {
-	// return null;
-	// }
-	// return list;
-	// }
-
 }

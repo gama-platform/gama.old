@@ -42,8 +42,8 @@ public class SpeciesFactory extends SymbolFactory {
 
 	@Override
 	protected TypeDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-			final ChildrenProvider children, final IDescription sd, final SymbolProto proto) {
-		return new SpeciesDescription(keyword, (SpeciesDescription) sd, children, element, facets);
+			final Iterable<IDescription> children, final IDescription sd, final SymbolProto proto) {
+		return new SpeciesDescription(keyword, null, (SpeciesDescription) sd, null, children, element, facets);
 	}
 
 	public SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,

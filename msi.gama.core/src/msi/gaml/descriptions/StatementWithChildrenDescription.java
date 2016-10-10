@@ -1,30 +1,31 @@
 package msi.gaml.descriptions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
-@SuppressWarnings({ "rawtypes" })
 public class StatementWithChildrenDescription extends StatementDescription {
 
 	protected THashMap<String, IVarExpression> temps;
 	protected List<IDescription> children;
 
 	public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
-			final ChildrenProvider cp, final boolean hasArgs, final EObject source, final Facets facets,
+			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
 			final Arguments alreadyComputedArgs) {
-		super(keyword, superDesc, cp, hasArgs, source, facets, alreadyComputedArgs);
+		super(keyword, superDesc, hasArgs, cp, source, facets, alreadyComputedArgs);
 	}
 
 	@Override
@@ -47,6 +48,11 @@ public class StatementWithChildrenDescription extends StatementDescription {
 				return false;
 		}
 		return true;
+	}
+
+	@Override
+	public Iterable<IDescription> getOwnChildren() {
+		return children == null ? Collections.EMPTY_LIST : children;
 	}
 
 	@Override
@@ -79,7 +85,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		return getMeta().hasScope() /* canHaveTemps */ && temps != null;
 	}
 
-	public IExpression addTemp(final IDescription declaration, final String name, final IType type) {
+	public IExpression addTemp(final IDescription declaration, final String name, final IType<?> type) {
 		// TODO Should separate validation from execution, here.
 
 		if (!getMeta().hasScope() /* canHaveTemps */) {
@@ -116,22 +122,6 @@ public class StatementWithChildrenDescription extends StatementDescription {
 		temps.put(name, (IVarExpression) result);
 		return result;
 	}
-	//
-	// @Override
-	// public void copyTempsAbove() {
-	// if (!getMeta().hasScope() /* canHaveTemps */)
-	// return;
-	// IDescription d = getEnclosingDescription();
-	// while (d != null && d instanceof StatementWithChildrenDescription) {
-	// if (((StatementWithChildrenDescription) d).hasTemps()) {
-	// if (temps == null)
-	// temps = new THashMap(((StatementWithChildrenDescription) d).temps);
-	// else
-	// temps.putAll(((StatementWithChildrenDescription) d).temps);
-	// }
-	// d = d.getEnclosingDescription();
-	// }
-	// }
 
 	@Override
 	public IDescription addChild(final IDescription child) {
@@ -146,19 +136,10 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	@Override
 	public StatementWithChildrenDescription copy(final IDescription into) {
-		final List<IDescription> children = new ArrayList<>();
-		visitChildren(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription desc) {
-				children.add(desc.copy(into));
-				return true;
-			}
-		});
-
-		final StatementWithChildrenDescription desc = new StatementWithChildrenDescription(getKeyword(), into,
-				new ChildrenProvider(children), false, element, getFacetsCopy(),
-				passedArgs == null ? null : passedArgs.cleanCopy());
+		final Iterable<IDescription> children = this.children == null ? null
+				: Iterables.transform(this.children, each -> each.copy(into));
+		final StatementWithChildrenDescription desc = new StatementWithChildrenDescription(getKeyword(), into, children,
+				false, element, getFacetsCopy(), passedArgs == null ? null : passedArgs.cleanCopy());
 		desc.originName = getOriginName();
 		return desc;
 	}

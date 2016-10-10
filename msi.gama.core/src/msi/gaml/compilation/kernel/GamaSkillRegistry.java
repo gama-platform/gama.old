@@ -22,8 +22,14 @@ public class GamaSkillRegistry {
 	}
 
 	public SkillDescription register(final String name, final Class<? extends ISkill> support, final String plugin,
-			final String... species) {
-		final SkillDescription sd = new SkillDescription(name, support, plugin);
+			final Iterable<IDescription> children, final String... species) {
+		if (children != null) {
+			for (final IDescription d : children) {
+				d.setOriginName("skill " + name);
+				d.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
+			}
+		}
+		final SkillDescription sd = new SkillDescription(name, support, children, plugin);
 		classSkillNames.put(support, name);
 		skills.put(name, sd);
 		for (final String spec : species) {

@@ -29,7 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
-import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Strings;
@@ -76,7 +76,7 @@ public class IfStatement extends AbstractStatementSequence {
 	public static class IfSerializer extends StatementSerializer {
 
 		@Override
-		protected void serializeChildren(final StatementDescription desc, final StringBuilder sb,
+		protected void serializeChildren(final SymbolDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			sb.append(' ').append('{').append(Strings.LN);
 			final String[] elseString = new String[] { null };

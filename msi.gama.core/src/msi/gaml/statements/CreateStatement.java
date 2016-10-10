@@ -50,6 +50,7 @@ import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -221,8 +222,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	public static class CreateSerializer extends StatementSerializer {
 
 		@Override
-		protected void serializeArgs(final StatementDescription desc, final StringBuilder sb,
-				final boolean ncludingBuiltIn) {
+		protected void serializeArgs(final SymbolDescription s, final StringBuilder sb, final boolean ncludingBuiltIn) {
+			final StatementDescription desc = (StatementDescription) s;
 			final Facets args = desc.getPassedArgs();
 			if (args == null || args.isEmpty()) {
 				return;

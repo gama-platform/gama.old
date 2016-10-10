@@ -26,6 +26,7 @@ import gnu.trove.set.hash.TIntHashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.ISymbolConstructor;
@@ -61,7 +62,7 @@ public class SymbolProto extends AbstractProto {
 			new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID });
 
 	public SymbolProto(final Class clazz, final boolean hasSequence, final boolean hasArgs, final int kind,
-			final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets, final String omissible,
+			final boolean doesNotHaveScope, final FacetProto[] possibleFacets, final String omissible,
 			final String[] contextKeywords, final int[] parentKinds, final boolean isRemoteContext,
 			final boolean isUniqueInContext, final boolean nameUniqueInContext, final ISymbolConstructor constr,
 			final IDescriptionValidator validator, final SymbolSerializer serializer, final String name,
@@ -79,14 +80,20 @@ public class SymbolProto extends AbstractProto {
 		this.isUniqueInContext = isUniqueInContext;
 		this.kind = kind;
 		this.hasScope = !doesNotHaveScope;
-		this.possibleFacets = possibleFacets;
-		final Builder<String> builder = ImmutableSet.builder();
-		for (final FacetProto f : possibleFacets.values()) {
-			if (!f.optional) {
-				builder.add(f.name);
+		if (possibleFacets != null) {
+			final Builder<String> builder = ImmutableSet.builder();
+			this.possibleFacets = new TOrderedHashMap<String, FacetProto>();
+			for (final FacetProto f : possibleFacets) {
+				this.possibleFacets.put(f.name, f);
+				if (!f.optional) {
+					builder.add(f.name);
+				}
 			}
+			mandatoryFacets = builder.build();
+		} else {
+			this.possibleFacets = null;
+			mandatoryFacets = null;
 		}
-		mandatoryFacets = builder.build();
 		this.contextKeywords = ImmutableSet.copyOf(contextKeywords);
 		Arrays.fill(this.contextKinds, false);
 		for (final int i : parentKinds) {
@@ -135,7 +142,7 @@ public class SymbolProto extends AbstractProto {
 	}
 
 	public Map<String, FacetProto> getPossibleFacets() {
-		return possibleFacets;
+		return possibleFacets == null ? Collections.emptyMap() : possibleFacets;
 	}
 
 	public boolean isTopLevel() {
@@ -226,7 +233,7 @@ public class SymbolProto extends AbstractProto {
 	 * @return
 	 */
 	public FacetProto getFacet(final String facet) {
-		return possibleFacets.get(facet);
+		return possibleFacets == null ? null : possibleFacets.get(facet);
 	}
 
 	/**
@@ -235,7 +242,7 @@ public class SymbolProto extends AbstractProto {
 	 */
 	public Set<String> getMissingMandatoryFacets(final Facets facets) {
 		if (facets == null) {
-			if (mandatoryFacets.isEmpty())
+			if (mandatoryFacets == null || mandatoryFacets.isEmpty())
 				return null;
 			return mandatoryFacets;
 		}

@@ -1,12 +1,10 @@
 package msi.gaml.descriptions;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.Iterables;
+
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -17,7 +15,7 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 	protected IDescription previousDescription;
 
 	public StatementRemoteWithChildrenDescription(final String keyword, final IDescription superDesc,
-			final ChildrenProvider cp, final boolean hasArgs, final EObject source, final Facets facets,
+			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
 			final Arguments alreadyComputedArgs) {
 		super(keyword, superDesc, cp, hasArgs, source, facets, alreadyComputedArgs);
 	}
@@ -57,7 +55,7 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 	}
 
 	@Override
-	public List<? extends ISymbol> compileChildren() {
+	public Iterable<? extends ISymbol> compileChildren() {
 
 		final SpeciesDescription sd = getType().getDenotedSpecies();
 		if (sd != null) {
@@ -71,19 +69,10 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 
 	@Override
 	public StatementRemoteWithChildrenDescription copy(final IDescription into) {
-		final List<IDescription> children = new ArrayList<>();
-		visitChildren(new DescriptionVisitor<IDescription>() {
-
-			@Override
-			public boolean visit(final IDescription desc) {
-				children.add(desc.copy(into));
-				return true;
-			}
-		});
-
+		final Iterable<IDescription> children = this.children == null ? null
+				: Iterables.transform(this.children, each -> each.copy(into));
 		final StatementRemoteWithChildrenDescription desc = new StatementRemoteWithChildrenDescription(getKeyword(),
-				into, new ChildrenProvider(children), false, element, getFacetsCopy(),
-				passedArgs == null ? null : passedArgs.cleanCopy());
+				into, children, false, element, getFacetsCopy(), passedArgs == null ? null : passedArgs.cleanCopy());
 		desc.originName = getOriginName();
 		return desc;
 	}

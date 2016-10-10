@@ -15,15 +15,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import com.google.common.collect.UnmodifiableIterator;
 
-import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.interfaces.ISkill;
 
 /**
@@ -35,99 +36,81 @@ import msi.gama.common.interfaces.ISkill;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class JavaUtils {
 
-	public final static Map<Set<Class>, List<Class>> IMPLEMENTATION_CLASSES = new THashMap<>();
-	private static Map<Class, Set<Class>> allInterfaces = new THashMap<>();
-	private static Map<Class, Set<Class>> allSuperclasses = new THashMap<>();
+	public final static TIntObjectHashMap<List<Class>> IMPLEMENTATION_CLASSES = new TIntObjectHashMap();
+	private static Multimap<Class, Class> INTERFACES = HashMultimap.<Class, Class> create();
+	private static Multimap<Class, Class> SUPERCLASSES = HashMultimap.<Class, Class> create();
 
-	private static void addAllInterfaces(final Class clazz, final Set allInterfaces, final Set<Class> in) {
-		if (clazz == null) {
-			return;
-		}
-		final Class[] interfaces = clazz.getInterfaces();
-		for (final Class c : interfaces) {
-			if (in.contains(c)) {
-				allInterfaces.add(c);
-			}
-		}
-		addAllInterfaces(interfaces, allInterfaces, in);
-		addAllInterfaces(clazz.getSuperclass(), allInterfaces, in);
-	}
-
-	private static void addAllInterfaces(final Class[] clazzes, final Set allInterfaces, final Set<Class> in) {
-		if (clazzes != null) {
-			for (int i = 0; i < clazzes.length; i++) {
-				addAllInterfaces(clazzes[i], allInterfaces, in);
-			}
-		}
-	}
-
-	public static final Set<Class> allInterfacesOf(final Class c, final Set<Class> in) {
-		if (allInterfaces.containsKey(c)) {
-			return allInterfaces.get(c);
-		}
-		final Set<Class> result = new THashSet<Class>();
-		addAllInterfaces(c, result, in);
-		allInterfaces.put(c, result);
+	private static int keyOf(final Class base, final Iterable<Class<? extends ISkill>> others) {
+		int result = base.hashCode();
+		for (final Class other : others)
+			result += other.hashCode();
 		return result;
 	}
 
-	public static final Set<Class> allSuperclassesOf(final Class c, final Set<Class> in) {
-		if (allSuperclasses.containsKey(c)) {
-			return allSuperclasses.get(c);
-		}
-		final THashSet<Class> result = new THashSet<>();
-		if (c == null) {
-			return result;
-		}
-		Class c2 = c.getSuperclass();
-		while (c2 != null) {
-			if (in.contains(c2)) {
-				result.add(c2);
+	private static final Set<Class> allInterfacesOf(final Class c, final Set<Class> in) {
+		if (c == null)
+			return Collections.EMPTY_SET;
+		if (!INTERFACES.containsKey(c)) {
+			final Class[] interfaces = c.getInterfaces();
+			for (final Class c1 : interfaces) {
+				if (in.contains(c1)) {
+					INTERFACES.put(c, c1);
+					INTERFACES.putAll(c, allInterfacesOf(c1, in));
+				}
 			}
-			c2 = c2.getSuperclass();
+			INTERFACES.putAll(c, allInterfacesOf(c.getSuperclass(), in));
 		}
-		allSuperclasses.put(c, result);
+		return (Set<Class>) INTERFACES.get(c);
+	}
 
-		return result;
+	private static final Set<Class> allSuperclassesOf(final Class c, final Set<Class> in) {
+		if (c == null)
+			return null;
+		if (!SUPERCLASSES.containsKey(c)) {
+			Class c2 = c.getSuperclass();
+			while (c2 != null) {
+				if (in.contains(c2)) {
+					SUPERCLASSES.put(c, c2);
+				}
+				c2 = c2.getSuperclass();
+			}
+		}
+		return (Set<Class>) SUPERCLASSES.get(c);
 	}
 
 	public static List<Class> collectImplementationClasses(final Class baseClass,
 			final Iterable<Class<? extends ISkill>> skillClasses, final Set<Class> in) {
-		final Set<Class> classes = new THashSet<>();
-		if (baseClass != null) {
-			classes.add(baseClass);
-		}
-		Iterables.addAll(classes, skillClasses);
-		final Set<Class> key = new THashSet(classes);
-		if (IMPLEMENTATION_CLASSES.containsKey(key)) {
-			return IMPLEMENTATION_CLASSES.get(key);
-		}
-		classes.addAll(allInterfacesOf(baseClass, in));
-		for (final Class classi : new ArrayList<Class>(classes)) {
-			classes.addAll(allSuperclassesOf(classi, in));
-		}
-		final ArrayList<Class> classes2 = new ArrayList(classes);
-		Collections.sort(classes2, (o1, o2) -> {
-			if (o1 == o2) {
-				return 0;
-			}
-			if (o1.isAssignableFrom(o2)) {
-				return -1;
-			}
-			if (o2.isAssignableFrom(o1)) {
+		final int key = keyOf(baseClass, skillClasses);
+		if (!IMPLEMENTATION_CLASSES.containsKey(key)) {
+			final Iterable<Class> basis = Iterables.concat(Collections.singleton(baseClass), skillClasses,
+					allInterfacesOf(baseClass, in));
+			final Iterable<Class> extensions = Iterables
+					.concat(Iterables.transform(basis, each -> allSuperclassesOf(each, in)));
+			final Set<Class> classes = Sets.newHashSet(Iterables.concat(basis, extensions));
+			final ArrayList<Class> classes2 = new ArrayList(classes);
+			Collections.sort(classes2, (o1, o2) -> {
+				if (o1 == o2) {
+					return 0;
+				}
+				if (o1.isAssignableFrom(o2)) {
+					return -1;
+				}
+				if (o2.isAssignableFrom(o1)) {
+					return 1;
+				}
+				if (o1.isInterface() && !o2.isInterface()) {
+					return -1;
+				}
+				if (o2.isInterface() && !o1.isInterface()) {
+					return 1;
+				}
 				return 1;
-			}
-			if (o1.isInterface() && !o2.isInterface()) {
-				return -1;
-			}
-			if (o2.isInterface() && !o1.isInterface()) {
-				return 1;
-			}
-			return 1;
-		});
+			});
 
-		IMPLEMENTATION_CLASSES.put(key, classes2);
-		return classes2;
+			IMPLEMENTATION_CLASSES.put(key, classes2);
+		}
+		return IMPLEMENTATION_CLASSES.get(key);
+
 	}
 
 	public static <F> Iterator<F> iterator(final Object[] array) {

@@ -21,7 +21,6 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import gnu.trove.set.hash.THashSet;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -30,9 +29,7 @@ import msi.gama.util.GAML;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.SyntacticFactory;
-import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;
 import msi.gaml.expressions.ConstantExpression;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -53,12 +50,6 @@ public class ModelDescription extends SpeciesDescription {
 	public static final String MODEL_SUFFIX = "_model";
 	public static volatile ModelDescription ROOT;
 	private TOrderedHashMap<String, ExperimentDescription> experiments;
-	/**
-	 * If statements refer to a species, it will be stored here (rather than in
-	 * the statement).
-	 */
-	// private final THashMap<StatementDescription, SpeciesDescription>
-	// statementSpeciesReferences = new THashMap<>();
 	final TypesManager types;
 	private String modelFilePath;
 	private final String modelProjectPath;
@@ -101,9 +92,10 @@ public class ModelDescription extends SpeciesDescription {
 	// end-hqnghi
 
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
-			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
+			final EObject source, final SpeciesDescription macro, final SpeciesDescription parent,
+			final Iterable<? extends IDescription> children, final Facets facets,
 			final ValidationContext validationContext, final Set<String> imports) {
-		super(MODEL, clazz, macro, parent, ChildrenProvider.NONE, source, facets);
+		super(MODEL, clazz, macro, parent, children, source, facets);
 		setName(name);
 		types = parent instanceof ModelDescription ? new TypesManager(((ModelDescription) parent).types)
 				: Types.builtInTypes;
@@ -115,7 +107,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public SymbolSerializer createSerializer() {
-		return ModelSerializer.getInstance();
+		return MODEL_SERIALIZER;
 	}
 
 	@Override
@@ -344,7 +336,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	public Set<String> getExperimentNames() {
 		if (experiments == null)
-			return new THashSet<>();
+			return Collections.EMPTY_SET;
 		return new TLinkedHashSet(experiments.keySet());
 	}
 

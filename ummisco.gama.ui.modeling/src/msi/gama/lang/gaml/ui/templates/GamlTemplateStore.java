@@ -7,7 +7,6 @@ package msi.gama.lang.gaml.ui.templates;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -158,8 +157,7 @@ public class GamlTemplateStore extends XtextTemplateStore {
 		for (final String keyword : protos) {
 			final SymbolProto sp = DescriptionFactory.getProto(keyword, null);
 			// List<template> templates = sp.getTemplates();
-			final List<usage> usages = sp.getUsages();
-			for (final usage u : usages) {
+			for (final usage u : sp.getUsages()) {
 				final TemplatePersistenceData data = GamlTemplateFactory.from(u, sp);
 				if (data != null) {
 					internalAdd(data);
@@ -170,8 +168,7 @@ public class GamlTemplateStore extends XtextTemplateStore {
 		for (final String keyword : protos) {
 			final Map<Signature, OperatorProto> map = IExpressionCompiler.OPERATORS.get(keyword);
 			for (final OperatorProto p : map.values()) {
-				final List<usage> usages = p.getUsages();
-				for (final usage u : usages) {
+				for (final usage u : p.getUsages()) {
 					final TemplatePersistenceData data = GamlTemplateFactory.from(u, p);
 					if (data != null) {
 						internalAdd(data);

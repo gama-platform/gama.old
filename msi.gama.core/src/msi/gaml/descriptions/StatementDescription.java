@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
@@ -18,11 +19,9 @@ import org.eclipse.emf.ecore.EObject;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.util.GAML;
-import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IOperator;
 import msi.gaml.expressions.IVarExpression;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.DoStatement;
 import msi.gaml.statements.Facets;
@@ -43,15 +42,16 @@ public class StatementDescription extends SymbolDescription {
 	protected final Arguments passedArgs;
 	private static int COMMAND_INDEX = 0;
 
-	public StatementDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
-			final boolean hasArgs, final EObject source, final Facets facets, final Arguments alreadyComputedArgs) {
-		super(keyword, superDesc, cp, source, facets);
+	public StatementDescription(final String keyword, final IDescription superDesc, final boolean hasArgs,
+			final Iterable<IDescription> children, final EObject source, final Facets facets,
+			final Arguments alreadyComputedArgs) {
+		super(keyword, superDesc, source, children, facets);
 		passedArgs = alreadyComputedArgs != null ? alreadyComputedArgs : hasArgs ? createArgs() : null;
 	}
 
 	@Override
-	protected StatementSerializer createSerializer() {
-		return StatementSerializer.getInstance();
+	protected SymbolSerializer<? extends SymbolDescription> createSerializer() {
+		return STATEMENT_SERIALIZER;
 	}
 
 	@Override
@@ -111,8 +111,8 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public StatementDescription copy(final IDescription into) {
-		final StatementDescription desc = new StatementDescription(getKeyword(), into, ChildrenProvider.NONE, false,
-				element, getFacetsCopy(), passedArgs == null ? null : passedArgs.cleanCopy());
+		final StatementDescription desc = new StatementDescription(getKeyword(), into, false, null, element,
+				getFacetsCopy(), passedArgs == null ? null : passedArgs.cleanCopy());
 		desc.originName = getOriginName();
 		return desc;
 	}
@@ -198,16 +198,19 @@ public class StatementDescription extends SymbolDescription {
 		return kw + " " + getName() + " " + in;
 	}
 
-	public void collectChildren(final String keyword, final Set<StatementDescription> returns) {
+	public void collectAllStatements(final String keyword, final Set<StatementDescription> returns) {
 
 		visitChildren(new DescriptionVisitor() {
 
 			@Override
 			public boolean visit(final IDescription desc) {
-				if (desc.getKeyword().equals(keyword)) {
-					returns.add((StatementDescription) desc);
+				if (desc instanceof StatementDescription) {
+					if (desc.getKeyword().equals(keyword)) {
+						returns.add((StatementDescription) desc);
+					}
+					if (desc instanceof StatementWithChildrenDescription)
+						((StatementWithChildrenDescription) desc).visitChildren(this);
 				}
-				((StatementDescription) desc).visitChildren(this);
 				return true;
 			}
 		});
@@ -356,6 +359,11 @@ public class StatementDescription extends SymbolDescription {
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
 		return true;
+	}
+
+	@Override
+	public Iterable<IDescription> getOwnChildren() {
+		return Collections.EMPTY_LIST;
 	}
 
 	public Arguments createCompiledArgs() {

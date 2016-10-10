@@ -11,23 +11,22 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.HashSet;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import com.google.common.collect.Sets;
+import com.google.common.collect.ImmutableSet;
 
 import gnu.trove.map.hash.THashMap;
+import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.GamaHelper;
-import msi.gaml.descriptions.SymbolSerializer.VarSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaIntegerType;
 import msi.gaml.types.IType;
@@ -39,7 +38,6 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class VariableDescription extends SymbolDescription {
 
 	private static Map<String, Set<String>> dependencies = new THashMap<>();
@@ -48,11 +46,11 @@ public class VariableDescription extends SymbolDescription {
 	private final boolean _isGlobal, _isNotModifiable;
 	// for variables automatically added to species for containing micro-agents
 	private boolean _isSyntheticSpeciesContainer;
-	private GamaHelper get, init, set;
+	private GamaHelper<?> get, init, set;
 
-	public VariableDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
-			final EObject source, final Facets facets) {
-		super(keyword, superDesc, cp, source, facets);
+	public VariableDescription(final String keyword, final IDescription superDesc, final EObject source,
+			final Facets facets) {
+		super(keyword, superDesc, source, null, facets);
 		if (facets != null && !facets.containsKey(TYPE) && !isExperimentParameter()) {
 			facets.putAsLabel(TYPE, keyword);
 		}
@@ -122,16 +120,15 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public VariableDescription copy(final IDescription into) {
-		final VariableDescription vd = new VariableDescription(getKeyword(), into, ChildrenProvider.NONE, element,
-				getFacetsCopy());
+		final VariableDescription vd = new VariableDescription(getKeyword(), into, element, getFacetsCopy());
 		vd.addHelpers(get, init, set);
 		vd.originName = getOriginName();
 		return vd;
 	}
 
 	@Override
-	protected SymbolSerializer createSerializer() {
-		return VarSerializer.getInstance();
+	protected SymbolSerializer<VariableDescription> createSerializer() {
+		return VAR_SERIALIZER;
 	}
 
 	/**
@@ -159,8 +156,8 @@ public class VariableDescription extends SymbolDescription {
 	 * @see msi.gaml.descriptions.SymbolDescription#getTypeNamed(java.lang.String)
 	 */
 	@Override
-	public IType getTypeNamed(final String s) {
-		final IType result = super.getTypeNamed(s);
+	public IType<?> getTypeNamed(final String s) {
+		final IType<?> result = super.getTypeNamed(s);
 		if (result == Types.NO_TYPE) {
 			final int provider = GamaIntegerType.staticCast(null, s, null, false);
 			switch (provider) {
@@ -193,7 +190,7 @@ public class VariableDescription extends SymbolDescription {
 					// We try to change the type of the 'target' variable if the
 					// expression contains only agents from the
 					// same species
-					final IType t = mirrors.getType().getContentType();
+					final IType<?> t = mirrors.getType().getContentType();
 					if (t.isAgentType() && t.id() != IType.AGENT) {
 						getEnclosingDescription().info("The 'target' attribute will be of type " + t.getSpeciesName(),
 								IGamlIssue.GENERAL, MIRRORS);
@@ -209,12 +206,14 @@ public class VariableDescription extends SymbolDescription {
 		return result;
 	}
 
-	private static Set<String> INIT_DEPENDENCIES_FACETS = Sets.newHashSet(INIT, MIN, MAX, FUNCTION, STEP, SIZE);
-	private static Set<String> UPDATE_DEPENDENCIES_FACETS = Sets.newHashSet(UPDATE, VALUE, MIN, MAX, FUNCTION);
+	private static Set<String> INIT_DEPENDENCIES_FACETS = ImmutableSet.<String> builder()
+			.add(INIT, MIN, MAX, FUNCTION, STEP, SIZE).build();
+	private static Set<String> UPDATE_DEPENDENCIES_FACETS = ImmutableSet.<String> builder()
+			.add(UPDATE, VALUE, MIN, MAX, FUNCTION).build();
 
 	public Set<VariableDescription> getDependencies(final boolean forInit) {
 
-		final Set<VariableDescription> result = new HashSet();
+		final Set<VariableDescription> result = new THashSet<>();
 		final Set<String> deps = dependencies.get(getName());
 		if (deps != null) {
 			for (final String s : deps) {
@@ -292,21 +291,21 @@ public class VariableDescription extends SymbolDescription {
 		return s + super.getDocumentation();
 	}
 
-	public void addHelpers(final GamaHelper get, final GamaHelper init, final GamaHelper set) {
+	public void addHelpers(final GamaHelper<?> get, final GamaHelper<?> init, final GamaHelper<?> set) {
 		this.get = get;
 		this.set = set;
 		this.init = init;
 	}
 
-	public GamaHelper getGetter() {
+	public GamaHelper<?> getGetter() {
 		return get;
 	}
 
-	public GamaHelper getIniter() {
+	public GamaHelper<?> getIniter() {
 		return init;
 	}
 
-	public GamaHelper getSetter() {
+	public GamaHelper<?> getSetter() {
 		return set;
 	}
 
@@ -336,6 +335,11 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
 		return true;
+	}
+
+	@Override
+	public Iterable<IDescription> getOwnChildren() {
+		return Collections.EMPTY_LIST;
 	}
 
 }

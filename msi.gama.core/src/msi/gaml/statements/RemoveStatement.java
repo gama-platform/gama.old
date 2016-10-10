@@ -29,6 +29,7 @@ import msi.gama.util.IContainer;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.AbstractContainerStatement.ContainerValidator;
@@ -105,8 +106,7 @@ public class RemoveStatement extends AbstractContainerStatement {
 	public static class RemoveSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
-		protected void serialize(final StatementDescription cd, final StringBuilder sb,
-				final boolean includingBuiltIn) {
+		protected void serialize(final SymbolDescription cd, final StringBuilder sb, final boolean includingBuiltIn) {
 			final IExpression item = cd.getFacetExpr(ITEM);
 			final IExpression list = cd.getFacetExpr(TO);
 			final IExpression allFacet = cd.getFacetExpr(ALL);

@@ -32,6 +32,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
@@ -85,7 +86,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 	public static class ActionSerializer extends StatementSerializer {
 
 		@Override
-		protected String serializeFacetValue(final StatementDescription s, final String key,
+		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
 			if (key.equals(TYPE)) {
 				return null;
@@ -107,7 +108,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		}
 
 		@Override
-		protected void serializeKeyword(final StatementDescription desc, final StringBuilder sb,
+		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			String type = desc.getType().serialize(includingBuiltIn);
 			if (type.equals(UNKNOWN)) {
@@ -134,12 +135,13 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		}
 
 		private void assertReturnedValueIsOk(final StatementDescription cd) {
-			final Set<StatementDescription> returns = new TLinkedHashSet<>();
-			cd.collectChildren(RETURN, returns);
 			final IType at = cd.getType();
 			if (at == Types.NO_TYPE) {
 				return;
 			}
+			final Set<StatementDescription> returns = new TLinkedHashSet<>();
+			cd.collectAllStatements(RETURN, returns);
+
 			// Primitives dont need to be ckecked
 			// if ( cd.getKeyword().equals(PRIMITIVE) ) { return; }
 			if (returns.isEmpty()) {

@@ -621,9 +621,6 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		return currentContext;
 	}
 
-	// A temp errors set used by the method below
-	// final Set<Diagnostic> errors = new HashSet();
-
 	/**
 	 * @see msi.gaml.expressions.IExpressionParser#parseArguments(msi.gaml.descriptions.ExpressionDescription,
 	 *      msi.gaml.descriptions.IDescription)

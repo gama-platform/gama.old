@@ -33,6 +33,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -105,7 +106,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 		}
 
 		@Override
-		protected String serializeFacetValue(final StatementDescription s, final String key,
+		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
 			if (!DO_FACETS.contains(key)) {
 				return null;

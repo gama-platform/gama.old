@@ -12,12 +12,13 @@
 package msi.gaml.types;
 
 import java.io.File;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IKeyword;
@@ -42,7 +43,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	public static Map<String, ParametricFileType> extensionsToFullType = new THashMap<>();
 	static Map<String, ParametricFileType> aliasesToFullType = new THashMap<>();
-	static Map<String, Set<String>> aliasesToExtensions = new THashMap<>();
+	static Multimap<String, String> aliasesToExtensions = HashMultimap.<String, String> create();
 	static int currentFileTypeIndex = 1000;
 
 	/**
@@ -58,12 +59,6 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	public static void addFileTypeDefinition(final String alias, final IType<?> bufferType, final IType<?> keyType,
 			final IType<?> contentType, final Class clazz, final GamaHelper<IGamaFile<?, ?, ?, ?>> builder,
 			final String[] extensions) {
-		// GAMA.getGui().debug("GamaFileType registering file type " + alias + "
-		// with extensions " +
-		// Arrays.toString(extensions) + " with key type " + keyType + " and
-		// content type " + contentType);
-
-		final Set<String> exts = new HashSet();
 		// Added to ensure that extensions do not begin with a "." or contain
 		// blank characters
 		for (final String ext : extensions) {
@@ -71,14 +66,14 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 			if (clean.startsWith(".")) {
 				clean = clean.substring(1);
 			}
-			exts.add(clean);
+			aliasesToExtensions.put(alias, clean);
 		}
-		aliasesToExtensions.put(alias, exts);
+
 		// classToExtensions.put(clazz, exts);
 		final ParametricFileType t = new ParametricFileType(alias + "_file", clazz, builder, bufferType, keyType,
 				contentType);
 		aliasesToFullType.put(alias, t);
-		for (final String s : exts) {
+		for (final String s : aliasesToExtensions.get(alias)) {
 			extensionsToFullType.put(s, t);
 		}
 		t.setParent(Types.FILE);

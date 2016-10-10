@@ -5,10 +5,8 @@
 package msi.gaml.descriptions;
 
 import java.lang.reflect.AnnotatedElement;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -108,12 +106,12 @@ public abstract class AbstractProto implements IGamlDescription {
 	public void setName(final String newName) {
 	}
 
-	public List<usage> getUsages() {
+	public Iterable<usage> getUsages() {
 		final doc d = getDocAnnotation();
 		if (d != null) {
 			final usage[] tt = d.usages();
 			if (tt.length > 0) {
-				return new ArrayList<>(Arrays.asList(tt));
+				return Arrays.asList(tt);
 			}
 		}
 		return Collections.EMPTY_LIST;

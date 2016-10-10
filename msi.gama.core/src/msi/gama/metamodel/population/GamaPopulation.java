@@ -438,13 +438,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return species.getVar(s);
 	}
 
-	// @Override
-	// public boolean manages(final ISpecies s, final boolean direct) {
-	// if ( species == s ) { return true; }
-	// if ( !direct ) { return species.extendsSpecies(s); }
-	// return false;
-	// }
-
 	@Override
 	public boolean hasUpdatableVariables() {
 		return updatableVars.length > 0;

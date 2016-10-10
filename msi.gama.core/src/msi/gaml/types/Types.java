@@ -21,7 +21,6 @@ import java.util.Set;
 import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
@@ -214,7 +213,7 @@ public class Types {
 			type.setFieldGetters(vars);
 			type.setParent(node.getParent() == null ? null : node.getParent().getData());
 		}
-		System.out.println("Hierarchy" + hierarchy.toStringWithDepth());
+		// System.out.println("Hierarchy" + hierarchy.toStringWithDepth());
 	}
 
 	private static TypeTree<IType> buildHierarchy() {
@@ -267,31 +266,34 @@ public class Types {
 	}
 
 	private static List<SpeciesDescription> builtInSpecies;
-	private static TypeTree<SpeciesDescription> builtInSpeciesTree;
+	// private static TypeTree<SpeciesDescription> builtInSpeciesTree;
 
-	public static TypeTree<SpeciesDescription> getBuiltInSpeciesTree() {
-		if (builtInSpeciesTree != null)
-			return builtInSpeciesTree;
-		final ModelDescription root = ModelDescription.ROOT;
-		final TypeTree<SpeciesDescription> result = new TypeTree(root.getSpeciesDescription(IKeyword.AGENT));
-		final List<SpeciesDescription> speciesLeft = new ArrayList(getBuiltInSpecies());
-		while (!speciesLeft.isEmpty()) {
-			final List<SpeciesDescription> speciesToConsider = new ArrayList(speciesLeft);
-			for (final SpeciesDescription sd : speciesToConsider) {
-				if (result.exists(sd))
-					speciesLeft.remove(sd);
-				else {
-					final TypeNode node = result.find(sd.getParent());
-					if (node != null) {
-						node.addChild(sd);
-						speciesLeft.remove(sd);
-					}
-				}
-			}
-		}
-		builtInSpeciesTree = result;
-		return builtInSpeciesTree;
-	}
+	// public static TypeTree<SpeciesDescription> getBuiltInSpeciesTree() {
+	// if (builtInSpeciesTree != null)
+	// return builtInSpeciesTree;
+	// final ModelDescription root = ModelDescription.ROOT;
+	// final TypeTree<SpeciesDescription> result = new
+	// TypeTree(root.getSpeciesDescription(IKeyword.AGENT));
+	// final List<SpeciesDescription> speciesLeft = new
+	// ArrayList(getBuiltInSpecies());
+	// while (!speciesLeft.isEmpty()) {
+	// final List<SpeciesDescription> speciesToConsider = new
+	// ArrayList(speciesLeft);
+	// for (final SpeciesDescription sd : speciesToConsider) {
+	// if (result.exists(sd))
+	// speciesLeft.remove(sd);
+	// else {
+	// final TypeNode node = result.find(sd.getParent());
+	// if (node != null) {
+	// node.addChild(sd);
+	// speciesLeft.remove(sd);
+	// }
+	// }
+	// }
+	// }
+	// builtInSpeciesTree = result;
+	// return builtInSpeciesTree;
+	// }
 
 	public static Collection<? extends TypeDescription> getBuiltInSpecies() {
 		if (builtInSpecies != null)

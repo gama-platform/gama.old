@@ -10,7 +10,6 @@ import static msi.gama.common.interfaces.IKeyword.NAME;
 import static msi.gama.common.interfaces.IKeyword.SCHEDULES;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +18,9 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.graph.SimpleDirectedGraph;
+import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -35,14 +37,13 @@ import msi.gaml.compilation.ast.SyntacticFactory;
 import msi.gaml.compilation.ast.SyntacticModelElement;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.ValidationContext;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.TypeNode;
-import msi.gaml.types.TypeTree;
 import msi.gaml.types.Types;
 
 /**
@@ -116,25 +117,19 @@ public class ModelAssembler {
 						Iterables.transform(models.reverse(), each -> ((SyntacticModelElement) each).getPath()));
 
 		final ModelDescription model = new ModelDescription(modelName, null, projectPath, modelPath,
-				source.getElement(), null, ModelDescription.ROOT, globalFacets, collector,
+				source.getElement(), null, ModelDescription.ROOT, null, globalFacets, collector,
 				absoluteAlternatePathAsStrings);
 
-		Collection<String> allModelNames = null;
-		for (final ISyntacticElement element : models) {
-			final String s = buildModelName(element.getName());
-			if (!s.equals(modelName)) {
-				if (allModelNames == null)
-					allModelNames = new ArrayList<>();
-				allModelNames.add(s);
-			}
-		}
+		final Collection<String> allModelNames = models.size() == 1 ? null
+				: ImmutableSet
+						.copyOf(Iterables.transform(Iterables.skip(models, 1), each -> buildModelName(each.getName())));
 		model.setImportedModelNames(allModelNames);
 		model.isDocumenting(document);
 
 		// hqnghi add micro-models
 		if (mm != null) {
 			// model.setMicroModels(mm);
-			model.addChildren(new ArrayList(mm.values()));
+			model.addChildren(mm.values());
 		}
 		// end-hqnghi
 		// recursively add user-defined species to world and down on to the
@@ -199,6 +194,7 @@ public class ModelAssembler {
 		// recursion is hierarchical
 
 		model.inheritFromParent();
+
 		for (final SpeciesDescription sd : getSpeciesInHierarchicalOrder(model)) {
 			sd.inheritFromParent();
 			if (sd.isExperiment()) {
@@ -222,39 +218,27 @@ public class ModelAssembler {
 
 	}
 
-	// TODO Refaire ça avec un graphe ??
 	private Iterable<SpeciesDescription> getSpeciesInHierarchicalOrder(final ModelDescription model) {
-		final TypeTree<SpeciesDescription> hierarchy = Types.getBuiltInSpeciesTree().copy();
-		final List<SpeciesDescription> speciesLeft = new ArrayList<>();
-		model.getAllSpecies(speciesLeft);
-		final List<SpeciesDescription> speciesToRemove = new ArrayList<>();
+		final DirectedGraph<SpeciesDescription, Object> hierarchy = new SimpleDirectedGraph<>(Object.class);
+		final DescriptionVisitor visitor = new DescriptionVisitor<SpeciesDescription>() {
 
-		while (!speciesLeft.isEmpty()) {
-			for (final SpeciesDescription sd : speciesLeft) {
-				if (sd instanceof ModelDescription) {
-					speciesToRemove.add(sd);
-				} else {
-					final SpeciesDescription parent = sd.getParent();
-					if (sd == parent || parent == null) {
-						// Takes care of invalid species
-						return Collections.EMPTY_LIST;
-					} else {
-						final TypeNode<SpeciesDescription> superNode = hierarchy.find(parent);
-						if (superNode != null) {
-							superNode.addChild(sd);
-							speciesToRemove.add(sd);
-						}
-					}
+			@Override
+			public boolean visit(final SpeciesDescription desc) {
+				if (desc instanceof ModelDescription)
+					return true;
+				final SpeciesDescription sd = desc.getParent();
+				if (sd == null || sd == desc)
+					return false;
+				hierarchy.addVertex(desc);
+				if (!sd.isBuiltIn()) {
+					hierarchy.addVertex(sd);
+					hierarchy.addEdge(sd, desc);
 				}
+				return true;
 			}
-			speciesLeft.removeAll(speciesToRemove);
-			speciesToRemove.clear();
-		}
-		return Iterables.filter(hierarchy.getAllElements(TypeTree.Order.PRE_ORDER), input -> {
-			if (input.isBuiltIn() || input instanceof ModelDescription)
-				return false;
-			return true;
-		});
+		};
+		model.visitAllSpecies(visitor);
+		return () -> new TopologicalOrderIterator<>(hierarchy);
 	}
 
 	private void createSchedulerSpecies(final ModelDescription model) {
@@ -281,7 +265,7 @@ public class ModelAssembler {
 	void addExperiment(final String origin, final ModelDescription model, final ISyntacticElement experiment,
 			final Map<String, SpeciesDescription> cache) {
 		// Create the experiment description
-		final IDescription desc = DescriptionFactory.create(experiment, model, ChildrenProvider.NONE);
+		final IDescription desc = DescriptionFactory.create(experiment, model, Collections.EMPTY_LIST);
 		final ExperimentDescription eDesc = (ExperimentDescription) desc;
 		cache.put(eDesc.getName(), eDesc);
 		((SymbolDescription) desc).resetOriginName();
@@ -320,9 +304,10 @@ public class ModelAssembler {
 
 	void addMicroSpecies(final SpeciesDescription macro, final ISyntacticElement micro,
 			final Map<String, SpeciesDescription> cache) {
-		// Create the species description without any children
+		// Create the species description without any children. Passing
+		// explicitly an empty list and not null;
 		final SpeciesDescription mDesc = (SpeciesDescription) DescriptionFactory.create(micro, macro,
-				ChildrenProvider.NONE);
+				Collections.EMPTY_LIST);
 		cache.put(mDesc.getName(), mDesc);
 		// Add it to its macro-species
 		macro.addChild(mDesc);
@@ -404,7 +389,6 @@ public class ModelAssembler {
 			p = IKeyword.AGENT;
 		}
 		SpeciesDescription parent = lookupSpecies(p, cache);
-		// DEBUG
 		if (parent == null) {
 			parent = model.getSpeciesDescription(p);
 		}
