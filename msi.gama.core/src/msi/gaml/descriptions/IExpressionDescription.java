@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.Set;
+import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -52,7 +52,7 @@ public interface IExpressionDescription extends IGamlable {
 
 	public boolean isConst();
 
-	public Set<String> getStrings(IDescription context, boolean skills);
+	public Collection<String> getStrings(IDescription context, boolean skills);
 
 	public abstract IExpressionDescription cleanCopy();
 

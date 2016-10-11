@@ -1,6 +1,5 @@
 package msi.gama.lang.gaml.resource;
 
-import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.emf.common.util.TreeIterator;
@@ -15,9 +14,7 @@ import org.eclipse.xtext.resource.XtextResourceSet;
 import com.google.inject.Singleton;
 
 import gnu.trove.set.hash.TLinkedHashSet;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
-import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
@@ -68,14 +65,10 @@ public class GamlResourceInfoProvider implements IGamlResourceInfoProvider {
 				if (s == null) {
 					System.out.println("EXPERIMENT NULL");
 				}
-				final Map<String, Facet> f = EGaml.getFacetsMapOf((Statement) e);
-				final Facet typeFacet = f.get(IKeyword.TYPE);
-				if (typeFacet != null) {
-					final String type = EGaml.getKeyOf(typeFacet.getExpr());
-					if (IKeyword.BATCH.equals(type)) {
-						s = GamlFileInfo.BATCH_PREFIX + s;
-					}
+				if (EGaml.isBatch((Statement) e)) {
+					s = GamlFileInfo.BATCH_PREFIX + s;
 				}
+
 				if (exps == null)
 					exps = new TLinkedHashSet();
 				exps.add(s);

@@ -56,7 +56,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			return new StatementWithChildrenDescription(keyword, enclosing, children, proto.hasArgs(), element, facets,
 					null);
 		}
-		return new StatementDescription(keyword, enclosing, proto.hasArgs(), children, element, facets, null);
+		return new StatementDescription(keyword, enclosing, proto.hasArgs(), /* children, */ element, facets, null);
 	}
 
 }

@@ -60,7 +60,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
 			final TypeDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
 			final Facets facets, final String plugin) {
-		super(keyword, macroDesc, source, cp, facets);
+		super(keyword, macroDesc, source, /* cp, */ facets);
+		addChildren(cp);
 		// parent can be null
 		if (parent != null)
 			setParent(parent);
@@ -132,7 +133,9 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected void addAttributeNoCheck(final VariableDescription vd) {
 		if (attributes == null)
 			attributes = new TOrderedHashMap();
-		attributes.put(vd.getName(), vd);
+//		synchronized (this) {
+			attributes.put(vd.getName(), vd);
+//		}
 	}
 
 	public boolean assertAttributesAreCompatible(final VariableDescription existingVar,
@@ -336,7 +339,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 
 		final VariableDescription shape = attributes.get(SHAPE);
-		final Set<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
+		final Collection<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
 				: shape.getDependencies(forInit);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
@@ -348,7 +351,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			if (shape != null && var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
 				dependencies.addEdge(shape, var);
 			}
-			final Set<VariableDescription> varDependencies = var.getDependencies(forInit);
+			final Collection<VariableDescription> varDependencies = var.getDependencies(forInit);
 			for (final VariableDescription newVar : varDependencies) {
 				if (attributes.containsValue(newVar)) {
 					dependencies.addVertex(newVar);
@@ -382,7 +385,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			return true;
 
 		final VariableDescription shape = attributes.get(SHAPE);
-		final Set<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
+		final Collection<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
 				: shape.getDependencies(true);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {

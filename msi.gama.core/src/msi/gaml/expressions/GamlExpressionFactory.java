@@ -310,9 +310,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public IExpression createTemporaryActionForAgent(final IAgent agent, final String action) {
-		final IDescription context = agent.getSpecies().getDescription();
-		final IDescription desc = DescriptionFactory.create(IKeyword.ACTION, context, Collections.EMPTY_LIST,
-				IKeyword.TYPE, IKeyword.STRING, IKeyword.NAME, TEMPORARY_ACTION_NAME);
+		final SpeciesDescription context = (SpeciesDescription) agent.getSpecies().getDescription();
+		final ActionDescription desc = (ActionDescription) DescriptionFactory.create(IKeyword.ACTION, context,
+				Collections.EMPTY_LIST, IKeyword.TYPE, IKeyword.STRING, IKeyword.NAME, TEMPORARY_ACTION_NAME);
 		final List<IDescription> children = getParser().compileBlock(action, context);
 		for (final IDescription child : children) {
 			desc.addChild(child);

@@ -58,7 +58,7 @@ public abstract class SymbolDescription implements IDescription {
 	private IType<?> type;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc, final EObject source,
-			final Iterable<? extends IDescription> children, final Facets facets) {
+			/* final Iterable<? extends IDescription> children, */ final Facets facets) {
 		this.keyword = keyword;
 		this.facets = facets;
 		element = source;
@@ -66,7 +66,7 @@ public abstract class SymbolDescription implements IDescription {
 			originName = superDesc.getName();
 		}
 		setEnclosingDescription(superDesc);
-		addChildren(children);
+		// addChildren(children);
 	}
 
 	protected boolean hasFacets() {
@@ -368,7 +368,7 @@ public abstract class SymbolDescription implements IDescription {
 	}
 
 	// To add children from outside
-	@Override
+	// @Override
 	public final void addChildren(final Iterable<? extends IDescription> originalChildren) {
 		if (originalChildren == null /* || !getMeta().hasSequence() */)
 			return;
@@ -377,7 +377,7 @@ public abstract class SymbolDescription implements IDescription {
 		}
 	}
 
-	@Override
+	// @Override
 	public IDescription addChild(final IDescription child) {
 		if (child == null) {
 			return null;
@@ -665,9 +665,9 @@ public abstract class SymbolDescription implements IDescription {
 		final boolean isDo = DO.equals(getKeyword());
 		final boolean isBuiltIn = isBuiltIn();
 		final SymbolProto proto = getMeta();
-		final Set<String> missingFacets = proto.getMissingMandatoryFacets(facets);
-		if (missingFacets != null) {
-			error("Missing facets " + missingFacets, IGamlIssue.MISSING_FACET);
+		final Iterable<String> missingFacets = proto.getMissingMandatoryFacets(facets);
+		if (missingFacets != null && !Iterables.isEmpty(missingFacets)) {
+			error("Missing facets " + ImmutableSet.copyOf(missingFacets), IGamlIssue.MISSING_FACET);
 			return false;
 		}
 		final boolean ok = visitFacets(new FacetVisitor() {
@@ -753,6 +753,15 @@ public abstract class SymbolDescription implements IDescription {
 	protected boolean validateChildren() {
 		return visitOwnChildren(VALIDATING_VISITOR);
 	}
+
+	// protected boolean validateChildrenInParallel() {
+	// final ConcurrentHashMap map = new ConcurrentHashMap<>();
+	// for (final IDescription d : getOwnChildren()) {
+	// map.putIfAbsent(d, d);
+	// }
+	// map.forEach(1, (BiConsumer) VALIDATING_VISITOR);
+	// return true;
+	// }
 
 	@Override
 	public final ISymbol compile() {

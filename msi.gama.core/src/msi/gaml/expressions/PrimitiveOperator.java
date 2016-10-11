@@ -12,12 +12,12 @@
 package msi.gaml.expressions;
 
 import java.util.Map;
-import java.util.Set;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.FacetVisitor;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -159,7 +159,7 @@ public class PrimitiveOperator implements IExpression {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
 		if (parameters != null)
 			parameters.forEachEntry(new FacetVisitor() {
 

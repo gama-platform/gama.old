@@ -15,16 +15,15 @@ import java.io.File;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.kernel.simulation.SimulationAgent;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import msi.gaml.types.ITypesManager;
@@ -43,7 +42,7 @@ public class ModelDescription extends SpeciesDescription {
 	// TODO Move elsewhere
 	public static final String MODEL_SUFFIX = "_model";
 	public static volatile ModelDescription ROOT;
-	private TOrderedHashMap<String, ExperimentDescription> experiments;
+	private THashMap<String, ExperimentDescription> experiments;
 	final TypesManager types;
 	private String modelFilePath;
 	private final String modelProjectPath;
@@ -51,7 +50,7 @@ public class ModelDescription extends SpeciesDescription {
 	private final ValidationContext validationContext;
 	protected volatile boolean document;
 	// hqnghi new attribute manipulate micro-models
-	private Map<String, ModelDescription> microModels;
+	private THashMap<String, ModelDescription> microModels;
 	private String alias = "";
 	boolean isStartingDateDefined = false;
 	private Collection<String> importedModelNames;
@@ -256,7 +255,7 @@ public class ModelDescription extends SpeciesDescription {
 		if (child instanceof ModelDescription) {
 			((ModelDescription) child).getTypesManager().setParent(getTypesManager());
 			if (microModels == null)
-				microModels = new TOrderedHashMap();
+				microModels = new THashMap();
 			microModels.put(((ModelDescription) child).getAlias(), (ModelDescription) child);
 		} // no else as models are also species, which should be added after.
 		if (!child.isBuiltIn() && child.getName().equals(SimulationAgent.STARTING_DATE)) {
@@ -264,7 +263,7 @@ public class ModelDescription extends SpeciesDescription {
 		} else if (child instanceof ExperimentDescription) {
 			final String s = child.getName();
 			if (experiments == null) {
-				experiments = new TOrderedHashMap();
+				experiments = new THashMap();
 			}
 			experiments.put(s, (ExperimentDescription) child);
 		} else {
@@ -418,36 +417,9 @@ public class ModelDescription extends SpeciesDescription {
 
 	public IDescription validate(final boolean document) {
 		isDocumenting(document);
-		// System.out.println(getName() + ": " +
-		// computeFacetSizeDistribution());
 		super.validate();
 		return this;
 	}
-
-	// private Map<String, Integer> computeFacetSizeDistribution() {
-	// final Map<String, Integer> result = new HashMap();
-	// final int[] facetsNumber = new int[] { 0 };
-	// final int[] descWith1Facets = new int[] { 0 };
-	// final int[] descNumber = new int[] { 0 };
-	// final FacetVisitor proc = new FacetVisitor() {
-	//
-	// @Override
-	// public boolean visit(final String a, final IExpressionDescription b) {
-	// final Integer i = result.get(a);
-	// if (i == null) {
-	// result.put(a, 1);
-	// } else
-	// result.put(a, i + 1);
-	// return true;
-	// }
-	// };
-	//
-	// this.computeStats(proc, facetsNumber, descWith1Facets, descNumber);
-	// result.put("TOTAL_FACETS", facetsNumber[0]);
-	// result.put("TOTAL_DESCS", descNumber[0]);
-	// result.put("DESC_WITH_1_FACETS", descWith1Facets[0]);
-	// return result;
-	// }
 
 	/**
 	 * @return

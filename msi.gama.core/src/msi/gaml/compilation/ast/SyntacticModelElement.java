@@ -44,12 +44,6 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 		return false;
 	}
 
-	// public void printStats() {
-	// final Map<String, Integer> stats = new HashMap();
-	// computeStats(stats);
-	// // System.out.println("Stats for " + getName() + " : " + stats);
-	// }
-
 	@Override
 	public void visitExperiments(final SyntacticVisitor visitor) {
 		visitAllChildren(visitor, EXPERIMENT_FILTER);

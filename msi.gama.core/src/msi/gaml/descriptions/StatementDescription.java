@@ -42,10 +42,23 @@ public class StatementDescription extends SymbolDescription {
 	protected final Arguments passedArgs;
 	private static int COMMAND_INDEX = 0;
 
+	/**
+	 * @deprecated This method should not be used. It defers automatically to
+	 *             the other constructor, which does not take children into
+	 *             account. IF children need to be passed, call addChildren()
+	 *             after
+	 */
+	@Deprecated
 	public StatementDescription(final String keyword, final IDescription superDesc, final boolean hasArgs,
 			final Iterable<IDescription> children, final EObject source, final Facets facets,
 			final Arguments alreadyComputedArgs) {
-		super(keyword, superDesc, source, children, facets);
+		this(keyword, superDesc, hasArgs, source, facets, alreadyComputedArgs);
+	}
+
+	public StatementDescription(final String keyword, final IDescription superDesc, final boolean hasArgs,
+			/* final Iterable<IDescription> children, */ final EObject source, final Facets facets,
+			final Arguments alreadyComputedArgs) {
+		super(keyword, superDesc, source, /* children, */ facets);
 		passedArgs = alreadyComputedArgs != null ? alreadyComputedArgs : hasArgs ? createArgs() : null;
 	}
 
@@ -111,7 +124,7 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public StatementDescription copy(final IDescription into) {
-		final StatementDescription desc = new StatementDescription(getKeyword(), into, false, null, element,
+		final StatementDescription desc = new StatementDescription(getKeyword(), into, false, /* null, */ element,
 				getFacetsCopy(), passedArgs == null ? null : passedArgs.cleanCopy());
 		desc.originName = getOriginName();
 		return desc;

@@ -1,8 +1,6 @@
 package msi.gaml.descriptions;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -11,6 +9,8 @@ import com.google.common.collect.Iterables;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.util.Collector;
+import msi.gama.util.ICollector;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.statements.Arguments;
@@ -20,18 +20,17 @@ import msi.gaml.types.IType;
 public class StatementWithChildrenDescription extends StatementDescription {
 
 	protected THashMap<String, IVarExpression> temps;
-	protected List<IDescription> children;
+	protected final ICollector<IDescription> children = new Collector.Ordered<IDescription>();
 
 	public StatementWithChildrenDescription(final String keyword, final IDescription superDesc,
 			final Iterable<IDescription> cp, final boolean hasArgs, final EObject source, final Facets facets,
 			final Arguments alreadyComputedArgs) {
-		super(keyword, superDesc, hasArgs, cp, source, facets, alreadyComputedArgs);
+		super(keyword, superDesc, hasArgs, /* cp, */source, facets, alreadyComputedArgs);
+		addChildren(cp);
 	}
 
 	@Override
 	public boolean visitChildren(final DescriptionVisitor visitor) {
-		if (children == null)
-			return true;
 		for (final IDescription d : children) {
 			if (!visitor.visit(d))
 				return false;
@@ -41,8 +40,6 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	@Override
 	public boolean visitOwnChildren(final DescriptionVisitor visitor) {
-		if (children == null)
-			return true;
 		for (final IDescription d : children) {
 			if (!visitor.visit(d))
 				return false;
@@ -58,8 +55,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	@Override
 	public void dispose() {
 		super.dispose();
-
-		children = null;
+		children.clear();
 		if (temps != null)
 			temps.forEachValue(object -> {
 				object.dispose();
@@ -127,8 +123,6 @@ public class StatementWithChildrenDescription extends StatementDescription {
 	public IDescription addChild(final IDescription child) {
 		final IDescription d = super.addChild(child);
 		if (d != null) {
-			if (children == null)
-				children = new ArrayList<>();
 			children.add(child);
 		}
 		return d;
@@ -136,8 +130,7 @@ public class StatementWithChildrenDescription extends StatementDescription {
 
 	@Override
 	public StatementWithChildrenDescription copy(final IDescription into) {
-		final Iterable<IDescription> children = this.children == null ? null
-				: Iterables.transform(this.children, each -> each.copy(into));
+		final Iterable<IDescription> children = Iterables.transform(this.children, each -> each.copy(into));
 		final StatementWithChildrenDescription desc = new StatementWithChildrenDescription(getKeyword(), into, children,
 				false, element, getFacetsCopy(), passedArgs == null ? null : passedArgs.cleanCopy());
 		desc.originName = getOriginName();

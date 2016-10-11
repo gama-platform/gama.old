@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
@@ -20,10 +21,11 @@ import org.eclipse.emf.ecore.EObject;
 import com.google.common.collect.ImmutableSet;
 
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.ITypeProvider;
+import msi.gama.util.Collector;
 import msi.gama.util.GAML;
+import msi.gama.util.ICollector;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
@@ -40,7 +42,7 @@ import msi.gaml.types.Types;
  */
 public class VariableDescription extends SymbolDescription {
 
-	private static Map<String, Set<String>> dependencies = new THashMap<>();
+	private static Map<String, Collection<String>> dependencies = new THashMap<>();
 	private static Set<String> INIT_DEPENDENCIES_FACETS = ImmutableSet.<String> builder()
 			.add(INIT, MIN, MAX, FUNCTION, STEP, SIZE).build();
 	private static Set<String> UPDATE_DEPENDENCIES_FACETS = ImmutableSet.<String> builder()
@@ -54,7 +56,7 @@ public class VariableDescription extends SymbolDescription {
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final EObject source,
 			final Facets facets) {
-		super(keyword, superDesc, source, null, facets);
+		super(keyword, superDesc, source, /* null, */facets);
 		if (facets != null && !facets.containsKey(TYPE) && !isExperimentParameter()) {
 			facets.putAsLabel(TYPE, keyword);
 		}
@@ -63,7 +65,7 @@ public class VariableDescription extends SymbolDescription {
 				&& !isParameter();
 		if (isBuiltIn() && hasFacet("depends_on")) {
 			final IExpressionDescription desc = getFacet("depends_on");
-			final Set<String> strings = desc.getStrings(this, false);
+			final Collection<String> strings = desc.getStrings(this, false);
 			dependencies.put(getName(), strings);
 			removeFacets("depends_on");
 		}
@@ -212,15 +214,16 @@ public class VariableDescription extends SymbolDescription {
 		return result;
 	}
 
-	public Set<VariableDescription> getDependencies(final boolean forInit) {
+	public Collection<VariableDescription> getDependencies(final boolean forInit) {
 
-		final Set<VariableDescription> result = new THashSet<>();
-		final Set<String> deps = dependencies.get(getName());
+		final ICollector<VariableDescription> result = new Collector.Unique<>();
+		final Collection<String> deps = dependencies.get(getName());
 		if (deps != null) {
 			for (final String s : deps) {
 				final VariableDescription vd = getSpeciesContext().getAttribute(s);
-				if (vd != null)
+				if (vd != null) {
 					result.add(vd);
+				}
 			}
 		}
 
@@ -236,7 +239,7 @@ public class VariableDescription extends SymbolDescription {
 		});
 		result.remove(this);
 		result.remove(null);
-		return result;
+		return result.items();
 	}
 
 	public boolean isUpdatable() {
