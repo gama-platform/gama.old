@@ -52,13 +52,13 @@ global{
 		
 		ask road {
 			point ptF <- first(shape.points);
-			if (not(ptF in nodes_map)) {
+			if (not(ptF in nodes_map.keys)) {
 				create intersection with:[location::ptF] {
 					nodes_map[location] <- self;
 				}	
 			}
 			point ptL <- last(shape.points);
-			if (not(ptL in nodes_map)) {
+			if (not(ptL in nodes_map.keys)) {
 				create intersection with:[location::ptL] {
 					nodes_map[location] <- self;
 				}
