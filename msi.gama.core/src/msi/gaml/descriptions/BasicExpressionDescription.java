@@ -11,8 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.Collection;
 import java.util.Collections;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -145,7 +145,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	}
 
 	@Override
-	public Set<String> getStrings(final IDescription context, final boolean skills) {
+	public Collection<String> getStrings(final IDescription context, final boolean skills) {
 		return Collections.EMPTY_SET;
 	}
 

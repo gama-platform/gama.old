@@ -19,13 +19,12 @@ import static msi.gama.precompiler.ITypeProvider.FIRST_TYPE;
 import static msi.gama.precompiler.ITypeProvider.NONE;
 import static msi.gama.precompiler.ITypeProvider.WRAPPED;
 
-import java.util.Set;
-
 import msi.gama.common.GamaPreferences;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
+import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.VariableDescription;
@@ -48,8 +47,6 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		if (u.isConst() && GamaPreferences.CONSTANT_OPTIMIZATION.getValue()) {
 			final IExpression e = GAML.getExpressionFactory().createConst(u.value(null), u.getType(),
 					u.serialize(false));
-			// System.out.println(" ==== Simplification of " + u.toGaml() + "
-			// into " + e.toGaml());
 			return e;
 		}
 		return u;
@@ -210,7 +207,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
 		child.collectUsedVarsOf(species, result);
 	}
 

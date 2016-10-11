@@ -69,8 +69,7 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 
 	@Override
 	public StatementRemoteWithChildrenDescription copy(final IDescription into) {
-		final Iterable<IDescription> children = this.children == null ? null
-				: Iterables.transform(this.children, each -> each.copy(into));
+		final Iterable<IDescription> children = Iterables.transform(this.children, each -> each.copy(into));
 		final StatementRemoteWithChildrenDescription desc = new StatementRemoteWithChildrenDescription(getKeyword(),
 				into, children, false, element, getFacetsCopy(), passedArgs == null ? null : passedArgs.cleanCopy());
 		desc.originName = getOriginName();

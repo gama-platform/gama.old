@@ -12,6 +12,8 @@
 package msi.gaml.descriptions;
 
 import java.util.Set;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -52,7 +54,8 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	static final Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = input -> input.getJavaBase();
 
-	public static abstract class DescriptionVisitor<T extends IDescription> implements TObjectProcedure<T> {
+	public static abstract class DescriptionVisitor<T extends IDescription>
+			implements TObjectProcedure<T>, BiConsumer<T, T>, Consumer<T> {
 
 		@Override
 		public boolean execute(final T desc) {
@@ -61,13 +64,29 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 		public abstract boolean visit(T desc);
 
+		@Override
+		public void accept(final T d, final T e) {
+			visit(e);
+		}
+
+		@Override
+		public void accept(final T d) {
+			visit(d);
+		}
+
 	}
 
-	public static abstract class FacetVisitor implements TObjectObjectProcedure<String, IExpressionDescription> {
+	public static abstract class FacetVisitor implements TObjectObjectProcedure<String, IExpressionDescription>,
+			BiConsumer<String, IExpressionDescription> {
 
 		@Override
 		public final boolean execute(final String name, final IExpressionDescription exp) {
 			return visit(name, exp);
+		}
+
+		@Override
+		public final void accept(final String name, final IExpressionDescription exp) {
+			visit(name, exp);
 		}
 
 		/**
@@ -159,9 +178,10 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	// public abstract List<IDescription> getChildren();
 
-	public abstract void addChildren(Iterable<? extends IDescription> children);
-
-	public abstract IDescription addChild(IDescription child);
+	// public abstract void addChildren(Iterable<? extends IDescription>
+	// children);
+	//
+	// public abstract IDescription addChild(IDescription child);
 
 	public abstract IType getTypeNamed(String s);
 

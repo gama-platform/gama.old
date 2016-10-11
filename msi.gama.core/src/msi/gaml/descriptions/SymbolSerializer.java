@@ -5,6 +5,7 @@
 package msi.gaml.descriptions;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -83,7 +84,7 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 				if (ed == null) {
 					return null;
 				}
-				final Set<String> strings = ed.getStrings(s, true);
+				final Collection<String> strings = ed.getStrings(s, true);
 				return strings.toString();
 			}
 			return super.serializeFacetValue(s, key, includingBuiltIn);

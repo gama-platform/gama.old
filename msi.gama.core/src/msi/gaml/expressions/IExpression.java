@@ -11,13 +11,12 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.Set;
-
 import msi.gama.common.interfaces.IDisposable;
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.ITyped;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
 
@@ -43,6 +42,6 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 
 	public abstract boolean shouldBeParenthesized();
 
-	public abstract void collectUsedVarsOf(IDescription species, Set<VariableDescription> result);
+	public abstract void collectUsedVarsOf(IDescription species, ICollector<VariableDescription> result);
 
 }

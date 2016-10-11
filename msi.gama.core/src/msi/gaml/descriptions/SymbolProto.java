@@ -20,13 +20,13 @@ import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.common.collect.Iterables;
 
-import gnu.trove.set.hash.THashSet;
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TIntHashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.compilation.ISymbolConstructor;
@@ -82,7 +82,7 @@ public class SymbolProto extends AbstractProto {
 		this.hasScope = !doesNotHaveScope;
 		if (possibleFacets != null) {
 			final Builder<String> builder = ImmutableSet.builder();
-			this.possibleFacets = new TOrderedHashMap<String, FacetProto>();
+			this.possibleFacets = new THashMap<String, FacetProto>();
 			for (final FacetProto f : possibleFacets) {
 				this.possibleFacets.put(f.name, f);
 				if (!f.optional) {
@@ -240,22 +240,13 @@ public class SymbolProto extends AbstractProto {
 	 * @param facets
 	 * @return
 	 */
-	public Set<String> getMissingMandatoryFacets(final Facets facets) {
+	public Iterable<String> getMissingMandatoryFacets(final Facets facets) {
 		if (facets == null || facets.isEmpty()) {
 			if (mandatoryFacets == null || mandatoryFacets.isEmpty())
 				return null;
 			return mandatoryFacets;
 		}
-		Set<String> missing = null;
-		for (final String s : mandatoryFacets) {
-			if (!facets.containsKey(s)) {
-				if (missing == null) {
-					missing = new THashSet<String>();
-				}
-				missing.add(s);
-			}
-		}
-		return missing;
+		return Iterables.filter(mandatoryFacets, each -> !facets.containsKey(each));
 	}
 
 	/**

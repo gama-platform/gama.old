@@ -12,7 +12,6 @@
 package msi.gaml.expressions;
 
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.Iterables;
 
@@ -23,6 +22,7 @@ import msi.gama.util.GAML;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.GamaPair;
+import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.GamaType;
@@ -221,7 +221,7 @@ public class MapExpression extends AbstractExpression {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
 		for (final IExpression e : keys) {
 			if (e != null) {
 				e.collectUsedVarsOf(species, result);

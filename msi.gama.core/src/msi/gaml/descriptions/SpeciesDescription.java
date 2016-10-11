@@ -17,11 +17,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
 
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -59,7 +61,7 @@ public class SpeciesDescription extends TypeDescription {
 	// AD 08/16: Behaviors are now inherited dynamically
 	private TOrderedHashMap<String, StatementDescription> behaviors;
 	// AD 08/16: Aspects are now inherited dynamically
-	private TOrderedHashMap<String, StatementDescription> aspects;
+	private THashMap<String, StatementDescription> aspects;
 	private TOrderedHashMap<String, SpeciesDescription> microSpecies;
 	protected TLinkedHashSet<SkillDescription> skills;
 	protected SkillDescription control;
@@ -327,7 +329,7 @@ public class SpeciesDescription extends TypeDescription {
 			duplicateInfo(ce, getAspect(aspectName));
 		}
 		if (aspects == null) {
-			aspects = new TOrderedHashMap<String, StatementDescription>();
+			aspects = new THashMap<String, StatementDescription>();
 		}
 		aspects.put(aspectName, ce);
 	}

@@ -11,12 +11,11 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.Set;
-
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
+import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -92,7 +91,7 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
 		if (species.hasAttribute(value.toString()))
 			result.add(((TypeDescription) species).getAttribute(value.toString()));
 	}

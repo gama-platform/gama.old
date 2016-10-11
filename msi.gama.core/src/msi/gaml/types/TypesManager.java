@@ -12,8 +12,8 @@
 package msi.gaml.types;
 
 import java.util.Collection;
+import java.util.concurrent.ConcurrentHashMap;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -28,7 +28,7 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 
 	public static int CURRENT_INDEX = IType.SPECIES_TYPES;
 	private TypesManager parent;
-	private final THashMap<String, IType> types = new THashMap(10, 0.95f);
+	private final ConcurrentHashMap<String, IType> types = new ConcurrentHashMap(5, 0.75f);
 
 	public TypesManager(final TypesManager parent) {
 		setParent(parent);
@@ -159,6 +159,8 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 
 	@Override
 	public IType get(final String type) {
+		if (type == null)
+			return Types.NO_TYPE;
 		final IType t = types.get(type);
 		if (t != null)
 			return t;
