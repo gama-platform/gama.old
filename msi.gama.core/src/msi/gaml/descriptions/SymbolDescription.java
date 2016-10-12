@@ -56,6 +56,7 @@ public abstract class SymbolDescription implements IDescription {
 	protected String name;
 	protected final String keyword;
 	private IType<?> type;
+	protected boolean validated;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc, final EObject source,
 			/* final Iterable<? extends IDescription> children, */ final Facets facets) {
@@ -589,11 +590,10 @@ public abstract class SymbolDescription implements IDescription {
 
 	@Override
 	public IDescription validate() {
-		// if (validated && "ball_in_group".equals(getName())) {
-		// System.out.println("Trying to revalidate " + this);
-		// return this;
-		// }
-		// validated = true;
+		if (validated) {
+			return this;
+		}
+		validated = true;
 		if (isBuiltIn()) {
 			// We simply make sure that the facets are correctly compiled
 			validateFacets();

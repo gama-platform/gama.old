@@ -6,6 +6,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.Spliterator;
+import java.util.function.Predicate;
+import java.util.stream.Stream;
+
+import com.google.common.collect.Sets;
 
 import gnu.trove.set.hash.THashSet;
 import gnu.trove.set.hash.TLinkedHashSet;
@@ -19,9 +24,60 @@ import gnu.trove.set.hash.TLinkedHashSet;
  * @param <E>
  */
 
-public abstract class Collector<E, C extends Collection<E>> implements ICollector<E> {
+public abstract class Collector<E, C extends Collection<E>> implements ICollector<E>, Collection<E> {
+
+	@Override
+	public boolean removeIf(final Predicate<? super E> filter) {
+		if (collect != null)
+			return collect.removeIf(filter);
+		return ICollector.super.removeIf(filter);
+	}
+
+	@Override
+	public Spliterator<E> spliterator() {
+		if (collect != null)
+			return collect.spliterator();
+		return ICollector.super.spliterator();
+	}
+
+	@Override
+	public Stream<E> stream() {
+		if (collect != null)
+			return collect.stream();
+		return ICollector.super.stream();
+	}
+
+	@Override
+	public Stream<E> parallelStream() {
+		if (collect != null)
+			return collect.parallelStream();
+		return ICollector.super.parallelStream();
+	}
 
 	public static class Unique<E> extends Collector<E, Set<E>> {
+
+		public static class Concurrent<E> extends Unique<E> {
+			@Override
+			protected void initCollect() {
+				if (collect == null) {
+					collect = Sets.newConcurrentHashSet();
+				}
+			}
+
+			@Override
+			public boolean remove(final Object o) {
+				if (o == null)
+					return false;
+				return super.remove(o);
+			}
+
+			@Override
+			public boolean removeAll(final Collection<?> o) {
+				if (o == null)
+					return false;
+				return super.removeAll(o);
+			}
+		}
 
 		@Override
 		protected void initCollect() {
@@ -62,6 +118,61 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 
 	}
 
+	@Override
+	public int size() {
+		if (collect == null)
+			return 0;
+		return collect.size();
+	}
+
+	@Override
+	public boolean contains(final Object o) {
+		if (collect == null)
+			return false;
+		return collect.contains(o);
+	}
+
+	@Override
+	public Object[] toArray() {
+		if (collect == null)
+			return new Object[0];
+		return collect.toArray();
+	}
+
+	@Override
+	public <T> T[] toArray(final T[] a) {
+		if (collect == null)
+			return a;
+		return collect.toArray(a);
+	}
+
+	@Override
+	public boolean containsAll(final Collection<?> c) {
+		if (collect == null)
+			return false;
+		return collect.containsAll(c);
+	}
+
+	@Override
+	public boolean addAll(final Collection<? extends E> c) {
+		initCollect();
+		return collect.addAll(c);
+	}
+
+	@Override
+	public boolean removeAll(final Collection<?> c) {
+		if (collect == null)
+			return false;
+		return collect.removeAll(c);
+	}
+
+	@Override
+	public boolean retainAll(final Collection<?> c) {
+		if (collect == null)
+			return false;
+		return collect.retainAll(c);
+	}
+
 	C collect;
 
 	/*
@@ -70,9 +181,9 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 	 * @see msi.gama.util.ICollector#add(E)
 	 */
 	@Override
-	public void add(final E vd) {
+	public boolean add(final E vd) {
 		initCollect();
-		collect.add(vd);
+		return collect.add(vd);
 	}
 
 	protected abstract void initCollect();
@@ -96,10 +207,10 @@ public abstract class Collector<E, C extends Collection<E>> implements ICollecto
 	 * @see msi.gama.util.ICollector#remove(E)
 	 */
 	@Override
-	public void remove(final E e) {
+	public boolean remove(final Object e) {
 		if (collect == null)
-			return;
-		collect.remove(e);
+			return false;
+		return collect.remove(e);
 	}
 
 	/*

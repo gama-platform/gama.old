@@ -13,6 +13,7 @@ package msi.gama.metamodel.topology.grid;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -29,6 +30,7 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
 import gnu.trove.iterator.TIntIterator;
 import gnu.trove.set.hash.THashSet;
 import gnu.trove.set.hash.TIntHashSet;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.JavaUtils;
 import msi.gama.common.util.RandomUtils;
@@ -79,6 +81,14 @@ import msi.gaml.variables.IVariable;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
+
+	static {
+		// Explicitly sets the number of threads for parallel operations on the
+		// grid
+		if (GamaPreferences.GRID_OPTIMIZATION.getValue())
+			System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
+					String.valueOf(GamaPreferences.NUMBERS_OF_GRID_THREADS.getValue()));
+	}
 
 	/** The geometry of host. */
 
@@ -1212,11 +1222,19 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				return true;
 			}
 
-			for (final IShape s : matrix) {
-				if (!scope.step((IAgent) s)) {
-					return false;
+			if (GamaPreferences.GRID_OPTIMIZATION.getValue()) {
+				// Important for each agent to be executed in its own scope
+				return Arrays.stream(matrix).parallel()
+						.allMatch(each -> ((IAgent) each).getScope().step((IAgent) each));
+			} else {
+				// We can keep the same scope for sequential steps
+				for (final IShape s : matrix) {
+					if (!scope.step((IAgent) s)) {
+						return false;
+					}
 				}
 			}
+
 			return true;
 		}
 
@@ -1759,6 +1777,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public double[] getGridValueOfColorAttribute() {
 		return null;
+	}
+
+	@Override
+	public Collection<IAgent> allAgents() {
+		return this.getAgents();
 	}
 
 }

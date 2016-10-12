@@ -295,7 +295,6 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public boolean isPoint() {
-		// return isPoint;
 		if (geometry == null) {
 			return false;
 		}

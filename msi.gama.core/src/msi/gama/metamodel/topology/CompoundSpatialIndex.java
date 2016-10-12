@@ -26,6 +26,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
+import msi.gama.util.Collector;
+import msi.gama.util.ICollector;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.species.ISpecies;
 
@@ -39,7 +41,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public CompoundSpatialIndex(final Envelope bounds) {
 		indexes = new TObjectIntHashMap<>(10, 0.75f, -1);
 		// noEntryValue is 0 by default
-		all = new ISpatialIndex[] { new GamaQuadTree(bounds) };
+		all = new ISpatialIndex[] { GamaQuadTree.create(bounds) };
 		final double biggest = FastMath.max(bounds.getWidth(), bounds.getHeight());
 		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest, biggest * FastMath.sqrt(2) };
 	}
@@ -209,14 +211,23 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	@Override
 	public void updateQuadtree(final Envelope envelope) {
-		GamaQuadTree tree = (GamaQuadTree) all[0];
+		ISpatialIndex tree = all[0];
 		final Collection<IAgent> agents = tree.allAgents();
 		tree.dispose();
-		tree = new GamaQuadTree(envelope);
+		tree = GamaQuadTree.create(envelope);
 		all[0] = tree;
 		for (final IAgent a : agents)
 			tree.insert(a);
 
+	}
+
+	@Override
+	public Collection<IAgent> allAgents() {
+		final ICollector<IAgent> set = new Collector.UniqueOrdered<>();
+		for (final ISpatialIndex i : all) {
+			set.addAll(i.allAgents());
+		}
+		return set;
 	}
 
 }

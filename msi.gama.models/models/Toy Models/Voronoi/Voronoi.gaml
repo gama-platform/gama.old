@@ -11,10 +11,10 @@ model voronoi
 global {
 	// Parameters 
 	//Number of points
-	int num_points <- 4 min: 1 max: 1000;
+	int num_points <- 50 min: 1 max: 1000;
 	//Size of the environment
-	int env_width <- 100 min: 10 max: 400;
-	int env_height <- 100 min: 10 max: 400;
+	int env_width <- 150 min: 10 max: 400;
+	int env_height <- 150 min: 10 max: 400;
 	
 	// Environment
 	geometry shape <- rectangle(env_width, env_height);
@@ -41,6 +41,11 @@ grid cell width: env_width height: env_height neighbors: 8 use_regular_agents: f
 	// Note: since GAMA 1.7, the topology needs to be specified for this computation to use continuous distances
 	center closest_center <- nil update: (center closest_to self.location) using topology(world);
 	rgb color <- #white update: (closest_center).color;
+	float grid_value <- color.red / 10 + 50 update: color.red / 10 + 50;
+	
+	aspect default {
+		draw shape color: color border: false;
+	}
 
 }
 //Species representing the center of a Voronoi point
@@ -50,8 +55,8 @@ species center skills: [moving] {
 	reflex wander {
 		do wander amplitude: 90;
 	}  
-	aspect base {
-		draw square(1.0) color: color;
+	aspect default {
+		draw square(1.0) color: color border: #black;
 	}
 }
 
@@ -67,8 +72,8 @@ experiment voronoi type: gui{
 	
 	output {
 		display Voronoi type: opengl {
-			grid cell  ;
-			species center aspect: base ;
+			grid cell ;
+			species center;
 		}
 	}	
 }

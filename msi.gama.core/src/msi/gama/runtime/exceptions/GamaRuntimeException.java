@@ -167,6 +167,7 @@ public class GamaRuntimeException extends RuntimeException {
 			}
 		}
 		if (ex != null) {
+			ex.printStackTrace();
 			addContext(ex.getClass().getSimpleName() + ": " + ex.getMessage());
 			int i = 0;
 			for (final StackTraceElement element : ex.getStackTrace()) {

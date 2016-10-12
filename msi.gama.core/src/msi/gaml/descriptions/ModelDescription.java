@@ -412,6 +412,8 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public IDescription validate() {
+		if (validated)
+			return this;
 		return validate(false);
 	}
 

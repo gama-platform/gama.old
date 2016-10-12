@@ -232,7 +232,8 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public IDescription validate() {
-
+		if (validated)
+			return this;
 		final IDescription result = super.validate();
 		if (passedArgs != null)
 			validatePassedArgs();

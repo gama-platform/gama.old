@@ -757,6 +757,25 @@ public class GamaPreferences {
 	public static final Entry<Integer> NUMBERS_OF_THREADS = create("core.threads_number",
 			"Max. number of threads to use (available processors: " + Runtime.getRuntime().availableProcessors() + ")",
 			4, IType.INT).between(1, null).in(EXPERIMENTAL).group(SIMULATIONS);
+	public static final Entry<Boolean> GRID_OPTIMIZATION = create("core.grid_optimization",
+			"Enable parallel grid operations", false, IType.BOOL).in(EXPERIMENTAL).group(SIMULATIONS)
+					.activates("core.grid_threads");
+	public static final Entry<Integer> NUMBERS_OF_GRID_THREADS = create("core.grid_threads",
+			"Max. number of threads to use", 4, IType.INT).between(1, null).in(EXPERIMENTAL).group(SIMULATIONS)
+					.addChangeListener(new IPreferenceChangeListener<Integer>() {
+
+						@Override
+						public boolean beforeValueChange(final Integer newValue) {
+							return true;
+						}
+
+						@Override
+						public void afterValueChange(final Integer newValue) {
+							System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
+									String.valueOf(newValue));
+						}
+					});
+
 	public static final Entry<Boolean> CONSTANT_OPTIMIZATION = create("core.constant_optimization",
 			"Automatically optimize constant expressions", false, IType.BOOL).in(EXPERIMENTAL).group("Compilation");
 	public static final Entry<Boolean> AGENT_OPTIMIZATION = create("core.agent_optimization",

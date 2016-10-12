@@ -11,9 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import static com.google.common.collect.Iterators.emptyIterator;
-import static com.google.common.collect.Iterators.singletonIterator;
-
+import java.util.Arrays;
 import java.util.Iterator;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -34,12 +32,15 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.IStatement.Breakable;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 // A group of commands that can be executed on remote agents.
 
 @symbol(name = IKeyword.ASK, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true, concept = {
 		IConcept.SPECIES })
 @facets(value = {
+		@facet(name = "parallel", type = { IType.BOOL,
+				IType.INT }, optional = true, doc = @doc("(experimental) setting this facet to 'true' will allow 'ask' to use concurrency when traversing the targets; setting it to an integer will set the max. concurrent number of threads used (the default is the number of processors minus 1). False by default.")),
 		@facet(name = IKeyword.TARGET, type = { IType.CONTAINER,
 				IType.AGENT }, of = IType.AGENT, optional = false, doc = @doc("an expression that evaluates to an agent or a list of agents")),
 		@facet(name = IKeyword.AS, type = {
@@ -88,10 +89,12 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 
 	private RemoteSequence sequence = null;
 	private final IExpression target;
+	private final IExpression parallel;
 
 	public AskStatement(final IDescription desc) {
 		super(desc);
 		target = getFacet(IKeyword.TARGET);
+		parallel = getFacet("parallel");
 		if (target != null) {
 			setName("ask " + target.serialize(false));
 		}
@@ -121,13 +124,31 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 	@Override
 	public Object privateExecuteIn(final IScope scope) {
 		final Object t = target.value(scope);
+		if (t instanceof IContainer) {
+			if (parallel != null) {
+				final Object p = parallel.value(scope);
+				if (p instanceof Boolean && p.equals(true) || p instanceof Integer && (Integer) p > 0) {
+					return privateExecuteInParallel(scope, (IContainer) t);
+				}
 
-		final Iterator<IAgent> runners = t instanceof IContainer ? ((IContainer) t).iterable(scope).iterator()
-				: t instanceof IAgent ? singletonIterator((IAgent) t) : emptyIterator();
-		final Object[] result = new Object[1];
-		while (runners.hasNext() && scope.execute(sequence, runners.next(), null, result)) {
+			}
+			final Iterator<IAgent> runners = ((IContainer) t).iterable(scope).iterator();
+			final Object[] result = new Object[1];
+			while (runners.hasNext() && scope.execute(sequence, runners.next(), null, result)) {
+			}
+			return result[0];
+		} else {
+			final Object[] result = new Object[1];
+			scope.execute(sequence, (IAgent) t, null, result);
+			return result[0];
 		}
-		return result[0];
+	}
+
+	public Object privateExecuteInParallel(final IScope scope, final IContainer<?, IAgent> agents) {
+		final IAgent[] array = agents.listValue(scope, Types.NO_TYPE, false).toArray(new IAgent[0]);
+		final Object[] result = new Object[1];
+		Arrays.stream(array).parallel().allMatch(each -> each.getScope().execute(sequence, each, null, result));
+		return result;
 	}
 
 }

@@ -113,7 +113,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	final SimulationClock clock;
 	GamaColor color;
 
-	final SimulationScope scope;
+	final ThreadLocal<SimulationScope> scope = ThreadLocal.withInitial(() -> new SimulationScope());
 	private SimulationOutputManager outputs;
 	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
@@ -167,9 +167,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public SimulationAgent(final SimulationPopulation pop) throws GamaRuntimeException {
 		super(pop);
-		scope = new SimulationScope();
-		clock = new SimulationClock(scope);
-		executer = new ActionExecuter(scope);
+		// scope = new SimulationScope();
+		clock = new SimulationClock(getScope());
+		executer = new ActionExecuter(getScope());
 		projectionFactory = new ProjectionFactory();
 		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());
 	}
@@ -240,7 +240,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	public void schedule(final IScope scope) {
 
 		// this.prepareGuiForSimulation(scope);
-		super.schedule(this.scope);
+		super.schedule(this.getScope());
 	}
 
 	@Override
@@ -260,15 +260,15 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		// A simulation always runs in its own scope
 		try {
 			executer.executeBeginActions();
-			super._step_(this.scope);
+			super._step_(this.getScope());
 			executer.executeEndActions();
 			executer.executeOneShotActions();
 
 			if (outputs != null) {
-				outputs.step(this.scope);
+				outputs.step(this.getScope());
 			}
 		} finally {
-			clock.step(this.scope);
+			clock.step(this.getScope());
 		}
 		// }
 		return this;
@@ -277,10 +277,10 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		// A simulation always runs in its own scope
-		super._init_(this.scope);
+		super._init_(this.getScope());
 
 		if (outputs != null) {
-			outputs.init(this.scope);
+			outputs.init(this.getScope());
 		}
 		return this;
 	}
@@ -292,7 +292,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public IScope getScope() {
-		return scope;
+		return scope.get();
 	}
 
 	public ProjectionFactory getProjectionFactory() {
@@ -325,7 +325,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			topology.dispose();
 			topology = null;
 		}
-		GAMA.releaseScope(scope);
+
+		GAMA.releaseScope(getScope());
+		scope.set(null);
 		super.dispose();
 
 	}
@@ -645,7 +647,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public void initOutputs() {
 		if (outputs != null) {
-			outputs.init(this.scope);
+			outputs.init(this.getScope());
 		}
 	}
 

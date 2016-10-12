@@ -12,9 +12,9 @@
 package msi.gama.common.util;
 
 import java.security.SecureRandom;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
@@ -261,7 +261,7 @@ public class RandomUtils {
 		}
 	}
 
-	public void shuffle2(final Set list) {
+	public void shuffle2(final Collection list) {
 		final int size = list.size();
 		if (size < 2) {
 			return;

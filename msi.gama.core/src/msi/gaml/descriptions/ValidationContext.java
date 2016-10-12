@@ -49,23 +49,25 @@ public class ValidationContext extends Collector.Ordered<GamlCompilationError> i
 	}
 
 	@Override
-	public void add(final GamlCompilationError error) {
+	public boolean add(final GamlCompilationError error) {
 		if (error.isWarning()) {
 			if (!GamaPreferences.WARNINGS_ENABLED.getValue() || noWarning) {
-				return;
+				return false;
 			}
 		} else if (error.isInfo()) {
 			if (!GamaPreferences.INFO_ENABLED.getValue() || noInfo) {
-				return;
+				return false;
 			}
 		}
 		final URI uri = error.getURI();
 		final boolean sameResource = uri.equals(resourceURI);
 		if (sameResource) {
-			super.add(error);
+			return super.add(error);
 		} else if (error.isError()) {
 			importedErrors.add(error);
+			return true;
 		}
+		return false;
 	}
 
 	static Predicate<GamlCompilationError> IS_INFO = input -> input.isInfo();

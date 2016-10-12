@@ -40,14 +40,10 @@ global torus: torus_environment {
 	
 	//Ask at each life_cell to evolve and update
 	reflex generation {
-		ask life_cell {
+		// The computation is made in parallel
+		ask life_cell parallel: true {
 			do evolve;
 		}
-
-		ask life_cell {
-			do update;
-		}
-
 	}
 	//Write the description of the model in the console
 	action description {
@@ -58,7 +54,7 @@ global torus: torus_environment {
 }
 
 //Grid species representing a cellular automata
-grid life_cell width: environment_width height: environment_height neighbors: 8  use_individual_shapes: false use_regular_agents: false frequency: 0
+grid life_cell width: environment_width height: environment_height neighbors: 8  use_individual_shapes: false use_regular_agents: false 
 use_neighbors_cache: false {
 	//Boolean to know if it is the new state of the cell
 	bool new_state;
@@ -85,7 +81,7 @@ use_neighbors_cache: false {
 
 	}
 	//Action to update the new state of the cell
-	action update {
+	reflex update {
 		alive <- new_state;
 	}
 

@@ -2,16 +2,8 @@ package msi.gama.util;
 
 import java.util.Collection;
 
-public interface ICollector<E> extends Iterable<E> {
-
-	void add(E vd);
+public interface ICollector<E> extends Collection<E> {
 
 	Collection<E> items();
-
-	void remove(E e);
-
-	boolean isEmpty();
-
-	void clear();
 
 }

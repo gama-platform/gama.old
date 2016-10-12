@@ -133,9 +133,9 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected void addAttributeNoCheck(final VariableDescription vd) {
 		if (attributes == null)
 			attributes = new TOrderedHashMap();
-//		synchronized (this) {
-			attributes.put(vd.getName(), vd);
-//		}
+		// synchronized (this) {
+		attributes.put(vd.getName(), vd);
+		// }
 	}
 
 	public boolean assertAttributesAreCompatible(final VariableDescription existingVar,
@@ -641,6 +641,8 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	@Override
 	public IDescription validate() {
+		if (validated)
+			return this;
 		final IDescription result = super.validate();
 		if (result != null && !verifyAttributeCycles())
 			return null;
