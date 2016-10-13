@@ -8,11 +8,13 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang.ArrayUtils;
 
 import com.google.common.collect.Iterables;
 
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.GamaType;
@@ -194,11 +196,12 @@ public class GamaListFactory {
 		final IType contentType = fillExpr.getType();
 		// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
 		if (fillExpr.isConst()) {
-			Arrays.fill(contents, fillExpr.value(scope));
+			final Object o = fillExpr.value(scope);
+			Arrays.fill(contents, o);
 		} else {
-			for (int i = 0; i < contents.length; i++) {
+			GAMA.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
 				contents[i] = fillExpr.value(scope);
-			}
+			}));
 		}
 		return create(scope, contentType, contents);
 	}

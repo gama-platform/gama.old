@@ -11,9 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import java.util.Arrays;
 import java.util.Iterator;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -25,7 +25,9 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.ParallelAgentRunner;
 import msi.gama.util.IContainer;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -40,7 +42,7 @@ import msi.gaml.types.Types;
 		IConcept.SPECIES })
 @facets(value = {
 		@facet(name = "parallel", type = { IType.BOOL,
-				IType.INT }, optional = true, doc = @doc("(experimental) setting this facet to 'true' will allow 'ask' to use concurrency when traversing the targets; setting it to an integer will set the max. concurrent number of threads used (the default is the number of processors minus 1). False by default.")),
+				IType.INT }, optional = true, doc = @doc("(experimental) setting this facet to 'true' will allow 'ask' to use concurrency when traversing the targets; setting it to an integer will set the threshold under which they will be run sequentially (the default is initially 20, but can be fixed in the preferences). This facet is false by default.")),
 		@facet(name = IKeyword.TARGET, type = { IType.CONTAINER,
 				IType.AGENT }, of = IType.AGENT, optional = false, doc = @doc("an expression that evaluates to an agent or a list of agents")),
 		@facet(name = IKeyword.AS, type = {
@@ -125,12 +127,19 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 	public Object privateExecuteIn(final IScope scope) {
 		final Object t = target.value(scope);
 		if (t instanceof IContainer) {
-			if (parallel != null) {
+			int threshold = GamaPreferences.SEQUENTIAL_THRESHOLD.getValue();
+			boolean runInParallel = parallel != null;
+			if (runInParallel) {
 				final Object p = parallel.value(scope);
-				if (p instanceof Boolean && p.equals(true) || p instanceof Integer && (Integer) p > 0) {
-					return privateExecuteInParallel(scope, (IContainer) t);
+				if (p instanceof Boolean) {
+					runInParallel = (Boolean) p;
+				} else {
+					threshold = (Integer) p;
 				}
+			}
 
+			if (runInParallel) {
+				return privateExecuteInParallel(scope, (IContainer<?, IAgent>) t, threshold);
 			}
 			final Iterator<IAgent> runners = ((IContainer) t).iterable(scope).iterator();
 			final Object[] result = new Object[1];
@@ -144,11 +153,10 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 		}
 	}
 
-	public Object privateExecuteInParallel(final IScope scope, final IContainer<?, IAgent> agents) {
+	public Object privateExecuteInParallel(final IScope scope, final IContainer<?, IAgent> agents,
+			final int threshold) {
 		final IAgent[] array = agents.listValue(scope, Types.NO_TYPE, false).toArray(new IAgent[0]);
-		final Object[] result = new Object[1];
-		Arrays.stream(array).parallel().allMatch(each -> each.getScope().execute(sequence, each, null, result));
-		return result;
+		return GAMA.executeThreaded(ParallelAgentRunner.execute(scope, sequence, array, threshold));
 	}
 
 }

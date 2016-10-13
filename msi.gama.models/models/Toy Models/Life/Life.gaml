@@ -41,7 +41,7 @@ global torus: torus_environment {
 	//Ask at each life_cell to evolve and update
 	reflex generation {
 		// The computation is made in parallel
-		ask life_cell parallel: true {
+		ask life_cell parallel: 50 {
 			do evolve;
 		}
 	}

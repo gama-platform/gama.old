@@ -14,6 +14,8 @@ package msi.gama.runtime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGui;
@@ -36,6 +38,23 @@ import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException
  * @todo Description
  */
 public class GAMA {
+
+	public static ForkJoinPool THREAD_POOL = new ForkJoinPool(GamaPreferences.NUMBERS_OF_GRID_THREADS.getValue());
+
+	public static void setConcurrencyLevel(final int nb) {
+		THREAD_POOL.shutdown();
+		THREAD_POOL = new ForkJoinPool(nb);
+	}
+
+	public static void executeThreaded(final Runnable r) {
+		THREAD_POOL.invoke(ForkJoinTask.adapt(r));
+	}
+
+	public static <T> T executeThreaded(final ForkJoinTask<T> task) {
+		if (task == null)
+			return null;
+		return THREAD_POOL.invoke(task);
+	}
 
 	public final static String VERSION = "GAMA 1.7";
 	// public static final String _FATAL = "fatal";

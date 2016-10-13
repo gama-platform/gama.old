@@ -34,6 +34,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.JavaUtils;
 import msi.gama.common.util.RandomUtils;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.AbstractAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -48,6 +49,8 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
+import msi.gama.runtime.ParallelAgentRunner;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
@@ -1224,8 +1227,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 			if (GamaPreferences.GRID_OPTIMIZATION.getValue()) {
 				// Important for each agent to be executed in its own scope
-				return Arrays.stream(matrix).parallel()
-						.allMatch(each -> ((IAgent) each).getScope().step((IAgent) each));
+				final ITopLevelAgent agent = scope.getRoot();
+				GAMA.executeThreaded(ParallelAgentRunner.step(scope, matrix));
 			} else {
 				// We can keep the same scope for sequential steps
 				for (final IShape s : matrix) {

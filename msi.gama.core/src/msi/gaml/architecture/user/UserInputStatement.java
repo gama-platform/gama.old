@@ -141,7 +141,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	@Override
 	protected Object privateExecuteIn(final IScope scope) {
-		scope.setVarValue(tempVar, currentValue);
+		scope.addVarWithValue(tempVar, currentValue);
 		return currentValue;
 	}
 

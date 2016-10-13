@@ -50,14 +50,14 @@ global {
      //Initialization of the obstacles (buildings and dykes)
       do init_obstacles;
       //Set the height of each cell
-      ask cell {
+      ask cell parallel: true{
          obstacle_height <- compute_highest_obstacle();
          do update_color;
       }
    }
    //Action to initialize the altitude value of the cell according to the dem file
    action init_cells {
-      ask cell {
+      ask cell parallel: true {
          altitude <- grid_value;
          neighbour_cells <- (self neighbors_at 1) ;
       }
@@ -77,7 +77,7 @@ global {
          do update_cells;
       }
       create dyke from: dykes_shapefile;
-      ask dyke {
+      ask dyke parallel: 2 {
           shape <-  shape + dyke_width;
             do update_cells;
       }
@@ -85,26 +85,26 @@ global {
    //Reflex to add water among the water cells
    reflex adding_input_water {
    	  float water_input <- rnd(100)/100;
-      ask river_cells {
+      ask river_cells parallel: true{
          water_height <- water_height + water_input;
       }
    }
    //Reflex to flow the water according to the altitute and the obstacle
    reflex flowing {
-      ask cell {already <- false;}
-      ask (cell sort_by ((each.altitude + each.water_height + each.obstacle_height))) {
+      ask (cell sort_by ((each.altitude + each.water_height + each.obstacle_height))) parallel: true {
+      	already <- false;
          do flow;
       }
    }
    //Reflex to update the color of the cell
    reflex update_cell_color {
-      ask cell {
+      ask cell parallel: true {
          do update_color;
       }
    }
    //Reflex for the drain cells to drain water
    reflex draining {
-      ask drain_cells {
+      ask drain_cells parallel: true{
          water_height <- 0.0;
       }
    }
@@ -175,7 +175,7 @@ global {
       
       //Action to represent the break of the dyke
        action break{
-         ask cells_concerned {
+         ask cells_concerned  {
             do update_after_destruction(myself);
          }
          do die;
@@ -202,7 +202,7 @@ global {
       user_command "Destroy dyke" action: break; 
    }
    //Grid cell to discretize space, initialized using the dem file
-   grid cell file: dem_file neighbors: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbors_cache: false {
+   grid cell file: dem_file neighbors: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbors_cache: false schedules: []  {
       //Altitude of the cell
       float altitude;
       //Height of the water in the cell

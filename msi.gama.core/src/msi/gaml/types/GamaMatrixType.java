@@ -11,12 +11,16 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
+import java.util.Arrays;
+import java.util.stream.IntStream;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -138,23 +142,32 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		case IType.FLOAT:
 			result = new GamaFloatMatrix(cols, rows);
 			final double[] dd = ((GamaFloatMatrix) result).getMatrix();
-			for (int i = 0; i < dd.length; i++) {
-				dd[i] = Cast.asFloat(scope, fillExpr.value(scope));
-			}
+			if (fillExpr.isConst()) {
+				Arrays.fill(dd, Cast.asFloat(scope, fillExpr.value(scope)));
+			} else
+				GAMA.executeThreaded(() -> IntStream.range(0, dd.length).parallel().forEach(i -> {
+					dd[i] = Cast.asFloat(scope, fillExpr.value(scope));
+				}));
 			break;
 		case IType.INT:
 			result = new GamaIntMatrix(cols, rows);
 			final int[] ii = ((GamaIntMatrix) result).getMatrix();
-			for (int i = 0; i < ii.length; i++) {
-				ii[i] = Cast.asInt(scope, fillExpr.value(scope));
-			}
+			if (fillExpr.isConst()) {
+				Arrays.fill(ii, Cast.asInt(scope, fillExpr.value(scope)));
+			} else
+				GAMA.executeThreaded(() -> IntStream.range(0, ii.length).parallel().forEach(i -> {
+					ii[i] = Cast.asInt(scope, fillExpr.value(scope));
+				}));
 			break;
 		default:
 			result = new GamaObjectMatrix(cols, rows, fillExpr.getType());
 			final Object[] contents = ((GamaObjectMatrix) result).getMatrix();
-			for (int i = 0; i < contents.length; i++) {
-				contents[i] = fillExpr.value(scope);
-			}
+			if (fillExpr.isConst()) {
+				Arrays.fill(contents, fillExpr.value(scope));
+			} else
+				GAMA.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
+					contents[i] = fillExpr.value(scope);
+				}));
 		}
 		return result;
 	}

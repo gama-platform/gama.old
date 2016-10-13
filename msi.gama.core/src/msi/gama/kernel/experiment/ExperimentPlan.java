@@ -20,7 +20,6 @@ import com.google.common.collect.Iterables;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.batch.BatchOutput;
 import msi.gama.kernel.batch.ExhaustiveSearch;
 import msi.gama.kernel.batch.IExploration;
@@ -39,7 +38,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.AbstractScope;
+import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -456,22 +455,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	/**
-	 * A short-circuited scope that represents the scope of the experiment. If a
-	 * simulation is available, it refers to it and gains access to its global
-	 * scope. If not, it throws the appropriate runtime exceptions when a
-	 * feature dependent on the existence of a simulation is accessed
+	 * A short-circuited scope that represents the scope of the experiment plan,
+	 * before any agent is defined. If a simulation is available, it refers to
+	 * it and gains access to its global scope. If not, it throws the
+	 * appropriate runtime exceptions when a feature dependent on the existence
+	 * of a simulation is accessed
 	 *
 	 * @author Alexis Drogoul
 	 * @since November 2011
 	 */
-	private class Scope extends AbstractScope {
-
-		/**
-		 * A flag indicating that the experiment is shutting down. As this scope
-		 * is used before any experiment agent (and runtime scope) is defined,
-		 * it is necessary to define it here.
-		 */
-		private volatile boolean interrupted;
+	private class Scope extends ExecutionScope {
 
 		public Scope(final String additionalName) {
 			super(null, additionalName);
@@ -500,69 +493,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				return a.getDirectVarValue(this, name);
 			}
 			return null;
-		}
-
-		@Override
-		public SimulationAgent getSimulation() {
-			return getCurrentSimulation();
-		}
-
-		/**
-		 * Method getAgentScope()
-		 * 
-		 * @see msi.gama.runtime.IScope#getAgent()
-		 */
-		@Override
-		public ExperimentAgent getAgent() {
-			return ExperimentPlan.this.getAgent();
-		}
-
-		@Override
-		public IExperimentAgent getExperiment() {
-			return getAgent();
-		}
-
-		@Override
-		public IDescription getExperimentContext() {
-			return ExperimentPlan.this.getDescription();
-		}
-
-		@Override
-		public IDescription getModelContext() {
-			return ExperimentPlan.this.getModel().getDescription();
-		}
-
-		@Override
-		public IModel getModel() {
-			return ExperimentPlan.this.getModel();
-		}
-
-		@Override
-		protected boolean _root_interrupted() {
-			return interrupted;
-		}
-
-		@Override
-		public void setInterrupted() {
-			this.interrupted = true;
-		}
-
-		@Override
-		public IScope copy(final String additionalName) {
-			return new Scope(additionalName);
-		}
-
-		/**
-		 * Method getRandom()
-		 * 
-		 * @see msi.gama.runtime.IScope#getRandom()
-		 */
-		@Override
-		public RandomUtils getRandom() {
-			if (getAgent() == null) {
-				return null;
-			}
-			return getAgent().getRandomGenerator();
 		}
 
 	}

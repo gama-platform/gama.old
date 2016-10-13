@@ -48,7 +48,7 @@ import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
-import msi.gama.runtime.AbstractScope;
+import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -572,7 +572,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @since 22 avr. 2013
 	 *
 	 */
-	public class ExperimentAgentScope extends AbstractScope {
+	public class ExperimentAgentScope extends ExecutionScope {
 
 		volatile boolean interrupted = false;
 

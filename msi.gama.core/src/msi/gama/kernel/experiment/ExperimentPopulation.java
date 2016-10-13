@@ -46,6 +46,7 @@ public class ExperimentPopulation extends GamaPopulation<ExperimentAgent> {
 					.createExperimentAgent(((ExperimentPlan) getSpecies()).getExperimentType(), this);
 			exp.setIndex(currentAgentIndex++);
 			add(exp);
+			scope.push(exp);
 			createVariables(scope, exp, initialValues.isEmpty() ? Collections.EMPTY_MAP : initialValues.get(i));
 		}
 		return this;

@@ -486,21 +486,6 @@ public class Variable extends Symbol implements IVariable {
 		return agent.getAttribute(name);
 	}
 
-	// @Override
-	// public void updateFor(final IScope scope, final IAgent agent) throws
-	// GamaRuntimeException {
-	// // if ( !doUpdate ) {
-	// // doUpdate = true;
-	// // return;
-	// // }
-	// try {
-	// _setVal(agent, scope, updateExpression.value(scope));
-	// } catch (final GamaRuntimeException e) {
-	// e.addContext("in updating attribute " + getName());
-	// throw e;
-	// }
-	// }
-
 	@Override
 	public Object getUpdatedValue(final IScope scope) {
 		return updateExpression.value(scope);

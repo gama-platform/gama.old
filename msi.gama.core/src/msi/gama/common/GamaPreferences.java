@@ -771,10 +771,14 @@ public class GamaPreferences {
 
 						@Override
 						public void afterValueChange(final Integer newValue) {
+							GAMA.setConcurrencyLevel(newValue);
 							System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism",
 									String.valueOf(newValue));
 						}
 					});
+	public static final Entry<Integer> SEQUENTIAL_THRESHOLD = create("core.sequential_threshold",
+			"Number under which agents will always be executed sequentially", 20, IType.INT).between(1, null)
+					.in(EXPERIMENTAL).group(SIMULATIONS);
 
 	public static final Entry<Boolean> CONSTANT_OPTIMIZATION = create("core.constant_optimization",
 			"Automatically optimize constant expressions", false, IType.BOOL).in(EXPERIMENTAL).group("Compilation");

@@ -11,15 +11,12 @@
  **********************************************************************************************/
 package msi.gama.runtime;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
 import java.util.Map;
-import java.util.NoSuchElementException;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStepable;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.kernel.model.IModel;
@@ -48,36 +45,90 @@ import msi.gaml.types.Types;
  *
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public abstract class AbstractScope implements IScope {
+public class ExecutionScope implements IScope {
 
-	private static int ScopeNumber = 0;
+	private static final String TOPOLOGY = "%_topology_%";
+	private static final String GRAPHICS = "%_graphics_%";
+	private static final String EACH = "%_each_%";
+	private static final String ATTRIBUTES = "%_attributes_%";
+	private static int SCOPE_NUMBER = 0;
+
 	private final String name;
-	private final Deque<IAgent> agentsStack = new ArrayDeque(3);
-	private final Deque<Record> statementContextsStack = new ArrayDeque(5);
-	private Deque<Map> fileAttributesStack;
-	private IGraphics graphics;
-	private ITopology topology;
-	private volatile boolean _action_halted, _loop_halted, _agent_halted, _trace;
-	private Object each;
+	private ITopLevelAgent rootAgent;
+	protected IExecutionContext.Agent currentAgentContext;
+	protected IExecutionContext.Statement currentExecutionContext;
+	private volatile boolean _action_halted, _loop_halted, _agent_halted, _trace, _interrupted, _errors_disabled;
 	private ISymbol currentSymbol;
 
-	// Allows to disable error reporting for this scope (the value will be read
-	// by the error reporting mechnanism).
-	private boolean reportErrors = true;
+	class AgentExecutionContext implements IExecutionContext.Agent {
 
-	public AbstractScope(final ITopLevelAgent root) {
+		final IAgent agent;
+		final IExecutionContext.Agent outer;
+
+		public AgentExecutionContext(final IAgent agent) {
+			this(agent, null);
+		}
+
+		private AgentExecutionContext(final IAgent agent, final IExecutionContext.Agent outer) {
+			this.agent = agent;
+			this.outer = outer;
+		}
+
+		@Override
+		public void setVar(final String name, final Object value) {
+			agent.setDirectVarValue(ExecutionScope.this, name, value);
+
+		}
+
+		@Override
+		public Object getVar(final String name) {
+			return agent.getDirectVarValue(ExecutionScope.this, name);
+		}
+
+		@Override
+		public boolean hasVar(final String name) {
+			return agent.getSpecies().hasVar(name);
+		}
+
+		@Override
+		public IExecutionContext.Agent copy() {
+			return this;
+		}
+
+		@Override
+		public IExecutionContext.Agent getOuter() {
+			return outer;
+		}
+
+		@Override
+		public IAgent getAgent() {
+			return agent;
+		}
+
+		@Override
+		public Agent createChild(final IAgent agent) {
+			if (this.agent == agent)
+				return this;
+			return new AgentExecutionContext(agent, this);
+		}
+
+	}
+
+	public ExecutionScope(final ITopLevelAgent root) {
 		this(root, null);
 	}
 
-	public AbstractScope(final ITopLevelAgent root, final String otherName) {
-		String name = "Scope #" + ++ScopeNumber;
+	public ExecutionScope(final ITopLevelAgent root, final String otherName) {
+		String name = "Scope #" + ++SCOPE_NUMBER;
+
+		setRoot(root);
+		currentAgentContext = new AgentExecutionContext(root);
 		if (root != null) {
-			agentsStack.push(root);
 			name += " of " + root;
 		}
 		name += otherName == null || otherName.isEmpty() ? "" : "(" + otherName + ")";
 		this.name = name;
-		statementContextsStack.push(new Record(null));
+		currentExecutionContext = new ExecutionContext();
 	}
 
 	/**
@@ -87,81 +138,29 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void clear() {
-		agentsStack.clear();
-		statementContextsStack.clear();
-		each = null;
-		graphics = null;
-		topology = null;
+		currentAgentContext = null;
+		currentExecutionContext = null;
 		currentSymbol = null;
-		if (fileAttributesStack != null)
-			fileAttributesStack.clear();
 	}
 
 	@Override
 	public void disableErrorReporting() {
-		reportErrors = false;
+		_errors_disabled = true;
 	}
 
 	@Override
 	public void enableErrorReporting() {
-		reportErrors = true;
+		_errors_disabled = false;
 	}
 
 	@Override
 	public boolean reportErrors() {
-		return reportErrors;
+		return !_errors_disabled;
 	}
 
 	@Override
 	public void setTrace(final boolean t) {
 		_trace = t;
-	}
-
-	private class Record extends THashMap<String, Object> {
-
-		Record previous;
-
-		public Record(final Record previous) {
-			super(5);
-			this.previous = previous;
-		}
-
-		@Override
-		public boolean equals(final Object other) {
-			if (!(other instanceof Record)) {
-				return false;
-			}
-			final Record that = (Record) other;
-			if (this == that) {
-				return true;
-			}
-			return super.equals(other);
-		}
-
-		public void setVar(final String name, final Object value) {
-			final int i = index(name);
-			if (i == -1) {
-				if (previous != null)
-					previous.setVar(name, value);
-			} else {
-				_values[i] = value;
-			}
-		}
-
-		public Object getVar(final String name) {
-			final int i = index(name);
-			if (i < 0) {
-				if (previous == null)
-					return null;
-				return previous.getVar(name);
-			}
-			return _values[i];
-		}
-
-		public boolean hasVar(final String name) {
-			return index(name) >= 0 || previous != null && previous.hasVar(name);
-		}
-
 	}
 
 	/**
@@ -177,8 +176,25 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
+	public void setInterrupted() {
+		this._interrupted = true;
+	}
+
+	/**
+	 * @return true if the root agent of the scope is marked as interrupted
+	 *         (i.e. dead)
+	 */
+
+	protected boolean _root_interrupted() {
+		return _interrupted || getRoot() == null || getRoot().dead();
+	}
+
+	@Override
 	public boolean isOnUserHold() {
-		return getRoot().isOnUserHold();
+		final ITopLevelAgent root = getRoot();
+		if (root == null)
+			return false;
+		return root.isOnUserHold();
 	}
 
 	@Override
@@ -205,12 +221,6 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	/**
-	 * @return true if the root agent of the scope is marked as interrupted
-	 *         (i.e. dead)
-	 */
-	protected abstract boolean _root_interrupted();
-
-	/**
 	 * Method push()
 	 * 
 	 * @see msi.gama.runtime.IScope#push(msi.gama.metamodel.agent.IAgent)
@@ -218,12 +228,23 @@ public abstract class AbstractScope implements IScope {
 	// @Override
 	@Override
 	public synchronized boolean push(final IAgent agent) {
-		final IAgent a = agentsStack.peek();
+		final IAgent a = currentAgentContext.getAgent();
 		if (a != null && a.equals(agent)) {
 			return false;
 		}
-		agentsStack.push(agent);
+		// Previous context didnt have a root.
+		if (a == null) {
+			if (agent instanceof ITopLevelAgent) {
+				setRoot((ITopLevelAgent) agent);
+			}
+			currentAgentContext = new AgentExecutionContext(agent);
+		} else
+			currentAgentContext = currentAgentContext.createChild(agent);
 		return true;
+	}
+
+	protected void setRoot(final ITopLevelAgent agent) {
+		rootAgent = agent;
 	}
 
 	/**
@@ -234,11 +255,10 @@ public abstract class AbstractScope implements IScope {
 	// @Override
 	@Override
 	public void pop(final IAgent agent) {
-		if (agentsStack.size() == 0) {
+		if (currentAgentContext == null) {
 			throw GamaRuntimeException.warning("Agents stack is empty", this);
-			// return;
 		}
-		agentsStack.pop();
+		currentAgentContext = currentAgentContext.getOuter();
 		_agent_halted = false;
 	}
 
@@ -250,7 +270,7 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void push(final ISymbol statement) {
 		setCurrentSymbol(statement);
-		statementContextsStack.push(new Record(statementContextsStack.peek()));
+		currentExecutionContext = currentExecutionContext.createChild();
 	}
 
 	@Override
@@ -266,7 +286,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	private void writeTrace() {
 		final StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < statementContextsStack.size(); i++) {
+		for (int i = 0; i < currentExecutionContext.depth(); i++) {
 			sb.append(Strings.TAB);
 		}
 		sb.append(currentSymbol.getTrace(this));
@@ -290,11 +310,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void pop(final ISymbol symbol) {
-		try {
-			statementContextsStack.pop();
-		} catch (final NoSuchElementException e) {
-			return;
-		}
+		currentExecutionContext = currentExecutionContext.getOuter();
 	}
 
 	@Override
@@ -314,10 +330,6 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public boolean execute(final IExecutable statement, final IAgent agent, final Arguments args,
 			final Object[] result) {
-		// If the statement or the agent is null, we act as if the scope had
-		// been marked as INTERRUPTED
-		// IScope scope = agent == null ? this :(statement instanceof
-		// RemoteSequence ? this : agent.getScope());
 		final IAgent caller = this.getAgent();
 		if (statement == null || agent == null || interrupted() || agent.dead()) {
 			return false;
@@ -367,7 +379,7 @@ public abstract class AbstractScope implements IScope {
 			actualArgs.forEachEntry((a, b) -> {
 				final IExpression e = b.getExpression();
 				if (e != null) {
-					addVarWithValue(a, e.value(AbstractScope.this));
+					addVarWithValue(a, e.value(ExecutionScope.this));
 				}
 				return true;
 			});
@@ -452,7 +464,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Object getVarValue(final String varName) {
-		return statementContextsStack.peek().getVar(varName);
+		return currentExecutionContext.getVar(varName);
 	}
 
 	/**
@@ -463,7 +475,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void setVarValue(final String varName, final Object val) {
-		statementContextsStack.peek().setVar(varName, val);
+		currentExecutionContext.setVar(varName, val);
 	}
 
 	/**
@@ -473,7 +485,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void saveAllVarValuesIn(final Map<String, Object> varsToSave) {
-		varsToSave.putAll(statementContextsStack.peek());
+		varsToSave.putAll(currentExecutionContext.getAllOwnVars());
 	}
 
 	/**
@@ -483,9 +495,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void removeAllVars() {
-		final Record r = statementContextsStack.peek();
-		r.clear();
-
+		currentExecutionContext.clearOwnVars();
 	}
 
 	/**
@@ -496,7 +506,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void addVarWithValue(final String varName, final Object val) {
-		statementContextsStack.peek().put(varName, val);
+		currentExecutionContext.putOwnVar(varName, val);
 	}
 
 	/**
@@ -506,7 +516,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void setEach(final Object value) {
-		each = value;
+		this.addVarWithValue(EACH, value);
 	}
 
 	/**
@@ -516,7 +526,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Object getEach() {
-		return each;
+		return getVarValue(EACH);
 	}
 
 	/**
@@ -526,7 +536,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Object getArg(final String string, final int type) throws GamaRuntimeException {
-		return Types.get(type).cast(this, statementContextsStack.peek().get(string), null, false);
+		return Types.get(type).cast(this, currentExecutionContext.getOwnVar(string), null, false);
 	}
 
 	@Override
@@ -561,7 +571,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public boolean hasArg(final String name) {
-		return statementContextsStack.peek().contains(name);
+		return currentExecutionContext.hasOwnVar(name);
 	}
 
 	/**
@@ -571,7 +581,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public boolean hasVar(final String name) {
-		return statementContextsStack.peek().hasVar(name);
+		return currentExecutionContext.hasVar(name);
 	}
 
 	/**
@@ -584,12 +594,11 @@ public abstract class AbstractScope implements IScope {
 	public Object getAgentVarValue(final IAgent agent, final String name) throws GamaRuntimeException {
 		if (agent == null || agent.dead() || interrupted()) {
 			return null;
-		} // TODO Interrupted ?
+		}
 		Object result = null;
 		final boolean pushed = push(agent);
 		try {
-			result = agent.getDirectVarValue(this, name);
-			// result = getAgentVarValue(name);
+			result = currentAgentContext.getVar(name);
 		} finally {
 			if (pushed) {
 				pop(agent);
@@ -597,32 +606,6 @@ public abstract class AbstractScope implements IScope {
 		}
 		return result;
 	}
-
-	/**
-	 * Method getAgentVarValue()
-	 * 
-	 * @see msi.gama.runtime.IScope#getAgentVarValue(java.lang.String)
-	 */
-	// @Override
-	// public Object getAgentVarValue(final String name) throws
-	// GamaRuntimeException {
-	// if ( interrupted() ) { return null; } // TODO INTERRUPTED ?
-	// return agents.peek().getDirectVarValue(this, name);
-	// }
-
-	/**
-	 * Method setAgentVarValue()
-	 * 
-	 * @see msi.gama.runtime.IScope#setAgentVarValue(java.lang.String,
-	 *      java.lang.Object)
-	 */
-	// @Override
-	// public void setAgentVarValue(final String name, final Object v) throws
-	// GamaRuntimeException {
-	// if ( !interrupted() ) {
-	// agents.peek().setDirectVarValue(this, name, v);
-	// }
-	// }
 
 	/**
 	 * Method setAgentVarValue()
@@ -637,7 +620,7 @@ public abstract class AbstractScope implements IScope {
 		}
 		final boolean pushed = push(agent);
 		try {
-			agent.setDirectVarValue(this, name, v);
+			currentAgentContext.setVar(name, v);
 		} finally {
 			if (pushed) {
 				pop(agent);
@@ -714,7 +697,8 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public ITopology getTopology() {
-		return topology != null ? topology : agentsStack.peek().getTopology();
+		final ITopology topology = (ITopology) this.getVarValue(TOPOLOGY);
+		return topology != null ? topology : getAgent().getTopology();
 	}
 
 	/**
@@ -724,8 +708,8 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public ITopology setTopology(final ITopology topo) {
-		final ITopology previous = topology;
-		topology = topo;
+		final ITopology previous = getTopology();
+		addVarWithValue(TOPOLOGY, topo);
 		return previous;
 	}
 
@@ -736,7 +720,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void setGraphics(final IGraphics val) {
-		graphics = val;
+		addVarWithValue(GRAPHICS, val);
 	}
 
 	/**
@@ -746,7 +730,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public IGraphics getGraphics() {
-		return graphics;
+		return (IGraphics) getVarValue(GRAPHICS);
 	}
 
 	/**
@@ -756,7 +740,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public IAgent getAgent() {
-		return agentsStack.peek();
+		return currentAgentContext.getAgent();
 	}
 
 	/**
@@ -832,14 +816,19 @@ public abstract class AbstractScope implements IScope {
 		if (root == null) {
 			return null;
 		}
-		// if ( root == null ) { return new SimulationClock(); }
 		return root.getClock();
 	}
 
 	@Override
 	public IAgent[] getAgentsStack() {
-		final IAgent[] result = new IAgent[agentsStack.size()];
-		return agentsStack.toArray(result);
+		final IAgent[] result = new IAgent[currentAgentContext.depth() + 1];
+		IExecutionContext.Agent current = currentAgentContext;
+		int i = 0;
+		while (current != null) {
+			result[i++] = current.getAgent();
+			current = current.getOuter();
+		}
+		return result;
 	}
 
 	/**
@@ -849,10 +838,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void pushReadAttributes(final Map values) {
-		if (fileAttributesStack == null) {
-			fileAttributesStack = new ArrayDeque<>();
-		}
-		fileAttributesStack.push(values);
+		addVarWithValue(ATTRIBUTES, values);
 	}
 
 	/**
@@ -862,19 +848,15 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public Map popReadAttributes() {
-		if (fileAttributesStack == null)
-			return null;
-		final Map result = fileAttributesStack.pop();
-		if (fileAttributesStack.isEmpty())
-			fileAttributesStack = null;
-		return result;
+		final Map value = (Map) this.getVarValue(ATTRIBUTES);
+		currentExecutionContext.removeOwnVar(ATTRIBUTES);
+		return value;
 	}
 
 	@Override
 	public Map peekReadAttributes() {
-		if (fileAttributesStack == null)
-			return null;
-		return fileAttributesStack.peek();
+		final Map value = (Map) this.getVarValue(ATTRIBUTES);
+		return value;
 	}
 
 	@Override
@@ -891,12 +873,29 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public ITopLevelAgent getRoot() {
-		return (ITopLevelAgent) agentsStack.peekLast();
+		return rootAgent;
 	}
 
 	@Override
 	public boolean isPaused() {
 		return getExperiment().getSpecies().getController().getScheduler().paused || isOnUserHold();
+	}
+
+	/**
+	 * Method getRandom()
+	 * 
+	 * @see msi.gama.runtime.IScope#getRandom()
+	 */
+	@Override
+	public RandomUtils getRandom() {
+		return getRoot().getRandomGenerator();
+	}
+
+	@Override
+	public IScope copy(final String additionalName) {
+		final ExecutionScope scope = new ExecutionScope(getRoot(), additionalName);
+		scope.currentExecutionContext = currentExecutionContext.copy();
+		return scope;
 	}
 
 }

@@ -49,7 +49,7 @@ import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.ITypeProvider;
-import msi.gama.runtime.AbstractScope;
+import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -113,7 +113,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	final SimulationClock clock;
 	GamaColor color;
 
-	final ThreadLocal<SimulationScope> scope = ThreadLocal.withInitial(() -> new SimulationScope());
+	final IScope scope = new ExecutionScope(this);
 	private SimulationOutputManager outputs;
 	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
@@ -121,45 +121,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	private final RandomUtils random;
 	private final ActionExecuter executer;
 	private RootTopology topology;
-
-	class SimulationScope extends AbstractScope {
-
-		volatile boolean interrupted = false;
-
-		public SimulationScope() {
-			super(SimulationAgent.this);
-		}
-
-		public SimulationScope(final String additionalName) {
-			super(SimulationAgent.this, additionalName);
-		}
-
-		@Override
-		protected boolean _root_interrupted() {
-			return interrupted || SimulationAgent.this.dead();
-		}
-
-		@Override
-		public void setInterrupted() {
-			this.interrupted = true;
-		}
-
-		@Override
-		public IScope copy(final String additionalName) {
-			return new SimulationScope(additionalName);
-		}
-
-		/**
-		 * Method getRandom()
-		 * 
-		 * @see msi.gama.runtime.IScope#getRandom()
-		 */
-		@Override
-		public RandomUtils getRandom() {
-			return SimulationAgent.this.getRandomGenerator();
-		}
-
-	}
 
 	public SimulationAgent(final IPopulation<? extends IAgent> pop) {
 		this((SimulationPopulation) pop);
@@ -292,7 +253,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public IScope getScope() {
-		return scope.get();
+		return scope;
 	}
 
 	public ProjectionFactory getProjectionFactory() {
@@ -327,7 +288,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		}
 
 		GAMA.releaseScope(getScope());
-		scope.set(null);
+		// scope = null;
 		super.dispose();
 
 	}
