@@ -14,8 +14,8 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
@@ -199,7 +199,7 @@ public class GamaListFactory {
 			final Object o = fillExpr.value(scope);
 			Arrays.fill(contents, o);
 		} else {
-			GAMA.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
+			GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
 				contents[i] = fillExpr.value(scope);
 			}));
 		}

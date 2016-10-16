@@ -127,7 +127,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		final IList<IAgent> agents = listValue(scope, contentsType, false);
 		// Default behavior : Returns a map containing the names of agents as
 		// keys and the agents themselves as values
-		final GamaMap result = GamaMapFactory.create(Types.STRING, scope.getModelContext().getTypeNamed(getName()));
+		final GamaMap result = GamaMapFactory.create(Types.STRING, scope.getType(getName()));
 		for (final IAgent agent : agents.iterable(scope)) {
 			result.put(agent.getName(), agent);
 		}

@@ -12,10 +12,10 @@
 
 package msi.gama.metamodel.topology;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
@@ -171,10 +171,10 @@ public class GamaQuadTree implements ISpatialIndex {
 
 		private final Envelope bounds;
 		private final double halfx, halfy;
-		private QuadNode[] nodes = null;
+		private volatile QuadNode[] nodes = null;
 		// ** Addresses part of Issue 722 -- Need to keep the objects ordered
 		// (by insertion order) **
-		private Collection<IAgent> objects = null;
+		private volatile ConcurrentLinkedQueue<IAgent> objects = null;
 		private final boolean canSplit;
 
 		public QuadNode(final Envelope bounds) {
@@ -200,11 +200,8 @@ public class GamaQuadTree implements ISpatialIndex {
 
 		public IShape remove(final Coordinate p, final IShape a) {
 			if (objects != null) {
-				final boolean removed = false;
-				synchronized (objects) {
-					if (objects.remove(a))
-						return a;
-				}
+				if (objects.remove(a))
+					return a;
 			} else if (nodes != null) {
 				return nodes[quadrant(p)].remove(p, a);
 			}
@@ -221,11 +218,9 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 			if (nodes == null) {
 				if (objects == null) {
-					objects = new ArrayList(maxCapacity + 5);
+					objects = new ConcurrentLinkedQueue();
 				}
-				synchronized (objects) {
-					return objects.add(a);
-				}
+				return objects.add(a);
 			} else
 				return nodes[quadrant(p)].add(p, a);
 		}
@@ -239,9 +234,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		public boolean remove(final Envelope bounds, final IShape a) {
 			if (nodes == null) {
 				if (objects != null) {
-					synchronized (objects) {
-						return objects.remove(a);
-					}
+					return objects.remove(a);
 				} else
 					return false;
 			}
@@ -260,12 +253,9 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 			if (nodes == null) {
 				if (objects == null) {
-					objects = new ArrayList(maxCapacity + 5);
+					objects = new ConcurrentLinkedQueue();
 				}
-				synchronized (objects) {
-					return objects.add(o);
-				}
-
+				return objects.add(o);
 			}
 			boolean retVal = false;
 			for (final QuadNode node : nodes)
@@ -284,31 +274,28 @@ public class GamaQuadTree implements ISpatialIndex {
 					new QuadNode(new Envelope(halfx, maxx, miny, halfy)),
 					new QuadNode(new Envelope(minx, halfx, halfy, maxy)),
 					new QuadNode(new Envelope(halfx, maxx, halfy, maxy)) };
-			IAgent[] tempList;
-			synchronized (objects) {
-				tempList = objects.toArray(new IAgent[objects.size()]);
-			}
-			objects = null;
-			for (final IAgent entry : tempList) {
-				if (!entry.dead()) {
-					final IShape g = entry.getGeometry();
-					if (g.isPoint()) {
-						add((Coordinate) g.getLocation(), entry);
-					} else {
-						add(g.getEnvelope(), entry);
+
+			if (objects != null) {// Can happen in concurrent executions
+				for (final IAgent entry : objects) {
+					if (entry != null && !entry.dead()) {
+						final IShape g = entry.getGeometry();
+						if (g.isPoint()) {
+							add((Coordinate) g.getLocation(), entry);
+						} else {
+							add(g.getEnvelope(), entry);
+						}
 					}
 				}
+				objects = null;
 			}
 		}
 
 		public void findIntersects(final Envelope r, final Collection<IAgent> result) {
 			if (bounds.intersects(r)) {
 				if (objects != null) {
-					synchronized (objects) {
-						for (final IShape entry : objects) {
-							if (entry.getEnvelope().intersects(r)) {
-								result.add(entry.getAgent());
-							}
+					for (final IShape entry : objects) {
+						if (entry.getEnvelope().intersects(r)) {
+							result.add(entry.getAgent());
 						}
 					}
 				}

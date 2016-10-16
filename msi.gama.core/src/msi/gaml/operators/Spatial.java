@@ -2777,7 +2777,7 @@ public abstract class Spatial {
 				return GamaListFactory.create();
 			}
 			final IType type = filter.getSpecies() == null ? Types.AGENT
-					: scope.getModelContext().getTypeNamed(filter.getSpecies().getName());
+					: scope.getType(filter.getSpecies().getName());
 			return GamaListFactory.createWithoutCasting(type,
 					scope.getTopology().getAgentsIn(scope, Cast.asGeometry(scope, source, false), filter, inside));
 		}
@@ -2807,7 +2807,7 @@ public abstract class Spatial {
 				return GamaListFactory.create();
 			}
 			final IType type = filter.getSpecies() == null ? Types.AGENT
-					: scope.getModelContext().getTypeNamed(filter.getSpecies().getName());
+					: scope.getType(filter.getSpecies().getName());
 			return GamaListFactory.createWithoutCasting(type, t.getNeighborsOf(scope,
 					Cast.asGeometry(scope, source, false), Cast.asFloat(scope, distance), filter));
 		}

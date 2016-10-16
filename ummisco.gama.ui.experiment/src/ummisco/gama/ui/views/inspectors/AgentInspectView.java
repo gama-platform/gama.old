@@ -169,9 +169,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 					// We run into the scope provided by the agent
 					final IScope runningScope = agent.getScope();
 					runningScope.getSimulation().executeAction(scope -> {
-						final Object[] result = new Object[1];
-						scope.execute(command, agent, null, result);
-						return result[0];
+						return scope.execute(command, agent, null).getValue();
 					});
 				}
 

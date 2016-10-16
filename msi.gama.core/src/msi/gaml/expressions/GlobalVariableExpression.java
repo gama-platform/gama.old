@@ -12,6 +12,7 @@
 package msi.gaml.expressions;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -54,7 +55,18 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		// return scope.getGlobalVarValue(getName());
 		final IAgent sc = scope.getAgent();
-		return sc.getScope().getRoot().getScope().getGlobalVarValue(getName());
+		if (sc != null) {
+			final IScope agentScope = sc.getScope();
+			if (agentScope != null) {
+				final ITopLevelAgent root = agentScope.getRoot();
+				if (root != null) {
+					final IScope globalScope = root.getScope();
+					if (globalScope != null)
+						return globalScope.getGlobalVarValue(getName());
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override

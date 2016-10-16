@@ -22,7 +22,6 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IExecutable;
@@ -107,9 +106,8 @@ class TemporaryScope implements IScope {
 	 *      java.lang.Object[]) Impossible to execute anything here
 	 */
 	@Override
-	public boolean execute(final IExecutable executable, final IAgent agent, final Arguments args,
-			final Object[] result) {
-		return false;
+	public ExecutionResult execute(final IExecutable executable, final IAgent agent, final Arguments args) {
+		return FAILED;
 	}
 
 	/**
@@ -119,12 +117,12 @@ class TemporaryScope implements IScope {
 	 *      msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public Object evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
+	public ExecutionResult evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
 		try {
-			return expr.value(this);
+			return new ExecutionResultWithValue(expr.value(this));
 		} catch (final GamaRuntimeException g) {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
-			return null;
+			return FAILED;
 		}
 
 	}
@@ -272,16 +270,6 @@ class TemporaryScope implements IScope {
 	}
 
 	/**
-	 * Method hasVar()
-	 * 
-	 * @see msi.gama.runtime.IScope#hasVar(java.lang.String)
-	 */
-	@Override
-	public boolean hasVar(final String string) {
-		return vars.containsKey(string);
-	}
-
-	/**
 	 * Method getAgentVarValue()
 	 * 
 	 * @see msi.gama.runtime.IScope#getAgentVarValue(msi.gama.metamodel.agent.IAgent,
@@ -423,24 +411,9 @@ class TemporaryScope implements IScope {
 		return null;
 	}
 
-	/**
-	 * Method getExperimentContext()
-	 * 
-	 * @see msi.gama.runtime.IScope#getExperimentContext() No Experiment
-	 */
 	@Override
-	public IDescription getExperimentContext() {
-		return null;
-	}
-
-	/**
-	 * Method getModelContext()
-	 * 
-	 * @see msi.gama.runtime.IScope#getModelContext() No Model
-	 */
-	@Override
-	public IDescription getModelContext() {
-		return null;
+	public IType getType(final String name) {
+		return Types.get(name);
 	}
 
 	/**
@@ -525,8 +498,8 @@ class TemporaryScope implements IScope {
 	 *      Nothing to do here
 	 */
 	@Override
-	public boolean init(final IStepable agent) {
-		return false;
+	public ExecutionResult init(final IStepable agent) {
+		return FAILED;
 	}
 
 	/**
@@ -536,8 +509,8 @@ class TemporaryScope implements IScope {
 	 *      Nothing to do here
 	 */
 	@Override
-	public boolean step(final IStepable agent) {
-		return false;
+	public ExecutionResult step(final IStepable agent) {
+		return FAILED;
 	}
 
 	/**
@@ -550,14 +523,11 @@ class TemporaryScope implements IScope {
 	}
 
 	/**
-	 * Method update()
-	 * 
-	 * @see msi.gama.runtime.IScope#update(msi.gama.metamodel.agent.IAgent)
-	 *      Nothing to do here
+	 * Method update() Nothing to do here
 	 */
 	@Override
-	public boolean update(final IAgent agent) {
-		return false;
+	public ExecutionResult update(final IAgent agent) {
+		return FAILED;
 	}
 
 	/**

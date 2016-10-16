@@ -12,7 +12,9 @@
 package msi.gama.runtime;
 
 import java.util.Map;
+import java.util.Set;
 
+import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IStepable;
@@ -27,7 +29,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Arguments;
@@ -35,6 +37,7 @@ import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
+import msi.gaml.types.ITypesManager;
 import msi.gaml.types.Types;
 
 /**
@@ -47,69 +50,69 @@ import msi.gaml.types.Types;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class ExecutionScope implements IScope {
 
-	private static final String TOPOLOGY = "%_topology_%";
-	private static final String GRAPHICS = "%_graphics_%";
-	private static final String EACH = "%_each_%";
+	// private static final String TOPOLOGY = "%_topology_%";
+	// private static final String GRAPHICS = "%_graphics_%";
+	// static final String EACH = "%_each_%";
 	private static final String ATTRIBUTES = "%_attributes_%";
 	private static int SCOPE_NUMBER = 0;
 
 	private final String name;
-	private ITopLevelAgent rootAgent;
-	protected IExecutionContext.Agent currentAgentContext;
-	protected IExecutionContext.Statement currentExecutionContext;
+
+	protected IExecutionContext executionContext;
+	protected AgentExecutionContext agentContext;
+	protected final SpecialContext additionalContext = new SpecialContext();
 	private volatile boolean _action_halted, _loop_halted, _agent_halted, _trace, _interrupted, _errors_disabled;
 	private ISymbol currentSymbol;
 
-	class AgentExecutionContext implements IExecutionContext.Agent {
+	class SpecialContext {
+		Object each;
+		IGraphics graphics;
+		public ITopology topology;
+		private ITopLevelAgent rootAgent;
+		private IGui gui;
+		private ITypesManager types;
+
+		void clear() {
+			each = null;
+			graphics = null;
+			topology = null;
+			rootAgent = null;
+			gui = null;
+			types = null;
+		}
+
+		public void copyFrom(final SpecialContext specialContext) {
+			each = specialContext.each;
+			graphics = specialContext.graphics;
+			topology = specialContext.topology;
+			rootAgent = specialContext.rootAgent;
+			gui = specialContext.gui;
+			types = specialContext.types;
+		}
+
+	}
+
+	class AgentExecutionContext {
 
 		final IAgent agent;
-		final IExecutionContext.Agent outer;
+		final AgentExecutionContext outer;
 
-		public AgentExecutionContext(final IAgent agent) {
-			this(agent, null);
-		}
-
-		private AgentExecutionContext(final IAgent agent, final IExecutionContext.Agent outer) {
-			this.agent = agent;
+		public AgentExecutionContext(final IAgent agent, final AgentExecutionContext outer) {
 			this.outer = outer;
+			this.agent = agent;
 		}
 
-		@Override
-		public void setVar(final String name, final Object value) {
-			agent.setDirectVarValue(ExecutionScope.this, name, value);
-
-		}
-
-		@Override
-		public Object getVar(final String name) {
-			return agent.getDirectVarValue(ExecutionScope.this, name);
-		}
-
-		@Override
-		public boolean hasVar(final String name) {
-			return agent.getSpecies().hasVar(name);
-		}
-
-		@Override
-		public IExecutionContext.Agent copy() {
-			return this;
-		}
-
-		@Override
-		public IExecutionContext.Agent getOuter() {
-			return outer;
-		}
-
-		@Override
 		public IAgent getAgent() {
 			return agent;
 		}
 
 		@Override
-		public Agent createChild(final IAgent agent) {
-			if (this.agent == agent)
-				return this;
-			return new AgentExecutionContext(agent, this);
+		public String toString() {
+			return "context of " + agent;
+		}
+
+		public AgentExecutionContext getOuterContext() {
+			return outer;
 		}
 
 	}
@@ -122,14 +125,34 @@ public class ExecutionScope implements IScope {
 		String name = "Scope #" + ++SCOPE_NUMBER;
 
 		setRoot(root);
-		currentAgentContext = new AgentExecutionContext(root);
+		agentContext = new AgentExecutionContext(root, null);
 		if (root != null) {
 			name += " of " + root;
 		}
 		name += otherName == null || otherName.isEmpty() ? "" : "(" + otherName + ")";
 		this.name = name;
-		currentExecutionContext = new ExecutionContext();
+		// System.out.println("Scope created " + this);
+
+		// Necessary to create a blank execution context
+		push((ISymbol) null);
+
 	}
+
+	public ExecutionScope(final ITopLevelAgent root, final String otherName, final ExecutionContext context,
+			final AgentExecutionContext agentContext, final SpecialContext specialContext) {
+		this(root, otherName);
+		this.executionContext = context.createCopyContext();
+		this.agentContext = agentContext;
+		this.additionalContext.copyFrom(specialContext);
+	}
+
+	public AgentExecutionContext createChildContext(final IAgent agent) {
+		return new AgentExecutionContext(agent, agentContext);
+	};
+
+	public IExecutionContext createChildContext() {
+		return new ExecutionContext(executionContext);
+	};
 
 	/**
 	 * Method clear()
@@ -138,8 +161,9 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void clear() {
-		currentAgentContext = null;
-		currentExecutionContext = null;
+		executionContext = null;
+		agentContext = null;
+		additionalContext.clear();
 		currentSymbol = null;
 	}
 
@@ -228,23 +252,26 @@ public class ExecutionScope implements IScope {
 	// @Override
 	@Override
 	public synchronized boolean push(final IAgent agent) {
-		final IAgent a = currentAgentContext.getAgent();
-		if (a != null && a.equals(agent)) {
-			return false;
-		}
-		// Previous context didnt have a root.
+		final IAgent a = agentContext.getAgent();
 		if (a == null) {
 			if (agent instanceof ITopLevelAgent) {
+				// Previous context didnt have a root.
 				setRoot((ITopLevelAgent) agent);
 			}
-			currentAgentContext = new AgentExecutionContext(agent);
-		} else
-			currentAgentContext = currentAgentContext.createChild(agent);
+			// get rid of the previous context **important**
+			agentContext = null;
+		} else if (a == agent) {
+			return false;
+		}
+
+		// System.out.println("PUSHING " + agent + " IN " + this + " (Previous
+		// context:" + context);
+		agentContext = createChildContext(agent);
 		return true;
 	}
 
 	protected void setRoot(final ITopLevelAgent agent) {
-		rootAgent = agent;
+		additionalContext.rootAgent = agent;
 	}
 
 	/**
@@ -255,10 +282,10 @@ public class ExecutionScope implements IScope {
 	// @Override
 	@Override
 	public void pop(final IAgent agent) {
-		if (currentAgentContext == null) {
+		if (agentContext == null) {
 			throw GamaRuntimeException.warning("Agents stack is empty", this);
 		}
-		currentAgentContext = currentAgentContext.getOuter();
+		agentContext = agentContext.getOuterContext();
 		_agent_halted = false;
 	}
 
@@ -270,7 +297,7 @@ public class ExecutionScope implements IScope {
 	@Override
 	public void push(final ISymbol statement) {
 		setCurrentSymbol(statement);
-		currentExecutionContext = currentExecutionContext.createChild();
+		executionContext = createChildContext();
 	}
 
 	@Override
@@ -286,7 +313,7 @@ public class ExecutionScope implements IScope {
 	 */
 	private void writeTrace() {
 		final StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < currentExecutionContext.depth(); i++) {
+		for (int i = 0; i < executionContext.depth(); i++) {
 			sb.append(Strings.TAB);
 		}
 		sb.append(currentSymbol.getTrace(this));
@@ -310,7 +337,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void pop(final ISymbol symbol) {
-		currentExecutionContext = currentExecutionContext.getOuter();
+		executionContext = executionContext.getOuterContext();
 	}
 
 	@Override
@@ -328,11 +355,10 @@ public class ExecutionScope implements IScope {
 	 *      msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public boolean execute(final IExecutable statement, final IAgent agent, final Arguments args,
-			final Object[] result) {
+	public ExecutionResult execute(final IExecutable statement, final IAgent agent, final Arguments args) {
 		final IAgent caller = this.getAgent();
 		if (statement == null || agent == null || interrupted() || agent.dead()) {
-			return false;
+			return FAILED;
 		}
 		// We then try to push the agent on the stack
 		final boolean pushed = push(agent);
@@ -345,15 +371,11 @@ public class ExecutionScope implements IScope {
 			} else if (statement instanceof RemoteSequence) {
 				((RemoteSequence) statement).setMyself(caller);
 				// We delegate to the remote scope
-				result[0] = statement.executeOn(this);
-				return true;
 			}
-			result[0] = statement.executeOn(this);
+			return new ExecutionResultWithValue(statement.executeOn(this));
 		} catch (final GamaRuntimeException g) {
-			// If an exception occurs, we throw it and return false (could be
-			// INTERRUPTED as well)
-			// g.addAgent(agent.getName());
 			GAMA.reportAndThrowIfNeeded(this, g, true);
+			return FAILED;
 		} finally {
 			// Whatever the outcome, we pop the agent from the stack if it has
 			// been previously pushed
@@ -361,7 +383,6 @@ public class ExecutionScope implements IScope {
 				pop(agent);
 			}
 		}
-		return true;
 
 	}
 
@@ -398,13 +419,13 @@ public class ExecutionScope implements IScope {
 	 *      msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public Object evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
+	public ExecutionResult evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
 		if (agent == null || interrupted() || agent.dead()) {
-			return null;
+			return FAILED;
 		}
 		final boolean pushed = push(agent);
 		try {
-			return expr.value(this);
+			return new ExecutionResultWithValue(expr.value(this));
 		} catch (final GamaRuntimeException g) {
 			// g.addAgent(agent.toString());
 			GAMA.reportAndThrowIfNeeded(this, g, true);
@@ -417,44 +438,42 @@ public class ExecutionScope implements IScope {
 	}
 
 	@Override
-	public boolean step(final IStepable agent) {
-		boolean result = false;
+	public ExecutionResult step(final IStepable agent) {
 		final boolean isAgent = agent instanceof IAgent;
 		if (agent == null || interrupted() || isAgent && ((IAgent) agent).dead()) {
-			return false;
+			return FAILED;
 		}
 		final boolean pushed = isAgent && push((IAgent) agent);
 		try {
-			result = agent.step(this);
+			return new ExecutionResultWithValue(agent.step(this));
 		} catch (final Throwable ex) {
 			final GamaRuntimeException g = GamaRuntimeException.create(ex, this);
 			GAMA.reportAndThrowIfNeeded(this, g, true);
+			return FAILED;
 		} finally {
 			if (pushed) {
 				pop((IAgent) agent);
 			}
 		}
-		return result;
 	}
 
 	@Override
-	public boolean init(final IStepable agent) {
-		boolean result = false;
+	public ExecutionResult init(final IStepable agent) {
 		final boolean isAgent = agent instanceof IAgent;
 		if (agent == null || interrupted() || isAgent && ((IAgent) agent).dead()) {
-			return false;
+			return FAILED;
 		}
 		final boolean pushed = isAgent && push((IAgent) agent);
 		try {
-			result = agent.init(this);
+			return new ExecutionResultWithValue(agent.init(this));
 		} catch (final GamaRuntimeException g) {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
+			return FAILED;
 		} finally {
 			if (pushed) {
 				pop((IAgent) agent);
 			}
 		}
-		return result;
 	}
 
 	/**
@@ -464,7 +483,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public Object getVarValue(final String varName) {
-		return currentExecutionContext.getVar(varName);
+		return executionContext.getTempVar(varName);
 	}
 
 	/**
@@ -475,7 +494,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void setVarValue(final String varName, final Object val) {
-		currentExecutionContext.setVar(varName, val);
+		executionContext.setTempVar(varName, val);
 	}
 
 	/**
@@ -485,7 +504,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void saveAllVarValuesIn(final Map<String, Object> varsToSave) {
-		varsToSave.putAll(currentExecutionContext.getAllOwnVars());
+		varsToSave.putAll(executionContext.getLocalVars());
 	}
 
 	/**
@@ -495,7 +514,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void removeAllVars() {
-		currentExecutionContext.clearOwnVars();
+		executionContext.clearLocalVars();
 	}
 
 	/**
@@ -506,7 +525,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void addVarWithValue(final String varName, final Object val) {
-		currentExecutionContext.putOwnVar(varName, val);
+		executionContext.putLocalVar(varName, val);
 	}
 
 	/**
@@ -516,7 +535,8 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void setEach(final Object value) {
-		this.addVarWithValue(EACH, value);
+		additionalContext.each = value;
+
 	}
 
 	/**
@@ -526,7 +546,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public Object getEach() {
-		return getVarValue(EACH);
+		return additionalContext.each;
 	}
 
 	/**
@@ -536,7 +556,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public Object getArg(final String string, final int type) throws GamaRuntimeException {
-		return Types.get(type).cast(this, currentExecutionContext.getOwnVar(string), null, false);
+		return Types.get(type).cast(this, executionContext.getLocalVar(string), null, false);
 	}
 
 	@Override
@@ -571,17 +591,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public boolean hasArg(final String name) {
-		return currentExecutionContext.hasOwnVar(name);
-	}
-
-	/**
-	 * Method hasVar()
-	 * 
-	 * @see msi.gama.runtime.IScope#hasVar(java.lang.String)
-	 */
-	@Override
-	public boolean hasVar(final String name) {
-		return currentExecutionContext.hasVar(name);
+		return executionContext.hasLocalVar(name);
 	}
 
 	/**
@@ -595,16 +605,14 @@ public class ExecutionScope implements IScope {
 		if (agent == null || agent.dead() || interrupted()) {
 			return null;
 		}
-		Object result = null;
 		final boolean pushed = push(agent);
 		try {
-			result = currentAgentContext.getVar(name);
+			return agent.getDirectVarValue(ExecutionScope.this, name);
 		} finally {
 			if (pushed) {
 				pop(agent);
 			}
 		}
-		return result;
 	}
 
 	/**
@@ -620,7 +628,7 @@ public class ExecutionScope implements IScope {
 		}
 		final boolean pushed = push(agent);
 		try {
-			currentAgentContext.setVar(name, v);
+			agent.setDirectVarValue(ExecutionScope.this, name, v);
 		} finally {
 			if (pushed) {
 				pop(agent);
@@ -629,22 +637,22 @@ public class ExecutionScope implements IScope {
 	}
 
 	@Override
-	public boolean update(final IAgent a) {
+	public ExecutionResult update(final IAgent a) {
 		if (a == null || a.dead() || interrupted()) {
-			return false;
+			return FAILED;
 		}
 		final boolean pushed = push(a);
 		try {
 			a.getPopulation().updateVariables(this, a);
-
+			return PASSED;
 		} catch (final GamaRuntimeException g) {
 			GAMA.reportAndThrowIfNeeded(this, g, true);
+			return FAILED;
 		} finally {
 			if (pushed) {
 				pop(a);
 			}
 		}
-		return true;
 	}
 
 	/**
@@ -697,7 +705,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public ITopology getTopology() {
-		final ITopology topology = (ITopology) this.getVarValue(TOPOLOGY);
+		final ITopology topology = additionalContext.topology;
 		return topology != null ? topology : getAgent().getTopology();
 	}
 
@@ -709,7 +717,7 @@ public class ExecutionScope implements IScope {
 	@Override
 	public ITopology setTopology(final ITopology topo) {
 		final ITopology previous = getTopology();
-		addVarWithValue(TOPOLOGY, topo);
+		additionalContext.topology = topo;
 		return previous;
 	}
 
@@ -720,7 +728,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void setGraphics(final IGraphics val) {
-		addVarWithValue(GRAPHICS, val);
+		additionalContext.graphics = val;
 	}
 
 	/**
@@ -730,7 +738,7 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public IGraphics getGraphics() {
-		return (IGraphics) getVarValue(GRAPHICS);
+		return additionalContext.graphics;
 	}
 
 	/**
@@ -740,7 +748,9 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public IAgent getAgent() {
-		return currentAgentContext.getAgent();
+		if (agentContext == null)
+			return null;
+		return agentContext.getAgent();
 	}
 
 	/**
@@ -777,32 +787,12 @@ public class ExecutionScope implements IScope {
 		return getRoot().getModel();
 	}
 
-	/**
-	 * Method getExperimentContext()
-	 * 
-	 * @see msi.gama.runtime.IScope#getExperimentContext()
-	 */
 	@Override
-	public IDescription getExperimentContext() {
-		final IExperimentAgent a = getExperiment();
-		if (a == null) {
-			return null;
-		}
-		return a.getSpecies().getDescription();
-	}
-
-	/**
-	 * Method getModelContext()
-	 * 
-	 * @see msi.gama.runtime.IScope#getModelContext()
-	 */
-	@Override
-	public IDescription getModelContext() {
-		final IModel model = getModel();
-		if (model == null) {
-			return null;
-		}
-		return model.getDescription();
+	public IType getType(final String name) {
+		if (additionalContext.types == null)
+			additionalContext.types = ((ModelDescription) getSimulation().getSpecies().getDescription())
+					.getTypesManager();
+		return additionalContext.types.get(name);
 	}
 
 	/**
@@ -821,14 +811,17 @@ public class ExecutionScope implements IScope {
 
 	@Override
 	public IAgent[] getAgentsStack() {
-		final IAgent[] result = new IAgent[currentAgentContext.depth() + 1];
-		IExecutionContext.Agent current = currentAgentContext;
-		int i = 0;
-		while (current != null) {
-			result[i++] = current.getAgent();
-			current = current.getOuter();
+		final Set<IAgent> agents = new TLinkedHashSet<>();
+		AgentExecutionContext current = agentContext;
+		if (current == null) {
+			return new IAgent[0];
 		}
-		return result;
+		final int i = 0;
+		while (current != null) {
+			agents.add(current.getAgent());
+			current = current.getOuterContext();
+		}
+		return agents.stream().toArray(IAgent[]::new);
 	}
 
 	/**
@@ -849,7 +842,7 @@ public class ExecutionScope implements IScope {
 	@Override
 	public Map popReadAttributes() {
 		final Map value = (Map) this.getVarValue(ATTRIBUTES);
-		currentExecutionContext.removeOwnVar(ATTRIBUTES);
+		executionContext.removeLocalVar(ATTRIBUTES);
 		return value;
 	}
 
@@ -861,19 +854,21 @@ public class ExecutionScope implements IScope {
 
 	@Override
 	public IGui getGui() {
+		if (additionalContext.gui != null)
+			return additionalContext.gui;
 		final IExperimentAgent experiment = getExperiment();
 		if (experiment == null) {
-			return GAMA.getGui();
-		}
-		if (experiment.getSpecies().isHeadless()) {
-			return GAMA.getHeadlessGui();
-		}
-		return GAMA.getRegularGui();
+			additionalContext.gui = GAMA.getGui();
+		} else if (experiment.getSpecies().isHeadless()) {
+			additionalContext.gui = GAMA.getHeadlessGui();
+		} else
+			additionalContext.gui = GAMA.getRegularGui();
+		return additionalContext.gui;
 	}
 
 	@Override
 	public ITopLevelAgent getRoot() {
-		return rootAgent;
+		return additionalContext.rootAgent;
 	}
 
 	@Override
@@ -888,13 +883,18 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public RandomUtils getRandom() {
-		return getRoot().getRandomGenerator();
+		final ITopLevelAgent root = getRoot();
+		if (root == null)
+			return new RandomUtils();
+		return root.getRandomGenerator();
 	}
 
 	@Override
 	public IScope copy(final String additionalName) {
 		final ExecutionScope scope = new ExecutionScope(getRoot(), additionalName);
-		scope.currentExecutionContext = currentExecutionContext.copy();
+		scope.executionContext = executionContext.createCopyContext();
+		scope.agentContext = agentContext;
+		scope.additionalContext.copyFrom(additionalContext);
 		return scope;
 	}
 

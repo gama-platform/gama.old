@@ -58,6 +58,8 @@ public interface ISpecies
 
 	public abstract IExpression getSchedule();
 
+	public abstract IExpression getConcurrency();
+
 	public abstract boolean extendsSpecies(final ISpecies s);
 
 	public abstract boolean isGrid();

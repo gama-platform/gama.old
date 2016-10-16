@@ -131,7 +131,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		if (super._init(scope)) {
 			for (final SpeciesLayerStatement microLayer : microSpeciesLayers) {
 				microLayer.setHostSpecies(species);
-				if (!scope.init(microLayer)) {
+				if (!scope.init(microLayer).passed()) {
 					return false;
 				}
 			}

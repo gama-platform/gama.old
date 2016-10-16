@@ -111,9 +111,4 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	 */
 	public abstract ISpecies getCellSpecies();
 
-	/**
-	 * @return
-	 */
-	public abstract double[] getGridValueOfColorAttribute();
-
 }

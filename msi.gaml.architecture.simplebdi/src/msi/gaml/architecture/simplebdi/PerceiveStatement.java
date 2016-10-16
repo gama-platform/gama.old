@@ -28,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
@@ -139,12 +140,13 @@ public class PerceiveStatement extends AbstractStatementSequence {
 							}
 						}
 						final Iterator<IAgent> runners = ((IContainer) temp).iterable(scope).iterator();
-						final Object[] result = new Object[1];
+						ExecutionResult result = null;
 						if (runners != null) {
-							while (runners.hasNext() && scope.execute(sequence, runners.next(), null, result)) {
+							while (runners.hasNext()
+									&& (result = scope.execute(sequence, runners.next(), null)).passed()) {
 							}
 						}
-						return result[0];
+						return result.getValue();
 
 					} else if (inArg instanceof msi.gaml.types.GamaGeometryType || inArg instanceof GamaShape) {
 						IList<IAgent> temp = GamaListFactory.create();
@@ -158,20 +160,21 @@ public class PerceiveStatement extends AbstractStatementSequence {
 							}
 						}
 						final Iterator<IAgent> runners = ((IContainer) temp).iterable(scope).iterator();
-						final Object[] result = new Object[1];
+						ExecutionResult result = null;
 						if (runners != null) {
-							while (runners.hasNext() && scope.execute(sequence, runners.next(), null, result)) {
+							while (runners.hasNext()
+									&& (result = scope.execute(sequence, runners.next(), null)).passed()) {
 							}
 						}
-						return result[0];
+						return result.getValue();
 					} else {
-						final Object[] result = new Object[1];
+						ExecutionResult result = null;
 						final Iterator<IAgent> runners = obj instanceof IContainer
 								? ((IContainer) obj).iterable(scope).iterator()
 								: obj instanceof IAgent ? transformAgentToList((IAgent) obj, scope) : null;
-						while (runners.hasNext() && scope.execute(sequence, runners.next(), null, result)) {
+						while (runners.hasNext() && (result = scope.execute(sequence, runners.next(), null)).passed()) {
 						}
-						return result[0];
+						return result.getValue();
 					}
 				}
 			}

@@ -121,6 +121,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	private final RandomUtils random;
 	private final ActionExecuter executer;
 	private RootTopology topology;
+	// Added here to be sure to
 
 	public SimulationAgent(final IPopulation<? extends IAgent> pop) {
 		this((SimulationPopulation) pop);
@@ -199,47 +200,30 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public void schedule(final IScope scope) {
-
-		// this.prepareGuiForSimulation(scope);
 		super.schedule(this.getScope());
 	}
 
 	@Override
-	// TODO A redefinition of this method in GAML will lose all information
-	// regarding the clock and the advance of time,
-	// which will have to be done manually (i.e. cycle <- cycle + 1; time <-
-	// time + step;). The outputs will not be stepped neither
-	public Object _step_(final IScope scope) {
-
-		// hqnghi check the on_user_hold in case that micro-model use an
-		// user_panel
-		// AD: removing the fix by Nghi temporarily. But it needs to be checked
-		// more
-		// carefully
-		// if (!scope.isOnUserHold()) {
+	protected boolean preStep(final IScope scope) {
 		clock.beginCycle();
-		// A simulation always runs in its own scope
-		try {
-			executer.executeBeginActions();
-			super._step_(this.getScope());
-			executer.executeEndActions();
-			executer.executeOneShotActions();
+		executer.executeBeginActions();
+		return super.preStep(scope);
+	}
 
-			if (outputs != null) {
-				outputs.step(this.getScope());
-			}
-		} finally {
-			clock.step(this.getScope());
+	@Override
+	protected void postStep(final IScope scope) {
+		super.postStep(scope);
+		executer.executeEndActions();
+		executer.executeOneShotActions();
+		if (outputs != null) {
+			outputs.step(this.getScope());
 		}
-		// }
-		return this;
+		clock.step(this.getScope());
 	}
 
 	@Override
 	public Object _init_(final IScope scope) {
-		// A simulation always runs in its own scope
 		super._init_(this.getScope());
-
 		if (outputs != null) {
 			outputs.init(this.getScope());
 		}
@@ -273,10 +257,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		executer.executeDisposeActions();
 		// hqnghi if simulation come from popultion extern, dispose pop first
 		// and then their outputs
-		for (final IPopulation<? extends IAgent> pop : getExternMicroPopulations().values()) {
-			pop.dispose();
-		}
-		this.getExternMicroPopulations().clear();
+
+		if (externMicroPopulations != null)
+			externMicroPopulations.clear();
 
 		if (outputs != null) {
 			outputs.dispose();

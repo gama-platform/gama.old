@@ -110,13 +110,15 @@ public class NumberVariable extends Variable {
 
 	protected Integer checkMinMax(final IAgent agent, final IScope scope, final Integer f) throws GamaRuntimeException {
 		if (min != null) {
-			final Integer m = minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent)) : (Integer) minVal;
+			final Integer m = minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent).getValue())
+					: (Integer) minVal;
 			if (f < m) {
 				return m;
 			}
 		}
 		if (max != null) {
-			final Integer m = maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent)) : (Integer) maxVal;
+			final Integer m = maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent).getValue())
+					: (Integer) maxVal;
 			if (f > m) {
 				return m;
 			}
@@ -126,13 +128,15 @@ public class NumberVariable extends Variable {
 
 	protected Double checkMinMax(final IAgent agent, final IScope scope, final Double f) throws GamaRuntimeException {
 		if (min != null) {
-			final Double fmin = minVal == null ? Cast.asFloat(scope, scope.evaluate(min, agent)) : (Double) minVal;
+			final Double fmin = minVal == null ? Cast.asFloat(scope, scope.evaluate(min, agent).getValue())
+					: (Double) minVal;
 			if (f < fmin) {
 				return fmin;
 			}
 		}
 		if (max != null) {
-			final Double fmax = maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent)) : (Double) maxVal;
+			final Double fmax = maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent).getValue())
+					: (Double) maxVal;
 			if (f > fmax) {
 				return fmax;
 			}

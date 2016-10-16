@@ -167,6 +167,8 @@ public class BatchAgent extends ExperimentAgent {
 	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
 		final SimulationPopulation pop = getSimulationPopulation();
+		if (pop == null) // interrupted
+			return 0d;
 		currentSolution = new ParametersSet(sol);
 		fitnessValues.clear();
 		runNumber = runNumber + 1;
@@ -180,7 +182,9 @@ public class BatchAgent extends ExperimentAgent {
 		}
 		// We then create a number of simulations with the same solution
 
-		final int numberOfCores = pop.getMaxNumberOfConcurrentSimulations();
+		int numberOfCores = pop.getMaxNumberOfConcurrentSimulations();
+		if (numberOfCores == 0)
+			numberOfCores = 1;
 		int repeatIndex = 0;
 		while (repeatIndex < getSeeds().length) {
 			for (int coreIndex = 0; coreIndex < numberOfCores; coreIndex++) {
@@ -202,7 +206,7 @@ public class BatchAgent extends ExperimentAgent {
 					// cycles += " " + simulation.getClock().getCycle();
 					// test the condition first in case it is paused
 					final boolean stopConditionMet = Cast.asBool(sim.getScope(),
-							sim.getScope().evaluate(stopCondition, sim));
+							sim.getScope().evaluate(stopCondition, sim).getValue());
 					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 					if (mustStop) {
 						pop.unscheduleSimulation(agent);

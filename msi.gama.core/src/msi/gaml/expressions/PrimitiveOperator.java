@@ -76,9 +76,7 @@ public class PrimitiveOperator implements IExpression {
 			// parameters.setCaller(scope.getAgentScope());
 			// And finally, (3) to execute the executer on the target (it will
 			// be pushed in the scope)
-			final Object[] result = new Object[1];
-			scope.execute(executer, target, parameters, result);
-			return result[0];
+			return scope.execute(executer, target, parameters).getValue();
 		}
 		return null;
 	}

@@ -186,8 +186,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 						// scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 						if (sequence != null && !sequence.isEmpty()) {
 							for (final IAgent capturedA : capturedAgents) {
-								final Object[] result = new Object[1];
-								if (!scope.execute(sequence, capturedA, null, result)) {
+								if (!scope.execute(sequence, capturedA, null).passed()) {
 									break;
 								}
 							}
@@ -205,8 +204,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 						capturedAgent = macroAgent.captureMicroAgent(scope, microSpecies, c);
 
 						if (sequence != null && !sequence.isEmpty()) {
-							final Object[] result = new Object[1];
-							scope.execute(sequence, capturedAgent, null, result);
+							scope.execute(sequence, capturedAgent, null);
 						}
 
 						capturedAgents.add(capturedAgent);

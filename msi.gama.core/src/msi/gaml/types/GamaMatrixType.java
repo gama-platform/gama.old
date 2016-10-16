@@ -20,8 +20,8 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
@@ -145,7 +145,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 			if (fillExpr.isConst()) {
 				Arrays.fill(dd, Cast.asFloat(scope, fillExpr.value(scope)));
 			} else
-				GAMA.executeThreaded(() -> IntStream.range(0, dd.length).parallel().forEach(i -> {
+				GamaExecutorService.executeThreaded(() -> IntStream.range(0, dd.length).parallel().forEach(i -> {
 					dd[i] = Cast.asFloat(scope, fillExpr.value(scope));
 				}));
 			break;
@@ -155,7 +155,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 			if (fillExpr.isConst()) {
 				Arrays.fill(ii, Cast.asInt(scope, fillExpr.value(scope)));
 			} else
-				GAMA.executeThreaded(() -> IntStream.range(0, ii.length).parallel().forEach(i -> {
+				GamaExecutorService.executeThreaded(() -> IntStream.range(0, ii.length).parallel().forEach(i -> {
 					ii[i] = Cast.asInt(scope, fillExpr.value(scope));
 				}));
 			break;
@@ -165,7 +165,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 			if (fillExpr.isConst()) {
 				Arrays.fill(contents, fillExpr.value(scope));
 			} else
-				GAMA.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
+				GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
 					contents[i] = fillExpr.value(scope);
 				}));
 		}

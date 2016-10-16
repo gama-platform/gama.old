@@ -22,10 +22,16 @@ import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IStatement;
 import msi.gaml.types.GamaGeometryType;
 
 @species(name = IKeyword.AGENT, doc = @doc("The species parent of all agent species"))
+/**
+ * A concrete implementation of AbstractAgent that declares its own population,
+ * geometry and name. Base of most of the concrete subclasses of GAMA agents
+ * 
+ * @author drogoul
+ *
+ */
 public class MinimalAgent extends AbstractAgent {
 
 	/** The population that this agent belongs to. */
@@ -132,14 +138,7 @@ public class MinimalAgent extends AbstractAgent {
 				return;
 			}
 			final Envelope previous = geometry.getEnvelope();
-			// Envelope previousEnvelope = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
-			// final Integer newHeading =
-			// topology.directionInDegreesTo(getScope(), previousPoint,
-			// newLocation);
-			// if ( newHeading != null && !getTopology().isTorus() ) {
-			// setHeading(newHeading);
-			// }
 			topology.updateAgent(previous, this);
 
 			// update micro-agents' locations accordingly
@@ -189,7 +188,7 @@ public class MinimalAgent extends AbstractAgent {
 	/**
 	 * During the call to init, the agent will search for the action named
 	 * _init_ and execute it. Its default implementation is provided in this
-	 * class as well.
+	 * class as well (equivalent to a super.init())
 	 * 
 	 * @see GamlAgent#_init_()
 	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
@@ -202,15 +201,15 @@ public class MinimalAgent extends AbstractAgent {
 		if (!getSpecies().isInitOverriden()) {
 			_init_(scope);
 		} else {
-			executeCallbackAction(scope, getSpecies().getAction(ISpecies.initActionName));
+			scope.execute(getSpecies().getAction(ISpecies.initActionName), this, null);
 		}
 		return !scope.interrupted();
 	}
 
 	/**
-	 * During the call to step, the agent will search for the action named
+	 * During the call to doStep(), the agent will search for the action named
 	 * _step_ and execute it. Its default implementation is provided in this
-	 * class as well.
+	 * class as well (equivalent to a super.doStep());
 	 * 
 	 * @see GamlAgent#_step_()
 	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
@@ -219,54 +218,41 @@ public class MinimalAgent extends AbstractAgent {
 	 *          _step_(IScope) instead.
 	 */
 	@Override
-	public boolean step(final IScope scope) {
+	public boolean doStep(final IScope scope) {
 		if (!getSpecies().isStepOverriden()) {
 			_step_(scope);
+			return !scope.interrupted();
 		} else {
-			executeCallbackAction(scope, getSpecies().getAction(ISpecies.stepActionName));
+			return scope.execute(getSpecies().getAction(ISpecies.stepActionName), this, null).passed();
 		}
-		return !scope.interrupted();
 	}
 
 	/**
-	 * Callback Actions
-	 *
-	 */
-
-	protected Object executeCallbackAction(final IScope scope, final IStatement action) {
-		final Object[] callbackResult = new Object[1];
-		scope.execute(action, this, null, callbackResult);
-		return callbackResult[0];
-	}
-
-	@action(name = ISpecies.initActionName)
-	public Object _init_(final IScope scope) {
-		getSpecies().getArchitecture().init(scope);
-		return this;
-	}
-
-	@action(name = ISpecies.stepActionName)
-	public Object _step_(final IScope scope) {
-		scope.update(this);
-		// we ask the architecture to execute on this
-		final Object[] result = new Object[1];
-		if (scope.execute(getSpecies().getArchitecture(), this, null, result)) {
-			// we ask the sub-populations to step their agents if any
-			return stepSubPopulations(scope);
-		}
-		return result[0];
-	}
-
-	/**
+	 * The default init of agents consists in calling the super implementation
+	 * of init() in order to realize the default init sequence
+	 * 
 	 * @param scope
 	 * @return
 	 */
-	protected Object stepSubPopulations(final IScope scope) {
-		return this;
+	@action(name = ISpecies.initActionName)
+	public Object _init_(final IScope scope) {
+		return super.init(scope);
 	}
 
 	/**
-	 * Method getArea()
+	 * The default step of agents consists in calling the super implementation
+	 * of doStep() in order to realize the default step sequence
+	 * 
+	 * @param scope
+	 * @return
+	 */
+	@action(name = ISpecies.stepActionName)
+	public Object _step_(final IScope scope) {
+		return super.doStep(scope);
+	}
+
+	/**
+	 * Method getArea(). Simply delegates to the geometry
 	 * 
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getArea()
 	 */
@@ -276,7 +262,7 @@ public class MinimalAgent extends AbstractAgent {
 	}
 
 	/**
-	 * Method getVolume()
+	 * Method getVolume(). Simply delegates to the geometry
 	 * 
 	 * @see msi.gama.metamodel.shape.IGeometricalShape#getVolume()
 	 */
@@ -388,7 +374,6 @@ public class MinimalAgent extends AbstractAgent {
 			this.setDirectVarValue(scope, attr.getKey(), attr.getValue());
 		}
 
-		// Update microPop
 	}
 
 }

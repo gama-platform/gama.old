@@ -294,7 +294,7 @@ public class FileOutput extends AbstractOutput {
 	public void doRefreshWriteAndClose(final ParametersSet sol, final Object fitness) throws GamaRuntimeException {
 		setSolution(sol);
 		if (fitness == null) {
-			if (!getScope().step(this)) {
+			if (!getScope().step(this).passed()) {
 				return;
 			}
 		} else {

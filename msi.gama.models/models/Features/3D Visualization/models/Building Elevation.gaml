@@ -24,7 +24,7 @@ global
 	//Definition of the shape of the world as the bounds of the shapefiles to show everything contained
 	// by the area delimited by the bounds
 	geometry shape <- envelope(shape_file_bounds);
-	int nb_people <- 100;
+	int nb_people <- 5000;
 	int day_time update: cycle mod 144;
 	int min_work_start <- 36;
 	int max_work_start <- 60;
@@ -83,7 +83,7 @@ species road
 species people skills: [moving]
 {
 	float speed <- min_speed + rnd(max_speed - min_speed);
-	rgb color <- # yellow;
+	rgb color <- rnd_color(255);
 	building living_place <- one_of(residential_buildings);
 	building working_place <- one_of(industrial_buildings);
 	point location <- any_location_in(living_place) + { 0, 0, living_place.height };

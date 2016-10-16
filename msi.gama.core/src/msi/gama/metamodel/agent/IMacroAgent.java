@@ -20,7 +20,6 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
@@ -179,7 +178,8 @@ public interface IMacroAgent extends IAgent {
 
 	public abstract IPopulation<? extends IAgent> getExternMicroPopulationFor(final String expName);
 
-	public abstract GamaMap<String, IPopulation<? extends IAgent>> getExternMicroPopulations();
+	// public abstract GamaMap<String, IPopulation<? extends IAgent>>
+	// getExternMicroPopulations();
 	// end-hqnghi
 
 }

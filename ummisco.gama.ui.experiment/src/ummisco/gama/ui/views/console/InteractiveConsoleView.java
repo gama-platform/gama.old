@@ -11,11 +11,9 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.custom.VerifyKeyListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -108,22 +106,17 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 			}
 		});
 
-		viewer.getTextWidget().addVerifyKeyListener(new VerifyKeyListener() {
+		viewer.getTextWidget().addVerifyKeyListener(e -> {
+			if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN) {
+				final StyledText text = (StyledText) e.widget;
+				final Point selection = text.getSelection();
+				final int line = text.getLineAtOffset(selection.y);
+				if (line == text.getLineCount() - 1) {
+					e.doit = false;
+					insertHistory(e.keyCode == SWT.ARROW_UP);
 
-			@Override
-			public void verifyKey(final VerifyEvent e) {
-				if (e.keyCode == SWT.ARROW_UP || e.keyCode == SWT.ARROW_DOWN) {
-					final StyledText text = (StyledText) e.widget;
-					final Point selection = text.getSelection();
-					final int line = text.getLineAtOffset(selection.y);
-					if (line == text.getLineCount() - 1) {
-						e.doit = false;
-						insertHistory(e.keyCode == SWT.ARROW_UP);
-
-					}
 				}
 			}
-
 		});
 		p.layout(true, true);
 		showPrompt();
@@ -138,27 +131,19 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	private void showPrompt() {
 
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				append(Strings.LN + PROMPT, false, false);
-				try {
-					// Wait for the output stream to finish
-					Thread.sleep(200);
-				} catch (final InterruptedException e) {
-				}
-				WorkbenchHelper.run(new Runnable() {
-
-					@Override
-					public void run() {
-						if (viewer != null && viewer.getTextWidget() != null && !viewer.getTextWidget().isDisposed())
-							viewer.getTextWidget().setCaretOffset(viewer.getTextWidget().getCharCount());
-
-					}
-				});
-
+		new Thread(() -> {
+			append(Strings.LN + PROMPT, false, false);
+			try {
+				// Wait for the output stream to finish
+				Thread.sleep(200);
+			} catch (final InterruptedException e) {
 			}
+			WorkbenchHelper.run(() -> {
+				if (viewer != null && viewer.getTextWidget() != null && !viewer.getTextWidget().isDisposed())
+					viewer.getTextWidget().setCaretOffset(viewer.getTextWidget().getCharCount());
+
+			});
+
 		}).start();
 		;
 
@@ -204,19 +189,15 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	public void append(final String text, final boolean error, final boolean showPrompt) {
 
 		final OutputStreamWriter writer = error ? errorWriter : resultWriter;
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					writer.append(text);
-					writer.flush();
-					if (showPrompt)
-						showPrompt();
-				} catch (final IOException e) {
-				}
-
+		WorkbenchHelper.asyncRun(() -> {
+			try {
+				writer.append(text);
+				writer.flush();
+				if (showPrompt)
+					showPrompt();
+			} catch (final IOException e) {
 			}
+
 		});
 
 	}
@@ -299,15 +280,8 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	private void setExecutorAgent(final IAgent agent) {
 		listeningAgent = agent;
 		if (agent != null)
-			WorkbenchHelper.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					toolbar.status(GamaIcons.create(IGamaIcons.MENU_AGENT).image(),
-							"Listening agent: " + Cast.toGaml(agent), IGamaColors.NEUTRAL, SWT.LEFT);
-
-				}
-			});
+			WorkbenchHelper.asyncRun(() -> toolbar.status(GamaIcons.create(IGamaIcons.MENU_AGENT).image(),
+					"Listening agent: " + Cast.toGaml(agent), IGamaColors.NEUTRAL, SWT.LEFT));
 
 	}
 
@@ -323,7 +297,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 			try {
 				final IExpression expr = GAML.compileExpression(s, listeningAgent, false);
 				if (expr != null) {
-					result = Cast.toGaml(listeningAgent.getScope().evaluate(expr, listeningAgent));
+					result = Cast.toGaml(listeningAgent.getScope().evaluate(expr, listeningAgent).getValue());
 				}
 			} catch (final Exception e) {
 				error = true;

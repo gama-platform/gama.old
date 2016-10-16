@@ -1,7 +1,7 @@
 /*********************************************************************************************
  *
  *
- * 'MinimalAgent.java', in plugin 'msi.gama.core', is part of the source code of the
+ * 'AbstractAgent.java', in plugin 'msi.gama.core', is part of the source code of the
  * GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
@@ -42,7 +42,7 @@ import msi.gaml.variables.IVariable;
 
 /**
  *
- * Class MinimalAgent. An abstract class that tries to minimize the number of
+ * Class AbstractAgent. An abstract class that tries to minimize the number of
  * attributes manipulated by agents. In particular, it declares no Geometry
  * (leaving the programmer the possibility to redeclare getGeometry(), for
  * example in a dynamic fashion), no Population (leaving the programmer the
@@ -248,13 +248,61 @@ public abstract class AbstractAgent implements IAgent {
 		return getSpecies().getArchitecture().init(scope);
 	}
 
+	/**
+	 * Method called repetitively by the simulation engine. Should not be
+	 * redefined except in rare cases (like special forms of experiments, which
+	 * need to define their own sequence)
+	 */
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
-		if (scope.update(this)) {
-			final Object[] result = new Object[1];
-			return scope.execute(getSpecies().getArchitecture(), this, null, result);
+		boolean result = false;
+		try {
+			return result = preStep(scope) ? doStep(scope) : false;
+		} finally {
+			if (result)
+				postStep(scope);
 		}
-		return false;
+	}
+
+	/**
+	 * This method contains everything to do *before* the actual step is done
+	 * (runs of reflexes, etc.). The basis consists in updating the variables.
+	 * 
+	 * @param scope
+	 *            the scope in which the agent is asked to do the preStep()
+	 * @return r
+	 */
+	protected boolean preStep(final IScope scope) {
+		return scope.update(this).passed();
+	}
+
+	/**
+	 * This method contains everything to do *during* during the step of an
+	 * agent. The basis consists in asking the architecture to execute on this
+	 * and, if successfull, to step its sub-populations (if any). Only called if
+	 * the preStep() method has been sucessfull
+	 * 
+	 * @param scope
+	 *            the scope in which the agent is asked to do the step
+	 * @return whether or not the step has been successful (i.e. no errors,
+	 *         etc.)
+	 */
+	protected boolean doStep(final IScope scope) {
+		return scope.execute(getSpecies().getArchitecture(), this, null).passed() ? stepSubPopulations(scope) : false;
+	}
+
+	protected boolean stepSubPopulations(final IScope scope) {
+		return true;
+	}
+
+	/**
+	 * This method contains everything to do *after* the actual step of the
+	 * agent has been done. Only called if the doStep() method has been
+	 * successful.
+	 * 
+	 * @param scope
+	 */
+	protected void postStep(final IScope scope) {
 	}
 
 	@Override
@@ -272,8 +320,8 @@ public abstract class AbstractAgent implements IAgent {
 		final IPopulation<? extends IAgent> pop = getHost().getPopulationFor(this.getSpecies());
 		if (pop != null) {
 			final IScope scope = getScope();
-			final IList<IAgent> retVal = GamaListFactory.<IAgent> createWithoutCasting(
-					scope.getModelContext().getTypeNamed(getSpeciesName()), pop.toArray());
+			final IList<IAgent> retVal = GamaListFactory.<IAgent> createWithoutCasting(scope.getType(getSpeciesName()),
+					pop.toArray());
 			retVal.remove(this);
 			return retVal;
 		}
@@ -514,7 +562,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public IType<?> getType() {
-		return getScope().getModelContext().getTypeNamed(getSpeciesName());
+		return getScope().getType(getSpeciesName());
 	}
 
 	/**

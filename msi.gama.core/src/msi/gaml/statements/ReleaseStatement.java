@@ -129,7 +129,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		if (asExpr != null && inExpr != null) {
 			targetAgent = (IMacroAgent) inExpr.value(scope);
 			if (targetAgent != null && !targetAgent.equals(macroAgent)) {
-				microSpecies = (ISpecies) scope.evaluate(asExpr, targetAgent);
+				microSpecies = (ISpecies) scope.evaluate(asExpr, targetAgent).getValue();
 				releasedMicroAgents = targetAgent.captureMicroAgents(scope, microSpecies, microAgents);
 			}
 		} else if (asExpr != null && inExpr == null) {
@@ -193,8 +193,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			// scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 			if (!sequence.isEmpty()) {
 				for (final IAgent releasedA : releasedMicroAgents) {
-					final Object[] result = new Object[1];
-					if (!scope.execute(sequence, releasedA, null, result)) {
+					if (!scope.execute(sequence, releasedA, null).passed()) {
 						break;
 					}
 				}

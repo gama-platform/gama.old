@@ -57,7 +57,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.Guava;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
-import msi.gaml.descriptions.IDescription;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaGeometryType;
@@ -526,25 +525,23 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public boolean step(final IScope scope) {
+	protected boolean preStep(final IScope scope) {
 		clock.beginCycle();
-		boolean result;
-		// An experiment always runs in its own scope
-		try {
-			executer.executeBeginActions();
-			result = super.step(this.scope);
-			executer.executeEndActions();
-			executer.executeOneShotActions();
-			final IOutputManager outputs = getOutputManager();
-			if (outputs != null) {
-				outputs.step(scope);
-			}
-		} finally {
-			clock.step(this.scope);
+		executer.executeBeginActions();
+		return super.preStep(scope);
+	}
 
-			informStatus();
+	@Override
+	protected void postStep(final IScope scope) {
+		super.postStep(scope);
+		executer.executeEndActions();
+		executer.executeOneShotActions();
+		final IOutputManager outputs = getOutputManager();
+		if (outputs != null) {
+			outputs.step(scope);
 		}
-		return result;
+		clock.step(this.scope);
+		informStatus();
 	}
 
 	@Override
@@ -620,16 +617,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		@Override
 		public IExperimentAgent getExperiment() {
 			return ExperimentAgent.this;
-		}
-
-		@Override
-		public IDescription getExperimentContext() {
-			return ExperimentAgent.this.getSpecies().getDescription();
-		}
-
-		@Override
-		public IDescription getModelContext() {
-			return ExperimentAgent.this.getSpecies().getModel().getDescription();
 		}
 
 		@Override

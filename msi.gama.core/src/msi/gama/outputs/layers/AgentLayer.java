@@ -25,6 +25,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.statements.IExecutable;
@@ -79,9 +80,8 @@ public class AgentLayer extends AbstractLayer {
 						aspect = AspectStatement.DEFAULT_ASPECT;
 					}
 
-					final Object[] result = new Object[1];
-					scope.execute(aspect, a, null, result);
-					final Rectangle2D r = (Rectangle2D) result[0];
+					final ExecutionResult result = scope.execute(aspect, a, null);
+					final Rectangle2D r = (Rectangle2D) result.getValue();
 					// final Rectangle2D r = aspect.draw(scope, a);
 					if (r != null) {
 						shapes.put(a, r);
@@ -94,9 +94,8 @@ public class AgentLayer extends AbstractLayer {
 				if (a != null/* && !scope.interrupted() */ ) {
 					final IExecutable aspect = AspectStatement.DEFAULT_ASPECT;
 
-					final Object[] result = new Object[1];
-					scope.execute(aspect, a, null, result);
-					final Rectangle2D r = (Rectangle2D) result[0];
+					final ExecutionResult result = scope.execute(aspect, a, null);
+					final Rectangle2D r = (Rectangle2D) result.getValue();
 					// final Rectangle2D r = aspect.draw(scope, a);
 					if (r != null) {
 						shapes.put(a, r);

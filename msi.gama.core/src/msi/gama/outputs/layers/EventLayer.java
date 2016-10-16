@@ -200,15 +200,7 @@ public class EventLayer extends AbstractLayer {
 					return;
 				}
 			}
-			GAMA.runAndUpdateAll(new Runnable() {
-
-				final Object[] result = new Object[1];
-
-				@Override
-				public void run() {
-					executionScope.execute(executer, agent, null, result);
-				}
-			});
+			GAMA.runAndUpdateAll(() -> executionScope.execute(executer, agent, null));
 
 		}
 

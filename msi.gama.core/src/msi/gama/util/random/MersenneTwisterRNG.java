@@ -26,7 +26,6 @@
 package msi.gama.util.random;
 
 import msi.gama.common.util.RandomUtils;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 
 /**
  * <p>
@@ -130,7 +129,7 @@ public class MersenneTwisterRNG extends GamaRNG {
 		// version.
 		int i = 1;
 		int j = 0;
-		for (int k = CmnFastMath.max(N, seedInts.length); k > 0; k--) {
+		for (int k = Math.max(N, seedInts.length); k > 0; k--) {
 			mt[i] = (mt[i] ^ (mt[i - 1] ^ mt[i - 1] >>> 30) * SEED_FACTOR1) + seedInts[j] + j;
 			i++;
 			j++;

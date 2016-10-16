@@ -13,6 +13,7 @@ package msi.gama.util;
 
 import org.eclipse.emf.common.util.URI;
 
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -92,7 +93,7 @@ public class GAML {
 			return null;
 		}
 		final IScope scope = a.getScope().copy("in temporary expression evaluator");
-		final Object o = scope.evaluate(expr, a);
+		final Object o = scope.evaluate(expr, a).getValue();
 		GAMA.releaseScope(scope);
 		return o;
 	}
@@ -132,7 +133,10 @@ public class GAML {
 			return null;
 		}
 		final IScope scope = a.getScope();
-		return (ExperimentDescription) scope.getExperimentContext();
+		final ITopLevelAgent agent = scope.getExperiment();
+		if (agent == null)
+			return null;
+		return (ExperimentDescription) agent.getSpecies().getDescription();
 	}
 
 	public static void registerInfoProvider(final IGamlResourceInfoProvider info) {

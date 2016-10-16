@@ -22,6 +22,7 @@ import static com.google.common.collect.Iterables.toArray;
 import static msi.gama.util.GAML.emptyCheck;
 import static msi.gama.util.GAML.nullCheck;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -463,9 +464,8 @@ public class Containers {
 	private static IList of_species(final IScope scope, final IContainer agents, final ISpecies s,
 			final boolean generic) {
 
-		return GamaListFactory.create(scope, scope.getModelContext().getTypeNamed(s.getName()),
-				Iterables.filter(agents.iterable(scope),
-						and(instanceOf(IAgent.class), (Predicate<IAgent>) be -> be.isInstanceOf(s, !generic))));
+		return GamaListFactory.create(scope, scope.getType(s.getName()), Iterables.filter(agents.iterable(scope),
+				and(instanceOf(IAgent.class), (Predicate<IAgent>) be -> be.isInstanceOf(s, !generic))));
 	}
 
 	@operator(value = {
@@ -707,28 +707,6 @@ public class Containers {
 		return result;
 	}
 
-	// @operator(value = "among", content_type =
-	// ITypeProvider.RIGHT_CONTENT_TYPE)
-	// @doc(special_cases = {
-	// "if the right-hand operand is a map, among returns a map of right-hand
-	// operand element instead of a list"
-	// }, examples = { "2 among [1::2, 3::4, 5::6] --: [1::2, 3::4]" })
-	// public static GamaMap among(final IScope scope, final Integer number,
-	// final GamaMap l)
-	// throws GamaRuntimeException {
-	// final GamaMap result = GamaMapFactory.create();
-	// if ( l == null ) { return result; }
-	// int size = l.size();
-	// if ( number == 0 ) { return result; }
-	// if ( number >= size ) { return l; }
-	// final IList indexes = among(scope, number, new GamaList(l.keySet()));
-	// for ( int i = 0; i < number; i++ ) {
-	// Object o = indexes.get(i);
-	// result.put(o, l.get(o));
-	// }
-	// return result;
-	// }
-
 	@operator(value = "among", content_type = ITypeProvider.SECOND_CONTENT_TYPE, category = IOperatorCategory.CONTAINER, concept = {
 			IConcept.CONTAINER, IConcept.FILTER })
 	@doc(value = "Returns a list of length the value of the left-hand operand, containing random elements from the right-hand operand. As of GAMA 1.6, the order in which the elements are returned can be different than the order in which they appear in the right-hand container", special_cases = {
@@ -775,61 +753,19 @@ public class Containers {
 					@example(value = "(list(node) sort_by (round(node(each).location.x))", equals = "[node5, node1, node0, node2, node3]", isExecutable = false),
 					@example(value = "[1::2, 5::6, 3::4] sort_by (each)", equals = "[2, 4, 6]") }, see = { "group_by" })
 	public static IList sort(final IScope scope, final IContainer original, final IExpression filter) {
+		if (original instanceof List) {
+			final Object[] array = ((List) original).toArray(new Object[((List) original).size()]);
+			Arrays.parallelSort(array, Guava.orderOn(Guava.function(scope, filter)));
+			return GamaListFactory.createWithoutCasting(original.getType().getContentType(), array);
+		}
 		final Iterable it = nullCheck(scope, original).iterable(scope);
 		final int size = size(it);
 		if (size == 0) {
 			return GamaListFactory.create();
 		}
-		// if ( size == 1 ) { return
-		// GamaListFactory.createWithoutCasting(original.getType().getContentType(),
-		// getFirst(it, null)); }
 		return GamaListFactory.createWithoutCasting(original.getType().getContentType(),
 				Guava.orderOn(Guava.function(scope, filter)).sortedCopy(it));
 	}
-
-	/**
-	 * for maps, we sort the keys and reinsert them in this order in the new map
-	 * 
-	 * @param scope
-	 * @param original
-	 * @param filter
-	 * @return
-	 * @throws GamaRuntimeException
-	 */
-	// // FIXME Completely false: rewrite this method
-	// @operator(value = { "sort_by", "sort" }, content_type =
-	// ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
-	// public static GamaMap sort(final IScope scope, final GamaMap original,
-	// final IExpression filter)
-	// throws GamaRuntimeException {
-	// final GamaMap resultMap = GamaMapFactory.create(nullCheck(scope,
-	// original));
-	// // copy in order to prevent any side effect on the left member
-	// if ( resultMap.isEmpty() ) { return resultMap; }
-	// final IList<GamaPair> sortedPairs = sort(scope, resultMap.getPairs(),
-	// filter);
-	// for ( final GamaPair pair : sortedPairs ) {
-	// resultMap.add(pair);
-	// }
-	// return resultMap;
-	// }
-
-	// @operator(value = { "where", "select" }, priority = IPriority.ITERATOR,
-	// iterator = true)
-	// public static GamaMap where(final IScope scope, final GamaMap original,
-	// final IExpression
-	// filter)
-	// throws GamaRuntimeException {
-	// if ( original == null ) { return GamaMapFactory.create(); }
-	// final GamaMap result = GamaMapFactory.create();
-	// for ( GamaPair p : original.iterable(scope) ) {
-	// scope.setEach(p);
-	// if ( Cast.asBool(scope, filter.value(scope)) ) {
-	// result.add(p);
-	// }
-	// }
-	// return result;
-	// }
 
 	@operator(value = { "where",
 			"select" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL, category = IOperatorCategory.CONTAINER, concept = {

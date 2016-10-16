@@ -747,7 +747,7 @@ public class FIPASkill extends MessagingSkill {
 			return GamaListFactory.create();
 		}
 		final IList<FIPAMessage> result = GamaListFactory
-				.create(scope.getModelContext().getTypeNamed(GamaMessageType.MESSAGE_STR));
+				.create(scope.getType(GamaMessageType.MESSAGE_STR));
 		for (final FIPAMessage m : inBox) {
 			final boolean unread = m.isUnread();
 			final int mperf = m.getPerformative();

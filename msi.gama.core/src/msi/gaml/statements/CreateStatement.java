@@ -20,7 +20,7 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.experiment.ExperimentPlan;
-import msi.gama.kernel.experiment.ExperimentPopulation;
+import msi.gama.kernel.experiment.ExperimentPlan.ExperimentPopulation;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -311,8 +311,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			// hqnghi population of micro-model's experiment is not exist, we
 			// must create the new one
 			if (pop == null && s instanceof ExperimentPlan && executor instanceof IMacroAgent) {
-				pop = new ExperimentPopulation(s);
-				final IScope sc = ((ExperimentPlan) s).getExperimentScope();
+				final ExperimentPlan ep = (ExperimentPlan) s;
+				pop = ep.new ExperimentPopulation(s);
+				final IScope sc = ep.getExperimentScope();
 				pop.initializeFor(sc);
 				((IMacroAgent) executor).addExternMicroPopulation(
 						s.getDescription().getModelDescription().getAlias() + "." + s.getName(), pop);
@@ -388,8 +389,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		// end-hqnghi
 		if (sequence != null && !sequence.isEmpty()) {
 			for (final IAgent remoteAgent : list.iterable(scope)) {
-				final Object[] result = new Object[1];
-				if (!scope.execute(sequence, remoteAgent, null, result)) {
+				if (!scope.execute(sequence, remoteAgent, null).passed()) {
 					break;
 				}
 			}

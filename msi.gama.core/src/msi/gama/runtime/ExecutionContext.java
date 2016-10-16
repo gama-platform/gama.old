@@ -1,94 +1,100 @@
 package msi.gama.runtime;
 
+import java.util.Collections;
 import java.util.Map;
 
 import gnu.trove.map.hash.THashMap;
 
-public class ExecutionContext extends THashMap<String, Object> implements IExecutionContext.Statement {
+public class ExecutionContext implements IExecutionContext {
 
-	IExecutionContext outer;
+	Map<String, Object> local;
+	final IExecutionContext outer;
 
 	public ExecutionContext() {
 		this(null);
 	}
 
-	private ExecutionContext(final IExecutionContext previous) {
-		super(5);
-		this.outer = previous;
+	ExecutionContext(final IExecutionContext outer) {
+		this.outer = outer;
 	}
 
 	@Override
-	public void setVar(final String name, final Object value) {
-		final int i = index(name);
-		if (i == -1) {
+	public final IExecutionContext getOuterContext() {
+		return outer;
+	}
+
+	@Override
+	public void setTempVar(final String name, final Object value) {
+		if (local == null || !local.containsKey(name)) {
 			if (outer != null)
-				outer.setVar(name, value);
+				outer.setTempVar(name, value);
 		} else {
-			_values[i] = value;
+			local.put(name, value);
 		}
+
 	}
 
 	@Override
-	public Object getVar(final String name) {
-		final int i = index(name);
-		if (i < 0) {
-			if (outer == null)
-				return null;
-			return outer.getVar(name);
-		}
-		return _values[i];
+	public Object getTempVar(final String name) {
+		if (local == null || !local.containsKey(name))
+			return outer == null ? null : outer.getTempVar(name);
+		// if (name == ExecutionScope.EACH)
+		// System.out.println("EACH value found in context " + this);
+		return local.get(name);
 	}
 
 	@Override
-	public boolean hasVar(final String name) {
-		return index(name) >= 0 || outer != null && outer.hasVar(name);
-	}
-
-	@Override
-	public ExecutionContext copy() {
+	public ExecutionContext createCopyContext() {
 		final ExecutionContext r = new ExecutionContext(outer);
-		r.putAll(this);
+		if (local != null)
+			r.local = new THashMap<String, Object>(local);
 		return r;
 	}
 
 	@Override
-	public IExecutionContext.Statement getOuter() {
-		return (Statement) outer;
+	public Map<? extends String, ? extends Object> getLocalVars() {
+		return local == null ? Collections.EMPTY_MAP : local;
 	}
 
 	@Override
-	public Map<? extends String, ? extends Object> getAllOwnVars() {
-		return this;
+	public void clearLocalVars() {
+		local = null;
 	}
 
 	@Override
-	public void clearOwnVars() {
-		clear();
+	public void putLocalVar(final String varName, final Object val) {
+		if (local == null)
+			local = new THashMap<>();
+		// if (varName == ExecutionScope.EACH)
+		// System.out.println("EACH value set to " + val + " in context " +
+		// this);
+		local.put(varName, val);
 	}
 
 	@Override
-	public void putOwnVar(final String varName, final Object val) {
-		put(varName, val);
+	public Object getLocalVar(final String string) {
+		if (local == null)
+			return null;
+		return local.get(string);
 	}
 
 	@Override
-	public Object getOwnVar(final String string) {
-		return get(string);
+	public boolean hasLocalVar(final String name) {
+		if (local == null)
+			return false;
+		return local.containsKey(name);
 	}
 
 	@Override
-	public boolean hasOwnVar(final String name) {
-		return contains(name);
+	public void removeLocalVar(final String name) {
+		if (local == null)
+			return;
+		local.remove(name);
 	}
 
 	@Override
-	public Statement createChild() {
-		return new ExecutionContext(this);
-	}
-
-	@Override
-	public void removeOwnVar(final String name) {
-		remove(name);
+	public String toString() {
+		return "execution context " + local;
 	}
 
 }

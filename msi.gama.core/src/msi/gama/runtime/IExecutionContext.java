@@ -2,59 +2,46 @@ package msi.gama.runtime;
 
 import java.util.Map;
 
-import msi.gama.metamodel.agent.IAgent;
-
 public interface IExecutionContext {
 
-	public interface Agent extends IExecutionContext {
-		public abstract IAgent getAgent();
-
-		@Override
-		public abstract IExecutionContext.Agent copy();
-
-		@Override
-		public abstract IExecutionContext.Agent getOuter();
-
-		public abstract IExecutionContext.Agent createChild(IAgent agent);
-	}
-
-	public interface Statement extends IExecutionContext {
-		public abstract Map<? extends String, ? extends Object> getAllOwnVars();
-
-		public abstract void clearOwnVars();
-
-		public abstract void putOwnVar(String varName, Object val);
-
-		public abstract Object getOwnVar(String string);
-
-		public abstract boolean hasOwnVar(String name);
-
-		@Override
-		public abstract IExecutionContext.Statement getOuter();
-
-		@Override
-		public abstract IExecutionContext.Statement copy();
-
-		public abstract IExecutionContext.Statement createChild();
-
-		public abstract void removeOwnVar(String name);
-
-	}
-
 	public default int depth() {
-		if (getOuter() == null)
+		if (getOuterContext() == null)
 			return 0;
-		return 1 + getOuter().depth();
+		return 1 + getOuterContext().depth();
 	}
 
-	public abstract void setVar(String name, Object value);
+	/**
+	 * Temporary variables, defined in execution contexts. Can be accessed in a
+	 * recursive way
+	 */
 
-	public abstract Object getVar(String name);
+	public abstract void setTempVar(String name, Object value);
 
-	public abstract boolean hasVar(String name);
+	public abstract Object getTempVar(String name);
 
-	public abstract IExecutionContext copy();
+	/**
+	 * Local variables, for example arguments, defined in execution contexts.
+	 * Are only managed locally
+	 */
 
-	public abstract IExecutionContext getOuter();
+	public abstract Map<? extends String, ? extends Object> getLocalVars();
+
+	public abstract void clearLocalVars();
+
+	public abstract void putLocalVar(String varName, Object val);
+
+	public abstract Object getLocalVar(String string);
+
+	public abstract boolean hasLocalVar(String name);
+
+	public abstract void removeLocalVar(String name);
+
+	/**
+	 * Other methods
+	 */
+
+	public abstract IExecutionContext getOuterContext();
+
+	public abstract IExecutionContext createCopyContext();
 
 }

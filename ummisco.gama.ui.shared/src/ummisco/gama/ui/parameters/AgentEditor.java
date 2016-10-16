@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GAML;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.interfaces.IAgentMenuFactory;
@@ -117,7 +116,7 @@ public class AgentEditor extends ExpressionBasedEditor {
 
 	@Override
 	public IType getExpectedType() {
-		return GAML.getModelContext().getTypeNamed(species);
+		return getScope().getType(species);
 	}
 
 	/**
