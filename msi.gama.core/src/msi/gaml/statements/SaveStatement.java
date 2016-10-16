@@ -187,6 +187,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	// TODO rewrite this with the GamaFile framework
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		// First case: we have a file as item;
@@ -237,11 +238,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if (item == null) {
 				return null;
 			}
-			final IList<? extends IShape> agents = Cast.asList(scope, item.value(scope));
-			if (agents == null || agents.isEmpty()) {
+			Object agents = item.value(scope);
+			if (agents instanceof ISpecies) {
+				agents = scope.getAgent().getPopulationFor((ISpecies) agents);
+			}
+			if (!(agents instanceof IList)) {
 				return null;
 			}
-			saveShape(agents, path, scope);
+			saveShape((IList<? extends IShape>) agents, path, scope);
 		} else if (type.equals("text") || type.equals("csv")) {
 			final File fileTxt = new File(path);
 			boolean exists = fileTxt.exists();
@@ -415,7 +419,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 	}
 
-	public String getGeometryType(final IList<? extends IShape> agents) {
+	public String getGeometryType(final List<? extends IShape> agents) {
 		String geomType = "";
 		for (final IShape be : agents) {
 			final IShape geom = be.getGeometry();
@@ -671,12 +675,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				ff.setAttributes(values);
 				fw.write();
 			}
-//			store.dispose();
+			// store.dispose();
 			if (gis != null) {
 				writePRJ(scope, path, gis);
 			}
-		}
-		finally{
+		} finally {
 			store.dispose();
 		}
 	}
