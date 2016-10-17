@@ -252,6 +252,7 @@ public class ModelDescription extends SpeciesDescription {
 	public IDescription addChild(final IDescription child) {
 		if (child == null)
 			return null;
+
 		if (child instanceof ModelDescription) {
 			((ModelDescription) child).getTypesManager().setParent(getTypesManager());
 			if (microModels == null)
@@ -260,7 +261,8 @@ public class ModelDescription extends SpeciesDescription {
 		} // no else as models are also species, which should be added after.
 		if (!child.isBuiltIn() && child.getName().equals(SimulationAgent.STARTING_DATE)) {
 			isStartingDateDefined = true;
-		} else if (child instanceof ExperimentDescription) {
+		}
+		if (child instanceof ExperimentDescription) {
 			final String s = child.getName();
 			if (experiments == null) {
 				experiments = new THashMap();
