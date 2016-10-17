@@ -29,6 +29,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.ExecutionResult;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
@@ -40,6 +41,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.statements.RemoteSequence;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 @symbol(name = {
 		PerceiveStatement.PERCEIVE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true, concept = {
@@ -139,14 +141,8 @@ public class PerceiveStatement extends AbstractStatementSequence {
 								temp.add((IAgent) obj);
 							}
 						}
-						final Iterator<IAgent> runners = ((IContainer) temp).iterable(scope).iterator();
-						ExecutionResult result = null;
-						if (runners != null) {
-							while (runners.hasNext()
-									&& (result = scope.execute(sequence, runners.next(), null)).passed()) {
-							}
-						}
-						return result.getValue();
+						GamaExecutorService.execute(scope,sequence,(IList<IAgent>) temp.listValue(scope, Types.AGENT, false), null);
+						return this;
 
 					} else if (inArg instanceof msi.gaml.types.GamaGeometryType || inArg instanceof GamaShape) {
 						IList<IAgent> temp = GamaListFactory.create();
@@ -159,14 +155,8 @@ public class PerceiveStatement extends AbstractStatementSequence {
 								temp.add((IAgent) obj);
 							}
 						}
-						final Iterator<IAgent> runners = ((IContainer) temp).iterable(scope).iterator();
-						ExecutionResult result = null;
-						if (runners != null) {
-							while (runners.hasNext()
-									&& (result = scope.execute(sequence, runners.next(), null)).passed()) {
-							}
-						}
-						return result.getValue();
+						GamaExecutorService.execute(scope,sequence,(IList<IAgent>) temp.listValue(scope, Types.AGENT, false), null);
+						return this;
 					} else {
 						ExecutionResult result = null;
 						final Iterator<IAgent> runners = obj instanceof IContainer
