@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import org.joda.time.MutableDateTime;
+import java.time.LocalDateTime;
 
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -33,6 +33,8 @@ import msi.gaml.operators.Cast;
 @type(name = "date", id = IType.DATE, wraps = { GamaDate.class }, kind = ISymbolKind.Variable.REGULAR, concept = {
 		IConcept.TYPE, IConcept.DATE, IConcept.TIME })
 public class GamaDateType extends GamaType<GamaDate> {
+
+	public static final GamaDate DEFAULT_STARTING_DATE = new GamaDate(LocalDateTime.of(0, 1, 1, 0, 0));
 
 	@Override
 	public GamaDate cast(final IScope scope, final Object obj, final Object param, final boolean copy)
@@ -59,13 +61,10 @@ public class GamaDateType extends GamaType<GamaDate> {
 		}
 
 		if (obj instanceof String) {
-			if ("now".equals(obj.toString())) {
-				return new GamaDate(MutableDateTime.now());
-			}
-			return new GamaDate((String) obj);
+			return new GamaDate(scope, (String) obj);
 		}
 		if (obj instanceof Boolean) {
-			return new GamaDate();
+			return new GamaDate(0);
 		}
 		final int i = Cast.asInt(scope, obj);
 		return new GamaDate(i);

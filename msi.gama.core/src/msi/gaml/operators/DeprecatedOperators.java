@@ -11,7 +11,7 @@
  **********************************************************************************************/
 package msi.gaml.operators;
 
-import static msi.gama.util.GAML.nullCheck;
+import static msi.gama.util.GAML.notNull;
 
 import java.util.Map;
 
@@ -406,7 +406,7 @@ public class DeprecatedOperators {
 					IOperatorCategory.LIST })
 	@doc(deprecated = "Deprecated. Use copy_between(list, int, int) instead")
 	public static IList copy_between(final IScope scope, final IList l1, final GamaPoint p) {
-		return Containers.Range.copy_between(scope, l1, (int) nullCheck(scope, p).x, (int) p.y);
+		return Containers.Range.copy_between(scope, l1, (int) notNull(scope, p).x, (int) p.y);
 	}
 
 	@Deprecated

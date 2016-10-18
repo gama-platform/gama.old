@@ -84,8 +84,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	 */
 	@Override
 	public UnitConstantExpression createUnit(final Object value, final IType t, final String name, final String doc,
-			final String[] names) {
-		return UnitConstantExpression.create(value, t, name, doc, names);
+			final String deprecated, final boolean isTime, final String[] names) {
+		final UnitConstantExpression exp = UnitConstantExpression.create(value, t, name, doc, isTime, names);
+		if (deprecated != null && !deprecated.isEmpty())
+			exp.setDeprecated(deprecated);
+		return exp;
+
 	}
 
 	@Override

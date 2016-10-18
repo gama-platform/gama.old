@@ -107,6 +107,7 @@ import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.expressions.TypeFieldExpression;
+import msi.gaml.expressions.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.statements.Arguments;
@@ -751,7 +752,10 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	public IExpression caseUnitName(final UnitName object) {
 		final String s = EGaml.getKeyOf(object);
 		if (IUnits.UNITS_EXPR.containsKey(s)) {
-			return getFactory().getUnitExpr(s);
+			final UnitConstantExpression exp = getFactory().getUnitExpr(s);
+			if (exp.isDeprecated())
+				getContext().warning(s + " is deprecated.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
+			return exp;
 		}
 		getContext().error(s + " is not a unit name.", IGamlIssue.NOT_A_UNIT, object, (String[]) null);
 		return null;

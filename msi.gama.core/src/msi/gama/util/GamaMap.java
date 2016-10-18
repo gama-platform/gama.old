@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Iterables;
 
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -33,6 +32,7 @@ import msi.gaml.types.GamaType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 /**
  * The Class GamaMap.
@@ -97,6 +97,11 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 		} else {
 			return GamaListFactory.create(scope, contentsType, values());
 		}
+	}
+
+	@Override
+	public StreamEx<V> stream(final IScope scope) {
+		return StreamEx.ofValues(this);
 	}
 
 	@Override
@@ -442,8 +447,6 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 		GamaPairList() {
 			super(GamaMap.this.size(), Types.PAIR.of(type.getKeyType(), type.getContentType()));
-			Iterables.addAll(this, Iterables.transform(entrySet(),
-					each -> new GamaPair(each.getKey(), each.getValue(), type.getKeyType(), type.getContentType())));
 		}
 
 	}

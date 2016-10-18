@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry exported="true" kind="lib" path="streamex 0.6.2/streamex-0.6.2.jar" sourcepath="streamex 0.6.2/streamex-0.6.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/core-0.26.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-affine-1.0.9.jar"/>
 	<classpathentry exported="true" kind="lib" path="geotools 14.5/jt-algebra-1.0.9.jar"/>
@@ -165,6 +166,5 @@
 	<classpathentry exported="true" kind="lib" path="prefuse 2007-10-21/jars/prefuse.jar"/>
 	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-1.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="olap4j 1.2.0/jars/olap4j-xmla-1.2.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="jodatime 2.9/jars/joda-time-2.9.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

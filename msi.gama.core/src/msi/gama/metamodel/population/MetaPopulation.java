@@ -38,6 +38,7 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 /**
  * Class MetaPopulation. A list of IPopulation, ISpecies or MetaPopulation that
@@ -57,6 +58,15 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 
 	public MetaPopulation(final IPopulationSet... pop) {
 		populationSets = Lists.newArrayList(pop);
+	}
+
+	@Override
+	public StreamEx<IAgent> stream(final IScope scope) {
+		final StreamEx<IAgent> stream = StreamEx.empty();
+		for (final IPopulationSet pop : populationSets) {
+			stream.append(pop.stream(scope));
+		}
+		return stream;
 	}
 
 	/**

@@ -130,6 +130,7 @@ species accessing_list_elements {
 		write sample(l2 max_of (length(each))); 
 		write sample(copy_between(l2,1,3));
 		write sample(copy_between(l2, 1, length(l2) - 1));
+		write sample(l2 as_map (length(each)::"new"+each));
 	}
 }
 

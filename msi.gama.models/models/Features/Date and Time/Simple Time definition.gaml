@@ -4,7 +4,7 @@
 * Description: Show how the time is managed is GAMA.
 * Tags: Date
 */
-
+@no_warning
 model SimpleTimedefinition
 
 global {

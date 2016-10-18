@@ -77,6 +77,7 @@ import msi.gaml.types.GamaPairType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaGraph<V, E> implements IGraph<V, E> {
@@ -960,6 +961,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		// final GamaList list = edgeBased ? new GamaList(edgeSet()) : new
 		// GamaList(vertexSet());
 		// return list.listValue(scope, contentsType);
+	}
+
+	@Override
+	public StreamEx<E> stream(final IScope scope) {
+		return StreamEx.<E> of(edgeSet());
 	}
 
 	@Override

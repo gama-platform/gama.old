@@ -38,6 +38,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.species.GamlSpecies.SpeciesValidator;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
+import one.util.streamex.StreamEx;
 
 /**
  * The Class GamlSpecies. A species specified by GAML attributes
@@ -243,6 +244,11 @@ public class GamlSpecies extends AbstractSpecies {
 	@Override
 	public boolean accept(final IScope scope, final IShape source, final IShape a) {
 		return getPopulation(scope).accept(scope, source, a);
+	}
+
+	@Override
+	public StreamEx<IAgent> stream(final IScope scope) {
+		return getPopulation(scope).stream(scope);
 	}
 
 	/**

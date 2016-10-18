@@ -17,6 +17,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
+import one.util.streamex.StreamEx;
 
 /**
  * Class IPopulationSet. An interface common to ISpecies, IPopulation and
@@ -29,5 +30,8 @@ import msi.gama.util.IContainer;
 public interface IPopulationSet<T extends IAgent> extends IContainer<Integer, T>, IAgentFilter {
 
 	Collection<? extends IPopulation<? extends IAgent>> getPopulations(IScope scope);
+
+	@Override
+	StreamEx<T> stream(final IScope scope);
 
 }

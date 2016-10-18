@@ -11,6 +11,8 @@
  **********************************************************************************************/
 package msi.gama.util;
 
+import java.util.Collection;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.shape.ILocation;
@@ -26,6 +28,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 /**
  * Written by drogoul Modified on 3 juin 2010
@@ -47,6 +51,23 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 	public abstract GamaMap<?, ?> mapValue(IScope scope, IType<?> keyType, IType<?> contentType, boolean copy);
 
 	public java.lang.Iterable<? extends ValueType> iterable(final IScope scope);
+
+	/**
+	 * Internal method to get a correct stream in order to reuse the algorithms
+	 * of the Java Collections Framework. The intent is to reduce to the minimum
+	 * the amount of computation needed in that case. The default is to return
+	 * the stream of the underlying collection when the container is already a
+	 * collection. Must be redefined in subclasses.
+	 * 
+	 * @param scope
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public default StreamEx<ValueType> stream(final IScope scope) {
+		if (this instanceof Collection)
+			return StreamEx.of(((Collection<ValueType>) this).stream());
+		return StreamEx.of(listValue(scope, Types.NO_TYPE, false));
+	}
 
 	public static interface Addressable<KeyType, ValueType> {
 

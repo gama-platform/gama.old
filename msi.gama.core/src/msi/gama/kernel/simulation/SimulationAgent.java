@@ -95,8 +95,8 @@ import msi.gaml.types.IType;
 		@var(name = SimulationAgent.TOTAL_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
 		@var(name = SimulationAgent.AVERAGE_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
 		@var(name = SimulationAgent.MACHINE_TIME, type = IType.FLOAT, doc = @doc(value = "Returns the current system time in milliseconds", comment = "The return value is a float number")),
-		@var(name = SimulationAgent.CURRENT_DATE, type = IType.DATE, doc = @doc(value = "Returns the current date in the simulation", comment = "The return value is a date; the starting_date have to be initialized to use this attribute")),
-		@var(name = SimulationAgent.STARTING_DATE, type = IType.DATE, doc = @doc(value = "Represents the starting date of the simulation", comment = "It is required to intiliaze this value to be able to use the current_date attribute")), })
+		@var(name = SimulationAgent.CURRENT_DATE, depends_on = SimulationAgent.STARTING_DATE, type = IType.DATE, doc = @doc(value = "Returns the current date in the simulation", comment = "The return value is a date; the starting_date have to be initialized to use this attribute, which otherwise indicates a pseudo-date")),
+		@var(name = SimulationAgent.STARTING_DATE, type = IType.DATE, doc = @doc(value = "Represents the starting date of the simulation", comment = "If no starting_date is provided in the model, GAMA initializes it with a zero date: 1st of January, 0000 at 00:00:00")), })
 public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public static final String DURATION = "duration";
@@ -437,11 +437,11 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@setter(STARTING_DATE)
-	public void setSTartingDate(final GamaDate d) throws GamaRuntimeException {
+	public void setStartingDate(final GamaDate d) throws GamaRuntimeException {
 		clock.setStartingDate(d);
 	}
 
-	@getter(STARTING_DATE)
+	@getter(value = STARTING_DATE, initializer = true)
 	public GamaDate getStartingDate() {
 		return clock.getStartingDate();
 	}

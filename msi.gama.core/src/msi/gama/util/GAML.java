@@ -42,11 +42,11 @@ public class GAML {
 	public static ModelFactory modelFactory = null;
 	private static IGamlResourceInfoProvider infoProvider = null;
 
-	public static <T> T nullCheck(final IScope scope, final T object) {
-		return nullCheck(scope, object, "Error: nil value detected");
+	public static <T> T notNull(final IScope scope, final T object) {
+		return notNull(scope, object, "Error: nil value detected");
 	}
 
-	public static <T> T nullCheck(final IScope scope, final T object, final String error) {
+	public static <T> T notNull(final IScope scope, final T object, final String error) {
 		if (object == null) {
 			throw GamaRuntimeException.error(error, scope);
 		}
@@ -55,7 +55,7 @@ public class GAML {
 
 	@SuppressWarnings("rawtypes")
 	public static <T extends IContainer> T emptyCheck(final IScope scope, final T container) {
-		if (nullCheck(scope, container).isEmpty(scope)) {
+		if (notNull(scope, container).isEmpty(scope)) {
 			throw GamaRuntimeException.error("Error: the container is empty", scope);
 		}
 		return container;

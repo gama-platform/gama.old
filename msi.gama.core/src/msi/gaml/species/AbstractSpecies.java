@@ -90,7 +90,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IPopulation<? extends IAgent> getPopulation(final IScope scope) {
+	public IPopulation<IAgent> getPopulation(final IScope scope) {
 		final IAgent a = scope.getAgent();
 		IPopulation result = null;
 		if (a != null) {

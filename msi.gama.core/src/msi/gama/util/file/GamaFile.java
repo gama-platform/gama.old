@@ -36,6 +36,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
+import one.util.streamex.StreamEx;
 
 /**
  * Written by drogoul Modified on 7 août 2010
@@ -383,6 +384,12 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 			throws GamaRuntimeException {
 		getContents(scope);
 		return getBuffer().listValue(scope, contentsType, copy);
+	}
+
+	@Override
+	public StreamEx<V> stream(final IScope scope) {
+		getContents(scope);
+		return getBuffer().stream(scope);
 	}
 
 	@Override

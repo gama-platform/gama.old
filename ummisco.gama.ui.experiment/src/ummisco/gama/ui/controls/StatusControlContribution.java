@@ -186,8 +186,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 			clock = sim.getClock();
 
 			sb.append(String.format("%-20s %-10d\tSimulated time %-30s\n", "Cycles elapsed: ", clock.getCycle(),
-					clock.getStartingDate() == null ? Dates.asDate(clock.getTime(), null)
-							: Dates.asDate(clock.getStartingDate(), clock.getCurrentDate(), null)));
+					Dates.asDuration(clock.getStartingDate(), clock.getCurrentDate())));
 			sb.append(String.format("%-20s cycle %5d; average %5d; total %10d", "Duration (ms)", clock.getDuration(),
 					(int) clock.getAverageDuration(), clock.getTotalDuration()));
 			result.add(GamaColors.get(sim.getColor()), sb.toString());

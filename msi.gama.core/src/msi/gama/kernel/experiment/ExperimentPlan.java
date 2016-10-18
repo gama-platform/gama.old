@@ -48,7 +48,7 @@ import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.Guava;
+import msi.gama.util.ContainerHelper;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IDescriptionValidator;
@@ -642,7 +642,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 		return Iterables.filter(
 				Iterables.concat(getAgent().getAllSimulationOutputs(), Collections.singleton(experimentOutputs)),
-				Guava.NOT_NULL);
+				ContainerHelper.NOT_NULL);
 
 	}
 

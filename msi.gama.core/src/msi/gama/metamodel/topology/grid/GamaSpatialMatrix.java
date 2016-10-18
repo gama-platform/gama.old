@@ -74,6 +74,7 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import one.util.streamex.StreamEx;
 
 /**
  * This matrix contains geometries and can serve to organize the agents of a
@@ -519,7 +520,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return GamaListFactory.create();
 		}
 		if (cellSpecies == null) {
-
 			return cast ? GamaListFactory.create(scope, contentType, matrix)
 					: GamaListFactory.createWithoutCasting(contentType, matrix);
 		} else {
@@ -1150,6 +1150,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
+		public StreamEx<G> stream(final IScope scope) {
+			return (StreamEx<G>) StreamEx.of(matrix);
+		}
+
+		@Override
 		public IList<G> createAgents(final IScope scope, final int number,
 				final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
 				final boolean toBeScheduled) throws GamaRuntimeException {
@@ -1355,8 +1360,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		@Override
 		public IList<G> listValue(final IScope scope, final IType contentsType, final boolean copy)
 				throws GamaRuntimeException {
-			return _listValue(scope, contentsType,
-					false)/* .listValue(scope, contentsType, false); */;
+			return _listValue(scope, contentsType, false);
 		}
 
 		@Override
@@ -1706,6 +1710,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public Collection<IAgent> allAgents() {
 		return this.getAgents();
+	}
+
+	@Override
+	public StreamEx<IShape> stream(final IScope scope) {
+		return StreamEx.of(matrix);
 	}
 
 }

@@ -54,7 +54,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.Guava;
+import msi.gama.util.ContainerHelper;
 import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.species.ISpecies;
@@ -676,7 +676,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public Iterable<IOutputManager> getAllSimulationOutputs() {
 		return Iterables.concat(
 				Iterables.filter(Iterables.transform(getSimulationPopulation(), each -> each.getOutputManager()),
-						Guava.NOT_NULL),
+						ContainerHelper.NOT_NULL),
 				Collections.singletonList(getOutputManager()));
 	}
 

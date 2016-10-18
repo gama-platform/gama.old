@@ -8,7 +8,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.Iterator;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import org.apache.commons.lang.ArrayUtils;
 
@@ -36,7 +39,24 @@ import msi.gaml.types.Types;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaListFactory {
 
-	private static final int DEFAULT_SIZE = 10;
+	private static final int DEFAULT_SIZE = 4;
+
+	public static Collector<Object, IList<Object>, IList<Object>> TO_GAMA_LIST = ContainerHelper.<Object> toGamaList();
+
+	public static class GamaListSupplier implements Supplier<IList> {
+
+		final IType t;
+
+		public GamaListSupplier(final IType t) {
+			this.t = t;
+		}
+
+		@Override
+		public IList get() {
+			return create(t);
+		}
+
+	}
 
 	/**
 	 * Create a GamaList from an array of objects, but does not attempt casting
@@ -48,6 +68,15 @@ public class GamaListFactory {
 	 *          wrong type into the list
 	 * @return
 	 */
+
+	// public static <T> IList<T> create(final IType t, final Stream<T> stream)
+	// {
+	// return (IList<T>) createWithoutCasting(t, stream.toArray());
+	// }
+
+	public static <T> IList<T> create(final IType t, final Stream<T> stream) {
+		return (IList<T>) stream.collect(TO_GAMA_LIST);
+	}
 
 	public static <T> IList<T> createWithoutCasting(final IType contentType, final T... objects) {
 		final IList<T> list = create(contentType, objects.length);
@@ -197,7 +226,9 @@ public class GamaListFactory {
 		// 10/01/14. Cannot use Arrays.fill() everywhere: see Issue 778.
 		if (fillExpr.isConst()) {
 			final Object o = fillExpr.value(scope);
-			Arrays.fill(contents, o);
+			GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
+				contents[i] = o;
+			}));
 		} else {
 			GamaExecutorService.executeThreaded(() -> IntStream.range(0, contents.length).parallel().forEach(i -> {
 				contents[i] = fillExpr.value(scope);
