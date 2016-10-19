@@ -141,7 +141,7 @@ public class PerceiveStatement extends AbstractStatementSequence {
 								temp.add((IAgent) obj);
 							}
 						}
-						GamaExecutorService.execute(scope,sequence,(IList<IAgent>) temp.listValue(scope, Types.AGENT, false), null);
+						GamaExecutorService.execute(scope, sequence, temp.listValue(scope, Types.AGENT, false), null);
 						return this;
 
 					} else if (inArg instanceof msi.gaml.types.GamaGeometryType || inArg instanceof GamaShape) {
@@ -155,7 +155,7 @@ public class PerceiveStatement extends AbstractStatementSequence {
 								temp.add((IAgent) obj);
 							}
 						}
-						GamaExecutorService.execute(scope,sequence,(IList<IAgent>) temp.listValue(scope, Types.AGENT, false), null);
+						GamaExecutorService.execute(scope, sequence, temp.listValue(scope, Types.AGENT, false), null);
 						return this;
 					} else {
 						ExecutionResult result = null;

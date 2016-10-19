@@ -80,6 +80,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
+	public Collection<IStatement> getBehaviors() {
+		return behaviors;
+	}
+
+	@Override
 	public java.lang.Iterable<? extends IAgent> iterable(final IScope scope) {
 		return getPopulation(scope).iterable(scope);
 	}

@@ -1,8 +1,10 @@
 package msi.gaml.compilation.kernel;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
 import gnu.trove.map.hash.THashMap;
@@ -17,6 +19,8 @@ public class GamaSkillRegistry {
 	public final static GamaSkillRegistry INSTANCE = new GamaSkillRegistry();
 	private final THashMap<String, SkillDescription> skills = new THashMap<>();
 	private final THashMap<Class, String> classSkillNames = new THashMap<>();
+	private List<String> architectureNames = null;
+	private List<String> skillNames = null;
 
 	private GamaSkillRegistry() {
 	}
@@ -73,6 +77,8 @@ public class GamaSkillRegistry {
 	}
 
 	public Collection<String> getSkillNames() {
+		if (skillNames != null)
+			return skillNames;
 		final Set<String> result = new LinkedHashSet();
 		for (final String s : getAllSkillNames()) {
 			final SkillDescription c = skills.get(s);
@@ -80,10 +86,13 @@ public class GamaSkillRegistry {
 				result.add(s);
 			}
 		}
+		skillNames = new ArrayList(result);
 		return result;
 	}
 
 	public Collection<String> getArchitectureNames() {
+		if (architectureNames != null)
+			return architectureNames;
 		final Set<String> result = new LinkedHashSet();
 		for (final String s : getAllSkillNames()) {
 			final SkillDescription c = skills.get(s);
@@ -91,6 +100,7 @@ public class GamaSkillRegistry {
 				result.add(s);
 			}
 		}
+		architectureNames = new ArrayList(result);
 		return result;
 
 	}

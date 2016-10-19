@@ -203,4 +203,6 @@ public interface ISpecies
 
 	public abstract void addTemporaryAction(ActionStatement a);
 
+	public abstract Collection<IStatement> getBehaviors();
+
 }
