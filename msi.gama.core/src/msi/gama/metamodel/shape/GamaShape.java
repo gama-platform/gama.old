@@ -679,6 +679,8 @@ public class GamaShape implements IShape /* , IContainer */ {
 			} catch (final AssertionFailedException e2) {
 				return false;
 			}
+		} catch (final Exception e) {
+			return false;
 		}
 		// }
 		// return operations().covers(g);
@@ -767,6 +769,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 			} catch (final AssertionFailedException e2) {
 				return false;
 			}
+		}
+		catch (final Exception e) {
+			return false;
 		}
 	}
 
