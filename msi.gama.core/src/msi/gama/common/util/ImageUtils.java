@@ -36,7 +36,6 @@ import com.sun.media.jai.codec.TIFFDecodeParam;
 import gnu.trove.map.hash.THashMap;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
-import msi.gaml.operators.fastmaths.FastMath;
 
 public class ImageUtils {
 
@@ -188,7 +187,7 @@ public class ImageUtils {
 		if (map == null) {
 			return null;
 		}
-		final int position = (int) FastMath.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
+		final int position = (int) Math.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
 		return map[position];
 	}
 

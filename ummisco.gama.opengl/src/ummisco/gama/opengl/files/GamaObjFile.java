@@ -29,17 +29,19 @@ import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.file;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gama.util.file.Gama3DGeometryFile;
-import msi.gama.util.file.GamaImageFile;
+import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.TextureCache;
 import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 /**
@@ -50,16 +52,15 @@ import ummisco.gama.opengl.utils.GLUtilGLContext;
  *
  */
 @file(name = "obj", extensions = "obj", buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaObjFile extends Gama3DGeometryFile {
 
-	private final ArrayList<float[]> vertexSets = new ArrayList<>();
-	private final ArrayList vertexsetsNorms = new ArrayList<>();
-	private final ArrayList vertexSetsTexs = new ArrayList<>();
-	private final ArrayList<int[]> faces = new ArrayList<>();
-	private final ArrayList facesTexs = new ArrayList<>();
-	private final ArrayList facesNorms = new ArrayList<>();
-	private final ArrayList matTimings = new ArrayList<>();
+	private final ArrayList<float[]> vertexSets = new ArrayList();
+	private final ArrayList vertexsetsNorms = new ArrayList();
+	private final ArrayList vertexSetsTexs = new ArrayList();
+	private final ArrayList<int[]> faces = new ArrayList();
+	private final ArrayList facesTexs = new ArrayList();
+	private final ArrayList facesNorms = new ArrayList();
+	private final ArrayList matTimings = new ArrayList();
 	private MtlLoader materials;
 	// private int objectList;
 	// private int numPolys = 0;
@@ -114,7 +115,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	}
 
-	private void loadObject(final IScope scope) {
+	private void loadObject(final IScope scope, final boolean forDrawing) {
 		if (loaded) {
 			return;
 		}
@@ -271,7 +272,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		loadObject(scope);
+		loadObject(scope, false);
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		final IList<IShape> vertices = GamaListFactory.create(Types.POINT);
 		for (final float[] coords : vertexSets) {
@@ -310,8 +311,17 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		}
 	}
 
+	/**
+	 * Method flushBuffer()
+	 * 
+	 * @see msi.gama.util.file.GamaFile#flushBuffer() //
+	 */
+	// @Override
+	// protected void flushBuffer() throws GamaRuntimeException {
+	// }
+
 	public void drawToOpenGL(final GL2 gl, final JOGLRenderer renderer) {
-		loadObject(renderer.getSurface().getScope());
+		loadObject(renderer.getSurface().getScope(), true);
 		int nextmat = -1;
 		int matcount = 0;
 		final int totalmats = matTimings.size();
@@ -351,10 +361,13 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					}
 					f = new File(path);
 					if (f.exists()) {
-						texture = renderer.getCurrentScene().getTexture(gl,
-								new GamaImageFile(renderer.getSurface().getScope(), f.getAbsolutePath()));
-						// BufferedImage im;
-						// try {
+						// Solves Issue #1951. Asynchronous loading of textures
+						// was not possible when displaying the file
+						TextureCache cache = renderer.getSharedTextureCache();
+						if (!cache.contains(f)) {
+							cache.buildAndSaveTextureImmediately(gl, f);
+						}
+						texture = cache.get(gl, f);
 						// im = ImageUtils.getInstance().getImageFromFile(f);
 						// final TextureData data =
 						// AWTTextureIO.newTextureData(gl.getGLProfile(), im,
@@ -364,7 +377,8 @@ public class GamaObjFile extends Gama3DGeometryFile {
 						texture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
 						texture.enable(gl);
 						texture.bind(gl);
-						// } catch (final IOException e) {
+						// }
+						// catch (final IOException e) {
 						// e.printStackTrace();
 						// }
 					}
