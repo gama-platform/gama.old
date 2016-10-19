@@ -31,7 +31,7 @@ import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-public class IUnits {
+public interface IUnits {
 
 	/**
 	 * Buffer constants
@@ -404,7 +404,7 @@ public class IUnits {
 		return value;
 	}
 
-	static {
+	public static void initialize() {
 		for (final Map.Entry<String, GamaColor> entry : GamaColor.colors.entrySet()) {
 			final GamaColor c = entry.getValue();
 			final String doc = "standard CSS color corresponding to " + "rgb (" + c.red() + ", " + c.green() + ", "

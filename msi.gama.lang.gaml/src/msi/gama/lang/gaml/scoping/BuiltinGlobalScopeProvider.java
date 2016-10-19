@@ -76,7 +76,7 @@ import msi.gaml.types.Types;
  */
 @Singleton
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
+public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider implements IUnits {
 
 	static final THashMap EMPTY_MAP = new THashMap<>();
 	private static THashMap<EClass, TerminalMapBasedScope> GLOBAL_SCOPES = new THashMap<>();
@@ -276,6 +276,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider {
 		}
 		final long start = System.currentTimeMillis();
 		System.out.print(">GAMA building GAML artefacts");
+		IUnits.initialize();
 		createDescriptions();
 		System.out.println(" in " + (System.currentTimeMillis() - start) + " ms");
 
