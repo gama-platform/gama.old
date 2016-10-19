@@ -489,4 +489,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 		return Types.NO_TYPE;
 	}
 
+	@Override
+	public boolean isCompoundType() {
+		return false;
+	}
+
 }

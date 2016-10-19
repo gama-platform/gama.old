@@ -106,10 +106,10 @@ public class GamaPointType extends GamaType<ILocation> {
 	public boolean isDrawable() {
 		return true;
 	}
-	//
-	// @Override
-	// public boolean hasContents() {
-	// return true;
-	// }
+
+	@Override
+	public boolean isCompoundType() {
+		return true;
+	}
 
 }

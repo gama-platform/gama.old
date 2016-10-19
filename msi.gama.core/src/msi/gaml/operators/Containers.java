@@ -88,6 +88,10 @@ public class Containers {
 		return notNull(scope, c).stream(scope);
 	}
 
+	private static StreamEx parallelStream(final IScope scope, final IContainer c) {
+		return notNull(scope, c).parallelStream(scope);
+	}
+
 	private static GamaListSupplier listOf(final IType t) {
 		return new GamaListSupplier(t);
 	}
@@ -862,7 +866,7 @@ public class Containers {
 		}
 		final IExpression key = pair.arg(0);
 		final IExpression value = pair.arg(1);
-		return (GamaMap) original.stream(scope).collect(Collectors.toMap(function(scope, key), function(scope, value),
+		return (GamaMap) stream(scope, original).collect(Collectors.toMap(function(scope, key), function(scope, value),
 				(a, b) -> a, asMapOf(key.getType(), value.getType())));
 	}
 
@@ -907,10 +911,6 @@ public class Containers {
 			@example(value = "['a'::1,'b'::2] - ('b'::2)", equals = "['a'::1]"),
 			@example(value = "['a'::1,'b'::2] - ('c'::3)", equals = "['a'::1,'b'::2]") }, see = { "" + IKeyword.MINUS })
 	public static GamaMap minus(final IScope scope, final GamaMap m1, final GamaPair m2) {
-		// special case for the addition of two populations or
-		// meta-populations
-		// final GamaMap res=(GamaMap) nullCheck(m1).mapValue(scope,
-		// Types.NO_TYPE).copy(scope);
 		final GamaMap res = notNull(scope, m1).copy(scope);
 		res.remove(m2.getKey());
 		return res;

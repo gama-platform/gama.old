@@ -25,7 +25,7 @@ public class NowUnitExpression extends UnitConstantExpression {
 
 	@Override
 	public GamaDate value(final IScope scope) {
-		return new GamaDate(LocalDateTime.now());
+		return GamaDate.absolute(LocalDateTime.now());
 	}
 
 	@Override

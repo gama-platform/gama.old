@@ -167,6 +167,7 @@ public class GamaListFactory {
 		return list;
 	}
 
+	@SafeVarargs
 	public static <T> IList<T> create(final IScope scope, final IType contentType, final T... objects) {
 		final IList<T> list = create(contentType, objects == null ? 0 : objects.length);
 		if (objects != null) {

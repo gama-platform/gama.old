@@ -24,6 +24,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.IContainerType;
@@ -67,6 +68,10 @@ public interface IContainer<KeyType, ValueType> extends IValue {
 		if (this instanceof Collection)
 			return StreamEx.of(((Collection<ValueType>) this).stream());
 		return StreamEx.of(listValue(scope, Types.NO_TYPE, false));
+	}
+
+	public default StreamEx<ValueType> parallelStream(final IScope scope) {
+		return stream(scope).parallel(GamaExecutorService.AGENT_PARALLEL_EXECUTOR);
 	}
 
 	public static interface Addressable<KeyType, ValueType> {

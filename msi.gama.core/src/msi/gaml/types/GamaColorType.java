@@ -127,10 +127,10 @@ public class GamaColorType extends GamaType<GamaColor> {
 	public boolean canCastToConst() {
 		return true;
 	}
-	//
-	// @Override
-	// public boolean hasContents() {
-	// return true;
-	// }
+
+	@Override
+	public boolean isCompoundType() {
+		return true;
+	}
 
 }

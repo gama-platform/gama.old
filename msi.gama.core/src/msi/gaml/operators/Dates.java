@@ -59,7 +59,7 @@ public class Dates {
 
 	@operator(value = { IKeyword.MINUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
 			IConcept.DATE })
-	@doc(usages = @usage(value = "if both operands are dates, returns the duration in second between  date2 and date1", examples = {
+	@doc(see = "milliseconds_between", usages = @usage(value = "if both operands are dates, returns the duration in seconds between  date2 and date1. To obtain a more precise duration, in milliseconds, use milliseconds_between(date1, date2)", examples = {
 			@example(value = "date1 - date2", equals = "598") }))
 	public static double minusDate(final IScope scope, final GamaDate date1, final GamaDate date2)
 			throws GamaRuntimeException {
@@ -77,11 +77,12 @@ public class Dates {
 		return date1.plus(duration, SECONDS);
 	}
 
-	@operator(value = { IKeyword.PLUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {})
-	@doc("Add a duration to a date")
+	@operator(value = { IKeyword.PLUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.TIME, IConcept.DATE })
+	@doc("Add a duration to a date. The duration is expressed to be in seconds (so that adding 0.5, for instance, will add 500ms)")
 	public static GamaDate plusDuration(final IScope scope, final GamaDate date1, final double duration)
 			throws GamaRuntimeException {
-		return date1.plus(duration, SECONDS);
+		return date1.plus(duration * 1000, ChronoUnit.MILLIS);
 	}
 
 	@operator(value = { IKeyword.MINUS, "minus_seconds", "subtract_seconds" }, content_type = IType.NONE, category = {
@@ -93,12 +94,12 @@ public class Dates {
 		return date1.plus(-duration, SECONDS);
 	}
 
-	@operator(value = { IKeyword.MINUS }, content_type = IType.NONE, category = {
-			IOperatorCategory.DATE }, concept = {})
-	@doc("Minus a duration from a date")
+	@operator(value = { IKeyword.MINUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.TIME, IConcept.DATE })
+	@doc("Removes a duration from a date. The duration is expected to be in seconds (so that removing 0.5, for instance, will add 500ms) ")
 	public static GamaDate minusDuration(final IScope scope, final GamaDate date1, final double duration)
 			throws GamaRuntimeException {
-		return date1.plus(-duration, SECONDS);
+		return date1.plus(-duration * 1000, ChronoUnit.MILLIS);
 	}
 
 	@operator(value = { IKeyword.PLUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {})
@@ -110,7 +111,7 @@ public class Dates {
 
 	@operator(value = { "plus_years", "add_years" }, content_type = IType.NONE, category = {
 			IOperatorCategory.DATE }, concept = { IConcept.DATE })
-	@doc(value = "Add a given number of year to a date", examples = { @example(value = "date1 plus_years 3") })
+	@doc(value = "Add a given number of years to a date", examples = { @example(value = "date1 plus_years 3") })
 	public static GamaDate addYears(final IScope scope, final GamaDate date1, final int nbYears)
 			throws GamaRuntimeException {
 
@@ -133,7 +134,6 @@ public class Dates {
 	@doc(value = "Add a given number of weeks to a date", examples = { @example(value = "date1 plus_weeks 15") })
 	public static GamaDate addWeeks(final IScope scope, final GamaDate date1, final int nbWeeks)
 			throws GamaRuntimeException {
-
 		return date1.plus(nbWeeks, WEEKS);
 
 	}
@@ -143,7 +143,6 @@ public class Dates {
 	@doc(value = "Add a given number of days to a date", examples = { @example(value = "date1 plus_days 20") })
 	public static GamaDate addDays(final IScope scope, final GamaDate date1, final int nbDays)
 			throws GamaRuntimeException {
-
 		return date1.plus(nbDays, DAYS);
 
 	}
@@ -154,7 +153,6 @@ public class Dates {
 			@example(value = "date1 plus_hours 15 // equivalent to date1 + 15 #h") })
 	public static GamaDate addHours(final IScope scope, final GamaDate date1, final int nbHours)
 			throws GamaRuntimeException {
-
 		return date1.plus(nbHours, HOURS);
 
 	}
@@ -165,7 +163,6 @@ public class Dates {
 			@example(value = "date1 plus_minutes 5 // equivalent to date1 + 5 #mn") })
 	public static GamaDate addMinutes(final IScope scope, final GamaDate date1, final int nbMinutes)
 			throws GamaRuntimeException {
-
 		return date1.plus(nbMinutes, MINUTES);
 
 	}
@@ -175,7 +172,6 @@ public class Dates {
 	@doc(value = "Subtract a given number of year from a date", examples = { @example(value = "date1 minus_years 3") })
 	public static GamaDate subtractYears(final IScope scope, final GamaDate date1, final int nbYears)
 			throws GamaRuntimeException {
-
 		return date1.plus(-nbYears, YEARS);
 
 	}
@@ -186,7 +182,6 @@ public class Dates {
 			@example(value = "date1 minus_months 5") })
 	public static GamaDate subtractMonths(final IScope scope, final GamaDate date1, final int nbMonths)
 			throws GamaRuntimeException {
-
 		return date1.plus(-nbMonths, MONTHS);
 
 	}
@@ -197,7 +192,6 @@ public class Dates {
 			@example(value = "date1 minus_weeks 15") })
 	public static GamaDate subtractWeeks(final IScope scope, final GamaDate date1, final int nbWeeks)
 			throws GamaRuntimeException {
-
 		return date1.plus(-nbWeeks, WEEKS);
 
 	}
@@ -207,19 +201,35 @@ public class Dates {
 	@doc(value = "Subtract a given number of days from a date", examples = { @example(value = "date1 minus_days 20") })
 	public static GamaDate subtractDays(final IScope scope, final GamaDate date1, final int nbDays)
 			throws GamaRuntimeException {
-
 		return date1.plus(-nbDays, DAYS);
 
 	}
 
 	@operator(value = { "minus_hours", "subtract_hours" }, content_type = IType.NONE, category = {
 			IOperatorCategory.DATE }, concept = { IConcept.DATE })
-	@doc(value = "Add a given number of hours from a date", examples = {
+	@doc(value = "Remove a given number of hours from a date", examples = {
 			@example(value = "date1 minus_hours 15 // equivalent to date1 - 15 #h") })
 	public static GamaDate subtractHours(final IScope scope, final GamaDate date1, final int nbHours)
 			throws GamaRuntimeException {
 		return date1.plus(-nbHours, HOURS);
 
+	}
+
+	@operator(value = { "minus_ms", "subtract_ms" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Remove a given number of milliseconds from a date", examples = {
+			@example(value = "date1 minus_ms 15 // equivalent to date1 - 15 #ms") })
+	public static GamaDate subtractMs(final IScope scope, final GamaDate date1, final int nbMs)
+			throws GamaRuntimeException {
+		return date1.plus(-nbMs, ChronoUnit.MILLIS);
+	}
+
+	@operator(value = { "plus_ms", "add_ms" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Add a given number of milliseconds to a date", examples = {
+			@example(value = "date1 plus_ms 15 // equivalent to date1 + 15 #ms") })
+	public static GamaDate addMs(final IScope scope, final GamaDate date1, final int nbMs) throws GamaRuntimeException {
+		return date1.plus(nbMs, ChronoUnit.MILLIS);
 	}
 
 	@operator(value = { "minus_minutes", "subtract_minutes" }, content_type = IType.NONE, category = {
@@ -235,19 +245,28 @@ public class Dates {
 	@operator(value = { "years_between" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
 			IConcept.DATE })
 	@doc(value = "Provide the exact number of years between two dates. This number can be positive or negative (if the second operand is smaller than the first one)", examples = {
-			@example(value = "years_between(d1, d2) :- 10 ") })
+			@example(value = "years_between(d1, d2) -: 10 ") })
 	public static int years_between(final IScope scope, final GamaDate date1, final GamaDate date2)
 			throws GamaRuntimeException {
-		return date2.yearsDifferenceWith(date1);
+		return (int) ChronoUnit.YEARS.between(date1, date2);
+	}
+
+	@operator(value = { "milliseconds_between" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Provide the exact number of milliseconds between two dates. This number can be positive or negative (if the second operand is smaller than the first one)", examples = {
+			@example(value = "milliseconds_between(d1, d2) -: 10 ") })
+	public static double milliseconds_between(final IScope scope, final GamaDate date1, final GamaDate date2)
+			throws GamaRuntimeException {
+		return ChronoUnit.MILLIS.between(date1, date2);
 	}
 
 	@operator(value = { "months_between" }, content_type = IType.NONE, category = {
 			IOperatorCategory.DATE }, concept = { IConcept.DATE })
 	@doc(value = "Provide the exact number of months between two dates. This number can be positive or negative (if the second operand is smaller than the first one)", examples = {
-			@example(value = "months_between(d1, d2) :- 10 ") })
+			@example(value = "months_between(d1, d2) -: 10 ") })
 	public static int months_between(final IScope scope, final GamaDate date1, final GamaDate date2)
 			throws GamaRuntimeException {
-		return date2.monthDifferenceWith(date1);
+		return (int) ChronoUnit.MONTHS.between(date1, date2);
 	}
 
 	@operator(value = { ">" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
@@ -378,14 +397,6 @@ public class Dates {
 		return result;
 	}
 
-	public static String asDuration(final long time) {
-		return DurationFormatter.format(Duration.of(time, ChronoUnit.SECONDS));
-	}
-
-	public static String asDuration(final Temporal d1) {
-		return asDuration(GamaDateType.DEFAULT_STARTING_DATE, d1);
-	}
-
 	public static String asDuration(final Temporal d1, final Temporal d2) {
 		final Duration p = Duration.between(d1, d2);
 		return DurationFormatter.format(p);
@@ -398,26 +409,11 @@ public class Dates {
 		return new GamaDate(scope, value, pattern);
 	}
 
-	@operator(value = "format", can_be_const = true, category = { IOperatorCategory.STRING,
+	@operator(value = "string", can_be_const = true, category = { IOperatorCategory.STRING,
 			IOperatorCategory.TIME }, concept = { IConcept.STRING, IConcept.CAST, IConcept.TIME })
 	@doc(value = "converts a date to astring following a custom pattern. The pattern can use \"%Y %M %N %D %E %h %m %s %z\" for outputting years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will return the complete date as defined by the ISO date & time format. The pattern can also follow the pattern definition found here, which gives much more control over the format of the date: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns ", usages = @usage(value = "", examples = @example(value = "format(#now, 'yyyy-MM-dd')")))
 	public static String format(final GamaDate time, final String pattern) {
 		return time.toString(pattern);
-	}
-
-	@operator(value = "as_date", can_be_const = true, category = { IOperatorCategory.TIME }, concept = {
-			IConcept.DATE })
-	@doc(value = "converts a number of seconds in the model (for instance, the 'time' variable) into a date that represents the period elapsed since the beginning of the simulation using year, month, day, hour, minutes and seconds ")
-	public static GamaDate asDate(final double time) {
-		return new GamaDate(new DurationFormatter(Duration.of((long) time, ChronoUnit.SECONDS), null).temporal);
-	}
-
-	@operator(value = "as_system_date", can_be_const = true, category = { IOperatorCategory.STRING,
-			IOperatorCategory.TIME }, concept = { IConcept.STRING, IConcept.TIME, IConcept.DATE })
-	@doc(value = "converts a number of milliseconds in the system (for instance, the 'machine_time' variable) into a date that represents the period elapsed since the beginning of the simulation using year, month, day, hour, minutes and seconds ", masterDoc = true)
-	public static GamaDate asSystemDate(final double time, final String pattern) {
-		return new GamaDate(new DurationFormatter(Duration.of((long) time, ChronoUnit.MILLIS), null).temporal);
-
 	}
 
 	private static class DurationFormatter implements TemporalAccessor {

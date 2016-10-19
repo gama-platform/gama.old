@@ -249,7 +249,7 @@ public class SimulationClock {
 		final int cycle = getCycle();
 		final ITopLevelAgent agent = scope.getRoot();
 		final String info = agent.getName() + ": " + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed ["
-				+ (outputCurrentDateAsDuration ? Dates.asDuration(getCurrentDate())
+				+ (outputCurrentDateAsDuration ? Dates.asDuration(getStartingDate(), getCurrentDate())
 						: getCurrentDate().toString("yyyy-MM-dd HH:mm:ss"))
 				+ " ]";
 		return info;

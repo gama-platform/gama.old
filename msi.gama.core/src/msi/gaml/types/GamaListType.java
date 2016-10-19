@@ -22,6 +22,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaDate;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
@@ -45,7 +46,9 @@ public class GamaListType extends GamaContainerType<IList> {
 		if (obj == null) {
 			return GamaListFactory.create(Types.NO_TYPE, 0);
 		}
-		// if ( obj instanceof IList ) { return (IList) obj; }
+		if (obj instanceof GamaDate) {
+			return ((GamaDate) obj).listValue(scope, ct);
+		}
 		if (obj instanceof IContainer) {
 			return ((IContainer) obj).listValue(scope, contentsType, copy);
 		}

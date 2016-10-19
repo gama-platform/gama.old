@@ -65,6 +65,11 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 	}
 
 	@Override
+	public boolean isCompoundType() {
+		return true;
+	}
+
+	@Override
 	public boolean isFixedLength() {
 		return false;
 	}
@@ -72,7 +77,7 @@ public class GamaContainerType<T extends IContainer<?, ?>> extends GamaType<T> i
 	@Override
 	public IType<?> contentsTypeIfCasting(final IExpression exp) {
 		final IType<?> itemType = exp.getType();
-		if (itemType.isContainer() || itemType.isAgentType()) {
+		if (itemType.isContainer() || itemType.isAgentType() || itemType.isCompoundType()) {
 			return itemType.getContentType();
 		}
 		return itemType;

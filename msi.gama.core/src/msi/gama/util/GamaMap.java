@@ -32,7 +32,6 @@ import msi.gaml.types.GamaType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
-import one.util.streamex.StreamEx;
 
 /**
  * The Class GamaMap.
@@ -97,11 +96,6 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 		} else {
 			return GamaListFactory.create(scope, contentsType, values());
 		}
-	}
-
-	@Override
-	public StreamEx<V> stream(final IScope scope) {
-		return StreamEx.ofValues(this);
 	}
 
 	@Override

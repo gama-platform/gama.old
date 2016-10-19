@@ -13,7 +13,6 @@ package msi.gaml.descriptions;
 
 import java.util.Set;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -54,8 +53,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	static final Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = input -> input.getJavaBase();
 
-	public static abstract class DescriptionVisitor<T extends IDescription>
-			implements TObjectProcedure<T>, BiConsumer<T, T>, Consumer<T> {
+	public static abstract class DescriptionVisitor<T extends IDescription> implements TObjectProcedure<T> {
 
 		@Override
 		public boolean execute(final T desc) {
@@ -64,15 +62,15 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 		public abstract boolean visit(T desc);
 
-		@Override
-		public void accept(final T d, final T e) {
-			visit(e);
-		}
-
-		@Override
-		public void accept(final T d) {
-			visit(d);
-		}
+		// @Override
+		// public void accept(final T d, final T e) {
+		// visit(e);
+		// }
+		//
+		// @Override
+		// public void accept(final T d) {
+		// visit(d);
+		// }
 
 	}
 

@@ -24,8 +24,10 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IConstantCategory;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaDate;
 import msi.gama.util.GamaMaterial;
 import msi.gaml.expressions.UnitConstantExpression;
+import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -133,7 +135,7 @@ public class IUnits {
 			IConcept.GRAPHIC_UNIT }, doc = @doc("This constant is only accessible in a graphical context: display, graphics...")) public final static double display_height = 1;
 
 	@constant(value = "now", category = { IConstantCategory.TIME }, concept = { IConcept.DATE,
-			IConcept.TIME }, doc = @doc("This constant represents the current date")) public final static double now = 1;
+			IConcept.TIME }, doc = @doc("This value represents the current date")) public final static double now = 1;
 
 	/**
 	 * Mathematical constants
@@ -267,6 +269,11 @@ public class IUnits {
 			IConstantCategory.TIME }, concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT,
 					IConcept.TIME }, doc = { @doc("millisecond time unit") }) public final static double msec = sec
 							/ 1000, millisecond = msec, milliseconds = msec, ms = msec;
+
+	/** The Constant msec. */
+	@constant(value = "epoch", category = { IConstantCategory.TIME }, concept = { IConcept.DATE,
+			IConcept.TIME }, doc = {
+					@doc("The epoch default starting date as defined by the ISO format (1970-01-01T00:00Z)") }) public final static GamaDate epoch = GamaDateType.DEFAULT_STARTING_DATE;
 
 	/*
 	 *

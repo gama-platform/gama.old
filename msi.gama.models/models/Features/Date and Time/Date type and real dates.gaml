@@ -34,11 +34,15 @@ global {
 		my_date3 <- date("2010-03-23 17:30:10"); 
 		//Dates (without time) can be defined also using the ISO basic format with no separators
 		 my_date3 <- date("20100323");
+		
 		//Or the normal ISO date format with no time / timezone information
-		my_date3 <- date("2010-03-23");
+		my_date3 <- date("2013-03-23");
 		write sample(my_date2);
 		write sample(my_date3);
-	
+		// Finally, dates can also be parsed using a custom pattern if one encounters it in a data file, for instance (see https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns) 
+		write(sample(date("01 23 2000","MM dd yyyy")));
+		// Parsed dates that only represent hours will be parsed as departing from the starting_date of the model
+		write(sample(date("01 23 20","HH mm ss")));
 		//it is possible to get the current date by using the "now" string:
 		date today <- date("now"); 
 		write (today);
@@ -63,7 +67,9 @@ global {
 		 write sample(my_date2 > my_date3);
 		 write sample(#now < my_date3);
 		 
-		 
+		 // Dates can be easily casted from and to other values
+		 write "Casting to float returns the number of seconds of this date since the starting_date of the model: " + sample(float(my_date3));
+		 write "Casting to list returns a list with the year, month, day, hour, minute, second: " + sample(list(my_date2));
 		 
 		 //to add or subtract a duration (in years, months, weeks, days, hours, minutes,  secondes) to a date, use the plus_* (or add_*) / minus_* (or subtract_*) operators
 		  write sample(my_date2 plus_years 1);
@@ -78,6 +84,8 @@ global {
 		  write(sample(my_date2 + 1#h));
 		  write(sample(my_date2 + 1#mn));
 		  write(sample(my_date2 + 1#s));
+		  // Adding milliseconds can be done too
+		  write(sample((my_date2 + 0.7) + 0.7)); // should add a second and 400 milliseconds
 		  // Subtraction follows the same rules
 		  write sample(my_date2 minus_years 1);
 		  write sample(my_date2 minus_months 1);
@@ -96,24 +104,36 @@ global {
 		  write(sample((#now plus_months 5 plus_days 2) = (#now + 5#months + 2#days)));
 		  write(sample(#now - (#now minus_months 5) = 5#month));
 		  
-		  // Dates can be formatted in different ways (see https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns)
+		  // Dates can be formatted in different ways (see https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns) 
 		  
-		  write  format(my_date2, "dd MMMM yyyy");
-		  write  format(my_date2, "HH:mm:ss");
-		  write  format(my_date2, "'Week 'w' of 'yyyy");
+		  write  string(my_date2, "MM dd yyyy");
+		  write  string(my_date2, "HH:mm:ss");
+		  write  string(my_date2, "'Week 'w' of 'yyyy");
 		  
-		  // For models that do not define a starting_date, GAMA uses a pseudo-starting date represented by the first day of the first month of year 0
+		  // For models that do not define a starting_date, GAMA uses a pseudo-starting date represented by the ISO notion of the 'epoch' day (1970-01-01T00:00Z), accessible in GAMA with the constant #epoch
 		  // This allows to output a current date that represents the duration from this zero-date. 
-		  starting_date <- nil;
+		  starting_date <- #epoch;
 		  write sample(current_date + 3#day);
 		  starting_date <- #now;
+		  
+		 // Consistency with existing variables in enforced.  For instance, machine_time can now be obtained in the following way:
+		 write "Machine time value = " + sample(machine_time);
+		 write "Other way to obtain the same value = " + sample(milliseconds_between(#epoch, #now));
+		 
+		 // This allows precise computations of hours, minutes, seconds, etc. 
+		 write "Hours between " + my_date2 + " and " + #now + " = " + int(milliseconds_between(my_date2, #now) / #hours);
+		 write "Days between " + my_date2 + " and " + #now + " = " + int(milliseconds_between(my_date2, #now) / #days);
+		 // However, months and years have to use dedicated operators, since they dont capture the notion of duration correctly
+		 write "Months between " + my_date2 + " and " + #now + " = " + (months_between(my_date2, #now)); 
+		  write "Years between " + my_date2 + " and " + #now + " = " + (years_between(my_date2, #now)); 
+		  write "Milliseconds between now and ... now = " + milliseconds_between(#now, #now);
 	}
 	
 	reflex info_date {
 		//at each simulation step, the current_date is updated - its value can be seen in the top-left info panel. 
 		// If a starting date is defined, the current date is printed. If not, its equivalent duration is printed instead
 		// current_date is always equal to starting_date + time or starting_date + cycle * step
-		write "current_date at cycle " + cycle + " : " + format(current_date, "dd MMMM yyyy HH:mm:ss");
+		write "current_date at cycle " + cycle + " : " + string(current_date, "dd MMMM yyyy HH:mm:ss");
 	}
 }
 
