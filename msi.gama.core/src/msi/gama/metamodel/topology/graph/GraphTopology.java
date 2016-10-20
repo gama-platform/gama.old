@@ -484,16 +484,15 @@ public class GraphTopology extends AbstractTopology {
 	public double pathlengthEdges(final IList<IShape> edges) {
 		double length = 0;
 		for (final IShape sp : edges) {
-			length += sp.getPerimeter();
+			length += getPlaces().getWeightOf(sp);
 		}
 		return length;
 	}
 
 	public double lengthEdge(final IShape edge, final IShape location, final IShape source, final IShape target) {
 		final double dist = source.getLocation().euclidianDistanceTo(target.getLocation());
-		return dist == 0 ? 0 : edge.getPerimeter() * location.euclidianDistanceTo(target.getLocation()) / dist;
+		return dist == 0 ? 0 : getPlaces().getWeightOf(edge) * location.euclidianDistanceTo(target.getLocation()) / dist;
 	}
-
 	public GamaSpatialPath pathBetweenCommonDirected(final IScope scope, final IShape edgeS, final IShape edgeT,
 			final IShape source, final IShape target, final boolean sourceNode, final boolean targetNode) {
 		IList<IShape> edges;
