@@ -300,7 +300,7 @@ public class GraphTopology extends AbstractTopology {
 						double valmin = lmin;
 						if (ts1) {
 							computeS2T1 = false;
-							final double val = lmin - els - e0.getPerimeter()
+							final double val = lmin - els - getPlaces().getEdgeWeight(e0)
 									+ lengthEdge(edgeS, source, nodeS1, nodeS2);
 							if (valmin > val) {
 								valmin = val;
@@ -308,7 +308,7 @@ public class GraphTopology extends AbstractTopology {
 						}
 						if (ts2) {
 							computeS1T2 = false;
-							final double val = lmin - elt - el.getPerimeter()
+							final double val = lmin - elt -getPlaces().getEdgeWeight(el)
 									+ lengthEdge(edgeT, target, nodeT1, nodeT2);
 							if (valmin > val) {
 								valmin = val;
@@ -316,7 +316,7 @@ public class GraphTopology extends AbstractTopology {
 						}
 						if (ts1 && ts2) {
 							computeS2T2 = false;
-							final double val = lmin - els - e0.getPerimeter() - elt - el.getPerimeter()
+							final double val = lmin - els - getPlaces().getEdgeWeight(e0) - elt - getPlaces().getEdgeWeight(el)
 									+ lengthEdge(edgeS, source, nodeS1, nodeS2)
 									+ lengthEdge(edgeT, target, nodeT1, nodeT2);
 							if (valmin > val) {
@@ -349,7 +349,7 @@ public class GraphTopology extends AbstractTopology {
 							double valmin = l2;
 							if (ts2) {
 								computeS2T2 = false;
-								final double val = l2 - elt - el.getPerimeter()
+								final double val = l2 - elt - getPlaces().getEdgeWeight(el)
 										+ lengthEdge(edgeT, target, nodeT1, nodeT2);
 								if (valmin > val) {
 									valmin = val;
@@ -357,7 +357,7 @@ public class GraphTopology extends AbstractTopology {
 							}
 							if (ts1 && ts2) {
 								computeS1T2 = false;
-								final double val = l2 - els - e0.getPerimeter() - elt - el.getPerimeter()
+								final double val = l2 - els - getPlaces().getEdgeWeight(e0) - elt - getPlaces().getEdgeWeight(el)
 										+ lengthEdge(edgeS, source, nodeS2, nodeS1)
 										+ lengthEdge(edgeT, target, nodeT1, nodeT2);
 								if (valmin > val) {
@@ -391,7 +391,7 @@ public class GraphTopology extends AbstractTopology {
 						final boolean ts1 = graph.getEdgeSource(e0) == nodeS2 || graph.getEdgeTarget(e0) == nodeS2;
 						if (ts1) {
 							computeS2T2 = false;
-							final double val = l2 - els - e0.getPerimeter() + lengthEdge(edgeS, source, nodeS1, nodeS2);
+							final double val = l2 - els - getPlaces().getEdgeWeight(e0) + lengthEdge(edgeS, source, nodeS1, nodeS2);
 							if (l2 > val) {
 								l2 = val;
 							}
@@ -954,7 +954,7 @@ public class GraphTopology extends AbstractTopology {
 			if (alr.contains(ed))
 				continue;
 			alr.add(ed);
-			final double dist = ed.getPerimeter();
+			final double dist = getPlaces().getEdgeWeight(ed);
 			if (edge)
 				edges.add(ed);
 			if (currentDist - dist > 0) {
