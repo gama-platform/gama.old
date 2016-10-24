@@ -35,6 +35,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
@@ -224,11 +225,10 @@ public class AgentsMenu extends ContributionItem {
 			if (c != null && a != null && !a.dead()) {
 				final IScope runningScope = a.getScope();
 				runningScope.getSimulation().executeAction(scope -> {
-					final Object[] result = new Object[1];
 					final Arguments args = new Arguments();
-					scope.execute(c, a, args, result);
+					final ExecutionResult result = scope.execute(c, a, args);
 					GAMA.getExperiment().refreshAllOutputs();
-					return result[0];
+					return result.getValue();
 				});
 
 			}

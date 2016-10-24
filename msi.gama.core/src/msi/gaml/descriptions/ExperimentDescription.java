@@ -11,9 +11,12 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
+import java.util.Collections;
 import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
+
+import com.google.common.collect.Iterables;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
@@ -22,7 +25,6 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IAgentConstructor;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 
 public class ExperimentDescription extends SpeciesDescription {
@@ -31,8 +33,8 @@ public class ExperimentDescription extends SpeciesDescription {
 	private StatementDescription output;
 	private StatementDescription permanent;
 
-	public ExperimentDescription(final String keyword, final SpeciesDescription enclosing, final ChildrenProvider cp,
-			final EObject source, final Facets facets) {
+	public ExperimentDescription(final String keyword, final SpeciesDescription enclosing,
+			final Iterable<IDescription> cp, final EObject source, final Facets facets) {
 		super(keyword, null, enclosing, null, cp, source, facets);
 	}
 
@@ -138,6 +140,14 @@ public class ExperimentDescription extends SpeciesDescription {
 			if (!visitor.visit(permanent))
 				return false;
 		return true;
+	}
+
+	@Override
+	public Iterable<IDescription> getOwnChildren() {
+		return Iterables.concat(super.getOwnChildren(),
+				parameters == null ? Collections.EMPTY_LIST : parameters.values(),
+				output == null ? Collections.EMPTY_LIST : Collections.singleton(output),
+				permanent == null ? Collections.EMPTY_LIST : Collections.singleton(permanent));
 	}
 
 	@Override

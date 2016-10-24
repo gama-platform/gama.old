@@ -38,6 +38,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.species.GamlSpecies.SpeciesValidator;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
+import one.util.streamex.StreamEx;
 
 /**
  * The Class GamlSpecies. A species specified by GAML attributes
@@ -48,6 +49,8 @@ import msi.gaml.types.IType;
 		IKeyword.GRID }, kind = ISymbolKind.SPECIES, with_sequence = true, concept = { IConcept.SPECIES })
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES })
 @facets(value = {
+		@facet(name = IKeyword.PARALLEL, type = { IType.BOOL,
+				IType.INT }, optional = true, doc = @doc("(experimental) setting this facet to 'true' will allow this species to use concurrency when scheduling its agents; setting it to an integer will set the threshold under which they will be run sequentially (the default is initially 20, but can be fixed in the preferences). This facet has a default set in the preferences (Under Performances > Concurrency)")),
 		@facet(name = IKeyword.WIDTH, type = IType.INT, optional = true, doc = @doc("(grid only), the width of the grid (in terms of agent number)")),
 		@facet(name = IKeyword.HEIGHT, type = IType.INT, optional = true, doc = @doc("(grid only),  the height of the grid (in terms of agent number)")),
 		@facet(name = IKeyword.CELL_WIDTH, type = IType.FLOAT, optional = true, doc = @doc("(grid only), the width of the cells of the grid")),
@@ -181,8 +184,15 @@ public class GamlSpecies extends AbstractSpecies {
 		}
 	}
 
+	private final IExpression concurrency;
+	private final IExpression schedule;
+	private final IExpression frequency;
+
 	public GamlSpecies(final IDescription desc) {
 		super(desc);
+		concurrency = this.getFacet(IKeyword.PARALLEL);
+		schedule = this.getFacet(IKeyword.SCHEDULES);
+		frequency = this.getFacet(IKeyword.FREQUENCY);
 	}
 
 	@Override
@@ -192,12 +202,17 @@ public class GamlSpecies extends AbstractSpecies {
 
 	@Override
 	public IExpression getFrequency() {
-		return this.getFacet(IKeyword.FREQUENCY);
+		return frequency;
 	}
 
 	@Override
 	public IExpression getSchedule() {
-		return this.getFacet(IKeyword.SCHEDULES);
+		return schedule;
+	}
+
+	@Override
+	public IExpression getConcurrency() {
+		return concurrency;
 	}
 
 	/**
@@ -229,6 +244,11 @@ public class GamlSpecies extends AbstractSpecies {
 	@Override
 	public boolean accept(final IScope scope, final IShape source, final IShape a) {
 		return getPopulation(scope).accept(scope, source, a);
+	}
+
+	@Override
+	public StreamEx<IAgent> stream(final IScope scope) {
+		return getPopulation(scope).stream(scope);
 	}
 
 	/**

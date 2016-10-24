@@ -70,6 +70,7 @@ public class GamaPreferences {
 	public static final String UI = "Presentation";
 	public static final String EXPERIMENTS = "Experiments";
 	public static final String SIMULATIONS = "Simulations";
+	public static final String CONCURRENCY = "Concurrency";
 	public static final String EXPERIMENTAL = "Performances";
 	public static final String DISPLAY = "Displays";
 	public static final String EDITOR = "Editors";
@@ -750,13 +751,7 @@ public class GamaPreferences {
 			false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Integer> CORE_OUTPUT_DELAY = create("core.output_delay",
 			"Delay (in ms) between the opening of display views (increase if you experience freezes when opening displays, esp. Java2D displays)",
-			200, IType.INT).between(0, 1000).in(EXPERIMENTAL).group(DISPLAY);;
-	public static final Entry<Boolean> MULTITHREADED_SIMULATIONS = create("core.multithreaded_simulations",
-			"Run multiple simulations in multiple threads", true, IType.BOOL).activates("core.threads_number")
-					.in(EXPERIMENTAL).group(SIMULATIONS);
-	public static final Entry<Integer> NUMBERS_OF_THREADS = create("core.threads_number",
-			"Max. number of threads to use (available processors: " + Runtime.getRuntime().availableProcessors() + ")",
-			4, IType.INT).between(1, null).in(EXPERIMENTAL).group(SIMULATIONS);
+			200, IType.INT).between(0, 1000).in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Boolean> CONSTANT_OPTIMIZATION = create("core.constant_optimization",
 			"Automatically optimize constant expressions", false, IType.BOOL).in(EXPERIMENTAL).group("Compilation");
 	public static final Entry<Boolean> AGENT_OPTIMIZATION = create("core.agent_optimization",

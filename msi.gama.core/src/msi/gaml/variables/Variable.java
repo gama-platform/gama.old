@@ -382,7 +382,7 @@ public class Variable extends Symbol implements IVariable {
 			if (v != null) {
 				_setVal(a, scope, v);
 			} else if (initExpression != null) {
-				_setVal(a, scope, scope.evaluate(initExpression, a));
+				_setVal(a, scope, scope.evaluate(initExpression, a).getValue());
 			} else if (initer != null) {
 				final Object val = initer.run(scope, a, gSkill == null ? a : gSkill);
 				_setVal(a, scope, val);
@@ -424,8 +424,6 @@ public class Variable extends Symbol implements IVariable {
 		this.name = name;
 	}
 
-	private static Object[] JunkResults = new Object[1];
-
 	@Override
 	public final void setVal(final IScope scope, final IAgent agent, final Object v) throws GamaRuntimeException {
 		if (isNotModifiable) {
@@ -437,7 +435,7 @@ public class Variable extends Symbol implements IVariable {
 			if (on_changer == null) {
 				on_changer = agent.getSpecies().getAction(Cast.asString(scope, onChangeExpression.value(scope)));
 			}
-			scope.execute(on_changer, agent, null, JunkResults);
+			scope.execute(on_changer, agent, null);
 		}
 	}
 
@@ -456,7 +454,7 @@ public class Variable extends Symbol implements IVariable {
 		if (amongExpression == null) {
 			return val;
 		}
-		final List among = Cast.asList(scope, scope.evaluate(amongExpression, agent));
+		final List among = Cast.asList(scope, scope.evaluate(amongExpression, agent).getValue());
 		if (among == null) {
 			return val;
 		}
@@ -481,25 +479,10 @@ public class Variable extends Symbol implements IVariable {
 			return getter.run(scope, agent, gSkill == null ? agent : gSkill);
 		}
 		if (functionExpression != null) {
-			return scope.evaluate(functionExpression, agent);
+			return scope.evaluate(functionExpression, agent).getValue();
 		}
 		return agent.getAttribute(name);
 	}
-
-	// @Override
-	// public void updateFor(final IScope scope, final IAgent agent) throws
-	// GamaRuntimeException {
-	// // if ( !doUpdate ) {
-	// // doUpdate = true;
-	// // return;
-	// // }
-	// try {
-	// _setVal(agent, scope, updateExpression.value(scope));
-	// } catch (final GamaRuntimeException e) {
-	// e.addContext("in updating attribute " + getName());
-	// throw e;
-	// }
-	// }
 
 	@Override
 	public Object getUpdatedValue(final IScope scope) {

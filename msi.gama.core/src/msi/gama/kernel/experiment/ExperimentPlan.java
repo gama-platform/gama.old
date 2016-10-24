@@ -13,20 +13,25 @@ package msi.gama.kernel.experiment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.google.common.collect.Iterables;
 
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.batch.BatchOutput;
 import msi.gama.kernel.batch.ExhaustiveSearch;
 import msi.gama.kernel.batch.IExploration;
 import msi.gama.kernel.experiment.ExperimentPlan.BatchValidator;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.metamodel.population.GamaPopulation;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.outputs.ExperimentOutputManager;
 import msi.gama.outputs.FileOutput;
 import msi.gama.outputs.IOutputManager;
@@ -39,18 +44,21 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.AbstractScope;
+import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.Guava;
+import msi.gama.util.ContainerHelper;
+import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
@@ -79,7 +87,8 @@ import msi.gaml.variables.IVariable;
 		@facet(name = IKeyword.KEEP_SIMULATIONS, type = IType.BOOL, optional = true, doc = @doc("In the case of a batch experiment, specifies whether or not the simulations should be kept in memory for further analysis or immediately discarded with only their fitness kept in memory")),
 		@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true, doc = @doc("In the case of a batch experiment, expresses hom many times the simulations must be repeated")),
 		@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true, doc = @doc("In the case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated")),
-		@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true, doc = @doc("Allows the experiment, when set to true, to use multiple threads to run its simulations")),
+		@facet(name = IKeyword.PARALLEL, type = { IType.BOOL,
+				IType.INT }, optional = true, doc = @doc("When set to true, use multiple threads to run its simulations. Setting it to n will set the numbers of threads to use")),
 		@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.MEMORIZE,
 				/* IKeyword.REMOTE, */IKeyword.GUI_,
 				IKeyword.HEADLESS_UI }, optional = false, doc = @doc("the type of the experiment (either 'gui' or 'batch'")) }, omissible = IKeyword.NAME)
@@ -127,11 +136,68 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	protected IExploration exploration;
 	private FileOutput log;
 	private boolean isHeadless;
-	private final boolean isMulticore;
 	private final boolean keepSeed;
 	private final boolean keepSimulations;
-
 	private final String experimentType;
+
+	public class ExperimentPopulation extends GamaPopulation<ExperimentAgent> {
+
+		public ExperimentPopulation(final ISpecies expr) {
+			super(null, expr);
+		}
+
+		@Override
+		public IList<ExperimentAgent> createAgents(final IScope scope, final int number,
+				final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
+				final boolean toBeScheduled) throws GamaRuntimeException {
+			for (int i = 0; i < number; i++) {
+				agent = GamaMetaModel.INSTANCE.createExperimentAgent(getExperimentType(), this);
+				agent.setIndex(currentAgentIndex++);
+				add(agent);
+				scope.push(agent);
+				createVariables(scope, agent, initialValues.isEmpty() ? Collections.EMPTY_MAP : initialValues.get(i));
+			}
+			return this;
+		}
+
+		public void createVariables(final IScope scope, final IAgent a, final Map<String, Object> inits)
+				throws GamaRuntimeException {
+			final Set<String> names = inits.keySet();
+			try {
+				for (final String s : orderedVarNames) {
+					final IVariable var = getVar(s);
+					var.initializeWith(scope, a, inits.get(s));
+					names.remove(s);
+				}
+				for (final String s : names) {
+					a.getScope().setAgentVarValue(a, s, inits.get(s));
+				}
+			} finally {
+			}
+
+		}
+
+		@Override
+		protected boolean stepAgents(final IScope scope) {
+			return scope.step(agent).passed();
+		}
+
+		@Override
+		public ExperimentAgent getAgent(final IScope scope, final ILocation value) {
+			return agent;
+		}
+
+		@Override
+		public IMacroAgent getHost() {
+			return null;
+		}
+
+		@Override
+		public void computeTopology(final IScope scope) throws GamaRuntimeException {
+			topology = new AmorphousTopology();
+		}
+
+	}
 
 	@Override
 	public boolean isHeadless() {
@@ -158,9 +224,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		} else if (experimentType.equals(IKeyword.HEADLESS_UI)) {
 			setHeadless(true);
 		}
-		final IExpression coreExpr = getFacet(IKeyword.MULTICORE);
-		isMulticore = (coreExpr == null ? GamaPreferences.MULTITHREADED_SIMULATIONS.getValue()
-				: coreExpr.literalValue().equals(IKeyword.TRUE)) && !isHeadless();
 		final IExpression expr = getFacet(IKeyword.KEEP_SEED);
 		if (expr != null && expr.isConst())
 			keepSeed = Cast.asBool(scope, expr.value(scope));
@@ -172,11 +235,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		else
 			keepSimulations = true;
 
-	}
-
-	@Override
-	public boolean isMulticore() {
-		return isMulticore;
 	}
 
 	@Override
@@ -456,22 +514,16 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	/**
-	 * A short-circuited scope that represents the scope of the experiment. If a
-	 * simulation is available, it refers to it and gains access to its global
-	 * scope. If not, it throws the appropriate runtime exceptions when a
-	 * feature dependent on the existence of a simulation is accessed
+	 * A short-circuited scope that represents the scope of the experiment plan,
+	 * before any agent is defined. If a simulation is available, it refers to
+	 * it and gains access to its global scope. If not, it throws the
+	 * appropriate runtime exceptions when a feature dependent on the existence
+	 * of a simulation is accessed
 	 *
 	 * @author Alexis Drogoul
 	 * @since November 2011
 	 */
-	private class Scope extends AbstractScope {
-
-		/**
-		 * A flag indicating that the experiment is shutting down. As this scope
-		 * is used before any experiment agent (and runtime scope) is defined,
-		 * it is necessary to define it here.
-		 */
-		private volatile boolean interrupted;
+	private class Scope extends ExecutionScope {
 
 		public Scope(final String additionalName) {
 			super(null, additionalName);
@@ -500,69 +552,6 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				return a.getDirectVarValue(this, name);
 			}
 			return null;
-		}
-
-		@Override
-		public SimulationAgent getSimulation() {
-			return getCurrentSimulation();
-		}
-
-		/**
-		 * Method getAgentScope()
-		 * 
-		 * @see msi.gama.runtime.IScope#getAgent()
-		 */
-		@Override
-		public ExperimentAgent getAgent() {
-			return ExperimentPlan.this.getAgent();
-		}
-
-		@Override
-		public IExperimentAgent getExperiment() {
-			return getAgent();
-		}
-
-		@Override
-		public IDescription getExperimentContext() {
-			return ExperimentPlan.this.getDescription();
-		}
-
-		@Override
-		public IDescription getModelContext() {
-			return ExperimentPlan.this.getModel().getDescription();
-		}
-
-		@Override
-		public IModel getModel() {
-			return ExperimentPlan.this.getModel();
-		}
-
-		@Override
-		protected boolean _root_interrupted() {
-			return interrupted;
-		}
-
-		@Override
-		public void setInterrupted() {
-			this.interrupted = true;
-		}
-
-		@Override
-		public IScope copy(final String additionalName) {
-			return new Scope(additionalName);
-		}
-
-		/**
-		 * Method getRandom()
-		 * 
-		 * @see msi.gama.runtime.IScope#getRandom()
-		 */
-		@Override
-		public RandomUtils getRandom() {
-			if (getAgent() == null) {
-				return null;
-			}
-			return getAgent().getRandomGenerator();
 		}
 
 	}
@@ -653,7 +642,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 		return Iterables.filter(
 				Iterables.concat(getAgent().getAllSimulationOutputs(), Collections.singleton(experimentOutputs)),
-				Guava.NOT_NULL);
+				ContainerHelper.NOT_NULL);
 
 	}
 

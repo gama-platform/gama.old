@@ -46,6 +46,11 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	}
 
 	@Override
+	public boolean isCompoundType() {
+		return true;
+	}
+
+	@Override
 	public boolean equals(final Object other) {
 		if (other instanceof ParametricType) {
 			return type.equals(((ParametricType) other).getType())

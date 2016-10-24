@@ -44,7 +44,7 @@ public class VariableFactory extends SymbolFactory {
 
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
+			final Iterable<IDescription> children, final IDescription enclosing, final SymbolProto proto) {
 		if (keyword.equals(PARAMETER)) {
 
 			final Map<String, FacetProto> possibleFacets = proto.getPossibleFacets();
@@ -63,7 +63,7 @@ public class VariableFactory extends SymbolFactory {
 
 			}
 		}
-		return new VariableDescription(keyword, enclosing, children, element, facets);
+		return new VariableDescription(keyword, enclosing, element, facets);
 	}
 
 }

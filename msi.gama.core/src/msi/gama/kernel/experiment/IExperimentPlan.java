@@ -47,8 +47,6 @@ public interface IExperimentPlan extends ISpecies {
 
 	public abstract boolean isGui();
 
-	public boolean isMulticore();
-
 	public abstract boolean hasParameter(String name);
 
 	public ExperimentAgent getAgent();

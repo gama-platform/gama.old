@@ -12,10 +12,12 @@
 package msi.gaml.descriptions;
 
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.base.Function;
+import com.google.common.collect.Iterables;
 
 import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
@@ -25,6 +27,10 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.common.interfaces.ITyped;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.descriptions.SymbolSerializer.ModelSerializer;
+import msi.gaml.descriptions.SymbolSerializer.SpeciesSerializer;
+import msi.gaml.descriptions.SymbolSerializer.StatementSerializer;
+import msi.gaml.descriptions.SymbolSerializer.VarSerializer;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -38,6 +44,11 @@ import msi.gaml.types.IType;
 @SuppressWarnings({ "rawtypes" })
 public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable {
 
+	public static final SymbolSerializer<SymbolDescription> SYMBOL_SERIALIZER = new SymbolSerializer<>();
+	public static final VarSerializer VAR_SERIALIZER = new VarSerializer();
+	public static final SpeciesSerializer SPECIES_SERIALIZER = new SpeciesSerializer();
+	public static final ModelSerializer MODEL_SERIALIZER = new ModelSerializer();
+	public static final StatementSerializer STATEMENT_SERIALIZER = new StatementSerializer();
 	public static final Function<? super IDescription, ? extends String> TO_NAME = input -> input.getName();
 
 	static final Function<TypeDescription, Class<? extends ISkill>> TO_CLASS = input -> input.getJavaBase();
@@ -51,13 +62,29 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 		public abstract boolean visit(T desc);
 
+		// @Override
+		// public void accept(final T d, final T e) {
+		// visit(e);
+		// }
+		//
+		// @Override
+		// public void accept(final T d) {
+		// visit(d);
+		// }
+
 	}
 
-	public static abstract class FacetVisitor implements TObjectObjectProcedure<String, IExpressionDescription> {
+	public static abstract class FacetVisitor implements TObjectObjectProcedure<String, IExpressionDescription>,
+			BiConsumer<String, IExpressionDescription> {
 
 		@Override
 		public final boolean execute(final String name, final IExpressionDescription exp) {
 			return visit(name, exp);
+		}
+
+		@Override
+		public final void accept(final String name, final IExpressionDescription exp) {
+			visit(name, exp);
 		}
 
 		/**
@@ -126,6 +153,15 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public abstract Iterable<IDescription> getChildrenWithKeyword(String keyword);
 
+	public abstract Iterable<IDescription> getOwnChildren();
+
+	public default Iterable<IDescription> getChildren() {
+		final IDescription enclosing = getEnclosingDescription();
+		if (enclosing == null)
+			return getOwnChildren();
+		return Iterables.concat(enclosing.getChildren(), getOwnChildren());
+	}
+
 	public abstract IDescription getChildWithKeyword(String keyword);
 
 	/**
@@ -140,9 +176,10 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	// public abstract List<IDescription> getChildren();
 
-	public abstract void addChildren(Iterable<IDescription> children);
-
-	public abstract IDescription addChild(IDescription child);
+	// public abstract void addChildren(Iterable<? extends IDescription>
+	// children);
+	//
+	// public abstract IDescription addChild(IDescription child);
 
 	public abstract IType getTypeNamed(String s);
 

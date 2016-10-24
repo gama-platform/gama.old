@@ -31,6 +31,7 @@ import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IList;
 import msi.gama.util.IModifiableContainer;
 import msi.gaml.types.IType;
+import one.util.streamex.StreamEx;
 
 /**
  * Written by drogoul Modified on 15 d�c. 2010
@@ -188,6 +189,9 @@ public interface IMatrix<T>
 	@doc(value = "The inverse matrix of the given matrix. If no inverse exists, returns a matrix that has properties that resemble that of an inverse.", masterDoc = true, examples = {
 			@example(value = "inverse(matrix([[5,-3],[6,-4]]))", equals = "[2.0000000000000004,-0.9999999999999998]") })
 	public abstract IMatrix<Double> inverse(IScope scope) throws GamaRuntimeException;
+
+	@Override
+	public abstract StreamEx<T> stream(final IScope scope);
 
 	// public abstract void put(final int col, final int row, final double obj)
 	// throws GamaRuntimeException;

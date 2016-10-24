@@ -232,11 +232,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 	public void leaveScope(final IScope scope) {
 		// Should clear any _loop_halted status present
 		scope.popLoop();
-		// 25/02/14: Suppressed because already done in loopBody() :
-		// super.leaveScope(scope);
 	}
-
-	// final Object[] result = new Object[1];
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
@@ -248,8 +244,6 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 		if (varName != null) {
 			scope.setVarValue(varName, var);
 		}
-
-		// result[0] =
 		super.privateExecuteIn(scope);
 		scope.pop(this);
 		return !scope.interrupted();
@@ -286,7 +280,6 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			} else {
 				stepDefined = true;
 			}
-			// GAMA.releaseScope(scope);
 		}
 
 		@Override
@@ -311,7 +304,6 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 				}
 			}
 			return true;
-			// return result[0];
 		}
 	}
 
@@ -330,7 +322,6 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 				}
 			}
 			return true;
-			// return result[0];
 		}
 	}
 
@@ -350,8 +341,7 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			final int max = constantTimes == null ? Cast.asInt(scope, times.value(scope)) : constantTimes;
 			for (int i = 0; i < max && loopBody(scope, null); i++) {
 			}
-			return null;//
-			// return result[0];
+			return null;
 		}
 
 	}
@@ -365,7 +355,6 @@ public class LoopStatement extends AbstractStatementSequence implements Breakabl
 			while (Cast.asBool(scope, cond.value(scope)) && loopBody(scope, null)) {
 			}
 			return null;
-			// return result[0];
 		}
 	}
 

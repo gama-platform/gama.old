@@ -19,7 +19,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
-import msi.gaml.factories.ChildrenProvider;
 import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 
 // SEIR (with demography) equation is defined by 
@@ -50,8 +49,7 @@ public class ClassicalSEIREquations {
 		final IExpression[] v = ((ListExpression) with_vars).getElements();
 		final IExpression[] p = ((ListExpression) with_params).getElements();
 
-		final StatementDescription stm = new StatementDescription("=", getDescription(), new ChildrenProvider(null),
-				false, null, null, null);
+		final StatementDescription stm = new StatementDescription("=", getDescription(), false, null, null, null, null);
 
 		// diff(S,t) = mu * N - beta * S * I / N - mu * S ;
 		// diff(E,t) = beta * S * I / N - mu * E - sigma * E ;
@@ -69,7 +67,7 @@ public class ClassicalSEIREquations {
 						+ p[1].literalValue() + " * " + v[0].literalValue() + " * " + v[2].literalValue() + " / "
 						+ p[0].literalValue() + ") + " + "(- " + p[4].literalValue() + " * " + v[0].literalValue()
 						+ " )", getDescription()));
-//		eq1.establishVar();
+		// eq1.establishVar();
 		cmd.add(eq1);
 
 		final SingleEquationStatement eq2 = new SingleEquationStatement(stm);
@@ -80,7 +78,7 @@ public class ClassicalSEIREquations {
 						+ " / " + p[0].literalValue() + ") + " + "( - " + p[4].literalValue() + " * "
 						+ v[1].literalValue() + ") + " + "( - " + p[3].literalValue() + " * " + v[1].literalValue()
 						+ ")", getDescription()));
-//		eq2.establishVar();
+		// eq2.establishVar();
 		cmd.add(eq2);
 
 		final SingleEquationStatement eq3 = new SingleEquationStatement(stm);
@@ -90,7 +88,7 @@ public class ClassicalSEIREquations {
 				.createExpr("(" + p[3].literalValue() + " * " + v[1].literalValue() + ") + " + "(- "
 						+ p[4].literalValue() + " * " + v[2].literalValue() + ") + " + "(- " + p[2].literalValue()
 						+ " * " + v[2].literalValue() + ")", getDescription()));
-//		eq3.establishVar();
+		// eq3.establishVar();
 		cmd.add(eq3);
 
 		final SingleEquationStatement eq4 = new SingleEquationStatement(stm);
@@ -98,7 +96,7 @@ public class ClassicalSEIREquations {
 				.createExpr("diff(" + v[3].literalValue() + "," + v[4].literalValue() + ")", getDescription()));
 		eq4.setExpression(GAML.getExpressionFactory().createExpr("(" + p[2].literalValue() + " * " + v[2].literalValue()
 				+ ") + " + "(- " + p[4].literalValue() + " * " + v[3].literalValue() + ")", getDescription()));
-//		eq4.establishVar();
+		// eq4.establishVar();
 		cmd.add(eq4);
 
 		return cmd;

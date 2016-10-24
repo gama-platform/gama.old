@@ -56,7 +56,7 @@ public class GamaBasicTypeConverter implements Converter {
 	@Override
 	public Object unmarshal(final HierarchicalStreamReader reader, final UnmarshallingContext arg1) {
 		reader.moveDown();
-		final IType<?> t = convertScope.getScope().getModelContext().getTypeNamed(reader.getValue());
+		final IType<?> t = convertScope.getScope().getType(reader.getValue());
 		// ModelDescription modelDesc = ((ModelDescription)
 		// convertScope.getScope().getModelContext());
 		// IType t = ((ModelDescription)

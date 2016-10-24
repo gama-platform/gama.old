@@ -67,8 +67,7 @@ public class StopSoundStatement extends AbstractStatementSequence {
 		soundPlayer.stop(false);
 
 		if (sequence != null) {
-			final Object[] result = new Object[1];
-			scope.execute(sequence, currentAgent, null, result);
+			scope.execute(sequence, currentAgent, null);
 		}
 
 		return null;

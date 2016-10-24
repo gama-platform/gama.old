@@ -100,7 +100,8 @@ public interface IExpressionFactory {
 	 * @param doc
 	 * @return
 	 */
-	public UnitConstantExpression createUnit(Object value, IType t, String name, String doc, String[] names);
+	public UnitConstantExpression createUnit(Object value, IType t, String name, String doc, String deprecated,
+			boolean isTime, String[] names);
 
 	/**
 	 * @param op

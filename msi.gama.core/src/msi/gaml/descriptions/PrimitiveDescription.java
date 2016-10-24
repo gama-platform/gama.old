@@ -24,7 +24,6 @@ import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamaHelper;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 
@@ -35,8 +34,8 @@ public class PrimitiveDescription extends ActionDescription {
 	private AccessibleObject method;
 	private String plugin;
 
-	public PrimitiveDescription(final IDescription superDesc, final EObject source, final ChildrenProvider children,
-			final Facets facets, final String plugin) {
+	public PrimitiveDescription(final IDescription superDesc, final EObject source,
+			final Iterable<IDescription> children, final Facets facets, final String plugin) {
 		super(IKeyword.PRIMITIVE, superDesc, children, source, facets);
 		this.plugin = plugin;
 	}
@@ -124,8 +123,7 @@ public class PrimitiveDescription extends ActionDescription {
 
 	@Override
 	public PrimitiveDescription copy(final IDescription into) {
-		final PrimitiveDescription desc = new PrimitiveDescription(into, element,
-				children != null ? new ChildrenProvider(children) : ChildrenProvider.NONE, getFacetsCopy(), plugin);
+		final PrimitiveDescription desc = new PrimitiveDescription(into, element, children, getFacetsCopy(), plugin);
 		desc.originName = getOriginName();
 		desc.setHelper(helper, method);
 		return desc;

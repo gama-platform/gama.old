@@ -11,10 +11,8 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.expression;
 
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -23,6 +21,8 @@ import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.VariableRef;
+import msi.gama.util.Collector;
+import msi.gama.util.ICollector;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.BasicExpressionDescription;
 import msi.gaml.descriptions.IDescription;
@@ -52,7 +52,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 	}
 
 	@Override
-	public Set<String> getStrings(final IDescription context, final boolean skills) {
+	public Collection<String> getStrings(final IDescription context, final boolean skills) {
 		if (target == null) {
 			return Collections.EMPTY_SET;
 		}
@@ -67,7 +67,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 				if (skills && !GamaSkillRegistry.INSTANCE.hasSkill(skillName)) {
 					context.error("Unknown " + type + " " + skillName, IGamlIssue.UNKNOWN_SKILL, target);
 				}
-				return new HashSet<>(Arrays.asList(skillName));
+				return Collections.singleton(skillName);
 			}
 			if (target instanceof Expression) {
 				context.error("Impossible to recognize valid " + type + "s in " + EGaml.toString(target),
@@ -78,7 +78,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 			}
 			return Collections.EMPTY_SET;
 		}
-		final Set<String> result = new HashSet<>();
+		final ICollector<String> result = new Collector.UniqueOrdered<String>();
 		final Array array = (Array) target;
 		for (final Expression expr : EGaml.getExprsOf(array.getExprs())) {
 			final String type = skills ? "skill" : "attribute";
@@ -90,7 +90,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 				result.add(name);
 			}
 		}
-		return result;
+		return result.items();
 	}
 
 }

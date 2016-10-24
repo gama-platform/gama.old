@@ -27,10 +27,10 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IExecutable;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 18 janv. 2011
@@ -40,6 +40,96 @@ import msi.gaml.statements.IExecutable;
  */
 @SuppressWarnings({ "rawtypes" })
 public interface IScope {
+
+	/**
+	 * Use this class to accumulate a series of execution results. Only the last
+	 * one marked as 'passed' will be returned
+	 * 
+	 * @author drogoul
+	 *
+	 */
+	public static class MutableResult extends ExecutionResultWithValue {
+		public MutableResult() {
+			super(true, null);
+		}
+
+		public boolean accept(final ExecutionResult e) {
+			passed = passed && e.passed();
+			if (passed)
+				this.value = e.getValue();
+			return passed;
+		}
+
+		@Override
+		public Object getValue() {
+			return value;
+		}
+
+	}
+
+	/**
+	 * The result of executions. 'passed' represents the success or failure of
+	 * the computation, value its result
+	 * 
+	 * @author drogoul
+	 *
+	 */
+
+	public abstract static class ExecutionResult {
+		public abstract boolean passed();
+
+		public Object getValue() {
+			return passed();
+		}
+
+	}
+
+	public static class FailedExecutionResult extends ExecutionResult {
+
+		@Override
+		public boolean passed() {
+			return false;
+		}
+
+	}
+
+	public static class SuccessfulExecutionResult extends ExecutionResult {
+
+		@Override
+		public boolean passed() {
+			return true;
+		}
+
+	}
+
+	public static class ExecutionResultWithValue extends ExecutionResult {
+
+		protected Object value;
+		protected boolean passed;
+
+		public ExecutionResultWithValue(final Object value) {
+			this(true, value);
+		}
+
+		public ExecutionResultWithValue(final boolean passed, final Object value) {
+			this.passed = passed;
+			this.value = value;
+		}
+
+		@Override
+		public Object getValue() {
+			return value;
+		}
+
+		@Override
+		public boolean passed() {
+			return passed;
+		}
+
+	}
+
+	public final static ExecutionResult PASSED = new SuccessfulExecutionResult();
+	public final static ExecutionResult FAILED = new FailedExecutionResult();
 
 	/**
 	 * Management of the scope state.
@@ -178,10 +268,9 @@ public interface IScope {
 	 * 
 	 */
 
-	public abstract boolean execute(final IExecutable executable, final IAgent agent, final Arguments args,
-			Object[] result);
+	public abstract ExecutionResult execute(final IExecutable executable, final IAgent agent, final Arguments args);
 
-	public abstract Object evaluate(IExpression expr, IAgent agent) throws GamaRuntimeException;
+	public abstract ExecutionResult evaluate(IExpression expr, IAgent agent) throws GamaRuntimeException;
 
 	/**
 	 * Access to variables (agent and context)
@@ -226,18 +315,7 @@ public interface IScope {
 
 	public abstract boolean hasArg(String string);
 
-	public abstract boolean hasVar(String string);
-
-	/**
-	 * Returns the current simulation in which this scope is defined.
-	 * 
-	 * @return the current simulation or null if none is defined (unlikely as
-	 *         the scope is created by a simulation)
-	 */
-
-	public abstract IDescription getExperimentContext();
-
-	public abstract IDescription getModelContext();
+	public IType getType(final String name);
 
 	public abstract IModel getModel();
 
@@ -268,9 +346,9 @@ public interface IScope {
 	 */
 	public abstract void interruptLoop();
 
-	public abstract boolean init(final IStepable agent);
+	public abstract ExecutionResult init(final IStepable agent);
 
-	public abstract boolean step(final IStepable agent);
+	public abstract ExecutionResult step(final IStepable agent);
 
 	/**
 	 * @param actualArgs
@@ -280,7 +358,7 @@ public interface IScope {
 	/**
 	 * @param gamlAgent
 	 */
-	public abstract boolean update(IAgent agent);
+	public abstract ExecutionResult update(IAgent agent);
 
 	/**
 	 * @return the current statement or null if none

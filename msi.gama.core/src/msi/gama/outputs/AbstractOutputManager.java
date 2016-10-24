@@ -144,7 +144,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public boolean init(final IScope scope) {
 		for (final IOutput output : ImmutableList.copyOf(this)) {
 
-			if (scope.init(output)) {
+			if (scope.init(output).passed()) {
 				output.setPaused(false);
 				if (initialStep(scope, output)) {
 					try {
@@ -162,13 +162,13 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	}
 
 	protected boolean initialStep(final IScope scope, final IOutput output) {
-		return scope.step(output);
+		return scope.step(output).passed();
 	}
 
 	@Override
 	public boolean step(final IScope scope) {
 		final ImmutableList<IOutput> stepable = ImmutableList
-				.copyOf(Iterables.filter(this, each -> each.isRefreshable() && each.getScope().step(each)));
+				.copyOf(Iterables.filter(this, each -> each.isRefreshable() && each.getScope().step(each).passed()));
 		for (final IOutput o : stepable) {
 			o.update();
 		}

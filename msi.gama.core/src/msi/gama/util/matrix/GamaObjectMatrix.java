@@ -33,6 +33,7 @@ import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.GamaType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 public class GamaObjectMatrix extends GamaMatrix<Object> {
 
@@ -447,6 +448,11 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 			return null;
 		}
 		return getMatrix()[index];
+	}
+
+	@Override
+	public StreamEx<Object> stream(final IScope scope) {
+		return StreamEx.of(matrix);
 	}
 
 }

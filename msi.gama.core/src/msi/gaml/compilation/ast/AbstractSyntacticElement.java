@@ -186,4 +186,10 @@ public abstract class AbstractSyntacticElement implements ISyntacticElement {
 		// visitExperiments(visitor);
 	}
 
+	@Override
+	public void dispose() {
+		if (facets != null)
+			facets.dispose();
+	}
+
 }

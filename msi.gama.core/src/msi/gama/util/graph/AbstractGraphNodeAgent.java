@@ -24,6 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.operators.Cast;
@@ -45,9 +46,8 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 		@Override
 		public boolean related(final IScope scope, final AbstractGraphNodeAgent p1, final AbstractGraphNodeAgent p2) {
 			args.put("other", ConstantExpressionDescription.create(p2));
-			final Object[] result = new Object[1];
-			scope.execute(getAction(p1), p1, args, result);
-			return Cast.asBool(scope, result[0]);
+			final ExecutionResult result = scope.execute(getAction(p1), p1, args);
+			return Cast.asBool(scope, result.getValue());
 		}
 
 		@Override

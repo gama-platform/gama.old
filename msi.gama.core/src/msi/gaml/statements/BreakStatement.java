@@ -26,6 +26,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.StatementWithChildrenDescription;
+import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.statements.BreakStatement.BreakSerializer;
 import msi.gaml.statements.BreakStatement.BreakValidator;
@@ -47,8 +48,7 @@ public class BreakStatement extends AbstractStatement {
 	public static class BreakSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
-		protected void serialize(final StatementDescription desc, final StringBuilder sb,
-				final boolean includingBuiltIn) {
+		protected void serialize(final SymbolDescription desc, final StringBuilder sb, final boolean includingBuiltIn) {
 			sb.append(BREAK).append(";");
 		}
 	}

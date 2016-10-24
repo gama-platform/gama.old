@@ -17,11 +17,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Iterables;
 
+import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IGamlIssue;
@@ -44,13 +46,11 @@ import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
-import msi.gaml.descriptions.SymbolSerializer.SpeciesSerializer;
 import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
 import msi.gaml.expressions.SkillConstantExpression;
 import msi.gaml.expressions.SpeciesConstantExpression;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaType;
@@ -61,7 +61,7 @@ public class SpeciesDescription extends TypeDescription {
 	// AD 08/16: Behaviors are now inherited dynamically
 	private TOrderedHashMap<String, StatementDescription> behaviors;
 	// AD 08/16: Aspects are now inherited dynamically
-	private TOrderedHashMap<String, StatementDescription> aspects;
+	private THashMap<String, StatementDescription> aspects;
 	private TOrderedHashMap<String, SpeciesDescription> microSpecies;
 	protected TLinkedHashSet<SkillDescription> skills;
 	protected SkillDescription control;
@@ -70,13 +70,9 @@ public class SpeciesDescription extends TypeDescription {
 	protected Class javaBase;
 	protected boolean canUseMinimalAgents = true;
 
-	public SpeciesDescription(final String keyword, final SpeciesDescription macroDesc, final ChildrenProvider cp,
-			final EObject source, final Facets facets) {
-		this(keyword, null, macroDesc, null, cp, source, facets);
-	}
-
 	public SpeciesDescription(final String keyword, final Class clazz, final SpeciesDescription macroDesc,
-			final SpeciesDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets) {
+			final SpeciesDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
+			final Facets facets) {
 		super(keyword, clazz, macroDesc, parent, cp, source, facets, null);
 		setJavaBase(clazz);
 		setSkills(getFacet(SKILLS), Collections.EMPTY_SET);
@@ -89,7 +85,7 @@ public class SpeciesDescription extends TypeDescription {
 	public SpeciesDescription(final String name, final Class clazz, final SpeciesDescription superDesc,
 			final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills2, final Facets ff,
 			final String plugin) {
-		super(SPECIES, clazz, superDesc, null, ChildrenProvider.NONE, null, new Facets(NAME, name), plugin);
+		super(SPECIES, clazz, superDesc, null, null, null, new Facets(NAME, name), plugin);
 		setJavaBase(clazz);
 		setParent(parent);
 		setSkills(ff == null ? null : ff.get(SKILLS), skills2);
@@ -106,7 +102,7 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public SymbolSerializer createSerializer() {
-		return SpeciesSerializer.getInstance();
+		return SPECIES_SERIALIZER;
 	}
 
 	@Override
@@ -333,7 +329,7 @@ public class SpeciesDescription extends TypeDescription {
 			duplicateInfo(ce, getAspect(aspectName));
 		}
 		if (aspects == null) {
-			aspects = new TOrderedHashMap<String, StatementDescription>();
+			aspects = new THashMap<String, StatementDescription>();
 		}
 		aspects.put(aspectName, ce);
 	}
@@ -856,6 +852,14 @@ public class SpeciesDescription extends TypeDescription {
 			if (!aspects.forEachValue(visitor))
 				return false;
 		return true;
+	}
+
+	@Override
+	public Iterable<IDescription> getOwnChildren() {
+		return Iterables.concat(super.getOwnChildren(),
+				microSpecies == null ? Collections.EMPTY_LIST : microSpecies.values(),
+				behaviors == null ? Collections.EMPTY_LIST : behaviors.values(),
+				aspects == null ? Collections.EMPTY_LIST : aspects.values());
 	}
 
 	@Override

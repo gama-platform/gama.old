@@ -11,7 +11,8 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import org.joda.time.MutableDateTime;
+import java.time.LocalDateTime;
+
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaDate;
 import msi.gaml.types.Types;
@@ -24,7 +25,7 @@ public class NowUnitExpression extends UnitConstantExpression {
 
 	@Override
 	public GamaDate value(final IScope scope) {
-		return new GamaDate(MutableDateTime.now());
+		return GamaDate.absolute(LocalDateTime.now());
 	}
 
 	@Override

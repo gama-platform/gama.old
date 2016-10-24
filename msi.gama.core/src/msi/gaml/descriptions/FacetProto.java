@@ -11,10 +11,10 @@
  **********************************************************************************************/
 package msi.gaml.descriptions;
 
-import java.util.Arrays;
 import java.util.Set;
 
-import gnu.trove.set.hash.THashSet;
+import com.google.common.collect.ImmutableSet;
+
 import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.types.IType;
@@ -36,10 +36,6 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	public final boolean isType;
 	public final Set<String> values;
 	public String doc = "No documentation yet";
-	// private SymbolProto owner;
-	// static FacetProto KEYWORD = KEYWORD();
-	// static FacetProto DEPENDS_ON = DEPENDS_ON();
-	// static FacetProto NAME = NAME();
 
 	public FacetProto(final String name, final int[] types, final int ct, final int kt, final String[] values,
 			final boolean optional, final boolean internal, final String doc) {
@@ -57,7 +53,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		isLabel = SymbolProto.ids.contains(types[0]);
 		isId = isLabel && types[0] != IType.LABEL;
 		isType = types[0] == IType.TYPE_ID;
-		this.values = new THashSet<>(Arrays.asList(values));
+		this.values = values.length == 0 ? null : ImmutableSet.copyOf(values);
 		if (doc != null) {
 			final String[] strings = doc.split(GamlProperties.SEPARATOR, -1);
 			this.doc = strings[0];
@@ -84,28 +80,6 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	public boolean isId() {
 		return isId;
 	}
-
-	// public void setOwner(final SymbolProto symbol) {
-	// owner = symbol;
-	// }
-
-	// static FacetProto DEPENDS_ON() {
-	// return new FacetProto(IKeyword.DEPENDS_ON, new int[] { IType.LIST },
-	// IType.STRING, IType.INT, new String[0],
-	// true, true, "the dependencies of expressions (internal)");
-	// }
-
-	// static FacetProto KEYWORD() {
-	// return new FacetProto(IKeyword.KEYWORD, new int[] { IType.ID },
-	// IType.NONE, IType.NONE, new String[0], true,
-	// true, "the declared keyword (internal)");
-	// }
-	//
-	// static FacetProto NAME() {
-	// return new FacetProto(IKeyword.NAME, new int[] { IType.LABEL },
-	// IType.NONE, IType.NONE, new String[0], true,
-	// true, "the declared name (internal)");
-	// }
 
 	/**
 	 * Method getTitle()
@@ -167,7 +141,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		sb.append("<b>").append(name).append("</b>, ")
 				.append(deprecated != null ? "deprecated" : optional ? "optional" : "required").append("")
 				.append(", expects ").append(typesToString());
-		if (values.size() > 0) {
+		if (values != null && values.size() > 0) {
 			sb.append(", takes values in ").append(values).append(". ");
 		}
 		if (doc != null && doc.length() > 0) {

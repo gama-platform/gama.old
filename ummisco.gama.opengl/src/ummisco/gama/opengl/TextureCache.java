@@ -14,6 +14,7 @@ package ummisco.gama.opengl;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Map;
@@ -28,7 +29,6 @@ import com.jogamp.opengl.GLDrawableFactory;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.texture.Texture;
-import com.jogamp.opengl.util.texture.TextureIO;
 import com.jogamp.opengl.util.texture.awt.AWTTextureIO;
 
 import msi.gama.common.GamaPreferences;
@@ -42,7 +42,7 @@ import ummisco.gama.opengl.scene.PGMTextureProvider;
 public class TextureCache {
 
 	static {
-		TextureIO.addTextureProvider(new PGMTextureProvider());
+		AWTTextureIO.addTextureProvider(new PGMTextureProvider());
 		GamaPreferences.DISPLAY_POWER_OF_TWO.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 			@Override
@@ -52,10 +52,10 @@ public class TextureCache {
 
 			@Override
 			public void afterValueChange(final Boolean newValue) {
-				TextureIO.setTexRectEnabled(newValue);
+				AWTTextureIO.setTexRectEnabled(newValue);
 			}
 		});
-		TextureIO.setTexRectEnabled(GamaPreferences.DISPLAY_POWER_OF_TWO.getValue());
+		AWTTextureIO.setTexRectEnabled(GamaPreferences.DISPLAY_POWER_OF_TWO.getValue());
 	}
 
 	final Map<String, Texture> textures = new ConcurrentHashMap<>(100, 0.75f, 4);
@@ -84,19 +84,26 @@ public class TextureCache {
 		if (image == null) {
 			return null;
 		}
-		Texture texture = textures.get(image.getPath(scope));
+		return get(gl, image.getFile(scope));
+	}
+
+	public Texture get(final GL gl, final File file) {
+		if (file == null) {
+			return null;
+		}
+		Texture texture = textures.get(file.getAbsolutePath());
 		if (texture == null) {
 			if (!GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()) {
 				if (!gl.getContext().isCurrent()) {
 					gl.getContext().makeCurrent();
 				}
-				texture = buildTexture(scope, gl, image);
+				texture = buildTexture(gl, file);
 				if (texture != null) {
-					textures.put(image.getPath(scope), texture);
+					saveTexture(file, texture);
 				}
 			} else {
 				while (texture == null) {
-					texture = textures.get(image.getPath(scope));
+					texture = textures.get(file.getAbsolutePath());
 					try {
 						Thread.sleep(10);
 					} catch (final InterruptedException e) {
@@ -107,6 +114,10 @@ public class TextureCache {
 		}
 
 		return texture;
+	}
+
+	public void saveTexture(final File file, final Texture texture) {
+		textures.put(file.getAbsolutePath(), texture);
 	}
 
 	public void initializeStaticTexture(final IScope scope, final GamaImageFile image) {
@@ -124,14 +135,32 @@ public class TextureCache {
 	 * @param image
 	 * @return
 	 */
-	boolean contains(final IScope scope, final GamaImageFile image) {
+	public boolean contains(final IScope scope, final GamaImageFile image) {
 		return textures.containsKey(image.getPath(scope));
 	}
 
-	public static Texture buildTexture(final IScope scope, final GL gl, final GamaImageFile image) {
+	public boolean contains(final File file) {
+		return textures.containsKey(file.getAbsolutePath());
+	}
+
+	private static Texture buildTexture(final IScope scope, final GL gl, final GamaImageFile image) {
+		return buildTexture(gl, image.getFile(scope));
+	}
+
+	public void buildAndSaveTextureImmediately(final GL gl, final File file) {
+		final Texture texture = buildTexture(gl, file);
+		if (texture != null)
+			saveTexture(file, texture);
+	}
+
+	private static Texture buildTexture(final GL gl, final File file) {
 		try {
-			final Texture texture = TextureIO.newTexture(image.getFile(scope), false);
-			return texture;
+			final BufferedImage im = ImageUtils.getInstance().getImageFromFile(file);
+			return buildTexture(gl, im);
+			// final TextureData data =
+			// AWTTextureIO.newTextureData(gl.getGLProfile(), im, true);
+			// final Texture texture = new Texture(gl, data);
+			// return texture;
 		} catch (final GLException | IOException e) {
 			e.printStackTrace();
 			return null;
@@ -142,13 +171,6 @@ public class TextureCache {
 
 	public static Texture buildTexture(final GL gl, final BufferedImage image) {
 		try {
-			// final TextureData data =
-			// AWTTextureIO.newTextureData(gl.getGLProfile(),
-			// correctImage(image,
-			// !JOGLRenderer.isNonPowerOf2TexturesAvailable), GL.GL_RGBA,
-			// GL.GL_SRGB8_ALPHA8,
-			// true);
-			// data.setHaveGL12(true);
 			final Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(),
 					correctImage(image, !Abstract3DRenderer.isNonPowerOf2TexturesAvailable), true);
 			return texture;

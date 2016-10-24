@@ -39,6 +39,8 @@ import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.IntStreamEx;
+import one.util.streamex.StreamEx;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaIntMatrix extends GamaMatrix<Integer> {
@@ -317,9 +319,6 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		for (int i = 0; i < numCols; i++) {
 			for (int j = 0; j < numRows; j++) {
 				result.set(scope, j, i, get(scope, i, j));
-				// System.out.println("result.get..." + result.get(scope, j,
-				// i));
-				// System.out.println("result = " + result);
 			}
 		}
 		return result;
@@ -720,5 +719,10 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		final RealMatrix rm = toApacheMatrix(scope);
 		final LUDecomposition ld = new LUDecomposition(rm);
 		return fromApacheMatrix(scope, ld.getSolver().getInverse());
+	}
+
+	@Override
+	public StreamEx<Integer> stream(final IScope scope) {
+		return IntStreamEx.of(matrix).boxed();
 	}
 }

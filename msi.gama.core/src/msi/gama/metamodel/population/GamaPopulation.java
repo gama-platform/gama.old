@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 
 import gnu.trove.map.hash.THashMap;
@@ -41,6 +40,7 @@ import msi.gama.metamodel.topology.graph.GraphTopology;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
@@ -60,6 +60,7 @@ import msi.gaml.types.GamaTopologyType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import one.util.streamex.StreamEx;
 
 /**
  * Written by drogoul Modified on 6 sept. 2010
@@ -95,7 +96,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	protected final IVariable[] updatableVars;
 	protected int currentAgentIndex;
 	protected final IArchitecture architecture;
-	protected final IExpression scheduleFrequency;
 
 	/**
 	 * Listeners, created in a lazy way
@@ -159,18 +159,29 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 					.postEndAction(new MirrorPopulationManagement(species.getFacet(IKeyword.MIRRORS)));
 		}
 
-		// Add an attribute to the agents (dans SpeciesDescription)
-		scheduleFrequency = species.getFrequency();
 	}
 
 	@Override
 	public boolean step(final IScope scope) throws GamaRuntimeException {
-		for (final T agent : ImmutableList.copyOf(computeAgentsToSchedule(scope))) {
-			if (!scope.step(agent)) {
-				continue;
+		final IExpression frequencyExp = species.getFrequency();
+		if (frequencyExp != null) {
+			final int frequency = Cast.asInt(scope, frequencyExp.value(scope));
+			final int step = scope.getClock().getCycle();
+			if (frequency == 0 || step % frequency != 0) {
+				return true;
 			}
 		}
-		return true;
+		return stepAgents(scope);
+
+	}
+
+	protected boolean stepAgents(final IScope scope) {
+		return GamaExecutorService.step(scope, this, getSpecies());
+	}
+
+	@Override
+	public StreamEx<T> stream(final IScope scope) {
+		return super.stream(scope);
 	}
 
 	@Override
@@ -185,8 +196,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public boolean init(final IScope scope) {
 		return true;
 		// // Do whatever the population has to do at the first step ?
-		// Ideally, the list of agents to init should be there rather than in
-		// the scheduler
 	}
 
 	@Override
@@ -195,23 +204,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final IVariable var = species.getVar(s);
 			var.initializeWith(scope, agent, null);
 		}
-	}
-
-	/**
-	 *
-	 * @see msi.gama.interfaces.IPopulation#computeAgentsToSchedule(msi.gama.interfaces.IScope,
-	 *      msi.gama.util.GamaList)
-	 */
-	// @Override
-	public Iterable<T> computeAgentsToSchedule(final IScope scope) {
-		final int frequency = scheduleFrequency == null ? 1 : Cast.asInt(scope, scheduleFrequency.value(scope));
-		final int step = scope.getClock().getCycle();
-		if (frequency == 0 || step % frequency != 0) {
-			return Collections.EMPTY_LIST;
-		}
-		final IExpression ags = getSpecies().getSchedule();
-		final IList<T> agents = ags == null ? this : Cast.asList(scope, ags.value(scope));
-		return agents;
 	}
 
 	@Override
@@ -438,13 +430,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		return species.getVar(s);
 	}
 
-	// @Override
-	// public boolean manages(final ISpecies s, final boolean direct) {
-	// if ( species == s ) { return true; }
-	// if ( !direct ) { return species.extendsSpecies(s); }
-	// return false;
-	// }
-
 	@Override
 	public boolean hasUpdatableVariables() {
 		return updatableVars.length > 0;
@@ -473,7 +458,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		final boolean fixed = species.isGraph() || species.isGrid();
 		if (expr != null) {
 			if (!fixed) {
-				topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host), false);
+				topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host).getValue(), false);
 				return;
 			}
 			throw GamaRuntimeException.warning(
@@ -485,7 +470,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final IExpression spec = species.getFacet(IKeyword.EDGE_SPECIES);
 			final String edgeName = spec == null ? "base_edge" : spec.literalValue();
 			final ISpecies edgeSpecies = scope.getSimulation().getModel().getSpecies(edgeName);
-			final IType<?> edgeType = scope.getModelContext().getTypeNamed(edgeName);
+			final IType<?> edgeType = scope.getType(edgeName);
 			final IType<?> nodeType = getType().getContentType();
 			// TODO Specifier directed quelque part dans l'esp�ce
 			final GamaSpatialGraph g = new GamaSpatialGraph(GamaListFactory.create(), false, false,
@@ -753,7 +738,6 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			return false;
 		}
 		final IAgent as = source.getAgent();
-		// if ( as != null && as.getPopulation() != pop ) {
 		if (agent == as) {
 			return false;
 		}

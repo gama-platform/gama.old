@@ -83,17 +83,12 @@ public class ExperimentScheduler implements Runnable {
 			}
 		}
 
-		// GAMA.getGui().debug("ExperimentScheduler.step");
 		stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
 		scopes = toStep.values().toArray(new IScope[toStep.size()]);
 		for (int i = 0; i < stepables.length; i++) {
 			final IScope scope = scopes[i];
 			try {
-				// GAMA.getGui().debug("ExperimentScheduler.step : stepping " +
-				// stepables[i]);
-				if (!scope.step(stepables[i])) {
-					// GAMA.getGui().debug("ExperimentScheduler.step : removal
-					// of " + stepables[i]);
+				if (!scope.step(stepables[i]).passed()) {
 					toStop.add(stepables[i]);
 				}
 			} catch (final Exception e) {
@@ -164,7 +159,7 @@ public class ExperimentScheduler implements Runnable {
 		// We first init the stepable before it is scheduled
 		// GAMA.getGui().debug("ExperimentScheduler.schedule " + stepable);
 		try {
-			if (!scope.init(stepable)) {
+			if (!scope.init(stepable).passed()) {
 				toStop.add(stepable);
 			}
 		} catch (final Throwable e) {

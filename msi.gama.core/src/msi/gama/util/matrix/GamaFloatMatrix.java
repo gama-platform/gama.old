@@ -38,6 +38,8 @@ import msi.gaml.types.GamaMatrixType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.DoubleStreamEx;
+import one.util.streamex.StreamEx;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaFloatMatrix extends GamaMatrix<Double> {
@@ -693,6 +695,11 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		final RealMatrix rm = toApacheMatrix(scope);
 		final LUDecomposition ld = new LUDecomposition(rm);
 		return fromApacheMatrix(scope, ld.getSolver().getInverse());
+	}
+
+	@Override
+	public StreamEx<Double> stream(final IScope scope) {
+		return DoubleStreamEx.of(matrix).boxed();
 	}
 
 }

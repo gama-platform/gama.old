@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
@@ -29,6 +30,7 @@ import msi.gaml.types.GamaType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 /**
  * Written by drogoul Modified on 21 nov. 2008
@@ -36,13 +38,18 @@ import msi.gaml.types.Types;
  * @todo Description
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class GamaList<E> extends ArrayList<E> implements IList<E> {
+public class GamaList<E> extends ArrayList<E> implements List<E>, IList<E> {
 
 	private IContainerType type;
 
 	@Override
 	public IContainerType<?> getType() {
 		return type;
+	}
+
+	@Override
+	public StreamEx<E> stream(final IScope scope) {
+		return StreamEx.<E> of((ArrayList<E>) this);
 	}
 
 	protected GamaList(final int capacity, final IType contentType) {

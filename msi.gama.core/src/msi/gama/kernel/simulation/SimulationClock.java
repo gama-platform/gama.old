@@ -11,12 +11,15 @@
  **********************************************************************************************/
 package msi.gama.kernel.simulation;
 
+import java.time.temporal.ChronoUnit;
+
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.operators.Dates;
-import msi.gaml.types.Types;
+import msi.gaml.types.GamaDateType;
 
 /**
  * The class GamaRuntimeInformation.
@@ -72,13 +75,14 @@ public class SimulationClock {
 	 */
 	private volatile boolean displayCycles = true;
 
-	private GamaDate current_date = null;
-
 	private GamaDate starting_date = null;
+
+	private final boolean outputCurrentDateAsDuration;
 
 	private final IScope scope;
 
 	public SimulationClock(final IScope scope) {
+		outputCurrentDateAsDuration = !((ModelDescription) scope.getModel().getDescription()).isStartingDateDefined();
 		this.scope = scope;
 	}
 
@@ -99,16 +103,6 @@ public class SimulationClock {
 
 		cycle = i;
 	}
-
-	// /**
-	// * Increments the cycle by 1.
-	// * @return the new value of cycle
-	// */
-	//
-	// private int incrementCycle() {
-	// cycle++;
-	// return cycle;
-	// }
 
 	/**
 	 * Returns the current value of cycle
@@ -217,9 +211,6 @@ public class SimulationClock {
 	public void step(final IScope scope) {
 		setCycle(cycle + 1);
 		setTime(time + step);
-		if (current_date != null) {
-			current_date.addSeconds((int) step);
-		}
 		computeDuration();
 		waitDelay();
 	}
@@ -258,7 +249,9 @@ public class SimulationClock {
 		final int cycle = getCycle();
 		final ITopLevelAgent agent = scope.getRoot();
 		final String info = agent.getName() + ": " + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed ["
-				+ (starting_date == null ? Dates.asDate(time, null) : current_date.toString()) + " ]";
+				+ (outputCurrentDateAsDuration ? Dates.asDuration(getStartingDate(), getCurrentDate())
+						: getCurrentDate().toString("yyyy-MM-dd HH:mm:ss"))
+				+ " ]";
 		return info;
 	}
 
@@ -297,20 +290,21 @@ public class SimulationClock {
 	}
 
 	public GamaDate getCurrentDate() {
-		return current_date;
-	}
-
-	public void setCurrentDate(final GamaDate date) {
-		this.current_date = date;
+		return getStartingDate().plus((long) (getTime() * 1000), ChronoUnit.MILLIS);
 	}
 
 	public GamaDate getStartingDate() {
+		if (starting_date == null)
+			setStartingDate(GamaDateType.DEFAULT_STARTING_DATE);
 		return starting_date;
 	}
 
 	public void setStartingDate(final GamaDate starting_date) {
-		setCurrentDate((GamaDate) Types.DATE.cast(null, starting_date, null, true));
 		this.starting_date = starting_date;
+	}
+
+	public boolean outputAsDuration() {
+		return outputCurrentDateAsDuration;
 	}
 
 }

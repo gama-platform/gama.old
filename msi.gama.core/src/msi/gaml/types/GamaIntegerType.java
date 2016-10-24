@@ -20,6 +20,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaDate;
 import msi.gama.util.GamaFont;
 import msi.gaml.descriptions.IDescription;
 
@@ -93,6 +94,8 @@ public class GamaIntegerType extends GamaType<Integer> {
 		if (obj instanceof GamaFont) {
 			return ((GamaFont) obj).getSize();
 		}
+		if (obj instanceof GamaDate)
+			return ((GamaDate) obj).intValue(scope);
 		return 0;
 	}
 

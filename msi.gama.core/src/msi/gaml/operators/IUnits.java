@@ -13,6 +13,7 @@ package msi.gaml.operators;
 
 import java.awt.Font;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,12 +24,14 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IConstantCategory;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaDate;
 import msi.gama.util.GamaMaterial;
 import msi.gaml.expressions.UnitConstantExpression;
+import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-public class IUnits {
+public interface IUnits {
 
 	/**
 	 * Buffer constants
@@ -132,7 +135,7 @@ public class IUnits {
 			IConcept.GRAPHIC_UNIT }, doc = @doc("This constant is only accessible in a graphical context: display, graphics...")) public final static double display_height = 1;
 
 	@constant(value = "now", category = { IConstantCategory.TIME }, concept = { IConcept.DATE,
-			IConcept.TIME }, doc = @doc("This constant represents the current date")) public final static double now = 1;
+			IConcept.TIME }, doc = @doc("This value represents the current date")) public final static double now = 1;
 
 	/**
 	 * Mathematical constants
@@ -250,22 +253,27 @@ public class IUnits {
 					d = day;
 
 	/** The Constant month. */
-	@constant(value = "month", altNames = { "months" }, category = { IConstantCategory.TIME }, concept = {
+	@Deprecated @constant(value = "month", altNames = { "months" }, category = { IConstantCategory.TIME }, concept = {
 			IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT,
-			IConcept.TIME }, doc = @doc("month time unit. Note that 1 month equals 30 days and 1 year 360 days in these units")) public final static double month = 30
+			IConcept.TIME }, doc = @doc(deprecated = "This unit did not represent a proper duration. Please use the date type instead or define your own concept of 'month'", value = "month time unit. Note that 1 month equals 30 days and 1 year 360 days in these units")) public final static double month = 30
 					* day, months = month;
 
 	/** The Constant y. */
-	@constant(value = "year", altNames = { "years", "y" }, category = { IConstantCategory.TIME }, concept = {
-			IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT,
-			IConcept.TIME }, doc = @doc("year time unit. Note that 1 month equals 30 days and 1 year 360 days in these units")) public final static double year = 12
-					* month, years = year, y = year;
+	@Deprecated @constant(value = "year", altNames = { "years", "y" }, category = {
+			IConstantCategory.TIME }, concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT,
+					IConcept.TIME }, doc = @doc(deprecated = "This unit did not represent a proper duration. Please use the date type instead or define your own concept of 'year'", value = "year time unit. Note that 1 month equals 30 days and 1 year 360 days in these units")) public final static double year = 12
+							* month, years = year, y = year;
 
 	/** The Constant msec. */
 	@constant(value = "msec", altNames = { "millisecond", "milliseconds", "ms" }, category = {
 			IConstantCategory.TIME }, concept = { IConcept.DIMENSION, IConcept.DATE, IConcept.TIME_UNIT,
 					IConcept.TIME }, doc = { @doc("millisecond time unit") }) public final static double msec = sec
 							/ 1000, millisecond = msec, milliseconds = msec, ms = msec;
+
+	/** The Constant msec. */
+	@constant(value = "epoch", category = { IConstantCategory.TIME }, concept = { IConcept.DATE,
+			IConcept.TIME }, doc = {
+					@doc("The epoch default starting date as defined by the ISO format (1970-01-01T00:00Z)") }) public final static GamaDate epoch = GamaDateType.DEFAULT_STARTING_DATE;
 
 	/*
 	 *
@@ -379,12 +387,14 @@ public class IUnits {
 	public final static Map<String, UnitConstantExpression> UNITS_EXPR = new HashMap<>();
 
 	@SuppressWarnings("rawtypes")
-	static Object add(final String name, final Object value, final String doc, final String[] names) {
+	static Object add(final String name, final Object value, final String doc, final String deprec,
+			final boolean isTime, final String[] names) {
 		if (UNITS_EXPR.containsKey(name)) {
 			return null;
 		}
 		final IType t = Types.get(value.getClass());
-		final UnitConstantExpression exp = GAML.getExpressionFactory().createUnit(value, t, name, doc, names);
+		final UnitConstantExpression exp = GAML.getExpressionFactory().createUnit(value, t, name, doc, deprec, isTime,
+				names);
 		UNITS_EXPR.put(name, exp);
 		if (names != null) {
 			for (final String s : names) {
@@ -394,18 +404,18 @@ public class IUnits {
 		return value;
 	}
 
-	static {
+	public static void initialize() {
 		for (final Map.Entry<String, GamaColor> entry : GamaColor.colors.entrySet()) {
 			final GamaColor c = entry.getValue();
 			final String doc = "standard CSS color corresponding to " + "rgb (" + c.red() + ", " + c.green() + ", "
 					+ c.blue() + "," + c.getAlpha() + ")";
-			add(entry.getKey(), c, doc, null);
+			add(entry.getKey(), c, doc, null, false, null);
 		}
 
 		for (final Map.Entry<String, GamaMaterial> entry : GamaMaterial.materials.entrySet()) {
 			final GamaMaterial m = entry.getValue();
 			final String doc = "standard materials.";
-			add(entry.getKey(), m, doc, null);
+			add(entry.getKey(), m, doc, null, false, null);
 		}
 
 		for (final Field f : IUnits.class.getDeclaredFields()) {
@@ -413,16 +423,23 @@ public class IUnits {
 				final Object v = f.get(IUnits.class);
 				String[] names = null;
 				final constant annotation = f.getAnnotation(constant.class);
+				boolean isTime = false;
 				String documentation = "Its value is " + Cast.toGaml(v) + ". </b>";
+				String deprecated = null;
 				if (annotation != null) {
 					names = annotation.altNames();
 					final doc[] ds = annotation.doc();
 					if (ds != null && ds.length > 0) {
 						final doc d = ds[0];
 						documentation += d.value();
+						deprecated = d.deprecated();
+						if (deprecated.isEmpty())
+							deprecated = null;
 					}
+					final String[] e = annotation.category();
+					isTime = Arrays.asList(e).contains(IConstantCategory.TIME);
 				}
-				add(f.getName(), v, documentation, names);
+				add(f.getName(), v, documentation, deprecated, isTime, names);
 
 			} catch (final IllegalArgumentException e) {
 				e.printStackTrace();

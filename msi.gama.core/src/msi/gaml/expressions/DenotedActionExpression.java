@@ -11,10 +11,9 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.Set;
-
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
+import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.Types;
@@ -58,7 +57,7 @@ public class DenotedActionExpression extends VariableExpression {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
 	}
 
 }

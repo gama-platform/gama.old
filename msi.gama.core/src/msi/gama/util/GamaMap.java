@@ -16,7 +16,6 @@ import java.util.Map;
 import java.util.Set;
 
 import com.google.common.base.Objects;
-import com.google.common.collect.Iterables;
 
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -442,8 +441,6 @@ public class GamaMap<K, V> extends TOrderedHashMap<K, V>
 
 		GamaPairList() {
 			super(GamaMap.this.size(), Types.PAIR.of(type.getKeyType(), type.getContentType()));
-			Iterables.addAll(this, Iterables.transform(entrySet(),
-					each -> new GamaPair(each.getKey(), each.getValue(), type.getKeyType(), type.getContentType())));
 		}
 
 	}

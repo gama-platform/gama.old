@@ -136,7 +136,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			final String s = text.getText();
 			// AD: Fix for Issue 1042
 			if (agent != null && agent.getScope().interrupted() && agent instanceof SimulationAgent) {
-				agent = getHostAgent().getExperiment();
+				agent = agent.getScope().getExperiment();
 			}
 			if (NumberEditor.UNDEFINED_LABEL.equals(s)) {
 				setCurrentValue(null);

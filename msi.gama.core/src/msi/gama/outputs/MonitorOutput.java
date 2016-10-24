@@ -80,7 +80,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 				name == null ? expr : name));
 		setScope(scope.copy("in monitor '" + expr + "'"));
 		setNewExpressionText(expr);
-		if (getScope().init(this)) {
+		if (getScope().init(this).passed()) {
 			getScope().getSimulation().addOutput(this);
 			setPaused(false);
 			open();
@@ -152,7 +152,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	public boolean setNewExpressionText(final String string) {
 		expressionText = string;
 		setValue(GAML.compileExpression(string, getScope().getSimulation(), true));
-		return getScope().step(this);
+		return getScope().step(this).passed();
 	}
 
 	public void setNewExpression(final IExpression expr) throws GamaRuntimeException {

@@ -11,6 +11,7 @@
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
 
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.common.collect.Iterables;
@@ -41,11 +42,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	// hqnghi manipulate micro-models AD put it to null to have lazy
 	// initialization (saves some bytes in each agent)
 	protected GamaMap<String, IPopulation<? extends IAgent>> externMicroPopulations;
-
-	// FIXME Necessary to have this in all agents ? It seems that only
-	// simulations are concerned, and they can get this information directly
-	// from the meta-population returned by "agents".
-	protected int nbSubAgents = 0;
+	// Added to optimize the traversal of "non-minimal" agents that contain
+	// micropopulations
+	private IPopulation<? extends IAgent>[] microPopulations;
+	static IPopulation<? extends IAgent>[] NO_POP = new IPopulation[0];
 
 	// end-hqnghi
 
@@ -66,16 +66,27 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	@Override
-	protected Object stepSubPopulations(final IScope scope) {
+	public IPopulation<? extends IAgent>[] getMicroPopulations() {
 		if (getAttributes() == null) {
-			return this;
+			return NO_POP;
 		}
-		for (final Object pop : getAttributes().values().toArray()) {
-			if (pop instanceof IPopulation) {
-				scope.step((IPopulation<? extends IAgent>) pop);
-			}
+		if (microPopulations == null) {
+			microPopulations = Iterables.toArray(Iterables.filter(getAttributes().values(), IPopulation.class),
+					IPopulation.class);
+			if (microPopulations.length == 0)
+				microPopulations = NO_POP;
+			Arrays.parallelSort(microPopulations, (p1, p2) -> p1.isGrid() ? p2.isGrid() ? 0 : 1 : p2.isGrid() ? -1 : 0);
 		}
-		return this;
+		return microPopulations;
+	}
+
+	@Override
+	protected boolean stepSubPopulations(final IScope scope) {
+		for (final IPopulation<? extends IAgent> pop : getMicroPopulations()) {
+			if (!scope.step(pop).passed())
+				return false;
+		}
+		return true;
 	}
 
 	@Override
@@ -216,18 +227,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		}
 		super.dispose();
-	}
-
-	static IPopulation<? extends IAgent>[] NO_POP = new IPopulation[0];
-
-	@Override
-	public IPopulation<? extends IAgent>[] getMicroPopulations() {
-		if (getAttributes() == null) {
-			return NO_POP;
-		}
-		final IPopulation<? extends IAgent>[] pops = Iterables
-				.toArray(Iterables.filter(getAttributes().values(), IPopulation.class), IPopulation.class);
-		return pops;
 	}
 
 	@Override
@@ -386,14 +385,15 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		}
 		return null;
 	}
-
-	@Override
-	public GamaMap<String, IPopulation<? extends IAgent>> getExternMicroPopulations() {
-		if (externMicroPopulations == null) {
-			return GamaMapFactory.create();
-		}
-		return externMicroPopulations;
-	}
+	//
+	// @Override
+	// public GamaMap<String, IPopulation<? extends IAgent>>
+	// getExternMicroPopulations() {
+	// if (externMicroPopulations == null) {
+	// return GamaMapFactory.create();
+	// }
+	// return externMicroPopulations;
+	// }
 
 	// @Override
 	// public int getNbAgents() {

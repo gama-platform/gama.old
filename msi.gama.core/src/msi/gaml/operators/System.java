@@ -134,7 +134,7 @@ public class System {
 			}
 			return null;
 		}
-		return scope.evaluate(s, a);
+		return scope.evaluate(s, a).getValue();
 	}
 
 	@operator(value = "copy", type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
@@ -198,7 +198,7 @@ public class System {
 		final IDescription d = agent.getSpecies().getDescription();
 		try {
 			final IExpression e = GAML.getExpressionFactory().createExpr(gaml, d);
-			return scope.evaluate(e, agent);
+			return scope.evaluate(e, agent).getValue();
 		} catch (final GamaRuntimeException e) {
 			scope.getGui().getConsole().informConsole(
 					"Error in evaluating Gaml code : '" + gaml + "' in " + scope.getAgent()

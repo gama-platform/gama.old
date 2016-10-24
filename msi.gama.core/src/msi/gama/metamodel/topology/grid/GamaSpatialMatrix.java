@@ -13,6 +13,7 @@ package msi.gama.metamodel.topology.grid;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -47,6 +48,7 @@ import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
@@ -72,6 +74,7 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import msi.gaml.variables.IVariable;
+import one.util.streamex.StreamEx;
 
 /**
  * This matrix contains geometries and can serve to organize the agents of a
@@ -128,7 +131,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		if (cellSpecies == null) {
 			return super.getType();
 		} else {
-			return Types.MATRIX.of(scope.getModelContext().getTypeNamed(cellSpecies.getName()));
+			return Types.MATRIX.of(scope.getType(cellSpecies.getName()));
 		}
 	}
 
@@ -361,7 +364,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			if (s != null) {
 				final IAgent a = s.getAgent();
 				if (a != null) {
-					result[i] = Cast.asFloat(scope, scope.evaluate(exp, a));
+					result[i] = Cast.asFloat(scope, scope.evaluate(exp, a).getValue());
 				}
 			}
 
@@ -517,7 +520,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return GamaListFactory.create();
 		}
 		if (cellSpecies == null) {
-
 			return cast ? GamaListFactory.create(scope, contentType, matrix)
 					: GamaListFactory.createWithoutCasting(contentType, matrix);
 		} else {
@@ -1148,6 +1150,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
+		public StreamEx<G> stream(final IScope scope) {
+			return (StreamEx<G>) StreamEx.of(matrix);
+		}
+
+		@Override
 		public IList<G> createAgents(final IScope scope, final int number,
 				final List<? extends Map<String, Object>> initialValues, final boolean isRestored,
 				final boolean toBeScheduled) throws GamaRuntimeException {
@@ -1199,25 +1206,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
-		public boolean step(final IScope scope) throws GamaRuntimeException {
-			final IExpression ags = getSpecies().getSchedule();
-			if (ags != null) {
-				// In case there is a schedule specified, we do the "normal"
-				// step
-				return super.step(scope);
-			}
-			final int frequency = scheduleFrequency == null ? 1 : Cast.asInt(scope, scheduleFrequency.value(scope));
-			final int step = scope.getClock().getCycle();
-			if (frequency == 0 || step % frequency != 0) {
-				return true;
-			}
-
-			for (final IShape s : matrix) {
-				if (!scope.step((IAgent) s)) {
-					return false;
-				}
-			}
-			return true;
+		protected boolean stepAgents(final IScope scope) {
+			return GamaExecutorService.step(scope, matrix, getSpecies());
 		}
 
 		public int getNbCols() {
@@ -1370,8 +1360,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		@Override
 		public IList<G> listValue(final IScope scope, final IType contentsType, final boolean copy)
 				throws GamaRuntimeException {
-			return _listValue(scope, contentsType,
-					false)/* .listValue(scope, contentsType, false); */;
+			return _listValue(scope, contentsType, false);
 		}
 
 		@Override
@@ -1693,42 +1682,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				return bands.get(getIndex());
 			}
 
-			// // hqnghi must-implement methods from GamlAgent
-			// @Override
-			// public void addExternMicroPopulation(final String expName, final
-			// IPopulation pop) {
-			// // TODO Auto-generated method stub
-			//
-			// }
-			//
-			// @Override
-			// public IPopulation getExternMicroPopulationFor(final String
-			// expName) {
-			// // TODO Auto-generated method stub
-			// return null;
-			// }
-			//
-			// @Override
-			// public Map<String, IPopulation> getExternMicroPopulations() {
-			// // TODO Auto-generated method stub
-			// return null;
-			// }
-			// // end-hqnghi
-
 		}
 
 	}
-
-	// private class IntToAgents implements Function<Integer, IAgent> {
-	//
-	// @Override
-	// public IAgent apply(final Integer input) {
-	// return matrix[input].getAgent();
-	// }
-	//
-	// }
-	//
-	// private final Function<Integer, IAgent> intToAgents = new IntToAgents();
 
 	/**
 	 * Method usesNeighborsCache()
@@ -1751,14 +1707,14 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		return matrix[index];
 	}
 
-	/**
-	 * Method getGridValueOfColorAttribute()
-	 * 
-	 * @see msi.gama.metamodel.topology.grid.IGrid#getGridValueOfColorAttribute()
-	 */
 	@Override
-	public double[] getGridValueOfColorAttribute() {
-		return null;
+	public Collection<IAgent> allAgents() {
+		return this.getAgents();
+	}
+
+	@Override
+	public StreamEx<IShape> stream(final IScope scope) {
+		return StreamEx.of(matrix);
 	}
 
 }

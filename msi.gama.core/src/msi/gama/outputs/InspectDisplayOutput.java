@@ -237,7 +237,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 	}
 
 	public void launch(final IScope scope) throws GamaRuntimeException {
-		if (!scope.init(InspectDisplayOutput.this)) {
+		if (!scope.init(InspectDisplayOutput.this).passed()) {
 			return;
 		}
 		// What to do in case of multi-simulations ???
@@ -262,7 +262,7 @@ public class InspectDisplayOutput extends MonitorOutput implements IStatement {
 				return false;
 			}
 			getScope().setCurrentSymbol(this);
-			lastValue = getScope().evaluate(getValue(), rootAgent);
+			lastValue = getScope().evaluate(getValue(), rootAgent).getValue();
 		}
 		return true;
 	}

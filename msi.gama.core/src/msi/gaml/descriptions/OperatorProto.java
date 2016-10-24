@@ -18,7 +18,8 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
-import gnu.trove.set.hash.THashSet;
+import com.google.common.collect.ImmutableSet;
+
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlProperties;
@@ -48,8 +49,8 @@ import msi.gaml.types.Types;
 @SuppressWarnings({ "rawtypes" })
 public class OperatorProto extends AbstractProto {
 
-	public static Set<String> noMandatoryParenthesis = new THashSet<String>(Arrays.<String> asList("-", "!"));
-	public static Set<String> binaries = new THashSet<String>(Arrays.<String> asList("=", "+", "-", "/", "*", "^", "<",
+	public static Set<String> noMandatoryParenthesis = ImmutableSet.copyOf(Arrays.<String> asList("-", "!"));
+	public static Set<String> binaries = ImmutableSet.copyOf(Arrays.<String> asList("=", "+", "-", "/", "*", "^", "<",
 			">", "<=", ">=", "?", "!=", ":", ".", "where", "select", "collect", "first_with", "last_with",
 			"overlapping", "at_distance", "in", "inside", "among", "contains", "contains_any", "contains_all", "min_of",
 			"max_of", "with_max_of", "with_min_of", "of_species", "of_generic_species", "sort_by", "accumulate", "or",

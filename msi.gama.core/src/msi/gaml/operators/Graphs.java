@@ -738,7 +738,7 @@ public class Graphs {
 			"as_intersection_graph", "as_edge_graph" })
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance,
 			final ISpecies edgeSpecies) {
-		final IType edgeType = scope.getModelContext().getTypeNamed(edgeSpecies.getName());
+		final IType edgeType = scope.getType(edgeSpecies.getName());
 		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
 				edgeSpecies, scope, vertices.getType().getContentType(), edgeType);
 
@@ -754,7 +754,7 @@ public class Graphs {
 		final Double distance = (Double) params.get("distance");
 		final ISpecies edgeSpecies = (ISpecies) params.get("species");
 		final IType edgeType = edgeSpecies == null ? Types.GEOMETRY
-				: scope.getModelContext().getTypeNamed(edgeSpecies.getName());
+				: scope.getType(edgeSpecies.getName());
 		final IGraph createdGraph = new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
 				edgeSpecies, scope, vertices.getType().getContentType(), edgeType);
 

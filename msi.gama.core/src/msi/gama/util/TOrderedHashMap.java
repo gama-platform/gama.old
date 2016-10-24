@@ -19,12 +19,15 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import gnu.trove.impl.hash.TObjectHash;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import gnu.trove.procedure.TObjectProcedure;
 import msi.gama.runtime.IScope;
+import one.util.streamex.StreamEx;
 
 public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
@@ -173,6 +176,27 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			}
 		}
 		return true;
+	}
+
+	public void forEachValue(final Consumer<? super V> procedure) {
+		final V[] values = _values;
+		final Object[] set = _set;
+		final int[] inserts = _indicesByInsertOrder;
+		for (int i = 0; i <= _lastInsertOrderIndex; i++) {
+			final int index = inserts[i];
+			if (index == EMPTY) {
+				continue;
+			}
+			if (set[index] != FREE && set[index] != REMOVED) {
+				procedure.accept(values[index]);
+			}
+		}
+	}
+
+	public StreamEx<V> stream(final IScope scope) {
+		final StreamEx.Builder<V> b = Stream.builder();
+		forEachValue((final V v) -> b.accept(v));
+		return StreamEx.of(b.build().parallel());
 	}
 
 	@SuppressWarnings("unchecked")

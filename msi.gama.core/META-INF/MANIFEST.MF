@@ -212,6 +212,7 @@ Export-Package: msi.gama.common,
    msi.gaml.descriptions,
    msi.gama.metamodel.agent,
    msi.gama.runtime.exceptions",
+ msi.gama.runtime.concurrent,
  msi.gama.runtime.exceptions;uses:="msi.gama.common.interfaces",
  msi.gama.util;
   uses:="org.jgrapht,

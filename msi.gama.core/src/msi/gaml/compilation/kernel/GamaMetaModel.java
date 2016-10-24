@@ -126,17 +126,6 @@ public class GamaMetaModel {
 		} else {
 			desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
 		}
-		//
-		// final List<IDescription> additions = new
-		// ArrayList(AbstractGamlAdditions.getAdditions(clazz));
-		// for (final Class c : JavaUtils.collectImplementationClasses(clazz,
-		// Collections.EMPTY_SET,
-		// AbstractGamlAdditions.ADDITIONS.keySet())) {
-		// additions.addAll(AbstractGamlAdditions.getAdditions(c));
-		// }
-		// for (final IDescription d : additions) {
-		// d.setOriginName("built-in species " + name);
-		// }
 		desc.copyJavaAdditions();
 		desc.inheritFromParent();
 		return desc;

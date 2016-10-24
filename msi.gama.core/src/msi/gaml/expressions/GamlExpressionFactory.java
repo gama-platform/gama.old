@@ -15,6 +15,7 @@ import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
@@ -32,7 +33,6 @@ import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StringBasedExpressionDescription;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 import msi.gaml.statements.ActionStatement;
@@ -84,8 +84,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	 */
 	@Override
 	public UnitConstantExpression createUnit(final Object value, final IType t, final String name, final String doc,
-			final String[] names) {
-		return UnitConstantExpression.create(value, t, name, doc, names);
+			final String deprecated, final boolean isTime, final String[] names) {
+		final UnitConstantExpression exp = UnitConstantExpression.create(value, t, name, doc, isTime, names);
+		if (deprecated != null && !deprecated.isEmpty())
+			exp.setDeprecated(deprecated);
+		return exp;
+
 	}
 
 	@Override
@@ -165,8 +169,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			return new TempVariableExpression(name, type, definitionDescription);
 		case IVarExpression.EACH:
 			return new EachExpression(type);
-		case IVarExpression.WORLD:
-			return new WorldExpression(type, definitionDescription.getModelDescription());
+		// case IVarExpression.WORLD:
+		// return new WorldExpression(type,
+		// definitionDescription.getModelDescription());
 		case IVarExpression.SELF:
 			return new SelfExpression(type);
 		default:
@@ -309,9 +314,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public IExpression createTemporaryActionForAgent(final IAgent agent, final String action) {
-		final IDescription context = agent.getSpecies().getDescription();
-		final IDescription desc = DescriptionFactory.create(IKeyword.ACTION, context, ChildrenProvider.FUTURE,
-				IKeyword.TYPE, IKeyword.STRING, IKeyword.NAME, TEMPORARY_ACTION_NAME);
+		final SpeciesDescription context = (SpeciesDescription) agent.getSpecies().getDescription();
+		final ActionDescription desc = (ActionDescription) DescriptionFactory.create(IKeyword.ACTION, context,
+				Collections.EMPTY_LIST, IKeyword.TYPE, IKeyword.STRING, IKeyword.NAME, TEMPORARY_ACTION_NAME);
 		final List<IDescription> children = getParser().compileBlock(action, context);
 		for (final IDescription child : children) {
 			desc.addChild(child);

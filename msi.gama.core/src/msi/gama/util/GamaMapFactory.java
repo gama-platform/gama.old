@@ -5,6 +5,7 @@
 package msi.gama.util;
 
 import java.util.Map;
+import java.util.function.Supplier;
 
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
@@ -21,6 +22,21 @@ import msi.gaml.types.Types;
 public class GamaMapFactory {
 
 	private static final int DEFAULT_SIZE = 10;
+
+	public static class GamaMapSupplier implements Supplier<GamaMap> {
+		IType k;
+		IType c;
+
+		public GamaMapSupplier(final IType key, final IType contents) {
+			k = key;
+			c = contents;
+		}
+
+		@Override
+		public GamaMap get() {
+			return create(k, c);
+		}
+	}
 
 	public static GamaMap create() {
 		return create(Types.NO_TYPE, Types.NO_TYPE);

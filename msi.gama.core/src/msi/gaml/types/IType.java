@@ -199,4 +199,15 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 
 	SpeciesDescription getDenotedSpecies();
 
+	/**
+	 * Denotes a type that has components which can be exctracted when casting
+	 * it to a container (for instance, points have float components). The inner
+	 * type is returned by getContentType(). Containers are compound types by
+	 * default
+	 * 
+	 * @return true if the type represents a compound value which components can
+	 *         be extracted
+	 */
+	public boolean isCompoundType();
+
 }

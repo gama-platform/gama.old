@@ -11,13 +11,13 @@
  **********************************************************************************************/
 package msi.gaml.expressions;
 
-import java.util.Set;
-
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
+import msi.gama.util.ICollector;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -48,15 +48,25 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 
 	@Override
 	public IExpression getOwner() {
-		return new WorldExpression(this.getDefinitionDescription().getModelDescription().getType(),
-				this.getDefinitionDescription().getModelDescription());
+		return this.getDefinitionDescription().getModelDescription().getVarExpr(IKeyword.WORLD_AGENT_NAME, false);
 	}
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		// return scope.getGlobalVarValue(getName());
 		final IAgent sc = scope.getAgent();
-		return sc.getScope().getRoot().getScope().getGlobalVarValue(getName());
+		if (sc != null) {
+			final IScope agentScope = sc.getScope();
+			if (agentScope != null) {
+				final ITopLevelAgent root = agentScope.getRoot();
+				if (root != null) {
+					final IScope globalScope = root.getScope();
+					if (globalScope != null)
+						return globalScope.getGlobalVarValue(getName());
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -87,7 +97,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
 		if (species.equals(this.getDefinitionDescription().getSpeciesContext()))
 			result.add(getDefinitionDescription().getSpeciesContext().getAttribute(getName()));
 	}

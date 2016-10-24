@@ -12,9 +12,9 @@
 package msi.gama.common.util;
 
 import java.security.SecureRandom;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
@@ -181,7 +181,7 @@ public class RandomUtils {
 		int x = 0;
 		double t = 0.0;
 		while (true) {
-			t -= FastMath.log(next()) / mean;
+			t -= Math.log(next()) / mean;
 			if (t > 1.0) {
 				break;
 			}
@@ -190,6 +190,8 @@ public class RandomUtils {
 		return x;
 
 	}
+
+	public static boolean USE_BITWISE = true;
 
 	private byte[] createSeed(final Double s, final int length) {
 		this.seed = s;
@@ -200,10 +202,11 @@ public class RandomUtils {
 		if (realSeed < 1) {
 			realSeed *= Long.MAX_VALUE;
 		}
-		long l = realSeed.longValue();
-		// System.out.println("Initial seed: " + seed + "; normalized seed: " +
-		// l);
-
+		long l;
+		if (!USE_BITWISE)
+			l = realSeed.longValue();
+		else
+			l = Double.doubleToRawLongBits(realSeed);
 		final byte[] result = new byte[length];
 		switch (length) {
 		case 4:
@@ -230,11 +233,9 @@ public class RandomUtils {
 	public void dispose() {
 		seed = null;
 		generator = null;
-		// uniform = null;
 	}
 
 	public byte[] generateSeed(final int length) {
-		// byte[] result;
 		return createSeed(seed, length);
 	}
 
@@ -261,7 +262,7 @@ public class RandomUtils {
 		}
 	}
 
-	public void shuffle2(final Set list) {
+	public void shuffle2(final Collection list) {
 		final int size = list.size();
 		if (size < 2) {
 			return;
@@ -341,6 +342,10 @@ public class RandomUtils {
 		return generator.nextDouble();
 	}
 
+	public int nextInt() {
+		return generator.nextInt();
+	}
+
 	/**
 	 * @param matrix
 	 * @return
@@ -416,26 +421,6 @@ public class RandomUtils {
 			System.out.print(" | ");
 		}
 		System.out.println();
-	}
-
-	public static void main(final String[] args) {
-		final RandomUtils r1 = new RandomUtils(100.0, "mersenne");
-		final RandomUtils r2 = new RandomUtils(100.0, "m{ersenne");
-		for (int i = 0; i < 2000; i++) {
-			System.out.println("r1 " + r1.next() + " | r2 " + r2.next());
-		}
-		// drawRandomValues(-0.2, 0.2, 0.1);
-		// drawRandomValues(4., 5., 0.2);
-		// drawRandomValues(0, 100, 3);
-		// drawRandomValues(-5, 5, 3);
-		// RandomUtils r = new RandomUtils(100.0, "mersenne");
-		// for ( int i = 0; i < 10000000; i++ ) {
-		// double d = 0.0;
-		// if ( r.between(0.0, 0.1) == 0.0 ) {
-		// System.out.println("0.0 !");
-		// }
-		// }
-		// System.out.println("Finished");
 	}
 
 	private class BitString {
@@ -593,6 +578,23 @@ public class RandomUtils {
 			return count;
 		}
 
+	}
+
+	public static void main(final String[] args) {
+		USE_BITWISE = false;
+		RandomUtils r1 = new RandomUtils(1.0, "mersenne1");
+		RandomUtils r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
+		RandomUtils r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
+		for (int i = 0; i < 3; i++) {
+			System.out.println("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
+		}
+		USE_BITWISE = true;
+		r1 = new RandomUtils(1.0, "mersenne1");
+		r2 = new RandomUtils(1.0 * Math.pow(10, -50), "mersenne2");
+		r3 = new RandomUtils(1.1 * Math.pow(10, -50), "mersenne3");
+		for (int i = 0; i < 3; i++) {
+			System.out.println("r1 " + r1.nextInt() + " | r2 " + r2.nextInt() + " | r3 " + r3.nextInt());
+		}
 	}
 
 }

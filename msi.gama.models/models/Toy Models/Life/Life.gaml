@@ -13,7 +13,7 @@ global torus: torus_environment {
 	//Size of the environment
 	int environment_width <- 200 min: 10 max: 1000;
 	int environment_height <- 200 min: 10 max: 1000;
-	
+	bool parallel <- true;
 	//Declare as torus or not
 	bool torus_environment <- true;
 	//Density 
@@ -40,14 +40,10 @@ global torus: torus_environment {
 	
 	//Ask at each life_cell to evolve and update
 	reflex generation {
-		ask life_cell {
+		// The computation is made in parallel
+		ask life_cell parallel: parallel {
 			do evolve;
 		}
-
-		ask life_cell {
-			do update;
-		}
-
 	}
 	//Write the description of the model in the console
 	action description {
@@ -58,8 +54,8 @@ global torus: torus_environment {
 }
 
 //Grid species representing a cellular automata
-grid life_cell width: environment_width height: environment_height neighbors: 8  use_individual_shapes: false use_regular_agents: false frequency: 0
-use_neighbors_cache: false {
+grid life_cell width: environment_width height: environment_height neighbors: 8  use_individual_shapes: false use_regular_agents: false 
+use_neighbors_cache: false parallel: parallel{
 	//Boolean to know if it is the new state of the cell
 	bool new_state;
 	//List of all the neighbours
@@ -85,7 +81,7 @@ use_neighbors_cache: false {
 
 	}
 	//Action to update the new state of the cell
-	action update {
+	reflex update {
 		alive <- new_state;
 	}
 
@@ -93,6 +89,7 @@ use_neighbors_cache: false {
 
 
 experiment "Game of Life" type: gui {
+	parameter "Run in parallel " var: parallel category: 'Board';
 	parameter 'Width:' var: environment_width category: 'Board';
 	parameter 'Height:' var: environment_height category: 'Board';
 	parameter 'Torus?:' var: torus_environment category: 'Board';

@@ -259,7 +259,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		for (final ILayerStatement layer : getLayers()) {
 			// try {
 			layer.setDisplayOutput(this);
-			if (!getScope().init(layer)) {
+			if (!getScope().init(layer).passed()) {
 				return false;
 			}
 			// } catch (final GamaRuntimeException e) {

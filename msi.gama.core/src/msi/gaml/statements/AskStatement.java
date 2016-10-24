@@ -11,11 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import static com.google.common.collect.Iterators.emptyIterator;
-import static com.google.common.collect.Iterators.singletonIterator;
-
-import java.util.Iterator;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -28,18 +23,23 @@ import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
+import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.util.IContainer;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.IStatement.Breakable;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 // A group of commands that can be executed on remote agents.
 
 @symbol(name = IKeyword.ASK, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true, concept = {
 		IConcept.SPECIES })
 @facets(value = {
+		@facet(name = IKeyword.PARALLEL, type = { IType.BOOL,
+				IType.INT }, optional = true, doc = @doc("(experimental) setting this facet to 'true' will allow 'ask' to use concurrency when traversing the targets; setting it to an integer will set the threshold under which they will be run sequentially (the default is initially 20, but can be fixed in the preferences). This facet is false by default.")),
 		@facet(name = IKeyword.TARGET, type = { IType.CONTAINER,
 				IType.AGENT }, of = IType.AGENT, optional = false, doc = @doc("an expression that evaluates to an agent or a list of agents")),
 		@facet(name = IKeyword.AS, type = {
@@ -88,10 +88,12 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 
 	private RemoteSequence sequence = null;
 	private final IExpression target;
+	private final IExpression parallel;
 
 	public AskStatement(final IDescription desc) {
 		super(desc);
 		target = getFacet(IKeyword.TARGET);
+		parallel = getFacet("parallel");
 		if (target != null) {
 			setName("ask " + target.serialize(false));
 		}
@@ -117,17 +119,18 @@ public class AskStatement extends AbstractStatementSequence implements Breakable
 		super.leaveScope(scope);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
 	public Object privateExecuteIn(final IScope scope) {
 		final Object t = target.value(scope);
-
-		final Iterator<IAgent> runners = t instanceof IContainer ? ((IContainer) t).iterable(scope).iterator()
-				: t instanceof IAgent ? singletonIterator((IAgent) t) : emptyIterator();
-		final Object[] result = new Object[1];
-		while (runners.hasNext() && scope.execute(sequence, runners.next(), null, result)) {
+		if (t instanceof IContainer) {
+			GamaExecutorService.execute(scope, sequence,
+					((IContainer<?, IAgent>) t).listValue(scope, Types.AGENT, false), parallel);
+			return this;
+		} else {
+			final ExecutionResult result = scope.execute(sequence, (IAgent) t, null);
+			return result.getValue();
 		}
-		return result[0];
 	}
 
 }

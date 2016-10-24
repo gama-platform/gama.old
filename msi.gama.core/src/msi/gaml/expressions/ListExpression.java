@@ -12,7 +12,6 @@
 package msi.gaml.expressions;
 
 import java.util.Arrays;
-import java.util.Set;
 
 import com.google.common.collect.Iterables;
 
@@ -20,6 +19,7 @@ import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.ICollector;
 import msi.gama.util.IList;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -167,7 +167,7 @@ public class ListExpression extends AbstractExpression {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final Set<VariableDescription> result) {
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
 		for (final IExpression e : elements) {
 			if (e != null) {
 				e.collectUsedVarsOf(species, result);

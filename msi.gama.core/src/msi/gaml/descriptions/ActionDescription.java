@@ -10,7 +10,6 @@ import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -20,7 +19,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 
 	protected final boolean isAbstract;
 
-	public ActionDescription(final String keyword, final IDescription superDesc, final ChildrenProvider cp,
+	public ActionDescription(final String keyword, final IDescription superDesc, final Iterable<IDescription> cp,
 			final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, true, source, facets, null);
 		isAbstract = TRUE.equals(getLitteral(VIRTUAL));
@@ -29,8 +28,7 @@ public class ActionDescription extends StatementWithChildrenDescription {
 
 	@Override
 	public ActionDescription copy(final IDescription into) {
-		final ActionDescription desc = new ActionDescription(getKeyword(), into,
-				children != null ? new ChildrenProvider(children) : ChildrenProvider.NONE, element, getFacetsCopy());
+		final ActionDescription desc = new ActionDescription(getKeyword(), into, children, element, getFacetsCopy());
 		desc.originName = getOriginName();
 		return desc;
 	}

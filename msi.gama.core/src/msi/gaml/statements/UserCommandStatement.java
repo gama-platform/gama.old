@@ -174,9 +174,8 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 			}
 			if (isWorkaroundForIssue1595) {
 				final SimulationPopulation simulations = scope.getExperiment().getSimulationPopulation();
-				final Object[] resultArray = new Object[1];
 				for (final SimulationAgent sim : simulations.iterable(scope)) {
-					scope.execute(executer, sim, tempArgs, resultArray);
+					scope.execute(executer, sim, tempArgs);
 				}
 			} else {
 				executer.setRuntimeArgs(tempArgs);

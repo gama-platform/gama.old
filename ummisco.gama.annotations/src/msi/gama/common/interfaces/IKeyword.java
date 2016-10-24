@@ -315,6 +315,7 @@ public interface IKeyword {
 	public static final String PERMANENT = "permanent"; // "show" // "front_end"
 														// // "presentation" //
 														// "
+	public static final String PARALLEL = "parallel";
 	public static final String PERSPECTIVE = "perspective";
 	public static final String PIE = "pie";
 	public static final String PITCH = "pitch";

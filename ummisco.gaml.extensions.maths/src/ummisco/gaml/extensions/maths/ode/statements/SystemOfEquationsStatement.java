@@ -41,6 +41,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.compilation.IDescriptionValidator;
@@ -271,9 +272,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		final Map<Integer, IAgent> equaAgents = getEquationAgents(currentScope);
 		for (int i = 0, n = getDimension(); i < n; i++) {
 			try {
-				final Object[] result = new Object[1];
-				currentScope.execute(equations.get(i), equaAgents.get(i), null, result);
-				ydot[i] = Cast.asFloat(currentScope, result[0]);
+				final ExecutionResult result = currentScope.execute(equations.get(i), equaAgents.get(i), null);
+				ydot[i] = Cast.asFloat(currentScope, result.getValue());
 			} catch (final Throwable e2) {
 				GAMA.reportAndThrowIfNeeded(currentScope, GamaRuntimeException.create(e2, currentScope), true);
 			}

@@ -19,7 +19,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
-import msi.gaml.factories.ChildrenProvider;
 import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 
 // SI equation is defined by
@@ -54,8 +53,7 @@ public class ClassicalLVEquations {
 		final IExpression[] v = ((ListExpression) with_vars).getElements();
 		final IExpression[] p = ((ListExpression) with_params).getElements();
 
-		final StatementDescription stm = new StatementDescription("=", getDescription(), new ChildrenProvider(null),
-				false, null, null, null);
+		final StatementDescription stm = new StatementDescription("=", getDescription(), false, null, null, null, null);
 
 		final SingleEquationStatement eq1 = new SingleEquationStatement(stm);
 		eq1.setFunction(GAML.getExpressionFactory()
@@ -63,7 +61,7 @@ public class ClassicalLVEquations {
 		eq1.setExpression(
 				GAML.getExpressionFactory().createExpr(v[0].literalValue() + " * " + " ( " + p[0].literalValue() + " - "
 						+ p[1].literalValue() + " * " + v[1].literalValue() + ")", getDescription()));
-//		eq1.establishVar();
+		// eq1.establishVar();
 		cmd.add(eq1);
 
 		final SingleEquationStatement eq2 = new SingleEquationStatement(stm);
@@ -72,7 +70,7 @@ public class ClassicalLVEquations {
 		eq2.setExpression(
 				GAML.getExpressionFactory().createExpr("- " + v[1].literalValue() + " * " + " ( " + p[2].literalValue()
 						+ " - " + p[3].literalValue() + " * " + v[0].literalValue() + ")", getDescription()));
-//		eq2.establishVar();
+		// eq2.establishVar();
 		cmd.add(eq2);
 
 		return cmd;

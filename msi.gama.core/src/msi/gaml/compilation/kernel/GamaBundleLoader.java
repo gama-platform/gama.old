@@ -30,16 +30,12 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectProcedure;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.ICreateDelegate;
 import msi.gaml.compilation.IGamlAdditions;
-import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
-import msi.gaml.operators.Dates;
 import msi.gaml.operators.Strings;
 import msi.gaml.statements.CreateStatement;
-import msi.gaml.types.Signature;
 import msi.gaml.types.Types;
 
 /**
@@ -138,24 +134,13 @@ public class GamaBundleLoader {
 	}
 
 	private static void performStaticInitializations() {
-		new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				final long start = System.currentTimeMillis();
-				Dates.initializeAllFormats();
-				System.out.println(">GAMA JodaTime initialization in " + (System.currentTimeMillis() - start) + " ms.");
-				IExpressionCompiler.OPERATORS.forEachValue(new TObjectProcedure<THashMap<Signature, OperatorProto>>() {
-
-					@Override
-					public boolean execute(final THashMap<Signature, OperatorProto> object) {
-						object.compact();
-						return true;
-					}
-
-				});
-				IExpressionCompiler.OPERATORS.compact();
-			}
+		new Thread(() -> {
+			final long start = System.currentTimeMillis();
+			IExpressionCompiler.OPERATORS.forEachValue(object -> {
+				object.compact();
+				return true;
+			});
+			IExpressionCompiler.OPERATORS.compact();
 		}).start();
 
 	}

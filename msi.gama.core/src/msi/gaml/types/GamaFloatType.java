@@ -19,6 +19,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaDate;
 import msi.gama.util.GamaFont;
 import msi.gaml.descriptions.IDescription;
 
@@ -63,6 +64,8 @@ public class GamaFloatType extends GamaType<Double> {
 		if (obj instanceof GamaFont) {
 			return (double) ((GamaFont) obj).getSize();
 		}
+		if (obj instanceof GamaDate)
+			return ((GamaDate) obj).floatValue(scope);
 		return 0d;
 	}
 

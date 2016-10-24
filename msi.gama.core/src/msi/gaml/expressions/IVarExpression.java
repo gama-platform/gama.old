@@ -31,7 +31,7 @@ public interface IVarExpression extends IExpression {
 	public static final int TEMP = 2;
 	public static final int EACH = 3;
 	public static final int SELF = 4;
-	public static final int WORLD = 5;
+	// public static final int WORLD = 5;
 
 	public abstract void setVal(IScope scope, Object v, boolean create);
 

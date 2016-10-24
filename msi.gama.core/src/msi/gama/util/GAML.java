@@ -13,6 +13,7 @@ package msi.gama.util;
 
 import org.eclipse.emf.common.util.URI;
 
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
@@ -41,11 +42,11 @@ public class GAML {
 	public static ModelFactory modelFactory = null;
 	private static IGamlResourceInfoProvider infoProvider = null;
 
-	public static <T> T nullCheck(final IScope scope, final T object) {
-		return nullCheck(scope, object, "Error: nil value detected");
+	public static <T> T notNull(final IScope scope, final T object) {
+		return notNull(scope, object, "Error: nil value detected");
 	}
 
-	public static <T> T nullCheck(final IScope scope, final T object, final String error) {
+	public static <T> T notNull(final IScope scope, final T object, final String error) {
 		if (object == null) {
 			throw GamaRuntimeException.error(error, scope);
 		}
@@ -54,7 +55,7 @@ public class GAML {
 
 	@SuppressWarnings("rawtypes")
 	public static <T extends IContainer> T emptyCheck(final IScope scope, final T container) {
-		if (nullCheck(scope, container).isEmpty(scope)) {
+		if (notNull(scope, container).isEmpty(scope)) {
 			throw GamaRuntimeException.error("Error: the container is empty", scope);
 		}
 		return container;
@@ -92,7 +93,7 @@ public class GAML {
 			return null;
 		}
 		final IScope scope = a.getScope().copy("in temporary expression evaluator");
-		final Object o = scope.evaluate(expr, a);
+		final Object o = scope.evaluate(expr, a).getValue();
 		GAMA.releaseScope(scope);
 		return o;
 	}
@@ -132,7 +133,10 @@ public class GAML {
 			return null;
 		}
 		final IScope scope = a.getScope();
-		return (ExperimentDescription) scope.getExperimentContext();
+		final ITopLevelAgent agent = scope.getExperiment();
+		if (agent == null)
+			return null;
+		return (ExperimentDescription) agent.getSpecies().getDescription();
 	}
 
 	public static void registerInfoProvider(final IGamlResourceInfoProvider info) {

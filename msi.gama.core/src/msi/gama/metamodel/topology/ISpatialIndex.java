@@ -50,4 +50,6 @@ public interface ISpatialIndex {
 
 	}
 
+	public abstract Collection<IAgent> allAgents();
+
 }

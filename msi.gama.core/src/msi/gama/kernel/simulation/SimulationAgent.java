@@ -20,10 +20,12 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.ActionExecuter;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.agent.SavedAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
@@ -46,7 +48,8 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.AbstractScope;
+import msi.gama.precompiler.ITypeProvider;
+import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -60,6 +63,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
+import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 
 /**
@@ -79,6 +83,9 @@ import msi.gaml.types.IType;
 				+ IKeyword.CELLULAR
 				+ " is a cellular automaton based generator that should be a bit faster, but less reliable; and "
 				+ IKeyword.JAVA + " invokes the standard Java generator")),
+		@var(name = IKeyword.EXPERIMENT, type = ITypeProvider.EXPERIMENT_TYPE, doc = {
+				@doc("Returns the current experiment agent") }),
+		@var(name = IKeyword.WORLD_AGENT_NAME, type = ITypeProvider.MODEL_TYPE, doc = @doc("Represents the 'world' of the agents, i.e. the instance of the model in which they are instantiated. Equivalent to 'simulation' in experiments")),
 		@var(name = IKeyword.STEP, type = IType.FLOAT, doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles", comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
 		@var(name = SimulationAgent.TIME, type = IType.FLOAT, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
 		@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")),
@@ -88,8 +95,8 @@ import msi.gaml.types.IType;
 		@var(name = SimulationAgent.TOTAL_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
 		@var(name = SimulationAgent.AVERAGE_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
 		@var(name = SimulationAgent.MACHINE_TIME, type = IType.FLOAT, doc = @doc(value = "Returns the current system time in milliseconds", comment = "The return value is a float number")),
-		@var(name = SimulationAgent.CURRENT_DATE, type = IType.DATE, doc = @doc(value = "Returns the current date in the simulation", comment = "The return value is a date; the starting_date have to be initialized to use this attribute")),
-		@var(name = SimulationAgent.STARTING_DATE, type = IType.DATE, doc = @doc(value = "Represents the starting date of the simulation", comment = "It is required to intiliaze this value to be able to use the current_date attribute")), })
+		@var(name = SimulationAgent.CURRENT_DATE, depends_on = SimulationAgent.STARTING_DATE, type = IType.DATE, doc = @doc(value = "Returns the current date in the simulation", comment = "The return value is a date; the starting_date have to be initialized to use this attribute, which otherwise indicates a pseudo-date")),
+		@var(name = SimulationAgent.STARTING_DATE, type = IType.DATE, doc = @doc(value = "Represents the starting date of the simulation", comment = "If no starting_date is provided in the model, GAMA initializes it with a zero date: 1st of January, 0000 at 00:00:00")), })
 public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public static final String DURATION = "duration";
@@ -106,7 +113,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	final SimulationClock clock;
 	GamaColor color;
 
-	final SimulationScope scope;
+	final IScope scope = new ExecutionScope(this);
 	private SimulationOutputManager outputs;
 	final ProjectionFactory projectionFactory;
 	private Boolean scheduled = false;
@@ -114,45 +121,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	private final RandomUtils random;
 	private final ActionExecuter executer;
 	private RootTopology topology;
-
-	class SimulationScope extends AbstractScope {
-
-		volatile boolean interrupted = false;
-
-		public SimulationScope() {
-			super(SimulationAgent.this);
-		}
-
-		public SimulationScope(final String additionalName) {
-			super(SimulationAgent.this, additionalName);
-		}
-
-		@Override
-		protected boolean _root_interrupted() {
-			return interrupted || SimulationAgent.this.dead();
-		}
-
-		@Override
-		public void setInterrupted() {
-			this.interrupted = true;
-		}
-
-		@Override
-		public IScope copy(final String additionalName) {
-			return new SimulationScope(additionalName);
-		}
-
-		/**
-		 * Method getRandom()
-		 * 
-		 * @see msi.gama.runtime.IScope#getRandom()
-		 */
-		@Override
-		public RandomUtils getRandom() {
-			return SimulationAgent.this.getRandomGenerator();
-		}
-
-	}
+	// Added here to be sure to
 
 	public SimulationAgent(final IPopulation<? extends IAgent> pop) {
 		this((SimulationPopulation) pop);
@@ -160,9 +129,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public SimulationAgent(final SimulationPopulation pop) throws GamaRuntimeException {
 		super(pop);
-		scope = new SimulationScope();
-		clock = new SimulationClock(scope);
-		executer = new ActionExecuter(scope);
+		// scope = new SimulationScope();
+		clock = new SimulationClock(getScope());
+		executer = new ActionExecuter(getScope());
 		projectionFactory = new ProjectionFactory();
 		random = new RandomUtils(pop.getHost().getSeed(), pop.getHost().getRng());
 	}
@@ -172,6 +141,16 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
+	@getter(IKeyword.EXPERIMENT)
+	public IExperimentAgent getExperiment() {
+		final IMacroAgent agent = getHost();
+		if (agent instanceof IExperimentAgent)
+			return (IExperimentAgent) agent;
+		return null;
+	}
+
+	@Override
+	@getter(IKeyword.WORLD_AGENT_NAME)
 	public SimulationAgent getSimulation() {
 		return this;
 	}
@@ -221,49 +200,32 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	@Override
 	public void schedule(final IScope scope) {
-
-		// this.prepareGuiForSimulation(scope);
-		super.schedule(this.scope);
+		super.schedule(this.getScope());
 	}
 
 	@Override
-	// TODO A redefinition of this method in GAML will lose all information
-	// regarding the clock and the advance of time,
-	// which will have to be done manually (i.e. cycle <- cycle + 1; time <-
-	// time + step;). The outputs will not be stepped neither
-	public Object _step_(final IScope scope) {
-
-		// hqnghi check the on_user_hold in case that micro-model use an
-		// user_panel
-		// AD: removing the fix by Nghi temporarily. But it needs to be checked
-		// more
-		// carefully
-		// if (!scope.isOnUserHold()) {
+	protected boolean preStep(final IScope scope) {
 		clock.beginCycle();
-		// A simulation always runs in its own scope
-		try {
-			executer.executeBeginActions();
-			super._step_(this.scope);
-			executer.executeEndActions();
-			executer.executeOneShotActions();
+		executer.executeBeginActions();
+		return super.preStep(scope);
+	}
 
-			if (outputs != null) {
-				outputs.step(this.scope);
-			}
-		} finally {
-			clock.step(this.scope);
+	@Override
+	protected void postStep(final IScope scope) {
+		super.postStep(scope);
+		executer.executeEndActions();
+		executer.executeOneShotActions();
+		if (outputs != null) {
+			outputs.step(this.getScope());
 		}
-		// }
-		return this;
+		clock.step(this.getScope());
 	}
 
 	@Override
 	public Object _init_(final IScope scope) {
-		// A simulation always runs in its own scope
-		super._init_(this.scope);
-
+		super._init_(this.getScope());
 		if (outputs != null) {
-			outputs.init(this.scope);
+			outputs.init(this.getScope());
 		}
 		return this;
 	}
@@ -295,10 +257,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		executer.executeDisposeActions();
 		// hqnghi if simulation come from popultion extern, dispose pop first
 		// and then their outputs
-		for (final IPopulation<? extends IAgent> pop : getExternMicroPopulations().values()) {
-			pop.dispose();
-		}
-		this.getExternMicroPopulations().clear();
+
+		if (externMicroPopulations != null)
+			externMicroPopulations.clear();
 
 		if (outputs != null) {
 			outputs.dispose();
@@ -308,7 +269,9 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 			topology.dispose();
 			topology = null;
 		}
-		GAMA.releaseScope(scope);
+
+		GAMA.releaseScope(getScope());
+		// scope = null;
 		super.dispose();
 
 	}
@@ -326,10 +289,13 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@Override
-	public void setGeometry(final IShape geom) {
+	public void setGeometry(final IShape g) {
 		// FIXME : AD 5/15 Revert the commit by PT:
 		// getProjectionFactory().setWorldProjectionEnv(geom.getEnvelope());
 		// We systematically translate the geometry to {0,0}
+		IShape geom = g;
+		if (geom == null)
+			geom = GamaGeometryType.buildBox(100, 100, 100, new GamaPoint(50, 50, 50));
 		final Envelope3D env = geom.getEnvelope();
 		if (getProjectionFactory().getWorld() != null) {
 			((WorldProjection) getProjectionFactory().getWorld()).updateTranslations(env);
@@ -471,11 +437,11 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	}
 
 	@setter(STARTING_DATE)
-	public void setSTartingDate(final GamaDate d) throws GamaRuntimeException {
+	public void setStartingDate(final GamaDate d) throws GamaRuntimeException {
 		clock.setStartingDate(d);
 	}
 
-	@getter(STARTING_DATE)
+	@getter(value = STARTING_DATE, initializer = true)
 	public GamaDate getStartingDate() {
 		return clock.getStartingDate();
 	}
@@ -625,7 +591,7 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public void initOutputs() {
 		if (outputs != null) {
-			outputs.init(this.scope);
+			outputs.init(this.getScope());
 		}
 	}
 

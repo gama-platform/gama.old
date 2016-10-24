@@ -58,6 +58,8 @@ public interface ISpecies
 
 	public abstract IExpression getSchedule();
 
+	public abstract IExpression getConcurrency();
+
 	public abstract boolean extendsSpecies(final ISpecies s);
 
 	public abstract boolean isGrid();
@@ -200,5 +202,7 @@ public interface ISpecies
 	public abstract IPopulation<? extends IAgent> getPopulation(IScope scope);
 
 	public abstract void addTemporaryAction(ActionStatement a);
+
+	public abstract Collection<IStatement> getBehaviors();
 
 }

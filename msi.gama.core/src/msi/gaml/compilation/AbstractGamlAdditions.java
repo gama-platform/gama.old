@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.compilation;
 
-import static msi.gama.common.interfaces.IKeyword.EXPERIMENT;
 import static msi.gama.common.interfaces.IKeyword.OF;
 import static msi.gama.common.interfaces.IKeyword.SPECIES;
 import static msi.gama.common.interfaces.IKeyword._DOT;
@@ -19,7 +18,6 @@ import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
 
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +54,6 @@ import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.PrimitiveDescription;
 import msi.gaml.descriptions.SkillDescription;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.descriptions.SymbolSerializer;
@@ -66,7 +63,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.extensions.genstar.IGamaPopulationsLinker;
 import msi.gaml.extensions.genstar.IGamaPopulationsLinkerConstructor;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.factories.SymbolFactory;
 import msi.gaml.types.GamaFileType;
@@ -110,7 +106,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return classes;
 	}
 
-	protected static IType T(final Class c) {
+	protected static IType<?> T(final Class<?> c) {
 		return Types.get(c);
 	}
 
@@ -163,10 +159,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	protected void _skill(final String name, final Class clazz, final String... species) {
 		final SkillDescription sd = GamaSkillRegistry.INSTANCE.register(name, clazz,
-				GamaBundleLoader.CURRENT_PLUGIN_NAME, species);
-		for (final IDescription d : ADDITIONS.get(clazz)) {
-			sd.addChild(d);
-		}
+				GamaBundleLoader.CURRENT_PLUGIN_NAME, ADDITIONS.get(clazz), species);
 	}
 
 	protected void _factories(final SymbolFactory... factories) {
@@ -175,43 +168,22 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		}
 	}
 
-	// combinations and doc missing
+	// doc missing
 	protected void _symbol(final Class c, /* final int docIndex, */final IDescriptionValidator validator,
 			final SymbolSerializer serializer, final int sKind, final boolean remote, final boolean args,
 			final boolean scope, final boolean sequence, final boolean unique, final boolean name_unique,
 			final String[] contextKeywords, final int[] contextKinds, final FacetProto[] fmd, final String omissible,
 			final ISymbolConstructor sc, final String... names) {
 
-		// final Set<String> contextKeywords = new THashSet<>();
-		// final TIntHashSet contextKinds = new TIntHashSet();
-		final Map<String, FacetProto> facets = new THashMap<>();
-		if (fmd != null) {
-			for (final FacetProto f : fmd) {
-				facets.put(f.name, f);
-			}
-		}
-
-		// if (parentSymbols != null) {
-		// for (final String p : parentSymbols) {
-		// contextKeywords.add(p);
-		// }
-		// }
-		// if (parentKinds != null) {
-		// for (final int p : parentKinds) {
-		// contextKinds.add(p);
-		// }
-		// }
-		final List<String> keywords = names == null ? new ArrayList<>() : new ArrayList(Arrays.asList(names));
-		// if the symbol is a variable
+		final Collection<String> keywords;
 		if (ISymbolKind.Variable.KINDS.contains(sKind)) {
-			keywords.addAll(VARTYPE2KEYWORDS.get(sKind));
-			// Special trick and workaround for compiling species and
-			// experiments rather than variables
+			keywords = VARTYPE2KEYWORDS.get(sKind);
 			keywords.remove(SPECIES);
-			keywords.remove(EXPERIMENT);
+		} else {
+			keywords = Arrays.asList(names);
 		}
 
-		final SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, facets, omissible, contextKeywords,
+		final SymbolProto md = new SymbolProto(c, sequence, args, sKind, !scope, fmd, omissible, contextKeywords,
 				contextKinds, remote, unique, name_unique, sc, validator, serializer,
 				names == null || names.length == 0 ? "variable declaration" : names[0],
 				GamaBundleLoader.CURRENT_PLUGIN_NAME);
@@ -300,7 +272,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	protected IDescription desc(final String keyword, final IDescription superDesc, final ChildrenProvider children,
 			final String... facets) {
-		return DescriptionFactory.create(keyword, superDesc, children, facets);
+		return DescriptionFactory.create(keyword, superDesc, children.getChildren(), facets);
 	}
 
 	protected IDescription desc(final String keyword, final String... facets) {
@@ -404,14 +376,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			if (proto.shouldBeDefinedIn(s)) {
 				result.add(proto);
 			}
-		}
-		return result;
-	}
-
-	public static Collection<String> getAllAspects() {
-		final Set<String> result = new HashSet();
-		for (final TypeDescription s : Types.getBuiltInSpecies()) {
-			result.addAll(((SpeciesDescription) s).getAspectNames());
 		}
 		return result;
 	}

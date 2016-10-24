@@ -35,11 +35,11 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gama.util.file.Gama3DGeometryFile;
-import msi.gama.util.file.GamaImageFile;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.opengl.JOGLRenderer;
+import ummisco.gama.opengl.TextureCache;
 import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 /**
@@ -50,16 +50,15 @@ import ummisco.gama.opengl.utils.GLUtilGLContext;
  *
  */
 @file(name = "obj", extensions = "obj", buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
-@SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaObjFile extends Gama3DGeometryFile {
 
 	private final ArrayList<float[]> vertexSets = new ArrayList<>();
-	private final ArrayList vertexsetsNorms = new ArrayList<>();
-	private final ArrayList vertexSetsTexs = new ArrayList<>();
+	private final ArrayList<float[]> vertexsetsNorms = new ArrayList<>();
+	private final ArrayList<float[]> vertexSetsTexs = new ArrayList<>();
 	private final ArrayList<int[]> faces = new ArrayList<>();
-	private final ArrayList facesTexs = new ArrayList<>();
-	private final ArrayList facesNorms = new ArrayList<>();
-	private final ArrayList matTimings = new ArrayList<>();
+	private final ArrayList<int[]> facesTexs = new ArrayList<>();
+	private final ArrayList<int[]> facesNorms = new ArrayList<>();
+	private final ArrayList<String[]> matTimings = new ArrayList<>();
 	private MtlLoader materials;
 	// private int objectList;
 	// private int numPolys = 0;
@@ -78,10 +77,10 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	 * @throws GamaRuntimeException
 	 */
 	public GamaObjFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		this(scope, pathName, (GamaPair) null);
+		this(scope, pathName, (GamaPair<Double, GamaPoint>) null);
 	}
 
-	public GamaObjFile(final IScope scope, final String pathName, final GamaPair initRotation)
+	public GamaObjFile(final IScope scope, final String pathName, final GamaPair<Double, GamaPoint> initRotation)
 			throws GamaRuntimeException {
 		this(scope, pathName, pathName.replace(".obj", ".mtl"), initRotation);
 	}
@@ -90,7 +89,8 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		this(scope, pathName, mtlPath, null);
 	}
 
-	public GamaObjFile(final IScope scope, final String pathName, final String mtlPath, final GamaPair initRotation) {
+	public GamaObjFile(final IScope scope, final String pathName, final String mtlPath,
+			final GamaPair<Double, GamaPoint> initRotation) {
 		super(scope, pathName, initRotation);
 		if (mtlPath != null) {
 			this.mtlPath = FileUtils.constructAbsoluteFilePath(scope, mtlPath, false);
@@ -114,7 +114,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 	}
 
-	private void loadObject(final IScope scope) {
+	private void loadObject(final IScope scope, final boolean forDrawing) {
 		if (loaded) {
 			return;
 		}
@@ -271,7 +271,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		loadObject(scope);
+		loadObject(scope, false);
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		final IList<IShape> vertices = GamaListFactory.create(Types.POINT);
 		for (final float[] coords : vertexSets) {
@@ -282,7 +282,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 			final IList<IShape> face = GamaListFactory.<IShape> create(Types.POINT);
 			for (final int vertex : vertexRefs) {
 				face.add(vertices.get(vertex - 1));
-				((IList) getBuffer()).add(GamaGeometryType.buildPolygon(face));
+				getBuffer().add(GamaGeometryType.buildPolygon(face));
 			}
 		}
 		envelope = new Envelope3D(leftpoint, rightpoint, bottompoint, toppoint, nearpoint, farpoint);
@@ -310,8 +310,17 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		}
 	}
 
+	/**
+	 * Method flushBuffer()
+	 * 
+	 * @see msi.gama.util.file.GamaFile#flushBuffer() //
+	 */
+	// @Override
+	// protected void flushBuffer() throws GamaRuntimeException {
+	// }
+
 	public void drawToOpenGL(final GL2 gl, final JOGLRenderer renderer) {
-		loadObject(renderer.getSurface().getScope());
+		loadObject(renderer.getSurface().getScope(), true);
 		int nextmat = -1;
 		int matcount = 0;
 		final int totalmats = matTimings.size();
@@ -319,7 +328,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 		String nextmatname = null;
 
 		if (totalmats > 0 && materials != null) {
-			nextmatnamearray = (String[]) matTimings.get(matcount);
+			nextmatnamearray = matTimings.get(matcount);
 			nextmatname = nextmatnamearray[0];
 			nextmat = Integer.parseInt(nextmatnamearray[1]);
 		}
@@ -351,10 +360,13 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					}
 					f = new File(path);
 					if (f.exists()) {
-						texture = renderer.getCurrentScene().getTexture(gl,
-								new GamaImageFile(renderer.getSurface().getScope(), f.getAbsolutePath()));
-						// BufferedImage im;
-						// try {
+						// Solves Issue #1951. Asynchronous loading of textures
+						// was not possible when displaying the file
+						final TextureCache cache = renderer.getSharedTextureCache();
+						if (!cache.contains(f)) {
+							cache.buildAndSaveTextureImmediately(gl, f);
+						}
+						texture = cache.get(gl, f);
 						// im = ImageUtils.getInstance().getImageFromFile(f);
 						// final TextureData data =
 						// AWTTextureIO.newTextureData(gl.getGLProfile(), im,
@@ -364,7 +376,8 @@ public class GamaObjFile extends Gama3DGeometryFile {
 						texture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
 						texture.enable(gl);
 						texture.bind(gl);
-						// } catch (final IOException e) {
+						// }
+						// catch (final IOException e) {
 						// e.printStackTrace();
 						// }
 					}
@@ -372,15 +385,15 @@ public class GamaObjFile extends Gama3DGeometryFile {
 				}
 				matcount++;
 				if (matcount < totalmats) {
-					nextmatnamearray = (String[]) matTimings.get(matcount);
+					nextmatnamearray = matTimings.get(matcount);
 					nextmatname = nextmatnamearray[0];
 					nextmat = Integer.parseInt(nextmatnamearray[1]);
 				}
 			}
 
 			final int[] tempfaces = faces.get(i);
-			final int[] tempfacesnorms = (int[]) facesNorms.get(i);
-			final int[] tempfacestexs = (int[]) facesTexs.get(i);
+			final int[] tempfacesnorms = facesNorms.get(i);
+			final int[] tempfacestexs = facesTexs.get(i);
 
 			//// Quad Begin Header ////
 			int polytype;
@@ -396,16 +409,16 @@ public class GamaObjFile extends Gama3DGeometryFile {
 
 			for (int w = 0; w < tempfaces.length; w++) {
 				if (tempfacesnorms[w] != 0) {
-					final float normtempx = ((float[]) vertexsetsNorms.get(tempfacesnorms[w] - 1))[0];
-					final float normtempy = ((float[]) vertexsetsNorms.get(tempfacesnorms[w] - 1))[1];
-					final float normtempz = ((float[]) vertexsetsNorms.get(tempfacesnorms[w] - 1))[2];
+					final float normtempx = vertexsetsNorms.get(tempfacesnorms[w] - 1)[0];
+					final float normtempy = vertexsetsNorms.get(tempfacesnorms[w] - 1)[1];
+					final float normtempz = vertexsetsNorms.get(tempfacesnorms[w] - 1)[2];
 					gl.glNormal3f(normtempx, normtempy, normtempz);
 				}
 
 				if (tempfacestexs[w] != 0) {
-					final float textempx = ((float[]) vertexSetsTexs.get(tempfacestexs[w] - 1))[0];
-					final float textempy = ((float[]) vertexSetsTexs.get(tempfacestexs[w] - 1))[1];
-					final float textempz = ((float[]) vertexSetsTexs.get(tempfacestexs[w] - 1))[2];
+					final float textempx = vertexSetsTexs.get(tempfacestexs[w] - 1)[0];
+					final float textempy = vertexSetsTexs.get(tempfacestexs[w] - 1)[1];
+					final float textempz = vertexSetsTexs.get(tempfacestexs[w] - 1)[2];
 					final float valy = 1f - textempy;
 					if (valy >= 0 && valy <= 1.0) {
 						gl.glTexCoord3f(textempx, valy, textempz);

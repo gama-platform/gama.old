@@ -38,11 +38,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException
 public class GAMA {
 
 	public final static String VERSION = "GAMA 1.7";
-	// public static final String _FATAL = "fatal";
 	public static final String _WARNINGS = "warnings";
-
-	// private final static ExperimentController controller = new
-	// ExperimentController(new ExperimentScheduler());
 
 	// hqnghi: add several controllers to have multi-thread experiments
 	private final static List<IExperimentController> controllers = new ArrayList<>();

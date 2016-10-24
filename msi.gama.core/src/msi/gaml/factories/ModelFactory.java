@@ -50,14 +50,14 @@ public class ModelFactory extends SymbolFactory {
 	@SuppressWarnings("rawtypes")
 	public static ModelDescription createRootModel(final String name, final Class clazz, final SpeciesDescription macro,
 			final SpeciesDescription parent) {
-		ModelDescription.ROOT = new ModelDescription(name, clazz, "", "", null, macro, parent, null,
+		ModelDescription.ROOT = new ModelDescription(name, clazz, "", "", null, macro, parent, null, null,
 				ValidationContext.NULL, Collections.EMPTY_SET);
 		return ModelDescription.ROOT;
 	}
 
 	@Override
 	protected IDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
+			final Iterable<IDescription> children, final IDescription enclosing, final SymbolProto proto) {
 		// This method is actually never called.
 		return null;
 	}

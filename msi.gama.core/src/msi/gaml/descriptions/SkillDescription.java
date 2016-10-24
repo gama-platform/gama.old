@@ -7,8 +7,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.interfaces.ISkill;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.compilation.kernel.GamaBundleLoader;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.skills.Skill;
 
 public class SkillDescription extends TypeDescription {
@@ -17,8 +15,9 @@ public class SkillDescription extends TypeDescription {
 	final boolean isControl;
 	final Class<? extends ISkill> javaBase;
 
-	public SkillDescription(final String name, final Class<? extends ISkill> support, final String plugin) {
-		super(IKeyword.SKILL, support, null, null, ChildrenProvider.NONE, null, null, plugin);
+	public SkillDescription(final String name, final Class<? extends ISkill> support,
+			final Iterable<IDescription> children, final String plugin) {
+		super(IKeyword.SKILL, support, null, null, children, null, null, plugin);
 		this.name = name;
 		this.javaBase = support;
 		this.isControl = IArchitecture.class.isAssignableFrom(support);
@@ -37,8 +36,7 @@ public class SkillDescription extends TypeDescription {
 
 	@Override
 	public IDescription addChild(final IDescription child) {
-		child.setOriginName("skill " + name);
-		child.setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
+
 		if (child instanceof ActionDescription) {
 			addAction((ActionDescription) child);
 		} else {

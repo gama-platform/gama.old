@@ -45,29 +45,30 @@ public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLoca
 		private final Multimap<QualifiedName, IEObjectDescription> nameToObjects;
 
 		public MultimapBasedSelectable(final List<IEObjectDescription> descriptions) {
-			this.descriptions = descriptions;
-			this.nameToObjects = LinkedHashMultimap.create();
-			for (final IEObjectDescription description : descriptions) {
-				nameToObjects.put(description.getName(), description);
-			}
+			this.descriptions = descriptions == null || descriptions.isEmpty() ? null : descriptions;
+			this.nameToObjects = this.descriptions == null ? null : LinkedHashMultimap.create();
+			if (this.descriptions != null)
+				for (final IEObjectDescription description : descriptions) {
+					nameToObjects.put(description.getName(), description);
+				}
 
 		}
 
 		@Override
 		public boolean isEmpty() {
-			return descriptions.isEmpty();
+			return descriptions == null;
 		}
 
 		@Override
 		public Iterable<IEObjectDescription> getExportedObjectsByType(final EClass type) {
-			if (descriptions.isEmpty())
+			if (descriptions == null)
 				return Collections.emptyList();
 			return Iterables.filter(descriptions, input -> EcoreUtil2.isAssignableFrom(type, input.getEClass()));
 		}
 
 		@Override
 		public Iterable<IEObjectDescription> getExportedObjectsByObject(final EObject object) {
-			if (descriptions.isEmpty())
+			if (descriptions == null)
 				return Collections.emptyList();
 			final URI uri = EcoreUtil2.getPlatformResourceOrNormalizedURI(object);
 			return Iterables.filter(descriptions, input -> {
@@ -83,6 +84,8 @@ public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLoca
 		@Override
 		public Iterable<IEObjectDescription> getExportedObjects(final EClass type, final QualifiedName name,
 				final boolean ignoreCase) {
+			if (nameToObjects == null)
+				return Collections.emptyList();
 			if (nameToObjects.containsKey(name)) {
 				for (final IEObjectDescription desc : nameToObjects.get(name)) {
 					if (EcoreUtil2.isAssignableFrom(type, desc.getEClass())) {
@@ -95,19 +98,21 @@ public class GamlScopeProvider extends org.eclipse.xtext.scoping.impl.SimpleLoca
 
 		@Override
 		public Iterable<IEObjectDescription> getExportedObjects() {
-			return descriptions;
+			return descriptions == null ? Collections.EMPTY_LIST : descriptions;
 		}
 
 	}
 
 	@Override
 	protected ISelectable getAllDescriptions(final Resource resource) {
-		final List<IEObjectDescription> descriptions = new ArrayList<>();
+		List<IEObjectDescription> descriptions = null;
 		final Iterator<EObject> iterator = resource.getAllContents();
 		while (iterator.hasNext()) {
 			final EObject from = iterator.next();
 			final QualifiedName qualifiedName = getNameProvider().apply(from);
 			if (qualifiedName != null) {
+				if (descriptions == null)
+					descriptions = new ArrayList<>();
 				descriptions.add(new EObjectDescription(qualifiedName, from, null));
 			}
 		}

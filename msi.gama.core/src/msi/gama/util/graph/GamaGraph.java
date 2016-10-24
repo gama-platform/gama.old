@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.EdgeFactory;
@@ -76,6 +77,7 @@ import msi.gaml.types.GamaPairType;
 import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
+import one.util.streamex.StreamEx;
 
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class GamaGraph<V, E> implements IGraph<V, E> {
@@ -119,7 +121,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		version = 1;
 		agentEdge = false;
 		this.scope = scope;
-		shortestPathComputed = new TOrderedHashMap<VertexPair<V>, IList<IList<E>>>();
+		shortestPathComputed = new ConcurrentHashMap<VertexPair<V>, IList<IList<E>>>();
 		type = Types.GRAPH.of(nodeType, vertexType);
 	}
 
@@ -127,7 +129,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			final VertexRelationship rel, final ISpecies edgesSpecies, final IType nodeType, final IType edgeType) {
 		vertexMap = new TOrderedHashMap();
 		edgeMap = new TOrderedHashMap();
-		shortestPathComputed = new TOrderedHashMap<VertexPair<V>, IList<IList<E>>>();
+		shortestPathComputed = new ConcurrentHashMap<VertexPair<V>, IList<IList<E>>>();
 		this.scope = scope;
 		// WARNING TODO Verify this
 		// IType nodeType = byEdge ? Types.NO_TYPE :
@@ -142,7 +144,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public GamaGraph(final IScope scope, final IType nodeType, final IType vertexType) {
 		vertexMap = new TOrderedHashMap();
 		edgeMap = new TOrderedHashMap();
-		shortestPathComputed = new TOrderedHashMap<VertexPair<V>, IList<IList<E>>>();
+		shortestPathComputed = new ConcurrentHashMap<VertexPair<V>, IList<IList<E>>>();
 		this.scope = scope;
 		type = Types.GRAPH.of(nodeType, vertexType);
 	}
@@ -962,6 +964,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	@Override
+	public StreamEx<E> stream(final IScope scope) {
+		return StreamEx.<E> of(edgeSet());
+	}
+
+	@Override
 	public String stringValue(final IScope scope) {
 		return toString();
 	}
@@ -1261,7 +1268,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public void loadShortestPaths(final IScope scope, final GamaMatrix matrix) {
 		final GamaList<V> vertices = (GamaList<V>) getVertices();
 		final int nbvertices = matrix.numCols;
-		shortestPathComputed = new TOrderedHashMap<VertexPair<V>, IList<IList<E>>>();
+		shortestPathComputed = new ConcurrentHashMap<VertexPair<V>, IList<IList<E>>>();
 		final GamaIntMatrix mat = GamaIntMatrix.from(scope, matrix);
 
 		final Map<Integer, E> edgesVertices = GamaMapFactory.create(Types.INT, getType().getContentType());

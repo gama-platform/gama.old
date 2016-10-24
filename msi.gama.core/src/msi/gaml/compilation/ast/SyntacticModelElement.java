@@ -44,24 +44,12 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 		return false;
 	}
 
-	// public void printStats() {
-	// final Map<String, Integer> stats = new HashMap();
-	// computeStats(stats);
-	// // System.out.println("Stats for " + getName() + " : " + stats);
-	// }
-
 	@Override
 	public void visitExperiments(final SyntacticVisitor visitor) {
 		visitAllChildren(visitor, EXPERIMENT_FILTER);
 	}
 
-	static SyntacticVisitor compacter = new SyntacticVisitor() {
-
-		@Override
-		public void visit(final ISyntacticElement element) {
-			element.compact();
-		}
-	};
+	static SyntacticVisitor compacter = element -> element.compact();
 
 	public void compactModel() {
 		this.visitThisAndAllChildrenRecursively(compacter);
@@ -70,4 +58,5 @@ public class SyntacticModelElement extends SyntacticTopLevelElement {
 	public String getPath() {
 		return path;
 	}
+
 }

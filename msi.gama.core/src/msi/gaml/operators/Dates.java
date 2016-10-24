@@ -1,26 +1,33 @@
 package msi.gaml.operators;
 
+import static java.time.temporal.ChronoField.DAY_OF_MONTH;
+import static java.time.temporal.ChronoField.DAY_OF_WEEK;
+import static java.time.temporal.ChronoField.HOUR_OF_DAY;
+import static java.time.temporal.ChronoField.MINUTE_OF_HOUR;
+import static java.time.temporal.ChronoField.MONTH_OF_YEAR;
+import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
+import static java.time.temporal.ChronoField.YEAR;
+import static java.time.temporal.ChronoUnit.DAYS;
+import static java.time.temporal.ChronoUnit.HOURS;
+import static java.time.temporal.ChronoUnit.MINUTES;
+import static java.time.temporal.ChronoUnit.MONTHS;
+import static java.time.temporal.ChronoUnit.SECONDS;
+import static java.time.temporal.ChronoUnit.WEEKS;
+import static java.time.temporal.ChronoUnit.YEARS;
+
+import java.time.Duration;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAccessor;
+import java.time.temporal.TemporalField;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.joda.time.Chronology;
-import org.joda.time.DateTimeZone;
-import org.joda.time.Duration;
-import org.joda.time.DurationFieldType;
-import org.joda.time.LocalDateTime;
-import org.joda.time.Period;
-import org.joda.time.PeriodType;
-import org.joda.time.chrono.AssembledChronology;
-import org.joda.time.chrono.GregorianChronology;
-import org.joda.time.field.PreciseDurationField;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.DateTimeFormatterBuilder;
-import org.joda.time.format.ISODateTimeFormat;
-import org.joda.time.format.PeriodFormatter;
-import org.joda.time.format.PeriodFormatterBuilder;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -29,92 +36,70 @@ import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.usage;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.IOperatorCategory;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
+import msi.gaml.types.GamaDateType;
 import msi.gaml.types.IType;
 
 public class Dates {
 
-	static Pattern model_pattern = Pattern.compile("%[YMDhms]");
-	static Pattern system_pattern = Pattern.compile("%[YMNDEhmsz]");
-	private static PeriodFormatterBuilder format;
-	private static DateTimeFormatterBuilder systemFormat;
-	private static PeriodFormatter dateFormat;
-	private static PeriodFormatter timeFormat;
-	private static DateTimeFormatter systemDateFormat;
-	private static DateTimeFormatter systemTimeFormat;
-	private static DateTimeFormatter systemDateTimeFormat;
-	private static GamaChronology chronology;
+	static Pattern model_pattern = Pattern.compile("%[YMNDEhmsz]");
+
+	public static HashMap<String, DateTimeFormatter> FORMATTERS = new HashMap<String, DateTimeFormatter>() {
+		{
+			put("ISO_LOCAL_DATE", DateTimeFormatter.ISO_LOCAL_DATE);
+			put("ISO_LOCAL_DATE_TIME", DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+			put("ISO_LOCAL_TIME", DateTimeFormatter.ISO_LOCAL_TIME);
+			put("ISO_OFFSET_DATE_TIME", DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+			put("ISO_ZONED_DATE_TIME", DateTimeFormatter.ISO_ZONED_DATE_TIME);
+		}
+	};
 
 	@operator(value = { IKeyword.MINUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
 			IConcept.DATE })
-	@doc(usages = @usage(value = "if both operands are dates, returns the duration in second between from date2 to date1", examples = {
+	@doc(see = "milliseconds_between", usages = @usage(value = "if both operands are dates, returns the duration in seconds between  date2 and date1. To obtain a more precise duration, in milliseconds, use milliseconds_between(date1, date2)", examples = {
 			@example(value = "date1 - date2", equals = "598") }))
 	public static double minusDate(final IScope scope, final GamaDate date1, final GamaDate date2)
 			throws GamaRuntimeException {
-		final Duration duration = new Duration(date2, date1);
-		return duration.getStandardSeconds();
+		final Duration duration = Duration.between(date2, date1);
+		return duration.getSeconds();
 
 	}
 
-	@operator(value = { IKeyword.PLUS, "add_seconds" }, content_type = IType.NONE, category = {
+	@operator(value = { IKeyword.PLUS, "plus_seconds", "add_seconds" }, content_type = IType.NONE, category = {
 			IOperatorCategory.DATE }, concept = { IConcept.DATE })
 	@doc(usages = @usage(value = "if one of the operands is a date and the other a number, returns a date corresponding to the date plus the given number as duration (in seconds)", examples = {
 			@example(value = "date1 + 200") }))
 	public static GamaDate plusDuration(final IScope scope, final GamaDate date1, final int duration)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addSeconds(duration);
-		return nd;
+		return date1.plus(duration, SECONDS);
 	}
 
-	@operator(value = { IKeyword.PLUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {})
-	@doc("Add a duration to a date")
+	@operator(value = { IKeyword.PLUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.TIME, IConcept.DATE })
+	@doc("Add a duration to a date. The duration is expressed to be in seconds (so that adding 0.5, for instance, will add 500ms)")
 	public static GamaDate plusDuration(final IScope scope, final GamaDate date1, final double duration)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addSeconds((int) duration);
-		return nd;
+		return date1.plus(duration * 1000, ChronoUnit.MILLIS);
 	}
 
-	@operator(value = { IKeyword.PLUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {})
-	@doc("Add a duration to a date")
-	public static GamaDate plusDuration(final IScope scope, final int duration, final GamaDate date1)
-			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addSeconds(duration);
-		return nd;
-	}
-
-	@operator(value = { IKeyword.PLUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {})
-	@doc("Add a duration to a date")
-	public static GamaDate plusDuration(final IScope scope, final double duration, final GamaDate date1)
-			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addSeconds((int) duration);
-		return nd;
-	}
-
-	@operator(value = { IKeyword.MINUS, "subtract_seconds" }, content_type = IType.NONE, category = {
+	@operator(value = { IKeyword.MINUS, "minus_seconds", "subtract_seconds" }, content_type = IType.NONE, category = {
 			IOperatorCategory.DATE }, concept = {})
 	@doc(usages = @usage(value = "if one of the operands is a date and the other a number, returns a date corresponding to the date minus the given number as duration (in seconds)", examples = {
 			@example(value = "date1 - 200") }))
 	public static GamaDate minusDuration(final IScope scope, final GamaDate date1, final int duration)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addSeconds(-duration);
-		return nd;
+		return date1.plus(-duration, SECONDS);
 	}
 
-	@operator(value = { IKeyword.MINUS }, content_type = IType.NONE, category = {
-			IOperatorCategory.DATE }, concept = {})
-	@doc("Minus a duration from a date")
+	@operator(value = { IKeyword.MINUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.TIME, IConcept.DATE })
+	@doc("Removes a duration from a date. The duration is expected to be in seconds (so that removing 0.5, for instance, will add 500ms) ")
 	public static GamaDate minusDuration(final IScope scope, final GamaDate date1, final double duration)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addSeconds(-(int) duration);
-		return nd;
+		return date1.plus(-duration * 1000, ChronoUnit.MILLIS);
 	}
 
 	@operator(value = { IKeyword.PLUS }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {})
@@ -124,180 +109,236 @@ public class Dates {
 		return date1.toString() + text;
 	}
 
-	@operator(value = { "add_years" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
-			IConcept.DATE })
-	@doc(value = "Add a given number of year to a date", examples = { @example(value = "date1 add_years 3") })
+	@operator(value = { "plus_years", "add_years" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Add a given number of years to a date", examples = { @example(value = "date1 plus_years 3") })
 	public static GamaDate addYears(final IScope scope, final GamaDate date1, final int nbYears)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addYears(nbYears);
-		return nd;
+
+		return date1.plus(nbYears, YEARS);
+
 	}
 
-	@operator(value = { "add_months" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
-			IConcept.DATE })
-	@doc(value = "Add a given number of months to a date", examples = { @example(value = "date1 add_months 5") })
+	@operator(value = { "plus_months", "add_months" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Add a given number of months to a date", examples = { @example(value = "date1 plus_months 5") })
 	public static GamaDate addMonths(final IScope scope, final GamaDate date1, final int nbMonths)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addMonths(nbMonths);
-		return nd;
+
+		return date1.plus(nbMonths, MONTHS);
+
 	}
 
-	@operator(value = { "add_weeks" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
-			IConcept.DATE })
-	@doc(value = "Add a given number of weeks to a date", examples = { @example(value = "date1 add_weeks 15") })
+	@operator(value = { "plus_weeks", "add_weeks" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Add a given number of weeks to a date", examples = { @example(value = "date1 plus_weeks 15") })
 	public static GamaDate addWeeks(final IScope scope, final GamaDate date1, final int nbWeeks)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addWeeks(nbWeeks);
-		return nd;
+		return date1.plus(nbWeeks, WEEKS);
+
 	}
 
-	@operator(value = { "add_days" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
-			IConcept.DATE })
-	@doc(value = "Add a given number of days to a date", examples = { @example(value = "date1 add_days 20") })
+	@operator(value = { "plus_days", "add_days" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Add a given number of days to a date", examples = { @example(value = "date1 plus_days 20") })
 	public static GamaDate addDays(final IScope scope, final GamaDate date1, final int nbDays)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addDays(nbDays);
-		return nd;
+		return date1.plus(nbDays, DAYS);
+
 	}
 
-	@operator(value = { "add_hours" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
-			IConcept.DATE })
-	@doc(value = "Add a given number of hours to a date", examples = { @example(value = "date1 add_hours 15") })
+	@operator(value = { "plus_hours", "add_hours" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Add a given number of hours to a date", examples = {
+			@example(value = "date1 plus_hours 15 // equivalent to date1 + 15 #h") })
 	public static GamaDate addHours(final IScope scope, final GamaDate date1, final int nbHours)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addHours(nbHours);
-		return nd;
+		return date1.plus(nbHours, HOURS);
+
 	}
 
-	@operator(value = { "add_minutes" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
-			IConcept.DATE })
-	@doc(value = "Add a given number of minutes to a date", examples = { @example(value = "date1 add_minutes 5") })
+	@operator(value = { "plus_minutes", "add_minutes" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Add a given number of minutes to a date", examples = {
+			@example(value = "date1 plus_minutes 5 // equivalent to date1 + 5 #mn") })
 	public static GamaDate addMinutes(final IScope scope, final GamaDate date1, final int nbMinutes)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addMinutes(nbMinutes);
-		return nd;
+		return date1.plus(nbMinutes, MINUTES);
+
 	}
 
-	@operator(value = { "subtract_years" }, content_type = IType.NONE, category = {
+	@operator(value = { "minus_years", "subtract_years" }, content_type = IType.NONE, category = {
 			IOperatorCategory.DATE }, concept = { IConcept.DATE })
-	@doc(value = "Subtract a given number of year from a date", examples = {
-			@example(value = "date1 subtract_years 3") })
+	@doc(value = "Subtract a given number of year from a date", examples = { @example(value = "date1 minus_years 3") })
 	public static GamaDate subtractYears(final IScope scope, final GamaDate date1, final int nbYears)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addYears(-nbYears);
-		return nd;
+		return date1.plus(-nbYears, YEARS);
+
 	}
 
-	@operator(value = { "subtract_months" }, content_type = IType.NONE, category = {
+	@operator(value = { "minus_months", "subtract_months" }, content_type = IType.NONE, category = {
 			IOperatorCategory.DATE }, concept = { IConcept.DATE })
 	@doc(value = "Subtract a given number of months from a date", examples = {
-			@example(value = "date1 subtract_months 5") })
+			@example(value = "date1 minus_months 5") })
 	public static GamaDate subtractMonths(final IScope scope, final GamaDate date1, final int nbMonths)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addMonths(-nbMonths);
-		return nd;
+		return date1.plus(-nbMonths, MONTHS);
+
 	}
 
-	@operator(value = { "subtract_weeks" }, content_type = IType.NONE, category = {
+	@operator(value = { "minus_weeks", "subtract_weeks" }, content_type = IType.NONE, category = {
 			IOperatorCategory.DATE }, concept = { IConcept.DATE })
 	@doc(value = "Subtract a given number of weeks from a date", examples = {
-			@example(value = "date1 subtract_weeks 15") })
+			@example(value = "date1 minus_weeks 15") })
 	public static GamaDate subtractWeeks(final IScope scope, final GamaDate date1, final int nbWeeks)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addWeeks(-nbWeeks);
-		return nd;
+		return date1.plus(-nbWeeks, WEEKS);
+
 	}
 
-	@operator(value = { "subtract_days" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
-			IConcept.DATE })
-	@doc(value = "Subtract a given number of days from a date", examples = {
-			@example(value = "date1 subtract_days 20") })
+	@operator(value = { "minus_days", "subtract_days" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Subtract a given number of days from a date", examples = { @example(value = "date1 minus_days 20") })
 	public static GamaDate subtractDays(final IScope scope, final GamaDate date1, final int nbDays)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addDays(-nbDays);
-		return nd;
+		return date1.plus(-nbDays, DAYS);
+
 	}
 
-	@operator(value = { "subtract_hours" }, content_type = IType.NONE, category = {
+	@operator(value = { "minus_hours", "subtract_hours" }, content_type = IType.NONE, category = {
 			IOperatorCategory.DATE }, concept = { IConcept.DATE })
-	@doc(value = "Add a given number of hours from a date", examples = { @example(value = "date1 subtract_hours 15") })
+	@doc(value = "Remove a given number of hours from a date", examples = {
+			@example(value = "date1 minus_hours 15 // equivalent to date1 - 15 #h") })
 	public static GamaDate subtractHours(final IScope scope, final GamaDate date1, final int nbHours)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addHours(-nbHours);
-		return nd;
+		return date1.plus(-nbHours, HOURS);
+
 	}
 
-	@operator(value = { "subtract_minutes" }, content_type = IType.NONE, category = {
+	@operator(value = { "minus_ms", "subtract_ms" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Remove a given number of milliseconds from a date", examples = {
+			@example(value = "date1 minus_ms 15 // equivalent to date1 - 15 #ms") })
+	public static GamaDate subtractMs(final IScope scope, final GamaDate date1, final int nbMs)
+			throws GamaRuntimeException {
+		return date1.plus(-nbMs, ChronoUnit.MILLIS);
+	}
+
+	@operator(value = { "plus_ms", "add_ms" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Add a given number of milliseconds to a date", examples = {
+			@example(value = "date1 plus_ms 15 // equivalent to date1 + 15 #ms") })
+	public static GamaDate addMs(final IScope scope, final GamaDate date1, final int nbMs) throws GamaRuntimeException {
+		return date1.plus(nbMs, ChronoUnit.MILLIS);
+	}
+
+	@operator(value = { "minus_minutes", "subtract_minutes" }, content_type = IType.NONE, category = {
 			IOperatorCategory.DATE }, concept = { IConcept.DATE })
 	@doc(value = "Subtract a given number of minutes from a date", examples = {
-			@example(value = "date1 subtract_minutes 5") })
+			@example(value = "date1 minus_minutes 5 // equivalent to date1 - 5#mn") })
 	public static GamaDate subtractMinutes(final IScope scope, final GamaDate date1, final int nbMinutes)
 			throws GamaRuntimeException {
-		final GamaDate nd = new GamaDate(date1);
-		nd.addMinutes(-nbMinutes);
-		return nd;
-	}
-
-	private static final class GamaChronology extends AssembledChronology {
-
-		private GamaChronology(final Chronology base) {
-			super(base, null);
-		}
-
-		@Override
-		protected void assemble(final AssembledChronology.Fields fields) {
-			fields.months = new PreciseDurationField(DurationFieldType.months(), (long) IUnits.month * 1000);
-			fields.years = new PreciseDurationField(DurationFieldType.years(), (long) IUnits.year * 1000);
-		}
-
-		@Override
-		public Chronology withUTC() {
-			return this;
-		}
-
-		@Override
-		public Chronology withZone(final DateTimeZone zone) {
-			return this;
-		}
-
-		@Override
-		public String toString() {
-			return "GAMA Chronology : 1 yr = 12 months ; 1 month = 30 days ";
-		}
+		return date1.plus(-nbMinutes, MINUTES);
 
 	}
 
-	@operator(value = "as_date", can_be_const = true, category = { IOperatorCategory.STRING,
-			IOperatorCategory.TIME }, concept = { IConcept.STRING, IConcept.DATE })
-	@doc(value = "converts a number of seconds in the model (for instance, the 'time' variable) into a string that represents the period elapsed since the beginning of the simulation using year, month, day, hour, minutes and seconds following a given pattern (right-hand operand). GAMA uses a special calendar for internal model times, where months have 30 days and years 12 months. ", masterDoc = true, usages = @usage(value = "Pattern should include : \"%Y %M %D %h %m %s\" for outputting years, months, days, hours, minutes, seconds", examples = @example(value = "22324234 as_date \"%M m %D d %h h %m m %s seconds\"", equals = "\"8 m 18 d 9 h 10 m 34 seconds\"")), see = {
-			"as_time" })
-	public static String asDate(final double time, final String pattern) {
-		// Pattern should include : "%Y %M %D %h %m %s" for outputting years,
-		// months, days, hours,
-		// minutes, seconds
-		if (pattern == null || pattern.isEmpty()) {
-			return asDate(time) + " " + asTime(time);
-		}
-		fillCustomFormat(pattern);
-		final PeriodFormatter pf = getCustomFormat().toFormatter();
-		final PeriodType pt = PeriodType.yearMonthDayTime();
-		return pf.print(new Period(new Duration((long) time * 1000), getChronology()).normalizedStandard(pt));
-
+	@operator(value = { "years_between" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.DATE })
+	@doc(value = "Provide the exact number of years between two dates. This number can be positive or negative (if the second operand is smaller than the first one)", examples = {
+			@example(value = "years_between(d1, d2) -: 10 ") })
+	public static int years_between(final IScope scope, final GamaDate date1, final GamaDate date2)
+			throws GamaRuntimeException {
+		return (int) ChronoUnit.YEARS.between(date1, date2);
 	}
 
-	private static void fillCustomFormat(final String pattern) {
-		getCustomFormat().clear();
+	@operator(value = { "milliseconds_between" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Provide the exact number of milliseconds between two dates. This number can be positive or negative (if the second operand is smaller than the first one)", examples = {
+			@example(value = "milliseconds_between(d1, d2) -: 10 ") })
+	public static double milliseconds_between(final IScope scope, final GamaDate date1, final GamaDate date2)
+			throws GamaRuntimeException {
+		return ChronoUnit.MILLIS.between(date1, date2);
+	}
+
+	@operator(value = { "months_between" }, content_type = IType.NONE, category = {
+			IOperatorCategory.DATE }, concept = { IConcept.DATE })
+	@doc(value = "Provide the exact number of months between two dates. This number can be positive or negative (if the second operand is smaller than the first one)", examples = {
+			@example(value = "months_between(d1, d2) -: 10 ") })
+	public static int months_between(final IScope scope, final GamaDate date1, final GamaDate date2)
+			throws GamaRuntimeException {
+		return (int) ChronoUnit.MONTHS.between(date1, date2);
+	}
+
+	@operator(value = { ">" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.DATE })
+	@doc(value = "Returns true if the first date is strictly greater than the second one", examples = {
+			@example(value = "#now > #now minus_hours 1 :- true") })
+	public static boolean greater_than(final IScope scope, final GamaDate date1, final GamaDate date2)
+			throws GamaRuntimeException {
+		return date1.isGreaterThan(date2, true);
+	}
+
+	@operator(value = { ">=" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.DATE })
+	@doc(value = "Returns true if the first date is greater than or equal to the second one", examples = {
+			@example(value = "#now >= #now minus_hours 1 :- true") })
+	public static boolean greater_than_or_equal(final IScope scope, final GamaDate date1, final GamaDate date2)
+			throws GamaRuntimeException {
+		return date1.isGreaterThan(date2, false);
+	}
+
+	@operator(value = { "<" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.DATE })
+	@doc(value = "Returns true if the first date is strictly smaller than the second one", examples = {
+			@example(value = "#now < #now minus_hours 1 :- false") })
+	public static boolean smaller_than(final IScope scope, final GamaDate date1, final GamaDate date2)
+			throws GamaRuntimeException {
+		return date1.isSmallerThan(date2, true);
+	}
+
+	@operator(value = { "<=" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.DATE })
+	@doc(value = "Returns true if the first date is smaller than or equal to the second one", examples = {
+			@example(value = "#now <= #now minus_hours 1 :- false") })
+	public static boolean smaller_than_or_equal(final IScope scope, final GamaDate date1, final GamaDate date2)
+			throws GamaRuntimeException {
+		return date1.isSmallerThan(date2, true);
+	}
+
+	@operator(value = { "=" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.DATE })
+	@doc(value = "Returns true if the two dates are equal (i.e.they represent the same instant in time)", examples = {
+			@example(value = "#now = #now minus_hours 1 :- false") })
+	public static boolean equal(final IScope scope, final GamaDate date1, final GamaDate date2)
+			throws GamaRuntimeException {
+		return date1.equals(date2);
+	}
+
+	@operator(value = { "!=" }, content_type = IType.NONE, category = { IOperatorCategory.DATE }, concept = {
+			IConcept.DATE })
+	@doc(value = "Returns true if the two dates are different  (i.e.they do not represent the same instant in time)", examples = {
+			@example(value = "#now != #now minus_hours 1 :- true") })
+	public static boolean different(final IScope scope, final GamaDate date1, final GamaDate date2)
+			throws GamaRuntimeException {
+		return !date1.equals(date2);
+	}
+
+	public static DateTimeFormatter getFormatter(final String pattern) {
+		final DateTimeFormatter formatter = FORMATTERS.get(pattern);
+		if (formatter != null)
+			return formatter;
+		if (!pattern.contains("%")) {
+			try {
+				final DateTimeFormatter result = DateTimeFormatter.ofPattern(pattern);
+				FORMATTERS.put(pattern, result);
+				return result;
+			} catch (final IllegalArgumentException e) {
+				GAMA.reportAndThrowIfNeeded(GAMA.getRuntimeScope(),
+						GamaRuntimeException.create(e, GAMA.getRuntimeScope()), false);
+				return DateTimeFormatter.ISO_DATE_TIME;
+			}
+		}
+		final DateTimeFormatterBuilder df = new DateTimeFormatterBuilder();
 		final List<String> dateList = new ArrayList<>();
 		final Matcher m = model_pattern.matcher(pattern);
 		int i = 0;
@@ -318,226 +359,128 @@ public class Dates {
 				final Character c = s.charAt(1);
 				switch (c) {
 				case 'Y':
-					getCustomFormat().appendYears();
+					df.appendValue(YEAR, 4);
 					break;
 				case 'M':
-					getCustomFormat().appendMonths();
-					break;
-				case 'D':
-					getCustomFormat().appendDays();
-					break;
-				case 'h':
-					getCustomFormat().appendHours();
-					break;
-				case 'm':
-					getCustomFormat().appendMinutes();
-					break;
-				case 's':
-					getCustomFormat().appendSeconds();
-					break;
-				default:
-					getCustomFormat().appendLiteral(s);
-				}
-			} else {
-				getCustomFormat().appendLiteral(s);
-			}
-		}
-
-	}
-
-	public static String asDate(final GamaDate d1, final GamaDate d2, final String pattern) {
-		final Period p = new Period(d1, d2);
-		if (pattern == null) {
-			final String date = getDateFormat().print(p);
-			final PeriodType pt = PeriodType.yearMonthDayTime();
-			final String time = getTimeFormat().print(p.normalizedStandard(pt));
-			return date + " " + time;
-		}
-		fillCustomFormat(pattern);
-		final PeriodFormatter pf = getCustomFormat().toFormatter();
-		final PeriodType pt = PeriodType.yearMonthDayTime();
-		return pf.print(p.normalizedStandard(pt));
-	}
-
-	@operator(value = "as_system_date", can_be_const = true, category = { IOperatorCategory.STRING,
-			IOperatorCategory.TIME }, concept = { IConcept.STRING, IConcept.TIME, IConcept.DATE })
-	@doc(value = "converts a number of milliseconds in the system (for instance, the 'machine_time' variable) into a string that represents the current date represented by these milliseconds  using year, month, day, hour, minutes, seconds and time-zone offset following a given pattern (right-hand operand) ", masterDoc = true, usages = @usage(value = "Pattern should include : \"%Y %M %N %D %E %h %m %s %z\" for outputting years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will return the complete date as defined by the ISO 8601 standard yyyy-MM-ddThh:mm:ss w/o the time-zone offset. Names are defined using the locale of the system", examples = @example(value = "2147483647 as_date \" %D %Y %M / %h:%m:%s %z\"", equals = "\"06 2015 05 / 23:58:57 +07\"")), see = {
-			"as_system_time" })
-	public static String asSystemDate(final double time, final String pattern) {
-		// Pattern should include : "%Y %M %D %h %m %s" for outputting years,
-		// months, days, hours,
-		// minutes, seconds
-		if (pattern == null || pattern.isEmpty()) {
-			return asSystemDate(time) + "T" + asSystemTime(time);
-		}
-		getSystemFormat().clear();
-		final List<String> dateList = new ArrayList<>();
-		final Matcher m = system_pattern.matcher(pattern);
-		int i = 0;
-		while (m.find()) {
-			final String tmp = m.group();
-			if (i != m.start()) {
-				dateList.add(pattern.substring(i, m.start()));
-			}
-			dateList.add(tmp);
-			i = m.end();
-		}
-		if (i != pattern.length()) {
-			dateList.add(pattern.substring(i));
-		}
-		for (i = 0; i < dateList.size(); i++) {
-			final String s = dateList.get(i);
-			if (s.charAt(0) == '%' && s.length() == 2) {
-				final Character c = s.charAt(1);
-				switch (c) {
-				case 'Y':
-					getSystemFormat().appendYear(4, 4);
-					break;
-				case 'M':
-					getSystemFormat().appendMonthOfYear(2);
+					df.appendValue(MONTH_OF_YEAR, 2);
 					break;
 				case 'N':
-					getSystemFormat().appendMonthOfYearText();
+					df.appendText(MONTH_OF_YEAR);
 					break;
 				case 'D':
-					getSystemFormat().appendDayOfMonth(2);
+					df.appendValue(DAY_OF_MONTH, 2);
 					break;
 				case 'E':
-					getSystemFormat().appendDayOfWeekText();
+					df.appendText(DAY_OF_WEEK);
 					break;
 				case 'h':
-					getSystemFormat().appendHourOfDay(2);
+					df.appendValue(HOUR_OF_DAY, 2);
 					break;
 				case 'm':
-					getSystemFormat().appendMinuteOfHour(2);
+					df.appendValue(MINUTE_OF_HOUR, 2);
 					break;
 				case 's':
-					getSystemFormat().appendSecondOfMinute(2);
+					df.appendValue(SECOND_OF_MINUTE, 2);
 					break;
 				case 'z':
-					getSystemFormat().appendTimeZoneOffset(null, false, 1, 2);
+					df.appendZoneOrOffsetId();
 					break;
 				default:
-					getSystemFormat().appendLiteral(s);
+					df.appendLiteral(s);
 				}
 			} else {
-				getSystemFormat().appendLiteral(s);
+				df.appendLiteral(s);
 			}
 		}
-
-		final DateTimeFormatter pf = getSystemFormat().toFormatter();
-		return pf.print((long) time);
-
+		final DateTimeFormatter result = df.toFormatter();
+		FORMATTERS.put(pattern, result);
+		return result;
 	}
 
-	@operator(value = "as_date", can_be_const = true, category = { IOperatorCategory.STRING,
+	public static String asDuration(final Temporal d1, final Temporal d2) {
+		final Duration p = Duration.between(d1, d2);
+		return DurationFormatter.format(p);
+	}
+
+	@operator(value = "date", can_be_const = true, category = { IOperatorCategory.STRING,
 			IOperatorCategory.TIME }, concept = { IConcept.STRING, IConcept.CAST, IConcept.TIME })
-	@doc(value = "converts a number of seconds in the model (for example, the value of the 'time' variable) into a string that represents the period elapsed since the beginning of the simulation with years, months and days following a standard pattern. GAMA uses a special calendar for internal model times, where months have 30 days and years 12 months. ", usages = @usage(value = "used as an unary operator, it uses a defined pattern with years, months, days", examples = @example(value = "as_date(22324234)", equals = "\"8 months, 18 days\"")))
-	public static String asDate(final double time) {
-		final PeriodType pt = PeriodType.yearMonthDayTime();
-		return getDateFormat()
-				.print(new Period(new Duration((long) time * 1000), getChronology()).normalizedStandard(pt));
+	@doc(value = "converts a string to a date following a custom pattern. The pattern can use \"%Y %M %N %D %E %h %m %s %z\" for outputting years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will parse the date using one of the ISO date & time formats (similar to date('...') in that case). The pattern can also follow the pattern definition found here, which gives much more control over what will be parsed: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns ", usages = @usage(value = "", examples = @example(value = "date(\"1999-12-30\", 'yyyy-MM-dd')")))
+	public static GamaDate date(final IScope scope, final String value, final String pattern) {
+		return new GamaDate(scope, value, pattern);
 	}
 
-	public static String asDate(final GamaDate date) {
-		return getSystemDateTimeFormat().print(date);
+	@operator(value = "string", can_be_const = true, category = { IOperatorCategory.STRING,
+			IOperatorCategory.TIME }, concept = { IConcept.STRING, IConcept.CAST, IConcept.TIME })
+	@doc(value = "converts a date to astring following a custom pattern. The pattern can use \"%Y %M %N %D %E %h %m %s %z\" for outputting years, months, name of month, days, name of days, hours, minutes, seconds and the time-zone. A null or empty pattern will return the complete date as defined by the ISO date & time format. The pattern can also follow the pattern definition found here, which gives much more control over the format of the date: https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html#patterns ", usages = @usage(value = "", examples = @example(value = "format(#now, 'yyyy-MM-dd')")))
+	public static String format(final GamaDate time, final String pattern) {
+		return time.toString(pattern);
 	}
 
-	@operator(value = "as_time", can_be_const = true, category = { IOperatorCategory.STRING,
-			IOperatorCategory.TIME }, concept = { IConcept.STRING, IConcept.TIME })
-	@doc(value = "converts  a number of seconds in the model  (for example, the value of the 'time' variable)  into a string that represents the current number of hours, minutes and seconds of the period elapsed since the beginning of the simulation. As GAMA has no conception of time zones, the time is expressed as if the model was at GMT+00", comment = "as_time operator is a particular case (using a particular pattern) of the as_date operator.", examples = @example(value = "as_time(22324234)", equals = "\"09:10:34\""), see = "as_date")
-	public static String asTime(final double time) {
-		final PeriodType pt = PeriodType.yearMonthDayTime();
-		return getTimeFormat()
-				.print(new Period(new Duration((long) time * 1000), getChronology()).normalizedStandard(pt));
-	}
+	private static class DurationFormatter implements TemporalAccessor {
+		private static final DateTimeFormatter YMDHMS = DateTimeFormatter.ofPattern("y'y' M'm' d'd' HH:mm:ss");
+		private static final DateTimeFormatter MDHMS = DateTimeFormatter.ofPattern("M' months' d 'days' HH:mm:ss");
+		private static final DateTimeFormatter M1DHMS = DateTimeFormatter.ofPattern("M' month' d 'days' HH:mm:ss");
+		private static final DateTimeFormatter M1D1HMS = DateTimeFormatter.ofPattern("M' month' d 'day' HH:mm:ss");
+		private static final DateTimeFormatter DHMS = DateTimeFormatter.ofPattern("d 'days' HH:mm:ss");
+		private static final DateTimeFormatter D1HMS = DateTimeFormatter.ofPattern("d 'day' HH:mm:ss");
+		private static final DateTimeFormatter HMS = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-	@operator(value = "as_system_time", can_be_const = true, category = { IOperatorCategory.STRING,
-			IOperatorCategory.TIME }, concept = { IConcept.STRING, IConcept.TIME })
-	@doc(value = "converts  a value of milliseconds in the system  (for example, the value of the 'machine_time' variable)  into a string representing the current hours, minutes and seconds in the current time zone of the machine and the current Locale. This representation follows the ISO 8601 standard hh:mm:ss", comment = "as_system_time operator is a particular case (using a particular pattern) of the as_system_date operator.", examples = @example(value = "as_system_time(2147483647)", equals = "\"23:58:57\""), see = "as_system_date")
-	public static String asSystemTime(final double time) {
-		return getSystemTimeFormat().print((long) time);
-	}
-
-	@operator(value = "as_system_date", can_be_const = true, category = { IOperatorCategory.STRING,
-			IOperatorCategory.TIME }, concept = { IConcept.STRING, IConcept.DATE, IConcept.TIME })
-	@doc(value = "converts  a value of milliseconds in the system (for example, the value of the 'machine_time' variable)  into a string representing the current year, month and day in the current time zone of the machine and the current Locale. This representation follows the ISO 8601 standard yyyy-mm-dd", comment = "as_system_date operator is a particular case (using a particular pattern) of the as_system_date operator.", examples = @example(value = "as_system_date(2147483647)", equals = "\"2015-05-06\""), see = "as_system_date")
-	public static String asSystemDate(final double time) {
-		return getSystemDateFormat().print((long) time);
-	}
-
-	static PeriodFormatterBuilder getCustomFormat() {
-		if (format == null) {
-			format = new PeriodFormatterBuilder();
+		static String format(final Duration duration) {
+			return new DurationFormatter(duration).toString();
 		}
-		return format;
-	}
 
-	static DateTimeFormatterBuilder getSystemFormat() {
-		if (systemFormat == null) {
-			systemFormat = new DateTimeFormatterBuilder();
+		private Temporal temporal;
+		private final Duration duration;
+
+		private DurationFormatter(final Duration duration) {
+			this(duration, null);
 		}
-		return systemFormat;
-	}
 
-	static PeriodFormatter getTimeFormat() {
-		if (timeFormat == null) {
-			timeFormat = new PeriodFormatterBuilder().printZeroAlways().minimumPrintedDigits(2).appendHours()
-					.appendLiteral(":").appendMinutes().appendLiteral(":").appendSeconds().toFormatter();
+		private DurationFormatter(final Duration duration, final DateTimeFormatter df) {
+			this.duration = duration;
+			this.temporal = duration.addTo(GamaDateType.DEFAULT_STARTING_DATE);
+			if (duration.toDays() == 0l)
+				temporal = LocalTime.from(temporal);
 		}
-		return timeFormat;
-	}
 
-	static DateTimeFormatter getSystemTimeFormat() {
-		if (systemTimeFormat == null) {
-			systemTimeFormat = DateTimeFormat.forPattern("HH:mm:ss");
+		private DateTimeFormatter getFormatter() {
+			if (isSupported(YEAR))
+				return YMDHMS;
+			if (isSupported(MONTH_OF_YEAR)) {
+				if (getLong(MONTH_OF_YEAR) < 2) {
+					if (getLong(DAY_OF_MONTH) < 2) {
+						return M1D1HMS;
+					} else
+						return M1DHMS;
+				}
+				return MDHMS;
+			}
+			if (isSupported(DAY_OF_MONTH))
+				if (getLong(DAY_OF_MONTH) < 2)
+					return D1HMS;
+				else
+					return DHMS;
+			return HMS;
 		}
-		return systemTimeFormat;
-	}
 
-	static DateTimeFormatter getSystemDateFormat() {
-		if (systemDateFormat == null) {
-			systemDateFormat = ISODateTimeFormat.yearMonthDay();
+		@Override
+		public boolean isSupported(final TemporalField field) {
+			if (!temporal.isSupported(field))
+				return false;
+			final long value = temporal.getLong(field) - GamaDateType.DEFAULT_STARTING_DATE.getLong(field);
+			return value != 0l;
 		}
-		return systemDateFormat;
-	}
 
-	static public DateTimeFormatter getSystemDateTimeFormat() {
-		if (systemDateTimeFormat == null) {
-			systemDateTimeFormat = ISODateTimeFormat.dateTimeNoMillis();
+		@Override
+		public long getLong(final TemporalField field) {
+			return temporal.getLong(field) - GamaDateType.DEFAULT_STARTING_DATE.getLong(field);
 		}
-		return systemDateTimeFormat;
-	}
 
-	static PeriodFormatter getDateFormat() {
-		if (dateFormat == null) {
-			dateFormat = new PeriodFormatterBuilder().appendYears().appendSuffix(" year", " years")
-					.appendSeparator(", ").appendMonths().appendSuffix(" month", " months").appendSeparator(", ")
-					.appendWeeks().appendSuffix(" week", " weeks").appendSeparator(", ").appendDays()
-					.appendSuffix(" day", " days").appendSeparator(" ").toFormatter();
+		@Override
+		public String toString() {
+			return getFormatter().format(this);
 		}
-		return dateFormat;
-	}
 
-	public static GamaChronology getChronology() {
-		if (chronology == null) {
-			chronology = new GamaChronology(GregorianChronology.getInstanceUTC());
-		}
-		return chronology;
-	}
-
-	public static void initializeAllFormats() {
-		LocalDateTime.now();
-		getCustomFormat();
-		getDateFormat();
-		getSystemDateFormat();
-		getSystemDateTimeFormat();
-		getSystemFormat();
-		getSystemTimeFormat();
-		getTimeFormat();
-		getChronology();
-		asDate(0);
-		asTime(0);
 	}
 
 }

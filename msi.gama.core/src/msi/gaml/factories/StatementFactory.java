@@ -43,20 +43,20 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected StatementDescription buildDescription(final String keyword, final Facets facets, final EObject element,
-			final ChildrenProvider children, final IDescription enclosing, final SymbolProto proto) {
+			final Iterable<IDescription> children, final IDescription enclosing, final SymbolProto proto) {
 		if (proto.isPrimitive()) {
 			return new PrimitiveDescription(enclosing, element, children, facets, null);
 		}
 		if (keyword.equals(ACTION))
 			return new ActionDescription(keyword, enclosing, children, element, facets);
-		if (proto.hasSequence() && children.hasChildren()) {
+		if (proto.hasSequence() && children != null) {
 			if (proto.isRemoteContext())
 				return new StatementRemoteWithChildrenDescription(keyword, enclosing, children, proto.hasArgs(),
 						element, facets, null);
 			return new StatementWithChildrenDescription(keyword, enclosing, children, proto.hasArgs(), element, facets,
 					null);
 		}
-		return new StatementDescription(keyword, enclosing, children, proto.hasArgs(), element, facets, null);
+		return new StatementDescription(keyword, enclosing, proto.hasArgs(), /* children, */ element, facets, null);
 	}
 
 }

@@ -51,7 +51,7 @@ import msi.gaml.types.Types;
 public class AmorphousTopology implements ITopology {
 
 	IShape expandableEnvironment = GamaGeometryType.createPoint(new GamaPoint(0, 0));
-	ISpatialIndex index = new GamaQuadTree(expandableEnvironment.getEnvelope());
+	ISpatialIndex index = GamaQuadTree.create(expandableEnvironment.getEnvelope());
 
 	/**
 	 * @see msi.gama.interfaces.IValue#type()

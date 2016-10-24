@@ -32,7 +32,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 
 	// Already cached in IExpressionFactory.UNIT_EXPRS
 	public static UnitConstantExpression create(final Object val, final IType<?> t, final String unit, final String doc,
-			final String[] names) {
+			final boolean isTime, final String[] names) {
 
 		switch (unit) {
 		case "zoom":
@@ -60,12 +60,14 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 		case "user_location":
 			return new UserLocationUnitExpression(doc);
 		}
-
+		if (isTime)
+			return new TimeUnitConstantExpression(val, t, unit, doc, names);
 		return new UnitConstantExpression(val, t, unit, doc, names);
 	}
 
-	final String documentation;
+	String documentation;
 	final List<String> alternateNames;
+	private boolean isDeprecated;
 
 	public UnitConstantExpression(final Object val, final IType<?> t, final String name, final String doc,
 			final String[] names) {
@@ -154,6 +156,15 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	@Override
 	public IType getDenotedType(final IDescription context) {
 		return Types.NO_TYPE;
+	}
+
+	public void setDeprecated(final String deprecated) {
+		isDeprecated = true;
+		documentation = "Deprecated: " + deprecated + ". " + documentation;
+	}
+
+	public boolean isDeprecated() {
+		return isDeprecated;
 	}
 
 }

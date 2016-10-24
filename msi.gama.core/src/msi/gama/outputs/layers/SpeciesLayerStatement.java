@@ -33,6 +33,7 @@ import msi.gama.util.GamaListFactory;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.descriptions.SymbolDescription;
 import msi.gaml.descriptions.SymbolSerializer;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
@@ -90,7 +91,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	public static class SpeciesLayerSerializer extends SymbolSerializer<StatementDescription> {
 
 		@Override
-		protected void serializeKeyword(final StatementDescription desc, final StringBuilder sb,
+		protected void serializeKeyword(final SymbolDescription desc, final StringBuilder sb,
 				final boolean includingBuiltIn) {
 			sb.append("species ");
 		}
@@ -130,7 +131,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		if (super._init(scope)) {
 			for (final SpeciesLayerStatement microLayer : microSpeciesLayers) {
 				microLayer.setHostSpecies(species);
-				if (!scope.init(microLayer)) {
+				if (!scope.init(microLayer).passed()) {
 					return false;
 				}
 			}

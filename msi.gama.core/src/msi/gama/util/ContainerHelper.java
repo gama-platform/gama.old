@@ -8,7 +8,12 @@ import java.util.ArrayDeque;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.function.BiConsumer;
+import java.util.function.BinaryOperator;
+import java.util.function.Supplier;
+import java.util.stream.Collector;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -17,10 +22,13 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.AbstractIterator;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Ordering;
 
 import msi.gama.runtime.IScope;
+import msi.gama.util.ContainerHelper.GamlGuavaHelper.GamlFunction;
+import msi.gama.util.ContainerHelper.GamlGuavaHelper.GamlPredicate;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
@@ -32,7 +40,7 @@ import msi.gaml.operators.Cast;
  *
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
-public class Guava {
+public class ContainerHelper {
 
 	public final static Function<Object, Iterable> transformToIterables = input -> {
 		if (input instanceof Iterable) {
@@ -43,14 +51,14 @@ public class Guava {
 
 	public final static Predicate<Object> NOT_NULL = each -> each != null;
 
-	public static class InContainer implements Predicate {
+	public static class InContainer implements Predicate, java.util.function.Predicate {
 
 		final IContainer container;
 		final IScope scope;
 
 		public InContainer(final IScope s, final IContainer c) {
 			scope = s;
-			container = GAML.nullCheck(s, c);
+			container = GAML.notNull(s, c);
 		}
 
 		/**
@@ -61,6 +69,11 @@ public class Guava {
 		@Override
 		public boolean apply(final Object input) {
 			return container.contains(scope, input);
+		}
+
+		@Override
+		public boolean test(final Object t) {
+			return apply(t);
 		}
 
 	}
@@ -142,7 +155,8 @@ public class Guava {
 			}
 		}
 
-		public static class GamlFunction<T> extends GamlGuavaHelper<T> implements Function<Object, T> {
+		public static class GamlFunction<T> extends GamlGuavaHelper<T>
+				implements Function<Object, T>, java.util.function.Function<Object, T> {
 
 			GamlFunction(final IScope scope, final IExpression filter) {
 				super(scope, filter);
@@ -171,7 +185,7 @@ public class Guava {
 
 		}
 
-		static class GamlPredicate extends GamlGuavaHelper implements Predicate {
+		static class GamlPredicate extends GamlGuavaHelper implements Predicate, java.util.function.Predicate {
 
 			GamlPredicate(final IScope scope, final IExpression filter) {
 				super(scope, filter);
@@ -185,6 +199,11 @@ public class Guava {
 			public boolean apply(final Object each) {
 				scope.setEach(each);
 				return Cast.asBool(scope, filter.value(scope));
+			}
+
+			@Override
+			public boolean test(final Object each) {
+				return apply(each);
 			}
 		}
 	}
@@ -222,14 +241,14 @@ public class Guava {
 	/**
 	 *
 	 */
-	public Guava() {
+	public ContainerHelper() {
 	}
 
-	public static <T> Function function(final IScope scope, final IExpression filter) {
+	public static <T> GamlFunction function(final IScope scope, final IExpression filter) {
 		return GamlGuavaHelper.<T> getFunction(scope, filter);
 	}
 
-	public static Predicate withPredicate(final IScope scope, final IExpression filter) {
+	public static GamlPredicate withPredicate(final IScope scope, final IExpression filter) {
 		return GamlGuavaHelper.getPredicate(scope, filter);
 	}
 
@@ -237,8 +256,49 @@ public class Guava {
 		return GamlGuavaHelper.getOrdering(f);
 	}
 
-	public static Predicate inContainer(final IScope scope, final IContainer l) {
+	public static InContainer inContainer(final IScope scope, final IContainer l) {
 		return new InContainer(scope, l);
+	}
+
+	// (Supplier<List<T>>) ArrayList::new, List::add, (left, right) -> {
+	// left.addAll(right);
+	// return left;
+	// }, Collector.Characteristics.IDENTITY_FINISH
+
+	private static Set<Collector.Characteristics> CH = ImmutableSet.<Collector.Characteristics> of(
+			Collector.Characteristics.IDENTITY_FINISH);
+
+	public static <T> Collector<T, IList<T>, IList<T>> toGamaList() {
+		return new Collector<T, IList<T>, IList<T>>() {
+
+			@Override
+			public Supplier<IList<T>> supplier() {
+				return GamaListFactory::create;
+			}
+
+			@Override
+			public BiConsumer<IList<T>, T> accumulator() {
+				return (left, right) -> left.add(right);
+			}
+
+			@Override
+			public BinaryOperator<IList<T>> combiner() {
+				return (left, right) -> {
+					left.addAll(right);
+					return left;
+				};
+			}
+
+			@Override
+			public java.util.function.Function<IList<T>, IList<T>> finisher() {
+				return (left) -> left;
+			}
+
+			@Override
+			public Set<java.util.stream.Collector.Characteristics> characteristics() {
+				return CH;
+			}
+		};
 	}
 
 }

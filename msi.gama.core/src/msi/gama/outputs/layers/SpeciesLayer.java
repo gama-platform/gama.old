@@ -22,6 +22,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.IScope.ExecutionResult;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AspectStatement;
@@ -78,18 +79,18 @@ public class SpeciesLayer extends AgentLayer {
 			if (a == null || a.dead()) {
 				continue;
 			}
-			final Object[] result = new Object[1];
+			ExecutionResult result;
 			if (a == scope.getGui().getHighlightedAgent()) {
 				IExecutable hAspect = population.getSpecies().getAspect("highlighted");
 				if (hAspect == null) {
 					hAspect = aspect;
 					// hAspect = AspectStatement.HIGHLIGHTED_ASPECT;
 				}
-				scope.execute(hAspect, a, null, result);
+				result = scope.execute(hAspect, a, null);
 			} else {
-				scope.execute(aspect, a, null, result);
+				result = scope.execute(aspect, a, null);
 			}
-			final Rectangle2D r = (Rectangle2D) result[0];
+			final Rectangle2D r = (Rectangle2D) result.getValue();
 			if (r != null) {
 				shapes.put(a, r);
 			}

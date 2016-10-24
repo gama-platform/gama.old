@@ -37,7 +37,6 @@ import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
@@ -59,9 +58,10 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected TypeDescription parent;
 
 	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
-			final TypeDescription parent, final ChildrenProvider cp, final EObject source, final Facets facets,
-			final String plugin) {
-		super(keyword, macroDesc, cp, source, facets);
+			final TypeDescription parent, final Iterable<? extends IDescription> cp, final EObject source,
+			final Facets facets, final String plugin) {
+		super(keyword, macroDesc, source, /* cp, */ facets);
+		addChildren(cp);
 		// parent can be null
 		if (parent != null)
 			setParent(parent);
@@ -133,7 +133,9 @@ public abstract class TypeDescription extends SymbolDescription {
 	protected void addAttributeNoCheck(final VariableDescription vd) {
 		if (attributes == null)
 			attributes = new TOrderedHashMap();
+		// synchronized (this) {
 		attributes.put(vd.getName(), vd);
+		// }
 	}
 
 	public boolean assertAttributesAreCompatible(final VariableDescription existingVar,
@@ -326,6 +328,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	// }
 
 	public Collection<String> getOrderedAttributeNames(final boolean forInit) {
+		// TODO Do it once for built-in species
 		final Collection<String> accumulator = parent != null && parent != this
 				? parent.getOrderedAttributeNames(forInit) : new TLinkedHashSet<String>();
 		if (attributes == null)
@@ -336,7 +339,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 
 		final VariableDescription shape = attributes.get(SHAPE);
-		final Set<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
+		final Collection<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
 				: shape.getDependencies(forInit);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
@@ -348,8 +351,8 @@ public abstract class TypeDescription extends SymbolDescription {
 			if (shape != null && var.isSyntheticSpeciesContainer() && !shapeDependencies.contains(var)) {
 				dependencies.addEdge(shape, var);
 			}
-
-			for (final VariableDescription newVar : var.getDependencies(forInit)) {
+			final Collection<VariableDescription> varDependencies = var.getDependencies(forInit);
+			for (final VariableDescription newVar : varDependencies) {
 				if (attributes.containsValue(newVar)) {
 					dependencies.addVertex(newVar);
 					dependencies.addEdge(newVar, var);
@@ -368,7 +371,6 @@ public abstract class TypeDescription extends SymbolDescription {
 				accumulator.remove(name);
 			accumulator.add(name);
 		}
-
 		return accumulator;
 
 	}
@@ -383,7 +385,7 @@ public abstract class TypeDescription extends SymbolDescription {
 			return true;
 
 		final VariableDescription shape = attributes.get(SHAPE);
-		final Set<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
+		final Collection<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
 				: shape.getDependencies(true);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
@@ -580,10 +582,13 @@ public abstract class TypeDescription extends SymbolDescription {
 			myAction.error("Return type (" + myType + ") differs from that (" + parentType
 					+ ") of the implementation of  " + actionName + " in " + parentName);
 		}
-		if (!new HashSet(parentAction.getArgNames()).equals(new HashSet(myAction.getArgNames()))) {
-			final String error = "The list of arguments " + myAction.getArgNames()
-					+ " differs from that of the implementation of " + actionName + " in " + parentName + " "
-					+ parentAction.getArgNames() + "";
+		final List<String> myNames = myAction.getArgNames();
+		final List<String> parentNames = parentAction.getArgNames();
+		final boolean different = myNames.size() != parentNames.size() || !myNames.containsAll(parentNames);
+
+		if (different) {
+			final String error = "The list of arguments " + myNames + " differs from that of the implementation of "
+					+ actionName + " in " + parentName + " " + parentNames + "";
 			myAction.warning(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
 		}
 
@@ -629,7 +634,15 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	@Override
+	public Iterable<IDescription> getOwnChildren() {
+		return Iterables.concat(actions == null ? Collections.EMPTY_LIST : actions.values(),
+				attributes == null ? Collections.EMPTY_LIST : attributes.values());
+	}
+
+	@Override
 	public IDescription validate() {
+		if (validated)
+			return this;
 		final IDescription result = super.validate();
 		if (result != null && !verifyAttributeCycles())
 			return null;
