@@ -12,6 +12,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 import msi.gaml.types.GamaMaterialType;
+import msi.gaml.types.IType;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.Material;
 import ummisco.gama.opengl.scene.AbstractObject;
@@ -361,7 +362,7 @@ abstract class AbstractTransformer {
 		final int verticesNb = coordsArray.length / 3;
 		float[] result = null;
 		result = new float[verticesNb * 4];
-		if (colors != null) {
+		if ((colors != null)&&(colors.get(0).getType().id() != IType.INT)){
 			// the case where a list of color has been passed for the geometry object
 			for (int i = 0; i < verticesNb; i++) {
 				float[] color = new float[] { (float) colors.get(0).red() / 255f, (float) colors.get(0).green() / 255f,
