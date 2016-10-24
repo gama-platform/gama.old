@@ -1,4 +1,4 @@
-package ummisco.gama.mqtt.common;
+package ummisco.gama.mqtt.external.connector;
 
 import java.util.Map;
 

@@ -103,7 +103,7 @@ public abstract class Connector implements IConnector{
 						LinkedList<ConnectorMessage> messages  = receivedMessage.get(agt);
 						if(messages != null)
 							messages.add(message);
-					}
+						}
 					break;
 				}
 			}

@@ -66,7 +66,7 @@ public class NetworkMessage implements ConnectorMessage {
 
 	public static NetworkMessage unPackMessage(final String sender, final String data) {
 		final String key = new String(keyChain);
-		if (data.substring(0, keyChain.length - 1).equals(key))
+		if (!data.substring(0, keyChain.length).equals(key))
 			return new NetworkMessage(sender, data);
 
 		final int size = MAX_HEADER_SIZE < data.length() ? MAX_HEADER_SIZE : data.length();
