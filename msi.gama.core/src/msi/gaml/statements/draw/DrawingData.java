@@ -21,6 +21,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaFontType;
 import msi.gaml.types.GamaListType;
 import msi.gaml.types.GamaMaterialType;
+import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
@@ -250,13 +251,32 @@ public class DrawingData {
 		// if (constantColor != null) {
 		// currentColor = constantColor;
 		// } else {
+		if (colorExp != null) {
+			switch (colorExp.getType().id()) {
+				case IType.COLOR:
+					currentColor = (GamaColor) colorExp.value(scope);
+					currentColors = GamaListFactory.createWithoutCasting(Types.COLOR, currentColor);
+					break;
+				case IType.LIST:
+					currentColors = (IList) colorExp.value(scope);
+					if (!currentColors.isEmpty()) {
+						currentColor = currentColors.get(0);
+					} else currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
+					break;
+				default:
+					currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
+			}
+
+		} else {
+			currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
+		}/*
 		if (colorExp != null && Cast.asColor(scope, colorExp.value(scope)) != null) {
 			final IList<GamaColor> val = Cast.asList(scope, colorExp.value(scope));
 			currentColors = val;
 			currentColor = Cast.asColor(scope, colorExp.value(scope));
 		} else {
 			currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
-		}
+		}*/
 		// }
 
 		/* BORDER */
