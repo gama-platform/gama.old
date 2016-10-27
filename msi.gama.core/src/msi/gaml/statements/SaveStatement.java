@@ -660,10 +660,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				values.add(gis == null ? ag.getInnerGeometry() : gis.inverseTransform(ag.getInnerGeometry()));
 				if (ag instanceof IAgent) {
 					for (final String variable : attributeValues) {
-						if (stringVars.contains(variable))
-							values.add(Cast.toGaml(((IAgent) ag).getDirectVarValue(scope, variable)));
+						String val = Cast.toGaml(((IAgent) ag).getDirectVarValue(scope, variable));
+						if (stringVars.contains(variable)) {
+							if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+								val = val.substring(1, val.length() - 1);
+							values.add(val);
+						}
 						else
-							values.add(((IAgent) ag).getDirectVarValue(scope, variable));
+							values.add(val);
 					}
 				}
 				// AD Assumes that the type is ok.
