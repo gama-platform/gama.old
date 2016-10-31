@@ -1361,6 +1361,12 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 			createFearConfirmed(scope);
 			createRelief(scope);
 			createDisappointment(scope);
+			createEmotionsRelatedToOthers(scope);
+			createPrideAndShameAndAdmirationAndReproach(scope);
+			createGratification(scope);
+			createRemorse(scope);
+			createGratitude(scope);
+			createAnger(scope);
 		}
 	}
 
@@ -1598,6 +1604,146 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		}
 	}
 
+	private void createEmotionsRelatedToOthers(final IScope scope){
+		//Regroupe le happy_for, sorry_for, resentment et gloating.
+		if(!getSocialBase(scope, SOCIALLINK_BASE).isEmpty()){
+			for(SocialLink temp : getSocialBase(scope, SOCIALLINK_BASE)){
+				if(temp.getLiking()>0.0){
+					IAgent agentTemp = temp.getAgent();
+					IScope scopeAgentTemp = null;
+					if (agentTemp != null) {
+						scopeAgentTemp = agentTemp.getScope().copy("in SimpleBdiArchitecture");
+						scopeAgentTemp.push(agentTemp);
+					}
+					for (final Emotion emo : getEmotionBase(scopeAgentTemp, EMOTION_BASE)) {
+						if (emo.getName().equals("joy")){
+							Emotion happyFor = new Emotion("happy_for", emo.getIntensity()*temp.getLiking(), emo.getAbout(),agentTemp);
+							addEmotion(scope,happyFor);
+						}
+						if(emo.getName().equals("sadness")){
+							Emotion sorryFor = new Emotion("sorry_for", emo.getIntensity()*temp.getLiking(), emo.getAbout(),agentTemp);
+							addEmotion(scope,sorryFor);
+						}
+					}
+					GAMA.releaseScope(scopeAgentTemp);
+				}
+				if(temp.getLiking()<0.0){
+					IAgent agentTemp = temp.getAgent();
+					IScope scopeAgentTemp = null;
+					if (agentTemp != null) {
+						scopeAgentTemp = agentTemp.getScope().copy("in SimpleBdiArchitecture");
+						scopeAgentTemp.push(agentTemp);
+					}
+					for (final Emotion emo : getEmotionBase(scopeAgentTemp, EMOTION_BASE)) {
+						if (emo.getName().equals("joy")){
+							Emotion resentment = new Emotion("resentment", emo.getIntensity()*-temp.getLiking(), emo.getAbout(),agentTemp);
+							addEmotion(scope,resentment);
+						}
+						if(emo.getName().equals("sadness")){
+							Emotion gloating = new Emotion("gloating", emo.getIntensity()*-temp.getLiking(), emo.getAbout(),agentTemp);
+							addEmotion(scope,gloating);
+						}
+					}
+					GAMA.releaseScope(scopeAgentTemp);
+				}
+			}
+		}
+	}
+	
+	private void createPrideAndShameAndAdmirationAndReproach(final IScope scope){
+		for (final Predicate predTest : getBase(scope, SimpleBdiArchitecture.BELIEF_BASE)) {
+			if ((predTest.getAgentCause() != null) && (predTest.getAgentCause().equals(scope.getAgent()))){
+				if (predTest.getPraiseworthiness()>0.0) {
+					final Emotion pride = new Emotion("pride", predTest);
+					pride.setAgentCause(scope.getAgent());
+					addEmotion(scope, pride);
+				}
+				if ((predTest.getPraiseworthiness()<0.0)) {
+					final Emotion shame = new Emotion("shame", predTest);
+					shame.setAgentCause(scope.getAgent());
+					addEmotion(scope, shame);
+				}
+			} else {
+				if(predTest.getAgentCause() != null){
+					if (predTest.getPraiseworthiness()>0.0) {
+						final Emotion admiration = new Emotion("admiration", predTest);
+						admiration.setAgentCause(predTest.getAgentCause());
+						addEmotion(scope, admiration);
+					}
+					if ((predTest.getPraiseworthiness()<0.0)) {
+						final Emotion reproach = new Emotion("reproach", predTest);
+						reproach.setAgentCause(predTest.getAgentCause());
+						addEmotion(scope, reproach);
+					}
+				}
+			}
+		}
+	}
+	
+	private void createGratification(final IScope scope){
+		final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+				.cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getType());
+		for (final Emotion emo : emoTemps){
+			if (emo.getName().equals("pride")) {
+				for (final Emotion emoTemp : emoTemps){
+					if(emoTemp.getName().equals("joy") && emo.getAbout().equals(emoTemp.getAbout())){
+						final Emotion gratification = new Emotion("gratification", emoTemp.getAbout());
+						gratification.setAgentCause(emo.getAgentCause());
+						addEmotion(scope, gratification);
+					}
+				}
+			}
+		}
+	}
+	
+	private void createRemorse(final IScope scope){
+		final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+				.cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getType());
+		for (final Emotion emo : emoTemps){
+			if (emo.getName().equals("shame")) {
+				for (final Emotion emoTemp : emoTemps){
+					if(emoTemp.getName().equals("sadness") && emo.getAbout().equals(emoTemp.getAbout())){
+						final Emotion remorse = new Emotion("remorse", emoTemp.getAbout());
+						remorse.setAgentCause(emo.getAgentCause());
+						addEmotion(scope, remorse);
+					}
+				}
+			}
+		}
+	}
+	
+	private void createGratitude(final IScope scope){
+		final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+				.cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getType());
+		for (final Emotion emo : emoTemps){
+			if (emo.getName().equals("admiration")) {
+				for (final Emotion emoTemp : emoTemps){
+					if(emoTemp.getName().equals("joy") && emo.getAbout().equals(emoTemp.getAbout())){
+						final Emotion gratitude = new Emotion("gratitude", emoTemp.getAbout());
+						gratitude.setAgentCause(emo.getAgentCause());
+						addEmotion(scope, gratitude);
+					}
+				}
+			}
+		}
+	}
+	
+	private void createAnger(final IScope scope){
+		final GamaList<Emotion> emoTemps = getEmotionBase(scope, EMOTION_BASE)
+				.cloneWithContentType(getEmotionBase(scope, EMOTION_BASE).getType());
+		for (final Emotion emo : emoTemps){
+			if (emo.getName().equals("reproach")) {
+				for (final Emotion emoTemp : emoTemps){
+					if(emoTemp.getName().equals("sadness") && emo.getAbout().equals(emoTemp.getAbout())){
+						final Emotion anger = new Emotion("anger", emoTemp.getAbout());
+						anger.setAgentCause(emo.getAgentCause());
+						addEmotion(scope, anger);
+					}
+				}
+			}
+		}
+	}
+	
 	private List<Emotion> listEmotionsNull(final IScope scope) {
 		final List<Emotion> tempPred = new ArrayList<Emotion>();
 		for (final Emotion pred : getEmotionBase(scope, SimpleBdiArchitecture.EMOTION_BASE)) {
