@@ -29,7 +29,7 @@ import msi.gaml.types.Types;
 		@var(name = "values", type = IType.MAP), @var(name = "priority", type = IType.FLOAT),
 		@var(name = "date", type = IType.FLOAT), @var(name = "subintentions", type = IType.LIST),
 		@var(name = "on_hold_until", type = IType.NONE), @var(name = "super_intention", type = IType.NONE),
-		@var(name = "agentCause", type = IType.AGENT) })
+		@var(name = "praiseworthiness", type = IType.FLOAT),@var(name = "agentCause", type = IType.AGENT) })
 public class Predicate implements IValue {
 
 	String name;
@@ -40,6 +40,7 @@ public class Predicate implements IValue {
 	List<Predicate> onHoldUntil;
 	List<Predicate> subintentions;
 	Predicate superIntention;
+	Double praiseworthiness = 0.0;
 	IAgent agentCause;
 	boolean everyPossibleValues = false;
 	boolean is_true = true;
@@ -95,6 +96,10 @@ public class Predicate implements IValue {
 		return lifetime;
 	}
 
+	public Double getPraiseworthiness(){
+		return praiseworthiness;
+	}
+	
 	public void setSuperIntention(final Predicate superPredicate) {
 		this.superIntention = superPredicate;
 	}
@@ -132,6 +137,10 @@ public class Predicate implements IValue {
 		this.lifetime = lifetime;
 	}
 
+	public void setPraiseworthiness(final Double praise){
+		this.praiseworthiness = praise;
+	}
+	
 	public void setAgentCause(final IAgent ag) {
 		this.agentCause = ag;
 		this.noAgentCause = false;
@@ -190,7 +199,7 @@ public class Predicate implements IValue {
 		this.noAgentCause = ag == null;
 		everyPossibleValues = true;
 	}
-
+	
 	public Predicate(final String name, final Map<String, Object> values, final Boolean truth) {
 		super();
 		this.name = name;
