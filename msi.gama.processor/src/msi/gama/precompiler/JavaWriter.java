@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'JavaWriter.java', in plugin 'msi.gama.processor', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'JavaWriter.java', in plugin 'msi.gama.processor', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -16,7 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class JavaWriter {
 
 	public final static String ACTION_PREFIX = "!", OPERATOR_PREFIX = "?", GETTER_PREFIX = "/", SETTER_PREFIX = "-",
@@ -31,17 +30,19 @@ public class JavaWriter {
 			ISIMULATION = "ISimulation", ISKILL = "ISkill", ISUPPORT = "IVarAndActionSupport", ISYMBOL = "ISymbol",
 			IDESC = "IDescription", ISCOPE = "IScope", OBJECT = "Object", IVALUE = "IValue",
 			IEXPRESSION = "IExpression", YPES = "Types", INTEGER = "Integer", DOUBLE = "Double", BOOLEAN = "Boolean";
-	final static String[] IMPORTS = new String[] { "msi.gama.outputs.layers", "msi.gama.outputs",
-			"msi.gama.kernel.batch", "msi.gaml.architecture.weighted_tasks", "msi.gaml.architecture.user",
-			"msi.gaml.architecture.reflex", "msi.gaml.architecture.finite_state_machine", "msi.gaml.species",
-			"msi.gama.metamodel.shape", "msi.gaml.expressions", "msi.gama.metamodel.topology",
-			"msi.gama.metamodel.population", "msi.gama.kernel.simulation", "java.util", " msi.gama.metamodel.shape",
-			"msi.gama.common.interfaces", "msi.gama.runtime", "java.lang", "msi.gama.metamodel.agent", "msi.gaml.types",
-			"msi.gaml.compilation", "msi.gaml.factories", "msi.gaml.descriptions", "msi.gama.util.file",
-			"msi.gama.util.matrix", "msi.gama.util.graph", "msi.gama.util.path", "msi.gama.util",
-			"msi.gama.runtime.exceptions", "msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills",
-			"msi.gaml.variables", "msi.gama.kernel.experiment", "msi.gaml.operators", "msi.gaml.extensions.genstar",
-			"msi.gama.common.interfaces", "msi.gama.metamodel.population" },
+	final static String[] IMPORTS =
+			new String[] { "msi.gama.outputs.layers", "msi.gama.outputs", "msi.gama.kernel.batch",
+					"msi.gaml.architecture.weighted_tasks", "msi.gaml.architecture.user",
+					"msi.gaml.architecture.reflex", "msi.gaml.architecture.finite_state_machine", "msi.gaml.species",
+					"msi.gama.metamodel.shape", "msi.gaml.expressions", "msi.gama.metamodel.topology",
+					"msi.gama.metamodel.population", "msi.gama.kernel.simulation", "java.util",
+					" msi.gama.metamodel.shape", "msi.gama.common.interfaces", "msi.gama.runtime", "java.lang",
+					"msi.gama.metamodel.agent", "msi.gaml.types", "msi.gaml.compilation", "msi.gaml.factories",
+					"msi.gaml.descriptions", "msi.gama.util.file", "msi.gama.util.matrix", "msi.gama.util.graph",
+					"msi.gama.util.path", "msi.gama.util", "msi.gama.runtime.exceptions", "msi.gaml.factories",
+					"msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables", "msi.gama.kernel.experiment",
+					"msi.gaml.operators", "msi.gaml.extensions.genstar", "msi.gama.common.interfaces",
+					"msi.gama.metamodel.population" },
 			EXPLICIT_IMPORTS = new String[] { "msi.gaml.operators.Random", "msi.gaml.operators.Maths",
 					"msi.gaml.operators.Points", "msi.gaml.operators.Spatial.Properties", "msi.gaml.operators.System" };
 
@@ -224,8 +225,7 @@ public class JavaWriter {
 	void writeSymbolsInitialization(final GamlProperties props, final StringBuilder sb) {
 		sb.append("public void initializeSymbols() {");
 		for (final Map.Entry<String, String> entry : props.filterFirst(SYMBOL_PREFIX).entrySet()) {
-			writeSymbolAddition(sb /* ,doc */,
-					entry.getKey()/* , entry.getValue() */);
+			writeSymbolAddition(sb /* ,doc */, entry.getKey()/* , entry.getValue() */);
 		}
 		sb.append("};");
 	}
@@ -256,16 +256,12 @@ public class JavaWriter {
 	}
 
 	private String toArrayOfInts(final String array) {
-		if (array == null || array.length() == 0) {
-			return "AI";
-		}
+		if (array == null || array.length() == 0) { return "AI"; }
 		return "I(" + array + ")";
 	}
 
 	private String toArrayOfStrings(final String array, final String regex) {
-		if (array == null || array.equals("")) {
-			return "AS";
-		}
+		if (array == null || array.equals("")) { return "AS"; }
 		// FIX AD 3/4/13: split(regex) would not include empty trailing strings
 		final String[] segments = array.split(regex, -1);
 		String result = "S(";
@@ -280,9 +276,7 @@ public class JavaWriter {
 	}
 
 	private String toJavaString(final String s) {
-		if (s == null || s.isEmpty()) {
-			return "(String)null";
-		}
+		if (s == null || s.isEmpty()) { return "(String)null"; }
 		final int i = ss1.indexOf(s);
 		return i == -1 ? "\"" + replaceCommas(s) + "\"" : ss2.get(i);
 	}
@@ -304,9 +298,7 @@ public class JavaWriter {
 	 * @param factoryMap
 	 */
 	protected void writeFactoriesAddition(final StringBuilder sb, final Map<String, String> factoryMap) {
-		if (factoryMap == null || factoryMap.isEmpty()) {
-			return;
-		}
+		if (factoryMap == null || factoryMap.isEmpty()) { return; }
 		sb.append(in);
 		sb.append("_factories(");
 		for (final String key : factoryMap.keySet()) {
@@ -320,8 +312,8 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeFileAddition(final StringBuilder sb,
-			/* final StringBuilder docBuilder, */final String file, final String doc) {
+	protected void writeFileAddition(final StringBuilder sb, /* final StringBuilder docBuilder, */final String file,
+			final String doc) {
 		final String[] segments = file.split("\\$");
 		final String name = toJavaString(segments[0]);
 		final String clazz = segments[1];
@@ -339,8 +331,8 @@ public class JavaWriter {
 		}
 	}
 
-	protected void writeVarAddition(final StringBuilder sb,
-			/* final StringBuilder docBuilder, */final String var, final String doc) {
+	protected void writeVarAddition(final StringBuilder sb, /* final StringBuilder docBuilder, */final String var,
+			final String doc) {
 		final String[] segments = var.split("\\$");
 		final String type = segments[0];
 		final String contentType = segments[1];
@@ -390,7 +382,8 @@ public class JavaWriter {
 					"(" + param + ") arg[0]); return null; }}");
 
 		}
-		sb.append(in).append(isField ? "_field(" : "_var(").append(toClassObject(clazz)).append(",");
+		sb.append(in).append(isField ? "_field(" : "_var(").append(toClassObject(clazz)).append(",")
+				.append(toJavaString(doc)).append(",");
 		if (isField) {
 			sb.append("new OperatorProto(").append(name).append(", null, ").append(getterHelper)
 					.append(", false, true, ").append(type).append(",").append(toClassObject(clazz)).append(", false, ")
@@ -498,8 +491,8 @@ public class JavaWriter {
 		}
 	}
 
-	protected void writeType(final StringBuilder sb,
-			/* final StringBuilder docBuilder, */final String s, final String doc) {
+	protected void writeType(final StringBuilder sb, /* final StringBuilder docBuilder, */final String s,
+			final String doc) {
 		final String[] segments = s.split("\\$");
 		final String keyword = segments[0];
 		final String id = segments[1];
@@ -515,8 +508,8 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeOperatorAddition(final StringBuilder sb,
-			/* final StringBuilder docBuilder, */final String s, final String doc) {
+	protected void writeOperatorAddition(final StringBuilder sb, /* final StringBuilder docBuilder, */final String s,
+			final String doc) {
 		final String[] segments = s.split("\\$");
 		final int arg_number = Integer.decode(segments[0]);
 		final String[] classes = new String[arg_number];
@@ -571,15 +564,14 @@ public class JavaWriter {
 				.append(content_type_expected).append(",").append(toClassObject(ret)).append(',').append(canBeConst)
 				.append(',').append(type).append(',').append(contentType).append(',').append(indexType).append(',')
 				.append(helper)/*
-								 * .append(',').append("DOC(").append(addDoc(
-								 * docBuilder, toArrayOfStrings(doc,
+								 * .append(',').append("DOC(").append(addDoc( docBuilder, toArrayOfStrings(doc,
 								 * DOC_REGEX)))
 								 */
 				/* .append(")") */.append(");");
 	}
 
-	protected void writeSpecies(final StringBuilder sb,
-			/* final StringBuilder docBuilder, */final String s, final String doc) {
+	protected void writeSpecies(final StringBuilder sb, /* final StringBuilder docBuilder, */final String s,
+			final String doc) {
 		final String[] segments = s.split("\\$");
 		final String name = segments[0];
 		final String clazz = segments[1];
@@ -646,8 +638,8 @@ public class JavaWriter {
 		return body;
 	}
 
-	protected void writeActionAddition(final StringBuilder sb,
-			/* final StringBuilder docBuilder, */final String s, final String doc) {
+	protected void writeActionAddition(final StringBuilder sb, /* final StringBuilder docBuilder, */final String s,
+			final String doc) {
 		final String[] segments = s.split("\\$");
 		final String method = segments[0];
 		final String clazz = segments[1];
@@ -664,8 +656,9 @@ public class JavaWriter {
 			}
 			// picking name
 			args += "desc(ARG,NAME," + toJavaString(segments[pointer++]);
-			// skipping type
-			pointer++;
+			// not skipping type
+			args += ", TYPE, " + toJavaString(segments[pointer++]);
+			// pointer++;
 			// not skipping optional
 			final String optional = toJavaString(segments[pointer++]);
 			args += ", \"optional\", " + optional;
@@ -693,8 +686,8 @@ public class JavaWriter {
 		return result;
 	}
 
-	protected void writeSkill(final StringBuilder sb,
-			/* final StringBuilder docBuilder, */final String s, final String doc) {
+	protected void writeSkill(final StringBuilder sb, /* final StringBuilder docBuilder, */final String s,
+			final String doc) {
 		final String[] segments = s.split("\\$");
 		final String name = segments[0];
 		final String clazz = segments[1];
@@ -705,8 +698,8 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeDisplay(final StringBuilder sb,
-			/* final StringBuilder docBuilder, */final String s, final String doc) {
+	protected void writeDisplay(final StringBuilder sb, /* final StringBuilder docBuilder, */final String s,
+			final String doc) {
 		final String[] segments = s.split("\\$");
 		final String name = segments[0];
 		final String clazz = segments[1];
@@ -715,8 +708,8 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeExperiment(final StringBuilder sb,
-			/* final StringBuilder docBuilder, */final String s, final String doc) {
+	protected void writeExperiment(final StringBuilder sb, /* final StringBuilder docBuilder, */final String s,
+			final String doc) {
 		final String[] segments = s.split("\\$");
 		final String name = segments[0];
 		final String clazz = segments[1];
@@ -760,9 +753,8 @@ public class JavaWriter {
 
 	protected String check(final String clazz) {
 		for (int i = 0; i < IMPORTS.length; i++) {
-			if (clazz.startsWith(IMPORTS[i]) && !clazz.replace(IMPORTS[i] + ".", "").contains(".")) {
-				return clazz.substring(clazz.lastIndexOf('.') + 1);
-			}
+			if (clazz.startsWith(IMPORTS[i]) && !clazz.replace(IMPORTS[i] + ".", "").contains(".")) { return clazz
+					.substring(clazz.lastIndexOf('.') + 1); }
 		}
 
 		return clazz;
@@ -776,16 +768,16 @@ public class JavaWriter {
 	protected String param(final String c, final String par) {
 		final String jc = checkPrim(c);
 		switch (jc) {
-		case DOUBLE:
-			return concat("asFloat(s,", par, ")");
-		case INTEGER:
-			return concat("asInt(s,", par, ")");
-		case BOOLEAN:
-			return concat("asBool(s,", par, ")");
-		case OBJECT:
-			return par;
-		default:
-			return concat("((", jc, ")", par, ")");
+			case DOUBLE:
+				return concat("asFloat(s,", par, ")");
+			case INTEGER:
+				return concat("asInt(s,", par, ")");
+			case BOOLEAN:
+				return concat("asBool(s,", par, ")");
+			case OBJECT:
+				return par;
+			default:
+				return concat("((", jc, ")", par, ")");
 		}
 
 	}
@@ -796,16 +788,12 @@ public class JavaWriter {
 	}
 
 	private String extractMethod(final String s, final boolean stat) {
-		if (!stat) {
-			return s;
-		}
+		if (!stat) { return s; }
 		return s.substring(s.lastIndexOf('.') + 1);
 	}
 
 	private String extractClass(final String name, final String string, final boolean stat) {
-		if (stat) {
-			return name.substring(0, name.lastIndexOf('.'));
-		}
+		if (stat) { return name.substring(0, name.lastIndexOf('.')); }
 		return string;
 	}
 
@@ -831,9 +819,8 @@ public class JavaWriter {
 		final String ret = checkPrim(retClass);
 		final int index = stat ? 0 : 1;
 		final String firstArg = scope ? "s" : "";
-		String body = stat ? concat("{return ", name, "(", firstArg)
-				: concat("{return o[0]", " == null?", returnWhenNull(ret), ":((", classes[0], ")o[0]).", name, "(",
-						firstArg);
+		String body = stat ? concat("{return ", name, "(", firstArg) : concat("{return o[0]", " == null?",
+				returnWhenNull(ret), ":((", classes[0], ")o[0]).", name, "(", firstArg);
 		if (index < classes.length) {
 			if (scope) {
 				body += ",";

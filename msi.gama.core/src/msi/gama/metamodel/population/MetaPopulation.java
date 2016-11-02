@@ -13,7 +13,6 @@ package msi.gama.metamodel.population;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -120,14 +119,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 		final IAgent sourceAgent = source == null ? null : source.getAgent();
 		results.remove(sourceAgent);
-		final Iterator<? extends IShape> it = results.iterator();
-		while (it.hasNext()) {
-			if (!contains(scope, it.next().getAgent())) {
-				it.remove();
-			}
-
-		}
-
+		results.removeIf((each) -> !contains(scope, each));
 	}
 
 	/**

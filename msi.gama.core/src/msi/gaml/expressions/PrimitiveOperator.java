@@ -201,4 +201,5 @@ public class PrimitiveOperator implements IExpression {
 	public boolean shouldBeParenthesized() {
 		return true;
 	}
+
 }

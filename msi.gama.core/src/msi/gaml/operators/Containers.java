@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -48,6 +49,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ContainerHelper;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaListFactory.GamaListSupplier;
 import msi.gama.util.GamaMap;
@@ -56,6 +58,7 @@ import msi.gama.util.GamaMapFactory.GamaMapSupplier;
 import msi.gama.util.GamaPair;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.expressions.BinaryOperator;
 import msi.gaml.expressions.IExpression;
@@ -603,6 +606,36 @@ public class Containers {
 		return stream(scope, c).map(function(scope, filter)).maxBy(self()).orElse(null);
 	}
 
+	@operator(value = "sum", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
+			IType.INT, IType.FLOAT, IType.POINT, IType.COLOR, IType.STRING }, category = {
+					IOperatorCategory.STATISTICAL, IOperatorCategory.CONTAINER,
+					IOperatorCategory.COLOR }, concept = { IConcept.STATISTIC, IConcept.COLOR })
+	@doc(value = "the sum of all the elements of the operand", masterDoc = true, comment = "the behavior depends on the nature of the operand", usages = {
+			@usage(value = "if it is a list of int or float: sum returns the sum of all the elements", examples = {
+					@example(value = "sum ([12,10,3])", returnType = IKeyword.INT, equals = "25") }),
+			@usage(value = "if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)", examples = {
+					@example(value = "sum([{1.0,3.0},{3.0,5.0},{9.0,1.0},{7.0,8.0}])", equals = "{20.0,17.0}") }),
+			@usage(value = "if it is a population or a list of other types: sum transforms all elements into float and sums them"),
+			@usage(value = "if it is a map, sum returns the sum of the value of all elements"),
+			@usage(value = "if it is a file, sum returns the sum of the content of the file (that is also a container)"),
+			@usage(value = "if it is a graph, sum returns the total weight of the graph"),
+			@usage(value = "if it is a matrix of int, float or object, sum returns the sum of all the numerical elements (i.e. all elements for integer and float matrices)"),
+			@usage(value = "if it is a matrix of other types: sum transforms all elements into float and sums them"),
+			@usage(value = "if it is a list of colors: sum will sum them and return the blended resulting color") }, see = {
+					"mul" })
+	public static Object sum(final IScope scope, final IContainer l) {
+		return sum_of(scope, l, null);
+	}
+
+	@operator(value = "sum", can_be_const = true, type = IType.GRAPH, category = {
+			IOperatorCategory.GRAPH }, concept = { IConcept.GRAPH })
+	public static double sum(final IScope scope, final IGraph g) {
+		if (g == null) {
+			return 0.0;
+		}
+		return g.computeTotalWeight();
+	}
+
 	@operator(value = { "sum_of" }, type = ITypeProvider.SECOND_TYPE, expected_content_type = { IType.FLOAT,
 			IType.POINT, IType.COLOR, IType.INT,
 			IType.STRING }, iterator = true, category = IOperatorCategory.CONTAINER, concept = { IConcept.CONTAINER,
@@ -614,7 +647,28 @@ public class Containers {
 							@example(value = "[1,2] sum_of (each * 100 )", equals = "300") }, see = { "min_of",
 									"max_of", "product_of", "mean_of" })
 	public static Object sum_of(final IScope scope, final IContainer container, final IExpression filter) {
-		return Stats.sum(scope, collect(scope, container, filter));
+		Stream s = stream(scope, container);
+		IType t;
+		if (filter != null) {
+			s = s.map(function(scope, filter));
+			t = filter.getType();
+		} else
+			t = container.getType().getContentType();
+		s = s.map(each -> t.cast(scope, each, null, false));
+		switch (t.id()) {
+		case IType.INT:
+			return ((Stream<Integer>) s).reduce(0, Integer::sum);
+		case IType.FLOAT:
+			return ((Stream<Double>) s).reduce(0d, Double::sum);
+		case IType.POINT:
+			return ((Stream<GamaPoint>) s).reduce(new GamaPoint(), GamaPoint::plus);
+		case IType.COLOR:
+			return ((Stream<GamaColor>) s).reduce(new GamaColor(0, 0, 0, 0), GamaColor::merge);
+		case IType.STRING:
+			return ((Stream<String>) s).reduce("", String::concat);
+		default:
+			return GamaRuntimeException.error("No sum can be computed for " + container.serialize(true), scope);
+		}
 	}
 
 	@operator(value = {
@@ -630,6 +684,27 @@ public class Containers {
 		return Stats.product(scope, collect(scope, container, filter));
 	}
 
+	@operator(value = "mean", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
+			IType.INT, IType.FLOAT, IType.POINT, IType.COLOR }, category = { IOperatorCategory.STATISTICAL,
+					IOperatorCategory.CONTAINER,
+					IOperatorCategory.COLOR }, concept = { IConcept.STATISTIC, IConcept.COLOR })
+	@doc(value = "the mean of all the elements of the operand", comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.", special_cases = {
+			"if the container contains points, the result will be a point. If the container contains rgb values, the result will be a rgb color" }, examples = {
+					@example(value = "mean ([4.5, 3.5, 5.5, 7.0])", equals = "5.125 ") }, see = { "sum" })
+	public static Object mean(final IScope scope, final IContainer l) throws GamaRuntimeException {
+		final Object s = Containers.sum(scope, l);
+		if (s instanceof Number) {
+			return ((Number) s).doubleValue() / l.length(scope);
+		}
+		if (s instanceof ILocation) {
+			return Points.divide(scope, (GamaPoint) s, l.length(scope));
+		}
+		if (s instanceof GamaColor) {
+			return Colors.divide((GamaColor) s, l.length(scope));
+		}
+		return Cast.asFloat(scope, s) / l.length(scope);
+	}
+
 	@operator(value = {
 			"mean_of" }, type = ITypeProvider.SECOND_TYPE, iterator = true, category = IOperatorCategory.CONTAINER, concept = {
 					IConcept.CONTAINER, IConcept.FILTER })
@@ -640,7 +715,7 @@ public class Containers {
 							@example(value = "[1,2] mean_of (each * 10 )", equals = "15") }, see = { "min_of", "max_of",
 									"sum_of", "product_of" })
 	public static Object mean_of(final IScope scope, final IContainer container, final IExpression filter) {
-		return Stats.getMean(scope, collect(scope, container, filter));
+		return mean(scope, collect(scope, container, filter));
 	}
 
 	@operator(value = {

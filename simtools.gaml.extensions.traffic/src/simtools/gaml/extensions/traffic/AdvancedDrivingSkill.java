@@ -928,7 +928,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 	protected double computeDistance(final IScope scope, final IAgent agent, final double s, final double t)
 			throws GamaRuntimeException {
 
-		return s * t * scope.getClock().getStep();
+		return s * t * scope.getClock().getStepInSeconds();
 	}
 
 	public double distance2D(final GamaPoint p1, final GamaPoint p2) {

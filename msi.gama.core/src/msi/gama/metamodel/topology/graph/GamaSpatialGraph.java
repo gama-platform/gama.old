@@ -12,9 +12,7 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.jgrapht.Graphs;
@@ -33,6 +31,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
+import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
@@ -290,7 +289,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	protected void buildByEdgeWithNode(final IScope scope, final IContainer edges, final IContainer vertices) {
-		final Map<ILocation, IAgent> nodes = GamaMapFactory.create(Types.POINT, getType().getKeyType());
+		final GamaMap<ILocation, IAgent> nodes = GamaMapFactory.create(Types.POINT, getType().getKeyType());
 		for (final Object ag : vertices.iterable(scope)) {
 			nodes.put(((IAgent) ag).getLocation(), (IAgent) ag);
 		}
@@ -300,7 +299,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 	}
 
-	public Object addDrivingEdge(final IScope scope, final IShape e, final Map<ILocation, IAgent> nodes) {
+	public Object addDrivingEdge(final IScope scope, final IShape e, final GamaMap<ILocation, IAgent> nodes) {
 		if (containsEdge(e)) {
 			return false;
 		}
@@ -387,12 +386,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 */
 	@Override
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
-		final Iterator<? extends IShape> it = results.iterator();
-		while (it.hasNext()) {
-			if (!edgeMap.containsKey(it.next())) {
-				it.remove();
-			}
-		}
+		results.removeIf(each -> !edgeMap.containsKey(each));
 	}
 
 	public double getTolerance() {

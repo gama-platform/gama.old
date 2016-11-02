@@ -58,15 +58,6 @@ public class System {
 		return a == null || a.dead();
 	}
 
-	@operator(value = "every", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM, IConcept.CYCLE })
-	@doc(value = "true every operand * cycle, false otherwise", comment = "the value of the every operator depends on the cycle. It can be used to do something every x cycle.", examples = {
-			@example("if every(2) {write \"the time step is even\";}"),
-			@example("	     else {write \"the time step is odd\";}") })
-	public static Boolean opEvery(final IScope scope, final Integer period) {
-		final int time = scope.getClock().getCycle();
-		return period > 0 && time >= period && time % period == 0;
-	}
-
 	@operator(value = "command", category = { IOperatorCategory.SYSTEM }, concept = { IConcept.SYSTEM,
 			IConcept.COMMUNICATION })
 	@doc("command allows GAMA to issue a system command using the system terminal or shell and to receive a string containing the outcome of the command or script executed. By default, commands are blocking the agent calling them, unless the sequence ' &' is used at the end. In this case, the result of the operator is an empty string")

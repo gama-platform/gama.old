@@ -5,6 +5,7 @@ import org.osgi.framework.BundleContext;
 
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
+import msi.gaml.operators.Dates;
 
 public class Activator implements BundleActivator {
 
@@ -14,6 +15,7 @@ public class Activator implements BundleActivator {
 		new Thread(() -> {
 			GamaBundleLoader.preBuildContributions();
 			GamaExecutorService.startUp();
+			Dates.initialize();
 		}).start();
 
 	}

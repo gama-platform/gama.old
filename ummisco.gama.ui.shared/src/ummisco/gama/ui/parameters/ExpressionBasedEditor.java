@@ -9,7 +9,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -45,9 +44,7 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 
 	@Override
 	public Text getEditorControl() {
-		if (expression == null) {
-			return null;
-		}
+		if (expression == null) { return null; }
 		return expression.getControl();
 	}
 
@@ -62,7 +59,10 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 	protected void displayParameterValue() {
 		internalModification = true;
 		expression.displayValue(currentValue);
-		expression.getControl().setText(StringUtils.toGaml(currentValue, false));
+		// if (getExpectedType() == Types.STRING)
+		// expression.getControl()
+		// .setText(currentValue == null ? "" : StringUtils.toJavaString(currentValue.toString()));
+		// expression.getControl().setText(StringUtils.toGaml(currentValue, false));
 		internalModification = false;
 	}
 

@@ -14,7 +14,7 @@ experiment "Adapter" type: gui
 	{
 		ask simulation
 		{
-			return cell at p;
+			return first(cell overlapping p);
 		}
 
 	}

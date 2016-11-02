@@ -1,9 +1,8 @@
 /*********************************************************************************************
  * 
  *
- * 'AbstractGraphNodeAgent.java', in plugin 'msi.gama.core', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractGraphNodeAgent.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
@@ -33,8 +32,12 @@ import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
 // FIXME: Add all the necessary variables (degree, neighbors, edges)
-@species(name = "graph_node", concept = { IConcept.GRAPH, IConcept.NODE })
-@vars({ @var(name = IKeyword.MYGRAPH, type = IType.GRAPH) })
+@species (
+		name = "graph_node",
+		concept = { IConcept.GRAPH, IConcept.NODE })
+@vars ({ @var (
+		name = IKeyword.MYGRAPH,
+		type = IType.GRAPH) })
 public class AbstractGraphNodeAgent extends GamlAgent {
 
 	final static Arguments args = new Arguments();
@@ -73,15 +76,20 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 		return getSpecies().getAction("related_to");
 	}
 
-	@action(name = "related_to", virtual = true, args = {
-			@arg(name = "other", optional = false, type = { IType.AGENT }) })
+	@action (
+			name = "related_to",
+			virtual = true,
+			args = { @arg (
+					name = "other",
+					optional = false,
+					type = IType.AGENT) })
 	public Boolean relatedTo(final IScope scope) {
 		scope.getGui().debug("Should never be called !");
 		return false;
 	}
 
-	@SuppressWarnings("rawtypes")
-	@getter(IKeyword.MYGRAPH)
+	@SuppressWarnings ("rawtypes")
+	@getter (IKeyword.MYGRAPH)
 	public GamaGraph getGraph() {
 		return (GamaGraph) getTopology().getPlaces();
 	}

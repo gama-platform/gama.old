@@ -13,7 +13,7 @@ global
 	{
 		create Networking_Server
 		{
-			do connect to: "localhost" protocol: "tcp_server" port: "3001" with_name: "Server";
+			do connect to: "localhost" protocol: "tcp_server" port: 3001 with_name: "Server";
 		}
 
 	}

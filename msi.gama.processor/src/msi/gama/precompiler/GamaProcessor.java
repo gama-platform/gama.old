@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'GamaProcessor.java', in plugin 'msi.gama.processor', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaProcessor.java', in plugin 'msi.gama.processor', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -85,7 +84,7 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaProcessor extends AbstractProcessor {
 
 	private GamlProperties gp;
@@ -239,8 +238,8 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Format : 0.type 1.type 2. contentType 3.varName 4.class 5.[facetName,
-	 * facetValue]+ 6.getter 7.initializer(true/false)? 8.setter
+	 * Format : 0.type 1.type 2. contentType 3.varName 4.class 5.[facetName, facetValue]+ 6.getter
+	 * 7.initializer(true/false)? 8.setter
 	 * 
 	 * @param env
 	 */
@@ -359,7 +358,13 @@ public class GamaProcessor extends AbstractProcessor {
 					sb.append("null");
 				}
 				sb.append(SEP);
-				gp.put(sb.toString(), "");
+				String d;
+				if (docs.length == 0) {
+					d = "";
+				} else {
+					d = docs[0].value();
+				}
+				gp.put(sb.toString(), d);
 			}
 		}
 	}
@@ -421,9 +426,8 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Computes the representation of symbols. Format: prefix 0.kind 1.class
-	 * 2.remote 3.with_args 4.with_scope 5.with_sequence 6.symbols_inside
-	 * 7.kinds_inside 8.nbFacets 9.[facet]* 10.omissible 11.[name$]*
+	 * Computes the representation of symbols. Format: prefix 0.kind 1.class 2.remote 3.with_args 4.with_scope
+	 * 5.with_sequence 6.symbols_inside 7.kinds_inside 8.nbFacets 9.[facet]* 10.omissible 11.[name$]*
 	 * 
 	 * @param env
 	 */
@@ -552,26 +556,20 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Format 0.value 1.deprecated 2.returns 3.comment 4.nb_cases
-	 * 5.[specialCases$]* 6.nb_examples 7.[examples$]* Uses its own separator
-	 * (DOC_SEP)
+	 * Format 0.value 1.deprecated 2.returns 3.comment 4.nb_cases 5.[specialCases$]* 6.nb_examples 7.[examples$]* Uses
+	 * its own separator (DOC_SEP)
 	 *
 	 * @param docs
 	 *            an Array of @doc annotations (only the 1st is significant)
-	 * @return aString containing the documentation formatted using the format
-	 *         above
+	 * @return aString containing the documentation formatted using the format above
 	 */
 	private String docToString(final doc[] docs) {
-		if (docs == null || docs.length == 0) {
-			return "";
-		}
+		if (docs == null || docs.length == 0) { return ""; }
 		return docToString(docs[0]);
 	}
 
 	private String docToString(final doc doc) {
-		if (doc == null) {
-			return "";
-		}
+		if (doc == null) { return ""; }
 		final StringBuilder sb = new StringBuilder();
 		sb.append(doc.value()).append(DOC_SEP);
 		sb.append(doc.deprecated());
@@ -609,10 +607,13 @@ public class GamaProcessor extends AbstractProcessor {
 		return sb.toString();
 	}
 
+	private String typeArrayToFirstType(final int[] array) {
+		if (array.length == 0) { return "unknown"; }
+		return Integer.toString(array[0]);
+	}
+
 	private String arrayToString(final int[] array) {
-		if (array.length == 0) {
-			return "";
-		}
+		if (array.length == 0) { return ""; }
 		final StringBuilder sb = new StringBuilder();
 		for (final int i : array) {
 			sb.append(i).append(",");
@@ -622,9 +623,7 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	private String arrayToString(final String[] array) {
-		if (array.length == 0) {
-			return "";
-		}
+		if (array.length == 0) { return ""; }
 		final StringBuilder sb = new StringBuilder();
 		for (final String i : array) {
 			sb.append(replaceCommas(i)).append(",");
@@ -649,8 +648,7 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Format : prefix 0.class 1.[handles,]* 2.[uses,]* Format :
-	 * ]class$handles*$uses*
+	 * Format : prefix 0.class 1.[handles,]* 2.[uses,]* Format : ]class$handles*$uses*
 	 * 
 	 * @param env
 	 */
@@ -832,9 +830,8 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Format : prefix 0.leftClass 1.rightClass 2.const 3.type 4.contentType
-	 * 5.iterator 6.priority 7.returnClass 8.methodName 9.static 10.contextual
-	 * 11.[name$]+
+	 * Format : prefix 0.leftClass 1.rightClass 2.const 3.type 4.contentType 5.iterator 6.priority 7.returnClass
+	 * 8.methodName 9.static 10.contextual 11.[name$]+
 	 * 
 	 * @param env
 	 */
@@ -876,8 +873,7 @@ public class GamaProcessor extends AbstractProcessor {
 				for (int i = 0; i < actual_args_number - begin; i++) {
 					classes[begin + i] = args[i + shift];
 				}
-			} catch (final Exception e1) {
-			}
+			} catch (final Exception e1) {}
 
 			final String ret = rawNameOf(ex.getReturnType());
 			methodName = stat ? declClass + "." + methodName : methodName;
@@ -964,13 +960,13 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 			final int nb = strings.size();
 			sb.append(nb).append(SEP);
-			// args format 1.name 2.[type,]+ 3.optional
+			// args format 1.name 2.type 3.optional
 			strings.clear();
 			if (args.length > 0) {
 				for (int i = 0; i < args.length; i++) {
 					final arg arg = args[i];
 					sb.append(arg.name()).append(SEP);
-					sb.append(arrayToString(arg.type())).append(SEP);
+					sb.append(arg.type()).append(SEP);
 					sb.append(arg.optional()).append(SEP);
 					final doc[] docs = arg.doc();
 					if (docs.length == 0) {
@@ -998,22 +994,7 @@ public class GamaProcessor extends AbstractProcessor {
 	public void processConstants(final RoundEnvironment env) {
 		for (final Element e : sortElements(env, constant.class)) {
 			final VariableElement ve = (VariableElement) e;
-			// final TypeMirror tm = ve.asType();
-			// boolean ok = tm instanceof PrimitiveType || tm instanceof
-			// ArrayType;
-			// ok |= this.rawNameOf(tm).startsWith("String");
 			final constant constant = ve.getAnnotation(constant.class);
-			// //if (!ok) {
-			//
-			// processingEnv.getMessager()
-			// .printMessage(Kind.WARNING, "GAML: constant '" + constant.value()
-			// +
-			// "' cannot be instance of "
-			// + tm.toString() + ". The type of constants must be either a
-			// primitive type or String",
-			// e);
-			//
-			// }
 
 			final doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
 
@@ -1071,16 +1052,14 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	private String name(final TypeElement e) {
-		if (e.getNestingKind() == NestingKind.TOP_LEVEL) {
-			return e.getQualifiedName().toString();
-		}
+		if (e.getNestingKind() == NestingKind.TOP_LEVEL) { return e.getQualifiedName().toString(); }
 		return name((TypeElement) e.getEnclosingElement()) + "." + e.getSimpleName().toString();
 	}
 
 	private Writer createWriter(final String s) {
 		try {
-			final OutputStream output = processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null)
-					.openOutputStream();
+			final OutputStream output =
+					processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null).openOutputStream();
 			final Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
 			return writer;
 		} catch (final Exception e) {
@@ -1091,8 +1070,8 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createSourceWriter() {
 		try {
-			final OutputStream output = processingEnv.getFiler().createSourceFile(ADDITIONS, (Element[]) null)
-					.openOutputStream();
+			final OutputStream output =
+					processingEnv.getFiler().createSourceFile(ADDITIONS, (Element[]) null).openOutputStream();
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {

@@ -11,7 +11,6 @@
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import java.util.Iterator;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -115,12 +114,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			microAgents.add((IAgent) t);
 		}
 		final IAgent macroAgent = scope.getAgent();
-		final Iterator<IAgent> it = microAgents.iterator();
-		while (it.hasNext()) {
-			if (!it.next().getHost().equals(macroAgent)) {
-				it.remove();
-			}
-		}
+		microAgents.removeIf(each -> !each.getHost().equals(macroAgent));
 
 		IMacroAgent targetAgent;
 		ISpecies microSpecies = null;

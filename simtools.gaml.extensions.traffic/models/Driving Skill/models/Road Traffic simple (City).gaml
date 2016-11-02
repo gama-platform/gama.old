@@ -74,7 +74,7 @@ global {
 	}
 	
 	//Update of the graph every 10 Cycles to take into account the traffic jam of the road in the weights of the graph
-	reflex update_graph when:every(10){
+	reflex update_graph when:every(10#cycle){
 		map<road,float> weights_map <- road as_map (each:: (each.shape.perimeter * each.coeff_traffic));
 		the_graph <- the_graph with_weights weights_map;
 	}
@@ -215,7 +215,7 @@ experiment traffic type: gui {
 			species road aspect: base ;
 			species road aspect: traffic_jam ;
 		}
-		display chart_display refresh: every(10) {
+		display chart_display refresh: every(10#cycle) {
 			chart "Traffic jam" type: series size: {0.9, 0.4} position: {0.05, 0.05} {
 				data "Mean road traffic coefficient" value: mean (road collect each.coeff_traffic) style: line color: #green ;
 				data "Max road traffic coefficient" value: road max_of (each.coeff_traffic) style: line color: #red ;

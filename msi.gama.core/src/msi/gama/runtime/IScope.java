@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
  *
- * 'IScope.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IScope.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
@@ -38,12 +37,11 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public interface IScope {
 
 	/**
-	 * Use this class to accumulate a series of execution results. Only the last
-	 * one marked as 'passed' will be returned
+	 * Use this class to accumulate a series of execution results. Only the last one marked as 'passed' will be returned
 	 * 
 	 * @author drogoul
 	 *
@@ -68,8 +66,7 @@ public interface IScope {
 	}
 
 	/**
-	 * The result of executions. 'passed' represents the success or failure of
-	 * the computation, value its result
+	 * The result of executions. 'passed' represents the success or failure of the computation, value its result
 	 * 
 	 * @author drogoul
 	 *
@@ -134,18 +131,14 @@ public interface IScope {
 	/**
 	 * Management of the scope state.
 	 * 
-	 * clear() removes any contextual information from it. setOnUserHold()
-	 * allows to suspend execution because the user is asked for something.
-	 * isOnUserHold() allows to know it. isPaused() allows to know if the
-	 * execution is paused. disableErrorReporting() allows to disable any output
-	 * of exceptions during an execution. enableErrorReporting() does the
-	 * contrary. reportErrors() will return whether this property is true or
-	 * false. setTrace() allows to turn the trace of execution on and off. When
-	 * tracing, the scope will output every execution that takes place on it.
-	 * getName() returns the name of the scope. copy() allows to make a copy of
-	 * the current scope. setInterrupted() and interrupted() respectively set
-	 * and retrieve the value of 'interrupted', which marks the end of the
-	 * execution on this scope
+	 * clear() removes any contextual information from it. setOnUserHold() allows to suspend execution because the user
+	 * is asked for something. isOnUserHold() allows to know it. isPaused() allows to know if the execution is paused.
+	 * disableErrorReporting() allows to disable any output of exceptions during an execution. enableErrorReporting()
+	 * does the contrary. reportErrors() will return whether this property is true or false. setTrace() allows to turn
+	 * the trace of execution on and off. When tracing, the scope will output every execution that takes place on it.
+	 * getName() returns the name of the scope. copy() allows to make a copy of the current scope. setInterrupted() and
+	 * interrupted() respectively set and retrieve the value of 'interrupted', which marks the end of the execution on
+	 * this scope
 	 */
 
 	public abstract void clear();
@@ -175,11 +168,9 @@ public interface IScope {
 	/**
 	 * Keeping track of symbols.
 	 * 
-	 * setCurrentSymbol() indicates which symbol (statement, variable, output,
-	 * ..) is currently executing. push() does the same but creates a local
-	 * context where variables can be manipulated. pop() discards this local
-	 * context. getCurrentSymbol() allows to retrieve the latest symbol that has
-	 * been pushed or set
+	 * setCurrentSymbol() indicates which symbol (statement, variable, output, ..) is currently executing. push() does
+	 * the same but creates a local context where variables can be manipulated. pop() discards this local context.
+	 * getCurrentSymbol() allows to retrieve the latest symbol that has been pushed or set
 	 */
 
 	public abstract void push(ISymbol symbol);
@@ -193,11 +184,9 @@ public interface IScope {
 	/**
 	 * Access to read attributes
 	 * 
-	 * Manipulates a distinct stack where the attributes read from files,
-	 * databases, etc. are temporarily stored. pushReadAttributes() allows to
-	 * store a new map of attributes. popReadAttributes() retieves the latest
-	 * pushed attributes (and removes them from the stack). peekReadAttributes()
-	 * retrieves the latest without removing them.
+	 * Manipulates a distinct stack where the attributes read from files, databases, etc. are temporarily stored.
+	 * pushReadAttributes() allows to store a new map of attributes. popReadAttributes() retieves the latest pushed
+	 * attributes (and removes them from the stack). peekReadAttributes() retrieves the latest without removing them.
 	 * 
 	 */
 	public abstract void pushReadAttributes(Map values);
@@ -209,8 +198,7 @@ public interface IScope {
 	/**
 	 * Access to various agents and objects
 	 * 
-	 * setEach() allows to fix temporarily the value of the 'each'
-	 * pseudo-variable, getEach() to retrieve it.
+	 * setEach() allows to fix temporarily the value of the 'each' pseudo-variable, getEach() to retrieve it.
 	 */
 
 	public abstract void setEach(Object value);
@@ -226,10 +214,9 @@ public interface IScope {
 	/**
 	 * Current agent management.
 	 * 
-	 * getAgentScope() returns the currently pushed agent. push() allos to keep
-	 * trace of the current agent, while pop() will retrieve it. getAgentScope()
-	 * returns the currently pushed agent. getAgentsStack() returns a copy of
-	 * the stack of agents
+	 * getAgentScope() returns the currently pushed agent. push() allos to keep trace of the current agent, while pop()
+	 * will retrieve it. getAgentScope() returns the currently pushed agent. getAgentsStack() returns a copy of the
+	 * stack of agents
 	 * 
 	 */
 
@@ -244,8 +231,8 @@ public interface IScope {
 	/**
 	 * Access to utilities and runtime contexts
 	 * 
-	 * getRandom() gives access to the current random number generator. getGui()
-	 * returns the current user-interface component being used.
+	 * getRandom() gives access to the current random number generator. getGui() returns the current user-interface
+	 * component being used.
 	 */
 
 	public abstract RandomUtils getRandom();
@@ -320,14 +307,12 @@ public interface IScope {
 	public abstract IModel getModel();
 
 	/**
-	 * Indicates that a loop is finishing : should clear any _loop_halted status
-	 * present
+	 * Indicates that a loop is finishing : should clear any _loop_halted status present
 	 */
 	public abstract void popLoop();
 
 	/**
-	 * Indicates that an action is finishing : should clear any _action_halted
-	 * status present
+	 * Indicates that an action is finishing : should clear any _action_halted status present
 	 */
 	public abstract void popAction();
 

@@ -215,6 +215,11 @@ public class GamaColor extends Color implements IValue,
 		return new GamaColor(this);
 	}
 
+	public static GamaColor merge(final GamaColor c1, final GamaColor c2) {
+		return new GamaColor(c1.getRed() + c2.getRed(), c1.getGreen() + c2.getGreen(), c1.getBlue() + c2.getBlue(),
+				c1.getAlpha() + c2.getAlpha());
+	}
+
 	public int compareRgbTo(final Color c2) {
 		return Integer.signum(getRGB() - c2.getRGB());
 	}

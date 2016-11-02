@@ -597,9 +597,16 @@
             </and>
          </activeWhen>
          <enabledWhen>
-            <reference
-                  definitionId="isSimulationReady">
-            </reference>
+            <and>
+               <reference
+                     definitionId="isSimulationReady">
+               </reference>
+               <not>
+                  <reference
+                        definitionId="isSimulationRunning">
+                  </reference>
+               </not>
+            </and>
          </enabledWhen>
       </handler>
       <handler

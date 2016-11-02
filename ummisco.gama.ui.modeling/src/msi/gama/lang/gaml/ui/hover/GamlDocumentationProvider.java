@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'GamlDocumentationProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlDocumentationProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -23,7 +22,9 @@ import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
+import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.S_Definition;
+import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TypeRef;
@@ -43,6 +44,8 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 
 	@Override
 	public String getDocumentation(final EObject o) {
+		if (o instanceof Import) { return "ctrl-click or cmd-click on the path to open this model in a new editor"; }
+		if (o instanceof S_Global) { return getDocumentation(o.eContainer().eContainer()); }
 		if (o instanceof StringLiteral) {
 			final URI iu = detector.getURI((StringLiteral) o);
 			if (iu != null) {
@@ -74,9 +77,8 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 		}
 		if (o instanceof TypeRef) {
 			final Statement s = EGaml.getStatement(o);
-			if (s instanceof S_Definition && ((S_Definition) s).getTkey() == o) {
-				return getDocumentation(s);
-			}
+			if (s instanceof S_Definition && ((S_Definition) s).getTkey() == o) { return comment
+					+ GamlResourceServices.getResourceDocumenter().getGamlDocumentation(s).getDocumentation(); }
 		} else if (o instanceof Function) {
 			final Function f = (Function) o;
 			if (f.getAction() instanceof ActionRef) {
@@ -85,6 +87,8 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 				if (!temp.contains("No documentation"))
 					return temp;
 			}
+		} else if (o instanceof VariableRef) {
+			if (((VariableRef) o).getRef() != null) { return ""; }
 		}
 
 		// else if (o instanceof VariableRef) {
@@ -103,15 +107,11 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 				final SymbolProto p = DescriptionFactory.getProto(key, null);
 				if (p != null) {
 					final FacetProto f = p.getPossibleFacets().get(facetName);
-					if (f != null) {
-						return comment + Strings.LN + f.getDocumentation();
-					}
+					if (f != null) { return comment + Strings.LN + f.getDocumentation(); }
 				}
 				return comment;
 			}
-			if (comment.isEmpty()) {
-				return null;
-			}
+			if (comment.isEmpty()) { return null; }
 			return comment + Strings.LN + "No documentation.";
 		}
 

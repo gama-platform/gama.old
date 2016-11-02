@@ -43,8 +43,7 @@ class TemporaryScope implements IScope {
 	/**
 	 *
 	 */
-	public TemporaryScope() {
-	}
+	public TemporaryScope() {}
 
 	/**
 	 * Method clear()
@@ -60,8 +59,7 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method push()
 	 * 
-	 * @see msi.gama.runtime.IScope#push(msi.gama.metamodel.agent.IAgent) No
-	 *      agents
+	 * @see msi.gama.runtime.IScope#push(msi.gama.metamodel.agent.IAgent) No agents
 	 */
 	@Override
 	public boolean push(final IAgent agent) {
@@ -71,39 +69,32 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method push()
 	 * 
-	 * @see msi.gama.runtime.IScope#push(msi.gaml.statements.IStatement) No
-	 *      statements
+	 * @see msi.gama.runtime.IScope#push(msi.gaml.statements.IStatement) No statements
 	 */
 	@Override
-	public void push(final ISymbol statement) {
-	}
+	public void push(final ISymbol statement) {}
 
 	/**
 	 * Method pop()
 	 * 
-	 * @see msi.gama.runtime.IScope#pop(msi.gama.metamodel.agent.IAgent) No
-	 *      agents
+	 * @see msi.gama.runtime.IScope#pop(msi.gama.metamodel.agent.IAgent) No agents
 	 */
 	@Override
-	public void pop(final IAgent agent) {
-	}
+	public void pop(final IAgent agent) {}
 
 	/**
 	 * Method pop()
 	 * 
-	 * @see msi.gama.runtime.IScope#pop(msi.gaml.statements.IStatement) No
-	 *      statements
+	 * @see msi.gama.runtime.IScope#pop(msi.gaml.statements.IStatement) No statements
 	 */
 	@Override
-	public void pop(final ISymbol statement) {
-	}
+	public void pop(final ISymbol statement) {}
 
 	/**
 	 * Method execute()
 	 * 
-	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IExecutable,
-	 *      msi.gama.metamodel.agent.IAgent, msi.gaml.statements.Arguments,
-	 *      java.lang.Object[]) Impossible to execute anything here
+	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IExecutable, msi.gama.metamodel.agent.IAgent,
+	 *      msi.gaml.statements.Arguments, java.lang.Object[]) Impossible to execute anything here
 	 */
 	@Override
 	public ExecutionResult execute(final IExecutable executable, final IAgent agent, final Arguments args) {
@@ -113,8 +104,7 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method evaluate()
 	 * 
-	 * @see msi.gama.runtime.IScope#evaluate(msi.gaml.expressions.IExpression,
-	 *      msi.gama.metamodel.agent.IAgent)
+	 * @see msi.gama.runtime.IScope#evaluate(msi.gaml.expressions.IExpression, msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
 	public ExecutionResult evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
@@ -140,8 +130,7 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method setVarValue()
 	 * 
-	 * @see msi.gama.runtime.IScope#setVarValue(java.lang.String,
-	 *      java.lang.Object)
+	 * @see msi.gama.runtime.IScope#setVarValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public void setVarValue(final String varName, final Object val) {
@@ -171,8 +160,7 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method addVarWithValue()
 	 * 
-	 * @see msi.gama.runtime.IScope#addVarWithValue(java.lang.String,
-	 *      java.lang.Object)
+	 * @see msi.gama.runtime.IScope#addVarWithValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
 	public void addVarWithValue(final String varName, final Object val) {
@@ -272,8 +260,7 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method getAgentVarValue()
 	 * 
-	 * @see msi.gama.runtime.IScope#getAgentVarValue(msi.gama.metamodel.agent.IAgent,
-	 *      java.lang.String)
+	 * @see msi.gama.runtime.IScope#getAgentVarValue(msi.gama.metamodel.agent.IAgent, java.lang.String)
 	 */
 	@Override
 	public Object getAgentVarValue(final IAgent agent, final String name) throws GamaRuntimeException {
@@ -283,8 +270,8 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method setAgentVarValue()
 	 * 
-	 * @see msi.gama.runtime.IScope#setAgentVarValue(msi.gama.metamodel.agent.IAgent,
-	 *      java.lang.String, java.lang.Object)
+	 * @see msi.gama.runtime.IScope#setAgentVarValue(msi.gama.metamodel.agent.IAgent, java.lang.String,
+	 *      java.lang.Object)
 	 */
 	@Override
 	public void setAgentVarValue(final IAgent agent, final String name, final Object v) throws GamaRuntimeException {
@@ -307,8 +294,7 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#setInterrupted(boolean) No interruption
 	 */
 	@Override
-	public void setInterrupted() {
-	}
+	public void setInterrupted() {}
 
 	/**
 	 * Method getGlobalVarValue()
@@ -323,12 +309,10 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method setGlobalVarValue()
 	 * 
-	 * @see msi.gama.runtime.IScope#setGlobalVarValue(java.lang.String,
-	 *      java.lang.Object)
+	 * @see msi.gama.runtime.IScope#setGlobalVarValue(java.lang.String, java.lang.Object)
 	 */
 	@Override
-	public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
-	}
+	public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {}
 
 	/**
 	 * Method getName()
@@ -353,8 +337,7 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method setTopology()
 	 * 
-	 * @see msi.gama.runtime.IScope#setTopology(msi.gama.metamodel.topology.ITopology)
-	 *      No Topology to set
+	 * @see msi.gama.runtime.IScope#setTopology(msi.gama.metamodel.topology.ITopology) No Topology to set
 	 */
 	@Override
 	public ITopology setTopology(final ITopology topology) {
@@ -364,12 +347,10 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method setGraphics()
 	 * 
-	 * @see msi.gama.runtime.IScope#setGraphics(msi.gama.common.interfaces.IGraphics)
-	 *      No Graphics to set
+	 * @see msi.gama.runtime.IScope#setGraphics(msi.gama.common.interfaces.IGraphics) No Graphics to set
 	 */
 	@Override
-	public void setGraphics(final IGraphics val) {
-	}
+	public void setGraphics(final IGraphics val) {}
 
 	/**
 	 * Method getGraphics()
@@ -452,8 +433,7 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#popLoop() Nothing to do here
 	 */
 	@Override
-	public void popLoop() {
-	}
+	public void popLoop() {}
 
 	/**
 	 * Method popAction()
@@ -461,8 +441,7 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#popAction() Nothing to do here
 	 */
 	@Override
-	public void popAction() {
-	}
+	public void popAction() {}
 
 	/**
 	 * Method interruptAction()
@@ -470,8 +449,7 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#interruptAction() Nothing to do here
 	 */
 	@Override
-	public void interruptAction() {
-	}
+	public void interruptAction() {}
 
 	/**
 	 * Method interruptAgent()
@@ -479,8 +457,7 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#interruptAgent() Nothing to do here
 	 */
 	@Override
-	public void interruptAgent() {
-	}
+	public void interruptAgent() {}
 
 	/**
 	 * Method interruptLoop()
@@ -488,14 +465,12 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#interruptLoop() Nothing to do here
 	 */
 	@Override
-	public void interruptLoop() {
-	}
+	public void interruptLoop() {}
 
 	/**
 	 * Method init()
 	 * 
-	 * @see msi.gama.runtime.IScope#init(msi.gama.common.interfaces.IStepable)
-	 *      Nothing to do here
+	 * @see msi.gama.runtime.IScope#init(msi.gama.common.interfaces.IStepable) Nothing to do here
 	 */
 	@Override
 	public ExecutionResult init(final IStepable agent) {
@@ -505,8 +480,7 @@ class TemporaryScope implements IScope {
 	/**
 	 * Method step()
 	 * 
-	 * @see msi.gama.runtime.IScope#step(msi.gama.common.interfaces.IStepable)
-	 *      Nothing to do here
+	 * @see msi.gama.runtime.IScope#step(msi.gama.common.interfaces.IStepable) Nothing to do here
 	 */
 	@Override
 	public ExecutionResult step(final IStepable agent) {
@@ -519,8 +493,7 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#stackArguments(msi.gaml.statements.Arguments)
 	 */
 	@Override
-	public void stackArguments(final Arguments actualArgs) {
-	}
+	public void stackArguments(final Arguments actualArgs) {}
 
 	/**
 	 * Method update() Nothing to do here
@@ -546,18 +519,15 @@ class TemporaryScope implements IScope {
 	 * @see msi.gama.runtime.IScope#setTrace(boolean) Nothing to do here
 	 */
 	@Override
-	public void setTrace(final boolean trace) {
-	}
+	public void setTrace(final boolean trace) {}
 
 	/**
 	 * Method setStatement()
 	 * 
-	 * @see msi.gama.runtime.IScope#setStatement(msi.gaml.statements.IStatement)
-	 *      Nothing to do here
+	 * @see msi.gama.runtime.IScope#setStatement(msi.gaml.statements.IStatement) Nothing to do here
 	 */
 	@Override
-	public void setCurrentSymbol(final ISymbol abstractStatement) {
-	}
+	public void setCurrentSymbol(final ISymbol abstractStatement) {}
 
 	RandomUtils random = null;
 

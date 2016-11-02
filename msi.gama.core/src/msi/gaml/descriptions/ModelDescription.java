@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'ModelDescription.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ModelDescription.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -20,9 +19,12 @@ import java.util.Set;
 
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.Iterables;
+
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -36,7 +38,7 @@ import msi.gaml.types.TypesManager;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class ModelDescription extends SpeciesDescription {
 
 	// TODO Move elsewhere
@@ -126,9 +128,7 @@ public class ModelDescription extends SpeciesDescription {
 	// hqnghi does it need to verify parent of micro-model??
 	@Override
 	protected boolean verifyParent() {
-		if (parent == ModelDescription.ROOT) {
-			return true;
-		}
+		if (parent == ModelDescription.ROOT) { return true; }
 		return super.verifyParent();
 	}
 
@@ -136,9 +136,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public void markAttributeRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
-		if (newVar.isBuiltIn()) {
-			return;
-		}
+		if (newVar.isBuiltIn()) { return; }
 		if (existingVar.isBuiltIn()) {
 			newVar.info(
 					"This definition of " + newVar.getName() + " supersedes the one in " + existingVar.getOriginName(),
@@ -159,6 +157,25 @@ public class ModelDescription extends SpeciesDescription {
 					+ existingResource.eResource().getURI().lastSegment(), IGamlIssue.REDEFINES, NAME);
 	}
 
+	@Override
+	public String getDocumentationWithoutMeta() {
+		final StringBuilder sb = new StringBuilder(200);
+		final String parentName = getParent() == null ? "nil" : getParent().getName();
+		if (!parentName.equals(IKeyword.MODEL))
+			sb.append("<b>Subspecies of:</b> ").append(parentName).append("<br>");
+		final Iterable<String> skills = getSkillsNames();
+		if (!Iterables.isEmpty(skills))
+			sb.append("<b>Skills:</b> ").append(skills).append("<br>");
+		sb.append("<br>")
+				.append("The following attributes and actions will be accessible using 'world' (in the model) and 'simulation' (in an experiment)")
+				.append("<br>");
+		sb.append(getAttributeDocumentation());
+		sb.append("<br/>");
+		sb.append(getActionDocumentation());
+		sb.append("<br/>");
+		return sb.toString();
+	}
+
 	/**
 	 * Relocates the working path. The last segment must not end with a "/"
 	 * 
@@ -170,40 +187,18 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public String toString() {
-		if (modelFilePath == null || modelFilePath.isEmpty()) {
-			return "abstract model";
-		}
+		if (modelFilePath == null || modelFilePath.isEmpty()) { return "abstract model"; }
 		return "description of " + modelFilePath.substring(modelFilePath.lastIndexOf(File.separator));
 	}
 
 	@Override
 	public void dispose() {
-		if (isBuiltIn()) {
-			return;
-		}
+		if (isBuiltIn()) { return; }
 		super.dispose();
 		experiments = null;
-		// statementSpeciesReferences.clear();
 		types.dispose();
 
 	}
-
-	// public void addSpeciesReferencedBy(final StatementDescription sd, final
-	// SpeciesDescription species) {
-	// System.out.println(sd.toString() + " references " + species + " ; type "
-	// + sd.getType());
-	// statementSpeciesReferences.put(sd, species);
-	// }
-	//
-	// public boolean isSpeciesReferenceComputed(final StatementDescription sd)
-	// {
-	// return statementSpeciesReferences.containsKey(sd);
-	// }
-	//
-	// public SpeciesDescription getSpeciesReferencedBy(final
-	// StatementDescription sd) {
-	// return statementSpeciesReferences.get(sd);
-	// }
 
 	/**
 	 * Gets the model file name.
@@ -259,9 +254,7 @@ public class ModelDescription extends SpeciesDescription {
 				microModels = new THashMap();
 			microModels.put(((ModelDescription) child).getAlias(), (ModelDescription) child);
 		} // no else as models are also species, which should be added after.
-		if (!child.isBuiltIn() && child.getName().equals(SimulationAgent.STARTING_DATE)) {
-			isStartingDateDefined = true;
-		}
+
 		if (child instanceof ExperimentDescription) {
 			final String s = child.getName();
 			if (experiments == null) {
@@ -273,6 +266,14 @@ public class ModelDescription extends SpeciesDescription {
 		}
 
 		return child;
+	}
+
+	@Override
+	public void addOwnAttribute(final VariableDescription vd) {
+		if (!vd.isBuiltIn() && vd.getName().equals(SimulationAgent.STARTING_DATE)) {
+			isStartingDateDefined = true;
+		}
+		super.addOwnAttribute(vd);
 	}
 
 	public boolean isStartingDateDefined() {
@@ -300,9 +301,7 @@ public class ModelDescription extends SpeciesDescription {
 	public SpeciesDescription getSpeciesDescription(final String spec) {
 		if (spec.equals(getName()))
 			return this;
-		if (importedModelNames != null && importedModelNames.contains(spec)) {
-			return this;
-		}
+		if (importedModelNames != null && importedModelNames.contains(spec)) { return this; }
 		if (getTypesManager() == null) {
 			if (hasMicroSpecies())
 				return getMicroSpecies().get(spec);
@@ -314,9 +313,7 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public IType getTypeNamed(final String s) {
-		if (types == null) {
-			return Types.NO_TYPE;
-		}
+		if (types == null) { return Types.NO_TYPE; }
 		return types.get(s);
 	}
 
@@ -439,8 +436,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	/**
-	 * Returns all the species including the model itself, all the micro-species
-	 * and the experiments
+	 * Returns all the species including the model itself, all the micro-species and the experiments
 	 * 
 	 * @return
 	 */

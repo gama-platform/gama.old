@@ -29,8 +29,8 @@ species cell {
 
 species user control:user_only {
    user_panel "Default" initial: true {
-      transition to: "Basic Control" when: every (10) and !advanced_user_control;
-      transition to: "Advanced Control" when: every(10) and advanced_user_control;
+      transition to: "Basic Control" when: every (10#cycles) and !advanced_user_control;
+      transition to: "Advanced Control" when: every(10#cycles) and advanced_user_control;
    }
    
    user_panel "Basic Control" {

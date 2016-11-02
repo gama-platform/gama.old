@@ -19,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import com.google.common.collect.Iterables;
 
@@ -188,7 +189,8 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public void updateVariables(final IScope scope, final IAgent a) {
 		for (final IVariable v : updatableVars) {
 			scope.setCurrentSymbol(v);
-			v.setVal(scope, a, v.getUpdatedValue(scope));
+			scope.setAgentVarValue(a, v.getName(), v.getUpdatedValue(scope));
+			// v.setVal(scope, a, v.getUpdatedValue(scope));
 		}
 	}
 
@@ -755,19 +757,14 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 		final IAgent sourceAgent = source == null ? null : source.getAgent();
 		results.remove(sourceAgent);
-		final Iterator<? extends IShape> it = results.iterator();
-		while (it.hasNext()) {
-			final IShape s = it.next();
-			final IAgent a = s.getAgent();
-			if (a == null || a.dead()
+		final Predicate<IShape> toRemove = (each) -> {
+			final IAgent a = each.getAgent();
+			return a == null || a.dead()
 					|| a.getPopulation() != this
 							&& (a.getPopulation().getType().getContentType() != this.getType().getContentType()
-									|| !this.contains(a))) {
-				it.remove();
-			}
-
-		}
-
+									|| !this.contains(a));
+		};
+		results.removeIf(toRemove);
 	}
 
 	@Override

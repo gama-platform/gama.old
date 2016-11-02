@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'DrivingSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DrivingSkill.java', in plugin 'simtools.gaml.extensions.traffic', is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -58,13 +57,34 @@ import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@vars({ @var(name = "living_space", type = IType.FLOAT, init = "1.0", doc = @doc("the min distance between the agent and an obstacle (in meter)")),
-		@var(name = "lanes_attribute", type = IType.STRING, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes")),
-		@var(name = "tolerance", type = IType.FLOAT, init = "0.1", doc = @doc("the tolerance distance used for the computation (in meter)")),
-		@var(name = "obstacle_species", type = IType.LIST, init = "[]", doc = @doc("the list of species that are considered as obstacles")),
-		@var(name = IKeyword.SPEED, type = IType.FLOAT, init = "1.0", doc = @doc("the speed of the agent (in meter/second)")) })
-@skill(name = "driving", concept = { IConcept.TRANSPORT, IConcept.SKILL, IConcept.AGENT_MOVEMENT })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@vars ({ @var (
+		name = "living_space",
+		type = IType.FLOAT,
+		init = "1.0",
+		doc = @doc ("the min distance between the agent and an obstacle (in meter)")),
+		@var (
+				name = "lanes_attribute",
+				type = IType.STRING,
+				doc = @doc ("the name of the attribut of the road agent that determine the number of road lanes")),
+		@var (
+				name = "tolerance",
+				type = IType.FLOAT,
+				init = "0.1",
+				doc = @doc ("the tolerance distance used for the computation (in meter)")),
+		@var (
+				name = "obstacle_species",
+				type = IType.LIST,
+				init = "[]",
+				doc = @doc ("the list of species that are considered as obstacles")),
+		@var (
+				name = IKeyword.SPEED,
+				type = IType.FLOAT,
+				init = "1.0",
+				doc = @doc ("the speed of the agent (in meter/second)")) })
+@skill (
+		name = "driving",
+		concept = { IConcept.TRANSPORT, IConcept.SKILL, IConcept.AGENT_MOVEMENT })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class DrivingSkill extends MovingSkill {
 
 	public final static String LIVING_SPACE = "living_space";
@@ -72,45 +92,45 @@ public class DrivingSkill extends MovingSkill {
 	public final static String LANES_ATTRIBUTE = "lanes_attribute";
 	public final static String OBSTACLE_SPECIES = "obstacle_species";
 
-	@getter(LIVING_SPACE)
+	@getter (LIVING_SPACE)
 	public double getLivingSpace(final IAgent agent) {
 		return (Double) agent.getAttribute(LIVING_SPACE);
 	}
 
-	@setter(LANES_ATTRIBUTE)
+	@setter (LANES_ATTRIBUTE)
 	public void setLanesAttribute(final IAgent agent, final String latt) {
 		agent.setAttribute(LANES_ATTRIBUTE, latt);
 		// scope.setAgentVarValue(agent, IKeyword.SPEED, s);
 	}
 
-	@getter(LANES_ATTRIBUTE)
+	@getter (LANES_ATTRIBUTE)
 	public String getLanesAttribute(final IAgent agent) {
 		return (String) agent.getAttribute(LANES_ATTRIBUTE);
 	}
 
-	@setter(LIVING_SPACE)
+	@setter (LIVING_SPACE)
 	public void setLivingSpace(final IAgent agent, final double ls) {
 		agent.setAttribute(LIVING_SPACE, ls);
 		// scope.setAgentVarValue(agent, IKeyword.SPEED, s);
 	}
 
-	@getter(TOLERANCE)
+	@getter (TOLERANCE)
 	public double getTolerance(final IAgent agent) {
 		return (Double) agent.getAttribute(TOLERANCE);
 	}
 
-	@setter(TOLERANCE)
+	@setter (TOLERANCE)
 	public void setTolerance(final IAgent agent, final double t) {
 		agent.setAttribute(TOLERANCE, t);
 		// scope.setAgentVarValue(agent, IKeyword.SPEED, s);
 	}
 
-	@getter(OBSTACLE_SPECIES)
+	@getter (OBSTACLE_SPECIES)
 	public GamaList<ISpecies> getObstacleSpecies(final IAgent agent) {
 		return (GamaList<ISpecies>) agent.getAttribute(OBSTACLE_SPECIES);
 	}
 
-	@setter(OBSTACLE_SPECIES)
+	@setter (OBSTACLE_SPECIES)
 	public void setObstacleSpecies(final IAgent agent, final GamaList<ISpecies> os) {
 		agent.setAttribute(OBSTACLE_SPECIES, os);
 	}
@@ -134,15 +154,47 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@Override
-	@action(name = "follow_driving", args = {
-			@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-			@arg(name = "path", type = IType.PATH, optional = true, doc = @doc("a path to be followed.")),
-			@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
-			@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weigths used for the moving.")),
-			@arg(name = LIVING_SPACE, type = IType.FLOAT, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
-			@arg(name = TOLERANCE, type = IType.FLOAT, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
-			@arg(name = LANES_ATTRIBUTE, type = IType.STRING, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent along a given path passed in the arguments while considering the other agents in the network.", returns = "optional: the path followed by the agent.", examples = {
-					@example("do follow speed: speed * 2 path: road_path;") }))
+	@action (
+			name = "follow_driving",
+			args = { @arg (
+					name = IKeyword.SPEED,
+					type = IType.FLOAT,
+					optional = true,
+					doc = @doc ("the speed to use for this move (replaces the current value of speed)")),
+					@arg (
+							name = "path",
+							type = IType.PATH,
+							optional = true,
+							doc = @doc ("a path to be followed.")),
+					@arg (
+							name = "return_path",
+							type = IType.BOOL,
+							optional = true,
+							doc = @doc ("if true, return the path followed (by default: false)")),
+					@arg (
+							name = "move_weights",
+							type = IType.MAP,
+							optional = true,
+							doc = @doc ("Weigths used for the moving.")),
+					@arg (
+							name = LIVING_SPACE,
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("min distance between the agent and an obstacle (replaces the current value of living_space)")),
+					@arg (
+							name = TOLERANCE,
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("tolerance distance used for the computation (replaces the current value of tolerance)")),
+					@arg (
+							name = LANES_ATTRIBUTE,
+							type = IType.STRING,
+							optional = true,
+							doc = @doc ("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) },
+			doc = @doc (
+					value = "moves the agent along a given path passed in the arguments while considering the other agents in the network.",
+					returns = "optional: the path followed by the agent.",
+					examples = { @example ("do follow speed: speed * 2 path: road_path;") }))
 	public IPath primFollow(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final double maxDist = computeDistance(scope, agent);
@@ -187,18 +239,52 @@ public class DrivingSkill extends MovingSkill {
 		return null;
 	}
 
-	@action(name = "goto_driving", args = {
-			@arg(name = "target", type = { IType.POINT, IType.GEOMETRY,
-					IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
-			@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-			@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH,
-					IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
-			@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
-			@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weigths used for the moving.")),
-			@arg(name = LIVING_SPACE, type = IType.FLOAT, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
-			@arg(name = TOLERANCE, type = IType.FLOAT, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
-			@arg(name = LANES_ATTRIBUTE, type = IType.STRING, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = {
-					@example("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
+	@action (
+			name = "goto_driving",
+			args = { @arg (
+					name = "target",
+					type = IType.GEOMETRY,
+					optional = false,
+					doc = @doc ("the location or entity towards which to move.")),
+					@arg (
+							name = IKeyword.SPEED,
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("the speed to use for this move (replaces the current value of speed)")),
+					@arg (
+							name = "on",
+							optional = true,
+							doc = @doc ("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
+					@arg (
+							name = "return_path",
+							type = IType.BOOL,
+							optional = true,
+							doc = @doc ("if true, return the path followed (by default: false)")),
+					@arg (
+							name = "move_weights",
+							type = IType.MAP,
+							optional = true,
+							doc = @doc ("Weigths used for the moving.")),
+					@arg (
+							name = LIVING_SPACE,
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("min distance between the agent and an obstacle (replaces the current value of living_space)")),
+					@arg (
+							name = TOLERANCE,
+							type = IType.FLOAT,
+							optional = true,
+							doc = @doc ("tolerance distance used for the computation (replaces the current value of tolerance)")),
+					@arg (
+							name = LANES_ATTRIBUTE,
+							type = IType.STRING,
+							optional = true,
+							doc = @doc ("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) },
+			doc = @doc (
+					value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)",
+					returns = "optional: the path followed by the agent.",
+					examples = {
+							@example ("do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;") }))
 	public IPath primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final ILocation source = agent.getLocation().copy(scope);
@@ -339,9 +425,7 @@ public class DrivingSkill extends MovingSkill {
 			final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final IList indexVals = initMoveAlongPath(agent, path, currentLocation);
-		if (indexVals == null) {
-			return;
-		}
+		if (indexVals == null) { return; }
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		final int endIndexSegment = (Integer) indexVals.get(2);
@@ -442,9 +526,7 @@ public class DrivingSkill extends MovingSkill {
 			final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final IList indexVals = initMoveAlongPath(agent, path, currentLocation);
-		if (indexVals == null) {
-			return null;
-		}
+		if (indexVals == null) { return null; }
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		final int endIndexSegment = (Integer) indexVals.get(2);
@@ -541,11 +623,9 @@ public class DrivingSkill extends MovingSkill {
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
 		path.setSource(currentLocation.copy(scope));
-		if (segments.isEmpty()) {
-			return null;
-		}
-		final IPath followedPath = PathFactory.newInstance(scope.getTopology(), startLocation, currentLocation,
-				segments);
+		if (segments.isEmpty()) { return null; }
+		final IPath followedPath =
+				PathFactory.newInstance(scope.getTopology(), startLocation, currentLocation, segments);
 		// new GamaPath(scope.getTopology(), startLocation, currentLocation,
 		// segments);
 		followedPath.setRealObjects(agents);
@@ -559,9 +639,7 @@ public class DrivingSkill extends MovingSkill {
 		Integer indexSegment = 0;
 		Integer endIndexSegment = 0;
 		final IList<IShape> edges = path.getEdgeGeometry();
-		if (edges.isEmpty()) {
-			return null;
-		}
+		if (edges.isEmpty()) { return null; }
 		// final int nb = edges.size();
 		if (currentRoad.getInnerGeometry().getNumPoints() == 2) {
 			indexSegment = 0;

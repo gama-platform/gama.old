@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'VariableDescription.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'VariableDescription.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -26,6 +25,7 @@ import msi.gama.precompiler.ITypeProvider;
 import msi.gama.util.Collector;
 import msi.gama.util.GAML;
 import msi.gama.util.ICollector;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
@@ -43,10 +43,10 @@ import msi.gaml.types.Types;
 public class VariableDescription extends SymbolDescription {
 
 	private static Map<String, Collection<String>> dependencies = new THashMap<>();
-	private static Set<String> INIT_DEPENDENCIES_FACETS = ImmutableSet.<String> builder()
-			.add(INIT, MIN, MAX, FUNCTION, STEP, SIZE).build();
-	private static Set<String> UPDATE_DEPENDENCIES_FACETS = ImmutableSet.<String> builder()
-			.add(UPDATE, VALUE, MIN, MAX, FUNCTION).build();
+	private static Set<String> INIT_DEPENDENCIES_FACETS =
+			ImmutableSet.<String> builder().add(INIT, MIN, MAX, FUNCTION, STEP, SIZE).build();
+	private static Set<String> UPDATE_DEPENDENCIES_FACETS =
+			ImmutableSet.<String> builder().add(UPDATE, VALUE, MIN, MAX, FUNCTION).build();
 	private String plugin;
 
 	private final boolean _isGlobal, _isNotModifiable;
@@ -61,8 +61,8 @@ public class VariableDescription extends SymbolDescription {
 			facets.putAsLabel(TYPE, keyword);
 		}
 		_isGlobal = superDesc instanceof ModelDescription;
-		_isNotModifiable = facets != null && (facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE))
-				&& !isParameter();
+		_isNotModifiable =
+				facets != null && (facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE)) && !isParameter();
 		if (isBuiltIn() && hasFacet("depends_on")) {
 			final IExpressionDescription desc = getFacet("depends_on");
 			final Collection<String> strings = desc.getStrings(this, false);
@@ -86,9 +86,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if (isBuiltIn()) {
-			return;
-		}
+		if (isBuiltIn()) { return; }
 		super.dispose();
 	}
 
@@ -102,9 +100,7 @@ public class VariableDescription extends SymbolDescription {
 			@Override
 			public boolean visit(final String facetName, final IExpressionDescription exp) {
 				if (isFunction) {
-					if (facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE)) {
-						return true;
-					}
+					if (facetName.equals(INIT) || facetName.equals(UPDATE) || facetName.equals(VALUE)) { return true; }
 				}
 				if (!hasFacet(facetName)) {
 					setFacet(facetName, exp);
@@ -138,9 +134,8 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	/**
-	 * A variable is said to be contextual if its type or contents type depends
-	 * on the species context. For example, 'simulation' in experiments. If so,
-	 * it has to be copied in subspecies
+	 * A variable is said to be contextual if its type or contents type depends on the species context. For example,
+	 * 'simulation' in experiments. If so, it has to be copied in subspecies
 	 * 
 	 * @return
 	 */
@@ -155,9 +150,8 @@ public class VariableDescription extends SymbolDescription {
 	}
 
 	/**
-	 * Returns the type denoted by this string. This is a contextual retrieval,
-	 * as the string can contain the value of one of the ITypeProvider
-	 * constants. Method getTypeNamed()
+	 * Returns the type denoted by this string. This is a contextual retrieval, as the string can contain the value of
+	 * one of the ITypeProvider constants. Method getTypeNamed()
 	 * 
 	 * @see msi.gaml.descriptions.SymbolDescription#getTypeNamed(java.lang.String)
 	 */
@@ -167,48 +161,41 @@ public class VariableDescription extends SymbolDescription {
 		if (result == Types.NO_TYPE) {
 			final int provider = GamaIntegerType.staticCast(null, s, null, false);
 			switch (provider) {
-			case ITypeProvider.MACRO_TYPE:
-				final IDescription species = this.getEnclosingDescription();
-				final IDescription macro = species.getEnclosingDescription();
-				if (macro == null) {
-					return Types.AGENT;
-				}
-				return macro.getType();
-			case ITypeProvider.OWNER_TYPE: // This represents the type of the
-											// agents of the enclosing species
-				if (this.getEnclosingDescription() == null) {
-					return Types.AGENT;
-				}
-				return this.getEnclosingDescription().getType();
-			case ITypeProvider.MODEL_TYPE: // This represents the type of the
-											// model (used for simulations)
-				final ModelDescription md = this.getModelDescription();
-				if (md == null) {
-					return Types.get("model");
-				}
-				return md.getType();
-			case ITypeProvider.EXPERIMENT_TYPE:
-				return Types.get("experiment");
-			case ITypeProvider.MIRROR_TYPE:
-				if (getEnclosingDescription() == null) {
-					return null;
-				}
-				final IExpression mirrors = getEnclosingDescription().getFacetExpr(MIRRORS);
-				if (mirrors != null) {
-					// We try to change the type of the 'target' variable if the
-					// expression contains only agents from the
-					// same species
-					final IType<?> t = mirrors.getType().getContentType();
-					if (t.isAgentType() && t.id() != IType.AGENT) {
-						getEnclosingDescription().info("The 'target' attribute will be of type " + t.getSpeciesName(),
-								IGamlIssue.GENERAL, MIRRORS);
+				case ITypeProvider.MACRO_TYPE:
+					final IDescription species = this.getEnclosingDescription();
+					final IDescription macro = species.getEnclosingDescription();
+					if (macro == null) { return Types.AGENT; }
+					return macro.getType();
+				case ITypeProvider.OWNER_TYPE: // This represents the type of the
+												// agents of the enclosing species
+					if (this.getEnclosingDescription() == null) { return Types.AGENT; }
+					return this.getEnclosingDescription().getType();
+				case ITypeProvider.MODEL_TYPE: // This represents the type of the
+												// model (used for simulations)
+					final ModelDescription md = this.getModelDescription();
+					if (md == null) { return Types.get("model"); }
+					return md.getType();
+				case ITypeProvider.EXPERIMENT_TYPE:
+					return Types.get("experiment");
+				case ITypeProvider.MIRROR_TYPE:
+					if (getEnclosingDescription() == null) { return null; }
+					final IExpression mirrors = getEnclosingDescription().getFacetExpr(MIRRORS);
+					if (mirrors != null) {
+						// We try to change the type of the 'target' variable if the
+						// expression contains only agents from the
+						// same species
+						final IType<?> t = mirrors.getType().getContentType();
+						if (t.isAgentType() && t.id() != IType.AGENT) {
+							getEnclosingDescription().info(
+									"The 'target' attribute will be of type " + t.getSpeciesName(), IGamlIssue.GENERAL,
+									MIRRORS);
+						}
+						return t;
+					} else {
+						getEnclosingDescription().info(
+								"No common species detected in 'mirrors'. The 'target' variable will be of generic type 'agent'",
+								IGamlIssue.WRONG_TYPE, MIRRORS);
 					}
-					return t;
-				} else {
-					getEnclosingDescription().info(
-							"No common species detected in 'mirrors'. The 'target' variable will be of generic type 'agent'",
-							IGamlIssue.WRONG_TYPE, MIRRORS);
-				}
 			}
 		}
 		return result;
@@ -270,30 +257,55 @@ public class VariableDescription extends SymbolDescription {
 
 	public String getParameterName() {
 		final String pName = getLitteral(PARAMETER);
-		if (pName == null || pName.equals(TRUE)) {
-			return getName();
-		}
+		if (pName == null || pName.equals(TRUE)) { return getName(); }
 		return pName;
 	}
 
 	@Override
+	public TypeDescription getEnclosingDescription() {
+		return (TypeDescription) super.getEnclosingDescription();
+	}
+
+	@Override
 	public String getTitle() {
-		final String title = "Definition of "
-				+ (isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ");
-		return title + " "
-				+ getName() /* + " of type " + getType().getTitle() */;
+		final boolean isRedefinition = getEnclosingDescription() != null
+				&& getEnclosingDescription().redefinesAttribute(getName())
+				&& AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.containsKey(getName()) && !isBuiltIn();
+		final String title = (isRedefinition ? "Redefinition of " : "Definition of ")
+				+ (isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ") + getName();
+		if (getEnclosingDescription() == null)
+			return title;
+		final String s = title + ", of type " + getType().getTitle() + ", in "
+				+ this.getEnclosingDescription().getTitle() + "<br/>";
+		return s;
 	}
 
 	@Override
 	public String getDocumentation() {
-		final String title = "a" + (isParameter() ? "  parameter " : isNotModifiable() ? " constant " : "n attribute ");
-		if (getEnclosingDescription() == null) {
-			return "This statement declares " + getName() + " as " + title + "<br/>" + super.getDocumentation();
+		final String doc = AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(getName());
+		if (isBuiltIn()) { return doc == null ? "Not yet documented" : doc; }
+		String s = "";
+		if (getEnclosingDescription() != null && getEnclosingDescription().redefinesAttribute(getName())
+				&& doc != null) {
+			s += doc + "<br/>";
 		}
-		final String s = "This statement declares " + getName() + " as " + title + ", of type " + getType().getTitle()
-				+ ", in " + this.getEnclosingDescription().getTitle() + "<br/>";
-		return s + super.getDocumentation();
+		return s + getMeta().getFacetsDocumentation();
 	}
+
+	public String getShortDescription() {
+		final String doc = AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(getName());
+		String s = ", of type " + getType().getTitle();
+		if (getEnclosingDescription() != null
+				&& (getEnclosingDescription().redefinesAttribute(getName()) || isBuiltIn()) && doc != null) {
+			s += ": " + doc + "<br/>";
+		}
+		return s;
+
+	}
+
+	// public String getVarDocumentation() {
+	// return
+	// }
 
 	public void addHelpers(final GamaHelper<?> get, final GamaHelper<?> init, final GamaHelper<?> set) {
 		this.get = get;

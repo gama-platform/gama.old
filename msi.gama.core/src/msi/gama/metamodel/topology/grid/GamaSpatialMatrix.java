@@ -952,50 +952,25 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	//
 	@Override
 	public Set<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
-		// scope.getGui().debug("GamaSpatialMatrix.allAtDistance");
 		final double exp = dist * Maths.SQRT2;
 		final Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
 		final Set<IAgent> result = allInEnvelope(scope, source, env, f, false);
-		final Iterator<IAgent> it = result.iterator();
-		while (it.hasNext()) {
-			if (source.euclidianDistanceTo(it.next()) >= dist) {
-				it.remove();
-			}
-		}
-		// return Iterators.filter(allInEnvelope(scope, source, ENVELOPE, f,
-		// false), new Predicate<IShape>() {
-		//
-		// // TODO Make it a static class
-		// @Override
-		// public boolean apply(final IShape input) {
-		// return source.euclidianDistanceTo(input) < dist;
-		// }
-		// });
+		result.removeIf(each -> source.euclidianDistanceTo(each) >= dist);
 		return result;
 	}
 
 	@Override
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
-		// scope.getGui().debug("GamaSpatialMatrix.firstAtDistance");
 		final double exp = dist * Maths.SQRT2;
 		final Envelope3D env = new Envelope3D(source.getEnvelope());
 		env.expandBy(exp);
-		// final Iterator<IShape> in_square = allInEnvelope(source, ENVELOPE, f,
-		// false);
 		final Ordering<IShape> ordering = Ordering.natural().onResultOf(input -> source.euclidianDistanceTo(input));
 		final Set<IAgent> shapes = allInEnvelope(scope, source, env, f, false);
 		if (shapes.isEmpty()) {
 			return null;
 		}
 		return ordering.min(shapes);
-		// let this throw NoSuchElementException as necessary
-		// IShape minSoFar = shapes.next();
-		// while (shapes.hasNext()) {
-		// IShape next = shapes.next();
-		// minSoFar = ordering.compare(minSoFar, next) <= 0 ? minSoFar : next;
-		// }
-		// return minSoFar;
 	}
 
 	private Set<IAgent> inEnvelope(final Envelope env) {
@@ -1029,14 +1004,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		// Iterators.emptyIterator(); }
 		final Set<IAgent> shapes = inEnvelope(env);
 		shapes.remove(source);
-		final Iterator<IAgent> it = shapes.iterator();
-		while (it.hasNext()) {
-			final IShape s = it.next();
-			final Envelope3D e = s.getEnvelope();
-			if (s.getAgent() == null || !(covered ? env.covers(e) : env.intersects(e))) {
-				it.remove();
-			}
-		}
+		shapes.removeIf(each -> {
+			final Envelope3D e = each.getEnvelope();
+			return each.getAgent() == null || !(covered ? env.covers(e) : env.intersects(e));
+		});
 		if (f != null) {
 			f.filter(scope, source, shapes);
 		}

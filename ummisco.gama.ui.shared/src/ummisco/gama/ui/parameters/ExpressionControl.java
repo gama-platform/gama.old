@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'ExpressionControl.java', in plugin 'msi.gama.application', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExpressionControl.java', in plugin 'msi.gama.application', is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -31,13 +30,15 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class ExpressionControl implements /* IPopupProvider, */SelectionListener, ModifyListener, FocusListener {
 
 	private final Text text;
@@ -77,9 +78,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	@Override
 	public void modifyText(final ModifyEvent event) {
 		// if ( editor == null ) { return; }
-		if (editor != null && editor.internalModification) {
-			return;
-		}
+		if (editor != null && editor.internalModification) { return; }
 		modifyValue();
 		displayTooltip();
 	}
@@ -113,9 +112,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	@Override
 	public void widgetDefaultSelected(final SelectionEvent me) {
 		try {
-			if (text == null || text.isDisposed()) {
-				return;
-			}
+			if (text == null || text.isDisposed()) { return; }
 			modifyValue();
 			displayValue(getCurrentValue());
 			// displayTooltip();
@@ -130,9 +127,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 			currentException = null;
 			IAgent agent = getHostAgent();
 			// AD: fix for SWT Issue in Eclipse 4.4
-			if (text == null || text.isDisposed()) {
-				return null;
-			}
+			if (text == null || text.isDisposed()) { return null; }
 			final String s = text.getText();
 			// AD: Fix for Issue 1042
 			if (agent != null && agent.getScope().interrupted() && agent instanceof SimulationAgent) {
@@ -143,7 +138,10 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 				// return null;
 			} else if (agent == null) {
 				// return Cast.as(s, expectedType.toClass(), false);
-				setCurrentValue(Cast.as(s, expectedType.toClass(), false));
+				if (expectedType == Types.STRING)
+					setCurrentValue(StringUtils.toJavaString(GamaStringType.staticCast(null, s, false)));
+				else
+					setCurrentValue(Cast.as(s, expectedType.toClass(), false));
 			} else {
 				// return evaluateExpression ? GAML.evaluateExpression(s, agent)
 				// : GAML.compileExpression(s, agent);
@@ -170,7 +168,11 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 				if (editor.acceptNull && value == null) {
 					editor.modifyValue(null);
 				} else {
-					editor.modifyValue(evaluateExpression ? expectedType.cast(scope, value, false, false) : value);
+					if (expectedType == Types.STRING) {
+						editor.modifyValue(evaluateExpression
+								? StringUtils.toJavaString(GamaStringType.staticCast(scope, value, false)) : value);
+					} else
+						editor.modifyValue(evaluateExpression ? expectedType.cast(scope, value, false, false) : value);
 				}
 				editor.checkButtons();
 
@@ -228,9 +230,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 
 	@Override
 	public void focusLost(final FocusEvent e) {
-		if (e.widget == null || !e.widget.equals(text)) {
-			return;
-		}
+		if (e.widget == null || !e.widget.equals(text)) { return; }
 		widgetDefaultSelected(null);
 		/* async is needed to wait until focus reaches its new Control */
 		removeTooltip();
@@ -253,8 +253,7 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	}
 
 	@Override
-	public void widgetSelected(final SelectionEvent e) {
-	}
+	public void widgetSelected(final SelectionEvent e) {}
 
 	/**
 	 * @see ummisco.gama.ui.controls.IPopupProvider#getPopupText()
@@ -312,8 +311,13 @@ public class ExpressionControl implements /* IPopupProvider, */SelectionListener
 	 * @param currentValue2
 	 */
 	public void displayValue(final Object currentValue2) {
-		setCurrentValue(evaluateExpression ? expectedType.cast(scope, currentValue2, null, false) : currentValue2);
-		text.setText(StringUtils.toGaml(currentValue2, false));
+		setCurrentValue(evaluateExpression ? expectedType == Types.STRING
+				? StringUtils.toJavaString(GamaStringType.staticCast(scope, currentValue2, false))
+				: expectedType.cast(scope, currentValue2, null, false) : currentValue2);
+		if (expectedType == Types.STRING) {
+			text.setText(currentValue == null ? "" : StringUtils.toJavaString(currentValue.toString()));
+		} else
+			text.setText(StringUtils.toGaml(currentValue2, false));
 	}
 
 }

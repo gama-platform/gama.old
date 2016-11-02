@@ -5,11 +5,14 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -44,13 +47,11 @@ public class ActionDescription extends StatementWithChildrenDescription {
 		return Lists.newArrayList(Iterables.transform(getFormalArgs(), TO_NAME));
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	public boolean verifyArgs(final IDescription caller, final Arguments names) {
 		final Iterable<IDescription> formalArgs = getFormalArgs();
 
-		if (Iterables.isEmpty(formalArgs) && names.isEmpty()) {
-			return true;
-		}
+		if (Iterables.isEmpty(formalArgs) && names.isEmpty()) { return true; }
 		final List<String> allArgs = getArgNames();
 		if (caller.getKeyword().equals(DO)) {
 			// If the names were not known at the time of the creation of the
@@ -158,6 +159,60 @@ public class ActionDescription extends StatementWithChildrenDescription {
 			ca.put(name, e);
 		}
 		return ca;
+
+	}
+
+	@Override
+	public String getDocumentation() {
+		return getArgDocumentation() + super.getDocumentation();
+	}
+
+	public String getArgDocumentation() {
+		final StringBuilder sb = new StringBuilder(200);
+
+		if (getArgNames().size() > 0) {
+			final List<String> args = ImmutableList.copyOf(Iterables.transform(getFormalArgs(), desc -> {
+				final StringBuilder sb1 = new StringBuilder(100);
+				sb1.append("<li><b>").append(Strings.TAB).append(desc.getName()).append("</b>, type ")
+						.append(desc.getType());
+				if (desc.hasFacet(IKeyword.DEFAULT)) {
+					sb1.append(" <i>(default: ").append(desc.getFacetExpr(IKeyword.DEFAULT).serialize(false))
+							.append(")</i>");
+				}
+				sb1.append("</li>").append(Strings.LN);
+
+				return sb1.toString();
+			}));
+			sb.append("Arguments accepted: ").append("<br/><ul>").append(Strings.LN);
+			for (final String a : args) {
+				sb.append(a);
+			}
+			sb.append("</ul><br/>");
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public TypeDescription getEnclosingDescription() {
+		return (TypeDescription) super.getEnclosingDescription();
+	}
+
+	@Override
+	public String getTitle() {
+		return super.getTitle() + getShortDescription();
+	}
+
+	public String getShortDescription() {
+		final String returns = getType().equals(Types.NO_TYPE) ? ", no value returned"
+				: ", returns a result of type " + getType().getTitle();
+		final StringBuilder args = new StringBuilder();
+		for (final IDescription desc : getFormalArgs()) {
+			args.append(desc.getType()).append(" ").append(desc.getName()).append(", ");
+		}
+		if (args.length() > 0)
+			args.setLength(args.length() - 2);
+
+		return "(" + args.toString() + ")" + returns;
 
 	}
 

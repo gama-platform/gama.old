@@ -123,6 +123,16 @@ public class Variable extends Symbol implements IVariable {
 							IGamlIssue.IS_RESERVED, NAME, name);
 					return;
 				}
+				// if the step is defined with simply an init, we copy the init
+				// expression to the update facet as well, so that it is
+				// recomputed every time it changes (necessary for
+				// time-dependent units. Should be done, actually, for any
+				// variable that manipulaes time-dependent units
+				if (name.equals(STEP)) {
+					if (cd.hasFacet(INIT) && !cd.hasFacet(UPDATE) && !cd.hasFacet(VALUE)) {
+						cd.setFacet(UPDATE, cd.getFacet(INIT));
+					}
+				}
 			}
 			// The name is ok. Now verifying the logic of facets
 			// Verifying that 'function' is not used in conjunction with other

@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'TypeDescription.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TypeDescription.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -41,14 +40,13 @@ import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
 /**
- * A class that represents skills and species (either built-in or introduced by
- * users) The class TypeDescription.
+ * A class that represents skills and species (either built-in or introduced by users) The class TypeDescription.
  *
  * @author drogoul
  * @since 23 fevr. 2013
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class TypeDescription extends SymbolDescription {
 
 	// AD 08/16 : actions and attributes are now inherited dynamically and built
@@ -90,8 +88,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public Collection<String> getAttributeNames() {
-		final Collection<String> accumulator = parent != null && parent != this ? parent.getAttributeNames()
-				: new TLinkedHashSet<String>();
+		final Collection<String> accumulator =
+				parent != null && parent != this ? parent.getAttributeNames() : new TLinkedHashSet<String>();
 		if (attributes != null) {
 			attributes.forEachKey(s -> {
 				if (accumulator.contains(s))
@@ -105,10 +103,16 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public VariableDescription getAttribute(final String name) {
 		final VariableDescription attribute = attributes == null ? null : attributes.get(name);
-		if (attribute == null && parent != null && parent != this) {
-			return getParent().getAttribute(name);
-		}
+		if (attribute == null && parent != null && parent != this) { return getParent().getAttribute(name); }
 		return attribute;
+	}
+
+	public boolean redefinesAttribute(final String name) {
+		if (!attributes.contains(name))
+			return false;
+		if (parent == null || parent == this)
+			return false;
+		return parent.hasAttribute(name);
 	}
 
 	@Override
@@ -122,9 +126,7 @@ public abstract class TypeDescription extends SymbolDescription {
 		final VariableDescription vd = getAttribute(n);
 		if (vd == null) {
 			final IDescription desc = getAction(n);
-			if (desc != null) {
-				return new DenotedActionExpression(desc);
-			}
+			if (desc != null) { return new DenotedActionExpression(desc); }
 			return null;
 		}
 		return vd.getVarExpr(asField);
@@ -140,9 +142,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public boolean assertAttributesAreCompatible(final VariableDescription existingVar,
 			final VariableDescription newVar) {
-		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) {
-			return true;
-		}
+		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) { return true; }
 		final IType existingType = existingVar.getType();
 		final IType newType = newVar.getType();
 		if (!newType.isTranslatableInto(existingType)) {
@@ -189,16 +189,12 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public void markAttributeRedefinition(final VariableDescription existingVar, final VariableDescription newVar) {
-		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) {
-			return;
-		}
+		if (newVar.isBuiltIn() && existingVar.isBuiltIn()) { return; }
 		if (newVar.getOriginName().equals(existingVar.getOriginName())) {
 			// TODO must be review carefully the inheritance in comodel
 			/// temporay fix for co-model, variable in micro-model can be
 			// defined multi time
-			if (!newVar.getModelDescription().getAlias().equals("")) {
-				return;
-			}
+			if (!newVar.getModelDescription().getAlias().equals("")) { return; }
 			///
 			existingVar.error("Attribute " + newVar.getName() + " is defined twice", IGamlIssue.DUPLICATE_DEFINITION,
 					NAME);
@@ -211,8 +207,8 @@ public abstract class TypeDescription extends SymbolDescription {
 					IGamlIssue.REDEFINES, NAME);
 		} else {
 			// Possibily different resources
-			final Resource newResource = newVar.getUnderlyingElement(null) == null ? null
-					: newVar.getUnderlyingElement(null).eResource();
+			final Resource newResource =
+					newVar.getUnderlyingElement(null) == null ? null : newVar.getUnderlyingElement(null).eResource();
 			final Resource existingResource = existingVar.getUnderlyingElement(null).eResource();
 			if (Objects.equals(newResource, existingResource)) {
 				newVar.info("This definition of " + newVar.getName() + " supersedes the one in "
@@ -272,61 +268,6 @@ public abstract class TypeDescription extends SymbolDescription {
 		return Lists.newArrayList(Iterables.filter(getOrderedAttributeNames(false), VAR_IS_UPDATABLE));
 	}
 
-	// protected boolean sortAttributes() {
-	// if (attributes == null || attributes.size() <= 1)
-	// return true;
-	// final HashMultimap<VariableDescription, VariableDescription> dependencies
-	// = HashMultimap.create();
-	// attributes.forEachEntry((name, var) -> {
-	// dependencies.put(null, var);
-	// for (final String depName : var.getDependenciesNames()) {
-	// final VariableDescription newVar = attributes.get(depName);
-	// if (newVar != null && !depName.equals(name))
-	// dependencies.put(var, newVar);
-	//
-	// }
-	// var.discardDependencies();
-	// return true;
-	// });
-	// attributes.clear();
-	// final Set<VariableDescription> expanded = new
-	// HashSet<VariableDescription>();
-	// for (final VariableDescription node : dependencies.keySet())
-	// explore(node, dependencies, expanded);
-	// return true;
-	// }
-	//
-	// private void explore(final VariableDescription node, final
-	// HashMultimap<VariableDescription, VariableDescription> g,
-	// final Set<VariableDescription> expanded) {
-	// if (node != null && attributes.containsKey(node.getName())) {
-	// /*
-	// * There are two cases to consider. First, if this node has already
-	// * been expanded, then it's already been assigned a position in the
-	// * final topological sort and we don't need to explore it again.
-	// * However, if it hasn't been expanded, it means that we've just
-	// * found a node that is currently being explored, and therefore is
-	// * part of a cycle. In that case, we should report an error.
-	// */
-	// if (expanded.contains(node))
-	// return;
-	// throw new IllegalArgumentException("Graph contains a cycle.");
-	// }
-	//
-	// /* Mark that we've been here */
-	// if (node != null) {
-	// attributes.put(node.getName(), node);
-	// }
-	// /* Recursively explore all of the node's predecessors. */
-	// for (final VariableDescription predecessor : g.get(node)) {
-	// if (predecessor != null)
-	// explore(predecessor, g, expanded);
-	// }
-	// if (node != null) {
-	// expanded.add(node);
-	// }
-	// }
-
 	public Collection<String> getOrderedAttributeNames(final boolean forInit) {
 		// TODO Do it once for built-in species
 		final Collection<String> accumulator = parent != null && parent != this
@@ -339,8 +280,8 @@ public abstract class TypeDescription extends SymbolDescription {
 		}
 
 		final VariableDescription shape = attributes.get(SHAPE);
-		final Collection<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
-				: shape.getDependencies(forInit);
+		final Collection<VariableDescription> shapeDependencies =
+				shape == null ? Collections.EMPTY_SET : shape.getDependencies(forInit);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
 			dependencies.addVertex(shape);
@@ -361,8 +302,8 @@ public abstract class TypeDescription extends SymbolDescription {
 			return true;
 		});
 
-		final TopologicalOrderIterator<VariableDescription, Object> iterator = new TopologicalOrderIterator<>(
-				dependencies);
+		final TopologicalOrderIterator<VariableDescription, Object> iterator =
+				new TopologicalOrderIterator<>(dependencies);
 		while (iterator.hasNext()) {
 
 			final VariableDescription vd = iterator.next();
@@ -385,8 +326,8 @@ public abstract class TypeDescription extends SymbolDescription {
 			return true;
 
 		final VariableDescription shape = attributes.get(SHAPE);
-		final Collection<VariableDescription> shapeDependencies = shape == null ? Collections.EMPTY_SET
-				: shape.getDependencies(true);
+		final Collection<VariableDescription> shapeDependencies =
+				shape == null ? Collections.EMPTY_SET : shape.getDependencies(true);
 		final DirectedGraph<VariableDescription, Object> dependencies = new DefaultDirectedGraph<>(Object.class);
 		if (shape != null) {
 			dependencies.addVertex(shape);
@@ -436,13 +377,9 @@ public abstract class TypeDescription extends SymbolDescription {
 		final String error = key + " " + name + " is declared twice. This definition supersedes the previous in "
 				+ two.getOriginName();
 		one.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
-		// two.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
 	}
 
 	protected void addAction(final ActionDescription newAction) {
-		// if (isBuiltIn()) {
-		// newAction.setOriginName("built-in species " + getName());
-		// }
 		final String actionName = newAction.getName();
 		if (actions != null) {
 			final StatementDescription existing = actions.get(actionName);
@@ -453,6 +390,14 @@ public abstract class TypeDescription extends SymbolDescription {
 			actions = new THashMap<>();
 		}
 		actions.put(actionName, newAction);
+	}
+
+	public boolean redefinesAction(final String name) {
+		if (!actions.contains(name))
+			return false;
+		if (parent == null || parent == this)
+			return false;
+		return parent.hasAction(name);
 	}
 
 	@Override
@@ -466,8 +411,8 @@ public abstract class TypeDescription extends SymbolDescription {
 	}
 
 	public Collection<String> getActionNames() {
-		final Collection<String> allNames = new LinkedHashSet(
-				actions == null ? Collections.EMPTY_LIST : actions.keySet());
+		final Collection<String> allNames =
+				new LinkedHashSet(actions == null ? Collections.EMPTY_LIST : actions.keySet());
 		if (parent != null && parent != this)
 			allNames.addAll(getParent().getActionNames());
 		return allNames;
@@ -485,9 +430,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public boolean isAbstract() {
 		for (final ActionDescription a : getActions()) {
-			if (a.isAbstract()) {
-				return true;
-			}
+			if (a.isAbstract()) { return true; }
 		}
 		return false;
 	}
@@ -499,9 +442,7 @@ public abstract class TypeDescription extends SymbolDescription {
 
 	public boolean isArgOf(final String op, final String arg) {
 		final ActionDescription action = getAction(op);
-		if (action != null) {
-			return action.containsArg(arg);
-		}
+		if (action != null) { return action.containsArg(arg); }
 		return false;
 	}
 
@@ -518,9 +459,7 @@ public abstract class TypeDescription extends SymbolDescription {
 	public void dispose() {
 
 		super.dispose();
-		if (isBuiltIn()) {
-			return;
-		}
+		if (isBuiltIn()) { return; }
 		actions = null;
 		attributes = null;
 		parent = null;
@@ -647,6 +586,14 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (result != null && !verifyAttributeCycles())
 			return null;
 		return result;
+	}
+
+	public VariableDescription getOwnAttribute(final String keyword) {
+		return attributes == null ? null : attributes.get(keyword);
+	}
+
+	public ActionDescription getOwnAction(final String keyword) {
+		return actions == null ? null : actions.get(keyword);
 	}
 
 }

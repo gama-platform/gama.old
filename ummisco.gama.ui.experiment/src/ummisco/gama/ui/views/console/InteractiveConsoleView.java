@@ -136,8 +136,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 			try {
 				// Wait for the output stream to finish
 				Thread.sleep(200);
-			} catch (final InterruptedException e) {
-			}
+			} catch (final InterruptedException e) {}
 			WorkbenchHelper.run(() -> {
 				if (viewer != null && viewer.getTextWidget() != null && !viewer.getTextWidget().isDisposed())
 					viewer.getTextWidget().setCaretOffset(viewer.getTextWidget().getCharCount());
@@ -175,8 +174,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 				indexInHistory--;
 			} else
 				indexInHistory++;
-		} catch (final org.eclipse.jface.text.BadLocationException e1) {
-		}
+		} catch (final org.eclipse.jface.text.BadLocationException e1) {}
 
 	}
 
@@ -195,8 +193,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 				writer.flush();
 				if (showPrompt)
 					showPrompt();
-			} catch (final IOException e) {
-			}
+			} catch (final IOException e) {}
 
 		});
 
@@ -223,9 +220,7 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	@Override
 	public Control getSizableFontControl() {
-		if (viewer == null) {
-			return null;
-		}
+		if (viewer == null) { return null; }
 		return viewer.getTextWidget();
 	}
 
@@ -250,9 +245,8 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 	}
 
 	/**
-	 * As ConsoleView is automatically opened by moving to the simulation
-	 * perspective, the automatic closing can cause problems. So the view is
-	 * stated as accepting an "experiment-less" mode. See Issue #1361 Method
+	 * As ConsoleView is automatically opened by moving to the simulation perspective, the automatic closing can cause
+	 * problems. So the view is stated as accepting an "experiment-less" mode. See Issue #1361 Method
 	 * shouldBeClosedWhenNoExperiments()
 	 * 
 	 * @see ummisco.gama.ui.views.GamaViewPart#shouldBeClosedWhenNoExperiments()
@@ -294,15 +288,18 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 			indexInHistory = history.size() - 1;
 			String result = null;
 			boolean error = false;
-			try {
-				final IExpression expr = GAML.compileExpression(s, listeningAgent, false);
-				if (expr != null) {
-					result = Cast.toGaml(listeningAgent.getScope().evaluate(expr, listeningAgent).getValue());
+			if (entered.startsWith("?")) {
+				result = GAML.getDocumentationOn(entered.substring(1));
+			} else
+				try {
+					final IExpression expr = GAML.compileExpression(s, listeningAgent, false);
+					if (expr != null) {
+						result = Cast.toGaml(listeningAgent.getScope().evaluate(expr, listeningAgent).getValue());
+					}
+				} catch (final Exception e) {
+					error = true;
+					result = "> Error: " + e.getMessage();
 				}
-			} catch (final Exception e) {
-				error = true;
-				result = "> Error: " + e.getMessage();
-			}
 			if (result == null) {
 				result = "nil";
 			}

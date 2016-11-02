@@ -14,7 +14,6 @@ package msi.gama.metamodel.topology;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -484,19 +483,13 @@ public abstract class AbstractTopology implements ITopology {
 		if (!isTorus()) {
 			final Envelope3D envelope = source.getEnvelope().intersection(environment.getEnvelope());
 			final Collection<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
-			final Iterator<IAgent> it = shapes.iterator();
 			final PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
-			while (it.hasNext()) {
-				final IAgent input = it.next();
-				if (input.dead()) {
-					it.remove();
-					continue;
-				}
-				final Geometry geom = input.getInnerGeometry();
-				if (!(covered ? pg.covers(geom) : pg.intersects(geom))) {
-					it.remove();
-				}
-			}
+			shapes.removeIf(each -> {
+				if (each.dead())
+					return true;
+				final Geometry geom = each.getInnerGeometry();
+				return !(covered ? pg.covers(geom) : pg.intersects(geom));
+			});
 			return shapes;
 		}
 		final Geometry sourceTo = returnToroidalGeom(source);

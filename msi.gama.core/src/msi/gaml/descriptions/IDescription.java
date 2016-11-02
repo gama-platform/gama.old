@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'IDescription.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IDescription.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -41,7 +40,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable {
 
 	public static final SymbolSerializer<SymbolDescription> SYMBOL_SERIALIZER = new SymbolSerializer<>();
@@ -61,16 +60,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 		}
 
 		public abstract boolean visit(T desc);
-
-		// @Override
-		// public void accept(final T d, final T e) {
-		// visit(e);
-		// }
-		//
-		// @Override
-		// public void accept(final T d) {
-		// visit(d);
-		// }
 
 	}
 
@@ -165,21 +154,13 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public abstract IDescription getChildWithKeyword(String keyword);
 
 	/**
-	 * If hasField is true, then should not return a GlobalVarExpression, but a
-	 * normal var expression
+	 * If asField is true, then should not return a GlobalVarExpression, but a normal var expression
 	 * 
 	 * @param name
 	 * @param asField
 	 * @return
 	 */
 	public abstract IExpression getVarExpr(final String name, boolean asField);
-
-	// public abstract List<IDescription> getChildren();
-
-	// public abstract void addChildren(Iterable<? extends IDescription>
-	// children);
-	//
-	// public abstract IDescription addChild(IDescription child);
 
 	public abstract IType getTypeNamed(String s);
 

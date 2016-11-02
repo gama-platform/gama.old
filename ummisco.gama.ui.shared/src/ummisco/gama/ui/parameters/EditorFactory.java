@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'EditorFactory.java', in plugin 'msi.gama.application', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'EditorFactory.java', in plugin 'msi.gama.application', is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -20,12 +19,13 @@ import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaDate;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.interfaces.EditorListener;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class EditorFactory {
 
 	private static final EditorFactory instance = new EditorFactory();
@@ -48,6 +48,11 @@ public class EditorFactory {
 	public static ColorEditor create(final IScope scope, final Composite parent, final String title,
 			final java.awt.Color value, final EditorListener<java.awt.Color> whenModified) {
 		return new ColorEditor(scope, parent, title, value, whenModified);
+	}
+
+	public static DateEditor create(final IScope scope, final Composite parent, final String title,
+			final GamaDate value, final EditorListener<GamaDate> whenModified) {
+		return new DateEditor(scope, parent, title, value, whenModified);
 	}
 
 	public static ExpressionEditor createExpression(final IScope scope, final Composite parent, final String title,
@@ -106,9 +111,7 @@ public class EditorFactory {
 
 	public static AbstractEditor create(final IScope scope, final Composite parent, final String title,
 			final String value, final boolean asLabel, final EditorListener<String> whenModified) {
-		if (asLabel) {
-			return new LabelEditor(scope, parent, title, value, whenModified);
-		}
+		if (asLabel) { return new LabelEditor(scope, parent, title, value, whenModified); }
 		return new StringEditor(scope, parent, title, value, whenModified);
 	}
 
@@ -140,41 +143,39 @@ public class EditorFactory {
 		final boolean canBeNull = var instanceof ExperimentParameter && ((ExperimentParameter) var).canBeNull();
 		final IType t = var.getType();
 		final int type = t.getType().id();
-		if (t.isContainer() && t.getContentType().isAgentType()) {
-			return new PopulationEditor(scope, agent, var, l);
-		}
-		if (t.isAgentType() || type == IType.AGENT) {
-			return new AgentEditor(scope, agent, var, l);
-		}
+		if (t.isContainer() && t.getContentType().isAgentType()) { return new PopulationEditor(scope, agent, var, l); }
+		if (t.isAgentType() || type == IType.AGENT) { return new AgentEditor(scope, agent, var, l); }
 		switch (type) {
-		case IType.BOOL:
-			return new BooleanEditor(scope, agent, var, l);
-		case IType.COLOR:
-			return new ColorEditor(scope, agent, var, l);
-		case IType.FLOAT:
-			if (var.getMaxValue(scope) != null && var.getMinValue(scope) != null && var.acceptsSlider(scope))
-				return new SliderEditor.Float(scope, agent, var, l);
-			return new FloatEditor(scope, agent, var, canBeNull, l);
-		case IType.INT:
-			if (var.getMaxValue(scope) != null && var.getMinValue(scope) != null && var.acceptsSlider(scope))
-				return new SliderEditor.Int(scope, agent, var, l);
-			return new IntEditor(scope, agent, var, canBeNull, l);
-		case IType.LIST:
-			return new ListEditor(scope, agent, var, l);
-		case IType.POINT:
-			return new PointEditor(scope, agent, var, l);
-		case IType.MAP:
-			return new MapEditor(scope, agent, var, l);
-		case IType.MATRIX:
-			return new MatrixEditor(scope, agent, var, l);
-		case IType.FILE:
-			return new FileEditor(scope, agent, var, l);
-		case IType.FONT:
-			return new FontEditor(scope, agent, var, l);
-		case IType.STRING:
-			return new StringEditor(scope, agent, var, l);
-		default:
-			return new GenericEditor(scope, agent, var, l);
+			case IType.BOOL:
+				return new BooleanEditor(scope, agent, var, l);
+			case IType.DATE:
+				return new DateEditor(scope, agent, var, l);
+			case IType.COLOR:
+				return new ColorEditor(scope, agent, var, l);
+			case IType.FLOAT:
+				if (var.getMaxValue(scope) != null && var.getMinValue(scope) != null && var.acceptsSlider(scope))
+					return new SliderEditor.Float(scope, agent, var, l);
+				return new FloatEditor(scope, agent, var, canBeNull, l);
+			case IType.INT:
+				if (var.getMaxValue(scope) != null && var.getMinValue(scope) != null && var.acceptsSlider(scope))
+					return new SliderEditor.Int(scope, agent, var, l);
+				return new IntEditor(scope, agent, var, canBeNull, l);
+			case IType.LIST:
+				return new ListEditor(scope, agent, var, l);
+			case IType.POINT:
+				return new PointEditor(scope, agent, var, l);
+			case IType.MAP:
+				return new MapEditor(scope, agent, var, l);
+			case IType.MATRIX:
+				return new MatrixEditor(scope, agent, var, l);
+			case IType.FILE:
+				return new FileEditor(scope, agent, var, l);
+			case IType.FONT:
+				return new FontEditor(scope, agent, var, l);
+			case IType.STRING:
+				return new StringEditor(scope, agent, var, l);
+			default:
+				return new GenericEditor(scope, agent, var, l);
 		}
 	}
 }

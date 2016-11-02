@@ -1,9 +1,8 @@
 /*********************************************************************************************
  * 
  * 
- * 'ColorEditor.java', in plugin 'msi.gama.application', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ColorEditor.java', in plugin 'msi.gama.application', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
@@ -51,9 +50,7 @@ public class ColorEditor extends AbstractEditor<Color> {
 			final MenuItem i = (MenuItem) e.widget;
 			final String color = i.getText().replace("#", "");
 			final GamaColor c = GamaColor.colors.get(color);
-			if (c == null) {
-				return;
-			}
+			if (c == null) { return; }
 			modifyAndDisplayValue(c);
 		}
 
@@ -95,8 +92,8 @@ public class ColorEditor extends AbstractEditor<Color> {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		final GamaUIColor color = GamaColors
-				.get(currentValue == null ? GamaColor.getInt(0) : (java.awt.Color) currentValue);
+		final GamaUIColor color =
+				GamaColors.get(currentValue == null ? GamaColor.getInt(0) : (java.awt.Color) currentValue);
 		edit.setText(color.toString());
 		edit.setColor(color);
 		internalModification = false;

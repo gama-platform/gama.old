@@ -74,7 +74,7 @@ species firefighter skills: [moving] control: simple_bdi{
 	
 	//The plan to do when the intention is to patrol.
 	plan patrolling intention:patrol_desire finished_when: has_belief(new_predicate("location_fireArea")) or has_belief(no_water_predicate){
-		do wander amplitude: 30 speed: 2;
+		do wander amplitude: 30 speed: 2.0;
 	}
 	
 	//The plan that is executed when the agent got the intention of extinguish a fire.

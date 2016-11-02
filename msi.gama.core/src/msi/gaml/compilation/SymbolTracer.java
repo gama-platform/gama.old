@@ -21,7 +21,7 @@ public class SymbolTracer {
 				public boolean visit(final String name, final IExpressionDescription ed) {
 					if (name.equals(IKeyword.NAME)) {
 						final String n = statement.getFacet(IKeyword.NAME).literalValue();
-						if (n.startsWith("internal_"))
+						if (n.startsWith(IKeyword.INTERNAL))
 							return true;
 					}
 					IExpression expr = null;

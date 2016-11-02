@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'StatementDescription.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'StatementDescription.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -35,7 +34,7 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class StatementDescription extends SymbolDescription {
 
 	// Corresponds to the "with" facet
@@ -43,10 +42,8 @@ public class StatementDescription extends SymbolDescription {
 	private static int COMMAND_INDEX = 0;
 
 	/**
-	 * @deprecated This method should not be used. It defers automatically to
-	 *             the other constructor, which does not take children into
-	 *             account. IF children need to be passed, call addChildren()
-	 *             after
+	 * @deprecated This method should not be used. It defers automatically to the other constructor, which does not take
+	 *             children into account. IF children need to be passed, call addChildren() after
 	 */
 	@Deprecated
 	public StatementDescription(final String keyword, final IDescription superDesc, final boolean hasArgs,
@@ -69,9 +66,7 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if (isBuiltIn()) {
-			return;
-		}
+		if (isBuiltIn()) { return; }
 		super.dispose();
 
 		if (passedArgs != null)
@@ -111,9 +106,7 @@ public class StatementDescription extends SymbolDescription {
 
 	private ActionDescription getAction() {
 		final String actionName = getLitteral(IKeyword.ACTION);
-		if (actionName == null) {
-			return null;
-		}
+		if (actionName == null) { return null; }
 		final TypeDescription declPlace = (TypeDescription) getDescriptionDeclaringAction(actionName);
 		ActionDescription executer = null;
 		if (declPlace != null) {
@@ -152,9 +145,7 @@ public class StatementDescription extends SymbolDescription {
 
 	public boolean verifyArgs(final Arguments args) {
 		final ActionDescription executer = getAction();
-		if (executer == null) {
-			return false;
-		}
+		if (executer == null) { return false; }
 		return executer.verifyArgs(this, args);
 	}
 
@@ -208,7 +199,7 @@ public class StatementDescription extends SymbolDescription {
 				in = " of " + d.getTitle();
 			}
 		}
-		return kw + " " + getName() + " " + in;
+		return kw + " " + name + " " + in;
 	}
 
 	public void collectAllStatements(final String keyword, final Set<StatementDescription> returns) {

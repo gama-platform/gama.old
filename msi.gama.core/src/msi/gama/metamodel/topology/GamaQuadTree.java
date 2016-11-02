@@ -14,7 +14,6 @@ package msi.gama.metamodel.topology;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -125,12 +124,7 @@ public class GamaQuadTree implements ISpatialIndex {
 		final Collection<IAgent> result = findIntersects(scope, source, env, f);
 		if (result.isEmpty())
 			return Collections.EMPTY_LIST;
-		final Iterator<IAgent> it = result.iterator();
-		while (it.hasNext()) {
-			if (source.euclidianDistanceTo(it.next()) > dist) {
-				it.remove();
-			}
-		}
+		result.removeIf(each -> source.euclidianDistanceTo(each) > dist);
 		return result;
 	}
 

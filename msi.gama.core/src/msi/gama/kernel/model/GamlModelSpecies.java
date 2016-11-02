@@ -213,8 +213,10 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		final List forExperiment = new ArrayList<>();
 
 		final List<IExperimentPlan> experiments = new ArrayList<>();
+
 		for (final Iterator<? extends ISymbol> it = children.iterator(); it.hasNext();) {
 			final ISymbol s = it.next();
+
 			if (s instanceof IExperimentPlan) {
 				experiments.add((IExperimentPlan) s);
 				it.remove();

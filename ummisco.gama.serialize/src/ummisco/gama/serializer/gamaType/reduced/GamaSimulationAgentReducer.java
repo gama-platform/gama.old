@@ -58,7 +58,7 @@ public class GamaSimulationAgentReducer {
 		this.geometry = agt.getGeometry();
 		seed = agt.getSeed();
 		// TODO : to complete
-		step = agt.getClock().getStep();
+		step = agt.getClock().getStepInSeconds();
 		cycle = agt.getClock().getCycle();
 
 		// this.attributes = agt.getAttributes();

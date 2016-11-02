@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'GamaColorType.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaColorType.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -11,7 +10,11 @@
  **********************************************************************************************/
 package msi.gaml.types;
 
-import java.time.LocalDate;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
@@ -28,12 +31,19 @@ import msi.gaml.operators.Cast;
  * @todo Description
  *
  */
-@SuppressWarnings("unchecked")
-@type(name = "date", id = IType.DATE, wraps = { GamaDate.class }, kind = ISymbolKind.Variable.REGULAR, concept = {
-		IConcept.TYPE, IConcept.DATE, IConcept.TIME })
+@SuppressWarnings ("unchecked")
+@type (
+		name = "date",
+		id = IType.DATE,
+		wraps = { GamaDate.class },
+		kind = ISymbolKind.Variable.REGULAR,
+		concept = { IConcept.TYPE, IConcept.DATE, IConcept.TIME })
 public class GamaDateType extends GamaType<GamaDate> {
 
-	public static final GamaDate DEFAULT_STARTING_DATE = GamaDate.absolute(LocalDate.ofEpochDay(0));
+	public static final ZoneId DEFAULT_ZONE = Clock.systemDefaultZone().getZone();
+	public static final ZoneOffset DEFAULT_OFFSET_IN_SECONDS =
+			Clock.systemDefaultZone().getZone().getRules().getOffset(Instant.now(Clock.systemDefaultZone()));
+	public static final GamaDate EPOCH = GamaDate.of(LocalDateTime.ofEpochSecond(0, 0, DEFAULT_OFFSET_IN_SECONDS));
 
 	@Override
 	public GamaDate cast(final IScope scope, final Object obj, final Object param, final boolean copy)
@@ -43,23 +53,17 @@ public class GamaDateType extends GamaType<GamaDate> {
 
 	public static GamaDate staticCast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
-		if (obj == null) {
-			return null;
-		}
+		if (obj == null) { return null; }
 		if (obj instanceof GamaDate) {
-			if (copy) {
-				return new GamaDate(scope, (GamaDate) obj);
-			}
+			if (copy) { return new GamaDate(scope, (GamaDate) obj); }
 			return (GamaDate) obj;
 		}
-		if (obj instanceof IContainer) {
-			return new GamaDate(scope, ((IContainer<?, ?>) obj).listValue(scope, Types.INT, false));
-		}
-		if (obj instanceof String) {
-			return new GamaDate(scope, (String) obj);
-		}
-		final int i = Cast.asInt(scope, obj);
-		return new GamaDate(scope, i);
+		if (obj instanceof IContainer) { return new GamaDate(scope,
+				((IContainer<?, ?>) obj).listValue(scope, Types.INT, false)); }
+		if (obj instanceof String) { return new GamaDate(scope, (String) obj); }
+		// If everything fails, we assume it is a duration in seconds since the starting date of the model
+		final Double d = Cast.asFloat(scope, obj);
+		return new GamaDate(scope, d);
 	}
 
 	@Override
