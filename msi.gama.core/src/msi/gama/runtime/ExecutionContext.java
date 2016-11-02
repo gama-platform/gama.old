@@ -65,9 +65,6 @@ public class ExecutionContext implements IExecutionContext {
 	public void putLocalVar(final String varName, final Object val) {
 		if (local == null)
 			local = new THashMap<>();
-		// if (varName == ExecutionScope.EACH)
-		// System.out.println("EACH value set to " + val + " in context " +
-		// this);
 		local.put(varName, val);
 	}
 

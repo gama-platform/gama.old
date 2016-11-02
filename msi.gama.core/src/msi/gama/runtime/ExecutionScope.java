@@ -10,6 +10,7 @@
  **********************************************************************************************/
 package msi.gama.runtime;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
@@ -330,7 +331,8 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void pop(final ISymbol symbol) {
-		executionContext = executionContext.getOuterContext();
+		if (executionContext != null)
+			executionContext = executionContext.getOuterContext();
 	}
 
 	@Override
@@ -412,7 +414,7 @@ public class ExecutionScope implements IScope {
 		} catch (final GamaRuntimeException g) {
 			// g.addAgent(agent.toString());
 			GAMA.reportAndThrowIfNeeded(this, g, true);
-			return null;
+			return FAILED;
 		} finally {
 			if (pushed) {
 				pop(agent);
@@ -462,7 +464,9 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public Object getVarValue(final String varName) {
-		return executionContext.getTempVar(varName);
+		if (executionContext != null)
+			return executionContext.getTempVar(varName);
+		return null;
 	}
 
 	/**
@@ -472,7 +476,8 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void setVarValue(final String varName, final Object val) {
-		executionContext.setTempVar(varName, val);
+		if (executionContext != null)
+			executionContext.setTempVar(varName, val);
 	}
 
 	/**
@@ -482,7 +487,8 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void saveAllVarValuesIn(final Map<String, Object> varsToSave) {
-		varsToSave.putAll(executionContext.getLocalVars());
+		if (executionContext != null)
+			varsToSave.putAll(executionContext.getLocalVars());
 	}
 
 	/**
@@ -492,7 +498,8 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void removeAllVars() {
-		executionContext.clearLocalVars();
+		if (executionContext != null)
+			executionContext.clearLocalVars();
 	}
 
 	/**
@@ -502,7 +509,8 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public void addVarWithValue(final String varName, final Object val) {
-		executionContext.putLocalVar(varName, val);
+		if (executionContext != null)
+			executionContext.putLocalVar(varName, val);
 	}
 
 	/**
@@ -533,7 +541,9 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public Object getArg(final String string, final int type) throws GamaRuntimeException {
-		return Types.get(type).cast(this, executionContext.getLocalVar(string), null, false);
+		if (executionContext != null)
+			return Types.get(type).cast(this, executionContext.getLocalVar(string), null, false);
+		return null;
 	}
 
 	@Override
@@ -568,7 +578,9 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public boolean hasArg(final String name) {
-		return executionContext.hasLocalVar(name);
+		if (executionContext != null)
+			return executionContext.hasLocalVar(name);
+		return false;
 	}
 
 	/**
@@ -675,7 +687,10 @@ public class ExecutionScope implements IScope {
 	@Override
 	public ITopology getTopology() {
 		final ITopology topology = additionalContext.topology;
-		return topology != null ? topology : getAgent().getTopology();
+		if (topology != null)
+			return topology;
+		final IAgent a = getAgent();
+		return a == null ? null : a.getTopology();
 	}
 
 	/**
@@ -806,9 +821,12 @@ public class ExecutionScope implements IScope {
 	 */
 	@Override
 	public Map popReadAttributes() {
-		final Map value = (Map) this.getVarValue(ATTRIBUTES);
-		executionContext.removeLocalVar(ATTRIBUTES);
-		return value;
+		if (executionContext != null) {
+			final Map value = (Map) this.getVarValue(ATTRIBUTES);
+			executionContext.removeLocalVar(ATTRIBUTES);
+			return value;
+		}
+		return Collections.EMPTY_MAP;
 	}
 
 	@Override
