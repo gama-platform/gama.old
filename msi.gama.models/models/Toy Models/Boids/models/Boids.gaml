@@ -42,7 +42,7 @@ global torus: torus_environment{
 	//Action to move the goal to the mouse location
 	action move_goal {
 		ask first(boids_goal) {
-			do goto target: #user_location speed: 30;
+			do goto target: #user_location speed: 30.0;
 		}
 	}
 	
@@ -68,7 +68,7 @@ species boids_goal skills: [moving] {
 	
 	//If the mouse is not used, then the goal just wander
 	reflex wander {  
-		do  wander amplitude: 45 speed: 20;  
+		do  wander amplitude: 45 speed: 20.0;  
 	}
 	
 	aspect default {

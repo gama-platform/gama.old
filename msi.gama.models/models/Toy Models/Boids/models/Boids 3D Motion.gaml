@@ -59,7 +59,7 @@ species boids_goal skills: [moving3D] {
 	//Reflex to make the goal agent wander in a certain amplitude and a certain speed, 
 	//Respecting the minimal and maximal z values
 	reflex wander { 
-		do  wander amplitude: 45 speed: 20; 
+		do  wander amplitude: 45 speed: 20.0; 
 		if (location.z) < 0 {
 			location <- {location.x,location.y,0};
 		} else if (location.z) > z_max {

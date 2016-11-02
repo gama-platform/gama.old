@@ -20,7 +20,7 @@ species object skills: [moving]{
 	rgb color <- rgb(rnd(255),rnd(255),rnd(255));
 	int size <- rnd(10) + 1;
 	int rot <- 1000 + rnd(1000);
-	reflex m when: every(100) {
+	reflex m when: every(100#cycles) {
 		do wander amplitude: 30 speed: 0.001;
 	}
 	aspect obj {
