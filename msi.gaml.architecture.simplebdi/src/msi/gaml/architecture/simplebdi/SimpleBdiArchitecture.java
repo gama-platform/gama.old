@@ -787,7 +787,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	@action(name = "add_belief", args = {
-			@arg(name = PREDICATE, type = IType.MAP, optional = true, doc = @doc("predicate to add as a belief")) }, doc = @doc(value = "add the predicate in the belief base.", returns = "true if it is added in the base.", examples = {
+			@arg(name = PREDICATE, type = PredicateType.id, optional = true, doc = @doc("predicate to add as a belief")) }, doc = @doc(value = "add the predicate in the belief base.", returns = "true if it is added in the base.", examples = {
 					@example("") }))
 	public Boolean primAddBelief(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect = (Predicate) (scope.hasArg(PREDICATE)
@@ -867,7 +867,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 
 	@action(name = "get_beliefs", args = {
 			@arg(name = PREDICATE, type = PredicateType.id, optional = false, doc = @doc("name of the predicates to check")) }, doc = @doc(value = "get the list of predicates is in the belief base", returns = "the list of predicates.", examples = {
-					@example("get_belief(\"has_water\")") }))
+					@example("get_belief(new_predicate(\"has_water\"))") }))
 	public IList<Predicate> getBeliefs(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect = (Predicate) (scope.hasArg(PREDICATE)
 				? scope.getArg(PREDICATE, PredicateType.id) : null);
@@ -1839,7 +1839,7 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	@action(name = "add_uncertainty", args = {
-			@arg(name = PREDICATE, type = IType.MAP, optional = true, doc = @doc("predicate to check")) }, doc = @doc(value = "add a predicate in the uncertainty base.", returns = "true it works.", examples = {
+			@arg(name = PREDICATE, type = PredicateType.id, optional = true, doc = @doc("predicate to check")) }, doc = @doc(value = "add a predicate in the uncertainty base.", returns = "true it works.", examples = {
 					@example("") }))
 	public Boolean primAddUncertainty(final IScope scope) throws GamaRuntimeException {
 		final Predicate predicateDirect = (Predicate) (scope.hasArg(PREDICATE)
