@@ -1,4 +1,13 @@
-/* $Id: Platform.java,v 1.6 2008/04/28 17:17:13 bhaible Exp $ */
+/*********************************************************************************************
+ *
+ * 'PlatformHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 /*******************************************************************************
  * Copyright (c) 2007-2008 SAS Institute Inc., ILOG S.A.
  * All rights reserved. This program and the accompanying materials

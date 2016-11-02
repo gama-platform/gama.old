@@ -1,9 +1,13 @@
-/* 
- * $Id$
+/*********************************************************************************************
+ *
+ * 'AccumulativeRunnable.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
- * Copyright (c) 2005 Sun Microsystems, Inc. All rights
- * reserved. Use is subject to license terms.
- */
+ *
+ **********************************************************************************************/
 
 package ummisco.gama.ui.viewers.gis.geotools.utils;
 
