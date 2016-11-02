@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'GAMA.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'GAMA.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.runtime;
@@ -30,8 +28,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException
 /**
  * Written by drogoul Modified on 23 nov. 2009
  *
- * In GUI Mode, for the moment, only one controller allowed at a time
- * (controllers[0])
+ * In GUI Mode, for the moment, only one controller allowed at a time (controllers[0])
  *
  * @todo Description
  */
@@ -75,9 +72,7 @@ public class GAMA {
 			final IExperimentPlan existingExperiment = controller.getExperiment();
 			if (existingExperiment != null) {
 				controller.getScheduler().pause();
-				if (!getGui().confirmClose(existingExperiment)) {
-					return;
-				}
+				if (!getGui().confirmClose(existingExperiment)) { return; }
 			}
 		}
 		controller = newExperiment.getController();
@@ -122,9 +117,8 @@ public class GAMA {
 
 		final ExperimentPlan currentExperiment = (ExperimentPlan) model.getExperiment(expName);
 
-		if (currentExperiment == null) {
-			throw GamaRuntimeException.error("Experiment " + expName + " cannot be created");
-		}
+		if (currentExperiment == null) { throw GamaRuntimeException
+				.error("Experiment " + expName + " cannot be created"); }
 		currentExperiment.setHeadless(true);
 		for (final Map.Entry<String, Object> entry : params.entrySet()) {
 
@@ -145,21 +139,15 @@ public class GAMA {
 
 	public static void closeFrontmostExperiment() {
 		final IExperimentController controller = getFrontmostController();
-		if (controller == null || controller.getExperiment() == null) {
-			return;
-		}
+		if (controller == null || controller.getExperiment() == null) { return; }
 		controller.close();
 		controllers.remove(controller);
 	}
 
 	public static void closeExperiment(final IExperimentPlan experiment) {
-		if (experiment == null) {
-			return;
-		}
+		if (experiment == null) { return; }
 		final IExperimentController controller = experiment.getController();
-		if (controller == null) {
-			return;
-		}
+		if (controller == null) { return; }
 		controller.close();
 		controllers.remove(controller);
 	}
@@ -180,25 +168,19 @@ public class GAMA {
 
 	public static SimulationAgent getSimulation() {
 		final IExperimentController controller = getFrontmostController();
-		if (controller == null || controller.getExperiment() == null) {
-			return null;
-		}
+		if (controller == null || controller.getExperiment() == null) { return null; }
 		return controller.getExperiment().getCurrentSimulation();
 	}
 
 	public static IExperimentPlan getExperiment() {
 		final IExperimentController controller = getFrontmostController();
-		if (controller == null) {
-			return null;
-		}
+		if (controller == null) { return null; }
 		return controller.getExperiment();
 	}
 
 	public static IModel getModel() {
 		final IExperimentController controller = getFrontmostController();
-		if (controller == null || controller.getExperiment() == null) {
-			return null;
-		}
+		if (controller == null || controller.getExperiment() == null) { return null; }
 		return controller.getExperiment().getModel();
 	}
 
@@ -212,9 +194,7 @@ public class GAMA {
 			final boolean shouldStopSimulation) {
 		final IExperimentController controller = getFrontmostController();
 		if (controller == null || controller.getExperiment() == null || controller.isDisposing()
-				|| controller.getExperiment().getAgent() == null) {
-			return false;
-		}
+				|| controller.getExperiment().getAgent() == null) { return false; }
 		// Returns whether or not to continue
 		if (!(g instanceof GamaRuntimeFileException) && scope != null && !scope.reportErrors()) {
 			// AD: we still throw exceptions related to files (Issue #1281)
@@ -249,9 +229,7 @@ public class GAMA {
 		final boolean shouldStop = !reportError(scope, g, shouldStopSimulation);
 		if (shouldStop) {
 			final IExperimentController controller = getFrontmostController();
-			if (controller == null || controller.isDisposing()) {
-				return;
-			}
+			if (controller == null || controller.isDisposing()) { return; }
 			controller.userPause();
 			throw g;
 		}
@@ -297,9 +275,7 @@ public class GAMA {
 
 	public static boolean isPaused() {
 		final IExperimentController controller = getFrontmostController();
-		if (controller == null || controller.getExperiment() == null) {
-			return true;
-		}
+		if (controller == null || controller.getExperiment() == null) { return true; }
 		return controller.getScheduler().paused;
 
 	}
@@ -318,25 +294,17 @@ public class GAMA {
 
 	private static IScope obtainNewScope(final String additionalName) {
 		final IScope scope = getRuntimeScope();
-		if (scope != null) {
-			return scope.copy(additionalName);
-		}
+		if (scope != null) { return scope.copy(additionalName); }
 		return null;
 	}
 
 	public static IScope getRuntimeScope() {
 		final IExperimentController controller = getFrontmostController();
-		if (controller == null || controller.getExperiment() == null) {
-			return new TemporaryScope();
-		}
+		if (controller == null || controller.getExperiment() == null) { return new TemporaryScope(); }
 		final ExperimentAgent a = controller.getExperiment().getAgent();
-		if (a == null || a.dead()) {
-			return controller.getExperiment().getExperimentScope();
-		}
+		if (a == null || a.dead()) { return controller.getExperiment().getExperimentScope(); }
 		final SimulationAgent s = a.getSimulation();
-		if (s == null || s.dead()) {
-			return a.getScope();
-		}
+		if (s == null || s.dead()) { return a.getScope(); }
 		return s.getScope();
 	}
 

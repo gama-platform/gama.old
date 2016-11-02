@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'GamaAgentType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'GamaAgentType.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.types;
@@ -19,15 +17,15 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.species.ISpecies;
 
 /**
- * The type used to represent an agent of a species. Should be used by the
- * species for all the operations relative to casting, etc.
+ * The type used to represent an agent of a species. Should be used by the species for all the operations relative to
+ * casting, etc.
  *
  * Written by drogoul Modified on 1 ao�t 2010
  *
  * @todo Description
  *
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings ("unchecked")
 public class GamaAgentType extends GamaType<IAgent> {
 
 	SpeciesDescription species;
@@ -65,22 +63,14 @@ public class GamaAgentType extends GamaType<IAgent> {
 	@Override
 	public IAgent cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
-		if (obj == null) {
-			return null;
-		}
+		if (obj == null) { return null; }
 		ISpecies species = (ISpecies) param;
 		if (species == null) {
 			species = scope.getModel().getSpecies(this.species.getName());
 		}
-		if (species == null) {
-			return (IAgent) Types.AGENT.cast(scope, obj, param, copy);
-		}
-		if (obj instanceof IAgent) {
-			return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null;
-		}
-		if (obj instanceof Integer) {
-			return scope.getAgent().getPopulationFor(species).getAgent((Integer) obj);
-		}
+		if (species == null) { return (IAgent) Types.AGENT.cast(scope, obj, param, copy); }
+		if (obj instanceof IAgent) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
+		if (obj instanceof Integer) { return scope.getAgent().getPopulationFor(species).getAgent((Integer) obj); }
 		if (obj instanceof ILocation) {
 			final IAgent result = scope.getAgent().getPopulationFor(species).getAgent(scope, (ILocation) obj);
 			return result;
@@ -116,9 +106,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 	@Override
 	public boolean canBeTypeOf(final IScope scope, final Object obj) {
 		final boolean b = super.canBeTypeOf(scope, obj);
-		if (b) {
-			return true;
-		}
+		if (b) { return true; }
 		if (obj instanceof IAgent) {
 			final ISpecies s = scope.getSimulation().getModel().getSpecies(getSpeciesName());
 			return ((IAgent) obj).isInstanceOf(s, false);
