@@ -19,6 +19,7 @@ import msi.gama.common.interfaces.IVarAndActionSupport;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.factories.DescriptionFactory;
@@ -42,6 +43,7 @@ public class PlatformSpeciesDescription extends SpeciesDescription {
 	public void copyJavaAdditions() {
 		super.copyJavaAdditions();
 		for (final Map.Entry<String, GamaPreferences.Entry<?>> pref : GamaPreferences.getAll().entrySet()) {
+			AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(pref.getKey(), pref.getValue().getTitle());
 			final VariableDescription var = (VariableDescription) DescriptionFactory
 					.create(pref.getValue().getType().toString(), PlatformSpeciesDescription.this, NAME, pref.getKey());
 			final GamaHelper get = new GamaHelper() {

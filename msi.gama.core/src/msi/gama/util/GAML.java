@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GAML.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GAML.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,10 +9,14 @@
  **********************************************************************************************/
 package msi.gama.util;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.URI;
 
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
@@ -82,13 +85,31 @@ public class GAML {
 		return result;
 	}
 
-	public static String getDocumentationOn(final String s) {
-		final String keyword = (s.startsWith("#") ? s.substring(1) : s).trim();
+	public static String getDocumentationOn(final String query) {
+		final String keyword = StringUtils.removeEnd(StringUtils.removeStart(query.trim(), "#"), ":");
 		final THashMap<String, String> results = new THashMap<>();
 		// Statements
 		final SymbolProto p = DescriptionFactory.getStatementProto(keyword);
 		if (p != null)
 			results.put("Statement", p.getDocumentation());
+		DescriptionFactory.visitStatementProtos((name, proto) -> {
+			if (proto.getFacet(keyword) != null) {
+				results.put("Facet of statement " + name, proto.getFacet(keyword).getDocumentation());
+			}
+		});
+		final Set<String> types = new HashSet<>();
+		final String[] facetDoc = { "" };
+		DescriptionFactory.visitVarProtos((name, proto) -> {
+			if (proto.getFacet(keyword) != null && types.size() < 4) {
+				if (!Types.get(name).isAgentType() || name.equals(IKeyword.AGENT))
+					types.add(name);
+				facetDoc[0] = proto.getFacet(keyword).getDocumentation();
+			}
+		});
+		if (!types.isEmpty()) {
+			results.put("Facet of attribute declarations with types " + types + (types.size() == 4 ? " ..." : ""),
+					facetDoc[0]);
+		}
 		// Operators
 		final THashMap<Signature, OperatorProto> ops = IExpressionCompiler.OPERATORS.get(keyword);
 		if (ops != null) {

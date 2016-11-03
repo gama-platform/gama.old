@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -59,6 +60,14 @@ public class DescriptionFactory {
 			return true;
 		});
 
+	}
+
+	public final static void visitStatementProtos(final BiConsumer<String, SymbolProto> consumer) {
+		STATEMENT_KEYWORDS_PROTOS.forEach(consumer);
+	}
+
+	public final static void visitVarProtos(final BiConsumer<String, SymbolProto> consumer) {
+		VAR_KEYWORDS_PROTOS.forEach(consumer);
 	}
 
 	public final static SymbolProto getProto(final String keyword, final IDescription superDesc) {

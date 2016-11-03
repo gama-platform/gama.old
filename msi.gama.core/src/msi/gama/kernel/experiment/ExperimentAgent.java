@@ -9,13 +9,10 @@
  **********************************************************************************************/
 package msi.gama.kernel.experiment;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.core.runtime.Platform;
 
 import com.google.common.collect.Iterables;
 
@@ -25,6 +22,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.experiment.IParameter.Batch;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.kernel.simulation.SimulationClock.ExperimentClock;
@@ -120,7 +118,7 @@ import msi.gaml.types.Types;
 						value = "The minimum duration (in seconds) a simulation cycle should last. Default is 0. Units can be used to pass values smaller than a second (for instance '10 °msec')",
 						comment = "Useful to introduce slow_downs to fast simulations or to synchronize the simulation on some other process")),
 		@var (
-				name = ExperimentAgent.WORKSPACE_PATH,
+				name = PlatformAgent.WORKSPACE_PATH,
 				type = IType.STRING,
 				constant = true,
 				doc = @doc (
@@ -138,7 +136,7 @@ import msi.gaml.types.Types;
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public static final String MODEL_PATH = "model_path";
-	public static final String WORKSPACE_PATH = "workspace_path";
+
 	public static final String PROJECT_PATH = "project_path";
 	public static final String MINIMUM_CYCLE_DURATION = "minimum_cycle_duration";
 
@@ -433,11 +431,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@getter (
-			value = WORKSPACE_PATH,
+			value = PlatformAgent.WORKSPACE_PATH,
 			initializer = true)
 	public String getWorkspacePath() {
-		final URL url = Platform.getInstanceLocation().getURL();
-		return url.getPath();
+		return GAMA.getPlatformAgent().getWorkspacePath();
 	}
 
 	@getter (PROJECT_PATH)

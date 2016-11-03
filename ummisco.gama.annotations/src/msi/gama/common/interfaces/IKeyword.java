@@ -133,6 +133,7 @@ public interface IKeyword {
 	public static final String ENTITIES = "entities";
 	public static final String ENVIRONMENT = "environment";
 	public static final String EQUALS = "equals";
+	public static final String GAMA = "gama";
 	/*
 	 * Equations
 	 */
@@ -500,4 +501,5 @@ public interface IKeyword {
 	public static final String GENSTAR_POPULATION = "genstar_population";
 	public static final String GENSTAR_ENTITY = "genstar_entity";
 	public static final String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
+	public static final String PLATFORM = "platform";
 }

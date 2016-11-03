@@ -21,6 +21,7 @@ import msi.gama.kernel.experiment.ActionExecuter;
 import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
@@ -139,7 +140,7 @@ import msi.gaml.types.IType;
 				type = IType.STRING,
 				doc = @doc ("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
 		@var (
-				name = SimulationAgent.MACHINE_TIME,
+				name = PlatformAgent.MACHINE_TIME,
 				type = IType.FLOAT,
 				doc = @doc (
 						deprecated = "Use 'gama.machine_time' instead",
@@ -161,7 +162,6 @@ import msi.gaml.types.IType;
 public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public static final String DURATION = "duration";
-	public static final String MACHINE_TIME = "machine_time";
 	public static final String TOTAL_DURATION = "total_duration";
 	public static final String AVERAGE_DURATION = "average_duration";
 	public static final String CYCLE = "cycle";
@@ -468,12 +468,12 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 		return Double.toString(getClock().getAverageDuration());
 	}
 
-	@getter (MACHINE_TIME)
+	@getter (PlatformAgent.MACHINE_TIME)
 	public Double getMachineTime() {
-		return (double) System.currentTimeMillis();
+		return GAMA.getPlatformAgent().getMachineTime();
 	}
 
-	@setter (MACHINE_TIME)
+	@setter (PlatformAgent.MACHINE_TIME)
 	public void setMachineTime(final Double t) throws GamaRuntimeException {
 		// NOTHING
 	}

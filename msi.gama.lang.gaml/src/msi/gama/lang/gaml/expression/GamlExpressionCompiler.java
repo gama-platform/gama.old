@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlExpressionCompiler.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlExpressionCompiler.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -84,6 +83,7 @@ import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.ast.SyntacticFactory;
@@ -1015,6 +1015,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			return null;
 		}
 		switch (varName) {
+			case IKeyword.GAMA:
+				return GAMA.getPlatformAgent();
 			case EACH:
 				return getEachExpr(object);
 			case NULL:

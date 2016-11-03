@@ -31,6 +31,7 @@ import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGenericAgentType;
 import msi.gaml.types.Types;
 
@@ -124,7 +125,7 @@ public class GamaMetaModel {
 		final Set<String> allSkills = new HashSet(Arrays.asList(skills));
 		allSkills.addAll(speciesSkills.get(name));
 		SpeciesDescription desc;
-		if (proto.name.equals("platform")) {
+		if (proto.name.equals(IKeyword.PLATFORM)) {
 			desc = DescriptionFactory.createPlatformSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
 					plugin);
 		} else {
@@ -146,6 +147,11 @@ public class GamaMetaModel {
 
 	public void addSpeciesSkill(final String spec, final String name) {
 		speciesSkills.put(spec, name);
+	}
+
+	public ISpecies getPlatformSpecies() {
+		final SpeciesDescription desc = Types.get(IKeyword.PLATFORM).getSpecies();
+		return (ISpecies) desc.compile();
 	}
 
 }

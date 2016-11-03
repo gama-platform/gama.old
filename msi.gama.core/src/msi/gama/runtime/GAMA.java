@@ -21,6 +21,7 @@ import msi.gama.kernel.experiment.IExperimentController;
 import msi.gama.kernel.experiment.IExperimentPlan;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
+import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
@@ -36,6 +37,7 @@ public class GAMA {
 
 	public final static String VERSION = "GAMA 1.7";
 	public static final String _WARNINGS = "warnings";
+	public static PlatformAgent agent;
 
 	// hqnghi: add several controllers to have multi-thread experiments
 	private final static List<IExperimentController> controllers = new ArrayList<>();
@@ -405,6 +407,12 @@ public class GAMA {
 		// Needs to be done: recompile the model and runs the previous
 		// experiment if any
 
+	}
+
+	public static PlatformAgent getPlatformAgent() {
+		if (agent == null)
+			agent = new PlatformAgent();
+		return agent;
 	}
 
 }
