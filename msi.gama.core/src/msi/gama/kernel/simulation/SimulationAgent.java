@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SimulationAgent.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SimulationAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -143,6 +142,7 @@ import msi.gaml.types.IType;
 				name = SimulationAgent.MACHINE_TIME,
 				type = IType.FLOAT,
 				doc = @doc (
+						deprecated = "Use 'gama.machine_time' instead",
 						value = "Returns the current system time in milliseconds",
 						comment = "The return value is a float number")),
 		@var (
@@ -157,7 +157,7 @@ import msi.gaml.types.IType;
 				type = IType.DATE,
 				doc = @doc (
 						value = "Represents the starting date of the simulation",
-						comment = "If no starting_date is provided in the model, GAMA initializes it with a zero date: 1st of January, 0000 at 00:00:00")), })
+						comment = "If no starting_date is provided in the model, GAMA initializes it with a zero date: 1st of January, 1970 at 00:00:00")), })
 public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public static final String DURATION = "duration";

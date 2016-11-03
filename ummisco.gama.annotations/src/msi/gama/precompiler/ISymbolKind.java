@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ISymbolKind.java, in plugin ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ISymbolKind.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -68,10 +67,12 @@ public interface ISymbolKind {
 
 	public static final int OPERATOR = 15;
 
+	public static final int PLATFORM = 16;
+
 	// Update this variable when adding a kind of symbol
-	public static final int __NUMBER__ = 16;
+	public static final int __NUMBER__ = 17;
 
 	public static final String[] TEMPLATE_MENU = { "Species", "Model", "Statement", "Behavior", "Parameter", "Output",
-			"Layer", "Skill", "Batch", "Batch", "", "Statement", "Statement", "Experiment", "", "Operator" };
+			"Layer", "Skill", "Batch", "Batch", "", "Statement", "Statement", "Experiment", "", "Operator", "" };
 
 }

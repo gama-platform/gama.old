@@ -76,7 +76,7 @@ public class GamaPreferences {
 	public static final String EDITOR = "Editors";
 	public static final String LIBRARIES = "External";
 	static Preferences store;
-	private static Map<String, Entry> prefs = new LinkedHashMap<>();
+	private static Map<String, Entry<? extends Object>> prefs = new LinkedHashMap<>();
 	private static List<String> storeKeys;
 
 	static {
@@ -99,18 +99,16 @@ public class GamaPreferences {
 	}
 
 	public static <T> Entry<T> get(final String key, final Class<T> clazz) {
+		return (Entry<T>) prefs.get(key);
+	}
+
+	public static Entry<?> get(final String key) {
 		return prefs.get(key);
 	}
 
-	//
-	// public static <T> Entry<T> create(final String key, final T value) {
-	// return create(key, value, IType.STRING);
-	// }
-
-	// public static <T> Entry<T> create(final String key, final T value, final
-	// int type) {
-	// return create(key, "Value of " + key, value, type);
-	// }
+	public static Map<String, Entry<?>> getAll() {
+		return prefs;
+	}
 
 	public static <T> Entry<T> create(final String key, final String title, final T value, final int type) {
 		if (key.contains(".") || key.contains(" "))

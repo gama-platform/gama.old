@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaMetaModel.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaMetaModel.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -35,7 +34,7 @@ import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.GamaGenericAgentType;
 import msi.gaml.types.Types;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaMetaModel {
 
 	public final static GamaMetaModel INSTANCE = new GamaMetaModel();
@@ -62,8 +61,7 @@ public class GamaMetaModel {
 		}
 	}
 
-	private GamaMetaModel() {
-	}
+	private GamaMetaModel() {}
 
 	public ExperimentAgent createExperimentAgent(final String name, final IPopulation pop) {
 		return (ExperimentAgent) experimentCreators.get(name).create(pop);
@@ -126,15 +124,20 @@ public class GamaMetaModel {
 		final Set<String> allSkills = new HashSet(Arrays.asList(skills));
 		allSkills.addAll(speciesSkills.get(name));
 		SpeciesDescription desc;
-		if (!isGlobal) {
-			if (isExperiment)
-				desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
-						allSkills, plugin);
-			else
-				desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
-						plugin);
+		if (proto.name.equals("platform")) {
+			desc = DescriptionFactory.createPlatformSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
+					plugin);
 		} else {
-			desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
+			if (!isGlobal) {
+				if (isExperiment)
+					desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
+							allSkills, plugin);
+				else
+					desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper,
+							allSkills, plugin);
+			} else {
+				desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
+			}
 		}
 		desc.copyJavaAdditions();
 		desc.inheritFromParent();

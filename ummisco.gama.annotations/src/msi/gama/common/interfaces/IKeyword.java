@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IKeyword.java, in plugin ummisco.gama.annotations, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IKeyword.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -20,6 +19,7 @@ package msi.gama.common.interfaces;
 public interface IKeyword {
 
 	public static final String _DOT = ".";
+	public static final String ABORT = "abort";
 	public static final String ACTION = "action";
 	public static final String ADD = "add";
 	public static final String AGENT = "agent";

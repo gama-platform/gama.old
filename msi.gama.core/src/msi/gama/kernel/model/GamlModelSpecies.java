@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlModelSpecies.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlModelSpecies.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -37,20 +36,62 @@ import msi.gaml.species.GamlSpecies;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
-@symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true, internal = true, concept = {})
-@facets(value = { @facet(name = IKeyword.VERSION, type = IType.ID, optional = true),
-		@facet(name = IKeyword.AUTHOR, type = IType.ID, optional = true),
-		@facet(name = IKeyword.PRAGMA, type = IType.LIST, of = IType.STRING, optional = true, internal = true),
-		@facet(name = IKeyword.TORUS, type = IType.BOOL, optional = true),
-		@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-		@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
-		@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true),
-		@facet(name = IKeyword.CONTROL, type = IType.SKILL, optional = true),
-		@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
-		@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
-		@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
-@doc("The root declaration of all models")
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@symbol (
+		name = { IKeyword.MODEL },
+		kind = ISymbolKind.MODEL,
+		with_sequence = true,
+		internal = true,
+		concept = {})
+@facets (
+		value = { @facet (
+				name = IKeyword.VERSION,
+				type = IType.ID,
+				optional = true),
+				@facet (
+						name = IKeyword.AUTHOR,
+						type = IType.ID,
+						optional = true),
+				@facet (
+						name = IKeyword.PRAGMA,
+						type = IType.LIST,
+						of = IType.STRING,
+						optional = true,
+						internal = true),
+				@facet (
+						name = IKeyword.TORUS,
+						type = IType.BOOL,
+						optional = true),
+				@facet (
+						name = IKeyword.NAME,
+						type = IType.ID,
+						optional = false),
+				@facet (
+						name = IKeyword.PARENT,
+						type = IType.ID,
+						optional = true),
+				@facet (
+						name = IKeyword.SKILLS,
+						type = IType.LIST,
+						optional = true),
+				@facet (
+						name = IKeyword.CONTROL,
+						type = IType.SKILL,
+						optional = true),
+				@facet (
+						name = IKeyword.FREQUENCY,
+						type = IType.INT,
+						optional = true),
+				@facet (
+						name = IKeyword.SCHEDULES,
+						type = IType.CONTAINER,
+						optional = true),
+				@facet (
+						name = IKeyword.TOPOLOGY,
+						type = IType.TOPOLOGY,
+						optional = true) },
+		omissible = IKeyword.NAME)
+@doc ("A model is a species that is used to specify the 'world' of all the agents in the model. The corresponding population is hosted by experiments and accessible by the keyword 'simulations' (or 'simulation' to get the most recently created one)")
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	protected final Map<String, IExperimentPlan> experiments = new TOrderedHashMap();
@@ -88,9 +129,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	}
 
 	protected void addExperiment(final IExperimentPlan exp) {
-		if (exp == null) {
-			return;
-		}
+		if (exp == null) { return; }
 		experiments.put(exp.getName(), exp);
 		titledExperiments.put(exp.getFacet(IKeyword.TITLE).literalValue(), exp);
 		exp.setModel(this);
@@ -133,12 +172,8 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	@Override
 	public ISpecies getSpecies(final String speciesName) {
-		if (speciesName == null) {
-			return null;
-		}
-		if (speciesName.equals(getName())) {
-			return this;
-		}
+		if (speciesName == null) { return null; }
+		if (speciesName.equals(getName())) { return this; }
 		/*
 		 * the original is: return getAllSpecies().get(speciesName);
 		 */
@@ -161,12 +196,8 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	@Override
 	public ISpecies getSpecies(final String speciesName, final SpeciesDescription specDes) {
-		if (speciesName == null) {
-			return null;
-		}
-		if (speciesName.equals(getName())) {
-			return this;
-		}
+		if (speciesName == null) { return null; }
+		if (speciesName.equals(getName())) { return this; }
 		// hqnghi 11/Oct/13
 		// get experiementSpecies in any model
 		ISpecies sp = getExperiment(speciesName);
@@ -174,9 +205,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 			for (final ISpecies mm : getAllSpecies().values()) {
 				if (mm instanceof GamlModelSpecies && specDes.getOriginName().equals(mm.getName())) {
 					sp = ((GamlModelSpecies) mm).getExperiment(speciesName);
-					if (sp != null) {
-						return sp;
-					}
+					if (sp != null) { return sp; }
 				}
 			}
 		}

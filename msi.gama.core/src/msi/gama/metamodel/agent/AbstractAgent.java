@@ -68,6 +68,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	private volatile int index;
 	protected volatile boolean dead = false;
+	protected volatile boolean dying = false;
 
 	@Override
 	public abstract IPopulation<? extends IAgent> getPopulation();
@@ -537,6 +538,10 @@ public abstract class AbstractAgent implements IAgent {
 			name = "die",
 			doc = @doc ("Kills the agent and disposes of it. Once dead, the agent cannot behave anymore"))
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
+		if (dying)
+			return null;
+		dying = true;
+		getSpecies().getArchitecture().abort(scope);
 		scope.interruptAgent();
 		dispose();
 		return null;
