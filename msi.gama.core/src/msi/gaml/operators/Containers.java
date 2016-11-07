@@ -1394,15 +1394,13 @@ public class Containers {
 			see = { "collect" })
 	public static IList accumulate(final IScope scope, final IContainer c, final IExpression filter) {
 		// WARNING TODO The resulting type is not computed
-		IType type = filter.getType();
-		if (type.isContainer()) {
-			type = type.getContentType();
+		final IType type = filter.getType();
+		IType resultingContentsType = type;
+		if (resultingContentsType.isContainer()) {
+			resultingContentsType = resultingContentsType.getContentType();
 		}
-		if (filter.getType().isContainer()
-				&& !filter.getType().isTranslatableInto(Types.LIST)) { throw GamaRuntimeException
-						.error("'accumulate' only works with iterators that return lists or single values", scope); }
 		return (IList) stream(scope, c).flatCollection(function(scope, filter).andThen(toLists))
-				.toCollection(listOf(type));
+				.toCollection(listOf(resultingContentsType));
 
 	}
 
