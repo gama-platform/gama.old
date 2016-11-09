@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaDateType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaDateType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -16,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -37,7 +37,8 @@ import msi.gaml.operators.Cast;
 		id = IType.DATE,
 		wraps = { GamaDate.class },
 		kind = ISymbolKind.Variable.REGULAR,
-		concept = { IConcept.TYPE, IConcept.DATE, IConcept.TIME })
+		concept = { IConcept.TYPE, IConcept.DATE, IConcept.TIME },
+		doc = { @doc ("GAML objects that represent a date") })
 public class GamaDateType extends GamaType<GamaDate> {
 
 	public static final ZoneId DEFAULT_ZONE = Clock.systemDefaultZone().getZone();

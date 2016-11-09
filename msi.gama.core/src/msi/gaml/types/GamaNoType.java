@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaNoType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaNoType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -11,6 +10,7 @@
 package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -24,9 +24,14 @@ import msi.gama.runtime.IScope;
  * @todo Description
  *
  */
-@SuppressWarnings("unchecked")
-@type(name = IKeyword.UNKNOWN, id = IType.NONE, wraps = {
-		Object.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE })
+@SuppressWarnings ("unchecked")
+@type (
+		name = IKeyword.UNKNOWN,
+		id = IType.NONE,
+		wraps = { Object.class },
+		kind = ISymbolKind.Variable.REGULAR,
+		concept = { IConcept.TYPE },
+		doc = @doc ("A type, root of all other types, that represents values without a precise type"))
 public class GamaNoType extends GamaType<Object> {
 
 	@Override

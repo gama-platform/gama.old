@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaProcessor.java, in plugin msi.gama.processor, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaProcessor.java, in plugin msi.gama.processor, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -89,7 +88,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private GamlProperties gp;
 	private final static boolean PRODUCES_DOC = true;
-	private final static boolean PRODUCES_WARNING = false;
+	private final static boolean PRODUCES_WARNING = true;
 	private GamlDocProcessor docProc;
 	private TypeMirror iSkill, iAgent;
 	private static final Charset CHARSET = Charset.forName("UTF-8");
@@ -126,6 +125,15 @@ public class GamaProcessor extends AbstractProcessor {
 			processingEnv.getMessager().printMessage(Kind.WARNING, s);
 		else
 			processingEnv.getMessager().printMessage(Kind.WARNING, s, e);
+	}
+
+	private void emitError(final String s, final Element e) {
+		if (!PRODUCES_WARNING)
+			return;
+		if (e == null)
+			processingEnv.getMessager().printMessage(Kind.ERROR, s);
+		else
+			processingEnv.getMessager().printMessage(Kind.ERROR, s, e);
 	}
 
 	@Override
@@ -211,6 +219,8 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	String rawNameOf(final TypeMirror t) {
+		if (t.getKind().equals(TypeKind.VOID))
+			return "void";
 		final String init = processingEnv.getTypeUtils().erasure(t).toString();
 		final String[] segments = init.split("\\.");
 		final StringBuilder sb = new StringBuilder();
@@ -838,33 +848,63 @@ public class GamaProcessor extends AbstractProcessor {
 
 	public void processOperators(final RoundEnvironment env) {
 		for (final Element e : sortElements(env, operator.class)) {
-			final ExecutableElement ex = (ExecutableElement) e;
-			final operator op = ex.getAnnotation(operator.class);
-			doc documentation = ex.getAnnotation(doc.class);
+			final ExecutableElement method = (ExecutableElement) e;
+			final operator operator = method.getAnnotation(operator.class);
+			final String names[] = operator.value();
+			if (names == null) {
+				emitError("GAML operators need to have at least one name", method);
+				continue;
+			}
+			final String name = operator.value()[0];
+			doc documentation = method.getAnnotation(doc.class);
 			if (documentation == null) {
-				final doc[] docs = op.doc();
+				final doc[] docs = operator.doc();
 				if (docs.length > 0)
-					documentation = op.doc()[0];
+					documentation = operator.doc()[0];
 			}
 
 			if (documentation == null) {
-				emitWarning("GAML: operator '" + op.value()[0] + "' is not documented", e);
+				emitWarning("GAML: operator '" + name + "' is not documented", e);
 			}
+			final Set<Modifier> modifiers = method.getModifiers();
 
-			final boolean stat = ex.getModifiers().contains(Modifier.STATIC);
-			final String declClass = rawNameOf(ex.getEnclosingElement());
-			final List<? extends VariableElement> argParams = ex.getParameters();
+			final boolean isStatic = modifiers.contains(Modifier.STATIC);
+
+			if (!modifiers.contains(Modifier.PUBLIC)) {
+				emitError("GAML operators can only be implemented by public (or public static) methods", method);
+				continue;
+			}
+			final String declClass = rawNameOf(method.getEnclosingElement());
+			final List<? extends VariableElement> argParams = method.getParameters();
 			final String[] args = new String[argParams.size()];
 			for (int i = 0; i < args.length; i++) {
+				final VariableElement ve = argParams.get(i);
+				switch (ve.asType().getKind()) {
+					case ARRAY:
+						emitError(
+								"GAML operators cannot accept Java arrays arguments. Please wrap this argument in a GAML container type (list or matrix) ",
+								ve);
+						return;
+					case CHAR:
+					case BYTE:
+					case SHORT:
+						emitWarning("The type of this argument will be casted to integer in GAML", ve);
+						break;
+					default:
+				}
 				args[i] = rawNameOf(argParams.get(i));
 			}
 			final int n = args.length;
+			if (n == 0 && !isStatic) {
+				emitError("GAML operators need to have at least one argument", method);
+				continue;
+			}
 			final boolean scope = n > 0 && args[0].contains("IScope");
-			final int actual_args_number = n + (scope ? -1 : 0) + (!stat ? 1 : 0);
-			String methodName = ex.getSimpleName().toString();
+			final int actual_args_number = n + (scope ? -1 : 0) + (!isStatic ? 1 : 0);
+			String methodName = method.getSimpleName().toString();
 			final String[] classes = new String[actual_args_number];
 			int begin = 0;
-			if (!stat) {
+			if (!isStatic) {
 				classes[0] = declClass;
 				begin = 1;
 			}
@@ -873,10 +913,42 @@ public class GamaProcessor extends AbstractProcessor {
 				for (int i = 0; i < actual_args_number - begin; i++) {
 					classes[begin + i] = args[i + shift];
 				}
-			} catch (final Exception e1) {}
+			} catch (final Exception e1) {
+				emitError("An exception occurred in the processor: " + e1.getMessage(), method);
+				continue;
+			}
 
-			final String ret = rawNameOf(ex.getReturnType());
-			methodName = stat ? declClass + "." + methodName : methodName;
+			final String ret = rawNameOf(method.getReturnType());
+
+			switch (method.getReturnType().getKind()) {
+				case ARRAY:
+					emitError(
+							"GAML operators cannot return Java arrays. Please wrap this result in a GAML container type (list or matrix) ",
+							method);
+					continue;
+				case VOID: // does not seem to be recognized
+				case NULL:
+				case NONE:
+				case ERROR:
+					emitError("GAML operators need to return a value.", method);
+					continue;
+				case CHAR:
+				case BYTE:
+				case SHORT:
+					emitWarning("The return type of this operator will be casted to integer in GAML", method);
+					break;
+				case EXECUTABLE:
+					emitError("GAML operators cannot return Java executables", method);
+					continue;
+				default:
+			}
+
+			if (ret.equals("void")) {
+				emitError("GAML operators need to return a value", method);
+				continue;
+			}
+
+			methodName = isStatic ? declClass + "." + methodName : methodName;
 			final StringBuilder sb = new StringBuilder();
 			// prefix
 			sb.append(OPERATOR_PREFIX);
@@ -887,31 +959,30 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append(s).append(SEP);
 			}
 			// 2.canBeConst
-			sb.append(op.can_be_const()).append(SEP);
+			sb.append(operator.can_be_const()).append(SEP);
 			// 3.type
-			sb.append(op.type()).append(SEP);
+			sb.append(operator.type()).append(SEP);
 			// 4.contentType
-			sb.append(op.content_type()).append(SEP);
+			sb.append(operator.content_type()).append(SEP);
 			// 4+. index_type
-			sb.append(op.index_type()).append(SEP);
+			sb.append(operator.index_type()).append(SEP);
 			// 5.iterator
-			sb.append(op.iterator()).append(SEP);
+			sb.append(operator.iterator()).append(SEP);
 			// 6.expected types number
-			sb.append(op.expected_content_type().length).append(SEP);
+			sb.append(operator.expected_content_type().length).append(SEP);
 			// 6+ expected types
-			for (int i = 0; i < op.expected_content_type().length; i++) {
-				sb.append(op.expected_content_type()[i]).append(SEP);
+			for (int i = 0; i < operator.expected_content_type().length; i++) {
+				sb.append(operator.expected_content_type()[i]).append(SEP);
 			}
 			// 7.return class
 			sb.append(ret).append(SEP);
 			// 8.methodName
 			sb.append(methodName).append(SEP);
 			// 9.static
-			sb.append(stat).append(SEP);
+			sb.append(isStatic).append(SEP);
 			// 10.contextual
 			sb.append(scope);
 			// 11+. names
-			final String[] names = op.value();
 			for (int i = 0; i < names.length; i++) {
 				sb.append(SEP).append(names[i]);
 			}

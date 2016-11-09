@@ -11,6 +11,7 @@ package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -26,7 +27,8 @@ import msi.gaml.expressions.IExpression;
 		id = IType.MAP,
 		wraps = { GamaMap.class },
 		kind = ISymbolKind.Variable.CONTAINER,
-		concept = { IConcept.TYPE, IConcept.CONTAINER, IConcept.MAP })
+		concept = { IConcept.TYPE, IConcept.CONTAINER, IConcept.MAP },
+		doc = @doc ("Represents lists of pairs key::value, where each key is unique in the map. Maps are ordered by the insertion order of elements"))
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaMapType extends GamaContainerType<GamaMap> {
 

@@ -68,7 +68,8 @@ import msi.gaml.types.Types;
  *
  */
 @species (
-		name = IKeyword.EXPERIMENT)
+		name = IKeyword.EXPERIMENT,
+		doc = @doc ("The species of agents that represent experiments"))
 @vars ({ @var (
 		name = IKeyword.SIMULATIONS,
 		type = IType.LIST,

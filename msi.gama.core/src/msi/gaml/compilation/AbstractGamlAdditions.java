@@ -281,7 +281,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	protected IDescription desc(final int keyword, final String... facets) {
-		return desc(Types.get(keyword).toString(), facets);
+		final IType t = Types.get(keyword);
+		return desc(t.toString(), facets);
 	}
 
 	protected void _action(final String methodName, final Class clazz, final GamaHelper e, final IDescription desc,

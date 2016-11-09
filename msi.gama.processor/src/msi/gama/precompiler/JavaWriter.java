@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'JavaWriter.java, in plugin msi.gama.processor, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'JavaWriter.java, in plugin msi.gama.processor, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -508,8 +507,7 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeOperatorAddition(final StringBuilder sb, /* final StringBuilder docBuilder, */final String s,
-			final String doc) {
+	protected void writeOperatorAddition(final StringBuilder sb, final String s, final String doc) {
 		final String[] segments = s.split("\\$");
 		final int arg_number = Integer.decode(segments[0]);
 		final String[] classes = new String[arg_number];
@@ -563,11 +561,7 @@ public class JavaWriter {
 				.append(buildMethodCall(classes, m, stat, scope)).append(',').append(classNames).append(",")
 				.append(content_type_expected).append(",").append(toClassObject(ret)).append(',').append(canBeConst)
 				.append(',').append(type).append(',').append(contentType).append(',').append(indexType).append(',')
-				.append(helper)/*
-								 * .append(',').append("DOC(").append(addDoc( docBuilder, toArrayOfStrings(doc,
-								 * DOC_REGEX)))
-								 */
-				/* .append(")") */.append(");");
+				.append(helper).append(");");
 	}
 
 	protected void writeSpecies(final StringBuilder sb, /* final StringBuilder docBuilder, */final String s,
