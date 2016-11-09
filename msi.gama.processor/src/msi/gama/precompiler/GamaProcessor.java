@@ -991,6 +991,8 @@ public class GamaProcessor extends AbstractProcessor {
 		}
 	}
 
+	private static Set<String> RESERVED_FACETS = new HashSet(Arrays.asList("name", "keyword", "returns"));
+
 	// Format: prefix 0.method 1.declClass 2.retClass 3.name 4.nbArgs 5.[arg]*
 	void processActions(final RoundEnvironment env) {
 		for (final Element e : sortElements(env, action.class)) {
@@ -1036,12 +1038,19 @@ public class GamaProcessor extends AbstractProcessor {
 			if (args.length > 0) {
 				for (int i = 0; i < args.length; i++) {
 					final arg arg = args[i];
-					sb.append(arg.name()).append(SEP);
+					final String argName = arg.name();
+					if (RESERVED_FACETS.contains(argName)) {
+						emitWarning(
+								"Argument " + argName
+										+ " will prevent this primitive to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
+								e);
+					}
+					sb.append(argName).append(SEP);
 					sb.append(arg.type()).append(SEP);
 					sb.append(arg.optional()).append(SEP);
 					final doc[] docs = arg.doc();
 					if (docs.length == 0) {
-						emitWarning("GAML: argument '" + arg.name() + "' is not documented", e);
+						emitWarning("GAML: argument '" + argName + "' is not documented", e);
 					}
 					sb.append(docToString(arg.doc())).append(SEP);
 					strings.add(args[i].name());
