@@ -9,12 +9,12 @@
  **********************************************************************************************/
 package msi.gama.common;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,6 +46,10 @@ import msi.gama.util.IList;
 import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.IGamaFile;
+import msi.gaml.compilation.kernel.GamaMetaModel;
+import msi.gaml.descriptions.PlatformSpeciesDescription;
+import msi.gaml.operators.Cast;
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.GamaBoolType;
 import msi.gaml.types.GamaFloatType;
@@ -66,7 +70,6 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPreferences {
 
-	// public static final String GENERAL = "General";
 	public static final String UI = "Presentation";
 	public static final String EXPERIMENTS = "Experiments";
 	public static final String SIMULATIONS = "Simulations";
@@ -294,11 +297,6 @@ public class GamaPreferences {
 			return value == null ? newValue != null : !value.equals(newValue);
 		}
 
-		// public Entry typed(final int type) {
-		// this.type = Types.get(type);
-		// return this;
-		// }
-
 		public Entry<T> activates(final String... link) {
 			activates = link;
 			return this;
@@ -348,11 +346,6 @@ public class GamaPreferences {
 
 		@Override
 		public void setUnitLabel(final String label) {}
-
-		// @Override
-		// public Integer getDefinitionOrder() {
-		// return 0;
-		// }
 
 		@Override
 		public void setValue(final IScope scope, final Object value) {
@@ -548,9 +541,10 @@ public class GamaPreferences {
 			create("pref_experiment_ask_closing", "Ask to close the previous experiment before launching a new one ?",
 					true, IType.BOOL).in(EXPERIMENTS).group("Runtime");
 
-	public static final Color[] BASIC_COLORS = new Color[] { new Color(74, 97, 144), new Color(66, 119, 42),
-			new Color(83, 95, 107), new Color(195, 98, 43), new Color(150, 132, 106) };
-	public static final Entry<Color>[] SIMULATION_COLORS = new Entry[5];
+	public static final GamaColor[] BASIC_COLORS =
+			new GamaColor[] { new GamaColor(74, 97, 144), new GamaColor(66, 119, 42), new GamaColor(83, 95, 107),
+					new GamaColor(195, 98, 43), new GamaColor(150, 132, 106) };
+	public static final Entry<GamaColor>[] SIMULATION_COLORS = new Entry[5];
 
 	static {
 		for (int i = 0; i < 5; i++) {
@@ -591,11 +585,11 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_ANTIALIAS =
 			create("pref_display_antialias", "Apply antialiasing", false, IType.BOOL).in(DISPLAY)
 					.group("Properties (settings effective after experiment relaunch)");
-	public static final Entry<Color> CORE_BACKGROUND =
-			create("pref_display_background_color", "Default background color", Color.white, IType.COLOR).in(DISPLAY)
-					.group("Properties (settings effective after experiment relaunch)");
-	public static final Entry<Color> CORE_HIGHLIGHT =
-			create("pref_display_highlight_color", "Default highlight color", new Color(0, 200, 200), IType.COLOR)
+	public static final Entry<GamaColor> CORE_BACKGROUND =
+			create("pref_display_background_color", "Default background color", GamaColor.getNamed("white"),
+					IType.COLOR).in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<GamaColor> CORE_HIGHLIGHT =
+			create("pref_display_highlight_color", "Default highlight color", new GamaColor(0, 200, 200), IType.COLOR)
 					.in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_DISPLAY_ORDER =
 			create("pref_display_same_order", "Stack displays on screen in the order defined by the model", true,
@@ -604,7 +598,6 @@ public class GamaPreferences {
 			create("pref_display_show_border", "Display a border around the view", true, IType.BOOL).in(DISPLAY)
 					.group("Properties (settings effective after experiment relaunch)");
 
-	// TODO REMOVED Because too much instability
 	public static final List<String> LAYOUTS = Arrays.asList("None", "Stacked", "Split", "Horizontal", "Vertical");
 	public static final Entry<String> CORE_DISPLAY_LAYOUT =
 			create("pref_display_view_layout", "Default layout of display views", "None", IType.STRING)
@@ -621,26 +614,19 @@ public class GamaPreferences {
 	public static final Entry<Double> CORE_SIZE =
 			create("pref_display_default_size", "Default size to use for agents", 1.0, IType.FLOAT).between(0.01, null)
 					.in(DISPLAY).group("Default aspect (settings effective after experiment relaunch)");
-	public static final Entry<Color> CORE_COLOR =
-			create("pref_display_default_color", "Default color to use for agents", Color.yellow, IType.COLOR)
-					.in(DISPLAY).group("Default aspect (settings effective after experiment relaunch)");
+	public static final Entry<GamaColor> CORE_COLOR =
+			create("pref_display_default_color", "Default color to use for agents", GamaColor.getNamed("yellow"),
+					IType.COLOR).in(DISPLAY).group("Default aspect (settings effective after experiment relaunch)");
 	/**
 	 * OpenGL
 	 */
-	// public static final Entry<Boolean> CORE_Z_FIGHTING =
-	// create("core.z_fighting", "Use improved z positioning", true,
-	// IType.BOOL).in(DISPLAY)
-	// .group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> CORE_DRAW_ENV =
 			create("pref_display_show_referential", "Draw 3D referential", true, IType.BOOL).in(DISPLAY)
 					.group("OpenGL (settings effective after experiment relaunch)");
 	public static final Entry<Boolean> DRAW_ROTATE_HELPER =
 			create("pref_display_show_rotation", "Draw rotation helper", true, IType.BOOL).in(DISPLAY)
 					.group("OpenGL (settings effective after experiment relaunch)");
-	// public static final Entry<Boolean> CORE_IS_LIGHT_ON =
-	// create("core.islighton", "Enable lighting", true, IType.BOOL)
-	// .in(DISPLAY).group("OpenGL (settings effective after experiment
-	// relaunch)");
+
 	public static final Entry<Double> OPENGL_ZOOM = create("pref_display_zoom_factor",
 			"Set the zoom factor to use (from 0 for a slow zoom to 1 for a fast one)", 0.5, IType.FLOAT).in(DISPLAY)
 					.group("OpenGL (settings effective immediately)").between(0, 1);
@@ -650,14 +636,6 @@ public class GamaPreferences {
 	public static final Entry<Double> CORE_LINE_WIDTH =
 			create("pref_display_line_width", "Set the width of lines drawn on displays", 1.2d, IType.FLOAT).in(DISPLAY)
 					.group("OpenGL (settings effective immediately)");
-	// public static final Entry<Boolean> CORE_DRAW_NORM =
-	// create("core.draw_norm", "Draw normals to objects", false,
-	// IType.BOOL).in(DISPLAY)
-	// .group("OpenGL (settings effective after experiment relaunch)");
-	// public static final Entry<Boolean> CORE_CUBEDISPLAY =
-	// create("core.cubedisplay", "Display as a cube", false,
-	// IType.BOOL).in(DISPLAY)
-	// .group("OpenGL (settings effective after experiment relaunch)");
 
 	// LIBRARIES PAGE
 	/**
@@ -859,14 +837,21 @@ public class GamaPreferences {
 					store.put(key, GamaStringType.staticCast(scope, value, false));
 				}
 		}
-		// if ( scope != null ) {
-		// GAMA.releaseScope(scope);
-		// }
 		try {
 			store.flush();
 		} catch (final BackingStoreException e) {
 			e.printStackTrace();
 		}
+		// Adds the preferences to the platform species if it is already created
+		final PlatformSpeciesDescription spec = GamaMetaModel.INSTANCE.getPlatformSpeciesDescription();
+		if (spec != null) {
+			if (!spec.hasAttribute(key)) {
+				spec.addPref(key, gp);
+				spec.validate();
+			}
+		}
+		// Registers the preferences in the variable of the scope provider
+
 	}
 
 	public static void writeToStore(final Entry gp) {
@@ -890,7 +875,7 @@ public class GamaPreferences {
 				break;
 			case IType.COLOR:
 				// Stores the preference as an int but create a color
-				final int code = ((Color) value).getRGB();
+				final int code = ((GamaColor) value).getRGB();
 				store.putInt(key, code);
 				break;
 			case IType.FONT:
@@ -977,13 +962,33 @@ public class GamaPreferences {
 	}
 
 	public static void savePreferencesTo(final String path) {
-		// System.out.println("Save preferences to " + path);
-		try {
-			final FileOutputStream os = new FileOutputStream(path);
-			store.exportNode(os);
-			os.close();
-		} catch (final IOException | BackingStoreException e) {
-			// TODO Auto-generated catch block
+		try (FileWriter os = new FileWriter(path)) {
+			final List<Entry> entries = new ArrayList(prefs.values());
+			final StringBuilder read = new StringBuilder(1000);
+			final StringBuilder write = new StringBuilder(1000);
+			for (final Entry e : entries) {
+				read.append(Strings.TAB).append("//").append(e.getTitle()).append(Strings.LN);
+				read.append(Strings.TAB).append("write sample(gama.").append(e.getName()).append(");")
+						.append(Strings.LN).append(Strings.LN);
+				write.append(Strings.TAB).append("//").append(e.getTitle()).append(Strings.LN);
+				write.append(Strings.TAB).append("gama.").append(e.getName()).append(" <- ")
+						.append(Cast.toGaml(e.getValue())).append(";").append(Strings.LN).append(Strings.LN);
+			}
+			os.append("// ").append(GAMA.VERSION).append(" Preferences saved on ")
+					.append(LocalDateTime.now().toString()).append(Strings.LN).append(Strings.LN);
+			os.append("model preferences").append(Strings.LN).append(Strings.LN);
+			os.append("experiment 'Display Preferences' type: gui {").append(Strings.LN);
+			os.append("init {").append(Strings.LN);
+			os.append(read);
+			os.append("}").append(Strings.LN);
+			os.append("}").append(Strings.LN).append(Strings.LN).append(Strings.LN);
+			os.append("experiment 'Set Preferences' type: gui {").append(Strings.LN);
+			os.append("init {").append(Strings.LN);
+			os.append(write);
+			os.append("}").append(Strings.LN);
+			os.append("}").append(Strings.LN);
+			os.flush();
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 	}

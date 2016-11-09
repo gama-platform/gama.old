@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TypeDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TypeDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -80,11 +79,15 @@ public abstract class TypeDescription extends SymbolDescription {
 	public abstract Class getJavaBase();
 
 	/**
-	 * ==================================== MANAGEMENT OF VARIABLES
+	 * ==================================== MANAGEMENT OF ATTRIBUTES
 	 */
 
 	public Iterable<VariableDescription> getAttributes() {
 		return Iterables.transform(getAttributeNames(), input -> getAttribute(input));
+	}
+
+	public Iterable<VariableDescription> getOwnAttributes() {
+		return attributes == null ? Collections.EMPTY_LIST : attributes.values();
 	}
 
 	public Collection<String> getAttributeNames() {
@@ -408,6 +411,17 @@ public abstract class TypeDescription extends SymbolDescription {
 		if (ownAction == null && parent != null && parent != this)
 			ownAction = getParent().getAction(aName);
 		return ownAction;
+	}
+
+	public Iterable<ActionDescription> getOwnActions() {
+		return actions == null ? Collections.EMPTY_LIST : actions.values();
+	}
+
+	public void removeAction(final String temp) {
+		if (actions == null)
+			return;
+		actions.remove(temp);
+
 	}
 
 	public Collection<String> getActionNames() {

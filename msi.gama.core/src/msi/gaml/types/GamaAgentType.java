@@ -115,6 +115,11 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
+	public String getSupportName() {
+		return ", type of agents instances of species " + species.getName();
+	}
+
+	@Override
 	public IType<String> getKeyType() {
 		return Types.STRING;
 	}

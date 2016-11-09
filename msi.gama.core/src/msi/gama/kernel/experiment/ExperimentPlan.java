@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ExperimentPlan.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExperimentPlan.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -62,38 +61,99 @@ import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
 /**
- * Written by drogoul Modified on 28 mai 2011 Apr. 2013: Important modifications
- * to enable running true experiment agents
+ * Written by drogoul Modified on 28 mai 2011 Apr. 2013: Important modifications to enable running true experiment
+ * agents
  *
  * 
- * Dec 2015: ExperimentPlans now manage their own controller. They are entirely
- * responsible for its life-cycle (creation, disposal)
+ * Dec 2015: ExperimentPlans now manage their own controller. They are entirely responsible for its life-cycle
+ * (creation, disposal)
  * 
  * @todo Description
  *
  */
-@symbol(name = { IKeyword.EXPERIMENT }, kind = ISymbolKind.EXPERIMENT, with_sequence = true, concept = {
-		IConcept.EXPERIMENT })
-@facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the experiment")),
-		@facet(name = IKeyword.TITLE, type = IType.LABEL, optional = false, doc = @doc(""), internal = true),
-		@facet(name = IKeyword.PARENT, type = IType.ID, optional = true, doc = @doc("the parent experiment (in case of inheritance between experiments)")),
-		@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true, doc = @doc(""), internal = true),
-		@facet(name = IKeyword.CONTROL, type = IType.ID, optional = true, doc = @doc(""), internal = true),
-		@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true, internal = true, doc = @doc("the execution frequence of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.")),
-		@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true, internal = true, doc = @doc("an ordered list of agents giving the order of their execution")),
-		@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL, optional = true, doc = @doc("")),
-		@facet(name = IKeyword.KEEP_SIMULATIONS, type = IType.BOOL, optional = true, doc = @doc("In the case of a batch experiment, specifies whether or not the simulations should be kept in memory for further analysis or immediately discarded with only their fitness kept in memory")),
-		@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true, doc = @doc("In the case of a batch experiment, expresses hom many times the simulations must be repeated")),
-		@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true, doc = @doc("In the case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated")),
-		@facet(name = IKeyword.PARALLEL, type = { IType.BOOL,
-				IType.INT }, optional = true, doc = @doc("When set to true, use multiple threads to run its simulations. Setting it to n will set the numbers of threads to use")),
-		@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.MEMORIZE,
-				/* IKeyword.REMOTE, */IKeyword.GUI_,
-				IKeyword.HEADLESS_UI }, optional = false, doc = @doc("the type of the experiment (either 'gui' or 'batch'")) }, omissible = IKeyword.NAME)
-@inside(kinds = { ISymbolKind.MODEL })
-@validator(BatchValidator.class)
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@symbol (
+		name = { IKeyword.EXPERIMENT },
+		kind = ISymbolKind.EXPERIMENT,
+		with_sequence = true,
+		concept = { IConcept.EXPERIMENT })
+@facets (
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.LABEL,
+				optional = false,
+				doc = @doc ("identifier of the experiment")),
+				@facet (
+						name = IKeyword.TITLE,
+						type = IType.LABEL,
+						optional = false,
+						doc = @doc (""),
+						internal = true),
+				@facet (
+						name = IKeyword.PARENT,
+						type = IType.ID,
+						optional = true,
+						doc = @doc ("the parent experiment (in case of inheritance between experiments)")),
+				@facet (
+						name = IKeyword.SKILLS,
+						type = IType.LIST,
+						optional = true,
+						doc = @doc (""),
+						internal = true),
+				@facet (
+						name = IKeyword.CONTROL,
+						type = IType.ID,
+						optional = true,
+						doc = @doc (""),
+						internal = true),
+				@facet (
+						name = IKeyword.FREQUENCY,
+						type = IType.INT,
+						optional = true,
+						internal = true,
+						doc = @doc ("the execution frequence of the experiment (default value: 1). If frequency: 10, the experiment is executed only each 10 steps.")),
+				@facet (
+						name = IKeyword.SCHEDULES,
+						type = IType.CONTAINER,
+						optional = true,
+						internal = true,
+						doc = @doc ("an ordered list of agents giving the order of their execution")),
+				@facet (
+						name = IKeyword.KEEP_SEED,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("")),
+				@facet (
+						name = IKeyword.KEEP_SIMULATIONS,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("In the case of a batch experiment, specifies whether or not the simulations should be kept in memory for further analysis or immediately discarded with only their fitness kept in memory")),
+				@facet (
+						name = IKeyword.REPEAT,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("In the case of a batch experiment, expresses hom many times the simulations must be repeated")),
+				@facet (
+						name = IKeyword.UNTIL,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("In the case of a batch experiment, an expression that will be evaluated to know when a simulation should be terminated")),
+				@facet (
+						name = IKeyword.PARALLEL,
+						type = { IType.BOOL, IType.INT },
+						optional = true,
+						doc = @doc ("When set to true, use multiple threads to run its simulations. Setting it to n will set the numbers of threads to use")),
+				@facet (
+						name = IKeyword.TYPE,
+						type = IType.LABEL,
+						values = { IKeyword.BATCH, IKeyword.MEMORIZE, /* IKeyword.REMOTE, */IKeyword.GUI_,
+								IKeyword.HEADLESS_UI },
+						optional = false,
+						doc = @doc ("the type of the experiment (either 'gui' or 'batch'")) },
+		omissible = IKeyword.NAME)
+@inside (
+		kinds = { ISymbolKind.MODEL })
+@validator (BatchValidator.class)
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	public static class BatchValidator implements IDescriptionValidator {
@@ -110,9 +170,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 				desc.warning("The memorize experiment is still in development. It should not be used.",
 						IGamlIssue.DEPRECATED);
 			}
-			if (!type.equals(IKeyword.BATCH)) {
-				return;
-			}
+			if (!type.equals(IKeyword.BATCH)) { return; }
 			if (!desc.hasFacet(IKeyword.UNTIL)) {
 				desc.warning(
 						"No stopping condition have been defined (facet 'until:'). This may result in an endless run of the simulations",
@@ -162,16 +220,13 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 		public void createVariables(final IScope scope, final IAgent a, final Map<String, Object> inits)
 				throws GamaRuntimeException {
 			final Set<String> names = inits.keySet();
-			try {
-				for (final String s : orderedVarNames) {
-					final IVariable var = getVar(s);
-					var.initializeWith(scope, a, inits.get(s));
-					names.remove(s);
-				}
-				for (final String s : names) {
-					a.getScope().setAgentVarValue(a, s, inits.get(s));
-				}
-			} finally {
+			for (final String s : orderedVarNames) {
+				final IVariable var = getVar(s);
+				var.initializeWith(scope, a, inits.get(s));
+				names.remove(s);
+			}
+			for (final String s : names) {
+				a.getScope().setAgentVarValue(a, s, inits.get(s));
 			}
 
 		}
@@ -372,9 +427,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	private void createOutput(final BatchOutput output) throws GamaRuntimeException {
 		// TODO revoir tout ceci. Devrait plut�t �tre une commande
-		if (output == null) {
-			return;
-		}
+		if (output == null) { return; }
 		IExpression data = output.getFacet(IKeyword.DATA);
 		if (data == null) {
 			data = exploration.getFitnessExpression();
@@ -466,9 +519,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	public IParameter.Batch getParameter(final String name) {
 		final IParameter p = parameters.get(name);
-		if (p != null && p instanceof IParameter.Batch) {
-			return (IParameter.Batch) p;
-		}
+		if (p != null && p instanceof IParameter.Batch) { return (IParameter.Batch) p; }
 		return null;
 	}
 
@@ -483,19 +534,15 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	protected IParameter.Batch checkGetParameterByTitle(final String name) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameterByTitle(name);
-		if (v == null) {
-			throw GamaRuntimeException.error("No parameter named " + name + " in experiment " + getName(),
-					getExperimentScope());
-		}
+		if (v == null) { throw GamaRuntimeException.error("No parameter named " + name + " in experiment " + getName(),
+				getExperimentScope()); }
 		return v;
 	}
 
 	protected IParameter.Batch checkGetParameter(final String name) throws GamaRuntimeException {
 		final IParameter.Batch v = getParameter(name);
-		if (v == null) {
-			throw GamaRuntimeException.error("No parameter named " + name + " in experiment " + getName(),
-					getExperimentScope());
-		}
+		if (v == null) { throw GamaRuntimeException.error("No parameter named " + name + " in experiment " + getName(),
+				getExperimentScope()); }
 		return v;
 	}
 
@@ -506,18 +553,14 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 	@Override
 	public SimulationAgent getCurrentSimulation() {
-		if (agent == null) {
-			return null;
-		}
+		if (agent == null) { return null; }
 		return agent.getSimulation();
 	}
 
 	/**
-	 * A short-circuited scope that represents the scope of the experiment plan,
-	 * before any agent is defined. If a simulation is available, it refers to
-	 * it and gains access to its global scope. If not, it throws the
-	 * appropriate runtime exceptions when a feature dependent on the existence
-	 * of a simulation is accessed
+	 * A short-circuited scope that represents the scope of the experiment plan, before any agent is defined. If a
+	 * simulation is available, it refers to it and gains access to its global scope. If not, it throws the appropriate
+	 * runtime exceptions when a feature dependent on the existence of a simulation is accessed
 	 *
 	 * @author Alexis Drogoul
 	 * @since November 2011
@@ -543,13 +586,9 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 
 		@Override
 		public Object getGlobalVarValue(final String name) throws GamaRuntimeException {
-			if (hasParameter(name)) {
-				return getParameterValue(name);
-			}
+			if (hasParameter(name)) { return getParameterValue(name); }
 			final SimulationAgent a = getCurrentSimulation();
-			if (a != null) {
-				return a.getDirectVarValue(this, name);
-			}
+			if (a != null) { return a.getDirectVarValue(this, name); }
 			return null;
 		}
 
@@ -602,8 +641,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	/**
-	 * Same as the previous one, but forces the outputs to do one step of
-	 * computation (if some values have changed)
+	 * Same as the previous one, but forces the outputs to do one step of computation (if some values have changed)
 	 */
 	@Override
 	public void recomputeAndRefreshAllOutputs() {
@@ -628,8 +666,7 @@ public class ExperimentPlan extends GamlSpecies implements IExperimentPlan {
 	}
 
 	/**
-	 * Returns the output managers that are currently active. If no agent is
-	 * defined, then an empty iterable is returned
+	 * Returns the output managers that are currently active. If no agent is defined, then an empty iterable is returned
 	 * 
 	 * @return
 	 */

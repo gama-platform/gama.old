@@ -49,9 +49,6 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class ExecutionScope implements IScope {
 
-	// private static final String TOPOLOGY = "%_topology_%";
-	// private static final String GRAPHICS = "%_graphics_%";
-	// static final String EACH = "%_each_%";
 	private static final String ATTRIBUTES = "%_attributes_%";
 	private static int SCOPE_NUMBER = 0;
 
@@ -81,6 +78,8 @@ public class ExecutionScope implements IScope {
 		}
 
 		public void copyFrom(final SpecialContext specialContext) {
+			if (specialContext == null)
+				return;
 			each = specialContext.each;
 			graphics = specialContext.graphics;
 			topology = specialContext.topology;
@@ -121,36 +120,29 @@ public class ExecutionScope implements IScope {
 	}
 
 	public ExecutionScope(final ITopLevelAgent root, final String otherName) {
-		String name = "Scope #" + ++SCOPE_NUMBER;
+		this(root, otherName, null);
+	}
 
+	public ExecutionScope(final ITopLevelAgent root, final String otherName, final IExecutionContext context) {
+		this(root, otherName, context, null, null);
+	}
+
+	public ExecutionScope(final ITopLevelAgent root, final String otherName, final IExecutionContext context,
+			final AgentExecutionContext agentContext, final SpecialContext specialContext) {
+		String name = "Scope #" + ++SCOPE_NUMBER;
 		setRoot(root);
-		agentContext = new AgentExecutionContext(root, null);
 		if (root != null) {
 			name += " of " + root;
 		}
 		name += otherName == null || otherName.isEmpty() ? "" : "(" + otherName + ")";
 		this.name = name;
-		// System.out.println("Scope created " + this);
-
-		// Necessary to create a blank execution context
-		push((ISymbol) null);
-
-	}
-
-	public ExecutionScope(final ITopLevelAgent root, final String otherName, final ExecutionContext context,
-			final AgentExecutionContext agentContext, final SpecialContext specialContext) {
-		this(root, otherName);
-		this.executionContext = context.createCopyContext();
-		this.agentContext = agentContext;
+		this.executionContext = context == null ? new ExecutionContext() : context.createCopyContext();
+		this.agentContext = agentContext == null ? new AgentExecutionContext(root, null) : agentContext;
 		this.additionalContext.copyFrom(specialContext);
 	}
 
 	public AgentExecutionContext createChildContext(final IAgent agent) {
 		return new AgentExecutionContext(agent, agentContext);
-	};
-
-	public IExecutionContext createChildContext() {
-		return new ExecutionContext(executionContext);
 	};
 
 	/**
@@ -258,9 +250,6 @@ public class ExecutionScope implements IScope {
 			// get rid of the previous context **important**
 			agentContext = null;
 		} else if (a == agent) { return false; }
-
-		// System.out.println("PUSHING " + agent + " IN " + this + " (Previous
-		// context:" + context);
 		agentContext = createChildContext(agent);
 		return true;
 	}
@@ -290,7 +279,10 @@ public class ExecutionScope implements IScope {
 	@Override
 	public void push(final ISymbol statement) {
 		setCurrentSymbol(statement);
-		executionContext = createChildContext();
+		if (executionContext != null)
+			executionContext = executionContext.createChildContext();
+		else
+			executionContext = new ExecutionContext();
 	}
 
 	@Override

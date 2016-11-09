@@ -61,6 +61,11 @@ public class ExecutionContext implements IExecutionContext {
 	}
 
 	@Override
+	public ExecutionContext createChildContext() {
+		return new ExecutionContext(this);
+	}
+
+	@Override
 	public Map<? extends String, ? extends Object> getLocalVars() {
 		return local == null ? Collections.EMPTY_MAP : local;
 	}

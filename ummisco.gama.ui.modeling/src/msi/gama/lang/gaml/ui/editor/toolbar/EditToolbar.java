@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'EditToolbar.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'EditToolbar.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -87,34 +86,6 @@ public class EditToolbar {
 	public void installGesturesFor(final GamlEditor editor) {
 		final StyledText text = editor.getInternalSourceViewer().getTextWidget();
 		if (text != null) {
-			// text.addFocusListener(new FocusListener() {
-			//
-			// @Override
-			// public void focusLost(final FocusEvent e) {
-			// // System.out.println("The editor has lost focus");
-			// }
-			//
-			// @Override
-			// public void focusGained(final FocusEvent e) {
-			// // System.out.println("The editor has gained focus");
-			// }
-			// });
-			// text.addMouseListener(new MouseListener() {
-			//
-			// @Override
-			// public void mouseUp(final MouseEvent e) {
-			// // System.out.println("The editor has had a click");
-			// WorkaroundForIssue1353.showShell();
-			// }
-			//
-			// @Override
-			// public void mouseDown(final MouseEvent e) {
-			// }
-			//
-			// @Override
-			// public void mouseDoubleClick(final MouseEvent e) {
-			// }
-			// });
 			text.addGestureListener(ge -> {
 				if (ge.detail == SWT.GESTURE_BEGIN) {
 

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaSkillRegistry.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaSkillRegistry.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,13 +16,17 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
+
 import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.ISkill;
+import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.SkillDescription;
+import msi.gaml.descriptions.VariableDescription;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaSkillRegistry {
 
 	public final static GamaSkillRegistry INSTANCE = new GamaSkillRegistry();
@@ -32,8 +35,7 @@ public class GamaSkillRegistry {
 	private List<String> architectureNames = null;
 	private List<String> skillNames = null;
 
-	private GamaSkillRegistry() {
-	}
+	private GamaSkillRegistry() {}
 
 	public SkillDescription register(final String name, final Class<? extends ISkill> support, final String plugin,
 			final Iterable<IDescription> children, final String... species) {
@@ -119,18 +121,30 @@ public class GamaSkillRegistry {
 		final SkillDescription sd = skills.get(s);
 		if (sd == null)
 			return Collections.EMPTY_LIST;
-		return sd.getAttributes();
+		return sd.getOwnAttributes();
 	}
 
 	public Iterable<? extends IDescription> getActionsForSkill(final String s) {
 		final SkillDescription sd = skills.get(s);
 		if (sd == null)
 			return Collections.EMPTY_LIST;
-		return sd.getActions();
+		return sd.getOwnActions();
 	}
 
 	public void visitSkills(final DescriptionVisitor visitor) {
 		skills.forEachValue(visitor);
+	}
+
+	public Iterable<SkillDescription> getRegisteredSkills() {
+		return skills.values();
+	}
+
+	public Iterable<? extends VariableDescription> getRegisteredSkillsAttributes() {
+		return Iterables.concat(Iterables.transform(getRegisteredSkills(), (each) -> each.getOwnAttributes()));
+	}
+
+	public Iterable<? extends ActionDescription> getRegisteredSkillsActions() {
+		return Iterables.concat(Iterables.transform(getRegisteredSkills(), (each) -> each.getOwnActions()));
 	}
 
 }

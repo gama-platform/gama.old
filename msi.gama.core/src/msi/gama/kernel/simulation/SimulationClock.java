@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SimulationClock.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SimulationClock.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,6 +13,7 @@ import java.time.DateTimeException;
 import java.time.temporal.ChronoUnit;
 
 import msi.gama.kernel.experiment.ITopLevelAgent;
+import msi.gama.kernel.model.IModel;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaDate;
@@ -83,7 +83,9 @@ public class SimulationClock {
 	private final IScope scope;
 
 	public SimulationClock(final IScope scope) {
-		outputCurrentDateAsDuration = !((ModelDescription) scope.getModel().getDescription()).isStartingDateDefined();
+		final IModel model = scope.getModel();
+		outputCurrentDateAsDuration =
+				model == null ? true : !((ModelDescription) model.getDescription()).isStartingDateDefined();
 		this.scope = scope;
 	}
 

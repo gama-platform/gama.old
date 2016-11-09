@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PreferencesHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PreferencesHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,7 +9,6 @@
  **********************************************************************************************/
 package ummisco.gama.ui.utils;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,6 +32,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.Entry;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.menus.GamaColorMenu;
@@ -44,27 +43,32 @@ import ummisco.gama.ui.views.GamaPreferencesView;
 
 public class PreferencesHelper {
 
-	public static final Entry<Color> SHAPEFILE_VIEWER_FILL = GamaPreferences.create("pref_shapefile_background_color",
-			"Default shapefile viewer fill color", Color.LIGHT_GRAY, IType.COLOR).in(GamaPreferences.UI)
-			.group("Viewers (settings effective for new viewers)");
-
-	public static final Entry<Color> SHAPEFILE_VIEWER_LINE_COLOR = GamaPreferences
-			.create("pref_shapefile_line_color", "Default shapefile viewer line color", Color.black, IType.COLOR)
+	public static final Entry<GamaColor> SHAPEFILE_VIEWER_FILL = GamaPreferences
+			.create("pref_shapefile_background_color", "Default shapefile viewer fill color",
+					GamaColor.getNamed("lightgray"), IType.COLOR)
 			.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
 
-	public static final Entry<Color> ERROR_TEXT_COLOR = GamaPreferences
+	public static final Entry<GamaColor> SHAPEFILE_VIEWER_LINE_COLOR =
+			GamaPreferences
+					.create("pref_shapefile_line_color", "Default shapefile viewer line color",
+							GamaColor.getNamed("black"), IType.COLOR)
+					.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
+
+	public static final Entry<GamaColor> ERROR_TEXT_COLOR = GamaPreferences
 			.create("pref_error_text_color", "Text color of errors in error view",
-					GamaColors.toAwtColor(IGamaColors.ERROR.inactive()), IType.COLOR)
+					GamaColors.toGamaColor(IGamaColors.ERROR.inactive()), IType.COLOR)
 			.in(GamaPreferences.EXPERIMENTS).group("Errors");
 
-	public static final Entry<Color> WARNING_TEXT_COLOR = GamaPreferences
+	public static final Entry<GamaColor> WARNING_TEXT_COLOR = GamaPreferences
 			.create("pref_warning_text_color", "Text color of warnings in error view",
-					GamaColors.toAwtColor(IGamaColors.WARNING.inactive()), IType.COLOR)
+					GamaColors.toGamaColor(IGamaColors.WARNING.inactive()), IType.COLOR)
 			.in(GamaPreferences.EXPERIMENTS).group("Errors");
 
-	public static final Entry<Color> IMAGE_VIEWER_BACKGROUND = GamaPreferences
-			.create("pref_image_background_color", "Default image viewer background color", Color.white, IType.COLOR)
-			.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
+	public static final Entry<GamaColor> IMAGE_VIEWER_BACKGROUND =
+			GamaPreferences
+					.create("pref_image_background_color", "Default image viewer background color",
+							GamaColor.getNamed("white"), IType.COLOR)
+					.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
 
 	public static final Entry<GamaFont> BASE_BUTTON_FONT = GamaPreferences
 			.create("pref_button_font", "Font of buttons (applies to new buttons)",

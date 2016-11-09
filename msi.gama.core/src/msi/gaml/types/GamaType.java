@@ -17,6 +17,10 @@ import org.apache.commons.lang.StringUtils;
 
 import gnu.trove.set.hash.TLinkedHashSet;
 import msi.gama.common.interfaces.IValue;
+import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -64,7 +68,60 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public String getDocumentation() {
-		return null;
+		doc documentation;
+		documentation = getClass().getAnnotation(doc.class);
+		if (documentation == null) {
+			final type t = getClass().getAnnotation(type.class);
+			if (t != null) {
+				final doc[] docs = t.doc();
+				if (docs != null && docs.length > 0) {
+					documentation = docs[0];
+				}
+			}
+		}
+		String result;
+		if (documentation == null) {
+			result = "Type " + getName() + getSupportName();
+		} else
+			result = documentation.value();
+		return result + getFieldDocumentation();
+	}
+
+	public String getSupportName() {
+		return ", wraps Java objects of class " + support.getSimpleName();
+	}
+
+	public String getFieldDocumentation() {
+		if (getters == null)
+			return "";
+		final StringBuilder sb = new StringBuilder(200);
+		sb.append("<b><br/>Fields :</b><ul>");
+		for (final OperatorProto f : getters.values()) {
+			sb.append("<li> ").append(f.getName()).append(" of type ").append(f.returnType)
+					.append(getFieldDocumentation(f));
+			sb.append("</li>");
+		}
+
+		sb.append("</ul>");
+		return sb.toString();
+	}
+
+	private String getFieldDocumentation(final OperatorProto prototype) {
+		final StringBuilder sb = new StringBuilder(200);
+
+		final vars annot = prototype.getSupport().getAnnotation(vars.class);
+		if (annot != null) {
+			final var[] allVars = annot.value();
+			for (final var v : allVars) {
+				if (v.name().equals(prototype.getName())) {
+					if (v.doc().length > 0) {
+						sb.append(", ").append(v.doc()[0].value());
+					}
+					break;
+				}
+			}
+		}
+		return sb.toString();
 	}
 
 	@Override
@@ -115,12 +172,12 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public void setFieldGetters(final Map<String, OperatorProto> map) {
+		map.replaceAll((final String key, final OperatorProto each) -> each.copyWithSignature(this));
+
 		getters = map;
 		// AD 20/09/13 Added the initialization of the type containing the
 		// fields
-		for (final OperatorProto t : map.values()) {
-			t.setSignature(this);
-		}
+
 	}
 
 	@Override

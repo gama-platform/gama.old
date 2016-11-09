@@ -39,6 +39,7 @@ import java.time.temporal.WeekFields;
 import org.apache.commons.lang.StringUtils;
 
 import msi.gama.common.interfaces.IValue;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -254,7 +255,10 @@ public class GamaDate implements IValue, Temporal, Comparable<GamaDate> {
 	 * @return the duration in seconds since this starting date
 	 */
 	public double floatValue(final IScope scope) {
-		return scope.getSimulation().getStartingDate().until(this, ChronoUnit.SECONDS);
+		final SimulationAgent sim = scope.getSimulation();
+		if (sim == null)
+			return Dates.DATES_STARTING_DATE.getValue().until(this, ChronoUnit.SECONDS);
+		return sim.getStartingDate().until(this, ChronoUnit.SECONDS);
 	}
 
 	public int intValue(final IScope scope) {

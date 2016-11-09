@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IExpressionFactory.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IExpressionFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -13,6 +12,7 @@ package msi.gaml.expressions;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IExecutionContext;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.ConstantExpressionDescription;
@@ -27,7 +27,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public interface IExpressionFactory {
 
 	public static final ConstantExpression TRUE_EXPR = ConstantExpressionDescription.TRUE_EXPR_DESCRIPTION;
@@ -47,6 +47,9 @@ public interface IExpressionFactory {
 	public abstract IExpression createExpr(final IExpressionDescription s, final IDescription context);
 
 	public abstract IExpression createExpr(final String s, IDescription context);
+
+	public IExpression createExpr(final String s, final IDescription context,
+			final IExecutionContext additionalContext);
 
 	public abstract UnitConstantExpression getUnitExpr(final String unit);
 
@@ -113,6 +116,7 @@ public interface IExpressionFactory {
 	IExpression createAction(String op, IDescription callerContext, ActionDescription action, IExpression call,
 			Arguments arguments);
 
-	public abstract IExpression createTemporaryActionForAgent(IAgent agent, String expression);
+	public abstract IExpression createTemporaryActionForAgent(IAgent agent, String expression,
+			IExecutionContext tempContext);
 
 }

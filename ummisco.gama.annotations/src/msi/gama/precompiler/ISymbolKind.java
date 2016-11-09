@@ -10,7 +10,9 @@
 package msi.gama.precompiler;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -32,6 +34,15 @@ public interface ISymbolKind {
 		public static final int REGULAR = 104;
 
 		public static final Set<Integer> KINDS = new HashSet<>(Arrays.asList(NUMBER, CONTAINER, REGULAR, SIGNAL));
+
+		public static final Map<Integer, String> KINDS_AS_STRING = new HashMap<Integer, String>() {
+			{
+				put(NUMBER, "number");
+				put(CONTAINER, "container");
+				put(REGULAR, "regular");
+				put(SIGNAL, "signal");
+			}
+		};
 	}
 
 	public static final int SPECIES = 0;

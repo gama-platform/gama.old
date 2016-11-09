@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'BuiltinGlobalScopeProvider.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BuiltinGlobalScopeProvider.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -40,6 +39,7 @@ import com.google.inject.Singleton;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IGamlDescription;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
@@ -338,15 +338,11 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 	}
 
-	static void addVar(final EClass eClass, final String t, final IGamlDescription o, final String keyword) {
-		// if (o instanceof VariableDescription)
-		// System.out.println("Adding " + t + " of type " + keyword + " for description " + o + " in "
-		// + ((IDescription) o).getEnclosingDescription());
-
-		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+	public static void addVar(final String t, final IGamlDescription o, final String keyword) {
+		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eVar);
 		// TODO Add the fields definition here
 		stub.setName(t);
-		resources.get(eClass).getContents().add(stub);
+		resources.get(eVar).getContents().add(stub);
 		final IGamlDescription d =
 				GAMA.isInHeadLessMode() ? null : GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 		Map<String, String> doc;
@@ -356,7 +352,7 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 			doc = new ImmutableMap("type", keyword);
 		}
 		final IEObjectDescription e = EObjectDescription.create(t, stub, doc);
-		descriptions.get(eClass).put(e.getName(), e);
+		descriptions.get(eVar).put(e.getName(), e);
 		allNames.add(e.getName());
 
 	}
@@ -443,10 +439,11 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 				addUnit(eUnit, t);
 			}
 			for (final OperatorProto t : AbstractGamlAdditions.getAllFields()) {
-				addVar(eVar, t.getName(), t, "field");
+				addVar(t.getName(), t, "field");
 			}
+			addVar(IKeyword.GAMA, GAMA.getPlatformAgent(), "platform");
 			for (final IDescription t : AbstractGamlAdditions.getAllVars()) {
-				addVar(eVar, t.getName(), t, "variable");
+				addVar(t.getName(), t, "variable");
 			}
 			for (final String t : GamaSkillRegistry.INSTANCE.getAllSkillNames()) {
 				add(eSkill, t);
@@ -501,6 +498,10 @@ public class BuiltinGlobalScopeProvider extends ImportUriGlobalScopeProvider imp
 
 		scope = SelectableBasedScope.createScope(scope, descriptions, filter, type, false);
 		return scope;
+	}
+
+	public static IEObjectDescription getVar(final String name) {
+		return descriptions.get(eVar).get(name);
 	}
 
 }

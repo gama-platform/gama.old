@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractSpecies.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractSpecies.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -40,6 +39,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SkillDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
+import msi.gaml.expressions.IExpressionFactory;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.statements.IExecutable;
@@ -56,7 +56,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	protected final boolean isGrid, isGraph;
@@ -91,6 +91,12 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public void addTemporaryAction(final ActionStatement action) {
 		actions.put(action.getName(), action);
+	}
+
+	@Override
+	public void removeTemporaryAction() {
+		actions.remove(IExpressionFactory.TEMPORARY_ACTION_NAME);
+		getDescription().removeAction(IExpressionFactory.TEMPORARY_ACTION_NAME);
 	}
 
 	@Override
@@ -196,13 +202,9 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public ISpecies getMicroSpecies(final String microSpeciesName) {
 		final ISpecies retVal = microSpecies.get(microSpeciesName);
-		if (retVal != null) {
-			return retVal;
-		}
+		if (retVal != null) { return retVal; }
 		final ISpecies parentSpecies = this.getParentSpecies();
-		if (parentSpecies != null) {
-			return parentSpecies.getMicroSpecies(microSpeciesName);
-		}
+		if (parentSpecies != null) { return parentSpecies.getMicroSpecies(microSpeciesName); }
 		return null;
 	}
 
@@ -247,9 +249,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		if (parentSpecies == null) {
 			final TypeDescription parentSpecDesc = getDescription().getParent();
 			// Takes care of invalid species (see Issue 711)
-			if (parentSpecDesc == null || parentSpecDesc == getDescription()) {
-				return null;
-			}
+			if (parentSpecDesc == null || parentSpecDesc == getDescription()) { return null; }
 			ISpecies currentMacroSpec = this.getMacroSpecies();
 			while (currentMacroSpec != null && parentSpecies == null) {
 				parentSpecies = currentMacroSpec.getMicroSpecies(parentSpecDesc.getName());
@@ -262,12 +262,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public boolean extendsSpecies(final ISpecies s) {
 		final ISpecies parent = getParentSpecies();
-		if (parent == null) {
-			return false;
-		}
-		if (parent == s) {
-			return true;
-		}
+		if (parent == null) { return false; }
+		if (parent == s) { return true; }
 		return parent.extendsSpecies(s);
 	}
 
@@ -349,9 +345,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {
 		// First we verify the control architecture
-		if (control == null) {
-			throw GamaRuntimeException.error("The control of species " + description.getName() + " cannot be computed");
-		}
+		if (control == null) { throw GamaRuntimeException
+				.error("The control of species " + description.getName() + " cannot be computed"); }
 		// Then we classify the children in their categories
 		for (final ISymbol s : children) {
 			if (s instanceof ISpecies) {
@@ -431,15 +426,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		for (final IStatement s : behaviors) {
 			final boolean instance = clazz.isAssignableFrom(s.getClass());
 			if (instance) {
-				if (valueOfFacetName == null) {
-					return (T) s;
-				}
+				if (valueOfFacetName == null) { return (T) s; }
 				final String t = s.getDescription().getName();
 				if (t != null) {
 					final boolean named = t.equals(valueOfFacetName);
-					if (named) {
-						return (T) s;
-					}
+					if (named) { return (T) s; }
 				}
 			}
 		}
@@ -545,17 +536,13 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public ISkill getSkillInstanceFor(final Class skillClass) {
 		if (skillClass == null)
 			return null;
-		if (skillClass.isAssignableFrom(control.getClass())) {
-			return control;
-		}
+		if (skillClass.isAssignableFrom(control.getClass())) { return control; }
 		return getSkillInstanceFor(getDescription(), skillClass);
 	}
 
 	private ISkill getSkillInstanceFor(final SpeciesDescription sd, final Class skillClass) {
 		for (final SkillDescription sk : sd.getSkills()) {
-			if (skillClass.isAssignableFrom(sk.getJavaBase())) {
-				return sk.getInstance();
-			}
+			if (skillClass.isAssignableFrom(sk.getJavaBase())) { return sk.getInstance(); }
 		}
 		if (sd.getParent() != null && sd.getParent() != sd)
 			return getSkillInstanceFor(sd.getParent(), skillClass);

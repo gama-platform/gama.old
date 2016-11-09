@@ -447,7 +447,7 @@ TerminalExpression:
 	{ReservedLiteral} op=KEYWORD;
 
 terminal KEYWORD:
-	'each' | 'self' | 'myself' | 'nil' | 'world' ;
+	'each' | 'self' | 'myself' | 'nil'  ;
 
 //terminal INTEGER : ('0'..'9')+;
 

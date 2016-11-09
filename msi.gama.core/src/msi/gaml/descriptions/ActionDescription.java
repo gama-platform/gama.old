@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ActionDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ActionDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -31,11 +30,13 @@ import msi.gaml.types.Types;
 public class ActionDescription extends StatementWithChildrenDescription {
 
 	protected final boolean isAbstract;
+	protected final boolean isSynthetic;
 
 	public ActionDescription(final String keyword, final IDescription superDesc, final Iterable<IDescription> cp,
 			final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, true, source, facets, null);
 		isAbstract = TRUE.equals(getLitteral(VIRTUAL));
+		isSynthetic = getName() != null && getName().startsWith(SYNTHETIC);
 		removeFacets(VIRTUAL);
 	}
 
@@ -48,6 +49,11 @@ public class ActionDescription extends StatementWithChildrenDescription {
 
 	public boolean isAbstract() {
 		return isAbstract;
+	}
+
+	@Override
+	public boolean isSynthetic() {
+		return isSynthetic;
 	}
 
 	/**
@@ -189,11 +195,11 @@ public class ActionDescription extends StatementWithChildrenDescription {
 					sb1.append(" <i>(default: ").append(desc.getFacetExpr(IKeyword.DEFAULT).serialize(false))
 							.append(")</i>");
 				}
-				sb1.append("</li>").append(Strings.LN);
+				sb1.append("</li>");
 
 				return sb1.toString();
 			}));
-			sb.append("Arguments accepted: ").append("<br/><ul>").append(Strings.LN);
+			sb.append("Arguments accepted: ").append("<br/><ul>");
 			for (final String a : args) {
 				sb.append(a);
 			}

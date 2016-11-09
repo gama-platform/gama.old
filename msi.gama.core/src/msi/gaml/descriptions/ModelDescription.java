@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ModelDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ModelDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -45,7 +44,7 @@ public class ModelDescription extends SpeciesDescription {
 	public static final String MODEL_SUFFIX = "_model";
 	public static volatile ModelDescription ROOT;
 	private THashMap<String, ExperimentDescription> experiments;
-	final TypesManager types;
+	final ITypesManager types;
 	private String modelFilePath;
 	private final String modelProjectPath;
 	private final Set<String> alternatePaths;

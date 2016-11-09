@@ -33,6 +33,7 @@ import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.ast.SyntacticFactory;
+import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -269,6 +270,14 @@ public class DescriptionFactory {
 		final IDescription desc = md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md);
 		return desc;
 
+	}
+
+	public static Iterable<SymbolProto> getStatementProtos() {
+		return Iterables.concat(STATEMENT_KEYWORDS_PROTOS.values(), VAR_KEYWORDS_PROTOS.values());
+	}
+
+	public static Iterable<? extends FacetProto> getFacetsProtos() {
+		return Iterables.concat(Iterables.transform(getStatementProtos(), (each) -> each.getPossibleFacets().values()));
 	}
 
 }

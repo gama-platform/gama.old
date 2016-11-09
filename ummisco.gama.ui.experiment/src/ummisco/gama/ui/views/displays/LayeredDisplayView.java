@@ -76,7 +76,7 @@ import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.GamaViewPart;
-import ummisco.gama.ui.views.console.InteractiveConsoleView;
+import ummisco.gama.ui.views.InteractiveConsoleView;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;

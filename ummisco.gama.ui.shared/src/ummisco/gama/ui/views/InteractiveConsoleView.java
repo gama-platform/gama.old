@@ -1,21 +1,22 @@
 /*********************************************************************************************
  *
- * 'InteractiveConsoleView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'InteractiveConsoleView.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
  *
  **********************************************************************************************/
-package ummisco.gama.ui.views.console;
+package ummisco.gama.ui.views;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocumentListener;
@@ -34,31 +35,41 @@ import org.eclipse.ui.console.IOConsoleOutputStream;
 import org.eclipse.ui.internal.console.IOConsoleViewer;
 
 import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IExecutionContext;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
+import msi.gaml.descriptions.IVarDescriptionProvider;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IVarExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Strings;
+import msi.gaml.types.GamaType;
+import msi.gaml.types.IType;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.ViewsHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
-import ummisco.gama.ui.views.GamaViewPart;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
-public class InteractiveConsoleView extends GamaViewPart implements IToolbarDecoratedView.Sizable, IGamaView.Console {
+public class InteractiveConsoleView extends GamaViewPart
+		implements IToolbarDecoratedView.Sizable, IGamaView.Console, IExecutionContext, IVarDescriptionProvider {
 
 	private IOConsole msgConsole;
 	IOConsoleViewer viewer;
 	private OutputStreamWriter resultWriter, errorWriter;
 	private BufferedReader reader;
-	private IAgent listeningAgent;
+	private IScope scope;
+	private final Map<String, Object> temps = new LinkedHashMap<>();
+	// private IAgent listeningAgent;
 	private final List<String> history = new ArrayList<>();
 	private int indexInHistory = 0;
 	private Composite controlToDisplayInFullScreen;
@@ -81,11 +92,11 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	@Override
 	public void ownCreatePartControl(final Composite p) {
-
 		msgConsole = new IOConsole("GAMA Console", null);
 		reader = new BufferedReader(new InputStreamReader(msgConsole.getInputStream()));
 		IOConsoleOutputStream stream = msgConsole.newOutputStream();
 		stream.setColor(IGamaColors.NEUTRAL.color());
+		// stream.setFontStyle(SWT.ITALIC);
 		resultWriter = new OutputStreamWriter(stream);
 		stream = msgConsole.newOutputStream();
 		stream.setColor(IGamaColors.ERROR.color());
@@ -281,16 +292,30 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 		}
 	}
 
-	private void setExecutorAgent(final IAgent agent) {
-		listeningAgent = agent;
-		if (agent != null)
+	private void setExecutorAgent(final ITopLevelAgent agent) {
+		if (scope != null) {
+			scope.clear();
+			scope = null;
+		}
+		if (agent == null) {
+
+			WorkbenchHelper.asyncRun(() -> {
+				if (toolbar != null && !toolbar.isDisposed()) {
+					toolbar.wipe(SWT.LEFT, true);
+				}
+			});
+		} else {
+			scope = new ExecutionScope(agent, " in console", this);
+			agent.getSpecies().getDescription().attachAlternateVarDescriptionProvider(this);
 			WorkbenchHelper.asyncRun(() -> toolbar.status(GamaIcons.create(IGamaIcons.MENU_AGENT).image(),
 					"Listening agent: " + Cast.toGaml(agent), IGamaColors.NEUTRAL, SWT.LEFT));
+		}
 
 	}
 
 	protected void processInput(final String s) {
-		if (listeningAgent == null || listeningAgent.dead()) {
+		final IAgent agent = getListeningAgent();
+		if (agent == null || agent.dead()) {
 			setExecutorAgent(null);
 		} else {
 			final String entered = s.trim();
@@ -302,13 +327,15 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 				result = GAML.getDocumentationOn(entered.substring(1));
 			} else
 				try {
-					final IExpression expr = GAML.compileExpression(s, listeningAgent, false);
+					final IExpression expr = GAML.compileExpression(s, agent, this, false);
 					if (expr != null) {
-						result = Cast.toGaml(listeningAgent.getScope().evaluate(expr, listeningAgent).getValue());
+						result = StringUtils.toGaml(scope.evaluate(expr, agent).getValue(), true);
 					}
 				} catch (final Exception e) {
 					error = true;
 					result = "> Error: " + e.getMessage();
+				} finally {
+					agent.getSpecies().removeTemporaryAction();
 				}
 			if (result == null) {
 				result = "nil";
@@ -326,6 +353,85 @@ public class InteractiveConsoleView extends GamaViewPart implements IToolbarDeco
 
 	public void setParentOfControlToDisplayFullScreen(final Composite parentOfControlToDisplayFullScreen) {
 		this.parentOfControlToDisplayFullScreen = parentOfControlToDisplayFullScreen;
+	}
+
+	private IAgent getListeningAgent() {
+		if (scope == null)
+			setExecutorAgent(GAMA.getPlatformAgent());
+		return scope.getRoot();
+	}
+
+	@Override
+	public void setTempVar(final String name, final Object value) {
+		temps.put(name, value);
+
+	}
+
+	@Override
+	public Object getTempVar(final String name) {
+		return temps.get(name);
+	}
+
+	@Override
+	public Map<? extends String, ? extends Object> getLocalVars() {
+		return temps;
+	}
+
+	@Override
+	public void clearLocalVars() {
+		temps.clear();
+
+	}
+
+	@Override
+	public void putLocalVar(final String name, final Object val) {
+		temps.put(name, val);
+
+	}
+
+	@Override
+	public Object getLocalVar(final String name) {
+		return temps.get(name);
+	}
+
+	@Override
+	public boolean hasLocalVar(final String name) {
+		return temps.containsKey(name);
+	}
+
+	@Override
+	public void removeLocalVar(final String name) {
+		temps.remove(name);
+	}
+
+	@Override
+	public IExecutionContext getOuterContext() {
+		return this;
+	}
+
+	@Override
+	public IExecutionContext createCopyContext() {
+		return this;
+	}
+
+	@Override
+	public IExecutionContext createChildContext() {
+		return this;
+	}
+
+	@Override
+	public IExpression getVarExpr(final String name, final boolean asField) {
+		if (temps.containsKey(name)) {
+			final Object value = temps.get(name);
+			final IType<?> t = GamaType.of(value);
+			return GAML.getExpressionFactory().createVar(name, t, false, IVarExpression.TEMP, null);
+		}
+		return null;
+	}
+
+	@Override
+	public boolean hasAttribute(final String name) {
+		return temps.containsKey(name);
 	}
 
 }

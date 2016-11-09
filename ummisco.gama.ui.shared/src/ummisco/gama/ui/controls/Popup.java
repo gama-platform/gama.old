@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'Popup.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Popup.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -18,13 +17,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TypedListener;
 import org.eclipse.swt.widgets.Widget;
 
+import msi.gama.util.GAML;
 import ummisco.gama.ui.controls.IPopupProvider.PopupText;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -39,13 +38,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class Popup {
 
 	private static final Shell popup = new Shell(WorkbenchHelper.getDisplay(), SWT.ON_TOP | SWT.NO_TRIM);
-	private static final Listener hide = new Listener() {
-
-		@Override
-		public void handleEvent(final Event event) {
-			hide();
-		}
-	};
+	private static final Listener hide = event -> hide();
 
 	static {
 		popup.setLayout(new GridLayout(1, true));
@@ -55,14 +48,10 @@ public class Popup {
 
 		@Override
 		public void mouseEnter(final MouseEvent e) {
-			Display.getCurrent().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					// open();
-					display();
-					isVisible = true;
-				}
+			Display.getCurrent().asyncExec(() -> {
+				// open();
+				display();
+				isVisible = true;
 			});
 
 		}
@@ -75,13 +64,9 @@ public class Popup {
 
 		@Override
 		public void mouseHover(final MouseEvent e) {
-			Display.getCurrent().asyncExec(new Runnable() {
-
-				@Override
-				public void run() {
-					display();
-					isVisible = true;
-				}
+			Display.getCurrent().asyncExec(() -> {
+				display();
+				isVisible = true;
 			});
 
 		}
@@ -142,14 +127,14 @@ public class Popup {
 				label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 				label.setBackground(entry.color.color());
 				label.setForeground(GamaColors.getTextColorForBackground(entry.color.color()).color());
-				label.setText(entry.text);
+				label.setText(GAML.toText(entry.text));
 				labels[i++] = label;
 			}
 		} else
 			for (final PopupText.Pair entry : s.contents) {
 				final Label label = (Label) labels[index++];
 				label.setBackground(entry.color.color());
-				label.setText(entry.text);
+				label.setText(GAML.toText(entry.text));
 			}
 
 		final Point point = provider.getAbsoluteOrigin();

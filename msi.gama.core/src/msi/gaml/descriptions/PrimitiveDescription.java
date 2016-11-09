@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PrimitiveDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PrimitiveDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,6 +18,7 @@ import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.GamaHelper;
+import msi.gaml.operators.Strings;
 import msi.gaml.statements.Facets;
 
 @SuppressWarnings ({ "rawtypes" })
@@ -46,10 +46,14 @@ public class PrimitiveDescription extends ActionDescription {
 
 	@Override
 	public String getDocumentation() {
+		String documentation;
 		final doc d = getDocAnnotation();
-		if (d == null) { return ""; }
+		if (d == null) {
+			documentation = "";
+		} else
+			documentation = d.value() + Strings.LN;
 		// Only arguments
-		return super.getArgDocumentation();
+		return documentation + super.getArgDocumentation();
 	}
 
 	public doc getDocAnnotation() {
@@ -66,18 +70,18 @@ public class PrimitiveDescription extends ActionDescription {
 		return d;
 	}
 
-	@Override
-	public String getShortDescription() {
-		final doc d = getDocAnnotation();
-		final String doc = d == null ? null : d.value();
-		String s = super.getShortDescription();
-		if (getEnclosingDescription() != null && (getEnclosingDescription().redefinesAction(getName()) || isBuiltIn())
-				&& doc != null && !doc.isEmpty()) {
-			s += ": " + doc + "<br/>";
-		}
-		return s;
-
-	}
+	// @Override
+	// public String getShortDescription() {
+	// final doc d = getDocAnnotation();
+	// final String doc = d == null ? null : d.value();
+	// String s = super.getShortDescription();
+	// if (getEnclosingDescription() != null && (getEnclosingDescription().redefinesAction(getName()) || isBuiltIn())
+	// && doc != null && !doc.isEmpty()) {
+	// s += ": " + doc + "<br/>";
+	// }
+	// return s;
+	//
+	// }
 
 	public GamaHelper getHelper() {
 		return helper;

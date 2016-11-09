@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'SymbolProto.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'SymbolProto.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -55,6 +54,7 @@ public class SymbolProto extends AbstractProto {
 	private final ImmutableSet<String> mandatoryFacets;
 	private final String omissibleFacet;
 	private final boolean isPrimitive;
+	private final boolean isVar;
 
 	static final TIntHashSet ids =
 			new TIntHashSet(new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID });
@@ -77,12 +77,14 @@ public class SymbolProto extends AbstractProto {
 		this.omissibleFacet = omissible;
 		this.isUniqueInContext = isUniqueInContext;
 		this.kind = kind;
+		this.isVar = ISymbolKind.Variable.KINDS.contains(kind);
 		this.hasScope = !doesNotHaveScope;
 		if (possibleFacets != null) {
 			final Builder<String> builder = ImmutableSet.builder();
 			this.possibleFacets = new THashMap<String, FacetProto>();
 			for (final FacetProto f : possibleFacets) {
 				this.possibleFacets.put(f.name, f);
+				f.setOwner(getTitle());
 				if (!f.optional) {
 					builder.add(f.name);
 				}
@@ -157,6 +159,11 @@ public class SymbolProto extends AbstractProto {
 	 */
 	public String getOmissible() {
 		return omissibleFacet;
+	}
+
+	@Override
+	public String getTitle() {
+		return isVar ? ISymbolKind.Variable.KINDS_AS_STRING.get(kind) + " declaration" : "statement " + getName();
 	}
 
 	/**

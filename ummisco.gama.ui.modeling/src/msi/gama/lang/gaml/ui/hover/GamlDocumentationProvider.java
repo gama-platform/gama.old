@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlDocumentationProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlDocumentationProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,6 +13,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
+import org.eclipse.xtext.resource.IEObjectDescription;
 
 import com.google.inject.Inject;
 
@@ -28,14 +28,18 @@ import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.StringLiteral;
 import msi.gama.lang.gaml.gaml.TypeRef;
+import msi.gama.lang.gaml.gaml.UnitName;
+import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
+import msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider;
 import msi.gama.lang.gaml.ui.editor.GamlHyperlinkDetector;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.file.IGamaFileMetaData;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.operators.IUnits;
 import msi.gaml.operators.Strings;
 
 public class GamlDocumentationProvider extends MultiLineCommentDocumentationProvider {
@@ -88,12 +92,17 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 					return temp;
 			}
 		} else if (o instanceof VariableRef) {
-			if (((VariableRef) o).getRef() != null) { return ""; }
-		}
+			final VarDefinition vd = ((VariableRef) o).getRef();
+			if (vd != null) {
+				if (vd.eContainer() == null) {
+					final IEObjectDescription desc = BuiltinGlobalScopeProvider.getVar(vd.getName());
+					if (desc != null)
+						return desc.getUserData("doc");
+				}
+			}
+		} else if (o instanceof UnitName) { return IUnits.UNITS_EXPR.get(((UnitName) o).getRef().getName())
+				.getDocumentation(); }
 
-		// else if (o instanceof VariableRef) {
-		// return getDocumentation(((VariableRef) o).getRef());
-		// }
 		final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 
 		// TODO Add a swtich for constants

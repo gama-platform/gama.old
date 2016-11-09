@@ -84,6 +84,7 @@ import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IExecutionContext;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.ast.SyntacticFactory;
@@ -93,6 +94,7 @@ import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.ExperimentDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.descriptions.IVarDescriptionProvider;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -151,8 +153,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		if (s.isConst() || s == getCurrentExpressionDescription()) { return s.getExpression(); }
 		setCurrentExpressionDescription(s);
 		final EObject o = s.getTarget();
-		if (o == null
-				&& s instanceof StringBasedExpressionDescription) { return compile(s.toString(), parsingContext); }
+		if (o == null && s instanceof StringBasedExpressionDescription) { return compile(s.toString(), parsingContext,
+				null); }
 		final IDescription previous = setContext(parsingContext);
 		try {
 			final IExpression result = compile(o);
@@ -165,13 +167,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	@Override
-	public IExpression compile(final String expression, final IDescription parsingContext) {
+	public IExpression compile(final String expression, final IDescription parsingContext,
+			final IExecutionContext tempContext) {
 		final IDescription previous = setContext(parsingContext);
 		try {
 
 			IExpression result = constantSyntheticExpressions.get(expression);
 			if (result != null) { return result; }
-			final EObject o = getEObjectOf(expression);
+			final EObject o = getEObjectOf(expression, tempContext);
 			result = compile(o);
 			if (result != null && result.isConst())
 				constantSyntheticExpressions.put(expression, result);
@@ -206,14 +209,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 		final IExpression expr = compile(e);
 		if (expr == null) { return null; }
 		if (op.equals(MY)) {
-			final IDescription desc = getContext().getDescriptionDeclaringVar(MYSELF);
-			if (desc != null) {
+			final IVarDescriptionProvider desc = getContext().getDescriptionDeclaringVar(MYSELF);
+			if (desc instanceof IDescription) {
 				// We are in a remote context, so 'my' refers to the calling
 				// agent
 				final IExpression myself = desc.getVarExpr(MYSELF, false);
 				final IDescription species = myself.getType().getSpecies();
 				final IExpression var = species.getVarExpr(EGaml.getKeyOf(e), true);
-				return getFactory().createOperator(_DOT, desc, e, myself, var);
+				return getFactory().createOperator(_DOT, (IDescription) desc, e, myself, var);
 			}
 			// Otherwise, we ignore 'my' since it refers to 'self'
 			return expr;
@@ -1037,7 +1040,8 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 			final SpeciesDescription sd = getSpeciesContext(varName);
 			return sd == null ? null : sd.getSpeciesExpr();
 		}
-		final IDescription temp_sd = getContext() == null ? null : getContext().getDescriptionDeclaringVar(varName);
+		final IVarDescriptionProvider temp_sd =
+				getContext() == null ? null : getContext().getDescriptionDeclaringVar(varName);
 
 		if (temp_sd != null) {
 			if (temp_sd instanceof SpeciesDescription) {
@@ -1092,14 +1096,14 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	}
 
-	private EObject getEObjectOf(final String string) throws GamaRuntimeException {
+	private EObject getEObjectOf(final String string, final IExecutionContext tempContext) throws GamaRuntimeException {
 		EObject result = null;
 		final String s = "dummy <- " + string;
 		final GamlResource resource = GamlResourceServices.getTemporaryResource(getContext());
 		try {
 			final InputStream is = new ByteArrayInputStream(s.getBytes());
 			try {
-				resource.loadSynthetic(is);
+				resource.loadSynthetic(is, tempContext);
 			} catch (final Exception e1) {
 				e1.printStackTrace();
 				return null;
@@ -1122,21 +1126,28 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 	}
 
 	@Override
-	public List<IDescription> compileBlock(final String string, final IDescription actionContext)
-			throws GamaRuntimeException {
+	public List<IDescription> compileBlock(final String string, final IDescription actionContext,
+			final IExecutionContext tempContext) throws GamaRuntimeException {
 		final List<IDescription> result = new ArrayList<>();
 		final String s = "__synthetic__ {" + string + "}";
 		final GamlResource resource = GamlResourceServices.getTemporaryResource(getContext());
 		try {
 			final InputStream is = new ByteArrayInputStream(s.getBytes());
 			try {
-				resource.loadSynthetic(is);
+				resource.loadSynthetic(is, tempContext);
 			} catch (final Exception e1) {
 				e1.printStackTrace();
 				return null;
-			}
+			} finally {}
 			if (!resource.hasErrors()) {
 				final SyntacticModelElement elt = (SyntacticModelElement) resource.getSyntacticContents();
+				// We have a problem -- can be simply an empty block or an expression
+				if (!elt.hasChildren()) {
+					if (elt.hasFacet(IKeyword.FUNCTION)) {
+						// Compile the expression is the best way to know if this expression is correct
+						elt.getExpressionAt(IKeyword.FUNCTION).compile(actionContext);
+					}
+				}
 				elt.visitChildren(e -> {
 					final IDescription desc = DescriptionFactory.create(e, actionContext, null);
 					result.add(desc);

@@ -9,6 +9,7 @@
  **********************************************************************************************/
 package msi.gama.runtime;
 
+import java.io.Closeable;
 import java.util.Map;
 
 import msi.gama.common.interfaces.IGraphics;
@@ -38,7 +39,7 @@ import msi.gaml.types.IType;
  *
  */
 @SuppressWarnings ({ "rawtypes" })
-public interface IScope {
+public interface IScope extends Closeable {
 
 	/**
 	 * Use this class to accumulate a series of execution results. Only the last one marked as 'passed' will be returned
@@ -218,6 +219,11 @@ public interface IScope {
 	 */
 
 	public abstract void clear();
+
+	@Override
+	public default void close() {
+		clear();
+	}
 
 	/**
 	 * Sets the scope on user hold.

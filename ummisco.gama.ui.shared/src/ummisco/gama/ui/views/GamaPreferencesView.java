@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaPreferencesView.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaPreferencesView.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -60,7 +59,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 31 août 2013
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaPreferencesView {
 
 	Map<String, IPreferenceNode> preferencePages = new LinkedHashMap();
@@ -360,8 +359,8 @@ public class GamaPreferencesView {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				final FileDialog fd = new FileDialog(shell, SWT.SAVE);
-				fd.setFileName("gama.prefs");
-				fd.setFilterExtensions(new String[] { "*.prefs" });
+				fd.setFileName("preferences.gaml");
+				fd.setFilterExtensions(new String[] { "*.gaml" });
 				fd.setOverwrite(false);
 				final String path = fd.open();
 				if (path == null)

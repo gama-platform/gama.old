@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SpeciesDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SpeciesDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -159,6 +158,30 @@ public class SpeciesDescription extends TypeDescription {
 			addSkill(GamaSkillRegistry.INSTANCE.get(s));
 		}
 
+	}
+
+	@Override
+	public boolean redefinesAttribute(final String name) {
+		if (super.redefinesAttribute(name))
+			return true;
+		if (skills != null)
+			for (final SkillDescription skill : skills) {
+				if (skill.hasAttribute(name))
+					return true;
+			}
+		return false;
+	}
+
+	@Override
+	public boolean redefinesAction(final String name) {
+		if (super.redefinesAction(name))
+			return true;
+		if (skills != null)
+			for (final SkillDescription skill : skills) {
+				if (skill.hasAction(name))
+					return true;
+			}
+		return false;
 	}
 
 	public String getControlName() {
@@ -477,6 +500,9 @@ public class SpeciesDescription extends TypeDescription {
 		sb.append("<b>Subspecies of:</b> ").append(parentName).append("<br>");
 		if (hostName != null) {
 			sb.append("<b>Microspecies of:</b> ").append(hostName).append("<br>");
+		}
+		if (getJavaBase() != null) {
+
 		}
 		final Iterable<String> skills = getSkillsNames();
 		if (!Iterables.isEmpty(skills))

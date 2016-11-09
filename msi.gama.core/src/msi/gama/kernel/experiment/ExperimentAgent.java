@@ -662,12 +662,20 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		@Override
 		public Object getGlobalVarValue(final String name) {
-			if (ExperimentAgent.this.hasAttribute(name) || getSpecies().hasVar(name)) {
-				return super.getGlobalVarValue(name);
-			} else if (getSimulation() != null && !getSimulation().dead()) {
-				return getSimulation().getScope().getGlobalVarValue(name);
-			} else if (getSpecies()
-					.hasParameter(name)) { return getSpecies().getExperimentScope().getGlobalVarValue(name); }
+
+			// First case: we have the variable inside the experiment.
+			if (ExperimentAgent.this.hasAttribute(name)
+					|| getSpecies().hasVar(name)) { return super.getGlobalVarValue(name); }
+			// Second case: the simulation is not null, so it should handle it
+			if (getSimulation() != null
+					&& !getSimulation().dead()) { return getSimulation().getScope().getGlobalVarValue(name); }
+			// Third case, the simulation is null but the model defines this variable (see #2044). We then grab its
+			// initial value if possible
+			if (this.getModel().getSpecies()
+					.hasVar(name)) { return getModel().getSpecies().getVar(name).getInitialValue(this); }
+			// Fourth case: this is a parameter, so we get it from the species
+			if (getSpecies().hasParameter(name)) { return getSpecies().getExperimentScope().getGlobalVarValue(name); }
+			// Fifth case: it is an extra parameter
 			return extraParametersMap.get(name);
 		}
 

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PixelUnitExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PixelUnitExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,16 +16,16 @@ import msi.gaml.types.Types;
 public class PixelUnitExpression extends UnitConstantExpression {
 
 	public PixelUnitExpression(final String name, final String doc) {
-		super(1.0, Types.FLOAT, name, doc, null);
+		super(1.0, Types.FLOAT, name, doc, new String[] { "pixels", "px" });
 	}
 
 	@Override
 	public Double value(final IScope scope) {
-		IGraphics g = scope.getGraphics();
-		if ( g == null ) { return 0d; }
-		double ratio = g.getyRatioBetweenPixelsAndModelUnits();
-		if ( ratio == 0d ) { return 0d; }
-		Double v = 1d / ratio;
+		final IGraphics g = scope.getGraphics();
+		if (g == null) { return 0d; }
+		final double ratio = g.getyRatioBetweenPixelsAndModelUnits();
+		if (ratio == 0d) { return 0d; }
+		final Double v = 1d / ratio;
 		return v;
 	}
 

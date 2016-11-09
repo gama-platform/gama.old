@@ -25,14 +25,17 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IExperimentAgentCreator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.PlatformSpeciesDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGenericAgentType;
+import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 @SuppressWarnings ({ "unchecked", "rawtypes" })
@@ -43,6 +46,7 @@ public class GamaMetaModel {
 	private final Map<String, IExperimentAgentCreator> experimentCreators = new THashMap<>();
 	private final Map<String, SpeciesProto> tempSpecies = new TOrderedHashMap();
 	private final Multimap<String, String> speciesSkills = HashMultimap.create();
+	private GamlModelSpecies abstractModelSpecies;
 
 	private static class SpeciesProto {
 
@@ -149,9 +153,19 @@ public class GamaMetaModel {
 		speciesSkills.put(spec, name);
 	}
 
-	public ISpecies getPlatformSpecies() {
-		final SpeciesDescription desc = Types.get(IKeyword.PLATFORM).getSpecies();
-		return (ISpecies) desc.compile();
+	public GamlModelSpecies getAbstractModelSpecies() {
+		if (abstractModelSpecies == null) {
+			final IType model = Types.get(IKeyword.MODEL);
+			abstractModelSpecies = (GamlModelSpecies) model.getSpecies().compile();
+		}
+		return abstractModelSpecies;
+	}
+
+	public PlatformSpeciesDescription getPlatformSpeciesDescription() {
+		final IType platform = Types.get(IKeyword.PLATFORM);
+		if (platform != null && platform != Types.NO_TYPE)
+			return (PlatformSpeciesDescription) platform.getSpecies();
+		return null;
 	}
 
 }

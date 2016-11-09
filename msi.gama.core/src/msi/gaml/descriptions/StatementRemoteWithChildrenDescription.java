@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'StatementRemoteWithChildrenDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'StatementRemoteWithChildrenDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,7 +18,7 @@ import msi.gaml.statements.Arguments;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class StatementRemoteWithChildrenDescription extends StatementWithChildrenDescription {
 
 	protected IDescription previousDescription;
@@ -102,8 +101,8 @@ public class StatementRemoteWithChildrenDescription extends StatementWithChildre
 	}
 
 	@Override
-	public IDescription getDescriptionDeclaringVar(final String name) {
-		IDescription result = super.getDescriptionDeclaringVar(name);
+	public IVarDescriptionProvider getDescriptionDeclaringVar(final String name) {
+		IVarDescriptionProvider result = super.getDescriptionDeclaringVar(name);
 		if (result == null && previousDescription != null) {
 			result = previousDescription.getDescriptionDeclaringVar(name);
 		}

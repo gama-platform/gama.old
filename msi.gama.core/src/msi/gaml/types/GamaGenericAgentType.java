@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaGenericAgentType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaGenericAgentType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -28,8 +27,12 @@ import msi.gaml.descriptions.SpeciesDescription;
  * @modified 08 juin 2012
  * 
  */
-@type(name = IKeyword.AGENT, id = IType.AGENT, wraps = {
-		IAgent.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.SPECIES })
+@type (
+		name = IKeyword.AGENT,
+		id = IType.AGENT,
+		wraps = { IAgent.class },
+		kind = ISymbolKind.Variable.REGULAR,
+		concept = { IConcept.TYPE, IConcept.SPECIES })
 public class GamaGenericAgentType extends GamaAgentType {
 
 	public GamaGenericAgentType() {
@@ -49,13 +52,14 @@ public class GamaGenericAgentType extends GamaAgentType {
 	@Override
 	public IAgent cast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
-		if (obj == null) {
-			return getDefault();
-		}
-		if (obj instanceof IAgent) {
-			return (IAgent) obj;
-		}
+		if (obj == null) { return getDefault(); }
+		if (obj instanceof IAgent) { return (IAgent) obj; }
 		return getDefault();
+	}
+
+	@Override
+	public String getDocumentation() {
+		return "Generic type of all agents in a model";
 	}
 
 	@Override

@@ -182,7 +182,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 	private final RandomUtils random;
 	private final ActionExecuter executer;
 	private RootTopology topology;
-	// Added here to be sure to
 
 	public SimulationAgent(final IPopulation<? extends IAgent> pop) {
 		this((SimulationPopulation) pop);
@@ -190,7 +189,6 @@ public class SimulationAgent extends GamlAgent implements ITopLevelAgent {
 
 	public SimulationAgent(final SimulationPopulation pop) throws GamaRuntimeException {
 		super(pop);
-		// scope = new SimulationScope();
 		clock = new SimulationClock(getScope());
 		executer = new ActionExecuter(getScope());
 		projectionFactory = new ProjectionFactory();

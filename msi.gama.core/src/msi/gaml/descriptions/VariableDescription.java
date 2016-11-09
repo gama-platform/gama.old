@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'VariableDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'VariableDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -268,15 +267,15 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public String getTitle() {
-		final boolean isRedefinition = getEnclosingDescription() != null
-				&& getEnclosingDescription().redefinesAttribute(getName())
-				&& AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.containsKey(getName()) && !isBuiltIn();
-		final String title = (isRedefinition ? "Redefinition of " : "Definition of ")
-				+ (isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ") + getName();
+		// final boolean isRedefinition = getEnclosingDescription() != null
+		// && getEnclosingDescription().redefinesAttribute(getName())
+		// && AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.containsKey(getName()) && !isBuiltIn();
+		final String title = getType().getTitle() +
+		// (isRedefinition ? "Redefinition of " : "Definition of ")
+				(isParameter() ? " parameter " : isNotModifiable() ? " constant " : " attribute ") + getName();
 		if (getEnclosingDescription() == null)
 			return title;
-		final String s = title + ", of type " + getType().getTitle() + ", in "
-				+ this.getEnclosingDescription().getTitle() + "<br/>";
+		final String s = title + " of " + this.getEnclosingDescription().getTitle() + "<br/>";
 		return s;
 	}
 
@@ -297,7 +296,7 @@ public class VariableDescription extends SymbolDescription {
 		String s = ", of type " + getType().getTitle();
 		if (getEnclosingDescription() != null
 				&& (getEnclosingDescription().redefinesAttribute(getName()) || isBuiltIn()) && doc != null) {
-			s += ": " + doc + "<br/>";
+			s += ": " + doc;
 		}
 		return s;
 

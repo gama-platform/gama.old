@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaColors.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaColors.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -18,6 +17,8 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+
+import msi.gama.util.GamaColor;
 
 /**
  * Class GamaIcons.
@@ -184,16 +185,12 @@ public class GamaColors {
 	}
 
 	public static GamaUIColor get(final java.awt.Color color) {
-		if (color == null) {
-			return null;
-		}
+		if (color == null) { return null; }
 		return get(color.getRed(), color.getGreen(), color.getBlue());
 	}
 
 	public static GamaUIColor get(final RGB rgb) {
-		if (rgb == null) {
-			return null;
-		}
+		if (rgb == null) { return null; }
 		GamaUIColor c = colors.get(rgb);
 		if (c == null) {
 			final Color cc = getColor(rgb.red, rgb.green, rgb.blue);
@@ -228,8 +225,7 @@ public class GamaColors {
 	}
 
 	/**
-	 * Get the color of the icon passed in parameter (supposing it's
-	 * mono-colored)
+	 * Get the color of the icon passed in parameter (supposing it's mono-colored)
 	 * 
 	 * @param create
 	 * @return
@@ -264,6 +260,10 @@ public class GamaColors {
 
 	public static java.awt.Color toAwtColor(final Color color) {
 		return new java.awt.Color(color.getRed(), color.getGreen(), color.getBlue());
+	}
+
+	public static GamaColor toGamaColor(final Color color) {
+		return new GamaColor(color.getRed(), color.getGreen(), color.getBlue());
 	}
 
 	/**

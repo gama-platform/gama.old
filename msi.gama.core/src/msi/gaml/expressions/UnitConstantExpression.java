@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'UnitConstantExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'UnitConstantExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -89,7 +88,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "°" + name;
+		return "#" + name;
 	}
 
 	@Override
@@ -109,7 +108,17 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 
 	@Override
 	public String getTitle() {
-		String s = "Unit " + serialize(false);
+		String prefix;
+		if (type.equals(Types.COLOR)) {
+			prefix = "Constant color ";
+		} else {
+			if (getClass().equals(UnitConstantExpression.class)) {
+				prefix = "Constant ";
+			} else {
+				prefix = "Mutable value ";
+			}
+		}
+		String s = prefix + serialize(false);
 		if (alternateNames.size() > 1) {
 			s += " (" + alternateNames + ")";
 		}

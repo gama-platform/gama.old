@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'IDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -41,7 +40,7 @@ import msi.gaml.types.IType;
  *
  */
 @SuppressWarnings ({ "rawtypes" })
-public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable {
+public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDisposable, IVarDescriptionProvider {
 
 	public static final SymbolSerializer<SymbolDescription> SYMBOL_SERIALIZER = new SymbolSerializer<>();
 	public static final VarSerializer VAR_SERIALIZER = new VarSerializer();
@@ -136,7 +135,7 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public abstract IDescription getEnclosingDescription();
 
-	public abstract IDescription getDescriptionDeclaringVar(final String name);
+	public abstract IVarDescriptionProvider getDescriptionDeclaringVar(final String name);
 
 	public abstract IDescription getDescriptionDeclaringAction(final String name);
 
@@ -152,15 +151,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	}
 
 	public abstract IDescription getChildWithKeyword(String keyword);
-
-	/**
-	 * If asField is true, then should not return a GlobalVarExpression, but a normal var expression
-	 * 
-	 * @param name
-	 * @param asField
-	 * @return
-	 */
-	public abstract IExpression getVarExpr(final String name, boolean asField);
 
 	public abstract IType getTypeNamed(String s);
 
@@ -193,8 +183,6 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 	public abstract void info(final String message, final String code);
 
 	public void resetOriginName();
-
-	public boolean hasAttribute(String name);
 
 	public boolean manipulatesVar(final String name);
 
@@ -230,10 +218,14 @@ public interface IDescription extends IGamlDescription, IKeyword, ITyped, IDispo
 
 	public boolean visitOwnChildren(DescriptionVisitor visitor);
 
-	void computeStats(FacetVisitor proc, int[] facetNumber, int[] descWithNoFacets, int[] descNumber);
+	// void computeStats(FacetVisitor proc, int[] facetNumber, int[] descWithNoFacets, int[] descNumber);
 
 	public void document(EObject s, IGamlDescription desc);
 
 	public Facets getFacets();
+
+	public boolean isSynthetic();
+
+	public void attachAlternateVarDescriptionProvider(final IVarDescriptionProvider vp);
 
 }

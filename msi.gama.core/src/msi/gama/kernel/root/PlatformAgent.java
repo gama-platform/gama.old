@@ -22,6 +22,8 @@ import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -29,6 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.GamlProperties;
+import msi.gama.runtime.ExecutionScope;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -38,8 +41,10 @@ import msi.gaml.compilation.kernel.GamaMetaModel;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IExecutable;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 @species (
 		name = IKeyword.PLATFORM,
@@ -70,18 +75,43 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 
 	public static final String WORKSPACE_PATH = "workspace_path";
 	public static final String MACHINE_TIME = "machine_time";
+	private final IScope scope;
 
 	public PlatformAgent() {
-		this(new GamaPopulation<PlatformAgent>(null, GamaMetaModel.INSTANCE.getPlatformSpecies()));
+		this(new GamaPopulation<PlatformAgent>(null,
+				GamaMetaModel.INSTANCE.getAbstractModelSpecies().getMicroSpecies(IKeyword.PLATFORM)));
 	}
 
 	public PlatformAgent(final IPopulation<PlatformAgent> pop) {
 		super(pop);
+		scope = new ExecutionScope(this, "Gama platform scope");
+	}
+
+	@Override
+	public Object primDie(final IScope scope) {
+		GAMA.closeAllExperiments(false, true);
+		scope.getGui().exit();
+		return null;
+	}
+
+	@Override
+	public ITopology getTopology() {
+		return new AmorphousTopology();
+	}
+
+	@Override
+	public ISpecies getSpecies() {
+		return getPopulation().getSpecies();
 	}
 
 	@Override
 	public SimulationClock getClock() {
 		return new SimulationClock(getScope());
+	}
+
+	@Override
+	public IScope getScope() {
+		return scope;
 	}
 
 	@Override
@@ -192,4 +222,8 @@ public class PlatformAgent extends GamlAgent implements ITopLevelAgent, IExpress
 	@Override
 	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
 
+	@Override
+	public IType<?> getType() {
+		return Types.get(IKeyword.PLATFORM);
+	}
 }

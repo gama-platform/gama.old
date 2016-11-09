@@ -300,6 +300,8 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
+		if (getHost() == null)
+			return GamaListFactory.create();
 		final IPopulation<? extends IAgent> pop = getHost().getPopulationFor(this.getSpecies());
 		if (pop != null) {
 			final IScope scope = getScope();

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlHoverProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlHoverProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -49,10 +48,12 @@ import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
+import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.operators.IUnits;
 
 public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
@@ -247,7 +248,8 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 						return temp;
 				}
 			}
-		}
+		} else if (o instanceof UnitName) { return "<b>"
+				+ IUnits.UNITS_EXPR.get(((UnitName) o).getRef().getName()).getTitle() + "</b>"; }
 
 		final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 		if (description == null) {

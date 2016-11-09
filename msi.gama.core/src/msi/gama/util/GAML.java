@@ -9,21 +9,31 @@
  **********************************************************************************************/
 package msi.gama.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.eclipse.emf.common.util.URI;
 
+import com.google.common.collect.Multimap;
+
 import gnu.trove.map.hash.THashMap;
+import msi.gama.common.interfaces.IGamlDescription;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IExecutionContext;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.GamlFileInfo;
 import msi.gama.util.file.IGamlResourceInfoProvider;
+import msi.gaml.compilation.GamlIdiomsProvider;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.kernel.GamaSkillRegistry;
 import msi.gaml.descriptions.ActionDescription;
@@ -33,6 +43,7 @@ import msi.gaml.descriptions.IDescription.DescriptionVisitor;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SkillDescription;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -71,21 +82,138 @@ public class GAML {
 		return object;
 	}
 
-	private static String toText(final String s) {
-		String result = s.replace("<br/>", Strings.LN);
-		result = result.replace("<br>", Strings.LN);
-		result = result.replace("<b>", "");
-		result = result.replace("</b>", "");
-		result = result.replace("<i>", "");
-		result = result.replace("</i>", "");
-		result = result.replace("<ul>", "");
-		result = result.replace("</ul>", "");
-		result = result.replace("<li>", Strings.LN + "- ");
-		result = result.replace("</li>", "");
-		return result;
+	private static String[] HTML_TAGS =
+			{ "<br/>", "<br>", "<b>", "</b>", "<i>", "</i>", "<ul>", "</ul>", "<li>", "</li>" };
+	private static String[] REPLACEMENTS = { Strings.LN, Strings.LN, "", "", "", "", "", "", Strings.LN + "- ", "" };
+
+	public static String toText(final String s) {
+		if (s == null)
+			return "";
+		return breakStringToLines(StringUtils.replaceEach(s, HTML_TAGS, REPLACEMENTS), 120, Strings.LN);
+	}
+
+	private static String multiLine(final String longString, final String splitter, final int maxLength) {
+		return Arrays.stream(longString.split(splitter)).collect(ArrayList<String>::new, (l, s) -> {
+			final Function<ArrayList<String>, Integer> id = list -> list.size() - 1;
+			if (l.size() == 0
+					|| l.get(id.apply(l)).length() != 0 && l.get(id.apply(l)).length() + s.length() >= maxLength)
+				l.add("");
+			l.set(id.apply(l), l.get(id.apply(l)) + (l.get(id.apply(l)).length() == 0 ? "" : splitter) + s);
+		}, (l1, l2) -> l1.addAll(l2)).stream().reduce((s1, s2) -> s1 + "\n" + s2).get();
+	}
+
+	/**
+	 * Indicates that a String search operation yielded no results.
+	 */
+	public static final int NOT_FOUND = -1;
+
+	/**
+	 * Version of lastIndexOf that uses regular expressions for searching. By Tomer Godinger.
+	 * 
+	 * @param str
+	 *            String in which to search for the pattern.
+	 * @param toFind
+	 *            Pattern to locate.
+	 * @return The index of the requested pattern, if found; NOT_FOUND (-1) otherwise.
+	 */
+	public static int lastIndexOfRegex(final String str, final String toFind) {
+		final Pattern pattern = Pattern.compile(toFind);
+		final Matcher matcher = pattern.matcher(str);
+
+		// Default to the NOT_FOUND constant
+		int lastIndex = NOT_FOUND;
+
+		// Search for the given pattern
+		while (matcher.find()) {
+			lastIndex = matcher.start();
+		}
+
+		return lastIndex;
+	}
+
+	/**
+	 * Finds the last index of the given regular expression pattern in the given string, starting from the given index
+	 * (and conceptually going backwards). By Tomer Godinger.
+	 * 
+	 * @param str
+	 *            String in which to search for the pattern.
+	 * @param toFind
+	 *            Pattern to locate.
+	 * @param fromIndex
+	 *            Maximum allowed index.
+	 * @return The index of the requested pattern, if found; NOT_FOUND (-1) otherwise.
+	 */
+	public static int lastIndexOfRegex(final String str, final String toFind, final int fromIndex) {
+		// Limit the search by searching on a suitable substring
+		return lastIndexOfRegex(str.substring(0, fromIndex), toFind);
+	}
+
+	/**
+	 * Breaks the given string into lines as best possible, each of which no longer than <code>maxLength</code>
+	 * characters. By Tomer Godinger.
+	 * 
+	 * @param str
+	 *            The string to break into lines.
+	 * @param maxLength
+	 *            Maximum length of each line.
+	 * @param newLineString
+	 *            The string to use for line breaking.
+	 * @return The resulting multi-line string.
+	 */
+	public static String breakStringToLines(String str, final int maxLength, final String newLineString) {
+		final StringBuilder result = new StringBuilder();
+		while (str.length() > maxLength) {
+			// Attempt to break on whitespace first,
+			int breakingIndex = lastIndexOfRegex(str, "\\s", maxLength);
+
+			// Then on other non-alphanumeric characters,
+			if (breakingIndex == NOT_FOUND)
+				breakingIndex = lastIndexOfRegex(str, "[^a-zA-Z0-9]", maxLength);
+
+			// And if all else fails, break in the middle of the word
+			if (breakingIndex == NOT_FOUND)
+				breakingIndex = maxLength;
+
+			// Append each prepared line to the builder
+			result.append(str.substring(0, breakingIndex + 1));
+			result.append(newLineString);
+
+			// And start the next line
+			str = str.substring(breakingIndex + 1);
+		}
+
+		// Check if there are any residual characters left
+		if (str.length() > 0) {
+			result.append(str);
+		}
+
+		// Return the resulting string
+		return result.toString();
 	}
 
 	public static String getDocumentationOn(final String query) {
+		final String keyword = StringUtils.removeEnd(StringUtils.removeStart(query.trim(), "#"), ":");
+		final Multimap<GamlIdiomsProvider<?>, IGamlDescription> results = GamlIdiomsProvider.forName(keyword);
+		if (results.isEmpty())
+			return "No result found";
+		final StringBuilder sb = new StringBuilder();
+		final int max = results.keySet().stream().mapToInt(each -> each.name.length()).max().getAsInt();
+		final String separator = StringUtils.repeat("—", max + 6).concat(Strings.LN);
+		results.asMap().forEach((provider, list) -> {
+			sb.append("").append(separator).append("|| ");
+			sb.append(StringUtils.rightPad(provider.name, max));
+			sb.append(" ||").append(Strings.LN).append(separator);
+			for (final IGamlDescription d : list)
+				sb.append("== ").append(toText(d.getTitle())).append(Strings.LN).append(toText(provider.document(d)))
+						.append(Strings.LN);
+		});
+
+		return sb.toString();
+
+		//
+	}
+
+	public static String getDocumentationOn2(final String query) {
 		final String keyword = StringUtils.removeEnd(StringUtils.removeStart(query.trim(), "#"), ":");
 		final THashMap<String, String> results = new THashMap<>();
 		// Statements
@@ -134,7 +262,8 @@ public class GAML {
 				}
 				final ActionDescription action = sd.getAction(keyword);
 				if (action != null) {
-					results.put("Primitive of skill " + desc.getName(), action.getShortDescription());
+					results.put("Primitive of skill " + desc.getName(),
+							action.getDocumentation().isEmpty() ? "" : ":" + action.getDocumentation());
 				}
 				return true;
 			}
@@ -150,7 +279,7 @@ public class GAML {
 		// Built-in species
 		for (final TypeDescription td : Types.getBuiltInSpecies()) {
 			if (td.getName().equals(keyword)) {
-				results.put("Built-in species", td.getDocumentation());
+				results.put("Built-in species", ((SpeciesDescription) td).getDocumentationWithoutMeta());
 			}
 			final IDescription var = td.getOwnAttribute(keyword);
 			if (var != null) {
@@ -158,7 +287,8 @@ public class GAML {
 			}
 			final ActionDescription action = td.getOwnAction(keyword);
 			if (action != null) {
-				results.put("Primitive of built-in species " + td.getName(), action.getShortDescription());
+				results.put("Primitive of built-in species " + td.getName(),
+						action.getDocumentation().isEmpty() ? "" : ":" + action.getDocumentation());
 			}
 		}
 		// Constants
@@ -169,13 +299,12 @@ public class GAML {
 		if (results.isEmpty())
 			return "No result found";
 		final StringBuilder sb = new StringBuilder();
+		final int max = results.keySet().stream().mapToInt(each -> each.length()).max().getAsInt();
+		final String separator = StringUtils.repeat("—", max + 6).concat(Strings.LN);
 		results.forEachEntry((sig, doc) -> {
-			sb.append(StringUtils.repeat("—", sig.length() + 6));
-			sb.append(Strings.LN);
-			sb.append("|| ");
-			sb.append(sig);
-			sb.append(" ||").append(Strings.LN);
-			sb.append(StringUtils.repeat("—", sig.length() + 6)).append(Strings.LN);
+			sb.append("").append(separator).append("|| ");
+			sb.append(StringUtils.rightPad(sig, max));
+			sb.append(" ||").append(Strings.LN).append(separator);
 			sb.append(toText(doc)).append(Strings.LN);
 			return true;
 		});
@@ -226,17 +355,23 @@ public class GAML {
 
 	public static IExpression compileExpression(final String expression, final IAgent agent,
 			final boolean onlyExpression) throws GamaRuntimeException {
+		return compileExpression(expression, agent, null, onlyExpression);
+	}
+
+	public static IExpression compileExpression(final String expression, final IAgent agent,
+			final IExecutionContext tempContext, final boolean onlyExpression) throws GamaRuntimeException {
 		if (agent == null)
 			throw GamaRuntimeException.error("");
+		final IDescription context = agent.getSpecies().getDescription();
 		try {
-			final IExpression result =
-					getExpressionFactory().createExpr(expression, agent.getSpecies().getDescription());
+			final IExpression result = getExpressionFactory().createExpr(expression, context, tempContext);
 			return result;
 		} catch (final Throwable e) {
 			// Maybe it is a statement instead ?
 			if (!onlyExpression)
 				try {
-					final IExpression result = getExpressionFactory().createTemporaryActionForAgent(agent, expression);
+					final IExpression result =
+							getExpressionFactory().createTemporaryActionForAgent(agent, expression, tempContext);
 					return result;
 				} catch (final Throwable e2) {
 					throw GamaRuntimeException.create(e2, agent.getScope());

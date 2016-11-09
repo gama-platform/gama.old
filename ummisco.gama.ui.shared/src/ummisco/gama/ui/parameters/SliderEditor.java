@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SliderEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SliderEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -103,7 +102,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 		return ITEMS;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	protected T getStep() {
 		return (T) param.getStepValue(getScope());
 	}
@@ -117,8 +116,7 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
 
 		slider = new SimpleSlider(composite, IGamaColors.OK.color(), IGamaColors.GRAY_LABEL.lighter(),
-				GamaIcons.create("small.slider2").image(), false) {
-		};
+				GamaIcons.create("small.slider2").image(), false) {};
 
 		if (stepValue != null) {
 			final Double realStep = stepValue.doubleValue() / (maxValue.doubleValue() - minValue.doubleValue());
@@ -131,14 +129,9 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 	}
 
 	String truncateCurrentValue() {
+		// Avoids invisible exception (see #2044)
+		if (currentValue == null) { return formatter.format(0); }
 		final String s = formatter.format(currentValue);
-		// final char[] array = s.toCharArray();
-		// int pos = 0;
-		// while (array[pos] == '0') {
-		// array[pos] = ' ';
-		// pos++;
-		// }
-		// return String.valueOf(array);
 		return s;
 	}
 
@@ -173,16 +166,15 @@ public abstract class SliderEditor<T extends Number> extends AbstractEditor<T> {
 	}
 
 	@Override
-	protected void addToolbarHiders(final Control... c) {
-	}
+	protected void addToolbarHiders(final Control... c) {}
 
 	protected abstract T computeValue(final double position);
 
 	@Override
 	protected void displayParameterValue() {
 		final T p = currentValue;
-		final double position = (p.doubleValue() - minValue.doubleValue())
-				/ (maxValue.doubleValue() - minValue.doubleValue());
+		final double position =
+				(p.doubleValue() - minValue.doubleValue()) / (maxValue.doubleValue() - minValue.doubleValue());
 		slider.updateSlider(position, false);
 		unitItem.setText(computeUnitLabel());
 		composite.layout();

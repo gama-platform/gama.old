@@ -25,6 +25,7 @@ import msi.gama.kernel.root.PlatformAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
+import msi.gaml.compilation.kernel.GamaMetaModel;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009
@@ -182,7 +183,8 @@ public class GAMA {
 
 	public static IModel getModel() {
 		final IExperimentController controller = getFrontmostController();
-		if (controller == null || controller.getExperiment() == null) { return null; }
+		if (controller == null
+				|| controller.getExperiment() == null) { return GamaMetaModel.INSTANCE.getAbstractModelSpecies(); }
 		return controller.getExperiment().getModel();
 	}
 
@@ -294,7 +296,7 @@ public class GAMA {
 		}
 	}
 
-	private static IScope obtainNewScope(final String additionalName) {
+	private static IScope copyRuntimeScope(final String additionalName) {
 		final IScope scope = getRuntimeScope();
 		if (scope != null) { return scope.copy(additionalName); }
 		return null;
@@ -302,7 +304,7 @@ public class GAMA {
 
 	public static IScope getRuntimeScope() {
 		final IExperimentController controller = getFrontmostController();
-		if (controller == null || controller.getExperiment() == null) { return new TemporaryScope(); }
+		if (controller == null || controller.getExperiment() == null) { return getPlatformAgent().getScope(); }
 		final ExperimentAgent a = controller.getExperiment().getAgent();
 		if (a == null || a.dead()) { return controller.getExperiment().getExperimentScope(); }
 		final SimulationAgent s = a.getSimulation();
@@ -327,12 +329,9 @@ public class GAMA {
 	}
 
 	public static <T> T run(final InScope<T> r) {
-		final IScope scope = obtainNewScope(" in temporary scope block");
-		try {
+		try (IScope scope = copyRuntimeScope(" in temporary scope block")) {
 			final T result = r.run(scope);
 			return result;
-		} finally {
-			releaseScope(scope);
 		}
 	}
 

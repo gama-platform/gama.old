@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IUnits.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IUnits.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -676,6 +675,8 @@ public interface IUnits {
 
 		for (final Field f : IUnits.class.getDeclaredFields()) {
 			try {
+				if (f.getName().equals("UNITS_EXPR"))
+					continue;
 				final Object v = f.get(IUnits.class);
 				String[] names = null;
 				final constant annotation = f.getAnnotation(constant.class);
