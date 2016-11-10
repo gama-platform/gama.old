@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.bindings;
 
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseEvent;
@@ -29,6 +31,15 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class GamaKeyBindings implements Listener {
 
+	public static String SEARCH_STRING = format(SWT.COMMAND + SWT.SHIFT, 'H');
+	public static String PLAY_STRING = format(SWT.COMMAND, 'P');
+	public static String STEP_STRING = format(SWT.COMMAND + SWT.SHIFT, 'P');
+	public static String RELOAD_STRING = format(SWT.COMMAND, 'R');
+	public static String RELAUNCH_STRING = format(SWT.COMMAND + SWT.SHIFT, 'R');
+	public static String QUIT_STRING = format(SWT.COMMAND + SWT.SHIFT, 'X');
+
+	GamaKeyBindings() {}
+
 	@Override
 	public void handleEvent(final Event event) {
 		// if (GAMA.getFrontmostController() == null)
@@ -46,7 +57,7 @@ public class GamaKeyBindings implements Listener {
 			case 'p':
 				if (shift(event)) {
 					consume(event);
-					GAMA.startFrontmostExperiment();
+					GAMA.stepFrontmostExperiment();
 				} else {
 					consume(event);
 					GAMA.startPauseFrontmostExperiment();
@@ -105,6 +116,11 @@ public class GamaKeyBindings implements Listener {
 
 	public static boolean shift(final MouseEvent e) {
 		return (e.stateMask & SWT.SHIFT) != 0;
+	}
+
+	public static String format(final int mod, final int key) {
+
+		return SWTKeySupport.getKeyFormatterForPlatform().format(KeyStroke.getInstance(mod, key));
 	}
 
 }

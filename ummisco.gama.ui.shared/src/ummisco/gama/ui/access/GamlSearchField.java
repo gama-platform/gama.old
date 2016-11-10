@@ -45,8 +45,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 import msi.gama.common.interfaces.IGamlDescription;
+import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class GamlSearchField {
@@ -208,11 +208,7 @@ public class GamlSearchField {
 
 	private Text createText(final Composite parent) {
 		final Text text = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
-		String message = "GAML Search";
-		if (PlatformHelper.isCocoa())
-			message += " (SHIFT+CMD+H)";
-		else
-			message += " (SHIFT+CTRL+H)";
+		final String message = "GAML Search (" + GamaKeyBindings.SEARCH_STRING + ")";
 		text.setMessage(message);
 
 		final GC gc = new GC(text);
