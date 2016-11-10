@@ -20,8 +20,7 @@ Require-Bundle: msi.gama.application;bundle-version="1.7.0",
  org.apache.commons.lang,
  org.eclipse.ui;bundle-version="3.107.0",
  org.eclipse.core.expressions;bundle-version="3.5.0"
-Export-Package: ummisco.gama.ui.bindings,
- ummisco.gama.ui.menus,
+Export-Package: ummisco.gama.ui.menus,
  ummisco.gama.ui.views,
  ummisco.gama.ui.views.displays
 Bundle-ActivationPolicy: lazy

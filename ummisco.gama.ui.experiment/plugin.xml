@@ -717,29 +717,6 @@
       </handler>
    </extension>
    <extension
-         point="org.eclipse.ui.bindings">
-      <key
-            commandId="msi.gama.application.commands.PlaySimulation"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+R">
-      </key>
-      <key
-            commandId="msi.gama.application.commands.PauseSimulation"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+P">
-      </key>
-      <key
-            commandId="msi.gama.application.commands.StepByStepSimulation"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+P">
-      </key>
-      <key
-            commandId="msi.gama.application.commands.ReloadSimulation"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+R">
-      </key>
-   </extension>
-   <extension
          point="org.eclipse.ui.contexts">
       <context
             id="msi.gama.application.simulation.context"

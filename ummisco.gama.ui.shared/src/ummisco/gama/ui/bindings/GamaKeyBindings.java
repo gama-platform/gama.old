@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaKeyBindings.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaKeyBindings.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,12 +16,13 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import msi.gama.runtime.GAMA;
+import ummisco.gama.ui.access.GamlSearchField;
 import ummisco.gama.ui.utils.PlatformHelper;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
- * The purpose of this class is to install global key bindings that can work in
- * any of the contexts of GAMA (incl. fullscreen)
+ * The purpose of this class is to install global key bindings that can work in any of the contexts of GAMA (incl.
+ * fullscreen)
  * 
  * @author drogoul
  *
@@ -31,38 +31,43 @@ public class GamaKeyBindings implements Listener {
 
 	@Override
 	public void handleEvent(final Event event) {
-		if (GAMA.getFrontmostController() == null)
-			return;
+		// if (GAMA.getFrontmostController() == null)
+		// return;
 		if (!ctrl(event))
 			return;
 		switch (event.keyCode) {
-		// Handles START & RELOAD
-		case 'p':
-			if (shift(event)) {
-				consume(event);
-				GAMA.startFrontmostExperiment();
-			} else {
-				consume(event);
-				GAMA.startPauseFrontmostExperiment();
-
-			}
-			break;
-		// Handles PAUSE & STEP
-		case 'r':
-			if (shift(event)) {
-				consume(event);
-				GAMA.relaunchFrontmostExperiment();
-			} else {
-				consume(event);
-				GAMA.reloadFrontmostExperiment();
-			}
-			break;
-		// Handles CLOSE
-		case 'x':
-			if (shift(event)) {
-				consume(event);
-				GAMA.closeAllExperiments(true, false);
-			}
+			case 'h':
+				if (shift(event)) {
+					consume(event);
+					GamlSearchField.INSTANCE.search();
+				}
+				break;
+			// Handles START & RELOAD
+			case 'p':
+				if (shift(event)) {
+					consume(event);
+					GAMA.startFrontmostExperiment();
+				} else {
+					consume(event);
+					GAMA.startPauseFrontmostExperiment();
+				}
+				break;
+			// Handles PAUSE & STEP
+			case 'r':
+				if (shift(event)) {
+					consume(event);
+					GAMA.relaunchFrontmostExperiment();
+				} else {
+					consume(event);
+					GAMA.reloadFrontmostExperiment();
+				}
+				break;
+			// Handles CLOSE
+			case 'x':
+				if (shift(event)) {
+					consume(event);
+					GAMA.closeAllExperiments(true, false);
+				}
 		}
 
 	}
@@ -75,14 +80,7 @@ public class GamaKeyBindings implements Listener {
 	private final static GamaKeyBindings BINDINGS = new GamaKeyBindings();
 
 	public static void install() {
-		WorkbenchHelper.run(new Runnable() {
-
-			@Override
-			public void run() {
-				WorkbenchHelper.getDisplay().addFilter(SWT.KeyDown, BINDINGS);
-
-			}
-		});
+		WorkbenchHelper.run(() -> WorkbenchHelper.getDisplay().addFilter(SWT.KeyDown, BINDINGS));
 	}
 
 	public static boolean ctrl(final Event e) {

@@ -188,14 +188,6 @@ public class AutoStartup implements IStartup {
 
 		GamlRuntimeModule.staticInitialize();
 		hideQuickAccess();
-
-		// try {
-		// WorkspaceIndexer.INSTANCE.buildIndex();
-		// ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD,
-		// new NullProgressMonitor());
-		// } catch (final CoreException e) {
-		// e.printStackTrace();
-		// }
 	}
 
 }

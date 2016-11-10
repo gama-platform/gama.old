@@ -11,7 +11,10 @@ package ummisco.gama.ui.access;
 
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.util.Geometry;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -37,14 +40,20 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 import msi.gama.common.interfaces.IGamlDescription;
 import ummisco.gama.ui.resources.IGamaColors;
+import ummisco.gama.ui.utils.PlatformHelper;
+import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class GamlSearchField {
 
 	Shell shell;
 	private Text text;
+	public static GamlSearchField INSTANCE;
 
 	private GamlAccessContents quickAccessContents;
 
@@ -56,6 +65,14 @@ public class GamlSearchField {
 
 	private String selectedString = ""; //$NON-NLS-1$
 	private AccessibleAdapter accessibleListener;
+
+	public GamlSearchField() {
+		INSTANCE = this;
+	}
+
+	public Text getText() {
+		return text;
+	}
 
 	public Composite createWidget(final Composite parent) {
 		final Composite comp = new Composite(parent, SWT.NONE);
@@ -104,8 +121,10 @@ public class GamlSearchField {
 				final TableItem[] selection = table.getSelection();
 				if (selection != null && selection.length > 0) {
 					final GamlAccessEntry entry = (GamlAccessEntry) selection[0].getData();
-					final IGamlDescription element = entry.element;
-					return PopupText.with(IGamaColors.BLUE, entry.provider.document(element));
+					if (entry != null) {
+						final IGamlDescription element = entry.element;
+						return PopupText.with(IGamaColors.BLUE, entry.provider.document(element));
+					}
 				}
 
 				return null;
@@ -189,10 +208,15 @@ public class GamlSearchField {
 
 	private Text createText(final Composite parent) {
 		final Text text = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
-		text.setMessage("GAML Help");
+		String message = "GAML Search";
+		if (PlatformHelper.isCocoa())
+			message += " (SHIFT+CMD+H)";
+		else
+			message += " (SHIFT+CTRL+H)";
+		text.setMessage(message);
 
 		final GC gc = new GC(text);
-		final Point p = gc.textExtent("GAML Help");
+		final Point p = gc.textExtent("GAML Interactive help system");
 		final Rectangle r = text.computeTrim(0, 0, p.x, p.y);
 		gc.dispose();
 
@@ -343,8 +367,26 @@ public class GamlSearchField {
 		text.getAccessible().sendEvent(ACC.EVENT_NAME_CHANGED, null);
 	}
 
-	private String getId() {
-		return "org.eclipse.ui.internal.QuickAccess"; //$NON-NLS-1$
+	public void search() {
+		final IWorkbenchPart part = WorkbenchHelper.getActivePart();
+		if (part instanceof IEditorPart) {
+			final IEditorPart editor = (IEditorPart) part;
+			final IWorkbenchPartSite site = editor.getSite();
+			if (site != null) {
+				final ISelectionProvider provider = site.getSelectionProvider();
+				if (provider != null) {
+					final ISelection viewSiteSelection = provider.getSelection();
+					if (viewSiteSelection instanceof TextSelection) {
+						final TextSelection textSelection = (TextSelection) viewSiteSelection;
+						text.setText(textSelection.getText());
+					}
+				}
+			}
+
+		}
+		activate(null);
+		text.setFocus();
+
 	}
 
 }
