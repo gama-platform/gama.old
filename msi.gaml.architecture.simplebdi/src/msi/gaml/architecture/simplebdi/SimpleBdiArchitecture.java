@@ -1588,6 +1588,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		return false;
 	}
 
+	@action (
+			name = "clear_emotions",
+			doc = @doc (
+					value = "clear the emotion base",
+					returns = "true if the base is cleared correctly",
+					examples = { @example ("") }))
+	public Boolean primClearEmotion(final IScope scope) {
+		getEmotionBase(scope, EMOTION_BASE).clear();
+		return true;
+	}
+	
 	protected void updateEmotionsIntensity(final IScope scope) {
 		for (final Emotion emo : getEmotionBase(scope, SimpleBdiArchitecture.EMOTION_BASE)) {
 			emo.decayIntensity();
@@ -2205,6 +2216,17 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	// Peut-être mettre après un replace Uncertainty
+	
+	@action (
+			name = "clear_uncertainties",
+			doc = @doc (
+					value = "clear the uncertainty base",
+					returns = "true if the base is cleared correctly",
+					examples = { @example ("") }))
+	public Boolean primClearUncertainty(final IScope scope) {
+		getBase(scope, UNCERTAINTY_BASE).clear();
+		return true;
+	}
 
 	@action (
 			name = "add_social_link",
@@ -2305,7 +2327,19 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 		if (socialDirect != null) { return removeSocialLink(scope, socialDirect); }
 		return false;
 	}
-
+	
+	@action (
+			name = "clear_social_links",
+			doc = @doc (
+					value = "clear the intention base",
+					returns = "true if the base is cleared correctly",
+					examples = { @example ("") }))
+	public Boolean primClearSocialLinks(final IScope scope) {
+		getSocialBase(scope, SOCIALLINK_BASE).clear();
+		return true;
+	}
+	
+	
 	private List<SocialLink> listSocialAgentDead(final IScope scope) {
 		final List<SocialLink> tempPred = new ArrayList<SocialLink>();
 		for (final SocialLink pred : getSocialBase(scope, SimpleBdiArchitecture.SOCIALLINK_BASE)) {
@@ -2317,10 +2351,6 @@ public class SimpleBdiArchitecture extends ReflexArchitecture {
 	}
 
 	protected void updateSocialLinks(final IScope scope) {
-		// Etape 0, demander à l'utilisateur s'il veut ou non utiliser cette
-		// architecture
-		// Etape 1, mettre à jour les relations sociales par rapport aux états
-		// mentaux de l'agent
 		final IAgent agent = getCurrentAgent(scope);
 		final Boolean use_social_architecture = scope.hasArg(USE_SOCIAL_ARCHITECTURE)
 				? scope.getBoolArg(USE_SOCIAL_ARCHITECTURE) : (Boolean) agent.getAttribute(USE_SOCIAL_ARCHITECTURE);
