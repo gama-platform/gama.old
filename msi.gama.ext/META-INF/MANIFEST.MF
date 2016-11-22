@@ -126,6 +126,7 @@ Export-Package: com.kitfox.svg;
  org.apache.commons.dbcp.cpdsadapter,
  org.apache.commons.dbcp.datasources,
  org.apache.commons.dbcp.managed,
+ org.apache.commons.math3.distribution,
  org.apache.commons.math3.exception;uses:="org.apache.commons.math3.exception.util,org.apache.commons.math3.util",
  org.apache.commons.math3.geometry.euclidean.threed,
  org.apache.commons.math3.linear;
@@ -148,6 +149,7 @@ Export-Package: com.kitfox.svg;
    org.apache.commons.math3.analysis.solvers,
    org.apache.commons.math3.linear",
  org.apache.commons.math3.ode.sampling;uses:="org.apache.commons.math3.ode,new org.apache.commons.math3.ode.sampling,org.apache.commons.math3.linear",
+ org.apache.commons.math3.random,
  org.apache.commons.math3.stat.clustering,
  org.apache.commons.math3.stat.descriptive,
  org.apache.commons.math3.stat.descriptive.moment,
