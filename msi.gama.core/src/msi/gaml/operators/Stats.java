@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.apache.commons.math3.distribution.GammaDistribution;
 import org.apache.commons.math3.stat.clustering.Cluster;
 import org.apache.commons.math3.stat.clustering.DBSCANClusterer;
 import org.apache.commons.math3.stat.clustering.EuclideanDoublePoint;
@@ -801,6 +802,15 @@ public class Stats {
 		return results;
 	}
 
+	@operator(value = "gamma_rnd", can_be_const = false, type = IType.LIST, category = {
+			IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
+	@doc(value = "returns a random value from a gamma distribution with specified values of the shape and scale parameters", examples = {
+			@example("gamma_rnd(10.0,5.0)") })
+	public static Double OpGammaDist(final IScope scope, final Double shape, final Double scale ) throws GamaRuntimeException {
+		final GammaDistribution dist = new GammaDistribution(scope.getRandom().getGenerator(),shape,scale,GammaDistribution.DEFAULT_INVERSE_ABSOLUTE_ACCURACY);
+		return dist.sample();
+	}
+	
 	@operator(value = "skewness", can_be_const = false, type = IType.LIST, category = {
 			IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CLUSTERING })
 	@doc(value = "returns skewness value computed from the operand list of values", special_cases = "if the length of the list is lower than 3, returns NaN", examples = {

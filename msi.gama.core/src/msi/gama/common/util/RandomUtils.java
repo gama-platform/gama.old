@@ -578,6 +578,11 @@ public class RandomUtils {
 		}
 
 	}
+	
+
+	public GamaRNG getGenerator() {
+		return generator;
+	}
 
 	public static void main(final String[] args) {
 		USE_BITWISE = false;

@@ -8,7 +8,7 @@
 model statistic_operators
 
 global {
-	init {
+	init tet {
 		list data <- [1,2,3,4,5,6,7,10,20,100];
 		write "data: " + data;
 		write "min: " + min(data);
@@ -23,6 +23,7 @@ global {
 		write "mean_deviation: " + mean_deviation(data);
 		write "kurtosis: " + kurtosis(data);
 		write "skewness: " + skewness(data);
+		write "gamma_rnd: " + gamma_rnd(0.1,1); 
 	}
 }
 
