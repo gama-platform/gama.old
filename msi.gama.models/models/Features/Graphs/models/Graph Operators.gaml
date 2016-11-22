@@ -10,6 +10,7 @@ model graphoperators
 global {
 	graph<geometry,geometry> the_graph;
 	list<list> cliques;
+	map<geometry,int> ec;
 	init {
 		create people number: 50;
 		
@@ -17,13 +18,17 @@ global {
 		the_graph <- as_distance_graph(people, 20);
 		
 		//compute the betweenness_centrality of each vertice
-		map<people,float> bc <- map<people, float>(betweenness_centrality(the_graph));
-		float max_centrality <- max(bc.values);
-		float min_centrality <- min(bc.values);
+		map<people,int> bc <- map<people, int>(betweenness_centrality(the_graph));
+		int max_centrality <- max(bc.values);
+		int min_centrality <- min(bc.values);
 		ask people {
 			centrality <- (bc[self] - min_centrality) / (max_centrality - min_centrality);
 			centrality_color <- rgb(255, int(255 * (1 - centrality)), int(255 * (1 - centrality)));
 		}
+		
+		//compute the edge_betweenness of each edge
+		ec <- map<geometry, int>(edge_betweenness(the_graph));
+		
 		write "mean vertice degree: " + mean(the_graph.vertices collect (the_graph degree_of each));
 		write "nb_cycles: " + nb_cycles(the_graph);
 		write "alpha_index: " + alpha_index(the_graph);
@@ -49,13 +54,11 @@ species people {
 }
 
 experiment graphoperators type: gui {
-	
 	output {
-		
 		display map background:#lightgray{
 			graphics "edges" {
 				loop edge over: the_graph.edges {
-					draw edge color: #black;
+					draw edge + (0.1+ec[edge]/500) color: #yellow border: #black;
 				}
  			}
  			species people aspect: centrality;

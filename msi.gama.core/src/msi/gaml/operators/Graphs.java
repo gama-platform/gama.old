@@ -677,11 +677,11 @@ public class Graphs {
 		return (S - C) / (S - 1.0);
 	}
 
-	// WARNING Why FLOAT ???
+	
 	@operator (
 			value = "betweenness_centrality",
 			type = IType.MAP,
-			content_type = IType.FLOAT,
+			content_type = IType.INT,
 			category = { IOperatorCategory.GRAPH },
 			concept = { IConcept.GRAPH })
 	@doc (
@@ -698,10 +698,10 @@ public class Graphs {
 				.error("In the betweenness_centrality operator, the graph should not be null!", scope); }
 		// java.lang.System.out.println("result.getRaw() : " + result.getRaw());
 
-		final GamaMap mapResult = GamaMapFactory.create(graph.getType().getKeyType(), Types.FLOAT);
+		final GamaMap mapResult = GamaMapFactory.create(graph.getType().getKeyType(), Types.INT);
 		final GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
 		for (final Object v : vertices) {
-			mapResult.put(v, 0.0);
+			mapResult.put(v, 0);
 		}
 		final boolean directed = graph.isDirected();
 		for (int i = 0; i < vertices.size(); i++) {
@@ -721,9 +721,54 @@ public class Graphs {
 					if (node == vc)
 						node = graph.getEdgeSource(edge);
 					if (node != v2 && node != v1) {
-						mapResult.put(node, (Double) mapResult.get(node) + 1);
+						mapResult.put(node, (Integer) mapResult.get(node) + 1);
 					}
 					vc = node;
+				}
+			}
+		}
+		return mapResult;
+	}
+	
+	@operator (
+			value = "edge_betweenness",
+			type = IType.MAP,
+			content_type = IType.INT,
+			category = { IOperatorCategory.GRAPH },
+			concept = { IConcept.GRAPH })
+	@doc (
+			value = "returns a map containing for each edge (key), its betweenness centrality (value): number of shortest paths passing through each edge ",
+			examples = { @example (
+					value = "graph graphEpidemio <- graph([]);"),
+					@example (
+							value = "edge_betweenness(graphEpidemio)",
+							equals = "the edge betweenness index of the graph",
+							test = false) },
+			see = {})
+	public static GamaMap edgeBetweenness(final IScope scope, final IGraph graph) {
+		if (graph == null) { throw GamaRuntimeException
+				.error("In the edge_betweenness operator, the graph should not be null!", scope); }
+		// java.lang.System.out.println("result.getRaw() : " + result.getRaw());
+
+		final GamaMap mapResult = GamaMapFactory.create(graph.getType().getKeyType(), Types.INT);
+		for (final Object v : graph.edgeSet()) {
+			mapResult.put(v, 0);
+		}
+		final GamaList vertices = (GamaList) Cast.asList(scope, graph.vertexSet());
+		final boolean directed = graph.isDirected();
+		for (int i = 0; i < vertices.size(); i++) {
+			for (int j = directed ? 0 : i + 1; j < vertices.size(); j++) {
+				final Object v1 = vertices.get(i);
+				final Object v2 = vertices.get(j);
+				if (v1 == v2) {
+					continue;
+				}
+				final List edges = graph.computeBestRouteBetween(scope, v1, v2);
+				if (edges == null) {
+					continue;
+				}
+				for (final Object edge : edges) {
+					mapResult.put(edge, (Integer) mapResult.get(edge) + 1);
 				}
 			}
 		}
