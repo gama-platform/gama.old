@@ -1286,6 +1286,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				V vs = v1;
 				int previous = i;
 				Integer next = mat.get(scope, j, i);
+				if (next == -1) {
+					continue;
+				}
 				if (i == next) {
 					final IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
 					spl.add(edges);
