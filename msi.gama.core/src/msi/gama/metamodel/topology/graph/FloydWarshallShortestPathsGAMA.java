@@ -97,7 +97,7 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 		// initialize matrix, 2
 		Set<E> edges = graph.edgeSet();
-		boolean isDirected = graph instanceof AsUndirectedGraph;
+		boolean isDirected = ! (graph instanceof AsUndirectedGraph);
 				
 		for ( E edge : edges ) {
 			V v1 = graph.getEdgeSource(edge);
