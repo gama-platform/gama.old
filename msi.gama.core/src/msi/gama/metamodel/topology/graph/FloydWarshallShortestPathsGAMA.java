@@ -13,8 +13,8 @@ package msi.gama.metamodel.topology.graph;
 import gnu.trove.map.hash.THashMap;
 import gnu.trove.procedure.TObjectObjectProcedure;
 import java.util.*;
-import msi.gama.util.graph.GamaGraph;
 import org.jgrapht.*;
+import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.GraphPathImpl;
 import org.jgrapht.util.VertexPair;
 
@@ -35,7 +35,7 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 	public FloydWarshallShortestPathsGAMA(final Graph<V, E> graph) {
 		this.graph = graph;
-		this.vertices = new ArrayList<V>(((GamaGraph<V, E>)graph).getVertexMap().keySet());
+		this.vertices = new ArrayList<V>(graph.vertexSet());
 		
 	}
 
@@ -97,6 +97,8 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 		// initialize matrix, 2
 		Set<E> edges = graph.edgeSet();
+		boolean isDirected = graph instanceof AsUndirectedGraph;
+				
 		for ( E edge : edges ) {
 			V v1 = graph.getEdgeSource(edge);
 			V v2 = graph.getEdgeTarget(edge);
@@ -105,7 +107,7 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 			int v_2 = vertices.indexOf(v2);
 
 			d[v_1][v_2] = graph.getEdgeWeight(edge);
-			if ( !((GamaGraph<V, E>) graph).isDirected() ) {
+			if ( ! isDirected ) {
 				d[v_2][v_1] = graph.getEdgeWeight(edge);
 			}
 		}
