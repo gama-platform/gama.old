@@ -1269,7 +1269,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		final int nbvertices = matrix.numCols;
 		shortestPathComputed = new ConcurrentHashMap<VertexPair<V>, IList<IList<E>>>();
 		final GamaIntMatrix mat = GamaIntMatrix.from(scope, matrix);
-
+		if (optimizerType == 1) {
+			optimizer = new FloydWarshallShortestPathsGAMA(this, mat);
+			return;
+		}
+		
 		final Map<Integer, E> edgesVertices = GamaMapFactory.create(Types.INT, getType().getContentType());
 		for (int i = 0; i < nbvertices; i++) {
 			final V v1 = vertices.get(i);
@@ -1433,7 +1437,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			}
 		} else {
 			if (optimizerType == 1) {
-				optimizer = new FloydWarshallShortestPathsGAMA(getProxyGraph());
+				optimizer = new FloydWarshallShortestPathsGAMA(this);
 				optimizer.lazyCalculateMatrix();
 				for (int i = 0; i < vertexMap.size(); i++) {
 					for (int j = 0; j < vertexMap.size(); j++) {

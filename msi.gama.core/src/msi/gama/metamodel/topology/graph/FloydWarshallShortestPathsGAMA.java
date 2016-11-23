@@ -11,10 +11,12 @@
 package msi.gama.metamodel.topology.graph;
 
 import gnu.trove.map.hash.THashMap;
-import gnu.trove.procedure.TObjectObjectProcedure;
+import msi.gama.runtime.GAMA;
+import msi.gama.util.graph.GamaGraph;
+import msi.gama.util.matrix.GamaIntMatrix;
+
 import java.util.*;
 import org.jgrapht.*;
-import org.jgrapht.graph.AsUndirectedGraph;
 import org.jgrapht.graph.GraphPathImpl;
 import org.jgrapht.util.VertexPair;
 
@@ -23,23 +25,32 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 	// ~ Instance fields --------------------------------------------------------
 
-	private final Graph<V, E> graph;
+	private final GamaGraph<V, E> graph;
 	private final List<V> vertices;
 	private int nShortestPaths = 0;
 	private double diameter = 0.0;
 	private double[][] d = null;
 	private int[][] backtrace = null;
+	private GamaIntMatrix matrix = null;
 	private THashMap<VertexPair<V>, GraphPath<V, E>> paths = null;
 
 	// ~ Constructors -----------------------------------------------------------
 
-	public FloydWarshallShortestPathsGAMA(final Graph<V, E> graph) {
+	public FloydWarshallShortestPathsGAMA(final GamaGraph<V, E> graph) {
 		this.graph = graph;
-		this.vertices = new ArrayList<V>(graph.vertexSet());
+		this.vertices = new ArrayList<V>(graph.getVertexMap().keySet());
 		
 	}
 
 	// ~ Methods ----------------------------------------------------------------
+
+	public FloydWarshallShortestPathsGAMA(final GamaGraph<V, E> graph, final GamaIntMatrix matrix) {
+		this.graph = graph;
+		this.vertices = new ArrayList<V>(graph.getVertexMap().keySet());
+		this.paths = new THashMap<VertexPair<V>, GraphPath<V, E>>();
+		nShortestPaths = 0;
+		this.matrix = matrix;
+	}
 
 	/**
 	 * @return the graph on which this algorithm operates
@@ -71,6 +82,7 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 	 * does not populate the paths map.
 	 */
 	public void lazyCalculateMatrix() {
+		matrix = null;
 		if ( d != null ) {
 			// already done
 			return;
@@ -97,17 +109,16 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 
 		// initialize matrix, 2
 		Set<E> edges = graph.edgeSet();
-		boolean isDirected = ! (graph instanceof AsUndirectedGraph);
 				
 		for ( E edge : edges ) {
-			V v1 = graph.getEdgeSource(edge);
-			V v2 = graph.getEdgeTarget(edge);
+			V v1 = (V) graph.getEdgeSource(edge);
+			V v2 = (V) graph.getEdgeTarget(edge);
 
 			int v_1 = vertices.indexOf(v1);
 			int v_2 = vertices.indexOf(v2);
 
 			d[v_1][v_2] = graph.getEdgeWeight(edge);
-			if ( ! isDirected ) {
+			if ( ! graph.isDirected() ) {
 				d[v_2][v_1] = graph.getEdgeWeight(edge);
 			}
 		}
@@ -128,20 +139,6 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 	}
 
 	/**
-	 * Get the length of a shortest path.
-	 * 
-	 * @param a first vertex
-	 * @param b second vertex
-	 * 
-	 * @return shortest distance between a and b
-	 */
-	public double shortestDistance(final V a, final V b) {
-		lazyCalculateMatrix();
-
-		return d[vertices.indexOf(a)][vertices.indexOf(b)];
-	}
-
-	/**
 	 * @return the diameter (longest of all the shortest paths) computed for the
 	 *         graph
 	 */
@@ -154,7 +151,16 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 		int k = backtrace[v_a][v_b];
 		
 		if ( k == -1 ) {
-			E edge = graph.getEdge(vertices.get(v_a), vertices.get(v_b));
+			Set<E> edgs = graph.getAllEdges(vertices.get(v_a),  vertices.get(v_b));
+			double minW = Double.MAX_VALUE;
+			E edge = null;
+			for (E e : edgs) {
+				double ew = graph.getEdgeWeight(e);
+				if (ew < minW) {
+					minW = ew;
+					edge = e;
+				}
+			}
 			if ( edge != null ) {
 				edges.add(edge);
 			}
@@ -195,15 +201,48 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 	private GraphPath<V, E> getShortestPathImpl(final V a, final V b) {
 		int v_a = vertices.indexOf(a);
 		int v_b = vertices.indexOf(b);
-
+		int prev = v_a;
 		List<E> edges = new ArrayList<E>();
-		shortestPathRecur(edges, v_a, v_b);
+		if (matrix != null) {
+			v_a = matrix.get(GAMA.getRuntimeScope(), v_b,v_a);
+			if (v_a != -1) {
+				while (prev != v_b)  {
+					final Set<E> eds = graph.getAllEdges(vertices.get(prev), vertices.get(v_a));
+					if (!eds.isEmpty()) {
+						double minW = Double.MAX_VALUE;
+						E ed = null;
+						for (E e : eds) {
+							double w = graph.getEdgeWeight(e);
+							if (w < minW) {
+								minW = w;
+								ed = e;
+							}
+						}
+						edges.add(ed);
+					} else {
+						return null;
+					}
+					if (prev != v_b) {
+						prev = v_a;
+						v_a = matrix.get(GAMA.getRuntimeScope(), v_b,v_a);
+					}
+				} 
+			}
+		} else {
+			shortestPathRecur(edges, v_a, v_b);
+		}
+		
 
 		// no path, return null
 		if ( edges.size() < 1 ) { return null; }
+		GraphPathImpl path = new GraphPathImpl<V, E>(graph, a, b, edges, edges.size());
+		if (path != null && graph.isSaveComputedShortestPaths()) {
+			V v_i = vertices.get(v_a);
+			V v_j = vertices.get(v_b);
 
-		GraphPathImpl<V, E> path = new GraphPathImpl<V, E>(graph, a, b, edges, edges.size());
-
+			paths.put(new VertexPair<V>(v_i, v_j), path);
+			nShortestPaths++;
+		}
 		return path;
 	}
 
@@ -212,59 +251,14 @@ public class FloydWarshallShortestPathsGAMA<V, E> {
 	 */
 	private void lazyCalculatePaths() {
 		// already we have calculated it once.
-		if ( paths != null ) { return; }
+		if ( paths != null || matrix != null ) { return; }
 
 		lazyCalculateMatrix();
 
-		THashMap<VertexPair<V>, GraphPath<V, E>> sps = new THashMap<VertexPair<V>, GraphPath<V, E>>();
-		int n = vertices.size();
-
+		this.paths = new THashMap<VertexPair<V>, GraphPath<V, E>>();
+		
 		nShortestPaths = 0;
-		for ( int i = 0; i < n; i++ ) {
-			for ( int j = 0; j < n; j++ ) {
-				// don't count this.
-				if ( i == j ) {
-					continue;
-				}
-
-				V v_i = vertices.get(i);
-				V v_j = vertices.get(j);
-
-				GraphPath<V, E> path = getShortestPathImpl(v_i, v_j);
-
-				// we got a path
-				if ( path != null ) {
-					sps.put(new VertexPair<V>(v_i, v_j), path);
-					nShortestPaths++;
-				}
-			}
-		}
-
-		this.paths = sps;
-	}
-
-	/**
-	 * Get shortest paths from a vertex to all other vertices in the graph.
-	 * 
-	 * @param v the originating vertex
-	 * 
-	 * @return List of paths
-	 */
-	public List<GraphPath<V, E>> getShortestPaths(final V v) {
-		lazyCalculatePaths();
-		final List<GraphPath<V, E>> found = new ArrayList<GraphPath<V, E>>();
-		paths.forEachEntry(new TObjectObjectProcedure<VertexPair<V>, GraphPath<V, E>>() {
-
-			@Override
-			public boolean execute(final VertexPair<V> pair, final GraphPath<V, E> path) {
-				if ( pair.hasVertex(v) ) {
-					found.add(path);
-				}
-				return true;
-			}
-		});
-
-		return found;
+		
 	}
 }
 

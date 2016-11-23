@@ -108,20 +108,53 @@ public class GraphTopology extends AbstractTopology {
 				&& targetNode) { return (GamaSpatialPath) graph.computeShortestPathBetween(scope, sourceN, targetN); }
 
 		IShape edgeS = null, edgeT = null;
-
+		boolean optimization = graph.edgeSet().size() > 1000;
+		double dist = optimization ? Math.sqrt(scope.getSimulation().getArea())/graph.edgeSet().size()*100: -1;
+		
 		if (graph.isAgentEdge()) {
 			final IAgentFilter filter = In.edgesOf(getPlaces());
 			if (!sourceNode) {
 				edgeS = getPathEdge(scope, source);
-				if (edgeS == null)
-					edgeS = scope.getSimulation().getAgent().getTopology().getAgentClosestTo(scope, source, filter);
+				if (edgeS == null) {
+					if (optimization) {
+						Collection<IAgent> ags = scope.getSimulation().getAgent().getTopology().getNeighborsOf(scope, source, dist, filter);
+						if (! ags.isEmpty()) {
+							double distMin = Double.MAX_VALUE;
+							for (final IAgent e : ags) {
+								double d = source.euclidianDistanceTo(e);
+								if (d < distMin) {
+									edgeS = e;
+									distMin = d;
+								}
+							}
+						}
+					}
+					if (edgeS == null)
+						edgeS = scope.getSimulation().getAgent().getTopology().getAgentClosestTo(scope, source, filter);
+				}
 				// We avoid computing the target if we cannot find any source.
 				if (edgeS == null) { return null; }
 			}
 			if (!targetNode) {
 				edgeT = getPathEdge(scope, target);
-				if (edgeT == null)
-					edgeT = scope.getSimulation().getAgent().getTopology().getAgentClosestTo(scope, target, filter);
+				if (edgeT == null) {
+					if (optimization) {
+						Collection<IAgent> ags = scope.getSimulation().getAgent().getTopology().getNeighborsOf(scope, target, dist, filter);
+						if (! ags.isEmpty()) {
+							double distMin = Double.MAX_VALUE;
+							for (final IAgent e : ags) {
+								double d = target.euclidianDistanceTo(e);
+								if (d < distMin) {
+									edgeT = e;
+									distMin = d;
+								}
+							}
+						}
+					}
+					if (edgeT == null)
+						edgeT = scope.getSimulation().getAgent().getTopology().getAgentClosestTo(scope, target, filter);
+					
+				}
 				if (edgeT == null) { return null; }
 			}
 		} else {
