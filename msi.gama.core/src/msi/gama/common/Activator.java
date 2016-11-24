@@ -1,3 +1,13 @@
+/*********************************************************************************************
+ *
+ * 'Activator.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gama.common;
 
 import org.osgi.framework.BundleActivator;
@@ -5,6 +15,7 @@ import org.osgi.framework.BundleContext;
 
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gaml.compilation.kernel.GamaBundleLoader;
+import msi.gaml.operators.Dates;
 
 public class Activator implements BundleActivator {
 
@@ -14,6 +25,7 @@ public class Activator implements BundleActivator {
 		new Thread(() -> {
 			GamaBundleLoader.preBuildContributions();
 			GamaExecutorService.startUp();
+			Dates.initialize();
 		}).start();
 
 	}

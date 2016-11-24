@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'GamlExpressionFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'GamlExpressionFactory.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.expressions;
@@ -27,6 +25,7 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IExecutionContext;
 import msi.gaml.descriptions.ActionDescription;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -46,7 +45,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamlExpressionFactory implements IExpressionFactory {
 
 	public static interface ParserProvider {
@@ -79,8 +78,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	/**
 	 * Method createUnit()
 	 * 
-	 * @see msi.gaml.expressions.IExpressionFactory#createUnit(java.lang.Object,
-	 *      msi.gaml.types.IType, java.lang.String)
+	 * @see msi.gaml.expressions.IExpressionFactory#createUnit(java.lang.Object, msi.gaml.types.IType, java.lang.String)
 	 */
 	@Override
 	public UnitConstantExpression createUnit(final Object value, final IType t, final String name, final String doc,
@@ -99,30 +97,18 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public SpeciesConstantExpression createSpeciesConstant(final IType type) {
-		if (type.getType() != Types.SPECIES) {
-			return null;
-		}
+		if (type.getType() != Types.SPECIES) { return null; }
 		final SpeciesDescription sd = type.getContentType().getSpecies();
-		if (sd == null) {
-			return null;
-		}
+		if (sd == null) { return null; }
 		return new SpeciesConstantExpression(sd.getName(), type);
 	}
 
 	@Override
 	public ConstantExpression createConst(final Object val, final IType type, final String name) {
-		if (type.getType() == Types.SPECIES) {
-			return createSpeciesConstant(type);
-		}
-		if (type == Types.SKILL) {
-			return new SkillConstantExpression((String) val, type);
-		}
-		if (val == null) {
-			return NIL_EXPR;
-		}
-		if (val instanceof Boolean) {
-			return (Boolean) val ? TRUE_EXPR : FALSE_EXPR;
-		}
+		if (type.getType() == Types.SPECIES) { return createSpeciesConstant(type); }
+		if (type == Types.SKILL) { return new SkillConstantExpression((String) val, type); }
+		if (val == null) { return NIL_EXPR; }
+		if (val instanceof Boolean) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
 		return new ConstantExpression(val, type, name);
 	}
 
@@ -133,27 +119,27 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public IExpression createExpr(final IExpressionDescription ied, final IDescription context) {
-		if (ied == null) {
-			return null;
-		}
+		if (ied == null) { return null; }
 		final IExpression p = ied.getExpression();
 		return p == null ? getParser().compile(ied, context) : p;
 	}
 
 	@Override
 	public IExpression createExpr(final String s, final IDescription context) {
-		if (s == null || s.isEmpty()) {
-			return null;
-		}
+		if (s == null || s.isEmpty()) { return null; }
 		return getParser().compile(StringBasedExpressionDescription.create(s), context);
+	}
+
+	public IExpression createExpr(final String s, final IDescription context,
+			final IExecutionContext additionalContext) {
+		if (s == null || s.isEmpty()) { return null; }
+		return getParser().compile(s, context, additionalContext);
 	}
 
 	@Override
 	public Arguments createArgumentMap(final ActionDescription action, final IExpressionDescription args,
 			final IDescription context) {
-		if (args == null) {
-			return null;
-		}
+		if (args == null) { return null; }
 		return getParser().parseArguments(action, args.getTarget(), context, false);
 	}
 
@@ -161,21 +147,22 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public IExpression createVar(final String name, final IType type, final boolean isConst, final int scope,
 			final IDescription definitionDescription) {
 		switch (scope) {
-		case IVarExpression.GLOBAL:
-			return GlobalVariableExpression.create(name, type, isConst, definitionDescription.getModelDescription());
-		case IVarExpression.AGENT:
-			return new AgentVariableExpression(name, type, isConst, definitionDescription);
-		case IVarExpression.TEMP:
-			return new TempVariableExpression(name, type, definitionDescription);
-		case IVarExpression.EACH:
-			return new EachExpression(type);
-		// case IVarExpression.WORLD:
-		// return new WorldExpression(type,
-		// definitionDescription.getModelDescription());
-		case IVarExpression.SELF:
-			return new SelfExpression(type);
-		default:
-			return null;
+			case IVarExpression.GLOBAL:
+				return GlobalVariableExpression.create(name, type, isConst,
+						definitionDescription.getModelDescription());
+			case IVarExpression.AGENT:
+				return new AgentVariableExpression(name, type, isConst, definitionDescription);
+			case IVarExpression.TEMP:
+				return new TempVariableExpression(name, type, definitionDescription);
+			case IVarExpression.EACH:
+				return new EachExpression(type);
+			// case IVarExpression.WORLD:
+			// return new WorldExpression(type,
+			// definitionDescription.getModelDescription());
+			case IVarExpression.SELF:
+				return new SelfExpression(type);
+			default:
+				return null;
 		}
 	}
 
@@ -192,13 +179,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createOperator(final String op, final IDescription context, final EObject currentEObject,
 			final IExpression... args) {
-		if (args == null) {
-			return null;
-		}
+		if (args == null) { return null; }
 		for (final IExpression exp : args) {
-			if (exp == null) {
-				return null;
-			}
+			if (exp == null) { return null; }
 		}
 		if (OPERATORS.containsKey(op)) {
 			// We get the possible sets of types registered in OPERATORS
@@ -261,8 +244,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 						}
 						// System.out.println("Coercing arg " + args[i] + " to "
 						// + t + " in " + op);
-						args[i] = createOperator(IKeyword.AS, context, currentEObject, args[i],
-								createTypeExpression(t));
+						args[i] =
+								createOperator(IKeyword.AS, context, currentEObject, args[i], createTypeExpression(t));
 					}
 				}
 			}
@@ -285,9 +268,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createAction(final String op, final IDescription callerContext, final ActionDescription action,
 			final IExpression call, final Arguments arguments) {
-		if (action.verifyArgs(callerContext, arguments)) {
-			return new PrimitiveOperator(callerContext, action, call, arguments);
-		}
+		if (action.verifyArgs(callerContext,
+				arguments)) { return new PrimitiveOperator(callerContext, action, call, arguments); }
 		return null;
 	}
 
@@ -313,11 +295,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IExpression createTemporaryActionForAgent(final IAgent agent, final String action) {
+	public IExpression createTemporaryActionForAgent(final IAgent agent, final String action,
+			final IExecutionContext tempContext) {
 		final SpeciesDescription context = (SpeciesDescription) agent.getSpecies().getDescription();
 		final ActionDescription desc = (ActionDescription) DescriptionFactory.create(IKeyword.ACTION, context,
-				Collections.EMPTY_LIST, IKeyword.TYPE, IKeyword.STRING, IKeyword.NAME, TEMPORARY_ACTION_NAME);
-		final List<IDescription> children = getParser().compileBlock(action, context);
+				Collections.EMPTY_LIST, IKeyword.TYPE, IKeyword.UNKNOWN, IKeyword.NAME, TEMPORARY_ACTION_NAME);
+		final List<IDescription> children = getParser().compileBlock(action, context, tempContext);
 		for (final IDescription child : children) {
 			desc.addChild(child);
 		}
@@ -325,7 +308,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		context.addChild(desc);
 		final ActionStatement a = (ActionStatement) desc.compile();
 		agent.getSpecies().addTemporaryAction(a);
-		return getParser().compile(TEMPORARY_ACTION_NAME + "()", context);
+		return getParser().compile(TEMPORARY_ACTION_NAME + "()", context, null);
 	}
 
 }

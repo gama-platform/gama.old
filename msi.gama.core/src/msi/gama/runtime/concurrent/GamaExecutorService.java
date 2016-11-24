@@ -1,3 +1,13 @@
+/*********************************************************************************************
+ *
+ * 'GamaExecutorService.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gama.runtime.concurrent;
 
 import static msi.gama.common.GamaPreferences.CONCURRENCY;
@@ -30,19 +40,19 @@ public abstract class GamaExecutorService {
 	public static ExecutorService SIMULATION_PARALLEL_EXECUTOR;
 	public static final ExecutorService SAME_THREAD_EXECUTOR = MoreExecutors.sameThreadExecutor();
 
-	public static final Entry<Boolean> CONCURRENCY_SIMULATIONS = create("core.multithreaded_simulations",
-			"Allow experiments to run multiple simulations in parallel", true, IType.BOOL).in(EXPERIMENTAL)
-					.group(CONCURRENCY);
-	public static final Entry<Boolean> CONCURRENCY_GRID = create("core.grid_optimization",
-			"Make grids schedule their agents in parallel by default", false, IType.BOOL).in(EXPERIMENTAL)
-					.group(CONCURRENCY);
-	public static final Entry<Boolean> CONCURRENCY_SPECIES = create("core.species_optimization",
-			"Make regular species schedule their agents in parallel by default", false, IType.BOOL).in(EXPERIMENTAL)
-					.group(CONCURRENCY);
-	public static final Entry<Integer> CONCURRENCY_THRESHOLD = create("core.sequential_threshold",
-			"Number under which agents will always be executed sequentially", 20, IType.INT).between(1, null)
+	public static final Entry<Boolean> CONCURRENCY_SIMULATIONS =
+			create("pref_parallel_simulations", "Allow experiments to run multiple simulations in parallel", true,
+					IType.BOOL).in(EXPERIMENTAL).group(CONCURRENCY);
+	public static final Entry<Boolean> CONCURRENCY_GRID =
+			create("pref_parallel_grids", "Make grids schedule their agents in parallel by default", false, IType.BOOL)
 					.in(EXPERIMENTAL).group(CONCURRENCY);
-	public static final Entry<Integer> CONCURRENCY_THREADS_NUMBER = create("core.threads_number",
+	public static final Entry<Boolean> CONCURRENCY_SPECIES =
+			create("pref_parallel_species", "Make regular species schedule their agents in parallel by default", false,
+					IType.BOOL).in(EXPERIMENTAL).group(CONCURRENCY);
+	public static final Entry<Integer> CONCURRENCY_THRESHOLD =
+			create("pref_parallel_threshold", "Number under which agents will always be executed sequentially", 20,
+					IType.INT).between(1, null).in(EXPERIMENTAL).group(CONCURRENCY);
+	public static final Entry<Integer> CONCURRENCY_THREADS_NUMBER = create("pref_parallel_threads",
 			"Max. number of threads to use for parallel operations (available processors: "
 					+ Runtime.getRuntime().availableProcessors() + ")",
 			4, IType.INT).between(1, null).in(EXPERIMENTAL).group(CONCURRENCY)
@@ -80,38 +90,37 @@ public abstract class GamaExecutorService {
 	}
 
 	/**
-	 * Returns the level of parallelism from the expression passed and the
-	 * preferences
+	 * Returns the level of parallelism from the expression passed and the preferences
 	 * 
 	 * @param concurrency
 	 *            The facet passed to the statement or species
 	 * @param forSpecies
 	 *            whether it is for species or not
-	 * @return 0 for no parallelism, 1 for complete parallelism (i.e. each agent
-	 *         on its own), n for parallelism with a threshold of n
+	 * @return 0 for no parallelism, 1 for complete parallelism (i.e. each agent on its own), n for parallelism with a
+	 *         threshold of n
 	 */
 	public static int getParallelism(final IScope scope, final IExpression concurrency, final Caller caller) {
 		if (concurrency == null) {
 			switch (caller) {
-			case SIMULATION:
-				if (CONCURRENCY_SIMULATIONS.getValue())
-					return CONCURRENCY_THREADS_NUMBER.getValue();
-				else
+				case SIMULATION:
+					if (CONCURRENCY_SIMULATIONS.getValue())
+						return CONCURRENCY_THREADS_NUMBER.getValue();
+					else
+						return 0;
+				case SPECIES:
+					if (CONCURRENCY_SPECIES.getValue()) {
+						return CONCURRENCY_THRESHOLD.getValue();
+					} else {
+						return 0;
+					}
+				case GRID:
+					if (CONCURRENCY_GRID.getValue()) {
+						return CONCURRENCY_THRESHOLD.getValue();
+					} else {
+						return 0;
+					}
+				default:
 					return 0;
-			case SPECIES:
-				if (CONCURRENCY_SPECIES.getValue()) {
-					return CONCURRENCY_THRESHOLD.getValue();
-				} else {
-					return 0;
-				}
-			case GRID:
-				if (CONCURRENCY_GRID.getValue()) {
-					return CONCURRENCY_THRESHOLD.getValue();
-				} else {
-					return 0;
-				}
-			default:
-				return 0;
 			}
 		} else {
 			final Object o = concurrency.value(scope);
@@ -141,8 +150,8 @@ public abstract class GamaExecutorService {
 			throws GamaRuntimeException {
 		final IExpression schedule = species.getSchedule();
 		final List<? extends IAgent> agents = schedule == null ? pop : Cast.asList(scope, schedule.value(scope));
-		final int threshold = getParallelism(scope, species.getConcurrency(),
-				species.isGrid() ? Caller.GRID : Caller.SPECIES);
+		final int threshold =
+				getParallelism(scope, species.getConcurrency(), species.isGrid() ? Caller.GRID : Caller.SPECIES);
 		return doStep(scope, agents.toArray(new IAgent[0]), threshold);
 	}
 
@@ -156,8 +165,8 @@ public abstract class GamaExecutorService {
 			final List<IShape> agents = Cast.asList(scope, schedule.value(scope));
 			scheduledAgents = agents.toArray(new IShape[0]);
 		}
-		final int threshold = getParallelism(scope, species.getConcurrency(),
-				species.isGrid() ? Caller.GRID : Caller.SPECIES);
+		final int threshold =
+				getParallelism(scope, species.getConcurrency(), species.isGrid() ? Caller.GRID : Caller.SPECIES);
 		return doStep(scope, scheduledAgents, threshold);
 	}
 
@@ -166,19 +175,19 @@ public abstract class GamaExecutorService {
 		if (array.length <= threshold)
 			concurrency = 0;
 		switch (concurrency) {
-		case 0:
-			for (final A agent : array) {
-				if (!scope.step((IAgent) agent).passed())
-					return false;
-			}
-			return true;
-		case 1:
-			for (final A agent : array) {
-				executeThreaded(() -> scope.step((IAgent) agent));
-			}
-			return true;
-		default:
-			return ParallelAgentRunner.step(scope, array, threshold);
+			case 0:
+				for (final A agent : array) {
+					if (!scope.step((IAgent) agent).passed())
+						return false;
+				}
+				return true;
+			case 1:
+				for (final A agent : array) {
+					executeThreaded(() -> scope.step((IAgent) agent));
+				}
+				return true;
+			default:
+				return ParallelAgentRunner.step(scope, array, threshold);
 		}
 	}
 
@@ -188,18 +197,18 @@ public abstract class GamaExecutorService {
 		if (array.length <= threshold)
 			threshold = 0;
 		switch (threshold) {
-		case 0:
-			for (final A agent : array) {
-				scope.execute(executable, (IAgent) agent, null);
-			}
-			return;
-		case 1:
-			for (final A agent : array) {
-				executeThreaded(() -> scope.execute(executable, (IAgent) agent, null));
-			}
-			return;
-		default:
-			ParallelAgentRunner.execute(scope, executable, array, threshold);
+			case 0:
+				for (final A agent : array) {
+					scope.execute(executable, (IAgent) agent, null);
+				}
+				return;
+			case 1:
+				for (final A agent : array) {
+					executeThreaded(() -> scope.execute(executable, (IAgent) agent, null));
+				}
+				return;
+			default:
+				ParallelAgentRunner.execute(scope, executable, array, threshold);
 		}
 	}
 

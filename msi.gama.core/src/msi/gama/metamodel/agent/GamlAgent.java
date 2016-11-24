@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'GamlAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'GamlAgent.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.metamodel.agent;
@@ -33,10 +31,10 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.Types;
 
 /**
- * The Class GamlAgent. Represents agents that can be manipulated in GAML. They
- * are provided with everything their species defines .
+ * The Class GamlAgent. Represents agents that can be manipulated in GAML. They are provided with everything their
+ * species defines .
  */
-@SuppressWarnings("unchecked")
+@SuppressWarnings ("unchecked")
 public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	// hqnghi manipulate micro-models AD put it to null to have lazy
@@ -45,7 +43,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	// Added to optimize the traversal of "non-minimal" agents that contain
 	// micropopulations
 	private IPopulation<? extends IAgent>[] microPopulations;
-	static IPopulation<? extends IAgent>[] NO_POP = new IPopulation[0];
+	static final IPopulation<? extends IAgent>[] NO_POP = new IPopulation[0];
 
 	// end-hqnghi
 
@@ -67,12 +65,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IPopulation<? extends IAgent>[] getMicroPopulations() {
-		if (getAttributes() == null) {
-			return NO_POP;
-		}
+		if (getAttributes() == null) { return NO_POP; }
 		if (microPopulations == null) {
-			microPopulations = Iterables.toArray(Iterables.filter(getAttributes().values(), IPopulation.class),
-					IPopulation.class);
+			microPopulations =
+					Iterables.toArray(Iterables.filter(getAttributes().values(), IPopulation.class), IPopulation.class);
 			if (microPopulations.length == 0)
 				microPopulations = NO_POP;
 			Arrays.parallelSort(microPopulations, (p1, p2) -> p1.isGrid() ? p2.isGrid() ? 0 : 1 : p2.isGrid() ? -1 : 0);
@@ -93,9 +89,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public IList<IAgent> captureMicroAgents(final IScope scope, final ISpecies microSpecies,
 			final IList<IAgent> microAgents) throws GamaRuntimeException {
 		if (microAgents == null || microAgents.isEmpty() || microSpecies == null
-				|| !this.getSpecies().getMicroSpecies().contains(microSpecies)) {
-			return GamaListFactory.create();
-		}
+				|| !this.getSpecies().getMicroSpecies().contains(microSpecies)) { return GamaListFactory.create(); }
 
 		final List<IAgent> candidates = GamaListFactory.create(Types.AGENT);
 		for (final IAgent a : microAgents.iterable(scope)) {
@@ -142,8 +136,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	/**
-	 * Migrates some micro-agents from one micro-species to another
-	 * micro-species of this agent's species.
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
 	 *
 	 * @param microAgent
 	 * @param newMicroSpecies
@@ -174,8 +167,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	/**
-	 * Migrates some micro-agents from one micro-species to another
-	 * micro-species of this agent's species.
+	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's species.
 	 *
 	 * @param microAgent
 	 * @param newMicroSpecies
@@ -210,12 +202,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		microPop.initializeFor(scope);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	@Override
 	public void dispose() {
-		if (dead) {
-			return;
-		}
+		if (dead) { return; }
 		final IPopulation[] microPops = getMicroPopulations();
 		for (final IPopulation pop : microPops) {
 			pop.dispose();
@@ -231,9 +221,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public synchronized IPopulation<? extends IAgent> getMicroPopulation(final String microSpeciesName) {
-		if (getAttributes() == null) {
-			return null;
-		}
+		if (getAttributes() == null) { return null; }
 		final Object o = getAttributes().get(microSpeciesName);
 		if (o instanceof IPopulation)
 			return (IPopulation<? extends IAgent>) o;
@@ -242,31 +230,23 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IPopulation<? extends IAgent> getMicroPopulation(final ISpecies microSpecies) {
-		if (getAttributes() == null) {
-			return null;
-		}
+		if (getAttributes() == null) { return null; }
 		final Object o = getAttributes().get(microSpecies.getName());
 		return o instanceof IPopulation ? (IPopulation<IAgent>) o : null;
 	}
 
 	@Override
 	public boolean hasMembers() {
-		if (dead() || getAttributes() == null) {
-			return false;
-		}
+		if (dead() || getAttributes() == null) { return false; }
 		for (final Object pop : getAttributes().getRawValues()) {
-			if (pop instanceof IPopulation && ((IPopulation<? extends IAgent>) pop).size() > 0) {
-				return true;
-			}
+			if (pop instanceof IPopulation && ((IPopulation<? extends IAgent>) pop).size() > 0) { return true; }
 		}
 		return false;
 	}
 
 	@Override
 	public IContainer<?, IAgent> getMembers(final IScope scope) {
-		if (dead() || getAttributes() == null) {
-			return GamaListFactory.create();
-		}
+		if (dead() || getAttributes() == null) { return GamaListFactory.create(); }
 		final MetaPopulation mp = new MetaPopulation();
 		for (final Object pop : getAttributes().values()) {
 			if (pop instanceof IPopulation && ((IPopulation<? extends IAgent>) pop).size() > 0) {
@@ -302,9 +282,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IList<IAgent> getAgents(final IScope scope) {
-		if (!hasMembers()) {
-			return GamaListFactory.create();
-		}
+		if (!hasMembers()) { return GamaListFactory.create(); }
 
 		final IContainer<?, IAgent> members = getMembers(scope);
 		final IList<IAgent> agents = GamaListFactory.create(Types.AGENT);
@@ -340,33 +318,24 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public IPopulation<? extends IAgent> getPopulationFor(final String speciesName) {
 		final IPopulation<? extends IAgent> microPopulation = this.getMicroPopulation(speciesName);
-		if (microPopulation == null && getHost() != null) {
-			return getHost().getPopulationFor(speciesName);
-		}
+		if (microPopulation == null && getHost() != null) { return getHost().getPopulationFor(speciesName); }
 		return microPopulation;
 	}
 
 	/**
 	 * Verifies if this agent can capture other agent as newSpecies.
 	 *
-	 * @return true if the following conditions are correct: 1. newSpecies is
-	 *         one micro-species of this agent's species; 2. newSpecies is a
-	 *         sub-species of this agent's species or other species is a
-	 *         sub-species of this agent's species; 3. the "other" agent is not
-	 *         macro-agent of this agent; 4. the "other" agent is not a
-	 *         micro-agent of this agent.
+	 * @return true if the following conditions are correct: 1. newSpecies is one micro-species of this agent's species;
+	 *         2. newSpecies is a sub-species of this agent's species or other species is a sub-species of this agent's
+	 *         species; 3. the "other" agent is not macro-agent of this agent; 4. the "other" agent is not a micro-agent
+	 *         of this agent.
 	 */
 	@Override
 	public boolean canCapture(final IAgent other, final ISpecies newSpecies) {
-		if (other == null || other.dead() || newSpecies == null || !this.getSpecies().containMicroSpecies(newSpecies)) {
-			return false;
-		}
-		if (this.getMacroAgents().contains(other)) {
-			return false;
-		}
-		if (other.getHost().equals(this)) {
-			return false;
-		}
+		if (other == null || other.dead() || newSpecies == null
+				|| !this.getSpecies().containMicroSpecies(newSpecies)) { return false; }
+		if (this.getMacroAgents().contains(other)) { return false; }
+		if (other.getHost().equals(this)) { return false; }
 		return true;
 	}
 
@@ -380,9 +349,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IPopulation<? extends IAgent> getExternMicroPopulationFor(final String expName) {
-		if (externMicroPopulations != null) {
-			return externMicroPopulations.get(expName);
-		}
+		if (externMicroPopulations != null) { return externMicroPopulations.get(expName); }
 		return null;
 	}
 	//

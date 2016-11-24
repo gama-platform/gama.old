@@ -1,13 +1,12 @@
 /*********************************************************************************************
+ *
+ * 'DocProcessorAnnotations.java, in plugin ummisco.gama.annotations, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
  *
- * 'DocProcessorAnnotations.java', in plugin 'msi.gama.processor', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
  **********************************************************************************************/
 package msi.gama.precompiler.doc;
 
@@ -53,9 +52,8 @@ public class DocProcessorAnnotations {
 
 	public static org.w3c.dom.Element getDocElt(final doc[] docAnnotTab, final Document doc, final Messager mes,
 			final String eltName, final TypeConverter tc, final ExecutableElement e) { // e.getSimpleName()
-		if (docAnnotTab == null || docAnnotTab.length == 0) {
-			return DocProcessorAnnotations.getDocElt(null, doc, null, mes, eltName, tc, e);
-		}
+		if (docAnnotTab == null || docAnnotTab.length == 0) { return DocProcessorAnnotations.getDocElt(null, doc, null,
+				mes, eltName, tc, e); }
 		return DocProcessorAnnotations.getDocElt(docAnnotTab[0], doc, null, mes, eltName, tc, e);
 	}
 
@@ -76,8 +74,8 @@ public class DocProcessorAnnotations {
 			final boolean masterDoc = docAnnot.masterDoc();
 			if (value != "") {
 				if (docElt.getElementsByTagName(XMLElements.RESULT).getLength() != 0) {
-					final org.w3c.dom.Element resultElt = (org.w3c.dom.Element) docElt
-							.getElementsByTagName(XMLElements.RESULT).item(0);
+					final org.w3c.dom.Element resultElt =
+							(org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.RESULT).item(0);
 					if ("true".equals(resultElt.getAttribute(XMLElements.ATT_RES_MASTER)) && masterDoc
 							|| !"true".equals(resultElt.getAttribute(XMLElements.ATT_RES_MASTER)) && !masterDoc) {
 						resultElt.setTextContent(resultElt.getTextContent() + "\n" + value);
@@ -146,14 +144,14 @@ public class DocProcessorAnnotations {
 				usagesElt = doc.createElement(XMLElements.USAGES);
 			}
 			if (docElt.getElementsByTagName(XMLElements.USAGES_EXAMPLES).getLength() != 0) {
-				usagesExampleElt = (org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES_EXAMPLES)
-						.item(0);
+				usagesExampleElt =
+						(org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES_EXAMPLES).item(0);
 			} else {
 				usagesExampleElt = doc.createElement(XMLElements.USAGES_EXAMPLES);
 			}
 			if (docElt.getElementsByTagName(XMLElements.USAGES_NO_EXAMPLE).getLength() != 0) {
-				usagesNoExampleElt = (org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES_NO_EXAMPLE)
-						.item(0);
+				usagesNoExampleElt =
+						(org.w3c.dom.Element) docElt.getElementsByTagName(XMLElements.USAGES_NO_EXAMPLE).item(0);
 			} else {
 				usagesNoExampleElt = doc.createElement(XMLElements.USAGES_NO_EXAMPLE);
 			}
@@ -167,8 +165,8 @@ public class DocProcessorAnnotations {
 				if ("".equals(usage.value())) {
 					numberOfUsagesWithExamplesOnly++;
 
-					final org.w3c.dom.Element examplesUsageElt = DocProcessorAnnotations
-							.getExamplesElt(usage.examples(), doc, e, tc);
+					final org.w3c.dom.Element examplesUsageElt =
+							DocProcessorAnnotations.getExamplesElt(usage.examples(), doc, e, tc);
 					usageElt.appendChild(examplesUsageElt);
 					usagesExampleElt.appendChild(usageElt);
 				}
@@ -184,8 +182,8 @@ public class DocProcessorAnnotations {
 					numberOfUsages++;
 
 					usageElt.setAttribute(XMLElements.ATT_USAGE_DESC, usage.value());
-					final org.w3c.dom.Element examplesUsageElt = DocProcessorAnnotations
-							.getExamplesElt(usage.examples(), doc, e, tc);
+					final org.w3c.dom.Element examplesUsageElt =
+							DocProcessorAnnotations.getExamplesElt(usage.examples(), doc, e, tc);
 					usageElt.appendChild(examplesUsageElt);
 					usagesElt.appendChild(usageElt);
 				}
@@ -198,8 +196,8 @@ public class DocProcessorAnnotations {
 			if (docAnnot.examples().length != 0) {
 				final org.w3c.dom.Element usageExElt = doc.createElement(XMLElements.USAGE);
 
-				final org.w3c.dom.Element examplesElt = DocProcessorAnnotations.getExamplesElt(docAnnot.examples(), doc,
-						e, tc);
+				final org.w3c.dom.Element examplesElt =
+						DocProcessorAnnotations.getExamplesElt(docAnnot.examples(), doc, e, tc);
 
 				numberOfUsagesWithExamplesOnly += docAnnot.examples().length;
 				usageExElt.appendChild(examplesElt);
@@ -292,8 +290,8 @@ public class DocProcessorAnnotations {
 
 		constantElt.appendChild(getCategories(e, doc, doc.createElement(XMLElements.CATEGORIES), tc));
 
-		final org.w3c.dom.Element docConstantElt = getDocElt(constant.doc(), doc, mes, e.getSimpleName().toString(),
-				null, null);
+		final org.w3c.dom.Element docConstantElt =
+				getDocElt(constant.doc(), doc, mes, e.getSimpleName().toString(), null, null);
 		if (docConstantElt != null) {
 			constantElt.appendChild(docConstantElt);
 		}
@@ -331,9 +329,7 @@ public class DocProcessorAnnotations {
 
 	public static org.w3c.dom.Element getActionElt(final action actionAnnot, final Document doc, final Messager mes,
 			final Element e, final TypeConverter tc) {
-		if (!(e instanceof ExecutableElement) || actionAnnot == null) {
-			return null;
-		}
+		if (!(e instanceof ExecutableElement) || actionAnnot == null) { return null; }
 
 		final ExecutableElement eltMethod = (ExecutableElement) e;
 		final org.w3c.dom.Element actionElt = doc.createElement(XMLElements.ACTION);
@@ -346,11 +342,11 @@ public class DocProcessorAnnotations {
 			final org.w3c.dom.Element argElt = doc.createElement(XMLElements.ARG);
 			argElt.setAttribute(XMLElements.ATT_ARG_NAME, eltArg.name());
 
-			String tabType = "";
-			for (int i = 0; i < eltArg.type().length; i++) {
-				tabType = tabType + (i < eltArg.type().length - 1 ? tc.getTypeString(eltArg.type()[i]) + ","
-						: tc.getTypeString(eltArg.type()[i]));
-			}
+			final String tabType = tc.getTypeString(eltArg.type());
+			// for (int i = 0; i < eltArg.type().length; i++) {
+			// tabType = tabType + (i < eltArg.type().length - 1 ? tc.getTypeString(eltArg.type()[i]) + ","
+			// : tc.getTypeString(eltArg.type()[i]));
+			// }
 			argElt.setAttribute(XMLElements.ATT_ARG_TYPE, tabType);
 			argElt.setAttribute(XMLElements.ATT_ARG_OPTIONAL, "" + eltArg.optional());
 			final org.w3c.dom.Element docEltArg = DocProcessorAnnotations.getDocElt(eltArg.doc(), doc, mes,
@@ -374,9 +370,7 @@ public class DocProcessorAnnotations {
 
 	public static org.w3c.dom.Element getFacetsElt(final facets facetsAnnot, final Document doc, final Messager mes,
 			final String statName, final TypeConverter tc) {
-		if (facetsAnnot == null) {
-			return null;
-		}
+		if (facetsAnnot == null) { return null; }
 
 		final org.w3c.dom.Element facetsElt = doc.createElement(XMLElements.FACETS);
 
@@ -408,9 +402,7 @@ public class DocProcessorAnnotations {
 
 	public static org.w3c.dom.Element getInsideElt(final inside insideAnnot, final Document doc,
 			final TypeConverter tc) {
-		if (insideAnnot == null) {
-			return null;
-		}
+		if (insideAnnot == null) { return null; }
 
 		final org.w3c.dom.Element insideElt = doc.createElement(XMLElements.INSIDE);
 
@@ -439,9 +431,7 @@ public class DocProcessorAnnotations {
 		final boolean found = false;
 		while (!found && i < nL.getLength()) {
 			final org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
-			if (eltName.equals(elt.getAttribute(XMLElements.ATT_OP_ID))) {
-				return elt;
-			}
+			if (eltName.equals(elt.getAttribute(XMLElements.ATT_OP_ID))) { return elt; }
 			i++;
 		}
 		return null;

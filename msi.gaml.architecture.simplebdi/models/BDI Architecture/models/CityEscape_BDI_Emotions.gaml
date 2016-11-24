@@ -45,7 +45,7 @@ global {
       	current_weights <- road as_map (each::each.shape.perimeter);
 	}
 	
-	reflex update_speeds when: every(10){
+	reflex update_speeds when: every(10#cycle){
 		current_weights <- road as_map (each::each.shape.perimeter / each.speed_coeff);
 		road_network <- road_network with_weights current_weights;
 	}

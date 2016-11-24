@@ -30,7 +30,7 @@ global {
 			//We set the name of the client equals to the pseudo of the user
 			name<-pseudo;
 			//We connect the client to the server written IP Adress, with the server port, and the type of protocol (must be the same that server but with client, like x_client and x_server)
-			do connect to:"127.0.0.1" protocol:"tcp_client" port:"3001" with_name:pseudo;
+			do connect to:"127.0.0.1" protocol:"tcp_client" port:3001 with_name:pseudo;
 			theUser<-self;
 			//Set the message to send to the server equals to 'Connexion:pseudo' to say to the server  that we are a new client connected
 			myMessage<-"Connexion:"+pseudo;

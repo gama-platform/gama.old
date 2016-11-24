@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'ISpecies.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'ISpecies.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.species;
@@ -42,10 +40,24 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  *
  */
-@vars({ @var(name = IKeyword.ATTRIBUTES, type = IType.LIST, of = IType.STRING),
-		@var(name = IKeyword.PARENT, type = IType.SPECIES), @var(name = IKeyword.NAME, type = IType.STRING),
-		@var(name = ISpecies.SUBSPECIES, type = IType.LIST, of = IType.SPECIES),
-		@var(name = ISpecies.POPULATION, type = IType.LIST, of = ITypeProvider.FIRST_CONTENT_TYPE) })
+@vars ({ @var (
+		name = IKeyword.ATTRIBUTES,
+		type = IType.LIST,
+		of = IType.STRING),
+		@var (
+				name = IKeyword.PARENT,
+				type = IType.SPECIES),
+		@var (
+				name = IKeyword.NAME,
+				type = IType.STRING),
+		@var (
+				name = ISpecies.SUBSPECIES,
+				type = IType.LIST,
+				of = IType.SPECIES),
+		@var (
+				name = ISpecies.POPULATION,
+				type = IType.LIST,
+				of = ITypeProvider.FIRST_CONTENT_TYPE) })
 public interface ISpecies
 		extends ISymbol, IAddressableContainer<Integer, IAgent, Integer, IAgent>, IPopulationSet<IAgent> {
 
@@ -71,17 +83,17 @@ public interface ISpecies
 	 * 
 	 * @return
 	 */
-	@getter(SUBSPECIES)
-	@doc("Returns all the direct subspecies of this species")
+	@getter (SUBSPECIES)
+	@doc ("Returns all the direct subspecies of this species")
 	public abstract IList<ISpecies> getSubSpecies(IScope scope);
 
 	@Override
-	@getter(IKeyword.NAME)
+	@getter (IKeyword.NAME)
 	public abstract String getName();
 
 	/**
-	 * Returns all the micro-species. Micro-species includes: 1. the "direct"
-	 * micro-species; 2. the micro-species of the parent-species.
+	 * Returns all the micro-species. Micro-species includes: 1. the "direct" micro-species; 2. the micro-species of the
+	 * parent-species.
 	 *
 	 * @return
 	 */
@@ -103,8 +115,7 @@ public interface ISpecies
 	public abstract boolean hasMicroSpecies();
 
 	/**
-	 * Verifies of the specified species is a micro-species of this species of
-	 * not.
+	 * Verifies of the specified species is a micro-species of this species of not.
 	 *
 	 * @param species
 	 * @return
@@ -116,8 +127,8 @@ public interface ISpecies
 	 *
 	 * @return
 	 */
-	@getter(IKeyword.PARENT)
-	@doc("Returns the direct parent of the species. Experiments, models and species with no explicit parents will return nil")
+	@getter (IKeyword.PARENT)
+	@doc ("Returns the direct parent of the species. Experiments, models and species with no explicit parents will return nil")
 	public abstract ISpecies getParentSpecies();
 
 	/**
@@ -158,14 +169,13 @@ public interface ISpecies
 	public abstract Collection<String> getVarNames();
 
 	/**
-	 * Similar to getVarNames(), but returns a correctly initialized IList of
-	 * attribute names
+	 * Similar to getVarNames(), but returns a correctly initialized IList of attribute names
 	 * 
 	 * @param scope
 	 * @return the list of all the attributes defined in this species
 	 */
-	@getter(IKeyword.ATTRIBUTES)
-	@doc("retuns the list of attributes defined in this species (incl. the ones inherited from its parent")
+	@getter (IKeyword.ATTRIBUTES)
+	@doc ("retuns the list of attributes defined in this species (incl. the ones inherited from its parent")
 	public IList<String> getAttributeNames(final IScope scope);
 
 	public abstract Collection<IVariable> getVars();
@@ -190,19 +200,20 @@ public interface ISpecies
 	public abstract boolean isStepOverriden();
 
 	/**
-	 * Returns the population of agents that belong to this species and that are
-	 * hosted in the same host
+	 * Returns the population of agents that belong to this species and that are hosted in the same host
 	 * 
 	 * @param scope
 	 * @return
 	 *
 	 */
-	@getter(POPULATION)
-	@doc("Returns the population of agents that belong to this species")
+	@getter (POPULATION)
+	@doc ("Returns the population of agents that belong to this species")
 	public abstract IPopulation<? extends IAgent> getPopulation(IScope scope);
 
 	public abstract void addTemporaryAction(ActionStatement a);
 
 	public abstract Collection<IStatement> getBehaviors();
+
+	public abstract void removeTemporaryAction();
 
 }

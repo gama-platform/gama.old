@@ -1,12 +1,11 @@
 /*********************************************************************************************
  *
- *
- * 'Stats2.java', in plugin 'ummisco.gaml.extensions.stats', is part of the source code of the
+ * 'Stats2.java, in plugin ummisco.gaml.extensions.stats, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package ummisco.gaml.extensions.stats;
@@ -22,6 +21,7 @@ import msi.gama.precompiler.IConcept;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
+import msi.gaml.operators.Containers;
 import msi.gaml.operators.Stats;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -64,7 +64,7 @@ public class Stats2 extends Stats {
 
 			// TODO input parameters validation
 
-			final double mean = (Double) Stats.getMean(scope, data);
+			final double mean = (Double) Containers.mean(scope, data);
 			final double variance = Stats.opVariance(scope, data);
 
 			return Descriptive.autoCorrelation(from(scope, data), lag, mean, variance);
@@ -145,7 +145,7 @@ public class Stats2 extends Stats {
 
 			// TODO input parameters validation
 
-			final double mean = (Double) Stats.getMean(scope, data);
+			final double mean = (Double) Containers.mean(scope, data);
 			final double standardDeviation = Stats.opStDev(scope, data);
 
 			return Descriptive.kurtosis(from(scope, data), mean, standardDeviation);
@@ -276,7 +276,7 @@ public class Stats2 extends Stats {
 
 			// TODO input parameters validation
 
-			final double mean = (Double) Stats.getMean(scope, data);
+			final double mean = (Double) Containers.mean(scope, data);
 			final double standardDeviation = Stats.opStDev(scope, data);
 
 			return Descriptive.skew(from(scope, data), mean, standardDeviation);

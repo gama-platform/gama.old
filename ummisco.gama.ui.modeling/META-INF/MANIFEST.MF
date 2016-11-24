@@ -24,7 +24,8 @@ Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
  msi.gama.application,
  org.eclipse.emf.common,
  org.eclipse.emf.ecore,
- msi.gama.ext
+ msi.gama.ext,
+ org.eclipse.e4.ui.model.workbench
 Import-Package: gnu.trove.map.hash,
  org.apache.commons.lang;version="2.6.0",
  org.apache.log4j,

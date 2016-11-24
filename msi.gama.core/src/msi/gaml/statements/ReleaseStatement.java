@@ -1,17 +1,15 @@
 /*********************************************************************************************
  *
- *
- * 'ReleaseStatement.java', in plugin 'msi.gama.core', is part of the source code of the
+ * 'ReleaseStatement.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.statements;
 
-import java.util.Iterator;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
@@ -115,12 +113,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			microAgents.add((IAgent) t);
 		}
 		final IAgent macroAgent = scope.getAgent();
-		final Iterator<IAgent> it = microAgents.iterator();
-		while (it.hasNext()) {
-			if (!it.next().getHost().equals(macroAgent)) {
-				it.remove();
-			}
-		}
+		microAgents.removeIf(each -> !each.getHost().equals(macroAgent));
 
 		IMacroAgent targetAgent;
 		ISpecies microSpecies = null;

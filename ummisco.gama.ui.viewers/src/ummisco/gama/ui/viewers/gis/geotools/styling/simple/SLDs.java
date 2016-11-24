@@ -1,19 +1,13 @@
-/*
- *    uDig - User Friendly Desktop Internet GIS client
- *    http://udig.refractions.net
- *    (C) 2004, Refractions Research Inc.
+/*********************************************************************************************
  *
- *    This library is free software; you can redistribute it and/or
- *    modify it under the terms of the GNU Lesser General Public
- *    License as published by the Free Software Foundation;
- *    version 2.1 of the License.
+ * 'SLDs.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- *    This library is distributed in the hope that it will be useful,
- *    but WITHOUT ANY WARRANTY; without even the implied warranty of
- *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *    Lesser General Public License for more details.
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
- */
+ **********************************************************************************************/
 package ummisco.gama.ui.viewers.gis.geotools.styling.simple;
 
 import java.awt.Color;

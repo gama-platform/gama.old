@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'DescriptionFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'DescriptionFactory.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.factories;
@@ -19,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 import org.eclipse.emf.ecore.EObject;
 
@@ -34,6 +33,7 @@ import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.compilation.ast.ISyntacticElement.SyntacticVisitor;
 import msi.gaml.compilation.ast.SyntacticFactory;
+import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -47,7 +47,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class DescriptionFactory {
 
 	static TIntObjectHashMap<SymbolFactory> FACTORIES = new TIntObjectHashMap(10, 0.5f, Integer.MAX_VALUE);
@@ -63,12 +63,18 @@ public class DescriptionFactory {
 
 	}
 
+	public final static void visitStatementProtos(final BiConsumer<String, SymbolProto> consumer) {
+		STATEMENT_KEYWORDS_PROTOS.forEach(consumer);
+	}
+
+	public final static void visitVarProtos(final BiConsumer<String, SymbolProto> consumer) {
+		VAR_KEYWORDS_PROTOS.forEach(consumer);
+	}
+
 	public final static SymbolProto getProto(final String keyword, final IDescription superDesc) {
 		final SymbolProto p = getStatementProto(keyword);
 		// If not a statement, we try to find a var declaration prototype
-		if (p == null) {
-			return getVarProto(keyword, superDesc);
-		}
+		if (p == null) { return getVarProto(keyword, superDesc); }
 		return p;
 	}
 
@@ -82,17 +88,11 @@ public class DescriptionFactory {
 			// If not a var declaration, we try to find if it is not a species
 			// name (in which case, it is an "agent"
 			// declaration prototype)
-			if (superDesc == null) {
-				return null;
-			}
+			if (superDesc == null) { return null; }
 			final ModelDescription md = superDesc.getModelDescription();
-			if (md == null) {
-				return null;
-			}
+			if (md == null) { return null; }
 			final IType t = md.getTypesManager().get(keyword);
-			if (t.isAgentType()) {
-				return getVarProto(AGENT, null);
-			}
+			if (t.isAgentType()) { return getVarProto(AGENT, null); }
 		}
 		return p;
 	}
@@ -121,9 +121,7 @@ public class DescriptionFactory {
 
 	public static String getOmissibleFacetForSymbol(final String keyword) {
 		final SymbolProto md = getProto(keyword, null);
-		if (md == null) {
-			return IKeyword.NAME;
-		}
+		if (md == null) { return IKeyword.NAME; }
 		return md.getOmissible();
 	}
 
@@ -146,9 +144,7 @@ public class DescriptionFactory {
 	}
 
 	public static void addNewTypeName(final String s, final int kind) {
-		if (VAR_KEYWORDS_PROTOS.containsKey(s)) {
-			return;
-		}
+		if (VAR_KEYWORDS_PROTOS.containsKey(s)) { return; }
 		final SymbolProto p = KINDS_PROTOS.get(kind);
 		if (p != null) {
 			if (s.equals("species")) {
@@ -161,9 +157,7 @@ public class DescriptionFactory {
 
 	public static SymbolFactory getFactory(final String keyword) {
 		final SymbolProto p = getProto(keyword, null);
-		if (p != null) {
-			return p.getFactory();
-		}
+		if (p != null) { return p.getFactory(); }
 		return null;
 	}
 
@@ -175,8 +169,8 @@ public class DescriptionFactory {
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
 			final IDescription superDesc, final Iterable<IDescription> children, final Facets facets) {
-		final IDescription result = create(SyntacticFactory.create(keyword, facets, children != null), superDesc,
-				children);
+		final IDescription result =
+				create(SyntacticFactory.create(keyword, facets, children != null), superDesc, children);
 		return result;
 	}
 
@@ -209,9 +203,7 @@ public class DescriptionFactory {
 	}
 
 	public static Set<String> getAllowedFacetsFor(final String key) {
-		if (key == null) {
-			return Collections.EMPTY_SET;
-		}
+		if (key == null) { return Collections.EMPTY_SET; }
 		final SymbolProto md = getProto(key, null);
 		return md == null ? Collections.EMPTY_SET : md.getPossibleFacets().keySet();
 	}
@@ -223,10 +215,24 @@ public class DescriptionFactory {
 				superDesc, parent, helper, skills, null, plugin);
 	}
 
+	public static SpeciesDescription createPlatformSpeciesDescription(final String name, final Class clazz,
+			final SpeciesDescription macro, final SpeciesDescription parent, final IAgentConstructor helper,
+			final Set<String> allSkills, final String plugin) {
+		return ((SpeciesFactory) getFactory(ISymbolKind.PLATFORM)).createBuiltInSpeciesDescription(name, clazz, macro,
+				parent, helper, allSkills, null, plugin);
+	}
+
 	public static SpeciesDescription createBuiltInExperimentDescription(final String name, final Class clazz,
 			final SpeciesDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
 			final Set<String> skills, final String plugin) {
 		return ((ExperimentFactory) getFactory(ISymbolKind.EXPERIMENT)).createBuiltInSpeciesDescription(name, clazz,
+				superDesc, parent, helper, skills, null, plugin);
+	}
+
+	public static SpeciesDescription createBuiltInPlatformSpeciesDescriotion(final String name, final Class clazz,
+			final SpeciesDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
+			final Set<String> skills, final String plugin) {
+		return ((SpeciesFactory) getFactory(ISymbolKind.SPECIES)).createBuiltInSpeciesDescription(name, clazz,
 				superDesc, parent, helper, skills, null, plugin);
 	}
 
@@ -237,9 +243,7 @@ public class DescriptionFactory {
 
 	public static final IDescription create(final ISyntacticElement source, final IDescription superDesc,
 			final Iterable<IDescription> cp) {
-		if (source == null) {
-			return null;
-		}
+		if (source == null) { return null; }
 		final String keyword = source.getKeyword();
 		final SymbolProto md = DescriptionFactory.getProto(keyword, superDesc);
 		if (md == null) {
@@ -266,6 +270,14 @@ public class DescriptionFactory {
 		final IDescription desc = md.getFactory().buildDescription(keyword, facets, element, children, superDesc, md);
 		return desc;
 
+	}
+
+	public static Iterable<SymbolProto> getStatementProtos() {
+		return Iterables.concat(STATEMENT_KEYWORDS_PROTOS.values(), VAR_KEYWORDS_PROTOS.values());
+	}
+
+	public static Iterable<? extends FacetProto> getFacetsProtos() {
+		return Iterables.concat(Iterables.transform(getStatementProtos(), (each) -> each.getPossibleFacets().values()));
 	}
 
 }

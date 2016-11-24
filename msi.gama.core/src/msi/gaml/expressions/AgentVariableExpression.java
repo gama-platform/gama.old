@@ -1,12 +1,11 @@
 /*********************************************************************************************
  *
- *
- * 'AgentVariableExpression.java', in plugin 'msi.gama.core', is part of the source code of the
+ * 'AgentVariableExpression.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.expressions;
@@ -15,13 +14,14 @@ import msi.gama.precompiler.GamlProperties;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.ICollector;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
 public class AgentVariableExpression extends VariableExpression implements IVarExpression.Agent {
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	protected AgentVariableExpression(final String n, final IType type, final boolean notModifiable,
 			final IDescription def) {
 		super(n, type, notModifiable, def);
@@ -45,7 +45,17 @@ public class AgentVariableExpression extends VariableExpression implements IVarE
 	@Override
 	public String getDocumentation() {
 		final IDescription desc = getDefinitionDescription();
-		return "Type " + type.getTitle() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
+		String s = "Type " + type.getTitle();
+		final String doc = AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(name);
+		if (doc != null)
+			s += "<br>" + doc;
+		if (desc == null)
+			return s;
+		final String quality =
+				(desc.isBuiltIn() ? "<br>Built In " : doc == null ? "<br>Defined in " : "<br>Redefined in ")
+						+ desc.getTitle();
+
+		return s + quality;
 	}
 
 	/**

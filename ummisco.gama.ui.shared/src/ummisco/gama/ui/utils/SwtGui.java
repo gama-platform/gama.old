@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'SwtGui.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'SwtGui.java', in plugin 'msi.gama.application', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package ummisco.gama.ui.utils;
@@ -92,9 +90,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public boolean confirmClose(final IExperimentPlan exp) {
-		if (exp == null || !GamaPreferences.CORE_ASK_CLOSING.getValue()) {
-			return true;
-		}
+		if (exp == null || !GamaPreferences.CORE_ASK_CLOSING.getValue()) { return true; }
 		openSimulationPerspective(true);
 		return Messages.question("Close simulation confirmation", "Do you want to close experiment '" + exp.getName()
 				+ "' of model '" + exp.getModel().getName() + "' ?");
@@ -114,9 +110,7 @@ public class SwtGui implements IGui {
 	public void runtimeError(final GamaRuntimeException g) {
 		if (g.isReported())
 			return;
-		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) {
-			return;
-		}
+		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) { return; }
 		final IRuntimeExceptionHandler handler = WorkbenchHelper.getService(IRuntimeExceptionHandler.class);
 		if (!handler.isRunning())
 			handler.start();
@@ -127,12 +121,8 @@ public class SwtGui implements IGui {
 	@Override
 	public void displayErrors(final List<GamaRuntimeException> exceptions) {
 		if (exceptions == null) // close it
-		{
-			final IViewReference ref = WorkbenchHelper.getPage().findViewReference(ERROR_VIEW_ID);
-			if (ref != null) {
-				WorkbenchHelper.getPage().hideView(ref);
-			}
-		} else {
+			WorkbenchHelper.hideView(ERROR_VIEW_ID);
+		else {
 			final IGamaView.Error v = (Error) showView(ERROR_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			if (v != null)
 				v.displayErrors();
@@ -146,9 +136,7 @@ public class SwtGui implements IGui {
 	}
 
 	private Object internalShowView(final String viewId, final String secondaryId, final int code) {
-		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) {
-			return null;
-		}
+		if (GAMA.getFrontmostController() != null && GAMA.getFrontmostController().isDisposing()) { return null; }
 		final Object[] result = new Object[1];
 		WorkbenchHelper.run(() -> {
 			try {
@@ -194,9 +182,7 @@ public class SwtGui implements IGui {
 
 		Object o = internalShowView(viewId, secondaryId, code);
 		if (o instanceof IWorkbenchPart) {
-			if (o instanceof IGamaView) {
-				return (IGamaView) o;
-			}
+			if (o instanceof IGamaView) { return (IGamaView) o; }
 			o = GamaRuntimeException.error("Impossible to open view " + viewId);
 		}
 		if (o instanceof Throwable) {
@@ -260,8 +246,8 @@ public class SwtGui implements IGui {
 			final Map<String, Object> initialValues, final Map<String, IType<?>> types) {
 		final Map<String, Object> result = new THashMap<>();
 		WorkbenchHelper.run(() -> {
-			final EditorsDialog dialog = new EditorsDialog(scope, WorkbenchHelper.getShell(), initialValues, types,
-					title);
+			final EditorsDialog dialog =
+					new EditorsDialog(scope, WorkbenchHelper.getShell(), initialValues, types, title);
 			result.putAll(dialog.open() == Window.OK ? dialog.getValues() : initialValues);
 		});
 		return result;
@@ -331,11 +317,9 @@ public class SwtGui implements IGui {
 	public void updateParameterView(final IExperimentPlan exp) {
 
 		WorkbenchHelper.run(() -> {
-			if (!exp.hasParametersOrUserCommands()) {
-				return;
-			}
-			final IGamaView.Parameters view = (Parameters) showView(PARAMETER_VIEW_ID, null,
-					IWorkbenchPage.VIEW_ACTIVATE);
+			if (!exp.hasParametersOrUserCommands()) { return; }
+			final IGamaView.Parameters view =
+					(Parameters) showView(PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_ACTIVATE);
 			view.addItem(exp);
 			view.updateItemValues();
 
@@ -346,11 +330,9 @@ public class SwtGui implements IGui {
 	public void showParameterView(final IExperimentPlan exp) {
 
 		WorkbenchHelper.run(() -> {
-			if (!exp.hasParametersOrUserCommands()) {
-				return;
-			}
-			final IGamaView.Parameters view = (Parameters) showView(PARAMETER_VIEW_ID, null,
-					IWorkbenchPage.VIEW_VISIBLE);
+			if (!exp.hasParametersOrUserCommands()) { return; }
+			final IGamaView.Parameters view =
+					(Parameters) showView(PARAMETER_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 			view.addItem(exp);
 		});
 	}
@@ -363,12 +345,8 @@ public class SwtGui implements IGui {
 	@Override
 	public void setSelectedAgent(final IAgent a) {
 		WorkbenchHelper.asyncRun(() -> {
-			if (WorkbenchHelper.getPage() == null) {
-				return;
-			}
-			if (a == null) {
-				return;
-			}
+			if (WorkbenchHelper.getPage() == null) { return; }
+			if (a == null) { return; }
 			try {
 				final InspectDisplayOutput output = new InspectDisplayOutput(a);
 				output.launch(a.getScope());
@@ -499,9 +477,7 @@ public class SwtGui implements IGui {
 		final IExperimentController controller = GAMA.getFrontmostController();
 		if (controller == null) {
 			return NONE;
-		} else if (controller.getScheduler().paused) {
-			return PAUSED;
-		}
+		} else if (controller.getScheduler().paused) { return PAUSED; }
 		return RUNNING;
 	}
 
@@ -524,8 +500,8 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateViewTitle(final IDisplayOutput out, final SimulationAgent agent) {
-		final IGamaView part = (IGamaView) WorkbenchHelper.findView(out.getViewId(),
-				out.isUnique() ? null : out.getName(), true);
+		final IGamaView part =
+				(IGamaView) WorkbenchHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
 		if (part != null)
 			WorkbenchHelper.run(() -> part.changePartNameWithSimulation(agent));
 
@@ -577,6 +553,12 @@ public class SwtGui implements IGui {
 	@Override
 	public void setMouseLocationInModel(final ILocation location) {
 		mouseLocationInModel = location;
+	}
+
+	@Override
+	public void exit() {
+		WorkbenchHelper.asyncRun(() -> PlatformUI.getWorkbench().close());
+
 	}
 
 }

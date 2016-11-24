@@ -1,19 +1,17 @@
 /*********************************************************************************************
- * 
- * 
- * 'MetaPopulation.java', in plugin 'msi.gama.core', is part of the source code of the
+ *
+ * 'MetaPopulation.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.population;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -120,14 +118,7 @@ public class MetaPopulation implements IContainer.Addressable<Integer, IAgent>, 
 	public void filter(final IScope scope, final IShape source, final Collection<? extends IShape> results) {
 		final IAgent sourceAgent = source == null ? null : source.getAgent();
 		results.remove(sourceAgent);
-		final Iterator<? extends IShape> it = results.iterator();
-		while (it.hasNext()) {
-			if (!contains(scope, it.next().getAgent())) {
-				it.remove();
-			}
-
-		}
-
+		results.removeIf((each) -> !contains(scope, each));
 	}
 
 	/**

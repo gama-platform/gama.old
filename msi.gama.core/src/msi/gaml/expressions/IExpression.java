@@ -1,13 +1,12 @@
 /*********************************************************************************************
- * 
- * 
- * 'IExpression.java', in plugin 'msi.gama.core', is part of the source code of the
+ *
+ * 'IExpression.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
@@ -35,8 +34,8 @@ public interface IExpression extends IGamlDescription, ITyped, IDisposable {
 	public abstract String literalValue();
 
 	/*
-	 * Returns an expression where all the temp variables belonging to the scope
-	 * passed in parameter are replaced by constants representing their values
+	 * Returns an expression where all the temp variables belonging to the scope passed in parameter are replaced by
+	 * constants representing their values
 	 */
 	public abstract IExpression resolveAgainst(IScope scope);
 

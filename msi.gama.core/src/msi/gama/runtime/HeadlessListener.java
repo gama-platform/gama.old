@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'HeadlessListener.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'HeadlessListener.java', in plugin 'msi.gama.headless', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.runtime;
@@ -65,12 +63,10 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {
-	}
+	public void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {}
 
 	@Override
-	public void closeDialogs() {
-	}
+	public void closeDialogs() {}
 
 	@Override
 	public IAgent getHighlightedAgent() {
@@ -78,8 +74,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void setHighlightedAgent(final IAgent a) {
-	}
+	public void setHighlightedAgent(final IAgent a) {}
 
 	@Override
 	public IGamaView showView(final String viewId, final String name, final int code) {
@@ -100,8 +95,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void showParameterView(final IExperimentPlan exp) {
-	}
+	public void showParameterView(final IExperimentPlan exp) {}
 
 	// @Override
 	// public void updateViewOf(final IDisplayOutput output) {}
@@ -123,8 +117,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void prepareForExperiment(final IExperimentPlan exp) {
-	}
+	public void prepareForExperiment(final IExperimentPlan exp) {}
 
 	// @Override
 	// public boolean openModelingPerspective(final boolean immediately) {
@@ -136,7 +129,7 @@ public class HeadlessListener implements IGui {
 		return true;
 	}
 
-	@SuppressWarnings("rawtypes") static Map<String, Class> displayClasses = null;
+	@SuppressWarnings ("rawtypes") static Map<String, Class> displayClasses = null;
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final LayeredDisplayOutput output) {
@@ -155,28 +148,23 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void editModel(final Object eObject) {
-	}
+	public void editModel(final Object eObject) {}
 
 	@Override
-	public void updateParameterView(final IExperimentPlan exp) {
-	}
+	public void updateParameterView(final IExperimentPlan exp) {}
 
 	//
 	// @Override
 	// public void cycleDisplayViews(final Set<String> names) {}
 
 	@Override
-	public void setSelectedAgent(final IAgent a) {
-	}
+	public void setSelectedAgent(final IAgent a) {}
 
 	@Override
-	public void cleanAfterExperiment() {
-	}
+	public void cleanAfterExperiment() {}
 
 	@Override
-	public void runModel(final Object object, final String exp) {
-	}
+	public void runModel(final Object object, final String exp) {}
 
 	/**
 	 * Method updateSpeedDisplay()
@@ -184,8 +172,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#updateSpeedDisplay(java.lang.Double)
 	 */
 	@Override
-	public void updateSpeedDisplay(final Double d, final boolean notify) {
-	}
+	public void updateSpeedDisplay(final Double d, final boolean notify) {}
 
 	/**
 	 * Method getMetaDataProvider()
@@ -203,8 +190,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#closeSimulationViews(boolean)
 	 */
 	@Override
-	public void closeSimulationViews(final boolean andOpenModelingPerspective, final boolean immediately) {
-	}
+	public void closeSimulationViews(final boolean andOpenModelingPerspective, final boolean immediately) {}
 
 	/**
 	 * Method getDisplayDescriptionFor()
@@ -232,8 +218,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#updateExperimentState(java.lang.String)
 	 */
 	@Override
-	public void updateExperimentState(final String state) {
-	}
+	public void updateExperimentState(final String state) {}
 
 	/**
 	 * Method updateSimulationState()
@@ -241,8 +226,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#updateExperimentState()
 	 */
 	@Override
-	public void updateExperimentState() {
-	}
+	public void updateExperimentState() {}
 
 	@Override
 	public boolean openSimulationPerspective(final boolean immediately) {
@@ -395,20 +379,16 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void run(final Runnable opener) {
-	}
+	public void run(final Runnable opener) {}
 
 	@Override
-	public void setFocusOn(final IShape o) {
-	}
+	public void setFocusOn(final IShape o) {}
 
 	@Override
-	public void applyLayout(final int layout) {
-	}
+	public void applyLayout(final int layout) {}
 
 	@Override
-	public void displayErrors(final List<GamaRuntimeException> list) {
-	}
+	public void displayErrors(final List<GamaRuntimeException> list) {}
 
 	@Override
 	public ILocation getMouseLocationInModel() {
@@ -426,6 +406,11 @@ public class HeadlessListener implements IGui {
 	public IGamlLabelProvider getGamlLabelProvider() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void exit() {
+		System.exit(0);
 	}
 
 }

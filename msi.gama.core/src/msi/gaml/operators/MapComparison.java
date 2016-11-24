@@ -1,12 +1,11 @@
 /*********************************************************************************************
  *
- *
- * 'MapComparison.java', in plugin 'idees.gama.mapcomparison', is part of the source code of the
+ * 'MapComparison.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.operators;
@@ -447,7 +446,7 @@ public class MapComparison {
 		for (final IAgent ag : agents.iterable(scope)) {
 			locs.add(ag.getLocation());
 		}
-		final ILocation centralLoc = (ILocation) Stats.getMean(scope, locs);
+		final ILocation centralLoc = (ILocation) Containers.mean(scope, locs);
 		if (filter != null) {
 			final IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
 			final List<IAgent> neighbors = distance == 0 ? new ArrayList<IAgent>()
@@ -672,7 +671,7 @@ public class MapComparison {
 		for (final IAgent ag : agents.iterable(scope)) {
 			locs.add(ag.getLocation());
 		}
-		final ILocation centralLoc = (ILocation) Stats.getMean(scope, locs);
+		final ILocation centralLoc = (ILocation) Containers.mean(scope, locs);
 		final IAgent centralAg = scope.getTopology().getAgentClosestTo(scope, centralLoc, filter);
 		final List<IAgent> neighbors = distance == 0 || filter == null ? new ArrayList<IAgent>()
 				: new ArrayList<IAgent>(scope.getTopology().getNeighborsOf(scope, centralAg, distance, filter));

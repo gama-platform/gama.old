@@ -15,7 +15,7 @@ global {
 	}
 	
 	//Reflex saving the agents every 10 steps. 
-	reflex save_data when: every(10){
+	reflex save_data when: every(10#cycles){
 		//save the following text into the given text file. Note that each time the save statement is used, a new line is added at the end of the file.
 		save ("cycle:" + cycle + ", mean size: " + mean(bug collect each.size)) to: "../results/data.txt";
 	}
@@ -40,7 +40,7 @@ species bug skills:[moving]{
 		}
 	} 	
 	
-	//Make the agent move randomly
+	//Make the agent move randomly 
 	reflex move {
 		do wander;
 	}

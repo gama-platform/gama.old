@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'GamlResource.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'GamlResource.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.resource;
@@ -39,6 +37,7 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.indexer.GamlResourceIndexer;
+import msi.gama.runtime.IExecutionContext;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.compilation.ast.ISyntacticElement;
@@ -112,9 +111,9 @@ public class GamlResource extends LazyLinkingResource {
 		// If there are no micro-models
 		final Set<String> keySet = resources.keySet();
 		if (keySet.size() == 1 && keySet.contains(null)) {
-			final Iterable<ISyntacticElement> selfAndImports = Iterables.concat(
-					Collections.singleton(getSyntacticContents()),
-					Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS).get(null));
+			final Iterable<ISyntacticElement> selfAndImports =
+					Iterables.concat(Collections.singleton(getSyntacticContents()),
+							Multimaps.transformValues(resources, TO_SYNTACTIC_CONTENTS).get(null));
 			return f.createModelDescription(projectPath, modelPath, selfAndImports, context, isEdited, null);
 		}
 		final ListMultimap<String, ISyntacticElement> models = ArrayListMultimap.create();
@@ -161,14 +160,12 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	/**
-	 * Validates the resource by compiling its contents into a ModelDescription
-	 * and discarding this ModelDescription afterwards
+	 * Validates the resource by compiling its contents into a ModelDescription and discarding this ModelDescription
+	 * afterwards
 	 * 
-	 * @note The errors will be available as part of the ValidationContext,
-	 *       which can later be retrieved from the resource, and which contains
-	 *       semantic errors (as opposed to the ones obtained via
-	 *       resource.getErrors(), which are syntactic errors), This collector
-	 *       can be probed for compilation errors via its hasErrors(),
+	 * @note The errors will be available as part of the ValidationContext, which can later be retrieved from the
+	 *       resource, and which contains semantic errors (as opposed to the ones obtained via resource.getErrors(),
+	 *       which are syntactic errors), This collector can be probed for compilation errors via its hasErrors(),
 	 *       hasInternalErrors(), hasImportedErrors() methods
 	 *
 	 */
@@ -241,7 +238,10 @@ public class GamlResource extends LazyLinkingResource {
 	 * 
 	 * @throws IOException
 	 */
-	public void loadSynthetic(final InputStream is) throws IOException {
+	public void loadSynthetic(final InputStream is, final IExecutionContext additionalLinkingContext)
+			throws IOException {
+		final OnChangeEvictingCache r = getCache();
+		r.getOrCreate(this).set("linking", additionalLinkingContext);
 		getCache().execWithoutCacheClear(this, new IUnitOfWork.Void<GamlResource>() {
 
 			@Override
@@ -250,6 +250,7 @@ public class GamlResource extends LazyLinkingResource {
 				EcoreUtil.resolveAll(GamlResource.this);
 			}
 		});
+		r.getOrCreate(this).set("linking", null);
 
 	}
 

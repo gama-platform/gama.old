@@ -1,7 +1,12 @@
-/**
- * Created by drogoul, 10 mars 2015
+/*********************************************************************************************
  *
- */
+ * 'LayeredDisplayData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gama.outputs;
 
 import java.awt.Color;
@@ -114,15 +119,15 @@ public class LayeredDisplayData {
 	 *
 	 */
 
-	IPreferenceChangeListener<Color> highlightListener = new IPreferenceChangeListener<Color>() {
+	IPreferenceChangeListener<GamaColor> highlightListener = new IPreferenceChangeListener<GamaColor>() {
 
 		@Override
-		public boolean beforeValueChange(final Color newValue) {
+		public boolean beforeValueChange(final GamaColor newValue) {
 			return true;
 		}
 
 		@Override
-		public void afterValueChange(final Color newValue) {
+		public void afterValueChange(final GamaColor newValue) {
 			setHighlightColor(newValue);
 
 		}
@@ -642,9 +647,7 @@ public class LayeredDisplayData {
 	 *            the zoomLevel to set
 	 */
 	public void setZoomLevel(final Double zoomLevel) {
-		if (this.zoomLevel != null && this.zoomLevel.equals(zoomLevel)) {
-			return;
-		}
+		if (this.zoomLevel != null && this.zoomLevel.equals(zoomLevel)) { return; }
 		this.zoomLevel = zoomLevel;
 		notifyListeners(Changes.ZOOM, true);
 	}

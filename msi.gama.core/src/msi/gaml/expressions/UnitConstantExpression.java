@@ -1,7 +1,12 @@
-/**
- * Created by drogoul, 22 avr. 2014
+/*********************************************************************************************
  *
- */
+ * 'UnitConstantExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gaml.expressions;
 
 import java.util.ArrayList;
@@ -35,30 +40,30 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 			final boolean isTime, final String[] names) {
 
 		switch (unit) {
-		case "zoom":
-			return new ZoomUnitExpression(unit, doc);
-		case "pixels":
-		case "px":
-			return new PixelUnitExpression(unit, doc);
-		case "display_width":
-			return new DisplayWidthUnitExpression(doc);
-		case "display_height":
-			return new DisplayHeightUnitExpression(doc);
-		case "view_x":
-		case "view_y":
-		case "view_width":
-		case "view_height":
-			return new ViewUnitExpression(unit, doc);
-		case "now":
-			return new NowUnitExpression(unit, doc);
-		case "camera_location":
-			return new CameraPositionUnitExpression(doc);
-		case "camera_target":
-			return new CameraTargetUnitExpression(doc);
-		case "camera_orientation":
-			return new CameraOrientationUnitExpression(doc);
-		case "user_location":
-			return new UserLocationUnitExpression(doc);
+			case "zoom":
+				return new ZoomUnitExpression(unit, doc);
+			case "pixels":
+			case "px":
+				return new PixelUnitExpression(unit, doc);
+			case "display_width":
+				return new DisplayWidthUnitExpression(doc);
+			case "display_height":
+				return new DisplayHeightUnitExpression(doc);
+			case "view_x":
+			case "view_y":
+			case "view_width":
+			case "view_height":
+				return new ViewUnitExpression(unit, doc);
+			case "now":
+				return new NowUnitExpression(unit, doc);
+			case "camera_location":
+				return new CameraPositionUnitExpression(doc);
+			case "camera_target":
+				return new CameraTargetUnitExpression(doc);
+			case "camera_orientation":
+				return new CameraOrientationUnitExpression(doc);
+			case "user_location":
+				return new UserLocationUnitExpression(doc);
 		}
 		if (isTime)
 			return new TimeUnitConstantExpression(val, t, unit, doc, names);
@@ -83,7 +88,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		return "°" + name;
+		return "#" + name;
 	}
 
 	@Override
@@ -92,8 +97,28 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	}
 
 	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(final String n) {
+		this.name = n;
+	}
+
+	@Override
 	public String getTitle() {
-		String s = "Unit " + serialize(false);
+		String prefix;
+		if (type.equals(Types.COLOR)) {
+			prefix = "Constant color ";
+		} else {
+			if (getClass().equals(UnitConstantExpression.class)) {
+				prefix = "Constant ";
+			} else {
+				prefix = "Mutable value ";
+			}
+		}
+		String s = prefix + serialize(false);
 		if (alternateNames.size() > 1) {
 			s += " (" + alternateNames + ")";
 		}
@@ -111,8 +136,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	}
 
 	@Override
-	public void setExpression(final IExpression expr) {
-	}
+	public void setExpression(final IExpression expr) {}
 
 	@Override
 	public IExpression compile(final IDescription context) {
@@ -140,8 +164,7 @@ public class UnitConstantExpression extends ConstantExpression implements IExpre
 	}
 
 	@Override
-	public void setTarget(final EObject target) {
-	}
+	public void setTarget(final EObject target) {}
 
 	@Override
 	public Set<String> getStrings(final IDescription context, final boolean skills) {

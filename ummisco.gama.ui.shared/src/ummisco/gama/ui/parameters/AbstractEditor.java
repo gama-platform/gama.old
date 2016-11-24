@@ -1,11 +1,11 @@
-/**
+/*********************************************************************************************
  *
- * 'AbstractEditor.java', in plugin 'msi.gama.application', is part of the source code of the
+ * 'AbstractEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package ummisco.gama.ui.parameters;
@@ -43,6 +43,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.types.GamaStringType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
@@ -68,33 +69,31 @@ public abstract class AbstractEditor<T>
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
 			switch (code) {
-			case REVERT:
-				modifyAndDisplayValue(applyRevert());
-				break;
-			case PLUS:
-				modifyAndDisplayValue(applyPlus());
-				break;
-			case MINUS:
-				modifyAndDisplayValue(applyMinus());
-				break;
-			case EDIT:
-				applyEdit();
-				break;
-			case INSPECT:
-				applyInspect();
-				break;
-			case BROWSE:
-				applyBrowse();
-				break;
-			case CHANGE:
-				if (e.detail != SWT.ARROW) {
-					return;
-				}
-				applyChange();
-				break;
-			case DEFINE:
-				applyDefine();
-				break;
+				case REVERT:
+					modifyAndDisplayValue(applyRevert());
+					break;
+				case PLUS:
+					modifyAndDisplayValue(applyPlus());
+					break;
+				case MINUS:
+					modifyAndDisplayValue(applyMinus());
+					break;
+				case EDIT:
+					applyEdit();
+					break;
+				case INSPECT:
+					applyInspect();
+					break;
+				case BROWSE:
+					applyBrowse();
+					break;
+				case CHANGE:
+					if (e.detail != SWT.ARROW) { return; }
+					applyChange();
+					break;
+				case DEFINE:
+					applyDefine();
+					break;
 			}
 		}
 
@@ -139,16 +138,13 @@ public abstract class AbstractEditor<T>
 
 		@Override
 		public void mouseExit(final MouseEvent e) {
-			if (isCombo && combo != null && combo.getListVisible()) {
-				return;
-			}
+			if (isCombo && combo != null && combo.getListVisible()) { return; }
 			if (GAMA.getExperiment() == null || !GAMA.getExperiment().isBatch())
 				hideToolbar();
 		}
 
 		@Override
-		public void mouseHover(final MouseEvent e) {
-		}
+		public void mouseHover(final MouseEvent e) {}
 
 	};
 	private boolean dontUseScope;
@@ -360,9 +356,7 @@ public abstract class AbstractEditor<T>
 
 	protected void hideToolbar() {
 		final GridData d = (GridData) toolbar.getLayoutData();
-		if (d.exclude) {
-			return;
-		}
+		if (d.exclude) { return; }
 		d.exclude = true;
 		toolbar.setVisible(false);
 		composite.setBackground(getNormalBackground());
@@ -371,9 +365,7 @@ public abstract class AbstractEditor<T>
 
 	protected void showToolbar() {
 		final GridData d = (GridData) toolbar.getLayoutData();
-		if (!d.exclude) {
-			return;
-		}
+		if (!d.exclude) { return; }
 		d.exclude = false;
 		toolbar.setVisible(true);
 		composite.setBackground(HOVERED_BACKGROUND);
@@ -433,29 +425,29 @@ public abstract class AbstractEditor<T>
 		for (final int i : codes) {
 			ToolItem item = null;
 			switch (i) {
-			case REVERT:
-				item = createItem(t, "Revert to original value", GamaIcons.create("small.revert").image());
-				break;
-			case PLUS:
-				item = createPlusItem(t);
-				break;
-			case MINUS:
-				item = createItem(t, "Decrement the parameter", GamaIcons.create(IGamaIcons.SMALL_MINUS).image());
-				break;
-			case EDIT:
-				item = createItem(t, "Edit the parameter", GamaIcons.create("small.edit").image());
-				break;
-			case INSPECT:
-				item = createItem(t, "Inspect the agent", GamaIcons.create("small.inspect").image());
-				break;
-			case BROWSE:
-				item = createItem(t, "Browse the list of agents", GamaIcons.create("small.browse").image());
-				break;
-			case CHANGE:
-				item = createItem(t, "Choose another agent", GamaIcons.create("small.change").image());
-				break;
-			case DEFINE:
-				item = createItem(t, "Set the parameter to undefined", GamaIcons.create("small.undefine").image());
+				case REVERT:
+					item = createItem(t, "Revert to original value", GamaIcons.create("small.revert").image());
+					break;
+				case PLUS:
+					item = createPlusItem(t);
+					break;
+				case MINUS:
+					item = createItem(t, "Decrement the parameter", GamaIcons.create(IGamaIcons.SMALL_MINUS).image());
+					break;
+				case EDIT:
+					item = createItem(t, "Edit the parameter", GamaIcons.create("small.edit").image());
+					break;
+				case INSPECT:
+					item = createItem(t, "Inspect the agent", GamaIcons.create("small.inspect").image());
+					break;
+				case BROWSE:
+					item = createItem(t, "Browse the list of agents", GamaIcons.create("small.browse").image());
+					break;
+				case CHANGE:
+					item = createItem(t, "Choose another agent", GamaIcons.create("small.change").image());
+					break;
+				case DEFINE:
+					item = createItem(t, "Set the parameter to undefined", GamaIcons.create("small.undefine").image());
 			}
 			if (item != null) {
 				items[i] = item;
@@ -484,7 +476,7 @@ public abstract class AbstractEditor<T>
 		return i;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	protected T getParameterValue() throws GamaRuntimeException {
 		Object result;
 		if (agent == null) {
@@ -492,6 +484,8 @@ public abstract class AbstractEditor<T>
 		} else {
 			result = scope.getAgentVarValue(getAgent(), param.getName());
 		}
+		if (getExpectedType() == Types.STRING) { return (T) StringUtils
+				.toJavaString(GamaStringType.staticCast(scope, result, false)); }
 		return (T) getExpectedType().cast(scope, result, null, false);
 
 	}
@@ -538,7 +532,10 @@ public abstract class AbstractEditor<T>
 			// if ( param.isLabel() ) {
 			// valuesAsString[i] = possibleValues.get(i).toString();
 			// } else {
-			valuesAsString[i] = StringUtils.toGaml(possibleValues.get(i), false);
+			if (getExpectedType() == Types.STRING)
+				valuesAsString[i] = StringUtils.toJavaString(StringUtils.toGaml(possibleValues.get(i), false));
+			else
+				valuesAsString[i] = StringUtils.toGaml(possibleValues.get(i), false);
 			// }
 		}
 		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
@@ -571,9 +568,7 @@ public abstract class AbstractEditor<T>
 
 	protected void checkButtons() {
 		final ToolItem revert = items[REVERT];
-		if (revert == null || revert.isDisposed()) {
-			return;
-		}
+		if (revert == null || revert.isDisposed()) { return; }
 		revert.setEnabled(currentValue == null ? originalValue != null : !currentValue.equals(originalValue));
 	}
 
@@ -613,9 +608,7 @@ public abstract class AbstractEditor<T>
 	public void updateValue() {
 		try {
 			final T newVal = getParameterValue();
-			if (!isValueDifferent(newVal)) {
-				return;
-			}
+			if (!isValueDifferent(newVal)) { return; }
 			internalModification = true;
 			if (titleLabel != null && !titleLabel.isDisposed()) {
 				modifyAndDisplayValue(newVal);
@@ -649,9 +642,7 @@ public abstract class AbstractEditor<T>
 	}
 
 	protected IAgent getAgent() {
-		if (agent != null) {
-			return agent;
-		}
+		if (agent != null) { return agent; }
 		if (scope == null)
 			return null;
 		return scope.getSimulation();
@@ -659,16 +650,13 @@ public abstract class AbstractEditor<T>
 	}
 
 	@Override
-	public void modifyText(final ModifyEvent e) {
-	}
+	public void modifyText(final ModifyEvent e) {}
 
 	@Override
-	public void widgetSelected(final SelectionEvent e) {
-	}
+	public void widgetSelected(final SelectionEvent e) {}
 
 	@Override
-	public void widgetDefaultSelected(final SelectionEvent e) {
-	}
+	public void widgetDefaultSelected(final SelectionEvent e) {}
 
 	protected T getOriginalValue() {
 		return originalValue;
@@ -690,20 +678,15 @@ public abstract class AbstractEditor<T>
 		return getOriginalValue();
 	}
 
-	protected void applyBrowse() {
-	}
+	protected void applyBrowse() {}
 
-	protected void applyInspect() {
-	}
+	protected void applyInspect() {}
 
-	protected void applyEdit() {
-	}
+	protected void applyEdit() {}
 
-	protected void applyChange() {
-	}
+	protected void applyChange() {}
 
-	protected void applyDefine() {
-	}
+	protected void applyDefine() {}
 
 	public Composite getComposite() {
 		return composite;

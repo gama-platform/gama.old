@@ -1,7 +1,12 @@
-/**
- * Created by drogoul, 4 déc. 2014
+/*********************************************************************************************
  *
- */
+ * 'ImportedInButton.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
 import java.util.LinkedHashSet;
@@ -35,7 +40,7 @@ import ummisco.gama.ui.views.toolbar.GamaToolbar2;
  * @since 4 déc. 2014
  *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class ImportedInButton {
 
 	final GamlEditor editor;
@@ -52,6 +57,8 @@ public class ImportedInButton {
 
 	private void createButton() {
 		// parent.sep(5, SWT.RIGHT);
+		// parent.control(new GamlSearchField().createWidget(parent.getToolbar(SWT.RIGHT)), 100, SWT.RIGHT);
+		// parent.sep(10, SWT.RIGHT);
 		menu = parent.menu(IGamaColors.BLUE, "Used in...", SWT.RIGHT);
 		menu.getControl().setToolTipText("List of models in which this model is imported");
 		((FlatButton) menu.getControl()).addSelectionListener(new SelectionAdapter() {
@@ -124,14 +131,10 @@ public class ImportedInButton {
 	 */
 	public void setVisible(final boolean enabled) {
 		if (enabled) {
-			if (menu != null) {
-				return;
-			}
+			if (menu != null) { return; }
 			createButton();
 		} else {
-			if (menu == null) {
-				return;
-			}
+			if (menu == null) { return; }
 			menu.dispose();
 			menu = null;
 		}

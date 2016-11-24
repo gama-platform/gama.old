@@ -80,7 +80,7 @@ species people skills: [moving] {
 			path_to_follow <- path_between(road_network with_weights roads_knowledge, location,the_target);
 		}
 		//the agent follows the path it computed but with the real weights of the graph
-		do follow path:path_to_follow speed: 5 move_weights: roads_weight;
+		do follow path:path_to_follow speed: 5.0 move_weights: roads_weight;
 	}
 		
 	aspect base {

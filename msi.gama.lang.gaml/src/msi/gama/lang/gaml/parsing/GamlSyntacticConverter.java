@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'GamlSyntacticConverter.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'GamlCompatibilityConverter.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.parsing;
@@ -112,9 +110,8 @@ import msi.gaml.statements.Facets;
 
 /**
  *
- * The class GamlCompatibilityConverter. Performs a series of transformations
- * between the EObject based representation of GAML models and the
- * representation based on SyntacticElements in GAMA.
+ * The class GamlCompatibilityConverter. Performs a series of transformations between the EObject based representation
+ * of GAML models and the representation based on SyntacticElements in GAMA.
  *
  * @author drogoul
  * @since 16 mars 2013
@@ -124,25 +121,23 @@ public class GamlSyntacticConverter {
 
 	final static ExpressionDescriptionBuilder builder = new ExpressionDescriptionBuilder();
 
-	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
-			ISymbolKind.OUTPUT, ISymbolKind.MODEL);
+	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES =
+			Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
 	public SyntacticModelElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
 		if (root instanceof StandaloneBlock) {
-			final SyntacticModelElement elt = (SyntacticModelElement) SyntacticFactory.create("model", root, true);
+			final SyntacticModelElement elt = SyntacticFactory.createSyntheticModel(root);
 			convertBlock(elt, ((StandaloneBlock) root).getBlock(), errors);
 			return elt;
 		}
-		if (!(root instanceof Model)) {
-			return null;
-		}
+		if (!(root instanceof Model)) { return null; }
 		final ModelImpl m = (ModelImpl) root;
 		final List<String> prgm = collectPragmas(m);
 		// final Object[] imps = collectImports(m);<>
 
 		final File path = GamlResourceServices.getAbsoluteContainerFolderPathOf(root.eResource()).toFile();
-		final SyntacticModelElement model = (SyntacticModelElement) SyntacticFactory.create(MODEL, m,
-				EGaml.hasChildren(m), path/* , imps */);
+		final SyntacticModelElement model =
+				(SyntacticModelElement) SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m), path/* , imps */);
 		if (prgm != null)
 			model.setFacet(IKeyword.PRAGMA, ConstantExpressionDescription.create(prgm));
 		model.setFacet(NAME, convertToLabel(null, m.getName()));
@@ -166,9 +161,7 @@ public class GamlSyntacticConverter {
 	// }
 
 	private List<String> collectPragmas(final ModelImpl m) {
-		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) {
-			return null;
-		}
+		if (!m.eIsSet(GamlPackage.MODEL__PRAGMAS)) { return null; }
 		final List<Pragma> pragmas = m.getPragmas();
 		final List<String> result = new ArrayList<>();
 		if (pragmas.isEmpty())
@@ -182,9 +175,7 @@ public class GamlSyntacticConverter {
 
 	private boolean doesNotDefineAttributes(final String keyword) {
 		final SymbolProto p = DescriptionFactory.getProto(keyword, null);
-		if (p == null) {
-			return true;
-		}
+		if (p == null) { return true; }
 		final int kind = p.getKind();
 		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
 	}
@@ -522,17 +513,13 @@ public class GamlSyntacticConverter {
 	}
 
 	private final IExpressionDescription convExpr(final EObject expr, final Set<Diagnostic> errors) {
-		if (expr == null) {
-			return null;
-		}
+		if (expr == null) { return null; }
 		final IExpressionDescription result = builder.create(expr/* , errors */);
 		return result;
 	}
 
 	private final IExpressionDescription convExpr(final ISyntacticElement expr, final Set<Diagnostic> errors) {
-		if (expr == null) {
-			return null;
-		}
+		if (expr == null) { return null; }
 		final IExpressionDescription result = builder.create(expr, errors);
 		return result;
 	}
@@ -545,19 +532,15 @@ public class GamlSyntacticConverter {
 			final Expression expr = facet.getExpr();
 			if (expr == null && facet.getBlock() != null) {
 				final Block b = facet.getBlock();
-				final ISyntacticElement elt = SyntacticFactory.create(ACTION,
-						new Facets(NAME, SYNTHETIC + SYNTHETIC_ACTION++), true);
+				final ISyntacticElement elt =
+						SyntacticFactory.create(ACTION, new Facets(NAME, SYNTHETIC + SYNTHETIC_ACTION++), true);
 				convertBlock(elt, b, errors);
 				return convExpr(elt, errors);
 			}
-			if (expr != null) {
-				return label ? convertToLabel(expr, EGaml.getKeyOf(expr)) : convExpr(expr, errors);
-			}
+			if (expr != null) { return label ? convertToLabel(expr, EGaml.getKeyOf(expr)) : convExpr(expr, errors); }
 			final String name = facet.getName();
 			// TODO Verify the use of "facet"
-			if (name != null) {
-				return convertToLabel(null, name);
-			}
+			if (name != null) { return convertToLabel(null, name); }
 		}
 		return null;
 	}
@@ -587,18 +570,12 @@ public class GamlSyntacticConverter {
 	}
 
 	private final IExpressionDescription findExpr(final Statement stm, final Set<Diagnostic> errors) {
-		if (stm == null) {
-			return null;
-		}
+		if (stm == null) { return null; }
 		// The order below should be important
 		final String name = EGaml.getNameOf(stm);
-		if (name != null) {
-			return convertToLabel(stm, name);
-		}
+		if (name != null) { return convertToLabel(stm, name); }
 		final Expression expr = stm.getExpr();
-		if (expr != null) {
-			return convExpr(expr, errors);
-		}
+		if (expr != null) { return convExpr(expr, errors); }
 		return null;
 	}
 

@@ -1,7 +1,12 @@
-/**
- * Created by drogoul, 28 janv. 2016
+/*********************************************************************************************
  *
- */
+ * 'ShapeExecuter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gaml.statements.draw;
 
 import java.awt.geom.Rectangle2D;
@@ -73,9 +78,7 @@ class ShapeExecuter extends DrawExecuter {
 	@Override
 	Rectangle2D executeOn(final IScope scope, final IGraphics gr, final DrawingData data) throws GamaRuntimeException {
 		IShape shape = constantShape == null ? Cast.asGeometry(scope, item.value(scope), false) : constantShape;
-		if (shape == null) {
-			return null;
-		}
+		if (shape == null) { return null; }
 		final ShapeDrawingAttributes attributes = computeAttributes(scope, data, shape);
 		// If the graphics is 2D, we pre-translate and pre-rotate the geometry
 		// otherwise we just pre-translate it (the rotation in 3D will be
@@ -102,9 +105,7 @@ class ShapeExecuter extends DrawExecuter {
 			final Envelope e = shape.getEnvelope();
 			final Envelope visible = gr.getVisibleRegion();
 			if (visible != null)
-				if (!visible.intersects(e)) {
-					return null;
-				}
+				if (!visible.intersects(e)) { return null; }
 			// XXX EXPERIMENTAL
 		}
 
@@ -132,11 +133,9 @@ class ShapeExecuter extends DrawExecuter {
 	 * @param scope
 	 * @param attributes
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	private void addTextures(final IScope scope, final ShapeDrawingAttributes attributes) {
-		if (attributes.textures == null) {
-			return;
-		}
+		if (attributes.textures == null) { return; }
 		final IList<String> textureNames = GamaListFactory.create(Types.STRING);
 		textureNames.addAll(attributes.textures);
 		attributes.textures.clear();
@@ -170,14 +169,10 @@ class ShapeExecuter extends DrawExecuter {
 	}
 
 	private IShape addArrows(final IScope scope, final IShape g1, final Boolean fill) {
-		if (!hasArrows) {
-			return g1;
-		}
+		if (!hasArrows) { return g1; }
 		final IList<? extends ILocation> points = g1.getPoints();
 		final int size = points.size();
-		if (size < 2) {
-			return g1;
-		}
+		if (size < 2) { return g1; }
 		IShape end = null, begin = null;
 		if (endArrow != null || constantEnd != null) {
 			final double width = constantEnd == null ? Cast.asFloat(scope, endArrow.value(scope)) : constantEnd;

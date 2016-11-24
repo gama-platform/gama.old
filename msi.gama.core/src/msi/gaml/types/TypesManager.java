@@ -1,17 +1,15 @@
 /*********************************************************************************************
  *
+ * 'TypesManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'TypesManager.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.types;
 
-import java.util.Collection;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
 
 import msi.gama.common.interfaces.IGamlIssue;
@@ -23,15 +21,20 @@ import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescription> implements ITypesManager {
 
 	public static int CURRENT_INDEX = IType.SPECIES_TYPES;
 	private TypesManager parent;
-	private final ConcurrentHashMap<String, IType> types = new ConcurrentHashMap(5, 0.75f);
+	private final ConcurrentHashMap<String, IType<?>> types = new ConcurrentHashMap(5, 0.75f);
 
-	public TypesManager(final TypesManager parent) {
-		setParent(parent);
+	public TypesManager(final ITypesManager types2) {
+		setParent(types2);
+	}
+
+	@Override
+	public Iterable<IType<?>> getAllTypes() {
+		return new HashSet(types.values());
 	}
 
 	@Override
@@ -42,8 +45,7 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.gaml.types.ITypesManager#alias(java.lang.String,
-	 * java.lang.String)
+	 * @see msi.gaml.types.ITypesManager#alias(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void alias(final String existingTypeName, final String otherTypeName) {
@@ -62,8 +64,7 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.gaml.types.ITypesManager#addSpeciesType(msi.gaml.descriptions.
-	 * TypeDescription)
+	 * @see msi.gaml.types.ITypesManager#addSpeciesType(msi.gaml.descriptions. TypeDescription)
 	 */
 	@Override
 	public IType<? extends IAgent> addSpeciesType(final SpeciesDescription species) {
@@ -144,17 +145,9 @@ public class TypesManager extends IDescription.DescriptionVisitor<SpeciesDescrip
 	@Override
 	public boolean containsType(final String s) {
 		final IType t = types.get(s);
-		if (t != null) {
-			return true;
-		}
-		if (parent == null) {
-			return false;
-		}
+		if (t != null) { return true; }
+		if (parent == null) { return false; }
 		return parent.containsType(s);
-	}
-
-	Collection<IType> getTypes() {
-		return types.values();
 	}
 
 	@Override

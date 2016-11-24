@@ -82,7 +82,7 @@ species NetworkingAgent skills:[moving]{
    }
       
    reflex update{
-     do goto target:target_loc speed:10;
+     do goto target:target_loc speed:10.0;
    }	
    aspect base{
    	draw shape color:color;

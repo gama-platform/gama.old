@@ -1,3 +1,12 @@
+/*********************************************************************************************
+ *
+ * 'GamaMetaModel.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gaml.compilation.kernel;
 
 import static msi.gama.common.interfaces.IKeyword.AGENT;
@@ -16,16 +25,20 @@ import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.IExperimentAgentCreator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.util.TOrderedHashMap;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.descriptions.PlatformSpeciesDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGenericAgentType;
+import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaMetaModel {
 
 	public final static GamaMetaModel INSTANCE = new GamaMetaModel();
@@ -33,6 +46,7 @@ public class GamaMetaModel {
 	private final Map<String, IExperimentAgentCreator> experimentCreators = new THashMap<>();
 	private final Map<String, SpeciesProto> tempSpecies = new TOrderedHashMap();
 	private final Multimap<String, String> speciesSkills = HashMultimap.create();
+	private GamlModelSpecies abstractModelSpecies;
 
 	private static class SpeciesProto {
 
@@ -52,8 +66,7 @@ public class GamaMetaModel {
 		}
 	}
 
-	private GamaMetaModel() {
-	}
+	private GamaMetaModel() {}
 
 	public ExperimentAgent createExperimentAgent(final String name, final IPopulation pop) {
 		return (ExperimentAgent) experimentCreators.get(name).create(pop);
@@ -116,15 +129,20 @@ public class GamaMetaModel {
 		final Set<String> allSkills = new HashSet(Arrays.asList(skills));
 		allSkills.addAll(speciesSkills.get(name));
 		SpeciesDescription desc;
-		if (!isGlobal) {
-			if (isExperiment)
-				desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
-						allSkills, plugin);
-			else
-				desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
-						plugin);
+		if (proto.name.equals(IKeyword.PLATFORM)) {
+			desc = DescriptionFactory.createPlatformSpeciesDescription(name, clazz, macro, parent, helper, allSkills,
+					plugin);
 		} else {
-			desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
+			if (!isGlobal) {
+				if (isExperiment)
+					desc = DescriptionFactory.createBuiltInExperimentDescription(name, clazz, macro, parent, helper,
+							allSkills, plugin);
+				else
+					desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper,
+							allSkills, plugin);
+			} else {
+				desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
+			}
 		}
 		desc.copyJavaAdditions();
 		desc.inheritFromParent();
@@ -133,6 +151,21 @@ public class GamaMetaModel {
 
 	public void addSpeciesSkill(final String spec, final String name) {
 		speciesSkills.put(spec, name);
+	}
+
+	public GamlModelSpecies getAbstractModelSpecies() {
+		if (abstractModelSpecies == null) {
+			final IType model = Types.get(IKeyword.MODEL);
+			abstractModelSpecies = (GamlModelSpecies) model.getSpecies().compile();
+		}
+		return abstractModelSpecies;
+	}
+
+	public PlatformSpeciesDescription getPlatformSpeciesDescription() {
+		final IType platform = Types.get(IKeyword.PLATFORM);
+		if (platform != null && platform != Types.NO_TYPE)
+			return (PlatformSpeciesDescription) platform.getSpecies();
+		return null;
 	}
 
 }

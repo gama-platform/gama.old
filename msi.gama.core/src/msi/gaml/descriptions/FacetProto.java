@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'FacetProto.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'FacetProto.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.descriptions;
@@ -36,6 +34,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	public final boolean isType;
 	public final Set<String> values;
 	public String doc = "No documentation yet";
+	public String owner;
 
 	public FacetProto(final String name, final int[] types, final int ct, final int kt, final String[] values,
 			final boolean optional, final boolean internal, final String doc) {
@@ -70,6 +69,10 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		return isLabel;
 	}
 
+	public void setOwner(final String s) {
+		owner = s;
+	}
+
 	@Override
 	public String getDefiningPlugin() {
 		// returns null as facets cannot be defined alone (the symbol already
@@ -88,8 +91,8 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	 */
 	@Override
 	public String getTitle() {
-		// String p = owner == null ? "" : " of statement " + owner.getName();
-		return "Facet " + name /* + p */;
+		final String p = owner == null ? "" : " of " + owner;
+		return "Facet " + name + p;
 	}
 
 	public String typesToString() {
@@ -97,28 +100,28 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 		s.append(types.length < 2 ? " " : " any type in [");
 		for (int i = 0; i < types.length; i++) {
 			switch (typesDescribers[i]) {
-			case IType.ID:
-				s.append("an identifier");
-				break;
-			case IType.LABEL:
-				s.append("a label");
-				break;
-			case IType.NEW_TEMP_ID:
-				s.append("a new identifier");
-				break;
-			case IType.NEW_VAR_ID:
-				s.append("a new identifier");
-				break;
-			case IType.TYPE_ID:
-				s.append("a datatype identifier");
-				break;
-			case IType.NONE:
-				s.append("any type");
-				break;
-			default:
-				// TODO AD 2/16 Document the types with the new possibility to
-				// include of and index
-				s.append(types[i].toString());
+				case IType.ID:
+					s.append("an identifier");
+					break;
+				case IType.LABEL:
+					s.append("a label");
+					break;
+				case IType.NEW_TEMP_ID:
+					s.append("a new identifier");
+					break;
+				case IType.NEW_VAR_ID:
+					s.append("a new identifier");
+					break;
+				case IType.TYPE_ID:
+					s.append("a datatype identifier");
+					break;
+				case IType.NONE:
+					s.append("any type");
+					break;
+				default:
+					// TODO AD 2/16 Document the types with the new possibility to
+					// include of and index
+					s.append(types[i].toString());
 			}
 			if (i != types.length - 1) {
 				s.append(", ");
@@ -187,12 +190,8 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	 */
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		if (deprecated != null) {
-			return "";
-		}
-		if (SymbolSerializer.uselessFacets.contains(name)) {
-			return "";
-		}
+		if (deprecated != null) { return ""; }
+		if (SymbolSerializer.uselessFacets.contains(name)) { return ""; }
 		return name + (optional ? ": optional" : ": required") + " ("
 				+ (types.length < 2 ? typesToString().substring(1) : typesToString()) + ")";
 	}
@@ -203,8 +202,7 @@ public class FacetProto implements IGamlDescription, Comparable<FacetProto> {
 	 * @see msi.gama.common.interfaces.IGamlDescription#collectPlugins(java.util.Set)
 	 */
 	@Override
-	public void collectMetaInformation(final GamlProperties meta) {
-	}
+	public void collectMetaInformation(final GamlProperties meta) {}
 
 	/**
 	 * @return

@@ -7659,7 +7659,7 @@ ruleTerminalExpression returns [EObject current=null]
 
 
 
-RULE_KEYWORD : ('each'|'self'|'myself'|'nil'|'world');
+RULE_KEYWORD : ('each'|'self'|'myself'|'nil');
 
 RULE_INTEGER : ('0'|'1'..'9' ('0'..'9')*);
 

@@ -73,7 +73,7 @@ species boids_goal skills: [moving] {
 	float size  <- 10.0;
 	
 	reflex wander {  
-		do  wander amplitude: 45 speed: 20;  
+		do  wander amplitude: 45 speed: 20.0;  
 		goal <- location;
 	}
 	

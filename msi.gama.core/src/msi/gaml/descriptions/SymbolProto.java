@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'SymbolProto.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'SymbolProto.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.descriptions;
@@ -16,7 +14,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -41,7 +38,7 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class SymbolProto extends AbstractProto {
 
 	private final ISymbolConstructor constructor;
@@ -57,9 +54,10 @@ public class SymbolProto extends AbstractProto {
 	private final ImmutableSet<String> mandatoryFacets;
 	private final String omissibleFacet;
 	private final boolean isPrimitive;
+	private final boolean isVar;
 
-	static final TIntHashSet ids = new TIntHashSet(
-			new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID });
+	static final TIntHashSet ids =
+			new TIntHashSet(new int[] { IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID });
 
 	public SymbolProto(final Class clazz, final boolean hasSequence, final boolean hasArgs, final int kind,
 			final boolean doesNotHaveScope, final FacetProto[] possibleFacets, final String omissible,
@@ -79,12 +77,14 @@ public class SymbolProto extends AbstractProto {
 		this.omissibleFacet = omissible;
 		this.isUniqueInContext = isUniqueInContext;
 		this.kind = kind;
+		this.isVar = ISymbolKind.Variable.KINDS.contains(kind);
 		this.hasScope = !doesNotHaveScope;
 		if (possibleFacets != null) {
 			final Builder<String> builder = ImmutableSet.builder();
 			this.possibleFacets = new THashMap<String, FacetProto>();
 			for (final FacetProto f : possibleFacets) {
 				this.possibleFacets.put(f.name, f);
+				f.setOwner(getTitle());
 				if (!f.optional) {
 					builder.add(f.name);
 				}
@@ -111,17 +111,13 @@ public class SymbolProto extends AbstractProto {
 
 	public boolean isLabel(final String s) {
 		final FacetProto f = getPossibleFacets().get(s);
-		if (f == null) {
-			return false;
-		}
+		if (f == null) { return false; }
 		return f.isLabel();
 	}
 
 	public boolean isId(final String s) {
 		final FacetProto f = getPossibleFacets().get(s);
-		if (f == null) {
-			return false;
-		}
+		if (f == null) { return false; }
 		return f.isId();
 	}
 
@@ -165,6 +161,11 @@ public class SymbolProto extends AbstractProto {
 		return omissibleFacet;
 	}
 
+	@Override
+	public String getTitle() {
+		return isVar ? ISymbolKind.Variable.KINDS_AS_STRING.get(kind) + " declaration" : "statement " + getName();
+	}
+
 	/**
 	 * @return
 	 */
@@ -172,7 +173,13 @@ public class SymbolProto extends AbstractProto {
 	public String getDocumentation() {
 		final StringBuilder sb = new StringBuilder(200);
 		sb.append(super.getDocumentation());
-		sb.append("<b><br/>Facets :</b><ul>");
+		sb.append(getFacetsDocumentation());
+		return sb.toString();
+	}
+
+	public String getFacetsDocumentation() {
+		final StringBuilder sb = new StringBuilder(200);
+		sb.append("<b><br/>Possible facets :</b><ul>");
 		final List<FacetProto> protos = new ArrayList(getPossibleFacets().values());
 		Collections.sort(protos);
 		for (final FacetProto f : protos) {
@@ -182,6 +189,7 @@ public class SymbolProto extends AbstractProto {
 			sb.append("</li>");
 		}
 		return sb.toString();
+
 	}
 
 	/**

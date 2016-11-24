@@ -25,7 +25,7 @@ global skills:[network]{
 
 species NetworkingAgent skills:[moving]{
    rgb color;
-   reflex updateState when:every(10){
+   reflex updateState when:every(10#cycles){
    			write "teleportation from reciever to sender";
    			ask world{
 	          do teletransportation(myself,"sender");	

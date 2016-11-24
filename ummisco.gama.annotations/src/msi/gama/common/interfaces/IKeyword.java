@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'IKeyword.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'IKeyword.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.common.interfaces;
@@ -21,6 +19,7 @@ package msi.gama.common.interfaces;
 public interface IKeyword {
 
 	public static final String _DOT = ".";
+	public static final String ABORT = "abort";
 	public static final String ACTION = "action";
 	public static final String ADD = "add";
 	public static final String AGENT = "agent";
@@ -134,6 +133,7 @@ public interface IKeyword {
 	public static final String ENTITIES = "entities";
 	public static final String ENVIRONMENT = "environment";
 	public static final String EQUALS = "equals";
+	public static final String GAMA = "gama";
 	/*
 	 * Equations
 	 */
@@ -491,7 +491,7 @@ public interface IKeyword {
 	// external progam
 	public static final String ALPHA = "alpha";
 
-	public final static String INTERNAL = "internal_";
+	public final static String INTERNAL = "_internal_";
 
 	/**
 	 * Gen*
@@ -501,4 +501,5 @@ public interface IKeyword {
 	public static final String GENSTAR_POPULATION = "genstar_population";
 	public static final String GENSTAR_ENTITY = "genstar_entity";
 	public static final String SYNTHETIC_RESOURCES_PREFIX = "__synthetic__";
+	public static final String PLATFORM = "platform";
 }

@@ -1,3 +1,12 @@
+/*********************************************************************************************
+ *
+ * 'ExecutionContext.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gama.runtime;
 
 import java.util.Collections;
@@ -52,6 +61,11 @@ public class ExecutionContext implements IExecutionContext {
 	}
 
 	@Override
+	public ExecutionContext createChildContext() {
+		return new ExecutionContext(this);
+	}
+
+	@Override
 	public Map<? extends String, ? extends Object> getLocalVars() {
 		return local == null ? Collections.EMPTY_MAP : local;
 	}
@@ -65,9 +79,6 @@ public class ExecutionContext implements IExecutionContext {
 	public void putLocalVar(final String varName, final Object val) {
 		if (local == null)
 			local = new THashMap<>();
-		// if (varName == ExecutionScope.EACH)
-		// System.out.println("EACH value set to " + val + " in context " +
-		// this);
 		local.put(varName, val);
 	}
 

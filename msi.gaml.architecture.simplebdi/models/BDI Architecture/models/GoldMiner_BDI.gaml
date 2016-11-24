@@ -95,7 +95,7 @@ species miner skills: [moving] control:simple_bdi {
 	
 	//plan that has for goal to fulfill the define gold target desire. This plan is instantaneous (does not take a complete simulation step to apply).
 	plan choose_gold_target intention: define_gold_target instantaneous: true{
-		list<point> possible_golds <- get_beliefs("location_gold") collect (point(predicate(each).values["location_value"]));
+		list<point> possible_golds <- get_beliefs_with_name("location_gold") collect (point(predicate(each).values["location_value"]));
 		if (empty(possible_golds)) {
 			do remove_intention(get_gold, true);
 		} else {

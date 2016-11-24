@@ -1,12 +1,11 @@
 /*********************************************************************************************
  *
- *
- * 'LayeredDisplayView.java', in plugin 'msi.gama.application', is part of the source code of the
+ * 'LayeredDisplayView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package ummisco.gama.ui.views.displays;
@@ -77,7 +76,7 @@ import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.GamaViewPart;
-import ummisco.gama.ui.views.console.InteractiveConsoleView;
+import ummisco.gama.ui.views.InteractiveConsoleView;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;

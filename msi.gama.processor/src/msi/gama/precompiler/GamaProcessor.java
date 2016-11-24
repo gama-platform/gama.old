@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'GamaProcessor.java, in plugin msi.gama.processor, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'GamaProcessor.java', in plugin 'msi.gama.processor', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.precompiler;
@@ -85,12 +83,12 @@ import msi.gama.precompiler.GamlAnnotations.validator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaProcessor extends AbstractProcessor {
 
 	private GamlProperties gp;
 	private final static boolean PRODUCES_DOC = true;
-	private final static boolean PRODUCES_WARNING = false;
+	private final static boolean PRODUCES_WARNING = true;
 	private GamlDocProcessor docProc;
 	private TypeMirror iSkill, iAgent;
 	private static final Charset CHARSET = Charset.forName("UTF-8");
@@ -127,6 +125,15 @@ public class GamaProcessor extends AbstractProcessor {
 			processingEnv.getMessager().printMessage(Kind.WARNING, s);
 		else
 			processingEnv.getMessager().printMessage(Kind.WARNING, s, e);
+	}
+
+	private void emitError(final String s, final Element e) {
+		if (!PRODUCES_WARNING)
+			return;
+		if (e == null)
+			processingEnv.getMessager().printMessage(Kind.ERROR, s);
+		else
+			processingEnv.getMessager().printMessage(Kind.ERROR, s, e);
 	}
 
 	@Override
@@ -212,6 +219,8 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	String rawNameOf(final TypeMirror t) {
+		if (t.getKind().equals(TypeKind.VOID))
+			return "void";
 		final String init = processingEnv.getTypeUtils().erasure(t).toString();
 		final String[] segments = init.split("\\.");
 		final StringBuilder sb = new StringBuilder();
@@ -239,8 +248,8 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Format : 0.type 1.type 2. contentType 3.varName 4.class 5.[facetName,
-	 * facetValue]+ 6.getter 7.initializer(true/false)? 8.setter
+	 * Format : 0.type 1.type 2. contentType 3.varName 4.class 5.[facetName, facetValue]+ 6.getter
+	 * 7.initializer(true/false)? 8.setter
 	 * 
 	 * @param env
 	 */
@@ -359,7 +368,13 @@ public class GamaProcessor extends AbstractProcessor {
 					sb.append("null");
 				}
 				sb.append(SEP);
-				gp.put(sb.toString(), "");
+				String d;
+				if (docs.length == 0) {
+					d = "";
+				} else {
+					d = docs[0].value();
+				}
+				gp.put(sb.toString(), d);
 			}
 		}
 	}
@@ -421,9 +436,8 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Computes the representation of symbols. Format: prefix 0.kind 1.class
-	 * 2.remote 3.with_args 4.with_scope 5.with_sequence 6.symbols_inside
-	 * 7.kinds_inside 8.nbFacets 9.[facet]* 10.omissible 11.[name$]*
+	 * Computes the representation of symbols. Format: prefix 0.kind 1.class 2.remote 3.with_args 4.with_scope
+	 * 5.with_sequence 6.symbols_inside 7.kinds_inside 8.nbFacets 9.[facet]* 10.omissible 11.[name$]*
 	 * 
 	 * @param env
 	 */
@@ -552,26 +566,20 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Format 0.value 1.deprecated 2.returns 3.comment 4.nb_cases
-	 * 5.[specialCases$]* 6.nb_examples 7.[examples$]* Uses its own separator
-	 * (DOC_SEP)
+	 * Format 0.value 1.deprecated 2.returns 3.comment 4.nb_cases 5.[specialCases$]* 6.nb_examples 7.[examples$]* Uses
+	 * its own separator (DOC_SEP)
 	 *
 	 * @param docs
 	 *            an Array of @doc annotations (only the 1st is significant)
-	 * @return aString containing the documentation formatted using the format
-	 *         above
+	 * @return aString containing the documentation formatted using the format above
 	 */
 	private String docToString(final doc[] docs) {
-		if (docs == null || docs.length == 0) {
-			return "";
-		}
+		if (docs == null || docs.length == 0) { return ""; }
 		return docToString(docs[0]);
 	}
 
 	private String docToString(final doc doc) {
-		if (doc == null) {
-			return "";
-		}
+		if (doc == null) { return ""; }
 		final StringBuilder sb = new StringBuilder();
 		sb.append(doc.value()).append(DOC_SEP);
 		sb.append(doc.deprecated());
@@ -609,10 +617,13 @@ public class GamaProcessor extends AbstractProcessor {
 		return sb.toString();
 	}
 
+	private String typeArrayToFirstType(final int[] array) {
+		if (array.length == 0) { return "unknown"; }
+		return Integer.toString(array[0]);
+	}
+
 	private String arrayToString(final int[] array) {
-		if (array.length == 0) {
-			return "";
-		}
+		if (array.length == 0) { return ""; }
 		final StringBuilder sb = new StringBuilder();
 		for (final int i : array) {
 			sb.append(i).append(",");
@@ -622,9 +633,7 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	private String arrayToString(final String[] array) {
-		if (array.length == 0) {
-			return "";
-		}
+		if (array.length == 0) { return ""; }
 		final StringBuilder sb = new StringBuilder();
 		for (final String i : array) {
 			sb.append(replaceCommas(i)).append(",");
@@ -649,8 +658,7 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Format : prefix 0.class 1.[handles,]* 2.[uses,]* Format :
-	 * ]class$handles*$uses*
+	 * Format : prefix 0.class 1.[handles,]* 2.[uses,]* Format : ]class$handles*$uses*
 	 * 
 	 * @param env
 	 */
@@ -832,42 +840,71 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	/**
-	 * Format : prefix 0.leftClass 1.rightClass 2.const 3.type 4.contentType
-	 * 5.iterator 6.priority 7.returnClass 8.methodName 9.static 10.contextual
-	 * 11.[name$]+
+	 * Format : prefix 0.leftClass 1.rightClass 2.const 3.type 4.contentType 5.iterator 6.priority 7.returnClass
+	 * 8.methodName 9.static 10.contextual 11.[name$]+
 	 * 
 	 * @param env
 	 */
 
 	public void processOperators(final RoundEnvironment env) {
 		for (final Element e : sortElements(env, operator.class)) {
-			final ExecutableElement ex = (ExecutableElement) e;
-			final operator op = ex.getAnnotation(operator.class);
-			doc documentation = ex.getAnnotation(doc.class);
+			final ExecutableElement method = (ExecutableElement) e;
+			final operator operator = method.getAnnotation(operator.class);
+			final String names[] = operator.value();
+			if (names == null) {
+				emitError("GAML operators need to have at least one name", method);
+				continue;
+			}
+			final String name = operator.value()[0];
+			doc documentation = method.getAnnotation(doc.class);
 			if (documentation == null) {
-				final doc[] docs = op.doc();
+				final doc[] docs = operator.doc();
 				if (docs.length > 0)
-					documentation = op.doc()[0];
+					documentation = operator.doc()[0];
 			}
 
 			if (documentation == null) {
-				emitWarning("GAML: operator '" + op.value()[0] + "' is not documented", e);
+				emitWarning("GAML: operator '" + name + "' is not documented", e);
 			}
+			final Set<Modifier> modifiers = method.getModifiers();
 
-			final boolean stat = ex.getModifiers().contains(Modifier.STATIC);
-			final String declClass = rawNameOf(ex.getEnclosingElement());
-			final List<? extends VariableElement> argParams = ex.getParameters();
+			final boolean isStatic = modifiers.contains(Modifier.STATIC);
+
+			if (!modifiers.contains(Modifier.PUBLIC)) {
+				emitError("GAML operators can only be implemented by public (or public static) methods", method);
+				continue;
+			}
+			final String declClass = rawNameOf(method.getEnclosingElement());
+			final List<? extends VariableElement> argParams = method.getParameters();
 			final String[] args = new String[argParams.size()];
 			for (int i = 0; i < args.length; i++) {
+				final VariableElement ve = argParams.get(i);
+				switch (ve.asType().getKind()) {
+					case ARRAY:
+						emitError(
+								"GAML operators cannot accept Java arrays arguments. Please wrap this argument in a GAML container type (list or matrix) ",
+								ve);
+						return;
+					case CHAR:
+					case BYTE:
+					case SHORT:
+						emitWarning("The type of this argument will be casted to integer in GAML", ve);
+						break;
+					default:
+				}
 				args[i] = rawNameOf(argParams.get(i));
 			}
 			final int n = args.length;
+			if (n == 0 && !isStatic) {
+				emitError("GAML operators need to have at least one argument", method);
+				continue;
+			}
 			final boolean scope = n > 0 && args[0].contains("IScope");
-			final int actual_args_number = n + (scope ? -1 : 0) + (!stat ? 1 : 0);
-			String methodName = ex.getSimpleName().toString();
+			final int actual_args_number = n + (scope ? -1 : 0) + (!isStatic ? 1 : 0);
+			String methodName = method.getSimpleName().toString();
 			final String[] classes = new String[actual_args_number];
 			int begin = 0;
-			if (!stat) {
+			if (!isStatic) {
 				classes[0] = declClass;
 				begin = 1;
 			}
@@ -877,10 +914,41 @@ public class GamaProcessor extends AbstractProcessor {
 					classes[begin + i] = args[i + shift];
 				}
 			} catch (final Exception e1) {
+				emitError("An exception occurred in the processor: " + e1.getMessage(), method);
+				continue;
 			}
 
-			final String ret = rawNameOf(ex.getReturnType());
-			methodName = stat ? declClass + "." + methodName : methodName;
+			final String ret = rawNameOf(method.getReturnType());
+
+			switch (method.getReturnType().getKind()) {
+				case ARRAY:
+					emitError(
+							"GAML operators cannot return Java arrays. Please wrap this result in a GAML container type (list or matrix) ",
+							method);
+					continue;
+				case VOID: // does not seem to be recognized
+				case NULL:
+				case NONE:
+				case ERROR:
+					emitError("GAML operators need to return a value.", method);
+					continue;
+				case CHAR:
+				case BYTE:
+				case SHORT:
+					emitWarning("The return type of this operator will be casted to integer in GAML", method);
+					break;
+				case EXECUTABLE:
+					emitError("GAML operators cannot return Java executables", method);
+					continue;
+				default:
+			}
+
+			if (ret.equals("void")) {
+				emitError("GAML operators need to return a value", method);
+				continue;
+			}
+
+			methodName = isStatic ? declClass + "." + methodName : methodName;
 			final StringBuilder sb = new StringBuilder();
 			// prefix
 			sb.append(OPERATOR_PREFIX);
@@ -891,31 +959,30 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append(s).append(SEP);
 			}
 			// 2.canBeConst
-			sb.append(op.can_be_const()).append(SEP);
+			sb.append(operator.can_be_const()).append(SEP);
 			// 3.type
-			sb.append(op.type()).append(SEP);
+			sb.append(operator.type()).append(SEP);
 			// 4.contentType
-			sb.append(op.content_type()).append(SEP);
+			sb.append(operator.content_type()).append(SEP);
 			// 4+. index_type
-			sb.append(op.index_type()).append(SEP);
+			sb.append(operator.index_type()).append(SEP);
 			// 5.iterator
-			sb.append(op.iterator()).append(SEP);
+			sb.append(operator.iterator()).append(SEP);
 			// 6.expected types number
-			sb.append(op.expected_content_type().length).append(SEP);
+			sb.append(operator.expected_content_type().length).append(SEP);
 			// 6+ expected types
-			for (int i = 0; i < op.expected_content_type().length; i++) {
-				sb.append(op.expected_content_type()[i]).append(SEP);
+			for (int i = 0; i < operator.expected_content_type().length; i++) {
+				sb.append(operator.expected_content_type()[i]).append(SEP);
 			}
 			// 7.return class
 			sb.append(ret).append(SEP);
 			// 8.methodName
 			sb.append(methodName).append(SEP);
 			// 9.static
-			sb.append(stat).append(SEP);
+			sb.append(isStatic).append(SEP);
 			// 10.contextual
 			sb.append(scope);
 			// 11+. names
-			final String[] names = op.value();
 			for (int i = 0; i < names.length; i++) {
 				sb.append(SEP).append(names[i]);
 			}
@@ -923,6 +990,8 @@ public class GamaProcessor extends AbstractProcessor {
 			gp.put(sb.toString(), "" /* docToString(documentation) */);
 		}
 	}
+
+	private static Set<String> RESERVED_FACETS = new HashSet(Arrays.asList("name", "keyword", "returns"));
 
 	// Format: prefix 0.method 1.declClass 2.retClass 3.name 4.nbArgs 5.[arg]*
 	void processActions(final RoundEnvironment env) {
@@ -964,17 +1033,24 @@ public class GamaProcessor extends AbstractProcessor {
 			}
 			final int nb = strings.size();
 			sb.append(nb).append(SEP);
-			// args format 1.name 2.[type,]+ 3.optional
+			// args format 1.name 2.type 3.optional
 			strings.clear();
 			if (args.length > 0) {
 				for (int i = 0; i < args.length; i++) {
 					final arg arg = args[i];
-					sb.append(arg.name()).append(SEP);
-					sb.append(arrayToString(arg.type())).append(SEP);
+					final String argName = arg.name();
+					if (RESERVED_FACETS.contains(argName)) {
+						emitWarning(
+								"Argument " + argName
+										+ " will prevent this primitive to be called using facets (e.g. 'do action arg1: val1 arg2: val2;'). Consider renaming it to a non-reserved facet keyword",
+								e);
+					}
+					sb.append(argName).append(SEP);
+					sb.append(arg.type()).append(SEP);
 					sb.append(arg.optional()).append(SEP);
 					final doc[] docs = arg.doc();
 					if (docs.length == 0) {
-						emitWarning("GAML: argument '" + arg.name() + "' is not documented", e);
+						emitWarning("GAML: argument '" + argName + "' is not documented", e);
 					}
 					sb.append(docToString(arg.doc())).append(SEP);
 					strings.add(args[i].name());
@@ -998,22 +1074,7 @@ public class GamaProcessor extends AbstractProcessor {
 	public void processConstants(final RoundEnvironment env) {
 		for (final Element e : sortElements(env, constant.class)) {
 			final VariableElement ve = (VariableElement) e;
-			// final TypeMirror tm = ve.asType();
-			// boolean ok = tm instanceof PrimitiveType || tm instanceof
-			// ArrayType;
-			// ok |= this.rawNameOf(tm).startsWith("String");
 			final constant constant = ve.getAnnotation(constant.class);
-			// //if (!ok) {
-			//
-			// processingEnv.getMessager()
-			// .printMessage(Kind.WARNING, "GAML: constant '" + constant.value()
-			// +
-			// "' cannot be instance of "
-			// + tm.toString() + ". The type of constants must be either a
-			// primitive type or String",
-			// e);
-			//
-			// }
 
 			final doc documentation = constant.doc().length == 0 ? null : constant.doc()[0];
 
@@ -1071,16 +1132,14 @@ public class GamaProcessor extends AbstractProcessor {
 	}
 
 	private String name(final TypeElement e) {
-		if (e.getNestingKind() == NestingKind.TOP_LEVEL) {
-			return e.getQualifiedName().toString();
-		}
+		if (e.getNestingKind() == NestingKind.TOP_LEVEL) { return e.getQualifiedName().toString(); }
 		return name((TypeElement) e.getEnclosingElement()) + "." + e.getSimpleName().toString();
 	}
 
 	private Writer createWriter(final String s) {
 		try {
-			final OutputStream output = processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null)
-					.openOutputStream();
+			final OutputStream output =
+					processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null).openOutputStream();
 			final Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
 			return writer;
 		} catch (final Exception e) {
@@ -1091,8 +1150,8 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createSourceWriter() {
 		try {
-			final OutputStream output = processingEnv.getFiler().createSourceFile(ADDITIONS, (Element[]) null)
-					.openOutputStream();
+			final OutputStream output =
+					processingEnv.getFiler().createSourceFile(ADDITIONS, (Element[]) null).openOutputStream();
 			final Writer writer = new OutputStreamWriter(output, CHARSET);
 			return writer;
 		} catch (final Exception e) {

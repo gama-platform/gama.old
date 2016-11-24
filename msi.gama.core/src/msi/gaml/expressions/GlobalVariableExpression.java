@@ -1,12 +1,11 @@
 /*********************************************************************************************
  *
- *
- * 'GlobalVariableExpression.java', in plugin 'msi.gama.core', is part of the source code of the
+ * 'GlobalVariableExpression.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.expressions;
@@ -18,6 +17,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.ICollector;
+import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.VariableDescription;
@@ -71,9 +71,7 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
-		if (isNotModifiable) {
-			return;
-		}
+		if (isNotModifiable) { return; }
 		final IAgent sc = scope.getAgent();
 		sc.getScope().getRoot().getScope().setGlobalVarValue(getName(), v);
 	}
@@ -81,19 +79,26 @@ public class GlobalVariableExpression extends VariableExpression implements IVar
 	@Override
 	public String getTitle() {
 		final IDescription desc = getDefinitionDescription();
-		final boolean isParameter = desc == null ? false
-				: desc.getSpeciesContext().getAttribute(getName()).isParameter();
+		final boolean isParameter =
+				desc == null ? false : desc.getSpeciesContext().getAttribute(getName()).isParameter();
 		return "global " + (isParameter ? "parameter" : isNotModifiable ? "constant" : "attribute") + " " + getName()
 				+ " of type " + getType().getTitle();
 	}
 
-	/**
-	 * @see msi.gaml.expressions.IExpression#getDocumentation()
-	 */
 	@Override
 	public String getDocumentation() {
 		final IDescription desc = getDefinitionDescription();
-		return "Of type: " + type.getTitle() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
+		String s = "Type " + type.getTitle();
+		final String doc = AbstractGamlAdditions.TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.get(name);
+		if (doc != null)
+			s += "<br>" + doc;
+		if (desc == null)
+			return s;
+		final String quality =
+				(desc.isBuiltIn() ? "<br>Built In " : doc == null ? "<br>Defined in " : "<br>Redefined in ")
+						+ desc.getTitle();
+
+		return s + quality;
 	}
 
 	@Override

@@ -287,7 +287,7 @@ experiment main_gui type: gui {
          species buildings aspect: geometry;
          species dyke aspect: geometry ;
       }
-      display chart_display refresh: every(24) { 
+      display chart_display refresh: every(24#cycles) { 
          chart "Pressure on Dykes" type: series {
             data "Mean pressure on dykes " value: mean(dyke collect (each.water_pressure)) style: line color: #magenta ;
             data "Rate of dykes with max pressure" value: (dyke count (each.water_pressure = 1.0))/ length(dyke) style: line color: #red ;

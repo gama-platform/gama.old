@@ -1,7 +1,12 @@
-/**
- * Created by drogoul, 4 déc. 2014
+/*********************************************************************************************
  *
- */
+ * 'OtherExperimentsButton.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
 import java.util.ArrayList;
@@ -92,7 +97,6 @@ public class OtherExperimentsButton {
 			}
 
 		});
-		// setVisible(XtextGui.EDITOR_SHOW_OTHER.getValue());
 	}
 
 	private final SelectionAdapter adapter = new SelectionAdapter() {
@@ -208,14 +212,10 @@ public class OtherExperimentsButton {
 	 */
 	public void setVisible(final boolean enabled) {
 		if (enabled) {
-			if (menu != null) {
-				return;
-			}
+			if (menu != null) { return; }
 			createButton();
 		} else {
-			if (menu == null) {
-				return;
-			}
+			if (menu == null) { return; }
 			menu.dispose();
 			menu = null;
 		}

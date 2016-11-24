@@ -1,3 +1,12 @@
+/*********************************************************************************************
+ *
+ * 'SkillDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gaml.descriptions;
 
 import java.util.Collection;
@@ -36,7 +45,7 @@ public class SkillDescription extends TypeDescription {
 
 	@Override
 	public IDescription addChild(final IDescription child) {
-
+		child.setEnclosingDescription(this);
 		if (child instanceof ActionDescription) {
 			addAction((ActionDescription) child);
 		} else {
@@ -65,8 +74,7 @@ public class SkillDescription extends TypeDescription {
 		try {
 			instance = (Skill) getJavaBase().newInstance();
 			instance.setDescription(this);
-		} catch (InstantiationException | IllegalAccessException e) {
-		}
+		} catch (InstantiationException | IllegalAccessException e) {}
 		return instance;
 	}
 
@@ -78,6 +86,11 @@ public class SkillDescription extends TypeDescription {
 
 	public boolean isControl() {
 		return isControl;
+	}
+
+	@Override
+	public String getTitle() {
+		return "skill " + getName();
 	}
 
 	@Override

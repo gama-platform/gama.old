@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'AbstractGamlAdditions.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'AbstractGamlAdditions.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.compilation;
@@ -73,14 +71,13 @@ import msi.gaml.types.Types;
 
 /**
  *
- * The class AbstractGamlAdditions. Default base implementation for plugins'
- * gaml additions.
+ * The class AbstractGamlAdditions. Default base implementation for plugins' gaml additions.
  *
  * @author drogoul
  * @since 17 mai 2012
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static final Set<String> CONSTANTS = new HashSet();
@@ -88,7 +85,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	private static Function<Class, Collection<IDescription>> INTO_DESCRIPTIONS = input -> ADDITIONS.get(input);
 	private final static Multimap<Class, OperatorProto> FIELDS = HashMultimap.create();
 	public final static Multimap<Integer, String> VARTYPE2KEYWORDS = HashMultimap.create();
-	public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS = new THashMap<String, IGamaPopulationsLinker>();
+	public final static Map<String, IGamaPopulationsLinker> POPULATIONS_LINKERS =
+			new THashMap<String, IGamaPopulationsLinker>();
+	public final static Map<String, String> TEMPORARY_BUILT_IN_VARS_DOCUMENTATION = new THashMap<>();
 
 	protected static String[] S(final String... strings) {
 		return strings;
@@ -134,8 +133,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _experiment(final String string, final Class class1, final IExperimentAgentCreator d) {
 		CONSTANTS.add(string);
-		final ExperimentAgentDescription ed = new ExperimentAgentDescription(d, string,
-				GamaBundleLoader.CURRENT_PLUGIN_NAME);
+		final ExperimentAgentDescription ed =
+				new ExperimentAgentDescription(d, string, GamaBundleLoader.CURRENT_PLUGIN_NAME);
 		GamaMetaModel.INSTANCE.addExperimentAgentCreator(string, ed);
 	}
 
@@ -250,23 +249,25 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	protected void _populationsLinker(final String name, final Class clazz,
 			final IGamaPopulationsLinkerConstructor helper) {
 		final IGamaPopulationsLinker linker = helper.newInstance();
-		if (POPULATIONS_LINKERS.get(name) != null) {
-		} // TODO inform duplication
+		if (POPULATIONS_LINKERS.get(name) != null) {} // TODO inform duplication
 		POPULATIONS_LINKERS.put(name, linker);
 	}
 
 	private void add(final Class clazz, final IDescription desc) {
 		ADDITIONS.put(clazz, desc);
+
+		// final mettre documentation ?
 	}
 
-	protected void _var(final Class clazz, final IDescription desc, final GamaHelper get, final GamaHelper init,
-			final GamaHelper set) {
+	protected void _var(final Class clazz, final String doc, final IDescription desc, final GamaHelper get,
+			final GamaHelper init, final GamaHelper set) {
 		add(clazz, desc);
 		((VariableDescription) desc).addHelpers(get, init, set);
+		TEMPORARY_BUILT_IN_VARS_DOCUMENTATION.put(desc.getName(), doc);
 		((VariableDescription) desc).setDefiningPlugin(GamaBundleLoader.CURRENT_PLUGIN_NAME);
 	}
 
-	protected void _field(final Class clazz, final OperatorProto getter) {
+	protected void _field(final Class clazz, final String doc, final OperatorProto getter) {
 		FIELDS.put(clazz, getter);
 	}
 
@@ -280,7 +281,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	protected IDescription desc(final int keyword, final String... facets) {
-		return desc(Types.get(keyword).toString(), facets);
+		final IType t = Types.get(keyword);
+		return desc(t.toString(), facets);
 	}
 
 	protected void _action(final String methodName, final Class clazz, final GamaHelper e, final IDescription desc,
@@ -306,8 +308,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public static Map<String, OperatorProto> getAllFields(final Class clazz) {
-		final List<Class> classes = JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET,
-				FIELDS.keySet());
+		final List<Class> classes =
+				JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, FIELDS.keySet());
 		final Map<String, OperatorProto> fieldsMap = new TOrderedHashMap();
 		for (final Class c : classes) {
 			for (final OperatorProto desc : FIELDS.get(c)) {
@@ -421,14 +423,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	 * @return
 	 */
 	public static boolean isUnaryOperator(final String name) {
-		if (!OPERATORS.containsKey(name)) {
-			return false;
-		}
+		if (!OPERATORS.containsKey(name)) { return false; }
 		final Map<Signature, OperatorProto> map = OPERATORS.get(name);
 		for (final Signature s : map.keySet()) {
-			if (s.isUnary()) {
-				return true;
-			}
+			if (s.isUnary()) { return true; }
 		}
 		return false;
 	}

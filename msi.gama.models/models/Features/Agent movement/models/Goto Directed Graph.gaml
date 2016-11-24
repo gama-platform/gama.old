@@ -66,7 +66,7 @@ species people skills: [moving] {
 		
 		//The operator goto is a built-in operator derivated from the moving skill, moving the agent from its location to its target, 
 		//   restricted by the on variable, with the speed and returning the path followed
-		my_path <- self goto (on:the_graph, target:target, speed:10, return_path: true);
+		my_path <- self goto (on:the_graph, target:target, speed:10.0, return_path: true);
 		
 		//If the agent arrived to its target location, then it choose randomly an other target on the road
 		if (target = location) {			

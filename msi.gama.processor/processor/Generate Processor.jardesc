@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="msi.gama.processor/processor/plugins/msi.gama.processor_1.4.0.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/msi.gama.processor/processor/Generate Processor.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" manifestLocation="/msi.gama.processor/META-INF/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="false" exportJavaFiles="true" exportOutputFolder="true">
+        <file path="/msi.gama.processor/.classpath"/>
+        <folder path="/msi.gama.processor/META-INF"/>
+        <file path="/msi.gama.processor/.gitignore"/>
+        <file path="/msi.gama.processor/build.properties"/>
+        <file path="/msi.gama.processor/.project"/>
+        <file path="/msi.gama.processor/plugin.xml"/>
+        <file path="/msi.gama.processor/.DS_Store"/>
+        <file path="/msi.gama.processor/pom.xml"/>
+        <javaElement handleIdentifier="=ummisco.gama.annotations/src"/>
+        <javaElement handleIdentifier="=msi.gama.processor/src"/>
+    </selectedElements>
+</jardesc>

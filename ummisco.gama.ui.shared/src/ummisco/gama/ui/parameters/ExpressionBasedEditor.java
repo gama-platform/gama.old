@@ -1,7 +1,13 @@
-/**
- * Created by drogoul, 30 nov. 2014
+/*********************************************************************************************
  *
- */
+ * 'ExpressionBasedEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package ummisco.gama.ui.parameters;
 
 import org.eclipse.swt.SWT;
@@ -9,7 +15,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 
-import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
@@ -45,9 +50,7 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 
 	@Override
 	public Text getEditorControl() {
-		if (expression == null) {
-			return null;
-		}
+		if (expression == null) { return null; }
 		return expression.getControl();
 	}
 
@@ -62,7 +65,10 @@ public abstract class ExpressionBasedEditor<T> extends AbstractEditor<T> {
 	protected void displayParameterValue() {
 		internalModification = true;
 		expression.displayValue(currentValue);
-		expression.getControl().setText(StringUtils.toGaml(currentValue, false));
+		// if (getExpectedType() == Types.STRING)
+		// expression.getControl()
+		// .setText(currentValue == null ? "" : StringUtils.toJavaString(currentValue.toString()));
+		// expression.getControl().setText(StringUtils.toGaml(currentValue, false));
 		internalModification = false;
 	}
 

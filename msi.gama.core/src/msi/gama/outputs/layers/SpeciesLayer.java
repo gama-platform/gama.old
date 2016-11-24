@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'SpeciesLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'SpeciesLayer.java', in plugin 'msi.gama.application', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.outputs.layers;
@@ -101,37 +99,29 @@ public class SpeciesLayer extends AgentLayer {
 			// draw grids first...
 			final List<GridLayerStatement> gridLayers = layer.getGridLayers();
 			for (final GridLayerStatement gl : gridLayers) {
-				try {
-					// a.acquireLock();
-					if (a.dead() /* || scope.interrupted() */ ) {
-						continue;
-					}
-					microPop = ((IMacroAgent) a).getMicroPopulation(gl.getName());
-					if (microPop != null && microPop.size() > 0) {
-						// FIXME Needs to be entirely redefined using the new
-						// interfaces
-						// drawGridPopulation(a, gl, microPop, scope, g);
-					}
-				} finally {
-					// a.releaseLock();
+				// a.acquireLock();
+				if (a.dead() /* || scope.interrupted() */ ) {
+					continue;
+				}
+				microPop = ((IMacroAgent) a).getMicroPopulation(gl.getName());
+				if (microPop != null && microPop.size() > 0) {
+					// FIXME Needs to be entirely redefined using the new
+					// interfaces
+					// drawGridPopulation(a, gl, microPop, scope, g);
 				}
 			}
 
 			// then recursively draw the micro-populations
 			final List<SpeciesLayerStatement> microLayers = layer.getMicroSpeciesLayers();
 			for (final SpeciesLayerStatement ml : microLayers) {
-				try {
-					// a.acquireLock();
-					if (a.dead()) {
-						continue;
-					}
-					microPop = ((IMacroAgent) a).getMicroPopulation(ml.getSpecies());
+				// a.acquireLock();
+				if (a.dead()) {
+					continue;
+				}
+				microPop = ((IMacroAgent) a).getMicroPopulation(ml.getSpecies());
 
-					if (microPop != null && microPop.size() > 0) {
-						drawPopulation(scope, g, ml, microPop);
-					}
-				} finally {
-					// a.releaseLock();
+				if (microPop != null && microPop.size() > 0) {
+					drawPopulation(scope, g, ml, microPop);
 				}
 			}
 		}

@@ -69,7 +69,7 @@ species people skills: [moving]{
 	//Reflex to move the agent 
 	reflex move {
 		//Make the agent move only on cell without walls
-		do goto target: target speed: 1 on: (cell where not each.is_wall) recompute_path: false;
+		do goto target: target speed: 1.0 on: (cell where not each.is_wall) recompute_path: false;
 		//If the agent is close enough to the exit, it dies
 		if (self distance_to target) < 2.0 {
 			do die;

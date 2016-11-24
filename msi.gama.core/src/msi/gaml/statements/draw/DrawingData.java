@@ -1,7 +1,13 @@
-/**
- * Created by drogoul, 28 janv. 2016
+/*********************************************************************************************
  *
- */
+ * 'DrawingData.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gaml.statements.draw;
 
 import java.awt.Color;
@@ -25,15 +31,14 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * Class DrawingData. This class contains a number of attributes to help draw
- * geometries, pictures, files and text. These attributes are supplied either by
- * the draw statement or by the layer
+ * Class DrawingData. This class contains a number of attributes to help draw geometries, pictures, files and text.
+ * These attributes are supplied either by the draw statement or by the layer
  *
  * @author drogoul
  * @since 28 janv. 2016
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class DrawingData {
 
 	static final GamaPoint DEFAULT_AXIS = new GamaPoint(0, 0, 1);
@@ -223,8 +228,8 @@ public class DrawingData {
 					currentRotation = Cast.asPair(scope, rotationExp.value(scope), true);
 					currentRotation.key = Cast.asFloat(scope, currentRotation.key);
 				} else {
-					currentRotation = new GamaPair(scope, rotationExp.value(scope), DEFAULT_AXIS, Types.FLOAT,
-							Types.POINT);
+					currentRotation =
+							new GamaPair(scope, rotationExp.value(scope), DEFAULT_AXIS, Types.FLOAT, Types.POINT);
 					currentRotation.key = Cast.asFloat(scope, currentRotation.key);
 				}
 			}
@@ -248,9 +253,6 @@ public class DrawingData {
 		}
 
 		/* COLOR */
-		// if (constantColor != null) {
-		// currentColor = constantColor;
-		// } else {
 		if (colorExp != null) {
 			switch (colorExp.getType().id()) {
 				case IType.COLOR:
@@ -261,7 +263,7 @@ public class DrawingData {
 					currentColors = (IList) colorExp.value(scope);
 					if (!currentColors.isEmpty()) {
 						currentColor = currentColors.get(0);
-					} else currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
+					}
 					break;
 				default:
 					currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
@@ -269,14 +271,8 @@ public class DrawingData {
 
 		} else {
 			currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
-		}/*
-		if (colorExp != null && Cast.asColor(scope, colorExp.value(scope)) != null) {
-			final IList<GamaColor> val = Cast.asList(scope, colorExp.value(scope));
-			currentColors = val;
-			currentColor = Cast.asColor(scope, colorExp.value(scope));
-		} else {
-			currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
-		}*/
+		}
+
 		// }
 
 		/* BORDER */

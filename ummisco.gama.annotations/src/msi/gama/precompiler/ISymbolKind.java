@@ -1,18 +1,18 @@
 /*********************************************************************************************
+ *
+ * 'ISymbolKind.java, in plugin ummisco.gama.annotations, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
- * 
- * 'ISymbolKind.java', in plugin 'msi.gama.processor', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
  **********************************************************************************************/
 package msi.gama.precompiler;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -34,6 +34,15 @@ public interface ISymbolKind {
 		public static final int REGULAR = 104;
 
 		public static final Set<Integer> KINDS = new HashSet<>(Arrays.asList(NUMBER, CONTAINER, REGULAR, SIGNAL));
+
+		public static final Map<Integer, String> KINDS_AS_STRING = new HashMap<Integer, String>() {
+			{
+				put(NUMBER, "number");
+				put(CONTAINER, "container");
+				put(REGULAR, "regular");
+				put(SIGNAL, "signal");
+			}
+		};
 	}
 
 	public static final int SPECIES = 0;
@@ -69,10 +78,12 @@ public interface ISymbolKind {
 
 	public static final int OPERATOR = 15;
 
+	public static final int PLATFORM = 16;
+
 	// Update this variable when adding a kind of symbol
-	public static final int __NUMBER__ = 16;
+	public static final int __NUMBER__ = 17;
 
 	public static final String[] TEMPLATE_MENU = { "Species", "Model", "Statement", "Behavior", "Parameter", "Output",
-			"Layer", "Skill", "Batch", "Batch", "", "Statement", "Statement", "Experiment", "", "Operator" };
+			"Layer", "Skill", "Batch", "Batch", "", "Statement", "Statement", "Experiment", "", "Operator", "" };
 
 }

@@ -182,7 +182,7 @@
 		<jfreechart.version>1.0.19</jfreechart.version>
 		<jcommon.version>1.0.23</jcommon.version>
 		<jgrapht.version>0.9.1</jgrapht.version>
-		<joda-time.version>2.9</joda-time.version>
+		<streamex.version>0.6.1</streamex.version>
 		<kabeja.version>0.4</kabeja.version>
 		<olap4j.version>1.2.0</olap4j.version>
 		<osmosis.version>0.45</osmosis.version>

@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'VariableExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'VariableExpression.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.expressions;
@@ -79,9 +77,9 @@ public abstract class VariableExpression extends AbstractExpression implements I
 
 	@Override
 	public String getTitle() {
-		return isNotModifiable ? "constant"
-				: "variable " + getName() + " of type " + getType() + " defined in "
-						+ getDefinitionDescription().getTitle();
+
+		return isNotModifiable ? "constant" : "variable " + getName() + " of type " + getType()
+				+ (definitionDescription != null ? " defined in " + getDefinitionDescription().getTitle() : "");
 	}
 
 	@Override

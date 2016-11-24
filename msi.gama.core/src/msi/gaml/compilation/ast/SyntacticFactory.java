@@ -1,13 +1,11 @@
 /*********************************************************************************************
+ *
+ * 'SyntacticFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
- * 
- * 'SyntacticFactory.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
  **********************************************************************************************/
 package msi.gaml.compilation.ast;
 
@@ -33,6 +31,10 @@ public class SyntacticFactory {
 
 	public static final String SPECIES_VAR = "species_var";
 
+	public static SyntacticModelElement createSyntheticModel(final EObject statement) {
+		return new SyntacticModelElement("synthetic_model", null, statement, null);
+	}
+
 	public static ISyntacticElement create(final String keyword, final EObject statement, final boolean withChildren,
 			final Object... data) {
 		return create(keyword, null, statement, withChildren, data);
@@ -52,12 +54,8 @@ public class SyntacticFactory {
 				return new SyntacticModelElement(keyword, facets, statement, null);
 		} else if (keyword.equals(SPECIES) || keyword.equals(GRID)) {
 			return new SyntacticSpeciesElement(keyword, facets, statement);
-		} else if (keyword.equals(EXPERIMENT)) {
-			return new SyntacticExperimentElement(keyword, facets, statement);
-		}
-		if (!withChildren) {
-			return new SyntacticSingleElement(keyword, facets, statement);
-		}
+		} else if (keyword.equals(EXPERIMENT)) { return new SyntacticExperimentElement(keyword, facets, statement); }
+		if (!withChildren) { return new SyntacticSingleElement(keyword, facets, statement); }
 		return new SyntacticComposedElement(keyword, facets, statement);
 	}
 

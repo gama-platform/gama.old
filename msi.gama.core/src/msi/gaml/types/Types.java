@@ -1,31 +1,28 @@
 /*********************************************************************************************
  *
+ * 'Types.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'Types.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.types;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.descriptions.SpeciesDescription;
-import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -37,10 +34,10 @@ import msi.gaml.types.TypeTree.Order;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class Types {
 
-	public final static TypesManager builtInTypes = new TypesManager(null);
+	public final static ITypesManager builtInTypes = new TypesManager(null);
 
 	public final static IType NO_TYPE = new GamaNoType();
 
@@ -52,121 +49,121 @@ public class Types {
 
 	public static void cache(final int id, final IType instance) {
 		switch (id) {
-		case IType.INT:
-			INT = instance;
-			break;
-		case IType.FLOAT:
-			FLOAT = instance;
-			break;
-		case IType.BOOL:
-			BOOL = instance;
-			break;
-		case IType.COLOR:
-			COLOR = instance;
-			break;
-		case IType.DATE:
-			DATE = instance;
-			break;
-		case IType.MATERIAL:
-			MATERIAL = instance;
-			break;
-		case IType.STRING:
-			STRING = instance;
-			break;
-		case IType.POINT:
-			POINT = instance;
-			break;
-		case IType.GEOMETRY:
-			GEOMETRY = instance;
-			break;
-		case IType.TOPOLOGY:
-			TOPOLOGY = instance;
-			break;
-		case IType.LIST:
-			LIST = (IContainerType) instance;
-			break;
-		case IType.MAP:
-			MAP = (IContainerType) instance;
-			break;
-		case IType.GRAPH:
-			GRAPH = (IContainerType) instance;
-			break;
-		case IType.FILE:
-			FILE = (IContainerType) instance;
-			break;
-		case IType.PAIR:
-			PAIR = (IContainerType) instance;
-			break;
-		case IType.AGENT:
-			AGENT = instance;
-			break;
-		case IType.PATH:
-			PATH = instance;
-			break;
-		case IType.MATRIX:
-			MATRIX = (IContainerType) instance;
-			break;
-		case IType.CONTAINER:
-			CONTAINER = (IContainerType) instance;
-			break;
-		case IType.SPECIES:
-			SPECIES = (IContainerType) instance;
-			break;
-		case IType.FONT:
-			FONT = instance;
-			break;
-		case IType.SKILL:
-			SKILL = instance;
-			break;
-		default:
+			case IType.INT:
+				INT = instance;
+				break;
+			case IType.FLOAT:
+				FLOAT = instance;
+				break;
+			case IType.BOOL:
+				BOOL = instance;
+				break;
+			case IType.COLOR:
+				COLOR = instance;
+				break;
+			case IType.DATE:
+				DATE = instance;
+				break;
+			case IType.MATERIAL:
+				MATERIAL = instance;
+				break;
+			case IType.STRING:
+				STRING = instance;
+				break;
+			case IType.POINT:
+				POINT = instance;
+				break;
+			case IType.GEOMETRY:
+				GEOMETRY = instance;
+				break;
+			case IType.TOPOLOGY:
+				TOPOLOGY = instance;
+				break;
+			case IType.LIST:
+				LIST = (IContainerType) instance;
+				break;
+			case IType.MAP:
+				MAP = (IContainerType) instance;
+				break;
+			case IType.GRAPH:
+				GRAPH = (IContainerType) instance;
+				break;
+			case IType.FILE:
+				FILE = (IContainerType) instance;
+				break;
+			case IType.PAIR:
+				PAIR = (IContainerType) instance;
+				break;
+			case IType.AGENT:
+				AGENT = instance;
+				break;
+			case IType.PATH:
+				PATH = instance;
+				break;
+			case IType.MATRIX:
+				MATRIX = (IContainerType) instance;
+				break;
+			case IType.CONTAINER:
+				CONTAINER = (IContainerType) instance;
+				break;
+			case IType.SPECIES:
+				SPECIES = (IContainerType) instance;
+				break;
+			case IType.FONT:
+				FONT = instance;
+				break;
+			case IType.SKILL:
+				SKILL = instance;
+				break;
+			default:
 		}
 	}
 
 	public static IType get(final int type) {
 		// use cache first
 		switch (type) {
-		case IType.INT:
-			return INT;
-		case IType.FLOAT:
-			return FLOAT;
-		case IType.BOOL:
-			return BOOL;
-		case IType.COLOR:
-			return COLOR;
-		case IType.DATE:
-			return DATE;
-		case IType.STRING:
-			return STRING;
-		case IType.POINT:
-			return POINT;
-		case IType.GEOMETRY:
-			return GEOMETRY;
-		case IType.TOPOLOGY:
-			return TOPOLOGY;
-		case IType.LIST:
-			return LIST;
-		case IType.MAP:
-			return MAP;
-		case IType.GRAPH:
-			return GRAPH;
-		case IType.FILE:
-			return FILE;
-		case IType.PAIR:
-			return PAIR;
-		case IType.AGENT:
-			return AGENT;
-		case IType.PATH:
-			return PATH;
-		case IType.MATRIX:
-			return MATRIX;
-		case IType.CONTAINER:
-			return CONTAINER;
-		case IType.SPECIES:
-			return SPECIES;
-		case IType.SKILL:
-			return SKILL;
-		case IType.MATERIAL:
-			return MATERIAL;
+			case IType.INT:
+				return INT;
+			case IType.FLOAT:
+				return FLOAT;
+			case IType.BOOL:
+				return BOOL;
+			case IType.COLOR:
+				return COLOR;
+			case IType.DATE:
+				return DATE;
+			case IType.STRING:
+				return STRING;
+			case IType.POINT:
+				return POINT;
+			case IType.GEOMETRY:
+				return GEOMETRY;
+			case IType.TOPOLOGY:
+				return TOPOLOGY;
+			case IType.LIST:
+				return LIST;
+			case IType.MAP:
+				return MAP;
+			case IType.GRAPH:
+				return GRAPH;
+			case IType.FILE:
+				return FILE;
+			case IType.PAIR:
+				return PAIR;
+			case IType.AGENT:
+				return AGENT;
+			case IType.PATH:
+				return PATH;
+			case IType.MATRIX:
+				return MATRIX;
+			case IType.CONTAINER:
+				return CONTAINER;
+			case IType.SPECIES:
+				return SPECIES;
+			case IType.SKILL:
+				return SKILL;
+			case IType.MATERIAL:
+				return MATERIAL;
 		}
 		return builtInTypes.get(String.valueOf(type));
 	}
@@ -187,7 +184,7 @@ public class Types {
 			if (!type.isInterface()) {
 				newEntry = !Types.CLASSES_TYPES_CORRESPONDANCE.forEachEntry((support, id) -> {
 					if (support != Object.class && support.isAssignableFrom(type)) {
-						t[0] = builtInTypes.get(id);
+						t[0] = (IType<T>) builtInTypes.get(id);
 						return false;
 					}
 					return true;
@@ -201,7 +198,7 @@ public class Types {
 	}
 
 	public static Iterable<String> getTypeNames() {
-		return Iterables.transform(builtInTypes.getTypes(), each -> each.getName());
+		return Iterables.transform(builtInTypes.getAllTypes(), each -> each.getName());
 	}
 
 	public static void init() {
@@ -235,7 +232,7 @@ public class Types {
 		for (int i = 0; i < 10; i++) {
 			depths[i] = new ArrayList<>();
 		}
-		final Set<IType> list = new LinkedHashSet(builtInTypes.getTypes());
+		final Set<IType> list = Sets.newLinkedHashSet(builtInTypes.getAllTypes());
 		for (final IType t : list) {
 			// System.out.println("Type computing depth: " + t);
 
@@ -266,36 +263,8 @@ public class Types {
 	}
 
 	private static List<SpeciesDescription> builtInSpecies;
-	// private static TypeTree<SpeciesDescription> builtInSpeciesTree;
 
-	// public static TypeTree<SpeciesDescription> getBuiltInSpeciesTree() {
-	// if (builtInSpeciesTree != null)
-	// return builtInSpeciesTree;
-	// final ModelDescription root = ModelDescription.ROOT;
-	// final TypeTree<SpeciesDescription> result = new
-	// TypeTree(root.getSpeciesDescription(IKeyword.AGENT));
-	// final List<SpeciesDescription> speciesLeft = new
-	// ArrayList(getBuiltInSpecies());
-	// while (!speciesLeft.isEmpty()) {
-	// final List<SpeciesDescription> speciesToConsider = new
-	// ArrayList(speciesLeft);
-	// for (final SpeciesDescription sd : speciesToConsider) {
-	// if (result.exists(sd))
-	// speciesLeft.remove(sd);
-	// else {
-	// final TypeNode node = result.find(sd.getParent());
-	// if (node != null) {
-	// node.addChild(sd);
-	// speciesLeft.remove(sd);
-	// }
-	// }
-	// }
-	// }
-	// builtInSpeciesTree = result;
-	// return builtInSpeciesTree;
-	// }
-
-	public static Collection<? extends TypeDescription> getBuiltInSpecies() {
+	public static Collection<? extends SpeciesDescription> getBuiltInSpecies() {
 		if (builtInSpecies != null)
 			return builtInSpecies;
 		final ModelDescription root = ModelDescription.ROOT;
@@ -323,19 +292,18 @@ public class Types {
 	 */
 	public static boolean mapListCase(final IType receiverType, final IType assignedType, final IExpression expr2) {
 		if (receiverType.getType() == MAP && assignedType.getType() == LIST) {
-			if (expr2 instanceof ListExpression) {
-				return ((ListExpression) expr2).isEmpty();
-			}
-			if (expr2.isConst() && ((List) expr2.value(null)).isEmpty()) {
-				return true;
-			}
+			if (expr2 instanceof ListExpression) { return ((ListExpression) expr2).isEmpty(); }
+			if (expr2.isConst() && ((List) expr2.value(null)).isEmpty()) { return true; }
 		}
 		if (receiverType.getType() == MAP && assignedType.getType() == MAP) {
-			if (expr2.isConst() && ((Map) expr2.value(null)).isEmpty()) {
-				return true;
-			}
+			if (expr2.isConst() && ((Map) expr2.value(null)).isEmpty()) { return true; }
 		}
 		return false;
+	}
+
+	public static Iterable<OperatorProto> getAllFields() {
+		return Iterables
+				.concat(Iterables.transform(builtInTypes.getAllTypes(), (each) -> each.getFieldGetters().values()));
 	}
 
 }

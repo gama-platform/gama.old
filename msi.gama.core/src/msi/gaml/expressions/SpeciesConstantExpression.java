@@ -1,16 +1,15 @@
 /*********************************************************************************************
  *
+ * 'SpeciesConstantExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'SpeciesConstantExpression.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gaml.expressions;
 
+import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlProperties;
@@ -23,7 +22,7 @@ import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.IType;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class SpeciesConstantExpression extends ConstantExpression {
 
 	public SpeciesConstantExpression(final String string, final IType t) {
@@ -36,22 +35,18 @@ public class SpeciesConstantExpression extends ConstantExpression {
 		if (a != null) {
 			// hqnghi if main description contains micro-description then
 			// species comes from micro-model
+			final IModel m = scope.getModel();
 			final ModelDescription micro = this.getType().getContentType().getSpecies().getModelDescription();
-			final ModelDescription main = (ModelDescription) scope.getModel().getDescription();
-			final Boolean fromMicroModel = main.getMicroModel(micro.getAlias()) != null;
+			final ModelDescription main = m == null ? null : (ModelDescription) scope.getModel().getDescription();
+			final Boolean fromMicroModel = main == null || main.getMicroModel(micro.getAlias()) != null;
 			if (!fromMicroModel) {
 				final IPopulation pop = scope.getAgent().getPopulationFor((String) value);
-				if (pop != null) {
-					return pop.getSpecies();
-				}
-				return scope.getSimulation().getModel().getSpecies((String) value);
+				if (pop != null) { return pop.getSpecies(); }
+				return scope.getModel().getSpecies((String) value);
 			} else {
 				final IPopulation pop = scope.getRoot().getExternMicroPopulationFor(micro.getAlias() + "." + value);
-				if (pop != null) {
-					return pop.getSpecies();
-				}
-				return scope.getSimulation().getModel().getSpecies((String) value,
-						this.getType().getContentType().getSpecies());
+				if (pop != null) { return pop.getSpecies(); }
+				return scope.getModel().getSpecies((String) value, this.getType().getContentType().getSpecies());
 			}
 			// end-hqnghi
 		}

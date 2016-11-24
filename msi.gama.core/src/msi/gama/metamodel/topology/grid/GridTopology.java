@@ -1,17 +1,17 @@
 /*********************************************************************************************
  *
- *
- * 'GridTopology.java', in plugin 'msi.gama.core', is part of the source code of the
+ * 'GridTopology.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.metamodel.topology.grid;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -20,6 +20,7 @@ import com.vividsolutions.jts.geom.Envelope;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.population.IPopulationSet;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.AbstractTopology;
@@ -228,7 +229,19 @@ public class GridTopology extends AbstractTopology {
 		// If we only accept cells from this topology, no need to look for other
 		// agents
 		if (filter.getSpecies() == getPlaces().getCellSpecies()) {
-			return placesConcerned;
+			//case where the filter is the complete population set
+			if (filter instanceof IPopulationSet)
+				return placesConcerned;
+			else {
+				//otherwise, we return only the accepted cells
+				Set<IAgent> agents = new HashSet<IAgent>();
+				for (IAgent ag: placesConcerned) {
+					if (filter.accept(scope, null, ag))
+						agents.add(ag);
+				}
+				return agents;
+			}
+				
 		}
 		// Otherwise, we return all the agents that intersect the geometry
 		// formed by the shapes of the cells (incl. the

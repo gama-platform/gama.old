@@ -1,6 +1,14 @@
+/*********************************************************************************************
+ *
+ * 'PreferencesHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package ummisco.gama.ui.utils;
 
-import java.awt.Color;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -24,6 +32,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.Entry;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.IGui;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
 import ummisco.gama.ui.menus.GamaColorMenu;
@@ -34,30 +43,35 @@ import ummisco.gama.ui.views.GamaPreferencesView;
 
 public class PreferencesHelper {
 
-	public static final Entry<Color> SHAPEFILE_VIEWER_FILL = GamaPreferences
-			.create("shapefile.viewer.background", "Default shapefile viewer fill color", Color.LIGHT_GRAY, IType.COLOR)
+	public static final Entry<GamaColor> SHAPEFILE_VIEWER_FILL = GamaPreferences
+			.create("pref_shapefile_background_color", "Default shapefile viewer fill color",
+					GamaColor.getNamed("lightgray"), IType.COLOR)
 			.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
 
-	public static final Entry<Color> SHAPEFILE_VIEWER_LINE_COLOR = GamaPreferences
-			.create("shapefile.viewer.line.color", "Default shapefile viewer line color", Color.black, IType.COLOR)
-			.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
+	public static final Entry<GamaColor> SHAPEFILE_VIEWER_LINE_COLOR =
+			GamaPreferences
+					.create("pref_shapefile_line_color", "Default shapefile viewer line color",
+							GamaColor.getNamed("black"), IType.COLOR)
+					.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
 
-	public static final Entry<Color> ERROR_TEXT_COLOR = GamaPreferences
-			.create("error.text.color", "Text color of errors in error view",
-					GamaColors.toAwtColor(IGamaColors.ERROR.inactive()), IType.COLOR)
+	public static final Entry<GamaColor> ERROR_TEXT_COLOR = GamaPreferences
+			.create("pref_error_text_color", "Text color of errors in error view",
+					GamaColors.toGamaColor(IGamaColors.ERROR.inactive()), IType.COLOR)
 			.in(GamaPreferences.EXPERIMENTS).group("Errors");
 
-	public static final Entry<Color> WARNING_TEXT_COLOR = GamaPreferences
-			.create("warning.text.color", "Text color of warnings in error view",
-					GamaColors.toAwtColor(IGamaColors.WARNING.inactive()), IType.COLOR)
+	public static final Entry<GamaColor> WARNING_TEXT_COLOR = GamaPreferences
+			.create("pref_warning_text_color", "Text color of warnings in error view",
+					GamaColors.toGamaColor(IGamaColors.WARNING.inactive()), IType.COLOR)
 			.in(GamaPreferences.EXPERIMENTS).group("Errors");
 
-	public static final Entry<Color> IMAGE_VIEWER_BACKGROUND = GamaPreferences
-			.create("image.viewer.background", "Default image viewer background color", Color.white, IType.COLOR)
-			.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
+	public static final Entry<GamaColor> IMAGE_VIEWER_BACKGROUND =
+			GamaPreferences
+					.create("pref_image_background_color", "Default image viewer background color",
+							GamaColor.getNamed("white"), IType.COLOR)
+					.in(GamaPreferences.UI).group("Viewers (settings effective for new viewers)");
 
 	public static final Entry<GamaFont> BASE_BUTTON_FONT = GamaPreferences
-			.create("base_button_font", "Font of buttons (applies to new buttons)",
+			.create("pref_button_font", "Font of buttons (applies to new buttons)",
 					new GamaFont(GamaFonts.baseFont, SWT.BOLD, GamaFonts.baseSize), IType.FONT)
 			.in(GamaPreferences.UI).group("Fonts")
 			.addChangeListener(new GamaPreferences.IPreferenceChangeListener<GamaFont>() {
@@ -73,62 +87,63 @@ public class PreferencesHelper {
 				}
 			});
 
-	public static GamaPreferences.Entry<String> COLOR_MENU_SORT = GamaPreferences
-			.create("menu.colors.sort", "Sort colors menu by", "RGB value", IType.STRING)
-			.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
-			.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<String>() {
+	public static GamaPreferences.Entry<String> COLOR_MENU_SORT =
+			GamaPreferences.create("pref_menu_colors_sort", "Sort colors menu by", "RGB value", IType.STRING)
+					.among(GamaColorMenu.SORT_NAMES).activates("menu.colors.reverse", "menu.colors.group")
+					.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<String>() {
 
-				@Override
-				public boolean beforeValueChange(final String newValue) {
-					return true;
-				}
+						@Override
+						public boolean beforeValueChange(final String newValue) {
+							return true;
+						}
 
-				@Override
-				public void afterValueChange(final String pref) {
-					if (pref.equals(GamaColorMenu.SORT_NAMES[0])) {
-						GamaColorMenu.colorComp = GamaColorMenu.byRGB;
-					} else if (pref.equals(GamaColorMenu.SORT_NAMES[1])) {
-						GamaColorMenu.colorComp = GamaColorMenu.byName;
-					} else if (pref.equals(GamaColorMenu.SORT_NAMES[2])) {
-						GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
-					} else {
-						GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
-					}
-					GamaColorMenu.instance.reset();
-				}
-			});
-	public static GamaPreferences.Entry<Boolean> COLOR_MENU_REVERSE = GamaPreferences
-			.create("menu.colors.reverse", "Reverse order", false, IType.BOOL).in(GamaPreferences.UI).group("Menus")
-			.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+						@Override
+						public void afterValueChange(final String pref) {
+							if (pref.equals(GamaColorMenu.SORT_NAMES[0])) {
+								GamaColorMenu.colorComp = GamaColorMenu.byRGB;
+							} else if (pref.equals(GamaColorMenu.SORT_NAMES[1])) {
+								GamaColorMenu.colorComp = GamaColorMenu.byName;
+							} else if (pref.equals(GamaColorMenu.SORT_NAMES[2])) {
+								GamaColorMenu.colorComp = GamaColorMenu.byBrightness;
+							} else {
+								GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
+							}
+							GamaColorMenu.instance.reset();
+						}
+					});
+	public static GamaPreferences.Entry<Boolean> COLOR_MENU_REVERSE =
+			GamaPreferences.create("pref_menu_colors_reverse", "Reverse order", false, IType.BOOL)
+					.in(GamaPreferences.UI).group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-				@Override
-				public boolean beforeValueChange(final Boolean newValue) {
-					return true;
-				}
+						@Override
+						public boolean beforeValueChange(final Boolean newValue) {
+							return true;
+						}
 
-				@Override
-				public void afterValueChange(final Boolean pref) {
-					GamaColorMenu.setReverse(pref ? -1 : 1);
-					GamaColorMenu.instance.reset();
-				}
-			});
-	public static GamaPreferences.Entry<Boolean> COLOR_MENU_GROUP = GamaPreferences
-			.create("menu.colors.group", "Group colors", false, IType.BOOL).in(GamaPreferences.UI).group("Menus")
-			.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+						@Override
+						public void afterValueChange(final Boolean pref) {
+							GamaColorMenu.setReverse(pref ? -1 : 1);
+							GamaColorMenu.instance.reset();
+						}
+					});
+	public static GamaPreferences.Entry<Boolean> COLOR_MENU_GROUP =
+			GamaPreferences.create("pref_menu_colors_group", "Group colors", false, IType.BOOL).in(GamaPreferences.UI)
+					.group("Menus").addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-				@Override
-				public boolean beforeValueChange(final Boolean newValue) {
-					return true;
-				}
+						@Override
+						public boolean beforeValueChange(final Boolean newValue) {
+							return true;
+						}
 
-				@Override
-				public void afterValueChange(final Boolean pref) {
-					GamaColorMenu.breakdown = pref;
-					GamaColorMenu.instance.reset();
-				}
-			});
+						@Override
+						public void afterValueChange(final Boolean pref) {
+							GamaColorMenu.breakdown = pref;
+							GamaColorMenu.instance.reset();
+						}
+					});
 	public static final Entry<Boolean> NAVIGATOR_METADATA = GamaPreferences
-			.create("navigator.metadata", "Display metadata of data and GAML files in navigator", true, IType.BOOL)
+			.create("pref_navigator_display_metadata", "Display metadata of data and GAML files in navigator", true,
+					IType.BOOL)
 			.in(GamaPreferences.UI).group("Navigator").addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
 				@Override
@@ -152,7 +167,7 @@ public class PreferencesHelper {
 		final int memory = readMaxMemoryInMegabytes();
 		if (memory > 0) {
 			final GamaPreferences.Entry<Integer> p = GamaPreferences
-					.create("core_max_memory", "Maximum memory allocated to GAMA in megabytes", memory, 1)
+					.create("pref_memory_max", "Maximum memory allocated to GAMA in megabytes", memory, 1)
 					.in(GamaPreferences.EXPERIMENTAL).group("Memory (restart GAMA for it to take effect)");
 			p.addChangeListener(new IPreferenceChangeListener<Integer>() {
 
@@ -188,21 +203,21 @@ public class PreferencesHelper {
 							double divider = 1000000;
 							boolean unit = false;
 							switch (last) {
-							case 'k':
-							case 'K':
-								unit = true;
-								divider = 1000;
-								break;
-							case 'm':
-							case 'M':
-								unit = true;
-								divider = 1;
-								break;
-							case 'g':
-							case 'G':
-								unit = true;
-								divider = 0.001;
-								break;
+								case 'k':
+								case 'K':
+									unit = true;
+									divider = 1000;
+									break;
+								case 'm':
+								case 'M':
+									unit = true;
+									divider = 1;
+									break;
+								case 'g':
+								case 'G':
+									unit = true;
+									divider = 0.001;
+									break;
 							}
 							String trim = s;
 							trim = trim.replace("-Xmx", "");
@@ -216,8 +231,7 @@ public class PreferencesHelper {
 					}
 				}
 			}
-		} catch (final IOException e) {
-		}
+		} catch (final IOException e) {}
 		return 0;
 
 	}
@@ -252,8 +266,7 @@ public class PreferencesHelper {
 					writer.flush();
 				}
 			}
-		} catch (final IOException e) {
-		}
+		} catch (final IOException e) {}
 
 	}
 

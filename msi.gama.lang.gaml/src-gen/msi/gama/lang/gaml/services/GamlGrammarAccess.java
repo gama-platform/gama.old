@@ -6036,7 +6036,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//terminal KEYWORD:
-	//	'each' | 'self' | 'myself' | 'nil' | 'world';
+	//	'each' | 'self' | 'myself' | 'nil';
 	public TerminalRule getKEYWORDRule() {
 		return tKEYWORD;
 	} 

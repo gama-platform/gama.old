@@ -1,10 +1,19 @@
-/**
- * Created by drogoul, 4 juin 2015
+/*********************************************************************************************
  *
- */
+ * 'GamaRNG.java, in plugin msi.gama.core, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gama.util.random;
 
 import java.util.Random;
+
+import org.apache.commons.math3.random.RandomGenerator;
+import org.apache.commons.math3.random.RandomGeneratorFactory;
 
 /**
  * Class GamaRNG.
@@ -13,7 +22,7 @@ import java.util.Random;
  * @since 4 juin 2015
  *
  */
-public abstract class GamaRNG extends Random {
+public abstract class GamaRNG extends Random implements RandomGenerator {
 
 	// Mask for casting a byte to an int, bit-by-bit (with
 	// bitwise AND) with no special consideration for the sign bit.
@@ -82,6 +91,17 @@ public abstract class GamaRNG extends Random {
 			ints[i] = convertBytesToInt(bytes, i * 4);
 		}
 		return ints;
+	}
+
+	@Override
+	public void setSeed(int seed) {
+		super.setSeed(Integer.toUnsignedLong(seed));
+		
+	}
+
+	@Override
+	public void setSeed(int[] seed) {
+		 setSeed(RandomGeneratorFactory.convertToLong(seed));
 	}
 
 }

@@ -29,7 +29,7 @@ global skills:[network]{
 
 species NetworkingAgent skills:[moving]{
    rgb color;
-   reflex updateState when:every(10){
+   reflex updateState when:every(10#cycles){
    			write "teleportation from sender to reciever";
    			ask world{
 	          do teletransportation(myself,"reciever");	

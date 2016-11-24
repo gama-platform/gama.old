@@ -1,13 +1,12 @@
 /*********************************************************************************************
- * 
- * 
- * 'In.java', in plugin 'msi.gama.core', is part of the source code of the
+ *
+ * 'In.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
  **********************************************************************************************/
 package msi.gama.metamodel.topology.filter;
 
@@ -25,8 +24,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.IContainer;
 import msi.gama.util.IList;
+import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 @SuppressWarnings({ "rawtypes" })
@@ -39,7 +38,8 @@ public abstract class In implements IAgentFilter {
 		if (targets instanceof IPopulationSet) {
 			return (IPopulationSet) targets;
 		}
-		return new InList(targets.listValue(scope, Types.NO_TYPE, false));
+		ISpecies species = targets.getType().getContentType().isAgentType() ? Cast.asSpecies(scope, targets.getType().getContentType().getSpeciesName()) : null;
+		return new InList(targets.listValue(scope, Types.NO_TYPE, false), species);
 	}
 
 	public static IAgentFilter edgesOf(final ISpatialGraph graph) {
@@ -52,16 +52,16 @@ public abstract class In implements IAgentFilter {
 	private static class InList extends In {
 
 		final Set<IShape> agents;
-		final IType contentType;
+		ISpecies species;
 
-		InList(final IList<? extends IShape> list) {
+		InList(final IList<? extends IShape> list, ISpecies species) {
 			agents = new LinkedHashSet<IShape>(list);
-			contentType = list.getType().getContentType();
+			this.species = species;
 		}
 
 		@Override
 		public boolean accept(final IScope scope, final IShape source, final IShape a) {
-			return a.getGeometry() != source.getGeometry() && agents.contains(a);
+			return ((source == null) || (a.getGeometry() != source.getGeometry())) && agents.contains(a);
 		}
 
 		@Override
@@ -71,7 +71,7 @@ public abstract class In implements IAgentFilter {
 
 		@Override
 		public ISpecies getSpecies() {
-			return null;
+			return species;
 		}
 
 		@Override

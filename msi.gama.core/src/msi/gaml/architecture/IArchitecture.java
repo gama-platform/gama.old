@@ -1,13 +1,11 @@
 /*********************************************************************************************
+ *
+ * 'IArchitecture.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
  *
- * 'IArchitecture.java', in plugin 'msi.gama.core', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
  **********************************************************************************************/
 package msi.gaml.architecture;
 
@@ -26,6 +24,8 @@ import msi.gaml.statements.IStatement;
 public interface IArchitecture extends ISkill, IStatement {
 
 	public abstract boolean init(IScope scope) throws GamaRuntimeException;
+
+	public abstract boolean abort(IScope scope) throws GamaRuntimeException;
 
 	public abstract void verifyBehaviors(ISpecies context);
 }

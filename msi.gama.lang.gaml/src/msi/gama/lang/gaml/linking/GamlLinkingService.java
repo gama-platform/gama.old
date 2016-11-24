@@ -1,13 +1,11 @@
 /*********************************************************************************************
+ *
+ * 'GamlLinkingService.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
- * 
- * 'GamlLinkingService.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.linking;
 
@@ -32,13 +30,15 @@ import com.google.inject.Inject;
 import msi.gama.lang.gaml.EGaml;
 import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
+import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.runtime.IExecutionContext;
 
 /**
  * The class GamlLinkingService.
  * 
  * 
- * Provide the linking semantics for GAML. The references to 'imported' table
- * definitions are stubbed out by this class until the Indexer is implemented.
+ * Provide the linking semantics for GAML. The references to 'imported' table definitions are stubbed out by this class
+ * until the Indexer is implemented.
  * 
  * @author John Bito, adapted by Alexis Drogoul
  * @since 10 mai 2012
@@ -64,14 +64,18 @@ public class GamlLinkingService extends DefaultLinkingService {
 			// System.out.println("Adding stub reference to " + name + " as a "
 			// + clazz.getName());
 			// System.out.println("****************************************************");
-
-			final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(clazz);
-			stub.setName(name);
+			final EObject stub = create(name, clazz);
 			getResource().getContents().add(stub);
-			list = Collections.singletonList((EObject) stub);
+			list = Collections.singletonList(stub);
 			stubbedRefs.put(name, list);
 		}
 		return list;
+	}
+
+	public EObject create(final String name, final EClass clazz) {
+		final GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(clazz);
+		stub.setName(name);
+		return stub;
 	}
 
 	private Resource getResource() {
@@ -93,21 +97,27 @@ public class GamlLinkingService extends DefaultLinkingService {
 	}
 
 	/**
-	 * Override default in order to supply a stub object. If the default
-	 * implementation isn't able to resolve the link, assume it to be a local
-	 * resource.
+	 * Override default in order to supply a stub object. If the default implementation isn't able to resolve the link,
+	 * assume it to be a local resource.
 	 */
 	@Override
 	public List<EObject> getLinkedObjects(final EObject context, final EReference ref, final INode node)
 			throws IllegalNodeException {
 		final List<EObject> result = super.getLinkedObjects(context, ref, node);
 		// If the default implementation resolved the link, return it
-		if (null != result && !result.isEmpty()) {
-			return result;
-		}
+		if (null != result && !result.isEmpty()) { return result; }
 		final String name = getCrossRefNodeAsString(node);
-		if (GamlPackage.eINSTANCE.getTypeDefinition().isSuperTypeOf(ref.getEReferenceType())) {
-			return addSymbol(name, ref.getEReferenceType());
+		if (GamlPackage.eINSTANCE.getTypeDefinition()
+				.isSuperTypeOf(ref.getEReferenceType())) { return addSymbol(name, ref.getEReferenceType()); }
+		if (GamlPackage.eINSTANCE.getVarDefinition().isSuperTypeOf(ref.getEReferenceType())) {
+			if (name.startsWith("pref_"))
+				return addSymbol(name, ref.getEReferenceType());
+		}
+		final GamlResource resource = (GamlResource) context.eResource();
+		final IExecutionContext additionalContext = resource.getCache().getOrCreate(resource).get("linking");
+		if (additionalContext != null) {
+			if (additionalContext.hasLocalVar(name))
+				return Collections.singletonList(create(name, ref.getEReferenceType()));
 		}
 		return Collections.EMPTY_LIST;
 	}

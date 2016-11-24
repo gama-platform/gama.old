@@ -1,12 +1,10 @@
 /*********************************************************************************************
  *
+ * 'CompoundSpatialIndex.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * 'CompoundSpatialIndex.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.metamodel.topology;
@@ -34,36 +32,33 @@ import msi.gaml.species.ISpecies;
 public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compound {
 
 	boolean disposed = false;
-	ISpatialIndex[] all;
+	private ISpatialIndex[] all;
+	private static final ISpatialIndex[] EMPTY_INDEXES = new ISpatialIndex[0];
 	final TObjectIntHashMap<ISpecies> indexes;
 	final protected double[] steps;
 
 	public CompoundSpatialIndex(final Envelope bounds) {
 		indexes = new TObjectIntHashMap<>(10, 0.75f, -1);
 		// noEntryValue is 0 by default
-		all = new ISpatialIndex[] { GamaQuadTree.create(bounds) };
+		setAllSpatialIndexes(new ISpatialIndex[] { GamaQuadTree.create(bounds) });
 		final double biggest = FastMath.max(bounds.getWidth(), bounds.getHeight());
 		steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest, biggest * FastMath.sqrt(2) };
 	}
 
 	private ISpatialIndex findSpatialIndex(final ISpecies s) {
-		if (disposed) {
-			return null;
-		}
+		if (disposed) { return null; }
 		int index = indexes.get(s);
 		if (index == -1) {
 			index = 0;
 			indexes.put(s, 0);
 		}
-		return all[index];
+		return getAllSpatialIndexes()[index];
 	}
 
 	// Returns the index of the spatial index to use. Return -1 if all spatial
 	// indexes are concerned
 	private int findSpatialIndexes(final IAgentFilter f) {
-		if (disposed) {
-			return -1;
-		}
+		if (disposed) { return -1; }
 		final ISpecies s = f.getSpecies();
 		return indexes.get(s);
 
@@ -71,9 +66,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	@Override
 	public void insert(final IAgent a) {
-		if (a == null) {
-			return;
-		}
+		if (a == null) { return; }
 		final ISpatialIndex si = findSpatialIndex(a.getSpecies());
 		if (si != null) {
 			si.insert(a);
@@ -83,9 +76,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	@Override
 	public void remove(final Envelope previous, final IAgent o) {
 		final IAgent a = o.getAgent();
-		if (a == null) {
-			return;
-		}
+		if (a == null) { return; }
 		final ISpatialIndex si = findSpatialIndex(a.getSpecies());
 		if (si != null) {
 			si.remove(previous, o);
@@ -96,20 +87,16 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 			final ISpatialIndex index) {
 		for (int i = 0; i < steps.length; i++) {
 			final IAgent first = index.firstAtDistance(scope, source, steps[i], filter);
-			if (first != null) {
-				return first;
-			}
+			if (first != null) { return first; }
 		}
 		return null;
 	}
 
 	private IAgent firstAtDistance(final IScope scope, final IShape source, final IAgentFilter filter) {
-		if (disposed) {
-			return null;
-		}
+		if (disposed) { return null; }
 		final List<IAgent> shapes = new ArrayList<>();
 		for (int i = 0; i < steps.length; i++) {
-			for (final ISpatialIndex si : all) {
+			for (final ISpatialIndex si : getAllSpatialIndexes()) {
 				final IAgent first = si.firstAtDistance(scope, source, steps[i], filter);
 				if (first != null) {
 					shapes.add(first);
@@ -119,9 +106,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 				break;
 			}
 		}
-		if (shapes.size() == 1) {
-			return shapes.get(0);
-		}
+		if (shapes.size() == 1) { return shapes.get(0); }
 		// Adresses Issue 722 by shuffling the returned list using GAMA random
 		// procedure
 		scope.getRandom().shuffle(shapes);
@@ -142,44 +127,38 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public IAgent firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// TODO -- Verify : dist not taken into account here. Normal ?
 		final int id = findSpatialIndexes(f);
-		if (id != -1) {
-			return firstAtDistance(scope, source, f, all[id]);
-		}
+		if (id != -1) { return firstAtDistance(scope, source, f, getAllSpatialIndexes()[id]); }
 		return firstAtDistance(scope, source, f);
 	}
 
 	@Override
 	public Collection<IAgent> allAtDistance(final IScope scope, final IShape source, final double dist,
 			final IAgentFilter f) {
-		if (disposed) {
-			return Collections.EMPTY_LIST;
-		}
+		if (disposed) { return Collections.EMPTY_LIST; }
 		final int id = findSpatialIndexes(f);
 		if (id == -1) {
 			final Set<IAgent> agents = new THashSet<>();
-			for (final ISpatialIndex si : all) {
+			for (final ISpatialIndex si : getAllSpatialIndexes()) {
 				agents.addAll(si.allAtDistance(scope, source, dist, f));
 			}
 			return agents;
 		}
-		return all[id].allAtDistance(scope, source, dist, f);
+		return getAllSpatialIndexes()[id].allAtDistance(scope, source, dist, f);
 	}
 
 	@Override
 	public Collection<IAgent> allInEnvelope(final IScope scope, final IShape source, final Envelope envelope,
 			final IAgentFilter f, final boolean contained) {
-		if (disposed) {
-			return Collections.EMPTY_LIST;
-		}
+		if (disposed) { return Collections.EMPTY_LIST; }
 		final int id = findSpatialIndexes(f);
 		if (id == -1) {
 			final Set<IAgent> agents = new THashSet<>();
-			for (final ISpatialIndex si : all) {
+			for (final ISpatialIndex si : getAllSpatialIndexes()) {
 				agents.addAll(si.allInEnvelope(scope, source, envelope, f, contained));
 			}
 			return agents;
 		}
-		return all[id].allInEnvelope(scope, source, envelope, f, contained);
+		return getAllSpatialIndexes()[id].allInEnvelope(scope, source, envelope, f, contained);
 	}
 
 	// @Override
@@ -193,29 +172,27 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	@Override
 	public void add(final ISpatialIndex index, final ISpecies species) {
-		if (disposed) {
-			return;
-		}
-		all = Arrays.copyOf(all, all.length + 1);
-		all[all.length - 1] = index;
-		indexes.put(species, all.length - 1);
+		if (disposed) { return; }
+		setAllSpatialIndexes(Arrays.copyOf(getAllSpatialIndexes(), getAllSpatialIndexes().length + 1));
+		getAllSpatialIndexes()[getAllSpatialIndexes().length - 1] = index;
+		indexes.put(species, getAllSpatialIndexes().length - 1);
 	}
 
 	@Override
 	public void dispose() {
 		indexes.clear();
-		Arrays.fill(all, null);
-		all = null;
+		Arrays.fill(getAllSpatialIndexes(), null);
+		setAllSpatialIndexes(null);
 		disposed = true;
 	}
 
 	@Override
 	public void updateQuadtree(final Envelope envelope) {
-		ISpatialIndex tree = all[0];
+		ISpatialIndex tree = getAllSpatialIndexes()[0];
 		final Collection<IAgent> agents = tree.allAgents();
 		tree.dispose();
 		tree = GamaQuadTree.create(envelope);
-		all[0] = tree;
+		getAllSpatialIndexes()[0] = tree;
 		for (final IAgent a : agents)
 			tree.insert(a);
 
@@ -224,10 +201,20 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	@Override
 	public Collection<IAgent> allAgents() {
 		final ICollector<IAgent> set = new Collector.UniqueOrdered<>();
-		for (final ISpatialIndex i : all) {
+		for (final ISpatialIndex i : getAllSpatialIndexes()) {
 			set.addAll(i.allAgents());
 		}
 		return set;
+	}
+
+	ISpatialIndex[] getAllSpatialIndexes() {
+		if (all == null)
+			return EMPTY_INDEXES;
+		return all;
+	}
+
+	void setAllSpatialIndexes(final ISpatialIndex[] all) {
+		this.all = all;
 	}
 
 }

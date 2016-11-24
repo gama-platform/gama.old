@@ -1,12 +1,11 @@
 /*********************************************************************************************
  *
- *
- * 'GamlRuntimeModule.java', in plugin 'msi.gama.lang.gaml', is part of the source code of the
+ * 'GamlRuntimeModule.java, in plugin msi.gama.lang.gaml, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml;
@@ -48,15 +47,15 @@ import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.IType;
 
 /**
- * Use this class to register components to be used at runtime / without the
- * Equinox extension registry.
+ * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeModule {
 
 	private static boolean initialized;
 
-	public static GamaPreferences.Entry<Boolean> ENABLE_FAST_COMPIL = GamaPreferences.create("fast_compilation",
-			"Enable faster compilation (but less accurate error reporting in nagivator)", false, IType.BOOL)
+	public static GamaPreferences.Entry<Boolean> ENABLE_FAST_COMPIL = GamaPreferences
+			.create("pref_optimize_fast_compilation",
+					"Enable faster compilation (but less accurate error reporting in nagivator)", false, IType.BOOL)
 			.in(GamaPreferences.EXPERIMENTAL).group("Compilation");
 
 	public static void staticInitialize() {
@@ -90,13 +89,13 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return GamlQualifiedNameProvider.class;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	public Class<? extends IExpressionCompiler> bindIGamlExpressionCompiler() {
 		return GamlExpressionCompiler.class;
 	}
 
 	@Override
-	@SingletonBinding()
+	@SingletonBinding ()
 	public Class<? extends org.eclipse.xtext.scoping.IGlobalScopeProvider> bindIGlobalScopeProvider() {
 		return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
 	}
@@ -139,7 +138,8 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	// contributed by
 	// org.eclipse.xtext.generator.builder.BuilderIntegrationFragment
-	public Class<? extends org.eclipse.xtext.resource.containers.IAllContainersState.Provider> bindIAllContainersState$Provider() {
+	public Class<? extends org.eclipse.xtext.resource.containers.IAllContainersState.Provider>
+			bindIAllContainersState$Provider() {
 		return org.eclipse.xtext.resource.containers.ResourceSetBasedAllContainersStateProvider.class;
 	}
 

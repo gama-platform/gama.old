@@ -96,15 +96,6 @@
             name="User Control"
             restorable="false">
       </view>
-      <view
-            allowMultiple="false"
-            category="msi.gama.gui.category.gama"
-            class="ummisco.gama.ui.views.console.InteractiveConsoleView"
-            icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.interactive2.png"
-            id="msi.gama.application.view.InteractiveConsoleView"
-            name="Interactive console"
-            restorable="false">
-      </view>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -421,6 +412,13 @@
                      style="push"
                      tooltip="Toggle the main toolbar on and off">
                </command>
+               <command
+                     commandId="org.eclipse.ui.window.hideShowEditors"
+                     icon="platform:/plugin/ummisco.gama.ui.shared/icons/menu.save.perspective.png"
+                     label="Hide/Show Editors"
+                     style="push"
+                     tooltip="Hide or show the editors">
+               </command>
             </menu>
          </menu>
       </menuContribution>
@@ -597,9 +595,16 @@
             </and>
          </activeWhen>
          <enabledWhen>
-            <reference
-                  definitionId="isSimulationReady">
-            </reference>
+            <and>
+               <reference
+                     definitionId="isSimulationReady">
+               </reference>
+               <not>
+                  <reference
+                        definitionId="isSimulationRunning">
+                  </reference>
+               </not>
+            </and>
          </enabledWhen>
       </handler>
       <handler
@@ -710,29 +715,6 @@
             </and>
          </activeWhen>
       </handler>
-   </extension>
-   <extension
-         point="org.eclipse.ui.bindings">
-      <key
-            commandId="msi.gama.application.commands.PlaySimulation"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+R">
-      </key>
-      <key
-            commandId="msi.gama.application.commands.PauseSimulation"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+P">
-      </key>
-      <key
-            commandId="msi.gama.application.commands.StepByStepSimulation"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+P">
-      </key>
-      <key
-            commandId="msi.gama.application.commands.ReloadSimulation"
-            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="M1+M2+R">
-      </key>
    </extension>
    <extension
          point="org.eclipse.ui.contexts">

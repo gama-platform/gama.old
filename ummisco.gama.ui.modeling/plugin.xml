@@ -651,6 +651,21 @@
           <perspectiveShortcut
                 id="msi.gama.application.perspectives.SimulationPerspective">
           </perspectiveShortcut>
+          <view
+                closeable="false"
+                id="msi.gama.application.view.InteractiveConsoleView"
+                minimized="false"
+                moveable="true"
+                ratio="0.7"
+                relationship="bottom"
+                relative="org.eclipse.ui.editorss"
+                showTitle="true"
+                standalone="false"
+                visible="true">
+          </view>
+          <viewShortcut
+                id="msi.gama.application.view.InteractiveConsoleView">
+          </viewShortcut>
        </perspectiveExtension>
     </extension>
     <extension

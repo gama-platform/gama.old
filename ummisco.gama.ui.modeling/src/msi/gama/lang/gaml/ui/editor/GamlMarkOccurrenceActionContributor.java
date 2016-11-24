@@ -1,23 +1,27 @@
 /*********************************************************************************************
  *
- *
- * 'GamlMarkOccurrenceActionContributor.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
+ * 'GamlMarkOccurrenceActionContributor.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor;
 
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.ui.editor.occurrences.MarkOccurrenceActionContributor;
-import org.eclipse.xtext.ui.editor.preferences.*;
+import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreAccess;
+import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
+
 import com.google.inject.Singleton;
+
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.GamaPreferences.*;
+import msi.gama.common.GamaPreferences.Entry;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gaml.types.IType;
 
 /**
@@ -28,16 +32,17 @@ import msi.gaml.types.IType;
  *
  */
 @Singleton
-public class GamlMarkOccurrenceActionContributor extends MarkOccurrenceActionContributor implements IPreferenceStoreInitializer {
+public class GamlMarkOccurrenceActionContributor extends MarkOccurrenceActionContributor
+		implements IPreferenceStoreInitializer {
 
 	IPreferenceStoreAccess access;
 
 	@Override
 	public void contributeActions(final XtextEditor editor) {
 		super.contributeActions(editor);
-		IToolBarManager toolBarManager = editor.getEditorSite().getActionBars().getToolBarManager();
-		IContributionItem item = toolBarManager.find(getAction().getId());
-		if ( item != null ) {
+		final IToolBarManager toolBarManager = editor.getEditorSite().getActionBars().getToolBarManager();
+		final IContributionItem item = toolBarManager.find(getAction().getId());
+		if (item != null) {
 			toolBarManager.remove(item);
 		}
 
@@ -45,19 +50,20 @@ public class GamlMarkOccurrenceActionContributor extends MarkOccurrenceActionCon
 
 	// Preference here is an instance variable, but only one will be created as this class is a singleton.
 	public final Entry<Boolean> EDITOR_MARK_OCCURRENCES = GamaPreferences
-		.create("editor.mark.occurrences", "Mark occurrences of symbols in models", true, IType.BOOL)
-		.in(GamaPreferences.EDITOR).group("Presentation").addChangeListener(new IPreferenceChangeListener<Boolean>() {
+			.create("pref_editor_mark_occurrences", "Mark occurrences of symbols in models", true, IType.BOOL)
+			.in(GamaPreferences.EDITOR).group("Presentation")
+			.addChangeListener(new IPreferenceChangeListener<Boolean>() {
 
-			@Override
-			public boolean beforeValueChange(final Boolean newValue) {
-				return true;
-			}
+				@Override
+				public boolean beforeValueChange(final Boolean newValue) {
+					return true;
+				}
 
-			@Override
-			public void afterValueChange(final Boolean newValue) {
-				stateChanged(newValue);
-			}
-		});
+				@Override
+				public void afterValueChange(final Boolean newValue) {
+					stateChanged(newValue);
+				}
+			});
 
 	@Override
 	protected void stateChanged(final boolean newState) {
@@ -68,8 +74,8 @@ public class GamlMarkOccurrenceActionContributor extends MarkOccurrenceActionCon
 	public void initialize(final IPreferenceStoreAccess preferenceStoreAccess) {
 		access = preferenceStoreAccess;
 		preferenceStoreAccess.getWritablePreferenceStore().setDefault(getPreferenceKey(),
-			EDITOR_MARK_OCCURRENCES.getValue());
+				EDITOR_MARK_OCCURRENCES.getValue());
 		preferenceStoreAccess.getWritablePreferenceStore().setValue(getPreferenceKey(),
-			EDITOR_MARK_OCCURRENCES.getValue());
+				EDITOR_MARK_OCCURRENCES.getValue());
 	}
 }

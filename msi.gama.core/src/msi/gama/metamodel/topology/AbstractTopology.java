@@ -1,12 +1,11 @@
 /*********************************************************************************************
  *
- *
- * 'AbstractTopology.java', in plugin 'msi.gama.core', is part of the source code of the
+ * 'AbstractTopology.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.metamodel.topology;
@@ -14,7 +13,6 @@ package msi.gama.metamodel.topology;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -484,19 +482,13 @@ public abstract class AbstractTopology implements ITopology {
 		if (!isTorus()) {
 			final Envelope3D envelope = source.getEnvelope().intersection(environment.getEnvelope());
 			final Collection<IAgent> shapes = getSpatialIndex().allInEnvelope(scope, source, envelope, f, covered);
-			final Iterator<IAgent> it = shapes.iterator();
 			final PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
-			while (it.hasNext()) {
-				final IAgent input = it.next();
-				if (input.dead()) {
-					it.remove();
-					continue;
-				}
-				final Geometry geom = input.getInnerGeometry();
-				if (!(covered ? pg.covers(geom) : pg.intersects(geom))) {
-					it.remove();
-				}
-			}
+			shapes.removeIf(each -> {
+				if (each.dead())
+					return true;
+				final Geometry geom = each.getInnerGeometry();
+				return !(covered ? pg.covers(geom) : pg.intersects(geom));
+			});
 			return shapes;
 		}
 		final Geometry sourceTo = returnToroidalGeom(source);

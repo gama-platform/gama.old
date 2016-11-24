@@ -1,13 +1,11 @@
 /*********************************************************************************************
+ *
+ * 'GamlHoverProvider.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
- * 
- * 'GamlHoverProvider.java', in plugin 'msi.gama.lang.gaml.ui', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
- * 
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- * 
- * 
+ *
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui.hover;
 
@@ -45,13 +43,17 @@ import msi.gama.lang.gaml.gaml.ActionDefinition;
 import msi.gama.lang.gaml.gaml.ActionRef;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.Function;
+import msi.gama.lang.gaml.gaml.Import;
 import msi.gama.lang.gaml.gaml.S_Definition;
+import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
+import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.operators.IUnits;
 
 public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
@@ -114,8 +116,8 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 					return Tuples.create(o, region2);
 				}
 			} else {
-				final ILeafNode node = NodeModelUtils.findLeafNodeAtOffset(resource.getParseResult().getRootNode(),
-						offset);
+				final ILeafNode node =
+						NodeModelUtils.findLeafNodeAtOffset(resource.getParseResult().getRootNode(), offset);
 				if (node != null && node.getGrammarElement() instanceof Keyword) {
 					final IRegion region2 = new Region(node.getOffset(), node.getLength());
 					return Tuples.create(node.getGrammarElement(), region2);
@@ -162,8 +164,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			}
 
 			/*
-			 * @see org.eclipse.jface.text.IInformationControlExtension5#
-			 * getInformationPresenterControlCreator()
+			 * @see org.eclipse.jface.text.IInformationControlExtension5# getInformationPresenterControlCreator()
 			 */
 			@Override
 			public IInformationControlCreator getInformationPresenterControlCreator() {
@@ -178,10 +179,10 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			if (BrowserInformationControl.isAvailable(parent)) {
 				final String font = "org.eclipse.jdt.ui.javadocfont"; // FIXME:
 																		// PreferenceConstants.APPEARANCE_JAVADOC_FONT;
-				final IXtextBrowserInformationControl iControl = new GamlInformationControl(parent, font,
-						tooltipAffordanceString) {
+				final IXtextBrowserInformationControl iControl =
+						new GamlInformationControl(parent, font, tooltipAffordanceString) {
 
-				};
+						};
 				addLinkListener(iControl);
 				return iControl;
 			} else {
@@ -225,13 +226,17 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	@Override
 	protected String getFirstLine(final EObject o) {
-		if (o == null) {
-			return "";
+		if (o == null) { return ""; }
+		if (o instanceof Import) {
+			String uri = ((Import) o).getImportURI();
+			uri = uri.substring(uri.lastIndexOf('/') + 1);
+			final String model = ((Import) o).getName() != null ? "micro-model" : "model";
+			return "Import of the " + model + " defined in <b>" + uri + "</b>";
 		}
+		if (o instanceof S_Global) { return "Global definitions of " + getFirstLine(o.eContainer().eContainer()); }
 		final Statement s = EGaml.getStatement(o);
-		if (o instanceof TypeRef && s instanceof S_Definition && ((S_Definition) s).getTkey() == o) {
-			return getFirstLine(s);
-		}
+		if (o instanceof TypeRef && s instanceof S_Definition
+				&& ((S_Definition) s).getTkey() == o) { return getFirstLine(s); }
 
 		if (o instanceof Function) {
 			final ActionRef ref = getActionFrom((Function) o);
@@ -243,24 +248,15 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 						return temp;
 				}
 			}
-		}
-
-		// else
-
-		// if (o instanceof VariableRef) {
-		// return getFirstLine(((VariableRef) o).getRef());
-		// }
+		} else if (o instanceof UnitName) { return "<b>"
+				+ IUnits.UNITS_EXPR.get(((UnitName) o).getRef().getName()).getTitle() + "</b>"; }
 
 		final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 		if (description == null) {
-			if (o instanceof Facet) {
-				return "<b>" + getFirstLineOf((Facet) o) + "</b>";
-			}
+			if (o instanceof Facet) { return "<b>" + getFirstLineOf((Facet) o) + "</b>"; }
 
 			if (s != null && DescriptionFactory.isStatementProto(EGaml.getKeyOf(o))) {
-				if (s == o) {
-					return "";
-				}
+				if (s == o) { return ""; }
 				return getFirstLine(s);
 			} else {
 				if (o instanceof TypeRef) {
@@ -271,9 +267,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			}
 		} else {
 			String result = description.getTitle();
-			if (result == null || result.isEmpty()) {
-				return "";
-			}
+			if (result == null || result.isEmpty()) { return ""; }
 			result = "<b>" + result + "</b>";
 			return result;
 		}
@@ -298,9 +292,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		final SymbolProto p = DescriptionFactory.getProto(key, null);
 		if (p != null) {
 			final FacetProto f = p.getPossibleFacets().get(facetName);
-			if (f != null) {
-				return f.getTitle();
-			}
+			if (f != null) { return f.getTitle(); }
 		}
 		return "Facet " + o.getKey();
 

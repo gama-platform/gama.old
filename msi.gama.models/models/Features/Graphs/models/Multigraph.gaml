@@ -63,7 +63,7 @@ species people skills: [moving]{
 			target <- target_people.location;
 			do updateSize;
 		}
-		do goto on:road_graph target:target speed:1 + rnd(2);
+		do goto on:road_graph target:target speed:1 + rnd(2.0);
 	}
 	aspect default {
 		draw circle(size) color: #red;

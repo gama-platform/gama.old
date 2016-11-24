@@ -1,3 +1,12 @@
+/*********************************************************************************************
+ *
+ * 'GamaFonts.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package ummisco.gama.ui.resources;
 
 import org.eclipse.swt.SWT;
@@ -24,6 +33,10 @@ public class GamaFonts {
 	public static Font navigResourceFont;
 	public static Font navigHeaderFont;
 	public static Font unitFont;
+	public static Font helpFont;
+	public static Font boldHelpFont;
+	public static Font categoryHelpFont;
+	public static Font categoryBoldHelpFont;
 
 	static void initFonts() {
 		FontData fd = new FontData(awtBaseFont.getName(), awtBaseFont.getSize(), awtBaseFont.getStyle());
@@ -46,6 +59,14 @@ public class GamaFonts {
 		navigRegularFont = new Font(Display.getDefault(), fd);
 		fd = new FontData(fd.getName(), fd.getHeight(), SWT.ITALIC);
 		navigResourceFont = new Font(Display.getDefault(), fd);
+		fd = new FontData(fd.getName(), 12, SWT.NORMAL);
+		helpFont = new Font(Display.getDefault(), fd);
+		fd = new FontData(fd.getName(), 12, SWT.BOLD);
+		boldHelpFont = new Font(Display.getDefault(), fd);
+		fd = new FontData(fd.getName(), 14, SWT.NORMAL);
+		categoryHelpFont = new Font(Display.getDefault(), fd);
+		fd = new FontData(fd.getName(), 14, SWT.BOLD);
+		categoryBoldHelpFont = new Font(Display.getDefault(), fd);
 	}
 
 	public static void setLabelFont(final Font f) {
@@ -82,6 +103,20 @@ public class GamaFonts {
 			initFonts();
 		}
 		return expandFont;
+	}
+
+	public static Font getHelpFont() {
+		if (helpFont == null) {
+			initFonts();
+		}
+		return helpFont;
+	}
+
+	public static Font getBoldHelpFont() {
+		if (boldHelpFont == null) {
+			initFonts();
+		}
+		return boldHelpFont;
 	}
 
 	public static Font getParameterEditorsFont() {

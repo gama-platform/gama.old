@@ -1,3 +1,13 @@
+/*********************************************************************************************
+ *
+ * 'TCPConnector.java, in plugin ummisco.gama.network, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package ummisco.gama.network.tcp;
 
 import java.io.OutputStream;
@@ -152,14 +162,16 @@ public class TCPConnector extends Connector {
 			GamaList<ConnectorMessage> m = null;
 
 			m = (GamaList<ConnectorMessage>) agt.getAttribute("messages" + agt);
-			// receivedMessage.get(agt).addAll(m);
-			for (final ConnectorMessage cm : m) {
-				receivedMessage.get(agt).add(cm);
+			if(m!=null){				
+				// receivedMessage.get(agt).addAll(m);
+				for (final ConnectorMessage cm : m) {
+					receivedMessage.get(agt).add(cm);
+				}
+				m.clear();  
+				agt.setAttribute("message" + agt, m);
+				// scope.getAgentScope().setAttribute("messages" +
+				// scope.getAgentScope(), null);
 			}
-			m.clear();
-			agt.setAttribute("message" + agt, m);
-			// scope.getAgentScope().setAttribute("messages" +
-			// scope.getAgentScope(), null);
 		}
 		return super.fetchAllMessages();
 	}

@@ -1,3 +1,13 @@
+/*********************************************************************************************
+ *
+ * 'GamaSimulationAgentReducer.java, in plugin ummisco.gama.serialize, is part of the source code of the
+ * GAMA modeling and simulation platform.
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package ummisco.gama.serializer.gamaType.reduced;
 
 import java.util.ArrayList;
@@ -58,7 +68,7 @@ public class GamaSimulationAgentReducer {
 		this.geometry = agt.getGeometry();
 		seed = agt.getSeed();
 		// TODO : to complete
-		step = agt.getClock().getStep();
+		step = agt.getClock().getStepInSeconds();
 		cycle = agt.getClock().getCycle();
 
 		// this.attributes = agt.getAttributes();

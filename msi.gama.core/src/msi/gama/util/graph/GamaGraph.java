@@ -1,12 +1,11 @@
 /*********************************************************************************************
  *
- *
- * 'GamaGraph.java', in plugin 'msi.gama.core', is part of the source code of the
+ * 'GamaGraph.java, in plugin msi.gama.core, is part of the source code of the
  * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
- * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
- *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
  *
  **********************************************************************************************/
 package msi.gama.util.graph;
@@ -1270,7 +1269,11 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		final int nbvertices = matrix.numCols;
 		shortestPathComputed = new ConcurrentHashMap<VertexPair<V>, IList<IList<E>>>();
 		final GamaIntMatrix mat = GamaIntMatrix.from(scope, matrix);
-
+		if (optimizerType == 1) {
+			optimizer = new FloydWarshallShortestPathsGAMA(this, mat);
+			return;
+		}
+		
 		final Map<Integer, E> edgesVertices = GamaMapFactory.create(Types.INT, getType().getContentType());
 		for (int i = 0; i < nbvertices; i++) {
 			final V v1 = vertices.get(i);
@@ -1287,6 +1290,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				V vs = v1;
 				int previous = i;
 				Integer next = mat.get(scope, j, i);
+				if (next == -1) {
+					continue;
+				}
 				if (i == next) {
 					final IList<IList<E>> spl = GamaListFactory.create(Types.LIST.of(getType().getContentType()));
 					spl.add(edges);
@@ -1431,7 +1437,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			}
 		} else {
 			if (optimizerType == 1) {
-				optimizer = new FloydWarshallShortestPathsGAMA(getProxyGraph());
+				optimizer = new FloydWarshallShortestPathsGAMA(this);
 				optimizer.lazyCalculateMatrix();
 				for (int i = 0; i < vertexMap.size(); i++) {
 					for (int j = 0; j < vertexMap.size(); j++) {

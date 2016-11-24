@@ -1,3 +1,12 @@
+/*********************************************************************************************
+ *
+ * 'EditToolbar.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ *
+ * Visit https://github.com/gama-platform/gama for license information and developers contact.
+ * 
+ *
+ **********************************************************************************************/
 package msi.gama.lang.gaml.ui.editor.toolbar;
 
 import org.eclipse.core.commands.Command;
@@ -77,34 +86,6 @@ public class EditToolbar {
 	public void installGesturesFor(final GamlEditor editor) {
 		final StyledText text = editor.getInternalSourceViewer().getTextWidget();
 		if (text != null) {
-			// text.addFocusListener(new FocusListener() {
-			//
-			// @Override
-			// public void focusLost(final FocusEvent e) {
-			// // System.out.println("The editor has lost focus");
-			// }
-			//
-			// @Override
-			// public void focusGained(final FocusEvent e) {
-			// // System.out.println("The editor has gained focus");
-			// }
-			// });
-			// text.addMouseListener(new MouseListener() {
-			//
-			// @Override
-			// public void mouseUp(final MouseEvent e) {
-			// // System.out.println("The editor has had a click");
-			// WorkaroundForIssue1353.showShell();
-			// }
-			//
-			// @Override
-			// public void mouseDown(final MouseEvent e) {
-			// }
-			//
-			// @Override
-			// public void mouseDoubleClick(final MouseEvent e) {
-			// }
-			// });
 			text.addGestureListener(ge -> {
 				if (ge.detail == SWT.GESTURE_BEGIN) {
 
@@ -158,7 +139,7 @@ public class EditToolbar {
 		folding.setSelection(editor.isRangeIndicatorEnabled());
 
 		// Mark Occurrences button (synchronized with the global preference)
-		final GamaPreferences.Entry<Boolean> pref = GamaPreferences.get("editor.mark.occurrences", Boolean.class);
+		final GamaPreferences.Entry<Boolean> pref = GamaPreferences.get("pref_editor_mark_occurrences", Boolean.class);
 		mark = toolbar.check("editor.mark2", null, "Mark occurrences", new SelectionAdapter() {
 
 			@Override
@@ -299,8 +280,7 @@ public class EditToolbar {
 		});
 
 		/**
-		 * Serialization : commented because a bit too experimental for the
-		 * moment
+		 * Serialization : commented because a bit too experimental for the moment
 		 */
 		// toolbar.button("editor.serialize2", null, "Re-serialize the model
 		// (warning: removes all comments)",
@@ -395,13 +375,9 @@ public class EditToolbar {
 		final StyledText text = editor.getInternalSourceViewer().getTextWidget();
 		final FontData data = text.getFont().getFontData()[0];
 		data.height += deltaToApply;
-		if (data.height < 6) {
-			return;
-		}
+		if (data.height < 6) { return; }
 		if (font != null) {
-			if (data.equals(font.getFontData()[0])) {
-				return;
-			}
+			if (data.equals(font.getFontData()[0])) { return; }
 		}
 		// if ( font != null && !font.isDisposed() ) {
 		// font.dispose();
@@ -423,12 +399,10 @@ public class EditToolbar {
 	}
 
 	private void registerListeners() {
-		if (listenersRegistered) {
-			return;
-		}
+		if (listenersRegistered) { return; }
 		listenersRegistered = true;
 		// Listening to "Mark occurrences..."
-		final GamaPreferences.Entry<Boolean> pref = GamaPreferences.get("editor.mark.occurrences", Boolean.class);
+		final GamaPreferences.Entry<Boolean> pref = GamaPreferences.get("pref_editor_mark_occurrences", Boolean.class);
 		final IPreferenceChangeListener<Boolean> change = new IPreferenceChangeListener<Boolean>() {
 
 			@Override
