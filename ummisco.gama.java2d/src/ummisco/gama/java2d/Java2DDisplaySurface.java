@@ -325,7 +325,7 @@ public class Java2DDisplaySurface extends JPanel implements IDisplaySurface {
 		}
 		final double xScale = getWidth() / r.getWidth();
 		final double yScale = getHeight() / r.getHeight();
-		double zoomFactor = Math.max(xScale, yScale);
+		double zoomFactor = Math.min(xScale, yScale);
 		final Point center = new Point((int) Math.round(r.getCenterX()), (int) Math.round(r.getCenterY()));
 
 		zoomFactor = applyZoom(zoomFactor);
