@@ -40,7 +40,6 @@ import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.graph._Edge;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gama.util.path.PathFactory;
-import msi.gaml.operators.Spatial.Queries;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
@@ -293,12 +292,13 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			nodes.put(((IAgent) ag).getLocation(), (IAgent) ag);
 		}
 		for (final Object p : edges.iterable(scope)) {
-			addDrivingEdge(scope, (IShape) p, nodes);
+			boolean addEdge = addDrivingEdge(scope, (IShape) p, nodes);
+			if (!addEdge) continue;
 			getEdge(p).setWeight(((IShape) p).getPerimeter());
 		}
 	}
 
-	public Object addDrivingEdge(final IScope scope, final IShape e, final GamaMap<ILocation, IAgent> nodes) {
+	public boolean addDrivingEdge(final IScope scope, final IShape e, final GamaMap<ILocation, IAgent> nodes) {
 		if (containsEdge(e)) {
 			return false;
 		}
@@ -306,13 +306,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		final IShape ptS = new GamaPoint(coord[0]);
 		final IShape ptT = new GamaPoint(coord[coord.length - 1]);
 		IAgent v1 = nodes.get(ptS);
-		if (v1 == null) {
-			v1 = (IAgent) Queries.closest_to(scope, (IContainer<?, ? extends IShape>) nodes.values(), ptS);
-		}
+		if (v1 == null) return false;
 		IAgent v2 = nodes.get(ptT);
-		if (v2 == null) {
-			v2 = (IAgent) Queries.closest_to(scope, (IContainer<?, ? extends IShape>) nodes.values(), ptT);
-		}
+		if (v2 == null) return false;
 
 		final IAgent ag = e.getAgent();
 		final List v1ro = (List) v1.getAttribute("roads_out");
