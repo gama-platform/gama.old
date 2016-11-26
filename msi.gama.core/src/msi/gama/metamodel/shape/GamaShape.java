@@ -68,6 +68,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	protected Geometry geometry;
 	private IAgent agent;
+	
 	// This represents a waste of memory but it is necessary to maintain it, as
 	// the Geometry does not give access
 	// to a custom envelope builder
@@ -431,7 +432,18 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public double getPerimeter() {
-		return getInnerGeometry().getLength();
+		if (getEnvelope().getDepth() > 0) {
+			double perimeter = 0;
+			int nb = this.getPoints().size();
+			ILocation pS = this.getPoints().get(0);
+			for (int i = 1; i < nb; i++) {
+				ILocation pT = this.getPoints().get(i);
+				perimeter += pS.euclidianDistanceTo(pT);
+				pS = pT;
+			}
+			return perimeter;
+		} else
+			return getInnerGeometry().getLength();
 	}
 
 	@Override

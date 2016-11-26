@@ -2345,7 +2345,7 @@ public abstract class Spatial {
 				@example(value = "any_location_in(square(5))", equals = "a point in the square, for example : {3,4.6}.", test = false) }, see = {
 						"closest_points_with", "farthest_point_to", "points_at" })
 		public static ILocation any_location_in(final IScope scope, final IShape g) {
-			final ILocation p = GeometryUtils.pointInGeom(g.getInnerGeometry(), scope.getRandom());
+			final ILocation p = GeometryUtils.pointInGeom(g, scope.getRandom());
 			return p;
 		}
 

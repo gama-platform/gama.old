@@ -293,7 +293,8 @@ public class GeometryUtils {
 	public static PreparedGeometryFactory pgfactory = new PreparedGeometryFactory();
 	public static CoordinateSequenceFactory coordFactory = FACTORY.getCoordinateSequenceFactory();
 
-	public static GamaPoint pointInGeom(final Geometry geom, final RandomUtils rand) {
+	public static GamaPoint pointInGeom(final IShape shape, final RandomUtils rand) {
+		Geometry geom = shape.getInnerGeometry();
 		// WARNING Only in 2D !
 		if (geom == null || geom.getCoordinate() == null) {
 			return null;
@@ -303,19 +304,23 @@ public class GeometryUtils {
 			return new GamaPoint(geom.getCoordinate());
 		}
 		if (geom instanceof LineString) {
-			final int i = rand.between(0, geom.getCoordinates().length - 2);
-			final Coordinate source = geom.getCoordinates()[i];
-			final Coordinate target = geom.getCoordinates()[i + 1];
-			if (source.x != target.x) {
-				final double a = (source.y - target.y) / (source.x - target.x);
-				final double b = source.y - a * source.x;
-				final double x = rand.between(source.x, target.x);
-				final double y = a * x + b;
-				return new GamaPoint(x, y, 0);
+			double perimeter = shape.getPerimeter();
+			double dist = perimeter * rand.between(0.0, 1.0);
+			double sumDist = 0;
+			Coordinate pS = ((LineString) geom).getCoordinateN(0);
+			for (int i = 1; i < geom.getNumPoints(); i++) {
+				Coordinate pT = ((LineString) geom).getCoordinateN(i);
+				double d = pS.distance3D(pT);
+				if ((d + sumDist) >= dist) {
+					double ratio = (dist - sumDist)/d;
+					final double newX = pS.x + ratio * (pT.x - pS.x);
+					final double newY = pS.y + ratio * (pT.y - pS.y);
+					final double newZ = pS.z + ratio * (pT.z - pS.z);
+					return new GamaPoint(newX, newY, newZ); 
+				}
+				pS = pT;
+				sumDist += d;
 			}
-			final double x = source.x;
-			final double y = rand.between(source.y, target.y);
-			return new GamaPoint(x, y, 0);
 		}
 		if (geom instanceof Polygon) {
 			final Envelope env = geom.getEnvelopeInternal();
@@ -336,10 +341,10 @@ public class GeometryUtils {
 						.intersection(GeometryPrecisionReducer.reducePointwise(geom, pm));
 
 			}
-			return pointInGeom(line, rand);
+			return pointInGeom(new GamaShape(line), rand);
 		}
 		if (geom instanceof GeometryCollection) {
-			return pointInGeom(geom.getGeometryN(rand.between(0, geom.getNumGeometries() - 1)), rand);
+			return pointInGeom(new GamaShape(geom.getGeometryN(rand.between(0, geom.getNumGeometries() - 1))), rand);
 		}
 
 		return null;

@@ -348,7 +348,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public GamaPoint getRandomLocation(final IScope scope) {
-		return GeometryUtils.pointInGeom(environment.getInnerGeometry(), scope.getRandom());
+		return GeometryUtils.pointInGeom(environment, scope.getRandom());
 	}
 
 	@Override
