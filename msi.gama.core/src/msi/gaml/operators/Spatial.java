@@ -2050,7 +2050,20 @@ public abstract class Spatial {
 				IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH }, concept = {
 						IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION,
 						IConcept.TOPOLOGY })
-		@doc(value = "A path between a list of two geometries (geometries, agents or points) considering a topology.", examples = {
+		@doc(value = "A path between two geometries (geometries, agents or points) considering a topology.", examples = {
+				@example(value = "my_topology path_between (ag1, ag2)", equals = "A path between ag1 and ag2", isExecutable = false) }, see = {
+						"towards", "direction_to", "distance_between", "direction_between", "path_to", "distance_to" })
+		public static IPath path_between(final IScope scope, final ITopology graph, final IShape source,
+				final IShape target)
+				throws GamaRuntimeException {
+			return graph.pathBetween(scope, source, target); 
+			
+		}
+		@operator(value = "path_between", type = IType.PATH, content_type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
+				IOperatorCategory.SPATIAL, IOperatorCategory.SP_RELATIONS, IOperatorCategory.PATH }, concept = {
+						IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION, IConcept.AGENT_LOCATION,
+						IConcept.TOPOLOGY })
+		@doc(value = "A path between a list of several geometries (geometries, agents or points) considering a topology.", examples = {
 				@example(value = "my_topology path_between [ag1, ag2]", equals = "A path between ag1 and ag2", isExecutable = false) }, see = {
 						"towards", "direction_to", "distance_between", "direction_between", "path_to", "distance_to" })
 		public static IPath path_between(final IScope scope, final ITopology graph, final IContainer<?, IShape> nodes)
@@ -2085,6 +2098,54 @@ public abstract class Spatial {
 			}
 			return PathFactory.newInstance(graph, source, target, edges);
 			// new GamaPath(graph, source, target, edges);
+		}
+		
+		@operator(value = "path_between",
+
+				category = { IOperatorCategory.GRID, IOperatorCategory.PATH }, concept = { IConcept.GRID })
+		@doc(value = "The shortest path between several objects according to set of cells", masterDoc = true, examples = {
+				@example(value = "path_between (cell_grid where each.is_free, [ag1, ag2, ag3])", equals = "A path between ag1 and ag2 and ag3 passing through the given cell_grid agents", isExecutable = false) })
+		public static IPath path_between(final IScope scope, final IList<IAgent> cells,  final IContainer<?, IShape> nodes) throws GamaRuntimeException {
+			if (cells == null || cells.isEmpty()) {
+				return null;
+			}
+			
+			if (nodes.isEmpty(scope)) {
+				return null;
+			}
+			final ITopology topo = cells.get(0).getTopology();
+			
+			final int n = nodes.length(scope);
+			final IShape source = nodes.firstValue(scope);
+			if (n == 1) {
+				if (topo instanceof GridTopology) {
+					return ((GridTopology) topo).pathBetween(scope, source, source, cells);
+				} else {
+					return scope.getTopology().pathBetween(scope, source, source);
+				}
+			}
+			final IShape target = nodes.lastValue(scope);
+			if (n == 2) {
+				if (topo instanceof GridTopology) {
+					return ((GridTopology) topo).pathBetween(scope, source, target, cells);
+				} else {
+					return scope.getTopology().pathBetween(scope, source, target);
+				}
+			}
+			final IList<IShape> edges = GamaListFactory.create(Types.GEOMETRY);
+			IShape previous = null;
+			for (final IShape gg : nodes.iterable(scope)) {
+				if (previous != null) {
+					// TODO Take the case of ILocation
+					if (topo instanceof GridTopology) {
+						edges.addAll(((GridTopology) topo).pathBetween(scope, source, target, cells).getEdgeList());
+					} else {
+						edges.addAll(scope.getTopology().pathBetween(scope, source, target).getEdgeList());
+					}
+				}
+				previous = gg;
+			}
+			return PathFactory.newInstance(topo instanceof GridTopology? topo : scope.getTopology(), source, target, edges);
 		}
 
 		@operator(value = "path_between",

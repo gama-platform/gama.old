@@ -1294,7 +1294,6 @@ public class Graphs {
 		return graph.computeShortestPathBetween(scope, source, target);
 		// return graph.computeShortestPathBetween(sourTarg.key,
 		// sourTarg.value);
-
 	}
 
 	@operator (
