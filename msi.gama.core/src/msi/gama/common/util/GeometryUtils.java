@@ -36,6 +36,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 import com.vividsolutions.jts.geom.PrecisionModel;
@@ -56,6 +57,7 @@ import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -64,6 +66,7 @@ import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Files;
 import msi.gaml.operators.Graphs;
+import msi.gaml.operators.Random;
 import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.operators.Spatial.ThreeD;
@@ -295,7 +298,7 @@ public class GeometryUtils {
 
 	public static GamaPoint pointInGeom(final IShape shape, final RandomUtils rand) {
 		Geometry geom = shape.getInnerGeometry();
-		// WARNING Only in 2D !
+		// WARNING Only in 2D for Polygons !
 		if (geom == null || geom.getCoordinate() == null) {
 			return null;
 		}
@@ -344,6 +347,21 @@ public class GeometryUtils {
 			return pointInGeom(new GamaShape(line), rand);
 		}
 		if (geom instanceof GeometryCollection) {
+			if (geom instanceof MultiLineString) {
+				IList<Double> distribution = GamaListFactory.create(Types.FLOAT);
+				for (int i = 0; i < geom.getNumGeometries(); i++) {
+					distribution.add(new GamaShape(geom.getGeometryN(i)).getPerimeter());
+				}
+				int index = Random.opRndChoice(GAMA.getRuntimeScope(), distribution);
+				return pointInGeom(new GamaShape(geom.getGeometryN(index)), rand);
+			} else if (geom instanceof MultiPolygon) {
+				IList<Double> distribution = GamaListFactory.create(Types.FLOAT);
+				for (int i = 0; i < geom.getNumGeometries(); i++) {
+					distribution.add(new GamaShape(geom.getGeometryN(i)).getArea());
+				}
+				int index = Random.opRndChoice(GAMA.getRuntimeScope(), distribution);
+				return pointInGeom(new GamaShape(geom.getGeometryN(index)), rand);
+			} 
 			return pointInGeom(new GamaShape(geom.getGeometryN(rand.between(0, geom.getNumGeometries() - 1))), rand);
 		}
 
