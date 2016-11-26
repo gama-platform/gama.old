@@ -893,13 +893,14 @@ public class GeometryUtils {
 				Coordinate s = coordsSimp[i];
 				final Coordinate t = coordsSimp[i + 1];
 				while (true) {
-					final double dist = s.distance(t);
+					final double dist = s.distance3D(t);
 					if (distance - distCur < dist) {
 						final double distTravel = distance - distCur;
 						final double ratio = distTravel / dist;
 						final double x_s = s.x + ratio * (t.x - s.x);
 						final double y_s = s.y + ratio * (t.y - s.y);
-						s = new Coordinate(x_s, y_s);
+						final double z_s = s.z + ratio * (t.z - s.z);
+						s = new Coordinate(x_s, y_s,z_s);
 						locs.add(new GamaPoint(s));
 						distCur = 0;
 
@@ -915,7 +916,7 @@ public class GeometryUtils {
 
 			}
 			if (locs.size() > 1) {
-				if (locs.get(0).distance(locs.get(locs.size() - 1)) < 0.1 * distance) {
+				if (locs.get(0).distance3D(locs.get(locs.size() - 1)) < 0.1 * distance) {
 					locs.remove(locs.size() - 1);
 				}
 			}
