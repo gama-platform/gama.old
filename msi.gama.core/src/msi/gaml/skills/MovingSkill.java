@@ -44,6 +44,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.IList;
+import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.path.GamaPath;
 import msi.gama.util.path.GamaSpatialPath;
@@ -82,6 +83,16 @@ import msi.gaml.types.Types;
 				type = IType.INT,
 				init = "rnd(359)",
 				doc = @doc ("Represents the absolute heading of the agent in degrees.")),
+		@var (
+				name = "current_path",
+				type = IType.PATH,
+				init = "nil",
+				doc = @doc ("Represents the path on which the agent is moving on (goto action on a graph)")),
+		@var (
+				name = "current_edge",
+				type = IType.GEOMETRY,
+				init = "nil",
+				doc = @doc ("Represents the agent/geometry on which the agent is located (only used with a graph)")),
 		@var (
 				name = IKeyword.DESTINATION,
 				type = IType.POINT,
@@ -158,7 +169,35 @@ public class MovingSkill extends Skill {
 		}
 		agent.setLocation(p);
 	}
-
+	
+	@setter ("current_path")
+	public void setCurrentPath(final IAgent agent, final IPath p) {
+		// READ_ONLY
+	}
+	
+	@getter (value = "current_path")
+	public IPath getCurrentPath(final IAgent agent) {
+		if (agent == null) { return null; }
+		return (IPath) agent.getAttribute("current_path");
+	}
+	
+	@setter ("current_edge")
+	public void setCurrentEdge(final IAgent agent, final IShape g) {
+		// READ_ONLY
+	}
+	
+	@getter (value = "current_edge")
+	public IShape getCurrentEdge(final IAgent agent) {
+		if (agent == null) { return null; }
+		IPath path = getCurrentPath(agent);
+		if (path == null) { return null; }
+		Integer index = (Integer) agent.getAttribute("index_on_path");
+		if (index < path.getEdgeList().size())
+			return (IShape)path.getEdgeList().get(index);
+		return null;
+	}
+	
+	
 	/**
 	 * @throws GamaRuntimeException
 	 * @throws GamaRuntimeException
@@ -253,7 +292,13 @@ public class MovingSkill extends Skill {
 							name = IKeyword.BOUNDS,
 							type = IType.GEOMETRY,
 							optional = true,
-							doc = @doc ("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) },
+							doc = @doc ("the geometry (the localized entity geometry) or graph that restrains this move (the agent moves inside this geometry or on the graph")),
+					@arg (
+							name = "proba_edges",
+							type = IType.MAP,
+							optional = true,
+							doc = @doc ("When the agent moves on a graph, the probability to choose another edge. If not defined, each edge has the same probability to be chosen"))
+					},
 			doc = @doc (
 					examples = { @example ("do wander speed: speed - 10 amplitude: 120 bounds: agentA;") },
 					value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
@@ -262,7 +307,7 @@ public class MovingSkill extends Skill {
 		final ILocation location = agent.getLocation();
 		final int heading = computeHeadingFromAmplitude(scope, agent);
 		final double dist = computeDistance(scope, agent);
-
+		
 		ILocation loc = scope.getTopology().getDestination(location, heading, dist, true);
 
 		if (loc == null) {
@@ -271,23 +316,27 @@ public class MovingSkill extends Skill {
 		} else {
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if (bounds != null) {
-				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
-				if (geom != null && geom.getInnerGeometry() != null) {
-					loc = computeLocationForward(scope, dist, loc, geom);
+				if (bounds instanceof GamaGraph) {
+					GamaGraph graph = (GamaGraph) bounds;
+					Map<IShape,Double> probaDeplacement = null;
+					if (scope.hasArg("proba_edges"))
+						probaDeplacement = (Map<IShape, Double>) (scope.getVarValue("proba_edges"));
+					
+				} else {
+					final IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
+					if (geom != null && geom.getInnerGeometry() != null) {
+						loc = computeLocationForward(scope, dist, loc, geom);
+					}
 				}
 			}
-			// pathFollowed = new GamaPath(this.getTopology(agent),
-			// GamaList.with(location, loc));
-
+		
 			// Enable to use wander in 3D space. An agent will wander in the
 			// plan define by its z value.
 			((GamaPoint) loc).z = agent.getLocation().getZ();
 			setLocation(agent, loc);
 		}
-		// scope.setStatus(loc == null ? ExecutionStatus.failure :
-		// ExecutionStatus.success);
-		// return null;
 	}
+
 
 	@action (
 			name = "move",
@@ -388,7 +437,8 @@ public class MovingSkill extends Skill {
 		// scope.setStatus(ExecutionStatus.failure);
 		return null;
 	}
-
+	
+	
 	@action (
 			name = "goto",
 			args = { @arg (
@@ -632,6 +682,10 @@ public class MovingSkill extends Skill {
 		initVals.add(falseTarget);
 		return initVals;
 	}
+	
+	
+	
+	
 
 	private void moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final IPath path,
 			final double d, final GamaMap weigths) {
@@ -854,6 +908,8 @@ public class MovingSkill extends Skill {
 
 		return followedPath;
 	}
+	
+	
 
 	private ILocation computeLocationForward(final IScope scope, final double dist, final ILocation loc,
 			final IShape geom) {
