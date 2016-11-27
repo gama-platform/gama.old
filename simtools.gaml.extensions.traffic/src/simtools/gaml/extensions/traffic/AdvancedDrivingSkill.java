@@ -855,7 +855,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 						newRoad = nextRoads.get(Random.opRndChoice(scope, distribution));
 					}
 				}
-				if (roadProba != null)
+				
 				argsEF.put("remaining_time", ConstantExpressionDescription.create(remainingTime));
 				argsEF.put("new_road", ConstantExpressionDescription.create(newRoad));
 				actionImpactEF.setRuntimeArgs(argsEF);
