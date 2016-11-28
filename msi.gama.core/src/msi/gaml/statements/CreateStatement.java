@@ -324,7 +324,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		final List<Map<String, Object>> inits = GamaListFactory.create(Types.MAP, max == null ? 10 : max);
 		final Object source = getSource(scope);
 		for (final ICreateDelegate delegate : delegates) {
-			if (delegate.acceptSource(source)) {
+			if (delegate.acceptSource(null, source)) {
 				delegate.createFrom(scope, inits, max, source, init, this);
 			}
 		}

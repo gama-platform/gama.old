@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CreateFromGridFileDelegate.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CreateFromGridFileDelegate.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -29,28 +28,26 @@ import msi.gaml.types.Types;
  * @since 27 mai 2015
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class CreateFromGridFileDelegate implements ICreateDelegate {
 
 	/**
 	 * Method acceptSource()
 	 *
-	 * @see msi.gama.common.interfaces.ICreateDelegate#acceptSource(java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#acceptSource(IScope, java.lang.Object)
 	 */
 	@Override
-	public boolean acceptSource(final Object source) {
-
+	public boolean acceptSource(final IScope scope, final Object source) {
 		return source instanceof GamaGridFile;
 	}
 
 	/**
-	 * Method createFrom() Method used to read initial values and attributes
-	 * from a GRID file.
+	 * Method createFrom() Method used to read initial values and attributes from a GRID file.
 	 *
 	 * @author Alexis Drogoul
 	 * @since 04-09-2012
-	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope,
-	 *      java.util.List, int, java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope, java.util.List, int,
+	 *      java.lang.Object)
 	 */
 	@Override
 	public boolean createFrom(final IScope scope, final List<Map<String, Object>> inits, final Integer max,

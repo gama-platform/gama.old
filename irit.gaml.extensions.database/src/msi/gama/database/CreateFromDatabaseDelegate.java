@@ -38,10 +38,10 @@ public class CreateFromDatabaseDelegate implements ICreateDelegate {
 	/**
 	 * Method acceptSource()
 	 * 
-	 * @see msi.gama.common.interfaces.ICreateDelegate#acceptSource(java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#acceptSource(IScope, java.lang.Object)
 	 */
 	@Override
-	public boolean acceptSource(final Object source) {
+	public boolean acceptSource(IScope scope, final Object source) {
 		return source instanceof IList && ((IList) source).get(0) instanceof List;
 	}
 

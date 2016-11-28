@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CreateFromGeometriesDelegate.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CreateFromGeometriesDelegate.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -31,43 +30,39 @@ import msi.gaml.types.Types;
  * @since 27 mai 2015
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class CreateFromGeometriesDelegate implements ICreateDelegate {
 
 	/**
 	 * Method acceptSource()
 	 *
-	 * @see msi.gama.common.interfaces.ICreateDelegate#acceptSource(java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#acceptSource(IScope, java.lang.Object)
 	 */
 	@Override
-	public boolean acceptSource(final Object source) {
+	public boolean acceptSource(final IScope scope, final Object source) {
 		// THIS CONDITION MUST BE CHECKED : bypass a condition that belong to
 		// the case createFromDatabase
-		if (source instanceof IList && ((IList) source).get(0) instanceof IList) {
-			return false;
-		}
+		if (source instanceof IList && ((IList) source).get(0) instanceof IList) { return false; }
 		return source instanceof IList && ((IList) source).getType().getContentType().isAssignableFrom(Types.GEOMETRY)
 
 				|| source instanceof GamaGeometryFile;
 
-		// ||
-		// source instanceof GamaShapeFile || source instanceof GamaOsmFile ||
-		// source instanceof GamaSVGFile || source instanceof GamaDXFFile );
 	}
 
 	/**
-	 * Method createFrom() Method used to read initial values and attributes
-	 * from a CSV values describing a synthetic population
+	 * Method createFrom() Method used to read initial values and attributes from a CSV values describing a synthetic
+	 * population
 	 *
 	 * @author Alexis Drogoul
 	 * @since 04-09-2012
-	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope,
-	 *      java.util.List, int, java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope, java.util.List, int,
+	 *      java.lang.Object)
 	 */
 	@Override
 	public boolean createFrom(final IScope scope, final List<Map<String, Object>> inits, final Integer max,
 			final Object input, final Arguments init, final CreateStatement statement) {
-		final IAddressableContainer<Integer, GamaShape, Integer, GamaShape> container = (IAddressableContainer<Integer, GamaShape, Integer, GamaShape>) input;
+		final IAddressableContainer<Integer, GamaShape, Integer, GamaShape> container =
+				(IAddressableContainer<Integer, GamaShape, Integer, GamaShape>) input;
 		final int num = max == null ? container.length(scope) : CmnFastMath.min(container.length(scope), max);
 		for (int i = 0; i < num; i++) {
 			final GamaShape g = container.get(scope, i);

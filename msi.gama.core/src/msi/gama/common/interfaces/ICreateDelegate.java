@@ -30,12 +30,13 @@ public interface ICreateDelegate {
 	/**
 	 * Returns whether or not this delegate accepts to create agents from this
 	 * source.
-	 * 
+	 * @param scope TODO
 	 * @param source
+	 * 
 	 * @return
 	 */
 
-	boolean acceptSource(Object source);
+	boolean acceptSource(IScope scope, Object source);
 
 	/**
 	 * Fills the list of maps with the initial values read from the source.

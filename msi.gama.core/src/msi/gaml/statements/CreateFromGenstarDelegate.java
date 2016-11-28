@@ -34,10 +34,10 @@ public class CreateFromGenstarDelegate implements ICreateDelegate {
 	/**
 	 * Method acceptSource()
 	 *
-	 * @see msi.gama.common.interfaces.ICreateDelegate#acceptSource(java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#acceptSource(IScope, java.lang.Object)
 	 */
 	@Override
-	public boolean acceptSource(final Object source) {
+	public boolean acceptSource(IScope scope, final Object source) {
 		return source instanceof List && ((List) source).get(0) instanceof String
 				&& ((List) source).get(0).equals(IKeyword.GENSTAR_POPULATION);
 	}

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CreateFromNullDelegate.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CreateFromNullDelegate.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -27,28 +26,26 @@ import msi.gaml.types.Types;
  *
  *
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class CreateFromNullDelegate implements ICreateDelegate {
 
 	/**
 	 * Method acceptSource()
 	 *
-	 * @see msi.gama.common.interfaces.ICreateDelegate#acceptSource(java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#acceptSource(IScope, java.lang.Object)
 	 */
 	@Override
-	public boolean acceptSource(final Object source) {
-
+	public boolean acceptSource(final IScope scope, final Object source) {
 		return source == null;
 	}
 
 	/**
-	 * Method createFrom() reads initial values decribed by the modeler (facet
-	 * with)
+	 * Method createFrom() reads initial values decribed by the modeler (facet with)
 	 *
 	 * @author Alexis Drogoul
 	 * @since 04-09-2012
-	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope,
-	 *      java.util.List, int, java.lang.Object)
+	 * @see msi.gama.common.interfaces.ICreateDelegate#createFrom(msi.gama.runtime.IScope, java.util.List, int,
+	 *      java.lang.Object)
 	 */
 	@Override
 	public boolean createFrom(final IScope scope, final List<Map<String, Object>> inits, final Integer max,
@@ -59,8 +56,8 @@ public class CreateFromNullDelegate implements ICreateDelegate {
 		}
 		final int num = max == null ? 1 : max;
 		for (int i = 0; i < num; i++) {
-			final Map<String, Object> map = init == null ? nullMap
-					: GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
+			final Map<String, Object> map =
+					init == null ? nullMap : GamaMapFactory.create(Types.NO_TYPE, Types.NO_TYPE);
 			statement.fillWithUserInit(scope, map);
 			inits.add(map);
 		}
