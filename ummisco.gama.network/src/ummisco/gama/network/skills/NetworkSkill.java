@@ -10,6 +10,9 @@
  **********************************************************************************************/
 package ummisco.gama.network.skills;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -46,6 +49,33 @@ public class NetworkSkill extends MessagingSkill {
 	final static String REGISTERED_AGENTS = "registred_agents";
 	final static String REGISTRED_SERVER = "registred_servers";
 
+	
+	
+	@action(name = "execute", args = {
+			@arg(name = "command", type = IType.STRING, doc = @doc("command to execute"))}, doc = @doc(value = "", returns = "", examples = {
+					@example("") }))
+	public String systemExec(final IScope scope) {
+		final IAgent agent = scope.getAgent();
+		final String commandToExecute = (String) scope.getArg("command", IType.STRING);
+		
+		String res = "";
+		
+		Process p;
+		try {
+			p = Runtime.getRuntime().exec(commandToExecute);
+		
+			BufferedReader stdError = new BufferedReader(new 
+            InputStreamReader(p.getErrorStream()));
+			return stdError.readLine();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "";
+				
+	}
+
+	
 	@SuppressWarnings("unchecked")
 	@action(name = INetworkSkill.CONNECT_TOPIC, args = {
 			@arg(name = INetworkSkill.PROTOCOL, type = IType.STRING, doc = @doc("protocol type (udp, tcp, mqqt)")),
