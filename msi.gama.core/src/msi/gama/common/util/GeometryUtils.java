@@ -332,6 +332,13 @@ public class GeometryUtils {
 			final double yMin = env.getMinY();
 			final double yMax = env.getMaxY();
 			final double x = rand.between(xMin, xMax);
+			final double y = rand.between(yMin, yMax);
+			GamaPoint pt = new GamaPoint(x,y);
+			while (!shape.intersects(pt)) {
+				pt = new GamaPoint(rand.between(xMin, xMax),rand.between(yMin, yMax));
+			}
+			return pt;
+			/*
 			final Coordinate coord1 = new Coordinate(x, yMin);
 			final Coordinate coord2 = new Coordinate(x, yMax);
 			final Coordinate[] coords = { coord1, coord2 };
@@ -344,7 +351,7 @@ public class GeometryUtils {
 						.intersection(GeometryPrecisionReducer.reducePointwise(geom, pm));
 
 			}
-			return pointInGeom(new GamaShape(line), rand);
+			return pointInGeom(new GamaShape(line), rand);*/
 		}
 		if (geom instanceof GeometryCollection) {
 			if (geom instanceof MultiLineString) {
