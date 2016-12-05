@@ -1,14 +1,13 @@
 /*********************************************************************************************
  *
- * 'EditToolbarBuiltinMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BuiltinReferenceMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
  *
  **********************************************************************************************/
-package msi.gama.lang.gaml.ui.editor.toolbar;
+package msi.gama.lang.gaml.ui.reference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -17,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 
 import com.google.common.collect.Lists;
@@ -33,6 +33,7 @@ import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.descriptions.VariableDescription;
 import msi.gaml.types.Types;
+import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * The class EditToolbarTemplateMenu.
@@ -41,7 +42,7 @@ import msi.gaml.types.Types;
  * @since 5 déc. 2014
  *
  */
-public class EditToolbarBuiltinMenu extends EditToolbarMenu {
+public class BuiltinReferenceMenu extends GamlReferenceMenu {
 
 	@Override
 	protected void fillMenu() {
@@ -256,7 +257,22 @@ public class EditToolbarBuiltinMenu extends EditToolbarMenu {
 	}
 
 	@Override
-	protected void openView() {
+	protected void openView() {}
+
+	/**
+	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
+	 */
+	@Override
+	protected Image getImage() {
+		return GamaIcons.create("reference.builtin").image();
+	}
+
+	/**
+	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()
+	 */
+	@Override
+	protected String getTitle() {
+		return "Built-In structures";
 	}
 
 }

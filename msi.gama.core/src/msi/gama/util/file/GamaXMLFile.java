@@ -64,7 +64,7 @@ public class GamaXMLFile extends GamaFile<GamaMap<String, String>, String, Strin
 		DocumentBuilder db;
 		try {
 			db = factory.newDocumentBuilder();
-			final Document doc = db.parse(new File(getPath(scope)));
+			final Document doc = db.parse(new File(this.getPath(scope)));
 			return doc.getFirstChild().getNodeName();
 		} catch (final ParserConfigurationException | SAXException | IOException e1) {
 			e1.printStackTrace();

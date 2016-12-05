@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaSourceViewer.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaSourceViewer.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -31,6 +30,7 @@ import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 public class GamaSourceViewer extends XtextSourceViewer {
 
 	private IGamlBuilderListener resourceListener;
+	private boolean isOverviewVisible;
 
 	/**
 	 * @param parent
@@ -42,12 +42,23 @@ public class GamaSourceViewer extends XtextSourceViewer {
 	public GamaSourceViewer(final Composite parent, final IVerticalRuler ruler, final IOverviewRuler overviewRuler,
 			final boolean showsAnnotationOverview, final int styles) {
 		super(parent, ruler, overviewRuler, showsAnnotationOverview, styles);
+		isOverviewVisible = showsAnnotationOverview && overviewRuler != null;
 	}
 
 	@Override
 	protected void handleDispose() {
 		GamlResourceServices.removeResourceListener(resourceListener);
 		super.handleDispose();
+	}
+
+	@Override
+	public void showAnnotationsOverview(final boolean show) {
+		super.showAnnotationsOverview(show);
+		isOverviewVisible = show;
+	}
+
+	public boolean isOverviewVisible() {
+		return isOverviewVisible;
 	}
 
 	/**
@@ -59,8 +70,8 @@ public class GamaSourceViewer extends XtextSourceViewer {
 
 			@Override
 			public void process(final XtextResource state) throws Exception {
-				if(state!=null)
-				GamlResourceServices.addResourceListener(state.getURI(), listener);
+				if (state != null)
+					GamlResourceServices.addResourceListener(state.getURI(), listener);
 			}
 		});
 	}

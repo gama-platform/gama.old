@@ -1,14 +1,13 @@
 /*********************************************************************************************
  *
- * 'EditToolbarTemplateMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TemplateReferenceMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
  *
  **********************************************************************************************/
-package msi.gama.lang.gaml.ui.editor.toolbar;
+package msi.gama.lang.gaml.ui.reference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,11 +21,13 @@ import org.eclipse.jface.text.templates.persistence.TemplatePersistenceData;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.PartInitException;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import msi.gaml.operators.Strings;
+import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
@@ -36,7 +37,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 5 déc. 2014
  * 
  */
-public class EditToolbarTemplateMenu extends EditToolbarMenu {
+public class TemplateReferenceMenu extends GamlReferenceMenu {
 
 	abstract class Node {
 
@@ -79,9 +80,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 		@Override
 		String getPath() {
 			final String s = parent.getPath();
-			if (s.isEmpty()) {
-				return "" + rank;
-			}
+			if (s.isEmpty()) { return "" + rank; }
 			return s + "." + rank;
 		}
 
@@ -102,7 +101,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 					applyTemplate(store.getTemplateData(getPath()).getTemplate());
 				}
 
-			}).setTooltipText(pattern);
+			}).setToolTipText(pattern);
 			action(sub, "Edit...", new SelectionAdapter() {
 
 				@Override
@@ -142,9 +141,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 		Node childWithName(final String s) {
 			for (final Node n : getChildren()) {
-				if (n.getName().equals(s)) {
-					return n;
-				}
+				if (n.getName().equals(s)) { return n; }
 			}
 			return null;
 		}
@@ -192,9 +189,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 		@Override
 		String getPath() {
 			final String s = parent.getPath();
-			if (s.isEmpty()) {
-				return getName();
-			}
+			if (s.isEmpty()) { return getName(); }
 			return s + "." + getName();
 		}
 
@@ -234,6 +229,7 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 
 	@Override
 	protected void fillMenu() {
+
 		if (tree == null || tree.getChildren().isEmpty()) {
 			tree = new TemplateRoot();
 			store = getEditor().getTemplateStore();
@@ -278,6 +274,22 @@ public class EditToolbarTemplateMenu extends EditToolbarMenu {
 		} catch (final PartInitException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
+	 */
+	@Override
+	protected Image getImage() {
+		return GamaIcons.create("reference.templates").image();
+	}
+
+	/**
+	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()
+	 */
+	@Override
+	protected String getTitle() {
+		return "Templates";
 	}
 
 }

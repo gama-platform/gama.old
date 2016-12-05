@@ -209,6 +209,14 @@
            label="Elements in models...">
      </command>
   </menuContribution>
+  <menuContribution
+        allPopups="false"
+        locationURI="menu:org.eclipse.ui.main.menu">
+     <dynamic
+           class="ummisco.gama.ui.modeling.EditorMenu"
+           id="ummisco.gama.ui.modeling.dynamic5">
+     </dynamic>
+  </menuContribution>
 	</extension>
 
 <!-- adding resource factories -->

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaColorMenu.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaColorMenu.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -41,16 +40,10 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 5 déc. 2014
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaColorMenu extends GamaMenu {
 
 	public static final String[] SORT_NAMES = new String[] { "RGB value", "Name", "Brightness", "Luminescence" };
-
-	public static GamaColorMenu instance = new GamaColorMenu();
-
-	public static GamaColorMenu getInstance() {
-		return instance;
-	}
 
 	public static interface IColorRunnable {
 
@@ -75,56 +68,51 @@ public class GamaColorMenu extends GamaMenu {
 
 	};
 
-	private GamaColorMenu() {
+	public GamaColorMenu(final Menu main) {
+		mainMenu = main;
 	}
 
 	private SelectionListener currentListener;
 
 	private static Integer reverse = null;
-
-	public static Comparator byRGB = (arg0, arg1) -> getReverse()
-			* GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
-
-	public static Comparator byBrightness = (arg0, arg1) -> getReverse()
-			* GamaColor.colors.get(arg0).compareBrightnessTo(GamaColor.colors.get(arg1));
-
+	public static Comparator byRGB =
+			(arg0, arg1) -> getReverse() * GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
+	public static Comparator byBrightness =
+			(arg0, arg1) -> getReverse() * GamaColor.colors.get(arg0).compareBrightnessTo(GamaColor.colors.get(arg1));
 	public static Comparator byName = (arg0, arg1) -> getReverse() * arg0.toString().compareTo(arg1.toString());
-
-	public static Comparator byLuminescence = (arg0, arg1) -> getReverse()
-			* GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
+	public static Comparator byLuminescence =
+			(arg0, arg1) -> getReverse() * GamaColor.colors.get(arg0).compareTo(GamaColor.colors.get(arg1));
 	public static Comparator colorComp = null;
-
-	public static SelectionListener chooseSort = new SelectionAdapter() {
+	public SelectionListener chooseSort = new SelectionAdapter() {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			final GamaMenuItem item = (GamaMenuItem) e.widget;
+			final MenuItem item = (MenuItem) e.widget;
 			colorComp = (Comparator) item.getData();
-			item.getTopLevelMenu().reset();
+			reset();
 		}
 
 	};
 
 	public static Boolean breakdown = null;
-
-	static SelectionListener chooseBreak = new SelectionAdapter() {
+	SelectionListener chooseBreak = new SelectionAdapter() {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			final GamaMenuItem item = (GamaMenuItem) e.widget;
+			final MenuItem item = (MenuItem) e.widget;
 			breakdown = !breakdown;
-			item.getTopLevelMenu().reset();
+			reset();
 		}
 
 	};
 
-	static SelectionListener chooseReverse = new SelectionAdapter() {
+	SelectionListener chooseReverse = new SelectionAdapter() {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			final GamaMenuItem item = (GamaMenuItem) e.widget;
+			final MenuItem item = (MenuItem) e.widget;
 			setReverse(-1 * getReverse());
-			item.getTopLevelMenu().reset();
+			reset();
 		}
 
 	};

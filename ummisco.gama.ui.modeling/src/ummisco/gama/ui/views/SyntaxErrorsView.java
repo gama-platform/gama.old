@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SyntaxErrorsView.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SyntaxErrorsView.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -92,8 +91,7 @@ public class SyntaxErrorsView extends MarkerSupportView implements IToolbarDecor
 			try {
 				ResourcesPlugin.getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, null);
 				view.checkActions();
-			} catch (final CoreException e) {
-			}
+			} catch (final CoreException e) {}
 
 		}
 	}

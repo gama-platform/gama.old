@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaToolbar2.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaToolbar2.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -81,8 +80,7 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	@Override
-	protected void checkSubclass() {
-	}
+	protected void checkSubclass() {}
 
 	public ToolItem sep(final int n, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		final GamaIcon icon = GamaIcons.createSizer(getBackground(), n, height);
@@ -114,11 +112,8 @@ public class GamaToolbar2 extends Composite {
 		return item;
 	}
 
-	public ToolItem tooltip(final String s, final GamaUIColor color,
-			final int side /* SWT.LEFT or SWT.RIGHT */) {
-		if (s == null) {
-			return null;
-		}
+	public ToolItem tooltip(final String s, final GamaUIColor color, final int side /* SWT.LEFT or SWT.RIGHT */) {
+		if (s == null) { return null; }
 		hasTooltip = true;
 		final GamaToolbarSimple tb = getToolbar(side);
 		wipe(side, false);
@@ -142,13 +137,11 @@ public class GamaToolbar2 extends Composite {
 				}
 				line = reader.readLine();
 			}
-		} catch (final IOException exc) {
-		}
+		} catch (final IOException exc) {}
 		label.setText(newString);
 		label.setFont(GamaFonts.getSmallFont());
 		label.setBackground(color.inactive());
-		final ToolItem t = control(label,
-				/* c.computeSize(SWT.DEFAULT, SWT.DEFAULT).x + 10 */width, side);
+		final ToolItem t = control(label, /* c.computeSize(SWT.DEFAULT, SWT.DEFAULT).x + 10 */width, side);
 		refresh(true);
 		return t;
 	}
@@ -197,8 +190,7 @@ public class GamaToolbar2 extends Composite {
 		return create(image, text, tip, listener, SWT.DROP_DOWN, false, null, side);
 	}
 
-	public ToolItem control(final Control c, final int width,
-			final int side /* SWT.LEFT or SWT.RIGHT */) {
+	public ToolItem control(final Control c, final int width, final int side /* SWT.LEFT or SWT.RIGHT */) {
 		final ToolItem control = create(null, null, null, null, SWT.SEPARATOR, false, c, side);
 		// control.setControl(c);
 		if (width == SWT.DEFAULT) {
@@ -214,8 +206,8 @@ public class GamaToolbar2 extends Composite {
 	}
 
 	/**
-	 * Wipes the toolbar (left or right), including or not the simple tool
-	 * items. Retuns the width of the toolbar once wiped.
+	 * Wipes the toolbar (left or right), including or not the simple tool items. Retuns the width of the toolbar once
+	 * wiped.
 	 *
 	 * @param side
 	 * @param includingToolItems
@@ -270,7 +262,11 @@ public class GamaToolbar2 extends Composite {
 
 	private void normalizeToolbars() {
 		final int n = right.getItemCount();
-		((GridData) right.getLayoutData()).minimumWidth = n * 32;
+		int size = 0;
+		for (final ToolItem t : right.getItems()) {
+			size += t.getWidth();
+		}
+		((GridData) right.getLayoutData()).minimumWidth = size;
 	}
 
 	/**

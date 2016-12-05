@@ -9,39 +9,24 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.ui;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IStartup;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.editors.text.EditorsPlugin;
-import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.GamaPreferences.Entry;
 import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.lang.gaml.GamlRuntimeModule;
-import msi.gama.lang.gaml.ui.editor.GamlEditor;
-import msi.gama.lang.gaml.ui.editor.toolbar.EditToolbar;
-import msi.gama.lang.gaml.ui.editor.toolbar.EditToolbarOperatorsMenu;
+import msi.gama.lang.gaml.ui.editor.GamlEditorBindings;
+import msi.gama.lang.gaml.ui.reference.GamlReferenceSearch;
+import msi.gama.lang.gaml.ui.reference.OperatorsReferenceMenu;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gaml.types.IType;
-import ummisco.gama.ui.access.GamlSearchField;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 
 public class AutoStartup implements IStartup {
 
@@ -57,8 +42,11 @@ public class AutoStartup implements IStartup {
 
 						@Override
 						public void afterValueChange(final String newValue) {
-							EditToolbarOperatorsMenu.byName = newValue.equals("Name");
-							EditToolbar.visitToolbars(toolbar -> toolbar.resetOperatorsMenu());
+							OperatorsReferenceMenu.byName = newValue.equals("Name");
+							// final GamlReferenceMenu menu = GamlReferenceTools.getInstance().getOperatorsMenu();
+							// if (menu != null) {
+							// menu.reset();
+							// }
 						}
 					});
 	public static final Entry<Boolean> CORE_CLOSE_CURLY = GamaPreferences
@@ -122,29 +110,29 @@ public class AutoStartup implements IStartup {
 									AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, rgb);
 						}
 					});
-	public static final GamaPreferences.Entry<Boolean> EDITOR_SHOW_OTHER =
-			GamaPreferences
-					.create("pref_editor_other_experiments", "Show other models' experiments in toolbar", false,
-							IType.BOOL)
-					.in(GamaPreferences.EDITOR).group("Toolbars")
-					.addChangeListener(new IPreferenceChangeListener<Boolean>() {
-
-						@Override
-						public boolean beforeValueChange(final Boolean newValue) {
-							return true;
-						}
-
-						@Override
-						public void afterValueChange(final Boolean newValue) {
-							final IEditorReference[] eds = WorkbenchHelper.getPage().getEditorReferences();
-							for (final IEditorReference ed : eds) {
-								final IEditorPart e = ed.getEditor(false);
-								if (e instanceof GamlEditor) {
-									((GamlEditor) e).setShowOtherEnabled(newValue);
-								}
-							}
-						}
-					});
+	// public static final GamaPreferences.Entry<Boolean> EDITOR_SHOW_OTHER =
+	// GamaPreferences
+	// .create("pref_editor_other_experiments", "Show other models' experiments in toolbar", false,
+	// IType.BOOL)
+	// .in(GamaPreferences.EDITOR).group("Toolbars")
+	// .addChangeListener(new IPreferenceChangeListener<Boolean>() {
+	//
+	// @Override
+	// public boolean beforeValueChange(final Boolean newValue) {
+	// return true;
+	// }
+	//
+	// @Override
+	// public void afterValueChange(final Boolean newValue) {
+	// final IEditorReference[] eds = WorkbenchHelper.getPage().getEditorReferences();
+	// for (final IEditorReference ed : eds) {
+	// final IEditorPart e = ed.getEditor(false);
+	// if (e instanceof GamlEditor) {
+	// ((GamlEditor) e).setShowOtherEnabled(newValue);
+	// }
+	// }
+	// }
+	// });
 
 	private static GamaColor getDefaultBackground() {
 		EditorsPlugin.getDefault().getPreferenceStore()
@@ -160,34 +148,11 @@ public class AutoStartup implements IStartup {
 		return new GamaFont(fd.getName(), fd.getStyle(), fd.getHeight());
 	}
 
-	private void hideQuickAccess() {
-		final UIJob job = new UIJob("hide quick access") {
-
-			@Override
-			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				final IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-				if (window instanceof WorkbenchWindow) {
-					final MTrimBar topTrim = ((WorkbenchWindow) window).getTopTrim();
-					for (final MTrimElement element : topTrim.getChildren()) {
-						if ("SearchField".equals(element.getElementId())) {
-							final Composite parent = ((Control) element.getWidget()).getParent();
-							((Control) element.getWidget()).dispose();
-							element.setWidget(new GamlSearchField().createWidget(parent));
-							break;
-						}
-					}
-				}
-				return Status.OK_STATUS;
-			}
-		};
-		job.schedule();
-	}
-
 	@Override
 	public void earlyStartup() {
-
 		GamlRuntimeModule.staticInitialize();
-		hideQuickAccess();
+		GamlEditorBindings.install();
+		GamlReferenceSearch.install();
 	}
 
 }

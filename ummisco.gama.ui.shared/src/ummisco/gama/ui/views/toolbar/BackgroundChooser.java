@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'BackgroundChooser.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BackgroundChooser.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,7 +18,6 @@ import org.eclipse.swt.widgets.ToolItem;
 
 import msi.gama.util.GamaColor;
 import ummisco.gama.ui.menus.GamaColorMenu;
-import ummisco.gama.ui.menus.GamaColorMenu.IColorRunnable;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
@@ -65,9 +63,7 @@ public class BackgroundChooser {
 						final MenuItem i = (MenuItem) e.widget;
 						final String color = i.getText().replace("#", "");
 						final GamaColor c = GamaColor.colors.get(color);
-						if (c == null) {
-							return;
-						}
+						if (c == null) { return; }
 						changeColor(c.red(), c.green(), c.blue());
 					}
 
@@ -84,13 +80,7 @@ public class BackgroundChooser {
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
 
-					GamaColorMenu.getInstance().open(item.getParent(), e, listener, new IColorRunnable() {
-
-						@Override
-						public void run(final int r, final int g, final int b) {
-							changeColor(r, g, b);
-						}
-					});
+					new GamaColorMenu(null).open(item.getParent(), e, listener, (r, g, b) -> changeColor(r, g, b));
 
 				}
 			});

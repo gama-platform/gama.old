@@ -28,10 +28,9 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
@@ -41,6 +40,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 
@@ -48,6 +48,8 @@ import msi.gama.common.interfaces.IGamlDescription;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.IGamlEditor;
+import ummisco.gama.ui.views.toolbar.GamaToolbarSimple;
 
 public class GamlSearchField {
 
@@ -60,24 +62,35 @@ public class GamlSearchField {
 	private int dialogHeight = -1;
 	private int dialogWidth = -1;
 	private Control previousFocusControl;
-
+	private GamaToolbarSimple toolbar;
+	private Composite composite;
 	private Table table;
 
 	private String selectedString = ""; //$NON-NLS-1$
 	private AccessibleAdapter accessibleListener;
 
-	public GamlSearchField() {
-		INSTANCE = this;
-	}
+	private GamlSearchField() {}
 
 	public Text getText() {
 		return text;
 	}
 
-	public Composite createWidget(final Composite parent) {
-		final Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout());
-		text = createText(comp);
+	public GamaToolbarSimple getToolbar() {
+		return toolbar;
+	}
+
+	public Control createWidget(final Composite parent) {
+		composite = new Composite(parent, SWT.NONE);
+		GridLayoutFactory.fillDefaults().margins(0, 0).spacing(0, 0).extendedMargins(0, 5, 5, 5).numColumns(2)
+				.equalWidth(false).applyTo(composite);
+
+		toolbar = new GamaToolbarSimple(composite, SWT.NONE, parent.getBackground());
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).hint(SWT.DEFAULT, 24)
+				.applyTo(toolbar);
+		toolbar.setVisible(false);
+		((GridData) toolbar.getLayoutData()).exclude = true;
+		text = createText(composite);
+		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.FILL).grab(true, true).hint(200, 24).applyTo(text);
 
 		parent.getShell().addControlListener(new ControlListener() {
 			@Override
@@ -202,22 +215,68 @@ public class GamlSearchField {
 				}
 			}
 		});
-		// quickAccessContents.createInfoLabel(shell);
-		return comp;
+		hookToWorkbench();
+		return composite;
+	}
+
+	private void hookToWorkbench() {
+		final IGamlEditor editor = WorkbenchHelper.getActiveEditor();
+		if (editor != null) {
+			toolbar.setVisible(true);
+			((GridData) toolbar.getLayoutData()).exclude = false;
+		}
+		WorkbenchHelper.getPage().addPartListener(new IPartListener() {
+
+			@Override
+			public void partOpened(final IWorkbenchPart part) {
+				// if (part instanceof IGamlEditor) {
+				// toolbar.setVisible(true);
+				// ((GridData) toolbar.getLayoutData()).exclude = false;
+				// }
+
+			}
+
+			@Override
+			public void partDeactivated(final IWorkbenchPart part) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void partClosed(final IWorkbenchPart part) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void partBroughtToTop(final IWorkbenchPart part) {
+				// if (part instanceof IGamlEditor) {
+				// toolbar.setVisible(true);
+				// ((GridData) toolbar.getLayoutData()).exclude = false;
+				// }
+
+			}
+
+			@Override
+			public void partActivated(final IWorkbenchPart part) {
+				if (part instanceof IGamlEditor) {
+					toolbar.setVisible(true);
+					((GridData) toolbar.getLayoutData()).exclude = false;
+				} else {
+					toolbar.setVisible(false);
+					((GridData) toolbar.getLayoutData()).exclude = true;
+				}
+				composite.layout(true);
+
+			}
+		});
+
 	}
 
 	private Text createText(final Composite parent) {
 		final Text text = new Text(parent, SWT.SEARCH | SWT.ICON_SEARCH);
-		final String message = "GAML Search (" + GamaKeyBindings.SEARCH_STRING + ")";
+		final String message = "Search in reference (" + GamaKeyBindings.SEARCH_STRING + ")";
 		text.setMessage(message);
-
-		final GC gc = new GC(text);
-		final Point p = gc.textExtent("GAML Interactive help system");
-		final Rectangle r = text.computeTrim(0, 0, p.x, p.y);
-		gc.dispose();
-
-		// computeTrim() may result in r.x < 0
-		GridDataFactory.fillDefaults().hint(r.width - r.x, SWT.DEFAULT).applyTo(text);
 		return text;
 	}
 
@@ -383,6 +442,11 @@ public class GamlSearchField {
 		activate(null);
 		text.setFocus();
 
+	}
+
+	public static Control installOn(final Composite parent) {
+		INSTANCE = new GamlSearchField();
+		return INSTANCE.createWidget(parent);
 	}
 
 }

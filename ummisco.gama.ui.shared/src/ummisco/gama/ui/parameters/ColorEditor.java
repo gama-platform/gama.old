@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ColorEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ColorEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -78,7 +77,7 @@ public class ColorEditor extends AbstractEditor<Color> {
 
 	@Override
 	public void widgetSelected(final SelectionEvent event) {
-		GamaColorMenu.getInstance().open(edit, event, listener, runnable);
+		new GamaColorMenu(null).open(edit, event, listener, runnable);
 	}
 
 	@Override
@@ -111,7 +110,6 @@ public class ColorEditor extends AbstractEditor<Color> {
 
 	@Override
 	protected void applyEdit() {
-		GamaColorMenu.getInstance();
 		final java.awt.Color color = currentValue;
 		final RGB rgb = new RGB(color.getRed(), color.getGreen(), color.getBlue());
 		GamaColorMenu.openView(runnable, rgb);

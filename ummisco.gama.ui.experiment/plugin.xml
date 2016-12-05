@@ -251,6 +251,12 @@
                   label="Welcome page"
                   style="push">
             </command>
+            <command
+                  commandId="msi.gama.application.command.interactive"
+                  icon="platform:/plugin/ummisco.gama.ui.shared/icons/view.interactive.png"
+                  label="Interactive Console"
+                  style="push">
+            </command>
             <separator
                   name="msi.gama.application.separator3"
                   visible="true">
@@ -947,6 +953,15 @@
             defaultHandler="ummisco.gama.ui.commands.DummyHandler"
             id="ummisco.gama.ui.experiment.dummy"
             name="Separator">
+      </command>
+      <command
+            defaultHandler="ummisco.gama.ui.commands.ShowInteractiveConsole"
+            id="msi.gama.application.command.interactive"
+            name="Show Interactive Console">
+      </command>
+      <command
+            id="ummisco.gama.ui.experiment.command1"
+            name="name">
       </command>
    </extension>
    <extension

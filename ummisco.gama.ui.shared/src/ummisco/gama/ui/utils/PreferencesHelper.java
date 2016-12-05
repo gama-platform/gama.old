@@ -108,7 +108,7 @@ public class PreferencesHelper {
 							} else {
 								GamaColorMenu.colorComp = GamaColorMenu.byLuminescence;
 							}
-							GamaColorMenu.instance.reset();
+							// GamaColorMenu.instance.reset();
 						}
 					});
 	public static GamaPreferences.Entry<Boolean> COLOR_MENU_REVERSE =
@@ -123,7 +123,7 @@ public class PreferencesHelper {
 						@Override
 						public void afterValueChange(final Boolean pref) {
 							GamaColorMenu.setReverse(pref ? -1 : 1);
-							GamaColorMenu.instance.reset();
+							// GamaColorMenu.instance.reset();
 						}
 					});
 	public static GamaPreferences.Entry<Boolean> COLOR_MENU_GROUP =
@@ -138,7 +138,7 @@ public class PreferencesHelper {
 						@Override
 						public void afterValueChange(final Boolean pref) {
 							GamaColorMenu.breakdown = pref;
-							GamaColorMenu.instance.reset();
+							// GamaColorMenu.instance.reset();
 						}
 					});
 	public static final Entry<Boolean> NAVIGATOR_METADATA = GamaPreferences

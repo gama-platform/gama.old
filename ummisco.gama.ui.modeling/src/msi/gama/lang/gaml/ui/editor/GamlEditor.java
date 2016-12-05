@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlEditor.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlEditor.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -48,10 +47,9 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.VerifyListener;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -98,12 +96,10 @@ import msi.gama.lang.gaml.ui.editbox.IBoxDecorator;
 import msi.gama.lang.gaml.ui.editbox.IBoxEnabledEditor;
 import msi.gama.lang.gaml.ui.editbox.IBoxProvider;
 import msi.gama.lang.gaml.ui.editor.toolbar.CreateExperimentSelectionListener;
-import msi.gama.lang.gaml.ui.editor.toolbar.EditToolbar;
+import msi.gama.lang.gaml.ui.editor.toolbar.EditorSearchControls;
 import msi.gama.lang.gaml.ui.editor.toolbar.GamlQuickOutlinePopup;
-import msi.gama.lang.gaml.ui.editor.toolbar.ImportedInButton;
 import msi.gama.lang.gaml.ui.editor.toolbar.OpenExperimentSelectionListener;
 import msi.gama.lang.gaml.ui.editor.toolbar.OpenImportedErrorSelectionListener;
-import msi.gama.lang.gaml.ui.editor.toolbar.OtherExperimentsButton;
 import msi.gama.lang.gaml.ui.editor.toolbar.RevalidateModelSelectionListener;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialog;
 import msi.gama.lang.gaml.ui.templates.GamlEditTemplateDialogFactory;
@@ -112,13 +108,14 @@ import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.ValidationContext;
 import ummisco.gama.ui.controls.FlatButton;
-import ummisco.gama.ui.controls.ITooltipDisplayer;
 import ummisco.gama.ui.interfaces.IModelRunner;
 import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
 import ummisco.gama.ui.resources.GamaIcons;
 import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
+import ummisco.gama.ui.utils.WorkbenchHelper;
+import ummisco.gama.ui.views.IGamlEditor;
 import ummisco.gama.ui.views.toolbar.GamaToolbar2;
 import ummisco.gama.ui.views.toolbar.GamaToolbarFactory;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
@@ -130,9 +127,9 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  *
  * @since 4 mars 2012
  */
-@SuppressWarnings("all")
-public class GamlEditor extends XtextEditor
-		implements IGamlBuilderListener, IBoxEnabledEditor, IToolbarDecoratedView, ITooltipDisplayer {
+@SuppressWarnings ("all")
+public class GamlEditor extends XtextEditor implements IGamlBuilderListener, IGamlEditor, IBoxEnabledEditor,
+		IToolbarDecoratedView /* IToolbarDecoratedView.Sizable, ITooltipDisplayer */ {
 
 	static {
 		final IPreferenceStore store = EditorsUI.getPreferenceStore();
@@ -142,8 +139,7 @@ public class GamlEditor extends XtextEditor
 
 	}
 
-	public GamlEditor() {
-	}
+	public GamlEditor() {}
 
 	protected static Map<IPartService, IPartListener2> partListeners;
 
@@ -151,7 +147,7 @@ public class GamlEditor extends XtextEditor
 	GamlEditorState state = new GamlEditorState(null, Collections.EMPTY_LIST);
 	GamaToolbar2 toolbar;
 	Composite toolbarParent;
-	EditToolbar editToolbar;
+	private EditorSearchControls findControl;
 	boolean decorationEnabled = AutoStartup.EDITBOX_ENABLED.getValue();
 	boolean editToolbarEnabled = AutoStartup.EDITOR_SHOW_TOOLBAR.getValue();
 
@@ -176,9 +172,7 @@ public class GamlEditor extends XtextEditor
 
 			@Override
 			public int getLayer(final Annotation annotation) {
-				if (annotation.isMarkedDeleted()) {
-					return IAnnotationAccessExtension.DEFAULT_LAYER;
-				}
+				if (annotation.isMarkedDeleted()) { return IAnnotationAccessExtension.DEFAULT_LAYER; }
 				return super.getLayer(annotation);
 			}
 
@@ -195,9 +189,7 @@ public class GamlEditor extends XtextEditor
 
 			@Override
 			public boolean isPaintable(final Annotation annotation) {
-				if (imageProvider.getManagedImage(annotation) != null) {
-					return true;
-				}
+				if (imageProvider.getManagedImage(annotation) != null) { return true; }
 				return super.isPaintable(annotation);
 			}
 
@@ -297,23 +289,11 @@ public class GamlEditor extends XtextEditor
 		final ToolItem t = toolbar.button(IGamaColors.NEUTRAL, "Waiting...", GamaIcons.create("status.clock").image(),
 				null, SWT.LEFT);
 		toolbar.sep(4, SWT.LEFT);
-		toolbar.wipe(SWT.RIGHT, true);
-		new OtherExperimentsButton(this, toolbar, runner, resourceSetProvider);
-		toolbar.sep(4, SWT.LEFT);
-		new ImportedInButton(this, toolbar);
-		final ToolItem toggle = toolbar.button("action.toolbar.toggle2", null, "Toggle edit toolbar", null, SWT.RIGHT);
-		toggle.addSelectionListener(new SelectionAdapter() {
 
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				editToolbarEnabled = !editToolbarEnabled;
-				editToolbar.setVisible(editToolbarEnabled);
-				toggle.setImage(editToolbarEnabled ? GamaIcons.create("action.toolbar.toggle2").image()
-						: GamaIcons.create("action.toolbar.toggle3").image());
-				toolbarParent.layout();
-			}
+		// new EditorToolbar().fill(toolbar.getToolbar(SWT.RIGHT));
+		// toolbar.getToolbar(SWT.RIGHT).sep(10);
+		findControl = new EditorSearchControls(this).fill(toolbar.getToolbar(SWT.RIGHT));
 
-		});
 		toolbar.refresh(true);
 	}
 
@@ -325,9 +305,7 @@ public class GamlEditor extends XtextEditor
 	}
 
 	public boolean isRangeIndicatorEnabled() {
-		final IPreferenceStore store = getAdvancedPreferenceStore();
-		return store != null ? store.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR)
-				: false;
+		return getInternalSourceViewer().isProjectionMode();
 	}
 
 	public final IPreferenceStore getAdvancedPreferenceStore() {
@@ -337,17 +315,15 @@ public class GamlEditor extends XtextEditor
 	@Override
 	public void createPartControl(final Composite compo) {
 		toolbarParent = GamaToolbarFactory.createToolbars(this, compo);
-		buildRightToolbar();
-
 		final GridLayout layout = new GridLayout(1, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
+		layout.marginLeft = 0;
+		layout.marginRight = -5;
 		toolbarParent.setLayout(layout);
 		toolbarParent.setBackground(IGamaColors.WHITE.color());
-		editToolbar = new EditToolbar(this, toolbarParent);
-		editToolbar.setVisible(editToolbarEnabled);
 
 		// Asking the editor to fill the rest
 		final Composite editor = new Composite(toolbarParent, SWT.BORDER);
@@ -364,6 +340,31 @@ public class GamlEditor extends XtextEditor
 
 	}
 
+	@Override
+	public boolean isOverviewRulerVisible() {
+		final GamaSourceViewer viewer = getInternalSourceViewer();
+		if (viewer == null)
+			return super.isOverviewRulerVisible();
+		return viewer.isOverviewVisible();
+	}
+
+	@Override
+	public void showOverviewRuler() {
+		getInternalSourceViewer().showAnnotationsOverview(true);
+		// super.showOverviewRuler();
+	}
+
+	@Override
+	public void hideOverviewRuler() {
+		getInternalSourceViewer().showAnnotationsOverview(false);
+		// super.hideOverviewRuler();
+	}
+
+	@Override
+	public GamaSourceViewer getInternalSourceViewer() {
+		return (GamaSourceViewer) super.getInternalSourceViewer();
+	}
+
 	//
 	@Override
 	public void setFocus() {
@@ -371,17 +372,55 @@ public class GamlEditor extends XtextEditor
 				&& !getSourceViewer().getTextWidget().isFocusControl()) {
 			getSourceViewer().getTextWidget().forceFocus();
 		}
+		// EditorMenu.getInstance().editorChanged();
 	}
 
 	private void installGestures() {
-		editToolbar.installGesturesFor(this);
+		final StyledText text = this.getInternalSourceViewer().getTextWidget();
+		if (text != null) {
+			text.addGestureListener(ge -> {
+				if (ge.detail == SWT.GESTURE_BEGIN) {
+
+				} else
+
+				if (ge.detail == SWT.GESTURE_MAGNIFY) {
+					if (ge.magnification > 1.0) {
+						setFontAndCheckButtons(1);
+					} else if (ge.magnification < 1.0) {
+						setFontAndCheckButtons(-1);
+					}
+				}
+			});
+		}
+	}
+
+	public Font getFont() {
+		return getInternalSourceViewer().getTextWidget().getFont();
+	}
+
+	private void setFont(final Font font) {
+		final StyledText text = getInternalSourceViewer().getTextWidget();
+		text.setFont(font);
+		text.update();
+	}
+
+	public void setFontAndCheckButtons(final int deltaToApply) {
+		Font font = getFont();
+		final FontData data = font.getFontData()[0];
+		data.height += deltaToApply;
+		if (data.height < 6) { return; }
+		if (font != null) {
+			if (data.equals(font.getFontData()[0])) { return; }
+		}
+		font = new Font(WorkbenchHelper.getDisplay(), data);
+		setFont(font);
+		updateBoxes();
 	}
 
 	@Override
 	protected void installFoldingSupport(final ProjectionViewer projectionViewer) {
 		super.installFoldingSupport(projectionViewer);
-		if (!getAdvancedPreferenceStore()
-				.getBoolean(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR))
+		if (!isRangeIndicatorEnabled())
 			projectionViewer.doOperation(ProjectionViewer.TOGGLE);
 	};
 
@@ -392,82 +431,75 @@ public class GamlEditor extends XtextEditor
 	}
 
 	private void enableButton(final int index, final String text, final SelectionListener listener) {
-		if (text == null) {
-			return;
-		}
+		if (text == null) { return; }
 		final boolean isBatch = state.types.get(index);
 		final Image image = isBatch ? GamaIcons.create(IGamaIcons.BUTTON_BATCH).image()
 				: GamaIcons.create(IGamaIcons.BUTTON_GUI).image();
-		final ToolItem t = toolbar.button(IGamaColors.OK, text, image, SWT.LEFT);
+		final ToolItem t = toolbar.button(IGamaColors.OK,
+				text/* + "  " + GamaKeyBindings.format(GamlEditorBindings.MODIFIERS, String.valueOf(index).charAt(0)) */,
+				image, SWT.LEFT);
 		final String type = isBatch ? "batch" : "regular";
 		t.getControl().setToolTipText("Executes the " + type + " experiment " + text);
 		((FlatButton) t.getControl()).addSelectionListener(listener);
+		t.setData("index", index);
+		((FlatButton) t.getControl()).setData("exp", text);
 		toolbar.sep(4, SWT.LEFT);
 	}
 
-	@Override
-	public void stopDisplayingTooltips() {
-		updateToolbar(state, true);
-	}
-
-	@Override
-	public void displayTooltip(final String text, final GamaUIColor color) {
-		if (toolbar == null || toolbar.isDisposed()) {
-			return;
-		}
-		toolbar.tooltip(text, color, SWT.LEFT);
-	}
+	// @Override
+	// public void stopDisplayingTooltips() {
+	// updateToolbar(state, true);
+	// }
+	//
+	// @Override
+	// public void displayTooltip(final String text, final GamaUIColor color) {
+	// if (toolbar == null || toolbar.isDisposed()) { return; }
+	// toolbar.tooltip(text, color, SWT.LEFT);
+	// }
 
 	private void updateToolbar(final GamlEditorState newState, final boolean forceState) {
 		if (forceState || !state.equals(newState)) {
-			Display.getDefault().asyncExec(new Runnable() {
+			Display.getDefault().asyncExec(() -> {
+				if (toolbar == null || toolbar.isDisposed()) { return; }
+				toolbar.wipe(SWT.LEFT, true);
 
-				@Override
-				public void run() {
-					if (toolbar == null || toolbar.isDisposed()) {
-						return;
+				final GamaUIColor c = state.getColor();
+				final String msg = state.getStatus();
+
+				SelectionListener listener = null;
+				String imageName = null;
+
+				if (msg == GamlEditorState.NO_EXP_DEFINED) {
+					listener = new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT));
+					imageName = "small.dropdown";
+				} else if (newState.hasImportedErrors) {
+					listener = new OpenImportedErrorSelectionListener(GamlEditor.this, newState,
+							toolbar.getToolbar(SWT.LEFT));
+					imageName = "small.dropdown";
+				} else if (msg != null) {
+					listener = new RevalidateModelSelectionListener(GamlEditor.this);
+					imageName = "marker.error2";
+				} else {
+					listener = new OpenExperimentSelectionListener(GamlEditor.this, newState, runner);
+				}
+
+				if (msg != null) {
+					final ToolItem t = toolbar.button(c, msg, GamaIcons.create(imageName).image(), listener, SWT.LEFT);
+
+					// without the following line, the display of the
+					// text "msg" is not updated
+					// correctly (at least for Windows OS)
+					toolbar.sep(4, SWT.LEFT);
+				} else {
+					int i = 0;
+					for (final String e : state.abbreviations) {
+						enableButton(i++, e, listener);
 					}
-					toolbar.wipe(SWT.LEFT, true);
-
-					final GamaUIColor c = state.getColor();
-					final String msg = state.getStatus();
-
-					SelectionListener listener = null;
-					String imageName = null;
-
-					if (msg == GamlEditorState.NO_EXP_DEFINED) {
-						listener = new CreateExperimentSelectionListener(GamlEditor.this, toolbar.getToolbar(SWT.LEFT));
-						imageName = "small.dropdown";
-					} else if (newState.hasImportedErrors) {
-						listener = new OpenImportedErrorSelectionListener(GamlEditor.this, newState,
-								toolbar.getToolbar(SWT.LEFT));
-						imageName = "small.dropdown";
-					} else if (msg != null) {
-						listener = new RevalidateModelSelectionListener(GamlEditor.this);
-						imageName = "marker.error2";
-					} else {
-						listener = new OpenExperimentSelectionListener(GamlEditor.this, newState, runner);
-					}
-
-					if (msg != null) {
-						final ToolItem t = toolbar.button(c, msg, GamaIcons.create(imageName).image(), listener,
-								SWT.LEFT);
-
-						// without the following line, the display of the
-						// text "msg" is not updated
-						// correctly (at least for Windows OS)
-						toolbar.sep(4, SWT.LEFT);
-					} else {
-						int i = 0;
-						for (final String e : state.abbreviations) {
-							enableButton(i++, e, listener);
-						}
-
-					}
-
-					toolbar.refresh(true);
 
 				}
+
+				toolbar.refresh(true);
+
 			});
 		}
 
@@ -507,10 +539,8 @@ public class GamlEditor extends XtextEditor
 	}
 
 	private void beforeSave() {
-		if (!AutoStartup.EDITOR_CLEAN_UP.getValue()) {
-			return;
-		}
-		final SourceViewer sv = (SourceViewer) getInternalSourceViewer();
+		if (!AutoStartup.EDITOR_CLEAN_UP.getValue()) { return; }
+		final SourceViewer sv = getInternalSourceViewer();
 		final Point p = sv.getSelectedRange();
 		sv.setSelectedRange(0, sv.getDocument().getLength());
 		if (sv.canDoOperation(SourceViewer.FORMAT))
@@ -541,9 +571,7 @@ public class GamlEditor extends XtextEditor
 	 */
 	@Override
 	public void createDecorator() {
-		if (decorator != null) {
-			return;
-		}
+		if (decorator != null) { return; }
 		final IBoxProvider provider = BoxProviderRegistry.getInstance().getGamlProvider();
 		decorator = provider.createDecorator();
 		decorator.setStyledText(getStyledText());
@@ -580,9 +608,7 @@ public class GamlEditor extends XtextEditor
 	}
 
 	public void updateBoxes() {
-		if (!decorationEnabled) {
-			return;
-		}
+		if (!decorationEnabled) { return; }
 		getDecorator().forceUpdate();
 	}
 
@@ -593,9 +619,7 @@ public class GamlEditor extends XtextEditor
 
 	private void assignBoxPartListener() {
 		final IPartService partService = getSite().getWorkbenchWindow().getPartService();
-		if (partService == null) {
-			return;
-		}
+		if (partService == null) { return; }
 		if (partListeners == null) {
 			partListeners = new HashMap<IPartService, IPartListener2>();
 		}
@@ -626,9 +650,7 @@ public class GamlEditor extends XtextEditor
 	public String getSelectedText() {
 		final ITextSelection sel = (ITextSelection) getSelectionProvider().getSelection();
 		final int length = sel.getLength();
-		if (length == 0) {
-			return "";
-		}
+		if (length == 0) { return ""; }
 		final IDocument doc = getDocument();
 		try {
 			return doc.get(sel.getOffset(), length);
@@ -691,20 +713,13 @@ public class GamlEditor extends XtextEditor
 		}
 	}
 
-	/**
-	 * @return
-	 */
-	public EditToolbar getEditToolbar() {
-		return editToolbar;
-	}
-
 	public void openOutlinePopup() {
 
 		getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
 			@Override
 			public void process(final XtextResource state) throws Exception {
-				final QuickOutlinePopup popup = new GamlQuickOutlinePopup(GamlEditor.this);
+				final QuickOutlinePopup popup = new GamlQuickOutlinePopup(GamlEditor.this, toolbar);
 				injector.injectMembers(popup);
 				popup.open();
 			}
@@ -719,6 +734,7 @@ public class GamlEditor extends XtextEditor
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
 		this.toolbar = tb;
+		buildRightToolbar();
 	}
 
 	@Override
@@ -746,8 +762,20 @@ public class GamlEditor extends XtextEditor
 		}
 	}
 
-	@Override
-	public void removeVerifyListener(final VerifyListener listener) {
-		super.removeVerifyListener(listener);
+	public void doSearch() {
+		if (findControl.getFindControl().isFocusControl()) {
+			findControl.findNext();
+		} else {
+			findControl.getFindControl().setFocus();
+		}
 	}
+
+	/**
+	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Sizable#getSizableFontControl()
+	 */
+	// @Override
+	// public Control getSizableFontControl() {
+	// return getStyledText();
+	// }
+
 }

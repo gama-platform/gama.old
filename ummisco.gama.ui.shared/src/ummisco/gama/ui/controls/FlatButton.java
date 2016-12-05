@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FlatButton.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FlatButton.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -82,7 +81,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 
 	private FlatButton(final Composite parent, final int style) {
 		super(parent, style | SWT.DOUBLE_BUFFERED);
-		setFont(GamaFonts.getLabelfont());
+		setFont(GamaFonts.systemFont);
 		addPaintListener(this);
 		addListeners();
 	}
@@ -90,33 +89,25 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	@Override
 	public void handleEvent(final Event e) {
 		switch (e.type) {
-		case SWT.MouseExit:
-			// System.out.println("Mouse exited from " + this.getText());
-			doHover(false);
-			break;
-		case SWT.MouseMove:
-			// System.out.println("Mouse moved in " + this.getText());
-			break;
-		case SWT.MouseEnter:
-		case SWT.MouseHover:
-			// System.out.println("Mouse entered/hovered on " + this.getText());
-			doHover(true);
-			e.doit = true;
-			break;
-		case SWT.MouseUp:
-			if (e.button == 1 && getClientArea().contains(e.x, e.y)) {
-				// for ( int i = 0; i < e.count; i++ ) {
-				doButtonClicked();
-				// }
-			}
-			break;
-		case SWT.MouseDown:
-			// if ( e.button == 1 ) {
-			// doHover(true);
-			// }
-			break;
-		default:
-			;
+			case SWT.MouseExit:
+				doHover(false);
+				break;
+			case SWT.MouseMove:
+				break;
+			case SWT.MouseEnter:
+			case SWT.MouseHover:
+				doHover(true);
+				e.doit = true;
+				break;
+			case SWT.MouseUp:
+				if (e.button == 1 && getClientArea().contains(e.x, e.y)) {
+					doButtonClicked();
+				}
+				break;
+			case SWT.MouseDown:
+				break;
+			default:
+				;
 		}
 	}
 
@@ -126,23 +117,17 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	 * @param listener
 	 */
 	public void addSelectionListener(final SelectionListener listener) {
-		if (listener == null) {
-			return;
-		}
+		if (listener == null) { return; }
 		addListener(SWT.Selection, new TypedListener(listener));
 	}
 
 	public void removeSelectionListener(final SelectionListener listener) {
-		if (listener == null) {
-			return;
-		}
+		if (listener == null) { return; }
 		removeListener(SWT.Selection, listener);
 	}
 
 	private void doButtonClicked() {
-		if (!enabled) {
-			return;
-		}
+		if (!enabled) { return; }
 		final Event e = new Event();
 		e.item = this;
 		e.widget = this;
@@ -151,15 +136,12 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	private void doHover(final boolean hover) {
-		// if ( hover && hovered || !hover && !hovered ) { return; }
 		hovered = hover;
 		redraw();
 	}
 
 	private void drawBackground(final GC gc, final Rectangle rect) {
 		setBackground(getParent().getBackground());
-		// gc.setBackground(getParent().getBackground());
-		// gc.fillRectangle(getBounds());
 
 		final Path path = createClipping(rect);
 		final GamaUIColor color = GamaColors.get(colorCode);
@@ -189,7 +171,6 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		gc.setFont(getFont());
 		final int width = getSize().x;
 		final int v_inset = (getBounds().height - height) / 2;
-		// width = FastMath.min(width, getParent().getBounds().width);
 		final Rectangle rect = new Rectangle(0, v_inset, width, height);
 		drawBackground(gc, rect);
 
@@ -218,9 +199,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	private int drawImage(final GC gc, final int x, final int y) {
-		if (getImage() == null) {
-			return x;
-		}
+		if (getImage() == null) { return x; }
 		gc.drawImage(getImage(), x, y);
 		return x + getImage().getBounds().width + imagePadding;
 	}
@@ -233,10 +212,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 		} else {
 			width = computeMinWidth();
 		}
-		// int clientWidth = getClientArea().width;
 		final Point result = new Point(width, height);
-		// System.out.println(text + ": wHint " + wHint + "; client area " +
-		// getClientArea() + "; result " + result);
 		return result;
 	}
 
@@ -258,9 +234,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public String newText() {
-		if (text == null) {
-			return null;
-		}
+		if (text == null) { return null; }
 		final int parentWidth = getParent().getBounds().width;
 		final int width = computeMinWidth();
 		if (parentWidth < width) {
@@ -273,37 +247,29 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 			final float r = (float) (parentWidth - imageWidth) / (float) width;
 			final int nbChars = text.length();
 			final int newNbChars = Math.max(0, (int) (nbChars * r));
-			final String newText = text.substring(0, newNbChars / 2) + "..."
-					+ text.substring(nbChars - newNbChars / 2, nbChars);
-			// System.out.println("Parent width =" + parentWidth + "; new nb
-			// chars = " + newNbChars + "; new text = " +
-			// newText);
+			final String newText =
+					text.substring(0, newNbChars / 2) + "..." + text.substring(nbChars - newNbChars / 2, nbChars);
 			return newText;
 		}
 		return text;
 	}
 
 	/**
-	 * This is an image that will be displayed to the side of the text inside
-	 * the button (if any). By default the image will be to the left of the
-	 * text; however, setImageStyle can be used to specify that it's either to
-	 * the right or left. If there is no text, the image will be centered inside
-	 * the button.
+	 * This is an image that will be displayed to the side of the text inside the button (if any). By default the image
+	 * will be to the left of the text; however, setImageStyle can be used to specify that it's either to the right or
+	 * left. If there is no text, the image will be centered inside the button.
 	 *
 	 * @param image
 	 */
 	public FlatButton setImage(final Image image) {
-		if (this.image == image) {
-			return this;
-		}
+		if (this.image == image) { return this; }
 		this.image = image;
 		redraw();
 		return this;
 	}
 
 	/**
-	 * Set the style with which the side image is drawn, either IMAGE_LEFT or
-	 * IMAGE_RIGHT (default is IMAGE_LEFT).
+	 * Set the style with which the side image is drawn, either IMAGE_LEFT or IMAGE_RIGHT (default is IMAGE_LEFT).
 	 *
 	 * @param imageStyle
 	 */
@@ -321,12 +287,8 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public FlatButton setText(final String text) {
-		if (text == null) {
-			return this;
-		}
-		if (text.equals(this.text)) {
-			return this;
-		}
+		if (text == null) { return this; }
+		if (text.equals(this.text)) { return this; }
 		this.text = text;
 		redraw();
 		return this;
@@ -345,8 +307,6 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public void setEnabled(final boolean enabled) {
 		final boolean oldSetting = this.enabled;
 		this.enabled = enabled;
-		// boolean oldSetting = super.getEnabled();
-		// super.setEnabled(enabled);
 		if (oldSetting != enabled) {
 			if (enabled) {
 				addListeners();
@@ -385,17 +345,11 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	}
 
 	public FlatButton light() {
-		// if ( getFont().equals(SwtGui.getParameterEditorsFont()) ) { return
-		// this; }
-		// setFont(SwtGui.getParameterEditorsFont());
-		// redraw();
 		return this;
 	}
 
 	public FlatButton small() {
-		if (height == 20) {
-			return this;
-		}
+		if (height == 20) { return this; }
 		height = 20;
 		redraw();
 		return this;
@@ -404,9 +358,7 @@ public class FlatButton extends Canvas implements PaintListener, Listener {
 	public FlatButton setColor(final GamaUIColor c) {
 		final RGB oldColorCode = colorCode;
 		final RGB newColorCode = c.getRGB();
-		if (newColorCode.equals(oldColorCode)) {
-			return this;
-		}
+		if (newColorCode.equals(oldColorCode)) { return this; }
 		colorCode = c.getRGB();
 		redraw();
 		return this;

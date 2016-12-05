@@ -413,4 +413,10 @@ public class HeadlessListener implements IGui {
 		System.exit(0);
 	}
 
+	@Override
+	public void openInteractiveConsole() {
+		// TODO Auto-generated method stub
+
+	}
+
 }

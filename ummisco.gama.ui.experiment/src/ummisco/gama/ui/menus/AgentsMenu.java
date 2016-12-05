@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AgentsMenu.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AgentsMenu.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -35,7 +34,6 @@ import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.IScope.ExecutionResult;
-import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.statements.Arguments;
 import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
@@ -164,8 +162,7 @@ public class AgentsMenu extends ContributionItem {
 
 	public static class Focuser extends SelectionAdapter {
 
-		public Focuser() {
-		}
+		public Focuser() {}
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -241,12 +238,11 @@ public class AgentsMenu extends ContributionItem {
 
 	public static void createMenuForAgent(final Menu menu, final IAgent agent, final boolean topLevel,
 			final MenuAction... actions) {
-		if (agent == null) {
-			return;
-		}
+		if (agent == null) { return; }
 		GamaMenu.separate(menu, "Actions");
+		final boolean simulation = agent instanceof SimulationAgent;
 		actionAgentMenuItem(menu, agent, inspector, GamaIcons.create(IGamaIcons.MENU_INSPECT).image(),
-				"Inspect" + (topLevel ? " experiment" : ""));
+				"Inspect" + (topLevel ? simulation ? " simulation" : " experiment" : ""));
 		if (!topLevel) {
 
 			actionAgentMenuItem(menu, agent, new Focuser(), GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
@@ -315,7 +311,7 @@ public class AgentsMenu extends ContributionItem {
 			final int nb = size / subMenuSize + 1;
 			for (int i = 0; i < nb; i++) {
 				final int begin = i * subMenuSize;
-				final int end = CmnFastMath.min((i + 1) * subMenuSize, size);
+				final int end = Math.min((i + 1) * subMenuSize, size);
 				if (begin >= end) {
 					break;
 				}
@@ -325,9 +321,7 @@ public class AgentsMenu extends ContributionItem {
 				rangeItem.setText("" + begin + " to " + (end - 1));
 				rangeItem.setImage(GamaIcons.create(IGamaIcons.MENU_POPULATION).image());
 				rangeMenu.addListener(SWT.Show, e -> {
-					if (!menu.isVisible()) {
-						return;
-					}
+					if (!menu.isVisible()) { return; }
 					final MenuItem[] items = rangeMenu.getItems();
 					for (final MenuItem item : items) {
 						item.dispose();
@@ -344,8 +338,8 @@ public class AgentsMenu extends ContributionItem {
 		}
 	}
 
-	public static MenuAction HIGHLIGHT_ACTION = new MenuAction(highlighter,
-			GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(), "Highlight");
+	public static MenuAction HIGHLIGHT_ACTION =
+			new MenuAction(highlighter, GamaIcons.create(IGamaIcons.MENU_HIGHLIGHT).image(), "Highlight");
 
 	@Override
 	public void fill(final Menu parent, final int index) {

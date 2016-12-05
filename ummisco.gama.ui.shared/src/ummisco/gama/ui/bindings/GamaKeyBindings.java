@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package ummisco.gama.ui.bindings;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.swt.SWT;
@@ -31,53 +34,75 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class GamaKeyBindings implements Listener {
 
-	public static String SEARCH_STRING = format(SWT.COMMAND + SWT.SHIFT, 'H');
-	public static String PLAY_STRING = format(SWT.COMMAND, 'P');
-	public static String STEP_STRING = format(SWT.COMMAND + SWT.SHIFT, 'P');
-	public static String RELOAD_STRING = format(SWT.COMMAND, 'R');
-	public static String RELAUNCH_STRING = format(SWT.COMMAND + SWT.SHIFT, 'R');
-	public static String QUIT_STRING = format(SWT.COMMAND + SWT.SHIFT, 'X');
+	public static int COMMAND = PlatformHelper.isCocoa() ? SWT.COMMAND : SWT.CTRL;
+	public static String SEARCH_STRING = format(COMMAND + SWT.SHIFT, 'H');
+	public static String PLAY_STRING = format(COMMAND, 'P');
+	public static String STEP_STRING = format(COMMAND + SWT.SHIFT, 'P');
+	public static String RELOAD_STRING = format(COMMAND, 'R');
+	public static String RELAUNCH_STRING = format(COMMAND + SWT.SHIFT, 'R');
+	public static String QUIT_STRING = format(COMMAND + SWT.SHIFT, 'X');
+
+	public static abstract class PluggableBinding implements Runnable {
+
+		final KeyStroke key;
+
+		public PluggableBinding(final int modifiers, final int keyCode) {
+			super();
+			this.key = KeyStroke.getInstance(modifiers, keyCode);
+		}
+
+	}
+
+	private static final Map<KeyStroke, PluggableBinding> bindings = new LinkedHashMap<>();
 
 	GamaKeyBindings() {}
 
 	@Override
 	public void handleEvent(final Event event) {
-		// if (GAMA.getFrontmostController() == null)
-		// return;
-		if (!ctrl(event))
+		if (event.stateMask == 0)
 			return;
+
 		switch (event.keyCode) {
+
 			case 'h':
-				if (shift(event)) {
+				if (ctrl(event) && shift(event)) {
 					consume(event);
 					GamlSearchField.INSTANCE.search();
 				}
 				break;
 			// Handles START & RELOAD
 			case 'p':
-				if (shift(event)) {
+				if (ctrl(event) && shift(event)) {
 					consume(event);
 					GAMA.stepFrontmostExperiment();
-				} else {
+				} else if (ctrl(event)) {
 					consume(event);
 					GAMA.startPauseFrontmostExperiment();
 				}
 				break;
 			// Handles PAUSE & STEP
 			case 'r':
-				if (shift(event)) {
+				if (ctrl(event) && shift(event)) {
 					consume(event);
 					GAMA.relaunchFrontmostExperiment();
-				} else {
+				} else if (ctrl(event)) {
 					consume(event);
 					GAMA.reloadFrontmostExperiment();
 				}
 				break;
 			// Handles CLOSE
 			case 'x':
-				if (shift(event)) {
+				if (ctrl(event) && shift(event)) {
 					consume(event);
 					GAMA.closeAllExperiments(true, false);
+				}
+				break;
+			default:
+				// System.out.println(" KEY CODE " + event.keyCode + " MODS " + event.stateMask);
+				final PluggableBinding pb = bindings.get(KeyStroke.getInstance(event.stateMask, event.keyCode));
+				if (pb != null) {
+					consume(event);
+					pb.run();
 				}
 		}
 
@@ -95,15 +120,15 @@ public class GamaKeyBindings implements Listener {
 	}
 
 	public static boolean ctrl(final Event e) {
-		return PlatformHelper.isCocoa() ? (e.stateMask & SWT.COMMAND) != 0 : (e.stateMask & SWT.CTRL) != 0;
+		return (e.stateMask & COMMAND) != 0;
 	}
 
 	public static boolean ctrl(final KeyEvent e) {
-		return PlatformHelper.isCocoa() ? (e.stateMask & SWT.COMMAND) != 0 : (e.stateMask & SWT.CTRL) != 0;
+		return (e.stateMask & COMMAND) != 0;
 	}
 
 	public static boolean ctrl(final MouseEvent e) {
-		return PlatformHelper.isCocoa() ? (e.stateMask & SWT.COMMAND) != 0 : (e.stateMask & SWT.CTRL) != 0;
+		return (e.stateMask & COMMAND) != 0;
 	}
 
 	public static boolean shift(final Event e) {
@@ -121,6 +146,13 @@ public class GamaKeyBindings implements Listener {
 	public static String format(final int mod, final int key) {
 
 		return SWTKeySupport.getKeyFormatterForPlatform().format(KeyStroke.getInstance(mod, key));
+	}
+
+	public static void plug(final PluggableBinding newBinding) {
+		bindings.put(newBinding.key, newBinding);
+		// System.out.println(
+		// "INSTALLING KEY CODE " + newBinding.key.getNaturalKey() + " MODS " + newBinding.key.getModifierKeys());
+
 	}
 
 }

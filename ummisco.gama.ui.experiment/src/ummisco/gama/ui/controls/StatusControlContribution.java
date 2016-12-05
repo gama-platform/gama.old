@@ -59,19 +59,19 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	private GamaUIColor color;
 	int agentIndex; // 0 for experiments, > 0 for simulation(s)
 
-	static StatusControlContribution instance;
+	static StatusControlContribution INSTANCE;
 
 	public static StatusControlContribution getInstance() {
-		return instance;
+		return INSTANCE;
 	}
 
 	public StatusControlContribution() {
-		instance = this;
+		INSTANCE = this;
 	}
 
 	public StatusControlContribution(final String id) {
 		super(id);
-		instance = this;
+		INSTANCE = this;
 	}
 
 	@Override

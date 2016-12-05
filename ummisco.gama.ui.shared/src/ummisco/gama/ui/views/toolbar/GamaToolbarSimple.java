@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaToolbarSimple.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaToolbarSimple.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -15,6 +14,7 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -37,14 +37,17 @@ public class GamaToolbarSimple extends ToolBar {
 
 	ControlListener widthListener;
 
-	public GamaToolbarSimple(final Composite parent, final int style) {
+	public GamaToolbarSimple(final Composite parent, final int style, final Color c) {
 		super(parent, style);
-		setBackground(IGamaColors.WHITE.color());
+		setBackground(c);
+	}
+
+	public GamaToolbarSimple(final Composite parent, final int style) {
+		this(parent, style, IGamaColors.WHITE.color());
 	}
 
 	@Override
-	protected void checkSubclass() {
-	}
+	protected void checkSubclass() {}
 
 	public GamaToolbarSimple width(final Control parent) {
 		if (widthListener != null) {

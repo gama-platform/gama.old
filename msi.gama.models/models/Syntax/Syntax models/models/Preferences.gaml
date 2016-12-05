@@ -305,9 +305,6 @@ experiment 'Display Preferences' type: gui
 		//Background color of editors
 		write sample(gama.pref_editor_background_color);
 
-		//Show other models' experiments in toolbar
-		write sample(gama.pref_editor_other_experiments);
-
 		//Enable faster compilation (but less accurate error reporting in nagivator)
 		write sample(gama.pref_optimize_fast_compilation);
 
@@ -614,9 +611,6 @@ experiment 'Set Preferences' type: gui
 
 		//Background color of editors
 		gama.pref_editor_background_color <- rgb(255, 255, 255, 255);
-
-		//Show other models' experiments in toolbar
-		gama.pref_editor_other_experiments <- false;
 
 		//Enable faster compilation (but less accurate error reporting in nagivator)
 		gama.pref_optimize_fast_compilation <- false;

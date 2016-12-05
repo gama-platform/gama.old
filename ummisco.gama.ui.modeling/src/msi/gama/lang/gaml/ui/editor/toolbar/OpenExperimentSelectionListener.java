@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'OpenExperimentSelectionListener.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'OpenExperimentSelectionListener.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -58,11 +57,9 @@ public class OpenExperimentSelectionListener implements SelectionListener {
 		if (AutoStartup.EDITOR_SAVE.getValue()) {
 			WorkbenchHelper.getPage().saveAllEditors(AutoStartup.EDITOR_SAVE_ASK.getValue());
 		}
-		String name = ((FlatButton) e.widget).getText();
+		String name = (String) ((FlatButton) e.widget).getData("exp");
 		final int i = state.abbreviations.indexOf(name);
-		if (i == -1) {
-			return;
-		}
+		if (i == -1) { return; }
 		name = state.experiments.get(i);
 		runner.runModel(editor.getDocument(), name);
 
@@ -80,7 +77,6 @@ public class OpenExperimentSelectionListener implements SelectionListener {
 	 * @see org.eclipse.swt.events.SelectionListener#widgetDefaultSelected(org.eclipse.swt.events.SelectionEvent)
 	 */
 	@Override
-	public void widgetDefaultSelected(final SelectionEvent e) {
-	}
+	public void widgetDefaultSelected(final SelectionEvent e) {}
 
 }

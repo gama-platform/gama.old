@@ -1,14 +1,13 @@
 /*********************************************************************************************
  *
- * 'EditToolbarOperatorsMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'OperatorsReferenceMenu.java, in plugin ummisco.gama.ui.modeling, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
  *
  **********************************************************************************************/
-package msi.gama.lang.gaml.ui.editor.toolbar;
+package msi.gama.lang.gaml.ui.reference;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -19,7 +18,9 @@ import java.util.Map;
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
 import gnu.trove.map.hash.THashMap;
 import msi.gama.lang.gaml.ui.AutoStartup;
@@ -27,7 +28,7 @@ import msi.gama.lang.gaml.ui.templates.GamlTemplateFactory;
 import msi.gaml.descriptions.OperatorProto;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.Signature;
-import ummisco.gama.ui.menus.GamaMenuItem;
+import ummisco.gama.ui.resources.GamaIcons;
 
 /**
  * The class EditToolbarTemplateMenu.
@@ -36,8 +37,8 @@ import ummisco.gama.ui.menus.GamaMenuItem;
  * @since 5 déc. 2014
  * 
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
-public class EditToolbarOperatorsMenu extends EditToolbarMenu {
+@SuppressWarnings ({ "unchecked", "rawtypes" })
+public class OperatorsReferenceMenu extends GamlReferenceMenu {
 
 	public static Boolean byName = null;
 
@@ -46,24 +47,24 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 		if (byName == null) {
 			byName = AutoStartup.OPERATORS_MENU_SORT.getValue().equals("Name");
 		}
-		final Menu sub = sub("Sort by...");
-		sep();
-		check(sub, "Name", byName, new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent event) {
-				byName = true;
-				reset();
-			}
-		});
-		check(sub, "Category", !byName, new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent event) {
-				byName = false;
-				reset();
-			}
-		});
+		// final Menu sub = sub("Sort by...");
+		// sep();
+		// check(sub, "Name", byName, new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent event) {
+		// byName = true;
+		// reset();
+		// }
+		// });
+		// check(sub, "Category", !byName, new SelectionAdapter() {
+		//
+		// @Override
+		// public void widgetSelected(final SelectionEvent event) {
+		// byName = false;
+		// reset();
+		// }
+		// });
 		if (byName) {
 			fillMenuByName();
 		} else {
@@ -89,7 +90,7 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 			final Menu name_menu = sub(name);
 			for (final OperatorProto proto : protos) {
 				final Template t = GamlTemplateFactory.from(proto);
-				final GamaMenuItem item = action(name_menu,
+				final MenuItem item = action(name_menu,
 						"(" + proto.signature.asPattern(false) + ") -> " + proto.returnType.serialize(true),
 						new SelectionAdapter() {
 
@@ -98,7 +99,7 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 								applyTemplate(t);
 							}
 						});
-				item.setTooltipText(t.getDescription());
+				item.setToolTipText(t.getDescription());
 			}
 		}
 	}
@@ -141,7 +142,7 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 				final Menu name_menu = sub(category_menu, name);
 				for (final OperatorProto proto : protos) {
 					final Template t = categories.get(category).get(name).get(proto);
-					final GamaMenuItem item = action(name_menu,
+					final MenuItem item = action(name_menu,
 							"(" + proto.signature.asPattern(false) + ") -> " + proto.returnType.serialize(true),
 							new SelectionAdapter() {
 
@@ -150,7 +151,7 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 									applyTemplate(t);
 								}
 							});
-					item.setTooltipText(t.getDescription());
+					item.setToolTipText(t.getDescription());
 				}
 
 			}
@@ -159,7 +160,22 @@ public class EditToolbarOperatorsMenu extends EditToolbarMenu {
 	}
 
 	@Override
-	protected void openView() {
+	protected void openView() {}
+
+	/**
+	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getImage()
+	 */
+	@Override
+	protected Image getImage() {
+		return GamaIcons.create("reference.operators").image();
+	}
+
+	/**
+	 * @see msi.gama.lang.gaml.ui.reference.GamlReferenceMenu#getTitle()
+	 */
+	@Override
+	protected String getTitle() {
+		return "Operators";
 	}
 
 }

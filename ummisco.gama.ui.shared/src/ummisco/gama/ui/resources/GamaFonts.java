@@ -9,6 +9,8 @@
  **********************************************************************************************/
 package ummisco.gama.ui.resources;
 
+import java.util.Arrays;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -18,7 +20,8 @@ import ummisco.gama.ui.utils.GraphicsHelper;
 
 public class GamaFonts {
 
-	public static FontData baseData = Display.getCurrent().getSystemFont().getFontData()[0];
+	public static Font systemFont = Display.getCurrent().getSystemFont();
+	public static FontData baseData = systemFont.getFontData()[0];
 	public static String baseFont = baseData.getName();
 	public static int baseSize = 11;
 	private static java.awt.Font awtBaseFont;
@@ -39,7 +42,9 @@ public class GamaFonts {
 	public static Font categoryBoldHelpFont;
 
 	static void initFonts() {
+		System.out.println("System font = " + Arrays.toString(systemFont.getFontData()));
 		FontData fd = new FontData(awtBaseFont.getName(), awtBaseFont.getSize(), awtBaseFont.getStyle());
+		final FontData original = fd;
 		labelFont = new Font(Display.getCurrent(), fd);
 		final FontData fd2 = new FontData(fd.getName(), fd.getHeight(), SWT.BOLD);
 		expandFont = new Font(Display.getDefault(), fd2);
@@ -59,9 +64,9 @@ public class GamaFonts {
 		navigRegularFont = new Font(Display.getDefault(), fd);
 		fd = new FontData(fd.getName(), fd.getHeight(), SWT.ITALIC);
 		navigResourceFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(fd.getName(), 12, SWT.NORMAL);
+		fd = new FontData(original.getName(), 12, SWT.NORMAL);
 		helpFont = new Font(Display.getDefault(), fd);
-		fd = new FontData(fd.getName(), 12, SWT.BOLD);
+		fd = new FontData(original.getName(), 12, SWT.BOLD);
 		boldHelpFont = new Font(Display.getDefault(), fd);
 		fd = new FontData(fd.getName(), 14, SWT.NORMAL);
 		categoryHelpFont = new Font(Display.getDefault(), fd);

@@ -561,4 +561,10 @@ public class SwtGui implements IGui {
 
 	}
 
+	@Override
+	public void openInteractiveConsole() {
+		this.showView(INTERACTIVE_CONSOLE_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
+
+	}
+
 }

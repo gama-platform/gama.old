@@ -154,4 +154,6 @@ public interface IGui {
 
 	void exit();
 
+	void openInteractiveConsole();
+
 }

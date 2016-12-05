@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ParameterExpandItem.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ParameterExpandItem.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -29,8 +28,8 @@ import ummisco.gama.ui.resources.IGamaColors;
 import ummisco.gama.ui.resources.IGamaIcons;
 
 /**
- * Instances of this class represent a selectable user interface object that
- * represents a expandable item in a expand bar.
+ * Instances of this class represent a selectable user interface object that represents a expandable item in a expand
+ * bar.
  */
 public class ParameterExpandItem extends Item {
 
@@ -42,7 +41,7 @@ public class ParameterExpandItem extends Item {
 	int visiblePosition = -1;
 	int selectablePosition = -1;
 	int closePosition = -1;
-	Color backgroundColor = IGamaColors.PARAMETERS_BACKGROUND.color();
+	Color backgroundColor = IGamaColors.VERY_LIGHT_GRAY.color();
 
 	private static int imageHeight = 16, imageWidth = 16;
 	boolean isPaused = false;
@@ -71,9 +70,7 @@ public class ParameterExpandItem extends Item {
 
 	@Override
 	public void dispose() {
-		if (isDisposed()) {
-			return;
-		}
+		if (isDisposed()) { return; }
 		if (parent != null) {
 			parent.destroyItem(this);
 		}
@@ -87,9 +84,7 @@ public class ParameterExpandItem extends Item {
 	}
 
 	void drawItem(final GC gc, final boolean drawHover) {
-		if (parent == null) {
-			return;
-		}
+		if (parent == null) { return; }
 		final int headerHeight = parent.bandHeight;
 		gc.setForeground(IGamaColors.PARAMETERS_BACKGROUND.color());
 		gc.setBackground(IGamaColors.PARAMETERS_BACKGROUND.color());
@@ -105,7 +100,7 @@ public class ParameterExpandItem extends Item {
 		// : 0), 6, 6);
 		int drawX = x;
 		final int imageY = y /*- 1*/ + (headerHeight - imageHeight) / 2;
-		if (getImage() != null) {
+		if (getImage() != null && drawHover) {
 			drawX += ParameterExpandItem.TEXT_INSET;
 			gc.drawImage(getImage(), drawX, imageY);
 			drawX += imageWidth;
@@ -125,8 +120,8 @@ public class ParameterExpandItem extends Item {
 		}
 
 		if (parent.hasVisibleToggle) {
-			final Image image = isVisible ? GamaIcons.create("small.inspect").image()
-					: GamaIcons.create("small.hidden").image();
+			final Image image =
+					isVisible ? GamaIcons.create("small.inspect").image() : GamaIcons.create("small.hidden").image();
 			endX -= 2 * TEXT_INSET + imageWidth;
 			visiblePosition = endX;
 			gc.drawImage(image, endX, imageY);
@@ -189,17 +184,13 @@ public class ParameterExpandItem extends Item {
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public int getHeaderHeight() {
 		// checkWidget();
-		if (parent == null) {
-			return imageHeight;
-		}
+		if (parent == null) { return imageHeight; }
 		return Math.max(parent.bandHeight, imageHeight);
 	}
 
@@ -219,9 +210,7 @@ public class ParameterExpandItem extends Item {
 	}
 
 	void redraw() {
-		if (parent == null) {
-			return;
-		}
+		if (parent == null) { return; }
 		final int headerHeight = parent.bandHeight;
 		if (imageHeight > headerHeight) {
 			parent.redraw(x + TEXT_INSET, y + headerHeight - imageHeight, imageWidth, imageHeight, false);
@@ -232,9 +221,7 @@ public class ParameterExpandItem extends Item {
 	void setBounds(final int x, final int y, final int width, final int height, final boolean move,
 			final boolean size) {
 		redraw();
-		if (parent == null) {
-			return;
-		}
+		if (parent == null) { return; }
 		final int headerHeight = parent.bandHeight;
 		int y1 = y;
 		if (move) {
@@ -280,17 +267,13 @@ public class ParameterExpandItem extends Item {
 	 *
 	 * @exception IllegalArgumentException
 	 *                <ul>
-	 *                <li>ERROR_INVALID_ARGUMENT - if the control has been
-	 *                disposed</li>
-	 *                <li>ERROR_INVALID_PARENT - if the control is not in the
-	 *                same widget tree</li>
+	 *                <li>ERROR_INVALID_ARGUMENT - if the control has been disposed</li>
+	 *                <li>ERROR_INVALID_PARENT - if the control is not in the same widget tree</li>
 	 *                </ul>
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setControl(final Composite control) {
@@ -321,16 +304,12 @@ public class ParameterExpandItem extends Item {
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setExpanded(final boolean expanded) {
-		if (parent == null) {
-			return;
-		}
+		if (parent == null) { return; }
 		// checkWidget();
 		this.expanded = expanded;
 		parent.showItem(this);
@@ -355,25 +334,21 @@ public class ParameterExpandItem extends Item {
 	}
 
 	/**
-	 * Sets the height of the receiver. This is height of the item when it is
-	 * expanded, excluding the height of the header.
+	 * Sets the height of the receiver. This is height of the item when it is expanded, excluding the height of the
+	 * header.
 	 *
 	 * @param height
 	 *            the new height
 	 *
 	 * @exception SWTException
 	 *                <ul>
-	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been
-	 *                disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the
-	 *                thread that created the receiver</li>
+	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setHeight(final int height) {
 		// checkWidget();
-		if (height < 0) {
-			return;
-		}
+		if (height < 0) { return; }
 		setBounds(0, 0, width, height, false, true);
 		if (expanded && parent != null) {
 			parent.layoutItems(parent.indexOf(this) + 1, true);
@@ -395,30 +370,22 @@ public class ParameterExpandItem extends Item {
 	}
 
 	public boolean closeRequested(final int x2, final int y2) {
-		if (closePosition == -1) {
-			return false;
-		}
+		if (closePosition == -1) { return false; }
 		return clickIn(x2, y2, x + closePosition);
 	}
 
 	public boolean pauseRequested(final int x2, final int y2) {
-		if (pausePosition == -1) {
-			return false;
-		}
+		if (pausePosition == -1) { return false; }
 		return clickIn(x2, y2, x + pausePosition);
 	}
 
 	public boolean visibleRequested(final int x2, final int y2) {
-		if (visiblePosition == -1) {
-			return false;
-		}
+		if (visiblePosition == -1) { return false; }
 		return clickIn(x2, y2, x + visiblePosition);
 	}
 
 	public boolean selectableRequested(final int x2, final int y2) {
-		if (selectablePosition == -1) {
-			return false;
-		}
+		if (selectablePosition == -1) { return false; }
 		return clickIn(x2, y2, x + selectablePosition);
 	}
 

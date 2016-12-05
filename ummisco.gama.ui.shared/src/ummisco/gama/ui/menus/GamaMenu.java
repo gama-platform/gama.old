@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaMenu.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaMenu.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -41,8 +40,8 @@ public abstract class GamaMenu {
 
 	protected Menu mainMenu;
 
-	protected GamaMenuItem createItem(final Menu m, final int style) {
-		return new GamaMenuItem(m, style, this);
+	protected MenuItem createItem(final Menu m, final int style) {
+		return new MenuItem(m, style);
 	}
 
 	protected final void sep() {
@@ -58,7 +57,7 @@ public abstract class GamaMenu {
 	}
 
 	protected final void sep(final Menu m, final String s) {
-		final GamaMenuItem me = createItem(m, SWT.NONE);
+		final MenuItem me = createItem(m, SWT.NONE);
 		me.setText(s);
 		me.setEnabled(false);
 	}
@@ -73,21 +72,20 @@ public abstract class GamaMenu {
 		sep(m);
 	}
 
-	protected final GamaMenuItem action(final String s, final SelectionListener listener) {
+	protected final MenuItem action(final String s, final SelectionListener listener) {
 		return action(mainMenu, s, listener);
 	}
 
-	protected final GamaMenuItem action(final String s, final SelectionListener listener, final Image image) {
+	protected final MenuItem action(final String s, final SelectionListener listener, final Image image) {
 		return action(mainMenu, s, listener, image);
 	}
 
-	protected final GamaMenuItem action(final Menu m, final String s, final SelectionListener listener) {
+	protected final MenuItem action(final Menu m, final String s, final SelectionListener listener) {
 		return action(m, s, listener, null);
 	}
 
-	protected final GamaMenuItem action(final Menu m, final String s, final SelectionListener listener,
-			final Image image) {
-		final GamaMenuItem action = createItem(m, SWT.PUSH);
+	protected final MenuItem action(final Menu m, final String s, final SelectionListener listener, final Image image) {
+		final MenuItem action = createItem(m, SWT.PUSH);
 		action.setText(s);
 		action.addSelectionListener(listener);
 		if (image != null) {
@@ -96,23 +94,23 @@ public abstract class GamaMenu {
 		return action;
 	}
 
-	protected final GamaMenuItem check(final String s, final boolean selected, final SelectionListener listener) {
+	protected final MenuItem check(final String s, final boolean selected, final SelectionListener listener) {
 		return check(mainMenu, s, selected, listener);
 	}
 
-	protected final GamaMenuItem check(final String s, final boolean selected, final SelectionListener listener,
+	protected final MenuItem check(final String s, final boolean selected, final SelectionListener listener,
 			final Image image) {
 		return check(mainMenu, s, selected, listener, image);
 	}
 
-	protected final GamaMenuItem check(final Menu m, final String s, final boolean select,
+	protected final MenuItem check(final Menu m, final String s, final boolean select,
 			final SelectionListener listener) {
 		return check(m, s, select, listener, null);
 	}
 
-	protected final GamaMenuItem check(final Menu m, final String s, final boolean select,
-			final SelectionListener listener, final Image image) {
-		final GamaMenuItem action = createItem(m, SWT.CHECK);
+	protected final MenuItem check(final Menu m, final String s, final boolean select, final SelectionListener listener,
+			final Image image) {
+		final MenuItem action = createItem(m, SWT.CHECK);
 		action.setText(s);
 		action.setSelection(select);
 		action.addSelectionListener(listener);
@@ -131,10 +129,10 @@ public abstract class GamaMenu {
 	}
 
 	protected final Menu sub(final Menu parent, final String s, final String t) {
-		final GamaMenuItem item = createItem(parent, SWT.CASCADE);
+		final MenuItem item = createItem(parent, SWT.CASCADE);
 		item.setText(s);
 		if (t != null) {
-			item.setTooltipText(t);
+			item.setToolTipText(t);
 		}
 		final Menu m = new Menu(item);
 		item.setMenu(m);
@@ -143,8 +141,8 @@ public abstract class GamaMenu {
 
 	public void reset() {
 		if (mainMenu != null && !mainMenu.isDisposed()) {
-			mainMenu.dispose();
-			mainMenu = null;
+			for (final MenuItem item : mainMenu.getItems())
+				item.dispose();
 		}
 	}
 
@@ -154,7 +152,7 @@ public abstract class GamaMenu {
 
 	public void open(final Control c, final SelectionEvent trigger, final int verticalOffset) {
 
-		if (mainMenu == null) {
+		if (mainMenu == null || mainMenu.isDisposed() || mainMenu.getItemCount() == 0) {
 			mainMenu = new Menu(c.getShell(), SWT.POP_UP);
 			fillMenu();
 		}

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ExperimentParametersView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ExperimentParametersView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -62,9 +61,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	public void addItem(final IExperimentPlan exp) {
 		if (exp != null) {
 			experiment = exp;
-			if (!exp.hasParametersOrUserCommands()) {
-				return;
-			}
+			if (!exp.hasParametersOrUserCommands()) { return; }
 			reset();
 			final Collection<IParameter> params = new ArrayList<>(exp.getParameters().values());
 			params.addAll(exp.getExplorableParameters().values());
@@ -125,20 +122,6 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 					}
 
 				}, SWT.RIGHT);
-		// tb.button("menu.reload4", "Reload experiment", "Reload experiment
-		// with the current parameters",
-		// new SelectionListener() {
-		//
-		// @Override
-		// public void widgetSelected(final SelectionEvent e) {
-		// GAMA.reloadFrontmostExperiment();
-		// }
-		//
-		// @Override
-		// public void widgetDefaultSelected(final SelectionEvent e) {
-		// widgetSelected(e);
-		// }
-		// }, SWT.RIGHT);
 		tb.button("menu.add2", "Add simulation",
 				"Add a new simulation (with the current parameters) to this experiment", new SelectionListener() {
 
@@ -183,8 +166,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> impl
 	/**
 	 * Method handleMenu()
 	 * 
-	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object,
-	 *      int, int)
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final String data, final int x, final int y) {

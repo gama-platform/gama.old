@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IGamaColors.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IGamaColors.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -33,8 +32,8 @@ public interface IGamaColors {
 	public static GamaUIColor TOOLTIP = GamaColors.get(GamaIcons.create("palette.yellow2")).validate();
 	public static GamaUIColor GRAY_LABEL = GamaColors.get(0x88, 0x88, 0x88).validate();
 	public static GamaUIColor VERY_LIGHT_GRAY = GamaColors.get(245, 245, 245).validate();
-	public static GamaUIColor WHITE = new GamaUIColor(GamaColors.system(SWT.COLOR_WHITE),
-			GamaColors.system(SWT.COLOR_WHITE)).validate();
+	public static GamaUIColor WHITE =
+			new GamaUIColor(GamaColors.system(SWT.COLOR_WHITE), GamaColors.system(SWT.COLOR_WHITE)).validate();
 	public static GamaUIColor BLACK = new GamaUIColor(GamaColors.system(SWT.COLOR_BLACK)).validate();
 	public static GamaUIColor PARAMETERS_BACKGROUND = GamaColors.get(255, 255, 255).validate();
 
