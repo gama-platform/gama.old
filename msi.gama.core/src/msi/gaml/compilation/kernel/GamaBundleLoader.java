@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaBundleLoader.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaBundleLoader.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -46,6 +45,7 @@ import msi.gaml.types.Types;
  */
 public class GamaBundleLoader {
 
+	public volatile static boolean LOADED = false;
 	public static String CORE_PLUGIN = "msi.gama.core";
 	public static String CORE_MODELS = "msi.gama.models";
 	public static String CURRENT_PLUGIN_NAME = CORE_PLUGIN;
@@ -108,6 +108,7 @@ public class GamaBundleLoader {
 			MODEL_PLUGINS.put(e.getContributor().getName(), e.getAttribute("name"));
 		}
 		// CRUCIAL INITIALIZATIONS
+		LOADED = true;
 		GamaMetaModel.INSTANCE.build();
 		Types.init();
 
@@ -156,9 +157,7 @@ public class GamaBundleLoader {
 		} catch (final MalformedURLException e) {
 			e.printStackTrace();
 		}
-		if (url == null) {
-			return false;
-		}
+		if (url == null) { return false; }
 		File file = null;
 		try {
 			final URL new_url = FileLocator.resolve(url);
@@ -171,7 +170,7 @@ public class GamaBundleLoader {
 		return file != null && file.exists() && file.isDirectory();
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public static void preBuild(final String s) {
 		GamaClassLoader.getInstance().addBundle(Platform.getBundle(s));
 
@@ -208,8 +207,7 @@ public class GamaBundleLoader {
 	}
 
 	/**
-	 * The list of GAMA_PLUGINS declaring models, together with the inner path
-	 * to the folder containing model projects
+	 * The list of GAMA_PLUGINS declaring models, together with the inner path to the folder containing model projects
 	 * 
 	 * @return
 	 */

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'UpdateBuiltInModelsHandler.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'UpdateBuiltInModelsHandler.java, in plugin ummisco.gama.ui.navigator, is part of the source code of the GAMA
+ * modeling and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -13,10 +12,6 @@ package ummisco.gama.ui.commands;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 
@@ -29,19 +24,7 @@ public class UpdateBuiltInModelsHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-		final Job job = new Job("Updating the Built-in Models Library") {
-
-			@Override
-			protected IStatus run(final IProgressMonitor monitor) {
-				// Nothing to do really. Maybe a later version will remove this
-				// command. See Issue 669
-				WorkspaceModelsManager.linkSampleModelsToWorkspace();
-				return Status.OK_STATUS;
-			}
-
-		};
-		job.setUser(true);
-		job.schedule();
+		WorkspaceModelsManager.linkSampleModelsToWorkspace();
 
 		// job.addJobChangeListener(new JobChangeAdapter() {
 		//

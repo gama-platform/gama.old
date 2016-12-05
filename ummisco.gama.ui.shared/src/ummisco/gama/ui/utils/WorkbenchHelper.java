@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'WorkbenchHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'WorkbenchHelper.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -23,6 +22,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 
 import msi.gama.application.workspace.WorkspaceModelsManager;
+import ummisco.gama.ui.views.IGamlEditor;
 
 public class WorkbenchHelper {
 
@@ -53,9 +53,7 @@ public class WorkbenchHelper {
 
 	public static IWorkbenchPage getPage() {
 		final IWorkbenchWindow w = getWindow();
-		if (w == null) {
-			return null;
-		}
+		if (w == null) { return null; }
 		final IWorkbenchPage p = w.getActivePage();
 		return p;
 	}
@@ -82,26 +80,24 @@ public class WorkbenchHelper {
 
 		if (w == null) {
 			final IWorkbenchWindow[] windows = getWorkbench().getWorkbenchWindows();
-			if (windows != null && windows.length > 0) {
-				return windows[0];
-			}
+			if (windows != null && windows.length > 0) { return windows[0]; }
 		}
 		return w;
 	}
 
-	public static IEditorPart getActiveEditor() {
+	public static IGamlEditor getActiveEditor() {
 		final IWorkbenchPage page = getPage();
 		if (page != null) {
-			return page.getActiveEditor();
+			final IEditorPart editor = page.getActiveEditor();
+			if (editor instanceof IGamlEditor)
+				return (IGamlEditor) editor;
 		}
 		return null;
 	}
 
 	public static IWorkbenchPart getActivePart() {
 		final IWorkbenchPage page = getPage();
-		if (page != null) {
-			return page.getActivePart();
-		}
+		if (page != null) { return page.getActivePart(); }
 		return null;
 	}
 
@@ -111,43 +107,29 @@ public class WorkbenchHelper {
 
 	public static IViewPart findView(final String id, final String second, final boolean restore) {
 		final IWorkbenchPage page = WorkbenchHelper.getPage();
-		if (page == null) {
-			return null;
-		} // Closing the workbench
+		if (page == null) { return null; } // Closing the workbench
 		final IViewReference ref = page.findViewReference(id, second);
-		if (ref == null) {
-			return null;
-		}
+		if (ref == null) { return null; }
 		final IViewPart part = ref.getView(restore);
 		return part;
 	}
 
 	public static void setWorkbenchWindowTitle(final String title) {
-		run(new Runnable() {
-
-			@Override
-			public void run() {
-				if (WorkbenchHelper.getShell() != null)
-					WorkbenchHelper.getShell().setText(title);
-			}
+		run(() -> {
+			if (WorkbenchHelper.getShell() != null)
+				WorkbenchHelper.getShell().setText(title);
 		});
 
 	}
 
 	public static void hideView(final String id) {
 
-		run(new Runnable() {
-
-			@Override
-			public void run() {
-				final IWorkbenchPage activePage = getPage();
-				if (activePage == null) {
-					return;
-				} // Closing the workbench
-				final IWorkbenchPart part = activePage.findView(id);
-				if (part != null && activePage.isPartVisible(part)) {
-					activePage.hideView((IViewPart) part);
-				}
+		run(() -> {
+			final IWorkbenchPage activePage = getPage();
+			if (activePage == null) { return; } // Closing the workbench
+			final IWorkbenchPart part = activePage.findView(id);
+			if (part != null && activePage.isPartVisible(part)) {
+				activePage.hideView((IViewPart) part);
 			}
 		});
 
@@ -155,9 +137,7 @@ public class WorkbenchHelper {
 
 	public static void hideView(final IViewPart gamaViewPart) {
 		final IWorkbenchPage activePage = getPage();
-		if (activePage == null) {
-			return;
-		} // Closing the workbenc
+		if (activePage == null) { return; } // Closing the workbenc
 		activePage.hideView(gamaViewPart);
 
 	}

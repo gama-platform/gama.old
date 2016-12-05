@@ -12,6 +12,7 @@ package msi.gama.application.workbench;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Map;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -24,6 +25,7 @@ import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchWindowAdvisor;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.AboutInfo;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
@@ -61,11 +63,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			e.printStackTrace();
 		}
 
-		/* Linking the stock models with the workspace if they are not already */
-		if ( checkCopyOfBuiltInModels() ) {
-			WorkspaceModelsManager.linkSampleModelsToWorkspace();
-		}
-
 	}
 
 	@Override
@@ -81,6 +78,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	}
 
 	protected boolean checkCopyOfBuiltInModels() {
+
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject[] projects = workspace.getRoot().getProjects();
 		// If no projects are registered at all, we are facing a fresh new workspace
@@ -168,6 +166,27 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 		return super.preShutdown();
 
+	}
+
+	@Override
+	public void preStartup() {
+		super.preStartup();
+		/* Linking the stock models with the workspace if they are not already */
+		if ( checkCopyOfBuiltInModels() ) {
+			WorkspaceModelsManager.linkSampleModelsToWorkspace();
+		}
+	}
+
+	@Override
+	public Map<String, AboutInfo> getNewlyAddedBundleGroups() {
+		// TODO Auto-generated method stub
+		return super.getNewlyAddedBundleGroups();
+	}
+
+	@Override
+	public boolean openWindows() {
+		// TODO Auto-generated method stub
+		return super.openWindows();
 	}
 
 	private void saveEclipsePreferences() {
