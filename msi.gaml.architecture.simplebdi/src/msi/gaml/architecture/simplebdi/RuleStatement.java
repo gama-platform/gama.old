@@ -12,6 +12,8 @@
 
 package msi.gaml.architecture.simplebdi;
 
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.example;
@@ -28,6 +30,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 @symbol(name = RuleStatement.RULE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, concept = {
 		IConcept.BDI })
@@ -41,6 +44,14 @@ import msi.gaml.types.IType;
 		@facet(name = RuleStatement.NEW_BELIEF, type = PredicateType.id, optional = true, doc = @doc("The belief that will be added")),
 		@facet(name = RuleStatement.NEW_EMOTION, type = EmotionType.id, optional = true, doc = @doc("The emotion that will be added")),
 		@facet(name = RuleStatement.NEW_UNCERTAINTY, type = PredicateType.id, optional = true, doc = @doc("The uncertainty that will be added")),
+		@facet(name = RuleStatement.NEW_DESIRES, type = IType.LIST, of=PredicateType.id, optional = true, doc = @doc("The desire that will be added")),
+		@facet(name = RuleStatement.NEW_BELIEFS, type = IType.LIST, of=PredicateType.id, optional = true, doc = @doc("The belief that will be added")),
+		@facet(name = RuleStatement.NEW_EMOTIONS, type = IType.LIST, of=EmotionType.id, optional = true, doc = @doc("The emotion that will be added")),
+		@facet(name = RuleStatement.NEW_UNCERTAINTIES, type = IType.LIST, of=PredicateType.id, optional = true, doc = @doc("The uncertainty that will be added")),
+		@facet(name = RuleStatement.REMOVE_BELIEFS, type = IType.LIST, of = PredicateType.id, optional = true, doc = @doc("The belief that will be removed")),
+		@facet(name = RuleStatement.REMOVE_DESIRES, type = IType.LIST, of = PredicateType.id, optional = true, doc = @doc("The desire that will be removed")),
+		@facet(name = RuleStatement.REMOVE_EMOTIONS, type = IType.LIST, of = EmotionType.id, optional = true, doc = @doc("The emotion that will be removed")),
+		@facet(name = RuleStatement.REMOVE_UNCERTAINTIES, type = IType.LIST, of = PredicateType.id, optional = true, doc = @doc("The uncertainty that will be removed")),
 		@facet(name = RuleStatement.REMOVE_BELIEF, type = PredicateType.id, optional = true, doc = @doc("The belief that will be removed")),
 		@facet(name = RuleStatement.REMOVE_DESIRE, type = PredicateType.id, optional = true, doc = @doc("The desire that will be removed")),
 		@facet(name = RuleStatement.REMOVE_INTENTION, type = PredicateType.id, optional = true, doc = @doc("The intention that will be removed")),
@@ -69,6 +80,14 @@ public class RuleStatement extends AbstractStatement {
 	public static final String REMOVE_INTENTION = "remove_intention";
 	public static final String REMOVE_EMOTION = "remove_emotion";
 	public static final String REMOVE_UNCERTAINTY = "remove_uncertainty";
+	public static final String NEW_DESIRES = "new_desires";
+	public static final String NEW_BELIEFS = "new_beliefs";
+	public static final String NEW_EMOTIONS = "new_emotions";
+	public static final String NEW_UNCERTAINTIES = "new_uncertainties";
+	public static final String REMOVE_BELIEFS = "remove_beliefs";
+	public static final String REMOVE_DESIRES = "remove_desires";
+	public static final String REMOVE_EMOTIONS = "remove_emotions";
+	public static final String REMOVE_UNCERTAINTIES = "remove_uncertainties";
 	public static final String PRIORITY = "priority";
 	public static final String THRESHOLD = "threshold";
 
@@ -86,6 +105,14 @@ public class RuleStatement extends AbstractStatement {
 	final IExpression removeIntention;
 	final IExpression removeEmotion;
 	final IExpression removeUncertainty;
+	final IExpression newBeliefs;
+	final IExpression newDesires;
+	final IExpression newEmotions;
+	final IExpression newUncertainties;
+	final IExpression removeBeliefs;
+	final IExpression removeDesires;
+	final IExpression removeEmotions;
+	final IExpression removeUncertainties;
 	final IExpression priority;
 	final IExpression threshold;
 
@@ -105,6 +132,14 @@ public class RuleStatement extends AbstractStatement {
 		removeIntention = getFacet(RuleStatement.REMOVE_INTENTION);
 		removeEmotion = getFacet(RuleStatement.REMOVE_EMOTION);
 		removeUncertainty = getFacet(RuleStatement.REMOVE_UNCERTAINTY);
+		newBeliefs = getFacet(RuleStatement.NEW_BELIEFS);
+		newDesires = getFacet(RuleStatement.NEW_DESIRES);
+		newEmotions = getFacet(RuleStatement.NEW_EMOTIONS);
+		newUncertainties = getFacet(RuleStatement.NEW_UNCERTAINTIES);
+		removeBeliefs = getFacet(RuleStatement.REMOVE_BELIEFS);
+		removeDesires = getFacet(RuleStatement.REMOVE_DESIRES);
+		removeEmotions = getFacet(RuleStatement.REMOVE_EMOTIONS);
+		removeUncertainties = getFacet(RuleStatement.REMOVE_UNCERTAINTIES);
 		priority = getFacet(RuleStatement.PRIORITY);
 		threshold = getFacet(RuleStatement.THRESHOLD);
 	}
@@ -164,6 +199,43 @@ public class RuleStatement extends AbstractStatement {
 								if (removeUncertainty != null) {
 									final Predicate removUncert = (Predicate) removeUncertainty.value(scope);
 									SimpleBdiArchitecture.removeUncertainty(scope, removUncert);
+								}
+								
+								
+								if (newDesires != null) {
+									final List<Predicate> newDess = (List<Predicate>) newDesires.value(scope);
+									if (priority != null) {
+										for (Predicate newDes : newDess) newDes.setPriority(Cast.asFloat(scope, priority.value(scope)));
+									}
+									for (Predicate newDes : newDess) SimpleBdiArchitecture.addDesire(scope, null, newDes);
+								}
+								if (newBeliefs != null) {
+									final List<Predicate> newBels = (List<Predicate>) newBeliefs.value(scope);
+									for (Predicate newBel : newBels) SimpleBdiArchitecture.addBelief(scope, newBel);
+								}
+								if (newEmotions != null) {
+									final List<Emotion> newEmos = (List<Emotion>) newEmotions.value(scope);
+									for (Emotion newEmo : newEmos) SimpleBdiArchitecture.addEmotion(scope, newEmo);
+								}
+								if (newUncertainties != null) {
+									final List<Predicate> newUncerts = (List<Predicate>) newUncertainties.value(scope);
+									for (Predicate newUncert : newUncerts) SimpleBdiArchitecture.addUncertainty(scope, newUncert);
+								}
+								if (removeBeliefs != null) {
+									final List<Predicate> removBels = (List<Predicate>) removeBeliefs.value(scope);
+									for (Predicate removBel : removBels)SimpleBdiArchitecture.removeBelief(scope, removBel);
+								}
+								if (removeDesires != null) {
+									final List<Predicate> removeDess = (List<Predicate>) removeDesires.value(scope);
+									for (Predicate removeDes : removeDess) SimpleBdiArchitecture.removeDesire(scope, removeDes);
+								}
+								if (removeEmotions != null) {
+									final List<Emotion> removeEmos = (List<Emotion>) removeEmotions.value(scope);
+									for (Emotion removeEmo : removeEmos)SimpleBdiArchitecture.removeEmotion(scope, removeEmo);
+								}
+								if (removeUncertainties != null) {
+									final List<Predicate> removUncerts = (List<Predicate>) removeUncertainties.value(scope);
+									for (Predicate removUncert : removUncerts) SimpleBdiArchitecture.removeUncertainty(scope, removUncert);
 								}
 							}
 						}
