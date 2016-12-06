@@ -30,6 +30,7 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.swt.IFocusService;
 
 import msi.gama.lang.gaml.ui.editor.GamlEditor;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
@@ -57,6 +58,8 @@ public class EditorSearchControls {
 	public EditorSearchControls fill(final GamaToolbarSimple toolbar) {
 
 		find = new Text(toolbar, SWT.SEARCH | SWT.ICON_SEARCH);
+		final IFocusService focusService = editor.getSite().getService(IFocusService.class);
+		focusService.addFocusTracker(find, "search");
 
 		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 24;

@@ -709,5 +709,28 @@
              class="msi.gama.lang.gaml.ui.OverridingModule">
        </module>
     </extension>
+    <extension point="org.eclipse.ui.handlers">
+	<handler class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:cut" commandId="org.eclipse.ui.edit.cut">
+		<activeWhen>
+			<with variable="activeFocusControlId">
+				<equals value="search"/>
+			</with>
+		</activeWhen>
+	</handler>
+	<handler class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:copy" commandId="org.eclipse.ui.edit.copy">
+		<activeWhen>
+			<with variable="activeFocusControlId">
+				<equals value="search"/>
+			</with>
+		</activeWhen>
+	</handler>
+	<handler class="org.eclipse.ui.internal.handlers.WidgetMethodHandler:paste" commandId="org.eclipse.ui.edit.paste">
+		<activeWhen>
+			<with variable="activeFocusControlId">
+				<equals value="search"/>
+			</with>
+		</activeWhen>
+	</handler>
+</extension>
 
 </plugin>
