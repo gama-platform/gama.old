@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'LayeredDisplayView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'LayeredDisplayView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -176,9 +175,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	protected Runnable displayOverlay = () -> {
-		if (overlay == null) {
-			return;
-		}
+		if (overlay == null) { return; }
 		updateOverlay();
 	};
 
@@ -212,9 +209,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	public boolean isOpenGL() {
-		if (outputs.isEmpty()) {
-			return false;
-		}
+		if (outputs.isEmpty()) { return false; }
 		return getOutput().isOpenGL();
 	}
 
@@ -242,8 +237,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public void toggleInteractiveConsole() {
 		if (!sideControlsVisible)
 			toggleSideControls();
-		final InteractiveConsoleView view = (InteractiveConsoleView) WorkbenchHelper
-				.findView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, true);
+		final InteractiveConsoleView view =
+				(InteractiveConsoleView) WorkbenchHelper.findView(IGui.INTERACTIVE_CONSOLE_VIEW_ID, null, true);
 		if (view == null)
 			return;
 		if (interactiveConsoleVisible) {
@@ -264,9 +259,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	@Override
 	public void ownCreatePartControl(final Composite c) {
-		if (getOutput() == null) {
-			return;
-		}
+		if (getOutput() == null) { return; }
 
 		final GridLayout ll = new GridLayout(1, true);
 		ll.horizontalSpacing = 0;
@@ -290,8 +283,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		layout.marginWidth = 0;
 		sidePanel.setLayout(layout);
 		sidePanel.setBackground(IGamaColors.WHITE.color());
-		final Composite centralPanel = new Composite(form,
-				GamaPreferences.CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
+		final Composite centralPanel =
+				new Composite(form, GamaPreferences.CORE_DISPLAY_BORDER.getValue() ? SWT.BORDER : SWT.NONE);
 		GridLayout gl = new GridLayout(1, true);
 		gl.horizontalSpacing = 0;
 		gl.marginHeight = 0;
@@ -320,8 +313,8 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 			@Override
 			public void controlResized(final ControlEvent e) {
-				final Rectangle r = WorkbenchHelper.getDisplay().map(surfaceComposite, null,
-						surfaceComposite.getBounds());
+				final Rectangle r =
+						WorkbenchHelper.getDisplay().map(surfaceComposite, null, surfaceComposite.getBounds());
 				surfaceCompositeBounds.setBounds(r.x, r.y, r.width, r.height);
 			}
 		});
@@ -350,8 +343,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 			@Override
 			public void perspectiveChanged(final IWorkbenchPage page, final IPerspectiveDescriptor perspective,
-					final String changeId) {
-			}
+					final String changeId) {}
 
 			@Override
 			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
@@ -403,17 +395,13 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	@Override
 	public IDisplaySurface getDisplaySurface() {
 		final LayeredDisplayOutput out = getOutput();
-		if (out != null) {
-			return out.getSurface();
-		}
+		if (out != null) { return out.getSurface(); }
 		return null;
 	}
 
 	@Override
 	public void widgetDisposed(final DisposeEvent e) {
-		if (disposed) {
-			return;
-		}
+		if (disposed) { return; }
 		if (getOutput() != null) {
 			getOutput().getData().removeListener(this);
 		}
@@ -449,23 +437,23 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	@Override
 	public void changed(final Changes changes, final boolean value) {
 		switch (changes) {
-		case ZOOM:
-			WorkbenchHelper.asyncRun(() -> overlay.update());
-			break;
-		case BACKGROUND:
-			break;
-		case CAMERA_POS:
-			break;
-		case CHANGE_CAMERA:
-			break;
-		case HIGHLIGHT:
-			break;
-		case SPLIT_LAYER:
-			break;
-		case THREED_VIEW:
-			break;
-		default:
-			break;
+			case ZOOM:
+				WorkbenchHelper.asyncRun(() -> overlay.update());
+				break;
+			case BACKGROUND:
+				break;
+			case CAMERA_POS:
+				break;
+			case CHANGE_CAMERA:
+				break;
+			case HIGHLIGHT:
+				break;
+			case SPLIT_LAYER:
+				break;
+			case THREED_VIEW:
+				break;
+			default:
+				break;
 		}
 
 	}
@@ -474,9 +462,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	 * Between 0 and 100;
 	 */
 	public int getZoomLevel() {
-		if (getOutput() == null) {
-			return 0;
-		}
+		if (getOutput() == null) { return 0; }
 		final Double dataZoom = getOutput().getData().getZoomLevel();
 		if (dataZoom == null) {
 			return 1;
@@ -497,9 +483,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	public double getValueOfOnePixelInModelUnits() {
 		final IDisplaySurface s = getDisplaySurface();
-		if (s == null) {
-			return 1;
-		}
+		if (s == null) { return 1; }
 		final double displayWidth = s.getDisplayWidth();
 		final double envWidth = s.getEnvWidth();
 		return envWidth / displayWidth;
@@ -507,9 +491,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	public String getOverlayCoordInfo() {
 		final LayeredDisplayOutput output = getOutput();
-		if (output == null) {
-			return "";
-		}
+		if (output == null) { return ""; }
 		final boolean paused = output.isPaused();
 		final boolean synced = output.getData().isSynchronized();
 		final IDisplaySurface surface = getDisplaySurface();
@@ -519,9 +501,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 	public String getOverlayZoomInfo() {
 		final IDisplaySurface surface = getDisplaySurface();
-		if (surface == null) {
-			return "";
-		}
+		if (surface == null) { return ""; }
 		final boolean openGL = isOpenGL();
 		String result = GamaPreferences.CORE_SHOW_FPS.getValue() ? String.valueOf(surface.getFPS()) + " fps | " : "";
 		if (!openGL) {
@@ -531,8 +511,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 			final IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
 			final ILocation camera = ds.getCameraPosition();
 			result = result + String.format("Zoom %d%% | Camera [%.2f;%.2f;%.2f]", getZoomLevel(), camera.getX(),
-					camera.getY(),
-					camera.getZ()/* , camera.getTheta(), camera.getPhi() */);
+					camera.getY(), camera.getZ()/* , camera.getTheta(), camera.getPhi() */);
 			if (roi != null) {
 				result = result + " ROI [" + Maths.round(roi.getWidth(), 2) + " x " + Maths.round(roi.getHeight(), 2)
 						+ "]";
@@ -634,9 +613,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
-				if (getDisplaySurface() == null) {
-					return Status.CANCEL_STATUS;
-				}
+				if (getDisplaySurface() == null) { return Status.CANCEL_STATUS; }
 				getDisplaySurface().updateDisplay(false);
 				return Status.OK_STATUS;
 			}
@@ -662,17 +639,18 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 				while (!disposed) {
 
 					if (s != null && s.isRealized() && !s.isDisposed() && !disposed) {
+						acquireLock();
+						s.updateDisplay(false);
 						if (s.getData().isAutosave()) {
 							doSnapshot();
 						}
-						s.updateDisplay(false);
 						// Fix for issue #1693
 						if (output.isInInitPhase()) {
 							output.setInInitPhase(false);
 							output.setSynchronized(oldSync);
 							// end fix
 						}
-						acquireLock();
+
 					}
 
 				}
@@ -701,13 +679,15 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	void doSnapshot() {
+		if (getOutput() == null || getDisplaySurface() == null)
+			return;
+		final IDisplaySurface surface = getDisplaySurface();
+		final IScope scope = surface.getScope();
 		final LayeredDisplayData data = getOutput().getData();
 		final int w = (int) data.getImageDimension().getX();
 		final int h = (int) data.getImageDimension().getY();
-		final int previousWidth = getDisplaySurface().getWidth();
-		final int previousHeight = getDisplaySurface().getHeight();
-		final int width = w == -1 ? previousWidth : w;
-		final int height = h == -1 ? previousHeight : h;
+		final int width = w == -1 ? surface.getWidth() : w;
+		final int height = h == -1 ? surface.getHeight() : h;
 		BufferedImage snapshot = null;
 		if (GamaPreferences.DISPLAY_FAST_SNAPSHOT.getValue()) {
 			try {
@@ -720,9 +700,10 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 		}
 		// in case it has not worked, snapshot is still null
 		if (snapshot == null) {
-			snapshot = getDisplaySurface().getImage(width, height);
+			snapshot = surface.getImage(width, height);
 		}
-		saveSnapshot(getDisplaySurface().getScope(), snapshot);
+		if (!scope.interrupted())
+			saveSnapshot(scope, snapshot);
 	}
 
 	/**
@@ -734,9 +715,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	public final void saveSnapshot(final IScope scope, final BufferedImage image) {
 		// Intentionnaly passing GAMA.getRuntimeScope() to errors in order to
 		// prevent the exceptions from being masked.
-		if (image == null) {
-			return;
-		}
+		if (image == null) { return; }
 		try {
 			Files.newFolder(scope, IDisplaySurface.SNAPSHOT_FOLDER_NAME);
 		} catch (final GamaRuntimeException e1) {
@@ -841,8 +820,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	}
 
 	/**
-	 * Ensures that the overlay tool item is coherent with the state of the
-	 * overlay
+	 * Ensures that the overlay tool item is coherent with the state of the overlay
 	 * 
 	 * @param hidden
 	 */
