@@ -581,6 +581,9 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_SHOW_FPS =
 			create("pref_display_show_fps", "Show number of frames per second in overlay", false, IType.BOOL)
 					.in(DISPLAY).group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CHART_FLAT =
+			create("pref_display_flat_charts", "Display histograms with a 'flat' look", false, IType.BOOL).in(DISPLAY)
+					.group("Properties (settings effective after experiment relaunch)");
 
 	public static final Entry<Boolean> CORE_ANTIALIAS =
 			create("pref_display_antialias", "Apply antialiasing", false, IType.BOOL).in(DISPLAY)

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ChartJFreeChartOutputHistogram.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ChartJFreeChartOutputHistogram.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -35,11 +34,16 @@ import org.jfree.chart.renderer.category.AbstractCategoryItemRenderer;
 import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.category.BarRenderer3D;
 import org.jfree.chart.renderer.category.CategoryItemRenderer;
+import org.jfree.chart.renderer.category.GradientBarPainter;
 import org.jfree.chart.renderer.category.LevelRenderer;
 import org.jfree.chart.renderer.category.ScatterRenderer;
 import org.jfree.chart.renderer.category.StackedAreaRenderer;
 import org.jfree.chart.renderer.category.StackedBarRenderer;
+import org.jfree.chart.renderer.category.StandardBarPainter;
 import org.jfree.chart.renderer.category.StatisticalLineAndShapeRenderer;
+import org.jfree.chart.renderer.xy.GradientXYBarPainter;
+import org.jfree.chart.renderer.xy.StandardXYBarPainter;
+import org.jfree.chart.renderer.xy.XYBarRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.Dataset;
@@ -47,6 +51,8 @@ import org.jfree.data.general.PieDataset;
 import org.jfree.data.xy.XYDataset;
 import org.jfree.ui.TextAnchor;
 
+import msi.gama.common.GamaPreferences;
+import msi.gama.common.GamaPreferences.IPreferenceChangeListener;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
@@ -56,6 +62,40 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	boolean useSubAxis = false;
 	boolean useMainAxisLabel = true;
+
+	public static void enableFlatLook(final boolean flat) {
+		if (flat) {
+			BarRenderer.setDefaultBarPainter(new StandardBarPainter());
+			BarRenderer.setDefaultShadowsVisible(false);
+			XYBarRenderer.setDefaultBarPainter(new StandardXYBarPainter());
+			XYBarRenderer.setDefaultShadowsVisible(false);
+			StackedBarRenderer.setDefaultBarPainter(new StandardBarPainter());
+			StackedBarRenderer.setDefaultShadowsVisible(false);
+		} else {
+			BarRenderer.setDefaultBarPainter(new GradientBarPainter());
+			BarRenderer.setDefaultShadowsVisible(true);
+			XYBarRenderer.setDefaultBarPainter(new GradientXYBarPainter());
+			XYBarRenderer.setDefaultShadowsVisible(true);
+			StackedBarRenderer.setDefaultBarPainter(new GradientBarPainter());
+			StackedBarRenderer.setDefaultShadowsVisible(true);
+		}
+	}
+
+	static {
+		enableFlatLook(GamaPreferences.CHART_FLAT.getValue());
+		GamaPreferences.CHART_FLAT.addChangeListener(new IPreferenceChangeListener<Boolean>() {
+
+			@Override
+			public boolean beforeValueChange(final Boolean newValue) {
+				return true;
+			}
+
+			@Override
+			public void afterValueChange(final Boolean newValue) {
+				enableFlatLook(newValue);
+			}
+		});
+	}
 
 	public ChartJFreeChartOutputHistogram(final IScope scope, final String name, final IExpression typeexp) {
 		super(scope, name, typeexp);
@@ -96,22 +136,22 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		// TODO Auto-generated method stub
 
 		switch (type_val) {
-		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
-		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
-		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
-		case ChartDataSource.DATA_TYPE_LIST_POINT:
-		case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE:
-		case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
-		case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3: {
-			source.setCumulative(scope, false);
-			source.setUseSize(scope, false);
-			break;
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_N:
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_N:
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_12:
+			case ChartDataSource.DATA_TYPE_LIST_POINT:
+			case ChartDataSource.DATA_TYPE_MATRIX_DOUBLE:
+			case ChartDataSource.DATA_TYPE_LIST_DOUBLE_3:
+			case ChartDataSource.DATA_TYPE_LIST_LIST_DOUBLE_3: {
+				source.setCumulative(scope, false);
+				source.setUseSize(scope, false);
+				break;
 
-		}
-		default: {
-			source.setCumulative(scope, false); // never cumulative by default
-			source.setUseSize(scope, false);
-		}
+			}
+			default: {
+				source.setCumulative(scope, false); // never cumulative by default
+				source.setUseSize(scope, false);
+			}
 		}
 
 	}
@@ -144,39 +184,39 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		final String style = this.getChartdataset().getDataSeries(scope, serieid).getStyle(scope);
 		AbstractRenderer newr = new BarRenderer();
 		switch (style) {
-		case IKeyword.STACK: {
-			newr = new StackedBarRenderer();
-			break;
+			case IKeyword.STACK: {
+				newr = new StackedBarRenderer();
+				break;
 
-		}
-		case IKeyword.THREE_D: {
-			newr = new BarRenderer3D();
-			break;
+			}
+			case IKeyword.THREE_D: {
+				newr = new BarRenderer3D();
+				break;
 
-		}
-		case IKeyword.DOT: {
-			newr = new ScatterRenderer();
-			break;
-		}
-		case IKeyword.AREA: {
-			newr = new StackedAreaRenderer();
-			break;
-		}
-		case IKeyword.LINE: {
-			newr = new StatisticalLineAndShapeRenderer();
-			break;
-		}
-		case IKeyword.STEP: {
-			newr = new LevelRenderer();
-			break;
-		}
-		case IKeyword.RING:
-		case IKeyword.EXPLODED:
-		default: {
-			newr = new BarRenderer();
-			break;
+			}
+			case IKeyword.DOT: {
+				newr = new ScatterRenderer();
+				break;
+			}
+			case IKeyword.AREA: {
+				newr = new StackedAreaRenderer();
+				break;
+			}
+			case IKeyword.LINE: {
+				newr = new StatisticalLineAndShapeRenderer();
+				break;
+			}
+			case IKeyword.STEP: {
+				newr = new LevelRenderer();
+				break;
+			}
+			case IKeyword.RING:
+			case IKeyword.EXPLODED:
+			default: {
+				newr = new BarRenderer();
+				break;
 
-		}
+			}
 		}
 		return newr;
 	}
@@ -205,8 +245,8 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 				// ((BarRenderer)newr).setBaseItemLabelGenerator(new
 				// LabelGenerator());
 				newr.setBaseItemLabelGenerator(new LabelGenerator());
-				final ItemLabelPosition itemlabelposition = new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12,
-						TextAnchor.BOTTOM_CENTER);
+				final ItemLabelPosition itemlabelposition =
+						new ItemLabelPosition(ItemLabelAnchor.OUTSIDE12, TextAnchor.BOTTOM_CENTER);
 				newr.setBasePositiveItemLabelPosition(itemlabelposition);
 				newr.setBaseNegativeItemLabelPosition(itemlabelposition);
 				newr.setBaseItemLabelsVisible(true);
@@ -395,33 +435,33 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		final String sty = getStyle();
 		this.useSubAxis = false;
 		switch (sty) {
-		case IKeyword.STACK: {
-			if (this.series_label_position.equals("xaxis")) {
-				this.series_label_position = "default";
-			}
-			if (this.series_label_position.equals("default")) {
-				this.series_label_position = "legend";
-			}
-			break;
-		}
-		default: {
-			if (this.series_label_position.equals("default")) {
-				if (this.getChartdataset().getSources().size() > 0) {
-					final ChartDataSource onesource = this.getChartdataset().getSources().get(0);
-					if (onesource.isCumulative) {
-						this.series_label_position = "legend";
-					} else {
-						this.series_label_position = "xaxis";
-						useMainAxisLabel = false;
-					}
-
-				} else {
-					this.series_label_position = "legend";
-
+			case IKeyword.STACK: {
+				if (this.series_label_position.equals("xaxis")) {
+					this.series_label_position = "default";
 				}
+				if (this.series_label_position.equals("default")) {
+					this.series_label_position = "legend";
+				}
+				break;
 			}
-			break;
-		}
+			default: {
+				if (this.series_label_position.equals("default")) {
+					if (this.getChartdataset().getSources().size() > 0) {
+						final ChartDataSource onesource = this.getChartdataset().getSources().get(0);
+						if (onesource.isCumulative) {
+							this.series_label_position = "legend";
+						} else {
+							this.series_label_position = "xaxis";
+							useMainAxisLabel = false;
+						}
+
+					} else {
+						this.series_label_position = "legend";
+
+					}
+				}
+				break;
+			}
 		}
 		if (this.series_label_position.equals("xaxis")) {
 			this.useSubAxis = true;
@@ -436,7 +476,6 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 		pp.setDomainGridlinePaint(axesColor);
 		pp.setRangeGridlinePaint(axesColor);
 		pp.setRangeCrosshairVisible(true);
-
 		pp.getRangeAxis().setAxisLinePaint(axesColor);
 		pp.getRangeAxis().setLabelFont(getLabelFont());
 		pp.getRangeAxis().setTickLabelFont(getTickFont());
@@ -464,6 +503,9 @@ public class ChartJFreeChartOutputHistogram extends ChartJFreeChartOutput {
 
 	@Override
 	protected void initRenderer(final IScope scope) {
+		// final CategoryPlot pp = (CategoryPlot) chart.getPlot();
+		// final BarRenderer renderer = (BarRenderer) pp.getRenderer();
+
 		// TODO Auto-generated method stub
 		// CategoryPlot plot = (CategoryPlot)this.chart.getPlot();
 		// defaultrenderer = new BarRenderer();
