@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TOrderedHashMap.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TOrderedHashMap.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -45,9 +44,8 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	}
 
 	/**
-	 * Creates a new <code>THashMap</code> instance with a prime capacity equal
-	 * to or greater than <tt>initialCapacity</tt> and with the default load
-	 * factor.
+	 * Creates a new <code>THashMap</code> instance with a prime capacity equal to or greater than
+	 * <tt>initialCapacity</tt> and with the default load factor.
 	 * 
 	 * @param initialCapacity
 	 *            an <code>int</code> value
@@ -57,9 +55,8 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	}
 
 	/**
-	 * Creates a new <code>THashMap</code> instance with a prime capacity equal
-	 * to or greater than <tt>initialCapacity</tt> and with the specified load
-	 * factor.
+	 * Creates a new <code>THashMap</code> instance with a prime capacity equal to or greater than
+	 * <tt>initialCapacity</tt> and with the specified load factor.
 	 * 
 	 * @param initialCapacity
 	 *            an <code>int</code> value
@@ -71,8 +68,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	}
 
 	/**
-	 * Creates a new <code>THashMap</code> instance which contains the key/value
-	 * pairs in <tt>map</tt>.
+	 * Creates a new <code>THashMap</code> instance which contains the key/value pairs in <tt>map</tt>.
 	 * 
 	 * @param map
 	 *            a <code>Map</code> value
@@ -85,7 +81,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	/**
 	 * @return a shallow clone of this collection
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public TOrderedHashMap<K, V> clone() {
 		TOrderedHashMap<K, V> m = null;
@@ -93,8 +89,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			m = (TOrderedHashMap<K, V>) super.clone();
 			m._indicesByInsertOrder = this._indicesByInsertOrder.clone();
 			m._lastInsertOrderIndex = this._lastInsertOrderIndex;
-		} catch (final CloneNotSupportedException e) {
-		}
+		} catch (final CloneNotSupportedException e) {}
 
 		return m;
 	}
@@ -115,7 +110,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		return capacity;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	protected void rehash(final int newCapacity) {
 		final int oldCapacity = _set.length;
@@ -170,9 +165,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			if (index == EMPTY) {
 				continue;
 			}
-			if (set[index] != FREE && set[index] != REMOVED && !procedure.execute(values[index])) {
-				return false;
-			}
+			if (set[index] != FREE && set[index] != REMOVED && !procedure.execute(values[index])) { return false; }
 		}
 		return true;
 	}
@@ -194,11 +187,23 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	public StreamEx<V> stream(final IScope scope) {
 		final StreamEx.Builder<V> b = Stream.builder();
-		forEachValue((final V v) -> b.accept(v));
-		return StreamEx.of(b.build().parallel());
+		final V[] values = _values;
+		final Object[] set = _set;
+		final int[] inserts = _indicesByInsertOrder;
+		for (int i = 0; i <= _lastInsertOrderIndex; i++) {
+			final int index = inserts[i];
+			if (index == EMPTY) {
+				continue;
+			}
+			if (set[index] != FREE && set[index] != REMOVED) {
+				b.accept(values[index]);
+			}
+		}
+
+		return StreamEx.of(b.build());
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public boolean forEachEntry(final TObjectObjectProcedure<? super K, ? super V> procedure) {
 		final Object[] keys = _set;
@@ -209,14 +214,13 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			if (index == EMPTY) {
 				continue;
 			}
-			if (keys[index] != FREE && keys[index] != REMOVED && !procedure.execute((K) keys[index], values[index])) {
-				return false;
-			}
+			if (keys[index] != FREE && keys[index] != REMOVED
+					&& !procedure.execute((K) keys[index], values[index])) { return false; }
 		}
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public boolean forEach(final TObjectProcedure<? super K> procedure) {
 		final Object[] set = _set;
@@ -226,17 +230,14 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			if (index == EMPTY) {
 				continue;
 			}
-			if (set[index] != FREE && set[index] != REMOVED && !procedure.execute((K) set[index])) {
-				return false;
-			}
+			if (set[index] != FREE && set[index] != REMOVED && !procedure.execute((K) set[index])) { return false; }
 		}
 		return true;
 	}
 
 	@Override
 	public void clear() {
-		if (size() == 0) {
-			return; // optimization
+		if (size() == 0) { return; // optimization
 		}
 		super.clear();
 		Arrays.fill(_indicesByInsertOrder, EMPTY);
@@ -251,8 +252,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	 *            an <code>Object</code> value
 	 * @param value
 	 *            an <code>Object</code> value
-	 * @return the previous value associated with <tt>key</tt>, or {@code null}
-	 *         if none was found.
+	 * @return the previous value associated with <tt>key</tt>, or {@code null} if none was found.
 	 */
 	@Override
 	public V put(final K key, final V value) {
@@ -261,22 +261,18 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	}
 
 	/**
-	 * Inserts a key/value pair into the map if the specified key is not already
-	 * associated with a value.
+	 * Inserts a key/value pair into the map if the specified key is not already associated with a value.
 	 * 
 	 * @param key
 	 *            an <code>Object</code> value
 	 * @param value
 	 *            an <code>Object</code> value
-	 * @return the previous value associated with <tt>key</tt>, or {@code null}
-	 *         if none was found.
+	 * @return the previous value associated with <tt>key</tt>, or {@code null} if none was found.
 	 */
 	@Override
 	public V putIfAbsent(final K key, final V value) {
 		final int index = insertKey(key);
-		if (index < 0) {
-			return _values[-index - 1];
-		}
+		if (index < 0) { return _values[-index - 1]; }
 		return doPut(value, index);
 	}
 
@@ -345,8 +341,8 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	}
 
 	/*
-	 * To prevent running out of slots in _indicesByInsertOrder, we must compact
-	 * the array's elements when we near capacity.
+	 * To prevent running out of slots in _indicesByInsertOrder, we must compact the array's elements when we near
+	 * capacity.
 	 */
 	private void appendToInsertionOrder(final int index, final int effectiveCapacity) {
 		if (_lastInsertOrderIndex == effectiveCapacity - 1) {
@@ -379,7 +375,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			}
 
 			@Override
-			@SuppressWarnings("unchecked")
+			@SuppressWarnings ("unchecked")
 			public Entry objectAtIndex(final int index) {
 				return new Entry((K) _set[index], _values[index], index);
 			}
@@ -390,7 +386,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 			return new EntryIterator();
 		}
 
-		@SuppressWarnings("synthetic-access")
+		@SuppressWarnings ("synthetic-access")
 		@Override
 		public boolean removeElement(final Map.Entry<K, V> entry) {
 			Object val;
@@ -434,13 +430,13 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		public abstract boolean containsElement(E key);
 
 		@Override
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings ("unchecked")
 		public boolean contains(final Object key) {
 			return containsElement((E) key);
 		}
 
 		@Override
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings ("unchecked")
 		public boolean remove(final Object o) {
 			return removeElement((E) o);
 		}
@@ -448,9 +444,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		@Override
 		public boolean containsAll(final Collection<?> collection) {
 			for (final Iterator<?> i = collection.iterator(); i.hasNext();) {
-				if (!contains(i.next())) {
-					return false;
-				}
+				if (!contains(i.next())) { return false; }
 			}
 			return true;
 		}
@@ -481,7 +475,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		}
 
 		@Override
-		@SuppressWarnings("unchecked")
+		@SuppressWarnings ("unchecked")
 		public <T> T[] toArray(T[] a) {
 			final int size = size();
 			if (a.length < size) {
@@ -534,7 +528,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		public Iterator<K> iterator() {
 			return new THashIterator<K>() {
 
-				@SuppressWarnings("unchecked")
+				@SuppressWarnings ("unchecked")
 				@Override
 				protected K objectAtIndex(final int idx) {
 					return (K) TOrderedHashMap.this._set[idx];
@@ -585,9 +579,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 		@Override
 		public V setValue(final V o) {
-			if (_values[index] != val) {
-				throw new ConcurrentModificationException();
-			}
+			if (_values[index] != val) { throw new ConcurrentModificationException(); }
 			_values[index] = o;
 			final V o2 = val; // need to return previous value
 			val = o; // update this entry's value, in case
@@ -618,7 +610,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		public Iterator<V> iterator() {
 			return new THashIterator<V>() {
 
-				@SuppressWarnings("synthetic-access")
+				@SuppressWarnings ("synthetic-access")
 				@Override
 				protected V objectAtIndex(final int index) {
 					return _values[index];
@@ -652,8 +644,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 	private abstract class THashIterator<T> implements Iterator<T> {
 
 		/**
-		 * Create an instance of THashIterator over the values of the
-		 * TObjectHash
+		 * Create an instance of THashIterator over the values of the TObjectHash
 		 */
 		private THashIterator() {
 			_expectedSize = TOrderedHashMap.this.size();
@@ -665,8 +656,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		 * 
 		 * @return an <code>Object</code> value
 		 * @exception ConcurrentModificationException
-		 *                if the structure was changed using a method that isn't
-		 *                on this iterator.
+		 *                if the structure was changed using a method that isn't on this iterator.
 		 * @exception NoSuchElementException
 		 *                if this is called on an exhausted iterator.
 		 */
@@ -679,18 +669,14 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		protected abstract T objectAtIndex(int idx);
 
 		/**
-		 * Returns the index of the next value in the data structure or a
-		 * negative value if the iterator is exhausted.
+		 * Returns the index of the next value in the data structure or a negative value if the iterator is exhausted.
 		 * 
 		 * @return an <code>int</code> value
 		 * @exception ConcurrentModificationException
-		 *                if the underlying collection's size has been modified
-		 *                since the iterator was created.
+		 *                if the underlying collection's size has been modified since the iterator was created.
 		 */
 		protected final int nextIndex() {
-			if (_expectedSize != TOrderedHashMap.this.size()) {
-				throw new ConcurrentModificationException();
-			}
+			if (_expectedSize != TOrderedHashMap.this.size()) { throw new ConcurrentModificationException(); }
 
 			final Object[] set = TOrderedHashMap.this._set;
 			int i = _index + 1;
@@ -703,16 +689,14 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		}
 
 		/**
-		 * the number of elements this iterator believes are in the data
-		 * structure it accesses.
+		 * the number of elements this iterator believes are in the data structure it accesses.
 		 */
 		protected int _expectedSize;
 		/** the index used for iteration. */
 		protected int _index;
 
 		/**
-		 * Returns true if the iterator can be advanced past its current
-		 * location.
+		 * Returns true if the iterator can be advanced past its current location.
 		 * 
 		 * @return a <code>boolean</code> value
 		 */
@@ -722,15 +706,12 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		}
 
 		/**
-		 * Removes the last entry returned by the iterator. Invoking this method
-		 * more than once for a single entry will leave the underlying data
-		 * structure in a confused state.
+		 * Removes the last entry returned by the iterator. Invoking this method more than once for a single entry will
+		 * leave the underlying data structure in a confused state.
 		 */
 		@Override
 		public void remove() {
-			if (_expectedSize != TOrderedHashMap.this.size()) {
-				throw new ConcurrentModificationException();
-			}
+			if (_expectedSize != TOrderedHashMap.this.size()) { throw new ConcurrentModificationException(); }
 
 			// Disable auto compaction during the remove. This is a workaround
 			// for bug 1642768.
@@ -745,15 +726,12 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 		}
 
 		/**
-		 * Sets the internal <tt>index</tt> so that the `next' object can be
-		 * returned.
+		 * Sets the internal <tt>index</tt> so that the `next' object can be returned.
 		 */
 		protected final void moveToNextIndex() {
 			// doing the assignment && < 0 in one line shaves
 			// 3 opcodes...
-			if ((_index = nextIndex()) < 0) {
-				throw new NoSuchElementException();
-			}
+			if ((_index = nextIndex()) < 0) { throw new NoSuchElementException(); }
 		}
 
 	}
@@ -764,18 +742,14 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 
 	public V anyValue(final IScope scope) {
 		final int size = _size;
-		if (size == 0) {
-			return null;
-		}
+		if (size == 0) { return null; }
 		final int i = scope.getRandom().between(0, _size - 1);
 		return valueAt(i);
 	}
 
 	// Zero-based access
 	public V valueAt(final int i) {
-		if (i > _size - 1) {
-			return null;
-		}
+		if (i > _size - 1) { return null; }
 		int index = -1;
 		for (int insert = 0; insert <= _lastInsertOrderIndex; insert++) {
 			final int keyIndex = _indicesByInsertOrder[insert];
@@ -783,9 +757,7 @@ public class TOrderedHashMap<K, V> extends THashMap<K, V> implements Cloneable {
 				continue;
 			} else {
 				index++;
-				if (index == i) {
-					return _values[keyIndex];
-				}
+				if (index == i) { return _values[keyIndex]; }
 			}
 		}
 		return null;
