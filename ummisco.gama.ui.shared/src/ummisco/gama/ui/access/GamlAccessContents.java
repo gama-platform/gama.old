@@ -167,7 +167,7 @@ public abstract class GamlAccessContents implements IPopupProvider {
 				int count = 0;
 				final GamlIdiomsProvider<?> provider = GamlIdiomsProvider.PROVIDERS.get(i);
 				if (filter.length() > 0) {
-					final IGamlDescription[] sortedElements = provider.sortedElements;
+					final IGamlDescription[] sortedElements = provider.getSortedElements();
 					final List<GamlAccessEntry> poorFilterMatches = new ArrayList<GamlAccessEntry>();
 
 					int j = indexPerProvider[i];

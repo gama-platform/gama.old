@@ -73,8 +73,10 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 					STATEMENTS, CONSTANTS, OPERATORS, TYPES, FACETS, FIELDS);
 
 	public final String id, name;
-	public final IGamlDescription[] sortedElements;
-	public final Multimap<String, ? extends T> byName;
+	public final Iterable<? extends T> elements;
+	public final Map<T, String> titles;
+	public IGamlDescription[] sortedElements;
+	public Multimap<String, ? extends T> byName;
 	// default
 	public Function<T, String> documenter = (each) -> each.getDocumentation();
 
@@ -86,13 +88,8 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 			final Map<T, String> titles) {
 		this.id = id;
 		this.name = name;
-		sortedElements = Iterables.toArray(elmts, IGamlDescription.class);
-		if (titles == null)
-			Arrays.sort(sortedElements, (e1, e2) -> e1.getTitle().compareTo(e2.getTitle()));
-		else {
-			Arrays.sort(sortedElements, (e1, e2) -> titles.get(e1).compareTo(titles.get(e2)));
-		}
-		byName = Multimaps.index(elmts, (each) -> each.getName());
+		this.elements = elmts;
+		this.titles = titles;
 	}
 
 	@SuppressWarnings ("unchecked")
@@ -106,7 +103,29 @@ public class GamlIdiomsProvider<T extends IGamlDescription> {
 	}
 
 	public Collection<? extends T> get(final String name) {
+		if (byName == null) {
+			init();
+		}
 		return byName.get(name);
+	}
+
+	public IGamlDescription[] getSortedElements() {
+		if (sortedElements == null) {
+			init();
+		}
+		return sortedElements;
+	}
+
+	private void init() {
+
+		sortedElements = Iterables.toArray(elements, IGamlDescription.class);
+		if (titles == null)
+			Arrays.sort(sortedElements, (e1, e2) -> e1.getTitle().compareTo(e2.getTitle()));
+		else {
+			Arrays.sort(sortedElements, (e1, e2) -> titles.get(e1).compareTo(titles.get(e2)));
+		}
+		byName = Multimaps.index(elements, (each) -> each.getName());
+
 	}
 
 	public static Multimap<GamlIdiomsProvider<?>, IGamlDescription> forName(final String name) {
