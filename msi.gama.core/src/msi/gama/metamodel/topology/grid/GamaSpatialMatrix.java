@@ -831,8 +831,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 						IAgent cel2 = cel;
 						while (cpt > 0) {
 							cpt--;
-							final List<IAgent> agsTmp = scope.getRandom()
-									.shuffle(new ArrayList(getNeighborsOf(scope, cel2.getLocation(), 1.0, null)));
+							final List<IAgent> agsTmp = new ArrayList(getNeighborhood().getNeighborsIn(scope, cel2.getIndex(), 1));
 							double minDist = Double.MAX_VALUE;
 							IAgent ca = null;
 							for (final IAgent ag : agsTmp) {
@@ -858,7 +857,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 						Collections.reverse(nodesPt);
 						return PathFactory.newInstance(scope, topo, nodesPt);
 					}
-					final Set<IAgent> agentsTmp2 = getNeighborsOf(scope, cel.getLocation(), 1.0, null);
+					final Set<IAgent> agentsTmp2 = getNeighborhood().getNeighborsIn(scope, cel.getIndex(), 1);
 					for (final IAgent ag : agentsTmp2) {
 						if (dists[ag.getIndex()] == -1) {
 							neighb2.add(ag);
