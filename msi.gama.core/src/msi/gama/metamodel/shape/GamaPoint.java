@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaPoint.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaPoint.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -32,7 +31,7 @@ import msi.gaml.types.Types;
  *
  * @author drogoul 11 oct. 07
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 
 public class GamaPoint extends Coordinate implements ILocation {
 
@@ -66,21 +65,21 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void setLocation(final double... coords) {
 		final int n = coords.length;
 		switch (n) {
-		case 0:
-			return;
-		case 1:
-			setX(coords[0]);
-			setY(coords[0]);
-			setZ(coords[0]);
-			break;
-		case 2:
-			setX(coords[0]);
-			setY(coords[1]);
-			break;
-		default:
-			setX(coords[0]);
-			setY(coords[1]);
-			setZ(coords[2]);
+			case 0:
+				return;
+			case 1:
+				setX(coords[0]);
+				setY(coords[0]);
+				setZ(coords[0]);
+				break;
+			case 2:
+				setX(coords[0]);
+				setY(coords[1]);
+				break;
+			default:
+				setX(coords[0]);
+				setY(coords[1]);
+				setZ(coords[2]);
 		}
 	}
 
@@ -92,15 +91,15 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public void setOrdinate(final int i, final double v) {
 		switch (i) {
-		case X:
-			setX(v);
-			break;
-		case Y:
-			setY(v);
-			break;
-		case Z:
-			setZ(v);
-			break;
+			case X:
+				setX(v);
+				break;
+			case Y:
+				setY(v);
+				break;
+			case Z:
+				setZ(v);
+				break;
 		}
 	}
 
@@ -120,19 +119,19 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	@getter("x")
+	@getter ("x")
 	public double getX() {
 		return x;
 	}
 
 	@Override
-	@getter("y")
+	@getter ("y")
 	public double getY() {
 		return y;
 	}
 
 	@Override
-	@getter("z")
+	@getter ("z")
 	public double getZ() {
 		return z;
 	}
@@ -191,8 +190,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * msi.gama.interfaces.IGeometry#setGeometry(msi.gama.util.GamaGeometry)
+	 * @see msi.gama.interfaces.IGeometry#setGeometry(msi.gama.util.GamaGeometry)
 	 */
 	@Override
 	public void setGeometry(final IShape g) {
@@ -217,9 +215,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public boolean equals(final Object o) {
-		if (o instanceof GamaPoint) {
-			return equals3D((GamaPoint) o);
-		}
+		if (o instanceof GamaPoint) { return equals3D((GamaPoint) o); }
 		return super.equals(o);
 	}
 
@@ -228,9 +224,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public boolean covers(final IShape g) {
-		if (g.isPoint()) {
-			return g.getLocation().equals(this);
-		}
+		if (g.isPoint()) { return g.getLocation().equals(this); }
 		return false;
 	}
 
@@ -239,9 +233,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
-		if (g.isPoint()) {
-			return euclidianDistanceTo(g.getLocation());
-		}
+		if (g.isPoint()) { return euclidianDistanceTo(g.getLocation()); }
 		return g.euclidianDistanceTo(this);
 	}
 
@@ -258,17 +250,13 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public boolean intersects(final IShape g) {
-		if (g.isPoint()) {
-			return g.getLocation().equals(this);
-		}
+		if (g.isPoint()) { return g.getLocation().equals(this); }
 		return g.intersects(this);
 	}
 
 	@Override
 	public boolean crosses(final IShape g) {
-		if (g.isPoint()) {
-			return false;
-		}
+		if (g.isPoint()) { return false; }
 		return g.crosses(this);
 	}
 
@@ -284,8 +272,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 * @see msi.gama.interfaces.IGeometry#setAgent(msi.gama.interfaces.IAgent)
 	 */
 	@Override
-	public void setAgent(final IAgent agent) {
-	}
+	public void setAgent(final IAgent agent) {}
 	//
 	// /**
 	// * @see msi.gama.interfaces.IGeometry#getPerimeter()
@@ -308,8 +295,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 * @see msi.gama.common.interfaces.IGeometry#dispose()
 	 */
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public GamaMap getAttributes() {
@@ -327,8 +313,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public void setAttribute(final Object key, final Object value) {
-	}
+	public void setAttribute(final Object key, final Object value) {}
 
 	@Override
 	public boolean hasAttribute(final Object key) {
@@ -376,9 +361,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	public GamaPoint normalized() {
 		final double r = this.norm();
-		if (r == 0d) {
-			return new GamaPoint(0, 0, 0);
-		}
+		if (r == 0d) { return new GamaPoint(0, 0, 0); }
 		return new GamaPoint(this.x / r, this.y / r, this.z / r);
 	}
 
@@ -407,8 +390,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	/**
-	 * @return the point with y negated (for OpenGL, for example), without side
-	 *         effect on the point.
+	 * @return the point with y negated (for OpenGL, for example), without side effect on the point.
 	 */
 	public GamaPoint yNegated() {
 		return new GamaPoint(x, -y, z);
@@ -552,14 +534,17 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public double getOrdinate(final int i) {
 		switch (i) {
-		case 0:
-			return x;
-		case 1:
-			return y;
-		case 2:
-			return z;
+			case 0:
+				return x;
+			case 1:
+				return y;
+			case 2:
+				return z;
 		}
 		return 0d;
 	}
+
+	@Override
+	public void copyShapeAttributesFrom(final IShape other) {}
 
 }
