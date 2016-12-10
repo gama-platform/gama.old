@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamlRuntimeModule.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamlRuntimeModule.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,7 +9,6 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml;
 
-import org.eclipse.xtext.generator.IOutputConfigurationProvider;
 import org.eclipse.xtext.linking.ILinkingDiagnosticMessageProvider;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
@@ -28,7 +26,6 @@ import com.google.inject.Binder;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.lang.gaml.expression.GamlExpressionCompiler;
-import msi.gama.lang.gaml.generator.GamlOutputConfigurationProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingErrorMessageProvider;
 import msi.gama.lang.gaml.linking.GamlLinkingService;
 import msi.gama.lang.gaml.naming.GamlNameConverter;
@@ -78,7 +75,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
-		binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
+		// binder.bind(IOutputConfigurationProvider.class).to(GamlOutputConfigurationProvider.class);
 		binder.bind(IResourceValidator.class).to(GamlResourceValidator.class);
 		binder.bind(ErrorToDiagnoticTranslator.class);
 
