@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AgentInspectView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AgentInspectView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -18,39 +17,35 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Menu;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.kernel.experiment.IParameter;
-import msi.gama.kernel.experiment.ParameterAdapter;
+import msi.gama.kernel.experiment.ITopLevelAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.IOutput;
 import msi.gama.outputs.InspectDisplayOutput;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
-import msi.gaml.species.ISpecies;
-import msi.gaml.statements.UserCommandStatement;
-import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
+import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.controls.ParameterExpandBar;
 import ummisco.gama.ui.controls.ParameterExpandItem;
 import ummisco.gama.ui.experiment.parameters.AgentAttributesEditorsList;
+import ummisco.gama.ui.menus.AgentsMenu;
 import ummisco.gama.ui.parameters.AbstractEditor;
-import ummisco.gama.ui.parameters.EditorFactory;
-import ummisco.gama.ui.resources.GamaColors;
 import ummisco.gama.ui.resources.GamaColors.GamaUIColor;
+import ummisco.gama.ui.resources.GamaFonts;
 import ummisco.gama.ui.resources.IGamaColors;
-import ummisco.gama.ui.utils.WorkbenchHelper;
 import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 
-public class AgentInspectView extends AttributesEditorsView<IAgent> implements
-		IToolbarDecoratedView.Pausable /* implements GamaSelectionListener */ {
+public class AgentInspectView extends AttributesEditorsView<IAgent>
+		implements IToolbarDecoratedView.Pausable /* implements GamaSelectionListener */ {
 
 	public static final String ID = IGui.AGENT_VIEW_ID;
 	public String firstPartName = null;
@@ -62,9 +57,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 			reset();
 			return;
 		}
-		if (!(output instanceof InspectDisplayOutput)) {
-			return;
-		}
+		if (!(output instanceof InspectDisplayOutput)) { return; }
 		final InspectDisplayOutput out = (InspectDisplayOutput) output;
 		final IAgent[] agents = out.getLastValue();
 		if (agents == null || agents.length == 0) {
@@ -107,83 +100,41 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 
 	@Override
 	protected Composite createItemContentsFor(final IAgent agent) {
-
-		// add highlight in the expand bar ?
-
 		final Composite attributes = super.createItemContentsFor(agent);
-		final AbstractEditor<?> ed = EditorFactory.create(agent.getScope(), attributes,
-				new ParameterAdapter("highlight", IType.BOOL) {
+		final Label l = AbstractEditor.createLeftLabel(attributes, "Actions");
+		l.setFont(GamaFonts.getExpandfont());
+		final Composite composite = new Composite(attributes, SWT.NONE);
+		composite.setBackground(attributes.getBackground());
+		final GridData data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		data.minimumWidth = 150;
+		composite.setLayoutData(data);
 
-					@Override
-					public void setValue(final IScope scope, final Object value) {
-						if ((Boolean) value) {
-							scope.getGui().setHighlightedAgent(agent);
-						} else {
-							scope.getGui().setHighlightedAgent(null);
-						}
-						GAMA.getExperiment().refreshAllOutputs();
-					}
+		final GridLayout layout = new GridLayout(2, false);
+		layout.marginWidth = 5;
 
-					@Override
-					public Boolean value() {
-						return agent == agent.getScope().getGui().getHighlightedAgent();
-					}
+		composite.setLayout(layout);
+		final FlatButton b = FlatButton.menu(composite, IGamaColors.BLUE, "Select...");
+		b.addSelectionListener(new SelectionListener() {
 
-					@Override
-					public boolean isEditable() {
-						return true;
-					}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				final Menu m = new Menu(b);
+				AgentsMenu.createMenuForAgent(m, agent, agent instanceof ITopLevelAgent, false,
+						AgentsMenu.HIGHLIGHT_ACTION);
+				m.setVisible(true);
+			}
 
-				});
-		editors.getCategories().get(agent).put("highlight", ed);
-		final ISpecies species = agent.getSpecies();
-		final Collection<UserCommandStatement> userCommands = species.getUserCommands();
-		if (userCommands.isEmpty()) {
-			return attributes;
-		}
-		final Composite buttons = new Composite(attributes, SWT.BORDER_SOLID);
-		buttons.moveAbove(null);
-		buttons.setBackground(WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
-		buttons.setForeground(WorkbenchHelper.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
-		final GridData data = new GridData(SWT.FILL, SWT.TOP, true, false, 2, 1);
-		buttons.setLayoutData(data);
-		// final GridLayout layout = new GridLayout(3, false);
-		// buttons.setLayout(layout);
-		buttons.setLayout(new FillLayout());
+			@Override
+			public void widgetDefaultSelected(final SelectionEvent e) {
+				widgetSelected(e);
+			}
+		});
 
-		for (final UserCommandStatement command : userCommands) {
-			final Button b = new Button(buttons, SWT.PUSH);
-			b.setText(command.getName());
-			GamaUIColor color = GamaColors.get(command.getColor(agent.getScope()));
-			if (color == null)
-				color = IGamaColors.BLUE;
-			b.setBackground(color.color());
-			b.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					if (agent.dead()) {
-						return;
-					}
-					// We run into the scope provided by the agent
-					final IScope runningScope = agent.getScope();
-					runningScope.getSimulation().executeAction(scope -> {
-						return scope.execute(command, agent, null).getValue();
-					});
-				}
-
-			});
-		}
-		buttons.layout();
-		buttons.pack();
-		buttons.update();
 		return attributes;
 	}
 
 	@Override
 	public boolean addItem(final IAgent agent) {
-		// System.out.println("Adding item " + agent.getName() + " to
-		// inspector");
 		if (editors == null) {
 			editors = new AgentAttributesEditorsList();
 		}
@@ -193,9 +144,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 			// System.out.println("Asking to create the item " + agent.getName()
 			// + " in inspector");
 			final ParameterExpandItem item = createItem(parent, agent, true, null);
-			if (item == null) {
-				return false;
-			}
+			if (item == null) { return false; }
 			return true;
 		}
 		return false;
@@ -262,8 +211,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#pauseChanged()
 	 */
 	@Override
-	public void pauseChanged() {
-	}
+	public void pauseChanged() {}
 
 	/**
 	 * Method synchronizeChanged()
@@ -271,26 +219,16 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
 	 */
 	@Override
-	public void synchronizeChanged() {
-	}
+	public void synchronizeChanged() {}
 
 	/**
 	 * Method handleMenu()
 	 * 
-	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object,
-	 *      int, int)
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final IAgent data, final int x, final int y) {
 		return null;
 	}
-
-	// /**
-	// * Method createToolItem()
-	// * @see msi.gama.gui.views.IToolbarDecoratedView#createToolItem(int,
-	// msi.gama.gui.swt.controls.GamaToolbar2)
-	// */
-	// @Override
-	// public void createToolItems(final GamaToolbar2 tb) {}
 
 }

@@ -58,7 +58,7 @@ public class AgentsMenu extends ContributionItem {
 		result.setImage(image);
 		final Menu agentMenu = new Menu(result);
 		result.setMenu(agentMenu);
-		createMenuForAgent(agentMenu, agent, agent instanceof ITopLevelAgent, actions);
+		createMenuForAgent(agentMenu, agent, agent instanceof ITopLevelAgent, true, actions);
 		return result;
 	}
 
@@ -237,14 +237,14 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	public static void createMenuForAgent(final Menu menu, final IAgent agent, final boolean topLevel,
-			final MenuAction... actions) {
+			final boolean withInspect, final MenuAction... actions) {
 		if (agent == null) { return; }
 		GamaMenu.separate(menu, "Actions");
 		final boolean simulation = agent instanceof SimulationAgent;
-		actionAgentMenuItem(menu, agent, inspector, GamaIcons.create(IGamaIcons.MENU_INSPECT).image(),
-				"Inspect" + (topLevel ? simulation ? " simulation" : " experiment" : ""));
+		if (withInspect)
+			actionAgentMenuItem(menu, agent, inspector, GamaIcons.create(IGamaIcons.MENU_INSPECT).image(),
+					"Inspect" + (topLevel ? simulation ? " simulation" : " experiment" : ""));
 		if (!topLevel) {
-
 			actionAgentMenuItem(menu, agent, new Focuser(), GamaIcons.create(IGamaIcons.MENU_FOCUS).image(),
 					"Focus on all displays");
 		}
@@ -343,6 +343,6 @@ public class AgentsMenu extends ContributionItem {
 
 	@Override
 	public void fill(final Menu parent, final int index) {
-		createMenuForAgent(parent, GAMA.getExperiment().getAgent(), true, HIGHLIGHT_ACTION);
+		createMenuForAgent(parent, GAMA.getExperiment().getAgent(), true, true, HIGHLIGHT_ACTION);
 	}
 }

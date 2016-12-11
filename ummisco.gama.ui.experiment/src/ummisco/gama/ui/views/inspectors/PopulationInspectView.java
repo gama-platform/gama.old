@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PopulationInspectView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PopulationInspectView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -88,7 +87,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
  * @todo Description
  *
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class PopulationInspectView extends GamaViewPart
 		implements IToolbarDecoratedView.Sizable, IToolbarDecoratedView.Pausable {
 
@@ -101,8 +100,8 @@ public class PopulationInspectView extends GamaViewPart
 	public final static int LOCK = 1;
 	public final static int POP = 2;
 	public final static int EXPR = 3;
-	public static final List<String> DONT_INSPECT_BY_DEFAULT = Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS,
-			IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
+	public static final List<String> DONT_INSPECT_BY_DEFAULT =
+			Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
 	private IScope scope;
 	volatile boolean locked;
 	// volatile boolean refreshing;
@@ -136,9 +135,7 @@ public class PopulationInspectView extends GamaViewPart
 
 		@Override
 		public void updateElement(final int index) {
-			if (index > elements.length - 1) {
-				return;
-			}
+			if (index > elements.length - 1) { return; }
 			viewer.replace(elements[index], index);
 		}
 
@@ -158,9 +155,8 @@ public class PopulationInspectView extends GamaViewPart
 			@Override
 			public IStatus runInUIThread(final IProgressMonitor monitor) {
 				final TableViewer v = viewer;
-				if (v == null || v.getTable() == null || v.getTable().isDisposed() || getOutput() == null) {
-					return Status.CANCEL_STATUS;
-				}
+				if (v == null || v.getTable() == null || v.getTable().isDisposed()
+						|| getOutput() == null) { return Status.CANCEL_STATUS; }
 				if (!locked) {
 					final IAgent[] agents = getOutput().getLastValue();
 					if (Arrays.equals(elements, agents)) {
@@ -184,9 +180,7 @@ public class PopulationInspectView extends GamaViewPart
 	@Override
 	public void addOutput(final IDisplayOutput output) {
 		// Either both are null or they are equal
-		if (getOutput() == output) {
-			return;
-		}
+		if (getOutput() == output) { return; }
 		// super.addOutput(output);
 		// Only one output allowed for this view.
 		if (getOutput() != null) {
@@ -222,9 +216,7 @@ public class PopulationInspectView extends GamaViewPart
 			if (names != null) {
 				selectedColumns.get(name).addAll(names);
 			} else if (getOutput().getValue() != null) {
-				if (species == null) {
-					return;
-				}
+				if (species == null) { return; }
 				selectedColumns.get(name).addAll(species.getVarNames());
 				selectedColumns.get(name).removeAll(DONT_INSPECT_BY_DEFAULT);
 			}
@@ -245,9 +237,7 @@ public class PopulationInspectView extends GamaViewPart
 	// }
 
 	private void changePartName(final String name, final boolean complete) {
-		if (name == null) {
-			return;
-		}
+		if (name == null) { return; }
 		// this.setContentDescription(StringUtils.capitalize(name) + "
 		// population in macro-agent " +
 		// getOutput().getRootAgent().getName());
@@ -292,9 +282,7 @@ public class PopulationInspectView extends GamaViewPart
 				final Object oldVal = getCurrentValue();
 				super.modifyValue();
 				if (oldVal == null ? getCurrentValue() != null : !oldVal.equals(getCurrentValue())) {
-					if (outputs.isEmpty()) {
-						return;
-					}
+					if (outputs.isEmpty()) { return; }
 					try {
 						getOutput().setNewExpression((IExpression) getCurrentValue());
 
@@ -350,24 +338,16 @@ public class PopulationInspectView extends GamaViewPart
 	};
 
 	private String getSpeciesName() {
-		if (getOutput() == null) {
-			return "";
-		}
+		if (getOutput() == null) { return ""; }
 		final ISpecies species = getOutput().getSpecies();
-		if (species == null) {
-			return IKeyword.AGENT;
-		}
+		if (species == null) { return IKeyword.AGENT; }
 		return species.getName();
 	}
 
 	void fillAttributeMenu() {
-		if (getOutput() == null) {
-			return;
-		}
+		if (getOutput() == null) { return; }
 		// Not yet declared or already disposed
-		if (attributesMenu == null || attributesMenu.isDisposed()) {
-			return;
-		}
+		if (attributesMenu == null || attributesMenu.isDisposed()) { return; }
 		for (final Control c : attributesMenu.getChildren()) {
 			c.dispose();
 		}
@@ -450,7 +430,8 @@ public class PopulationInspectView extends GamaViewPart
 			if (agent != null) {
 				manager.removeAll();
 				manager.update(true);
-				AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, false, AgentsMenu.HIGHLIGHT_ACTION);
+				AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, false, true,
+						AgentsMenu.HIGHLIGHT_ACTION);
 			}
 		});
 		final Menu menu = menuMgr.createContextMenu(viewer.getControl());
@@ -465,13 +446,9 @@ public class PopulationInspectView extends GamaViewPart
 	}
 
 	void recreateViewer() {
-		if (viewer == null) {
-			return;
-		}
+		if (viewer == null) { return; }
 		final Table table = viewer.getTable();
-		if (table.isDisposed()) {
-			return;
-		}
+		if (table.isDisposed()) { return; }
 		table.dispose();
 		createViewer(parent);
 		parent.layout(true);
@@ -492,12 +469,8 @@ public class PopulationInspectView extends GamaViewPart
 			@Override
 			public String getText(final Object element) {
 				final IAgent agent = (IAgent) element;
-				if (agent.dead() && !title.equals(ID_ATTRIBUTE)) {
-					return "N/A";
-				}
-				if (title.equals(ID_ATTRIBUTE)) {
-					return String.valueOf(agent.getIndex());
-				}
+				if (agent.dead() && !title.equals(ID_ATTRIBUTE)) { return "N/A"; }
+				if (title.equals(ID_ATTRIBUTE)) { return String.valueOf(agent.getIndex()); }
 				return Cast.toGaml(getScope().getAgentVarValue(agent, title));
 			}
 		};
@@ -585,20 +558,20 @@ public class PopulationInspectView extends GamaViewPart
 							final IVariable v = getOutput().getSpecies().getVar(attribute);
 							final int id = v.getType().id();
 							switch (id) {
-							case IType.INT:
-								rc = ((Integer) v1).compareTo((Integer) v2);
-								break;
-							case IType.FLOAT:
-								rc = ((Double) v1).compareTo((Double) v2);
-								break;
-							case IType.STRING:
-								rc = stringComparator.compare(v1, v2);
-								break;
-							case IType.POINT:
-								rc = ((ILocation) v1).compareTo(v2);
-								break;
-							default:
-								rc = Cast.toGaml(v1).compareTo(Cast.toGaml(v2));
+								case IType.INT:
+									rc = ((Integer) v1).compareTo((Integer) v2);
+									break;
+								case IType.FLOAT:
+									rc = ((Double) v1).compareTo((Double) v2);
+									break;
+								case IType.STRING:
+									rc = stringComparator.compare(v1, v2);
+									break;
+								case IType.POINT:
+									rc = ((ILocation) v1).compareTo(v2);
+									break;
+								default:
+									rc = Cast.toGaml(v1).compareTo(Cast.toGaml(v2));
 							}
 						}
 					}
@@ -648,9 +621,7 @@ public class PopulationInspectView extends GamaViewPart
 					if (bias == 0) {
 						bias = +1;
 					}
-				} else if (ca == 0 && cb == 0) {
-					return bias;
-				}
+				} else if (ca == 0 && cb == 0) { return bias; }
 			}
 		}
 
@@ -697,9 +668,7 @@ public class PopulationInspectView extends GamaViewPart
 
 				// process run of digits
 				if (Character.isDigit(ca) && Character.isDigit(cb)) {
-					if ((result = compareRight(a.substring(ia), b.substring(ib))) != 0) {
-						return result;
-					}
+					if ((result = compareRight(a.substring(ia), b.substring(ib))) != 0) { return result; }
 				}
 
 				if (ca == 0 && cb == 0) {
@@ -710,9 +679,7 @@ public class PopulationInspectView extends GamaViewPart
 
 				if (ca < cb) {
 					return -1;
-				} else if (ca > cb) {
-					return +1;
-				}
+				} else if (ca > cb) { return +1; }
 
 				++ia;
 				++ib;
@@ -721,9 +688,7 @@ public class PopulationInspectView extends GamaViewPart
 		}
 
 		char charAt(final String s, final int i) {
-			if (i >= s.length()) {
-				return 0;
-			}
+			if (i >= s.length()) { return 0; }
 			return s.charAt(i);
 		}
 	}
@@ -788,17 +753,13 @@ public class PopulationInspectView extends GamaViewPart
 
 	@Override
 	public Control getSizableFontControl() {
-		if (viewer == null) {
-			return null;
-		}
+		if (viewer == null) { return null; }
 		return viewer.getTable();
 	}
 
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
-		if (getOutput() == null) {
-			return;
-		}
+		if (getOutput() == null) { return; }
 		super.createToolItems(tb);
 		tb.check("population.lock2", "", "Lock the current population (prevents editing it)", new SelectionAdapter() {
 
@@ -817,9 +778,7 @@ public class PopulationInspectView extends GamaViewPart
 
 			@Override
 			public void widgetSelected(final SelectionEvent trigger) {
-				if (locked) {
-					return;
-				}
+				if (locked) { return; }
 				final GamaMenu menu = new GamaMenu() {
 
 					@Override
@@ -877,8 +836,7 @@ public class PopulationInspectView extends GamaViewPart
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#pauseChanged()
 	 */
 	@Override
-	public void pauseChanged() {
-	}
+	public void pauseChanged() {}
 
 	/**
 	 * Method synchronizeChanged()
@@ -886,7 +844,6 @@ public class PopulationInspectView extends GamaViewPart
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
 	 */
 	@Override
-	public void synchronizeChanged() {
-	}
+	public void synchronizeChanged() {}
 
 }
