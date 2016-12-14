@@ -17,7 +17,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
-import com.vividsolutions.jts.geom.Coordinate;
 
 import gnu.trove.set.hash.THashSet;
 import msi.gama.metamodel.agent.IAgent;
@@ -635,14 +634,16 @@ public class GraphTopology extends AbstractTopology {
 		if (path == null) { return Double.MAX_VALUE; }
 		if (path.getEdgeList().isEmpty())
 			return 0.0;
-		final Coordinate[] coordsSource = path.getEdgeList().get(0).getInnerGeometry().getCoordinates();
+		
+		//Patrick: no idea of the goal of the following code (in commentary)
+		/*final Coordinate[] coordsSource = path.getEdgeList().get(0).getInnerGeometry().getCoordinates();
 		final Coordinate[] coordsTarget =
 				path.getEdgeList().get(path.getEdgeList().size() - 1).getInnerGeometry().getCoordinates();
 		if (coordsSource.length == 0 || coordsTarget.length == 0) { return Double.MAX_VALUE; }
 		final GamaPoint sourceEdges = new GamaPoint(coordsSource[0]);
 		final GamaPoint targetEdges = new GamaPoint(coordsTarget[coordsTarget.length - 1]);
 		path.setSource(sourceEdges);
-		path.setTarget(targetEdges);
+		path.setTarget(targetEdges);*/
 		return path.getDistance(scope);
 	}
 
@@ -652,14 +653,15 @@ public class GraphTopology extends AbstractTopology {
 		if (path == null) { return Double.MAX_VALUE; }
 		if (path.getEdgeList().isEmpty())
 			return 0.0;
-		final Coordinate[] coordsSource = path.getEdgeList().get(0).getInnerGeometry().getCoordinates();
+		//Patrick: no idea of the goal of the following code (in commentary)
+		/*final Coordinate[] coordsSource = path.getEdgeList().get(0).getInnerGeometry().getCoordinates();
 		final Coordinate[] coordsTarget =
 				path.getEdgeList().get(path.getEdgeList().size() - 1).getInnerGeometry().getCoordinates();
 		if (coordsSource.length == 0 || coordsTarget.length == 0) { return Double.MAX_VALUE; }
 		final GamaPoint sourceEdges = new GamaPoint(coordsSource[0]);
 		final GamaPoint targetEdges = new GamaPoint(coordsTarget[coordsTarget.length - 1]);
 		path.setSource(sourceEdges);
-		path.setTarget(targetEdges);
+		path.setTarget(targetEdges);*/
 		return path.getDistance(scope);
 	}
 
