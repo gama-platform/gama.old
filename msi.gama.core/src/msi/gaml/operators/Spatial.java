@@ -2407,6 +2407,8 @@ public abstract class Spatial {
 				@example(value = "centroid(world)", equals = "the centroid of the square, for example : {50.0,50.0}.", test = false) }, see = {
 						"any_location_in", "closest_points_with", "farthest_point_to", "points_at" })
 		public static ILocation centroidArea(final IScope scope, final IShape g) {
+			if (g == null || g.getInnerGeometry() == null) 
+				return null;
 			Centroid cent = new Centroid(g.getInnerGeometry());
 			return new GamaPoint(cent.getCentroid());
 		}
