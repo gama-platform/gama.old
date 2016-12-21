@@ -24,6 +24,7 @@ import org.geotools.referencing.CRS;
 import org.opengis.referencing.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.vividsolutions.jts.algorithm.Centroid;
 import com.vividsolutions.jts.algorithm.distance.DistanceToPoint;
 import com.vividsolutions.jts.algorithm.distance.PointPairDistance;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -2398,7 +2399,18 @@ public abstract class Spatial {
 	}
 
 	public static abstract class Punctal {
-
+		
+		@operator(value = "centroid", category = { IOperatorCategory.SPATIAL,
+				IOperatorCategory.POINT }, concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION,
+						IConcept.SPATIAL_RELATION, IConcept.POINT })
+		@doc(value = "Centroid (weighted sum of the centroids of a decomposition of the area into triangles) of the operand-geometry. Can be different to the location of the geometry", examples = {
+				@example(value = "centroid(world)", equals = "the centroid of the square, for example : {50.0,50.0}.", test = false) }, see = {
+						"any_location_in", "closest_points_with", "farthest_point_to", "points_at" })
+		public static ILocation centroidArea(final IScope scope, final IShape g) {
+			Centroid cent = new Centroid(g.getInnerGeometry());
+			return new GamaPoint(cent.getCentroid());
+		}
+		
 		@operator(value = { "any_location_in", "any_point_in" }, category = { IOperatorCategory.SPATIAL,
 				IOperatorCategory.POINT }, concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION,
 						IConcept.SPATIAL_RELATION, IConcept.POINT })
