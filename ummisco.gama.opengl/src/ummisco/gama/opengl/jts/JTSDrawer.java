@@ -19,6 +19,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GL2GL3;
+import com.jogamp.opengl.GLContext;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
@@ -26,6 +27,7 @@ import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
@@ -52,7 +54,8 @@ public class JTSDrawer {
 	private final GLUT glut;
 	private final GLUtessellator tobj;
 	public final JOGLRenderer renderer;
-	final JTSVisitor contourDrawer;
+	final static CoordinateFilter contourDrawer =
+			point -> GLContext.getCurrentGL().getGL2().glVertex3d(point.x, JOGLRenderer.Y_FLAG * point.y, point.z);;
 
 	public JTSDrawer(final JOGLRenderer gLRender) {
 		glut = new GLUT();
@@ -63,7 +66,6 @@ public class JTSDrawer {
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-		contourDrawer = new JTSVisitor();
 	}
 
 	public void dispose() {
@@ -73,10 +75,6 @@ public class JTSDrawer {
 	public void setColor(final GL2 gl, final Color c, final double alpha) {
 		if (c == null) { return; }
 		renderer.setCurrentColor(gl, c, alpha);
-		// GLUtilGLContext.SetCurrentColor(gl, (float) (c.getRed() / 255.0),
-		// (float) (c.getGreen() / 255.0),
-		// (float) (c.getBlue() / 255.0), (float) (alpha * c.getAlpha() /
-		// 255.0));
 	}
 
 	public void drawGeometryCached(final GL2 gl, final GamaGeometryFile file) {
