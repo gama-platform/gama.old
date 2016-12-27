@@ -110,8 +110,11 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 		// Enable smooth shading, which blends colors nicely, and smoothes out
 		// lighting.
-		GLUtilLight.enableSmooth(gl);
-		GLUtilLight.enableDepthTest(gl);
+		gl.glShadeModel(GLLightingFunc.GL_SMOOTH);
+		// the depth buffer & enable the depth testing
+		gl.glClearDepth(1.0f);
+		gl.glEnable(GL.GL_DEPTH_TEST); // enables depth testing
+		gl.glDepthFunc(GL.GL_LEQUAL); // the type of depth test to do
 		GLUtilLight.InitializeLighting(gl, data, false);
 
 		// Perspective correction
@@ -130,8 +133,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 		gl.glEnable(GL2.GL_ALPHA_TEST);
 		gl.glAlphaFunc(GL2.GL_GREATER, 0.01f);
-		// FIXME : should be turn on only if need (if we draw image)
-		// problem when true with glutBitmapString
+		gl.glDisable(GL.GL_LINE_SMOOTH);
 		// We mark the renderer as inited
 		inited = true;
 
@@ -182,14 +184,13 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		}
 
 		if (data.isLightOn()) {
-			GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(), data.getAmbientLightColor());
+			GLUtilLight.setAmbiantLight(gl, data.getAmbientLightColor());
 			GLUtilLight.UpdateDiffuseLightValue(gl, this);
 		}
 
 		// Line width ? Disable line smoothing seems to improve rendering time
-		GLUtilLight.setLineWidth(gl, getLineWidth(), false);
-		//
-
+		// smooth should be set to false always, as it creates jagged lines
+		gl.glLineWidth(getLineWidth());
 		if (!data.isTriangulation()) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 		} else {

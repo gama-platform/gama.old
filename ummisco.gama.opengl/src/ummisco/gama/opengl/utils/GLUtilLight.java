@@ -15,8 +15,6 @@ import java.util.List;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.fixedfunc.GLLightingFunc;
-import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.math.Vector3D;
@@ -33,42 +31,16 @@ public class GLUtilLight {
 
 	public static final int fogMode[] = { GL2.GL_EXP, GL2.GL_EXP2, GL2.GL_LINEAR };
 
-	public static void enableSmooth(final GL2 gl) {
-		gl.glShadeModel(GLLightingFunc.GL_SMOOTH);
-	}
-
-	public static void enableDepthTest(final GL2 gl) {
-		// the depth buffer & enable the depth testing
-		gl.glClearDepth(1.0f);
-		gl.glEnable(GL.GL_DEPTH_TEST); // enables depth testing
-		gl.glDepthFunc(GL.GL_LEQUAL); // the type of depth test to do
-	}
-
 	public static void setAmbiantLight(final GL2 gl, final Color ambientLightValue) {
 		final float[] lightAmbientValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
 				ambientLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
-	public static void DrawSphere(final GL gl, final GLU glu, final double radius) {
-		// Draw sphere (possible styles: FILL, LINE, POINT).
-		final GLUquadric earth = glu.gluNewQuadric();
-		glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
-		glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
-		glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
-		final int slices = 16;
-		final int stacks = 16;
-		glu.gluSphere(earth, radius, slices, stacks);
-		glu.gluDeleteQuadric(earth);
-	}
-
 	public static void InitializeLighting(final GL2 gl, final LayeredDisplayData data, final boolean modernRenderer) {
 
 		// ambient
-		final Color ambientLightValue = data.getAmbientLightColor();
-		final float[] lightAmbientValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
-				ambientLightValue.getBlue() / 255.0f, 1.0f };
-		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
+		setAmbiantLight(gl, data.getAmbientLightColor());
 		// deactivate diffuse light for the light0
 		data.setLightActive(0, true);
 		data.setLightType(0, "direction");
@@ -101,13 +73,6 @@ public class GLUtilLight {
 		gl.glEnable(GLLightingFunc.GL_COLOR_MATERIAL);
 	}
 
-	public static void UpdateAmbiantLightValue(final GL2 gl, final GLU glu, final Color ambiantLightValue) {
-
-		final float[] lightAmbientValue = { ambiantLightValue.getRed() / 255.0f, ambiantLightValue.getGreen() / 255.0f,
-				ambiantLightValue.getBlue() / 255.0f, 1.0f };
-		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
-	}
-
 	public static void NotifyOpenGLTranslation(final GL2 gl, final double[] translation,
 			final List<LightPropertiesStructure> lightPropertiesList, final LayeredDisplayData data) {
 		for (final LightPropertiesStructure lightProperties : lightPropertiesList) {
@@ -121,30 +86,6 @@ public class GLUtilLight {
 				data.setLightPosition(lightProperties.id, new GamaPoint(newPos[0], newPos[1], newPos[2]));
 			}
 		}
-	}
-
-	public static double[] QuaternionRotate(final double[] initVector3, final double[] quaternionRotation) {
-		final double[] result = new double[3];
-		// a, b, c are the normalized composants of the axis.
-		final double[] axis = new double[] { quaternionRotation[0], quaternionRotation[1], quaternionRotation[2] };
-		final double angle = quaternionRotation[3];
-		final double a = axis[0] / (axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
-		final double b = -axis[1] / (axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
-		final double c = axis[2] / (axis[0] * axis[0] + axis[1] * axis[1] + axis[2] * axis[2]);
-		// x, y, z are the initial position of the light.
-		final double x = initVector3[0];
-		final double y = initVector3[1];
-		final double z = initVector3[2];
-		result[0] = x * (a * a + (1 - a * a) * Maths.cos(angle))
-				+ y * (a * b * (1 - Maths.cos(angle) - c * Maths.sin(angle)))
-				+ z * (a * c * (1 - Maths.cos(angle) + b * Maths.sin(angle)));
-		result[1] = x * (a * b * (1 - Maths.cos(angle) + c * Maths.sin(angle)))
-				+ y * (b * b + (1 - b * b) * Maths.cos(angle))
-				+ z * (b * c * (1 - Maths.cos(angle)) - a * Maths.sin(angle));
-		result[2] = x * (a * c * (1 - Maths.cos(angle)) - b * Maths.sin(angle))
-				+ y * (b * c * (1 - Maths.cos(angle)) + a * Maths.sin(angle))
-				+ z * (c * c + (1 - c * c) * Maths.cos(angle));
-		return result;
 	}
 
 	public static void NotifyOpenGLRotation(final GL2 gl, final double angle, final Coordinate axis,
@@ -344,17 +285,6 @@ public class GLUtilLight {
 		result[1] = vect1[2] * vect2[0] - vect1[0] * vect2[2];
 		result[2] = vect1[0] * vect2[1] - vect1[1] * vect2[0];
 		return result;
-	}
-
-	public static void setLineWidth(final GL gl, final float size, final boolean smooth) {
-		// smooth should be set to false always, as it creates jagged lines
-		gl.glLineWidth(size);
-		if (smooth) {
-			gl.glEnable(GL.GL_LINE_SMOOTH);
-			// gl.glHint(GL.GL_LINE_SMOOTH_HINT, GL.GL_NICEST);
-		} else {
-			gl.glDisable(GL.GL_LINE_SMOOTH);
-		}
 	}
 
 }
