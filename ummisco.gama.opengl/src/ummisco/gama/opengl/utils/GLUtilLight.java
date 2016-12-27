@@ -26,6 +26,7 @@ import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LightPropertiesStructure;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Maths;
+import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class GLUtilLight {
@@ -199,8 +200,11 @@ public class GLUtilLight {
 		}
 	}
 
-	public static void UpdateDiffuseLightValue(final GL2 gl, final List<LightPropertiesStructure> lightPropertiesList,
-			final double size, final double worldWidth, final double worldHeight) {
+	public static void UpdateDiffuseLightValue(final GL2 gl, final Abstract3DRenderer renderer) {
+		final List<LightPropertiesStructure> lightPropertiesList = renderer.data.getDiffuseLights();
+		final double size = renderer.getMaxEnvDim() / 20;
+		final double worldWidth = renderer.data.getEnvWidth();
+		final double worldHeight = renderer.data.getEnvHeight();
 		for (final LightPropertiesStructure lightProperties : lightPropertiesList) {
 			if (lightProperties.active) {
 				gl.glEnable(GL2.GL_LIGHT0 + lightProperties.id);
@@ -250,11 +254,11 @@ public class GLUtilLight {
 
 					// save the current color to re-set it at the end of this
 					// part
-					final float[] currentColor = GLUtilGLContext.GetCurrentColor();
+					final Color currentColor = renderer.getCurrentColor();
 					// change the current color to the light color (the
 					// representation of the color will have the same color as
 					// the light in itself)
-					GLUtilGLContext.SetCurrentColor(gl, diffuseColor);
+					renderer.setCurrentColor(gl, lightProperties.color);
 					final GLUT glut = new GLUT();
 					final double x = lightProperties.direction.x;
 					final double y = lightProperties.direction.y * JOGLRenderer.Y_FLAG;
@@ -324,7 +328,7 @@ public class GLUtilLight {
 							}
 						}
 					}
-					GLUtilGLContext.SetCurrentColor(gl, currentColor);
+					renderer.setCurrentColor(gl, currentColor);
 
 					gl.glEnable(GL2.GL_LIGHTING);
 				}

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaObjFile.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaObjFile.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -39,7 +38,6 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.TextureCache;
-import ummisco.gama.opengl.utils.GLUtilGLContext;
 
 /**
  * Class GamaObjFile.
@@ -48,7 +46,11 @@ import ummisco.gama.opengl.utils.GLUtilGLContext;
  * @since 30 déc. 2013
  *
  */
-@file(name = "obj", extensions = "obj", buffer_type = IType.LIST, buffer_content = IType.GEOMETRY)
+@file (
+		name = "obj",
+		extensions = "obj",
+		buffer_type = IType.LIST,
+		buffer_content = IType.GEOMETRY)
 public class GamaObjFile extends Gama3DGeometryFile {
 
 	private final ArrayList<float[]> vertexSets = new ArrayList<>();
@@ -114,9 +116,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	}
 
 	private void loadObject(final IScope scope, final boolean forDrawing) {
-		if (loaded) {
-			return;
-		}
+		if (loaded) { return; }
 		int facecounter = 0;
 		try (BufferedReader br = new BufferedReader(new FileReader(getFile(scope)))) {
 			boolean firstpass = true;
@@ -263,8 +263,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 	}
 
 	/**
-	 * Method fillBuffer(). Fills the buffer with the polygons built from the
-	 * .obj vertices + faces
+	 * Method fillBuffer(). Fills the buffer with the polygons built from the .obj vertices + faces
 	 * 
 	 * @see msi.gama.util.file.GamaFile#fillBuffer(msi.gama.runtime.IScope)
 	 */
@@ -341,9 +340,9 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					texture = null;
 				}
 				gl.glEnable(GLLightingFunc.GL_COLOR_MATERIAL);
-
-				GLUtilGLContext.SetCurrentColor(gl, materials.getKd(nextmatname)[0], materials.getKd(nextmatname)[1],
+				renderer.setCurrentColor(gl, materials.getKd(nextmatname)[0], materials.getKd(nextmatname)[1],
 						materials.getKd(nextmatname)[2], materials.getd(nextmatname));
+
 				final String mapKa = materials.getMapKa(nextmatname);
 				final String mapKd = materials.getMapKd(nextmatname);
 				final String mapd = materials.getMapd(nextmatname);

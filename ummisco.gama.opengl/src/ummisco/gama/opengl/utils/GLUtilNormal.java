@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GLUtilNormal.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GLUtilNormal.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -116,7 +115,7 @@ public class GLUtilNormal {
 		if (renderer.data.isDraw_norm()) {
 
 			// memorize the current color to the buffer
-			final float[] previousColor = GLUtilGLContext.GetCurrentColor();
+			final Color previousColor = renderer.getCurrentColor();
 
 			final Vertex center = GetCenter(vertices);
 			gl.glBegin(GL.GL_LINES);
@@ -133,7 +132,7 @@ public class GLUtilNormal {
 			gl.glEnd();
 
 			// reset the previous color of the opengl context.
-			GLUtilGLContext.SetCurrentColor(gl, previousColor);
+			renderer.setCurrentColor(gl, previousColor);
 
 		}
 

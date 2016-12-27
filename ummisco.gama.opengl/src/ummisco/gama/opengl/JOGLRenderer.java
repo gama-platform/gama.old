@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'JOGLRenderer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'JOGLRenderer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -70,7 +69,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  * @since 27 avr. 2015
  *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class JOGLRenderer extends Abstract3DRenderer {
 
 	private final PickingState pickingState = new PickingState();
@@ -155,9 +154,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	public void display(final GLAutoDrawable drawable) {
 
 		currentScene = sceneBuffer.getSceneToRender();
-		if (currentScene == null) {
-			return;
-		}
+		if (currentScene == null) { return; }
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
 
@@ -186,8 +183,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 		if (data.isLightOn()) {
 			GLUtilLight.UpdateAmbiantLightValue(gl, getGlu(), data.getAmbientLightColor());
-			GLUtilLight.UpdateDiffuseLightValue(gl, data.getDiffuseLights(), getMaxEnvDim() / 20, data.getEnvWidth(),
-					data.getEnvHeight());
+			GLUtilLight.UpdateDiffuseLightValue(gl, this);
 		}
 
 		// Line width ? Disable line smoothing seems to improve rendering time
@@ -226,9 +222,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width,
 			final int height) {
 		// Get the OpenGL graphics context
-		if (width <= 0 || height <= 0) {
-			return;
-		}
+		if (width <= 0 || height <= 0) { return; }
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		// Set the viewport (display area) to cover the entire window
 		gl.glViewport(0, 0, width, height);
@@ -282,9 +276,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	public void drawScene(final GL2 gl) {
 		currentScene = sceneBuffer.getSceneToRender();
-		if (currentScene == null) {
-			return;
-		}
+		if (currentScene == null) { return; }
 		// Do some garbage collecting in model scenes
 		sceneBuffer.garbageCollect(gl);
 		// if picking, we draw a first pass to pick the color
@@ -300,9 +292,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * First pass prepare select buffer for select mode by clearing it, prepare
-	 * openGL to select mode and tell it where should draw object by using
-	 * gluPickMatrix() method
+	 * First pass prepare select buffer for select mode by clearing it, prepare openGL to select mode and tell it where
+	 * should draw object by using gluPickMatrix() method
 	 * 
 	 * @return if returned value is true that mean the picking is enabled
 	 */
@@ -327,12 +318,10 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glRenderMode(GL2.GL_SELECT);
 
 		/*
-		 * The application must redefine the viewing volume so that it renders
-		 * only a small area around the place where the mouse was clicked. In
-		 * order to do that it is necessary to set the matrix mode to
-		 * GL_PROJECTION. Afterwards, the application should push the current
-		 * matrix to save the normal rendering mode settings. Next initialise
-		 * the matrix
+		 * The application must redefine the viewing volume so that it renders only a small area around the place where
+		 * the mouse was clicked. In order to do that it is necessary to set the matrix mode to GL_PROJECTION.
+		 * Afterwards, the application should push the current matrix to save the normal rendering mode settings. Next
+		 * initialise the matrix
 		 */
 
 		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
@@ -340,14 +329,12 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glLoadIdentity();
 
 		/*
-		 * Define the viewing volume so that rendering is done only in a small
-		 * area around the cursor. gluPickMatrix method restrict the area where
-		 * openGL will drawing objects
+		 * Define the viewing volume so that rendering is done only in a small area around the cursor. gluPickMatrix
+		 * method restrict the area where openGL will drawing objects
 		 *
-		 * OpenGL has a different origin for its window coordinates than the
-		 * operation system. The second parameter provides for the conversion
-		 * between the two systems, i.e. it transforms the origin from the upper
-		 * left corner, into the bottom left corner
+		 * OpenGL has a different origin for its window coordinates than the operation system. The second parameter
+		 * provides for the conversion between the two systems, i.e. it transforms the origin from the upper left
+		 * corner, into the bottom left corner
 		 */
 		glu.gluPickMatrix(camera.getMousePosition().x, viewport[3] - camera.getMousePosition().y, 4, 4, viewport, 0);
 
@@ -362,8 +349,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * After drawing we have to calculate which object was nearest screen and
-	 * return its index
+	 * After drawing we have to calculate which object was nearest screen and return its index
 	 * 
 	 * @return name of selected object
 	 */
@@ -472,17 +458,13 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	}
 
 	/**
-	 * Method drawGeometry. Add a given JTS Geometry in the list of all the
-	 * existing geometry that will be displayed by openGl.
+	 * Method drawGeometry. Add a given JTS Geometry in the list of all the existing geometry that will be displayed by
+	 * openGl.
 	 */
 	@Override
 	public Rectangle2D drawShape(final IShape shape, final ShapeDrawingAttributes attributes) {
-		if (shape == null) {
-			return null;
-		}
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return null;
-		}
+		if (shape == null) { return null; }
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 		// IShape.Type type = shape.getGeometricalType();
 		if (highlight) {
 			attributes.color = GamaColor.getInt(data.getHighlightColor().getRGB());
@@ -514,12 +496,10 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	}
 
 	@Override
-	public void startDrawKeystoneHelper() {
-	} // TODO (or not)
+	public void startDrawKeystoneHelper() {} // TODO (or not)
 
 	@Override
-	public void stopDrawKeystoneHelper() {
-	} // TODO (or not)
+	public void stopDrawKeystoneHelper() {} // TODO (or not)
 
 	@Override
 	public void drawRotationHelper(final GL2 gl) {
@@ -539,9 +519,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	 */
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return null;
-		}
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 		if (attributes.size == null) {
 			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
 		}
@@ -555,9 +533,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return null;
-		}
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 
 		if (file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath(getSurface().getScope()))) {
 			envelopes.put(file.getPath(getSurface().getScope()), file.computeEnvelope(surface.getScope()));
@@ -568,22 +544,17 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return null;
-		}
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 
 		sceneBuffer.getSceneToUpdate().addField(fieldValues, attributes);
 		/*
-		 * This line has been removed to fix the issue 1174 if ( gridColor !=
-		 * null ) { drawGridLine(img, gridColor); }
+		 * This line has been removed to fix the issue 1174 if ( gridColor != null ) { drawGridLine(img, gridColor); }
 		 */
 		return rect;
 	}
 
 	public void drawGridLine(final GamaPoint dimensions, final Color lineColor) {
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return;
-		}
+		if (sceneBuffer.getSceneToUpdate() == null) { return; }
 		double stepX, stepY;
 		final double cellWidth = this.data.getEnvWidth() / dimensions.x;
 		final double cellHeight = this.data.getEnvHeight() / dimensions.y;
@@ -604,9 +575,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	@Override
 	public Rectangle2D drawString(final String string, final TextDrawingAttributes attributes) {
 		// Multiline: Issue #780
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return null;
-		}
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 		if (string.contains("\n")) {
 			for (final String s : string.split("\n")) {
 				attributes.location.setY(attributes.location.getY()
@@ -642,9 +611,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	}
 
 	/**
-	 * Set the value z of the current Layer. If no value is define is defined
-	 * set it to 0. Set the type of the layer weither it's a static layer
-	 * (refresh:false) or a dynamic layer (by default or refresh:true)
+	 * Set the value z of the current Layer. If no value is define is defined set it to 0. Set the type of the layer
+	 * weither it's a static layer (refresh:false) or a dynamic layer (by default or refresh:true)
 	 */
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
@@ -690,9 +658,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	public GamaPoint getRealWorldPointFromWindowPoint(final Point windowPoint) {
-		if (glu == null) {
-			return null;
-		}
+		if (glu == null) { return null; }
 		int realy = 0;// GL y coord pos
 		final double[] wcoord = new double[4];// wx, wy, wz;// returned xyz
 												// coords
@@ -707,8 +673,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		final GamaPoint v2 = new GamaPoint(wcoord[0], wcoord[1], wcoord[2]);
 
 		final GamaPoint v3 = v2.minus(v1).normalized();
-		final float distance = (float) (camera.getPosition().getZ()
-				/ GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3));
+		final float distance =
+				(float) (camera.getPosition().getZ() / GamaPoint.dotProduct(new GamaPoint(0.0, 0.0, -1.0), v3));
 		final GamaPoint worldCoordinates = camera.getPosition().plus(v3.times(distance));
 
 		return new GamaPoint(worldCoordinates.x, worldCoordinates.y);
