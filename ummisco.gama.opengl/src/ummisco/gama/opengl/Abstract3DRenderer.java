@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'Abstract3DRenderer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'Abstract3DRenderer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -52,8 +51,7 @@ import ummisco.gama.opengl.vaoGenerator.ShapeCache;
 import ummisco.gama.ui.utils.WorkbenchHelper;
 
 /**
- * This class plays the role of Renderer and IGraphics. Class
- * Abstract3DRenderer.
+ * This class plays the role of Renderer and IGraphics. Class Abstract3DRenderer.
  *
  * @author drogoul
  * @since 27 avr. 2015
@@ -114,9 +112,9 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	}
 
-	public static int Y_FLAG = -1;
+	public final static int Y_FLAG = -1;
 
-	// protected GL2 gl;
+	private Color currentColor;
 	protected DrawingEntityGenerator drawingEntityGenerator;
 
 	protected boolean useShader = false;
@@ -160,8 +158,8 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	protected final GeometryCache geometryCache = new GeometryCache();
 	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
-	protected final TextureCache textureCache = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()
-			? TextureCache.getSharedInstance() : new TextureCache();
+	protected final TextureCache textureCache =
+			GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue() ? TextureCache.getSharedInstance() : new TextureCache();
 
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
 	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
@@ -174,11 +172,11 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		ShapeCache.freedShapeCache();
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	public GLAutoDrawable createDrawable(final Composite parent) {
 		final boolean useSharedContext = GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue();
-		final GLProfile profile = useSharedContext ? TextureCache.getSharedContext().getGLProfile()
-				: GLProfile.getDefault();
+		final GLProfile profile =
+				useSharedContext ? TextureCache.getSharedContext().getGLProfile() : GLProfile.getDefault();
 		final GLCapabilities cap = new GLCapabilities(profile);
 		cap.setStencilBits(8);
 		cap.setDoubleBuffered(true);
@@ -244,9 +242,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	protected void initializeCanvasListeners() {
 
 		WorkbenchHelper.asyncRun(() -> {
-			if (getCanvas() == null || getCanvas().isDisposed()) {
-				return;
-			}
+			if (getCanvas() == null || getCanvas().isDisposed()) { return; }
 			getCanvas().addKeyListener(camera);
 			getCanvas().addMouseListener(camera);
 			getCanvas().addMouseMoveListener(camera);
@@ -470,6 +466,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public void setCurrentColor(final GL2 gl, final double red, final double green, final double blue,
 			final double alpha) {
+		currentColor = new Color((float) red, (float) green, (float) blue, (float) alpha);
 		gl.glColor4d(red, green, blue, alpha);
 	}
 
@@ -477,7 +474,11 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		setCurrentColor(gl, value, value, value, 1);
 	}
 
-	@SuppressWarnings("rawtypes")
+	public Color getCurrentColor() {
+		return currentColor;
+	}
+
+	@SuppressWarnings ("rawtypes")
 	public ObjectDrawer getDrawerFor(final Class<? extends AbstractObject> class1) {
 		return null;
 	}
@@ -501,14 +502,14 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		float[] coords3 = new float[] { 1, 0 }; // top-right
 		float[] coords4 = new float[] { 1, 1 }; // bottom-right
 		if (data.getKeystone() != null) {
-			coords1 = new float[] { (float) data.getKeystone().get(2).getX(),
-					(float) data.getKeystone().get(2).getY() };
-			coords2 = new float[] { (float) data.getKeystone().get(0).getX(),
-					(float) data.getKeystone().get(0).getY() };
-			coords3 = new float[] { (float) data.getKeystone().get(1).getX(),
-					(float) data.getKeystone().get(1).getY() };
-			coords4 = new float[] { (float) data.getKeystone().get(3).getX(),
-					(float) data.getKeystone().get(3).getY() };
+			coords1 =
+					new float[] { (float) data.getKeystone().get(2).getX(), (float) data.getKeystone().get(2).getY() };
+			coords2 =
+					new float[] { (float) data.getKeystone().get(0).getX(), (float) data.getKeystone().get(0).getY() };
+			coords3 =
+					new float[] { (float) data.getKeystone().get(1).getX(), (float) data.getKeystone().get(1).getY() };
+			coords4 =
+					new float[] { (float) data.getKeystone().get(3).getX(), (float) data.getKeystone().get(3).getY() };
 		}
 		setKeystoneCoordinates(0, coords1);
 		setKeystoneCoordinates(1, coords2);
