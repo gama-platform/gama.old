@@ -23,9 +23,9 @@ public class JTSVisitor implements CoordinateSequenceFilter {
 	@Override
 	public void filter(final CoordinateSequence seq, final int i) {
 		final GL2 gl = GLContext.getCurrentGL().getGL2();
-		final int ii1 = (i + 1) % seq.size();
+		// final int ii1 = (i + 1) % seq.size();
 		gl.glVertex3d(seq.getX(i), JOGLRenderer.Y_FLAG * seq.getY(i), seq.getOrdinate(i, 2));
-		gl.glVertex3d(seq.getX(ii1), JOGLRenderer.Y_FLAG * seq.getY(ii1), seq.getOrdinate(ii1, 2));
+		// gl.glVertex3d(seq.getX(ii1), JOGLRenderer.Y_FLAG * seq.getY(ii1), seq.getOrdinate(ii1, 2));
 	}
 
 	@Override
