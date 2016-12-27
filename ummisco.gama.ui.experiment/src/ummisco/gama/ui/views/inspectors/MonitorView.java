@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'MonitorView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MonitorView.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -31,6 +30,7 @@ import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IExpressionFactory;
+import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.parameters.EditorFactory;
 import ummisco.gama.ui.resources.GamaColors;
@@ -43,7 +43,7 @@ import ummisco.gama.ui.views.toolbar.IToolbarDecoratedView;
 /**
  * @author Alexis Drogoul
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class MonitorView extends ExpandableItemsView<MonitorOutput> implements IToolbarDecoratedView.Pausable {
 
 	private static int count = 0;
@@ -100,14 +100,14 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		// secondColData.widthHint = 200;
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
-		final Text titleEditor = (Text) EditorFactory
-				.create(output.getScope(), compo, "Title:", output.getName(), true, newValue -> {
+		final Text titleEditor =
+				(Text) EditorFactory.create(output.getScope(), compo, "Title:", output.getName(), true, newValue -> {
 					output.setName(newValue);
 					update(output);
 				}).getEditor();
 
-		final IExpression expr = GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulation(),
-				true);
+		final IExpression expr =
+				GAML.compileExpression(output.getExpressionText(), output.getScope().getSimulation(), true);
 
 		final Text c = (Text) EditorFactory.createExpression(output.getScope(), compo, "Expression:",
 				output.getValue() == null ? IExpressionFactory.NIL_EXPR : expr, newValue -> {
@@ -118,8 +118,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		c.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public void widgetSelected(final SelectionEvent e) {
-			}
+			public void widgetSelected(final SelectionEvent e) {}
 
 			@Override
 			public void widgetDefaultSelected(final SelectionEvent e) {
@@ -177,7 +176,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 		return o.getColor();
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings ("unused")
 	public static void createNewMonitor(final IScope scope) {
 		// TODO ADD the possibility to do it in several simulations
 		new MonitorOutput(scope, "monitor" + count++, "");
@@ -225,8 +224,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	}
 
 	@Override
-	public void updateItemValues() {
-	}
+	public void updateItemValues() {}
 
 	@Override
 	public void createToolItems(final GamaToolbar2 tb) {
@@ -253,8 +251,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#pauseChanged()
 	 */
 	@Override
-	public void pauseChanged() {
-	}
+	public void pauseChanged() {}
 
 	/**
 	 * Method synchronizeChanged()
@@ -262,17 +259,22 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> implements I
 	 * @see ummisco.gama.ui.views.toolbar.IToolbarDecoratedView.Pausable#synchronizeChanged()
 	 */
 	@Override
-	public void synchronizeChanged() {
-	}
+	public void synchronizeChanged() {}
 
 	/**
 	 * Method handleMenu()
 	 * 
-	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object,
-	 *      int, int)
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final MonitorOutput data, final int x, final int y) {
+		final IExpression exp = data.getValue();
+		if (exp == null)
+			return null;
+		final IType<?> type = exp.getType();
+		if (type.isNumber()) {
+
+		}
 		return null;
 	}
 

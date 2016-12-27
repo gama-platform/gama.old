@@ -1,14 +1,15 @@
 /*********************************************************************************************
  *
- * 'MonitorOutput.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MonitorOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
  *
  **********************************************************************************************/
 package msi.gama.outputs;
+
+import java.util.List;
 
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.interfaces.IKeyword;
@@ -27,6 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaListFactory;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -38,16 +40,49 @@ import msi.gaml.types.IType;
  *
  * @author drogoul
  */
-@symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT, with_sequence = false, concept = { IConcept.MONITOR })
-@facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("identifier of the monitor")),
-		@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc(value = "Allows to refresh the monitor every n time steps (default is 1)", deprecated = "Use refresh: every(n) instead")),
-		@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true, doc = @doc("Indicates the (possibly dynamic) color of this output (default is a light gray)")),
-		@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true, doc = @doc("Indicates the condition under which this output should be refreshed (default is true)")),
-		@facet(name = IKeyword.VALUE, type = IType.NONE, optional = false, doc = @doc("expression that will be evaluated to be displayed in the monitor")) }, omissible = IKeyword.NAME)
-@inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
-@doc(value = "A monitor allows to follow the value of an arbitrary expression in GAML.", usages = {
-		@usage(value = "An example of use is:", examples = @example(value = "monitor \"nb preys\" value: length(prey as list) refresh_every: 5;  ", isExecutable = false)) })
+@symbol (
+		name = IKeyword.MONITOR,
+		kind = ISymbolKind.OUTPUT,
+		with_sequence = false,
+		concept = { IConcept.MONITOR })
+@facets (
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.LABEL,
+				optional = false,
+				doc = @doc ("identifier of the monitor")),
+				@facet (
+						name = IKeyword.REFRESH_EVERY,
+						type = IType.INT,
+						optional = true,
+						doc = @doc (
+								value = "Allows to refresh the monitor every n time steps (default is 1)",
+								deprecated = "Use refresh: every(n) instead")),
+				@facet (
+						name = IKeyword.COLOR,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("Indicates the (possibly dynamic) color of this output (default is a light gray)")),
+				@facet (
+						name = IKeyword.REFRESH,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Indicates the condition under which this output should be refreshed (default is true)")),
+				@facet (
+						name = IKeyword.VALUE,
+						type = IType.NONE,
+						optional = false,
+						doc = @doc ("expression that will be evaluated to be displayed in the monitor")) },
+		omissible = IKeyword.NAME)
+@inside (
+		symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
+@doc (
+		value = "A monitor allows to follow the value of an arbitrary expression in GAML.",
+		usages = { @usage (
+				value = "An example of use is:",
+				examples = @example (
+						value = "monitor \"nb preys\" value: length(prey as list) refresh_every: 5;  ",
+						isExecutable = false)) })
 public class MonitorOutput extends AbstractDisplayOutput {
 
 	protected String expressionText = "";
@@ -56,6 +91,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	protected GamaColor color = null;
 	protected GamaColor constantColor = null;
 	protected Object lastValue = "";
+	protected List<Object> history;
 
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
@@ -115,12 +151,12 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	@Override
 	public boolean step(final IScope scope) {
 		getScope().setCurrentSymbol(this);
-		if (getScope().interrupted()) {
-			return false;
-		}
+		if (getScope().interrupted()) { return false; }
 		if (getValue() != null) {
 			try {
 				lastValue = getValue().value(getScope());
+				if (history != null)
+					history.add(lastValue);
 			} catch (final GamaRuntimeException e) {
 				lastValue = ItemList.ERROR_CODE + e.getMessage();
 			}
@@ -174,7 +210,15 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	}
 
 	protected void setValue(final IExpression value) {
+		if (history != null) {
+			history.clear();
+			history = null;
+		}
 		this.value = value;
+		final IType<?> t = value.getType();
+		if (t.isNumber() || t.isContainer() && t.getContentType().isNumber()) {
+			history = GamaListFactory.create(t);
+		}
 	}
 
 }

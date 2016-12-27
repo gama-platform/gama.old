@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractDisplayOutput.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractDisplayOutput.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -34,9 +33,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	final Runnable opener = () -> {
 		view = getScope().getGui().showView(getViewId(), isUnique() ? null : getName(), 1); // IWorkbenchPage.VIEW_ACTIVATE
-		if (view == null) {
-			return;
-		}
+		if (view == null) { return; }
 		view.addOutput(AbstractDisplayOutput.this);
 	};
 
@@ -54,9 +51,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public void dispose() {
-		if (disposed) {
-			return;
-		}
+		if (disposed) { return; }
 		disposed = true;
 		if (view != null) {
 			view.removeOutput(this);
@@ -95,9 +90,8 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public String getId() {
 		final String cName = ((AbstractOutput) this).getDescription().getModelDescription().getAlias();
-		if (!cName.equals("") && !getName().contains("#")) {
-			return isUnique() ? getViewId() : getViewId() + getName() + "#" + cName;
-		}
+		if (cName != null && !cName.equals("") && !getName().contains("#")) { return isUnique() ? getViewId()
+				: getViewId() + getName() + "#" + cName; }
 		return isUnique() ? getViewId() : getViewId() + getName();
 	}
 

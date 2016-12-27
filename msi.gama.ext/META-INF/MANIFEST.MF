@@ -41,6 +41,7 @@ Export-Package: com.kitfox.svg;
  com.vividsolutions.jts.geom.util;uses:="com.vividsolutions.jts.geom,com.vividsolutions.jts.util",
  com.vividsolutions.jts.index.quadtree;uses:="com.vividsolutions.jts.geom,com.vividsolutions.jts.index",
  com.vividsolutions.jts.io;uses:="com.vividsolutions.jts.geom",
+ com.vividsolutions.jts.math,
  com.vividsolutions.jts.operation.buffer;uses:="com.vividsolutions.jts.noding,com.vividsolutions.jts.geom,com.vividsolutions.jts.geomgraph",
  com.vividsolutions.jts.operation.distance;uses:="com.vividsolutions.jts.index.strtree,com.vividsolutions.jts.geom",
  com.vividsolutions.jts.operation.union;uses:="com.vividsolutions.jts.geom",
