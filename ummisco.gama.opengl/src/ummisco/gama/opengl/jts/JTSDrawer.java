@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'JTSDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'JTSDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -52,8 +51,8 @@ public class JTSDrawer {
 
 	private final GLUT glut;
 	private final GLUtessellator tobj;
-	public JOGLRenderer renderer;
-	JTSVisitor visitor;
+	public final JOGLRenderer renderer;
+	final JTSVisitor visitor;
 
 	public JTSDrawer(final JOGLRenderer gLRender) {
 		glut = new GLUT();
@@ -68,9 +67,7 @@ public class JTSDrawer {
 	}
 
 	public void setColor(final GL2 gl, final Color c, final double alpha) {
-		if (c == null) {
-			return;
-		}
+		if (c == null) { return; }
 		renderer.setCurrentColor(gl, c, alpha);
 		// GLUtilGLContext.SetCurrentColor(gl, (float) (c.getRed() / 255.0),
 		// (float) (c.getGreen() / 255.0),
@@ -86,8 +83,7 @@ public class JTSDrawer {
 	}
 
 	public void drawGeometryCollection(final GL2 gl, final GeometryCollection geoms, final Color c, final double alpha,
-			final boolean fill, final Color border,
-			final GeometryObject object, /* final Integer angle, */
+			final boolean fill, final Color border, final GeometryObject object, /* final Integer angle, */
 			final double height, final double z_fighting_value, final double z) {
 
 		final int numGeometries = geoms.getNumGeometries();
@@ -113,8 +109,7 @@ public class JTSDrawer {
 	}
 
 	public void drawMultiPolygon(final GL2 gl, final MultiPolygon polygons, final Color c, final double alpha,
-			final boolean fill, final Color border,
-			final GeometryObject object, /* final Integer angle, */
+			final boolean fill, final Color border, final GeometryObject object, /* final Integer angle, */
 			final double height, final double z_fighting_value) {
 
 		final int numGeometries = polygons.getNumGeometries();
@@ -473,9 +468,7 @@ public class JTSDrawer {
 
 	public void drawPolygonContour(final GL2 gl, final Polygon p, final Color border, final double alpha,
 			final double z_fighting_value) {
-		if (border == null) {
-			return;
-		}
+		if (border == null) { return; }
 
 		// FIXME: when rendering with this method the triangulation does not
 		// work anymore
@@ -1066,9 +1059,7 @@ public class JTSDrawer {
 
 	public void drawRotationHelper(final GL2 gl, final GamaPoint pos, final double distance) {
 		// TODO
-		if (gl == null) {
-			return;
-		}
+		if (gl == null) { return; }
 		final int slices = 32;
 		final int stacks = 32;
 		final GLUT glut = new GLUT();
@@ -1097,9 +1088,7 @@ public class JTSDrawer {
 		final double height = envelope.getHeight();
 		final double z = Math.max(2, renderer.getMaxEnvDim() / 100);
 		// TODO
-		if (gl == null) {
-			return;
-		}
+		if (gl == null) { return; }
 		gl.glPushMatrix();
 		gl.glTranslated(pos.x, pos.y, pos.z);
 		gl.glScaled(width, height, z);
