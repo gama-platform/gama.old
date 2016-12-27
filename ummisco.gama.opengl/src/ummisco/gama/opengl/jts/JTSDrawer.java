@@ -52,7 +52,7 @@ public class JTSDrawer {
 	private final GLUT glut;
 	private final GLUtessellator tobj;
 	public final JOGLRenderer renderer;
-	final JTSVisitor visitor;
+	final JTSVisitor contourDrawer;
 
 	public JTSDrawer(final JOGLRenderer gLRender) {
 		glut = new GLUT();
@@ -63,7 +63,7 @@ public class JTSDrawer {
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
-		visitor = new JTSVisitor();
+		contourDrawer = new JTSVisitor();
 	}
 
 	public void dispose() {
@@ -155,7 +155,7 @@ public class JTSDrawer {
 				setColor(gl, Color.black, alpha);
 				// GLUtilGLContext.SetCurrentColor(gl, 0.0f, 0.0f, 0.0f, (float)
 				// alpha);
-				if (drawPolygonContour == true) {
+				if (drawPolygonContour) {
 					drawPolygonContour(gl, p, border, alpha, z_fighting_value);
 				}
 			} else { // Draw only the contour of the polygon. If no border has
@@ -172,7 +172,7 @@ public class JTSDrawer {
 			if (texture != null) {
 				drawTexturedPolygon(gl, p, texture, p_norm_dir);
 			}
-			if (drawPolygonContour == true) {
+			if (drawPolygonContour) {
 				drawPolygonContour(gl, p, border, alpha, z_fighting_value);
 			}
 		}
@@ -486,14 +486,14 @@ public class JTSDrawer {
 			// myGl.glPolygonOffset(0.0f,10.0f);
 			gl.glBegin(GL2.GL_POLYGON);
 			setColor(gl, border, alpha);
-			p.getExteriorRing().apply(visitor);
+			p.getExteriorRing().apply(contourDrawer);
 			gl.glEnd();
 
 			if (p.getNumInteriorRing() > 0) {
 				// Draw Interior ring
 				for (int i = 0; i < p.getNumInteriorRing(); i++) {
 					gl.glBegin(GL2.GL_POLYGON);
-					p.getInteriorRingN(i).apply(visitor);
+					p.getInteriorRingN(i).apply(contourDrawer);
 					gl.glEnd();
 				}
 			}
@@ -504,14 +504,14 @@ public class JTSDrawer {
 		} else {
 			gl.glBegin(GL.GL_LINES);
 			setColor(gl, border, alpha);
-			p.getExteriorRing().apply(visitor);
+			p.getExteriorRing().apply(contourDrawer);
 			gl.glEnd();
 
 			if (p.getNumInteriorRing() > 0) {
 				// Draw Interior ring
 				for (int i = 0; i < p.getNumInteriorRing(); i++) {
 					gl.glBegin(GL.GL_LINES);
-					p.getInteriorRingN(i).apply(visitor);
+					p.getInteriorRingN(i).apply(contourDrawer);
 					gl.glEnd();
 				}
 			}
