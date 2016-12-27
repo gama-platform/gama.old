@@ -57,13 +57,17 @@ public class JTSDrawer {
 	public JTSDrawer(final JOGLRenderer gLRender) {
 		glut = new GLUT();
 		renderer = gLRender;
-		final TessellCallBack tessCallback = new TessellCallBack(renderer.getGlu());
+		final TessellCallBack tessCallback = new TessellCallBack();
 		tobj = GLU.gluNewTess();
 
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
 		GLU.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
 		visitor = new JTSVisitor();
+	}
+
+	public void dispose() {
+		GLU.gluDeleteTess(tobj);
 	}
 
 	public void setColor(final GL2 gl, final Color c, final double alpha) {

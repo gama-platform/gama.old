@@ -408,6 +408,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		// this.setCurrentPickedObject(null);
 		this.currentScene = null;
 		drawable.removeGLEventListener(this);
+		jtsDrawer.dispose();
 	}
 
 	@Override

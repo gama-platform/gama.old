@@ -36,7 +36,7 @@ import msi.gaml.types.Types;
 public class GamaPoint extends Coordinate implements ILocation {
 
 	private static final double[] EMPTY = new double[] {};
-	public static final GamaPoint NULL_POINT = new GamaPoint(0, 0);
+	public static final GamaPoint NULL_POINT = new GamaPoint(0d, 0d, 0d);
 
 	{
 		x = 0.0d;
