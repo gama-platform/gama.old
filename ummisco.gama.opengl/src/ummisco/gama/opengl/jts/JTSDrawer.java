@@ -10,8 +10,6 @@
 package ummisco.gama.opengl.jts;
 
 import java.awt.Color;
-import java.util.ArrayList;
-import java.util.List;
 
 import javax.vecmath.Vector3d;
 
@@ -39,8 +37,6 @@ import com.vividsolutions.jts.geom.Polygon;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -51,11 +47,14 @@ import ummisco.gama.opengl.utils.Vertex;
 
 public class JTSDrawer {
 
+	private static final float[] RECT_TEX_COORDS = { 0f, 1f, 0f, 0f, 1f, 0f, 1f, 1f, };
+	private static final float[] TRIANGLE_TEX_COORDS = { 0f, 1f, 1f, 0f, 1f, 1f };
+
 	private final GLUT glut;
 	private final GLUtessellator tobj;
 	public final JOGLRenderer renderer;
-	final static CoordinateFilter contourDrawer =
-			point -> GLContext.getCurrentGL().getGL2().glVertex3d(point.x, JOGLRenderer.Y_FLAG * point.y, point.z);;
+	final static CoordinateFilter pointDrawer =
+			point -> GLContext.getCurrentGL().getGL2().glVertex3d(point.x, JOGLRenderer.Y_FLAG * point.y, point.z);
 
 	public JTSDrawer(final JOGLRenderer gLRender) {
 		glut = new GLUT();
@@ -85,8 +84,8 @@ public class JTSDrawer {
 	}
 
 	public void drawGeometryCollection(final GL2 gl, final GeometryCollection geoms, final Color c, final double alpha,
-			final boolean fill, final Color border, final GeometryObject object, /* final Integer angle, */
-			final double height, final double z_fighting_value, final double z) {
+			final boolean fill, final Color border, final GeometryObject object, final double height,
+			final double z_fighting_value, final double z) {
 
 		final int numGeometries = geoms.getNumGeometries();
 
@@ -111,8 +110,8 @@ public class JTSDrawer {
 	}
 
 	public void drawMultiPolygon(final GL2 gl, final MultiPolygon polygons, final Color c, final double alpha,
-			final boolean fill, final Color border, final GeometryObject object, /* final Integer angle, */
-			final double height, final double z_fighting_value) {
+			final boolean fill, final Color border, final GeometryObject object, final double height,
+			final double z_fighting_value) {
 
 		final int numGeometries = polygons.getNumGeometries();
 
@@ -136,34 +135,21 @@ public class JTSDrawer {
 
 		if (renderer.getComputeNormal()) {
 			final Vertex[] vertices = getExteriorRingVertices(p);
-
-			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+			if (!GeometryUtils.isClockWise(p)) {
 				p_norm_dir = -1;
-			} else {
-				p_norm_dir = 1;
 			}
-
 			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		}
 		if (!object.isTextured()) {
 			if (fill) {
 				setColor(gl, c, alpha);
-
 				drawTesselatedPolygon(gl, p, p_norm_dir, c, alpha);
 				setColor(gl, Color.black, alpha);
-				// GLUtilGLContext.SetCurrentColor(gl, 0.0f, 0.0f, 0.0f, (float)
-				// alpha);
 				if (drawPolygonContour) {
 					drawPolygonContour(gl, p, border, alpha, z_fighting_value);
 				}
-			} else { // Draw only the contour of the polygon. If no border has
-						// been define draw empty shape with their original
-						// color
-				if (border == null) {
-					drawPolygonContour(gl, p, c, alpha, z_fighting_value);
-				} else {
-					drawPolygonContour(gl, p, border, alpha, z_fighting_value);
-				}
+			} else {
+				drawPolygonContour(gl, p, border == null ? c : border, alpha, z_fighting_value);
 			}
 		} else {
 			final Texture texture = object.getTexture(gl, renderer, 0);
@@ -186,78 +172,24 @@ public class JTSDrawer {
 
 		if (renderer.getComputeNormal()) {
 			final Vertex[] vertices = getExteriorRingVertices(p);
-
-			final double[] normalmean = new double[3];
-			// for (int i = 0; i < vertices.length - 2; i++) {
-			final double[] normal = GLUtilNormal.CalculateNormal(vertices[0], vertices[0 + 1], vertices[0 + 2]);
-			normalmean[0] = normalmean[0] + normal[0];
-			normalmean[1] = normalmean[1] + normal[1];
-			normalmean[2] = normalmean[2] + normal[2];
-			// }
-
-			if (renderer.data.isDraw_norm()) {
-				final Vertex center = GLUtilNormal.GetCenter(vertices);
-				gl.glBegin(GL.GL_LINES);
-				setColor(gl, Color.red, 1);
-				// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 0.0f, 0.0f);
-				gl.glVertex3d(center.x, center.y, center.z);
-				gl.glVertex3d(center.x + normalmean[0] * norm_dir, center.y + normalmean[1] * norm_dir,
-						center.z + normalmean[2] * norm_dir);
-				gl.glEnd();
-
-				gl.glPointSize(2.0f);
-				gl.glBegin(GL.GL_POINTS);
-				gl.glVertex3d(center.x + normalmean[0] * norm_dir, center.y + normalmean[1] * norm_dir,
-						center.z + normalmean[2] * norm_dir);
-				gl.glEnd();
-
-				if (c != null) {
-					setColor(gl, c, alpha);
-				}
-			}
-
-			GLU.gluTessNormal(tobj, normalmean[0] * norm_dir, normalmean[1] * norm_dir, normalmean[2] * norm_dir);
+			final double[] normal = GLUtilNormal.CalculateNormal(vertices[0], vertices[1], vertices[2], norm_dir);
+			GLUtilNormal.drawNormal(vertices, renderer, gl, normal);
+			GLU.gluTessNormal(tobj, normal[0], normal[1], normal[2]);
 		}
 
-		double[][] tempPolygon = new double[p.getExteriorRing().getNumPoints()][3];
-		// Convert vertices as a list of double for gluTessVertex
-		for (int j = 0; j < p.getExteriorRing().getNumPoints(); j++) {
-			final Point pp = p.getExteriorRing().getPointN(j);
-			tempPolygon[j][0] = pp.getX();
-			tempPolygon[j][1] = JOGLRenderer.Y_FLAG * pp.getY();
-			if (Double.isNaN(pp.getCoordinate().z) == true) {
-				tempPolygon[j][2] = 0.0d;
-			} else {
-				tempPolygon[j][2] = 0.0d + pp.getCoordinate().z;
-			}
+		for (final GamaPoint pp : GeometryUtils.getCoordinates(p)) {
+			final double[] doubles = { pp.x, JOGLRenderer.Y_FLAG * pp.y, pp.z };
+			GLU.gluTessVertex(tobj, doubles, 0, doubles);
 		}
-
-		for (int j = 0; j < p.getExteriorRing().getNumPoints(); j++) {
-			GLU.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
-		}
-
 		GLU.gluTessEndContour(tobj);
 
 		// interior contour
 		for (int i = 0; i < p.getNumInteriorRing(); i++) {
 			GLU.gluTessBeginContour(tobj);
-			final int numIntPoints = p.getInteriorRingN(i).getNumPoints();
-			tempPolygon = new double[numIntPoints][3];
-			// Convert vertices as a list of double for gluTessVertex
-			for (int j = 0; j < numIntPoints; j++) {
-				final Point pp = p.getInteriorRingN(i).getPointN(j);
-				tempPolygon[j][0] = pp.getX();
-				tempPolygon[j][1] = JOGLRenderer.Y_FLAG * pp.getY();
-
-				if (Double.isNaN(pp.getCoordinate().z) == true) {
-					tempPolygon[j][2] = 0.0d;
-				} else {
-					tempPolygon[j][2] = 0.0d + pp.getCoordinate().z;
-				}
-			}
-
-			for (int j = 0; j < numIntPoints; j++) {
-				GLU.gluTessVertex(tobj, tempPolygon[j], 0, tempPolygon[j]);
+			final LineString ls = p.getInteriorRingN(i);
+			for (final GamaPoint pp : GeometryUtils.getCoordinates(ls)) {
+				final double[] doubles = { pp.x, JOGLRenderer.Y_FLAG * pp.y, pp.z };
+				GLU.gluTessVertex(tobj, doubles, 0, doubles);
 			}
 			GLU.gluTessEndContour(tobj);
 		}
@@ -265,260 +197,73 @@ public class JTSDrawer {
 		GLU.gluTessEndPolygon(tobj);
 	}
 
-	public void drawTexturedPolygon(final GL2 gl, final Polygon p, final Texture texture, final int norm_dir) {
-		// final int p_norm_dir = 1;
+	private void drawTexturedPolygon(final GL2 gl, final Polygon p, final Texture texture, final int norm_dir) {
+		texture.enable(gl);
+		texture.bind(gl);
 		setColor(gl, Color.white, 1);
-		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
-		if (texture != null) {
-			texture.enable(gl);
-			texture.bind(gl);
-		}
-		setColor(gl, Color.white, 1);
-		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
+		final boolean isRectangle = p.getNumPoints() == 5;
 
-		if (p.getNumPoints() > 5) {
-			drawTriangulatedPolygon(gl, p, false, texture);
-
+		if (!isRectangle) {
+			gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
+			for (final Polygon tri : GeometryUtils.triangulationSimple(null, p)) {
+				final Coordinate[] coords = tri.getCoordinates();
+				for (int i = 0; i < 3; i++) {
+					gl.glTexCoord2f(TRIANGLE_TEX_COORDS[i * 2], TRIANGLE_TEX_COORDS[i * 2 + 1]);
+					gl.glVertex3d(coords[i].x, JOGLRenderer.Y_FLAG * coords[i].y, coords[i].z);
+				}
+			}
 		} else {
-
 			if (renderer.getComputeNormal()) {
 				final Vertex[] vertices = this.getExteriorRingVertices(p);
 				GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
 			}
-			gl.glColor3d(1.0, 1.0, 1.0);// Set the color to white to avoid color
-										// and texture mixture
 			gl.glBegin(GL2ES3.GL_QUADS);
-			gl.glTexCoord2f(0.0f, 0.0f);
-			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(),
-					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(0).getY(),
-					p.getExteriorRing().getCoordinateN(0).z);
-			gl.glTexCoord2f(0.0f, 1.0f);
-			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(),
-					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(1).getY(),
-					p.getExteriorRing().getCoordinateN(1).z);
-			gl.glTexCoord2f(1.0f, 1.0f);
-			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(),
-					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(2).getY(),
-					p.getExteriorRing().getCoordinateN(2).z);
-			gl.glTexCoord2f(1.0f, 0.0f);
-			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(),
-					JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(3).getY(),
-					p.getExteriorRing().getCoordinateN(3).z);
-			gl.glEnd();
-		}
-		if (texture != null) {
-			texture.disable(gl);
-		}
+			for (int i = 0; i < 4; i++) {
+				final Coordinate c = p.getExteriorRing().getCoordinateN(i);
+				gl.glTexCoord2f(RECT_TEX_COORDS[i * 2], RECT_TEX_COORDS[i * 2 + 1]);
+				gl.glVertex3d(c.x, JOGLRenderer.Y_FLAG * c.y, c.z);
+			}
 
+		}
+		gl.glEnd();
+		texture.disable(gl);
 	}
 
-	void drawTriangulatedPolygon(final GL2 gl, final Polygon p, final boolean showTriangulation,
-			final Texture texture) {
-		// boolean simplifyGeometry = false;
-		List<IShape> triangles = null;
-		// Workaround to compute the z value of each triangle as triangulation
-		// create new point during the triangulation that are set with z=NaN
-		if (p.getNumPoints() > 4) {
-			triangles = GeometryUtils.triangulationSimple(null, p); // VERIFY
-																	// NULL
-																	// SCOPE
-
-			final List<Geometry> segments = new ArrayList<>();
-			for (int i = 0; i < p.getNumPoints() - 1; i++) {
-				final Coordinate[] cs = new Coordinate[2];
-				cs[0] = p.getCoordinates()[i];
-				cs[1] = p.getCoordinates()[i + 1];
-				segments.add(GeometryUtils.FACTORY.createLineString(cs));
-			}
-			for (final IShape tri : triangles) {
-				for (int i = 0; i < tri.getInnerGeometry().getNumPoints(); i++) {
-					final Coordinate coord = tri.getInnerGeometry().getCoordinates()[i];
-					if (Double.isNaN(coord.z)) {
-						final Point pt = GeometryUtils.FACTORY.createPoint(coord);
-						double distMin = Double.MAX_VALUE;
-						Geometry closestSeg = segments.get(0);
-						for (final Geometry seg : segments) {
-							final double dist = seg.distance(pt);
-							if (dist < distMin) {
-								distMin = dist;
-								closestSeg = seg;
-							}
-						}
-						final Point pt1 = GeometryUtils.FACTORY.createPoint(closestSeg.getCoordinates()[0]);
-						final Point pt2 = GeometryUtils.FACTORY.createPoint(closestSeg.getCoordinates()[1]);
-
-						final double dist1 = pt.distance(pt1);
-						final double dist2 = pt.distance(pt2);
-						// FIXME: Work only for geometry
-						coord.z = (1 - dist1 / closestSeg.getLength()) * closestSeg.getCoordinates()[0].z
-								+ (1 - dist2 / closestSeg.getLength()) * closestSeg.getCoordinates()[1].z;
-						drawTriangulatedPolygonShape(gl, p, tri, showTriangulation, texture);
-					}
-				}
-			}
-		} else if (p.getNumPoints() == 4) {
-			triangles = new ArrayList<>();
-			triangles.add(new GamaShape(p));
-		}
-		if (triangles != null) {
-			for (final IShape tri : triangles) {
-				drawTriangulatedPolygonShape(gl, p, tri, showTriangulation, texture);
-			}
-		}
-	}
-
-	public void drawTriangulatedPolygonShape(final GL2 gl, final Polygon triangulatedPolygon, final IShape shape,
-			final boolean showTriangulation, final Texture texture) {
-
-		final Polygon polygon = (Polygon) shape.getInnerGeometry();
-
-		// final Envelope env = triangulatedPolygon.getEnvelopeInternal();
-		// final double xMin = env.getMinX();
-		// final double xMax = env.getMaxX();
-		// final double yMin = env.getMinY();
-		// final double yMax = env.getMaxY();
-
-		// reverse the list of points in the exterior ring if the "real" ring
-		// (with the Y_FLAG) is not Clockwise.
-		final Point[] pointList = new Point[polygon.getExteriorRing().getNumPoints()];
-		// final Vertex[] vertices = getExteriorRingVertices(polygon);
-		for (int i = 0; i < polygon.getExteriorRing().getNumPoints(); i++) {
-			pointList[i] = polygon.getExteriorRing().getPointN(i);
-		}
-
-		if (showTriangulation) {
-			if (Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true) {
-				gl.glBegin(GL.GL_LINES); // draw using triangles
-				gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(), 0.0d);
-				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(), 0.0d);
-				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(), 0.0d);
-				gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(), 0.0d);
-				gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(), 0.0d);
-				gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(), 0.0d);
-				gl.glEnd();
-			} else {
-				gl.glBegin(GL.GL_LINES); // draw using triangles
-				gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
-						pointList[0].getCoordinate().z);
-				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(),
-						pointList[1].getCoordinate().z);
-				gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(),
-						pointList[1].getCoordinate().z);
-				gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(),
-						pointList[2].getCoordinate().z);
-				gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(),
-						pointList[2].getCoordinate().z);
-				gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
-						pointList[0].getCoordinate().z);
-				gl.glEnd();
-
-			}
-		} else {
-			if (Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true) {
-				if (texture != null) {
-					setColor(gl, Color.white, 1);
-					// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f); //
-					// Set the color to white to avoid color and texture mixture
-					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
-					gl.glTexCoord2f(0.0f, 1.0f);
-					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(), 0.0d);
-					gl.glTexCoord2f(1.0f, 1.0f);
-					gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(), 0.0d);
-					gl.glTexCoord2f(1.0f, 0.0f);
-					gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(), 0.0d);
-					gl.glEnd();
-
-				} else {
-					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
-					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(), 0.0d);
-					gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(), 0.0d);
-					gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(), 0.0d);
-					gl.glEnd();
-				}
-
-			} else {
-				if (texture != null) {
-					setColor(gl, Color.white, 1);
-					// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f,
-					// 1.0f, 1.0f });
-					// Set the color to white to avoid color and texture mixture
-					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
-					gl.glTexCoord2f(0.0f, 1.0f);
-					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
-							pointList[0].getCoordinate().z);
-					gl.glTexCoord2f(1.0f, 1.0f);
-					gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(),
-							pointList[1].getCoordinate().z);
-					gl.glTexCoord2f(1.0f, 0.0f);
-					gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(),
-							pointList[2].getCoordinate().z);
-					gl.glEnd();
-				} else {
-					gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
-					gl.glVertex3d(pointList[0].getX(), JOGLRenderer.Y_FLAG * pointList[0].getY(),
-							pointList[0].getCoordinate().z);
-					gl.glVertex3d(pointList[1].getX(), JOGLRenderer.Y_FLAG * pointList[1].getY(),
-							pointList[1].getCoordinate().z);
-					gl.glVertex3d(pointList[2].getX(), JOGLRenderer.Y_FLAG * pointList[2].getY(),
-							pointList[2].getCoordinate().z);
-					gl.glEnd();
-				}
-			}
-
-		}
-	}
-
-	public void drawPolygonContour(final GL2 gl, final Polygon p, final Color border, final double alpha,
+	private void drawPolygonContour(final GL2 gl, final Polygon p, final Color border, final double alpha,
 			final double z_fighting_value) {
 		if (border == null) { return; }
+		final boolean zFighting = renderer.data.isZ_fighting();
 
 		// FIXME: when rendering with this method the triangulation does not
 		// work anymore
-		if (renderer.data.isZ_fighting()) {
+		if (zFighting) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-			// }
-
-			// myGl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
 			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 			gl.glPolygonOffset(0.0f, -(float) (z_fighting_value * 1.1));
-			// myGl.glPolygonOffset(0.0f,10.0f);
-			gl.glBegin(GL2.GL_POLYGON);
-			setColor(gl, border, alpha);
-			p.getExteriorRing().apply(contourDrawer);
-			gl.glEnd();
+		}
+		gl.glBegin(zFighting ? GL2.GL_POLYGON : GL2.GL_LINE_STRIP);
+		setColor(gl, border, alpha);
+		p.getExteriorRing().apply(pointDrawer);
+		gl.glEnd();
 
-			if (p.getNumInteriorRing() > 0) {
-				// Draw Interior ring
-				for (int i = 0; i < p.getNumInteriorRing(); i++) {
-					gl.glBegin(GL2.GL_POLYGON);
-					p.getInteriorRingN(i).apply(contourDrawer);
-					gl.glEnd();
-				}
+		if (p.getNumInteriorRing() > 0) {
+			// Draw Interior ring
+			for (int i = 0; i < p.getNumInteriorRing(); i++) {
+				gl.glBegin(zFighting ? GL2.GL_POLYGON : GL2.GL_LINE_STRIP);
+				p.getInteriorRingN(i).apply(pointDrawer);
+				gl.glEnd();
 			}
+		}
+		if (zFighting)
 			gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
-			if (!renderer.data.isTriangulation()) {
-				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-			}
-		} else {
-			gl.glBegin(GL.GL_LINES);
-			setColor(gl, border, alpha);
-			p.getExteriorRing().apply(contourDrawer);
-			gl.glEnd();
-
-			if (p.getNumInteriorRing() > 0) {
-				// Draw Interior ring
-				for (int i = 0; i < p.getNumInteriorRing(); i++) {
-					gl.glBegin(GL.GL_LINES);
-					p.getInteriorRingN(i).apply(contourDrawer);
-					gl.glEnd();
-				}
-			}
+		if (!renderer.data.isTriangulation()) {
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 		}
 	}
 
 	public void drawPolyhedre(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
-			final double height, /* final Integer angle, */final boolean drawPolygonContour, final Color border,
-			final GeometryObject object, final Double z_fighting_value) {
+			final double height, final boolean drawPolygonContour, final Color border, final GeometryObject object,
+			final Double z_fighting_value) {
 
 		int p_norm_dir = 1;
 		final int face_norm_dir = -1;
@@ -545,10 +290,6 @@ public class JTSDrawer {
 				(float) (-vectorNormal[1] * height), (float) (-vectorNormal[2] * height) });
 		drawPolygon(gl, p, c, alpha, fill, border, object/* ,angle */, drawPolygonContour, z_fighting_value,
 				-p_norm_dir);
-		// gl.glTranslated(0, 0, -height);
-		// gl.glTranslated(-vectorNormal[0]*height, -vectorNormal[1]*height,
-		// vectorNormal[2]*height);
-		// FIXME : Will be wrong if angle =!0
 
 		if (object.isTextured()) {
 			if (object.hasSeveralTextures()) {
@@ -570,7 +311,7 @@ public class JTSDrawer {
 	// //////////////////////////////FACE DRAWER
 	// //////////////////////////////////////////////////////////////////////////////////
 
-	public void drawFaces(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
+	private void drawFaces(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 			final Color b, final double height, final boolean drawPolygonContour, final int norm_dir,
 			final boolean clockwise) {
 		setColor(gl, c, alpha);
@@ -617,15 +358,13 @@ public class JTSDrawer {
 		}
 	}
 
-	public void drawTexturedFaces(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
+	private void drawTexturedFaces(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 			final Color b, final Texture texture, final double height, final boolean drawPolygonContour,
 			final int norm_dir, final boolean clockwise) {
 		setColor(gl, Color.white, 1);
-		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
 		texture.enable(gl);
 		texture.bind(gl);
 		setColor(gl, Color.white, 1);
-		// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
 
 		double elevation = 0.0d;
 
@@ -674,7 +413,7 @@ public class JTSDrawer {
 		texture.disable(gl);
 	}
 
-	public double[] calculatePolygonNormal(final Polygon p, final Boolean clockwise) {
+	private double[] calculatePolygonNormal(final Polygon p, final Boolean clockwise) {
 		// Get 3 vertices of the initial polygon.
 		final Vertex[] verticesP = new Vertex[3];
 		for (int i = 0; i < 3; i++) {
@@ -692,16 +431,13 @@ public class JTSDrawer {
 		verticesP[2].x = p.getExteriorRing().getPointN(2).getX();
 		verticesP[2].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(2).getY();
 		verticesP[2].z = p.getExteriorRing().getPointN(2).getCoordinate().z;
-		final double[] normal = GLUtilNormal.CalculateNormal(verticesP[0], verticesP[1], verticesP[2]);
-		if (clockwise == null || clockwise != isClockwise(verticesP)) {
-			normal[0] *= -1;
-			normal[1] *= -1;
-			normal[2] *= -1;
-		}
+		final int multiplier = clockwise == null || clockwise != isClockwise(verticesP) ? -1 : 1;
+		final double[] normal = GLUtilNormal.CalculateNormal(verticesP[0], verticesP[1], verticesP[2], multiplier);
+
 		return normal;
 	}
 
-	public Vertex[] getFaceVertices(final Polygon p, final int j, final int k, final double elevation,
+	private Vertex[] getFaceVertices(final Polygon p, final int j, final int k, final double elevation,
 			final double height, final boolean clockwise) {
 
 		final double[] vectorNormal = calculatePolygonNormal(p, clockwise);
@@ -742,29 +478,6 @@ public class JTSDrawer {
 
 		return vertices;
 
-	}
-
-	public Vertex[] getTriangleVertices(final Polygon p) {
-		// Build the 3 vertices of the face from the 3 first point (maybe wrong
-		// in some case).
-		final Vertex[] vertices = new Vertex[3];
-		for (int i = 0; i < 3; i++) {
-			vertices[i] = new Vertex();
-		}
-		// FIXME; change double to double in Vertex
-		vertices[0].x = p.getExteriorRing().getPointN(0).getX();
-		vertices[0].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(0).getY();
-		vertices[0].z = p.getExteriorRing().getPointN(0).getCoordinate().z;
-
-		vertices[1].x = p.getExteriorRing().getPointN(1).getX();
-		vertices[1].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(1).getY();
-		vertices[1].z = p.getExteriorRing().getPointN(1).getCoordinate().z;
-
-		vertices[2].x = p.getExteriorRing().getPointN(2).getX();
-		vertices[2].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(2).getY();
-		vertices[2].z = p.getExteriorRing().getPointN(2).getCoordinate().z;
-
-		return vertices;
 	}
 
 	public Vertex[] getExteriorRingVertices(final Polygon p) {
@@ -1069,13 +782,10 @@ public class JTSDrawer {
 		gl.glPushMatrix();
 		gl.glTranslated(pos.x, pos.y, pos.z);
 		setColor(gl, Color.gray, 1);
-		// GLUtilGLContext.SetCurrentColor(gl, 0.5f, 0.5f, 0.5f, 1.0f);
 		glut.glutSolidSphere(5.0 * (distance / 500), slices, stacks);
 		setColor(gl, Color.gray, 0.1);
-		// GLUtilGLContext.SetCurrentColor(gl, 0.5f, 0.5f, 0.5f, 0.1f);
 		glut.glutSolidSphere(49.0 * (distance / 500), slices, stacks);
 		setColor(gl, Color.gray, 1);
-		// GLUtilGLContext.SetCurrentColor(gl, 0.5f, 0.5f, 0.5f, 1.0f);
 		glut.glutWireSphere(50.0 * (distance / 500), slices / 2, stacks / 2);
 		gl.glPopMatrix();
 		gl.glEnable(GL2.GL_LIGHTING);
@@ -1095,10 +805,8 @@ public class JTSDrawer {
 		gl.glTranslated(pos.x, pos.y, pos.z);
 		gl.glScaled(width, height, z);
 		renderer.setCurrentColor(gl, 0, 0.5, 0, 0.15);
-		// GLUtilGLContext.SetCurrentColor(gl, 0.0f, 0.5f, 0.0f, 0.15f);
 		glut.glutSolidCube(0.99f);
 		setColor(gl, Color.gray, 1);
-		// GLUtilGLContext.SetCurrentColor(gl, 0.5f, 0.5f, 0.5f, 1.0f);
 		glut.glutWireCube(1f);
 		gl.glPopMatrix();
 	}
@@ -1158,14 +866,10 @@ public class JTSDrawer {
 		}
 
 		gl.glPopMatrix();
-		// gl.glTranslated(-p.getCentroid().getX(), -JOGLRenderer.Y_FLAG *
-		// p.getCentroid().getY(), -z);
 		revertTranslatePositionalLights(gl, buffer);
 	}
 
 	public void drawCone3D(final GL2 gl, final GeometryObject g) {
-		// (final Polygon p, final double radius, final Color c, final double
-		// alpha) {
 		// Add z value (Note: getCentroid does not return a z value)
 		double z = 0.0;
 		final Polygon p = (Polygon) g.geometry;
@@ -1240,10 +944,7 @@ public class JTSDrawer {
 		if (g.getBorder() != null) {
 			setColor(gl, g.getBorder(), g.getAlpha());
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-			// gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
-			// gl.glPolygonOffset(0.0f, -(float) 1.1);
 			pyramidSkeleton(gl, p, g.getHeight(), g.getBorder(), g.getAlpha(), g);
-			// gl.glDisable(GL2GL3.GL_POLYGON_OFFSET_LINE);
 			if (!renderer.data.isTriangulation()) {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
 			}
@@ -1515,106 +1216,4 @@ public class JTSDrawer {
 		return sum > 0.0;
 	}
 
-	public static void drawRoundRectangle(final GL2 gl, final Polygon p) {
-
-		final double width = p.getEnvelopeInternal().getWidth();
-		final double height = p.getEnvelopeInternal().getHeight();
-
-		gl.glPushMatrix();
-		gl.glTranslated(p.getCentroid().getX(), p.getCentroid().getY(), 0.0d);
-		drawRectangle(gl, width, height * 0.8, p.getCentroid());
-		drawRectangle(gl, width * 0.8, height, p.getCentroid());
-		drawRoundCorner(gl, width, height, width * 0.1, height * 0.1, 5);
-		gl.glPopMatrix();
-
-	}
-
-	static void drawRectangle(final GL2 gl, final double width, final double height, final Point point) {
-
-		gl.glBegin(GL2.GL_POLYGON); // draw using quads
-		gl.glVertex3d(-width / 2, height / 2, 0.0d);
-		gl.glVertex3d(width / 2, height / 2, 0.0d);
-		gl.glVertex3d(width / 2, -height / 2, 0.0d);
-		gl.glVertex3d(-width / 2, -height / 2, 0.0d);
-		gl.glEnd();
-	}
-
-	static void drawFan(final GL2 gl, final double radius, final double x, final double y, final int or_x,
-			final int or_y, final int timestep) {
-
-		gl.glBegin(GL.GL_TRIANGLE_FAN); // upper right
-		gl.glVertex3d(or_x * x, or_y * y, 0.0d);
-		for (int i = 0; i <= timestep; i++) {
-			final double anglerad = CmnFastMath.PI / 2 * i / timestep;
-			final double xi = FastMath.cos(anglerad) * radius;
-			final double yi = FastMath.sin(anglerad) * radius;
-			gl.glVertex3d(or_x * (x + xi), y + yi, 0.0d);
-		}
-		gl.glEnd();
-	}
-
-	static void drawRoundCorner(final GL2 gl, final double width, final double height, final double x_radius,
-			final double y_radius, final int nbPoints) {
-
-		final double xc = width / 2 * 0.8;
-		final double yc = height / 2 * 0.8;
-		// Enhancement implement DrawFan(radius, xc, yc, 10);
-
-		gl.glBegin(GL.GL_TRIANGLE_FAN); // upper right
-		gl.glVertex3d(xc, yc, 0.0d);
-		for (int i = 0; i <= nbPoints; i++) {
-			final double anglerad = CmnFastMath.PI / 2 * i / nbPoints;
-			final double xi = FastMath.cos(anglerad) * x_radius;
-			final double yi = FastMath.sin(anglerad) * y_radius;
-			gl.glVertex3d(xc + xi, yc + yi, 0.0d);
-		}
-		gl.glEnd();
-
-		gl.glBegin(GL.GL_TRIANGLE_FAN); // upper right
-
-		gl.glVertex3d(xc, -yc, 0.0d);
-		for (int i = 0; i <= nbPoints; i++) {
-			final double anglerad = CmnFastMath.PI / 2 * i / nbPoints;
-			final double xi = FastMath.cos(anglerad) * x_radius;
-			final double yi = FastMath.sin(anglerad) * y_radius;
-			gl.glVertex3d(xc + xi, -(yc + yi), 0.0d);
-		}
-		gl.glEnd();
-
-		gl.glBegin(GL.GL_TRIANGLE_FAN); // upper left
-
-		gl.glVertex3d(-xc, yc, 0.0d);
-		for (int i = 0; i <= nbPoints; i++) {
-			final double anglerad = CmnFastMath.PI / 2 * i / nbPoints;
-			final double xi = FastMath.cos(anglerad) * x_radius;
-			final double yi = FastMath.sin(anglerad) * y_radius;
-			gl.glVertex3d(-(xc + xi), yc + yi, 0.0d);
-		}
-		gl.glEnd();
-
-		gl.glBegin(GL.GL_TRIANGLE_FAN);
-		gl.glVertex3d(-xc, -yc, 0.0d); // down left
-		for (int i = 0; i <= nbPoints; i++) {
-			final double anglerad = CmnFastMath.PI / 2 * i / nbPoints;
-			final double xi = FastMath.cos(anglerad) * x_radius;
-			final double yi = FastMath.sin(anglerad) * y_radius;
-			gl.glVertex3d(-(xc + xi), -(yc + yi), 0.0d);
-		}
-		gl.glEnd();
-	}
-
-	/*
-	 * Return 9 array with the 3 vertex coordinates of the traingle
-	 */
-	public double[] getTriangleVertices(final IShape shape) {
-
-		final Polygon polygon = (Polygon) shape.getInnerGeometry();
-		final double[] vertices = new double[9];
-		for (int i = 0; i < 3; i++) {
-			vertices[i * 3] = polygon.getExteriorRing().getPointN(0).getX();
-			vertices[i * 3 + 1] = JOGLRenderer.Y_FLAG * polygon.getExteriorRing().getPointN(0).getY();
-			vertices[i * 3 + 2] = 0.0d;
-		}
-		return vertices;
-	}
 }
