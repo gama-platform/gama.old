@@ -377,6 +377,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 	}
 
+	// Calculate the normal, from three points on a surface
+	public final static GamaPoint normal(final GamaPoint a, final GamaPoint b, final GamaPoint c,
+			final int multiplier) {
+		return crossProduct(b.minus(a), c.minus(a)).normalized().times(multiplier);
+	}
+
 	/**
 	 * Method getPoints()
 	 * 
