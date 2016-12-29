@@ -16,9 +16,9 @@ import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.util.texture.Texture;
 import com.jogamp.opengl.util.texture.TextureCoords;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.utils.GLUtilNormal;
-import ummisco.gama.opengl.utils.Vertex;
 
 /**
  *
@@ -64,9 +64,9 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 			gl.glTranslated(-(x + width / 2), +(y + height / 2), 0.0d);
 		}
 
-		final Vertex[] vertices = new Vertex[4];
+		final GamaPoint[] vertices = new GamaPoint[4];
 		for (int i = 0; i < 4; i++) {
-			vertices[i] = new Vertex();
+			vertices[i] = new GamaPoint();
 		}
 		vertices[0].x = x;
 		vertices[0].y = -(y + height);

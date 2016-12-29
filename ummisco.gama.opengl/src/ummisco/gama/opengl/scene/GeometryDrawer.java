@@ -96,7 +96,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 							true, border, geometry, geometry.getZ_fighting_id());
 				} else {
 					drawer.drawPolygon(gl, (Polygon) geometry.geometry, color, alpha, geometry.isFilled(), border,
-							geometry, true, geometry.getZ_fighting_id(), 1);
+							geometry, true, geometry.getZ_fighting_id());
 				}
 				break;
 			case LINESTRING:

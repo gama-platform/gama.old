@@ -19,9 +19,9 @@ import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.utils.GLUtilNormal;
-import ummisco.gama.opengl.utils.Vertex;
 
 /**
  *
@@ -187,9 +187,9 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 						// Compute normal
 
-						final Vertex[] vertices = new Vertex[4];
+						final GamaPoint[] vertices = new GamaPoint[4];
 						for (int i1 = 0; i1 < 4; i1++) {
-							vertices[i1] = new Vertex();
+							vertices[i1] = new GamaPoint();
 						}
 						vertices[0].x = x1 * cellWidth;
 						vertices[0].y = JOGLRenderer.Y_FLAG * y1 * cellHeight;

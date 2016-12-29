@@ -15,13 +15,14 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLContext;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class GLUtilNormal {
 
 	// Calculate the normal, from three points on a surface
-	public static double[] CalculateNormal(final Vertex pointA, final Vertex pointB, final Vertex pointC,
+	public static double[] CalculateNormal(final GamaPoint pointA, final GamaPoint pointB, final GamaPoint pointC,
 			final int multiplier) {
 		// Step 1
 		// build two vectors, one pointing from A to B, the other pointing from
@@ -68,29 +69,26 @@ public class GLUtilNormal {
 		return normal;
 	}
 
-	public static Vertex GetCenter(final Vertex pointA, final Vertex pointB, final Vertex pointC) {
-		final Vertex center = new Vertex();
+	public static GamaPoint GetCenter(final GamaPoint pointA, final GamaPoint pointB, final GamaPoint pointC) {
+		final GamaPoint center = new GamaPoint();
 		center.x = (pointA.x + pointB.x + pointC.x) / 3;
 		center.y = (pointA.y + pointB.y + pointC.y) / 3;
 		center.z = (pointA.z + pointB.z + pointC.z) / 3;
 		return center;
 	}
 
-	public static Vertex GetCenter(final Vertex[] vertices) {
-		final Vertex center = new Vertex();
+	public static GamaPoint GetCenter(final GamaPoint[] vertices) {
+		final GamaPoint center = new GamaPoint();
 		for (int i = 0; i < vertices.length; i++) {
-			center.x = center.x + vertices[i].x;
-			center.y = center.y + vertices[i].y;
-			center.z = center.z + vertices[i].z;
+			center.add(vertices[i]);
 		}
-
 		center.x = center.x / vertices.length;
 		center.y = center.y / vertices.length;
 		center.z = center.z / vertices.length;
 		return center;
 	}
 
-	public static void HandleNormal(final Vertex[] vertices, final int norm_dir1, final JOGLRenderer renderer) {
+	public static void HandleNormal(final GamaPoint[] vertices, final int norm_dir1, final JOGLRenderer renderer) {
 		final GL2 gl = GLContext.getCurrentGL().getGL2();
 		final double[] normal = CalculateNormal(vertices[0], vertices[0 + 1], vertices[0 + 2], 1);
 
@@ -108,12 +106,12 @@ public class GLUtilNormal {
 
 	}
 
-	public static void drawNormal(final Vertex[] vertices, final JOGLRenderer renderer, final GL2 gl,
+	public static void drawNormal(final GamaPoint[] vertices, final JOGLRenderer renderer, final GL2 gl,
 			final double[] normal) {
 		// memorize the current color to the buffer
 		final Color previousColor = renderer.getCurrentColor();
 
-		final Vertex center = GetCenter(vertices);
+		final GamaPoint center = GetCenter(vertices);
 		gl.glBegin(GL.GL_LINES);
 		// set the color of the normal to red
 		renderer.setCurrentColor(gl, Color.red);

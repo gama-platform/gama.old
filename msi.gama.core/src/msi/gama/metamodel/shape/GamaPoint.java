@@ -173,6 +173,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 		setZ(z + loc.getZ());
 	}
 
+	public void add(final GamaPoint loc) {
+		setX(x + loc.x);
+		setY(y + loc.y);
+		setZ(z + loc.z);
+	}
+
 	public Coordinate toCoordinate() {
 		return new Coordinate(x, y, z);
 	}

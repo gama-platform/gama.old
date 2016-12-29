@@ -24,6 +24,7 @@ import com.jogamp.opengl.glu.GLUquadric;
 import com.jogamp.opengl.glu.GLUtessellator;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureCoords;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Geometry;
@@ -42,7 +43,6 @@ import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.scene.GeometryObject;
 import ummisco.gama.opengl.utils.GLUtilNormal;
-import ummisco.gama.opengl.utils.Vertex;
 
 public class JTSDrawer {
 
@@ -91,7 +91,7 @@ public class JTSDrawer {
 				if (height > 0) {
 					drawPolyhedre(gl, curPolygon, c, alpha, fill, height, false, border, object, z_fighting_value);
 				} else {
-					drawPolygon(gl, curPolygon, c, alpha, fill, border, object, true, z_fighting_value, 1);
+					drawPolygon(gl, curPolygon, c, alpha, fill, border, object, true, z_fighting_value);
 				}
 			} else if (geom instanceof LineString) {
 				final LineString l = (LineString) geom;
@@ -106,14 +106,12 @@ public class JTSDrawer {
 
 	public void drawPolygon(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 			final Color border, final GeometryObject object, final boolean drawPolygonContour,
-			final double z_fighting_value, final int norm_dir) {
+			final double z_fighting_value) {
 
-		int p_norm_dir = 1;
+		final int p_norm_dir = GeometryUtils.isClockWise(p) ? 1 : -1;
 
-		final Vertex[] vertices = getExteriorRingVertices(p);
-		if (!GeometryUtils.isClockWise(p)) {
-			p_norm_dir = -1;
-		}
+		final GamaPoint[] vertices = getExteriorRingVertices(p);
+
 		GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		if (!object.isTextured()) {
 			if (fill) {
@@ -145,7 +143,7 @@ public class JTSDrawer {
 		// Exterior contour
 		GLU.gluTessBeginContour(tobj);
 
-		final Vertex[] vertices = getExteriorRingVertices(p);
+		final GamaPoint[] vertices = getExteriorRingVertices(p);
 		final double[] normal = GLUtilNormal.CalculateNormal(vertices[0], vertices[1], vertices[2], norm_dir);
 		GLUtilNormal.drawNormal(vertices, renderer, gl, normal);
 		GLU.gluTessNormal(tobj, normal[0], normal[1], normal[2]);
@@ -174,9 +172,8 @@ public class JTSDrawer {
 		texture.enable(gl);
 		texture.bind(gl);
 		setColor(gl, Color.white, 1);
-		final boolean isRectangle = p.getNumPoints() == 5;
 
-		if (!isRectangle) {
+		if (p.getNumPoints() > 5) {
 			gl.glBegin(GL.GL_TRIANGLES); // draw using triangles
 			for (final Polygon tri : GeometryUtils.triangulationSimple(null, p)) {
 				final Coordinate[] coords = tri.getCoordinates();
@@ -187,7 +184,7 @@ public class JTSDrawer {
 			}
 		} else {
 
-			final Vertex[] vertices = this.getExteriorRingVertices(p);
+			final GamaPoint[] vertices = this.getExteriorRingVertices(p);
 			GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
 			gl.glBegin(GL2ES3.GL_QUADS);
 			for (int i = 0; i < 4; i++) {
@@ -206,8 +203,6 @@ public class JTSDrawer {
 		if (border == null) { return; }
 		final boolean zFighting = renderer.data.isZ_fighting();
 
-		// FIXME: when rendering with this method the triangulation does not
-		// work anymore
 		if (zFighting) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
 			gl.glEnable(GL2GL3.GL_POLYGON_OFFSET_LINE);
@@ -234,45 +229,26 @@ public class JTSDrawer {
 	}
 
 	public void drawPolyhedre(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
-			final double height, final boolean drawPolygonContour, final Color border, final GeometryObject object,
+			final double height, final boolean drawContour, final Color border, final GeometryObject object,
 			final Double z_fighting_value) {
 
-		int p_norm_dir = 1;
-		final int face_norm_dir = -1;
-		boolean polyCW = true;
+		final int faceNormDir = -1;
+		final GamaPoint[] vertices = getExteriorRingVertices(p);
+		final boolean isCW = isClockwise(vertices);
+		final int p_norm_dir = isCW ? -1 : 1;
 
-		final Vertex[] vertices = getExteriorRingVertices(p);
-		polyCW = isClockwise(vertices);
-
-		if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
-			p_norm_dir = 1;
-		} else {
-			p_norm_dir = -1;
-		}
-
-		drawPolygon(gl, p, c, alpha, fill, border, object, drawPolygonContour, z_fighting_value, p_norm_dir);
-		// gl.glTranslated(0, 0, height);
-		final double[] vectorNormal = calculatePolygonNormal(p, polyCW);
+		drawPolygon(gl, p, c, alpha, fill, border, object, drawContour, z_fighting_value);
+		final double[] vectorNormal = calculatePolygonNormal(p, isCW);
 
 		gl.glPushMatrix();
 		gl.glTranslated(-vectorNormal[0] * height, -vectorNormal[1] * height, -vectorNormal[2] * height);
 		final float[][] buffer = translatePositionalLights(gl, new float[] { (float) (-vectorNormal[0] * height),
 				(float) (-vectorNormal[1] * height), (float) (-vectorNormal[2] * height) });
-		drawPolygon(gl, p, c, alpha, fill, border, object/* ,angle */, drawPolygonContour, z_fighting_value,
-				-p_norm_dir);
+		drawPolygon(gl, p, c, alpha, fill, border, object, drawContour, z_fighting_value);
 
-		if (object.isTextured()) {
-			if (object.hasSeveralTextures()) {
-				drawTexturedFaces(gl, p, c, alpha, fill, border, object.getTexture(gl, renderer, 1), height,
-						drawPolygonContour, -face_norm_dir, polyCW);
-			} else {
-				drawTexturedFaces(gl, p, c, alpha, fill, border, object.getTexture(gl, renderer, 0), height,
-						drawPolygonContour, -face_norm_dir, polyCW);
-			}
+		final Texture texture = object.getTexture(gl, renderer, object.hasSeveralTextures() ? 1 : 0);
 
-		} else {
-			drawFaces(gl, p, c, alpha, fill, border, height, drawPolygonContour, -face_norm_dir, polyCW);
-		}
+		drawFaces(gl, p, c, alpha, fill, border, texture, height, drawContour, -faceNormDir, isCW);
 
 		revertTranslatePositionalLights(gl, buffer);
 		gl.glPopMatrix();
@@ -282,110 +258,68 @@ public class JTSDrawer {
 	// //////////////////////////////////////////////////////////////////////////////////
 
 	private void drawFaces(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
-			final Color b, final double height, final boolean drawPolygonContour, final int norm_dir,
-			final boolean clockwise) {
-		setColor(gl, c, alpha);
-
-		double elevation = 0.0d;
-
-		if (Double.isNaN(p.getExteriorRing().getPointN(0).getCoordinate().z) == false) {
-			elevation = p.getExteriorRing().getPointN(0).getCoordinate().z;
-		}
-
-		final int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
-
-		for (int j = 0; j < curPolyGonNumPoints; j++) {
-			final int k = (j + 1) % curPolyGonNumPoints;
-			final Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
-
-			if (fill) {
-				GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
-				gl.glBegin(GL2ES3.GL_QUADS);
-				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
-				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
-				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
-				gl.glEnd();
-			}
-
-			if (drawPolygonContour == true || fill == false) {
-
-				setColor(gl, b, alpha);
-				gl.glBegin(GL.GL_LINES);
-				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
-				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
-				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
-				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
-				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
-				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
-				gl.glEnd();
-				setColor(gl, c, alpha);
-			}
-		}
-	}
-
-	private void drawTexturedFaces(final GL2 gl, final Polygon p, final Color c, final double alpha, final boolean fill,
 			final Color b, final Texture texture, final double height, final boolean drawPolygonContour,
 			final int norm_dir, final boolean clockwise) {
-		setColor(gl, Color.white, 1);
-		texture.enable(gl);
-		texture.bind(gl);
-		setColor(gl, Color.white, 1);
-
-		double elevation = 0.0d;
-
-		if (Double.isNaN(p.getExteriorRing().getPointN(0).getCoordinate().z) == false) {
-			elevation = p.getExteriorRing().getPointN(0).getCoordinate().z;
+		Color fillColor = c;
+		final boolean textured = texture != null;
+		final TextureCoords tc = textured ? texture.getImageTexCoords() : null;
+		if (textured) {
+			texture.enable(gl);
+			texture.bind(gl);
+			fillColor = Color.white;
 		}
 
+		final double elevation = p.getExteriorRing().getCoordinateN(0).z;
 		final int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
-
 		for (int j = 0; j < curPolyGonNumPoints; j++) {
-
 			final int k = (j + 1) % curPolyGonNumPoints;
-
-			final Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
-			GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
+			final GamaPoint[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
+			if (fill || texture != null)
+				GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
 			gl.glBegin(GL2ES3.GL_QUADS);
-			setColor(gl, Color.white, 1);
-			// GLUtilGLContext.SetCurrentColor(gl, 1.0f, 1.0f, 1.0f);
+			setColor(gl, fillColor, 1);
 			// Set the color to white to avoid color and texture mixture
-			gl.glTexCoord2f(0.0f, 0.0f);
+			// 1f, 0f, 0f, 0f, 0f, 1f, 1f, 1f,
+
+			if (textured) {
+				gl.glTexCoord2f(tc.left(), tc.bottom());
+			}
 			gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
-			gl.glTexCoord2f(1.0f, 0.0f);
+			if (textured) {
+				gl.glTexCoord2f(tc.right(), tc.bottom());
+			}
 			gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
-			gl.glTexCoord2f(1.0f, 1.0f);
+			if (textured) {
+				gl.glTexCoord2f(tc.right(), tc.top());
+			}
 			gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-			gl.glTexCoord2f(0.0f, 1.0f);
+			if (textured) {
+				gl.glTexCoord2f(tc.left(), tc.top());
+			}
 			gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
 			gl.glEnd();
 
-			if (drawPolygonContour == true || fill == false) {
+			if (drawPolygonContour || !fill) {
 				setColor(gl, b, alpha);
-				gl.glBegin(GL.GL_LINES);
+				gl.glBegin(GL.GL_LINE_STRIP);
 				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
 				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
-				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
 				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-				gl.glVertex3d(vertices[2].x, vertices[2].y, vertices[2].z);
-				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
 				gl.glVertex3d(vertices[3].x, vertices[3].y, vertices[3].z);
 				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
 				gl.glEnd();
-				setColor(gl, c, alpha);
 			}
 
 		}
-		texture.disable(gl);
+		if (texture != null)
+			texture.disable(gl);
 	}
 
 	private double[] calculatePolygonNormal(final Polygon p, final Boolean clockwise) {
 		// Get 3 vertices of the initial polygon.
-		final Vertex[] verticesP = new Vertex[3];
+		final GamaPoint[] verticesP = new GamaPoint[3];
 		for (int i = 0; i < 3; i++) {
-			verticesP[i] = new Vertex();
+			verticesP[i] = new GamaPoint();
 		}
 
 		verticesP[0].x = p.getExteriorRing().getPointN(0).getX();
@@ -405,14 +339,14 @@ public class JTSDrawer {
 		return normal;
 	}
 
-	private Vertex[] getFaceVertices(final Polygon p, final int j, final int k, final double elevation,
+	private GamaPoint[] getFaceVertices(final Polygon p, final int j, final int k, final double elevation,
 			final double height, final boolean clockwise) {
 
 		final double[] vectorNormal = calculatePolygonNormal(p, clockwise);
 		// Build the 4 vertices of the face.
-		final Vertex[] vertices = new Vertex[4];
+		final GamaPoint[] vertices = new GamaPoint[4];
 		for (int i = 0; i < 4; i++) {
-			vertices[i] = new Vertex();
+			vertices[i] = new GamaPoint();
 		}
 
 		// reverse the list of points in the exterior ring if the "real" ring
@@ -448,11 +382,11 @@ public class JTSDrawer {
 
 	}
 
-	public Vertex[] getExteriorRingVertices(final Polygon p) {
+	public GamaPoint[] getExteriorRingVertices(final Polygon p) {
 		// Build the n vertices of the facet of the polygon.
-		final Vertex[] vertices = new Vertex[p.getExteriorRing().getNumPoints() - 1];
+		final GamaPoint[] vertices = new GamaPoint[p.getExteriorRing().getNumPoints() - 1];
 		for (int i = 0; i < p.getExteriorRing().getNumPoints() - 1; i++) {
-			vertices[i] = new Vertex();
+			vertices[i] = new GamaPoint();
 			vertices[i].x = p.getExteriorRing().getPointN(i).getX();
 			vertices[i].y = JOGLRenderer.Y_FLAG * p.getExteriorRing().getPointN(i).getY();
 			vertices[i].z = p.getExteriorRing().getPointN(i).getCoordinate().z;
@@ -504,9 +438,9 @@ public class JTSDrawer {
 
 		for (int j = 0; j < numPoints - 1; j++) {
 
-			final Vertex[] vertices = new Vertex[3];
+			final GamaPoint[] vertices = new GamaPoint[3];
 			for (int i = 0; i < 3; i++) {
-				vertices[i] = new Vertex();
+				vertices[i] = new GamaPoint();
 			}
 			vertices[0].x = l.getPointN(j).getX();
 			vertices[0].y = JOGLRenderer.Y_FLAG * l.getPointN(j).getY();
@@ -954,11 +888,11 @@ public class JTSDrawer {
 
 	}
 
-	public Vertex[] getPyramidfaceVertices(final Polygon p, final int i, final int j, final double size, final int x,
+	public GamaPoint[] getPyramidfaceVertices(final Polygon p, final int i, final int j, final double size, final int x,
 			final int y) {
-		final Vertex[] vertices = new Vertex[3];
+		final GamaPoint[] vertices = new GamaPoint[3];
 		for (int i1 = 0; i1 < 3; i1++) {
-			vertices[i1] = new Vertex();
+			vertices[i1] = new GamaPoint();
 		}
 
 		vertices[0].x = p.getExteriorRing().getPointN(i).getX();
@@ -983,7 +917,7 @@ public class JTSDrawer {
 		// / 255.0f, c.getBlue() / 255.0f,
 		// (float) alpha);
 
-		Vertex[] vertices;
+		GamaPoint[] vertices;
 		int p_norm_dir = -1;
 
 		vertices = getExteriorRingVertices(p);
@@ -1109,11 +1043,11 @@ public class JTSDrawer {
 
 	}
 
-	public static boolean isClockwise(final Vertex[] vertices) {
+	public static boolean isClockwise(final GamaPoint[] vertices) {
 		double sum = 0.0;
 		for (int i = 0; i < vertices.length; i++) {
-			final Vertex v1 = vertices[i];
-			final Vertex v2 = vertices[(i + 1) % vertices.length];
+			final GamaPoint v1 = vertices[i];
+			final GamaPoint v2 = vertices[(i + 1) % vertices.length];
 			sum += (v2.x - v1.x) * (v2.y + v1.y);
 		}
 		return sum > 0.0;
