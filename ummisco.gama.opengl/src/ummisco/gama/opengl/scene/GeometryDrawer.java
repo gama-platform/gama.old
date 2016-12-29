@@ -14,8 +14,6 @@ import java.awt.Color;
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -63,41 +61,27 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		final Color color = geometry.getColor();
 		final Color border = geometry.getBorder();
 		final IShape.Type type = geometry.getType();
-
-		// // find the translation vector
-		// double z = 0.0;
-		// final Polygon p = (Polygon) geometry.geometry;
-		// if (Double.isNaN(p.getCoordinate().z) == false) {
-		// z = p.getExteriorRing().getPointN(0).getCoordinate().z;
-		// }
-		// float[] translationVector = new float[] {(float)p.getCentroid().getX(), (float)(renderer.yFlag *
-		// p.getCentroid().getY()), (float)z};
-		// // translate the light
-		// getJtsDrawer().translateAllLights(gl, translationVector);
+		final JTSDrawer drawer = renderer.getJTSDrawer();
+		final Double alpha = geometry.getAlpha();
 
 		switch (type) {
-			case MULTIPOLYGON:
-				getJtsDrawer().drawMultiPolygon(gl, (MultiPolygon) geometry.geometry, color, geometry.getAlpha(),
-						geometry.isFilled() || renderer.data.isTriangulation(), border, geometry, height,
-						geometry.getZ_fighting_id());
-				break;
 			case SPHERE:
-				getJtsDrawer().drawSphere(gl, geometry);
+				drawer.drawSphere(gl, geometry);
 				break;
 			case CONE:
-				getJtsDrawer().drawCone3D(gl, geometry);
+				drawer.drawCone3D(gl, geometry);
 				break;
 			case TEAPOT:
-				getJtsDrawer().drawTeapot(gl, geometry);
+				drawer.drawTeapot(gl, geometry);
 				break;
 			case PYRAMID:
-				getJtsDrawer().drawPyramid(gl, geometry);
+				drawer.drawPyramid(gl, geometry);
 				break;
 			case POLYLINECYLINDER:
-				getJtsDrawer().drawMultiLineCylinder(gl, geometry.geometry, color, geometry.getAlpha(), height);
+				drawer.drawMultiLineCylinder(gl, geometry.geometry, color, alpha, height);
 				break;
 			case LINECYLINDER:
-				getJtsDrawer().drawLineCylinder(gl, geometry.geometry, color, geometry.getAlpha(), height);
+				drawer.drawLineCylinder(gl, geometry.geometry, color, alpha, height);
 				break;
 			case POLYGON:
 			case ENVIRONMENT:
@@ -108,45 +92,35 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			case GRIDLINE:
 
 				if (height > 0) {
-					getJtsDrawer().drawPolyhedre(gl, (Polygon) geometry.geometry, color, geometry.getAlpha(),
-							geometry.isFilled(), height, true, geometry.getBorder(), geometry,
-							geometry.getZ_fighting_id());
+					drawer.drawPolyhedre(gl, (Polygon) geometry.geometry, color, alpha, geometry.isFilled(), height,
+							true, border, geometry, geometry.getZ_fighting_id());
 				} else {
-
-					final int norm_dir = 1;
-					getJtsDrawer().drawPolygon(gl, (Polygon) geometry.geometry, color, geometry.getAlpha(),
-							geometry.isFilled(), geometry.getBorder(), geometry, true, geometry.getZ_fighting_id(),
-							norm_dir);
-
+					drawer.drawPolygon(gl, (Polygon) geometry.geometry, color, alpha, geometry.isFilled(), border,
+							geometry, true, geometry.getZ_fighting_id(), 1);
 				}
-				break;
-			case MULTILINESTRING:
-				getJtsDrawer().drawMultiLineString(gl, (MultiLineString) geometry.geometry, 0, color,
-						geometry.getBorder(), geometry.getAlpha(), height, geometry);
 				break;
 			case LINESTRING:
 			case LINEARRING:
 			case PLAN:
 			case POLYPLAN:
 				if (height > 0) {
-					getJtsDrawer().drawPlan(gl, (LineString) geometry.geometry, 0, color, geometry.getBorder(),
-							geometry.getAlpha(), height, 0, true, geometry);
+					drawer.drawPlan(gl, (LineString) geometry.geometry, color, border, alpha, height, geometry);
 				} else {
-					getJtsDrawer().drawLineString(gl, (LineString) geometry.geometry, 0, JOGLRenderer.getLineWidth(),
-							color, geometry.getAlpha());
+					drawer.drawLineString(gl, (LineString) geometry.geometry, JOGLRenderer.getLineWidth(), color,
+							alpha);
 				}
 				break;
 			case POINT:
-				getJtsDrawer().drawPoint(gl, (Point) geometry.geometry, 0, 10, renderer.getMaxEnvDim() / 1000, color,
-						geometry.getAlpha());
+				drawer.drawPoint(gl, (Point) geometry.geometry, 0, 10, renderer.getMaxEnvDim() / 1000, color, alpha);
 				break;
+			case MULTIPOLYGON:
+			case MULTILINESTRING:
 			default:
 				if (geometry.geometry instanceof GeometryCollection) {
-					getJtsDrawer().drawGeometryCollection(gl, (GeometryCollection) geometry.geometry, color,
-							geometry.getAlpha(), geometry.isFilled(), geometry.getBorder(), geometry, height,
-							geometry.getZ_fighting_id(), 0);
+					drawer.drawGeometryCollection(gl, (GeometryCollection) geometry.geometry, color, alpha,
+							geometry.isFilled() || renderer.data.isTriangulation(), border, geometry, height,
+							geometry.getZ_fighting_id());
 				}
-
 		}
 
 		if (rot != null) {
@@ -157,19 +131,11 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			final LayeredDisplayData data = renderer.data;
 			// loc in opengl coordinates (y already multiplied by Y_FLAG)
 			gl.glRotated(-angle, axis.x, axis.y, axis.z);
-			// float[] locArr = new float[] {(float) loc.x, (float)
-			// (JOGLRenderer.Y_FLAG * loc.y), (float) loc.z};
-			// FIXME (julien 18/05/16) : does not work for draw shape with facet
-			// rotate. Decomment the following line should work, but it does not...
 			GLUtilLight.NotifyOpenGLRotation(gl, -angle, axis, renderer.data);
 			gl.glTranslated(-loc.x, -JOGLRenderer.Y_FLAG * loc.y, -loc.z);
 
 		}
 
-	}
-
-	JTSDrawer getJtsDrawer() {
-		return renderer.getJTSDrawer();
 	}
 
 }

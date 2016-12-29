@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GeometryCache.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GeometryCache.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -63,9 +62,7 @@ public class GeometryCache {
 		} else {
 			final IDisplaySurface surface = renderer.getSurface();
 			final IShape shape = file.getGeometry(surface.getScope());
-			if (shape == null) {
-				return index;
-			}
+			if (shape == null) { return index; }
 			final Geometry g = shape.getInnerGeometry();
 			drawSimpleGeometry(gl, renderer, g);
 		}
@@ -90,7 +87,7 @@ public class GeometryCache {
 			if (g instanceof Polygon) {
 				drawer.drawTesselatedPolygon(gl, (Polygon) g, 1, defaultColor, 1);
 			} else if (g instanceof LineString) {
-				drawer.drawLineString(gl, (LineString) g, 0, JOGLRenderer.getLineWidth(), defaultColor, 1);
+				drawer.drawLineString(gl, (LineString) g, JOGLRenderer.getLineWidth(), defaultColor, 1);
 			}
 		}
 	}

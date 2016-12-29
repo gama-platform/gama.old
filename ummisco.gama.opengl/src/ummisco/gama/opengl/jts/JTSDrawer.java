@@ -30,7 +30,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -38,7 +37,6 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.common.util.GeometryUtils.GamaCoordinateSequence;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.util.file.GamaGeometryFile;
 import msi.gaml.operators.fastmaths.CmnFastMath;
 import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.JOGLRenderer;
@@ -82,7 +80,7 @@ public class JTSDrawer {
 
 	public void drawGeometryCollection(final GL2 gl, final GeometryCollection geoms, final Color c, final double alpha,
 			final boolean fill, final Color border, final GeometryObject object, final double height,
-			final double z_fighting_value, final double z) {
+			final double z_fighting_value) {
 
 		final int numGeometries = geoms.getNumGeometries();
 
@@ -98,28 +96,10 @@ public class JTSDrawer {
 			} else if (geom instanceof LineString) {
 				final LineString l = (LineString) geom;
 				if (height > 0) {
-					drawPlan(gl, l, z, c, border, alpha, height, 0, true, object);
+					drawPlan(gl, l, c, border, alpha, height, object);
 				} else {
-					drawLineString(gl, l, z, JOGLRenderer.getLineWidth(), c, alpha);
+					drawLineString(gl, l, JOGLRenderer.getLineWidth(), c, alpha);
 				}
-			}
-		}
-	}
-
-	public void drawMultiPolygon(final GL2 gl, final MultiPolygon polygons, final Color c, final double alpha,
-			final boolean fill, final Color border, final GeometryObject object, final double height,
-			final double z_fighting_value) {
-
-		final int numGeometries = polygons.getNumGeometries();
-
-		for (int i = 0; i < numGeometries; i++) {
-			final Polygon curPolygon = (Polygon) polygons.getGeometryN(i);
-
-			if (height > 0) {
-				drawPolyhedre(gl, curPolygon, c, alpha, fill, height, /* angle, */false, border, object,
-						z_fighting_value);
-			} else {
-				drawPolygon(gl, curPolygon, c, alpha, fill, border, object, /* angle, */true, z_fighting_value, 1);
 			}
 		}
 	}
@@ -486,29 +466,7 @@ public class JTSDrawer {
 	// ////////////////////////////// LINE DRAWER
 	// //////////////////////////////////////////////////////////////////////////////////
 
-	public void drawMultiLineString(final GL2 gl, final MultiLineString lines, final double z, final Color c,
-			final Color b, final double alpha, final double height, final GeometryObject object) {
-
-		// get the number of line in the multiline.
-		final int numGeometries = lines.getNumGeometries();
-
-		// FIXME: Why setting the color here?
-		setColor(gl, c, alpha);
-
-		// for each line of a multiline, get each point coordinates.
-		for (int i = 0; i < numGeometries; i++) {
-
-			final LineString l = (LineString) lines.getGeometryN(i);
-			if (height > 0) {
-				drawPlan(gl, l, z, c, b, alpha, height, 0, true, object);
-			} else {
-				drawLineString(gl, l, z, JOGLRenderer.getLineWidth(), c, alpha);
-			}
-
-		}
-	}
-
-	public void drawLineString(final GL2 gl, final LineString line, final double z, final float size, final Color c,
+	public void drawLineString(final GL2 gl, final LineString line, final float size, final Color c,
 			final double alpha) {
 
 		setColor(gl, c, alpha);
@@ -517,51 +475,32 @@ public class JTSDrawer {
 
 		gl.glLineWidth(size);
 
-		// FIXME: this will draw a 3d line if the z value of each point has been
-		// set thanks to add_z_pt but if
 		gl.glBegin(GL.GL_LINES);
 		for (int j = 0; j < numPoints - 1; j++) {
 
-			if (Double.isNaN(line.getPointN(j).getCoordinate().z) == true) {
-				gl.glVertex3d(line.getPointN(j).getX(), JOGLRenderer.Y_FLAG * line.getPointN(j).getY(), z);
+			gl.glVertex3d(line.getPointN(j).getX(), JOGLRenderer.Y_FLAG * line.getPointN(j).getY(),
+					line.getPointN(j).getCoordinate().z);
 
-			} else {
-				gl.glVertex3d(line.getPointN(j).getX(), JOGLRenderer.Y_FLAG * line.getPointN(j).getY(),
-						z + line.getPointN(j).getCoordinate().z);
-			}
-			if (Double.isNaN(line.getPointN(j + 1).getCoordinate().z) == true) {
-				gl.glVertex3d(line.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * line.getPointN(j + 1).getY(), z);
-			} else {
-				gl.glVertex3d(line.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * line.getPointN(j + 1).getY(),
-						z + line.getPointN(j + 1).getCoordinate().z);
-			}
+			gl.glVertex3d(line.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * line.getPointN(j + 1).getY(),
+					line.getPointN(j + 1).getCoordinate().z);
 
 		}
 		gl.glEnd();
 
 	}
 
-	public void drawPlan(final GL2 gl, final LineString l, final double z_ordinate, final Color c, final Color b,
-			final double alpha, final double height, final Integer angle, final boolean drawPolygonContour,
-			final GeometryObject object) {
-		double z = z_ordinate;
-		if (object.isTextured() == false) {
-			drawLineString(gl, l, z, JOGLRenderer.getLineWidth(), c, alpha);
-			drawLineString(gl, l, z + height, JOGLRenderer.getLineWidth(), c, alpha);
+	public void drawPlan(final GL2 gl, final LineString l, final Color c, final Color b, final double alpha,
+			final double height, final GeometryObject object) {
+		if (!object.isTextured()) {
+			drawLineString(gl, l, JOGLRenderer.getLineWidth(), c, alpha);
 		}
 
 		// Draw a quad
 		setColor(gl, c, alpha);
-		// GLUtilGLContext.SetCurrentColor(gl, (float) (c.getRed() / 255.0),
-		// (float) (c.getGreen() / 255.0),
-		// (float) (c.getBlue() / 255.0), (float) (alpha * c.getAlpha() /
-		// 255.0));
 		final int numPoints = l.getNumPoints();
 
 		// Add z value
-		if (Double.isNaN(l.getCoordinate().z) == false) {
-			z = z + l.getCoordinate().z;
-		}
+		final double z = l.getCoordinate().z;
 
 		for (int j = 0; j < numPoints - 1; j++) {
 
@@ -585,18 +524,6 @@ public class JTSDrawer {
 			if (object.isTextured()) {
 				final Texture texture = object.getTexture(gl, renderer, 0);
 				setColor(gl, Color.white, 1);
-				// GLUtilGLContext.SetCurrentColor(gl, new float[] { 1.0f, 1.0f,
-				// 1.0f });// Set
-				// the
-				// color
-				// to
-				// white
-				// to
-				// avoid
-				// color
-				// and
-				// texture
-				// mixture
 				if (texture != null) {
 					texture.enable(gl);
 					texture.bind(gl);
@@ -631,27 +558,27 @@ public class JTSDrawer {
 
 		}
 
-		if (drawPolygonContour == true) {
-			setColor(gl, b, alpha);
+		// if (drawPolygonContour == true) {
+		setColor(gl, b, alpha);
 
-			for (int j = 0; j < numPoints - 1; j++) {
-				gl.glBegin(GL.GL_LINES);
-				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z);
-				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z);
+		for (int j = 0; j < numPoints - 1; j++) {
+			gl.glBegin(GL.GL_LINES);
+			gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z);
+			gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z);
 
-				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z);
-				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z + height);
+			gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z);
+			gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z + height);
 
-				gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z + height);
-				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z + height);
+			gl.glVertex3d(l.getPointN(j + 1).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY(), z + height);
+			gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z + height);
 
-				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z + height);
-				gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z);
+			gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z + height);
+			gl.glVertex3d(l.getPointN(j).getX(), JOGLRenderer.Y_FLAG * l.getPointN(j).getY(), z);
 
-				gl.glEnd();
-			}
-			setColor(gl, b, alpha);
+			gl.glEnd();
 		}
+		setColor(gl, b, alpha);
+		// }
 	}
 
 	public void drawPoint(final GL2 gl, final Point point, final double z_ordinate, final int numPoints,
