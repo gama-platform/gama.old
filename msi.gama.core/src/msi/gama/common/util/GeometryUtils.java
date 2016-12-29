@@ -354,6 +354,10 @@ public class GeometryUtils {
 			v.process(points[0].x, points[0].y, points[0].z);
 		}
 
+		public GamaPoint getNormal(final int dir) {
+			return GamaPoint.normal(points[0], points[1], points[2], dir);
+		}
+
 	}
 
 	public static GeometryFactory FACTORY = new GeometryFactory(new GamaCoordinateSequenceFactory());
