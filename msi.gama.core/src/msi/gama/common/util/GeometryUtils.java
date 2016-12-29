@@ -19,6 +19,7 @@ import static msi.gama.metamodel.shape.IShape.Type.POLYGON;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -138,7 +139,7 @@ public class GeometryUtils {
 		/**
 		 * @param points2
 		 */
-		public GamaCoordinateSequence(final Coordinate[] points2) {
+		public GamaCoordinateSequence(final Coordinate... points2) {
 			if (points2 == null) {
 				points = new GamaPoint[0];
 			} else {
@@ -146,6 +147,16 @@ public class GeometryUtils {
 				for (int i = 0; i < points2.length; i++) {
 					points[i] = new GamaPoint(points2[i]);
 				}
+			}
+		}
+
+		/*
+		 * @param values [x0, y0, z0, x1, y1, z1, ...]
+		 */
+		public GamaCoordinateSequence(final double[] values) {
+			points = new GamaPoint[values.length / 3];
+			for (int i = 0; i < points.length; i++) {
+				points[i] = new GamaPoint(values[i * 3], values[i * 3 + 1], values[i * 3 + 2]);
 			}
 		}
 
@@ -187,7 +198,7 @@ public class GeometryUtils {
 		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int)
 		 */
 		@Override
-		public Coordinate getCoordinate(final int i) {
+		public GamaPoint getCoordinate(final int i) {
 			return points[i];
 		}
 
@@ -197,7 +208,7 @@ public class GeometryUtils {
 		 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinateCopy(int)
 		 */
 		@Override
-		public Coordinate getCoordinateCopy(final int i) {
+		public GamaPoint getCoordinateCopy(final int i) {
 			return new GamaPoint((Coordinate) points[i]);
 		}
 
@@ -268,7 +279,7 @@ public class GeometryUtils {
 		 * @see com.vividsolutions.jts.geom.CoordinateSequence#toCoordinateArray()
 		 */
 		@Override
-		public Coordinate[] toCoordinateArray() {
+		public GamaPoint[] toCoordinateArray() {
 			return points;
 		}
 
@@ -289,6 +300,58 @@ public class GeometryUtils {
 		@Override
 		public Iterator<GamaPoint> iterator() {
 			return Iterators.forArray(points);
+		}
+
+		public GamaPoint getCenter() {
+			final GamaPoint center = new GamaPoint();
+			for (final GamaPoint p : points) {
+				center.x += p.x;
+				center.y += p.y;
+				center.z += p.z;
+			}
+			center.x /= points.length;
+			center.y /= points.length;
+			center.z /= points.length;
+			return center;
+		}
+
+		public GamaCoordinateSequence yNegated() {
+			final GamaCoordinateSequence result = new GamaCoordinateSequence(points);
+			for (final GamaPoint p : result) {
+				p.y *= -1;
+			}
+			return result;
+		}
+
+		public boolean isClockwise() {
+			double sum = 0.0;
+			for (int i = 0; i < points.length; i++) {
+				final Coordinate v1 = points[i];
+				final Coordinate v2 = points[(i + 1) % points.length];
+				sum += (v2.x - v1.x) * (v2.y + v1.y);
+			}
+			return sum < 0.0;
+		}
+
+		public GamaCoordinateSequence reverse() {
+			final GamaCoordinateSequence result = new GamaCoordinateSequence(points);
+			Collections.reverse(Arrays.asList(result.points));
+			return result;
+		}
+
+		public static interface Visitor {
+			public void process(final double x, final double y, final double z);
+		}
+
+		public void visit(final Visitor v) {
+			for (final GamaPoint p : points) {
+				v.process(p.x, p.y, p.z);
+			}
+		}
+
+		public void visitCircular(final Visitor v) {
+			visit(v);
+			v.process(points[0].x, points[0].y, points[0].z);
 		}
 
 	}
@@ -1122,6 +1185,18 @@ public class GeometryUtils {
 		return (GamaCoordinateSequence) g.getCoordinateSequence();
 	}
 
+	public static boolean isClockWise(final Polygon geom) {
+
+		double sum = 0.0;
+		final Coordinate[] coords = geom.getExteriorRing().getCoordinates();
+		for (int i = 0; i < coords.length; i++) {
+			final Coordinate v1 = coords[i];
+			final Coordinate v2 = coords[(i + 1) % coords.length];
+			sum += (v2.x - v1.x) * (v2.y + v1.y);
+		}
+		return sum < 0.0;
+	}
+
 	public static boolean isClockWise(final Geometry geom) {
 		if (geom instanceof GeometryCollection) {
 			boolean isCW = true;
@@ -1133,14 +1208,26 @@ public class GeometryUtils {
 			return isCW;
 		} else if (!(geom instanceof Polygon)) { return true; }
 
-		double sum = 0.0;
-		final Coordinate[] coords = ((Polygon) geom).getExteriorRing().getCoordinates();
-		for (int i = 0; i < coords.length; i++) {
-			final Coordinate v1 = coords[i];
-			final Coordinate v2 = coords[(i + 1) % coords.length];
-			sum += (v2.x - v1.x) * (v2.y + v1.y);
-		}
-		return sum < 0.0;
+		return isClockWise((Polygon) geom);
+	}
+
+	public static GamaPoint getNormal(final Polygon p) {
+		final int normalDir = !isClockWise(p) ? -1 : 1;
+		return getNormal(p, normalDir);
+	}
+
+	public static GamaPoint getNormal(final GamaCoordinateSequence p) {
+		final int normalDir = !p.isClockwise() ? -1 : 1;
+		return getNormal(p, normalDir);
+	}
+
+	public static GamaPoint getNormal(final Polygon p, final int normalDir) {
+		final GamaCoordinateSequence coords = getCoordinates(p);
+		return getNormal(coords, normalDir);
+	}
+
+	public static GamaPoint getNormal(final GamaCoordinateSequence coords, final int normalDir) {
+		return GamaPoint.normal(coords.getCoordinate(0), coords.getCoordinate(1), coords.getCoordinate(2), normalDir);
 	}
 
 	public static Geometry changeClockWise(final Geometry geom) {
