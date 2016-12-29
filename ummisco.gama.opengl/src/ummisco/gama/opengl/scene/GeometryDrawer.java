@@ -112,16 +112,11 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 							geometry.isFilled(), height, true, geometry.getBorder(), geometry,
 							geometry.getZ_fighting_id());
 				} else {
-					if (getRenderer().getComputeNormal()) {
-						final int norm_dir = 1;
-						getJtsDrawer().drawPolygon(gl, (Polygon) geometry.geometry, color, geometry.getAlpha(),
-								geometry.isFilled(), geometry.getBorder(), geometry, true, geometry.getZ_fighting_id(),
-								norm_dir);
-					} else {
-						getJtsDrawer().drawPolygon(gl, (Polygon) geometry.geometry, color, geometry.getAlpha(),
-								geometry.isFilled(), geometry.getBorder(), geometry, true, geometry.getZ_fighting_id(),
-								-1);
-					}
+
+					final int norm_dir = 1;
+					getJtsDrawer().drawPolygon(gl, (Polygon) geometry.geometry, color, geometry.getAlpha(),
+							geometry.isFilled(), geometry.getBorder(), geometry, true, geometry.getZ_fighting_id(),
+							norm_dir);
 
 				}
 				break;

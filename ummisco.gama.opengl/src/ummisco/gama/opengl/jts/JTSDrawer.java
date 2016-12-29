@@ -35,6 +35,7 @@ import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
 
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.GeometryUtils.GamaCoordinateSequence;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaGeometryFile;
@@ -47,14 +48,17 @@ import ummisco.gama.opengl.utils.Vertex;
 
 public class JTSDrawer {
 
-	private static final float[] RECT_TEX_COORDS = { 0f, 1f, 0f, 0f, 1f, 0f, 1f, 1f, };
+	private static final float[] RECT_TEX_COORDS = { 0f, 1f, 0f, 0f, 1f, 0f, 1f, 1f };
 	private static final float[] TRIANGLE_TEX_COORDS = { 0f, 1f, 1f, 0f, 1f, 1f };
+	private static final float[] FACE_TEX_COORDS = { 0f, 0f, 1f, 0f, 1f, 1f, 0f, 1f };
 
 	private final GLUT glut;
 	private final GLUtessellator tobj;
 	public final JOGLRenderer renderer;
 	final static CoordinateFilter pointDrawer =
 			point -> GLContext.getCurrentGL().getGL2().glVertex3d(point.x, JOGLRenderer.Y_FLAG * point.y, point.z);
+	final static GamaCoordinateSequence.Visitor sequenceDrawer =
+			(x, y, z) -> GLContext.getCurrentGL().getGL2().glVertex3d(x, y, z);
 
 	public JTSDrawer(final JOGLRenderer gLRender) {
 		glut = new GLUT();
@@ -133,13 +137,11 @@ public class JTSDrawer {
 
 		int p_norm_dir = 1;
 
-		if (renderer.getComputeNormal()) {
-			final Vertex[] vertices = getExteriorRingVertices(p);
-			if (!GeometryUtils.isClockWise(p)) {
-				p_norm_dir = -1;
-			}
-			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
+		final Vertex[] vertices = getExteriorRingVertices(p);
+		if (!GeometryUtils.isClockWise(p)) {
+			p_norm_dir = -1;
 		}
+		GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		if (!object.isTextured()) {
 			if (fill) {
 				setColor(gl, c, alpha);
@@ -170,12 +172,10 @@ public class JTSDrawer {
 		// Exterior contour
 		GLU.gluTessBeginContour(tobj);
 
-		if (renderer.getComputeNormal()) {
-			final Vertex[] vertices = getExteriorRingVertices(p);
-			final double[] normal = GLUtilNormal.CalculateNormal(vertices[0], vertices[1], vertices[2], norm_dir);
-			GLUtilNormal.drawNormal(vertices, renderer, gl, normal);
-			GLU.gluTessNormal(tobj, normal[0], normal[1], normal[2]);
-		}
+		final Vertex[] vertices = getExteriorRingVertices(p);
+		final double[] normal = GLUtilNormal.CalculateNormal(vertices[0], vertices[1], vertices[2], norm_dir);
+		GLUtilNormal.drawNormal(vertices, renderer, gl, normal);
+		GLU.gluTessNormal(tobj, normal[0], normal[1], normal[2]);
 
 		for (final GamaPoint pp : GeometryUtils.getCoordinates(p)) {
 			final double[] doubles = { pp.x, JOGLRenderer.Y_FLAG * pp.y, pp.z };
@@ -213,10 +213,9 @@ public class JTSDrawer {
 				}
 			}
 		} else {
-			if (renderer.getComputeNormal()) {
-				final Vertex[] vertices = this.getExteriorRingVertices(p);
-				GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
-			}
+
+			final Vertex[] vertices = this.getExteriorRingVertices(p);
+			GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
 			gl.glBegin(GL2ES3.GL_QUADS);
 			for (int i = 0; i < 4; i++) {
 				final Coordinate c = p.getExteriorRing().getCoordinateN(i);
@@ -268,16 +267,14 @@ public class JTSDrawer {
 		int p_norm_dir = 1;
 		final int face_norm_dir = -1;
 		boolean polyCW = true;
-		if (renderer.getComputeNormal()) {
-			final Vertex[] vertices = getExteriorRingVertices(p);
-			polyCW = isClockwise(vertices);
 
-			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
-				p_norm_dir = 1;
-			} else {
-				p_norm_dir = -1;
-			}
+		final Vertex[] vertices = getExteriorRingVertices(p);
+		polyCW = isClockwise(vertices);
 
+		if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+			p_norm_dir = 1;
+		} else {
+			p_norm_dir = -1;
 		}
 
 		drawPolygon(gl, p, c, alpha, fill, border, object, drawPolygonContour, z_fighting_value, p_norm_dir);
@@ -329,9 +326,7 @@ public class JTSDrawer {
 			final Vertex[] vertices = getFaceVertices(p, j, k, elevation, height, clockwise);
 
 			if (fill) {
-				if (renderer.getComputeNormal()) {
-					GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
-				}
+				GLUtilNormal.HandleNormal(vertices, norm_dir, renderer);
 				gl.glBegin(GL2ES3.GL_QUADS);
 				gl.glVertex3d(vertices[0].x, vertices[0].y, vertices[0].z);
 				gl.glVertex3d(vertices[1].x, vertices[1].y, vertices[1].z);
@@ -577,24 +572,22 @@ public class JTSDrawer {
 
 		for (int j = 0; j < numPoints - 1; j++) {
 
-			if (renderer.getComputeNormal()) {
-				final Vertex[] vertices = new Vertex[3];
-				for (int i = 0; i < 3; i++) {
-					vertices[i] = new Vertex();
-				}
-				vertices[0].x = l.getPointN(j).getX();
-				vertices[0].y = JOGLRenderer.Y_FLAG * l.getPointN(j).getY();
-				vertices[0].z = z;
-
-				vertices[1].x = l.getPointN(j + 1).getX();
-				vertices[1].y = JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY();
-				vertices[1].z = z;
-
-				vertices[2].x = l.getPointN(j + 1).getX();
-				vertices[2].y = JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY();
-				vertices[2].z = z + height;
-				GLUtilNormal.HandleNormal(vertices, 1, renderer);
+			final Vertex[] vertices = new Vertex[3];
+			for (int i = 0; i < 3; i++) {
+				vertices[i] = new Vertex();
 			}
+			vertices[0].x = l.getPointN(j).getX();
+			vertices[0].y = JOGLRenderer.Y_FLAG * l.getPointN(j).getY();
+			vertices[0].z = z;
+
+			vertices[1].x = l.getPointN(j + 1).getX();
+			vertices[1].y = JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY();
+			vertices[1].z = z;
+
+			vertices[2].x = l.getPointN(j + 1).getX();
+			vertices[2].y = JOGLRenderer.Y_FLAG * l.getPointN(j + 1).getY();
+			vertices[2].z = z + height;
+			GLUtilNormal.HandleNormal(vertices, 1, renderer);
 
 			if (object.isTextured()) {
 				final Texture texture = object.getTexture(gl, renderer, 0);
@@ -1073,17 +1066,15 @@ public class JTSDrawer {
 		Vertex[] vertices;
 		int p_norm_dir = -1;
 
-		if (renderer.getComputeNormal()) {
-			vertices = getExteriorRingVertices(p);
+		vertices = getExteriorRingVertices(p);
 
-			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
-				p_norm_dir = 1;
-			} else {
-				p_norm_dir = -1;
-			}
-
-			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
+		if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+			p_norm_dir = 1;
+		} else {
+			p_norm_dir = -1;
 		}
+
+		GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 		final Coordinate coords[] = p.getExteriorRing().getCoordinates();
 
 		if (g.isTextured()) {
@@ -1112,15 +1103,13 @@ public class JTSDrawer {
 		gl.glVertex3d(coords[3].x, JOGLRenderer.Y_FLAG * coords[3].y, coords[3].z);
 		gl.glEnd();
 
-		if (renderer.getComputeNormal()) {
-			vertices = getPyramidfaceVertices(p, 0, 1, size, 1, -1);
-			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
-				p_norm_dir = 1;
-			} else {
-				p_norm_dir = -1;
-			}
-			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
+		vertices = getPyramidfaceVertices(p, 0, 1, size, 1, -1);
+		if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+			p_norm_dir = 1;
+		} else {
+			p_norm_dir = -1;
 		}
+		GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 
 		final double[] norm = calculatePolygonNormal(p, null);
 		norm[0] = norm[0] * size + p.getCentroid().getX();
@@ -1138,15 +1127,13 @@ public class JTSDrawer {
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
 
-		if (renderer.getComputeNormal()) {
-			vertices = getPyramidfaceVertices(p, 1, 2, size, 1, 1);
-			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
-				p_norm_dir = 1;
-			} else {
-				p_norm_dir = -1;
-			}
-			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
+		vertices = getPyramidfaceVertices(p, 1, 2, size, 1, 1);
+		if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+			p_norm_dir = 1;
+		} else {
+			p_norm_dir = -1;
 		}
+		GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glTexCoord2f(0.0f, 1.0f);
@@ -1157,15 +1144,13 @@ public class JTSDrawer {
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
 
-		if (renderer.getComputeNormal()) {
-			vertices = getPyramidfaceVertices(p, 2, 3, size, -1, 1);
-			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
-				p_norm_dir = 1;
-			} else {
-				p_norm_dir = -1;
-			}
-			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
+		vertices = getPyramidfaceVertices(p, 2, 3, size, -1, 1);
+		if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+			p_norm_dir = 1;
+		} else {
+			p_norm_dir = -1;
 		}
+		GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glTexCoord2f(0.0f, 1.0f);
@@ -1176,15 +1161,13 @@ public class JTSDrawer {
 		gl.glVertex3d(norm[0], norm[1], norm[2]);
 		gl.glEnd();
 
-		if (renderer.getComputeNormal()) {
-			vertices = getPyramidfaceVertices(p, 3, 0, size, -1, -1);
-			if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
-				p_norm_dir = 1;
-			} else {
-				p_norm_dir = -1;
-			}
-			GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
+		vertices = getPyramidfaceVertices(p, 3, 0, size, -1, -1);
+		if (isClockwise(vertices) == (JOGLRenderer.Y_FLAG == 1)) {
+			p_norm_dir = 1;
+		} else {
+			p_norm_dir = -1;
 		}
+		GLUtilNormal.HandleNormal(vertices, p_norm_dir, renderer);
 
 		gl.glBegin(GL.GL_TRIANGLES);
 		gl.glTexCoord2f(0.0f, 1.0f);

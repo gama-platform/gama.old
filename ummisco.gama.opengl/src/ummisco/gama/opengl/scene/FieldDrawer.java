@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FieldDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FieldDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -56,9 +55,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 			// Get Texture Properties
 			final Texture curTexture = demObj.getTexture(gl, renderer, 0);
-			if (curTexture == null) {
-				return;
-			}
+			if (curTexture == null) { return; }
 
 			// FIXME: Need to set it dynamicly
 			final double altFactor = demObj.getZFactor();
@@ -189,30 +186,29 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 						}
 
 						// Compute normal
-						if (renderer.getComputeNormal()) {
-							final Vertex[] vertices = new Vertex[4];
-							for (int i1 = 0; i1 < 4; i1++) {
-								vertices[i1] = new Vertex();
-							}
-							vertices[0].x = x1 * cellWidth;
-							vertices[0].y = JOGLRenderer.Y_FLAG * y1 * cellHeight;
-							vertices[0].z = z1 * altFactor;
 
-							vertices[1].x = x1 * cellWidth;
-							vertices[1].y = JOGLRenderer.Y_FLAG * y2 * cellHeight;
-							vertices[1].z = z1 * altFactor;
-
-							vertices[2].x = x2 * cellWidth;
-							vertices[2].y = JOGLRenderer.Y_FLAG * y1 * cellHeight;
-							vertices[2].z = z4 * altFactor;
-
-							vertices[3].x = x2 * cellWidth;
-							vertices[3].y = JOGLRenderer.Y_FLAG * y2 * cellHeight;
-							vertices[3].z = z3 * altFactor;
-							GLUtilNormal.HandleNormal(vertices, 1, renderer);
-							// GLUtilNormal.HandleNormal(vertices, null, 0,-1,
-							// renderer);
+						final Vertex[] vertices = new Vertex[4];
+						for (int i1 = 0; i1 < 4; i1++) {
+							vertices[i1] = new Vertex();
 						}
+						vertices[0].x = x1 * cellWidth;
+						vertices[0].y = JOGLRenderer.Y_FLAG * y1 * cellHeight;
+						vertices[0].z = z1 * altFactor;
+
+						vertices[1].x = x1 * cellWidth;
+						vertices[1].y = JOGLRenderer.Y_FLAG * y2 * cellHeight;
+						vertices[1].z = z1 * altFactor;
+
+						vertices[2].x = x2 * cellWidth;
+						vertices[2].y = JOGLRenderer.Y_FLAG * y1 * cellHeight;
+						vertices[2].z = z4 * altFactor;
+
+						vertices[3].x = x2 * cellWidth;
+						vertices[3].y = JOGLRenderer.Y_FLAG * y2 * cellHeight;
+						vertices[3].z = z3 * altFactor;
+						GLUtilNormal.HandleNormal(vertices, 1, renderer);
+						// GLUtilNormal.HandleNormal(vertices, null, 0,-1,
+						// renderer);
 						final Color lineColor = demObj.getBorder();
 						if (lineColor != null) {
 							renderer.setCurrentColor(gl, lineColor);
@@ -312,9 +308,7 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 		final BufferedImage dem = demObj.getDirectImage(1);
 		final Texture curTexture = demObj.getTexture(gl, renderer, 0);
-		if (curTexture == null) {
-			return;
-		}
+		if (curTexture == null) { return; }
 		// Enable the texture
 
 		curTexture.enable(gl);

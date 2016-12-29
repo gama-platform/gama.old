@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ImageDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ImageDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -39,9 +38,7 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 	protected void _draw(final GL2 gl, final ImageObject img) {
 
 		final Texture curTexture = img.getTexture(gl, renderer, 0);
-		if (curTexture == null) {
-			return;
-		}
+		if (curTexture == null) { return; }
 		final double width = img.getDimensions().x;
 		final double height = img.getDimensions().y;
 		double x = 0, y = 0, z = 0;
@@ -67,28 +64,26 @@ public class ImageDrawer extends ObjectDrawer<ImageObject> {
 			gl.glTranslated(-(x + width / 2), +(y + height / 2), 0.0d);
 		}
 
-		if (renderer.getComputeNormal()) {
-			final Vertex[] vertices = new Vertex[4];
-			for (int i = 0; i < 4; i++) {
-				vertices[i] = new Vertex();
-			}
-			vertices[0].x = x;
-			vertices[0].y = -(y + height);
-			vertices[0].z = z;
-
-			vertices[1].x = x + width;
-			vertices[1].y = -(y + height);
-			vertices[1].z = z;
-
-			vertices[2].x = x + width;
-			vertices[2].y = -y;
-			vertices[2].z = z;
-
-			vertices[3].x = x;
-			vertices[3].y = -y;
-			vertices[3].z = z;
-			GLUtilNormal.HandleNormal(vertices, -1, renderer);
+		final Vertex[] vertices = new Vertex[4];
+		for (int i = 0; i < 4; i++) {
+			vertices[i] = new Vertex();
 		}
+		vertices[0].x = x;
+		vertices[0].y = -(y + height);
+		vertices[0].z = z;
+
+		vertices[1].x = x + width;
+		vertices[1].y = -(y + height);
+		vertices[1].z = z;
+
+		vertices[2].x = x + width;
+		vertices[2].y = -y;
+		vertices[2].z = z;
+
+		vertices[3].x = x;
+		vertices[3].y = -y;
+		vertices[3].z = z;
+		GLUtilNormal.HandleNormal(vertices, -1, renderer);
 		renderer.setCurrentColor(gl, Color.white, img.getAlpha());
 		gl.glBegin(GL2ES3.GL_QUADS);
 		// bottom-left of the texture and quad

@@ -257,10 +257,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		return data.isDraw_norm();
 	}
 
-	public final boolean getComputeNormal() {
-		return data.isComputingNormals;
-	}
-
 	public final double getMaxEnvDim() {
 		// built dynamically to prepare for the changes in size of the
 		// environment
