@@ -30,6 +30,9 @@ public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
 
 	@Override
 	protected void _draw(final GL2 gl, final ResourceObject object) {
-		renderer.getJTSDrawer().drawGeometryCached(gl, object.file);
+		final int index = renderer.getJTSDrawer().renderer.getGeometryListFor(gl, object.file);
+		if (index != -1) {
+			gl.glCallList(index);
+		}
 	}
 }

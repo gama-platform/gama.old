@@ -80,13 +80,6 @@ public class JTSDrawer {
 		renderer.setCurrentColor(gl, c, alpha);
 	}
 
-	public void drawGeometryCached(final GL2 gl, final GamaGeometryFile file) {
-		final int index = renderer.getGeometryListFor(gl, file);
-		if (index != -1) {
-			gl.glCallList(index);
-		}
-	}
-
 	public void drawGeometryCollection(final GL2 gl, final GeometryCollection geoms, final Color c, final double alpha,
 			final boolean fill, final Color border, final GeometryObject object, final double height,
 			final double z_fighting_value, final double z) {
