@@ -358,6 +358,12 @@ public class GeometryUtils {
 			return GamaPoint.normal(points[0], points[1], points[2], dir);
 		}
 
+		public void visitWithYNegated(final Visitor v) {
+			for (final GamaPoint p : points) {
+				v.process(p.x, -p.y, p.z);
+			}
+		}
+
 	}
 
 	public static GeometryFactory FACTORY = new GeometryFactory(new GamaCoordinateSequenceFactory());
@@ -1187,6 +1193,10 @@ public class GeometryUtils {
 
 	public static GamaCoordinateSequence getCoordinates(final LineString g) {
 		return (GamaCoordinateSequence) g.getCoordinateSequence();
+	}
+
+	public static GamaCoordinateSequence getCoordinates(final Geometry g) {
+		return g instanceof Polygon ? getCoordinates((Polygon) g) : getCoordinates((LineString) g);
 	}
 
 	public static boolean isClockWise(final Polygon geom) {
