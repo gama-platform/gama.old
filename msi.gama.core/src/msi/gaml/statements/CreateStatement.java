@@ -144,7 +144,7 @@ import msi.gaml.types.Types;
 				@usage ("If `number` equals 0 or species is not a species, the statement is ignored."), @usage (
 						value = "In GAML modelers can create agents of species `a_species  (with two attributes `type` and `nature` with types corresponding to the types of the shapefile attributes) from a shapefile `the_shapefile` while reading attributes 'TYPE_OCC' and 'NATURE' of the shapefile. One agent will be created by object contained in the shapefile:",
 						examples = @example (
-								value = "create a_species from: the_shapefile with: [type:: 'TYPE_OCC', nature::'NATURE'];",
+								value = "create a_species from: the_shapefile with: [type:: read('TYPE_OCC'), nature::read('NATURE')];",
 								isExecutable = false)),
 				@usage (
 						value = "In order to create agents from a .csv file, facet `header` can be used to specified whether we can use columns header:",
