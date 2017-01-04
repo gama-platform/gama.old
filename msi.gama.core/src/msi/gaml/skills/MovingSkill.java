@@ -655,11 +655,13 @@ public class MovingSkill extends Skill {
 										pt0.z + (pt1.z - pt0.z) * currentLocation.distance(pt0) / segment.getLength();
 							}
 						}
-					} else {
+					} else if (line.getInnerGeometry().getNumPoints() >= 2) {
 						final ILocation c0 = line.getPoints().get(0);
 						final ILocation c1 = line.getPoints().get(1);
 						currentLocation.z = c0.getZ() + (c1.getZ() - c0.getZ())
 								* currentLocation.distance((Coordinate) c0) / line.getPerimeter();
+					} else {
+						currentLocation.z = line.getPoints().get(0).getZ() ;
 					}
 				}
 			}
