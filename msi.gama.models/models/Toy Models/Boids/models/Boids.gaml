@@ -20,7 +20,6 @@ global torus: torus_environment{
 	int alignment_factor <- 100; 
 	//Variables for the movement of the boids
 	float minimal_distance <- 10.0; 
-	int maximal_turn <- 45 min: 0 max: 359; 
 	
 	int width_and_height_of_environment <- 1000;  
 	bool torus_environment <- false; 
@@ -203,7 +202,6 @@ experiment boids_gui type: gui {
 	parameter 'Cohesion Factor' var: cohesion_factor;
 	parameter 'Alignment Factor' var: alignment_factor; 
 	parameter 'Minimal Distance'  var: minimal_distance; 
-	parameter 'Maximal Turn'  var: maximal_turn; 
 	parameter 'Width/Height of the Environment' var: width_and_height_of_environment ;  
 	parameter 'Toroidal Environment ?'  var: torus_environment ; 
 	parameter 'Apply Cohesion ?' var: apply_cohesion ;
