@@ -145,7 +145,9 @@ public class JTSDrawer {
 
 		final GamaPoint[] vertices = getExteriorRingVertices(p);
 		final double[] normal = GLUtilNormal.CalculateNormal(vertices[0], vertices[1], vertices[2], norm_dir);
-		GLUtilNormal.drawNormal(vertices, renderer, gl, normal);
+		if (renderer.data.isDraw_norm()){
+			GLUtilNormal.drawNormal(vertices, renderer, gl, normal);	
+		}	
 		GLU.gluTessNormal(tobj, normal[0], normal[1], normal[2]);
 
 		for (final GamaPoint pp : GeometryUtils.getCoordinates(p)) {
