@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'Envelope3D.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'Envelope3D.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -20,6 +19,7 @@ import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.util.ICoordinates;
 import msi.gaml.operators.Comparison;
 import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
@@ -39,9 +39,7 @@ import msi.gaml.types.GamaGeometryType;
 public class Envelope3D extends Envelope {
 
 	public static Envelope3D of(final Geometry g) {
-		if (g == null || g.isEmpty()) {
-			return new Envelope3D();
-		}
+		if (g == null || g.isEmpty()) { return new Envelope3D(); }
 		final Envelope3D env = new Envelope3D();
 		g.apply((CoordinateFilter) coord -> env.expandToInclude(coord));
 		return env;
@@ -81,6 +79,12 @@ public class Envelope3D extends Envelope {
 		// return of(p.getInnerGeometry());
 	}
 
+	public static Envelope3D of(final ICoordinates points) {
+		final Envelope3D env = new Envelope3D();
+		points.expandEnvelope(env);
+		return env;
+	}
+
 	/**
 	 * Serial number for compatibility with different versions.
 	 */
@@ -97,8 +101,7 @@ public class Envelope3D extends Envelope {
 	private double maxz;
 
 	/**
-	 * Initialize an <code>Envelope</code> for a region defined by maximum and
-	 * minimum values.
+	 * Initialize an <code>Envelope</code> for a region defined by maximum and minimum values.
 	 *
 	 * @param x1
 	 *            the first x-value
@@ -126,8 +129,7 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Initialize an <code>Envelope</code> to a region defined by two
-	 * Coordinates.
+	 * Initialize an <code>Envelope</code> to a region defined by two Coordinates.
 	 *
 	 * @param p1
 	 *            the first Coordinate
@@ -140,8 +142,7 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Initialize an <code>Envelope</code> to a region defined by a single
-	 * Coordinate.
+	 * Initialize an <code>Envelope</code> to a region defined by a single Coordinate.
 	 *
 	 * @param p
 	 *            the coordinate
@@ -173,8 +174,7 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Makes this <code>Envelope</code> a "null" envelope, that is, the envelope
-	 * of the empty geometry.
+	 * Makes this <code>Envelope</code> a "null" envelope, that is, the envelope of the empty geometry.
 	 */
 	@Override
 	public void setToNull() {
@@ -189,15 +189,13 @@ public class Envelope3D extends Envelope {
 	 * @return max z - min z, or 0 if this is a null <code>Envelope</code>
 	 */
 	public double getDepth() {
-		if (isNull()) {
-			return 0;
-		}
+		if (isNull()) { return 0; }
 		return maxz - minz;
 	}
 
 	/**
-	 * Returns the <code>Envelope</code>s minimum z-value. min z > max z
-	 * indicates that this is a null <code>Envelope</code>.
+	 * Returns the <code>Envelope</code>s minimum z-value. min z > max z indicates that this is a null
+	 * <code>Envelope</code>.
 	 *
 	 * @return the minimum z-coordinate
 	 */
@@ -206,8 +204,8 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Returns the <code>Envelope</code>s maximum z-value. min z > max z
-	 * indicates that this is a null <code>Envelope</code>.
+	 * Returns the <code>Envelope</code>s maximum z-value. min z > max z indicates that this is a null
+	 * <code>Envelope</code>.
 	 *
 	 * @return the maximum z-coordinate
 	 */
@@ -222,9 +220,7 @@ public class Envelope3D extends Envelope {
 	 * @return 0.0 if the envelope is null
 	 */
 	public double getVolume() {
-		if (isNull()) {
-			return 0.0;
-		}
+		if (isNull()) { return 0.0; }
 		return getWidth() * getHeight() * getDepth();
 	}
 
@@ -235,9 +231,7 @@ public class Envelope3D extends Envelope {
 	 */
 	@Override
 	public double minExtent() {
-		if (isNull()) {
-			return 0.0;
-		}
+		if (isNull()) { return 0.0; }
 		return FastMath.min(getWidth(), FastMath.min(getHeight(), getDepth()));
 	}
 
@@ -248,16 +242,13 @@ public class Envelope3D extends Envelope {
 	 */
 	@Override
 	public double maxExtent() {
-		if (isNull()) {
-			return 0.0;
-		}
+		if (isNull()) { return 0.0; }
 		return FastMath.max(getWidth(), FastMath.max(getHeight(), getDepth()));
 	}
 
 	/**
-	 * Enlarges this <code>Envelope</code> so that it contains the given
-	 * {@link Coordinate}. Has no effect if the point is already on or within
-	 * the envelope.
+	 * Enlarges this <code>Envelope</code> so that it contains the given {@link Coordinate}. Has no effect if the point
+	 * is already on or within the envelope.
 	 *
 	 * @param p
 	 *            the Coordinate to expand to include
@@ -268,8 +259,7 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Expands this envelope by a given distance in all directions. Both
-	 * positive and negative distances are supported.
+	 * Expands this envelope by a given distance in all directions. Both positive and negative distances are supported.
 	 *
 	 * @param distance
 	 *            the distance to expand the envelope
@@ -280,8 +270,7 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Expands this envelope by a given distance in all directions. Both
-	 * positive and negative distances are supported.
+	 * Expands this envelope by a given distance in all directions. Both positive and negative distances are supported.
 	 *
 	 * @param deltaX
 	 *            the distance to expand the envelope along the the X axis
@@ -289,9 +278,7 @@ public class Envelope3D extends Envelope {
 	 *            the distance to expand the envelope along the the Y axis
 	 */
 	public void expandBy(final double deltaX, final double deltaY, final double deltaZ) {
-		if (isNull()) {
-			return;
-		}
+		if (isNull()) { return; }
 		minz -= deltaZ;
 		maxz += deltaZ;
 		expandBy(deltaX, deltaY);
@@ -303,18 +290,15 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Enlarges this <code>Envelope</code> so that it contains the given point.
-	 * Has no effect if the point is already on or within the envelope.
+	 * Enlarges this <code>Envelope</code> so that it contains the given point. Has no effect if the point is already on
+	 * or within the envelope.
 	 *
 	 * @param x
-	 *            the value to lower the minimum x to or to raise the maximum x
-	 *            to
+	 *            the value to lower the minimum x to or to raise the maximum x to
 	 * @param y
-	 *            the value to lower the minimum y to or to raise the maximum y
-	 *            to
+	 *            the value to lower the minimum y to or to raise the maximum y to
 	 * @param z
-	 *            the value to lower the minimum z to or to raise the maximum z
-	 *            to
+	 *            the value to lower the minimum z to or to raise the maximum z to
 	 */
 	public void expandToInclude(final double x, final double y, final double z) {
 		if (isNull()) {
@@ -333,8 +317,7 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Translates this envelope by given amounts in the X and Y direction.
-	 * Returns the envelope
+	 * Translates this envelope by given amounts in the X and Y direction. Returns the envelope
 	 *
 	 * @param transX
 	 *            the amount to translate along the X axis
@@ -344,55 +327,43 @@ public class Envelope3D extends Envelope {
 	 *            the amount to translate along the Z axis
 	 */
 	public Envelope3D translate(final double transX, final double transY, final double transZ) {
-		if (isNull()) {
-			return this;
-		}
+		if (isNull()) { return this; }
 		init(getMinX() + transX, getMaxX() + transX, getMinY() + transY, getMaxY() + transY, getMinZ() + transZ,
 				getMaxZ() + transZ);
 		return this;
 	}
 
 	/**
-	 * Computes the coordinate of the centre of this envelope (as long as it is
-	 * non-null
+	 * Computes the coordinate of the centre of this envelope (as long as it is non-null
 	 *
-	 * @return the centre coordinate of this envelope <code>null</code> if the
-	 *         envelope is null
+	 * @return the centre coordinate of this envelope <code>null</code> if the envelope is null
 	 */
 	@Override
 	public GamaPoint centre() {
-		if (isNull()) {
-			return null;
-		}
+		if (isNull()) { return null; }
 		return new GamaPoint((getMinX() + getMaxX()) / 2.0, (getMinY() + getMaxY()) / 2.0,
 				(getMinZ() + getMaxZ()) / 2.0);
 	}
 
 	/**
-	 * Check if the region defined by <code>other</code> overlaps (intersects)
-	 * the region of this <code>Envelope</code>.
+	 * Check if the region defined by <code>other</code> overlaps (intersects) the region of this <code>Envelope</code>.
 	 *
 	 * @param other
-	 *            the <code>Envelope</code> which this <code>Envelope</code> is
-	 *            being checked for overlapping
+	 *            the <code>Envelope</code> which this <code>Envelope</code> is being checked for overlapping
 	 * @return <code>true</code> if the <code>Envelope</code>s overlap
 	 */
 	@Override
 	public boolean intersects(final Envelope other) {
-		if (!super.intersects(other)) {
-			return false;
-		}
+		if (!super.intersects(other)) { return false; }
 		return !(getMinZOf(other) > maxz || getMaxZOf(other) < minz);
 	}
 
 	/**
-	 * Check if the point <code>p</code> overlaps (lies inside) the region of
-	 * this <code>Envelope</code>.
+	 * Check if the point <code>p</code> overlaps (lies inside) the region of this <code>Envelope</code>.
 	 *
 	 * @param p
 	 *            the <code>Coordinate</code> to be tested
-	 * @return <code>true</code> if the point overlaps this
-	 *         <code>Envelope</code>
+	 * @return <code>true</code> if the point overlaps this <code>Envelope</code>
 	 */
 	@Override
 	public boolean intersects(final Coordinate p) {
@@ -400,8 +371,7 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Check if the point <code>(x, y)</code> overlaps (lies inside) the region
-	 * of this <code>Envelope</code>.
+	 * Check if the point <code>(x, y)</code> overlaps (lies inside) the region of this <code>Envelope</code>.
 	 *
 	 * @param x
 	 *            the x-ordinate of the point
@@ -409,13 +379,10 @@ public class Envelope3D extends Envelope {
 	 *            the y-ordinate of the point
 	 * @param z
 	 *            the z-ordinate of the point
-	 * @return <code>true</code> if the point overlaps this
-	 *         <code>Envelope</code>
+	 * @return <code>true</code> if the point overlaps this <code>Envelope</code>
 	 */
 	protected boolean intersects(final double x, final double y, final double z) {
-		if (isNull()) {
-			return false;
-		}
+		if (isNull()) { return false; }
 		return intersects(x, y) && !(z < minz || z > maxz);
 	}
 
@@ -423,18 +390,14 @@ public class Envelope3D extends Envelope {
 	 * Tests if the given point lies in or on the envelope.
 	 *
 	 * @param x
-	 *            the x-coordinate of the point which this <code>Envelope</code>
-	 *            is being checked for containing
+	 *            the x-coordinate of the point which this <code>Envelope</code> is being checked for containing
 	 * @param y
-	 *            the y-coordinate of the point which this <code>Envelope</code>
-	 *            is being checked for containing
-	 * @return <code>true</code> if <code>(x, y)</code> lies in the interior or
-	 *         on the boundary of this <code>Envelope</code>.
+	 *            the y-coordinate of the point which this <code>Envelope</code> is being checked for containing
+	 * @return <code>true</code> if <code>(x, y)</code> lies in the interior or on the boundary of this
+	 *         <code>Envelope</code>.
 	 */
 	protected boolean covers(final double x, final double y, final double z) {
-		if (isNull()) {
-			return false;
-		}
+		if (isNull()) { return false; }
 		return covers(x, y) && z >= minz && z <= maxz;
 	}
 
@@ -442,10 +405,8 @@ public class Envelope3D extends Envelope {
 	 * Tests if the given point lies in or on the envelope.
 	 *
 	 * @param p
-	 *            the point which this <code>Envelope</code> is being checked
-	 *            for containing
-	 * @return <code>true</code> if the point lies in the interior or on the
-	 *         boundary of this <code>Envelope</code>.
+	 *            the point which this <code>Envelope</code> is being checked for containing
+	 * @return <code>true</code> if the point lies in the interior or on the boundary of this <code>Envelope</code>.
 	 */
 	@Override
 	public boolean covers(final Coordinate p) {
@@ -453,8 +414,8 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Tests if the <code>Envelope other</code> lies wholely inside this
-	 * <code>Envelope</code> (inclusive of the boundary).
+	 * Tests if the <code>Envelope other</code> lies wholely inside this <code>Envelope</code> (inclusive of the
+	 * boundary).
 	 *
 	 * @param other
 	 *            the <code>Envelope</code> to check
@@ -462,25 +423,18 @@ public class Envelope3D extends Envelope {
 	 */
 	@Override
 	public boolean covers(final Envelope other) {
-		if (isNull() || other.isNull()) {
-			return false;
-		}
-		if (!super.covers(other)) {
-			return false;
-		}
+		if (isNull() || other.isNull()) { return false; }
+		if (!super.covers(other)) { return false; }
 		return getMinZOf(other) >= minz && getMaxZOf(other) <= maxz;
 	}
 
 	/**
-	 * Computes the distance between this and another <code>Envelope</code>. The
-	 * distance between overlapping Envelopes is 0. Otherwise, the distance is
-	 * the Euclidean distance between the closest points.
+	 * Computes the distance between this and another <code>Envelope</code>. The distance between overlapping Envelopes
+	 * is 0. Otherwise, the distance is the Euclidean distance between the closest points.
 	 */
 	@Override
 	public double distance(final Envelope env) {
-		if (intersects(env)) {
-			return 0;
-		}
+		if (intersects(env)) { return 0; }
 
 		double dx = 0.0;
 		if (getMaxX() < env.getMinX()) {
@@ -507,15 +461,9 @@ public class Envelope3D extends Envelope {
 
 		// if either is zero, the envelopes overlap either vertically or
 		// horizontally
-		if (dx == 0.0 && dz == 0.0) {
-			return dy;
-		}
-		if (dy == 0.0 && dz == 0.0) {
-			return dx;
-		}
-		if (dx == 0.0 && dy == 0.0) {
-			return dz;
-		}
+		if (dx == 0.0 && dz == 0.0) { return dy; }
+		if (dy == 0.0 && dz == 0.0) { return dx; }
+		if (dx == 0.0 && dy == 0.0) { return dz; }
 		return FastMath.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
@@ -587,15 +535,12 @@ public class Envelope3D extends Envelope {
 	 *
 	 * @param env
 	 *            the envelope to intersect with
-	 * @return a new Envelope representing the intersection of the envelopes
-	 *         (this will be the null envelope if either argument is null, or
-	 *         they do not intersect
+	 * @return a new Envelope representing the intersection of the envelopes (this will be the null envelope if either
+	 *         argument is null, or they do not intersect
 	 */
 	@Override
 	public Envelope3D intersection(final Envelope env) {
-		if (isNull() || env.isNull() || !intersects(env)) {
-			return new Envelope3D();
-		}
+		if (isNull() || env.isNull() || !intersects(env)) { return new Envelope3D(); }
 		final Envelope xyInt = super.intersection(env);
 		final double otherMinZ = getMinZOf(env);
 		final double intMinZ = minz > otherMinZ ? minz : otherMinZ;
@@ -605,9 +550,8 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Computes the list of envelopes (from 2 to 4, possibily 0 if env covers
-	 * this) resulting from the extrusion of env from this. Only in 2D for the
-	 * moment. Does not return null envelopes.
+	 * Computes the list of envelopes (from 2 to 4, possibily 0 if env covers this) resulting from the extrusion of env
+	 * from this. Only in 2D for the moment. Does not return null envelopes.
 	 *
 	 */
 	public List<Envelope> extrusion(final Envelope env) {
@@ -636,18 +580,15 @@ public class Envelope3D extends Envelope {
 	}
 
 	/**
-	 * Enlarges this <code>Envelope</code> so that it contains the
-	 * <code>other</code> Envelope. Has no effect if <code>other</code> is
-	 * wholly on or within the envelope.
+	 * Enlarges this <code>Envelope</code> so that it contains the <code>other</code> Envelope. Has no effect if
+	 * <code>other</code> is wholly on or within the envelope.
 	 *
 	 * @param other
 	 *            the <code>Envelope</code> to expand to include
 	 */
 	@Override
 	public void expandToInclude(final Envelope other) {
-		if (other.isNull()) {
-			return;
-		}
+		if (other.isNull()) { return; }
 		final double otherMinZ = getMinZOf(other);
 		final double otherMaxZ = getMaxZOf(other);
 		if (isNull()) {
@@ -670,9 +611,7 @@ public class Envelope3D extends Envelope {
 	 * @return
 	 */
 	private double getMaxZOf(final Envelope other) {
-		if (other instanceof Envelope3D) {
-			return ((Envelope3D) other).maxz;
-		}
+		if (other instanceof Envelope3D) { return ((Envelope3D) other).maxz; }
 		return 0d;
 	}
 
@@ -681,15 +620,13 @@ public class Envelope3D extends Envelope {
 	 * @return
 	 */
 	private double getMinZOf(final Envelope other) {
-		if (other instanceof Envelope3D) {
-			return ((Envelope3D) other).minz;
-		}
+		if (other instanceof Envelope3D) { return ((Envelope3D) other).minz; }
 		return 0d;
 	}
 
 	/**
-	 * Returns a hash value for this envelope. This value need not remain
-	 * consistent between different implementations of the same class.
+	 * Returns a hash value for this envelope. This value need not remain consistent between different implementations
+	 * of the same class.
 	 */
 	@Override
 	public int hashCode() {
@@ -706,17 +643,11 @@ public class Envelope3D extends Envelope {
 	 */
 	@Override
 	public boolean equals(final Object other) {
-		if (!(other instanceof Envelope3D)) {
-			return false;
-		}
+		if (!(other instanceof Envelope3D)) { return false; }
 		final Envelope3D otherEnvelope = (Envelope3D) other;
-		if (isNull()) {
-			return otherEnvelope.isNull();
-		}
+		if (isNull()) { return otherEnvelope.isNull(); }
 		if (super.equals(other) && Comparison.equal(minz, otherEnvelope.getMinZ())
-				&& Comparison.equal(maxz, otherEnvelope.getMaxZ())) {
-			return true;
-		}
+				&& Comparison.equal(maxz, otherEnvelope.getMaxZ())) { return true; }
 		return false;
 	}
 
@@ -725,19 +656,8 @@ public class Envelope3D extends Envelope {
 	}
 
 	public Geometry toGeometry() {
-		if (isFlat()) {
-			return GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre()).getInnerGeometry();
-		}
+		if (isFlat()) { return GamaGeometryType.buildRectangle(getWidth(), getHeight(), centre()).getInnerGeometry(); }
 		return GamaGeometryType.buildBox(getWidth(), getHeight(), getDepth(), centre()).getInnerGeometry();
-
-		// return GeometryUtils.FACTORY.createPolygon(
-		// GeometryUtils.FACTORY.createLinearRing(new Coordinate[] { new
-		// Coordinate(getMinX(), getMinY()),
-		// new Coordinate(getMaxX(), getMinY()), new Coordinate(getMaxX(),
-		// getMaxY()),
-		// new Coordinate(getMinX(), getMaxY()), new Coordinate(getMinX(),
-		// getMinY()) }), null);
-
 	}
 
 	@Override
@@ -745,5 +665,17 @@ public class Envelope3D extends Envelope {
 		return "Env[" + getMinX() + " : " + getMaxX() + ", " + getMinY() + " : " + getMaxY() + ",  " + minz + " : "
 				+ maxz + "]";
 	}
+
+	// a: minx, miny, minz / b : minx, maxy / c: maxx maxy maxz
+	//
+	// public final GamaPoint normal(final int direction) {
+	// // Avoids the creation of GamaPoints by not calling intermediate operations like minus() or times()
+	// final double x = ((maxy - miny) * (c.z - a.z) - (b.z - a.z) * (c.y - a.y)) * direction;
+	// final double y = ((b.z - a.z) * (c.x - a.x) - (b.x - a.x) * (c.z - a.z)) * direction;
+	// final double z = ((b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x)) * direction;
+	// final double r1 = Math.sqrt(x * x + y * y + z * z);
+	// if (r1 == 0d) { return new GamaPoint(0, 0, 0); }
+	// return new GamaPoint(x / r1, y / r1, z / r1);
+	// }
 
 }

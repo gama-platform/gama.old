@@ -76,7 +76,7 @@ public class GamaSVGFile extends GamaGeometryFile {
 			final URI uri = svg.loadSVG(in, getPath(scope));
 			final SVGDiagram diagram = svg.getDiagram(uri);
 			final Shape shape = diagram.getRoot().getShape();
-			final Geometry geom = ShapeReader.read(shape, 1.0, GeometryUtils.FACTORY); // flatness
+			final Geometry geom = ShapeReader.read(shape, 1.0, GeometryUtils.GEOMETRY_FACTORY); // flatness
 																						// =
 																						// ??
 			// We center and scale the shape in the same operation

@@ -30,6 +30,7 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.awt.TextRenderer;
+import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.common.GamaPreferences;
@@ -113,6 +114,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	}
 
 	public final static int Y_FLAG = -1;
+	public final static boolean DRAW_NORM = false;
 
 	private Color currentColor;
 	protected DrawingEntityGenerator drawingEntityGenerator;
@@ -128,6 +130,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
 	public boolean colorPicking = false;
+	protected GLUT glut;
 	protected GLU glu;
 	protected GL2 gl;
 	// relative to rotation helper
@@ -202,6 +205,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		drawingEntityGenerator = new DrawingEntityGenerator(this);
 
 		glu = new GLU();
+		glut = new GLUT();
 		currentZRotation = data.getZRotation();
 		gl = drawable.getContext().getGL().getGL2();
 		final Color background = data.getBackgroundColor();
@@ -251,10 +255,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 		});
 
-	}
-
-	public final boolean getDrawNormal() {
-		return data.isDraw_norm();
 	}
 
 	public final double getMaxEnvDim() {
@@ -366,6 +366,10 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public final GLU getGlu() {
 		return glu;
+	}
+
+	public final GLUT getGlut() {
+		return glut;
 	}
 
 	public final GamaPoint getIntWorldPointFromWindowPoint(final Point windowPoint) {

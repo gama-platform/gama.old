@@ -9,21 +9,22 @@
  **********************************************************************************************/
 package ummisco.gama.opengl;
 
-import java.awt.Color;
+import static msi.gama.common.util.GeometryUtils.getTypeOf;
+
 import java.io.FileNotFoundException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.jogamp.opengl.GL2;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.geom.GeometryFilter;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.file.GamaGeometryFile;
 import ummisco.gama.opengl.files.GamaObjFile;
-import ummisco.gama.opengl.jts.JTSDrawer;
+import ummisco.gama.opengl.scene.GeometryDrawer;
 
 public class GeometryCache {
 
@@ -31,8 +32,6 @@ public class GeometryCache {
 
 	public GeometryCache() {
 		cache = new ConcurrentHashMap<>(100, 0.75f, 4);
-
-		// drawer = new GeometryDrawer(renderer);
 	}
 
 	public Integer get(final GL2 gl, final JOGLRenderer renderer, final GamaGeometryFile file) {
@@ -63,8 +62,7 @@ public class GeometryCache {
 			final IDisplaySurface surface = renderer.getSurface();
 			final IShape shape = file.getGeometry(surface.getScope());
 			if (shape == null) { return index; }
-			final Geometry g = shape.getInnerGeometry();
-			drawSimpleGeometry(gl, renderer, g);
+			drawSimpleGeometry(gl, renderer, shape.getInnerGeometry());
 		}
 		// We then pop the matrix
 		gl.glPopMatrix();
@@ -74,27 +72,12 @@ public class GeometryCache {
 		return index;
 	}
 
-	private final Color defaultColor = new Color(0, 0, 0);
-
-	void drawSimpleGeometry(final GL2 gl, final JOGLRenderer renderer, final Geometry g) {
-		if (g.getNumGeometries() > 1) {
-			for (int i = 0; i < g.getNumGeometries(); i++) {
-				final Geometry jts = g.getGeometryN(i);
-				drawSimpleGeometry(gl, renderer, jts);
-			}
-		} else {
-			final JTSDrawer drawer = renderer.getJTSDrawer();
-			if (g instanceof Polygon) {
-				drawer.drawTesselatedPolygon(gl, (Polygon) g, 1, defaultColor, 1);
-			} else if (g instanceof LineString) {
-				drawer.drawLineString(gl, (LineString) g, JOGLRenderer.getLineWidth(), defaultColor, 1);
-			}
-		}
+	void drawSimpleGeometry(final GL2 gl, final JOGLRenderer renderer, final Geometry geom) {
+		renderer.setCurrentColor(gl, GamaPreferences.CORE_COLOR.getValue());
+		final GeometryDrawer drawer = renderer.getGeometryDrawer();
+		geom.apply((GeometryFilter) (g) -> drawer.drawGeometry(gl, g, false, true, null, 0, null, getTypeOf(geom)));
 	}
 
-	/**
-	 * @param gl
-	 */
 	public void dispose(final GL2 gl) {
 		for (final Integer i : cache.values()) {
 			gl.glDeleteLists(i, 1);

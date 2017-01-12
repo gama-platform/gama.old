@@ -737,6 +737,12 @@ public class GamaPreferences {
 	public static final Entry<Boolean> DISPLAY_SHARED_CONTEXT = create("pref_display_shared_cache",
 			"Enable OpenGL background loading of textures (can cause problems with some graphics cards on Linux and Windows)",
 			false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
+	public static final Entry<Boolean> ONLY_VISIBLE_FACES =
+			create("pref_display_visible_faces", "Draw only the faces of objects considered as 'external' by OpenGL",
+					false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);
+	public static final Entry<Integer> DISPLAY_SLICE_NUMBER = create("pref_display_slice_number",
+			"Number of slices to use for circular geometries in OpenGL (the smaller the faster)", 16, IType.INT)
+					.in(EXPERIMENTAL).group(DISPLAY);
 	public static final Entry<Boolean> DISPLAY_FAST_SNAPSHOT = create("pref_display_fast_snapshot",
 			"Enable fast snapshots of displays (uncomplete when the display is obscured by other views but much faster than normal snapshots)",
 			false, IType.BOOL).in(EXPERIMENTAL).group(DISPLAY);

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TextDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TextDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,21 +13,20 @@ import java.util.List;
 
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class TextDrawingAttributes extends DrawingAttributes {
 
 	public final GamaFont font;
 	public final boolean perspective;
 
-	public TextDrawingAttributes(final ILocation size, final GamaPair<Double, GamaPoint> rotation,
-			final ILocation location, final GamaColor color, final GamaFont font, final Boolean perspective) {
-		super(size, rotation, location, color);
+	public TextDrawingAttributes(final GamaPoint size, final GamaPair<Double, GamaPoint> rotation,
+			final GamaPoint location, final GamaColor color, final GamaFont font, final Boolean perspective) {
+		super(size, rotation, location, color, null);
 		this.font = font;
 		this.perspective = perspective == null ? true : perspective.booleanValue();
 	}
@@ -71,16 +69,6 @@ public class TextDrawingAttributes extends DrawingAttributes {
 	@Override
 	public GamaColor getBorder() {
 		return null;
-	}
-
-	/**
-	 * Method getDepth()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getDepth()
-	 */
-	@Override
-	public double getDepth() {
-		return 0;
 	}
 
 	/**

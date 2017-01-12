@@ -27,10 +27,10 @@ import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.awt.TextRenderer;
-import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -44,13 +44,11 @@ import msi.gaml.statements.draw.FileDrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.statements.draw.TextDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
-import ummisco.gama.opengl.jts.JTSDrawer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.FieldDrawer;
 import ummisco.gama.opengl.scene.FieldObject;
 import ummisco.gama.opengl.scene.GeometryDrawer;
 import ummisco.gama.opengl.scene.GeometryObject;
-import ummisco.gama.opengl.scene.ImageDrawer;
 import ummisco.gama.opengl.scene.ImageObject;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.scene.ObjectDrawer;
@@ -73,15 +71,11 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class JOGLRenderer extends Abstract3DRenderer {
 
 	private final PickingState pickingState = new PickingState();
-	private final GLUT glut = new GLUT();
 	private Envelope3D ROIEnvelope = null;
 	private volatile boolean inited;
 
-	private final JTSDrawer jtsDrawer;
-
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
 		super(d);
-		jtsDrawer = new JTSDrawer(this);
 	}
 
 	@Override
@@ -96,6 +90,10 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (camera.isROISticky())
 			return;
 		ROIEnvelope = null;
+	}
+
+	public GL2 getGL() {
+		return gl;
 	}
 
 	@Override
@@ -114,6 +112,11 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		// the depth buffer & enable the depth testing
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL.GL_DEPTH_TEST); // enables depth testing
+		if (GamaPreferences.ONLY_VISIBLE_FACES.getValue()) {
+			gl.glEnable(GL.GL_CULL_FACE);
+			gl.glCullFace(GL.GL_BACK);
+		}
+		gl.glFrontFace(GL.GL_CW);
 		gl.glDepthFunc(GL.GL_LEQUAL); // the type of depth test to do
 		GLUtilLight.InitializeLighting(gl, data, false);
 
@@ -121,12 +124,9 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 
 		// PolygonMode (Solid or lines)
-		if (data.isPolygonMode()) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-		} else {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-		}
-
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, getPolygonMode());
+		// Enable texture 2D
+		gl.glEnable(GL.GL_TEXTURE_2D);
 		// Blending & alpha control
 		gl.glEnable(GL.GL_BLEND);
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
@@ -134,6 +134,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glEnable(GL2.GL_ALPHA_TEST);
 		gl.glAlphaFunc(GL2.GL_GREATER, 0.01f);
 		gl.glDisable(GL.GL_LINE_SMOOTH);
+
 		// We mark the renderer as inited
 		inited = true;
 
@@ -190,12 +191,8 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 		// Line width ? Disable line smoothing seems to improve rendering time
 		// smooth should be set to false always, as it creates jagged lines
-		gl.glLineWidth(getLineWidth());
-		if (!data.isTriangulation()) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_FILL);
-		} else {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL2GL3.GL_LINE);
-		}
+		// gl.glLineWidth(getLineWidth());
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, getPolygonMode());
 
 		this.rotateModel(gl);
 		if (data.isShowfps())
@@ -217,6 +214,10 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 		}
 
+	}
+
+	public int getPolygonMode() {
+		return !data.isTriangulation() ? GL2GL3.GL_FILL : GL2GL3.GL_LINE;
 	}
 
 	@Override
@@ -408,7 +409,10 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		// this.setCurrentPickedObject(null);
 		this.currentScene = null;
 		drawable.removeGLEventListener(this);
-		jtsDrawer.dispose();
+		for (final ObjectDrawer o : drawers.values()) {
+			o.dispose();
+		}
+		drawers.clear();
 	}
 
 	@Override
@@ -433,7 +437,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	public void drawROI(final GL2 gl) {
-		jtsDrawer.drawROIHelper(gl, ROIEnvelope);
+		getGeometryDrawer().drawROIHelper(gl, ROIEnvelope);
 	}
 
 	@Override
@@ -469,7 +473,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 		// IShape.Type type = shape.getGeometricalType();
 		if (highlight) {
-			attributes.color = GamaColor.getInt(data.getHighlightColor().getRGB());
+			attributes.setColor(GamaColor.getInt(data.getHighlightColor().getRGB()));
 		}
 		sceneBuffer.getSceneToUpdate().addGeometry(shape.getInnerGeometry(), attributes);
 
@@ -508,7 +512,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
 				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
 				+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
-		jtsDrawer.drawRotationHelper(gl, rotationHelperPosition, distance);
+		getGeometryDrawer().drawRotationHelper(gl, rotationHelperPosition, distance);
 	}
 
 	/**
@@ -522,13 +526,14 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
 		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
-		if (attributes.size == null) {
-			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
+		if (attributes.getSize() == null) {
+			attributes.setSize(new GamaPoint(data.getEnvWidth(), data.getEnvHeight()));
+			attributes.setLocation(attributes.getSize().dividedBy(2));
 		}
 		sceneBuffer.getSceneToUpdate().addImage(img, attributes);
 
-		if (attributes.border != null) {
-			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.border);
+		if (attributes.getBorder() != null) {
+			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.getBorder());
 		}
 		return rect;
 	}
@@ -580,13 +585,13 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 		if (string.contains("\n")) {
 			for (final String s : string.split("\n")) {
-				attributes.location.setY(attributes.location.getY()
+				attributes.getLocation().setY(attributes.getLocation().getY()
 						+ attributes.font.getSize() * this.getyRatioBetweenPixelsAndModelUnits());
 				drawString(s, attributes);
 			}
 			return null;
 		}
-		attributes.location.setY(-attributes.location.getY());
+		attributes.getLocation().setY(-attributes.getLocation().getY());
 		sceneBuffer.getSceneToUpdate().addString(string, attributes);
 		return null;
 	}
@@ -715,14 +720,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		return env.contains(p);
 	}
 
-	public JTSDrawer getJTSDrawer() {
-		return jtsDrawer;
-	}
-
-	public GLUT getGlut() {
-		return glut;
-	}
-
 	@Override
 	public boolean cannotDraw() {
 		return sceneBuffer.getSceneToUpdate() != null && sceneBuffer.getSceneToUpdate().cannotAdd();
@@ -732,15 +729,24 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	public ObjectDrawer getDrawerFor(final Class<? extends AbstractObject> class1) {
+		return getDrawers().get(class1);
+	}
+
+	public GeometryDrawer getGeometryDrawer() {
+		return (GeometryDrawer) getDrawers().get(GeometryObject.class);
+	}
+
+	private Map<Class, ObjectDrawer> getDrawers() {
 		if (drawers == null) {
 			drawers = new HashMap();
-			drawers.put(GeometryObject.class, new GeometryDrawer(this));
-			drawers.put(ImageObject.class, new ImageDrawer(this));
+			final GeometryDrawer gd = new GeometryDrawer(this);
+			drawers.put(GeometryObject.class, gd);
+			drawers.put(ImageObject.class, gd);
 			drawers.put(FieldObject.class, new FieldDrawer(this));
 			drawers.put(StringObject.class, new StringDrawer(this));
 			drawers.put(ResourceObject.class, new ResourceDrawer(this));
 		}
-		return drawers.get(class1);
+		return drawers;
 	}
 
 }

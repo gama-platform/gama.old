@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'DrawingData.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'DrawingData.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -14,7 +13,6 @@ import java.awt.Color;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaFont;
@@ -24,9 +22,14 @@ import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.types.GamaBoolType;
+import msi.gaml.types.GamaColorType;
+import msi.gaml.types.GamaFloatType;
 import msi.gaml.types.GamaFontType;
 import msi.gaml.types.GamaListType;
 import msi.gaml.types.GamaMaterialType;
+import msi.gaml.types.GamaPairType;
+import msi.gaml.types.GamaPointType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
@@ -41,288 +44,154 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class DrawingData {
 
+	@FunctionalInterface
+	interface Evaluator<V> {
+		V value(IScope scope);
+	}
+
+	abstract class Attribute<T extends IType, V> implements Evaluator<V> {
+		V value;
+
+		void refresh(final IScope scope) {
+			value = value(scope);
+		}
+	}
+
+	class ConstantAttribute<T extends IType, V> extends Attribute<T, V> {
+
+		ConstantAttribute(final V value) {
+			this.value = value;
+		}
+
+		@Override
+		void refresh(final IScope scope) {}
+
+		@Override
+		public V value(final IScope scope) {
+			return value;
+		}
+
+	}
+
+	class ExpressionAttribute<T extends IType, V> extends Attribute<T, V> {
+		final Evaluator<V> evaluator;
+
+		public ExpressionAttribute(final Evaluator<V> ev) {
+			evaluator = ev;
+		}
+
+		@Override
+		public V value(final IScope scope) {
+			return evaluator.value(scope);
+		}
+	}
+
+	<T extends IType<V>, V> Attribute create(final IExpression exp, final T type, final V def) {
+		return create(exp, (scope) -> type.cast(scope, exp.value(scope), null, false), type, def);
+	}
+
+	<T extends IType<V>, V> Attribute create(final IExpression exp, final Evaluator ev, final T type, final V def) {
+		if (exp != null
+				&& exp.isConst()) { return new ConstantAttribute(type.cast(null, ev.value(null), null, false)); }
+		if (exp == null) { return new ConstantAttribute(def); }
+		return new ExpressionAttribute(ev);
+	}
+
 	static final GamaPoint DEFAULT_AXIS = new GamaPoint(0, 0, 1);
 	static final GamaColor DEFAULT_BORDER_COLOR = new GamaColor(Color.BLACK);
 
-	final IExpression sizeExp;
-	final IExpression depthExp;
-	final IExpression rotationExp;
-	final IExpression locationExp;
-	final IExpression emptyExp;
-	final IExpression borderExp;
-	final IExpression colorExp;
-	final IExpression fontExp;
-	final IExpression textureExp;
-	final IExpression materialExp;
-	final IExpression perspectiveExp;
+	final Attribute<GamaPointType, GamaPoint> size;
+	final Attribute<GamaFloatType, Double> depth;
+	final Attribute<GamaPairType, GamaPair<Double, GamaPoint>> rotation;
+	final Attribute<GamaPointType, GamaPoint> location;
+	final Attribute<GamaBoolType, Boolean> empty;
+	final Attribute<GamaColorType, GamaColor> border;
+	final Attribute<GamaListType, IList<GamaColor>> color;
+	final Attribute<GamaFontType, GamaFont> font;
+	final Attribute<GamaListType, IList> texture;
+	final Attribute<GamaMaterialType, GamaMaterial> material;
+	final Attribute<GamaBoolType, Boolean> perspective;
+	final Attribute<GamaFloatType, Double> lineWidth;
 
-	ILocation constantSIze;
-	Double constantDepth;
-	GamaPair<Double, GamaPoint> constantRotation;
-	ILocation constantLocation;
-	Boolean constantEmpty;
-	GamaColor constantBorder;
-	// GamaColor constantColor;
-	GamaFont constantFont;
-	IList constantTextures;
-	GamaMaterial constantMaterial;
-	Boolean constantperspective;
-	Boolean hasBorder;
-	Boolean hasColor;
-
-	ILocation currentSize = null;
-	Double currentDepth = null;
-	GamaPair<Double, GamaPoint> currentRotation = null;
-	ILocation currentLocation = null;
-	Boolean currentEmpty;
-	GamaColor currentBorder = null;
-	GamaColor currentColor;
-	IList<GamaColor> currentColors;
-	GamaFont currentFont;
-	IList currentTextures = null;
-	GamaMaterial currentMaterial = null;
-	Boolean currentperspective;
+	final Attribute[] ATTRIBUTES;
 
 	public DrawingData(final IExpression sizeExp, final IExpression depthExp, final IExpression rotationExp,
 			final IExpression locationExp, final IExpression emptyExp, final IExpression borderExp,
 			final IExpression colorExp, final IExpression fontExp, final IExpression textureExp,
-			final IExpression materialExp, final IExpression perspectiveExp) {
-		this.sizeExp = sizeExp;
-		this.depthExp = depthExp;
-		this.rotationExp = rotationExp;
-		this.locationExp = locationExp;
-		this.emptyExp = emptyExp;
-		this.borderExp = borderExp;
-		this.colorExp = colorExp;
-		this.fontExp = fontExp;
-		this.textureExp = textureExp;
-		this.materialExp = materialExp;
-		this.perspectiveExp = perspectiveExp;
-		initializeConstants();
-	}
-
-	private void initializeConstants() {
-		/* perspective */
-		if (perspectiveExp != null && perspectiveExp.isConst()) {
-			constantperspective = Cast.asBool(null, perspectiveExp.value(null));
-		} else if (perspectiveExp == null) {
-			constantperspective = true;
-		}
-		/* SIZE */
-		if (sizeExp != null && sizeExp.isConst()) {
-			constantSIze = Cast.asPoint(null, sizeExp.value(null));
-		}
-		/* DEPTH */
-		if (depthExp != null && depthExp.isConst()) {
-			constantDepth = Cast.asFloat(null, depthExp.value(null));
-		}
-		/* ROTATION */
-		if (rotationExp != null && rotationExp.isConst()) {
+			final IExpression materialExp, final IExpression perspectiveExp, final IExpression lineWidthExp) {
+		this.size = create(sizeExp, (scope) -> {
+			if (sizeExp.getType().isNumber()) {
+				final double val = Cast.asFloat(scope, sizeExp.value(scope));
+				// We do not consider the z ordinate -- see Issue #1539
+				return new GamaPoint(val, val, 0);
+			} else {
+				return (GamaPoint) sizeExp.value(scope);
+			}
+		}, Types.POINT, null);
+		this.depth = create(depthExp, Types.FLOAT, null);
+		this.rotation = create(rotationExp, (scope) -> {
 			if (rotationExp.getType().getType() == Types.PAIR) {
-				constantRotation = Cast.asPair(null, rotationExp.value(null), true);
-				constantRotation.key = Cast.asFloat(null, constantRotation.key);
+				final GamaPair currentRotation = Cast.asPair(scope, rotationExp.value(scope), true);
+				currentRotation.key = Cast.asFloat(scope, currentRotation.key);
+				return currentRotation;
 			} else {
-				constantRotation = new GamaPair(rotationExp.value(null), DEFAULT_AXIS, Types.FLOAT, Types.POINT);
-				constantRotation.key = Cast.asFloat(null, constantRotation.key);
+				final GamaPair currentRotation =
+						new GamaPair(scope, rotationExp.value(scope), DEFAULT_AXIS, Types.FLOAT, Types.POINT);
+				currentRotation.key = Cast.asFloat(scope, currentRotation.key);
+				return currentRotation;
 			}
-		}
-		/* LOCATION */
-		if (locationExp != null && locationExp.isConst()) {
-			constantLocation = Cast.asPoint(null, locationExp.value(null));
-		}
-		/* EMPTY */
-		if (emptyExp != null && emptyExp.isConst()) {
-			constantEmpty = Cast.asBool(null, emptyExp.value(null));
-		} else if (emptyExp == null) {
-			constantEmpty = false;
-		}
-
-		/* BORDER */
-		if (borderExp != null && borderExp.isConst()) {
+		}, Types.PAIR, null);
+		this.location = create(locationExp, Types.POINT, null);
+		this.empty = create(emptyExp, Types.BOOL, false);
+		this.border = create(borderExp, (scope) -> {
 			if (borderExp.getType() == Types.BOOL) {
-				hasBorder = Cast.asBool(null, borderExp.value(null));
-				if (hasBorder) {
-					constantBorder = DEFAULT_BORDER_COLOR;
-				}
+				final boolean hasBorder = Cast.asBool(scope, borderExp.value(scope));
+				if (hasBorder) { return DEFAULT_BORDER_COLOR; }
+				return null;
 			} else {
-				hasBorder = true;
-				constantBorder = Cast.asColor(null, borderExp.value(null));
+				return borderExp.value(scope);
 			}
-		} else if (borderExp == null) {
-			hasBorder = false;
-			// AD commented in order to allow for the color to be chosen when
-			// computing the border color
-			// constantBorder = DEFAULT_BORDER_COLOR;
-		} else {
-			hasBorder = true;
-		}
+		}, Types.COLOR, null);
+		this.color = create(colorExp, (scope) -> {
+			switch (colorExp.getType().id()) {
+				case IType.COLOR:
+					final GamaColor currentColor = (GamaColor) colorExp.value(scope);
+					return GamaListFactory.createWithoutCasting(Types.COLOR, currentColor);
+				case IType.LIST:
+					return (IList) colorExp.value(scope);
+				default:
+					return GamaListFactory.createWithoutCasting(Types.COLOR,
+							new GamaColor(GamaPreferences.CORE_COLOR.getValue()));
+			}
 
-		/* COLOR */
-		hasColor = colorExp != null;
-		// if (colorExp != null && colorExp.isConst()) {
-		// hasColor = true;
-		// // constantColor = Cast.asColor(null, colorExp.value(null));
-		// } else if (colorExp == null) {
-		// hasColor = false;
-		// } else {
-		// hasColor = true;
-		// }
-
-		/* FONT */
-		if (fontExp != null && fontExp.isConst()) {
-			constantFont = GamaFontType.staticCast(null, fontExp.value(null), true);
-		}
-
-		/* TEXTURES */
-		if (textureExp != null && textureExp.isConst()) {
+		}, Types.LIST, GamaListFactory.createWithoutCasting(Types.COLOR,
+				new GamaColor(GamaPreferences.CORE_COLOR.getValue())));
+		this.font = create(fontExp, Types.FONT, GamaFontType.DEFAULT_DISPLAY_FONT.getValue());
+		this.texture = create(textureExp, (scope) -> {
 			if (textureExp.getType().getType() == Types.LIST) {
-				constantTextures = Cast.asList(null, textureExp.value(null));
+				return GamaListType.staticCast(scope, textureExp.value(scope), Types.STRING, false);
 			} else {
-				constantTextures = GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(null));
+				return GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(scope));
 			}
-		}
-
-		/* MATERIAL */
-		if (materialExp != null && materialExp.isConst()) {
-			constantMaterial = GamaMaterialType.staticCast(null, materialExp.value(null), true);
-		}
+		}, Types.LIST, null);
+		this.material = create(materialExp, Types.MATERIAL, null);
+		this.perspective = create(perspectiveExp, Types.BOOL, true);
+		this.lineWidth = create(lineWidthExp, Types.FLOAT, GamaPreferences.CORE_LINE_WIDTH.getValue());
+		ATTRIBUTES = new Attribute[] { size, location, depth, color, rotation, empty, border, font, texture, material,
+				perspective, lineWidth };
 	}
 
 	public void computeAttributes(final IScope scope) {
+		for (final Attribute a : ATTRIBUTES) {
+			a.refresh(scope);
+		}
+		if (border.value == null && empty.value) {
+			border.value = color.value.get(0);
+		}
+	}
 
-		/* perspective */
-		if (constantperspective != null) {
-			currentperspective = constantperspective;
-		} else {
-			currentperspective = Cast.asBool(scope, perspectiveExp.value(scope));
-		}
-		/* SIZE */
-		if (constantSIze != null) {
-			currentSize = constantSIze;
-		} else {
-			if (sizeExp != null) {
-				if (sizeExp.getType().isNumber()) {
-					final double val = Cast.asFloat(scope, sizeExp.value(scope));
-					// We do not consider the z ordinate -- see Issue #1539
-					currentSize = new GamaPoint(val, val, 0);
-				} else {
-					currentSize = Cast.asPoint(scope, sizeExp.value(scope));
-				}
-			}
-		}
-		/* DEPTH */
-		if (constantDepth != null) {
-			currentDepth = constantDepth;
-		} else {
-			if (depthExp != null) {
-				currentDepth = Cast.asFloat(scope, depthExp.value(scope));
-			}
-		}
-
-		/* ROTATION */
-		if (constantRotation != null) {
-			currentRotation = constantRotation;
-		} else {
-			if (rotationExp != null) {
-				if (rotationExp.getType().getType() == Types.PAIR) {
-					currentRotation = Cast.asPair(scope, rotationExp.value(scope), true);
-					currentRotation.key = Cast.asFloat(scope, currentRotation.key);
-				} else {
-					currentRotation =
-							new GamaPair(scope, rotationExp.value(scope), DEFAULT_AXIS, Types.FLOAT, Types.POINT);
-					currentRotation.key = Cast.asFloat(scope, currentRotation.key);
-				}
-			}
-		}
-		/* LOCATION */
-		if (constantLocation != null) {
-			currentLocation = constantLocation;
-		} else {
-			if (locationExp != null) {
-				currentLocation = Cast.asPoint(scope, locationExp.value(scope));
-			}
-			// else {
-			// currentLocation = scope.getAgentScope().getLocation();
-			// }
-		}
-		/* EMPTY */
-		if (constantEmpty != null) {
-			currentEmpty = constantEmpty;
-		} else {
-			currentEmpty = Cast.asBool(scope, emptyExp.value(scope));
-		}
-
-		/* COLOR */
-		if (colorExp != null) {
-			switch (colorExp.getType().id()) {
-				case IType.COLOR:
-					currentColor = (GamaColor) colorExp.value(scope);
-					currentColors = GamaListFactory.createWithoutCasting(Types.COLOR, currentColor);
-					break;
-				case IType.LIST:
-					currentColors = (IList) colorExp.value(scope);
-					if (!currentColors.isEmpty()) {
-						currentColor = currentColors.get(0);
-					}
-					break;
-				default:
-					currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
-			}
-
-		} else {
-			currentColor = new GamaColor(GamaPreferences.CORE_COLOR.getValue());
-		}
-
-		// }
-
-		/* BORDER */
-		if (hasBorder || currentEmpty) {
-			if (constantBorder != null) {
-				currentBorder = constantBorder;
-			} else {
-				if (borderExp != null && borderExp.getType() != Types.BOOL) {
-					currentBorder = Cast.asColor(scope, borderExp.value(scope));
-				} else {
-					currentBorder = currentColor;
-				}
-			}
-		}
-
-		/* FONT */
-		if (constantFont != null) {
-			currentFont = constantFont;
-		} else {
-			if (fontExp != null) {
-				currentFont = GamaFontType.staticCast(scope, fontExp.value(scope), true);
-			} else {
-				currentFont = GamaFontType.DEFAULT_DISPLAY_FONT.getValue();
-			}
-		}
-
-		/* TEXTURES */
-		if (constantTextures != null) {
-			currentTextures = constantTextures;
-		} else {
-			if (textureExp != null) {
-				if (textureExp.getType().getType() == Types.LIST) {
-					currentTextures = GamaListType.staticCast(scope, textureExp.value(scope), Types.STRING, false);
-				} else {
-					currentTextures = GamaListFactory.createWithoutCasting(Types.NO_TYPE, textureExp.value(scope));
-				}
-			}
-		}
-
-		/* MATERIAL */
-		if (constantMaterial != null) {
-			currentMaterial = constantMaterial;
-		} else {
-			if (materialExp != null) {
-				currentMaterial = GamaMaterialType.staticCast(scope, materialExp.value(scope), true);
-			} else {
-				currentMaterial = null;
-			}
-		}
-
+	public GamaColor getCurrentColor() {
+		return color.value.get(0);
 	}
 
 }

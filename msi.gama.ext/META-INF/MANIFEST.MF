@@ -37,6 +37,7 @@ Export-Package: com.kitfox.svg;
  com.vividsolutions.jts.algorithm.distance;uses:="com.vividsolutions.jts.geom",
  com.vividsolutions.jts.awt;uses:="com.vividsolutions.jts.geom",
  com.vividsolutions.jts.geom;uses:="com.vividsolutions.jts.algorithm,com.vividsolutions.jts.geom.util",
+ com.vividsolutions.jts.geom.impl,
  com.vividsolutions.jts.geom.prep;uses:="com.vividsolutions.jts.algorithm.locate,com.vividsolutions.jts.noding,com.vividsolutions.jts.geom",
  com.vividsolutions.jts.geom.util;uses:="com.vividsolutions.jts.geom,com.vividsolutions.jts.util",
  com.vividsolutions.jts.index.quadtree;uses:="com.vividsolutions.jts.geom,com.vividsolutions.jts.index",
@@ -64,6 +65,7 @@ Export-Package: com.kitfox.svg;
  gnu.trove.impl,
  gnu.trove.impl.hash;uses:="gnu.trove.strategy,gnu.trove.procedure,gnu.trove.iterator",
  gnu.trove.iterator,
+ gnu.trove.list,
  gnu.trove.map,
  gnu.trove.map.hash;
   uses:="gnu.trove.function,

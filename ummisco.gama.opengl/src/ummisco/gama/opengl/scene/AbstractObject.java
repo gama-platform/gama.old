@@ -1,9 +1,8 @@
 
 /*********************************************************************************************
  *
- * 'AbstractObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -13,6 +12,7 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -36,6 +36,7 @@ public abstract class AbstractObject {
 	public final int pickingIndex = index++;
 	private boolean picked = false;
 	protected final Texture[] textures;
+	protected final double zFightingId;
 
 	protected boolean overlay = false;
 
@@ -54,15 +55,12 @@ public abstract class AbstractObject {
 		this.layer = layer;
 		this.alpha = layer == null ? 1 : layer.alpha;
 		this.textures = textures;
+		this.zFightingId = computeZFightingId();
 	}
 
 	public void dispose(final GL gl) {
-		if (textures == null) {
-			return;
-		}
-		for (int i = 0; i < textures.length; i++) {
-			textures[i] = null;
-		}
+		if (textures == null) { return; }
+		Arrays.fill(textures, null);
 	}
 
 	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer) {
@@ -74,9 +72,7 @@ public abstract class AbstractObject {
 	}
 
 	public Texture[] getTextures(final GL gl, final Abstract3DRenderer renderer) {
-		if (textures == null) {
-			return null;
-		}
+		if (textures == null) { return null; }
 		final Texture[] result = new Texture[textures.length];
 		for (int i = 0; i < textures.length; i++) {
 			result[i] = getTexture(gl, renderer, i);
@@ -84,44 +80,30 @@ public abstract class AbstractObject {
 		return result;
 	}
 
+	public Texture getAlternateTexture(final GL gl, final Abstract3DRenderer renderer) {
+		return getTexture(gl, renderer, 1);
+	}
+
+	public Texture getPrimaryTexture(final GL gl, final Abstract3DRenderer renderer) {
+		return getTexture(gl, renderer, 0);
+	}
+
 	public int getNumberOfTexture() {
-		if (textures == null) {
-			return 0;
-		}
+		if (textures == null) { return 0; }
 		return textures.length;
 	}
 
 	public Texture getTexture(final GL gl, final Abstract3DRenderer renderer, final int order) {
-		if (textures == null) {
-			return null;
-		}
-		if (order < 0 || order > textures.length - 1) {
-			return null;
-		}
+		if (textures == null) { return null; }
+		if (order < 0 || order > textures.length - 1) { return null; }
 		if (textures[order] == null) {
 			textures[order] = computeTexture(gl, renderer, order);
 		}
 		return textures[order];
 	}
 
-	public int[] getTextureIDs(final GL gl, final Abstract3DRenderer renderer) {
-		if (textures == null) {
-			return null;
-		}
-		final int[] result = new int[textures.length];
-		for (int order = 0; order < textures.length; order++) {
-			if (textures[order] == null) {
-				textures[order] = computeTexture(gl, renderer, order);
-			}
-			result[order] = textures[order].getTextureObject();
-		}
-		return result;
-	}
-
 	public String[] getTexturePaths(final IScope scope) {
-		if (attributes.getTextures() == null) {
-			return null;
-		}
+		if (attributes.getTextures() == null) { return null; }
 		final int numberOfTextures = attributes.getTextures().size();
 		final String[] result = new String[numberOfTextures];
 		for (int i = 0; i < numberOfTextures; i++) {
@@ -137,9 +119,8 @@ public abstract class AbstractObject {
 		final Object obj = attributes.getTextures().get(order);
 		if (obj instanceof BufferedImage) {
 			return renderer.getCurrentScene().getTexture(gl, (BufferedImage) obj);
-		} else if (obj instanceof GamaImageFile) {
-			return renderer.getCurrentScene().getTexture(gl, (GamaImageFile) obj);
-		}
+		} else if (obj instanceof GamaImageFile) { return renderer.getCurrentScene().getTexture(gl,
+				(GamaImageFile) obj); }
 		return null;
 	}
 
@@ -151,10 +132,9 @@ public abstract class AbstractObject {
 		return textures != null && textures.length > 0;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean isPicking) {
 		final Abstract3DRenderer renderer = drawer.renderer;
-
 		if (isPicking && layer.isPickable())
 			gl.glLoadName(pickingIndex);
 		drawer.draw(gl, this);
@@ -162,8 +142,6 @@ public abstract class AbstractObject {
 		if (picked)
 			if (!renderer.getPickingState().isMenuOn()) {
 				renderer.getPickingState().setMenuOn(true);
-				// System.out.println("Object " + pickingIndex + " showing
-				// menu");
 				renderer.getSurface().selectAgent(attributes);
 			}
 	}
@@ -173,17 +151,18 @@ public abstract class AbstractObject {
 	}
 
 	public Color getColor() {
-		if (picked) {
-			return pickedColor;
-		}
-		return attributes.color;
+		if (picked) { return pickedColor; }
+		return attributes.getColor();
 	}
 
-	public double getZ_fighting_id() {
+	public double computeZFightingId() {
 		final AgentIdentifier id = attributes.getAgentIdentifier();
 		final double offset = id == null ? 0 : 1 / (double) (id.getIndex() + 10);
-		// final double offset = 0;
 		return (layer == null ? 0 : layer.getOrder()) + offset;
+	}
+
+	public double getZFightingId() {
+		return zFightingId;
 	}
 
 	public double getLayerZ() {
@@ -199,6 +178,9 @@ public abstract class AbstractObject {
 	}
 
 	public void preload(final GL2 gl, final Abstract3DRenderer renderer) {
+		// Make sure textures are loaded
+		getPrimaryTexture(gl, renderer);
+		getAlternateTexture(gl, renderer);
 	}
 
 	public boolean isFilled() {
@@ -206,27 +188,25 @@ public abstract class AbstractObject {
 	}
 
 	public GamaPoint getLocation() {
-		return attributes.location;
+		return attributes.getLocation();
 	}
 
 	public GamaPoint getDimensions() {
-		return attributes.size;
+		return attributes.getSize();
 	}
 
 	public Color getBorder() {
 		return attributes.getBorder();
 	}
 
-	public double getHeight() {
+	public Double getHeight() {
 		return attributes.getDepth();
 	}
 
-	public double getRotationAngle() {
-		if (attributes.rotation == null || attributes.rotation.key == null) {
-			return 0;
-		}
+	public Double getRotationAngle() {
+		if (attributes.getAngle() == null) { return null; }
 		// AD Change to a negative rotation to fix Issue #1514
-		return -attributes.rotation.key;
+		return -attributes.getAngle();
 	}
 
 	public void enableLightInteraction() {
@@ -239,5 +219,9 @@ public abstract class AbstractObject {
 
 	public boolean isLightInteraction() {
 		return lightInteraction;
+	}
+
+	public double getLineWidth() {
+		return attributes.getLineWidth();
 	}
 }

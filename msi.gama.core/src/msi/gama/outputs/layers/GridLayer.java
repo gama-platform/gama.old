@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GridLayer.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GridLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -48,9 +47,7 @@ public class GridLayer extends ImageLayer {
 	public Rectangle2D focusOn(final IShape geometry, final IDisplaySurface s) {
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		final IAgent a = geometry.getAgent();
-		if (a == null || a.getSpecies() != g.getEnvironment().getCellSpecies()) {
-			return null;
-		}
+		if (a == null || a.getSpecies() != g.getEnvironment().getCellSpecies()) { return null; }
 		return super.focusOn(a, s);
 	}
 
@@ -104,20 +101,17 @@ public class GridLayer extends ImageLayer {
 		final GamaImageFile textureFile = g.textureFile();
 		final FieldDrawingAttributes attributes = new FieldDrawingAttributes(getName(), lineColor);
 		attributes.grayScaled = g.isGrayScaled;
-		attributes.fieldSize = g.getEnvironment().getDimensions();
-		attributes.depth = 1.0;
 		if (textureFile != null) {
 			attributes.textures = Arrays.asList(textureFile);
 		} else if (image != null) {
-
 			final int[] data = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 			System.arraycopy(g.getEnvironment().getDisplayData(), 0, data, 0, data.length);
 			attributes.textures = Arrays.asList(image);
 		}
 		attributes.triangulated = g.isTriangulated;
 		attributes.withText = g.showText;
-		attributes.cellSize = cellSize;
-		attributes.border = lineColor;
+		attributes.setCellSize(cellSize);
+		attributes.setBorder(lineColor);
 
 		if (gridValueMatrix == null) {
 			dg.drawImage(image, attributes);

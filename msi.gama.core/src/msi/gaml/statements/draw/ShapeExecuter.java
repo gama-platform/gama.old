@@ -28,7 +28,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.runtime.exceptions.GamaRuntimeException.GamaRuntimeFileException;
 import msi.gama.util.GamaListFactory;
-import msi.gama.util.GamaPair;
 import msi.gama.util.IList;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
@@ -84,13 +83,13 @@ class ShapeExecuter extends DrawExecuter {
 		// otherwise we just pre-translate it (the rotation in 3D will be
 		// handled separately
 		// once the complete shapes are built)
-		final GamaPair<Double, GamaPoint> rot = attributes.rotation;
+
 		if (gr.is2D()) {
-			final Double rotation = rot == null ? null : rot.key;
-			final GamaPoint axis = rot == null ? null : rot.value;
-			shape = new GamaShape(shape, null, rotation, axis, attributes.location);
+			final Double rotation = attributes.getAngle();
+			final GamaPoint axis = attributes.getAxis();
+			shape = new GamaShape(shape, null, rotation, axis, attributes.getLocation());
 		} else {
-			shape = new GamaShape(shape, null, null, attributes.location);
+			shape = new GamaShape(shape, null, null, attributes.getLocation());
 		}
 		// We add the arrows if any
 		shape = addArrows(scope, shape, !attributes.empty);
@@ -116,10 +115,10 @@ class ShapeExecuter extends DrawExecuter {
 	}
 
 	ShapeDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final IShape shape) {
-		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(data.currentSize, data.currentDepth,
-				data.currentRotation, data.currentLocation, data.currentEmpty, data.currentColor, data.currentColors,
-				data.currentBorder, data.currentTextures, data.currentMaterial, scope.getAgent(),
-				shape.getGeometricalType());
+		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(data.size.value, data.depth.value,
+				data.rotation.value, data.location.value, data.empty.value, data.getCurrentColor(), data.color.value,
+				data.border.value, data.texture.value, data.material.value, scope.getAgent(),
+				shape.getGeometricalType(), data.lineWidth.value);
 		// We push the depth of the geometry if none have been specified already
 		attributes.setDepthIfAbsent((Double) shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
 		// We push the (perhaps new) location of the shape to the attributes.
@@ -160,7 +159,7 @@ class ShapeExecuter extends DrawExecuter {
 		final ITopology t = scope.getTopology();
 		if (t != null && t.isTorus()) {
 			final List<Geometry> geoms = t.listToroidalGeometries(shape.getInnerGeometry());
-			final Geometry all = GeometryUtils.FACTORY.buildGeometry(geoms);
+			final Geometry all = GeometryUtils.GEOMETRY_FACTORY.buildGeometry(geoms);
 			final Geometry world = scope.getSimulation().getInnerGeometry();
 			result = new GamaShape(all.intersection(world));
 			// WARNING Does not correctly handle rotations or translations

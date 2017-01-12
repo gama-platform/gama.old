@@ -25,7 +25,6 @@ import msi.gama.outputs.LightPropertiesStructure;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Maths;
 import ummisco.gama.opengl.Abstract3DRenderer;
-import ummisco.gama.opengl.JOGLRenderer;
 
 public class GLUtilLight {
 
@@ -134,8 +133,7 @@ public class GLUtilLight {
 							+ z * (c * c + (1 - c * c) * Maths.cos(angle));
 					gl.glLightfv(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_SPOT_DIRECTION,
 							new float[] { (float) resultX, (float) resultY, (float) resultZ }, 0);
-					data.setLightDirection(lightProperties.id,
-							new GamaPoint(resultX, JOGLRenderer.Y_FLAG * resultY, resultZ));
+					data.setLightDirection(lightProperties.id, new GamaPoint(resultX, -resultY, resultZ));
 				}
 			}
 		}
@@ -163,12 +161,10 @@ public class GLUtilLight {
 				float[] lightPosition;
 				if (type == LightPropertiesStructure.TYPE.DIRECTION) {
 					lightPosition = new float[] { -(float) lightProperties.direction.x,
-							-JOGLRenderer.Y_FLAG * (float) lightProperties.direction.y,
-							-(float) lightProperties.direction.z, 0 };
+							(float) lightProperties.direction.y, -(float) lightProperties.direction.z, 0 };
 				} else {
 					lightPosition = new float[] { (float) lightProperties.position.x,
-							JOGLRenderer.Y_FLAG * (float) lightProperties.position.y,
-							(float) lightProperties.position.z, 1 };
+							-(float) lightProperties.position.y, (float) lightProperties.position.z, 1 };
 				}
 				gl.glLightfv(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_POSITION, lightPosition, 0);
 				// Get and set the attenuation (if it is not a direction light)
@@ -181,8 +177,7 @@ public class GLUtilLight {
 				// Get and set spot properties (if the light is a spot light)
 				if (type == LightPropertiesStructure.TYPE.SPOT) {
 					final float[] spotLight = { (float) lightProperties.direction.x,
-							JOGLRenderer.Y_FLAG * (float) lightProperties.direction.y,
-							(float) lightProperties.direction.z };
+							-(float) lightProperties.direction.y, (float) lightProperties.direction.z };
 					gl.glLightfv(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_SPOT_DIRECTION, spotLight, 0);
 					final float spotAngle = lightProperties.spotAngle;
 					gl.glLightf(GL2.GL_LIGHT0 + lightProperties.id, GL2.GL_SPOT_CUTOFF, spotAngle);
@@ -202,7 +197,7 @@ public class GLUtilLight {
 					renderer.setCurrentColor(gl, lightProperties.color);
 					final GLUT glut = new GLUT();
 					final double x = lightProperties.direction.x;
-					final double y = lightProperties.direction.y * JOGLRenderer.Y_FLAG;
+					final double y = -lightProperties.direction.y;
 					final double z = lightProperties.direction.z;
 					final double zNorm = z / Math.sqrt(x * x + y * y + z * z);
 					final double xNorm = x / Math.sqrt(x * x + y * y + z * z);
@@ -250,14 +245,13 @@ public class GLUtilLight {
 						final int maxJ = 3;
 						for (int i = 0; i < maxI; i++) {
 							for (int j = 0; j < maxJ; j++) {
-								final double[] beginPoint = new double[] { i * worldWidth / maxI,
-										JOGLRenderer.Y_FLAG * j * worldHeight / maxJ, size * 10 };
+								final double[] beginPoint =
+										new double[] { i * worldWidth / maxI, -j * worldHeight / maxJ, size * 10 };
 								final double[] endPoint = new double[] { i * worldWidth / maxI + xNorm * size * 3,
-										JOGLRenderer.Y_FLAG * (j * worldHeight / maxJ) + yNorm * size * 3,
-										size * 10 + zNorm * size * 3 };
+										-(j * worldHeight / maxJ) + yNorm * size * 3, size * 10 + zNorm * size * 3 };
 								// draw the lines
 								gl.glBegin(GL2.GL_LINES);
-								gl.glLineWidth((float) (size / 10));
+								// gl.glLineWidth((float) (size / 10));
 								gl.glVertex3d(beginPoint[0], beginPoint[1], beginPoint[2]);
 								gl.glVertex3d(endPoint[0], endPoint[1], endPoint[2]);
 								gl.glEnd();

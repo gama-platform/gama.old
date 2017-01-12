@@ -500,10 +500,9 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void updateViewTitle(final IDisplayOutput out, final SimulationAgent agent) {
-		final IGamaView part =
-				(IGamaView) WorkbenchHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
-		if (part != null)
-			WorkbenchHelper.run(() -> part.changePartNameWithSimulation(agent));
+		final IViewPart part = WorkbenchHelper.findView(out.getViewId(), out.isUnique() ? null : out.getName(), true);
+		if (part != null && part instanceof IGamaView)
+			WorkbenchHelper.run(() -> ((IGamaView) part).changePartNameWithSimulation(agent));
 
 	}
 

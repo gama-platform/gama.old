@@ -12,12 +12,12 @@ global {
 	file gamaRaster <- file('../images/Gama.png');
 	
 	int size <- 10;
-	list<geometry> geometries2D <-[point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size)];
-	list<geometry> texturedGeometries2D <-[point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size)];	
-	list<geometry> geometries3D <-[sphere(size/2),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size)];
-    list<geometry> texturedGeometries <-[sphere(size/2),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size)];
+	list<geometry> geometries2D <-[point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size), square(size) - square(size / 2)];
+	list<geometry> texturedGeometries2D <-[point([0,0]),line ([{0,0},{size,size}]),polyline([{0,0},{size/2,size/2},{0,size}]),circle(size),square(size),rectangle(size,size*1.5),triangle(size),hexagon(size),square(size) - square(size / 2) ];	
+	list<geometry> geometries3D <-[sphere(size/2),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size), cube(size) - cube(size / 2)];
+    list<geometry> texturedGeometries <-[sphere(size/2),plan ([{0,0},{size,size}],size),polyplan([{0,0},{size/2,size/2},{0,size}],size),cylinder(size,size),cube(size),box(size,size*1.5,size*0.5),pyramid(size),polyhedron([{-1*size/2,0.5*size/2}, {-0.5*size/2,1*size/2}, {0.5*size/2,1*size/2}, {1*size/2,0.5*size/2},{1*size/2,-0.5*size/2},{0.5*size/2,-1*size/2},{-0.5*size/2,-1*size/2},{-1*size/2,-0.5*size/2}],size), cube(size) - cube(size / 2)];
     
-   
+   	int angle <- 0 update: (angle+1) mod 360;
 	
 	geometry shape <- rectangle(length(geometries3D)*size*2,size*6);
 
@@ -59,8 +59,9 @@ species Geometry2D{
 
 	geometry myGeometry;
 	
+	
 	aspect default {
-		draw myGeometry color:°orange at:location border:#red;
+		draw myGeometry color:°orange at:location border:#blue rotate:angle::{1,0,0};
     }
 } 
 
@@ -70,7 +71,7 @@ species TexturedGeometry2D{
 	file myTexture;
 	
 	aspect default {
-		draw myGeometry texture:myTexture.path at:location border:#red;
+		draw myGeometry texture:myTexture.path at:location border:#red rotate:angle::{0,1,0};
     }
 } 
     
@@ -79,7 +80,7 @@ species Geometry3D{
 	geometry myGeometry;
 
 	aspect default {
-		draw myGeometry color:°orange at:location border:#red;
+		draw myGeometry  color:°orange at:location border:#red rotate: angle;
     }
 }
 
@@ -89,7 +90,7 @@ species TexturedGeometry3D{
 	file myTexture;
 
 	aspect default {
-		draw myGeometry texture:myTexture.path at:location border:#red;
+		draw myGeometry rotated_by -angle texture:myTexture.path at:location border:#green ;
     }
 }
 

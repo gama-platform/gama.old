@@ -49,7 +49,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		final double factorT = theta * Maths.toRad;
 		final double r_temp = FastMath.cos(factorP);
 		forward.setLocation(r_temp * FastMath.cos(factorT), r_temp * FastMath.sin(factorT), FastMath.sin(factorP));
-		left.setLocation(GamaPoint.crossProduct(up, forward).normalized());
+		left.setLocation(new GamaPoint(up.y * forward.z - up.z * forward.y, up.z * forward.x - up.x * forward.z, up.x * forward.y - up.y * forward.x).normalized());
 		target.setLocation(forward.plus(position));
 	}
 

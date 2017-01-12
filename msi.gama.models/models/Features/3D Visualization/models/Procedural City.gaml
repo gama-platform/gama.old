@@ -47,14 +47,14 @@ species Building{
 	}
 	
 	aspect textured {
-		draw shape texture:[roof_texture.path,texture.path] ;
+		draw shape texture:[roof_texture.path,texture.path] border: #black;
 	}
 }	
 
 
 experiment DisplayTextured  type: gui {
 	output {
-	  display City type:opengl background:rgb(10,40,55){
+	  display City type:opengl background:#white{
 			species Building aspect:textured;							
 		}
 	}

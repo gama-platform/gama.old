@@ -21,7 +21,6 @@ import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -52,6 +51,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 		this(coord.x, coord.y, coord.z);
 	}
 
+	public GamaPoint(final GamaPoint point) {
+		this((Coordinate) point);
+	}
+
 	public GamaPoint(final ILocation point) {
 		this(point == null ? EMPTY : new double[] { point.getX(), point.getY(), point.getZ() });
 	}
@@ -59,6 +62,12 @@ public class GamaPoint extends Coordinate implements ILocation {
 	@Override
 	public void setLocation(final ILocation al) {
 		setLocation(al.getX(), al.getY(), al.getZ());
+	}
+
+	public void setLocation(final double x, final double y, final double z) {
+		this.x = x;
+		this.y = y;
+		setZ(z);
 	}
 
 	@Override
@@ -179,6 +188,18 @@ public class GamaPoint extends Coordinate implements ILocation {
 		setZ(z + loc.z);
 	}
 
+	public void multiplyBy(final double value) {
+		x *= value;
+		y *= value;
+		setZ(z * value);
+	}
+
+	public void divideBy(final double value) {
+		x /= value;
+		y /= value;
+		setZ(z / value);
+	}
+
 	public Coordinate toCoordinate() {
 		return new Coordinate(x, y, z);
 	}
@@ -208,7 +229,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public Geometry getInnerGeometry() {
-		return GeometryUtils.FACTORY.createPoint(this);
+		return GeometryUtils.GEOMETRY_FACTORY.createPoint(this);
 	}
 
 	/**
@@ -245,10 +266,11 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public double euclidianDistanceTo(final ILocation p) {
-		// FIXME: Need to check the cost of checking if z and p.getZ() are equal
-		// to Zero so that we can use
-		// return this.distance(p.toCoordinate());
 		return Maths.hypot(x, p.getX(), y, p.getY(), z, p.getZ());
+	}
+
+	public double euclidianDistanceTo(final GamaPoint p) {
+		return distance3D(p);
 	}
 
 	/**
@@ -353,7 +375,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	public double norm() {
-		return FastMath.hypot(x, y, z);
+		return Math.sqrt(x * x + y * y + z * z);
 	}
 
 	@Override
@@ -375,18 +397,15 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return new GamaPoint(-x, -y, -z);
 	}
 
-	public final static GamaPoint crossProduct(final GamaPoint v1, final GamaPoint v2) {
-		return new GamaPoint(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
-	}
-
 	public final static double dotProduct(final GamaPoint v1, final GamaPoint v2) {
 		return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 	}
 
-	// Calculate the normal, from three points on a surface
-	public final static GamaPoint normal(final GamaPoint a, final GamaPoint b, final GamaPoint c,
-			final int multiplier) {
-		return crossProduct(b.minus(a), c.minus(a)).normalized().times(multiplier);
+	public final static GamaPoint cross(final GamaPoint v1, final GamaPoint v2) {
+		final double x = v1.y * v2.z - v1.z * v2.y;
+		final double y = v2.x * v1.z - v2.z * v1.x;
+		final double z = v1.x * v2.y - v1.y * v2.x;
+		return new GamaPoint(x, y, z);
 	}
 
 	/**

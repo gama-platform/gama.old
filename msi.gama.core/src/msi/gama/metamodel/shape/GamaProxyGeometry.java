@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaProxyGeometry.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaProxyGeometry.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -26,37 +25,32 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * Class GamaProxyGeometry. A geometry that represents a wrapper to a reference
- * geometry and a translation. All the operations are transmitted to the
- * reference geometry, taking this translation into account. The inner geometry
- * of each instance is computed dynamically every time.
+ * Class GamaProxyGeometry. A geometry that represents a wrapper to a reference geometry and a translation. All the
+ * operations are transmitted to the reference geometry, taking this translation into account. The inner geometry of
+ * each instance is computed dynamically every time.
  *
- * This class does not allow any other transformation to its geometry than
- * translation (no scaling, no rotation, etc.). TODO This might come later when
- * rotatedBy() and scaledBy() are redefined outside GamaShape.
+ * This class does not allow any other transformation to its geometry than translation (no scaling, no rotation, etc.).
+ * TODO This might come later when rotatedBy() and scaledBy() are redefined outside GamaShape.
  *
  * Abstract methods to override: getReferenceGeometry()
  *
- * Caching of the resulting innner geometry can be achieved by redefining
- * getInnerGeometry() and implementing the policy there. However, the purpose of
- * this class is principally to save memory (see. GamaSpatialMatrix).
+ * Caching of the resulting innner geometry can be achieved by redefining getInnerGeometry() and implementing the policy
+ * there. However, the purpose of this class is principally to save memory (see. GamaSpatialMatrix).
  *
  *
- * AD: Changed in 2016 to create attributes due to the abandon of attributes in
- * agents. These geometries have attributes now.
+ * AD: Changed in 2016 to create attributes due to the abandon of attributes in agents. These geometries have attributes
+ * now.
  *
- * The geometries dont have individual attributes. Instead, they read from /
- * write to the attributes of the reference geometry. This can be a simple way
- * to implement properties common to a set of geometries. Subclasses that wish
- * to implement individual attributes can do so by overriding the corresponding
- * methods.
+ * The geometries dont have individual attributes. Instead, they read from / write to the attributes of the reference
+ * geometry. This can be a simple way to implement properties common to a set of geometries. Subclasses that wish to
+ * implement individual attributes can do so by overriding the corresponding methods.
  *
  *
  * @author drogoul
  * @since 18 mai 2013
  *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public abstract class GamaProxyGeometry implements IShape, Cloneable {
 
 	ILocation absoluteLocation;
@@ -106,10 +100,9 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	}
 
 	/**
-	 * @return The geometry wrapped by this proxy. This geometry can be static
-	 *         or dynamic (all translations are computed dynamically). No
-	 *         caching being made in the basic implementation, it can also
-	 *         change during the lifetime of the proxy.
+	 * @return The geometry wrapped by this proxy. This geometry can be static or dynamic (all translations are computed
+	 *         dynamically). No caching being made in the basic implementation, it can also change during the lifetime
+	 *         of the proxy.
 	 */
 	protected abstract IShape getReferenceGeometry();
 
@@ -135,9 +128,8 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	}
 
 	/**
-	 * Method getAttributes(). The attributes are shared by all the translated
-	 * geometries. Another option would be to maintain a map of attributes in
-	 * each translated shape, but it is costly.
+	 * Method getAttributes(). The attributes are shared by all the translated geometries. Another option would be to
+	 * maintain a map of attributes in each translated shape, but it is costly.
 	 * 
 	 * @see msi.gama.common.interfaces.IAttributed#getAttributes()
 	 */
@@ -168,9 +160,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public Object getAttribute(final Object key) {
-		if (attributes == null) {
-			return null;
-		}
+		if (attributes == null) { return null; }
 		return attributes.get(key);
 		// return getReferenceGeometry().getAttribute(key);
 	}
@@ -178,8 +168,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	/**
 	 * Method setAttribute()
 	 * 
-	 * @see msi.gama.common.interfaces.IAttributed#setAttribute(java.lang.Object,
-	 *      java.lang.Object)
+	 * @see msi.gama.common.interfaces.IAttributed#setAttribute(java.lang.Object, java.lang.Object)
 	 */
 	@Override
 	public void setAttribute(final Object key, final Object value) {
@@ -265,14 +254,14 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 		final double dx = getLocation().getX() - getReferenceGeometry().getLocation().getX();
 		final double dy = getLocation().getY() - getReferenceGeometry().getLocation().getY();
 		final double dz = getLocation().getZ() - getReferenceGeometry().getLocation().getZ();
-		copy.apply(new GamaShape.Translation(dx, dy, dz));
+		GeometryUtils.translate(copy, dx, dy, dz);
 		copy.geometryChanged();
 		return copy;
 	}
 
 	/**
-	 * Method getEnvelope(). Computed dynamically. A subclass may choose to
-	 * cache this (often used) information by redefining this method
+	 * Method getEnvelope(). Computed dynamically. A subclass may choose to cache this (often used) information by
+	 * redefining this method
 	 * 
 	 * @see msi.gama.metamodel.shape.IShape#getEnvelope()
 	 */
@@ -314,9 +303,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
-		if (isPoint() && g.isPoint()) {
-			return g.getLocation().euclidianDistanceTo(getLocation());
-		}
+		if (isPoint() && g.isPoint()) { return g.getLocation().euclidianDistanceTo(getLocation()); }
 		return getInnerGeometry().distance(g.getInnerGeometry());
 	}
 
@@ -327,9 +314,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public double euclidianDistanceTo(final ILocation g) {
-		if (isPoint()) {
-			return g.euclidianDistanceTo(getLocation());
-		}
+		if (isPoint()) { return g.euclidianDistanceTo(getLocation()); }
 		return getInnerGeometry().distance(g.getInnerGeometry());
 		// GamaShape.ppd.initialize();
 		// DistanceToPoint.computeDistance(getInnerGeometry(), (Coordinate) g,
@@ -363,8 +348,7 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 * @see msi.gama.metamodel.shape.IShape#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
 	 */
 	@Override
-	public void setInnerGeometry(final Geometry intersection) {
-	}
+	public void setInnerGeometry(final Geometry intersection) {}
 
 	/**
 	 * Method dispose()
@@ -441,11 +425,11 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 			final Polygon p = (Polygon) g;
 			final int n = p.getNumInteriorRing();
 			for (int i = 0; i < n; i++) {
-				holes.add(new GamaShape(GeometryUtils.fromLineToPoylgon(p.getInteriorRingN(i))));
+				holes.add(new GamaShape(
+						GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getInteriorRingN(i).getCoordinates())));
 			}
 		}
 		return holes;
-
 	}
 
 	/**

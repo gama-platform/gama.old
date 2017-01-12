@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AgentIdentifier.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AgentIdentifier.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -18,9 +17,8 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
 
 /**
- * Uniquely identifies an agent using a path from the simulation consisting of a
- * set of species names and index in these species of the different hosts and
- * the agent
+ * Uniquely identifies an agent using a path from the simulation consisting of a set of species names and index in these
+ * species of the different hosts and the agent
  * 
  * @author drogoul
  *

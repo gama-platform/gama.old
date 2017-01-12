@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ModelScene.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ModelScene.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -39,9 +38,8 @@ import ummisco.gama.webgl.SimpleScene;
 
 /**
  *
- * The class ModelScene. A repository for all the objects that constitute the
- * scene of a model : strings, images, shapes... 04/03/14: Now organized by
- * layers to address the issue of z depth
+ * The class ModelScene. A repository for all the objects that constitute the scene of a model : strings, images,
+ * shapes... 04/03/14: Now organized by layers to address the issue of z depth
  *
  * @author drogoul
  * @since 3 mai 2013
@@ -91,8 +89,7 @@ public class ModelScene {
 
 	/**
 	 * @param context
-	 *            Called every new iteration when updateDisplay() is called on
-	 *            the surface
+	 *            Called every new iteration when updateDisplay() is called on the surface
 	 */
 	public void wipe(final GL2 gl) {
 		// The display is cleared every iteration if not in a trace display mode
@@ -122,9 +119,7 @@ public class ModelScene {
 	}
 
 	public Texture getTexture(final GL gl, final BufferedImage image) {
-		if (image == null) {
-			return null;
-		}
+		if (image == null) { return null; }
 		Texture texture = localVolatileTextures.get(image);
 		if (texture == null) {
 			texture = TextureCache.buildTexture(gl, image);
@@ -135,9 +130,7 @@ public class ModelScene {
 
 	// Must have been stored before
 	public Texture getTexture(final GL gl, final GamaImageFile file) {
-		if (file == null) {
-			return null;
-		}
+		if (file == null) { return null; }
 		final Texture texture = renderer.getSharedTextureCache().get(renderer.getSurface().getScope(), gl, file);
 		return antiAliasTexture(gl, texture);
 	}
@@ -153,9 +146,6 @@ public class ModelScene {
 	}
 
 	public void draw(final GL2 gl) {
-		// System.out.println("Beginning rendering Model front scene #" + id);
-		// ((LightsLayerObject) layers.get(LIGHTS_KEY)).updateLights();
-
 		// if the rotation helper layer exists, put it at the end of the map
 		// (otherwise, transparency issues)
 		final LayerObject rotLayer = layers.get(ROTATION_HELPER_KEY);
@@ -194,17 +184,13 @@ public class ModelScene {
 	}
 
 	public void addString(final String string, final DrawingAttributes attributes) {
-		if (cannotAdd()) {
-			return;
-		}
+		if (cannotAdd()) { return; }
 		currentLayer.addString(string, attributes);
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	public void addFile(final GamaFile file, final FileDrawingAttributes attributes) {
-		if (cannotAdd()) {
-			return;
-		}
+		if (cannotAdd()) { return; }
 		if (file instanceof GamaImageFile) {
 			renderer.getSharedTextureCache().initializeStaticTexture(renderer.getSurface().getScope(),
 					(GamaImageFile) file);
@@ -215,16 +201,12 @@ public class ModelScene {
 	}
 
 	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
-		if (cannotAdd()) {
-			return;
-		}
+		if (cannotAdd()) { return; }
 		currentLayer.addImage(img, attributes);
 	}
 
 	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
-		if (cannotAdd()) {
-			return;
-		}
+		if (cannotAdd()) { return; }
 		if (attributes.textures != null && !attributes.textures.isEmpty()) {
 			for (final Object img : attributes.textures) {
 				if (img instanceof GamaImageFile) {
@@ -237,9 +219,7 @@ public class ModelScene {
 	}
 
 	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		if (cannotAdd()) {
-			return;
-		}
+		if (cannotAdd()) { return; }
 		if (attributes.textures != null && !attributes.textures.isEmpty()) {
 			for (final Object img : attributes.textures) {
 				if (img instanceof GamaImageFile) {
@@ -256,8 +236,7 @@ public class ModelScene {
 		currentLayer = null;
 	}
 
-	public void beginDrawingLayers() {
-	}
+	public void beginDrawingLayers() {}
 
 	public void endDrawingLayers() {
 		if (!SceneReceiver.getInstance().canReceive())

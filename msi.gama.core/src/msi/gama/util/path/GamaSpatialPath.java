@@ -168,7 +168,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 		for (int i = 0; i < nbSp - 1; i++) {
 			temp[0] = (Coordinate) edge.getPoints().get(i);
 			temp[1] = (Coordinate) edge.getPoints().get(i + 1);
-			final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
+			final LineString segment = GeometryUtils.GEOMETRY_FACTORY.createLineString(temp);
 			final double distS = segment.distance(pointGeom);
 			if (distS < distanceS) {
 				distanceS = distS;
@@ -352,7 +352,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				for (int i = 0; i < nbSp - 1; i++) {
 					temp[0] = coords[i];
 					temp[1] = coords[i + 1];
-					final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
+					final LineString segment = GeometryUtils.GEOMETRY_FACTORY.createLineString(temp);
 					final double distS = segment.distance(pointGeom);
 					if (distS < distanceS) {
 						distanceS = distS;
@@ -376,7 +376,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 				for (int i = 0; i < nbSp - 1; i++) {
 					temp[0] = coords[i];
 					temp[1] = coords[i + 1];
-					final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
+					final LineString segment = GeometryUtils.GEOMETRY_FACTORY.createLineString(temp);
 					final double distT = segment.distance(pointGeom);
 					if (distT < distanceT) {
 						distanceT = distT;
@@ -441,7 +441,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 			if (geoms.length == 1) {
 				shape = new GamaShape(geoms[0]);
 			} else {
-				final Geometry geom = GeometryUtils.FACTORY.createGeometryCollection(geoms);
+				final Geometry geom = GeometryUtils.GEOMETRY_FACTORY.createGeometryCollection(geoms);
 				shape = new GamaShape(geom.union());
 			}
 

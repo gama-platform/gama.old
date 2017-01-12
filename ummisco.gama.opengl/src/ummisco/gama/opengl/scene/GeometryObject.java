@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GeometryObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GeometryObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,17 +9,24 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
+import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.webgl.SimpleGeometryObject;
 
 public class GeometryObject extends AbstractObject {
 
-	public final Geometry geometry;
+	protected Geometry geometry;
+
+	public GeometryObject(final DrawingAttributes attributes, final LayerObject layer, final Texture... textures) {
+		super(attributes, layer, textures);
+	}
 
 	public GeometryObject(final Geometry geometry, final DrawingAttributes attributes, final LayerObject layer) {
 		super(attributes, layer);
@@ -29,18 +35,16 @@ public class GeometryObject extends AbstractObject {
 
 	// Package protected as it is only used by the static layers
 	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final LayerObject layer) {
-		this(geometry, color, true, type, layer);
+		this(geometry, color, type, JOGLRenderer.getLineWidth(), layer);
 	}
 
-	GeometryObject(final IShape geometry, final GamaColor color, final boolean filled, final IShape.Type type,
+	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final float lineWidth,
 			final LayerObject layer) {
-		this(geometry.getInnerGeometry(), new ShapeDrawingAttributes(geometry, filled ? color : null, color), layer);
+		this(geometry.getInnerGeometry(), new ShapeDrawingAttributes(geometry, color, color, lineWidth), layer);
 	}
 
 	public IShape.Type getType() {
-		if (!(attributes instanceof ShapeDrawingAttributes)) {
-			return null;
-		}
+		if (!(attributes instanceof ShapeDrawingAttributes)) { return IShape.Type.POLYGON; }
 		return ((ShapeDrawingAttributes) attributes).type;
 	}
 
@@ -51,7 +55,16 @@ public class GeometryObject extends AbstractObject {
 
 	public SimpleGeometryObject toSimpleGeometryObject() {
 		return new SimpleGeometryObject(geometry, getColor(), this.getBorder(), attributes.getDepth(),
-				attributes.rotation, getLocation(), attributes.size, getType(), !isFilled(), attributes.getTextures());
+				attributes.getAngle(), attributes.getAxis(), getLocation(), attributes.getSize(), getType(),
+				!isFilled(), attributes.getTextures());
+	}
+
+	public Geometry getGeometry() {
+		return geometry;
+	}
+
+	public GamaPoint getRotationAxis() {
+		return attributes.getAxis();
 	}
 
 }

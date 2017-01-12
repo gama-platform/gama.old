@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractCamera.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractCamera.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -43,7 +42,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected boolean flipped = false;
 	protected double upVectorAngle;
 
-	private final double _keyboardSensivity = 4.0;
+	private final double _keyboardSensivity = 1d;
 	private final double _sensivity = 1;
 
 	// Mouse and keyboard state
@@ -67,8 +66,7 @@ public abstract class AbstractCamera implements ICamera {
 		upPosition(0.0, 1.0, 0.0);
 	}
 
-	public void updateSphericalCoordinatesFromLocations() {
-	}
+	public void updateSphericalCoordinatesFromLocations() {}
 
 	@Override
 	public void toggleStickyROI() {
@@ -226,8 +224,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseEnter(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public final void mouseEnter(final org.eclipse.swt.events.MouseEvent e) {
-	}
+	public final void mouseEnter(final org.eclipse.swt.events.MouseEvent e) {}
 
 	/**
 	 * Method mouseExit()
@@ -235,8 +232,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseExit(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public final void mouseExit(final org.eclipse.swt.events.MouseEvent e) {
-	}
+	public final void mouseExit(final org.eclipse.swt.events.MouseEvent e) {}
 
 	/**
 	 * Method mouseHover()
@@ -244,8 +240,7 @@ public abstract class AbstractCamera implements ICamera {
 	 * @see org.eclipse.swt.events.MouseTrackListener#mouseHover(org.eclipse.swt.events.MouseEvent)
 	 */
 	@Override
-	public final void mouseHover(final org.eclipse.swt.events.MouseEvent e) {
-	}
+	public final void mouseHover(final org.eclipse.swt.events.MouseEvent e) {}
 
 	/**
 	 * Method mouseDoubleClick()
@@ -302,15 +297,13 @@ public abstract class AbstractCamera implements ICamera {
 		// keystone. Return 10 if click on the center.
 		final int xPixCoord = e.x;
 		final int yPixCoord = e.y;
-		final float xCoordNormalized = (float) xPixCoord / (float) getRenderer().getDisplayWidth()
-				* getRenderer().getZoomLevel().floatValue();
+		final float xCoordNormalized =
+				(float) xPixCoord / (float) getRenderer().getDisplayWidth() * getRenderer().getZoomLevel().floatValue();
 		final float yCoordNormalized = (float) yPixCoord / (float) getRenderer().getDisplayHeight()
 				* getRenderer().getZoomLevel().floatValue();
 		for (int cornerId = 0; cornerId < getRenderer().getKeystoneCoordinates().length; cornerId++) {
-			if (Math.abs(xCoordNormalized - getRenderer().getKeystoneCoordinates()[cornerId][0]) < 0.03
-					&& Math.abs(yCoordNormalized - getRenderer().getKeystoneCoordinates()[cornerId][1]) < 0.03) {
-				return cornerId;
-			}
+			if (Math.abs(xCoordNormalized - getRenderer().getKeystoneCoordinates()[cornerId][0]) < 0.03 && Math.abs(
+					yCoordNormalized - getRenderer().getKeystoneCoordinates()[cornerId][1]) < 0.03) { return cornerId; }
 		}
 		// check if the click has been in the center of the screen (in the
 		// intersection between the diagonals)
@@ -484,79 +477,74 @@ public abstract class AbstractCamera implements ICamera {
 		renderer.getDrawable().invoke(false, drawable -> {
 			if (cameraInteraction) {
 				switch (e.keyCode) {
-				case SWT.ARROW_LEFT:
-					setCtrlPressed(GamaKeyBindings.ctrl(e));
-					AbstractCamera.this.strafeLeft = true;
-					break;
-				case SWT.ARROW_RIGHT:
-					setCtrlPressed(GamaKeyBindings.ctrl(e));
-					AbstractCamera.this.strafeRight = true;
-					break;
-				case SWT.ARROW_UP:
-					setCtrlPressed(GamaKeyBindings.ctrl(e));
-					AbstractCamera.this.goesForward = true;
-					break;
-				case SWT.ARROW_DOWN:
-					setCtrlPressed(GamaKeyBindings.ctrl(e));
-					AbstractCamera.this.goesBackward = true;
-					break;
-				case SWT.SPACE:
-					resetPivot();
-					break;
-				case SWT.CTRL:
-					setCtrlPressed(!firsttimeMouseDown);
-					break;
-				case SWT.COMMAND:
-					setCtrlPressed(!firsttimeMouseDown);
-					break;
-				// case SWT.SHIFT:
-				// setShiftPressed(true);
-				// break;
+					case SWT.ARROW_LEFT:
+						setCtrlPressed(GamaKeyBindings.ctrl(e));
+						AbstractCamera.this.strafeLeft = true;
+						break;
+					case SWT.ARROW_RIGHT:
+						setCtrlPressed(GamaKeyBindings.ctrl(e));
+						AbstractCamera.this.strafeRight = true;
+						break;
+					case SWT.ARROW_UP:
+						setCtrlPressed(GamaKeyBindings.ctrl(e));
+						AbstractCamera.this.goesForward = true;
+						break;
+					case SWT.ARROW_DOWN:
+						setCtrlPressed(GamaKeyBindings.ctrl(e));
+						AbstractCamera.this.goesBackward = true;
+						break;
+					case SWT.SPACE:
+						resetPivot();
+						break;
+					case SWT.CTRL:
+						setCtrlPressed(!firsttimeMouseDown);
+						break;
+					case SWT.COMMAND:
+						setCtrlPressed(!firsttimeMouseDown);
+						break;
+					// case SWT.SHIFT:
+					// setShiftPressed(true);
+					// break;
 				}
 				switch (e.character) {
-				case '+':
-					zoom(true);
-					break;
-				case '-':
-					zoom(false);
-					break;
-				case '4':
-					quickLeftTurn();
-					break;
-				case '6':
-					quickRightTurn();
-					break;
-				case '8':
-					quickUpTurn();
-					break;
-				case '2':
-					quickDownTurn();
-					break;
-				case 'k':
-					activateKeystoneMode(true);
-					break;
-				default:
-					return true;
+					case '+':
+						zoom(true);
+						break;
+					case '-':
+						zoom(false);
+						break;
+					case '4':
+						quickLeftTurn();
+						break;
+					case '6':
+						quickRightTurn();
+						break;
+					case '8':
+						quickUpTurn();
+						break;
+					case '2':
+						quickDownTurn();
+						break;
+					case 'k':
+						activateKeystoneMode(true);
+						break;
+					default:
+						return true;
 				}
 			}
 			return false;
 		});
 	}
 
-	protected void resetPivot() {
-	}
+	protected void resetPivot() {}
 
-	protected void quickLeftTurn() {
-	}
+	protected void quickLeftTurn() {}
 
-	protected void quickRightTurn() {
-	}
+	protected void quickRightTurn() {}
 
-	protected void quickUpTurn() {
-	}
+	protected void quickUpTurn() {}
 
-	protected void quickDownTurn() {
-	}
+	protected void quickDownTurn() {}
 
 	protected void activateKeystoneMode(final boolean value) {
 		if (renderer.useShader()) {
@@ -582,37 +570,37 @@ public abstract class AbstractCamera implements ICamera {
 		renderer.getDrawable().invoke(false, drawable -> {
 			if (cameraInteraction) {
 				switch (e.character) {
-				case 'k':
-					activateKeystoneMode(false);
-					break;
+					case 'k':
+						activateKeystoneMode(false);
+						break;
 				}
 				switch (e.keyCode) {
-				case SWT.ARROW_LEFT: // player turns left (scene rotates
-										// right)
-					strafeLeft = false;
-					break;
-				case SWT.ARROW_RIGHT: // player turns right (scene rotates
-										// left)
-					strafeRight = false;
-					break;
-				case SWT.ARROW_UP:
-					goesForward = false;
-					break;
-				case SWT.ARROW_DOWN:
-					goesBackward = false;
-					break;
-				case SWT.CTRL:
-					setCtrlPressed(false);
-					break;
-				case SWT.COMMAND:
-					setCtrlPressed(false);
-					break;
-				case SWT.SHIFT:
-					setShiftPressed(false);
-					finishROISelection();
-					break;
-				default:
-					return true;
+					case SWT.ARROW_LEFT: // player turns left (scene rotates
+											// right)
+						strafeLeft = false;
+						break;
+					case SWT.ARROW_RIGHT: // player turns right (scene rotates
+											// left)
+						strafeRight = false;
+						break;
+					case SWT.ARROW_UP:
+						goesForward = false;
+						break;
+					case SWT.ARROW_DOWN:
+						goesBackward = false;
+						break;
+					case SWT.CTRL:
+						setCtrlPressed(false);
+						break;
+					case SWT.COMMAND:
+						setCtrlPressed(false);
+						break;
+					case SWT.SHIFT:
+						setShiftPressed(false);
+						finishROISelection();
+						break;
+					default:
+						return true;
 				}
 			}
 			return false;

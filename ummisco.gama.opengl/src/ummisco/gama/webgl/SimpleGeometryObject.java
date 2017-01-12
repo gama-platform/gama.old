@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SimpleGeometryObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SimpleGeometryObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,6 +18,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.shape.IShape.Type;
 import msi.gama.util.GamaPair;
+import msi.gaml.types.Types;
 
 /**
  * A simplified representation of a GeometryObject
@@ -26,7 +26,7 @@ import msi.gama.util.GamaPair;
  * @author drogoul
  *
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class SimpleGeometryObject {
 
 	Geometry geometry;
@@ -41,13 +41,13 @@ public class SimpleGeometryObject {
 	List textures;
 
 	public SimpleGeometryObject(final Geometry geometry, final Color color, final Color border, final Double depth,
-			final GamaPair<Double, GamaPoint> rotation, final GamaPoint location, final GamaPoint size, final Type type,
+			final Double angle, final GamaPoint axis, final GamaPoint location, final GamaPoint size, final Type type,
 			final Boolean empty, final List textures) {
 		this.geometry = geometry;
 		this.color = color;
 		this.border = border;
 		this.depth = depth;
-		this.rotation = rotation;
+		this.rotation = new GamaPair<Double, GamaPoint>(angle, axis, Types.FLOAT, Types.POINT);
 		this.location = location;
 		this.size = size;
 		this.type = type;

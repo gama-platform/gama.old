@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaShapeFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaShapeFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -25,23 +24,21 @@ import org.geotools.data.Query;
 import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureIterator;
+import org.geotools.data.store.ContentFeatureSource;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
+import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -62,11 +59,17 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@file(name = "shape", extensions = {
-		"shp" }, buffer_type = IType.LIST, buffer_content = IType.GEOMETRY, buffer_index = IType.INT, concept = {
-				IConcept.SHAPEFILE, IConcept.FILE })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@file (
+		name = "shape",
+		extensions = { "shp" },
+		buffer_type = IType.LIST,
+		buffer_content = IType.GEOMETRY,
+		buffer_index = IType.INT,
+		concept = { IConcept.SHAPEFILE, IConcept.FILE })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaShapeFile extends GamaGisFile {
+
+	static CoordinateFilter ZERO_Z = coord -> ((GamaPoint) coord).z = 0;
 
 	public static class ShapeInfo extends GamaFileMetaData {
 
@@ -209,8 +212,8 @@ public class GamaShapeFile extends GamaGisFile {
 			}
 			final String attributeNames = join(attributes.keySet(), SUB_DELIMITER);
 			final String types = join(attributes.values(), SUB_DELIMITER);
-			final Object[] toSave = new Object[] { super.toPropertyString(), itemNumber, system, width, height,
-					attributeNames, types };
+			final Object[] toSave =
+					new Object[] { super.toPropertyString(), itemNumber, system, width, height, attributeNames, types };
 			return join(toSave, DELIMITER);
 		}
 	}
@@ -251,9 +254,7 @@ public class GamaShapeFile extends GamaGisFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		readShapes(scope);
 	}
@@ -297,38 +298,23 @@ public class GamaShapeFile extends GamaGisFile {
 		int size = 0;
 		try {
 			store = new ShapefileDataStore(file.toURI().toURL());
-			final Envelope env = store.getFeatureSource().getBounds();
-			size = store.getFeatureSource().getCount(Query.ALL);
+			store.setGeometryFactory(GeometryUtils.GEOMETRY_FACTORY);
+			final ContentFeatureSource source = store.getFeatureSource();
+			final Envelope env = source.getBounds();
+			size = source.getCount(Query.ALL);
 			int index = 0;
 			computeProjection(scope, env);
 			try (FeatureReader reader = store.getFeatureReader()) {
-
 				while (reader.hasNext()) {
-					scope.getGui().getStatus().setSubStatusCompletion(index++ / size);
+					index++;
+					if (index % 20 == 0)
+						scope.getGui().getStatus().setSubStatusCompletion(index / size);
 					final Feature feature = reader.next();
 					Geometry g = (Geometry) feature.getDefaultGeometryProperty().getValue();
 					if (g != null && !g.isEmpty() /* Fix for Issue 725 && 677 */ ) {
 						g = gis.transform(g);
 						if (!with3D) {
-							g.apply(new CoordinateSequenceFilter() {
-
-								@Override
-								public void filter(final CoordinateSequence seq, final int i) {
-									if (i <= seq.size() - 1) {
-										seq.getCoordinate(i).z = 0.0;
-									}
-								}
-
-								@Override
-								public boolean isDone() {
-									return false;
-								}
-
-								@Override
-								public boolean isGeometryChanged() {
-									return true;
-								}
-							});
+							g.apply(ZERO_Z);
 						}
 						list.add(new GamaGisGeometry(g, feature));
 					} else {
@@ -354,78 +340,6 @@ public class GamaShapeFile extends GamaGisFile {
 		if (size > list.size()) {
 			GAMA.reportError(scope, GamaRuntimeException.warning("Problem with file " + getFile(scope) + ": only "
 					+ list.size() + " of the " + size + " geometries could be added", scope), false);
-		}
-	}
-
-	public void getFeatureIterator(final IScope scope, final boolean returnIt) {
-		final File file = getFile(scope);
-		ShapefileDataStore store = null;
-		FeatureCollection<SimpleFeatureType, SimpleFeature> features = null;
-		try {
-			scope.getGui().getStatus().beginSubStatus((returnIt ? "Reading file" : "Measuring file ") + getName(scope));
-			store = new ShapefileDataStore(file.toURI().toURL());
-			features = store.getFeatureSource(store.getTypeNames()[0]).getFeatures();
-			final Envelope env = store.getFeatureSource().getBounds();
-			// ShapefileFileResourceInfo info = new
-			// ShapefileFileResourceInfo(store);
-			// Envelope env = info.getBounds();
-			computeProjection(scope, env);
-			if (features != null && returnIt) {
-				final double size = features.size();
-				try (FeatureIterator<SimpleFeature> it = features.features()) {
-					// return returnIt ? features.features() : null;
-					int i = 0;
-					while (it.hasNext()) {
-						scope.getGui().getStatus().setSubStatusCompletion(i++ / size);
-						final SimpleFeature feature = it.next();
-						Geometry g = (Geometry) feature.getDefaultGeometry();
-						if (!with3D) {
-							g.apply(new CoordinateSequenceFilter() {
-
-								@Override
-								public void filter(final CoordinateSequence seq, final int i) {
-									if (i <= seq.size() - 1) {
-										seq.getCoordinate(i).z = 0.0;
-									}
-								}
-
-								@Override
-								public boolean isDone() {
-									return false;
-								}
-
-								@Override
-								public boolean isGeometryChanged() {
-									return true;
-								}
-							});
-						}
-						if (g != null && !g.isEmpty() /* Fix for Issue 725 */ ) {
-							// Fix for Issue 677
-							g = gis.transform(g);
-							((IList) getBuffer()).add(new GamaGisGeometry(g, feature));
-						} else {
-							// See Issue 725
-							GAMA.reportError(scope,
-									GamaRuntimeException
-											.warning(
-													"GamaShapeFile.fillBuffer; geometry could not be added  as it is "
-															+ (g == null ? "nil :" : "empty :") + feature.getID(),
-													scope),
-									false);
-						}
-					}
-				}
-			} else {
-				// return null;
-			}
-		} catch (final IOException e) {
-			throw GamaRuntimeException.create(e, scope);
-		} finally {
-			if (store != null) {
-				store.dispose();
-			}
-			scope.getGui().getStatus().endSubStatus("Opening file " + getName(scope));
 		}
 	}
 

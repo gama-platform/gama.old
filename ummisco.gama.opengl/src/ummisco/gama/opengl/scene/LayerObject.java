@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'LayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'LayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -43,7 +42,7 @@ import ummisco.gama.webgl.SimpleLayer;
  * @since 3 mars 2014
  *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class LayerObject implements Iterable<GeometryObject> {
 
 	final static GamaPoint NULL_OFFSET = new GamaPoint();
@@ -90,9 +89,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void draw(final GL2 gl) {
-		if (isInvalid()) {
-			return;
-		}
+		if (isInvalid()) { return; }
 		if (renderer.useShader()) {
 			drawWithShader(gl);
 		} else {
@@ -159,9 +156,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 			final GamaPoint scale = getScale();
 			gl.glScaled(scale.x, scale.y, scale.z);
 			final boolean picking = renderer.getPickingState().isPicking() && isPickable();
-			if (objects.size() == 0) {
-				return;
-			}
+			if (objects.size() == 0) { return; }
 			renderer.setCurrentColor(gl, Color.white);
 			if (picking) {
 				drawPicking(gl);
@@ -233,9 +228,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public boolean isStatic() {
-		if (layer == null) {
-			return true;
-		}
+		if (layer == null) { return true; }
 		final Boolean isDynamic = layer.isDynamic();
 		return isDynamic == null ? false : !isDynamic;
 	}
@@ -288,22 +281,18 @@ public class LayerObject implements Iterable<GeometryObject> {
 		currentList.add(new GeometryObject(geometry, attributes, this));
 	}
 
-	public int getOrder() {
-		return layer == null ? 0 : layer.getOrder();
+	public double getOrder() {
+		return layer == null ? 2 : layer.getOrder() + 3;
 	}
 
 	private int getTrace() {
-		if (layer == null) {
-			return 0;
-		}
+		if (layer == null) { return 0; }
 		final Integer trace = layer.getTrace();
 		return trace == null ? 0 : trace;
 	}
 
 	private boolean getFading() {
-		if (layer == null) {
-			return false;
-		}
+		if (layer == null) { return false; }
 		final Boolean fading = layer.getFading();
 		return fading == null ? false : fading;
 	}
@@ -352,9 +341,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public void preload(final GL2 gl) {
-		if (objects.size() == 0) {
-			return;
-		}
+		if (objects.size() == 0) { return; }
 		for (final AbstractObject object : currentList) {
 			object.preload(gl, renderer);
 		}

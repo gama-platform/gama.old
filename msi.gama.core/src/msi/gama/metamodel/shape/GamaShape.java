@@ -19,7 +19,6 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -62,15 +61,8 @@ public class GamaShape implements IShape /* , IContainer */ {
 		}
 	}
 
-	// private static final boolean USE_PREPARED_OPERATIONS = false;
-
 	protected Geometry geometry;
 	private IAgent agent;
-
-	// This represents a waste of memory but it is necessary to maintain it, as
-	// the Geometry does not give access
-	// to a custom envelope builder
-	// private Envelope3D envelope;
 
 	// Property map to add all kinds of information (e.g to specify if the
 	// geometry is a sphere, a
@@ -330,24 +322,17 @@ public class GamaShape implements IShape /* , IContainer */ {
 		final Coordinate location = GeometryUtils.toCoordinate(l);
 		if (previous != null) {
 			if (isPoint()) {
-				geometry = GeometryUtils.FACTORY.createPoint(location);
+				geometry = GeometryUtils.GEOMETRY_FACTORY.createPoint(location);
 				setEnvelope(Envelope3D.of(location));
 			} else {
 				// if ( isPoint ) {
 				final double dx = location.x - previous.getX();
 				final double dy = location.y - previous.getY();
 				final double dz = location.z - previous.getZ();
-				geometry.apply(new Translation(dx, dy, dz));
+				GeometryUtils.translate(geometry, dx, dy, dz);
 				// We move the envelope as well if it has been computed
-				// if ( envelope != null ) {
 				getEnvelope().translate(dx, dy, dz);
-				// }
-				// Changed to avoid side effects when computing displacements &
-				// display at a given location at the same
-				// time.
 			}
-
-			// geometry.geometryChanged();
 		}
 	}
 
@@ -355,32 +340,6 @@ public class GamaShape implements IShape /* , IContainer */ {
 		final GamaShape result = copy(scope);
 		result.setLocation(target);
 		return result;
-	}
-
-	public static class Translation implements CoordinateFilter {
-
-		double dx, dy, dz;
-
-		Translation(final double x, final double y, final double z) {
-			dx = x;
-			dy = y;
-			dz = z;
-		}
-
-		/**
-		 * @see com.vividsolutions.jts.geom.CoordinateFilter#filter(com.vividsolutions.jts.geom.Coordinate)
-		 */
-		@Override
-		public synchronized void filter(final Coordinate coord) {
-			coord.x += dx;
-			coord.y += dy;
-			if (Double.isNaN(coord.z)) {
-				coord.z = dz;
-			} else {
-				coord.z += dz;
-			}
-		}
-
 	}
 
 	final static PointLocator pl = new PointLocator();
@@ -424,7 +383,8 @@ public class GamaShape implements IShape /* , IContainer */ {
 			final Polygon p = (Polygon) getInnerGeometry();
 			final int n = p.getNumInteriorRing();
 			for (int i = 0; i < n; i++) {
-				holes.add(new GamaShape(GeometryUtils.fromLineToPoylgon(p.getInteriorRingN(i))));
+				holes.add(new GamaShape(
+						GeometryUtils.GEOMETRY_FACTORY.createPolygon(p.getInteriorRingN(i).getCoordinates())));
 			}
 		}
 		return holes;
@@ -454,7 +414,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 			for (int i = 0; i < mp.getNumGeometries(); i++) {
 				lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
 			}
-			result = GeometryUtils.FACTORY.createMultiLineString(lines);
+			result = GeometryUtils.GEOMETRY_FACTORY.createMultiLineString(lines);
 
 		}
 		return new GamaShape(result);
@@ -488,13 +448,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public IList<? extends ILocation> getPoints() {
-		final IList<GamaPoint> result = GamaListFactory.create(Types.POINT);
-		if (getInnerGeometry() == null) { return result; }
-		final Coordinate[] points = getInnerGeometry().getCoordinates();
-		for (final Coordinate c : points) {
-			result.add(new GamaPoint(c));
-		}
-		return result;
+		if (getInnerGeometry() == null) { return GamaListFactory.create(Types.POINT); }
+		return (IList<? extends ILocation>) GamaListFactory.createWithoutCasting(Types.POINT,
+				getInnerGeometry().getCoordinates());
 	}
 
 	@Override
@@ -509,10 +465,6 @@ public class GamaShape implements IShape /* , IContainer */ {
 			return (Envelope3D) e;
 		} catch (IllegalArgumentException | IllegalAccessException e) {}
 		return null;
-		// if ( envelope == null ) {
-		// envelope = Envelope3D.of(this);
-		// }
-		// return envelope;
 	}
 
 	@Override
@@ -540,9 +492,9 @@ public class GamaShape implements IShape /* , IContainer */ {
 		} else {
 			geometry = geom;
 		}
-		if (geometry != null && !GeometryUtils.isClockWise(geometry)) {
-			GeometryUtils.changeClockWise(geometry);
-		}
+		// if (geometry != null && !GeometryUtils.isClockwise(geometry)) {
+		// GeometryUtils.changeClockwise(geometry);
+		// }
 		// setEnvelope(null);
 	}
 

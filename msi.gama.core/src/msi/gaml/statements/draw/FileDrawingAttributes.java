@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FileDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FileDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -12,10 +11,10 @@ package msi.gaml.statements.draw;
 
 import java.util.List;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
@@ -23,25 +22,29 @@ import msi.gama.util.GamaPair;
 public class FileDrawingAttributes extends DrawingAttributes {
 
 	public final AgentIdentifier agentIdentifier;
-	public GamaColor border;
 
-	public FileDrawingAttributes(final ILocation size, final GamaPair<Double, GamaPoint> rotation,
-			final ILocation location, final GamaColor color, final GamaColor border, final IAgent agent) {
-		super(size, rotation, location, color);
+	public FileDrawingAttributes(final GamaPoint size, final GamaPair<Double, GamaPoint> rotation,
+			final GamaPoint location, final GamaColor color, final GamaColor border, final IAgent agent,
+			final Double lineWidth) {
+		super(size, rotation, location, color, border);
 		this.agentIdentifier = AgentIdentifier.of(agent);
-		this.border = border;
+		setLineWidth(lineWidth == null ? GamaPreferences.CORE_LINE_WIDTH.getValue() : lineWidth);
 	}
 
-	public FileDrawingAttributes(final ILocation location) {
-		super(null, null, location, null);
-		agentIdentifier = null;
-		border = null;
+	public void setLineWidth(final Double d) {
+		setLength(ID_LINE_WIDTH, d);
 	}
 
-	public FileDrawingAttributes(final ILocation location, final GamaColor color, final GamaColor border) {
-		super(null, null, location, color);
+	public FileDrawingAttributes(final GamaPoint location) {
+		super(null, null, location, null, null);
 		agentIdentifier = null;
-		this.border = border;
+		setLineWidth(GamaPreferences.CORE_LINE_WIDTH.getValue());
+	}
+
+	public FileDrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border) {
+		super(null, null, location, color, border);
+		agentIdentifier = null;
+		setLineWidth(GamaPreferences.CORE_LINE_WIDTH.getValue());
 	}
 
 	/**
@@ -62,36 +65,6 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	@Override
 	public boolean isEmpty() {
 		return false;
-	}
-
-	/**
-	 * Method getAgent()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getAgent()
-	 */
-	// @Override
-	// public IAgent getAgent() {
-	// return agent;
-	// }
-
-	/**
-	 * Method getBorder()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getBorder()
-	 */
-	@Override
-	public GamaColor getBorder() {
-		return border;
-	}
-
-	/**
-	 * Method getDepth()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getDepth()
-	 */
-	@Override
-	public double getDepth() {
-		return 0;
 	}
 
 	/**

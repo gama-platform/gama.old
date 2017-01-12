@@ -89,7 +89,6 @@ public class LayeredDisplayData {
 	private boolean isTriangulating = false;
 	// private int traceSize = 0;
 	private boolean isZFighting = true; // GamaPreferences.CORE_Z_FIGHTING.getValue();
-	private boolean isDrawingNormals = true; // GamaPreferences.CORE_DRAW_NORM.getValue();
 	private boolean isDisplayingAsACube = false; // GamaPreferences.CORE_CUBEDISPLAY.getValue();
 	private boolean ortho = false;
 	private boolean disableCameraInteraction = false; // "fixed_camera" facet of
@@ -226,21 +225,6 @@ public class LayeredDisplayData {
 	}
 
 	/**
-	 * @return the draw_norm
-	 */
-	public boolean isDraw_norm() {
-		return isDrawingNormals;
-	}
-
-	/**
-	 * @param draw_norm
-	 *            the draw_norm to set
-	 */
-	public void setDraw_norm(final boolean draw_norm) {
-		this.isDrawingNormals = draw_norm;
-	}
-
-	/**
 	 * @return the cubeDisplay
 	 */
 	public boolean isCubeDisplay() {
@@ -330,6 +314,7 @@ public class LayeredDisplayData {
 		this.isLightOn = isLightOn;
 	}
 
+	// Change lights to a possibly null structure instead of generating an array for each data
 	public List<LightPropertiesStructure> getDiffuseLights() {
 		final ArrayList<LightPropertiesStructure> result = new ArrayList<LightPropertiesStructure>();
 		for (final LightPropertiesStructure lightProp : lights) {

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ModernRenderer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ModernRenderer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -113,9 +112,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 	public void display(final GLAutoDrawable drawable) {
 
 		currentScene = sceneBuffer.getSceneToRender();
-		if (currentScene == null) {
-			return;
-		}
+		if (currentScene == null) { return; }
 		final GL2 gl = drawable.getContext().getGL().getGL2();
 		// We preload any geometry, textures, etc. that are used in layers
 		currentScene.preload(gl);
@@ -163,9 +160,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width,
 			final int height) {
 		// Get the OpenGL graphics context
-		if (width <= 0 || height <= 0) {
-			return;
-		}
+		if (width <= 0 || height <= 0) { return; }
 		updatePerspective();
 	}
 
@@ -192,9 +187,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	public void drawScene(final GL2 gl) {
 		currentScene = sceneBuffer.getSceneToRender();
-		if (currentScene == null) {
-			return;
-		}
+		if (currentScene == null) { return; }
 		// Do some garbage collecting in model scenes
 		sceneBuffer.garbageCollect(gl);
 		// if picking, we draw a first pass to pick the color
@@ -215,8 +208,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
-	 * After drawing we have to calculate which object was nearest screen and
-	 * return its index
+	 * After drawing we have to calculate which object was nearest screen and return its index
 	 * 
 	 * @return name of selected object
 	 */
@@ -284,20 +276,16 @@ public class ModernRenderer extends Abstract3DRenderer {
 	}
 
 	/**
-	 * Method drawGeometry. Add a given JTS Geometry in the list of all the
-	 * existing geometry that will be displayed by openGl.
+	 * Method drawGeometry. Add a given JTS Geometry in the list of all the existing geometry that will be displayed by
+	 * openGl.
 	 */
 	@Override
 	public Rectangle2D drawShape(final IShape shape, final ShapeDrawingAttributes attributes) {
-		if (shape == null) {
-			return null;
-		}
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return null;
-		}
+		if (shape == null) { return null; }
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 		// IShape.Type type = shape.getGeometricalType();
 		if (highlight) {
-			attributes.color = GamaColor.getInt(data.getHighlightColor().getRGB());
+			attributes.setColor(GamaColor.getInt(data.getHighlightColor().getRGB()));
 		}
 		sceneBuffer.getSceneToUpdate().addGeometry(shape.getInnerGeometry(), attributes);
 
@@ -346,28 +334,24 @@ public class ModernRenderer extends Abstract3DRenderer {
 	 */
 	@Override
 	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return null;
-		}
-		if (attributes.size == null) {
-			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
+		if (attributes.getSize() == null) {
+			attributes.setSize(new GamaPoint(data.getEnvWidth(), data.getEnvHeight()));
 		}
 		sceneBuffer.getSceneToUpdate().addImage(img, attributes);
 
-		if (attributes.border != null) {
-			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.border);
+		if (attributes.getBorder() != null) {
+			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.getBorder());
 		}
 		return rect;
 	}
 
-	@SuppressWarnings("rawtypes")
+	@SuppressWarnings ("rawtypes")
 	@Override
 	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return null;
-		}
-		if (attributes.size == null) {
-			attributes.size = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
+		if (attributes.getSize() == null) {
+			attributes.setSize(new GamaPoint(data.getEnvWidth(), data.getEnvHeight()));
 		}
 
 		if (file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath(surface.getScope()))) {
@@ -384,9 +368,7 @@ public class ModernRenderer extends Abstract3DRenderer {
 	}
 
 	public void drawGridLine(final GamaPoint dimensions, final Color lineColor) {
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return;
-		}
+		if (sceneBuffer.getSceneToUpdate() == null) { return; }
 		double stepX, stepY;
 		final double cellWidth = this.data.getEnvWidth() / dimensions.x;
 		final double cellHeight = this.data.getEnvHeight() / dimensions.y;
@@ -407,18 +389,16 @@ public class ModernRenderer extends Abstract3DRenderer {
 	@Override
 	public Rectangle2D drawString(final String string, final TextDrawingAttributes attributes) {
 		// Multiline: Issue #780
-		if (sceneBuffer.getSceneToUpdate() == null) {
-			return null;
-		}
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 		if (string.contains("\n")) {
 			for (final String s : string.split("\n")) {
-				attributes.location.setY(attributes.location.getY()
+				attributes.getLocation().setY(attributes.getLocation().getY()
 						+ attributes.font.getSize() * this.getyRatioBetweenPixelsAndModelUnits());
 				drawString(s, attributes);
 			}
 			return null;
 		}
-		attributes.location.setY(-attributes.location.getY());
+		attributes.getLocation().setY(-attributes.getLocation().getY());
 		sceneBuffer.getSceneToUpdate().addString(string, attributes);
 		return null;
 	}
@@ -445,9 +425,8 @@ public class ModernRenderer extends Abstract3DRenderer {
 	}
 
 	/**
-	 * Set the value z of the current Layer. If no value is define is defined
-	 * set it to 0. Set the type of the layer weather it's a static layer
-	 * (refresh:false) or a dynamic layer (by default or refresh:true)
+	 * Set the value z of the current Layer. If no value is define is defined set it to 0. Set the type of the layer
+	 * weather it's a static layer (refresh:false) or a dynamic layer (by default or refresh:true)
 	 */
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {

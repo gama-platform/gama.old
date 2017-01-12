@@ -88,21 +88,21 @@ public abstract class AbstractTopology implements ITopology {
 
 	public Geometry returnToroidalGeom(final GamaPoint loc) {
 		final List<Geometry> geoms = new ArrayList<Geometry>();
-		final Point pt = GeometryUtils.FACTORY.createPoint(loc);
+		final Point pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(loc);
 		final AffineTransformation at = new AffineTransformation();
 		geoms.add(pt);
 		for (int cnt = 0; cnt < 8; cnt++) {
 			at.setToTranslation(adjustedXVector[cnt], adjustedYVector[cnt]);
 			geoms.add(at.transform(pt));
 		}
-		return GeometryUtils.FACTORY.buildGeometry(geoms);
+		return GeometryUtils.GEOMETRY_FACTORY.buildGeometry(geoms);
 	}
 
 	public Geometry returnToroidalGeom(final IShape shape) {
 		if (shape.isPoint()) {
 			return returnToroidalGeom((GamaPoint) shape.getLocation());
 		}
-		return GeometryUtils.FACTORY.buildGeometry(listToroidalGeometries(shape.getInnerGeometry()));
+		return GeometryUtils.GEOMETRY_FACTORY.buildGeometry(listToroidalGeometries(shape.getInnerGeometry()));
 	}
 
 	public Map<Geometry, IAgent> toroidalGeoms(final IScope scope, final IContainer<?, ? extends IShape> shps) {
@@ -110,7 +110,7 @@ public abstract class AbstractTopology implements ITopology {
 		for (final IShape ag : shps.iterable(scope)) {
 			final IAgent agent = ag.getAgent();
 			if (agent != null) {
-				geoms.put(GeometryUtils.FACTORY
+				geoms.put(GeometryUtils.GEOMETRY_FACTORY
 						.buildGeometry(listToroidalGeometries(agent.getGeometry().getInnerGeometry())), agent);
 			}
 		}
@@ -247,7 +247,7 @@ public abstract class AbstractTopology implements ITopology {
 		}
 
 		if (isTorus()) {
-			final Point pt = GeometryUtils.FACTORY.createPoint(GeometryUtils.toCoordinate(point));
+			final Point pt = GeometryUtils.GEOMETRY_FACTORY.createPoint(GeometryUtils.toCoordinate(point));
 
 			for (int cnt = 0; cnt < 8; cnt++) {
 				final AffineTransformation at = new AffineTransformation();

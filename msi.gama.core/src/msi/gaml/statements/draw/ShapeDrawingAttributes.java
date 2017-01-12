@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ShapeDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ShapeDrawingAttributes.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -15,34 +14,30 @@ import java.util.List;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class ShapeDrawingAttributes extends FileDrawingAttributes {
 
-	public double depth = 0.0;
 	public boolean empty;
 	public final List textures;
 	public GamaMaterial material;
 	public IShape.Type type;
-	public List<GamaColor> colors;
 
-	public ShapeDrawingAttributes(final ILocation size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
-			final ILocation location, final Boolean empty, final GamaColor color, final List<GamaColor> colors,
+	public ShapeDrawingAttributes(final GamaPoint size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
+			final GamaPoint location, final Boolean empty, final GamaColor color, final List<GamaColor> colors,
 			final GamaColor border, final List textures, final GamaMaterial material, final IAgent agent,
-			final IShape.Type type) {
-		super(size, rotation, location, color, border, agent);
-		this.depth = depth == null ? 0.0 : depth.doubleValue();
+			final IShape.Type type, final Double lineWidth) {
+		super(size, rotation, location, color, border, agent, lineWidth);
+		setDepthIfAbsent(depth);
 		this.empty = empty == null ? false : empty.booleanValue();
-		this.border = border == null && this.empty ? color : border;
+		setBorder(border == null && this.empty ? getColor() : border);
 		this.textures = textures == null ? null : new ArrayList(textures);
 		this.material = material == null ? null : material;
 		this.type = type;
-		this.colors = colors;
 	}
 
 	public ShapeDrawingAttributes(final GamaPoint location) {
@@ -55,7 +50,7 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 
 	public ShapeDrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border,
 			final IShape.Type type) {
-		this(null, null, null, location, color == null, color, null, border, null, null, null, type);
+		this(null, null, null, location, color == null, color, null, border, null, null, null, type, null);
 	}
 
 	/**
@@ -64,15 +59,19 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	 * @param borderColor
 	 */
 	public ShapeDrawingAttributes(final IShape shape, final GamaColor color, final GamaColor border) {
-		this(null, null, null, shape.getLocation(), color == null, color, null, border, null, null, shape.getAgent(),
-				shape.getGeometricalType());
+		this(null, null, null, (GamaPoint) shape.getLocation(), color == null, color, null, border, null, null,
+				shape.getAgent(), shape.getGeometricalType(), null);
+	}
+
+	public ShapeDrawingAttributes(final IShape shape, final GamaColor color, final GamaColor border,
+			final double lineWidth) {
+		this(null, null, null, (GamaPoint) shape.getLocation(), color == null, color, null, border, null, null,
+				shape.getAgent(), shape.getGeometricalType(), lineWidth);
 	}
 
 	public void setDepthIfAbsent(final Double d) {
-		if (depth != 0.0) {
-			return;
-		}
-		depth = d == null ? 0.0 : d;
+		if (getDepth() == null)
+			setDepth(d);
 	}
 
 	@Override
@@ -91,31 +90,6 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	}
 
 	/**
-	 * Method getAgent()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getAgent()
-	 */
-	// @Override
-	// public IAgent getAgent() {
-	// return agent;
-	// }
-
-	/**
-	 * Method getDepth()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getDepth()
-	 */
-	@Override
-	public double getDepth() {
-		return depth;
-	}
-
-	@Override
-	public List<GamaColor> getColors() {
-		return colors;
-	}
-
-	/**
 	 * Method getMaterial()
 	 * 
 	 * @see msi.gaml.statements.draw.DrawingAttributes#getMaterial()
@@ -123,6 +97,11 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	@Override
 	public GamaMaterial getMaterial() {
 		return material;
+	}
+
+	@Override
+	public void setEmpty(final boolean b) {
+		empty = b;
 	}
 
 }

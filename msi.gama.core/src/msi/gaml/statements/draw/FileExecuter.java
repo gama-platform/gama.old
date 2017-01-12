@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'FileExecuter.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'FileExecuter.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -26,7 +25,7 @@ import msi.gama.util.file.GamaImageFile;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 class FileExecuter extends DrawExecuter {
 
 	private final GamaFile constImg;
@@ -39,22 +38,19 @@ class FileExecuter extends DrawExecuter {
 	@Override
 	Rectangle2D executeOn(final IScope scope, final IGraphics g, final DrawingData data) throws GamaRuntimeException {
 		final GamaFile file = constImg == null ? (GamaFile) item.value(scope) : constImg;
-		if (file == null) {
-			return null;
-		}
+		if (file == null) { return null; }
 		final FileDrawingAttributes attributes = computeAttributes(scope, data, file instanceof GamaImageFile);
 
 		// XXX EXPERIMENTAL See Issue #1521
 		if (GamaPreferences.DISPLAY_ONLY_VISIBLE.getValue() && !GAMA.isInHeadLessMode()) {
-			if (attributes.size != null) {
+			final GamaPoint size = attributes.getSize();
+			if (size != null) {
 				// if a size is provided
-				final Envelope3D expected = Envelope3D.of(attributes.location);
-				expected.expandBy(attributes.size.x / 2, attributes.size.y / 2);
+				final Envelope3D expected = Envelope3D.of(attributes.getLocation());
+				expected.expandBy(size.x / 2, size.y / 2);
 				final Envelope visible = g.getVisibleRegion();
 				if (visible != null)
-					if (!visible.intersects(expected)) {
-						return null;
-					}
+					if (!visible.intersects(expected)) { return null; }
 			}
 			// XXX EXPERIMENTAL
 		}
@@ -63,22 +59,24 @@ class FileExecuter extends DrawExecuter {
 	}
 
 	FileDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final boolean imageFile) {
-		final FileDrawingAttributes attributes = new FileDrawingAttributes(data.currentSize, data.currentRotation,
-				data.currentLocation, data.currentColor, imageFile ? null : data.currentBorder, scope.getAgent());
+		final FileDrawingAttributes attributes = new FileDrawingAttributes(data.size.value, data.rotation.value,
+				data.location.value, data.getCurrentColor(), imageFile ? null : data.border.value, scope.getAgent(),
+				data.lineWidth.value);
 		// We push the location of the agent if none has been provided
 		attributes.setLocationIfAbsent(new GamaPoint(scope.getAgent().getLocation()));
 		if (imageFile) {
 			// If the size is provided, we automatically center the file
-			if (attributes.size != null) {
-				final GamaPoint location = attributes.location;
-				final double displayWidth = attributes.size.x;
-				final double displayHeight = attributes.size.y;
-				final double displayDepth = attributes.size.z;
+			final GamaPoint size = attributes.getSize();
+			if (size != null) {
+				final GamaPoint location = attributes.getLocation();
+				final double displayWidth = size.x;
+				final double displayHeight = size.y;
+				final double displayDepth = size.z;
 				final double x = location.x - displayWidth / 2;
 				final double y = location.y - displayHeight / 2;
 				final double z = location.z - displayDepth / 2;
 				// New location
-				attributes.location = new GamaPoint(x, y, z);
+				attributes.setLocation(new GamaPoint(x, y, z));
 			}
 		}
 		return attributes;

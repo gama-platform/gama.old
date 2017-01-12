@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ResourceObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ResourceObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -43,22 +42,18 @@ public class ResourceObject extends AbstractObject {
 		final Envelope env = JOGLRenderer.getEnvelopeFor(file.getPath(renderer.getSurface().getScope()));
 		// If a location is provided we use it otherwise we use that of the
 		// agent if it exists
-		if (attributes.location != null) {
-			gl.glTranslated(attributes.location.x, JOGLRenderer.Y_FLAG * attributes.location.y, attributes.location.z);
+		if (attributes.getLocation() != null) {
+			gl.glTranslated(attributes.getLocation().x, -attributes.getLocation().y, attributes.getLocation().z);
 		}
-		// else if (attributes.getAgent() != null) {
-		// final ILocation loc = attributes.getAgent().getLocation();
-		// gl.glTranslated(loc.getX(), JOGLRenderer.Y_FLAG * loc.getY(),
-		// loc.getZ());
-		// }
 
 		final GamaPoint size = getDimensions();
 
 		// If there is a rotation we apply it
-		if (attributes.rotation != null) {
+		Double rot = attributes.getAngle();
+		if (rot != null) {
 			// AD Change to a negative rotation to fix Issue #1514
-			final Double rot = -attributes.rotation.key;
-			final GamaPoint axis = attributes.rotation.value;
+			rot = -rot;
+			final GamaPoint axis = attributes.getAxis();
 			gl.glRotated(rot, axis.x, axis.y, axis.z);
 		}
 
@@ -66,7 +61,7 @@ public class ResourceObject extends AbstractObject {
 		// we also apply the initial rotation if there is any
 		if (initRotation != null) {
 			// AD Change to a negative rotation to fix Issue #1514
-			final Double rot = -initRotation.key;
+			rot = -initRotation.key;
 			final GamaPoint axis = initRotation.value;
 			gl.glRotated(rot, axis.x, axis.y, axis.z);
 		}
@@ -74,10 +69,8 @@ public class ResourceObject extends AbstractObject {
 		// We translate it to its center
 		// FIXME Necessary for all file types ?
 		//
-		// if ( size != null ) {
-		// gl.glTranslated(-size.x / 2, JOGLRenderer.Y_FLAG * size.y / 2, 0);
 		if (size == null && env != null) {
-			gl.glTranslated(-env.getWidth() / 2, -JOGLRenderer.Y_FLAG * env.getHeight() / 2, 0);
+			gl.glTranslated(-env.getWidth() / 2, env.getHeight() / 2, 0);
 		}
 
 		// We then compute the scaling factor to apply
@@ -91,15 +84,7 @@ public class ResourceObject extends AbstractObject {
 			}
 			gl.glScaled(factor, factor, factor);
 		}
-		// And apply its color if any
-		if (getColor() != null) { // does not work for obj files
-			renderer.setCurrentColor(gl, getColor(), getAlpha());
-			// GLUtilGLContext.SetCurrentColor(gl, (float) (getColor().getRed()
-			// / 255.0),
-			// (float) (getColor().getGreen() / 255.0), (float)
-			// (getColor().getBlue() / 255.0),
-			// (float) (getAlpha() * getColor().getAlpha() / 255.0f));
-		}
+
 		// Then we draw the geometry itself
 		super.draw(gl, drawer, isPicking);
 
@@ -109,6 +94,7 @@ public class ResourceObject extends AbstractObject {
 
 	@Override
 	public void preload(final GL2 gl, final Abstract3DRenderer renderer) {
+		super.preload(gl, renderer);
 		renderer.getGeometryListFor(gl, file);
 	}
 }

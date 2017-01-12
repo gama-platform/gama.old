@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractTransformer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractTransformer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -22,6 +21,7 @@ import msi.gama.util.GamaColor;
 import msi.gama.util.GamaMaterial;
 import msi.gama.util.GamaPair;
 import msi.gaml.types.GamaMaterialType;
+import msi.gaml.types.Types;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.modernOpenGL.Material;
 import ummisco.gama.opengl.scene.AbstractObject;
@@ -39,14 +39,14 @@ abstract class AbstractTransformer {
 	private static GamaColor DEFAULT_COLOR = new GamaColor(1.0, 1.0, 0.0, 1.0);
 
 	protected boolean geometryCorrupted = false;
-	
+
 	protected boolean isOverlay = false;
 	protected boolean isTriangulation = false;
 	protected boolean isLightInteraction = true;
 	protected boolean isWireframe = false;
-	protected ArrayList<int[]> faces = new ArrayList<int[]>(); 
+	protected ArrayList<int[]> faces = new ArrayList<int[]>();
 	// (way to construct a face from the indices of the coordinates (anti clockwise for front face) )
-	private final ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>(); 
+	private final ArrayList<int[]> edgesToSmooth = new ArrayList<int[]>();
 	// (list that store all the edges erased thanks to the smooth shading (those edges must
 	// not be displayed when displaying the borders !) )
 	protected float[] coords;
@@ -72,7 +72,7 @@ abstract class AbstractTransformer {
 	protected GamaPair<Double, GamaPoint> rotation;
 	protected GamaPoint size;
 	protected GamaColor color;
-	protected ArrayList<GamaColor> colors;
+	protected GamaColor[] colors;
 	protected GamaColor borderColor;
 	protected Coordinate[] coordinates;
 	protected GamaMaterial material;
@@ -96,29 +96,31 @@ abstract class AbstractTransformer {
 		if (this.material == null)
 			this.material = GamaMaterialType.DEFAULT_MATERIAL;
 
-		this.translation = object.getAttributes().location;
+		this.translation = object.getAttributes().getLocation();
 		if (translation == null)
 			translation = new GamaPoint(0, 0, 0); // ex : charts
-		this.rotation = object.getAttributes().rotation;
-		this.isWireframe = object.getAttributes().wireframe;
+		this.rotation = object.getAttributes().getAngle() == null ? null
+				: new GamaPair<>(object.getRotationAngle(), object.getAttributes().getAxis(), Types.FLOAT, Types.POINT);
+		this.isWireframe = object.getAttributes().isEmpty();
 	}
 
 	public String getHashCode() {
 		// returns the hashcode used in the shape cache.
 		String result = null;
 		if (type.toString().equals("SPHERE") || type.toString().equals("PYRAMID") || type.toString().equals("CONE")
-				|| type.toString().equals("CUBE") || type.toString().equals("CYLINDER") || type.toString().equals("RECTANGLE")) {
+				|| type.toString().equals("CUBE") || type.toString().equals("CYLINDER")
+				|| type.toString().equals("RECTANGLE")) {
 			result = type.toString() + (isWireframe ? "_wireframe" : "") + depth;
-		} 
-//		else {
-//			String coordsInString = "";
-//			for (final Coordinate c : coordsWithDoublons) {
-//				coordsInString += c.x;
-//				coordsInString += c.y;
-//				coordsInString += c.z;
-//			}
-//			result = type.toString() + coordsInString;
-//		}
+		}
+		// else {
+		// String coordsInString = "";
+		// for (final Coordinate c : coordsWithDoublons) {
+		// coordsInString += c.x;
+		// coordsInString += c.y;
+		// coordsInString += c.z;
+		// }
+		// result = type.toString() + coordsInString;
+		// }
 		return result;
 	}
 
@@ -129,8 +131,8 @@ abstract class AbstractTransformer {
 		this.depth = this.depth * 1 / size.z;
 		coordsWithDoublons = GeomMathUtils.setTranslationToCoordArray(coordsWithDoublons, -translation.x,
 				-translation.y, -translation.z);
-		coordsWithDoublons = GeomMathUtils.setScalingToCoordArray(coordsWithDoublons, 1 / size.x, 1 / size.y,
-				1 / size.z);
+		coordsWithDoublons =
+				GeomMathUtils.setScalingToCoordArray(coordsWithDoublons, 1 / size.x, 1 / size.y, 1 / size.z);
 	}
 
 	protected void loadManyFacedShape(final AbstractTransformer shape) {
@@ -272,9 +274,9 @@ abstract class AbstractTransformer {
 			edgesToSmooth.add(edge);
 		}
 	}
-	
+
 	protected void triangulate() {
-		UtilTriangulation triangulate = new UtilTriangulation(coords);
+		final UtilTriangulation triangulate = new UtilTriangulation(coords);
 		for (int i = 0; i < faces.size(); i++) {
 			final int[] faceTriangulated = triangulate.ear_cutting_triangulatation(faces.get(i));
 			faces.remove(i);
@@ -371,24 +373,23 @@ abstract class AbstractTransformer {
 		final int verticesNb = coordsArray.length / 3;
 		float[] result = null;
 		result = new float[verticesNb * 4];
-		if (colors != null){
+		if (colors != null) {
 			// the case where a list of color has been passed for the geometry object
 			for (int i = 0; i < verticesNb; i++) {
-				float[] color = new float[] { (float) colors.get(0).red() / 255f, (float) colors.get(0).green() / 255f,
-						(float) colors.get(0).blue() / 255f, (float) colors.get(0).alpha() / 255f };
-				if (i < colors.size()) {
-					color = new float[] { (float) colors.get(i).red() / 255f, (float) colors.get(i).green() / 255f,
-							(float) colors.get(i).blue() / 255f, (float) colors.get(i).alpha() / 255f };
+				float[] color = new float[] { (float) colors[0].red() / 255f, (float) colors[0].green() / 255f,
+						(float) colors[0].blue() / 255f, (float) colors[0].alpha() / 255f };
+				if (i < colors.length) {
+					color = new float[] { (float) colors[i].red() / 255f, (float) colors[i].green() / 255f,
+							(float) colors[i].blue() / 255f, (float) colors[i].alpha() / 255f };
 				}
 				result[4 * i] = color[0];
 				result[4 * i + 1] = color[1];
 				result[4 * i + 2] = color[2];
 				result[4 * i + 3] = color[3];
 			}
-		}
-		else {
+		} else {
 			final float[] color = new float[] { (float) gamaColor.red() / 255f, (float) gamaColor.green() / 255f,
-				(float) gamaColor.blue() / 255f, (float) gamaColor.alpha() / 255f };
+					(float) gamaColor.blue() / 255f, (float) gamaColor.alpha() / 255f };
 			for (int i = 0; i < verticesNb; i++) {
 				result[4 * i] = color[0];
 				result[4 * i + 1] = color[1];
@@ -396,16 +397,14 @@ abstract class AbstractTransformer {
 				result[4 * i + 3] = color[3];
 			}
 		}
-		
+
 		return result;
 	}
-	
-	private int getFaceNumber(int vIdx) {
-		for (int i = 0 ; i < faces.size() ; i++) {
-			for (int j : faces.get(0)) {
-				if (j == vIdx) {
-					return i;
-				}
+
+	private int getFaceNumber(final int vIdx) {
+		for (int i = 0; i < faces.size(); i++) {
+			for (final int j : faces.get(0)) {
+				if (j == vIdx) { return i; }
 			}
 		}
 		return -1;
@@ -413,14 +412,14 @@ abstract class AbstractTransformer {
 
 	protected void computeNormals() {
 		final float[] result = new float[coords.length];
-		
+
 		boolean faceIsClockwise[] = new boolean[faces.size()];
-		for (int i = 0 ; i < faces.size() ; i++) {
-			float[] coordsOfFace = new float[faces.get(i).length * 3];
-			for (int j = 0 ; j < faces.get(i).length ; j++) {
-				coordsOfFace[j*3] = coords[faces.get(i)[j]*3];
-				coordsOfFace[j*3+1] = coords[faces.get(i)[j]*3+1];
-				coordsOfFace[j*3+2] = coords[faces.get(i)[j]*3+2];
+		for (int i = 0; i < faces.size(); i++) {
+			final float[] coordsOfFace = new float[faces.get(i).length * 3];
+			for (int j = 0; j < faces.get(i).length; j++) {
+				coordsOfFace[j * 3] = coords[faces.get(i)[j] * 3];
+				coordsOfFace[j * 3 + 1] = coords[faces.get(i)[j] * 3 + 1];
+				coordsOfFace[j * 3 + 2] = coords[faces.get(i)[j] * 3 + 2];
 			}
 			faceIsClockwise[i] = Utils.isClockwise(coordsOfFace);
 		}
@@ -449,17 +448,16 @@ abstract class AbstractTransformer {
 				// compute the vectorial product between the two edges. The vectorial product is done on the other side
 				// .. if the vertex is inside the geometry.
 				float[] vectProduct;
-				float[] coordArray = Utils.concatFloatArrays(vtxCoordBefore,vtxCoord);
-				coordArray = Utils.concatFloatArrays(coordArray,vtxCoordAfter);
-				int faceNumber = getFaceNumber(vIdx);
+				float[] coordArray = Utils.concatFloatArrays(vtxCoordBefore, vtxCoord);
+				coordArray = Utils.concatFloatArrays(coordArray, vtxCoordAfter);
+				final int faceNumber = getFaceNumber(vIdx);
 				boolean vIsInsideTheGeometry = false;
 				if (faceNumber != -1) {
-					vIsInsideTheGeometry = faceIsClockwise[faceNumber] != (Utils.isClockwise(coordArray));
+					vIsInsideTheGeometry = faceIsClockwise[faceNumber] != Utils.isClockwise(coordArray);
 				}
 				if (vIsInsideTheGeometry) {
 					vectProduct = GeomMathUtils.CrossProduct(vec2, vec1);
-				}
-				else {
+				} else {
 					vectProduct = GeomMathUtils.CrossProduct(vec1, vec2);
 				}
 				sum = vectProduct[0] * vectProduct[0] + vectProduct[1] * vectProduct[1]
@@ -501,8 +499,8 @@ abstract class AbstractTransformer {
 		final ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
 
 		// configure the drawing entity for the border
-		final DrawingEntity borderEntity = createBorderEntity(coords, getIdxBufferForLines(),
-				getColorArray(TRIANGULATE_COLOR, coords));
+		final DrawingEntity borderEntity =
+				createBorderEntity(coords, getIdxBufferForLines(), getColorArray(TRIANGULATE_COLOR, coords));
 
 		if (borderEntity != null)
 			result.add(borderEntity);
@@ -514,8 +512,8 @@ abstract class AbstractTransformer {
 		final ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
 
 		// configure the drawing entity for the border
-		final DrawingEntity borderEntity = createBorderEntity(coords, getIdxBufferForLines(),
-				getColorArray(color, coords));
+		final DrawingEntity borderEntity =
+				createBorderEntity(coords, getIdxBufferForLines(), getColorArray(color, coords));
 
 		if (borderEntity != null)
 			result.add(borderEntity);
@@ -529,8 +527,8 @@ abstract class AbstractTransformer {
 		final ArrayList<DrawingEntity> result = new ArrayList<DrawingEntity>();
 
 		// configure the drawing entity for the border
-		final DrawingEntity borderEntity = createBorderEntity(coordsForBorder, idxForBorder,
-				getColorArray(color, coordsForBorder));
+		final DrawingEntity borderEntity =
+				createBorderEntity(coordsForBorder, idxForBorder, getColorArray(color, coordsForBorder));
 
 		if (borderEntity != null)
 			result.add(borderEntity);
@@ -548,8 +546,8 @@ abstract class AbstractTransformer {
 			// if there is a border
 
 			// configure the drawing entity for the border
-			final DrawingEntity borderEntity = createBorderEntity(coordsForBorder, idxForBorder,
-					getColorArray(borderColor, coordsForBorder));
+			final DrawingEntity borderEntity =
+					createBorderEntity(coordsForBorder, idxForBorder, getColorArray(borderColor, coordsForBorder));
 
 			if (borderEntity != null)
 				result.add(borderEntity);
@@ -588,17 +586,17 @@ abstract class AbstractTransformer {
 				// rest of the shape.
 				// build the bot/top entity
 				final DrawingEntity botTopEntity = new DrawingEntity();
-				final int numberOfSpecialFaces = topFace != null && topFace.length > 1
-						? bottomFace != null && bottomFace.length > 1 ? 2 : 1 : 1; // a
-																					// "specialFace"
-																					// is
-																					// either
-																					// a
-																					// top
-																					// or
-																					// a
-																					// bottom
-																					// face.
+				final int numberOfSpecialFaces =
+						topFace != null && topFace.length > 1 ? bottomFace != null && bottomFace.length > 1 ? 2 : 1 : 1; // a
+																															// "specialFace"
+																															// is
+																															// either
+																															// a
+																															// top
+																															// or
+																															// a
+																															// bottom
+																															// face.
 				int[] idxBuffer = faces.get(0);
 				if (numberOfSpecialFaces == 2) {
 					idxBuffer = Utils.concatIntArrays(faces.get(0), faces.get(1));

@@ -215,9 +215,11 @@ public class MonitorOutput extends AbstractDisplayOutput {
 			history = null;
 		}
 		this.value = value;
-		final IType<?> t = value.getType();
-		if (t.isNumber() || t.isContainer() && t.getContentType().isNumber()) {
-			history = GamaListFactory.create(t);
+		if (value != null) {
+			final IType<?> t = value.getType();
+			if (t.isNumber() || t.isContainer() && t.getContentType().isNumber()) {
+				history = GamaListFactory.create(t);
+			}
 		}
 	}
 

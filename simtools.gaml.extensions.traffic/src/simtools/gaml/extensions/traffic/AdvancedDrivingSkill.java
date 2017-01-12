@@ -1666,7 +1666,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			for (int i = 0; i < nbSp - 1; i++) {
 				temp[0] = coords[i];
 				temp[1] = coords[i + 1];
-				final LineString segment = GeometryUtils.FACTORY.createLineString(temp);
+				final LineString segment = GeometryUtils.GEOMETRY_FACTORY.createLineString(temp);
 				final double distS = segment.distance(pointS);
 				if (distS <= distanceS) {
 					distanceS = distS;

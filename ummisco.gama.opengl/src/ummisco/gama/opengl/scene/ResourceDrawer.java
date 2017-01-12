@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ResourceDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ResourceDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -30,7 +29,7 @@ public class ResourceDrawer extends ObjectDrawer<ResourceObject> {
 
 	@Override
 	protected void _draw(final GL2 gl, final ResourceObject object) {
-		final int index = renderer.getJTSDrawer().renderer.getGeometryListFor(gl, object.file);
+		final int index = renderer.getGeometryListFor(gl, object.file);
 		if (index != -1) {
 			gl.glCallList(index);
 		}

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GeometryObjectTransformer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GeometryObjectTransformer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -31,20 +30,24 @@ class GeometryObjectTransformer extends AbstractTransformer {
 		loadManyFacedShape(obj);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	public GeometryObjectTransformer(final GeometryObject geomObj, final int[] textureIds, final String[] texturePaths,
 			final boolean isTriangulation) {
 		// for GeometryObject
 		genericInit(geomObj, isTriangulation);
 
-		this.colors = (ArrayList) geomObj.getAttributes().getColors();
+		this.colors = geomObj.getAttributes().getColors();
+		if (colors.length < 3)
+			colors = null;
+		else
+			colors = Arrays.copyOfRange(colors, 2, colors.length - 1);
 		this.isLightInteraction = geomObj.isLightInteraction() && !is1DShape() && !isWireframe;
 
 		this.textureIDs = textureIds;
 		this.texturePaths = texturePaths;
 		this.type = geomObj.getType();
 
-		coordsWithDoublons = geomObj.geometry.getCoordinates();
+		coordsWithDoublons = geomObj.getGeometry().getCoordinates();
 
 		this.size = getObjSize(geomObj);
 		cancelTransformation();
@@ -180,7 +183,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 		float maxX = -Float.MAX_VALUE;
 		float minY = Float.MAX_VALUE;
 		float maxY = -Float.MAX_VALUE;
-		final Coordinate[] coordinates = geomObj.geometry.getCoordinates();
+		final Coordinate[] coordinates = geomObj.getGeometry().getCoordinates();
 		for (int i = 0; i < coordinates.length; i++) {
 			if (coordinates[i].x < minX)
 				minX = (float) coordinates[i].x;
@@ -195,8 +198,8 @@ class GeometryObjectTransformer extends AbstractTransformer {
 		float YSize = (maxY - minY) / 2 == 0 ? 1 : (maxY - minY) / 2;
 		float ZSize = this.depth == 0 ? 1 : (float) this.depth;
 
-		final GamaPoint attrSize = geomObj.getAttributes().size == null ? new GamaPoint(1, 1, 1)
-				: geomObj.getAttributes().size;
+		final GamaPoint attrSize =
+				geomObj.getAttributes().getSize() == null ? new GamaPoint(1, 1, 1) : geomObj.getAttributes().getSize();
 
 		if (isSphere()) {
 			final float realSize = Math.max(YSize, XSize);
@@ -222,9 +225,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 		// a pyramid geometry is either a 3D cone or a pyramid (made with a
 		// base, a summit and
 		// generated lateral faces)
-		if (type == IShape.Type.CONE && depth > 0 || type == IShape.Type.PYRAMID) {
-			return true;
-		}
+		if (type == IShape.Type.CONE && depth > 0 || type == IShape.Type.PYRAMID) { return true; }
 		return false;
 	}
 
@@ -235,18 +236,15 @@ class GeometryObjectTransformer extends AbstractTransformer {
 	private boolean is1DShape() {
 		// a 1D shape is a line, polyline or point. It cannot have a border, and
 		// it does not have faces
-		if (type == IShape.Type.POINT || type == IShape.Type.LINEARRING || type == IShape.Type.LINESTRING) {
-			return true;
-		}
+		if (type == IShape.Type.POINT || type == IShape.Type.LINEARRING
+				|| type == IShape.Type.LINESTRING) { return true; }
 		return false;
 	}
 
 	private boolean isPolyplan() {
 		// a plan / polyplan are a bit particular : they are build out of a
 		// line, and the depth attribute gives the height of the plan.
-		if (type == IShape.Type.PLAN || type == IShape.Type.POLYPLAN) {
-			return true;
-		}
+		if (type == IShape.Type.PLAN || type == IShape.Type.POLYPLAN) { return true; }
 		return false;
 	}
 
@@ -525,9 +523,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 
 	@Override
 	public ArrayList<DrawingEntity> getDrawingEntityList() {
-		if (geometryCorrupted) {
-			return new ArrayList<DrawingEntity>();
-		}
+		if (geometryCorrupted) { return new ArrayList<DrawingEntity>(); }
 		// returns the DrawingEntities corresponding to this shape (can be 2
 		// DrawingEntities
 		// in case it has been asked to draw the border)

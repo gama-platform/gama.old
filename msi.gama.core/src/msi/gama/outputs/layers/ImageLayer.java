@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'ImageLayer.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'ImageLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -39,9 +38,7 @@ public class ImageLayer extends AbstractLayer {
 
 	protected void buildImage(final IScope scope) {
 		final String newImage = ((ImageLayerStatement) definition).getImageFileName();
-		if (imageFileName != null && imageFileName.equals(newImage)) {
-			return;
-		}
+		if (imageFileName != null && imageFileName.equals(newImage)) { return; }
 		imageFileName = newImage;
 		if (imageFileName == null || imageFileName.length() == 0) {
 			file = null;
@@ -60,13 +57,11 @@ public class ImageLayer extends AbstractLayer {
 		if (dg.cannotDraw())
 			return;
 		buildImage(scope);
-		if (file == null) {
-			return;
-		}
-		final GamaPoint loc = env == null ? new GamaPoint(0, 0) : new GamaPoint(env.getMinX(), env.getMinY());
+		if (file == null) { return; }
+		final GamaPoint loc = env == null ? null : new GamaPoint(env.getMinX(), env.getMinY());
 		final FileDrawingAttributes attributes = new FileDrawingAttributes(loc);
 		if (env != null) {
-			attributes.size = new GamaPoint(env.getWidth(), env.getHeight());
+			attributes.setSize(new GamaPoint(env.getWidth(), env.getHeight()));
 		}
 		dg.drawFile(file, attributes);
 	}
