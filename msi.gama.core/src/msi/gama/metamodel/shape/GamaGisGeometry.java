@@ -33,7 +33,15 @@ public class GamaGisGeometry extends GamaShape {
 			// We filter out the geometries (already loaded before)
 			for (final Property p : feature.getProperties()) {
 				if (!(p.getType() instanceof GeometryType)) {
-					setAttribute(p.getName().getLocalPart(), p.getValue());
+					String type = p.getDescriptor().getType().getBinding().getSimpleName();
+					if ("String".equals(type)) {
+						String val = (String) p.getValue();
+						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
+							val = val.substring(1, val.length() - 1);
+						setAttribute(p.getName().getLocalPart(),val);
+						
+					} else
+						setAttribute(p.getName().getLocalPart(), p.getValue());
 				}
 			}
 		}

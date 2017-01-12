@@ -503,7 +503,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					return;
 				}
 				if (isAgent) {
-					final Collection<String> attributeNames = values.getType().getContentType().getSpecies()
+					
+					final Collection<String> attributeNames = values instanceof IPopulation ?  ((IPopulation) values).getSpecies().getAttributeNames(scope): values.getType().getContentType().getSpecies()
 							.getAttributeNames();
 					attributeNames.remove(IKeyword.NAME);
 					attributeNames.remove(IKeyword.LOCATION);
