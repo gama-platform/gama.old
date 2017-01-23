@@ -129,8 +129,14 @@ public class GamaIFCFile extends GamaGeometryFile {
 		
 		GamaPoint axisS = toPoint(position.getAxis());
 		if (axisS != null) {
-			if (axis == null) {axis = new GamaPoint(axisS.toCoordinate());}
-			else{axis.x += axisS.x;axis.y += axisS.y;axis.z += axisS.z;}}
+			double angleX = Math.toDegrees(Math.asin((axisS.x))) ;
+			double angleY = Math.toDegrees(Math.asin(axisS.y)) ;
+			if (axis == null) {
+				axis = new GamaPoint(angleX,angleY,axisS.z);}
+			else {
+				axis.x += angleX;axis.y += angleY;axis.z += axisS.z;
+			}
+		}
 		
 		GamaPoint directionS = toPoint(position.getRefDirection());
 		if (directionS != null) {
@@ -147,7 +153,8 @@ public class GamaIFCFile extends GamaGeometryFile {
 				direction = new GamaPoint(angle,0,angleZ);}
 			else {
 				direction.x += angle;direction.z += angleZ;
-			}}
+			}
+		}
 		points.add(loc);points.add(axis);points.add(direction);
 		return points;
 	}
@@ -190,7 +197,7 @@ public class GamaIFCFile extends GamaGeometryFile {
 			//	System.out.println("loc: " + loc);
 				if (axispl2D.getRefDirection() != null) {
 					GamaPoint dir = toPoint(axispl2D.getRefDirection());
-					double dist = Math.sqrt(dir.x * dir.x + dir.y * dir.y);
+					double dist = 1;// Math.sqrt(dir.x * dir.x + dir.z * dir.z );
 				//	System.out.println("dist: " + dist);
 					if (dist == 0) dist = 1;
 					double angle = Math.toDegrees(Math.acos(dir.x/dist)) * (dir.y < 0 ? -1 : 1);
@@ -219,8 +226,9 @@ public class GamaIFCFile extends GamaGeometryFile {
 				}
 				if (axispl3D.getAxis() != null) {
 					GamaPoint ax = toPoint(axispl3D.getAxis());
-					double angle = Math.toDegrees(Math.acos(ax.x)) * (ax.y < 0 ? -1 : 1);
-					points.get(1).x += angle;
+					double angleX = Math.toDegrees(Math.asin((ax.x))) ;
+					double angleY = Math.toDegrees(Math.asin(ax.y)) ;
+					points.get(1).x += angleX;points.get(1).y += angleY;points.get(1).z += ax.z;
 				}
 			}
 			
@@ -395,15 +403,17 @@ public class GamaIFCFile extends GamaGeometryFile {
 	}
 	
 	public IShape createSlab(final IScope scope, IfcSlab s){
-		 GamaPoint loc = new GamaPoint(0,0,0);
-		 GamaPoint axis = new GamaPoint(0,0,0);;
-		 GamaPoint direction = new GamaPoint(0,0,0);
-		 List<GamaPoint> points = new ArrayList<GamaPoint>();
-		 points.add(loc); points.add(axis); points.add(direction);
-		 relatedTo(scope, s.getObjectPlacement(),points);
 		for (IfcRepresentation rep : s.getRepresentation().getRepresentations()) {
 			for (IfcRepresentationItem item : rep.getItems()) {
+				
 				if (item instanceof IfcExtrudedAreaSolid) {
+					 GamaPoint loc = new GamaPoint(0,0,0);
+					 GamaPoint axis = new GamaPoint(0,0,0);;
+					 GamaPoint direction = new GamaPoint(0,0,0);
+					 List<GamaPoint> points = new ArrayList<GamaPoint>();
+					 points.add(loc); points.add(axis); points.add(direction);
+					 relatedTo(scope, s.getObjectPlacement(),points);
+					
 					IfcExtrudedAreaSolid solid = (IfcExtrudedAreaSolid) item;
 					List<GamaPoint> pts = updateLocAxisDir(solid.getPosition(), loc, axis, direction);
 					loc = pts.get(0);
@@ -415,6 +425,10 @@ public class GamaIFCFile extends GamaGeometryFile {
 						Double height = profil.getYDim().value;
 						IShape box = Spatial.Creation.box(scope,width, height, depth);
 						box.setAttribute(IKeyword.NAME, s.getName().getDecodedValue());
+						if (axis != null){
+							box = Spatial.Transformations.rotated_by(scope, box, axis.x, new GamaPoint(0,-1,0));
+							box = Spatial.Transformations.rotated_by(scope, box, axis.y, new GamaPoint(-1,0,0));
+						}
 						if (loc != null) box.setLocation(loc);
 						if (direction != null) {
 							box = Spatial.Transformations.rotated_by(scope, box, direction.x);
@@ -424,18 +438,22 @@ public class GamaIFCFile extends GamaGeometryFile {
 						return box;
 					} else if (solid.getSweptArea() instanceof IfcArbitraryClosedProfileDef) { 
 						IfcArbitraryClosedProfileDef profil = (IfcArbitraryClosedProfileDef) solid.getSweptArea();
-						
 						IfcCurve curve = profil.getOuterCurve();
 						if (curve instanceof IfcPolyline) {
 							IShape shape = toGeom(scope,((IfcPolyline)curve).getPoints(), true);
 							shape.setDepth(depth);
 							shape.setAttribute(IKeyword.NAME, s.getName().getDecodedValue());
+							if (axis != null){
+								shape = Spatial.Transformations.rotated_by(scope, shape, axis.x, new GamaPoint(0,-1,0));
+								shape = Spatial.Transformations.rotated_by(scope, shape, axis.y, new GamaPoint(-1,0,0));
+							}
 							if (loc != null) shape.setLocation(loc);
 							if (direction != null) {
 								
 								shape = Spatial.Transformations.rotated_by(scope, shape, direction.x);
 								shape = Spatial.Transformations.rotated_by(scope, shape, direction.z, new GamaPoint(1,0,0));
 							}
+							
 							addAttribtutes(s,shape);
 							return shape;
 						} 
@@ -502,12 +520,12 @@ public class GamaIFCFile extends GamaGeometryFile {
 			 }
 			 
 			 Collection<IfcOpeningElement> openings = ifcModel.getCollection(IfcOpeningElement.class);
-			/* for (IfcOpeningElement o : openings) {
+			 for (IfcOpeningElement o : openings) {
 				 already.add(o);
 				 IShape g = createOpening(scope,o);
 				 if (g != null) geoms.add(g);
 				
-			 }*/
+			 }
 			
 			 setBuffer(geoms);
 			 
