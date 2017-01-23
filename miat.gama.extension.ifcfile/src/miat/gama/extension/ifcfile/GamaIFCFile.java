@@ -430,6 +430,7 @@ public class GamaIFCFile extends GamaGeometryFile {
 							box = Spatial.Transformations.rotated_by(scope, box, axis.y, new GamaPoint(-1,0,0));
 						}
 						if (loc != null) box.setLocation(loc);
+						if (axis == null || (axis.x == 0.0 && axis.y == 0.0))box = Spatial.Transformations.translated_by(scope, box, new GamaPoint(0,0,-depth));
 						if (direction != null) {
 							box = Spatial.Transformations.rotated_by(scope, box, direction.x);
 							box = Spatial.Transformations.rotated_by(scope, box, direction.z, new GamaPoint(1,0,0));
@@ -448,6 +449,7 @@ public class GamaIFCFile extends GamaGeometryFile {
 								shape = Spatial.Transformations.rotated_by(scope, shape, axis.y, new GamaPoint(-1,0,0));
 							}
 							if (loc != null) shape.setLocation(loc);
+							if (axis == null || (axis.x == 0.0 && axis.y == 0.0))shape = Spatial.Transformations.translated_by(scope, shape, new GamaPoint(0,0,-depth));
 							if (direction != null) {
 								
 								shape = Spatial.Transformations.rotated_by(scope, shape, direction.x);
