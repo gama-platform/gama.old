@@ -49,7 +49,6 @@ import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.graph.AbstractGraphNodeAgent;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.IAgentConstructor;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.TypeDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -142,7 +141,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		this.host = host;
 		this.species = species;
 		architecture = species.getArchitecture();
-		final TypeDescription ecd = (TypeDescription) species.getDescription();
+		final TypeDescription ecd = species.getDescription();
 		orderedVarNames = ecd.getOrderedAttributeNames(true).toArray(new String[0]);
 		final List<String> updatableVarNames = ecd.getUpdatableAttributeNames();
 		final int updatableVarsSize = updatableVarNames.size();
@@ -270,7 +269,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		final int number = geometries.length(scope);
 		if (number == 0) { return GamaListFactory.create(); }
 		final IList<T> list = GamaListFactory.create(getType().getContentType(), number);
-		final IAgentConstructor<T> constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
+		final IAgentConstructor<T> constr = species.getDescription().getAgentConstructor();
 		for (final IShape geom : geometries.iterable(scope)) {
 			// WARNING Should be redefined somehow
 			final T a = constr.createOneAgent(this);
@@ -314,7 +313,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			final boolean toBeScheduled) throws GamaRuntimeException {
 		if (number == 0) { return GamaListFactory.create(); }
 		final IList<T> list = GamaListFactory.create(getType().getContentType(), number);
-		final IAgentConstructor<T> constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
+		final IAgentConstructor<T> constr = species.getDescription().getAgentConstructor();
 		for (int i = 0; i < number; i++) {
 			@SuppressWarnings ("unchecked") final T a = constr.createOneAgent(this);
 			final int ind = currentAgentIndex++;

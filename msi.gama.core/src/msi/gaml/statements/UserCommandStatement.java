@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'UserCommandStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'UserCommandStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -51,21 +50,56 @@ import msi.gaml.types.IType;
  * @todo Description
  *
  */
-@symbol(name = {
-		IKeyword.USER_COMMAND }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_args = true, concept = {
-				IConcept.GUI })
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL }, symbols = IKeyword.USER_PANEL)
-@facets(value = {
-		@facet(name = IKeyword.CONTINUE, type = IType.BOOL, optional = true, doc = @doc("Whether or not the button, when clicked, should dismiss the user panel it is defined in. Has no effect in other contexts (menu, parameters, inspectors)")),
-		@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true, doc = @doc("The color of the button to display")),
-		@facet(name = IKeyword.ACTION, type = IType.ID, optional = true, doc = @doc("the identifier of the action to be executed. This action should be accessible in the context in which it is defined (an experiment, the global section or a species). A special case is allowed to maintain the compatibility with older versions of GAMA, when the user_command is declared in an experiment and the action is declared in 'global'. In that case, all the simulations managed by the experiment will run the action in response to the user executing the command")),
-		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the user_command")),
-		@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true, doc = @doc("the condition that should be fulfilled (in addition to the user clicking it) in order to execute this action")),
-		@facet(name = IKeyword.WITH, type = IType.MAP, optional = true, doc = @doc("the map of the parameters::values required by the action")) }, omissible = IKeyword.NAME)
-@doc(value = "Anywhere in the global block, in a species or in an (GUI) experiment, user_command statements allows to either call directly an existing action (with or without arguments) or to be followed by a block that describes what to do when this command is run.", usages = {
-		@usage(value = "The general syntax is for example:", examples = @example(value = "user_command kill_myself action: some_action with: [arg1::val1, arg2::val2, ...];", isExecutable = false)) }, see = {
-				IKeyword.USER_INIT, IKeyword.USER_PANEL, IKeyword.USER_INPUT })
-@validator(UserCommandValidator.class)
+@symbol (
+		name = { IKeyword.USER_COMMAND },
+		kind = ISymbolKind.SEQUENCE_STATEMENT,
+		with_sequence = true,
+		with_args = true,
+		concept = { IConcept.GUI })
+@inside (
+		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL },
+		symbols = IKeyword.USER_PANEL)
+@facets (
+		value = { @facet (
+				name = IKeyword.CONTINUE,
+				type = IType.BOOL,
+				optional = true,
+				doc = @doc ("Whether or not the button, when clicked, should dismiss the user panel it is defined in. Has no effect in other contexts (menu, parameters, inspectors)")),
+				@facet (
+						name = IKeyword.COLOR,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("The color of the button to display")),
+				@facet (
+						name = IKeyword.ACTION,
+						type = IType.ACTION,
+						optional = true,
+						doc = @doc ("the identifier of the action to be executed. This action should be accessible in the context in which the user_command is defined (an experiment, the global section or a species). A special case is allowed to maintain the compatibility with older versions of GAMA, when the user_command is declared in an experiment and the action is declared in 'global'. In that case, all the simulations managed by the experiment will run the action in response to the user executing the command")),
+				@facet (
+						name = IKeyword.NAME,
+						type = IType.LABEL,
+						optional = false,
+						doc = @doc ("the identifier of the user_command")),
+				@facet (
+						name = IKeyword.WHEN,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("the condition that should be fulfilled (in addition to the user clicking it) in order to execute this action")),
+				@facet (
+						name = IKeyword.WITH,
+						type = IType.MAP,
+						optional = true,
+						doc = @doc ("the map of the parameters::values required by the action")) },
+		omissible = IKeyword.NAME)
+@doc (
+		value = "Anywhere in the global block, in a species or in an (GUI) experiment, user_command statements allows to either call directly an existing action (with or without arguments) or to be followed by a block that describes what to do when this command is run.",
+		usages = { @usage (
+				value = "The general syntax is for example:",
+				examples = @example (
+						value = "user_command kill_myself action: some_action with: [arg1::val1, arg2::val2, ...];",
+						isExecutable = false)) },
+		see = { IKeyword.USER_INIT, IKeyword.USER_PANEL, IKeyword.USER_INPUT })
+@validator (UserCommandValidator.class)
 
 public class UserCommandStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
@@ -74,8 +108,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 		/*
 		 * (non-Javadoc)
 		 *
-		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.
-		 * descriptions.IDescription)
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml. descriptions.IDescription)
 		 */
 		@Override
 		public void validate(final IDescription description) {

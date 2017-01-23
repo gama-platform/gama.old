@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaStringType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaStringType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -11,8 +10,8 @@
 package msi.gaml.types;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.INamed;
 import msi.gama.common.interfaces.IValue;
-import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.IConcept;
 import msi.gama.precompiler.ISymbolKind;
@@ -47,8 +46,8 @@ public class GamaStringType extends GamaType<String> {
 			throws GamaRuntimeException {
 		if (obj == null) { return null; }
 		if (obj instanceof IValue) { return ((IValue) obj).stringValue(scope); }
+		if (obj instanceof INamed) { return ((INamed) obj).getName(); }
 		return obj.toString();
-		// return obj.toString();
 	}
 
 	@Override

@@ -308,6 +308,8 @@ public interface IMatrix<T>
 
 	@operator (
 			value = "transpose",
+			can_be_const = true,
+			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (
@@ -320,6 +322,8 @@ public interface IMatrix<T>
 
 	@operator (
 			value = "inverse",
+			can_be_const = true,
+			content_type = ITypeProvider.FIRST_CONTENT_TYPE,
 			category = { IOperatorCategory.MATRIX },
 			concept = { IConcept.MATRIX })
 	@doc (

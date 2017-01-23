@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'BlockExpressionDescription.java, in plugin msi.gama.lang.gaml, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BlockExpressionDescription.java, in plugin msi.gama.lang.gaml, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,15 +9,14 @@
  **********************************************************************************************/
 package msi.gama.lang.gaml.expression;
 
-import msi.gama.util.GAML;
 import msi.gaml.compilation.ast.ISyntacticElement;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.expressions.DenotedActionExpression;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.types.Types;
 
 public class BlockExpressionDescription extends EcoreBasedExpressionDescription {
 
@@ -39,7 +37,7 @@ public class BlockExpressionDescription extends EcoreBasedExpressionDescription 
 			sd.addChild(action);
 			action.validate();
 			final String name = action.getName();
-			expression = GAML.getExpressionFactory().createConst(name, Types.STRING);
+			expression = new DenotedActionExpression(action);
 		}
 		return expression;
 	}

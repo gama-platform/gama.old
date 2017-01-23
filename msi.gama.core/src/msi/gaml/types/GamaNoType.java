@@ -61,9 +61,19 @@ public class GamaNoType extends GamaType<Object> {
 		return true;
 	}
 
+	/**
+	 * An unknown value (at the time of compilation) cannot be translated into a bool, an int or a float value
+	 */
 	@Override
 	public boolean isTranslatableInto(final IType<?> t) {
-		return true;
+		switch (t.id()) {
+			case IType.BOOL:
+			case IType.INT:
+			case IType.FLOAT:
+				return false;
+			default:
+				return true;
+		}
 	}
 
 }

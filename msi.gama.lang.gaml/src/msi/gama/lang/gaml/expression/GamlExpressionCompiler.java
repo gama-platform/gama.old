@@ -647,8 +647,23 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 	@Override
 	public IExpression caseActionRef(final ActionRef object) {
-		// final String s = EGaml.getKeyOf(object);
-		return getFactory().createConst(EGaml.getKeyOf(object), Types.STRING);
+		final String s = EGaml.getKeyOf(object);
+		final SpeciesDescription sd = getContext().getSpeciesContext();
+		ActionDescription ad = sd.getAction(s);
+		if (ad == null) {
+			ad = sd.getModelDescription().getAction(s);
+			if (ad == null) {
+				getContext().error("Unknown action", IGamlIssue.UNKNOWN_ACTION, object);
+				return null;
+			}
+		}
+		if (ad.getArgNames().size() > 0) {
+			getContext().error("Impossible to call an action that requires arguments", IGamlIssue.UNKNOWN_ARGUMENT,
+					object);
+			return null;
+		}
+		return new DenotedActionExpression(ad);
+		// return getFactory().createConst(EGaml.getKeyOf(object), Types.STRING);
 	}
 
 	@Override

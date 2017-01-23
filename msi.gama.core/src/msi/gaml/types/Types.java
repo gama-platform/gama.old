@@ -42,7 +42,7 @@ public class Types {
 	public final static IType NO_TYPE = new GamaNoType();
 
 	public static IType INT, FLOAT, BOOL, COLOR, STRING, POINT, GEOMETRY, TOPOLOGY, AGENT, PATH, FONT, SKILL, DATE,
-			MATERIAL;
+			MATERIAL, ACTION;
 	public static IContainerType LIST, MATRIX, MAP, GRAPH, FILE, PAIR, CONTAINER, SPECIES;
 
 	public static final THashMap<Class, String> CLASSES_TYPES_CORRESPONDANCE = new THashMap(10, 0.95f);
@@ -115,6 +115,9 @@ public class Types {
 			case IType.SKILL:
 				SKILL = instance;
 				break;
+			case IType.ACTION:
+				ACTION = instance;
+				break;
 			default:
 		}
 	}
@@ -164,6 +167,8 @@ public class Types {
 				return SKILL;
 			case IType.MATERIAL:
 				return MATERIAL;
+			case IType.ACTION:
+				return ACTION;
 		}
 		return builtInTypes.get(String.valueOf(type));
 	}
@@ -285,18 +290,43 @@ public class Types {
 	}
 
 	/**
+	 * Tests whether constant list expressions can still be compatible with a receiver even if their actual types differ
+	 * 
 	 * @param receiverType
 	 * @param assignedType
 	 * @param expr2
 	 * @return
 	 */
-	public static boolean mapListCase(final IType receiverType, final IType assignedType, final IExpression expr2) {
-		if (receiverType.getType() == MAP && assignedType.getType() == LIST) {
-			if (expr2 instanceof ListExpression) { return ((ListExpression) expr2).isEmpty(); }
-			if (expr2.isConst() && ((List) expr2.value(null)).isEmpty()) { return true; }
+	public static boolean isEmptyContainerCase(final IType receiverType, final IExpression expr2) {
+		final IType receiver = receiverType.getType();
+		final boolean result = (receiver == MAP || receiver == LIST) && isEmpty(expr2);
+		if (result)
+			return true;
+
+		// One last chance if receiverType is a list of lists/maps and expr2 is a list expression containing empty
+		// lists. This case is treated recursively in case of complex data structures
+		if (expr2 instanceof ListExpression) {
+			for (final IExpression subExpr : ((ListExpression) expr2).getElements()) {
+				if (!isEmptyContainerCase(receiverType.getContentType(), subExpr))
+					return false;
+			}
+			return true;
 		}
-		if (receiverType.getType() == MAP && assignedType.getType() == MAP) {
-			if (expr2.isConst() && ((Map) expr2.value(null)).isEmpty()) { return true; }
+		return false;
+
+	}
+
+	private static boolean isEmpty(final IExpression expr2) {
+		switch (expr2.getType().getType().id()) {
+			case IType.LIST:
+				if (expr2 instanceof ListExpression)
+					return ((ListExpression) expr2).isEmpty();
+				if (expr2.isConst())
+					return ((List) expr2.value(null)).isEmpty();
+				break;
+			case IType.MAP:
+				if (expr2.isConst())
+					return ((Map) expr2.value(null)).isEmpty();
 		}
 		return false;
 	}

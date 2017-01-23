@@ -130,6 +130,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return getParser().compile(StringBasedExpressionDescription.create(s), context);
 	}
 
+	@Override
 	public IExpression createExpr(final String s, final IDescription context,
 			final IExecutionContext additionalContext) {
 		if (s == null || s.isEmpty()) { return null; }
@@ -156,9 +157,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				return new TempVariableExpression(name, type, definitionDescription);
 			case IVarExpression.EACH:
 				return new EachExpression(type);
-			// case IVarExpression.WORLD:
-			// return new WorldExpression(type,
-			// definitionDescription.getModelDescription());
 			case IVarExpression.SELF:
 				return new SelfExpression(type);
 			default:
@@ -216,14 +214,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 						}
 					}
 				}
-				// userSignature = Ordering.from(new Comparator<Signature>() {
-				//
-				// @Override
-				// public int compare(final Signature o1, final Signature o2) {
-				// return o1.distanceTo(originalUserSignature) -
-				// o2.distanceTo(originalUserSignature);
-				// }
-				// }).min(filtered);
 
 				// We coerce the types if necessary, by wrapping the original
 				// expressions in a
@@ -297,7 +287,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createTemporaryActionForAgent(final IAgent agent, final String action,
 			final IExecutionContext tempContext) {
-		final SpeciesDescription context = (SpeciesDescription) agent.getSpecies().getDescription();
+		final SpeciesDescription context = agent.getSpecies().getDescription();
 		final ActionDescription desc = (ActionDescription) DescriptionFactory.create(IKeyword.ACTION, context,
 				Collections.EMPTY_LIST, IKeyword.TYPE, IKeyword.UNKNOWN, IKeyword.NAME, TEMPORARY_ACTION_NAME);
 		final List<IDescription> children = getParser().compileBlock(action, context, tempContext);
