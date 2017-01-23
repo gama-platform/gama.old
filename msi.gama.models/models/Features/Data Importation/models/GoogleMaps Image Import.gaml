@@ -34,8 +34,7 @@ global
 experiment Display
 {
 	
-	parameter "Zoom" var: zoom_text on_change:
-	{
+	parameter "Zoom" var: zoom_text on_change: {
 		ask simulation  {do load_map;}
 		do update_outputs(true);
 	};
@@ -46,7 +45,7 @@ experiment Display
 	};
 	output
 	{
-		display "Google Map"
+		display "Google Map" type: opengl
 		{
 			image google_request;
 		}

@@ -10,6 +10,7 @@
 package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaImageFile;
@@ -19,20 +20,13 @@ public class FieldObject extends AbstractObject {
 
 	final double[] values;
 
-	// FIXME AD: This class has not been reworked correctly to work with the new API of SceneObjects. Basically, it has
-	// been made compatible, but not more.
-
-	public FieldObject(final double[] dem, final FieldDrawingAttributes attributes, final LayerObject layer) {
-		super(attributes, layer);
+	public FieldObject(final double[] dem, final FieldDrawingAttributes attributes) {
+		super(attributes);
 		this.values = dem;
 	}
 
 	public GamaPoint getCellSize() {
 		return ((FieldDrawingAttributes) attributes).getCellSize();
-	}
-
-	public double getZFactor() {
-		return attributes.getDepth();
 	}
 
 	public boolean isGrayScaled() {
@@ -49,11 +43,17 @@ public class FieldObject extends AbstractObject {
 
 	public BufferedImage getDirectImage(final int order) {
 		final FieldDrawingAttributes a = (FieldDrawingAttributes) attributes;
-		if (a.textures == null || a.textures.size() > order + 1) { return null; }
-		final Object t = a.textures.get(order);
+		final List<?> textures = a.getTextures();
+		if (textures == null || textures.size() > order + 1) { return null; }
+		final Object t = textures.get(order);
 		if (t instanceof BufferedImage) { return (BufferedImage) t; }
 		if (t instanceof GamaImageFile) { return ((GamaImageFile) t).getImage(null); }
 		return null;
+	}
+
+	@Override
+	public DrawerType getDrawerType() {
+		return DrawerType.FIELD;
 	}
 
 }

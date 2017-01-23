@@ -28,18 +28,17 @@ public class GamaGisGeometry extends GamaShape {
 
 	public GamaGisGeometry(final Geometry g, final Feature feature) {
 		super(g);
-		// super(GeometryUtils.isClockwise(g) ? g : GeometryUtils.changeClockwise(g));
 		if (feature != null) {
 			// We filter out the geometries (already loaded before)
 			for (final Property p : feature.getProperties()) {
 				if (!(p.getType() instanceof GeometryType)) {
-					String type = p.getDescriptor().getType().getBinding().getSimpleName();
+					final String type = p.getDescriptor().getType().getBinding().getSimpleName();
 					if ("String".equals(type)) {
 						String val = (String) p.getValue();
 						if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
 							val = val.substring(1, val.length() - 1);
-						setAttribute(p.getName().getLocalPart(),val);
-						
+						setAttribute(p.getName().getLocalPart(), val);
+
 					} else
 						setAttribute(p.getName().getLocalPart(), p.getValue());
 				}

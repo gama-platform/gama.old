@@ -1,20 +1,24 @@
 package msi.gama.common.util;
 
 import static com.google.common.collect.Iterators.forArray;
-import static com.vividsolutions.jts.algorithm.CGAlgorithms.isCCW;
-import static org.apache.commons.lang.ArrayUtils.reverse;
+import static com.vividsolutions.jts.algorithm.CGAlgorithms.signedArea;
+import static msi.gama.common.util.GamaGeometryFactory.isRing;
 
 import java.util.Iterator;
+
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 
 /**
- * Clockwise sequence of points. Allows several computations (on convexity, etc.) and a cheap visitor pattern. Be aware
- * that CW property is not maintained if individual points are modified via the setOrdinate() method and if the sequence
- * is not a ring. All other methods should however maintain it.
+ * Clockwise sequence of points. Supports several computations (rotation, etc.) and a cheap visitor pattern. Be aware
+ * that CW property is not maintained if individual points are modified via the setOrdinate() or replaceWith() method
+ * and if the sequence is not a ring. All other methods should however maintain it.
  * 
  * @author A. Drogoul
  *
@@ -23,52 +27,61 @@ import msi.gama.metamodel.shape.GamaPoint;
 public class GamaCoordinateSequence implements ICoordinates {
 
 	/**
-	 * The final array of GamaPoint, considered to be internally mutable
+	 * The final array of GamaPoint, considered to be internally mutable (i.e. points can be changed inside)
 	 */
 	final GamaPoint[] points;
 
 	/**
+	 * Creates a sequence from an array of points. The points will be cloned before being added (to prevent side
+	 * effects). The order of the points will not necessarily remain the same if the sequence is a ring (as this class
+	 * enforces a clockwise direction of the sequence)
+	 * 
 	 * @param points2
+	 *            an array of points
 	 */
 	GamaCoordinateSequence(final Coordinate... points2) {
 		this(true, points2);
 	}
 
+	/**
+	 * Creates a sequence from an array of points. If copy is true, the points are cloned before being added to the
+	 * sequence (to prevent side effects, for instance). The sequence will be modified to enforce a clockwise direction
+	 * if the array represents a ring
+	 * 
+	 * @param copy
+	 *            whether or not to copy the points or to add them directly
+	 * @param points2
+	 *            an array of points
+	 */
 	GamaCoordinateSequence(final boolean copy, final Coordinate... points2) {
+
 		if (copy) {
 			final int size = points2.length;
-			points = new GamaPoint[size];
+			final GamaPoint[] result = new GamaPoint[size];
 			for (int i = 0; i < size; i++) {
-				points[i] = new GamaPoint(points2[i]);
+				result[i] = new GamaPoint(points2[i]);
 			}
-			turnClockwise(points);
+			points = turnClockwise(result);
+
 		} else {
 			points = (GamaPoint[]) points2;
 		}
 	}
 
-	/*
-	 * @param values [x0, y0, z0, x1, y1, z1, ...]
-	 */
-	GamaCoordinateSequence(final double... values) {
-		final int size = values.length / 3;
-		points = new GamaPoint[size];
-		for (int i = 0; i < values.length; i += 3)
-			points[i / 3] = new GamaPoint(values[i], values[i + 1], values[i + 2]);
-		turnClockwise(points);
-	}
-
 	/**
+	 * Creates a sequence of points with a given size (that may be altered after)
+	 * 
 	 * @param size
+	 *            an int > 0 (negative sizes will be treated as 0)
 	 */
 	GamaCoordinateSequence(final int size) {
-		points = new GamaPoint[size];
+		points = new GamaPoint[size < 0 ? 0 : size];
 		for (int i = 0; i < size; i++)
 			points[i] = new GamaPoint(0d, 0d, 0d);
 	}
 
 	/**
-	 * Method getDimension()
+	 * Method getDimension(). Always 3 for these sequences
 	 * 
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getDimension()
 	 */
@@ -78,7 +91,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	}
 
 	/**
-	 * Makes a complete copy (incl. cloning the points themselves)
+	 * Makes a complete copy of this sequence (incl. cloning the points themselves)
 	 */
 	@Override
 	public GamaCoordinateSequence clone() {
@@ -86,17 +99,13 @@ public class GamaCoordinateSequence implements ICoordinates {
 	}
 
 	/**
-	 * Method getCoordinate()
+	 * Method getCoordinate(). The coordinate is *not* a copy of the original one, so any modification to it will
+	 * directly affect the sequence of points
 	 * 
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int)
 	 */
 	@Override
 	public GamaPoint getCoordinate(final int i) {
-		return points[i];
-	}
-
-	@Override
-	public GamaPoint at(final int i) {
 		return points[i];
 	}
 
@@ -161,7 +170,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	}
 
 	/**
-	 * Method setOrdinate(). Be aware that CW property is not maintained
+	 * Method setOrdinate(). Be aware that CW property is not maintained in case of direct modifications like this
 	 * 
 	 * @see com.vividsolutions.jts.geom.CoordinateSequence#setOrdinate(int, int, double)
 	 */
@@ -199,18 +208,6 @@ public class GamaCoordinateSequence implements ICoordinates {
 		return forArray(points);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.common.util.ICoordinates#getCenter()
-	 */
-	@Override
-	public GamaPoint getCenter() {
-		final GamaPoint p = new GamaPoint();
-		addCenterTo(p);
-		return p;
-	}
-
 	@Override
 	public void addCenterTo(final GamaPoint other) {
 		final int size = isRing(points) ? points.length - 1 : points.length;
@@ -246,43 +243,6 @@ public class GamaCoordinateSequence implements ICoordinates {
 		return result;
 	}
 
-	@Override
-	public boolean isConvex() {
-		final int n = points.length - 1;
-		if (n < 4)
-			return true;
-		boolean sign = false;
-		for (int i = 0; i < n; i++) {
-			final double dx1 = points[(i + 2) % n].x - points[(i + 1) % n].x;
-			final double dy1 = points[(i + 2) % n].y - points[(i + 1) % n].y;
-			final double dx2 = points[i].x - points[(i + 1) % n].x;
-			final double dy2 = points[i].y - points[(i + 1) % n].y;
-			final double zcrossproduct = dx1 * dy2 - dy1 * dx2;
-			if (i == 0)
-				sign = zcrossproduct > 0;
-			else if (sign != zcrossproduct > 0)
-				return false;
-		}
-		return true;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.common.util.ICoordinates#isClockwise(msi.gama.metamodel.shape.GamaPoint)
-	 */
-	public static boolean isClockwise(final GamaPoint... points) {
-		if (isRing(points))
-			return !isCCW(points);
-		double sum = 0.0;
-		for (int i = 0; i < points.length; i++) {
-			final Coordinate v1 = points[i];
-			final Coordinate v2 = points[(i + 1) % points.length];
-			sum += (v2.x - v1.x) * (v2.y + v1.y);
-		}
-		return sum < 0.0;
-	}
-
 	/**
 	 * Turns this sequence of coordinates into a clockwise orientation. Only done for rings (as it may change the
 	 * definition of line strings)
@@ -290,21 +250,13 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * @param points
 	 * @return
 	 */
-	public static void turnClockwise(final GamaPoint... points) {
+	public static GamaPoint[] turnClockwise(final GamaPoint... points) {
 		if (!isRing(points))
-			return;
-		if (isCCW(points))
-			reverse(points);
-	}
-
-	@FunctionalInterface
-	public static interface PairVisitor {
-		public void process(GamaPoint p1, GamaPoint p2);
-	}
-
-	@FunctionalInterface
-	public static interface IndexedVisitor {
-		public void process(final double x, final double y, final double z, final int i);
+			return points;
+		if (signedArea(points) <= 0) {
+			ArrayUtils.reverse(points);
+		}
+		return points;
 	}
 
 	@Override
@@ -351,18 +303,17 @@ public class GamaCoordinateSequence implements ICoordinates {
 	 * 
 	 * @param clockwise
 	 *            whether to obtain the normal facing up (for clockwise sequences) or down.
-	 * @return
+	 * @param factor
+	 *            the factor to multiply the unit normal vector with
+	 * @param normal
+	 *            the returned vector
 	 */
-	@Override
-	public GamaPoint getNormal(final boolean clockwise) {
-		final GamaPoint normal = new GamaPoint();
-		getNormal(clockwise, 1, normal);
-		return normal;
-	}
 
 	@Override
 	public void getNormal(final boolean clockwise, final double factor, final GamaPoint normal) {
 		normal.setLocation(0, 0, 0);
+		if (points.length < 3)
+			return;
 		for (int i = 0; i < points.length - 1; i++) {
 			final GamaPoint v0 = points[i];
 			final GamaPoint v1 = points[i + 1];
@@ -381,21 +332,10 @@ public class GamaCoordinateSequence implements ICoordinates {
 		normal.divideBy(norm / factor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.common.util.ICoordinates#applyTranslation(int, double, double, double)
-	 */
 	@Override
-	public void applyTranslation(final int i, final double dx, final double dy, final double dz) {
-		points[i].x += dx;
-		points[i].y += dy;
-		points[i].z += dz;
-	}
-
-	@Override
-	public boolean isClockwise() {
-		return isClockwise(points);
+	public void getEnvelope(final Envelope3D envelope) {
+		envelope.setToNull();
+		expandEnvelope(envelope);
 	}
 
 	@Override
@@ -409,14 +349,6 @@ public class GamaCoordinateSequence implements ICoordinates {
 		return sum / points.length;
 	}
 
-	public static boolean isRing(final GamaPoint[] pts) {
-		if (pts.length < 4)
-			return false;
-		if (!pts[0].equals(pts[pts.length - 1]))
-			return false;
-		return true;
-	}
-
 	@Override
 	public void replaceWith(final GamaPoint... points2) {
 		final int size = Math.min(points2.length, points.length);
@@ -428,15 +360,49 @@ public class GamaCoordinateSequence implements ICoordinates {
 
 	@Override
 	public void replaceWith(final double... points2) {
-		final int incomingSize = points2.length / 3;
-		final int size = Math.min(incomingSize, points.length);
-		for (int i = 0; i < points2.length; i += 3) {
+		final int size = Math.min(points2.length, points.length * 3);
+		for (int i = 0; i < size; i += 3) {
 			final GamaPoint self = points[i / 3];
 			self.x = points2[i];
 			self.y = points2[i + 1];
 			self.z = points2[i + 2];
 		}
 		turnClockwise(points);
+	}
+
+	@Override
+	public GamaPoint directionBetweenOriginAndFirstPoint() {
+		final GamaPoint origin = points[0];
+		for (int i = 1; i < points.length; i++)
+			if (!points[i].equals(origin))
+				return points[i].minus(origin);
+		return new GamaPoint();
+	}
+
+	@Override
+	public void applyRotation(final Rotation rotation) {
+		for (final GamaPoint point : points) {
+			point.applyRotation(rotation);
+		}
+
+	}
+
+	@Override
+	public void replaceWith(final int i, final double x, final double y, final double z) {
+		if (i < 0 || i >= points.length)
+			return;
+		points[i].setLocation(x, y, z);
+
+	}
+
+	@Override
+	public boolean isHorizontal() {
+		final double z = points[0].z;
+		for (int i = 1; i < points.length; i++) {
+			if (points[i].z != z)
+				return false;
+		}
+		return true;
 	}
 
 }

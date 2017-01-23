@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TransformationMatrix.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TransformationMatrix.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -17,10 +16,8 @@ import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.camera.ICamera;
 
 /*
- * This class creates the 3 matrices for the shader :
- *   - The perspective matrix
- *   - The view matrix
- *   - The transformation matrix
+ * This class creates the 3 matrices for the shader : - The perspective matrix - The view matrix - The transformation
+ * matrix
  */
 
 public class TransformationMatrix {

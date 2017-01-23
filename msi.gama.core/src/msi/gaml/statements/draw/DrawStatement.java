@@ -237,18 +237,6 @@ public class DrawStatement extends AbstractStatementSequence {
 				}
 			}
 
-			// IExpressionDescription rotate =
-			// description.getFacets().get(ROTATE);
-			// if ( rotate != null ) {
-			// IExpression exp = rotate.getExpression();
-			// if ( !exp.getType().isTranslatableInto(Types.FLOAT) &&
-			// !exp.getType().isTranslatableInto(GamaType.from(Types.PAIR,
-			// Types.FLOAT, Types.POINT)) ) {
-			// description.error("the type of rotate must be either a float/int
-			// or a pair<float,point>",
-			// IGamlIssue.WRONG_TYPE, ROTATE);
-			// }
-			// }
 		}
 
 		private boolean canDraw(final IExpression exp) {
@@ -268,7 +256,7 @@ public class DrawStatement extends AbstractStatementSequence {
 	private final DrawExecuter executer;
 	private final IExpression size, depth, rotate, at, empty, border, color, font, texture, perspective, material,
 			lineWidth;
-	// private final ThreadLocal<DrawingData> data = new ThreadLocal();
+	private final ThreadLocal<DrawingData> data;
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
@@ -285,6 +273,8 @@ public class DrawStatement extends AbstractStatementSequence {
 		perspective = getFacet("bitmap", PERSPECTIVE);
 		lineWidth = getFacet(WIDTH);
 		final IExpression item = getFacet(IKeyword.GEOMETRY);
+		data = ThreadLocal.withInitial(() -> new DrawingData(size, depth, rotate, at, empty, border, color, font,
+				texture, material, perspective, lineWidth));
 		if (item == null) {
 			executer = null;
 			// data = null;
@@ -310,12 +300,12 @@ public class DrawStatement extends AbstractStatementSequence {
 		if (executer == null)
 			return null;
 		final IGraphics g = scope.getGraphics();
-		if (g == null || g.cannotDraw()) { return null; }
+		if (g == null) { return null; }
 		try {
-			final DrawingData data = new DrawingData(size, depth, rotate, at, empty, border, color, font, texture,
-					material, perspective, lineWidth);
-			data.computeAttributes(scope);
-			return executer.executeOn(scope, g, data);
+			// final DrawingData data = new DrawingData(size, depth, rotate, at, empty, border, color, font, texture,
+			// material, perspective, lineWidth);
+
+			return executer.executeOn(scope, g, data.get().computeAttributes(scope));
 		} catch (final GamaRuntimeException e) {
 			throw e;
 		} catch (final Throwable e) {

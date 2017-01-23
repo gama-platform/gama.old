@@ -24,6 +24,7 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
@@ -68,10 +69,10 @@ public class GridLayer extends ImageLayer {
 	}
 
 	@Override
-	protected void buildImage(final IScope scope) {
+	protected Envelope3D buildImage(final IScope scope) {
 		final IGraphics g = scope.getGraphics();
 		if (g == null)
-			return;
+			return null;
 		if (image == null) {
 			final GamaSpatialMatrix m = (GamaSpatialMatrix) ((GridLayerStatement) definition).getEnvironment();
 			final ILocation p = m.getDimensions();
@@ -81,13 +82,12 @@ public class GridLayer extends ImageLayer {
 				image = ImageUtils.createPremultipliedBlankImage((int) p.getX(), (int) p.getY());
 			}
 		}
+		return null;
 
 	}
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		if (dg == null || dg.cannotDraw())
-			return;
 		buildImage(scope);
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		GamaColor lineColor = null;
@@ -102,11 +102,11 @@ public class GridLayer extends ImageLayer {
 		final FieldDrawingAttributes attributes = new FieldDrawingAttributes(getName(), lineColor);
 		attributes.grayScaled = g.isGrayScaled;
 		if (textureFile != null) {
-			attributes.textures = Arrays.asList(textureFile);
+			attributes.setTextures(Arrays.asList(textureFile));
 		} else if (image != null) {
 			final int[] data = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
 			System.arraycopy(g.getEnvironment().getDisplayData(), 0, data, 0, data.length);
-			attributes.textures = Arrays.asList(image);
+			attributes.setTextures(Arrays.asList(image));
 		}
 		attributes.triangulated = g.isTriangulated;
 		attributes.withText = g.showText;

@@ -18,44 +18,39 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 
-import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.runtime.IScope;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaMaterial;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import ummisco.gama.opengl.Abstract3DRenderer;
+import ummisco.gama.opengl.Abstract3DRenderer.PickingState;
 
 public abstract class AbstractObject {
 
-	static int index = 0;
-	static Color pickedColor = Color.red;
+	public static enum DrawerType {
+		GEOMETRY, STRING, FIELD, RESOURCE
+	}
+
+	static int INDEX = 0;
+	static final GamaColor PICKED_COLOR = new GamaColor(Color.red);
 
 	protected final DrawingAttributes attributes;
-	private final LayerObject layer;
-	protected Double alpha;
-	public final int pickingIndex = index++;
+	public final int index;
 	private boolean picked = false;
 	protected final Texture[] textures;
-	protected final double zFightingId;
+	private double zFightingOffset;
 
-	protected boolean overlay = false;
-
-	public void enableOverlay(final boolean value) {
-		overlay = value;
-	}
-
-	public boolean isOverlay() {
-		return overlay;
-	}
-
-	private boolean lightInteraction = true;
-
-	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer, final Texture[] textures) {
+	public AbstractObject(final DrawingAttributes attributes, final Texture[] textures) {
 		this.attributes = attributes;
-		this.layer = layer;
-		this.alpha = layer == null ? 1 : layer.alpha;
+		this.index = INDEX++;
 		this.textures = textures;
-		this.zFightingId = computeZFightingId();
+	}
+
+	public abstract DrawerType getDrawerType();
+
+	public AbstractObject(final DrawingAttributes attributes) {
+		this(attributes, attributes.getTextures() != null ? new Texture[attributes.getTextures().size()] : null);
 	}
 
 	public void dispose(final GL gl) {
@@ -63,19 +58,12 @@ public abstract class AbstractObject {
 		Arrays.fill(textures, null);
 	}
 
-	public AbstractObject(final DrawingAttributes attributes, final LayerObject layer) {
-		this(attributes, layer, attributes.getTextures() != null ? new Texture[attributes.getTextures().size()] : null);
-	}
-
-	public DrawingAttributes getAttributes() {
-		return attributes;
-	}
-
-	public Texture[] getTextures(final GL gl, final Abstract3DRenderer renderer) {
+	public int[] getTexturesId(final GL2 gl, final Abstract3DRenderer renderer) {
 		if (textures == null) { return null; }
-		final Texture[] result = new Texture[textures.length];
+		final int[] result = new int[textures.length];
 		for (int i = 0; i < textures.length; i++) {
-			result[i] = getTexture(gl, renderer, i);
+			final Texture t = getTexture(gl, renderer, i);
+			result[i] = t == null ? 0 : t.getTextureObject();
 		}
 		return result;
 	}
@@ -88,12 +76,7 @@ public abstract class AbstractObject {
 		return getTexture(gl, renderer, 0);
 	}
 
-	public int getNumberOfTexture() {
-		if (textures == null) { return 0; }
-		return textures.length;
-	}
-
-	public Texture getTexture(final GL gl, final Abstract3DRenderer renderer, final int order) {
+	private Texture getTexture(final GL gl, final Abstract3DRenderer renderer, final int order) {
 		if (textures == null) { return null; }
 		if (order < 0 || order > textures.length - 1) { return null; }
 		if (textures[order] == null) {
@@ -102,21 +85,12 @@ public abstract class AbstractObject {
 		return textures[order];
 	}
 
-	public String[] getTexturePaths(final IScope scope) {
-		if (attributes.getTextures() == null) { return null; }
-		final int numberOfTextures = attributes.getTextures().size();
-		final String[] result = new String[numberOfTextures];
-		for (int i = 0; i < numberOfTextures; i++) {
-			final Object obj = attributes.getTextures().get(i);
-			if (obj instanceof GamaImageFile) {
-				result[i] = ((GamaImageFile) obj).getPath(scope);
-			}
-		}
-		return result;
-	}
-
 	private Texture computeTexture(final GL gl, final Abstract3DRenderer renderer, final int order) {
-		final Object obj = attributes.getTextures().get(order);
+		Object obj = null;
+		try {
+			obj = attributes.getTextures().get(order);
+		} catch (final IndexOutOfBoundsException e) {// do nothing. Can arrive in the new shader architecture
+		}
 		if (obj instanceof BufferedImage) {
 			return renderer.getCurrentScene().getTexture(gl, (BufferedImage) obj);
 		} else if (obj instanceof GamaImageFile) { return renderer.getCurrentScene().getTexture(gl,
@@ -124,63 +98,35 @@ public abstract class AbstractObject {
 		return null;
 	}
 
-	public boolean hasSeveralTextures() {
-		return textures != null && textures.length > 1;
-	}
-
 	public boolean isTextured() {
 		return textures != null && textures.length > 0;
 	}
 
-	@SuppressWarnings ({ "unchecked", "rawtypes" })
-	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean isPicking) {
+	public boolean isPicked() {
+		return picked;
+	}
+
+	public void draw(final GL2 gl, final ObjectDrawer<AbstractObject> drawer, final boolean isPicking) {
 		final Abstract3DRenderer renderer = drawer.renderer;
-		if (isPicking && layer.isPickable())
-			gl.glLoadName(pickingIndex);
+		if (isPicking)
+			gl.glLoadName(index);
 		drawer.draw(gl, this);
-		picked = isPicked(renderer);
-		if (picked)
-			if (!renderer.getPickingState().isMenuOn()) {
-				renderer.getPickingState().setMenuOn(true);
+		if (isPicking) {
+			final PickingState state = renderer.getPickingState();
+			picked = state.isPicked(index);
+			if (picked && !state.isMenuOn()) {
+				state.setMenuOn(true);
 				renderer.getSurface().selectAgent(attributes);
 			}
+		}
 	}
 
-	public boolean isPicked(final Abstract3DRenderer renderer) {
-		return renderer.getPickingState().isPicked(pickingIndex) && layer.isPickable();
+	public GamaColor getColor() {
+		return picked ? PICKED_COLOR : attributes.getColor();
 	}
 
-	public Color getColor() {
-		if (picked) { return pickedColor; }
-		return attributes.getColor();
-	}
-
-	public double computeZFightingId() {
-		final AgentIdentifier id = attributes.getAgentIdentifier();
-		final double offset = id == null ? 0 : 1 / (double) (id.getIndex() + 10);
-		return (layer == null ? 0 : layer.getOrder()) + offset;
-	}
-
-	public double getZFightingId() {
-		return zFightingId;
-	}
-
-	public double getLayerZ() {
-		return layer == null ? 0 : layer.getOffset().z;
-	}
-
-	public Double getAlpha() {
-		return alpha;
-	}
-
-	public void setAlpha(final Double alpha) {
-		this.alpha = alpha;
-	}
-
-	public void preload(final GL2 gl, final Abstract3DRenderer renderer) {
-		// Make sure textures are loaded
-		getPrimaryTexture(gl, renderer);
-		getAlternateTexture(gl, renderer);
+	public double getZFightingOffset() {
+		return zFightingOffset;
 	}
 
 	public boolean isFilled() {
@@ -195,7 +141,7 @@ public abstract class AbstractObject {
 		return attributes.getSize();
 	}
 
-	public Color getBorder() {
+	public GamaColor getBorder() {
 		return attributes.getBorder();
 	}
 
@@ -209,19 +155,20 @@ public abstract class AbstractObject {
 		return -attributes.getAngle();
 	}
 
-	public void enableLightInteraction() {
-		lightInteraction = true;
-	}
-
-	public void disableLightInteraction() {
-		lightInteraction = false;
-	}
-
-	public boolean isLightInteraction() {
-		return lightInteraction;
-	}
-
 	public double getLineWidth() {
 		return attributes.getLineWidth();
 	}
+
+	public GamaPoint getRotationAxis() {
+		return attributes.getAxis();
+	}
+
+	public GamaMaterial getMaterial() {
+		return attributes.getMaterial();
+	}
+
+	public void setZFightingOffset(final double d) {
+		zFightingOffset = d;
+	}
+
 }

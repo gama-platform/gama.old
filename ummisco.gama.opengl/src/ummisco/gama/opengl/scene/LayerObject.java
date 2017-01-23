@@ -9,15 +9,11 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-import com.google.common.collect.Iterators;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
@@ -26,12 +22,11 @@ import com.vividsolutions.jts.geom.Geometry;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.DrawingAttributes;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
+import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.modernOpenGL.DrawingEntity;
 import ummisco.gama.opengl.Abstract3DRenderer;
-import ummisco.gama.opengl.JOGLRenderer;
 import ummisco.gama.opengl.ModernRenderer;
 import ummisco.gama.webgl.SimpleLayer;
 
@@ -43,20 +38,13 @@ import ummisco.gama.webgl.SimpleLayer;
  *
  */
 @SuppressWarnings ({ "rawtypes", "unchecked" })
-public class LayerObject implements Iterable<GeometryObject> {
+public class LayerObject {
 
 	final static GamaPoint NULL_OFFSET = new GamaPoint();
 	final static GamaPoint NULL_SCALE = new GamaPoint(1, 1, 1);
 
 	private boolean sceneIsInitialized = false;
-	protected boolean constantRedrawnLayer = false; // flag that indicate if the
-													// layer has to be redrawn
-													// at every frame, even in
-													// the same simulation step
-													// (basically, it is the
-													// case for the helper
-													// layer)
-	protected boolean isOverlay = false;
+	protected boolean constantRedrawnLayer = false;
 
 	GamaPoint offset = NULL_OFFSET;
 	GamaPoint scale = null;
@@ -71,8 +59,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 	Integer openGLListIndex;
 	boolean isFading;
 
-	boolean isInit = false;
-
 	public LayerObject(final Abstract3DRenderer renderer, final ILayer layer) {
 		this.renderer = renderer;
 		this.layer = layer;
@@ -80,8 +66,12 @@ public class LayerObject implements Iterable<GeometryObject> {
 		objects.add(currentList);
 	}
 
+	public boolean isLightInteraction() {
+		return true;
+	}
+
 	private List newCurrentList() {
-		return new CopyOnWriteArrayList();
+		return Collections.synchronizedList(new ArrayList());
 	}
 
 	protected boolean isPickable() {
@@ -111,23 +101,24 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if (!sceneIsInitialized || constantRedrawnLayer) {
 			renderer.getDrawer().prepareMapForLayer(this);
 			double alpha = 0d;
+			final double originalAlpha = this.alpha;
 			final int size = objects.size();
 			final double delta = size == 0 ? 0 : 1d / size;
 			for (final List<AbstractObject> list : objects) {
-				alpha = alpha + delta;
-				for (final AbstractObject object : list) {
-					final double originalAlpha = object.getAlpha();
-					object.setAlpha(originalAlpha * alpha);
-					final DrawingEntity[] drawingEntity = renderer.getDrawingEntityGenerator()
-							.GenerateDrawingEntities(renderer.getSurface().getScope(), object, gl);
-					if (overlay) {
-						for (final DrawingEntity de : drawingEntity) {
-							de.enableOverlay(true);
+				alpha = isFading ? originalAlpha * (alpha + delta) : originalAlpha;
+				synchronized (list) {
+					for (final AbstractObject object : list) {
+						renderer.setCurrentObjectAlpha(alpha);
+						final DrawingEntity[] drawingEntity = renderer.getDrawingEntityGenerator()
+								.generateDrawingEntities(renderer.getSurface().getScope(), object, this, gl);
+						if (overlay) {
+							for (final DrawingEntity de : drawingEntity) {
+								de.enableOverlay(true);
+							}
 						}
+						if (drawingEntity != null)
+							renderer.getDrawer().addDrawingEntities(drawingEntity);
 					}
-					object.setAlpha(originalAlpha);
-					if (drawingEntity != null)
-						renderer.getDrawer().addDrawingEntities(drawingEntity);
 				}
 			}
 			renderer.getDrawer().redraw();
@@ -142,13 +133,13 @@ public class LayerObject implements Iterable<GeometryObject> {
 		if (overlay) {
 			gl.glDisable(GL.GL_DEPTH_TEST);
 			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-			gl.glPushMatrix();
 			gl.glLoadIdentity();
-			gl.glOrtho(0.0, renderer.data.getEnvWidth(), renderer.data.getEnvHeight(), 0.0, -1.0,
-					renderer.getMaxEnvDim());
+			gl.glPushMatrix();
+			renderer.getGlu().gluOrtho2D(0.0, 500, 500, 0.0);
 			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
 			gl.glLoadIdentity();
 		}
+		if (objects.size() == 0) { return; }
 		try {
 			gl.glPushMatrix();
 			final GamaPoint offset = getOffset();
@@ -156,75 +147,61 @@ public class LayerObject implements Iterable<GeometryObject> {
 			final GamaPoint scale = getScale();
 			gl.glScaled(scale.x, scale.y, scale.z);
 			final boolean picking = renderer.getPickingState().isPicking() && isPickable();
-			if (objects.size() == 0) { return; }
-			renderer.setCurrentColor(gl, Color.white);
 			if (picking) {
-				drawPicking(gl);
-				return;
-			}
-			Integer index = openGLListIndex;
-			if (index == null) {
-				index = gl.glGenLists(1);
-				gl.glNewList(index, GL2.GL_COMPILE);
-				double alpha = 0d;
-				final int size = objects.size();
-				final double delta = size == 0 ? 0 : 1d / size;
-				for (final List<AbstractObject> list : objects) {
-					alpha = alpha + delta;
-					for (final AbstractObject object : list) {
-						final ObjectDrawer drawer = renderer.getDrawerFor(object.getClass());
-						if (isFading) {
-							final double originalAlpha = object.getAlpha();
-							object.setAlpha(originalAlpha * alpha);
-							object.draw(gl, drawer, false);
-							object.setAlpha(originalAlpha);
-						} else {
-							object.draw(gl, drawer, false);
-						}
-					}
+				gl.glInitNames();
+				gl.glPushName(0);
+				drawAllObjects(gl, true);
+				gl.glPopName();
+			} else {
+				if (openGLListIndex == null) {
+					openGLListIndex = gl.glGenLists(1);
+					gl.glNewList(openGLListIndex, GL2.GL_COMPILE);
+					drawAllObjects(gl, false);
+					gl.glEndList();
 				}
-				gl.glEndList();
+				gl.glCallList(openGLListIndex);
 			}
-			gl.glCallList(index);
-			openGLListIndex = index;
 		} finally {
 			gl.glPopMatrix();
+			if (overlay) {
+				// Making sure we can render 3d again
+				gl.glEnable(GL.GL_DEPTH_TEST);
+				gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
+				gl.glPopMatrix();
+				gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+			}
 		}
 
-		if (overlay) {
-			// Making sure we can render 3d again
-			gl.glEnable(GL.GL_DEPTH_TEST);
-			gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
-			gl.glPopMatrix();
-			gl.glMatrixMode(GLMatrixFunc.GL_MODELVIEW);
+	}
+
+	protected void drawAllObjects(final GL2 gl, final boolean picking) {
+		if (getTrace() > 0) {
+			double delta = 0;
+			if (isFading) {
+				final int size = objects.size();
+				delta = size == 0 ? 0 : 1d / size;
+			}
+			drawSublists(gl, delta, picking);
+		} else
+			drawObjects(gl, currentList, alpha, picking);
+	}
+
+	protected void drawSublists(final GL2 gl, final double alphaDelta, final boolean picking) {
+		double alpha = 0d;
+		for (final List<AbstractObject> list : objects) {
+			alpha = alphaDelta == 0d ? this.alpha : this.alpha * (alpha + alphaDelta);
+			drawObjects(gl, list, alpha, picking);
 		}
 	}
 
-	protected void drawPicking(final GL2 gl) {
-		gl.glPushMatrix();
-		gl.glInitNames();
-		gl.glPushName(0);
-		double alpha = 0d;
-		final int size = objects.size();
-		final double delta = size == 0 ? 0 : 1d / size;
-		for (final List<AbstractObject> list : objects) {
-			alpha = alpha + delta;
+	protected void drawObjects(final GL2 gl, final List<AbstractObject> list, final double alpha,
+			final boolean picking) {
+		renderer.setCurrentObjectAlpha(alpha);
+		synchronized (list) {
 			for (final AbstractObject object : list) {
-				final ObjectDrawer drawer = ((JOGLRenderer) renderer).getDrawerFor(object.getClass());
-				if (isFading) {
-					final double originalAlpha = object.getAlpha();
-					object.setAlpha(originalAlpha * alpha);
-					object.draw(gl, drawer, true);
-					object.setAlpha(originalAlpha);
-				} else {
-					object.draw(gl, drawer, true);
-				}
+				object.draw(gl, renderer.getDrawerFor(object.getDrawerType()), picking);
 			}
 		}
-
-		gl.glPopName();
-		gl.glPopMatrix();
-
 	}
 
 	public boolean isStatic() {
@@ -257,32 +234,50 @@ public class LayerObject implements Iterable<GeometryObject> {
 		this.scale = scale;
 	}
 
-	public void addString(final String string, final DrawingAttributes attributes) {
-		currentList.add(new StringObject(string, attributes, this));
+	public StringObject addString(final String string, final DrawingAttributes attributes) {
+		final StringObject object = new StringObject(string, attributes);
+		currentList.add(object);
+		return object;
 	}
 
-	public void addFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
-		currentList.add(new ResourceObject(file, attributes, this));
+	public ResourceObject addFile(final GamaGeometryFile file, final DrawingAttributes attributes) {
+		final ResourceObject resource = new ResourceObject(file, attributes);
+		currentList.add(resource);
+		return resource;
 	}
 
-	public void addImage(final GamaImageFile img, final DrawingAttributes attributes) {
-		currentList.add(new ImageObject(img, attributes, this));
+	public GeometryObject addImage(final Object o, final DrawingAttributes attributes) {
+		// If no dimensions have been defined, then the image is considered as wide and tall as the environment
+		GamaPoint size = attributes.getSize();
+		if (size == null) {
+			size = renderer.getWorldsDimensions();
+			attributes.setSize(size);
+		}
+		final GamaPoint loc = attributes.getLocation();
+		final GamaPoint inc = attributes.getSize().dividedBy(2);
+		final GamaPoint newLoc = loc == null ? inc : loc.plus(inc);
+		// We build a rectangle that will serve as a "support" for the image (which will become its texture)
+		final Geometry geometry = GamaGeometryType.buildRectangle(size.x, size.y, newLoc).getInnerGeometry();
+		// If a rotation is defined, we reverse it (to accomodate for the changes in coordinates between GAMA and
+		// OpenGL)
+		attributes.setLocation(newLoc);
+		final Double angle = attributes.getAngle();
+		if (angle != null)
+			attributes.setAngle(-angle);
+		attributes.setTexture(o);
+		return addGeometry(geometry, attributes);
 	}
 
-	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
-		currentList.add(new ImageObject(img, attributes, this));
+	public FieldObject addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
+		final FieldObject field = new FieldObject(fieldValues, attributes);
+		currentList.add(field);
+		return field;
 	}
 
-	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		currentList.add(new FieldObject(fieldValues, attributes, this));
-	}
-
-	public void addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
-		currentList.add(new GeometryObject(geometry, attributes, this));
-	}
-
-	public double getOrder() {
-		return layer == null ? 2 : layer.getOrder() + 3;
+	public GeometryObject addGeometry(final Geometry geometry, final DrawingAttributes attributes) {
+		final GeometryObject geom = new GeometryObject(geometry, attributes);
+		currentList.add(geom);
+		return geom;
 	}
 
 	private int getTrace() {
@@ -299,9 +294,8 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public void clear(final GL2 gl) {
 		final int sizeLimit = getTrace();
-		final boolean fading = getFading();
 
-		isFading = fading;
+		isFading = getFading();
 
 		final int size = objects.size();
 		for (int i = 0, n = size - sizeLimit; i < n; i++) {
@@ -323,11 +317,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	}
 
-	@Override
-	public Iterator<GeometryObject> iterator() {
-		return Iterators.filter(currentList.iterator(), GeometryObject.class);
-	}
-
 	public boolean isInvalid() {
 		return isInvalid;
 	}
@@ -338,13 +327,6 @@ public class LayerObject implements Iterable<GeometryObject> {
 
 	public boolean hasTrace() {
 		return getTrace() > 0;
-	}
-
-	public void preload(final GL2 gl) {
-		if (objects.size() == 0) { return; }
-		for (final AbstractObject object : currentList) {
-			object.preload(gl, renderer);
-		}
 	}
 
 	public void setOverlay(final boolean b) {
@@ -364,7 +346,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 	}
 
 	public boolean isOverlay() {
-		return isOverlay;
+		return overlay;
 	}
 
 	public SimpleLayer toSimpleLayer() {
@@ -375,7 +357,7 @@ public class LayerObject implements Iterable<GeometryObject> {
 			for (final List<AbstractObject> list : objects) {
 				for (final AbstractObject object : list) {
 					final DrawingEntity[] drawingEntities = renderer.getDrawingEntityGenerator()
-							.GenerateDrawingEntities(renderer.getSurface().getScope(), object, false, null);
+							.generateDrawingEntities(renderer.getSurface().getScope(), object, false, this, null);
 					// explicitly passes null for the OpenGL context
 					if (drawingEntities != null) {
 						for (final DrawingEntity drawingEntity : drawingEntities) {

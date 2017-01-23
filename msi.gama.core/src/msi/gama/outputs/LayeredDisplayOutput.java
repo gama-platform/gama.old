@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package msi.gama.outputs;
 
-import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -362,8 +361,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean constantAmbientLight = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
-	public volatile boolean cameraFix = false; // Means that the camera has been
-												// set by the modeler.
+	// public volatile boolean cameraFix = false;
 	final LayeredDisplayData data = new LayeredDisplayData();
 	// Specific to overlays
 	OverlayStatement overlayInfo;
@@ -541,7 +539,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			location.setY(-location.getY()); // y component need to be reverted
 			this.data.setCameraPos(location);
 			constantCamera = camera.isConst();
-			cameraFix = true;
+			// cameraFix = true;
 		}
 
 		final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
@@ -550,7 +548,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			location.setY(-location.getY()); // y component need to be reverted
 			this.data.setCameraLookPos(location);
 			constantCameraLook = cameraLook.isConst();
-			cameraFix = true;
+			// cameraFix = true;
 		}
 		// Set the up vector of the opengl Camera (see gluPerspective)
 		final IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
@@ -558,7 +556,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			final ILocation location = Cast.asPoint(getScope(), cameraUp.value(getScope()));
 			location.setY(-location.getY()); // y component need to be reverted
 			this.data.setCameraUpVector(location);
-			cameraFix = true;
+			// cameraFix = true;
 		}
 
 		// Set the up vector of the opengl Camera (see gluPerspective)
@@ -795,7 +793,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return surface == null ? null : surface.getImage(w, h);
 	}
 
-	private void setBackgroundColor(final Color background) {
+	private void setBackgroundColor(final GamaColor background) {
 		data.setBackgroundColor(background);
 	}
 

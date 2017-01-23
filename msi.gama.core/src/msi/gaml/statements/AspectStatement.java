@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AspectStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AspectStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -40,20 +39,49 @@ import msi.gaml.statements.draw.ShapeDrawingAttributes;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 
-@symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true, concept = {
-		IConcept.DISPLAY })
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
-@facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.ID, optional = true, doc = @doc("identifier of the aspect (it can be used in a display to identify which aspect should be used for the given species). Two special names can also be used: 'default' will allow this aspect to be used as a replacement for the default aspect defined in preferences; 'highlighted' will allow the aspect to be used when the agent is highlighted as a replacement for the default (application of a color)")) }, omissible = IKeyword.NAME)
-@doc(value = "Aspect statement is used to define a way to draw the current agent. Several aspects can be defined in one species. It can use attributes to customize each agent's aspect. The aspect is evaluate for each agent each time it has to be displayed.", usages = {
-		@usage(value = "An example of use of the aspect statement:", examples = {
-				@example(value = "species one_species {", isExecutable = false),
-				@example(value = "	int a <- rnd(10);", isExecutable = false),
-				@example(value = "	aspect aspect1 {", isExecutable = false),
-				@example(value = "		if(a mod 2 = 0) { draw circle(a);}", isExecutable = false),
-				@example(value = "		else {draw square(a);}", isExecutable = false),
-				@example(value = "		draw text: \"a= \" + a color: #black size: 5;", isExecutable = false),
-				@example(value = "	}", isExecutable = false), @example(value = "}", isExecutable = false) }) })
+@symbol (
+		name = { IKeyword.ASPECT },
+		kind = ISymbolKind.BEHAVIOR,
+		with_sequence = true,
+		unique_name = true,
+		concept = { IConcept.DISPLAY })
+@inside (
+		kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
+@facets (
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.ID,
+				optional = true,
+				doc = @doc ("identifier of the aspect (it can be used in a display to identify which aspect should be used for the given species). Two special names can also be used: 'default' will allow this aspect to be used as a replacement for the default aspect defined in preferences; 'highlighted' will allow the aspect to be used when the agent is highlighted as a replacement for the default (application of a color)")) },
+		omissible = IKeyword.NAME)
+@doc (
+		value = "Aspect statement is used to define a way to draw the current agent. Several aspects can be defined in one species. It can use attributes to customize each agent's aspect. The aspect is evaluate for each agent each time it has to be displayed.",
+		usages = { @usage (
+				value = "An example of use of the aspect statement:",
+				examples = { @example (
+						value = "species one_species {",
+						isExecutable = false),
+						@example (
+								value = "	int a <- rnd(10);",
+								isExecutable = false),
+						@example (
+								value = "	aspect aspect1 {",
+								isExecutable = false),
+						@example (
+								value = "		if(a mod 2 = 0) { draw circle(a);}",
+								isExecutable = false),
+						@example (
+								value = "		else {draw square(a);}",
+								isExecutable = false),
+						@example (
+								value = "		draw text: \"a= \" + a color: #black size: 5;",
+								isExecutable = false),
+						@example (
+								value = "	}",
+								isExecutable = false),
+						@example (
+								value = "}",
+								isExecutable = false) }) })
 public class AspectStatement extends AbstractStatementSequence {
 
 	boolean isHighlightAspect;
@@ -75,12 +103,8 @@ public class AspectStatement extends AbstractStatementSequence {
 		final IAgent agent = scope.getAgent();
 		if (agent != null && !agent.dead()) {
 			final IGraphics g = scope.getGraphics();
-			if (g == null || g.cannotDraw()) {
-				return null;
-			}
+			if (g == null) { return null; }
 			try {
-				// agent.acquireLock();
-				// if ( agent.dead() ) { return null; }
 				if (agent == scope.getGui().getHighlightedAgent()) {
 					g.beginHighlight();
 				}
@@ -101,33 +125,33 @@ public class AspectStatement extends AbstractStatementSequence {
 					final ILocation point = agent.getLocation();
 
 					switch (SHAPES.get(defaultShape)) {
-					case 1:
-						ag = GamaGeometryType.buildCircle(defaultSize, point);
-						break;
-					case 2:
-						ag = GamaGeometryType.buildSquare(defaultSize, point);
-						break;
-					case 3:
-						ag = GamaGeometryType.buildTriangle(defaultSize, point);
-						break;
-					case 4:
-						ag = GamaGeometryType.buildSphere(defaultSize, point);
-						break;
-					case 5:
-						ag = GamaGeometryType.buildCube(defaultSize, point);
-						break;
-					case 6:
-						ag = GamaGeometryType.createPoint(point);
-						break;
-					default:
-						ag = agent.getGeometry();
+						case 1:
+							ag = GamaGeometryType.buildCircle(defaultSize, point);
+							break;
+						case 2:
+							ag = GamaGeometryType.buildSquare(defaultSize, point);
+							break;
+						case 3:
+							ag = GamaGeometryType.buildTriangle(defaultSize, point);
+							break;
+						case 4:
+							ag = GamaGeometryType.buildSphere(defaultSize, point);
+							break;
+						case 5:
+							ag = GamaGeometryType.buildCube(defaultSize, point);
+							break;
+						case 6:
+							ag = GamaGeometryType.createPoint(point);
+							break;
+						default:
+							ag = agent.getGeometry();
 					}
 				} else {
 					ag = agent.getGeometry();
 				}
 
 				final IShape ag2 = ag.copy(scope);
-				final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, color, borderColor);
+				final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(ag2, agent, color, borderColor);
 				final Rectangle2D r = g.drawShape(ag2, attributes);
 				return r;
 			} catch (final GamaRuntimeException e) {
@@ -135,7 +159,6 @@ public class AspectStatement extends AbstractStatementSequence {
 				e.printStackTrace();
 			} finally {
 				g.endHighlight();
-				// agent.releaseLock();
 			}
 		}
 		return null;
@@ -158,13 +181,9 @@ public class AspectStatement extends AbstractStatementSequence {
 				g = GAMA.getExperiment().getAgent().getSimulation().getScope().getGraphics();
 			}
 			// end-hqnghi
-			if (g == null || g.cannotDraw()) {
-				return null;
-			}
+			if (g == null) { return null; }
 			try {
-				if (scope.interrupted()) {
-					return null;
-				}
+				if (scope.interrupted()) { return null; }
 				if (shouldHighlight) {
 					g.beginHighlight();
 				}

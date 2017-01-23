@@ -53,19 +53,18 @@ public class AxesLayerObject extends StaticLayerObject.World {
 
 			// build axis
 			list.add(new GeometryObject(GamaGeometryType.buildLine(origin, p), COLORS[i], LINESTRING,
-					2 * JOGLRenderer.getLineWidth(), this));
+					2 * JOGLRenderer.getLineWidth()));
 
 			// build labels
 			final GamaFont font = new GamaFont("Helvetica", 0, 18); // 0 for plain, 18 for text size.
 			final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(1, 1, 1), null,
 					p.times(1.2).yNegated(), COLORS[i], font, false);
-			final StringObject strObj = new StringObject(LABELS[i], textDrawingAttr, this);
+			final StringObject strObj = new StringObject(LABELS[i], textDrawingAttr);
 			list.add(strObj);
 
 			// build arrows
 			final GeometryObject arrow =
-					new GeometryObject(GamaGeometryType.buildArrow(p.times(1.1), size / 6), COLORS[i], POLYGON, this);
-			arrow.disableLightInteraction();
+					new GeometryObject(GamaGeometryType.buildArrow(p.times(1.1), size / 6), COLORS[i], POLYGON, false);
 			list.add(arrow);
 		}
 	}

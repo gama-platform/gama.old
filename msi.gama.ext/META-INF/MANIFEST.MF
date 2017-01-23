@@ -66,6 +66,7 @@ Export-Package: com.kitfox.svg;
  gnu.trove.impl.hash;uses:="gnu.trove.strategy,gnu.trove.procedure,gnu.trove.iterator",
  gnu.trove.iterator,
  gnu.trove.list,
+ gnu.trove.list.array,
  gnu.trove.map,
  gnu.trove.map.hash;
   uses:="gnu.trove.function,
@@ -756,7 +757,8 @@ Export-Package: com.kitfox.svg;
    javax.swing",
  rcaller.exception
 Require-Bundle: com.google.guava;bundle-version="15.0.0";visibility:=reexport,
- org.eclipse.osgi
+ org.eclipse.osgi,
+ org.apache.commons.lang;bundle-version="2.6.0"
 Bundle-ClassPath: .,
  commons-math3-3.6.1/jars/commons-math3-3.6.1.jar,
  osmosis.0.45/mysql-connector-java-5.1.37.jar,

@@ -13,10 +13,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.nio.BufferOverflowException;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -27,35 +24,25 @@ import com.jogamp.opengl.fixedfunc.GLLightingFunc;
 import com.jogamp.opengl.fixedfunc.GLMatrixFunc;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.awt.TextRenderer;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import com.jogamp.opengl.util.texture.Texture;
 
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.layers.OverlayLayer;
-import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
+import msi.gama.util.file.GamaImageFile;
 import msi.gaml.statements.draw.FieldDrawingAttributes;
 import msi.gaml.statements.draw.FileDrawingAttributes;
-import msi.gaml.statements.draw.ShapeDrawingAttributes;
-import msi.gaml.statements.draw.TextDrawingAttributes;
-import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.FieldDrawer;
-import ummisco.gama.opengl.scene.FieldObject;
 import ummisco.gama.opengl.scene.GeometryDrawer;
-import ummisco.gama.opengl.scene.GeometryObject;
-import ummisco.gama.opengl.scene.ImageObject;
+import ummisco.gama.opengl.scene.HelpersDrawer;
 import ummisco.gama.opengl.scene.ModelScene;
 import ummisco.gama.opengl.scene.ObjectDrawer;
 import ummisco.gama.opengl.scene.ResourceDrawer;
-import ummisco.gama.opengl.scene.ResourceObject;
 import ummisco.gama.opengl.scene.StringDrawer;
-import ummisco.gama.opengl.scene.StringObject;
 import ummisco.gama.opengl.utils.FPSDrawer;
 import ummisco.gama.opengl.utils.GLUtilLight;
 import ummisco.gama.ui.utils.WorkbenchHelper;
@@ -70,26 +57,23 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class JOGLRenderer extends Abstract3DRenderer {
 
-	private final PickingState pickingState = new PickingState();
-	private Envelope3D ROIEnvelope = null;
-	private volatile boolean inited;
+	private final FPSDrawer fpsDrawer = new FPSDrawer();
+	private volatile boolean visible;
+	private Color currentColor;
+	private Texture currentTexture;
+	private final GeometryDrawer geometryDrawer;
+	private final StringDrawer stringDrawer;
+	private final FieldDrawer fieldDrawer;
+	private final ResourceDrawer resourceDrawer;
+	private final HelpersDrawer helpersDrawer;
 
 	public JOGLRenderer(final SWTOpenGLDisplaySurface d) {
 		super(d);
-	}
-
-	@Override
-	public void defineROI(final Point start, final Point end) {
-		final GamaPoint startInWorld = getRealWorldPointFromWindowPoint(start);
-		final GamaPoint endInWorld = getRealWorldPointFromWindowPoint(end);
-		ROIEnvelope = new Envelope3D(new Envelope(startInWorld.x, endInWorld.x, startInWorld.y, endInWorld.y));
-	}
-
-	@Override
-	public void cancelROI() {
-		if (camera.isROISticky())
-			return;
-		ROIEnvelope = null;
+		geometryDrawer = new GeometryDrawer(this);
+		fieldDrawer = new FieldDrawer(this);
+		stringDrawer = new StringDrawer(this);
+		resourceDrawer = new ResourceDrawer(this);
+		helpersDrawer = new HelpersDrawer(this);
 	}
 
 	public GL2 getGL() {
@@ -123,8 +107,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		// Perspective correction
 		gl.glHint(GL2ES1.GL_PERSPECTIVE_CORRECTION_HINT, GL.GL_NICEST);
 
-		// PolygonMode (Solid or lines)
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, getPolygonMode());
 		// Enable texture 2D
 		gl.glEnable(GL.GL_TEXTURE_2D);
 		// Blending & alpha control
@@ -147,11 +129,11 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	public TextRenderer getTextRendererFor(final Font font) {
-		return textRendererCache.get(font);
+		final TextRenderer r = textRendererCache.get(font);
+		if (getCurrentColor() != null && r != null)
+			r.setColor(getCurrentColor());
+		return r;
 	}
-
-	private boolean visible;
-	private final FPSDrawer fpsDrawer = new FPSDrawer();
 
 	@Override
 	public void display(final GLAutoDrawable drawable) {
@@ -159,9 +141,9 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		currentScene = sceneBuffer.getSceneToRender();
 		if (currentScene == null) { return; }
 		// We preload any geometry, textures, etc. that are used in layers
-		currentScene.preload(gl);
-
-		// if () != null && animator.isPaused() ) { return; }
+		gl = drawable.getGL().getGL2();
+		textureCache.processUnloadedTextures(gl);
+		geometryCache.processUnloadedGeometries(gl, this);
 
 		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 		gl.glGetDoublev(GLMatrixFunc.GL_MODELVIEW_MATRIX, mvmatrix, 0);
@@ -174,38 +156,36 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		gl.glMatrixMode(GLMatrixFunc.GL_PROJECTION);
 		gl.glLoadIdentity();
 
-		// TODO Is this line necessary ? The changes are made in init and
-		// reshape
 		updateCameraPosition();
 		updatePerspective();
-		if (data.isLightOn()) {
-			gl.glEnable(GLLightingFunc.GL_LIGHTING);
-		} else {
-			gl.glDisable(GLLightingFunc.GL_LIGHTING);
-		}
 
 		if (data.isLightOn()) {
-			GLUtilLight.setAmbiantLight(gl, data.getAmbientLightColor());
+			gl.glEnable(GL2.GL_LIGHTING);
+			GLUtilLight.SetAmbiantLight(gl, data.getAmbientLightColor());
 			GLUtilLight.UpdateDiffuseLightValue(gl, this);
+		} else {
+			gl.glDisable(GL2.GL_LIGHTING);
 		}
 
-		// Line width ? Disable line smoothing seems to improve rendering time
-		// smooth should be set to false always, as it creates jagged lines
-		// gl.glLineWidth(getLineWidth());
-		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, getPolygonMode());
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, !data.isTriangulation() ? GL2GL3.GL_FILL : GL2GL3.GL_LINE);
 
-		this.rotateModel(gl);
-		if (data.isShowfps())
-			fpsDrawer.draw(gl, this);
+		if (data.isRotationOn())
+			rotateModel(gl);
+
 		drawScene(gl);
 
-		gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+		gl.glDisable(GL2.GL_LIGHTING);
+		gl.glDisable(GL2.GL_TEXTURE_2D);
+
+		if (data.isShowfps())
+			fpsDrawer.draw(gl, this);
 
 		if (ROIEnvelope != null) {
-			drawROI(gl);
+			helpersDrawer.drawROIHelper(gl, ROIEnvelope);
 		}
 		if (drawRotationHelper) {
-			drawRotationHelper(gl);
+			helpersDrawer.drawRotationHelper(gl, rotationHelperPosition,
+					camera.getPosition().distance3D(rotationHelperPosition));
 		}
 		if (!visible) {
 			// We make the canvas visible only after a first display has occured
@@ -216,16 +196,12 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	}
 
-	public int getPolygonMode() {
-		return !data.isTriangulation() ? GL2GL3.GL_FILL : GL2GL3.GL_LINE;
-	}
-
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width,
 			final int height) {
 		// Get the OpenGL graphics context
 		if (width <= 0 || height <= 0) { return; }
-		final GL2 gl = drawable.getContext().getGL().getGL2();
+		gl = drawable.getContext().getGL().getGL2();
 		// Set the viewport (display area) to cover the entire window
 		gl.glViewport(0, 0, width, height);
 		// Enable the model view - any new transformations will affect the
@@ -251,7 +227,6 @@ public class JOGLRenderer extends Abstract3DRenderer {
 			try {
 				final double zNear = maxDim / 1000;
 				double fW, fH;
-				// final double fovY = 45.0d;
 				final double fovY = this.data.getCameralens();
 				if (aspect > 1.0) {
 					fH = Math.tan(fovY / 360 * Math.PI) * zNear;
@@ -261,34 +236,20 @@ public class JOGLRenderer extends Abstract3DRenderer {
 					fH = fW / aspect;
 				}
 				gl.glFrustum(-fW, fW, -fH, fH, zNear, maxDim * 10);
+
 			} catch (final BufferOverflowException e) {
 				System.out.println("Buffer overflow exception");
 			}
 		} else {
 			if (aspect >= 1.0) {
-				((GL2ES1) gl).glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
+				gl.glOrtho(-maxDim * aspect, maxDim * aspect, -maxDim, maxDim, maxDim * 10, -maxDim * 10);
 			} else {
-				((GL2ES1) gl).glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
+				gl.glOrtho(-maxDim, maxDim, -maxDim / aspect, maxDim / aspect, maxDim, -maxDim);
 			}
 			gl.glTranslated(0d, 0d, maxDim * 0.05);
 		}
 
 		camera.animate();
-	}
-
-	public void drawScene(final GL2 gl) {
-		currentScene = sceneBuffer.getSceneToRender();
-		if (currentScene == null) { return; }
-		// Do some garbage collecting in model scenes
-		sceneBuffer.garbageCollect(gl);
-		// if picking, we draw a first pass to pick the color
-		if (pickingState.isBeginningPicking()) {
-			beginPicking(gl);
-			currentScene.draw(gl);
-			endPicking(gl);
-		}
-		// we draw the scene on screen
-		currentScene.draw(gl);
 	}
 
 	// Picking method
@@ -299,6 +260,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	 * 
 	 * @return if returned value is true that mean the picking is enabled
 	 */
+	@Override
 	public void beginPicking(final GL2 gl) {
 
 		final GLU glu = getGlu();
@@ -355,6 +317,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	 * 
 	 * @return name of selected object
 	 */
+	@Override
 	public void endPicking(final GL2 gl) {
 
 		// this.setPickedPressed(false);// no further iterations
@@ -399,36 +362,22 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	public void dispose(final GLAutoDrawable drawable) {
 		sceneBuffer.garbageCollect((GL2) drawable.getGL());
 		sceneBuffer.dispose();
-
 		textureCache.dispose(drawable.getGL());
 		geometryCache.dispose(drawable.getGL().getGL2());
 		textRendererCache.dispose(drawable.getGL());
 		this.canvas = null;
 		this.camera = null;
 		this.currentLayer = null;
-		// this.setCurrentPickedObject(null);
 		this.currentScene = null;
 		drawable.removeGLEventListener(this);
-		for (final ObjectDrawer o : drawers.values()) {
-			o.dispose();
-		}
-		drawers.clear();
-	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
-		dispose(getDrawable());
 	}
 
 	// Use when the rotation button is on.
 	public void rotateModel(final GL2 gl) {
-		if (data.isRotationOn()) {
-			currentZRotation++;
-		}
+		currentZRotation++;
 		if (currentZRotation != 0) {
-			final double env_width = data.getEnvWidth();
-			final double env_height = data.getEnvHeight();
+			final double env_width = worldDimensions.x;
+			final double env_height = worldDimensions.y;
 			gl.glTranslated(env_width / 2, -env_height / 2, 0);
 			gl.glRotated(currentZRotation, 0, 0, 1);
 			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
@@ -436,115 +385,18 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	}
 
 	@Override
-	public void drawROI(final GL2 gl) {
-		getGeometryDrawer().drawROIHelper(gl, ROIEnvelope);
-	}
-
-	@Override
-	public Envelope3D getROIEnvelope() {
-		return ROIEnvelope;
-	}
-
-	@Override
-	public PickingState getPickingState() {
-		return pickingState;
-	}
-
-	// This method is normally called either when the graphics is created or
-	// when the output is changed
-	// @Override
-	@Override
-	public void initScene() {
-		if (sceneBuffer != null) {
-			final ModelScene scene = sceneBuffer.getSceneToRender();
-			if (scene != null) {
-				scene.reload();
-			}
-		}
-	}
-
-	/**
-	 * Method drawGeometry. Add a given JTS Geometry in the list of all the existing geometry that will be displayed by
-	 * openGl.
-	 */
-	@Override
-	public Rectangle2D drawShape(final IShape shape, final ShapeDrawingAttributes attributes) {
-		if (shape == null) { return null; }
-		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
-		// IShape.Type type = shape.getGeometricalType();
-		if (highlight) {
-			attributes.setColor(GamaColor.getInt(data.getHighlightColor().getRGB()));
-		}
-		sceneBuffer.getSceneToUpdate().addGeometry(shape.getInnerGeometry(), attributes);
-
-		return rect;
-
-	}
-
-	@Override
-	public void startDrawRotationHelper(final GamaPoint pos) {
-		rotationHelperPosition = pos;
-		drawRotationHelper = true;
-		final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
-				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
-				+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
-		final double size = distance / 10; // the size of the displayed axis
-		if (currentScene != null)
-			currentScene.startDrawRotationHelper(pos, size);
-	}
-
-	@Override
-	public void stopDrawRotationHelper() {
-		rotationHelperPosition = null;
-		drawRotationHelper = false;
-		if (currentScene != null)
-			currentScene.stopDrawRotationHelper();
-	}
-
-	@Override
-	public void startDrawKeystoneHelper() {} // TODO (or not)
-
-	@Override
-	public void stopDrawKeystoneHelper() {} // TODO (or not)
-
-	@Override
-	public void drawRotationHelper(final GL2 gl) {
-		final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
-				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
-				+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
-		getGeometryDrawer().drawRotationHelper(gl, rotationHelperPosition, distance);
-	}
-
-	/**
-	 * Method drawImage.
-	 *
-	 * @param img
-	 *            Image
-	 * @param angle
-	 *            Integer
-	 */
-	@Override
-	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
-		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
-		if (attributes.getSize() == null) {
-			attributes.setSize(new GamaPoint(data.getEnvWidth(), data.getEnvHeight()));
-			attributes.setLocation(attributes.getSize().dividedBy(2));
-		}
-		sceneBuffer.getSceneToUpdate().addImage(img, attributes);
-
-		if (attributes.getBorder() != null) {
-			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.getBorder());
-		}
-		return rect;
-	}
-
-	@Override
 	public Rectangle2D drawFile(final GamaFile file, final FileDrawingAttributes attributes) {
 		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
 
-		if (file instanceof GamaGeometryFile && !envelopes.containsKey(file.getPath(getSurface().getScope()))) {
-			envelopes.put(file.getPath(getSurface().getScope()), file.computeEnvelope(surface.getScope()));
+		if (file instanceof GamaGeometryFile) {
+			final String path = file.getPath(getSurface().getScope());
+			if (!ENVELOPES_CACHE.containsKey(path))
+				ENVELOPES_CACHE.put(path, file.computeEnvelope(surface.getScope()));
+			geometryCache.saveGeometryToProcess((GamaGeometryFile) file);
+		} else if (file instanceof GamaImageFile) {
+			textureCache.initializeStaticTexture(getSurface().getScope(), (GamaImageFile) file);
 		}
+		tryToHighlight(attributes);
 		sceneBuffer.getSceneToUpdate().addFile(file, attributes);
 		return rect;
 	}
@@ -552,115 +404,12 @@ public class JOGLRenderer extends Abstract3DRenderer {
 	@Override
 	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
 		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
-
+		preloadTextures(attributes);
 		sceneBuffer.getSceneToUpdate().addField(fieldValues, attributes);
 		/*
 		 * This line has been removed to fix the issue 1174 if ( gridColor != null ) { drawGridLine(img, gridColor); }
 		 */
 		return rect;
-	}
-
-	public void drawGridLine(final GamaPoint dimensions, final Color lineColor) {
-		if (sceneBuffer.getSceneToUpdate() == null) { return; }
-		double stepX, stepY;
-		final double cellWidth = this.data.getEnvWidth() / dimensions.x;
-		final double cellHeight = this.data.getEnvHeight() / dimensions.y;
-		final GamaColor color = GamaColor.getInt(lineColor.getRGB());
-		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
-		for (double i = 0; i < dimensions.x; i++) {
-			for (double j = 0; j < dimensions.y; j++) {
-				stepX = i + 0.5;
-				stepY = j + 0.5;
-				final Geometry g = GamaGeometryType
-						.buildRectangle(cellWidth, cellHeight, new GamaPoint(stepX * cellWidth, stepY * cellHeight))
-						.getInnerGeometry();
-				sceneBuffer.getSceneToUpdate().addGeometry(g, attributes);
-			}
-		}
-	}
-
-	@Override
-	public Rectangle2D drawString(final String string, final TextDrawingAttributes attributes) {
-		// Multiline: Issue #780
-		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
-		if (string.contains("\n")) {
-			for (final String s : string.split("\n")) {
-				attributes.getLocation().setY(attributes.getLocation().getY()
-						+ attributes.font.getSize() * this.getyRatioBetweenPixelsAndModelUnits());
-				drawString(s, attributes);
-			}
-			return null;
-		}
-		attributes.getLocation().setY(-attributes.getLocation().getY());
-		sceneBuffer.getSceneToUpdate().addString(string, attributes);
-		return null;
-	}
-
-	@Override
-	public void fillBackground(final Color bgColor, final double opacity) {
-		setOpacity(opacity);
-	}
-
-	/**
-	 * Each new step the Z value of the first layer is set to 0.
-	 */
-	@Override
-	public boolean beginDrawingLayers() {
-		while (!inited) {
-			try {
-				Thread.sleep(10);
-			} catch (final InterruptedException e) {
-				return false;
-			}
-		}
-		return sceneBuffer.beginUpdatingScene();
-
-	}
-
-	/**
-	 * Set the value z of the current Layer. If no value is define is defined set it to 0. Set the type of the layer
-	 * weither it's a static layer (refresh:false) or a dynamic layer (by default or refresh:true)
-	 */
-	@Override
-	public void beginDrawingLayer(final ILayer layer) {
-		super.beginDrawingLayer(layer);
-		GamaPoint currentOffset, currentScale;
-		if (!(layer instanceof OverlayLayer)) {
-			final double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
-
-			// get the value of the z scale if positive otherwise set it to 1.
-			double z_scale;
-			if (layer.getExtent().getZ() > 0) {
-				z_scale = layer.getExtent().getZ();
-			} else {
-				z_scale = 1;
-			}
-
-			currentOffset = new GamaPoint(getXOffsetInPixels() / (getWidth() / data.getEnvWidth()),
-					getYOffsetInPixels() / (getHeight() / data.getEnvHeight()), currentZLayer);
-			currentScale = new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), z_scale);
-		} else {
-			currentOffset = new GamaPoint(getXOffsetInPixels() / (getWidth() / data.getEnvWidth()),
-					getYOffsetInPixels() / (getHeight() / data.getEnvHeight()), 1);
-
-			currentScale = new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), 1);
-
-		}
-		final ModelScene scene = sceneBuffer.getSceneToUpdate();
-		if (scene != null) {
-			scene.beginDrawingLayer(layer, currentOffset, currentScale, currentAlpha);
-		}
-	}
-
-	/**
-	 * Method endDrawingLayers()
-	 * 
-	 * @see msi.gama.common.interfaces.IGraphics#endDrawingLayers()
-	 */
-	@Override
-	public void endDrawingLayers() {
-		sceneBuffer.endUpdatingScene();
-		getSurface().invalidateVisibleRegions();
 	}
 
 	@Override
@@ -725,28 +474,72 @@ public class JOGLRenderer extends Abstract3DRenderer {
 		return sceneBuffer.getSceneToUpdate() != null && sceneBuffer.getSceneToUpdate().cannotAdd();
 	}
 
-	Map<Class, ObjectDrawer> drawers;
-
 	@Override
-	public ObjectDrawer getDrawerFor(final Class<? extends AbstractObject> class1) {
-		return getDrawers().get(class1);
+	public ObjectDrawer getDrawerFor(final AbstractObject.DrawerType type) {
+		switch (type) {
+			case STRING:
+				return stringDrawer;
+			case RESOURCE:
+				return resourceDrawer;
+			case GEOMETRY:
+				return geometryDrawer;
+			case FIELD:
+				return fieldDrawer;
+		}
+		return null;
 	}
 
 	public GeometryDrawer getGeometryDrawer() {
-		return (GeometryDrawer) getDrawers().get(GeometryObject.class);
+		return geometryDrawer;
 	}
 
-	private Map<Class, ObjectDrawer> getDrawers() {
-		if (drawers == null) {
-			drawers = new HashMap();
-			final GeometryDrawer gd = new GeometryDrawer(this);
-			drawers.put(GeometryObject.class, gd);
-			drawers.put(ImageObject.class, gd);
-			drawers.put(FieldObject.class, new FieldDrawer(this));
-			drawers.put(StringObject.class, new StringDrawer(this));
-			drawers.put(ResourceObject.class, new ResourceDrawer(this));
+	// HELPERS FOR COLOR, ALPHA AND TEXTURES
+
+	public void setCurrentColor(final Color c, final double alpha) {
+		if (c == null)
+			return;
+		setCurrentColor(c.getRed() / 255d, c.getGreen() / 255d, c.getBlue() / 255d, c.getAlpha() / 255d * alpha);
+	}
+
+	public void setCurrentColor(final Color c) {
+		setCurrentColor(c, currentObjectAlpha);
+	}
+
+	public void setCurrentColor(final double red, final double green, final double blue, final double alpha) {
+		currentColor = new Color((float) red, (float) green, (float) blue, (float) alpha);
+		gl.glColor4d(red, green, blue, alpha);
+	}
+
+	public void setCurrentColor(final double value) {
+		setCurrentColor(value, value, value, 1);
+	}
+
+	public Color getCurrentColor() {
+		if (currentColor == null)
+			return Color.white;
+		return currentColor;
+	}
+
+	public void setCurrentTexture(final Texture t) {
+		if (t == null) {
+			gl.glDisable(GL.GL_TEXTURE_2D);
+		} else {
+			// We enable it anyway, in case the texture target has been disabled
+			t.enable(gl);
+			if (currentTexture == t)
+				return;
 		}
-		return drawers;
+		currentTexture = t;
+		if (t != null) {
+			final boolean antiAlias = data.isAntialias();
+			// Apply antialas to the texture based on the current preferences
+			t.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
+			t.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
+		}
+	}
+
+	public Texture getCurrentTexture() {
+		return currentTexture;
 	}
 
 }

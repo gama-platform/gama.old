@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SWTLayeredDisplayView.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SWTLayeredDisplayView.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -58,18 +57,14 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	@Override
 	public void close() {
 
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					if (getDisplaySurface() != null) {
-						getDisplaySurface().dispose();
-					}
-					getSite().getPage().hideView(SWTLayeredDisplayView.this);
-				} catch (final Exception e) {
-					e.printStackTrace();
+		WorkbenchHelper.asyncRun(() -> {
+			try {
+				if (getDisplaySurface() != null) {
+					getDisplaySurface().dispose();
 				}
+				getSite().getPage().hideView(SWTLayeredDisplayView.this);
+			} catch (final Exception e) {
+				e.printStackTrace();
 			}
 		});
 
@@ -77,7 +72,10 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 
 	@Override
 	protected void updateOverlay() {
-		if (getDisplaySurface().getROIDimensions() != null) {
+		final SWTOpenGLDisplaySurface surface = getDisplaySurface();
+		if (surface == null)
+			return;
+		if (surface.getROIDimensions() != null) {
 			if (!overlay.isVisible()) {
 				isOverlayTemporaryVisible = true;
 				overlay.setVisible(true);
@@ -98,10 +96,9 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	}
 
 	/**
-	 * Wait for the OpenGL environment to be initialized, preventing a wait when
-	 * two or more views are open at the same time. Should be called in the SWT
-	 * thread. On MacOS X, for example, it seems necessary to show the view,
-	 * even briefly, to make the JOGL Canvas "realized"
+	 * Wait for the OpenGL environment to be initialized, preventing a wait when two or more views are open at the same
+	 * time. Should be called in the SWT thread. On MacOS X, for example, it seems necessary to show the view, even
+	 * briefly, to make the JOGL Canvas "realized"
 	 * 
 	 * @see msi.gama.common.interfaces.IGamaView#waitToBeRealized()
 	 */
@@ -109,12 +106,6 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	@Override
 	public void waitToBeRealized() {
 
-		WorkbenchHelper.asyncRun(new Runnable() {
-
-			@Override
-			public void run() {
-				WorkbenchHelper.getPage().bringToTop(SWTLayeredDisplayView.this);
-			}
-		});
+		WorkbenchHelper.asyncRun(() -> WorkbenchHelper.getPage().bringToTop(SWTLayeredDisplayView.this));
 	}
 }

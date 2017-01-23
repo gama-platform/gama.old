@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ICamera.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ICamera.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -34,12 +33,6 @@ public interface ICamera extends org.eclipse.swt.events.KeyListener, MouseListen
 	public final static double INIT_Z_FACTOR = 1.5;
 
 	// Positions
-	
-	public abstract double getPitch();
-	
-	public abstract double getYaw();
-	
-	public abstract double getRoll();
 
 	public abstract GamaPoint getPosition();
 

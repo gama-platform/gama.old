@@ -82,7 +82,6 @@ public class SpeciesLayer extends AgentLayer {
 				IExecutable hAspect = population.getSpecies().getAspect("highlighted");
 				if (hAspect == null) {
 					hAspect = aspect;
-					// hAspect = AspectStatement.HIGHLIGHTED_ASPECT;
 				}
 				result = scope.execute(hAspect, a, null);
 			} else {

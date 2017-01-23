@@ -12,6 +12,7 @@ package ummisco.gama.opengl.vaoGenerator;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
 
 import msi.gama.metamodel.shape.GamaPoint;
@@ -31,20 +32,21 @@ class GeometryObjectTransformer extends AbstractTransformer {
 	}
 
 	@SuppressWarnings ({ "unchecked", "rawtypes" })
-	public GeometryObjectTransformer(final GeometryObject geomObj, final int[] textureIds, final String[] texturePaths,
-			final boolean isTriangulation) {
+	public GeometryObjectTransformer(final GeometryObject geomObj, final int[] textureIds,
+			final boolean isLightInteraction, /* final String[] texturePaths, */ final boolean isOverlay,
+			final boolean isTriangulation, final double layerAlpha) {
 		// for GeometryObject
-		genericInit(geomObj, isTriangulation);
+		genericInit(geomObj, isOverlay, isTriangulation, layerAlpha);
 
-		this.colors = geomObj.getAttributes().getColors();
-		if (colors.length < 3)
+		this.colors = geomObj.getColors();
+		if (colors == null || colors.length < 3)
 			colors = null;
 		else
-			colors = Arrays.copyOfRange(colors, 2, colors.length - 1);
-		this.isLightInteraction = geomObj.isLightInteraction() && !is1DShape() && !isWireframe;
+			colors = Arrays.copyOfRange(colors, 2, colors.length);
+		this.isLightInteraction = isLightInteraction && !is1DShape() && !isWireframe;
 
 		this.textureIDs = textureIds;
-		this.texturePaths = texturePaths;
+		// this.texturePaths = texturePaths;
 		this.type = geomObj.getType();
 
 		coordsWithDoublons = geomObj.getGeometry().getCoordinates();
@@ -198,8 +200,7 @@ class GeometryObjectTransformer extends AbstractTransformer {
 		float YSize = (maxY - minY) / 2 == 0 ? 1 : (maxY - minY) / 2;
 		float ZSize = this.depth == 0 ? 1 : (float) this.depth;
 
-		final GamaPoint attrSize =
-				geomObj.getAttributes().getSize() == null ? new GamaPoint(1, 1, 1) : geomObj.getAttributes().getSize();
+		final GamaPoint attrSize = Objects.firstNonNull(geomObj.getDimensions(), new GamaPoint(1, 1, 1));
 
 		if (isSphere()) {
 			final float realSize = Math.max(YSize, XSize);

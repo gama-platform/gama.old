@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FreeFlyCamera.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FreeFlyCamera.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -49,7 +48,8 @@ public class FreeFlyCamera extends AbstractCamera {
 		final double factorT = theta * Maths.toRad;
 		final double r_temp = FastMath.cos(factorP);
 		forward.setLocation(r_temp * FastMath.cos(factorT), r_temp * FastMath.sin(factorT), FastMath.sin(factorP));
-		left.setLocation(new GamaPoint(up.y * forward.z - up.z * forward.y, up.z * forward.x - up.x * forward.z, up.x * forward.y - up.y * forward.x).normalized());
+		left.setLocation(new GamaPoint(up.y * forward.z - up.z * forward.y, up.z * forward.x - up.x * forward.z,
+				up.x * forward.y - up.y * forward.x).normalized());
 		target.setLocation(forward.plus(position));
 	}
 
@@ -160,9 +160,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	@Override
 	public void internalMouseMove(final org.eclipse.swt.events.MouseEvent e) {
 		super.internalMouseMove(e);
-		if ((e.stateMask & SWT.BUTTON_MASK) == 0) {
-			return;
-		}
+		if ((e.stateMask & SWT.BUTTON_MASK) == 0) { return; }
 		if (GamaKeyBindings.shift(e) /** || alt(e)) */
 				&& isViewInXYPlan()) {
 			getMousePosition().x = e.x;
@@ -183,17 +181,6 @@ public class FreeFlyCamera extends AbstractCamera {
 		return GamaKeyBindings.shift(arg0) /* || alt(arg0) */;
 	}
 
-	// @Override
-	// public void dump() {
-	// System.out.println("xPos:" + position.x + " yPos:" + position.y + "
-	// zPos:" + position.z);
-	// System.out.println("xLPos:" + target.x + " yLPos:" + target.y + " zLPos:"
-	// + target.z);
-	// System.out.println("_forwardX:" + forward.x + " _forwardY:" + forward.y +
-	// " _forwardZ:" + forward.z);
-	// System.out.println("_phi : " + phi + " _theta : " + theta);
-	// }
-
 	@Override
 	public boolean isViewInXYPlan() {
 		return phi >= -89 && phi < -85;
@@ -201,25 +188,6 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	protected void drawRotationHelper() {
-	}
-
-	@Override
-	public double getPitch() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getYaw() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public double getRoll() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	protected void drawRotationHelper() {}
 
 }

@@ -1,72 +1,148 @@
 package msi.gama.common.util;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
+
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
-import msi.gama.common.util.GamaCoordinateSequence.IndexedVisitor;
-import msi.gama.common.util.GamaCoordinateSequence.PairVisitor;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 
 public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 
+	/**
+	 * An interface used to visit pairs of coordinates in a sequence
+	 * 
+	 * @author drogoul
+	 *
+	 */
+	@FunctionalInterface
+	public static interface PairVisitor {
+		public void process(GamaPoint p1, GamaPoint p2);
+	}
+
+	/**
+	 * An interface used to visit points in a sequence, which accepts their ordinates and their index in the sequence
+	 * 
+	 * @author drogoul
+	 *
+	 */
+	@FunctionalInterface
+	public static interface IndexedVisitor {
+		public void process(final double x, final double y, final double z, final int i);
+	}
+
+	/**
+	 * The empty coordinate sequence
+	 */
 	ICoordinates EMPTY = new GamaCoordinateSequence(new GamaPoint[] {});
 
-	GamaPoint getCenter();
+	/**
+	 * Returns the geometric center of this sequence of points
+	 * 
+	 * @return a new point containing the ordinates of the center
+	 */
+	default GamaPoint getCenter() {
+		final GamaPoint p = new GamaPoint();
+		addCenterTo(p);
+		return p;
+	}
 
+	/**
+	 * Computes the center of this sequence of points and fills the parameter with its ordinates
+	 * 
+	 * @param other
+	 *            the result of the computation
+	 */
 	void addCenterTo(final GamaPoint other);
 
 	@Override
 	GamaPoint getCoordinate(int i);
 
-	GamaPoint at(int i);
+	/**
+	 * Returns the point at index i or null if i is greater than the sequence size or smaller than zero
+	 * 
+	 * @param i
+	 * @return a point or null
+	 */
+	default GamaPoint at(final int i) {
+		if (i > size() || i < 0)
+			return null;
+		return getCoordinate(i);
+	}
 
+	/**
+	 * Returns a new sequence of points with all their y ordinate negated. The original sequence is left untouched
+	 * 
+	 * @return a new sequence of points with all their y ordinate negated
+	 */
 	ICoordinates yNegated();
 
+	/**
+	 * Returns the array backing this sequence of points. Note that this array is *not* a copy. Any modification will
+	 * directly affect the sequence and possibly change its properties (i.e. clockwiseness or ring), which cannot
+	 * therefore be verified
+	 */
 	@Override
 	GamaPoint[] toCoordinateArray();
 
 	/**
-	 * Visits the coordinates, passing the x, y, z ordinates of each coordinate and its index to the visitor, optionally
-	 * visiting again the first coordinate
+	 * Visits the coordinates, passing the x, y, z ordinates of each coordinate and its index to the visitor
 	 * 
 	 * @param v
 	 *            the visitor (cannot be null)
 	 * @param max
 	 *            the maximum number of vertices to visit (-1 for all)
-	 * @param circular
-	 *            whether the first vertex will be visited again or not
-	 * @param negateY
-	 *            whether to negate the y ordinate
+	 * @param clockwise
+	 *            whether to visit the sequence in the clockwise or counter-clockwise direction
 	 */
 	void visit(IndexedVisitor v, int max, boolean clockwise);
 
 	/**
-	 * Visits the coordinates by pairs (n, n+1), optionally extending to the last pair (nmax, 0)
+	 * Visits all the coordinates by pairs of adjacent coordinates (n, n+1)
 	 * 
 	 * @param v
-	 *            the visitor (cannot be null)
-	 * @param circular
-	 *            whether the pair with the last and first vertices will be visited again or not
-	 * @param negateY
-	 *            whether to negate the y ordinate of the visited coordinates
+	 *            the pair visitor (cannot be null)
 	 */
 	void visit(PairVisitor v);
 
 	/**
-	 * With a direction of 1 (when vertices are defined clockwise) or -1
+	 * Returns the normal to the sequence, with a direction of 1 (when clockwise is asked and the sequence is clockwise)
+	 * or -1
 	 * 
-	 * @return
+	 * @return the normal to the sequence of points, in clockwise or counter-clockwise direction
 	 */
 
-	GamaPoint getNormal(boolean clockwise);
+	default GamaPoint getNormal(final boolean clockwise) {
+		final GamaPoint normal = new GamaPoint();
+		getNormal(clockwise, 1, normal);
+		return normal;
+	};
 
+	/**
+	 * Computes the normal to this sequence, multiplying the resulting unit vector by a given factor, and fills the
+	 * third parameter with its ordinates
+	 * 
+	 * @param clockwise
+	 *            Whether or not the sequence is expected to be clockwise
+	 * @param factor
+	 *            a multiplying factor
+	 * @param normal
+	 *            the result of the computation
+	 */
 	void getNormal(boolean clockwise, double factor, GamaPoint normal);
 
-	void applyTranslation(int i, double dx, double dy, double dz);
+	/**
+	 * Expands an existing envelope with this sequence of points
+	 * 
+	 * @param envelope
+	 */
+	void getEnvelope(Envelope3D envelope);
 
-	boolean isConvex();
-
-	public boolean isClockwise();
-
+	/**
+	 * Compute the average z ordinate of this sequence of points
+	 * 
+	 * @return the average z ordinate
+	 */
 	public double averageZ();
 
 	/**
@@ -95,4 +171,40 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 */
 	public void replaceWith(double... ordinates);
 
+	/**
+	 * Equivalent to the setOrdinate(i, d) method but sets all the ordinates at once. No measure is taken for ensuring
+	 * that the sequence is still valid after this (i.e. clockwise and/or ring)
+	 * 
+	 * @param i
+	 *            the index of the point to replace
+	 * @param x
+	 *            x ordinate
+	 * @param y
+	 *            y ordinate
+	 * @param z
+	 *            z ordinate
+	 */
+	public void replaceWith(int i, double x, double y, double z);
+
+	/**
+	 * Returns the vector between the point considered as the origin of the sequence (i.e. at index 0) and the following
+	 * point in the sequence
+	 * 
+	 * @return a point containing the vector
+	 */
+	GamaPoint directionBetweenOriginAndFirstPoint();
+
+	/**
+	 * Applies a 3D rotation to the sequence of points
+	 * 
+	 * @param rotation
+	 */
+	void applyRotation(Rotation rotation);
+
+	/**
+	 * Whether this sequence is horizontal or not (i.e. all the z ordinates are equal)
+	 * 
+	 * @return true if all the z ordinates are equal, otherwise false
+	 */
+	boolean isHorizontal();
 }

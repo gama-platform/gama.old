@@ -10,7 +10,6 @@
 package ummisco.gama.opengl.vaoGenerator;
 
 import java.awt.Font;
-import java.awt.image.BufferedImage;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
@@ -22,7 +21,7 @@ import ummisco.gama.modernOpenGL.font.fontMeshCreator.TextMeshData;
 import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.scene.AbstractObject;
 import ummisco.gama.opengl.scene.GeometryObject;
-import ummisco.gama.opengl.scene.ImageObject;
+import ummisco.gama.opengl.scene.LayerObject;
 import ummisco.gama.opengl.scene.StringObject;
 
 /*
@@ -40,8 +39,9 @@ public class DrawingEntityGenerator {
 		this.fontTextCache = new FontTextureCache();
 	}
 
-	public DrawingEntity[] GenerateDrawingEntities(final IScope scope, final AbstractObject object, final GL2 gl) {
-		return GenerateDrawingEntities(scope, object, true, gl);
+	public DrawingEntity[] generateDrawingEntities(final IScope scope, final AbstractObject object,
+			final LayerObject layer, final GL2 gl) {
+		return generateDrawingEntities(scope, object, true, layer, gl);
 	}
 
 	private String getFontName(final StringObject strObj) {
@@ -63,8 +63,8 @@ public class DrawingEntityGenerator {
 		return 2 * 18;
 	}
 
-	public DrawingEntity[] GenerateDrawingEntities(final IScope scope, final AbstractObject object,
-			final boolean computeTextureIds, final GL2 gl) {
+	public DrawingEntity[] generateDrawingEntities(final IScope scope, final AbstractObject object,
+			final boolean computeTextureIds, final LayerObject layer, final GL2 gl) {
 		// if this function is called to create a simpleScene, we don't compute
 		// the texture IDs (the only thing that interest us in this case is the
 		// texture Path)
@@ -77,82 +77,27 @@ public class DrawingEntityGenerator {
 			final String style = getStyle(strObj);
 			final int fontSize = getFontSize(strObj);
 			textures[0] = fontTextCache.getFontTexture(fontName + style);
-			float ratio = (float) (object.isOverlay() ? 1
+			float ratio = (float) (layer.isOverlay() ? 1
 					: renderer.getGlobalYRatioBetweenPixelsAndModelUnits() / renderer.getZoomLevel());
-			ratio = (float) (object.getAttributes().getSize() != null ? ratio / object.getAttributes().getSize().x
-					: ratio);
+			ratio = (float) (object.getDimensions() != null ? ratio / object.getDimensions().x : ratio);
 			final TextMeshData textMeshData =
 					fontTextCache.getTextMeshData(fontName + style, strObj.string, ratio, fontSize);
 			final String[] texturePaths = new String[1];
 			texturePaths[0] = fontName + style;
 			final int[] textureIds = new int[1];
 			textureIds[0] = textures[0].getTextureObject();
-			transformer = new StringObjectTransformer(strObj, textureIds, texturePaths, textMeshData,
-					renderer.data.isTriangulation());
+			transformer = new StringObjectTransformer(strObj, textureIds, texturePaths, textMeshData, layer.isOverlay(),
+					renderer.data.isTriangulation(), renderer.getCurrentObjectAlpha());
 		} else if (object instanceof GeometryObject) {
 			final GeometryObject geomObj = (GeometryObject) object;
-
-			final String[] texturePaths = geomObj.getTexturePaths(scope); // returns
-																			// null
-																			// if
-																			// no
-																			// texture
-																			// for
-																			// this
-																			// entity
-			final int[] textureIDs = texturePaths == null ? null : new int[texturePaths.length];
-			if (textureIDs != null && computeTextureIds && texturePaths != null) {
-				final Texture[] textures = geomObj.getTextures(gl, renderer);
-				for (int i = 0; i < textures.length; i++) {
-					textureIDs[i] = textures[i].getTextureObject();
-				}
+			// final String[] texturePaths = geomObj.getTexturePaths(scope);
+			// final int[] textureIDs = texturePaths == null ? null : new int[texturePaths.length];
+			int[] ids = null;
+			if (computeTextureIds) {
+				ids = geomObj.getTexturesId(gl, renderer);
 			}
-			transformer =
-					new GeometryObjectTransformer(geomObj, textureIDs, texturePaths, renderer.data.isTriangulation());
-		} else if (object instanceof ImageObject) {
-			final ImageObject imObj = (ImageObject) object;
-
-			String[] texturePaths = null;
-			int[][][] bufferedImageValue = null;
-			final String texturePath = imObj.getImagePath(scope); // returns
-																	// null if
-																	// no
-																	// texture
-																	// for this
-																	// entity
-			if (texturePath != null) {
-				texturePaths = new String[1];
-				texturePaths[0] = texturePath;
-			} else {
-				// the image contains no path : it is just a buffered image
-				final BufferedImage buffImg = imObj.getBufferedImage();
-				if (buffImg != null) {
-					final int widthNb = buffImg.getWidth();
-					final int heightNb = buffImg.getHeight();
-					bufferedImageValue = new int[widthNb][heightNb][4];
-					for (int i = 0; i < widthNb; i++) {
-						for (int j = 0; j < heightNb; j++) {
-							final int clr = buffImg.getRGB(i, j);
-							final int red = (clr & 0x00ff0000) >> 16;
-							final int green = (clr & 0x0000ff00) >> 8;
-							final int blue = clr & 0x000000ff;
-							bufferedImageValue[i][j][0] = red;
-							bufferedImageValue[i][j][1] = green;
-							bufferedImageValue[i][j][2] = blue;
-							bufferedImageValue[i][j][3] = 255;
-						}
-					}
-				}
-			}
-			final int[] textureIDs = texturePath == null && imObj.getBufferedImage() == null ? null : new int[1];
-			if (textureIDs != null && computeTextureIds && (texturePath != null || imObj.getBufferedImage() != null)) {
-				final Texture[] textures = object.getTextures(gl, renderer);
-				for (int i = 0; i < textures.length; i++) {
-					textureIDs[i] = textures[i].getTextureObject();
-				}
-			}
-			transformer = new ImageObjectTransformer(imObj, textureIDs, texturePaths, bufferedImageValue,
-					renderer.data.isTriangulation());
+			transformer = new GeometryObjectTransformer(geomObj, ids, layer.isLightInteraction(), layer.isOverlay(),
+					renderer.data.isTriangulation(), renderer.getCurrentObjectAlpha());
 		}
 		if (transformer != null)
 			result = transformer.getDrawingEntities();

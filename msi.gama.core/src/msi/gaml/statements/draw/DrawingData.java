@@ -10,6 +10,7 @@
 package msi.gaml.statements.draw;
 
 import java.awt.Color;
+import java.util.List;
 
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -87,12 +88,11 @@ public class DrawingData {
 	}
 
 	<T extends IType<V>, V> Attribute create(final IExpression exp, final T type, final V def) {
-		return create(exp, (scope) -> type.cast(scope, exp.value(scope), null, false), type, def);
+		return create(exp, (scope) -> type.cast(scope, exp.value(scope), null, true), type, def);
 	}
 
 	<T extends IType<V>, V> Attribute create(final IExpression exp, final Evaluator ev, final T type, final V def) {
-		if (exp != null
-				&& exp.isConst()) { return new ConstantAttribute(type.cast(null, ev.value(null), null, false)); }
+		if (exp != null && exp.isConst()) { return new ConstantAttribute(type.cast(null, ev.value(null), null, true)); }
 		if (exp == null) { return new ConstantAttribute(def); }
 		return new ExpressionAttribute(ev);
 	}
@@ -106,7 +106,7 @@ public class DrawingData {
 	final Attribute<GamaPointType, GamaPoint> location;
 	final Attribute<GamaBoolType, Boolean> empty;
 	final Attribute<GamaColorType, GamaColor> border;
-	final Attribute<GamaListType, IList<GamaColor>> color;
+	private final Attribute<GamaListType, IList<GamaColor>> colors;
 	final Attribute<GamaFontType, GamaFont> font;
 	final Attribute<GamaListType, IList> texture;
 	final Attribute<GamaMaterialType, GamaMaterial> material;
@@ -152,7 +152,7 @@ public class DrawingData {
 				return borderExp.value(scope);
 			}
 		}, Types.COLOR, null);
-		this.color = create(colorExp, (scope) -> {
+		this.colors = create(colorExp, (scope) -> {
 			switch (colorExp.getType().id()) {
 				case IType.COLOR:
 					final GamaColor currentColor = (GamaColor) colorExp.value(scope);
@@ -160,12 +160,10 @@ public class DrawingData {
 				case IType.LIST:
 					return (IList) colorExp.value(scope);
 				default:
-					return GamaListFactory.createWithoutCasting(Types.COLOR,
-							new GamaColor(GamaPreferences.CORE_COLOR.getValue()));
+					return null;
 			}
 
-		}, Types.LIST, GamaListFactory.createWithoutCasting(Types.COLOR,
-				new GamaColor(GamaPreferences.CORE_COLOR.getValue())));
+		}, Types.LIST, null);
 		this.font = create(fontExp, Types.FONT, GamaFontType.DEFAULT_DISPLAY_FONT.getValue());
 		this.texture = create(textureExp, (scope) -> {
 			if (textureExp.getType().getType() == Types.LIST) {
@@ -177,21 +175,27 @@ public class DrawingData {
 		this.material = create(materialExp, Types.MATERIAL, null);
 		this.perspective = create(perspectiveExp, Types.BOOL, true);
 		this.lineWidth = create(lineWidthExp, Types.FLOAT, GamaPreferences.CORE_LINE_WIDTH.getValue());
-		ATTRIBUTES = new Attribute[] { size, location, depth, color, rotation, empty, border, font, texture, material,
+		ATTRIBUTES = new Attribute[] { size, location, depth, colors, rotation, empty, border, font, texture, material,
 				perspective, lineWidth };
 	}
 
-	public void computeAttributes(final IScope scope) {
+	public DrawingData computeAttributes(final IScope scope) {
 		for (final Attribute a : ATTRIBUTES) {
 			a.refresh(scope);
 		}
-		if (border.value == null && empty.value) {
-			border.value = color.value.get(0);
-		}
+		return this;
 	}
 
 	public GamaColor getCurrentColor() {
-		return color.value.get(0);
+		if (colors.value == null || colors.value.isEmpty())
+			return null;
+		return colors.value.get(0);
+	}
+
+	public List<GamaColor> getColors() {
+		if (colors.value == null || colors.value.isEmpty() || colors.value.size() == 1)
+			return null;
+		return colors.value;
 	}
 
 }

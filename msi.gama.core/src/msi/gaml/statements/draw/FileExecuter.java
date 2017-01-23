@@ -68,15 +68,8 @@ class FileExecuter extends DrawExecuter {
 			// If the size is provided, we automatically center the file
 			final GamaPoint size = attributes.getSize();
 			if (size != null) {
-				final GamaPoint location = attributes.getLocation();
-				final double displayWidth = size.x;
-				final double displayHeight = size.y;
-				final double displayDepth = size.z;
-				final double x = location.x - displayWidth / 2;
-				final double y = location.y - displayHeight / 2;
-				final double z = location.z - displayDepth / 2;
 				// New location
-				attributes.setLocation(new GamaPoint(x, y, z));
+				attributes.setLocation(attributes.getLocation().minus(size.dividedBy(2)));
 			}
 		}
 		return attributes;

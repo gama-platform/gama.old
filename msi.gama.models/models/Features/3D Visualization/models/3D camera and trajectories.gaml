@@ -38,7 +38,7 @@ experiment trajectory_analysis type: gui {
 		
 		display RealBoids  type:opengl {
 			image 'background' file:'../images/sky.jpg';
-			species boids trace:100{
+			species boids trace:20 fading: true {
 			    draw triangle(20) rotate: 90 + heading color: hsb (float(heading)/360.0,1.0,1.0) depth:8 ;	
 			}
 			species boids_goal transparency:0.2 position:{0,0,0.1};

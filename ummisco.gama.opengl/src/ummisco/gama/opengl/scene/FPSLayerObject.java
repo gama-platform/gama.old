@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FPSLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FPSLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 
 import com.jogamp.opengl.GL2;
 
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
@@ -28,7 +28,7 @@ public class FPSLayerObject extends LayerObject {
 	public FPSLayerObject(final Abstract3DRenderer renderer) {
 		super(renderer, null);
 		constantRedrawnLayer = true;
-		isOverlay = true;
+		overlay = true;
 		startTime = System.currentTimeMillis();
 	}
 
@@ -39,8 +39,7 @@ public class FPSLayerObject extends LayerObject {
 	private double fps;
 
 	@Override
-	public void clear(final GL2 gl) {
-	}
+	public void clear(final GL2 gl) {}
 
 	@Override
 	public void draw(final GL2 gl) {
@@ -72,11 +71,11 @@ public class FPSLayerObject extends LayerObject {
 		final double w = 0.15;
 		final double h = 0.04;
 		final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));
-		final ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, new GamaColor(255, 255, 255, 255),
-				null); // white for the color, null
-						// for the border color
-		final GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
-		geomObj.enableOverlay(true);
+		final ShapeDrawingAttributes drawingAttr =
+				new ShapeDrawingAttributes(g, (IAgent) null, new GamaColor(255, 255, 255, 255), null); // white for the
+																										// color, null
+		// for the border color
+		final GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr);
 		newElem.add(geomObj);
 		// build label
 		final GamaFont font = new GamaFont("Helvetica", 0, 18); // 0 for plain,
@@ -84,8 +83,7 @@ public class FPSLayerObject extends LayerObject {
 																// size.
 		final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(0.0015, 0.0015, 0.0015),
 				null, new GamaPoint(0.005, -0.03, 0), new GamaColor(0, 0, 0, 1), font, true);
-		final StringObject strObj = new StringObject("fps : " + fps, textDrawingAttr, this);
-		strObj.enableOverlay(true);
+		final StringObject strObj = new StringObject("fps : " + fps, textDrawingAttr);
 		newElem.add(strObj);
 
 		objects.add(newElem);

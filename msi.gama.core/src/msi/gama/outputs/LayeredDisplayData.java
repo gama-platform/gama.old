@@ -58,10 +58,9 @@ public class LayeredDisplayData {
 	/**
 	 * Colors
 	 */
-	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
-	private Color ambientColor = new GamaColor(127, 127, 127, 255); // default
-																	// value
-	private Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
+	private GamaColor backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
+	private GamaColor ambientColor = new GamaColor(120, 120, 120, 255);
+	private GamaColor highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 
 	/**
 	 * Properties
@@ -104,7 +103,7 @@ public class LayeredDisplayData {
 	private boolean isRotating;
 	private boolean isUsingArcBallCamera = true;
 	private boolean isSplittingLayers;
-	private volatile boolean isCameraLock = true;
+	// private volatile boolean isCameraLock = true;
 
 	/**
 	 * Overlay
@@ -150,7 +149,7 @@ public class LayeredDisplayData {
 	 * @param backgroundColor
 	 *            the backgroundColor to set
 	 */
-	public void setBackgroundColor(final Color backgroundColor) {
+	public void setBackgroundColor(final GamaColor backgroundColor) {
 		this.backgroundColor = backgroundColor;
 		notifyListeners(Changes.BACKGROUND, true);
 	}
@@ -391,7 +390,7 @@ public class LayeredDisplayData {
 	 * @param ambientLightColor
 	 *            the ambientLightColor to set
 	 */
-	public void setAmbientLightColor(final Color ambientLightColor) {
+	public void setAmbientLightColor(final GamaColor ambientLightColor) {
 		this.ambientColor = ambientLightColor;
 	}
 
@@ -544,11 +543,11 @@ public class LayeredDisplayData {
 	/**
 	 * @return
 	 */
-	public Color getHighlightColor() {
+	public GamaColor getHighlightColor() {
 		return highlightColor;
 	}
 
-	public void setHighlightColor(final Color hc) {
+	public void setHighlightColor(final GamaColor hc) {
 		highlightColor = hc;
 		notifyListeners(Changes.HIGHLIGHT, true);
 	}
@@ -599,13 +598,13 @@ public class LayeredDisplayData {
 	/**
 	 * @return
 	 */
-	public boolean isCameraLock() {
-		return isCameraLock;
-	}
-
-	public void setCameraLock(final boolean s) {
-		isCameraLock = s;
-	}
+	// public boolean isCameraLock() {
+	// return isCameraLock;
+	// }
+	//
+	// public void setCameraLock(final boolean s) {
+	// isCameraLock = s;
+	// }
 
 	public static ILocation getNoChange() {
 		return noChange;

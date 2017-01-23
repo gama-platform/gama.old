@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'StaticLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'StaticLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -25,6 +24,11 @@ public class StaticLayerObject extends LayerObject {
 		}
 
 		@Override
+		public boolean isLightInteraction() {
+			return false;
+		}
+
+		@Override
 		public void draw(final GL2 gl) {
 			if (renderer.getPickingState().isPicking())
 				return;
@@ -32,8 +36,9 @@ public class StaticLayerObject extends LayerObject {
 			if (currentList.isEmpty()) {
 				fillWithObjects(currentList);
 			}
-			gl.glEnable(GL2.GL_LIGHTING);
 			super.draw(gl);
+			gl.glEnable(GL2.GL_LIGHTING);
+
 		}
 
 		@Override
@@ -54,7 +59,6 @@ public class StaticLayerObject extends LayerObject {
 	}
 
 	@Override
-	public void clear(final GL2 gl) {
-	}
+	public void clear(final GL2 gl) {}
 
 }

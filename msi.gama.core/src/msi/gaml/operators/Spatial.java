@@ -3872,45 +3872,19 @@ public abstract class Spatial {
 			final IGraphics graphics = scope.getGraphics();
 			if (graphics == null || graphics.cannotDraw())
 				return null;
-			// if ( !graphics.is2D() ) {
-			// BufferedImage dem = ((GamaImageFile) demFile).getImage(scope);
-			// BufferedImage texture = ((GamaImageFile)
-			// textureFile).getImage(scope);
-			// texture = ImageUtils.flipRightSideLeftImage(texture);
 			final FieldDrawingAttributes attributes = new FieldDrawingAttributes(null, null);
 			attributes.setDepth(z_factor);
-
-			// ((IGraphics.OpenGL) graphics).drawDEM(demFile, textureFile,
-			// z_factor);
-			// } else {
-			// DrawingAttributes attributes = new DrawingAttributes(new
-			// GamaPoint(0, 0), null, null);
 
 			if (!graphics.is2D()) {
 				// If we are in the OpenGL world
 				final BufferedImage dem = ((GamaImageFile) demFile).getImage(scope);
-				// int width = dem.getWidth();
-				// int height = dem.getHeight();
-				// double[] values = new double[width * height];
-				// int[] pixels = new int[width * height];
-				// dem.getRGB(0, 0, width, height, pixels, 0, width);
-				// for ( int i = 0; i < pixels.length; i++ ) {
-				// values[i] = pixels[i];
-				// }
-				// dem.getRaster().getPixels(0, 0, width - 1, height - 1,
-				// values);
 				attributes.setCellSize(new GamaPoint(1, 1));
-				attributes.textures = Arrays.asList(textureFile, dem);
+				attributes.setTextures(Arrays.asList(textureFile, dem));
 				graphics.drawField(null, attributes);
 			} else {
 				graphics.drawFile(demFile, attributes);
 			}
-			// }
-			// ILocation location;
-			// final IAgent a = scope.getAgentScope();
-			// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			return null;// new
-						// GamaShape(scope.getSimulationScope().getInnerGeometry());
+			return null;
 		}
 
 		@operator (

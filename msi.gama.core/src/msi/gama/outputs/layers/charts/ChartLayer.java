@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'ChartLayer.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'ChartLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -56,18 +55,13 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		if (dg == null || dg.cannotDraw())
-			return;
 		try {
-			// if ( dg.is2D()){
 			int x = getSizeInPixels().x;
 			int y = getSizeInPixels().y;
-			// } else {
 			if (!dg.is2D()) {
 				x = (int) (Math.min(x, y) * 0.80);
 				y = x;
 			}
-			// }
 			final BufferedImage im = getChart().getImage(scope, x, y);
 			final FileDrawingAttributes attributes = new FileDrawingAttributes(null);
 			dg.drawImage(im, attributes);

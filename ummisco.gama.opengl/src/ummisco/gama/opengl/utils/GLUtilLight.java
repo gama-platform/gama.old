@@ -24,22 +24,21 @@ import msi.gama.outputs.LayeredDisplayData;
 import msi.gama.outputs.LightPropertiesStructure;
 import msi.gama.util.GamaColor;
 import msi.gaml.operators.Maths;
-import ummisco.gama.opengl.Abstract3DRenderer;
+import ummisco.gama.opengl.JOGLRenderer;
 
 public class GLUtilLight {
 
 	public static final int fogMode[] = { GL2.GL_EXP, GL2.GL_EXP2, GL2.GL_LINEAR };
 
-	public static void setAmbiantLight(final GL2 gl, final Color ambientLightValue) {
+	public static void SetAmbiantLight(final GL2 gl, final Color ambientLightValue) {
 		final float[] lightAmbientValue = { ambientLightValue.getRed() / 255.0f, ambientLightValue.getGreen() / 255.0f,
 				ambientLightValue.getBlue() / 255.0f, 1.0f };
 		gl.glLightfv(GLLightingFunc.GL_LIGHT0, GLLightingFunc.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
 	public static void InitializeLighting(final GL2 gl, final LayeredDisplayData data, final boolean modernRenderer) {
-
 		// ambient
-		setAmbiantLight(gl, data.getAmbientLightColor());
+		SetAmbiantLight(gl, data.getAmbientLightColor());
 		// deactivate diffuse light for the light0
 		data.setLightActive(0, true);
 		data.setLightType(0, "direction");
@@ -139,7 +138,7 @@ public class GLUtilLight {
 		}
 	}
 
-	public static void UpdateDiffuseLightValue(final GL2 gl, final Abstract3DRenderer renderer) {
+	public static void UpdateDiffuseLightValue(final GL2 gl, final JOGLRenderer renderer) {
 		final List<LightPropertiesStructure> lightPropertiesList = renderer.data.getDiffuseLights();
 		final double size = renderer.getMaxEnvDim() / 20;
 		final double worldWidth = renderer.data.getEnvWidth();
@@ -194,7 +193,7 @@ public class GLUtilLight {
 					// change the current color to the light color (the
 					// representation of the color will have the same color as
 					// the light in itself)
-					renderer.setCurrentColor(gl, lightProperties.color);
+					renderer.setCurrentColor(lightProperties.color);
 					final GLUT glut = new GLUT();
 					final double x = lightProperties.direction.x;
 					final double y = -lightProperties.direction.y;
@@ -248,7 +247,7 @@ public class GLUtilLight {
 								final double[] beginPoint =
 										new double[] { i * worldWidth / maxI, -j * worldHeight / maxJ, size * 10 };
 								final double[] endPoint = new double[] { i * worldWidth / maxI + xNorm * size * 3,
-										-(j * worldHeight / maxJ) + yNorm * size * 3, size * 10 + zNorm * size * 3 };
+										-(j * worldHeight / maxJ) - yNorm * size * 3, size * 10 + zNorm * size * 3 };
 								// draw the lines
 								gl.glBegin(GL2.GL_LINES);
 								// gl.glLineWidth((float) (size / 10));
@@ -263,7 +262,7 @@ public class GLUtilLight {
 							}
 						}
 					}
-					renderer.setCurrentColor(gl, currentColor);
+					renderer.setCurrentColor(currentColor);
 
 					gl.glEnable(GL2.GL_LIGHTING);
 				}

@@ -9,10 +9,9 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.scene;
 
-import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
 
-import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
 import msi.gaml.statements.draw.DrawingAttributes;
@@ -24,23 +23,19 @@ public class GeometryObject extends AbstractObject {
 
 	protected Geometry geometry;
 
-	public GeometryObject(final DrawingAttributes attributes, final LayerObject layer, final Texture... textures) {
-		super(attributes, layer, textures);
-	}
-
-	public GeometryObject(final Geometry geometry, final DrawingAttributes attributes, final LayerObject layer) {
-		super(attributes, layer);
+	public GeometryObject(final Geometry geometry, final DrawingAttributes attributes) {
+		super(attributes);
 		this.geometry = geometry;
 	}
 
 	// Package protected as it is only used by the static layers
-	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final LayerObject layer) {
-		this(geometry, color, type, JOGLRenderer.getLineWidth(), layer);
+	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final boolean empty) {
+		this(geometry, color, type, JOGLRenderer.getLineWidth());
+		attributes.setEmpty(empty);
 	}
 
-	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final float lineWidth,
-			final LayerObject layer) {
-		this(geometry.getInnerGeometry(), new ShapeDrawingAttributes(geometry, color, color, lineWidth), layer);
+	GeometryObject(final IShape geometry, final GamaColor color, final IShape.Type type, final double lineWidth) {
+		this(geometry.getInnerGeometry(), new ShapeDrawingAttributes(geometry, (IAgent) null, color, color, lineWidth));
 	}
 
 	public IShape.Type getType() {
@@ -63,8 +58,13 @@ public class GeometryObject extends AbstractObject {
 		return geometry;
 	}
 
-	public GamaPoint getRotationAxis() {
-		return attributes.getAxis();
+	public GamaColor[] getColors() {
+		return attributes.getColors();
+	}
+
+	@Override
+	public DrawerType getDrawerType() {
+		return DrawerType.GEOMETRY;
 	}
 
 }

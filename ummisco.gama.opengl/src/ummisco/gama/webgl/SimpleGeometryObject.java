@@ -46,7 +46,7 @@ public class SimpleGeometryObject {
 		this.geometry = geometry;
 		this.color = color;
 		this.border = border;
-		this.depth = depth;
+		this.depth = depth == null ? 0.0 : depth;
 		this.rotation = new GamaPair<Double, GamaPoint>(angle, axis, Types.FLOAT, Types.POINT);
 		this.location = location;
 		this.size = size;

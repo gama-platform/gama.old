@@ -38,6 +38,7 @@ import java.awt.geom.Line2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.List;
 
 import com.vividsolutions.jts.awt.PointTransformation;
 import com.vividsolutions.jts.awt.ShapeWriter;
@@ -109,6 +110,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public AWTDisplayGraphics(final IDisplaySurface surface, final Graphics2D g2) {
 		super(surface);
 		setGraphics2D(g2);
+		sw.setRemoveDuplicatePoints(true);
 
 	}
 
@@ -146,12 +148,12 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		p.setLocation(xFromModelUnitsToPixels(c.x), yFromModelUnitsToPixels(c.y));
 	}
 
-	@SuppressWarnings ("rawtypes")
 	@Override
 	public Rectangle2D drawField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
-		if (attributes.textures == null) { return null; }
-		final Object image = attributes.textures.get(0);
-		if (image instanceof GamaFile) { return drawFile((GamaFile) image, attributes); }
+		final List<?> textures = attributes.getTextures();
+		if (textures == null) { return null; }
+		final Object image = textures.get(0);
+		if (image instanceof GamaFile) { return drawFile((GamaFile<?, ?, ?, ?>) image, attributes); }
 		if (image instanceof BufferedImage) { return drawImage((BufferedImage) image, attributes); }
 		return null;
 	}
@@ -164,15 +166,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		IShape shape = Cast.asGeometry(scope, file);
 		if (shape == null) { return null; }
 		final Double rotation = attributes.getAngle();
-		// System.out.println("Old centroid " +
-		// shape.getInnerGeometry().getCentroid());
-		// shape = shape.translatedTo(scope, attributes.location);
-		// System.out.println("Centroid after translation" +
-		// shape.getInnerGeometry().getCentroid());
 		shape = new GamaShape(shape, null, rotation, attributes.getLocation(), attributes.getSize(), true);
-		// shape = new GamaShape(shape, null, rotation, attributes.location);
-		// System.out.println("New centroid " +
-		// shape.getInnerGeometry().getCentroid());
 		final GamaColor c = attributes.getColor();
 		return drawShape(shape, new ShapeDrawingAttributes(new GamaPoint((Coordinate) shape.getLocation()), c, c));
 	}
@@ -277,10 +271,10 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		try {
 			final Rectangle2D r = s.getBounds2D();
 			currentRenderer.setColor(attributes.getColor());
-			if (!isLine && !attributes.empty) {
+			if (!isLine && !attributes.isEmpty()) {
 				currentRenderer.fill(s);
 			}
-			if (isLine || border != null || attributes.empty) {
+			if (isLine || border != null || attributes.isEmpty()) {
 				if (border != null) {
 					currentRenderer.setColor(border);
 				}

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SWTGLAnimator.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SWTGLAnimator.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -11,7 +10,11 @@
 package ummisco.gama.opengl;
 
 import java.io.PrintStream;
-import com.jogamp.opengl.*;
+
+import com.jogamp.opengl.GLAnimatorControl;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLException;
+
 import msi.gama.common.GamaPreferences;
 
 /**
@@ -72,7 +75,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	@Override
 	public float getLastFPS() {
-		int result = frames;
+		final int result = frames;
 		frames = 0;
 		return result;
 	}
@@ -89,7 +92,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	@Override
 	public float getTotalFPS() {
-		int result = frames;
+		final int result = frames;
 		frames = 0;
 		return result;
 	}
@@ -127,7 +130,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 		this.stopRequested = true;
 		try {
 			this.animatorThread.join();
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			e.printStackTrace();
 		} finally {
 			this.stopRequested = false;
@@ -168,18 +171,18 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	@Override
 	public void run() {
-		long frameDuration = 1000 / this.targetFPS;
+		final long frameDuration = 1000 / this.targetFPS;
 		while (!this.stopRequested) {
-			if ( !pauseRequested ) {
-				long timeBegin = System.currentTimeMillis();
+			if (!pauseRequested) {
+				final long timeBegin = System.currentTimeMillis();
 				this.displayGL();
 				frames++;
-				long timeUsed = System.currentTimeMillis() - timeBegin;
-				long timeSleep = frameDuration - timeUsed;
-				if ( timeSleep >= 0 ) {
+				final long timeUsed = System.currentTimeMillis() - timeBegin;
+				final long timeSleep = frameDuration - timeUsed;
+				if (timeSleep >= 0) {
 					try {
 						Thread.sleep(timeSleep);
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 						e.printStackTrace();
 					}
 				}
@@ -190,9 +193,11 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 	protected void displayGL() {
 		this.animating = true;
 		try {
-			if ( drawable.isRealized() ) {
+			if (drawable.isRealized()) {
 				drawable.display();
 			}
+		} catch (final GLException ex) {
+			System.out.println("Exception in OpenGL:" + ex.getMessage());
 		} finally {
 			this.animating = false;
 		}
@@ -200,6 +205,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	/**
 	 * Method getUncaughtExceptionHandler()
+	 * 
 	 * @see com.jogamp.opengl.GLAnimatorControl#getUncaughtExceptionHandler()
 	 */
 	@Override
@@ -209,6 +215,7 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	/**
 	 * Method setUncaughtExceptionHandler()
+	 * 
 	 * @see com.jogamp.opengl.GLAnimatorControl#setUncaughtExceptionHandler(com.jogamp.opengl.GLAnimatorControl.UncaughtExceptionHandler)
 	 */
 	@Override
@@ -216,11 +223,13 @@ public class SWTGLAnimator implements Runnable, GLAnimatorControl, GLAnimatorCon
 
 	/**
 	 * Method uncaughtException()
-	 * @see com.jogamp.opengl.GLAnimatorControl.UncaughtExceptionHandler#uncaughtException(com.jogamp.opengl.GLAnimatorControl, com.jogamp.opengl.GLAutoDrawable, java.lang.Throwable)
+	 * 
+	 * @see com.jogamp.opengl.GLAnimatorControl.UncaughtExceptionHandler#uncaughtException(com.jogamp.opengl.GLAnimatorControl,
+	 *      com.jogamp.opengl.GLAutoDrawable, java.lang.Throwable)
 	 */
 	@Override
 	public void uncaughtException(final GLAnimatorControl animator, final GLAutoDrawable drawable,
-		final Throwable cause) {
+			final Throwable cause) {
 		System.out.println("Uncaught exception in animator & drawable:");
 		cause.printStackTrace();
 

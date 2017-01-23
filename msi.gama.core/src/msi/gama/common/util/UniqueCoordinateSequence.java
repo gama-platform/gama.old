@@ -2,14 +2,21 @@ package msi.gama.common.util;
 
 import java.util.Iterator;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
+
 import com.google.common.collect.Iterators;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 
-import msi.gama.common.util.GamaCoordinateSequence.IndexedVisitor;
-import msi.gama.common.util.GamaCoordinateSequence.PairVisitor;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 
+/**
+ * A 'sequence' of points containing an unique point.
+ * 
+ * @author drogoul
+ *
+ */
 public class UniqueCoordinateSequence implements ICoordinates {
 
 	final GamaPoint point;
@@ -29,11 +36,6 @@ public class UniqueCoordinateSequence implements ICoordinates {
 
 	@Override
 	public GamaPoint getCoordinate(final int i) {
-		return point;
-	}
-
-	@Override
-	public GamaPoint at(final int i) {
 		return point;
 	}
 
@@ -93,11 +95,6 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public GamaPoint getCenter() {
-		return point;
-	}
-
-	@Override
 	public ICoordinates yNegated() {
 		return new UniqueCoordinateSequence(false, point.yNegated());
 	}
@@ -120,30 +117,8 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public void applyTranslation(final int i, final double dx, final double dy, final double dz) {
-		point.x += dx;
-		point.y += dy;
-		point.z += dz;
-	}
-
-	@Override
-	public boolean isConvex() {
-		return true;
-	}
-
-	@Override
-	public GamaPoint getNormal(final boolean clockwise) {
-		return new GamaPoint(0, 0, clockwise ? -1 : 1);
-	}
-
-	@Override
 	public void getNormal(final boolean clockwise, final double factor, final GamaPoint normal) {
 		normal.setLocation(0, 0, clockwise ? -factor : factor);
-	}
-
-	@Override
-	public boolean isClockwise() {
-		return true;
 	}
 
 	@Override
@@ -173,6 +148,34 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	@Override
 	public void addCenterTo(final GamaPoint other) {
 		other.add(point);
+	}
+
+	@Override
+	public void getEnvelope(final Envelope3D envelope) {
+		envelope.expandToInclude(point);
+	}
+
+	@Override
+	public GamaPoint directionBetweenOriginAndFirstPoint() {
+		return new GamaPoint();
+	}
+
+	@Override
+	public void applyRotation(final Rotation rotation) {
+		point.setLocation(rotation.applyTo(point.toVector3D()));
+	}
+
+	@Override
+	public void replaceWith(final int i, final double x, final double y, final double z) {
+		if (i != 0)
+			return;
+		point.setLocation(x, y, z);
+
+	}
+
+	@Override
+	public boolean isHorizontal() {
+		return true;
 	}
 
 }

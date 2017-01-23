@@ -22,7 +22,7 @@ species object skills:[moving]{
 		do wander;
 	}
 	aspect obj {
-		draw shape;
+		draw shape border: #black;
 	}
 			
 }	

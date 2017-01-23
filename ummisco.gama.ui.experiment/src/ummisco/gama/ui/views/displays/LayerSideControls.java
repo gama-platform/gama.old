@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'LayerSideControls.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'LayerSideControls.java, in plugin ummisco.gama.ui.experiment, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -32,6 +31,7 @@ import msi.gama.outputs.layers.ImageLayerStatement;
 import msi.gama.outputs.layers.SpeciesLayerStatement;
 import msi.gama.outputs.layers.charts.ChartLayerStatement;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GamaColor;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.Types;
 import ummisco.gama.ui.interfaces.EditorListener;
@@ -47,8 +47,7 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
  */
 public class LayerSideControls {
 
-	public LayerSideControls() {
-	}
+	public LayerSideControls() {}
 
 	public static void updateIfPaused(final ILayer layer, final IDisplaySurface container) {
 		// if ( layer.isPaused(container) ) {
@@ -64,21 +63,21 @@ public class LayerSideControls {
 				});
 		EditorFactory.create(container.getScope(), compo, "Background:", container.getData().getBackgroundColor(),
 				(EditorListener<Color>) newValue -> {
-					container.getData().setBackgroundColor(newValue);
+					container.getData().setBackgroundColor(new GamaColor(newValue));
 					updateIfPaused(null, container);
 				});
 		EditorFactory.create(container.getScope(), compo, "Highlight:", container.getData().getHighlightColor(),
 				(EditorListener<Color>) newValue -> {
-					container.getData().setHighlightColor(newValue);
+					container.getData().setHighlightColor(new GamaColor(newValue));
 					updateIfPaused(null, container);
 				});
-		if (container.getOutput().isOpenGL() && container.getOutput().cameraFix) {
-			EditorFactory.create(container.getScope(), compo, "Camera Lock:", container.getData().isCameraLock(),
-					(EditorListener<Boolean>) newValue -> {
-						container.getData().setCameraLock(newValue);
-						updateIfPaused(null, container);
-					});
-		}
+		// if (container.getOutput().isOpenGL() && container.getOutput().cameraFix) {
+		// EditorFactory.create(container.getScope(), compo, "Camera Lock:", container.getData().isCameraLock(),
+		// (EditorListener<Boolean>) newValue -> {
+		// container.getData().setCameraLock(newValue);
+		// updateIfPaused(null, container);
+		// });
+		// }
 
 	}
 
@@ -114,122 +113,122 @@ public class LayerSideControls {
 
 		switch (definition.getType()) {
 
-		case ILayerStatement.GRID: {
-			EditorFactory.create(container.getScope(), compo, "Draw grid:",
-					((GridLayerStatement) definition).drawLines(), (EditorListener<Boolean>) newValue -> {
-						((GridLayer) layer).setDrawLines(newValue);
-						updateIfPaused(layer, container);
-					});
-			break;
-		}
-		case ILayerStatement.AGENTS: {
-			IExpression expr = null;
-			if (definition instanceof AgentLayerStatement) {
-				expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
-			}
-			if (expr != null) {
-				EditorFactory.createExpression(container.getScope(), compo, "Agents:", expr, newValue -> {
-					((AgentLayerStatement) definition).setAgentsExpr(newValue);
-					updateIfPaused(layer, container);
-				}, Types.LIST);
-			}
-			break;
-		}
-		case ILayerStatement.SPECIES: {
-			EditorFactory.choose(container.getScope(), compo, "Aspect:",
-					((SpeciesLayerStatement) definition).getAspectName(), true,
-					((SpeciesLayerStatement) definition).getAspects(), newValue -> {
-						((SpeciesLayerStatement) definition).setAspect(newValue);
-						updateIfPaused(layer, container);
-					});
-			break;
-		}
-		// case ILayerStatement.TEXT: {
-		// EditorFactory.createExpression(compo, "Expression:",
-		// ((TextLayerStatement) definition).getTextExpr(),
-		// new EditorListener<IExpression>() {
-		//
-		// @Override
-		// public void valueModified(final IExpression newValue) {
-		// ((TextLayerStatement) definition).setTextExpr(newValue);
-		// updateIfPaused(layer, container);
-		// }
-		// }, Types.STRING);
-		// EditorFactory.create(compo, "Color:", ((TextLayerStatement)
-		// definition).getColor(),
-		// new EditorListener<Color>() {
-		//
-		// @Override
-		// public void valueModified(final Color newValue) {
-		// ((TextLayerStatement) definition).setColor(newValue);
-		// updateIfPaused(layer, container);
-		// }
-		// });
-		// EditorFactory.create(compo, "Font:", ((TextLayerStatement)
-		// definition).getFont(),
-		// new EditorListener<GamaFont>() {
-		//
-		// @Override
-		// public void valueModified(final GamaFont newValue) {
-		// ((TextLayerStatement) definition).setFont(newValue);
-		// updateIfPaused(layer, container);
-		// }
-		// });
-		// break;
-		// }
-		case ILayerStatement.IMAGE: {
-			if (definition instanceof ImageLayerStatement) {
-				EditorFactory.create(container.getScope(), compo, "Image:",
-						((ImageLayerStatement) definition).getImageFileName(), false, newValue -> {
-							((ImageLayerStatement) definition).setImageFileName(newValue);
+			case ILayerStatement.GRID: {
+				EditorFactory.create(container.getScope(), compo, "Draw grid:",
+						((GridLayerStatement) definition).drawLines(), (EditorListener<Boolean>) newValue -> {
+							((GridLayer) layer).setDrawLines(newValue);
 							updateIfPaused(layer, container);
 						});
+				break;
 			}
-			break;
-
-		}
-		case ILayerStatement.GIS: {
-			EditorFactory.createFile(container.getScope(), compo, "Shapefile:",
-					((ImageLayerStatement) definition).getImageFileName(), newValue -> {
-						((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(),
-								newValue.getName(GAMA.getRuntimeScope()));
+			case ILayerStatement.AGENTS: {
+				IExpression expr = null;
+				if (definition instanceof AgentLayerStatement) {
+					expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
+				}
+				if (expr != null) {
+					EditorFactory.createExpression(container.getScope(), compo, "Agents:", expr, newValue -> {
+						((AgentLayerStatement) definition).setAgentsExpr(newValue);
 						updateIfPaused(layer, container);
-					});
-			break;
-		}
-		case ILayerStatement.CHART: {
-			final Button b = new Button(compo, SWT.PUSH);
-			b.setText("Properties");
-			b.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
-			b.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					// FIXME Editor not working for the moment
-					final Point p = b.toDisplay(b.getLocation());
-					p.y = p.y + 30;
-					final SWTChartEditor editor = new SWTChartEditor(WorkbenchHelper.getDisplay(),
-							((ChartLayerStatement) definition).getChart(), p);
-					// TODO Revoir cet �diteur, tr�s laid !
-					editor.open();
-					updateIfPaused(layer, container);
+					}, Types.LIST);
 				}
-
-			});
-			final Button save = new Button(compo, SWT.PUSH);
-			save.setText("Save...");
-			save.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
-			save.setToolTipText("Save the chart data as a CSV file");
-			save.addSelectionListener(new SelectionAdapter() {
-
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					((ChartLayerStatement) definition).saveHistory();
+				break;
+			}
+			case ILayerStatement.SPECIES: {
+				EditorFactory.choose(container.getScope(), compo, "Aspect:",
+						((SpeciesLayerStatement) definition).getAspectName(), true,
+						((SpeciesLayerStatement) definition).getAspects(), newValue -> {
+							((SpeciesLayerStatement) definition).setAspect(newValue);
+							updateIfPaused(layer, container);
+						});
+				break;
+			}
+			// case ILayerStatement.TEXT: {
+			// EditorFactory.createExpression(compo, "Expression:",
+			// ((TextLayerStatement) definition).getTextExpr(),
+			// new EditorListener<IExpression>() {
+			//
+			// @Override
+			// public void valueModified(final IExpression newValue) {
+			// ((TextLayerStatement) definition).setTextExpr(newValue);
+			// updateIfPaused(layer, container);
+			// }
+			// }, Types.STRING);
+			// EditorFactory.create(compo, "Color:", ((TextLayerStatement)
+			// definition).getColor(),
+			// new EditorListener<Color>() {
+			//
+			// @Override
+			// public void valueModified(final Color newValue) {
+			// ((TextLayerStatement) definition).setColor(newValue);
+			// updateIfPaused(layer, container);
+			// }
+			// });
+			// EditorFactory.create(compo, "Font:", ((TextLayerStatement)
+			// definition).getFont(),
+			// new EditorListener<GamaFont>() {
+			//
+			// @Override
+			// public void valueModified(final GamaFont newValue) {
+			// ((TextLayerStatement) definition).setFont(newValue);
+			// updateIfPaused(layer, container);
+			// }
+			// });
+			// break;
+			// }
+			case ILayerStatement.IMAGE: {
+				if (definition instanceof ImageLayerStatement) {
+					EditorFactory.create(container.getScope(), compo, "Image:",
+							((ImageLayerStatement) definition).getImageFileName(), false, newValue -> {
+								((ImageLayerStatement) definition).setImageFileName(newValue);
+								updateIfPaused(layer, container);
+							});
 				}
+				break;
 
-			});
-			break;
-		}
+			}
+			case ILayerStatement.GIS: {
+				EditorFactory.createFile(container.getScope(), compo, "Shapefile:",
+						((ImageLayerStatement) definition).getImageFileName(), newValue -> {
+							((ImageLayerStatement) definition).setGisLayerName(GAMA.getRuntimeScope(),
+									newValue.getName(GAMA.getRuntimeScope()));
+							updateIfPaused(layer, container);
+						});
+				break;
+			}
+			case ILayerStatement.CHART: {
+				final Button b = new Button(compo, SWT.PUSH);
+				b.setText("Properties");
+				b.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
+				b.addSelectionListener(new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						// FIXME Editor not working for the moment
+						final Point p = b.toDisplay(b.getLocation());
+						p.y = p.y + 30;
+						final SWTChartEditor editor = new SWTChartEditor(WorkbenchHelper.getDisplay(),
+								((ChartLayerStatement) definition).getChart(), p);
+						// TODO Revoir cet �diteur, tr�s laid !
+						editor.open();
+						updateIfPaused(layer, container);
+					}
+
+				});
+				final Button save = new Button(compo, SWT.PUSH);
+				save.setText("Save...");
+				save.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
+				save.setToolTipText("Save the chart data as a CSV file");
+				save.addSelectionListener(new SelectionAdapter() {
+
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						((ChartLayerStatement) definition).saveHistory();
+					}
+
+				});
+				break;
+			}
 
 		}
 

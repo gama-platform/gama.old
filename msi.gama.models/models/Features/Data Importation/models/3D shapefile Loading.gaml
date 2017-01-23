@@ -7,9 +7,9 @@
 model shapefile_loading
 
 global {
-	
+	 
 	//file variable that will store the shape file
-	file shape_file_gis_3d_objects <- shape_file('../includes/Mobilier.shp', 0);
+	file shape_file_gis_3d_objects <- shape_file('../includes/Mobilier.shp', 0, true);
 	geometry shape <- envelope(shape_file_gis_3d_objects);
 	init {
 		create gis_3d_object from: shape_file_gis_3d_objects;
@@ -18,14 +18,14 @@ global {
 
 species gis_3d_object {
 	aspect base {
-		draw shape at:{world.shape.width/2,world.shape.height/2,0};
+		draw shape at:{world.shape.width/2,world.shape.height/2,0} color: #gray border: #darkgray width: 4;
 	}
 }
 
 experiment display_shape type: gui {
 
 	output {
-		display city_display type: opengl draw_env:false{
+		display city_display type: opengl draw_env:false background: #black{
 			species gis_3d_object aspect: base;
 		}
 

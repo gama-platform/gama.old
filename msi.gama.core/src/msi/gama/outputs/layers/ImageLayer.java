@@ -9,9 +9,8 @@
  **********************************************************************************************/
 package msi.gama.outputs.layers;
 
-import com.vividsolutions.jts.geom.Envelope;
-
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaGridFile;
@@ -29,38 +28,36 @@ public class ImageLayer extends AbstractLayer {
 	GamaImageFile file = null;
 	GamaGridFile grid = null;
 	private String imageFileName = "";
-	Envelope env = null;
+	Envelope3D env;
 
 	public ImageLayer(final IScope scope, final ILayerStatement layer) {
 		super(layer);
 		buildImage(scope);
 	}
 
-	protected void buildImage(final IScope scope) {
+	protected Envelope3D buildImage(final IScope scope) {
 		final String newImage = ((ImageLayerStatement) definition).getImageFileName();
-		if (imageFileName != null && imageFileName.equals(newImage)) { return; }
+		if (imageFileName != null && imageFileName.equals(newImage)) { return env; }
 		imageFileName = newImage;
 		if (imageFileName == null || imageFileName.length() == 0) {
 			file = null;
 			grid = null;
 		} else {
 			file = new GamaImageFile(scope, imageFileName);
-			env = file.getGeoDataFile(scope) == null ? null : file.computeEnvelope(scope);
-			if (!file.isGeoreferenced()) {
-				env = null;
-			}
+			env = file.getGeoDataFile(scope) == null ? scope.getSimulation().getEnvelope()
+					: file.computeEnvelope(scope);
 		}
+		return env;
 	}
 
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
-		if (dg.cannotDraw())
-			return;
 		buildImage(scope);
 		if (file == null) { return; }
-		final GamaPoint loc = env == null ? null : new GamaPoint(env.getMinX(), env.getMinY());
-		final FileDrawingAttributes attributes = new FileDrawingAttributes(loc);
+		final FileDrawingAttributes attributes = new FileDrawingAttributes(null);
 		if (env != null) {
+			final GamaPoint loc = new GamaPoint(env.getMinX(), env.getMinY());
+			attributes.setLocation(loc);
 			attributes.setSize(new GamaPoint(env.getWidth(), env.getHeight()));
 		}
 		dg.drawFile(file, attributes);

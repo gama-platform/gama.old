@@ -17,42 +17,42 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaPair;
 import msi.gama.util.file.Gama3DGeometryFile;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gaml.operators.fastmaths.FastMath;
 import msi.gaml.statements.draw.DrawingAttributes;
-import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.opengl.JOGLRenderer;
 
 public class ResourceObject extends AbstractObject {
 
 	public final GamaGeometryFile file;
 
-	public ResourceObject(final GamaGeometryFile file, final DrawingAttributes attributes, final LayerObject layer) {
-		super(attributes, layer);
+	public ResourceObject(final GamaGeometryFile file, final DrawingAttributes attributes) {
+		super(attributes);
 		this.file = file;
+		attributes.setEmpty(false);
+	}
+
+	public GamaPair<Double, GamaPoint> getInitialRotation() {
+		return file.getInitRotation();
 	}
 
 	@Override
-	public void draw(final GL2 gl, final ObjectDrawer drawer, final boolean isPicking) {
+	public void draw(final GL2 gl, final ObjectDrawer<AbstractObject> drawer, final boolean isPicking) {
 
 		final JOGLRenderer renderer = drawer.renderer;
 		// We first push the matrix so that all translations, etc. are done
 		// locally
 
 		gl.glPushMatrix();
-		final Envelope env = JOGLRenderer.getEnvelopeFor(file.getPath(renderer.getSurface().getScope()));
-		// If a location is provided we use it otherwise we use that of the
-		// agent if it exists
-		if (attributes.getLocation() != null) {
-			gl.glTranslated(attributes.getLocation().x, -attributes.getLocation().y, attributes.getLocation().z);
+		// If a location is provided we use it
+		final GamaPoint loc = attributes.getLocation();
+		if (loc != null) {
+			gl.glTranslated(loc.x, -loc.y, loc.z);
 		}
 
 		final GamaPoint size = getDimensions();
 
 		// If there is a rotation we apply it
-		Double rot = attributes.getAngle();
+		Double rot = getRotationAngle();
 		if (rot != null) {
-			// AD Change to a negative rotation to fix Issue #1514
-			rot = -rot;
 			final GamaPoint axis = attributes.getAxis();
 			gl.glRotated(rot, axis.x, axis.y, axis.z);
 		}
@@ -69,21 +69,20 @@ public class ResourceObject extends AbstractObject {
 		// We translate it to its center
 		// FIXME Necessary for all file types ?
 		//
-		if (size == null && env != null) {
-			gl.glTranslated(-env.getWidth() / 2, env.getHeight() / 2, 0);
-		}
-
-		// We then compute the scaling factor to apply
-		double factor = 0.0;
-		if (size != null && env != null) {
-			if (!(file instanceof Gama3DGeometryFile) || size.z == 0d) {
-				factor = FastMath.min(size.x / env.getWidth(), size.y / env.getHeight());
+		final Envelope env = JOGLRenderer.getEnvelopeFor(file.getPath(renderer.getSurface().getScope()));
+		if (env != null)
+			if (size == null) {
+				gl.glTranslated(-env.getWidth() / 2, env.getHeight() / 2, 0);
 			} else {
-				final double min_xy = FastMath.min(size.x / env.getWidth(), size.y / env.getHeight());
-				factor = FastMath.min(min_xy, size.z / ((Envelope3D) env).getDepth());
+				double factor = 0.0;
+				if (!(file instanceof Gama3DGeometryFile) || size.z == 0d) {
+					factor = Math.min(size.x / env.getWidth(), size.y / env.getHeight());
+				} else {
+					final double min_xy = Math.min(size.x / env.getWidth(), size.y / env.getHeight());
+					factor = Math.min(min_xy, size.z / ((Envelope3D) env).getDepth());
+				}
+				gl.glScaled(factor, factor, factor);
 			}
-			gl.glScaled(factor, factor, factor);
-		}
 
 		// Then we draw the geometry itself
 		super.draw(gl, drawer, isPicking);
@@ -93,8 +92,12 @@ public class ResourceObject extends AbstractObject {
 	}
 
 	@Override
-	public void preload(final GL2 gl, final Abstract3DRenderer renderer) {
-		super.preload(gl, renderer);
-		renderer.getGeometryListFor(gl, file);
+	public DrawerType getDrawerType() {
+		return DrawerType.RESOURCE;
 	}
+
+	public GamaGeometryFile getFile() {
+		return file;
+	}
+
 }

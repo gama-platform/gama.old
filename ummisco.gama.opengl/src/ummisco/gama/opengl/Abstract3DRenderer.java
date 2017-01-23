@@ -12,7 +12,10 @@ package ummisco.gama.opengl;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.nio.IntBuffer;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -32,14 +35,24 @@ import com.jogamp.opengl.swt.GLCanvas;
 import com.jogamp.opengl.util.awt.TextRenderer;
 import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.GamaPreferences;
+import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.display.AbstractDisplayGraphics;
+import msi.gama.outputs.layers.OverlayLayer;
+import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaGeometryFile;
-import msi.gaml.operators.fastmaths.FastMath;
+import msi.gama.util.file.GamaImageFile;
+import msi.gaml.statements.draw.DrawingAttributes;
+import msi.gaml.statements.draw.FileDrawingAttributes;
+import msi.gaml.statements.draw.ShapeDrawingAttributes;
+import msi.gaml.statements.draw.TextDrawingAttributes;
+import msi.gaml.types.GamaGeometryType;
 import ummisco.gama.opengl.camera.CameraArcBall;
 import ummisco.gama.opengl.camera.FreeFlyCamera;
 import ummisco.gama.opengl.camera.ICamera;
@@ -71,9 +84,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 		public void setPicking(final boolean isPicking) {
 			this.isPicking = isPicking;
-			// System.out.println(
-			// "Picking is " + isPicking + " with menu on: " + isMenuOn + " and
-			// picked index " + pickedIndex);
 			if (!isPicking) {
 				setPickedIndex(NONE);
 				setMenuOn(false);
@@ -81,13 +91,11 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		}
 
 		public void setMenuOn(final boolean isMenuOn) {
-			// System.out.println("Menu on is " + isMenuOn);
 			this.isMenuOn = isMenuOn;
 		}
 
 		public void setPickedIndex(final int pickedIndex) {
 			this.pickedIndex = pickedIndex;
-			// System.out.println("Picked object = " + pickedIndex);
 			if (pickedIndex == WORLD && !isMenuOn) {
 				// Selection occured, but no object have been selected
 				setMenuOn(true);
@@ -113,19 +121,17 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	}
 
-	public final static int Y_FLAG = -1;
 	public final static boolean DRAW_NORM = false;
-
-	private Color currentColor;
 	protected DrawingEntityGenerator drawingEntityGenerator;
-
-	protected boolean useShader = false;
-
+	protected final PickingState pickingState = new PickingState();
 	public SceneBuffer sceneBuffer;
 	protected ModelScene currentScene;
 	protected GLCanvas canvas;
 	public ICamera camera;
+	protected volatile boolean inited;
+	protected volatile boolean visible;
 	protected double currentZRotation = 0;
+	protected double currentObjectAlpha = 1d;
 	int[] viewport = new int[4];
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
@@ -133,6 +139,8 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	protected GLUT glut;
 	protected GLU glu;
 	protected GL2 gl;
+	protected final GamaPoint worldDimensions;
+	protected Envelope3D ROIEnvelope = null;
 	// relative to rotation helper
 	protected boolean drawRotationHelper = false;
 	protected GamaPoint rotationHelperPosition = null;
@@ -159,17 +167,29 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		return cornerSelected;
 	}
 
+	public void startDrawKeystoneHelper() {
+		drawKeystoneHelper = true;
+		cornerSelected = -1;
+	}
+
+	public void stopDrawKeystoneHelper() {
+		drawKeystoneHelper = false;
+	}
+
+	// CACHES FOR TEXTURES, FONTS AND GEOMETRIES
+
 	protected final GeometryCache geometryCache = new GeometryCache();
 	protected final TextRenderersCache textRendererCache = new TextRenderersCache();
 	protected final TextureCache textureCache =
 			GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue() ? TextureCache.getSharedInstance() : new TextureCache();
 
 	public static Boolean isNonPowerOf2TexturesAvailable = false;
-	protected static Map<String, Envelope> envelopes = new ConcurrentHashMap<>();
+	protected static Map<String, Envelope> ENVELOPES_CACHE = new ConcurrentHashMap<>();
 	protected final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);
 
 	public Abstract3DRenderer(final SWTOpenGLDisplaySurface d) {
 		super(d);
+		worldDimensions = new GamaPoint(data.getEnvWidth(), data.getEnvHeight());
 		camera = new CameraArcBall(this);
 		sceneBuffer = new SceneBuffer(this);
 		ShapeCache.freedShapeCache();
@@ -200,6 +220,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	}
 
 	protected void commonInit(final GLAutoDrawable drawable) {
+		WorkbenchHelper.run(() -> getCanvas().setVisible(visible));
 		// the drawingEntityGenerator is used only when there is a webgl display
 		// and/or a modernRenderer.
 		drawingEntityGenerator = new DrawingEntityGenerator(this);
@@ -207,7 +228,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		glu = new GLU();
 		glut = new GLUT();
 		currentZRotation = data.getZRotation();
-		gl = drawable.getContext().getGL().getGL2();
+		gl = drawable.getGL().getGL2();
 		final Color background = data.getBackgroundColor();
 		gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f, background.getBlue() / 255.0f,
 				1.0f);
@@ -217,11 +238,9 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		initializeCanvasListeners();
 		updateCameraPosition();
 		updatePerspective();
+
+		setUpKeystoneCoordinates();
 	}
-
-	public abstract void initScene();
-
-	public abstract PickingState getPickingState();
 
 	public final ModelScene getCurrentScene() {
 		return currentScene;
@@ -230,10 +249,6 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public abstract Integer getGeometryListFor(final GL2 gl, final GamaGeometryFile file);
 
 	public abstract TextRenderer getTextRendererFor(final Font font);
-
-	public abstract void defineROI(final Point start, final Point end);
-
-	public abstract void cancelROI();
 
 	public final GLCanvas getCanvas() {
 		return canvas;
@@ -260,22 +275,18 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public final double getMaxEnvDim() {
 		// built dynamically to prepare for the changes in size of the
 		// environment
-		final double env_width = data.getEnvWidth();
-		final double env_height = data.getEnvHeight();
+		final double env_width = worldDimensions.x;
+		final double env_height = worldDimensions.y;
 		return env_width > env_height ? env_width : env_height;
 	}
 
 	public final double getEnvWidth() {
-		return data.getEnvWidth();
+		return worldDimensions.x;
 	}
 
 	public final double getEnvHeight() {
-		return data.getEnvHeight();
+		return worldDimensions.y;
 	}
-
-	// public GL2 getContext() {
-	// return gl;
-	// }
 
 	public DrawingEntityGenerator getDrawingEntityGenerator() {
 		return drawingEntityGenerator;
@@ -315,23 +326,9 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	protected abstract void updatePerspective();
 
-	public abstract void drawROI(final GL2 gl);
-
-	public abstract Envelope3D getROIEnvelope();
-
-	public abstract void startDrawRotationHelper(final GamaPoint pos);
-
-	public abstract void stopDrawRotationHelper();
-
-	public abstract void startDrawKeystoneHelper();
-
-	public abstract void stopDrawKeystoneHelper();
-
-	public abstract void drawRotationHelper(final GL2 gl);
-
 	@Override
 	public void fillBackground(final Color bgColor, final double opacity) {
-		setOpacity(opacity);
+		setCurrentObjectAlpha(opacity);
 	}
 
 	/**
@@ -341,7 +338,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	 */
 	@Override
 	public final int getDisplayWidth() {
-		return (int) FastMath.round(getWidth());
+		return (int) Math.round(getWidth());
 	}
 
 	/**
@@ -351,17 +348,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	 */
 	@Override
 	public final int getDisplayHeight() {
-		return (int) FastMath.round(getHeight());
-	}
-
-	/**
-	 * Method setOpacity()
-	 * 
-	 * @see msi.gama.common.interfaces.IGraphics#setOpacity(double)
-	 */
-	@Override
-	public final void setOpacity(final double alpha) {
-		currentAlpha = alpha;
+		return (int) Math.round(getHeight());
 	}
 
 	public final GLU getGlu() {
@@ -413,7 +400,7 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	 * @return
 	 */
 	public final static Envelope getEnvelopeFor(final String path) {
-		return envelopes.get(path);
+		return ENVELOPES_CACHE.get(path);
 	}
 
 	/**
@@ -443,8 +430,12 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 		return camera.getOrientation();
 	}
 
-	public final boolean useShader() {
-		return useShader;
+	public boolean useShader() {
+		return false;
+	}
+
+	public boolean preloadTextures() {
+		return true;
 	}
 
 	public TextureCache getSharedTextureCache() {
@@ -453,33 +444,10 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 
 	public abstract boolean mouseInROI(final Point mousePosition);
 
-	// TODO : maybe those following functions are to put anywhere else...
-	public void setCurrentColor(final GL2 gl, final Color c, final double alpha) {
-		if (c == null)
-			return;
-		setCurrentColor(gl, c.getRed() / 255d, c.getGreen() / 255d, c.getBlue() / 255d, c.getAlpha() / 255d * alpha);
-	}
-
-	public void setCurrentColor(final GL2 gl, final Color c) {
-		setCurrentColor(gl, c, 1);
-	}
-
-	public void setCurrentColor(final GL2 gl, final double red, final double green, final double blue,
-			final double alpha) {
-		currentColor = new Color((float) red, (float) green, (float) blue, (float) alpha);
-		gl.glColor4d(red, green, blue, alpha);
-	}
-
-	public void setCurrentColor(final GL2 gl, final double value) {
-		setCurrentColor(gl, value, value, value, 1);
-	}
-
-	public Color getCurrentColor() {
-		return currentColor;
-	}
+	// END HELPERS
 
 	@SuppressWarnings ("rawtypes")
-	public ObjectDrawer getDrawerFor(final Class<? extends AbstractObject> class1) {
+	public ObjectDrawer getDrawerFor(final AbstractObject.DrawerType type) {
 		return null;
 	}
 
@@ -520,5 +488,236 @@ public abstract class Abstract3DRenderer extends AbstractDisplayGraphics impleme
 	public void cornerSelected(final int cornerId) {
 		cornerSelected = cornerId;
 	}
+
+	public final void setCurrentObjectAlpha(final double alpha) {
+		currentObjectAlpha = alpha;
+	}
+
+	public double getCurrentObjectAlpha() {
+		return currentObjectAlpha;
+	}
+
+	public GamaPoint getWorldsDimensions() {
+		return worldDimensions;
+	}
+
+	/**
+	 * Method drawGeometry. Add a given JTS Geometry in the list of all the existing geometry that will be displayed by
+	 * openGl.
+	 */
+	@Override
+	public Rectangle2D drawShape(final IShape shape, final ShapeDrawingAttributes attributes) {
+		if (shape == null) { return null; }
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
+		tryToHighlight(attributes);
+		preloadTextures(attributes);
+		sceneBuffer.getSceneToUpdate().addGeometry(shape.getInnerGeometry(), attributes);
+		return rect;
+	}
+
+	/**
+	 * Method drawImage.
+	 *
+	 * @param img
+	 *            Image
+	 * @param angle
+	 *            Integer
+	 */
+	@Override
+	public Rectangle2D drawImage(final BufferedImage img, final FileDrawingAttributes attributes) {
+		if (sceneBuffer.getSceneToUpdate() == null) { return null; }
+		sceneBuffer.getSceneToUpdate().addImage(img, attributes);
+		tryToHighlight(attributes);
+		if (attributes.getBorder() != null) {
+			drawGridLine(new GamaPoint(img.getWidth(), img.getHeight()), attributes.getBorder());
+		}
+		return rect;
+	}
+
+	protected void tryToHighlight(final FileDrawingAttributes attributes) {
+		if (highlight) {
+			attributes.setHighlighted(data.getHighlightColor());
+		}
+	}
+
+	public void drawGridLine(final GamaPoint dimensions, final Color lineColor) {
+		if (sceneBuffer.getSceneToUpdate() == null) { return; }
+		double stepX, stepY;
+		final double cellWidth = worldDimensions.x / dimensions.x;
+		final double cellHeight = worldDimensions.y / dimensions.y;
+		final GamaColor color = GamaColor.getInt(lineColor.getRGB());
+		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(null, color, color, IShape.Type.GRIDLINE);
+		for (double i = 0; i < dimensions.x; i++) {
+			for (double j = 0; j < dimensions.y; j++) {
+				stepX = i + 0.5;
+				stepY = j + 0.5;
+				final Geometry g = GamaGeometryType
+						.buildRectangle(cellWidth, cellHeight, new GamaPoint(stepX * cellWidth, stepY * cellHeight))
+						.getInnerGeometry();
+				sceneBuffer.getSceneToUpdate().addGeometry(g, attributes);
+			}
+		}
+	}
+
+	@Override
+	public Rectangle2D drawString(final String string, final TextDrawingAttributes attributes) {
+		// Multiline: Issue #780
+		if (string.contains("\n")) {
+			for (final String s : string.split("\n")) {
+				attributes.getLocation().setY(attributes.getLocation().getY()
+						+ attributes.font.getSize() * this.getyRatioBetweenPixelsAndModelUnits());
+				drawString(s, attributes);
+			}
+			return null;
+		}
+		attributes.getLocation().setY(-attributes.getLocation().getY());
+		sceneBuffer.getSceneToUpdate().addString(string, attributes);
+		return null;
+	}
+
+	protected void preloadTextures(final DrawingAttributes attributes) {
+		if (!preloadTextures())
+			return;
+		final List<?> textures = attributes.getTextures();
+		if (textures != null && !textures.isEmpty()) {
+			for (final Object img : textures) {
+				if (img instanceof GamaImageFile) {
+					textureCache.initializeStaticTexture(getSurface().getScope(), (GamaImageFile) img);
+				}
+			}
+		}
+	}
+
+	public void startDrawRotationHelper(final GamaPoint pos) {
+		rotationHelperPosition = pos;
+		drawRotationHelper = true;
+		final double distance = Math.sqrt(Math.pow(camera.getPosition().x - rotationHelperPosition.x, 2)
+				+ Math.pow(camera.getPosition().y - rotationHelperPosition.y, 2)
+				+ Math.pow(camera.getPosition().z - rotationHelperPosition.z, 2));
+		final double size = distance / 10; // the size of the displayed axis
+		if (currentScene != null)
+			currentScene.startDrawRotationHelper(pos, size);
+	}
+
+	public void stopDrawRotationHelper() {
+		rotationHelperPosition = null;
+		drawRotationHelper = false;
+		if (currentScene != null)
+			currentScene.stopDrawRotationHelper();
+	}
+
+	public void defineROI(final Point start, final Point end) {
+		final GamaPoint startInWorld = getRealWorldPointFromWindowPoint(start);
+		final GamaPoint endInWorld = getRealWorldPointFromWindowPoint(end);
+		ROIEnvelope = new Envelope3D(new Envelope(startInWorld.x, endInWorld.x, startInWorld.y, endInWorld.y));
+	}
+
+	public void cancelROI() {
+		if (camera.isROISticky())
+			return;
+		ROIEnvelope = null;
+	}
+
+	public PickingState getPickingState() {
+		return pickingState;
+	}
+
+	public Envelope3D getROIEnvelope() {
+		return ROIEnvelope;
+	}
+
+	public void drawScene(final GL2 gl) {
+		currentScene = sceneBuffer.getSceneToRender();
+		if (currentScene == null) { return; }
+		// Do some garbage collecting in model scenes
+		sceneBuffer.garbageCollect(gl);
+		// if picking, we draw a first pass to pick the color
+		if (pickingState.isBeginningPicking()) {
+			beginPicking(gl);
+			currentScene.draw(gl);
+			endPicking(gl);
+		}
+		// we draw the scene on screen
+		currentScene.draw(gl);
+	}
+
+	// This method is normally called either when the graphics is created or
+	// when the output is changed
+	// @Override
+	public void initScene() {
+		if (sceneBuffer != null) {
+			final ModelScene scene = sceneBuffer.getSceneToRender();
+			if (scene != null) {
+				scene.reload();
+			}
+		}
+	}
+
+	@Override
+	public boolean beginDrawingLayers() {
+		while (!inited) {
+			try {
+				Thread.sleep(10);
+			} catch (final InterruptedException e) {
+				return false;
+			}
+		}
+		return sceneBuffer.beginUpdatingScene();
+
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		dispose(getDrawable());
+	}
+
+	@Override
+	public void beginDrawingLayer(final ILayer layer) {
+		super.beginDrawingLayer(layer);
+		GamaPoint currentOffset, currentScale;
+		if (!(layer instanceof OverlayLayer)) {
+			final double currentZLayer = getMaxEnvDim() * layer.getPosition().getZ();
+
+			// get the value of the z scale if positive otherwise set it to 1.
+			double z_scale;
+			if (layer.getExtent().getZ() > 0) {
+				z_scale = layer.getExtent().getZ();
+			} else {
+				z_scale = 1;
+			}
+
+			currentOffset = new GamaPoint(getXOffsetInPixels() / (getWidth() / worldDimensions.x),
+					getYOffsetInPixels() / (getHeight() / worldDimensions.y), currentZLayer);
+			currentScale = new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), z_scale);
+		} else {
+			currentOffset = new GamaPoint(getXOffsetInPixels() / (getWidth() / worldDimensions.x),
+					getYOffsetInPixels() / (getHeight() / worldDimensions.y), 1);
+
+			currentScale = new GamaPoint(getLayerWidth() / getWidth(), getLayerHeight() / getHeight(), 1);
+
+		}
+		final ModelScene scene = sceneBuffer.getSceneToUpdate();
+		if (scene != null) {
+			scene.beginDrawingLayer(layer, currentOffset, currentScale, currentLayerAlpha);
+		}
+	}
+
+	/**
+	 * Method endDrawingLayers()
+	 * 
+	 * @see msi.gama.common.interfaces.IGraphics#endDrawingLayers()
+	 */
+	@Override
+	public void endDrawingLayers() {
+		sceneBuffer.endUpdatingScene();
+		getSurface().invalidateVisibleRegions();
+	}
+
+	// Picking method
+	// //////////////////////////////////////////////////////////////////////////////////////
+	public abstract void beginPicking(final GL2 gl);
+
+	public abstract void endPicking(final GL2 gl);
 
 }

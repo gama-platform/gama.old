@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaGisFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaGisFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -12,8 +11,10 @@ package msi.gama.util.file;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.IProjection;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
@@ -32,6 +33,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 
 	// The code to force reading the GIS data as already projected
 	public static final int ALREADY_PROJECTED_CODE = 0;
+	static CoordinateFilter ZERO_Z = coord -> ((GamaPoint) coord).z = 0;
 	protected IProjection gis;
 	protected Integer initialCRSCode = null;
 	protected String initialCRSCodeStr = null;
@@ -78,9 +80,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	protected abstract CoordinateReferenceSystem getOwnCRS(IScope scope);
 
 	protected void computeProjection(final IScope scope, final Envelope env) {
-		if (scope == null) {
-			return;
-		}
+		if (scope == null) { return; }
 		final CoordinateReferenceSystem crs = getExistingCRS(scope);
 		final ProjectionFactory pf = scope.getSimulation().getProjectionFactory();
 		gis = pf.fromCRS(crs, env);

@@ -9,6 +9,9 @@
  **********************************************************************************************/
 package msi.gama.metamodel.shape;
 
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -61,6 +64,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public void setLocation(final ILocation al) {
+		setLocation(al.getX(), al.getY(), al.getZ());
+	}
+
+	public void setLocation(final Vector3D al) {
 		setLocation(al.getX(), al.getY(), al.getZ());
 	}
 
@@ -577,5 +584,14 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public void copyShapeAttributesFrom(final IShape other) {}
+
+	public Vector3D toVector3D() {
+		return new Vector3D(x, y, z);
+	}
+
+	public void applyRotation(final Rotation r) {
+		final Vector3D v = toVector3D();
+		setLocation(r.applyTo(v));
+	}
 
 }

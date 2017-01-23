@@ -71,7 +71,7 @@ experiment voronoi type: gui{
 	parameter 'Height of the environment:' var: env_height;
 	
 	output {
-		display Voronoi type: opengl {
+		display "Voronoi Display" type: opengl {
 			grid cell ;
 			species center;
 		}

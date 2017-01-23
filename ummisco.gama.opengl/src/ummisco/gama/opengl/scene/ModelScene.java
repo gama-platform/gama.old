@@ -11,8 +11,6 @@ package ummisco.gama.opengl.scene;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -21,8 +19,10 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.Geometry;
 
+import gnu.trove.map.hash.THashMap;
 import msi.gama.common.interfaces.ILayer;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.util.TOrderedHashMap;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.file.GamaGeometryFile;
 import msi.gama.util.file.GamaImageFile;
@@ -47,36 +47,36 @@ import ummisco.gama.webgl.SimpleScene;
  */
 public class ModelScene {
 
-	private static int number = 0;
-	private final int id;
 	public static final String AXES_KEY = "__axes__0";
 	public static final String FRAME_KEY = "__frame__0";
 	public static final String ROTATION_HELPER_KEY = "__rotation__0";
 	public static final String KEYSTONE_HELPER_KEY = "__keystone__0";
 	public static final String LIGHTS_KEY = "__lights__0";
 	public static final String FPS_KEY = "z__fps__0";
-	protected final Map<String, LayerObject> layers = new LinkedHashMap<String, LayerObject>();
+	protected final TOrderedHashMap<String, LayerObject> layers = new TOrderedHashMap<String, LayerObject>();
 	protected LayerObject currentLayer;
 	protected final Abstract3DRenderer renderer;
-	private final Map<BufferedImage, Texture> localVolatileTextures = new HashMap<BufferedImage, Texture>(10);
+	private final Map<BufferedImage, Texture> localVolatileTextures = new THashMap<BufferedImage, Texture>(2);
 	private volatile boolean rendered = false;
+	private volatile double visualZIncrement;
+	private volatile int objectNumber;
+
+	public static abstract class ObjectVisitor {
+		public abstract void process(AbstractObject object);
+	}
 
 	public ModelScene(final Abstract3DRenderer renderer, final boolean withWorld) {
 		this.renderer = renderer;
-		this.id = number++;
 		if (withWorld) {
 			initWorld();
 		}
-	}
-
-	public int getId() {
-		return id;
 	}
 
 	protected void initWorld() {
 		if (renderer.data.isDrawEnv()) {
 			layers.put(FRAME_KEY, new FrameLayerObject(renderer));
 			layers.put(AXES_KEY, new AxesLayerObject(renderer));
+			// layers.put(KEYSTONE_HELPER_KEY, new KeystoneHelperLayerObject(renderer));
 		}
 		if (renderer.useShader()) {
 			layers.put(ROTATION_HELPER_KEY, new RotationHelperLayerObject(renderer));
@@ -92,9 +92,6 @@ public class ModelScene {
 	 *            Called every new iteration when updateDisplay() is called on the surface
 	 */
 	public void wipe(final GL2 gl) {
-		// The display is cleared every iteration if not in a trace display mode
-		// or when reloading a simulation
-		// int traceSize = FastMath.max(requestedTraceSize, 0);
 
 		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
 			final LayerObject obj = entry.getValue();
@@ -102,8 +99,7 @@ public class ModelScene {
 				obj.clear(gl);
 			}
 		}
-		// Wipe the textures. However, might be necessary to know what to do for
-		// the trace...
+		// Wipe the textures.
 		final int size = localVolatileTextures.size();
 		if (size != 0) {
 			final int[] textureIdsToDestroy = new int[size];
@@ -111,7 +107,6 @@ public class ModelScene {
 			for (final Map.Entry<BufferedImage, Texture> entry : localVolatileTextures.entrySet()) {
 				final Texture t = entry.getValue();
 				textureIdsToDestroy[index++] = t == null ? 0 : t.getTextureObject();
-				// entry.getKey().flush();
 			}
 			gl.glDeleteTextures(textureIdsToDestroy.length, textureIdsToDestroy, 0);
 			localVolatileTextures.clear();
@@ -125,45 +120,27 @@ public class ModelScene {
 			texture = TextureCache.buildTexture(gl, image);
 			localVolatileTextures.put(image, texture);
 		}
-		return antiAliasTexture(gl, texture);
+		return texture;
 	}
 
 	// Must have been stored before
 	public Texture getTexture(final GL gl, final GamaImageFile file) {
 		if (file == null) { return null; }
 		final Texture texture = renderer.getSharedTextureCache().get(renderer.getSurface().getScope(), gl, file);
-		return antiAliasTexture(gl, texture);
-	}
-
-	private Texture antiAliasTexture(final GL gl, final Texture texture) {
-		if (texture != null) {
-			final boolean antiAlias = renderer.data.isAntialias();
-			// Apply antialas to the texture based on the current preferences
-			texture.setTexParameteri(gl, GL.GL_TEXTURE_MIN_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
-			texture.setTexParameteri(gl, GL.GL_TEXTURE_MAG_FILTER, antiAlias ? GL.GL_LINEAR : GL.GL_NEAREST);
-		}
 		return texture;
 	}
 
 	public void draw(final GL2 gl) {
 		// if the rotation helper layer exists, put it at the end of the map
 		// (otherwise, transparency issues)
+
 		final LayerObject rotLayer = layers.get(ROTATION_HELPER_KEY);
 		if (rotLayer != null) {
 			layers.remove(ROTATION_HELPER_KEY);
 			layers.put(ROTATION_HELPER_KEY, rotLayer);
 		}
 
-		final ArrayList<LayerObject> list = new ArrayList<>(layers.values());
-		// reorder the list, to put the overlay at the end
-		for (int i = list.size() - 1; i >= 0; i--) {
-			if (list.get(i).isOverlay()) {
-				list.add(list.get(i));
-				list.remove(i);
-			}
-		}
-		final LayerObject[] array = list.toArray(new LayerObject[0]);
-		for (final LayerObject layer : array) {
+		for (final LayerObject layer : layers.values()) {
 			if (layer != null && !layer.isInvalid()) {
 				try {
 					layer.draw(gl);
@@ -177,58 +154,57 @@ public class ModelScene {
 		rendered = true;
 	}
 
+	private void computeVisualZIncrement() {
+		if (objectNumber == 0)
+			return;
+		// The maximum visual z allowance between the object at the bottom and the one at the top
+		final double maxZ = renderer.getMaxEnvDim() / 2000d;
+		// The increment is simply
+		visualZIncrement = maxZ / objectNumber;
+	}
+
+	public double getVisualZIncrement() {
+		return visualZIncrement;
+	}
+
 	public boolean cannotAdd() {
 		if (currentLayer == null)
 			return true;
 		return currentLayer.isStatic() && currentLayer.isLocked();
 	}
 
+	private void configure(final AbstractObject object) {
+		object.setZFightingOffset(objectNumber++);
+	}
+
 	public void addString(final String string, final DrawingAttributes attributes) {
 		if (cannotAdd()) { return; }
-		currentLayer.addString(string, attributes);
+		configure(currentLayer.addString(string, attributes));
 	}
 
 	@SuppressWarnings ("rawtypes")
 	public void addFile(final GamaFile file, final FileDrawingAttributes attributes) {
 		if (cannotAdd()) { return; }
 		if (file instanceof GamaImageFile) {
-			renderer.getSharedTextureCache().initializeStaticTexture(renderer.getSurface().getScope(),
-					(GamaImageFile) file);
-			currentLayer.addImage((GamaImageFile) file, attributes);
+			configure(currentLayer.addImage(file, attributes));
 		} else if (file instanceof GamaGeometryFile) {
-			currentLayer.addFile((GamaGeometryFile) file, attributes);
+			configure(currentLayer.addFile((GamaGeometryFile) file, attributes));
 		}
 	}
 
 	public void addImage(final BufferedImage img, final DrawingAttributes attributes) {
 		if (cannotAdd()) { return; }
-		currentLayer.addImage(img, attributes);
+		configure(currentLayer.addImage(img, attributes));
 	}
 
 	public void addGeometry(final Geometry geometry, final ShapeDrawingAttributes attributes) {
 		if (cannotAdd()) { return; }
-		if (attributes.textures != null && !attributes.textures.isEmpty()) {
-			for (final Object img : attributes.textures) {
-				if (img instanceof GamaImageFile) {
-					renderer.getSharedTextureCache().initializeStaticTexture(renderer.getSurface().getScope(),
-							(GamaImageFile) img);
-				}
-			}
-		}
-		currentLayer.addGeometry(geometry, attributes);
+		configure(currentLayer.addGeometry(geometry, attributes));
 	}
 
 	public void addField(final double[] fieldValues, final FieldDrawingAttributes attributes) {
 		if (cannotAdd()) { return; }
-		if (attributes.textures != null && !attributes.textures.isEmpty()) {
-			for (final Object img : attributes.textures) {
-				if (img instanceof GamaImageFile) {
-					renderer.getSharedTextureCache().initializeStaticTexture(renderer.getSurface().getScope(),
-							(GamaImageFile) img);
-				}
-			}
-		}
-		currentLayer.addField(fieldValues, attributes);
+		configure(currentLayer.addField(fieldValues, attributes));
 	}
 
 	public void dispose() {
@@ -236,25 +212,15 @@ public class ModelScene {
 		currentLayer = null;
 	}
 
-	public void beginDrawingLayers() {}
+	public void beginDrawingLayers() {
+		visualZIncrement = 0;
+	}
 
 	public void endDrawingLayers() {
+		computeVisualZIncrement();
 		if (!SceneReceiver.getInstance().canReceive())
 			return;
 		SceneReceiver.getInstance().receive(this.toSimpleScene());
-	}
-
-	private SimpleScene toSimpleScene() {
-		final List<SimpleLayer> simpleLayers = new ArrayList<>();
-		for (final LayerObject layer : this.layers.values()) {
-			simpleLayers.add(layer.toSimpleLayer());
-		}
-		final int[] rgbBackgroundColor = new int[3];
-		rgbBackgroundColor[0] = renderer.data.getBackgroundColor().getRed();
-		rgbBackgroundColor[1] = renderer.data.getBackgroundColor().getGreen();
-		rgbBackgroundColor[2] = renderer.data.getBackgroundColor().getBlue();
-		return new SimpleScene(simpleLayers, this.renderer.data.getDiffuseLights(), rgbBackgroundColor,
-				this.renderer.data.getEnvWidth(), this.renderer.data.getEnvHeight(), this.renderer.hashCode());
 	}
 
 	public boolean rendered() {
@@ -282,7 +248,8 @@ public class ModelScene {
 			currentLayer = new LayerObject(renderer, layer);
 			layers.put(key, currentLayer);
 		}
-		currentLayer.setOffset(offset.plus(new GamaPoint(0, 0, id * 0.1f)));
+		// offset.z = offset.z + id * 0.01f;
+		currentLayer.setOffset(offset);
 		currentLayer.setScale(scale);
 		currentLayer.setAlpha(alpha);
 	}
@@ -314,15 +281,6 @@ public class ModelScene {
 		}
 	}
 
-	/**
-	 * @param gl
-	 */
-	public void preload(final GL2 gl) {
-		for (final Map.Entry<String, LayerObject> entry : layers.entrySet()) {
-			entry.getValue().preload(gl);
-		}
-	}
-
 	public void startDrawRotationHelper(final GamaPoint pivotPoint, final double size) {
 		final AxesLayerObject worldLayer = (AxesLayerObject) layers.get(AXES_KEY);
 		if (worldLayer != null) {
@@ -340,6 +298,19 @@ public class ModelScene {
 			worldLayer.setScale(null);
 		}
 
+	}
+
+	private SimpleScene toSimpleScene() {
+		final List<SimpleLayer> simpleLayers = new ArrayList<>();
+		for (final LayerObject layer : this.layers.values()) {
+			simpleLayers.add(layer.toSimpleLayer());
+		}
+		final int[] rgbBackgroundColor = new int[3];
+		rgbBackgroundColor[0] = renderer.data.getBackgroundColor().getRed();
+		rgbBackgroundColor[1] = renderer.data.getBackgroundColor().getGreen();
+		rgbBackgroundColor[2] = renderer.data.getBackgroundColor().getBlue();
+		return new SimpleScene(simpleLayers, this.renderer.data.getDiffuseLights(), rgbBackgroundColor,
+				this.renderer.data.getEnvWidth(), this.renderer.data.getEnvHeight(), this.renderer.hashCode());
 	}
 
 }

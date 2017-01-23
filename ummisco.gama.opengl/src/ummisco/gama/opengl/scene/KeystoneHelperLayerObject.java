@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'KeystoneHelperLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'KeystoneHelperLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,6 +13,7 @@ import java.util.ArrayList;
 
 import com.jogamp.opengl.GL2;
 
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
@@ -28,12 +28,16 @@ public class KeystoneHelperLayerObject extends LayerObject {
 	public KeystoneHelperLayerObject(final Abstract3DRenderer renderer) {
 		super(renderer, null);
 		constantRedrawnLayer = true;
-		isOverlay = true;
+		overlay = true;
 	}
 
 	@Override
-	public void clear(final GL2 gl) {
+	public boolean isLightInteraction() {
+		return false;
 	}
+
+	@Override
+	public void clear(final GL2 gl) {}
 
 	@Override
 	public void draw(final GL2 gl) {
@@ -59,8 +63,8 @@ public class KeystoneHelperLayerObject extends LayerObject {
 						? new GamaColor(100, 0, 0, 255) : new GamaColor(0, 100, 0, 255);
 				final GamaColor insideCircleColor = cornerId == renderer.getCornerSelected()
 						? new GamaColor(255, 50, 50, 255) : new GamaColor(50, 255, 50, 255);
-				final GamaPoint circleLocation = new GamaPoint(keystonePositions[cornerId][0],
-						keystonePositions[cornerId][1]);
+				final GamaPoint circleLocation =
+						new GamaPoint(keystonePositions[cornerId][0], keystonePositions[cornerId][1]);
 				// build the circle and the border of the circle
 				final GeometryObject outsideCircle = createCircleObject(0.05, circleLocation, outsideCircleColor);
 				newElem.add(outsideCircle);
@@ -68,31 +72,31 @@ public class KeystoneHelperLayerObject extends LayerObject {
 				newElem.add(insideCircle);
 
 				// build background for label
-				final GamaPoint backgroundLocation = new GamaPoint(
-						((keystonePositions[cornerId][0] * 2 - 1) * 0.82 + 1) / 2f,
-						((keystonePositions[cornerId][1] * 2 - 1) * 0.82 + 1) / 2f - 0.01);
-				final GeometryObject bckgndObj = createRectangleObject(0.2, 0.05, backgroundLocation,
-						new GamaColor(255, 255, 255, 255));
+				final GamaPoint backgroundLocation =
+						new GamaPoint(((keystonePositions[cornerId][0] * 2 - 1) * 0.82 + 1) / 2f,
+								((keystonePositions[cornerId][1] * 2 - 1) * 0.82 + 1) / 2f - 0.01);
+				final GeometryObject bckgndObj =
+						createRectangleObject(0.2, 0.05, backgroundLocation, new GamaColor(255, 255, 255, 255));
 				newElem.add(bckgndObj);
 				// build label
 				final String content = "(" + floor4Digit(renderer.getKeystoneCoordinates()[cornerId][0]) + ","
 						+ floor4Digit(renderer.getKeystoneCoordinates()[cornerId][1]) + ")";
-				final GamaPoint testLocation = new GamaPoint(
-						((keystonePositions[cornerId][0] * 2 - 1) * 0.82 + 1) / 2f - 0.08,
-						-((keystonePositions[cornerId][1] * 2 - 1) * 0.82 + 1) / 2f);
-				final StringObject strObj = createStringObject(content, 0.0015, testLocation,
-						new GamaColor(0, 0, 0, 1));
+				final GamaPoint testLocation =
+						new GamaPoint(((keystonePositions[cornerId][0] * 2 - 1) * 0.82 + 1) / 2f - 0.08,
+								-((keystonePositions[cornerId][1] * 2 - 1) * 0.82 + 1) / 2f);
+				final StringObject strObj =
+						createStringObject(content, 0.0015, testLocation, new GamaColor(0, 0, 0, 1));
 				newElem.add(strObj);
 			}
 			// add the "back to default" button
 
 			// build text border
-			final GeometryObject borderObj = createRectangleObject(0.24, 0.14, new GamaPoint(0.5, 0.5),
-					new GamaColor(0, 100, 0, 255));
+			final GeometryObject borderObj =
+					createRectangleObject(0.24, 0.14, new GamaPoint(0.5, 0.5), new GamaColor(0, 100, 0, 255));
 			newElem.add(borderObj);
 			// build text background
-			final GeometryObject bckgrdObj = createRectangleObject(0.2, 0.1, new GamaPoint(0.5, 0.5),
-					new GamaColor(50, 255, 50, 255));
+			final GeometryObject bckgrdObj =
+					createRectangleObject(0.2, 0.1, new GamaPoint(0.5, 0.5), new GamaColor(50, 255, 50, 255));
 			newElem.add(bckgrdObj);
 
 			// build label
@@ -106,31 +110,27 @@ public class KeystoneHelperLayerObject extends LayerObject {
 
 	private StringObject createStringObject(final String content, final double size, final GamaPoint location,
 			final GamaColor color) {
-		final GamaFont font = new GamaFont("Helvetica", 0, 18); // 0 for plain,
-																// 18 for text
-																// size.
-		final TextDrawingAttributes textDrawingAttr = new TextDrawingAttributes(new GamaPoint(size, size, size), null,
-				location, color, font, true);
-		final StringObject strObj = new StringObject(content, textDrawingAttr, this);
-		strObj.enableOverlay(true);
+		// 0 for plain, 18 for text size
+		final GamaFont font = new GamaFont("Helvetica", 0, 18);
+		final TextDrawingAttributes textDrawingAttr =
+				new TextDrawingAttributes(new GamaPoint(size, size, size), null, location, color, font, true);
+		final StringObject strObj = new StringObject(content, textDrawingAttr);
 		return strObj;
 	}
 
 	private GeometryObject createCircleObject(final double size, final GamaPoint location, final GamaColor color) {
 		final IShape g = GamaGeometryType.buildCircle(size, location);
-		final ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, color, null);
-		final GeometryObject circleGeom = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
-		circleGeom.enableOverlay(true);
+		final ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, (IAgent) null, color, null);
+		final GeometryObject circleGeom = new GeometryObject(g.getInnerGeometry(), drawingAttr);
 		return circleGeom;
 	}
 
 	private GeometryObject createRectangleObject(final double wSize, final double hSize, final GamaPoint location,
 			final GamaColor color) {
 		final IShape g = GamaGeometryType.buildRectangle(wSize, hSize, location);
-		final ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, color, null);
+		final ShapeDrawingAttributes drawingAttr = new ShapeDrawingAttributes(g, (IAgent) null, color, null);
 		// for the border color
-		final GeometryObject rectGeom = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
-		rectGeom.enableOverlay(true);
+		final GeometryObject rectGeom = new GeometryObject(g.getInnerGeometry(), drawingAttr);
 		return rectGeom;
 	}
 

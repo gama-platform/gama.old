@@ -1,5 +1,7 @@
 package msi.gama.common.util;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -16,12 +18,24 @@ public class GamaGeometryFactory extends GeometryFactory {
 		super(COORDINATES_FACTORY);
 	}
 
+	public static boolean isRing(final Coordinate[] pts) {
+		if (pts.length < 4)
+			return false;
+		if (!pts[0].equals(pts[pts.length - 1]))
+			return false;
+		return true;
+	}
+
 	/**
 	 * Linear rings are created using a simple coordinate array, without enforcing any clockwiseness condition.
 	 */
 	@Override
 	public LinearRing createLinearRing(final Coordinate[] coordinates) {
-		return createLinearRing(JTS_COORDINATES_FACTORY.create(coordinates));
+		Coordinate[] coords = coordinates;
+		if (!isRing(coords)) {
+			coords = (Coordinate[]) ArrayUtils.add(coords, coords[0]);
+		}
+		return createLinearRing(JTS_COORDINATES_FACTORY.create(coords));
 	}
 
 	/**
@@ -39,6 +53,8 @@ public class GamaGeometryFactory extends GeometryFactory {
 	}
 
 	private LinearRing turnClockwise(final LinearRing ring) {
+		if (ring == null || ring.isEmpty())
+			return ring;
 		return createLinearRing(COORDINATES_FACTORY.create(ring.getCoordinateSequence()));
 	}
 

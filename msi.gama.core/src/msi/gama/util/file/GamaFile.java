@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -43,7 +42,7 @@ import one.util.streamex.StreamEx;
  * @todo Description
  *
  */
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAdd> & IAddressableContainer<K, V, K, V>, ValueToAdd, K, V>
 		implements IGamaFile<C, ValueToAdd, K, V> {
 
@@ -69,18 +68,19 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		}
 	}
 
+	@Override
+	public String getOriginalPath() {
+		return originalPath;
+	}
+
 	/**
-	 * Whether or not passing an URL will automatically make GAMA cache its
-	 * contents in a temp file. Should be redefined by GamaFiles that can
-	 * retrieve from URL directly (like, e.g., GeoTools'datastore-backed files).
-	 * If false, the url will be initialized, but the path will be set to the
-	 * empty string and no attempt will be made to download data later. In that
-	 * case, it is the responsibility of subclasses to use the url -- and NOT
-	 * the path -- to download the contents of the file later (for example in
-	 * fillBuffer()). The default is true.
+	 * Whether or not passing an URL will automatically make GAMA cache its contents in a temp file. Should be redefined
+	 * by GamaFiles that can retrieve from URL directly (like, e.g., GeoTools'datastore-backed files). If false, the url
+	 * will be initialized, but the path will be set to the empty string and no attempt will be made to download data
+	 * later. In that case, it is the responsibility of subclasses to use the url -- and NOT the path -- to download the
+	 * contents of the file later (for example in fillBuffer()). The default is true.
 	 * 
-	 * @return true or false depending on whether the contents should be cached
-	 *         in a temp file
+	 * @return true or false depending on whether the contents should be cached in a temp file
 	 */
 	protected boolean automaticallyFetchFromURL() {
 		return true;
@@ -94,9 +94,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 		} catch (final MalformedURLException e1) {
 			throw GamaRuntimeException.error("Malformed URL " + urlPath, scope);
 		}
-		if (!automaticallyFetchFromURL()) {
-			return null;
-		}
+		if (!automaticallyFetchFromURL()) { return null; }
 		final String status = "Downloading file " + urlPath.substring(urlPath.lastIndexOf('/'));
 		try {
 			scope.getGui().getStatus().beginSubStatus(status);
@@ -137,16 +135,13 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	protected void checkValidity(final IScope scope) throws GamaRuntimeException {
-		if (getFile(scope).exists() && getFile(scope).isDirectory()) {
-			throw GamaRuntimeException
-					.error(getFile(scope).getAbsolutePath() + " is a folder. Files can not overwrite folders", scope);
-		}
+		if (getFile(scope).exists() && getFile(scope).isDirectory()) { throw GamaRuntimeException
+				.error(getFile(scope).getAbsolutePath() + " is a folder. Files can not overwrite folders", scope); }
 	}
 
 	@Override
 	public void setWritable(final IScope scope, final boolean w) {
 		writable = w;
-		getFile(scope).setWritable(w);
 	}
 
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
@@ -245,8 +240,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object,
-	 * boolean)
+	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object, boolean)
 	 */
 	@Override
 	public boolean checkBounds(final IScope scope, final Object index, final boolean forAdding) {
@@ -307,9 +301,7 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	public String getExtension(final IScope scope) {
 		final String path = getPath(scope).toLowerCase();
 		final int mid = path.lastIndexOf(".");
-		if (mid == -1) {
-			return "";
-		}
+		if (mid == -1) { return ""; }
 		return path.substring(mid + 1, path.length());
 	}
 
@@ -333,9 +325,8 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 
 	@Override
 	public C getContents(final IScope scope) throws GamaRuntimeException {
-		if (buffer == null && !exists(scope)) {
-			throw GamaRuntimeException.error("File " + getFile(scope).getAbsolutePath() + " does not exist", scope);
-		}
+		if (buffer == null && !exists(scope)) { throw GamaRuntimeException
+				.error("File " + getFile(scope).getAbsolutePath() + " does not exist", scope); }
 		fillBuffer(scope);
 		return getBuffer();
 	}
@@ -466,13 +457,10 @@ public abstract class GamaFile<C extends IModifiableContainer<K, V, K, ValueToAd
 	}
 
 	/**
-	 * This method is being called from the save statement (see
-	 * SaveStatement.java). The scope and all the facets declared in the save
-	 * statement are passed as parameters, which allows the programmer to
-	 * retrieve them (for instance, to get the crs for shape files, or the
-	 * attributes to save from a list of agents, etc.). This method cannot be
-	 * redefined. Instead, programmers should redefine flushBuffer(), which
-	 * takes the same arguments
+	 * This method is being called from the save statement (see SaveStatement.java). The scope and all the facets
+	 * declared in the save statement are passed as parameters, which allows the programmer to retrieve them (for
+	 * instance, to get the crs for shape files, or the attributes to save from a list of agents, etc.). This method
+	 * cannot be redefined. Instead, programmers should redefine flushBuffer(), which takes the same arguments
 	 */
 
 	@Override

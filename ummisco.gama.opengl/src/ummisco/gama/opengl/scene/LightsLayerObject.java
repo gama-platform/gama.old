@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'LightsLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'LightsLayerObject.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -28,7 +27,11 @@ public class LightsLayerObject extends LayerObject {
 	}
 
 	@Override
-	public void clear(final GL2 gl) {
+	public void clear(final GL2 gl) {}
+
+	@Override
+	public boolean isLightInteraction() {
+		return false;
 	}
 
 	@Override
@@ -49,20 +52,15 @@ public class LightsLayerObject extends LayerObject {
 
 				if (light.type == LightPropertiesStructure.TYPE.POINT) {
 					final IShape sphereShape = GamaGeometryType.buildSphere(size, pos);
-					final GeometryObject pointLight = new GeometryObject(sphereShape, light.color, IShape.Type.SPHERE,
-							this);
-					pointLight.disableLightInteraction();
+					final GeometryObject pointLight =
+							new GeometryObject(sphereShape, light.color, IShape.Type.SPHERE, false);
 					newElem.add(pointLight);
 				} else if (light.type == LightPropertiesStructure.TYPE.SPOT) {
 					// TODO
 					final double baseSize = Math.sin(Math.toRadians(light.spotAngle)) * size;
 					final IShape coneShape = GamaGeometryType.buildCone3D(baseSize, size, pos);
-					final GeometryObject spotLight = new GeometryObject(coneShape, light.color, IShape.Type.CONE, this);
-					// spotLight.getAttributes().rotation = new
-					// GamaPair(Cast.asFloat(null, 0), Cast.asPoint(null,
-					// light.direction),
-					// Types.FLOAT, Types.POINT);
-					spotLight.disableLightInteraction();
+					final GeometryObject spotLight =
+							new GeometryObject(coneShape, light.color, IShape.Type.CONE, false);
 					newElem.add(spotLight);
 				} else {
 					// TODO

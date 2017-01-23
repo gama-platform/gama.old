@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'CameraArcBall.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'CameraArcBall.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -21,7 +20,6 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayData;
 import msi.gaml.operators.Maths;
-import msi.gaml.operators.fastmaths.FastMath;
 import ummisco.gama.opengl.Abstract3DRenderer;
 import ummisco.gama.ui.bindings.GamaKeyBindings;
 
@@ -48,30 +46,32 @@ public class CameraArcBall extends AbstractCamera {
 		}
 		final double factorT = theta * Maths.toRad;
 		final double factorP = phi * Maths.toRad;
-		final double cosT = FastMath.cos(factorT);
-		final double sinT = FastMath.sin(factorT);
-		final double cosP = FastMath.cos(factorP);
-		final double sinP = FastMath.sin(factorP);
+		final double cosT = Math.cos(factorT);
+		final double sinT = Math.sin(factorT);
+		final double cosP = Math.cos(factorP);
+		final double sinP = Math.sin(factorP);
 		position.setLocation(radius * cosT * sinP + target.x, radius * sinT * sinP + target.y,
 				radius * cosP + target.z);
 	}
 
 	@Override
 	public void updateSphericalCoordinatesFromLocations() {
-		final double x = position.x - target.x;
-		final double y = position.y - target.y;
-		final double z = position.z - target.z;
 
-		radius = FastMath.sqrt(x * x + y * y + z * z);
-		theta = Maths.toDeg * FastMath.atan2(y, x);
-		phi = Maths.toDeg * FastMath.acos(z / radius);
+		final GamaPoint p = position.minus(target);
+		radius = p.norm();
+
+		theta = Maths.toDeg * Math.atan2(p.y, p.x);
+		// See issue on camera_pos
+		if (theta == 0)
+			theta = -90;
+		phi = Maths.toDeg * Math.acos(p.z / radius);
 	}
 
 	private void translateCameraFromScreenPlan(final double x_translation_in_screen,
 			final double y_translation_in_screen) {
 
-		final double theta_vect_x = -FastMath.sin(theta * Maths.toRad);
-		final double theta_vect_y = FastMath.cos(theta * Maths.toRad);
+		final double theta_vect_x = -Math.sin(theta * Maths.toRad);
+		final double theta_vect_y = Math.cos(theta * Maths.toRad);
 		final double theta_vect_z = 0;
 		final double theta_vect_ratio = x_translation_in_screen
 				/ (theta_vect_x * theta_vect_x + theta_vect_y * theta_vect_y + theta_vect_z * theta_vect_z);
@@ -79,20 +79,14 @@ public class CameraArcBall extends AbstractCamera {
 		final double theta_vect_y_norm = theta_vect_y * theta_vect_ratio;
 		final double theta_vect_z_norm = theta_vect_z * theta_vect_ratio;
 
-		upPosition(
-				-FastMath.cos(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
-						* FastMath.cos(upVectorAngle * Maths.toRad)
-						- FastMath.sin(theta * Maths.toRad) * FastMath.sin(upVectorAngle * Maths.toRad),
-				-FastMath.sin(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad)
-						* FastMath.cos(upVectorAngle * Maths.toRad
-								+ FastMath.cos(theta * Maths.toRad) * FastMath.sin(upVectorAngle * Maths.toRad)),
-				FastMath.sin(phi * Maths.toRad) * FastMath.cos(upVectorAngle * Maths.toRad));
+		upPosition(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
+				-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad), Math.sin(phi * Maths.toRad));
 
-		final double phi_vect_x = FastMath.cos(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad);
-		final double phi_vect_y = FastMath.sin(theta * Maths.toRad) * FastMath.cos(phi * Maths.toRad);
-		final double phi_vect_z = -FastMath.sin(phi * Maths.toRad);
-		final double phi_vect_ratio = y_translation_in_screen
-				/ (phi_vect_x * phi_vect_x + phi_vect_y * phi_vect_y + phi_vect_z * phi_vect_z);
+		final double phi_vect_x = Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad);
+		final double phi_vect_y = Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad);
+		final double phi_vect_z = -Math.sin(phi * Maths.toRad);
+		final double phi_vect_ratio =
+				y_translation_in_screen / (phi_vect_x * phi_vect_x + phi_vect_y * phi_vect_y + phi_vect_z * phi_vect_z);
 		final double phi_vect_x_norm = phi_vect_x * phi_vect_ratio;
 		final double phi_vect_y_norm = phi_vect_y * phi_vect_ratio;
 		final double phi_vect_z_norm = phi_vect_z * phi_vect_ratio;
@@ -208,9 +202,11 @@ public class CameraArcBall extends AbstractCamera {
 		target.setLocation(envWidth / 2, -envHeight / 2, 0);
 		phi = threeD ? 135.0 : 0.0;
 		theta = -90.00;
-		upVectorAngle = 0.0;
 		flipped = false;
 		updateCartesianCoordinatesFromAngles();
+		initialized = false;
+		update();
+
 	}
 
 	@Override
@@ -241,12 +237,10 @@ public class CameraArcBall extends AbstractCamera {
 					updateCartesianCoordinatesFromAngles();
 				} else {
 					if (flipped)
-						translateCameraFromScreenPlan(0.0, getKeyboardSensivity()
-								* getSensivity() /** radius/1000.0 */
+						translateCameraFromScreenPlan(0.0, getKeyboardSensivity() * getSensivity() /** radius/1000.0 */
 						);
 					else
-						translateCameraFromScreenPlan(0.0, -getKeyboardSensivity()
-								* getSensivity() /** radius/1000.0 */
+						translateCameraFromScreenPlan(0.0, -getKeyboardSensivity() * getSensivity() /** radius/1000.0 */
 						);
 
 				}
@@ -273,12 +267,10 @@ public class CameraArcBall extends AbstractCamera {
 					updateCartesianCoordinatesFromAngles();
 				} else {
 					if (flipped)
-						translateCameraFromScreenPlan(0.0, -getKeyboardSensivity()
-								* getSensivity() /** radius/1000.0 */
+						translateCameraFromScreenPlan(0.0, -getKeyboardSensivity() * getSensivity() /** radius/1000.0 */
 						);
 					else
-						translateCameraFromScreenPlan(0.0, getKeyboardSensivity()
-								* getSensivity() /** radius/1000.0 */
+						translateCameraFromScreenPlan(0.0, getKeyboardSensivity() * getSensivity() /** radius/1000.0 */
 						);
 				}
 			}
@@ -291,14 +283,10 @@ public class CameraArcBall extends AbstractCamera {
 					updateCartesianCoordinatesFromAngles();
 				} else {
 					if (flipped)
-						translateCameraFromScreenPlan(
-								getKeyboardSensivity()
-										* getSensivity() /** radius/1000.0 */
+						translateCameraFromScreenPlan(getKeyboardSensivity() * getSensivity() /** radius/1000.0 */
 								, 0.0);
 					else
-						translateCameraFromScreenPlan(
-								-getKeyboardSensivity()
-										* getSensivity() /** radius/1000.0 */
+						translateCameraFromScreenPlan(-getKeyboardSensivity() * getSensivity() /** radius/1000.0 */
 								, 0.0);
 				}
 			}
@@ -311,14 +299,10 @@ public class CameraArcBall extends AbstractCamera {
 					updateCartesianCoordinatesFromAngles();
 				} else {
 					if (flipped)
-						translateCameraFromScreenPlan(
-								-getKeyboardSensivity()
-										* getSensivity() /** radius/1000.0 */
+						translateCameraFromScreenPlan(-getKeyboardSensivity() * getSensivity() /** radius/1000.0 */
 								, 0.0);
 					else
-						translateCameraFromScreenPlan(
-								getKeyboardSensivity()
-										* getSensivity() /** radius/1000.0 */
+						translateCameraFromScreenPlan(getKeyboardSensivity() * getSensivity() /** radius/1000.0 */
 								, 0.0);
 				}
 			}
@@ -379,9 +363,7 @@ public class CameraArcBall extends AbstractCamera {
 		}
 
 		super.internalMouseMove(e);
-		if ((e.stateMask & SWT.BUTTON_MASK) == 0) {
-			return;
-		}
+		if ((e.stateMask & SWT.BUTTON_MASK) == 0) { return; }
 		final Point newPoint = new Point(e.x, e.y);
 		if (GamaKeyBindings.ctrl(e)) {
 			final int horizMovement = e.x - lastMousePressedPosition.x;
@@ -391,10 +373,8 @@ public class CameraArcBall extends AbstractCamera {
 			// vertMovement = -vertMovement;
 			// }
 
-			final double horizMovement_real = horizMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-					- vertMovement * FastMath.sin(upVectorAngle * Maths.toRad);
-			final double vertMovement_real = vertMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-					+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
+			final double horizMovement_real = horizMovement;
+			final double vertMovement_real = vertMovement;
 
 			lastMousePressedPosition = newPoint;
 			theta = theta - horizMovement_real * getSensivity();
@@ -461,10 +441,8 @@ public class CameraArcBall extends AbstractCamera {
 				vertMovement = -vertMovement;
 			}
 
-			final double horizMovement_real = horizMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-					- vertMovement * FastMath.sin(upVectorAngle * Maths.toRad);
-			final double vertMovement_real = vertMovement * FastMath.cos(upVectorAngle * Maths.toRad)
-					+ horizMovement * FastMath.sin(upVectorAngle * Maths.toRad);
+			final double horizMovement_real = horizMovement;
+			final double vertMovement_real = vertMovement;
 
 			translateCameraFromScreenPlan(horizMovement_real, vertMovement_real);
 
@@ -487,55 +465,6 @@ public class CameraArcBall extends AbstractCamera {
 				getRenderer().stopDrawRotationHelper();
 			}
 		}
-	}
-
-	@Override
-	public double getPitch() {
-		// compute the angle between the vector (0,0,1) and the vector (x,y,z),
-		// where (x,y,z) is the orthogonal projection of the vector from the on
-		// the plan (y=0).y and z are the normalized components of the vector
-		// from the camera
-		// position to the target position.
-		final double x = target.x - position.x;
-		double y = target.y - position.y;
-		double z = target.z - position.z;
-		final double sum = Math.abs(x) + 0 + Math.abs(z);
-		y = Math.abs(y / sum); // normalize
-		z = Math.abs(z / sum); // normalize
-		// the angle between the two vectors is computed like this : cos(angle)
-		// = u dot v.
-		final double cosAngle = z;
-		final double angle = Math.acos(cosAngle);
-		// final double angleInDeg = Math.toDegrees(angle);
-		return angle;
-		// return Math.toRadians(-phi);
-	}
-
-	@Override
-	public double getYaw() {
-		// compute the angle between the vector (0,0,1) and the vector (0,y,z),
-		// where y and z are the normalized components of the vector from the
-		// camera
-		// position to the target position.
-		// final double x = target.x - position.x;
-		double y = target.y - position.y;
-		double z = target.z - position.z;
-		final double sum = 0 + Math.abs(y) + Math.abs(z);
-		y = Math.abs(y / sum); // normalize
-		z = Math.abs(z / sum); // normalize
-		// the angle between the two vectors is computed like this : cos(angle)
-		// = u dot v.
-		final double cosAngle = z;
-		final double angle = Math.acos(cosAngle);
-		// double angleInDeg = Math.toDegrees(angle);
-		return angle;
-		// return Math.toRadians(-theta-90);
-	}
-
-	@Override
-	public double getRoll() {
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 }// End of Class CameraArcBall

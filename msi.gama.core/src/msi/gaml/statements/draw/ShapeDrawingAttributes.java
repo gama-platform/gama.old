@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package msi.gaml.statements.draw;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.metamodel.agent.IAgent;
@@ -22,8 +21,6 @@ import msi.gama.util.GamaPair;
 @SuppressWarnings ({ "rawtypes", "unchecked" })
 public class ShapeDrawingAttributes extends FileDrawingAttributes {
 
-	public boolean empty;
-	public final List textures;
 	public GamaMaterial material;
 	public IShape.Type type;
 
@@ -33,11 +30,16 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 			final IShape.Type type, final Double lineWidth) {
 		super(size, rotation, location, color, border, agent, lineWidth);
 		setDepthIfAbsent(depth);
-		this.empty = empty == null ? false : empty.booleanValue();
-		setBorder(border == null && this.empty ? getColor() : border);
-		this.textures = textures == null ? null : new ArrayList(textures);
+		setEmpty(empty);
+		setTextures(textures);
 		this.material = material == null ? null : material;
 		this.type = type;
+		setColors(colors);
+	}
+
+	private void setTextures(final List textures) {
+		colorProperties = colorProperties.withTextures(textures);
+
 	}
 
 	public ShapeDrawingAttributes(final GamaPoint location) {
@@ -45,7 +47,7 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	}
 
 	public ShapeDrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border) {
-		this(location, color, border, null);
+		this(location, color, border, (IShape.Type) null);
 	}
 
 	public ShapeDrawingAttributes(final GamaPoint location, final GamaColor color, final GamaColor border,
@@ -58,35 +60,20 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	 * @param c
 	 * @param borderColor
 	 */
-	public ShapeDrawingAttributes(final IShape shape, final GamaColor color, final GamaColor border) {
-		this(null, null, null, (GamaPoint) shape.getLocation(), color == null, color, null, border, null, null,
-				shape.getAgent(), shape.getGeometricalType(), null);
+	public ShapeDrawingAttributes(final IShape shape, final IAgent agent, final GamaColor color,
+			final GamaColor border) {
+		this(shape, agent, color, border, null);
 	}
 
-	public ShapeDrawingAttributes(final IShape shape, final GamaColor color, final GamaColor border,
-			final double lineWidth) {
-		this(null, null, null, (GamaPoint) shape.getLocation(), color == null, color, null, border, null, null,
-				shape.getAgent(), shape.getGeometricalType(), lineWidth);
+	public ShapeDrawingAttributes(final IShape shape, final IAgent agent, final GamaColor color, final GamaColor border,
+			final Double lineWidth) {
+		this(null, null, null, (GamaPoint) shape.getLocation(), color == null, color, null, border, null, null, agent,
+				shape.getGeometricalType(), lineWidth);
 	}
 
 	public void setDepthIfAbsent(final Double d) {
 		if (getDepth() == null)
 			setDepth(d);
-	}
-
-	@Override
-	public List getTextures() {
-		return textures;
-	}
-
-	/**
-	 * Method isEmpty()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#isEmpty()
-	 */
-	@Override
-	public boolean isEmpty() {
-		return empty;
 	}
 
 	/**
@@ -97,11 +84,6 @@ public class ShapeDrawingAttributes extends FileDrawingAttributes {
 	@Override
 	public GamaMaterial getMaterial() {
 		return material;
-	}
-
-	@Override
-	public void setEmpty(final boolean b) {
-		empty = b;
 	}
 
 }

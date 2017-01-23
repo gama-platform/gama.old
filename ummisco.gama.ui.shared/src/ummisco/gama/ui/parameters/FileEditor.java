@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FileEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FileEditor.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -20,6 +19,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.operators.Files;
 import msi.gaml.types.IType;
@@ -28,7 +28,7 @@ import ummisco.gama.ui.controls.FlatButton;
 import ummisco.gama.ui.interfaces.EditorListener;
 import ummisco.gama.ui.resources.IGamaColors;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class FileEditor extends AbstractEditor<IGamaFile> {
 
 	private FlatButton textBox;
@@ -82,8 +82,15 @@ public class FileEditor extends AbstractEditor<IGamaFile> {
 			textBox.setText("No file");
 		} else {
 			final IGamaFile file = currentValue;
-			textBox.setToolTipText(file.getPath(getScope()));
-			textBox.setText(file.getPath(getScope()));
+			String path;
+			try {
+				path = file.getPath(getScope());
+			} catch (final GamaRuntimeException e) {
+				path = file.getOriginalPath();
+			}
+
+			textBox.setToolTipText(path);
+			textBox.setText(path);
 		}
 		internalModification = false;
 	}

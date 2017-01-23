@@ -51,20 +51,17 @@ public class RotationHelperLayerObject extends LayerObject {
 			// interior sphere
 			final IShape interiorSphereShape = GamaGeometryType.buildSphere(5.0 * (distance / 500), pos);
 			final GeometryObject interiorSphere = new GeometryObject(interiorSphereShape,
-					new GamaColor(0.5, 0.5, 0.5, 1.0), IShape.Type.SPHERE, this);
-			interiorSphere.disableLightInteraction();
+					new GamaColor(0.5, 0.5, 0.5, 1.0), IShape.Type.SPHERE, false);
 			newElem.add(interiorSphere);
 			// exterior sphere
 			final IShape exteriorSphereShape = GamaGeometryType.buildSphere(49.0 * (distance / 500), pos);
 			final GeometryObject exteriorSphere = new GeometryObject(exteriorSphereShape,
-					new GamaColor(0.5, 0.5, 0.5, 0.1), IShape.Type.SPHERE, this);
-			exteriorSphere.disableLightInteraction();
+					new GamaColor(0.5, 0.5, 0.5, 0.1), IShape.Type.SPHERE, false);
 			newElem.add(exteriorSphere);
 			// wireframe sphere
 			final IShape wireframeSphereShape = GamaGeometryType.buildSphere(50.0 * (distance / 500), pos);
 			final GeometryObject wireframeSphere = new GeometryObject(wireframeSphereShape,
-					new GamaColor(0.5, 0.5, 0.5, 1.0), IShape.Type.SPHERE, this);
-			wireframeSphere.getAttributes().setEmpty(true);
+					new GamaColor(0.5, 0.5, 0.5, 1.0), IShape.Type.SPHERE, true);
 			newElem.add(wireframeSphere);
 
 			objects.add(newElem);

@@ -32,13 +32,11 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
-import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.projection.ProjectionFactory;
 import msi.gama.precompiler.GamlAnnotations.file;
@@ -69,8 +67,6 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaShapeFile extends GamaGisFile {
 
-	static CoordinateFilter ZERO_Z = coord -> ((GamaPoint) coord).z = 0;
-
 	public static class ShapeInfo extends GamaFileMetaData {
 
 		final int itemNumber;
@@ -86,7 +82,7 @@ public class GamaShapeFile extends GamaGisFile {
 			CoordinateReferenceSystem crs1 = null;
 			int number = 0;
 			try {
-				store = new ShapefileDataStore(url);
+				store = getDataStore(url);
 				final SimpleFeatureSource source = store.getFeatureSource();
 				final SimpleFeatureCollection features = source.getFeatures();
 				try {
@@ -279,7 +275,7 @@ public class GamaShapeFile extends GamaGisFile {
 	protected CoordinateReferenceSystem getOwnCRS(final IScope scope) {
 		ShapefileDataStore store = null;
 		try {
-			store = new ShapefileDataStore(getFile(scope).toURI().toURL());
+			store = getDataStore(getFile(scope).toURI().toURL());
 			return store.getFeatureSource().getInfo().getCRS();
 		} catch (final IOException e) {
 			return null;
@@ -290,6 +286,14 @@ public class GamaShapeFile extends GamaGisFile {
 		}
 	}
 
+	static ShapefileDataStore getDataStore(final URL url) {
+		final ShapefileDataStore store = new ShapefileDataStore(url);
+		store.setGeometryFactory(GeometryUtils.GEOMETRY_FACTORY);
+		store.setBufferCachingEnabled(true);
+		store.setMemoryMapped(true);
+		return store;
+	}
+
 	protected void readShapes(final IScope scope) {
 		scope.getGui().getStatus().beginSubStatus("Reading file" + getName(scope));
 		ShapefileDataStore store = null;
@@ -297,8 +301,7 @@ public class GamaShapeFile extends GamaGisFile {
 		final IList list = getBuffer();
 		int size = 0;
 		try {
-			store = new ShapefileDataStore(file.toURI().toURL());
-			store.setGeometryFactory(GeometryUtils.GEOMETRY_FACTORY);
+			store = getDataStore(file.toURI().toURL());
 			final ContentFeatureSource source = store.getFeatureSource();
 			final Envelope env = source.getBounds();
 			size = source.getCount(Query.ALL);
@@ -317,14 +320,12 @@ public class GamaShapeFile extends GamaGisFile {
 							g.apply(ZERO_Z);
 						}
 						list.add(new GamaGisGeometry(g, feature));
-					} else {
+					} else if (g == null) {
 						// See Issue 725
 						GAMA.reportError(scope,
 								GamaRuntimeException
-										.warning(
-												"GamaShapeFile.fillBuffer; geometry could not be added  as it is "
-														+ (g == null ? "nil: " : "empty: ") + feature.getIdentifier(),
-												scope),
+										.warning("GamaShapeFile.fillBuffer; geometry could not be added  as it is "
+												+ "nil: " + feature.getIdentifier(), scope),
 								false);
 					}
 				}
@@ -348,7 +349,7 @@ public class GamaShapeFile extends GamaGisFile {
 		if (gis == null) {
 			ShapefileDataStore store = null;
 			try {
-				store = new ShapefileDataStore(getFile(scope).toURI().toURL());
+				store = getDataStore(getFile(scope).toURI().toURL());
 				final Envelope env = store.getFeatureSource().getBounds();
 				computeProjection(scope, env);
 			} catch (final IOException e) {

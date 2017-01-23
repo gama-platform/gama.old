@@ -9,12 +9,15 @@
  **********************************************************************************************/
 package ummisco.gama.opengl.vaoGenerator;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import com.google.common.base.Objects;
 import com.vividsolutions.jts.geom.Coordinate;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
@@ -36,7 +39,7 @@ abstract class AbstractTransformer {
 	private static float SMOOTH_SHADING_ANGLE = 40f; // in degree
 	protected static int BUILT_IN_SHAPE_RESOLUTION = 32; // for sphere / cone / cylinder
 	private static GamaColor TRIANGULATE_COLOR = new GamaColor(1.0, 1.0, 0.0, 1.0);
-	private static GamaColor DEFAULT_COLOR = new GamaColor(1.0, 1.0, 0.0, 1.0);
+	private static GamaColor DEFAULT_COLOR = GamaPreferences.CORE_COLOR.getValue();
 
 	protected boolean geometryCorrupted = false;
 
@@ -54,7 +57,7 @@ abstract class AbstractTransformer {
 	protected float[] uvMapping;
 	protected float[] normals;
 	protected int[] textureIDs = null; // null for "no texture"
-	protected String[] texturePaths = null; // null for "no texture"
+	// protected String[] texturePaths = null; // null for "no texture"
 	protected int[][][] bufferedImageValue = null;
 	protected float[] coordsForBorder;
 	protected float[] idxForBorder;
@@ -77,31 +80,32 @@ abstract class AbstractTransformer {
 	protected Coordinate[] coordinates;
 	protected GamaMaterial material;
 
-	protected void genericInit(final AbstractObject object, final boolean isTriangulation) {
-		this.isOverlay = object.isOverlay();
+	protected void genericInit(final AbstractObject object, final boolean isOverlay, final boolean isTriangulation,
+			final double layerAlpha) {
+		this.isOverlay = isOverlay;
 		this.faces = new ArrayList<int[]>();
 		this.coords = new float[0];
 		this.coordsForBorder = new float[0];
 
-		this.depth = object.getAttributes().getDepth();
-		this.pickingId = object.pickingIndex;
-
-		if (object.getColor() != null)
-			this.color = new GamaColor(object.getColor(), object.getColor().getAlpha() / 255.0 * object.getAlpha());
+		this.depth = Objects.firstNonNull(object.getHeight(), 0.0);
+		this.pickingId = object.index;
+		final Color c = object.getColor();
+		if (c != null)
+			this.color = new GamaColor(c, c.getAlpha() / 255.0 * layerAlpha);
 		else
 			this.color = null;
-		this.borderColor = object.getAttributes().getBorder();
+		this.borderColor = object.getBorder();
 		this.isTriangulation = isTriangulation;
-		this.material = object.getAttributes().getMaterial();
+		this.material = object.getMaterial();
 		if (this.material == null)
 			this.material = GamaMaterialType.DEFAULT_MATERIAL;
 
-		this.translation = object.getAttributes().getLocation();
+		this.translation = object.getLocation();
 		if (translation == null)
 			translation = new GamaPoint(0, 0, 0); // ex : charts
-		this.rotation = object.getAttributes().getAngle() == null ? null
-				: new GamaPair<>(object.getRotationAngle(), object.getAttributes().getAxis(), Types.FLOAT, Types.POINT);
-		this.isWireframe = object.getAttributes().isEmpty();
+		this.rotation = object.getRotationAngle() == null ? null
+				: new GamaPair<>(object.getRotationAngle(), object.getRotationAxis(), Types.FLOAT, Types.POINT);
+		this.isWireframe = !object.isFilled();
 	}
 
 	public String getHashCode() {
@@ -513,7 +517,7 @@ abstract class AbstractTransformer {
 
 		// configure the drawing entity for the border
 		final DrawingEntity borderEntity =
-				createBorderEntity(coords, getIdxBufferForLines(), getColorArray(color, coords));
+				createBorderEntity(coords, getIdxBufferForLines(), getColorArray(borderColor, coords));
 
 		if (borderEntity != null)
 			result.add(borderEntity);
@@ -571,9 +575,10 @@ abstract class AbstractTransformer {
 				filledEntity.type = DrawingEntity.Type.FACE;
 				if (textureIDs != null) {
 					filledEntity.type = DrawingEntity.Type.TEXTURED;
-					if (texturePaths != null)
-						filledEntity.setTexturePath(texturePaths[0]);
-					else if (bufferedImageValue != null)
+					// if (texturePaths != null)
+					// filledEntity.setTexturePath(texturePaths[0]);
+					// else
+					if (bufferedImageValue != null)
 						filledEntity.setBufferedImageTextureValue(bufferedImageValue);
 					filledEntity.setTextureID(textureIDs[0]);
 					filledEntity.setUvMapping(uvMapping);
@@ -624,7 +629,7 @@ abstract class AbstractTransformer {
 				botTopEntity.type = DrawingEntity.Type.TEXTURED;
 				botTopEntity.setMaterial(
 						new Material(this.material.getDamper(), this.material.getReflectivity(), isLightInteraction));
-				botTopEntity.setTexturePath(texturePaths[0]);
+				// botTopEntity.setTexturePath(texturePaths[0]);
 				botTopEntity.setTextureID(textureIDs[0]);
 				botTopEntity.setUvMapping(botTopUVMapping);
 
@@ -652,7 +657,7 @@ abstract class AbstractTransformer {
 				otherEntity.type = DrawingEntity.Type.TEXTURED;
 				otherEntity.setMaterial(
 						new Material(this.material.getDamper(), this.material.getReflectivity(), isLightInteraction));
-				otherEntity.setTexturePath(texturePaths[1]);
+				// otherEntity.setTexturePath(texturePaths[1]);
 				otherEntity.setTextureID(textureIDs[1]);
 				otherEntity.setUvMapping(uvMapping);
 

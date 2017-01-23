@@ -92,7 +92,7 @@ class ShapeExecuter extends DrawExecuter {
 			shape = new GamaShape(shape, null, null, attributes.getLocation());
 		}
 		// We add the arrows if any
-		shape = addArrows(scope, shape, !attributes.empty);
+		shape = addArrows(scope, shape, !attributes.isEmpty());
 		// As well as the parts of the shape that can belong to a toroidal
 		// representation
 		shape = addToroidalParts(scope, shape);
@@ -116,7 +116,7 @@ class ShapeExecuter extends DrawExecuter {
 
 	ShapeDrawingAttributes computeAttributes(final IScope scope, final DrawingData data, final IShape shape) {
 		final ShapeDrawingAttributes attributes = new ShapeDrawingAttributes(data.size.value, data.depth.value,
-				data.rotation.value, data.location.value, data.empty.value, data.getCurrentColor(), data.color.value,
+				data.rotation.value, data.location.value, data.empty.value, data.getCurrentColor(), data.getColors(),
 				data.border.value, data.texture.value, data.material.value, scope.getAgent(),
 				shape.getGeometricalType(), data.lineWidth.value);
 		// We push the depth of the geometry if none have been specified already
@@ -134,17 +134,21 @@ class ShapeExecuter extends DrawExecuter {
 	 */
 	@SuppressWarnings ("unchecked")
 	private void addTextures(final IScope scope, final ShapeDrawingAttributes attributes) {
-		if (attributes.textures == null) { return; }
-		final IList<String> textureNames = GamaListFactory.create(Types.STRING);
-		textureNames.addAll(attributes.textures);
-		attributes.textures.clear();
-		for (final String s : textureNames) {
-			GamaImageFile image;
-			image = new GamaImageFile(scope, s);
-			if (!image.exists(scope)) {
+		if (attributes.getTextures() == null) { return; }
+		final List textures = GamaListFactory.create(Types.STRING);
+		textures.addAll(attributes.getTextures());
+		attributes.getTextures().clear();
+		for (final Object s : textures) {
+			GamaImageFile image = null;
+			if (s instanceof GamaImageFile) {
+				image = (GamaImageFile) s;
+			} else if (s instanceof String) {
+				image = new GamaImageFile(scope, (String) s);
+			}
+			if (image == null || !image.exists(scope)) {
 				throw new GamaRuntimeFileException(scope, "Texture file not found: " + s);
 			} else {
-				attributes.textures.add(image);
+				attributes.getTextures().add(image);
 			}
 		}
 	}

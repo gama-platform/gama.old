@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaColorType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaColorType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -29,9 +28,13 @@ import msi.gaml.operators.Cast;
  * @todo Description
  * 
  */
-@type(name = IKeyword.RGB, id = IType.COLOR, wraps = { GamaColor.class,
-		Color.class }, kind = ISymbolKind.Variable.REGULAR, concept = { IConcept.TYPE, IConcept.COLOR })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@type (
+		name = IKeyword.RGB,
+		id = IType.COLOR,
+		wraps = { GamaColor.class, Color.class },
+		kind = ISymbolKind.Variable.REGULAR,
+		concept = { IConcept.TYPE, IConcept.COLOR })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaColorType extends GamaType<GamaColor> {
 
 	@Override
@@ -43,6 +46,7 @@ public class GamaColorType extends GamaType<GamaColor> {
 	public static GamaColor staticCast(final IScope scope, final Object obj, final Object param, final boolean copy)
 			throws GamaRuntimeException {
 		// param can contain the alpha value
+		if (obj == null) { return null; }
 		if (obj instanceof GamaColor) {
 			final GamaColor col = (GamaColor) obj;
 			if (param instanceof Integer) {
@@ -56,23 +60,18 @@ public class GamaColorType extends GamaType<GamaColor> {
 		if (obj instanceof List) {
 			final List l = (List) obj;
 			final int size = l.size();
-			if (size == 0) {
-				return new GamaColor(Color.black);
-			}
+			if (size == 0) { return new GamaColor(Color.black); }
 			if (size == 1 || size == 2) {
 				return staticCast(scope, ((List) obj).get(0), param, copy);
 			} else if (size == 3) {
 				return new GamaColor(Cast.asInt(scope, l.get(0)), Cast.asInt(scope, l.get(1)),
 						Cast.asInt(scope, l.get(2)), 255);
-			} else if (size >= 4) {
-				return new GamaColor(Cast.asInt(scope, l.get(0)), Cast.asInt(scope, l.get(1)),
-						Cast.asInt(scope, l.get(2)), Cast.asInt(scope, l.get(3)));
-			}
+			} else if (size >= 4) { return new GamaColor(Cast.asInt(scope, l.get(0)), Cast.asInt(scope, l.get(1)),
+					Cast.asInt(scope, l.get(2)), Cast.asInt(scope, l.get(3))); }
 			/* To allow constructions like rgb [255,255,255] */
 		}
-		if (obj instanceof IContainer) {
-			return staticCast(scope, ((IContainer) obj).listValue(scope, Types.NO_TYPE, false), param, copy);
-		}
+		if (obj instanceof IContainer) { return staticCast(scope,
+				((IContainer) obj).listValue(scope, Types.NO_TYPE, false), param, copy); }
 		if (obj instanceof String) {
 			final String s = ((String) obj).toLowerCase();
 			GamaColor c = GamaColor.colors.get(s);
@@ -80,8 +79,8 @@ public class GamaColorType extends GamaType<GamaColor> {
 				try {
 					c = new GamaColor(Color.decode(s));
 				} catch (final NumberFormatException e) {
-					final GamaRuntimeException ex = GamaRuntimeException.error("'" + s + "' is not a valid color name",
-							scope);
+					final GamaRuntimeException ex =
+							GamaRuntimeException.error("'" + s + "' is not a valid color name", scope);
 					throw ex;
 				}
 				GamaColor.colors.put(s, c);
@@ -90,26 +89,20 @@ public class GamaColorType extends GamaType<GamaColor> {
 				return c;
 			} else if (param instanceof Integer) {
 				return new GamaColor(c, (Integer) param);
-			} else if (param instanceof Double) {
-				return new GamaColor(c, (Double) param);
-			}
+			} else if (param instanceof Double) { return new GamaColor(c, (Double) param); }
 		}
-		if (obj instanceof Boolean) {
-			return (Boolean) obj ? new GamaColor(Color.black) : new GamaColor(Color.white);
-		}
+		if (obj instanceof Boolean) { return (Boolean) obj ? new GamaColor(Color.black) : new GamaColor(Color.white); }
 		final int i = Cast.asInt(scope, obj);
 		final GamaColor gc = GamaColor.getInt((255 & 0xFF) << 24 | i & 0xFFFFFF << 0);
 		if (param instanceof Integer) {
 			return new GamaColor(gc, (Integer) param);
-		} else if (param instanceof Double) {
-			return new GamaColor(gc, (Double) param);
-		}
+		} else if (param instanceof Double) { return new GamaColor(gc, (Double) param); }
 		return gc;
 	}
 
 	@Override
 	public GamaColor getDefault() {
-		return new GamaColor(Color.black);
+		return null; // new GamaColor(Color.black);
 	}
 
 	@Override

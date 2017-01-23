@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaImageFile.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaImageFile.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -30,6 +29,7 @@ import com.vividsolutions.jts.geom.Envelope;
 
 import gnu.trove.map.hash.TIntObjectHashMap;
 import msi.gama.common.util.ImageUtils;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
@@ -51,10 +51,14 @@ import msi.gaml.types.IContainerType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@file(name = "image", extensions = { "tiff", "jpg", "jpeg", "png", "gif", "pict",
-		"bmp" }, buffer_type = IType.MATRIX, buffer_content = IType.INT, buffer_index = IType.POINT, concept = {
-				IConcept.IMAGE, IConcept.FILE })
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@file (
+		name = "image",
+		extensions = { "tiff", "jpg", "jpeg", "png", "gif", "pict", "bmp" },
+		buffer_type = IType.MATRIX,
+		buffer_content = IType.INT,
+		buffer_index = IType.POINT,
+		concept = { IConcept.IMAGE, IConcept.FILE })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation, Integer> {
 
 	public static class ImageInfo extends GamaFileMetaData {
@@ -83,8 +87,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		private final int width;
 		private final int height;
 
-		public ImageInfo(final long modificationStamp,
-				/* final Object thumbnail, */final int origType, final int origWidth, final int origHeight) {
+		public ImageInfo(final long modificationStamp, /* final Object thumbnail, */final int origType,
+				final int origWidth, final int origHeight) {
 			super(modificationStamp);
 			// this.thumbnail = thumbnail;
 			this.type = origType;
@@ -137,7 +141,11 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		}
 	}
 
-	@file(name = "pgm", extensions = { "pgm" }, buffer_type = IType.MATRIX, buffer_content = IType.INT)
+	@file (
+			name = "pgm",
+			extensions = { "pgm" },
+			buffer_type = IType.MATRIX,
+			buffer_content = IType.INT)
 	public static class GamaPgmFile extends GamaImageFile {
 
 		/**
@@ -192,9 +200,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 		// Temporary workaround for pgm files, which can be read by ImageIO but
 		// produce wrong results. See Issue 880.
 		// TODO change this behavior
@@ -213,10 +219,12 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	 */
 	@Override
 	protected void flushBuffer(final IScope scope, final Facets facets) throws GamaRuntimeException {
-		if (getBuffer() == null || getBuffer().isEmpty(scope))
+		if (!writable || getBuffer() == null || getBuffer().isEmpty(scope))
 			return;
 		try {
-			ImageIO.write(imageFromMatrix(scope), getExtension(scope), getFile(scope));
+			final File f = getFile(scope);
+			f.setWritable(true);
+			ImageIO.write(imageFromMatrix(scope), getExtension(scope), f);
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e, scope);
 		}
@@ -226,9 +234,8 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 	protected IMatrix _matrixValue(final IScope scope, final IType contentsType, final ILocation preferredSize,
 			final boolean copy) throws GamaRuntimeException {
 		getContents(scope);
-		if (preferredSize != null) {
-			return matrixValueFromImage(scope, preferredSize).matrixValue(scope, contentsType, copy);
-		}
+		if (preferredSize != null) { return matrixValueFromImage(scope, preferredSize).matrixValue(scope, contentsType,
+				copy); }
 		return getBuffer().matrixValue(scope, contentsType, copy);
 	}
 
@@ -236,12 +243,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		if (image == null) {
 			try {
 				image = ImageUtils.getInstance().getImageFromFile(scope, getPath(scope));
-				if (image == null) {
-					throw GamaRuntimeException.error(
-							"This image format (." + getExtension(scope)
-									+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
-							scope);
-				}
+				if (image == null) { throw GamaRuntimeException.error(
+						"This image format (." + getExtension(scope)
+								+ ") is not recognized. Please use a proper operator to read it (for example, pgm_file to read a .pgm format",
+						scope); }
 			} catch (final IOException e) {
 				throw GamaRuntimeException.create(e, scope);
 			}
@@ -307,13 +312,10 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 		try (BufferedReader in = new BufferedReader(new FileReader(getFile(scope)))) {
 			StringTokenizer tok;
 			String str = in.readLine();
-			if (str != null && !str.equals("P2")) {
-				throw new UnsupportedEncodingException("File is not in PGM ascii format");
-			}
+			if (str != null
+					&& !str.equals("P2")) { throw new UnsupportedEncodingException("File is not in PGM ascii format"); }
 			str = in.readLine();
-			if (str == null) {
-				return GamaMatrixType.with(scope, 0, preferredSize, Types.INT);
-			}
+			if (str == null) { return GamaMatrixType.with(scope, 0, preferredSize, Types.INT); }
 			tok = new StringTokenizer(str);
 			final int xSize = Integer.valueOf(tok.nextToken());
 			final int ySize = Integer.valueOf(tok.nextToken());
@@ -357,14 +359,12 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			return null;
 		}
 		final File infodata = new File(geodataFile);
-		if (infodata.exists()) {
-			return geodataFile;
-		}
+		if (infodata.exists()) { return geodataFile; }
 		return val;
 	}
 
 	@Override
-	public Envelope computeEnvelope(final IScope scope) {
+	public Envelope3D computeEnvelope(final IScope scope) {
 		final String geodataFile = getGeoDataFile(scope);
 		double cellSizeX = 1;
 		double cellSizeY = 1;
@@ -425,7 +425,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 
 				}
 				isGeoreferenced = true;
-				return new Envelope(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y);
+				return new Envelope3D(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
 			}
 
 		}
@@ -445,7 +445,7 @@ public class GamaImageFile extends GamaFile<IMatrix<Integer>, Integer, ILocation
 			maxCorner = (GamaPoint) Projections.to_GAMA_CRS(scope, maxCorner).getLocation();
 		}
 
-		final Envelope boundsEnv = new Envelope(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y);
+		final Envelope3D boundsEnv = new Envelope3D(minCorner.x, maxCorner.x, minCorner.y, maxCorner.y, 0, 0);
 		return boundsEnv;
 
 	}

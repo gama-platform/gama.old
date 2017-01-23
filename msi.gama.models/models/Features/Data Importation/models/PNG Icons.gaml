@@ -58,7 +58,7 @@ species people skills: [moving]
 		do wander amplitude: 100;
 	}
 
-	// The default aspect will be used when no other aspect is defined in displays
+	// The default aspect will be used when no other aspect is invoked in displays
 	aspect default
 	{
 		// We draw the image corresponding to the path, with a size given by 'size' and we use the heading of the people to rotate it
@@ -73,7 +73,7 @@ experiment Icons
 	float minimum_cycle_duration <- 100 # msec;
 	output
 	{
-		display Colorful
+		display Colorful type: opengl
 		{
 			// We simply display people, which will use their default aspect
 			species people;

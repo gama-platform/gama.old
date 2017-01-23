@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package msi.gaml.statements.draw;
 
-import java.util.List;
-
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.util.GamaColor;
@@ -29,46 +27,6 @@ public class TextDrawingAttributes extends DrawingAttributes {
 		super(size, rotation, location, color, null);
 		this.font = font;
 		this.perspective = perspective == null ? true : perspective.booleanValue();
-	}
-
-	/**
-	 * Method getTextures()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getTextures()
-	 */
-	@Override
-	public List getTextures() {
-		return null;
-	}
-
-	/**
-	 * Method isEmpty()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#isEmpty()
-	 */
-	@Override
-	public boolean isEmpty() {
-		return false;
-	}
-
-	/**
-	 * Method getAgent()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getAgent()
-	 */
-	// @Override
-	// public IAgent getAgent() {
-	// return null;
-	// }
-
-	/**
-	 * Method getBorder()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getBorder()
-	 */
-	@Override
-	public GamaColor getBorder() {
-		return null;
 	}
 
 	/**

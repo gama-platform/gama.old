@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TextureCache.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TextureCache.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,11 +13,12 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import com.jogamp.opengl.GL;
@@ -58,6 +58,7 @@ public class TextureCache {
 	}
 
 	final Map<String, Texture> textures = new ConcurrentHashMap<>(100, 0.75f, 4);
+	final List<File> texturesToProcess = new CopyOnWriteArrayList<>();
 	private static volatile TextureAsyncBuilder BUILDER;
 
 	public static GLAutoDrawable getSharedContext() {
@@ -68,9 +69,7 @@ public class TextureCache {
 	}
 
 	public void dispose(final GL gl) {
-		if (this == sharedInstance) {
-			return;
-		}
+		if (this == sharedInstance) { return; }
 		for (final Texture t : textures.values()) {
 			t.destroy(gl);
 		}
@@ -80,16 +79,12 @@ public class TextureCache {
 	// Assumes the texture has been created. But it may be processed at the time
 	// of the call, so we wait for its availability.
 	public Texture get(final IScope scope, final GL gl, final GamaImageFile image) {
-		if (image == null) {
-			return null;
-		}
+		if (image == null) { return null; }
 		return get(gl, image.getFile(scope));
 	}
 
 	public Texture get(final GL gl, final File file) {
-		if (file == null) {
-			return null;
-		}
+		if (file == null) { return null; }
 		Texture texture = textures.get(file.getAbsolutePath());
 		if (texture == null) {
 			if (!GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()) {
@@ -99,6 +94,8 @@ public class TextureCache {
 				texture = buildTexture(gl, file);
 				if (texture != null) {
 					saveTexture(file, texture);
+				} else {
+					System.out.println("Texture for file " + file + " is null");
 				}
 			} else {
 				while (texture == null) {
@@ -120,14 +117,24 @@ public class TextureCache {
 	}
 
 	public void initializeStaticTexture(final IScope scope, final GamaImageFile image) {
+		if (contains(scope, image)) { return; }
 		if (!GamaPreferences.DISPLAY_SHARED_CONTEXT.getValue()) {
-			return;
-		}
-		if (contains(scope, image)) {
+			saveTextureToProcess(image.getFile(scope));
 			return;
 		}
 		final BuildingTask task = new BuildingTask(scope, null, image);
 		BUILDER.tasks.offer(task);
+	}
+
+	private void saveTextureToProcess(final File file) {
+		texturesToProcess.add(file);
+	}
+
+	public void processUnloadedTextures(final GL gl) {
+		for (final File f : texturesToProcess) {
+			buildAndSaveTextureImmediately(gl, f);
+		}
+		texturesToProcess.clear();
 	}
 
 	/**
@@ -146,21 +153,20 @@ public class TextureCache {
 		return buildTexture(gl, image.getFile(scope));
 	}
 
-	public void buildAndSaveTextureImmediately(final GL gl, final File file) {
+	public Texture buildAndSaveTextureImmediately(final GL gl, final File file) {
+		if (contains(file))
+			return get(gl, file);
 		final Texture texture = buildTexture(gl, file);
 		if (texture != null)
 			saveTexture(file, texture);
+		return texture;
 	}
 
 	private static Texture buildTexture(final GL gl, final File file) {
 		try {
 			final BufferedImage im = ImageUtils.getInstance().getImageFromFile(file);
 			return buildTexture(gl, im);
-			// final TextureData data =
-			// AWTTextureIO.newTextureData(gl.getGLProfile(), im, true);
-			// final Texture texture = new Texture(gl, data);
-			// return texture;
-		} catch (final GLException | IOException e) {
+		} catch (final GLException e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -171,7 +177,7 @@ public class TextureCache {
 	public static Texture buildTexture(final GL gl, final BufferedImage image) {
 		try {
 			final Texture texture = AWTTextureIO.newTexture(gl.getGLProfile(),
-					correctImage(image, !Abstract3DRenderer.isNonPowerOf2TexturesAvailable), true);
+					correctImage(image, !Abstract3DRenderer.isNonPowerOf2TexturesAvailable), false);
 			return texture;
 		} catch (final GLException e) {
 			e.printStackTrace();
@@ -258,8 +264,7 @@ public class TextureCache {
 						drawable.getContext().release();
 					} catch (final com.jogamp.nativewindow.NativeWindowException e) {
 						drawable.destroy();
-					} catch (final com.jogamp.opengl.GLException ex) {
-					}
+					} catch (final com.jogamp.opengl.GLException ex) {}
 					copy.clear();
 				}
 			}
@@ -300,11 +305,9 @@ public class TextureCache {
 		@Override
 		public void runIn(final GL gl) {
 
-			if (contains(scope, image)) {
-				return;
-			}
+			if (contains(scope, image)) { return; }
 			final Texture texture = buildTexture(scope, gl, image);
-			// System.out.println("Building texture : " + image);
+			// System.out.println("Building texture : " + image.getPath(scope));
 			// We use the original image to keep track of the texture
 			if (texture != null) {
 				textures.put(image.getPath(scope), texture);

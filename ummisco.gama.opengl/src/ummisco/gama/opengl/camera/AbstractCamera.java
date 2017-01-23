@@ -25,6 +25,7 @@ import ummisco.gama.ui.bindings.GamaKeyBindings;
 public abstract class AbstractCamera implements ICamera {
 
 	private Abstract3DRenderer renderer;
+	protected boolean initialized;
 
 	// Mouse
 	private Point mousePosition;
@@ -40,7 +41,7 @@ public abstract class AbstractCamera implements ICamera {
 	protected double theta;
 	protected double phi;
 	protected boolean flipped = false;
-	protected double upVectorAngle;
+	// protected double upVectorAngle;
 
 	private final double _keyboardSensivity = 1d;
 	private final double _sensivity = 1;
@@ -62,7 +63,7 @@ public abstract class AbstractCamera implements ICamera {
 	public AbstractCamera(final Abstract3DRenderer renderer) {
 		setRenderer(renderer);
 		setMousePosition(new Point(0, 0));
-		upVectorAngle = 0.0;
+		// upVectorAngle = 0.0;
 		upPosition(0.0, 1.0, 0.0);
 	}
 
@@ -82,7 +83,8 @@ public abstract class AbstractCamera implements ICamera {
 	public void update() {
 		final LayeredDisplayData data = renderer.data;
 		cameraInteraction = !data.cameraInteractionDisabled();
-		if (data.isCameraLock()) {
+
+		if (!initialized || !cameraInteraction) {
 			final ILocation cameraPos = data.getCameraPos();
 			if (cameraPos != LayeredDisplayData.getNoChange()) {
 				updatePosition(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
@@ -95,31 +97,20 @@ public abstract class AbstractCamera implements ICamera {
 			if (camLookUpVector != LayeredDisplayData.getNoChange()) {
 				upPosition(camLookUpVector.getX(), camLookUpVector.getY(), camLookUpVector.getZ());
 			}
-			if (cameraInteraction) { // cameraInteractionDisabled is true when
-										// the camera_interaction facet is
-										// turned to false.
-				if (flipped)
-					upPosition(
-							-(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)
-									* Math.cos(upVectorAngle * Maths.toRad)
-									- Math.sin(theta * Maths.toRad) * Math.sin(upVectorAngle * Maths.toRad)),
-							-(-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)
-									* Math.cos(upVectorAngle * Maths.toRad
-											+ Math.cos(theta * Maths.toRad) * Math.sin(upVectorAngle * Maths.toRad))),
-							-(Math.sin(phi * Maths.toRad) * Math.cos(upVectorAngle * Maths.toRad)));
-				else
-					upPosition(
-							-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)
-									* Math.cos(upVectorAngle * Maths.toRad)
-									- Math.sin(theta * Maths.toRad) * Math.sin(upVectorAngle * Maths.toRad),
-							-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)
-									* Math.cos(upVectorAngle * Maths.toRad
-											+ Math.cos(theta * Maths.toRad) * Math.sin(upVectorAngle * Maths.toRad)),
-							Math.sin(phi * Maths.toRad) * Math.cos(upVectorAngle * Maths.toRad));
-				drawRotationHelper();
-			}
-			updateSphericalCoordinatesFromLocations();
+			// updateSphericalCoordinatesFromLocations();
 		}
+
+		if (initialized) {
+			if (flipped)
+				upPosition(-(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)),
+						-(-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad)), -Math.sin(phi * Maths.toRad));
+			else
+				upPosition(-Math.cos(theta * Maths.toRad) * Math.cos(phi * Maths.toRad),
+						-Math.sin(theta * Maths.toRad) * Math.cos(phi * Maths.toRad), Math.sin(phi * Maths.toRad));
+			drawRotationHelper();
+		}
+		updateSphericalCoordinatesFromLocations();
+		initialized = true;
 	}
 
 	protected abstract void drawRotationHelper();
@@ -547,16 +538,16 @@ public abstract class AbstractCamera implements ICamera {
 	protected void quickDownTurn() {}
 
 	protected void activateKeystoneMode(final boolean value) {
-		if (renderer.useShader()) {
-			if (keystoneMode != value) {
-				keystoneMode = value;
-				if (keystoneMode) {
-					getRenderer().startDrawKeystoneHelper();
-				} else {
-					getRenderer().stopDrawKeystoneHelper();
-				}
+		// if (renderer.useShader()) {
+		if (keystoneMode != value) {
+			keystoneMode = value;
+			if (keystoneMode) {
+				getRenderer().startDrawKeystoneHelper();
+			} else {
+				getRenderer().stopDrawKeystoneHelper();
 			}
 		}
+		// }
 	}
 
 	/**
@@ -575,12 +566,10 @@ public abstract class AbstractCamera implements ICamera {
 						break;
 				}
 				switch (e.keyCode) {
-					case SWT.ARROW_LEFT: // player turns left (scene rotates
-											// right)
+					case SWT.ARROW_LEFT: // turns left (scene rotates right)
 						strafeLeft = false;
 						break;
-					case SWT.ARROW_RIGHT: // player turns right (scene rotates
-											// left)
+					case SWT.ARROW_RIGHT: // turns right (scene rotates left)
 						strafeRight = false;
 						break;
 					case SWT.ARROW_UP:

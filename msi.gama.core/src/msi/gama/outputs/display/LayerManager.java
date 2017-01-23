@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'LayerManager.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'LayerManager.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -71,9 +70,7 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public ILayer addLayer(final ILayer d) {
-		if (addItem(d)) {
-			return d;
-		}
+		if (addItem(d)) { return d; }
 		return null;
 	}
 
@@ -153,18 +150,16 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void drawLayersOn(final IGraphics g) {
+		if (g == null || g.cannotDraw())
+			return;
 		final IScope scope = surface.getScope();
 		// If the experiment is already closed
-		if (scope == null || scope.interrupted()) {
-			return;
-		}
+		if (scope == null || scope.interrupted()) { return; }
 		scope.setGraphics(g);
 		try {
 			if (g.beginDrawingLayers()) {
 				for (int i = 0, n = enabledLayers.size(); i < n; i++) {
-					if (scope.interrupted()) {
-						return;
-					}
+					if (scope.interrupted()) { return; }
 					final ILayer dis = enabledLayers.get(i);
 					dis.drawDisplay(scope, g);
 				}
@@ -197,12 +192,10 @@ public class LayerManager implements ILayerManager {
 	}
 
 	@Override
-	public void pauseItem(final ILayer obj) {
-	}
+	public void pauseItem(final ILayer obj) {}
 
 	@Override
-	public void resumeItem(final ILayer obj) {
-	}
+	public void resumeItem(final ILayer obj) {}
 
 	@Override
 	public String getItemDisplayName(final ILayer obj, final String previousName) {
@@ -215,8 +208,7 @@ public class LayerManager implements ILayerManager {
 	}
 
 	@Override
-	public void focusItem(final ILayer obj) {
-	}
+	public void focusItem(final ILayer obj) {}
 
 	@Override
 	public boolean addItem(final ILayer obj) {
@@ -228,12 +220,10 @@ public class LayerManager implements ILayerManager {
 	}
 
 	@Override
-	public void updateItemValues() {
-	}
+	public void updateItemValues() {}
 
 	/**
-	 * Allows the layers to do some cleansing when the output of the display
-	 * changes
+	 * Allows the layers to do some cleansing when the output of the display changes
 	 * 
 	 * @see msi.gama.common.interfaces.ILayerManager#outputChanged()
 	 */
@@ -250,9 +240,7 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public boolean stayProportional() {
 		for (final ILayer i : enabledLayers) {
-			if (i.stayProportional()) {
-				return true;
-			}
+			if (i.stayProportional()) { return true; }
 		}
 		return false;
 	}
@@ -260,8 +248,7 @@ public class LayerManager implements ILayerManager {
 	/**
 	 * Method makeItemSelectable()
 	 * 
-	 * @see msi.gama.common.interfaces.ItemList#makeItemSelectable(java.lang.Object,
-	 *      boolean)
+	 * @see msi.gama.common.interfaces.ItemList#makeItemSelectable(java.lang.Object, boolean)
 	 */
 	@Override
 	public void makeItemSelectable(final ILayer data, final boolean b) {
@@ -271,8 +258,7 @@ public class LayerManager implements ILayerManager {
 	/**
 	 * Method makeItemVisible()
 	 * 
-	 * @see msi.gama.common.interfaces.ItemList#makeItemVisible(java.lang.Object,
-	 *      boolean)
+	 * @see msi.gama.common.interfaces.ItemList#makeItemVisible(java.lang.Object, boolean)
 	 */
 	@Override
 	public void makeItemVisible(final ILayer obj, final boolean b) {
@@ -282,8 +268,7 @@ public class LayerManager implements ILayerManager {
 	/**
 	 * Method handleMenu()
 	 * 
-	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object,
-	 *      int, int)
+	 * @see msi.gama.common.interfaces.ItemList#handleMenu(java.lang.Object, int, int)
 	 */
 	@Override
 	public Map<String, Runnable> handleMenu(final ILayer data, final int x, final int y) {
@@ -298,9 +283,7 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public boolean isProvidingCoordinates() {
 		for (final ILayer i : enabledLayers) {
-			if (i.isProvidingCoordinates()) {
-				return true;
-			}
+			if (i.isProvidingCoordinates()) { return true; }
 		}
 		return false;
 	}
@@ -308,15 +291,12 @@ public class LayerManager implements ILayerManager {
 	/*
 	 * (non-Javadoc)
 	 *
-	 * @see
-	 * msi.gama.common.interfaces.ILayerManager#isProvidingWorldCoordinates()
+	 * @see msi.gama.common.interfaces.ILayerManager#isProvidingWorldCoordinates()
 	 */
 	@Override
 	public boolean isProvidingWorldCoordinates() {
 		for (final ILayer i : enabledLayers) {
-			if (i.isProvidingWorldCoordinates()) {
-				return true;
-			}
+			if (i.isProvidingWorldCoordinates()) { return true; }
 		}
 		return false;
 	}

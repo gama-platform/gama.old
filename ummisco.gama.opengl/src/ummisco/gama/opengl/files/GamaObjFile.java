@@ -340,7 +340,7 @@ public class GamaObjFile extends Gama3DGeometryFile {
 					texture = null;
 				}
 				gl.glEnable(GLLightingFunc.GL_COLOR_MATERIAL);
-				renderer.setCurrentColor(gl, materials.getKd(nextmatname)[0], materials.getKd(nextmatname)[1],
+				renderer.setCurrentColor(materials.getKd(nextmatname)[0], materials.getKd(nextmatname)[1],
 						materials.getKd(nextmatname)[2], materials.getd(nextmatname));
 
 				final String mapKa = materials.getMapKa(nextmatname);
@@ -361,23 +361,10 @@ public class GamaObjFile extends Gama3DGeometryFile {
 						// Solves Issue #1951. Asynchronous loading of textures
 						// was not possible when displaying the file
 						final TextureCache cache = renderer.getSharedTextureCache();
-						if (!cache.contains(f)) {
-							cache.buildAndSaveTextureImmediately(gl, f);
-						}
-						texture = cache.get(gl, f);
-						// im = ImageUtils.getInstance().getImageFromFile(f);
-						// final TextureData data =
-						// AWTTextureIO.newTextureData(gl.getGLProfile(), im,
-						// false);
-						// texture = new Texture(gl, data);
+						texture = cache.buildAndSaveTextureImmediately(gl, f);
+						renderer.setCurrentTexture(texture);
 						texture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
 						texture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
-						texture.enable(gl);
-						texture.bind(gl);
-						// }
-						// catch (final IOException e) {
-						// e.printStackTrace();
-						// }
 					}
 
 				}

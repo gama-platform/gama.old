@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'EditorListener.java, in plugin ummisco.gama.ui.shared, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'EditorListener.java, in plugin ummisco.gama.ui.shared, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -20,6 +19,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public interface EditorListener<T> {
 
-	void valueModified(T newValue) throws GamaRuntimeException;
+	void valueModified(T val) throws GamaRuntimeException;
 
 }

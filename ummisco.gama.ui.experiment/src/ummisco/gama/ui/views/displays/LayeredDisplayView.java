@@ -91,11 +91,7 @@ public abstract class LayeredDisplayView extends GamaViewPart implements Display
 	protected volatile boolean disposed;
 	protected volatile boolean realized = false;
 	protected ToolItem overlayItem, sideControlsItem;
-	boolean sideControlsVisible = false, interactiveConsoleVisible = false; // TODO
-																			// Make
-																			// it
-																			// a
-																			// preference
+	boolean sideControlsVisible = false, interactiveConsoleVisible = false;
 	int[] sideControlWeights = new int[] { 30, 70 };
 	protected final java.awt.Rectangle surfaceCompositeBounds = new java.awt.Rectangle();
 	protected LayeredDisplayMultiListener keyAndMouseListener;

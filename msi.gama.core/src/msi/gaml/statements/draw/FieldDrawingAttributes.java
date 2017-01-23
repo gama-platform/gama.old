@@ -9,7 +9,6 @@
  **********************************************************************************************/
 package msi.gaml.statements.draw;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.metamodel.agent.IAgent;
@@ -22,21 +21,25 @@ public class FieldDrawingAttributes extends FileDrawingAttributes {
 	// empty whether or not we apply the texture and/or color
 	// border whether or not we draw the lines
 
-	public boolean empty;
-	public List<?> textures;
+	// public List<?> textures;
 	public String speciesName;
 	public boolean triangulated;
 	public boolean grayScaled;
 	public boolean withText;
+	public GamaPoint cellSize;
 
 	public FieldDrawingAttributes(final GamaPoint size, final Double depth, final GamaPair<Double, GamaPoint> rotation,
 			final GamaPoint location, final Boolean empty, final GamaColor color, final GamaColor border,
 			final List<?> textures, final IAgent agent) {
 		super(size, rotation, location, color, border, agent, null);
 		setDepth(depth == null ? 1.0 : depth.doubleValue());
-		this.empty = empty == null ? false : empty.booleanValue();
-		setBorder(border == null && this.empty ? color : border);
-		this.textures = textures == null ? null : new ArrayList<>(textures);
+		setEmpty(empty);
+		setTextures(textures);
+	}
+
+	public void setTextures(final List<?> textures) {
+		colorProperties = colorProperties.withTextures(textures);
+
 	}
 
 	/**
@@ -46,12 +49,6 @@ public class FieldDrawingAttributes extends FileDrawingAttributes {
 	public FieldDrawingAttributes(final String name, final GamaColor border) {
 		super(null, null, border);
 		speciesName = name;
-		textures = null;
-	}
-
-	@Override
-	public List<?> getTextures() {
-		return textures;
 	}
 
 	public void setSpeciesName(final String name) {
@@ -64,12 +61,12 @@ public class FieldDrawingAttributes extends FileDrawingAttributes {
 	}
 
 	public void setCellSize(final GamaPoint p) {
-		setPosition(ID_CELL_SIZE, p);
+		cellSize = p;
 
 	}
 
 	public GamaPoint getCellSize() {
-		return get(positions, ID_CELL_SIZE);
+		return cellSize;
 	}
 
 }

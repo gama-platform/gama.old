@@ -11,6 +11,7 @@ package ummisco.gama.opengl.scene;
 
 import java.util.List;
 
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaColor;
@@ -24,10 +25,6 @@ public class FrameLayerObject extends StaticLayerObject.World {
 		super(renderer);
 	}
 
-	// @Override
-	// public double getOrder() {
-	// return 0;
-	// }
 
 	@Override
 	void fillWithObjects(final List<AbstractObject> list) {
@@ -35,9 +32,8 @@ public class FrameLayerObject extends StaticLayerObject.World {
 		final double h = renderer.data.getEnvHeight();
 		final IShape g = GamaGeometryType.buildRectangle(w, h, new GamaPoint(w / 2, h / 2));
 		final ShapeDrawingAttributes drawingAttr =
-				new ShapeDrawingAttributes(g, null, new GamaColor(150, 150, 150, 255)); // null for the color, grey
-																						// for the border color
-		final GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr, this);
+				new ShapeDrawingAttributes(g, (IAgent) null, null, new GamaColor(150, 150, 150, 255));
+		final GeometryObject geomObj = new GeometryObject(g.getInnerGeometry(), drawingAttr);
 		list.add(geomObj);
 	}
 }

@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.Locale;
 
+import com.google.common.base.Objects;
 import com.google.common.primitives.Doubles;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -21,6 +22,7 @@ import com.jogamp.opengl.util.gl2.GLUT;
 
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.common.util.ICoordinates;
+import msi.gama.metamodel.shape.GamaPoint;
 import ummisco.gama.opengl.JOGLRenderer;
 
 /**
@@ -50,50 +52,37 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 				drawFromImage(demObj, gl);
 				return;
 			}
-			final double cellWidth = demObj.getCellSize().x;
-			final double cellHeight = demObj.getCellSize().y;
-			final double columns = renderer.data.getEnvWidth() / cellWidth;
-			final double rows = renderer.data.getEnvHeight() / cellHeight;
-			final double w = 1 / columns;
-			final double h = 1 / rows;
-
-			// FIXME: Need to set it dynamicly
-			final double altFactor = demObj.getZFactor();
+			final double altFactor = Objects.firstNonNull(demObj.getHeight(), 1.0);
 			final double maxZ = Doubles.max(demObj.values);
-
 			if (demObj.isGrayScaled()) {
 				gl.glDisable(GL.GL_TEXTURE_2D);
 			}
-			renderer.setCurrentColor(gl, Color.white, demObj.getAlpha());
-
-			if (!demObj.isTriangulated()) {
-				drawAsRectangles(gl, demObj, cellWidth, cellHeight, columns, rows, w, h, altFactor, maxZ);
+			if (demObj.isTriangulated()) {
+				drawAsTriangles(gl, demObj, altFactor, maxZ);
 			} else {
-				drawAsTriangles(gl, demObj, cellWidth, cellHeight, columns, rows, w, h, altFactor, maxZ);
+				drawAsRectangles(gl, demObj, altFactor, maxZ);
 			}
-
 			if (demObj.isShowText() && demObj.values != null) {
-				drawLabels(gl, demObj, cellWidth, cellHeight, columns, rows, altFactor);
+				drawLabels(gl, demObj, altFactor);
 			}
-
 		} finally {
 			gl.glPopMatrix();
 		}
 	}
 
-	public void drawLabels(final GL2 gl, final FieldObject demObj, final double cellWidth, final double cellHeight,
-			final double columns, final double rows, final double altFactor) {
-		double stepX;
-		double stepY;
+	public void drawLabels(final GL2 gl, final FieldObject demObj, final double altFactor) {
+		final GamaPoint cellDim = demObj.getCellSize();
+		final double columns = renderer.getEnvWidth() / cellDim.x;
+		final double rows = renderer.getEnvHeight() / cellDim.y;
 		// Draw gridvalue as text inside each cell
 		gl.glDisable(GL.GL_BLEND);
-		renderer.setCurrentColor(gl, Color.black);
+		renderer.setCurrentColor(Color.black);
 		for (int i = 0; i < columns; i++) {
-			stepX = i * cellWidth;/// textureWidth * columns;
+			final double stepX = i * cellDim.x;/// textureWidth * columns;
 			for (int j = 0; j < rows; j++) {
-				stepY = j * cellHeight;/// textureHeight * rows;
+				final double stepY = j * cellDim.y;/// textureHeight * rows;
 				final double gridValue = demObj.values[(int) (j * columns + i)];
-				gl.glRasterPos3d(stepX + cellWidth / 2, -(stepY + cellHeight / 2), gridValue * altFactor + 1);
+				gl.glRasterPos3d(stepX + cellDim.x / 2, -(stepY + cellDim.y / 2), gridValue * altFactor + 1);
 				gl.glPushMatrix();
 				gl.glScaled(8.0d, 8.0d, 8.0d);
 				renderer.getGlut().glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,
@@ -104,18 +93,17 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		gl.glEnable(GL.GL_BLEND);
 	}
 
-	public void drawAsTriangles(final GL2 gl, final FieldObject demObj, final double cellWidth, final double cellHeight,
-			final double columns, final double rows, final double w, final double h, final double altFactor,
-			final double maxZ) {
-		final double zValScaled = 0d;
-		double z1 = 0d, z2 = 0d, z3 = 0d, z4 = 0d;
-		double x1, x2, y1, y2;
+	public void drawAsTriangles(final GL2 gl, final FieldObject demObj, final double altFactor, final double maxZ) {
+		final GamaPoint cellDim = demObj.getCellSize();
+		final double columns = renderer.getEnvWidth() / cellDim.x;
+		final double rows = renderer.getEnvHeight() / cellDim.y;
 		for (int i = 0; i < columns; i++) {
-			x1 = i / columns * columns * cellWidth;
-			x2 = (i + 1) / columns * columns * cellWidth;
+			final double x1 = i * cellDim.x;
+			final double x2 = x1 + cellDim.x;
 			for (int j = 0; j < rows; j++) {
-				y1 = -j / rows * rows * cellHeight;
-				y2 = -(j + 1) / rows * rows * cellHeight;
+				final double y1 = -j * cellDim.y;
+				final double y2 = y1 - cellDim.y;
+				double z1 = 0d, z2 = 0d, z3 = 0d, z4 = 0d;
 				if (demObj.values != null) {
 					z1 = Math.min(maxZ, Math.abs(demObj.values[(int) (j * columns + i)]));
 					if (i < columns - 1 && j < rows - 1) {
@@ -134,16 +122,16 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 				}
 				fourPoints.replaceWith(x1, y1, z1 * altFactor, x1, y2, z2 * altFactor, x2, y1, z4 * altFactor, x2, y2,
 						z3 * altFactor);
-				handleNormal(gl, fourPoints, true);
+				_normal(fourPoints, true);
 				final Color lineColor = demObj.getBorder();
 				if (lineColor != null) {
-					drawTriangleLines(gl, fourPoints, lineColor);
+					drawTriangleLines(fourPoints, lineColor);
 				} else {
 					if (demObj.isGrayScaled()) {
-						drawGrayScaledTriangle(gl, maxZ, fourPoints);
+						drawGrayScaledTriangle(maxZ, fourPoints);
 
 					} else {
-						drawTexturedTriangle(gl, w, h, i, j, fourPoints);
+						drawTexturedTriangle(gl, 1 / columns, 1 / rows, i, j, fourPoints);
 					}
 				}
 			}
@@ -152,21 +140,18 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 
 	public void drawTexturedTriangle(final GL2 gl, final double w, final double h, final int i, final int j,
 			final ICoordinates vertices) {
-		final double xt = w * i;
-		final double yt = h * j;
-		final double xt2 = xt + w;
-		final double yt2 = yt + h;
+		final double xt = w * i, yt = h * j, xt2 = xt + w, yt2 = yt + h;
 		final double[] texCoords3 = { xt2, yt, xt, yt2, xt, yt };
 		gl.glBegin(GL.GL_TRIANGLES);
 		threePoints.replaceWith(vertices.at(2), vertices.at(1), vertices.at(0));
-		handleNormal(gl, threePoints, true);
+		_normal(threePoints, true);
 		threePoints.visit((x, y, z, index) -> {
 			gl.glTexCoord2d(texCoords3[index * 2], texCoords3[index * 2 + 1]);
 			gl.glVertex3d(x, y, z);
 		}, 3, true);
 		final double[] texCoords4 = { xt, yt2, xt2, yt, xt2, yt2 };
 		threePoints.replaceWith(vertices.at(1), vertices.at(2), vertices.at(3));
-		handleNormal(gl, threePoints, false);
+		_normal(threePoints, false);
 		threePoints.visit((x, y, z, index) -> {
 			gl.glTexCoord2d(texCoords4[index * 2], texCoords4[index * 2 + 1]);
 			gl.glVertex3d(x, y, z);
@@ -174,59 +159,52 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 		gl.glEnd();
 	}
 
-	public void drawGrayScaledTriangle(final GL2 gl, final double maxZ, final ICoordinates vertices) {
+	public void drawGrayScaledTriangle(final double maxZ, final ICoordinates vertices) {
 		threePoints.replaceWith(vertices.at(2), vertices.at(1), vertices.at(0));
-		renderer.setCurrentColor(gl, threePoints.averageZ() / maxZ);
-		_triangle(gl, threePoints, true, true, true, null);
+		renderer.setCurrentColor(threePoints.averageZ() / maxZ);
+		_shape(threePoints, 3, true, true, true, null);
 		threePoints.replaceWith(vertices.at(1), vertices.at(2), vertices.at(3));
-		renderer.setCurrentColor(gl, threePoints.averageZ() / maxZ);
-		_triangle(gl, threePoints, true, false, true, null);
+		renderer.setCurrentColor(threePoints.averageZ() / maxZ);
+		_shape(threePoints, 3, true, false, true, null);
 	}
 
-	public void drawTriangleLines(final GL2 gl, final ICoordinates vertices, final Color lineColor) {
-		renderer.setCurrentColor(gl, lineColor);
-		_line(gl, vertices, -1, true);
+	public void drawTriangleLines(final ICoordinates vertices, final Color lineColor) {
+		renderer.setCurrentColor(lineColor);
+		_line(vertices, -1, true);
 	}
 
-	public void drawAsRectangles(final GL2 gl, final FieldObject demObj, final double cellWidth,
-			final double cellHeight, final double columns, final double rows, final double w, final double h,
-			final double altFactor, final double maxZ) {
-		double zValue = 0d;
-		double zValScaled = 0d;
-		double x1, x2, y1, y2;
+	public void drawAsRectangles(final GL2 gl, final FieldObject demObj, final double altFactor, final double maxZ) {
+		final GamaPoint cellDim = demObj.getCellSize();
+		final double columns = renderer.getEnvWidth() / cellDim.x;
+		final double rows = renderer.getEnvHeight() / cellDim.y;
 		for (int i = 0; i < columns; i++) {
-			x1 = i / columns * columns * cellWidth;
-			x2 = (i + 1) / columns * columns * cellWidth;
+			final double x1 = i * cellDim.x, x2 = x1 + cellDim.x;
 			for (int j = 0; j < rows; j++) {
-				// Already negated
-				y1 = -j / rows * rows * cellHeight;
-				y2 = -(j + 1) / rows * rows * cellHeight;
-				if (demObj.values != null) {
-					zValue = Math.min(Math.abs(demObj.values[(int) (j * columns + i)]), maxZ);
-					zValScaled = zValue * altFactor;
-				}
+				final double y1 = -j * cellDim.y, y2 = y1 - cellDim.y;
+				final double zValue = Math.min(Math.abs(demObj.values[(int) (j * columns + i)]), maxZ);
+				final double scaledZ = zValue * altFactor;
 				// Explicitly create a ring
-				fivePoints.replaceWith(x1, y1, zValScaled, x2, y1, zValScaled, x2, y2, zValScaled, x1, y2, zValScaled,
-						x1, y1, zValScaled);
+				fivePoints.replaceWith(x1, y1, scaledZ, x2, y1, scaledZ, x2, y2, scaledZ, x1, y2, scaledZ, x1, y1,
+						scaledZ);
 				final Color lineColor = demObj.getBorder();
 				if (lineColor != null) {
-					renderer.setCurrentColor(gl, lineColor);
-					_line(gl, fivePoints, 4, true);
+					renderer.setCurrentColor(lineColor);
+					_line(fivePoints, 4, true);
 				} else {
-					handleNormal(gl, fivePoints, true);
+					_normal(fivePoints, true);
 					if (demObj.isGrayScaled()) {
-						drawGrayScaledCell(gl, maxZ, zValue, fivePoints);
+						drawGrayScaledCell(maxZ, zValue, fivePoints);
 					} else {
-						drawTexturedCell(gl, w, h, i, j, fivePoints);
+						drawTexturedCell(gl, 1 / columns, 1 / rows, i, j, fivePoints);
 					}
 				}
 			}
 		}
 	}
 
-	public void drawGrayScaledCell(final GL2 gl, final double maxZ, final double zValue, final ICoordinates vertices) {
-		renderer.setCurrentColor(gl, zValue / maxZ);
-		_rectangle(gl, vertices, true, true, false, null);
+	public void drawGrayScaledCell(final double maxZ, final double zValue, final ICoordinates vertices) {
+		renderer.setCurrentColor(zValue / maxZ);
+		_shape(vertices, 4, true, true, false, null);
 	}
 
 	public void drawTexturedCell(final GL2 gl, final double w, final double h, final int i, final int j,
@@ -241,53 +219,36 @@ public class FieldDrawer extends ObjectDrawer<FieldObject> {
 	}
 
 	protected void drawFromImage(final FieldObject demObj, final GL2 gl) {
-
 		int rows, cols;
 		int x, y;
 		double vx, vy, s, t;
 		double ts, tt, tw, th;
-
 		final BufferedImage dem = demObj.getDirectImage(1);
 		rows = dem.getHeight() - 1;
 		cols = dem.getWidth() - 1;
 		ts = 1.0f / cols;
 		tt = 1.0f / rows;
-
-		// FIXME/ need to set w and h dynamicly
-		final double w = renderer.data.getEnvWidth();
-		final double h = renderer.data.getEnvHeight();
-		final double altFactor = demObj.getZFactor();
-
-		tw = w / cols;
-		th = h / rows;
+		final double altFactor = Objects.firstNonNull(demObj.getHeight(), 1.0);
+		tw = renderer.getEnvWidth() / cols;
+		th = renderer.getEnvHeight() / rows;
 		gl.glPushMatrix();
-		gl.glTranslated(w / 2, -h / 2, 0);
+		gl.glTranslated(renderer.getEnvWidth() / 2, -renderer.getEnvHeight() / 2, 0);
 		gl.glNormal3d(0f, 0f, 1f);
 
 		for (y = 0; y < rows; y++) {
 			gl.glBegin(GL2.GL_QUAD_STRIP);
 			for (x = 0; x <= cols; x++) {
-				vx = tw * x - w / 2.0f;
-				vy = th * y - h / 2.0f;
+				vx = tw * x - renderer.getEnvWidth() / 2.0f;
+				vy = th * y - renderer.getEnvHeight() / 2.0f;
 				s = 1.0f - ts * x;
 				t = 1.0f - tt * y;
-
 				final double alt1 = (dem.getRGB(cols - x, y) & 255) * altFactor;
 				final double alt2 = (dem.getRGB(cols - x, y + 1) & 255) * altFactor;
+				gl.glTexCoord2d(s, t);
+				gl.glVertex3d(vx, vy, alt1);
+				gl.glTexCoord2d(s, t - tt);
+				gl.glVertex3d(vx, vy + th, alt2);
 
-				final boolean isTextured = true;
-				if (isTextured) {
-					gl.glTexCoord2d(s, t);
-					gl.glVertex3d(vx, vy, alt1);
-					gl.glTexCoord2d(s, t - tt);
-					gl.glVertex3d(vx, vy + th, alt2);
-				} else {
-					float color = dem.getRGB(cols - x, y) & 255;
-					color = color / 255.0f;
-					renderer.setCurrentColor(gl, color);
-					gl.glVertex3d(vx, vy, alt1);
-					gl.glVertex3d(vx, vy + th, alt2);
-				}
 			}
 			gl.glEnd();
 		}

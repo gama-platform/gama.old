@@ -35,9 +35,9 @@ import ummisco.gama.ui.resources.IGamaColors;
 
 public class ColorEditor extends AbstractEditor<Color> {
 
-	IColorRunnable runnable = (r, g, b) -> modifyAndDisplayValue(new GamaColor(r, g, b, 255));
+	final IColorRunnable runnable = (r, g, b) -> modifyAndDisplayValue(new GamaColor(r, g, b, 255));
 
-	SelectionListener listener = new SelectionAdapter() {
+	final SelectionListener listener = new SelectionAdapter() {
 
 		@Override
 		public void widgetDefaultSelected(final SelectionEvent e) {

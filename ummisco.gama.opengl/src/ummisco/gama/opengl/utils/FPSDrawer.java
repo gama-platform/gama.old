@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'FPSDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'FPSDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -42,19 +41,20 @@ public class FPSDrawer {
 	}
 
 	public void draw(final GL2 gl, final JOGLRenderer renderer) {
-		gl.glDisable(GL2.GL_LIGHTING);
+
 		if (renderer.data.isShowfps()) {
-			computeFrameRate();
 			gl.glDisable(GL.GL_BLEND);
-			renderer.setCurrentColor(gl, Color.black);
+			computeFrameRate();
+			renderer.setCurrentColor(Color.black);
 			gl.glRasterPos3d(-renderer.getWidth() / 10d, renderer.getHeight() / 10d, 0);
+			gl.glPushMatrix();
 			gl.glScaled(8.0d, 8.0d, 8.0d);
-			final GLUT glut = new GLUT();
+			final GLUT glut = renderer.getGlut();
 			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);
-			gl.glScaled(0.125d, 0.125d, 0.125d);
 			gl.glEnable(GL.GL_BLEND);
+			gl.glPopMatrix();
 		}
-		gl.glEnable(GL2.GL_LIGHTING);
+
 	}
 
 }

@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'AgentLayer.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'AgentLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -106,18 +105,15 @@ public class AgentLayer extends AbstractLayer {
 
 	@Override
 	public Collection<IAgent> getAgentsForMenu(final IScope scope) {
-		if (shapes.isEmpty()) {
-			return getAgentsToDisplay();
-		}
+		if (shapes.isEmpty()) { return getAgentsToDisplay(); }
 		// Avoid recalculating the agents
 		return shapes.keySet();
 	}
 
 	public Collection<IAgent> getAgentsToDisplay() {
 		// return agents;
-		if (definition instanceof AgentLayerStatement) {
-			return ((AgentLayerStatement) definition).getAgentsToDisplay();
-		}
+		if (definition instanceof AgentLayerStatement) { return ((AgentLayerStatement) definition)
+				.getAgentsToDisplay(); }
 		return ((GridLayerStatement) definition).getAgentsToDisplay();
 	}
 

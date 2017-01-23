@@ -17,8 +17,12 @@ import static msi.gama.common.util.GeometryUtils.getYNegatedCoordinates;
 import static msi.gama.common.util.GeometryUtils.triangulationSimple;
 
 import java.awt.Color;
-import java.util.Arrays;
+import java.util.Collection;
 
+import com.google.common.base.Objects;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
@@ -51,14 +55,19 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 	private static final double POINT_THETA = 2 * Math.PI / POINT_SEGMENTS;
 	private static final double POINT_COS = Math.cos(POINT_THETA);
 	private static final double POINT_SIN = Math.sin(POINT_THETA);
+	private final LoadingCache<Polygon, Collection<Polygon>> TRIANGULATION_CACHE =
+			CacheBuilder.newBuilder().build(new CacheLoader<Polygon, Collection<Polygon>>() {
+
+				@Override
+				public Collection<Polygon> load(final Polygon key) throws Exception {
+					return triangulationSimple(null, key);
+				}
+			});
 
 	final ICoordinates pointVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(10, 3);
-	final ICoordinates planFaceVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(5, 3);
-	final ICoordinates pyramidFaceVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(4, 3);
-	final ICoordinates polyhedronFaceVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(5, 3);
-	final GamaPoint polyhedronNormal = new GamaPoint();
-	final GamaPoint pyramidTop = new GamaPoint();
-	final double pointCoords[] = new double[30];
+	final ICoordinates quadVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(5, 3);
+	final ICoordinates triangleVertices = GEOMETRY_FACTORY.COORDINATES_FACTORY.create(4, 3);
+	final GamaPoint tempTopPoint = new GamaPoint();
 
 	public GeometryDrawer(final JOGLRenderer r) {
 		super(r);
@@ -73,16 +82,15 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			gl.glPushMatrix();
 			gl.glTranslated(loc.x, -loc.y, loc.z);
 			gl.glRotated(-angle, axis.x, axis.y, axis.z);
-			GLUtilLight.NotifyOpenGLRotation(gl, angle, axis, renderer.data);
+			GLUtilLight.NotifyOpenGLRotation(gl, -angle, axis, renderer.data);
 			gl.glTranslated(-loc.x, loc.y, -loc.z);
 			return true;
 		}
-
 		return false;
 	}
 
 	protected void cancelRotation(final GL2 gl, final Double angle, final GamaPoint axis) {
-		GLUtilLight.NotifyOpenGLRotation(gl, -angle, axis, renderer.data);
+		GLUtilLight.NotifyOpenGLRotation(gl, angle, axis, renderer.data);
 		gl.glPopMatrix();
 	}
 
@@ -92,16 +100,13 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		final GamaPoint axis = object.getRotationAxis();
 		final boolean rotated = applyRotation(gl, object.getLocation(), angle, axis);
 		try {
-			final boolean triangulated = renderer.data.isTriangulation();
-			final boolean filled = object.isFilled() && !triangulated;
-			final boolean textured = object.isTextured() && !triangulated;
 			final boolean solid = filled || textured;
 			final Color border = object.getBorder() == null && !solid ? object.getColor() : object.getBorder();
-			final double height = object.getHeight() == null ? 0d : object.getHeight();
+			final double height = Objects.firstNonNull(object.getHeight(), 0d);
 			final Geometry geom = object.getGeometry();
 			final Texture faceTexture = object.getAlternateTexture(gl, renderer);
 			final IShape.Type type = object.getType();
-			drawGeometry(gl, geom, textured, solid, border, height, faceTexture, type);
+			drawGeometry(geom, solid, border, height, faceTexture, type);
 		} finally {
 			if (rotated) {
 				cancelRotation(gl, angle, axis);
@@ -110,26 +115,26 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		}
 	}
 
-	public void drawGeometry(final GL2 gl, final Geometry geom, final boolean textured, final boolean solid,
-			final Color border, final double height, final Texture faceTexture, final IShape.Type type) {
+	public void drawGeometry(final Geometry geom, final boolean solid, final Color border, final double height,
+			final Texture faceTexture, final IShape.Type type) {
 		switch (type) {
 			case SPHERE:
-				drawSphere(gl, geom, solid, height, border);
+				drawSphere(geom, solid, height, border);
 				break;
 			case CONE:
-				drawCone3D(gl, geom, solid, height, border);
+				drawCone3D(geom, solid, height, border);
 				break;
 			case TEAPOT:
-				drawTeapot(gl, geom, solid, height, border);
+				drawTeapot(geom, solid, height, border);
 				break;
 			case PYRAMID:
-				drawPyramid(gl, geom, solid, height, border);
+				drawPyramid(geom, solid, height, border);
 				break;
 			case POLYLINECYLINDER:
-				drawMultiLineCylinder(gl, geom, solid, height, border);
+				drawMultiLineCylinder(geom, solid, height, border);
 				break;
 			case LINECYLINDER:
-				drawLineCylinder(gl, geom, solid, height, border);
+				drawLineCylinder(geom, solid, height, border);
 				break;
 			case POLYGON:
 			case ENVIRONMENT:
@@ -138,20 +143,20 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			case BOX:
 			case CYLINDER:
 			case GRIDLINE:
-				drawPolygon(gl, geom, solid, textured, height, border, faceTexture);
+				drawPolygon(geom, solid, height, border, faceTexture);
 				break;
 			case LINESTRING:
 			case LINEARRING:
 			case PLAN:
 			case POLYPLAN:
-				drawLineString(gl, geom, solid, height, border);
+				drawLineString(geom, solid, height, border);
 				break;
 			case POINT:
-				drawPoint(gl, geom, solid, renderer.getMaxEnvDim() / 800d, border);
+				drawPoint(geom, solid, renderer.getMaxEnvDim() / 800d, border);
 				break;
 			default:
 				applyToInnerGeometries(geom, (g) -> {
-					drawGeometry(gl, g, textured, solid, border, height, faceTexture, getTypeOf(g));
+					drawGeometry(g, solid, border, height, faceTexture, getTypeOf(g));
 				});
 		}
 	}
@@ -160,159 +165,129 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		return getYNegatedCoordinates(g);
 	}
 
-	public void drawPolygon(final GL2 gl, final Geometry polygon, final boolean solid, final boolean textured,
-			final double height, final Color border, final Texture faceTexture) {
-		if (height > 0)
-			this.drawPolyhedron(gl, polygon, solid, textured, height, border, faceTexture);
-		else {
-			// Front face
-			this.drawPolygon(gl, polygon, solid, textured, border, true);
-			// Back face (to avoid face culling in case of planar polygons)
-			// if (!GamaPreferences.ONLY_VISIBLE_FACES.getValue())
-			// this.drawPolygon(gl, polygon, solid, textured, border, false);
-		}
+	public void drawPolygon(final Geometry polygon, final boolean solid, final double height, final Color border,
+			final Texture faceTexture) {
+		if (polygon instanceof Polygon)
+			if (height > 0)
+				drawPolyhedron(polygon, solid, height, border, faceTexture);
+			else {
+				drawPolygon((Polygon) polygon, solid, border, true);
+			}
 
 	}
 
-	public void drawPolyhedron(final GL2 gl, final Geometry polygon, final boolean solid, final boolean textured,
-			final double height, final Color border, final Texture faceTexture) {
+	public void drawPolyhedron(final Geometry polygon, final boolean solid, final double height, final Color border,
+			final Texture faceTexture) {
+		final GL2 gl = renderer.getGL();
 		final ICoordinates vertices = getCoordinates(polygon);
 		final boolean hasHoles = getHolesNumber(polygon) > 0;
 		// Draw bottom
-		drawPolygon(gl, polygon, solid, textured, hasHoles ? border : null, false);
+		drawPolygon((Polygon) polygon, solid, hasHoles ? border : null, false);
 		// Compute z-up vector (normal to the bottom if the coordinates were to be drawn clockwise)
-		vertices.getNormal(true, height, polyhedronNormal);
+		vertices.getNormal(true, height, tempTopPoint);
 		// Translate to the new z position
-		gl.glPushMatrix();
-		gl.glTranslated(polyhedronNormal.x, polyhedronNormal.y, polyhedronNormal.z);
-		// Draw top
-		drawPolygon(gl, polygon, solid, textured, hasHoles ? border : null, true);
-		gl.glPopMatrix();
-		if (faceTexture != null) {
-			// faceTexture.enable(gl);
-			faceTexture.bind(gl);
+		try {
+			gl.glPushMatrix();
+			gl.glTranslated(tempTopPoint.x, tempTopPoint.y, tempTopPoint.z);
+			// Draw top
+			drawPolygon((Polygon) polygon, solid, hasHoles ? border : null, true);
+		} finally {
+			gl.glPopMatrix();
 		}
-		// gl.glActiveTexture(GL.GL_TEXTURE1);
-
+		if (faceTexture != null) {
+			renderer.setCurrentTexture(faceTexture);
+		}
 		// Draw faces
-
 		vertices.visit((pj, pk) -> {
-			polyhedronFaceVertices.replaceWith(pk.x, pk.y, pk.z, pk.x + polyhedronNormal.x, pk.y + polyhedronNormal.y,
-					pk.z + polyhedronNormal.z, pj.x + polyhedronNormal.x, pj.y + polyhedronNormal.y,
-					pj.z + polyhedronNormal.z, pj.x, pj.y, pj.z, pk.x, pk.y, pk.z);
-			_rectangle(gl, polyhedronFaceVertices, solid, true, true, border);
+			quadVertices.replaceWith(pk.x, pk.y, pk.z, pk.x + tempTopPoint.x, pk.y + tempTopPoint.y,
+					pk.z + tempTopPoint.z, pj.x + tempTopPoint.x, pj.y + tempTopPoint.y, pj.z + tempTopPoint.z, pj.x,
+					pj.y, pj.z, pk.x, pk.y, pk.z);
+			_shape(quadVertices, 4, solid, true, true, border);
 		});
 
 	}
 
-	private void drawPolygon(final GL2 gl, final Geometry p, final boolean solid, final boolean textured,
-			final Color border, final boolean clockwise) {
+	private void drawPolygon(final Polygon p, final boolean solid, final Color border, final boolean clockwise) {
 		final ICoordinates vertices = getCoordinates(p);
 		// Geometries are normally represented clockwise. If the programmer needs to represent a back face, it is
-		// specified by clockwise = false; drawBackFace tells whether the two faces of the polygon need to be drawn or
-		// not
-
-		handleNormal(gl, vertices, clockwise);
-		final boolean hasHoles = getHolesNumber(p) > 0;
+		// specified by clockwise = false;
 		if (solid) {
-			if (vertices.size() == 4 && !hasHoles) {
-				_triangle(gl, vertices, solid, clockwise, false, null);
-			} else if (vertices.size() == 5 && !hasHoles) {
-				_rectangle(gl, vertices, solid, clockwise, false, null);
-			} else if (textured) {
-				for (final Polygon tri : triangulationSimple(null, p)) {
-					_triangle(gl, getCoordinates(tri), solid, clockwise, false, null);
+			_normal(vertices, clockwise);
+			final boolean hasHoles = getHolesNumber(p) > 0;
+			final int size = vertices.size();
+			if (hasHoles || size > 5) {
+				for (final Polygon tri : TRIANGULATION_CACHE.apply(p)) {
+					_shape(getCoordinates(tri), 3, solid, clockwise, false, null);
 				}
-			} else {
-				GLU.gluTessBeginPolygon(tobj, null);
-				GLU.gluTessBeginContour(tobj);
-				vertices.visit(tessDrawer, -1, clockwise);
-				GLU.gluTessEndContour(tobj);
-				applyToInnerGeometries(p, geom -> {
-					GLU.gluTessBeginContour(tobj);
-					getCoordinates(geom).visit(tessDrawer, -1, !clockwise);
-					GLU.gluTessEndContour(tobj);
-				});
-				GLU.gluTessEndPolygon(tobj);
-			}
+			} else
+				_shape(vertices, size - 1, solid, clockwise, false, null);
 		}
 		if (border != null) {
-			_contour(gl, vertices, border);
-			applyToInnerGeometries(p, ring -> _contour(gl, getCoordinates(ring), border));
+			_contour(vertices, border);
+			applyToInnerGeometries(p, ring -> _contour(getCoordinates(ring), border));
 		}
 	}
 
-	public void drawLineString(final GL2 gl, final Geometry p, final boolean solid, final double height,
-			final Color border) {
+	public void drawLineString(final Geometry p, final boolean solid, final double height, final Color border) {
 		if (height > 0)
-			drawPlan(gl, p, solid, height, border);
+			drawPlan(p, solid, height, border);
 		else
-			_line(gl, getCoordinates(p), -1, false);
+			_line(getCoordinates(p), -1, false);
 	}
 
-	private void drawPlan(final GL2 gl, final Geometry p, final boolean solid, final double height,
-			final Color border) {
+	private void drawPlan(final Geometry p, final boolean solid, final double height, final Color border) {
 		getCoordinates(p).visit((pj, pk) -> {
-			// Explicitly create a ring
-			planFaceVertices.replaceWith(pk.x, pk.y, pk.z, pk.x, pk.y, pk.z + height, pj.x, pj.y, pj.z + height, pj.x,
-					pj.y, pj.z, pk.x, pk.y, pk.z);
-			_rectangle(gl, planFaceVertices, solid, true, true, border);
-			// To avoid face culling
-			// if (!GamaPreferences.ONLY_VISIBLE_FACES.getValue())
-			// _rectangle(gl, ring, solid, false, true, border);
+			quadVertices.replaceWith(pk.x, pk.y, pk.z, pk.x, pk.y, pk.z + height, pj.x, pj.y, pj.z + height, pj.x, pj.y,
+					pj.z, pk.x, pk.y, pk.z);
+			_shape(quadVertices, 4, solid, true, true, border);
 		});
 	}
 
-	public void drawPoint(final GL2 gl, final Geometry point, final boolean solid, final double height,
-			final Color border) {
+	public void drawPoint(final Geometry point, final boolean solid, final double height, final Color border) {
 		final Coordinate p = point.getCoordinate();
 		double x = height;
 		double y = 0;
-		Arrays.fill(pointCoords, p.z);
 		for (int ii = 0; ii < 10; ii++) {
 			final double t = x;
 			x = POINT_COS * x - POINT_SIN * y;
 			y = POINT_SIN * t + POINT_COS * y;
-			pointCoords[ii * 3] = x + p.x;
-			pointCoords[ii * 3 + 1] = y - p.y;
+			pointVertices.replaceWith(ii, x + p.x, y - p.y, 0);
 		}
-		pointVertices.replaceWith(pointCoords);
-		if (solid) {
-			gl.glBegin(gl.GL_POLYGON);
-			pointVertices.visit(pointDrawer, -1, true);
-			gl.glEnd();
-		}
-		_contour(gl, pointVertices, border);
+		_shape(pointVertices, -1, solid, true, true, border);
 	}
 
 	// //////////////////////////////SPECIAL 3D SHAPE DRAWER
 	// //////////////////////////////////////////////////////////////////////////////////
 
-	public void drawPyramid(final GL2 gl, final Geometry p, final boolean solid, final double height,
-			final Color border) {
+	public void drawPyramid(final Geometry p, final boolean solid, final double height, final Color border) {
+		final GL2 gl = renderer.getGL();
 		final ICoordinates vertices = getCoordinates(p);
-		gl.glPushMatrix();
-		gl.glTranslated(0, 0, vertices.at(0).z);
-		_rectangle(gl, vertices, solid, false, true, null);
-		vertices.getNormal(true, height, pyramidTop);
-		vertices.addCenterTo(pyramidTop);
-		vertices.visit((pj, pk) -> {
-			pyramidFaceVertices.replaceWith(pyramidTop.x, pyramidTop.y, pyramidTop.z, pk.x, pk.y, pk.z, pj.x, pj.y,
-					pj.z, pyramidTop.x, pyramidTop.y, pyramidTop.z);
-			_triangle(gl, pyramidFaceVertices, solid, true, true, border);
-		});
-		gl.glPopMatrix();
+		try {
+			gl.glPushMatrix();
+			gl.glTranslated(0, 0, vertices.at(0).z);
+			_shape(vertices, 4, solid, false, true, null);
+			vertices.getNormal(true, height, tempTopPoint);
+			vertices.addCenterTo(tempTopPoint);
+			vertices.visit((pj, pk) -> {
+				triangleVertices.replaceWith(tempTopPoint.x, tempTopPoint.y, tempTopPoint.z, pk.x, pk.y, pk.z, pj.x,
+						pj.y, pj.z, tempTopPoint.x, tempTopPoint.y, tempTopPoint.z);
+				_shape(triangleVertices, 3, solid, true, true, border);
+			});
+		} finally {
+			gl.glPopMatrix();
+		}
 	}
 
-	public void drawSphere(final GL2 gl, final Geometry p, final boolean solid, final double height,
-			final Color border) {
+	public void drawSphere(final Geometry p, final boolean solid, final double height, final Color border) {
 		final ICoordinates vertices = getCoordinates(p);
 		final double z = vertices.at(0).z;
+		final GL2 gl = renderer.getGL();
 		gl.glPushMatrix();
 		final Coordinate centroid = vertices.getCenter();
 		gl.glTranslated(centroid.x, centroid.y, z);
 
 		final GLU glu = renderer.getGlu();
+
 		final GLUquadric quad = glu.gluNewQuadric();
 		if (solid) {
 			glu.gluQuadricTexture(quad, true);
@@ -326,7 +301,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 		glu.gluSphere(quad, height, slices, stacks);
 		if (border != null) {
-			renderer.setCurrentColor(gl, border);
+			renderer.setCurrentColor(border);
 			glu.gluQuadricTexture(quad, false);
 			glu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
 			glu.gluSphere(quad, height, slices, stacks);
@@ -335,40 +310,41 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		gl.glPopMatrix();
 	}
 
-	public void drawMultiLineCylinder(final GL2 gl, final Geometry g, final boolean solid, final double height,
-			final Color border) {
+	public void drawMultiLineCylinder(final Geometry g, final boolean solid, final double height, final Color border) {
 		final int numGeometries = g.getNumGeometries();
 		for (int i = 0; i < numGeometries; i++) {
 			final Geometry gg = g.getGeometryN(i);
-			drawLineCylinder(gl, gg, solid, height, border);
+			drawLineCylinder(gg, solid, height, border);
 		}
 	}
 
-	public void drawTeapot(final GL2 gl, final Geometry p, final boolean solid, final double height,
-			final Color border) {
+	public void drawTeapot(final Geometry p, final boolean solid, final double height, final Color border) {
 		final ICoordinates vertices = getCoordinates(p);
-		gl.glPushMatrix();
-		final Coordinate centroid = vertices.getCenter();
-		gl.glTranslated(centroid.x, centroid.y, centroid.z);
-		gl.glRotated(90, 1.0, 0.0, 0.0);
-		final GLUT glut = renderer.getGlut();
-		if (solid) {
-			glut.glutSolidTeapot(height);
-			if (border != null) {
-				renderer.setCurrentColor(gl, border);
+		final GL2 gl = renderer.getGL();
+		try {
+			gl.glPushMatrix();
+			final Coordinate centroid = vertices.getCenter();
+			gl.glTranslated(centroid.x, centroid.y, centroid.z);
+			gl.glRotated(90, 1.0, 0.0, 0.0);
+			final GLUT glut = renderer.getGlut();
+			if (solid) {
+				glut.glutSolidTeapot(height);
+				if (border != null) {
+					renderer.setCurrentColor(border);
+					glut.glutWireTeapot(height);
+				}
+			} else
 				glut.glutWireTeapot(height);
-			}
-		} else
-			glut.glutWireTeapot(height);
-		gl.glRotated(-90, 1.0, 0.0, 0.0);
-		gl.glPopMatrix();
+		} finally {
+			gl.glPopMatrix();
+		}
 	}
 
-	public void drawLineCylinder(final GL2 gl, final Geometry g, final boolean solid, final double height,
-			final Color border) {
+	public void drawLineCylinder(final Geometry g, final boolean solid, final double height, final Color border) {
 
 		if (!(g instanceof LineString))
 			return;
+		final GL2 gl = renderer.getGL();
 		final LineString l = (LineString) g;
 
 		for (int i = 0; i <= l.getNumPoints() - 2; i++) {
@@ -396,7 +372,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 			final int stacks = slices;
 			glu.gluCylinder(quad, height, height, distance, slices, stacks);
 			if (border != null) {
-				renderer.setCurrentColor(gl, border);
+				renderer.setCurrentColor(border);
 				glu.gluQuadricTexture(quad, false);
 				glu.gluQuadricDrawStyle(quad, GLU.GLU_LINE);
 				glu.gluCylinder(quad, height, height, distance, slices, stacks);
@@ -407,8 +383,8 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
 	}
 
-	public void drawCone3D(final GL2 gl, final Geometry p, final boolean solid, final double height,
-			final Color border) {
+	public void drawCone3D(final Geometry p, final boolean solid, final double height, final Color border) {
+		final GL2 gl = renderer.getGL();
 		final ICoordinates vertices = getCoordinates(p);
 		final double z = vertices.at(0).z;
 
@@ -433,7 +409,7 @@ public class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 		if (solid) {
 			glut.glutSolidCone(radius, height, slices, slices);
 			if (border != null) {
-				renderer.setCurrentColor(gl, border);
+				renderer.setCurrentColor(border);
 				glut.glutWireCone(radius, height, slices, slices);
 			}
 		} else {

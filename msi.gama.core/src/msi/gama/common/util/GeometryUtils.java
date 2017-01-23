@@ -490,7 +490,6 @@ public class GeometryUtils {
 				final Geometry gg = tri.getGeometryN(i);
 
 				if (env.covers(gg) && pg.covers(gg)) {
-					// final GamaShape g = new GamaShape(gg);
 					if (zValue != null && gg.getCoordinate().z != z) {
 						gg.apply(new CoordinateSequenceFilter() {
 
@@ -912,10 +911,6 @@ public class GeometryUtils {
 		return g instanceof Polygon ? getContourCoordinates((Polygon) g)
 				: g instanceof LineString ? getContourCoordinates((LineString) g)
 						: GamaGeometryFactory.COORDINATES_FACTORY.create(g.getBoundary().getCoordinates());
-	}
-
-	public static boolean isConvex(final Polygon geom) {
-		return geom.getNumInteriorRing() == 0 && getContourCoordinates(geom).isConvex();
 	}
 
 	/**

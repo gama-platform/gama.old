@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractLayer.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -69,20 +68,16 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public void reloadOn(final IDisplaySurface surface) {
-	}
+	public void reloadOn(final IDisplaySurface surface) {}
 
 	@Override
-	public void firstLaunchOn(final IDisplaySurface surface) {
-	}
+	public void firstLaunchOn(final IDisplaySurface surface) {}
 
 	@Override
-	public void enableOn(final IDisplaySurface surface) {
-	}
+	public void enableOn(final IDisplaySurface surface) {}
 
 	@Override
-	public void disableOn(final IDisplaySurface surface) {
-	}
+	public void disableOn(final IDisplaySurface surface) {}
 
 	@Override
 	public void setOrder(final Integer o) {
@@ -100,8 +95,7 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public void dispose() {
-	}
+	public void dispose() {}
 
 	@Override
 	public void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
@@ -178,12 +172,12 @@ public abstract class AbstractLayer implements ILayer {
 		point = box.getSize();
 		// Computation of width
 		final double w = point.getX();
-		final double absolute_width = FastMath.abs(w) <= 1 ? pixelWidth * w
-				: g.getxRatioBetweenPixelsAndModelUnits() * w;
+		final double absolute_width =
+				FastMath.abs(w) <= 1 ? pixelWidth * w : g.getxRatioBetweenPixelsAndModelUnits() * w;
 		// Computation of height
 		final double h = point.getY();
-		final double absolute_height = FastMath.abs(h) <= 1 ? pixelHeight * h
-				: g.getyRatioBetweenPixelsAndModelUnits() * h;
+		final double absolute_height =
+				FastMath.abs(h) <= 1 ? pixelHeight * h : g.getyRatioBetweenPixelsAndModelUnits() * h;
 		sizeInPixels.setLocation(absolute_width, absolute_height);
 		positionInPixels.setLocation(absolute_x, absolute_y);
 	}
@@ -279,41 +273,41 @@ public abstract class AbstractLayer implements ILayer {
 	public static ILayer createLayer(final IScope scope, final ILayerStatement layer) {
 		switch (layer.getType()) {
 
-		case ILayerStatement.GRID: {
-			return new GridLayer(scope, layer);
-		}
-		case ILayerStatement.AGENTS: {
-			return new AgentLayer(layer);
-		}
-		case ILayerStatement.SPECIES: {
-			return new SpeciesLayer(layer);
-		}
-		// case ILayerStatement.TEXT: {
-		// return new TextLayer(layer);
-		// }
-		case ILayerStatement.IMAGE: {
-			return new ImageLayer(scope, layer);
-		}
-		case ILayerStatement.GIS: {
-			return new GisLayer(layer);
-		}
-		case ILayerStatement.CHART: {
-			return new ChartLayer(layer);
-		}
-		// case ILayerStatement.QUADTREE: {
-		// return new QuadTreeLayer(layer);
-		// }
-		case ILayerStatement.EVENT: {
-			return new EventLayer(layer);
-		}
-		case ILayerStatement.GRAPHICS: {
-			return new GraphicLayer(layer);
-		}
-		case ILayerStatement.OVERLAY: {
-			return new OverlayLayer(layer);
-		}
-		default:
-			return null;
+			case ILayerStatement.GRID: {
+				return new GridLayer(scope, layer);
+			}
+			case ILayerStatement.AGENTS: {
+				return new AgentLayer(layer);
+			}
+			case ILayerStatement.SPECIES: {
+				return new SpeciesLayer(layer);
+			}
+			// case ILayerStatement.TEXT: {
+			// return new TextLayer(layer);
+			// }
+			case ILayerStatement.IMAGE: {
+				return new ImageLayer(scope, layer);
+			}
+			case ILayerStatement.GIS: {
+				return new GisLayer(layer);
+			}
+			case ILayerStatement.CHART: {
+				return new ChartLayer(layer);
+			}
+			// case ILayerStatement.QUADTREE: {
+			// return new QuadTreeLayer(layer);
+			// }
+			case ILayerStatement.EVENT: {
+				return new EventLayer(layer);
+			}
+			case ILayerStatement.GRAPHICS: {
+				return new GraphicLayer(layer);
+			}
+			case ILayerStatement.OVERLAY: {
+				return new OverlayLayer(layer);
+			}
+			default:
+				return null;
 		}
 	}
 

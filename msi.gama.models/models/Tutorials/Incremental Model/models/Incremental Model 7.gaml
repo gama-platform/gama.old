@@ -83,7 +83,7 @@ species road {
 
 species building {
 	float height <- 10#m + rnd(10) #m;
-	list<people_in_building> people_inside -> {members collect people_in_building(each)};
+	list<people_in_building> people_inside -> {self.people_in_building};
 	float I;
 	float S;
 	float T;
@@ -91,7 +91,7 @@ species building {
    	float I_to1; 
    	
 	aspect geom {
-		int nbI <- members count people_in_building(each).is_infected;
+		int nbI <- self.people_in_building count each.is_infected;
 		int nbT <- length(members);
 		draw shape color:nbT = 0 ? #gray : (float(nbI)/nbT > 0.5 ? #red : #green) depth: height;
 	}
@@ -100,10 +100,10 @@ species building {
 	}
 	
 	reflex let_people_leave  {
-		ask members as: people_in_building{
+		ask self.people_in_building{
 			staying_counter <- staying_counter + 1;
 		}
-		list<people_in_building> leaving_people <- list<people_in_building>(members where (flip(people_in_building(each).staying_counter / staying_coeff)));
+		list<people_in_building> leaving_people <- list<people_in_building>(self.people_in_building where (flip((each).staying_counter / staying_coeff)));
 		if not (empty (leaving_people)) {
 			release leaving_people as: people in: world returns: released_people;
 			ask released_people {
@@ -124,7 +124,7 @@ species building {
 
 	reflex epidemic when: not empty(members){ 	
 		T <- float(length(members));
-		list<people_in_building> S_members <- list<people_in_building>(members where not (people_in_building(each).is_infected));
+		list<people_in_building> S_members <- list<people_in_building>(self.people_in_building where not ((each).is_infected));
     	S <- float(length(S_members));
     	I <- T-S;
     	float I0 <- I;

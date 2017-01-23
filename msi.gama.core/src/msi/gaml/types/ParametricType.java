@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ParametricType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ParametricType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -25,8 +24,7 @@ import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 
 /**
- * Class ParametrizedType. A class that allows to build composed types with a
- * content type and a key type
+ * Class ParametrizedType. A class that allows to build composed types with a content type and a key type
  *
  * @author drogoul
  * @since 19 janv. 2014
@@ -51,11 +49,9 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 
 	@Override
 	public boolean equals(final Object other) {
-		if (other instanceof ParametricType) {
-			return type.equals(((ParametricType) other).getType())
-					&& keyType.equals(((ParametricType) other).getKeyType())
-					&& contentsType.equals(((ParametricType) other).getContentType());
-		}
+		if (other instanceof ParametricType) { return type.equals(((ParametricType) other).getType())
+				&& keyType.equals(((ParametricType) other).getKeyType())
+				&& contentsType.equals(((ParametricType) other).getContentType()); }
 		return false;
 	}
 
@@ -82,8 +78,8 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	/**
 	 * Method cast()
 	 * 
-	 * @see msi.gaml.types.IType#cast(msi.gama.runtime.IScope, java.lang.Object,
-	 *      java.lang.Object, msi.gaml.types.IType, msi.gaml.types.IType)
+	 * @see msi.gaml.types.IType#cast(msi.gama.runtime.IScope, java.lang.Object, java.lang.Object, msi.gaml.types.IType,
+	 *      msi.gaml.types.IType)
 	 */
 	@Override
 	public IContainer<?, ?> cast(final IScope scope, final Object obj, final Object param, final IType<?> kt,
@@ -261,8 +257,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 * @see msi.gaml.types.IType#setParent(msi.gaml.types.IType)
 	 */
 	@Override
-	public void setParent(final IType<? super IContainer<?, ?>> p) {
-	}
+	public void setParent(final IType<? super IContainer<?, ?>> p) {}
 
 	/**
 	 * Method getParent()
@@ -277,8 +272,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	/**
 	 * Method coerce()
 	 * 
-	 * @see msi.gaml.types.IType#coerce(msi.gaml.types.IType,
-	 *      msi.gaml.descriptions.IDescription)
+	 * @see msi.gaml.types.IType#coerce(msi.gaml.types.IType, msi.gaml.descriptions.IDescription)
 	 */
 	@Override
 	public IType<?> coerce(final IType<?> expr, final IDescription context) {
@@ -302,14 +296,12 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 * @see msi.gaml.types.IType#setFieldGetters(java.util.Map)
 	 */
 	@Override
-	public void setFieldGetters(final Map<String, OperatorProto> map) {
-	}
+	public void setFieldGetters(final Map<String, OperatorProto> map) {}
 
 	/**
 	 * Method canBeTypeOf()
 	 * 
-	 * @see msi.gaml.types.IType#canBeTypeOf(msi.gama.runtime.IScope,
-	 *      java.lang.Object)
+	 * @see msi.gaml.types.IType#canBeTypeOf(msi.gama.runtime.IScope, java.lang.Object)
 	 */
 	@Override
 	public boolean canBeTypeOf(final IScope s, final Object c) {
@@ -319,12 +311,10 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	/**
 	 * Method init()
 	 * 
-	 * @see msi.gaml.types.IType#init(int, int, java.lang.String,
-	 *      java.lang.Class[])
+	 * @see msi.gaml.types.IType#init(int, int, java.lang.String, java.lang.Class[])
 	 */
 	@Override
-	public void init(final int varKind, final int id, final String name, final Class<IContainer<?, ?>> clazz) {
-	}
+	public void init(final int varKind, final int id, final String name, final Class<IContainer<?, ?>> clazz) {}
 
 	/**
 	 * Method isContainer()
@@ -351,7 +341,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 * 
 	 * @see msi.gaml.types.IType#findCommonSupertypeWith(msi.gaml.types.IType)
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public IType<? super IContainer<?, ?>> findCommonSupertypeWith(final IType<?> iType) {
 		if (iType instanceof ParametricType) {
@@ -395,8 +385,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 * @see msi.gaml.types.IType#setSupport(java.lang.Class)
 	 */
 	@Override
-	public void setSupport(final Class<IContainer<?, ?>> clazz) {
-	}
+	public void setSupport(final Class<IContainer<?, ?>> clazz) {}
 
 	@Override
 	public IContainer<?, ?> cast(final IScope scope, final Object obj, final Object param, final boolean copy)
@@ -406,13 +395,9 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 
 	@Override
 	public String toString() {
-		if (type.id() == IType.LIST || type.id() == IType.MATRIX
-				|| type.id() == IType.CONTAINER && keyType == Types.NO_TYPE) {
-			return type.toString() + "<" + contentsType.toString() + ">";
-		}
-		if (type.id() == IType.SPECIES) {
-			return type.toString() + "<" + contentsType.toString() + ">";
-		}
+		if (type.id() == IType.LIST || type.id() == IType.MATRIX || type.id() == IType.CONTAINER
+				&& keyType == Types.NO_TYPE) { return type.toString() + "<" + contentsType.toString() + ">"; }
+		if (type.id() == IType.SPECIES) { return type.toString() + "<" + contentsType.toString() + ">"; }
 		return type.toString() + "<" + keyType.toString() + ", " + contentsType.toString() + ">";
 	}
 
@@ -424,13 +409,9 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 
 	@Override
 	public String serialize(final boolean includingBuiltIn) {
-		if (type.id() == IType.LIST || type.id() == IType.MATRIX
-				|| type.id() == IType.CONTAINER && keyType == Types.NO_TYPE) {
-			return type.toString() + "<" + contentsType.toString() + ">";
-		}
-		if (type.id() == IType.SPECIES) {
-			return type.toString() + "<" + contentsType.toString() + ">";
-		}
+		if (type.id() == IType.LIST || type.id() == IType.MATRIX || type.id() == IType.CONTAINER
+				&& keyType == Types.NO_TYPE) { return type.toString() + "<" + contentsType.toString() + ">"; }
+		if (type.id() == IType.SPECIES) { return type.toString() + "<" + contentsType.toString() + ">"; }
 		return type.toString() + "<" + keyType.serialize(includingBuiltIn) + ", "
 				+ contentsType.serialize(includingBuiltIn) + ">";
 	}
@@ -488,15 +469,11 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 
 	@Override
 	public IContainerType<?> of(final IType<?>... subs) {
-		if (subs.length == 0) {
-			return this;
-		}
+		if (subs.length == 0) { return this; }
 		IType<?> kt = subs.length == 1 ? getKeyType() : subs[0];
 		IType<?> ct = subs.length == 1 ? subs[0] : subs[1];
 		if (ct == Types.NO_TYPE) {
-			if (kt == Types.NO_TYPE) {
-				return this;
-			}
+			if (kt == Types.NO_TYPE) { return this; }
 			ct = getContentType();
 		}
 		if (kt == Types.NO_TYPE) {
@@ -512,8 +489,7 @@ public class ParametricType implements IContainerType<IContainer<?, ?>> {
 	 * @see msi.gaml.types.IType#setDefiningPlugin(java.lang.String)
 	 */
 	@Override
-	public void setDefiningPlugin(final String plugin) {
-	}
+	public void setDefiningPlugin(final String plugin) {}
 
 	@Override
 	public void collectMetaInformation(final GamlProperties meta) {

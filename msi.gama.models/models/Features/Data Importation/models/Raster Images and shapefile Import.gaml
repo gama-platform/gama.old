@@ -96,7 +96,7 @@ experiment main type: gui {
 	// We can thus compare the original MNT image and the discretized image in the grid.
 	// For cosmetic need, we can choose to not display the grid. 
 	output {
-		display HowToImportVectorial {
+		display HowToImportVectorial type: opengl{
 	        image 'Background' file: mntImageRaster.path;  		
 	       	grid cell;
 	 		species managementUnit transparency: 0.5;

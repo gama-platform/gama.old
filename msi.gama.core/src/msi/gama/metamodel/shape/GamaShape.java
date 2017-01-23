@@ -492,10 +492,6 @@ public class GamaShape implements IShape /* , IContainer */ {
 		} else {
 			geometry = geom;
 		}
-		// if (geometry != null && !GeometryUtils.isClockwise(geometry)) {
-		// GeometryUtils.changeClockwise(geometry);
-		// }
-		// setEnvelope(null);
 	}
 
 	private void setEnvelope(final Envelope3D envelope) {

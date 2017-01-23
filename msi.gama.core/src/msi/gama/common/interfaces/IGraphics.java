@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'IGraphics.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IGraphics.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -69,8 +68,7 @@ public interface IGraphics {
 	public abstract double getxRatioBetweenPixelsAndModelUnits();
 
 	/*
-	 * Returns the region of the current layer (in model units) that is visible
-	 * on screen
+	 * Returns the region of the current layer (in model units) that is visible on screen
 	 */
 	public abstract Envelope getVisibleRegion();
 

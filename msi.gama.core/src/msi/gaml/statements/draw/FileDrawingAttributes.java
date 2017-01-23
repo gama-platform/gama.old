@@ -9,8 +9,6 @@
  **********************************************************************************************/
 package msi.gaml.statements.draw;
 
-import java.util.List;
-
 import msi.gama.common.GamaPreferences;
 import msi.gama.metamodel.agent.AgentIdentifier;
 import msi.gama.metamodel.agent.IAgent;
@@ -22,6 +20,7 @@ import msi.gama.util.GamaPair;
 public class FileDrawingAttributes extends DrawingAttributes {
 
 	public final AgentIdentifier agentIdentifier;
+	public double lineWidth;
 
 	public FileDrawingAttributes(final GamaPoint size, final GamaPair<Double, GamaPoint> rotation,
 			final GamaPoint location, final GamaColor color, final GamaColor border, final IAgent agent,
@@ -32,7 +31,12 @@ public class FileDrawingAttributes extends DrawingAttributes {
 	}
 
 	public void setLineWidth(final Double d) {
-		setLength(ID_LINE_WIDTH, d);
+		lineWidth = d;
+	}
+
+	@Override
+	public Double getLineWidth() {
+		return lineWidth;
 	}
 
 	public FileDrawingAttributes(final GamaPoint location) {
@@ -45,26 +49,6 @@ public class FileDrawingAttributes extends DrawingAttributes {
 		super(null, null, location, color, border);
 		agentIdentifier = null;
 		setLineWidth(GamaPreferences.CORE_LINE_WIDTH.getValue());
-	}
-
-	/**
-	 * Method getTextures()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#getTextures()
-	 */
-	@Override
-	public List<?> getTextures() {
-		return null;
-	}
-
-	/**
-	 * Method isEmpty()
-	 * 
-	 * @see msi.gaml.statements.draw.DrawingAttributes#isEmpty()
-	 */
-	@Override
-	public boolean isEmpty() {
-		return false;
 	}
 
 	/**

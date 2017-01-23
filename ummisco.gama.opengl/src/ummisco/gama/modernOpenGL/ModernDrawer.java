@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ModernDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ModernDrawer.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,6 +9,7 @@
  **********************************************************************************************/
 package ummisco.gama.modernOpenGL;
 
+import java.awt.Color;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ import ummisco.gama.opengl.scene.LayerObject;
 import ummisco.gama.opengl.vaoGenerator.ModernLayerStructure;
 import ummisco.gama.opengl.vaoGenerator.TransformationMatrix;
 
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings ({ "unchecked" })
 public class ModernDrawer {
 
 	private boolean isRenderingToTexture = false;
@@ -148,9 +148,7 @@ public class ModernDrawer {
 
 	private boolean addEntityToList(final DrawingEntity entity, final DrawingEntity newEntity,
 			final DrawingEntity.Type type) {
-		if (entity.isOverlay() != newEntity.isOverlay()) {
-			return false;
-		}
+		if (entity.isOverlay() != newEntity.isOverlay()) { return false; }
 		if (type.equals(DrawingEntity.Type.LINE)) {
 			return true;
 		} else if (type.equals(DrawingEntity.Type.FACE)) {
@@ -158,9 +156,7 @@ public class ModernDrawer {
 		} else if (type.equals(DrawingEntity.Type.TEXTURED) || type.equals(DrawingEntity.Type.STRING)) {
 			return entity.getMaterial().equalsTo(newEntity.getMaterial())
 					&& entity.getTextureID() == newEntity.getTextureID();
-		} else if (type.equals(DrawingEntity.Type.POINT)) {
-			return true;
-		}
+		} else if (type.equals(DrawingEntity.Type.POINT)) { return true; }
 		return false;
 	}
 
@@ -199,8 +195,7 @@ public class ModernDrawer {
 
 	public void redraw() {
 
-		if (numberOfShaderInTheCurrentLayer == 0) {
-			return; // if nothing is to draw for this layer, do nothing.
+		if (numberOfShaderInTheCurrentLayer == 0) { return; // if nothing is to draw for this layer, do nothing.
 		}
 		final int[] vboHandles = new int[numberOfShaderInTheCurrentLayer * 5];
 		this.gl.glGenBuffers(numberOfShaderInTheCurrentLayer * 5, vboHandles, 0);
@@ -249,8 +244,7 @@ public class ModernDrawer {
 
 	public void refresh(final LayerObject layer) {
 		currentLayer = layer;
-		if (layerStructureMap.get(currentLayer) == null) {
-			return; // if nothing is to draw for this layer, do nothing.
+		if (layerStructureMap.get(currentLayer) == null) { return; // if nothing is to draw for this layer, do nothing.
 		}
 		final ArrayList<AbstractShader> shaderList = layerStructureMap.get(currentLayer).shaderList;
 		for (final AbstractShader shader : shaderList) {
@@ -291,7 +285,7 @@ public class ModernDrawer {
 		}
 	}
 
-	@SuppressWarnings("null")
+	@SuppressWarnings ("null")
 	private FrameBufferObject applyPostprocessing(final FrameBufferObject inputFbo,
 			final AbstractPostprocessingShader shader, final int effectNumber, final boolean lastEffect) {
 		fboHandles = new int[5];
@@ -342,23 +336,13 @@ public class ModernDrawer {
 		isRenderingToTexture = true;
 		fboHandles = new int[5];
 
-		final boolean applyBlur = renderer.data.getKeystone() != null ? true : false; // we
-																						// apply
-																						// blur
-																						// if
-																						// there
-																						// is
-																						// a
-																						// keystoning
-																						// deformation.
+		final boolean applyBlur = renderer.data.getKeystone() != null ? true : false;
 
 		if (applyBlur) {
-			final FrameBufferObject fbo_with_horiz_blur = applyPostprocessing(fbo_scene, new HorizontalBlurShader(gl),
-					1, false);
-			// applyPostprocessing(fbo_with_horiz_blur,new
-			// SimpleShaderProgram(gl),0,true);
-			final FrameBufferObject fbo_with_vert_blur = applyPostprocessing(fbo_with_horiz_blur,
-					new VerticalBlurShader(gl), 2, false);
+			final FrameBufferObject fbo_with_horiz_blur =
+					applyPostprocessing(fbo_scene, new HorizontalBlurShader(gl), 1, false);
+			final FrameBufferObject fbo_with_vert_blur =
+					applyPostprocessing(fbo_with_horiz_blur, new VerticalBlurShader(gl), 2, false);
 			applyPostprocessing(fbo_with_vert_blur, new KeystoneShaderProgram(gl), 0, true);
 		} else {
 			applyPostprocessing(fbo_scene, new KeystoneShaderProgram(gl), 0, true);
@@ -511,9 +495,8 @@ public class ModernDrawer {
 	}
 
 	private void prepareShader(final DrawingEntity entity, final ShaderProgram shaderProgram) {
-		shaderProgram.loadAmbientLight(new Vector3f(renderer.data.getAmbientLightColor().getRed() / 255f,
-				renderer.data.getAmbientLightColor().getGreen() / 255f,
-				renderer.data.getAmbientLightColor().getBlue() / 255f));
+		final Color c = renderer.data.getAmbientLightColor();
+		shaderProgram.loadAmbientLight(new Vector3f(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f));
 		shaderProgram.loadLights(renderer.data.getDiffuseLights());
 		final boolean useNormals = entity.getMaterial().useLight;
 		if (useNormals) {
@@ -567,8 +550,8 @@ public class ModernDrawer {
 		final float[] quat = new float[] { 0, 0, 1, (float) Math.toRadians(renderer.getZRotation()) };
 		final float scale = (float) currentLayer.getScale().x;
 
-		final float env_width = (float) renderer.data.getEnvWidth();
-		final float env_height = (float) renderer.data.getEnvHeight();
+		final float env_width = (float) renderer.getWorldsDimensions().x;
+		final float env_height = (float) renderer.getWorldsDimensions().y;
 		return TransformationMatrix.createTransformationMatrix(layerTranslation, quat, scale, env_width, env_height);
 	}
 
@@ -665,8 +648,7 @@ public class ModernDrawer {
 
 		int offset = 0;
 		for (final float[] data : listData) {
-			final FloatBuffer fbData = Buffers
-					.newDirectFloatBuffer(data/* totalData,positionInBuffer */);
+			final FloatBuffer fbData = Buffers.newDirectFloatBuffer(data/* totalData,positionInBuffer */);
 			gl.glBufferSubData(GL2.GL_ARRAY_BUFFER, offset, data.length * 4, fbData);
 			offset += data.length * 4;
 			fbData.rewind(); // It is OK to release CPU after transfer to GPU
@@ -681,19 +663,19 @@ public class ModernDrawer {
 	private void bindBuffer(final int shaderAttributeNumber, final int bufferAttributeNumber, final int shaderNumber) {
 		int coordinateSize = 0;
 		switch (shaderAttributeNumber) {
-		// recognize the type of VAO to determine the size of the coordinates
-		case AbstractShader.COLOR_ATTRIBUTE_IDX:
-			coordinateSize = 4;
-			break; // r, g, b, a
-		case AbstractShader.POSITION_ATTRIBUTE_IDX:
-			coordinateSize = 3;
-			break; // x, y, z
-		case AbstractShader.NORMAL_ATTRIBUTE_IDX:
-			coordinateSize = 3;
-			break; // x, y, z
-		case AbstractShader.UVMAPPING_ATTRIBUTE_IDX:
-			coordinateSize = textureWith4Coordinates ? 4 : 2;
-			break; // s, t, r, q for textureRendering, u, v otherwise
+			// recognize the type of VAO to determine the size of the coordinates
+			case AbstractShader.COLOR_ATTRIBUTE_IDX:
+				coordinateSize = 4;
+				break; // r, g, b, a
+			case AbstractShader.POSITION_ATTRIBUTE_IDX:
+				coordinateSize = 3;
+				break; // x, y, z
+			case AbstractShader.NORMAL_ATTRIBUTE_IDX:
+				coordinateSize = 3;
+				break; // x, y, z
+			case AbstractShader.UVMAPPING_ATTRIBUTE_IDX:
+				coordinateSize = textureWith4Coordinates ? 4 : 2;
+				break; // s, t, r, q for textureRendering, u, v otherwise
 		}
 		// Select the VBO, GPU memory data, to use for data
 		if (!isRenderingToTexture)

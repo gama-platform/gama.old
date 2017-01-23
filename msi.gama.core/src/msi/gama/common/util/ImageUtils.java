@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'ImageUtils.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'ImageUtils.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -23,22 +22,24 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.imageio.ImageIO;
 import javax.media.jai.JAI;
 import javax.media.jai.RenderedOp;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.sun.media.jai.codec.FileSeekableStream;
 import com.sun.media.jai.codec.TIFFDecodeParam;
 
-import gnu.trove.map.hash.THashMap;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 
 public class ImageUtils {
 
-	private final Map<String, BufferedImage[]> cache;
+	private final static BufferedImage NO_IMAGE = new BufferedImage(4, 4, BufferedImage.TYPE_INT_ARGB);
+	private final Cache<String, BufferedImage> cache = CacheBuilder.newBuilder().build();
 
 	private static GraphicsConfiguration cachedGC;
 
@@ -50,13 +51,7 @@ public class ImageUtils {
 		return cachedGC;
 	}
 
-	private static final int POSITIONS = 360;
-
-	private static final int ANGLE_INCREMENT = 360 / POSITIONS;
-
 	private static final List<String> tiffExt = Arrays.asList(".tiff", ".tif", ".TIF", ".TIFF");
-
-	// private final static double DEGREE_90 = 90.0 * FastMath.PI / 180.0;
 
 	private static ImageUtils instance = new ImageUtils();
 
@@ -64,65 +59,50 @@ public class ImageUtils {
 		return instance;
 	}
 
-	private ImageUtils() {
-		cache = new THashMap<>();
-	}
+	private ImageUtils() {}
 
 	public boolean contains(final String s) {
-		return cache.containsKey(s);
+		return cache.getIfPresent(s) != null;
 	}
 
 	public BufferedImage getImageFromFile(final IScope scope, final String fileName) throws IOException {
-		final BufferedImage image = get(fileName);
-		if (image != null) {
-			return image;
-		}
+		final BufferedImage image = cache.getIfPresent(fileName);
+		if (image != null) { return image; }
 		final String s = scope != null ? FileUtils.constructAbsoluteFilePath(scope, fileName, true) : fileName;
 		final File f = new File(s);
-		return getImageFromFile(f);
+		final BufferedImage result = getImageFromFile(f);
+		return result == NO_IMAGE ? null : result;
 	}
 
-	public BufferedImage getImageFromFile(final File file) throws IOException {
-		BufferedImage image = get(file.getAbsolutePath());
-		if (image == null) {
-			if (file.getName().contains(".")) {
-				final String ext = file.getName().substring(file.getName().lastIndexOf("."));
-				if (tiffExt.contains(ext)) {
-					try (FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath())) {
-						final TIFFDecodeParam decodeParam = new TIFFDecodeParam();
-						decodeParam.setDecodePaletteAsShorts(true);
-						final ParameterBlock params = new ParameterBlock();
-						params.add(stream);
-						final RenderedOp image1 = JAI.create("tiff", params);
-						image = image1.getAsBufferedImage();
-					}
+	private BufferedImage privateReadFromFile(final File file) throws IOException {
+		final String name = file.getName();
+		if (name.contains(".")) {
+			final String ext = name.substring(file.getName().lastIndexOf("."));
+			if (tiffExt.contains(ext)) {
+				try (FileSeekableStream stream = new FileSeekableStream(file.getAbsolutePath())) {
+					final TIFFDecodeParam decodeParam = new TIFFDecodeParam();
+					decodeParam.setDecodePaletteAsShorts(true);
+					final ParameterBlock params = new ParameterBlock();
+					params.add(stream);
+					final RenderedOp image1 = JAI.create("tiff", params);
+					return image1.getAsBufferedImage();
 				}
+			} else {
+				return ImageIO.read(file);
 			}
 		}
-		if (image == null) {
-			image = ImageIO.read(file);
-		}
-		if (image != null) {
-			add(file.getAbsolutePath(), image);
-		}
-		return image;
+		return NO_IMAGE;
 	}
 
-	public void add(final String s, final BufferedImage image) {
-		add(s, image, 0); // No rotations for the moment
-		// for ( int i = 0; i < POSITIONS; i++ ) {
-		// add(s, createRotatedImage(image, i * ANGLE_INCREMENT), i);
-		// }
-	}
-
-	private void add(final String s, final BufferedImage image, final int position) {
-		// OutputManager.debug("Creating rotated images of " + s + " at "
-		// + position * ANGLE_INCREMENT);
-		if (!cache.containsKey(s)) {
-			cache.put(s, new BufferedImage[POSITIONS]);
+	public BufferedImage getImageFromFile(final File file) {
+		BufferedImage image;
+		try {
+			image = cache.get(file.getAbsolutePath(), () -> privateReadFromFile(file));
+			return image == NO_IMAGE ? null : image;
+		} catch (final ExecutionException e) {
+			e.printStackTrace();
 		}
-		final BufferedImage[] map = cache.get(s);
-		map[position] = /* toCompatibleImage(image); */ image;
+		return null;
 	}
 
 	static boolean DEBUG_OPTION = true;
@@ -146,19 +126,14 @@ public class ImageUtils {
 	}
 
 	public static BufferedImage toCompatibleImage(final BufferedImage image) {
-		if (GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless()) {
-			return image;
-		}
+		if (GAMA.isInHeadLessMode() || GraphicsEnvironment.isHeadless()) { return image; }
 		// final GraphicsConfiguration gfx_config =
 		// GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
 		/*
-		 * if image is already compatible and optimized for current system
-		 * settings, simply return it
+		 * if image is already compatible and optimized for current system settings, simply return it
 		 */
-		if (image.getColorModel().equals(getCachedGC().getColorModel())) {
-			return image;
-		}
+		if (image.getColorModel().equals(getCachedGC().getColorModel())) { return image; }
 
 		// image is not optimized, so create a new image that is
 		final BufferedImage new_image =
@@ -175,19 +150,6 @@ public class ImageUtils {
 
 		// return the new optimized image
 		return new_image;
-	}
-
-	public BufferedImage get(final String s) {
-		return get(s, 0);
-	}
-
-	private BufferedImage get(final String s, final int angle) {
-		final BufferedImage[] map = cache.get(s);
-		if (map == null) {
-			return null;
-		}
-		final int position = (int) Math.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
-		return map[position];
 	}
 
 	//
@@ -245,8 +207,7 @@ public class ImageUtils {
 	// }
 
 	/**
-	 * Convenience method that returns a scaled instance of the provided
-	 * {@code BufferedImage}.
+	 * Convenience method that returns a scaled instance of the provided {@code BufferedImage}.
 	 *
 	 * @param img
 	 *            the original image to be scaled
@@ -255,25 +216,22 @@ public class ImageUtils {
 	 * @param targetHeight
 	 *            the desired height of the scaled instance, in pixels
 	 * @param hint
-	 *            one of the rendering hints that corresponds to
-	 *            {@code RenderingHints.KEY_INTERPOLATION} (e.g.
+	 *            one of the rendering hints that corresponds to {@code RenderingHints.KEY_INTERPOLATION} (e.g.
 	 *            {@code RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
 	 *            {@code RenderingHints.VALUE_INTERPOLATION_BILINEAR},
 	 *            {@code RenderingHints.VALUE_INTERPOLATION_BICUBIC})
 	 * @param higherQuality
-	 *            if true, this method will use a multi-step scaling technique
-	 *            that provides higher quality than the usual one-step technique
-	 *            (only useful in downscaling cases, where {@code targetWidth}
-	 *            or {@code targetHeight} is smaller than the original
-	 *            dimensions, and generally only when the {@code BILINEAR} hint
-	 *            is specified)
+	 *            if true, this method will use a multi-step scaling technique that provides higher quality than the
+	 *            usual one-step technique (only useful in downscaling cases, where {@code targetWidth} or
+	 *            {@code targetHeight} is smaller than the original dimensions, and generally only when the
+	 *            {@code BILINEAR} hint is specified)
 	 * @return a scaled version of the original {@code BufferedImage}
 	 */
 	public static BufferedImage resize(final BufferedImage img, final int targetWidth, final int targetHeight,
 			final Object hint, final boolean higherQuality) {
 
-		final int type = img.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB
-				: BufferedImage.TYPE_INT_ARGB;
+		final int type =
+				img.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
 		BufferedImage ret = img;
 		int w, h;
 		if (higherQuality) {
@@ -332,14 +290,12 @@ public class ImageUtils {
 	 * @return
 	 */
 	public static BufferedImage resize(final BufferedImage snapshot, final int width, final int height) {
-		if (width == snapshot.getWidth() && height == snapshot.getHeight()) {
-			return snapshot;
-		}
+		if (width == snapshot.getWidth() && height == snapshot.getHeight()) { return snapshot; }
 		return resize(snapshot, width, height, RenderingHints.VALUE_INTERPOLATION_BILINEAR, false);
 	}
 
 	public void clearCache(final String pathName) {
-		cache.remove(pathName);
+		cache.invalidate(pathName);
 
 	}
 }

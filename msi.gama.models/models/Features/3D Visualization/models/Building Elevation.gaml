@@ -120,7 +120,7 @@ species people skills: [moving]
 
 	aspect base
 	{
-		draw sphere(10) color: color;
+		draw cube(10) color: color;
 	}
 
 }
@@ -158,19 +158,19 @@ experiment road_traffic type: gui
 	parameter 'maximal speed' var: max_speed category: 'People';
 	output
 	{
-		display city_display type: opengl show_fps: true
+		display city_display type: opengl camera_pos: {world.location.x,world.location.y,1000} camera_look_pos: {world.location.x,world.location.y,0} show_fps: true
 		{
-			species building aspect: base;
-			species road aspect: base;
+			species building aspect: base refresh: true;
+			species road aspect: base refresh: false;
 			species people aspect: base;
 		}
-
-		display city_display2
-		{
-			species building aspect: base;
-			species road aspect: base;
-			species people aspect: base;
-		}
+//
+//		display city_display2
+//		{
+//			species building aspect: base;
+//			species road aspect: base;
+//			species people aspect: base;
+//		}
 
 	}
 
@@ -205,7 +205,7 @@ experiment road_traffic_flying_off type: gui
 {
 	output
 	{
-		display flyingOffAgents type: opengl
+		display flyingOffAgents type: opengl 
 		{
 			species road aspect: base;
 			species building aspect: base position: { 0, 0, (time * 2) / 1000 };

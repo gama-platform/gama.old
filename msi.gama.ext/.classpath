@@ -152,7 +152,7 @@
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry exported="true" kind="lib" path="commons-math3-3.6.1/jars/commons-math3-3.6.1.jar" sourcepath="commons-math3-3.6.1/commons-math3-3.6.1-src.zip"/>
-	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jcommon-1.0.23.jar"/>
+	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jcommon-1.0.23.jar" sourcepath="/Users/drogoul/.m2/repository/org/jfree/jcommon/1.0.23/jcommon-1.0.23-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart 1.0.19/jars/jfreechart-1.0.19.jar" sourcepath="jfreechart 1.0.19/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="jts 1.14/jars/jts-core-1.14.0.jar" sourcepath="jts 1.14/src.zip"/>
 	<classpathentry exported="true" kind="lib" path="rcaller 2.5/jars/RCaller-2.5.jar"/>

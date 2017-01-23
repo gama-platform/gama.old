@@ -90,7 +90,7 @@ species board {
 		mat <- material(10,0.2); // create a varnish-like wood : moderated reflectivity
 	}
 	aspect base {
-		draw rectangle(100,100) depth:5 material:mat texture:"../includes/wood.jpg";
+		draw rectangle(100,100)  texture:"../includes/wood.jpg";
 		draw rectangle(100,10) at:{50,5} depth:10 material:mat texture:"../includes/wood.jpg";
 		draw rectangle(100,10) at:{50,95} depth:10 material:mat texture:"../includes/wood.jpg";
 		draw rectangle(10,100) at:{5,50} depth:10 material:mat texture:"../includes/wood.jpg";

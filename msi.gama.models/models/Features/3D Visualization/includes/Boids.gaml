@@ -10,7 +10,7 @@ model boids
 global torus: torus_environment{ 
 	
 	//Variable to represent the number of boids to create
-	int number_of_agents <- 10 min: 1 max: 1000000;
+	int number_of_agents <- 100 min: 1 max: 1000000;
 	//Variable to represent the number of obstacles to create
 	int number_of_obstacles <- 5 min: 0;
 	//Variable to represent the maximal speed of the boids agents
@@ -216,7 +216,7 @@ experiment Boids_gui type: gui {
 	parameter 'Direction of the wind' var: wind_vector ;  
 	
 	output {
-		display Sky
+		display Sky type: opengl
 		{
 			image 'background' file:'../images/sky.jpg';
 			species boids aspect: image;

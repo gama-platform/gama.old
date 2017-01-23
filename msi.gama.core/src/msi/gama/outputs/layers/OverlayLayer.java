@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'OverlayLayer.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'OverlayLayer.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -75,9 +74,7 @@ public class OverlayLayer extends GraphicLayer {
 
 	@Override
 	protected void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
-		if (computed) {
-			return;
-		}
+		if (computed) { return; }
 		// Voir comment conserver cette information
 		final int pixelWidth = g.getDisplayWidth();
 		final int pixelHeight = g.getDisplayHeight();

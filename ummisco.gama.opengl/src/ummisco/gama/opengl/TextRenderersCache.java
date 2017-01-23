@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'TextRenderersCache.java, in plugin ummisco.gama.opengl, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'TextRenderersCache.java, in plugin ummisco.gama.opengl, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,8 +18,7 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.util.awt.TextRenderer;
 
 /**
- * Global text renderers. Does not allow renderers to be created for text bigger
- * than 200 pixels
+ * Global text renderers. Does not allow renderers to be created for text bigger than 200 pixels
  * 
  * @author drogoul
  *
@@ -34,10 +32,9 @@ public class TextRenderersCache {
 	}
 
 	public TextRenderer get(final String font, final int s, final int style) {
+		System.out.println("GETTING TEXT RENDERER FOR SIZE " + s);
 		final int size = s > 150 ? 150 : s;
-		if (size < 6) {
-			return null;
-		}
+		if (size < 6) { return null; }
 		Map<Integer, Map<Integer, TextRenderer>> map1 = cache.get(font);
 		if (map1 == null) {
 			map1 = new HashMap<>();
@@ -51,8 +48,8 @@ public class TextRenderersCache {
 		TextRenderer r = map2.get(style);
 		if (r == null) {
 			r = new TextRenderer(new Font(font, style, size), true, false, null, true);
-			r.setSmoothing(true);
-			r.setUseVertexArrays(true);
+			r.setSmoothing(false);
+			r.setUseVertexArrays(false);
 			map2.put(style, r);
 		}
 		return r;
