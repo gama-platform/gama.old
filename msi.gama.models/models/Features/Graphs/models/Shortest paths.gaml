@@ -76,7 +76,7 @@ species people skills: [moving] {
 		draw circle(50) color: #green;
 	}
 	reflex movement {
-		do goto on:the_graph target:target speed:1;
+		do goto on:the_graph target:target speed:1.0;
 	}
 }
 

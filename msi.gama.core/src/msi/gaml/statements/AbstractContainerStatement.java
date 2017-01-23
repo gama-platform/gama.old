@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractContainerStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractContainerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -42,8 +41,8 @@ import msi.gaml.types.Types;
  * @todo Description
  *
  */
-@validator(ContainerValidator.class)
-@SuppressWarnings({ "rawtypes" })
+@validator (ContainerValidator.class)
+@SuppressWarnings ({ "rawtypes" })
 public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	public static class ContainerValidator implements IDescriptionValidator {
@@ -108,14 +107,12 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			}
 
 			/**
-			 * After these operations, the statement should be provided with:
-			 * ITEM: the object to add/remove/put ALL: a boolean indicating
-			 * whether (or not) to treat the operation as "all" TO: the
-			 * container to change AT: the index at which the operation should
-			 * be done (if any)
+			 * After these operations, the statement should be provided with: ITEM: the object to add/remove/put ALL: a
+			 * boolean indicating whether (or not) to treat the operation as "all" TO: the container to change AT: the
+			 * index at which the operation should be done (if any)
 			 *
-			 * All other facets are then meaningless. As a consequence, ITEM is
-			 * never null except in the case of the "remove all: true from: ..."
+			 * All other facets are then meaningless. As a consequence, ITEM is never null except in the case of the
+			 * "remove all: true from: ..."
 			 */
 
 			final String keyword = cd.getKeyword();
@@ -187,7 +184,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 					valueType = item.getType();
 				}
 
-				if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)) {
+				if (contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType)
+						&& !Types.isEmptyContainerCase(contentType, item)) {
 					String message = "The type of the elements of " + list.serialize(false) + " (" + contentType
 							+ ") does not match with the type of the ";
 					if (isAll) {
@@ -265,37 +263,25 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	}
 
 	protected Object identifyValue(final IScope scope, final IContainer.Modifiable container) {
-		if (item == null) {
-			return null;
-		}
+		if (item == null) { return null; }
 		// For the moment, only graphs need to recompute their objects
-		if (isGraph) {
-			return buildValue(scope, (IGraph) container);
-		}
+		if (isGraph) { return buildValue(scope, (IGraph) container); }
 		return item.value(scope);
 	}
 
 	protected Object identifyIndex(final IScope scope, final IContainer.Modifiable container) {
-		if (index == null) {
-			return null;
-		}
-		if (isGraph) {
-			return buildIndex(scope, (IGraph) container);
-		}
+		if (index == null) { return null; }
+		if (isGraph) { return buildIndex(scope, (IGraph) container); }
 		return index.value(scope);
 	}
 
 	protected Object buildValue(final IScope scope, final IGraph container) {
-		if (asAllValues) {
-			return container.buildValues(scope, (IContainer) this.item.value(scope));
-		}
+		if (asAllValues) { return container.buildValues(scope, (IContainer) this.item.value(scope)); }
 		return container.buildValue(scope, this.item.value(scope));
 	}
 
 	protected Object buildIndex(final IScope scope, final IGraph container) {
-		if (asAllIndexes) {
-			return container.buildIndexes(scope, (IContainer) this.index.value(scope));
-		}
+		if (asAllIndexes) { return container.buildIndexes(scope, (IContainer) this.index.value(scope)); }
 		return container.buildIndex(scope, this.index.value(scope));
 	}
 
@@ -305,12 +291,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	 */
 	private IContainer.Modifiable identifyContainer(final IScope scope) throws GamaRuntimeException {
 		final Object cont = list.value(scope);
-		if (isDirect) {
-			return (IContainer.Modifiable) cont;
-		}
-		if (cont instanceof IShape) {
-			return ((IShape) cont).getOrCreateAttributes();
-		}
+		if (isDirect) { return (IContainer.Modifiable) cont; }
+		if (cont instanceof IShape) { return ((IShape) cont).getOrCreateAttributes(); }
 		throw GamaRuntimeException.warning(
 				"Cannot use " + list.serialize(false) + ", of type " + list.getType().toString() + ", as a container",
 				scope);
@@ -329,9 +311,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 			throws GamaRuntimeException;
 
 	/**
-	 * Placeholders for fake expressions used to build complex items (like edges
-	 * and nodes). These expressions are never evaluated, and return special
-	 * graph objects (node, edge, nodes and edges)
+	 * Placeholders for fake expressions used to build complex items (like edges and nodes). These expressions are never
+	 * evaluated, and return special graph objects (node, edge, nodes and edges)
 	 */
 
 	public static interface GraphObjectToAdd {
@@ -431,84 +412,147 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, // FIXME This is
-																// false
-			category = {
-					IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The third parameter indicates which weight this edge should have in the graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@operator (
+			value = "edge",
+			type = ITypeProvider.FIRST_TYPE, // FIXME This is
+												// false
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The third parameter indicates which weight this edge should have in the graph",
+					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object source, final Object target, final Double weight) {
 		return edge(source, target, null, weight);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.TYPE_AT_INDEX + 1, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and a third and indicates  they should respectively be considered as the source (key of the pair), the target (value of the pair) and the actual object representing an edge of a graph. The third parameter indicates which weight this edge should have in the graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@operator (
+			value = "edge",
+			type = ITypeProvider.TYPE_AT_INDEX + 1,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and a third and indicates  they should respectively be considered as the source (key of the pair), the target (value of the pair) and the actual object representing an edge of a graph. The third parameter indicates which weight this edge should have in the graph",
+					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final GamaPair pair, final Object object, final Double weight) {
 		return edge(pair.key, pair.value, object, weight);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, // FIXME this is
-																// false
-			category = {
-					IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph ", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@operator (
+			value = "edge",
+			type = ITypeProvider.FIRST_TYPE, // FIXME this is
+												// false
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph ",
+					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object source, final Object target) {
 		return edge(source, target, null, null);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.TYPE_AT_INDEX + 2, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps three objects and indicates they should respectively be considered as the source, the target and the actual object representing an edge of a graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@operator (
+			value = "edge",
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps three objects and indicates they should respectively be considered as the source, the target and the actual object representing an edge of a graph",
+					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object source, final Object target, final Object object) {
 		return edge(source, target, object, null);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.TYPE_AT_INDEX + 2, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The fourth parameter indicates which weight this edge should have in the graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@operator (
+			value = "edge",
+			type = ITypeProvider.TYPE_AT_INDEX + 2,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps two objects and indicates they should be considered as the source and the target of a new edge of a graph. The fourth parameter indicates which weight this edge should have in the graph",
+					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object source, final Object target, final Object object, final Double weight) {
 		return new EdgeToAdd(source, target, object, weight);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph. The second parameter indicates which weight this edge should have in the graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@operator (
+			value = "edge",
+			type = ITypeProvider.FIRST_TYPE,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph. The second parameter indicates which weight this edge should have in the graph",
+					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object edgeObject, final Double weight) {
 		return edge(null, null, edgeObject, weight);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge. The second parameter indicates which weight this edge should have in the graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@operator (
+			value = "edge",
+			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge. The second parameter indicates which weight this edge should have in the graph",
+					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final GamaPair pair, final Double weight) {
 		return edge(pair.key, pair.value, null, weight);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_TYPE, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@operator (
+			value = "edge",
+			type = ITypeProvider.FIRST_TYPE,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as an edge of a graph",
+					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final Object object) {
 		return edge(null, null, object, null);
 	}
 
-	@operator(value = "edge", type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge of a graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@operator (
+			value = "edge",
+			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps a pair of objects and indicates they should be considered as the source and target of an edge of a graph",
+					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static Object edge(final GamaPair pair) {
 		return edge(pair.key, pair.value, null, null);
 	}
 
-	@operator(value = "node", type = ITypeProvider.FIRST_TYPE, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as a node of a graph. The second parameter indicates which weight the node should have in the graph", comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
+	@operator (
+			value = "node",
+			type = ITypeProvider.FIRST_TYPE,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as a node of a graph. The second parameter indicates which weight the node should have in the graph",
+					comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
 	public static Object node(final Object object, final Double weight) {
 		return new NodeToAdd(object, weight);
 	}
 
-	@operator(value = "node", type = ITypeProvider.FIRST_TYPE, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as a node of a graph", comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
+	@operator (
+			value = "node",
+			type = ITypeProvider.FIRST_TYPE,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type unknown) that wraps an actual object and indicates it should be considered as a node of a graph",
+					comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
 	public static Object node(final Object nodeObject) {
 		return node(nodeObject, null);
 	}
 
-	@operator(value = "nodes", type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type list) that wraps a list of objects and indicates they should be considered as nodes of a graph", comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
+	@operator (
+			value = "nodes",
+			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type list) that wraps a list of objects and indicates they should be considered as nodes of a graph",
+					comment = "Useful only in graph-related operations (addition, removal of nodes, creation of graphs)"))
 	public static IContainer nodes(final IScope scope, final IContainer nodes) {
 		return NodesToAdd.from(scope, nodes);
 	}
 
-	@operator(value = "edges", type = ITypeProvider.FIRST_CONTENT_TYPE, category = {
-			IOperatorCategory.GRAPH }, doc = @doc(value = "Allows to create a wrapper (of type list) that wraps a list of objects and indicates they should be considered as edges of a graph", comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
+	@operator (
+			value = "edges",
+			type = ITypeProvider.FIRST_CONTENT_TYPE,
+			category = { IOperatorCategory.GRAPH },
+			doc = @doc (
+					value = "Allows to create a wrapper (of type list) that wraps a list of objects and indicates they should be considered as edges of a graph",
+					comment = "Useful only in graph-related operations (addition, removal of edges, creation of graphs)"))
 	public static IContainer edges(final IScope scope, final IContainer nodes) {
 		return EdgesToAdd.from(scope, nodes);
 	}

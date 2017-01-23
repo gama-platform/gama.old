@@ -132,7 +132,7 @@ class ShapeExecuter extends DrawExecuter {
 	 * @param scope
 	 * @param attributes
 	 */
-	@SuppressWarnings ("unchecked")
+	@SuppressWarnings ({ "unchecked", "rawtypes" })
 	private void addTextures(final IScope scope, final ShapeDrawingAttributes attributes) {
 		if (attributes.getTextures() == null) { return; }
 		final List textures = GamaListFactory.create(Types.STRING);

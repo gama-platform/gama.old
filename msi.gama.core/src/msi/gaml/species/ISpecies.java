@@ -26,6 +26,7 @@ import msi.gama.util.IAddressableContainer;
 import msi.gama.util.IList;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.IExecutable;
@@ -215,5 +216,8 @@ public interface ISpecies
 	public abstract Collection<IStatement> getBehaviors();
 
 	public abstract void removeTemporaryAction();
+
+	@Override
+	public abstract SpeciesDescription getDescription();
 
 }

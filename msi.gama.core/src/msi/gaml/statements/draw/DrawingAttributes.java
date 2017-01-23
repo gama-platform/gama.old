@@ -104,6 +104,7 @@ public abstract class DrawingAttributes {
 		}
 	}
 
+	@SuppressWarnings ("rawtypes")
 	public List getTextures() {
 		return colorProperties.getTextures();
 	}

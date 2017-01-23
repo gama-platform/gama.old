@@ -95,8 +95,8 @@ species road  {
 	
 	
 	//Command that the user can execute to remove or add a road	
-	user_command "Remove a road" action: remove;
-	user_command "Add a road" action: add;
+	user_command "Block" action: remove;
+	user_command "Unblock" action: add;
 		 
 	action remove {
 		blocked <- true;

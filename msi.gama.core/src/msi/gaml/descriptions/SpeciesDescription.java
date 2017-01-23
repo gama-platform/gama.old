@@ -683,8 +683,8 @@ public class SpeciesDescription extends TypeDescription {
 								+ SpeciesDescription.this, IGamlIssue.DUPLICATE_NAME, NAME);
 						return false;
 					}
-					final VariableDescription var = (VariableDescription) DescriptionFactory.create(CONTAINER,
-							SpeciesDescription.this, NAME, n);
+					final VariableDescription var =
+							(VariableDescription) DescriptionFactory.create(LIST, SpeciesDescription.this, NAME, n);
 
 					var.setSyntheticSpeciesContainer();
 					var.setFacet(OF, GAML.getExpressionFactory()

@@ -13,7 +13,6 @@ import com.google.common.collect.ImmutableSet;
 
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.util.IContainer;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.descriptions.ModelDescription;
@@ -65,7 +64,7 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 			if (expr2 != IExpressionFactory.NIL_EXPR
 					&& !assignedType.getType().isTranslatableInto(receiverType.getType())
 					|| Types.intFloatCase(receiverType, assignedType)) {
-				if (!Types.mapListCase(receiverType, assignedType, expr2)) {
+				if (!Types.isEmptyContainerCase(receiverType, expr2)) {
 					context.warning(
 							receiverDescription + " of type " + receiverType.getType() + " is assigned a value of type "
 									+ assignedType.getType() + ", which will be casted to " + receiverType.getType(),
@@ -77,18 +76,8 @@ public interface IDescriptionValidator<T extends IDescription> extends IKeyword 
 				final IType receiverContentType = receiverType.getContentType();
 				IType<?> contentType = assignedType.getContentType();
 				// Special cases for the empty lists and maps
-				if (contentType == Types.NO_TYPE) {
-					if (expr2.isConst() && (assignedType.id() == IType.LIST || assignedType.id() == IType.MAP)) {
-						final IContainer c = (IContainer) expr2.value(null);
-						if (c.isEmpty(null)) { return; }
-					}
-					// if ( expr2 instanceof ListExpression && ((ListExpression)
-					// expr2).getElements().length == 0 ) {
-					// return; }
-					// if ( expr2 instanceof MapExpression && ((MapExpression)
-					// expr2).keysArray().length == 0 ) {
-					// return; }
-				}
+				if (Types.isEmptyContainerCase(receiverType, expr2))
+					return;
 				// AD: 28/4/14 special case for variables of type species<xxx>
 				if (expr2 != IExpressionFactory.NIL_EXPR && receiverType.getType().id() == IType.SPECIES) {
 					if (!contentType.isTranslatableInto(receiverContentType)) {

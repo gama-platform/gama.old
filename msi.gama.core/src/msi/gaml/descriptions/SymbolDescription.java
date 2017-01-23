@@ -679,8 +679,6 @@ public abstract class SymbolDescription implements IDescription {
 						// Some expresssions might not be compiled
 						boolean compatible = false;
 						final IType<?> actualType = exp.getType();
-						// final ITypesManager tm =
-						// getModelDescription().getTypesManager();
 						final IType<?> contentType = fp.contentType;
 						final IType<?> keyType = fp.keyType;
 						for (final IType<?> type : fp.types) {
@@ -688,7 +686,8 @@ public abstract class SymbolDescription implements IDescription {
 							if (requestedType.isContainer()) {
 								requestedType = GamaType.from(requestedType, keyType, contentType);
 							}
-							compatible = compatible || actualType.isTranslatableInto(requestedType);
+							compatible = compatible || actualType.isTranslatableInto(requestedType)
+									|| Types.isEmptyContainerCase(requestedType, exp);
 							if (compatible) {
 								break;
 							}
@@ -707,8 +706,6 @@ public abstract class SymbolDescription implements IDescription {
 									+ actualType, IGamlIssue.SHOULD_CAST, facet, fp.types[0].toString());
 						}
 					}
-					// else if (exp == null) // VERIFY this
-					// return false;
 				}
 				return true;
 			}

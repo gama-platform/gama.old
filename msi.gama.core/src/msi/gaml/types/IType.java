@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'IType.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'IType.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -64,6 +63,7 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	public final static int DATE = 23;
 	public final static int MESSAGE = 24;
 	public final static int MATERIAL = 25;
+	public final static int ACTION = 26;
 	public final static int AVAILABLE_TYPES = 50;
 	public final static int SPECIES_TYPES = 100;
 
@@ -128,8 +128,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	public void init(int varKind, final int id, final String name, final Class<Support> clazz);
 
 	/**
-	 * Whether or not this type can be considered as having a contents. True for
-	 * all containers and special types (like rgb, species, etc.)
+	 * Whether or not this type can be considered as having a contents. True for all containers and special types (like
+	 * rgb, species, etc.)
 	 * 
 	 * @return
 	 */
@@ -158,10 +158,8 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 
 	/**
 	 * @param context
-	 *            When casting an expression, the type returned is usually that
-	 *            of this type. However, some types will compute another type
-	 *            based on the type of the expressoin to cast (for instance,
-	 *            species or agent)
+	 *            When casting an expression, the type returned is usually that of this type. However, some types will
+	 *            compute another type based on the type of the expressoin to cast (for instance, species or agent)
 	 * @param exp
 	 * @return
 	 */
@@ -199,13 +197,10 @@ public interface IType<Support> extends IGamlDescription, ITyped {
 	SpeciesDescription getDenotedSpecies();
 
 	/**
-	 * Denotes a type that has components which can be exctracted when casting
-	 * it to a container (for instance, points have float components). The inner
-	 * type is returned by getContentType(). Containers are compound types by
-	 * default
+	 * Denotes a type that has components which can be exctracted when casting it to a container (for instance, points
+	 * have float components). The inner type is returned by getContentType(). Containers are compound types by default
 	 * 
-	 * @return true if the type represents a compound value which components can
-	 *         be extracted
+	 * @return true if the type represents a compound value which components can be extracted
 	 */
 	public boolean isCompoundType();
 

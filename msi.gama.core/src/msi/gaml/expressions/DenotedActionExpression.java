@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'DenotedActionExpression.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'DenotedActionExpression.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -20,7 +19,7 @@ import msi.gaml.types.Types;
 public class DenotedActionExpression extends VariableExpression {
 
 	public DenotedActionExpression(final IDescription action) {
-		super(action.getName(), Types.NO_TYPE, true, action);
+		super(action.getName(), Types.ACTION, true, action);
 	}
 
 	@Override
@@ -42,8 +41,7 @@ public class DenotedActionExpression extends VariableExpression {
 	}
 
 	@Override
-	public void setVal(final IScope scope, final Object v, final boolean create) {
-	}
+	public void setVal(final IScope scope, final Object v, final boolean create) {}
 
 	/**
 	 * Method collectPlugins()
@@ -56,7 +54,6 @@ public class DenotedActionExpression extends VariableExpression {
 	}
 
 	@Override
-	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {
-	}
+	public void collectUsedVarsOf(final IDescription species, final ICollector<VariableDescription> result) {}
 
 }

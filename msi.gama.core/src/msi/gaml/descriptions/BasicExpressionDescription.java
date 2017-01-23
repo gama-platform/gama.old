@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'BasicExpressionDescription.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'BasicExpressionDescription.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -61,15 +60,9 @@ public class BasicExpressionDescription implements IExpressionDescription {
 
 	@Override
 	public boolean equals(final Object c) {
-		if (c == null) {
-			return false;
-		}
-		if (c == this) {
-			return true;
-		}
-		if (c instanceof IExpressionDescription) {
-			return ((IExpressionDescription) c).equalsString(toString());
-		}
+		if (c == null) { return false; }
+		if (c == this) { return true; }
+		if (c instanceof IExpressionDescription) { return ((IExpressionDescription) c).equalsString(toString()); }
 		return false;
 	}
 
@@ -160,9 +153,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		compile(context);
 		if (expression == null)
 			return Types.NO_TYPE;
-		if (expression instanceof TypeExpression) {
-			return expression.getType();
-		}
+		if (expression instanceof TypeExpression) { return expression.getType(); }
 		if (expression.isConst())
 			return context.getTypeNamed(GamaStringType.staticCast(null, expression.value(null), true));
 
