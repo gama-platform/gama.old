@@ -23,7 +23,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
@@ -56,9 +55,8 @@ import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.operators.Maths;
 import msi.gaml.operators.Random;
-import msi.gaml.operators.Spatial.Operators;
+import msi.gaml.operators.Spatial;
 import msi.gaml.operators.Spatial.Punctal;
-import msi.gaml.operators.Spatial.Transformations;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -329,13 +327,12 @@ public class MovingSkill extends Skill {
 		final double dist = computeDistance(scope, agent);
 
 		ILocation loc = scope.getTopology().getDestination(location, heading, dist, true);
-
 		if (loc == null) {
 			setHeading(agent, heading - 180);
 			// pathFollowed = null;
 		} else {
 			final Object on = scope.getArg(IKeyword.ON, IType.GRAPH);
-
+			Integer newHeading = null;
 			if (on != null && on instanceof GamaSpatialGraph) {
 				final GamaSpatialGraph graph = (GamaSpatialGraph) on;
 				GamaMap<IShape, Double> probaDeplacement = null;
@@ -346,16 +343,34 @@ public class MovingSkill extends Skill {
 			}
 			final Object bounds = scope.getArg(IKeyword.BOUNDS, IType.NONE);
 			if (bounds != null) {
-				final IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
+				IShape geom = GamaGeometryType.staticCast(scope, bounds, null, false);
+
+				if (geom.getGeometries().size() > 1) {
+					for (final IShape g : geom.getGeometries()) {
+						if (g.euclidianDistanceTo(location) < 0.01) {
+							geom = g;
+							break;
+						}
+					}
+				}
 				if (geom != null && geom.getInnerGeometry() != null) {
-					loc = computeLocationForward(scope, dist, loc, geom);
+					final ILocation loc2 = computeLocationForward(scope, dist, loc, geom);
+					if (!loc2.equals(loc)) {
+						newHeading = heading - 180;
+						loc = loc2;
+					}
 				}
 			}
 
 			// Enable to use wander in 3D space. An agent will wander in the
 			// plan define by its z value.
 			((GamaPoint) loc).z = agent.getLocation().getZ();
+
 			setLocation(agent, loc);
+			if (newHeading != null) {
+				setHeading(agent, newHeading);
+
+			}
 		}
 	}
 
@@ -658,7 +673,7 @@ public class MovingSkill extends Skill {
 						currentLocation.z = c0.getZ() + (c1.getZ() - c0.getZ())
 								* currentLocation.distance((Coordinate) c0) / line.getPerimeter();
 					} else {
-						currentLocation.z = line.getPoints().get(0).getZ() ;
+						currentLocation.z = line.getPoints().get(0).getZ();
 					}
 				}
 			}
@@ -1125,25 +1140,21 @@ public class MovingSkill extends Skill {
 
 	private ILocation computeLocationForward(final IScope scope, final double dist, final ILocation loc,
 			final IShape geom) {
+		final IList pts = GamaListFactory.create(Types.POINT);
+		pts.add(scope.getAgent().getLocation());
+		pts.add(loc);
+		final IShape line = Spatial.Creation.line(scope, pts);
+		// line = Spatial.Operators.inter(scope, line, geom);
 
-		final IShape buff = Transformations.enlarged_by(scope, loc, dist);
-		IShape frontier = Operators.inter(scope, buff, geom);
-		if (frontier == null)
+		if (line == null)
 			return getCurrentAgent(scope).getLocation();
-		final IShape test = new GamaShape(loc, loc.getInnerGeometry().buffer(dist / 100.0, 4));
-		IShape geomsSimp = null;
-		if (frontier.getGeometries().size() > 1) {
-			for (final IShape g : frontier.getGeometries()) {
-				if (g.intersects(test)) {
-					geomsSimp = g;
-					break;
-				}
-			}
-			if (geomsSimp == null || geomsSimp.getPoints().isEmpty()) { return getCurrentAgent(scope).getLocation(); }
-			frontier = geomsSimp;
-		}
-		final ILocation computedPt = Punctal._closest_point_to(loc, frontier);
-		if (computedPt != null) { return computedPt; }
+		if (geom.covers(line))
+			return loc;
+
+		// final ILocation computedPt = line.getPoints().lastValue(scope);
+
+		final ILocation computedPt = Spatial.Punctal.closest_points_with(line, geom.getExteriorRing(scope)).get(0);
+		if (computedPt != null && computedPt.intersects(geom)) { return computedPt; }
 		return getCurrentAgent(scope).getLocation();
 	}
 }

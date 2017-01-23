@@ -2981,6 +2981,32 @@ public abstract class Spatial {
 		}
 
 		@operator (
+				value = { "points_along" },
+				type = IType.LIST,
+				content_type = IType.POINT,
+				category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
+				concept = { IConcept.GEOMETRY, IConcept.SPATIAL_COMPUTATION, IConcept.SPATIAL_RELATION,
+						IConcept.POINT })
+		@doc (
+				value = "A list of points along the operand-geometry given its location in terms of rate of distance from the starting points of the geometry.",
+				examples = { @example (
+						value = " line([{10,10},{80,80}]) points_along ([0.3, 0.5, 0.9])",
+						equals = "the list of following points: [{31.0,31.0,0.0},{45.0,45.0,0.0},{73.0,73.0,0.0}]",
+						test = false) },
+				see = { "closest_points_with", "farthest_point_to", "points_at", "points_on" })
+		public static IList points_along(final IShape geom, final IList<Double> rates) {
+			final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
+			if (geom.getInnerGeometry() instanceof GeometryCollection) {
+				for (int i = 0; i < geom.getInnerGeometry().getNumGeometries(); i++) {
+					locs.addAll(GeometryUtils.locsAlongGeometry(geom.getInnerGeometry().getGeometryN(i), rates));
+				}
+			} else {
+				locs.addAll(GeometryUtils.locsAlongGeometry(geom.getInnerGeometry(), rates));
+			}
+			return locs;
+		}
+
+		@operator (
 				value = { "points_at" },
 				content_type = IType.POINT,
 				category = { IOperatorCategory.SPATIAL, IOperatorCategory.POINT },
@@ -2993,6 +3019,7 @@ public abstract class Spatial {
 						equals = "returns [pt1, pt2, pt3] with pt1, pt2 and pt3 located at a distance of 20.0 to the agent location",
 						test = false) },
 				see = { "any_location_in", "any_point_in", "closest_points_with", "farthest_point_to" })
+
 		public static IList<ILocation> points_at(final IScope scope, final Integer nbLoc, final Double distance) {
 			if (distance == null || nbLoc == null) {
 				// scope.setStatus(ExecutionStatus.failure);

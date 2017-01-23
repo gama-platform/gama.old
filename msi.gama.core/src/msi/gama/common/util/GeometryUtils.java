@@ -739,6 +739,53 @@ public class GeometryUtils {
 		return locs;
 	}
 
+	
+	public static IList<GamaPoint> locsAlongGeometry(final Geometry geom, final List<Double> rates) {
+		final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
+		if (rates == null || rates.isEmpty())
+			return locs;
+		if (geom instanceof Point) {
+			for (int i = 0; i < rates.size(); i++)
+				locs.add(new GamaPoint(geom.getCoordinate()));
+		} else if (geom instanceof LineString) {
+			for (Double rate: rates) {
+				final Coordinate[] coordsSimp = geom.getCoordinates();
+				final int nbSp = coordsSimp.length;
+				if (nbSp <= 0) return locs; 
+				if (rate > 1.0) rate = 1.0;
+				if (rate < 0.0) rate = 0.0;
+				if (rate == 0) {locs.add(new GamaPoint(coordsSimp[0])); continue;}
+				if (rate == 1) {locs.add(new GamaPoint(coordsSimp[nbSp - 1])); continue;}
+				double distCur = 0;
+				double distance = rate * geom.getLength();
+				for (int i = 0; i < nbSp - 1; i++) {
+					Coordinate s = coordsSimp[i];
+					final Coordinate t = coordsSimp[i + 1];
+					final double dist = s.distance3D(t);
+					if (distance - distCur < dist) {
+						final double distTravel = distance - distCur;
+						final double ratio = distTravel / dist;
+						final double x_s = s.x + ratio * (t.x - s.x);
+						final double y_s = s.y + ratio * (t.y - s.y);
+						final double z_s = s.z + ratio * (t.z - s.z);
+						s = new Coordinate(x_s, y_s, z_s);
+						locs.add(new GamaPoint(s));
+						break;			
+					} else if (distance - distCur > dist) {
+						distCur += dist;
+					} else {
+						locs.add(new GamaPoint(t));
+						break;
+					}
+				}
+			}
+		} else if (geom instanceof Polygon) {
+			final Polygon poly = (Polygon) geom;
+			locs.addAll(locsAlongGeometry(poly.getExteriorRing(), rates));
+		}
+		return locs;
+	}
+
 	// ---------------------------------------------------------------------------------------------
 	// Thai.truongminh@gmail.com
 	// Created date:24-Feb-2013: Process for SQL - MAP type
