@@ -58,7 +58,6 @@ import ummisco.gama.ui.utils.WorkbenchHelper;
 public class JOGLRenderer extends Abstract3DRenderer {
 
 	private final FPSDrawer fpsDrawer = new FPSDrawer();
-	private volatile boolean visible;
 	private Color currentColor;
 	private Texture currentTexture;
 	private final GeometryDrawer geometryDrawer;
@@ -471,7 +470,7 @@ public class JOGLRenderer extends Abstract3DRenderer {
 
 	@Override
 	public boolean cannotDraw() {
-		return sceneBuffer.getSceneToUpdate() != null && sceneBuffer.getSceneToUpdate().cannotAdd();
+		return canvas == null || sceneBuffer.getSceneToUpdate() != null && sceneBuffer.getSceneToUpdate().cannotAdd();
 	}
 
 	@Override
