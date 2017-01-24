@@ -244,10 +244,11 @@ public class GeometryUtils {
 	}
 
 	public static IList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows, final int nbColumns) {
-		final double widthEnv = geom.getEnvelope().getWidth();
-		final double heightEnv = geom.getEnvelope().getHeight();
-		double xmin = geom.getEnvelope().getMinX();
-		double ymin = geom.getEnvelope().getMinY();
+		final Envelope env = geom.getEnvelope();
+		final double widthEnv = env.getWidth();
+		final double heightEnv = env.getHeight();
+		double xmin = env.getMinX();
+		double ymin = env.getMinY();
 		final double widthHex = widthEnv / (nbColumns * 0.75 + 0.25);
 		final double heightHex = heightEnv / nbRows;
 		final IList<IShape> geoms = GamaListFactory.create(Types.GEOMETRY);
@@ -391,8 +392,9 @@ public class GeometryUtils {
 	}
 
 	public static IList<IShape> geometryDecomposition(final IShape geom, final int nbCols, final int nbRows) {
-		final double x_size = geom.getEnvelope().getWidth() / nbCols;
-		final double y_size = geom.getEnvelope().getHeight() / nbRows;
+		final Envelope env = geom.getEnvelope();
+		final double x_size = env.getWidth() / nbCols;
+		final double y_size = env.getHeight() / nbRows;
 		return geometryDecomposition(geom, x_size, y_size);
 	}
 

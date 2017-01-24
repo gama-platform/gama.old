@@ -136,7 +136,11 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * 
 	 * @param envelope
 	 */
-	Envelope3D getEnvelope(Envelope3D envelope);
+	Envelope3D getEnvelopeInto(Envelope3D envelope);
+
+	default Envelope3D getEnvelope() {
+		return getEnvelopeInto(new Envelope3D());
+	}
 
 	/**
 	 * Compute the average z ordinate of this sequence of points

@@ -26,6 +26,7 @@ import gnu.trove.set.hash.THashSet;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
+import msi.gama.metamodel.shape.Envelope3D;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.shape.ILocation;
@@ -473,18 +474,16 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	protected static ITopology buildGridTopology(final IScope scope, final ISpecies species, final IAgent host) {
 		IExpression exp = species.getFacet(IKeyword.WIDTH);
-		final int rows = exp == null
-				? species.hasFacet(IKeyword.CELL_WIDTH)
-						? (int) (scope.getSimulation().getGeometry().getEnvelope().getWidth()
-								/ Cast.asInt(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope)))
-						: 100
-				: Cast.asInt(scope, exp.value(scope));
+		final Envelope3D env = scope.getSimulation().getGeometry().getEnvelope();
+		final int rows =
+				exp == null
+						? species.hasFacet(IKeyword.CELL_WIDTH) ? (int) (env.getWidth()
+								/ Cast.asInt(scope, species.getFacet(IKeyword.CELL_WIDTH).value(scope))) : 100
+						: Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.HEIGHT);
 		final int columns = exp == null
-				? species.hasFacet(IKeyword.CELL_HEIGHT)
-						? (int) (scope.getSimulation().getGeometry().getEnvelope().getHeight()
-								/ Cast.asInt(scope, species.getFacet(IKeyword.CELL_HEIGHT).value(scope)))
-						: 100
+				? species.hasFacet(IKeyword.CELL_HEIGHT) ? (int) (env.getHeight()
+						/ Cast.asInt(scope, species.getFacet(IKeyword.CELL_HEIGHT).value(scope))) : 100
 				: Cast.asInt(scope, exp.value(scope));
 
 		final boolean isTorus = host.getTopology().isTorus();

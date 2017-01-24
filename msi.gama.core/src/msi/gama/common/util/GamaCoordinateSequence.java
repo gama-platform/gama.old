@@ -333,7 +333,7 @@ public class GamaCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public Envelope3D getEnvelope(final Envelope3D envelope) {
+	public Envelope3D getEnvelopeInto(final Envelope3D envelope) {
 		envelope.setToNull();
 		expandEnvelope(envelope);
 		return envelope;

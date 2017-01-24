@@ -216,17 +216,21 @@ public class LayerSideControls {
 
 				});
 				final Button save = new Button(compo, SWT.PUSH);
-				save.setText("Save...");
+				final boolean enabled = ((ChartLayerStatement) definition).getDataSet().keepsHistory();
+				save.setText(enabled ? "Save..." : "No history");
 				save.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
-				save.setToolTipText("Save the chart data as a CSV file");
-				save.addSelectionListener(new SelectionAdapter() {
+				save.setToolTipText(
+						"Save the chart data as a CSV file when memorization of values is enabled in the preferences or via the 'memorize:' facet");
+				save.setEnabled(enabled);
+				if (enabled)
+					save.addSelectionListener(new SelectionAdapter() {
 
-					@Override
-					public void widgetSelected(final SelectionEvent e) {
-						((ChartLayerStatement) definition).saveHistory();
-					}
+						@Override
+						public void widgetSelected(final SelectionEvent e) {
+							((ChartLayerStatement) definition).saveHistory();
+						}
 
-				});
+					});
 				break;
 			}
 

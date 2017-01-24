@@ -584,6 +584,9 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CHART_FLAT =
 			create("pref_display_flat_charts", "Display histograms with a 'flat' look", false, IType.BOOL).in(DISPLAY)
 					.group("Properties (settings effective after experiment relaunch)");
+	public static final Entry<Boolean> CHART_MEMORIZE = create("pref_display_memorize_charts",
+			"Keep the data displayed in charts in memory (to save them later as CSV)", true, IType.BOOL).in(DISPLAY)
+					.group("Properties (settings effective after experiment relaunch)");
 
 	public static final Entry<Boolean> CORE_ANTIALIAS =
 			create("pref_display_antialias", "Apply antialiasing", false, IType.BOOL).in(DISPLAY)

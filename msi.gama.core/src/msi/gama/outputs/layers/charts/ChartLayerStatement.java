@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ChartLayerStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ChartLayerStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -16,6 +15,7 @@ import java.util.Map;
 
 import org.jfree.chart.JFreeChart;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.AbstractLayerStatement;
@@ -47,83 +47,225 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER, with_sequence = true, concept = { IConcept.CHART,
-		IConcept.DISPLAY })
-@inside(symbols = IKeyword.DISPLAY)
-@facets(value = {
-		/*
-		 * @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional =
-		 * true),
-		 */
-		@facet(name = ChartLayerStatement.XRANGE, type = { IType.FLOAT, IType.INT, IType.POINT,
-				IType.LIST }, optional = true, doc = @doc("range of the x-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
-		@facet(name = ChartLayerStatement.YRANGE, type = { IType.FLOAT, IType.INT, IType.POINT,
-				IType.LIST }, optional = true, doc = @doc("range of the y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
-		@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true, doc = @doc("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
-		@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true, doc = @doc("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
-		@facet(name = IKeyword.REVERSE_AXIS, type = IType.BOOL, optional = true, doc = @doc("reverse X and Y axis (for example to get horizental bar charts")),
-		@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("the background color")),
-		@facet(name = IKeyword.X_SERIE, type = { IType.LIST, IType.FLOAT,
-				IType.INT }, optional = true, doc = @doc("for series charts, change the default common x serie (simulation cycle) for an other value (list or numerical).")),
-		@facet(name = IKeyword.X_LABELS, type = { IType.LIST, IType.FLOAT, IType.INT,
-				IType.LABEL }, optional = true, doc = @doc("change the default common x series labels (replace x value or categories) for an other value (string or numerical).")),
-		// @facet(name = IKeyword.Y_SERIES,
-		// type = {IType.LIST, IType.FLOAT, IType.INT},
-		// optional = true,
-		// doc = @doc("change the default common y serie for an other value
-		// (list or numerical).")),
-		@facet(name = IKeyword.Y_LABELS, type = { IType.LIST, IType.FLOAT, IType.INT,
-				IType.LABEL }, optional = true, doc = @doc("for heatmaps/3d charts, change the default y serie for an other value (string or numerical in a list or cumulative).")),
-		@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true, doc = @doc("the axis color")),
-		@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM,
-				IKeyword.SERIES, IKeyword.PIE, IKeyword.RADAR, IKeyword.HEATMAP,
-				IKeyword.BOX_WHISKER }, optional = true, doc = @doc("the type of chart. It could be histogram, series, xy, pie, radar, heatmap or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
-		@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
-				IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D,
-				IKeyword.RING, IKeyword.EXPLODED,
-				IKeyword.DEFAULT }, doc = @doc("The sub-style style, also default style for the series."), optional = true),
-		// @facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional =
-		// true, doc = @doc("the style of the chart")),
-		// unused?
-		@facet(name = IKeyword.GAP, type = IType.FLOAT, optional = true, doc = @doc("minimum gap between bars (in proportion)")),
-		@facet(name = ChartLayerStatement.YTICKUNIT, type = IType.FLOAT, optional = true, doc = @doc("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
-		@facet(name = ChartLayerStatement.XTICKUNIT, type = IType.FLOAT, optional = true, doc = @doc("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
-		@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false, doc = @doc("the identifier of the chart layer")),
-		@facet(name = ChartLayerStatement.XLABEL, type = IType.STRING, optional = true, doc = @doc("the title for the X axis")),
-		@facet(name = ChartLayerStatement.YLABEL, type = IType.STRING, optional = true, doc = @doc("the title for the Y axis")),
-		@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true, doc = @doc("Text color")),
-		@facet(name = ChartLayerStatement.SERIES_LABEL_POSITION, type = IType.ID, values = { "default", "none",
-				"legend", "onchart", "yaxis",
-				"xaxis" }, optional = true, doc = @doc("Position of the Series names: default (best guess), none, legend, onchart, xaxis (for category plots) or yaxis (uses the first serie name).")),
-
-		@facet(name = ChartLayerStatement.TICKFONTFACE, type = IType.STRING, optional = true, doc = @doc("Tick font face")),
-		@facet(name = ChartLayerStatement.TICKFONTSIZE, type = IType.INT, optional = true, doc = @doc("Tick font size")),
-		@facet(name = ChartLayerStatement.TICKFONTSTYLE, type = IType.ID, values = { "plain", "bold",
-				"italic" }, optional = true, doc = @doc("the style used to display ticks")),
-		@facet(name = ChartLayerStatement.LABELFONTFACE, type = IType.STRING, optional = true, doc = @doc("Label font face")),
-		@facet(name = ChartLayerStatement.LABELFONTSIZE, type = IType.INT, optional = true, doc = @doc("Label font size")),
-		@facet(name = ChartLayerStatement.LABELFONTSTYLE, type = IType.ID, values = { "plain", "bold",
-				"italic" }, optional = true, doc = @doc("the style used to display labels")),
-		@facet(name = ChartLayerStatement.LEGENDFONTFACE, type = IType.STRING, optional = true, doc = @doc("Legend font face")),
-		@facet(name = ChartLayerStatement.LEGENDFONTSIZE, type = IType.INT, optional = true, doc = @doc("Legend font size")),
-		@facet(name = ChartLayerStatement.LEGENDFONTSTYLE, type = IType.ID, values = { "plain", "bold",
-				"italic" }, optional = true, doc = @doc("the style used to display legend")),
-		@facet(name = ChartLayerStatement.TITLEFONTFACE, type = IType.STRING, optional = true, doc = @doc("Title font face")),
-		@facet(name = ChartLayerStatement.TITLEFONTSIZE, type = IType.INT, optional = true, doc = @doc("Title font size")),
-		@facet(name = ChartLayerStatement.TITLEFONTSTYLE, type = IType.ID, values = { "plain", "bold",
-				"italic" }, optional = true, doc = @doc("the style used to display titles")), },
+@symbol (
+		name = IKeyword.CHART,
+		kind = ISymbolKind.LAYER,
+		with_sequence = true,
+		concept = { IConcept.CHART, IConcept.DISPLAY })
+@inside (
+		symbols = IKeyword.DISPLAY)
+@facets (
+		value = {
+				/*
+				 * @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional = true),
+				 */
+				@facet (
+						name = ChartLayerStatement.XRANGE,
+						type = { IType.FLOAT, IType.INT, IType.POINT, IType.LIST },
+						optional = true,
+						doc = @doc ("range of the x-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
+				@facet (
+						name = ChartLayerStatement.YRANGE,
+						type = { IType.FLOAT, IType.INT, IType.POINT, IType.LIST },
+						optional = true,
+						doc = @doc ("range of the y-axis. Can be a number (which will set the axis total range) or a point (which will set the min and max of the axis).")),
+				@facet (
+						name = IKeyword.POSITION,
+						type = IType.POINT,
+						optional = true,
+						doc = @doc ("position of the upper-left corner of the layer. Note that if coordinates are in [0,1[, the position is relative to the size of the environment (e.g. {0.5,0.5} refers to the middle of the display) whereas it is absolute when coordinates are greter than 1. The position can only be a 3D point {0.5, 0.5, 0.5}, the last coordinate specifying the elevation of the layer.")),
+				@facet (
+						name = IKeyword.SIZE,
+						type = IType.POINT,
+						optional = true,
+						doc = @doc ("the layer resize factor: {1,1} refers to the original size whereas {0.5,0.5} divides by 2 the height and the width of the layer. In case of a 3D layer, a 3D point can be used (note that {1,1} is equivalent to {1,1,0}, so a resize of a layer containing 3D objects with a 2D points will remove the elevation)")),
+				@facet (
+						name = IKeyword.REVERSE_AXIS,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("reverse X and Y axis (for example to get horizental bar charts")),
+				@facet (
+						name = IKeyword.BACKGROUND,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("the background color")),
+				@facet (
+						name = IKeyword.X_SERIE,
+						type = { IType.LIST, IType.FLOAT, IType.INT },
+						optional = true,
+						doc = @doc ("for series charts, change the default common x serie (simulation cycle) for an other value (list or numerical).")),
+				@facet (
+						name = IKeyword.X_LABELS,
+						type = { IType.LIST, IType.FLOAT, IType.INT, IType.LABEL },
+						optional = true,
+						doc = @doc ("change the default common x series labels (replace x value or categories) for an other value (string or numerical).")),
+				// @facet(name = IKeyword.Y_SERIES,
+				// type = {IType.LIST, IType.FLOAT, IType.INT},
+				// optional = true,
+				// doc = @doc("change the default common y serie for an other value
+				// (list or numerical).")),
+				@facet (
+						name = IKeyword.Y_LABELS,
+						type = { IType.LIST, IType.FLOAT, IType.INT, IType.LABEL },
+						optional = true,
+						doc = @doc ("for heatmaps/3d charts, change the default y serie for an other value (string or numerical in a list or cumulative).")),
+				@facet (
+						name = IKeyword.AXES,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("the axis color")),
+				@facet (
+						name = IKeyword.TYPE,
+						type = IType.ID,
+						values = { IKeyword.XY, IKeyword.SCATTER, IKeyword.HISTOGRAM, IKeyword.SERIES, IKeyword.PIE,
+								IKeyword.RADAR, IKeyword.HEATMAP, IKeyword.BOX_WHISKER },
+						optional = true,
+						doc = @doc ("the type of chart. It could be histogram, series, xy, pie, radar, heatmap or box whisker. The difference between series and xy is that the former adds an implicit x-axis that refers to the numbers of cycles, while the latter considers the first declaration of data to be its x-axis.")),
+				@facet (
+						name = IKeyword.STYLE,
+						type = IType.ID,
+						values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA, IKeyword.BAR, IKeyword.DOT,
+								IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
+								IKeyword.EXPLODED, IKeyword.DEFAULT },
+						doc = @doc ("The sub-style style, also default style for the series."),
+						optional = true),
+				// @facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional =
+				// true, doc = @doc("the style of the chart")),
+				// unused?
+				@facet (
+						name = IKeyword.GAP,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("minimum gap between bars (in proportion)")),
+				@facet (
+						name = ChartLayerStatement.YTICKUNIT,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the tick unit for the x-axis (distance between vertical lines and values bellow the axis).")),
+				@facet (
+						name = ChartLayerStatement.XTICKUNIT,
+						type = IType.FLOAT,
+						optional = true,
+						doc = @doc ("the tick unit for the y-axis (distance between horyzontal lines and values on the left of the axis).")),
+				@facet (
+						name = IKeyword.NAME,
+						type = IType.LABEL,
+						optional = false,
+						doc = @doc ("the identifier of the chart layer")),
+				@facet (
+						name = ChartLayerStatement.XLABEL,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("the title for the X axis")),
+				@facet (
+						name = ChartLayerStatement.YLABEL,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("the title for the Y axis")),
+				@facet (
+						name = IKeyword.COLOR,
+						type = IType.COLOR,
+						optional = true,
+						doc = @doc ("Text color")),
+				@facet (
+						name = ChartLayerStatement.SERIES_LABEL_POSITION,
+						type = IType.ID,
+						values = { "default", "none", "legend", "onchart", "yaxis", "xaxis" },
+						optional = true,
+						doc = @doc ("Position of the Series names: default (best guess), none, legend, onchart, xaxis (for category plots) or yaxis (uses the first serie name).")),
+				@facet (
+						name = ChartLayerStatement.MEMORIZE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("Whether or not to keep the values in memory (in order to produce a csv file, for instance). The default value, true, can also be changed in the preferences")),
+				@facet (
+						name = ChartLayerStatement.TICKFONTFACE,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("Tick font face")),
+				@facet (
+						name = ChartLayerStatement.TICKFONTSIZE,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("Tick font size")),
+				@facet (
+						name = ChartLayerStatement.TICKFONTSTYLE,
+						type = IType.ID,
+						values = { "plain", "bold", "italic" },
+						optional = true,
+						doc = @doc ("the style used to display ticks")),
+				@facet (
+						name = ChartLayerStatement.LABELFONTFACE,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("Label font face")),
+				@facet (
+						name = ChartLayerStatement.LABELFONTSIZE,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("Label font size")),
+				@facet (
+						name = ChartLayerStatement.LABELFONTSTYLE,
+						type = IType.ID,
+						values = { "plain", "bold", "italic" },
+						optional = true,
+						doc = @doc ("the style used to display labels")),
+				@facet (
+						name = ChartLayerStatement.LEGENDFONTFACE,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("Legend font face")),
+				@facet (
+						name = ChartLayerStatement.LEGENDFONTSIZE,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("Legend font size")),
+				@facet (
+						name = ChartLayerStatement.LEGENDFONTSTYLE,
+						type = IType.ID,
+						values = { "plain", "bold", "italic" },
+						optional = true,
+						doc = @doc ("the style used to display legend")),
+				@facet (
+						name = ChartLayerStatement.TITLEFONTFACE,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("Title font face")),
+				@facet (
+						name = ChartLayerStatement.TITLEFONTSIZE,
+						type = IType.INT,
+						optional = true,
+						doc = @doc ("Title font size")),
+				@facet (
+						name = ChartLayerStatement.TITLEFONTSTYLE,
+						type = IType.ID,
+						values = { "plain", "bold", "italic" },
+						optional = true,
+						doc = @doc ("the style used to display titles")), },
 
 		omissible = IKeyword.NAME)
-@doc(value = "`" + IKeyword.CHART
-		+ "` allows modeler to display a chart: this enables to display specific values of the model at each iteration. GAMA can display various chart types: time series (series), pie charts (pie) and histograms (histogram).", usages = {
-				@usage(value = "The general syntax is:", examples = {
-						@example(value = "display chart_display {", isExecutable = false),
-						@example(value = "   chart \"chart name\" type: series [additional options] {", isExecutable = false),
-						@example(value = "      [Set of data, datalists statements]", isExecutable = false),
-						@example(value = "   }", isExecutable = false),
-						@example(value = "}", isExecutable = false) }) }, see = { IKeyword.DISPLAY, IKeyword.AGENTS,
-								IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE, IKeyword.OVERLAY,
-								IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
+@doc (
+		value = "`" + IKeyword.CHART
+				+ "` allows modeler to display a chart: this enables to display specific values of the model at each iteration. GAMA can display various chart types: time series (series), pie charts (pie) and histograms (histogram).",
+		usages = { @usage (
+				value = "The general syntax is:",
+				examples = { @example (
+						value = "display chart_display {",
+						isExecutable = false),
+						@example (
+								value = "   chart \"chart name\" type: series [additional options] {",
+								isExecutable = false),
+						@example (
+								value = "      [Set of data, datalists statements]",
+								isExecutable = false),
+						@example (
+								value = "   }",
+								isExecutable = false),
+						@example (
+								value = "}",
+								isExecutable = false) }) },
+		see = { IKeyword.DISPLAY, IKeyword.AGENTS, IKeyword.EVENT, "graphics", IKeyword.GRID_POPULATION, IKeyword.IMAGE,
+				IKeyword.OVERLAY, IKeyword.QUADTREE, IKeyword.POPULATION, IKeyword.TEXT })
 public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String XRANGE = "x_range";
@@ -131,6 +273,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public static final String XLABEL = "x_label";
 	public static final String YLABEL = "y_label";
+	public static final String MEMORIZE = "memorize";
 
 	public static final String SERIES_LABEL_POSITION = "series_label_position";
 
@@ -385,14 +528,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		if (face != null) {
 			chartoutput.setLegendFontStyle(scope, getLiteral(ChartLayerStatement.LEGENDFONTSTYLE));
 		}
-		face = getFacet(ChartLayerStatement.TITLEFONTSTYLE);
+		face = getFacet(TITLEFONTSTYLE);
 		if (face != null) {
-			chartoutput.setTitleFontStyle(scope, getLiteral(ChartLayerStatement.TITLEFONTSTYLE));
+			chartoutput.setTitleFontStyle(scope, getLiteral(TITLEFONTSTYLE));
+		}
+		boolean memorize = GamaPreferences.CHART_MEMORIZE.getValue();
+		face = getFacet(MEMORIZE);
+		if (face != null) {
+			memorize = Cast.asBool(scope, face.value(scope));
 		}
 
 		chartoutput.initChart(scope, getName());
 
-		chartdataset = new ChartDataSet();
+		chartdataset = new ChartDataSet(memorize);
 		chartoutput.setChartdataset(chartdataset);
 		chartoutput.initdataset();
 
@@ -411,9 +559,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 
 		/*
-		 * expr = getFacet(IKeyword.Y_SERIE); if (expr!=null) { IExpression
-		 * expval = getFacet(IKeyword.Y_SERIE).resolveAgainst(scope);
-		 * chartdataset.setYSource(scope,expval);
+		 * expr = getFacet(IKeyword.Y_SERIE); if (expr!=null) { IExpression expval =
+		 * getFacet(IKeyword.Y_SERIE).resolveAgainst(scope); chartdataset.setYSource(scope,expval);
 		 * chartoutput.setUseYSource(scope,expval); }
 		 */
 		// will be added with 3d charts
@@ -452,29 +599,12 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	public void saveHistory() {
-		// System.out.println("try to save!");
-		final IScope scope = this.getDisplayOutput().getScope().copy("toto");
-		if (scope == null) {
+		if (!getDataSet().keepsHistory())
 			return;
-		}
-
-		// IScope scope = output.getScope().copy();
+		final IScope scope = this.getDisplayOutput().getScope().copy("Save");
+		if (scope == null) { return; }
 		try {
-
-			// this.getDataSet().saveHistory(this.getDisplayOutput().getScope(),this.getName());
 			this.getDataSet().saveHistory(scope, this.getName());
-			// TODO!!
-
-			// IScope scope = output.getScope().copy();
-			// if ( scope == null ) { return; }
-			// try {
-			// Files.newFolder(scope, chartFolder);
-			// String file = chartFolder + "/" + "chart_" + getName() + ".csv";
-			// BufferedWriter bw;
-			// file = FileUtils.constructAbsoluteFilePath(scope, file, false);
-			// bw = new BufferedWriter(new FileWriter(file));
-			// bw.append(history);
-			// bw.close();
 		} catch (final Exception e) {
 			e.printStackTrace();
 			return;

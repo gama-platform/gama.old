@@ -73,7 +73,8 @@ public class ChartDataSet {
 	boolean keepOldSeries = true; // keep old series or move to deleted (to keep
 									// history)
 
-	ChartHistory history;
+	final boolean keepHistory;
+	final ChartHistory history;
 
 	public int getCommonXIndex() {
 		return commonXindex;
@@ -91,18 +92,6 @@ public class ChartDataSet {
 		this.resetAllBefore = resetAllBefore;
 		forceResetAll = true;
 	}
-
-	public boolean isKeepOldSeries() {
-		return keepOldSeries;
-	}
-
-	public void setKeepOldSeries(final boolean keepOldSeries) {
-		this.keepOldSeries = keepOldSeries;
-	}
-	//
-	// private ArrayList<String> getCategories() {
-	// return Xcategories;
-	// }
 
 	public String getCategories(final IScope scope, final int i) {
 		if (Xcategories.size() > i) { return Xcategories.get(i);
@@ -170,8 +159,13 @@ public class ChartDataSet {
 		return serieRemovalDate;
 	}
 
-	public ChartDataSet() {
-		history = new ChartHistory();
+	public ChartDataSet(final boolean keepHistory) {
+		this.keepHistory = keepHistory;
+		history = keepHistory ? new ChartHistory() : null;
+	}
+
+	public boolean keepsHistory() {
+		return keepHistory;
 	}
 
 	public ChartHistory getHistory() {
@@ -314,9 +308,11 @@ public class ChartDataSet {
 
 		for (final ChartDataSource source : sources) {
 			source.updatevalues(scope, chartCycle);
-			source.savehistory(scope, history);
+			if (keepHistory)
+				source.savehistory(scope, history);
 		}
-		history.append(Strings.LN);
+		if (keepHistory)
+			history.append(Strings.LN);
 	}
 
 	public void updateYValues(final IScope scope, final int chartCycle, int targetNb) {
@@ -588,18 +584,19 @@ public class ChartDataSet {
 
 	public void saveHistory(final IScope scope, final String name) {
 		if (scope == null) { return; }
-		try {
-			Files.newFolder(scope, chartFolder);
-			String file = chartFolder + "/" + "chart_" + name + ".csv";
-			BufferedWriter bw;
-			file = FileUtils.constructAbsoluteFilePath(scope, file, false);
-			bw = new BufferedWriter(new FileWriter(file));
-			history.writeTo(bw);
-			bw.close();
-		} catch (final Exception e) {
-			e.printStackTrace();
-			return;
-		}
+		if (keepHistory)
+			try {
+				Files.newFolder(scope, chartFolder);
+				String file = chartFolder + "/" + "chart_" + name + ".csv";
+				BufferedWriter bw;
+				file = FileUtils.constructAbsoluteFilePath(scope, file, false);
+				bw = new BufferedWriter(new FileWriter(file));
+				history.writeTo(bw);
+				bw.close();
+			} catch (final Exception e) {
+				e.printStackTrace();
+				return;
+			}
 
 	}
 

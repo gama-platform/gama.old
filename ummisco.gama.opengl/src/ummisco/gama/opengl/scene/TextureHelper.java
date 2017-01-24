@@ -38,7 +38,7 @@ public class TextureHelper {
 		// final Rotation alignYAxes = new Rotation(towardsY, Vector3D.MINUS_J);
 		// seq.applyRotation(alignYAxes);
 
-		seq.getEnvelope(envelope);
+		seq.getEnvelopeInto(envelope);
 		if (horizontal)
 			rotation = alignXAxes;
 		else

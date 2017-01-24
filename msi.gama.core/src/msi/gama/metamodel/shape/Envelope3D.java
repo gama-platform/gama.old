@@ -38,7 +38,7 @@ public class Envelope3D extends Envelope {
 
 	public static Envelope3D of(final Geometry g) {
 		final ICoordinates sq = GeometryUtils.getContourCoordinates(g);
-		return sq.getEnvelope(new Envelope3D());
+		return sq.getEnvelope();
 	}
 
 	public static Envelope3D of(final GamaShape s) {
@@ -649,6 +649,10 @@ public class Envelope3D extends Envelope {
 
 	public boolean isFlat() {
 		return minz == 0d && maxz == 0d;
+	}
+
+	public boolean isHorizontal() {
+		return minz == maxz;
 	}
 
 	public Geometry toGeometry() {

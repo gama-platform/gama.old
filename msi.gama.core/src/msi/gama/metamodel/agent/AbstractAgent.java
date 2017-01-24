@@ -95,7 +95,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	/**
-	 * @see msi.gama.interfaces.IGeometry#getInnerGeometry()
+	 * @see msi.gama.interfaces.IShape#getInnerGeometry()
 	 */
 	@Override
 	public Geometry getInnerGeometry() {
@@ -105,7 +105,7 @@ public abstract class AbstractAgent implements IAgent {
 	/**
 	 * Returns the envelope of the geometry of the agent, or null if the geometry has not yet been defined
 	 * 
-	 * @see msi.gama.interfaces.IGeometry#getEnvelope()
+	 * @see msi.gama.interfaces.IShape#getEnvelope()
 	 */
 	@Override
 	public Envelope3D getEnvelope() {
@@ -114,7 +114,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	/**
-	 * @see msi.gama.interfaces.IGeometry#covers(msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.interfaces.IShape#covers(msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public boolean covers(final IShape g) {
@@ -122,7 +122,7 @@ public abstract class AbstractAgent implements IAgent {
 	}
 
 	/**
-	 * @see msi.gama.interfaces.IGeometry#euclidianDistanceTo(msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.interfaces.IShape#euclidianDistanceTo(msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
