@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'IProjection.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IProjection.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -12,7 +11,11 @@ package msi.gama.metamodel.topology.projection;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-import com.vividsolutions.jts.geom.*;
+
+import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
+
+import msi.gama.runtime.IScope;
 
 /**
  * Class IProjection.
@@ -29,9 +32,9 @@ public interface IProjection {
 
 	public abstract Geometry inverseTransform(final Geometry g);
 
-	public abstract CoordinateReferenceSystem getInitialCRS();
+	public abstract CoordinateReferenceSystem getInitialCRS(IScope scope);
 
-	public abstract CoordinateReferenceSystem getTargetCRS();
+	public abstract CoordinateReferenceSystem getTargetCRS(IScope scope);
 
 	public abstract Envelope getProjectedEnvelope();
 

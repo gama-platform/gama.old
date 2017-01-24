@@ -24,6 +24,7 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.runtime.IScope;
 
 public class Projection implements IProjection {
 
@@ -38,14 +39,14 @@ public class Projection implements IProjection {
 		factory = fact;
 	}
 
-	Projection(final IProjection world, final CoordinateReferenceSystem crs, final Envelope env,
+	Projection(final IScope scope, final IProjection world, final CoordinateReferenceSystem crs, final Envelope env,
 			final ProjectionFactory fact) {
 		this.factory = fact;
 		this.referenceProjection = world;
 		initialCRS = crs;
 		if (env != null) {
 			if (CRS.getProjectedCRS(initialCRS) == null) {
-				createTransformation(computeProjection());
+				createTransformation(computeProjection(scope));
 			}
 			// We project the envelope and we use it for initializing the translations
 			projectedEnv = transform(env);
@@ -56,13 +57,13 @@ public class Projection implements IProjection {
 	@Override
 	public void createTransformation(final MathTransform t) {
 		if (t != null) {
-			transformer = new GeometryCoordinateSequenceTransformer(
-					new DefaultCoordinateSequenceTransformer(GeometryUtils.GEOMETRY_FACTORY.getCoordinateSequenceFactory()));
+			transformer = new GeometryCoordinateSequenceTransformer(new DefaultCoordinateSequenceTransformer(
+					GeometryUtils.GEOMETRY_FACTORY.getCoordinateSequenceFactory()));
 			// TODO see ConcatenatedTransformDirect2D
 			transformer.setMathTransform(t);
 			try {
-				inverseTransformer = new GeometryCoordinateSequenceTransformer(
-						new DefaultCoordinateSequenceTransformer(GeometryUtils.GEOMETRY_FACTORY.getCoordinateSequenceFactory()));
+				inverseTransformer = new GeometryCoordinateSequenceTransformer(new DefaultCoordinateSequenceTransformer(
+						GeometryUtils.GEOMETRY_FACTORY.getCoordinateSequenceFactory()));
 				inverseTransformer.setMathTransform(t.inverse());
 			} catch (final NoninvertibleTransformException e) {
 				e.printStackTrace();
@@ -124,11 +125,11 @@ public class Projection implements IProjection {
 		return geom;
 	}
 
-	MathTransform computeProjection() {
+	MathTransform computeProjection(final IScope scope) {
 		MathTransform crsTransformation = null;
 		// ProjectionFactory.computeTargetCRS(longitude, latitude);
 		try {
-			crsTransformation = CRS.findMathTransform(initialCRS, getTargetCRS(), true);
+			crsTransformation = CRS.findMathTransform(initialCRS, getTargetCRS(scope), true);
 		} catch (final FactoryException e) {
 			e.printStackTrace();
 			return null;
@@ -137,7 +138,7 @@ public class Projection implements IProjection {
 	}
 
 	@Override
-	public CoordinateReferenceSystem getInitialCRS() {
+	public CoordinateReferenceSystem getInitialCRS(final IScope scope) {
 		return initialCRS;
 	}
 
@@ -152,9 +153,9 @@ public class Projection implements IProjection {
 	 * @see msi.gama.metamodel.topology.projection.IProjection#getTargetCRS()
 	 */
 	@Override
-	public CoordinateReferenceSystem getTargetCRS() {
-		if (referenceProjection != null) { return referenceProjection.getTargetCRS(); }
-		return factory.getTargetCRS();
+	public CoordinateReferenceSystem getTargetCRS(final IScope scope) {
+		if (referenceProjection != null) { return referenceProjection.getTargetCRS(scope); }
+		return factory.getTargetCRS(scope);
 	}
 
 	/**

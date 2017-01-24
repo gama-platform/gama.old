@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PrimitiveStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PrimitiveStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -36,19 +35,37 @@ import msi.gaml.types.IType;
  *
  * @author drogoul
  */
-@symbol(name = IKeyword.PRIMITIVE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, with_args = true, internal = true, concept = {
-		IConcept.ACTION, IConcept.SYSTEM })
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL }, symbols = IKeyword.CHART)
-@facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = { @doc("The name of this primitive") }),
-		@facet(name = IKeyword.VIRTUAL, type = IType.BOOL, optional = true, doc = {
-				@doc("Indicates if this primitive is virtual or not. A virtual primitive does not contain code and must be redefined in the species that implement the skill or extend the species that contain it") }),
-		@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = {
-				@doc("The type of the value returned by this primitive") }) }, omissible = IKeyword.NAME)
+@symbol (
+		name = IKeyword.PRIMITIVE,
+		kind = ISymbolKind.BEHAVIOR,
+		with_sequence = true,
+		with_args = true,
+		internal = true,
+		concept = { IConcept.ACTION, IConcept.SYSTEM })
+@inside (
+		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL },
+		symbols = IKeyword.CHART)
+@facets (
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.ID,
+				optional = false,
+				doc = { @doc ("The name of this primitive") }),
+				@facet (
+						name = IKeyword.VIRTUAL,
+						type = IType.BOOL,
+						optional = true,
+						doc = { @doc ("Indicates if this primitive is virtual or not. A virtual primitive does not contain code and must be redefined in the species that implement the skill or extend the species that contain it") }),
+				@facet (
+						name = IKeyword.TYPE,
+						type = IType.TYPE_ID,
+						optional = true,
+						doc = { @doc ("The type of the value returned by this primitive") }) },
+		omissible = IKeyword.NAME)
 // Necessary to avoid running the validator from ActionStatement
-@validator(NullValidator.class)
-@doc("A primitve is an action written in Java (as opposed to GAML for regular actions")
-@SuppressWarnings({ "rawtypes" })
+@validator (NullValidator.class)
+@doc ("A primitve is an action written in Java (as opposed to GAML for regular actions")
+@SuppressWarnings ({ "rawtypes" })
 public class PrimitiveStatement extends ActionStatement {
 
 	// Declaring a null validator because primites dont need to be checked
@@ -76,7 +93,7 @@ public class PrimitiveStatement extends ActionStatement {
 	}
 
 	@Override
-	public void setRuntimeArgs(final Arguments args) {
+	public void setRuntimeArgs(final IScope scope, final Arguments args) {
 		actualArgs.set(args);
 	}
 

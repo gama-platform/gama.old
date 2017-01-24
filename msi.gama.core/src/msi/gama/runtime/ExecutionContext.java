@@ -18,13 +18,24 @@ public class ExecutionContext implements IExecutionContext {
 
 	Map<String, Object> local;
 	final IExecutionContext outer;
+	IScope scope;
 
-	public ExecutionContext() {
-		this(null);
+	public ExecutionContext(final IScope scope) {
+		this(scope, null);
 	}
 
-	ExecutionContext(final IExecutionContext outer) {
+	public ExecutionContext(final IExecutionContext outer) {
+		this(outer.getScope(), outer);
+	}
+
+	@Override
+	public IScope getScope() {
+		return scope;
+	}
+
+	ExecutionContext(final IScope scope, final IExecutionContext outer) {
 		this.outer = outer;
+		this.scope = scope;
 	}
 
 	@Override
@@ -54,7 +65,7 @@ public class ExecutionContext implements IExecutionContext {
 
 	@Override
 	public ExecutionContext createCopyContext() {
-		final ExecutionContext r = new ExecutionContext(outer);
+		final ExecutionContext r = new ExecutionContext(scope, outer);
 		if (local != null)
 			r.local = new THashMap<String, Object>(local);
 		return r;

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ResumeSoundStatement.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ResumeSoundStatement.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -25,10 +24,14 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 import ummisco.gaml.extensions.sound.ResumeSoundStatement.ResumeSoundValidator;
 
-@symbol(name = IKeyword.RESUME_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = {
-		IConcept.SOUND })
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@validator(ResumeSoundValidator.class)
+@symbol (
+		name = IKeyword.RESUME_SOUND,
+		kind = ISymbolKind.SEQUENCE_STATEMENT,
+		with_sequence = true,
+		concept = { IConcept.SOUND })
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@validator (ResumeSoundValidator.class)
 public class ResumeSoundStatement extends AbstractStatementSequence {
 
 	public static class ResumeSoundValidator implements IDescriptionValidator<IDescription> {
@@ -63,7 +66,7 @@ public class ResumeSoundStatement extends AbstractStatementSequence {
 		final IAgent currentAgent = scope.getAgent();
 
 		final GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
-		soundPlayer.resume();
+		soundPlayer.resume(scope);
 
 		if (sequence != null) {
 			scope.execute(sequence, currentAgent, null);

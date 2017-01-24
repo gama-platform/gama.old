@@ -75,7 +75,7 @@ public class GamaShapeFile extends GamaGisFile {
 		final double height;
 		final Map<String, String> attributes = new LinkedHashMap();
 
-		public ShapeInfo(final URL url, final long modificationStamp) {
+		public ShapeInfo(final IScope scope, final URL url, final long modificationStamp) {
 			super(modificationStamp);
 			ShapefileDataStore store = null;
 			ReferencedEnvelope env = new ReferencedEnvelope();
@@ -93,7 +93,7 @@ public class GamaShapeFile extends GamaGisFile {
 				env = source.getBounds();
 				if (crs1 != null) {
 					try {
-						env = env.transform(new ProjectionFactory().getTargetCRS(), true);
+						env = env.transform(new ProjectionFactory().getTargetCRS(scope), true);
 					} catch (final Exception e) {
 						throw e;
 					}
@@ -263,7 +263,7 @@ public class GamaShapeFile extends GamaGisFile {
 			s = (ShapeInfo) p.getMetaData(getFile(scope), false, true);
 		} else {
 			try {
-				s = new ShapeInfo(getFile(scope).toURI().toURL(), 0);
+				s = new ShapeInfo(scope, getFile(scope).toURI().toURL(), 0);
 			} catch (final MalformedURLException e) {
 				return GamaListFactory.create();
 			}

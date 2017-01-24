@@ -39,7 +39,7 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 // DataStore.dispose(); //close connection;
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class GamaSqlConnection extends GamaGisFile {
 
 	protected static final boolean DEBUG = false; // Change DEBUG = false for
@@ -262,8 +262,7 @@ public class GamaSqlConnection extends GamaGisFile {
 	}
 
 	/*
-	 * Create a connection to database with current connection parameter of the
-	 * GamaSqlConnection object
+	 * Create a connection to database with current connection parameter of the GamaSqlConnection object
 	 */
 	public DataStore Connect(final IScope scope) throws Exception {
 		Map<String, Object> connectionParameters = new HashMap<String, Object>();
@@ -272,9 +271,7 @@ public class GamaSqlConnection extends GamaGisFile {
 		dStore = DataStoreFinder.getDataStore(connectionParameters); // get
 																		// connection
 		// System.out.println("data store postgress:" + dStore);
-		if (dStore == null) {
-			throw new IOException("Can't connect to " + database);
-		}
+		if (dStore == null) { throw new IOException("Can't connect to " + database); }
 		return dStore;
 	}
 
@@ -288,9 +285,7 @@ public class GamaSqlConnection extends GamaGisFile {
 		DataStore dStore;
 		dStore = DataStoreFinder.getDataStore(connectionParameters); // get
 																		// connection
-		if (dStore == null) {
-			throw new IOException("Can't connect to " + database);
-		}
+		if (dStore == null) { throw new IOException("Can't connect to " + database); }
 		return dStore;
 	}
 
@@ -366,7 +361,7 @@ public class GamaSqlConnection extends GamaGisFile {
 		SimpleFeatureIterator reader = null;
 		final IList list = getBuffer();
 		try {
-			final QueryInfo queryInfo = new QueryInfo(this.dataStore, tableName, filterStr);
+			final QueryInfo queryInfo = new QueryInfo(scope, this.dataStore, tableName, filterStr);
 			final int size = queryInfo.getSize();
 			final Envelope env = queryInfo.getEnvelope();
 			int index = 0;
@@ -410,9 +405,7 @@ public class GamaSqlConnection extends GamaGisFile {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if (getBuffer() != null) {
-			return;
-		}
+		if (getBuffer() != null) { return; }
 		setBuffer(GamaListFactory.<IShape> create(Types.GEOMETRY));
 		readTable(scope);
 	}
@@ -437,7 +430,7 @@ public class GamaSqlConnection extends GamaGisFile {
 		final Map<String, String> attributes; // meta data of query
 		final SimpleFeatureCollection features; // data/recordsets
 
-		public QueryInfo(final DataStore dStore, final String tableName, final String filterStr) {
+		public QueryInfo(final IScope scope, final DataStore dStore, final String tableName, final String filterStr) {
 
 			SimpleFeatureSource source = null;
 			SimpleFeatureCollection sfeatures = null; // Query data
@@ -460,9 +453,8 @@ public class GamaSqlConnection extends GamaGisFile {
 				env = source.getBounds();
 				if (crs != null) {
 					try {
-						env = env.transform(new ProjectionFactory().getTargetCRS(), true);
-					} catch (final Exception e) {
-					}
+						env = env.transform(new ProjectionFactory().getTargetCRS(scope), true);
+					} catch (final Exception e) {}
 				}
 				number = sfeatures.size(); // get number of records
 				// get meta data

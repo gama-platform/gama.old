@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaSpatialGraph.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaSpatialGraph.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -45,12 +44,11 @@ import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph, IPopulation.Listener {
 
 	/*
-	 * Own topology of the graph. Lazily instantiated, and invalidated at each
-	 * modification of the graph.
+	 * Own topology of the graph. Lazily instantiated, and invalidated at each modification of the graph.
 	 */
 	private ITopology topology;
 	private double tolerance = 0;
@@ -68,8 +66,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 		/**
 		 * @param scope
-		 *            TODO Determines if two vertex geometries are to be treated
-		 *            as related in any way.
+		 *            TODO Determines if two vertex geometries are to be treated as related in any way.
 		 * @param p1
 		 *            a geometrical object
 		 * @param p2
@@ -119,7 +116,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	@Override
 	protected GamaSpatialPath pathFromEdges(final IScope scope, final IShape source, final IShape target,
 			final IList<IShape> edges) {
-		return PathFactory.newInstance(getTopology(scope), source, target, edges);
+		return PathFactory.newInstance(scope, getTopology(scope), source, target, edges);
 		// return new GamaPath(getTopology(), (IShape) source, (IShape) target,
 		// edges);
 	}
@@ -202,9 +199,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		boolean related, already;
 		for (final IShape s1 : vSet) {
 			for (final IShape s2 : vSet) {
-				if (scope.interrupted()) {
-					return;
-				}
+				if (scope.interrupted()) { return; }
 				if (vertexRelation.equivalent(scope, s1, s2)) {
 					continue;
 				}
@@ -221,38 +216,37 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	protected Object generateEdgeObject(final Object v1, final Object v2) {
-		if (v1 instanceof IShape && v2 instanceof IShape) {
-			return GamaGeometryType.buildLink(scope, (IShape) v1, (IShape) v2);
-		}
+		if (v1 instanceof IShape
+				&& v2 instanceof IShape) { return GamaGeometryType.buildLink(scope, (IShape) v1, (IShape) v2); }
 		return super.generateEdgeObject(v1, v2);
 	}
 
 	@Override
-	public void notifyAgentRemoved(final IPopulation pop, final IAgent agent) {
+	public void notifyAgentRemoved(final IScope scope, final IPopulation pop, final IAgent agent) {
 		this.removeVertex(agent);
 	}
 
 	@Override
-	public void notifyAgentAdded(final IPopulation pop, final IAgent agent) {
+	public void notifyAgentAdded(final IScope scope, final IPopulation pop, final IAgent agent) {
 		this.addVertex(agent);
 	}
 
 	@Override
-	public void notifyAgentsAdded(final IPopulation pop, final Collection agents) {
+	public void notifyAgentsAdded(final IScope scope, final IPopulation pop, final Collection agents) {
 		for (final Object o : agents) {
 			addVertex((IAgent) o);
 		}
 	}
 
 	@Override
-	public void notifyAgentsRemoved(final IPopulation pop, final Collection agents) {
+	public void notifyAgentsRemoved(final IScope scope, final IPopulation pop, final Collection agents) {
 		for (final Object o : agents) {
 			removeVertex(o);
 		}
 	}
 
 	@Override
-	public void notifyPopulationCleared(final IPopulation pop) {
+	public void notifyPopulationCleared(final IScope scope, final IPopulation pop) {
 		removeAllVertices(vertexSet());
 	}
 
@@ -279,9 +273,8 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		if (sh != null)
 			return sh;
 		for (final Object v : verticesBuilt.values()) {
-			if (vertex.distance3D(GeometryUtils.toCoordinate(((IShape) v).getLocation())) <= tolerance) {
-				return (IShape) v;
-			}
+			if (vertex.distance3D(
+					GeometryUtils.toCoordinate(((IShape) v).getLocation())) <= tolerance) { return (IShape) v; }
 		}
 		return null;
 	}
@@ -292,23 +285,24 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			nodes.put(((IAgent) ag).getLocation(), (IAgent) ag);
 		}
 		for (final Object p : edges.iterable(scope)) {
-			boolean addEdge = addDrivingEdge(scope, (IShape) p, nodes);
-			if (!addEdge) continue;
+			final boolean addEdge = addDrivingEdge(scope, (IShape) p, nodes);
+			if (!addEdge)
+				continue;
 			getEdge(p).setWeight(((IShape) p).getPerimeter());
 		}
 	}
 
 	public boolean addDrivingEdge(final IScope scope, final IShape e, final GamaMap<ILocation, IAgent> nodes) {
-		if (containsEdge(e)) {
-			return false;
-		}
+		if (containsEdge(e)) { return false; }
 		final Coordinate[] coord = e.getInnerGeometry().getCoordinates();
 		final IShape ptS = new GamaPoint(coord[0]);
 		final IShape ptT = new GamaPoint(coord[coord.length - 1]);
-		IAgent v1 = nodes.get(ptS);
-		if (v1 == null) return false;
-		IAgent v2 = nodes.get(ptT);
-		if (v2 == null) return false;
+		final IAgent v1 = nodes.get(ptS);
+		if (v1 == null)
+			return false;
+		final IAgent v2 = nodes.get(ptT);
+		if (v2 == null)
+			return false;
 
 		final IAgent ag = e.getAgent();
 		final List v1ro = (List) v1.getAttribute("roads_out");
@@ -328,7 +322,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 		// if ( edge == null ) { return false; }
 		edgeMap.put(e, edge);
-		dispatchEvent(new GraphEvent(scope, this, this, e, null, GraphEventType.EDGE_ADDED));
+		dispatchEvent(scope, new GraphEvent(scope, this, this, e, null, GraphEventType.EDGE_ADDED));
 		return true;
 	}
 

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GraphUtilsGraphStream.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GraphUtilsGraphStream.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -32,13 +31,12 @@ import msi.gama.util.GamaColor;
  * @author Samuel Thiriot
  * 
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class GraphUtilsGraphStream {
 
 	/**
-	 * Preprocess a gama object before exportation. Filters gama objects that
-	 * have no meaning out of gama; notably GAMA colors are translated to RGB
-	 * values.
+	 * Preprocess a gama object before exportation. Filters gama objects that have no meaning out of gama; notably GAMA
+	 * colors are translated to RGB values.
 	 * 
 	 * @param gamaValue
 	 * @return
@@ -55,8 +53,8 @@ public class GraphUtilsGraphStream {
 	}
 
 	/**
-	 * Takes a gama graph as an input, returns a graphstream graph as close as
-	 * possible. Preserves double links (multi graph).
+	 * Takes a gama graph as an input, returns a graphstream graph as close as possible. Preserves double links (multi
+	 * graph).
 	 * 
 	 * @param gamaGraph
 	 * @return
@@ -65,8 +63,8 @@ public class GraphUtilsGraphStream {
 
 		final Graph g = new MultiGraph("tmpGraph", true, false);
 
-		final Map<Object, Node> gamaNode2graphStreamNode = new HashMap<Object, Node>(
-				gamaGraph._internalNodesSet().size());
+		final Map<Object, Node> gamaNode2graphStreamNode =
+				new HashMap<Object, Node>(gamaGraph._internalNodesSet().size());
 
 		// add nodes
 		for (final Object v : gamaGraph._internalVertexMap().keySet()) {
@@ -128,12 +126,14 @@ public class GraphUtilsGraphStream {
 			} catch (final EdgeRejectedException e) {
 				GAMA.reportError(GAMA.getRuntimeScope(),
 						GamaRuntimeException.warning(
-								"an edge was rejected during the transformation, probably because it was a double one"),
+								"an edge was rejected during the transformation, probably because it was a double one",
+								GAMA.getRuntimeScope()),
 						true);
 			} catch (final IdAlreadyInUseException e) {
 				GAMA.reportError(GAMA.getRuntimeScope(),
 						GamaRuntimeException.warning(
-								"an edge was rejected during the transformation, probably because it was a double one"),
+								"an edge was rejected during the transformation, probably because it was a double one",
+								GAMA.getRuntimeScope()),
 						true);
 			}
 
@@ -144,14 +144,14 @@ public class GraphUtilsGraphStream {
 			GAMA.reportError(GAMA.getRuntimeScope(),
 					GamaRuntimeException.warning("The exportation ran without error, but an integrity test failed: "
 							+ "the number of vertices is not correct(" + g.getNodeCount() + " instead of "
-							+ gamaGraph.getVertices().size() + ")"),
+							+ gamaGraph.getVertices().size() + ")", GAMA.getRuntimeScope()),
 					true);
 		}
 		if (gamaGraph.getEdges().size() != g.getEdgeCount()) {
 			GAMA.reportError(GAMA.getRuntimeScope(),
 					GamaRuntimeException.warning("The exportation ran without error, but an integrity test failed: "
 							+ "the number of edges is not correct(" + g.getEdgeCount() + " instead of "
-							+ gamaGraph.getEdges().size() + ")"),
+							+ gamaGraph.getEdges().size() + ")", GAMA.getRuntimeScope()),
 					true);
 		}
 

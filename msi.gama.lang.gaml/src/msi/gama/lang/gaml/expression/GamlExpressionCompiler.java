@@ -1131,7 +1131,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 				}
 			} else {
 				final Resource.Diagnostic d = resource.getErrors().get(0);
-				throw GamaRuntimeException.error(d.getMessage());
+				throw GamaRuntimeException.error(d.getMessage(), tempContext.getScope());
 			}
 
 			return result;
@@ -1170,7 +1170,7 @@ public class GamlExpressionCompiler extends GamlSwitch<IExpression> implements I
 
 			} else {
 				final Resource.Diagnostic d = resource.getErrors().get(0);
-				throw GamaRuntimeException.error(d.getMessage());
+				throw GamaRuntimeException.error(d.getMessage(), tempContext.getScope());
 			}
 			return result;
 		} finally {

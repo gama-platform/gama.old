@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SaveStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SaveStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -89,40 +88,92 @@ import msi.gaml.types.GamaFileType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, concept = { IConcept.FILE,
-		IConcept.SAVE_FILE }, with_sequence = false, with_args = true, remote_context = true)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
-@facets(value = {
-		@facet(name = IKeyword.TYPE, type = IType.ID, optional = true, values = { "shp", "text", "csv", "asc",
-				"geotiff",
-				"image" }, doc = @doc("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
-		@facet(name = IKeyword.DATA, type = IType.NONE, optional = true, doc = @doc("any expression, that will be saved in the file")),
-		@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it. Default is true")),
-		@facet(name = IKeyword.HEADER, type = IType.BOOL, optional = true, doc = @doc("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist")),
-		@facet(name = IKeyword.TO, type = IType.STRING, optional = true, doc = @doc("an expression that evaluates to an string, the path to the file")),
-		@facet(name = "crs", type = IType.NONE, optional = true, doc = @doc("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
-		@facet(name = IKeyword.WITH, type = {
-				IType.MAP }, optional = true, doc = @doc("Not yet used")) }, omissible = IKeyword.DATA)
-@doc(value = "Allows to save data in a file. The type of file can be \"shp\", \"asc\", \"geotiff\", \"text\" or \"csv\".", usages = {
-		@usage(value = "Its simple syntax is:", examples = {
-				@example(value = "save data to: output_file type: a_type_file;", isExecutable = false) }),
-		@usage(value = "To save data in a text file:", examples = {
-				@example(value = "save (string(cycle) + \"->\"  + name + \":\" + location) to: \"save_data.txt\" type: \"text\";") }),
-		@usage(value = "To save the values of some attributes of the current agent in csv file:", examples = {
-				@example(value = "save [name, location, host] to: \"save_data.csv\" type: \"csv\";") }),
-		@usage(value = "To save the values of all attributes of all the agents of a species into a csv (with optional attributes):", examples = {
-				@example(value = "save species_of(self) to: \"save_csvfile.csv\" type: \"csv\" header: false;") }),
-		@usage(value = "To save the geometries of all the agents of a species into a shapefile (with optional attributes):", examples = {
-				@example(value = "save species_of(self) to: \"save_shapefile.shp\" type: \"shp\" with: [name::\"nameAgent\", location::\"locationAgent\"] crs: \"EPSG:4326\";") }),
-		@usage(value = "To save the grid_value attributes of all the cells of a grid into an ESRI ASCII Raster file:", examples = {
-				@example(value = "save grid to: \"save_grid.asc\" type: \"asc\";") }),
-		@usage(value = "To save the grid_value attributes of all the cells of a grid into geotiff:", examples = {
-				@example(value = "save grid to: \"save_grid.tif\" type: \"geotiff\";") }),
-		@usage(value = "To save the grid_value attributes of all the cells of a grid into png (with a worldfile):", examples = {
-				@example(value = "save grid to: \"save_grid.png\" type: \"image\";") }),
-		@usage(value = "The save statement can be use in an init block, a reflex, an action or in a user command. Do not use it in experiments.") })
-@validator(SaveValidator.class)
-@SuppressWarnings({ "rawtypes" })
+@symbol (
+		name = IKeyword.SAVE,
+		kind = ISymbolKind.SINGLE_STATEMENT,
+		concept = { IConcept.FILE, IConcept.SAVE_FILE },
+		with_sequence = false,
+		with_args = true,
+		remote_context = true)
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
+@facets (
+		value = { @facet (
+				name = IKeyword.TYPE,
+				type = IType.ID,
+				optional = true,
+				values = { "shp", "text", "csv", "asc", "geotiff", "image" },
+				doc = @doc ("an expression that evaluates to an string, the type of the output file (it can be only \"shp\", \"asc\", \"geotiff\", \"image\", \"text\" or \"csv\") ")),
+				@facet (
+						name = IKeyword.DATA,
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("any expression, that will be saved in the file")),
+				@facet (
+						name = IKeyword.REWRITE,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("an expression that evaluates to a boolean, specifying whether the save will ecrase the file or append data at the end of it. Default is true")),
+				@facet (
+						name = IKeyword.HEADER,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("an expression that evaluates to a boolean, specifying whether the save will write a header if the file does not exist")),
+				@facet (
+						name = IKeyword.TO,
+						type = IType.STRING,
+						optional = true,
+						doc = @doc ("an expression that evaluates to an string, the path to the file")),
+				@facet (
+						name = "crs",
+						type = IType.NONE,
+						optional = true,
+						doc = @doc ("the name of the projection, e.g. crs:\"EPSG:4326\" or its EPSG id, e.g. crs:4326. Here a list of the CRS codes (and EPSG id): http://spatialreference.org")),
+				@facet (
+						name = IKeyword.WITH,
+						type = { IType.MAP },
+						optional = true,
+						doc = @doc ("Not yet used")) },
+		omissible = IKeyword.DATA)
+@doc (
+		value = "Allows to save data in a file. The type of file can be \"shp\", \"asc\", \"geotiff\", \"text\" or \"csv\".",
+		usages = { @usage (
+				value = "Its simple syntax is:",
+				examples = { @example (
+						value = "save data to: output_file type: a_type_file;",
+						isExecutable = false) }),
+				@usage (
+						value = "To save data in a text file:",
+						examples = { @example (
+								value = "save (string(cycle) + \"->\"  + name + \":\" + location) to: \"save_data.txt\" type: \"text\";") }),
+				@usage (
+						value = "To save the values of some attributes of the current agent in csv file:",
+						examples = { @example (
+								value = "save [name, location, host] to: \"save_data.csv\" type: \"csv\";") }),
+				@usage (
+						value = "To save the values of all attributes of all the agents of a species into a csv (with optional attributes):",
+						examples = { @example (
+								value = "save species_of(self) to: \"save_csvfile.csv\" type: \"csv\" header: false;") }),
+				@usage (
+						value = "To save the geometries of all the agents of a species into a shapefile (with optional attributes):",
+						examples = { @example (
+								value = "save species_of(self) to: \"save_shapefile.shp\" type: \"shp\" with: [name::\"nameAgent\", location::\"locationAgent\"] crs: \"EPSG:4326\";") }),
+				@usage (
+						value = "To save the grid_value attributes of all the cells of a grid into an ESRI ASCII Raster file:",
+						examples = { @example (
+								value = "save grid to: \"save_grid.asc\" type: \"asc\";") }),
+				@usage (
+						value = "To save the grid_value attributes of all the cells of a grid into geotiff:",
+						examples = { @example (
+								value = "save grid to: \"save_grid.tif\" type: \"geotiff\";") }),
+				@usage (
+						value = "To save the grid_value attributes of all the cells of a grid into png (with a worldfile):",
+						examples = { @example (
+								value = "save grid to: \"save_grid.png\" type: \"image\";") }),
+				@usage (
+						value = "The save statement can be use in an init block, a reflex, an action or in a user command. Do not use it in experiments.") })
+@validator (SaveValidator.class)
+@SuppressWarnings ({ "rawtypes" })
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	public static class SaveValidator implements IDescriptionValidator<StatementDescription> {
@@ -136,15 +187,11 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		public void validate(final StatementDescription description) {
 			final StatementDescription desc = description;
 			final IExpression data = desc.getFacetExpr(DATA);
-			if (data == null) {
-				return;
-			}
+			if (data == null) { return; }
 			final IType<?> t = data.getType().getContentType();
 			final SpeciesDescription species = t.getSpecies();
 			final Facets args = desc.getPassedArgs();
-			if (args == null || args.isEmpty()) {
-				return;
-			}
+			if (args == null || args.isEmpty()) { return; }
 			if (species == null) {
 				desc.error("No attributes can be saved for geometries", IGamlIssue.UNKNOWN_VAR, WITH);
 			} else {
@@ -186,7 +233,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	// TODO rewrite this with the GamaFile framework
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		// First case: we have a file as item;
@@ -234,16 +281,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			type = typeExp;
 		}
 		if (type.equals("shp")) {
-			if (item == null) {
-				return null;
-			}
+			if (item == null) { return null; }
 			Object agents = item.value(scope);
 			if (agents instanceof ISpecies) {
 				agents = scope.getAgent().getPopulationFor((ISpecies) agents);
 			}
-			if (!(agents instanceof IList)) {
-				return null;
-			}
+			if (!(agents instanceof IList)) { return null; }
 			saveShape((IList<? extends IShape>) agents, path, scope);
 		} else if (type.equals("text") || type.equals("csv")) {
 			final File fileTxt = new File(path);
@@ -271,24 +314,16 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		} else if (type.equals("asc")) {
 			ISpecies species;
-			if (item == null) {
-				return null;
-			}
+			if (item == null) { return null; }
 			species = Cast.asSpecies(scope, item.value(scope));
-			if (species == null || !species.isGrid()) {
-				return null;
-			}
+			if (species == null || !species.isGrid()) { return null; }
 
 			saveAsc(species, path, scope);
 		} else if (type.equals("geotiff") || type.equals("image")) {
 			ISpecies species;
-			if (item == null) {
-				return null;
-			}
+			if (item == null) { return null; }
 			species = Cast.asSpecies(scope, item.value(scope));
-			if (species == null || !species.isGrid()) {
-				return null;
-			}
+			if (species == null || !species.isGrid()) { return null; }
 
 			saveRasterImage(species, path, scope, type.equals("geotiff"));
 		} else if (AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase())) {
@@ -394,7 +429,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		CoordinateReferenceSystem crs = null;
 		try {
 			crs = nullProjection ? CRS.decode("EPSG:2154")
-					: scope.getSimulation().getProjectionFactory().getWorld().getTargetCRS();
+					: scope.getSimulation().getProjectionFactory().getWorld().getTargetCRS(scope);
 		} catch (final NoSuchAuthorityCodeException e1) {
 			e1.printStackTrace();
 		} catch (final FactoryException e1) {
@@ -487,9 +522,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	public void saveText(final String type, final File fileTxt, final boolean header, final IScope scope)
 			throws GamaRuntimeException {
 		try (FileWriter fw = new FileWriter(fileTxt, true)) {
-			if (item == null) {
-				return;
-			}
+			if (item == null) { return; }
 			if (type.equals("text")) {
 				fw.write(Cast.asString(scope, item.value(scope)) + Strings.LN);
 			} else if (type.equals("csv")) {
@@ -503,9 +536,10 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					return;
 				}
 				if (isAgent) {
-					
-					final Collection<String> attributeNames = values instanceof IPopulation ?  ((IPopulation) values).getSpecies().getAttributeNames(scope): values.getType().getContentType().getSpecies()
-							.getAttributeNames();
+
+					final Collection<String> attributeNames =
+							values instanceof IPopulation ? ((IPopulation) values).getSpecies().getAttributeNames(scope)
+									: values.getType().getContentType().getSpecies().getAttributeNames();
 					attributeNames.remove(IKeyword.NAME);
 					attributeNames.remove(IKeyword.LOCATION);
 					attributeNames.remove(IKeyword.PEERS);
@@ -567,15 +601,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	public String type(final VariableDescription var) {
 		final IType gamaName = var.getType();
-		if (gamaName.id() == IType.BOOL) {
-			return "Boolean";
-		}
-		if (gamaName.id() == IType.FLOAT) {
-			return "Double";
-		}
-		if (gamaName.id() == IType.INT) {
-			return "Integer";
-		}
+		if (gamaName.id() == IType.BOOL) { return "Boolean"; }
+		if (gamaName.id() == IType.FLOAT) { return "Double"; }
+		if (gamaName.id() == IType.INT) { return "Integer"; }
 		return "String";
 	}
 
@@ -586,9 +614,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	private void computeInits(final IScope scope, final Map<String, String> values, final SpeciesDescription species)
 			throws GamaRuntimeException {
-		if (init == null) {
-			return;
-		}
+		if (init == null) { return; }
 		if (init.isEmpty() && species != null) {
 			final List<String> attributeNames = new ArrayList<String>();
 			attributeNames.add(IKeyword.PEERS);
@@ -629,7 +655,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			gis = scope.getSimulation().getProjectionFactory().getWorld();
 		} else {
 			try {
-				gis = scope.getSimulation().getProjectionFactory().forSavingWith(code);
+				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
 			} catch (final FactoryException e1) {
 				throw GamaRuntimeException.error("The code " + code
 						+ " does not correspond to a known EPSG code. GAMA is unable to save " + path, scope);
@@ -643,15 +669,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final ShapefileDataStore store = new ShapefileDataStore(f.toURI().toURL());
 		// The name of the type and the name of the feature source shoud now be
 		// the same.
-		final SimpleFeatureType type = DataUtilities.createType(store.getFeatureSource().getEntry().getTypeName(),
-				specs);
+		final SimpleFeatureType type =
+				DataUtilities.createType(store.getFeatureSource().getEntry().getTypeName(), specs);
 		store.createSchema(type);
 		// AD: creation of a FeatureWriter on the store.
 		try (FeatureWriter fw = store.getFeatureWriter(Transaction.AUTO_COMMIT)) {
 
 			// AD Builds once the list of agent attributes to evaluate
-			final Collection<String> attributeValues = attributes == null ? Collections.EMPTY_LIST
-					: attributes.values();
+			final Collection<String> attributeValues =
+					attributes == null ? Collections.EMPTY_LIST : attributes.values();
 			final List<Object> values = new ArrayList<>();
 			for (final IShape ag : agents) {
 				values.clear();
@@ -662,13 +688,13 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 					for (final String variable : attributeValues) {
 						if (stringVars.contains(variable)) {
 							String val = Cast.toGaml(((IAgent) ag).getDirectVarValue(scope, variable));
-							if (val.equals("nil")) val = "";
+							if (val.equals("nil"))
+								val = "";
 							if (val.startsWith("'") && val.endsWith("'") || val.startsWith("\"") && val.endsWith("\""))
-									val = val.substring(1, val.length() - 1);
+								val = val.substring(1, val.length() - 1);
 							values.add(val);
-							
-						}
-						else
+
+						} else
 							values.add(((IAgent) ag).getDirectVarValue(scope, variable));
 					}
 				}
@@ -691,7 +717,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	private void writePRJ(final IScope scope, final String path, final IProjection gis) {
-		final CoordinateReferenceSystem crs = gis.getInitialCRS();
+		final CoordinateReferenceSystem crs = gis.getInitialCRS(scope);
 		if (crs != null) {
 			try (FileWriter fw = new FileWriter(path.replace(".shp", ".prj"))) {
 				fw.write(crs.toString());
@@ -707,7 +733,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	@Override
-	public void setRuntimeArgs(final Arguments args) {
+	public void setRuntimeArgs(final IScope scope, final Arguments args) {
 		// TODO Auto-generated method stub
 	}
 }

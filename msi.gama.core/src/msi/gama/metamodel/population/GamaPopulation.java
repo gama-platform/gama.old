@@ -38,6 +38,7 @@ import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.metamodel.topology.graph.GraphTopology;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.metamodel.topology.grid.GridTopology;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.concurrent.GamaExecutorService;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -239,10 +240,10 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@Override
 	public void dispose() {
-		// scope.getGui().debug("GamaPopulation.dispose : " + this);
 		killMembers();
-		/* agents. */clear();
-		firePopulationCleared();
+		clear();
+		final IScope scope = getHost() == null ? GAMA.getRuntimeScope() : getHost().getScope();
+		firePopulationCleared(scope);
 		if (topology != null) {
 			topology.dispose();
 			topology = null;
@@ -285,7 +286,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 			// a.scheduleAndExecute(null);
 		}
 		createVariablesFor(scope, list, Collections.EMPTY_LIST);
-		fireAgentsAdded(list);
+		fireAgentsAdded(scope, list);
 		return list;
 
 	}
@@ -347,7 +348,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 				// a.scheduleAndExecute(sequence);
 			}
 		}
-		fireAgentsAdded(list);
+		fireAgentsAdded(scope, list);
 		return list;
 	}
 
@@ -556,7 +557,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 
 	@Override
 	public void addValue(final IScope scope, final T value) {
-		fireAgentAdded(value);
+		fireAgentAdded(scope, value);
 		add(value);
 	}
 
@@ -581,7 +582,7 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		if (value instanceof IAgent && super.remove(value)) {
 			if (topology != null)
 				topology.removeAgent((IAgent) value);
-			fireAgentRemoved((IAgent) value);
+			fireAgentRemoved(scope, (IAgent) value);
 		}
 	}
 
@@ -629,18 +630,18 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		listeners.remove(listener);
 	}
 
-	protected void fireAgentAdded(final IAgent agent) {
+	protected void fireAgentAdded(final IScope scope, final IAgent agent) {
 		if (!hasListeners()) { return; }
 		try {
 			for (final IPopulation.Listener l : listeners) {
-				l.notifyAgentAdded(this, agent);
+				l.notifyAgentAdded(scope, this, agent);
 			}
 		} catch (final RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
 
-	protected <T extends IAgent> void fireAgentsAdded(final IList<T> container) {
+	protected <T extends IAgent> void fireAgentsAdded(final IScope scope, final IList<T> container) {
 		if (!hasListeners()) { return; }
 		// create list
 		final Collection<T> agents = new LinkedList<>();
@@ -651,30 +652,30 @@ public class GamaPopulation<T extends IAgent> extends GamaList<T> implements IPo
 		// send event
 		try {
 			for (final IPopulation.Listener l : listeners) {
-				l.notifyAgentsAdded(this, agents);
+				l.notifyAgentsAdded(scope, this, agents);
 			}
 		} catch (final RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
 
-	protected void fireAgentRemoved(final IAgent agent) {
+	protected void fireAgentRemoved(final IScope scope, final IAgent agent) {
 		if (!hasListeners()) { return; }
 		try {
 			for (final IPopulation.Listener l : listeners) {
-				l.notifyAgentRemoved(this, agent);
+				l.notifyAgentRemoved(scope, this, agent);
 			}
 		} catch (final RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
 
-	protected void firePopulationCleared() {
+	protected void firePopulationCleared(final IScope scope) {
 		if (!hasListeners()) { return; }
 		// send event
 		try {
 			for (final IPopulation.Listener l : listeners) {
-				l.notifyPopulationCleared(this);
+				l.notifyPopulationCleared(scope, this);
 			}
 		} catch (final RuntimeException e) {
 			e.printStackTrace();

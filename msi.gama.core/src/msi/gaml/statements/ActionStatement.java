@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ActionStatement.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ActionStatement.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -45,41 +44,116 @@ import msi.gaml.types.Types;
  * 
  * @author drogoul
  */
-@symbol(name = IKeyword.ACTION, kind = ISymbolKind.ACTION, with_sequence = true, with_args = true, unique_name = true, concept = {
-		IConcept.SPECIES, IConcept.ACTION })
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
-@facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.ID, optional = false, doc = @doc("identifier of the action")),
-		@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true, doc = @doc("the action returned type"), internal = true),
-		@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true, doc = @doc("if the action returns a container, the type of its elements"), internal = true),
-		@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true, doc = @doc("if the action returns a map, the type of its keys"), internal = true),
-		@facet(name = IKeyword.VIRTUAL, type = IType.BOOL, optional = true, doc = @doc("whether the action is virtual (defined without a set of instructions) (false by default)")), }, omissible = IKeyword.NAME)
-@doc(value = "Allows to define in a species, model or experiment a new action that can be called elsewhere.", usages = {
-		@usage(value = "The simplest syntax to define an action that does not take any parameter and does not return anything is:", examples = {
-				@example(value = "action simple_action {", isExecutable = false),
-				@example(value = "   // [set of statements]", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "If the action needs some parameters, they can be specified betwee, braquets after the identifier of the action:", examples = {
-				@example(value = "action action_parameters(int i, string s){", isExecutable = false),
-				@example(value = "   // [set of statements using i and s]", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "If the action returns any value, the returned type should be used instead of the \"action\" keyword. A return statement inside the body of the action statement is mandatory.", examples = {
-				@example(value = "int action_return_val(int i, string s){", isExecutable = false),
-				@example(value = "   // [set of statements using i and s]", isExecutable = false),
-				@example(value = "   return i + i;", isExecutable = false),
-				@example(value = "}", isExecutable = false) }),
-		@usage(value = "If virtual: is true, then the action is abstract, which means that the action is defined without body. A species containing at least one abstract action is abstract. Agents of this species cannot be created. The common use of an abstract action is to define an action that can be used by all its sub-species, which should redefine all abstract actions and implements its body.", examples = {
-				@example(value = "species parent_species {", isExecutable = false),
-				@example(value = "   int virtual_action(int i, string s);", isExecutable = false),
-				@example(value = "}", isExecutable = false), @example(value = "", isExecutable = false),
-				@example(value = "species children parent: parent_species {", isExecutable = false),
-				@example(value = "   int virtual_action(int i, string s) {", isExecutable = false),
-				@example(value = "      return i + i;", isExecutable = false),
-				@example(value = "   }", isExecutable = false),
-				@example(value = "}", isExecutable = false) }) }, see = { "do" })
-@validator(ActionValidator.class)
-@serializer(ActionSerializer.class)
-@SuppressWarnings({ "rawtypes" })
+@symbol (
+		name = IKeyword.ACTION,
+		kind = ISymbolKind.ACTION,
+		with_sequence = true,
+		with_args = true,
+		unique_name = true,
+		concept = { IConcept.SPECIES, IConcept.ACTION })
+@inside (
+		kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
+@facets (
+		value = { @facet (
+				name = IKeyword.NAME,
+				type = IType.ID,
+				optional = false,
+				doc = @doc ("identifier of the action")),
+				@facet (
+						name = IKeyword.TYPE,
+						type = IType.TYPE_ID,
+						optional = true,
+						doc = @doc ("the action returned type"),
+						internal = true),
+				@facet (
+						name = IKeyword.OF,
+						type = IType.TYPE_ID,
+						optional = true,
+						doc = @doc ("if the action returns a container, the type of its elements"),
+						internal = true),
+				@facet (
+						name = IKeyword.INDEX,
+						type = IType.TYPE_ID,
+						optional = true,
+						doc = @doc ("if the action returns a map, the type of its keys"),
+						internal = true),
+				@facet (
+						name = IKeyword.VIRTUAL,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("whether the action is virtual (defined without a set of instructions) (false by default)")), },
+		omissible = IKeyword.NAME)
+@doc (
+		value = "Allows to define in a species, model or experiment a new action that can be called elsewhere.",
+		usages = { @usage (
+				value = "The simplest syntax to define an action that does not take any parameter and does not return anything is:",
+				examples = { @example (
+						value = "action simple_action {",
+						isExecutable = false),
+						@example (
+								value = "   // [set of statements]",
+								isExecutable = false),
+						@example (
+								value = "}",
+								isExecutable = false) }),
+				@usage (
+						value = "If the action needs some parameters, they can be specified betwee, braquets after the identifier of the action:",
+						examples = { @example (
+								value = "action action_parameters(int i, string s){",
+								isExecutable = false),
+								@example (
+										value = "   // [set of statements using i and s]",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false) }),
+				@usage (
+						value = "If the action returns any value, the returned type should be used instead of the \"action\" keyword. A return statement inside the body of the action statement is mandatory.",
+						examples = { @example (
+								value = "int action_return_val(int i, string s){",
+								isExecutable = false),
+								@example (
+										value = "   // [set of statements using i and s]",
+										isExecutable = false),
+								@example (
+										value = "   return i + i;",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false) }),
+				@usage (
+						value = "If virtual: is true, then the action is abstract, which means that the action is defined without body. A species containing at least one abstract action is abstract. Agents of this species cannot be created. The common use of an abstract action is to define an action that can be used by all its sub-species, which should redefine all abstract actions and implements its body.",
+						examples = { @example (
+								value = "species parent_species {",
+								isExecutable = false),
+								@example (
+										value = "   int virtual_action(int i, string s);",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false),
+								@example (
+										value = "",
+										isExecutable = false),
+								@example (
+										value = "species children parent: parent_species {",
+										isExecutable = false),
+								@example (
+										value = "   int virtual_action(int i, string s) {",
+										isExecutable = false),
+								@example (
+										value = "      return i + i;",
+										isExecutable = false),
+								@example (
+										value = "   }",
+										isExecutable = false),
+								@example (
+										value = "}",
+										isExecutable = false) }) },
+		see = { "do" })
+@validator (ActionValidator.class)
+@serializer (ActionSerializer.class)
+@SuppressWarnings ({ "rawtypes" })
 public class ActionStatement extends AbstractStatementSequenceWithArgs {
 
 	public static class ActionSerializer extends StatementSerializer {
@@ -87,9 +161,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 		@Override
 		protected String serializeFacetValue(final SymbolDescription s, final String key,
 				final boolean includingBuiltIn) {
-			if (key.equals(TYPE)) {
-				return null;
-			}
+			if (key.equals(TYPE)) { return null; }
 			return super.serializeFacetValue(s, key, includingBuiltIn);
 		}
 
@@ -135,9 +207,7 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 
 		private void assertReturnedValueIsOk(final StatementDescription cd) {
 			final IType at = cd.getType();
-			if (at == Types.NO_TYPE) {
-				return;
-			}
+			if (at == Types.NO_TYPE) { return; }
 			final Set<StatementDescription> returns = new TLinkedHashSet<>();
 			cd.collectAllStatements(RETURN, returns);
 
@@ -200,8 +270,8 @@ public class ActionStatement extends AbstractStatementSequenceWithArgs {
 	}
 
 	@Override
-	public void setRuntimeArgs(final Arguments args) {
-		super.setRuntimeArgs(args);
+	public void setRuntimeArgs(final IScope scope, final Arguments args) {
+		super.setRuntimeArgs(scope, args);
 		actualArgs.get().complementWith(formalArgs);
 	}
 

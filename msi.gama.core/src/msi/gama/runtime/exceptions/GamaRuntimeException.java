@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaRuntimeException.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaRuntimeException.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -19,7 +18,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.emf.ecore.EObject;
 
 import msi.gama.kernel.simulation.SimulationClock;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Strings;
@@ -27,8 +25,7 @@ import msi.gaml.operators.Strings;
 /**
  * Written by drogoul Modified on 7 janv. 2011
  *
- * A kind of exception thrown when an abnormal situation happens while running a
- * model.
+ * A kind of exception thrown when an abnormal situation happens while running a model.
  *
  */
 
@@ -60,28 +57,10 @@ public class GamaRuntimeException extends RuntimeException {
 	// }
 
 	public static GamaRuntimeException create(final Throwable ex, final IScope scope) {
-		if (ex instanceof GamaRuntimeException) {
-			return (GamaRuntimeException) ex;
-		}
-		if (ex instanceof IOException || ex instanceof FileNotFoundException) {
-			return new GamaRuntimeFileException(scope, ex);
-		}
+		if (ex instanceof GamaRuntimeException) { return (GamaRuntimeException) ex; }
+		if (ex instanceof IOException
+				|| ex instanceof FileNotFoundException) { return new GamaRuntimeFileException(scope, ex); }
 		return new GamaRuntimeException(scope, ex);
-	}
-
-	/**
-	 * This method is deprecated. Use the equivalent method that passes the
-	 * scope
-	 * 
-	 * @param s
-	 * @return
-	 */
-	@Deprecated
-	public static GamaRuntimeException error(final String s) {
-		// Uses the dangerous and error-prone GAMA.getRuntimeScope() method,
-		// which can return null or the scope of
-		// another simulation
-		return error(s, GAMA.getRuntimeScope());
 	}
 
 	public static GamaRuntimeException error(final String s, final IScope scope) {
@@ -92,20 +71,6 @@ public class GamaRuntimeException extends RuntimeException {
 	public static GamaRuntimeException warning(final String s, final IScope scope) {
 		final GamaRuntimeException ex = new GamaRuntimeException(scope, s, true);
 		return ex;
-	}
-
-	/**
-	 * This call is deprecated. Use the equivalent method that passes the scope
-	 * 
-	 * @param s
-	 * @return
-	 */
-	@Deprecated
-	public static GamaRuntimeException warning(final String s) {
-		// Uses the dangerous and error-prone GAMA.getDefaultScope() method,
-		// which can return null or the scope of
-		// another simulation
-		return warning(s, GAMA.getRuntimeScope());
 	}
 
 	// Constructors
@@ -150,9 +115,7 @@ public class GamaRuntimeException extends RuntimeException {
 			return "exception in Eclipse";
 		} else if (ex instanceof ClassCastException) {
 			return "wrong casting";
-		} else if (ex instanceof IllegalArgumentException) {
-			return "illegal argument";
-		}
+		} else if (ex instanceof IllegalArgumentException) { return "illegal argument"; }
 
 		return ex.getClass().getSimpleName();
 	}
@@ -213,9 +176,7 @@ public class GamaRuntimeException extends RuntimeException {
 
 	public void addAgent(final String agent) {
 		occurrences++;
-		if (agentsNames.contains(agent)) {
-			return;
-		}
+		if (agentsNames.contains(agent)) { return; }
 		agentsNames.add(agent);
 	}
 
@@ -250,9 +211,7 @@ public class GamaRuntimeException extends RuntimeException {
 		final List<String> result = new ArrayList<>();
 		result.addAll(context);
 		final int size = agentsNames.size();
-		if (size == 0) {
-			return result;
-		}
+		if (size == 0) { return result; }
 		if (size == 1) {
 			result.add("in agent " + agentsNames.get(0));
 		} else {

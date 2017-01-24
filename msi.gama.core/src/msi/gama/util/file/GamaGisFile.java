@@ -49,7 +49,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 	protected CoordinateReferenceSystem getExistingCRS(final IScope scope) {
 		if (initialCRSCode != null) {
 			try {
-				return scope.getSimulation().getProjectionFactory().getCRS(initialCRSCode);
+				return scope.getSimulation().getProjectionFactory().getCRS(scope, initialCRSCode);
 			} catch (final GamaRuntimeException e) {
 				throw GamaRuntimeException.error(
 						"The code " + initialCRSCode
@@ -59,7 +59,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		}
 		if (initialCRSCodeStr != null) {
 			try {
-				return scope.getSimulation().getProjectionFactory().getCRS(initialCRSCodeStr);
+				return scope.getSimulation().getProjectionFactory().getCRS(scope, initialCRSCodeStr);
 			} catch (final GamaRuntimeException e) {
 				throw GamaRuntimeException.error(
 						"The code " + initialCRSCodeStr
@@ -69,7 +69,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		}
 		CoordinateReferenceSystem crs = getOwnCRS(scope);
 		if (crs == null && scope != null) {
-			crs = scope.getSimulation().getProjectionFactory().getDefaultInitialCRS();
+			crs = scope.getSimulation().getProjectionFactory().getDefaultInitialCRS(scope);
 		}
 		return crs;
 	}
@@ -83,7 +83,7 @@ public abstract class GamaGisFile extends GamaGeometryFile {
 		if (scope == null) { return; }
 		final CoordinateReferenceSystem crs = getExistingCRS(scope);
 		final ProjectionFactory pf = scope.getSimulation().getProjectionFactory();
-		gis = pf.fromCRS(crs, env);
+		gis = pf.fromCRS(scope, crs, env);
 	}
 
 	public GamaGisFile(final IScope scope, final String pathName, final Integer code, final boolean withZ) {

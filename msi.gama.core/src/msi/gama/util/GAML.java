@@ -361,7 +361,7 @@ public class GAML {
 	public static IExpression compileExpression(final String expression, final IAgent agent,
 			final IExecutionContext tempContext, final boolean onlyExpression) throws GamaRuntimeException {
 		if (agent == null)
-			throw GamaRuntimeException.error("");
+			throw GamaRuntimeException.error("Agent is nil", tempContext.getScope());
 		final IDescription context = agent.getSpecies().getDescription();
 		try {
 			final IExpression result = getExpressionFactory().createExpr(expression, context, tempContext);
@@ -374,10 +374,10 @@ public class GAML {
 							getExpressionFactory().createTemporaryActionForAgent(agent, expression, tempContext);
 					return result;
 				} catch (final Throwable e2) {
-					throw GamaRuntimeException.create(e2, agent.getScope());
+					throw GamaRuntimeException.create(e2, tempContext.getScope());
 				}
 			else {
-				throw GamaRuntimeException.create(e, agent.getScope());
+				throw GamaRuntimeException.create(e, tempContext.getScope());
 			}
 		}
 	}

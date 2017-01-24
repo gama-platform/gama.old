@@ -2493,7 +2493,7 @@ public abstract class Spatial {
 			if (nodes.isEmpty(scope)) { return null; }
 			final int n = nodes.length(scope);
 			final IShape source = nodes.firstValue(scope);
-			if (n == 1) { return PathFactory.newInstance(scope.getTopology(), source, source,
+			if (n == 1) { return PathFactory.newInstance(scope, scope.getTopology(), source, source,
 					GamaListFactory.<IShape> create(Types.GEOMETRY));
 			// return new GamaPath(scope.getTopology(), source, source, new
 			// GamaList());
@@ -2509,7 +2509,7 @@ public abstract class Spatial {
 				}
 				previous = gg;
 			}
-			return PathFactory.newInstance(graph, source, target, edges);
+			return PathFactory.newInstance(scope, graph, source, target, edges);
 			// new GamaPath(graph, source, target, edges);
 		}
 
@@ -2562,8 +2562,8 @@ public abstract class Spatial {
 				}
 				previous = gg;
 			}
-			return PathFactory.newInstance(topo instanceof GridTopology ? topo : scope.getTopology(), source, target,
-					edges);
+			return PathFactory.newInstance(scope, topo instanceof GridTopology ? topo : scope.getTopology(), source,
+					target, edges);
 		}
 
 		@operator (
@@ -3128,8 +3128,8 @@ public abstract class Spatial {
 			final double Xb = p2.x - p0.x;
 			final double Yb = p2.y - p0.y;
 
-			final double Na = Maths.sqrt(Xa * Xa + Ya * Ya);
-			final double Nb = Maths.sqrt(Xb * Xb + Yb * Yb);
+			final double Na = Maths.sqrt(scope, Xa * Xa + Ya * Ya);
+			final double Nb = Maths.sqrt(scope, Xb * Xb + Yb * Yb);
 			final double C = (Xa * Xb + Ya * Yb) / (Na * Nb);
 			final double S = Xa * Yb - Ya * Xb;
 			final double result = S > 0 ? Maths.acos(C) : -1 * Maths.acos(C);
@@ -4009,7 +4009,7 @@ public abstract class Spatial {
 				see = {})
 		public static String crsFromFile(final IScope scope, final GamaFile gisFile) {
 			if (gisFile instanceof GamaGisFile) {
-				final CoordinateReferenceSystem crs = ((GamaGisFile) gisFile).getGis(scope).getInitialCRS();
+				final CoordinateReferenceSystem crs = ((GamaGisFile) gisFile).getGis(scope).getInitialCRS(scope);
 				if (crs == null) { return null; }
 				try {
 					return CRS.lookupIdentifier(crs, true).toString();
@@ -4077,7 +4077,7 @@ public abstract class Spatial {
 		public static IShape to_GAMA_CRS(final IScope scope, final IShape g, final String code) {
 			IProjection gis;
 			try {
-				gis = scope.getSimulation().getProjectionFactory().forSavingWith(code);
+				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
 			} catch (final FactoryException e) {
 				throw GamaRuntimeException.error("The code " + code + " does not correspond to a known EPSG code",
 						scope);
@@ -4103,7 +4103,7 @@ public abstract class Spatial {
 		public static IShape transform_CRS(final IScope scope, final IShape g, final String code) {
 			IProjection gis;
 			try {
-				gis = scope.getSimulation().getProjectionFactory().forSavingWith(code);
+				gis = scope.getSimulation().getProjectionFactory().forSavingWith(scope, code);
 			} catch (final FactoryException e) {
 				throw GamaRuntimeException.error("The code " + code + " does not correspond to a known EPSG code",
 						scope);

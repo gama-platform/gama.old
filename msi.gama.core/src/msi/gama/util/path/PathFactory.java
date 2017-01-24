@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'PathFactory.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'PathFactory.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -24,7 +23,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class PathFactory {
 
 	public static <V, E> GamaPath<V, E, IGraph<V, E>> newInstance(final IGraph<V, E> g,
@@ -72,27 +71,26 @@ public class PathFactory {
 		}
 	}
 
-	public static GamaSpatialPath newInstance(final ITopology g, final IShape start, final IShape target,
-			final IList<IShape> edges) {
+	public static GamaSpatialPath newInstance(final IScope scope, final ITopology g, final IShape start,
+			final IShape target, final IList<IShape> edges) {
 		if (g instanceof GraphTopology) {
 			return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), start, target, edges);
 		} else if (g instanceof ContinuousTopology || g instanceof AmorphousTopology) {
 			return new GamaSpatialPath(start, target, edges);
 		} else {
-			throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account");
+			throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account", scope);
 		}
 	}
 
-	public static GamaSpatialPath newInstance(final ITopology g, final IShape start, final IShape target,
-			final IList<IShape> edges, final boolean modify_edges) {
+	public static GamaSpatialPath newInstance(final IScope scope, final ITopology g, final IShape start,
+			final IShape target, final IList<IShape> edges, final boolean modify_edges) {
 		if (g instanceof GraphTopology) {
 			return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), start, target, edges, modify_edges);
 		} else {// if ( g instanceof ContinuousTopology || g instanceof
 				// AmorphousTopology ) {
 			return new GamaSpatialPath(null, start, target, edges, modify_edges);
 		} /*
-			 * else { throw GamaRuntimeException.error(
-			 * "Topologies that are not Graph are not yet taken into account");
+			 * else { throw GamaRuntimeException.error( "Topologies that are not Graph are not yet taken into account");
 			 * }
 			 */
 	}

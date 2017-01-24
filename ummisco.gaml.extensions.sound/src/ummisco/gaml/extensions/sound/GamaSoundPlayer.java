@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaSoundPlayer.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaSoundPlayer.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -12,8 +11,15 @@ package ummisco.gaml.extensions.sound;
 
 import java.io.File;
 import java.util.Map;
-import javazoom.jlgui.basicplayer.*;
+
+import javazoom.jlgui.basicplayer.BasicController;
+import javazoom.jlgui.basicplayer.BasicPlayer;
+import javazoom.jlgui.basicplayer.BasicPlayerEvent;
+import javazoom.jlgui.basicplayer.BasicPlayerException;
+import javazoom.jlgui.basicplayer.BasicPlayerListener;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GamaSoundPlayer {
@@ -24,23 +30,24 @@ public class GamaSoundPlayer {
 		public void opened(final Object stream, final Map properties) {}
 
 		@Override
-		public void progress(final int bytesread, final long microseconds, final byte[] pcmdata, final Map properties) {}
+		public void progress(final int bytesread, final long microseconds, final byte[] pcmdata,
+				final Map properties) {}
 
 		@Override
 		public void stateUpdated(final BasicPlayerEvent event) {
 
-			if ( event.getCode() == BasicPlayerEvent.EOM ) {
+			if (event.getCode() == BasicPlayerEvent.EOM) {
 
-				if ( repeat ) {
+				if (repeat) {
 					endOfMedia = true;
 				}
 			}
 
-			if ( event.getCode() == BasicPlayerEvent.STOPPED ) {
+			if (event.getCode() == BasicPlayerEvent.STOPPED) {
 
-				if ( repeat && endOfMedia ) {
+				if (repeat && endOfMedia) {
 					endOfMedia = false;
-					repeatSound();
+					repeatSound(GAMA.getRuntimeScope());
 				}
 
 				playerStopped = true;
@@ -71,27 +78,28 @@ public class GamaSoundPlayer {
 		basicPlayer.addBasicPlayerListener(new MyBasicPlayerListener());
 	}
 
-	private void repeatSound() {
+	private void repeatSound(final IScope scope) {
 		synchronized (agentDiedOrSimDisposed) {
-			if ( !agentDiedOrSimDisposed ) {
+			if (!agentDiedOrSimDisposed) {
 				try {
 					basicPlayer.play();
-				} catch (BasicPlayerException e) {
-					throw GamaRuntimeException.error("Failed to replay sound");
+				} catch (final BasicPlayerException e) {
+					throw GamaRuntimeException.error("Failed to replay sound", scope);
 				}
 			}
 		}
 	}
 
-	public void play(final File soundFile, final String playerMode, final boolean repeat) throws GamaRuntimeException {
+	public void play(final IScope scope, final File soundFile, final String playerMode, final boolean repeat)
+			throws GamaRuntimeException {
 		try {
-			int playerState = basicPlayer.getStatus();
+			final int playerState = basicPlayer.getStatus();
 
-			if ( playerState == BasicPlayer.UNKNOWN || playerState == BasicPlayer.STOPPED ) {
+			if (playerState == BasicPlayer.UNKNOWN || playerState == BasicPlayer.STOPPED) {
 				basicPlayer.open(soundFile);
 				basicPlayer.play();
-			} else if ( (playerState == BasicPlayer.PLAYING || playerState == BasicPlayer.PAUSED) &&
-				playerMode.equals(OVERWRITE_MODE) ) {
+			} else if ((playerState == BasicPlayer.PLAYING || playerState == BasicPlayer.PAUSED)
+					&& playerMode.equals(OVERWRITE_MODE)) {
 				basicPlayer.stop();
 
 				basicPlayer.open(soundFile);
@@ -102,41 +110,41 @@ public class GamaSoundPlayer {
 			// this.soundPlayerMode = playerMode;
 			this.repeat = repeat;
 
-		} catch (BasicPlayerException e) {
+		} catch (final BasicPlayerException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error(e.getMessage());
+			throw GamaRuntimeException.error(e.getMessage(), scope);
 		}
 	}
 
-	public void stop(final boolean agentDiedOrSimDisposed) throws GamaRuntimeException {
+	public void stop(final IScope scope, final boolean agentDiedOrSimDisposed) throws GamaRuntimeException {
 		synchronized (this.agentDiedOrSimDisposed) {
 			this.agentDiedOrSimDisposed = agentDiedOrSimDisposed;
 
 			try {
 				endOfMedia = true;
 				basicPlayer.stop();
-			} catch (BasicPlayerException e) {
+			} catch (final BasicPlayerException e) {
 				e.printStackTrace();
-				throw GamaRuntimeException.error("Failed to stop sound player");
+				throw GamaRuntimeException.error("Failed to stop sound player", scope);
 			}
 		}
 	}
 
-	public void pause() throws GamaRuntimeException {
+	public void pause(final IScope scope) throws GamaRuntimeException {
 		try {
 			basicPlayer.pause();
-		} catch (BasicPlayerException e) {
+		} catch (final BasicPlayerException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error("Failed to pause sound player");
+			throw GamaRuntimeException.error("Failed to pause sound player", scope);
 		}
 	}
 
-	public void resume() throws GamaRuntimeException {
+	public void resume(final IScope scope) throws GamaRuntimeException {
 		try {
 			basicPlayer.resume();
-		} catch (BasicPlayerException e) {
+		} catch (final BasicPlayerException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error("Failed to resume sound player");
+			throw GamaRuntimeException.error("Failed to resume sound player", scope);
 		}
 	}
 

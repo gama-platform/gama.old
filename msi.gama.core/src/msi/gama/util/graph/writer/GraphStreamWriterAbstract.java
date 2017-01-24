@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GraphStreamWriterAbstract.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GraphStreamWriterAbstract.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -24,7 +23,7 @@ import msi.gama.util.graph.IGraph;
  * 
  * @author Samuel Thiriot
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public abstract class GraphStreamWriterAbstract implements IGraphWriter {
 
 	/**
@@ -37,7 +36,8 @@ public abstract class GraphStreamWriterAbstract implements IGraphWriter {
 			sink.writeAll(GraphUtilsGraphStream.getGraphstreamGraphFromGamaGraph(thegraph), outputFilename);
 		} catch (final IOException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error("error during the exportation of the graph to file " + outputFilename);
+			throw GamaRuntimeException.error("error during the exportation of the graph to file " + outputFilename,
+					scope);
 		}
 
 	}

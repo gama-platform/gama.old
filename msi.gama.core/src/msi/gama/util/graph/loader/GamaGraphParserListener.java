@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GamaGraphParserListener.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GamaGraphParserListener.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -30,21 +29,19 @@ import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
 /**
- * Listens for graph parsing events, and constructs the corresponding GamaGraph
- * and populations of edge and nodes. Principles:
+ * Listens for graph parsing events, and constructs the corresponding GamaGraph and populations of edge and nodes.
+ * Principles:
  * <ul>
- * <li>as a general philosophy, warnings are emitted when data was available in
- * the graph, but not used for agents</li>
- * <li>x,y,z attributes are processed as special attributes related to the
- * location</li>
- * <li>TODO directionality of the resulting graph is automatically detected: if
- * every edge is not directed, then the graph is not directed.
+ * <li>as a general philosophy, warnings are emitted when data was available in the graph, but not used for agents</li>
+ * <li>x,y,z attributes are processed as special attributes related to the location</li>
+ * <li>TODO directionality of the resulting graph is automatically detected: if every edge is not directed, then the
+ * graph is not directed.
  * </ul>
  *
  * @author Samuel Thiriot
  *
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class GamaGraphParserListener implements IGraphParserListener {
 
 	IPopulation<? extends IAgent> populationNodes = null;
@@ -87,8 +84,8 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	public void startOfParsing() {
 		final IType nodeType = populationNodes == null ? Types.NO_TYPE : populationNodes.getType().getContentType();
 		final IType edgeType = populationEdges == null ? Types.NO_TYPE : populationEdges.getType().getContentType();
-		gamaGraph = isSpatial ? new GamaSpatialGraph(scope, nodeType, edgeType)
-				: new GamaGraph(scope, nodeType, edgeType);
+		gamaGraph =
+				isSpatial ? new GamaSpatialGraph(scope, nodeType, edgeType) : new GamaGraph(scope, nodeType, edgeType);
 		nodeId2agent = new HashMap<String, IAgent>();
 		edgeId2agent = new HashMap<String, IAgent>();
 
@@ -100,12 +97,12 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	}
 
 	@Override
-	public void detectedNode(final String nodeId) {
+	public void detectedNode(final IScope scope, final String nodeId) {
 
 		if (populationNodes != null) {
 			// create an agent of the target specy
-			final IList<? extends IAgent> createdAgents = populationNodes.createAgents(scope, 1, Collections.EMPTY_LIST,
-					false, true);
+			final IList<? extends IAgent> createdAgents =
+					populationNodes.createAgents(scope, 1, Collections.EMPTY_LIST, false, true);
 			final IAgent createdAgent = createdAgents.get(0);
 
 			// update internal mapping
@@ -133,14 +130,12 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	}
 
 	@Override
-	public void detectedEdge(final String edgeId, final String fromNodeId, final String toNodeId) {
+	public void detectedEdge(final IScope scope, final String edgeId, final String fromNodeId, final String toNodeId) {
 
 		// check parameter
 		/*
-		 * TODO if ( directed != gamaGraph.isDirected() ) { throw new
-		 * GamaRuntimeException( "Attempted to read an " + (directed ? "" :
-		 * "un") + "directed edge for a " + (gamaGraph.isDirected() ? "" : "un")
-		 * + "directed graph"); }
+		 * TODO if ( directed != gamaGraph.isDirected() ) { throw new GamaRuntimeException( "Attempted to read an " +
+		 * (directed ? "" : "un") + "directed edge for a " + (gamaGraph.isDirected() ? "" : "un") + "directed graph"); }
 		 */
 
 		Object nodeFrom = null;
@@ -149,17 +144,14 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		if (populationNodes != null) {
 			// retrieve the agents for this edge
 			nodeFrom = nodeId2agent.get(fromNodeId);
-			if (nodeFrom == null) {
-				throw GamaRuntimeException
-						.error("Error while parsing graph: the node " + fromNodeId + " was not declared");
-			}
+			if (nodeFrom == null) { throw GamaRuntimeException
+					.error("Error while parsing graph: the node " + fromNodeId + " was not declared", scope); }
 			nodeTo = nodeId2agent.get(toNodeId);
-			if (nodeTo == null) {
-				throw GamaRuntimeException
-						.error("Error while parsing graph: the node " + toNodeId + " was not declared");
-				// TODO : add support for nodes that were not declared ? (may be
-				// supported in some file
-				// formats)
+			if (nodeTo == null) { throw GamaRuntimeException
+					.error("Error while parsing graph: the node " + toNodeId + " was not declared", scope);
+			// TODO : add support for nodes that were not declared ? (may be
+			// supported in some file
+			// formats)
 			}
 
 		} else {
@@ -169,8 +161,8 @@ public class GamaGraphParserListener implements IGraphParserListener {
 
 		if (populationEdges != null) {
 			// create the agent of the target specy
-			final IList<? extends IAgent> createdAgents = populationEdges.createAgents(scope, 1, Collections.EMPTY_LIST,
-					false, true);
+			final IList<? extends IAgent> createdAgents =
+					populationEdges.createAgents(scope, 1, Collections.EMPTY_LIST, false, true);
 
 			final IAgent createdAgent = createdAgents.get(0);
 
@@ -194,26 +186,17 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	}
 
 	protected double parseValueAsDouble(final Object o) {
-		if (o == null) {
-			throw new NullPointerException();
-		}
-		if (o instanceof Double) {
-			return ((Double) o).doubleValue();
-		}
-		if (o instanceof Float) {
-			return ((Float) o).doubleValue();
-		}
-		if (o instanceof Integer) {
-			return ((Integer) o).doubleValue();
-		}
-		if (o instanceof Long) {
-			return ((Long) o).doubleValue();
-		}
+		if (o == null) { throw new NullPointerException(); }
+		if (o instanceof Double) { return ((Double) o).doubleValue(); }
+		if (o instanceof Float) { return ((Float) o).doubleValue(); }
+		if (o instanceof Integer) { return ((Integer) o).doubleValue(); }
+		if (o instanceof Long) { return ((Long) o).doubleValue(); }
 		return Double.parseDouble(o.toString());
 	}
 
 	@Override
-	public void detectedNodeAttribute(final String nodeId, final String attributeName, final Object value) {
+	public void detectedNodeAttribute(final IScope scope, final String nodeId, final String attributeName,
+			final Object value) {
 
 		if (populationNodes == null) {
 			// can't set an attribute for a graph without agents
@@ -224,9 +207,8 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		}
 
 		final IAgent agent = nodeId2agent.get(nodeId);
-		if (agent == null) {
-			throw GamaRuntimeException.error("Error while parsing graph: the node " + nodeId + " was not declared");
-		}
+		if (agent == null) { throw GamaRuntimeException
+				.error("Error while parsing graph: the node " + nodeId + " was not declared", scope); }
 
 		// special case of attributes for position: x,y,z
 		if (attributeName.equalsIgnoreCase("X")) {
@@ -281,7 +263,8 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	}
 
 	@Override
-	public void detectedEdgeAttribute(final String edgeId, final String attributeName, final Object value) {
+	public void detectedEdgeAttribute(final IScope scope, final String edgeId, final String attributeName,
+			final Object value) {
 
 		if (populationEdges == null) {
 			// can't set an attribute for a graph without agents
@@ -292,9 +275,8 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		}
 
 		final IAgent agent = edgeId2agent.get(edgeId);
-		if (agent == null) {
-			throw GamaRuntimeException.error("Error while parsing graph: the edge " + edgeId + " was not declared");
-		}
+		if (agent == null) { throw GamaRuntimeException
+				.error("Error while parsing graph: the edge " + edgeId + " was not declared", scope); }
 
 		if (edgeGraphAttribute2AgentAttribute == null) {
 			if (agent.getAttributes().containsKey(attributeName)) {
@@ -316,9 +298,9 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	}
 
 	@Override
-	public void endOfParsing() {
+	public void endOfParsing(final IScope scope) {
 
-		warnings.publishAsGAMAWarning(
+		warnings.publishAsGAMAWarning(scope,
 				"during the interpretation of the graph as species, several warnings were raised:");
 	}
 

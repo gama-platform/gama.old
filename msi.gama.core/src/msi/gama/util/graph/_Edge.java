@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * '_Edge.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * '_Edge.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform. (c)
+ * 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -10,8 +9,10 @@
  **********************************************************************************************/
 package msi.gama.util.graph;
 
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.jgrapht.WeightedGraph;
+
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class _Edge<V, E> extends GraphObject<GamaGraph<V, E>, V, E> {
 
@@ -23,17 +24,18 @@ public class _Edge<V, E> extends GraphObject<GamaGraph<V, E>, V, E> {
 	private Object source, target;
 
 	public _Edge(final GamaGraph<V, E> gamaGraph, final Object edge, final Object source, final Object target)
-		throws GamaRuntimeException {
+			throws GamaRuntimeException {
 		this(gamaGraph, edge, source, target, WeightedGraph.DEFAULT_EDGE_WEIGHT);
 	}
 
 	public _Edge(final GamaGraph<V, E> gamaGraph, final Object edge, final Object source, final Object target,
-		final double weight) throws GamaRuntimeException {
+			final double weight) throws GamaRuntimeException {
 		super(gamaGraph, weight);
-		init(edge, source, target);
+		init(graph.getScope(), edge, source, target);
 	}
 
-	protected void init(final Object edge, final Object source, final Object target) throws GamaRuntimeException {
+	protected void init(final IScope scope, final Object edge, final Object source, final Object target)
+			throws GamaRuntimeException {
 		buildSource(edge, source);
 		buildTarget(edge, target);
 	}
@@ -56,8 +58,8 @@ public class _Edge<V, E> extends GraphObject<GamaGraph<V, E>, V, E> {
 	@Override
 	public double getWeight() {
 		// Syst�matique ??
-		//Double na = graph.getVertexWeight(source);
-		//Double nb = graph.getVertexWeight(target);
+		// Double na = graph.getVertexWeight(source);
+		// Double nb = graph.getVertexWeight(target);
 		return weight;// * (na + nb) / 2;
 	}
 

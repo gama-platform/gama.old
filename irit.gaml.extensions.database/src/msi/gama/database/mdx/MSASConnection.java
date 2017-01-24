@@ -1,9 +1,8 @@
 /*********************************************************************************************
  * 
  *
- * 'MSASConnection.java', in plugin 'msi.gama.core', is part of the source code of the 
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MSASConnection.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  * 
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  * 
@@ -11,9 +10,15 @@
  **********************************************************************************************/
 package msi.gama.database.mdx;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+import org.olap4j.OlapConnection;
+import org.olap4j.OlapWrapper;
+
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import org.olap4j.*;
 
 public class MSASConnection extends MdxConnection {
 
@@ -33,85 +38,88 @@ public class MSASConnection extends MdxConnection {
 	}
 
 	public MSASConnection(final String venderName, final String url, final String port, final String dbName,
-		final String userName, final String password) {
+			final String userName, final String password) {
 		super(venderName, url, port, dbName, userName, password);
 	}
 
 	@Override
-	public OlapConnection connectMDB() throws GamaRuntimeException {
+	public OlapConnection connectMDB(final IScope scope) throws GamaRuntimeException {
 		OlapWrapper wrapper;
 		Connection conn;
 		try {
-			if ( vender.equalsIgnoreCase(MSAS) ) {
+			if (vender.equalsIgnoreCase(MSAS)) {
 				Class.forName(DRIVER);
-				conn =
-					DriverManager.getConnection(
+				conn = DriverManager.getConnection(
 						// "jdbc:xmla:Server=http://localhost/xmla/msxisapi.dll");
 						"jdbc:xmla:Server=http://" + url + ":" + port + "/" + dbName + "/msmdpump.dll;", userName,
 						password);
 				wrapper = (OlapWrapper) conn;
 				olapConnection = wrapper.unwrap(OlapConnection.class);
 			} else {
-				throw GamaRuntimeException.error("MSASConnection.connectMDB: The " + vender + " is not supported!");
+				throw GamaRuntimeException.error("MSASConnection.connectMDB: The " + vender + " is not supported!",
+						scope);
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error(e.toString());
-		} catch (ClassNotFoundException e) {
+			throw GamaRuntimeException.error(e.toString(), scope);
+		} catch (final ClassNotFoundException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error(e.toString());
+			throw GamaRuntimeException.error(e.toString(), scope);
 		}
 		return olapConnection;
 	}
 
 	@Override
-	public OlapConnection connectMDB(final String dbName) throws GamaRuntimeException {
+	public OlapConnection connectMDB(final IScope scope, final String dbName) throws GamaRuntimeException {
 		OlapWrapper wrapper;
 		Connection conn;
 		try {
-			if ( vender.equalsIgnoreCase(MSAS) ) {
+			if (vender.equalsIgnoreCase(MSAS)) {
 				Class.forName(DRIVER);
-				conn =
-					DriverManager.getConnection("jdbc:xmla:Server=http://" + url + ":" + port + "/" + dbName +
-						"/msmdpump.dll;", userName, password);
+				conn = DriverManager.getConnection(
+						"jdbc:xmla:Server=http://" + url + ":" + port + "/" + dbName + "/msmdpump.dll;", userName,
+						password);
 				wrapper = (OlapWrapper) conn;
 				olapConnection = wrapper.unwrap(OlapConnection.class);
 				// olapConnection.setCatalog(catalog);
 			} else {
-				throw GamaRuntimeException.error("MSASConnection.connectMDB: The " + vender + " is not supported!");
+				throw GamaRuntimeException.error("MSASConnection.connectMDB: The " + vender + " is not supported!",
+						scope);
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error(e.toString());
-		} catch (ClassNotFoundException e) {
+			throw GamaRuntimeException.error(e.toString(), scope);
+		} catch (final ClassNotFoundException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error(e.toString());
+			throw GamaRuntimeException.error(e.toString(), scope);
 		}
 		return olapConnection;
 	}
 
 	@Override
-	public OlapConnection connectMDB(final String dbName, final String catalog) throws GamaRuntimeException {
+	public OlapConnection connectMDB(final IScope scope, final String dbName, final String catalog)
+			throws GamaRuntimeException {
 		OlapWrapper wrapper;
 		Connection conn;
 		try {
-			if ( vender.equalsIgnoreCase(MSAS) ) {
+			if (vender.equalsIgnoreCase(MSAS)) {
 				Class.forName(DRIVER);
-				conn =
-					DriverManager.getConnection("jdbc:xmla:Server=http://" + url + ":" + port + "/" + dbName +
-						"/msmdpump.dll;", userName, password);
+				conn = DriverManager.getConnection(
+						"jdbc:xmla:Server=http://" + url + ":" + port + "/" + dbName + "/msmdpump.dll;", userName,
+						password);
 				wrapper = (OlapWrapper) conn;
 				olapConnection = wrapper.unwrap(OlapConnection.class);
 				olapConnection.setCatalog(catalog);
 			} else {
-				throw GamaRuntimeException.error("MSASConnection.connectMDB: The " + vender + " is not supported!");
+				throw GamaRuntimeException.error("MSASConnection.connectMDB: The " + vender + " is not supported!",
+						scope);
 			}
-		} catch (SQLException e) {
+		} catch (final SQLException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error(e.toString());
-		} catch (ClassNotFoundException e) {
+			throw GamaRuntimeException.error(e.toString(), scope);
+		} catch (final ClassNotFoundException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error(e.toString());
+			throw GamaRuntimeException.error(e.toString(), scope);
 		}
 		return olapConnection;
 	}

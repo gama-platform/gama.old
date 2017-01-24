@@ -13,6 +13,8 @@ import java.util.Map;
 
 public interface IExecutionContext {
 
+	public IScope getScope();
+
 	public default int depth() {
 		if (getOuterContext() == null)
 			return 0;

@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'StopSoundStatement.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'StopSoundStatement.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -25,10 +24,14 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 import ummisco.gaml.extensions.sound.StopSoundStatement.StopSoundValidator;
 
-@symbol(name = IKeyword.STOP_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, concept = {
-		IConcept.SOUND })
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@validator(StopSoundValidator.class)
+@symbol (
+		name = IKeyword.STOP_SOUND,
+		kind = ISymbolKind.SEQUENCE_STATEMENT,
+		with_sequence = true,
+		concept = { IConcept.SOUND })
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@validator (StopSoundValidator.class)
 public class StopSoundStatement extends AbstractStatementSequence {
 
 	public static class StopSoundValidator implements IDescriptionValidator<IDescription> {
@@ -63,7 +66,7 @@ public class StopSoundStatement extends AbstractStatementSequence {
 		final IAgent currentAgent = scope.getAgent();
 
 		final GamaSoundPlayer soundPlayer = SoundPlayerBroker.getInstance().getSoundPlayer(currentAgent);
-		soundPlayer.stop(false);
+		soundPlayer.stop(scope, false);
 
 		if (sequence != null) {
 			scope.execute(sequence, currentAgent, null);

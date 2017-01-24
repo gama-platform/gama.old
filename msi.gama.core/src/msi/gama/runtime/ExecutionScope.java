@@ -136,7 +136,7 @@ public class ExecutionScope implements IScope {
 		}
 		name += otherName == null || otherName.isEmpty() ? "" : "(" + otherName + ")";
 		this.name = name;
-		this.executionContext = context == null ? new ExecutionContext() : context.createCopyContext();
+		this.executionContext = context == null ? new ExecutionContext(this) : context.createCopyContext();
 		this.agentContext = agentContext == null ? new AgentExecutionContext(root, null) : agentContext;
 		this.additionalContext.copyFrom(specialContext);
 	}
@@ -282,7 +282,7 @@ public class ExecutionScope implements IScope {
 		if (executionContext != null)
 			executionContext = executionContext.createChildContext();
 		else
-			executionContext = new ExecutionContext();
+			executionContext = new ExecutionContext(this);
 	}
 
 	@Override
@@ -348,7 +348,7 @@ public class ExecutionScope implements IScope {
 			// arguments if the statement expects them
 			if (args != null && statement instanceof IStatement.WithArgs) {
 				args.setCaller(caller);
-				((IStatement.WithArgs) statement).setRuntimeArgs(args);
+				((IStatement.WithArgs) statement).setRuntimeArgs(this, args);
 			} else if (statement instanceof RemoteSequence) {
 				((RemoteSequence) statement).setMyself(caller);
 				// We delegate to the remote scope
@@ -369,8 +369,8 @@ public class ExecutionScope implements IScope {
 
 	@Override
 	public void stackArguments(final Arguments actualArgs) {
-		boolean callerPushed = false;
 		if (actualArgs == null) { return; }
+		boolean callerPushed = false;
 		final IAgent caller = actualArgs.getCaller();
 		if (caller != null) {
 			callerPushed = push(caller);

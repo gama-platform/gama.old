@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'SqlConnection.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SqlConnection.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -36,25 +35,12 @@ import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 
 /*
- * @Author
- * TRUONG Minh Thai
- * Fredric AMBLARD
- * Benoit GAUDOU
- * Christophe Sibertin-BLANC
- * Created date: 19-Apr-2013
- * Modified:
- * 26-Apr-2013:
- * Remove driver msi.gama.ext/sqljdbc4.jar
- * add driver msi.gama.ext/jtds-1.2.6.jar
- * Change driver name for MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver
- * 18-July-2013:
- * Add load extension library for SQLITE case.
- * 15-Jan-2014:
- * Add datetime type.
- * Add NULL VALUE
- * Last Modified: 15-Jan-2014
+ * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC Created date: 19-Apr-2013 Modified:
+ * 26-Apr-2013: Remove driver msi.gama.ext/sqljdbc4.jar add driver msi.gama.ext/jtds-1.2.6.jar Change driver name for
+ * MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver 18-July-2013: Add load
+ * extension library for SQLITE case. 15-Jan-2014: Add datetime type. Add NULL VALUE Last Modified: 15-Jan-2014
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public abstract class SqlConnection {
 
 	protected static final boolean DEBUG = false; // Change DEBUG = false for
@@ -121,12 +107,12 @@ public abstract class SqlConnection {
 	}
 
 	protected IProjection getSavingGisProjection(final IScope scope) {
-		final Boolean longitudeFirst = params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst")
-				: true;
+		final Boolean longitudeFirst =
+				params.containsKey("longitudeFirst") ? (Boolean) params.get("longitudeFirst") : true;
 		final String crs = (String) params.get("crs");
 		if (crs != null) {
 			try {
-				return scope.getSimulation().getProjectionFactory().forSavingWith(crs);
+				return scope.getSimulation().getProjectionFactory().forSavingWith(scope, crs);
 			} catch (final FactoryException e) {
 
 				throw GamaRuntimeException.error("No factory found for decoding the EPSG " + crs
@@ -137,7 +123,7 @@ public abstract class SqlConnection {
 		final String srid = (String) params.get("srid");
 		if (srid != null) {
 			try {
-				return scope.getSimulation().getProjectionFactory().forSavingWith(Cast.asInt(scope, srid),
+				return scope.getSimulation().getProjectionFactory().forSavingWith(scope, Cast.asInt(scope, srid),
 						longitudeFirst);
 			} catch (final FactoryException e) {
 
@@ -153,8 +139,8 @@ public abstract class SqlConnection {
 			// scope.getSimulationScope().getProjectionFactory().forSavingWith((Integer)
 			// null);
 			try {
-				return scope.getSimulation().getProjectionFactory()
-						.forSavingWith(GamaPreferences.LIB_OUTPUT_CRS.getValue());
+				return scope.getSimulation().getProjectionFactory().forSavingWith(scope,
+						GamaPreferences.LIB_OUTPUT_CRS.getValue());
 			} catch (final FactoryException e) {
 
 				throw GamaRuntimeException.error("No factory found for decoding the EPSG "
@@ -187,8 +173,7 @@ public abstract class SqlConnection {
 		this.dbtype = venderName;
 	}
 
-	public SqlConnection() {
-	}
+	public SqlConnection() {}
 
 	public SqlConnection(final String venderName, final String url, final String port, final String dbName,
 			final String userName, final String password) {
@@ -274,8 +259,8 @@ public abstract class SqlConnection {
 	 * @return GamaList<GamaList<Object>>
 	 */
 	public IList<? super IList<? super IList>> selectDB(final IScope scope, final String selectComm) {
-		IList<? super IList<? super IList>> result = GamaListFactory
-				.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
+		IList<? super IList<? super IList>> result =
+				GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
 		Connection conn = null;
 		try {
 			conn = connectDB();
@@ -299,8 +284,8 @@ public abstract class SqlConnection {
 			final String selectComm) {
 		;
 		ResultSet rs;
-		IList<? super IList<? super IList>> result = GamaListFactory
-				.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
+		IList<? super IList<? super IList>> result =
+				GamaListFactory.create(msi.gaml.types.Types.LIST.of(msi.gaml.types.Types.LIST));
 		// GamaList<? extends GamaList<? super GamaList>> result = new
 		// GamaList();
 
@@ -345,7 +330,7 @@ public abstract class SqlConnection {
 				if (gis != null) // create envelope for environment
 				{
 					final Envelope env = scope.getSimulation().getEnvelope();
-					gis = scope.getSimulation().getProjectionFactory().fromParams(params, env);
+					gis = scope.getSimulation().getProjectionFactory().fromParams(scope, params, env);
 					result = SqlUtils.transform(scope, gis, result, false);
 				}
 			}
@@ -372,8 +357,7 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * Make a connection to BDMS and execute the update statement
-	 * (update/insert/delete/create/drop)
+	 * Make a connection to BDMS and execute the update statement (update/insert/delete/create/drop)
 	 */
 
 	public int executeUpdateDB(final IScope scope, final String updateComm) throws GamaRuntimeException {
@@ -408,8 +392,7 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * execute the update statement with current
-	 * connection(update/insert/delete/create/drop)
+	 * execute the update statement with current connection(update/insert/delete/create/drop)
 	 */
 	public int executeUpdateDB(final IScope scope, final Connection conn, final String updateComm)
 			throws GamaRuntimeException {
@@ -536,9 +519,8 @@ public abstract class SqlConnection {
 	public int insertDB(final IScope scope, final Connection conn, final String table_name, final GamaList<Object> cols,
 			final GamaList<Object> values) throws GamaRuntimeException {
 		int rec_no = -1;
-		if (values.size() != cols.size()) {
-			throw new IndexOutOfBoundsException("Size of columns list and values list are not equal");
-		}
+		if (values.size() != cols
+				.size()) { throw new IndexOutOfBoundsException("Size of columns list and values list are not equal"); }
 		try {
 			// Get Insert command
 			final Statement st = conn.createStatement();
@@ -669,21 +651,19 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * @Method: executeQueryDB(Connection conn,String queryStr, GamaList<Object>
-	 * condition_value)
+	 * @Method: executeQueryDB(Connection conn,String queryStr, GamaList<Object> condition_value)
 	 *
-	 * @Description: Executes the SQL query in this PreparedStatement object and
-	 * returns the ResultSet object generated by the query
+	 * @Description: Executes the SQL query in this PreparedStatement object and returns the ResultSet object generated
+	 * by the query
 	 *
 	 * @param queryStr: SQL query string with question mark (?).
 	 *
-	 * @param condition_value:List of values that are used to assign into
-	 * conditions of queryStr
+	 * @param condition_value:List of values that are used to assign into conditions of queryStr
 	 *
 	 * @return ResultSet:returns the ResultSet object generated by the query.
 	 *
-	 * @throws GamaRuntimeException: if a database access error occurs or the
-	 * SQL statement does not return a ResultSet object
+	 * @throws GamaRuntimeException: if a database access error occurs or the SQL statement does not return a ResultSet
+	 * object
 	 */
 	public IList<Object> executeQueryDB(final IScope scope, final Connection conn, final String queryStr,
 			final IList<Object> condition_values) throws GamaRuntimeException {
@@ -737,7 +717,7 @@ public abstract class SqlConnection {
 				gis = scope.getSimulation().getProjectionFactory().getWorld();
 				if (gis != null) {
 					final Envelope env = scope.getSimulation().getEnvelope();
-					gis = scope.getSimulation().getProjectionFactory().fromParams(params, env);
+					gis = scope.getSimulation().getProjectionFactory().fromParams(scope, params, env);
 					result = SqlUtils.transform(scope, gis, result, false);
 				}
 			}
@@ -768,23 +748,21 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * @Method: ExecuteQueryDB(Connection conn,String queryStr, GamaList<Object>
-	 * condition_values)
+	 * @Method: ExecuteQueryDB(Connection conn,String queryStr, GamaList<Object> condition_values)
 	 *
-	 * @Description: Executes the SQL query in this PreparedStatement object and
-	 * returns the ResultSet object generated by the query
+	 * @Description: Executes the SQL query in this PreparedStatement object and returns the ResultSet object generated
+	 * by the query
 	 *
 	 * @param conn: MAP of Connection parameters to RDBM
 	 *
 	 * @param queryStr: SQL query (select) string with question mark (?).
 	 *
-	 * @param condition_value:List of values that are used to assign into
-	 * conditions of queryStr
+	 * @param condition_value:List of values that are used to assign into conditions of queryStr
 	 *
 	 * @return ResultSet:returns the ResultSet object generated by the query.
 	 *
-	 * @throws GamaRuntimeException: if a database access error occurs or the
-	 * SQL statement does not return a ResultSet object
+	 * @throws GamaRuntimeException: if a database access error occurs or the SQL statement does not return a ResultSet
+	 * object
 	 */
 	public IList<Object> executeQueryDB(final IScope scope, final String queryStr, final IList<Object> condition_values)
 			throws GamaRuntimeException {
@@ -803,23 +781,19 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * @Method: executeUpdateDB(Connection conn,String queryStr,
-	 * GamaList<Object> condition_value)
+	 * @Method: executeUpdateDB(Connection conn,String queryStr, GamaList<Object> condition_value)
 	 *
-	 * @Description: Executes the SQL statement in this PreparedStatement
-	 * object, which must be an SQL INSERT, UPDATE or DELETE statement; or an
-	 * SQL statement that returns nothing, such as a DDL statement.
+	 * @Description: Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT, UPDATE or
+	 * DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
 	 *
 	 * @param conn: MAP of Connection parameters to RDBM
 	 *
-	 * @param queryStr: an SQL INSERT, UPDATE or DELETE statement with question
-	 * mark (?).
+	 * @param queryStr: an SQL INSERT, UPDATE or DELETE statement with question mark (?).
 	 *
-	 * @param condition_values: List of values that are used to assign into
-	 * conditions of queryStr.
+	 * @param condition_values: List of values that are used to assign into conditions of queryStr.
 	 *
-	 * @return row_count:either (1) the row count for INSERT, UPDATE, or DELETE
-	 * statements or (2) 0 for SQL statements that return nothing
+	 * @return row_count:either (1) the row count for INSERT, UPDATE, or DELETE statements or (2) 0 for SQL statements
+	 * that return nothing
 	 *
 	 * @throws GamaRuntimeException
 	 */
@@ -852,20 +826,17 @@ public abstract class SqlConnection {
 	}
 
 	/*
-	 * @Method: executeUpdateDB(Connection conn,String queryStr,
-	 * GamaList<Object> condition_value)
+	 * @Method: executeUpdateDB(Connection conn,String queryStr, GamaList<Object> condition_value)
 	 *
-	 * @Description: Executes the SQL statement in this PreparedStatement
-	 * object, which must be an SQL INSERT, UPDATE or DELETE statement; or an
-	 * SQL statement that returns nothing, such as a DDL statement.
+	 * @Description: Executes the SQL statement in this PreparedStatement object, which must be an SQL INSERT, UPDATE or
+	 * DELETE statement; or an SQL statement that returns nothing, such as a DDL statement.
 	 *
-	 * @param queryStr: an SQL INSERT, UPDATE or DELETE statement with question
-	 * mark (?).
+	 * @param queryStr: an SQL INSERT, UPDATE or DELETE statement with question mark (?).
 	 *
 	 * @param condition_values:
 	 *
-	 * @return row_count:either (1) the row count for INSERT, UPDATE, or DELETE
-	 * statements or (2) 0 for SQL statements that return nothing
+	 * @return row_count:either (1) the row count for INSERT, UPDATE, or DELETE statements or (2) 0 for SQL statements
+	 * that return nothing
 	 *
 	 * @throws GamaRuntimeException
 	 */

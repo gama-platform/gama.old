@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ShapeFileViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ShapeFileViewer.java, in plugin ummisco.gama.ui.viewers, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -105,8 +104,8 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 		String s;
 		GamaUIColor color;
 
-		final GamaShapeFile.ShapeInfo info = (ShapeInfo) GAMA.getGui().getMetaDataProvider().getMetaData(file, false,
-				true);
+		final GamaShapeFile.ShapeInfo info =
+				(ShapeInfo) GAMA.getGui().getMetaDataProvider().getMetaData(file, false, true);
 		if (info == null) {
 			s = "Error in reading file information";
 			color = IGamaColors.ERROR;
@@ -151,7 +150,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 						m2.setText("     - lower corner : " + env.getLowerCorner().getOrdinate(0) + " "
 								+ env.getLowerCorner().getOrdinate(1));
 						if (!noCRS) {
-							env = env.transform(new ProjectionFactory().getTargetCRS(), true);
+							env = env.transform(new ProjectionFactory().getTargetCRS(GAMA.getRuntimeScope()), true);
 						}
 						m2 = new MenuItem(menu, SWT.NONE);
 						m2.setEnabled(false);
@@ -254,9 +253,7 @@ public class ShapeFileViewer extends GISFileViewer implements IToolbarDecoratedV
 				return Mode.POLYGON;
 			} else if (def.equals("Line")) {
 				return Mode.LINE;
-			} else if (def.equals("Point")) {
-				return Mode.POINT;
-			}
+			} else if (def.equals("Point")) { return Mode.POINT; }
 		}
 		return Mode.ALL; // we are a generic geometry
 	}

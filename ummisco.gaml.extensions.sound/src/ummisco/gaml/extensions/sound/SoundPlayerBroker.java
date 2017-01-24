@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SoundPlayerBroker.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SoundPlayerBroker.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -20,7 +19,6 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.statements.IExecutable;
 
 public class SoundPlayerBroker {
 
@@ -28,10 +26,11 @@ public class SoundPlayerBroker {
 	// number will raise error.
 	private static final int MAX_NB_OF_MUSIC_PLAYERS = 2;
 
-	private final List<GamaSoundPlayer> soundPlayerPools = Collections
-			.synchronizedList(new ArrayList<GamaSoundPlayer>(MAX_NB_OF_MUSIC_PLAYERS));
+	private final List<GamaSoundPlayer> soundPlayerPools =
+			Collections.synchronizedList(new ArrayList<GamaSoundPlayer>(MAX_NB_OF_MUSIC_PLAYERS));
 
-	private static Map<SimulationAgent, Map<IAgent, GamaSoundPlayer>> soundPlayerOfAgents = new HashMap<SimulationAgent, Map<IAgent, GamaSoundPlayer>>();
+	private static Map<SimulationAgent, Map<IAgent, GamaSoundPlayer>> soundPlayerOfAgents =
+			new HashMap<SimulationAgent, Map<IAgent, GamaSoundPlayer>>();
 
 	private static SoundPlayerBroker broker = null;
 
@@ -67,23 +66,14 @@ public class SoundPlayerBroker {
 				soundPlayersOfSimulation = new HashMap<IAgent, GamaSoundPlayer>();
 				soundPlayerOfAgents.put(simulation, soundPlayersOfSimulation);
 
-				simulation.postEndAction(new IExecutable() {
-
-					@Override
-					public final Object executeOn(final IScope scope) throws GamaRuntimeException {
-						broker.manageMusicPlayers(simulation);
-						return null;
-					}
+				simulation.postEndAction(scope1 -> {
+					broker.manageMusicPlayers(simulation);
+					return null;
 				});
 
-				simulation.postDisposeAction(new IExecutable() {
-
-					@Override
-					public Object executeOn(final IScope scope) throws GamaRuntimeException {
-						broker.schedulerDisposed(simulation);
-						return null;
-					}
-
+				simulation.postDisposeAction(scope1 -> {
+					broker.schedulerDisposed(simulation);
+					return null;
 				});
 
 			}
@@ -117,7 +107,7 @@ public class SoundPlayerBroker {
 		}
 		for (final IAgent d : deadAgents) {
 			soundPlayer = soundPlayersOfSimulation.get(d);
-			soundPlayer.stop(true);
+			soundPlayer.stop(d.getScope(), true);
 
 			soundPlayersOfSimulation.remove(d);
 
@@ -153,7 +143,7 @@ public class SoundPlayerBroker {
 
 		if (soundPlayersOfSimulation != null) {
 			for (final GamaSoundPlayer player : soundPlayersOfSimulation.values()) {
-				player.stop(true);
+				player.stop(simulation.getScope(), true);
 			}
 			synchronized (soundPlayerPools) {
 				soundPlayerPools.clear();

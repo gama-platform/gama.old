@@ -22,6 +22,7 @@ import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaListFactory;
@@ -345,8 +346,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public void setChildren(final Iterable<? extends ISymbol> children) {
 		// First we verify the control architecture
-		if (control == null) { throw GamaRuntimeException
-				.error("The control of species " + description.getName() + " cannot be computed"); }
+		if (control == null) { throw GamaRuntimeException.error(
+				"The control of species " + description.getName() + " cannot be computed", GAMA.getRuntimeScope()); }
 		// Then we classify the children in their categories
 		for (final ISymbol s : children) {
 			if (s instanceof ISpecies) {

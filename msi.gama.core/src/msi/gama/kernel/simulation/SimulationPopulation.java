@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'SimulationPopulation.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'SimulationPopulation.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -30,7 +29,7 @@ import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import msi.gaml.variables.IVariable;
 
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 
 	private SimulationAgent currentSimulation;
@@ -54,8 +53,8 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	 * @see msi.gama.metamodel.population.GamaPopulation#fireAgentRemoved(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	protected void fireAgentRemoved(final IAgent agent) {
-		super.fireAgentRemoved(agent);
+	protected void fireAgentRemoved(final IScope scope, final IAgent agent) {
+		super.fireAgentRemoved(scope, agent);
 		runner.remove((SimulationAgent) agent);
 	}
 
@@ -89,9 +88,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 			currentSimulation.setName("Simulation " + currentSimulation.getIndex());
 			add(currentSimulation);
 			currentSimulation.setOutputs(((ExperimentPlan) host.getSpecies()).getOriginalSimulationOutputs());
-			if (scope.interrupted()) {
-				return null;
-			}
+			if (scope.interrupted()) { return null; }
 			initSimulation(scope, currentSimulation, initialValues, isRestored, toBeScheduled);
 			if (toBeScheduled) {
 				runner.add(currentSimulation);
@@ -120,11 +117,11 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	@Override
 	protected boolean allowVarInitToBeOverridenByExternalInit(final IVariable var) {
 		switch (var.getName()) {
-		case IKeyword.SEED:
-		case IKeyword.RNG:
-			return !var.hasFacet(IKeyword.INIT);
-		default:
-			return true;
+			case IKeyword.SEED:
+			case IKeyword.RNG:
+				return !var.hasFacet(IKeyword.INIT);
+			default:
+				return true;
 		}
 	}
 
@@ -155,8 +152,7 @@ public class SimulationPopulation extends GamaPopulation<SimulationAgent> {
 	}
 
 	/**
-	 * This method can be called by the batch experiments to temporarily stop
-	 * (unschedule) a simulation
+	 * This method can be called by the batch experiments to temporarily stop (unschedule) a simulation
 	 * 
 	 * @param sim
 	 */

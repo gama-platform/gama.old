@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'IPopulation.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'IPopulation.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -43,15 +42,17 @@ public interface IPopulation<T extends IAgent>
 
 	public interface Listener {
 
-		public void notifyAgentRemoved(IPopulation<? extends IAgent> pop, IAgent agent);
+		public void notifyAgentRemoved(IScope scope, IPopulation<? extends IAgent> pop, IAgent agent);
 
-		public void notifyAgentAdded(IPopulation<? extends IAgent> pop, IAgent agent);
+		public void notifyAgentAdded(IScope scope, IPopulation<? extends IAgent> pop, IAgent agent);
 
-		public void notifyAgentsAdded(IPopulation<? extends IAgent> pop, Collection<? extends IAgent> agents);
+		public void notifyAgentsAdded(IScope scope, IPopulation<? extends IAgent> pop,
+				Collection<? extends IAgent> agents);
 
-		public void notifyAgentsRemoved(IPopulation<? extends IAgent> pop, Collection<? extends IAgent> agents);
+		public void notifyAgentsRemoved(IScope scope, IPopulation<? extends IAgent> pop,
+				Collection<? extends IAgent> agents);
 
-		public void notifyPopulationCleared(IPopulation<? extends IAgent> pop);
+		public void notifyPopulationCleared(IScope scope, IPopulation<? extends IAgent> pop);
 
 	}
 
@@ -82,9 +83,8 @@ public interface IPopulation<T extends IAgent>
 	 * @param initialValues
 	 *            The initial values of agents' variables.
 	 * @param isRestored
-	 *            Indicates that the agents are newly created or they are
-	 *            restored (on a capture or release). If agents are restored on
-	 *            a capture or release then don't run their "init" reflex again.
+	 *            Indicates that the agents are newly created or they are restored (on a capture or release). If agents
+	 *            are restored on a capture or release then don't run their "init" reflex again.
 	 *
 	 * @return
 	 * @throws GamaRuntimeException
@@ -137,8 +137,7 @@ public interface IPopulation<T extends IAgent>
 
 	/**
 	 * @throws GamaRuntimeException
-	 *             When the "shape" of host changes, this method is invoked to
-	 *             update the topology.
+	 *             When the "shape" of host changes, this method is invoked to update the topology.
 	 */
 	// public abstract void hostChangesShape();
 

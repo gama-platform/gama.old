@@ -210,7 +210,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 					scope.execute(executer, sim, tempArgs);
 				}
 			} else {
-				executer.setRuntimeArgs(tempArgs);
+				executer.setRuntimeArgs(scope, tempArgs);
 				final Object result = executer.executeOn(scope);
 				runtimeArgs = null;
 				return result;
@@ -220,7 +220,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 	}
 
 	@Override
-	public void setRuntimeArgs(final Arguments args) {
+	public void setRuntimeArgs(final IScope scope, final Arguments args) {
 		this.runtimeArgs = args;
 	}
 

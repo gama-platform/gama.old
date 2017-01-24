@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'StartSoundStatement.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'StartSoundStatement.java, in plugin ummisco.gaml.extensions.sound, is part of the source code of the GAMA modeling
+ * and simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -33,16 +32,33 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 import ummisco.gaml.extensions.sound.StartSoundStatement.StartSoundValidator;
 
-@symbol(name = IKeyword.START_SOUND, kind = ISymbolKind.SEQUENCE_STATEMENT, concept = {
-		IConcept.SOUND }, with_sequence = true, doc = @doc("Starts playing a music file. The supported formats are aif, au, mp3, wav. One agent"))
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@facets(value = {
-		@facet(name = IKeyword.SOURCE, type = IType.STRING, optional = false, doc = @doc("The path to music file. This path is relative to the path of the model.")),
-		@facet(name = IKeyword.MODE, type = IType.ID, values = { IKeyword.OVERWRITE,
-				IKeyword.IGNORE }, optional = true, doc = @doc("Mode of ")),
-		@facet(name = IKeyword.REPEAT, type = IType.BOOL, optional = true, doc = @doc("")) })
-@validator(StartSoundValidator.class)
-@SuppressWarnings({ "rawtypes" })
+@symbol (
+		name = IKeyword.START_SOUND,
+		kind = ISymbolKind.SEQUENCE_STATEMENT,
+		concept = { IConcept.SOUND },
+		with_sequence = true,
+		doc = @doc ("Starts playing a music file. The supported formats are aif, au, mp3, wav. One agent"))
+@inside (
+		kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
+@facets (
+		value = { @facet (
+				name = IKeyword.SOURCE,
+				type = IType.STRING,
+				optional = false,
+				doc = @doc ("The path to music file. This path is relative to the path of the model.")),
+				@facet (
+						name = IKeyword.MODE,
+						type = IType.ID,
+						values = { IKeyword.OVERWRITE, IKeyword.IGNORE },
+						optional = true,
+						doc = @doc ("Mode of ")),
+				@facet (
+						name = IKeyword.REPEAT,
+						type = IType.BOOL,
+						optional = true,
+						doc = @doc ("")) })
+@validator (StartSoundValidator.class)
+@SuppressWarnings ({ "rawtypes" })
 public class StartSoundStatement extends AbstractStatementSequence {
 
 	public static class StartSoundValidator implements IDescriptionValidator {
@@ -88,7 +104,7 @@ public class StartSoundStatement extends AbstractStatementSequence {
 		final String soundFilePath = FileUtils.constructAbsoluteFilePath(scope, (String) source.value(scope), false);
 
 		if (soundPlayer != null) {
-			soundPlayer.play(new File(soundFilePath),
+			soundPlayer.play(scope, new File(soundFilePath),
 					mode != null ? (String) mode.value(scope) : GamaSoundPlayer.OVERWRITE_MODE,
 					repeat != null ? (Boolean) repeat.value(scope) : false);
 		} else {

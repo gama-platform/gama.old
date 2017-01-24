@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.google.common.collect.Iterables;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlProperties;
@@ -224,11 +226,14 @@ public class SymbolSerializer<C extends SymbolDescription> implements IKeyword {
 				final boolean includingBuiltIn) {
 			final StatementDescription desc = (StatementDescription) s;
 			sb.append("(");
-			for (final IDescription arg : desc.getFormalArgs()) {
-				serializeArg(desc, arg, sb, includingBuiltIn);
-				sb.append(", ");
+			final Iterable<IDescription> formalArgs = desc.getFormalArgs();
+			if (!Iterables.isEmpty(formalArgs)) {
+				for (final IDescription arg : formalArgs) {
+					serializeArg(desc, arg, sb, includingBuiltIn);
+					sb.append(", ");
+				}
+				sb.setLength(sb.length() - 2);
 			}
-			sb.setLength(sb.length() - 2);
 			sb.append(")");
 		}
 

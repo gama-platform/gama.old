@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'MdxConnection.java', in plugin 'msi.gama.core', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MdxConnection.java', in plugin 'msi.gama.core', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -30,6 +29,7 @@ import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 import org.olap4j.metadata.Property;
 
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.GamaListFactory;
@@ -37,26 +37,18 @@ import msi.gama.util.IList;
 import msi.gaml.operators.Strings;
 
 /*
- * @Author
- * TRUONG Minh Thai
- * Fredric AMBLARD
- * Benoit GAUDOU
- * Christophe Sibertin-BLANC
+ * @Author TRUONG Minh Thai Fredric AMBLARD Benoit GAUDOU Christophe Sibertin-BLANC
  *
  *
- * SQLConnection: supports the method
- * - connectDB: make a connection to DBMS.
- * - selectDB: connect to DBMS and run executeQuery to select data from DBMS.
- * - executeUpdateDB: connect to DBMS and run executeUpdate to update/insert/delete/drop/create data
- * on DBMS.
+ * SQLConnection: supports the method - connectDB: make a connection to DBMS. - selectDB: connect to DBMS and run
+ * executeQuery to select data from DBMS. - executeUpdateDB: connect to DBMS and run executeUpdate to
+ * update/insert/delete/drop/create data on DBMS.
  *
- * Created date: 18-Jan-2013
- * Modified:
- * 03-05-2013: add selectMDB methods
+ * Created date: 18-Jan-2013 Modified: 03-05-2013: add selectMDB methods
  *
  * Last Modified: 02-07-2013
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings ({ "unchecked" })
 public abstract class MdxConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for
@@ -92,8 +84,7 @@ public abstract class MdxConnection {
 
 	// protected Connection connection;
 
-	public MdxConnection() {
-	}
+	public MdxConnection() {}
 
 	public MdxConnection(final String vender) {
 		this.vender = vender;
@@ -146,20 +137,20 @@ public abstract class MdxConnection {
 	/*
 	 * Make a connection to Multidimensional Database Server
 	 */
-	public abstract OlapConnection connectMDB() throws GamaRuntimeException;
+	public abstract OlapConnection connectMDB(IScope scope) throws GamaRuntimeException;
 
 	/*
 	 * Make a connection to Multidimensional Database Server
 	 */
-	public abstract OlapConnection connectMDB(String dbName) throws GamaRuntimeException;
+	public abstract OlapConnection connectMDB(IScope scope, String dbName) throws GamaRuntimeException;
 
 	/*
 	 * Make a connection to Multidimensional Database Server
 	 */
-	public abstract OlapConnection connectMDB(String dbName, String catalog) throws GamaRuntimeException;
+	public abstract OlapConnection connectMDB(IScope scope, String dbName, String catalog) throws GamaRuntimeException;
 
-	public void setConnection() {
-		this.olapConnection = this.connectMDB();
+	public void setConnection(final IScope scope) {
+		this.olapConnection = this.connectMDB(scope);
 
 	}
 
@@ -268,12 +259,12 @@ public abstract class MdxConnection {
 	 * Select data source with connection was established
 	 */
 
-	public CellSet select(final String selectComm) {
+	public CellSet select(final IScope scope, final String selectComm) {
 		CellSet resultCellSet = null;
 		OlapConnection oConn = null;
 		try {
-			oConn = connectMDB();
-			resultCellSet = select(oConn, selectComm);
+			oConn = connectMDB(scope);
+			resultCellSet = select(scope, oConn, selectComm);
 			oConn.close();
 		} catch (final SQLException e) {
 
@@ -281,14 +272,14 @@ public abstract class MdxConnection {
 		return resultCellSet;
 	}
 
-	public CellSet select(final String selectComm, final IList<Object> condition_values) {
+	public CellSet select(final IScope scope, final String selectComm, final IList<Object> condition_values) {
 		CellSet resultCellSet = null;
 		OlapConnection oConn = null;
 		try {
 			// Connection conn = connectMDB();
 			final String mdxStr = parseMdx(selectComm, condition_values);
-			oConn = connectMDB();
-			resultCellSet = select(oConn, mdxStr);
+			oConn = connectMDB(scope);
+			resultCellSet = select(scope, oConn, mdxStr);
 			oConn.close();
 		} catch (final SQLException e) {
 
@@ -296,7 +287,8 @@ public abstract class MdxConnection {
 		return resultCellSet;
 	}
 
-	public CellSet select(final OlapConnection connection, final String selectComm) throws GamaRuntimeException {
+	public CellSet select(final IScope scope, final OlapConnection connection, final String selectComm)
+			throws GamaRuntimeException {
 		CellSet resultCellSet = null;
 		OlapStatement statement;
 		try {
@@ -307,10 +299,10 @@ public abstract class MdxConnection {
 			// connection.close();
 		} catch (final OlapException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error(e.toString());
+			throw GamaRuntimeException.error(e.toString(), scope);
 		} catch (final SQLException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error(e.toString());
+			throw GamaRuntimeException.error(e.toString(), scope);
 		}
 		return resultCellSet;
 	}
@@ -318,54 +310,52 @@ public abstract class MdxConnection {
 	/*
 	 * Select data source with connection was established
 	 */
-	public IList<Object> selectMDB(final String selectComm, final IList<Object> condition_values) {
-		final CellSet cellSet = select(selectComm, condition_values);
+	public IList<Object> selectMDB(final IScope scope, final String selectComm, final IList<Object> condition_values) {
+		final CellSet cellSet = select(scope, selectComm, condition_values);
 		return cellSet2List(cellSet);
 	}
 
-	public IList<Object> selectMDB(final String selectComm) {
-		final CellSet cellSet = select(selectComm);
+	public IList<Object> selectMDB(final IScope scope, final String selectComm) {
+		final CellSet cellSet = select(scope, selectComm);
 		return cellSet2List(cellSet);
 	}
 
-	public IList<Object> selectMDB(final OlapConnection connection, final String selectComm) {
-		final CellSet cellSet = select(connection, selectComm);
+	public IList<Object> selectMDB(final IScope scope, final OlapConnection connection, final String selectComm) {
+		final CellSet cellSet = select(scope, connection, selectComm);
 		return cellSet2List(cellSet);
 	}
 
-	public IList<Object> selectMDB(final String onColumns, final String onRows, final String from) {
+	public IList<Object> selectMDB(final IScope scope, final String onColumns, final String onRows, final String from) {
 		final String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from;
-		return selectMDB(mdxStr);
+		return selectMDB(scope, mdxStr);
 	}
 
-	public IList<Object> selectMDB(final OlapConnection connection, final String onColumns, final String onRows,
-			final String from) {
+	public IList<Object> selectMDB(final IScope scope, final OlapConnection connection, final String onColumns,
+			final String onRows, final String from) {
 		final String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from;
-		return selectMDB(connection, mdxStr);
+		return selectMDB(scope, connection, mdxStr);
 	}
 
-	public IList<Object> selectMDB(final String onColumns, final String onRows, final String from, final String where) {
-		final String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from
-				+ " WHERE " + where;
-		return selectMDB(mdxStr);
+	public IList<Object> selectMDB(final IScope scope, final String onColumns, final String onRows, final String from,
+			final String where) {
+		final String mdxStr =
+				"SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from + " WHERE " + where;
+		return selectMDB(scope, mdxStr);
 	}
 
-	public IList<Object> selectMDB(final OlapConnection connection, final String onColumns, final String onRows,
-			final String from, final String where) {
-		final String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from
-				+ " WHERE " + where;
-		return selectMDB(connection, mdxStr);
+	public IList<Object> selectMDB(final IScope scope, final OlapConnection connection, final String onColumns,
+			final String onRows, final String from, final String where) {
+		final String mdxStr =
+				"SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " + " FROM " + from + " WHERE " + where;
+		return selectMDB(scope, connection, mdxStr);
 	}
 
 	/*
-	 * Format of Olap query result (GamaList<Object>: Result of OLAP query is
-	 * transformed to Gamalist<Object> with order: (0): GamaList<String>: List
-	 * of column names. (1): GamaList<Object>: Row data. it contains List of
-	 * list and it look like a matrix with structure: (0): the first row data
-	 * (1): the second row data ... Each row data contains two element: (0):
-	 * rowMembers (GamaList<String>: this is a list of members in the row. (1):
-	 * cellValues (Gamalist<Object>): This is a list of values in cell column or
-	 * (we can call measures)
+	 * Format of Olap query result (GamaList<Object>: Result of OLAP query is transformed to Gamalist<Object> with
+	 * order: (0): GamaList<String>: List of column names. (1): GamaList<Object>: Row data. it contains List of list and
+	 * it look like a matrix with structure: (0): the first row data (1): the second row data ... Each row data contains
+	 * two element: (0): rowMembers (GamaList<String>: this is a list of members in the row. (1): cellValues
+	 * (Gamalist<Object>): This is a list of values in cell column or (we can call measures)
 	 */
 	public IList<Object> cellSet2List(final CellSet cellSet) {
 		final IList<Object> olapResult = GamaListFactory.create();

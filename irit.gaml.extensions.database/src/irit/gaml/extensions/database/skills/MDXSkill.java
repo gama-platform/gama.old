@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'MDXSkill.java', in plugin 'irit.gaml.extensions.database', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MDXSkill.java', in plugin 'irit.gaml.extensions.database', is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -28,26 +27,21 @@ import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
 /*
- * @Author
- * TRUONG Minh Thai
+ * @Author TRUONG Minh Thai
  *
- * @Supervisors:
- * Christophe Sibertin-BLANC
- * Fredric AMBLARD
- * Benoit GAUDOU
+ * @Supervisors: Christophe Sibertin-BLANC Fredric AMBLARD Benoit GAUDOU
  *
  * Description: Define MultiDimensional eXpressions features
  *
- * created date: 04-Jul-2013
- * Modified:
- * 08-Jul-2013:
- * - correct error on testConnection method
- * - add question mark and values to select method
+ * created date: 04-Jul-2013 Modified: 08-Jul-2013: - correct error on testConnection method - add question mark and
+ * values to select method
  *
  * Last Modified: 08-Jul-2013
  */
-@skill(name = "MDXSKILL", concept = { IConcept.DATABASE, IConcept.SKILL })
-@SuppressWarnings({ "rawtypes", "unchecked" })
+@skill (
+		name = "MDXSKILL",
+		concept = { IConcept.DATABASE, IConcept.SKILL })
+@SuppressWarnings ({ "rawtypes", "unchecked" })
 public class MDXSkill extends Skill {
 
 	// private static final boolean DEBUG = false; // Change DEBUG = false for
@@ -65,7 +59,8 @@ public class MDXSkill extends Skill {
 
 	// Get current time of system
 	// added from MaeliaSkill
-	@action(name = "timeStamp")
+	@action (
+			name = "timeStamp")
 	public Long timeStamp(final IScope scope) throws GamaRuntimeException {
 		final Long timeStamp = System.currentTimeMillis();
 		return timeStamp;
@@ -74,20 +69,23 @@ public class MDXSkill extends Skill {
 	/*
 	 * Make a connection to BDMS
 	 *
-	 * @syntax: do action: connectDB { arg params value:[ "olaptype":"SSAS/XMLA"
-	 * //"MONDRIAN"/"MONDRIAN/XMLA" "dbtype":"SQLSERVER",
-	 * //MySQL/postgres/sqlite "url":"host address", "port":"port number",
-	 * "database":"database name", "user": "user name", "passwd": "password" ];
-	 * }
+	 * @syntax: do action: connectDB { arg params value:[ "olaptype":"SSAS/XMLA" //"MONDRIAN"/"MONDRIAN/XMLA"
+	 * "dbtype":"SQLSERVER", //MySQL/postgres/sqlite "url":"host address", "port":"port number", "database":
+	 * "database name", "user": "user name", "passwd": "password" ]; }
 	 */
-	@action(name = "testConnection", args = {
-			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")) })
+	@action (
+			name = "testConnection",
+			args = { @arg (
+					name = "params",
+					type = IType.MAP,
+					optional = false,
+					doc = @doc ("Connection parameters")) })
 	public boolean testConnection(final IScope scope) {
 		MdxConnection mdxConn;
 		final java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		try {
 			mdxConn = MdxUtils.createConnectionObject(scope, params);
-			final OlapConnection oConn = mdxConn.connectMDB();
+			final OlapConnection oConn = mdxConn.connectMDB(scope);
 			oConn.getCatalog();
 			oConn.close();
 		} catch (final Exception e) {
@@ -98,28 +96,53 @@ public class MDXSkill extends Skill {
 		return true;
 	}
 
-	@action(name = "select", args = {
-			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
-			// @arg(name = "select", type = IType.STRING, optional = false, doc
-			// =
-			// @doc("select string with question marks")),
-			// @arg(name = "values", type = IType.LIST, optional = true, doc =
-			// @doc("List of values that are used to replace question marks")),
-			// @arg(name = "transform", type = IType.BOOL, optional = true, doc
-			// =
-			// @doc("if transform = true then geometry will be tranformed from
-			// absolute to gis otherways it will be not transformed. Default
-			// value is false "))
+	@action (
+			name = "select",
+			args = { @arg (
+					name = "params",
+					type = IType.MAP,
+					optional = false,
+					doc = @doc ("Connection parameters")),
+					// @arg(name = "select", type = IType.STRING, optional = false, doc
+					// =
+					// @doc("select string with question marks")),
+					// @arg(name = "values", type = IType.LIST, optional = true, doc =
+					// @doc("List of values that are used to replace question marks")),
+					// @arg(name = "transform", type = IType.BOOL, optional = true, doc
+					// =
+					// @doc("if transform = true then geometry will be tranformed from
+					// absolute to gis otherways it will be not transformed. Default
+					// value is false "))
 
-			// @arg(name = "mdx", type = IType.STRING, optional = true, doc =
-			// @doc("select string with question marks")),
-			@arg(name = "onColumns", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
-			@arg(name = "onRows", type = IType.LIST, optional = false, doc = @doc("List of values that are used to replace question marks")),
-			@arg(name = "from", type = IType.LIST, optional = false, doc = @doc("List of values that are used to replace question marks")),
-			@arg(name = "where", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
-			@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
+					// @arg(name = "mdx", type = IType.STRING, optional = true, doc =
+					// @doc("select string with question marks")),
+					@arg (
+							name = "onColumns",
+							type = IType.STRING,
+							optional = false,
+							doc = @doc ("select string with question marks")),
+					@arg (
+							name = "onRows",
+							type = IType.LIST,
+							optional = false,
+							doc = @doc ("List of values that are used to replace question marks")),
+					@arg (
+							name = "from",
+							type = IType.LIST,
+							optional = false,
+							doc = @doc ("List of values that are used to replace question marks")),
+					@arg (
+							name = "where",
+							type = IType.LIST,
+							optional = true,
+							doc = @doc ("List of values that are used to replace question marks")),
+					@arg (
+							name = "values",
+							type = IType.LIST,
+							optional = true,
+							doc = @doc ("List of values that are used to replace question marks")),
 
-	})
+			})
 	public IList<Object> select_QM(final IScope scope) throws GamaRuntimeException {
 
 		// ------------------------------------------------------------------------------------------
@@ -146,9 +169,9 @@ public class MDXSkill extends Skill {
 			}
 			mdxConn = MdxUtils.createConnectionObject(scope, params);
 			if (values != null) {
-				repRequest = mdxConn.selectMDB(selectStr, values);
+				repRequest = mdxConn.selectMDB(scope, selectStr, values);
 			} else {
-				repRequest = mdxConn.selectMDB(selectStr);
+				repRequest = mdxConn.selectMDB(scope, selectStr);
 			}
 
 			// Transform GIS to Absolute (Geometry in GAMA)

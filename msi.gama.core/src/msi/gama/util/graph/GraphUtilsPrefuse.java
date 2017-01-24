@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'GraphUtilsPrefuse.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'GraphUtilsPrefuse.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -14,17 +13,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import prefuse.data.Edge;
 import prefuse.data.Graph;
 import prefuse.data.Node;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class GraphUtilsPrefuse {
 
 	public static final String PREFUSE_ATTRIBUTE_GAMA_OBJECT = "go";
 
-	public static Graph getPrefuseGraphFromGamaGraphForVisu(final GamaGraph<?, ?> graph) {
+	public static Graph getPrefuseGraphFromGamaGraphForVisu(final IScope scope, final GamaGraph<?, ?> graph) {
 
 		System.err.println("translation of the graph to a prefuse graph...");
 
@@ -63,17 +63,17 @@ public class GraphUtilsPrefuse {
 		}
 
 		// basic verification
-		if (graph._internalVertexMap().size() != g.getNodeCount()) {
-			throw GamaRuntimeException.error(
-					"error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same.");
-		}
+		if (graph._internalVertexMap()
+				.size() != g.getNodeCount()) { throw GamaRuntimeException.error(
+						"error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same.",
+						scope); }
 
 		return g;
 
 	}
 
-	public static Graph getPrefuseGraphFromGamaGraph(final IGraph<?, ?> graph) {
-		return getPrefuseGraphFromGamaGraphForVisu((GamaGraph) graph);
+	public static Graph getPrefuseGraphFromGamaGraph(final IScope scope, final IGraph<?, ?> graph) {
+		return getPrefuseGraphFromGamaGraphForVisu(scope, (GamaGraph) graph);
 		/*
 		 * System.err.println("translation of the graph to a prefuse graph...");
 		 * 
@@ -81,14 +81,11 @@ public class GraphUtilsPrefuse {
 		 * 
 		 * // TODO add columns for attributes !
 		 * 
-		 * Map<Object, Node> gamaVertex2prefuseNode = new HashMap<Object,
-		 * Node>(graph._internalVertexMap().size());
+		 * Map<Object, Node> gamaVertex2prefuseNode = new HashMap<Object, Node>(graph._internalVertexMap().size());
 		 * 
-		 * // retrieve nodes for ( Object content :
-		 * graph._internalVertexMap().keySet() ) { // Object vertex =
-		 * graph._internalVertexMap().get(content); if ( content instanceof
-		 * IShape ) { IShape shContent = (IShape) content; ILocation loc =
-		 * shContent.getLocation();
+		 * // retrieve nodes for ( Object content : graph._internalVertexMap().keySet() ) { // Object vertex =
+		 * graph._internalVertexMap().get(content); if ( content instanceof IShape ) { IShape shContent = (IShape)
+		 * content; ILocation loc = shContent.getLocation();
 		 * 
 		 * Node prefuseNode = g.addNode(); // TODO add value of attributes !
 		 * 
@@ -100,16 +97,14 @@ public class GraphUtilsPrefuse {
 		 * 
 		 * _Edge<?, ?> edge = (_Edge) o;
 		 * 
-		 * Edge prefuseEdge =
-		 * g.addEdge(gamaVertex2prefuseNode.get(edge.getSource()),
+		 * Edge prefuseEdge = g.addEdge(gamaVertex2prefuseNode.get(edge.getSource()),
 		 * gamaVertex2prefuseNode.get(edge.getTarget()));
 		 * 
 		 * // TODO add attributes of edges ! }
 		 * 
-		 * // basic verification if ( graph._internalVertexMap().size() !=
-		 * g.getNodeCount() ) { throw GamaRuntimeException .error(
-		 * "error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same."
-		 * ); }
+		 * // basic verification if ( graph._internalVertexMap().size() != g.getNodeCount() ) { throw
+		 * GamaRuntimeException .error(
+		 * "error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same." ); }
 		 * 
 		 * return g;
 		 */

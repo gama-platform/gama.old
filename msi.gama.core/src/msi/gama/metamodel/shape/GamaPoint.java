@@ -23,7 +23,6 @@ import msi.gama.util.GamaListFactory;
 import msi.gama.util.GamaMap;
 import msi.gama.util.GamaMapFactory;
 import msi.gama.util.IList;
-import msi.gaml.operators.Maths;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
@@ -273,7 +272,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public double euclidianDistanceTo(final ILocation p) {
-		return Maths.hypot(x, p.getX(), y, p.getY(), z, p.getZ());
+		final double dx = p.getX() - x;
+		final double dy = p.getY() - y;
+		final double dz = p.getZ() - z;
+		return Math.sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
 	public double euclidianDistanceTo(final GamaPoint p) {

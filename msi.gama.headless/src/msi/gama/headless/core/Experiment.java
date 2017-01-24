@@ -1,9 +1,8 @@
 /*********************************************************************************************
  *
  *
- * 'MoleExperiment.java', in plugin 'msi.gama.headless', is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'MoleExperiment.java', in plugin 'msi.gama.headless', is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2014 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://code.google.com/p/gama-platform/ for license information and developers contact.
  *
@@ -102,13 +101,14 @@ public class Experiment implements IExperiment {
 
 	@Override
 	public Object getOutput(final String parameterName) {
-		final IOutput output = ((AbstractOutputManager) currentSimulation.getOutputManager())
-				.getOutputWithOriginalName(parameterName);
+		final IOutput output =
+				((AbstractOutputManager) currentSimulation.getOutputManager()).getOutputWithOriginalName(parameterName);
 		// System.out.
 		if (output == null)
-			throw GamaRuntimeException.error("Output does not exist: " + parameterName);
+			throw GamaRuntimeException.error("Output does not exist: " + parameterName, currentSimulation.getScope());
 		if (!(output instanceof MonitorOutput))
-			throw GamaRuntimeException.error("Output " + parameterName + " is not an alphanumeric data.");
+			throw GamaRuntimeException.error("Output " + parameterName + " is not an alphanumeric data.",
+					currentSimulation.getScope());
 		output.update();
 		return ((MonitorOutput) output).getLastValue();
 	}
@@ -116,11 +116,10 @@ public class Experiment implements IExperiment {
 	@Override
 	public Object getVariableOutput(final String parameterName) {
 		// this.currentExperiment.getSimulationOutputs().step(this.getScope());
-		final Object res = this.currentExperiment.getCurrentSimulation().getDirectVarValue(this.getScope(),
-				parameterName);
-		if (res == null) {
-			throw GamaRuntimeException.error("Output unresolved: " + parameterName);
-		}
+		final Object res =
+				this.currentExperiment.getCurrentSimulation().getDirectVarValue(this.getScope(), parameterName);
+		if (res == null) { throw GamaRuntimeException.error("Output unresolved: " + parameterName,
+				currentSimulation.getScope()); }
 		return res;
 	}
 

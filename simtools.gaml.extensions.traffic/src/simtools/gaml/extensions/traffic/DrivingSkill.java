@@ -625,7 +625,7 @@ public class DrivingSkill extends MovingSkill {
 		path.setSource(currentLocation.copy(scope));
 		if (segments.isEmpty()) { return null; }
 		final IPath followedPath =
-				PathFactory.newInstance(scope.getTopology(), startLocation, currentLocation, segments);
+				PathFactory.newInstance(scope, scope.getTopology(), startLocation, currentLocation, segments);
 		// new GamaPath(scope.getTopology(), startLocation, currentLocation,
 		// segments);
 		followedPath.setRealObjects(agents);

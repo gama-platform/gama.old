@@ -84,7 +84,7 @@ public class GamaDBConnection {
 		this.passwd = (String) params.get("passwd");
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings ("unchecked")
 	public GamaDBConnection(final IScope scope) {
 		final Map<String, Object> params = (Map<String, Object>) scope.getArg("params", IType.MAP);
 		this.dbtype = (String) params.get("dbtype");
@@ -117,9 +117,7 @@ public class GamaDBConnection {
 		dStore = DataStoreFinder.getDataStore(connectionParameters); // get
 																		// connection
 		// System.out.println("data store postgress:" + dStore);
-		if (dStore == null) {
-			throw new IOException("Can't connect to " + database);
-		}
+		if (dStore == null) { throw new IOException("Can't connect to " + database); }
 		return dStore;
 	}
 
@@ -128,9 +126,7 @@ public class GamaDBConnection {
 		dStore = DataStoreFinder.getDataStore(connectionParameters); // get
 																		// connection
 		// System.out.println("data store postgress:" + dStore);
-		if (dStore == null) {
-			throw new IOException("Can't connect to " + database);
-		}
+		if (dStore == null) { throw new IOException("Can't connect to " + database); }
 		return dStore;
 	}
 
@@ -149,7 +145,7 @@ public class GamaDBConnection {
 		final Map<String, String> attributes; // meta data of query
 		final SimpleFeatureCollection features; // data/recordsets
 
-		public QueryInfo(final DataStore dStore, final String tableName, final String filterStr) {
+		public QueryInfo(final IScope scope, final DataStore dStore, final String tableName, final String filterStr) {
 
 			SimpleFeatureSource source = null;
 			SimpleFeatureCollection sfeatures = null; // Query data
@@ -172,9 +168,8 @@ public class GamaDBConnection {
 				env = source.getBounds();
 				if (crs != null) {
 					try {
-						env = env.transform(new ProjectionFactory().getTargetCRS(), true);
-					} catch (final Exception e) {
-					}
+						env = env.transform(new ProjectionFactory().getTargetCRS(scope), true);
+					} catch (final Exception e) {}
 				}
 				number = sfeatures.size(); // get number of records
 				// get meta data

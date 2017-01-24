@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GraphLoader.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GraphLoader.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -21,13 +20,12 @@ import msi.gama.util.graph.GamaGraph;
 import msi.gaml.species.ISpecies;
 
 /**
- * Entry point for graphs loading. Used to load a graph for a given format (or
- * even automatic detection of the format).
+ * Entry point for graphs loading. Used to load a graph for a given format (or even automatic detection of the format).
  *
  * @author Samuel Thiriot
  *
  */
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class GraphLoader {
 
 	protected static GamaGraph loadAGraph(final IScope scope, final ISpecies nodeSpecies, final ISpecies edgeSpecies,
@@ -43,15 +41,12 @@ public class GraphLoader {
 			f = new File(filename);
 		}
 
-		if (!f.exists()) {
-			throw GamaRuntimeException.error("unable to open this file, which does not exists: " + filename, scope);
-		}
-		if (!f.canRead()) {
-			throw GamaRuntimeException.error("unable to open this file, which is not readable: " + filename, scope);
-		}
-		if (!f.isFile()) {
-			throw GamaRuntimeException.error("this is not a file (probably a directory): " + filename, scope);
-		}
+		if (!f.exists()) { throw GamaRuntimeException
+				.error("unable to open this file, which does not exists: " + filename, scope); }
+		if (!f.canRead()) { throw GamaRuntimeException
+				.error("unable to open this file, which is not readable: " + filename, scope); }
+		if (!f.isFile()) { throw GamaRuntimeException.error("this is not a file (probably a directory): " + filename,
+				scope); }
 
 		// this listener will receive events
 		final GamaGraphParserListener list = new GamaGraphParserListener(scope, nodeSpecies, edgeSpecies,
@@ -59,7 +54,7 @@ public class GraphLoader {
 
 		// make the parser parse, so it raises events
 		try {
-			parser.parseFile(list, f.getAbsolutePath());
+			parser.parseFile(scope, list, f.getAbsolutePath());
 		} catch (final Throwable t) {
 			throw GamaRuntimeException.create(t, scope);
 		}
@@ -73,10 +68,8 @@ public class GraphLoader {
 			final Map<String, String> edgeGraphAttribute2AgentAttribute, final String format, final boolean spatial) {
 
 		// if format is provided, attempt to load using only this format
-		if (format != null) {
-			return loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
-					edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(format), filename, spatial);
-		}
+		if (format != null) { return loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
+				edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(format), filename, spatial); }
 
 		// else,
 
@@ -101,9 +94,8 @@ public class GraphLoader {
 							spatial);
 					/*
 					 * GAMA.reportError(GamaRuntimeException .warning(
-					 * "Automatically detected the type of this graph from file extension ('"
-					 * + extension + "'). Hope this was the relevant type ?"),
-					 * false);
+					 * "Automatically detected the type of this graph from file extension ('" + extension +
+					 * "'). Hope this was the relevant type ?"), false);
 					 */
 					return res;
 				} catch (final GamaRuntimeException e) {

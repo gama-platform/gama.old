@@ -509,7 +509,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	}
 
 	@Override
-	public void setRuntimeArgs(final Arguments args) {}
+	public void setRuntimeArgs(final IScope scope, final Arguments args) {}
 
 	/**
 	 * @return

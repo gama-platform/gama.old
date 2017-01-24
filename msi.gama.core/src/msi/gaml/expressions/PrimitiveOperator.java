@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PrimitiveOperator.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PrimitiveOperator.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -55,13 +54,9 @@ public class PrimitiveOperator implements IExpression {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		if (scope == null) {
-			return null;
-		}
+		if (scope == null) { return null; }
 		final IAgent target = this.target == null ? scope.getAgent() : Cast.asAgent(scope, this.target.value(scope));
-		if (target == null) {
-			return null;
-		}
+		if (target == null) { return null; }
 		// AD 13/05/13 The target should not be pushed so early to the scope, as
 		// the arguments will be (incorrectly)
 		// evaluated in its context, but how to prevent it ? See Issue 401.
@@ -71,8 +66,6 @@ public class PrimitiveOperator implements IExpression {
 		// context of which the arguments need to
 		// be evaluated
 		if (executer != null) {
-			// Now done by the scope itself:
-			// parameters.setCaller(scope.getAgentScope());
 			// And finally, (3) to execute the executer on the target (it will
 			// be pushed in the scope)
 			return scope.execute(executer, target, parameters).getValue();
@@ -118,9 +111,7 @@ public class PrimitiveOperator implements IExpression {
 	}
 
 	protected String argsToGaml(final StringBuilder sb, final boolean includingBuiltIn) {
-		if (parameters == null || parameters.isEmpty()) {
-			return "";
-		}
+		if (parameters == null || parameters.isEmpty()) { return ""; }
 		for (final Map.Entry<String, IExpressionDescription> entry : parameters.entrySet()) {
 			final String name = entry.getKey();
 			final IExpressionDescription expr = entry.getValue();
@@ -172,8 +163,7 @@ public class PrimitiveOperator implements IExpression {
 	}
 
 	@Override
-	public void setName(final String newName) {
-	}
+	public void setName(final String newName) {}
 
 	@Override
 	public IType<?> getType() {

@@ -677,7 +677,6 @@ public class Graphs {
 		return (S - C) / (S - 1.0);
 	}
 
-	
 	@operator (
 			value = "betweenness_centrality",
 			type = IType.MAP,
@@ -729,7 +728,7 @@ public class Graphs {
 		}
 		return mapResult;
 	}
-	
+
 	@operator (
 			value = "edge_betweenness",
 			type = IType.MAP,
@@ -1652,7 +1651,7 @@ public class Graphs {
 		AvailableGraphLayouts
 				// retrieve layout for he layout that was selected by the user
 				// (may raise an exception)
-				.getStaticLayout(layoutEngine.trim().toLowerCase())
+				.getStaticLayout(scope, layoutEngine.trim().toLowerCase())
 				// apply this layout with the options
 				.doLayoutOneShot(scope, graph, timeout, jOptions);
 

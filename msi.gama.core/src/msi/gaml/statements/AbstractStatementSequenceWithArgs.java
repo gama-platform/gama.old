@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'AbstractStatementSequenceWithArgs.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'AbstractStatementSequenceWithArgs.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -24,6 +23,7 @@ import msi.gaml.statements.IStatement.WithArgs;
  */
 public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence implements WithArgs {
 
+	// final Map<IScope, Arguments> actualArgs = new ConcurrentHashMap<>();
 	final ThreadLocal<Arguments> actualArgs = new ThreadLocal<>();
 
 	/**
@@ -39,8 +39,7 @@ public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence
 	 * @see msi.gaml.statements.IStatement.WithArgs#setFormalArgs(msi.gaml.statements.Arguments)
 	 */
 	@Override
-	public void setFormalArgs(final Arguments args) {
-	}
+	public void setFormalArgs(final Arguments args) {}
 
 	/**
 	 * Method setRuntimeArgs()
@@ -48,7 +47,7 @@ public class AbstractStatementSequenceWithArgs extends AbstractStatementSequence
 	 * @see msi.gaml.statements.IStatement.WithArgs#setRuntimeArgs(msi.gaml.statements.Arguments)
 	 */
 	@Override
-	public void setRuntimeArgs(final Arguments args) {
+	public void setRuntimeArgs(final IScope scope, final Arguments args) {
 		actualArgs.set(new Arguments(args));
 	}
 

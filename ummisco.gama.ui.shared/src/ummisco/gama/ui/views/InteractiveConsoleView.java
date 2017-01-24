@@ -91,6 +91,11 @@ public class InteractiveConsoleView extends GamaViewPart
 	}
 
 	@Override
+	public IScope getScope() {
+		return scope;
+	}
+
+	@Override
 	public void ownCreatePartControl(final Composite p) {
 		msgConsole = new IOConsole("GAMA Console", null);
 		reader = new BufferedReader(new InputStreamReader(msgConsole.getInputStream()));

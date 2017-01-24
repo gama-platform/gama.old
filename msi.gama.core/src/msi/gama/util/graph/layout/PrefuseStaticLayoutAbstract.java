@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'PrefuseStaticLayoutAbstract.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'PrefuseStaticLayoutAbstract.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and
+ * simulation platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -43,7 +42,7 @@ import prefuse.render.DefaultRendererFactory;
 import prefuse.visual.VisualItem;
 import prefuse.visual.VisualTable;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 	public static final String PREFUSE_GRAPH = "g";
@@ -113,8 +112,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	}
 
 	/**
-	 * Takes a prefuse graph and applies a prefuse layout, with a max time for
-	 * execution; the layout is bounded according to parameters.
+	 * Takes a prefuse graph and applies a prefuse layout, with a max time for execution; the layout is bounded
+	 * according to parameters.
 	 * 
 	 * @param prefuseGraph
 	 * @param prefuseLayout
@@ -213,9 +212,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	}
 
 	/**
-	 * Takes a prefuse graph and applies a prefuse layout, with a max time for
-	 * execution. Layout will use the space defined by the world agent found
-	 * through the gama scope.
+	 * Takes a prefuse graph and applies a prefuse layout, with a max time for execution. Layout will use the space
+	 * defined by the world agent found through the gama scope.
 	 * 
 	 * @param prefuseGraph
 	 * @param prefuseLayout
@@ -227,23 +225,22 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 		final Envelope envelope = scope.getSimulation().getEnvelope();
 
-		final Rectangle bounds = new Rectangle((int) Math.floor(envelope.getMinX()),
-				(int) Math.floor(envelope.getMinY()), (int) Math.ceil(envelope.getWidth()),
-				(int) Math.ceil(envelope.getHeight()));
+		final Rectangle bounds =
+				new Rectangle((int) Math.floor(envelope.getMinX()), (int) Math.floor(envelope.getMinY()),
+						(int) Math.ceil(envelope.getWidth()), (int) Math.ceil(envelope.getHeight()));
 
 		renderLayout(prefuseGraph, prefuseLayout, bounds, maxtime);
 
 	}
 
 	/**
-	 * The actual creation of the prefuse layout to be used by the layout
-	 * process.
+	 * The actual creation of the prefuse layout to be used by the layout process.
 	 * 
 	 * @param timeout
 	 * @param options
 	 * @return
 	 */
-	protected abstract Layout createLayout(long timeout, Map<String, Object> options);
+	protected abstract Layout createLayout(final IScope scope, long timeout, Map<String, Object> options);
 
 	/**
 	 * Returns a concise name for this layout
@@ -268,8 +265,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	public void doLayoutOneShot(final IScope scope, final GamaGraph<?, ?> graph, final long timeout,
 			final Map<String, Object> options) {
 
-		renderLayout(GraphUtilsPrefuse.getPrefuseGraphFromGamaGraphForVisu(graph), createLayout(timeout, options),
-				scope, timeout);
+		renderLayout(GraphUtilsPrefuse.getPrefuseGraphFromGamaGraphForVisu(scope, graph),
+				createLayout(scope, timeout, options), scope, timeout);
 
 		// warn the user of the options that were provided but not used
 		final Set<String> uselessOptions = new HashSet<String>(options.keySet());
@@ -281,7 +278,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 			sb.append(uselessOptions);
 			sb.append(" (as a reminder, this layout accepts the following options: ");
 			sb.append(getLayoutOptions()).append(")");
-			GAMA.reportError(scope, GamaRuntimeException.warning(sb.toString()), false);
+			GAMA.reportError(scope, GamaRuntimeException.warning(sb.toString(), scope), false);
 		}
 	}
 
