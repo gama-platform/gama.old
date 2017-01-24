@@ -48,10 +48,12 @@ import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_Global;
 import msi.gama.lang.gaml.gaml.Statement;
 import msi.gama.lang.gaml.gaml.TypeRef;
+import msi.gama.lang.gaml.gaml.UnitFakeDefinition;
 import msi.gama.lang.gaml.gaml.UnitName;
 import msi.gama.lang.gaml.resource.GamlResourceServices;
 import msi.gaml.descriptions.FacetProto;
 import msi.gaml.descriptions.SymbolProto;
+import msi.gaml.expressions.UnitConstantExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.IUnits;
 
@@ -248,8 +250,15 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 						return temp;
 				}
 			}
-		} else if (o instanceof UnitName) { return "<b>"
-				+ IUnits.UNITS_EXPR.get(((UnitName) o).getRef().getName()).getTitle() + "</b>"; }
+		} else if (o instanceof UnitName) {
+			final UnitFakeDefinition fake = ((UnitName) o).getRef();
+			if (fake == null)
+				return "<b> Unknown unit or constant </b>";
+			final UnitConstantExpression unit = IUnits.UNITS_EXPR.get(fake.getName());
+			if (unit == null)
+				return "<b> Unknown unit or constant </b>";
+			return "<b>" + unit.getTitle() + "</b>";
+		}
 
 		final IGamlDescription description = GamlResourceServices.getResourceDocumenter().getGamlDocumentation(o);
 		if (description == null) {
