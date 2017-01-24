@@ -432,18 +432,18 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape, IGraph<IShape, ISh
 	public IShape getGeometry() {
 
 		if (shape == null && segments.size() > 0) {
-			final Geometry geoms[] = new Geometry[segments.size()];
-			int cpt = 0;
-			for (final IShape ent : segments) {
-				geoms[cpt] = ent.getInnerGeometry();
-				cpt++;
+			if (segments.size() == 1) 
+				shape = new GamaShape(segments.get(0)); 
+			else {
+				IList<IShape> pts = GamaListFactory.create(Types.POINT);
+				for (final IShape ent : segments) {
+					pts.add(new GamaPoint(ent.getPoints().get(0)));
+				}
+				IList<IShape> ls = (IList<IShape>) segments.get(segments.size() - 1).getPoints();
+				pts.add(ls.get(ls.size() - 1));
+				shape = GamaGeometryType.buildPolyline(ls);
 			}
-			if (geoms.length == 1) {
-				shape = new GamaShape(geoms[0]);
-			} else {
-				final Geometry geom = GeometryUtils.GEOMETRY_FACTORY.createGeometryCollection(geoms);
-				shape = new GamaShape(geom.union());
-			}
+			
 
 		}
 		return shape;
