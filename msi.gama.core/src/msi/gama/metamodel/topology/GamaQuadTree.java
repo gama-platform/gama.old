@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'GamaQuadTree.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'GamaQuadTree.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -31,15 +30,14 @@ import msi.gaml.operators.Maths;
 /**
  * A QuadTree allows to quickly find an object on a two-dimensional space.
  * <p>
- * QuadTree recursively subdivides a space into four rectangles. Each node of a
- * QuadTree subdivides the space covered by the rectangle of its parent node
- * into four smaller rectangles covering the upper left, upper right, lower left
- * and lower right quadrant of the parent rectangle.
+ * QuadTree recursively subdivides a space into four rectangles. Each node of a QuadTree subdivides the space covered by
+ * the rectangle of its parent node into four smaller rectangles covering the upper left, upper right, lower left and
+ * lower right quadrant of the parent rectangle.
  *
  * @author Werner Randelshofer, adapted by Alexis Drogoul for GAMA
  * @version $Id: QuadTree.java 717 2010-11-21 12:30:57Z rawcoder $
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaQuadTree implements ISpatialIndex {
 
 	public static final int NW = 0;
@@ -73,9 +71,7 @@ public class GamaQuadTree implements ISpatialIndex {
 
 	@Override
 	public void insert(final IAgent agent) {
-		if (agent == null) {
-			return;
-		}
+		if (agent == null) { return; }
 		if (agent.isPoint()) {
 			root.add((Coordinate) agent.getLocation(), agent);
 		} else {
@@ -90,9 +86,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	@Override
 	public void remove(final Envelope previous, final IAgent agent) {
 		final Envelope current = previous == null ? agent.getEnvelope() : previous;
-		if (current == null) {
-			return;
-		}
+		if (current == null) { return; }
 		if (isPoint(current)) {
 			root.remove(current.centre(), agent);
 		} else {
@@ -162,10 +156,15 @@ public class GamaQuadTree implements ISpatialIndex {
 
 	private class QuadNode {
 
+		private class Data {
+			IAgent agent;
+			Envelope3D envelope;
+		}
+
 		private final Envelope bounds;
 		private final double halfx, halfy;
 		private volatile QuadNode[] nodes = null;
-		// ** Addresses part of Issue 722 -- Need to keep the objects ordered
+		// ** Addresses part of Issue 722 -- Need to keep the agents ordered
 		// (by insertion order) **
 		private volatile ConcurrentLinkedQueue<IAgent> objects = null;
 		private final boolean canSplit;
@@ -195,9 +194,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			if (objects != null) {
 				if (objects.remove(a))
 					return a;
-			} else if (nodes != null) {
-				return nodes[quadrant(p)].remove(p, a);
-			}
+			} else if (nodes != null) { return nodes[quadrant(p)].remove(p, a); }
 			return null;
 		}
 

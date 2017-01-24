@@ -333,9 +333,10 @@ public class GamaCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public void getEnvelope(final Envelope3D envelope) {
+	public Envelope3D getEnvelope(final Envelope3D envelope) {
 		envelope.setToNull();
 		expandEnvelope(envelope);
+		return envelope;
 	}
 
 	@Override
@@ -403,6 +404,15 @@ public class GamaCoordinateSequence implements ICoordinates {
 				return false;
 		}
 		return true;
+	}
+
+	@Override
+	public double getLength() {
+		double result = 0;
+		for (int i = 1; i < points.length; i++) {
+			result += points[i].euclidianDistanceTo(points[i - 1]);
+		}
+		return result;
 	}
 
 }

@@ -739,7 +739,6 @@ public class GeometryUtils {
 		return locs;
 	}
 
-	
 	public static IList<GamaPoint> locsAlongGeometry(final Geometry geom, final List<Double> rates) {
 		final IList<GamaPoint> locs = GamaListFactory.create(Types.POINT);
 		if (rates == null || rates.isEmpty())
@@ -748,16 +747,25 @@ public class GeometryUtils {
 			for (int i = 0; i < rates.size(); i++)
 				locs.add(new GamaPoint(geom.getCoordinate()));
 		} else if (geom instanceof LineString) {
-			for (Double rate: rates) {
+			for (Double rate : rates) {
 				final Coordinate[] coordsSimp = geom.getCoordinates();
 				final int nbSp = coordsSimp.length;
-				if (nbSp <= 0) return locs; 
-				if (rate > 1.0) rate = 1.0;
-				if (rate < 0.0) rate = 0.0;
-				if (rate == 0) {locs.add(new GamaPoint(coordsSimp[0])); continue;}
-				if (rate == 1) {locs.add(new GamaPoint(coordsSimp[nbSp - 1])); continue;}
+				if (nbSp <= 0)
+					return locs;
+				if (rate > 1.0)
+					rate = 1.0;
+				if (rate < 0.0)
+					rate = 0.0;
+				if (rate == 0) {
+					locs.add(new GamaPoint(coordsSimp[0]));
+					continue;
+				}
+				if (rate == 1) {
+					locs.add(new GamaPoint(coordsSimp[nbSp - 1]));
+					continue;
+				}
 				double distCur = 0;
-				double distance = rate * geom.getLength();
+				final double distance = rate * geom.getLength();
 				for (int i = 0; i < nbSp - 1; i++) {
 					Coordinate s = coordsSimp[i];
 					final Coordinate t = coordsSimp[i + 1];
@@ -770,7 +778,7 @@ public class GeometryUtils {
 						final double z_s = s.z + ratio * (t.z - s.z);
 						s = new Coordinate(x_s, y_s, z_s);
 						locs.add(new GamaPoint(s));
-						break;			
+						break;
 					} else if (distance - distCur > dist) {
 						distCur += dist;
 					} else {
@@ -945,19 +953,29 @@ public class GeometryUtils {
 	}
 
 	public static ICoordinates getContourCoordinates(final Polygon g) {
+		if (g.isEmpty())
+			return ICoordinates.EMPTY;
 		return (ICoordinates) g.getExteriorRing().getCoordinateSequence();
 	}
 
 	public static ICoordinates getContourCoordinates(final LineString g) {
+		if (g.isEmpty())
+			return ICoordinates.EMPTY;
+		return (ICoordinates) g.getCoordinateSequence();
+	}
+
+	public static ICoordinates getContourCoordinates(final Point g) {
+		if (g.isEmpty())
+			return ICoordinates.EMPTY;
 		return (ICoordinates) g.getCoordinateSequence();
 	}
 
 	public static ICoordinates getContourCoordinates(final Geometry g) {
-		if (g == null)
-			return ICoordinates.EMPTY;
-		return g instanceof Polygon ? getContourCoordinates((Polygon) g)
-				: g instanceof LineString ? getContourCoordinates((LineString) g)
-						: GamaGeometryFactory.COORDINATES_FACTORY.create(g.getBoundary().getCoordinates());
+		if (g instanceof Polygon) { return getContourCoordinates((Polygon) g); }
+		if (g instanceof LineString) { return getContourCoordinates((LineString) g); }
+		if (g instanceof Point) { return getContourCoordinates((Point) g); }
+		if (g instanceof GeometryCollection) { return getContourCoordinates(((GeometryCollection) g).convexHull()); }
+		return ICoordinates.EMPTY;
 	}
 
 	/**

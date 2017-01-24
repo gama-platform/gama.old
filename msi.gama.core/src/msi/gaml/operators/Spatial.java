@@ -2160,8 +2160,9 @@ public abstract class Spatial {
 				final int nbRows, final boolean overlaps) {
 			if (geom == null
 					|| geom.getInnerGeometry().getArea() <= 0) { return GamaListFactory.create(Types.GEOMETRY); }
-			final double x_size = geom.getEnvelope().getWidth() / nbCols;
-			final double y_size = geom.getEnvelope().getHeight() / nbRows;
+			final Envelope3D envelope = geom.getEnvelope();
+			final double x_size = envelope.getWidth() / nbCols;
+			final double y_size = envelope.getHeight() / nbRows;
 
 			return GeometryUtils.discretization(geom.getInnerGeometry(), x_size, y_size, overlaps);
 		}
@@ -2215,8 +2216,9 @@ public abstract class Spatial {
 				final int nbRows) {
 			if (geom == null
 					|| geom.getInnerGeometry().getArea() <= 0) { return GamaListFactory.create(Types.GEOMETRY); }
-			final double x_size = geom.getEnvelope().getWidth() / nbCols;
-			final double y_size = geom.getEnvelope().getHeight() / nbRows;
+			final Envelope3D envelope = geom.getEnvelope();
+			final double x_size = envelope.getWidth() / nbCols;
+			final double y_size = envelope.getHeight() / nbRows;
 
 			return GeometryUtils.geometryDecomposition(geom, x_size, y_size);
 		}

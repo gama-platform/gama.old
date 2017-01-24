@@ -15,10 +15,10 @@ import java.util.List;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.CoordinateFilter;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.common.util.GeometryUtils;
 import msi.gama.common.util.ICoordinates;
 import msi.gaml.operators.Comparison;
 import msi.gaml.operators.fastmaths.FastMath;
@@ -30,8 +30,6 @@ import msi.gaml.types.GamaGeometryType;
  * A 3D envelope that extends the 2D JTS Envelope.
  *
  *
- * @source $URL$
- * @version $Id$
  * @author Niels Charlier
  * @adapted for GAMA by A. Drogoul
  *
@@ -39,24 +37,22 @@ import msi.gaml.types.GamaGeometryType;
 public class Envelope3D extends Envelope {
 
 	public static Envelope3D of(final Geometry g) {
-		if (g == null || g.isEmpty()) { return new Envelope3D(); }
-		final Envelope3D env = new Envelope3D();
-		g.apply((CoordinateFilter) coord -> env.expandToInclude(coord));
-		return env;
+		final ICoordinates sq = GeometryUtils.getContourCoordinates(g);
+		return sq.getEnvelope(new Envelope3D());
 	}
 
 	public static Envelope3D of(final GamaShape s) {
-		final Envelope3D env = of(s.getInnerGeometry());
-		if (s.hasAttribute(IShape.DEPTH_ATTRIBUTE)) {
-			// Note: A.G 27/03/14 If I put center.setZ(center.z + d ) it gives
-			// the issue 898 (that was introduces by
-			// revision 9047);
-			// Double d = (Double) s.getAttribute(IShape.DEPTH_ATTRIBUTE);
-			final GamaPoint center = env.centre();
-			center.setZ(center.z);
-			env.expandToInclude(center);
-		}
-		return env;
+		return of(s.getInnerGeometry());
+		// if (s.hasAttribute(IShape.DEPTH_ATTRIBUTE)) {
+		// // Note: A.G 27/03/14 If I put center.setZ(center.z + d ) it gives
+		// // the issue 898 (that was introduces by
+		// // revision 9047);
+		// // Double d = (Double) s.getAttribute(IShape.DEPTH_ATTRIBUTE);
+		// final GamaPoint center = env.centre();
+		// center.setZ(center.z);
+		// env.expandToInclude(center);
+		// }
+		// return env;
 	}
 
 	public static Envelope3D of(final Envelope e) {

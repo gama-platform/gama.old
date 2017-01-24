@@ -136,7 +136,7 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * 
 	 * @param envelope
 	 */
-	void getEnvelope(Envelope3D envelope);
+	Envelope3D getEnvelope(Envelope3D envelope);
 
 	/**
 	 * Compute the average z ordinate of this sequence of points
@@ -207,4 +207,6 @@ public interface ICoordinates extends CoordinateSequence, Iterable<GamaPoint> {
 	 * @return true if all the z ordinates are equal, otherwise false
 	 */
 	boolean isHorizontal();
+
+	double getLength();
 }

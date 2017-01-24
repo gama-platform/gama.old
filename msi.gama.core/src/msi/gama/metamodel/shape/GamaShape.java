@@ -11,7 +11,6 @@ package msi.gama.metamodel.shape;
 
 import static msi.gama.metamodel.shape.IShape.Type.SPHERE;
 
-import java.lang.reflect.Field;
 import java.util.Map;
 
 import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
@@ -19,7 +18,6 @@ import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.LineString;
@@ -30,6 +28,7 @@ import com.vividsolutions.jts.geom.TopologyException;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.ICoordinates;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaListFactory;
@@ -49,17 +48,17 @@ import msi.gaml.types.Types;
 @SuppressWarnings ({ "unchecked", "rawtypes" })
 public class GamaShape implements IShape /* , IContainer */ {
 
-	static Field envelopeField = null;
-	static {
-
-		try {
-			envelopeField = Geometry.class.getDeclaredField("envelope");
-		} catch (NoSuchFieldException | SecurityException e) {}
-
-		if (envelopeField != null) {
-			envelopeField.setAccessible(true);
-		}
-	}
+	// static Field envelopeField = null;
+	// static {
+	//
+	// try {
+	// envelopeField = Geometry.class.getDeclaredField("envelope");
+	// } catch (NoSuchFieldException | SecurityException e) {}
+	//
+	// if (envelopeField != null) {
+	// envelopeField.setAccessible(true);
+	// }
+	// }
 
 	protected Geometry geometry;
 	private IAgent agent;
@@ -69,6 +68,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	// cube, etc...). Can be reused by subclasses (for example to store GIS
 	// information)
 	protected GamaMap attributes;
+	// private Envelope3D envelope;
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -212,7 +212,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 				} else {
 					geometry.apply(AffineTransform3D.createScaling(bounds.x, bounds.y, bounds.z));
 				}
-				setEnvelope(null);
+				// setEnvelope(null);
 				setLocation(previous);
 			} else {
 				final Double scaling = FastMath.min(FastMath.min(bounds.x, bounds.y), bounds.z);
@@ -242,7 +242,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 			if (getAttribute(IShape.TYPE_ATTRIBUTE) != SPHERE) {
 				final GamaPoint previous = getLocation();
 				geometry.apply(AffineTransform3D.createScaling(scaling, scaling, scaling));
-				setEnvelope(null);
+				// setEnvelope(null);
 				setLocation(previous);
 			} else {
 				setAttribute(IShape.DEPTH_ATTRIBUTE, (Double) getAttribute(IShape.DEPTH_ATTRIBUTE) * scaling);
@@ -313,7 +313,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	@Override
 	public GamaPoint getLocation() {
 		if (isPoint()) { return new GamaPoint(geometry.getCoordinate()); }
-		return getEnvelope().centre();
+		return GeometryUtils.getContourCoordinates(geometry).getCenter();
 	}
 
 	@Override
@@ -323,7 +323,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 		if (previous != null) {
 			if (isPoint()) {
 				geometry = GeometryUtils.GEOMETRY_FACTORY.createPoint(location);
-				setEnvelope(Envelope3D.of(location));
+				// setEnvelope(Envelope3D.of(location));
 			} else {
 				// if ( isPoint ) {
 				final double dx = location.x - previous.getX();
@@ -331,7 +331,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 				final double dz = location.z - previous.getZ();
 				GeometryUtils.translate(geometry, dx, dy, dz);
 				// We move the envelope as well if it has been computed
-				getEnvelope().translate(dx, dy, dz);
+				// getEnvelope().translate(dx, dy, dz);
 			}
 		}
 	}
@@ -362,18 +362,21 @@ public class GamaShape implements IShape /* , IContainer */ {
 
 	@Override
 	public double getPerimeter() {
-		if (getEnvelope().getDepth() > 0) {
-			double perimeter = 0;
-			final int nb = this.getPoints().size();
-			ILocation pS = this.getPoints().get(0);
-			for (int i = 1; i < nb; i++) {
-				final ILocation pT = this.getPoints().get(i);
-				perimeter += pS.euclidianDistanceTo(pT);
-				pS = pT;
-			}
-			return perimeter;
-		} else
-			return getInnerGeometry().getLength();
+		final ICoordinates seq = GeometryUtils.getContourCoordinates(geometry);
+		return seq.getLength();
+		//
+		// if (getEnvelope().getDepth() > 0) {
+		// double perimeter = 0;
+		// final int nb = this.getPoints().size();
+		// ILocation pS = this.getPoints().get(0);
+		// for (int i = 1; i < nb; i++) {
+		// final ILocation pT = this.getPoints().get(i);
+		// perimeter += pS.euclidianDistanceTo(pT);
+		// pS = pT;
+		// }
+		// return perimeter;
+		// } else
+		// return getInnerGeometry().getLength();
 	}
 
 	@Override
@@ -438,7 +441,7 @@ public class GamaShape implements IShape /* , IContainer */ {
 	@Override
 	public void setDepth(final double depth) {
 		this.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
-		this.setEnvelope(null);
+		// this.setEnvelope(null);
 	}
 
 	@Override
@@ -456,16 +459,21 @@ public class GamaShape implements IShape /* , IContainer */ {
 	@Override
 	public Envelope3D getEnvelope() {
 		if (geometry == null) { return null; }
-		try {
-			Envelope e = (Envelope) envelopeField.get(geometry);
-			if (e == null || !(e instanceof Envelope3D)) {
-				e = Envelope3D.of(this);
-				envelopeField.set(geometry, e);
-			}
-			return (Envelope3D) e;
-		} catch (IllegalArgumentException | IllegalAccessException e) {}
-		return null;
+		// if (envelope == null) {
+		return Envelope3D.of(this);
 	}
+
+	// return envelope;
+	// try {
+	// Envelope e = (Envelope) envelopeField.get(geometry);
+	// if (e == null || !(e instanceof Envelope3D)) {
+	// e = Envelope3D.of(this);
+	// envelopeField.set(geometry, e);
+	// }
+	// return (Envelope3D) e;
+	// } catch (IllegalArgumentException | IllegalAccessException e) {}
+	// return null;
+	// }
 
 	@Override
 	public IAgent getAgent() {
@@ -494,15 +502,15 @@ public class GamaShape implements IShape /* , IContainer */ {
 		}
 	}
 
-	private void setEnvelope(final Envelope3D envelope) {
-		if (geometry == null) { return; }
-		try {
-			envelopeField.set(geometry, envelope);
-		} catch (IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		// this.envelope = envelope;
-	}
+	// private void setEnvelope(final Envelope3D envelope) {
+	// // if (geometry == null) { return; }
+	// // try {
+	// // envelopeField.set(geometry, envelope);
+	// // } catch (IllegalArgumentException | IllegalAccessException e) {
+	// // e.printStackTrace();
+	// // }
+	// // this.envelope = envelope;
+	// }
 
 	@Override
 	public void setGeometry(final IShape geom) {

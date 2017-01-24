@@ -151,8 +151,10 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	}
 
 	@Override
-	public void getEnvelope(final Envelope3D envelope) {
+	public Envelope3D getEnvelope(final Envelope3D envelope) {
+		envelope.setToNull();
 		envelope.expandToInclude(point);
+		return envelope;
 	}
 
 	@Override
@@ -176,6 +178,11 @@ public class UniqueCoordinateSequence implements ICoordinates {
 	@Override
 	public boolean isHorizontal() {
 		return true;
+	}
+
+	@Override
+	public double getLength() {
+		return 0;
 	}
 
 }

@@ -267,10 +267,12 @@ public abstract class GamaProxyGeometry implements IShape, Cloneable {
 	 */
 	@Override
 	public Envelope3D getEnvelope() {
-		final Envelope3D copy = new Envelope3D(getReferenceGeometry().getEnvelope());
-		final double dx = getLocation().getX() - getReferenceGeometry().getLocation().getX();
-		final double dy = getLocation().getY() - getReferenceGeometry().getLocation().getY();
-		final double dz = getLocation().getZ() - getReferenceGeometry().getLocation().getZ();
+		final Envelope3D copy = getReferenceGeometry().getEnvelope();
+		final ILocation loc = getLocation();
+		final ILocation loc2 = getReferenceGeometry().getLocation();
+		final double dx = loc.getX() - loc2.getX();
+		final double dy = loc.getY() - loc2.getY();
+		final double dz = loc.getZ() - loc2.getZ();
 		copy.translate(dx, dy, dz);
 		return copy;
 	}
