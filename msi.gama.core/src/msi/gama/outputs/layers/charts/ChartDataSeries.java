@@ -1,8 +1,7 @@
 /*********************************************************************************************
  *
- * 'ChartDataSeries.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
- * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
+ * 'ChartDataSeries.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation
+ * platform. (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
  * 
@@ -21,7 +20,7 @@ import msi.gama.util.IList;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class ChartDataSeries {
 
 	ArrayList<String> cvalues = new ArrayList<String>(); // for categories
@@ -181,10 +180,9 @@ public class ChartDataSeries {
 	}
 
 	/*
-	 * public void addxysvalue(double dx, double dy, double dz, int date) { //
-	 * TODO Auto-generated method stub xvalues.add(dx); yvalues.add(dy);
-	 * svalues.add(dz);
-	 * this.getDataset().serieToUpdateBefore.put(this.getName(), date);
+	 * public void addxysvalue(double dx, double dy, double dz, int date) { // TODO Auto-generated method stub
+	 * xvalues.add(dx); yvalues.add(dy); svalues.add(dz); this.getDataset().serieToUpdateBefore.put(this.getName(),
+	 * date);
 	 * 
 	 * }
 	 */
@@ -408,16 +406,14 @@ public class ChartDataSeries {
 	}
 
 	public void endupdate(final IScope scope) {
-		// TODO Auto-generated method stub
 		this.ongoing_update = false;
 	}
 
 	public void startupdate(final IScope scope) {
-		// TODO Auto-generated method stub
 		this.ongoing_update = true;
 	}
 
-	public void savelistd(final IScope scope, final StringBuilder history, final ArrayList<Double> mylist) {
+	private void savelistd(final IScope scope, final ChartHistory history, final ArrayList<Double> mylist) {
 		if (mylist.size() == 0) {
 			history.append(",");
 			return;
@@ -428,22 +424,15 @@ public class ChartDataSeries {
 
 	}
 
-	public void savelists(final IScope scope, final StringBuilder history, final ArrayList mylist) {
-		// history.append("[");
-		if (mylist.size() == 0) {
-			// history.append("],");
-			return;
-		}
+	private void savelists(final IScope scope, final ChartHistory history, final ArrayList mylist) {
+		if (mylist.size() == 0) { return; }
 		for (int i = 0; i < mylist.size(); i++) {
 			history.append(Cast.asString(scope, mylist.get(i)) + ",");
 		}
-		// history.append("],");
 
 	}
 
-	public void savehistory(final IScope scope, final StringBuilder history) {
-		// TODO Auto-generated method stub
-		// StringBuilder history=this.getDataset().getHistory();
+	public void savehistory(final IScope scope, final ChartHistory history) {
 		history.append(this.getName() + ",");
 		if (mysource.isByCategory()) {
 			if (this.cvalues.size() > 0) {
@@ -479,8 +468,6 @@ public class ChartDataSeries {
 	}
 
 	public void inithistory(final StringBuilder history) {
-		// TODO Auto-generated method stub
-		// StringBuilder history=this.getDataset().getHistory();
 		history.append(this.getName() + "_X" + ",");
 		history.append(this.getName() + "_Y" + ",");
 	}

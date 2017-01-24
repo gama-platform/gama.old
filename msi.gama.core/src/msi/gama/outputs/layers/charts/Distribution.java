@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'Distribution.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'Distribution.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -28,7 +27,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.types.Types;
 
-@SuppressWarnings({ "rawtypes" })
+@SuppressWarnings ({ "rawtypes" })
 public class Distribution {
 
 	public static GamaMap computeDistrib2d(final IScope scope, final IList lvaluex, final IList lvaluey,
@@ -333,19 +332,28 @@ public class Distribution {
 
 	}
 
-	@operator(value = { "distribution2d_of" }, can_be_const = false, iterator = true,
+	@operator (
+			value = { "distribution2d_of" },
+			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = IType.STRING, content_type = IType.LIST, category = {
-					IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CHART })
-	@doc(value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).", comment = "", examples = {
-			@example(value = "distribution_of([1,1,2,12.5],10)", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
+			index_type = IType.STRING,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC, IConcept.CHART })
+	@doc (
+			value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).",
+			comment = "",
+			examples = { @example (
+					value = "distribution_of([1,1,2,12.5],10)",
+					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
+					isExecutable = false) },
+			see = "as_map")
 
 	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy,
 			final Integer nbbarsx, final Integer nbbarsy) throws GamaRuntimeException {
 
-		if (valuesx == null) {
-			return GamaMapFactory.create(Types.STRING, Types.LIST);
-		}
+		if (valuesx == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvaluex = Cast.asList(scope, valuesx);
 		if (lvaluex.length(scope) < 1)
 			return GamaMapFactory.create(Types.STRING, Types.LIST);
@@ -364,20 +372,29 @@ public class Distribution {
 
 	}
 
-	@operator(value = { "distribution2d_of" }, can_be_const = false, iterator = true,
+	@operator (
+			value = { "distribution2d_of" },
+			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = IType.STRING, content_type = IType.LIST, category = {
-					IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CHART })
-	@doc(value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).", comment = "", examples = {
-			@example(value = "distribution_of([1,1,2,12.5],10)", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
+			index_type = IType.STRING,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC, IConcept.CHART })
+	@doc (
+			value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).",
+			comment = "",
+			examples = { @example (
+					value = "distribution_of([1,1,2,12.5],10)",
+					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
+					isExecutable = false) },
+			see = "as_map")
 
 	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy,
 			final Integer nbbarsx, final Double startvaluex, final Double endvaluex, final Integer nbbarsy,
 			final Double startvaluey, final Double endvaluey) throws GamaRuntimeException {
 
-		if (valuesx == null) {
-			return GamaMapFactory.create(Types.STRING, Types.LIST);
-		}
+		if (valuesx == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvaluex = Cast.asList(scope, valuesx);
 		if (lvaluex.length(scope) < 1)
 			return GamaMapFactory.create(Types.STRING, Types.LIST);
@@ -404,19 +421,29 @@ public class Distribution {
 
 	}
 
-	@operator(value = { "distribution2d_of" }, can_be_const = false, iterator = true,
+	@operator (
+			value = { "distribution2d_of" },
+			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = IType.STRING, content_type = IType.LIST, category = {
-					IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CHART })
-	@doc(value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts). Parameters can be (list), (list, nbbins) or (list,nbbins,valmin,valmax)", masterDoc = true, comment = "", examples = {
-			@example(value = "distribution2d_of([1,1,2,12.5])", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
+			index_type = IType.STRING,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC, IConcept.CHART })
+	@doc (
+			value = "Discretize two lists of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts). Parameters can be (list), (list, nbbins) or (list,nbbins,valmin,valmax)",
+			masterDoc = true,
+			comment = "",
+			examples = { @example (
+					value = "distribution2d_of([1,1,2,12.5])",
+					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
+					isExecutable = false) },
+			see = "as_map")
 
 	public static GamaMap Distribution2dOf(final IScope scope, final IContainer valuesx, final IContainer valuesy)
 			throws GamaRuntimeException {
 
-		if (valuesx == null) {
-			return GamaMapFactory.create(Types.STRING, Types.LIST);
-		}
+		if (valuesx == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvaluex = Cast.asList(scope, valuesx);
 		if (lvaluex.length(scope) < 1)
 			return GamaMapFactory.create(Types.STRING, Types.LIST);
@@ -469,7 +496,7 @@ public class Distribution {
 			final float minInt = (float) intermin;
 			final float maxInt = (float) intermax;
 			double N = Math.log10((maxInt - minInt) / (double) (nbBarres - 1)) / Math.log10(2);
-			System.out.println("Ncalc: maxmin: " + maxInt + "/" + minInt + " N " + N);
+			// System.out.println("Ncalc: maxmin: " + maxInt + "/" + minInt + " N " + N);
 			twoExponent = (int) N;
 			deuxpuissancek = (float) Math.pow(2, twoExponent);
 			newminInt = deuxpuissancek * (int) (minInt / deuxpuissancek);
@@ -579,19 +606,28 @@ public class Distribution {
 
 	}
 
-	@operator(value = { "distribution_of" }, can_be_const = false, iterator = true,
+	@operator (
+			value = { "distribution_of" },
+			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = IType.STRING, content_type = IType.LIST, category = {
-					IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CHART })
-	@doc(value = "Discretize a list of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).", comment = "", examples = {
-			@example(value = "distribution_of([1,1,2,12.5],10)", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
+			index_type = IType.STRING,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC, IConcept.CHART })
+	@doc (
+			value = "Discretize a list of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).",
+			comment = "",
+			examples = { @example (
+					value = "distribution_of([1,1,2,12.5],10)",
+					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
+					isExecutable = false) },
+			see = "as_map")
 
 	public static GamaMap DistributionOf(final IScope scope, final IContainer values, final Integer nbbars)
 			throws GamaRuntimeException {
 
-		if (values == null) {
-			return GamaMapFactory.create(Types.STRING, Types.LIST);
-		}
+		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvalue = Cast.asList(scope, values);
 		if (lvalue.length(scope) < 1)
 			return GamaMapFactory.create(Types.STRING, Types.LIST);
@@ -603,18 +639,28 @@ public class Distribution {
 
 	}
 
-	@operator(value = { "distribution_of" }, can_be_const = false, iterator = true,
+	@operator (
+			value = { "distribution_of" },
+			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = IType.STRING, content_type = IType.LIST, category = {
-					IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CHART })
-	@doc(value = "Discretize a list of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts). Parameters can be (list), (list, nbbins) or (list,nbbins,valmin,valmax)", masterDoc = true, comment = "", examples = {
-			@example(value = "distribution_of([1,1,2,12.5])", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
+			index_type = IType.STRING,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC, IConcept.CHART })
+	@doc (
+			value = "Discretize a list of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts). Parameters can be (list), (list, nbbins) or (list,nbbins,valmin,valmax)",
+			masterDoc = true,
+			comment = "",
+			examples = { @example (
+					value = "distribution_of([1,1,2,12.5])",
+					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
+					isExecutable = false) },
+			see = "as_map")
 
 	public static GamaMap DistributionOf(final IScope scope, final IContainer values) throws GamaRuntimeException {
 
-		if (values == null) {
-			return GamaMapFactory.create(Types.STRING, Types.LIST);
-		}
+		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvalue = Cast.asList(scope, values);
 		if (lvalue.length(scope) < 1)
 			return GamaMapFactory.create(Types.STRING, Types.LIST);
@@ -625,19 +671,29 @@ public class Distribution {
 
 	}
 
-	@operator(value = { "distribution_of" }, can_be_const = false, iterator = true,
+	@operator (
+			value = { "distribution_of" },
+			can_be_const = false,
+			iterator = true,
 			// index_type = ITypeProvider.SECOND_CONTENT_TYPE,
-			index_type = IType.STRING, content_type = IType.LIST, category = {
-					IOperatorCategory.STATISTICAL }, concept = { IConcept.STATISTIC, IConcept.CHART })
-	@doc(value = "Discretize a list of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).", masterDoc = false, comment = "", examples = {
-			@example(value = "distribution_of([1,1,2,12.5])", equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])", isExecutable = false) }, see = "as_map")
+			index_type = IType.STRING,
+			content_type = IType.LIST,
+			category = { IOperatorCategory.STATISTICAL },
+			concept = { IConcept.STATISTIC, IConcept.CHART })
+	@doc (
+			value = "Discretize a list of values into n bins (computes the bins from a numerical variable into n (default 10) bins. Returns a distribution map with the values (values key), the interval legends (legend key), the distribution parameters (params keys, for cumulative charts).",
+			masterDoc = false,
+			comment = "",
+			examples = { @example (
+					value = "distribution_of([1,1,2,12.5])",
+					equals = "map(['values'::[2,1,0,0,0,0,1,0,0,0],'legend'::['[0.0:2.0]','[2.0:4.0]','[4.0:6.0]','[6.0:8.0]','[8.0:10.0]','[10.0:12.0]','[12.0:14.0]','[14.0:16.0]','[16.0:18.0]','[18.0:20.0]'],'parlist'::[1,0]])",
+					isExecutable = false) },
+			see = "as_map")
 
 	public static GamaMap DistributionOf(final IScope scope, final IContainer values, final Integer nbbars,
 			final Double startvalue, final Double endvalue) throws GamaRuntimeException {
 
-		if (values == null) {
-			return GamaMapFactory.create(Types.STRING, Types.LIST);
-		}
+		if (values == null) { return GamaMapFactory.create(Types.STRING, Types.LIST); }
 		final IList lvalue = Cast.asList(scope, values);
 		if (lvalue.length(scope) < 1)
 			return GamaMapFactory.create(Types.STRING, Types.LIST);

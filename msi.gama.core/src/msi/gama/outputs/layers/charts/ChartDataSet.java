@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'ChartDataSet.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'ChartDataSet.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -74,7 +73,7 @@ public class ChartDataSet {
 	boolean keepOldSeries = true; // keep old series or move to deleted (to keep
 									// history)
 
-	StringBuilder history;
+	ChartHistory history;
 
 	public int getCommonXIndex() {
 		return commonXindex;
@@ -106,8 +105,7 @@ public class ChartDataSet {
 	// }
 
 	public String getCategories(final IScope scope, final int i) {
-		if (Xcategories.size() > i) {
-			return Xcategories.get(i);
+		if (Xcategories.size() > i) { return Xcategories.get(i);
 
 		}
 		for (int c = Xcategories.size(); c <= i; c++) {
@@ -117,8 +115,7 @@ public class ChartDataSet {
 	}
 
 	public String getLastCategories(final IScope scope) {
-		if (Xcategories.size() > 0) {
-			return Xcategories.get(Xcategories.size() - 1);
+		if (Xcategories.size() > 0) { return Xcategories.get(Xcategories.size() - 1);
 
 		}
 		this.Xcategories.add("c" + 0);
@@ -174,10 +171,10 @@ public class ChartDataSet {
 	}
 
 	public ChartDataSet() {
-		history = new StringBuilder();
+		history = new ChartHistory();
 	}
 
-	public StringBuilder getHistory() {
+	public ChartHistory getHistory() {
 		return history;
 	}
 
@@ -361,10 +358,8 @@ public class ChartDataSet {
 						}
 					}
 				}
-				if (xv2.size() < targetNb) {
-					throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
-							+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope);
-				}
+				if (xv2.size() < targetNb) { throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
+						+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope); }
 			} else {
 				if (this.useYSource && xval instanceof Number) {
 					final double dvalue = Cast.asFloat(scope, xval);
@@ -462,10 +457,8 @@ public class ChartDataSet {
 					}
 
 				}
-				if (xv2.size() < targetNb) {
-					throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
-							+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope);
-				}
+				if (xv2.size() < targetNb) { throw GamaRuntimeException.error("The x-serie length (" + xv2.size()
+						+ ") should NOT be shorter than any series length (" + targetNb + ") !", scope); }
 
 			} else {
 				if (this.useXSource && xval instanceof Number) {
@@ -543,9 +536,7 @@ public class ChartDataSet {
 
 	public ChartDataSeries createOrGetSerie(final IScope scope, final String id, final ChartDataSourceList source) {
 		// TODO Auto-generated method stub
-		if (series.keySet().contains(id)) {
-			return series.get(id);
-		}
+		if (series.keySet().contains(id)) { return series.get(id); }
 		if (deletedseries.keySet().contains(id)) {
 			final ChartDataSeries myserie = deletedseries.get(id);
 			deletedseries.remove(id);
@@ -596,24 +587,18 @@ public class ChartDataSet {
 	}
 
 	public void saveHistory(final IScope scope, final String name) {
-		if (scope == null) {
-			return;
-		}
+		if (scope == null) { return; }
 		try {
 			Files.newFolder(scope, chartFolder);
 			String file = chartFolder + "/" + "chart_" + name + ".csv";
 			BufferedWriter bw;
-			// file = FileUtils.constructAbsoluteFilePath(scope, file, false);
 			file = FileUtils.constructAbsoluteFilePath(scope, file, false);
 			bw = new BufferedWriter(new FileWriter(file));
-
-			bw.append(history);
+			history.writeTo(bw);
 			bw.close();
 		} catch (final Exception e) {
 			e.printStackTrace();
 			return;
-		} finally {
-			// GAMA.releaseScope(scope);
 		}
 
 	}
