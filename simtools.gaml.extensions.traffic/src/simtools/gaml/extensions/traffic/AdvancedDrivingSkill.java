@@ -718,7 +718,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
 		setCurrentTarget(agent, null);
 		setFinalTarget(agent, null);
-		setCurrentPath(agent, null);
+		setCurrentPath(agent, (IPath)null);
 		return null;
 	}
 
@@ -788,7 +788,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 		setTargets(agent, GamaListFactory.<ILocation> create(Types.POINT));
 		setCurrentTarget(agent, null);
 		setFinalTarget(agent, null);
-		setCurrentPath(agent, null);
+		setCurrentPath(agent, (IPath)null);
 		return null;
 	}
 
@@ -942,7 +942,7 @@ public class AdvancedDrivingSkill extends MovingSkill {
 			if (remainingTime > 0.0 && x == xt && y == yt) {
 				Integer currentIndex = getCurrentIndex(agent);
 				if (currentIndex >= path.getEdgeList().size() - 1) {
-					setCurrentPath(agent, null);
+					setCurrentPath(agent, (IPath)null);
 					setFinalTarget(agent, null);
 					// t4 += java.lang.System.currentTimeMillis() - t;
 

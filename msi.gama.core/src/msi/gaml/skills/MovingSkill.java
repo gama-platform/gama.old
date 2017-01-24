@@ -96,6 +96,12 @@ import msi.gaml.types.Types;
 				init = "nil",
 				doc = @doc ("Represents the agent/geometry on which the agent is located (only used with a graph)")),
 		@var (
+				name = "real_speed",
+				type = IType.FLOAT,
+				init = "0.0",
+				doc = @doc ("real speed of the agent (in meter/second)")),
+	
+		@var (
 				name = IKeyword.DESTINATION,
 				type = IType.POINT,
 				depends_on = { IKeyword.SPEED, IKeyword.HEADING, IKeyword.LOCATION },
@@ -148,6 +154,8 @@ public class MovingSkill extends Skill {
 		if (agent == null) { return; }
 		agent.setAttribute(IKeyword.SPEED, s);
 	}
+	
+	
 
 	@getter (
 			value = IKeyword.LOCATION,
@@ -172,11 +180,22 @@ public class MovingSkill extends Skill {
 		agent.setLocation(p);
 	}
 
+	@setter ("real_speed")
+	public void setCurrentPath(final IAgent agent, final Double s) {
+		// READ_ONLY
+	}
+	
+	@getter ("real_speed")
+	public double getRealSpeed(final IAgent agent) {
+		return (Double) agent.getAttribute("real_speed");
+	}
+	
 	@setter ("current_path")
 	public void setCurrentPath(final IAgent agent, final IPath p) {
 		// READ_ONLY
 	}
 
+	
 	@getter (
 			value = "current_path")
 	public IPath getCurrentPath(final IAgent agent) {
@@ -365,7 +384,8 @@ public class MovingSkill extends Skill {
 			// Enable to use wander in 3D space. An agent will wander in the
 			// plan define by its z value.
 			((GamaPoint) loc).z = agent.getLocation().getZ();
-
+			agent.setAttribute("real_speed", (loc.euclidianDistanceTo(location)/scope.getClock().getStepInSeconds()));
+			
 			setLocation(agent, loc);
 			if (newHeading != null) {
 				setHeading(agent, newHeading);
@@ -419,6 +439,8 @@ public class MovingSkill extends Skill {
 			// GamaList.with(location, loc));
 			setLocation(agent, loc);
 		}
+		agent.setAttribute("real_speed", (loc.euclidianDistanceTo(location)/scope.getClock().getStepInSeconds()));
+		
 		// scope.setStatus(loc == null ? ExecutionStatus.failure :
 		// ExecutionStatus.success);
 		return null;
@@ -830,6 +852,7 @@ public class MovingSkill extends Skill {
 		int inverse = (Integer) indexVals.get(2);
 		IShape edge = (IShape) graph.getEdges().get(index);
 		double distance = d;
+		double travelledDist = 0.0;
 		while (true) {
 			Coordinate coords[] = edge.getInnerGeometry().getCoordinates();
 			if (!graph.isDirected() && inverse == 1) {
@@ -844,11 +867,12 @@ public class MovingSkill extends Skill {
 			final double weight = graph.getEdgeWeight(edge) / edge.getGeometry().getPerimeter();
 			for (int j = indexSegment; j < coords.length; j++) {
 				final GamaPoint pt = new GamaPoint(coords[j]);
-				double dist = pt.distance(currentLocation);
-				dist = weight * dist;
+				double dis = pt.distance(currentLocation);
+				double dist = weight * dis;
 
 				if (distance < dist) {
 					final double ratio = distance / dist;
+					travelledDist += dis * ratio;
 					final double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
 					final double newY = currentLocation.y + ratio * (pt.y - currentLocation.y);
 					final double newZ = currentLocation.z + ratio * (pt.z - currentLocation.z);
@@ -857,6 +881,8 @@ public class MovingSkill extends Skill {
 					break;
 				} else if (distance > dist) {
 					currentLocation = pt;
+					travelledDist += dis ;
+					
 					distance = distance - dist;
 					indexSegment++;
 					if (j == coords.length - 1) {
@@ -897,6 +923,7 @@ public class MovingSkill extends Skill {
 					}
 				} else {
 					currentLocation = pt;
+					travelledDist += dis ;
 					distance = 0;
 					if (indexSegment < coords.length - 1) {
 						indexSegment++;
@@ -911,6 +938,8 @@ public class MovingSkill extends Skill {
 			}
 			indexSegment = 1;
 		}
+		agent.setAttribute("real_speed", (travelledDist/scope.getClock().getStepInSeconds()));
+		
 		agent.setAttribute("index_on_path", index);
 		setCurrentEdge(agent, graph);
 		agent.setAttribute("index_on_path_segment", indexSegment);
@@ -932,6 +961,7 @@ public class MovingSkill extends Skill {
 		final int nb = edges.size();
 		double distance = d;
 		final GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
+		double travelledDist = 0.0;
 		for (int i = index; i < nb; i++) {
 			final IShape line = edges.get(i);
 			final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
@@ -951,19 +981,22 @@ public class MovingSkill extends Skill {
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
-				double dist = pt.distance(currentLocation);
-				dist = weight * dist;
+				double dis = pt.distance(currentLocation);
+				double dist = weight * dis;
 
 				if (distance < dist) {
 					final double ratio = distance / dist;
 					final double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
 					final double newY = currentLocation.y + ratio * (pt.y - currentLocation.y);
 					final double newZ = currentLocation.z + ratio * (pt.z - currentLocation.z);
+					travelledDist += dis * ratio;
 					currentLocation.setLocation(newX, newY, newZ);
+					
 					distance = 0;
 					break;
 				} else if (distance > dist) {
 					currentLocation = pt;
+					travelledDist += dis ;
 					distance = distance - dist;
 					if (i == nb - 1 && j == endIndexSegment) {
 						break;
@@ -972,6 +1005,7 @@ public class MovingSkill extends Skill {
 				} else {
 					currentLocation = pt;
 					distance = 0;
+					travelledDist += dis;
 					if (indexSegment < coords.length - 1) {
 						indexSegment++;
 					} else {
@@ -998,6 +1032,7 @@ public class MovingSkill extends Skill {
 		}
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
+		agent.setAttribute("real_speed", (travelledDist/scope.getClock().getStepInSeconds()));
 		setCurrentEdge(agent, path);
 		setLocation(agent, currentLocation);
 		path.setSource(currentLocation.copy(scope));
@@ -1028,6 +1063,7 @@ public class MovingSkill extends Skill {
 		final IList<IShape> edges = path.getEdgeGeometry();
 		final int nb = edges.size();
 		double distance = d;
+		double travelledDist = 0.0;
 		final GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
 		for (int i = index; i < nb; i++) {
 			final IShape line = edges.get(i);
@@ -1049,13 +1085,15 @@ public class MovingSkill extends Skill {
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
-				double dist = pt.distance(currentLocation);
-				dist = weight * dist;
-
+				double dis = pt.distance(currentLocation);
+				double dist = weight * dis;
+				
 				if (distance < dist) {
 					final GamaPoint pto = currentLocation.copy(scope);
 
 					final double ratio = distance / dist;
+					travelledDist += dis * ratio;
+					
 					final double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
 					final double newY = currentLocation.y + ratio * (pt.y - currentLocation.y);
 					final double newZ = currentLocation.z + ratio * (pt.z - currentLocation.z);
@@ -1074,6 +1112,7 @@ public class MovingSkill extends Skill {
 
 					break;
 				} else if (distance > dist) {
+					travelledDist += dis;
 					final IShape gl = GamaGeometryType.buildLine(currentLocation, pt);
 					final IShape sh = path.getRealObject(line);
 					if (sh != null) {
@@ -1091,6 +1130,7 @@ public class MovingSkill extends Skill {
 					}
 					indexSegment++;
 				} else {
+					travelledDist += dis;
 					final IShape gl = GamaGeometryType.buildLine(currentLocation, pt);
 					if (path.getRealObject(line) != null) {
 						final IAgent a = path.getRealObject(line).getAgent();
@@ -1132,7 +1172,8 @@ public class MovingSkill extends Skill {
 		setCurrentEdge(agent, path);
 		setLocation(agent, currentLocation);
 		path.setSource(currentLocation.copy(scope));
-
+		agent.setAttribute("real_speed", (travelledDist/scope.getClock().getStepInSeconds()));
+		
 		if (segments.isEmpty()) { return null; }
 		final IPath followedPath =
 				PathFactory.newInstance(scope, agent.getTopology(), startLocation, currentLocation, segments, false);
