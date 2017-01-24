@@ -233,12 +233,15 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		if (scope.interrupted()) { return null; }
-
-		createSimulation(getParameterValues(), scheduled);
+		if (automaticallyCreateFirstSimulation())
+			createSimulation(getParameterValues(), scheduled);
 		// We execute any behavior defined in GAML.
 		super._init_(scope);
-
 		return this;
+	}
+
+	protected boolean automaticallyCreateFirstSimulation() {
+		return true;
 	}
 
 	@Override

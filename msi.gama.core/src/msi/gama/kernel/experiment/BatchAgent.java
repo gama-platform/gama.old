@@ -1,7 +1,6 @@
 /*********************************************************************************************
  *
- * 'BatchAgent.java, in plugin msi.gama.core, is part of the source code of the
- * GAMA modeling and simulation platform.
+ * 'BatchAgent.java, in plugin msi.gama.core, is part of the source code of the GAMA modeling and simulation platform.
  * (c) 2007-2016 UMI 209 UMMISCO IRD/UPMC & Partners
  *
  * Visit https://github.com/gama-platform/gama for license information and developers contact.
@@ -43,8 +42,8 @@ import msi.gaml.variables.IVariable;
  *
  */
 
-@experiment(IKeyword.BATCH)
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@experiment (IKeyword.BATCH)
+@SuppressWarnings ({ "unchecked", "rawtypes" })
 public class BatchAgent extends ExperimentAgent {
 
 	final IExpression stopCondition;
@@ -52,10 +51,6 @@ public class BatchAgent extends ExperimentAgent {
 	ParametersSet currentSolution;
 	private Double[] seeds;
 	final List<Double> fitnessValues = new ArrayList<>();
-
-	// public BatchAgent(final Object...args) throws GamaRuntimeException {
-	// this((Ipopulation) args[0]);
-	// }
 
 	public BatchAgent(final IPopulation p) throws GamaRuntimeException {
 		super(p);
@@ -91,10 +86,19 @@ public class BatchAgent extends ExperimentAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		getSpecies().getExplorationAlgorithm().initializeFor(scope, this);
+		// Fix for issue #2088
+		// We call super _init_ here, but the result of automaticallyCreateFirstSimulation() will prevent from creating
+		// a first simulation (which we dont want as it should be the task of the exploration algorithm)
+		super._init_(scope);
 		return this;
 	}
 
-	@SuppressWarnings("null")
+	@Override
+	protected boolean automaticallyCreateFirstSimulation() {
+		return false;
+	}
+
+	@SuppressWarnings ("null")
 	@Override
 	public void reset() {
 		// We first save the results of the various simulations
@@ -141,14 +145,13 @@ public class BatchAgent extends ExperimentAgent {
 	 *
 	 * Method step()
 	 * 
-	 * @see msi.gama.metamodel.agent.GamlAgent#step(msi.gama.runtime.IScope)
-	 *      This method, called once by the front controller, actually serves as
-	 *      "launching" the batch process (entirely piloted by the exploration
-	 *      algorithm)
+	 * @see msi.gama.metamodel.agent.GamlAgent#step(msi.gama.runtime.IScope) This method, called once by the front
+	 *      controller, actually serves as "launching" the batch process (entirely piloted by the exploration algorithm)
 	 */
 	@Override
 	public boolean step(final IScope scope) {
-		// We run the exloration algorithm
+		// We run the exloration algorithm. The future steps will be called by the exploration algorithm through the
+		// launchSimulationsWithSolution() method
 		getSpecies().getExplorationAlgorithm().run(scope);
 		// Once the algorithm has finished exploring the solutions, the agent is
 		// killed.
@@ -204,8 +207,8 @@ public class BatchAgent extends ExperimentAgent {
 					final SimulationAgent agent = (SimulationAgent) sim;
 					// cycles += " " + simulation.getClock().getCycle();
 					// test the condition first in case it is paused
-					final boolean stopConditionMet = Cast.asBool(sim.getScope(),
-							sim.getScope().evaluate(stopCondition, sim).getValue());
+					final boolean stopConditionMet =
+							Cast.asBool(sim.getScope(), sim.getScope().evaluate(stopCondition, sim).getValue());
 					final boolean mustStop = stopConditionMet || agent.dead() || agent.getScope().isPaused();
 					if (mustStop) {
 						pop.unscheduleSimulation(agent);
@@ -243,9 +246,7 @@ public class BatchAgent extends ExperimentAgent {
 		super.step(getScope());
 
 		// If the agent is dead, we return immediately
-		if (dead) {
-			return 0.0;
-		}
+		if (dead) { return 0.0; }
 		// We reset the experiment agent to erase traces of the current
 		// simulations if any
 		this.reset();
@@ -295,26 +296,18 @@ public class BatchAgent extends ExperimentAgent {
 			@Override
 			public String getUnitLabel(final IScope scope) {
 				final IExploration algo = getSpecies().getExplorationAlgorithm();
-				if (algo == null) {
-					return "";
-				}
+				if (algo == null) { return ""; }
 				final ParametersSet params = algo.getBestSolution();
-				if (params == null) {
-					return "";
-				}
+				if (params == null) { return ""; }
 				return "with " + params;
 			}
 
 			@Override
 			public String value() {
 				final IExploration algo = getSpecies().getExplorationAlgorithm();
-				if (algo == null) {
-					return "-";
-				}
+				if (algo == null) { return "-"; }
 				final Double best = algo.getBestFitness();
-				if (best == null) {
-					return "-";
-				}
+				if (best == null) { return "-"; }
 				return best.toString();
 			}
 
@@ -324,17 +317,13 @@ public class BatchAgent extends ExperimentAgent {
 
 			@Override
 			public String getUnitLabel(final IScope scope) {
-				if (currentSolution == null) {
-					return "";
-				}
+				if (currentSolution == null) { return ""; }
 				return "with " + currentSolution.toString();
 			}
 
 			@Override
 			public String value() {
-				if (fitnessValues.isEmpty()) {
-					return "-";
-				}
+				if (fitnessValues.isEmpty()) { return "-"; }
 				return fitnessValues.get(fitnessValues.size() - 1).toString();
 			}
 
@@ -345,9 +334,7 @@ public class BatchAgent extends ExperimentAgent {
 			@Override
 			public String value() {
 				final Map<String, IParameter.Batch> params = getSpecies().getExplorableParameters();
-				if (params.isEmpty()) {
-					return "";
-				}
+				if (params.isEmpty()) { return ""; }
 				String result = "";
 				int dim = 1;
 				for (final Map.Entry<String, IParameter.Batch> entry : params.entrySet()) {
@@ -362,9 +349,7 @@ public class BatchAgent extends ExperimentAgent {
 			}
 
 			int getExplorationDimension(final IParameter.Batch p) {
-				if (p.getAmongValue(getScope()) != null) {
-					return p.getAmongValue(getScope()).size();
-				}
+				if (p.getAmongValue(getScope()) != null) { return p.getAmongValue(getScope()).size(); }
 				return (int) ((p.getMaxValue(getScope()).doubleValue() - p.getMinValue(getScope()).doubleValue())
 						/ p.getStepValue(getScope()).doubleValue()) + 1;
 			}
